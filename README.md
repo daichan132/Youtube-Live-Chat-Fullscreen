@@ -9,44 +9,10 @@
   </h2>
 </div>
 
-<p align="center">A cross-platform (Chrome, Firefox, Edge, Opera, Brave) web browser extension (Manifest V3 and Manifest V2) starter kit with hot reload support, built with React, Typescript, Redux, Vite, ESLint, Prettier, TailwindCSS, Jest and more! </p>
-<hr />
+## Due Credit
+このプロジェクトは [browser-extension-react-typescript-starter](https://github.com/sinanbekar/browser-extension-react-typescript-starter) をベースに開発されています。オリジナルのライセンスについては [LICENSE_ORIGINAL](./LICENSE_ORIGINAL) を参照してください。
 
-<div align="center" >
-  <a href="https://github.com/sinanbekar/browser-extension-react-typescript-starter/actions">
-    <img src="https://github.com/sinanbekar/browser-extension-react-typescript-starter/actions/workflows/ci.yml/badge.svg" alt="CI">
-  </a>
-    &nbsp;
-  <a>
-    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome">
-  </a>
-    &nbsp;
-  <a href="https://github.com/sinanbekar/browser-extension-react-typescript-starter/blob/main/LICENSE">
-    <img src="https://img.shields.io/apm/l/atomic-design-ui.svg" alt="MIT License">
-  </a>
-
-</div>
-
-<p align="center">
-  <a href="#features">Features</a> ·
-  <a href="#quick-start">Quick Start</a> ·
-  <a href="#important-notes">Important Notes</a> ·
-  <a href="#license">License</a>
-</p>
-
-## Features
-
-- **Instant HMR** (hot reload)[^1]
-- Write once run on any browser
-- Global Redux support with persist option. Effortless communication between content, background, popup, options, and more pages.
-- Provides a basic content example and popup, options, and welcome pages with all React
-- Latest Manifest V3 support
-- Manifest V2 support (beta)
-- Dynamic manifest.json
-- Includes ESLint configured to work with TypeScript and Prettier
-- Includes tests with Jest
-
-#### Built with
+## Built with
 
 - React
 - TypeScript
