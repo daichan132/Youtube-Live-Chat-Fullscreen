@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import emojiRegex from 'emoji-regex';
 import { useEffect } from 'react';
 
 interface EmojiFixType {
@@ -12,7 +13,11 @@ export const EmojiFix = ({ textInputElement }: EmojiFixType) => {
           (node: any) => node.tagName === 'IMG'
         );
         imgNodes.forEach((imgNode: any) => {
-          imgNode.alt = ':' + imgNode.alt + ':';
+          const regex = emojiRegex();
+          const replacedText = imgNode.alt.replace(regex, '');
+          if (replacedText) {
+            imgNode.alt = ':' + imgNode.alt + ':';
+          }
         });
       });
     };
