@@ -1,13 +1,13 @@
-import { Counter } from '../shared/counter';
+import { useEmojiFixStore } from '../shared/emojiFixStore';
 
 const Popup = () => {
-  document.body.className = 'w-[30rem] h-[15rem]';
+  const isAvailable = useEmojiFixStore((state) => state.isAvailable);
+  document.body.className = `${isAvailable ? 'bg-green-50' : 'bg-rose-50'}`;
 
   return (
-    <>
-      <div className="flex justify-center mt-2 text-base">Popup Counter</div>
-      <Counter />
-    </>
+    <div className="flex justify-center h-full my-2 mx-3 text-sm whitespace-nowrap">
+      Emoji Helper {isAvailable ? 'Working Fine ✅' : 'Not Working ❌'}
+    </div>
   );
 };
 

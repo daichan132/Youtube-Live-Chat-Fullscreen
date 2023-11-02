@@ -7,23 +7,23 @@ import { version } from '../package.json';
 
 const manifest = defineManifest(async (env) => ({
   manifest_version: 3,
-  name: `${env.mode === 'development' ? '[Dev] ' : ''}Browser Extension TypeScript & React Starter`,
-  description: 'Browser Extension, TypeScript, React',
+  name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Emoji Helper`,
+  description: 'Youtube Emoji Helper',
   version,
   background: {
     service_worker: 'background/index.ts',
   },
   content_scripts: [
     {
-      matches: ['http://*/*', 'https://*/*', 'file:///*'],
+      matches: ['https://www.youtube.com/*'],
       js: ['content/index.tsx'],
     },
   ],
   host_permissions: ['<all_urls>'],
-  options_ui: {
-    page: 'options/options.html',
-    open_in_tab: true,
-  },
+  // options_ui: {
+  //   page: 'options/options.html',
+  //   open_in_tab: true,
+  // },
   web_accessible_resources: [
     {
       resources: [

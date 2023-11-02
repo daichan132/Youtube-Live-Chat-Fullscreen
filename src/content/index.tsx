@@ -4,8 +4,8 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { debounce } from 'lodash-es';
 import { twind, config, cssom, observe, stringify } from './twind';
-import { counterStoreReadyPromise } from '../shared/counter';
 import Content from './Content';
+import { emojiFixStoreReadyPromise } from '../shared/emojiFixStore';
 
 const contentRoot = document.createElement('div');
 contentRoot.id = 'my-extension-root';
@@ -41,10 +41,10 @@ shadowWrapper.id = 'root';
 shadowWrapper.style.display = 'contents';
 shadowRoot.appendChild(shadowWrapper);
 
-counterStoreReadyPromise.then(() => {
+emojiFixStoreReadyPromise.then(() =>
   createRoot(shadowWrapper).render(
     <React.StrictMode>
       <Content />
     </React.StrictMode>
-  );
-});
+  )
+);

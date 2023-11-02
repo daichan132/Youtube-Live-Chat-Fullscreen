@@ -1,12 +1,22 @@
-import { Counter } from '../shared/counter';
+import { useTextInputObserver } from './hooks/useTextInputObserver';
+import { EmojiFix } from './components/EmojiFix/EmojiFix';
+import { useEffect } from 'react';
+import { useEmojiFixStore } from '../shared/emojiFixStore';
 
 const Content = () => {
-  return (
-    <div className="fixed z-[999] bottom-2 right-2 shadow-xl border-[1px] bg-white bg-opacity-10">
-      <div className="flex justify-center mt-2 text-base">Content Counter</div>
-      <Counter />
-    </div>
-  );
+  const textInputElement = useTextInputObserver();
+  const setIsAvailable = useEmojiFixStore((state) => state.setIsAvailable);
+  useEffect(() => {
+    if (textInputElement) {
+      console.log('✅ detected textInputElement');
+      setIsAvailable(true);
+    } else {
+      console.log('❌ not detected textInputElement');
+      setIsAvailable(false);
+    }
+  }, [setIsAvailable, textInputElement]);
+
+  return textInputElement ? <EmojiFix textInputElement={textInputElement} /> : null;
 };
 
 export default Content;
