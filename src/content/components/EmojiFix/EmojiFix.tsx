@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import emojiRegex from 'emoji-regex';
 import { useEffect } from 'react';
+import { changeImgAlt } from '../../../utils/changeImgAlt';
 
 interface EmojiFixType {
-  textInputElement: Element;
+  element: Element;
 }
-export const EmojiFix = ({ textInputElement }: EmojiFixType) => {
+export const EmojiFix = ({ element }: EmojiFixType) => {
   useEffect(() => {
     const changeImgAltText = (mutations: any) => {
       mutations.forEach((mutation: any) => {
@@ -13,25 +13,16 @@ export const EmojiFix = ({ textInputElement }: EmojiFixType) => {
           (node: any) => node.tagName === 'IMG'
         );
         imgNodes.forEach((imgNode: any) => {
-          const regex = emojiRegex();
-          const replacedAlt = imgNode.alt.replace(regex, '');
-          if (!replacedAlt) return;
-          if (imgNode.dataset.emojiId.indexOf('UCkszU2WH9gy1mb0dV-11UJg/') !== -1) {
-            /* ---------------------------- Youtube固有の絵文字の場合 ---------------------------- */
-            imgNode.alt = ':' + imgNode.alt + ':';
-          } else {
-            /* ---------------------------- メンバーシップ専用の絵文字の場合 ---------------------------- */
-            imgNode.alt = ':_' + imgNode.alt + ':';
-          }
+          changeImgAlt(imgNode);
         });
       });
     };
     const mutationObserver = new MutationObserver(changeImgAltText);
-    mutationObserver.observe(textInputElement, { childList: true, subtree: true });
+    mutationObserver.observe(element, { childList: true, subtree: true });
     return () => {
       mutationObserver.disconnect();
     };
-  }, [textInputElement]);
+  }, [element]);
 
   return null;
 };

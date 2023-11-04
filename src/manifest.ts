@@ -7,8 +7,8 @@ import { version } from '../package.json';
 
 const manifest = defineManifest(async (env) => ({
   manifest_version: 3,
-  name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Emoji Helper`,
-  description: 'Youtube Emoji Helper',
+  name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Live Emoji Helper`,
+  description: 'Youtube Live Emoji Helper',
   version,
   background: {
     service_worker: 'background/index.ts',
@@ -19,21 +19,9 @@ const manifest = defineManifest(async (env) => ({
       js: ['content/index.tsx'],
     },
   ],
-  host_permissions: ['<all_urls>'],
-  // options_ui: {
-  //   page: 'options/options.html',
-  //   open_in_tab: true,
-  // },
-  web_accessible_resources: [
-    {
-      resources: [
-        // this file is web accessible; it supports HMR b/c it's declared in `rollupOptions.input`
-        'welcome/welcome.html',
-      ],
-      matches: ['<all_urls>'],
-    },
-  ],
+  host_permissions: [],
   action: {
+    matches: ['https://www.youtube.com/*'],
     default_popup: 'popup/popup.html',
     default_icon: {
       '16': 'images/extension_16.png',
@@ -48,7 +36,7 @@ const manifest = defineManifest(async (env) => ({
     '48': 'images/extension_48.png',
     '128': 'images/extension_128.png',
   },
-  permissions: ['storage', 'tabs'],
+  permissions: [],
 }));
 
 export default manifest;

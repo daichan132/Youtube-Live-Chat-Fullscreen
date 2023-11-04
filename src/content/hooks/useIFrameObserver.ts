@@ -1,17 +1,30 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 import { useMedia } from 'react-use';
+import { setupTailwind } from '../setupTailwind';
 
 export const useIFrameObserver = () => {
   const [iframeElement, setIFrameElement] = useState<HTMLIFrameElement | null>(null);
+  const [url, setUrl] = useState<string>('');
   const isWide = useMedia('(min-width: 1015px)');
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      setUrl(window.location.href);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
   useEffect(() => {
     setIFrameElement(null);
 
     const getParentElement = debounce(() => {
       const iframe = document.body.querySelector<HTMLIFrameElement>('#chatframe');
-      if (!iframe) return;
+      if (!iframe?.contentWindow) return;
+
       setIFrameElement(iframe);
       mutationObserver.disconnect();
     }, 100);
@@ -25,7 +38,7 @@ export const useIFrameObserver = () => {
       mutationObserver.disconnect();
     };
     // windowのwidthが1015pxのところでchatのiframeが再読み込みされる
-  }, [isWide]);
+  }, [isWide, url]);
 
   return iframeElement;
 };
