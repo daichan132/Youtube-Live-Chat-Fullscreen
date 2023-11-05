@@ -1,0 +1,15 @@
+div#menu.yt-live-chat-text-message-renderer.custom {
+  right: 32px;
+}
+
+div#menu.yt-live-chat-text-message-renderer.custom > div {
+  height: 20px;
+  width: 20px;
+  padding: 6px;
+}
+
+div#menu.yt-live-chat-text-message-renderer.custom > div > svg {
+  background-color: rgba(229, 231, 235, 0.3);
+  backdrop-filter: blur(12px);
+  border-radius: 0.25rem;
+}

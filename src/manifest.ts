@@ -13,10 +13,18 @@ const manifest = defineManifest(async (env) => ({
   background: {
     service_worker: 'background/index.ts',
   },
+  web_accessible_resources: [
+    {
+      resources: ['content/style.css'],
+      matches: ['https://www.youtube.com/*'],
+    },
+  ],
   content_scripts: [
     {
       matches: ['https://www.youtube.com/*'],
+      css: ['content/style.css'],
       js: ['content/index.tsx'],
+      all_frames: true,
     },
   ],
   host_permissions: [],

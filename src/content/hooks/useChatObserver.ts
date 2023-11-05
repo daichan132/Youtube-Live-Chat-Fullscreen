@@ -1,18 +1,25 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { useIFrameObserver } from './useIFrameObserver';
+import { useMedia } from 'react-use';
 
 export const useChatObserver = () => {
-  const iframeElement = useIFrameObserver();
   const [chatElement, setChatElement] = useState<Element | null>(null);
+  const [url, setUrl] = useState<string>('');
+  const isWide = useMedia('(min-width: 1015px)');
 
   useEffect(() => {
-    if (!iframeElement?.contentWindow?.document) return;
+    const handleLocationChange = () => {
+      setUrl(window.location.href);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
+  useEffect(() => {
     const getParentElement = debounce(() => {
-      const element = iframeElement.contentWindow?.document.querySelector(
-        'div#items.yt-live-chat-item-list-renderer'
-      );
+      const element = document.body.querySelector('div#items.yt-live-chat-item-list-renderer');
       if (!element) return;
 
       setChatElement(element);
@@ -23,7 +30,7 @@ export const useChatObserver = () => {
       mutationObserver.disconnect();
     }, 10 * 1000);
 
-    mutationObserver.observe(iframeElement.contentWindow.document, {
+    mutationObserver.observe(document.body, {
       childList: true,
       subtree: true,
     });
@@ -31,7 +38,7 @@ export const useChatObserver = () => {
       setChatElement(null);
       mutationObserver.disconnect();
     };
-  }, [iframeElement]);
+  }, [isWide, url]);
 
   return chatElement;
 };

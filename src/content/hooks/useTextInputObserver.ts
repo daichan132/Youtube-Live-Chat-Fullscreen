@@ -1,18 +1,25 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { useIFrameObserver } from './useIFrameObserver';
+import { useMedia } from 'react-use';
 
 export const useTextInputObserver = () => {
-  const iframeElement = useIFrameObserver();
   const [textInputElement, setTextInputElement] = useState<Element | null>(null);
+  const [url, setUrl] = useState<string>('');
+  const isWide = useMedia('(min-width: 1015px)');
 
   useEffect(() => {
-    if (!iframeElement?.contentWindow?.document) return;
+    const handleLocationChange = () => {
+      setUrl(window.location.href);
+    };
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
+  useEffect(() => {
     const getParentElement = debounce(() => {
-      const element = iframeElement.contentWindow?.document.querySelector(
-        'yt-live-chat-text-input-field-renderer'
-      );
+      const element = document.body.querySelector('yt-live-chat-text-input-field-renderer');
       if (!element) return;
       const contentEditable = Array.from(element.children).find(
         (child) => (child as HTMLElement).contentEditable === 'true'
@@ -27,7 +34,7 @@ export const useTextInputObserver = () => {
       mutationObserver.disconnect();
     }, 10 * 1000);
 
-    mutationObserver.observe(iframeElement.contentWindow.document, {
+    mutationObserver.observe(document.body, {
       childList: true,
       subtree: true,
     });
@@ -35,7 +42,7 @@ export const useTextInputObserver = () => {
       setTextInputElement(null);
       mutationObserver.disconnect();
     };
-  }, [iframeElement]);
+  }, [url, isWide]);
 
   return textInputElement;
 };

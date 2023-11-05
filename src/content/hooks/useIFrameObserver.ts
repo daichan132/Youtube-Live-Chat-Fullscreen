@@ -1,7 +1,6 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
 import { useMedia } from 'react-use';
-import { setupTailwind } from '../setupTailwind';
 
 export const useIFrameObserver = () => {
   const [iframeElement, setIFrameElement] = useState<HTMLIFrameElement | null>(null);
