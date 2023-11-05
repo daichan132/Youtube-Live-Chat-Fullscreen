@@ -40,18 +40,19 @@ jobs:
       - name: Lint
         run: yarn lint
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
-          cache: yarn
+  # 現在はテストファイルを作成していないのでコメントアウトしている
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Use Node.js ${{ matrix.node-version }}
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 16.x
+  #         cache: yarn
 
-      - name: Install dependencies
-        run: rm -rf node_modules && yarn install --frozen-lockfile
+  #     - name: Install dependencies
+  #       run: rm -rf node_modules && yarn install --frozen-lockfile
 
-      - name: Unit test
-        run: yarn ci:test
+  #     - name: Unit test
+  #       run: yarn ci:test
