@@ -27,11 +27,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
-    "react-use": "^17.4.0",
-    "redux-persist-webextension-storage": "^1.0.2",
-    "webext-zustand": "^0.2.0",
-    "webextension-polyfill": "^0.10.0",
-    "zustand": "^4.4.1"
+    "react-use": "^17.4.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.17",
@@ -43,8 +39,6 @@
     "@types/lodash-es": "^4.17.7",
     "@types/react": "^18.2.12",
     "@types/react-dom": "^18.2.5",
-    "@types/redux-persist-webextension-storage": "^1.0.0",
-    "@types/webextension-polyfill": "^0.10.0",
     "@typescript-eslint/eslint-plugin": "^5.59.11",
     "@typescript-eslint/parser": "^5.59.11",
     "@vitejs/plugin-react": "^4.0.0",
