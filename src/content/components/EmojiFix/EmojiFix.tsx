@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
-import { changeImgAlt } from '../../../utils/changeImgAlt';
+import { changeImgAlt } from './changeImgAlt';
 
 interface EmojiFixType {
   element: Element;

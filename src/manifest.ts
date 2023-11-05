@@ -10,9 +10,6 @@ const manifest = defineManifest(async (env) => ({
   name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Live Emoji Helper`,
   description: 'Youtube Live Emoji Helper',
   version,
-  background: {
-    service_worker: 'background/index.ts',
-  },
   web_accessible_resources: [
     {
       resources: ['content/style.css'],
@@ -30,7 +27,6 @@ const manifest = defineManifest(async (env) => ({
   host_permissions: [],
   action: {
     matches: ['https://www.youtube.com/*'],
-    default_popup: 'popup/popup.html',
     default_icon: {
       '16': 'images/extension_16.png',
       '32': 'images/extension_32.png',

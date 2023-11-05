@@ -20,8 +20,8 @@ export const AddChatMessageCopyIcon = ({ element }: AddChatMessageCopyIconType) 
         const filteredNodes = Array.from(mutation.addedNodes).filter(
           (node: any) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER'
         );
-        filteredNodes.forEach((node: any) => {
-          createCopyIcon(node);
+        filteredNodes.forEach((chatMessageElement: any) => {
+          createCopyIcon(chatMessageElement);
         });
       });
     };
