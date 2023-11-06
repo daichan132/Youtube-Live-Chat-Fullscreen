@@ -7,15 +7,15 @@ div#menu.yt-live-chat-text-message-renderer.custom {
 }
 
 div#menu.yt-live-chat-text-message-renderer.custom > div {
-  height: 20px;
-  width: 20px;
-  padding: 6px;
+  height: 32px;
+  width: 32px;
 }
 
 div#menu.yt-live-chat-text-message-renderer.custom > div > svg {
   background-color: rgba(250, 250, 250, 0.5);
   backdrop-filter: blur(4px);
   border-radius: 0.25rem;
+  padding: 6px;
 }
 
 /* カーソルを重ねる要素 */
