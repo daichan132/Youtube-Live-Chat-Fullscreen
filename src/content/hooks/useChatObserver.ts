@@ -1,21 +1,10 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { useMedia } from 'react-use';
+import { useReObserve } from './useReObserve';
 
 export const useChatObserver = () => {
   const [chatElement, setChatElement] = useState<Element | null>(null);
-  const [url, setUrl] = useState<string>('');
-  const isWide = useMedia('(min-width: 1015px)');
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setUrl(window.location.href);
-    };
-    window.addEventListener('popstate', handleLocationChange);
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-    };
-  }, []);
+  const state = useReObserve();
 
   useEffect(() => {
     const getParentElement = debounce(() => {
@@ -38,7 +27,7 @@ export const useChatObserver = () => {
       setChatElement(null);
       mutationObserver.disconnect();
     };
-  }, [isWide, url]);
+  }, [state]);
 
   return chatElement;
 };

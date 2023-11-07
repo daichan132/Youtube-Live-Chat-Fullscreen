@@ -1,21 +1,10 @@
 import { debounce } from 'lodash-es';
 import { useEffect, useState } from 'react';
-import { useMedia } from 'react-use';
+import { useReObserve } from './useReObserve';
 
 export const useTextInputObserver = () => {
   const [textInputElement, setTextInputElement] = useState<Element | null>(null);
-  const [url, setUrl] = useState<string>('');
-  const isWide = useMedia('(min-width: 1015px)');
-
-  useEffect(() => {
-    const handleLocationChange = () => {
-      setUrl(window.location.href);
-    };
-    window.addEventListener('popstate', handleLocationChange);
-    return () => {
-      window.removeEventListener('popstate', handleLocationChange);
-    };
-  }, []);
+  const { url, isWide } = useReObserve();
 
   useEffect(() => {
     const getParentElement = debounce(() => {
