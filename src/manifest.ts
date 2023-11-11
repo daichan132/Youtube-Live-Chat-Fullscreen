@@ -16,6 +16,9 @@ const manifest = defineManifest(async (env) => ({
       matches: ['https://www.youtube.com/*'],
     },
   ],
+  background: {
+    service_worker: 'background/index.ts',
+  },
   content_scripts: [
     {
       matches: ['https://www.youtube.com/*'],
@@ -40,7 +43,7 @@ const manifest = defineManifest(async (env) => ({
     '48': 'images/extension_48.png',
     '128': 'images/extension_128.png',
   },
-  permissions: [],
+  permissions: ['tabs'],
 }));
 
 export default manifest;
