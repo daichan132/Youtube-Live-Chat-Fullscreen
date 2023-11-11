@@ -13,7 +13,7 @@ export const AddChatMessageCopyIcon = () => {
   useEffect(() => {
     if (!chatElement) return;
     const chatMessageElements = Array.from(chatElement.children).filter(
-      (node) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER'
+      (node) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER',
     );
     chatMessageElements.forEach((chatMessageElement) => {
       createCopyIcon(chatMessageElement);
@@ -22,7 +22,7 @@ export const AddChatMessageCopyIcon = () => {
     const addChatMessageCopyIcon = (mutations: any) => {
       mutations.forEach((mutation: any) => {
         const filteredNodes = Array.from(mutation.addedNodes).filter(
-          (node: any) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER'
+          (node: any) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER',
         );
         filteredNodes.forEach((chatMessageElement: any) => {
           createCopyIcon(chatMessageElement);

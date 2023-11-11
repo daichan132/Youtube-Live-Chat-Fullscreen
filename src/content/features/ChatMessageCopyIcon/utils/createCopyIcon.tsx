@@ -5,10 +5,10 @@ import emojiRegex from 'emoji-regex';
 
 export const createCopyIcon = (chatMessageElement: Element) => {
   const ytIconButton = chatMessageElement.querySelector(
-    'div#menu:not(.custom).yt-live-chat-text-message-renderer'
+    'div#menu:not(.custom).yt-live-chat-text-message-renderer',
   );
   const message = chatMessageElement.querySelector(
-    'span#message.yt-live-chat-text-message-renderer'
+    'span#message.yt-live-chat-text-message-renderer',
   );
   const parent = ytIconButton?.parentElement;
   if (!parent || !message || !(ytIconButton?.previousElementSibling?.id === 'content')) return;

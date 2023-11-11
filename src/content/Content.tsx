@@ -1,4 +1,4 @@
-import { AddChatMessageCopyIcon } from './features/AddChatMessageCopyIcon';
+import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 import { EmojiFix } from './features/EmojiFix';
 
 const Content = () => {
