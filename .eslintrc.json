@@ -19,6 +19,12 @@
   },
   "plugins": ["@typescript-eslint", "prettier", "react", "react-hooks"],
   "rules": {
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": ["@/features/*/*"]
+      }
+    ],
     "react/react-in-jsx-scope": "off",
     "prettier/prettier": 0
   },

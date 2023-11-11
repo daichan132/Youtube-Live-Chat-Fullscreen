@@ -1,14 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from 'react';
-import { createCopyIcon } from './createCopyIcon';
+import { useEffect, useState } from 'react';
+import { createCopyIcon } from '../utils/createCopyIcon';
 
-interface AddChatMessageCopyIconType {
-  element: Element;
-}
+export const AddChatMessageCopyIcon = () => {
+  const [chatElement, setChatElement] = useState<Element | null>(null);
 
-export const AddChatMessageCopyIcon = ({ element }: AddChatMessageCopyIconType) => {
   useEffect(() => {
-    const chatMessageElements = Array.from(element.children).filter(
+    const element = document.body.querySelector('div#items.yt-live-chat-item-list-renderer');
+    setChatElement(element);
+  }, []);
+
+  useEffect(() => {
+    if (!chatElement) return;
+    const chatMessageElements = Array.from(chatElement.children).filter(
       (node) => node.nodeName === 'YT-LIVE-CHAT-TEXT-MESSAGE-RENDERER'
     );
     chatMessageElements.forEach((chatMessageElement) => {
@@ -26,11 +30,11 @@ export const AddChatMessageCopyIcon = ({ element }: AddChatMessageCopyIconType) 
       });
     };
     const mutationObserver = new MutationObserver(addChatMessageCopyIcon);
-    mutationObserver.observe(element, { childList: true });
+    mutationObserver.observe(chatElement, { childList: true });
     return () => {
       mutationObserver.disconnect();
     };
-  }, [element]);
+  }, [chatElement]);
 
   return null;
 };

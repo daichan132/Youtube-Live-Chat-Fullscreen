@@ -1,16 +1,11 @@
-import { useTextInputObserver } from './hooks/useTextInputObserver';
-import { EmojiFix } from './components/EmojiFix/EmojiFix';
-import { useChatObserver } from './hooks/useChatObserver';
-import { AddChatMessageCopyIcon } from './components/AddChatMessageCopyIcon/AddChatMessageCopyIcon';
+import { AddChatMessageCopyIcon } from './features/AddChatMessageCopyIcon';
+import { EmojiFix } from './features/EmojiFix';
 
 const Content = () => {
-  const textInputElement = useTextInputObserver();
-  const chatElement = useChatObserver();
-
   return (
     <>
-      {textInputElement ? <EmojiFix element={textInputElement} /> : null}
-      {chatElement ? <AddChatMessageCopyIcon element={chatElement} /> : null}
+      <EmojiFix />
+      <AddChatMessageCopyIcon />
     </>
   );
 };
