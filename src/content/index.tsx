@@ -10,5 +10,5 @@ document.body.append(contentRoot);
 createRoot(contentRoot).render(
   <React.StrictMode>
     <Content />
-  </React.StrictMode>
+  </React.StrictMode>,
 );

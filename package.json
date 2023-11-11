@@ -22,6 +22,8 @@
     "prepare": "simple-git-hooks"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.1.0",
+    "@dnd-kit/modifiers": "^7.0.0",
     "emoji-regex": "^10.3.0",
     "lodash-es": "^4.17.21",
     "react": "18.2.0",
