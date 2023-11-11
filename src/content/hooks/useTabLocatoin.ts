@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const useCustomLocatoin = () => {
+export const useTabLocatoin = () => {
   const [pathname, setPathname] = useState<string>('');
 
   useEffect(() => {

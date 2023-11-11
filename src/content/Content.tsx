@@ -1,18 +1,20 @@
 import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChatFullScreen } from './features/YTDLiveChatFullScreen';
-import { useCustomLocatoin } from './hooks/useCustomLocatoin';
+import { useTabLocatoin } from './hooks/useTabLocatoin';
 
 const Content = () => {
-  const { pathname } = useCustomLocatoin();
+  const { pathname } = useTabLocatoin();
   return (
     <>
-      {pathname === '/live_chat' ? (
+      {/* If the pathname of each iframe is /live_chat */}
+      {window.location.pathname === '/live_chat' ? (
         <>
           <EmojiFix />
           <AddChatMessageCopyIcon />
         </>
       ) : null}
+      {/* If the pathname of the tab is live_chat */}
       {pathname === '/watch' ? <YTDLiveChatFullScreen /> : null}
     </>
   );

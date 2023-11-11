@@ -12,7 +12,7 @@ export const YTDLiveChatIframe = ({ ytdLiveChatSrc, style }: YTDLiveChatIframe) 
     id: ytdLiveChatSrc,
   });
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  console.log(iframeRef.current?.contentWindow?.document);
+  // console.log(iframeRef.current?.contentWindow?.document);
   return (
     <div
       style={{

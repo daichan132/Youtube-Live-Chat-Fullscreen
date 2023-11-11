@@ -17,6 +17,7 @@ export const YTDLiveChatFullScreen = () => {
 
   return (
     <>
+      {/* Not shown during Youtube live archived videos. */}
       {ytdLiveChatSrc && ytdLiveChatSrc.indexOf('/live_chat_replay') === -1 ? (
         <DndContext
           onDragEnd={({ delta }) => {
