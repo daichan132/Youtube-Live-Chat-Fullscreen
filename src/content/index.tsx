@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Content from './Content';
+import './index.css';
 
 const contentRoot = document.createElement('div');
 contentRoot.id = 'my-extension-root';

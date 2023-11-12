@@ -12,7 +12,7 @@ const manifest = defineManifest(async (env) => ({
   version,
   web_accessible_resources: [
     {
-      resources: ['content/style.css', 'content/features/YTDLiveChat/iframe.css'],
+      resources: [],
       matches: ['https://www.youtube.com/*'],
     },
   ],
@@ -22,7 +22,6 @@ const manifest = defineManifest(async (env) => ({
   content_scripts: [
     {
       matches: ['https://www.youtube.com/*'],
-      css: ['content/style.css'],
       js: ['content/index.tsx'],
       all_frames: true,
     },
