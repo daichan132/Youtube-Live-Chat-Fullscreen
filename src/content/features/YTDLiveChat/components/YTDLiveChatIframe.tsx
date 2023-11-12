@@ -14,13 +14,12 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
       ref.current.onload = () => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
-          body.classList.add('custom');
+          body.classList.add('custom-yt-app-live-chat-extension');
           setLoaded(true);
         }
       };
     }
   }, []);
-  console.log(styles);
 
   return (
     <>
