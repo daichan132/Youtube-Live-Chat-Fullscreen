@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import style from '../iframe.css?inline';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -6,21 +7,50 @@ interface YTDLiveChatIframe {
 
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
   useEffect(() => {
-    console.log('reload');
-    ref.current?.contentDocument?.location.reload();
-  }, [src]);
+    console.log(ref.current);
+    if (ref.current) {
+      ref.current.onload = () => {
+        const doc = ref.current?.contentDocument;
+        if (doc) {
+          const styleElement = document.createElement('style');
+          styleElement.textContent = style;
+          doc.head.appendChild(styleElement);
+          setLoaded(true);
+        }
+      };
+    }
+  }, []);
+
+  console.log(loaded);
   return (
-    <iframe
-      style={{
-        width: '100%',
-        height: 'calc(100% - 20px)',
-        // display: 'none',
-      }}
-      id="chatframe"
-      className="style-scope ytd-live-chat-frame"
-      src={src}
-      ref={ref}
-    />
+    <>
+      <iframe
+        frameBorder={0}
+        style={{
+          width: '100%',
+          height: '100%',
+          opacity: loaded ? 1 : 0,
+        }}
+        id="chatframe"
+        className="style-scope ytd-live-chat-frame"
+        src={src}
+        ref={ref}
+      />
+      {!loaded && (
+        <div
+          className="skeleton-loading"
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            top: 0,
+            opacity: 0.8,
+            filter: 'blur(4px)',
+          }}
+        />
+      )}
+    </>
   );
 };

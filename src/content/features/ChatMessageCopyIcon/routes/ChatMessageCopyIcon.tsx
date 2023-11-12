@@ -9,7 +9,6 @@ export const AddChatMessageCopyIcon = () => {
 
   useEffect(() => {
     const element = document.body.querySelector('div#items.yt-live-chat-item-list-renderer');
-    console.log(element);
     setChatElement(element);
   }, [labelText]);
 

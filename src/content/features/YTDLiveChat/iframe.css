@@ -1,0 +1,37 @@
+yt-live-chat-renderer {
+  background-color: rgba(250, 250, 250, 0.7);
+  backdrop-filter: blur(4px);
+}
+yt-live-chat-header-renderer,
+yt-live-chat-message-input-renderer,
+yt-live-chat-ticker-renderer {
+  background-color: transparent;
+}
+yt-live-chat-banner-manager,
+yt-live-chat-restricted-participation-renderer,
+yt-live-chat-message-input-renderer yt-live-chat-author-chip,
+div#reaction-control-panel-overlay.yt-live-chat-renderer {
+  display: none;
+}
+
+iron-pages#panel-pages.yt-live-chat-renderer:has(yt-live-chat-restricted-participation-renderer),
+#panel-pages.yt-live-chat-renderer {
+  border-bottom: none;
+}
+#card.yt-live-chat-viewer-engagement-message-renderer {
+  background-color: transparent;
+  backdrop-filter: blur(2px);
+}
+yt-live-chat-app #item-scroller.yt-live-chat-item-list-renderer::-webkit-scrollbar,
+#categories.yt-emoji-picker-renderer::-webkit-scrollbar {
+  width: 15px;
+}
+yt-live-chat-app #item-scroller.yt-live-chat-item-list-renderer::-webkit-scrollbar-track,
+#categories.yt-emoji-picker-renderer::-webkit-scrollbar-track {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+yt-live-chat-app #item-scroller.yt-live-chat-item-list-renderer::-webkit-scrollbar-thumb,
+#categories.yt-emoji-picker-renderer::-webkit-scrollbar-thumb {
+  background-color: rgba(100, 100, 100, 0.5);
+  border: 2px solid rgb(255, 255, 255);
+}

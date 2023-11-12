@@ -3,8 +3,13 @@
   contain: none;
 }
 
+div#menu.yt-live-chat-text-message-renderer {
+  opacity: 0;
+}
 div#menu.yt-live-chat-text-message-renderer.custom {
-  right: 32px;
+  right: 0px;
+  opacity: 1;
+  z-index: 1;
 }
 
 div#menu.yt-live-chat-text-message-renderer.custom > div {
@@ -13,10 +18,12 @@ div#menu.yt-live-chat-text-message-renderer.custom > div {
 }
 
 div#menu.yt-live-chat-text-message-renderer.custom > div > svg {
-  background-color: rgba(250, 250, 250, 0.5);
-  backdrop-filter: blur(4px);
-  border-radius: 0.25rem;
   padding: 6px;
+}
+
+div#menu.yt-live-chat-text-message-renderer.custom > div > svg:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
 }
 
 /* カーソルを重ねる要素 */
@@ -31,7 +38,7 @@ div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > span.tooltip-
   visibility: hidden; /* はじめは隠しておく */
   position: absolute; /* 絶対配置 */
   left: 50%; /* 親に対して中央配置 */
-  transform: translateX(-50%); /* 親に対して中央配置 */
+  transform: translateX(-65%); /* 親に対して中央配置 */
   bottom: 35px; /* 親要素下からの位置 */
   display: inline-block;
   padding: 5px; /* 余白 */
@@ -50,7 +57,7 @@ div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > span.tooltip-
   content: '';
   position: absolute;
   bottom: -10px;
-  left: 50%;
+  left: 65%;
   margin-left: -5px;
   border: 5px solid transparent;
   border-top: 5px solid #333;
@@ -60,4 +67,32 @@ div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > span.tooltip-
 div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip:hover > .tooltip-text {
   opacity: 1;
   visibility: visible;
+}
+
+/* --------------------------------- skelton -------------------------------- */
+.skeleton-loading {
+  width: 100%;
+  height: 20px;
+  background: #d9d9d9;
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-loading::before {
+  content: '';
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  position: absolute;
+  top: 0;
+  left: 0;
+  animation: skeleton-animation 1.2s linear infinite;
+}
+@keyframes skeleton-animation {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
