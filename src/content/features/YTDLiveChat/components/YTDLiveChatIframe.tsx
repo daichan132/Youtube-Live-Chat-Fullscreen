@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import style from '../styles/iframe.css?inline';
+import styles from '../styles/YTDLiveChatIframe.module.scss';
+import '../styles/iframe.scss';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -11,16 +12,15 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   useEffect(() => {
     if (ref.current) {
       ref.current.onload = () => {
-        const doc = ref.current?.contentDocument;
-        if (doc) {
-          const styleElement = document.createElement('style');
-          styleElement.textContent = style;
-          doc.head.appendChild(styleElement);
+        const body = ref.current?.contentDocument?.body;
+        if (body) {
+          body.classList.add('custom');
           setLoaded(true);
         }
       };
     }
   }, []);
+  console.log(styles);
 
   return (
     <>
@@ -36,19 +36,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         src={src}
         ref={ref}
       />
-      {!loaded && (
-        <div
-          className="skeleton-loading"
-          style={{
-            position: 'absolute',
-            width: '100%',
-            height: '100%',
-            top: 0,
-            opacity: 0.8,
-            filter: 'blur(4px)',
-          }}
-        />
-      )}
+      {!loaded && <div className={styles['skelton']} />}
     </>
   );
 };
