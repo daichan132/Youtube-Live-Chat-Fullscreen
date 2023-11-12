@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import style from '../iframe.css?inline';
+import style from '../styles/iframe.css?inline';
 
 interface YTDLiveChatIframe {
   src: string;

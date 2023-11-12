@@ -30,7 +30,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
-    "react-router-dom": "^6.18.0",
     "react-use": "^17.4.0"
   },
   "devDependencies": {
@@ -47,7 +46,8 @@
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "@vitejs/plugin-react": "^4.1.1",
-    "construct-style-sheets-polyfill": "^3.1.0",
+    "autoprefixer": "^10.4.16",
+    "css-declaration-sorter": "^7.1.1",
     "eslint": "^8.53.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -60,8 +60,10 @@
     "jest-environment-jsdom": "^29.7.0",
     "nano-staged": "^0.8.0",
     "npm-run-all2": "^6.1.1",
+    "postcss": "^8.4.31",
     "prettier": "^3.0.3",
     "rimraf": "^5.0.5",
+    "sass": "^1.69.5",
     "simple-git-hooks": "^2.9.0",
     "ts-jest": "^29.1.1",
     "typescript": "5.2.2",
