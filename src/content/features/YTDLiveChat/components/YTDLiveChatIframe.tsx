@@ -9,7 +9,6 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
   useEffect(() => {
-    console.log(ref.current);
     if (ref.current) {
       ref.current.onload = () => {
         const doc = ref.current?.contentDocument;
@@ -23,7 +22,6 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
     }
   }, []);
 
-  console.log(loaded);
   return (
     <>
       <iframe

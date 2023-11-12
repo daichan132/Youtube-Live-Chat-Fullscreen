@@ -5,7 +5,7 @@ async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export const useLabelTextObserve = () => {
+export const useYTLabelTextObserve = () => {
   const [labelText, setLabelText] = useState('');
 
   useEffect(() => {

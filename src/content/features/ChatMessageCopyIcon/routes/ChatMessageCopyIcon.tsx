@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { createCopyIcon } from '../utils/createCopyIcon';
-import { useLabelTextObserve } from '../../../hooks/useLabelTextObserve';
+import { useYTLabelTextObserve } from '../../../hooks/useYTLabelTextObserve';
 
 export const AddChatMessageCopyIcon = () => {
   const [chatElement, setChatElement] = useState<Element | null>(null);
-  const labelText = useLabelTextObserve();
+  const labelText = useYTLabelTextObserve();
 
   useEffect(() => {
     const element = document.body.querySelector('div#items.yt-live-chat-item-list-renderer');

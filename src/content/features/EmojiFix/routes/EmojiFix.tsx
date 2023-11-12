@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 import { changeImgAlt } from '../utils/changeImgAlt';
-import { useLabelTextObserve } from '../../../hooks/useLabelTextObserve';
+import { useYTLabelTextObserve } from '../../../hooks/useYTLabelTextObserve';
 
 export const EmojiFix = () => {
   const [textInputElement, setTextInputElement] = useState<Element | null>(null);
-  const labelText = useLabelTextObserve();
+  const labelText = useYTLabelTextObserve();
   useEffect(() => {
     const element = document.body.querySelector('yt-live-chat-text-input-field-renderer');
     if (!element) return;
