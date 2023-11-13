@@ -5,10 +5,12 @@ import { Resizable } from 're-resizable';
 import { Coordinates } from '@dnd-kit/core/dist/types';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RiDraggable } from 'react-icons/ri';
+import classNames from 'classnames';
+import styles from '../styles/Wrapper.module.scss';
 
 const defaultCoordinates = {
-  x: 0,
-  y: 0,
+  x: 20,
+  y: 20,
 };
 
 interface Wrapper {
@@ -17,7 +19,6 @@ interface Wrapper {
 
 export const Wrapper = ({ children }: Wrapper) => {
   const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
-
   return (
     <DndContext
       onDragEnd={({ delta }) => {
@@ -43,7 +44,7 @@ interface DraggableItemType {
   children: React.ReactNode;
 }
 const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({
+  const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
   return (
@@ -51,13 +52,6 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
       defaultSize={{ width: 400, height: 500 }}
       minWidth={300}
       minHeight={400}
-      style={{
-        position: 'absolute',
-        zIndex: 100000,
-        transform: CSS.Translate.toString(transform),
-        top,
-        left,
-      }}
       enable={{
         top: false,
         right: true,
@@ -68,26 +62,16 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
         bottomLeft: false,
         topLeft: false,
       }}
+      className={styles['Resizable']}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        top,
+        left,
+      }}
     >
-      <div
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '100%',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          border: '1px solid rgba(0, 0, 0, 0.1)',
-        }}
-        ref={setNodeRef}
-      >
+      <div className={styles['Container']} ref={setNodeRef}>
         <div
-          style={{
-            position: 'absolute',
-            backgroundColor: 'rgba(0, 0, 0, 0.1)',
-            zIndex: 1,
-            right: 48,
-            top: 4,
-          }}
+          className={classNames(styles['button'], isDragging && styles['dragging'])}
           {...attributes}
           {...listeners}
         >

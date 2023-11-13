@@ -1,7 +1,6 @@
 import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
-import { useIsFullScreen } from './hooks/useIsFullScreen';
 import { useTabLocatoin } from './hooks/useTabLocatoin';
 
 function extractYouTubeID(url: string) {
@@ -13,7 +12,6 @@ function extractYouTubeID(url: string) {
 const Content = () => {
   const { pathname, search } = useTabLocatoin();
   const videoId = extractYouTubeID(search);
-  const isFullscreen = useIsFullScreen();
   return (
     <>
       {/* If the pathname of each iframe is /live_chat */}
@@ -24,7 +22,7 @@ const Content = () => {
         </>
       ) : null}
       {/* If the pathname of the tab is live_chat */}
-      {pathname === '/watch' && videoId && isFullscreen ? <YTDLiveChat videoID={videoId} /> : null}
+      {pathname === '/watch' && videoId ? <YTDLiveChat videoID={videoId} /> : null}
     </>
   );
 };

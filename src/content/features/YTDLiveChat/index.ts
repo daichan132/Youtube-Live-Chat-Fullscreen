@@ -1,1 +1,1 @@
-export * from './routes/YTDLiveChatFullScreen';
+export * from './routes/YTDLiveChat';

@@ -6,6 +6,7 @@ body.custom-yt-app-live-chat-extension {
 
   yt-live-chat-header-renderer,
   yt-live-chat-message-input-renderer,
+  yt-live-chat-text-message-renderer[author-is-owner],
   yt-live-chat-ticker-renderer,
   #card.yt-live-chat-viewer-engagement-message-renderer {
     background-color: transparent;
@@ -29,9 +30,9 @@ body.custom-yt-app-live-chat-extension {
   }
 
   yt-live-chat-app #item-scroller.yt-live-chat-item-list-renderer,
-  #categories.yt-emoji-picker-renderer {
+  yt-live-chat-app #categories.yt-emoji-picker-renderer {
     &::-webkit-scrollbar {
-      width: 10px;
+      width: 10px !important;
     }
 
     &::-webkit-scrollbar-track {

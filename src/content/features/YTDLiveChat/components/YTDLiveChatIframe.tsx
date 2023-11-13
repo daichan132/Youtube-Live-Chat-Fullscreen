@@ -19,7 +19,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          await sleep(100);
+          await sleep(500);
           setLoaded(true);
         }
       };
