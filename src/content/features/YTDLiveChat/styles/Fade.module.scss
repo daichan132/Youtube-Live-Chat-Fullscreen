@@ -1,10 +1,14 @@
 .enter {
   opacity: 0;
+  transform: translate(0px, -10px);
 }
 
 .enterActive {
   opacity: 1;
-  transition: opacity 500ms;
+  transform: translate(0px, 0px);
+  transition:
+    opacity 500ms,
+    transform 500ms;
 }
 
 .exit {
@@ -13,5 +17,8 @@
 
 .exitActive {
   opacity: 0;
-  transition: opacity 500ms;
+  transform: translate(0px, -30px);
+  transition:
+    opacity 500ms,
+    transform 500ms;
 }
