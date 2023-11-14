@@ -1,5 +1,6 @@
 export type Styles = {
   button: string;
+  children: string;
   Container: string;
   dragging: string;
   Resizable: string;

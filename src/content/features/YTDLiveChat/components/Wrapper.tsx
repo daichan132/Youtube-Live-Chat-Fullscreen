@@ -82,14 +82,7 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
         >
           <RiDraggable size={24} style={{ padding: 7 }} />
         </div>
-        <div
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-        >
-          {children}
-        </div>
+        <div className={styles['children']}>{children}</div>
       </div>
     </Resizable>
   );
