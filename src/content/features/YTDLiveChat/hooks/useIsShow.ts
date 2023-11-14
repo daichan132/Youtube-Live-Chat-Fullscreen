@@ -15,22 +15,21 @@ export const useIsShow = (videoID: string) => {
   }, [isFullscreen, videoID]);
 
   const [isTop, setIsTop] = useState<boolean>(false);
-  useEffect(() => {
-    setIsTop(true);
-    const ytdAppElement = document.querySelector('ytd-app');
-    if (!isFullscreen || !ytdAppElement) return;
-    if (ytdAppElement.hasAttribute('masthead-hidden')) {
+  const updateIsTopBasedOnMasthead = (element: Element) => {
+    if (element.hasAttribute('masthead-hidden')) {
       setIsTop(true);
     } else {
       setIsTop(false);
     }
+  };
+  useEffect(() => {
+    setIsTop(true);
+    const ytdAppElement = document.querySelector('ytd-app');
+    if (!isFullscreen || !ytdAppElement) return;
+    updateIsTopBasedOnMasthead(ytdAppElement);
     const mastheadHidden = (mutations: any) => {
       mutations.forEach((mutation: any) => {
-        if (mutation.target.hasAttribute('masthead-hidden')) {
-          setIsTop(true);
-        } else {
-          setIsTop(false);
-        }
+        updateIsTopBasedOnMasthead(mutation.target);
       });
     };
     const mutationObserver = new MutationObserver(mastheadHidden);
