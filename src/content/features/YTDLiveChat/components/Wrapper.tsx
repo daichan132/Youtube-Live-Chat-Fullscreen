@@ -20,21 +20,23 @@ interface Wrapper {
 export const Wrapper = ({ children }: Wrapper) => {
   const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
   return (
-    <DndContext
-      onDragEnd={({ delta }) => {
-        setCoordinates(({ x, y }) => {
-          return {
-            x: x + delta.x,
-            y: y + delta.y,
-          };
-        });
-      }}
-      modifiers={[restrictToWindowEdges]}
-    >
-      <DraggableItem top={y} left={x}>
-        {children}
-      </DraggableItem>
-    </DndContext>
+    <div className={styles['RestrictWindow']}>
+      <DndContext
+        onDragEnd={({ delta }) => {
+          setCoordinates(({ x, y }) => {
+            return {
+              x: x + delta.x,
+              y: y + delta.y,
+            };
+          });
+        }}
+        modifiers={[restrictToWindowEdges]}
+      >
+        <DraggableItem top={y} left={x}>
+          {children}
+        </DraggableItem>
+      </DndContext>
+    </div>
   );
 };
 
@@ -69,7 +71,10 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
         left,
       }}
     >
-      <div className={styles['Container']} ref={setNodeRef}>
+      <div
+        className={classNames(styles['Container'], isDragging && styles['dragging'])}
+        ref={setNodeRef}
+      >
         <div
           className={classNames(styles['button'], isDragging && styles['dragging'])}
           {...attributes}

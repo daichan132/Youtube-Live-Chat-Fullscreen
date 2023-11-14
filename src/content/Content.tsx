@@ -12,6 +12,7 @@ function extractYouTubeID(url: string) {
 const Content = () => {
   const { pathname, search } = useTabLocatoin();
   const videoId = extractYouTubeID(search);
+
   return (
     <>
       {/* If the pathname of each iframe is /live_chat */}

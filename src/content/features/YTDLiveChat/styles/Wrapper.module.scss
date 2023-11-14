@@ -1,7 +1,18 @@
+.RestrictWindow {
+  position: absolute;
+  overflow: hidden;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100vh;
+  pointer-events: none;
+}
+
 .Resizable {
   position: absolute;
   z-index: 100000;
   transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
+  pointer-events: all;
 }
 
 .Container {
@@ -11,6 +22,10 @@
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: filter 0.05s ease;
+  &.dragging {
+    filter: brightness(70%);
+  }
 
   > .button {
     position: absolute;
@@ -19,10 +34,12 @@
     top: 4px;
     transition: background-color 0.1s ease;
     border-radius: 10px;
+
     &:hover {
       cursor: pointer;
       background-color: rgba(0, 0, 0, 0.1);
     }
+
     &.dragging {
       cursor: grabbing;
     }
