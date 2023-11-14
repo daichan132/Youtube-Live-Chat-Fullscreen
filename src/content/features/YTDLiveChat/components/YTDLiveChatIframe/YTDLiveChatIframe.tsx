@@ -42,7 +42,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         src={src}
         ref={ref}
       />
-      <CSSTransition in={!loaded} timeout={500} classNames={fade} unmountOnExit>
+      <CSSTransition in={!loaded} timeout={200} classNames={fade} unmountOnExit>
         <div className={styles['skelton']} />
       </CSSTransition>
     </>

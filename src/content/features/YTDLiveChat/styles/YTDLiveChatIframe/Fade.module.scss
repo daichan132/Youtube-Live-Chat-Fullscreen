@@ -4,7 +4,7 @@
 
 .enterActive {
   opacity: 1;
-  transition: opacity 500ms;
+  transition: opacity 200ms;
 }
 
 .exit {
@@ -13,5 +13,5 @@
 
 .exitActive {
   opacity: 0;
-  transition: opacity 500ms;
+  transition: opacity 200ms;
 }
