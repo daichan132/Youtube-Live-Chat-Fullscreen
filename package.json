@@ -33,6 +33,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
+    "react-transition-group": "^4.4.5",
     "react-use": "^17.4.0"
   },
   "devDependencies": {
@@ -46,6 +47,7 @@
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@types/react-router-dom": "^5.3.3",
+    "@types/react-transition-group": "^4",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "@vitejs/plugin-react": "^4.1.1",
