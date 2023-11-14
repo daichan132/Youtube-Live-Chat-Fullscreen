@@ -70,6 +70,7 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
         top,
         left,
       }}
+      bounds={'window'}
     >
       <div
         className={classNames(styles['Container'], isDragging && styles['dragging'])}
