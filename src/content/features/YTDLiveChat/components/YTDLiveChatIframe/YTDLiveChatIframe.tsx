@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import { CSSTransition } from 'react-transition-group';
+import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 import '../../styles/YTDLiveChatIframe/iframe.scss';
 
@@ -40,7 +42,9 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         src={src}
         ref={ref}
       />
-      {!loaded && <div className={styles['skelton']} />}
+      <CSSTransition in={!loaded} timeout={500} classNames={fade} unmountOnExit>
+        <div className={styles['skelton']} />
+      </CSSTransition>
     </>
   );
 };
