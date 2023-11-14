@@ -1,51 +1,16 @@
-import { DndContext, useDraggable } from '@dnd-kit/core';
-import React, { useState } from 'react';
 import { CSS } from '@dnd-kit/utilities';
 import { Resizable } from 're-resizable';
-import { Coordinates } from '@dnd-kit/core/dist/types';
-import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RiDraggable } from 'react-icons/ri';
 import classNames from 'classnames';
-import styles from '../styles/Wrapper.module.scss';
-
-const defaultCoordinates = {
-  x: 20,
-  y: 20,
-};
-
-interface Wrapper {
-  children: React.ReactNode;
-}
-
-export const Wrapper = ({ children }: Wrapper) => {
-  const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
-  return (
-    <div className={styles['RestrictWindow']}>
-      <DndContext
-        onDragEnd={({ delta }) => {
-          setCoordinates(({ x, y }) => {
-            return {
-              x: x + delta.x,
-              y: y + delta.y,
-            };
-          });
-        }}
-        modifiers={[restrictToWindowEdges]}
-      >
-        <DraggableItem top={y} left={x}>
-          {children}
-        </DraggableItem>
-      </DndContext>
-    </div>
-  );
-};
+import { useDraggable } from '@dnd-kit/core';
+import styles from '../../styles/Draggable/DraggableItem.module.scss';
 
 interface DraggableItemType {
   top?: number;
   left?: number;
   children: React.ReactNode;
 }
-const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
+export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
@@ -81,7 +46,7 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
           {...attributes}
           {...listeners}
         >
-          <RiDraggable size={24} style={{ padding: 7 }} />
+          <RiDraggable size={24} />
         </div>
         <div className={styles['children']}>{children}</div>
       </div>

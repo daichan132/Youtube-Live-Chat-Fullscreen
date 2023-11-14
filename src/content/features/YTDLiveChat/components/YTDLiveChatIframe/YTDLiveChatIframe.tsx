@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import styles from '../styles/YTDLiveChatIframe.module.scss';
-import '../styles/iframe.scss';
+import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
+import '../../styles/YTDLiveChatIframe/iframe.scss';
 
 interface YTDLiveChatIframe {
   src: string;

@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Wrapper } from '../components/Wrapper';
-import { YTDLiveChatIframe } from '../components/YTDLiveChatIframe';
+import { Draggable } from '../components/Draggable/Draggable';
+import { YTDLiveChatIframe } from '../components/YTDLiveChatIframe/YTDLiveChatIframe';
 import { useIsShow } from '../hooks/useIsShow';
 import { CSSTransition } from 'react-transition-group';
 import styles from '../styles/Fade.module.scss';
@@ -14,9 +13,9 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
   return (
     isFullscreen && (
       <CSSTransition in={isShow} timeout={500} classNames={styles} unmountOnExit>
-        <Wrapper>
+        <Draggable>
           <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
-        </Wrapper>
+        </Draggable>
       </CSSTransition>
     )
   );

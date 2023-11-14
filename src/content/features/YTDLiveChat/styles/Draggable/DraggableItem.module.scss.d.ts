@@ -4,7 +4,6 @@ export type Styles = {
   dragButton: string;
   dragging: string;
   Resizable: string;
-  RestrictWindow: string;
 };
 
 export type ClassNames = keyof Styles;
