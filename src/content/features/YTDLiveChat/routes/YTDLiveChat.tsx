@@ -9,13 +9,15 @@ interface YTDLiveChatType {
   videoID: string;
 }
 export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
-  const isShow = useIsShow(videoID);
+  const { isFullscreen, isShow } = useIsShow(videoID);
 
   return (
-    <CSSTransition in={isShow} timeout={500} classNames={styles} unmountOnExit>
-      <Wrapper>
-        <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
-      </Wrapper>
-    </CSSTransition>
+    isFullscreen && (
+      <CSSTransition in={isShow} timeout={500} classNames={styles} unmountOnExit>
+        <Wrapper>
+          <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
+        </Wrapper>
+      </CSSTransition>
+    )
   );
 };

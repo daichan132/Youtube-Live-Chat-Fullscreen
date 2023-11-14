@@ -43,5 +43,5 @@ export const useIsShow = (videoID: string) => {
     };
   }, [isFullscreen]);
 
-  return isLive && isTop;
+  return { isFullscreen, isShow: isLive && isTop };
 };
