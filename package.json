@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "run-s clean && run-p dev:scss vite",
     "vite": "vite",
-    "dev:scss": "typed-scss-modules src/**/*.module.scss  --watch",
+    "dev:scss": "typed-scss-modules src  --watch",
     "build": "run-s clean && tsc && vite build && run-s firefox-mv2-build",
     "firefox-mv2-build": "node tools/unstable_mv3ToMv2Build.js",
     "clean": "run-p clean:dist && run-p clean:dist-firefox-v2",
@@ -34,7 +34,10 @@
     "react-dom": "18.2.0",
     "react-icons": "^4.11.0",
     "react-transition-group": "^4.4.5",
-    "react-use": "^17.4.0"
+    "react-use": "^17.4.0",
+    "redux-persist-webextension-storage": "^1.0.2",
+    "webext-zustand": "^0.2.0",
+    "zustand": "^4.4.6"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.17",
@@ -48,6 +51,7 @@
     "@types/react-dom": "^18.2.15",
     "@types/react-router-dom": "^5.3.3",
     "@types/react-transition-group": "^4",
+    "@types/redux-persist-webextension-storage": "^1",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "@typescript-eslint/parser": "^6.11.0",
     "@vitejs/plugin-react": "^4.1.1",

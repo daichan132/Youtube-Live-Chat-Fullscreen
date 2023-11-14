@@ -22,13 +22,13 @@
   border-radius: 10px;
   overflow: hidden;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: filter 0.05s ease;
+  transition: filter 0.1s ease;
 
   &.dragging {
-    filter: brightness(70%);
+    filter: brightness(60%);
   }
 
-  > .button {
+  > .dragButton {
     position: absolute;
     z-index: 1;
     right: 48px;

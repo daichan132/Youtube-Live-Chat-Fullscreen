@@ -1,7 +1,7 @@
 export type Styles = {
-  button: string;
   children: string;
   Container: string;
+  dragButton: string;
   dragging: string;
   Resizable: string;
   RestrictWindow: string;

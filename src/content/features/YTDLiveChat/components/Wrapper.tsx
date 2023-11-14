@@ -77,7 +77,7 @@ const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
         ref={setNodeRef}
       >
         <div
-          className={classNames(styles['button'], isDragging && styles['dragging'])}
+          className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
           {...listeners}
         >

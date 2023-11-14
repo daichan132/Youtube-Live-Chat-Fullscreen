@@ -22,7 +22,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "patterns": ["@/features/*/*"]
+        "patterns": ["**/features/*/*"]
       }
     ],
     "react/react-in-jsx-scope": "off",
