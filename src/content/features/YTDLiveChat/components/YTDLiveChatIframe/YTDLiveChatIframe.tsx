@@ -27,6 +27,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
       };
     }
   }, []);
+  const nodeRef = useRef(null);
 
   return (
     <>
@@ -42,8 +43,8 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         src={src}
         ref={ref}
       />
-      <CSSTransition in={!loaded} timeout={200} classNames={fade} unmountOnExit>
-        <div className={styles['skelton']} />
+      <CSSTransition nodeRef={nodeRef} in={!loaded} timeout={200} classNames={fade} unmountOnExit>
+        <div className={styles['skelton']} ref={nodeRef} />
       </CSSTransition>
     </>
   );
