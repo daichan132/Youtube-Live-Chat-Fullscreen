@@ -1,0 +1,12 @@
+.dropDown {
+  position: relative;
+  .dropDownContent {
+    position: absolute;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    border-radius: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}

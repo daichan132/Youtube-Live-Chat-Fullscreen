@@ -4,6 +4,7 @@ import { RiDraggable } from 'react-icons/ri';
 import classNames from 'classnames';
 import { useDraggable } from '@dnd-kit/core';
 import styles from '../../styles/Draggable/DraggableItem.module.scss';
+import { SettingButton } from './SettingButton';
 
 interface DraggableItemType {
   top?: number;
@@ -47,6 +48,9 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           {...listeners}
         >
           <RiDraggable size={24} />
+        </div>
+        <div className={styles['settingButton']}>
+          <SettingButton />
         </div>
         <div className={styles['children']}>{children}</div>
       </div>
