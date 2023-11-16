@@ -1,14 +1,12 @@
 export type Styles = {
   active: string;
   'close-button': string;
-  container: string;
   content: string;
   'content-item': string;
   header: string;
-  'settings-modal': string;
-  sidebar: string;
-  'sidebar-item': string;
-  title: string;
+  menu: string;
+  'menu-item': string;
+  settings: string;
 };
 
 export type ClassNames = keyof Styles;

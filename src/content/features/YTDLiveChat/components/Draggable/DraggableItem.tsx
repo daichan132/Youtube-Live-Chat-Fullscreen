@@ -4,7 +4,29 @@ import { RiDraggable } from 'react-icons/ri';
 import classNames from 'classnames';
 import { useDraggable } from '@dnd-kit/core';
 import styles from '../../styles/Draggable/DraggableItem.module.scss';
-import { SettingButton } from './SettingButton';
+import { useState } from 'react';
+import { CiSettings } from 'react-icons/ci';
+import Modal from 'react-modal';
+import { YTDLiveChatSetting } from '../YTDLiveChatSetting/YTDLiveChatSetting';
+
+const customStyles = {
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    padding: 0,
+    outline: 'none',
+    border: 'none',
+    zIndex: 10,
+    backgroundColor: 'transparent',
+  },
+};
 
 interface DraggableItemType {
   top?: number;
@@ -15,6 +37,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <Resizable
       defaultSize={{ width: 400, height: 500 }}
@@ -50,7 +74,22 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           <RiDraggable size={24} />
         </div>
         <div className={styles['settingButton']}>
-          <SettingButton />
+          <CiSettings
+            size={24}
+            onClick={() => {
+              setIsOpen((a) => !a);
+            }}
+          />
+          <Modal
+            closeTimeoutMS={200}
+            isOpen={isOpen}
+            style={customStyles}
+            shouldCloseOnOverlayClick={true}
+            onRequestClose={() => setIsOpen(false)}
+            appElement={document.getElementById('my-extension-root') || undefined}
+          >
+            <YTDLiveChatSetting setIsOpen={setIsOpen} />
+          </Modal>
         </div>
         <div className={styles['children']}>{children}</div>
       </div>
