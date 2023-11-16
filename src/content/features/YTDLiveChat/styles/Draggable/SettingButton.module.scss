@@ -1,5 +1,83 @@
-.modal {
-  padding: 1.5rem;
-  border-radius: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+/* SettingsModal.scss */
+
+.settings-modal {
+  display: flex;
+  flex-direction: column; // モーダルのメイン方向を縦に設定
+  width: 600px; // モーダルの幅
+  border-radius: 8px;
+  overflow: hidden; // ボーダーの外側にコンテンツが出ないようにする
+  background-color: #fff;
+  letter-spacing: 0.05rem;
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 2rem;
+    border-bottom: 1px solid #eaeaea;
+
+    .title {
+      font-size: 1.75rem;
+    }
+
+    .close-button {
+      cursor: pointer;
+      border-radius: 10px;
+      padding: 1rem;
+      transition: background-color 200ms ease;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
+    }
+  }
+
+  .container {
+    display: flex; // bodyセクションの中でサイドバーとコンテンツエリアを横に並べる
+    height: 400px; // 任意の高さに調整可能
+    font-size: 1.25rem;
+
+    .sidebar {
+      padding: 1rem;
+      width: 150px; // サイドバーの幅
+      overflow-y: auto; // コンテンツが多い場合にスクロール可能にする
+
+      .sidebar-item {
+        padding: 1rem;
+        cursor: pointer;
+        color: #333;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+        transition: background-color 200ms ease;
+
+        &.active {
+          background-color: rgba(0, 0, 0, 0.1);
+          border-radius: 4px;
+        }
+      }
+    }
+
+    .content {
+      flex-grow: 1;
+      padding: 30px 20px 20px 20px;
+      overflow-y: auto;
+      background-color: #f9f9f9;
+
+      .content-item {
+        display: flex;
+        justify-content: space-between;
+
+        h2 {
+          margin: 0 0 10px 0;
+        }
+      }
+
+      hr {
+        border: none;
+        height: 1px;
+        background-color: rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+      }
+    }
+  }
 }

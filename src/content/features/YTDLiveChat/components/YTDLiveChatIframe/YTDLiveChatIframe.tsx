@@ -8,10 +8,6 @@ interface YTDLiveChatIframe {
   src: string;
 }
 
-async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
@@ -21,7 +17,6 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          await sleep(500);
           setLoaded(true);
         }
       };
