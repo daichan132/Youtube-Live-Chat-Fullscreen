@@ -1,6 +1,8 @@
 import ytdLiveChatStore from '../stores/ytdLiveChatStore';
 
-ytdLiveChatStore.subscribe(() => {});
+ytdLiveChatStore.subscribe((state) => {
+  console.log(state);
+});
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status === 'complete' && tab.url) {

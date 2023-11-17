@@ -4,15 +4,19 @@ import { wrapStore } from 'webext-zustand';
 import { localStorage } from 'redux-persist-webextension-storage';
 
 interface YTDLiveChatStoreState {
-  count: number;
-  increment: () => void;
+  hex: string;
+  alpha: number;
+  setHex: (hex: string) => void;
+  setAlpha: (alpha: number) => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
   persist(
     (set) => ({
-      count: 0,
-      increment: () => set((state) => ({ count: state.count + 1 })),
+      hex: '#fff',
+      alpha: 1,
+      setHex: (hex) => set(() => ({ hex })),
+      setAlpha: (alpha) => set(() => ({ alpha })),
     }),
     {
       name: 'ytdLiveChatStore',

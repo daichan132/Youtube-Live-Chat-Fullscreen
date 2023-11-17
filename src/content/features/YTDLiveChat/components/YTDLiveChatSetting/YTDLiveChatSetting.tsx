@@ -1,22 +1,25 @@
-import React from 'react';
-import { ChromePicker } from 'react-color';
+import React, { useState } from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
 import { RiCloseLine } from 'react-icons/ri';
-import { useYlcBgColorChange } from '../../hooks/useYlcBgColorChange';
 import classNames from 'classnames';
+import { CustomColorPicker } from './CustomColorPicker';
 
 interface YTDLiveChatSettingType {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
-  const { color, changeColor } = useYlcBgColorChange();
+  const [item, setItem] = useState<string>('General');
 
   return (
     <div className={styles['settings']}>
       <div className={styles['header']}>
         <div className={styles['menu']}>
-          <div className={classNames(styles['menu-item'], styles['active'])}>General</div>
-          <div className={classNames(styles['menu-item'])}>UI</div>
+          <MenuItem isActive={'General' === item} onClick={() => setItem('General')}>
+            General
+          </MenuItem>
+          <MenuItem isActive={'UI' === item} onClick={() => setItem('UI')}>
+            UI
+          </MenuItem>
         </div>
         <RiCloseLine
           className={styles['close-button']}
@@ -25,25 +28,37 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
         />
       </div>
       <div className={styles['content']}>
-        <div className={styles['content-item']}>
-          <div>Background Color</div>
-          <div>
-            <ChromePicker
-              color={color}
-              onChange={changeColor}
-              styles={{
-                default: {
-                  picker: {
-                    boxShadow: 'none',
-                    border: '1px solid rgba(0, 0, 0, 0.1)',
-                  },
-                },
-              }}
-            />
-          </div>
-        </div>
-        <hr />
+        {item === 'UI' ? (
+          <>
+            <div className={styles['content-item']}>
+              <div>Background Color</div>
+              <div>
+                <CustomColorPicker />
+              </div>
+            </div>
+            <hr />
+          </>
+        ) : null}
       </div>
+    </div>
+  );
+};
+
+const MenuItem = ({
+  isActive,
+  onClick,
+  children,
+}: {
+  isActive: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => {
+  return (
+    <div
+      className={classNames(styles['menu-item'], isActive && styles['active'])}
+      onClick={onClick}
+    >
+      {children}
     </div>
   );
 };

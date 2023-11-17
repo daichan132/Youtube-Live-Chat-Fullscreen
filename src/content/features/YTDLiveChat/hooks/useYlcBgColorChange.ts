@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
-import { ColorResult } from 'react-color';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useYTDLiveChatStore } from '../../../../stores';
 
 const decimalToHex = (alpha: number) => (alpha === 0 ? '00' : Math.round(255 * alpha).toString(16));
 function darkenHexColor(hex: string, amount: number) {
@@ -28,8 +28,9 @@ const propertyListTransparent = [
   '--yt-live-chat-action-panel-gradient-scrim',
 ];
 
-export const useYlcBgColorChange = () => {
-  const [color, setColor] = useState<string>('#FFFFFF');
+export const useYLCBgColorChange = () => {
+  const { hex, alpha } = useYTDLiveChatStore.getState();
+  const [color, setColor] = useState<string>(`${hex}${decimalToHex(alpha || 0)}`);
   const ref = useRef<HTMLIFrameElement | null>(null);
   useEffect(() => {
     const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');
@@ -37,7 +38,7 @@ export const useYlcBgColorChange = () => {
       ref.current = element;
     }
   }, []);
-  const changeIframeBackgroundColor = (color: string) => {
+  const changeIframeBackgroundColor = useCallback((color: string) => {
     if (ref.current && ref.current.contentWindow) {
       const document = ref.current.contentWindow.document.documentElement;
       propertyList.forEach((property) => {
@@ -50,11 +51,14 @@ export const useYlcBgColorChange = () => {
         document.style.setProperty(property, 'transparent');
       });
     }
-  };
-  const changeColor = (color: ColorResult) => {
-    const hexCode = `${color.hex}${decimalToHex(color.rgb.a || 0)}`;
-    changeIframeBackgroundColor(hexCode);
-    setColor(hexCode);
-  };
+  }, []);
+  const changeColor = useCallback(
+    (hex: string, alpha: number | undefined) => {
+      const hexCode = `${hex}${decimalToHex(alpha || 0)}`;
+      changeIframeBackgroundColor(hexCode);
+      setColor(hexCode);
+    },
+    [changeIframeBackgroundColor],
+  );
   return { changeColor, color };
 };

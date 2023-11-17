@@ -3,6 +3,8 @@ import { CSSTransition } from 'react-transition-group';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 import '../../styles/YTDLiveChatIframe/iframe.scss';
+import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
+import { useYTDLiveChatStore } from '../../../../../stores';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -11,17 +13,20 @@ interface YTDLiveChatIframe {
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
+  const { changeColor } = useYLCBgColorChange();
   useEffect(() => {
     if (ref.current) {
       ref.current.onload = async () => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
+          const { hex, alpha } = useYTDLiveChatStore.getState();
+          changeColor(hex, alpha);
           setLoaded(true);
         }
       };
     }
-  }, []);
+  }, [changeColor]);
   const nodeRef = useRef(null);
 
   return (
