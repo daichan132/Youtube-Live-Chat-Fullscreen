@@ -36,7 +36,7 @@ export const CustomColorPicker = () => {
             backgroundPosition: '0 0, 5px 5px',
             backgroundSize: '10px 10px',
             backgroundColor: '#fff',
-            width: '50px',
+            width: '90px',
             height: '14px',
             borderRadius: '2px',
           }}

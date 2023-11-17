@@ -3,6 +3,7 @@ import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.sc
 import { RiCloseLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { CustomColorPicker } from './CustomColorPicker';
+import { BlurSlider } from './BlurSlider';
 
 interface YTDLiveChatSettingType {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,6 +34,11 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
             <div className={styles['content-item']}>
               <div>Background Color</div>
               <CustomColorPicker />
+            </div>
+            <hr />
+            <div className={styles['content-item']}>
+              <div>Blur</div>
+              <BlurSlider />
             </div>
             <hr />
           </>

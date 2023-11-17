@@ -6,7 +6,7 @@ import { RGBColor } from 'react-color';
 const propertyList: string[] = ['--yt-live-chat-background-color'];
 const propertyListDarken = [
   { property: '--yt-spec-icon-disabled', amount: 40 },
-  { property: '--yt-live-chat-vem-background-color', amount: 15 },
+  { property: '--yt-live-chat-vem-background-color', amount: 20 },
 ];
 const propertyListTransparent = [
   '--yt-live-chat-header-background-color',
