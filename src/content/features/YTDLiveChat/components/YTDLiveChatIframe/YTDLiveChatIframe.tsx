@@ -5,6 +5,7 @@ import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss
 import '../../styles/YTDLiveChatIframe/iframe.scss';
 import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
+import { decimalToHex } from '../../utils/hexUtils';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -28,6 +29,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
     }
   }, [changeColor]);
   const nodeRef = useRef(null);
+  const stateRef = useRef(useYTDLiveChatStore.getState());
 
   return (
     <>
@@ -44,7 +46,13 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         ref={ref}
       />
       <CSSTransition nodeRef={nodeRef} in={!loaded} timeout={200} classNames={fade} unmountOnExit>
-        <div className={styles['skelton']} ref={nodeRef} />
+        <div
+          className={styles['skelton']}
+          ref={nodeRef}
+          style={{
+            backgroundColor: `${stateRef.current.hex}${decimalToHex(stateRef.current.alpha || 0)}`,
+          }}
+        />
       </CSSTransition>
     </>
   );

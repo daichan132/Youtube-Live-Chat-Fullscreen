@@ -23,6 +23,7 @@ export const CustomColorPicker = () => {
           picker: {
             boxShadow: 'none',
             border: '1px solid rgba(0, 0, 0, 0.1)',
+            width: '80%',
           },
         },
       }}
