@@ -1,9 +1,24 @@
-import React from 'react';
-import { useSlider } from 'react-use';
+import React, { useRef } from 'react';
+import { useYLCBlurChange } from '../../hooks/useYLCBlurChange';
+import { useYTDLiveChatStore } from '../../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
+import { useInitializedSlider } from '../../hooks/useInitializedSlider';
 
 export const BlurSlider = () => {
-  const ref = React.useRef(null);
-  const { value } = useSlider(ref);
+  const { changeBlur } = useYLCBlurChange();
+  const blurRef = useRef(useYTDLiveChatStore.getState().blur);
+  const { setBlur: setBlurToStore } = useYTDLiveChatStore(
+    useShallow((state) => ({ setBlur: state.setBlur })),
+  );
+  const { value, ref } = useInitializedSlider<HTMLDivElement>({
+    initialValue: blurRef.current / 20,
+    onScrub(value) {
+      changeBlur(Math.round(value * 20));
+    },
+    onScrubStop(value) {
+      setBlurToStore(Math.round(value * 20));
+    },
+  });
 
   return (
     <div ref={ref} style={{ position: 'relative', width: '100px' }}>

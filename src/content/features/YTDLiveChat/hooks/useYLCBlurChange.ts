@@ -13,9 +13,7 @@ export const useYLCBlurChange = () => {
   }, []);
   const changeIframeBlur = useCallback((blur: number) => {
     const body = ref.current?.contentDocument?.body;
-    if (body instanceof HTMLElement) {
-      body.style.backdropFilter = `blur(${blur}px)`;
-    }
+    if (body) body.style.backdropFilter = `blur(${blur}px)`;
   }, []);
   const changeBlur = useCallback(
     (blur: number) => {
