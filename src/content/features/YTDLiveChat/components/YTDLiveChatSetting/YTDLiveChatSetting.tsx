@@ -31,10 +31,8 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
         {item === 'UI' ? (
           <>
             <div className={styles['content-item']}>
-              <div style={{ marginBottom: 10, fontSize: 14 }}>Background Color</div>
-              <div>
-                <CustomColorPicker />
-              </div>
+              <div>Background Color</div>
+              <CustomColorPicker />
             </div>
             <hr />
           </>

@@ -25,6 +25,7 @@ const customStyles = {
     border: 'none',
     zIndex: 10,
     backgroundColor: 'transparent',
+    overflow: 'none',
   },
 };
 

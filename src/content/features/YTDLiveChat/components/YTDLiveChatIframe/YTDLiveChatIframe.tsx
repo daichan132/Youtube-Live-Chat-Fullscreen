@@ -5,7 +5,6 @@ import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss
 import '../../styles/YTDLiveChatIframe/iframe.scss';
 import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
-import { decimalToHex } from '../../utils/hexUtils';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -21,15 +20,15 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          const { hex, alpha } = useYTDLiveChatStore.getState();
-          changeColor(hex, alpha);
+          const { rgba } = useYTDLiveChatStore.getState();
+          changeColor(rgba);
           setLoaded(true);
         }
       };
     }
   }, [changeColor]);
   const nodeRef = useRef(null);
-  const stateRef = useRef(useYTDLiveChatStore.getState());
+  const rgbaRef = useRef(useYTDLiveChatStore.getState().rgba);
 
   return (
     <>
@@ -50,7 +49,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
           className={styles['skelton']}
           ref={nodeRef}
           style={{
-            backgroundColor: `${stateRef.current.hex}${decimalToHex(stateRef.current.alpha || 0)}`,
+            backgroundColor: `rgba(${rgbaRef.current.r}, ${rgbaRef.current.g}, ${rgbaRef.current.b}, ${rgbaRef.current.a})`,
           }}
         />
       </CSSTransition>
