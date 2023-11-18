@@ -1,0 +1,41 @@
+.color-picker-wrapper {
+  position: relative;
+  .color-display {
+    padding: 5px;
+    background: #fff;
+    border-radius: 1px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    cursor: pointer;
+    position: relative;
+    .color-preview-background {
+      background-image: linear-gradient(
+          45deg,
+          #dddddd 25%,
+          transparent 25%,
+          transparent 75%,
+          #dddddd 75%
+        ),
+        linear-gradient(45deg, #dddddd 25%, transparent 25%, transparent 75%, #dddddd 75%);
+      background-position:
+        0 0,
+        5px 5px;
+      background-size: 10px 10px;
+      background-color: #fff;
+      width: 90px;
+      height: 14px;
+      border-radius: 2px;
+    }
+    .color-preview {
+      width: 100%;
+      height: 100%;
+      border-radius: 2px;
+      // backgroundColorは動的に設定されます
+    }
+  }
+  .color-picker {
+    position: absolute;
+    right: 0;
+    z-index: 1;
+  }
+}

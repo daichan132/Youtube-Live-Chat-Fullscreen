@@ -3,6 +3,7 @@ import { useYLCBlurChange } from '../../hooks/useYLCBlurChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { useInitializedSlider } from '../../hooks/useInitializedSlider';
+import styles from '../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
 
 export const BlurSlider = () => {
   const { changeBlur } = useYLCBlurChange();
@@ -21,32 +22,12 @@ export const BlurSlider = () => {
   });
 
   return (
-    <div ref={ref} style={{ position: 'relative', width: '100px' }}>
+    <div ref={ref} className={styles['slider-wrapper']}>
+      <div className={styles['slider-track']} />
       <div
+        className={styles['slider-thumb']}
         style={{
-          position: 'absolute',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: '100%',
-          height: '2px',
-          backgroundColor: '#9aa3ad',
-          borderRadius: '5px',
-          cursor: 'pointer',
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
           left: `${value * 100}%`,
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: '12px',
-          height: '12px',
-          border: '2px solid #868e96',
-          backgroundColor: '#fff',
-          borderRadius: '50%',
-          boxShadow: '0 1px 3px rgba(0, 0, 0, .5)',
-          cursor: 'pointer',
         }}
       />
     </div>

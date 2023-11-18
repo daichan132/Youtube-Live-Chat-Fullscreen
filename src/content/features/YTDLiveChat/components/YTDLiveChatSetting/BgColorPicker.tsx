@@ -4,8 +4,9 @@ import { useShallow } from 'zustand/react/shallow';
 import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
+import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
 
-export const CustomColorPicker = () => {
+export const BgColorPicker = () => {
   const { rgba, changeColor } = useYLCBgColorChange();
   const { setBgColor: setRgbaToStore } = useYTDLiveChatStore(
     useShallow((state) => ({ setBgColor: state.setBgColor })),
@@ -16,42 +17,16 @@ export const CustomColorPicker = () => {
     setDisplay(false);
   });
   return (
-    <div style={{ position: 'relative' }} ref={ref}>
-      <div
-        style={{
-          padding: '5px',
-          background: '#fff',
-          borderRadius: '1px',
-          boxShadow: '0 0 0 1px rgba(0,0,0,.1)',
-          display: 'inline-block',
-          cursor: 'pointer',
-          position: 'relative',
-        }}
-        onClick={() => setDisplay((d) => !d)}
-      >
-        <div
-          style={{
-            backgroundImage:
-              'linear-gradient(45deg, #dddddd 25%, transparent 25%, transparent 75%, #dddddd 75%), linear-gradient(45deg, #dddddd 25%, transparent 25%, transparent 75%, #dddddd 75%)',
-            backgroundPosition: '0 0, 5px 5px',
-            backgroundSize: '10px 10px',
-            backgroundColor: '#fff',
-            width: '90px',
-            height: '14px',
-            borderRadius: '2px',
-          }}
-        >
+    <div className={styles['color-picker-wrapper']} ref={ref}>
+      <div className={styles['color-display']} onClick={() => setDisplay((d) => !d)}>
+        <div className={styles['color-preview']}>
           <div
-            style={{
-              backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
-              width: '100%',
-              height: '100%',
-              borderRadius: '2px',
-            }}
+            className={styles['color-preview-background']}
+            style={{ backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})` }}
           />
         </div>
       </div>
-      <div style={{ position: 'absolute', right: 0, zIndex: 1 }}>
+      <div className={styles['color-picker']}>
         {display ? (
           <ChromePicker
             color={rgba}
