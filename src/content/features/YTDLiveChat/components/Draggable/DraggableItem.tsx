@@ -4,10 +4,12 @@ import { RiDraggable } from 'react-icons/ri';
 import classNames from 'classnames';
 import { useDraggable } from '@dnd-kit/core';
 import styles from '../../styles/Draggable/DraggableItem.module.scss';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { CiSettings } from 'react-icons/ci';
 import Modal from 'react-modal';
 import { YTDLiveChatSetting } from '../YTDLiveChatSetting/YTDLiveChatSetting';
+import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
+import { useShallow } from 'zustand/react/shallow';
 
 const customStyles = {
   overlay: {
@@ -39,10 +41,14 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     id: 'wrapper',
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const sizeRef = useRef(useYTDLiveChatStore.getState().size);
+  const { setSize: setSizeToStore } = useYTDLiveChatStore(
+    useShallow((state) => ({ setSize: state.setSize })),
+  );
 
   return (
     <Resizable
-      defaultSize={{ width: 400, height: 500 }}
+      defaultSize={{ width: sizeRef.current.width, height: sizeRef.current.height }}
       minWidth={300}
       minHeight={400}
       enable={{
@@ -62,6 +68,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         left,
       }}
       bounds={'window'}
+      onResizeStop={(event) => {
+        if (event instanceof MouseEvent) {
+          setSizeToStore({ width: event.clientX, height: event.clientY });
+        }
+      }}
     >
       <div
         className={classNames(styles['Container'], isDragging && styles['dragging'])}
