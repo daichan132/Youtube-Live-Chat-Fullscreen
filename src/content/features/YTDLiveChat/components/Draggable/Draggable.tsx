@@ -1,23 +1,24 @@
 import { DndContext } from '@dnd-kit/core';
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Coordinates } from '@dnd-kit/core/dist/types';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 
 import styles from '../../styles/Draggable/Draggable.module.scss';
 import { DraggableItem } from './DraggableItem';
-
-const defaultCoordinates = {
-  x: 20,
-  y: 20,
-};
+import { useYTDLiveChatStore } from '../../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 interface DraggableType {
   children: React.ReactNode;
 }
 
 export const Draggable = ({ children }: DraggableType) => {
-  const [{ x, y }, setCoordinates] = useState<Coordinates>(defaultCoordinates);
+  const coordinatesRef = useRef(useYTDLiveChatStore.getState().coordinates);
+  const [{ x, y }, setCoordinates] = useState<Coordinates>(coordinatesRef.current);
+  const { setCoordinates: setCoordinatesToStore } = useYTDLiveChatStore(
+    useShallow((state) => ({ setCoordinates: state.setCoordinates })),
+  );
   return (
     <div className={styles['RestrictWindow']}>
       <DndContext
@@ -28,6 +29,7 @@ export const Draggable = ({ children }: DraggableType) => {
               y: y + delta.y,
             };
           });
+          setCoordinatesToStore({ x: x + delta.x, y: y + delta.y });
         }}
         modifiers={[restrictToWindowEdges]}
       >

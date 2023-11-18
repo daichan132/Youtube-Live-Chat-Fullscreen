@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { wrapStore } from 'webext-zustand';
 import { localStorage } from 'redux-persist-webextension-storage';
 import { RGBColor } from 'react-color';
+import { Coordinates } from '@dnd-kit/core/dist/types';
 
 interface sizeType {
   width: number;
@@ -12,9 +13,12 @@ interface YTDLiveChatStoreState {
   bgColor: RGBColor;
   blur: number;
   size: sizeType;
+  coordinates: Coordinates;
   setBgColor: (bgColor: RGBColor) => void;
   setBlur: (blur: number) => void;
   setSize: (size: sizeType) => void;
+  setCoordinates: (coordinates: Coordinates) => void;
+  setDefaultPosition: () => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -23,9 +27,13 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       bgColor: { r: 255, g: 255, b: 255, a: 1 },
       blur: 0,
       size: { width: 400, height: 500 },
+      coordinates: { x: 20, y: 20 },
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setBlur: (blur) => set(() => ({ blur })),
       setSize: (size) => set(() => ({ size })),
+      setCoordinates: (coordinates) => set(() => ({ coordinates })),
+      setDefaultPosition: () =>
+        set(() => ({ size: { width: 400, height: 500 }, coordinates: { x: 20, y: 20 } })),
     }),
     {
       name: 'ytdLiveChatStore',

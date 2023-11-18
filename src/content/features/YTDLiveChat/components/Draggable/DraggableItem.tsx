@@ -42,13 +42,17 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const sizeRef = useRef(useYTDLiveChatStore.getState().size);
+  const [size, setSize] = useState({
+    width: sizeRef.current.width,
+    height: sizeRef.current.height,
+  });
   const { setSize: setSizeToStore } = useYTDLiveChatStore(
     useShallow((state) => ({ setSize: state.setSize })),
   );
 
   return (
     <Resizable
-      defaultSize={{ width: sizeRef.current.width, height: sizeRef.current.height }}
+      defaultSize={size}
       minWidth={300}
       minHeight={400}
       enable={{
@@ -68,9 +72,13 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         left,
       }}
       bounds={'window'}
-      onResizeStop={(event) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onResizeStop={(event, direction, ref, d) => {
         if (event instanceof MouseEvent) {
-          setSizeToStore({ width: event.clientX, height: event.clientY });
+          if (event.target instanceof HTMLElement) {
+            setSize({ width: size.width + d.width, height: size.height + d.height });
+            setSizeToStore({ width: size.width + d.width, height: size.height + d.height });
+          }
         }
       }}
     >
