@@ -19,7 +19,7 @@ const propertyListTransparent = [
 
 export const useYLCBgColorChange = () => {
   const stateRef = useRef(useYTDLiveChatStore.getState());
-  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.rgba);
+  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor);
   const ref = useRef<HTMLIFrameElement | null>(null);
   useEffect(() => {
     const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');

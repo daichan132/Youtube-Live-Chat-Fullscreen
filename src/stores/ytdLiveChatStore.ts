@@ -5,18 +5,18 @@ import { localStorage } from 'redux-persist-webextension-storage';
 import { RGBColor } from 'react-color';
 
 interface YTDLiveChatStoreState {
-  rgba: RGBColor;
+  bgColor: RGBColor;
   blur: number;
-  setRgba: (rgba: RGBColor) => void;
+  setBgColor: (bgColor: RGBColor) => void;
   setBlur: (blur: number) => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
   persist(
     (set) => ({
-      rgba: { r: 255, g: 255, b: 255, a: 1 },
+      bgColor: { r: 255, g: 255, b: 255, a: 1 },
       blur: 0,
-      setRgba: (rgba) => set(() => ({ rgba })),
+      setBgColor: (bgColor) => set(() => ({ bgColor })),
       setBlur: (blur) => set(() => ({ blur })),
     }),
     {

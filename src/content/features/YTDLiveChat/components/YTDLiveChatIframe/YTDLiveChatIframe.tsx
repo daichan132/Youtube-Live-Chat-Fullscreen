@@ -22,8 +22,8 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          const { rgba, blur } = useYTDLiveChatStore.getState();
-          changeColor(rgba);
+          const { bgColor, blur } = useYTDLiveChatStore.getState();
+          changeColor(bgColor);
           changeBlur(blur);
           setLoaded(true);
         }
@@ -31,7 +31,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
     }
   }, [changeBlur, changeColor]);
   const nodeRef = useRef(null);
-  const rgbaRef = useRef(useYTDLiveChatStore.getState().rgba);
+  const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
 
   return (
     <>
@@ -53,7 +53,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
           className={styles['skelton']}
           ref={nodeRef}
           style={{
-            backgroundColor: `rgba(${rgbaRef.current.r}, ${rgbaRef.current.g}, ${rgbaRef.current.b}, ${rgbaRef.current.a})`,
+            backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
           }}
         />
       </CSSTransition>

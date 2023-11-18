@@ -7,8 +7,8 @@ import { useClickAway } from 'react-use';
 
 export const CustomColorPicker = () => {
   const { rgba, changeColor } = useYLCBgColorChange();
-  const { setRgba: setRgbaToStore } = useYTDLiveChatStore(
-    useShallow((state) => ({ setRgba: state.setRgba })),
+  const { setBgColor: setRgbaToStore } = useYTDLiveChatStore(
+    useShallow((state) => ({ setBgColor: state.setBgColor })),
   );
   const [display, setDisplay] = useState(false);
   const ref = useRef(null);
