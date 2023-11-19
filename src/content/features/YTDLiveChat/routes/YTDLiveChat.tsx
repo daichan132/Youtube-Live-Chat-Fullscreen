@@ -15,7 +15,7 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
   const { isFullscreen, isShow } = useIsShow(videoID);
   const nodeRef = useRef(null);
   const [isHover, setIsHover] = useState(false);
-  const isIdle = useIdle(3e3);
+  const isIdle = useIdle(1.5e3);
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({
       alwaysOnDisplay: state.alwaysOnDisplay,

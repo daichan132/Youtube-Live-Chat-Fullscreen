@@ -5,15 +5,15 @@ import { useYTDLiveChatStore } from '../../../../../stores';
 import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
 
 export const ReactionButtonDisplaySwitch = () => {
-  const { ReactionButtonDisplay } = useYTDLiveChatStore(
+  const { reactionButtonDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({
-      ReactionButtonDisplay: state.ReactionButtonDisplay,
+      reactionButtonDisplay: state.reactionButtonDisplay,
     })),
   );
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
   return (
     <Switch
-      checked={ReactionButtonDisplay}
+      checked={reactionButtonDisplay}
       onChange={(checked) => {
         changeDisplay(checked);
       }}
