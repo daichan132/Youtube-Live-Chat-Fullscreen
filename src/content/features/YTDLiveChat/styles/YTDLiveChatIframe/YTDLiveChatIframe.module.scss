@@ -5,7 +5,7 @@
   background: #d9d9d9;
   overflow: hidden;
   top: 0;
-  filter: blur(6px);
+  border-radius: 10px;
 
   &::before {
     content: '';
