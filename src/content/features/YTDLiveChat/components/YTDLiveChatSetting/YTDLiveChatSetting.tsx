@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
+import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
 
 interface YTDLiveChatSettingType {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -30,6 +31,15 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
         />
       </div>
       <div className={styles['content']}>
+        {item === 'General' ? (
+          <>
+            <div className={styles['content-item']}>
+              <div>Always on Display</div>
+              <AlwaysOnDisplaySwitch />
+            </div>
+            <hr />
+          </>
+        ) : null}
         {item === 'UI' ? (
           <>
             <div className={styles['content-item']}>

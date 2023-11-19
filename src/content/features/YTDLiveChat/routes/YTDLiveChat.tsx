@@ -5,6 +5,8 @@ import { CSSTransition } from 'react-transition-group';
 import fade from '../styles/Fade.module.scss';
 import { useRef, useState } from 'react';
 import { useIdle } from 'react-use';
+import { useYTDLiveChatStore } from '../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 interface YTDLiveChatType {
   videoID: string;
@@ -14,6 +16,11 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
   const nodeRef = useRef(null);
   const [isHover, setIsHover] = useState(false);
   const isIdle = useIdle(3e3);
+  const { alwaysOnDisplay } = useYTDLiveChatStore(
+    useShallow((state) => ({
+      alwaysOnDisplay: state.alwaysOnDisplay,
+    })),
+  );
 
   return (
     isFullscreen && (
@@ -25,7 +32,7 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
         >
           <div
             style={{
-              opacity: isHover || !isIdle ? 1 : 0,
+              opacity: isHover || !isIdle || alwaysOnDisplay ? 1 : 0,
               transition: 'opacity 200ms ease',
             }}
           >
