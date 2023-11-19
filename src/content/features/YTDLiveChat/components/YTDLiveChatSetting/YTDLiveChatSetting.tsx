@@ -6,6 +6,7 @@ import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
+import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 
 interface YTDLiveChatSettingType {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -55,6 +56,11 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
             <div className={styles['content-item']}>
               <div>Blur</div>
               <BlurSlider />
+            </div>
+            <hr />
+            <div className={styles['content-item']}>
+              <div>Reaction Button</div>
+              <ReactionButtonDisplaySwitch />
             </div>
             <hr />
           </>

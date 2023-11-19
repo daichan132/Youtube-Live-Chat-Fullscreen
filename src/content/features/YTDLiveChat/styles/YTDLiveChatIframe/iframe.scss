@@ -1,3 +1,7 @@
+html {
+  --reaction-control-panel-display: block;
+}
+
 body.custom-yt-app-live-chat-extension {
   .item.yt-dropdown-menu,
   yt-formatted-string.ytd-menu-service-item-renderer,
@@ -11,6 +15,10 @@ body.custom-yt-app-live-chat-extension {
 
   #title.yt-emoji-picker-category-renderer {
     color: hsla(0, 0%, 6.7%, 0.6);
+  }
+
+  div#reaction-control-panel.yt-reaction-control-panel-overlay-view-model {
+    display: var(--reaction-control-panel-display);
   }
 
   // yt-live-chat-renderer {
