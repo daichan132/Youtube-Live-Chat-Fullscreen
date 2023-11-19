@@ -22,11 +22,17 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
           ref={nodeRef}
           onMouseEnter={() => setIsHover(true)}
           onMouseLeave={() => setIsHover(false)}
-          style={{ opacity: isHover || !isIdle ? 1 : 0, transition: 'opacity 200ms ease' }}
         >
-          <Draggable>
-            <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
-          </Draggable>
+          <div
+            style={{
+              opacity: isHover || !isIdle ? 1 : 0,
+              transition: 'opacity 200ms ease',
+            }}
+          >
+            <Draggable>
+              <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
+            </Draggable>
+          </div>
         </div>
       </CSSTransition>
     )
