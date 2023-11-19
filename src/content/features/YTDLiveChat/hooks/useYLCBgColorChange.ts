@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useYTDLiveChatStore } from '../../../../stores';
 import { darkenRgbaColor } from '../utils/darkenRgbaColor';
 import { RGBColor } from 'react-color';
+import { useShallow } from 'zustand/react/shallow';
 
 const propertyList: string[] = ['--yt-live-chat-background-color'];
 const propertyListDarken = [
@@ -20,6 +21,9 @@ const propertyListTransparent = [
 export const useYLCBgColorChange = () => {
   const stateRef = useRef(useYTDLiveChatStore.getState());
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor);
+  const { setBgColor: setBgColor } = useYTDLiveChatStore(
+    useShallow((state) => ({ setBgColor: state.setBgColor })),
+  );
   const ref = useRef<HTMLIFrameElement | null>(null);
   useEffect(() => {
     const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');
@@ -44,9 +48,10 @@ export const useYLCBgColorChange = () => {
   const changeColor = useCallback(
     (rgba: RGBColor) => {
       changeIframeBackgroundColor(rgba);
+      setBgColor(rgba);
       setRgba(rgba);
     },
-    [changeIframeBackgroundColor],
+    [changeIframeBackgroundColor, setBgColor],
   );
   return { changeColor, rgba };
 };

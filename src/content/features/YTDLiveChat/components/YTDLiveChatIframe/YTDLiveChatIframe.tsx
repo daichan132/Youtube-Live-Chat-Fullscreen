@@ -6,6 +6,7 @@ import '../../styles/YTDLiveChatIframe/iframe.scss';
 import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
 import { useYLCBlurChange } from '../../hooks/useYLCBlurChange';
+import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -14,7 +15,8 @@ interface YTDLiveChatIframe {
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
-  const { changeColor } = useYLCBgColorChange();
+  const { changeColor: changBgColor } = useYLCBgColorChange();
+  const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeBlur } = useYLCBlurChange();
   useEffect(() => {
     if (ref.current) {
@@ -22,14 +24,15 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          const { bgColor, blur } = useYTDLiveChatStore.getState();
-          changeColor(bgColor);
+          const { bgColor, blur, fontColor } = useYTDLiveChatStore.getState();
+          changBgColor(bgColor);
+          changFontColor(fontColor);
           changeBlur(blur);
           setLoaded(true);
         }
       };
     }
-  }, [changeBlur, changeColor]);
+  }, [changeBlur, changBgColor, changFontColor]);
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
 

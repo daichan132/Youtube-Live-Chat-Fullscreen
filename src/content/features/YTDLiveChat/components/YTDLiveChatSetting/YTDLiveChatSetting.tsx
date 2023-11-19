@@ -4,6 +4,7 @@ import { RiCloseLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
+import { FontColorPicker } from './FontColorPicker';
 
 interface YTDLiveChatSettingType {
   setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
@@ -34,6 +35,11 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
             <div className={styles['content-item']}>
               <div>Background Color</div>
               <BgColorPicker />
+            </div>
+            <hr />
+            <div className={styles['content-item']}>
+              <div>Font Color</div>
+              <FontColorPicker />
             </div>
             <hr />
             <div className={styles['content-item']}>

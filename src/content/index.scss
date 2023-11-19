@@ -39,6 +39,10 @@ div#menu.yt-live-chat-text-message-renderer.custom {
       }
     }
 
+    > svg {
+      color: var(--yt-live-chat-primary-text-color);
+    }
+
     > span.tooltip-text {
       opacity: 0;
       visibility: hidden;

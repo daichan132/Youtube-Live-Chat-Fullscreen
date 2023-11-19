@@ -1,11 +1,11 @@
 import { ChromePicker } from 'react-color';
-import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
+import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
 
-export const BgColorPicker = () => {
-  const { rgba, changeColor } = useYLCBgColorChange();
+export const FontColorPicker = () => {
+  const { rgba, changeColor } = useYLCFontColorChange();
   const [display, setDisplay] = useState(false);
   const ref = useRef(null);
   useClickAway(ref, () => {
