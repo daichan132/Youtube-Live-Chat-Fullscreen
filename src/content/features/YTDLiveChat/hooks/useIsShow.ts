@@ -45,13 +45,15 @@ export const useIsShow = (videoID: string) => {
   }, [isFullscreen]);
   useEffect(() => {
     if (isLive && isTop) {
-      const { size, coordinates, setDefaultPosition } = useYTDLiveChatStore.getState();
-      if (
-        !(
-          size.width + coordinates.x <= window.innerWidth &&
-          size.height + coordinates.y <= window.innerHeight
-        )
-      ) {
+      /* ----------------------- YLC is in outside of window ---------------------- */
+      const innerWidth = window.innerWidth;
+      const innerHeight = window.innerHeight;
+      const {
+        size: { width, height },
+        coordinates: { x, y },
+        setDefaultPosition,
+      } = useYTDLiveChatStore.getState();
+      if (!(width + x <= innerWidth && height + y <= innerHeight)) {
         setDefaultPosition();
       }
       setIsChecked(true);

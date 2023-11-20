@@ -3,7 +3,6 @@ import { Resizable } from 're-resizable';
 import classNames from 'classnames';
 import { useDraggable } from '@dnd-kit/core';
 import styles from '../../styles/Draggable/DraggableItem.module.scss';
-import { useRef, useState } from 'react';
 
 import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
 import { useShallow } from 'zustand/react/shallow';
@@ -19,18 +18,13 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
-  const sizeRef = useRef(useYTDLiveChatStore.getState().size);
-  const [size, setSize] = useState({
-    width: sizeRef.current.width,
-    height: sizeRef.current.height,
-  });
-  const { setSize: setSizeToStore } = useYTDLiveChatStore(
-    useShallow((state) => ({ setSize: state.setSize })),
+  const { size, setSize } = useYTDLiveChatStore(
+    useShallow((state) => ({ size: state.size, setSize: state.setSize })),
   );
 
   return (
     <Resizable
-      defaultSize={size}
+      size={size}
       minWidth={300}
       minHeight={400}
       enable={{
@@ -55,7 +49,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         if (event instanceof MouseEvent) {
           if (event.target instanceof HTMLElement) {
             setSize({ width: size.width + d.width, height: size.height + d.height });
-            setSizeToStore({ width: size.width + d.width, height: size.height + d.height });
           }
         }
       }}

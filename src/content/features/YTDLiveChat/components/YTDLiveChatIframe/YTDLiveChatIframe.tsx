@@ -8,6 +8,7 @@ import { useYTDLiveChatStore } from '../../../../../stores';
 import { useYLCBlurChange } from '../../hooks/useYLCBlurChange';
 import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
 import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
+import { useHandleWindowResize } from '../../hooks/useHandleWindowResize';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -20,6 +21,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeBlur } = useYLCBlurChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
+  useHandleWindowResize();
   useEffect(() => {
     if (ref.current) {
       ref.current.onload = async () => {
