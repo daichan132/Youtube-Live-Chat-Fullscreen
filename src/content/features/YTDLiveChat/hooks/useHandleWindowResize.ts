@@ -1,9 +1,9 @@
 import { useLayoutEffect } from 'react';
 import { useYTDLiveChatStore } from '../../../../stores';
-
+import { debounce } from 'lodash-es';
 export const useHandleWindowResize = () => {
   useLayoutEffect(() => {
-    const updatePosition = (): void => {
+    const updatePosition = debounce((): void => {
       const innerWidth = window.innerWidth;
       const innerHeight = window.innerHeight;
       const {
@@ -23,7 +23,7 @@ export const useHandleWindowResize = () => {
       } else if (newWidth >= 300 && newHeight >= 400) {
         setSize({ width: newWidth, height: newHeight });
       }
-    };
+    }, 100);
 
     window.addEventListener('resize', updatePosition);
     return () => window.removeEventListener('resize', updatePosition);
