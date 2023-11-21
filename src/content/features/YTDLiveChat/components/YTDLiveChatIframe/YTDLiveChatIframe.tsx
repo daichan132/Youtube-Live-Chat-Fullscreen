@@ -3,11 +3,10 @@ import { CSSTransition } from 'react-transition-group';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 import '../../styles/YTDLiveChatIframe/iframe.scss';
-import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
+import { useYLCBgColorChange } from '../../hooks/YTDLiveChatSetting/useYLCBgColorChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
-import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
-import { useHandleWindowResize } from '../../hooks/useHandleWindowResize';
+import { useYLCFontColorChange } from '../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
+import { useYLCReactionButtonDisplayChange } from '../../hooks/YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
 
@@ -21,7 +20,6 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
-  useHandleWindowResize();
   useEffect(() => {
     if (ref.current) {
       ref.current.onload = async () => {

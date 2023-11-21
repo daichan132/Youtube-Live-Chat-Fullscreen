@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useYTDLiveChatStore } from '../../../../stores';
-import { darkenRgbaColor } from '../utils/darkenRgbaColor';
+import { useYTDLiveChatStore } from '../../../../../stores';
+import { darkenRgbaColor } from '../../utils/darkenRgbaColor';
 import { RGBColor } from 'react-color';
 import { useShallow } from 'zustand/react/shallow';
 

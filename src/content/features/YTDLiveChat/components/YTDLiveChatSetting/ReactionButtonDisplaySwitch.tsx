@@ -2,7 +2,7 @@ import React from 'react';
 import { Switch } from '../../../../components/Switch';
 import { useShallow } from 'zustand/react/shallow';
 import { useYTDLiveChatStore } from '../../../../../stores';
-import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
+import { useYLCReactionButtonDisplayChange } from '../../hooks/YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 
 export const ReactionButtonDisplaySwitch = () => {
   const { reactionButtonDisplay } = useYTDLiveChatStore(

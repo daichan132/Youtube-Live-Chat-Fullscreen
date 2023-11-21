@@ -1,7 +1,8 @@
 import { useLayoutEffect } from 'react';
-import { useYTDLiveChatStore } from '../../../../stores';
+import { useYTDLiveChatStore } from '../../../../../stores';
 import { debounce } from 'lodash-es';
-export const useHandleWindowResize = () => {
+
+export const WindowResizeEffect = () => {
   useLayoutEffect(() => {
     const updatePosition = debounce((): void => {
       const innerWidth = window.innerWidth;

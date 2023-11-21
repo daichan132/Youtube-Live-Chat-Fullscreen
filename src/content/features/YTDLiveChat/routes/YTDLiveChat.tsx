@@ -6,7 +6,8 @@ import fade from '../styles/Fade.module.scss';
 import { useRef } from 'react';
 import { useYTDLiveChatNoLsStore } from '../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
-import { DisplayEffect } from '../components/YTDLiveChatIframe/DisplayEffect';
+import { DisplayEffect } from '../components/EffectComponent/DispkayEffect';
+import { WindowResizeEffect } from '../components/EffectComponent/WindowResizeEffect';
 
 interface YTDLiveChatType {
   videoID: string;
@@ -27,6 +28,7 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
           onMouseLeave={() => setIsHover(false)}
         >
           <DisplayEffect />
+          <WindowResizeEffect />
           <Draggable>
             <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
           </Draggable>
