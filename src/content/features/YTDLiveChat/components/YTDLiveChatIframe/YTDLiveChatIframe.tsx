@@ -3,10 +3,10 @@ import { CSSTransition } from 'react-transition-group';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 import '../../styles/YTDLiveChatIframe/iframe.scss';
-import { useYLCBgColorChange } from '../../hooks/YTDLiveChatSetting/useYLCBgColorChange';
+import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { useYLCFontColorChange } from '../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
-import { useYLCReactionButtonDisplayChange } from '../../hooks/YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
+import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
+import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
 

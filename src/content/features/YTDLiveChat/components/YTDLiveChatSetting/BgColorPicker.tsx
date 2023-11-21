@@ -1,5 +1,5 @@
 import { ChromePicker } from 'react-color';
-import { useYLCBgColorChange } from '../../hooks/YTDLiveChatSetting/useYLCBgColorChange';
+import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';

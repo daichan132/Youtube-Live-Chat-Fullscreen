@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { useYTDLiveChatStore } from '../../../../stores';
 import { RGBColor } from 'react-color';
 import { useShallow } from 'zustand/react/shallow';
 

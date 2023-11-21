@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { useYTDLiveChatStore } from '../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 
 export const useYLCReactionButtonDisplayChange = () => {
