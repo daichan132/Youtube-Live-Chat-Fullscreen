@@ -60,9 +60,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-
-      h2 {
-        margin: 0 0 10px 0;
+      .title-with-icon {
+        display: flex;
+        align-items: center;
+        > svg {
+          margin-right: 1rem;
+        }
       }
     }
 

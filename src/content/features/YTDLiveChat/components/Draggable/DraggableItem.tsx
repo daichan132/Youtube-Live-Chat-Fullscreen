@@ -48,7 +48,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         left,
       }}
       bounds={'window'}
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       onResizeStop={(event, direction, ref, d) => {
         if (event instanceof MouseEvent) {
           if (event.target instanceof HTMLElement) {

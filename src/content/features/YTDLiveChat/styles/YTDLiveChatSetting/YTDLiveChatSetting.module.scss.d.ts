@@ -7,6 +7,7 @@ export type Styles = {
   menu: string;
   'menu-item': string;
   settings: string;
+  'title-with-icon': string;
 };
 
 export type ClassNames = keyof Styles;
