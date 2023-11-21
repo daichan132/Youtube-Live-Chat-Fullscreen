@@ -8,6 +8,7 @@ import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
 import { useShallow } from 'zustand/react/shallow';
 import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
+import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 
 interface DraggableItemType {
   top?: number;
@@ -20,6 +21,9 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   });
   const { size, setSize } = useYTDLiveChatStore(
     useShallow((state) => ({ size: state.size, setSize: state.setSize })),
+  );
+  const { isDisplay } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay })),
   );
 
   return (
@@ -61,10 +65,20 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
           {...listeners}
+          style={{
+            transition: 'opacity 300ms ease',
+            opacity: isDisplay ? 1 : 0,
+          }}
         >
           <DragIcon />
         </div>
-        <div className={styles['settingButton']}>
+        <div
+          className={styles['settingButton']}
+          style={{
+            transition: 'opacity 300ms ease',
+            opacity: isDisplay ? 1 : 0,
+          }}
+        >
           <SettingIcon />
         </div>
         <div className={styles['children']}>{children}</div>

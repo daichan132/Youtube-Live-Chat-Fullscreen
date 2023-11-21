@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CiSettings } from 'react-icons/ci';
 import Modal from 'react-modal';
 import { YTDLiveChatSetting } from '../YTDLiveChatSetting/YTDLiveChatSetting';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 
 const customStyles = {
@@ -30,6 +30,9 @@ export const SettingIcon = () => {
   const { fontColor: rgba } = useYTDLiveChatStore(
     useShallow((state) => ({ fontColor: state.fontColor })),
   );
+  const { setIsHover } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ setIsHover: state.setIsHover })),
+  );
 
   return (
     <>
@@ -47,6 +50,7 @@ export const SettingIcon = () => {
         shouldCloseOnOverlayClick={true}
         onRequestClose={() => setIsOpen(false)}
         appElement={document.getElementById('my-extension-root') || undefined}
+        onAfterClose={() => setIsHover(false)}
       >
         <YTDLiveChatSetting setIsOpen={setIsOpen} />
       </Modal>

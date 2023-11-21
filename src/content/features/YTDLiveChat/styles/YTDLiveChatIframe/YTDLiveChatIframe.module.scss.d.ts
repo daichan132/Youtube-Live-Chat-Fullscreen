@@ -1,4 +1,5 @@
 export type Styles = {
+  iframe: string;
   'skeleton-animation': string;
   skelton: string;
 };
