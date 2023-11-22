@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
@@ -9,6 +9,7 @@ import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
 import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { IoColorFillOutline, IoHeart, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
+import { FontFamilyInput } from './FontFamilyInput';
 
 const generalItems = [
   {
@@ -27,6 +28,11 @@ const uiItems = [
     icon: <RiFontColor size={20} />,
     title: 'Font Color',
     data: <FontColorPicker />,
+  },
+  {
+    icon: <RiFontFamily size={20} />,
+    title: 'Font Family',
+    data: <FontFamilyInput />,
   },
   {
     icon: <MdBlurOn size={20} />,
@@ -68,7 +74,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
           <>
             {generalItems.map((item) => {
               return (
-                <>
+                <React.Fragment key={item.title}>
                   <div className={styles['content-item']}>
                     <div className={styles['title-with-icon']}>
                       {item.icon}
@@ -77,7 +83,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
                     {item.data}
                   </div>
                   <hr />
-                </>
+                </React.Fragment>
               );
             })}
           </>
@@ -86,7 +92,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
           <>
             {uiItems.map((item) => {
               return (
-                <>
+                <React.Fragment key={item.title}>
                   <div className={styles['content-item']}>
                     <div className={styles['title-with-icon']}>
                       {item.icon}
@@ -95,7 +101,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
                     {item.data}
                   </div>
                   <hr />
-                </>
+                </React.Fragment>
               );
             })}
           </>

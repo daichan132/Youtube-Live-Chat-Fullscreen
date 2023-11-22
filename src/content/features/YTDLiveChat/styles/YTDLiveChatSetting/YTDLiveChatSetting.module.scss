@@ -20,6 +20,7 @@
     .menu {
       font-size: 1.5rem;
       display: flex;
+
       .menu-item {
         padding: 1rem;
         cursor: pointer;
@@ -54,15 +55,17 @@
     overflow-y: visible;
     height: 300px; // 任意の高さに調整可能
     font-size: 1.25rem;
-    overflow-y: auto;
+    overflow-y: scroll;
 
     .content-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
+
       .title-with-icon {
         display: flex;
         align-items: center;
+
         > svg {
           margin-right: 1rem;
         }

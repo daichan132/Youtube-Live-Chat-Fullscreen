@@ -9,6 +9,7 @@ import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
 import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
+import { useYLCFontFamilyChange } from '../../hooks/useYLCFontFamilyChange';
 
 interface YTDLiveChatIframe {
   src: string;
@@ -20,21 +21,24 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
+  const { changeFontFamily } = useYLCFontFamilyChange();
   useEffect(() => {
     if (ref.current) {
       ref.current.onload = async () => {
         const body = ref.current?.contentDocument?.body;
         if (body) {
           body.classList.add('custom-yt-app-live-chat-extension');
-          const { bgColor, fontColor, reactionButtonDisplay } = useYTDLiveChatStore.getState();
+          const { fontFamily, bgColor, fontColor, reactionButtonDisplay } =
+            useYTDLiveChatStore.getState();
           changBgColor(bgColor);
           changFontColor(fontColor);
           changeDisplay(reactionButtonDisplay);
+          changeFontFamily(fontFamily);
           setLoaded(true);
         }
       };
     }
-  }, [changBgColor, changFontColor, changeDisplay]);
+  }, [changBgColor, changFontColor, changeDisplay, changeFontFamily]);
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
   const { blur } = useYTDLiveChatStore(useShallow((state) => ({ blur: state.blur })));
