@@ -1,16 +1,32 @@
-import { ChromePicker } from 'react-color';
+import { ChromePicker, ColorResult, RGBColor } from 'react-color';
 import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
-import { useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
+import { useYTDLiveChatStore } from '../../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 export const BgColorPicker = () => {
-  const { rgba, changeColor } = useYLCBgColorChange();
+  const { changeColor } = useYLCBgColorChange();
+  const stateRef = useRef(useYTDLiveChatStore.getState());
+  const { setBgColor: setBgColor } = useYTDLiveChatStore(
+    useShallow((state) => ({ setBgColor: state.setBgColor })),
+  );
+  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor);
   const [display, setDisplay] = useState(false);
+
   const ref = useRef(null);
   useClickAway(ref, () => {
     setDisplay(false);
   });
+  const onChange = useCallback(
+    (c: ColorResult) => {
+      changeColor(c.rgb);
+      setBgColor(c.rgb);
+      setRgba(c.rgb);
+    },
+    [changeColor, setBgColor],
+  );
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
       <div className={styles['color-display']} onClick={() => setDisplay((d) => !d)}>
@@ -25,9 +41,7 @@ export const BgColorPicker = () => {
         {display ? (
           <ChromePicker
             color={rgba}
-            onChange={(c) => {
-              changeColor(c.rgb);
-            }}
+            onChange={onChange}
             styles={{
               default: {
                 picker: {

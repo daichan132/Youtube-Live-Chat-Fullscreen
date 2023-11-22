@@ -1,16 +1,31 @@
-import { ChromePicker } from 'react-color';
-import { useRef, useState } from 'react';
+import { ChromePicker, ColorResult, RGBColor } from 'react-color';
+import { useCallback, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
 import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
+import { useYTDLiveChatStore } from '../../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 export const FontColorPicker = () => {
-  const { rgba, changeColor } = useYLCFontColorChange();
+  const { changeColor } = useYLCFontColorChange();
+  const stateRef = useRef(useYTDLiveChatStore.getState());
+  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor);
+  const { setFontColor: setFontColor } = useYTDLiveChatStore(
+    useShallow((state) => ({ setFontColor: state.setFontColor })),
+  );
   const [display, setDisplay] = useState(false);
   const ref = useRef(null);
   useClickAway(ref, () => {
     setDisplay(false);
   });
+  const onChange = useCallback(
+    (c: ColorResult) => {
+      changeColor(c.rgb);
+      setFontColor(c.rgb);
+      setRgba(c.rgb);
+    },
+    [changeColor, setFontColor],
+  );
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
       <div className={styles['color-display']} onClick={() => setDisplay((d) => !d)}>
@@ -25,9 +40,7 @@ export const FontColorPicker = () => {
         {display ? (
           <ChromePicker
             color={rgba}
-            onChange={(c) => {
-              changeColor(c.rgb);
-            }}
+            onChange={onChange}
             styles={{
               default: {
                 picker: {

@@ -1,7 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { useYTDLiveChatStore } from '../../../../stores';
+import { useCallback, useEffect, useRef } from 'react';
 import { RGBColor } from 'react-color';
-import { useShallow } from 'zustand/react/shallow';
 
 const propertyList: string[] = [
   '--yt-live-chat-primary-text-color',
@@ -10,12 +8,7 @@ const propertyList: string[] = [
 ];
 
 export const useYLCFontColorChange = () => {
-  const stateRef = useRef(useYTDLiveChatStore.getState());
-  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor);
   const ref = useRef<HTMLIFrameElement | null>(null);
-  const { setFontColor: setFontColor } = useYTDLiveChatStore(
-    useShallow((state) => ({ setFontColor: state.setFontColor })),
-  );
   useEffect(() => {
     const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');
     if (element instanceof HTMLIFrameElement) {
@@ -37,10 +30,8 @@ export const useYLCFontColorChange = () => {
   const changeColor = useCallback(
     (rgba: RGBColor) => {
       changeIframeFontColor(rgba);
-      setFontColor(rgba);
-      setRgba(rgba);
     },
-    [changeIframeFontColor, setFontColor],
+    [changeIframeFontColor],
   );
-  return { changeColor, rgba };
+  return { changeColor };
 };
