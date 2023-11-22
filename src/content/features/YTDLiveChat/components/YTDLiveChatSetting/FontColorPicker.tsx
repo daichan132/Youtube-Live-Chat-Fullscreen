@@ -35,6 +35,7 @@ export const FontColorPicker = () => {
                   border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderRadius: 5,
                   overflow: 'hidden',
+                  marginBottom: '30px',
                 },
               },
             }}

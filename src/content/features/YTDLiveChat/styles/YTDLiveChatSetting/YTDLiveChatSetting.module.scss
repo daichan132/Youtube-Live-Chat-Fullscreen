@@ -67,7 +67,11 @@
         align-items: center;
 
         > svg {
-          margin-right: 1rem;
+          margin-right: 1.5rem;
+          border: 1px solid #333;
+          color: #333;
+          padding: 3px;
+          border-radius: 5px;
         }
       }
     }

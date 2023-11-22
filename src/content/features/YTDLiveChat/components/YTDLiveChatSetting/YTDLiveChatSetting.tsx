@@ -1,49 +1,54 @@
 import React, { useState } from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily, RiHeartLine } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
-import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
+import { IconType } from 'react-icons';
 
-const generalItems = [
+interface itemType {
+  icon: IconType;
+  title: string;
+  data: React.ReactNode;
+}
+const generalItems: itemType[] = [
   {
-    icon: <IoTimerOutline size={20} color="#4D84F4" />,
+    icon: IoTimerOutline,
     title: 'Always on Display',
     data: <AlwaysOnDisplaySwitch />,
   },
 ];
-const uiItems = [
+const uiItems: itemType[] = [
   {
-    icon: <IoColorFillOutline size={20} color="#4D84F4" />,
+    icon: IoColorFillOutline,
     title: 'Background Color',
     data: <BgColorPicker />,
   },
   {
-    icon: <RiFontColor size={20} color="#4D84F4" />,
+    icon: RiFontColor,
     title: 'Font Color',
     data: <FontColorPicker />,
   },
   {
-    icon: <RiFontFamily size={20} color="#4D84F4" />,
+    icon: RiFontFamily,
     title: 'Font Family',
     data: <FontFamilyInput />,
   },
   {
-    icon: <MdBlurOn size={20} color="#4D84F4" />,
+    icon: MdBlurOn,
     title: 'Blur',
     data: <BlurSlider />,
   },
-  {
-    icon: <RiHeartLine size={20} color="#4D84F4" />,
-    title: 'Reaction Button',
-    data: <ReactionButtonDisplaySwitch />,
-  },
+  // {
+  //   icon: RiHeartLine,
+  //   title: 'Reaction Button',
+  //   data: <ReactionButtonDisplaySwitch />,
+  // },
 ];
 
 interface YTDLiveChatSettingType {
@@ -51,6 +56,12 @@ interface YTDLiveChatSettingType {
 }
 export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
   const [item, setItem] = useState<string>('General');
+  let items: itemType[] = [];
+  if (item === 'General') {
+    items = generalItems;
+  } else if (item === 'UI') {
+    items = uiItems;
+  }
 
   return (
     <div className={styles['settings']}>
@@ -70,42 +81,20 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
         />
       </div>
       <div className={styles['content']}>
-        {item === 'General' ? (
-          <>
-            {generalItems.map((item) => {
-              return (
-                <React.Fragment key={item.title}>
-                  <div className={styles['content-item']}>
-                    <div className={styles['title-with-icon']}>
-                      {item.icon}
-                      <div>{item.title}</div>
-                    </div>
-                    {item.data}
-                  </div>
-                  <hr />
-                </React.Fragment>
-              );
-            })}
-          </>
-        ) : null}
-        {item === 'UI' ? (
-          <>
-            {uiItems.map((item) => {
-              return (
-                <React.Fragment key={item.title}>
-                  <div className={styles['content-item']}>
-                    <div className={styles['title-with-icon']}>
-                      {item.icon}
-                      <div>{item.title}</div>
-                    </div>
-                    {item.data}
-                  </div>
-                  <hr />
-                </React.Fragment>
-              );
-            })}
-          </>
-        ) : null}
+        {items.map((item) => {
+          return (
+            <React.Fragment key={item.title}>
+              <div className={styles['content-item']}>
+                <div className={styles['title-with-icon']}>
+                  {<item.icon size={20} />}
+                  <div>{item.title}</div>
+                </div>
+                {item.data}
+              </div>
+              <hr />
+            </React.Fragment>
+          );
+        })}
       </div>
     </div>
   );
