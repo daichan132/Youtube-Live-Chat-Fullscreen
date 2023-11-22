@@ -3,7 +3,7 @@
 .settings {
   display: flex;
   flex-direction: column; // モーダルのメイン方向を縦に設定
-  width: 400px; // モーダルの幅
+  width: 500px; // モーダルの幅
   border-radius: 8px;
   background-color: #fff;
   letter-spacing: 0.05rem;
@@ -18,22 +18,16 @@
     border-bottom: 1px solid #eaeaea;
 
     .menu {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       display: flex;
 
       .menu-item {
         padding: 1rem;
-        cursor: pointer;
         color: #333;
         border-radius: 5px;
         margin-right: 0.5rem;
         transition: background-color 200ms ease;
         width: 100px;
-
-        &.active {
-          background-color: rgba(0, 0, 0, 0.1);
-          border-radius: 4px;
-        }
       }
     }
 
@@ -56,6 +50,7 @@
     height: 300px; // 任意の高さに調整可能
     font-size: 1.25rem;
     overflow-y: scroll;
+    background-color: #fafafa;
 
     .content-item {
       display: flex;
@@ -80,7 +75,7 @@
       border: none;
       height: 1px;
       background-color: rgba(0, 0, 0, 0.1);
-      margin: 20px 0;
+      margin: 30px 0;
     }
   }
 }

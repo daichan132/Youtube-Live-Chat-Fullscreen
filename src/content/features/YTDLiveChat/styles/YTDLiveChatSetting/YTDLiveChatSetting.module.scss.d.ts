@@ -1,5 +1,4 @@
 export type Styles = {
-  active: string;
   'close-button': string;
   content: string;
   'content-item': string;

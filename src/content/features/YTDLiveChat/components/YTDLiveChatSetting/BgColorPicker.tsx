@@ -31,7 +31,6 @@ export const BgColorPicker = () => {
             styles={{
               default: {
                 picker: {
-                  boxShadow: 'none',
                   border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderRadius: 5,
                   overflow: 'hidden',

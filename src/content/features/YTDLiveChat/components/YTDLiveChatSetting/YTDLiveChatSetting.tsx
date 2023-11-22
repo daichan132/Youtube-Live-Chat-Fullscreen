@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily, RiHeartLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
@@ -10,20 +10,20 @@ import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
 import { IconType } from 'react-icons';
+import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 
 interface itemType {
   icon: IconType;
   title: string;
   data: React.ReactNode;
 }
-const generalItems: itemType[] = [
+
+const items: itemType[] = [
   {
     icon: IoTimerOutline,
     title: 'Always on Display',
     data: <AlwaysOnDisplaySwitch />,
   },
-];
-const uiItems: itemType[] = [
   {
     icon: IoColorFillOutline,
     title: 'Background Color',
@@ -44,35 +44,22 @@ const uiItems: itemType[] = [
     title: 'Blur',
     data: <BlurSlider />,
   },
-  // {
-  //   icon: RiHeartLine,
-  //   title: 'Reaction Button',
-  //   data: <ReactionButtonDisplaySwitch />,
-  // },
+  {
+    icon: RiHeartLine,
+    title: 'Reaction Button',
+    data: <ReactionButtonDisplaySwitch />,
+  },
 ];
 
 interface YTDLiveChatSettingType {
   closeModal?: () => void;
 }
 export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
-  const [item, setItem] = useState<string>('General');
-  let items: itemType[] = [];
-  if (item === 'General') {
-    items = generalItems;
-  } else if (item === 'UI') {
-    items = uiItems;
-  }
-
   return (
     <div className={styles['settings']}>
       <div className={styles['header']}>
         <div className={styles['menu']}>
-          <MenuItem isActive={'General' === item} onClick={() => setItem('General')}>
-            General
-          </MenuItem>
-          <MenuItem isActive={'UI' === item} onClick={() => setItem('UI')}>
-            UI
-          </MenuItem>
+          <div className={classNames(styles['menu-item'])}>Settings</div>
         </div>
         <RiCloseLine
           className={styles['close-button']}
@@ -96,25 +83,6 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
           );
         })}
       </div>
-    </div>
-  );
-};
-
-const MenuItem = ({
-  isActive,
-  onClick,
-  children,
-}: {
-  isActive: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) => {
-  return (
-    <div
-      className={classNames(styles['menu-item'], isActive && styles['active'])}
-      onClick={onClick}
-    >
-      {children}
     </div>
   );
 };
