@@ -7,9 +7,16 @@ import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
 import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
-import { IoColorFillOutline, IoHeart } from 'react-icons/io5';
+import { IoColorFillOutline, IoHeart, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
 
+const generalItems = [
+  {
+    icon: <IoTimerOutline size={20} />,
+    title: 'Always on Display',
+    data: <AlwaysOnDisplaySwitch />,
+  },
+];
 const uiItems = [
   {
     icon: <IoColorFillOutline size={20} />,
@@ -59,11 +66,20 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
       <div className={styles['content']}>
         {item === 'General' ? (
           <>
-            <div className={styles['content-item']}>
-              <div className={styles['title-with-icon']}>Always on Display</div>
-              <AlwaysOnDisplaySwitch />
-            </div>
-            <hr />
+            {generalItems.map((item) => {
+              return (
+                <>
+                  <div className={styles['content-item']}>
+                    <div className={styles['title-with-icon']}>
+                      {item.icon}
+                      <div>{item.title}</div>
+                    </div>
+                    {item.data}
+                  </div>
+                  <hr />
+                </>
+              );
+            })}
           </>
         ) : null}
         {item === 'UI' ? (
