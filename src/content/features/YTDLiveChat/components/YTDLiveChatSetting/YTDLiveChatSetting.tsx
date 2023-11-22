@@ -1,46 +1,46 @@
 import React, { useState } from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily, RiHeartLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
 import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
-import { IoColorFillOutline, IoHeart, IoTimerOutline } from 'react-icons/io5';
+import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
 
 const generalItems = [
   {
-    icon: <IoTimerOutline size={20} />,
+    icon: <IoTimerOutline size={20} color="#4D84F4" />,
     title: 'Always on Display',
     data: <AlwaysOnDisplaySwitch />,
   },
 ];
 const uiItems = [
   {
-    icon: <IoColorFillOutline size={20} />,
+    icon: <IoColorFillOutline size={20} color="#4D84F4" />,
     title: 'Background Color',
     data: <BgColorPicker />,
   },
   {
-    icon: <RiFontColor size={20} />,
+    icon: <RiFontColor size={20} color="#4D84F4" />,
     title: 'Font Color',
     data: <FontColorPicker />,
   },
   {
-    icon: <RiFontFamily size={20} />,
+    icon: <RiFontFamily size={20} color="#4D84F4" />,
     title: 'Font Family',
     data: <FontFamilyInput />,
   },
   {
-    icon: <MdBlurOn size={20} />,
+    icon: <MdBlurOn size={20} color="#4D84F4" />,
     title: 'Blur',
     data: <BlurSlider />,
   },
   {
-    icon: <IoHeart size={20} />,
+    icon: <RiHeartLine size={20} color="#4D84F4" />,
     title: 'Reaction Button',
     data: <ReactionButtonDisplaySwitch />,
   },
