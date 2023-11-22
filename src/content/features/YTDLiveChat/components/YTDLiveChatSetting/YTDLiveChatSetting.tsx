@@ -11,6 +11,8 @@ import { MdBlurOn } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
 import { IconType } from 'react-icons';
 import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
+import { useYTDLiveChatNoLsStore } from '../../../../../stores';
+import { useShallow } from 'zustand/react/shallow';
 
 interface itemType {
   icon: IconType;
@@ -55,6 +57,11 @@ interface YTDLiveChatSettingType {
   closeModal?: () => void;
 }
 export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
+  const { setIsOpenSettingModal } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      setIsOpenSettingModal: state.setIsOpenSettingModal,
+    })),
+  );
   return (
     <div className={styles['settings']}>
       <div className={styles['header']}>
@@ -89,6 +96,9 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
               href="https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4"
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => {
+                setIsOpenSettingModal(false);
+              }}
             >
               Help
             </a>
