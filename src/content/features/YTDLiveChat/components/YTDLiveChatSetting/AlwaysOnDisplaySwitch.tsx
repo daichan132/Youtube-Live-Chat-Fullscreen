@@ -13,6 +13,7 @@ export const AlwaysOnDisplaySwitch = () => {
   return (
     <Switch
       checked={alwaysOnDisplay}
+      id="always-on-display-switch"
       onChange={(checked) => {
         setAlwaysOnDisplay(checked);
       }}
