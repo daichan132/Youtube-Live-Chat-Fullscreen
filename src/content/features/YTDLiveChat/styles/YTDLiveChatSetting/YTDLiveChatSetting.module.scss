@@ -46,7 +46,7 @@
 
   .content {
     flex-grow: 1;
-    padding: 30px 20px 20px 20px;
+    padding: 0px 20px 20px 20px;
     overflow-y: visible;
     height: 300px; // 任意の高さに調整可能
     font-size: 1.25rem;
@@ -57,6 +57,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 30px;
 
       .title-with-icon {
         display: flex;
@@ -76,7 +77,20 @@
       border: none;
       height: 1px;
       background-color: rgba(0, 0, 0, 0.1);
-      margin: 30px 0;
+      margin-top: 30px;
+    }
+
+    .footer {
+      margin-top: 15px;
+      margin: 28px 12px 0;
+      display: flex;
+      justify-content: flex-end;
+
+      .help {
+        > a {
+          color: #333333;
+        }
+      }
     }
   }
 }

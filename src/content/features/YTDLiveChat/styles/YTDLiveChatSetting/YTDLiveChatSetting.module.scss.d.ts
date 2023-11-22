@@ -2,7 +2,9 @@ export type Styles = {
   'close-button': string;
   content: string;
   'content-item': string;
+  footer: string;
   header: string;
+  help: string;
   menu: string;
   'menu-item': string;
   settings: string;

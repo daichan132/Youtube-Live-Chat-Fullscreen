@@ -82,6 +82,18 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
             </React.Fragment>
           );
         })}
+        <div className={styles['footer']}>
+          <div className={styles['help']}>
+            For instructions, click this{' '}
+            <a
+              href="https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Help
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );
