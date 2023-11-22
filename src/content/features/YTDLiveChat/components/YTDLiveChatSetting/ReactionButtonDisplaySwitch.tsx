@@ -13,13 +13,21 @@ export const ReactionButtonDisplaySwitch = () => {
   );
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
   return (
-    <Switch
-      checked={reactionButtonDisplay}
-      id="reaction-button-display-switch"
-      onChange={(checked) => {
-        changeDisplay(checked);
-        setReactionButtonDisplay(checked);
+    <div
+      style={{
+        width: '150px',
+        display: 'flex',
+        justifyContent: 'center',
       }}
-    />
+    >
+      <Switch
+        checked={reactionButtonDisplay}
+        id="reaction-button-display-switch"
+        onChange={(checked) => {
+          changeDisplay(checked);
+          setReactionButtonDisplay(checked);
+        }}
+      />
+    </div>
   );
 };

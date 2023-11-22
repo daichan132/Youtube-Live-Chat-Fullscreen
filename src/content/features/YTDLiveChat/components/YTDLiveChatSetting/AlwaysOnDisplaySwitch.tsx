@@ -11,12 +11,20 @@ export const AlwaysOnDisplaySwitch = () => {
     })),
   );
   return (
-    <Switch
-      checked={alwaysOnDisplay}
-      id="always-on-display-switch"
-      onChange={(checked) => {
-        setAlwaysOnDisplay(checked);
+    <div
+      style={{
+        width: '150px',
+        display: 'flex',
+        justifyContent: 'center',
       }}
-    />
+    >
+      <Switch
+        checked={alwaysOnDisplay}
+        id="always-on-display-switch"
+        onChange={(checked) => {
+          setAlwaysOnDisplay(checked);
+        }}
+      />
+    </div>
   );
 };
