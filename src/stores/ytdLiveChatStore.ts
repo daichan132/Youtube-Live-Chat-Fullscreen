@@ -13,6 +13,7 @@ interface YTDLiveChatStoreState {
   bgColor: RGBColor;
   fontColor: RGBColor;
   fontFamily: string;
+  fontSize: number;
   blur: number;
   size: sizeType;
   coordinates: Coordinates;
@@ -21,6 +22,7 @@ interface YTDLiveChatStoreState {
   setBgColor: (bgColor: RGBColor) => void;
   setFontColor: (fontColor: RGBColor) => void;
   setFontFamily: (fontFamily: string) => void;
+  setFontSize: (fontSize: number) => void;
   setBlur: (blur: number) => void;
   setSize: (size: sizeType) => void;
   setCoordinates: (coordinates: Coordinates) => void;
@@ -35,6 +37,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       bgColor: { r: 255, g: 255, b: 255, a: 1 },
       fontColor: { r: 0, g: 0, b: 0, a: 1 },
       fontFamily: '',
+      fontSize: 13,
       blur: 0,
       size: { width: 400, height: 500 },
       coordinates: { x: 20, y: 20 },
@@ -43,6 +46,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setFontColor: (fontColor) => set(() => ({ fontColor })),
       setFontFamily: (fontFamily) => set(() => ({ fontFamily })),
+      setFontSize: (fontSize) => set(() => ({ fontSize })),
       setBlur: (blur) => set(() => ({ blur })),
       setSize: (size) => set(() => ({ size })),
       setCoordinates: (coordinates) => set(() => ({ coordinates })),

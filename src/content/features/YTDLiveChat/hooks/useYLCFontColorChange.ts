@@ -16,7 +16,7 @@ export const useYLCFontColorChange = () => {
     }
   }, []);
   const changeIframeFontColor = useCallback((rgba: RGBColor) => {
-    if (ref.current && ref.current.contentWindow) {
+    if (ref.current?.contentWindow) {
       const document = ref.current.contentWindow.document.documentElement;
       propertyList.forEach((property) => {
         document.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);

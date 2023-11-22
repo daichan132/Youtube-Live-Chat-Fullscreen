@@ -13,6 +13,7 @@ import { IconType } from 'react-icons';
 import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
+import { FontSizeSlider } from './FontSizeSlider';
 
 interface itemType {
   icon: IconType;
@@ -40,6 +41,11 @@ const items: itemType[] = [
     icon: RiFontFamily,
     title: 'Font Family',
     data: <FontFamilyInput />,
+  },
+  {
+    icon: RiFontFamily,
+    title: 'Font Size',
+    data: <FontSizeSlider />,
   },
   {
     icon: MdBlurOn,
