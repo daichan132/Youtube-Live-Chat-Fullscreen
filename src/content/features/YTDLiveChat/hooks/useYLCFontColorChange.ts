@@ -5,7 +5,6 @@ import { useShallow } from 'zustand/react/shallow';
 
 const propertyList: string[] = [
   '--yt-live-chat-primary-text-color',
-  '--yt-live-chat-secondary-text-color',
   '--yt-live-chat-text-input-field-placeholder-color',
   '--yt-spec-text-primary',
 ];
@@ -29,6 +28,10 @@ export const useYLCFontColorChange = () => {
       propertyList.forEach((property) => {
         document.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
       });
+      document.style.setProperty(
+        '--yt-live-chat-secondary-text-color',
+        `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`,
+      );
     }
   }, []);
   const changeColor = useCallback(

@@ -36,6 +36,9 @@ export const FontColorPicker = () => {
                   overflow: 'hidden',
                   marginBottom: '30px',
                 },
+                alpha: {
+                  display: 'none',
+                },
               },
             }}
           />
