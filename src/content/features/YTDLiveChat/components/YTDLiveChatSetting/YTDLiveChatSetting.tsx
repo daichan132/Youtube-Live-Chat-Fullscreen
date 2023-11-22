@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily, RiHeartLine } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2, RiHeartLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
@@ -43,7 +43,7 @@ const items: itemType[] = [
     data: <FontFamilyInput />,
   },
   {
-    icon: RiFontFamily,
+    icon: RiFontSize2,
     title: 'Font Size',
     data: <FontSizeSlider />,
   },
