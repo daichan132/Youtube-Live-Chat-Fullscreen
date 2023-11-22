@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { CiSettings } from 'react-icons/ci';
 import Modal from 'react-modal';
 import { YTDLiveChatSetting } from '../YTDLiveChatSetting/YTDLiveChatSetting';
@@ -26,7 +25,12 @@ const customStyles = {
 };
 
 export const SettingIcon = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isOpenSettingModal: isOpen, setIsOpenSettingModal: setIsOpen } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isOpenSettingModal: state.isOpenSettingModal,
+      setIsOpenSettingModal: state.setIsOpenSettingModal,
+    })),
+  );
   const { fontColor: rgba } = useYTDLiveChatStore(
     useShallow((state) => ({ fontColor: state.fontColor })),
   );
@@ -39,7 +43,7 @@ export const SettingIcon = () => {
       <CiSettings
         size={24}
         onClick={() => {
-          setIsOpen((a) => !a);
+          setIsOpen(!isOpen);
         }}
         color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
       />
@@ -52,7 +56,7 @@ export const SettingIcon = () => {
         appElement={document.getElementById('my-extension-root') || undefined}
         onAfterClose={() => setIsHover(false)}
       >
-        <YTDLiveChatSetting setIsOpen={setIsOpen} />
+        <YTDLiveChatSetting closeModal={() => setIsOpen(false)} />
       </Modal>
     </>
   );

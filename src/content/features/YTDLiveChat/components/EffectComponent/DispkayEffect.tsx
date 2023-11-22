@@ -7,14 +7,18 @@ export const DisplayEffect = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({ blur: state.blur, alwaysOnDisplay: state.alwaysOnDisplay })),
   );
-  const { isHover, setIsDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isHover: state.isHover, setIsDisplay: state.setIsDisplay })),
+  const { isOpenSettingModal, isHover, setIsDisplay } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isOpenSettingModal: state.isOpenSettingModal,
+      isHover: state.isHover,
+      setIsDisplay: state.setIsDisplay,
+    })),
   );
   const isIdle = useIdle(2e3);
 
   useEffect(() => {
-    setIsDisplay(isHover || !isIdle || alwaysOnDisplay);
-  }, [alwaysOnDisplay, isHover, isIdle, setIsDisplay]);
+    setIsDisplay(isHover || !isIdle || alwaysOnDisplay || isOpenSettingModal);
+  }, [alwaysOnDisplay, isHover, isIdle, setIsDisplay, isOpenSettingModal]);
 
   return null;
 };

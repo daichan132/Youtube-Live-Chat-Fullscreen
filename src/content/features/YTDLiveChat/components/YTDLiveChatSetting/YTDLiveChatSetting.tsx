@@ -34,9 +34,9 @@ const uiItems = [
 ];
 
 interface YTDLiveChatSettingType {
-  setIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+  closeModal?: () => void;
 }
-export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
+export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
   const [item, setItem] = useState<string>('General');
 
   return (
@@ -52,7 +52,7 @@ export const YTDLiveChatSetting = ({ setIsOpen }: YTDLiveChatSettingType) => {
         </div>
         <RiCloseLine
           className={styles['close-button']}
-          onClick={() => setIsOpen && setIsOpen(false)}
+          onClick={() => closeModal && closeModal()}
           size={20}
         />
       </div>
