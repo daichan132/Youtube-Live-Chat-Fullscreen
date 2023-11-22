@@ -11,14 +11,12 @@ export const ReactionButtonDisplaySwitch = () => {
       setReactionButtonDisplay: state.setReactionButtonDisplay,
     })),
   );
-  console.log(reactionButtonDisplay);
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
   return (
     <Switch
       checked={reactionButtonDisplay}
       id="reaction-button-display-switch"
       onChange={(checked) => {
-        console.log(checked);
         changeDisplay(checked);
         setReactionButtonDisplay(checked);
       }}
