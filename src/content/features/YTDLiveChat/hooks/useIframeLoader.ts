@@ -31,6 +31,7 @@ export const useIframeLoader = () => {
           useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
         body.classList.add('always-on-display');
+        body.classList.add('display');
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeDisplay(reactionButtonDisplay);
