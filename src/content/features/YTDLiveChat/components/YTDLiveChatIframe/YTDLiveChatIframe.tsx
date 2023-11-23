@@ -13,14 +13,17 @@ interface YTDLiveChatIframe {
 }
 
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
-  const { ref, loaded } = useIframeLoader();
+  const { ref } = useIframeLoader();
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
   const { blur, alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({ blur: state.blur, alwaysOnDisplay: state.alwaysOnDisplay })),
   );
-  const { isDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay })),
+  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isDisplay: state.isDisplay,
+      isIframeLoaded: state.isIframeLoaded,
+    })),
   );
 
   return (
@@ -28,7 +31,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
       <iframe
         frameBorder={0}
         style={{
-          opacity: loaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
+          opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
           backdropFilter: `blur(${blur}px)`,
         }}
         id="chatframe"
@@ -36,11 +39,18 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
         src={src}
         ref={ref}
       />
-      <CSSTransition nodeRef={nodeRef} in={!loaded} timeout={100} classNames={fade} unmountOnExit>
+      <CSSTransition
+        nodeRef={nodeRef}
+        in={!isIframeLoaded}
+        timeout={100}
+        classNames={fade}
+        unmountOnExit
+      >
         <div
           className={styles['skelton']}
           ref={nodeRef}
           style={{
+            backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
           }}
         />

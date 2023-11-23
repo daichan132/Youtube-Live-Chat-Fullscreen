@@ -1,5 +1,5 @@
 // useIframeLoader.js
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useYLCBgColorChange } from '../hooks/useYLCBgColorChange';
 import { useYLCFontColorChange } from '../hooks/useYLCFontColorChange';
 import { useYLCReactionButtonDisplayChange } from '../hooks/useYLCReactionButtonDisplayChange';
@@ -7,22 +7,26 @@ import { useShallow } from 'zustand/react/shallow';
 import { useYLCFontFamilyChange } from '../hooks/useYLCFontFamilyChange';
 import { useYLCFontSizeChange } from '../hooks/useYLCFontSizeChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
+import { useMount, useUnmount, useUpdateEffect } from 'react-use';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({ alwaysOnDisplay: state.alwaysOnDisplay })),
   );
-  const { isDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay })),
+  const { isDisplay, setIsDisplay, setIsIframeLoaded } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isDisplay: state.isDisplay,
+      setIsDisplay: state.setIsDisplay,
+      setIsIframeLoaded: state.setIsIframeLoaded,
+    })),
   );
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
   const { changeFontFamily } = useYLCFontFamilyChange();
   const { changeFontSize } = useYLCFontSizeChange();
-  useEffect(() => {
+  useMount(() => {
     if (!ref.current) return;
     ref.current.onload = async () => {
       const body = ref.current?.contentDocument?.body;
@@ -37,11 +41,12 @@ export const useIframeLoader = () => {
         changeDisplay(reactionButtonDisplay);
         changeFontFamily(fontFamily);
         changeFontSize(fontSize);
-        setLoaded(true);
+        setIsIframeLoaded(true);
+        setIsDisplay(true);
       }
     };
-  }, [changBgColor, changFontColor, changeDisplay, changeFontFamily, changeFontSize]);
-  useEffect(() => {
+  });
+  useUpdateEffect(() => {
     const body = ref.current?.contentDocument?.body;
     if (!body) return;
 
@@ -57,6 +62,9 @@ export const useIframeLoader = () => {
       body.classList.remove('always-on-display');
     }
   }, [alwaysOnDisplay, isDisplay]);
+  useUnmount(() => {
+    setIsIframeLoaded(false);
+  });
 
-  return { ref, loaded };
+  return { ref };
 };

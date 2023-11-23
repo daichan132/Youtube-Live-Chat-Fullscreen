@@ -40,8 +40,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       setSize: state.setSize,
     })),
   );
-  const { isDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay })),
+  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isDisplay: state.isDisplay,
+      isIframeLoaded: state.isIframeLoaded,
+    })),
   );
   const { clipPath } = useClipPathHandle(isDisplay, isDragging, alwaysOnDisplay);
   const [disableTopTransition, setDisableTopTransition] = useState(true);
@@ -90,10 +93,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
           {...listeners}
+          style={{ opacity: isIframeLoaded ? 1 : 0 }}
         >
           <DragIcon />
         </div>
-        <div className={styles['settingButton']}>
+        <div className={styles['settingButton']} style={{ opacity: isIframeLoaded ? 1 : 0 }}>
           <SettingIcon />
         </div>
         <div className={styles['children']}>{children}</div>
