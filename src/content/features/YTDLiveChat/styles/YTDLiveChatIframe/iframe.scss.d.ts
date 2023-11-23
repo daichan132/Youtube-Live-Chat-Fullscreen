@@ -1,4 +1,5 @@
 export type Styles = {
+  'always-on-display': string;
   chat: string;
   contents: string;
   'custom-yt-app-live-chat-extension': string;

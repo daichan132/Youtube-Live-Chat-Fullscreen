@@ -5,21 +5,25 @@ html {
 }
 
 body.custom-yt-app-live-chat-extension {
-  #contents > #separator {
-    opacity: 0;
-    transition: opacity 200ms ease;
-  }
-  #panel-pages.yt-live-chat-renderer {
-    border-top: none;
-    transition: opacity 200ms ease;
-  }
-
-  &.hover {
+  &.always-on-display {
     #contents > #separator {
-      opacity: 1;
+      opacity: 0;
+      transition: opacity 200ms ease;
     }
+
     #panel-pages.yt-live-chat-renderer {
-      border-top: 1px solid var(--yt-live-chat-panel-pages-border-color);
+      border-top: 1px solid transparent;
+      transition: border-top 200ms ease;
+    }
+
+    &.hover {
+      #contents > #separator {
+        opacity: 1;
+      }
+
+      #panel-pages.yt-live-chat-renderer {
+        border-top: 1px solid var(--yt-live-chat-panel-pages-border-color);
+      }
     }
   }
 

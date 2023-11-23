@@ -29,8 +29,12 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
-  const { size, setSize } = useYTDLiveChatStore(
-    useShallow((state) => ({ size: state.size, setSize: state.setSize })),
+  const { size, alwaysOnDisplay, setSize } = useYTDLiveChatStore(
+    useShallow((state) => ({
+      size: state.size,
+      alwaysOnDisplay: state.alwaysOnDisplay,
+      setSize: state.setSize,
+    })),
   );
   const { isDisplay, isHover } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({ isDisplay: state.isDisplay, isHover: state.isHover })),
@@ -47,7 +51,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         transform: CSS.Translate.toString(transform),
         top,
         left,
-        clipPath: isHover ? 'inset(0 0 round 10px)' : 'inset(48px 0 round 10px)',
+        clipPath:
+          isHover || isDragging || !alwaysOnDisplay
+            ? 'inset(0 round 10px)'
+            : 'inset(36px 0 48px 0 round 10px)',
         transition: 'clip-path 200ms ease',
       }}
       bounds={'window'}

@@ -1,63 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { CSSTransition } from 'react-transition-group';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 import '../../styles/YTDLiveChatIframe/iframe.scss';
-import { useYLCBgColorChange } from '../../hooks/useYLCBgColorChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { useYLCFontColorChange } from '../../hooks/useYLCFontColorChange';
-import { useYLCReactionButtonDisplayChange } from '../../hooks/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
-import { useYLCFontFamilyChange } from '../../hooks/useYLCFontFamilyChange';
-import { useYLCFontSizeChange } from '../../hooks/useYLCFontSizeChange';
+import { useIframeLoader } from '../../hooks/useIframeLoader';
 
 interface YTDLiveChatIframe {
   src: string;
 }
 
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
-  const ref = useRef<HTMLIFrameElement>(null);
-  const [loaded, setLoaded] = useState<boolean>(false);
+  const { ref, loaded } = useIframeLoader();
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
   const { blur } = useYTDLiveChatStore(useShallow((state) => ({ blur: state.blur })));
-  const { isDisplay, isHover } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay, isHover: state.isHover })),
+  const { isDisplay } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay })),
   );
-  const { changeColor: changBgColor } = useYLCBgColorChange();
-  const { changeColor: changFontColor } = useYLCFontColorChange();
-  const { changeDisplay } = useYLCReactionButtonDisplayChange();
-  const { changeFontFamily } = useYLCFontFamilyChange();
-  const { changeFontSize } = useYLCFontSizeChange();
-  useEffect(() => {
-    if (ref.current) {
-      ref.current.onload = async () => {
-        const body = ref.current?.contentDocument?.body;
-        if (body) {
-          body.classList.add('custom-yt-app-live-chat-extension');
-          const { fontSize, fontFamily, bgColor, fontColor, reactionButtonDisplay } =
-            useYTDLiveChatStore.getState();
-          changBgColor(bgColor);
-          changFontColor(fontColor);
-          changeDisplay(reactionButtonDisplay);
-          changeFontFamily(fontFamily);
-          changeFontSize(fontSize);
-          setLoaded(true);
-        }
-      };
-    }
-  }, [changBgColor, changFontColor, changeDisplay, changeFontFamily, changeFontSize]);
-  useEffect(() => {
-    const body = ref.current?.contentDocument?.body;
-    if (!body) return;
-
-    if (isHover) {
-      body.classList.add('hover');
-    } else {
-      body.classList.remove('hover');
-    }
-  }, [isHover]);
 
   return (
     <>
