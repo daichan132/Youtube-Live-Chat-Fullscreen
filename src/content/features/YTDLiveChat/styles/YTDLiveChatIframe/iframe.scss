@@ -5,15 +5,16 @@ html {
 
 body.custom-yt-app-live-chat-extension {
   /* ------------------------ background color setting ------------------------ */
-  #item-scroller.yt-live-chat-item-list-renderer {
-    transition: background-color 200ms ease;
-
-    &::-webkit-scrollbar-thumb {
-      background-color: transparent;
+  #chat {
+    #item-scroller.yt-live-chat-item-list-renderer {
+      &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+      }
     }
-
-    &:hover::-webkit-scrollbar-thumb {
-      background-color: var(--yt-spec-icon-disabled);
+    &:hover {
+      #item-scroller.yt-live-chat-item-list-renderer::-webkit-scrollbar-thumb {
+        background-color: var(--yt-spec-icon-disabled);
+      }
     }
   }
 

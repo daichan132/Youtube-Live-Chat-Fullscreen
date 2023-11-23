@@ -1,4 +1,5 @@
 export type Styles = {
+  chat: string;
   'custom-yt-app-live-chat-extension': string;
   emoji: string;
   item: string;
