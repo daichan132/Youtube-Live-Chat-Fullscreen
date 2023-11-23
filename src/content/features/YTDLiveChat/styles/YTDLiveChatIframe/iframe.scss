@@ -4,6 +4,7 @@ html {
 }
 
 body.custom-yt-app-live-chat-extension {
+  /* --------------------------- font color setting --------------------------- */
   .item.yt-dropdown-menu,
   yt-formatted-string.ytd-menu-service-item-renderer,
   ytd-menu-service-item-renderer[system-icons] yt-icon.ytd-menu-service-item-renderer,
@@ -26,6 +27,11 @@ body.custom-yt-app-live-chat-extension {
   /* ---------------------------- font size setting --------------------------- */
   yt-live-chat-text-message-renderer {
     font-size: var(--extension-yt-live-chat-font-size);
+  }
+
+  #message.yt-live-chat-text-message-renderer .emoji.yt-live-chat-text-message-renderer {
+    width: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
+    height: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
   }
 
   // yt-live-chat-renderer {
