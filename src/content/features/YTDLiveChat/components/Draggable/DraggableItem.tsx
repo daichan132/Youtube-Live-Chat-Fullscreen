@@ -36,9 +36,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       setSize: state.setSize,
     })),
   );
-  const { isDisplay, isHover } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay, isHover: state.isHover })),
+  const { isDisplay } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay })),
   );
+  console.log(isDisplay);
 
   return (
     <Resizable
@@ -52,7 +53,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         top,
         left,
         clipPath:
-          isHover || isDragging || !alwaysOnDisplay
+          isDisplay || isDragging || !alwaysOnDisplay
             ? 'inset(0 round 10px)'
             : 'inset(36px 0 48px 0 round 10px)',
         transition: 'clip-path 200ms ease',

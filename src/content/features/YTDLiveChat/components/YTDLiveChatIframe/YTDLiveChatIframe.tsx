@@ -16,7 +16,9 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const { ref, loaded } = useIframeLoader();
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
-  const { blur } = useYTDLiveChatStore(useShallow((state) => ({ blur: state.blur })));
+  const { blur, alwaysOnDisplay } = useYTDLiveChatStore(
+    useShallow((state) => ({ blur: state.blur, alwaysOnDisplay: state.alwaysOnDisplay })),
+  );
   const { isDisplay } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({ isDisplay: state.isDisplay })),
   );
@@ -26,7 +28,7 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
       <iframe
         frameBorder={0}
         style={{
-          opacity: loaded && isDisplay ? 1 : 0,
+          opacity: loaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
           backdropFilter: `blur(${blur}px)`,
         }}
         id="chatframe"

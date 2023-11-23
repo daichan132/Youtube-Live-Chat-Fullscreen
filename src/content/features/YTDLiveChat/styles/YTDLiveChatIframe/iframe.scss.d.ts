@@ -3,8 +3,8 @@ export type Styles = {
   chat: string;
   contents: string;
   'custom-yt-app-live-chat-extension': string;
+  display: string;
   emoji: string;
-  hover: string;
   item: string;
   'item-scroller': string;
   message: string;

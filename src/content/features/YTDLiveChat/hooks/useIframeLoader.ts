@@ -14,7 +14,9 @@ export const useIframeLoader = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({ alwaysOnDisplay: state.alwaysOnDisplay })),
   );
-  const { isHover } = useYTDLiveChatNoLsStore(useShallow((state) => ({ isHover: state.isHover })));
+  const { isDisplay } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay })),
+  );
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
@@ -29,7 +31,6 @@ export const useIframeLoader = () => {
           useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
         if (alwaysOnDisplay) body.classList.add('always-on-display');
-        console.log(alwaysOnDisplay);
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeDisplay(reactionButtonDisplay);
@@ -43,10 +44,10 @@ export const useIframeLoader = () => {
     const body = ref.current?.contentDocument?.body;
     if (!body) return;
 
-    if (isHover) {
-      body.classList.add('hover');
+    if (isDisplay) {
+      body.classList.add('display');
     } else {
-      body.classList.remove('hover');
+      body.classList.remove('display');
     }
 
     if (alwaysOnDisplay) {
@@ -54,7 +55,7 @@ export const useIframeLoader = () => {
     } else {
       body.classList.remove('always-on-display');
     }
-  }, [isHover, alwaysOnDisplay]);
+  }, [alwaysOnDisplay, isDisplay]);
 
   return { ref, loaded };
 };
