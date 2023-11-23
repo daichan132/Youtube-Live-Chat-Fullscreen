@@ -39,7 +39,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { isDisplay } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({ isDisplay: state.isDisplay })),
   );
-  console.log(isDisplay);
 
   return (
     <Resizable
