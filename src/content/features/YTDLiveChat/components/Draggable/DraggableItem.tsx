@@ -32,8 +32,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { size, setSize } = useYTDLiveChatStore(
     useShallow((state) => ({ size: state.size, setSize: state.setSize })),
   );
-  const { isDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay })),
+  const { isDisplay, isHover } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay, isHover: state.isHover })),
   );
 
   return (
@@ -47,6 +47,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         transform: CSS.Translate.toString(transform),
         top,
         left,
+        clipPath: isHover ? 'inset(0 0 round 10px)' : 'inset(48px 0 round 10px)',
+        transition: 'clip-path 200ms ease',
       }}
       bounds={'window'}
       onResizeStop={(event, direction, ref, d) => {

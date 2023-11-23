@@ -19,6 +19,12 @@ interface YTDLiveChatIframe {
 export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
   const ref = useRef<HTMLIFrameElement>(null);
   const [loaded, setLoaded] = useState<boolean>(false);
+  const nodeRef = useRef(null);
+  const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
+  const { blur } = useYTDLiveChatStore(useShallow((state) => ({ blur: state.blur })));
+  const { isDisplay, isHover } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({ isDisplay: state.isDisplay, isHover: state.isHover })),
+  );
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
@@ -42,12 +48,16 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
       };
     }
   }, [changBgColor, changFontColor, changeDisplay, changeFontFamily, changeFontSize]);
-  const nodeRef = useRef(null);
-  const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
-  const { blur } = useYTDLiveChatStore(useShallow((state) => ({ blur: state.blur })));
-  const { isDisplay } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({ isDisplay: state.isDisplay })),
-  );
+  useEffect(() => {
+    const body = ref.current?.contentDocument?.body;
+    if (!body) return;
+
+    if (isHover) {
+      body.classList.add('hover');
+    } else {
+      body.classList.remove('hover');
+    }
+  }, [isHover]);
 
   return (
     <>
