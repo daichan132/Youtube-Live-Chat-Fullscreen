@@ -10,6 +10,16 @@ import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 
+const enable = {
+  top: false,
+  right: true,
+  bottom: true,
+  left: false,
+  topRight: false,
+  bottomRight: true,
+  bottomLeft: false,
+  topLeft: false,
+};
 interface DraggableItemType {
   top?: number;
   left?: number;
@@ -31,16 +41,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       size={size}
       minWidth={300}
       minHeight={400}
-      enable={{
-        top: false,
-        right: true,
-        bottom: true,
-        left: false,
-        topRight: false,
-        bottomRight: true,
-        bottomLeft: false,
-        topLeft: false,
-      }}
+      enable={enable}
       className={styles['Resizable']}
       style={{
         transform: CSS.Translate.toString(transform),

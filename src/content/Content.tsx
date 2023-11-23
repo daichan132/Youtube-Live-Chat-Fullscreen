@@ -16,13 +16,13 @@ const Content = () => {
   return (
     <>
       {/* If the pathname of each iframe is /live_chat */}
-      {window.location.pathname === '/live_chat' ? (
+      {pathname === '/live_chat' ? (
         <>
           <EmojiFix />
           <AddChatMessageCopyIcon />
         </>
       ) : null}
-      {/* If the pathname of the tab is live_chat */}
+      {/* If the pathname of the tab is watch */}
       {pathname === '/watch' && videoId ? <YTDLiveChat videoID={videoId} /> : null}
     </>
   );
