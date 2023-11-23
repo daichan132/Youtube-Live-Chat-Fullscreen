@@ -12,7 +12,7 @@ interface YTDLiveChatNoLsStoreState {
 
 export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set) => ({
   isHover: false,
-  isDisplay: false,
+  isDisplay: true,
   isOpenSettingModal: false,
   setIsHover: (isHover) => set(() => ({ isHover })),
   setIsDisplay: (isDisplay) => set(() => ({ isDisplay })),

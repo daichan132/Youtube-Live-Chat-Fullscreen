@@ -27,10 +27,10 @@ export const useIframeLoader = () => {
     ref.current.onload = async () => {
       const body = ref.current?.contentDocument?.body;
       if (body) {
-        const { alwaysOnDisplay, fontSize, fontFamily, bgColor, fontColor, reactionButtonDisplay } =
+        const { fontSize, fontFamily, bgColor, fontColor, reactionButtonDisplay } =
           useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
-        if (alwaysOnDisplay) body.classList.add('always-on-display');
+        body.classList.add('always-on-display');
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeDisplay(reactionButtonDisplay);
