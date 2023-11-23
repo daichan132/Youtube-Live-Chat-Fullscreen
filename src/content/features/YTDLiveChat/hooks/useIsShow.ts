@@ -53,7 +53,7 @@ export const useIsShow = (videoID: string) => {
         coordinates: { x, y },
         setDefaultPosition,
       } = useYTDLiveChatStore.getState();
-      if (!(0 <= x && width + x <= innerWidth && 0 <= y && height + y <= innerHeight)) {
+      if (x < 0 || innerWidth < width + x || y < 0 || innerHeight < height + y) {
         setDefaultPosition();
       }
       setIsChecked(true);
