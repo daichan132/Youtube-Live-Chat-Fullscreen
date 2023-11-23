@@ -56,10 +56,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         }
       }}
     >
-      <div
-        className={classNames(styles['Container'], isDragging && styles['dragging'])}
-        ref={setNodeRef}
-      >
+      <div className={classNames(styles['Container'])} ref={setNodeRef}>
         <div
           className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
