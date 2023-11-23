@@ -9,9 +9,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useClipPathHandle } from '../../hooks/useClipPathHandle';
 import { bottomClip, topClip } from '../../utils/clipPathConst';
+import { useDisanleTopTransition } from '../../hooks/useDisanleTopTransition';
 
 const enable = {
   top: false,
@@ -47,17 +48,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     })),
   );
   const { clipPath } = useClipPathHandle(isDisplay, isDragging, alwaysOnDisplay);
-  const [disableTopTransition, setDisableTopTransition] = useState(true);
-  useEffect(() => {
-    if (isDragging) {
-      setDisableTopTransition(true);
-    } else {
-      const timeoutId = setTimeout(() => {
-        setDisableTopTransition(false);
-      }, 200);
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isDragging]);
+  const disableTopTransition = useDisanleTopTransition(isDragging);
 
   return (
     <Resizable

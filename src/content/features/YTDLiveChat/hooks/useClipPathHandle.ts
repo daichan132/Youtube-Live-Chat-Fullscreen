@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useYTDLiveChatStore } from '../../../../stores';
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
@@ -17,16 +17,19 @@ export const useClipPathHandle = (
       setCoordinates: state.setCoordinates,
     })),
   );
-  const handleClipPathChange = (clipPath: boolean) => {
-    const { size, coordinates } = useYTDLiveChatStore.getState();
-    if (clipPath) {
-      setCoordinates({ x: coordinates.x, y: coordinates.y - topClip });
-      setSize({ width: size.width, height: size.height + (topClip + bottomClip) });
-    } else {
-      setCoordinates({ x: coordinates.x, y: coordinates.y + topClip });
-      setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
-    }
-  };
+  const handleClipPathChange = useCallback(
+    (clipPath: boolean) => {
+      const { size, coordinates } = useYTDLiveChatStore.getState();
+      if (clipPath) {
+        setCoordinates({ x: coordinates.x, y: coordinates.y - topClip });
+        setSize({ width: size.width, height: size.height + (topClip + bottomClip) });
+      } else {
+        setCoordinates({ x: coordinates.x, y: coordinates.y + topClip });
+        setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
+      }
+    },
+    [setCoordinates, setSize],
+  );
   useEffect(() => {
     setClipPath(!isDisplay && !isDragging && alwaysOnDisplay);
   }, [isDisplay, isDragging, alwaysOnDisplay]);
