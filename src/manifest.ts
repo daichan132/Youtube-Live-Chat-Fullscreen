@@ -7,8 +7,8 @@ import { version } from '../package.json';
 
 const manifest = defineManifest(async (env) => ({
   manifest_version: 3,
-  name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Live Emoji Helper`,
-  description: 'Youtube Live Emoji Helper',
+  name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Live Chat Fullscreen`,
+  description: 'This extension allows Chat to be used even when Youtube Live is in Fullscreen.',
   version,
   web_accessible_resources: [
     {
@@ -29,7 +29,7 @@ const manifest = defineManifest(async (env) => ({
   host_permissions: [],
   action: {
     matches: ['https://www.youtube.com/*'],
-    default_popup: 'popup/popup.html',
+    // default_popup: 'popup/popup.html',
     default_icon: {
       '16': 'images/extension_16.png',
       '32': 'images/extension_32.png',

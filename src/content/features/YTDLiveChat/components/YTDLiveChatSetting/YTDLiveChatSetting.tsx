@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2, RiHeartLine } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2 } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './BgColorPicker';
 import { BlurSlider } from './BlurSlider';
@@ -10,7 +10,7 @@ import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
 import { IconType } from 'react-icons';
-import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
+// import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { FontSizeSlider } from './FontSizeSlider';
@@ -52,11 +52,11 @@ const items: itemType[] = [
     title: 'Blur',
     data: <BlurSlider />,
   },
-  {
-    icon: RiHeartLine,
-    title: 'Reaction Button',
-    data: <ReactionButtonDisplaySwitch />,
-  },
+  // {
+  //   icon: RiHeartLine,
+  //   title: 'Reaction Button',
+  //   data: <ReactionButtonDisplaySwitch />,
+  // },
 ];
 
 interface YTDLiveChatSettingType {
