@@ -14,11 +14,12 @@ export const useIframeLoader = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({ alwaysOnDisplay: state.alwaysOnDisplay })),
   );
-  const { isDisplay, setIsDisplay, setIsIframeLoaded } = useYTDLiveChatNoLsStore(
+  const { isDisplay, setIsDisplay, setIsIframeLoaded, setClip } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       isDisplay: state.isDisplay,
       setIsDisplay: state.setIsDisplay,
       setIsIframeLoaded: state.setIsIframeLoaded,
+      setClip: state.setClip,
     })),
   );
   const { changeColor: changBgColor } = useYLCBgColorChange();
@@ -36,6 +37,10 @@ export const useIframeLoader = () => {
         body.classList.add('custom-yt-app-live-chat-extension');
         body.classList.add('always-on-display');
         body.classList.add('display');
+        const header = (body.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 5;
+        const input =
+          (body.querySelector('yt-live-chat-message-input-renderer')?.clientHeight || 0) - 5;
+        if (header && input) setClip({ header, input });
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeDisplay(reactionButtonDisplay);

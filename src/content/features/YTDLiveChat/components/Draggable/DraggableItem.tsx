@@ -11,7 +11,6 @@ import { SettingIcon } from './SettingIcon';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 import { useState } from 'react';
 import { useClipPathHandle } from '../../hooks/useClipPathHandle';
-import { bottomClip, topClip } from '../../utils/clipPathConst';
 import { useDisanleTopTransition } from '../../hooks/useDisanleTopTransition';
 
 const enable = {
@@ -41,10 +40,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       setSize: state.setSize,
     })),
   );
-  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
+  const { isDisplay, isIframeLoaded, clip } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       isDisplay: state.isDisplay,
       isIframeLoaded: state.isIframeLoaded,
+      clip: state.clip,
     })),
   );
   const { clipPath } = useClipPathHandle(isDisplay, isDragging, alwaysOnDisplay);
@@ -62,7 +62,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         top,
         left,
         clipPath: clipPath
-          ? `inset(${topClip}px 0 ${bottomClip}px 0 round 10px)`
+          ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
           : 'inset(0 round 10px)',
         transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}, ${
           !isResizing && 'height 200ms ease'

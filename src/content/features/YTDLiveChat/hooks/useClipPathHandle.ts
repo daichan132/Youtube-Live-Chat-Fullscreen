@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useYTDLiveChatStore } from '../../../../stores';
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
-import { bottomClip, topClip } from '../utils/clipPathConst';
 
 export const useClipPathHandle = (
   isDisplay: boolean,
@@ -17,9 +16,17 @@ export const useClipPathHandle = (
       setCoordinates: state.setCoordinates,
     })),
   );
+  const { clip } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      clip: state.clip,
+    })),
+  );
   const handleClipPathChange = useCallback(
     (clipPath: boolean) => {
       const { size, coordinates } = useYTDLiveChatStore.getState();
+      const topClip = clip.header;
+      const bottomClip = clip.input;
+      console.log(clip);
       if (clipPath) {
         setCoordinates({ x: coordinates.x, y: coordinates.y - topClip });
         setSize({ width: size.width, height: size.height + (topClip + bottomClip) });
@@ -28,7 +35,7 @@ export const useClipPathHandle = (
         setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
       }
     },
-    [setCoordinates, setSize],
+    [clip, setCoordinates, setSize],
   );
   useEffect(() => {
     setClipPath(!isDisplay && !isDragging && alwaysOnDisplay);
