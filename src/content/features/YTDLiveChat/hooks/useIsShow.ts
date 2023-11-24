@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useIsFullScreen } from './useIsFullScreen';
 import { useYTDLiveChatStore } from '../../../../stores';
 
+const gap = 10;
 export const useIsShow = (videoID: string) => {
   const isFullscreen = useIsFullScreen();
   const [isLive, setIsLive] = useState<boolean>(false);
@@ -53,7 +54,12 @@ export const useIsShow = (videoID: string) => {
         coordinates: { x, y },
         setDefaultPosition,
       } = useYTDLiveChatStore.getState();
-      if (x < 0 || innerWidth < width + x || y < 0 || innerHeight < height + y) {
+      if (
+        x + gap < 0 ||
+        innerWidth + gap < width + x ||
+        y + gap < 0 ||
+        innerHeight + gap < height + y
+      ) {
         setDefaultPosition();
       }
       setIsChecked(true);

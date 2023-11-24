@@ -26,7 +26,6 @@ export const useClipPathHandle = (
       const { size, coordinates } = useYTDLiveChatStore.getState();
       const topClip = clip.header;
       const bottomClip = clip.input;
-      console.log(clip);
       if (clipPath) {
         setCoordinates({ x: coordinates.x, y: coordinates.y - topClip });
         setSize({ width: size.width, height: size.height + (topClip + bottomClip) });
