@@ -8,6 +8,7 @@ import { useYLCFontFamilyChange } from '../hooks/useYLCFontFamilyChange';
 import { useYLCFontSizeChange } from '../hooks/useYLCFontSizeChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
 import { useMount, useUnmount, useUpdateEffect } from 'react-use';
+import { useYLCSpaceChange } from './useYLCSpaceChange';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
@@ -27,12 +28,13 @@ export const useIframeLoader = () => {
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
   const { changeFontFamily } = useYLCFontFamilyChange();
   const { changeFontSize } = useYLCFontSizeChange();
+  const { changeSpace } = useYLCSpaceChange();
   useMount(() => {
     if (!ref.current) return;
     ref.current.onload = async () => {
       const body = ref.current?.contentDocument?.body;
       if (body) {
-        const { fontSize, fontFamily, bgColor, fontColor, reactionButtonDisplay } =
+        const { fontSize, fontFamily, bgColor, fontColor, reactionButtonDisplay, space } =
           useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
         body.classList.add('always-on-display');
@@ -48,6 +50,7 @@ export const useIframeLoader = () => {
         changeDisplay(reactionButtonDisplay);
         changeFontFamily(fontFamily);
         changeFontSize(fontSize);
+        changeSpace(space);
         setIsIframeLoaded(true);
         setIsDisplay(true);
       }

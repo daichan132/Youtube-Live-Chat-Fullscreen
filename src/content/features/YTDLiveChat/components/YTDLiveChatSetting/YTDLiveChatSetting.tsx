@@ -7,13 +7,14 @@ import { BlurSlider } from './BlurSlider';
 import { FontColorPicker } from './FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
 import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
-import { MdBlurOn } from 'react-icons/md';
+import { MdBlurOn, MdExpand } from 'react-icons/md';
 import { FontFamilyInput } from './FontFamilyInput';
 import { IconType } from 'react-icons';
 // import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { FontSizeSlider } from './FontSizeSlider';
+import { SpaceSlider } from './SpaceSlider';
 
 interface itemType {
   icon: IconType;
@@ -51,6 +52,11 @@ const items: itemType[] = [
     icon: MdBlurOn,
     title: 'Blur',
     data: <BlurSlider />,
+  },
+  {
+    icon: MdExpand,
+    title: 'Space',
+    data: <SpaceSlider />,
   },
   // {
   //   icon: RiHeartLine,

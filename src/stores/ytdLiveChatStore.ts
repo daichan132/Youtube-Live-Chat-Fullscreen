@@ -15,6 +15,7 @@ interface YTDLiveChatStoreState {
   fontFamily: string;
   fontSize: number;
   blur: number;
+  space: number;
   size: sizeType;
   coordinates: Coordinates;
   alwaysOnDisplay: boolean;
@@ -24,6 +25,7 @@ interface YTDLiveChatStoreState {
   setFontFamily: (fontFamily: string) => void;
   setFontSize: (fontSize: number) => void;
   setBlur: (blur: number) => void;
+  setSpace: (space: number) => void;
   setSize: (size: sizeType) => void;
   setCoordinates: (coordinates: Coordinates) => void;
   setDefaultPosition: () => void;
@@ -39,6 +41,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       fontFamily: '',
       fontSize: 13,
       blur: 0,
+      space: 0,
       size: { width: 400, height: 500 },
       coordinates: { x: 20, y: 20 },
       alwaysOnDisplay: false,
@@ -48,6 +51,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setFontFamily: (fontFamily) => set(() => ({ fontFamily })),
       setFontSize: (fontSize) => set(() => ({ fontSize })),
       setBlur: (blur) => set(() => ({ blur })),
+      setSpace: (space) => set(() => ({ space })),
       setSize: (size) => set(() => ({ size })),
       setCoordinates: (coordinates) => set(() => ({ coordinates })),
       setDefaultPosition: () =>
