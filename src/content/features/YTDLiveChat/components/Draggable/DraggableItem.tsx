@@ -94,7 +94,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         >
           <SettingIcon />
         </div>
-        <div className={styles['children']}>{children}</div>
+        <div className={styles['children']}>
+          {isDragging && <div className={styles['overlay']} />}
+          {children}
+        </div>
       </div>
     </Resizable>
   );

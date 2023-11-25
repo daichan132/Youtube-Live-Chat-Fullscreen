@@ -3,6 +3,7 @@ export type Styles = {
   Container: string;
   dragButton: string;
   dragging: string;
+  overlay: string;
   Resizable: string;
   settingButton: string;
 };

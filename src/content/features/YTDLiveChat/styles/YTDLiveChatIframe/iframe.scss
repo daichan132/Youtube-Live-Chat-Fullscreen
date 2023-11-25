@@ -76,6 +76,9 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-text-message-renderer {
     margin: var(--extension-yt-live-chat-spacing) 0;
   }
+  yt-live-chat-text-message-renderer.yt-live-chat-banner-renderer {
+    margin: 0;
+  }
 
   // yt-live-chat-renderer {
   //   background-color: rgba(250, 250, 250, 0.7);
