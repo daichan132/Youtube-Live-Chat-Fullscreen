@@ -27,6 +27,10 @@ body.custom-yt-app-live-chat-extension {
     }
   }
 
+  #panel-pages.yt-live-chat-renderer {
+    border-bottom: none;
+  }
+
   /* ------------------------ background color setting ------------------------ */
   #chat {
     #item-scroller.yt-live-chat-item-list-renderer {
@@ -40,6 +44,14 @@ body.custom-yt-app-live-chat-extension {
         background-color: var(--yt-spec-icon-disabled);
       }
     }
+  }
+
+  #right-arrow-container.yt-live-chat-ticker-renderer {
+    background: none;
+  }
+
+  #left-arrow-container.yt-live-chat-ticker-renderer {
+    background: none;
   }
 
   /* --------------------------- font color setting --------------------------- */
@@ -76,6 +88,7 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-text-message-renderer {
     margin: var(--extension-yt-live-chat-spacing) 0;
   }
+
   yt-live-chat-text-message-renderer.yt-live-chat-banner-renderer {
     margin: 0;
   }
