@@ -43,7 +43,7 @@ export const useIframeLoader = () => {
         const input =
           (body.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
             body.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||
-            0) - 12;
+            0) - 4;
         if (header && input) setClip({ header, input });
         changBgColor(bgColor);
         changFontColor(fontColor);

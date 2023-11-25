@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { RGBColor } from 'react-color';
 
-const propertyList: string[] = [
-  '--yt-live-chat-primary-text-color',
+const propertyList: string[] = ['--yt-live-chat-primary-text-color', '--yt-spec-text-primary'];
+
+const propertyLightList: string[] = [
   '--yt-live-chat-text-input-field-placeholder-color',
-  '--yt-spec-text-primary',
+  '--yt-live-chat-secondary-text-color',
 ];
 
 export const useYLCFontColorChange = () => {
@@ -21,10 +22,12 @@ export const useYLCFontColorChange = () => {
       propertyList.forEach((property) => {
         document.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
       });
-      document.style.setProperty(
-        '--yt-live-chat-secondary-text-color',
-        `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`,
-      );
+      propertyLightList.forEach((property) => {
+        document.style.setProperty(
+          property,
+          `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`,
+        );
+      });
     }
   }, []);
   const changeColor = useCallback(
