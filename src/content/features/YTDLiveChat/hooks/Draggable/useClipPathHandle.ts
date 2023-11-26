@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 

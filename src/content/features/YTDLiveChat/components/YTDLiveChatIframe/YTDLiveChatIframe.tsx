@@ -6,7 +6,7 @@ import '../../styles/YTDLiveChatIframe/iframe.scss';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import classNames from 'classnames';
-import { useIframeLoader } from '../../hooks/useIframeLoader';
+import { useIframeLoader } from '../../hooks/YTDLiveChatIframe/useIframeLoader';
 
 interface YTDLiveChatIframe {
   src: string;

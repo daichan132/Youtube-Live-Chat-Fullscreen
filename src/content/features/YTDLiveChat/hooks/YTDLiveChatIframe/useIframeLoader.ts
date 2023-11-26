@@ -1,14 +1,14 @@
 // useIframeLoader.js
 import { useRef } from 'react';
-import { useYLCBgColorChange } from './YLCChange/useYLCBgColorChange';
-import { useYLCFontColorChange } from './YLCChange/useYLCFontColorChange';
-import { useYLCReactionButtonDisplayChange } from './YLCChange/useYLCReactionButtonDisplayChange';
+import { useYLCBgColorChange } from '../YTDLiveChatSetting/useYLCBgColorChange';
+import { useYLCFontColorChange } from '../YTDLiveChatSetting/useYLCFontColorChange';
+import { useYLCReactionButtonDisplayChange } from '../YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
-import { useYLCFontFamilyChange } from './YLCChange/useYLCFontFamilyChange';
-import { useYLCFontSizeChange } from './YLCChange/useYLCFontSizeChange';
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
+import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange';
+import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange';
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useMount, useUnmount, useUpdateEffect } from 'react-use';
-import { useYLCSpaceChange } from './YLCChange/useYLCSpaceChange';
+import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);

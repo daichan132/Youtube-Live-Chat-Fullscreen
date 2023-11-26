@@ -2,7 +2,7 @@ import { ChromePicker, ColorResult, RGBColor } from 'react-color';
 import { useCallback, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
-import { useYLCFontColorChange } from '../../hooks/YLCChange/useYLCFontColorChange';
+import { useYLCFontColorChange } from '../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 

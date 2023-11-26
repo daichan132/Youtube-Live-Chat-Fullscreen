@@ -1,4 +1,4 @@
-import { useYLCFontFamilyChange } from '../../hooks/YLCChange/useYLCFontFamilyChange';
+import { useYLCFontFamilyChange } from '../../hooks/YTDLiveChatSetting/useYLCFontFamilyChange';
 import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import styles from '../../styles/YTDLiveChatSetting/FontFamily.module.scss';

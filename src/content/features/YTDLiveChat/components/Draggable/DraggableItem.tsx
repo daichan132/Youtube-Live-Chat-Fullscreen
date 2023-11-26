@@ -10,8 +10,8 @@ import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 import { useEffect, useState } from 'react';
-import { useClipPathHandle } from '../../hooks/useClipPathHandle';
-import { useDisanleTopTransition } from '../../hooks/useDisanleTopTransition';
+import { useClipPathHandle } from '../../hooks/Draggable/useClipPathHandle';
+import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
 
 const enable = {
   top: false,
