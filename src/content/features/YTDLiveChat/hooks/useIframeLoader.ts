@@ -1,14 +1,14 @@
 // useIframeLoader.js
 import { useRef } from 'react';
-import { useYLCBgColorChange } from '../hooks/useYLCBgColorChange';
-import { useYLCFontColorChange } from '../hooks/useYLCFontColorChange';
-import { useYLCReactionButtonDisplayChange } from '../hooks/useYLCReactionButtonDisplayChange';
+import { useYLCBgColorChange } from './YLCChange/useYLCBgColorChange';
+import { useYLCFontColorChange } from './YLCChange/useYLCFontColorChange';
+import { useYLCReactionButtonDisplayChange } from './YLCChange/useYLCReactionButtonDisplayChange';
 import { useShallow } from 'zustand/react/shallow';
-import { useYLCFontFamilyChange } from '../hooks/useYLCFontFamilyChange';
-import { useYLCFontSizeChange } from '../hooks/useYLCFontSizeChange';
+import { useYLCFontFamilyChange } from './YLCChange/useYLCFontFamilyChange';
+import { useYLCFontSizeChange } from './YLCChange/useYLCFontSizeChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../stores';
 import { useMount, useUnmount, useUpdateEffect } from 'react-use';
-import { useYLCSpaceChange } from './useYLCSpaceChange';
+import { useYLCSpaceChange } from './YLCChange/useYLCSpaceChange';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
@@ -39,7 +39,7 @@ export const useIframeLoader = () => {
         body.classList.add('custom-yt-app-live-chat-extension');
         body.classList.add('always-on-display');
         body.classList.add('display');
-        const header = (body.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 16;
+        const header = (body.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8;
         const input =
           (body.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
             body.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||

@@ -3,7 +3,7 @@ import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { useInitializedSlider } from '../../hooks/useInitializedSlider';
 import styles from '../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
-import { useYLCSpaceChange } from '../../hooks/useYLCSpaceChange';
+import { useYLCSpaceChange } from '../../hooks/YLCChange/useYLCSpaceChange';
 
 const minSize = 0;
 const maxSize = 40;

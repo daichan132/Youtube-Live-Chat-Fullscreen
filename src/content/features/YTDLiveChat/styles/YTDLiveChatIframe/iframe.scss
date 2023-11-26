@@ -84,6 +84,11 @@ body.custom-yt-app-live-chat-extension {
     height: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
   }
 
+  yt-live-chat-text-message-renderer > yt-img-shadow > img.yt-img-shadow {
+    width: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+    height: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+  }
+
   /* ----------------------------- margin setting ----------------------------- */
   yt-live-chat-text-message-renderer {
     margin: var(--extension-yt-live-chat-spacing) 0;

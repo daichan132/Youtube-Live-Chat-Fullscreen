@@ -28,6 +28,7 @@
     }
 
     &.dragging > svg {
+      background-color: rgba(0, 0, 0, 0.1);
       &:hover {
         cursor: grabbing;
       }
@@ -63,6 +64,7 @@
       width: 100%;
       height: 100%;
       background-color: transparent;
+      cursor: grabbing;
     }
   }
 }

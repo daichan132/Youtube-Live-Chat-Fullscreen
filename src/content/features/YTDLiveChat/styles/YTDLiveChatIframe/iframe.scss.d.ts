@@ -16,6 +16,7 @@ export type Styles = {
   title: string;
   'yt-dropdown-menu': string;
   'yt-emoji-picker-category-renderer': string;
+  'yt-img-shadow': string;
   'yt-live-chat-banner-renderer': string;
   'yt-live-chat-item-list-renderer': string;
   'yt-live-chat-renderer': string;
