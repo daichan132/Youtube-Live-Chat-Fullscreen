@@ -19,7 +19,7 @@ interface YTDLiveChatStoreState {
   size: sizeType;
   coordinates: Coordinates;
   alwaysOnDisplay: boolean;
-  reactionButtonDisplay: boolean;
+  userNameDisplay: boolean;
   setBgColor: (bgColor: RGBColor) => void;
   setFontColor: (fontColor: RGBColor) => void;
   setFontFamily: (fontFamily: string) => void;
@@ -30,7 +30,7 @@ interface YTDLiveChatStoreState {
   setCoordinates: (coordinates: Coordinates) => void;
   setDefaultPosition: () => void;
   setAlwaysOnDisplay: (alwaysOnDisplay: boolean) => void;
-  setReactionButtonDisplay: (reactionButtonDisplay: boolean) => void;
+  setUserNameDisplay: (userNameDisplay: boolean) => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -45,7 +45,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       size: { width: 400, height: 500 },
       coordinates: { x: 20, y: 20 },
       alwaysOnDisplay: false,
-      reactionButtonDisplay: true,
+      userNameDisplay: true,
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setFontColor: (fontColor) => set(() => ({ fontColor })),
       setFontFamily: (fontFamily) => set(() => ({ fontFamily })),
@@ -57,7 +57,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setDefaultPosition: () =>
         set(() => ({ size: { width: 400, height: 500 }, coordinates: { x: 20, y: 20 } })),
       setAlwaysOnDisplay: (alwaysOnDisplay) => set(() => ({ alwaysOnDisplay })),
-      setReactionButtonDisplay: (reactionButtonDisplay) => set(() => ({ reactionButtonDisplay })),
+      setUserNameDisplay: (userNameDisplay) => set(() => ({ userNameDisplay })),
     }),
     {
       name: 'ytdLiveChatStore',

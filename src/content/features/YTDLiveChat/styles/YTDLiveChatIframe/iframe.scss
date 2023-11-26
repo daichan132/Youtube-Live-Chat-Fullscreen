@@ -1,5 +1,7 @@
 html {
   --reaction-control-panel-display: block;
+  --extension-user-icon-display: block;
+  --extension-user-name-display: inline;
   --extension-yt-live-chat-font-size: 13px;
   --extension-yt-live-chat-spacing: 0px;
 }
@@ -69,11 +71,6 @@ body.custom-yt-app-live-chat-extension {
     color: hsla(0, 0%, 6.7%, 0.6);
   }
 
-  /* --------------------- reaction button display setting -------------------- */
-  div#reaction-control-panel.yt-reaction-control-panel-overlay-view-model {
-    display: var(--reaction-control-panel-display);
-  }
-
   /* ---------------------------- font size setting --------------------------- */
   yt-live-chat-text-message-renderer {
     font-size: var(--extension-yt-live-chat-font-size);
@@ -96,6 +93,11 @@ body.custom-yt-app-live-chat-extension {
 
   yt-live-chat-text-message-renderer.yt-live-chat-banner-renderer {
     margin: 0;
+  }
+
+  /* ----------------------------- display setting ---------------------------- */
+  div#items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
+    display: var(--extension-user-name-display);
   }
 
   // yt-live-chat-renderer {

@@ -15,6 +15,7 @@ import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
+import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
 
 interface itemType {
   icon: IconType;
@@ -27,6 +28,11 @@ const items: itemType[] = [
     icon: IoTimerOutline,
     title: 'Always on Display',
     data: <AlwaysOnDisplaySwitch />,
+  },
+  {
+    icon: IoTimerOutline,
+    title: 'User Name Display',
+    data: <UserNameDisplaySwitch />,
   },
   {
     icon: IoColorFillOutline,

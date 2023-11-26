@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-export const useYLCReactionButtonDisplayChange = () => {
+export const useYLCUserNameDisplayChange = () => {
   const ref = useRef<HTMLIFrameElement | null>(null);
   useEffect(() => {
     const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');
@@ -8,16 +8,16 @@ export const useYLCReactionButtonDisplayChange = () => {
       ref.current = element;
     }
   }, []);
-  const changeReactionButtonDisplay = useCallback((display: boolean) => {
+  const changeUserNameDisplay = useCallback((display: boolean) => {
     const document = ref.current?.contentWindow?.document.documentElement;
     if (!document) return;
-    document.style.setProperty('--reaction-control-panel-display', display ? 'block' : 'none');
+    document.style.setProperty('--extension-user-name-display', display ? 'inline' : 'none');
   }, []);
   const changeDisplay = useCallback(
     (display: boolean) => {
-      changeReactionButtonDisplay(display);
+      changeUserNameDisplay(display);
     },
-    [changeReactionButtonDisplay],
+    [changeUserNameDisplay],
   );
   return { changeDisplay };
 };

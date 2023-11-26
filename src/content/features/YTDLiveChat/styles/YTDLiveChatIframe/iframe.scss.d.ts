@@ -7,10 +7,10 @@ export type Styles = {
   emoji: string;
   item: string;
   'item-scroller': string;
+  items: string;
   'left-arrow-container': string;
   message: string;
   'panel-pages': string;
-  'reaction-control-panel': string;
   'right-arrow-container': string;
   separator: string;
   title: string;
@@ -23,7 +23,6 @@ export type Styles = {
   'yt-live-chat-text-message-renderer': string;
   'yt-live-chat-ticker-renderer': string;
   'yt-live-chat-toggle-renderer': string;
-  'yt-reaction-control-panel-overlay-view-model': string;
   'ytd-menu-navigation-item-renderer': string;
   'ytd-menu-popup-renderer': string;
   'ytd-menu-service-item-renderer': string;
