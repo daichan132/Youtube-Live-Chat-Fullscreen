@@ -12,8 +12,11 @@ import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNam
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
-  const { alwaysOnDisplay } = useYTDLiveChatStore(
-    useShallow((state) => ({ alwaysOnDisplay: state.alwaysOnDisplay })),
+  const { alwaysOnDisplay, chatOnlyDisplay } = useYTDLiveChatStore(
+    useShallow((state) => ({
+      alwaysOnDisplay: state.alwaysOnDisplay,
+      chatOnlyDisplay: state.chatOnlyDisplay,
+    })),
   );
   const { isDisplay, setIsDisplay, setIsIframeLoaded, setClip } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
@@ -66,12 +69,12 @@ export const useIframeLoader = () => {
       body.classList.remove('display');
     }
 
-    if (alwaysOnDisplay) {
+    if (alwaysOnDisplay && chatOnlyDisplay) {
       body.classList.add('always-on-display');
     } else {
       body.classList.remove('always-on-display');
     }
-  }, [alwaysOnDisplay, isDisplay]);
+  }, [alwaysOnDisplay, isDisplay, chatOnlyDisplay]);
   useUnmount(() => {
     setIsIframeLoaded(false);
   });

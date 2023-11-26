@@ -95,13 +95,13 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
           {...listeners}
-          style={{ opacity: isIframeLoaded && isDisplay ? 1 : 0 }}
+          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
         >
           <DragIcon />
         </div>
         <div
           className={styles['settingButton']}
-          style={{ opacity: isIframeLoaded && isDisplay ? 1 : 0 }}
+          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
         >
           <SettingIcon />
         </div>
