@@ -19,6 +19,7 @@ interface YTDLiveChatStoreState {
   size: sizeType;
   coordinates: Coordinates;
   alwaysOnDisplay: boolean;
+  chatOnlyDisplay: boolean;
   userNameDisplay: boolean;
   setBgColor: (bgColor: RGBColor) => void;
   setFontColor: (fontColor: RGBColor) => void;
@@ -30,6 +31,7 @@ interface YTDLiveChatStoreState {
   setCoordinates: (coordinates: Coordinates) => void;
   setDefaultPosition: () => void;
   setAlwaysOnDisplay: (alwaysOnDisplay: boolean) => void;
+  setChatOnlyDisplay: (chatOnlyDisplay: boolean) => void;
   setUserNameDisplay: (userNameDisplay: boolean) => void;
 }
 
@@ -45,6 +47,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       size: { width: 400, height: 500 },
       coordinates: { x: 20, y: 20 },
       alwaysOnDisplay: false,
+      chatOnlyDisplay: false,
       userNameDisplay: true,
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setFontColor: (fontColor) => set(() => ({ fontColor })),
@@ -57,6 +60,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setDefaultPosition: () =>
         set(() => ({ size: { width: 400, height: 500 }, coordinates: { x: 20, y: 20 } })),
       setAlwaysOnDisplay: (alwaysOnDisplay) => set(() => ({ alwaysOnDisplay })),
+      setChatOnlyDisplay: (chatOnlyDisplay) => set(() => ({ chatOnlyDisplay })),
       setUserNameDisplay: (userNameDisplay) => set(() => ({ userNameDisplay })),
     }),
     {

@@ -10,8 +10,9 @@ export const useClipPathHandle = (
 ) => {
   const [clipPath, setClipPath] = useState<boolean | undefined>(undefined);
   const prevClipPath = usePrevious(clipPath);
-  const { setSize, setCoordinates } = useYTDLiveChatStore(
+  const { chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow((state) => ({
+      chatOnlyDisplay: state.chatOnlyDisplay,
       setSize: state.setSize,
       setCoordinates: state.setCoordinates,
     })),
@@ -23,6 +24,7 @@ export const useClipPathHandle = (
   );
   const handleClipPathChange = useCallback(
     (clipPath: boolean) => {
+      if (!chatOnlyDisplay) return;
       const { size, coordinates } = useYTDLiveChatStore.getState();
       const topClip = clip.header;
       const bottomClip = clip.input;
@@ -34,7 +36,7 @@ export const useClipPathHandle = (
         setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
       }
     },
-    [clip, setCoordinates, setSize],
+    [chatOnlyDisplay, clip.header, clip.input, setCoordinates, setSize],
   );
   useEffect(() => {
     setClipPath(!isDisplay && !isDragging && alwaysOnDisplay);

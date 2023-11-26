@@ -33,9 +33,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     id: 'wrapper',
   });
   const [isResizing, setResiziging] = useState(false);
-  const { size, alwaysOnDisplay, setSize } = useYTDLiveChatStore(
+  const { size, chatOnlyDisplay, alwaysOnDisplay, setSize } = useYTDLiveChatStore(
     useShallow((state) => ({
       size: state.size,
+      chatOnlyDisplay: state.chatOnlyDisplay,
       alwaysOnDisplay: state.alwaysOnDisplay,
       setSize: state.setSize,
     })),
@@ -70,9 +71,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         transform: CSS.Translate.toString(transform),
         top,
         left,
-        clipPath: clipPath
-          ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
-          : 'inset(0 round 10px)',
+        clipPath:
+          clipPath && chatOnlyDisplay
+            ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
+            : 'inset(0 round 10px)',
         transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}, ${
           !isResizing && 'height 200ms ease'
         }`,

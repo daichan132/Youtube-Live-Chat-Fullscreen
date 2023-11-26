@@ -2,6 +2,7 @@ export type Styles = {
   'close-button': string;
   content: string;
   'content-item': string;
+  disable: string;
   footer: string;
   header: string;
   help: string;

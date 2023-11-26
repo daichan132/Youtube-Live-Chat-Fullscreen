@@ -1,75 +1,29 @@
 import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2 } from 'react-icons/ri';
+import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri';
 import classNames from 'classnames';
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
 import { BlurSlider } from './YLCChangeItems/BlurSlider';
 import { FontColorPicker } from './YLCChangeItems/FontColorPicker';
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
-import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
+import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn, MdExpand } from 'react-icons/md';
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
 import { IconType } from 'react-icons';
 // import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
-import { useYTDLiveChatNoLsStore } from '../../../../../stores';
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
+import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
 
 interface itemType {
   icon: IconType;
   title: string;
   data: React.ReactNode;
+  disable?: boolean;
 }
-
-const items: itemType[] = [
-  {
-    icon: IoTimerOutline,
-    title: 'Always on Display',
-    data: <AlwaysOnDisplaySwitch />,
-  },
-  {
-    icon: IoTimerOutline,
-    title: 'User Name Display',
-    data: <UserNameDisplaySwitch />,
-  },
-  {
-    icon: IoColorFillOutline,
-    title: 'Background Color',
-    data: <BgColorPicker />,
-  },
-  {
-    icon: RiFontColor,
-    title: 'Font Color',
-    data: <FontColorPicker />,
-  },
-  {
-    icon: RiFontFamily,
-    title: 'Font Family',
-    data: <FontFamilyInput />,
-  },
-  {
-    icon: RiFontSize2,
-    title: 'Font Size',
-    data: <FontSizeSlider />,
-  },
-  {
-    icon: MdBlurOn,
-    title: 'Blur',
-    data: <BlurSlider />,
-  },
-  {
-    icon: MdExpand,
-    title: 'Space',
-    data: <SpaceSlider />,
-  },
-  // {
-  //   icon: RiHeartLine,
-  //   title: 'Reaction Button',
-  //   data: <ReactionButtonDisplaySwitch />,
-  // },
-];
 
 interface YTDLiveChatSettingType {
   closeModal?: () => void;
@@ -80,6 +34,61 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
       setIsOpenSettingModal: state.setIsOpenSettingModal,
     })),
   );
+  const { alwaysOnDisplay } = useYTDLiveChatStore(
+    useShallow((state) => ({
+      alwaysOnDisplay: state.alwaysOnDisplay,
+    })),
+  );
+
+  const items: itemType[] = [
+    {
+      icon: IoTimerOutline,
+      title: 'Always on Display',
+      data: <AlwaysOnDisplaySwitch />,
+    },
+    {
+      icon: IoChatbubbleEllipsesOutline,
+      title: 'Chat Only Display',
+      data: <ChatOnlyDisplaySwitch />,
+      disable: !alwaysOnDisplay,
+    },
+    {
+      icon: RiUserLine,
+      title: 'User Name Display',
+      data: <UserNameDisplaySwitch />,
+    },
+    {
+      icon: IoColorFillOutline,
+      title: 'Background Color',
+      data: <BgColorPicker />,
+    },
+    {
+      icon: RiFontColor,
+      title: 'Font Color',
+      data: <FontColorPicker />,
+    },
+    {
+      icon: RiFontFamily,
+      title: 'Font Family',
+      data: <FontFamilyInput />,
+    },
+    {
+      icon: RiFontSize2,
+      title: 'Font Size',
+      data: <FontSizeSlider />,
+    },
+    {
+      icon: MdBlurOn,
+      title: 'Blur',
+      data: <BlurSlider />,
+    },
+    {
+      icon: MdExpand,
+      title: 'Space',
+      data: <SpaceSlider />,
+    },
+  ];
+
   return (
     <div className={styles['settings']}>
       <div className={styles['header']}>
@@ -96,14 +105,16 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
         {items.map((item) => {
           return (
             <React.Fragment key={item.title}>
-              <div className={styles['content-item']}>
+              <div
+                className={classNames(styles['content-item'], item.disable && styles['disable'])}
+              >
                 <div className={styles['title-with-icon']}>
                   {<item.icon size={20} />}
                   <div>{item.title}</div>
                 </div>
                 {item.data}
               </div>
-              <hr />
+              {item.disable ? null : <hr />}
             </React.Fragment>
           );
         })}

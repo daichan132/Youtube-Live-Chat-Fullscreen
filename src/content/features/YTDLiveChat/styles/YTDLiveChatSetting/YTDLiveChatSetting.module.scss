@@ -46,7 +46,6 @@
 
   .content {
     flex-grow: 1;
-    padding: 0px 20px 20px 20px;
     overflow-y: visible;
     height: 400px; // 任意の高さに調整可能
     font-size: 1.25rem;
@@ -57,7 +56,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 30px;
+      overflow: hidden;
+      padding: 24px 20px;
+      opacity: 1;
+      transition:
+        height 200ms ease,
+        padding 200ms ease,
+        opacity 200ms ease;
+
+      &.disable {
+        height: 0px;
+        padding: 0px 20px;
+        opacity: 0;
+        pointer-events: none;
+      }
 
       .title-with-icon {
         display: flex;
@@ -77,11 +89,11 @@
       border: none;
       height: 1px;
       background-color: rgba(0, 0, 0, 0.1);
-      margin-top: 30px;
+      margin: 0 20px;
     }
 
     .footer {
-      margin: 20px 12px 0px;
+      margin: 20px 12px 20px;
       display: flex;
       justify-content: flex-end;
 
