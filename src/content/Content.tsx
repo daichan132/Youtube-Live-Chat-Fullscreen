@@ -1,4 +1,4 @@
-// import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
+import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
 import { useTabLocatoin } from './hooks/useTabLocatoin';
@@ -19,7 +19,7 @@ const Content = () => {
       {pathname === '/live_chat' ? (
         <>
           <EmojiFix />
-          {/* <AddChatMessageCopyIcon /> */}
+          <AddChatMessageCopyIcon />
         </>
       ) : null}
       {/* If the pathname of the tab is watch */}

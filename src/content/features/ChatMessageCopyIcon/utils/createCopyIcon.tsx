@@ -12,6 +12,9 @@ export const createCopyIcon = (chatMessageElement: Element) => {
   );
   const parent = ytIconButton?.parentElement;
   if (!parent || !message || !(ytIconButton?.previousElementSibling?.id === 'content')) return;
+  if (ytIconButton instanceof HTMLElement) {
+    ytIconButton.style.setProperty('opacity', '0');
+  }
 
   const copyIconRoot = document.createElement('div');
   copyIconRoot.id = 'menu';
