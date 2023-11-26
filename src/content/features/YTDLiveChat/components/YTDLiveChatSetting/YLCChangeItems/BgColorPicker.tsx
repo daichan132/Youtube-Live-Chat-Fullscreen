@@ -1,19 +1,20 @@
 import { ChromePicker, ColorResult, RGBColor } from 'react-color';
+import { useYLCBgColorChange } from '../../../hooks/YTDLiveChatSetting/useYLCBgColorChange';
 import { useCallback, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
-import styles from '../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
-import { useYLCFontColorChange } from '../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import styles from '../../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
+import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 
-export const FontColorPicker = () => {
-  const { changeColor } = useYLCFontColorChange();
+export const BgColorPicker = () => {
+  const { changeColor } = useYLCBgColorChange();
   const stateRef = useRef(useYTDLiveChatStore.getState());
-  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor);
-  const { setFontColor: setFontColor } = useYTDLiveChatStore(
-    useShallow((state) => ({ setFontColor: state.setFontColor })),
+  const { setBgColor: setBgColor } = useYTDLiveChatStore(
+    useShallow((state) => ({ setBgColor: state.setBgColor })),
   );
+  const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor);
   const [display, setDisplay] = useState(false);
+
   const ref = useRef(null);
   useClickAway(ref, () => {
     setDisplay(false);
@@ -21,10 +22,10 @@ export const FontColorPicker = () => {
   const onChange = useCallback(
     (c: ColorResult) => {
       changeColor(c.rgb);
-      setFontColor(c.rgb);
+      setBgColor(c.rgb);
       setRgba(c.rgb);
     },
-    [changeColor, setFontColor],
+    [changeColor, setBgColor],
   );
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
@@ -47,10 +48,6 @@ export const FontColorPicker = () => {
                   border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderRadius: 5,
                   overflow: 'hidden',
-                  marginBottom: '30px',
-                },
-                alpha: {
-                  display: 'none',
                 },
               },
             }}

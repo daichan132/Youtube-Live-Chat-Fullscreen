@@ -2,19 +2,19 @@ import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
 import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2 } from 'react-icons/ri';
 import classNames from 'classnames';
-import { BgColorPicker } from './BgColorPicker';
-import { BlurSlider } from './BlurSlider';
-import { FontColorPicker } from './FontColorPicker';
-import { AlwaysOnDisplaySwitch } from './AlwaysOnDisplaySwitch';
+import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
+import { BlurSlider } from './YLCChangeItems/BlurSlider';
+import { FontColorPicker } from './YLCChangeItems/FontColorPicker';
+import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
 import { IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn, MdExpand } from 'react-icons/md';
-import { FontFamilyInput } from './FontFamilyInput';
+import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
 import { IconType } from 'react-icons';
 // import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
-import { FontSizeSlider } from './FontSizeSlider';
-import { SpaceSlider } from './SpaceSlider';
+import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
+import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 
 interface itemType {
   icon: IconType;

@@ -1,9 +1,9 @@
 import React, { useRef } from 'react';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
-import { useInitializedSlider } from '../../../../hooks/useInitializedSlider';
-import styles from '../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
-import { useYLCSpaceChange } from '../../hooks/YTDLiveChatSetting/useYLCSpaceChange';
+import { useInitializedSlider } from '../../../../../hooks/useInitializedSlider';
+import styles from '../../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
+import { useYLCSpaceChange } from '../../../hooks/YTDLiveChatSetting/useYLCSpaceChange';
 
 const minSize = 0;
 const maxSize = 40;

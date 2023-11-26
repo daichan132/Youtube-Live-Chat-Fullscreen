@@ -1,7 +1,7 @@
 import React from 'react';
-import { Switch } from '../../../../components/Switch';
+import { Switch } from '../../../../../components/Switch';
 import { useShallow } from 'zustand/react/shallow';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { useYTDLiveChatStore } from '../../../../../../stores';
 
 export const AlwaysOnDisplaySwitch = () => {
   const { alwaysOnDisplay, setAlwaysOnDisplay } = useYTDLiveChatStore(
