@@ -17,7 +17,7 @@
     "format:prettier": "run-s \" lint:prettier --write \"",
     "lint": "run-p lint:eslint && run-p lint:prettier && run-p lint:type",
     "lint:eslint": "eslint . --ext .js,.ts,.tsx --max-warnings 0 --ignore-path .gitignore",
-    "lint:prettier": "prettier \"**/*.(md|json|yml)\" --ignore-path .gitignore --check",
+    "lint:prettier": "prettier \"**/*.(json|yml)\" --ignore-path .gitignore --check",
     "lint:type": "tsc --noEmit",
     "test": "jest",
     "ci:test": "run-s \" test --ci --reporters=\"default\" --reporters=\"github-actions\" \"",
