@@ -76,7 +76,7 @@ ytd-app[scrolling] {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  right: 0 !important;
   bottom: 0;
   overflow-x: auto;
 }
