@@ -1,4 +1,4 @@
-# Youtube Comment Extension
+# Youtube Live Chat Fullscreen
 
 ## Due Credit
 
