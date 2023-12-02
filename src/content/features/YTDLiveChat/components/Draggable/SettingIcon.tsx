@@ -53,7 +53,7 @@ export const SettingIcon = () => {
         style={customStyles}
         shouldCloseOnOverlayClick={true}
         onRequestClose={() => setIsOpen(false)}
-        appElement={document.getElementById('my-extension-root') || undefined}
+        appElement={document.body}
         onAfterClose={() => setIsHover(false)}
       >
         <YTDLiveChatSetting closeModal={() => setIsOpen(false)} />

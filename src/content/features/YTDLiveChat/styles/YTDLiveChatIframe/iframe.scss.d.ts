@@ -1,5 +1,11 @@
 export type Styles = {
   'always-on-display': string;
+  'channel-guidelines-dialog-community-guidelines': string;
+  'channel-guidelines-dialog-owner-name': string;
+  'channel-guidelines-dialog-title': string;
+  'channel-guidelines-dialog-welcome-message-text': string;
+  'channel-guidelines-list-item': string;
+  'channel-guidelines-list-item-text': string;
   chat: string;
   contents: string;
   'custom-yt-app-live-chat-extension': string;
@@ -9,6 +15,7 @@ export type Styles = {
   'item-scroller': string;
   items: string;
   'left-arrow-container': string;
+  'list-item-index': string;
   message: string;
   'panel-pages': string;
   'right-arrow-container': string;
@@ -18,6 +25,7 @@ export type Styles = {
   'yt-emoji-picker-category-renderer': string;
   'yt-img-shadow': string;
   'yt-live-chat-banner-renderer': string;
+  'yt-live-chat-channel-guidelines-dialog-renderer': string;
   'yt-live-chat-item-list-renderer': string;
   'yt-live-chat-renderer': string;
   'yt-live-chat-text-message-renderer': string;

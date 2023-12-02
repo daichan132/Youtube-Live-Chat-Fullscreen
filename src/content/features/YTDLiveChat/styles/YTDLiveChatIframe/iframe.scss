@@ -61,7 +61,14 @@ body.custom-yt-app-live-chat-extension {
   yt-icon.yt-live-chat-toggle-renderer,
   yt-live-chat-toggle-renderer.ytd-menu-popup-renderer span.yt-live-chat-toggle-renderer,
   yt-formatted-string.ytd-menu-navigation-item-renderer,
-  ytd-menu-navigation-item-renderer[system-icons] yt-icon.ytd-menu-navigation-item-renderer {
+  ytd-menu-navigation-item-renderer[system-icons] yt-icon.ytd-menu-navigation-item-renderer,
+  #channel-guidelines-list-item-text.yt-live-chat-channel-guidelines-dialog-renderer,
+  #channel-guidelines-dialog-owner-name.yt-live-chat-channel-guidelines-dialog-renderer,
+  #channel-guidelines-dialog-title.yt-live-chat-channel-guidelines-dialog-renderer,
+  #channel-guidelines-dialog-community-guidelines.yt-live-chat-channel-guidelines-dialog-renderer,
+  #channel-guidelines-list-item.yt-live-chat-channel-guidelines-dialog-renderer
+    #list-item-index.yt-live-chat-channel-guidelines-dialog-renderer,
+  #channel-guidelines-dialog-welcome-message-text.yt-live-chat-channel-guidelines-dialog-renderer {
     color: black;
   }
 

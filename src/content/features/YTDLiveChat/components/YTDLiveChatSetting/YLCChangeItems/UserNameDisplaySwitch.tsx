@@ -1,8 +1,8 @@
 import React from 'react';
-import { Switch } from '../../../../../components/Switch';
 import { useShallow } from 'zustand/react/shallow';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useYLCUserNameDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCUserNameDisplayChange';
+import { Switch } from '../../../../../../shared/components/Switch';
 
 export const UserNameDisplaySwitch = () => {
   const { userNameDisplay, setUserNameDisplay } = useYTDLiveChatStore(

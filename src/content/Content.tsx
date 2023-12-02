@@ -1,4 +1,6 @@
 // import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
+// import { useShallow } from 'zustand/react/shallow';
+// import { useGlobalSettingStore } from '../stores';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
 import { useTabLocatoin } from './hooks/useTabLocatoin';

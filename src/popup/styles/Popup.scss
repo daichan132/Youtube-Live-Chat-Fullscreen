@@ -1,0 +1,57 @@
+.settings {
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  border-radius: 10px;
+
+  .content {
+    flex-grow: 1;
+    overflow-y: visible;
+    font-size: 1.25rem;
+
+    .content-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 16px;
+      opacity: 1;
+      transition:
+        height 200ms ease,
+        padding 200ms ease,
+        opacity 200ms ease;
+
+      .title-with-icon {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+
+        > svg {
+          margin-right: 1.5rem;
+          border: 1px solid #333;
+          color: #333;
+          padding: 3px;
+          border-radius: 5px;
+        }
+      }
+    }
+
+    hr {
+      border: none;
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin: 0 0px;
+    }
+  }
+
+  .footer {
+    margin: 10px 12px 4px;
+    display: flex;
+    justify-content: flex-end;
+
+    .help {
+      > a {
+        color: #333333;
+      }
+    }
+  }
+}
