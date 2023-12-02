@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { wrapStore } from 'webext-zustand';
 
 interface clipState {
   header: number;
@@ -33,7 +32,5 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set)
   setIsIframeLoaded: (isIframeLoaded) => set(() => ({ isIframeLoaded })),
   setClip: (clip) => set(() => ({ clip })),
 }));
-
-export const ytdLiveChatNoLsStoreReadyPromise = wrapStore(useYTDLiveChatNoLsStore);
 
 export default useYTDLiveChatNoLsStore;

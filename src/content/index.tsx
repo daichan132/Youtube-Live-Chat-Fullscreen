@@ -2,17 +2,14 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Content from './Content';
 import './index.scss';
-import { ytdLiveChatStoreReadyPromise } from '../stores';
 import '../i18n/config';
 
-ytdLiveChatStoreReadyPromise.then(() => {
-  const contentRoot = document.createElement('div');
-  contentRoot.id = 'my-extension-root';
-  contentRoot.style.display = 'contents';
-  document.body.append(contentRoot);
-  createRoot(contentRoot).render(
-    <React.StrictMode>
-      <Content />
-    </React.StrictMode>,
-  );
-});
+const contentRoot = document.createElement('div');
+contentRoot.id = 'my-extension-root';
+contentRoot.style.display = 'contents';
+document.body.append(contentRoot);
+createRoot(contentRoot).render(
+  <React.StrictMode>
+    <Content />
+  </React.StrictMode>,
+);

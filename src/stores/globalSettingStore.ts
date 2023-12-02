@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { wrapStore } from 'webext-zustand';
 import { localStorage } from 'redux-persist-webextension-storage';
 
 interface globalSettingStoreState {
@@ -24,7 +23,5 @@ export const useGlobalSettingStore = create<globalSettingStoreState>()(
     },
   ),
 );
-
-export const globalSettingStoreReadyPromise = wrapStore(useGlobalSettingStore);
 
 export default useGlobalSettingStore;

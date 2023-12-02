@@ -18,6 +18,7 @@ const manifest = defineManifest(async (env) => ({
   ],
   background: {
     service_worker: 'background/index.ts',
+    matches: ['https://www.youtube.com/*'],
   },
   content_scripts: [
     {
@@ -29,7 +30,7 @@ const manifest = defineManifest(async (env) => ({
   host_permissions: [],
   action: {
     matches: ['https://www.youtube.com/*'],
-    // default_popup: 'popup/popup.html',
+    default_popup: 'popup/popup.html',
     default_icon: {
       '16': 'images/extension_16.png',
       '32': 'images/extension_32.png',

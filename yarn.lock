@@ -623,18 +623,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eduardoac-skimlinks/webext-redux@npm:3.0.1-release-candidate":
-  version: 3.0.1-release-candidate
-  resolution: "@eduardoac-skimlinks/webext-redux@npm:3.0.1-release-candidate"
-  dependencies:
-    lodash.assignin: "npm:^4.2.0"
-    lodash.clonedeep: "npm:^4.5.0"
-  peerDependencies:
-    redux: ">= 3 <= 4"
-  checksum: 640ad73cf57272f3964f9bbd383a949b13ea394615df8a178d50414cdc9da90b39c76d44f2545b9bcfca9a9d2c4dce09a6e55ce1ab4caee98671c5ce57c2e1a3
-  languageName: node
-  linkType: hard
-
 "@esbuild/android-arm64@npm:0.18.20":
   version: 0.18.20
   resolution: "@esbuild/android-arm64@npm:0.18.20"
@@ -2407,7 +2395,6 @@ __metadata:
     typed-scss-modules: "npm:^8.0.0"
     typescript: "npm:5.3.2"
     vite: "npm:^4.5.0"
-    webext-zustand: "npm:^0.2.0"
     zustand: "npm:^4.4.7"
   languageName: unknown
   linkType: soft
@@ -5952,24 +5939,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.assignin@npm:^4.2.0":
-  version: 4.2.0
-  resolution: "lodash.assignin@npm:4.2.0"
-  checksum: 40ac405acf5d6daf27fd40b50c99f823641a9ceba6bd282b18cb9989149204af584b5671f336587c2a263e367c3a2d1105cbf7bdc5ea33cbd0f829b02b16578a
-  languageName: node
-  linkType: hard
-
 "lodash.camelcase@npm:^4.3.0":
   version: 4.3.0
   resolution: "lodash.camelcase@npm:4.3.0"
   checksum: fcba15d21a458076dd309fce6b1b4bf611d84a0ec252cb92447c948c533ac250b95d2e00955801ebc367e5af5ed288b996d75d37d2035260a937008e14eaf432
-  languageName: node
-  linkType: hard
-
-"lodash.clonedeep@npm:^4.5.0":
-  version: 4.5.0
-  resolution: "lodash.clonedeep@npm:4.5.0"
-  checksum: 2caf0e4808f319d761d2939ee0642fa6867a4bbf2cfce43276698828380756b99d4c4fa226d881655e6ac298dd453fe12a5ec8ba49861777759494c534936985
   languageName: node
   linkType: hard
 
@@ -8664,17 +8637,6 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: aebab445129f3e104c271f1637fa38e55eb25f968593e3825bd2f7a12bd58dc3738bb70dc8ec85826621d80b4acfed5a29ebc9da17397c6125864d72301b937e
-  languageName: node
-  linkType: hard
-
-"webext-zustand@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "webext-zustand@npm:0.2.0"
-  dependencies:
-    "@eduardoac-skimlinks/webext-redux": "npm:3.0.1-release-candidate"
-  peerDependencies:
-    zustand: ^4
-  checksum: 605dc1102a89f096fb901e756a70124a15f6095130efa73be3fa0a0f4060ffd774707d9d87714a4e54f86d6484391ff9882201c6ed4ddf0c1eb3b214a80351cf
   languageName: node
   linkType: hard
 

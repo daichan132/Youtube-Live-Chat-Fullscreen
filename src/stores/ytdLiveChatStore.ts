@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { wrapStore } from 'webext-zustand';
 import { localStorage } from 'redux-persist-webextension-storage';
 import { RGBColor } from 'react-color';
 import { Coordinates } from '@dnd-kit/core/dist/types';
@@ -69,7 +68,5 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     },
   ),
 );
-
-export const ytdLiveChatStoreReadyPromise = wrapStore(useYTDLiveChatStore);
 
 export default useYTDLiveChatStore;
