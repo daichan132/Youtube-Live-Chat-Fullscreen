@@ -3,7 +3,7 @@
 .settings {
   display: flex;
   flex-direction: column; // モーダルのメイン方向を縦に設定
-  width: 500px; // モーダルの幅
+  width: 450px; // モーダルの幅
   border-radius: 8px;
   background-color: #fff;
   letter-spacing: 0.05rem;
@@ -15,7 +15,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 1.5rem;
+    padding: 0.25rem 1.5rem;
     border-bottom: 1px solid #eaeaea;
     font-weight: 500;
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export const useTabLocatoin = () => {
+export const useTabLocation = () => {
   const [pathname, setPathname] = useState<string>(window.location.pathname);
   const [search, setSearch] = useState<string>(window.location.search);
 

@@ -3,7 +3,7 @@
 // import { useGlobalSettingStore } from '../stores';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
-import { useTabLocatoin } from './hooks/useTabLocatoin';
+import { useTabLocation } from './hooks/useTabLocation';
 
 function extractYouTubeID(url: string) {
   const regex = /v=([^&]*)/;
@@ -12,7 +12,7 @@ function extractYouTubeID(url: string) {
 }
 
 const Content = () => {
-  const { pathname, search } = useTabLocatoin();
+  const { pathname, search } = useTabLocation();
   const videoId = extractYouTubeID(search);
 
   return (

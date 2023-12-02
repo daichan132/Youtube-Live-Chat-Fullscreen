@@ -2,7 +2,6 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
   if (changeInfo.status === 'complete' && tab.url) {
     const url = new URL(tab.url);
     if (url.hostname === 'www.youtube.com') {
-      // Only send message for example.com
       const sendData = {
         message: 'URL Changed',
         href: url.href,
