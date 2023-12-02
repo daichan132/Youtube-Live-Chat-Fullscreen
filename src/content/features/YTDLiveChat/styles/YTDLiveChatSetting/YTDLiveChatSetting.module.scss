@@ -15,8 +15,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid #eaeaea;
+    font-weight: 500;
 
     .menu {
       font-size: 1.75rem;
@@ -50,7 +51,7 @@
     height: 400px; // 任意の高さに調整可能
     font-size: 1.25rem;
     overflow-y: scroll;
-    background-color: #fafafa;
+    box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
 
     .content-item {
       display: flex;
@@ -76,10 +77,12 @@
 
         > svg {
           margin-right: 1.5rem;
-          border: 1px solid #333;
+          border: 1px solid rgba(0, 0, 0, 0.1);
           color: #333;
           padding: 3px;
           border-radius: 5px;
+          background-color: white;
+          padding: 6px;
         }
       }
     }

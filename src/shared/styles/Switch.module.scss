@@ -17,6 +17,7 @@
   .label {
     position: relative;
     background-color: rgba(0, 0, 0, 0.1);
+    box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.1);
     /* スイッチOFF時の背景色 */
     border-radius: 1em;
     /* 角丸 */
