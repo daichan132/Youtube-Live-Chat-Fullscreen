@@ -80,6 +80,9 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-text-message-renderer {
     font-size: var(--extension-yt-live-chat-font-size);
   }
+  yt-live-chat-viewer-engagement-message-renderer {
+    font-size: calc(var(--extension-yt-live-chat-font-size) - 1px);
+  }
 
   #message.yt-live-chat-text-message-renderer .emoji.yt-live-chat-text-message-renderer {
     width: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
