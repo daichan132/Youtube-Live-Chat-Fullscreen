@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import Content from './Content';
 import './index.scss';
 import { ytdLiveChatStoreReadyPromise } from '../stores';
+import '../i18n/config';
 
 ytdLiveChatStoreReadyPromise.then(() => {
   const contentRoot = document.createElement('div');

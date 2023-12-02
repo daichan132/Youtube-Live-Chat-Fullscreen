@@ -1,0 +1,18 @@
+{
+  "content": {
+    "setting": {
+      "header": "Setting",
+      "alwaysOnDisplay": "Always on Display",
+      "chatOnlyDisplay": "Chat Only Display",
+      "userNameDisplay": "User Name Display",
+      "backgroundColor": "Background Color",
+      "fontColor": "Font Color",
+      "fontFamily": "Font Family",
+      "fontSize": "Font Size",
+      "blur": "Blur",
+      "space": "Space",
+      "footer": "For instructions, click this ",
+      "help": "help"
+    }
+  }
+}

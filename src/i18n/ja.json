@@ -1,0 +1,18 @@
+{
+  "content": {
+    "setting": {
+      "header": "設定",
+      "alwaysOnDisplay": "常時表示",
+      "chatOnlyDisplay": "チャットのみ表示",
+      "userNameDisplay": "ユーザー名表示",
+      "backgroundColor": "背景色",
+      "fontColor": "フォント色",
+      "fontFamily": "フォントファミリー",
+      "fontSize": "フォントサイズ",
+      "blur": "ぼかし",
+      "space": "スペース",
+      "footer": "詳しい説明についてはこちらをクリックしてください　",
+      "help": "ヘルプ"
+    }
+  }
+}

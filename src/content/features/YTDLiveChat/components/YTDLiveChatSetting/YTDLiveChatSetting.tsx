@@ -17,6 +17,7 @@ import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
 import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
+import { useTranslation } from 'react-i18next';
 
 interface itemType {
   icon: IconType;
@@ -39,61 +40,60 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
       alwaysOnDisplay: state.alwaysOnDisplay,
     })),
   );
-
+  const { t } = useTranslation();
   const items: itemType[] = [
     {
       icon: IoTimerOutline,
-      title: 'Always on Display',
+      title: t('content.setting.alwaysOnDisplay'),
       data: <AlwaysOnDisplaySwitch />,
     },
     {
       icon: IoChatbubbleEllipsesOutline,
-      title: 'Chat Only Display',
+      title: t('content.setting.chatOnlyDisplay'),
       data: <ChatOnlyDisplaySwitch />,
       disable: !alwaysOnDisplay,
     },
     {
       icon: RiUserLine,
-      title: 'User Name Display',
+      title: t('content.setting.userNameDisplay'),
       data: <UserNameDisplaySwitch />,
     },
     {
       icon: IoColorFillOutline,
-      title: 'Background Color',
+      title: t('content.setting.backgroundColor'),
       data: <BgColorPicker />,
     },
     {
       icon: RiFontColor,
-      title: 'Font Color',
+      title: t('content.setting.fontColor'),
       data: <FontColorPicker />,
     },
     {
       icon: RiFontFamily,
-      title: 'Font Family',
+      title: t('content.setting.fontFamily'),
       data: <FontFamilyInput />,
     },
     {
       icon: RiFontSize2,
-      title: 'Font Size',
+      title: t('content.setting.fontSize'),
       data: <FontSizeSlider />,
     },
     {
       icon: MdBlurOn,
-      title: 'Blur',
+      title: t('content.setting.blur'),
       data: <BlurSlider />,
     },
     {
       icon: MdExpand,
-      title: 'Space',
+      title: t('content.setting.space'),
       data: <SpaceSlider />,
     },
   ];
-
   return (
     <div className={styles['settings']}>
       <div className={styles['header']}>
         <div className={styles['menu']}>
-          <div className={classNames(styles['menu-item'])}>Settings</div>
+          <div className={classNames(styles['menu-item'])}>{t('content.setting.header')}</div>
         </div>
         <RiCloseLine
           className={styles['close-button']}
@@ -120,7 +120,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
         })}
         <div className={styles['footer']}>
           <div className={styles['help']}>
-            For instructions, click this{' '}
+            {t('content.setting.footer')}
             <a
               href="https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4"
               target="_blank"
@@ -129,7 +129,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
                 setIsOpenSettingModal(false);
               }}
             >
-              Help
+              {t('content.setting.help')}
             </a>
           </div>
         </div>
