@@ -14,5 +14,8 @@
       "footer": "For instructions, click this ",
       "help": "help"
     }
+  },
+  "popup": {
+    "showChatOnFullscreen": "Show Chat on Fullscreen"
   }
 }

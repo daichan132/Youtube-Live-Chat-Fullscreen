@@ -1,6 +1,7 @@
 export type Styles = {
   content: string;
   'content-item': string;
+  disable: string;
   footer: string;
   help: string;
   settings: string;

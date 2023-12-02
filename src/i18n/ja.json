@@ -14,5 +14,8 @@
       "footer": "詳しい説明についてはこちらから　",
       "help": "ヘルプ"
     }
+  },
+  "popup": {
+    "showChatOnFullscreen": "フルスクリーン時にチャットを表示する"
   }
 }
