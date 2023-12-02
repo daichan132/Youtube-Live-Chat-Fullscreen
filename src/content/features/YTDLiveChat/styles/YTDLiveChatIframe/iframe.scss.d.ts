@@ -18,6 +18,7 @@ export type Styles = {
   'list-item-index': string;
   message: string;
   'panel-pages': string;
+  right: string;
   'right-arrow-container': string;
   separator: string;
   title: string;
@@ -27,6 +28,7 @@ export type Styles = {
   'yt-live-chat-banner-renderer': string;
   'yt-live-chat-channel-guidelines-dialog-renderer': string;
   'yt-live-chat-item-list-renderer': string;
+  'yt-live-chat-message-input-renderer': string;
   'yt-live-chat-renderer': string;
   'yt-live-chat-text-message-renderer': string;
   'yt-live-chat-ticker-renderer': string;

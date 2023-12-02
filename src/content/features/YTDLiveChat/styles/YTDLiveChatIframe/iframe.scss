@@ -31,6 +31,11 @@ body.custom-yt-app-live-chat-extension {
     border-bottom: none;
   }
 
+  yt-live-chat-message-input-renderer[updated-input-visuals]
+    #right.yt-live-chat-message-input-renderer {
+    display: none;
+  }
+
   /* ------------------------ background color setting ------------------------ */
   #chat {
     #item-scroller.yt-live-chat-item-list-renderer {
