@@ -102,7 +102,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
         />
       </div>
       <div className={styles['content']}>
-        {items.map((item) => {
+        {items.map((item, i) => {
           return (
             <React.Fragment key={item.title}>
               <div
@@ -114,7 +114,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
                 </div>
                 {item.data}
               </div>
-              {item.disable ? null : <hr />}
+              {item.disable || i === items.length - 1 ? null : <hr />}
             </React.Fragment>
           );
         })}

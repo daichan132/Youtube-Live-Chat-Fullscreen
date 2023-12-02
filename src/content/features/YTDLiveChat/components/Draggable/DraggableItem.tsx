@@ -9,9 +9,10 @@ import { useShallow } from 'zustand/react/shallow';
 import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useClipPathHandle } from '../../hooks/Draggable/useClipPathHandle';
 import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
+import { useHoverEvent } from '../../hooks/Draggable/useHoverEvent';
 
 const enable = {
   top: false,
@@ -32,6 +33,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
+  useHoverEvent(isDragging);
   const [isResizing, setResiziging] = useState(false);
   const { size, chatOnlyDisplay, alwaysOnDisplay, setSize } = useYTDLiveChatStore(
     useShallow((state) => ({
@@ -50,15 +52,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   );
   const { clipPath } = useClipPathHandle(isDisplay, isDragging, alwaysOnDisplay);
   const disableTopTransition = useDisanleTopTransition(isDragging);
-  useEffect(() => {
-    const ytdAppElement = document.body.querySelector('ytd-app');
-    if (!(ytdAppElement instanceof HTMLElement)) return;
-    if (isDragging) {
-      ytdAppElement.style.setProperty('pointer-events', 'none');
-    } else {
-      ytdAppElement.style.setProperty('pointer-events', 'all');
-    }
-  }, [isDragging]);
 
   return (
     <Resizable

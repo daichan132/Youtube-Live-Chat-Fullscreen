@@ -52,6 +52,7 @@
     font-size: 1.25rem;
     overflow-y: scroll;
     box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
+    background-color: #f9f9f9;
 
     .content-item {
       display: flex;
@@ -95,9 +96,11 @@
     }
 
     .footer {
-      margin: 20px 12px 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding: 20px 12px 20px;
       display: flex;
       justify-content: flex-end;
+      background-color: #fff;
 
       .help {
         > a {
