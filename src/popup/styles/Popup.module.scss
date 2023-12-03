@@ -1,10 +1,11 @@
-/* SettingsModal.scss */
+body {
+  margin: 0px;
+}
 
 .settings {
   display: flex;
   flex-direction: column;
   width: 400px;
-  padding: 0px;
 
   .content {
     flex-grow: 1;
@@ -15,7 +16,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
+      padding: 20px;
       opacity: 1;
       transition:
         height 200ms ease,
@@ -29,7 +30,7 @@
         pointer-events: none;
       }
 
-      .title-with-icon {
+      .title {
         display: flex;
         align-items: center;
         font-size: 14px;
@@ -45,7 +46,7 @@
 
     .footer {
       border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 12px 12px 4px;
+      padding: 16px;
       display: flex;
       justify-content: flex-end;
       background-color: #fff;

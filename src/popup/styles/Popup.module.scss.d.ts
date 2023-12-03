@@ -5,7 +5,7 @@ export type Styles = {
   footer: string;
   help: string;
   settings: string;
-  'title-with-icon': string;
+  title: string;
 };
 
 export type ClassNames = keyof Styles;
