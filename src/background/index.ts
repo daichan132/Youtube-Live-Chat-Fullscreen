@@ -13,3 +13,13 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     }
   }
 });
+
+chrome.runtime.onMessage.addListener(function (request) {
+  if (request.message === 'ytdLiveChat') {
+    chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, request);
+      }
+    });
+  }
+});

@@ -3,62 +3,31 @@ import styles from './styles/Popup.module.scss';
 import classNames from 'classnames';
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
 import React from 'react';
-import { useGlobalSettingStore } from '../stores';
-import { useUpdateEffect } from 'react-use';
 
 interface itemType {
   title: string;
   data: React.ReactNode;
-  disable?: boolean;
 }
 
 const Popup = () => {
   const { t } = useTranslation();
-  const [isChanged, setIsChanged] = React.useState(false);
   const items: itemType[] = [
     { title: t('popup.showChatOnFullscreen'), data: <YTDLiveChatSwitch /> },
-    {
-      title: t('popup.reload'),
-      data: (
-        <button
-          onClick={() => {
-            chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-              if (tabs[0]?.id) {
-                chrome.tabs.reload(tabs[0].id);
-                setIsChanged(false);
-              }
-            });
-          }}
-        >
-          aa
-        </button>
-      ),
-      disable: !isChanged,
-    },
   ];
-  const state = useGlobalSettingStore((state) => state);
-  useUpdateEffect(() => {
-    setIsChanged(true);
-  }, [state]);
+
   return (
     <div className={styles['settings']}>
       <div className={styles['content']}>
         {items.map((item, i) => {
           return (
             <React.Fragment key={item.title}>
-              <div
-                className={classNames(styles['content-item'], item?.disable && styles['disable'])}
-              >
+              <div className={classNames(styles['content-item'])}>
                 <div className={styles['title']}>
                   <div>{item.title}</div>
                 </div>
                 {item.data}
               </div>
-              {item.disable ||
-              i === items.length - 1 ||
-              (i === items.length - 2 && items[i + 1].disable) ? null : (
-                <hr />
-              )}
+              {i === items.length - 1 ? null : <hr />}
             </React.Fragment>
           );
         })}

@@ -1,11 +1,10 @@
-// import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
+import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 // import { useShallow } from 'zustand/react/shallow';
 // import { useGlobalSettingStore } from '../stores';
-import { useGlobalSettingStore } from '../stores';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
 import { useTabLocation } from './hooks/useTabLocation';
-import { useShallow } from 'zustand/react/shallow';
+import { useYTDLiveChat } from './hooks/useYTDLiveChat';
 
 function extractYouTubeID(url: string) {
   const regex = /v=([^&]*)/;
@@ -16,18 +15,14 @@ function extractYouTubeID(url: string) {
 const Content = () => {
   const { pathname, search } = useTabLocation();
   const videoId = extractYouTubeID(search);
-  const { ytdLiveChat } = useGlobalSettingStore(
-    useShallow((state) => ({
-      ytdLiveChat: state.ytdLiveChat,
-    })),
-  );
+  const ytdLiveChat = useYTDLiveChat();
   return (
     <>
       {/* If the pathname of each iframe is /live_chat */}
       {pathname === '/live_chat' ? (
         <>
           <EmojiFix />
-          {/* <AddChatMessageCopyIcon /> */}
+          <AddChatMessageCopyIcon />
         </>
       ) : null}
       {/* If the pathname of the tab is watch */}

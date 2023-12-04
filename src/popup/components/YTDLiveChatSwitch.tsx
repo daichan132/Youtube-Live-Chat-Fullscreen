@@ -23,6 +23,7 @@ export const YTDLiveChatSwitch = () => {
         id="ytd-live-chat-switch"
         onChange={(checked) => {
           setYTDLiveChat(checked);
+          chrome.runtime.sendMessage({ message: 'ytdLiveChat', ytdLiveChat: checked });
         }}
       />
     </div>
