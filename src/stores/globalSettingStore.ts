@@ -12,8 +12,8 @@ interface globalSettingStoreState {
 export const useGlobalSettingStore = create<globalSettingStoreState>()(
   persist(
     (set) => ({
-      ytdLiveChat: false,
-      emojiCopy: false,
+      ytdLiveChat: true,
+      emojiCopy: true,
       setYTDLiveChat: (ytdLiveChat) => set(() => ({ ytdLiveChat })),
       setEmojiCopy: (emojiCopy) => set(() => ({ emojiCopy })),
     }),
