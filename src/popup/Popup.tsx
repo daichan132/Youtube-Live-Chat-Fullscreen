@@ -3,6 +3,7 @@ import styles from './styles/Popup.module.scss';
 import classNames from 'classnames';
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
 import React from 'react';
+import { EmojiCopySwitch } from './components/EmojiCopySwitch';
 
 interface itemType {
   title: string;
@@ -13,6 +14,7 @@ const Popup = () => {
   const { t } = useTranslation();
   const items: itemType[] = [
     { title: t('popup.showChatOnFullscreen'), data: <YTDLiveChatSwitch /> },
+    { title: t('popup.emojiCopy'), data: <EmojiCopySwitch /> },
   ];
 
   return (

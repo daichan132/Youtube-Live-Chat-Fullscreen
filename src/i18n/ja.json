@@ -16,6 +16,7 @@
     }
   },
   "popup": {
-    "showChatOnFullscreen": "フルスクリーン時にチャットを表示する"
+    "showChatOnFullscreen": "フルスクリーン時にチャットを表示する",
+    "emojiCopy": "Youtubeの絵文字のコピーを可能にする"
   }
 }

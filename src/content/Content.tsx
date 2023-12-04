@@ -4,7 +4,7 @@ import { AddChatMessageCopyIcon } from './features/ChatMessageCopyIcon';
 import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
 import { useTabLocation } from './hooks/useTabLocation';
-import { useYTDLiveChat } from './hooks/useYTDLiveChat';
+import { useGlobalSetting } from './hooks/useGlobalSetting';
 
 function extractYouTubeID(url: string) {
   const regex = /v=([^&]*)/;
@@ -15,11 +15,11 @@ function extractYouTubeID(url: string) {
 const Content = () => {
   const { pathname, search } = useTabLocation();
   const videoId = extractYouTubeID(search);
-  const ytdLiveChat = useYTDLiveChat();
+  const { ytdLiveChat, emojiCopy } = useGlobalSetting();
   return (
     <>
       {/* If the pathname of each iframe is /live_chat */}
-      {pathname === '/live_chat' ? (
+      {emojiCopy && pathname === '/live_chat' ? (
         <>
           <EmojiFix />
           <AddChatMessageCopyIcon />
