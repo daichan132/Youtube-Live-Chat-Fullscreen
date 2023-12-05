@@ -6,6 +6,7 @@ export type Styles = {
   help: string;
   settings: string;
   title: string;
+  'title-with-icon': string;
 };
 
 export type ClassNames = keyof Styles;

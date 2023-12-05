@@ -35,6 +35,22 @@ body {
         align-items: center;
         font-size: 14px;
       }
+
+      .title-with-icon {
+        display: flex;
+        align-items: center;
+        font-size: 14px;
+
+        > svg {
+          margin-right: 10px;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          color: #333;
+          padding: 3px;
+          border-radius: 5px;
+          background-color: white;
+          padding: 6px;
+        }
+      }
     }
 
     hr {

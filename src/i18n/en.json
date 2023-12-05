@@ -16,6 +16,7 @@
     }
   },
   "popup": {
+    "language": "Language Setting",
     "showChatOnFullscreen": "Show Chat on Fullscreen",
     "emojiCopy": "Allows copying of Youtube emojis"
   }

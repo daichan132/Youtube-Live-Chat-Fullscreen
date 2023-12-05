@@ -57,7 +57,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     <Resizable
       size={size}
       minWidth={300}
-      minHeight={400}
+      minHeight={350}
       enable={enable}
       className={styles['Resizable']}
       style={{

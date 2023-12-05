@@ -4,8 +4,12 @@ import classNames from 'classnames';
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
 import React from 'react';
 import { EmojiCopySwitch } from './components/EmojiCopySwitch';
+import LanguageSelector from './components/LanguageSelector';
+import { IconType } from 'react-icons';
+import { IoLanguage } from 'react-icons/io5';
 
 interface itemType {
+  icon?: IconType;
   title: string;
   data: React.ReactNode;
 }
@@ -13,6 +17,7 @@ interface itemType {
 const Popup = () => {
   const { t } = useTranslation();
   const items: itemType[] = [
+    { icon: IoLanguage, title: t('popup.language'), data: <LanguageSelector /> },
     { title: t('popup.showChatOnFullscreen'), data: <YTDLiveChatSwitch /> },
     { title: t('popup.emojiCopy'), data: <EmojiCopySwitch /> },
   ];
@@ -22,9 +27,10 @@ const Popup = () => {
       <div className={styles['content']}>
         {items.map((item, i) => {
           return (
-            <React.Fragment key={item.title}>
+            <React.Fragment key={item.title + `-${i}`}>
               <div className={classNames(styles['content-item'])}>
-                <div className={styles['title']}>
+                <div className={item.icon ? styles['title-with-icon'] : styles['title']}>
+                  {item.icon ? <item.icon size={16} /> : null}
                   <div>{item.title}</div>
                 </div>
                 {item.data}
