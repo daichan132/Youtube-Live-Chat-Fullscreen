@@ -12,6 +12,7 @@ import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsSt
 import { useState } from 'react';
 import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
 import { useHoverEvent } from '../../hooks/Draggable/useHoverEvent';
+import { ClipPathEffect } from '../EffectComponent/ClipPathEffect';
 
 const enable = {
   top: false,
@@ -52,60 +53,63 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const disableTopTransition = useDisanleTopTransition(isDragging);
 
   return (
-    <Resizable
-      size={size}
-      minWidth={300}
-      minHeight={350}
-      enable={enable}
-      className={styles['Resizable']}
-      bounds={'window'}
-      onResizeStop={(event, direction, ref, d) => {
-        setResiziging(false);
-        if (event instanceof MouseEvent) {
-          if (event.target instanceof HTMLElement) {
-            setSize({ width: size.width + d.width, height: size.height + d.height });
+    <>
+      <ClipPathEffect isDragging={isDragging} isResizing={isResizing} />
+      <Resizable
+        size={size}
+        minWidth={300}
+        minHeight={350}
+        enable={enable}
+        className={styles['Resizable']}
+        bounds={'window'}
+        onResizeStop={(event, direction, ref, d) => {
+          setResiziging(false);
+          if (event instanceof MouseEvent) {
+            if (event.target instanceof HTMLElement) {
+              setSize({ width: size.width + d.width, height: size.height + d.height });
+            }
           }
-        }
-      }}
-      style={{
-        top,
-        left,
-        transition: `${!disableTopTransition && 'top 200ms ease'}, ${
-          !isResizing && 'height 200ms ease'
-        }`,
-      }}
-      onResizeStart={() => setResiziging(true)}
-    >
-      <div
-        className={classNames(styles['Container'])}
-        style={{
-          transform: CSS.Translate.toString(transform),
-          clipPath: isClipPath
-            ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
-            : 'inset(0 round 10px)',
-          transition: 'clip-path 200ms ease',
         }}
-        ref={setNodeRef}
+        style={{
+          top,
+          left,
+          transition: `${!disableTopTransition && 'top 200ms ease'}, ${
+            !isResizing && 'height 200ms ease'
+          }`,
+        }}
+        onResizeStart={() => setResiziging(true)}
       >
         <div
-          className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
-          {...attributes}
-          {...listeners}
-          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+          className={classNames(styles['Container'])}
+          style={{
+            transform: CSS.Translate.toString(transform),
+            clipPath: isClipPath
+              ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
+              : 'inset(0 round 10px)',
+            transition: 'clip-path 200ms ease',
+          }}
+          ref={setNodeRef}
         >
-          <DragIcon />
+          <div
+            className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
+            {...attributes}
+            {...listeners}
+            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+          >
+            <DragIcon />
+          </div>
+          <div
+            className={styles['settingButton']}
+            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+          >
+            <SettingIcon />
+          </div>
+          <div className={styles['children']}>
+            {isDragging && <div className={styles['overlay']} />}
+            {children}
+          </div>
         </div>
-        <div
-          className={styles['settingButton']}
-          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
-        >
-          <SettingIcon />
-        </div>
-        <div className={styles['children']}>
-          {isDragging && <div className={styles['overlay']} />}
-          {children}
-        </div>
-      </div>
-    </Resizable>
+      </Resizable>
+    </>
   );
 };

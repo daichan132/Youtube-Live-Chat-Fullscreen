@@ -10,7 +10,6 @@ import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 
 import { MdBlurOn, MdExpand } from 'react-icons/md';
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
 import { IconType } from 'react-icons';
-// import { ReactionButtonDisplaySwitch } from './ReactionButtonDisplaySwitch';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
@@ -18,6 +17,27 @@ import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
 import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
 import { useTranslation } from 'react-i18next';
+import Modal from 'react-modal';
+
+const customStyles = {
+  overlay: {
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
+  content: {
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+    padding: 0,
+    outline: 'none',
+    border: 'none',
+    zIndex: 10,
+    backgroundColor: 'transparent',
+    overflow: 'none',
+  },
+};
 
 interface itemType {
   icon: IconType;
@@ -30,9 +50,11 @@ interface YTDLiveChatSettingType {
   closeModal?: () => void;
 }
 export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
-  const { setIsOpenSettingModal } = useYTDLiveChatNoLsStore(
+  const { isOpenSettingModal, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
+      isOpenSettingModal: state.isOpenSettingModal,
       setIsOpenSettingModal: state.setIsOpenSettingModal,
+      setIsHover: state.setIsHover,
     })),
   );
   const { alwaysOnDisplay } = useYTDLiveChatStore(
@@ -90,50 +112,60 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
     },
   ];
   return (
-    <div className={styles['settings']}>
-      <div className={styles['header']}>
-        <div className={styles['menu']}>
-          <div className={classNames(styles['menu-item'])}>{t('content.setting.header')}</div>
+    <Modal
+      closeTimeoutMS={200}
+      isOpen={isOpenSettingModal}
+      style={customStyles}
+      shouldCloseOnOverlayClick={true}
+      onRequestClose={() => setIsOpenSettingModal(false)}
+      appElement={document.body}
+      onAfterClose={() => setIsHover(false)}
+    >
+      <div className={styles['settings']}>
+        <div className={styles['header']}>
+          <div className={styles['menu']}>
+            <div className={classNames(styles['menu-item'])}>{t('content.setting.header')}</div>
+          </div>
+          <RiCloseLine
+            className={styles['close-button']}
+            onClick={() => closeModal && closeModal()}
+            size={20}
+          />
         </div>
-        <RiCloseLine
-          className={styles['close-button']}
-          onClick={() => closeModal && closeModal()}
-          size={20}
-        />
-      </div>
-      <div className={styles['content']}>
-        {items.map((item, i) => {
-          return (
-            <React.Fragment key={item.title}>
-              <div
-                className={classNames(styles['content-item'], item.disable && styles['disable'])}
-              >
-                <div className={styles['title-with-icon']}>
-                  {<item.icon size={20} />}
-                  <div>{item.title}</div>
+        <div className={styles['content']}>
+          {items.map((item, i) => {
+            return (
+              <React.Fragment key={item.title}>
+                <div
+                  className={classNames(styles['content-item'], item.disable && styles['disable'])}
+                >
+                  <div className={styles['title-with-icon']}>
+                    {<item.icon size={20} />}
+                    <div>{item.title}</div>
+                  </div>
+                  {item.data}
                 </div>
-                {item.data}
-              </div>
-              {item.disable || i === items.length - 1 ? null : <hr />}
-            </React.Fragment>
-          );
-        })}
-        <div className={styles['footer']}>
-          <div className={styles['help']}>
-            {t('content.setting.footer')}
-            <a
-              href="https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4"
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => {
-                setIsOpenSettingModal(false);
-              }}
-            >
-              {t('content.setting.help')}
-            </a>
+                {item.disable || i === items.length - 1 ? null : <hr />}
+              </React.Fragment>
+            );
+          })}
+          <div className={styles['footer']}>
+            <div className={styles['help']}>
+              {t('content.setting.footer')}
+              <a
+                href="https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  setIsOpenSettingModal(false);
+                }}
+              >
+                {t('content.setting.help')}
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };

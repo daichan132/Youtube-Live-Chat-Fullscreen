@@ -8,7 +8,7 @@ import { useYTDLiveChatNoLsStore } from '../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { DisplayEffect } from '../components/EffectComponent/DisplayEffect';
 import { WindowResizeEffect } from '../components/EffectComponent/WindowResizeEffect';
-import { ClipPathEffect } from '../components/EffectComponent/ClipPathEffect';
+import { YTDLiveChatSetting } from '../components/YTDLiveChatSetting/YTDLiveChatSetting';
 
 interface YTDLiveChatType {
   videoID: string;
@@ -22,21 +22,22 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
 
   return (
     isFullscreen && (
-      <CSSTransition nodeRef={nodeRef} in={isShow} timeout={500} classNames={fade} unmountOnExit>
-        <div
-          ref={nodeRef}
-          onMouseEnter={() => setIsHover(true)}
-          onMouseLeave={() => setIsHover(false)}
-        >
-          <DisplayEffect />
-          <WindowResizeEffect />
-          <ClipPathEffect />
-
-          <Draggable>
-            <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
-          </Draggable>
-        </div>
-      </CSSTransition>
+      <>
+        <CSSTransition nodeRef={nodeRef} in={isShow} timeout={500} classNames={fade} unmountOnExit>
+          <div
+            ref={nodeRef}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+          >
+            <DisplayEffect />
+            <WindowResizeEffect />
+            <Draggable>
+              <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
+            </Draggable>
+          </div>
+        </CSSTransition>
+        <YTDLiveChatSetting />
+      </>
     )
   );
 };

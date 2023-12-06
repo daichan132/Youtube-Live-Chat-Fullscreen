@@ -1,9 +1,13 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
+import { usePrevious, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
-export const ClipPathEffect = () => {
+interface ClipPathEffectType {
+  isDragging: boolean;
+  isResizing: boolean;
+}
+export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) => {
   const { alwaysOnDisplay, chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow((state) => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
@@ -12,19 +16,21 @@ export const ClipPathEffect = () => {
       setCoordinates: state.setCoordinates,
     })),
   );
-  const { isDisplay, isClipPath, setIsClipPath, clip, isOpenSettingModal } =
+  const { isHover, isClipPath, isIframeLoaded, setIsClipPath, clip, isOpenSettingModal } =
     useYTDLiveChatNoLsStore(
       useShallow((state) => ({
-        isDisplay: state.isDisplay,
+        isHover: state.isHover,
         clip: state.clip,
         isOpenSettingModal: state.isOpenSettingModal,
         isClipPath: state.isClipPath,
+        isIframeLoaded: state.isIframeLoaded,
         setIsClipPath: state.setIsClipPath,
       })),
     );
   const prevClipPath = usePrevious(isClipPath);
   const handleClipPathChange = useCallback(
     (isClipPath: boolean) => {
+      if (!isIframeLoaded) return;
       const { size, coordinates } = useYTDLiveChatStore.getState();
       const topClip = clip.header;
       const bottomClip = clip.input;
@@ -36,21 +42,22 @@ export const ClipPathEffect = () => {
         setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
       }
     },
-    [clip.header, clip.input, setCoordinates, setSize],
+    [clip.header, clip.input, isIframeLoaded, setCoordinates, setSize],
   );
-  useEffect(() => {
-    setIsClipPath(alwaysOnDisplay && chatOnlyDisplay && (isOpenSettingModal || !isDisplay));
-  }, [isDisplay, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, setIsClipPath]);
   useUpdateEffect(() => {
-    if (isClipPath === undefined || prevClipPath === undefined) return;
+    setIsClipPath(
+      alwaysOnDisplay &&
+        chatOnlyDisplay &&
+        !isDragging &&
+        !isResizing &&
+        (isOpenSettingModal || !isHover),
+    );
+  }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing]);
+  useUpdateEffect(() => {
+    if (prevClipPath === undefined) return;
     if (alwaysOnDisplay) {
       handleClipPathChange(isClipPath);
     }
   }, [isClipPath]);
-  useUnmount(() => {
-    if (isClipPath === true) {
-      handleClipPathChange(false);
-    }
-  });
   return null;
 };
