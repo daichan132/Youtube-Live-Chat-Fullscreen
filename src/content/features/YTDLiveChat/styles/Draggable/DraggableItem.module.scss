@@ -1,6 +1,5 @@
 .Resizable {
   position: absolute;
-  transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
   pointer-events: all;
 }
 
@@ -9,6 +8,7 @@
   width: 100%;
   height: 100%;
   transition: filter 0.1s ease;
+  transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
 
   > .dragButton {
     z-index: 1;

@@ -58,17 +58,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       minHeight={350}
       enable={enable}
       className={styles['Resizable']}
-      style={{
-        transform: CSS.Translate.toString(transform),
-        top,
-        left,
-        clipPath: isClipPath
-          ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
-          : 'inset(0 round 10px)',
-        transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}, ${
-          !isResizing && 'height 200ms ease'
-        }`,
-      }}
       bounds={'window'}
       onResizeStop={(event, direction, ref, d) => {
         setResiziging(false);
@@ -78,9 +67,24 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           }
         }
       }}
+      style={{
+        transition: `${!isResizing && 'height 200ms ease'}`,
+      }}
       onResizeStart={() => setResiziging(true)}
     >
-      <div className={classNames(styles['Container'])} ref={setNodeRef}>
+      <div
+        className={classNames(styles['Container'])}
+        style={{
+          transform: CSS.Translate.toString(transform),
+          top,
+          left,
+          clipPath: isClipPath
+            ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
+            : 'inset(0 round 10px)',
+          transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}`,
+        }}
+        ref={setNodeRef}
+      >
         <div
           className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
           {...attributes}
