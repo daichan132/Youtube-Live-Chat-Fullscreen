@@ -3,27 +3,25 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../sto
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
-interface ClipPathEffectType {
-  isDisplay: boolean;
-  isDragging: boolean;
-  alwaysOnDisplay: boolean;
-}
-export const ClipPathEffect = ({ isDisplay, isDragging, alwaysOnDisplay }: ClipPathEffectType) => {
-  const { chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
+export const ClipPathEffect = () => {
+  const { alwaysOnDisplay, chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow((state) => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
+      alwaysOnDisplay: state.alwaysOnDisplay,
       setSize: state.setSize,
       setCoordinates: state.setCoordinates,
     })),
   );
-  const { isClipPath, setIsClipPath, clip, isOpenSettingModal } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({
-      clip: state.clip,
-      isOpenSettingModal: state.isOpenSettingModal,
-      isClipPath: state.isClipPath,
-      setIsClipPath: state.setIsClipPath,
-    })),
-  );
+  const { isDisplay, isClipPath, setIsClipPath, clip, isOpenSettingModal } =
+    useYTDLiveChatNoLsStore(
+      useShallow((state) => ({
+        isDisplay: state.isDisplay,
+        clip: state.clip,
+        isOpenSettingModal: state.isOpenSettingModal,
+        isClipPath: state.isClipPath,
+        setIsClipPath: state.setIsClipPath,
+      })),
+    );
   const prevClipPath = usePrevious(isClipPath);
   const handleClipPathChange = useCallback(
     (isClipPath: boolean) => {
@@ -41,10 +39,8 @@ export const ClipPathEffect = ({ isDisplay, isDragging, alwaysOnDisplay }: ClipP
     [clip.header, clip.input, setCoordinates, setSize],
   );
   useEffect(() => {
-    setIsClipPath(
-      alwaysOnDisplay && chatOnlyDisplay && (isOpenSettingModal || (!isDisplay && !isDragging)),
-    );
-  }, [isDisplay, isDragging, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, setIsClipPath]);
+    setIsClipPath(alwaysOnDisplay && chatOnlyDisplay && (isOpenSettingModal || !isDisplay));
+  }, [isDisplay, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, setIsClipPath]);
   useUpdateEffect(() => {
     if (isClipPath === undefined || prevClipPath === undefined) return;
     if (alwaysOnDisplay) {

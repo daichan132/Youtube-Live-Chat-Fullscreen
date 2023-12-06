@@ -12,7 +12,6 @@ import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsSt
 import { useState } from 'react';
 import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
 import { useHoverEvent } from '../../hooks/Draggable/useHoverEvent';
-import { ClipPathEffect } from '../EffectComponent/ClipPathEffect';
 
 const enable = {
   top: false,
@@ -53,61 +52,54 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const disableTopTransition = useDisanleTopTransition(isDragging);
 
   return (
-    <>
-      <ClipPathEffect
-        isDisplay={isDisplay}
-        isDragging={isDragging}
-        alwaysOnDisplay={alwaysOnDisplay}
-      />
-      <Resizable
-        size={size}
-        minWidth={300}
-        minHeight={350}
-        enable={enable}
-        className={styles['Resizable']}
-        style={{
-          transform: CSS.Translate.toString(transform),
-          top,
-          left,
-          clipPath: isClipPath
-            ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
-            : 'inset(0 round 10px)',
-          transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}, ${
-            !isResizing && 'height 200ms ease'
-          }`,
-        }}
-        bounds={'window'}
-        onResizeStop={(event, direction, ref, d) => {
-          setResiziging(false);
-          if (event instanceof MouseEvent) {
-            if (event.target instanceof HTMLElement) {
-              setSize({ width: size.width + d.width, height: size.height + d.height });
-            }
+    <Resizable
+      size={size}
+      minWidth={300}
+      minHeight={350}
+      enable={enable}
+      className={styles['Resizable']}
+      style={{
+        transform: CSS.Translate.toString(transform),
+        top,
+        left,
+        clipPath: isClipPath
+          ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
+          : 'inset(0 round 10px)',
+        transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}, ${
+          !isResizing && 'height 200ms ease'
+        }`,
+      }}
+      bounds={'window'}
+      onResizeStop={(event, direction, ref, d) => {
+        setResiziging(false);
+        if (event instanceof MouseEvent) {
+          if (event.target instanceof HTMLElement) {
+            setSize({ width: size.width + d.width, height: size.height + d.height });
           }
-        }}
-        onResizeStart={() => setResiziging(true)}
-      >
-        <div className={classNames(styles['Container'])} ref={setNodeRef}>
-          <div
-            className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
-            {...attributes}
-            {...listeners}
-            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
-          >
-            <DragIcon />
-          </div>
-          <div
-            className={styles['settingButton']}
-            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
-          >
-            <SettingIcon />
-          </div>
-          <div className={styles['children']}>
-            {isDragging && <div className={styles['overlay']} />}
-            {children}
-          </div>
+        }
+      }}
+      onResizeStart={() => setResiziging(true)}
+    >
+      <div className={classNames(styles['Container'])} ref={setNodeRef}>
+        <div
+          className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
+          {...attributes}
+          {...listeners}
+          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+        >
+          <DragIcon />
         </div>
-      </Resizable>
-    </>
+        <div
+          className={styles['settingButton']}
+          style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+        >
+          <SettingIcon />
+        </div>
+        <div className={styles['children']}>
+          {isDragging && <div className={styles['overlay']} />}
+          {children}
+        </div>
+      </div>
+    </Resizable>
   );
 };

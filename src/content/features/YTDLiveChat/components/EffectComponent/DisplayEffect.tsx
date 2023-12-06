@@ -11,7 +11,7 @@ export const DisplayEffect = () => {
       setIsDisplay: state.setIsDisplay,
     })),
   );
-  const isIdle = useIdle(2e3);
+  const isIdle = useIdle(1e3);
 
   useEffect(() => {
     setIsDisplay(isHover || !isIdle || isOpenSettingModal);

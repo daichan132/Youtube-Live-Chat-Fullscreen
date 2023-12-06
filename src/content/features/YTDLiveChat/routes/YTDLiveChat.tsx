@@ -8,6 +8,7 @@ import { useYTDLiveChatNoLsStore } from '../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
 import { DisplayEffect } from '../components/EffectComponent/DisplayEffect';
 import { WindowResizeEffect } from '../components/EffectComponent/WindowResizeEffect';
+import { ClipPathEffect } from '../components/EffectComponent/ClipPathEffect';
 
 interface YTDLiveChatType {
   videoID: string;
@@ -29,6 +30,8 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
         >
           <DisplayEffect />
           <WindowResizeEffect />
+          <ClipPathEffect />
+
           <Draggable>
             <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
           </Draggable>
