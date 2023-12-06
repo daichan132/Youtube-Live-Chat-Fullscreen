@@ -68,7 +68,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         }
       }}
       style={{
-        transition: `${!isResizing && 'height 200ms ease'}`,
+        top,
+        left,
+        transition: `${!disableTopTransition && 'top 200ms ease'}, ${
+          !isResizing && 'height 200ms ease'
+        }`,
       }}
       onResizeStart={() => setResiziging(true)}
     >
@@ -76,12 +80,10 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         className={classNames(styles['Container'])}
         style={{
           transform: CSS.Translate.toString(transform),
-          top,
-          left,
           clipPath: isClipPath
             ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
             : 'inset(0 round 10px)',
-          transition: `clip-path 200ms ease, ${!disableTopTransition && 'top 200ms ease'}`,
+          transition: 'clip-path 200ms ease',
         }}
         ref={setNodeRef}
       >

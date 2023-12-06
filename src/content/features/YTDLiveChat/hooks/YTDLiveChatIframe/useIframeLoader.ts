@@ -10,9 +10,6 @@ import { useMount, useUnmount, useUpdateEffect } from 'react-use';
 import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
 import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange';
 
-function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
   const { isDisplay, isClipPath, setIsDisplay, setIsIframeLoaded, setClip } =
@@ -51,7 +48,6 @@ export const useIframeLoader = () => {
         changeFontFamily(fontFamily);
         changeFontSize(fontSize);
         changeSpace(space);
-        await sleep(500);
         setIsIframeLoaded(true);
         setIsDisplay(true);
       }
