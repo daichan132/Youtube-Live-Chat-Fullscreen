@@ -76,6 +76,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           transition: `${!disableTopTransition && 'top 200ms ease'}, ${
             !isResizing && 'height 200ms ease'
           }`,
+          pointerEvents: isClipPath ? 'none' : 'all',
         }}
         onResizeStart={() => setResiziging(true)}
       >
