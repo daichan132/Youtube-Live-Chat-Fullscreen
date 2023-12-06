@@ -46,10 +46,7 @@ interface itemType {
   disable?: boolean;
 }
 
-interface YTDLiveChatSettingType {
-  closeModal?: () => void;
-}
-export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
+export const YTDLiveChatSetting = () => {
   const { isOpenSettingModal, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       isOpenSettingModal: state.isOpenSettingModal,
@@ -128,7 +125,7 @@ export const YTDLiveChatSetting = ({ closeModal }: YTDLiveChatSettingType) => {
           </div>
           <RiCloseLine
             className={styles['close-button']}
-            onClick={() => closeModal && closeModal()}
+            onClick={() => setIsOpenSettingModal(false)}
             size={20}
           />
         </div>
