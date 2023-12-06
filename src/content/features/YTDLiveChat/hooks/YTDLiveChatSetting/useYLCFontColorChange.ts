@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { RGBColor } from 'react-color';
 
-const propertyList: string[] = ['--yt-live-chat-primary-text-color', '--yt-spec-text-primary'];
+const propertyList: string[] = ['--extension-yt-live-font-color'];
 
-const propertyLightList: string[] = [
-  '--yt-live-chat-text-input-field-placeholder-color',
-  '--yt-live-chat-secondary-text-color',
-];
+const propertyLightList: string[] = ['--extension-yt-live-secondary-font-color'];
 
 export const useYLCFontColorChange = () => {
   const ref = useRef<HTMLIFrameElement | null>(null);

@@ -2,6 +2,8 @@ html {
   --extension-user-name-display: inline;
   --extension-yt-live-chat-font-size: 13px;
   --extension-yt-live-chat-spacing: 0px;
+  --extension-yt-live-font-color: black;
+  --extension-yt-live-secondary-font-color: rgba(0, 0, 0, 0.6);
 }
 
 body.custom-yt-app-live-chat-extension {
@@ -58,21 +60,26 @@ body.custom-yt-app-live-chat-extension {
   }
 
   /* --------------------------- font color setting --------------------------- */
-  .item.yt-dropdown-menu,
-  yt-formatted-string.ytd-menu-service-item-renderer,
-  ytd-menu-service-item-renderer[system-icons] yt-icon.ytd-menu-service-item-renderer,
-  yt-icon.yt-live-chat-toggle-renderer,
-  yt-live-chat-toggle-renderer.ytd-menu-popup-renderer span.yt-live-chat-toggle-renderer,
-  yt-formatted-string.ytd-menu-navigation-item-renderer,
-  ytd-menu-navigation-item-renderer[system-icons] yt-icon.ytd-menu-navigation-item-renderer,
-  #channel-guidelines-list-item-text.yt-live-chat-channel-guidelines-dialog-renderer,
-  #channel-guidelines-dialog-owner-name.yt-live-chat-channel-guidelines-dialog-renderer,
-  #channel-guidelines-dialog-title.yt-live-chat-channel-guidelines-dialog-renderer,
-  #channel-guidelines-dialog-community-guidelines.yt-live-chat-channel-guidelines-dialog-renderer,
-  #channel-guidelines-list-item.yt-live-chat-channel-guidelines-dialog-renderer
-    #list-item-index.yt-live-chat-channel-guidelines-dialog-renderer,
-  #channel-guidelines-dialog-welcome-message-text.yt-live-chat-channel-guidelines-dialog-renderer {
-    color: black;
+
+  #message.yt-live-chat-text-message-renderer,
+  #input.yt-live-chat-text-input-field-renderer,
+  yt-dropdown-menu .yt-dropdown-menu[style-target='label-text'],
+  #label-icon.yt-dropdown-menu,
+  .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text,
+  yt-live-chat-message-input-renderer,
+  yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji
+    yt-icon.yt-live-chat-icon-toggle-button-renderer,
+  div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg {
+    color: var(--extension-yt-live-font-color);
+  }
+
+  #message.yt-live-chat-viewer-engagement-message-renderer,
+  #label.yt-live-chat-text-input-field-renderer,
+  #timestamp.yt-live-chat-text-message-renderer,
+  #author-name.yt-live-chat-author-chip,
+  yt-live-chat-text-message-renderer[whole-message-clickable]
+    #menu.yt-live-chat-text-message-renderer {
+    color: var(--extension-yt-live-secondary-font-color);
   }
 
   #title.yt-emoji-picker-category-renderer {
@@ -83,6 +90,7 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-text-message-renderer {
     font-size: var(--extension-yt-live-chat-font-size);
   }
+
   yt-live-chat-viewer-engagement-message-renderer {
     font-size: calc(var(--extension-yt-live-chat-font-size) - 1px);
   }
