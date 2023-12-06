@@ -13,6 +13,7 @@ export type Styles = {
   label: string;
   'label-icon': string;
   'left-arrow-container': string;
+  member: string;
   menu: string;
   message: string;
   'panel-pages': string;

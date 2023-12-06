@@ -89,6 +89,10 @@ body.custom-yt-app-live-chat-extension {
     color: var(--extension-yt-live-secondary-font-color);
   }
 
+  #author-name.member.yt-live-chat-author-chip {
+    color: var(--yt-live-chat-sponsor-color);
+  }
+
   yt-live-chat-banner-manager
     yt-live-chat-text-message-renderer
     #message.yt-live-chat-text-message-renderer {

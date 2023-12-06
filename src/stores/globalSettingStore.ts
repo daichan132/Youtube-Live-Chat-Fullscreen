@@ -13,7 +13,7 @@ export const useGlobalSettingStore = create<globalSettingStoreState>()(
   persist(
     (set) => ({
       ytdLiveChat: true,
-      emojiCopy: true,
+      emojiCopy: false,
       setYTDLiveChat: (ytdLiveChat) => set(() => ({ ytdLiveChat })),
       setEmojiCopy: (emojiCopy) => set(() => ({ emojiCopy })),
     }),
