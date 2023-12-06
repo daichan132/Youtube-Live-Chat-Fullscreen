@@ -3,7 +3,7 @@
 .settings {
   display: flex;
   flex-direction: column; // モーダルのメイン方向を縦に設定
-  width: 450px; // モーダルの幅
+  width: 480px; // モーダルの幅
   border-radius: 8px;
   background-color: #fff;
   letter-spacing: 0.05rem;
@@ -75,6 +75,7 @@
       .title-with-icon {
         display: flex;
         align-items: center;
+        font-size: 14px;
 
         > svg {
           margin-right: 1.5rem;
@@ -101,7 +102,7 @@
       display: flex;
       justify-content: flex-end;
       background-color: #fff;
-      font-size: 12px;
+      font-size: 14px;
 
       .help {
         > a {
