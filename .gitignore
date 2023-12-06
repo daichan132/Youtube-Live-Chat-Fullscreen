@@ -25,6 +25,7 @@ dist-firefox-v2
 *.sw?
 
 dist.zip
+dist-firefox-v2.zip
 
 # yarn (using Zero-Installs)
 .yarn/*
