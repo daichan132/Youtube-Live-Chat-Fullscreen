@@ -1,6 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { usePrevious, useUpdateEffect } from 'react-use';
+import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
 interface ClipPathEffectType {
@@ -16,21 +16,28 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
       setCoordinates: state.setCoordinates,
     })),
   );
-  const { isHover, isClipPath, isIframeLoaded, setIsClipPath, clip, isOpenSettingModal } =
-    useYTDLiveChatNoLsStore(
-      useShallow((state) => ({
-        isHover: state.isHover,
-        clip: state.clip,
-        isOpenSettingModal: state.isOpenSettingModal,
-        isClipPath: state.isClipPath,
-        isIframeLoaded: state.isIframeLoaded,
-        setIsClipPath: state.setIsClipPath,
-      })),
-    );
+  const {
+    isHover,
+    isClipPath,
+    isIframeLoaded,
+    setIsClipPath,
+    clip,
+    isOpenSettingModal,
+    setIsHover,
+  } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      isHover: state.isHover,
+      clip: state.clip,
+      isOpenSettingModal: state.isOpenSettingModal,
+      isClipPath: state.isClipPath,
+      isIframeLoaded: state.isIframeLoaded,
+      setIsClipPath: state.setIsClipPath,
+      setIsHover: state.setIsHover,
+    })),
+  );
   const prevClipPath = usePrevious(isClipPath);
   const handleClipPathChange = useCallback(
     (isClipPath: boolean) => {
-      if (!isIframeLoaded) return;
       const { size, coordinates } = useYTDLiveChatStore.getState();
       const topClip = clip.header;
       const bottomClip = clip.input;
@@ -42,22 +49,37 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
         setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
       }
     },
-    [clip.header, clip.input, isIframeLoaded, setCoordinates, setSize],
+    [clip.header, clip.input, setCoordinates, setSize],
   );
-  useUpdateEffect(() => {
+  useEffect(() => {
     setIsClipPath(
-      alwaysOnDisplay &&
+      isIframeLoaded &&
+        alwaysOnDisplay &&
         chatOnlyDisplay &&
         !isDragging &&
         !isResizing &&
         (isOpenSettingModal || !isHover),
     );
-  }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing]);
+  }, [
+    isHover,
+    alwaysOnDisplay,
+    isOpenSettingModal,
+    chatOnlyDisplay,
+    isDragging,
+    isResizing,
+    setIsClipPath,
+    isIframeLoaded,
+  ]);
   useUpdateEffect(() => {
-    if (prevClipPath === undefined) return;
-    if (alwaysOnDisplay) {
-      handleClipPathChange(isClipPath);
-    }
+    if (isClipPath === undefined || prevClipPath === undefined) return;
+    handleClipPathChange(isClipPath);
   }, [isClipPath]);
+  useUnmount(() => {
+    if (isClipPath) {
+      setIsClipPath(undefined);
+      setIsHover(false);
+      handleClipPathChange(false);
+    }
+  });
   return null;
 };

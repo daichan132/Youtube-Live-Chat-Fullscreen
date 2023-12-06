@@ -6,6 +6,7 @@ export type Styles = {
   custom: string;
   'custom-yt-app-live-chat-extension': string;
   emoji: string;
+  icon: string;
   input: string;
   'item-scroller': string;
   items: string;
@@ -15,6 +16,7 @@ export type Styles = {
   menu: string;
   message: string;
   'panel-pages': string;
+  'picker-buttons': string;
   right: string;
   'right-arrow-container': string;
   separator: string;
@@ -30,6 +32,7 @@ export type Styles = {
   'yt-live-chat-item-list-renderer': string;
   'yt-live-chat-message-input-renderer': string;
   'yt-live-chat-renderer': string;
+  'yt-live-chat-restricted-participation-renderer': string;
   'yt-live-chat-text-input-field-renderer': string;
   'yt-live-chat-text-message-renderer': string;
   'yt-live-chat-ticker-renderer': string;

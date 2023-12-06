@@ -10,13 +10,13 @@ interface YTDLiveChatNoLsStoreState {
   isOpenSettingModal: boolean;
   isIframeLoaded: boolean;
   clip: clipState;
-  isClipPath: boolean;
+  isClipPath: boolean | undefined;
   setIsHover: (isHover: boolean) => void;
   setIsDisplay: (isDisplay: boolean) => void;
   setIsOpenSettingModal: (isSettingModal: boolean) => void;
   setIsIframeLoaded: (isIframeLoaded: boolean) => void;
   setClip: (clip: clipState) => void;
-  setIsClipPath: (isClipPath: boolean) => void;
+  setIsClipPath: (isClipPath: boolean | undefined) => void;
 }
 
 export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set) => ({
@@ -28,7 +28,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set)
     header: 0,
     input: 0,
   },
-  isClipPath: false,
+  isClipPath: undefined,
   setIsHover: (isHover) => set(() => ({ isHover })),
   setIsDisplay: (isDisplay) => set(() => ({ isDisplay })),
   setIsOpenSettingModal: (isOpenSettingModal) => set(() => ({ isOpenSettingModal })),
