@@ -3,11 +3,12 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../sto
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
-export const useClipPathHandle = (
-  isDisplay: boolean,
-  isDragging: boolean,
-  alwaysOnDisplay: boolean,
-) => {
+interface ClipPathEffectType {
+  isDisplay: boolean;
+  isDragging: boolean;
+  alwaysOnDisplay: boolean;
+}
+export const ClipPathEffect = ({ isDisplay, isDragging, alwaysOnDisplay }: ClipPathEffectType) => {
   const { chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow((state) => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
@@ -55,5 +56,5 @@ export const useClipPathHandle = (
       handleClipPathChange(false);
     }
   });
-  return { isClipPath };
+  return null;
 };

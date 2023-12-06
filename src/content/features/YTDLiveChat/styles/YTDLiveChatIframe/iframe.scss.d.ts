@@ -1,5 +1,4 @@
 export type Styles = {
-  'always-on-display': string;
   'channel-guidelines-dialog-community-guidelines': string;
   'channel-guidelines-dialog-owner-name': string;
   'channel-guidelines-dialog-title': string;
@@ -7,9 +6,9 @@ export type Styles = {
   'channel-guidelines-list-item': string;
   'channel-guidelines-list-item-text': string;
   chat: string;
+  'clip-path-enable': string;
   contents: string;
   'custom-yt-app-live-chat-extension': string;
-  display: string;
   emoji: string;
   item: string;
   'item-scroller': string;
