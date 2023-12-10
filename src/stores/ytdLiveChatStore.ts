@@ -20,6 +20,7 @@ interface YTDLiveChatStoreState {
   alwaysOnDisplay: boolean;
   chatOnlyDisplay: boolean;
   userNameDisplay: boolean;
+  userIconDisplay: boolean;
   setBgColor: (bgColor: RGBColor) => void;
   setFontColor: (fontColor: RGBColor) => void;
   setFontFamily: (fontFamily: string) => void;
@@ -32,6 +33,7 @@ interface YTDLiveChatStoreState {
   setAlwaysOnDisplay: (alwaysOnDisplay: boolean) => void;
   setChatOnlyDisplay: (chatOnlyDisplay: boolean) => void;
   setUserNameDisplay: (userNameDisplay: boolean) => void;
+  setUserIconDisplay: (userIconDisplay: boolean) => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -48,6 +50,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       alwaysOnDisplay: false,
       chatOnlyDisplay: false,
       userNameDisplay: true,
+      userIconDisplay: true,
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setFontColor: (fontColor) => set(() => ({ fontColor })),
       setFontFamily: (fontFamily) => set(() => ({ fontFamily })),
@@ -61,6 +64,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setAlwaysOnDisplay: (alwaysOnDisplay) => set(() => ({ alwaysOnDisplay })),
       setChatOnlyDisplay: (chatOnlyDisplay) => set(() => ({ chatOnlyDisplay })),
       setUserNameDisplay: (userNameDisplay) => set(() => ({ userNameDisplay })),
+      setUserIconDisplay: (userIconDisplay) => set(() => ({ userIconDisplay })),
     }),
     {
       name: 'ytdLiveChatStore',

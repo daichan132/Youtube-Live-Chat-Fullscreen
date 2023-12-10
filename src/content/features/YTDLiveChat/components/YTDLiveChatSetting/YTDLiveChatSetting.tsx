@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
 import { RiCloseLine, RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri';
+import { FaRegUserCircle } from 'react-icons/fa';
 import classNames from 'classnames';
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
 import { BlurSlider } from './YLCChangeItems/BlurSlider';
@@ -18,6 +19,7 @@ import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
 import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
 import { useTranslation } from 'react-i18next';
 import Modal from 'react-modal';
+import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch';
 
 const customStyles = {
   overlay: {
@@ -76,6 +78,11 @@ export const YTDLiveChatSetting = () => {
       icon: RiUserLine,
       title: t('content.setting.userNameDisplay'),
       data: <UserNameDisplaySwitch />,
+    },
+    {
+      icon: FaRegUserCircle,
+      title: t('content.setting.userIconDisplay'),
+      data: <UserIconDisplaySwitch />,
     },
     {
       icon: IoColorFillOutline,

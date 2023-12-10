@@ -3,7 +3,7 @@ import styles from './styles/Popup.module.scss';
 import classNames from 'classnames';
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
 import React from 'react';
-import { EmojiCopySwitch } from './components/EmojiCopySwitch';
+// import { EmojiCopySwitch } from './components/EmojiCopySwitch';
 import LanguageSelector from './components/LanguageSelector';
 import { IconType } from 'react-icons';
 import { IoLanguage } from 'react-icons/io5';
@@ -19,7 +19,7 @@ const Popup = () => {
   const items: itemType[] = [
     { icon: IoLanguage, title: t('popup.language'), data: <LanguageSelector /> },
     { title: t('popup.showChatOnFullscreen'), data: <YTDLiveChatSwitch /> },
-    { title: t('popup.emojiCopy'), data: <EmojiCopySwitch /> },
+    // { title: t('popup.emojiCopy'), data: <EmojiCopySwitch /> },
   ];
 
   return (

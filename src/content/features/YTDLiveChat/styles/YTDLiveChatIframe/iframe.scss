@@ -1,5 +1,6 @@
 html {
   --extension-user-name-display: inline;
+  --extension-user-icon-display: inline;
   --extension-yt-live-chat-font-size: 13px;
   --extension-yt-live-chat-spacing: 0px;
   --extension-yt-live-font-color: black;
@@ -134,6 +135,9 @@ body.custom-yt-app-live-chat-extension {
   /* ----------------------------- display setting ---------------------------- */
   div#items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
     display: var(--extension-user-name-display);
+  }
+  #author-photo.yt-live-chat-text-message-renderer {
+    display: var(--extension-user-icon-display);
   }
 
   // yt-live-chat-renderer {

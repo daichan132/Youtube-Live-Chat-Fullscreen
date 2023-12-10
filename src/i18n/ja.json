@@ -5,6 +5,7 @@
       "alwaysOnDisplay": "常時表示",
       "chatOnlyDisplay": "チャットのみ表示",
       "userNameDisplay": "ユーザー名表示",
+      "userIconDisplay": "ユーザーアイコン表示",
       "backgroundColor": "背景色",
       "fontColor": "フォント色",
       "fontFamily": "フォントファミリー",

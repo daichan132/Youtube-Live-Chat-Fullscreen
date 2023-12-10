@@ -1,5 +1,6 @@
 export type Styles = {
   'author-name': string;
+  'author-photo': string;
   chat: string;
   'clip-path-enable': string;
   contents: string;

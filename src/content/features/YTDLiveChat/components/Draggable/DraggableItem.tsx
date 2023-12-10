@@ -73,8 +73,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         style={{
           top,
           left,
-          transition: `${!disableTopTransition && 'top 250ms ease-in-out'}, ${
-            !isResizing && 'height 250ms ease-in-out'
+          transition: `${!disableTopTransition && 'top 250ms ease'}, ${
+            !isResizing && 'height 250ms ease'
           }`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
@@ -87,7 +87,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
             clipPath: isClipPath
               ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
               : 'inset(0 round 10px)',
-            transition: 'clip-path 250ms ease-in-out',
+            transition: 'clip-path 250ms ease',
           }}
           ref={setNodeRef}
         >
