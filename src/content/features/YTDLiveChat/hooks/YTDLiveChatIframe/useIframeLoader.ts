@@ -12,11 +12,10 @@ import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNam
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
-  const { setIsDisplay, setIsIframeLoaded, setClip, setIFrameElement } = useYTDLiveChatNoLsStore(
+  const { setIsDisplay, setIsIframeLoaded, setIFrameElement } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       setIsDisplay: state.setIsDisplay,
       setIsIframeLoaded: state.setIsIframeLoaded,
-      setClip: state.setClip,
       setIFrameElement: state.setIFrameElement,
     })),
   );
@@ -35,12 +34,6 @@ export const useIframeLoader = () => {
         const { fontSize, fontFamily, bgColor, fontColor, userNameDisplay, space } =
           useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
-        const header = (body.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8;
-        const input =
-          (body.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
-            body.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||
-            0) - 4;
-        if (header && input) setClip({ header, input });
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeUserNameDisplay(userNameDisplay);

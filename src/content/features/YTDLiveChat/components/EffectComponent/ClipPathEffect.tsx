@@ -19,30 +19,29 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
   const {
     isHover,
     isClipPath,
-    isDisplay,
     isIframeLoaded,
-    clip,
     isOpenSettingModal,
     iframeElement,
     setIsClipPath,
     setIsHover,
+    setClip,
   } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       isHover: state.isHover,
-      isDisplay: state.isDisplay,
-      clip: state.clip,
       isOpenSettingModal: state.isOpenSettingModal,
       isClipPath: state.isClipPath,
       isIframeLoaded: state.isIframeLoaded,
       iframeElement: state.iframeElement,
       setIsClipPath: state.setIsClipPath,
       setIsHover: state.setIsHover,
+      setClip: state.setClip,
     })),
   );
   const prevClipPath = usePrevious(isClipPath);
   const handleClipPathChange = useCallback(
     (isClipPath: boolean) => {
       const { size, coordinates } = useYTDLiveChatStore.getState();
+      const { clip } = useYTDLiveChatNoLsStore.getState();
       const topClip = clip.header;
       const bottomClip = clip.input;
       if (isClipPath) {
@@ -53,8 +52,22 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
         setSize({ width: size.width, height: size.height - (topClip + bottomClip) });
       }
     },
-    [clip.header, clip.input, setCoordinates, setSize],
+    [setCoordinates, setSize],
   );
+  const getClip = useCallback(() => {
+    const body = iframeElement?.contentDocument?.body;
+    const header = (body?.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8;
+    const input =
+      (body?.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
+        body?.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||
+        0) - 4;
+    return { header, input };
+  }, [iframeElement?.contentDocument?.body]);
+  const removeFocus = useCallback(() => {
+    (iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur();
+  }, [iframeElement?.contentDocument?.activeElement]);
+
+  /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
     setIsClipPath(
       isIframeLoaded &&
@@ -74,10 +87,25 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
     setIsClipPath,
     isIframeLoaded,
   ]);
+
+  /* ------------------------- handle Clip Path change ------------------------ */
   useUpdateEffect(() => {
-    if (isClipPath === undefined || prevClipPath === undefined) return;
+    const body = iframeElement?.contentDocument?.body;
+    if (isClipPath === undefined || prevClipPath === undefined || body === undefined) return;
+    removeFocus();
+    const newClip = getClip();
+    if (newClip) setClip(newClip);
     handleClipPathChange(isClipPath);
   }, [isClipPath]);
+  useUnmount(() => {
+    if (isClipPath) {
+      setIsClipPath(undefined);
+      setIsHover(false);
+      handleClipPathChange(false);
+    }
+  });
+
+  /* ---------------------------- add style change ---------------------------- */
   useUpdateEffect(() => {
     const body = iframeElement?.contentDocument?.body;
     if (!body) return;
@@ -86,13 +114,6 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
     } else {
       body.classList.remove('clip-path-enable');
     }
-  }, [isDisplay, isClipPath]);
-  useUnmount(() => {
-    if (isClipPath) {
-      setIsClipPath(undefined);
-      setIsHover(false);
-      handleClipPathChange(false);
-    }
-  });
+  }, [isClipPath]);
   return null;
 };
