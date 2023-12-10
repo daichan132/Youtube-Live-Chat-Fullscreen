@@ -19,18 +19,22 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
   const {
     isHover,
     isClipPath,
+    isDisplay,
     isIframeLoaded,
-    setIsClipPath,
     clip,
     isOpenSettingModal,
+    iframeElement,
+    setIsClipPath,
     setIsHover,
   } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
       isHover: state.isHover,
+      isDisplay: state.isDisplay,
       clip: state.clip,
       isOpenSettingModal: state.isOpenSettingModal,
       isClipPath: state.isClipPath,
       isIframeLoaded: state.isIframeLoaded,
+      iframeElement: state.iframeElement,
       setIsClipPath: state.setIsClipPath,
       setIsHover: state.setIsHover,
     })),
@@ -74,6 +78,15 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
     if (isClipPath === undefined || prevClipPath === undefined) return;
     handleClipPathChange(isClipPath);
   }, [isClipPath]);
+  useUpdateEffect(() => {
+    const body = iframeElement?.contentDocument?.body;
+    if (!body) return;
+    if (isClipPath) {
+      body.classList.add('clip-path-enable');
+    } else {
+      body.classList.remove('clip-path-enable');
+    }
+  }, [isDisplay, isClipPath]);
   useUnmount(() => {
     if (isClipPath) {
       setIsClipPath(undefined);

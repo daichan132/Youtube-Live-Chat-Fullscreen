@@ -6,22 +6,20 @@ import { useShallow } from 'zustand/react/shallow';
 import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange';
 import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange';
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
-import { useMount, useUnmount, useUpdateEffect } from 'react-use';
+import { useMount, useUnmount } from 'react-use';
 import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
 import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
-  const { isDisplay, isClipPath, setIsDisplay, setIsIframeLoaded, setClip } =
-    useYTDLiveChatNoLsStore(
-      useShallow((state) => ({
-        isDisplay: state.isDisplay,
-        setIsDisplay: state.setIsDisplay,
-        setIsIframeLoaded: state.setIsIframeLoaded,
-        setClip: state.setClip,
-        isClipPath: state.isClipPath,
-      })),
-    );
+  const { setIsDisplay, setIsIframeLoaded, setClip, setIFrameElement } = useYTDLiveChatNoLsStore(
+    useShallow((state) => ({
+      setIsDisplay: state.setIsDisplay,
+      setIsIframeLoaded: state.setIsIframeLoaded,
+      setClip: state.setClip,
+      setIFrameElement: state.setIFrameElement,
+    })),
+  );
   const { changeColor: changBgColor } = useYLCBgColorChange();
   const { changeColor: changFontColor } = useYLCFontColorChange();
   const { changeFontFamily } = useYLCFontFamilyChange();
@@ -30,6 +28,7 @@ export const useIframeLoader = () => {
   const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange();
   useMount(() => {
     if (!ref.current) return;
+    setIFrameElement(ref.current);
     ref.current.onload = async () => {
       const body = ref.current?.contentDocument?.body;
       if (body) {
@@ -53,15 +52,6 @@ export const useIframeLoader = () => {
       }
     };
   });
-  useUpdateEffect(() => {
-    const body = ref.current?.contentDocument?.body;
-    if (!body) return;
-    if (isClipPath) {
-      body.classList.add('clip-path-enable');
-    } else {
-      body.classList.remove('clip-path-enable');
-    }
-  }, [isDisplay, isClipPath]);
   useUnmount(() => {
     setIsIframeLoaded(false);
   });
