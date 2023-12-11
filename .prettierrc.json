@@ -1,4 +1,13 @@
 {
   "tabWidth": 2,
-  "printWidth": 100
+  "printWidth": 100,
+  "singleQuote": true,
+  "overrides": [
+    {
+      "files": ["**/*.scss.d.ts"],
+      "options": {
+        "singleQuote": false
+      }
+    }
+  ]
 }
