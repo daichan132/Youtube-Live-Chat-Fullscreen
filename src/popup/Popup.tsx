@@ -1,12 +1,14 @@
-import { useTranslation } from 'react-i18next';
-import styles from './styles/Popup.module.scss';
-import classNames from 'classnames';
-import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
 import React from 'react';
-// import { EmojiCopySwitch } from './components/EmojiCopySwitch';
-import LanguageSelector from './components/LanguageSelector';
-import { IconType } from 'react-icons';
+
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { IoLanguage } from 'react-icons/io5';
+
+import LanguageSelector from './components/LanguageSelector';
+import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch';
+import styles from './styles/Popup.module.scss';
+
+import type { IconType } from 'react-icons';
 
 interface itemType {
   icon?: IconType;

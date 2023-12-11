@@ -1,6 +1,7 @@
 import { CiSettings } from 'react-icons/ci';
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 
 export const SettingIcon = () => {
   const { setIsOpenSettingModal } = useYTDLiveChatNoLsStore(

@@ -1,14 +1,16 @@
-import { Draggable } from '../components/Draggable/Draggable';
-import { YTDLiveChatIframe } from '../components/YTDLiveChatIframe/YTDLiveChatIframe';
-import { useIsShow } from '../hooks/useIsShow';
-import { CSSTransition } from 'react-transition-group';
-import fade from '../styles/Fade.module.scss';
 import { useRef } from 'react';
-import { useYTDLiveChatNoLsStore } from '../../../../stores';
+
+import { CSSTransition } from 'react-transition-group';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatNoLsStore } from '../../../../stores';
+import { Draggable } from '../components/Draggable/Draggable';
 import { DisplayEffect } from '../components/EffectComponent/DisplayEffect';
 import { WindowResizeEffect } from '../components/EffectComponent/WindowResizeEffect';
+import { YTDLiveChatIframe } from '../components/YTDLiveChatIframe/YTDLiveChatIframe';
 import { YTDLiveChatSetting } from '../components/YTDLiveChatSetting/YTDLiveChatSetting';
+import { useIsShow } from '../hooks/useIsShow';
+import fade from '../styles/Fade.module.scss';
 
 interface YTDLiveChatType {
   videoID: string;

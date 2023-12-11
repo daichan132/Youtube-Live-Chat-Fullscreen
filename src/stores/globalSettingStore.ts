@@ -1,6 +1,6 @@
+import { localStorage } from 'redux-persist-webextension-storage';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { localStorage } from 'redux-persist-webextension-storage';
 
 interface globalSettingStoreState {
   ytdLiveChat: boolean;

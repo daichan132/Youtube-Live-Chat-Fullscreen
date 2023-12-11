@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { createCopyIcon } from '../utils/createCopyIcon';
+
 import { useYTLabelTextObserve } from '../../../hooks/useYTLabelTextObserve';
+import { createCopyIcon } from '../utils/createCopyIcon';
 
 export const AddChatMessageCopyIcon = () => {
   const [chatElement, setChatElement] = useState<Element | null>(null);

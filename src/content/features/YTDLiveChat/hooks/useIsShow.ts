@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { useIsFullScreen } from './useIsFullScreen';
+
 import { useYTDLiveChatStore } from '../../../../stores';
+
+import { useIsFullScreen } from './useIsFullScreen';
 
 const gap = 10;
 export const useIsShow = (videoID: string) => {

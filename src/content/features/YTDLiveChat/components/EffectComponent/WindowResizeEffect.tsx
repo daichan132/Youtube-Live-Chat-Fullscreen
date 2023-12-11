@@ -1,6 +1,8 @@
 import { useLayoutEffect } from 'react';
-import { useYTDLiveChatStore } from '../../../../../stores';
+
 import { debounce } from 'lodash-es';
+
+import { useYTDLiveChatStore } from '../../../../../stores';
 
 export const WindowResizeEffect = () => {
   useLayoutEffect(() => {

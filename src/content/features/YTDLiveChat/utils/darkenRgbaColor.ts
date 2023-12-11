@@ -1,4 +1,4 @@
-import { RGBColor } from 'react-color';
+import type { RGBColor } from 'react-color';
 
 export const darkenRgbaColor = (rgba: RGBColor, amount: number) => {
   let r = rgba.r;

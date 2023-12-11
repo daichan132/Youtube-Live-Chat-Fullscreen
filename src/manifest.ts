@@ -1,4 +1,5 @@
 import { defineManifest } from '@crxjs/vite-plugin';
+
 import { version } from '../package.json';
 
 // NOTE: do not include src/ in paths,

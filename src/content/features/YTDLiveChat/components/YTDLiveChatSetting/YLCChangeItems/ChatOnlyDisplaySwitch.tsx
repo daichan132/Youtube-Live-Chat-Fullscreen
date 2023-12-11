@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { useShallow } from 'zustand/react/shallow';
-import { useYTDLiveChatStore } from '../../../../../../stores';
+
 import { Switch } from '../../../../../../shared/components/Switch';
+import { useYTDLiveChatStore } from '../../../../../../stores';
 
 export const ChatOnlyDisplaySwitch = () => {
   const { chatOnlyDisplay, setChatOnlyDisplay } = useYTDLiveChatStore(

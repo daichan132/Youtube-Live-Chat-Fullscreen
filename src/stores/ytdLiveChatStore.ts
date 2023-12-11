@@ -1,8 +1,9 @@
+import { localStorage } from 'redux-persist-webextension-storage';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { localStorage } from 'redux-persist-webextension-storage';
-import { RGBColor } from 'react-color';
-import { Coordinates } from '@dnd-kit/core/dist/types';
+
+import type { Coordinates } from '@dnd-kit/core/dist/types';
+import type { RGBColor } from 'react-color';
 
 interface sizeType {
   width: number;

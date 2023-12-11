@@ -1,5 +1,6 @@
 import type React from 'react';
 import { useRef } from 'react';
+
 import { useSlider } from 'react-use';
 
 type Options = NonNullable<Parameters<typeof useSlider>[1]>;

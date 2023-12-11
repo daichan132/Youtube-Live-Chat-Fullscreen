@@ -1,7 +1,10 @@
 import { useState } from 'react';
-import { useGlobalSettingStore } from '../../stores';
-import useChromeRuntimeMessageListener from './useChromeRuntimeMessageListener';
+
 import { useTranslation } from 'react-i18next';
+
+import { useGlobalSettingStore } from '../../stores';
+
+import useChromeRuntimeMessageListener from './useChromeRuntimeMessageListener';
 
 export const useGlobalSetting = () => {
   const [ytdLiveChat, setYTDLiveChat] = useState(useGlobalSettingStore.getState().ytdLiveChat);

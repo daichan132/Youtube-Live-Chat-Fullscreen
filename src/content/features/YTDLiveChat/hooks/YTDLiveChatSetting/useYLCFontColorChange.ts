@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { RGBColor } from 'react-color';
+
+import type { RGBColor } from 'react-color';
 
 const propertyList: string[] = ['--extension-yt-live-font-color'];
 

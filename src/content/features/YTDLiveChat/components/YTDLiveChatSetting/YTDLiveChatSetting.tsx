@@ -1,11 +1,14 @@
 import React from 'react';
-import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
-import { RiCloseLine } from 'react-icons/ri';
+
 import classNames from 'classnames';
-import { useYTDLiveChatNoLsStore } from '../../../../../stores';
-import { useShallow } from 'zustand/react/shallow';
-import Modal from 'react-modal';
 import { useTranslation } from 'react-i18next';
+import { RiCloseLine } from 'react-icons/ri';
+import Modal from 'react-modal';
+import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatNoLsStore } from '../../../../../stores';
+import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
+
 import { UISettingContent } from './UISettingContent';
 
 const customStyles = {

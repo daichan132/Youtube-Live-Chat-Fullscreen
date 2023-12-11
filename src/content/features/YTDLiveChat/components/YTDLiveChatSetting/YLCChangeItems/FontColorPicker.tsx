@@ -1,10 +1,14 @@
-import { ChromePicker, ColorResult, RGBColor } from 'react-color';
 import { useCallback, useRef, useState } from 'react';
+
+import { ChromePicker } from 'react-color';
 import { useClickAway } from 'react-use';
-import styles from '../../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
-import { useYLCFontColorChange } from '../../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
-import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatStore } from '../../../../../../stores';
+import { useYLCFontColorChange } from '../../../hooks/YTDLiveChatSetting/useYLCFontColorChange';
+import styles from '../../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss';
+
+import type { ColorResult, RGBColor } from 'react-color';
 
 export const FontColorPicker = () => {
   const { changeColor } = useYLCFontColorChange();

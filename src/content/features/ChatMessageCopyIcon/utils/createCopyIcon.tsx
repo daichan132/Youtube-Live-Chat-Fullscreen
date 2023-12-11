@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { CopyIcon } from '../components/CopyIcon';
 import { createRoot } from 'react-dom/client';
+
 import emojiRegex from 'emoji-regex';
+
+import { CopyIcon } from '../components/CopyIcon';
 
 export const createCopyIcon = (chatMessageElement: Element) => {
   const ytIconButton = chatMessageElement.querySelector(

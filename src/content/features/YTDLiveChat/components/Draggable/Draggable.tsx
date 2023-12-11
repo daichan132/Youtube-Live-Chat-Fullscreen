@@ -1,10 +1,13 @@
-import { DndContext } from '@dnd-kit/core';
 import React from 'react';
+
+import { DndContext } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
-import styles from '../../styles/Draggable/Draggable.module.scss';
-import { DraggableItem } from './DraggableItem';
-import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatStore } from '../../../../../stores';
+import styles from '../../styles/Draggable/Draggable.module.scss';
+
+import { DraggableItem } from './DraggableItem';
 
 interface DraggableType {
   children: React.ReactNode;

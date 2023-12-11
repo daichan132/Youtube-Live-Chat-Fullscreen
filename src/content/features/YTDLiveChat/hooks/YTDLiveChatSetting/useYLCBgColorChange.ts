@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
+
 import { darkenRgbaColor } from '../../utils/darkenRgbaColor';
-import { RGBColor } from 'react-color';
+
+import type { RGBColor } from 'react-color';
 
 const propertyList: string[] = ['--yt-live-chat-background-color'];
 const propertyListDarken = [

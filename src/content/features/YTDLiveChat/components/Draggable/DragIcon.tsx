@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { RiDraggable } from 'react-icons/ri';
-import { useYTDLiveChatStore } from '../../../../../stores';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatStore } from '../../../../../stores';
 
 export const DragIcon = () => {
   const { fontColor: rgba } = useYTDLiveChatStore(

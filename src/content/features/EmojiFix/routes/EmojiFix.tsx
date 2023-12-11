@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
-import { changeImgAlt } from '../utils/changeImgAlt';
+
 import { useYTLabelTextObserve } from '../../../hooks/useYTLabelTextObserve';
+import { changeImgAlt } from '../utils/changeImgAlt';
 
 export const EmojiFix = () => {
   const [textInputElement, setTextInputElement] = useState<Element | null>(null);

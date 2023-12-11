@@ -15,9 +15,11 @@
   "parserOptions": {
     "sourceType": "module",
     "ecmaVersion": 2020,
-    "ecmaFeatures": { "jsx": true }
+    "ecmaFeatures": {
+      "jsx": true
+    }
   },
-  "plugins": ["@typescript-eslint", "prettier", "react", "react-hooks"],
+  "plugins": ["@typescript-eslint", "prettier", "react", "react-hooks", "import"],
   "rules": {
     "no-restricted-imports": [
       "error",
@@ -26,7 +28,37 @@
       }
     ],
     "react/react-in-jsx-scope": "off",
-    "prettier/prettier": 0
+    "prettier/prettier": 0,
+    // importの順番を指定する
+    "import/order": [
+      "error",
+      {
+        "groups": ["builtin", "external", "parent", "sibling", "index", "object", "type"],
+        "pathGroups": [
+          {
+            "pattern": "{react,react-dom/**,react-router-dom}",
+            "group": "builtin",
+            "position": "before"
+          },
+          {
+            "pattern": "@src/**",
+            "group": "parent",
+            "position": "before"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {
+          "order": "asc"
+        },
+        "newlines-between": "always"
+      }
+    ],
+    "@typescript-eslint/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports"
+      }
+    ]
   },
   "overrides": [
     {

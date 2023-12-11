@@ -1,18 +1,20 @@
-import { CSS } from '@dnd-kit/utilities';
-import { Resizable } from 're-resizable';
-import classNames from 'classnames';
-import { useDraggable } from '@dnd-kit/core';
-import styles from '../../styles/Draggable/DraggableItem.module.scss';
-
-import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
-import { useShallow } from 'zustand/react/shallow';
-import { DragIcon } from './DragIcon';
-import { SettingIcon } from './SettingIcon';
-import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 import { useState } from 'react';
+
+import { useDraggable } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
+import classNames from 'classnames';
+import { Resizable } from 're-resizable';
+import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
+import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
 import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
 import { useHoverEvent } from '../../hooks/Draggable/useHoverEvent';
+import styles from '../../styles/Draggable/DraggableItem.module.scss';
 import { ClipPathEffect } from '../EffectComponent/ClipPathEffect';
+
+import { DragIcon } from './DragIcon';
+import { SettingIcon } from './SettingIcon';
 
 const enable = {
   top: false,

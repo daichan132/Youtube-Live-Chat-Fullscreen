@@ -1,24 +1,28 @@
 import React from 'react';
-import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri';
+
+import classNames from 'classnames';
+import { useTranslation } from 'react-i18next';
 import { FaRegUserCircle } from 'react-icons/fa';
-import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
-import { BlurSlider } from './YLCChangeItems/BlurSlider';
-import { FontColorPicker } from './YLCChangeItems/FontColorPicker';
-import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
 import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn, MdExpand } from 'react-icons/md';
-import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
-import { useYTDLiveChatStore } from '../../../../../stores';
+import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri';
 import { useShallow } from 'zustand/react/shallow';
+
+import { useYTDLiveChatStore } from '../../../../../stores';
+import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
+
+import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
+import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
+import { BlurSlider } from './YLCChangeItems/BlurSlider';
+import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
+import { FontColorPicker } from './YLCChangeItems/FontColorPicker';
+import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
-import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
-import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
-import { useTranslation } from 'react-i18next';
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch';
-import classNames from 'classnames';
-import { IconType } from 'react-icons';
-import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
+import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
+
+import type { IconType } from 'react-icons';
 
 interface itemType {
   icon: IconType;

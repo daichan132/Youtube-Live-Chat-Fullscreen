@@ -1,7 +1,8 @@
 //@ts-check
 
-import fs from 'fs-extra';
 import * as path from 'path';
+
+import fs from 'fs-extra';
 
 const BASE_OUT_DIR = 'dist';
 const baseOutDir = path.resolve(BASE_OUT_DIR);

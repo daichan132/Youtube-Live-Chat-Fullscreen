@@ -3,8 +3,8 @@
 // import { useGlobalSettingStore } from '../stores';
 // import { EmojiFix } from './features/EmojiFix';
 import { YTDLiveChat } from './features/YTDLiveChat';
-import { useTabLocation } from './hooks/useTabLocation';
 import { useGlobalSetting } from './hooks/useGlobalSetting';
+import { useTabLocation } from './hooks/useTabLocation';
 
 function extractYouTubeID(url: string) {
   const regex = /v=([^&]*)/;

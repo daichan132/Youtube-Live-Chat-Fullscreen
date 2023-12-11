@@ -1,6 +1,7 @@
 import React from 'react';
-import Select from 'react-select';
+
 import { useTranslation } from 'react-i18next';
+import Select from 'react-select';
 
 const LanguageSelector = () => {
   const languageOptions: {
