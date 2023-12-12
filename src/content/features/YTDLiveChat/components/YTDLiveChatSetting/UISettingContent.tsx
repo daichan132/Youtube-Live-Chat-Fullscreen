@@ -51,16 +51,6 @@ export const UISettingContent = () => {
       disable: !alwaysOnDisplay,
     },
     {
-      icon: RiUserLine,
-      title: t('content.setting.userNameDisplay'),
-      data: <UserNameDisplaySwitch />,
-    },
-    {
-      icon: FaRegUserCircle,
-      title: t('content.setting.userIconDisplay'),
-      data: <UserIconDisplaySwitch />,
-    },
-    {
       icon: IoColorFillOutline,
       title: t('content.setting.backgroundColor'),
       data: <BgColorPicker />,
@@ -89,6 +79,16 @@ export const UISettingContent = () => {
       icon: MdExpand,
       title: t('content.setting.space'),
       data: <SpaceSlider />,
+    },
+    {
+      icon: RiUserLine,
+      title: t('content.setting.userNameDisplay'),
+      data: <UserNameDisplaySwitch />,
+    },
+    {
+      icon: FaRegUserCircle,
+      title: t('content.setting.userIconDisplay'),
+      data: <UserIconDisplaySwitch />,
     },
   ];
   return (
