@@ -6,10 +6,7 @@ export const useDisanleTopTransition = (isDragging: boolean, isResizing: boolean
     if (isDragging || isResizing) {
       setDisableTopTransition(true);
     } else {
-      const timeoutId = setTimeout(() => {
-        setDisableTopTransition(false);
-      }, 200);
-      return () => clearTimeout(timeoutId);
+      setDisableTopTransition(false);
     }
   }, [isDragging, isResizing]);
   return disableTopTransition;

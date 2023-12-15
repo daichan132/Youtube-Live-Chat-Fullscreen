@@ -71,14 +71,22 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
 
   /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
-    setIsClipPath(
+    if (
       isIframeLoaded &&
-        alwaysOnDisplay &&
-        chatOnlyDisplay &&
-        !isDragging &&
-        !isResizing &&
-        (isOpenSettingModal || !isHover),
-    );
+      alwaysOnDisplay &&
+      chatOnlyDisplay &&
+      !isDragging &&
+      !isResizing &&
+      (isOpenSettingModal || !isHover)
+    ) {
+      setTimeout(() => {
+        setIsClipPath(true);
+      }, 10);
+    } else {
+      setTimeout(() => {
+        setIsClipPath(false);
+      }, 10);
+    }
   }, [
     isHover,
     alwaysOnDisplay,
