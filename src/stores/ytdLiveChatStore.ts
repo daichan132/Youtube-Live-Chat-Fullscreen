@@ -58,8 +58,22 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setFontSize: (fontSize) => set(() => ({ fontSize })),
       setBlur: (blur) => set(() => ({ blur })),
       setSpace: (space) => set(() => ({ space })),
-      setSize: (size) => set(() => ({ size })),
-      setCoordinates: (coordinates) => set(() => ({ coordinates })),
+      setSize: (size) => {
+        set(() => ({
+          size: {
+            width: size.width < 0 ? 0 : size.width,
+            height: size.height < 0 ? 0 : size.height,
+          },
+        }));
+      },
+      setCoordinates: (coordinates) => {
+        set(() => ({
+          coordinates: {
+            x: coordinates.x < 0 ? 0 : coordinates.x,
+            y: coordinates.y < 0 ? 0 : coordinates.y,
+          },
+        }));
+      },
       setDefaultPosition: () =>
         set(() => ({ size: { width: 400, height: 500 }, coordinates: { x: 20, y: 20 } })),
       setAlwaysOnDisplay: (alwaysOnDisplay) => set(() => ({ alwaysOnDisplay })),

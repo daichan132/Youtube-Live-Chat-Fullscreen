@@ -84,14 +84,9 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         minWidth={300}
         minHeight={350}
         className={styles['Resizable']}
-        bounds={'window'}
         onResizeStop={(event, direction, ref, d) => {
           setResiziging(false);
-          if (event instanceof MouseEvent) {
-            if (event.target instanceof HTMLElement) {
-              setSize({ width: size.width + d.width, height: size.height + d.height });
-            }
-          }
+          setSize({ width: size.width + d.width, height: size.height + d.height });
         }}
         onResize={(event, direction, ref, delta) => {
           onResize({ delta, direction });
