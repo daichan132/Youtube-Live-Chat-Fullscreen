@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
@@ -9,23 +9,17 @@ import { useShallow } from 'zustand/react/shallow';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores/ytdLiveChatNoLsStore';
 import useYTDLiveChatStore from '../../../../../stores/ytdLiveChatStore';
 import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition';
-import { useHoverEvent } from '../../hooks/Draggable/useHoverEvent';
+import { useIconDisplay } from '../../hooks/Draggable/useIconDisplay';
 import styles from '../../styles/Draggable/DraggableItem.module.scss';
 import { ClipPathEffect } from '../EffectComponent/ClipPathEffect';
+import { HoverEffect } from '../EffectComponent/HoverEffect';
 
 import { DragIcon } from './DragIcon';
 import { SettingIcon } from './SettingIcon';
 
-const enable = {
-  top: false,
-  right: true,
-  bottom: true,
-  left: false,
-  topRight: false,
-  bottomRight: true,
-  bottomLeft: false,
-  topLeft: false,
-};
+import type { NumberSize } from 're-resizable';
+import type { Direction } from 're-resizable/lib/resizer';
+
 interface DraggableItemType {
   top?: number;
   left?: number;
@@ -35,33 +29,60 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   });
-  useHoverEvent(isDragging);
   const [isResizing, setResiziging] = useState(false);
-  const { size, alwaysOnDisplay, setSize } = useYTDLiveChatStore(
+  const { size, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow((state) => ({
       size: state.size,
-      alwaysOnDisplay: state.alwaysOnDisplay,
       setSize: state.setSize,
+      setCoordinates: state.setCoordinates,
     })),
   );
-  const { isDisplay, isIframeLoaded, clip, isClipPath } = useYTDLiveChatNoLsStore(
+  const { clip, isClipPath } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({
-      isDisplay: state.isDisplay,
-      isIframeLoaded: state.isIframeLoaded,
       clip: state.clip,
       isClipPath: state.isClipPath,
     })),
   );
-  const disableTopTransition = useDisanleTopTransition(isDragging);
+  const disableTopTransition = useDisanleTopTransition(isDragging, isResizing);
+  const isIconDisplay = useIconDisplay();
+  const coordinateRef = useRef({ x: left, y: top });
+  const onResize = useCallback(
+    ({ delta, direction }: { delta: NumberSize; direction: Direction }) => {
+      if (!isResizing) {
+        return;
+      }
+      const directions = ['top', 'left', 'topLeft', 'bottomLeft', 'topRight'];
+
+      if (directions.indexOf(direction) !== -1) {
+        let newLeft = coordinateRef.current.x;
+        let newTop = coordinateRef.current.y;
+
+        if (direction === 'bottomLeft') {
+          newLeft = coordinateRef.current.x - delta.width;
+        } else if (direction === 'topRight') {
+          newTop = coordinateRef.current.y - delta.height;
+        } else {
+          newLeft = coordinateRef.current.x - delta.width;
+          newTop = coordinateRef.current.y - delta.height;
+        }
+
+        setCoordinates({
+          x: newLeft,
+          y: newTop,
+        });
+      }
+    },
+    [isResizing, setCoordinates],
+  );
 
   return (
     <>
       <ClipPathEffect isDragging={isDragging} isResizing={isResizing} />
+      <HoverEffect isDragging={isDragging} />
       <Resizable
         size={size}
         minWidth={300}
         minHeight={350}
-        enable={enable}
         className={styles['Resizable']}
         bounds={'window'}
         onResizeStop={(event, direction, ref, d) => {
@@ -72,6 +93,13 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
             }
           }
         }}
+        onResize={(event, direction, ref, delta) => {
+          onResize({ delta, direction });
+        }}
+        onResizeStart={() => {
+          setResiziging(true);
+          coordinateRef.current = { x: left, y: top };
+        }}
         style={{
           top,
           left,
@@ -80,7 +108,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           }`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
-        onResizeStart={() => setResiziging(true)}
       >
         <div
           className={classNames(styles['Container'])}
@@ -97,14 +124,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
             className={classNames(styles['dragButton'], isDragging && styles['dragging'])}
             {...attributes}
             {...listeners}
-            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
+            style={{ opacity: isIconDisplay ? 1 : 0 }}
           >
             <DragIcon />
           </div>
-          <div
-            className={styles['settingButton']}
-            style={{ opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0 }}
-          >
+          <div className={styles['settingButton']} style={{ opacity: isIconDisplay ? 1 : 0 }}>
             <SettingIcon />
           </div>
           <div className={styles['children']}>
