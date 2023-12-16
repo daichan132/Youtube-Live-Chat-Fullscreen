@@ -5,7 +5,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import type { Coordinates } from '@dnd-kit/core/dist/types';
 import type { RGBColor } from 'react-color';
 
-interface sizeType {
+export interface sizeType {
   width: number;
   height: number;
 }
@@ -66,14 +66,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           },
         }));
       },
-      setCoordinates: (coordinates) => {
-        set(() => ({
-          coordinates: {
-            x: coordinates.x < 0 ? 0 : coordinates.x,
-            y: coordinates.y < 0 ? 0 : coordinates.y,
-          },
-        }));
-      },
+      setCoordinates: (coordinates) => set(() => ({ coordinates })),
       setDefaultPosition: () =>
         set(() => ({ size: { width: 400, height: 500 }, coordinates: { x: 20, y: 20 } })),
       setAlwaysOnDisplay: (alwaysOnDisplay) => set(() => ({ alwaysOnDisplay })),

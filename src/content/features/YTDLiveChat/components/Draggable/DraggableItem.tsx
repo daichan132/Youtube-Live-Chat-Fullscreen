@@ -67,8 +67,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         }
 
         setCoordinates({
-          x: newLeft,
-          y: newTop,
+          x: newLeft < 0 ? 0 : newLeft,
+          y: newTop < 0 ? 0 : newTop,
         });
       }
     },
@@ -86,7 +86,15 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         className={styles['Resizable']}
         onResizeStop={(event, direction, ref, d) => {
           setResiziging(false);
-          setSize({ width: size.width + d.width, height: size.height + d.height });
+          let newWidth = size.width + d.width;
+          let newHeight = size.height + d.height;
+          if (newWidth + left > window.innerWidth) {
+            newWidth = window.innerWidth - left;
+          }
+          if (newHeight + top > window.innerHeight) {
+            newHeight = window.innerHeight - top;
+          }
+          setSize({ width: newWidth, height: newHeight });
         }}
         onResize={(event, direction, ref, delta) => {
           onResize({ delta, direction });
