@@ -22,6 +22,7 @@ interface YTDLiveChatStoreState {
   chatOnlyDisplay: boolean;
   userNameDisplay: boolean;
   userIconDisplay: boolean;
+  reactionButtonDisplay: boolean;
   setBgColor: (bgColor: RGBColor) => void;
   setFontColor: (fontColor: RGBColor) => void;
   setFontFamily: (fontFamily: string) => void;
@@ -35,6 +36,7 @@ interface YTDLiveChatStoreState {
   setChatOnlyDisplay: (chatOnlyDisplay: boolean) => void;
   setUserNameDisplay: (userNameDisplay: boolean) => void;
   setUserIconDisplay: (userIconDisplay: boolean) => void;
+  setReactionButtonDisplay: (reactionButtonDisplay: boolean) => void;
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -52,6 +54,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       chatOnlyDisplay: false,
       userNameDisplay: true,
       userIconDisplay: true,
+      reactionButtonDisplay: true,
       setBgColor: (bgColor) => set(() => ({ bgColor })),
       setFontColor: (fontColor) => set(() => ({ fontColor })),
       setFontFamily: (fontFamily) => set(() => ({ fontFamily })),
@@ -73,6 +76,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setChatOnlyDisplay: (chatOnlyDisplay) => set(() => ({ chatOnlyDisplay })),
       setUserNameDisplay: (userNameDisplay) => set(() => ({ userNameDisplay })),
       setUserIconDisplay: (userIconDisplay) => set(() => ({ userIconDisplay })),
+      setReactionButtonDisplay: (reactionButtonDisplay) => set(() => ({ reactionButtonDisplay })),
     }),
     {
       name: 'ytdLiveChatStore',

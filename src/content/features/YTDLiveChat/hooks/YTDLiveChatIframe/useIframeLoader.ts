@@ -10,6 +10,7 @@ import { useYLCBgColorChange } from '../YTDLiveChatSetting/useYLCBgColorChange';
 import { useYLCFontColorChange } from '../YTDLiveChatSetting/useYLCFontColorChange';
 import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange';
 import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange';
+import { useYLCReactionButtonDisplayChange } from '../YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
 import { useYLCUserIconDisplayChange } from '../YTDLiveChatSetting/useYLCUserIconDisplayChange';
 import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange';
@@ -30,6 +31,7 @@ export const useIframeLoader = () => {
   const { changeSpace } = useYLCSpaceChange();
   const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange();
   const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange();
+  const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange();
   useMount(() => {
     if (!ref.current) return;
     setIFrameElement(ref.current);
@@ -50,12 +52,14 @@ export const useIframeLoader = () => {
           userNameDisplay,
           space,
           userIconDisplay,
+          reactionButtonDisplay,
         } = useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
         changBgColor(bgColor);
         changFontColor(fontColor);
         changeUserNameDisplay(userNameDisplay);
         changeUserIconDisplay(userIconDisplay);
+        changeReactionButtonDisplay(reactionButtonDisplay);
         changeFontFamily(fontFamily);
         changeFontSize(fontSize);
         changeSpace(space);

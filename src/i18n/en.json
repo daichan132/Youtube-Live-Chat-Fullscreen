@@ -6,6 +6,7 @@
       "chatOnlyDisplay": "Chat Only Display",
       "userNameDisplay": "User Name Display",
       "userIconDisplay": "User Icon Display",
+      "reactionButtonDisplay": "Reaction Button Display",
       "backgroundColor": "Background Color",
       "fontColor": "Font Color",
       "fontFamily": "Font Family",

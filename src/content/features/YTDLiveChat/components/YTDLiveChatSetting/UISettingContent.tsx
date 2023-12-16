@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { FaRegUserCircle } from 'react-icons/fa';
 import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5';
 import { MdBlurOn, MdExpand } from 'react-icons/md';
-import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri';
+import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatStore } from '../../../../../stores';
@@ -18,6 +18,7 @@ import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch';
 import { FontColorPicker } from './YLCChangeItems/FontColorPicker';
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput';
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider';
+import { ReactionButtonDisplaySwitch } from './YLCChangeItems/ReactionButtonDisplay';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch';
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
@@ -89,6 +90,11 @@ export const UISettingContent = () => {
       icon: FaRegUserCircle,
       title: t('content.setting.userIconDisplay'),
       data: <UserIconDisplaySwitch />,
+    },
+    {
+      icon: RiHeartFill,
+      title: t('content.setting.reactionButtonDisplay'),
+      data: <ReactionButtonDisplaySwitch />,
     },
   ];
   return (

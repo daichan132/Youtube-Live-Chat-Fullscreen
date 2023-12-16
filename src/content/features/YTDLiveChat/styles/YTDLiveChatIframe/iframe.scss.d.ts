@@ -7,6 +7,7 @@ export type Styles = {
   custom: string;
   "custom-yt-app-live-chat-extension": string;
   emoji: string;
+  "fab-container": string;
   icon: string;
   input: string;
   "item-scroller": string;
@@ -39,6 +40,7 @@ export type Styles = {
   "yt-live-chat-text-message-renderer": string;
   "yt-live-chat-ticker-renderer": string;
   "yt-live-chat-viewer-engagement-message-renderer": string;
+  "yt-reaction-control-panel-view-model": string;
   "yt-simple-endpoint": string;
   "yt-spec-button-shape-next--mono": string;
   "yt-spec-button-shape-next--text": string;
