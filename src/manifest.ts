@@ -25,7 +25,6 @@ const manifest = defineManifest(async (env) => ({
     {
       matches: ['https://www.youtube.com/*'],
       js: ['content/index.tsx'],
-      all_frames: true,
     },
   ],
   host_permissions: [],

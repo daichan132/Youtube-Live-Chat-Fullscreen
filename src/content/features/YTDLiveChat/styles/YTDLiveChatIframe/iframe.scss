@@ -75,7 +75,8 @@ body.custom-yt-app-live-chat-extension {
     yt-icon.yt-live-chat-icon-toggle-button-renderer,
   div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg,
   yt-live-chat-restricted-participation-renderer[updated-input-visuals]
-    #icon.yt-live-chat-restricted-participation-renderer {
+    #icon.yt-live-chat-restricted-participation-renderer,
+  .yt-simple-endpoint {
     color: var(--extension-yt-live-font-color);
   }
 
@@ -136,6 +137,7 @@ body.custom-yt-app-live-chat-extension {
   div#items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
     display: var(--extension-user-name-display);
   }
+
   #author-photo.yt-live-chat-text-message-renderer {
     display: var(--extension-user-icon-display);
   }

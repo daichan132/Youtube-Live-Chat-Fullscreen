@@ -8,7 +8,6 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../sto
 import { useIframeLoader } from '../../hooks/YTDLiveChatIframe/useIframeLoader';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
-import '../../styles/YTDLiveChatIframe/iframe.scss';
 
 interface YTDLiveChatIframe {
   src: string;

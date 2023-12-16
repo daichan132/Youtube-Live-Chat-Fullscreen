@@ -5,6 +5,7 @@ import { useMount, useUnmount } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
+import iframeStyles from '../../styles/YTDLiveChatIframe/iframe.scss?inline';
 import { useYLCBgColorChange } from '../YTDLiveChatSetting/useYLCBgColorChange';
 import { useYLCFontColorChange } from '../YTDLiveChatSetting/useYLCFontColorChange';
 import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange';
@@ -34,6 +35,12 @@ export const useIframeLoader = () => {
     setIFrameElement(ref.current);
     ref.current.onload = async () => {
       const body = ref.current?.contentDocument?.body;
+      const head = ref.current?.contentDocument?.head;
+      if (head) {
+        const style = document.createElement('style');
+        style.textContent = iframeStyles;
+        head.appendChild(style);
+      }
       if (body) {
         const {
           fontSize,

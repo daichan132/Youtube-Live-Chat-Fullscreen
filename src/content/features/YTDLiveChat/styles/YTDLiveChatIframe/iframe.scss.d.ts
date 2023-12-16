@@ -39,6 +39,7 @@ export type Styles = {
   "yt-live-chat-text-message-renderer": string;
   "yt-live-chat-ticker-renderer": string;
   "yt-live-chat-viewer-engagement-message-renderer": string;
+  "yt-simple-endpoint": string;
   "yt-spec-button-shape-next--mono": string;
   "yt-spec-button-shape-next--text": string;
 };
