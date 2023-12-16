@@ -61,8 +61,8 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       setSize: (size) => {
         set(() => ({
           size: {
-            width: size.width < 0 ? 0 : size.width,
-            height: size.height < 0 ? 0 : size.height,
+            width: size.width < 300 ? 300 : size.width,
+            height: size.height < 350 ? 350 : size.height,
           },
         }));
       },
