@@ -9,7 +9,7 @@ import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 
 import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatStore } from '../../../../../stores';
-import styles from '../../styles/YTDLiveChatSetting/UISettingContent.module.scss';
+import styles from '../../styles/YTDLiveChatSetting/SettingContent.module.scss';
 
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker';

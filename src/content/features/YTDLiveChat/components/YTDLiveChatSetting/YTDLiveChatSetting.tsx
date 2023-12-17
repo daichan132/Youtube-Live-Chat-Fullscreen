@@ -10,7 +10,7 @@ import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
 
 import { PresetContent } from './PresetContent';
-import { SettingContent } from './UISettingContent';
+import { SettingContent } from './SettingContent';
 
 const customStyles = {
   overlay: {
