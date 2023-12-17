@@ -9,7 +9,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
 
-import { UISettingContent } from './UISettingContent';
+import { PresetContent } from './PresetContent';
+import { SettingContent } from './UISettingContent';
 
 const customStyles = {
   overlay: {
@@ -81,9 +82,8 @@ export const YTDLiveChatSetting = () => {
           />
         </div>
         <div className={styles['content']}>
-          <div className={styles['content-item-container']}>
-            {menuItem === 'setting' && <UISettingContent />}
-          </div>
+          {menuItem === 'setting' && <SettingContent />}
+          {menuItem === 'preset' && <PresetContent />}
           <div className={styles['footer']}>
             <div className={styles['help']}>
               {t('content.setting.footer')}

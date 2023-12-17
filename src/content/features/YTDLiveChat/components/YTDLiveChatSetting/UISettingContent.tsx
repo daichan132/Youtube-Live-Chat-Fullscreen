@@ -9,7 +9,7 @@ import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 
 import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatStore } from '../../../../../stores';
-import styles from '../../styles/YTDLiveChatSetting/YTDLiveChatSetting.module.scss';
+import styles from '../../styles/YTDLiveChatSetting/UISettingContent.module.scss';
 
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch';
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker';
@@ -32,7 +32,7 @@ interface itemType {
   disable?: boolean;
 }
 
-export const UISettingContent = () => {
+export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow((state) => ({
       alwaysOnDisplay: state.alwaysOnDisplay,
@@ -98,11 +98,16 @@ export const UISettingContent = () => {
     },
   ];
   return (
-    <>
+    <div>
       {items.map((item, i) => {
         return (
           <React.Fragment key={item.title}>
-            <div className={classNames(styles['content-item'], item.disable && styles['disable'])}>
+            <div
+              className={classNames(
+                styles['content-setting-item'],
+                item.disable && styles['disable'],
+              )}
+            >
               <div className={styles['title-with-icon']}>
                 {<item.icon size={20} />}
                 <div>{item.title}</div>
@@ -113,6 +118,6 @@ export const UISettingContent = () => {
           </React.Fragment>
         );
       })}
-    </>
+    </div>
   );
 };
