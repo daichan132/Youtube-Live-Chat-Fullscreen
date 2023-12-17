@@ -39,6 +39,7 @@ export const YTDLiveChatSetting = () => {
       setIsHover: state.setIsHover,
     })),
   );
+  const [menuItem, setMenuItem] = React.useState('setting');
   const { t } = useTranslation();
 
   return (
@@ -54,7 +55,24 @@ export const YTDLiveChatSetting = () => {
       <div className={styles['settings']}>
         <div className={styles['header']}>
           <div className={styles['menu']}>
-            <div className={classNames(styles['menu-item'])}>{t('content.setting.header')}</div>
+            <div
+              className={classNames(
+                styles['menu-item'],
+                menuItem === 'preset' && styles['selected-menu-item'],
+              )}
+              onClick={() => setMenuItem('preset')}
+            >
+              {t('content.setting.header.preset')}
+            </div>
+            <div
+              className={classNames(
+                styles['menu-item'],
+                menuItem === 'setting' && styles['selected-menu-item'],
+              )}
+              onClick={() => setMenuItem('setting')}
+            >
+              {t('content.setting.header.setting')}
+            </div>
           </div>
           <RiCloseLine
             className={styles['close-button']}
@@ -63,7 +81,9 @@ export const YTDLiveChatSetting = () => {
           />
         </div>
         <div className={styles['content']}>
-          <UISettingContent />
+          <div className={styles['content-item-container']}>
+            {menuItem === 'setting' && <UISettingContent />}
+          </div>
           <div className={styles['footer']}>
             <div className={styles['help']}>
               {t('content.setting.footer')}

@@ -1,7 +1,10 @@
 {
   "content": {
     "setting": {
-      "header": "Setting",
+      "header": {
+        "preset": "Preset",
+        "setting": "Setting"
+      },
       "alwaysOnDisplay": "Always on Display",
       "chatOnlyDisplay": "Chat Only Display",
       "userNameDisplay": "User Name Display",

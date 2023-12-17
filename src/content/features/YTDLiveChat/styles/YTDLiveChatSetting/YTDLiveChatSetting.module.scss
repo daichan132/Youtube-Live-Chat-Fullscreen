@@ -15,20 +15,32 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1.5rem;
+    padding: 1rem 1.5rem;
     border-bottom: 1px solid #eaeaea;
 
     .menu {
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       display: flex;
 
       .menu-item {
-        padding: 1rem;
+        padding: 1rem 1.25rem;
         color: #333;
         border-radius: 5px;
-        margin-right: 0.5rem;
-        transition: background-color 200ms ease;
-        width: 100px;
+        margin-right: 1rem;
+        transition:
+          background-color 200ms ease,
+          color 200ms ease;
+        cursor: pointer;
+        min-width: 50px;
+        text-align: center;
+        &:hover {
+          background-color: #f9f9f9;
+        }
+
+        &.selected-menu-item {
+          color: #099cff;
+          background-color: #e3f3ff;
+        }
       }
     }
 
@@ -53,37 +65,40 @@
     box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
     background-color: #f9f9f9;
 
-    .content-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 24px 20px;
-      opacity: 1;
-      transition:
-        height 200ms ease,
-        padding 200ms ease,
-        opacity 200ms ease;
-
-      &.disable {
-        height: 0px;
-        padding: 0px 20px;
-        opacity: 0;
-        pointer-events: none;
-      }
-
-      .title-with-icon {
+    .content-item-container {
+      min-height: 338px;
+      .content-item {
         display: flex;
+        justify-content: space-between;
         align-items: center;
-        font-size: 14px;
+        padding: 24px 20px;
+        opacity: 1;
+        transition:
+          height 200ms ease,
+          padding 200ms ease,
+          opacity 200ms ease;
 
-        > svg {
-          margin-right: 1.5rem;
-          border: 1px solid rgba(0, 0, 0, 0.1);
-          color: #333;
-          padding: 3px;
-          border-radius: 5px;
-          background-color: white;
-          padding: 6px;
+        &.disable {
+          height: 0px;
+          padding: 0px 20px;
+          opacity: 0;
+          pointer-events: none;
+        }
+
+        .title-with-icon {
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+
+          > svg {
+            margin-right: 1.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #333;
+            padding: 3px;
+            border-radius: 5px;
+            background-color: white;
+            padding: 6px;
+          }
         }
       }
     }
