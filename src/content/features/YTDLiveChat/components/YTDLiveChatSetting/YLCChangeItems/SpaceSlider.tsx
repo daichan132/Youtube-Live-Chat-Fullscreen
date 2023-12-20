@@ -12,15 +12,15 @@ const maxSize = 40;
 
 export const SpaceSlider = () => {
   const SpaceRef = useRef(useYTDLiveChatStore.getState().space);
-  const { updateYLCStyleUpdate } = useYTDLiveChatStore(
-    useShallow((state) => ({ updateYLCStyleUpdate: state.updateYLCStyleUpdate })),
+  const { updateYLCStyle } = useYTDLiveChatStore(
+    useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
   const { changeSpace } = useYLCSpaceChange();
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
     initialValue: ((SpaceRef.current - minSize) * 100) / ((maxSize - minSize) * 100),
     onScrub(value) {
       const space = Math.round((value * ((maxSize - minSize) * 100)) / 100 + minSize);
-      updateYLCStyleUpdate({ space });
+      updateYLCStyle({ space });
       changeSpace(space);
     },
   });

@@ -34,7 +34,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
     id: id,
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateTitle(id, event.target.value);
   };
   const deleteItem = useCallback(
@@ -60,7 +60,12 @@ export const PresetItem = ({ id }: PresetItemType) => {
               {...attributes}
             />
           </div>
-          <input type="text" value={title} onChange={handleChange} className={styles['title']} />
+          <input
+            type="text"
+            value={title}
+            onChange={handleTitleChange}
+            className={styles['title']}
+          />
         </div>
         <div className={styles['rightContainer']}>
           <MdAutoFixNormal size={20} />

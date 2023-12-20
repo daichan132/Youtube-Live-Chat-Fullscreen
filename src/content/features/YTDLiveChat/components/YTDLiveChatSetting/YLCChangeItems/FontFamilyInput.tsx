@@ -6,10 +6,10 @@ import styles from '../../../styles/YTDLiveChatSetting/FontFamily.module.scss';
 
 export const FontFamilyInput = () => {
   const { changeFontFamily } = useYLCFontFamilyChange();
-  const { fontFamily, updateYLCStyleUpdate } = useYTDLiveChatStore(
+  const { fontFamily, updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({
       fontFamily: state.fontFamily,
-      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
+      updateYLCStyle: state.updateYLCStyle,
     })),
   );
   return (
@@ -17,7 +17,7 @@ export const FontFamilyInput = () => {
       className={styles['input']}
       value={fontFamily}
       onChange={(event) => {
-        updateYLCStyleUpdate({ fontFamily: event.target.value });
+        updateYLCStyle({ fontFamily: event.target.value });
         changeFontFamily(event.target.value);
       }}
     />

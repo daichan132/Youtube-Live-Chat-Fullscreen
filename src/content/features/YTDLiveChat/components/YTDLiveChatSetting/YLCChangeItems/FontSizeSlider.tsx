@@ -12,15 +12,15 @@ const maxSize = 20;
 
 export const FontSizeSlider = () => {
   const fontSizeRef = useRef(useYTDLiveChatStore.getState().fontSize);
-  const { updateYLCStyleUpdate } = useYTDLiveChatStore(
-    useShallow((state) => ({ updateYLCStyleUpdate: state.updateYLCStyleUpdate })),
+  const { updateYLCStyle } = useYTDLiveChatStore(
+    useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
   const { changeFontSize } = useYLCFontSizeChange();
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
     initialValue: ((fontSizeRef.current - minSize) * 100) / ((maxSize - minSize) * 100),
     onScrub(value) {
       const fontSize = Math.round((value * ((maxSize - minSize) * 100)) / 100 + minSize);
-      updateYLCStyleUpdate({ fontSize });
+      updateYLCStyle({ fontSize });
       changeFontSize(fontSize);
     },
   });

@@ -13,8 +13,8 @@ import type { ColorResult, RGBColor } from 'react-color';
 export const BgColorPicker = () => {
   const { changeColor } = useYLCBgColorChange();
   const stateRef = useRef(useYTDLiveChatStore.getState());
-  const { updateYLCStyleUpdate: updateYLCStyleUpdate } = useYTDLiveChatStore(
-    useShallow((state) => ({ updateYLCStyleUpdate: state.updateYLCStyleUpdate })),
+  const { updateYLCStyle: updateYLCStyle } = useYTDLiveChatStore(
+    useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor);
   const [display, setDisplay] = useState(false);
@@ -26,10 +26,10 @@ export const BgColorPicker = () => {
   const onChange = useCallback(
     (c: ColorResult) => {
       changeColor(c.rgb);
-      updateYLCStyleUpdate({ bgColor: c.rgb });
+      updateYLCStyle({ bgColor: c.rgb });
       setRgba(c.rgb);
     },
-    [changeColor, updateYLCStyleUpdate],
+    [changeColor, updateYLCStyle],
   );
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>

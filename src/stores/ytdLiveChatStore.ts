@@ -16,7 +16,7 @@ type YTDLiveChatStoreState = {
   addPresetItem: (id: string, title: string, ylcStyle: YLCStyleType) => void;
   deletePresetItem: (id: string) => void;
   updateTitle: (id: string, title: string) => void;
-  updateYLCStyleUpdate: (YLCStyleUpdate: YLCStyleUpdateType) => void;
+  updateYLCStyle: (YLCStyleUpdate: YLCStyleUpdateType) => void;
   setPresetItemIds: (presetItemIds: string[]) => void;
   setSize: (size: sizeType) => void;
   setCoordinates: (coordinates: Coordinates) => void;
@@ -56,7 +56,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
             state.presetItemIds = state.presetItemIds.filter((item) => item !== id);
           }),
         updateTitle: (id, title) => set((state) => (state.presetItemStyles[id].title = title)),
-        updateYLCStyleUpdate: (YLCStyleUpdate) => set((state) => ({ ...state, ...YLCStyleUpdate })),
+        updateYLCStyle: (YLCStyleUpdate) => set((state) => ({ ...state, ...YLCStyleUpdate })),
         setPresetItemIds: (presetItemIds) => set(() => ({ presetItemIds })),
         setSize: (size) => {
           set(() => ({

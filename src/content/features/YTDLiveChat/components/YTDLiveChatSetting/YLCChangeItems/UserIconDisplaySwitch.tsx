@@ -7,10 +7,10 @@ import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useYLCUserIconDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCUserIconDisplayChange';
 
 export const UserIconDisplaySwitch = () => {
-  const { userIconDisplay, updateYLCStyleUpdate } = useYTDLiveChatStore(
+  const { userIconDisplay, updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({
       userIconDisplay: state.userIconDisplay,
-      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
+      updateYLCStyle: state.updateYLCStyle,
     })),
   );
   const { changeDisplay } = useYLCUserIconDisplayChange();
@@ -27,7 +27,7 @@ export const UserIconDisplaySwitch = () => {
         id="user-icon-display-switch"
         onChange={(checked) => {
           changeDisplay(checked);
-          updateYLCStyleUpdate({ userIconDisplay: checked });
+          updateYLCStyle({ userIconDisplay: checked });
         }}
       />
     </div>

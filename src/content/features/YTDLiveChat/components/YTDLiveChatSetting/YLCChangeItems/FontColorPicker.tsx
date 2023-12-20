@@ -14,8 +14,8 @@ export const FontColorPicker = () => {
   const { changeColor } = useYLCFontColorChange();
   const stateRef = useRef(useYTDLiveChatStore.getState());
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor);
-  const { updateYLCStyleUpdate } = useYTDLiveChatStore(
-    useShallow((state) => ({ updateYLCStyleUpdate: state.updateYLCStyleUpdate })),
+  const { updateYLCStyle } = useYTDLiveChatStore(
+    useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
   const [display, setDisplay] = useState(false);
   const ref = useRef(null);
@@ -25,10 +25,10 @@ export const FontColorPicker = () => {
   const onChange = useCallback(
     (c: ColorResult) => {
       changeColor(c.rgb);
-      updateYLCStyleUpdate({ fontColor: c.rgb });
+      updateYLCStyle({ fontColor: c.rgb });
       setRgba(c.rgb);
     },
-    [changeColor, updateYLCStyleUpdate],
+    [changeColor, updateYLCStyle],
   );
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>

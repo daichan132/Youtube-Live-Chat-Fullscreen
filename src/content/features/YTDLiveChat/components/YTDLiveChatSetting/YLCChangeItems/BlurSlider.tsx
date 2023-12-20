@@ -8,13 +8,13 @@ import styles from '../../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
 
 export const BlurSlider = () => {
   const blurRef = useRef(useYTDLiveChatStore.getState().blur);
-  const { updateYLCStyleUpdate } = useYTDLiveChatStore(
-    useShallow((state) => ({ updateYLCStyleUpdate: state.updateYLCStyleUpdate })),
+  const { updateYLCStyle } = useYTDLiveChatStore(
+    useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
     initialValue: blurRef.current / 20,
     onScrub(value) {
-      updateYLCStyleUpdate({ blur: Math.round(value * 20) });
+      updateYLCStyle({ blur: Math.round(value * 20) });
     },
   });
 
