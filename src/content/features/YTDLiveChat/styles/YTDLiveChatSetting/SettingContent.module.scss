@@ -8,13 +8,13 @@
     height 200ms ease,
     padding 200ms ease,
     opacity 200ms ease;
-  overflow: hidden;
 
   &.disable {
     height: 0px;
     padding: 0px 20px;
     opacity: 0;
     pointer-events: none;
+    overflow: hidden;
   }
 
   .title-with-icon {

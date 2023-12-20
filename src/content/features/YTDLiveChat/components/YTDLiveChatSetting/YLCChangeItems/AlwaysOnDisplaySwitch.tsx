@@ -6,10 +6,10 @@ import { Switch } from '../../../../../../shared/components/Switch';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 
 export const AlwaysOnDisplaySwitch = () => {
-  const { alwaysOnDisplay, setAlwaysOnDisplay } = useYTDLiveChatStore(
+  const { alwaysOnDisplay, updateYLCStyleUpdate } = useYTDLiveChatStore(
     useShallow((state) => ({
       alwaysOnDisplay: state.alwaysOnDisplay,
-      setAlwaysOnDisplay: state.setAlwaysOnDisplay,
+      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
     })),
   );
   return (
@@ -24,7 +24,7 @@ export const AlwaysOnDisplaySwitch = () => {
         checked={alwaysOnDisplay}
         id="always-on-display-switch"
         onChange={(checked) => {
-          setAlwaysOnDisplay(checked);
+          updateYLCStyleUpdate({ alwaysOnDisplay: checked });
         }}
       />
     </div>

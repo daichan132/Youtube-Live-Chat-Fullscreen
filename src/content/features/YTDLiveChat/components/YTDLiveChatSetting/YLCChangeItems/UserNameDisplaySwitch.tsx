@@ -7,10 +7,10 @@ import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useYLCUserNameDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCUserNameDisplayChange';
 
 export const UserNameDisplaySwitch = () => {
-  const { userNameDisplay, setUserNameDisplay } = useYTDLiveChatStore(
+  const { userNameDisplay, updateYLCStyleUpdate } = useYTDLiveChatStore(
     useShallow((state) => ({
       userNameDisplay: state.userNameDisplay,
-      setUserNameDisplay: state.setUserNameDisplay,
+      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
     })),
   );
   const { changeDisplay } = useYLCUserNameDisplayChange();
@@ -27,7 +27,7 @@ export const UserNameDisplaySwitch = () => {
         id="user-name-display-switch"
         onChange={(checked) => {
           changeDisplay(checked);
-          setUserNameDisplay(checked);
+          updateYLCStyleUpdate({ userNameDisplay: checked });
         }}
       />
     </div>

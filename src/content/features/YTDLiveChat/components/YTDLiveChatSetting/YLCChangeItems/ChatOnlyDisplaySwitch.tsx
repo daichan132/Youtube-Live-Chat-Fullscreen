@@ -6,10 +6,10 @@ import { Switch } from '../../../../../../shared/components/Switch';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 
 export const ChatOnlyDisplaySwitch = () => {
-  const { chatOnlyDisplay, setChatOnlyDisplay } = useYTDLiveChatStore(
+  const { chatOnlyDisplay, updateYLCStyleUpdate } = useYTDLiveChatStore(
     useShallow((state) => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
-      setChatOnlyDisplay: state.setChatOnlyDisplay,
+      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
     })),
   );
   return (
@@ -24,7 +24,7 @@ export const ChatOnlyDisplaySwitch = () => {
         checked={chatOnlyDisplay}
         id="chat-only-display-switch"
         onChange={(checked) => {
-          setChatOnlyDisplay(checked);
+          updateYLCStyleUpdate({ chatOnlyDisplay: checked });
         }}
       />
     </div>

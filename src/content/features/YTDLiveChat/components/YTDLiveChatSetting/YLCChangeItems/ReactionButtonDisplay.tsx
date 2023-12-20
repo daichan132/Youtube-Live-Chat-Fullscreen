@@ -7,10 +7,10 @@ import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useYLCReactionButtonDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 
 export const ReactionButtonDisplaySwitch = () => {
-  const { reactionButtonDisplay, setReactionButtonDisplay } = useYTDLiveChatStore(
+  const { reactionButtonDisplay, updateYLCStyleUpdate } = useYTDLiveChatStore(
     useShallow((state) => ({
       reactionButtonDisplay: state.reactionButtonDisplay,
-      setReactionButtonDisplay: state.setReactionButtonDisplay,
+      updateYLCStyleUpdate: state.updateYLCStyleUpdate,
     })),
   );
   const { changeDisplay } = useYLCReactionButtonDisplayChange();
@@ -27,7 +27,7 @@ export const ReactionButtonDisplaySwitch = () => {
         id="reaction-button-display-switch"
         onChange={(checked) => {
           changeDisplay(checked);
-          setReactionButtonDisplay(checked);
+          updateYLCStyleUpdate({ reactionButtonDisplay: checked });
         }}
       />
     </div>
