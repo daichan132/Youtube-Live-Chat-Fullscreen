@@ -31,5 +31,13 @@ export const FontSizeSlider = () => {
     },
   });
 
-  return <Slider value={value} sliderRef={ref} />;
+  return <FontSizeSliderUI value={value} ref={ref} />;
 };
+
+export const FontSizeSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
+  ({ value }, ref) => {
+    return <Slider value={value} ref={ref} />;
+  },
+);
+
+FontSizeSliderUI.displayName = 'FontSizeSlider';

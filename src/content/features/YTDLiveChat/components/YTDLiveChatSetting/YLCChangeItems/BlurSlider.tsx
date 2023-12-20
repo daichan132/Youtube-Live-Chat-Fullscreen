@@ -23,6 +23,13 @@ export const BlurSlider = () => {
       updateBlur(value);
     },
   });
-
-  return <Slider value={value} sliderRef={ref} />;
+  return <BlurSliderUI value={value} ref={ref} />;
 };
+
+export const BlurSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
+  ({ value }, ref) => {
+    return <Slider value={value} ref={ref} />;
+  },
+);
+
+BlurSliderUI.displayName = 'BlurSlider';

@@ -1,4 +1,6 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useRef, useState } from 'react';
+import React from 'react';
 
 import { ChromePicker } from 'react-color';
 import { useClickAway } from 'react-use';
@@ -31,8 +33,28 @@ export const FontColorPicker = () => {
     [changeColor, updateYLCStyle],
   );
   return (
+    <FontColorPickerUI
+      rgba={rgba}
+      ref={ref}
+      display={display}
+      setDisplay={setDisplay}
+      onChange={onChange}
+    />
+  );
+};
+
+export const FontColorPickerUI = React.forwardRef<
+  HTMLDivElement,
+  {
+    rgba: RGBColor;
+    display?: boolean;
+    setDisplay?: Dispatch<SetStateAction<boolean>>;
+    onChange?: (c: ColorResult) => void;
+  }
+>(({ rgba, display, setDisplay, onChange }, ref) => {
+  return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div className={styles['color-display']} onClick={() => setDisplay((d) => !d)}>
+      <div className={styles['color-display']} onClick={() => setDisplay && setDisplay((d) => !d)}>
         <div className={styles['color-preview-background']}>
           <div
             className={styles['color-preview']}
@@ -51,10 +73,6 @@ export const FontColorPicker = () => {
                   border: '1px solid rgba(0, 0, 0, 0.1)',
                   borderRadius: 5,
                   overflow: 'hidden',
-                  marginBottom: '30px',
-                },
-                alpha: {
-                  display: 'none',
                 },
               },
             }}
@@ -63,4 +81,6 @@ export const FontColorPicker = () => {
       </div>
     </div>
   );
-};
+});
+
+FontColorPickerUI.displayName = 'FontColorPickerUI';

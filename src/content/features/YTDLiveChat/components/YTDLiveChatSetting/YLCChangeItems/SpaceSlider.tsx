@@ -31,5 +31,13 @@ export const SpaceSlider = () => {
     },
   });
 
-  return <Slider value={value} sliderRef={ref} />;
+  return <SpaceSliderUI value={value} ref={ref} />;
 };
+
+export const SpaceSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
+  ({ value }, ref) => {
+    return <Slider value={value} ref={ref} />;
+  },
+);
+
+SpaceSliderUI.displayName = 'SpaceSlider';

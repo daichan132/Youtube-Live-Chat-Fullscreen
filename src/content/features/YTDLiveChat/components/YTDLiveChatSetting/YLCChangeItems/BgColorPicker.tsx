@@ -1,4 +1,6 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { useCallback, useRef, useState } from 'react';
+import React from 'react';
 
 import { ChromePicker } from 'react-color';
 import { useClickAway } from 'react-use';
@@ -32,8 +34,28 @@ export const BgColorPicker = () => {
     [changeColor, updateYLCStyle],
   );
   return (
+    <BgColorPickerUI
+      rgba={rgba}
+      ref={ref}
+      display={display}
+      setDisplay={setDisplay}
+      onChange={onChange}
+    />
+  );
+};
+
+export const BgColorPickerUI = React.forwardRef<
+  HTMLDivElement,
+  {
+    rgba: RGBColor;
+    display?: boolean;
+    setDisplay?: Dispatch<SetStateAction<boolean>>;
+    onChange?: (c: ColorResult) => void;
+  }
+>(({ rgba, display, setDisplay, onChange }, ref) => {
+  return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div className={styles['color-display']} onClick={() => setDisplay((d) => !d)}>
+      <div className={styles['color-display']} onClick={() => setDisplay && setDisplay((d) => !d)}>
         <div className={styles['color-preview-background']}>
           <div
             className={styles['color-preview']}
@@ -60,4 +82,6 @@ export const BgColorPicker = () => {
       </div>
     </div>
   );
-};
+});
+
+BgColorPickerUI.displayName = 'BgColorPickerUI';

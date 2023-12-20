@@ -5,6 +5,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { Switch } from '../../../../../../shared/components/Switch';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 
+import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType';
+
 export const AlwaysOnDisplaySwitch = () => {
   const { alwaysOnDisplay, updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({
@@ -12,6 +14,18 @@ export const AlwaysOnDisplaySwitch = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   );
+  return (
+    <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} updateYLCStyle={updateYLCStyle} />
+  );
+};
+
+export const AlwaysOnDisplaySwitchUI = ({
+  alwaysOnDisplay,
+  updateYLCStyle,
+}: {
+  alwaysOnDisplay: boolean;
+  updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void;
+}) => {
   return (
     <div
       style={{
@@ -24,7 +38,7 @@ export const AlwaysOnDisplaySwitch = () => {
         checked={alwaysOnDisplay}
         id="always-on-display-switch"
         onChange={(checked) => {
-          updateYLCStyle({ alwaysOnDisplay: checked });
+          updateYLCStyle && updateYLCStyle({ alwaysOnDisplay: checked });
         }}
       />
     </div>

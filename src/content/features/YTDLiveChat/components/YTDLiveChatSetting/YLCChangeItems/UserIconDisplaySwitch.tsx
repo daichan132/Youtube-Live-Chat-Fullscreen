@@ -6,6 +6,8 @@ import { Switch } from '../../../../../../shared/components/Switch';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useYLCUserIconDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCUserIconDisplayChange';
 
+import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType';
+
 export const UserIconDisplaySwitch = () => {
   const { userIconDisplay, updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({
@@ -14,6 +16,24 @@ export const UserIconDisplaySwitch = () => {
     })),
   );
   const { changeDisplay } = useYLCUserIconDisplayChange();
+  return (
+    <UserIconDisplaySwitchUI
+      userIconDisplay={userIconDisplay}
+      updateYLCStyle={updateYLCStyle}
+      changeDisplay={changeDisplay}
+    />
+  );
+};
+
+export const UserIconDisplaySwitchUI = ({
+  userIconDisplay,
+  updateYLCStyle,
+  changeDisplay,
+}: {
+  userIconDisplay: boolean;
+  updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void;
+  changeDisplay?: (userIconDisplay: boolean) => void;
+}) => {
   return (
     <div
       style={{
@@ -26,8 +46,8 @@ export const UserIconDisplaySwitch = () => {
         checked={userIconDisplay}
         id="user-icon-display-switch"
         onChange={(checked) => {
-          changeDisplay(checked);
-          updateYLCStyle({ userIconDisplay: checked });
+          changeDisplay && changeDisplay(checked);
+          updateYLCStyle && updateYLCStyle({ userIconDisplay: checked });
         }}
       />
     </div>

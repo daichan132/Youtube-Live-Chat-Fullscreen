@@ -5,6 +5,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { Switch } from '../../../../../../shared/components/Switch';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 
+import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType';
+
 export const ChatOnlyDisplaySwitch = () => {
   const { chatOnlyDisplay, updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({
@@ -12,6 +14,18 @@ export const ChatOnlyDisplaySwitch = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   );
+  return (
+    <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} updateYLCStyle={updateYLCStyle} />
+  );
+};
+
+export const ChatOnlyDisplaySwitchUI = ({
+  chatOnlyDisplay,
+  updateYLCStyle,
+}: {
+  chatOnlyDisplay: boolean;
+  updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void;
+}) => {
   return (
     <div
       style={{
@@ -24,7 +38,7 @@ export const ChatOnlyDisplaySwitch = () => {
         checked={chatOnlyDisplay}
         id="chat-only-display-switch"
         onChange={(checked) => {
-          updateYLCStyle({ chatOnlyDisplay: checked });
+          updateYLCStyle && updateYLCStyle({ chatOnlyDisplay: checked });
         }}
       />
     </div>

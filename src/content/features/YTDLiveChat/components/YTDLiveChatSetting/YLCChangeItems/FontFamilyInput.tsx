@@ -12,14 +12,25 @@ export const FontFamilyInput = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   );
+
   return (
-    <input
-      className={styles['input']}
+    <FontFamilyInputUI
       value={fontFamily}
       onChange={(event) => {
-        updateYLCStyle({ fontFamily: event.target.value });
-        changeFontFamily(event.target.value);
+        const fontFamily = event.target.value;
+        updateYLCStyle({ fontFamily });
+        changeFontFamily(fontFamily);
       }}
     />
   );
+};
+
+export const FontFamilyInputUI = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) => {
+  return <input className={styles['input']} value={value} onChange={onChange} />;
 };
