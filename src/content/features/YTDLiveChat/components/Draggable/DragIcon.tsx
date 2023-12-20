@@ -10,5 +10,14 @@ export const DragIcon = () => {
     useShallow((state) => ({ fontColor: state.fontColor })),
   );
 
-  return <RiDraggable size={24} color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`} />;
+  return (
+    // hoverしたときにgrabにする
+    <RiDraggable
+      style={{
+        cursor: 'grab',
+      }}
+      size={24}
+      color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+    />
+  );
 };

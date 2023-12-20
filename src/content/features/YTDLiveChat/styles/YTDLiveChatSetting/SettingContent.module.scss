@@ -8,6 +8,7 @@
     height 200ms ease,
     padding 200ms ease,
     opacity 200ms ease;
+  overflow: hidden;
 
   &.disable {
     height: 0px;

@@ -18,14 +18,6 @@ const Content = () => {
   const { ytdLiveChat } = useGlobalSetting();
   return (
     <>
-      {/* If the pathname of each iframe is /live_chat */}
-      {/* {emojiCopy && pathname === '/live_chat' ? (
-        <>
-          <EmojiFix />
-          <AddChatMessageCopyIcon />
-        </>
-      ) : null} */}
-      {/* If the pathname of the tab is watch */}
       {ytdLiveChat && pathname === '/watch' && videoId ? <YTDLiveChat videoID={videoId} /> : null}
     </>
   );
