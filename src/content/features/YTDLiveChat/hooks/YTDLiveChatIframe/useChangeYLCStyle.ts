@@ -38,7 +38,6 @@ export const useChangeYLCStyle = () => {
       if (space !== undefined) changeSpace(space);
       if (userNameDisplay !== undefined) changeUserNameDisplay(userNameDisplay);
       if (userIconDisplay !== undefined) changeUserIconDisplay(userIconDisplay);
-      console.log(reactionButtonDisplay);
       if (reactionButtonDisplay !== undefined) changeReactionButtonDisplay(reactionButtonDisplay);
     },
     [

@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
+import i18n from '../i18n/config';
 import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils';
 
 import type { YLCStyleType, YLCStyleUpdateType, sizeType } from '../types/ytdLiveChatType';
@@ -37,9 +38,9 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           default3: ylcSimpleSetting,
         },
         presetItemTitles: {
-          default1: 'Default',
-          default2: 'Transparent',
-          default3: 'Simple',
+          default1: i18n.t('content.preset.defaultTitle'), // i18nキーを使う
+          default2: i18n.t('content.preset.transparentTitle'),
+          default3: i18n.t('content.preset.simpleTitle'),
         },
         ...ylcInitSetting,
         addPresetItem: (id, title, ylcStyle) =>

@@ -18,6 +18,13 @@
       "space": "スペース",
       "footer": "詳しい説明についてはこちらから　",
       "help": "ヘルプ"
+    },
+    "preset": {
+      "addMessage": "現在の設定を追加",
+      "addItemTitle": "無題",
+      "defaultTitle": "デフォルト",
+      "transparentTitle": "透明",
+      "simpleTitle": "シンプル"
     }
   },
   "popup": {

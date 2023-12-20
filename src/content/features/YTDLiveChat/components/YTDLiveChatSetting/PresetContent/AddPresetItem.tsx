@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 
+import { useTranslation } from 'react-i18next';
 import { MdAdd } from 'react-icons/md';
 import { v4 as uuidv4 } from 'uuid';
 import { useShallow } from 'zustand/react/shallow';
@@ -13,6 +14,7 @@ export const AddPresetItem = () => {
       addPresetItem: state.addPresetItem,
     })),
   );
+  const { t } = useTranslation();
   const addItem = useCallback(() => {
     const state = useYTDLiveChatStore.getState();
     const ylcStyle = {
@@ -30,11 +32,11 @@ export const AddPresetItem = () => {
       userIconDisplay: state.userIconDisplay,
       reactionButtonDisplay: state.reactionButtonDisplay,
     };
-    addPresetItem(uuidv4(), `Untitled`, ylcStyle);
-  }, [addPresetItem]);
+    addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle);
+  }, [addPresetItem, t]);
   return (
     <div className={styles['add-preset-item']} onClick={() => addItem()}>
-      <MdAdd size={20} /> <div>Add current setting</div>
+      <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
     </div>
   );
 };

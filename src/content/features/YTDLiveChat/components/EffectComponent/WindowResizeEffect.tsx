@@ -4,7 +4,6 @@ import { useYTDLiveChatStore } from '../../../../../stores';
 
 export const WindowResizeEffect = () => {
   const updatePosition = useCallback(() => {
-    console.log('change');
     const innerWidth = window.innerWidth;
     const {
       size: { width, height },

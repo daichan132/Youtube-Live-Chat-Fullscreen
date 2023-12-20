@@ -18,6 +18,13 @@
       "space": "Space",
       "footer": "For instructions, click this ",
       "help": "help"
+    },
+    "preset": {
+      "addMessage": "Add current setting",
+      "addItemTitle": "Untitled",
+      "defaultTitle": "Default",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Simple"
     }
   },
   "popup": {
