@@ -21,11 +21,7 @@ const sendMessage = (tabs: chrome.tabs.Tab[], request: any) => {
   }
 };
 chrome.runtime.onMessage.addListener(function (request) {
-  if (
-    request.message === 'ytdLiveChat' ||
-    request.message === 'emojiCopy' ||
-    request.message === 'language'
-  ) {
+  if (request.message === 'ytdLiveChat' || request.message === 'language') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => sendMessage(tabs, request));
   }
 });
