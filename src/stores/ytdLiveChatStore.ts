@@ -3,14 +3,15 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { ylcInitSetting } from '../utils';
+import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils';
 
 import type { YLCStyleType, YLCStyleUpdateType, sizeType } from '../types/ytdLiveChatType';
 import type { Coordinates } from '@dnd-kit/core/dist/types';
 
 type YTDLiveChatStoreState = {
   presetItemIds: string[];
-  presetItemStyles: { [key: string]: { title: string; ylcStyle: YLCStyleType } };
+  presetItemStyles: { [key: string]: YLCStyleType };
+  presetItemTitles: { [key: string]: string };
   coordinates: Coordinates;
   size: sizeType;
   addPresetItem: (id: string, title: string, ylcStyle: YLCStyleType) => void;
@@ -31,31 +32,33 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         size: { width: 400, height: 500 },
         presetItemIds: ['default1', 'default2', 'default3'],
         presetItemStyles: {
-          default1: {
-            title: 'default1',
-            ylcStyle: ylcInitSetting,
-          },
-          default2: {
-            title: 'default2',
-            ylcStyle: ylcInitSetting,
-          },
-          default3: {
-            title: 'default3',
-            ylcStyle: ylcInitSetting,
-          },
+          default1: ylcInitSetting,
+          default2: ylcTransparentSetting,
+          default3: ylcSimpleSetting,
+        },
+        presetItemTitles: {
+          default1: 'Default',
+          default2: 'Transparent',
+          default3: 'Simple',
         },
         ...ylcInitSetting,
         addPresetItem: (id, title, ylcStyle) =>
           set((state) => {
-            state.presetItemStyles[id] = { title, ylcStyle };
+            state.presetItemStyles[id] = ylcStyle;
+            state.presetItemTitles[id] = title;
             state.presetItemIds.push(id);
           }),
         deletePresetItem: (id) =>
           set((state) => {
             delete state.presetItemStyles[id];
+            delete state.presetItemTitles[id];
             state.presetItemIds = state.presetItemIds.filter((item) => item !== id);
           }),
-        updateTitle: (id, title) => set((state) => (state.presetItemStyles[id].title = title)),
+        updateTitle: (id, title) =>
+          set((state) => ({
+            ...state,
+            presetItemTitles: { ...state.presetItemTitles, [id]: title },
+          })),
         updateYLCStyle: (YLCStyleUpdate) => set((state) => ({ ...state, ...YLCStyleUpdate })),
         setPresetItemIds: (presetItemIds) => set(() => ({ presetItemIds })),
         setSize: (size) => {

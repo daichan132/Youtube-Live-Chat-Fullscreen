@@ -8,6 +8,7 @@ import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatStore } from '../../../../../../stores';
+import { useChangeYLCStyle } from '../../../hooks/YTDLiveChatIframe/useChangeYLCStyle';
 import styles from '../../../styles/YTDLiveChatSetting/PresetContent.module.scss';
 
 interface PresetItemType {
@@ -15,13 +16,15 @@ interface PresetItemType {
 }
 
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, updateTitle, deletePresetItem } = useYTDLiveChatStore(
+  const { title, updateTitle, updateYLCStyle, deletePresetItem } = useYTDLiveChatStore(
     useShallow((state) => ({
-      title: state.presetItemStyles[id].title,
+      title: state.presetItemTitles[id],
       updateTitle: state.updateTitle,
       deletePresetItem: state.deletePresetItem,
+      updateYLCStyle: state.updateYLCStyle,
     })),
   );
+
   const {
     attributes,
     setActivatorNodeRef,
@@ -33,16 +36,19 @@ export const PresetItem = ({ id }: PresetItemType) => {
   } = useSortable({
     id: id,
   });
+  const changeYLCStyle = useChangeYLCStyle();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     updateTitle(id, event.target.value);
   };
-  const deleteItem = useCallback(
-    (id: string) => {
-      deletePresetItem(id);
-    },
-    [deletePresetItem],
-  );
+  const updateStyle = useCallback(() => {
+    const ylcStyle = useYTDLiveChatStore.getState().presetItemStyles[id];
+    updateYLCStyle(ylcStyle);
+    changeYLCStyle(ylcStyle);
+  }, [changeYLCStyle, id, updateYLCStyle]);
+  const deleteItem = useCallback(() => {
+    deletePresetItem(id);
+  }, [deletePresetItem, id]);
 
   return (
     <div
@@ -68,8 +74,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
           />
         </div>
         <div className={styles['rightContainer']}>
-          <MdAutoFixNormal size={20} />
-          <IoTrashOutline size={20} onClick={() => deleteItem(id)} />
+          <MdAutoFixNormal size={20} onClick={() => updateStyle()} />
+          <IoTrashOutline size={20} onClick={() => deleteItem()} />
         </div>
       </div>
     </div>

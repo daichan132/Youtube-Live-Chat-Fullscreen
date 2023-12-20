@@ -6,14 +6,8 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '../../../../../stores';
 import iframeStyles from '../../styles/YTDLiveChatIframe/iframe.scss?inline';
-import { useYLCBgColorChange } from '../YTDLiveChatSetting/useYLCBgColorChange';
-import { useYLCFontColorChange } from '../YTDLiveChatSetting/useYLCFontColorChange';
-import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange';
-import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange';
-import { useYLCReactionButtonDisplayChange } from '../YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
-import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
-import { useYLCUserIconDisplayChange } from '../YTDLiveChatSetting/useYLCUserIconDisplayChange';
-import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange';
+
+import { useChangeYLCStyle } from './useChangeYLCStyle';
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLIFrameElement>(null);
@@ -24,14 +18,7 @@ export const useIframeLoader = () => {
       setIFrameElement: state.setIFrameElement,
     })),
   );
-  const { changeColor: changBgColor } = useYLCBgColorChange();
-  const { changeColor: changFontColor } = useYLCFontColorChange();
-  const { changeFontFamily } = useYLCFontFamilyChange();
-  const { changeFontSize } = useYLCFontSizeChange();
-  const { changeSpace } = useYLCSpaceChange();
-  const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange();
-  const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange();
-  const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange();
+  const changeYLCStyle = useChangeYLCStyle();
   useMount(() => {
     if (!ref.current) return;
     setIFrameElement(ref.current);
@@ -55,14 +42,16 @@ export const useIframeLoader = () => {
           reactionButtonDisplay,
         } = useYTDLiveChatStore.getState();
         body.classList.add('custom-yt-app-live-chat-extension');
-        changBgColor(bgColor);
-        changFontColor(fontColor);
-        changeUserNameDisplay(userNameDisplay);
-        changeUserIconDisplay(userIconDisplay);
-        changeReactionButtonDisplay(reactionButtonDisplay);
-        changeFontFamily(fontFamily);
-        changeFontSize(fontSize);
-        changeSpace(space);
+        changeYLCStyle({
+          bgColor,
+          fontColor,
+          fontFamily,
+          fontSize,
+          space,
+          userNameDisplay,
+          userIconDisplay,
+          reactionButtonDisplay,
+        });
         setIsIframeLoaded(true);
         setIsDisplay(true);
       }
