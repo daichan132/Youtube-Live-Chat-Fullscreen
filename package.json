@@ -32,6 +32,7 @@
     "emoji-regex": "^10.3.0",
     "i18next": "^23.7.8",
     "i18next-browser-languagedetector": "^7.2.0",
+    "immer": "^10.0.3",
     "lodash-es": "^4.17.21",
     "re-resizable": "^6.9.11",
     "react": "18.2.0",
@@ -44,6 +45,7 @@
     "react-transition-group": "^4.4.5",
     "react-use": "^17.4.2",
     "redux-persist-webextension-storage": "^1.0.2",
+    "uuid": "^9.0.1",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
@@ -61,6 +63,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-transition-group": "^4.4.10",
     "@types/redux-persist-webextension-storage": "^1.0.3",
+    "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
     "@typescript-eslint/parser": "^6.13.2",
     "@vitejs/plugin-react": "^4.2.1",

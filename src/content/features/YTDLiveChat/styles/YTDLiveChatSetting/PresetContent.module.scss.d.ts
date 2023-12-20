@@ -1,14 +1,11 @@
 export type Styles = {
-  blue: string;
-  cardContainer: string;
-  colorBar: string;
-  colorSection: string;
+  "add-preset-item": string;
   "content-preset-container": string;
   dragging: string;
   dragIcon: string;
   flex: string;
   leftContainer: string;
-  red: string;
+  "preset-item": string;
   rightContainer: string;
   title: string;
 };

@@ -33,14 +33,16 @@ const customStyles = {
 };
 
 export const YTDLiveChatSetting = () => {
-  const { isOpenSettingModal, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
-    useShallow((state) => ({
-      isOpenSettingModal: state.isOpenSettingModal,
-      setIsOpenSettingModal: state.setIsOpenSettingModal,
-      setIsHover: state.setIsHover,
-    })),
-  );
-  const [menuItem, setMenuItem] = React.useState('setting');
+  const { isOpenSettingModal, menuItem, setMenuItem, setIsOpenSettingModal, setIsHover } =
+    useYTDLiveChatNoLsStore(
+      useShallow((state) => ({
+        isOpenSettingModal: state.isOpenSettingModal,
+        menuItem: state.menuItem,
+        setMenuItem: state.setMenuItem,
+        setIsOpenSettingModal: state.setIsOpenSettingModal,
+        setIsHover: state.setIsHover,
+      })),
+    );
   const { t } = useTranslation();
 
   return (

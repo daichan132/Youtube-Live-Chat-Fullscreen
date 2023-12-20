@@ -12,6 +12,7 @@ interface YTDLiveChatNoLsStoreState {
   clip: clipState;
   isClipPath: boolean | undefined;
   iframeElement: HTMLIFrameElement | null;
+  menuItem: 'setting' | 'preset';
   setIsHover: (isHover: boolean) => void;
   setIsDisplay: (isDisplay: boolean) => void;
   setIsOpenSettingModal: (isSettingModal: boolean) => void;
@@ -19,6 +20,7 @@ interface YTDLiveChatNoLsStoreState {
   setClip: (clip: clipState) => void;
   setIsClipPath: (isClipPath: boolean | undefined) => void;
   setIFrameElement: (iframeElement: HTMLIFrameElement | null) => void;
+  setMenuItem: (menuItem: 'setting' | 'preset') => void;
 }
 
 export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set) => ({
@@ -32,6 +34,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set)
   },
   isClipPath: undefined,
   iframeElement: null,
+  menuItem: 'preset',
   setIsHover: (isHover) => set(() => ({ isHover })),
   setIsDisplay: (isDisplay) => set(() => ({ isDisplay })),
   setIsOpenSettingModal: (isOpenSettingModal) => set(() => ({ isOpenSettingModal })),
@@ -39,6 +42,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()((set)
   setClip: (clip) => set(() => ({ clip })),
   setIsClipPath: (isClipPath) => set(() => ({ isClipPath })),
   setIFrameElement: (iframeElement) => set(() => ({ iframeElement })),
+  setMenuItem: (menuItem) => set(() => ({ menuItem })),
 }));
 
 export default useYTDLiveChatNoLsStore;
