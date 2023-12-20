@@ -1,32 +1,28 @@
-import React, { useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 
 import { useShallow } from 'zustand/react/shallow';
 
+import { Slider } from '../../../../../../shared/components/Slider';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useInitializedSlider } from '../../../../../hooks/useInitializedSlider';
-import styles from '../../../styles/YTDLiveChatSetting/BlurSlider.module.scss';
 
 export const BlurSlider = () => {
   const blurRef = useRef(useYTDLiveChatStore.getState().blur);
   const { updateYLCStyle } = useYTDLiveChatStore(
     useShallow((state) => ({ updateYLCStyle: state.updateYLCStyle })),
   );
+  const updateBlur = useCallback(
+    (value: number) => {
+      updateYLCStyle({ blur: Math.round(value * 20) });
+    },
+    [updateYLCStyle],
+  );
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
     initialValue: blurRef.current / 20,
     onScrub(value) {
-      updateYLCStyle({ blur: Math.round(value * 20) });
+      updateBlur(value);
     },
   });
 
-  return (
-    <div ref={ref} className={styles['slider-wrapper']}>
-      <div className={styles['slider-track']} />
-      <div
-        className={styles['slider-thumb']}
-        style={{
-          left: `${value * 100}%`,
-        }}
-      />
-    </div>
-  );
+  return <Slider value={value} sliderRef={ref} />;
 };
