@@ -6,6 +6,9 @@ import { Slider } from '../../../../../../shared/components/Slider';
 import { useYTDLiveChatStore } from '../../../../../../stores';
 import { useInitializedSlider } from '../../../../../hooks/useInitializedSlider';
 
+export const BlurToSliderValue = (blur: number) => {
+  return blur / 20;
+};
 export const BlurSlider = () => {
   const blurRef = useRef(useYTDLiveChatStore.getState().blur);
   const { updateYLCStyle } = useYTDLiveChatStore(
@@ -18,7 +21,7 @@ export const BlurSlider = () => {
     [updateYLCStyle],
   );
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
-    initialValue: blurRef.current / 20,
+    initialValue: BlurToSliderValue(blurRef.current),
     onScrub(value) {
       updateBlur(value);
     },

@@ -23,14 +23,7 @@ import { SpaceSlider } from './YLCChangeItems/SpaceSlider';
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch';
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch';
 
-import type { IconType } from 'react-icons';
-
-interface itemType {
-  icon: IconType;
-  title: string;
-  data: React.ReactNode;
-  disable?: boolean;
-}
+import type { SettingItemType } from '../../../../../types/ytdLiveChatSetting';
 
 export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
@@ -39,7 +32,7 @@ export const SettingContent = () => {
     })),
   );
   const { t } = useTranslation();
-  const items: itemType[] = [
+  const items: SettingItemType[] = [
     {
       icon: IoTimerOutline,
       title: t('content.setting.alwaysOnDisplay'),
@@ -98,7 +91,7 @@ export const SettingContent = () => {
     },
   ];
   return (
-    <div>
+    <div className={styles['content-setting-container']}>
       {items.map((item, i) => {
         return (
           <React.Fragment key={item.title}>

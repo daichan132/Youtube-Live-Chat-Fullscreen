@@ -10,6 +10,10 @@ import { useYLCSpaceChange } from '../../../hooks/YTDLiveChatSetting/useYLCSpace
 const minSize = 0;
 const maxSize = 40;
 
+export const spaceToSliderValue = (space: number) => {
+  return ((space - minSize) * 100) / ((maxSize - minSize) * 100);
+};
+
 export const SpaceSlider = () => {
   const SpaceRef = useRef(useYTDLiveChatStore.getState().space);
   const { updateYLCStyle } = useYTDLiveChatStore(
@@ -25,7 +29,7 @@ export const SpaceSlider = () => {
     [changeSpace, updateYLCStyle],
   );
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
-    initialValue: ((SpaceRef.current - minSize) * 100) / ((maxSize - minSize) * 100),
+    initialValue: spaceToSliderValue(SpaceRef.current),
     onScrub(value) {
       updateSpace(value);
     },

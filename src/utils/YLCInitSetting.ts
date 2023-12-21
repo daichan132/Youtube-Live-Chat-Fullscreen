@@ -15,7 +15,7 @@ export const ylcInitSetting: YLCStyleType = {
 };
 
 export const ylcTransparentSetting: YLCStyleType = {
-  bgColor: { r: 0, g: 0, b: 0, a: 0 },
+  bgColor: { r: 0, g: 0, b: 0, a: 0.3 },
   fontColor: { r: 255, g: 255, b: 255, a: 1 },
   fontFamily: 'Zen Maru Gothic',
   fontSize: 13,

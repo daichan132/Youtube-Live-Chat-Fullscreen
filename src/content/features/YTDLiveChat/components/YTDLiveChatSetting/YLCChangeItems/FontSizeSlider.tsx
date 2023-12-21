@@ -10,6 +10,9 @@ import { useYLCFontSizeChange } from '../../../hooks/YTDLiveChatSetting/useYLCFo
 const minSize = 10;
 const maxSize = 20;
 
+export const fontSizeToSliderValue = (fontSize: number) => {
+  return ((fontSize - minSize) * 100) / ((maxSize - minSize) * 100);
+};
 export const FontSizeSlider = () => {
   const fontSizeRef = useRef(useYTDLiveChatStore.getState().fontSize);
   const { updateYLCStyle } = useYTDLiveChatStore(
@@ -25,7 +28,7 @@ export const FontSizeSlider = () => {
     [changeFontSize, updateYLCStyle],
   );
   const { value, ref } = useInitializedSlider<HTMLDivElement>({
-    initialValue: ((fontSizeRef.current - minSize) * 100) / ((maxSize - minSize) * 100),
+    initialValue: fontSizeToSliderValue(fontSizeRef.current),
     onScrub(value) {
       updateFontSize(value);
     },
