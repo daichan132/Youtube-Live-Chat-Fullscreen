@@ -1,6 +1,8 @@
 export type Styles = {
   "add-preset-item": string;
+  applyStyleButton: string;
   "content-preset-container": string;
+  deleteButton: string;
   dragging: string;
   dragIcon: string;
   flex: string;

@@ -16,12 +16,11 @@ interface YTDLiveChatType {
   videoID: string;
 }
 export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
-  const { isFullscreen, isShow } = useIsShow(videoID);
+  const { isFullscreen, isShow, liveChatReplaySrc } = useIsShow(videoID);
   const nodeRef = useRef(null);
   const { setIsHover } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({ setIsHover: state.setIsHover })),
   );
-
   return (
     isFullscreen && (
       <>
@@ -34,7 +33,9 @@ export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
             <DisplayEffect />
             <WindowResizeEffect />
             <Draggable>
-              <YTDLiveChatIframe src={`/live_chat?v=${videoID}`} />
+              <YTDLiveChatIframe
+                src={liveChatReplaySrc ? liveChatReplaySrc : `/live_chat?v=${videoID}`}
+              />
             </Draggable>
           </div>
         </CSSTransition>

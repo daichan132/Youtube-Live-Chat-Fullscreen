@@ -3,14 +3,15 @@
     border: none;
     height: 1px;
     background-color: rgba(0, 0, 0, 0.1);
-    margin: 0 20px;
+    margin: 0 2rem;
   }
+  margin-top: 1rem;
 
   .content-setting-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 20px;
+    padding: 1.25rem 2rem;
     opacity: 1;
     transition:
       height 200ms ease,
@@ -19,7 +20,7 @@
 
     &.disable {
       height: 0px;
-      padding: 0px 20px;
+      padding: 0px 1rem;
       opacity: 0;
       pointer-events: none;
       overflow: hidden;

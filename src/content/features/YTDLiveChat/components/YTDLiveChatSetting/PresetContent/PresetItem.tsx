@@ -4,8 +4,8 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import classNames from 'classnames';
-// import { IoTrashOutline } from 'react-icons/io5';
-import { MdAutoFixNormal, MdKeyboardArrowRight, MdOutlineDragIndicator } from 'react-icons/md';
+import { IoTrashOutline } from 'react-icons/io5';
+import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md';
 import { useClickAway } from 'react-use';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,7 +22,7 @@ interface PresetItemType {
 }
 useYTDLiveChatStore.persist.clearStorage();
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, ylcStyle, updateTitle, updateYLCStyle } = useYTDLiveChatStore(
+  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem } = useYTDLiveChatStore(
     useShallow((state) => ({
       title: state.presetItemTitles[id],
       ylcStyle: state.presetItemStyles[id],
@@ -31,7 +31,6 @@ export const PresetItem = ({ id }: PresetItemType) => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   );
-
   const {
     attributes,
     setActivatorNodeRef,
@@ -44,10 +43,6 @@ export const PresetItem = ({ id }: PresetItemType) => {
     id: id,
   });
   const changeYLCStyle = useChangeYLCStyle();
-
-  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    updateTitle(id, event.target.value);
-  };
   const updateStyle = useCallback(
     (ylcStyle: YLCStyleType) => {
       updateYLCStyle(ylcStyle);
@@ -55,9 +50,6 @@ export const PresetItem = ({ id }: PresetItemType) => {
     },
     [changeYLCStyle, updateYLCStyle],
   );
-  // const deleteItem = useCallback(() => {
-  //   deletePresetItem(id);
-  // }, [deletePresetItem, id]);
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = React.useRef(null);
   useClickAway(ref, () => {
@@ -75,7 +67,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <div ref={setActivatorNodeRef}>
               <MdOutlineDragIndicator
                 className={classNames(styles['dragIcon'], isDragging && styles['dragging'])}
-                size={20}
+                size={16}
                 {...listeners}
                 {...attributes}
               />
@@ -83,19 +75,20 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <input
               type="text"
               value={title}
-              onChange={handleTitleChange}
+              onChange={(event) => updateTitle(id, event.target.value)}
               className={styles['title']}
             />
           </div>
           <div className={styles['rightContainer']}>
-            <MdAutoFixNormal size={20} onClick={() => updateStyle(ylcStyle)} />
-            {/* <IoTrashOutline size={20} onClick={() => deleteItem()} /> */}
-            <MdKeyboardArrowRight
+            <MdAutoFixNormal
+              className={styles['applyStyleButton']}
               size={20}
-              onClick={() => setIsOpen((p) => !p)}
-              style={{
-                rotate: isOpen ? '90deg' : '0deg',
-              }}
+              onClick={() => updateStyle(ylcStyle)}
+            />
+            <IoTrashOutline
+              className={styles['deleteButton']}
+              size={20}
+              onClick={() => deletePresetItem(id)}
             />
           </div>
         </div>
