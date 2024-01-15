@@ -32,5 +32,11 @@ export const FontFamilyInputUI = ({
   value: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }) => {
-  return <input className={styles['input']} value={value} onChange={onChange} />;
+  return (
+    <input
+      className={styles['input']}
+      value={value}
+      onChange={(event) => onChange && onChange(event)}
+    />
+  );
 };

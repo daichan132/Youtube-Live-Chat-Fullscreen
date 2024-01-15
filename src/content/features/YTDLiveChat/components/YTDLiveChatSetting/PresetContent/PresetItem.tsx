@@ -67,7 +67,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <div ref={setActivatorNodeRef}>
               <MdOutlineDragIndicator
                 className={classNames(styles['dragIcon'], isDragging && styles['dragging'])}
-                size={16}
+                size={20}
                 {...listeners}
                 {...attributes}
               />

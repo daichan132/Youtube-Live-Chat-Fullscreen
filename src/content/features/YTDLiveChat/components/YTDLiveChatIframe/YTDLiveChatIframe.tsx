@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 
-import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -9,11 +8,7 @@ import { useIframeLoader } from '../../hooks/YTDLiveChatIframe/useIframeLoader';
 import fade from '../../styles/YTDLiveChatIframe/Fade.module.scss';
 import styles from '../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss';
 
-interface YTDLiveChatIframe {
-  src: string;
-}
-
-export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
+export const YTDLiveChatIframe = () => {
   const { ref } = useIframeLoader();
   const nodeRef = useRef(null);
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor);
@@ -29,17 +24,19 @@ export const YTDLiveChatIframe = ({ src }: YTDLiveChatIframe) => {
 
   return (
     <>
-      <iframe
-        frameBorder={0}
+      <div
         style={{
           opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
           backdropFilter: `blur(${blur}px)`,
+          width: '100%',
+          height: '100%',
+          overflow: 'hidden',
+          borderRadius: '10px',
+          transition: 'opacity 300ms ease',
         }}
-        id="chatframe"
-        className={classNames('style-scope ytd-live-chat-frame', styles['iframe'])}
-        src={src}
+        id="live-chat-iframe-wrapper"
         ref={ref}
-      />
+      ></div>
       <CSSTransition
         nodeRef={nodeRef}
         in={!isIframeLoaded}

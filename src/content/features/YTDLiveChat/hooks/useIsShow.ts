@@ -10,11 +10,11 @@ export const useIsShow = (videoID: string) => {
   const isFullscreen = useIsFullScreen();
   const [isLive, setIsLive] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [liveChatReplaySrc, setLiveChatReplaySrc] = useState<string>('');
+  const [isReplay, setIsReplay] = useState<boolean>(false);
 
   useEffect(() => {
     setIsLive(false);
-    setLiveChatReplaySrc('');
+    setIsReplay(false);
     if (!isFullscreen) return;
     const liveBadge = document.querySelector('.ytp-chrome-controls .ytp-live .ytp-live-badge');
     const live = liveBadge && !liveBadge.getAttribute('disabled');
@@ -51,15 +51,15 @@ export const useIsShow = (videoID: string) => {
   useEffect(() => {
     if (isFullscreen) {
       const liveChatReplay = document.querySelector(`iframe.ytd-live-chat-frame`);
-      if (liveChatReplay) {
-        setLiveChatReplaySrc(liveChatReplay.getAttribute('src') ?? '');
+      if (liveChatReplay && liveChatReplay?.getAttribute('src') !== 'about:blank') {
+        setIsReplay(liveChatReplay ? true : false);
       }
     } else {
-      setLiveChatReplaySrc('');
+      setIsReplay(false);
     }
   }, [isFullscreen]);
   useEffect(() => {
-    if ((isLive || liveChatReplaySrc) && isTop) {
+    if ((isLive || isReplay) && isTop) {
       /* ----------------------- YLC is in outside of window ---------------------- */
       const innerWidth = window.innerWidth;
       const innerHeight = window.innerHeight;
@@ -80,11 +80,11 @@ export const useIsShow = (videoID: string) => {
     } else {
       setIsChecked(false);
     }
-  }, [isLive, isTop, liveChatReplaySrc]);
+  }, [isLive, isTop, isReplay]);
 
   return {
     isFullscreen,
-    isShow: (isLive || (liveChatReplaySrc ? true : false)) && isTop && isChecked,
-    liveChatReplaySrc,
+    isShow: (isLive || isReplay) && isTop && isChecked,
+    isReplay,
   };
 };

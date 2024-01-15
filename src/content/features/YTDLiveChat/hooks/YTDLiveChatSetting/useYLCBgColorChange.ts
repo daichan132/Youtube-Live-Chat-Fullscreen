@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 
+import { useYTDLiveChatNoLsStore } from '../../../../../stores';
 import { darkenRgbaColor } from '../../utils/darkenRgbaColor';
 
 import type { RGBColor } from 'react-color';
@@ -19,26 +20,22 @@ const propertyListTransparent = [
 ];
 
 export const useYLCBgColorChange = () => {
-  const ref = useRef<HTMLIFrameElement | null>(null);
-  useEffect(() => {
-    const element = document.querySelector('#my-extension-root iframe.ytd-live-chat-frame');
-    if (element instanceof HTMLIFrameElement) {
-      ref.current = element;
-    }
-  }, []);
   const changeIframeBackgroundColor = useCallback((rgba: RGBColor) => {
-    if (ref.current?.contentWindow) {
-      const document = ref.current.contentWindow.document.documentElement;
-      propertyList.forEach((property) => {
-        document.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`);
-      });
-      propertyListDarken.forEach((item) => {
-        document.style.setProperty(item.property, darkenRgbaColor(rgba, item.amount));
-      });
-      propertyListTransparent.forEach((property) => {
-        document.style.setProperty(property, 'transparent');
-      });
-    }
+    const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement;
+    const iframeDocument = iframeElement?.contentDocument?.documentElement;
+    if (!iframeDocument) return;
+    propertyList.forEach((property) => {
+      iframeDocument.style.setProperty(
+        property,
+        `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+      );
+    });
+    propertyListDarken.forEach((item) => {
+      iframeDocument.style.setProperty(item.property, darkenRgbaColor(rgba, item.amount));
+    });
+    propertyListTransparent.forEach((property) => {
+      iframeDocument.style.setProperty(property, 'transparent');
+    });
   }, []);
   const changeColor = useCallback(
     (rgba: RGBColor) => {
