@@ -98,7 +98,8 @@ body.custom-yt-app-live-chat-extension {
 
   yt-live-chat-banner-manager
     yt-live-chat-text-message-renderer
-    #message.yt-live-chat-text-message-renderer {
+    #message.yt-live-chat-text-message-renderer,
+  #message.yt-live-chat-text-message-renderer a.yt-live-chat-text-message-renderer {
     color: white;
   }
 

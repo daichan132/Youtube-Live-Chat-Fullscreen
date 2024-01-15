@@ -61,6 +61,12 @@ export const useIframeLoader = () => {
     if (!chatIframe) return;
     iframeRef.current = chatIframe;
     setIFrameElement(iframeRef.current);
+    if (
+      iframeRef.current.contentDocument?.location.href &&
+      iframeRef.current.contentDocument?.location.href !== 'about:blank'
+    ) {
+      iframeRef.current.src = iframeRef.current.contentDocument.location.href;
+    }
     ref.current?.appendChild(iframeRef.current);
     iframeRef.current.style.height = '100%';
     iframeRef.current.addEventListener('load', handleLoaded);
