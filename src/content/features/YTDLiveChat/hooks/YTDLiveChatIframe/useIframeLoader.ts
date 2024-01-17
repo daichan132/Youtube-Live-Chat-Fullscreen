@@ -63,7 +63,7 @@ export const useIframeLoader = () => {
     setIFrameElement(iframeRef.current);
     if (
       iframeRef.current.contentDocument?.location.href &&
-      iframeRef.current.contentDocument?.location.href !== 'about:blank'
+      !iframeRef.current.contentDocument?.location.href?.includes('about:blank')
     ) {
       iframeRef.current.src = iframeRef.current.contentDocument.location.href;
     }

@@ -1,3 +1,4 @@
+import { isEqual } from 'lodash-es';
 import { localStorage } from 'redux-persist-webextension-storage';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
@@ -8,11 +9,11 @@ import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../util
 
 import type { YLCStyleType, YLCStyleUpdateType, sizeType } from '../types/ytdLiveChatType';
 import type { Coordinates } from '@dnd-kit/core/dist/types';
-
 type YTDLiveChatStoreState = {
   presetItemIds: string[];
   presetItemStyles: { [key: string]: YLCStyleType };
   presetItemTitles: { [key: string]: string };
+  addPresetEnabled: boolean;
   coordinates: Coordinates;
   size: sizeType;
   addPresetItem: (id: string, title: string, ylcStyle: YLCStyleType) => void;
@@ -20,6 +21,7 @@ type YTDLiveChatStoreState = {
   updateTitle: (id: string, title: string) => void;
   updateYLCStyle: (YLCStyleUpdate: YLCStyleUpdateType) => void;
   setPresetItemIds: (presetItemIds: string[]) => void;
+  setAddPresetEnabled: (addPresetEnabled: boolean) => void;
   setSize: (size: sizeType) => void;
   setCoordinates: (coordinates: Coordinates) => void;
   setDefaultPosition: () => void;
@@ -42,15 +44,33 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           default2: i18n.t('content.preset.transparentTitle'),
           default3: i18n.t('content.preset.simpleTitle'),
         },
+        addPresetEnabled: true,
         ...ylcInitSetting,
         addPresetItem: (id, title, ylcStyle) =>
           set((state) => {
+            state.addPresetEnabled = false;
             state.presetItemStyles[id] = ylcStyle;
             state.presetItemTitles[id] = title;
             state.presetItemIds.push(id);
           }),
         deletePresetItem: (id) =>
           set((state) => {
+            const currentStyle: YLCStyleType = {
+              bgColor: state.bgColor,
+              fontColor: state.fontColor,
+              fontFamily: state.fontFamily,
+              fontSize: state.fontSize,
+              blur: state.blur,
+              space: state.space,
+              alwaysOnDisplay: state.alwaysOnDisplay,
+              chatOnlyDisplay: state.chatOnlyDisplay,
+              userNameDisplay: state.userNameDisplay,
+              userIconDisplay: state.userIconDisplay,
+              reactionButtonDisplay: state.reactionButtonDisplay,
+            };
+            if (isEqual(state.presetItemStyles[id], currentStyle)) {
+              state.addPresetEnabled = true;
+            }
             delete state.presetItemStyles[id];
             delete state.presetItemTitles[id];
             state.presetItemIds = state.presetItemIds.filter((item) => item !== id);
@@ -60,8 +80,10 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
             ...state,
             presetItemTitles: { ...state.presetItemTitles, [id]: title },
           })),
-        updateYLCStyle: (YLCStyleUpdate) => set((state) => ({ ...state, ...YLCStyleUpdate })),
+        updateYLCStyle: (YLCStyleUpdate) =>
+          set((state) => ({ ...state, ...YLCStyleUpdate, addPresetEnabled: true })),
         setPresetItemIds: (presetItemIds) => set(() => ({ presetItemIds })),
+        setAddPresetEnabled: (addPresetEnabled) => set(() => ({ addPresetEnabled })),
         setSize: (size) => {
           set(() => ({
             size: {

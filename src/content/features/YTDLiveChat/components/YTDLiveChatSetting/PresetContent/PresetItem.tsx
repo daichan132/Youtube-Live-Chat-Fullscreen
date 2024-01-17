@@ -22,15 +22,17 @@ interface PresetItemType {
 }
 useYTDLiveChatStore.persist.clearStorage();
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem } = useYTDLiveChatStore(
-    useShallow((state) => ({
-      title: state.presetItemTitles[id],
-      ylcStyle: state.presetItemStyles[id],
-      updateTitle: state.updateTitle,
-      deletePresetItem: state.deletePresetItem,
-      updateYLCStyle: state.updateYLCStyle,
-    })),
-  );
+  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } =
+    useYTDLiveChatStore(
+      useShallow((state) => ({
+        title: state.presetItemTitles[id],
+        ylcStyle: state.presetItemStyles[id],
+        updateTitle: state.updateTitle,
+        deletePresetItem: state.deletePresetItem,
+        updateYLCStyle: state.updateYLCStyle,
+        setAddPresetEnabled: state.setAddPresetEnabled,
+      })),
+    );
   const {
     attributes,
     setActivatorNodeRef,
@@ -47,8 +49,9 @@ export const PresetItem = ({ id }: PresetItemType) => {
     (ylcStyle: YLCStyleType) => {
       updateYLCStyle(ylcStyle);
       changeYLCStyle(ylcStyle);
+      setAddPresetEnabled(false);
     },
-    [changeYLCStyle, updateYLCStyle],
+    [changeYLCStyle, setAddPresetEnabled, updateYLCStyle],
   );
   const [isOpen, setIsOpen] = React.useState(false);
   const ref = React.useRef(null);

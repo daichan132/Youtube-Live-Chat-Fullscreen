@@ -6,20 +6,21 @@ import { useYTDLiveChatStore } from '../../../../stores';
 import { useIsFullScreen } from './useIsFullScreen';
 
 const gap = 10;
-export const useIsShow = (videoID: string) => {
+export const useIsShow = () => {
   const isFullscreen = useIsFullScreen();
-  const [isLive, setIsLive] = useState<boolean>(false);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  const [isReplay, setIsReplay] = useState<boolean>(false);
+  const [isChat, setIsChat] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLive(false);
-    setIsReplay(false);
+    setIsChat(false);
     if (!isFullscreen) return;
-    const liveBadge = document.querySelector('.ytp-chrome-controls .ytp-live .ytp-live-badge');
-    const live = liveBadge && !liveBadge.getAttribute('disabled');
-    if (live) setIsLive(true);
-  }, [isFullscreen, videoID]);
+    const liveChatReplay: HTMLIFrameElement | null = document.querySelector(
+      `iframe.ytd-live-chat-frame`,
+    );
+    if (liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
+      setIsChat(true);
+    }
+  }, [isFullscreen]);
 
   const [isTop, setIsTop] = useState<boolean>(false);
   const updateIsTopBasedOnMasthead = (element: Element) => {
@@ -49,17 +50,7 @@ export const useIsShow = (videoID: string) => {
     };
   }, [isFullscreen]);
   useEffect(() => {
-    if (isFullscreen) {
-      const liveChatReplay = document.querySelector(`iframe.ytd-live-chat-frame`);
-      if (liveChatReplay && liveChatReplay?.getAttribute('src') !== 'about:blank') {
-        setIsReplay(liveChatReplay ? true : false);
-      }
-    } else {
-      setIsReplay(false);
-    }
-  }, [isFullscreen]);
-  useEffect(() => {
-    if ((isLive || isReplay) && isTop) {
+    if (isChat && isTop) {
       /* ----------------------- YLC is in outside of window ---------------------- */
       const innerWidth = window.innerWidth;
       const innerHeight = window.innerHeight;
@@ -80,11 +71,11 @@ export const useIsShow = (videoID: string) => {
     } else {
       setIsChecked(false);
     }
-  }, [isLive, isTop, isReplay]);
+  }, [isTop, isChat]);
 
   return {
     isFullscreen,
-    isShow: (isLive || isReplay) && isTop && isChecked,
-    isReplay,
+    isShow: isChat && isTop && isChecked,
+    isChat,
   };
 };

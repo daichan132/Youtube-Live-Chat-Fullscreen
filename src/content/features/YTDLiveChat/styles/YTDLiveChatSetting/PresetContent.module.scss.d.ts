@@ -3,6 +3,7 @@ export type Styles = {
   applyStyleButton: string;
   "content-preset-container": string;
   deleteButton: string;
+  disable: string;
   dragging: string;
   dragIcon: string;
   flex: string;
