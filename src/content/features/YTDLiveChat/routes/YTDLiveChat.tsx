@@ -12,11 +12,8 @@ import { YTDLiveChatSetting } from '../components/YTDLiveChatSetting/YTDLiveChat
 import { useIsShow } from '../hooks/useIsShow';
 import fade from '../styles/Fade.module.scss';
 
-interface YTDLiveChatType {
-  videoID: string;
-}
-export const YTDLiveChat = ({ videoID }: YTDLiveChatType) => {
-  const { isFullscreen, isShow } = useIsShow(videoID);
+export const YTDLiveChat = () => {
+  const { isFullscreen, isShow } = useIsShow();
   const nodeRef = useRef(null);
   const { setIsHover } = useYTDLiveChatNoLsStore(
     useShallow((state) => ({ setIsHover: state.setIsHover })),

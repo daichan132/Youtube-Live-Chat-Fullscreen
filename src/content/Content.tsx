@@ -16,11 +16,7 @@ const Content = () => {
   const { pathname, search } = useTabLocation();
   const videoId = extractYouTubeID(search);
   const { ytdLiveChat } = useGlobalSetting();
-  return (
-    <>
-      {ytdLiveChat && pathname === '/watch' && videoId ? <YTDLiveChat videoID={videoId} /> : null}
-    </>
-  );
+  return <>{ytdLiveChat && pathname === '/watch' && videoId ? <YTDLiveChat /> : null}</>;
 };
 
 export default Content;
