@@ -24,7 +24,10 @@
       "addItemTitle": "Untitled",
       "defaultTitle": "Default",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple"
+      "simpleTitle": "Simple",
+      "deleteConfirmationMessage": "Do you really want to delete it?",
+      "delete": "Delete",
+      "cancel": "Cancel"
     }
   },
   "popup": {

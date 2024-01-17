@@ -34,12 +34,13 @@
         min-width: 50px;
         text-align: center;
         &:hover {
-          background-color: #f9f9f9;
+          background-color: rgba(0, 0, 0, 0.1);
         }
 
         &.selected-menu-item {
           color: #099cff;
           background-color: #e3f3ff;
+          cursor: default;
         }
       }
     }

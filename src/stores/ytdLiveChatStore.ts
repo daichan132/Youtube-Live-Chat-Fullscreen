@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash-es';
 import { localStorage } from 'redux-persist-webextension-storage';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
@@ -55,22 +54,6 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           }),
         deletePresetItem: (id) =>
           set((state) => {
-            const currentStyle: YLCStyleType = {
-              bgColor: state.bgColor,
-              fontColor: state.fontColor,
-              fontFamily: state.fontFamily,
-              fontSize: state.fontSize,
-              blur: state.blur,
-              space: state.space,
-              alwaysOnDisplay: state.alwaysOnDisplay,
-              chatOnlyDisplay: state.chatOnlyDisplay,
-              userNameDisplay: state.userNameDisplay,
-              userIconDisplay: state.userIconDisplay,
-              reactionButtonDisplay: state.reactionButtonDisplay,
-            };
-            if (isEqual(state.presetItemStyles[id], currentStyle)) {
-              state.addPresetEnabled = true;
-            }
             delete state.presetItemStyles[id];
             delete state.presetItemTitles[id];
             state.presetItemIds = state.presetItemIds.filter((item) => item !== id);

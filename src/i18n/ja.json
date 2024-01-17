@@ -24,7 +24,10 @@
       "addItemTitle": "無題",
       "defaultTitle": "デフォルト",
       "transparentTitle": "透明",
-      "simpleTitle": "シンプル"
+      "simpleTitle": "シンプル",
+      "deleteConfirmationMessage": "本当に削除しますか？",
+      "delete": "削除",
+      "cancel": "キャンセル"
     }
   },
   "popup": {
