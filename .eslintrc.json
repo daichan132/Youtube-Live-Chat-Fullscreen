@@ -68,5 +68,10 @@
       }
     }
   ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "ignorePatterns": ["dist/**", "dist-firefox-v2"]
 }
