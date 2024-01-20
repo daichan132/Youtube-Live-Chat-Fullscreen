@@ -1,4 +1,5 @@
 {
   "**/*": "yarn prettier --ignore-unknown --ignore-path .gitignore --write",
-  "**/*.{js,ts,tsx}": "yarn eslint --fix"
+  "**/*.{js,ts,tsx}": "yarn eslint --fix",
+  "**/*.spec.ts": "npx playwright test"
 }
