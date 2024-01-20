@@ -1,13 +1,17 @@
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 import { test as base, chromium, type BrowserContext } from '@playwright/test';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const test = base.extend<{
   context: BrowserContext;
   extensionId: string;
 }>({
-  context: async (_, use) => {
-    const pathToExtension = path.join(__dirname, 'my-extension');
+  // eslint-disable-next-line no-empty-pattern
+  context: async ({}, use) => {
+    const pathToExtension = path.join(__dirname, '../dist');
     const context = await chromium.launchPersistentContext('', {
       headless: false,
       args: [
