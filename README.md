@@ -1,16 +1,18 @@
-# Youtube Live Chat Fullscreen
+<div align="center">
+<a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><img src="public/images/extension_128.png" alt="logo"/></a>
+<h1> Youtube Live Chat Fullscreen</h1>
 
-<a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><img width='250' src="./public/readme/iNEddTyWiMfLSwFD6qGq.png"/></a>
+![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
+![](https://img.shields.io/badge/Typescript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![](https://badges.aleen42.com/src/vitejs.svg)
 
-## Overview
+</div>
 
-<p>
-  <img src="./public/readme/image.png" width="350">
-  <img src="./public/readme/image1.png" width="350">
-</p>
-<p>
-  <img src="./public/readme/image2.png" width="350">
-</p>
+## App Screenshots
+
+|          Chat is available in Fullscreen          |                    Style Change                    |                   Multi Language                   |
+| :-----------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
+| <img src="./public/readme/image.png" width="300"> | <img src="./public/readme/image1.png" width="300"> | <img src="./public/readme/image2.png" width="300"> |
 
 ## Due Credit
 
