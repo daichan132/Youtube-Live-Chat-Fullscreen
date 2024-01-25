@@ -4,9 +4,9 @@
 
 ## Overview
 
-<img src="./public/readme/image.png" width="300">
-<img src="./public/readme/image1.png" width="300">
-<img src="./public/readme/image2.png" width="300">
+<img src="./public/readme/image.png" width="400">
+<img src="./public/readme/image1.png" width="400">
+<img src="./public/readme/image2.png" width="400">
 
 ## Due Credit
 
