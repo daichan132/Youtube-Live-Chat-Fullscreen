@@ -9,7 +9,7 @@ import { version } from '../package.json';
 const manifest = defineManifest(async (env) => ({
   manifest_version: 3,
   name: `${env.mode === 'development' ? '[Dev] ' : ''}Youtube Live Chat Fullscreen`,
-  description: 'This extension allows Youtube Live to use chat when in Fllscreen.',
+  description: 'This extension allows Youtube Live to use chat when in Fullscreen.',
   version,
   web_accessible_resources: [
     {
