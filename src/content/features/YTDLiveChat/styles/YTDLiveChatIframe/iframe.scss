@@ -33,14 +33,6 @@ body.custom-yt-app-live-chat-extension {
     border-bottom: none;
   }
 
-  yt-live-chat-message-input-renderer[updated-input-visuals]
-    #right.yt-live-chat-message-input-renderer,
-  yt-live-chat-restricted-participation-renderer[system-icons]
-    #picker-buttons.yt-live-chat-restricted-participation-renderer
-    > *.yt-live-chat-restricted-participation-renderer {
-    display: none;
-  }
-
   /* ------------------------ background color setting ------------------------ */
   #chat {
     #item-scroller.yt-live-chat-item-list-renderer {
@@ -62,7 +54,27 @@ body.custom-yt-app-live-chat-extension {
     background: none;
   }
 
+  #pickers-container.yt-live-chat-message-buy-flow-renderer {
+    background: none;
+  }
+
   /* --------------------------- font color setting --------------------------- */
+
+  yt-button-view-model .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text {
+    color: var(--yt-spec-text-primary);
+  }
+
+  yt-live-chat-author-chip[disable-highlighting] #author-name.yt-live-chat-author-chip {
+    color: var(--yt-live-chat-disable-highlight-message-author-name-color);
+  }
+
+  yt-live-chat-paid-message-renderer #input.yt-live-chat-text-input-field-renderer {
+    color: var(--yt-live-chat-text-input-field-color);
+  }
+
+  yt-live-chat-paid-message-renderer #label.yt-live-chat-text-input-field-renderer {
+    color: var(--yt-live-chat-text-input-field-placeholder-color);
+  }
 
   #message.yt-live-chat-text-message-renderer,
   #input.yt-live-chat-text-input-field-renderer,
@@ -75,7 +87,32 @@ body.custom-yt-app-live-chat-extension {
   div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg,
   yt-live-chat-restricted-participation-renderer[updated-input-visuals]
     #icon.yt-live-chat-restricted-participation-renderer,
-  yt-live-chat-item-list-renderer #items .yt-simple-endpoint {
+  yt-live-chat-item-list-renderer #items .yt-simple-endpoint,
+  yt-live-chat-message-input-renderer[system-icons]
+    #picker-buttons.yt-live-chat-message-input-renderer
+    > *.yt-live-chat-message-input-renderer,
+  #close-button.yt-live-chat-message-buy-flow-renderer,
+  .yt-live-chat-paid-sticker-panel-renderer,
+  .yt-live-chat-super-sticker-preview-renderer,
+  .yt-live-chat-super-sticker-pack-backstory-renderer,
+  .dim.yt-live-chat-message-buy-flow-renderer,
+  #price-input.yt-live-chat-message-buy-flow-renderer
+    .input-content.tp-yt-paper-input-container
+    > input,
+  #price-input.yt-live-chat-message-buy-flow-renderer
+    .input-content.tp-yt-paper-input-container
+    > iron-input,
+  #price-input.yt-live-chat-message-buy-flow-renderer
+    .input-content.tp-yt-paper-input-container
+    > textarea,
+  #price-input.yt-live-chat-message-buy-flow-renderer
+    .input-content.tp-yt-paper-input-container
+    > iron-autogrow-textarea,
+  #price-input.yt-live-chat-message-buy-flow-renderer
+    .input-content.tp-yt-paper-input-container
+    > .paper-input-input,
+  yt-live-chat-message-buy-flow-renderer,
+  #info.yt-live-chat-message-buy-flow-renderer {
     color: var(--extension-yt-live-font-color);
   }
 
@@ -90,7 +127,9 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-text-message-renderer[whole-message-clickable]
     #menu.yt-live-chat-text-message-renderer,
   yt-live-chat-restricted-participation-renderer[updated-input-visuals]
-    #message.yt-live-chat-restricted-participation-renderer {
+    #message.yt-live-chat-restricted-participation-renderer,
+  #count.yt-live-chat-message-input-renderer,
+  #header-text.yt-live-chat-paid-sticker-panel-renderer {
     color: var(--extension-yt-live-secondary-font-color);
   }
 
