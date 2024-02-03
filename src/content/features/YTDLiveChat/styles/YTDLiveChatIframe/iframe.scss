@@ -44,14 +44,12 @@ body.custom-yt-app-live-chat-extension {
   /* ------------------------ background color setting ------------------------ */
   #chat {
     #item-scroller.yt-live-chat-item-list-renderer {
-      &::-webkit-scrollbar-thumb {
-        background-color: transparent;
-      }
+      scrollbar-color: transparent transparent;
     }
 
     &:hover {
-      #item-scroller.yt-live-chat-item-list-renderer::-webkit-scrollbar-thumb {
-        background-color: var(--yt-spec-icon-disabled);
+      #item-scroller.yt-live-chat-item-list-renderer {
+        scrollbar-color: var(--yt-spec-icon-disabled) transparent;
       }
     }
   }
@@ -95,6 +93,7 @@ body.custom-yt-app-live-chat-extension {
     #message.yt-live-chat-restricted-participation-renderer {
     color: var(--extension-yt-live-secondary-font-color);
   }
+
   #author-name.member.yt-live-chat-author-chip {
     color: var(--yt-live-chat-sponsor-color);
   }
