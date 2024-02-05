@@ -12,9 +12,9 @@ This extension allows Youtube Live to use chat when in Fullscreen.
 
 ## App Screenshots
 
-|          Chat is available in Fullscreen          |                    Style Change                    |                   Multi Language                   |
-| :-----------------------------------------------: | :------------------------------------------------: | :------------------------------------------------: |
-| <img src="./public/readme/image.png" width="300"> | <img src="./public/readme/image1.png" width="300"> | <img src="./public/readme/image2.png" width="300"> |
+|        Chat is available in Fullscreen         |                  Style Change                   |                 Multi Language                  |
+| :--------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
+| <img src="./readme-img/image.png" width="300"> | <img src="./readme-img/image1.png" width="300"> | <img src="./readme-img/image2.png" width="300"> |
 
 ## Due Credit
 
