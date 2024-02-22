@@ -14,12 +14,27 @@ export const useIsShow = () => {
   useEffect(() => {
     setIsChat(false);
     if (!isFullscreen) return;
-    const liveChatReplay: HTMLIFrameElement | null = document.querySelector(
-      `iframe.ytd-live-chat-frame`,
-    );
-    if (liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
-      setIsChat(true);
-    }
+    // 10回300ms毎に定期実行して、iframeが読み込まれているか確認する
+    let count = 0;
+    const interval = setInterval(() => {
+      const liveChatReplay: HTMLIFrameElement | null = document.querySelector(
+        `iframe.ytd-live-chat-frame`,
+      );
+      if (
+        liveChatReplay &&
+        !liveChatReplay.contentDocument?.location.href?.includes('about:blank')
+      ) {
+        setIsChat(true);
+        clearInterval(interval);
+      }
+      count++;
+      if (count > 10) {
+        clearInterval(interval);
+      }
+    }, 1000);
+    return () => {
+      clearInterval(interval);
+    };
   }, [isFullscreen]);
 
   const [isTop, setIsTop] = useState<boolean>(false);
@@ -72,7 +87,6 @@ export const useIsShow = () => {
       setIsChecked(false);
     }
   }, [isTop, isChat]);
-
   return {
     isFullscreen,
     isShow: isChat && isTop && isChecked,
