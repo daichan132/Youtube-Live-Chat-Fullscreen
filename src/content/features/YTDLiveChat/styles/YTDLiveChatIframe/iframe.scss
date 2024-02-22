@@ -33,15 +33,21 @@ body.custom-yt-app-live-chat-extension {
     border-bottom: none;
   }
 
+  yt-live-chat-header-renderer > #close-button {
+    display: none;
+  }
+
   /* ------------------------ background color setting ------------------------ */
   #chat {
     #item-scroller.yt-live-chat-item-list-renderer {
       scrollbar-color: transparent transparent;
+      scrollbar-width: none;
     }
 
     &:hover {
       #item-scroller.yt-live-chat-item-list-renderer {
         scrollbar-color: var(--yt-spec-icon-disabled) transparent;
+        scrollbar-width: auto;
       }
     }
   }
