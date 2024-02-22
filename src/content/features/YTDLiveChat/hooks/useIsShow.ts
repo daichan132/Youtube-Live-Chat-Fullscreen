@@ -14,7 +14,7 @@ export const useIsShow = () => {
   useEffect(() => {
     setIsChat(false);
     if (!isFullscreen) return;
-    // 10回300ms毎に定期実行して、iframeが読み込まれているか確認する
+    // 30回300ms毎に定期実行して、iframeが読み込まれているか確認する
     let count = 0;
     const interval = setInterval(() => {
       const liveChatReplay: HTMLIFrameElement | null = document.querySelector(
@@ -28,7 +28,7 @@ export const useIsShow = () => {
         clearInterval(interval);
       }
       count++;
-      if (count > 10) {
+      if (count > 30) {
         clearInterval(interval);
       }
     }, 1000);
