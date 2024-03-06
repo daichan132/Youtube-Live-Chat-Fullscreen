@@ -184,7 +184,9 @@ body.custom-yt-app-live-chat-extension {
     display: var(--extension-user-icon-display);
   }
 
-  #fab-container.yt-reaction-control-panel-view-model {
+  #fab-container.yt-reaction-control-panel-view-model,
+  yt-live-chat-message-input-renderer[modernized-fab]
+    #picker-buttons.yt-live-chat-message-input-renderer {
     display: var(--extension-reaction-button-display);
   }
 }
