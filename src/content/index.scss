@@ -72,17 +72,9 @@ div#menu.yt-live-chat-text-message-renderer.custom {
 }
 
 /* --------------------------- fullscreen setting --------------------------- */
-ytd-app[scrolling] {
-  position: absolute;
-  top: 0;
-  left: 0;
+ytd-app {
   right: 0 !important;
-  bottom: 0;
-  overflow-x: auto;
-}
-
-ytd-app[scrolling]::-webkit-scrollbar {
-  display: none;
+  scrollbar-width: none;
 }
 
 /* -------------------------- react-modal animation ------------------------- */

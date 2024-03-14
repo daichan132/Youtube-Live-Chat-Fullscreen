@@ -43,13 +43,6 @@ body.custom-yt-app-live-chat-extension {
       scrollbar-color: transparent transparent;
       scrollbar-width: none;
     }
-
-    &:hover {
-      #item-scroller.yt-live-chat-item-list-renderer {
-        scrollbar-color: var(--yt-spec-icon-disabled) transparent;
-        scrollbar-width: auto;
-      }
-    }
   }
 
   #right-arrow-container.yt-live-chat-ticker-renderer {
