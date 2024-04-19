@@ -10,6 +10,7 @@
       "userNameDisplay": "User Name Display",
       "userIconDisplay": "User Icon Display",
       "reactionButtonDisplay": "Reaction Button Display",
+      "superChatBarDisplay": "Super Chat Bar Display",
       "backgroundColor": "Background Color",
       "fontColor": "Font Color",
       "fontFamily": "Font Family",

@@ -17,6 +17,7 @@ export interface YLCStyleType {
   userNameDisplay: boolean;
   userIconDisplay: boolean;
   reactionButtonDisplay: boolean;
+  superChatBarDisplay: boolean;
 }
 
 export interface YLCStyleUpdateType {
@@ -31,4 +32,5 @@ export interface YLCStyleUpdateType {
   userNameDisplay?: boolean;
   userIconDisplay?: boolean;
   reactionButtonDisplay?: boolean;
+  superChatBarDisplay?: boolean;
 }

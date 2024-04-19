@@ -12,6 +12,7 @@ export const ylcInitSetting: YLCStyleType = {
   userNameDisplay: true,
   userIconDisplay: true,
   reactionButtonDisplay: true,
+  superChatBarDisplay: true,
 };
 
 export const ylcTransparentSetting: YLCStyleType = {
@@ -26,6 +27,7 @@ export const ylcTransparentSetting: YLCStyleType = {
   userNameDisplay: true,
   userIconDisplay: true,
   reactionButtonDisplay: true,
+  superChatBarDisplay: true,
 };
 
 export const ylcSimpleSetting: YLCStyleType = {
@@ -40,4 +42,5 @@ export const ylcSimpleSetting: YLCStyleType = {
   userNameDisplay: false,
   userIconDisplay: true,
   reactionButtonDisplay: false,
+  superChatBarDisplay: false,
 };
