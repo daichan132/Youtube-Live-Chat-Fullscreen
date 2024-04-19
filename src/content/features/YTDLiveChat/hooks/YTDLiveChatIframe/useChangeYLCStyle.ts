@@ -6,6 +6,7 @@ import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyCh
 import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange';
 import { useYLCReactionButtonDisplayChange } from '../YTDLiveChatSetting/useYLCReactionButtonDisplayChange';
 import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange';
+import { useYLCSuperChatBarDisplayChange } from '../YTDLiveChatSetting/useYLCSuperChatBarDisplayChange';
 import { useYLCUserIconDisplayChange } from '../YTDLiveChatSetting/useYLCUserIconDisplayChange';
 import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange';
 
@@ -20,6 +21,7 @@ export const useChangeYLCStyle = () => {
   const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange();
   const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange();
   const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange();
+  const { changeDisplay: changeSuperChatBarDisplay } = useYLCSuperChatBarDisplayChange();
   const changeYLCStyle = useCallback(
     ({
       bgColor,
@@ -30,6 +32,7 @@ export const useChangeYLCStyle = () => {
       userNameDisplay,
       userIconDisplay,
       reactionButtonDisplay,
+      superChatBarDisplay,
     }: YLCStyleUpdateType) => {
       if (bgColor !== undefined) changBgColor(bgColor);
       if (fontColor !== undefined) changFontColor(fontColor);
@@ -39,6 +42,7 @@ export const useChangeYLCStyle = () => {
       if (userNameDisplay !== undefined) changeUserNameDisplay(userNameDisplay);
       if (userIconDisplay !== undefined) changeUserIconDisplay(userIconDisplay);
       if (reactionButtonDisplay !== undefined) changeReactionButtonDisplay(reactionButtonDisplay);
+      if (superChatBarDisplay !== undefined) changeSuperChatBarDisplay(superChatBarDisplay);
     },
     [
       changBgColor,
@@ -49,6 +53,7 @@ export const useChangeYLCStyle = () => {
       changeSpace,
       changeUserIconDisplay,
       changeUserNameDisplay,
+      changeSuperChatBarDisplay,
     ],
   );
 
