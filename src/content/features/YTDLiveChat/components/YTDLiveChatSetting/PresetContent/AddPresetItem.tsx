@@ -33,6 +33,7 @@ export const AddPresetItem = () => {
       userNameDisplay: state.userNameDisplay,
       userIconDisplay: state.userIconDisplay,
       reactionButtonDisplay: state.reactionButtonDisplay,
+      superChatBarDisplay: state.superChatBarDisplay,
     };
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle);
   }, [addPresetItem, t]);

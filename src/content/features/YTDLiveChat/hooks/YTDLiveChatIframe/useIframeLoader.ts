@@ -37,6 +37,7 @@ export const useIframeLoader = () => {
         space,
         userIconDisplay,
         reactionButtonDisplay,
+        superChatBarDisplay,
       } = useYTDLiveChatStore.getState();
       body.classList.add('custom-yt-app-live-chat-extension');
       changeYLCStyle({
@@ -48,6 +49,7 @@ export const useIframeLoader = () => {
         userNameDisplay,
         userIconDisplay,
         reactionButtonDisplay,
+        superChatBarDisplay,
       });
       setIsIframeLoaded(true);
       setIsDisplay(true);
