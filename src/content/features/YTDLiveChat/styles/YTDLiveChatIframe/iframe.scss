@@ -131,7 +131,8 @@ body.custom-yt-app-live-chat-extension {
   yt-live-chat-restricted-participation-renderer[updated-input-visuals]
     #message.yt-live-chat-restricted-participation-renderer,
   #count.yt-live-chat-message-input-renderer,
-  #header-text.yt-live-chat-paid-sticker-panel-renderer {
+  #header-text.yt-live-chat-paid-sticker-panel-renderer,
+  #content.ytd-sponsorships-live-chat-gift-redemption-announcement-renderer {
     color: var(--extension-yt-live-secondary-font-color);
   }
 

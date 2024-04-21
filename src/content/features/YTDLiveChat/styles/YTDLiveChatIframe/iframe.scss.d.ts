@@ -4,6 +4,7 @@ export type Styles = {
   chat: string;
   "clip-path-enable": string;
   "close-button": string;
+  content: string;
   contents: string;
   count: string;
   custom: string;
@@ -57,6 +58,7 @@ export type Styles = {
   "yt-simple-endpoint": string;
   "yt-spec-button-shape-next--mono": string;
   "yt-spec-button-shape-next--text": string;
+  "ytd-sponsorships-live-chat-gift-redemption-announcement-renderer": string;
 };
 
 export type ClassNames = keyof Styles;
