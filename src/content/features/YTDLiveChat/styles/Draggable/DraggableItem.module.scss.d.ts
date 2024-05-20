@@ -1,11 +1,11 @@
 export type Styles = {
-  children: string;
-  Container: string;
-  dragButton: string;
-  dragging: string;
-  overlay: string;
-  Resizable: string;
-  settingButton: string;
+	children: string;
+	Container: string;
+	dragButton: string;
+	dragging: string;
+	overlay: string;
+	Resizable: string;
+	settingButton: string;
 };
 
 export type ClassNames = keyof Styles;

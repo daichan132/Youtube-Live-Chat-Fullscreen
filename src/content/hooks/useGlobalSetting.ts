@@ -1,26 +1,28 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
-import { useGlobalSettingStore } from '../../stores';
+import { useGlobalSettingStore } from "../../stores";
 
-import useChromeRuntimeMessageListener from './useChromeRuntimeMessageListener';
+import useChromeRuntimeMessageListener from "./useChromeRuntimeMessageListener";
 
 export const useGlobalSetting = () => {
-  const [ytdLiveChat, setYTDLiveChat] = useState(useGlobalSettingStore.getState().ytdLiveChat);
-  const { i18n } = useTranslation();
-  const handleMessage = (request: {
-    message: string;
-    ytdLiveChat?: boolean;
-    emojiCopy?: boolean;
-    language?: string;
-  }) => {
-    if (request.message === 'ytdLiveChat') {
-      setYTDLiveChat(request?.ytdLiveChat || false);
-    } else if (request.message === 'language') {
-      i18n.changeLanguage(request?.language || 'en');
-    }
-  };
-  useChromeRuntimeMessageListener(handleMessage);
-  return { ytdLiveChat };
+	const [ytdLiveChat, setYTDLiveChat] = useState(
+		useGlobalSettingStore.getState().ytdLiveChat,
+	);
+	const { i18n } = useTranslation();
+	const handleMessage = (request: {
+		message: string;
+		ytdLiveChat?: boolean;
+		emojiCopy?: boolean;
+		language?: string;
+	}) => {
+		if (request.message === "ytdLiveChat") {
+			setYTDLiveChat(request?.ytdLiveChat || false);
+		} else if (request.message === "language") {
+			i18n.changeLanguage(request?.language || "en");
+		}
+	};
+	useChromeRuntimeMessageListener(handleMessage);
+	return { ytdLiveChat };
 };

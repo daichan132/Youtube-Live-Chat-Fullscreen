@@ -1,4 +1,0 @@
-{
-  "**/*": "yarn prettier --ignore-unknown --ignore-path .gitignore --write",
-  "**/*.{js,ts,tsx}": "yarn eslint --fix"
-}
