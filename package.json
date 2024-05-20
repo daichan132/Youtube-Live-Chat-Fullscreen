@@ -78,7 +78,7 @@
 		"simple-git-hooks": "^2.11.1",
 		"typed-scss-modules": "^8.0.1",
 		"typescript": "5.4.5",
-		"vite": "^4.5.3"
+		"vite": "^5.2.11"
 	},
 	"simple-git-hooks": {
 		"pre-commit": "./node_modules/.bin/nano-staged"
