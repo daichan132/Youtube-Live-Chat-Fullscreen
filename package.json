@@ -84,5 +84,10 @@
 		"pre-commit": "./node_modules/.bin/nano-staged"
 	},
 	"packageManager": "yarn@4.2.2",
-	"browserslist": ["last 2 version", "ie >= 11", "iOS >= 8.1", "Android >= 4.4"]
+	"browserslist": [
+		"last 2 version",
+		"ie >= 11",
+		"iOS >= 8.1",
+		"Android >= 4.4"
+	]
 }
