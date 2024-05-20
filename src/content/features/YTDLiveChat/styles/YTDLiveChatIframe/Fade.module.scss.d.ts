@@ -1,8 +1,8 @@
 export type Styles = {
-	enter: string;
-	enterActive: string;
-	exit: string;
-	exitActive: string;
+  enter: string;
+  enterActive: string;
+  exit: string;
+  exitActive: string;
 };
 
 export type ClassNames = keyof Styles;

@@ -1,5 +1,5 @@
 export type Styles = {
-	RestrictWindow: string;
+  RestrictWindow: string;
 };
 
 export type ClassNames = keyof Styles;
