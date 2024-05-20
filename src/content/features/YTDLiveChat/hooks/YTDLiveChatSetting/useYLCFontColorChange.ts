@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useYTDLiveChatNoLsStore } from "../../../../../stores";
+import { useYTDLiveChatNoLsStore } from "@/stores";
 
 import type { RGBColor } from "react-color";
 

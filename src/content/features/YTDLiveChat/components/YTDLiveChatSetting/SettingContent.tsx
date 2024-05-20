@@ -17,7 +17,7 @@ import {
 } from "react-icons/ri";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatStore } from "../../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 import styles from "../../styles/YTDLiveChatSetting/SettingContent.module.scss";
 
 import { AlwaysOnDisplaySwitch } from "./YLCChangeItems/AlwaysOnDisplaySwitch";

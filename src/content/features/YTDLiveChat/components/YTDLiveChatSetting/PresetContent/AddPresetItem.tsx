@@ -6,7 +6,7 @@ import { MdAdd } from "react-icons/md";
 import { v4 as uuidv4 } from "uuid";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatStore } from "../../../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 import styles from "../../../styles/YTDLiveChatSetting/PresetContent.module.scss";
 
 import type { YLCStyleType } from "../../../../../../types/ytdLiveChatType";

@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { CSSTransition } from "react-transition-group";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatNoLsStore } from "../../../../stores";
+import { useYTDLiveChatNoLsStore } from "@/stores";
 import { Draggable } from "../components/Draggable/Draggable";
 import { DisplayEffect } from "../components/EffectComponent/DisplayEffect";
 import { WindowResizeEffect } from "../components/EffectComponent/WindowResizeEffect";

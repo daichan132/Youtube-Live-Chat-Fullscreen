@@ -10,7 +10,7 @@ import { MdAutoFixNormal, MdOutlineDragIndicator } from "react-icons/md";
 import Modal from "react-modal";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatStore } from "../../../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 import { useChangeYLCStyle } from "../../../hooks/YTDLiveChatIframe/useChangeYLCStyle";
 import modalStyles from "../../../styles/YTDLiveChatSetting/DeleteConfirmationModal.module.scss";
 import styles from "../../../styles/YTDLiveChatSetting/PresetContent.module.scss";

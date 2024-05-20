@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useYTDLiveChatNoLsStore } from "../../../../../stores";
+import { useYTDLiveChatNoLsStore } from "@/stores";
 
 export const useYLCSuperChatBarDisplayChange = () => {
 	const changeSuperChatBarDisplay = useCallback((display: boolean) => {

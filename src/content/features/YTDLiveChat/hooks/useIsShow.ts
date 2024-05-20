@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from "react";
 
-import { useYTDLiveChatStore } from "../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 
 import { useIsFullScreen } from "./useIsFullScreen";
 

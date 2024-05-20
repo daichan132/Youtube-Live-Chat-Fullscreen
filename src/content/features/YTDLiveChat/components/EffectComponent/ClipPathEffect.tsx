@@ -3,10 +3,7 @@ import { useCallback, useEffect } from "react";
 import { usePrevious, useUnmount, useUpdateEffect } from "react-use";
 import { useShallow } from "zustand/react/shallow";
 
-import {
-	useYTDLiveChatNoLsStore,
-	useYTDLiveChatStore,
-} from "../../../../../stores";
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from "@/stores";
 
 interface ClipPathEffectType {
 	isDragging: boolean;

@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { useYTDLiveChatNoLsStore } from "../../../../../stores";
+import { useYTDLiveChatNoLsStore } from "@/stores";
 
 export const useYLCUserIconDisplayChange = () => {
 	const changeUserIconDisplay = useCallback((display: boolean) => {

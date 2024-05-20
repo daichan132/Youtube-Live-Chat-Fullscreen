@@ -1,6 +1,6 @@
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatStore } from "../../../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 import { useYLCFontFamilyChange } from "../../../hooks/YTDLiveChatSetting/useYLCFontFamilyChange";
 import styles from "../../../styles/YTDLiveChatSetting/FontFamily.module.scss";
 

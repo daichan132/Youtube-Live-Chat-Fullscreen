@@ -2,8 +2,8 @@ import React, { useCallback, useRef } from "react";
 
 import { useShallow } from "zustand/react/shallow";
 
-import { Slider } from "../../../../../../shared/components/Slider";
-import { useYTDLiveChatStore } from "../../../../../../stores";
+import { Slider } from "@/shared/components/Slider";
+import { useYTDLiveChatStore } from "@/stores";
 import { useInitializedSlider } from "../../../../../hooks/useInitializedSlider";
 import { useYLCSpaceChange } from "../../../hooks/YTDLiveChatSetting/useYLCSpaceChange";
 

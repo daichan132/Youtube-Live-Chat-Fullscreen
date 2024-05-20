@@ -6,8 +6,8 @@ import classNames from "classnames";
 import { Resizable } from "re-resizable";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatNoLsStore } from "../../../../../stores/ytdLiveChatNoLsStore";
-import useYTDLiveChatStore from "../../../../../stores/ytdLiveChatStore";
+import { useYTDLiveChatNoLsStore } from "@/stores/ytdLiveChatNoLsStore";
+import useYTDLiveChatStore from "@/stores/ytdLiveChatStore";
 import { useDisanleTopTransition } from "../../hooks/Draggable/useDisanleTopTransition";
 import { useIconDisplay } from "../../hooks/Draggable/useIconDisplay";
 import styles from "../../styles/Draggable/DraggableItem.module.scss";

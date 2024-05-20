@@ -6,7 +6,7 @@ import { ChromePicker } from "react-color";
 import { useClickAway } from "react-use";
 import { useShallow } from "zustand/react/shallow";
 
-import { useYTDLiveChatStore } from "../../../../../../stores";
+import { useYTDLiveChatStore } from "@/stores";
 import { useYLCBgColorChange } from "../../../hooks/YTDLiveChatSetting/useYLCBgColorChange";
 import styles from "../../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss";
 
