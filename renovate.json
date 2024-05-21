@@ -7,5 +7,6 @@
   "stabilityDays": 3,
   "vulnerabilityAlerts": {
     "labels": ["security"]
-  }
+  },
+  "dependencyDashboard": false
 }
