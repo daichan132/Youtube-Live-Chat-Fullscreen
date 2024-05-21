@@ -16,28 +16,66 @@ This extension allows Youtube Live to use chat when in Fullscreen.
 | :--------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
 | <img src="./readme-img/image.png" width="300"> | <img src="./readme-img/image1.png" width="300"> | <img src="./readme-img/image2.png" width="300"> |
 
-## Scripts
+### Built with
 
-- **Development**: Cleans build directories and starts the server.
-  ```bash
-  yarn dev
-  ```
+- React
+- TypeScript
+- Vite
+- Biome (for format and lint)
+- i18next (for internationalization)
+- Zustand (for state management)
+- Sass
+- typed-scss-modules (for SCSS modules with TypeScript)
+- lefthook (for git hooks management)
+- dndkit (for drag functionality)
 
-- **Build**: Cleans, compiles, builds, and packages the project.
-  ```bash
-  yarn build
-  ```
+## Quick Start
 
-- **Format**
-  ```bash
-  yarn format
-  ```
+Ensure you have
 
-- **Lint**
-  ```bash
-  yarn lint
-  ```
+- [Node.js](https://nodejs.org) 20.x
+- [Yarn](https://yarnpkg.com) installed
+
+> **Note** If you don't have yarn installed, run: npm install -g yarn
+
+### Clone to local
+
+If you prefer to do it manually with the cleaner git history
+
+```bash
+npx degit daichan132/Youtube-Live-Chat-Fullscreen Youtube-Live-Chat-Fullscreen
+cd Youtube-Live-Chat-Fullscreen
+git init
+```
+
+Then run the following:
+
+- `yarn install` to install dependencies.
+- `yarn dev` to start the development server.
+- `yarn build` to build an unpacked extension.
+
+- **Load extension in Chrome (Chromium, Manifest V3)**
+
+  - Go to the browser address bar and type `chrome://extensions`
+  - Check the `Developer Mode` button to enable it.
+  - Click on the `Load Unpacked Extension` button.
+  - Select your `dist` folder in the project root.
+
+- **Load extension in Firefox (Manifest V2)**
+
+  - Go to the browser address bar and type `about://debugger`
+  - Click on the `Load Temporary Add-on` button.
+  - Select your `dist-firefox-v2` folder in the project root.
+
+### Available Commands
+
+- `yarn clean` to remove `dist` and `dist-firefox-v2` folders. Called by `dev` and `build` commands.
+- `yarn format` to format code with Biome.
+- `yarn lint` to lint code with Biome and type-check.
+- `yarn prepare` to install Git hooks with Lefthook.
+
 ## License
+
 This project is licensed under the GPL-3.0 license. See the [LICENSE](LICENSE) file for more details.
 
 ## Third-Party Licenses
@@ -46,4 +84,4 @@ This project uses third-party libraries or components, each subject to their own
 
 - browser-extension-react-typescript-starter
   - License: MIT License
-  - License Details: https://github.com/sinanbekar/browser-extension-react-typescript-starter/blob/main/LICENSE
+  - License Details: [Here](https://github.com/sinanbekar/browser-extension-react-typescript-starter/blob/main/LICENSE)
