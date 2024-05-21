@@ -16,6 +16,30 @@ This extension allows Youtube Live to use chat when in Fullscreen.
 | :--------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
 | <img src="./readme-img/image.png" width="300"> | <img src="./readme-img/image1.png" width="300"> | <img src="./readme-img/image2.png" width="300"> |
 
+## Scripts
+
+- **Development**: Cleans build directories and starts the server.
+  ```bash
+  yarn dev
+  ```
+
+- **Build**: Cleans, compiles, builds, and packages the project.
+  ```bash
+  yarn build
+  ```
+
+- **Format**
+  ```bash
+  yarn format
+  ```
+
+- **Lint**
+  ```bash
+  yarn lint
+  ```
+## License
+This project is licensed under the GPL-3.0 license. See the [LICENSE](LICENSE) file for more details.
+
 ## Third-Party Licenses
 
 This project uses third-party libraries or components, each subject to their own license terms. Please see below for details on each license.

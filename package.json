@@ -1,5 +1,5 @@
 {
-  "name": "browser-extension-react-ts-starter",
+  "name": "youtube-live-chat-fullscreen",
   "private": true,
   "version": "2.0.8",
   "type": "module",
@@ -13,12 +13,8 @@
     "clean": "run-p clean:dist && run-p clean:dist-firefox-v2",
     "clean:dist": "rimraf dist",
     "clean:dist-firefox-v2": "rimraf dist-firefox-v2",
-    "format": "run-p format:eslint && run-p format:prettier",
-    "format:eslint": "run-s \" lint:eslint --fix \"",
-    "format:prettier": "run-s \" lint:prettier --write \"",
+    "format": "npx @biomejs/biome format --write ./src/**",
     "lint": "biome check --apply ./src/** && run-p lint:type",
-    "lint:eslint": "eslint . --max-warnings 0 --ignore-pattern .gitignore",
-    "lint:prettier": "prettier \"**/*.(json|yml)\" --ignore-path .gitignore --check",
     "lint:type": "tsc --noEmit",
     "prepare": "lefthook install"
   },
