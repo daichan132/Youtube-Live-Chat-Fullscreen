@@ -16,8 +16,10 @@ This extension allows Youtube Live to use chat when in Fullscreen.
 | :--------------------------------------------: | :---------------------------------------------: | :---------------------------------------------: |
 | <img src="./readme-img/image.png" width="300"> | <img src="./readme-img/image1.png" width="300"> | <img src="./readme-img/image2.png" width="300"> |
 
-## Due Credit
+### Third-Party Licenses
 
-This project is based on [browser-extension-react-typescript-starter](https://github.com/sinanbekar/browser-extension-react-typescript-starter).
+This project uses third-party libraries or components, each subject to their own license terms. Please see below for details on each license.
 
-See [LICENSE_ORIGINAL](./LICENSE_ORIGINAL) for the original license.
+- browser-extension-react-typescript-starter
+  - License: MIT License
+  - License Details: https://github.com/sinanbekar/browser-extension-react-typescript-starter/blob/main/LICENSE
