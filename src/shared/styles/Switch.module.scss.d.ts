@@ -1,7 +1,7 @@
 export type Styles = {
-  input: string;
-  label: string;
-  wrapper: string;
+  'input': string;
+  'label': string;
+  'wrapper': string;
 };
 
 export type ClassNames = keyof Styles;

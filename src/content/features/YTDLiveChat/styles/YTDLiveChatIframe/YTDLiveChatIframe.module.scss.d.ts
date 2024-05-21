@@ -1,7 +1,7 @@
 export type Styles = {
-  iframe: string;
-  "skeleton-animation": string;
-  skelton: string;
+  'iframe': string;
+  'skeleton-animation': string;
+  'skelton': string;
 };
 
 export type ClassNames = keyof Styles;

@@ -8,7 +8,7 @@ import { useInitializedSlider } from "../../../../../hooks/useInitializedSlider"
 import { useYLCFontSizeChange } from "../../../hooks/YTDLiveChatSetting/useYLCFontSizeChange";
 
 const minSize = 10;
-const maxSize = 20;
+const maxSize = 24;
 
 export const fontSizeToSliderValue = (fontSize: number) => {
 	return ((fontSize - minSize) * 100) / ((maxSize - minSize) * 100);
