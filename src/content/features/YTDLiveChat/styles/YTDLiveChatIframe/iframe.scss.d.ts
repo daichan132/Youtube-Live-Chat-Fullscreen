@@ -4,6 +4,7 @@ export type Styles = {
   'chat': string;
   'clip-path-enable': string;
   'close-button': string;
+  'container': string;
   'content': string;
   'contents': string;
   'count': string;
