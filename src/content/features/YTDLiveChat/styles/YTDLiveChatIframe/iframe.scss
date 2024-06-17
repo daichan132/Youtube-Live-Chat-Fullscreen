@@ -100,7 +100,10 @@ body.custom-yt-app-live-chat-extension {
   #price-input.yt-live-chat-message-buy-flow-renderer .input-content.tp-yt-paper-input-container>.paper-input-input,
   yt-live-chat-message-buy-flow-renderer,
   #info.yt-live-chat-message-buy-flow-renderer,
-  button.yt-reaction-control-panel-button-view-model {
+  button.yt-reaction-control-panel-button-view-model,
+  #container.yt-live-chat-restricted-participation-renderer,
+  #icon.yt-live-chat-restricted-participation-renderer,
+  yt-live-chat-restricted-participation-renderer[system-icons] #picker-buttons.yt-live-chat-restricted-participation-renderer>*.yt-live-chat-restricted-participation-renderer {
     color: var(--extension-yt-live-font-color);
   }
 
