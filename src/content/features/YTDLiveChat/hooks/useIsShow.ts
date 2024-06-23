@@ -28,7 +28,7 @@ export const useIsShow = () => {
 				clearInterval(interval);
 			}
 			count++;
-			if (count > 30) {
+			if (count > 100) {
 				clearInterval(interval);
 			}
 		}, 1000);
@@ -65,8 +65,21 @@ export const useIsShow = () => {
 			mutationObserver.disconnect();
 		};
 	}, [isFullscreen, updateIsTopBasedOnMasthead]);
+
+	const [isTheaterChatMode, setIsTheaterChatMode] = useState<boolean>(false);
 	useEffect(() => {
-		if (isChat && isTop) {
+		setIsTheaterChatMode(false);
+		if (!isFullscreen) return;
+		const ytdWatchGridElement = document.querySelector("ytd-watch-grid");
+		if (!ytdWatchGridElement) return;
+		if (ytdWatchGridElement.hasAttribute('panel-expanded') && ytdWatchGridElement.hasAttribute('live-chat-present-and-expanded')) {
+			setIsTheaterChatMode(true);
+		} else {
+			setIsTheaterChatMode(false);
+		}
+	}, [isFullscreen]);
+	useEffect(() => {
+		if (isChat && isTop && !isTheaterChatMode) {
 			/* ----------------------- YLC is in outside of window ---------------------- */
 			const innerWidth = window.innerWidth;
 			const innerHeight = window.innerHeight;
@@ -87,10 +100,10 @@ export const useIsShow = () => {
 		} else {
 			setIsChecked(false);
 		}
-	}, [isTop, isChat]);
+	}, [isTop, isChat, isTheaterChatMode]);
 	return {
 		isFullscreen,
-		isShow: isChat && isTop && isChecked,
+		isShow: isChat && isTop && isChecked && !isTheaterChatMode,
 		isChat,
 	};
 };
