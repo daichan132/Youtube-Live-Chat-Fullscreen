@@ -72,7 +72,10 @@ export const useIsShow = () => {
 		if (!isFullscreen) return;
 		const ytdWatchGridElement = document.querySelector("ytd-watch-grid");
 		if (!ytdWatchGridElement) return;
-		if (ytdWatchGridElement.hasAttribute('panel-expanded') && ytdWatchGridElement.hasAttribute('live-chat-present-and-expanded')) {
+		if (
+			ytdWatchGridElement.hasAttribute("panel-expanded") &&
+			ytdWatchGridElement.hasAttribute("live-chat-present-and-expanded")
+		) {
 			setIsTheaterChatMode(true);
 		} else {
 			setIsTheaterChatMode(false);

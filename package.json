@@ -14,7 +14,7 @@
     "clean:dist": "rimraf dist",
     "clean:dist-firefox-v2": "rimraf dist-firefox-v2",
     "format": "npx @biomejs/biome format --write ./src/**",
-    "lint": "biome check --apply ./src/** && run-p lint:type",
+    "lint": "biome check --write ./src/** && run-p lint:type",
     "lint:type": "tsc --noEmit",
     "prepare": "lefthook install"
   },
