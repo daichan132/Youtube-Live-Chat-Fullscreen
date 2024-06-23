@@ -108,7 +108,7 @@ body.custom-yt-app-live-chat-extension {
   }
 
   .yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer {
-    color: white;
+    color: var(--yt-live-chat-primary-text-color, var(--yt-spec-text-primary));
   }
 
   #message.yt-live-chat-viewer-engagement-message-renderer,

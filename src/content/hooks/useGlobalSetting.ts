@@ -8,7 +8,7 @@ import useChromeRuntimeMessageListener from "./useChromeRuntimeMessageListener";
 
 export const useGlobalSetting = () => {
 	const [ytdLiveChat, setYTDLiveChat] = useState(
-		useGlobalSettingStore.getState().ytdLiveChat,
+		useGlobalSettingStore.getState().ytdLiveChat || false
 	);
 	const { i18n } = useTranslation();
 	const handleMessage = (request: {

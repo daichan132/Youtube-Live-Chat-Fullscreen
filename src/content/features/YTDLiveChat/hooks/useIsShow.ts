@@ -73,7 +73,7 @@ export const useIsShow = () => {
 		const ytdWatchGridElement = document.querySelector("ytd-watch-grid");
 		if (!ytdWatchGridElement) return;
 		if (
-			ytdWatchGridElement.hasAttribute("panel-expanded") &&
+			ytdWatchGridElement.hasAttribute("is-two-columns_") &&
 			ytdWatchGridElement.hasAttribute("live-chat-present-and-expanded")
 		) {
 			setIsTheaterChatMode(true);
