@@ -1,9 +1,6 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
@@ -34,3 +31,32 @@ jobs:
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Lint
         run: yarn lint
+
+  version-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Get current version from package.json
+        id: get_version
+        run: echo "::set-output name=version::$(jq -r .version package.json)"
+
+      - name: Check if version has been updated
+        run: |
+          git fetch origin main:main
+          git checkout main
+          OLD_VERSION=$(jq -r .version package.json)
+          git checkout -
+          NEW_VERSION=$(jq -r .version package.json)
+          if [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
+            echo "Error: The version in package.json has not been updated."
+            exit 1
+          else
+            echo "Version has been updated from $OLD_VERSION to $NEW_VERSION."
+          fi
