@@ -1,11 +1,11 @@
 name: CD
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
-
-  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
 
 jobs:
   build:
