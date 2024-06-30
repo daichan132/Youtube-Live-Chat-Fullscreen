@@ -35,18 +35,10 @@ jobs:
   version-check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.x
-
+      - uses: actions/checkout@v4
       - name: Get current version from package.json
         id: get_version
-        run: echo "::set-output name=version::$(jq -r .version package.json)"
-
+        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_ENV
       - name: Check if version has been updated
         run: |
           git fetch origin main:main
