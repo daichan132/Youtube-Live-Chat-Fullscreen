@@ -21,7 +21,7 @@ jobs:
       - name: Build
         run: yarn build
       - name: upload extension
-        run: npx chrome-webstore-upload-cli@2 upload --source dist.zip
+        run: npx chrome-webstore-upload-cli@3 upload --source dist.zip --auto-publish
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
