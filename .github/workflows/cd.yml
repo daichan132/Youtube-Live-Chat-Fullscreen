@@ -1,9 +1,9 @@
 name: CD
 
 on:
-  pull_request:
-    types:
-      - closed
+  push:
+    tags:
+      - "*"
     branches:
       - main
 
