@@ -2,8 +2,8 @@ name: CD
 
 on:
   push:
-    tags:
-      - "*"
+    paths:
+      - "package.json"
     branches:
       - main
 
@@ -16,12 +16,17 @@ jobs:
         with:
           node-version: 20.x
           cache: "yarn"
+      - name: Check version
+        run: ./check-version.sh
       - name: Install dependencies
+        if: success()
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Build
+        if: success()
         run: yarn build
       - name: upload extension
-        run: npx chrome-webstore-upload-cli@3 upload --source dist.zip --auto-publish
+        if: success()
+        run: npx chrome-webstore-upload-cli@3 upload --source dist.zip
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
