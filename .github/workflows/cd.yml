@@ -6,7 +6,30 @@ on:
       - main
 
 jobs:
+  check-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version-updated: ${{ steps.check.outputs.updated }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - id: check
+        run: |
+          current_version=$(jq -r '.version' package.json)
+          previous_version=$(git show HEAD~1:package.json | jq -r '.version')
+          if [ "$current_version" != "$previous_version" ]; then
+            echo "Version has been updated"
+            echo "::set-output name=updated::true"
+          else
+            echo "Version has not been updated"
+            echo "::set-output name=updated::false"
+          fi
+
   upload-extension:
+    needs: check-version
+    if: needs.check-version.outputs.version-updated == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,16 +37,11 @@ jobs:
         with:
           node-version: 20.x
           cache: "yarn"
-      - name: Check version
-        run: chmod +x .github/workflows/check-version.sh
       - name: Install dependencies
-        if: success()
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Build
-        if: success()
         run: yarn build
       - name: upload extension
-        if: success()
         run: npx chrome-webstore-upload-cli@3 upload --source dist.zip
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
