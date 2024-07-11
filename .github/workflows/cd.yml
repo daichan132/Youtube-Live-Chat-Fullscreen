@@ -2,8 +2,6 @@ name: CD
 
 on:
   push:
-    paths:
-      - "package.json"
     branches:
       - main
 
@@ -17,7 +15,7 @@ jobs:
           node-version: 20.x
           cache: "yarn"
       - name: Check version
-        run: .github/workflows/check-version.sh
+        run: chmod +x .github/workflows/check-version.sh
       - name: Install dependencies
         if: success()
         run: rm -rf node_modules && yarn install --frozen-lockfile
