@@ -21,10 +21,10 @@ jobs:
           previous_version=$(git show HEAD~1:package.json | jq -r '.version')
           if [ "$current_version" != "$previous_version" ]; then
             echo "Version has been updated"
-            echo "::set-output name=updated::true"
+            echo "updated=true" >> $GITHUB_OUTPUT
           else
             echo "Version has not been updated"
-            echo "::set-output name=updated::false"
+            echo "updated=false" >> $GITHUB_OUTPUT
           fi
 
   upload-extension:
