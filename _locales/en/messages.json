@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Youtube Live Chat Fullscreen"
+  },
+  "extensionNameDev": {
+    "message": "[Dev] Youtube Live Chat Fullscreen"
+  },
+  "extensionDescription": {
+    "message": "This extension allows Youtube Live to use chat when in Fullscreen."
+  }
+}
