@@ -8,8 +8,6 @@ on:
 jobs:
   check-version:
     runs-on: ubuntu-latest
-    outputs:
-      version-updated: ${{ steps.check.outputs.updated }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,11 +19,12 @@ jobs:
           previous_version=$(git show HEAD~1:package.json | jq -r '.version')
           if [ "$current_version" != "$previous_version" ]; then
             echo "Version has been updated"
-            echo "::set-output name=updated::true"
+            echo "version_updated=true" >> $GITHUB_ENV
           else
             echo "Version has not been updated"
-            echo "::set-output name=updated::false"
-          fi
+            echo "version_updated=false" >> $GITHUB_ENV
+    outputs:
+      version-updated: ${{ steps.check.outputs.version_updated }}
 
   upload-extension:
     needs: check-version
