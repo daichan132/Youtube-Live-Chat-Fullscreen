@@ -33,6 +33,7 @@
         cursor: pointer;
         min-width: 50px;
         text-align: center;
+
         &:hover {
           background-color: rgba(0, 0, 0, 0.1);
         }
@@ -68,13 +69,13 @@
 
     .footer {
       border-top: 1px solid rgba(0, 0, 0, 0.1);
-      padding: 20px 12px 20px;
+      padding: 20px 20px 20px;
       display: flex;
       justify-content: flex-end;
       font-size: 14px;
 
       .help {
-        > a {
+        >a {
           color: #333333;
         }
       }

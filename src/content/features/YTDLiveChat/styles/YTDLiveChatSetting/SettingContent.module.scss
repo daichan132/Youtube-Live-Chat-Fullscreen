@@ -1,11 +1,12 @@
 .content-setting-container {
+  margin-top: 1rem;
+
   hr {
     border: none;
     height: 1px;
     background-color: rgba(0, 0, 0, 0.1);
     margin: 0 2rem;
   }
-  margin-top: 1rem;
 
   .content-setting-item {
     display: flex;
@@ -31,7 +32,7 @@
       align-items: center;
       font-size: 14px;
 
-      > svg {
+      >svg {
         margin-right: 1.5rem;
         border: 1px solid rgba(0, 0, 0, 0.1);
         color: #333;
