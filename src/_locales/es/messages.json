@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Chat en pantalla completa de YouTube Live"
+  },
+  "extensionNameDev": {
+    "message": "[Desarrollo] Chat en pantalla completa de YouTube Live"
+  },
+  "extensionDescription": {
+    "message": "Esta extensión permite usar el chat de YouTube Live cuando está en pantalla completa."
+  }
+}

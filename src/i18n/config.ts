@@ -4,6 +4,12 @@ import { initReactI18next } from "react-i18next";
 
 import translation_en from "./en.json";
 import translation_ja from "./ja.json";
+import translation_zh from "./zh.json";
+import translation_th from "./th.json";
+import translation_tl from "./tl.json";
+import translation_ms from "./ms.json";
+import translation_id from "./id.json";
+import translation_es from "./es.json";
 
 const resources = {
 	ja: {
@@ -11,6 +17,24 @@ const resources = {
 	},
 	en: {
 		translation: translation_en,
+	},
+	zh: {
+		translation: translation_zh,
+	},
+	th: {
+		translation: translation_th,
+	},
+	tl: {
+		translation: translation_tl,
+	},
+	ms: {
+		translation: translation_ms,
+	},
+	id: {
+		translation: translation_id,
+	},
+	es: {
+		translation: translation_es,
 	},
 };
 

@@ -4,13 +4,17 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
 const LanguageSelector = () => {
-	const languageOptions: {
-		value: string;
-		label: string;
-	}[] = [
+	const languageOptions = [
 		{ value: "en", label: "English" },
-		{ value: "ja", label: "Japanese" },
+		{ value: "ja", label: "日本語" },
+		{ value: "zh", label: "中文" },
+		{ value: "th", label: "ไทย" },
+		{ value: "tl", label: "Filipino" },
+		{ value: "ms", label: "Bahasa Melayu" },
+		{ value: "id", label: "Bahasa Indonesia" },
+		{ value: "es", label: "Español" },
 	];
+
 	const { i18n } = useTranslation();
 
 	const changeLanguage = (

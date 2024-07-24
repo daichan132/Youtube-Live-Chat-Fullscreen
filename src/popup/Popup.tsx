@@ -25,7 +25,6 @@ const Popup = () => {
 			data: <LanguageSelector />,
 		},
 		{ title: t("popup.showChatOnFullscreen"), data: <YTDLiveChatSwitch /> },
-		// { title: t('popup.emojiCopy'), data: <EmojiCopySwitch /> },
 	];
 
 	return (

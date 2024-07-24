@@ -1,0 +1,39 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "พรีเซ็ต",
+        "setting": "การตั้งค่า"
+      },
+      "alwaysOnDisplay": "แสดงตลอดเวลา",
+      "chatOnlyDisplay": "แสดงเฉพาะแชท",
+      "userNameDisplay": "แสดงชื่อผู้ใช้",
+      "userIconDisplay": "แสดงไอคอนผู้ใช้",
+      "reactionButtonDisplay": "แสดงปุ่มปฏิกิริยา",
+      "superChatBarDisplay": "แสดงแถบซูเปอร์แชท",
+      "backgroundColor": "สีพื้นหลัง",
+      "fontColor": "สีตัวอักษร",
+      "fontFamily": "ตระกูลตัวอักษร",
+      "fontSize": "ขนาดตัวอักษร",
+      "blur": "เบลอ",
+      "space": "ช่องว่าง",
+      "footer": "สำหรับคำแนะนำ คลิกที่นี่ ",
+      "help": "ช่วยเหลือ"
+    },
+    "preset": {
+      "addMessage": "เพิ่มการตั้งค่าปัจจุบัน",
+      "addItemTitle": "ไม่มีชื่อ",
+      "defaultTitle": "ค่าเริ่มต้น",
+      "transparentTitle": "โปร่งใส",
+      "simpleTitle": "เรียบง่าย",
+      "deleteConfirmationMessage": "คุณต้องการลบจริงหรือ?",
+      "delete": "ลบ",
+      "cancel": "ยกเลิก"
+    }
+  },
+  "popup": {
+    "language": "การตั้งค่าภาษา",
+    "showChatOnFullscreen": "แสดงแชทในโหมดเต็มหน้าจอ",
+    "emojiCopy": "อนุญาตให้คัดลอกอีโมจิของ YouTube"
+  }
+}

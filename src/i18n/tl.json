@@ -1,0 +1,39 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Preset",
+        "setting": "Setting"
+      },
+      "alwaysOnDisplay": "Laging Nasa Display",
+      "chatOnlyDisplay": "Chat Lang na Display",
+      "userNameDisplay": "Display ng Pangalan ng User",
+      "userIconDisplay": "Display ng Icon ng User",
+      "reactionButtonDisplay": "Display ng Button ng Reaksyon",
+      "superChatBarDisplay": "Display ng Super Chat Bar",
+      "backgroundColor": "Kulay ng Background",
+      "fontColor": "Kulay ng Font",
+      "fontFamily": "Pamilya ng Font",
+      "fontSize": "Laki ng Font",
+      "blur": "Paglabo",
+      "space": "Espasyo",
+      "footer": "Para sa mga tagubilin, i-click ito ",
+      "help": "tulong"
+    },
+    "preset": {
+      "addMessage": "Idagdag ang kasalukuyang setting",
+      "addItemTitle": "Walang Pamagat",
+      "defaultTitle": "Default",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Simple",
+      "deleteConfirmationMessage": "Talaga bang nais mong tanggalin ito?",
+      "delete": "Tanggalin",
+      "cancel": "Kanselahin"
+    }
+  },
+  "popup": {
+    "language": "Setting ng Wika",
+    "showChatOnFullscreen": "Ipakita ang Chat sa Fullscreen",
+    "emojiCopy": "Pinapayagan ang pagkopya ng mga emoji ng YouTube"
+  }
+}

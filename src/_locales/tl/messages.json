@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "Buong Screen na Chat sa YouTube Live"
+  },
+  "extensionNameDev": {
+    "message": "[Dev] Buong Screen na Chat sa YouTube Live"
+  },
+  "extensionDescription": {
+    "message": "Pinapayagan ng extension na ito ang paggamit ng chat sa YouTube Live kapag nasa Buong Screen."
+  }
+}
