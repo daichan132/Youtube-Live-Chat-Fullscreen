@@ -8,7 +8,6 @@ const LanguageSelector = () => {
 		{ value: "en", label: "English" },
 		{ value: "ja", label: "日本語" },
 		{ value: "zh-TW", label: "中文 (繁體)" },
-		{ value: "zh-HK", label: "中文 (香港)" },
 		{ value: "th", label: "ไทย" },
 		{ value: "tl", label: "Filipino" },
 		{ value: "ms", label: "Bahasa Melayu" },
