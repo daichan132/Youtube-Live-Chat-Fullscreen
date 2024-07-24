@@ -38,7 +38,7 @@ const LanguageSelector = () => {
 					...baseStyles,
 					fontSize: "14px",
 					padding: "0 0",
-					width: 130,
+					width: 180,
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
