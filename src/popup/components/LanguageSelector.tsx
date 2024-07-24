@@ -6,13 +6,13 @@ import Select from "react-select";
 const LanguageSelector = () => {
 	const languageOptions = [
 		{ value: "en", label: "English" },
-		{ value: "ja", label: "日本語" },
-		{ value: "zh-TW", label: "中文 (繁體)" },
+		{ value: "id", label: "Bahasa Indonesia" },
+		{ value: "es", label: "Español" },
 		{ value: "th", label: "ไทย" },
 		{ value: "tl", label: "Filipino" },
 		{ value: "ms", label: "Bahasa Melayu" },
-		{ value: "id", label: "Bahasa Indonesia" },
-		{ value: "es", label: "Español" },
+		{ value: "zh-TW", label: "中文 (繁體)" },
+		{ value: "ja", label: "日本語" },
 	];
 
 	const { i18n } = useTranslation();
