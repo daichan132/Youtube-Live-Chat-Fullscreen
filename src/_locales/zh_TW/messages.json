@@ -1,0 +1,11 @@
+{
+  "extensionName": {
+    "message": "YouTube直播聊天室全螢幕"
+  },
+  "extensionNameDev": {
+    "message": "[開發] YouTube直播聊天室全螢幕"
+  },
+  "extensionDescription": {
+    "message": "這個擴充功能允許在全螢幕模式下使用YouTube直播聊天。"
+  }
+}

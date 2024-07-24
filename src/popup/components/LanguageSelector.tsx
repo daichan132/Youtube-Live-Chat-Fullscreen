@@ -1,5 +1,4 @@
 import React from "react";
-
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
@@ -7,7 +6,8 @@ const LanguageSelector = () => {
 	const languageOptions = [
 		{ value: "en", label: "English" },
 		{ value: "ja", label: "日本語" },
-		{ value: "zh", label: "中文" },
+		{ value: "zh-TW", label: "中文 (繁體)" },
+		{ value: "zh-HK", label: "中文 (香港)" },
 		{ value: "th", label: "ไทย" },
 		{ value: "tl", label: "Filipino" },
 		{ value: "ms", label: "Bahasa Melayu" },
@@ -38,13 +38,19 @@ const LanguageSelector = () => {
 					...baseStyles,
 					fontSize: "14px",
 					padding: "0 0",
-					width: 130,
+					width: 200,
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
 					fontSize: "14px",
+					zIndex: 9999,
+				}),
+				menuPortal: (baseStyles) => ({
+					...baseStyles,
+					zIndex: 9999,
 				}),
 			}}
+			menuPortalTarget={document.body}
 			defaultValue={languageOptions.find(
 				(option) => option.value === i18n.language,
 			)}
