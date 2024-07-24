@@ -1,4 +1,5 @@
 import React from "react";
+
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
@@ -38,19 +39,13 @@ const LanguageSelector = () => {
 					...baseStyles,
 					fontSize: "14px",
 					padding: "0 0",
-					width: 200,
+					width: 130,
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
 					fontSize: "14px",
-					zIndex: 9999,
-				}),
-				menuPortal: (baseStyles) => ({
-					...baseStyles,
-					zIndex: 9999,
 				}),
 			}}
-			menuPortalTarget={document.body}
 			defaultValue={languageOptions.find(
 				(option) => option.value === i18n.language,
 			)}
