@@ -34,6 +34,7 @@
   "popup": {
     "language": "Configuración de idioma",
     "showChatOnFullscreen": "Mostrar chat en pantalla completa",
-    "emojiCopy": "Permitir copiar emojis de Youtube"
+    "emojiCopy": "Permitir copiar emojis de Youtube",
+    "links": "Enlaces"
   }
 }

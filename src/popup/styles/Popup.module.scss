@@ -5,7 +5,7 @@ body {
 .settings {
   display: flex;
   flex-direction: column;
-  width: 450px;
+  width: 500px;
 
   .content {
     flex-grow: 1;
@@ -41,7 +41,7 @@ body {
         align-items: center;
         font-size: 14px;
 
-        > svg {
+        >svg {
           margin-right: 10px;
           border: 1px solid rgba(0, 0, 0, 0.1);
           color: #333;
@@ -69,7 +69,7 @@ body {
       font-size: 14px;
 
       .help {
-        > a {
+        >a {
           color: #333333;
         }
       }

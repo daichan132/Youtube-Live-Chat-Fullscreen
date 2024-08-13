@@ -34,6 +34,7 @@
   "popup": {
     "language": "Pengaturan Bahasa",
     "showChatOnFullscreen": "Tampilkan Obrolan di Layar Penuh",
-    "emojiCopy": "Izinkan penyalinan emoji YouTube"
+    "emojiCopy": "Izinkan penyalinan emoji YouTube",
+    "links": "Tautan"
   }
 }

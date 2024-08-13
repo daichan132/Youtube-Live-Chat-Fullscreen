@@ -34,6 +34,7 @@
   "popup": {
     "language": "語言設置",
     "showChatOnFullscreen": "全屏顯示聊天",
-    "emojiCopy": "允許複製YouTube表情"
+    "emojiCopy": "允許複製YouTube表情",
+    "links": "鏈接"
   }
 }

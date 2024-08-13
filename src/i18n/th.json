@@ -34,6 +34,7 @@
   "popup": {
     "language": "การตั้งค่าภาษา",
     "showChatOnFullscreen": "แสดงแชทในโหมดเต็มหน้าจอ",
-    "emojiCopy": "อนุญาตให้คัดลอกอีโมจิของ YouTube"
+    "emojiCopy": "อนุญาตให้คัดลอกอีโมจิของ YouTube",
+    "links": "ลิงก์"
   }
 }

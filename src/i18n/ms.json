@@ -34,6 +34,7 @@
   "popup": {
     "language": "Tetapan Bahasa",
     "showChatOnFullscreen": "Paparkan Chat pada Skrin Penuh",
-    "emojiCopy": "Benarkan penyalinan emoji YouTube"
+    "emojiCopy": "Benarkan penyalinan emoji YouTube",
+    "links": "Pautan"
   }
 }

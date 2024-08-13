@@ -2,13 +2,14 @@ import React from "react";
 
 import classNames from "classnames";
 import { useTranslation } from "react-i18next";
-import { IoLanguage } from "react-icons/io5";
+import { IoLanguage, IoChatboxOutline, IoLinkOutline } from "react-icons/io5";
 
 import LanguageSelector from "./components/LanguageSelector";
 import { YTDLiveChatSwitch } from "./components/YTDLiveChatSwitch";
 import styles from "./styles/Popup.module.scss";
 
 import type { IconType } from "react-icons";
+import { Links } from "./components/Links";
 
 interface itemType {
 	icon?: IconType;
@@ -24,7 +25,16 @@ const Popup = () => {
 			title: t("popup.language"),
 			data: <LanguageSelector />,
 		},
-		{ title: t("popup.showChatOnFullscreen"), data: <YTDLiveChatSwitch /> },
+		{
+			icon: IoChatboxOutline,
+			title: t("popup.showChatOnFullscreen"),
+			data: <YTDLiveChatSwitch />
+		},
+		{
+			icon: IoLinkOutline,
+			title: t("popup.links"),
+			data: <Links />
+		}
 	];
 
 	return (

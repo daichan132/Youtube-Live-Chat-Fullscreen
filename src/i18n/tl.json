@@ -34,6 +34,7 @@
   "popup": {
     "language": "Setting ng Wika",
     "showChatOnFullscreen": "Ipakita ang Chat sa Fullscreen",
-    "emojiCopy": "Pinapayagan ang pagkopya ng mga emoji ng YouTube"
+    "emojiCopy": "Pinapayagan ang pagkopya ng mga emoji ng YouTube",
+    "links": "Mga Link"
   }
 }
