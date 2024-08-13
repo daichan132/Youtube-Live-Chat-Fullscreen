@@ -33,7 +33,7 @@ This extension allows Youtube Live to use chat when in Fullscreen.
 
 Ensure you have
 
-- [Node.js](https://nodejs.org) 20.x
+- [Node.js](https://nodejs.org) 22.x
 - [Yarn](https://yarnpkg.com) installed
 
 > **Note** If you don't have yarn installed, run: npm install -g yarn
