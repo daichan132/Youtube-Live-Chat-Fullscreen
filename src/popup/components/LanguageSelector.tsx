@@ -3,7 +3,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 
-const LanguageSelector = () => {
+export const LanguageSelector = () => {
 	const languageOptions = [
 		{ value: "en", label: "English" },
 		{ value: "id", label: "Bahasa Indonesia" },
@@ -53,5 +53,3 @@ const LanguageSelector = () => {
 		/>
 	);
 };
-
-export default LanguageSelector;

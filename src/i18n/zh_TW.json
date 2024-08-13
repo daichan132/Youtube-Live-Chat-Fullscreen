@@ -1,40 +1,40 @@
 {
-  "content": {
-    "setting": {
-      "header": {
-        "preset": "預設",
-        "setting": "設置"
-      },
-      "alwaysOnDisplay": "始終顯示",
-      "chatOnlyDisplay": "僅顯示聊天",
-      "userNameDisplay": "顯示用戶名",
-      "userIconDisplay": "顯示用戶圖標",
-      "reactionButtonDisplay": "顯示反應按鈕",
-      "superChatBarDisplay": "顯示超級聊天欄",
-      "backgroundColor": "背景顏色",
-      "fontColor": "字體顏色",
-      "fontFamily": "字體家族",
-      "fontSize": "字體大小",
-      "blur": "模糊",
-      "space": "間距",
-      "footer": "有關說明，請點擊 ",
-      "help": "幫助"
-    },
-    "preset": {
-      "addMessage": "添加當前設置",
-      "addItemTitle": "無標題",
-      "defaultTitle": "默認",
-      "transparentTitle": "透明",
-      "simpleTitle": "簡單",
-      "deleteConfirmationMessage": "您確定要刪除嗎？",
-      "delete": "刪除",
-      "cancel": "取消"
-    }
-  },
-  "popup": {
-    "language": "語言設置",
-    "showChatOnFullscreen": "全屏顯示聊天",
-    "emojiCopy": "允許複製YouTube表情",
-    "links": "鏈接"
-  }
+	"content": {
+		"setting": {
+			"header": {
+				"preset": "預設",
+				"setting": "設置"
+			},
+			"alwaysOnDisplay": "始終顯示",
+			"chatOnlyDisplay": "僅顯示聊天",
+			"userNameDisplay": "顯示用戶名",
+			"userIconDisplay": "顯示用戶圖標",
+			"reactionButtonDisplay": "顯示反應按鈕",
+			"superChatBarDisplay": "顯示超級聊天欄",
+			"backgroundColor": "背景顏色",
+			"fontColor": "字體顏色",
+			"fontFamily": "字體家族",
+			"fontSize": "字體大小",
+			"blur": "模糊",
+			"space": "間距",
+			"footer": "有關說明，請點擊 ",
+			"help": "幫助"
+		},
+		"preset": {
+			"addMessage": "添加當前設置",
+			"addItemTitle": "無標題",
+			"defaultTitle": "默認",
+			"transparentTitle": "透明",
+			"simpleTitle": "簡單",
+			"deleteConfirmationMessage": "您確定要刪除嗎？",
+			"delete": "刪除",
+			"cancel": "取消"
+		}
+	},
+	"popup": {
+		"language": "語言設置",
+		"showChatOnFullscreen": "全屏顯示聊天",
+		"emojiCopy": "允許複製YouTube表情",
+		"links": "鏈接"
+	}
 }

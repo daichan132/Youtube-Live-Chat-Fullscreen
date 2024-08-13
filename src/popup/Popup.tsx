@@ -2,9 +2,9 @@ import React from "react";
 
 import classNames from "classnames";
 import { useTranslation } from "react-i18next";
-import { IoLanguage, IoChatboxOutline, IoLinkOutline } from "react-icons/io5";
+import { IoChatboxOutline, IoLanguage, IoLinkOutline } from "react-icons/io5";
 
-import LanguageSelector from "./components/LanguageSelector";
+import { LanguageSelector } from "./components/LanguageSelector";
 import { YTDLiveChatSwitch } from "./components/YTDLiveChatSwitch";
 import styles from "./styles/Popup.module.scss";
 
@@ -28,13 +28,13 @@ const Popup = () => {
 		{
 			icon: IoChatboxOutline,
 			title: t("popup.showChatOnFullscreen"),
-			data: <YTDLiveChatSwitch />
+			data: <YTDLiveChatSwitch />,
 		},
 		{
 			icon: IoLinkOutline,
 			title: t("popup.links"),
-			data: <Links />
-		}
+			data: <Links />,
+		},
 	];
 
 	return (

@@ -8,7 +8,10 @@ import { version } from "../package.json";
 
 const manifest = defineManifest(async (env) => ({
 	manifest_version: 3,
-	name: env.mode === "development" ? "__MSG_extensionNameDev__" : "__MSG_extensionName__",
+	name:
+		env.mode === "development"
+			? "__MSG_extensionNameDev__"
+			: "__MSG_extensionName__",
 	description: "__MSG_extensionDescription__",
 	version,
 	default_locale: "en",

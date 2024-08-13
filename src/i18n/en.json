@@ -1,40 +1,40 @@
 {
-  "content": {
-    "setting": {
-      "header": {
-        "preset": "Preset",
-        "setting": "Setting"
-      },
-      "alwaysOnDisplay": "Always on Display",
-      "chatOnlyDisplay": "Chat Only Display",
-      "userNameDisplay": "User Name Display",
-      "userIconDisplay": "User Icon Display",
-      "reactionButtonDisplay": "Reaction Button Display",
-      "superChatBarDisplay": "Super Chat Bar Display",
-      "backgroundColor": "Background Color",
-      "fontColor": "Font Color",
-      "fontFamily": "Font Family",
-      "fontSize": "Font Size",
-      "blur": "Blur",
-      "space": "Space",
-      "footer": "For instructions, click this ",
-      "help": "help"
-    },
-    "preset": {
-      "addMessage": "Add current setting",
-      "addItemTitle": "Untitled",
-      "defaultTitle": "Default",
-      "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "Do you really want to delete it?",
-      "delete": "Delete",
-      "cancel": "Cancel"
-    }
-  },
-  "popup": {
-    "language": "Language Setting",
-    "showChatOnFullscreen": "Show Chat on Fullscreen",
-    "emojiCopy": "Allows copying of Youtube emojis",
-    "links": "Links"
-  }
+	"content": {
+		"setting": {
+			"header": {
+				"preset": "Preset",
+				"setting": "Setting"
+			},
+			"alwaysOnDisplay": "Always on Display",
+			"chatOnlyDisplay": "Chat Only Display",
+			"userNameDisplay": "User Name Display",
+			"userIconDisplay": "User Icon Display",
+			"reactionButtonDisplay": "Reaction Button Display",
+			"superChatBarDisplay": "Super Chat Bar Display",
+			"backgroundColor": "Background Color",
+			"fontColor": "Font Color",
+			"fontFamily": "Font Family",
+			"fontSize": "Font Size",
+			"blur": "Blur",
+			"space": "Space",
+			"footer": "For instructions, click this ",
+			"help": "help"
+		},
+		"preset": {
+			"addMessage": "Add current setting",
+			"addItemTitle": "Untitled",
+			"defaultTitle": "Default",
+			"transparentTitle": "Transparent",
+			"simpleTitle": "Simple",
+			"deleteConfirmationMessage": "Do you really want to delete it?",
+			"delete": "Delete",
+			"cancel": "Cancel"
+		}
+	},
+	"popup": {
+		"language": "Language Setting",
+		"showChatOnFullscreen": "Show Chat on Fullscreen",
+		"emojiCopy": "Allows copying of Youtube emojis",
+		"links": "Links"
+	}
 }
