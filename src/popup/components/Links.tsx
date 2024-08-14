@@ -18,7 +18,7 @@ export const Links = () => {
 				<img
 					src="/images/extension_128.png"
 					alt="extension icon"
-					style={{ width: 26, height: 26 }}
+					style={{ width: 24, height: 24 }}
 				/>
 			</a>
 			<a
@@ -26,14 +26,14 @@ export const Links = () => {
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<IoLogoGithub size={28} style={{ color: "black" }} />
+				<IoLogoGithub size={26} style={{ color: "black" }} />
 			</a>
 			<a
 				href="https://www.producthunt.com/products/youtube-live-chat-fullscreen"
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				<FaProductHunt size={28} style={{ color: "#D9552E" }} />
+				<FaProductHunt size={26} style={{ color: "#D9552E" }} />
 			</a>
 		</div>
 	);
