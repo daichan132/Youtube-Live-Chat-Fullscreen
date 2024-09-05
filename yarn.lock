@@ -2174,13 +2174,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"emoji-regex@npm:^10.4.0":
-  version: 10.4.0
-  resolution: "emoji-regex@npm:10.4.0"
-  checksum: 10c0/a3fcedfc58bfcce21a05a5f36a529d81e88d602100145fcca3dc6f795e3c8acc4fc18fe773fbf9b6d6e9371205edb3afa2668ec3473fa2aa7fd47d2a9d46482d
-  languageName: node
-  linkType: hard
-
 "emoji-regex@npm:^8.0.0":
   version: 8.0.0
   resolution: "emoji-regex@npm:8.0.0"
@@ -5425,7 +5418,6 @@ __metadata:
     autoprefixer: "npm:^10.4.20"
     classnames: "npm:^2.5.1"
     css-declaration-sorter: "npm:^7.2.0"
-    emoji-regex: "npm:^10.4.0"
     fs-extra: "npm:^11.2.0"
     i18next: "npm:^23.14.0"
     i18next-browser-languagedetector: "npm:^8.0.0"

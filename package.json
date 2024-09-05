@@ -23,7 +23,6 @@
     "@dnd-kit/modifiers": "^7.0.0",
     "@dnd-kit/sortable": "^8.0.0",
     "classnames": "^2.5.1",
-    "emoji-regex": "^10.4.0",
     "i18next": "^23.14.0",
     "i18next-browser-languagedetector": "^8.0.0",
     "immer": "^10.1.1",
