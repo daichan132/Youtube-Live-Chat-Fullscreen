@@ -37,7 +37,6 @@ export const LanguageSelector = () => {
 				control: (baseStyles) => ({
 					...baseStyles,
 					fontSize: "14px",
-					padding: "0",
 					width: 180,
 					borderRadius: 4,
 				}),
@@ -56,6 +55,9 @@ export const LanguageSelector = () => {
 			)}
 			options={languageOptions}
 			onChange={changeLanguage}
+			components={{
+				IndicatorSeparator: () => null,
+			}}
 		/>
 	);
 };
