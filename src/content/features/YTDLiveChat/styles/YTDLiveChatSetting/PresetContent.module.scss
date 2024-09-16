@@ -3,7 +3,6 @@
   padding: 1rem 1.5rem;
 
   .preset-item {
-    border: 1px solid black;
     background-color: white;
     margin: 1rem 0.75rem;
     padding: 1rem 1rem;
@@ -12,12 +11,6 @@
     transition: background-color 200ms ease;
     position: relative;
     transition: scale 50ms ease;
-
-    &:hover .flex .leftContainer .dragIcon {
-      width: 20px;
-      padding: 0.5rem;
-      opacity: 1;
-    }
 
     &.dragging {
       z-index: 1;
@@ -38,17 +31,23 @@
         display: flex;
         align-items: center;
 
+        &:hover .dragIcon {
+          width: 20px;
+          padding: 0.5rem 0.25rem;
+          opacity: 1;
+        }
+
         .dragIcon {
           width: 0px;
           opacity: 0;
           cursor: grab;
           border-radius: 5px;
           padding: 0rem;
-          transition: background-color 200ms ease, width 200ms ease, opacity 200ms ease, padding 200ms ease;
+          transition: background-color 150ms ease, width 150ms ease, opacity 150ms ease, padding 150ms ease;
 
           &.dragging {
             width: 20px;
-            padding: 0.5rem;
+            padding: 0.5rem 0.25rem;
             opacity: 1;
             cursor: grabbing;
             background-color: rgba(0, 0, 0, 0.1);
@@ -68,8 +67,8 @@
           font-size: 14px;
           letter-spacing: 0.1rem;
           border: none;
-          padding: 0.3rem;
-          border-radius: 5px;
+          padding: 0.5rem;
+          border-radius: 4px;
           width: 15rem;
 
           &:focus {
