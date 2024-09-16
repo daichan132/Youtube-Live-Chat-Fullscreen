@@ -37,12 +37,18 @@ export const LanguageSelector = () => {
 				control: (baseStyles) => ({
 					...baseStyles,
 					fontSize: "14px",
-					padding: "0 0",
+					padding: "0",
 					width: 180,
+					borderRadius: 4,
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
 					fontSize: "14px",
+					borderRadius: 4,
+				}),
+				option: (baseStyles) => ({
+					...baseStyles,
+					padding: "8px 12px",
 				}),
 			}}
 			defaultValue={languageOptions.find(
