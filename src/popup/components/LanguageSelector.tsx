@@ -39,6 +39,7 @@ export const LanguageSelector = () => {
 					fontSize: "14px",
 					width: 180,
 					borderRadius: 4,
+					minHeight: "unset"
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
@@ -47,7 +48,11 @@ export const LanguageSelector = () => {
 				}),
 				option: (baseStyles) => ({
 					...baseStyles,
-					padding: "8px 12px",
+					padding: "6px 10px",
+				}),
+				dropdownIndicator: (baseStyles) => ({
+					...baseStyles,
+					padding: "7px 8px",
 				}),
 			}}
 			defaultValue={languageOptions.find(
