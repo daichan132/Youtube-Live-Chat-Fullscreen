@@ -19,6 +19,7 @@ export const Switch = (props: Props) => {
 					onChange(!checked);
 				}}
 			/>
+			{/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
 			<label className={styles.label} htmlFor={id} />
 		</div>
 	);

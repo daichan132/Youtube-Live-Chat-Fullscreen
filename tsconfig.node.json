@@ -7,7 +7,6 @@
   },
   "include": [
     "vite.config.ts",
-    // "./src/manifest.ts",
     "package.json",
     "tools"
   ]

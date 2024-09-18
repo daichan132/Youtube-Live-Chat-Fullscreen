@@ -39,7 +39,7 @@ export const LanguageSelector = () => {
 					fontSize: "14px",
 					width: 180,
 					borderRadius: 4,
-					minHeight: "unset"
+					minHeight: "unset",
 				}),
 				menu: (baseStyles) => ({
 					...baseStyles,
