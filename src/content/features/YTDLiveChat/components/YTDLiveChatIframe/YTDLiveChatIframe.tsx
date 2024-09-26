@@ -7,6 +7,7 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from "@/stores";
 import { useIframeLoader } from "../../hooks/YTDLiveChatIframe/useIframeLoader";
 import fade from "../../styles/YTDLiveChatIframe/Fade.module.scss";
 import styles from "../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss";
+import root from 'react-shadow';
 
 export const YTDLiveChatIframe = () => {
 	const { ref } = useIframeLoader();
@@ -27,7 +28,7 @@ export const YTDLiveChatIframe = () => {
 
 	return (
 		<>
-			<div
+			<root.div
 				style={{
 					opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
 					backdropFilter: `blur(${blur}px)`,

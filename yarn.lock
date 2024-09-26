@@ -2978,6 +2978,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"humps@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "humps@npm:2.0.1"
+  checksum: 10c0/554f3bb9de780ce833f0058f30536f87615bd75ead2008b98d900598379fe5dcd3300bdd9092d3e078d47b66fade82276974dda7151318b5de7a1d837c3abe6e
+  languageName: node
+  linkType: hard
+
 "hyphenate-style-name@npm:^1.0.3":
   version: 1.0.4
   resolution: "hyphenate-style-name@npm:1.0.4"
@@ -4349,6 +4356,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-shadow@npm:^20.5.0":
+  version: 20.5.0
+  resolution: "react-shadow@npm:20.5.0"
+  dependencies:
+    humps: "npm:^2.0.1"
+  peerDependencies:
+    prop-types: ^15.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/662c98518b2ba5a76534f8fdfcbb44414535cd92f4cb2f1e76142672ac1f29ddc0f730d2bf846972aeb1205e4c7ff8c978832d7cecce8faba82b7a60e2844d45
+  languageName: node
+  linkType: hard
+
 "react-transition-group@npm:^4.3.0, react-transition-group@npm:^4.4.5":
   version: 4.4.5
   resolution: "react-transition-group@npm:4.4.5"
@@ -5467,6 +5487,7 @@ __metadata:
     react-icons: "npm:^5.3.0"
     react-modal: "npm:^3.16.1"
     react-select: "npm:^5.8.1"
+    react-shadow: "npm:^20.5.0"
     react-transition-group: "npm:^4.4.5"
     react-use: "npm:^17.5.1"
     redux-persist-webextension-storage: "npm:^1.0.2"

@@ -71,6 +71,7 @@ export const useIframeLoader = () => {
 			iframeRef.current.src = iframeRef.current.contentDocument.location.href;
 		}
 		ref.current?.appendChild(iframeRef.current);
+		iframeRef.current.style.width = "100%";
 		iframeRef.current.style.height = "100%";
 		iframeRef.current.addEventListener("load", handleLoaded);
 		return () => {
