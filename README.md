@@ -17,6 +17,12 @@
 - 🖱️ **Flexible Positioning**: Drag and drop the chat window anywhere on your screen.
 - 🌐 **Multi-language Support**: Accessible to users worldwide with multiple languages.
 
+## 📸 Screenshots
+
+|            Fullscreen Chat             |           Style Customization            |         Multi-language Support         |
+| :------------------------------------: | :--------------------------------------: | :------------------------------------: |
+| <img src="./readme-img/image.png" width="300" alt="Chat in Fullscreen"> | <img src="./readme-img/image1.png" width="300" alt="Style Customization"> | <img src="./readme-img/image2.png" width="300" alt="Multi-language Support"> |
+
 ## 🎉 Getting Started
 
 ### 🔧 Requirements
