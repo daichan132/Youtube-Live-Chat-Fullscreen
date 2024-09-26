@@ -39,7 +39,7 @@ Before you begin, ensure you have the following software installed:
 Clone the repository and install the dependencies:
 
 ```bash
-git clone https://github.com/yourusername/Youtube-Live-Chat-Fullscreen.git
+git clone https://github.com/daichan132/Youtube-Live-Chat-Fullscreen.git
 cd Youtube-Live-Chat-Fullscreen
 yarn install
 ```
