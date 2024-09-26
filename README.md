@@ -12,14 +12,9 @@
 
 ## 🌟 Features
 
-### 🖥️ **Live Chat in Fullscreen Mode**
-<img src="./readme-img/image.png" width="500" alt="Chat in Fullscreen">
-
-### 🎨 **Customizable Appearance**
-<img src="./readme-img/image1.png" width="500" alt="Style Customization">
-
-### 🌍 **Multi-language Support**
-<img src="./readme-img/image2.png" width="500" alt="Multi-language Support">
+<img src="./readme-img/image.png" width="400" alt="Chat in Fullscreen">
+<img src="./readme-img/image1.png" width="400" alt="Style Customization">
+<img src="./readme-img/image2.png" width="400" alt="Multi-language Support">
 
 ## 🎉 Getting Started
 
