@@ -10,22 +10,22 @@
   ![](https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square)
 </div>
 
-## 🌟 Features
+## Features
 
 - 🎥 **Live Chat in Fullscreen**: Watch and chat without leaving fullscreen mode.
 - 🎨 **Customizable Appearance**: Adjust font size, colors, and transparency to your liking.
 - 🖱️ **Flexible Positioning**: Drag and drop the chat window anywhere on your screen.
 - 🌐 **Multi-language Support**: Accessible to users worldwide with multiple languages.
 
-## 📸 Screenshots
+## Screenshots
 
 |            Fullscreen Chat             |           Style Customization            |         Multi-language Support         |
 | :------------------------------------: | :--------------------------------------: | :------------------------------------: |
 | <img src="./readme-img/image.png" width="300" alt="Chat in Fullscreen"> | <img src="./readme-img/image1.png" width="300" alt="Style Customization"> | <img src="./readme-img/image2.png" width="300" alt="Multi-language Support"> |
 
-## 🎉 Getting Started
+## Getting Started
 
-### 🔧 Requirements
+### Requirements
 
 Before you begin, ensure you have the following software installed:
 
@@ -34,7 +34,7 @@ Before you begin, ensure you have the following software installed:
 
 > **Note**: If Yarn is not installed, run `npm install -g yarn` to install it globally.
 
-### 📥 Installation
+### Installation
 
 Clone the repository and install the dependencies:
 
@@ -44,7 +44,7 @@ cd Youtube-Live-Chat-Fullscreen
 yarn install
 ```
 
-### 🔌 Loading the Extension
+### Loading the Extension
 
 **🚀 Chrome (Chromium, Manifest V3)**
 
@@ -60,10 +60,10 @@ yarn install
 3. Click **Load Temporary Add-on...**.
 4. Select any file in the `dist-firefox-v2` directory.
 
-## 📄 License
+## License
 
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for more details.
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
