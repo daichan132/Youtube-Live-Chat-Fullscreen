@@ -10,15 +10,6 @@
   ![](https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square)
 </div>
 
-- [🌟 Features](#-features)
-- [📸 Screenshots](#-screenshots)
-- [🎉 Getting Started](#-getting-started)
-  - [🔧 Requirements](#-requirements)
-  - [📥 Installation](#-installation)
-  - [🔌 Loading the Extension](#-loading-the-extension)
-- [📄 License](#-license)
-- [🤝 Contributing](#-contributing)
-
 ## 🌟 Features
 
 - 🎥 **Live Chat in Fullscreen**: Watch and chat without leaving fullscreen mode.
