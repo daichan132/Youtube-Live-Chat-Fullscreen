@@ -12,16 +12,14 @@
 
 ## 🌟 Features
 
-- **Live Chat in Fullscreen**: Watch and chat without leaving fullscreen mode.
-- **Customizable Appearance**: Adjust font size, colors, and transparency to your liking.
-- **Flexible Positioning**: Drag and drop the chat window anywhere on your screen.
-- **Multi-language Support**: Accessible to users worldwide with multiple languages.
+### 🖥️ **Live Chat in Fullscreen Mode**
+<img src="./readme-img/image.png" width="500" alt="Chat in Fullscreen">
 
-## 📸 Screenshots
+### 🎨 **Customizable Appearance**
+<img src="./readme-img/image1.png" width="500" alt="Style Customization">
 
-|            Fullscreen Chat             |           Style Customization            |         Multi-language Support         |
-| :------------------------------------: | :--------------------------------------: | :------------------------------------: |
-| <img src="./readme-img/image.png" width="300" alt="Chat in Fullscreen"> | <img src="./readme-img/image1.png" width="300" alt="Style Customization"> | <img src="./readme-img/image2.png" width="300" alt="Multi-language Support"> |
+### 🌍 **Multi-language Support**
+<img src="./readme-img/image2.png" width="500" alt="Multi-language Support">
 
 ## 🎉 Getting Started
 
