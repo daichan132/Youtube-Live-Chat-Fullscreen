@@ -8,6 +8,7 @@
   "include": [
     "vite.config.ts",
     "package.json",
-    "tools"
+    "tools",
+    "./src/manifest.ts"
   ]
 }

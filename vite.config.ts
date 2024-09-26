@@ -29,6 +29,10 @@ export default defineConfig({
 	},
 	plugins: [react(), crx({ manifest }), tsconfigPaths()],
 	css: {
-		devSourcemap: true,
+		preprocessorOptions: {
+			scss: {
+				api: "modern-compiler",
+			},
+		},
 	},
 });
