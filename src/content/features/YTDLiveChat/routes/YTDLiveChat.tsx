@@ -32,6 +32,7 @@ export const YTDLiveChat = () => {
 						ref={nodeRef}
 						onMouseEnter={() => setIsHover(true)}
 						onMouseLeave={() => setIsHover(false)}
+						style={{ position: "relative", "zIndex": "1000000" }}
 					>
 						<DisplayEffect />
 						<WindowResizeEffect />

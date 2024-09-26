@@ -6,7 +6,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from "@/stores";
 import { useIframeLoader } from "../../hooks/YTDLiveChatIframe/useIframeLoader";
 import fade from "../../styles/YTDLiveChatIframe/Fade.module.scss";
-import styles from "../../styles/YTDLiveChatIframe/YTDLiveChatIframe.module.scss";
+import styles from "../../styles/YTDLiveChatIframe/Loader.module.scss";
 
 export const YTDLiveChatIframe = () => {
 	const { ref } = useIframeLoader();
@@ -30,12 +30,11 @@ export const YTDLiveChatIframe = () => {
 			<div
 				style={{
 					opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
-					backdropFilter: `blur(${blur}px)`,
+					backdropFilter: isIframeLoaded ? `blur(${blur}px)` : "none",
 					width: "100%",
 					height: "100%",
 					overflow: "hidden",
 					borderRadius: "10px",
-					transition: "opacity 300ms ease",
 				}}
 				id="live-chat-iframe-wrapper"
 				ref={ref}
@@ -43,18 +42,27 @@ export const YTDLiveChatIframe = () => {
 			<CSSTransition
 				nodeRef={nodeRef}
 				in={!isIframeLoaded}
-				timeout={100}
+				timeout={300}
 				classNames={fade}
+				delay={300}
 				unmountOnExit
 			>
 				<div
-					className={styles.skelton}
 					ref={nodeRef}
 					style={{
+						width: "100%",
+						height: "100%",
+						position: "absolute",
+						top: 0,
 						backdropFilter: `blur(${blur}px)`,
 						backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
+						display: "flex",
+						justifyContent: "center",
+						alignItems: "center",
 					}}
-				/>
+				>
+					<div className={styles.loader} />
+				</div>
 			</CSSTransition>
 		</>
 	);
