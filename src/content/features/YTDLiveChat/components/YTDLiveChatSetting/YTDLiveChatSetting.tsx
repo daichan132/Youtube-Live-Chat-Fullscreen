@@ -15,6 +15,7 @@ import { SettingContent } from "./SettingContent";
 const customStyles = {
 	overlay: {
 		backgroundColor: "rgba(0, 0, 0, 0)",
+		zIndex: 1000000,
 	},
 	content: {
 		top: "50%",
@@ -26,7 +27,6 @@ const customStyles = {
 		padding: 0,
 		outline: "none",
 		border: "none",
-		zIndex: 10,
 		backgroundColor: "transparent",
 		overflow: "none",
 	},
