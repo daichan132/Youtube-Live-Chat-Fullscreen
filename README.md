@@ -3,7 +3,6 @@
     <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128"/>
   </a>
   <h1>YouTube Live Chat Fullscreen</h1>
-  <p><strong>Enhance your YouTube Live experience by bringing the chat into fullscreen mode!</strong></p>
 
   ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
   ![](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -16,8 +15,9 @@
 - [📸 Screenshots](#-screenshots)
 - [🛠️ Built With](#️-built-with)
 - [🎉 Getting Started](#-getting-started)
-  - [📋 Prerequisites](#-prerequisites)
-  - [🔌 Load the Extension](#-load-the-extension)
+  - [🔧 Requirements](#-requirements)
+  - [📥 Installation](#-installation)
+  - [🔌 Loading the Extension](#-loading-the-extension)
     - [🚀 Chrome (Chromium, Manifest V3)](#-chrome-chromium-manifest-v3)
     - [🦊 Firefox (Manifest V2)](#-firefox-manifest-v2)
 - [📜 Available Scripts](#-available-scripts)
@@ -27,14 +27,14 @@
 
 ## 🚀 Overview
 
-**YouTube Live Chat Fullscreen** is a browser extension designed to enhance your YouTube Live experience by bringing the live chat into fullscreen mode. With this extension, you can watch YouTube Live videos in fullscreen while simultaneously viewing and interacting with the live chat.
+**YouTube Live Chat Fullscreen** lets you watch YouTube Live videos in fullscreen while keeping the live chat visible and interactive. Enhance your viewing experience by integrating the live chat into fullscreen mode.
 
 ## 🌟 Features
 
-- 🎥 **Live Chat in Fullscreen**: Seamlessly integrate YouTube Live chat into fullscreen videos, allowing you to watch and chat simultaneously without any interruptions.
-- 🎨 **Customizable Appearance**: Personalize the chat window's appearance, including font size, colors, and transparency, to suit your preferences.
-- 🖱️ **Flexible Positioning**: Easily drag and drop the chat window to any position on your screen for optimal viewing.
-- 🌐 **Multi-language Support**: Supports multiple languages, making it accessible to users worldwide.
+- 🎥 **Live Chat in Fullscreen**: Watch and chat without leaving fullscreen mode.
+- 🎨 **Customizable Appearance**: Adjust font size, colors, and transparency to your liking.
+- 🖱️ **Flexible Positioning**: Drag and drop the chat window anywhere on your screen.
+- 🌐 **Multi-language Support**: Accessible to users worldwide with multiple languages.
 
 ## 📸 Screenshots
 
@@ -54,19 +54,20 @@
 - **i18next**: Internationalization framework.
 - **Biome**: Code formatting and linting tool.
 - **Lefthook**: Git hooks management.
-
 ## 🎉 Getting Started
 
-### 📋 Prerequisites
+### 🔧 Requirements
 
-Ensure you have the following installed:
+Before you begin, ensure you have the following software installed:
 
-- **[Node.js](https://nodejs.org)** (v22.x or later)
+- **[Node.js](https://nodejs.org)** (v22.x)
 - **[Yarn](https://yarnpkg.com)**
 
-> **Note**: If you don't have Yarn installed, run `npm install -g yarn`.
+> **Note**: If Yarn is not installed, run `npm install -g yarn` to install it globally.
 
-**📥 Installation**: Clone the repository and install dependencies:
+### 📥 Installation
+
+Clone the repository and install the dependencies:
 
 ```bash
 git clone https://github.com/yourusername/Youtube-Live-Chat-Fullscreen.git
@@ -74,17 +75,7 @@ cd Youtube-Live-Chat-Fullscreen
 yarn install
 ```
 
-**🛠️ Development**:  Start the development server with live reloading:
-```bash
-yarn dev
-```
-
-**📦 Production Build**: Build the extension for production:
-```bash
-yarn build
-```
-
-### 🔌 Load the Extension
+### 🔌 Loading the Extension
 
 #### 🚀 Chrome (Chromium, Manifest V3)
 
@@ -102,8 +93,10 @@ yarn build
 
 ## 📜 Available Scripts
 
-In addition to the development and build scripts mentioned above, you can run the following scripts:
+You can run the following scripts:
 
+- `yarn dev`: Starts the development server with live reloading.
+- `yarn build`: Builds the extension for production.
 - `yarn clean`: Removes the `dist` and `dist-firefox-v2` folders.
 - `yarn format`: Formats the code using Biome.
 - `yarn lint`: Lints the code and performs type-checking.
@@ -126,5 +119,3 @@ This project utilizes third-party libraries and components, each subject to thei
 ## 🤝 Contributing
 
 Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
-
-Enjoy a seamless YouTube Live experience with chat in fullscreen! If you find this extension helpful, please consider giving it a star ⭐ on [GitHub](https://github.com/yourusername/Youtube-Live-Chat-Fullscreen).
