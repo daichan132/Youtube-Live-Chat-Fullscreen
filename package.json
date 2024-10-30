@@ -1,7 +1,7 @@
 {
   "name": "youtube-live-chat-fullscreen",
   "private": true,
-  "version": "2.0.24",
+  "version": "2.0.25",
   "type": "module",
   "scripts": {
     "dev": "run-s clean && run-p dev:scss vite",
