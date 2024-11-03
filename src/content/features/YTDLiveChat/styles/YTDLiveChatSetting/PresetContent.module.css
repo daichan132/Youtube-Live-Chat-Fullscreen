@@ -1,0 +1,129 @@
+.content-preset-container {
+	min-height: 318px;
+	padding: 1rem 1.5rem;
+}
+.content-preset-container .preset-item {
+	background-color: white;
+	margin: 1rem 0.75rem;
+	padding: 1rem 1rem;
+	border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	transition: background-color 200ms ease;
+	position: relative;
+	transition: scale 50ms ease;
+}
+.content-preset-container .preset-item.dragging {
+	z-index: 1;
+	cursor: grabbing;
+	scale: 1.02;
+}
+.content-preset-container .preset-item.dragging * {
+	cursor: grabbing;
+}
+.content-preset-container .preset-item .flex {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.content-preset-container .preset-item .flex .leftContainer {
+	display: flex;
+	align-items: center;
+}
+.content-preset-container .preset-item .flex .leftContainer:hover .dragIcon {
+	width: 20px;
+	padding: 0.5rem 0.25rem;
+	opacity: 1;
+}
+.content-preset-container .preset-item .flex .leftContainer .dragIcon {
+	width: 0px;
+	opacity: 0;
+	cursor: grab;
+	border-radius: 5px;
+	padding: 0rem;
+	transition: background-color 150ms ease, width 150ms ease, opacity 150ms ease,
+		padding 150ms ease;
+}
+.content-preset-container .preset-item .flex .leftContainer .dragIcon.dragging {
+	width: 20px;
+	padding: 0.5rem 0.25rem;
+	opacity: 1;
+	cursor: grabbing;
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .preset-item .flex .leftContainer .dragIcon:focus {
+	outline: none;
+}
+.content-preset-container .preset-item .flex .leftContainer .dragIcon:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .preset-item .flex .leftContainer .title {
+	margin-left: 0.5rem;
+	font-size: 14px;
+	letter-spacing: 0.1rem;
+	border: none;
+	padding: 0.5rem;
+	border-radius: 4px;
+	width: 15rem;
+}
+.content-preset-container .preset-item .flex .leftContainer .title:focus {
+	outline: solid 1px rgba(0, 0, 0, 0.2);
+}
+.content-preset-container .preset-item .flex .rightContainer {
+	transition: opacity 200ms ease;
+}
+.content-preset-container .preset-item .flex .rightContainer > svg {
+	padding: 0.5rem;
+	border-radius: 5px;
+	transition: background-color 200ms ease;
+	margin-left: 0.25rem;
+	margin-right: 0.25rem;
+	cursor: pointer;
+}
+.content-preset-container .preset-item .flex .rightContainer > svg:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .preset-item .flex .rightContainer .applyStyleButton {
+	transition: color 200ms ease, background-color 200ms ease;
+}
+.content-preset-container
+	.preset-item
+	.flex
+	.rightContainer
+	.applyStyleButton:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .preset-item .flex .rightContainer .deleteButton {
+	transition: color 200ms ease, background-color 200ms ease;
+}
+.content-preset-container
+	.preset-item
+	.flex
+	.rightContainer
+	.deleteButton:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .add-preset-item {
+	border: 1px solid black;
+	background-color: white;
+	margin: 10px;
+	padding: 1.25rem 1rem;
+	border-radius: 5px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	transition: background-color 200ms ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	font-size: 14px;
+}
+.content-preset-container .add-preset-item.disable {
+	background-color: rgba(0, 0, 0, 0.1);
+	opacity: 0.35;
+	cursor: not-allowed;
+}
+.content-preset-container .add-preset-item:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.content-preset-container .add-preset-item > svg {
+	margin-right: 0.5rem;
+}

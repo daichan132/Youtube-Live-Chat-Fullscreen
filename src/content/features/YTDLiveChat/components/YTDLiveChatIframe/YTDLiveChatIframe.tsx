@@ -5,8 +5,8 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from "@/stores";
 import { useIframeLoader } from "../../hooks/YTDLiveChatIframe/useIframeLoader";
-import fade from "../../styles/YTDLiveChatIframe/Fade.module.scss";
-import styles from "../../styles/YTDLiveChatIframe/Loader.module.scss";
+import fade from "../../styles/YTDLiveChatIframe/Fade.module.css";
+import styles from "../../styles/YTDLiveChatIframe/Loader.module.css";
 
 export const YTDLiveChatIframe = () => {
 	const { ref } = useIframeLoader();

@@ -10,7 +10,7 @@ import { useYTDLiveChatNoLsStore } from "@/stores/ytdLiveChatNoLsStore";
 import useYTDLiveChatStore from "@/stores/ytdLiveChatStore";
 import { useDisanleTopTransition } from "../../hooks/Draggable/useDisanleTopTransition";
 import { useIconDisplay } from "../../hooks/Draggable/useIconDisplay";
-import styles from "../../styles/Draggable/DraggableItem.module.scss";
+import styles from "../../styles/Draggable/DraggableItem.module.css";
 import { ClipPathEffect } from "../EffectComponent/ClipPathEffect";
 import { HoverEffect } from "../EffectComponent/HoverEffect";
 

@@ -1,6 +1,6 @@
 import React, { forwardRef } from "react";
 
-import styles from "../styles/Slider.module.scss";
+import styles from "../styles/Slider.module.css";
 
 interface SliderProps {
 	value: number;

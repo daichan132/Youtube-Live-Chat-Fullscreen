@@ -1,0 +1,64 @@
+body {
+	margin: 0px;
+}
+
+.settings {
+	display: flex;
+	flex-direction: column;
+	width: 450px;
+}
+.settings .content {
+	flex-grow: 1;
+	font-size: 1.25rem;
+	background-color: #f9f9f9;
+}
+.settings .content .content-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.85rem 1rem;
+	opacity: 1;
+	transition: height 200ms ease, padding 200ms ease, opacity 200ms ease;
+}
+.settings .content .content-item.disable {
+	height: 0px;
+	padding: 0px 20px;
+	opacity: 0;
+	pointer-events: none;
+}
+.settings .content .content-item .title {
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+}
+.settings .content .content-item .title-with-icon {
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+}
+.settings .content .content-item .title-with-icon > svg {
+	margin-right: 10px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	color: #333;
+	padding: 3px;
+	border-radius: 5px;
+	background-color: white;
+	padding: 6px;
+}
+.settings .content hr {
+	border: none;
+	height: 1px;
+	background-color: rgba(0, 0, 0, 0.1);
+	margin: 0 20px;
+}
+.settings .content .footer {
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	padding: 0.85rem 1rem;
+	display: flex;
+	justify-content: flex-end;
+	background-color: #fff;
+	font-size: 14px;
+}
+.settings .content .footer .help > a {
+	color: #333333;
+}

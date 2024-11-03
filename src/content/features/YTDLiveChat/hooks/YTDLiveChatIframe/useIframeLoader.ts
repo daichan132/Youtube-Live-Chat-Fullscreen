@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from "@/stores";
-import iframeStyles from "../../styles/YTDLiveChatIframe/iframe.scss?inline";
+import iframeStyles from "../../styles/YTDLiveChatIframe/iframe.css?inline";
 
 import { useChangeYLCStyle } from "./useChangeYLCStyle";
 

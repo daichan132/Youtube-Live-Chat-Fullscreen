@@ -17,7 +17,7 @@ import {
 	RiUserLine,
 } from "react-icons/ri";
 
-import styles from "../../../styles/YTDLiveChatSetting/SettingContent.module.scss";
+import styles from "../../../styles/YTDLiveChatSetting/SettingContent.module.css";
 import { AlwaysOnDisplaySwitchUI } from "../YLCChangeItems/AlwaysOnDisplaySwitch";
 import { BgColorPickerUI } from "../YLCChangeItems/BgColorPicker";
 import { BlurSliderUI, BlurToSliderValue } from "../YLCChangeItems/BlurSlider";

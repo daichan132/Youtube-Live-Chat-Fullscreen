@@ -8,7 +8,7 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useYTDLiveChatStore } from "@/stores";
 import { useYLCBgColorChange } from "../../../hooks/YTDLiveChatSetting/useYLCBgColorChange";
-import styles from "../../../styles/YTDLiveChatSetting/CustomColorPicker.module.scss";
+import styles from "../../../styles/YTDLiveChatSetting/CustomColorPicker.module.css";
 
 import type { ColorResult, RGBColor } from "react-color";
 

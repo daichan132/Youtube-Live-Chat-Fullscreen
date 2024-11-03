@@ -10,7 +10,7 @@ import { WindowResizeEffect } from "../components/EffectComponent/WindowResizeEf
 import { YTDLiveChatIframe } from "../components/YTDLiveChatIframe/YTDLiveChatIframe";
 import { YTDLiveChatSetting } from "../components/YTDLiveChatSetting/YTDLiveChatSetting";
 import { useIsShow } from "../hooks/useIsShow";
-import fade from "../styles/Fade.module.scss";
+import fade from "../styles/Fade.module.css";
 
 export const YTDLiveChat = () => {
 	const { isFullscreen, isShow } = useIsShow();
@@ -32,7 +32,7 @@ export const YTDLiveChat = () => {
 						ref={nodeRef}
 						onMouseEnter={() => setIsHover(true)}
 						onMouseLeave={() => setIsHover(false)}
-						style={{ position: "relative", "zIndex": "1000000" }}
+						style={{ position: "relative", zIndex: "1000000" }}
 					>
 						<DisplayEffect />
 						<WindowResizeEffect />

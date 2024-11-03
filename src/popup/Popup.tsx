@@ -6,7 +6,7 @@ import { IoChatboxOutline, IoLanguage, IoLinkOutline } from "react-icons/io5";
 
 import { LanguageSelector } from "./components/LanguageSelector";
 import { YTDLiveChatSwitch } from "./components/YTDLiveChatSwitch";
-import styles from "./styles/Popup.module.scss";
+import styles from "./styles/Popup.module.css";
 
 import type { IconType } from "react-icons";
 import { Links } from "./components/Links";

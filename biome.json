@@ -8,9 +8,9 @@
     "rules": {
       "recommended": true
     },
-    "ignore": ["./src/**/*.scss.d.ts"]
+    "ignore": ["./src/**/*.css.d.ts"]
   },
   "formatter": {
-    "ignore": ["./src/**/*.scss.d.ts"]
+    "ignore": ["./src/**/*.css.d.ts"]
   }
 }

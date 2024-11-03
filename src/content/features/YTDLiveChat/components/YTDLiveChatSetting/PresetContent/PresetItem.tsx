@@ -12,8 +12,8 @@ import { useShallow } from "zustand/react/shallow";
 
 import { useYTDLiveChatStore } from "@/stores";
 import { useChangeYLCStyle } from "../../../hooks/YTDLiveChatIframe/useChangeYLCStyle";
-import modalStyles from "../../../styles/YTDLiveChatSetting/DeleteConfirmationModal.module.scss";
-import styles from "../../../styles/YTDLiveChatSetting/PresetContent.module.scss";
+import modalStyles from "../../../styles/YTDLiveChatSetting/DeleteConfirmationModal.module.css";
+import styles from "../../../styles/YTDLiveChatSetting/PresetContent.module.css";
 
 import type { YLCStyleType } from "../../../../../../types/ytdLiveChatType";
 

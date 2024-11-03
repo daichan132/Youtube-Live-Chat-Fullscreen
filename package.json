@@ -4,9 +4,8 @@
   "version": "2.0.25",
   "type": "module",
   "scripts": {
-    "dev": "run-s clean && run-p dev:scss vite",
+    "dev": "run-s clean && vite",
     "vite": "vite",
-    "dev:scss": "typed-scss-modules src  --watch",
     "build": "run-s clean && tsc && vite build && run-s firefox-mv2-build && run-s zip",
     "zip": "rm -f dist.zip && zip -r dist.zip dist && rm -f dist-firefox-v2.zip && cd dist-firefox-v2 && zip -r ../dist-firefox-v2.zip . && cd ..",
     "firefox-mv2-build": "node tools/unstable_mv3ToMv2Build.js",
@@ -60,18 +59,14 @@
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/parser": "^8.12.2",
     "@vitejs/plugin-react": "^4.3.3",
-    "autoprefixer": "^10.4.20",
-    "css-declaration-sorter": "^7.2.0",
     "fs-extra": "^11.2.0",
     "identity-obj-proxy": "^3.0.0",
     "lefthook": "^1.8.2",
     "npm-run-all2": "^7.0.1",
-    "postcss": "^8.4.47",
     "rimraf": "^6.0.1",
-    "sass": "^1.80.6",
-    "typed-scss-modules": "^8.0.1",
     "typescript": "5.6.3",
-    "vite": "^5.4.10"
+    "vite": "^5.4.10",
+    "vite-css-modules": "^1.5.2"
   },
   "packageManager": "yarn@4.5.1",
   "browserslist": [

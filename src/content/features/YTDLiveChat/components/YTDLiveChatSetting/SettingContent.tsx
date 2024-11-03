@@ -18,7 +18,7 @@ import {
 import { useShallow } from "zustand/react/shallow";
 
 import { useYTDLiveChatStore } from "@/stores";
-import styles from "../../styles/YTDLiveChatSetting/SettingContent.module.scss";
+import styles from "../../styles/YTDLiveChatSetting/SettingContent.module.css";
 
 import { AlwaysOnDisplaySwitch } from "./YLCChangeItems/AlwaysOnDisplaySwitch";
 import { BgColorPicker } from "./YLCChangeItems/BgColorPicker";
