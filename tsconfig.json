@@ -27,7 +27,11 @@
 			"@/*": [
 				"./src/*"
 			]
-		}
+		},
+		"rootDirs": [
+			".",
+			"__generated__/typed-scss-modules"
+		],
 	},
 	"include": [
 		"src"

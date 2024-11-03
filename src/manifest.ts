@@ -48,6 +48,15 @@ const manifest = defineManifest(async (env) => ({
 		"48": "images/extension_48.png",
 		"128": "images/extension_128.png",
 	},
+	commands: {
+		"toggle-chat-fullscreen": {
+			suggested_key: {
+				default: "Ctrl+Shift+Y",
+				mac: "Command+Shift+Y",
+			},
+			description: "Toggle Show Chat on Fullscreen",
+		},
+	},
 	permissions: ["activeTab", "storage"],
 }));
 

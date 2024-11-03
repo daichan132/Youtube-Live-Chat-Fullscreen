@@ -6,9 +6,9 @@ import { defineConfig } from "vite";
 
 import tsconfigPaths from "vite-tsconfig-paths";
 import manifest from "./src/manifest";
+import { patchCssModules } from "vite-css-modules";
 
 export default defineConfig({
-	// @see https://github.com/crxjs/chrome-extension-tools/issues/696
 	server: {
 		port: 5173,
 		strictPort: true,
@@ -20,6 +20,7 @@ export default defineConfig({
 	root: resolve(__dirname, "src"),
 	publicDir: resolve(__dirname, "public"),
 	build: {
+		target: "es2022",
 		outDir: resolve(__dirname, "dist"),
 		rollupOptions: {
 			output: {
@@ -27,7 +28,7 @@ export default defineConfig({
 			},
 		},
 	},
-	plugins: [react(), crx({ manifest }), tsconfigPaths()],
+	plugins: [react(), crx({ manifest }), tsconfigPaths(), patchCssModules()],
 	css: {
 		preprocessorOptions: {
 			scss: {
