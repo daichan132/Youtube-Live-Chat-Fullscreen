@@ -6,7 +6,6 @@ import { defineConfig } from "vite";
 
 import tsconfigPaths from "vite-tsconfig-paths";
 import manifest from "./src/manifest";
-import { patchCssModules } from "vite-css-modules";
 
 export default defineConfig({
 	server: {
@@ -28,7 +27,7 @@ export default defineConfig({
 			},
 		},
 	},
-	plugins: [react(), crx({ manifest }), tsconfigPaths(), patchCssModules()],
+	plugins: [react(), crx({ manifest }), tsconfigPaths()],
 	css: {
 		preprocessorOptions: {
 			scss: {
