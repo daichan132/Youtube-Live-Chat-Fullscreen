@@ -1,13 +1,13 @@
 <div align="center">
-  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128"/>
-  </a>
-  <h1>YouTube Live Chat Fullscreen</h1>
 
-  ![](https://img.shields.io/badge/React-61DAFB?style=flat-square&logo=react&logoColor=black)
-  ![](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
-  ![](https://img.shields.io/badge/Vite-646CFF?style=flat-square&logo=vite&logoColor=white)
-  ![](https://img.shields.io/badge/License-GPL--3.0-blue?style=flat-square)
+  <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128" style="margin-bottom: 10px;" />
+
+  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white&color=f0494b"/>
+  </a>
+  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser&logoColor=white&color=f0494b"/>
+  </a>
 </div>
 
 ## 🌟 Features
