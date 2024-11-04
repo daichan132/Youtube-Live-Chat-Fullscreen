@@ -4,11 +4,11 @@ import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore } from '@/stores'
-import fade from './Fade.module.css'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useIsShow } from './hooks/useIsShow'
+import fade from './styles/Fade.module.css'
 
 export const YTDLiveChat = () => {
   const { isFullscreen, isShow } = useIsShow()

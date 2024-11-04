@@ -2,8 +2,8 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
+import { Switch } from '@/shared/components/Switch'
 import { useGlobalSettingStore } from '@/stores'
-import { Switch } from '../../shared/components/Switch'
 
 export const YTDLiveChatSwitch = () => {
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(

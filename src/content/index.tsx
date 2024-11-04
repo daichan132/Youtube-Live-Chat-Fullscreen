@@ -2,7 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import Content from './Content'
-import './index.css'
+import './styles/index.css'
 import '../i18n/config'
 
 const contentRoot = document.createElement('div')
