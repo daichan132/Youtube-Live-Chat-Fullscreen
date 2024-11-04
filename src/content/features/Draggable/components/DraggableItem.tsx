@@ -17,6 +17,7 @@ import { HoverEffect } from './EffectComponent/HoverEffect'
 import { DragIcon } from './DragIcon'
 import { SettingIcon } from './SettingIcon'
 
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { NumberSize } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 
@@ -81,8 +82,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       <HoverEffect isDragging={isDragging} />
       <Resizable
         size={size}
-        minWidth={300}
-        minHeight={350}
+        minWidth={ResizableMinWidth}
+        minHeight={ResizableMinHeight}
         className={styles.Resizable}
         onResizeStop={(_event, _direction, _ref, d) => {
           setResiziging(false)
@@ -106,9 +107,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         style={{
           top,
           left,
-          transition: `${!disableTopTransition && 'top 250ms ease'}, ${
-            !isResizing && 'height 250ms ease'
-          }`,
+          transition: `${!disableTopTransition && 'top 250ms ease'}, ${!isResizing && 'height 250ms ease'}`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
       >

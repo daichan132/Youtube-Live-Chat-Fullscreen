@@ -6,6 +6,7 @@ import { immer } from 'zustand/middleware/immer'
 import i18n from '../i18n/config'
 import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils'
 
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { Coordinates } from '@dnd-kit/core/dist/types'
 import type { YLCStyleType, YLCStyleUpdateType, sizeType } from '../types/ytdLiveChatType'
 type YTDLiveChatStoreState = {
@@ -74,8 +75,8 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         setSize: size => {
           set(() => ({
             size: {
-              width: size.width < 300 ? 300 : size.width,
-              height: size.height < 350 ? 350 : size.height,
+              width: size.width < ResizableMinWidth ? ResizableMinWidth : size.width,
+              height: size.height < ResizableMinHeight ? ResizableMinHeight : size.height,
             },
           }))
         },
