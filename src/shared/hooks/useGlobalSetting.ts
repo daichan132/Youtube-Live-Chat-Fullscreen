@@ -12,7 +12,6 @@ export const useGlobalSetting = () => {
   const handleMessage = (request: {
     message: string
     ytdLiveChat?: boolean
-    emojiCopy?: boolean
     language?: string
   }) => {
     if (request.message === 'ytdLiveChat') {
