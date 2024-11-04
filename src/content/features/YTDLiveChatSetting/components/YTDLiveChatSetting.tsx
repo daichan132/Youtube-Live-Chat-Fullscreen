@@ -6,7 +6,7 @@ import { RiCloseLine } from 'react-icons/ri'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatNoLsStore } from '@/stores'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import styles from '../styles/YTDLiveChatSetting.module.css'
 
 import { PresetContent } from './PresetContent'

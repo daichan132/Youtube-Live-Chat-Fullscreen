@@ -8,7 +8,7 @@ import { MdBlurOn, MdExpand } from 'react-icons/md'
 import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../styles/SettingContent.module.css'
 
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
@@ -23,7 +23,7 @@ import { SuperChatBarDisplaySwitch } from './YLCChangeItems/SuperChatBarDisplayS
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch'
 
-import type { SettingItemType } from '@/types/ytdLiveChatSetting'
+import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 
 export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(

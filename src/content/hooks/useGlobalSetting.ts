@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 import { useTranslation } from 'react-i18next'
 
-import { useGlobalSettingStore } from '@/stores'
+import { useGlobalSettingStore } from '@/shared/stores'
 
 import useChromeRuntimeMessageListener from './useChromeRuntimeMessageListener'
 

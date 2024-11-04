@@ -6,10 +6,10 @@ import { MdAdd } from 'react-icons/md'
 import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../../styles/PresetContent.module.css'
 
-import type { YLCStyleType } from '@/types/ytdLiveChatType'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 export const AddPresetItem = () => {
   const { addPresetEnabled, addPresetItem } = useYTDLiveChatStore(
@@ -41,7 +41,7 @@ export const AddPresetItem = () => {
     <div
       className={classNames(styles['add-preset-item'], !addPresetEnabled && styles.disable)}
       onClick={() => addPresetEnabled && addItem()}
-      onKeyDown={() => {}}
+      onKeyDown={() => { }}
     >
       <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
     </div>

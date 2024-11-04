@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { useYLCBgColorChange } from './ylcStyleChange/useYLCBgColorChange'
 import { useYLCFontColorChange } from './ylcStyleChange/useYLCFontColorChange'
 import { useYLCFontFamilyChange } from './ylcStyleChange/useYLCFontFamilyChange'

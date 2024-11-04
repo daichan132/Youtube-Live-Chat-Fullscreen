@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatNoLsStore } from '@/stores'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'

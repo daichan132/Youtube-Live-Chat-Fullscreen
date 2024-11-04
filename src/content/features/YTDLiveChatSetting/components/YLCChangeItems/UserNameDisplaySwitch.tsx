@@ -4,9 +4,9 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { Switch } from '@/content/../shared/components/Switch'
 import { useYLCUserNameDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCUserNameDisplayChange'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
-import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 
 export const UserNameDisplaySwitch = () => {
   const { userNameDisplay, updateYLCStyle } = useYTDLiveChatStore(

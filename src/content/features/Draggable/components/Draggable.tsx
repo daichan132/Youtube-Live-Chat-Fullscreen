@@ -4,7 +4,7 @@ import { DndContext } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../styles/Draggable.module.css'
 
 import { DraggableItem } from './DraggableItem'

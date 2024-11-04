@@ -1,6 +1,6 @@
 import { useCallback, useLayoutEffect } from 'react'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
 export const WindowResizeEffect = () => {
   const updatePosition = useCallback(() => {

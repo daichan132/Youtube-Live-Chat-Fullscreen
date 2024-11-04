@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 
 import { darkenRgbaColor } from '@/content/utils/darkenRgbaColor'
-import { useYTDLiveChatNoLsStore } from '@/stores'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 import type { RGBColor } from 'react-color'
 

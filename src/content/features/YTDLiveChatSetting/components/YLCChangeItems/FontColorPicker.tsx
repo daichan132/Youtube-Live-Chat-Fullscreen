@@ -7,7 +7,7 @@ import { useClickAway } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCFontColorChange } from '@/content/hooks/ylcStyleChange/useYLCFontColorChange'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../../styles/CustomColorPicker.module.css'
 
 import type { ColorResult, RGBColor } from 'react-color'
@@ -57,7 +57,7 @@ export const FontColorPickerUI = React.forwardRef<
       <div
         className={styles['color-display']}
         onClick={() => setDisplay?.(d => !d)}
-        onKeyUp={() => {}}
+        onKeyUp={() => { }}
       >
         <div className={styles['color-preview-background']}>
           <div

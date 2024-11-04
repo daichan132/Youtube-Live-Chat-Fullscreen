@@ -20,8 +20,8 @@ import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
 
-import type { SettingItemType } from '@/types/ytdLiveChatSetting'
-import type { YLCStyleType } from '@/types/ytdLiveChatType'
+import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 export const PresetSettingContent = ({
   ylcStyle,

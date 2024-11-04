@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 
-import { useYTDLiveChatNoLsStore } from '@/stores'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 export const useYLCFontSizeChange = () => {
   const changeFontSize = useCallback((fontSize: number) => {

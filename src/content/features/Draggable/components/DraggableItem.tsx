@@ -6,8 +6,8 @@ import classNames from 'classnames'
 import { Resizable } from 're-resizable'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatNoLsStore } from '@/stores/ytdLiveChatNoLsStore'
-import useYTDLiveChatStore from '@/stores/ytdLiveChatStore'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
+import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
 import { useDisanleTopTransition } from '../hooks/useDisanleTopTransition'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 import styles from '../styles/DraggableItem.module.css'
@@ -106,9 +106,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         style={{
           top,
           left,
-          transition: `${!disableTopTransition && 'top 250ms ease'}, ${
-            !isResizing && 'height 250ms ease'
-          }`,
+          transition: `${!disableTopTransition && 'top 250ms ease'}, ${!isResizing && 'height 250ms ease'
+            }`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
       >

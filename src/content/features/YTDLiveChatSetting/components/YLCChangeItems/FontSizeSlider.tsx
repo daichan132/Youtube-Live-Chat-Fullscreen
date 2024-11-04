@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useInitializedSlider } from '@/content/hooks/useInitializedSlider'
 import { useYLCFontSizeChange } from '@/content/hooks/ylcStyleChange/useYLCFontSizeChange'
 import { Slider } from '@/shared/components/Slider'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
 const minSize = 10
 const maxSize = 24

@@ -7,7 +7,7 @@ import { useClickAway } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCBgColorChange } from '@/content/hooks/ylcStyleChange/useYLCBgColorChange'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../../styles/CustomColorPicker.module.css'
 
 import type { ColorResult, RGBColor } from 'react-color'
@@ -58,7 +58,7 @@ export const BgColorPickerUI = React.forwardRef<
       <div
         className={styles['color-display']}
         onClick={() => setDisplay?.(d => !d)}
-        onKeyDown={() => {}}
+        onKeyDown={() => { }}
       >
         <div className={styles['color-preview-background']}>
           <div

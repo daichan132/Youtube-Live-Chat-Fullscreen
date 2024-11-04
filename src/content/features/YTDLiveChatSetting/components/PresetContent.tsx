@@ -4,7 +4,7 @@ import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifi
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../styles/PresetContent.module.css'
 
 import { AddPresetItem } from './PresetContent/AddPresetItem'

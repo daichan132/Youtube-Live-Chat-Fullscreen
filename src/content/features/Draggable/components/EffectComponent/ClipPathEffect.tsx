@@ -3,7 +3,7 @@ import { useCallback, useEffect } from 'react'
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
 interface ClipPathEffectType {
   isDragging: boolean
@@ -72,7 +72,7 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
     return { header, input }
   }, [iframeElement?.contentDocument?.body])
   const removeFocus = useCallback(() => {
-    ;(iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
+    ; (iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
   }, [iframeElement?.contentDocument?.activeElement])
 
   /* ---------------------------- Clip Path update ---------------------------- */

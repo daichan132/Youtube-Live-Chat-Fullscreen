@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useInitializedSlider } from '@/content/hooks/useInitializedSlider'
 import { Slider } from '@/shared/components/Slider'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
 export const BlurToSliderValue = (blur: number) => {
   return blur / 20

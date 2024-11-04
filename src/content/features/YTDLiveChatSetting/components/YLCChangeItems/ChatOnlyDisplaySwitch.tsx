@@ -3,9 +3,9 @@ import React from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { Switch } from '@/shared/components/Switch'
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
-import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 
 export const ChatOnlyDisplaySwitch = () => {
   const { chatOnlyDisplay, updateYLCStyle } = useYTDLiveChatStore(

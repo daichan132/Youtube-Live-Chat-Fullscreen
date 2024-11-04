@@ -3,7 +3,7 @@ import { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useIframeLoader } from '../hooks/useIframeLoader'
 import fade from '../styles/Fade.module.css'
 import styles from '../styles/Loader.module.css'

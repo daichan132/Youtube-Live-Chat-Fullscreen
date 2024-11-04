@@ -10,12 +10,12 @@ import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from '@/stores'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import modalStyles from '../../styles/DeleteConfirmationModal.module.css'
 import styles from '../../styles/PresetContent.module.css'
 
 import { useChangeYLCStyle } from '@/content/hooks/useChangeYLCStyle'
-import type { YLCStyleType } from '@/types/ytdLiveChatType'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 interface PresetItemType {
   id: string
