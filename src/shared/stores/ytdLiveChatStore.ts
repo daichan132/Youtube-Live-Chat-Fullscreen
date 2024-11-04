@@ -32,7 +32,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     persist(
       set => ({
         coordinates: { x: 20, y: 20 },
-        size: { width: 400, height: 500 },
+        size: { width: 400, height: 400 },
         presetItemIds: ['default1', 'default2', 'default3'],
         presetItemStyles: {
           default1: ylcInitSetting,
