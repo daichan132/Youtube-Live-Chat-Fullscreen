@@ -6,8 +6,8 @@ import './index.css'
 import '../i18n/config'
 
 const contentRoot = document.createElement('div')
-contentRoot.id = 'my-extension-root'
-contentRoot.style.display = 'contents'
+contentRoot.id = 'extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'
+contentRoot.className = 'extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'
 document.body.append(contentRoot)
 createRoot(contentRoot).render(
   <React.StrictMode>
