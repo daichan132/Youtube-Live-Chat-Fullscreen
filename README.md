@@ -1,18 +1,18 @@
 <div align="center">
 
   <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128" style="margin-bottom: 10px;" />
-
-<p align="center">
-<h2>Youtube Live Chat Fullscreen</h2>
-
-<a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-  <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white&color=f0494b"/>
-</a>
-<a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
-  <img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser&logoColor=white&color=f0494b"/>
-</a>
-</p>
 </div>
+<br>
+<h1 align="center">Youtube Live Chat Fullscreen</h1>
+<p align="center">
+  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white"/>
+  </a>
+  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser&logoColor=white"/>
+  </a>
+</p>
+<br>
 
 ## 🌟 Features
 
