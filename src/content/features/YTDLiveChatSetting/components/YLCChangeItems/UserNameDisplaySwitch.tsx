@@ -2,8 +2,8 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { Switch } from '@/content/../shared/components/Switch'
 import { useYLCUserNameDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCUserNameDisplayChange'
+import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'

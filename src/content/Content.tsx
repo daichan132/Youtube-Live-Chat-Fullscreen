@@ -1,4 +1,4 @@
-import { useGlobalSetting } from '../shared/hooks/useGlobalSetting'
+import { useGlobalSetting } from '@/shared/hooks/useGlobalSetting'
 import { YTDLiveChat } from './YTDLiveChat'
 
 const Content = () => {

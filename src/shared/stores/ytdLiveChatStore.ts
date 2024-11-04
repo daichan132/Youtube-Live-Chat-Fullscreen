@@ -83,7 +83,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         setCoordinates: coordinates => set(() => ({ coordinates })),
         setDefaultPosition: () =>
           set(() => ({
-            size: { width: 400, height: 500 },
+            size: { width: 400, height: 400 },
             coordinates: { x: 20, y: 20 },
           })),
       }),
