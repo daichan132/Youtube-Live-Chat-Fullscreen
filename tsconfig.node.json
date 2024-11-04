@@ -8,6 +8,6 @@
   "include": [
     "vite.config.ts",
     "package.json",
-    "tools"
+    "tools/convertToFirefoxCompatibleManifest.js"
   ]
 }

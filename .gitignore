@@ -63,6 +63,6 @@ sketch
 
 # Output of 'npm pack'
 dist.zip
-dist-firefox-v2.zip
+dist-firefox.zip
 dist/*
-dist-firefox-v2/*
+dist-firefox/*

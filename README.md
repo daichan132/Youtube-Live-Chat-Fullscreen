@@ -56,7 +56,7 @@ yarn install
 1. Open `about:debugging` in your browser.
 2. Click **This Firefox** (or **This Nightly**).
 3. Click **Load Temporary Add-on...**.
-4. Select any file in the `dist-firefox-v2` directory.
+4. Select any file in the `dist-firefox` directory.
 
 ## 📄 License
 
