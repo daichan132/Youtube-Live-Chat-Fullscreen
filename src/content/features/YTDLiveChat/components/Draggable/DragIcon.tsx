@@ -1,23 +1,23 @@
-import React from "react";
+import React from 'react'
 
-import { RiDraggable } from "react-icons/ri";
-import { useShallow } from "zustand/react/shallow";
+import { RiDraggable } from 'react-icons/ri'
+import { useShallow } from 'zustand/react/shallow'
 
-import { useYTDLiveChatStore } from "@/stores";
+import { useYTDLiveChatStore } from '@/stores'
 
 export const DragIcon = () => {
-	const { fontColor: rgba } = useYTDLiveChatStore(
-		useShallow((state) => ({ fontColor: state.fontColor })),
-	);
+  const { fontColor: rgba } = useYTDLiveChatStore(
+    useShallow(state => ({ fontColor: state.fontColor })),
+  )
 
-	return (
-		// hoverしたときにgrabにする
-		<RiDraggable
-			style={{
-				cursor: "grab",
-			}}
-			size={24}
-			color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
-		/>
-	);
-};
+  return (
+    // hoverしたときにgrabにする
+    <RiDraggable
+      style={{
+        cursor: 'grab',
+      }}
+      size={24}
+      color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+    />
+  )
+}

@@ -1,69 +1,69 @@
 /* SettingsModal.scss */
 .settings {
-	display: flex;
-	flex-direction: column;
-	width: 480px;
-	border-radius: 8px;
-	background-color: #fff;
-	letter-spacing: 0.05rem;
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	border-radius: 10px;
-	overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 480px;
+  border-radius: 8px;
+  background-color: #fff;
+  letter-spacing: 0.05rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
 }
 .settings .header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 1rem 1.5rem;
-	border-bottom: 1px solid #eaeaea;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eaeaea;
 }
 .settings .header .menu {
-	font-size: 1.5rem;
-	display: flex;
+  font-size: 1.5rem;
+  display: flex;
 }
 .settings .header .menu .menu-item {
-	padding: 1rem 1.25rem;
-	color: #333;
-	border-radius: 5px;
-	margin-right: 1rem;
-	transition: background-color 200ms ease, color 200ms ease;
-	cursor: pointer;
-	min-width: 50px;
-	text-align: center;
+  padding: 1rem 1.25rem;
+  color: #333;
+  border-radius: 5px;
+  margin-right: 1rem;
+  transition: background-color 200ms ease, color 200ms ease;
+  cursor: pointer;
+  min-width: 50px;
+  text-align: center;
 }
 .settings .header .menu .menu-item:hover {
-	background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .settings .header .menu .menu-item.selected-menu-item {
-	color: #099cff;
-	background-color: #e3f3ff;
-	cursor: default;
+  color: #099cff;
+  background-color: #e3f3ff;
+  cursor: default;
 }
 .settings .header .close-button {
-	cursor: pointer;
-	border-radius: 10px;
-	padding: 0.75rem;
-	transition: background-color 200ms ease;
+  cursor: pointer;
+  border-radius: 10px;
+  padding: 0.75rem;
+  transition: background-color 200ms ease;
 }
 .settings .header .close-button:hover {
-	background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .settings .content {
-	flex-grow: 1;
-	overflow-y: visible;
-	height: 400px;
-	font-size: 1.25rem;
-	overflow-y: scroll;
-	box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
-	background-color: #fff;
+  flex-grow: 1;
+  overflow-y: visible;
+  height: 400px;
+  font-size: 1.25rem;
+  overflow-y: scroll;
+  box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
 }
 .settings .content .footer {
-	border-top: 1px solid rgba(0, 0, 0, 0.1);
-	padding: 20px 20px 20px;
-	display: flex;
-	justify-content: flex-end;
-	font-size: 14px;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 20px 20px 20px;
+  display: flex;
+  justify-content: flex-end;
+  font-size: 14px;
 }
 .settings .content .footer .help > a {
-	color: #333333;
+  color: #333333;
 }

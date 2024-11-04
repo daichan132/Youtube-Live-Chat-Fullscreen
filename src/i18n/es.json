@@ -1,40 +1,40 @@
 {
-	"content": {
-		"setting": {
-			"header": {
-				"preset": "Preajuste",
-				"setting": "Configuración"
-			},
-			"alwaysOnDisplay": "Siempre en pantalla",
-			"chatOnlyDisplay": "Solo chat en pantalla",
-			"userNameDisplay": "Mostrar nombre de usuario",
-			"userIconDisplay": "Mostrar icono de usuario",
-			"reactionButtonDisplay": "Mostrar botón de reacción",
-			"superChatBarDisplay": "Mostrar barra de superchat",
-			"backgroundColor": "Color de fondo",
-			"fontColor": "Color de fuente",
-			"fontFamily": "Familia de fuentes",
-			"fontSize": "Tamaño de fuente",
-			"blur": "Desenfoque",
-			"space": "Espacio",
-			"footer": "Para más información, haga clic aquí ",
-			"help": "ayuda"
-		},
-		"preset": {
-			"addMessage": "Agregar configuración actual",
-			"addItemTitle": "Sin título",
-			"defaultTitle": "Predeterminado",
-			"transparentTitle": "Transparente",
-			"simpleTitle": "Simple",
-			"deleteConfirmationMessage": "¿Realmente desea eliminarlo?",
-			"delete": "Eliminar",
-			"cancel": "Cancelar"
-		}
-	},
-	"popup": {
-		"language": "Configuración de idioma",
-		"showChatOnFullscreen": "Mostrar chat en pantalla completa",
-		"emojiCopy": "Permitir copiar emojis de Youtube",
-		"links": "Enlaces"
-	}
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Preajuste",
+        "setting": "Configuración"
+      },
+      "alwaysOnDisplay": "Siempre en pantalla",
+      "chatOnlyDisplay": "Solo chat en pantalla",
+      "userNameDisplay": "Mostrar nombre de usuario",
+      "userIconDisplay": "Mostrar icono de usuario",
+      "reactionButtonDisplay": "Mostrar botón de reacción",
+      "superChatBarDisplay": "Mostrar barra de superchat",
+      "backgroundColor": "Color de fondo",
+      "fontColor": "Color de fuente",
+      "fontFamily": "Familia de fuentes",
+      "fontSize": "Tamaño de fuente",
+      "blur": "Desenfoque",
+      "space": "Espacio",
+      "footer": "Para más información, haga clic aquí ",
+      "help": "ayuda"
+    },
+    "preset": {
+      "addMessage": "Agregar configuración actual",
+      "addItemTitle": "Sin título",
+      "defaultTitle": "Predeterminado",
+      "transparentTitle": "Transparente",
+      "simpleTitle": "Simple",
+      "deleteConfirmationMessage": "¿Realmente desea eliminarlo?",
+      "delete": "Eliminar",
+      "cancel": "Cancelar"
+    }
+  },
+  "popup": {
+    "language": "Configuración de idioma",
+    "showChatOnFullscreen": "Mostrar chat en pantalla completa",
+    "emojiCopy": "Permitir copiar emojis de Youtube",
+    "links": "Enlaces"
+  }
 }
