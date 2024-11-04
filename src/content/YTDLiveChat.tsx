@@ -4,7 +4,7 @@ import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore } from '@/stores'
-import fade from '../styles/Fade.module.css'
+import fade from './Fade.module.css'
 import { Draggable } from './features/Draggable/components/Draggable'
 import { DisplayEffect } from './features/YTDLiveChat/components/EffectComponent/DisplayEffect'
 import { WindowResizeEffect } from './features/YTDLiveChat/components/EffectComponent/WindowResizeEffect'
