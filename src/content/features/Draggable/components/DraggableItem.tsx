@@ -20,6 +20,8 @@ import { SettingIcon } from './SettingIcon'
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { NumberSize } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
+import { WindowResizeEffect } from '../../Draggable/components/EffectComponent/WindowResizeEffect'
+import { DisplayEffect } from './EffectComponent/DisplayEffect'
 
 interface DraggableItemType {
   top?: number
@@ -80,6 +82,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     <>
       <ClipPathEffect isDragging={isDragging} isResizing={isResizing} />
       <HoverEffect isDragging={isDragging} />
+      <WindowResizeEffect />
+      <DisplayEffect />
       <Resizable
         size={size}
         minWidth={ResizableMinWidth}

@@ -7,8 +7,6 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useIframeLoader } from '../hooks/useIframeLoader'
 import fade from '../styles/Fade.module.css'
 import styles from '../styles/Loader.module.css'
-import { DisplayEffect } from './EffectComponent/DisplayEffect'
-import { WindowResizeEffect } from './EffectComponent/WindowResizeEffect'
 
 export const YTDLiveChatIframe = () => {
   const { ref } = useIframeLoader()
@@ -29,8 +27,6 @@ export const YTDLiveChatIframe = () => {
 
   return (
     <>
-      <DisplayEffect />
-      <WindowResizeEffect />
       <div
         style={{
           opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
