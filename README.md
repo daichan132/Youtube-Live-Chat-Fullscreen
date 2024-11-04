@@ -21,10 +21,6 @@
   <img src="./readme-img/image1.png" width="400" alt="Style Customization" style="margin-right: 10px;">
 </div>
 
-<div align="center" style="margin-top: 10px;">
-  <img src="./readme-img/image2.png" width="400" alt="Multi-language Support">
-</div>
-
 ## 🎉 Getting Started
 
 ### Requirements
