@@ -2,8 +2,6 @@
 
   <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128" style="margin-bottom: 10px;" />
 
-This extension allows Youtube Live to use chat when in Fullscreen.
-
 <p align="center">
 <h2>Youtube Live Chat Fullscreen</h2>
 
