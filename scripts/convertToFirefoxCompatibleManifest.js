@@ -9,7 +9,7 @@ if (!fs.existsSync(baseOutDir)) {
 }
 const outDir = `${path.dirname(
   path.basename(baseOutDir)
-)}/${BASE_OUT_DIR}-firefox-v2`;
+)}/${BASE_OUT_DIR}-firefox`;
 fs.copySync(baseOutDir, outDir);
 const manifestPath = path.resolve(outDir, "manifest.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
