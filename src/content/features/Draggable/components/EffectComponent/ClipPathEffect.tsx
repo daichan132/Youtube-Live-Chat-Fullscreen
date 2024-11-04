@@ -72,7 +72,7 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
     return { header, input }
   }, [iframeElement?.contentDocument?.body])
   const removeFocus = useCallback(() => {
-    ; (iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
+    ;(iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
   }, [iframeElement?.contentDocument?.activeElement])
 
   /* ---------------------------- Clip Path update ---------------------------- */

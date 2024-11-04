@@ -41,7 +41,7 @@ export const AddPresetItem = () => {
     <div
       className={classNames(styles['add-preset-item'], !addPresetEnabled && styles.disable)}
       onClick={() => addPresetEnabled && addItem()}
-      onKeyDown={() => { }}
+      onKeyDown={() => {}}
     >
       <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
     </div>

@@ -58,7 +58,7 @@ export const BgColorPickerUI = React.forwardRef<
       <div
         className={styles['color-display']}
         onClick={() => setDisplay?.(d => !d)}
-        onKeyDown={() => { }}
+        onKeyDown={() => {}}
       >
         <div className={styles['color-preview-background']}>
           <div

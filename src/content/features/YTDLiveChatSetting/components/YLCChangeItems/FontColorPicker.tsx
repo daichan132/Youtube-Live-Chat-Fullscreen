@@ -57,7 +57,7 @@ export const FontColorPickerUI = React.forwardRef<
       <div
         className={styles['color-display']}
         onClick={() => setDisplay?.(d => !d)}
-        onKeyUp={() => { }}
+        onKeyUp={() => {}}
       >
         <div className={styles['color-preview-background']}>
           <div
