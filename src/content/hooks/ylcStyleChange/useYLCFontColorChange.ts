@@ -17,10 +17,7 @@ export const useYLCFontColorChange = () => {
       iframeDocument.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
     }
     for (const property of propertyLightList) {
-      iframeDocument.style.setProperty(
-        property,
-        `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`,
-      )
+      iframeDocument.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`)
     }
   }, [])
   const changeColor = useCallback(

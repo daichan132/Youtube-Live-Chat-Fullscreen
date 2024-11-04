@@ -28,9 +28,7 @@ interface DraggableItemType {
   children: React.ReactNode
 }
 export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
-  const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
-    id: 'wrapper',
-  })
+  const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
   const { size, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow(state => ({
       size: state.size,
@@ -38,9 +36,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       setCoordinates: state.setCoordinates,
     })),
   )
-  const { clip, isClipPath } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath })),
-  )
+  const { clip, isClipPath } = useYTDLiveChatNoLsStore(useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath })))
   const [isResizing, setIsResizing] = useState(false)
   const { onResizeStart, onResize, onResizeStop } = useResizableHandlers({
     size,
@@ -78,9 +74,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           className={classNames(styles.Container)}
           style={{
             transform: CSS.Translate.toString(transform),
-            clipPath: isClipPath
-              ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)`
-              : 'inset(0 round 10px)',
+            clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
             transition: 'clip-path 250ms ease',
           }}
           ref={setNodeRef}

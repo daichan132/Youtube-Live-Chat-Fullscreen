@@ -16,13 +16,7 @@ export const UserNameDisplaySwitch = () => {
     })),
   )
   const { changeDisplay } = useYLCUserNameDisplayChange()
-  return (
-    <UserNameDisplaySwitchUI
-      userNameDisplay={userNameDisplay}
-      updateYLCStyle={updateYLCStyle}
-      changeDisplay={changeDisplay}
-    />
-  )
+  return <UserNameDisplaySwitchUI userNameDisplay={userNameDisplay} updateYLCStyle={updateYLCStyle} changeDisplay={changeDisplay} />
 }
 
 export const UserNameDisplaySwitchUI = ({

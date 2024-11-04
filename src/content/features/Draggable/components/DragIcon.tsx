@@ -6,9 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 export const DragIcon = () => {
-  const { fontColor: rgba } = useYTDLiveChatStore(
-    useShallow(state => ({ fontColor: state.fontColor })),
-  )
+  const { fontColor: rgba } = useYTDLiveChatStore(useShallow(state => ({ fontColor: state.fontColor })))
 
   return (
     // hoverしたときにgrabにする

@@ -14,9 +14,7 @@ export const AlwaysOnDisplaySwitch = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   )
-  return (
-    <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} updateYLCStyle={updateYLCStyle} />
-  )
+  return <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} updateYLCStyle={updateYLCStyle} />
 }
 
 export const AlwaysOnDisplaySwitchUI = ({

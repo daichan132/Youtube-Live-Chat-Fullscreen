@@ -110,12 +110,7 @@ export const PresetSettingContent = ({
           {items.map((item, i) => {
             return (
               <React.Fragment key={item.title}>
-                <div
-                  className={classNames(
-                    styles['content-setting-item'],
-                    item.disable && styles.disable,
-                  )}
-                >
+                <div className={classNames(styles['content-setting-item'], item.disable && styles.disable)}>
                   <div className={styles['title-with-icon']}>
                     {<item.icon size={16} />}
                     <div>{item.title}</div>

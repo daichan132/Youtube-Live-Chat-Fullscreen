@@ -37,13 +37,8 @@ export const useIsShow = () => {
     // 30回300ms毎に定期実行して、iframeが読み込まれているか確認する
     let count = 0
     const interval = setInterval(() => {
-      const liveChatReplay: HTMLIFrameElement | null = document.querySelector(
-        'iframe.ytd-live-chat-frame',
-      )
-      if (
-        liveChatReplay &&
-        !liveChatReplay.contentDocument?.location.href?.includes('about:blank')
-      ) {
+      const liveChatReplay: HTMLIFrameElement | null = document.querySelector('iframe.ytd-live-chat-frame')
+      if (liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
         setIsChat(true)
         clearInterval(interval)
       }
@@ -92,10 +87,7 @@ export const useIsShow = () => {
     if (!isFullscreen) return
     const ytdWatchGridElement = document.querySelector('ytd-watch-grid')
     if (!ytdWatchGridElement) return
-    if (
-      ytdWatchGridElement.hasAttribute('is-two-columns_') &&
-      ytdWatchGridElement.hasAttribute('live-chat-present-and-expanded')
-    ) {
+    if (ytdWatchGridElement.hasAttribute('is-two-columns_') && ytdWatchGridElement.hasAttribute('live-chat-present-and-expanded')) {
       setIsTheaterChatMode(true)
     } else {
       setIsTheaterChatMode(false)
@@ -111,12 +103,7 @@ export const useIsShow = () => {
         coordinates: { x, y },
         setDefaultPosition,
       } = useYTDLiveChatStore.getState()
-      if (
-        x + gap < 0 ||
-        innerWidth + gap < width + x ||
-        y + gap < 0 ||
-        innerHeight + gap < height + y
-      ) {
+      if (x + gap < 0 || innerWidth + gap < width + x || y + gap < 0 || innerHeight + gap < height + y) {
         setDefaultPosition()
       }
       setIsChecked(true)

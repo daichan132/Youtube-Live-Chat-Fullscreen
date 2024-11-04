@@ -16,9 +16,7 @@ export const spaceToSliderValue = (space: number) => {
 
 export const SpaceSlider = () => {
   const SpaceRef = useRef(useYTDLiveChatStore.getState().space)
-  const { updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })),
-  )
+  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const { changeSpace } = useYLCSpaceChange()
   const updateSpace = useCallback(
     (value: number) => {
@@ -38,10 +36,8 @@ export const SpaceSlider = () => {
   return <SpaceSliderUI value={value} ref={ref} />
 }
 
-export const SpaceSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
-  ({ value }, ref) => {
-    return <Slider value={value} ref={ref} />
-  },
-)
+export const SpaceSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
+  return <Slider value={value} ref={ref} />
+})
 
 SpaceSliderUI.displayName = 'SpaceSlider'

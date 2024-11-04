@@ -9,9 +9,7 @@ export const SettingIcon = () => {
       setIsOpenSettingModal: state.setIsOpenSettingModal,
     })),
   )
-  const { fontColor: rgba } = useYTDLiveChatStore(
-    useShallow(state => ({ fontColor: state.fontColor })),
-  )
+  const { fontColor: rgba } = useYTDLiveChatStore(useShallow(state => ({ fontColor: state.fontColor })))
 
   return (
     <CiSettings

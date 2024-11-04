@@ -7,10 +7,7 @@ export const useYLCSuperChatBarDisplayChange = () => {
     const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
     const iframeDocument = iframeElement?.contentDocument?.documentElement
     if (!iframeDocument) return
-    iframeDocument.style.setProperty(
-      '--extension-super-chat-bar-display',
-      display ? 'block' : 'none',
-    )
+    iframeDocument.style.setProperty('--extension-super-chat-bar-display', display ? 'block' : 'none')
   }, [])
   const changeDisplay = useCallback(
     (display: boolean) => {

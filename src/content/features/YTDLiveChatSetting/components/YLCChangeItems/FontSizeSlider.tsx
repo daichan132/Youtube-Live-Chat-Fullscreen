@@ -15,9 +15,7 @@ export const fontSizeToSliderValue = (fontSize: number) => {
 }
 export const FontSizeSlider = () => {
   const fontSizeRef = useRef(useYTDLiveChatStore.getState().fontSize)
-  const { updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })),
-  )
+  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const { changeFontSize } = useYLCFontSizeChange()
   const updateFontSize = useCallback(
     (value: number) => {
@@ -37,10 +35,8 @@ export const FontSizeSlider = () => {
   return <FontSizeSliderUI value={value} ref={ref} />
 }
 
-export const FontSizeSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
-  ({ value }, ref) => {
-    return <Slider value={value} ref={ref} />
-  },
-)
+export const FontSizeSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
+  return <Slider value={value} ref={ref} />
+})
 
 FontSizeSliderUI.displayName = 'FontSizeSlider'

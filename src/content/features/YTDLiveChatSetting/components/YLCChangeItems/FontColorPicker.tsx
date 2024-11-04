@@ -16,9 +16,7 @@ export const FontColorPicker = () => {
   const { changeColor } = useYLCFontColorChange()
   const stateRef = useRef(useYTDLiveChatStore.getState())
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor)
-  const { updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })),
-  )
+  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const [display, setDisplay] = useState(false)
   const ref = useRef(null)
   useClickAway(ref, () => {
@@ -32,15 +30,7 @@ export const FontColorPicker = () => {
     },
     [changeColor, updateYLCStyle],
   )
-  return (
-    <FontColorPickerUI
-      rgba={rgba}
-      ref={ref}
-      display={display}
-      setDisplay={setDisplay}
-      onChange={onChange}
-    />
-  )
+  return <FontColorPickerUI rgba={rgba} ref={ref} display={display} setDisplay={setDisplay} onChange={onChange} />
 }
 
 export const FontColorPickerUI = React.forwardRef<
@@ -54,11 +44,7 @@ export const FontColorPickerUI = React.forwardRef<
 >(({ rgba, display, setDisplay, onChange }, ref) => {
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div
-        className={styles['color-display']}
-        onClick={() => setDisplay?.(d => !d)}
-        onKeyUp={() => {}}
-      >
+      <div className={styles['color-display']} onClick={() => setDisplay?.(d => !d)} onKeyUp={() => {}}>
         <div className={styles['color-preview-background']}>
           <div
             className={styles['color-preview']}

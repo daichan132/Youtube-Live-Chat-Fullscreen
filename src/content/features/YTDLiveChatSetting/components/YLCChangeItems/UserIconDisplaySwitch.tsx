@@ -16,13 +16,7 @@ export const UserIconDisplaySwitch = () => {
     })),
   )
   const { changeDisplay } = useYLCUserIconDisplayChange()
-  return (
-    <UserIconDisplaySwitchUI
-      userIconDisplay={userIconDisplay}
-      updateYLCStyle={updateYLCStyle}
-      changeDisplay={changeDisplay}
-    />
-  )
+  return <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} updateYLCStyle={updateYLCStyle} changeDisplay={changeDisplay} />
 }
 
 export const UserIconDisplaySwitchUI = ({

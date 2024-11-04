@@ -18,27 +18,19 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
       setCoordinates: state.setCoordinates,
     })),
   )
-  const {
-    isHover,
-    isClipPath,
-    isIframeLoaded,
-    isOpenSettingModal,
-    iframeElement,
-    setIsClipPath,
-    setIsHover,
-    setClip,
-  } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      isHover: state.isHover,
-      isOpenSettingModal: state.isOpenSettingModal,
-      isClipPath: state.isClipPath,
-      isIframeLoaded: state.isIframeLoaded,
-      iframeElement: state.iframeElement,
-      setIsClipPath: state.setIsClipPath,
-      setIsHover: state.setIsHover,
-      setClip: state.setClip,
-    })),
-  )
+  const { isHover, isClipPath, isIframeLoaded, isOpenSettingModal, iframeElement, setIsClipPath, setIsHover, setClip } =
+    useYTDLiveChatNoLsStore(
+      useShallow(state => ({
+        isHover: state.isHover,
+        isOpenSettingModal: state.isOpenSettingModal,
+        isClipPath: state.isClipPath,
+        isIframeLoaded: state.isIframeLoaded,
+        iframeElement: state.iframeElement,
+        setIsClipPath: state.setIsClipPath,
+        setIsHover: state.setIsHover,
+        setClip: state.setClip,
+      })),
+    )
   const prevClipPath = usePrevious(isClipPath)
   const handleClipPathChange = useCallback(
     (isClipPath: boolean) => {
@@ -77,14 +69,7 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
 
   /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
-    if (
-      isIframeLoaded &&
-      alwaysOnDisplay &&
-      chatOnlyDisplay &&
-      !isDragging &&
-      !isResizing &&
-      (isOpenSettingModal || !isHover)
-    ) {
+    if (isIframeLoaded && alwaysOnDisplay && chatOnlyDisplay && !isDragging && !isResizing && (isOpenSettingModal || !isHover)) {
       setTimeout(() => {
         setIsClipPath(true)
       }, 10)
@@ -93,16 +78,7 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectType) =
         setIsClipPath(false)
       }, 10)
     }
-  }, [
-    isHover,
-    alwaysOnDisplay,
-    isOpenSettingModal,
-    chatOnlyDisplay,
-    isDragging,
-    isResizing,
-    setIsClipPath,
-    isIframeLoaded,
-  ])
+  }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing, setIsClipPath, isIframeLoaded])
 
   /* ------------------------- handle Clip Path change ------------------------ */
   useUpdateEffect(() => {

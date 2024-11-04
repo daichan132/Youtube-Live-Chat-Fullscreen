@@ -15,24 +15,12 @@ export const Links = () => {
         target='_blank'
         rel='noopener noreferrer'
       >
-        <img
-          src='/images/extension_128.png'
-          alt='extension icon'
-          style={{ width: 24, height: 24 }}
-        />
+        <img src='/images/extension_128.png' alt='extension icon' style={{ width: 24, height: 24 }} />
       </a>
-      <a
-        href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
-        target='_blank'
-        rel='noopener noreferrer'
-      >
+      <a href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen' target='_blank' rel='noopener noreferrer'>
         <IoLogoGithub size={26} style={{ color: 'black' }} />
       </a>
-      <a
-        href='https://www.producthunt.com/products/youtube-live-chat-fullscreen'
-        target='_blank'
-        rel='noopener noreferrer'
-      >
+      <a href='https://www.producthunt.com/products/youtube-live-chat-fullscreen' target='_blank' rel='noopener noreferrer'>
         <FaProductHunt size={26} style={{ color: '#D9552E' }} />
       </a>
     </div>

@@ -15,9 +15,7 @@ import type { ColorResult, RGBColor } from 'react-color'
 export const BgColorPicker = () => {
   const { changeColor } = useYLCBgColorChange()
   const stateRef = useRef(useYTDLiveChatStore.getState())
-  const { updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })),
-  )
+  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor)
   const [display, setDisplay] = useState(false)
 
@@ -33,15 +31,7 @@ export const BgColorPicker = () => {
     },
     [changeColor, updateYLCStyle],
   )
-  return (
-    <BgColorPickerUI
-      rgba={rgba}
-      ref={ref}
-      display={display}
-      setDisplay={setDisplay}
-      onChange={onChange}
-    />
-  )
+  return <BgColorPickerUI rgba={rgba} ref={ref} display={display} setDisplay={setDisplay} onChange={onChange} />
 }
 
 export const BgColorPickerUI = React.forwardRef<
@@ -55,11 +45,7 @@ export const BgColorPickerUI = React.forwardRef<
 >(({ rgba, display, setDisplay, onChange }, ref) => {
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div
-        className={styles['color-display']}
-        onClick={() => setDisplay?.(d => !d)}
-        onKeyDown={() => {}}
-      >
+      <div className={styles['color-display']} onClick={() => setDisplay?.(d => !d)} onKeyDown={() => {}}>
         <div className={styles['color-preview-background']}>
           <div
             className={styles['color-preview']}

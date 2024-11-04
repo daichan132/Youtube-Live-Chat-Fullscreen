@@ -11,14 +11,7 @@ interface UseResizableHandlersProps {
   setIsResizing: (isResizing: boolean) => void
 }
 
-export const useResizableHandlers = ({
-  size,
-  setSize,
-  left,
-  top,
-  setCoordinates,
-  setIsResizing,
-}: UseResizableHandlersProps) => {
+export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates, setIsResizing }: UseResizableHandlersProps) => {
   const coordinateRef = useRef({ x: left, y: top })
 
   const onResizeStart = useCallback(() => {
@@ -27,12 +20,7 @@ export const useResizableHandlers = ({
   }, [left, top, setIsResizing])
 
   const onResize = useCallback(
-    (
-      _event: MouseEvent | TouchEvent,
-      direction: Direction,
-      _ref: HTMLElement,
-      delta: NumberSize,
-    ) => {
+    (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
       const directions = ['top', 'left', 'topLeft', 'bottomLeft', 'topRight']
 
       if (directions.includes(direction)) {
@@ -58,12 +46,7 @@ export const useResizableHandlers = ({
   )
 
   const onResizeStop = useCallback(
-    (
-      _event: MouseEvent | TouchEvent,
-      _direction: Direction,
-      _ref: HTMLElement,
-      delta: NumberSize,
-    ) => {
+    (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
       setIsResizing(false)
       let newWidth = size.width + delta.width
       let newHeight = size.height + delta.height

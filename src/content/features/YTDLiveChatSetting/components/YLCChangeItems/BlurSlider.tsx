@@ -11,9 +11,7 @@ export const BlurToSliderValue = (blur: number) => {
 }
 export const BlurSlider = () => {
   const blurRef = useRef(useYTDLiveChatStore.getState().blur)
-  const { updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })),
-  )
+  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const updateBlur = useCallback(
     (value: number) => {
       updateYLCStyle({ blur: Math.round(value * 20) })
@@ -29,10 +27,8 @@ export const BlurSlider = () => {
   return <BlurSliderUI value={value} ref={ref} />
 }
 
-export const BlurSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(
-  ({ value }, ref) => {
-    return <Slider value={value} ref={ref} />
-  },
-)
+export const BlurSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
+  return <Slider value={value} ref={ref} />
+})
 
 BlurSliderUI.displayName = 'BlurSlider'

@@ -39,14 +39,7 @@ export const YTDLiveChatIframe = () => {
         id='live-chat-iframe-wrapper'
         ref={ref}
       />
-      <CSSTransition
-        nodeRef={nodeRef}
-        in={!isIframeLoaded}
-        timeout={300}
-        classNames={fade}
-        delay={300}
-        unmountOnExit
-      >
+      <CSSTransition nodeRef={nodeRef} in={!isIframeLoaded} timeout={300} classNames={fade} delay={300} unmountOnExit>
         <div
           ref={nodeRef}
           style={{

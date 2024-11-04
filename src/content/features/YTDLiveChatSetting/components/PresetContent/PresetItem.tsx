@@ -22,27 +22,18 @@ interface PresetItemType {
 }
 
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } =
-    useYTDLiveChatStore(
-      useShallow(state => ({
-        title: state.presetItemTitles[id],
-        ylcStyle: state.presetItemStyles[id],
-        updateTitle: state.updateTitle,
-        deletePresetItem: state.deletePresetItem,
-        updateYLCStyle: state.updateYLCStyle,
-        setAddPresetEnabled: state.setAddPresetEnabled,
-      })),
-    )
+  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
+    useShallow(state => ({
+      title: state.presetItemTitles[id],
+      ylcStyle: state.presetItemStyles[id],
+      updateTitle: state.updateTitle,
+      deletePresetItem: state.deletePresetItem,
+      updateYLCStyle: state.updateYLCStyle,
+      setAddPresetEnabled: state.setAddPresetEnabled,
+    })),
+  )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const {
-    attributes,
-    setActivatorNodeRef,
-    listeners,
-    setNodeRef,
-    transform,
-    isDragging,
-    transition,
-  } = useSortable({
+  const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
   })
   const changeYLCStyle = useChangeYLCStyle()
@@ -72,24 +63,11 @@ export const PresetItem = ({ id }: PresetItemType) => {
               {...attributes}
             />
           </div>
-          <input
-            type='text'
-            value={title}
-            onChange={event => updateTitle(id, event.target.value)}
-            className={styles.title}
-          />
+          <input type='text' value={title} onChange={event => updateTitle(id, event.target.value)} className={styles.title} />
         </div>
         <div className={styles.rightContainer}>
-          <MdAutoFixNormal
-            className={styles.applyStyleButton}
-            size={20}
-            onClick={() => updateStyle(ylcStyle)}
-          />
-          <IoTrashOutline
-            className={styles.deleteButton}
-            size={20}
-            onClick={() => setIsDeleteModalOpen(true)}
-          />
+          <MdAutoFixNormal className={styles.applyStyleButton} size={20} onClick={() => updateStyle(ylcStyle)} />
+          <IoTrashOutline className={styles.deleteButton} size={20} onClick={() => setIsDeleteModalOpen(true)} />
         </div>
       </div>
       {isDeleteModalOpen && (
@@ -103,18 +81,10 @@ export const PresetItem = ({ id }: PresetItemType) => {
           <div className={modalStyles.content}>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>
             <div className={modalStyles.actions}>
-              <button
-                type='button'
-                onClick={() => deletePresetItem(id)}
-                className={modalStyles.buttonDelete}
-              >
+              <button type='button' onClick={() => deletePresetItem(id)} className={modalStyles.buttonDelete}>
                 {t('content.preset.delete')}
               </button>
-              <button
-                type='button'
-                onClick={() => setIsDeleteModalOpen(false)}
-                className={modalStyles.buttonCancel}
-              >
+              <button type='button' onClick={() => setIsDeleteModalOpen(false)} className={modalStyles.buttonCancel}>
                 {t('content.preset.cancel')}
               </button>
             </div>

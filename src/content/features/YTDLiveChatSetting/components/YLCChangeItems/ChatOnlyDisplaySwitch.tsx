@@ -14,9 +14,7 @@ export const ChatOnlyDisplaySwitch = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   )
-  return (
-    <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} updateYLCStyle={updateYLCStyle} />
-  )
+  return <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} updateYLCStyle={updateYLCStyle} />
 }
 
 export const ChatOnlyDisplaySwitchUI = ({

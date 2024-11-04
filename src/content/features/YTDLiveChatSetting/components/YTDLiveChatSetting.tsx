@@ -33,16 +33,15 @@ const customStyles = {
 }
 
 export const YTDLiveChatSetting = () => {
-  const { isOpenSettingModal, menuItem, setMenuItem, setIsOpenSettingModal, setIsHover } =
-    useYTDLiveChatNoLsStore(
-      useShallow(state => ({
-        isOpenSettingModal: state.isOpenSettingModal,
-        menuItem: state.menuItem,
-        setMenuItem: state.setMenuItem,
-        setIsOpenSettingModal: state.setIsOpenSettingModal,
-        setIsHover: state.setIsHover,
-      })),
-    )
+  const { isOpenSettingModal, menuItem, setMenuItem, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
+    useShallow(state => ({
+      isOpenSettingModal: state.isOpenSettingModal,
+      menuItem: state.menuItem,
+      setMenuItem: state.setMenuItem,
+      setIsOpenSettingModal: state.setIsOpenSettingModal,
+      setIsHover: state.setIsHover,
+    })),
+  )
   const { t } = useTranslation()
 
   return (
@@ -60,30 +59,20 @@ export const YTDLiveChatSetting = () => {
           <div className={styles.menu}>
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <div
-              className={classNames(
-                styles['menu-item'],
-                menuItem === 'preset' && styles['selected-menu-item'],
-              )}
+              className={classNames(styles['menu-item'], menuItem === 'preset' && styles['selected-menu-item'])}
               onClick={() => setMenuItem('preset')}
             >
               {t('content.setting.header.preset')}
             </div>
             {/* biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <div
-              className={classNames(
-                styles['menu-item'],
-                menuItem === 'setting' && styles['selected-menu-item'],
-              )}
+              className={classNames(styles['menu-item'], menuItem === 'setting' && styles['selected-menu-item'])}
               onClick={() => setMenuItem('setting')}
             >
               {t('content.setting.header.setting')}
             </div>
           </div>
-          <RiCloseLine
-            className={styles['close-button']}
-            onClick={() => setIsOpenSettingModal(false)}
-            size={20}
-          />
+          <RiCloseLine className={styles['close-button']} onClick={() => setIsOpenSettingModal(false)} size={20} />
         </div>
         <div className={styles.content}>
           {menuItem === 'setting' && <SettingContent />}

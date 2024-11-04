@@ -7,10 +7,7 @@ export const useYLCReactionButtonDisplayChange = () => {
     const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
     const iframeDocument = iframeElement?.contentDocument?.documentElement
     if (!iframeDocument) return
-    iframeDocument.style.setProperty(
-      '--extension-reaction-button-display',
-      display ? 'inline' : 'none',
-    )
+    iframeDocument.style.setProperty('--extension-reaction-button-display', display ? 'inline' : 'none')
   }, [])
   const changeDisplay = useCallback(
     (display: boolean) => {
