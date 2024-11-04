@@ -2,9 +2,9 @@ import React, { useCallback, useRef } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
+import { useInitializedSlider } from '@/content/hooks/useInitializedSlider'
 import { Slider } from '@/shared/components/Slider'
 import { useYTDLiveChatStore } from '@/stores'
-import { useInitializedSlider } from '../../../../../hooks/useInitializedSlider'
 
 export const BlurToSliderValue = (blur: number) => {
   return blur / 20

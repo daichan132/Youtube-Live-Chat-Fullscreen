@@ -106,8 +106,9 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         style={{
           top,
           left,
-          transition: `${!disableTopTransition && 'top 250ms ease'}, ${!isResizing && 'height 250ms ease'
-            }`,
+          transition: `${!disableTopTransition && 'top 250ms ease'}, ${
+            !isResizing && 'height 250ms ease'
+          }`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
       >

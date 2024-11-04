@@ -7,9 +7,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/stores'
-import styles from '../../../styles/YTDLiveChatSetting/PresetContent.module.css'
+import styles from '../../styles/PresetContent.module.css'
 
-import type { YLCStyleType } from '../../../../../../types/ytdLiveChatType'
+import type { YLCStyleType } from '@/types/ytdLiveChatType'
 
 export const AddPresetItem = () => {
   const { addPresetEnabled, addPresetItem } = useYTDLiveChatStore(

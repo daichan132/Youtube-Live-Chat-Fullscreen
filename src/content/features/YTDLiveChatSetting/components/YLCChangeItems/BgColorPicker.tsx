@@ -6,9 +6,9 @@ import { ChromePicker } from 'react-color'
 import { useClickAway } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
+import { useYLCBgColorChange } from '@/content/hooks/ylcStyleChange/useYLCBgColorChange'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCBgColorChange } from '../../../../../hooks/ylcStyleChange/useYLCBgColorChange'
-import styles from '../../../styles/YTDLiveChatSetting/CustomColorPicker.module.css'
+import styles from '../../styles/CustomColorPicker.module.css'
 
 import type { ColorResult, RGBColor } from 'react-color'
 
@@ -58,7 +58,7 @@ export const BgColorPickerUI = React.forwardRef<
       <div
         className={styles['color-display']}
         onClick={() => setDisplay?.(d => !d)}
-        onKeyDown={() => { }}
+        onKeyDown={() => {}}
       >
         <div className={styles['color-preview-background']}>
           <div

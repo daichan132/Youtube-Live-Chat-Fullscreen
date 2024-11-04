@@ -5,7 +5,7 @@ import { SortableContext, arrayMove } from '@dnd-kit/sortable'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/stores'
-import styles from '../../styles/YTDLiveChatSetting/PresetContent.module.css'
+import styles from '../styles/PresetContent.module.css'
 
 import { AddPresetItem } from './PresetContent/AddPresetItem'
 import { PresetItem } from './PresetContent/PresetItem'

@@ -2,11 +2,11 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
+import { useYLCSuperChatBarDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCSuperChatBarDisplayChange } from '../../../../../hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
 
-import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
 
 export const SuperChatBarDisplaySwitch = () => {
   const { superChatBarDisplay, updateYLCStyle } = useYTDLiveChatStore(

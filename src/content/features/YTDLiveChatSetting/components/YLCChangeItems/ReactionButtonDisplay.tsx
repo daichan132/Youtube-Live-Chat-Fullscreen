@@ -2,11 +2,11 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
+import { useYLCReactionButtonDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCReactionButtonDisplayChange'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCReactionButtonDisplayChange } from '../../../../../hooks/ylcStyleChange/useYLCReactionButtonDisplayChange'
 
-import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
 
 export const ReactionButtonDisplaySwitch = () => {
   const { reactionButtonDisplay, updateYLCStyle } = useYTDLiveChatStore(

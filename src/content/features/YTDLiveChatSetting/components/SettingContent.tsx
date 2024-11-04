@@ -9,7 +9,7 @@ import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/stores'
-import styles from '../../styles/YTDLiveChatSetting/SettingContent.module.css'
+import styles from '../styles/SettingContent.module.css'
 
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
@@ -18,13 +18,12 @@ import { ChatOnlyDisplaySwitch } from './YLCChangeItems/ChatOnlyDisplaySwitch'
 import { FontColorPicker } from './YLCChangeItems/FontColorPicker'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { FontSizeSlider } from './YLCChangeItems/FontSizeSlider'
-// import { ReactionButtonDisplaySwitch } from './YLCChangeItems/ReactionButtonDisplay';
 import { SpaceSlider } from './YLCChangeItems/SpaceSlider'
 import { SuperChatBarDisplaySwitch } from './YLCChangeItems/SuperChatBarDisplaySwitch'
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch'
 
-import type { SettingItemType } from '../../../../../types/ytdLiveChatSetting'
+import type { SettingItemType } from '@/types/ytdLiveChatSetting'
 
 export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
@@ -90,11 +89,6 @@ export const SettingContent = () => {
       title: t('content.setting.superChatBarDisplay'),
       data: <SuperChatBarDisplaySwitch />,
     },
-    // {
-    //   icon: RiHeartFill,
-    //   title: t('content.setting.reactionButtonDisplay'),
-    //   data: <ReactionButtonDisplaySwitch />,
-    // },
   ]
   return (
     <div className={styles['content-setting-container']}>

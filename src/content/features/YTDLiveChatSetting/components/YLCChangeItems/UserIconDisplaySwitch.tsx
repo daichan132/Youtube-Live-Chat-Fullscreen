@@ -2,11 +2,11 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
+import { useYLCUserIconDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCUserIconDisplayChange'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCUserIconDisplayChange } from '../../../../../hooks/ylcStyleChange/useYLCUserIconDisplayChange'
 
-import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
 
 export const UserIconDisplaySwitch = () => {
   const { userIconDisplay, updateYLCStyle } = useYTDLiveChatStore(

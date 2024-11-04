@@ -1,8 +1,8 @@
 import { useShallow } from 'zustand/react/shallow'
 
+import { useYLCFontFamilyChange } from '@/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCFontFamilyChange } from '../../../../../hooks/ylcStyleChange/useYLCFontFamilyChange'
-import styles from '../../../styles/YTDLiveChatSetting/FontFamily.module.css'
+import styles from '../../styles/FontFamily.module.css'
 
 export const FontFamilyInput = () => {
   const { changeFontFamily } = useYLCFontFamilyChange()

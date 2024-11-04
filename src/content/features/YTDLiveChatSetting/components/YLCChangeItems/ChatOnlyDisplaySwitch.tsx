@@ -5,25 +5,25 @@ import { useShallow } from 'zustand/react/shallow'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/stores'
 
-import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
 
-export const AlwaysOnDisplaySwitch = () => {
-  const { alwaysOnDisplay, updateYLCStyle } = useYTDLiveChatStore(
+export const ChatOnlyDisplaySwitch = () => {
+  const { chatOnlyDisplay, updateYLCStyle } = useYTDLiveChatStore(
     useShallow(state => ({
-      alwaysOnDisplay: state.alwaysOnDisplay,
+      chatOnlyDisplay: state.chatOnlyDisplay,
       updateYLCStyle: state.updateYLCStyle,
     })),
   )
   return (
-    <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} updateYLCStyle={updateYLCStyle} />
+    <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} updateYLCStyle={updateYLCStyle} />
   )
 }
 
-export const AlwaysOnDisplaySwitchUI = ({
-  alwaysOnDisplay,
+export const ChatOnlyDisplaySwitchUI = ({
+  chatOnlyDisplay,
   updateYLCStyle,
 }: {
-  alwaysOnDisplay: boolean
+  chatOnlyDisplay: boolean
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
   return (
@@ -35,10 +35,10 @@ export const AlwaysOnDisplaySwitchUI = ({
       }}
     >
       <Switch
-        checked={alwaysOnDisplay}
-        id='always-on-display-switch'
+        checked={chatOnlyDisplay}
+        id='chat-only-display-switch'
         onChange={checked => {
-          updateYLCStyle?.({ alwaysOnDisplay: checked })
+          updateYLCStyle?.({ chatOnlyDisplay: checked })
         }}
       />
     </div>

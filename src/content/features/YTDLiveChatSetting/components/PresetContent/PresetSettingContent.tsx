@@ -7,7 +7,7 @@ import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 
 import { MdBlurOn, MdExpand } from 'react-icons/md'
 import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri'
 
-import styles from '../../../styles/YTDLiveChatSetting/SettingContent.module.css'
+import styles from '../../styles/SettingContent.module.css'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
 import { BlurSliderUI, BlurToSliderValue } from '../YLCChangeItems/BlurSlider'
@@ -20,8 +20,8 @@ import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
 
-import type { SettingItemType } from '../../../../../../types/ytdLiveChatSetting'
-import type { YLCStyleType } from '../../../../../../types/ytdLiveChatType'
+import type { SettingItemType } from '@/types/ytdLiveChatSetting'
+import type { YLCStyleType } from '@/types/ytdLiveChatType'
 
 export const PresetSettingContent = ({
   ylcStyle,
