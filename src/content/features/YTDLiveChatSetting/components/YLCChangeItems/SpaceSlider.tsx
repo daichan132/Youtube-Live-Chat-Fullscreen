@@ -2,9 +2,9 @@ import React, { useCallback, useRef } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useInitializedSlider } from '@/content/hooks/useInitializedSlider'
 import { useYLCSpaceChange } from '@/content/hooks/ylcStyleChange/useYLCSpaceChange'
 import { Slider } from '@/shared/components/Slider'
+import { useInitializedSlider } from '@/shared/hooks/useInitializedSlider'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 const minSize = 0

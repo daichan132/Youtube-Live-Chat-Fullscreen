@@ -3,7 +3,27 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
 
-import { useIsFullScreen } from './useIsFullScreen'
+const useIsFullScreen = () => {
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement !== null) {
+        setIsFullscreen(true)
+      } else {
+        setIsFullscreen(false)
+      }
+    }
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
+    }
+  }, [])
+
+  return isFullscreen
+}
 
 const gap = 10
 export const useIsShow = () => {
