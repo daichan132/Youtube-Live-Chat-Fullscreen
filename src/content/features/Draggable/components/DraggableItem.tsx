@@ -18,9 +18,8 @@ import { DragIcon } from './DragIcon'
 import { SettingIcon } from './SettingIcon'
 
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
-import type { NumberSize } from 're-resizable'
-import type { Direction } from 're-resizable/lib/resizer'
 import { WindowResizeEffect } from '../../Draggable/components/EffectComponent/WindowResizeEffect'
+import { useResizableHandlers } from '../hooks/useResizableHandlers'
 import { DisplayEffect } from './EffectComponent/DisplayEffect'
 
 interface DraggableItemType {
@@ -32,7 +31,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({
     id: 'wrapper',
   })
-  const [isResizing, setResiziging] = useState(false)
   const { size, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow(state => ({
       size: state.size,
@@ -41,42 +39,19 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     })),
   )
   const { clip, isClipPath } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      clip: state.clip,
-      isClipPath: state.isClipPath,
-    })),
+    useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath })),
   )
+  const [isResizing, setIsResizing] = useState(false)
+  const { onResizeStart, onResize, onResizeStop } = useResizableHandlers({
+    size,
+    setSize,
+    left,
+    top,
+    setCoordinates,
+    setIsResizing,
+  })
   const disableTopTransition = useDisanleTopTransition(isDragging, isResizing)
   const isIconDisplay = useIconDisplay()
-  const coordinateRef = useRef({ x: left, y: top })
-  const onResize = useCallback(
-    ({ delta, direction }: { delta: NumberSize; direction: Direction }) => {
-      if (!isResizing) {
-        return
-      }
-      const directions = ['top', 'left', 'topLeft', 'bottomLeft', 'topRight']
-
-      if (directions.indexOf(direction) !== -1) {
-        let newLeft = coordinateRef.current.x
-        let newTop = coordinateRef.current.y
-
-        if (direction === 'bottomLeft') {
-          newLeft = coordinateRef.current.x - delta.width
-        } else if (direction === 'topRight') {
-          newTop = coordinateRef.current.y - delta.height
-        } else {
-          newLeft = coordinateRef.current.x - delta.width
-          newTop = coordinateRef.current.y - delta.height
-        }
-
-        setCoordinates({
-          x: newLeft < 0 ? 0 : newLeft,
-          y: newTop < 0 ? 0 : newTop,
-        })
-      }
-    },
-    [isResizing, setCoordinates],
-  )
 
   return (
     <>
@@ -89,25 +64,9 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
         className={styles.Resizable}
-        onResizeStop={(_event, _direction, _ref, d) => {
-          setResiziging(false)
-          let newWidth = size.width + d.width
-          let newHeight = size.height + d.height
-          if (newWidth + left > window.innerWidth) {
-            newWidth = window.innerWidth - left
-          }
-          if (newHeight + top > window.innerHeight) {
-            newHeight = window.innerHeight - top
-          }
-          setSize({ width: newWidth, height: newHeight })
-        }}
-        onResize={(_event, direction, _ref, delta) => {
-          onResize({ delta, direction })
-        }}
-        onResizeStart={() => {
-          setResiziging(true)
-          coordinateRef.current = { x: left, y: top }
-        }}
+        onResizeStart={onResizeStart}
+        onResize={onResize}
+        onResizeStop={onResizeStop}
         style={{
           top,
           left,
