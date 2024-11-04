@@ -4,7 +4,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/stores'
-import { useYLCSuperChatBarDisplayChange } from '../../../hooks/YTDLiveChatSetting/useYLCSuperChatBarDisplayChange'
+import { useYLCSuperChatBarDisplayChange } from '../../../../../hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
 
 import type { YLCStyleUpdateType } from '../../../../../../types/ytdLiveChatType'
 

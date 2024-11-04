@@ -4,11 +4,11 @@ import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/stores'
-import { useIframeLoader } from '../../hooks/YTDLiveChatIframe/useIframeLoader'
-import fade from '../../styles/YTDLiveChatIframe/Fade.module.css'
-import styles from '../../styles/YTDLiveChatIframe/Loader.module.css'
-import { DisplayEffect } from '../EffectComponent/DisplayEffect'
-import { WindowResizeEffect } from '../EffectComponent/WindowResizeEffect'
+import { useIframeLoader } from '../hooks/useIframeLoader'
+import fade from '../styles/Fade.module.css'
+import styles from '../styles/Loader.module.css'
+import { DisplayEffect } from './EffectComponent/DisplayEffect'
+import { WindowResizeEffect } from './EffectComponent/WindowResizeEffect'
 
 export const YTDLiveChatIframe = () => {
   const { ref } = useIframeLoader()

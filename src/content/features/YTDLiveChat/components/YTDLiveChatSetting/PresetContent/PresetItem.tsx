@@ -11,10 +11,10 @@ import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/stores'
-import { useChangeYLCStyle } from '../../../hooks/YTDLiveChatIframe/useChangeYLCStyle'
 import modalStyles from '../../../styles/YTDLiveChatSetting/DeleteConfirmationModal.module.css'
 import styles from '../../../styles/YTDLiveChatSetting/PresetContent.module.css'
 
+import { useChangeYLCStyle } from '@/content/hooks/useChangeYLCStyle'
 import type { YLCStyleType } from '../../../../../../types/ytdLiveChatType'
 
 interface PresetItemType {

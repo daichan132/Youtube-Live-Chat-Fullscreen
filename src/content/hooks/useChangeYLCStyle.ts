@@ -1,16 +1,15 @@
 import { useCallback } from 'react'
 
-import { useYLCBgColorChange } from '../YTDLiveChatSetting/useYLCBgColorChange'
-import { useYLCFontColorChange } from '../YTDLiveChatSetting/useYLCFontColorChange'
-import { useYLCFontFamilyChange } from '../YTDLiveChatSetting/useYLCFontFamilyChange'
-import { useYLCFontSizeChange } from '../YTDLiveChatSetting/useYLCFontSizeChange'
-import { useYLCReactionButtonDisplayChange } from '../YTDLiveChatSetting/useYLCReactionButtonDisplayChange'
-import { useYLCSpaceChange } from '../YTDLiveChatSetting/useYLCSpaceChange'
-import { useYLCSuperChatBarDisplayChange } from '../YTDLiveChatSetting/useYLCSuperChatBarDisplayChange'
-import { useYLCUserIconDisplayChange } from '../YTDLiveChatSetting/useYLCUserIconDisplayChange'
-import { useYLCUserNameDisplayChange } from '../YTDLiveChatSetting/useYLCUserNameDisplayChange'
-
-import type { YLCStyleUpdateType } from '../../../../../types/ytdLiveChatType'
+import type { YLCStyleUpdateType } from '@/types/ytdLiveChatType'
+import { useYLCBgColorChange } from './ylcStyleChange/useYLCBgColorChange'
+import { useYLCFontColorChange } from './ylcStyleChange/useYLCFontColorChange'
+import { useYLCFontFamilyChange } from './ylcStyleChange/useYLCFontFamilyChange'
+import { useYLCFontSizeChange } from './ylcStyleChange/useYLCFontSizeChange'
+import { useYLCReactionButtonDisplayChange } from './ylcStyleChange/useYLCReactionButtonDisplayChange'
+import { useYLCSpaceChange } from './ylcStyleChange/useYLCSpaceChange'
+import { useYLCSuperChatBarDisplayChange } from './ylcStyleChange/useYLCSuperChatBarDisplayChange'
+import { useYLCUserIconDisplayChange } from './ylcStyleChange/useYLCUserIconDisplayChange'
+import { useYLCUserNameDisplayChange } from './ylcStyleChange/useYLCUserNameDisplayChange'
 
 export const useChangeYLCStyle = () => {
   const { changeColor: changBgColor } = useYLCBgColorChange()

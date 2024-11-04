@@ -1,4 +1,4 @@
-import { YTDLiveChat } from './features/YTDLiveChat'
+import { YTDLiveChat } from './YTDLiveChat'
 import { useGlobalSetting } from './hooks/useGlobalSetting'
 
 const Content = () => {
