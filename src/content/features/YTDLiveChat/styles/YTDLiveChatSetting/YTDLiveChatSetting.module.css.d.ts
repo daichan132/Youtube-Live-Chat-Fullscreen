@@ -19,9 +19,6 @@ export {
 	settings,
 	header,
 	menu,
-	menuItem as "menu-item",
-	selectedMenuItem as "selected-menu-item",
-	closeButton as "close-button",
 	content,
 	footer,
 	help

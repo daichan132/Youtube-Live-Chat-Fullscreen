@@ -19,8 +19,6 @@ const addPresetItem: string;
 const disable: string;
 
 export {
-	contentPresetContainer as "content-preset-container",
-	presetItem as "preset-item",
 	dragging,
 	flex,
 	leftContainer,
@@ -29,7 +27,6 @@ export {
 	rightContainer,
 	applyStyleButton,
 	deleteButton,
-	addPresetItem as "add-preset-item",
 	disable
 };
 

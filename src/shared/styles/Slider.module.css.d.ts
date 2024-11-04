@@ -10,9 +10,7 @@ const sliderTrack: string;
 const sliderThumb: string;
 
 export {
-	sliderWrapper as "slider-wrapper",
-	sliderTrack as "slider-track",
-	sliderThumb as "slider-thumb"
+
 };
 
 export default {

@@ -15,10 +15,7 @@ const title: string;
 const data: string;
 
 export {
-	contentSettingContainer as "content-setting-container",
-	contentSettingItem as "content-setting-item",
 	disable,
-	titleWithIcon as "title-with-icon",
 	preset,
 	open,
 	title,

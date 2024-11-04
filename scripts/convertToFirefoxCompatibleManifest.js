@@ -1,12 +1,11 @@
 import * as path from "node:path";
-
 import fs from "fs-extra";
 
 const BASE_OUT_DIR = "dist";
 const baseOutDir = path.resolve(BASE_OUT_DIR);
 
 if (!fs.existsSync(baseOutDir)) {
-  throw Error(
+  throw new Error(
     `${BASE_OUT_DIR} dir does not exist. Please run base build first.`
   );
 }
@@ -18,9 +17,7 @@ const outDir = `${path.dirname(
 fs.copySync(baseOutDir, outDir);
 
 const manifestPath = path.resolve(outDir, "manifest.json");
-const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
-
-manifest.manifest_version = 3;
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 
 fs.writeFileSync(
   `${outDir}/background.html`,

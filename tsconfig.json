@@ -34,11 +34,11 @@
 		],
 	},
 	"include": [
-		"src"
-	],
-	"references": [
-		{
-			"path": "./tsconfig.node.json"
-		}
+		"src",
+		"src/**/*.json",
+		"vite.config.ts",
+		"src/manifest.ts",
+		"package.json",
+		"scripts"
 	]
 }

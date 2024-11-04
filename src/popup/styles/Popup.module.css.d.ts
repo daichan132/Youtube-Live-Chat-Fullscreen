@@ -17,10 +17,8 @@ const help: string;
 export {
 	settings,
 	content,
-	contentItem as "content-item",
 	disable,
 	title,
-	titleWithIcon as "title-with-icon",
 	footer,
 	help
 };

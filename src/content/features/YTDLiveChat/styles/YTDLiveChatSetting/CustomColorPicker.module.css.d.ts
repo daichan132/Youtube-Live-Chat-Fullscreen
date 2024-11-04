@@ -12,11 +12,7 @@ const colorPreview: string;
 const colorPicker: string;
 
 export {
-	colorPickerWrapper as "color-picker-wrapper",
-	colorDisplay as "color-display",
-	colorPreviewBackground as "color-preview-background",
-	colorPreview as "color-preview",
-	colorPicker as "color-picker"
+
 };
 
 export default {
