@@ -8,11 +8,11 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore } from '@/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/stores/ytdLiveChatStore'
-import { useDisanleTopTransition } from '../../hooks/Draggable/useDisanleTopTransition'
-import { useIconDisplay } from '../../hooks/Draggable/useIconDisplay'
-import styles from '../../styles/Draggable/DraggableItem.module.css'
-import { ClipPathEffect } from '../EffectComponent/ClipPathEffect'
-import { HoverEffect } from '../EffectComponent/HoverEffect'
+import { useDisanleTopTransition } from '../hooks/useDisanleTopTransition'
+import { useIconDisplay } from '../hooks/useIconDisplay'
+import styles from '../styles/DraggableItem.module.css'
+import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
+import { HoverEffect } from './EffectComponent/HoverEffect'
 
 import { DragIcon } from './DragIcon'
 import { SettingIcon } from './SettingIcon'
@@ -106,9 +106,8 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         style={{
           top,
           left,
-          transition: `${!disableTopTransition && 'top 250ms ease'}, ${
-            !isResizing && 'height 250ms ease'
-          }`,
+          transition: `${!disableTopTransition && 'top 250ms ease'}, ${!isResizing && 'height 250ms ease'
+            }`,
           pointerEvents: isClipPath ? 'none' : 'all',
         }}
       >

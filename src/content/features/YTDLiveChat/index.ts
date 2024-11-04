@@ -1,1 +1,1 @@
-export * from './routes/YTDLiveChat'
+export * from '../../YTDLiveChat'

@@ -10,7 +10,7 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": ["node_modules", "./src/**/*.d.ts"],
+    "ignore": ["node_modules", "src/**/*.d.ts"],
     "indentWidth": 2,
     "indentStyle": "space",
     "lineWidth": 100
@@ -38,7 +38,7 @@
     }
   },
   "linter": {
-    "ignore": ["node_modules", "./src/**/*.d.ts"],
+    "ignore": ["node_modules", "src/**/*.d.ts"],
     "rules": {
       "a11y": {
         "noDistractingElements": "error",
