@@ -25,3 +25,21 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+
+  upload-firefox-extension:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: "yarn"
+      - name: Install dependencies
+        run: rm -rf node_modules && yarn install --frozen-lockfile
+      - name: Build Firefox Extension
+        run: yarn build
+      - name: Upload Firefox Extension
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: npx web-ext sign --source-dir=dist-firefox --artifacts-dir=bundle --api-key=${{ secrets.FIREFOX_JWT_ISSUER }} --api-secret=${{ secrets.FIREFOX_JWT_SECRET }}
