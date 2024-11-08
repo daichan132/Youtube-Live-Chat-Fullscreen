@@ -40,6 +40,6 @@ jobs:
         run: yarn build
       - name: Upload Firefox Extension
         env:
-          AMO_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
-          AMO_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist-firefox -a bundle --channel=listed --api-key=${{ secrets.FIREFOX_JWT_ISSUER }} --api-secret=${{ secrets.FIREFOX_JWT_SECRET }}
+          WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: npx web-ext sign -s dist-firefox -a bundle --channel=unlisted

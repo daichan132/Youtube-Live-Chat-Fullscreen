@@ -8,6 +8,7 @@ const manifest = defineManifest(async env => ({
   description: '__MSG_extensionDescription__',
   version,
   default_locale: 'en',
+  browser_specific_settings: { gecko: { id: '{6fecd3d1-1743-4913-af18-f30d06d1fad6}' } },
   background: {
     service_worker: 'background/index.ts',
   },
