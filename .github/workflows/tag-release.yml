@@ -21,4 +21,4 @@ jobs:
         run: |
           VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
           git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "v$VERSION"
+          git push origin "refs/tags/v$VERSION"
