@@ -1,12 +1,31 @@
 name: CD
 
 on:
-  push:
-    tags:
-      - '*'
+  pull_request:
+    branches:
+      - main
+    types: [closed]
 
 jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Git user
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Get version from package.json and create tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "refs/tags/v$VERSION"
   upload-extension:
+    needs: create_tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,8 +44,8 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-
   upload-firefox-extension:
+    needs: create_tag
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
