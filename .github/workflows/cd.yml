@@ -8,7 +8,8 @@ on:
 jobs:
   create_tag:
     runs-on: ubuntu-latest
-    continue-on-error: true
+    outputs:
+      tag_created: ${{ steps.check_tag.outputs.tag_created }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -17,14 +18,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
       - name: Get version from package.json and create tag
+        id: check_tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
-          git tag -a "v$VERSION" -m "Release v$VERSION"
-          git push origin "refs/tags/v$VERSION"
+          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
+            echo "Tag v$VERSION already exists."
+            echo "tag_created=false" >> $GITHUB_OUTPUT
+          else
+            git tag -a "v$VERSION" -m "Release v$VERSION"
+            git push origin "refs/tags/v$VERSION"
+            echo "tag_created=true" >> $GITHUB_OUTPUT
+          fi
+
   upload-extension:
     needs: create_tag
+    if: needs.create_tag.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -43,8 +53,10 @@ jobs:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+
   upload-firefox-extension:
     needs: create_tag
+    if: needs.create_tag.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
