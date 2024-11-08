@@ -1,0 +1,20 @@
+name: Tag from package.json version
+
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  create_tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Get version from package.json and create tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
+          git tag -a "v$VERSION" -m "Release v$VERSION"
+          git push origin "v$VERSION"
