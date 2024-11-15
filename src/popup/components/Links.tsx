@@ -7,7 +7,8 @@ export const Links = () => {
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '1rem',
+        gap: '1.25rem',
+        paddingRight: '0.5rem',
       }}
     >
       <a
@@ -15,17 +16,17 @@ export const Links = () => {
         target='_blank'
         rel='noopener noreferrer'
       >
-        <FaChrome size={22} style={{ color: '#333' }} />
+        <FaChrome size={22} style={{ color: '#444' }} />
       </a>
       <a
         href='https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/'
         target='_blank'
         rel='noopener noreferrer'
       >
-        <FaFirefox size={22} style={{ color: '#333' }} />
+        <FaFirefox size={22} style={{ color: '#444' }} />
       </a>
       <a href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen' target='_blank' rel='noopener noreferrer'>
-        <FaGithub size={22} style={{ color: '#333' }} />
+        <FaGithub size={22} style={{ color: '#444' }} />
       </a>
     </div>
   )
