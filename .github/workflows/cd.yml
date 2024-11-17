@@ -73,4 +73,4 @@ jobs:
         env:
           WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist-firefox -a bundle --channel=unlisted
+        run: npx web-ext sign -s dist-firefox -a bundle --channel=listed
