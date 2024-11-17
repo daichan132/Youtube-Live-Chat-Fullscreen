@@ -47,8 +47,8 @@ jobs:
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Build
         run: yarn build
-      - name: upload extension
-        run: npx chrome-webstore-upload-cli@3 upload --source bundle/dist.zip
+      - name: Upload and Publish Chrome Extension
+        run: npx chrome-webstore-upload --source bundle/dist.zip
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
