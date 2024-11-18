@@ -16,7 +16,7 @@
     "lint": "biome check --write ./src/** && run-p lint:type",
     "lint:type": "tsc --noEmit",
     "prepare": "lefthook install",
-    "test": "playwright test"
+    "test:playwright": "playwright test"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
