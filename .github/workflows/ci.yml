@@ -47,9 +47,9 @@ jobs:
       - name: Install dependencies
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: npx playwright install --with-deps chromium firefox
       - name: Test with Playwright
-        run: xvfb-run npx playwright test
+        run: npx playwright test
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
