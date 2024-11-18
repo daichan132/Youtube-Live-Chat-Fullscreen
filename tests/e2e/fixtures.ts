@@ -13,8 +13,6 @@ export const test = base.extend<{
     const pathToExtension = path.join(__dirname, '../../dist')
     const context = await chromium.launchPersistentContext('', {
       headless: false,
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)',
-      locale: 'en-US',
       args: [
         process.env.CI ? '--headless=new' : '',
         `--disable-extensions-except=${pathToExtension}`,
