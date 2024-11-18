@@ -2,7 +2,8 @@ import { expect, test } from './fixtures'
 
 test('youtube live archive test', async ({ page }) => {
   await page.goto('https://www.youtube.com/watch?v=SBGcCLGkVMo')
-  await page.locator('#chatframe').contentFrame().locator('yt-live-chat-text-message-renderer').isVisible
+  await page.locator('#chatframe').contentFrame().locator('yt-live-chat-text-message-renderer')
+  await page.locator('video').hover()
   await page.click('button.ytp-fullscreen-button')
 
   await expect(
