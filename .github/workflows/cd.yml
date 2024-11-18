@@ -47,8 +47,8 @@ jobs:
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Build
         run: yarn build
-      - name: upload extension
-        run: npx chrome-webstore-upload-cli@3 upload --source bundle/dist.zip
+      - name: Upload and Publish Chrome Extension
+        run: npx chrome-webstore-upload --source bundle/dist.zip
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -73,4 +73,4 @@ jobs:
         env:
           WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist-firefox -a bundle --channel=unlisted
+        run: npx web-ext sign -s dist-firefox -a bundle --channel=listed

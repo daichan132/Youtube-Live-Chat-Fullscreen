@@ -1,7 +1,7 @@
 {
   "name": "youtube-live-chat-fullscreen",
   "private": true,
-  "version": "2.0.28",
+  "version": "2.1.0",
   "type": "module",
   "scripts": {
     "dev": "run-s clean && vite",
@@ -15,7 +15,8 @@
     "format": "npx @biomejs/biome format --write ./src/**",
     "lint": "biome check --write ./src/** && run-p lint:type",
     "lint:type": "tsc --noEmit",
-    "prepare": "lefthook install"
+    "prepare": "lefthook install",
+    "test:playwright": "playwright test"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
