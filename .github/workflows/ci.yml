@@ -31,8 +31,9 @@ jobs:
         run: rm -rf node_modules && yarn install --frozen-lockfile
       - name: Lint
         run: yarn lint
-  
+
   test:
+    timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -42,5 +43,13 @@ jobs:
           cache: "yarn"
       - name: Install dependencies
         run: rm -rf node_modules && yarn install --frozen-lockfile
-      - name: Lint
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
+      - name: Test with Playwright
         run: xvfb-run npx playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
