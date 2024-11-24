@@ -18,11 +18,7 @@ export const Links = () => {
       >
         <FaChrome size={22} style={{ color: '#444' }} />
       </a>
-      <a
-        href='https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/'
-        target='_blank'
-        rel='noopener noreferrer'
-      >
+      <a href='https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/' target='_blank' rel='noopener noreferrer'>
         <FaFirefox size={22} style={{ color: '#444' }} />
       </a>
       <a href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen' target='_blank' rel='noopener noreferrer'>
