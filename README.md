@@ -1,6 +1,5 @@
 <div align="center">
-
-  <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="128" style="margin-bottom: 10px;" />
+  <img src="public/images/extension_128.png" alt="YouTube Live Chat Fullscreen Logo" width="100" />
 </div>
 <br>
 <h1 align="center">Youtube Live Chat Fullscreen</h1>
