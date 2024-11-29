@@ -46,7 +46,7 @@
     "@biomejs/biome": "1.9.4",
     "@crxjs/vite-plugin": "^2.0.0-beta.28",
     "@playwright/test": "^1.49.0",
-    "@types/chrome": "^0.0.284",
+    "@types/chrome": "^0.0.287",
     "@types/fs-extra": "^11.0.4",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.9.3",
