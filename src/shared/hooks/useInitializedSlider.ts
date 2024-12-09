@@ -18,7 +18,7 @@ export function useInitializedSlider<TElement extends HTMLElement>({
   initialValue,
   ...options
 }: InitializedSliderOptions): InitializedSliderHook<TElement> {
-  const ref = useRef<TElement>(null)
+  const ref = useRef<TElement>(null as unknown as TElement)
   const touched = useRef(false)
   const slider = useSlider(ref, {
     ...options,

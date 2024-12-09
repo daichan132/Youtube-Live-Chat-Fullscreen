@@ -26,6 +26,10 @@
 		"paths": {
 			"@/*": [
 				"./src/*"
+			],
+			// https://zenn.dev/manase/scraps/3fb10da5a4ecc5
+			"react": [
+				"./node_modules/@types/react"
 			]
 		},
 	},
