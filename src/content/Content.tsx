@@ -1,9 +1,28 @@
 import { useGlobalSetting } from '@/shared/hooks/useGlobalSetting'
+import { createPortal } from 'react-dom'
 import { YTDLiveChat } from './YTDLiveChat'
+import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
+import { useIsFullScreen } from './hooks/useIsFullscreen'
 
-const Content = () => {
+
+export const Content = () => {
   const { ytdLiveChat } = useGlobalSetting()
-  return <>{ytdLiveChat ? <YTDLiveChat /> : null}</>
-}
+  const isFullscreen = useIsFullScreen()
 
-export default Content
+  return (
+    <>
+      <YTDLiveChatSetting />
+      {ytdLiveChat && isFullscreen && (
+        (() => {
+          const portalRoot = document.getElementById('movie_player');
+          if (!portalRoot) return null;
+          return createPortal(
+            <div className='extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec '>
+              <YTDLiveChat />
+            </div>
+            , portalRoot);
+        })()
+      )}
+    </>
+  )
+}
