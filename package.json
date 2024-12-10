@@ -70,7 +70,7 @@
     "vite-css-modules": "^1.6.0",
     "web-ext": "^8.3.0"
   },
-  "packageManager": "yarn@4.5.2",
+  "packageManager": "yarn@4.5.3",
   "browserslist": [
     "last 2 version",
     "ie >= 11",
