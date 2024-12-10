@@ -10,48 +10,51 @@
   transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
   pointer-events: all;
 }
-.Container > .dragButton {
+.Container svg {
+  pointer-events: all !important;
+}
+.dragButton {
   z-index: 1;
   position: absolute;
   right: 48px;
   top: 4px;
 }
-.Container > .dragButton > svg {
+.dragButton > svg {
   border-radius: 10px;
   transition: background-color 0.1s ease;
   padding: 7px;
 }
-.Container > .dragButton > svg:hover {
+.dragButton > svg:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.1);
 }
-.Container > .dragButton.dragging > svg {
+.dragButton.dragging > svg {
   background-color: rgba(0, 0, 0, 0.1);
 }
-.Container > .dragButton.dragging > svg:hover {
+.dragButton.dragging > svg:hover {
   cursor: grabbing;
 }
-.Container > .settingButton {
+.settingButton {
   position: absolute;
   z-index: 1;
   right: 88px;
   top: 4px;
 }
-.Container > .settingButton > svg {
+.settingButton > svg {
   border-radius: 10px;
   padding: 7px;
   transition: background-color 0.1s ease;
 }
-.Container > .settingButton > svg:hover {
+.settingButton > svg:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.1);
 }
-.Container > .children {
+.children {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.Container > .children > .overlay {
+.children > .overlay {
   position: absolute;
   z-index: 100;
   width: 100%;

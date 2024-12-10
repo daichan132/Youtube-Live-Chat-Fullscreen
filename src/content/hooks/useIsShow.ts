@@ -3,42 +3,19 @@ import { useCallback, useEffect, useState } from 'react'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
 
-const useIsFullScreen = () => {
-  const [isFullscreen, setIsFullscreen] = useState(false)
-
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement !== null) {
-        setIsFullscreen(true)
-      } else {
-        setIsFullscreen(false)
-      }
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-
-    return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange)
-    }
-  }, [])
-
-  return isFullscreen
-}
-
 const gap = 10
 export const useIsShow = () => {
-  const isFullscreen = useIsFullScreen()
   const [isChecked, setIsChecked] = useState<boolean>(false)
   const [isChat, setIsChat] = useState<boolean>(false)
 
   useEffect(() => {
     setIsChat(false)
-    if (!isFullscreen) return
     // 30回300ms毎に定期実行して、iframeが読み込まれているか確認する
     let count = 0
     const interval = setInterval(() => {
       const liveChatReplay: HTMLIFrameElement | null = document.querySelector('iframe.ytd-live-chat-frame')
-      if (liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
+      const moviePlayer: HTMLElement | null = document.getElementById('movie_player')
+      if (liveChatReplay && moviePlayer && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
         setIsChat(true)
         clearInterval(interval)
       }
@@ -50,11 +27,11 @@ export const useIsShow = () => {
     return () => {
       clearInterval(interval)
     }
-  }, [isFullscreen])
+  }, [])
 
   const [isTop, setIsTop] = useState<boolean>(false)
   const updateIsTopBasedOnMasthead = useCallback((element: Element) => {
-    if (element.hasAttribute('masthead-hidden')) {
+    if (element.hasAttribute('masthead-hidden') || element.hasAttribute('player-fullscreen')) {
       setIsTop(true)
     } else {
       setIsTop(false)
@@ -63,7 +40,7 @@ export const useIsShow = () => {
   useEffect(() => {
     setIsTop(true)
     const ytdAppElement = document.querySelector('ytd-app')
-    if (!isFullscreen || !ytdAppElement) return
+    if (!ytdAppElement) return
     updateIsTopBasedOnMasthead(ytdAppElement)
     // biome-ignore lint/suspicious/noExplicitAny: <explanation>
     const mastheadHidden = (mutations: any) => {
@@ -73,18 +50,17 @@ export const useIsShow = () => {
     }
     const mutationObserver = new MutationObserver(mastheadHidden)
     mutationObserver.observe(ytdAppElement, {
-      attributeFilter: ['masthead-hidden'],
+      attributeFilter: ['masthead-hidden', 'player-fullscreen'],
       attributes: true,
     })
     return () => {
       mutationObserver.disconnect()
     }
-  }, [isFullscreen, updateIsTopBasedOnMasthead])
+  }, [updateIsTopBasedOnMasthead])
 
   const [isTheaterChatMode, setIsTheaterChatMode] = useState<boolean>(false)
   useEffect(() => {
     setIsTheaterChatMode(false)
-    if (!isFullscreen) return
     const ytdWatchGridElement = document.querySelector('ytd-watch-grid')
     if (!ytdWatchGridElement) return
     if (ytdWatchGridElement.hasAttribute('is-two-columns_') && ytdWatchGridElement.hasAttribute('live-chat-present-and-expanded')) {
@@ -92,7 +68,7 @@ export const useIsShow = () => {
     } else {
       setIsTheaterChatMode(false)
     }
-  }, [isFullscreen])
+  }, [])
   useEffect(() => {
     if (isChat && isTop && !isTheaterChatMode) {
       /* ----------------------- YLC is in outside of window ---------------------- */
@@ -111,9 +87,5 @@ export const useIsShow = () => {
       setIsChecked(false)
     }
   }, [isTop, isChat, isTheaterChatMode])
-  return {
-    isFullscreen,
-    isShow: isChat && isTop && isChecked && !isTheaterChatMode,
-    isChat,
-  }
+  return isChat && isTop && isChecked && !isTheaterChatMode
 }

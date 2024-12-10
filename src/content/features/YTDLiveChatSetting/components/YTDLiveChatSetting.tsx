@@ -51,8 +51,8 @@ export const YTDLiveChatSetting = () => {
       style={customStyles}
       shouldCloseOnOverlayClick={true}
       onRequestClose={() => setIsOpenSettingModal(false)}
-      appElement={document.body}
       onAfterClose={() => setIsHover(false)}
+      parentSelector={() => document.getElementById('movie_player') || document.body}
     >
       <div className={styles.settings}>
         <div className={styles.header}>
