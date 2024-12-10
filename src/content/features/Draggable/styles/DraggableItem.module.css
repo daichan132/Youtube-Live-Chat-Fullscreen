@@ -10,6 +10,9 @@
   transform: translate3d(var(--translate-x, 0), var(--translate-y, 0), 0);
   pointer-events: all;
 }
+.Container svg {
+  pointer-events: all !important;
+}
 .dragButton {
   z-index: 1;
   position: absolute;
@@ -20,7 +23,6 @@
   border-radius: 10px;
   transition: background-color 0.1s ease;
   padding: 7px;
-  pointer-events: all;
 }
 .dragButton > svg:hover {
   cursor: pointer;
@@ -42,7 +44,6 @@
   border-radius: 10px;
   padding: 7px;
   transition: background-color 0.1s ease;
-  pointer-events: all;
 }
 .settingButton > svg:hover {
   cursor: pointer;

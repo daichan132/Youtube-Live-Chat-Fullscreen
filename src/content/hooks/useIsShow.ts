@@ -31,7 +31,7 @@ export const useIsShow = () => {
 
   const [isTop, setIsTop] = useState<boolean>(false)
   const updateIsTopBasedOnMasthead = useCallback((element: Element) => {
-    if (element.hasAttribute('masthead-hidden')) {
+    if (element.hasAttribute('masthead-hidden') || element.hasAttribute('player-fullscreen')) {
       setIsTop(true)
     } else {
       setIsTop(false)
@@ -50,7 +50,7 @@ export const useIsShow = () => {
     }
     const mutationObserver = new MutationObserver(mastheadHidden)
     mutationObserver.observe(ytdAppElement, {
-      attributeFilter: ['masthead-hidden'],
+      attributeFilter: ['masthead-hidden', 'player-fullscreen'],
       attributes: true,
     })
     return () => {

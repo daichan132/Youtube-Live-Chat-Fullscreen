@@ -9,6 +9,10 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   overflow: hidden;
+  color: black !important;
+}
+.settings svg {
+  pointer-events: all !important;
 }
 .settings .header {
   display: flex;
@@ -23,7 +27,7 @@
 }
 .settings .header .menu .menu-item {
   padding: 1rem 1.25rem;
-  color: #333;
+  color: #333 !important;
   border-radius: 5px;
   margin-right: 1rem;
   transition: background-color 200ms ease, color 200ms ease;
@@ -65,5 +69,5 @@
   font-size: 14px;
 }
 .settings .content .footer .help > a {
-  color: #333333;
+  color: #333333 !important;
 }
