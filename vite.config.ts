@@ -1,40 +1,26 @@
-import path from 'node:path'
-import { crx } from '@crxjs/vite-plugin'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 import { patchCssModules } from 'vite-css-modules'
+import webExtension, { readJsonFile } from 'vite-plugin-web-extension'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import manifest from './src/manifest'
+import manifest from './src/manifest.json'
+
+const target = process.env.TARGET || 'chrome'
+
+function generateManifest() {
+  const pkg = readJsonFile('package.json')
+  return {
+    version: pkg.version,
+    ...manifest,
+  }
+}
 
 export default defineConfig({
-  server: {
-    port: 5173,
-    strictPort: true,
-    hmr: {
-      port: 5173,
-    },
-  },
-  // prevent src/ prefix on extension urls
-  root: path.resolve(__dirname, 'src'),
-  publicDir: path.resolve(__dirname, 'public'),
-  build: {
-    outDir: path.resolve(__dirname, 'dist'),
-    rollupOptions: {
-      // input: {
-      //   // see web_accessible_resources in the manifest config
-      //   welcome: path.join(__dirname, 'src/welcome/welcome.html'),
-      // },
-      output: {
-        chunkFileNames: 'assets/chunk-[hash].js',
-      },
-    },
-  },
+  define: { __BROWSER__: JSON.stringify(target) },
   plugins: [
     react(),
-    crx({ manifest }),
+    webExtension({ manifest: generateManifest, browser: target }),
     tsconfigPaths(),
-    patchCssModules({
-      generateSourceTypes: true,
-    }),
+    patchCssModules({ generateSourceTypes: true }),
   ],
 })
