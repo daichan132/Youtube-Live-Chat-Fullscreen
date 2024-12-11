@@ -33,7 +33,7 @@ jobs:
             echo "tag_created=true" >> $GITHUB_OUTPUT
           fi
 
-  upload-extension:
+  upload-chrome-extension:
     needs: create_tag
     if: needs.create_tag.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
@@ -47,8 +47,10 @@ jobs:
         run: rm -rf node_modules && yarn install --immutable
       - name: Build
         run: yarn build
+      - name: Zip dist folder
+        run: zip -r dist.zip dist
       - name: Upload and Publish Chrome Extension
-        run: npx chrome-webstore-upload-cli@3 --source bundle/dist.zip
+        run: npx chrome-webstore-upload-cli@3 --source dist.zip
         env:
           EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -68,9 +70,11 @@ jobs:
       - name: Install dependencies
         run: rm -rf node_modules && yarn install --immutable
       - name: Build Firefox Extension
-        run: yarn build
+        run: yarn build:firefox
+      - name: Zip dist folder
+        run: cd dist && zip -r ../dist.zip . && cd ..
       - name: Upload Firefox Extension
         env:
           WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist-firefox -a bundle --channel=listed
+        run: npx web-ext sign -s dist-firefox --channel=listed

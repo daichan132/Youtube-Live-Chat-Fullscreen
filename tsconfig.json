@@ -37,7 +37,7 @@
 		"src",
 		"src/**/*.json",
 		"vite.config.ts",
-		"src/manifest.ts",
+		"src/manifest.jon",
 		"package.json",
 		"scripts"
 	]
