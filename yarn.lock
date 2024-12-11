@@ -1199,16 +1199,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra@npm:^11.0.4":
-  version: 11.0.4
-  resolution: "@types/fs-extra@npm:11.0.4"
-  dependencies:
-    "@types/jsonfile": "npm:*"
-    "@types/node": "npm:*"
-  checksum: 10c0/9e34f9b24ea464f3c0b18c3f8a82aefc36dc524cc720fc2b886e5465abc66486ff4e439ea3fb2c0acebf91f6d3f74e514f9983b1f02d4243706bdbb7511796ad
-  languageName: node
-  linkType: hard
-
 "@types/har-format@npm:*":
   version: 1.2.16
   resolution: "@types/har-format@npm:1.2.16"
@@ -1234,15 +1224,6 @@ __metadata:
   version: 2.2.7
   resolution: "@types/js-cookie@npm:2.2.7"
   checksum: 10c0/29196c6829982b5efa79117122a7d62cf4bc2f6397ce8eac1539319ff5dce3b44b2d86f2ac064f2ed3488fb24439358f24af6914fde5c5c4bab9a85728a13a6f
-  languageName: node
-  linkType: hard
-
-"@types/jsonfile@npm:*":
-  version: 6.1.4
-  resolution: "@types/jsonfile@npm:6.1.4"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: 10c0/b12d068b021e4078f6ac4441353965769be87acf15326173e2aea9f3bf8ead41bd0ad29421df5bbeb0123ec3fc02eb0a734481d52903704a1454a1845896b9eb
   languageName: node
   linkType: hard
 
@@ -7612,7 +7593,6 @@ __metadata:
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@playwright/test": "npm:^1.49.1"
     "@types/chrome": "npm:^0.0.287"
-    "@types/fs-extra": "npm:^11.0.4"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/node": "npm:^22.10.1"
     "@types/react": "npm:^19.0.1"
@@ -7627,7 +7607,6 @@ __metadata:
     "@typescript-eslint/parser": "npm:^8.18.0"
     "@vitejs/plugin-react": "npm:^4.3.4"
     classnames: "npm:^2.5.1"
-    fs-extra: "npm:^11.2.0"
     i18next: "npm:^24.0.5"
     i18next-browser-languagedetector: "npm:^8.0.2"
     identity-obj-proxy: "npm:^3.0.0"
