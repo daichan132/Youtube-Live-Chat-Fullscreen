@@ -45,6 +45,8 @@ yarn install
 
 **Chrome (Chromium, Manifest V3)**
 
+During development, run `yarn dev`, and for building, run `yarn build`.
+
 1. Open `chrome://extensions` in your browser.
 2. Enable **Developer Mode**.
 3. Click **Load unpacked**.
@@ -52,10 +54,12 @@ yarn install
 
 **Firefox (Manifest V2)**
 
+During development, run `yarn dev:firefox`, and for building, run `yarn build:firefox`.
+
 1. Open `about:debugging` in your browser.
 2. Click **This Firefox** (or **This Nightly**).
 3. Click **Load Temporary Add-on...**.
-4. Select any file in the `dist-firefox` directory.
+4. Select any file in the `dist` directory.
 
 ## 📄 License
 
