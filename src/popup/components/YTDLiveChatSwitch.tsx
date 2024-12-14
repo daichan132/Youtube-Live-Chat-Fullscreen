@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
@@ -12,6 +12,15 @@ export const YTDLiveChatSwitch = () => {
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
+  const handleSwitchChange = useCallback((checked: boolean) => {
+    setYTDLiveChat(checked)
+    chrome.runtime.sendMessage({
+      target: 'content',
+      message: 'ytdLiveChat',
+      ytdLiveChat: checked,
+    })
+  }, [setYTDLiveChat])
+
   return (
     <div
       style={{
@@ -23,13 +32,7 @@ export const YTDLiveChatSwitch = () => {
       <Switch
         checked={ytdLiveChat}
         id='ytd-live-chat-switch'
-        onChange={checked => {
-          setYTDLiveChat(checked)
-          chrome.runtime.sendMessage({
-            message: 'ytdLiveChat',
-            ytdLiveChat: checked,
-          })
-        }}
+        onChange={handleSwitchChange}
       />
     </div>
   )

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 
 import { useTranslation } from 'react-i18next'
 import Select from 'react-select'
@@ -17,7 +17,7 @@ export const LanguageSelector = () => {
 
   const { i18n } = useTranslation()
 
-  const changeLanguage = (
+  const changeLanguage = useCallback((
     selectedOption: {
       value: string
       label: string
@@ -26,10 +26,11 @@ export const LanguageSelector = () => {
     if (selectedOption === null) return
     i18n.changeLanguage(selectedOption.value)
     chrome.runtime.sendMessage({
+      target: 'content',
       message: 'language',
       language: selectedOption.value,
     })
-  }
+  }, [i18n])
 
   return (
     <Select
