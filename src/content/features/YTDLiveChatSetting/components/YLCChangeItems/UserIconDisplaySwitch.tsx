@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCUserIconDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCUserIconDisplayChange'
+import { useYLCUserIconDisplayChange } from '@/content/hooks/ylc-style-change/useYLCUserIconDisplayChange'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
 

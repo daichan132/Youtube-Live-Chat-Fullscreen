@@ -14,7 +14,7 @@ import { useYTDLiveChatStore } from '@/shared/stores'
 import modalStyles from '../../styles/DeleteConfirmationModal.module.css'
 import styles from '../../styles/PresetContent.module.css'
 
-import { useChangeYLCStyle } from '@/content/hooks/useChangeYLCStyle'
+import { useChangeYLCStyle } from '@/content/hooks/ylc-style-change/useChangeYLCStyle'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 interface PresetItemType {

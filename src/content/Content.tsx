@@ -1,8 +1,8 @@
 import { createPortal } from 'react-dom'
 import { YTDLiveChat } from './YTDLiveChat'
-import { useI18n } from './hooks/useI18n'
-import { useIsFullScreen } from './hooks/useIsFullscreen'
-import { useYtdLiveChat } from './hooks/useYtdLiveChat'
+import { useI18n } from './hooks/global-state/useI18n'
+import { useYtdLiveChat } from './hooks/global-state/useYtdLiveChat'
+import { useIsFullScreen } from './hooks/watch-youtube-ui/useIsFullscreen'
 
 export const Content = () => {
   useI18n()

@@ -7,7 +7,7 @@ import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
-import { useIsShow } from './hooks/useIsShow'
+import { useIsShow } from './hooks/watch-youtube-ui/useIsShow'
 import fade from './styles/Fade.module.css'
 
 export const YTDLiveChat = () => {

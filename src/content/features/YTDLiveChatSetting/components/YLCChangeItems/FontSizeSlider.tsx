@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCFontSizeChange } from '@/content/hooks/ylcStyleChange/useYLCFontSizeChange'
+import { useYLCFontSizeChange } from '@/content/hooks/ylc-style-change/useYLCFontSizeChange'
 import { Slider } from '@/shared/components/Slider'
 import { useInitializedSlider } from '@/shared/hooks/useInitializedSlider'
 import { useYTDLiveChatStore } from '@/shared/stores'
