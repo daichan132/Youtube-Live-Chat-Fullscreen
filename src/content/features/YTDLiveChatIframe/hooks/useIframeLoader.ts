@@ -6,7 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
 
-import { useChangeYLCStyle } from '@/content/hooks/ylc-style-change/useChangeYLCStyle'
+import { useChangeYLCStyle } from '@/content/hooks/ylcStyleChange/useChangeYLCStyle'
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLDivElement>(null)

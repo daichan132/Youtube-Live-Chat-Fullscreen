@@ -6,7 +6,7 @@ import { ChromePicker } from 'react-color'
 import { useClickAway } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCFontColorChange } from '@/content/hooks/ylc-style-change/useYLCFontColorChange'
+import { useYLCFontColorChange } from '@/content/hooks/ylcStyleChange/useYLCFontColorChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../../styles/CustomColorPicker.module.css'
 

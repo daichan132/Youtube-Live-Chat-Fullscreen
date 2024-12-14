@@ -2,7 +2,7 @@ import React from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCSuperChatBarDisplayChange } from '@/content/hooks/ylc-style-change/useYLCSuperChatBarDisplayChange'
+import { useYLCSuperChatBarDisplayChange } from '@/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
