@@ -19,7 +19,13 @@ export default defineConfig({
   define: { __BROWSER__: JSON.stringify(target) },
   plugins: [
     react(),
-    webExtension({ manifest: generateManifest, browser: target }),
+    webExtension({
+      manifest: generateManifest,
+      browser: target,
+      webExtConfig: {
+        startUrl: 'https://www.youtube.com/',
+      },
+    }),
     tsconfigPaths(),
     patchCssModules({ generateSourceTypes: true }),
   ],

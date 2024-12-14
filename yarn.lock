@@ -1259,12 +1259,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.10.1":
-  version: 22.10.1
-  resolution: "@types/node@npm:22.10.1"
+"@types/node@npm:^22.10.2":
+  version: 22.10.2
+  resolution: "@types/node@npm:22.10.2"
   dependencies:
     undici-types: "npm:~6.20.0"
-  checksum: 10c0/0fbb6d29fa35d807f0223a4db709c598ac08d66820240a2cd6a8a69b8f0bc921d65b339d850a666b43b4e779f967e6ed6cf6f0fca3575e08241e6b900364c234
+  checksum: 10c0/2c7b71a040f1ef5320938eca8ebc946e6905caa9bbf3d5665d9b3774a8d15ea9fab1582b849a6d28c7fc80756a62c5666bc66b69f42f4d5dafd1ccb193cdb4ac
   languageName: node
   linkType: hard
 
@@ -1282,13 +1282,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-color@npm:^3.0.12":
-  version: 3.0.12
-  resolution: "@types/react-color@npm:3.0.12"
+"@types/react-color@npm:^3.0.13":
+  version: 3.0.13
+  resolution: "@types/react-color@npm:3.0.13"
   dependencies:
-    "@types/react": "npm:*"
     "@types/reactcss": "npm:*"
-  checksum: 10c0/1ac1012466b27b8678a1129056427e7ebe2c7c301d241f3669c52ed5ac33f5fc8e4cbeeb566c2eaa674b2fc57c7a306528046e15e1117906e4ec137418c6be8f
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10c0/a26a2a628dc98d2186743a52e18fc1a4622ba9ec69989be1e51614084fd90a52c139ea6689aa9706fcea94356d277c87d69f11a5c1f66c19b45e6b0132db40bb
   languageName: node
   linkType: hard
 
@@ -1331,12 +1332,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-transition-group@npm:^4.4.0, @types/react-transition-group@npm:^4.4.11":
+"@types/react-transition-group@npm:^4.4.0":
   version: 4.4.11
   resolution: "@types/react-transition-group@npm:4.4.11"
   dependencies:
     "@types/react": "npm:*"
   checksum: 10c0/8fbf0dcc1b81985cdcebe3c59d769fe2ea3f4525f12c3a10a7429a59f93e303c82b2abb744d21cb762879f4514969d70a7ab11b9bf486f92213e8fe70e04098d
+  languageName: node
+  linkType: hard
+
+"@types/react-transition-group@npm:^4.4.12":
+  version: 4.4.12
+  resolution: "@types/react-transition-group@npm:4.4.12"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10c0/0441b8b47c69312c89ec0760ba477ba1a0808a10ceef8dc1c64b1013ed78517332c30f18681b0ec0b53542731f1ed015169fed1d127cc91222638ed955478ec7
   languageName: node
   linkType: hard
 
@@ -1382,10 +1392,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/webextension-polyfill@npm:^0.10.0":
-  version: 0.10.7
-  resolution: "@types/webextension-polyfill@npm:0.10.7"
-  checksum: 10c0/78f9153398172b66db74e02202146e078b9c8fe30a283f52e7ab58021fdb4d18be74555142ec83b878f9d05d98a0296ffbef8287aedd411d9503025fe8ddba36
+"@types/webextension-polyfill@npm:^0.12.1":
+  version: 0.12.1
+  resolution: "@types/webextension-polyfill@npm:0.12.1"
+  checksum: 10c0/d6e6253bbd020dcfa40391112212e3486320760d12c58854d0410140bda7ad0476749b9476e18d6888a1b04092662715b488f470c3aa29b44768990ffaf6d194
   languageName: node
   linkType: hard
 
@@ -3727,9 +3737,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^24.0.5":
-  version: 24.0.5
-  resolution: "i18next@npm:24.0.5"
+"i18next@npm:^24.1.0":
+  version: 24.1.0
+  resolution: "i18next@npm:24.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
   peerDependencies:
@@ -3737,7 +3747,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/3bcaf95c2f9a9025bbbc0efaea24f29197c6cc9465ad9fc565974d06d34e38bb7646bf79eab0a2906815cbb91b2cbf73bbf4f20aecf4fec7591def464b92796b
+  checksum: 10c0/90cc4c31871755493cc78695f30c658b7a7d0d986d0b1c006346e5855822203f3a9f84485ce734778268f9c84ff767c7d75aed6d1674a7abdb848ea6b82df28e
   languageName: node
   linkType: hard
 
@@ -4373,90 +4383,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook-darwin-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-darwin-arm64@npm:1.9.0"
+"lefthook-darwin-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-darwin-arm64@npm:1.9.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-darwin-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-darwin-x64@npm:1.9.0"
+"lefthook-darwin-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-darwin-x64@npm:1.9.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-freebsd-arm64@npm:1.9.0"
+"lefthook-freebsd-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-freebsd-arm64@npm:1.9.2"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-freebsd-x64@npm:1.9.0"
+"lefthook-freebsd-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-freebsd-x64@npm:1.9.2"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-linux-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-linux-arm64@npm:1.9.0"
+"lefthook-linux-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-linux-arm64@npm:1.9.2"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-linux-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-linux-x64@npm:1.9.0"
+"lefthook-linux-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-linux-x64@npm:1.9.2"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-openbsd-arm64@npm:1.9.0"
+"lefthook-openbsd-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-openbsd-arm64@npm:1.9.2"
   conditions: os=openbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-openbsd-x64@npm:1.9.0"
+"lefthook-openbsd-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-openbsd-x64@npm:1.9.2"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-windows-arm64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-windows-arm64@npm:1.9.0"
+"lefthook-windows-arm64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-windows-arm64@npm:1.9.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-windows-x64@npm:1.9.0":
-  version: 1.9.0
-  resolution: "lefthook-windows-x64@npm:1.9.0"
+"lefthook-windows-x64@npm:1.9.2":
+  version: 1.9.2
+  resolution: "lefthook-windows-x64@npm:1.9.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "lefthook@npm:1.9.0"
+"lefthook@npm:^1.9.2":
+  version: 1.9.2
+  resolution: "lefthook@npm:1.9.2"
   dependencies:
-    lefthook-darwin-arm64: "npm:1.9.0"
-    lefthook-darwin-x64: "npm:1.9.0"
-    lefthook-freebsd-arm64: "npm:1.9.0"
-    lefthook-freebsd-x64: "npm:1.9.0"
-    lefthook-linux-arm64: "npm:1.9.0"
-    lefthook-linux-x64: "npm:1.9.0"
-    lefthook-openbsd-arm64: "npm:1.9.0"
-    lefthook-openbsd-x64: "npm:1.9.0"
-    lefthook-windows-arm64: "npm:1.9.0"
-    lefthook-windows-x64: "npm:1.9.0"
+    lefthook-darwin-arm64: "npm:1.9.2"
+    lefthook-darwin-x64: "npm:1.9.2"
+    lefthook-freebsd-arm64: "npm:1.9.2"
+    lefthook-freebsd-x64: "npm:1.9.2"
+    lefthook-linux-arm64: "npm:1.9.2"
+    lefthook-linux-x64: "npm:1.9.2"
+    lefthook-openbsd-arm64: "npm:1.9.2"
+    lefthook-openbsd-x64: "npm:1.9.2"
+    lefthook-windows-arm64: "npm:1.9.2"
+    lefthook-windows-x64: "npm:1.9.2"
   dependenciesMeta:
     lefthook-darwin-arm64:
       optional: true
@@ -4480,7 +4490,7 @@ __metadata:
       optional: true
   bin:
     lefthook: bin/index.js
-  checksum: 10c0/f013cca0257758e023abc68525793c18ab29353c222670e16a907274346483c8ca3d3a9f8d2f7d51dc9154e356da9f069c2423500eb055991930ebdc2c6f26c6
+  checksum: 10c0/ff28ac4989f7dd7ab722543e6af77262ffd6edb64b9ac53cbd467220e11e3e78626b016bb1f645b5fdb181ff5311aac49719dc3d0100616a26ee6db0fe2cc81f
   languageName: node
   linkType: hard
 
@@ -5771,9 +5781,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^15.1.4":
-  version: 15.1.4
-  resolution: "react-i18next@npm:15.1.4"
+"react-i18next@npm:^15.2.0":
+  version: 15.2.0
+  resolution: "react-i18next@npm:15.2.0"
   dependencies:
     "@babel/runtime": "npm:^7.25.0"
     html-parse-stringify: "npm:^3.0.1"
@@ -5785,7 +5795,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 10c0/6c1b053fc530c3a750c8cb0a090a54cd3580cbe2103bea26579a2855a6c0a8be7e1cbffda732d4ec9c9aa8724569783dc340564855e1fe76f48c24683fe0b3d4
+  checksum: 10c0/e6dfd3f04a070777231ea50e750d74ed7a72c56e3f2da238e8666db65431c805482706bbc76bdb69e5196c4125ff4c955ea4166a1788997a679c3a5c03590654
   languageName: node
   linkType: hard
 
@@ -5834,9 +5844,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:^5.8.3":
-  version: 5.8.3
-  resolution: "react-select@npm:5.8.3"
+"react-select@npm:^5.9.0":
+  version: 5.9.0
+  resolution: "react-select@npm:5.9.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.0"
     "@emotion/cache": "npm:^11.4.0"
@@ -5846,11 +5856,11 @@ __metadata:
     memoize-one: "npm:^6.0.0"
     prop-types: "npm:^15.6.0"
     react-transition-group: "npm:^4.3.0"
-    use-isomorphic-layout-effect: "npm:^1.1.2"
+    use-isomorphic-layout-effect: "npm:^1.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  checksum: 10c0/25aaf0ad964a31dcf991be8b9eb478f94b2ff5dfd2e74a894f692c6dec9247f6ded6258fbf875984d2ada5aeb0ee742b85c6a94f58fae89112e913526cfd0577
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/f21f18ca41a8c866ab69f9c65253e86dcc5323477bbfc729bf6aa9d897e04e27cfffd13c07f10b70dc554e15ad1d238c1283e05e457bf4ead8526a1dd7fbc8b0
   languageName: node
   linkType: hard
 
@@ -7064,15 +7074,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-isomorphic-layout-effect@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "use-isomorphic-layout-effect@npm:1.1.2"
+"use-isomorphic-layout-effect@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "use-isomorphic-layout-effect@npm:1.2.0"
   peerDependencies:
-    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 10c0/d8deea8b85e55ac6daba237a889630bfdbf0ebf60e9e22b6a78a78c26fabe6025e04ada7abef1e444e6786227d921e648b2707db8b3564daf757264a148a6e23
+  checksum: 10c0/2e4bdee68d65893b37e716ebdcc111550775189c80e662eda87d6f5b54dc431d3383a18914ea01a893ee5478902a878012713eaebcacbb6611ab88c463accb83
   languageName: node
   linkType: hard
 
@@ -7125,7 +7135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-web-extension@npm:^4.0.0":
+"vite-plugin-web-extension@npm:^4.3.1":
   version: 4.3.1
   resolution: "vite-plugin-web-extension@npm:4.3.1"
   dependencies:
@@ -7323,6 +7333,13 @@ __metadata:
   version: 0.10.0
   resolution: "webextension-polyfill@npm:0.10.0"
   checksum: 10c0/6a45278f1fed8fbd5355f9b19a7b0b3fadc91fa3a6eef69125a1706bb3efa2181235eefbfb3f538443bb396cfcb97512361551888ce8465c08914431cb2d5b6d
+  languageName: node
+  linkType: hard
+
+"webextension-polyfill@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "webextension-polyfill@npm:0.12.0"
+  checksum: 10c0/5ace2aaaf6a203515bdd2fb948622f186a5fbb50099b539ce9c0ad54896f9cc1fcc3c0e2a71d1f7071dd7236d7daebba1e0cbcf43bfdfe54361addf0333ee7d1
   languageName: node
   linkType: hard
 
@@ -7594,33 +7611,33 @@ __metadata:
     "@playwright/test": "npm:^1.49.1"
     "@types/chrome": "npm:^0.0.287"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^22.10.1"
+    "@types/node": "npm:^22.10.2"
     "@types/react": "npm:^19.0.1"
-    "@types/react-color": "npm:^3.0.12"
+    "@types/react-color": "npm:^3.0.13"
     "@types/react-dom": "npm:^19.0.2"
     "@types/react-modal": "npm:^3.16.3"
     "@types/react-router-dom": "npm:^5.3.3"
-    "@types/react-transition-group": "npm:^4.4.11"
+    "@types/react-transition-group": "npm:^4.4.12"
     "@types/redux-persist-webextension-storage": "npm:^1.0.3"
     "@types/uuid": "npm:^10.0.0"
-    "@types/webextension-polyfill": "npm:^0.10.0"
+    "@types/webextension-polyfill": "npm:^0.12.1"
     "@typescript-eslint/parser": "npm:^8.18.0"
     "@vitejs/plugin-react": "npm:^4.3.4"
     classnames: "npm:^2.5.1"
-    i18next: "npm:^24.0.5"
+    i18next: "npm:^24.1.0"
     i18next-browser-languagedetector: "npm:^8.0.2"
     identity-obj-proxy: "npm:^3.0.0"
     immer: "npm:^10.1.1"
-    lefthook: "npm:^1.9.0"
+    lefthook: "npm:^1.9.2"
     lodash-es: "npm:^4.17.21"
     re-resizable: "npm:^6.10.3"
     react: "npm:19.0.0"
     react-color: "npm:^2.19.3"
     react-dom: "npm:19.0.0"
-    react-i18next: "npm:^15.1.4"
+    react-i18next: "npm:^15.2.0"
     react-icons: "npm:^5.4.0"
     react-modal: "npm:^3.16.1"
-    react-select: "npm:^5.8.3"
+    react-select: "npm:^5.9.0"
     react-transition-group: "npm:^4.4.5"
     react-use: "npm:^17.6.0"
     redux-persist-webextension-storage: "npm:^1.0.2"
@@ -7628,10 +7645,10 @@ __metadata:
     uuid: "npm:^11.0.3"
     vite: "npm:^5.4.11"
     vite-css-modules: "npm:^1.6.0"
-    vite-plugin-web-extension: "npm:^4.0.0"
+    vite-plugin-web-extension: "npm:^4.3.1"
     vite-tsconfig-paths: "npm:^5.1.4"
     web-ext: "npm:^8.3.0"
-    webextension-polyfill: "npm:^0.10.0"
+    webextension-polyfill: "npm:^0.12.0"
     zustand: "npm:^5.0.2"
   languageName: unknown
   linkType: soft
