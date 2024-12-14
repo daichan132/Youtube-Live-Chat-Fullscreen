@@ -6,10 +6,11 @@ const sendMessage = (tabs: chrome.tabs.Tab[], request: any) => {
 }
 chrome.runtime.onMessage.addListener(request => {
   if (['ytdLiveChat', 'language'].includes(request.message)) {
-    if (request.target === 'content') {
-      chrome.tabs.query({ active: true, currentWindow: true }, tabs => sendMessage(tabs, request))
-    } else if (request.target === 'popup') {
-      chrome.runtime.sendMessage(request)
+    const { target, ...rest } = request
+    if (target === 'content') {
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => sendMessage(tabs, rest))
+    } else if (target === 'popup') {
+      chrome.runtime.sendMessage(rest)
     }
   }
 })
