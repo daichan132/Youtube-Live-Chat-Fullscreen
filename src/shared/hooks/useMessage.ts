@@ -13,9 +13,5 @@ export const useMessage = <T>() => {
     }
   }, [])
 
-  const sendMessage = (msg: T) => {
-    chrome.runtime.sendMessage(msg)
-  }
-
-  return { message, sendMessage }
+  return { message }
 }
