@@ -1,10 +1,12 @@
-import { useGlobalSetting } from '@/shared/hooks/useGlobalSetting'
 import { createPortal } from 'react-dom'
 import { YTDLiveChat } from './YTDLiveChat'
+import { useI18n } from './hooks/useI18n'
 import { useIsFullScreen } from './hooks/useIsFullscreen'
+import { useYtdLiveChat } from './hooks/useYtdLiveChat'
 
 export const Content = () => {
-  const { ytdLiveChat } = useGlobalSetting()
+  useI18n()
+  const { ytdLiveChat } = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
 
   return (

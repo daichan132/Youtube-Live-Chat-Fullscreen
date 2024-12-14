@@ -5,7 +5,7 @@ const sendMessage = (tabs: chrome.tabs.Tab[], request: any) => {
   }
 }
 chrome.runtime.onMessage.addListener(request => {
-  if (request.message === 'ytdLiveChat' || request.message === 'language') {
+  if (['ytdLiveChat', 'language'].includes(request.message)) {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => sendMessage(tabs, request))
   }
 })
