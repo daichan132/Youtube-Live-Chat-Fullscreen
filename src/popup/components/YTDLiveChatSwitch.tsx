@@ -15,7 +15,6 @@ export const YTDLiveChatSwitch = () => {
   const handleSwitchChange = useCallback((checked: boolean) => {
     setYTDLiveChat(checked)
     chrome.runtime.sendMessage({
-      target: 'content',
       message: 'ytdLiveChat',
       ytdLiveChat: checked,
     })

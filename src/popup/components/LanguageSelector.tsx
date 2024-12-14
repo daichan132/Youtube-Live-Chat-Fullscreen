@@ -26,7 +26,6 @@ export const LanguageSelector = () => {
     if (selectedOption === null) return
     i18n.changeLanguage(selectedOption.value)
     chrome.runtime.sendMessage({
-      target: 'content',
       message: 'language',
       language: selectedOption.value,
     })

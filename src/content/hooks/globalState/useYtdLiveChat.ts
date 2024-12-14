@@ -1,16 +1,22 @@
 import { useMessage } from '@/shared/hooks/useMessage'
 import { useGlobalSettingStore } from '@/shared/stores'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 
 export const useYtdLiveChat = () => {
-  const [ytdLiveChat, setYTDLiveChat] = useState(useGlobalSettingStore.getState().ytdLiveChat || false)
+  const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
+    useShallow(state => ({
+      ytdLiveChat: state.ytdLiveChat,
+      setYTDLiveChat: state.setYTDLiveChat,
+    })),
+  )
   const { message: ytdLiveChatMessage } = useMessage<{ message: 'ytdLiveChat'; ytdLiveChat: boolean }>()
 
   useEffect(() => {
     if (ytdLiveChatMessage?.message === 'ytdLiveChat') {
       setYTDLiveChat(ytdLiveChatMessage.ytdLiveChat)
     }
-  }, [ytdLiveChatMessage])
+  }, [ytdLiveChatMessage, setYTDLiveChat])
 
-  return { ytdLiveChat }
+  return [ytdLiveChat, setYTDLiveChat] as const
 }

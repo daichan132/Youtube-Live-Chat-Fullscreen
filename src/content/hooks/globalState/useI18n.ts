@@ -11,6 +11,4 @@ export const useI18n = () => {
       i18n.changeLanguage(languageMessage.language)
     }
   }, [languageMessage, i18n])
-
-  return { i18n }
 }

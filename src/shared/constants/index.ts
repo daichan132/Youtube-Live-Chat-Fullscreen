@@ -1,2 +1,2 @@
-export const ResizableMinWidth = 320
-export const ResizableMinHeight = 320
+export const ResizableMinWidth = 150
+export const ResizableMinHeight = 150
