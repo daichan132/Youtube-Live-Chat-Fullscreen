@@ -26,18 +26,20 @@ export const Content = () => {
         })()}
       {isFullscreen &&
         (() => {
-          const portalRoot = document.getElementById('movie_player')?.getElementsByClassName("ytp-right-controls")[0]
-          if (!portalRoot) return null
-          let switchButton = document.getElementById("switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec");
-          if (!switchButton) {
-            switchButton = document.createElement('button');
-            switchButton.className = 'ytp-button';
-            switchButton.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec";
-            portalRoot.insertBefore(switchButton, portalRoot.firstChild);
+          const container = document.getElementById('movie_player')?.getElementsByClassName("ytp-right-controls")[0]
+          if (!container) return null
+          let portalRoot = document.getElementById("switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec");
+          if (!portalRoot) {
+            portalRoot = document.createElement('div');
+            portalRoot.style.height = "100%";
+            portalRoot.style.width = "54px";
+            portalRoot.style.display = "inline-block"
+            portalRoot.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec";
+            container.insertBefore(portalRoot, container.firstChild);
           }
           return createPortal(
             <YTDLiveChatSwitch />,
-            switchButton,
+            portalRoot,
           )
         })()}
     </>

@@ -11,7 +11,10 @@ export const YTDLiveChatSwitch = () => {
 
 
   return (
-    <div
+    <button
+      type="button"
+      className="ytp-button ytp-subtitles-button"
+      aria-pressed={ytdLiveChat}
       style={{
         display: "flex",
         alignItems: "center",
@@ -24,14 +27,15 @@ export const YTDLiveChatSwitch = () => {
       onKeyUp={() => { }}
     >
       <IoChatboxSharp
-        size={"60%"}
+        size={"50%"}
         style={{
+          color: "#fff",
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
         }}
       />
-    </div>
+    </button>
   );
 };
