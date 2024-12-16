@@ -1,0 +1,23 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  opacity: 0.9;
+  transition: opacity .1s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.button:hover {
+  opacity: 1;
+}
+
+.icon {
+  color: #fff;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
