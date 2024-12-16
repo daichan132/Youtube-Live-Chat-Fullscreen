@@ -71,10 +71,8 @@ jobs:
         run: rm -rf node_modules && yarn install --immutable
       - name: Build Firefox Extension
         run: yarn build:firefox
-      - name: Zip dist folder
-        run: cd dist && zip -r ../dist.zip . && cd ..
       - name: Upload Firefox Extension
         env:
           WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
           WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist-firefox --channel=listed
+        run: npx web-ext sign -s dist --channel=listed
