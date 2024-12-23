@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { YTDLiveChat } from './YTDLiveChat'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
@@ -11,71 +10,38 @@ export const Content = () => {
   const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
 
-  const [chatPortalRoot, setChatPortalRoot] = useState<HTMLElement | null>(null)
-  const [switchPortalRoot, setSwitchPortalRoot] = useState<HTMLElement | null>(null)
-
-  useEffect(() => {
-    let chatRoot = null
-
-    if (ytdLiveChat && isFullscreen) {
-      const portalRoot = document.getElementById('movie_player')
-      if (portalRoot) {
-        chatRoot = document.createElement('div')
-        chatRoot.className = 'extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'
-        chatRoot.id = 'extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'
-        portalRoot.appendChild(chatRoot)
-        setChatPortalRoot(chatRoot)
-      }
-    }
-
-    return () => {
-      if (chatRoot) {
-        chatRoot.remove()
-        setChatPortalRoot(null)
-      }
-    }
-  }, [ytdLiveChat, isFullscreen])
-
-  useEffect(() => {
-    let switchRoot = null
-
-    if (isFullscreen) {
-      const container = document.getElementById('movie_player')?.getElementsByClassName("ytp-right-controls")[0]
-      if (container) {
-        switchRoot = document.createElement('div')
-        switchRoot.style.height = "100%"
-        switchRoot.style.width = "54px"
-        switchRoot.style.display = "inline-block"
-        switchRoot.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec"
-        container.insertBefore(switchRoot, container.firstChild)
-        setSwitchPortalRoot(switchRoot)
-      }
-    }
-
-    return () => {
-      if (switchRoot) {
-        switchRoot.remove()
-        setSwitchPortalRoot(null)
-      }
-    }
-  }, [isFullscreen])
-
   return (
     <>
-      {chatPortalRoot &&
-        createPortal(
-          <div className='extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec' id='extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'>
-            <YTDLiveChat />
-          </div>,
-          chatPortalRoot,
-        )
-      }
-      {switchPortalRoot &&
-        createPortal(
-          <YTDLiveChatSwitch />,
-          switchPortalRoot,
-        )
-      }
+      {ytdLiveChat &&
+        isFullscreen &&
+        (() => {
+          const portalRoot = document.getElementById('movie_player')
+          if (!portalRoot) return null
+          return createPortal(
+            <div className='extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'>
+              <YTDLiveChat />
+            </div>,
+            portalRoot,
+          )
+        })()}
+      {isFullscreen &&
+        (() => {
+          const container = document.getElementById('movie_player')?.getElementsByClassName("ytp-right-controls")[0]
+          if (!container) return null
+          let portalRoot = document.getElementById("switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec");
+          if (!portalRoot) {
+            portalRoot = document.createElement('div');
+            portalRoot.style.height = "100%";
+            portalRoot.style.width = "54px";
+            portalRoot.style.display = "inline-block"
+            portalRoot.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec";
+            container.insertBefore(portalRoot, container.firstChild);
+          }
+          return createPortal(
+            <YTDLiveChatSwitch />,
+            portalRoot,
+          )
+        })()}
     </>
   )
 }
