@@ -14,7 +14,7 @@ export const YTDLiveChatSwitch = () => {
   return (
     <button
       type="button"
-      className={`ytp-button ytp-subtitles-button ${styles.button}`}
+      className={`ytp-button ${styles.button}`}
       aria-pressed={ytdLiveChat}
       onClick={handleClick}
       onKeyUp={() => { }}

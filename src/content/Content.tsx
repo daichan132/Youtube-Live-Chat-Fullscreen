@@ -34,8 +34,9 @@ export const Content = () => {
             portalRoot.style.height = "100%";
             portalRoot.style.width = "54px";
             portalRoot.style.display = "inline-block"
+            portalRoot.style.verticalAlign = "top"
             portalRoot.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec";
-            container.insertBefore(portalRoot, container.firstChild);
+            container.prepend(portalRoot);
           }
           return createPortal(
             <YTDLiveChatSwitch />,
