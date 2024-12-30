@@ -1,5 +1,10 @@
 {
-  "extends": ["config:base", ":semanticCommits", ":preserveSemverRanges"],
+  "extends": [
+    "config:base",
+    ":semanticCommits",
+    ":preserveSemverRanges",
+    "customManagers:biomeVersions"
+  ],
   "postUpdateOptions": ["yarnDedupeHighest"],
   "prCreation": "not-pending",
   "prConcurrentLimit": 3,

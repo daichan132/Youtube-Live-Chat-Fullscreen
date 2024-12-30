@@ -16,27 +16,27 @@
     }
   ],
   "icons": {
-    "16": "images/extension_16.png",
-    "32": "images/extension_32.png",
-    "48": "images/extension_48.png",
-    "128": "images/extension_128.png"
+    "16": "icon/16.png",
+    "32": "icon/32.png",
+    "48": "icon/48.png",
+    "128": "icon/128.png"
   },
   "{{chrome}}.action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
-      "16": "images/extension_16.png",
-      "32": "images/extension_32.png",
-      "48": "images/extension_48.png",
-      "128": "images/extension_128.png"
+      "16": "icon/16.png",
+      "32": "icon/32.png",
+      "48": "icon/48.png",
+      "128": "icon/128.png"
     }
   },
   "{{firefox}}.browser_action": {
     "default_popup": "src/popup/popup.html",
     "default_icon": {
-      "16": "images/extension_16.png",
-      "32": "images/extension_32.png",
-      "48": "images/extension_48.png",
-      "128": "images/extension_128.png"
+      "16": "icon/16.png",
+      "32": "icon/32.png",
+      "48": "icon/48.png",
+      "128": "icon/128.png"
     }
   },
   "permissions": ["activeTab", "storage"]

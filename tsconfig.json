@@ -39,6 +39,5 @@
 		"vite.config.ts",
 		"src/manifest.jon",
 		"package.json",
-		"scripts"
 	]
 }
