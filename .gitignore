@@ -67,3 +67,6 @@ dist-firefox.zip
 dist/*
 dist-firefox/*
 *.xpi
+
+# vscode
+.vscode/
