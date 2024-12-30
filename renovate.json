@@ -2,5 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:best-practices", "customManagers:biomeVersions"],
   "enabledManagers": ["yarn"],
+  "packageRules": [
+    {
+      "matchPackageNames": ["yarn"],
+      "allowedVersions": ">= 4.0.0"
+    }
+  ],
   "timezone": "Asia/Tokyo"
 }
