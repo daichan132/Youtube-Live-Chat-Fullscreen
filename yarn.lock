@@ -929,7 +929,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:^1.49.1":
+"@playwright/test@npm:1.49.1":
   version: 1.49.1
   resolution: "@playwright/test@npm:1.49.1"
   dependencies:
@@ -1166,7 +1166,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:^0.0.287":
+"@types/chrome@npm:0.0.287":
   version: 0.0.287
   resolution: "@types/chrome@npm:0.0.287"
   dependencies:
@@ -1227,7 +1227,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash-es@npm:^4.17.12":
+"@types/lodash-es@npm:4.17.12":
   version: 4.17.12
   resolution: "@types/lodash-es@npm:4.17.12"
   dependencies:
@@ -1259,7 +1259,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.10.2":
+"@types/node@npm:22.10.2":
   version: 22.10.2
   resolution: "@types/node@npm:22.10.2"
   dependencies:
@@ -1282,7 +1282,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-color@npm:^3.0.13":
+"@types/react-color@npm:3.0.13":
   version: 3.0.13
   resolution: "@types/react-color@npm:3.0.13"
   dependencies:
@@ -1302,7 +1302,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-modal@npm:^3.16.3":
+"@types/react-modal@npm:3.16.3":
   version: 3.16.3
   resolution: "@types/react-modal@npm:3.16.3"
   dependencies:
@@ -1311,7 +1311,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-router-dom@npm:^5.3.3":
+"@types/react-router-dom@npm:5.3.3":
   version: 5.3.3
   resolution: "@types/react-router-dom@npm:5.3.3"
   dependencies:
@@ -1332,21 +1332,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-transition-group@npm:4.4.12":
+  version: 4.4.12
+  resolution: "@types/react-transition-group@npm:4.4.12"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 10c0/0441b8b47c69312c89ec0760ba477ba1a0808a10ceef8dc1c64b1013ed78517332c30f18681b0ec0b53542731f1ed015169fed1d127cc91222638ed955478ec7
+  languageName: node
+  linkType: hard
+
 "@types/react-transition-group@npm:^4.4.0":
   version: 4.4.11
   resolution: "@types/react-transition-group@npm:4.4.11"
   dependencies:
     "@types/react": "npm:*"
   checksum: 10c0/8fbf0dcc1b81985cdcebe3c59d769fe2ea3f4525f12c3a10a7429a59f93e303c82b2abb744d21cb762879f4514969d70a7ab11b9bf486f92213e8fe70e04098d
-  languageName: node
-  linkType: hard
-
-"@types/react-transition-group@npm:^4.4.12":
-  version: 4.4.12
-  resolution: "@types/react-transition-group@npm:4.4.12"
-  peerDependencies:
-    "@types/react": "*"
-  checksum: 10c0/0441b8b47c69312c89ec0760ba477ba1a0808a10ceef8dc1c64b1013ed78517332c30f18681b0ec0b53542731f1ed015169fed1d127cc91222638ed955478ec7
   languageName: node
   linkType: hard
 
@@ -1378,21 +1378,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/redux-persist-webextension-storage@npm:^1.0.3":
+"@types/redux-persist-webextension-storage@npm:1.0.3":
   version: 1.0.3
   resolution: "@types/redux-persist-webextension-storage@npm:1.0.3"
   checksum: 10c0/c23a6cec98fb86d854374f2cb52be54578e988e91647219a292e950fc6dfb2ee2bc1805f59d64dd34ab46d907fd172fe5df409f7c7da36503e0943501236de05
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:^10.0.0":
+"@types/uuid@npm:10.0.0":
   version: 10.0.0
   resolution: "@types/uuid@npm:10.0.0"
   checksum: 10c0/9a1404bf287164481cb9b97f6bb638f78f955be57c40c6513b7655160beb29df6f84c915aaf4089a1559c216557dc4d2f79b48d978742d3ae10b937420ddac60
   languageName: node
   linkType: hard
 
-"@types/webextension-polyfill@npm:^0.12.1":
+"@types/webextension-polyfill@npm:0.12.1":
   version: 0.12.1
   resolution: "@types/webextension-polyfill@npm:0.12.1"
   checksum: 10c0/d6e6253bbd020dcfa40391112212e3486320760d12c58854d0410140bda7ad0476749b9476e18d6888a1b04092662715b488f470c3aa29b44768990ffaf6d194
@@ -1408,7 +1408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^8.18.2":
+"@typescript-eslint/parser@npm:8.18.2":
   version: 8.18.2
   resolution: "@typescript-eslint/parser@npm:8.18.2"
   dependencies:
@@ -1476,7 +1476,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^4.3.4":
+"@vitejs/plugin-react@npm:4.3.4":
   version: 4.3.4
   resolution: "@vitejs/plugin-react@npm:4.3.4"
   dependencies:
@@ -4437,7 +4437,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook@npm:^1.10.1":
+"lefthook@npm:1.10.1":
   version: 1.10.1
   resolution: "lefthook@npm:1.10.1"
   dependencies:
@@ -7095,7 +7095,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-css-modules@npm:^1.8.0":
+"vite-css-modules@npm:1.8.0":
   version: 1.8.0
   resolution: "vite-css-modules@npm:1.8.0"
   dependencies:
@@ -7119,7 +7119,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-plugin-web-extension@npm:^4.3.1":
+"vite-plugin-web-extension@npm:4.3.1":
   version: 4.3.1
   resolution: "vite-plugin-web-extension@npm:4.3.1"
   dependencies:
@@ -7155,7 +7155,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^4.1.4, vite@npm:^5.4.11":
+"vite@npm:5.4.11, vite@npm:^5.0.0 || ^4.1.4":
   version: 5.4.11
   resolution: "vite@npm:5.4.11"
   dependencies:
@@ -7275,7 +7275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-ext@npm:^8.3.0":
+"web-ext@npm:8.3.0":
   version: 8.3.0
   resolution: "web-ext@npm:8.3.0"
   dependencies:
@@ -7313,17 +7313,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"webextension-polyfill@npm:0.12.0":
+  version: 0.12.0
+  resolution: "webextension-polyfill@npm:0.12.0"
+  checksum: 10c0/5ace2aaaf6a203515bdd2fb948622f186a5fbb50099b539ce9c0ad54896f9cc1fcc3c0e2a71d1f7071dd7236d7daebba1e0cbcf43bfdfe54361addf0333ee7d1
+  languageName: node
+  linkType: hard
+
 "webextension-polyfill@npm:^0.10.0":
   version: 0.10.0
   resolution: "webextension-polyfill@npm:0.10.0"
   checksum: 10c0/6a45278f1fed8fbd5355f9b19a7b0b3fadc91fa3a6eef69125a1706bb3efa2181235eefbfb3f538443bb396cfcb97512361551888ce8465c08914431cb2d5b6d
-  languageName: node
-  linkType: hard
-
-"webextension-polyfill@npm:^0.12.0":
-  version: 0.12.0
-  resolution: "webextension-polyfill@npm:0.12.0"
-  checksum: 10c0/5ace2aaaf6a203515bdd2fb948622f186a5fbb50099b539ce9c0ad54896f9cc1fcc3c0e2a71d1f7071dd7236d7daebba1e0cbcf43bfdfe54361addf0333ee7d1
   languageName: node
   linkType: hard
 
@@ -7592,26 +7592,26 @@ __metadata:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
-    "@playwright/test": "npm:^1.49.1"
-    "@types/chrome": "npm:^0.0.287"
-    "@types/lodash-es": "npm:^4.17.12"
-    "@types/node": "npm:^22.10.2"
+    "@playwright/test": "npm:1.49.1"
+    "@types/chrome": "npm:0.0.287"
+    "@types/lodash-es": "npm:4.17.12"
+    "@types/node": "npm:22.10.2"
     "@types/react": "npm:^19.0.2"
-    "@types/react-color": "npm:^3.0.13"
+    "@types/react-color": "npm:3.0.13"
     "@types/react-dom": "npm:^19.0.2"
-    "@types/react-modal": "npm:^3.16.3"
-    "@types/react-router-dom": "npm:^5.3.3"
-    "@types/react-transition-group": "npm:^4.4.12"
-    "@types/redux-persist-webextension-storage": "npm:^1.0.3"
-    "@types/uuid": "npm:^10.0.0"
-    "@types/webextension-polyfill": "npm:^0.12.1"
-    "@typescript-eslint/parser": "npm:^8.18.2"
-    "@vitejs/plugin-react": "npm:^4.3.4"
+    "@types/react-modal": "npm:3.16.3"
+    "@types/react-router-dom": "npm:5.3.3"
+    "@types/react-transition-group": "npm:4.4.12"
+    "@types/redux-persist-webextension-storage": "npm:1.0.3"
+    "@types/uuid": "npm:10.0.0"
+    "@types/webextension-polyfill": "npm:0.12.1"
+    "@typescript-eslint/parser": "npm:8.18.2"
+    "@vitejs/plugin-react": "npm:4.3.4"
     classnames: "npm:^2.5.1"
     i18next: "npm:^24.2.0"
     i18next-browser-languagedetector: "npm:^8.0.2"
     immer: "npm:^10.1.1"
-    lefthook: "npm:^1.10.1"
+    lefthook: "npm:1.10.1"
     lodash-es: "npm:^4.17.21"
     re-resizable: "npm:^6.10.3"
     react: "npm:19.0.0"
@@ -7626,12 +7626,12 @@ __metadata:
     redux-persist-webextension-storage: "npm:^1.0.2"
     typescript: "npm:5.7.2"
     uuid: "npm:^11.0.3"
-    vite: "npm:^5.4.11"
-    vite-css-modules: "npm:^1.8.0"
-    vite-plugin-web-extension: "npm:^4.3.1"
+    vite: "npm:5.4.11"
+    vite-css-modules: "npm:1.8.0"
+    vite-plugin-web-extension: "npm:4.3.1"
     vite-tsconfig-paths: "npm:^5.1.4"
-    web-ext: "npm:^8.3.0"
-    webextension-polyfill: "npm:^0.12.0"
+    web-ext: "npm:8.3.0"
+    webextension-polyfill: "npm:0.12.0"
     zustand: "npm:^5.0.2"
   languageName: unknown
   linkType: soft
