@@ -17,19 +17,22 @@ export const LanguageSelector = () => {
 
   const { i18n } = useTranslation()
 
-  const changeLanguage = useCallback((
-    selectedOption: {
-      value: string
-      label: string
-    } | null,
-  ) => {
-    if (selectedOption === null) return
-    i18n.changeLanguage(selectedOption.value)
-    chrome.runtime.sendMessage({
-      message: 'language',
-      language: selectedOption.value,
-    })
-  }, [i18n])
+  const changeLanguage = useCallback(
+    (
+      selectedOption: {
+        value: string
+        label: string
+      } | null,
+    ) => {
+      if (selectedOption === null) return
+      i18n.changeLanguage(selectedOption.value)
+      chrome.runtime.sendMessage({
+        message: 'language',
+        language: selectedOption.value,
+      })
+    },
+    [i18n],
+  )
 
   return (
     <Select

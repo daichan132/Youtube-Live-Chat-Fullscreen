@@ -26,22 +26,19 @@ export const Content = () => {
         })()}
       {isFullscreen &&
         (() => {
-          const container = document.getElementById('movie_player')?.getElementsByClassName("ytp-right-controls")[0]
+          const container = document.getElementById('movie_player')?.getElementsByClassName('ytp-right-controls')[0]
           if (!container) return null
-          let portalRoot = document.getElementById("switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec");
+          let portalRoot = document.getElementById('switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')
           if (!portalRoot) {
-            portalRoot = document.createElement('div');
-            portalRoot.style.height = "100%";
-            portalRoot.style.width = "54px";
-            portalRoot.style.display = "inline-block"
-            portalRoot.style.verticalAlign = "top"
-            portalRoot.id = "switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec";
-            container.prepend(portalRoot);
+            portalRoot = document.createElement('div')
+            portalRoot.style.height = '100%'
+            portalRoot.style.width = '54px'
+            portalRoot.style.display = 'inline-block'
+            portalRoot.style.verticalAlign = 'top'
+            portalRoot.id = 'switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec'
+            container.prepend(portalRoot)
           }
-          return createPortal(
-            <YTDLiveChatSwitch />,
-            portalRoot,
-          )
+          return createPortal(<YTDLiveChatSwitch />, portalRoot)
         })()}
     </>
   )

@@ -12,13 +12,16 @@ export const YTDLiveChatSwitch = () => {
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  const handleSwitchChange = useCallback((checked: boolean) => {
-    setYTDLiveChat(checked)
-    chrome.runtime.sendMessage({
-      message: 'ytdLiveChat',
-      ytdLiveChat: checked,
-    })
-  }, [setYTDLiveChat])
+  const handleSwitchChange = useCallback(
+    (checked: boolean) => {
+      setYTDLiveChat(checked)
+      chrome.runtime.sendMessage({
+        message: 'ytdLiveChat',
+        ytdLiveChat: checked,
+      })
+    },
+    [setYTDLiveChat],
+  )
 
   return (
     <div
@@ -28,11 +31,7 @@ export const YTDLiveChatSwitch = () => {
         justifyContent: 'center',
       }}
     >
-      <Switch
-        checked={ytdLiveChat}
-        id='ytd-live-chat-switch'
-        onChange={handleSwitchChange}
-      />
+      <Switch checked={ytdLiveChat} id='ytd-live-chat-switch' onChange={handleSwitchChange} />
     </div>
   )
 }

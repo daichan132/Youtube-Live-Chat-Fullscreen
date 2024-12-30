@@ -44,7 +44,7 @@ export const FontColorPickerUI = React.forwardRef<
 >(({ rgba, display, setDisplay, onChange }, ref) => {
   return (
     <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div className={styles['color-display']} onClick={() => setDisplay?.(d => !d)} onKeyUp={() => { }}>
+      <div className={styles['color-display']} onClick={() => setDisplay?.(d => !d)} onKeyUp={() => {}}>
         <div className={styles['color-preview-background']}>
           <div
             className={styles['color-preview']}
