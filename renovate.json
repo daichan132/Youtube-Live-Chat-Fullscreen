@@ -1,10 +1,17 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:best-practices", "customManagers:biomeVersions"],
-  "enabledManagers": ["yarn"],
+  "extends": [
+    "config:best-practices",
+    "customManagers:biomeVersions"
+  ],
+  "enabledManagers": [
+    "npm"
+  ],
   "packageRules": [
     {
-      "matchPackageNames": ["yarn"],
+      "matchPackageNames": [
+        "yarn"
+      ],
       "allowedVersions": ">= 4.0.0"
     }
   ],
