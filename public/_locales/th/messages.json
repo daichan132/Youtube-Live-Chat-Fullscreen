@@ -2,9 +2,6 @@
   "extensionName": {
     "message": "YouTube แชทสดแบบเต็มหน้าจอ"
   },
-  "extensionNameDev": {
-    "message": "[นักพัฒนา] YouTube แชทสดแบบเต็มหน้าจอ"
-  },
   "extensionDescription": {
     "message": "ส่วนขยายนี้ช่วยให้สามารถใช้แชท YouTube สดในโหมดเต็มหน้าจอได้"
   }
