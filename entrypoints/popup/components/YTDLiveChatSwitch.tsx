@@ -24,13 +24,7 @@ export const YTDLiveChatSwitch = () => {
   )
 
   return (
-    <div
-      style={{
-        width: '50px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='w-[50px] flex justify-center'>
       <Switch checked={ytdLiveChat} id='ytd-live-chat-switch' onChange={handleSwitchChange} />
     </div>
   )

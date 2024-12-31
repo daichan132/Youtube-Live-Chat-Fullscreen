@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Content } from './Content'
 import './styles/index.css'
 import '@/shared/i18n/config'
+import 'uno.css'
 
 export default defineContentScript({
   matches: ['*://*/*'],

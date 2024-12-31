@@ -1,5 +1,3 @@
-import styles from '../styles/Switch.module.css'
-
 type Props = {
   checked: boolean
   id: string
@@ -9,9 +7,9 @@ type Props = {
 export const Switch = (props: Props) => {
   const { checked, id, onChange } = props
   return (
-    <div className={styles.wrapper}>
+    <div className='relative flex items-center'>
       <input
-        className={styles.input}
+        className='hidden'
         id={id}
         type='checkbox'
         checked={checked}
@@ -19,8 +17,18 @@ export const Switch = (props: Props) => {
           onChange(!checked)
         }}
       />
-      {/* biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
-      <label className={styles.label} htmlFor={id} />
+      <label
+        className={`relative inset-0 box-shadow-inner rounded-full cursor-pointer flex items-center text-[16px] w-[40px] h-[23px] transition-colors duration-200 ${
+          checked ? 'bg-green-5' : 'bg-gray-4'
+        }`}
+        htmlFor={id}
+      >
+        <span
+          className={`absolute bg-white rounded-full w-[18px] h-[18px] left-[2px] transition-transform duration-200 ${
+            checked ? 'translate-x-full' : 'translate-x-0'
+          }`}
+        />
+      </label>
     </div>
   )
 }
