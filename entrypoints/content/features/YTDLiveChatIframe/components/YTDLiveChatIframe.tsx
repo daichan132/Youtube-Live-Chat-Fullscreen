@@ -5,7 +5,6 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useIframeLoader } from '../hooks/useIframeLoader'
-import fade from '../styles/Fade.module.css'
 import styles from '../styles/Loader.module.css'
 
 export const YTDLiveChatIframe = () => {
@@ -39,7 +38,19 @@ export const YTDLiveChatIframe = () => {
         id='live-chat-iframe-wrapper'
         ref={ref}
       />
-      <CSSTransition nodeRef={nodeRef} in={!isIframeLoaded} timeout={300} classNames={fade} delay={300} unmountOnExit>
+      <CSSTransition
+        nodeRef={nodeRef}
+        in={!isIframeLoaded}
+        timeout={300}
+        classNames={{
+          enter: 'opacity-0',
+          enterActive: 'opacity-100 transition-opacity duration-500',
+          exit: 'opacity-100',
+          exitActive: 'opacity-0 transition-opacity duration-500',
+        }}
+        delay={300}
+        unmountOnExit
+      >
         <div
           ref={nodeRef}
           style={{

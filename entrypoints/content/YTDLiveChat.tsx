@@ -8,7 +8,6 @@ import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
-import fade from './styles/Fade.module.css'
 
 export const YTDLiveChat = () => {
   const isShow = useIsShow()
@@ -18,7 +17,18 @@ export const YTDLiveChat = () => {
   return (
     <>
       <YTDLiveChatSetting />
-      <CSSTransition nodeRef={nodeRef} in={isShow} timeout={500} classNames={fade} unmountOnExit>
+      <CSSTransition
+        nodeRef={nodeRef}
+        in={isShow}
+        timeout={500}
+        classNames={{
+          enter: 'opacity-0',
+          enterActive: 'opacity-100 transition-opacity duration-500',
+          exit: 'opacity-100',
+          exitActive: 'opacity-0 transition-opacity duration-500',
+        }}
+        unmountOnExit
+      >
         <div ref={nodeRef} onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
           <Draggable>
             <YTDLiveChatIframe />

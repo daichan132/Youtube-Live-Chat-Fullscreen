@@ -1,17 +1,16 @@
 import { createRoot } from 'react-dom/client'
 
 import { Content } from './Content'
-import './styles/index.css'
 import '@/shared/i18n/config'
 import 'uno.css'
 
 export default defineContentScript({
-  matches: ['*://*/*'],
+  matches: ['*://www.youtube.com/*'],
   cssInjectionMode: 'ui',
 
   async main(ctx) {
     const ui = await createShadowRootUi(ctx, {
-      name: 'wxt-react-example',
+      name: 'wxt-react-content',
       position: 'inline',
       anchor: 'body',
       append: 'first',
