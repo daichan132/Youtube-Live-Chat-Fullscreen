@@ -1049,13 +1049,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.0.287":
-  version: 0.0.287
-  resolution: "@types/chrome@npm:0.0.287"
+"@types/chrome@npm:0.0.289":
+  version: 0.0.289
+  resolution: "@types/chrome@npm:0.0.289"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/3c3c3b9a1e79f0f92f2fc254971985517aba95d8bc1355cbae2309e9cb001cd961a2edde764b6b88a9189d3a496602db3329da6aad0a90aff600fca832bc88e4
+  checksum: 10c0/e8085ec710a4b790a85e3ca7abfa6e0908d39b0362437355ca3859df62ead83036f8793f146abb4b58b6bd176db5598c0e09d67a97eb0267913dac6174032cb1
   languageName: node
   linkType: hard
 
@@ -5386,7 +5386,7 @@ __metadata:
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@playwright/test": "npm:1.49.1"
-    "@types/chrome": "npm:0.0.287"
+    "@types/chrome": "npm:0.0.289"
     "@types/lodash-es": "npm:4.17.12"
     "@types/node": "npm:22.10.2"
     "@types/react": "npm:19.0.2"
