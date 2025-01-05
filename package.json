@@ -56,7 +56,7 @@
     "typescript": "5.7.2",
     "vite": "5.4.11",
     "vite-css-modules": "1.8.0",
-    "vite-plugin-web-extension": "4.3.1"
+    "vite-plugin-web-extension": "4.4.3"
   },
   "packageManager": "yarn@4.6.0",
   "browserslist": [
