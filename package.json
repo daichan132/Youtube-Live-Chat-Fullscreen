@@ -53,7 +53,7 @@
     "@types/uuid": "10.0.0",
     "@vitejs/plugin-react": "4.3.4",
     "lefthook": "1.10.1",
-    "typescript": "5.7.2",
+    "typescript": "5.7.3",
     "vite": "5.4.11",
     "vite-css-modules": "1.8.0",
     "vite-plugin-web-extension": "4.3.1"
