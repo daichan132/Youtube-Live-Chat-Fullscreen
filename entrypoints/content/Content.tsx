@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { PublicPath } from 'wxt/browser'
 import { YTDLiveChat } from './YTDLiveChat'
@@ -7,7 +7,7 @@ import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 
-function createShadowRootIfNeeded(): ShadowRoot | null {
+function createShadowRoot(): ShadowRoot | null {
   const player = document.getElementById('movie_player')
   if (!player) return null
 
@@ -15,28 +15,28 @@ function createShadowRootIfNeeded(): ShadowRoot | null {
   if (!host) {
     host = document.createElement('div')
     host.id = 'shadow-root-live-chat'
-    const shadowRoot = host.attachShadow({ mode: 'open' })
+    const root = host.attachShadow({ mode: 'open' })
 
-    const linkEl = document.createElement('link')
-    linkEl.rel = 'stylesheet'
-    linkEl.href = browser.runtime.getURL('content-scripts/content.css' as PublicPath)
-    shadowRoot.appendChild(linkEl)
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = browser.runtime.getURL('content-scripts/content.css' as PublicPath)
+    root.appendChild(link)
 
     player.appendChild(host)
-    return shadowRoot
+    return root
   }
   return host.shadowRoot ?? null
 }
 
-function removeShadowRootIfNeeded(shadowRoot: ShadowRoot | null) {
-  if (!shadowRoot) return
-  const host = shadowRoot.host
-  if (host && host.parentNode) {
+function removeShadowRoot(root: ShadowRoot | null) {
+  if (!root) return
+  const host = root.host
+  if (host?.parentNode) {
     host.parentNode.removeChild(host)
   }
 }
 
-function createSwitchButtonContainerIfNeeded(): HTMLElement | null {
+function createSwitchButtonContainer(): HTMLElement | null {
   const controls = document.getElementById('movie_player')?.getElementsByClassName('ytp-right-controls')[0]
   if (!controls) return null
 
@@ -53,7 +53,7 @@ function createSwitchButtonContainerIfNeeded(): HTMLElement | null {
   return container
 }
 
-function removeSwitchButtonContainerIfNeeded(container: HTMLElement | null) {
+function removeSwitchButtonContainer(container: HTMLElement | null) {
   if (!container) return
   if (container.parentNode) {
     container.parentNode.removeChild(container)
@@ -65,29 +65,42 @@ export const Content = () => {
   const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
 
-  const shadowRoot = useMemo(() => createShadowRootIfNeeded(), [])
-  const switchButtonContainer = useMemo(() => createSwitchButtonContainerIfNeeded(), [])
+  // Use refs to store DOM elements
+  const shadowRootRef = useRef<ShadowRoot | null>(null)
+  const switchButtonRef = useRef<HTMLElement | null>(null)
 
+  // A state flag to force a second render after elements are created
+  const [portalsReady, setPortalsReady] = useState(false)
+
+  // Create or remove DOM elements on isFullscreen change
   useEffect(() => {
-    return () => {
-      removeShadowRootIfNeeded(shadowRoot)
-      removeSwitchButtonContainerIfNeeded(switchButtonContainer)
+    if (isFullscreen) {
+      shadowRootRef.current = createShadowRoot()
+      switchButtonRef.current = createSwitchButtonContainer()
+      // Ensure these new references are used on the next render
+      setPortalsReady(true)
+    } else {
+      removeShadowRoot(shadowRootRef.current)
+      removeSwitchButtonContainer(switchButtonRef.current)
+      shadowRootRef.current = null
+      switchButtonRef.current = null
+      setPortalsReady(false)
     }
-  }, [shadowRoot, switchButtonContainer])
+  }, [isFullscreen])
 
   const renderLiveChatPortal = () => {
-    if (!isFullscreen || !ytdLiveChat || !shadowRoot) return null
+    if (!portalsReady || !ytdLiveChat || !shadowRootRef.current) return null
     return createPortal(
       <div className='fixed top-0 right-0 w-full h-full z-1000 pointer-events-none'>
         <YTDLiveChat />
       </div>,
-      shadowRoot,
+      shadowRootRef.current,
     )
   }
 
   const renderSwitchButtonPortal = () => {
-    if (!isFullscreen || !switchButtonContainer) return null
-    return createPortal(<YTDLiveChatSwitch />, switchButtonContainer)
+    if (!portalsReady || !switchButtonRef.current) return null
+    return createPortal(<YTDLiveChatSwitch />, switchButtonRef.current)
   }
 
   return (
