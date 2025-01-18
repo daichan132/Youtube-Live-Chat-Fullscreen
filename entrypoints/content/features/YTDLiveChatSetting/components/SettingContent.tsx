@@ -9,7 +9,7 @@ import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../styles/SettingContent.module.css'
+// import styles from '../styles/SettingContent.module.css'
 
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
@@ -91,21 +91,25 @@ export const SettingContent = () => {
     },
   ]
   return (
-    <div className={styles['content-setting-container']}>
-      {items.map((item, i) => {
-        return (
-          <React.Fragment key={item.title}>
-            <div className={classNames(styles['content-setting-item'], item.disable && styles.disable)}>
-              <div className={styles['title-with-icon']}>
-                {<item.icon size={20} />}
-                <div>{item.title}</div>
-              </div>
-              {item.data}
+    <div className='px-6 py-3'>
+      {items.map((item, i) => (
+        <React.Fragment key={item.title}>
+          <div
+            className={classNames(
+              'flex justify-between items-center transition-all duration-200 opacity-100 overflow-hidden',
+              !item.disable && 'px-4 py-4',
+              item.disable && 'h-0 py-0 px-4 opacity-0 pointer-events-none',
+            )}
+          >
+            <div className='flex items-center text-sm'>
+              <item.icon size={20} className='mr-6 border-1 border-solid border-[rgba(0,0,0,0.1)] text-[#333] rounded bg-white p-3' />
+              <div>{item.title}</div>
             </div>
-            {item.disable || i === items.length - 1 ? null : <hr />}
-          </React.Fragment>
-        )
-      })}
+            {item.data}
+          </div>
+          {!item.disable && i < items.length - 1 && <hr className='border-none h-[1px] bg-[rgba(0,0,0,0.1)]' />}
+        </React.Fragment>
+      ))}
     </div>
   )
 }

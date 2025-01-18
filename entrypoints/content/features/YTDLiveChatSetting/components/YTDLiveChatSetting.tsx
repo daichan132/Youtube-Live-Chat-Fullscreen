@@ -85,12 +85,13 @@ export const YTDLiveChatSetting = () => {
             size={20}
           />
         </div>
-        <div className='flex-grow overflow-y-scroll h-[400px] text-lg shadow-inner'>
-          <div className='flex-grow'>
+        <div className='flex-grow overflow-y-scroll h-[400px] text-lg shadow-inner scrollbar-thin'>
+          {/* scrollbarを細くする */}
+          <div className='min-h-[340px]'>
             {menuItem === 'setting' && <SettingContent />}
             {menuItem === 'preset' && <PresetContent />}
           </div>
-          <div className='border-1 border-t-solid border-gray-200 p-5 flex justify-end'>
+          <div className='border-1 border-t-solid border-gray-200 p-6 flex justify-end'>
             <div className='text-gray-700'>
               {t('content.setting.footer')}
               <a

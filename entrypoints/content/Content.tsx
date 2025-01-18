@@ -16,6 +16,11 @@ function createShadowRoot(): ShadowRoot | null {
     host = document.createElement('div')
     host.id = 'shadow-root-live-chat'
     const root = host.attachShadow({ mode: 'open' })
+    root.innerHTML = `<style>
+  :host { font-size: 14px }
+  div   { font-size: 14px }
+  p     { font-size: 14px }
+</style>`
 
     const link = document.createElement('link')
     link.rel = 'stylesheet'

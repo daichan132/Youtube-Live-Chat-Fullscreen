@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import styles from '../styles/PresetContent.module.css'
 
+import classNames from 'classnames'
 import { AddPresetItem } from './PresetContent/AddPresetItem'
 import { PresetItem } from './PresetContent/PresetItem'
 
@@ -24,30 +25,28 @@ export const PresetContent = () => {
     })),
   )
   return (
-    <div className={`${styles['content-preset-container']} min-h-[318px] py-4 px-6`}>
-      <div>
-        <DndContext
-          collisionDetection={closestCenter}
-          modifiers={[restrictToVerticalAxis, restrictToParentElement]}
-          measuring={measuringConfig}
-          onDragEnd={event => {
-            const { active, over } = event
-            if (over == null || active.id === over.id) {
-              return
-            }
-            const oldIndex = presetItemIds.findIndex(item => item === active.id)
-            const newIndex = presetItemIds.findIndex(item => item === over.id)
-            const newItems = arrayMove(presetItemIds, oldIndex, newIndex)
-            setPresetItemIds(newItems)
-          }}
-        >
-          <SortableContext items={presetItemIds}>
-            {presetItemIds.map(id => (
-              <PresetItem key={id} id={id} />
-            ))}
-          </SortableContext>
-        </DndContext>
-      </div>
+    <div className={classNames(styles['content-preset-container'], 'p-6')}>
+      <DndContext
+        collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+        measuring={measuringConfig}
+        onDragEnd={event => {
+          const { active, over } = event
+          if (over == null || active.id === over.id) {
+            return
+          }
+          const oldIndex = presetItemIds.findIndex(item => item === active.id)
+          const newIndex = presetItemIds.findIndex(item => item === over.id)
+          const newItems = arrayMove(presetItemIds, oldIndex, newIndex)
+          setPresetItemIds(newItems)
+        }}
+      >
+        <SortableContext items={presetItemIds}>
+          {presetItemIds.map(id => (
+            <PresetItem key={id} id={id} />
+          ))}
+        </SortableContext>
+      </DndContext>
       <AddPresetItem />
     </div>
   )
