@@ -8,13 +8,6 @@ html {
   --extension-yt-live-secondary-font-color: rgba(0, 0, 0, 0.6);
 }
 
-body.custom-yt-app-live-chat-extension {
-  /* ------------------------ background color setting ------------------------ */
-  /* --------------------------- font color setting --------------------------- */
-  /* ---------------------------- font size setting --------------------------- */
-  /* ----------------------------- margin setting ----------------------------- */
-  /* ----------------------------- display setting ---------------------------- */
-}
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 1;
 }
@@ -112,7 +105,9 @@ body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participati
 body.custom-yt-app-live-chat-extension
   yt-live-chat-restricted-participation-renderer[system-icons]
   #picker-buttons.yt-live-chat-restricted-participation-renderer
-  > *.yt-live-chat-restricted-participation-renderer {
+  > *.yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
   color: var(--extension-yt-live-font-color);
 }
 body.custom-yt-app-live-chat-extension .yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer {

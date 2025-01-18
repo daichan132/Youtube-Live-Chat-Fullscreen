@@ -79,6 +79,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
           onRequestClose={() => setIsDeleteModalOpen(false)}
           overlayClassName={modalStyles.Overlay}
           appElement={document.body}
+          parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
         >
           <div className={modalStyles.content}>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>

@@ -15,8 +15,9 @@ export default defineContentScript({
       anchor: 'body',
       append: 'first',
       onMount: container => {
-        // Don't mount react app directly on <body>
+        // Create a wrapper element
         const wrapper = document.createElement('div')
+        wrapper.id = 'wxt-react-content'
         container.append(wrapper)
 
         const root = createRoot(wrapper)

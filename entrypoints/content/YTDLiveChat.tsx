@@ -22,10 +22,11 @@ export const YTDLiveChat = () => {
         in={isShow}
         timeout={500}
         classNames={{
+          appear: 'opacity-0',
+          appearActive: 'transition-opacity opacity-100 duration-500',
           enter: 'opacity-0',
-          enterActive: 'opacity-100 transition-opacity duration-500',
-          exit: 'opacity-100',
-          exitActive: 'opacity-0 transition-opacity duration-500',
+          enterActive: 'transition-opacity opacity-100 duration-500',
+          exitActive: 'transition-opacity opacity-0 duration-500',
         }}
         unmountOnExit
       >

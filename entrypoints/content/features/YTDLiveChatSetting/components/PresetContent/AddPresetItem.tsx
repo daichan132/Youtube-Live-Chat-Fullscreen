@@ -39,7 +39,10 @@ export const AddPresetItem = () => {
   }, [addPresetItem, t])
   return (
     <div
-      className={classNames(styles['add-preset-item'], !addPresetEnabled && styles.disable)}
+      className={classNames(
+        'bg-white border-1 border-solid border-[rgba(0,0,0,0.1)] m-[10px] py-[1.25rem] px-[1rem] rounded-[5px] transition-colors duration-200 flex justify-center items-center cursor-pointer text-base',
+        !addPresetEnabled && 'bg-[rgba(0,0,0,0.1)] opacity-[0.35] cursor-not-allowed',
+      )}
       onClick={() => addPresetEnabled && addItem()}
       onKeyDown={() => {}}
     >

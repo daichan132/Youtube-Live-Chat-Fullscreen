@@ -5,7 +5,6 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../styles/Draggable.module.css'
 
 import { DraggableItem } from './DraggableItem'
 
@@ -24,7 +23,7 @@ export const Draggable = ({ children }: DraggableType) => {
     })),
   )
   return (
-    <div className={styles.RestrictWindow}>
+    <div className='absolute overflow-hidden top-0 left-0 w-full h-screen'>
       <DndContext
         onDragEnd={({ delta }) => {
           setCoordinates({

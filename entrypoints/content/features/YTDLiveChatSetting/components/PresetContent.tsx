@@ -24,7 +24,7 @@ export const PresetContent = () => {
     })),
   )
   return (
-    <div className={styles['content-preset-container']}>
+    <div className={`${styles['content-preset-container']} min-h-[318px] py-4 px-6`}>
       <div>
         <DndContext
           collisionDetection={closestCenter}

@@ -1,8 +1,7 @@
-import { useCallback, useRef, useState } from 'react'
+import { useState } from 'react'
 
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import classNames from 'classnames'
 import { Resizable } from 're-resizable'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -10,14 +9,12 @@ import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
 import { useDisanleTopTransition } from '../hooks/useDisanleTopTransition'
 import { useIconDisplay } from '../hooks/useIconDisplay'
-import styles from '../styles/DraggableItem.module.css'
 import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
 import { HoverEffect } from './EffectComponent/HoverEffect'
 
-import { DragIcon } from './DragIcon'
-import { SettingIcon } from './SettingIcon'
-
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { CiSettings } from 'react-icons/ci'
+import { RiDraggable } from 'react-icons/ri'
 import { WindowResizeEffect } from '../../Draggable/components/EffectComponent/WindowResizeEffect'
 import { useResizableHandlers } from '../hooks/useResizableHandlers'
 import { DisplayEffect } from './EffectComponent/DisplayEffect'
@@ -29,14 +26,22 @@ interface DraggableItemType {
 }
 export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
-  const { size, setSize, setCoordinates } = useYTDLiveChatStore(
+  const {
+    size,
+    setSize,
+    setCoordinates,
+    fontColor: rgba,
+  } = useYTDLiveChatStore(
     useShallow(state => ({
       size: state.size,
       setSize: state.setSize,
       setCoordinates: state.setCoordinates,
+      fontColor: state.fontColor,
     })),
   )
-  const { clip, isClipPath } = useYTDLiveChatNoLsStore(useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath })))
+  const { clip, isClipPath, setIsOpenSettingModal } = useYTDLiveChatNoLsStore(
+    useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath, setIsOpenSettingModal: state.setIsOpenSettingModal })),
+  )
   const [isResizing, setIsResizing] = useState(false)
   const { onResizeStart, onResize, onResizeStop } = useResizableHandlers({
     size,
@@ -59,7 +64,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         size={size}
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
-        className={styles.Resizable}
+        className='absolute transition-all'
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeStop={onResizeStop}
@@ -71,7 +76,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         }}
       >
         <div
-          className={classNames(styles.Container)}
+          className='relative h-full w-full transition-[clip-path]'
           style={{
             transform: CSS.Translate.toString(transform),
             clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
@@ -80,18 +85,29 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           ref={setNodeRef}
         >
           <div
-            className={classNames(styles.dragButton, isDragging && styles.dragging)}
+            className='absolute top-[4px] right-[48px] z-10 cursor-grab'
             {...attributes}
             {...listeners}
             style={{ opacity: isIconDisplay ? 1 : 0 }}
           >
-            <DragIcon />
+            <RiDraggable
+              className={`rounded-lg transition-[background-color] p-2 hover:bg-black/10 ${isDragging && 'bg-black/10'} cursor-grab`}
+              size={24}
+              color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+            />
           </div>
-          <div className={styles.settingButton} style={{ opacity: isIconDisplay ? 1 : 0 }}>
-            <SettingIcon />
+          <div className='absolute top-[4px] right-[88px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
+            <CiSettings
+              className='rounded-lg transition-[background-color] p-2 hover:bg-black/10'
+              size={24}
+              onClick={() => {
+                setIsOpenSettingModal(true)
+              }}
+              color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+            />
           </div>
-          <div className={styles.children}>
-            {isDragging && <div className={styles.overlay} />}
+          <div className='relative w-full h-full'>
+            {isDragging && <div className='absolute w-100% h-100% z-100 cursor-grabbing bg-transparent' />}
             {children}
           </div>
         </div>
