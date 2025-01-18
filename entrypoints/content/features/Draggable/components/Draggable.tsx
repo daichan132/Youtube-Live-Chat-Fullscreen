@@ -23,7 +23,7 @@ export const Draggable = ({ children }: DraggableType) => {
     })),
   )
   return (
-    <div className='absolute overflow-hidden top-0 left-0 w-full h-screen'>
+    <div className='absolute overflow-hidden top-0 left-0 w-screen h-screen'>
       <DndContext
         onDragEnd={({ delta }) => {
           setCoordinates({

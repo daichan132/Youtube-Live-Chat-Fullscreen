@@ -2,7 +2,6 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCFontFamilyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../../styles/FontFamily.module.css'
 
 export const FontFamilyInput = () => {
   const { changeFontFamily } = useYLCFontFamilyChange()
@@ -32,5 +31,11 @@ export const FontFamilyInputUI = ({
   value: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
-  return <input className={styles.input} value={value} onChange={event => onChange?.(event)} />
+  return (
+    <input
+      className='w-[calc(150px-1.5rem)] px-3 py-2 rounded-[2px] border border-black/10'
+      value={value}
+      onChange={event => onChange?.(event)}
+    />
+  )
 }

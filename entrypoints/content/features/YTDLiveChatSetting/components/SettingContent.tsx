@@ -91,7 +91,7 @@ export const SettingContent = () => {
     },
   ]
   return (
-    <div className='px-6 py-3'>
+    <div className='px-6 py-4'>
       {items.map((item, i) => (
         <React.Fragment key={item.title}>
           <div

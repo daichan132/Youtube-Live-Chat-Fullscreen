@@ -39,8 +39,13 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       fontColor: state.fontColor,
     })),
   )
-  const { clip, isClipPath, setIsOpenSettingModal } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({ clip: state.clip, isClipPath: state.isClipPath, setIsOpenSettingModal: state.setIsOpenSettingModal })),
+  const { clip, isClipPath, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
+    useShallow(state => ({
+      clip: state.clip,
+      isClipPath: state.isClipPath,
+      setIsOpenSettingModal: state.setIsOpenSettingModal,
+      setIsHover: state.setIsHover,
+    })),
   )
   const [isResizing, setIsResizing] = useState(false)
   const { onResizeStart, onResize, onResizeStop } = useResizableHandlers({
@@ -55,7 +60,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   const isIconDisplay = useIconDisplay()
 
   return (
-    <>
+    <div onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
       <ClipPathEffect isDragging={isDragging} isResizing={isResizing} />
       <HoverEffect isDragging={isDragging} />
       <WindowResizeEffect />
@@ -76,7 +81,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         }}
       >
         <div
-          className='relative h-full w-full transition-[clip-path]'
+          className='relative h-full w-full pointer-events-auto'
           style={{
             transform: CSS.Translate.toString(transform),
             clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
@@ -112,6 +117,6 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
           </div>
         </div>
       </Resizable>
-    </>
+    </div>
   )
 }
