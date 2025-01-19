@@ -33,46 +33,32 @@ jobs:
             echo "tag_created=true" >> $GITHUB_OUTPUT
           fi
 
-  upload-chrome-extension:
+  submit:
     needs: create_tag
     if: needs.create_tag.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22.x
           cache: "yarn"
       - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
-      - name: Build
-        run: yarn build
-      - name: Zip dist folder
-        run: zip -r dist.zip dist
-      - name: Upload and Publish Chrome Extension
-        run: npx chrome-webstore-upload-cli@3 --source dist.zip
+        run: yarn install --immutable
+      - name: Zip extensions
+        run: |
+          yarn zip
+          yarn zip:firefox
+      - name: Submit to stores
+        run: |
+          yarn wxt submit \
+            --chrome-zip .output/*-chrome.zip \
+            --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/*-sources.zip
         env:
-          EXTENSION_ID: dlnjcbkmomenmieechnmgglgcljhoepd
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-
-  upload-firefox-extension:
-    needs: create_tag
-    if: needs.create_tag.outputs.tag_created == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
-      - uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
-        with:
-          node-version: 22.x
-          cache: "yarn"
-      - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
-      - name: Build Firefox Extension
-        run: yarn build:firefox
-      - name: Upload Firefox Extension
-        env:
-          WEB_EXT_API_KEY: ${{ secrets.FIREFOX_JWT_ISSUER }}
-          WEB_EXT_API_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: npx web-ext sign -s dist --channel=listed
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}

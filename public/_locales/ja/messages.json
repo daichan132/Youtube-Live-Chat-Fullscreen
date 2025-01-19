@@ -2,9 +2,6 @@
   "extensionName": {
     "message": "YouTubeライブチャットフルスクリーン"
   },
-  "extensionNameDev": {
-    "message": "[Dev] YouTubeライブチャットフルスクリーン"
-  },
   "extensionDescription": {
     "message": "この拡張機能はYouTubeライブのフルスクリーンモードでチャットを使用できるようにします。"
   }

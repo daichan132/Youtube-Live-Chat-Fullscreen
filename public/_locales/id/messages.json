@@ -2,9 +2,6 @@
   "extensionName": {
     "message": "YouTube Live Chat Layar Penuh"
   },
-  "extensionNameDev": {
-    "message": "[Dev] YouTube Live Chat Layar Penuh"
-  },
   "extensionDescription": {
     "message": "Ekstensi ini memungkinkan YouTube Live untuk menggunakan obrolan saat dalam mode Layar Penuh."
   }
