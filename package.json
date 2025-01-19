@@ -12,8 +12,8 @@
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
-    "format": "npx @biomejs/biome format --write ./src/**",
-    "lint": "biome check --write ./src/** && tsc --noEmit",
+    "format": "biome format --write ./entrypoints/** ./shared/**",
+    "lint": "biome check --write ./entrypoints/** ./shared/** && tsc --noEmit",
     "prepare": "lefthook install",
     "test:playwright": "playwright test"
   },
