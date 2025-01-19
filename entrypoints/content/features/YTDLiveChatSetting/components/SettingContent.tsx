@@ -1,5 +1,7 @@
 import React from 'react'
 
+import { useYTDLiveChatStore } from '@/shared/stores'
+import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 import classNames from 'classnames'
 import { useTranslation } from 'react-i18next'
 import { FaRegUserCircle } from 'react-icons/fa'
@@ -7,10 +9,6 @@ import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 
 import { MdBlurOn, MdExpand } from 'react-icons/md'
 import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri'
 import { useShallow } from 'zustand/react/shallow'
-
-import { useYTDLiveChatStore } from '@/shared/stores'
-// import styles from '../styles/SettingContent.module.css'
-
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
 import { BlurSlider } from './YLCChangeItems/BlurSlider'
@@ -22,8 +20,6 @@ import { SpaceSlider } from './YLCChangeItems/SpaceSlider'
 import { SuperChatBarDisplaySwitch } from './YLCChangeItems/SuperChatBarDisplaySwitch'
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch'
-
-import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 
 export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
@@ -96,9 +92,9 @@ export const SettingContent = () => {
         <React.Fragment key={item.title}>
           <div
             className={classNames(
-              'flex justify-between items-center transition-all duration-200 opacity-100 overflow-hidden',
-              !item.disable && 'px-4 py-4',
-              item.disable && 'h-0 py-0 px-4 opacity-0 pointer-events-none',
+              'flex justify-between items-center transition-all duration-200 opacity-100',
+              !item.disable && 'px-4 py-3',
+              item.disable && 'h-0 py-0 px-4 opacity-0 pointer-events-none overflow-hidden',
             )}
           >
             <div className='flex items-center text-sm'>

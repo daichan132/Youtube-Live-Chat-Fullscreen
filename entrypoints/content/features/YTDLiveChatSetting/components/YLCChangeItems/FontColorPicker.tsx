@@ -3,13 +3,12 @@ import { useCallback, useRef, useState } from 'react'
 import React from 'react'
 
 import { ChromePicker } from 'react-color'
-import { useClickAway } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCFontColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontColorChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../../styles/CustomColorPicker.module.css'
 
+import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import type { ColorResult, RGBColor } from 'react-color'
 
 export const FontColorPicker = () => {
@@ -18,10 +17,8 @@ export const FontColorPicker = () => {
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor)
   const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const [display, setDisplay] = useState(false)
-  const ref = useRef(null)
-  useClickAway(ref, () => {
-    setDisplay(false)
-  })
+  const ref = useRef<HTMLDivElement>(null)
+  useShadowClickAway(ref, () => setDisplay(false))
   const onChange = useCallback(
     (c: ColorResult) => {
       changeColor(c.rgb)
@@ -43,18 +40,26 @@ export const FontColorPickerUI = React.forwardRef<
   }
 >(({ rgba, display, setDisplay, onChange }, ref) => {
   return (
-    <div className={styles['color-picker-wrapper']} ref={ref}>
-      <div className={styles['color-display']} onClick={() => setDisplay?.(d => !d)} onKeyUp={() => {}}>
-        <div className={styles['color-preview-background']}>
+    <div ref={ref} className='relative'>
+      <div
+        className='inline-block p-[5px] bg-white rounded-[1px] shadow-[0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer relative'
+        onClick={() => setDisplay?.(d => !d)}
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            setDisplay?.(d => !d)
+          }
+        }}
+      >
+        <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] bg-white rounded-[2px] w-full h-full'>
           <div
-            className={styles['color-preview']}
+            className='w-[140px] h-[16px] rounded-[2px]'
             style={{
               backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
             }}
           />
         </div>
       </div>
-      <div className={styles['color-picker']}>
+      <div className='absolute right-0 z-1'>
         {display ? (
           <ChromePicker
             color={rgba}
@@ -74,5 +79,3 @@ export const FontColorPickerUI = React.forwardRef<
     </div>
   )
 })
-
-FontColorPickerUI.displayName = 'FontColorPickerUI'

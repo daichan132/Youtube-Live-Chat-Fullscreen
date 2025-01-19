@@ -1,15 +1,11 @@
-import React, { useCallback } from 'react'
-
+import { useYTDLiveChatStore } from '@/shared/stores'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import classNames from 'classnames'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { MdAdd } from 'react-icons/md'
 import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
-
-import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../../styles/PresetContent.module.css'
-
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 export const AddPresetItem = () => {
   const { addPresetEnabled, addPresetItem } = useYTDLiveChatStore(

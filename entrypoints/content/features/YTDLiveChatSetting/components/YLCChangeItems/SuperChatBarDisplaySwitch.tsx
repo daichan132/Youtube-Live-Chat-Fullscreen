@@ -1,5 +1,3 @@
-import React from 'react'
-
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCSuperChatBarDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'

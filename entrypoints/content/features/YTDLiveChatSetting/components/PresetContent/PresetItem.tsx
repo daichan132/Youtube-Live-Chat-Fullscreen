@@ -1,21 +1,14 @@
-import { type ComponentType, useCallback, useState } from 'react'
-import React from 'react'
-
+import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
+import { useYTDLiveChatStore } from '@/shared/stores'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import classNames from 'classnames'
+import { type ComponentType, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IoTrashOutline } from 'react-icons/io5'
 import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
-
-import { useYTDLiveChatStore } from '@/shared/stores'
-import modalStyles from '../../styles/DeleteConfirmationModal.module.css'
-import styles from '../../styles/PresetContent.module.css'
-
-import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 
@@ -51,46 +44,67 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={classNames(styles['preset-item'], isDragging && styles.dragging)}
+      className={`bg-white my-4 mx-3 p-4 rounded border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
-      <div className={styles.flex}>
-        <div className={styles.leftContainer}>
+      <div className='flex justify-between items-center'>
+        <div className='group flex items-center'>
           <div ref={setActivatorNodeRef}>
             <MdOutlineDragIndicator
-              className={classNames(styles.dragIcon, isDragging && styles.dragging)}
-              size={20}
+              className={`transition-all duration-200 ${
+                isDragging
+                  ? 'w-7 px-1 opacity-100 cursor-grabbing bg-black/10'
+                  : 'w-0 group-hover:w-7 p-0 group-hover:px-1 opacity-0 group-hover:opacity-100 cursor-grab'
+              }`}
+              size={24}
               {...listeners}
               {...attributes}
             />
           </div>
-          <input type='text' value={title} onChange={event => updateTitle(id, event.target.value)} className={styles.title} />
+          <input
+            type='text'
+            value={title}
+            onChange={event => updateTitle(id, event.target.value)}
+            className='ml-2 tracking-widest border-none p-2 rounded w-60 outline-0 focus:ring-1 focus:ring-black/10'
+          />
         </div>
-        <div className={styles.rightContainer}>
-          <MdAutoFixNormal className={styles.applyStyleButton} size={20} onClick={() => updateStyle(ylcStyle)} />
-          <IoTrashOutline className={styles.deleteButton} size={20} onClick={() => setIsDeleteModalOpen(true)} />
+        <div className='flex transition-opacity duration-200'>
+          <MdAutoFixNormal className='p-2 rounded hover:bg-black/10 mx-1 cursor-pointer' size={20} onClick={() => updateStyle(ylcStyle)} />
+          <IoTrashOutline
+            className='p-2 rounded hover:bg-black/10 mx-1 cursor-pointer'
+            size={20}
+            onClick={() => setIsDeleteModalOpen(true)}
+          />
         </div>
       </div>
       {isDeleteModalOpen && (
         <ModalSafeForReact19
           isOpen={isDeleteModalOpen}
-          className={modalStyles.Modal}
+          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[280px] bg-white p-4 rounded shadow outline-none text-center border border-black/10'
           onRequestClose={() => setIsDeleteModalOpen(false)}
-          overlayClassName={modalStyles.Overlay}
+          overlayClassName='fixed top-0 left-0 w-full h-full bg-black/50 z-[1000001]'
           appElement={document.body}
           parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
         >
-          <div className={modalStyles.content}>
+          <div className='mb-4 text-[1.35rem] text-[#333]'>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>
-            <div className={modalStyles.actions}>
-              <button type='button' onClick={() => deletePresetItem(id)} className={modalStyles.buttonDelete}>
-                {t('content.preset.delete')}
-              </button>
-              <button type='button' onClick={() => setIsDeleteModalOpen(false)} className={modalStyles.buttonCancel}>
-                {t('content.preset.cancel')}
-              </button>
-            </div>
+          </div>
+          <div className='flex justify-around mt-4'>
+            <button
+              type='button'
+              onClick={() => deletePresetItem(id)}
+              className='w-[100px] bg-white text-[#f21616] border border-[#f21616] rounded p-3 cursor-pointer font-bold transition-colors hover:bg-[#ffe9e9]'
+            >
+              {t('content.preset.delete')}
+            </button>
+            <button
+              type='button'
+              onClick={() => setIsDeleteModalOpen(false)}
+              className='w-[100px] bg-white border border-black rounded p-3 cursor-pointer transition-colors hover:bg-black/10'
+            >
+              {t('content.preset.cancel')}
+            </button>
           </div>
         </ModalSafeForReact19>
       )}

@@ -1,13 +1,12 @@
-import React from 'react'
-
+import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import classNames from 'classnames'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { FaRegUserCircle } from 'react-icons/fa'
 import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
 import { MdBlurOn, MdExpand } from 'react-icons/md'
 import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri'
-
-import styles from '../../styles/SettingContent.module.css'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
 import { BlurSliderUI, BlurToSliderValue } from '../YLCChangeItems/BlurSlider'
@@ -19,9 +18,6 @@ import { ReactionButtonDisplaySwitchUI } from '../YLCChangeItems/ReactionButtonD
 import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider'
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
-
-import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 export const PresetSettingContent = ({
   ylcStyle,
@@ -103,19 +99,19 @@ export const PresetSettingContent = ({
     },
   ]
   return (
-    <div className={classNames(styles.preset, isOpen && styles.open)}>
-      <div className={styles['content-setting-container']}>
-        <div className={styles.title}>Setting (View Only)</div>
+    <div className={classNames('flex flex-col p-4 gap-y-4 transition-all', isOpen && 'opacity-100')}>
+      <div className='flex flex-col gap-y-2'>
+        <div className='text-lg font-bold'>Setting (View Only)</div>
         <div>
           {items.map((item, i) => {
             return (
               <React.Fragment key={item.title}>
-                <div className={classNames(styles['content-setting-item'], item.disable && styles.disable)}>
-                  <div className={styles['title-with-icon']}>
+                <div className={classNames('flex items-center justify-between py-2', item.disable && 'opacity-50 pointer-events-none')}>
+                  <div className='flex items-center gap-x-2'>
                     {<item.icon size={16} />}
                     <div>{item.title}</div>
                   </div>
-                  <div className={styles.data}>{item.data}</div>
+                  <div className='ml-auto'>{item.data}</div>
                 </div>
                 {item.disable || i === items.length - 1 ? null : <hr />}
               </React.Fragment>

@@ -1,13 +1,10 @@
+import { useYTDLiveChatStore } from '@/shared/stores'
 import { DndContext, closestCenter } from '@dnd-kit/core'
 import { MeasuringStrategy } from '@dnd-kit/core'
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { SortableContext, arrayMove } from '@dnd-kit/sortable'
-import { useShallow } from 'zustand/react/shallow'
-
-import { useYTDLiveChatStore } from '@/shared/stores'
-import styles from '../styles/PresetContent.module.css'
-
 import classNames from 'classnames'
+import { useShallow } from 'zustand/react/shallow'
 import { AddPresetItem } from './PresetContent/AddPresetItem'
 import { PresetItem } from './PresetContent/PresetItem'
 
@@ -25,7 +22,7 @@ export const PresetContent = () => {
     })),
   )
   return (
-    <div className={classNames(styles['content-preset-container'], 'p-6')}>
+    <div className='px-6 py-4'>
       <DndContext
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
