@@ -5,12 +5,12 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useIframeLoader } from '../hooks/useIframeLoader'
-import styles from '../styles/Loader.module.css'
 
 export const YTDLiveChatIframe = () => {
   const { ref } = useIframeLoader()
   const nodeRef = useRef(null)
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor)
+  const fontColorRef = useRef(useYTDLiveChatStore.getState().fontColor)
   const { blur, alwaysOnDisplay } = useYTDLiveChatStore(
     useShallow(state => ({
       blur: state.blur,
@@ -27,13 +27,10 @@ export const YTDLiveChatIframe = () => {
   return (
     <>
       <div
+        className='w-full h-full overflow-hidden rounded-md'
         style={{
           opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
           backdropFilter: isIframeLoaded ? `blur(${blur}px)` : 'none',
-          width: '100%',
-          height: '100%',
-          overflow: 'hidden',
-          borderRadius: '10px',
         }}
         id='live-chat-iframe-wrapper'
         ref={ref}
@@ -54,19 +51,20 @@ export const YTDLiveChatIframe = () => {
       >
         <div
           ref={nodeRef}
+          className='w-full h-full absolute top-0 flex justify-center items-center bg-opacity-[rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})] backdrop-blur-${blur} transition-opacity duration-500'
           style={{
-            width: '100%',
-            height: '100%',
-            position: 'absolute',
-            top: 0,
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
           }}
         >
-          <div className={styles.loader} />
+          <div className='flex justify-center' aria-label='loading'>
+            <div
+              className='animate-ping h-5 w-5 rounded-full'
+              style={{
+                backgroundColor: `rgba(${fontColorRef.current.r}, ${fontColorRef.current.g}, ${fontColorRef.current.b}, ${fontColorRef.current.a})`,
+              }}
+            />
+          </div>
         </div>
       </CSSTransition>
     </>

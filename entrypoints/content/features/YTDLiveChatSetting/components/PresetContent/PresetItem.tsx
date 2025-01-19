@@ -44,7 +44,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`bg-white my-4 mx-3 p-4 rounded border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
+      className={`bg-white my-4 mx-3 p-4 rounded-[5px] border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
@@ -52,7 +52,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center'>
           <div ref={setActivatorNodeRef}>
             <MdOutlineDragIndicator
-              className={`transition-all duration-200 ${
+              className={`transition-all duration-200 outline-0 focus:ring-1 focus:ring-black/10 ${
                 isDragging
                   ? 'w-7 px-1 opacity-100 cursor-grabbing bg-black/10'
                   : 'w-0 group-hover:w-7 p-0 group-hover:px-1 opacity-0 group-hover:opacity-100 cursor-grab'
