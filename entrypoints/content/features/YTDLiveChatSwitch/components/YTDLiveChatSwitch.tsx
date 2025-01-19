@@ -14,8 +14,9 @@ export const YTDLiveChatSwitch = () => {
       type='button'
       className='ytp-button'
       style={{
-        display: 'flex !important',
+        display: 'flex',
         alignItems: 'center',
+        WebkitAlignItems: 'center',
         justifyContent: 'center',
         height: '100%',
         width: '100%',

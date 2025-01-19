@@ -46,7 +46,7 @@ export const YTDLiveChatIframe = () => {
           enterActive: 'transition-opacity opacity-100 duration-500',
           exitActive: 'transition-opacity opacity-0 duration-500',
         }}
-        delay={300}
+        delay={150}
         unmountOnExit
       >
         <div
