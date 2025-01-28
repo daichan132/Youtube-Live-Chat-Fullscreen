@@ -67,7 +67,6 @@ function removeSwitchButtonContainer(container: HTMLElement | null) {
 
 export const Content = () => {
   useI18n()
-  const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
 
   // Use refs to store DOM elements
@@ -94,7 +93,7 @@ export const Content = () => {
   }, [isFullscreen])
 
   const renderLiveChatPortal = () => {
-    if (!portalsReady || !ytdLiveChat || !shadowRootRef.current) return null
+    if (!portalsReady || !shadowRootRef.current) return null
     return createPortal(
       <div className='fixed top-0 right-0 w-full h-full z-1000 pointer-events-none'>
         <YTDLiveChat />

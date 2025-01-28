@@ -41,10 +41,10 @@ export const YTDLiveChatIframe = () => {
         timeout={300}
         classNames={{
           appear: 'opacity-0',
-          appearActive: 'transition-opacity opacity-100 duration-500',
+          appearActive: 'transition-opacity opacity-100 duration-200',
           enter: 'opacity-0',
-          enterActive: 'transition-opacity opacity-100 duration-500',
-          exitActive: 'transition-opacity opacity-0 duration-500',
+          enterActive: 'transition-opacity opacity-100 duration-200',
+          exitActive: 'transition-opacity opacity-0 duration-200',
         }}
         delay={150}
         unmountOnExit
