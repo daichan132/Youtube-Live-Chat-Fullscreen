@@ -1267,14 +1267,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.49.1":
-  version: 1.49.1
-  resolution: "@playwright/test@npm:1.49.1"
+"@playwright/test@npm:1.50.0":
+  version: 1.50.0
+  resolution: "@playwright/test@npm:1.50.0"
   dependencies:
-    playwright: "npm:1.49.1"
+    playwright: "npm:1.50.0"
   bin:
     playwright: cli.js
-  checksum: 10c0/2fca0bb7b334f7a23c7c5dfa5dbe37b47794c56f39b747c8d74a2f95c339e7902a296f2f1dd32c47bdd723cfa92cee05219f1a5876725dc89a1871b9137a286d
+  checksum: 10c0/70b46eab2a5c8b4accc1c8a29a0ea371b7b8f56b0d38509e5c06354ebc60dc262837e92cea727076aea5e1c32f31e215c02fbde977519a7e38488cfc48f0ba5c
   languageName: node
   linkType: hard
 
@@ -1687,12 +1687,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:19.0.7":
+"@types/react@npm:*":
   version: 19.0.7
   resolution: "@types/react@npm:19.0.7"
   dependencies:
     csstype: "npm:^3.0.2"
   checksum: 10c0/818e546fa03a2a65ac2652fc472891ac96684211e8967bc25e1da6a8a09e2301ad972b1b038d128f8b4cbbd7691f6f57fee274db568169e9b6b01556abbb5bee
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:19.0.8":
+  version: 19.0.8
+  resolution: "@types/react@npm:19.0.8"
+  dependencies:
+    csstype: "npm:^3.0.2"
+  checksum: 10c0/5fa7236356b1476de03519c66ef65d4fd904826956105619e2ad60cb0b55ae7b251dd5fff02234076225b5e15333d0d936bf9dbe1d461406f8a2ba01c197ddcd
   languageName: node
   linkType: hard
 
@@ -4257,9 +4266,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^24.2.1":
-  version: 24.2.1
-  resolution: "i18next@npm:24.2.1"
+"i18next@npm:^24.2.2":
+  version: 24.2.2
+  resolution: "i18next@npm:24.2.2"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
   peerDependencies:
@@ -4267,7 +4276,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/f4193ec0c84b292f12fb734bb93f0dae09bdb5deed2f6b888694b4309b15d1703b2b61088b9a50772deeab4b53868ec204a0e932e44b3474358910995b88627b
+  checksum: 10c0/df2f08f7e7a813d0c38f67e9a9f67f6e86cd105a58b6419cab1118833e0a8ebf8d31e2df9033c12890fc1db18740fc227acc593c0a30887f8f7f94cd0293d051
   languageName: node
   linkType: hard
 
@@ -6041,27 +6050,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.49.1":
-  version: 1.49.1
-  resolution: "playwright-core@npm:1.49.1"
+"playwright-core@npm:1.50.0":
+  version: 1.50.0
+  resolution: "playwright-core@npm:1.50.0"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/990b619c75715cd98b2c10c1180a126e3a454b247063b8352bc67792fe01183ec07f31d30c8714c3768cefed12886d1d64ac06da701f2baafc2cad9b439e3919
+  checksum: 10c0/b0cc7fadcb2db68a7b8d730b26c7a7d17baad454a0697c781e08074a619e57779a90be9b57c4c741ff4895390bdfd093d8393a746e8bf68ae57ac452f4c1cdb2
   languageName: node
   linkType: hard
 
-"playwright@npm:1.49.1":
-  version: 1.49.1
-  resolution: "playwright@npm:1.49.1"
+"playwright@npm:1.50.0":
+  version: 1.50.0
+  resolution: "playwright@npm:1.50.0"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.49.1"
+    playwright-core: "npm:1.50.0"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/2368762c898920d4a0a5788b153dead45f9c36c3f5cf4d2af5228d0b8ea65823e3bbe998877950a2b9bb23a211e4633996f854c6188769dc81a25543ac818ab5
+  checksum: 10c0/0076a536433819b7122066a07c5fcfa56d40d09cbbec0a39061bbfa832c8a1f626df5e4fe206fbeba56b3a61f0e2b26d4ad3c2b402852d6f147a266fd18e4ddf
   languageName: node
   linkType: hard
 
@@ -6320,9 +6329,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-select@npm:^5.9.0":
-  version: 5.9.0
-  resolution: "react-select@npm:5.9.0"
+"react-select@npm:^5.10.0":
+  version: 5.10.0
+  resolution: "react-select@npm:5.10.0"
   dependencies:
     "@babel/runtime": "npm:^7.12.0"
     "@emotion/cache": "npm:^11.4.0"
@@ -6336,7 +6345,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/f21f18ca41a8c866ab69f9c65253e86dcc5323477bbfc729bf6aa9d897e04e27cfffd13c07f10b70dc554e15ad1d238c1283e05e457bf4ead8526a1dd7fbc8b0
+  checksum: 10c0/64cc73ef43556d0a199420d7d19f9f72e3c5e3a7f6828aef5421ec16cc0e4bc337061a8fa3c03afc5b929a087a4ca866f497e0ef865b03fe014c5cacde5e71dd
   languageName: node
   linkType: hard
 
@@ -7996,9 +8005,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wxt@npm:0.19.25":
-  version: 0.19.25
-  resolution: "wxt@npm:0.19.25"
+"wxt@npm:0.19.26":
+  version: 0.19.26
+  resolution: "wxt@npm:0.19.26"
   dependencies:
     "@1natsu/wait-element": "npm:^4.1.2"
     "@aklinker1/rollup-plugin-visualizer": "npm:5.12.0"
@@ -8052,7 +8061,7 @@ __metadata:
   bin:
     wxt: bin/wxt.mjs
     wxt-publish-extension: bin/wxt-publish-extension.cjs
-  checksum: 10c0/546f2ca80e981d6bf846db0e787cf930f50815c5e24a8e826f436abd392c635d8b6a6803e04f36c9b2ae9c92989cadeb93e0c03c51933def79dad0e1fe8282e3
+  checksum: 10c0/9f3c9c77bb49b96729b6058e280b3e3623d83b4fbaedc3adf1266887585ddd36fb29f8084ebddf3da72b78c8e5316f56fbde65496f12f42bf8441444743e4b68
   languageName: node
   linkType: hard
 
@@ -8177,10 +8186,10 @@ __metadata:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
-    "@playwright/test": "npm:1.49.1"
+    "@playwright/test": "npm:1.50.0"
     "@types/chrome": "npm:0.0.299"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/react": "npm:19.0.7"
+    "@types/react": "npm:19.0.8"
     "@types/react-color": "npm:3.0.13"
     "@types/react-dom": "npm:19.0.3"
     "@types/react-modal": "npm:3.16.3"
@@ -8191,7 +8200,7 @@ __metadata:
     "@wxt-dev/module-react": "npm:1.1.3"
     "@wxt-dev/unocss": "npm:1.0.0"
     classnames: "npm:^2.5.1"
-    i18next: "npm:^24.2.1"
+    i18next: "npm:^24.2.2"
     i18next-browser-languagedetector: "npm:^8.0.2"
     immer: "npm:^10.1.1"
     lefthook: "npm:1.10.10"
@@ -8203,7 +8212,7 @@ __metadata:
     react-i18next: "npm:^15.4.0"
     react-icons: "npm:^5.4.0"
     react-modal: "npm:^3.16.3"
-    react-select: "npm:^5.9.0"
+    react-select: "npm:^5.10.0"
     react-transition-group: "npm:^4.4.5"
     react-use: "npm:^17.6.0"
     redux-persist-webextension-storage: "npm:^1.0.2"
@@ -8212,7 +8221,7 @@ __metadata:
     unocss-preset-scrollbar: "npm:0.3.1"
     uuid: "npm:^11.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
-    wxt: "npm:0.19.25"
+    wxt: "npm:0.19.26"
     zustand: "npm:^5.0.3"
   languageName: unknown
   linkType: soft
