@@ -16,9 +16,7 @@
       "fontFamily": "Pamilya ng Font",
       "fontSize": "Laki ng Font",
       "blur": "Paglabo",
-      "space": "Espasyo",
-      "footer": "Para sa mga tagubilin, i-click ito ",
-      "help": "tulong"
+      "space": "Espasyo"
     },
     "preset": {
       "addMessage": "Idagdag ang kasalukuyang setting",

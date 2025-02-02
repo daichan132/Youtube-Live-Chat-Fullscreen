@@ -16,9 +16,7 @@
       "fontFamily": "Font Family",
       "fontSize": "Font Size",
       "blur": "Blur",
-      "space": "Space",
-      "footer": "For instructions, click this ",
-      "help": "help"
+      "space": "Space"
     },
     "preset": {
       "addMessage": "Add current setting",

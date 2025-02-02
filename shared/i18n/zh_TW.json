@@ -16,9 +16,7 @@
       "fontFamily": "字體家族",
       "fontSize": "字體大小",
       "blur": "模糊",
-      "space": "間距",
-      "footer": "有關說明，請點擊 ",
-      "help": "幫助"
+      "space": "間距"
     },
     "preset": {
       "addMessage": "添加當前設置",

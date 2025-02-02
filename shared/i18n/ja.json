@@ -16,9 +16,7 @@
       "fontFamily": "フォントファミリー",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
-      "space": "スペース",
-      "footer": "詳しい説明についてはこちらから　",
-      "help": "ヘルプ"
+      "space": "スペース"
     },
     "preset": {
       "addMessage": "現在の設定を追加",

@@ -16,9 +16,7 @@
       "fontFamily": "Keluarga Font",
       "fontSize": "Ukuran Font",
       "blur": "Buram",
-      "space": "Ruang",
-      "footer": "Untuk petunjuk, klik ini ",
-      "help": "bantuan"
+      "space": "Ruang"
     },
     "preset": {
       "addMessage": "Tambahkan pengaturan saat ini",

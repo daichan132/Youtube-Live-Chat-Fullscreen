@@ -16,9 +16,7 @@
       "fontFamily": "Familia de fuentes",
       "fontSize": "Tamaño de fuente",
       "blur": "Desenfoque",
-      "space": "Espacio",
-      "footer": "Para más información, haga clic aquí ",
-      "help": "ayuda"
+      "space": "Espacio"
     },
     "preset": {
       "addMessage": "Agregar configuración actual",
