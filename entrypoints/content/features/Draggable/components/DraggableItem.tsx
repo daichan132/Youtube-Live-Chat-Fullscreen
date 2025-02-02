@@ -96,14 +96,14 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
             style={{ opacity: isIconDisplay ? 1 : 0 }}
           >
             <RiDraggable
-              className={`rounded-lg transition-[background-color] p-2 hover:bg-black/10 ${isDragging && 'bg-black/10'} cursor-grab`}
+              className={`rounded-[100%] transition-[background-color] p-[8px] hover:bg-black/10 ${isDragging && 'bg-black/10'} cursor-grab`}
               size={24}
               color={`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
             />
           </div>
           <div className='absolute top-[4px] right-[88px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
             <CiSettings
-              className='rounded-lg transition-[background-color] p-2 hover:bg-black/10'
+              className='rounded-[100%] transition-[background-color] p-[8px] hover:bg-black/10'
               size={24}
               onClick={() => {
                 setIsOpenSettingModal(true)

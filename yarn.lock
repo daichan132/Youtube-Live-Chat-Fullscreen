@@ -1267,14 +1267,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.50.0":
-  version: 1.50.0
-  resolution: "@playwright/test@npm:1.50.0"
+"@playwright/test@npm:1.50.1":
+  version: 1.50.1
+  resolution: "@playwright/test@npm:1.50.1"
   dependencies:
-    playwright: "npm:1.50.0"
+    playwright: "npm:1.50.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/70b46eab2a5c8b4accc1c8a29a0ea371b7b8f56b0d38509e5c06354ebc60dc262837e92cea727076aea5e1c32f31e215c02fbde977519a7e38488cfc48f0ba5c
+  checksum: 10c0/77c1a7cfaca7b3b88804256bb4c0e15c54b8df02690298086ef4a4fc8c2a42b99b69ba1b83906d00cc7ddb322ce8b2f19f0238f189913607c679779a4d132da1
   languageName: node
   linkType: hard
 
@@ -1518,13 +1518,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.0.299":
-  version: 0.0.299
-  resolution: "@types/chrome@npm:0.0.299"
+"@types/chrome@npm:0.0.300":
+  version: 0.0.300
+  resolution: "@types/chrome@npm:0.0.300"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/66a4d5368997be66b8a9f9dd8e3d7da4971ce466737eb9285486e5c2b037b770dcfbf6c0ed7148fb7f0a69bfa2c7c93d83203e6f0784e75362369ec8c1d887da
+  checksum: 10c0/19fa837f7b85c4fe718cb0efa9cdba947fb12afbe2b12abbe84745e171db1c569b9f76d49c66c3d4aa87befcf9a8aeb0eff1421162742535152d7fddbad82010
   languageName: node
   linkType: hard
 
@@ -1793,26 +1793,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/core@npm:0.56.5, @unocss/core@npm:^0.56.5":
-  version: 0.56.5
-  resolution: "@unocss/core@npm:0.56.5"
-  checksum: 10c0/35bf186251ee1655048caa550bac8fdf0fb06400b1425f9fcd65c7694ff2e3e6e3aaaa9bf090367a52c56ece6fcbcb81221f409287777d84d162e0bbe836bf21
-  languageName: node
-  linkType: hard
-
 "@unocss/core@npm:65.4.3, @unocss/core@npm:^65.4.3":
   version: 65.4.3
   resolution: "@unocss/core@npm:65.4.3"
   checksum: 10c0/bd44fd79cf504028434cc8ebb5b830bf1c65a8acc12aee31065f2c62c8afcb32d2a140251885d6d2f518fc9265c4c87a52896fd0f725eac3b5f65d981e563742
-  languageName: node
-  linkType: hard
-
-"@unocss/extractor-arbitrary-variants@npm:0.56.5":
-  version: 0.56.5
-  resolution: "@unocss/extractor-arbitrary-variants@npm:0.56.5"
-  dependencies:
-    "@unocss/core": "npm:0.56.5"
-  checksum: 10c0/182c1daa3a958278958c977fed5a2e4500ab7ffea1c8a0afa2a88fbc92645f885a67a7bcb2ded25cbd0e91bb7252cf75a7ebebe87f259774bf69325dbb567b18
   languageName: node
   linkType: hard
 
@@ -1886,17 +1870,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@unocss/preset-mini@npm:^0.56.0":
-  version: 0.56.5
-  resolution: "@unocss/preset-mini@npm:0.56.5"
-  dependencies:
-    "@unocss/core": "npm:0.56.5"
-    "@unocss/extractor-arbitrary-variants": "npm:0.56.5"
-    "@unocss/rule-utils": "npm:0.56.5"
-  checksum: 10c0/25e20436b79761475f5c61557c801ff3647a34be95c873cb6fb8efecb923d5d579a9ed6e23305e7719295548fda85b1bd11a46586cbecbbeeb87e617780061de
-  languageName: node
-  linkType: hard
-
 "@unocss/preset-tagify@npm:65.4.3":
   version: 65.4.3
   resolution: "@unocss/preset-tagify@npm:65.4.3"
@@ -1953,15 +1926,6 @@ __metadata:
   version: 65.4.3
   resolution: "@unocss/reset@npm:65.4.3"
   checksum: 10c0/81c4deea45421d3b5d5a7977031b869f8eb4db2e5fa3bdae90d44025d0f53e4dd3657bb9a9b8689acf8e95645441fe2a5bab08bc60d906a88a4840a7c4a7b070
-  languageName: node
-  linkType: hard
-
-"@unocss/rule-utils@npm:0.56.5":
-  version: 0.56.5
-  resolution: "@unocss/rule-utils@npm:0.56.5"
-  dependencies:
-    "@unocss/core": "npm:^0.56.5"
-  checksum: 10c0/7e5ffcc6a3919535e4f833271b5ca84e0df7667d2078eb44a9fb454a20955e97e99f96654dfe746efc8a914f86e4f2829c220b9cde8d5deb9d0fa39d7540e2fe
   languageName: node
   linkType: hard
 
@@ -6050,27 +6014,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.50.0":
-  version: 1.50.0
-  resolution: "playwright-core@npm:1.50.0"
+"playwright-core@npm:1.50.1":
+  version: 1.50.1
+  resolution: "playwright-core@npm:1.50.1"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/b0cc7fadcb2db68a7b8d730b26c7a7d17baad454a0697c781e08074a619e57779a90be9b57c4c741ff4895390bdfd093d8393a746e8bf68ae57ac452f4c1cdb2
+  checksum: 10c0/c158764257d870897c31807a830ddcc3f5aaf4376719e05aeada3489a01f751650b2dc43e027201a40405a1b075084e89f58cd3730a985a229efe9d8cecfe360
   languageName: node
   linkType: hard
 
-"playwright@npm:1.50.0":
-  version: 1.50.0
-  resolution: "playwright@npm:1.50.0"
+"playwright@npm:1.50.1":
+  version: 1.50.1
+  resolution: "playwright@npm:1.50.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.50.0"
+    playwright-core: "npm:1.50.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/0076a536433819b7122066a07c5fcfa56d40d09cbbec0a39061bbfa832c8a1f626df5e4fe206fbeba56b3a61f0e2b26d4ad3c2b402852d6f147a266fd18e4ddf
+  checksum: 10c0/b292ee6e0d122748a3d024b85ace86a0d9c848fc4121685d90ffc5d43d6bcf13ed7dc7488b1055f69040599c420052306ccba6fabfe2f69a15fc109c55171207
   languageName: node
   linkType: hard
 
@@ -7531,17 +7495,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unocss-preset-scrollbar@npm:0.3.1":
-  version: 0.3.1
-  resolution: "unocss-preset-scrollbar@npm:0.3.1"
-  dependencies:
-    "@unocss/preset-mini": "npm:^0.56.0"
-  peerDependencies:
-    unocss: ">= 0.31.13 < 1"
-  checksum: 10c0/9a4ac2a9584a42fc715e66e31e6c9c4c8ea569fadaf2c5cf864ab0bbab3f74f279c364b03f75807c4d90bfedd14fcd901d0ba39163616d8950e4a60e0f13e031
-  languageName: node
-  linkType: hard
-
 "unocss@npm:65.4.3":
   version: 65.4.3
   resolution: "unocss@npm:65.4.3"
@@ -8186,8 +8139,8 @@ __metadata:
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
-    "@playwright/test": "npm:1.50.0"
-    "@types/chrome": "npm:0.0.299"
+    "@playwright/test": "npm:1.50.1"
+    "@types/chrome": "npm:0.0.300"
     "@types/lodash-es": "npm:4.17.12"
     "@types/react": "npm:19.0.8"
     "@types/react-color": "npm:3.0.13"
@@ -8218,7 +8171,6 @@ __metadata:
     redux-persist-webextension-storage: "npm:^1.0.2"
     typescript: "npm:5.7.3"
     unocss: "npm:65.4.3"
-    unocss-preset-scrollbar: "npm:0.3.1"
     uuid: "npm:^11.0.5"
     vite-tsconfig-paths: "npm:^5.1.4"
     wxt: "npm:0.19.26"

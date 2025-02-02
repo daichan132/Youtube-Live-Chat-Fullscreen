@@ -23,13 +23,7 @@ export const ChatOnlyDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
   return (
-    <div
-      style={{
-        width: '150px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='w-[150px] flex justify-center'>
       <Switch
         checked={chatOnlyDisplay}
         id='chat-only-display-switch'

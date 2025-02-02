@@ -8,6 +8,9 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
+import type { IconType } from 'react-icons'
+import { BiSlider } from 'react-icons/bi'
+import { HiOutlineCollection } from 'react-icons/hi'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
 
@@ -45,6 +48,11 @@ export const YTDLiveChatSetting = () => {
   )
   const { t } = useTranslation()
 
+  const tabs: { key: 'preset' | 'setting'; label: string; icon: IconType }[] = [
+    { key: 'preset', label: t('content.setting.header.preset'), icon: HiOutlineCollection },
+    { key: 'setting', label: t('content.setting.header.setting'), icon: BiSlider },
+  ]
+
   return (
     <ModalSafeForReact19
       isOpen={isOpenSettingModal}
@@ -56,28 +64,22 @@ export const YTDLiveChatSetting = () => {
       parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
     >
       <div className='flex flex-col w-[480px] rounded-lg bg-white text-black overflow-hidden border-1 border-solid border-gray-200'>
-        <div className='flex justify-between items-center p-4 border-1 border-b-solid border-gray-200'>
-          <div className='flex text-base gap-3'>
-            <div
-              className={classNames(
-                'px-5 py-4 rounded cursor-pointer transition-colors duration-200',
-                menuItem === 'preset' ? 'text-blue-500 bg-blue-100 cursor-default' : 'text-gray-700 hover:bg-gray-100',
-              )}
-              onClick={() => setMenuItem('preset')}
-              onKeyUp={e => e.key === 'Enter' && setMenuItem('preset')}
-            >
-              {t('content.setting.header.preset')}
-            </div>
-            <div
-              className={classNames(
-                'px-5 py-4 rounded cursor-pointer transition-colors duration-200',
-                menuItem === 'setting' ? 'text-blue-500 bg-blue-100 cursor-default' : 'text-gray-700 hover:bg-gray-100',
-              )}
-              onClick={() => setMenuItem('setting')}
-              onKeyUp={e => e.key === 'Enter' && setMenuItem('setting')}
-            >
-              {t('content.setting.header.setting')}
-            </div>
+        <div className='flex justify-between items-center px-6 py-4 border-1 border-b-solid border-gray-200'>
+          <div className='flex text-base gap-4'>
+            {tabs.map(item => (
+              <div
+                key={item.key}
+                className={classNames(
+                  'px-5 py-4 rounded cursor-pointer transition-colors duration-200 flex items-center gap-4',
+                  menuItem === item.key ? 'text-blue-700 bg-blue-100 cursor-default' : 'text-gray-700 hover:bg-gray-100',
+                )}
+                onClick={() => setMenuItem(item.key)}
+                onKeyUp={e => e.key === 'Enter' && setMenuItem(item.key)}
+              >
+                <item.icon size={14} />
+                {item.label}
+              </div>
+            ))}
           </div>
           <RiCloseLine
             className='cursor-pointer rounded p-3 transition-colors duration-200 hover:bg-gray-100'
@@ -85,28 +87,9 @@ export const YTDLiveChatSetting = () => {
             size={20}
           />
         </div>
-        <div className='flex-grow overflow-y-scroll h-[400px] text-lg shadow-inner scrollbar-thin'>
-          {/* scrollbarを細くする */}
-          <div className='min-h-[340px]'>
-            {menuItem === 'setting' && <SettingContent />}
-            {menuItem === 'preset' && <PresetContent />}
-          </div>
-          <div className='border-1 border-t-solid border-gray-200 p-6 flex justify-end'>
-            <div className='text-gray-700'>
-              {t('content.setting.footer')}
-              <a
-                href='https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4'
-                target='_blank'
-                rel='noopener noreferrer'
-                onClick={() => {
-                  setIsOpenSettingModal(false)
-                }}
-                className='text-gray-700 underline'
-              >
-                {t('content.setting.help')}
-              </a>
-            </div>
-          </div>
+        <div className='flex-grow overflow-y-scroll h-[380px] shadow-inner p-3'>
+          {menuItem === 'setting' && <SettingContent />}
+          {menuItem === 'preset' && <PresetContent />}
         </div>
       </div>
     </ModalSafeForReact19>

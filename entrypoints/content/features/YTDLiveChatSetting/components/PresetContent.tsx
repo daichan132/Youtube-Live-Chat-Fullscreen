@@ -22,7 +22,7 @@ export const PresetContent = () => {
     })),
   )
   return (
-    <div className='px-6 py-4'>
+    <>
       <DndContext
         collisionDetection={closestCenter}
         modifiers={[restrictToVerticalAxis, restrictToParentElement]}
@@ -45,6 +45,6 @@ export const PresetContent = () => {
         </SortableContext>
       </DndContext>
       <AddPresetItem />
-    </div>
+    </>
   )
 }

@@ -87,7 +87,7 @@ export const SettingContent = () => {
     },
   ]
   return (
-    <div className='px-6 py-4'>
+    <>
       {items.map((item, i) => (
         <React.Fragment key={item.title}>
           <div
@@ -97,15 +97,15 @@ export const SettingContent = () => {
               item.disable && 'h-0 py-0 px-4 opacity-0 pointer-events-none overflow-hidden',
             )}
           >
-            <div className='flex items-center text-sm'>
+            <div className='flex items-center'>
               <item.icon size={20} className='mr-6 border-1 border-solid border-[rgba(0,0,0,0.1)] text-[#333] rounded bg-white p-3' />
-              <div>{item.title}</div>
+              <p>{item.title}</p>
             </div>
             {item.data}
           </div>
           {!item.disable && i < items.length - 1 && <hr className='border-none h-[1px] bg-[rgba(0,0,0,0.1)]' />}
         </React.Fragment>
       ))}
-    </div>
+    </>
   )
 }

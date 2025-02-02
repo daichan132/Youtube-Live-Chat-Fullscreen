@@ -53,19 +53,6 @@ const Popup = () => {
             </React.Fragment>
           )
         })}
-        <div className='b-t-gray-3 b-t-solid b-t-1 px-3 py-3 flex justify-end bg-white text-sm'>
-          <div>
-            {t('content.setting.footer')}
-            <a
-              href='https://smart-persimmon-6f9.notion.site/Chrome-extension-help-1606385e75a14d65ae4d0e42ba47fb84?pvs=4'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='text-gray-800'
-            >
-              {t('content.setting.help')}
-            </a>
-          </div>
-        </div>
       </div>
     </div>
   )

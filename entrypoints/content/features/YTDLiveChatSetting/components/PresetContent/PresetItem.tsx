@@ -44,7 +44,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`bg-white my-4 mx-3 p-4 rounded-[5px] border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
+      className={`bg-white m-4 p-4 rounded-lg border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
@@ -52,7 +52,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center'>
           <div ref={setActivatorNodeRef}>
             <MdOutlineDragIndicator
-              className={`transition-all duration-200 outline-0 rounded focus:ring-1 focus:ring-black/10 ${
+              className={`transition-all duration-200 outline-0 rounded focus:ring-1 focus:ring-black/10 mt-1 ${
                 isDragging
                   ? 'w-7 px-1 opacity-100 cursor-grabbing bg-black/10'
                   : 'w-0 group-hover:w-7 p-0 group-hover:px-1 opacity-0 group-hover:opacity-100 cursor-grab'
@@ -66,7 +66,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
-            className='ml-2 tracking-widest border-none p-2 rounded w-60 outline-0 focus:ring-1 focus:ring-black/10'
+            className='ml-1 tracking-widest border-none p-2 rounded w-60 outline-0 focus:ring-1 focus:ring-black/10'
           />
         </div>
         <div className='flex transition-opacity duration-200'>
@@ -81,27 +81,27 @@ export const PresetItem = ({ id }: PresetItemType) => {
       {isDeleteModalOpen && (
         <ModalSafeForReact19
           isOpen={isDeleteModalOpen}
-          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[280px] bg-white p-4 rounded shadow outline-none text-center border border-black/10'
+          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[320px] bg-white p-6 rounded-lg shadow-lg outline-none text-center border border-black/10'
           onRequestClose={() => setIsDeleteModalOpen(false)}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/50 z-[1000001]'
           appElement={document.body}
           parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
         >
-          <div className='mb-4 text-[1.35rem] text-[#333]'>
+          <div className='mb-4 text-[1.5rem] font-bold text-[#333]'>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>
           </div>
-          <div className='flex justify-around mt-4'>
+          <div className='flex justify-around mt-6 space-x-4'>
             <button
               type='button'
               onClick={() => deletePresetItem(id)}
-              className='w-[100px] bg-white text-[#f21616] border border-[#f21616] rounded p-3 cursor-pointer font-bold transition-colors hover:bg-[#ffe9e9]'
+              className='w-[150px] bg-white text-[#f21616] border border-[#f21616] rounded-lg p-3 cursor-pointer font-bold transition-colors hover:bg-[#ffe9e9]'
             >
               {t('content.preset.delete')}
             </button>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
-              className='w-[100px] bg-white border border-black rounded p-3 cursor-pointer transition-colors hover:bg-black/10'
+              className='w-[150px] bg-white border border-black rounded-lg p-3 cursor-pointer transition-colors hover:bg-black/10'
             >
               {t('content.preset.cancel')}
             </button>

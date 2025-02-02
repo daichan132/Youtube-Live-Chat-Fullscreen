@@ -53,7 +53,7 @@ export const BgColorPickerUI = React.forwardRef<
       >
         <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] bg-white rounded-[2px] w-full h-full'>
           <div
-            className='w-[140px] h-[16px] rounded-[2px]'
+            className='w-[150px] h-[16px] rounded-[2px]'
             style={{
               backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
             }}

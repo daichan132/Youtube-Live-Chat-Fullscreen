@@ -33,13 +33,7 @@ export const ReactionButtonDisplaySwitchUI = ({
   changeDisplay?: (reactionButtonDisplay: boolean) => void
 }) => {
   return (
-    <div
-      style={{
-        width: '150px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='w-[150px] flex justify-center'>
       <Switch
         checked={reactionButtonDisplay}
         id='reaction-button-display-switch'

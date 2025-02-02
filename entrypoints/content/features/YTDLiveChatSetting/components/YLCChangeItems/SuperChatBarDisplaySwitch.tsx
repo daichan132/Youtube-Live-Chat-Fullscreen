@@ -29,13 +29,7 @@ export const SuperChatBarDisplaySwitchUI = ({
   changeDisplay?: (superChatBarDisplay: boolean) => void
 }) => {
   return (
-    <div
-      style={{
-        width: '150px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='w-[150px] flex justify-center'>
       <Switch
         checked={superChatBarDisplay}
         id='super-chat-bar-display-switch'

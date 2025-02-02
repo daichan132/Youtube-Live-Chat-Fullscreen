@@ -27,13 +27,7 @@ export const UserIconDisplaySwitchUI = ({
   changeDisplay?: (userIconDisplay: boolean) => void
 }) => {
   return (
-    <div
-      style={{
-        width: '150px',
-        display: 'flex',
-        justifyContent: 'center',
-      }}
-    >
+    <div className='w-[150px] flex justify-center'>
       <Switch
         checked={userIconDisplay}
         id='user-icon-display-switch'

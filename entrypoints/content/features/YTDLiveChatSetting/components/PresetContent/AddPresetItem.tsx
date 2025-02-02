@@ -36,7 +36,7 @@ export const AddPresetItem = () => {
   return (
     <div
       className={classNames(
-        'bg-white border-1 border-solid border-[rgba(0,0,0,0.1)] m-[10px] py-[1.25rem] px-[1rem] rounded-[5px] transition-colors duration-200 flex justify-center items-center cursor-pointer',
+        'border-1 border-solid border-[rgba(0,0,0,0.1)] m-4 p-5 rounded-lg transition-colors duration-200 flex justify-center items-center cursor-pointer',
         !addPresetEnabled && 'bg-[rgba(0,0,0,0.1)] opacity-[0.35] cursor-not-allowed',
       )}
       onClick={() => addPresetEnabled && addItem()}

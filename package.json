@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@playwright/test": "1.50.0",
-    "@types/chrome": "0.0.299",
+    "@playwright/test": "1.50.1",
+    "@types/chrome": "0.0.300",
     "@types/lodash-es": "4.17.12",
     "@types/react": "19.0.8",
     "@types/react-color": "3.0.13",
@@ -59,7 +59,6 @@
     "lefthook": "1.10.10",
     "typescript": "5.7.3",
     "unocss": "65.4.3",
-    "unocss-preset-scrollbar": "0.3.1",
     "wxt": "0.19.26"
   },
   "packageManager": "yarn@4.6.0",
