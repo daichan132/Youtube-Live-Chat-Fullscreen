@@ -63,7 +63,7 @@ export const YTDLiveChatSetting = () => {
       appElement={document.body}
       parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
     >
-      <div className='flex flex-col w-[480px] rounded-lg bg-white text-black overflow-hidden border-1 border-solid border-gray-200'>
+      <div className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'>
         <div className='flex justify-between items-center px-6 py-4 border-1 border-b-solid border-gray-200'>
           <div className='flex text-base gap-4'>
             {tabs.map(item => (
@@ -71,7 +71,7 @@ export const YTDLiveChatSetting = () => {
                 key={item.key}
                 className={classNames(
                   'px-5 py-4 rounded cursor-pointer transition-colors duration-200 flex items-center gap-4',
-                  menuItem === item.key ? 'text-blue-700 bg-blue-100 cursor-default' : 'text-gray-700 hover:bg-gray-100',
+                  menuItem === item.key ? 'text-[#333] bg-gray-100 cursor-default' : 'text-gray-700 hover:bg-gray-50',
                 )}
                 onClick={() => setMenuItem(item.key)}
                 onKeyUp={e => e.key === 'Enter' && setMenuItem(item.key)}
@@ -87,7 +87,7 @@ export const YTDLiveChatSetting = () => {
             size={20}
           />
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] shadow-inner p-3'>
+        <div className='flex-grow overflow-y-scroll h-[380px] p-3 bg-gray-100'>
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>

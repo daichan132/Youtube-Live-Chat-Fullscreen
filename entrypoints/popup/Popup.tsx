@@ -1,9 +1,9 @@
 import React from 'react'
 
 import { useTranslation } from 'react-i18next'
-import { IoChatboxOutline, IoLanguage, IoLinkOutline } from 'react-icons/io5'
 
 import type { IconType } from 'react-icons'
+import { MdChatBubbleOutline, MdLanguage, MdLink } from 'react-icons/md'
 import { LanguageSelector } from './components/LanguageSelector'
 import { Links } from './components/Links'
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch'
@@ -18,17 +18,17 @@ const Popup = () => {
   const { t } = useTranslation()
   const items: itemType[] = [
     {
-      icon: IoLanguage,
+      icon: MdLanguage,
       title: t('popup.language'),
       data: <LanguageSelector />,
     },
     {
-      icon: IoChatboxOutline,
+      icon: MdChatBubbleOutline,
       title: t('popup.showChatOnFullscreen'),
       data: <YTDLiveChatSwitch />,
     },
     {
-      icon: IoLinkOutline,
+      icon: MdLink,
       title: t('popup.links'),
       data: <Links />,
     },

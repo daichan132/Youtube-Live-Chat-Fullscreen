@@ -18,14 +18,14 @@ export const Switch = (props: Props) => {
         }}
       />
       <label
-        className={`relative inset-0 box-shadow-inner rounded-full cursor-pointer flex items-center text-[16px] w-[40px] h-[23px] transition-colors duration-200 ${
+        className={`relative inset-0 shadow-inner rounded-full cursor-pointer flex items-center text-[16px] w-[44px] h-[24px] transition-colors duration-200 ${
           checked ? 'bg-green-5' : 'bg-gray-4'
         }`}
         htmlFor={id}
       >
         <span
-          className={`absolute bg-white rounded-full w-[18px] h-[18px] left-[2px] transition-transform duration-200 ${
-            checked ? 'translate-x-full' : 'translate-x-0'
+          className={`absolute bg-white rounded-full w-[18px] h-[18px] transition-transform duration-200 ${
+            checked ? 'translate-x-[23px]' : 'translate-x-[3px]'
           }`}
         />
       </label>

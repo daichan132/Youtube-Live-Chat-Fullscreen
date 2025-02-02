@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 
 import { useTranslation } from 'react-i18next'
-import Select from 'react-select'
 
 export const LanguageSelector = () => {
   const languageOptions = [
@@ -17,53 +16,30 @@ export const LanguageSelector = () => {
 
   const { i18n } = useTranslation()
 
-  const changeLanguage = useCallback(
-    (
-      selectedOption: {
-        value: string
-        label: string
-      } | null,
-    ) => {
-      if (selectedOption === null) return
-      i18n.changeLanguage(selectedOption.value)
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      i18n.changeLanguage(e.target.value)
       chrome.runtime.sendMessage({
         message: 'language',
-        language: selectedOption.value,
+        language: e.target.value,
       })
     },
     [i18n],
   )
 
   return (
-    <Select
-      styles={{
-        control: baseStyles => ({
-          ...baseStyles,
-          fontSize: '14px',
-          width: 180,
-          borderRadius: 4,
-          minHeight: 'unset',
-        }),
-        menu: baseStyles => ({
-          ...baseStyles,
-          fontSize: '14px',
-          borderRadius: 4,
-        }),
-        option: baseStyles => ({
-          ...baseStyles,
-          padding: '6px 10px',
-        }),
-        dropdownIndicator: baseStyles => ({
-          ...baseStyles,
-          padding: '7px 8px',
-        }),
-      }}
-      defaultValue={languageOptions.find(option => option.value === i18n.language)}
-      options={languageOptions}
-      onChange={changeLanguage}
-      components={{
-        IndicatorSeparator: () => null,
-      }}
-    />
+    <div className="relative inline-flex items-center after:content-[''] after:absolute after:right-[15px] after:w-[10px] after:h-[7px] after:bg-[#535353] after:[clip-path:polygon(0_0,100%_0,50%_100%)] after:pointer-events-none">
+      <select
+        className='appearance-none min-w-[150px] h-[2.8em] py-[0.4em] pr-[calc(0.8em_+_30px)] pl-[0.8em] border border-[#d0d0d0] rounded-[3px] bg-white text-[#333333] text-[1em] cursor-pointer'
+        value={i18n.language}
+        onChange={handleChange}
+      >
+        {languageOptions.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
   )
 }
