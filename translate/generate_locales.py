@@ -10,8 +10,13 @@ def main():
     lang_codes = get_lang_codes()
     for code, language in lang_codes.items():
         print(f"Translating to {language} ({code})...")
-        source_path = os.path.join("public", "_locales", base_language, "messages.json")
-        target_path = os.path.join("public", "_locales", code, "messages.json")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        source_path = os.path.join(
+            script_dir, "..", "public", "_locales", base_language, "messages.json"
+        )
+        target_path = os.path.join(
+            script_dir, "..", "public", "_locales", code, "messages.json"
+        )
 
         schema = build_response_format(source_path)
         with open(source_path, "r", encoding="utf-8") as f:
