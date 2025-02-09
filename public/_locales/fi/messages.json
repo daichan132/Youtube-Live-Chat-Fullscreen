@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Koko Näytölle"
+    "message": "YouTube Live Chat Koko Näyttö"
   },
   "extensionDescription": {
-    "message": "Tämän laajennuksen avulla voit tarkastella keskustelua pitäessäsi YouTube Live -lähetystä koko näytöllä ja lähettää kommentteja. Tämä mahdollistaa vuorovaikutuksen suoratoistajan ja muiden katsojien kanssa samalla, kun säilytät suuren katselunäytön.\n\nTärkeimmät ominaisuudet\n\n- Lähetä keskusteluviestejä koko näytöllä\n  Voit lähettää kommentteja ja superchat-viestejä pitäessäsi katselunäytön suurena.\n- Mukauta keskustelukäyttöliittymää\n  Säädä taustaväriä, tekstin väriä ja tekstin kokoa mieltymystesi mukaan.\n- Tukee useita kieliä\n  Käytä käyttöliittymää suosikkikielelläsi, kuten japaniksi tai englanniksi.\n\nAktivointi ja käyttö\n\nMenetelmä 1: Aktivoi selaimen laajennusvalikosta\n\n1. Klikkaa \"Palapelin palanen\" -ikonia selaimesi oikeassa yläkulmassa.\n2. Etsi ja valitse tämä laajennus laajennusluettelosta.\n3. Ota laajennus käyttöön esille tulevassa valikossa.\n\nMenetelmä 2: Aktivoi YouTuben ohjauspalkista\n\n1. Aseta YouTube-video koko näytölle.\n2. Napsauta \"Keskustelu\" -ikonia, joka sijaitsee näytön alareunan ohjauspalkissa.\n\nTämä antaa sinun näyttää ja lähettää keskusteluviestejä, vaikka olisitkin koko näytön tilassa."
+    "message": "Tämän laajennuksen avulla voit näyttää keskustelupaneelin ja lähettää kommentteja samalla, kun pidät YouTube Live -videota koko näytöllä."
   }
 }

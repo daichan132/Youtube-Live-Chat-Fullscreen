@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Pantalla Completa"
+    "message": "Pantalla completa del xat en directe de YouTube"
   },
   "extensionDescription": {
-    "message": "Amb aquesta extensió, pots veure el xat mentre mantens YouTube Live en pantalla completa i fer comentaris. Això et permet interactuar amb el streamer i altres espectadors mentre mantens una pantalla de visualització gran.\n\nFuncions Clau\n\n- Enviar missatges de xat en pantalla completa\n  Pots fer comentaris i enviar superxats mantenint la pantalla de visualització gran.\n- Personalitzar la UI del xat\n  Ajusta el color de fons, el color del text i la mida del text segons les teves preferències.\n- Suporta múltiples idiomes\n  Utilitza la interfície en el teu idioma preferit com ara japonès o anglès.\n\nActivació i Ús\n\nMètode 1: Activa des del menú d'extensions del navegador\n\n1. Clica la icona de \"peça de trencaclosques\" a la cantonada superior dreta del teu navegador.\n2. Troba i selecciona aquesta extensió de la llista d'extensions.\n3. Activa l'extensió al menú que es mostra.\n\nMètode 2: Activa des de la barra de control de YouTube\n\n1. Posa el vídeo de YouTube en pantalla completa.\n2. Fes clic a la icona de \"Xat\" situada a la barra de control a la part inferior de la pantalla.\n\nAixò et permetrà mostrar i enviar xats fins i tot quan estiguis en mode pantalla completa."
+    "message": "Amb aquesta extensió, pots mostrar el panell de xat i publicar comentaris mentre mantens YouTube Live en mode de pantalla completa."
   }
 }

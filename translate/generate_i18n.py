@@ -15,9 +15,6 @@ def main():
         )
         target_path = os.path.join("public", "locales", code, "translation.json")
 
-        if os.path.exists(target_path):
-            continue
-
         schema = build_response_format(source_path)
         with open(source_path, "r", encoding="utf-8") as f:
             data = json.load(f)

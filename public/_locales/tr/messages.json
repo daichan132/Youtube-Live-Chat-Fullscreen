@@ -3,6 +3,6 @@
     "message": "YouTube Canlı Sohbet Tam Ekran"
   },
   "extensionDescription": {
-    "message": "Bu uzantı ile YouTube Canlı yayınını tam ekran yaparken sohbeti görüntüleyebilir ve yorum yapabilirsiniz. Bu, yayıncı ve diğer izleyicilerle etkileşim kurarken büyük bir izleme ekranı korumanıza olanak tanır.\n\nAna Özellikler\n\n- Tam ekranda sohbet mesajları gönderin\n  İzleme ekranını büyük tutarken yorum yapabilir ve süper sohbetler gönderebilirsiniz.\n- Sohbet arayüzünü özelleştirin\n  Arkaplan rengini, metin rengini ve metin boyutunu tercihinize göre ayarlayın.\n- Çoklu dil desteği\n  Arayüzü Japonca veya İngilizce gibi tercih ettiğiniz dilde kullanın.\n\nAktivasyon ve Kullanım\n\nYöntem 1: Tarayıcının uzantı menüsünden etkinleştirme\n\n1. Tarayıcınızın sağ üst köşesindeki \"Bulmaca Parçası\" simgesine tıklayın.\n2. Uzantılar listesinden bu uzantıyı bulun ve seçin.\n3. Görüntülenen menüde uzantıyı etkinleştirin.\n\nYöntem 2: YouTube kontrol çubuğundan etkinleştirme\n\n1. YouTube videosunu tam ekrana alın.\n2. Ekranın altındaki kontrol çubuğunda bulunan \"Sohbet\" simgesine tıklayın.\n\nBu, tam ekran modunda bile sohbetleri görüntülemenize ve göndermenize olanak tanır."
+    "message": "Bu uzantıyı kullanarak YouTube Canlıyı tam ekran modunda tutarken sohbet panelini görüntüleyebilir ve yorumları paylaşabilirsiniz."
   }
 }

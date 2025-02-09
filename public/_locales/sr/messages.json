@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat FullScreen"
+    "message": "YouTube Ćaskanje Uživo na Celoekranskom Prikazu"
   },
   "extensionDescription": {
-    "message": "Sa ovim proširenjem možete gledati chat dok je YouTube Live u režimu punog ekrana i postavljati komentare. Ovo vam omogućava da komunicirate sa streamerom i drugim gledaocima uz održavanje velikog ekrana za gledanje.\n\nKljučne karakteristike\n\n- Slanje poruka na chatu u režimu punog ekrana\n  Možete postavljati komentare i slati super čatove dok održavate veliki ekran za gledanje.\n- Prilagođavanje korisničkog interfejsa chata\n  Podesite boju pozadine, boju teksta i veličinu teksta prema vašim preferencijama.\n- Podrška za više jezika\n  Koristite interfejs na jeziku koji vam odgovara, kao što su japanski ili engleski.\n\nAktivacija i korišćenje\n\nMetod 1: Aktiviranje iz menija proširenja preglednika\n\n1. Kliknite na ikonu \"Puzzle Piece\" u gornjem desnom uglu vašeg preglednika.\n2. Pronađite i izaberite ovo proširenje sa liste proširenja.\n3. Omogućite proširenje u prikazanom meniju.\n\nMetod 2: Aktiviranje iz kontrolne trake YouTube-a\n\n1. Postavite YouTube video na puni ekran.\n2. Kliknite na ikonu \"Chat\" koja se nalazi na kontrolnoj traci na dnu ekrana.\n\nOvo će vam omogućiti prikaz i slanje poruka na chatu čak i kada ste u režimu punog ekrana."
+    "message": "Koristeći ovo proširenje, možete prikazati panel za ćaskanje i postavljati komentare dok držite YouTube Uživo u celoekranskom režimu."
   }
 }

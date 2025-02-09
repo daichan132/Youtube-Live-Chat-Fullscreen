@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat FullScreen"
+    "message": "YouTube FullScreen czat na żywo"
   },
   "extensionDescription": {
-    "message": "Dzięki tej rozszerzenia możesz przeglądać czat podczas oglądania YouTube Live w trybie pełnoekranowym oraz publikować komentarze. Umożliwia to interakcję ze streamerem i innymi widzami, zachowując duży ekran do oglądania.\n\nKluczowe funkcje\n\n- Wysyłanie wiadomości na czacie w trybie pełnoekranowym\n  Możesz publikować komentarze i wysyłać super czaty, utrzymując duży ekran do oglądania.\n- Dostosowywanie interfejsu czatu\n  Dopasuj kolor tła, kolor tekstu i rozmiar tekstu do swoich preferencji.\n- Obsługa wielu języków\n  Korzystaj z interfejsu w preferowanym języku, takim jak japoński lub angielski.\n\nAktywacja i użytkowanie\n\nMetoda 1: Aktywacja z menu rozszerzeń przeglądarki\n\n1. Kliknij ikonę „Puzzel” w prawym górnym rogu przeglądarki.\n2. Znajdź i wybierz to rozszerzenie z listy rozszerzeń.\n3. Włącz rozszerzenie w wyświetlonym menu.\n\nMetoda 2: Aktywacja z paska kontrolnego YouTube\n\n1. Ustaw wideo na YouTube na tryb pełnoekranowy.\n2. Kliknij ikonę „Czat” znajdującą się na pasku kontrolnym na dole ekranu.\n\nTo umożliwi wyświetlanie i wysyłanie czatów nawet w trybie pełnoekranowym."
+    "message": "Korzystając z tego rozszerzenia, możesz wyświetlać panel czatu i publikować komentarze, zachowując tryb pełnoekranowy YouTube Live."
   }
 }

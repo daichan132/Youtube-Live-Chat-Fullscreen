@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Celoten Zaslon"
   },
   "extensionDescription": {
-    "message": "S to razširitvijo lahko gledate klepet, medtem ko imate YouTube Live v celozaslonskem načinu in objavljate komentarje. To vam omogoča interakcijo z ustvarjalcem vsebine in drugimi gledalci, medtem ko ohranjate velik zaslon za ogled.\n\nKljučne funkcije\n\n- Pošiljanje sporočil v celozaslonskem načinu\n  Lahko objavljate komentarje in pošiljate super videoposnetke, medtem ko ohranjate velik zaslon za ogled.\n- Prilagoditev uporabniškega vmesnika klepeta\n  Prilagodite barvo ozadja, barvo besedila in velikost besedila po svojih željah.\n- Podpira več jezikov\n  Uporabljajte vmesnik v svojem želenem jeziku, kot sta japonščina ali angleščina.\n\nAktivacija in uporaba\n\nMetoda 1: Aktivirajte iz menija razširitev brskalnika\n\n1. Kliknite ikono \"Sestavljanka\" v zgornjem desnem kotu brskalnika.\n2. Poiščite in izberite to razširitev s seznama razširitev.\n3. Omogočite razširitev v prikazanem meniju.\n\nMetoda 2: Aktivirajte s kontrolne vrstice YouTube\n\n1. Nastavite YouTube video na celozaslonski način.\n2. Kliknite na ikono \"Klepet\", ki se nahaja na kontrolni vrstici na dnu zaslona.\n\nS tem boste lahko prikazovali in pošiljali klepete tudi, ko ste v celozaslonskem načinu."
+    "message": "S to razširitvijo lahko prikažete klepetalno ploščo in objavljate komentarje, medtem ko ohranjate YouTube Live v celozaslonskem načinu."
   }
 }

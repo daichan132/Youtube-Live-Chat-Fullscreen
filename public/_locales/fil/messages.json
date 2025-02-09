@@ -3,6 +3,6 @@
     "message": "YouTube Live Chat FullScreen"
   },
   "extensionDescription": {
-    "message": "Sa pamamagitan ng extension na ito, maaari mong makita ang chat habang nananatili ang YouTube Live sa fullscreen at mag-post ng mga komento. Pinapayagan ka nitong makipag-ugnayan sa streamer at iba pang manonood habang pinapanatili ang malaking screen ng panonood.\n\nMga Pangunahing Tampok\n\n- Magpadala ng mga mensaheng chat sa fullscreen\n  Maaari kang mag-post ng mga komento at magpadala ng super chats habang nananatiling malaki ang screen ng panonood.\n- I-customize ang chat UI\n  Ayusin ang kulay ng background, kulay ng teksto, at laki ng teksto ayon sa iyong mga kagustuhan.\n- Sinusuportahan ang iba't ibang mga wika\n  Gamitin ang interface sa iyong paboritong wika gaya ng Japanese o English.\n\nPag-activate at Paggamit\n\nParaan 1: I-activate mula sa menu ng extension ng browser\n\n1. I-click ang \"Puzzle Piece\" na icon sa kanang-itaas na bahagi ng iyong browser.\n2. Hanapin at piliin ang extension na ito mula sa listahan ng mga extension.\n3. I-enable ang extension sa ipinapakitang menu.\n\nParaan 2: I-activate mula sa control bar ng YouTube\n\n1. I-set ang YouTube video sa fullscreen.\n2. I-click ang \"Chat\" icon na matatagpuan sa control bar sa ibabang bahagi ng screen.\n\nPapayagan ka nitong ipakita at magpadala ng mga chat kahit na nasa fullscreen mode."
+    "message": "Gamit ang extension na ito, maaari mong ipakita ang chat panel at mag-post ng mga komento habang nasa full-screen mode ang YouTube Live."
   }
 }

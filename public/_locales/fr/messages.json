@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "Chat en Direct YouTube Plein Écran"
+    "message": "YouTube Live Chat Plein écran"
   },
   "extensionDescription": {
-    "message": "Avec cette extension, vous pouvez voir le chat tout en gardant le Live YouTube en plein écran et poster des commentaires. Cela vous permet d'interagir avec le streamer et les autres spectateurs tout en conservant un écran de visualisation large.\n\nCaractéristiques clés\n\n- Envoyer des messages chat en plein écran\n  Vous pouvez poster des commentaires et envoyer des super chats tout en gardant l'écran de visualisation grand.\n- Personnaliser l'interface du chat\n  Ajustez la couleur de fond, la couleur du texte et la taille du texte selon vos préférences.\n- Prend en charge plusieurs langues\n  Utilisez l'interface dans votre langue préférée comme le japonais ou l'anglais.\n\nActivation et utilisation\n\nMéthode 1 : Activer depuis le menu d'extension du navigateur\n\n1. Cliquez sur l'icône \"Pièce de puzzle\" en haut à droite de votre navigateur.\n2. Trouvez et sélectionnez cette extension dans la liste des extensions.\n3. Activez l'extension dans le menu affiché.\n\nMéthode 2 : Activer depuis la barre de contrôle YouTube\n\n1. Mettez la vidéo YouTube en plein écran.\n2. Cliquez sur l'icône \"Chat\" située sur la barre de contrôle en bas de l'écran.\n\nCela vous permettra d'afficher et d'envoyer des messages même en mode plein écran."
+    "message": "Avec cette extension, vous pouvez afficher le panneau de discussion et poster des commentaires tout en gardant YouTube Live en mode plein écran."
   }
 }

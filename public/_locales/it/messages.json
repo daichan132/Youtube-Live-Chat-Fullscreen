@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Schermo Intero"
+    "message": "YouTube Live Chat FullScreen"
   },
   "extensionDescription": {
-    "message": "Con questa estensione, puoi visualizzare la chat mantenendo YouTube Live a schermo intero e postare commenti. Questo ti consente di interagire con lo streamer e altri spettatori mantenendo uno schermo di visualizzazione ampio.\n\nCaratteristiche Principali\n\n- Invia messaggi in chat a schermo intero\n  Puoi postare commenti e inviare super chat mantenendo lo schermo di visualizzazione ampio.\n- Personalizza l'interfaccia della chat\n  Regola il colore di sfondo, il colore del testo e la dimensione del testo secondo le tue preferenze.\n- Supporto per più lingue\n  Usa l'interfaccia nella tua lingua preferita come il giapponese o l'inglese.\n\nAttivazione e Uso\n\nMetodo 1: Attiva dal menu delle estensioni del browser\n\n1. Clicca sull'icona \"Pezzo di Puzzle\" in alto a destra nel tuo browser.\n2. Trova e seleziona questa estensione dall'elenco delle estensioni.\n3. Abilita l'estensione nel menu visualizzato.\n\nMetodo 2: Attiva dalla barra di controllo di YouTube\n\n1. Imposta il video di YouTube a schermo intero.\n2. Clicca sull'icona \"Chat\" situata sulla barra di controllo in fondo allo schermo.\n\nQuesto ti permetterà di visualizzare e inviare chat anche quando sei in modalità schermo intero."
+    "message": "Con questa estensione, puoi visualizzare il pannello della chat e inviare commenti mentre mantieni YouTube Live a schermo intero."
   }
 }

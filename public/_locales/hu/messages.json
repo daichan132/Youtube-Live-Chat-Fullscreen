@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Élőcsevegés Teljesképernyős"
+    "message": "YouTube Live Chat FullScreen"
   },
   "extensionDescription": {
-    "message": "Ezzel a kiterjesztéssel teljes képernyős módban is megtekintheti a csevegést a YouTube Live közvetítés közben, és megjegyzéseket írhat. Lehetővé teszi, hogy kapcsolatba lépjen a közvetítővel és más nézőkkel, miközben nagy képernyőn élvezheti a tartalmat.\n\nFőbb jellemzők\n\n- Csevegőüzenetek küldése teljes képernyőn\n  Küldhet megjegyzéseket és szuper csevegéseket, miközben nagy képernyőt használ.\n- Csevegési felület testreszabása\n  Állítsa be a háttérszínt, a szöveg színét és a szöveg méretét az Ön igényei szerint.\n- Több nyelv támogatása\n  Használja a felületet az Ön által preferált nyelven, például japánul vagy angolul.\n\nAktiválás és Használat\n\n1. módszer: Aktiválás a böngésző kiterjesztés menüjéből\n\n1. Kattintson a jobb felső sarokban található \"Kirakós darab\" ikonra a böngészőjében.\n2. Keresse meg és válassza ki ezt a kiterjesztést a listából.\n3. Engedélyezze a kiterjesztést a megjelenített menüben.\n\n2. módszer: Aktiválás a YouTube vezérlő sávjáról\n\n1. Állítsa be a YouTube videót teljes képernyős módra.\n2. Kattintson a \"Csevegés\" ikonra a képernyő alján található vezérlősávon.\n\nEzzel lehetővé válik a csevegések megjelenítése és küldése teljes képernyős módban is."
+    "message": "Ezzel a kiterjesztéssel megjelenítheti a csevegőpanelt és hozzászólásokat is írhat, miközben a YouTube Live teljes képernyős módban marad."
   }
 }
