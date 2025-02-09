@@ -9,13 +9,13 @@ export const Links = () => {
         target='_blank'
         rel='noopener noreferrer'
       >
-        <FaChrome size={22} className='text-gray-600' />
+        <FaChrome size={22} className='text-gray-700' />
       </a>
       <a href='https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/' target='_blank' rel='noopener noreferrer'>
-        <FaFirefox size={22} className='text-gray-600' />
+        <FaFirefox size={22} className='text-gray-700' />
       </a>
       <a href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen' target='_blank' rel='noopener noreferrer'>
-        <FaGithub size={22} className='text-gray-600' />
+        <FaGithub size={22} className='text-gray-700' />
       </a>
     </div>
   )
