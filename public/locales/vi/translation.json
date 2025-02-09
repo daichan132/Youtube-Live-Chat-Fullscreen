@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Cài đặt trước",
+        "setting": "Cài đặt"
+      },
+      "alwaysOnDisplay": "Luôn hiển thị màn hình",
+      "chatOnlyDisplay": "Chỉ hiển thị trò chuyện",
+      "userNameDisplay": "Hiển thị tên người dùng",
+      "userIconDisplay": "Hiển thị biểu tượng người dùng",
+      "reactionButtonDisplay": "Hiển thị nút phản ứng",
+      "superChatBarDisplay": "Hiển thị thanh Super Chat",
+      "backgroundColor": "Màu nền",
+      "fontColor": "Màu chữ",
+      "fontFamily": "Phông chữ",
+      "fontSize": "Kích thước chữ",
+      "blur": "Làm mờ",
+      "space": "Không gian"
+    },
+    "preset": {
+      "addMessage": "Thêm cài đặt hiện tại",
+      "addItemTitle": "Chưa đặt tên",
+      "defaultTitle": "Mặc định",
+      "transparentTitle": "Trong suốt",
+      "simpleTitle": "Đơn giản",
+      "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa không?",
+      "delete": "Xóa",
+      "cancel": "Hủy"
+    }
+  },
+  "popup": {
+    "language": "Cài đặt ngôn ngữ",
+    "showChatOnFullscreen": "Trò chuyện toàn màn hình",
+    "links": "Liên kết",
+    "donate": "Quyên góp"
+  }
+}

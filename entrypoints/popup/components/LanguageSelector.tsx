@@ -1,18 +1,13 @@
 import { useCallback } from 'react'
 
+import language_codes from '@/shared/i18n/language_codes.json'
 import { useTranslation } from 'react-i18next'
 
 export const LanguageSelector = () => {
-  const languageOptions = [
-    { value: 'en', label: 'English' },
-    { value: 'id', label: 'Bahasa Indonesia' },
-    { value: 'es', label: 'Español' },
-    { value: 'th', label: 'ไทย' },
-    { value: 'tl', label: 'Filipino' },
-    { value: 'ms', label: 'Bahasa Melayu' },
-    { value: 'zh-TW', label: '中文 (繁體)' },
-    { value: 'ja', label: '日本語' },
-  ]
+  const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
+    value: code,
+    label: name,
+  }))
 
   const { i18n } = useTranslation()
 

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "קבוע מראש",
+        "setting": "הגדרות"
+      },
+      "alwaysOnDisplay": "תמיד בתצוגה",
+      "chatOnlyDisplay": "תצוגת צ'אט בלבד",
+      "userNameDisplay": "תצוגת שם משתמש",
+      "userIconDisplay": "תצוגת סמל משתמש",
+      "reactionButtonDisplay": "תצוגת כפתור תגובה",
+      "superChatBarDisplay": "תצוגת סרגל סופר צ'אט",
+      "backgroundColor": "צבע רקע",
+      "fontColor": "צבע גופן",
+      "fontFamily": "פונט",
+      "fontSize": "גודל גופן",
+      "blur": "טשטוש",
+      "space": "מרווח"
+    },
+    "preset": {
+      "addMessage": "הוסף הגדרות נוכחיות",
+      "addItemTitle": "ללא כותרת",
+      "defaultTitle": "ברירת מחדל",
+      "transparentTitle": "שקוף",
+      "simpleTitle": "פשוט",
+      "deleteConfirmationMessage": "האם אתה בטוח שברצונך למחוק?",
+      "delete": "מחק",
+      "cancel": "ביטול"
+    }
+  },
+  "popup": {
+    "language": "הגדרות שפה",
+    "showChatOnFullscreen": "צ'אט במסך מלא",
+    "links": "קישורים",
+    "donate": "תרומה"
+  }
+}

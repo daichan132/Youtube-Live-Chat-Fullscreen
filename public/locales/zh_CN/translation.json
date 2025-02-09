@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "预设",
+        "setting": "设置"
+      },
+      "alwaysOnDisplay": "始终显示",
+      "chatOnlyDisplay": "仅聊天显示",
+      "userNameDisplay": "用户名显示",
+      "userIconDisplay": "用户头像显示",
+      "reactionButtonDisplay": "反应按钮显示",
+      "superChatBarDisplay": "超级聊天栏显示",
+      "backgroundColor": "背景颜色",
+      "fontColor": "字体颜色",
+      "fontFamily": "字体",
+      "fontSize": "字体大小",
+      "blur": "模糊",
+      "space": "空间"
+    },
+    "preset": {
+      "addMessage": "添加当前设置",
+      "addItemTitle": "未命名",
+      "defaultTitle": "默认",
+      "transparentTitle": "透明",
+      "simpleTitle": "简单",
+      "deleteConfirmationMessage": "您确定要删除吗？",
+      "delete": "删除",
+      "cancel": "取消"
+    }
+  },
+  "popup": {
+    "language": "语言设置",
+    "showChatOnFullscreen": "全屏聊天",
+    "links": "链接",
+    "donate": "捐赠"
+  }
+}

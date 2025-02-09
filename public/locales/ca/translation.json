@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Predefinit",
+        "setting": "Configuració"
+      },
+      "alwaysOnDisplay": "Pantalla Sempre Encesa",
+      "chatOnlyDisplay": "Només Xat a la Pantalla",
+      "userNameDisplay": "Visualització del Nom de l'Usuari",
+      "userIconDisplay": "Visualització de la Icona de l'Usuari",
+      "reactionButtonDisplay": "Visualització del Botó de Reacció",
+      "superChatBarDisplay": "Visualització de la Barra de Super Chat",
+      "backgroundColor": "Color de Fons",
+      "fontColor": "Color de la Font",
+      "fontFamily": "Família de Fonts",
+      "fontSize": "Mida de la Font",
+      "blur": "Difuminar",
+      "space": "Espai"
+    },
+    "preset": {
+      "addMessage": "Afegir la Configuració Actual",
+      "addItemTitle": "Sense Títol",
+      "defaultTitle": "Per Defecte",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Simple",
+      "deleteConfirmationMessage": "Estàs segur que vols eliminar-ho?",
+      "delete": "Eliminar",
+      "cancel": "Cancel·lar"
+    }
+  },
+  "popup": {
+    "language": "Configuració d'Idiomes",
+    "showChatOnFullscreen": "Xat a Pantalla Completa",
+    "links": "Enllaços",
+    "donate": "Donar"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Preset",
+        "setting": "Mga Setting"
+      },
+      "alwaysOnDisplay": "Lagi sa Display",
+      "chatOnlyDisplay": "Chat Lang ang Display",
+      "userNameDisplay": "Ipakita ang Pangalan ng Gumagamit",
+      "userIconDisplay": "Ipakita ang Icon ng Gumagamit",
+      "reactionButtonDisplay": "Ipakita ang Button ng Reaksiyon",
+      "superChatBarDisplay": "Ipakita ang Super Chat Bar",
+      "backgroundColor": "Kulay ng Background",
+      "fontColor": "Kulay ng Font",
+      "fontFamily": "Font Family",
+      "fontSize": "Sukat ng Font",
+      "blur": "Labo",
+      "space": "Spasyo"
+    },
+    "preset": {
+      "addMessage": "Idagdag ang Kasalukuyang Mga Setting",
+      "addItemTitle": "Walang Pamagat",
+      "defaultTitle": "Default",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Simple",
+      "deleteConfirmationMessage": "Sigurado ka bang gusto mong tanggalin?",
+      "delete": "Tanggalin",
+      "cancel": "Kanselahin"
+    }
+  },
+  "popup": {
+    "language": "Mga Setting ng Wika",
+    "showChatOnFullscreen": "Fullscreen Chat",
+    "links": "Mga Link",
+    "donate": "Mag-donate"
+  }
+}

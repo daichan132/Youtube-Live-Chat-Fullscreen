@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Preset",
+        "setting": "Setări"
+      },
+      "alwaysOnDisplay": "Afișare permanentă",
+      "chatOnlyDisplay": "Afișare doar chat",
+      "userNameDisplay": "Afișare nume utilizator",
+      "userIconDisplay": "Afișare icon utilizator",
+      "reactionButtonDisplay": "Afișare buton reacție",
+      "superChatBarDisplay": "Afișare bar Super Chat",
+      "backgroundColor": "Culoare de fundal",
+      "fontColor": "Culoare font",
+      "fontFamily": "Familie de fonturi",
+      "fontSize": "Dimensiune font",
+      "blur": "Estompare",
+      "space": "Spațiu"
+    },
+    "preset": {
+      "addMessage": "Adăugă setările actuale",
+      "addItemTitle": "Fără titlu",
+      "defaultTitle": "Implicit",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Simplu",
+      "deleteConfirmationMessage": "Sigur doriți să ștergeți?",
+      "delete": "Șterge",
+      "cancel": "Anulează"
+    }
+  },
+  "popup": {
+    "language": "Setări limbă",
+    "showChatOnFullscreen": "Chat pe ecran complet",
+    "links": "Linkuri",
+    "donate": "Donează"
+  }
+}

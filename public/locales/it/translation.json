@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Preimpostazione",
+        "setting": "Impostazioni"
+      },
+      "alwaysOnDisplay": "Display Sempre Attivo",
+      "chatOnlyDisplay": "Solo Visualizzazione Chat",
+      "userNameDisplay": "Visualizzazione Nome Utente",
+      "userIconDisplay": "Visualizzazione Icona Utente",
+      "reactionButtonDisplay": "Visualizzazione Pulsante Reazione",
+      "superChatBarDisplay": "Visualizzazione Barra Super Chat",
+      "backgroundColor": "Colore di Sfondo",
+      "fontColor": "Colore del Testo",
+      "fontFamily": "Famiglia del Carattere",
+      "fontSize": "Dimensione del Carattere",
+      "blur": "Sfumatura",
+      "space": "Spazio"
+    },
+    "preset": {
+      "addMessage": "Aggiungi Impostazioni Correnti",
+      "addItemTitle": "Senza Titolo",
+      "defaultTitle": "Predefinito",
+      "transparentTitle": "Trasparente",
+      "simpleTitle": "Semplice",
+      "deleteConfirmationMessage": "Sei sicuro di voler eliminare?",
+      "delete": "Elimina",
+      "cancel": "Annulla"
+    }
+  },
+  "popup": {
+    "language": "Impostazioni Lingua",
+    "showChatOnFullscreen": "Visualizzazione Chat a Schermo Intero",
+    "links": "Link",
+    "donate": "Dona"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Förinställning",
+        "setting": "Inställningar"
+      },
+      "alwaysOnDisplay": "Alltid på Display",
+      "chatOnlyDisplay": "Endast chattvisning",
+      "userNameDisplay": "Användarnamnsvisning",
+      "userIconDisplay": "Användarikonsvisning",
+      "reactionButtonDisplay": "Reaktionsknappvisning",
+      "superChatBarDisplay": "Superchattbalkvisning",
+      "backgroundColor": "Bakgrundsfärg",
+      "fontColor": "Teckensnittsfärg",
+      "fontFamily": "Teckensnittfamilj",
+      "fontSize": "Teckenstorlek",
+      "blur": "Oskärpa",
+      "space": "Mellanrum"
+    },
+    "preset": {
+      "addMessage": "Lägg till nuvarande inställningar",
+      "addItemTitle": "Titel saknas",
+      "defaultTitle": "Standard",
+      "transparentTitle": "Transparent",
+      "simpleTitle": "Enkel",
+      "deleteConfirmationMessage": "Är du säker på att du vill ta bort?",
+      "delete": "Ta bort",
+      "cancel": "Avbryt"
+    }
+  },
+  "popup": {
+    "language": "Språkinställningar",
+    "showChatOnFullscreen": "Chatt i fullskärm",
+    "links": "Länkar",
+    "donate": "Donera"
+  }
+}

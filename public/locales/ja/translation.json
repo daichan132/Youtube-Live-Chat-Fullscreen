@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "プリセット",
+        "setting": "設定"
+      },
+      "alwaysOnDisplay": "常時オンディスプレイ",
+      "chatOnlyDisplay": "チャットのみ表示",
+      "userNameDisplay": "ユーザー名表示",
+      "userIconDisplay": "ユーザーアイコン表示",
+      "reactionButtonDisplay": "リアクションボタン表示",
+      "superChatBarDisplay": "スーパーチャットバー表示",
+      "backgroundColor": "背景色",
+      "fontColor": "フォントの色",
+      "fontFamily": "フォントファミリー",
+      "fontSize": "フォントサイズ",
+      "blur": "ぼかし",
+      "space": "スペース"
+    },
+    "preset": {
+      "addMessage": "現在の設定を追加",
+      "addItemTitle": "無題",
+      "defaultTitle": "デフォルト",
+      "transparentTitle": "透明",
+      "simpleTitle": "シンプル",
+      "deleteConfirmationMessage": "本当に削除しますか？",
+      "delete": "削除",
+      "cancel": "キャンセル"
+    }
+  },
+  "popup": {
+    "language": "言語設定",
+    "showChatOnFullscreen": "全画面チャット",
+    "links": "リンク",
+    "donate": "寄付"
+  }
+}

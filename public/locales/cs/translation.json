@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Předvolba",
+        "setting": "Nastavení"
+      },
+      "alwaysOnDisplay": "Vždy na obrazovce",
+      "chatOnlyDisplay": "Zobrazení pouze chatu",
+      "userNameDisplay": "Zobrazení uživatelského jména",
+      "userIconDisplay": "Zobrazení uživatelské ikony",
+      "reactionButtonDisplay": "Zobrazení tlačítka pro reakce",
+      "superChatBarDisplay": "Zobrazení Super Chat lišty",
+      "backgroundColor": "Barva pozadí",
+      "fontColor": "Barva písma",
+      "fontFamily": "Typ písma",
+      "fontSize": "Velikost písma",
+      "blur": "Rozmazání",
+      "space": "Prostor"
+    },
+    "preset": {
+      "addMessage": "Přidat aktuální nastavení",
+      "addItemTitle": "Bez názvu",
+      "defaultTitle": "Výchozí",
+      "transparentTitle": "Průhledný",
+      "simpleTitle": "Jednoduchý",
+      "deleteConfirmationMessage": "Opravdu chcete smazat?",
+      "delete": "Smazat",
+      "cancel": "Zrušit"
+    }
+  },
+  "popup": {
+    "language": "Nastavení jazyka",
+    "showChatOnFullscreen": "Zobrazit chat na celé obrazovce",
+    "links": "Odkazy",
+    "donate": "Darovat"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "પ્રીસેટ",
+        "setting": "સેટિંગ્સ"
+      },
+      "alwaysOnDisplay": "સદા પ્રદર્શિત",
+      "chatOnlyDisplay": "માત્ર ચેટ દર્શાવવું",
+      "userNameDisplay": "વપરાશકર્તા નામ દર્શાવવું",
+      "userIconDisplay": "વપરાશકર્તા ચિહ્ન દર્શાવવું",
+      "reactionButtonDisplay": "પ્રતિક્રિયા બટન દર્શાવવું",
+      "superChatBarDisplay": "સુપર ચેટ બાર દર્શાવવું",
+      "backgroundColor": "પીઠભૂમિ રંગ",
+      "fontColor": "ફોન્ટ રંગ",
+      "fontFamily": "ફોન્ટ પરિવાર",
+      "fontSize": "ફોન્ટ કદ",
+      "blur": "અસ્પષ્ટ કરવું",
+      "space": "સ્થાન"
+    },
+    "preset": {
+      "addMessage": "વર્તમાન સેટિંગ્સ ઉમેરો",
+      "addItemTitle": "બિનશીર્ષક",
+      "defaultTitle": "મૂળભૂત",
+      "transparentTitle": "પારદર્શક",
+      "simpleTitle": "સરળ",
+      "deleteConfirmationMessage": "તમે નક્કી કરી લીધું છે કે તમે કાઢી નાખવું ઈચ્છો છો?",
+      "delete": "કાઢી નાખવું",
+      "cancel": "રદ કરો"
+    }
+  },
+  "popup": {
+    "language": "ભાષા સેટિંગ્સ",
+    "showChatOnFullscreen": "ફુલસ્ક્રીન ચેટ",
+    "links": "લિંક્સ",
+    "donate": "દાન"
+  }
+}

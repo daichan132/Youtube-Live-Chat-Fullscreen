@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Esiasetus",
+        "setting": "Asetukset"
+      },
+      "alwaysOnDisplay": "Aina näytöllä",
+      "chatOnlyDisplay": "Vain chat -näyttö",
+      "userNameDisplay": "Käyttäjänimen näyttö",
+      "userIconDisplay": "Käyttäjäkuvakkeen näyttö",
+      "reactionButtonDisplay": "Reaktiopainikkeen näyttö",
+      "superChatBarDisplay": "Super chat -palkin näyttö",
+      "backgroundColor": "Taustaväri",
+      "fontColor": "Fontin väri",
+      "fontFamily": "Fonttipoika",
+      "fontSize": "Fonttikoko",
+      "blur": "Sumennus",
+      "space": "Väli"
+    },
+    "preset": {
+      "addMessage": "Lisää nykyiset asetukset",
+      "addItemTitle": "Nimeämätön",
+      "defaultTitle": "Oletus",
+      "transparentTitle": "Läpinäkyvä",
+      "simpleTitle": "Yksinkertainen",
+      "deleteConfirmationMessage": "Haluatko varmasti poistaa?",
+      "delete": "Poista",
+      "cancel": "Peruuta"
+    }
+  },
+  "popup": {
+    "language": "Kieliasetukset",
+    "showChatOnFullscreen": "Kokoruudun chat",
+    "links": "Linkit",
+    "donate": "Lahjoita"
+  }
+}

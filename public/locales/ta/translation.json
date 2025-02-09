@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "முன்னொப்பம்",
+        "setting": "அமைப்புகள்"
+      },
+      "alwaysOnDisplay": "எப்போதும் காட்டவும்",
+      "chatOnlyDisplay": "உரையாடல் மட்டும் காட்டவும்",
+      "userNameDisplay": "பயனர் பெயர் காட்டவும்",
+      "userIconDisplay": "பயனர் ஐகான் காட்டவும்",
+      "reactionButtonDisplay": "வினைபாட் பொத்தான் காட்டவும்",
+      "superChatBarDisplay": "சூப்பர் உரையாடல் பட்டி காட்டவும்",
+      "backgroundColor": "பின்புல நிறம்",
+      "fontColor": "எழுத்துரு நிறம்",
+      "fontFamily": "எழுத்தகம்",
+      "fontSize": "எழுத்தின் அளவு",
+      "blur": "மூடுபனி",
+      "space": "இடம்"
+    },
+    "preset": {
+      "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
+      "addItemTitle": "தலைப்பில்லா",
+      "defaultTitle": "இயல்புநிலை",
+      "transparentTitle": "தெளிவான",
+      "simpleTitle": "எளிய",
+      "deleteConfirmationMessage": "நீா் நிச்சயமாக நீக்க வேண்டுமா?",
+      "delete": "நீக்கு",
+      "cancel": "ரத்து செய்"
+    }
+  },
+  "popup": {
+    "language": "மொழி அமைப்புகள்",
+    "showChatOnFullscreen": "முழுத்திரை உரையாடல்",
+    "links": "இணைப்புகள்",
+    "donate": "நன்கொடை"
+  }
+}

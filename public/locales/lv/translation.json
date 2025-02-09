@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Iepriekš iestatītie",
+        "setting": "Iestatījumi"
+      },
+      "alwaysOnDisplay": "Vienmēr Ekrānā",
+      "chatOnlyDisplay": "Tikai Čata Skats",
+      "userNameDisplay": "Lietotāja Vārda Attēlojums",
+      "userIconDisplay": "Lietotāja Ikonas Attēlojums",
+      "reactionButtonDisplay": "Reakcijas Pogas Attēlojums",
+      "superChatBarDisplay": "Super Čata Joslas Attēlojums",
+      "backgroundColor": "Fona Krāsa",
+      "fontColor": "Fonta Krāsa",
+      "fontFamily": "Fonta Veids",
+      "fontSize": "Fonta Izmērs",
+      "blur": "Izpludinājums",
+      "space": "Atstarpes"
+    },
+    "preset": {
+      "addMessage": "Pievienot Pašreizējos Iestatījumus",
+      "addItemTitle": "Nenosaukts",
+      "defaultTitle": "Noklusējums",
+      "transparentTitle": "Caurspīdīgs",
+      "simpleTitle": "Vienkāršs",
+      "deleteConfirmationMessage": "Vai esat pārliecināts, ka vēlaties dzēst?",
+      "delete": "Dzēst",
+      "cancel": "Atcelt"
+    }
+  },
+  "popup": {
+    "language": "Valodas Iestatījumi",
+    "showChatOnFullscreen": "Čats Pilnekrāna Režīmā",
+    "links": "Saites",
+    "donate": "Ziedot"
+  }
+}

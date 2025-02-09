@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Predpriprema",
+        "setting": "Postavke"
+      },
+      "alwaysOnDisplay": "Uvijek prikazano",
+      "chatOnlyDisplay": "Samo prikaz razgovora",
+      "userNameDisplay": "Prikaz korisničkog imena",
+      "userIconDisplay": "Prikaz ikone korisnika",
+      "reactionButtonDisplay": "Prikaz gumba za reakciju",
+      "superChatBarDisplay": "Prikaz Super Chat trake",
+      "backgroundColor": "Boja pozadine",
+      "fontColor": "Boja fonta",
+      "fontFamily": "Vrsta fonta",
+      "fontSize": "Veličina fonta",
+      "blur": "Zamagli",
+      "space": "Razmak"
+    },
+    "preset": {
+      "addMessage": "Dodaj trenutne postavke",
+      "addItemTitle": "Bez naslova",
+      "defaultTitle": "Zadana",
+      "transparentTitle": "Prozirna",
+      "simpleTitle": "Jednostavna",
+      "deleteConfirmationMessage": "Jeste li sigurni da želite izbrisati?",
+      "delete": "Izbriši",
+      "cancel": "Odustani"
+    }
+  },
+  "popup": {
+    "language": "Postavke jezika",
+    "showChatOnFullscreen": "Razgovor na cijelom zaslonu",
+    "links": "Poveznice",
+    "donate": "Doniraj"
+  }
+}

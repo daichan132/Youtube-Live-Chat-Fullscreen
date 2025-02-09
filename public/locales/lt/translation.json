@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Išankstinis nustatymas",
+        "setting": "Nustatymai"
+      },
+      "alwaysOnDisplay": "Visada Rodomas Ekrane",
+      "chatOnlyDisplay": "Tik Pokalbių Rodymas",
+      "userNameDisplay": "Vartotojo Vardo Rodymas",
+      "userIconDisplay": "Vartotojo Piktogramos Rodymas",
+      "reactionButtonDisplay": "Reakcijos Mygtuko Rodymas",
+      "superChatBarDisplay": "Super Pokalbių Juostos Rodymas",
+      "backgroundColor": "Fono Spalva",
+      "fontColor": "Šrifto Spalva",
+      "fontFamily": "Šrifto Šeima",
+      "fontSize": "Šrifto Dydis",
+      "blur": "Neaiškumas",
+      "space": "Tarpas"
+    },
+    "preset": {
+      "addMessage": "Pridėti Dabartinius Nustatymus",
+      "addItemTitle": "Be Pavadinimo",
+      "defaultTitle": "Numatytoji",
+      "transparentTitle": "Permatomas",
+      "simpleTitle": "Paprastas",
+      "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
+      "delete": "Ištrinti",
+      "cancel": "Atšaukti"
+    }
+  },
+  "popup": {
+    "language": "Kalbos Nustatymai",
+    "showChatOnFullscreen": "Pokalbiai Visame Ekrane",
+    "links": "Nuorodos",
+    "donate": "Paaukoti"
+  }
+}

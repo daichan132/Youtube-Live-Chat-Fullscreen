@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Eelseadistus",
+        "setting": "Seaded"
+      },
+      "alwaysOnDisplay": "Alati ekraanil",
+      "chatOnlyDisplay": "Ainult vestlus ekraanil",
+      "userNameDisplay": "Kasutajanime kuvamine",
+      "userIconDisplay": "Kasutaja ikooni kuvamine",
+      "reactionButtonDisplay": "Reaktsiooninupu kuvamine",
+      "superChatBarDisplay": "Super Chat riba kuvamine",
+      "backgroundColor": "Taustavärv",
+      "fontColor": "Fondi värv",
+      "fontFamily": "Fondi perekond",
+      "fontSize": "Fondi suurus",
+      "blur": "Hägusus",
+      "space": "Tühik"
+    },
+    "preset": {
+      "addMessage": "Lisa praegused seaded",
+      "addItemTitle": "Pealkirjata",
+      "defaultTitle": "Vaikimisi",
+      "transparentTitle": "Läbipaistev",
+      "simpleTitle": "Lihtne",
+      "deleteConfirmationMessage": "Kas olete kindel, et soovite kustutada?",
+      "delete": "Kustuta",
+      "cancel": "Tühista"
+    }
+  },
+  "popup": {
+    "language": "Keele seaded",
+    "showChatOnFullscreen": "Täisekraanil vestlus",
+    "links": "Lingid",
+    "donate": "Annetamine"
+  }
+}

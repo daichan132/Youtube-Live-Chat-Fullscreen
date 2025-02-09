@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Предварително зададени",
+        "setting": "Настройки"
+      },
+      "alwaysOnDisplay": "Винаги на дисплей",
+      "chatOnlyDisplay": "Само дисплей за чат",
+      "userNameDisplay": "Дисплей на потребителско име",
+      "userIconDisplay": "Дисплей на икона на потребител",
+      "reactionButtonDisplay": "Дисплей на бутон за реакция",
+      "superChatBarDisplay": "Дисплей на лента за супер чат",
+      "backgroundColor": "Цвят на фона",
+      "fontColor": "Цвят на шрифта",
+      "fontFamily": "Шрифт",
+      "fontSize": "Размер на шрифта",
+      "blur": "Размазване",
+      "space": "Разстояние"
+    },
+    "preset": {
+      "addMessage": "Добавяне на текущите настройки",
+      "addItemTitle": "Без заглавие",
+      "defaultTitle": "По подразбиране",
+      "transparentTitle": "Прозрачност",
+      "simpleTitle": "Опростено",
+      "deleteConfirmationMessage": "Сигурни ли сте, че искате да изтриете?",
+      "delete": "Изтрий",
+      "cancel": "Отказ"
+    }
+  },
+  "popup": {
+    "language": "Езикови настройки",
+    "showChatOnFullscreen": "Чат на цял екран",
+    "links": "Връзки",
+    "donate": "Дарение"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "ಪ್ರಿಗ್ರಹಣ ಮುದುರಿಕೆ",
+        "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+      },
+      "alwaysOnDisplay": "ಸದ್ಯದಲ್ಲಿಯ ನೇರ ಪ್ರದರ್ಶನ",
+      "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ಪ್ರದರ್ಶನ",
+      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ಪ್ರದರ್ಶನ",
+      "userIconDisplay": "ಬಳಕೆದಾರರ ಐಕಾನ್ ಪ್ರದರ್ಶನ",
+      "reactionButtonDisplay": "ಪ್ರತಿಕ್ರಿಯೆ ಬಟನ್ ಪ್ರದರ್ಶನ",
+      "superChatBarDisplay": "ಸೂಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
+      "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
+      "fontColor": "ಅಕ್ಷರ ಬಣ್ಣ",
+      "fontFamily": "ಅಕ್ಷರ ಶೈಲಿ",
+      "fontSize": "ಅಕ್ಷರ ಗಾತ್ರ",
+      "blur": "ಅಸ್ಪಷ್ಟ",
+      "space": "ಜಾಗ"
+    },
+    "preset": {
+      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+      "addItemTitle": "ಅನಾಮಧೇಯ",
+      "defaultTitle": "ಪೂರ್ವನಿಯೋಜಿತ",
+      "transparentTitle": "ಪಾರದರ್ಶಕ",
+      "simpleTitle": "ಸರಳ",
+      "deleteConfirmationMessage": "ನೀವು ಖಚಿತವಾಗಿಯೂ ಅಳಿಸಲು ಬಯಸುವಿರಾ?",
+      "delete": "ಅಳಿಸಿ",
+      "cancel": "ರದ್ದುಗೊಳಿಸು"
+    }
+  },
+  "popup": {
+    "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ ಚಾಟ್",
+    "links": "ಲಿಂಕ್‌ಗಳು",
+    "donate": "ದಾನ"
+  }
+}

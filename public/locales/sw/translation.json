@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Violezo",
+        "setting": "Mipangilio"
+      },
+      "alwaysOnDisplay": "Onyesho Kila Wakati",
+      "chatOnlyDisplay": "Onyesho la Mazungumzo Pekee",
+      "userNameDisplay": "Onyesho la Jina la Mtumiaji",
+      "userIconDisplay": "Onyesho la Aikoni ya Mtumiaji",
+      "reactionButtonDisplay": "Onyesho la Kitufe cha Majibu",
+      "superChatBarDisplay": "Onyesho la Kaunta ya Super Chat",
+      "backgroundColor": "Rangi ya Mandharinyuma",
+      "fontColor": "Rangi ya Fonti",
+      "fontFamily": "Aina ya Fonti",
+      "fontSize": "Ukubwa wa Fonti",
+      "blur": "Fifia",
+      "space": "Nafasi"
+    },
+    "preset": {
+      "addMessage": "Ongeza Mipangilio ya Sasa",
+      "addItemTitle": "Bila Jina",
+      "defaultTitle": "Chaguo la Kawaida",
+      "transparentTitle": "Wazi",
+      "simpleTitle": "Rahisi",
+      "deleteConfirmationMessage": "Je, una uhakika unataka kufuta?",
+      "delete": "Futa",
+      "cancel": "Ghairi"
+    }
+  },
+  "popup": {
+    "language": "Mipangilio ya Lugha",
+    "showChatOnFullscreen": "Mazungumzo kwa Skrini Nzima",
+    "links": "Viungo",
+    "donate": "Changisha"
+  }
+}

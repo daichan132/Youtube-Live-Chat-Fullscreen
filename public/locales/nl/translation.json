@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Voorinstelling",
+        "setting": "Instellingen"
+      },
+      "alwaysOnDisplay": "Altijd Aan Weergave",
+      "chatOnlyDisplay": "Alleen Chat Weergave",
+      "userNameDisplay": "Gebruikersnaam Weergave",
+      "userIconDisplay": "Gebruikersicoon Weergave",
+      "reactionButtonDisplay": "Reactieknop Weergave",
+      "superChatBarDisplay": "Super Chatbalk Weergave",
+      "backgroundColor": "Achtergrondkleur",
+      "fontColor": "Lettertypekleur",
+      "fontFamily": "Lettertypefamilie",
+      "fontSize": "Lettergrootte",
+      "blur": "Vervagen",
+      "space": "Ruimte"
+    },
+    "preset": {
+      "addMessage": "Voeg Huidige Instellingen Toe",
+      "addItemTitle": "Naamloos",
+      "defaultTitle": "Standaard",
+      "transparentTitle": "Transparant",
+      "simpleTitle": "Eenvoudig",
+      "deleteConfirmationMessage": "Weet je zeker dat je wilt verwijderen?",
+      "delete": "Verwijderen",
+      "cancel": "Annuleren"
+    }
+  },
+  "popup": {
+    "language": "Taalinstellingen",
+    "showChatOnFullscreen": "Volledig Scherm Chat",
+    "links": "Links",
+    "donate": "Doneren"
+  }
+}

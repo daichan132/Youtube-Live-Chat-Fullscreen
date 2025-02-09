@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Forhåndsinnstilling",
+        "setting": "Innstillinger"
+      },
+      "alwaysOnDisplay": "Alltid På Skjerm",
+      "chatOnlyDisplay": "Kun Chat Vises",
+      "userNameDisplay": "Vis Brukernavn",
+      "userIconDisplay": "Vis Brukerikon",
+      "reactionButtonDisplay": "Vis Reaksjonsknapp",
+      "superChatBarDisplay": "Vis Super Chat Bar",
+      "backgroundColor": "Bakgrunnsfarge",
+      "fontColor": "Skriftfarge",
+      "fontFamily": "Skriftfamilie",
+      "fontSize": "Skriftstørrelse",
+      "blur": "Uskarphet",
+      "space": "Rom"
+    },
+    "preset": {
+      "addMessage": "Legg Til Nåværende Innstillinger",
+      "addItemTitle": "Uten Tittel",
+      "defaultTitle": "Standard",
+      "transparentTitle": "Gjennomsiktig",
+      "simpleTitle": "Enkel",
+      "deleteConfirmationMessage": "Er du sikker på at du vil slette?",
+      "delete": "Slett",
+      "cancel": "Avbryt"
+    }
+  },
+  "popup": {
+    "language": "Språkinnstillinger",
+    "showChatOnFullscreen": "Fullskjerm Chat",
+    "links": "Lenker",
+    "donate": "Doner"
+  }
+}

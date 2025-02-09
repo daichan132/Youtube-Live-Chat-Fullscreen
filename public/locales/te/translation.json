@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "నిర్ధిష్టం",
+        "setting": "సెట్టింగ్‌లు"
+      },
+      "alwaysOnDisplay": "ఎప్పుడూ ప్రదర్శనలో",
+      "chatOnlyDisplay": "కేవలం చాట్ ప్రదర్శన",
+      "userNameDisplay": "వినియోగదారుని పేరు ప్రదర్శన",
+      "userIconDisplay": "వినియోగదారుని చిహ్నం ప్రదర్శన",
+      "reactionButtonDisplay": "ప్రతిస్పందన బటన్ ప్రదర్శన",
+      "superChatBarDisplay": "సూపర్ చాట్ పట్టీ ప్రదర్శన",
+      "backgroundColor": "ప الرحيم彩祸 రంగు",
+      "fontColor": "ప ల ల గ గ పంī",
+      "fontFamily": "ప ప్ర ట మమ",
+      "fontSize": "ప హ పంī",
+      "blur": "ప గ గ పంī",
+      "space": "ప ר ג ו ר פ పంī"
+    },
+    "preset": {
+      "addMessage": "ప్రస్తుత సెట్టింగ్‌లను చేర్చండి",
+      "addItemTitle": "శీర్షిక లేదు",
+      "defaultTitle": "అపరాధం",
+      "transparentTitle": "పదార్థం",
+      "simpleTitle": "సాధారణం",
+      "deleteConfirmationMessage": "తొలగించాలని మీరు ఖచ్చితమనే అనుకుంటున్నారా?",
+      "delete": "తొలగించు",
+      "cancel": "రద్దు చేయండి"
+    }
+  },
+  "popup": {
+    "language": "భాషా సెట్టింగ్‌లు",
+    "showChatOnFullscreen": "పూర్తి స్క్రీన్ చాట్",
+    "links": "లింకులు",
+    "donate": "దానం చేయండి"
+  }
+}

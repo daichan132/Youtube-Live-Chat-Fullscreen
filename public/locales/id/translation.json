@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "Prasetel",
+        "setting": "Pengaturan"
+      },
+      "alwaysOnDisplay": "Selalu di Tampilan",
+      "chatOnlyDisplay": "Hanya Tampilan Obrolan",
+      "userNameDisplay": "Tampilan Nama Pengguna",
+      "userIconDisplay": "Tampilan Ikon Pengguna",
+      "reactionButtonDisplay": "Tampilan Tombol Reaksi",
+      "superChatBarDisplay": "Tampilan Bilah Super Chat",
+      "backgroundColor": "Warna Latar Belakang",
+      "fontColor": "Warna Huruf",
+      "fontFamily": "Jenis Huruf",
+      "fontSize": "Ukuran Huruf",
+      "blur": "Kabur",
+      "space": "Ruang"
+    },
+    "preset": {
+      "addMessage": "Tambahkan Pengaturan Saat Ini",
+      "addItemTitle": "Belum Ada Judul",
+      "defaultTitle": "Default",
+      "transparentTitle": "Transparan",
+      "simpleTitle": "Sederhana",
+      "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus?",
+      "delete": "Hapus",
+      "cancel": "Batal"
+    }
+  },
+  "popup": {
+    "language": "Pengaturan Bahasa",
+    "showChatOnFullscreen": "Obrolan Layar Penuh",
+    "links": "Tautan",
+    "donate": "Donasi"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "content": {
+    "setting": {
+      "header": {
+        "preset": "ቅድም አቀማመጥ",
+        "setting": "ቅንብሮች"
+      },
+      "alwaysOnDisplay": "ሁሌም በአሳይ",
+      "chatOnlyDisplay": "ልዩ ቻት አሳይ",
+      "userNameDisplay": "የተጠቃሚ ስም አሳይ",
+      "userIconDisplay": "የተጠቃሚ አዶ አሳይ",
+      "reactionButtonDisplay": "የእንቅስቃሴ አዝራር አሳይ",
+      "superChatBarDisplay": "ሱፐር ቻት መስመር አሳይ",
+      "backgroundColor": "የጀርባ ቀለም",
+      "fontColor": "የቅርጽ ቀለም",
+      "fontFamily": "የቅርጽ ቤተሰብ",
+      "fontSize": "የቅርጽ መጠን",
+      "blur": "መስዋት",
+      "space": "ቦታ"
+    },
+    "preset": {
+      "addMessage": "ያሉትን ቅንብሮች አክል",
+      "addItemTitle": "ርዕስ የሌለው",
+      "defaultTitle": "ነባሪ",
+      "transparentTitle": "ግልጽ",
+      "simpleTitle": "ቀላል",
+      "deleteConfirmationMessage": "ማጥፋት እንደሚፈልጉ ማረጋገጥ ይፈልጋሉ?",
+      "delete": "አጥፋ",
+      "cancel": "አቋርጥ"
+    }
+  },
+  "popup": {
+    "language": "የቋንቋ ቅንብር",
+    "showChatOnFullscreen": "ሙሉ ማያ ቻት",
+    "links": "ዝርዝሮች",
+    "donate": "አስተዋፅን"
+  }
+}
