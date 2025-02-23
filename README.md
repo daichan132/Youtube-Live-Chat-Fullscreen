@@ -31,18 +31,15 @@ Using this extension, you can display the chat panel and post comments while kee
 🌐 Supports multiple languages to cater to a wide range of users.
 
 ## Preview
-<div align="center">
-  <img src="./readme-img/image.png" width="400" alt="Chat in Fullscreen" style="margin-right: 10px;">
-  <img src="./readme-img/image1.png" width="400" alt="Style Customization" style="margin-right: 10px;">
-</div>
+<img src="./readme-img/image.png" width="100%" alt="Chat in Fullscreen" style="margin-right: 10px;">
+
+## Contributing
+Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
 
 ## Sponsor
 If you like this project, please consider supporting me by buying me a coffee.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
-
-## Contributing
-Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
 
 ## License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for more details.
