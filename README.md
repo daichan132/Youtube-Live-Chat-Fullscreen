@@ -19,7 +19,11 @@
 </p>
 <br>
 
-Using this extension, you can display the chat panel and post comments while keeping YouTube Live in full-screen mode.
+Using this extension, you can display the chat panel and post comments while keeping YouTube Live in full-screen mode. You can download it from the following links.
+
+- [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)
+- [Firefox Browser Add-ons](https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/)
+
 
 ## Features
 💬 Post comments and Super Chats even in full-screen mode.
@@ -34,10 +38,11 @@ Using this extension, you can display the chat panel and post comments while kee
 <img src="./readme-img/image.png" width="100%" alt="Chat in Fullscreen" style="margin-right: 10px;">
 
 ## Contributing
-Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
+Contributions are welcome! If you have ideas, bug reports, or improvements, please feel free to open an issue or submit a pull request on GitHub.
 
 ## Sponsor
-If you like this project, please consider supporting me by buying me a coffee.
+If you enjoy using this extension, please consider supporting the project.
+Your contributions help keep the project running and allow for future improvements.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
 
