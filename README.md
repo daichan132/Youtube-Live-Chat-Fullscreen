@@ -36,7 +36,47 @@ Using this extension, you can display the chat panel and post comments while kee
 🌐 Supports multiple languages to cater to a wide range of users.
 
 ## Preview
-![Preview](./.github/image.png)
+![Preview](./.github/preview.png)
+
+## Project Overview
+This extension uses a content script to handle chat interactions on the YouTube Live page, while the popup offers controls for language selection and toggling the extension on or off. Data is exchanged directly between the content script and the popup (shown as “Data Exchange” in the diagram), ensuring that language preferences and extension states stay in sync.
+
+![System](./.github/system_overview.drawio.png)
+
+## Getting Started
+
+### Requirements
+
+Before you begin, ensure you have the following software installed:
+
+- **[Node.js](https://nodejs.org)** (v22.x)
+- **[Yarn](https://yarnpkg.com)**
+
+> [!NOTE]
+> If Yarn is not installed, run `npm install -g yarn` to install it globally.
+
+### install
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/daichan132/Youtube-Live-Chat-Fullscreen.git
+cd Youtube-Live-Chat-Fullscreen
+yarn install
+```
+
+Alternatively, you can fork the repository to create your own version and customize it.
+
+### commands
+- **dev**: Start development server.
+- **dev:firefox**: Start development server for Firefox.
+- **build**: Build the project.
+- **build:firefox**: Build the project for Firefox.
+- **zip**: Create a zip package.
+- **zip:firefox**: Create a Firefox zip package.
+- **format**: Format code.
+- **lint**: Run lint checks.
+- **e2e**: Run end-to-end tests.
 
 ## Contributing
 Contributions are welcome! If you have ideas, bug reports, or improvements, please feel free to open an issue or submit a pull request on GitHub.
