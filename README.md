@@ -19,6 +19,8 @@
 </p>
 <br>
 
+Using this extension, you can display the chat panel and post comments while keeping YouTube Live in full-screen mode.
+
 ## Features
 💬 Post comments and Super Chats even in full-screen mode.
 
