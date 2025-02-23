@@ -1,14 +1,19 @@
+import { useGlobalSettingStore } from '@/shared/stores'
 import { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
+import { useShallow } from 'zustand/shallow'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
-import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 
 export const YTDLiveChat = () => {
   const isShow = useIsShow()
-  const [ytdLiveChat] = useYtdLiveChat()
+  const { ytdLiveChat } = useGlobalSettingStore(
+    useShallow(state => ({
+      ytdLiveChat: state.ytdLiveChat,
+    })),
+  )
   const nodeRef = useRef(null)
   return (
     <>

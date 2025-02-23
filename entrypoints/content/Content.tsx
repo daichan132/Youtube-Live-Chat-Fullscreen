@@ -67,6 +67,7 @@ function removeSwitchButtonContainer(container: HTMLElement | null) {
 
 export const Content = () => {
   useI18n()
+  useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
 
   // Use refs to store DOM elements

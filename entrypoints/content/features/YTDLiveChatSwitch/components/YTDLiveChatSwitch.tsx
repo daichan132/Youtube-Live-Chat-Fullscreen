@@ -1,9 +1,16 @@
 import { useYtdLiveChat } from '@/entrypoints/content/hooks/globalState/useYtdLiveChat'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { useCallback } from 'react'
 import { IoChatboxSharp } from 'react-icons/io5'
+import { useShallow } from 'zustand/shallow'
 
 export const YTDLiveChatSwitch = () => {
-  const [ytdLiveChat, setYTDLiveChat] = useYtdLiveChat()
+  const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
+    useShallow(state => ({
+      ytdLiveChat: state.ytdLiveChat,
+      setYTDLiveChat: state.setYTDLiveChat,
+    })),
+  )
   const handleClick = useCallback(() => {
     const newYtdLiveChat = !ytdLiveChat
     setYTDLiveChat(newYtdLiveChat)

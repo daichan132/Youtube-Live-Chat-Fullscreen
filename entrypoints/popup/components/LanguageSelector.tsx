@@ -14,9 +14,13 @@ export const LanguageSelector = () => {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       i18n.changeLanguage(e.target.value)
-      chrome.runtime.sendMessage({
-        message: 'language',
-        language: e.target.value,
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        if (tabs[0]?.id) {
+          chrome.tabs.sendMessage(tabs[0].id, {
+            message: 'language',
+            language: e.target.value,
+          })
+        }
       })
     },
     [i18n],
