@@ -36,9 +36,7 @@ Using this extension, you can display the chat panel and post comments while kee
 🌐 Supports multiple languages to cater to a wide range of users.
 
 ## Preview
-<p align="center">
 <img src="./.github/image.png" width="500" alt="Chat in Fullscreen" style="margin-right: 10px;">
-</p>
 
 ## Contributing
 Contributions are welcome! If you have ideas, bug reports, or improvements, please feel free to open an issue or submit a pull request on GitHub.
