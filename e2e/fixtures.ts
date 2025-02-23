@@ -1,8 +1,7 @@
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { type BrowserContext, test as base, chromium } from '@playwright/test'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const pathToExtension = path.resolve('.output/chrome-mv3')
 
 export const test = base.extend<{
   context: BrowserContext
@@ -10,21 +9,22 @@ export const test = base.extend<{
 }>({
   // biome-ignore lint/correctness/noEmptyPattern: <explanation>
   context: async ({}, use) => {
-    const pathToExtension = path.join(__dirname, '../../dist')
     const context = await chromium.launchPersistentContext('', {
       headless: false,
-      args: [
-        process.env.CI ? '--headless=new' : '',
-        `--disable-extensions-except=${pathToExtension}`,
-        `--load-extension=${pathToExtension}`,
-      ],
+      args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
     })
     await use(context)
     await context.close()
   },
   extensionId: async ({ context }, use) => {
-    let [background] = context.serviceWorkers()
-    if (!background) background = await context.waitForEvent('serviceworker')
+    let background: { url(): string }
+    if (pathToExtension.endsWith('-mv3')) {
+      ;[background] = context.serviceWorkers()
+      if (!background) background = await context.waitForEvent('serviceworker')
+    } else {
+      ;[background] = context.backgroundPages()
+      if (!background) background = await context.waitForEvent('backgroundpage')
+    }
 
     const extensionId = background.url().split('/')[2]
     await use(extensionId)

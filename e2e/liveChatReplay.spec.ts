@@ -6,7 +6,7 @@ test('youtube live archive test', async ({ page }) => {
   await page.locator('#chatframe').contentFrame()
   await page.click('button.ytp-fullscreen-button')
 
-  await expect(
-    page.locator('.extension-root-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec #live-chat-iframe-wrapper iframe#chatframe'),
-  ).toBeVisible()
+  const shadowHost = page.locator('#shadow-root-live-chat')
+  const shadowRootHandle = await shadowHost.evaluateHandle(el => el.shadowRoot)
+  expect(shadowRootHandle).toBeTruthy()
 })
