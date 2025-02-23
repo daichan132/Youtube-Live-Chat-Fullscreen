@@ -48,5 +48,5 @@ Your contributions help keep the project running and allow for future improvemen
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
 
 ## License
-This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for more details.
+Licensed under GPL-3.0. See [LICENSE](LICENSE) for details.
 
