@@ -39,7 +39,7 @@ Using this extension, you can display the chat panel and post comments while kee
 ![Preview](./.github/preview.png)
 
 ## Project Overview
-This extension uses a content script to handle chat interactions on the YouTube Live page, while the popup offers controls for language selection and toggling the extension on or off. Data is exchanged directly between the content script and the popup (shown as “Data Exchange” in the diagram), ensuring that language preferences and extension states stay in sync.
+This extension works by using a content script to manage the chat on YouTube Live. The popup provides settings for language and turning the extension on/off. The content script and popup communicate directly to keep your language choices and extension status aligned.
 
 ![System](./.github/system_overview.drawio.png)
 
@@ -68,15 +68,15 @@ yarn install
 Alternatively, you can fork the repository to create your own version and customize it.
 
 ### commands
-- **dev**: Start development server.
-- **dev:firefox**: Start development server for Firefox.
-- **build**: Build the project.
-- **build:firefox**: Build the project for Firefox.
-- **zip**: Create a zip package.
-- **zip:firefox**: Create a Firefox zip package.
-- **format**: Format code.
-- **lint**: Run lint checks.
-- **e2e**: Run end-to-end tests.
+- `dev`: Start development server.
+- `dev:firefox`: Start development server for Firefox.
+- `build`: Build the project.
+- `build:firefox`: Build the project for Firefox.
+- `zip`: Create a zip package.
+- `zip:firefox`: Create a Firefox zip package.
+- `format`: Format code.
+- `lint`: Run lint checks.
+- `e2e`: Run end-to-end tests.
 
 ## Contributing
 Contributions are welcome! If you have ideas, bug reports, or improvements, please feel free to open an issue or submit a pull request on GitHub.
