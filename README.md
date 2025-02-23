@@ -1,70 +1,47 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="100" />
+  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="80" />
 </div>
 <br>
 <h1 align="center">Youtube Live Chat Fullscreen</h1>
 <p align="center">
   <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img alt="Chrome Web Store" src="https://img.shields.io/badge/Chrome-141e24.svg?&style=for-the-badge&logo=google-chrome&logoColor=white"/>
+    <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
+  </a>
+  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
   </a>
   <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
-    <img alt="Firefox Add-ons" src="https://img.shields.io/badge/Firefox-141e24.svg?&style=for-the-badge&logo=firefox-browser&logoColor=white"/>
+    <img alt="Firefox Add-ons Rating" src="https://img.shields.io/amo/rating/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
+  </a>
+  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Add-ons Users" src="https://img.shields.io/amo/users/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
   </a>
 </p>
 <br>
 
-## 🌟 Features
+## Features
+💬 Post comments and Super Chats even in full-screen mode.
 
+✒️ Freely customize the chat appearance, including background color, text color, and font size.
+
+⚙️ Adjust the size and position of the chat window as desired.
+
+🌐 Supports multiple languages to cater to a wide range of users.
+
+## Preview
 <div align="center">
   <img src="./readme-img/image.png" width="400" alt="Chat in Fullscreen" style="margin-right: 10px;">
   <img src="./readme-img/image1.png" width="400" alt="Style Customization" style="margin-right: 10px;">
 </div>
 
-## 🎉 Getting Started
+## Sponsor
+If you like this project, please consider supporting me by buying me a coffee.
 
-### Requirements
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
 
-Before you begin, ensure you have the following software installed:
+## Contributing
+Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
 
-- **[Node.js](https://nodejs.org)** (v22.x)
-- **[Yarn](https://yarnpkg.com)**
-
-> **Note**: If Yarn is not installed, run `npm install -g yarn` to install it globally.
-
-### Installation
-
-Clone the repository and install the dependencies:
-
-```bash
-git clone https://github.com/daichan132/Youtube-Live-Chat-Fullscreen.git
-cd Youtube-Live-Chat-Fullscreen
-yarn install
-```
-
-### Loading the Extension
-
-**Chrome (Chromium, Manifest V3)**
-
-During development, run `yarn dev`, and for building, run `yarn build`.
-
-1. Open `chrome://extensions` in your browser.
-2. Enable **Developer Mode**.
-3. Click **Load unpacked**.
-4. Select the `dist` folder from the project root.
-
-**Firefox (Manifest V2)**
-
-During development, run `yarn dev:firefox`, and for building, run `yarn build:firefox`.
-
-1. Open `about:debugging` in your browser.
-2. Click **This Firefox** (or **This Nightly**).
-3. Click **Load Temporary Add-on...**.
-4. Select any file in the `dist` directory.
-
-## 📄 License
-
+## License
 This project is licensed under the **GNU General Public License v3.0**. See the [LICENSE](LICENSE) file for more details.
 
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests to help improve this project.
