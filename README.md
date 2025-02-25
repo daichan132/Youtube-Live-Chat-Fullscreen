@@ -2,7 +2,7 @@
   <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="80" />
 </div>
 <br>
-<h1 align="center">Youtube Live Chat Fullscreen</h1>
+<h1 align="center">YouTube Live Chat Fullscreen</h1>
 <p align="center">
   <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
     <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
