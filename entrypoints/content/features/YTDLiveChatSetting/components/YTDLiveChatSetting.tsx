@@ -64,8 +64,8 @@ export const YTDLiveChatSetting = () => {
       parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
     >
       <div className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'>
-        <div className='flex justify-between items-center px-6 py-4 border-1 border-b-solid border-gray-200'>
-          <div className='flex text-base gap-4'>
+        <div className='flex justify-between items-center px-3 py-3 border-1 border-b-solid border-gray-200'>
+          <div className='flex text-base gap-3'>
             {tabs.map(item => (
               <div
                 key={item.key}
