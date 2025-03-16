@@ -1,7 +1,7 @@
 {
   "name": "youtube-live-chat-fullscreen",
   "private": true,
-  "version": "2.1.10",
+  "version": "2.1.11",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -22,7 +22,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "classnames": "^2.5.1",
-    "i18next": "^24.2.2",
+    "i18next": "^24.2.3",
     "i18next-browser-languagedetector": "^8.0.4",
     "immer": "^10.1.1",
     "lodash-es": "^4.17.21",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@playwright/test": "1.51.0",
-    "@types/chrome": "0.0.308",
+    "@types/chrome": "0.0.309",
     "@types/lodash-es": "4.17.12",
     "@types/react": "19.0.10",
     "@types/react-color": "3.0.13",
@@ -57,7 +57,7 @@
     "@wxt-dev/unocss": "1.0.1",
     "lefthook": "1.11.3",
     "typescript": "5.8.2",
-    "unocss": "66.1.0-beta.3",
+    "unocss": "66.1.0-beta.5",
     "wxt": "0.19.29"
   },
   "packageManager": "yarn@4.7.0",
