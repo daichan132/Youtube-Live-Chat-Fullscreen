@@ -7,7 +7,7 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
-import { useDisanleTopTransition } from '../hooks/useDisanleTopTransition'
+import { useDisableTopTransition } from '../hooks/useDisableTopTransition'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
 import { HoverEffect } from './EffectComponent/HoverEffect'
@@ -56,7 +56,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
     setCoordinates,
     setIsResizing,
   })
-  const disableTopTransition = useDisanleTopTransition(isDragging, isResizing)
+  const disableTopTransition = useDisableTopTransition(isDragging, isResizing)
   const isIconDisplay = useIconDisplay()
 
   return (
