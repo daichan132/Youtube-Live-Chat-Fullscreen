@@ -1,7 +1,5 @@
 import { useState } from 'react'
-
 import { useDraggable } from '@dnd-kit/core'
-import { CSS } from '@dnd-kit/utilities'
 import { Resizable } from 're-resizable'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -11,13 +9,13 @@ import { useDisableTopTransition } from '../hooks/useDisableTopTransition'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
 import { HoverEffect } from './EffectComponent/HoverEffect'
-
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { CiSettings } from 'react-icons/ci'
 import { RiDraggable } from 'react-icons/ri'
 import { WindowResizeEffect } from '../../Draggable/components/EffectComponent/WindowResizeEffect'
 import { useResizableHandlers } from '../hooks/useResizableHandlers'
 import { DisplayEffect } from './EffectComponent/DisplayEffect'
+import { useDraggableItemStyles, useDraggableItemEvents } from '../hooks/useDraggableItemStyles'
 
 interface DraggableItemType {
   top?: number
@@ -39,7 +37,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
       fontColor: state.fontColor,
     })),
   )
-  const { clip, isClipPath, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
+  const { clip, isClipPath = false, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       clip: state.clip,
       isClipPath: state.isClipPath,
@@ -58,9 +56,19 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
   })
   const disableTopTransition = useDisableTopTransition(isDragging, isResizing)
   const isIconDisplay = useIconDisplay()
+  const { resizableStyle, innerDivStyle } = useDraggableItemStyles({
+    top,
+    left,
+    isClipPath,
+    disableTopTransition,
+    isResizing,
+    transform,
+    clip,
+  })
+  const { handleMouseEnter, handleMouseLeave } = useDraggableItemEvents(setIsHover)
 
   return (
-    <div onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <ClipPathEffect isDragging={isDragging} isResizing={isResizing} />
       <HoverEffect isDragging={isDragging} />
       <WindowResizeEffect />
@@ -73,20 +81,11 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeStop={onResizeStop}
-        style={{
-          top,
-          left,
-          transition: `${!disableTopTransition && 'top 250ms ease'}, ${!isResizing && 'height 250ms ease'}`,
-          pointerEvents: isClipPath ? 'none' : 'all',
-        }}
+        style={{ ...resizableStyle, pointerEvents: resizableStyle.pointerEvents as React.CSSProperties['pointerEvents'] }}
       >
         <div
           className='relative h-full w-full pointer-events-auto'
-          style={{
-            transform: CSS.Translate.toString(transform),
-            clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
-            transition: 'clip-path 250ms ease',
-          }}
+          style={innerDivStyle}
           ref={setNodeRef}
         >
           <div
