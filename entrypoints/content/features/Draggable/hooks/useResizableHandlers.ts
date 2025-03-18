@@ -14,12 +14,24 @@ interface UseResizableHandlersProps {
 export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates, setIsResizing }: UseResizableHandlersProps) => {
   const coordinateRef = useRef({ x: left, y: top })
 
-  const onResizeStart = useCallback(() => {
+  const handleResizeStart = useCallback(() => {
     setIsResizing(true)
     coordinateRef.current = { x: left, y: top }
   }, [left, top, setIsResizing])
+  const handleHorizontalResize = useCallback(
+    (newWidth: number) => {
+      setSize({ ...size, width: newWidth })
+    },
+    [size, setSize],
+  )
+  const handleVerticalResize = useCallback(
+    (newHeight: number) => {
+      setSize({ ...size, height: newHeight })
+    },
+    [size, setSize],
+  )
 
-  const onResize = useCallback(
+  const handleResize = useCallback(
     (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
       const directions = ['top', 'left', 'topLeft', 'bottomLeft', 'topRight']
 
@@ -41,11 +53,14 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
           y: newTop < 0 ? 0 : newTop,
         })
       }
+
+      handleHorizontalResize(size.width + delta.width)
+      handleVerticalResize(size.height + delta.height)
     },
-    [setCoordinates],
+    [setCoordinates, handleHorizontalResize, handleVerticalResize, size.width, size.height],
   )
 
-  const onResizeStop = useCallback(
+  const handleResizeStop = useCallback(
     (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
       setIsResizing(false)
       let newWidth = size.width + delta.width
@@ -62,8 +77,8 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
   )
 
   return {
-    onResizeStart,
-    onResize,
-    onResizeStop,
+    onResizeStart: handleResizeStart,
+    onResize: handleResize,
+    onResizeStop: handleResizeStop,
   }
 }
