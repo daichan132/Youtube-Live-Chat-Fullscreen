@@ -55,7 +55,7 @@
     "@types/uuid": "10.0.0",
     "@wxt-dev/module-react": "1.1.3",
     "@wxt-dev/unocss": "1.0.1",
-    "lefthook": "1.11.3",
+    "lefthook": "1.11.5",
     "typescript": "5.8.2",
     "unocss": "66.1.0-beta.5",
     "wxt": "0.19.29"
