@@ -1,3 +1,4 @@
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { NumberSize } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 import { useCallback, useRef } from 'react'
@@ -18,62 +19,57 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
     setIsResizing(true)
     coordinateRef.current = { x: left, y: top }
   }, [left, top, setIsResizing])
-  const handleHorizontalResize = useCallback(
-    (newWidth: number) => {
-      setSize({ ...size, width: newWidth })
-    },
-    [size, setSize],
-  )
-  const handleVerticalResize = useCallback(
-    (newHeight: number) => {
-      setSize({ ...size, height: newHeight })
-    },
-    [size, setSize],
-  )
+
+  // 座標の境界チェックを行うヘルパー関数
+  const ensurePositiveCoordinate = useCallback((value: number): number => {
+    return Math.max(0, value)
+  }, [])
 
   const handleResize = useCallback(
     (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
-      const directions = ['top', 'left', 'topLeft', 'bottomLeft', 'topRight']
+      const directionToCoordinateChanges: Record<Direction, { x: number; y: number }> = {
+        top: { x: 0, y: -delta.height },
+        left: { x: -delta.width, y: 0 },
+        topLeft: { x: -delta.width, y: -delta.height },
+        bottomLeft: { x: -delta.width, y: 0 },
+        topRight: { x: 0, y: -delta.height },
+        right: { x: 0, y: 0 },
+        bottom: { x: 0, y: 0 },
+        bottomRight: { x: 0, y: 0 },
+      }
 
-      if (directions.includes(direction)) {
-        let newLeft = coordinateRef.current.x
-        let newTop = coordinateRef.current.y
+      const changes = directionToCoordinateChanges[direction] || { x: 0, y: 0 }
 
-        if (direction === 'bottomLeft') {
-          newLeft = coordinateRef.current.x - delta.width
-        } else if (direction === 'topRight') {
-          newTop = coordinateRef.current.y - delta.height
-        } else {
-          newLeft = coordinateRef.current.x - delta.width
-          newTop = coordinateRef.current.y - delta.height
-        }
+      // 座標調整が必要な方向の場合のみ座標を更新
+      if (changes.x !== 0 || changes.y !== 0) {
+        const newLeft = coordinateRef.current.x + changes.x
+        const newTop = coordinateRef.current.y + changes.y
 
         setCoordinates({
-          x: newLeft < 0 ? 0 : newLeft,
-          y: newTop < 0 ? 0 : newTop,
+          x: ensurePositiveCoordinate(newLeft),
+          y: ensurePositiveCoordinate(newTop),
         })
       }
 
-      handleHorizontalResize(size.width + delta.width)
-      handleVerticalResize(size.height + delta.height)
+      setSize({
+        width: size.width + delta.width,
+        height: size.height + delta.height,
+      })
     },
-    [setCoordinates, handleHorizontalResize, handleVerticalResize, size.width, size.height],
+    [setCoordinates, setSize, size.width, size.height, ensurePositiveCoordinate],
   )
 
   const handleResizeStop = useCallback(
-    (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
+    (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, _delta: NumberSize) => {
       setIsResizing(false)
-      let newWidth = size.width + delta.width
-      let newHeight = size.height + delta.height
-      if (newWidth + left > window.innerWidth) {
-        newWidth = window.innerWidth - left
+      // 実際の要素サイズを取得して設定
+      const finalSize = {
+        width: Math.max(ResizableMinWidth, _ref.offsetWidth),
+        height: Math.max(ResizableMinHeight, _ref.offsetHeight),
       }
-      if (newHeight + top > window.innerHeight) {
-        newHeight = window.innerHeight - top
-      }
-      setSize({ width: newWidth, height: newHeight })
+      setSize(finalSize)
     },
-    [left, top, setSize, size.width, size.height, setIsResizing],
+    [setSize, setIsResizing],
   )
 
   return {
