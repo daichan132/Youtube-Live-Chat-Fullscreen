@@ -77,7 +77,7 @@ export const DraggableItem = ({ top = 0, left = 0, children }: DraggableItemType
         size={size}
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
-        className='absolute transition-all'
+        className={`absolute ${isResizing ? '' : 'transition-all'}`}
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeStop={onResizeStop}
