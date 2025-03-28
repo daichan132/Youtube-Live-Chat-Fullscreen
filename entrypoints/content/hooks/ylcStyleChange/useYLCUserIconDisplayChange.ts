@@ -1,19 +1,23 @@
 import { useCallback } from 'react'
 
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 export const useYLCUserIconDisplayChange = () => {
-  const changeUserIconDisplay = useCallback((display: boolean) => {
-    const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    const iframeDocument = iframeElement?.contentDocument?.documentElement
-    if (!iframeDocument) return
-    iframeDocument.style.setProperty('--extension-user-icon-display', display ? 'inline' : 'none')
-  }, [])
+  const { setProperty } = useYLCStylePropertyChange()
+
+  const changeUserIconDisplay = useCallback(
+    (display: boolean) => {
+      setProperty('--extension-user-icon-display', display ? 'inline' : 'none')
+    },
+    [setProperty],
+  )
+
   const changeDisplay = useCallback(
     (display: boolean) => {
       changeUserIconDisplay(display)
     },
     [changeUserIconDisplay],
   )
+
   return { changeDisplay }
 }

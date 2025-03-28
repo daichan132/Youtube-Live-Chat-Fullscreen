@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
-
 import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
-
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 import type { RGBColor } from 'react-color'
 
 const propertyList: string[] = ['--yt-live-chat-background-color']
@@ -20,25 +18,29 @@ const propertyListTransparent = [
 ]
 
 export const useYLCBgColorChange = () => {
-  const changeIframeBackgroundColor = useCallback((rgba: RGBColor) => {
-    const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    const iframeDocument = iframeElement?.contentDocument?.documentElement
-    if (!iframeDocument) return
-    for (const property of propertyList) {
-      iframeDocument.style.setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
-    }
-    for (const item of propertyListDarken) {
-      iframeDocument.style.setProperty(item.property, darkenRgbaColor(rgba, item.amount))
-    }
-    for (const property of propertyListTransparent) {
-      iframeDocument.style.setProperty(property, 'transparent')
-    }
-  }, [])
+  const { setProperty } = useYLCStylePropertyChange()
+
+  const changeIframeBackgroundColor = useCallback(
+    (rgba: RGBColor) => {
+      for (const property of propertyList) {
+        setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
+      }
+      for (const item of propertyListDarken) {
+        setProperty(item.property, darkenRgbaColor(rgba, item.amount))
+      }
+      for (const property of propertyListTransparent) {
+        setProperty(property, 'transparent')
+      }
+    },
+    [setProperty],
+  )
+
   const changeColor = useCallback(
     (rgba: RGBColor) => {
       changeIframeBackgroundColor(rgba)
     },
     [changeIframeBackgroundColor],
   )
+
   return { changeColor }
 }
