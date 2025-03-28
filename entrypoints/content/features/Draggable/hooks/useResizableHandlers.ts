@@ -3,15 +3,29 @@ import type { NumberSize } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 import { useCallback, useRef } from 'react'
 
+interface Size {
+  width: number
+  height: number
+}
+
+interface Coordinates {
+  x: number
+  y: number
+}
+
 interface UseResizableHandlersProps {
-  size: { width: number; height: number }
-  setSize: (size: { width: number; height: number }) => void
+  size: Size
+  setSize: (size: Size) => void
   left: number
   top: number
-  setCoordinates: (coordinates: { x: number; y: number }) => void
+  setCoordinates: (coordinates: Coordinates) => void
   setIsResizing: (isResizing: boolean) => void
 }
 
+/**
+ * Hook to manage resizable element handlers
+ * Handles coordinate adjustments during resize operations and enforces minimum sizes
+ */
 export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates, setIsResizing }: UseResizableHandlersProps) => {
   const coordinateRef = useRef({ x: left, y: top })
 
@@ -20,14 +34,17 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
     coordinateRef.current = { x: left, y: top }
   }, [left, top, setIsResizing])
 
-  // 座標の境界チェックを行うヘルパー関数
+  /**
+   * Ensures coordinate values are non-negative
+   */
   const ensurePositiveCoordinate = useCallback((value: number): number => {
     return Math.max(0, value)
   }, [])
 
   const handleResize = useCallback(
     (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
-      const directionToCoordinateChanges: Record<Direction, { x: number; y: number }> = {
+      // Map of how each resize direction affects the element coordinates
+      const directionToCoordinateChanges: Record<Direction, Coordinates> = {
         top: { x: 0, y: -delta.height },
         left: { x: -delta.width, y: 0 },
         topLeft: { x: -delta.width, y: -delta.height },
@@ -40,7 +57,7 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
 
       const changes = directionToCoordinateChanges[direction] || { x: 0, y: 0 }
 
-      // 座標調整が必要な方向の場合のみ座標を更新
+      // Update coordinates only when needed
       if (changes.x !== 0 || changes.y !== 0) {
         const newLeft = coordinateRef.current.x + changes.x
         const newTop = coordinateRef.current.y + changes.y
@@ -51,6 +68,7 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
         })
       }
 
+      // Update size
       setSize({
         width: size.width + delta.width,
         height: size.height + delta.height,
@@ -62,7 +80,8 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
   const handleResizeStop = useCallback(
     (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, _delta: NumberSize) => {
       setIsResizing(false)
-      // 実際の要素サイズを取得して設定
+
+      // Ensure final size respects minimum dimensions
       const finalSize = {
         width: Math.max(ResizableMinWidth, _ref.offsetWidth),
         height: Math.max(ResizableMinHeight, _ref.offsetHeight),

@@ -1,6 +1,6 @@
-import type React from 'react'
+import type { ReactNode } from 'react'
 
-import { DndContext } from '@dnd-kit/core'
+import { DndContext, type DragEndEvent } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
 import { useShallow } from 'zustand/react/shallow'
 
@@ -8,32 +8,33 @@ import { useYTDLiveChatStore } from '@/shared/stores'
 
 import { DraggableItem } from './DraggableItem'
 
-interface DraggableType {
-  children: React.ReactNode
+interface DraggableProps {
+  children: ReactNode
 }
 
-export const Draggable = ({ children }: DraggableType) => {
-  const {
-    coordinates: { x, y },
-    setCoordinates,
-  } = useYTDLiveChatStore(
+export const Draggable = ({ children }: DraggableProps) => {
+  const { coordinates, setCoordinates } = useYTDLiveChatStore(
     useShallow(state => ({
       coordinates: state.coordinates,
       setCoordinates: state.setCoordinates,
     })),
   )
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { delta } = event
+    setCoordinates({
+      x: coordinates.x + delta.x,
+      y: coordinates.y + delta.y,
+    })
+  }
+
   return (
-    <div className='absolute overflow-hidden top-0 left-0 w-screen h-screen'>
+    <div className="absolute overflow-hidden top-0 left-0 w-screen h-screen">
       <DndContext
-        onDragEnd={({ delta }) => {
-          setCoordinates({
-            x: x + delta.x,
-            y: y + delta.y,
-          })
-        }}
+        onDragEnd={handleDragEnd}
         modifiers={[restrictToWindowEdges]}
       >
-        <DraggableItem top={y} left={x}>
+        <DraggableItem top={coordinates.y} left={coordinates.x}>
           {children}
         </DraggableItem>
       </DndContext>
