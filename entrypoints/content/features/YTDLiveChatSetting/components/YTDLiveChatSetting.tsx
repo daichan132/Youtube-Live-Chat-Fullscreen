@@ -64,14 +64,16 @@ export const YTDLiveChatSetting = () => {
       parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
     >
       <div className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'>
-        <div className='flex justify-between items-center px-3 py-3 border-1 border-b-solid border-gray-200'>
+        <div className='flex justify-between items-center px-4 py-2 border-1 border-b-solid border-gray-200'>
           <div className='flex text-base gap-3'>
             {tabs.map(item => (
               <div
                 key={item.key}
                 className={classNames(
-                  'px-5 py-4 rounded cursor-pointer transition-colors duration-200 flex items-center gap-4',
-                  menuItem === item.key ? 'text-[#333] bg-gray-100 cursor-default' : 'text-gray-700 hover:bg-gray-50',
+                  'px-3 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-4',
+                  menuItem === item.key
+                    ? 'text-[#333] bg-gray-100 cursor-default border-b-solid border-b-1 border-gray-800'
+                    : 'text-gray-700 hover:bg-gray-100',
                 )}
                 onClick={() => setMenuItem(item.key)}
                 onKeyUp={e => e.key === 'Enter' && setMenuItem(item.key)}
