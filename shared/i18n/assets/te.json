@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "నిర్ధిష్టం",
-        "setting": "సెట్టింగ్‌లు"
+        "preset": "ప్రీసెట్",
+        "setting": "సెట్టింగ్స్"
       },
       "alwaysOnDisplay": "ఎప్పుడూ ప్రదర్శనలో",
       "chatOnlyDisplay": "కేవలం చాట్ ప్రదర్శన",
-      "userNameDisplay": "వినియోగదారుని పేరు ప్రదర్శన",
-      "userIconDisplay": "వినియోగదారుని చిహ్నం ప్రదర్శన",
-      "reactionButtonDisplay": "ప్రతిస్పందన బటన్ ప్రదర్శన",
-      "superChatBarDisplay": "సూపర్ చాట్ పట్టీ ప్రదర్శన",
-      "backgroundColor": "ప الرحيم彩祸 రంగు",
-      "fontColor": "ప ల ల గ గ పంī",
-      "fontFamily": "ప ప్ర ట మమ",
-      "fontSize": "ప హ పంī",
-      "blur": "ప గ గ పంī",
-      "space": "ప ר ג ו ר פ పంī"
+      "userNameDisplay": "వ్యవహారిక పేరు ప్రదర్శన",
+      "userIconDisplay": "వినియోగదారు ఐకాన్ ప్రదర్శన",
+      "reactionButtonDisplay": "ప్రতিক్రియ బటన్ ప్రదర్శన",
+      "superChatBarDisplay": "సూపర్ చాట్ బార్ ప్రదర్శన",
+      "backgroundColor": "నేపధ్య రంగు",
+      "fontColor": "ఫాంట్ రంగు",
+      "fontFamily": "ఫాంట్ కుటుంబం",
+      "fontSize": "ఫాంట్ పరిమాణం",
+      "blur": "బ్లర్",
+      "space": "స్థలం",
+      "footer": {
+        "donate": "దానం చేయండి",
+        "chrome": "క్రోమ్",
+        "firefox": "ఫైర్‌ఫాక్స్"
+      }
     },
     "preset": {
-      "addMessage": "ప్రస్తుత సెట్టింగ్‌లను చేర్చండి",
-      "addItemTitle": "శీర్షిక లేదు",
-      "defaultTitle": "అపరాధం",
-      "transparentTitle": "పదార్థం",
-      "simpleTitle": "సాధారణం",
-      "deleteConfirmationMessage": "తొలగించాలని మీరు ఖచ్చితమనే అనుకుంటున్నారా?",
+      "addMessage": "ప్రస్తుత సెట్టింగును జోడించండి",
+      "addItemTitle": "శీర్షిక లేని",
+      "defaultTitle": "నిర్దిష్టం",
+      "transparentTitle": "పారదర్శకత",
+      "simpleTitle": "సాధారణ",
+      "deleteConfirmationMessage": "మీరు తీసివేయాలని ఖచ్చితంగా ఖచ్చితంగా ఉన్నారా?",
       "delete": "తొలగించు",
-      "cancel": "రద్దు చేయండి"
+      "cancel": "రద్దు"
     }
   },
   "popup": {
-    "language": "భాషా సెట్టింగ్‌లు",
-    "showChatOnFullscreen": "పూర్తి స్క్రీన్ చాట్",
-    "links": "లింకులు",
+    "language": "భాషా సెట్టింగులు",
+    "showChatOnFullscreen": "పూర్తి తెర చాటు",
+    "links": "లింక్స్",
     "donate": "దానం చేయండి"
   }
 }

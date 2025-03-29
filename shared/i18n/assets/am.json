@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ቅድም አቀማመጥ",
+        "preset": "ቅንብር",
         "setting": "ቅንብሮች"
       },
-      "alwaysOnDisplay": "ሁሌም በአሳይ",
-      "chatOnlyDisplay": "ልዩ ቻት አሳይ",
-      "userNameDisplay": "የተጠቃሚ ስም አሳይ",
-      "userIconDisplay": "የተጠቃሚ አዶ አሳይ",
-      "reactionButtonDisplay": "የእንቅስቃሴ አዝራር አሳይ",
-      "superChatBarDisplay": "ሱፐር ቻት መስመር አሳይ",
-      "backgroundColor": "የጀርባ ቀለም",
+      "alwaysOnDisplay": "ሁሌም የታየ እንቅስቃሴ",
+      "chatOnlyDisplay": "የቆይታ ብቻ ዝርዝር",
+      "userNameDisplay": "የተጠቃሚ ስም ግምባር",
+      "userIconDisplay": "የተጠቃሚ አይኮን ግምባር",
+      "reactionButtonDisplay": "የምላሽ አዝራር ግምባር",
+      "superChatBarDisplay": "ስፖር ቁጣ ግምባር",
+      "backgroundColor": "ዳራ ቀለም",
       "fontColor": "የቅርጽ ቀለም",
       "fontFamily": "የቅርጽ ቤተሰብ",
-      "fontSize": "የቅርጽ መጠን",
-      "blur": "መስዋት",
-      "space": "ቦታ"
+      "fontSize": "የአማዝበላ መጠን",
+      "blur": "ግዠት",
+      "space": "ቦታ",
+      "footer": {
+        "donate": "ስጥ",
+        "chrome": "ክሮም",
+        "firefox": "ፋይረፎክስ"
+      }
     },
     "preset": {
-      "addMessage": "ያሉትን ቅንብሮች አክል",
-      "addItemTitle": "ርዕስ የሌለው",
-      "defaultTitle": "ነባሪ",
-      "transparentTitle": "ግልጽ",
+      "addMessage": "ወቅታዊ ቅንብሮችን አክል",
+      "addItemTitle": "ስምምላሽ",
+      "defaultTitle": "ነባር",
+      "transparentTitle": "ክፉባበር",
       "simpleTitle": "ቀላል",
-      "deleteConfirmationMessage": "ማጥፋት እንደሚፈልጉ ማረጋገጥ ይፈልጋሉ?",
-      "delete": "አጥፋ",
-      "cancel": "አቋርጥ"
+      "deleteConfirmationMessage": "እርግጠኛ ነህ/ነሽን ማጥፋት ይፈልጋሉ።",
+      "delete": "ማጥፋት",
+      "cancel": "ሰርዝ"
     }
   },
   "popup": {
-    "language": "የቋንቋ ቅንብር",
-    "showChatOnFullscreen": "ሙሉ ማያ ቻት",
-    "links": "ዝርዝሮች",
-    "donate": "አስተዋፅን"
+    "language": "የትምርት ቋንቋ ቅንብር",
+    "showChatOnFullscreen": "ሙሉ እንቅስቃሴ ዝርዝር",
+    "links": "አገናኞች",
+    "donate": "ስጥ"
   }
 }

@@ -2,36 +2,41 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Iepriekš iestatītie",
+        "preset": "Iepriekšiestatīt",
         "setting": "Iestatījumi"
       },
-      "alwaysOnDisplay": "Vienmēr Ekrānā",
-      "chatOnlyDisplay": "Tikai Čata Skats",
-      "userNameDisplay": "Lietotāja Vārda Attēlojums",
-      "userIconDisplay": "Lietotāja Ikonas Attēlojums",
-      "reactionButtonDisplay": "Reakcijas Pogas Attēlojums",
-      "superChatBarDisplay": "Super Čata Joslas Attēlojums",
-      "backgroundColor": "Fona Krāsa",
-      "fontColor": "Fonta Krāsa",
-      "fontFamily": "Fonta Veids",
-      "fontSize": "Fonta Izmērs",
-      "blur": "Izpludinājums",
-      "space": "Atstarpes"
+      "alwaysOnDisplay": "Vienmēr parādīts",
+      "chatOnlyDisplay": "Tikai čata parādīšana",
+      "userNameDisplay": "Lietotāja vārda parādīšana",
+      "userIconDisplay": "Lietotāja ikonas parādīšana",
+      "reactionButtonDisplay": "Reakcijas pogas parādīšana",
+      "superChatBarDisplay": "Super Tērzēšanas joslas parādīšana",
+      "backgroundColor": "Fona krāsa",
+      "fontColor": "Fonta krāsa",
+      "fontFamily": "Fonta ģimene",
+      "fontSize": "Fonta lielums",
+      "blur": "Aizmiglot",
+      "space": "Atstarpe",
+      "footer": {
+        "donate": "Ziedot",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Pievienot Pašreizējos Iestatījumus",
-      "addItemTitle": "Nenosaukts",
+      "addMessage": "Pievienot šos iestatījumus",
+      "addItemTitle": "Bez nosaukuma",
       "defaultTitle": "Noklusējums",
       "transparentTitle": "Caurspīdīgs",
       "simpleTitle": "Vienkāršs",
-      "deleteConfirmationMessage": "Vai esat pārliecināts, ka vēlaties dzēst?",
+      "deleteConfirmationMessage": "Vai tiešām vēlaties dzēst?",
       "delete": "Dzēst",
       "cancel": "Atcelt"
     }
   },
   "popup": {
-    "language": "Valodas Iestatījumi",
-    "showChatOnFullscreen": "Čats Pilnekrāna Režīmā",
+    "language": "Valodas iestatījumi",
+    "showChatOnFullscreen": "Pilnekrāna čats",
     "links": "Saites",
     "donate": "Ziedot"
   }

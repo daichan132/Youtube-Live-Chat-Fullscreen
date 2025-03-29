@@ -5,33 +5,38 @@
         "preset": "Förinställning",
         "setting": "Inställningar"
       },
-      "alwaysOnDisplay": "Alltid på Display",
-      "chatOnlyDisplay": "Endast chattvisning",
-      "userNameDisplay": "Användarnamnsvisning",
-      "userIconDisplay": "Användarikonsvisning",
-      "reactionButtonDisplay": "Reaktionsknappvisning",
-      "superChatBarDisplay": "Superchattbalkvisning",
+      "alwaysOnDisplay": "Alltid På Display",
+      "chatOnlyDisplay": "Endast Chatt Display",
+      "userNameDisplay": "Användarnamn Display",
+      "userIconDisplay": "Användarikon Display",
+      "reactionButtonDisplay": "Reaktionsknapp Display",
+      "superChatBarDisplay": "Superchatt Bar Display",
       "backgroundColor": "Bakgrundsfärg",
-      "fontColor": "Teckensnittsfärg",
-      "fontFamily": "Teckensnittfamilj",
+      "fontColor": "Teckenfärg",
+      "fontFamily": "Typsnitt",
       "fontSize": "Teckenstorlek",
       "blur": "Oskärpa",
-      "space": "Mellanrum"
+      "space": "Mellanrum",
+      "footer": {
+        "donate": "Donera",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Lägg till nuvarande inställningar",
-      "addItemTitle": "Titel saknas",
+      "addMessage": "Lägg till aktuella inställningar",
+      "addItemTitle": "Namnlös",
       "defaultTitle": "Standard",
-      "transparentTitle": "Transparent",
+      "transparentTitle": "Genomskinlig",
       "simpleTitle": "Enkel",
-      "deleteConfirmationMessage": "Är du säker på att du vill ta bort?",
-      "delete": "Ta bort",
+      "deleteConfirmationMessage": "Är du säker på att du vill radera?",
+      "delete": "Radera",
       "cancel": "Avbryt"
     }
   },
   "popup": {
     "language": "Språkinställningar",
-    "showChatOnFullscreen": "Chatt i fullskärm",
+    "showChatOnFullscreen": "Helbildschatt",
     "links": "Länkar",
     "donate": "Donera"
   }

@@ -2,21 +2,26 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preset",
+        "preset": "Inayos",
         "setting": "Mga Setting"
       },
-      "alwaysOnDisplay": "Lagi sa Display",
-      "chatOnlyDisplay": "Chat Lang ang Display",
-      "userNameDisplay": "Ipakita ang Pangalan ng Gumagamit",
-      "userIconDisplay": "Ipakita ang Icon ng Gumagamit",
-      "reactionButtonDisplay": "Ipakita ang Button ng Reaksiyon",
-      "superChatBarDisplay": "Ipakita ang Super Chat Bar",
+      "alwaysOnDisplay": "Laging Naka-display",
+      "chatOnlyDisplay": "Chat Lamang na Display",
+      "userNameDisplay": "Display ng Pangalan ng Gumagamit",
+      "userIconDisplay": "Display ng Icon ng Gumagamit",
+      "reactionButtonDisplay": "Display ng Button ng Reaksyon",
+      "superChatBarDisplay": "Display ng Super Chat Bar",
       "backgroundColor": "Kulay ng Background",
       "fontColor": "Kulay ng Font",
-      "fontFamily": "Font Family",
+      "fontFamily": "Pamilya ng Font",
       "fontSize": "Sukat ng Font",
       "blur": "Labo",
-      "space": "Spasyo"
+      "space": "Puwang",
+      "footer": {
+        "donate": "Mag-donate",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Idagdag ang Kasalukuyang Mga Setting",
@@ -24,7 +29,7 @@
       "defaultTitle": "Default",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "Sigurado ka bang gusto mong tanggalin?",
+      "deleteConfirmationMessage": "Sigurado ka bang nais mong tanggalin?",
       "delete": "Tanggalin",
       "cancel": "Kanselahin"
     }

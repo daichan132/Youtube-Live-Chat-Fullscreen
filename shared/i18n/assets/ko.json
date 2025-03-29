@@ -5,33 +5,38 @@
         "preset": "프리셋",
         "setting": "설정"
       },
-      "alwaysOnDisplay": "항상 켜짐 디스플레이",
+      "alwaysOnDisplay": "항상 표시",
       "chatOnlyDisplay": "채팅만 표시",
       "userNameDisplay": "사용자 이름 표시",
       "userIconDisplay": "사용자 아이콘 표시",
       "reactionButtonDisplay": "반응 버튼 표시",
-      "superChatBarDisplay": "슈퍼 챗 바 표시",
+      "superChatBarDisplay": "슈퍼 채팅 바 표시",
       "backgroundColor": "배경색",
-      "fontColor": "폰트 색상",
-      "fontFamily": "폰트 종류",
-      "fontSize": "폰트 크기",
-      "blur": "흐림 효과",
-      "space": "간격"
+      "fontColor": "글꼴 색상",
+      "fontFamily": "글꼴",
+      "fontSize": "글꼴 크기",
+      "blur": "블러",
+      "space": "여백",
+      "footer": {
+        "donate": "기부",
+        "chrome": "크롬",
+        "firefox": "파이어폭스"
+      }
     },
     "preset": {
       "addMessage": "현재 설정 추가",
       "addItemTitle": "제목 없음",
-      "defaultTitle": "기본값",
+      "defaultTitle": "기본",
       "transparentTitle": "투명",
       "simpleTitle": "단순",
-      "deleteConfirmationMessage": "삭제하시겠습니까?",
+      "deleteConfirmationMessage": "정말 삭제하시겠습니까?",
       "delete": "삭제",
       "cancel": "취소"
     }
   },
   "popup": {
     "language": "언어 설정",
-    "showChatOnFullscreen": "전체 화면 채팅",
+    "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
     "donate": "기부"
   }

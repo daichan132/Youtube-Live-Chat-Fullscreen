@@ -2,21 +2,26 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Предустановка",
+        "preset": "Попереднє налаштування",
         "setting": "Налаштування"
       },
-      "alwaysOnDisplay": "Завжди на екрані",
-      "chatOnlyDisplay": "Тільки чат",
+      "alwaysOnDisplay": "Завжди на дисплеї",
+      "chatOnlyDisplay": "Тільки чат на дисплеї",
       "userNameDisplay": "Відображення імені користувача",
       "userIconDisplay": "Відображення іконки користувача",
-      "reactionButtonDisplay": "Відображення кнопки реакції",
-      "superChatBarDisplay": "Панель супер-чату",
+      "reactionButtonDisplay": "Відображення кнопки реакцій",
+      "superChatBarDisplay": "Відображення суперчату",
       "backgroundColor": "Колір фону",
       "fontColor": "Колір шрифту",
       "fontFamily": "Шрифт",
       "fontSize": "Розмір шрифту",
-      "blur": "Розмитість",
-      "space": "Інтервал"
+      "blur": "Розмиття",
+      "space": "Інтервал",
+      "footer": {
+        "donate": "Пожертвувати",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Додати поточні налаштування",
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "Налаштування мови",
-    "showChatOnFullscreen": "Чат на весь екран",
+    "showChatOnFullscreen": "Повноекранний чат",
     "links": "Посилання",
     "donate": "Пожертвувати"
   }

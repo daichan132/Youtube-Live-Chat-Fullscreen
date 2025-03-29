@@ -2,26 +2,31 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Išankstinis nustatymas",
+        "preset": "Išankstiniai nustatymai",
         "setting": "Nustatymai"
       },
-      "alwaysOnDisplay": "Visada Rodomas Ekrane",
-      "chatOnlyDisplay": "Tik Pokalbių Rodymas",
-      "userNameDisplay": "Vartotojo Vardo Rodymas",
-      "userIconDisplay": "Vartotojo Piktogramos Rodymas",
-      "reactionButtonDisplay": "Reakcijos Mygtuko Rodymas",
-      "superChatBarDisplay": "Super Pokalbių Juostos Rodymas",
-      "backgroundColor": "Fono Spalva",
-      "fontColor": "Šrifto Spalva",
-      "fontFamily": "Šrifto Šeima",
-      "fontSize": "Šrifto Dydis",
-      "blur": "Neaiškumas",
-      "space": "Tarpas"
+      "alwaysOnDisplay": "Visada rodoma",
+      "chatOnlyDisplay": "Tik pokalbiai",
+      "userNameDisplay": "Vartotojo vardo rodymas",
+      "userIconDisplay": "Vartotojo ikonos rodymas",
+      "reactionButtonDisplay": "Reakcijų mygtuko rodymas",
+      "superChatBarDisplay": "Super Chat juostos rodymas",
+      "backgroundColor": "Fono spalva",
+      "fontColor": "Šrifto spalva",
+      "fontFamily": "Šrifto šeima",
+      "fontSize": "Šrifto dydis",
+      "blur": "Išblukimas",
+      "space": "Tarpai",
+      "footer": {
+        "donate": "Paaukoti",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Pridėti Dabartinius Nustatymus",
-      "addItemTitle": "Be Pavadinimo",
-      "defaultTitle": "Numatytoji",
+      "addMessage": "Pridėti esamus nustatymus",
+      "addItemTitle": "Be pavadinimo",
+      "defaultTitle": "Numatytasis",
       "transparentTitle": "Permatomas",
       "simpleTitle": "Paprastas",
       "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
@@ -30,8 +35,8 @@
     }
   },
   "popup": {
-    "language": "Kalbos Nustatymai",
-    "showChatOnFullscreen": "Pokalbiai Visame Ekrane",
+    "language": "Kalbos nustatymai",
+    "showChatOnFullscreen": "Viso ekrano pokalbis",
     "links": "Nuorodos",
     "donate": "Paaukoti"
   }

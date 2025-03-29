@@ -8,23 +8,28 @@
       "alwaysOnDisplay": "Altijd Aan Weergave",
       "chatOnlyDisplay": "Alleen Chat Weergave",
       "userNameDisplay": "Gebruikersnaam Weergave",
-      "userIconDisplay": "Gebruikersicoon Weergave",
+      "userIconDisplay": "Gebruikerspictogram Weergave",
       "reactionButtonDisplay": "Reactieknop Weergave",
-      "superChatBarDisplay": "Super Chatbalk Weergave",
+      "superChatBarDisplay": "Superchatbalk Weergave",
       "backgroundColor": "Achtergrondkleur",
       "fontColor": "Lettertypekleur",
       "fontFamily": "Lettertypefamilie",
       "fontSize": "Lettergrootte",
       "blur": "Vervagen",
-      "space": "Ruimte"
+      "space": "Ruimte",
+      "footer": {
+        "donate": "Doneren",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Voeg Huidige Instellingen Toe",
+      "addMessage": "Huidige Instellingen Toevoegen",
       "addItemTitle": "Naamloos",
       "defaultTitle": "Standaard",
       "transparentTitle": "Transparant",
       "simpleTitle": "Eenvoudig",
-      "deleteConfirmationMessage": "Weet je zeker dat je wilt verwijderen?",
+      "deleteConfirmationMessage": "Weet u zeker dat u wilt verwijderen?",
       "delete": "Verwijderen",
       "cancel": "Annuleren"
     }

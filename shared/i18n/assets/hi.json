@@ -5,33 +5,38 @@
         "preset": "प्रीसेट",
         "setting": "सेटिंग्स"
       },
-      "alwaysOnDisplay": "हमेशा डिस्प्ले पर",
-      "chatOnlyDisplay": "केवल चैट डिस्प्ले",
-      "userNameDisplay": "उपयोगकर्ता नाम प्रदर्शित करें",
-      "userIconDisplay": "उपयोगकर्ता आइकन प्रदर्शित करें",
-      "reactionButtonDisplay": "प्रतिक्रिया बटन प्रदर्शित करें",
-      "superChatBarDisplay": "सुपर चैट बार प्रदर्शित करें",
-      "backgroundColor": "पृष्ठभूमि का रंग",
-      "fontColor": "फ़ॉन्ट का रंग",
+      "alwaysOnDisplay": "सदैव प्रदर्शन पर",
+      "chatOnlyDisplay": "केवल चैट प्रदर्शन",
+      "userNameDisplay": "उपयोगकर्ता नाम प्रदर्शन",
+      "userIconDisplay": "उपयोगकर्ता चिह्न प्रदर्शन",
+      "reactionButtonDisplay": "प्रतिक्रिया बटन प्रदर्शन",
+      "superChatBarDisplay": "सुपर चैट बार प्रदर्शन",
+      "backgroundColor": "पृष्ठभूमि रंग",
+      "fontColor": "फ़ॉन्ट रंग",
       "fontFamily": "फ़ॉन्ट परिवार",
       "fontSize": "फ़ॉन्ट आकार",
-      "blur": "धुंधला करें",
-      "space": "स्थान"
+      "blur": "धुंधलापन",
+      "space": "स्थान",
+      "footer": {
+        "donate": "दान करें",
+        "chrome": "क्रोम",
+        "firefox": "फ़ायरफ़ॉक्स"
+      }
     },
     "preset": {
-      "addMessage": "वर्तमान सेटिंग जोड़ें",
-      "addItemTitle": "शीर्षक रहित",
+      "addMessage": "वर्तमान सेटिंग्स जोड़ें",
+      "addItemTitle": "अनाम",
       "defaultTitle": "डिफ़ॉल्ट",
       "transparentTitle": "पारदर्शी",
-      "simpleTitle": "सरल",
+      "simpleTitle": "साधारण",
       "deleteConfirmationMessage": "क्या आप वाकई इसे हटाना चाहते हैं?",
-      "delete": "हटाएं",
+      "delete": "हटाएँ",
       "cancel": "रद्द करें"
     }
   },
   "popup": {
     "language": "भाषा सेटिंग्स",
-    "showChatOnFullscreen": "पूर्ण-स्क्रीन चैट",
+    "showChatOnFullscreen": "पूर्ण स्क्रीन चैट",
     "links": "लिंक",
     "donate": "दान करें"
   }

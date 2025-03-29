@@ -5,21 +5,26 @@
         "preset": "Ön Ayar",
         "setting": "Ayarlar"
       },
-      "alwaysOnDisplay": "Her Zaman Açık Ekran",
-      "chatOnlyDisplay": "Yalnızca Sohbet Ekranı",
-      "userNameDisplay": "Kullanıcı İsmi Görüntüleme",
-      "userIconDisplay": "Kullanıcı İkonu Görüntüleme",
-      "reactionButtonDisplay": "Tepki Butonu Görüntüleme",
-      "superChatBarDisplay": "Süper Sohbet Barı Görüntüleme",
+      "alwaysOnDisplay": "Her Zaman Ekranda Görüntüle",
+      "chatOnlyDisplay": "Sadece Sohbeti Görüntüle",
+      "userNameDisplay": "Kullanıcı Adını Görüntüle",
+      "userIconDisplay": "Kullanıcı İkonunu Görüntüle",
+      "reactionButtonDisplay": "Tepki Butonunu Görüntüle",
+      "superChatBarDisplay": "Super Chat Çubuğunu Görüntüle",
       "backgroundColor": "Arka Plan Rengi",
       "fontColor": "Yazı Rengi",
-      "fontFamily": "Yazı Tipi",
+      "fontFamily": "Yazı Tipi Ailesi",
       "fontSize": "Yazı Boyutu",
       "blur": "Bulanıklık",
-      "space": "Boşluk"
+      "space": "Boşluk",
+      "footer": {
+        "donate": "Bağışta Bulun",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Mevcut Ayarları Ekle",
+      "addMessage": "Geçerli Ayarları Ekle",
       "addItemTitle": "Başlıksız",
       "defaultTitle": "Varsayılan",
       "transparentTitle": "Şeffaf",
@@ -33,6 +38,6 @@
     "language": "Dil Ayarları",
     "showChatOnFullscreen": "Tam Ekran Sohbet",
     "links": "Bağlantılar",
-    "donate": "Bağış Yap"
+    "donate": "Bağış"
   }
 }

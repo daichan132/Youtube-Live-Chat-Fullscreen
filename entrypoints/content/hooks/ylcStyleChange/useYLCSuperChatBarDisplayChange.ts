@@ -1,19 +1,23 @@
 import { useCallback } from 'react'
 
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 export const useYLCSuperChatBarDisplayChange = () => {
-  const changeSuperChatBarDisplay = useCallback((display: boolean) => {
-    const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    const iframeDocument = iframeElement?.contentDocument?.documentElement
-    if (!iframeDocument) return
-    iframeDocument.style.setProperty('--extension-super-chat-bar-display', display ? 'block' : 'none')
-  }, [])
+  const { setProperty } = useYLCStylePropertyChange()
+
+  const changeSuperChatBarDisplay = useCallback(
+    (display: boolean) => {
+      setProperty('--extension-super-chat-bar-display', display ? 'block' : 'none')
+    },
+    [setProperty],
+  )
+
   const changeDisplay = useCallback(
     (display: boolean) => {
       changeSuperChatBarDisplay(display)
     },
     [changeSuperChatBarDisplay],
   )
+
   return { changeDisplay }
 }

@@ -2,25 +2,30 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "پیش‌فرض",
+        "preset": "پیش تنظیم",
         "setting": "تنظیمات"
       },
-      "alwaysOnDisplay": "نمایش همیشه روشن",
+      "alwaysOnDisplay": "نمایش دائمی",
       "chatOnlyDisplay": "نمایش فقط چت",
-      "userNameDisplay": "نمایش نام کاربر",
+      "userNameDisplay": "نمایش نام کاربری",
       "userIconDisplay": "نمایش آیکون کاربر",
       "reactionButtonDisplay": "نمایش دکمه واکنش",
-      "superChatBarDisplay": "نمایش نوار سوپر چت",
-      "backgroundColor": "رنگ پس‌زمینه",
+      "superChatBarDisplay": "نمایش سوپر چت",
+      "backgroundColor": "رنگ پس زمینه",
       "fontColor": "رنگ فونت",
       "fontFamily": "خانواده فونت",
       "fontSize": "اندازه فونت",
       "blur": "تاری",
-      "space": "فاصله"
+      "space": "فضا",
+      "footer": {
+        "donate": "حمایت مالی",
+        "chrome": "کروم",
+        "firefox": "فایرفاکس"
+      }
     },
     "preset": {
       "addMessage": "افزودن تنظیمات فعلی",
-      "addItemTitle": "بدون عنوان",
+      "addItemTitle": "بی‌عنوان",
       "defaultTitle": "پیش‌فرض",
       "transparentTitle": "شفاف",
       "simpleTitle": "ساده",
@@ -31,8 +36,8 @@
   },
   "popup": {
     "language": "تنظیمات زبان",
-    "showChatOnFullscreen": "چت تمام صفحه",
+    "showChatOnFullscreen": "چت در حالت تمام‌صفحه",
     "links": "لینک‌ها",
-    "donate": "اهدا"
+    "donate": "حمایت مالی"
   }
 }

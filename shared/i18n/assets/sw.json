@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Violezo",
+        "preset": "Mapema",
         "setting": "Mipangilio"
       },
-      "alwaysOnDisplay": "Onyesho Kila Wakati",
-      "chatOnlyDisplay": "Onyesho la Mazungumzo Pekee",
-      "userNameDisplay": "Onyesho la Jina la Mtumiaji",
-      "userIconDisplay": "Onyesho la Aikoni ya Mtumiaji",
-      "reactionButtonDisplay": "Onyesho la Kitufe cha Majibu",
-      "superChatBarDisplay": "Onyesho la Kaunta ya Super Chat",
+      "alwaysOnDisplay": "Onyesha Daima",
+      "chatOnlyDisplay": "Onyesha Gumzo Pekee",
+      "userNameDisplay": "Onyesha Jina la Mtumiaji",
+      "userIconDisplay": "Onyesha Ikoni ya Mtumiaji",
+      "reactionButtonDisplay": "Onyesha Kitufe cha Mwitikio",
+      "superChatBarDisplay": "Onyesha Jopo la Super Chat",
       "backgroundColor": "Rangi ya Mandharinyuma",
       "fontColor": "Rangi ya Fonti",
       "fontFamily": "Aina ya Fonti",
       "fontSize": "Ukubwa wa Fonti",
-      "blur": "Fifia",
-      "space": "Nafasi"
+      "blur": "Fifisha",
+      "space": "Nafasi",
+      "footer": {
+        "donate": "Changia",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Ongeza Mipangilio ya Sasa",
       "addItemTitle": "Bila Jina",
-      "defaultTitle": "Chaguo la Kawaida",
+      "defaultTitle": "Chaguo-msingi",
       "transparentTitle": "Wazi",
       "simpleTitle": "Rahisi",
-      "deleteConfirmationMessage": "Je, una uhakika unataka kufuta?",
+      "deleteConfirmationMessage": "Una uhakika unataka kufuta?",
       "delete": "Futa",
       "cancel": "Ghairi"
     }
   },
   "popup": {
     "language": "Mipangilio ya Lugha",
-    "showChatOnFullscreen": "Mazungumzo kwa Skrini Nzima",
+    "showChatOnFullscreen": "Gumzo la Skrini Kamili",
     "links": "Viungo",
-    "donate": "Changisha"
+    "donate": "Changia"
   }
 }

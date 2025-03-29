@@ -2,28 +2,33 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Προεπιλογή",
+        "preset": "Προκαθορισμένη ρύθμιση",
         "setting": "Ρυθμίσεις"
       },
-      "alwaysOnDisplay": "Πάντα Ενεργή Οθόνη",
-      "chatOnlyDisplay": "Εμφάνιση Μόνο Συνομιλίας",
+      "alwaysOnDisplay": "Πάντα Εμφάνιση",
+      "chatOnlyDisplay": "Μόνο Εμφάνιση Συζητήσεων",
       "userNameDisplay": "Εμφάνιση Ονόματος Χρήστη",
-      "userIconDisplay": "Εμφάνιση Εικονιδίου Χρήστη",
+      "userIconDisplay": "Εμφάνιση Εικόνας Χρήστη",
       "reactionButtonDisplay": "Εμφάνιση Κουμπιού Αντίδρασης",
-      "superChatBarDisplay": "Εμφάνιση Ράβδου Super Chat",
+      "superChatBarDisplay": "Εμφάνιση Μπάρας Super Chat",
       "backgroundColor": "Χρώμα Φόντου",
       "fontColor": "Χρώμα Γραμματοσειράς",
       "fontFamily": "Οικογένεια Γραμματοσειράς",
       "fontSize": "Μέγεθος Γραμματοσειράς",
-      "blur": "Θόλωση",
-      "space": "Χώρος"
+      "blur": "Θάμπωμα",
+      "space": "Διάστημα",
+      "footer": {
+        "donate": "Δωρεά",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Προσθήκη Τρεχουσών Ρυθμίσεων",
       "addItemTitle": "Χωρίς Τίτλο",
       "defaultTitle": "Προεπιλογή",
-      "transparentTitle": "Διαφανής",
-      "simpleTitle": "Απλός",
+      "transparentTitle": "Διαφανές",
+      "simpleTitle": "Απλό",
       "deleteConfirmationMessage": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
       "delete": "Διαγραφή",
       "cancel": "Ακύρωση"
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "Ρυθμίσεις Γλώσσας",
-    "showChatOnFullscreen": "Συνομιλία Πλήρους Οθόνης",
+    "showChatOnFullscreen": "Συζήτηση σε Πλήρη Οθόνη",
     "links": "Σύνδεσμοι",
     "donate": "Δωρεά"
   }

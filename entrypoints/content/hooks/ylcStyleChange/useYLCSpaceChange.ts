@@ -1,13 +1,16 @@
 import { useCallback } from 'react'
 
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 export const useYLCSpaceChange = () => {
-  const changeSpace = useCallback((space: number) => {
-    const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    const iframeDocument = iframeElement?.contentDocument?.documentElement
-    if (!iframeDocument) return
-    iframeDocument.style.setProperty('--extension-yt-live-chat-spacing', `${space}px`)
-  }, [])
+  const { setProperty } = useYLCStylePropertyChange()
+
+  const changeSpace = useCallback(
+    (space: number) => {
+      setProperty('--extension-yt-live-chat-spacing', `${space}px`)
+    },
+    [setProperty],
+  )
+
   return { changeSpace }
 }

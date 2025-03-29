@@ -16,7 +16,12 @@
       "fontFamily": "フォントファミリー",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
-      "space": "スペース"
+      "space": "スペース",
+      "footer": {
+        "donate": "寄付",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "現在の設定を追加",

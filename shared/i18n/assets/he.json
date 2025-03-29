@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "קבוע מראש",
+        "preset": "הגדרה מוגדרת מראש",
         "setting": "הגדרות"
       },
       "alwaysOnDisplay": "תמיד בתצוגה",
       "chatOnlyDisplay": "תצוגת צ'אט בלבד",
       "userNameDisplay": "תצוגת שם משתמש",
-      "userIconDisplay": "תצוגת סמל משתמש",
+      "userIconDisplay": "תצוגת אייקון משתמש",
       "reactionButtonDisplay": "תצוגת כפתור תגובה",
-      "superChatBarDisplay": "תצוגת סרגל סופר צ'אט",
+      "superChatBarDisplay": "תצוגת סרגל גזע על",
       "backgroundColor": "צבע רקע",
       "fontColor": "צבע גופן",
-      "fontFamily": "פונט",
+      "fontFamily": "גופן",
       "fontSize": "גודל גופן",
       "blur": "טשטוש",
-      "space": "מרווח"
+      "space": "מרווח",
+      "footer": {
+        "donate": "תרום",
+        "chrome": "כרום",
+        "firefox": "פיירפוקס"
+      }
     },
     "preset": {
-      "addMessage": "הוסף הגדרות נוכחיות",
+      "addMessage": "הוסף את ההגדרות הנוכחיות",
       "addItemTitle": "ללא כותרת",
       "defaultTitle": "ברירת מחדל",
       "transparentTitle": "שקוף",
       "simpleTitle": "פשוט",
       "deleteConfirmationMessage": "האם אתה בטוח שברצונך למחוק?",
       "delete": "מחק",
-      "cancel": "ביטול"
+      "cancel": "בטל"
     }
   },
   "popup": {
     "language": "הגדרות שפה",
     "showChatOnFullscreen": "צ'אט במסך מלא",
     "links": "קישורים",
-    "donate": "תרומה"
+    "donate": "תרום"
   }
 }

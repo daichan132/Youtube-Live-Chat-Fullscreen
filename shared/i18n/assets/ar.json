@@ -2,26 +2,31 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "الافتراضية",
+        "preset": "الوضع المسبق",
         "setting": "الإعدادات"
       },
-      "alwaysOnDisplay": "العرض الدائم",
+      "alwaysOnDisplay": "العرض دائمًا",
       "chatOnlyDisplay": "عرض الدردشة فقط",
       "userNameDisplay": "عرض اسم المستخدم",
       "userIconDisplay": "عرض أيقونة المستخدم",
       "reactionButtonDisplay": "عرض زر التفاعل",
-      "superChatBarDisplay": "عرض شريط الدردشة الفائق",
+      "superChatBarDisplay": "عرض شريط السوبر شات",
       "backgroundColor": "لون الخلفية",
       "fontColor": "لون الخط",
       "fontFamily": "نوع الخط",
       "fontSize": "حجم الخط",
-      "blur": "تمويه",
-      "space": "المسافة"
+      "blur": "ضبابية",
+      "space": "الفراغ",
+      "footer": {
+        "donate": "تبرع",
+        "chrome": "كروم",
+        "firefox": "فايرفوكس"
+      }
     },
     "preset": {
       "addMessage": "إضافة الإعدادات الحالية",
       "addItemTitle": "بدون عنوان",
-      "defaultTitle": "الافتراضي",
+      "defaultTitle": "افتراضي",
       "transparentTitle": "شفاف",
       "simpleTitle": "بسيط",
       "deleteConfirmationMessage": "هل أنت متأكد أنك تريد الحذف؟",
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "إعدادات اللغة",
-    "showChatOnFullscreen": "دردشة ملء الشاشة",
+    "showChatOnFullscreen": "دردشة بملء الشاشة",
     "links": "روابط",
     "donate": "تبرع"
   }

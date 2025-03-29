@@ -5,18 +5,23 @@
         "preset": "Предустановка",
         "setting": "Настройки"
       },
-      "alwaysOnDisplay": "Постоянный дисплей",
+      "alwaysOnDisplay": "Всегда на экране",
       "chatOnlyDisplay": "Только чат",
       "userNameDisplay": "Отображение имени пользователя",
       "userIconDisplay": "Отображение иконки пользователя",
       "reactionButtonDisplay": "Кнопка реакции",
-      "superChatBarDisplay": "Панель супер чата",
+      "superChatBarDisplay": "Панель суперчата",
       "backgroundColor": "Цвет фона",
       "fontColor": "Цвет шрифта",
       "fontFamily": "Шрифт",
       "fontSize": "Размер шрифта",
       "blur": "Размытие",
-      "space": "Пространство"
+      "space": "Интервал",
+      "footer": {
+        "donate": "Пожертвовать",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Добавить текущие настройки",
@@ -26,12 +31,12 @@
       "simpleTitle": "Простой",
       "deleteConfirmationMessage": "Вы уверены, что хотите удалить?",
       "delete": "Удалить",
-      "cancel": "Отменить"
+      "cancel": "Отмена"
     }
   },
   "popup": {
     "language": "Настройки языка",
-    "showChatOnFullscreen": "Чат на полный экран",
+    "showChatOnFullscreen": "Полноэкранный режим чата",
     "links": "Ссылки",
     "donate": "Пожертвовать"
   }
