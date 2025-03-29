@@ -1,9 +1,9 @@
-import { CiSettings } from 'react-icons/ci'
-import { RiDraggable } from 'react-icons/ri'
-import { useIconDisplay } from '../hooks/useIconDisplay'
 import type { DraggableAttributes } from '@dnd-kit/core'
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 import type { RGBColor } from 'react-color'
+import { CiSettings } from 'react-icons/ci'
+import { RiDraggable } from 'react-icons/ri'
+import { useIconDisplay } from '../hooks/useIconDisplay'
 
 interface DragProps {
   attributes: DraggableAttributes
@@ -25,7 +25,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
   return (
     <>
       <div
-        className="absolute top-[4px] right-[48px] z-10 cursor-grab"
+        className='absolute top-[4px] right-[48px] z-10 cursor-grab'
         {...attributes}
         {...listeners}
         style={{ opacity: isIconDisplay ? 1 : 0 }}
@@ -37,12 +37,9 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         />
       </div>
 
-      <div
-        className="absolute top-[4px] right-[88px] z-10 cursor-pointer"
-        style={{ opacity: isIconDisplay ? 1 : 0 }}
-      >
+      <div className='absolute top-[4px] right-[88px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
         <CiSettings
-          className="rounded-[100%] transition-[background-color] p-[8px] hover:bg-black/10"
+          className='rounded-[100%] transition-[background-color] p-[8px] hover:bg-black/10'
           size={24}
           onClick={onSettingsClick}
           color={colorString}

@@ -1,7 +1,7 @@
 import { ClipPathEffect } from './ClipPathEffect'
+import { DisplayEffect } from './DisplayEffect'
 import { HoverEffect } from './HoverEffect'
 import { WindowResizeEffect } from './WindowResizeEffect'
-import { DisplayEffect } from './DisplayEffect'
 
 interface EffectsWrapperProps {
   isDragging: boolean

@@ -1,17 +1,17 @@
-import { useState } from 'react'
 import { useDraggable } from '@dnd-kit/core'
 import { Resizable } from 're-resizable'
+import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 
 import { useDisableTopTransition } from '../hooks/useDisableTopTransition'
+import { useDraggableItemEvents, useDraggableItemStyles } from '../hooks/useDraggableItemStyles'
 import { useResizableHandlers } from '../hooks/useResizableHandlers'
-import { useDraggableItemStyles, useDraggableItemEvents } from '../hooks/useDraggableItemStyles'
-import { EffectsWrapper } from './EffectComponent/EffectsWrapper'
 import { ControlIcons } from './ControlIcons'
+import { EffectsWrapper } from './EffectComponent/EffectsWrapper'
 
 interface DraggableItemProps {
   top: number
@@ -32,7 +32,12 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
     })),
   )
 
-  const { clip, isClipPath = false, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
+  const {
+    clip,
+    isClipPath = false,
+    setIsOpenSettingModal,
+    setIsHover,
+  } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       clip: state.clip,
       isClipPath: state.isClipPath,
@@ -78,19 +83,15 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
         onResizeStop={onResizeStop}
         style={{ ...resizableStyle, pointerEvents: resizableStyle.pointerEvents as React.CSSProperties['pointerEvents'] }}
       >
-        <div
-          className="relative h-full w-full pointer-events-auto"
-          style={innerDivStyle}
-          ref={setNodeRef}
-        >
+        <div className='relative h-full w-full pointer-events-auto' style={innerDivStyle} ref={setNodeRef}>
           <ControlIcons
             fontColor={fontColor}
             dragProps={{ attributes, listeners, isDragging }}
             onSettingsClick={() => setIsOpenSettingModal(true)}
           />
 
-          <div className="relative w-full h-full">
-            {isDragging && <div className="absolute w-100% h-100% z-100 cursor-grabbing bg-transparent" />}
+          <div className='relative w-full h-full'>
+            {isDragging && <div className='absolute w-100% h-100% z-100 cursor-grabbing bg-transparent' />}
             {children}
           </div>
         </div>

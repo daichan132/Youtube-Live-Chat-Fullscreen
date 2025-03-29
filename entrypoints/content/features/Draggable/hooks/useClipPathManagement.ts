@@ -1,5 +1,5 @@
-import { useCallback } from 'react'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useCallback } from 'react'
 
 interface ClipPathSizeAdjustment {
   setCoordinates: (coordinates: { x: number; y: number }) => void

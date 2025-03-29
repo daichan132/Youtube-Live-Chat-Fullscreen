@@ -29,11 +29,8 @@ export const Draggable = ({ children }: DraggableProps) => {
   }
 
   return (
-    <div className="absolute overflow-hidden top-0 left-0 w-screen h-screen">
-      <DndContext
-        onDragEnd={handleDragEnd}
-        modifiers={[restrictToWindowEdges]}
-      >
+    <div className='absolute overflow-hidden top-0 left-0 w-screen h-screen'>
+      <DndContext onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
         <DraggableItem top={coordinates.y} left={coordinates.x}>
           {children}
         </DraggableItem>

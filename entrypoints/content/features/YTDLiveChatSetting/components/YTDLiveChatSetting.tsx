@@ -96,25 +96,25 @@ export const YTDLiveChatSetting = () => {
         <div className='flex justify-end items-center px-7 py-6 border-t border-t-solid border-gray-200 bg-white text-xs'>
           <div className='flex gap-6'>
             <a
-              href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"
-              target="_blank"
-              rel="noopener noreferrer"
+              href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
+              target='_blank'
+              rel='noopener noreferrer'
               className='text-gray-400 hover:text-gray-700 transition-colors'
             >
               {t('content.setting.footer.chrome')}
             </a>
             <a
-              href="https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/"
-              target="_blank"
-              rel="noopener noreferrer"
+              href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
+              target='_blank'
+              rel='noopener noreferrer'
               className='text-gray-400 hover:text-gray-700 transition-colors'
             >
               {t('content.setting.footer.firefox')}
             </a>
             <a
-              href="https://ko-fi.com/daichan132"
-              target="_blank"
-              rel="noopener noreferrer"
+              href='https://ko-fi.com/daichan132'
+              target='_blank'
+              rel='noopener noreferrer'
               className='text-gray-400 hover:text-gray-700 transition-colors'
             >
               {t('content.setting.footer.donate')}

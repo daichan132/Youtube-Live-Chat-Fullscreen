@@ -1,7 +1,7 @@
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useCallback, useEffect } from 'react'
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useClipPathManagement } from '../../hooks/useClipPathManagement'
 
 interface ClipPathEffectProps {
@@ -14,12 +14,7 @@ interface ClipPathEffectProps {
  * Manages when to show/hide header and input areas based on user interaction
  */
 export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) => {
-  const {
-    alwaysOnDisplay,
-    chatOnlyDisplay,
-    setSize,
-    setCoordinates
-  } = useYTDLiveChatStore(
+  const { alwaysOnDisplay, chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
     useShallow(state => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
       alwaysOnDisplay: state.alwaysOnDisplay,
@@ -28,27 +23,19 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
     })),
   )
 
-  const {
-    isHover,
-    isClipPath,
-    isIframeLoaded,
-    isOpenSettingModal,
-    iframeElement,
-    setIsClipPath,
-    setIsHover,
-    setClip
-  } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      isHover: state.isHover,
-      isOpenSettingModal: state.isOpenSettingModal,
-      isClipPath: state.isClipPath,
-      isIframeLoaded: state.isIframeLoaded,
-      iframeElement: state.iframeElement,
-      setIsClipPath: state.setIsClipPath,
-      setIsHover: state.setIsHover,
-      setClip: state.setClip,
-    })),
-  )
+  const { isHover, isClipPath, isIframeLoaded, isOpenSettingModal, iframeElement, setIsClipPath, setIsHover, setClip } =
+    useYTDLiveChatNoLsStore(
+      useShallow(state => ({
+        isHover: state.isHover,
+        isOpenSettingModal: state.isOpenSettingModal,
+        isClipPath: state.isClipPath,
+        isIframeLoaded: state.isIframeLoaded,
+        iframeElement: state.iframeElement,
+        setIsClipPath: state.setIsClipPath,
+        setIsHover: state.setIsHover,
+        setClip: state.setClip,
+      })),
+    )
 
   const prevClipPath = usePrevious(isClipPath)
 
@@ -56,34 +43,20 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
   const { handleClipPathChange, getClip, removeFocus } = useClipPathManagement({
     setCoordinates,
     setSize,
-    iframeElement
+    iframeElement,
   })
 
   /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
     // Determine if clip path should be enabled
     const shouldEnableClipPath =
-      isIframeLoaded &&
-      alwaysOnDisplay &&
-      chatOnlyDisplay &&
-      !isDragging &&
-      !isResizing &&
-      (isOpenSettingModal || !isHover)
+      isIframeLoaded && alwaysOnDisplay && chatOnlyDisplay && !isDragging && !isResizing && (isOpenSettingModal || !isHover)
 
     // Set clip path state with small delay
     setTimeout(() => {
       setIsClipPath(shouldEnableClipPath)
     }, 10)
-  }, [
-    isHover,
-    alwaysOnDisplay,
-    isOpenSettingModal,
-    chatOnlyDisplay,
-    isDragging,
-    isResizing,
-    setIsClipPath,
-    isIframeLoaded
-  ])
+  }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing, setIsClipPath, isIframeLoaded])
 
   /* ------------------------- handle Clip Path change ------------------------ */
   useUpdateEffect(() => {
