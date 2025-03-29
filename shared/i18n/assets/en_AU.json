@@ -2,7 +2,7 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Pre-set",
+        "preset": "Preset",
         "setting": "Settings"
       },
       "alwaysOnDisplay": "Always On Display",
@@ -16,7 +16,12 @@
       "fontFamily": "Font Family",
       "fontSize": "Font Size",
       "blur": "Blur",
-      "space": "Space"
+      "space": "Space",
+      "footer": {
+        "donate": "Donate",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Add Current Settings",

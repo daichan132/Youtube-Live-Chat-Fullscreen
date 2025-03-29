@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ಪ್ರಿಗ್ರಹಣ ಮುದುರಿಕೆ",
-        "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+        "preset": "ಮುನ್ನಡೆ",
+        "setting": "ಸೆಟ್ಟಿಂಗ್ಗಳು"
       },
-      "alwaysOnDisplay": "ಸದ್ಯದಲ್ಲಿಯ ನೇರ ಪ್ರದರ್ಶನ",
-      "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ಪ್ರದರ್ಶನ",
-      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ಪ್ರದರ್ಶನ",
-      "userIconDisplay": "ಬಳಕೆದಾರರ ಐಕಾನ್ ಪ್ರದರ್ಶನ",
-      "reactionButtonDisplay": "ಪ್ರತಿಕ್ರಿಯೆ ಬಟನ್ ಪ್ರದರ್ಶನ",
-      "superChatBarDisplay": "ಸೂಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
+      "alwaysOnDisplay": "ಎಂದಿಗೂ ತೋರಿಸಲು",
+      "chatOnlyDisplay": "ಸಂವಾದ ಮಾತ್ರದ ಪ್ರದರ್ಶನ",
+      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರಿನ ಪ್ರದರ್ಶನ",
+      "userIconDisplay": "ಬಳಕೆದಾರರ ಚಿಹ್ನೆಯ ಪ್ರದರ್ಶನ",
+      "reactionButtonDisplay": "ಪ್ರತಿಕ್ರಿಯಾ ಬಟನ್ ಪ್ರದರ್ಶನ",
+      "superChatBarDisplay": "ಸುಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
       "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
       "fontColor": "ಅಕ್ಷರ ಬಣ್ಣ",
-      "fontFamily": "ಅಕ್ಷರ ಶೈಲಿ",
+      "fontFamily": "ಅಕ್ಷರ ಶ್ರೇಣಿ",
       "fontSize": "ಅಕ್ಷರ ಗಾತ್ರ",
-      "blur": "ಅಸ್ಪಷ್ಟ",
-      "space": "ಜಾಗ"
+      "blur": "ಮಸುಕಾಗು",
+      "space": "ಜಾಗ",
+      "footer": {
+        "donate": "ದೇಣಿಗೆ",
+        "chrome": "ಕ್ರೋಮ್",
+        "firefox": "ಫೈರ್ಫಾಕ್ಸ್"
+      }
     },
     "preset": {
-      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
-      "addItemTitle": "ಅನಾಮಧೇಯ",
+      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಸೇರಿಸಿ",
+      "addItemTitle": "ಶೀರ್ಷಿಕಾವಿಲ್ಲದ",
       "defaultTitle": "ಪೂರ್ವನಿಯೋಜಿತ",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
       "simpleTitle": "ಸರಳ",
-      "deleteConfirmationMessage": "ನೀವು ಖಚಿತವಾಗಿಯೂ ಅಳಿಸಲು ಬಯಸುವಿರಾ?",
+      "deleteConfirmationMessage": "ನೀವು ನಿಜವಾಗಿಯೂ ಅಳಿಸಲು ಇಚ್ಛಿಸುತ್ತೀರಾ?",
       "delete": "ಅಳಿಸಿ",
-      "cancel": "ರದ್ದುಗೊಳಿಸು"
+      "cancel": "ರದ್ದು ಮಾಡಿ"
     }
   },
   "popup": {
-    "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
-    "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ ಚಾಟ್",
-    "links": "ಲಿಂಕ್‌ಗಳು",
-    "donate": "ದಾನ"
+    "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್ಗಳು",
+    "showChatOnFullscreen": "ಪೂರ್ಣತೆರೆ ಚಾಟ್",
+    "links": "ಲಿಂಕುಗಳು",
+    "donate": "ದೇಣಿಗೆ"
   }
 }

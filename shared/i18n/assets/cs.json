@@ -2,36 +2,41 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Předvolba",
+        "preset": "Přednastavení",
         "setting": "Nastavení"
       },
-      "alwaysOnDisplay": "Vždy na obrazovce",
-      "chatOnlyDisplay": "Zobrazení pouze chatu",
-      "userNameDisplay": "Zobrazení uživatelského jména",
-      "userIconDisplay": "Zobrazení uživatelské ikony",
-      "reactionButtonDisplay": "Zobrazení tlačítka pro reakce",
-      "superChatBarDisplay": "Zobrazení Super Chat lišty",
-      "backgroundColor": "Barva pozadí",
-      "fontColor": "Barva písma",
-      "fontFamily": "Typ písma",
-      "fontSize": "Velikost písma",
+      "alwaysOnDisplay": "Vždy Zobrazit",
+      "chatOnlyDisplay": "Zobrazit Pouze Chat",
+      "userNameDisplay": "Zobrazit Uživatelské Jméno",
+      "userIconDisplay": "Zobrazit Uživatelskou Ikonu",
+      "reactionButtonDisplay": "Zobrazit Tlačítko Reakce",
+      "superChatBarDisplay": "Zobrazit Pruh Super Chatu",
+      "backgroundColor": "Barva Pozadí",
+      "fontColor": "Barva Písma",
+      "fontFamily": "Rodina Písma",
+      "fontSize": "Velikost Písma",
       "blur": "Rozmazání",
-      "space": "Prostor"
+      "space": "Mezera",
+      "footer": {
+        "donate": "Darovat",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Přidat aktuální nastavení",
+      "addMessage": "Přidat Aktuální Nastavení",
       "addItemTitle": "Bez názvu",
       "defaultTitle": "Výchozí",
       "transparentTitle": "Průhledný",
       "simpleTitle": "Jednoduchý",
-      "deleteConfirmationMessage": "Opravdu chcete smazat?",
-      "delete": "Smazat",
+      "deleteConfirmationMessage": "Opravdu chcete odstranit?",
+      "delete": "Odstranit",
       "cancel": "Zrušit"
     }
   },
   "popup": {
-    "language": "Nastavení jazyka",
-    "showChatOnFullscreen": "Zobrazit chat na celé obrazovce",
+    "language": "Jazyková Nastavení",
+    "showChatOnFullscreen": "Zobrazit Chat na Celou Obrazovku",
     "links": "Odkazy",
     "donate": "Darovat"
   }

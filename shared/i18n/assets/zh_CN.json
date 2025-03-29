@@ -8,15 +8,20 @@
       "alwaysOnDisplay": "始终显示",
       "chatOnlyDisplay": "仅聊天显示",
       "userNameDisplay": "用户名显示",
-      "userIconDisplay": "用户头像显示",
+      "userIconDisplay": "用户图标显示",
       "reactionButtonDisplay": "反应按钮显示",
       "superChatBarDisplay": "超级聊天栏显示",
       "backgroundColor": "背景颜色",
       "fontColor": "字体颜色",
-      "fontFamily": "字体",
+      "fontFamily": "字体系列",
       "fontSize": "字体大小",
       "blur": "模糊",
-      "space": "空间"
+      "space": "间距",
+      "footer": {
+        "donate": "捐赠",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "添加当前设置",

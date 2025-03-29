@@ -5,23 +5,28 @@
         "preset": "Prasetel",
         "setting": "Pengaturan"
       },
-      "alwaysOnDisplay": "Selalu di Tampilan",
-      "chatOnlyDisplay": "Hanya Tampilan Obrolan",
-      "userNameDisplay": "Tampilan Nama Pengguna",
-      "userIconDisplay": "Tampilan Ikon Pengguna",
-      "reactionButtonDisplay": "Tampilan Tombol Reaksi",
-      "superChatBarDisplay": "Tampilan Bilah Super Chat",
+      "alwaysOnDisplay": "Selalu Tampilkan",
+      "chatOnlyDisplay": "Tampilkan Chat Saja",
+      "userNameDisplay": "Tampilkan Nama Pengguna",
+      "userIconDisplay": "Tampilkan Ikon Pengguna",
+      "reactionButtonDisplay": "Tampilkan Tombol Reaksi",
+      "superChatBarDisplay": "Tampilkan Super Chat Bar",
       "backgroundColor": "Warna Latar Belakang",
       "fontColor": "Warna Huruf",
       "fontFamily": "Jenis Huruf",
       "fontSize": "Ukuran Huruf",
       "blur": "Kabur",
-      "space": "Ruang"
+      "space": "Ruang",
+      "footer": {
+        "donate": "Donasi",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Tambahkan Pengaturan Saat Ini",
-      "addItemTitle": "Belum Ada Judul",
-      "defaultTitle": "Default",
+      "addItemTitle": "Tanpa Judul",
+      "defaultTitle": "Standar",
       "transparentTitle": "Transparan",
       "simpleTitle": "Sederhana",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus?",
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "Pengaturan Bahasa",
-    "showChatOnFullscreen": "Obrolan Layar Penuh",
+    "showChatOnFullscreen": "Chat Layar Penuh",
     "links": "Tautan",
     "donate": "Donasi"
   }

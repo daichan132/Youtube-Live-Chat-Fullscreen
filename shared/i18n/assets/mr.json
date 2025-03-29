@@ -5,34 +5,39 @@
         "preset": "पूर्वनिर्धारित",
         "setting": "सेटिंग्ज"
       },
-      "alwaysOnDisplay": "नेहमी ऑन डिस्प्ले",
-      "chatOnlyDisplay": "फक्त चॅट डिस्प्ले",
-      "userNameDisplay": "वापरकर्ता नाव प्रदर्शन",
-      "userIconDisplay": "वापरकर्ता चिन्ह प्रदर्शन",
+      "alwaysOnDisplay": "नेहमी स्क्रीनवर",
+      "chatOnlyDisplay": "फक्त चॅट प्रदर्शन",
+      "userNameDisplay": "वापरकर्ता नावे प्रदर्शन",
+      "userIconDisplay": "वापरकर्ता आयकॉन प्रदर्शन",
       "reactionButtonDisplay": "प्रतिक्रिया बटण प्रदर्शन",
       "superChatBarDisplay": "सुपर चॅट बार प्रदर्शन",
-      "backgroundColor": "पार्श्वभूमी रंग",
+      "backgroundColor": "पार्श्वभूमीचा रंग",
       "fontColor": "फॉन्ट रंग",
       "fontFamily": "फॉन्ट कुटुंब",
       "fontSize": "फॉन्ट आकार",
-      "blur": "धूसर",
-      "space": "अंतर"
+      "blur": "ब्लर",
+      "space": "स्पेस",
+      "footer": {
+        "donate": "दान करा",
+        "chrome": "क्रोम",
+        "firefox": "फायरफॉक्स"
+      }
     },
     "preset": {
-      "addMessage": "वर्तमान सेटिंग्ज जोडा",
-      "addItemTitle": "शीर्षकविना",
-      "defaultTitle": "डीफॉल्ट",
+      "addMessage": "विद्यमान सेटिंग्ज जोडा",
+      "addItemTitle": "शीर्षक नाही",
+      "defaultTitle": "मूळ",
       "transparentTitle": "पारदर्शक",
-      "simpleTitle": "साधे",
-      "deleteConfirmationMessage": "आपण नक्की मिटवू इच्छिता?",
+      "simpleTitle": "साधा",
+      "deleteConfirmationMessage": "आपण नक्की हटवू इच्छिता?",
       "delete": "हटवा",
       "cancel": "रद्द करा"
     }
   },
   "popup": {
     "language": "भाषा सेटिंग्ज",
-    "showChatOnFullscreen": "पूर्ण स्क्रिन चॅट",
-    "links": "दुवे",
+    "showChatOnFullscreen": "पूर्ण स्क्रीनवर चॅट",
+    "links": "लिंक्स",
     "donate": "दान करा"
   }
 }

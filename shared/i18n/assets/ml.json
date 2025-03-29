@@ -2,36 +2,41 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "പ്രിസെറ്റ്",
+        "preset": "പ്രീസെറ്റ്",
         "setting": "ക്രമീകരണങ്ങൾ"
       },
-      "alwaysOnDisplay": "എപ്പോഴും പ്രദർശിപ്പിക്കുന്നു",
-      "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശനത്തിൻറെ പ്രദർശനം",
-      "userNameDisplay": "ഉപയോക്തൃ പേരുകൾ പ്രദർശനത്തിൻറെ പ്രദർശനം",
-      "userIconDisplay": "ഉപയോക്തൃ ഐക്കൺ പ്രദർശനത്തിൻറെ പ്രദർശനം",
-      "reactionButtonDisplay": "പ്രതികരണ ബട്ടൺ പ്രദർശനത്തിൻറെ പ്രദർശനം",
-      "superChatBarDisplay": "സൂപ്പർ ചാറ്റ് ബാർ പ്രദർശനം",
-      "backgroundColor": "നേര്‍കിയ നിറം",
+      "alwaysOnDisplay": "എല്ലായിടത്തും പ്രദർശിപ്പിക്കുക",
+      "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",
+      "userNameDisplay": "ഉപയോക്തൃ നാമം പ്രദർശിപ്പിക്കുക",
+      "userIconDisplay": "ഉപയോക്തൃ ഐകോൺ പ്രദർശിപ്പിക്കുക",
+      "reactionButtonDisplay": "പ്രതികരണ ബട്ടൺ പ്രദർശിപ്പിക്കുക",
+      "superChatBarDisplay": "സൂപ്പർ ചാറ്റ് ബാർ പ്രദർശിപ്പിക്കുക",
+      "backgroundColor": "പശ്ചാത്തല നിറം",
       "fontColor": "ഫോണ്ട് നിറം",
       "fontFamily": "ഫോണ്ട് കുടുംബം",
-      "fontSize": "ഫോണ്ട് വലിപ്പം",
-      "blur": "അസ്സ്പഷ്ടത",
-      "space": "സ്പേസ്"
+      "fontSize": "ഫോണ്ട് വലുപ്പം",
+      "blur": "അവല്ലപിക്കുന്നു",
+      "space": "ഇടം",
+      "footer": {
+        "donate": "സംഭാവന",
+        "chrome": "ക്രോം",
+        "firefox": "ഫയർഫോക്സ്"
+      }
     },
     "preset": {
-      "addMessage": "തற்பസാന്നികവർത്തമാന ക്രമീകരണങ്ങൾ ചേർക്കുക",
-      "addItemTitle": "ശീരോരഹിതം",
-      "defaultTitle": "സ്വാഭാവികം",
-      "transparentTitle": "പാരദർശകം",
-      "simpleTitle": "ലളിതം",
-      "deleteConfirmationMessage": "നിങ്ങളെ തന്റെ വിവാഹത്തിൽ നിന്നും നീക്കം ചെയ്യണമെങ്കിൽ ഉറപ്പാണോ?",
-      "delete": "മായക്കുക",
+      "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
+      "addItemTitle": "ശീർഷകമൊന്നുമില്ല",
+      "defaultTitle": "പൂർത്തീകരണം",
+      "transparentTitle": "പുതു ദൃദ്യമായ",
+      "simpleTitle": "ലളിതമായ",
+      "deleteConfirmationMessage": "നിങ്ങൾക്ക് നീക്കം ചെയ്യാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?",
+      "delete": "നീക്കം ചെയ്യുക",
       "cancel": "റദ്ദാക്കുക"
     }
   },
   "popup": {
     "language": "ഭാഷാ ക്രമീകരണങ്ങൾ",
-    "showChatOnFullscreen": "മുഴുവൻ സ്ക്രീനിൽ ചാറ്റ്",
+    "showChatOnFullscreen": "പൂർണ്ണസ്ക്രീൻ ചാറ്റ്",
     "links": "കണ്ണികൾ",
     "donate": "സംഭാവന"
   }

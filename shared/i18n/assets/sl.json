@@ -5,24 +5,29 @@
         "preset": "Prednastavitev",
         "setting": "Nastavitve"
       },
-      "alwaysOnDisplay": "Vedno na zaslonu",
+      "alwaysOnDisplay": "Vedno vklopljen prikaz",
       "chatOnlyDisplay": "Samo prikaz klepeta",
-      "userNameDisplay": "Prikaz uporabniškega imena",
-      "userIconDisplay": "Prikaz uporabniške ikone",
+      "userNameDisplay": "Prikaz imena uporabnika",
+      "userIconDisplay": "Prikaz ikone uporabnika",
       "reactionButtonDisplay": "Prikaz gumba za reakcije",
       "superChatBarDisplay": "Prikaz vrstice za super klepet",
       "backgroundColor": "Barva ozadja",
       "fontColor": "Barva pisave",
-      "fontFamily": "Pisava",
+      "fontFamily": "Družina pisav",
       "fontSize": "Velikost pisave",
       "blur": "Zameglitev",
-      "space": "Prostor"
+      "space": "Prostor",
+      "footer": {
+        "donate": "Doniraj",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Dodaj trenutne nastavitve",
-      "addItemTitle": "Neimenovan",
+      "addItemTitle": "Brez naslova",
       "defaultTitle": "Privzeto",
-      "transparentTitle": "Prozorno",
+      "transparentTitle": "Prosojno",
       "simpleTitle": "Enostavno",
       "deleteConfirmationMessage": "Ali ste prepričani, da želite izbrisati?",
       "delete": "Izbriši",

@@ -5,26 +5,31 @@
         "preset": "預設",
         "setting": "設定"
       },
-      "alwaysOnDisplay": "顯示恆常開啟",
-      "chatOnlyDisplay": "僅顯示聊天",
-      "userNameDisplay": "顯示使用者名稱",
-      "userIconDisplay": "顯示使用者圖示",
-      "reactionButtonDisplay": "顯示反應按鈕",
-      "superChatBarDisplay": "顯示超級聊天條",
+      "alwaysOnDisplay": "始終顯示",
+      "chatOnlyDisplay": "僅聊天顯示",
+      "userNameDisplay": "使用者名稱顯示",
+      "userIconDisplay": "使用者圖示顯示",
+      "reactionButtonDisplay": "反應按鈕顯示",
+      "superChatBarDisplay": "超級聊天欄顯示",
       "backgroundColor": "背景顏色",
       "fontColor": "字體顏色",
       "fontFamily": "字體",
       "fontSize": "字體大小",
       "blur": "模糊",
-      "space": "空間"
+      "space": "間距",
+      "footer": {
+        "donate": "捐款",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "新增當前設定",
+      "addMessage": "新增目前設定",
       "addItemTitle": "未命名",
       "defaultTitle": "預設",
       "transparentTitle": "透明",
       "simpleTitle": "簡單",
-      "deleteConfirmationMessage": "確定要刪除嗎？",
+      "deleteConfirmationMessage": "您確定要刪除嗎？",
       "delete": "刪除",
       "cancel": "取消"
     }
@@ -33,6 +38,6 @@
     "language": "語言設定",
     "showChatOnFullscreen": "全螢幕聊天",
     "links": "連結",
-    "donate": "捐贈"
+    "donate": "捐款"
   }
 }

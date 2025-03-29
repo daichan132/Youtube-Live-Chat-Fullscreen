@@ -5,18 +5,23 @@
         "preset": "Voreinstellung",
         "setting": "Einstellungen"
       },
-      "alwaysOnDisplay": "Immer eingeschaltet Anzeige",
-      "chatOnlyDisplay": "Nur Chat Anzeige",
-      "userNameDisplay": "Benutzername Anzeige",
-      "userIconDisplay": "Benutzersymbol Anzeige",
-      "reactionButtonDisplay": "Reaktionstasten Anzeige",
-      "superChatBarDisplay": "Super Chat Leiste Anzeige",
+      "alwaysOnDisplay": "Immer ein Display",
+      "chatOnlyDisplay": "Nur-Chat-Anzeige",
+      "userNameDisplay": "Benutzernamen-Anzeige",
+      "userIconDisplay": "Benutzersymbol-Anzeige",
+      "reactionButtonDisplay": "Reaktionsknopf-Anzeige",
+      "superChatBarDisplay": "Superchat-Leistenanzeige",
       "backgroundColor": "Hintergrundfarbe",
       "fontColor": "Schriftfarbe",
       "fontFamily": "Schriftfamilie",
       "fontSize": "Schriftgröße",
       "blur": "Unschärfe",
-      "space": "Abstand"
+      "space": "Raum",
+      "footer": {
+        "donate": "Spenden",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Aktuelle Einstellungen hinzufügen",
@@ -24,14 +29,14 @@
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
       "simpleTitle": "Einfach",
-      "deleteConfirmationMessage": "Sind Sie sicher, dass Sie löschen möchten?",
+      "deleteConfirmationMessage": "Möchten Sie wirklich löschen?",
       "delete": "Löschen",
       "cancel": "Abbrechen"
     }
   },
   "popup": {
     "language": "Spracheinstellungen",
-    "showChatOnFullscreen": "Vollbild Chat",
+    "showChatOnFullscreen": "Vollbild-Chat",
     "links": "Links",
     "donate": "Spenden"
   }

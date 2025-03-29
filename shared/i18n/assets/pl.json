@@ -2,27 +2,32 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Ustawienia wstępne",
+        "preset": "Ustawienie wstępne",
         "setting": "Ustawienia"
       },
       "alwaysOnDisplay": "Zawsze na ekranie",
-      "chatOnlyDisplay": "Tylko wyświetlanie czatu",
-      "userNameDisplay": "Wyświetlanie nazwy użytkownika",
-      "userIconDisplay": "Wyświetlanie ikony użytkownika",
-      "reactionButtonDisplay": "Wyświetlanie przycisku reakcji",
-      "superChatBarDisplay": "Wyświetlanie paska Super Chat",
+      "chatOnlyDisplay": "Wyświetlaj tylko czat",
+      "userNameDisplay": "Wyświetlaj nazwę użytkownika",
+      "userIconDisplay": "Wyświetlaj ikonę użytkownika",
+      "reactionButtonDisplay": "Wyświetlaj przycisk reakcji",
+      "superChatBarDisplay": "Wyświetlaj pasek Super Chat",
       "backgroundColor": "Kolor tła",
       "fontColor": "Kolor czcionki",
       "fontFamily": "Rodzina czcionek",
       "fontSize": "Rozmiar czcionki",
       "blur": "Rozmycie",
-      "space": "Przestrzeń"
+      "space": "Przestrzeń",
+      "footer": {
+        "donate": "Wesprzyj",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Dodaj bieżące ustawienia",
       "addItemTitle": "Bez tytułu",
       "defaultTitle": "Domyślny",
-      "transparentTitle": "Przejrzysty",
+      "transparentTitle": "Przezroczysty",
       "simpleTitle": "Prosty",
       "deleteConfirmationMessage": "Czy na pewno chcesz usunąć?",
       "delete": "Usuń",
@@ -33,6 +38,6 @@
     "language": "Ustawienia języka",
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Linki",
-    "donate": "Wpłata"
+    "donate": "Wesprzyj"
   }
 }

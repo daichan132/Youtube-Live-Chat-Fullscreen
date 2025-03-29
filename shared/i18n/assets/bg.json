@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Предварително зададени",
+        "preset": "Предварително зададено",
         "setting": "Настройки"
       },
-      "alwaysOnDisplay": "Винаги на дисплей",
-      "chatOnlyDisplay": "Само дисплей за чат",
-      "userNameDisplay": "Дисплей на потребителско име",
-      "userIconDisplay": "Дисплей на икона на потребител",
-      "reactionButtonDisplay": "Дисплей на бутон за реакция",
-      "superChatBarDisplay": "Дисплей на лента за супер чат",
+      "alwaysOnDisplay": "Винаги на дисплея",
+      "chatOnlyDisplay": "Само чат на дисплея",
+      "userNameDisplay": "Показване на потребителското име",
+      "userIconDisplay": "Показване на иконата на потребителя",
+      "reactionButtonDisplay": "Показване на бутона за реакция",
+      "superChatBarDisplay": "Показване на лентата за Super Chat",
       "backgroundColor": "Цвят на фона",
       "fontColor": "Цвят на шрифта",
       "fontFamily": "Шрифт",
       "fontSize": "Размер на шрифта",
       "blur": "Размазване",
-      "space": "Разстояние"
+      "space": "Разстояние",
+      "footer": {
+        "donate": "Дарете",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Добавяне на текущите настройки",
+      "addMessage": "Добавяне на текущи настройки",
       "addItemTitle": "Без заглавие",
       "defaultTitle": "По подразбиране",
-      "transparentTitle": "Прозрачност",
-      "simpleTitle": "Опростено",
+      "transparentTitle": "Прозрачен",
+      "simpleTitle": "Опостен",
       "deleteConfirmationMessage": "Сигурни ли сте, че искате да изтриете?",
-      "delete": "Изтрий",
+      "delete": "Изтриване",
       "cancel": "Отказ"
     }
   },
   "popup": {
-    "language": "Езикови настройки",
+    "language": "Настройки на езика",
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
-    "donate": "Дарение"
+    "donate": "Дарете"
   }
 }

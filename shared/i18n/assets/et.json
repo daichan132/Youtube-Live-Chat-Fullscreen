@@ -5,21 +5,26 @@
         "preset": "Eelseadistus",
         "setting": "Seaded"
       },
-      "alwaysOnDisplay": "Alati ekraanil",
-      "chatOnlyDisplay": "Ainult vestlus ekraanil",
-      "userNameDisplay": "Kasutajanime kuvamine",
-      "userIconDisplay": "Kasutaja ikooni kuvamine",
-      "reactionButtonDisplay": "Reaktsiooninupu kuvamine",
-      "superChatBarDisplay": "Super Chat riba kuvamine",
+      "alwaysOnDisplay": "Alati Ekraanil",
+      "chatOnlyDisplay": "Ainult Vestluse Näitamine",
+      "userNameDisplay": "Kasutajanime Näitamine",
+      "userIconDisplay": "Kasutaja Ikooni Näitamine",
+      "reactionButtonDisplay": "Reaktsiooninupu Näitamine",
+      "superChatBarDisplay": "SuperVestlusriba Näitamine",
       "backgroundColor": "Taustavärv",
-      "fontColor": "Fondi värv",
-      "fontFamily": "Fondi perekond",
-      "fontSize": "Fondi suurus",
-      "blur": "Hägusus",
-      "space": "Tühik"
+      "fontColor": "Kirjavärv",
+      "fontFamily": "Fontide Pere",
+      "fontSize": "Kirjavahe",
+      "blur": "Udusus",
+      "space": "Ruum",
+      "footer": {
+        "donate": "Annetage",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Lisa praegused seaded",
+      "addMessage": "Lisa Praegused Seaded",
       "addItemTitle": "Pealkirjata",
       "defaultTitle": "Vaikimisi",
       "transparentTitle": "Läbipaistev",
@@ -30,9 +35,9 @@
     }
   },
   "popup": {
-    "language": "Keele seaded",
-    "showChatOnFullscreen": "Täisekraanil vestlus",
+    "language": "Keele Seaded",
+    "showChatOnFullscreen": "Täisekraanil Vestlus",
     "links": "Lingid",
-    "donate": "Annetamine"
+    "donate": "Annetage"
   }
 }

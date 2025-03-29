@@ -2,37 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Cài đặt trước",
-        "setting": "Cài đặt"
+        "preset": "Cài Đặt Sẵn",
+        "setting": "Cài Đặt"
       },
-      "alwaysOnDisplay": "Luôn hiển thị màn hình",
-      "chatOnlyDisplay": "Chỉ hiển thị trò chuyện",
-      "userNameDisplay": "Hiển thị tên người dùng",
-      "userIconDisplay": "Hiển thị biểu tượng người dùng",
-      "reactionButtonDisplay": "Hiển thị nút phản ứng",
-      "superChatBarDisplay": "Hiển thị thanh Super Chat",
-      "backgroundColor": "Màu nền",
-      "fontColor": "Màu chữ",
-      "fontFamily": "Phông chữ",
-      "fontSize": "Kích thước chữ",
-      "blur": "Làm mờ",
-      "space": "Không gian"
+      "alwaysOnDisplay": "Luôn Hiển Thị",
+      "chatOnlyDisplay": "Chỉ Hiển Thị Trò Chuyện",
+      "userNameDisplay": "Hiển Thị Tên Người Dùng",
+      "userIconDisplay": "Hiển Thị Biểu Tượng Người Dùng",
+      "reactionButtonDisplay": "Hiển Thị Nút Phản Ứng",
+      "superChatBarDisplay": "Hiển Thị Thanh Super Chat",
+      "backgroundColor": "Màu Nền",
+      "fontColor": "Màu Chữ",
+      "fontFamily": "Phông Chữ",
+      "fontSize": "Kích Cỡ Chữ",
+      "blur": "Làm Mờ",
+      "space": "Không Gian",
+      "footer": {
+        "donate": "Quyên Góp",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Thêm cài đặt hiện tại",
-      "addItemTitle": "Chưa đặt tên",
-      "defaultTitle": "Mặc định",
-      "transparentTitle": "Trong suốt",
-      "simpleTitle": "Đơn giản",
-      "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa không?",
+      "addMessage": "Thêm Cài Đặt Hiện Tại",
+      "addItemTitle": "Chưa Có Tiêu Đề",
+      "defaultTitle": "Mặc Định",
+      "transparentTitle": "Trong Suốt",
+      "simpleTitle": "Đơn Giản",
+      "deleteConfirmationMessage": "Bạn có chắc muốn xóa không?",
       "delete": "Xóa",
       "cancel": "Hủy"
     }
   },
   "popup": {
-    "language": "Cài đặt ngôn ngữ",
-    "showChatOnFullscreen": "Trò chuyện toàn màn hình",
-    "links": "Liên kết",
-    "donate": "Quyên góp"
+    "language": "Cài Đặt Ngôn Ngữ",
+    "showChatOnFullscreen": "Trên Toàn Màn Hình",
+    "links": "Liên Kết",
+    "donate": "Quyên Góp"
   }
 }

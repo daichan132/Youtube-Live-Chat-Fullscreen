@@ -2,28 +2,33 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Forudindstilling",
+        "preset": "Forudindstillet",
         "setting": "Indstillinger"
       },
-      "alwaysOnDisplay": "Altid på skærmen",
-      "chatOnlyDisplay": "Kun chatvisning",
-      "userNameDisplay": "Vis brugernavn",
-      "userIconDisplay": "Vis brugerikon",
-      "reactionButtonDisplay": "Vis reaktionsknapper",
-      "superChatBarDisplay": "Vis superchat bar",
+      "alwaysOnDisplay": "Altid På Display",
+      "chatOnlyDisplay": "Kun Chat Display",
+      "userNameDisplay": "Brugernavn Display",
+      "userIconDisplay": "Brugerikon Display",
+      "reactionButtonDisplay": "Reaktionsknap Display",
+      "superChatBarDisplay": "Super Chat Bar Display",
       "backgroundColor": "Baggrundsfarve",
-      "fontColor": "Skrifttypefarve",
-      "fontFamily": "Skrifttypefamilie",
+      "fontColor": "Skriftfarve",
+      "fontFamily": "Skrifttype",
       "fontSize": "Skriftstørrelse",
       "blur": "Sløring",
-      "space": "Mellemrum"
+      "space": "Mellemrum",
+      "footer": {
+        "donate": "Doner",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Tilføj nuværende indstillinger",
-      "addItemTitle": "Uden titel",
+      "addMessage": "Tilføj Nuværende Indstillinger",
+      "addItemTitle": "Unavngivet",
       "defaultTitle": "Standard",
-      "transparentTitle": "Transparent",
-      "simpleTitle": "Simpel",
+      "transparentTitle": "Gennemsigtig",
+      "simpleTitle": "Enkel",
       "deleteConfirmationMessage": "Er du sikker på, at du vil slette?",
       "delete": "Slet",
       "cancel": "Annuller"
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "Sprogindstillinger",
-    "showChatOnFullscreen": "Fuldkærmschat",
+    "showChatOnFullscreen": "Fuldskærm Chat",
     "links": "Links",
     "donate": "Doner"
   }

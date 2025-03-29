@@ -2,29 +2,34 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Predefinido",
-        "setting": "Configuración"
+        "preset": "Preajuste",
+        "setting": "Configuraciones"
       },
       "alwaysOnDisplay": "Pantalla Siempre Activa",
-      "chatOnlyDisplay": "Solo Mostrar Chat",
+      "chatOnlyDisplay": "Pantalla Solo Chat",
       "userNameDisplay": "Mostrar Nombre de Usuario",
-      "userIconDisplay": "Mostrar Ícono de Usuario",
+      "userIconDisplay": "Mostrar Icono de Usuario",
       "reactionButtonDisplay": "Mostrar Botón de Reacción",
       "superChatBarDisplay": "Mostrar Barra de Super Chat",
       "backgroundColor": "Color de Fondo",
       "fontColor": "Color de Fuente",
-      "fontFamily": "Tipo de Letra",
+      "fontFamily": "Familia de Fuente",
       "fontSize": "Tamaño de Fuente",
       "blur": "Desenfoque",
-      "space": "Espacio"
+      "space": "Espacio",
+      "footer": {
+        "donate": "Donar",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
-      "addMessage": "Agregar Configuración Actual",
-      "addItemTitle": "Sin Título",
+      "addMessage": "Agregar Configuraciones Actuales",
+      "addItemTitle": "Sin título",
       "defaultTitle": "Predeterminado",
       "transparentTitle": "Transparente",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "¿Estás seguro de que deseas eliminar?",
+      "deleteConfirmationMessage": "¿Está seguro de que desea eliminar?",
       "delete": "Eliminar",
       "cancel": "Cancelar"
     }

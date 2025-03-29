@@ -5,18 +5,23 @@
         "preset": "Predefinição",
         "setting": "Configurações"
       },
-      "alwaysOnDisplay": "Sempre na Tela",
-      "chatOnlyDisplay": "Somente Chat na Tela",
-      "userNameDisplay": "Exibir Nome do Usuário",
-      "userIconDisplay": "Exibir Ícone do Usuário",
-      "reactionButtonDisplay": "Exibir Botão de Reação",
-      "superChatBarDisplay": "Exibir Barra de Super Chat",
+      "alwaysOnDisplay": "Sempre Exibido",
+      "chatOnlyDisplay": "Apenas Chat Exibido",
+      "userNameDisplay": "Exibição do Nome de Usuário",
+      "userIconDisplay": "Exibição do Ícone do Usuário",
+      "reactionButtonDisplay": "Exibição do Botão de Reação",
+      "superChatBarDisplay": "Exibição da Barra Super Chat",
       "backgroundColor": "Cor de Fundo",
       "fontColor": "Cor da Fonte",
       "fontFamily": "Família da Fonte",
       "fontSize": "Tamanho da Fonte",
-      "blur": "Desfocar",
-      "space": "Espaço"
+      "blur": "Desfoque",
+      "space": "Espaçamento",
+      "footer": {
+        "donate": "Doar",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Adicionar Configurações Atuais",
@@ -24,8 +29,8 @@
       "defaultTitle": "Padrão",
       "transparentTitle": "Transparente",
       "simpleTitle": "Simples",
-      "deleteConfirmationMessage": "Você tem certeza que deseja excluir?",
-      "delete": "Excluir",
+      "deleteConfirmationMessage": "Tem certeza de que deseja deletar?",
+      "delete": "Deletar",
       "cancel": "Cancelar"
     }
   },

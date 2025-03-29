@@ -2,25 +2,30 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Előre beállított",
+        "preset": "Előbeállítás",
         "setting": "Beállítások"
       },
-      "alwaysOnDisplay": "Mindig látható kijelző",
-      "chatOnlyDisplay": "Csak chat megjelenítése",
-      "userNameDisplay": "Felhasználónév megjelenítése",
-      "userIconDisplay": "Felhasználói ikon megjelenítése",
-      "reactionButtonDisplay": "Reakciógomb megjelenítése",
-      "superChatBarDisplay": "Super Chat sáv megjelenítése",
+      "alwaysOnDisplay": "Mindig látható megjelenítés",
+      "chatOnlyDisplay": "Csak chat megjelenítés",
+      "userNameDisplay": "Felhasználónév megjelenítés",
+      "userIconDisplay": "Felhasználói ikon megjelenítés",
+      "reactionButtonDisplay": "Reakció gomb megjelenítés",
+      "superChatBarDisplay": "Super Chat sáv megjelenítés",
       "backgroundColor": "Háttérszín",
       "fontColor": "Betűszín",
       "fontFamily": "Betűtípus",
       "fontSize": "Betűméret",
-      "blur": "Elmosódás",
-      "space": "Hely"
+      "blur": "Elmosás",
+      "space": "Hely",
+      "footer": {
+        "donate": "Adományozás",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Jelenlegi beállítások hozzáadása",
-      "addItemTitle": "Cím nélküli",
+      "addItemTitle": "Név nélküli",
       "defaultTitle": "Alapértelmezett",
       "transparentTitle": "Átlátszó",
       "simpleTitle": "Egyszerű",

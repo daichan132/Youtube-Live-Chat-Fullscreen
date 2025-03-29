@@ -6,21 +6,26 @@
         "setting": "Asetukset"
       },
       "alwaysOnDisplay": "Aina näytöllä",
-      "chatOnlyDisplay": "Vain chat -näyttö",
-      "userNameDisplay": "Käyttäjänimen näyttö",
-      "userIconDisplay": "Käyttäjäkuvakkeen näyttö",
+      "chatOnlyDisplay": "Vain keskustelu näytöllä",
+      "userNameDisplay": "Käyttäjänimenäyttö",
+      "userIconDisplay": "Käyttäjänikoninäyttö",
       "reactionButtonDisplay": "Reaktiopainikkeen näyttö",
-      "superChatBarDisplay": "Super chat -palkin näyttö",
+      "superChatBarDisplay": "Super Chat -palkkinäyttö",
       "backgroundColor": "Taustaväri",
-      "fontColor": "Fontin väri",
-      "fontFamily": "Fonttipoika",
+      "fontColor": "Fonttiväri",
+      "fontFamily": "Fontti",
       "fontSize": "Fonttikoko",
       "blur": "Sumennus",
-      "space": "Väli"
+      "space": "Väli",
+      "footer": {
+        "donate": "Lahjoita",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Lisää nykyiset asetukset",
-      "addItemTitle": "Nimeämätön",
+      "addItemTitle": "Nimetön",
       "defaultTitle": "Oletus",
       "transparentTitle": "Läpinäkyvä",
       "simpleTitle": "Yksinkertainen",
@@ -31,7 +36,7 @@
   },
   "popup": {
     "language": "Kieliasetukset",
-    "showChatOnFullscreen": "Kokoruudun chat",
+    "showChatOnFullscreen": "Kokoruudun keskustelu",
     "links": "Linkit",
     "donate": "Lahjoita"
   }

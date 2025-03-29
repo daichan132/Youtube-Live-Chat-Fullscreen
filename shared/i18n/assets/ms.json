@@ -5,8 +5,8 @@
         "preset": "Pratetap",
         "setting": "Tetapan"
       },
-      "alwaysOnDisplay": "Paparan Sentiasa Hidup",
-      "chatOnlyDisplay": "Paparan Hanya Sembang",
+      "alwaysOnDisplay": "Sentiasa Paparan",
+      "chatOnlyDisplay": "Paparan Chat Sahaja",
       "userNameDisplay": "Paparan Nama Pengguna",
       "userIconDisplay": "Paparan Ikon Pengguna",
       "reactionButtonDisplay": "Paparan Butang Reaksi",
@@ -16,22 +16,27 @@
       "fontFamily": "Keluarga Fon",
       "fontSize": "Saiz Fon",
       "blur": "Kabur",
-      "space": "Ruang"
+      "space": "Ruang",
+      "footer": {
+        "donate": "Derma",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
+      }
     },
     "preset": {
       "addMessage": "Tambah Tetapan Semasa",
       "addItemTitle": "Tanpa Tajuk",
-      "defaultTitle": "Lalai",
+      "defaultTitle": "Asal",
       "transparentTitle": "Telus",
       "simpleTitle": "Ringkas",
-      "deleteConfirmationMessage": "Adakah anda pasti ingin memadam?",
+      "deleteConfirmationMessage": "Adakah anda pasti mahu memadam?",
       "delete": "Padam",
       "cancel": "Batal"
     }
   },
   "popup": {
     "language": "Tetapan Bahasa",
-    "showChatOnFullscreen": "Sembang Skrin Penuh",
+    "showChatOnFullscreen": "Paparan Chat Penuh Skrin",
     "links": "Pautan",
     "donate": "Derma"
   }
