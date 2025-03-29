@@ -1,15 +1,24 @@
 import { useEffect } from 'react'
+import { useYouTubePointerEvents } from '../../hooks/useYouTubePointerEvents'
 
-export const HoverEffect = ({ isDragging }: { isDragging: boolean }) => {
+interface HoverEffectProps {
+  isDragging: boolean
+}
+
+/**
+ * Manages pointer events for YouTube app element while dragging
+ * Disables pointer events on the YouTube app when dragging to prevent interaction conflicts
+ */
+export const HoverEffect = ({ isDragging }: HoverEffectProps) => {
+  const { setYouTubePointerEvents } = useYouTubePointerEvents()
+
   useEffect(() => {
-    const ytdAppElement = document.body.querySelector('ytd-app')
-    if (!(ytdAppElement instanceof HTMLElement)) return
     if (isDragging) {
-      ytdAppElement.style.setProperty('pointer-events', 'none')
+      setYouTubePointerEvents('none')
     } else {
-      ytdAppElement.style.setProperty('pointer-events', 'all')
+      setYouTubePointerEvents('all')
     }
-  }, [isDragging])
+  }, [isDragging, setYouTubePointerEvents])
 
   return null
 }
