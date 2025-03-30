@@ -27,9 +27,9 @@
     "immer": "^10.1.1",
     "lodash-es": "^4.17.21",
     "re-resizable": "^6.11.2",
-    "react": "19.0.0",
+    "react": "19.1.0",
     "react-color": "^2.19.3",
-    "react-dom": "19.0.0",
+    "react-dom": "19.1.0",
     "react-i18next": "^15.4.1",
     "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",
@@ -60,7 +60,7 @@
     "unocss": "66.1.0-beta.7",
     "wxt": "0.20.0"
   },
-  "packageManager": "yarn@4.8.0",
+  "packageManager": "yarn@4.8.1",
   "browserslist": [
     "last 2 version",
     "ie >= 11",
