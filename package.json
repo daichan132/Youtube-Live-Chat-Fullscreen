@@ -60,7 +60,7 @@
     "unocss": "66.1.0-beta.7",
     "wxt": "0.20.0"
   },
-  "packageManager": "yarn@4.8.0",
+  "packageManager": "yarn@4.8.1",
   "browserslist": [
     "last 2 version",
     "ie >= 11",
