@@ -22,7 +22,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "classnames": "^2.5.1",
-    "i18next": "^24.2.3",
+    "i18next": "^25.0.0",
     "i18next-browser-languagedetector": "^8.0.4",
     "immer": "^10.1.1",
     "lodash-es": "^4.17.21",
