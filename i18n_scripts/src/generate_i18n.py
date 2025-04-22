@@ -27,22 +27,13 @@ def translate_language(code, language):
     # Resolve the absolute path for assets_dir
     assets_dir = settings.get_absolute_path("assets_dir")
 
-    # Skip translation if the target language is one of the base languages
-    if code in base_languages:
-        logger.info(f"Skipping {language} ({code}) as it's a base language")
-        return code, language
-
-    # Prepare base files to combine
-    files_to_combine = [
-        os.path.join(assets_dir, f"{base_lang}.json") for base_lang in base_languages
-    ]
-
     # Combine data from all base languages
-    combined_data = combine_json_data(files_to_combine)
-
-    # Get schema from primary language JSON
-    primary_source_path = os.path.join(assets_dir, f"{base_languages[0]}.json")
-    schema = build_response_format(primary_source_path)
+    combined_data = combine_json_data(
+        os.path.join(assets_dir, f"{base_lang}.json") for base_lang in base_languages
+    )
+    schema = build_response_format(
+        os.path.join(assets_dir, f"{base_languages[0]}.json")
+    )
 
     # Target path for the translated file
     target_path = os.path.join(assets_dir, f"{code}.json")
@@ -53,7 +44,11 @@ def translate_language(code, language):
 
     # Translate the combined data
     translated_data = translate(
-        json.dumps(combined_data, ensure_ascii=False), language, schema
+        "\n".join(
+            json.dumps(data, ensure_ascii=False, indent=2) for data in combined_data
+        ),
+        language,
+        schema,
     )
 
     # Save the translated data, creating directories if needed

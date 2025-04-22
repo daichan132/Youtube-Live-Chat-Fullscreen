@@ -59,15 +59,17 @@ def combine_json_data(files_to_combine):
     Returns:
         Combined JSON data dictionary
     """
-    combined_data = {}
+    combined_data = []
 
     for file_path in files_to_combine:
+        data = {}
         if os.path.exists(file_path):
             data = load_json_file(file_path)
             # Add data if key doesn't already exist
             for key, value in data.items():
-                if key not in combined_data:
-                    combined_data[key] = value
+                if key not in data:
+                    data[key] = value
+        combined_data.append(data)
 
     return combined_data
 

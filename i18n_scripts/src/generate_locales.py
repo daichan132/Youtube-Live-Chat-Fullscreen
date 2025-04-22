@@ -27,34 +27,28 @@ def translate_language(code, language):
     # Resolve the absolute path for locales_dir
     locales_dir = settings.get_absolute_path("locales_dir")
 
-    # Skip translation if the target language is one of the base languages
-    if code in base_languages:
-        logger.info(f"Skipping {language} ({code}) as it's a base language")
-        return code, language
-
     file_name = "messages.json"
-    # Prepare files to combine from configured locales_dir
-    files_to_combine = [
-        os.path.join(locales_dir, base_lang, file_name) for base_lang in base_languages
-    ]
-
     # Combine data from all base languages
-    combined_data = combine_json_data(files_to_combine)
+    combined_data = combine_json_data(
+        [
+            os.path.join(locales_dir, base_lang, file_name)
+            for base_lang in base_languages
+        ]
+    )
 
     # Get schema from primary language files
-    primary_source_path = os.path.join(locales_dir, base_languages[0], file_name)
-    schema = build_response_format(primary_source_path)
+    schema = build_response_format(
+        os.path.join(locales_dir, base_languages[0], file_name)
+    )
 
     # Target path for the translated file
     target_path = os.path.join(locales_dir, code, file_name)
-
-    # Log which base languages are being used
-    source_info = f"Combined from base languages: {', '.join(base_languages)}"
-    logger.info(f"  {source_info}")
-
-    # Translate the combined data
     translated_data = translate(
-        json.dumps(combined_data, ensure_ascii=False), language, schema
+        "\n".join(
+            json.dumps(data, ensure_ascii=False, indent=2) for data in combined_data
+        ),
+        language,
+        schema,
     )
 
     # Save the translated data, creating directories if needed
