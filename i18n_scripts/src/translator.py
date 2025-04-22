@@ -17,71 +17,6 @@ logger = get_logger(__name__)
 client = OpenAI()
 
 
-def combine_json_data(files_to_combine: List[str]) -> List[Dict[str, Any]]:
-    """
-    Combine JSON data from multiple files
-
-    Args:
-        files_to_combine: List of file paths to combine
-
-    Returns:
-        Combined JSON data from multiple files as a list
-    """
-    combined_data: List[Dict[str, Any]] = []
-
-    for file_path in files_to_combine:
-        data: Dict[str, Any] = {}
-        if os.path.exists(file_path):
-            # Load JSON file
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            # Add data if key doesn't already exist
-            for key, value in data.items():
-                if key not in data:
-                    data[key] = value
-        combined_data.append(data)
-
-    return combined_data
-
-
-def build_response_format(file_path: str) -> Dict[str, Any]:
-    """
-    Reads a JSON file (e.g. ja.json) and returns a JSON response_format
-    that reflects its structure. Designed for i18n file usage.
-    """
-    with open(file_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    def parse_value(value: Any) -> Dict[str, Any]:
-        if isinstance(value, dict):
-            return {
-                "type": "object",
-                "properties": {k: parse_value(v) for k, v in value.items()},
-                "required": list(value.keys()),
-                "additionalProperties": False,
-            }
-        elif isinstance(value, list):
-            return {
-                "type": "array",
-                "items": parse_value(value[0]) if value else {},
-            }
-        elif isinstance(value, bool):
-            return {"type": "boolean"}
-        elif isinstance(value, (int, float)):
-            return {"type": "number"}
-        else:
-            return {"type": "string"}
-
-    return {
-        "type": "json_schema",
-        "json_schema": {
-            "name": "locale_response",
-            "strict": True,
-            "schema": parse_value(data),
-        },
-    }
-
-
 class BaseTranslator(ABC):
     """Base class for translators"""
 
@@ -90,6 +25,43 @@ class BaseTranslator(ABC):
         self.target_language = target_language
         self.settings = get_settings()
         self.model = self.settings.openai_model
+
+    def build_response_format(self, file_path: str) -> Dict[str, Any]:
+        """
+        Reads a JSON file (e.g. ja.json) and returns a JSON response_format
+        that reflects its structure. Designed for i18n file usage.
+        """
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        def parse_value(value: Any) -> Dict[str, Any]:
+            if isinstance(value, dict):
+                return {
+                    "type": "object",
+                    "properties": {k: parse_value(v) for k, v in value.items()},
+                    "required": list(value.keys()),
+                    "additionalProperties": False,
+                }
+            elif isinstance(value, list):
+                return {
+                    "type": "array",
+                    "items": parse_value(value[0]) if value else {},
+                }
+            elif isinstance(value, bool):
+                return {"type": "boolean"}
+            elif isinstance(value, (int, float)):
+                return {"type": "number"}
+            else:
+                return {"type": "string"}
+
+        return {
+            "type": "json_schema",
+            "json_schema": {
+                "name": "locale_response",
+                "strict": True,
+                "schema": parse_value(data),
+            },
+        }
 
     @abstractmethod
     def get_base_files(self) -> List[str]:
@@ -108,37 +80,34 @@ class BaseTranslator(ABC):
 
     def translate(self) -> Dict[str, Any]:
         """Translate content using OpenAI API"""
-        # Get file paths
         base_files = self.get_base_files()
         schema_file = self.get_schema_file()
 
-        # Combine data from all base languages
-        combined_data = combine_json_data(base_files)
-
-        # Build response format schema
-        response_format = build_response_format(schema_file)
-
-        # Prepare combined data as text
+        # baseファイルをまとめて読み込み、combined_textを生成
         combined_text = "\n".join(
-            json.dumps(data, ensure_ascii=False, indent=2) for data in combined_data
+            json.dumps(
+                json.load(open(fp, "r", encoding="utf-8"))
+                if os.path.exists(fp)
+                else {},
+                ensure_ascii=False,
+                indent=2,
+            )
+            for fp in base_files
         )
 
-        # Build system prompt as a readable multi-line f-string
+        response_format = self.build_response_format(schema_file)
+
         system_prompt = f"""
 You are an expert localization assistant for the Chrome extension 'YouTube Live Chat Fullscreen'.
 Ensure the translation is natural, accurate, and culturally appropriate for {self.target_language} speakers using the extension.
 Translate all string values into {self.target_language} based on the JSON data from the following base languages: {", ".join(self.base_languages)}.
 """.strip()
 
-        # Make the API call
         response = client.chat.completions.create(
             model=self.model,
             messages=[
                 {"role": "system", "content": system_prompt},
-                {
-                    "role": "user",
-                    "content": combined_text,
-                },
+                {"role": "user", "content": combined_text},
             ],
             response_format=response_format,
         )
