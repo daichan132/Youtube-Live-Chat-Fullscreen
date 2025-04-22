@@ -55,12 +55,12 @@ Run the scripts using `uv run python`:
 
 - Generate translated Chrome extension locale files:
   ```bash
-  uv run python src/generate_locales.py
+  uv run python -m src.generate_locales
   ```
 
 - Generate translated JSON i18n asset files:
   ```bash
-  uv run python src/generate_i18n.py
+  uv run python -m src.generate_i18n
   ```
 
 ## How It Works

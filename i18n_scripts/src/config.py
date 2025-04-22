@@ -2,7 +2,7 @@
 
 import json
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 def get_config_path() -> str:
@@ -25,37 +25,41 @@ def load_config() -> Dict:
         return json.load(f)
 
 
-def get_config_value(key: str, default: Optional[any] = None) -> any:
-    """Get a value from the config."""
+def get_config_value(key: str, default: Optional[Any] = None) -> Any:
+    """Get a value from the config.
+
+    Raises:
+        KeyError: If the key is not found in the config and no default is provided.
+    """
     config = load_config()
+    if key not in config and default is None:
+        raise KeyError(f"Configuration key '{key}' not found in config file")
     return config.get(key, default)
 
 
 def get_base_langs() -> List[str]:
     """Get the base languages from the config."""
-    return get_config_value("base_langs", ["en", "ja"])
+    return get_config_value("base_langs")
 
 
 def get_locales_dir() -> str:
     """Get the locales directory from the config."""
-    config_dir = get_config_value("locales_dir", "../../public/_locales")
+    config_dir = get_config_value("locales_dir")
     return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", config_dir))
 
 
 def get_assets_dir() -> str:
     """Get the assets directory from the config."""
-    config_dir = get_config_value("assets_dir", "../../shared/i18n/assets")
+    config_dir = get_config_value("assets_dir")
     return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", config_dir))
 
 
 def get_lang_codes_file() -> str:
     """Get the language codes file from the config."""
-    config_file = get_config_value(
-        "lang_codes_file", "../../shared/i18n/language_codes.json"
-    )
+    config_file = get_config_value("lang_codes_file")
     return os.path.normpath(os.path.join(os.path.dirname(__file__), "..", config_file))
 
 
 def get_max_workers() -> int:
     """Get the maximum number of workers from the config."""
-    return get_config_value("max_workers", 3)
+    return get_config_value("max_workers")
