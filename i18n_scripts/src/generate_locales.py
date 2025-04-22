@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Tuple
 
 from src.config import get_settings
 from src.logger import get_logger
@@ -16,7 +17,7 @@ from src.utils import (
 logger = get_logger(__name__)
 
 
-def translate_language(code, language):
+def translate_language(code: str, language: str) -> Tuple[str, str]:
     """Process translation for a single language using multiple base languages"""
     logger.info(f"Started translating to {language} ({code})...")
 
@@ -57,7 +58,7 @@ def translate_language(code, language):
     return code, language
 
 
-def main():
+def main() -> None:
     # Load configuration
     settings = get_settings()
 

@@ -1,5 +1,6 @@
 import logging
 import sys
+from typing import Any, Optional
 
 # Define log levels
 NOTSET = logging.NOTSET
@@ -21,7 +22,7 @@ class ColoredFormatter(logging.Formatter):
         "RESET": "\033[0m",
     }
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord) -> str:
         levelname = record.levelname
         color = self.COLORS.get(levelname, self.COLORS["RESET"])
         reset = self.COLORS["RESET"]
@@ -31,7 +32,9 @@ class ColoredFormatter(logging.Formatter):
 
 
 # Configure the root logger
-def configure_logger(name=None, level=logging.INFO):
+def configure_logger(
+    name: Optional[str] = None, level: int = logging.INFO
+) -> logging.Logger:
     """
     Configure and return a logger with the given name and level.
 
@@ -67,31 +70,31 @@ def configure_logger(name=None, level=logging.INFO):
 
 
 # Create default module-level logger
-logger = configure_logger(__name__)
+logger: logging.Logger = configure_logger(__name__)
 
 
 # Helper functions for common log levels
-def debug(msg, *args, **kwargs):
+def debug(msg: Any, *args: Any, **kwargs: Any) -> None:
     logger.debug(msg, *args, **kwargs)
 
 
-def info(msg, *args, **kwargs):
+def info(msg: Any, *args: Any, **kwargs: Any) -> None:
     logger.info(msg, *args, **kwargs)
 
 
-def warning(msg, *args, **kwargs):
+def warning(msg: Any, *args: Any, **kwargs: Any) -> None:
     logger.warning(msg, *args, **kwargs)
 
 
-def error(msg, *args, **kwargs):
+def error(msg: Any, *args: Any, **kwargs: Any) -> None:
     logger.error(msg, *args, **kwargs)
 
 
-def critical(msg, *args, **kwargs):
+def critical(msg: Any, *args: Any, **kwargs: Any) -> None:
     logger.critical(msg, *args, **kwargs)
 
 
-def get_logger(name, level=logging.INFO):
+def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     """
     Get a logger with the specified name and level.
 

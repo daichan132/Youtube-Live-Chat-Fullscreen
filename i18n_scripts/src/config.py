@@ -74,7 +74,7 @@ class Settings(BaseModel):
 
 def get_config_path() -> str:
     """Get the path to the config file."""
-    config_path = os.path.normpath(
+    config_path: str = os.path.normpath(
         os.path.join(os.path.dirname(__file__), "..", "config.json")
     )
     logger.debug(f"Config path: {config_path}")
@@ -83,7 +83,7 @@ def get_config_path() -> str:
 
 def create_default_config() -> Settings:
     """Create default configuration."""
-    settings = Settings()
+    settings: Settings = Settings()
     logger.debug("Created default configuration")
     return settings
 
@@ -103,12 +103,12 @@ def init_settings() -> Settings:
         logger.debug("Settings already initialized")
         return _settings_instance
 
-    config_path = get_config_path()
+    config_path: str = get_config_path()
 
     # If config file doesn't exist, create default and save it
     if not os.path.exists(config_path):
         logger.warning(f"Config file not found at {config_path}, creating default")
-        settings = create_default_config()
+        settings: Settings = create_default_config()
 
         # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(config_path), exist_ok=True)
@@ -123,21 +123,21 @@ def init_settings() -> Settings:
     # Load config from file
     try:
         with open(config_path, "r", encoding="utf-8") as f:
-            config_data = json.load(f)
-            settings = Settings(**config_data)
+            config_data: dict = json.load(f)
+            settings: Settings = Settings(**config_data)
             logger.debug(f"Loaded configuration from {config_path}")
             _settings_instance = settings
             return settings
     except json.JSONDecodeError as e:
         logger.error(f"Error parsing config.json: {e}")
         logger.warning("Using default configuration instead")
-        settings = create_default_config()
+        settings: Settings = create_default_config()
         _settings_instance = settings
         return settings
     except Exception as e:
         logger.error(f"Error loading config: {e}")
         logger.warning("Using default configuration instead")
-        settings = create_default_config()
+        settings: Settings = create_default_config()
         _settings_instance = settings
         return settings
 

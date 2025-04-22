@@ -1,6 +1,7 @@
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from openai import OpenAI
 
@@ -14,7 +15,7 @@ logger = get_logger(__name__)
 client = OpenAI()
 
 
-def get_lang_codes(lang_codes_path=None):
+def get_lang_codes(lang_codes_path: Optional[str] = None) -> Dict[str, str]:
     """
     Load language codes JSON from the given path or default path from settings.
     """
@@ -27,12 +28,12 @@ def get_lang_codes(lang_codes_path=None):
         return json.load(f)
 
 
-def get_file_path(script_dir, path_parts):
+def get_file_path(script_dir: str, path_parts: Sequence[str]) -> str:
     """Construct file path from parts"""
     return os.path.join(script_dir, *path_parts)
 
 
-def load_json_file(file_path):
+def load_json_file(file_path: str) -> Dict[str, Any]:
     """Load and return JSON data from a file"""
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
@@ -40,7 +41,7 @@ def load_json_file(file_path):
     return {}
 
 
-def save_json_file(file_path, data, create_dirs=False):
+def save_json_file(file_path: str, data: Any, create_dirs: bool = False) -> None:
     """Save JSON data to a file"""
     if create_dirs:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
@@ -49,7 +50,7 @@ def save_json_file(file_path, data, create_dirs=False):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def combine_json_data(files_to_combine):
+def combine_json_data(files_to_combine: Sequence[str]) -> List[Dict[str, Any]]:
     """
     Combine JSON data from multiple files
 
@@ -59,10 +60,10 @@ def combine_json_data(files_to_combine):
     Returns:
         Combined JSON data dictionary
     """
-    combined_data = []
+    combined_data: List[Dict[str, Any]] = []
 
     for file_path in files_to_combine:
-        data = {}
+        data: Dict[str, Any] = {}
         if os.path.exists(file_path):
             data = load_json_file(file_path)
             # Add data if key doesn't already exist
@@ -74,7 +75,7 @@ def combine_json_data(files_to_combine):
     return combined_data
 
 
-def build_response_format(file_path: str) -> dict:
+def build_response_format(file_path: str) -> Dict[str, Any]:
     """
     Reads a JSON file (e.g. ja.json) and returns a JSON response_format
     that reflects its structure. Designed for i18n file usage.
@@ -82,7 +83,7 @@ def build_response_format(file_path: str) -> dict:
     with open(file_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    def parse_value(value) -> dict:
+    def parse_value(value: Any) -> Dict[str, Any]:
         if isinstance(value, dict):
             return {
                 "type": "object",
@@ -112,7 +113,9 @@ def build_response_format(file_path: str) -> dict:
     }
 
 
-def translate(text: str, target_language: str, response_format: dict) -> dict:
+def translate(
+    text: str, target_language: str, response_format: Dict[str, Any]
+) -> Dict[str, Any]:
     """Translate text using OpenAI API with model from config"""
     settings = get_settings()
     model = settings.openai_model
@@ -135,7 +138,11 @@ def translate(text: str, target_language: str, response_format: dict) -> dict:
     return json.loads(response.choices[0].message.content)
 
 
-def process_translations(lang_codes, translate_func, max_workers=None):
+def process_translations(
+    lang_codes: Dict[str, str],
+    translate_func: Callable[[str, str], Any],
+    max_workers: Optional[int] = None,
+) -> None:
     """
     Process all translations in parallel with limited concurrency
 
