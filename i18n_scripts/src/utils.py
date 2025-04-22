@@ -15,41 +15,6 @@ logger = get_logger(__name__)
 client = OpenAI()
 
 
-def get_lang_codes(lang_codes_path: Optional[str] = None) -> Dict[str, str]:
-    """
-    Load language codes JSON from the given path or default path from settings.
-    """
-    # Determine path if not provided
-    if not lang_codes_path:
-        settings = get_settings()
-        lang_codes_path = settings.get_absolute_path("lang_codes_file")
-
-    with open(lang_codes_path, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def get_file_path(script_dir: str, path_parts: Sequence[str]) -> str:
-    """Construct file path from parts"""
-    return os.path.join(script_dir, *path_parts)
-
-
-def load_json_file(file_path: str) -> Dict[str, Any]:
-    """Load and return JSON data from a file"""
-    if os.path.exists(file_path):
-        with open(file_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return {}
-
-
-def save_json_file(file_path: str, data: Any, create_dirs: bool = False) -> None:
-    """Save JSON data to a file"""
-    if create_dirs:
-        os.makedirs(os.path.dirname(file_path), exist_ok=True)
-
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
-
-
 def combine_json_data(files_to_combine: Sequence[str]) -> List[Dict[str, Any]]:
     """
     Combine JSON data from multiple files
@@ -58,14 +23,16 @@ def combine_json_data(files_to_combine: Sequence[str]) -> List[Dict[str, Any]]:
         files_to_combine: List of file paths to combine
 
     Returns:
-        Combined JSON data dictionary
+        Combined JSON data from multiple files as a list
     """
     combined_data: List[Dict[str, Any]] = []
 
     for file_path in files_to_combine:
         data: Dict[str, Any] = {}
         if os.path.exists(file_path):
-            data = load_json_file(file_path)
+            # Load JSON file
+            with open(file_path, "r", encoding="utf-8") as f:
+                data = json.load(f)
             # Add data if key doesn't already exist
             for key, value in data.items():
                 if key not in data:

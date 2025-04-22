@@ -7,9 +7,7 @@ from src.logger import get_logger
 from src.utils import (
     build_response_format,
     combine_json_data,
-    get_lang_codes,
     process_translations,
-    save_json_file,
     translate,
 )
 
@@ -53,7 +51,11 @@ def translate_language(code: str, language: str) -> Tuple[str, str]:
     )
 
     # Save the translated data, creating directories if needed
-    save_json_file(target_path, translated_data, create_dirs=True)
+    if not os.path.exists(os.path.dirname(target_path)):
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+
+    with open(target_path, "w", encoding="utf-8") as f:
+        json.dump(translated_data, f, ensure_ascii=False, indent=2)
 
     return code, language
 
@@ -62,11 +64,10 @@ def main() -> None:
     # Load configuration
     settings = get_settings()
 
-    # Resolve the absolute path for lang_codes_file
+    # Resolve the absolute path for lang_codes_file and load language codes
     lang_codes_file = settings.get_absolute_path("lang_codes_file")
-
-    # Load language codes from configured JSON
-    lang_codes = get_lang_codes(lang_codes_file)
+    with open(lang_codes_file, "r", encoding="utf-8") as f:
+        lang_codes = json.load(f)
 
     # Start parallel translations with configured concurrency
     process_translations(
