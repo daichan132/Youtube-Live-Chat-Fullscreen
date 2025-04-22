@@ -3,15 +3,11 @@
 import json
 import os
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from openai import OpenAI
 
-from src.config import get_settings
-from src.logger import get_logger
-
-# Create a logger for this module
-logger = get_logger(__name__)
+from src.config import Settings, get_settings
 
 # Create the OpenAI client
 client = OpenAI()
@@ -20,7 +16,7 @@ client = OpenAI()
 class BaseTranslator(ABC):
     """Base class for translators"""
 
-    def __init__(self, target_language: str, settings=None):
+    def __init__(self, target_language: str, settings: Optional[Settings] = None):
         self.settings = settings or get_settings()
         self.target_language = target_language
 
@@ -130,7 +126,7 @@ Translate all string values into {target_language} based on the JSON data from t
 class LocalesTranslator(BaseTranslator):
     """Translator for Chrome extension locales"""
 
-    def __init__(self, target_language: str, settings=None):
+    def __init__(self, target_language: str, settings: Optional[Settings] = None):
         super().__init__(target_language, settings)
 
     def get_base_files(self) -> List[str]:
@@ -155,7 +151,7 @@ class LocalesTranslator(BaseTranslator):
 class I18nTranslator(BaseTranslator):
     """Translator for i18n JSON assets"""
 
-    def __init__(self, target_language: str, settings=None):
+    def __init__(self, target_language: str, settings: Optional[Settings] = None):
         super().__init__(target_language, settings)
 
     def get_base_files(self) -> List[str]:

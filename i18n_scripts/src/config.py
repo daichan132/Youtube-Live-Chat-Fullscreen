@@ -8,10 +8,7 @@ from typing import List
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core import PydanticCustomError
 
-from src.logger import get_logger
-
-# Create a logger for this module
-logger = get_logger(__name__)
+from src.logger import logger
 
 
 class Settings(BaseModel):

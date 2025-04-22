@@ -3,10 +3,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Any, Callable, Dict, Optional
 
-from src.logger import get_logger
-
-# Create a logger for this module
-logger = get_logger(__name__)
+from src.logger import logger
 
 
 def process_translations(
@@ -29,6 +26,10 @@ def process_translations(
 
     base_langs = settings.base_langs
     logger.info(f"Starting translations with {max_workers} concurrent workers...")
+    # base_langsに含まれる言語は除外してsubmit
+    filtered_langs = {
+        code: name for code, name in lang_codes.items() if code not in base_langs
+    }
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         # Submit all translation tasks
         future_to_lang = {
@@ -36,15 +37,12 @@ def process_translations(
                 lang_code,
                 lang_name,
             )
-            for lang_code, lang_name in lang_codes.items()
+            for lang_code, lang_name in filtered_langs.items()
         }
 
         # Process results as they complete
         for future in as_completed(future_to_lang):
             lang_code, lang_name = future_to_lang[future]
-            if lang_code in base_langs:
-                logger.info(f"Skipping base language: {lang_name} ({lang_code})")
-                continue
             try:
                 result_code, result_language = future.result()
                 logger.info(
