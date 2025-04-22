@@ -2,7 +2,8 @@
 
 import json
 import os
-from typing import List, Optional
+from functools import lru_cache
+from typing import List
 
 from pydantic import BaseModel, Field, field_validator
 from pydantic_core import PydanticCustomError
@@ -72,22 +73,16 @@ class Settings(BaseModel):
         return absolute_path
 
 
-# Global settings instance - will be initialized once
-_settings_instance: Optional[Settings] = None
-
-
-def init_settings() -> Settings:
+def get_settings() -> Settings:
     """
-    Initialize the global settings instance.
-    This should be called once at application startup.
-    If already initialized, returns the existing instance.
+    Get the application settings (cached).
+    Loads config.json on first call, then returns cached Settings instance.
     """
-    global _settings_instance
+    return _load_settings()
 
-    if _settings_instance is not None:
-        logger.debug("Settings already initialized")
-        return _settings_instance
 
+@lru_cache(maxsize=1)
+def _load_settings() -> Settings:
     config_path = os.path.normpath(
         os.path.join(os.path.dirname(__file__), "..", "config.json")
     )
@@ -98,15 +93,9 @@ def init_settings() -> Settings:
         logger.warning(f"Config file not found at {config_path}, creating default")
         settings = Settings()
         logger.debug("Created default configuration")
-
-        # Create directory if it doesn't exist
         os.makedirs(os.path.dirname(config_path), exist_ok=True)
-
-        # Save default config
         with open(config_path, "w", encoding="utf-8") as f:
             json.dump(settings.model_dump(), f, ensure_ascii=False, indent=2)
-
-        _settings_instance = settings
         return settings
 
     # Load config from file
@@ -115,31 +104,12 @@ def init_settings() -> Settings:
             config_data = json.load(f)
             settings = Settings(**config_data)
             logger.debug(f"Loaded configuration from {config_path}")
-            _settings_instance = settings
             return settings
     except json.JSONDecodeError as e:
         logger.error(f"Error parsing config.json: {e}")
         logger.warning("Using default configuration instead")
-        settings = Settings()
-        _settings_instance = settings
-        return settings
+        return Settings()
     except Exception as e:
         logger.error(f"Error loading config: {e}")
         logger.warning("Using default configuration instead")
-        settings = Settings()
-        _settings_instance = settings
-        return settings
-
-
-def get_settings() -> Settings:
-    """
-    Get the application settings.
-    If settings have not been initialized, initialize them.
-    """
-    global _settings_instance
-
-    if _settings_instance is None:
-        logger.debug("Settings not initialized, initializing now")
-        return init_settings()
-
-    return _settings_instance
+        return Settings()

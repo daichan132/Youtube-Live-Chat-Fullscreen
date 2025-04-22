@@ -10,24 +10,20 @@ from src.utils import process_translations
 logger = get_logger(__name__)
 
 
-def translate_language(code: str, language: str) -> Tuple[str, str]:
+def translate_language(lang_code: str, lang_name: str) -> Tuple[str, str]:
     """Process translation for a single language using multiple base languages"""
-    logger.info(f"Started translating to {language} ({code})...")
-
-    # Get configuration
-    settings = get_settings()
-    base_languages = settings.base_langs
+    logger.info(f"Started translating to {lang_name} ({lang_code})...")
 
     # Create a translator instance
-    translator = LocalesTranslator(base_languages, language)
+    translator = LocalesTranslator(lang_name)
 
     # Translate using base languages
     translated_data = translator.translate()
 
     # Save the result
-    translator.save_translation(code, translated_data)
+    translator.save_translation(lang_code, translated_data)
 
-    return code, language
+    return lang_code, lang_name
 
 
 def main() -> None:
@@ -41,7 +37,7 @@ def main() -> None:
 
     # Start parallel translations with configured concurrency
     process_translations(
-        lang_codes, translate_language, max_workers=settings.max_workers
+        lang_codes, translate_language, settings, max_workers=settings.max_workers
     )
 
 
