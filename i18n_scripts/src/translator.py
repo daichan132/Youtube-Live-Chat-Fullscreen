@@ -123,14 +123,18 @@ class BaseTranslator(ABC):
             json.dumps(data, ensure_ascii=False, indent=2) for data in combined_data
         )
 
+        # Build system prompt as a readable multi-line f-string
+        system_prompt = f"""
+You are an expert localization assistant for the Chrome extension 'YouTube Live Chat Fullscreen'.
+Ensure the translation is natural, accurate, and culturally appropriate for {self.target_language} speakers using the extension.
+Translate all string values into {self.target_language} based on the JSON data from the following base languages: {", ".join(self.base_languages)}.
+""".strip()
+
         # Make the API call
         response = client.chat.completions.create(
             model=self.model,
             messages=[
-                {
-                    "role": "system",
-                    "content": f"I want to generate json data for i18n for an extension called YouTube Live Chat Fullscreen. Translate the following json into {self.target_language}",
-                },
+                {"role": "system", "content": system_prompt},
                 {
                     "role": "user",
                     "content": combined_text,
