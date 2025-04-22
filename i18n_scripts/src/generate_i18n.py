@@ -1,7 +1,7 @@
 import json
 import os
 
-from utils import (
+from i18n_scripts.src.utils import (
     build_response_format,
     combine_json_data,
     get_file_path,
@@ -25,13 +25,12 @@ def translate_language(code, language):
         print(f"Skipping {language} ({code}) as it's a base language")
         return code, language
 
-    # Path components for locales
-    locales_path = ["..", "public", "_locales"]
-    file_name = "messages.json"
+    # Path components for i18n assets
+    i18n_path = ["..", "shared", "i18n", "assets"]
 
     # Prepare files to combine
     files_to_combine = [
-        get_file_path(script_dir, locales_path + [base_lang, file_name])
+        get_file_path(script_dir, i18n_path + [f"{base_lang}.json"])
         for base_lang in base_languages
     ]
 
@@ -40,12 +39,12 @@ def translate_language(code, language):
 
     # Get schema from primary language
     primary_source_path = get_file_path(
-        script_dir, locales_path + [base_languages[0], file_name]
+        script_dir, i18n_path + [f"{base_languages[0]}.json"]
     )
     schema = build_response_format(primary_source_path)
 
     # Target path for the translated file
-    target_path = get_file_path(script_dir, locales_path + [code, file_name])
+    target_path = get_file_path(script_dir, i18n_path + [f"{code}.json"])
 
     # Log which base languages are being used
     source_info = f"Combined from base languages: {', '.join(base_languages)}"
@@ -56,8 +55,8 @@ def translate_language(code, language):
         json.dumps(combined_data, ensure_ascii=False), language, schema
     )
 
-    # Save the translated data, creating directories if needed
-    save_json_file(target_path, translated_data, create_dirs=True)
+    # Save the translated data
+    save_json_file(target_path, translated_data)
 
     return code, language
 
