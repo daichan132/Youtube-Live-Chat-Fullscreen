@@ -1,108 +1,13 @@
-import json
-import os
-from concurrent.futures import ProcessPoolExecutor, as_completed
-from typing import Any, Callable, Dict, List, Optional, Sequence
+"""Utility functions for i18n scripts."""
 
-from openai import OpenAI
+from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import Any, Callable, Dict, Optional
 
 from src.config import get_settings
 from src.logger import get_logger
 
 # Create a logger for this module
 logger = get_logger(__name__)
-
-# Create the OpenAI client
-client = OpenAI()
-
-
-def combine_json_data(files_to_combine: Sequence[str]) -> List[Dict[str, Any]]:
-    """
-    Combine JSON data from multiple files
-
-    Args:
-        files_to_combine: List of file paths to combine
-
-    Returns:
-        Combined JSON data from multiple files as a list
-    """
-    combined_data: List[Dict[str, Any]] = []
-
-    for file_path in files_to_combine:
-        data: Dict[str, Any] = {}
-        if os.path.exists(file_path):
-            # Load JSON file
-            with open(file_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            # Add data if key doesn't already exist
-            for key, value in data.items():
-                if key not in data:
-                    data[key] = value
-        combined_data.append(data)
-
-    return combined_data
-
-
-def build_response_format(file_path: str) -> Dict[str, Any]:
-    """
-    Reads a JSON file (e.g. ja.json) and returns a JSON response_format
-    that reflects its structure. Designed for i18n file usage.
-    """
-    with open(file_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    def parse_value(value: Any) -> Dict[str, Any]:
-        if isinstance(value, dict):
-            return {
-                "type": "object",
-                "properties": {k: parse_value(v) for k, v in value.items()},
-                "required": list(value.keys()),
-                "additionalProperties": False,
-            }
-        elif isinstance(value, list):
-            return {
-                "type": "array",
-                "items": parse_value(value[0]) if value else {},
-            }
-        elif isinstance(value, bool):
-            return {"type": "boolean"}
-        elif isinstance(value, (int, float)):
-            return {"type": "number"}
-        else:
-            return {"type": "string"}
-
-    return {
-        "type": "json_schema",
-        "json_schema": {
-            "name": "locale_response",
-            "strict": True,
-            "schema": parse_value(data),
-        },
-    }
-
-
-def translate(
-    text: str, target_language: str, response_format: Dict[str, Any]
-) -> Dict[str, Any]:
-    """Translate text using OpenAI API with model from config"""
-    settings = get_settings()
-    model = settings.openai_model
-
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {
-                "role": "system",
-                "content": f"I want to generate json data for i18n for an extension called YouTube Live Chat Fullscreen. Translate the following json into {target_language}",
-            },
-            {
-                "role": "user",
-                "content": text,
-            },
-        ],
-        response_format=response_format,
-    )
-
-    return json.loads(response.choices[0].message.content)
 
 
 def process_translations(

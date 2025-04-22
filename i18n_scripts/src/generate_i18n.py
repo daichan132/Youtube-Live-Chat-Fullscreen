@@ -1,15 +1,10 @@
 import json
-import os
 from typing import Tuple
 
 from src.config import get_settings
 from src.logger import get_logger
-from src.utils import (
-    build_response_format,
-    combine_json_data,
-    process_translations,
-    translate,
-)
+from src.translator import I18nTranslator
+from src.utils import process_translations
 
 # Create a logger for this module
 logger = get_logger(__name__)
@@ -23,39 +18,18 @@ def translate_language(code: str, language: str) -> Tuple[str, str]:
     settings = get_settings()
     base_languages = settings.base_langs
 
-    # Resolve the absolute path for assets_dir
-    assets_dir = settings.get_absolute_path("assets_dir")
-
-    # Combine data from all base languages
-    combined_data = combine_json_data(
-        os.path.join(assets_dir, f"{base_lang}.json") for base_lang in base_languages
-    )
-    schema = build_response_format(
-        os.path.join(assets_dir, f"{base_languages[0]}.json")
-    )
-
-    # Target path for the translated file
-    target_path = os.path.join(assets_dir, f"{code}.json")
-
     # Log which base languages are being used
     source_info = f"Combined from base languages: {', '.join(base_languages)}"
     logger.info(f"  {source_info}")
 
-    # Translate the combined data
-    translated_data = translate(
-        "\n".join(
-            json.dumps(data, ensure_ascii=False, indent=2) for data in combined_data
-        ),
-        language,
-        schema,
-    )
+    # Create a translator instance
+    translator = I18nTranslator(base_languages, language)
 
-    # Save the translated data, creating directories if needed
-    if not os.path.exists(os.path.dirname(target_path)):
-        os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    # Translate using base languages
+    translated_data = translator.translate()
 
-    with open(target_path, "w", encoding="utf-8") as f:
-        json.dump(translated_data, f, ensure_ascii=False, indent=2)
+    # Save the result
+    translator.save_translation(code, translated_data)
 
     return code, language
 
