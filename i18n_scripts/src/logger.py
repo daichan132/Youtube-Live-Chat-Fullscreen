@@ -10,6 +10,26 @@ ERROR = logging.ERROR
 CRITICAL = logging.CRITICAL
 
 
+class ColoredFormatter(logging.Formatter):
+    # ANSI escape codes for colors
+    COLORS = {
+        "DEBUG": "\033[36m",  # Cyan
+        "INFO": "\033[32m",  # Green
+        "WARNING": "\033[33m",  # Yellow
+        "ERROR": "\033[31m",  # Red
+        "CRITICAL": "\033[41m\033[97m",  # White on Red background
+        "RESET": "\033[0m",
+    }
+
+    def format(self, record):
+        levelname = record.levelname
+        color = self.COLORS.get(levelname, self.COLORS["RESET"])
+        reset = self.COLORS["RESET"]
+        record.levelname = f"{color}{levelname}{reset}"
+        record.msg = f"{color}{record.msg}{reset}"
+        return super().format(record)
+
+
 # Configure the root logger
 def configure_logger(name=None, level=logging.INFO):
     """
@@ -34,7 +54,7 @@ def configure_logger(name=None, level=logging.INFO):
     console_handler.setLevel(level)
 
     # Create formatter
-    formatter = logging.Formatter(
+    formatter = ColoredFormatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
     )
