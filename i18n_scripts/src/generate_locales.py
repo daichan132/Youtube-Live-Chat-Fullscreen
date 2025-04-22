@@ -7,6 +7,7 @@ from src.config import (
     get_locales_dir,
     get_max_workers,
 )
+from src.logger import get_logger
 from src.utils import (
     build_response_format,
     combine_json_data,
@@ -16,10 +17,13 @@ from src.utils import (
     translate,
 )
 
+# Create a logger for this module
+logger = get_logger(__name__)
+
 
 def translate_language(code, language):
     """Process translation for a single language using multiple base languages"""
-    print(f"Started translating to {language} ({code})...")
+    logger.info(f"Started translating to {language} ({code})...")
 
     # Get configuration
     base_languages = get_base_langs()
@@ -27,7 +31,7 @@ def translate_language(code, language):
 
     # Skip translation if the target language is one of the base languages
     if code in base_languages:
-        print(f"Skipping {language} ({code}) as it's a base language")
+        logger.info(f"Skipping {language} ({code}) as it's a base language")
         return code, language
 
     file_name = "messages.json"
@@ -48,7 +52,7 @@ def translate_language(code, language):
 
     # Log which base languages are being used
     source_info = f"Combined from base languages: {', '.join(base_languages)}"
-    print(f"  {source_info}")
+    logger.info(f"  {source_info}")
 
     # Translate the combined data
     translated_data = translate(

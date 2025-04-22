@@ -5,6 +5,10 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from openai import OpenAI
 
 from src.config import load_config
+from src.logger import get_logger
+
+# Create a logger for this module
+logger = get_logger(__name__)
 
 # Create the OpenAI client
 client = OpenAI()
@@ -138,7 +142,7 @@ def process_translations(lang_codes, translate_func, max_workers=3):
         translate_func: Function to translate a single language
         max_workers: Maximum number of concurrent workers (default: 3)
     """
-    print(f"Starting translations with {max_workers} concurrent workers...")
+    logger.info(f"Starting translations with {max_workers} concurrent workers...")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         # Submit all translation tasks
         future_to_lang = {
@@ -151,7 +155,9 @@ def process_translations(lang_codes, translate_func, max_workers=3):
             code, language = future_to_lang[future]
             try:
                 result_code, result_language = future.result()
-                print(f"✅ Completed translation for {result_language} ({result_code})")
+                logger.info(
+                    f"✅ Completed translation for {result_language} ({result_code})"
+                )
             except Exception as exc:
-                print(f"❌ Translation for {language} ({code}) failed: {exc}")
-                print(f"   Error: {str(exc)}")
+                logger.error(f"❌ Translation for {language} ({code}) failed: {exc}")
+                logger.error(f"   Error: {str(exc)}")
