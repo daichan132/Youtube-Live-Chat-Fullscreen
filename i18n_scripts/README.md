@@ -32,20 +32,20 @@ The scripts are configured using the `config.json` file in the root of the i18n_
 ```json
 {
   "base_langs": ["en", "ja"],
-  "locales_dir": "../../public/_locales",
-  "assets_dir": "../../shared/i18n/assets",
-  "lang_codes_file": "../../shared/i18n/language_codes.json",
+  "locales_dir": "../public/_locales",
+  "assets_dir": "../shared/i18n/assets",
+  "lang_codes_file": "../shared/i18n/language_codes.json",
   "max_workers": 3
 }
 ```
 
 Configuration options:
 
-- `base_langs`: List of base language codes (primary first). Default: `["en", "ja"]`.
+- `base_langs`: List of base language codes.
 - `locales_dir`: Path to the Chrome extension locales directory for JSON files.
 - `assets_dir`: Path to the i18n assets directory for JSON files.
 - `lang_codes_file`: Path to the JSON file containing language codes and display names.
-- `max_workers`: Number of parallel translation workers. Default: `3`.
+- `max_workers`: Number of parallel translation workers.
 
 If the configuration file doesn't exist, a default one will be created automatically when running the scripts.
 
