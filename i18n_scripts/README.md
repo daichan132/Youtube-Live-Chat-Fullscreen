@@ -55,21 +55,19 @@ If the configuration file doesn't exist, a default one will be created automatic
 
 ## Available Commands
 
-Run the scripts using `uv run python`:
+Run the CLI using `uv run python`:
 
-- Generate translated Chrome extension locale files:
-  ```bash
-  uv run python -m src.generate_locales
-  ```
+```bash
+# Generate translated Chrome extension locale files
+uv run python -m src.cli --type locales
 
-- Generate translated JSON i18n asset files:
-  ```bash
-  uv run python -m src.generate_i18n
-  ```
+# Generate translated JSON i18n asset files
+uv run python -m src.cli --type i18n
+```
 
 ## How It Works
 
-Both scripts will:
+The CLI will:
 1. Read settings from `config.json` using Pydantic models for validation
 2. Combine content from base languages (`en` and `ja` by default)
 3. Translate to all languages defined in the language codes file

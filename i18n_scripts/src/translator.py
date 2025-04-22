@@ -8,6 +8,7 @@ from typing import Any, Dict, List, Optional
 from openai import OpenAI
 
 from src.config import Settings, get_settings
+from src.logger import logger
 
 # Create the OpenAI client
 client = OpenAI()
@@ -58,19 +59,32 @@ class BaseTranslator(ABC):
         }
 
     @abstractmethod
+    def get_base_path(self) -> str:
+        """Get base directory path for this translator type"""
+        pass
+
+    @abstractmethod
+    def get_file_name(self, lang_code: str) -> str:
+        """Get the file name pattern for this translator type"""
+        pass
+
     def get_base_files(self) -> List[str]:
         """Get list of base language files"""
-        pass
+        base_path = self.get_base_path()
+        return [
+            os.path.join(base_path, self.get_file_name(lang))
+            for lang in self.settings.base_langs
+        ]
 
-    @abstractmethod
     def get_schema_file(self) -> str:
-        """Get schema file path"""
-        pass
+        """Get schema file path based on first base language"""
+        base_path = self.get_base_path()
+        return os.path.join(base_path, self.get_file_name(self.settings.base_langs[0]))
 
-    @abstractmethod
     def get_target_file(self, target_code: str) -> str:
         """Get target file path"""
-        pass
+        base_path = self.get_base_path()
+        return os.path.join(base_path, self.get_file_name(target_code))
 
     def translate(self) -> Dict[str, Any]:
         """Translate content using OpenAI API"""
@@ -79,16 +93,21 @@ class BaseTranslator(ABC):
         base_files = self.get_base_files()
         schema_file = self.get_schema_file()
 
+        # Create a list of base files that actually exist
+        existing_base_files = [fp for fp in base_files if os.path.exists(fp)]
+
+        if not existing_base_files:
+            logger.warning(f"No base files found at {base_files}")
+            return {}
+
         # baseファイルをまとめて読み込み、combined_textを生成
         combined_text = "\n".join(
             json.dumps(
-                json.load(open(fp, "r", encoding="utf-8"))
-                if os.path.exists(fp)
-                else {},
+                json.load(open(fp, "r", encoding="utf-8")),
                 ensure_ascii=False,
                 indent=2,
             )
-            for fp in base_files
+            for fp in existing_base_files
         )
 
         response_format = self.build_response_format(schema_file)
@@ -115,12 +134,13 @@ Translate all string values into {target_language} based on the JSON data from t
         target_path = self.get_target_file(target_code)
 
         # Ensure directory exists
-        if not os.path.exists(os.path.dirname(target_path)):
-            os.makedirs(os.path.dirname(target_path), exist_ok=True)
+        os.makedirs(os.path.dirname(target_path), exist_ok=True)
 
-        # Save file
+        # Save file with proper formatting
         with open(target_path, "w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+        logger.debug(f"Saved translation to {target_path}")
 
 
 class LocalesTranslator(BaseTranslator):
@@ -129,23 +149,13 @@ class LocalesTranslator(BaseTranslator):
     def __init__(self, target_language: str, settings: Optional[Settings] = None):
         super().__init__(target_language, settings)
 
-    def get_base_files(self) -> List[str]:
-        locales_dir = self.settings.get_absolute_path("locales_dir")
-        file_name = "messages.json"
-        return [
-            os.path.join(locales_dir, lang, file_name)
-            for lang in self.settings.base_langs
-        ]
+    def get_base_path(self) -> str:
+        """Get the base path for locales files"""
+        return self.settings.get_absolute_path("locales_dir")
 
-    def get_schema_file(self) -> str:
-        locales_dir = self.settings.get_absolute_path("locales_dir")
-        file_name = "messages.json"
-        return os.path.join(locales_dir, self.settings.base_langs[0], file_name)
-
-    def get_target_file(self, target_code: str) -> str:
-        locales_dir = self.settings.get_absolute_path("locales_dir")
-        file_name = "messages.json"
-        return os.path.join(locales_dir, target_code, file_name)
+    def get_file_name(self, lang_code: str) -> str:
+        """Get file name pattern for locales"""
+        return os.path.join(lang_code, "messages.json")
 
 
 class I18nTranslator(BaseTranslator):
@@ -154,17 +164,10 @@ class I18nTranslator(BaseTranslator):
     def __init__(self, target_language: str, settings: Optional[Settings] = None):
         super().__init__(target_language, settings)
 
-    def get_base_files(self) -> List[str]:
-        assets_dir = self.settings.get_absolute_path("assets_dir")
-        return [
-            os.path.join(assets_dir, f"{lang}.json")
-            for lang in self.settings.base_langs
-        ]
+    def get_base_path(self) -> str:
+        """Get the base path for i18n assets"""
+        return self.settings.get_absolute_path("assets_dir")
 
-    def get_schema_file(self) -> str:
-        assets_dir = self.settings.get_absolute_path("assets_dir")
-        return os.path.join(assets_dir, f"{self.settings.base_langs[0]}.json")
-
-    def get_target_file(self, target_code: str) -> str:
-        assets_dir = self.settings.get_absolute_path("assets_dir")
-        return os.path.join(assets_dir, f"{target_code}.json")
+    def get_file_name(self, lang_code: str) -> str:
+        """Get file name pattern for i18n assets"""
+        return f"{lang_code}.json"

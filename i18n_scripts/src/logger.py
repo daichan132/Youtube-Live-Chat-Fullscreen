@@ -30,24 +30,24 @@ class ColoredFormatter(logging.Formatter):
         return super().format(record)
 
 
-def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
+# Configure root logger
+def setup_logger(level: int = logging.INFO) -> logging.Logger:
     """
-    Get a logger with the specified name and level.
-    Configures a colored console formatter.
+    Set up and configure the root logger with colored console output.
 
     Args:
-        name: The name of the logger
         level: The log level to use (default: INFO)
 
     Returns:
-        Logger instance
+        The configured root logger
     """
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
+    # Get the root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(level)
 
     # Remove existing handlers to avoid duplicates
-    for handler in logger.handlers[:]:
-        logger.removeHandler(handler)
+    for handler in root_logger.handlers[:]:
+        root_logger.removeHandler(handler)
 
     # Create console handler
     console_handler = logging.StreamHandler(sys.stdout)
@@ -61,10 +61,13 @@ def get_logger(name: str, level: int = logging.INFO) -> logging.Logger:
     console_handler.setFormatter(formatter)
 
     # Add the handler to the logger
-    logger.addHandler(console_handler)
+    root_logger.addHandler(console_handler)
 
-    return logger
+    return root_logger
 
 
-# Create default module-level logger
-logger: logging.Logger = get_logger(__name__)
+# Set up the root logger at module import time
+setup_logger()
+
+# Create a logger for this package that modules can import
+logger = logging.getLogger("i18n_scripts")
