@@ -1,0 +1,8 @@
+{
+  "base_langs": ["en", "ja"],
+  "locales_dir": "../public/_locales",
+  "assets_dir": "../shared/i18n/assets",
+  "lang_codes_file": "../shared/i18n/language_codes.json",
+  "max_workers": 3,
+  "openai_model": "gpt-4o"
+}

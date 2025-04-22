@@ -1,8 +1,13 @@
-import argparse
 import json
 import os
 
-from i18n_scripts.src.utils import (
+from src.config import (
+    get_assets_dir,
+    get_base_langs,
+    get_lang_codes_file,
+    get_max_workers,
+)
+from src.utils import (
     build_response_format,
     combine_json_data,
     get_lang_codes,
@@ -12,49 +17,13 @@ from i18n_scripts.src.utils import (
 )
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(
-        description="Generate translated i18n JSON assets for Chrome extension"
-    )
-    parser.add_argument(
-        "--base-langs",
-        nargs="+",
-        default=["en", "ja"],
-        help="Base language codes (primary first)",
-    )
-    parser.add_argument(
-        "--assets-dir",
-        default=os.path.normpath(
-            os.path.join(os.path.dirname(__file__), "..", "shared", "i18n", "assets")
-        ),
-        help="Path to source i18n assets directory",
-    )
-    parser.add_argument(
-        "--lang-codes-file",
-        default=os.path.normpath(
-            os.path.join(os.getcwd(), "shared", "i18n", "language_codes.json")
-        ),
-        help="Path to language codes JSON file",
-    )
-    parser.add_argument(
-        "--max-workers",
-        type=int,
-        default=3,
-        help="Maximum number of concurrent translation workers",
-    )
-    return parser.parse_args()
-
-
-args = parse_args()
-base_languages = args.base_langs
-assets_dir = args.assets_dir
-lang_codes_file = args.lang_codes_file
-max_workers = args.max_workers
-
-
 def translate_language(code, language):
     """Process translation for a single language using multiple base languages"""
     print(f"Started translating to {language} ({code})...")
+
+    # Get configuration
+    base_languages = get_base_langs()
+    assets_dir = get_assets_dir()
 
     # Skip translation if the target language is one of the base languages
     if code in base_languages:
@@ -92,6 +61,10 @@ def translate_language(code, language):
 
 
 def main():
+    # Load configuration
+    lang_codes_file = get_lang_codes_file()
+    max_workers = get_max_workers()
+
     # Load language codes
     lang_codes = get_lang_codes(lang_codes_file)
     # Start parallel translations with configured concurrency

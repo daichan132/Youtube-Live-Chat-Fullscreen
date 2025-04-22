@@ -4,6 +4,9 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from openai import OpenAI
 
+from src.config import load_config
+
+# Create the OpenAI client
 client = OpenAI()
 
 
@@ -104,8 +107,12 @@ def build_response_format(file_path: str) -> dict:
 
 
 def translate(text: str, target_language: str, response_format: dict) -> dict:
+    """Translate text using OpenAI API with model from config.json"""
+    config = load_config()
+    model = config.get("openai_model", "gpt-4o")
+
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model=model,
         messages=[
             {
                 "role": "system",

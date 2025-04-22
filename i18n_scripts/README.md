@@ -25,40 +25,51 @@ Install project dependencies and sync the virtual environment:
 uv sync
 ```
 
+## Configuration
+
+The scripts are configured using the `config.json` file in the root of the i18n_scripts directory. Here's an example configuration:
+
+```json
+{
+  "base_langs": ["en", "ja"],
+  "locales_dir": "../../public/_locales",
+  "assets_dir": "../../shared/i18n/assets",
+  "lang_codes_file": "../../shared/i18n/language_codes.json",
+  "max_workers": 3
+}
+```
+
+Configuration options:
+
+- `base_langs`: List of base language codes (primary first). Default: `["en", "ja"]`.
+- `locales_dir`: Path to the Chrome extension locales directory for JSON files.
+- `assets_dir`: Path to the i18n assets directory for JSON files.
+- `lang_codes_file`: Path to the JSON file containing language codes and display names.
+- `max_workers`: Number of parallel translation workers. Default: `3`.
+
+If the configuration file doesn't exist, a default one will be created automatically when running the scripts.
+
 ## Available Commands
 
-Use uv's command runner (`uvx`) to invoke the CLI:
+Run the scripts using `uv run python`:
 
-- `uvx generate-locales`
-  - Generate translated Chrome extension locale files under `_locales/`.
-  - Usage:
-    ```bash
-uvx generate-locales \
-  --base-langs en ja \
-  --locales-dir path/to/_locales \
-  --lang-codes-file path/to/language_codes.json \
-  --max-workers 4
-    ```
+- Generate translated Chrome extension locale files:
+  ```bash
+  uv run python src/generate_locales.py
+  ```
 
-- `uvx generate-i18n`
-  - Generate translated JSON i18n asset files under `shared/i18n/assets/`.
-  - Usage:
-    ```bash
-uvx generate-i18n \
-  --base-langs en ja \
-  --assets-dir path/to/shared/i18n/assets \
-  --lang-codes-file path/to/language_codes.json \
-  --max-workers 4
-    ```
+- Generate translated JSON i18n asset files:
+  ```bash
+  uv run python src/generate_i18n.py
+  ```
 
-## Configuration Options
+## How It Works
 
-Both commands support the following flags:
-
-- `--base-langs`  : List of base language codes (primary first). Default: `en ja`.
-- `--locales-dir` / `--assets-dir`: Path to the source or output directory for JSON files.
-- `--lang-codes-file`: Path to the JSON file containing language codes and display names.
-- `--max-workers` : Number of parallel translation workers. Default: `3`.
+Both scripts will:
+1. Read settings from `config.json`
+2. Combine content from base languages (`en` and `ja` by default)
+3. Translate to all languages defined in the language codes file
+4. Save translated files to the appropriate directories
 
 ## License
 
