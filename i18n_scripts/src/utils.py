@@ -7,8 +7,16 @@ from openai import OpenAI
 client = OpenAI()
 
 
-def get_lang_codes():
-    with open("shared/i18n/language_codes.json", "r", encoding="utf-8") as f:
+def get_lang_codes(lang_codes_path=None):
+    """
+    Load language codes JSON from the given path or default shared/i18n location.
+    """
+    # Determine default path if not provided
+    if not lang_codes_path:
+        lang_codes_path = os.path.join(
+            os.getcwd(), "shared", "i18n", "language_codes.json"
+        )
+    with open(lang_codes_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
