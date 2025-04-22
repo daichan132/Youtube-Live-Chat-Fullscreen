@@ -26,6 +26,7 @@ def process_translations(
     if max_workers is None:
         max_workers = get_settings().max_workers
 
+    base_langs = get_settings().base_langs
     logger.info(f"Starting translations with {max_workers} concurrent workers...")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         # Submit all translation tasks
@@ -36,6 +37,9 @@ def process_translations(
 
         # Process results as they complete
         for future in as_completed(future_to_lang):
+            if future in base_langs:
+                logger.info(f"Skipping base language: {future_to_lang[future]}")
+                continue
             code, language = future_to_lang[future]
             try:
                 result_code, result_language = future.result()

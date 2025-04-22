@@ -20,11 +20,9 @@ client = OpenAI()
 class BaseTranslator(ABC):
     """Base class for translators"""
 
-    def __init__(self, base_languages: List[str], target_language: str):
-        self.base_languages = base_languages
+    def __init__(self, target_language: str, settings=None):
+        self.settings = settings or get_settings()
         self.target_language = target_language
-        self.settings = get_settings()
-        self.model = self.settings.openai_model
 
     def build_response_format(self, file_path: str) -> Dict[str, Any]:
         """
@@ -80,6 +78,8 @@ class BaseTranslator(ABC):
 
     def translate(self) -> Dict[str, Any]:
         """Translate content using OpenAI API"""
+        base_languages = self.settings.base_langs
+        target_language = self.target_language
         base_files = self.get_base_files()
         schema_file = self.get_schema_file()
 
@@ -99,12 +99,12 @@ class BaseTranslator(ABC):
 
         system_prompt = f"""
 You are an expert localization assistant for the Chrome extension 'YouTube Live Chat Fullscreen'.
-Ensure the translation is natural, accurate, and culturally appropriate for {self.target_language} speakers using the extension.
-Translate all string values into {self.target_language} based on the JSON data from the following base languages: {", ".join(self.base_languages)}.
+Ensure the translation is natural, accurate, and culturally appropriate for {target_language} speakers using the extension.
+Translate all string values into {target_language} based on the JSON data from the following base languages: {", ".join(base_languages)}.
 """.strip()
 
         response = client.chat.completions.create(
-            model=self.model,
+            model=self.settings.openai_model,
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": combined_text},
@@ -130,17 +130,21 @@ Translate all string values into {self.target_language} based on the JSON data f
 class LocalesTranslator(BaseTranslator):
     """Translator for Chrome extension locales"""
 
+    def __init__(self, target_language: str, settings=None):
+        super().__init__(target_language, settings)
+
     def get_base_files(self) -> List[str]:
         locales_dir = self.settings.get_absolute_path("locales_dir")
         file_name = "messages.json"
         return [
-            os.path.join(locales_dir, lang, file_name) for lang in self.base_languages
+            os.path.join(locales_dir, lang, file_name)
+            for lang in self.settings.base_langs
         ]
 
     def get_schema_file(self) -> str:
         locales_dir = self.settings.get_absolute_path("locales_dir")
         file_name = "messages.json"
-        return os.path.join(locales_dir, self.base_languages[0], file_name)
+        return os.path.join(locales_dir, self.settings.base_langs[0], file_name)
 
     def get_target_file(self, target_code: str) -> str:
         locales_dir = self.settings.get_absolute_path("locales_dir")
@@ -151,15 +155,19 @@ class LocalesTranslator(BaseTranslator):
 class I18nTranslator(BaseTranslator):
     """Translator for i18n JSON assets"""
 
+    def __init__(self, target_language: str, settings=None):
+        super().__init__(target_language, settings)
+
     def get_base_files(self) -> List[str]:
         assets_dir = self.settings.get_absolute_path("assets_dir")
         return [
-            os.path.join(assets_dir, f"{lang}.json") for lang in self.base_languages
+            os.path.join(assets_dir, f"{lang}.json")
+            for lang in self.settings.base_langs
         ]
 
     def get_schema_file(self) -> str:
         assets_dir = self.settings.get_absolute_path("assets_dir")
-        return os.path.join(assets_dir, f"{self.base_languages[0]}.json")
+        return os.path.join(assets_dir, f"{self.settings.base_langs[0]}.json")
 
     def get_target_file(self, target_code: str) -> str:
         assets_dir = self.settings.get_absolute_path("assets_dir")
