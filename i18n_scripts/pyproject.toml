@@ -1,14 +1,14 @@
 [project]
-name = "youtube-live-chat-fullscreen"
+name = "i18n-scripts"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.13"
 dependencies = [
-    "openai>=1.69.0",
+    "openai>=1.75.0",
 ]
 
 [dependency-groups]
 dev = [
-    "ruff>=0.9.5",
+    "ruff>=0.11.6",
 ]
