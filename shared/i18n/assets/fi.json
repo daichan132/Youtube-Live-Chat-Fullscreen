@@ -5,18 +5,18 @@
         "preset": "Esiasetus",
         "setting": "Asetukset"
       },
-      "alwaysOnDisplay": "Aina näytöllä",
-      "chatOnlyDisplay": "Vain keskustelu näytöllä",
-      "userNameDisplay": "Käyttäjänimenäyttö",
-      "userIconDisplay": "Käyttäjänikoninäyttö",
-      "reactionButtonDisplay": "Reaktiopainikkeen näyttö",
-      "superChatBarDisplay": "Super Chat -palkkinäyttö",
+      "alwaysOnDisplay": "Näytä aina",
+      "chatOnlyDisplay": "Vain chat näkyy",
+      "userNameDisplay": "Näytä käyttäjännimi",
+      "userIconDisplay": "Näytä käyttäjäkuvake",
+      "reactionButtonDisplay": "Näytä reaktiopainike",
+      "superChatBarDisplay": "Näytä Super Chat -palkki",
       "backgroundColor": "Taustaväri",
-      "fontColor": "Fonttiväri",
-      "fontFamily": "Fontti",
-      "fontSize": "Fonttikoko",
+      "fontColor": "Fontin väri",
+      "fontFamily": "Fonttiperhe",
+      "fontSize": "Fontin koko",
       "blur": "Sumennus",
-      "space": "Väli",
+      "space": "Välistys",
       "footer": {
         "donate": "Lahjoita",
         "chrome": "Chrome",
@@ -29,14 +29,14 @@
       "defaultTitle": "Oletus",
       "transparentTitle": "Läpinäkyvä",
       "simpleTitle": "Yksinkertainen",
-      "deleteConfirmationMessage": "Haluatko varmasti poistaa?",
+      "deleteConfirmationMessage": "Haluatko varmasti poistaa tämän?",
       "delete": "Poista",
       "cancel": "Peruuta"
     }
   },
   "popup": {
     "language": "Kieliasetukset",
-    "showChatOnFullscreen": "Kokoruudun keskustelu",
+    "showChatOnFullscreen": "Kokonäyttö-chat",
     "links": "Linkit",
     "donate": "Lahjoita"
   }

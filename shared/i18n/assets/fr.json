@@ -2,31 +2,31 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Prédéfini",
+        "preset": "Préréglages",
         "setting": "Paramètres"
       },
-      "alwaysOnDisplay": "Toujours Affiché",
-      "chatOnlyDisplay": "Affichage Chat Uniquement",
-      "userNameDisplay": "Affichage du Nom d'Utilisateur",
-      "userIconDisplay": "Affichage de l'Icone d'Utilisateur",
-      "reactionButtonDisplay": "Affichage du Bouton de Réaction",
-      "superChatBarDisplay": "Affichage de la Barre Super Chat",
-      "backgroundColor": "Couleur de Fond",
-      "fontColor": "Couleur de Police",
-      "fontFamily": "Famille de Polices",
-      "fontSize": "Taille de Police",
+      "alwaysOnDisplay": "Affichage permanent",
+      "chatOnlyDisplay": "Afficher uniquement le chat",
+      "userNameDisplay": "Afficher le nom d'utilisateur",
+      "userIconDisplay": "Afficher l'icône utilisateur",
+      "reactionButtonDisplay": "Afficher les boutons de réaction",
+      "superChatBarDisplay": "Afficher la barre Super Chat",
+      "backgroundColor": "Couleur d'arrière-plan",
+      "fontColor": "Couleur de police",
+      "fontFamily": "Police",
+      "fontSize": "Taille de la police",
       "blur": "Flou",
-      "space": "Espace",
+      "space": "Espacement",
       "footer": {
-        "donate": "Faire un Don",
+        "donate": "Faire un don",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Ajouter les Paramètres Actuels",
-      "addItemTitle": "Sans Titre",
-      "defaultTitle": "Par Défaut",
+      "addMessage": "Ajouter les paramètres actuels",
+      "addItemTitle": "Sans titre",
+      "defaultTitle": "Défaut",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
       "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer ?",
@@ -35,9 +35,9 @@
     }
   },
   "popup": {
-    "language": "Paramètres de Langue",
-    "showChatOnFullscreen": "Chat en Plein Écran",
+    "language": "Paramètres de langue",
+    "showChatOnFullscreen": "Chat en plein écran",
     "links": "Liens",
-    "donate": "Faire un Don"
+    "donate": "Faire un don"
   }
 }

@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ቅንብር",
-        "setting": "ቅንብሮች"
+        "preset": "ቅንጅት",
+        "setting": "ማስተካከያ"
       },
-      "alwaysOnDisplay": "ሁሌም የታየ እንቅስቃሴ",
-      "chatOnlyDisplay": "የቆይታ ብቻ ዝርዝር",
-      "userNameDisplay": "የተጠቃሚ ስም ግምባር",
-      "userIconDisplay": "የተጠቃሚ አይኮን ግምባር",
-      "reactionButtonDisplay": "የምላሽ አዝራር ግምባር",
-      "superChatBarDisplay": "ስፖር ቁጣ ግምባር",
-      "backgroundColor": "ዳራ ቀለም",
-      "fontColor": "የቅርጽ ቀለም",
-      "fontFamily": "የቅርጽ ቤተሰብ",
-      "fontSize": "የአማዝበላ መጠን",
-      "blur": "ግዠት",
-      "space": "ቦታ",
+      "alwaysOnDisplay": "ዘወትር ትታያለች",
+      "chatOnlyDisplay": "ቻት ብቻ ይታያል",
+      "userNameDisplay": "የተጠቃሚ ስም ማሳያ",
+      "userIconDisplay": "የተጠቃሚ አይኮን ማሳያ",
+      "reactionButtonDisplay": "የምልክት ቁልፍ ማሳያ",
+      "superChatBarDisplay": "የሱፐር ቻት አሞሌ ማሳያ",
+      "backgroundColor": "የመተዳደሪያ ቀለም",
+      "fontColor": "የፊደል ቀለም",
+      "fontFamily": "የፊደል አይነት",
+      "fontSize": "የፊደል መጠን",
+      "blur": "ማጠራቀሚያ",
+      "space": "ክፍተት",
       "footer": {
-        "donate": "ስጥ",
-        "chrome": "ክሮም",
-        "firefox": "ፋይረፎክስ"
+        "donate": "ድጋፍ ይስጡ",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "ወቅታዊ ቅንብሮችን አክል",
-      "addItemTitle": "ስምምላሽ",
-      "defaultTitle": "ነባር",
-      "transparentTitle": "ክፉባበር",
+      "addMessage": "አሁኑን ያሉትን ቅንጅት ያክሉ",
+      "addItemTitle": "ያልተሰየመ",
+      "defaultTitle": "ቀዳሚ",
+      "transparentTitle": "ግልጽ",
       "simpleTitle": "ቀላል",
-      "deleteConfirmationMessage": "እርግጠኛ ነህ/ነሽን ማጥፋት ይፈልጋሉ።",
+      "deleteConfirmationMessage": "ማጥፋት እንደሚፈልጉ ያረጋግጡ።",
       "delete": "ማጥፋት",
       "cancel": "ሰርዝ"
     }
   },
   "popup": {
-    "language": "የትምርት ቋንቋ ቅንብር",
-    "showChatOnFullscreen": "ሙሉ እንቅስቃሴ ዝርዝር",
+    "language": "የቋንቋ ቅንጅቶች",
+    "showChatOnFullscreen": "በሙሉ ስክሪን ቻት",
     "links": "አገናኞች",
-    "donate": "ስጥ"
+    "donate": "ድጋፍ ይስጡ"
   }
 }

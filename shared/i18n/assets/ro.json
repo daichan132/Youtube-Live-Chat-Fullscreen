@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Presetare",
+        "preset": "Preseturi",
         "setting": "Setări"
       },
-      "alwaysOnDisplay": "Afișaj Mereu Activ",
-      "chatOnlyDisplay": "Afișare Doar Chat",
-      "userNameDisplay": "Afișare Nume Utilizator",
-      "userIconDisplay": "Afișare Icon Utilizator",
-      "reactionButtonDisplay": "Afișare Buton Reacție",
-      "superChatBarDisplay": "Afișare Bar Super Chat",
-      "backgroundColor": "Culoare Fundal",
-      "fontColor": "Culoare Font",
-      "fontFamily": "Familie de Fonturi",
-      "fontSize": "Dimensiune Font",
+      "alwaysOnDisplay": "Afișare permanentă",
+      "chatOnlyDisplay": "Doar chat-ul",
+      "userNameDisplay": "Afișează numele utilizatorului",
+      "userIconDisplay": "Afișează iconița utilizatorului",
+      "reactionButtonDisplay": "Afișează butoanele de reacție",
+      "superChatBarDisplay": "Afișează bara Super Chat",
+      "backgroundColor": "Culoare de fundal",
+      "fontColor": "Culoare font",
+      "fontFamily": "Familia fontului",
+      "fontSize": "Dimensiune font",
       "blur": "Estompare",
-      "space": "Spațiu",
+      "space": "Spațiere",
       "footer": {
         "donate": "Donează",
         "chrome": "Chrome",
@@ -24,19 +24,19 @@
       }
     },
     "preset": {
-      "addMessage": "Adaugă Configurările Curente",
-      "addItemTitle": "Fără Titlu",
+      "addMessage": "Adaugă setările curente",
+      "addItemTitle": "Fără titlu",
       "defaultTitle": "Implicit",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simplu",
-      "deleteConfirmationMessage": "Ești sigur că vrei să ștergi?",
+      "deleteConfirmationMessage": "Sigur vrei să ștergi?",
       "delete": "Șterge",
       "cancel": "Anulează"
     }
   },
   "popup": {
-    "language": "Setări Limba",
-    "showChatOnFullscreen": "Chat pe Tot Ecranul",
+    "language": "Setări limbă",
+    "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
     "donate": "Donează"
   }

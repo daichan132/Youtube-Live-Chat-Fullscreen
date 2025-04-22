@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Inayos",
+        "preset": "Presets",
         "setting": "Mga Setting"
       },
-      "alwaysOnDisplay": "Laging Naka-display",
-      "chatOnlyDisplay": "Chat Lamang na Display",
-      "userNameDisplay": "Display ng Pangalan ng Gumagamit",
-      "userIconDisplay": "Display ng Icon ng Gumagamit",
-      "reactionButtonDisplay": "Display ng Button ng Reaksyon",
-      "superChatBarDisplay": "Display ng Super Chat Bar",
+      "alwaysOnDisplay": "Laging Nakikita",
+      "chatOnlyDisplay": "Chat Lang ang Ipakita",
+      "userNameDisplay": "Ipakita ang Username",
+      "userIconDisplay": "Ipakita ang User Icon",
+      "reactionButtonDisplay": "Ipakita ang Reaction Button",
+      "superChatBarDisplay": "Ipakita ang Super Chat Bar",
       "backgroundColor": "Kulay ng Background",
       "fontColor": "Kulay ng Font",
-      "fontFamily": "Pamilya ng Font",
-      "fontSize": "Sukat ng Font",
-      "blur": "Labo",
-      "space": "Puwang",
+      "fontFamily": "Font",
+      "fontSize": "Laki ng Font",
+      "blur": "Pag-blur",
+      "space": "Espasyo",
       "footer": {
         "donate": "Mag-donate",
         "chrome": "Chrome",
@@ -29,14 +29,14 @@
       "defaultTitle": "Default",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "Sigurado ka bang nais mong tanggalin?",
+      "deleteConfirmationMessage": "Sigurado ka bang gusto mong tanggalin ito?",
       "delete": "Tanggalin",
       "cancel": "Kanselahin"
     }
   },
   "popup": {
     "language": "Mga Setting ng Wika",
-    "showChatOnFullscreen": "Fullscreen Chat",
+    "showChatOnFullscreen": "Chat habang Buong Screen",
     "links": "Mga Link",
     "donate": "Mag-donate"
   }

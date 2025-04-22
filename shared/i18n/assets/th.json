@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ค่าที่ตั้งไว้ล่วงหน้า",
+        "preset": "ค่าตั้งล่วงหน้า",
         "setting": "การตั้งค่า"
       },
-      "alwaysOnDisplay": "หน้าจอไม่ปิด",
+      "alwaysOnDisplay": "แสดงผลตลอดเวลา",
       "chatOnlyDisplay": "แสดงเฉพาะแชท",
       "userNameDisplay": "แสดงชื่อผู้ใช้",
       "userIconDisplay": "แสดงไอคอนผู้ใช้",
-      "reactionButtonDisplay": "แสดงปุ่มปฏิกิริยา",
+      "reactionButtonDisplay": "แสดงปุ่มแสดงอารมณ์",
       "superChatBarDisplay": "แสดงแถบ Super Chat",
       "backgroundColor": "สีพื้นหลัง",
       "fontColor": "สีตัวอักษร",
-      "fontFamily": "แบบอักษร",
+      "fontFamily": "แบบตัวอักษร",
       "fontSize": "ขนาดตัวอักษร",
       "blur": "เบลอ",
-      "space": "พื้นที่",
+      "space": "ระยะห่าง",
       "footer": {
         "donate": "บริจาค",
         "chrome": "Chrome",
@@ -29,14 +29,14 @@
       "defaultTitle": "ค่าเริ่มต้น",
       "transparentTitle": "โปร่งใส",
       "simpleTitle": "เรียบง่าย",
-      "deleteConfirmationMessage": "คุณแน่ใจว่าจะลบหรือไม่?",
+      "deleteConfirmationMessage": "คุณแน่ใจว่าต้องการลบหรือไม่?",
       "delete": "ลบ",
       "cancel": "ยกเลิก"
     }
   },
   "popup": {
-    "language": "การตั้งค่าภาษา",
-    "showChatOnFullscreen": "การแชทแบบเต็มหน้าจอ",
+    "language": "ตั้งค่าภาษา",
+    "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค"
   }

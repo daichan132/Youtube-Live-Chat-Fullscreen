@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ಮುನ್ನಡೆ",
-        "setting": "ಸೆಟ್ಟಿಂಗ್ಗಳು"
+        "preset": "ಮೂಲೆಗುಚ್ಛ",
+        "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
       },
-      "alwaysOnDisplay": "ಎಂದಿಗೂ ತೋರಿಸಲು",
-      "chatOnlyDisplay": "ಸಂವಾದ ಮಾತ್ರದ ಪ್ರದರ್ಶನ",
-      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರಿನ ಪ್ರದರ್ಶನ",
-      "userIconDisplay": "ಬಳಕೆದಾರರ ಚಿಹ್ನೆಯ ಪ್ರದರ್ಶನ",
-      "reactionButtonDisplay": "ಪ್ರತಿಕ್ರಿಯಾ ಬಟನ್ ಪ್ರದರ್ಶನ",
-      "superChatBarDisplay": "ಸುಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
+      "alwaysOnDisplay": "ಯಾವಾಗಲೂ ಡಿಸ್ಪ್ಲೇ ಇದಿರಲಿ",
+      "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ಡಿಸ್ಪ್ಲೇ",
+      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ಪ್ರದರ್ಶನ",
+      "userIconDisplay": "ಬಳಕೆದಾರರ ಚಿಹ್ನೆ ಪ್ರದರ್ಶನ",
+      "reactionButtonDisplay": "ಪ್ರತಿಕ್ರಿಯೆ ಬಟನ್ ಪ್ರದರ್ಶನ",
+      "superChatBarDisplay": "ಸೂಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
       "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
-      "fontColor": "ಅಕ್ಷರ ಬಣ್ಣ",
-      "fontFamily": "ಅಕ್ಷರ ಶ್ರೇಣಿ",
+      "fontColor": "ಅಕ್ಷರದ ಬಣ್ಣ",
+      "fontFamily": "ಅಕ್ಷರಶೈಲಿ",
       "fontSize": "ಅಕ್ಷರ ಗಾತ್ರ",
-      "blur": "ಮಸುಕಾಗು",
-      "space": "ಜಾಗ",
+      "blur": "ಅಸ್ಪಷ್ಟತೆ",
+      "space": "ಸ್ಥಳ",
       "footer": {
-        "donate": "ದೇಣಿಗೆ",
+        "donate": "ದಾನಮಾಡಿ",
         "chrome": "ಕ್ರೋಮ್",
         "firefox": "ಫೈರ್ಫಾಕ್ಸ್"
       }
     },
     "preset": {
-      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್ಗಳನ್ನು ಸೇರಿಸಿ",
-      "addItemTitle": "ಶೀರ್ಷಿಕಾವಿಲ್ಲದ",
-      "defaultTitle": "ಪೂರ್ವನಿಯೋಜಿತ",
+      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+      "addItemTitle": "ಶೀರ್ಷಿಕೆ ಇಲ್ಲ",
+      "defaultTitle": "ಸಹಜ",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
       "simpleTitle": "ಸರಳ",
-      "deleteConfirmationMessage": "ನೀವು ನಿಜವಾಗಿಯೂ ಅಳಿಸಲು ಇಚ್ಛಿಸುತ್ತೀರಾ?",
+      "deleteConfirmationMessage": "ನೀವು ಖಂಡಿತವಾಗಿಯೂ ಅಳಿಸಬೇಕೆಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳುತ್ತೀರಾ?",
       "delete": "ಅಳಿಸಿ",
-      "cancel": "ರದ್ದು ಮಾಡಿ"
+      "cancel": "ರದ್ದುಮಾಡಿ"
     }
   },
   "popup": {
-    "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್ಗಳು",
-    "showChatOnFullscreen": "ಪೂರ್ಣತೆರೆ ಚಾಟ್",
-    "links": "ಲಿಂಕುಗಳು",
-    "donate": "ದೇಣಿಗೆ"
+    "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+    "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ್ ಚಾಟ್",
+    "links": "ಲಿಂಕ್‌ಗಳು",
+    "donate": "ದಾನಮಾಡಿ"
   }
 }

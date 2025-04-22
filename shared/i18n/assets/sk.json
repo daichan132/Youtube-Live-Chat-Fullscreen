@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Prednastavitev",
-        "setting": "Nastavitve"
+        "preset": "Prednastavené",
+        "setting": "Nastavenia"
       },
-      "alwaysOnDisplay": "Vedno vklopljen zaslon",
-      "chatOnlyDisplay": "Samo prikaz klepeta",
-      "userNameDisplay": "Prikaz imena uporabnika",
-      "userIconDisplay": "Prikaz ikone uporabnika",
-      "reactionButtonDisplay": "Prikaz gumba za reakcije",
-      "superChatBarDisplay": "Prikaz Super Chat vrstice",
-      "backgroundColor": "Barva ozadja",
-      "fontColor": "Barva pisave",
-      "fontFamily": "Pisava",
-      "fontSize": "Velikost pisave",
-      "blur": "Zamegljenost",
-      "space": "Prostor",
+      "alwaysOnDisplay": "Vždy zobrazené",
+      "chatOnlyDisplay": "Zobraziť len chat",
+      "userNameDisplay": "Zobraziť meno používateľa",
+      "userIconDisplay": "Zobraziť ikonu používateľa",
+      "reactionButtonDisplay": "Zobraziť tlačidlo reakcie",
+      "superChatBarDisplay": "Zobraziť panel Super Chatu",
+      "backgroundColor": "Farba pozadia",
+      "fontColor": "Farba písma",
+      "fontFamily": "Typ písma",
+      "fontSize": "Veľkosť písma",
+      "blur": "Rozmazanie",
+      "space": "Medzera",
       "footer": {
-        "donate": "Doniraj",
+        "donate": "Prispieť",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Dodaj trenutne nastavitve",
-      "addItemTitle": "Brez naslova",
-      "defaultTitle": "Privzeto",
-      "transparentTitle": "Prosojno",
-      "simpleTitle": "Preprosto",
-      "deleteConfirmationMessage": "Ali ste prepričani, da želite izbrisati?",
-      "delete": "Izbriši",
-      "cancel": "Prekliči"
+      "addMessage": "Pridať aktuálne nastavenia",
+      "addItemTitle": "Bez názvu",
+      "defaultTitle": "Predvolené",
+      "transparentTitle": "Priehľadné",
+      "simpleTitle": "Jednoduché",
+      "deleteConfirmationMessage": "Naozaj chcete odstrániť?",
+      "delete": "Odstrániť",
+      "cancel": "Zrušiť"
     }
   },
   "popup": {
-    "language": "Jezikovne nastavitve",
-    "showChatOnFullscreen": "Klepet na celotnem zaslonu",
-    "links": "Povezave",
-    "donate": "Doniraj"
+    "language": "Nastavenia jazyka",
+    "showChatOnFullscreen": "Chat na celú obrazovku",
+    "links": "Odkazy",
+    "donate": "Prispieť"
   }
 }

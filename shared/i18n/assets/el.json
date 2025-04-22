@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Προκαθορισμένη ρύθμιση",
+        "preset": "Προεπιλογή",
         "setting": "Ρυθμίσεις"
       },
-      "alwaysOnDisplay": "Πάντα Εμφάνιση",
-      "chatOnlyDisplay": "Μόνο Εμφάνιση Συζητήσεων",
-      "userNameDisplay": "Εμφάνιση Ονόματος Χρήστη",
-      "userIconDisplay": "Εμφάνιση Εικόνας Χρήστη",
-      "reactionButtonDisplay": "Εμφάνιση Κουμπιού Αντίδρασης",
-      "superChatBarDisplay": "Εμφάνιση Μπάρας Super Chat",
-      "backgroundColor": "Χρώμα Φόντου",
-      "fontColor": "Χρώμα Γραμματοσειράς",
-      "fontFamily": "Οικογένεια Γραμματοσειράς",
-      "fontSize": "Μέγεθος Γραμματοσειράς",
+      "alwaysOnDisplay": "Πάντα ορατό",
+      "chatOnlyDisplay": "Μόνο συνομιλία",
+      "userNameDisplay": "Εμφάνιση ονόματος χρήστη",
+      "userIconDisplay": "Εμφάνιση εικονιδίου χρήστη",
+      "reactionButtonDisplay": "Εμφάνιση κουμπιού αντίδρασης",
+      "superChatBarDisplay": "Εμφάνιση Super Chat Bar",
+      "backgroundColor": "Χρώμα φόντου",
+      "fontColor": "Χρώμα γραμματοσειράς",
+      "fontFamily": "Οικογένεια γραμματοσειράς",
+      "fontSize": "Μέγεθος γραμματοσειράς",
       "blur": "Θάμπωμα",
-      "space": "Διάστημα",
+      "space": "Κενό",
       "footer": {
         "donate": "Δωρεά",
         "chrome": "Chrome",
@@ -24,9 +24,9 @@
       }
     },
     "preset": {
-      "addMessage": "Προσθήκη Τρεχουσών Ρυθμίσεων",
-      "addItemTitle": "Χωρίς Τίτλο",
-      "defaultTitle": "Προεπιλογή",
+      "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
+      "addItemTitle": "Χωρίς τίτλο",
+      "defaultTitle": "Προεπιλεγμένο",
       "transparentTitle": "Διαφανές",
       "simpleTitle": "Απλό",
       "deleteConfirmationMessage": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
@@ -35,8 +35,8 @@
     }
   },
   "popup": {
-    "language": "Ρυθμίσεις Γλώσσας",
-    "showChatOnFullscreen": "Συζήτηση σε Πλήρη Οθόνη",
+    "language": "Ρυθμίσεις γλώσσας",
+    "showChatOnFullscreen": "Συνομιλία σε πλήρη οθόνη",
     "links": "Σύνδεσμοι",
     "donate": "Δωρεά"
   }

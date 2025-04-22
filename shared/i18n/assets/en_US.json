@@ -7,7 +7,7 @@
       },
       "alwaysOnDisplay": "Always On Display",
       "chatOnlyDisplay": "Chat Only Display",
-      "userNameDisplay": "Show Username",
+      "userNameDisplay": "Show User Name",
       "userIconDisplay": "Show User Icon",
       "reactionButtonDisplay": "Show Reaction Button",
       "superChatBarDisplay": "Show Super Chat Bar",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Language Settings",
-    "showChatOnFullscreen": "Fullscreen Chat",
+    "showChatOnFullscreen": "Show Chat in Fullscreen",
     "links": "Links",
     "donate": "Donate"
   }

@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "पूर्वनिर्धारित",
+        "preset": "पूर्वनियोजित सेटिंग",
         "setting": "सेटिंग्ज"
       },
-      "alwaysOnDisplay": "नेहमी स्क्रीनवर",
-      "chatOnlyDisplay": "फक्त चॅट प्रदर्शन",
-      "userNameDisplay": "वापरकर्ता नावे प्रदर्शन",
-      "userIconDisplay": "वापरकर्ता आयकॉन प्रदर्शन",
-      "reactionButtonDisplay": "प्रतिक्रिया बटण प्रदर्शन",
-      "superChatBarDisplay": "सुपर चॅट बार प्रदर्शन",
-      "backgroundColor": "पार्श्वभूमीचा रंग",
-      "fontColor": "फॉन्ट रंग",
-      "fontFamily": "फॉन्ट कुटुंब",
+      "alwaysOnDisplay": "नेहमी दृश्यमान ठेवा",
+      "chatOnlyDisplay": "फक्त चॅट दर्शवा",
+      "userNameDisplay": "वापरकर्त्याचे नाव दर्शवा",
+      "userIconDisplay": "वापरकर्त्याची प्रतिमा दर्शवा",
+      "reactionButtonDisplay": "प्रतिक्रिया बटण दर्शवा",
+      "superChatBarDisplay": "सुपर चॅट पट्टी दर्शवा",
+      "backgroundColor": "पार्श्वभूमी रंग",
+      "fontColor": "अक्षरांचा रंग",
+      "fontFamily": "फॉन्ट फॅमिली",
       "fontSize": "फॉन्ट आकार",
-      "blur": "ब्लर",
+      "blur": "अस्पष्टता",
       "space": "स्पेस",
       "footer": {
-        "donate": "दान करा",
-        "chrome": "क्रोम",
-        "firefox": "फायरफॉक्स"
+        "donate": "देणगी द्या",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "विद्यमान सेटिंग्ज जोडा",
-      "addItemTitle": "शीर्षक नाही",
-      "defaultTitle": "मूळ",
+      "addMessage": "सध्याच्या सेटिंग्ज जोडा",
+      "addItemTitle": "शिर्षक नाही",
+      "defaultTitle": "डीफॉल्ट",
       "transparentTitle": "पारदर्शक",
-      "simpleTitle": "साधा",
-      "deleteConfirmationMessage": "आपण नक्की हटवू इच्छिता?",
-      "delete": "हटवा",
+      "simpleTitle": "साधे",
+      "deleteConfirmationMessage": "आपण हे नक्की हटवू इच्छिता?",
+      "delete": "हटा",
       "cancel": "रद्द करा"
     }
   },
   "popup": {
     "language": "भाषा सेटिंग्ज",
-    "showChatOnFullscreen": "पूर्ण स्क्रीनवर चॅट",
+    "showChatOnFullscreen": "फुलस्क्रीन चॅट",
     "links": "लिंक्स",
-    "donate": "दान करा"
+    "donate": "देणगी द्या"
   }
 }

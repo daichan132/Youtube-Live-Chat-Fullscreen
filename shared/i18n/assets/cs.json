@@ -5,39 +5,39 @@
         "preset": "Přednastavení",
         "setting": "Nastavení"
       },
-      "alwaysOnDisplay": "Vždy Zobrazit",
-      "chatOnlyDisplay": "Zobrazit Pouze Chat",
-      "userNameDisplay": "Zobrazit Uživatelské Jméno",
-      "userIconDisplay": "Zobrazit Uživatelskou Ikonu",
-      "reactionButtonDisplay": "Zobrazit Tlačítko Reakce",
-      "superChatBarDisplay": "Zobrazit Pruh Super Chatu",
-      "backgroundColor": "Barva Pozadí",
-      "fontColor": "Barva Písma",
-      "fontFamily": "Rodina Písma",
-      "fontSize": "Velikost Písma",
-      "blur": "Rozmazání",
+      "alwaysOnDisplay": "Stále zobrazit",
+      "chatOnlyDisplay": "Zobrazit pouze chat",
+      "userNameDisplay": "Zobrazit uživatelské jméno",
+      "userIconDisplay": "Zobrazit uživatelskou ikonu",
+      "reactionButtonDisplay": "Zobrazit tlačítka reakcí",
+      "superChatBarDisplay": "Zobrazit lištu Super Chat",
+      "backgroundColor": "Barva pozadí",
+      "fontColor": "Barva písma",
+      "fontFamily": "Písmo",
+      "fontSize": "Velikost písma",
+      "blur": "Rozostření",
       "space": "Mezera",
       "footer": {
-        "donate": "Darovat",
+        "donate": "Přispět",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Přidat Aktuální Nastavení",
+      "addMessage": "Přidat aktuální nastavení",
       "addItemTitle": "Bez názvu",
       "defaultTitle": "Výchozí",
-      "transparentTitle": "Průhledný",
-      "simpleTitle": "Jednoduchý",
-      "deleteConfirmationMessage": "Opravdu chcete odstranit?",
-      "delete": "Odstranit",
+      "transparentTitle": "Průhledné",
+      "simpleTitle": "Jednoduché",
+      "deleteConfirmationMessage": "Opravdu chcete smazat?",
+      "delete": "Smazat",
       "cancel": "Zrušit"
     }
   },
   "popup": {
-    "language": "Jazyková Nastavení",
-    "showChatOnFullscreen": "Zobrazit Chat na Celou Obrazovku",
+    "language": "Nastavení jazyka",
+    "showChatOnFullscreen": "Chat na celou obrazovku",
     "links": "Odkazy",
-    "donate": "Darovat"
+    "donate": "Přispět"
   }
 }

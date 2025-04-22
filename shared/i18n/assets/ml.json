@@ -5,18 +5,18 @@
         "preset": "പ്രീസെറ്റ്",
         "setting": "ക്രമീകരണങ്ങൾ"
       },
-      "alwaysOnDisplay": "എല്ലായിടത്തും പ്രദർശിപ്പിക്കുക",
+      "alwaysOnDisplay": "എപ്പോഴും പ്രദർശിപ്പിക്കുക",
       "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",
-      "userNameDisplay": "ഉപയോക്തൃ നാമം പ്രദർശിപ്പിക്കുക",
-      "userIconDisplay": "ഉപയോക്തൃ ഐകോൺ പ്രദർശിപ്പിക്കുക",
-      "reactionButtonDisplay": "പ്രതികരണ ബട്ടൺ പ്രദർശിപ്പിക്കുക",
-      "superChatBarDisplay": "സൂപ്പർ ചാറ്റ് ബാർ പ്രദർശിപ്പിക്കുക",
-      "backgroundColor": "പശ്ചാത്തല നിറം",
+      "userNameDisplay": "ഉപയോക്തൃനാമം കാണിക്കുക",
+      "userIconDisplay": "ഉപയോക്തൃ ഐക്കൺ കാണിക്കുക",
+      "reactionButtonDisplay": "പ്രതികരണ ബട്ടൺ കാണിക്കുക",
+      "superChatBarDisplay": "സൂപ്പർ ചാറ്റ് ബാർ കാണിക്കുക",
+      "backgroundColor": "പിന്തുണയുടെ നിറം",
       "fontColor": "ഫോണ്ട് നിറം",
-      "fontFamily": "ഫോണ്ട് കുടുംബം",
+      "fontFamily": "ഫോണ്ട് ഫാമിലി",
       "fontSize": "ഫോണ്ട് വലുപ്പം",
-      "blur": "അവല്ലപിക്കുന്നു",
-      "space": "ഇടം",
+      "blur": "മങ്ങിയ നില",
+      "space": "സ്പേസ്",
       "footer": {
         "donate": "സംഭാവന",
         "chrome": "ക്രോം",
@@ -25,19 +25,19 @@
     },
     "preset": {
       "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
-      "addItemTitle": "ശീർഷകമൊന്നുമില്ല",
-      "defaultTitle": "പൂർത്തീകരണം",
-      "transparentTitle": "പുതു ദൃദ്യമായ",
-      "simpleTitle": "ലളിതമായ",
-      "deleteConfirmationMessage": "നിങ്ങൾക്ക് നീക്കം ചെയ്യാൻ ആഗ്രഹിക്കുന്നുണ്ടോ?",
-      "delete": "നീക്കം ചെയ്യുക",
+      "addItemTitle": "ശീർഷകമില്ലാത്തത്",
+      "defaultTitle": "ഡിഫോൾട്ട്",
+      "transparentTitle": "സുതാര്യമായത്",
+      "simpleTitle": "സിംപിള്‍",
+      "deleteConfirmationMessage": "നിങ്ങൾക്ക് തീർച്ചയാണോ ഡിലീറ്റ് ചെയ്യാൻ?",
+      "delete": "ഇളക്കുക",
       "cancel": "റദ്ദാക്കുക"
     }
   },
   "popup": {
-    "language": "ഭാഷാ ക്രമീകരണങ്ങൾ",
-    "showChatOnFullscreen": "പൂർണ്ണസ്ക്രീൻ ചാറ്റ്",
-    "links": "കണ്ണികൾ",
+    "language": "ഭാഷ ക്രമീകരണങ്ങൾ",
+    "showChatOnFullscreen": "പൂർണ്ണ സ്ക്രീൻ ചാറ്റ്",
+    "links": "ലിങ്കുകൾ",
     "donate": "സംഭാവന"
   }
 }

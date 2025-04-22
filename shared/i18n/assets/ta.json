@@ -2,33 +2,33 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "முன்னமைப்பு",
+        "preset": "முன் அமைப்பு",
         "setting": "அமைப்புகள்"
       },
-      "alwaysOnDisplay": "எப்போதும் காட்சியில் மேடு",
-      "chatOnlyDisplay": "சார்பு மட்டும் காட்சி",
-      "userNameDisplay": "பயனர் பெயர் காட்சி",
-      "userIconDisplay": "பயனர் ஐகான் காட்சி",
-      "reactionButtonDisplay": "பிரதி காட்சி பொத்தான்",
-      "superChatBarDisplay": "சூப்பர் சந்தா பட்டி காட்சி",
+      "alwaysOnDisplay": "எப்போதும் காட்டவும்",
+      "chatOnlyDisplay": "சாட்டை மட்டும் காட்டவும்",
+      "userNameDisplay": "பயனர் பெயர் காட்டவும்",
+      "userIconDisplay": "பயனர் ஐகான் காட்டவும்",
+      "reactionButtonDisplay": "வினையாக்கம் பொத்தானைக் காட்டவும்",
+      "superChatBarDisplay": "சூப்பர் சாட் பாரைக் காட்டவும்",
       "backgroundColor": "பின்னணி நிறம்",
-      "fontColor": "எழுத்துரு நிறம்",
-      "fontFamily": "எழுத்துரு குடும்பம்",
-      "fontSize": "எழுத்துரு அளவு",
-      "blur": "தூக்கம்",
+      "fontColor": "எழுத்து நிறம்",
+      "fontFamily": "எழுத்துரு",
+      "fontSize": "எழுத்து அளவு",
+      "blur": "மங்கல்",
       "space": "இடம்",
       "footer": {
-        "donate": "நன்கொடை",
-        "chrome": "குரோம்",
-        "firefox": "பயர்பாக்ஸ்"
+        "donate": "இறையஞ்சல்",
+        "chrome": "க்ரோம்",
+        "firefox": "ஃபயர்ஃபாக்ஸ்"
       }
     },
     "preset": {
-      "addMessage": "தற்போதைய அமைப்புகளை சேர்க்கவும்",
-      "addItemTitle": "தலைப்பு இல்லாதது",
+      "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
+      "addItemTitle": "தலைப்பில்லை",
       "defaultTitle": "இயல்புநிலை",
-      "transparentTitle": "தெளிவான",
-      "simpleTitle": "எளிமையான",
+      "transparentTitle": "ஒளிர்வானது",
+      "simpleTitle": "எளிமை",
       "deleteConfirmationMessage": "நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
       "cancel": "ரத்து"
@@ -36,8 +36,8 @@
   },
   "popup": {
     "language": "மொழி அமைப்புகள்",
-    "showChatOnFullscreen": "முழு திரை சந்தா",
+    "showChatOnFullscreen": "முழுத்திரை சாட்",
     "links": "இணைப்புகள்",
-    "donate": "நன்கொடை"
+    "donate": "இறையஞ்சல்"
   }
 }

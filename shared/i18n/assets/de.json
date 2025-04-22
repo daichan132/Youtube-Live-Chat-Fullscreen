@@ -5,18 +5,18 @@
         "preset": "Voreinstellung",
         "setting": "Einstellungen"
       },
-      "alwaysOnDisplay": "Immer ein Display",
-      "chatOnlyDisplay": "Nur-Chat-Anzeige",
-      "userNameDisplay": "Benutzernamen-Anzeige",
-      "userIconDisplay": "Benutzersymbol-Anzeige",
-      "reactionButtonDisplay": "Reaktionsknopf-Anzeige",
-      "superChatBarDisplay": "Superchat-Leistenanzeige",
+      "alwaysOnDisplay": "Immer sichtbar",
+      "chatOnlyDisplay": "Nur Chat anzeigen",
+      "userNameDisplay": "Benutzernamen anzeigen",
+      "userIconDisplay": "Benutzersymbol anzeigen",
+      "reactionButtonDisplay": "Reaktionsbutton anzeigen",
+      "superChatBarDisplay": "Super-Chat-Leiste anzeigen",
       "backgroundColor": "Hintergrundfarbe",
       "fontColor": "Schriftfarbe",
-      "fontFamily": "Schriftfamilie",
+      "fontFamily": "Schriftart",
       "fontSize": "Schriftgröße",
       "blur": "Unschärfe",
-      "space": "Raum",
+      "space": "Abstand",
       "footer": {
         "donate": "Spenden",
         "chrome": "Chrome",
@@ -24,12 +24,12 @@
       }
     },
     "preset": {
-      "addMessage": "Aktuelle Einstellungen hinzufügen",
+      "addMessage": "Aktuelle Einstellungen übernehmen",
       "addItemTitle": "Unbenannt",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
       "simpleTitle": "Einfach",
-      "deleteConfirmationMessage": "Möchten Sie wirklich löschen?",
+      "deleteConfirmationMessage": "Möchten Sie dies wirklich löschen?",
       "delete": "Löschen",
       "cancel": "Abbrechen"
     }

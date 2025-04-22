@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Előbeállítás",
+        "preset": "Előre beállított",
         "setting": "Beállítások"
       },
-      "alwaysOnDisplay": "Mindig látható megjelenítés",
-      "chatOnlyDisplay": "Csak chat megjelenítés",
-      "userNameDisplay": "Felhasználónév megjelenítés",
-      "userIconDisplay": "Felhasználói ikon megjelenítés",
-      "reactionButtonDisplay": "Reakció gomb megjelenítés",
-      "superChatBarDisplay": "Super Chat sáv megjelenítés",
+      "alwaysOnDisplay": "Állandó megjelenítés",
+      "chatOnlyDisplay": "Csak chat megjelenítése",
+      "userNameDisplay": "Felhasználónév megjelenítése",
+      "userIconDisplay": "Felhasználói ikon megjelenítése",
+      "reactionButtonDisplay": "Reakciógomb megjelenítése",
+      "superChatBarDisplay": "Super Chat sáv megjelenítése",
       "backgroundColor": "Háttérszín",
       "fontColor": "Betűszín",
       "fontFamily": "Betűtípus",
       "fontSize": "Betűméret",
-      "blur": "Elmosás",
-      "space": "Hely",
+      "blur": "Elmosódás",
+      "space": "Térköz",
       "footer": {
         "donate": "Adományozás",
         "chrome": "Chrome",
@@ -25,18 +25,18 @@
     },
     "preset": {
       "addMessage": "Jelenlegi beállítások hozzáadása",
-      "addItemTitle": "Név nélküli",
+      "addItemTitle": "Névtelen",
       "defaultTitle": "Alapértelmezett",
       "transparentTitle": "Átlátszó",
       "simpleTitle": "Egyszerű",
-      "deleteConfirmationMessage": "Biztosan törölni szeretné?",
+      "deleteConfirmationMessage": "Biztosan törli?",
       "delete": "Törlés",
       "cancel": "Mégse"
     }
   },
   "popup": {
     "language": "Nyelvi beállítások",
-    "showChatOnFullscreen": "Teljes képernyős chat",
+    "showChatOnFullscreen": "Chat teljes képernyőn",
     "links": "Linkek",
     "donate": "Adományozás"
   }

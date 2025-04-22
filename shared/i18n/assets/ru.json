@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Предустановка",
+        "preset": "Пресет",
         "setting": "Настройки"
       },
-      "alwaysOnDisplay": "Всегда на экране",
+      "alwaysOnDisplay": "Всегда отображать",
       "chatOnlyDisplay": "Только чат",
-      "userNameDisplay": "Отображение имени пользователя",
-      "userIconDisplay": "Отображение иконки пользователя",
-      "reactionButtonDisplay": "Кнопка реакции",
-      "superChatBarDisplay": "Панель суперчата",
-      "backgroundColor": "Цвет фона",
-      "fontColor": "Цвет шрифта",
+      "userNameDisplay": "Отображать имя пользователя",
+      "userIconDisplay": "Отображать иконку пользователя",
+      "reactionButtonDisplay": "Отображать кнопку реакций",
+      "superChatBarDisplay": "Отображать панель Super Chat",
+      "backgroundColor": "Фон",
+      "fontColor": "Цвет текста",
       "fontFamily": "Шрифт",
       "fontSize": "Размер шрифта",
       "blur": "Размытие",
-      "space": "Интервал",
+      "space": "Пробелы",
       "footer": {
         "donate": "Пожертвовать",
         "chrome": "Chrome",
@@ -35,8 +35,8 @@
     }
   },
   "popup": {
-    "language": "Настройки языка",
-    "showChatOnFullscreen": "Полноэкранный режим чата",
+    "language": "Язык интерфейса",
+    "showChatOnFullscreen": "Чат на весь экран",
     "links": "Ссылки",
     "donate": "Пожертвовать"
   }

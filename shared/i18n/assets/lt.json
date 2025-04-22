@@ -5,18 +5,18 @@
         "preset": "Išankstiniai nustatymai",
         "setting": "Nustatymai"
       },
-      "alwaysOnDisplay": "Visada rodoma",
-      "chatOnlyDisplay": "Tik pokalbiai",
-      "userNameDisplay": "Vartotojo vardo rodymas",
-      "userIconDisplay": "Vartotojo ikonos rodymas",
-      "reactionButtonDisplay": "Reakcijų mygtuko rodymas",
-      "superChatBarDisplay": "Super Chat juostos rodymas",
+      "alwaysOnDisplay": "Visada rodyti",
+      "chatOnlyDisplay": "Rodyti tik pokalbį",
+      "userNameDisplay": "Rodyti naudotojo vardą",
+      "userIconDisplay": "Rodyti naudotojo piktogramą",
+      "reactionButtonDisplay": "Rodyti reakcijos mygtuką",
+      "superChatBarDisplay": "Rodyti „Super Chat“ juostą",
       "backgroundColor": "Fono spalva",
       "fontColor": "Šrifto spalva",
       "fontFamily": "Šrifto šeima",
       "fontSize": "Šrifto dydis",
-      "blur": "Išblukimas",
-      "space": "Tarpai",
+      "blur": "Suliejimas",
+      "space": "Tarpas",
       "footer": {
         "donate": "Paaukoti",
         "chrome": "Chrome",
@@ -24,7 +24,7 @@
       }
     },
     "preset": {
-      "addMessage": "Pridėti esamus nustatymus",
+      "addMessage": "Įtraukti dabartinius nustatymus",
       "addItemTitle": "Be pavadinimo",
       "defaultTitle": "Numatytasis",
       "transparentTitle": "Permatomas",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Kalbos nustatymai",
-    "showChatOnFullscreen": "Viso ekrano pokalbis",
+    "showChatOnFullscreen": "Visas ekranas (pokalbis)",
     "links": "Nuorodos",
     "donate": "Paaukoti"
   }

@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Iepriekšiestatīt",
+        "preset": "Sagatave",
         "setting": "Iestatījumi"
       },
-      "alwaysOnDisplay": "Vienmēr parādīts",
-      "chatOnlyDisplay": "Tikai čata parādīšana",
-      "userNameDisplay": "Lietotāja vārda parādīšana",
-      "userIconDisplay": "Lietotāja ikonas parādīšana",
-      "reactionButtonDisplay": "Reakcijas pogas parādīšana",
-      "superChatBarDisplay": "Super Tērzēšanas joslas parādīšana",
+      "alwaysOnDisplay": "Vienmēr redzams",
+      "chatOnlyDisplay": "Tikai čats",
+      "userNameDisplay": "Lietotājvārda attēlošana",
+      "userIconDisplay": "Lietotāja ikonas attēlošana",
+      "reactionButtonDisplay": "Reakciju pogas attēlošana",
+      "superChatBarDisplay": "Super čata joslas attēlošana",
       "backgroundColor": "Fona krāsa",
       "fontColor": "Fonta krāsa",
       "fontFamily": "Fonta ģimene",
-      "fontSize": "Fonta lielums",
-      "blur": "Aizmiglot",
-      "space": "Atstarpe",
+      "fontSize": "Fonta izmērs",
+      "blur": "Aizmiglojums",
+      "space": "Atstatums",
       "footer": {
         "donate": "Ziedot",
         "chrome": "Chrome",
@@ -24,7 +24,7 @@
       }
     },
     "preset": {
-      "addMessage": "Pievienot šos iestatījumus",
+      "addMessage": "Pievienot pašreizējos iestatījumus",
       "addItemTitle": "Bez nosaukuma",
       "defaultTitle": "Noklusējums",
       "transparentTitle": "Caurspīdīgs",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Valodas iestatījumi",
-    "showChatOnFullscreen": "Pilnekrāna čats",
+    "showChatOnFullscreen": "Čats pilnekrānā",
     "links": "Saites",
     "donate": "Ziedot"
   }

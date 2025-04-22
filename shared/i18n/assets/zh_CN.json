@@ -6,21 +6,21 @@
         "setting": "设置"
       },
       "alwaysOnDisplay": "始终显示",
-      "chatOnlyDisplay": "仅聊天显示",
-      "userNameDisplay": "用户名显示",
-      "userIconDisplay": "用户图标显示",
-      "reactionButtonDisplay": "反应按钮显示",
-      "superChatBarDisplay": "超级聊天栏显示",
-      "backgroundColor": "背景颜色",
+      "chatOnlyDisplay": "仅显示聊天",
+      "userNameDisplay": "显示用户名",
+      "userIconDisplay": "显示用户头像",
+      "reactionButtonDisplay": "显示回应按钮",
+      "superChatBarDisplay": "显示Super Chat栏",
+      "backgroundColor": "背景色",
       "fontColor": "字体颜色",
-      "fontFamily": "字体系列",
+      "fontFamily": "字体",
       "fontSize": "字体大小",
       "blur": "模糊",
       "space": "间距",
       "footer": {
         "donate": "捐赠",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "chrome": "Chrome 浏览器",
+        "firefox": "Firefox 浏览器"
       }
     },
     "preset": {
@@ -28,8 +28,8 @@
       "addItemTitle": "未命名",
       "defaultTitle": "默认",
       "transparentTitle": "透明",
-      "simpleTitle": "简单",
-      "deleteConfirmationMessage": "您确定要删除吗？",
+      "simpleTitle": "简洁",
+      "deleteConfirmationMessage": "确定要删除吗？",
       "delete": "删除",
       "cancel": "取消"
     }
@@ -37,7 +37,7 @@
   "popup": {
     "language": "语言设置",
     "showChatOnFullscreen": "全屏聊天",
-    "links": "链接",
+    "links": "相关链接",
     "donate": "捐赠"
   }
 }

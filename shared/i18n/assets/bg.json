@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Предварително зададено",
+        "preset": "Шаблони",
         "setting": "Настройки"
       },
-      "alwaysOnDisplay": "Винаги на дисплея",
-      "chatOnlyDisplay": "Само чат на дисплея",
-      "userNameDisplay": "Показване на потребителското име",
-      "userIconDisplay": "Показване на иконата на потребителя",
-      "reactionButtonDisplay": "Показване на бутона за реакция",
-      "superChatBarDisplay": "Показване на лентата за Super Chat",
+      "alwaysOnDisplay": "Винаги видим дисплей",
+      "chatOnlyDisplay": "Само чат изглед",
+      "userNameDisplay": "Показване на потребителско име",
+      "userIconDisplay": "Показване на потребителска икона",
+      "reactionButtonDisplay": "Показване на бутоните за реакции",
+      "superChatBarDisplay": "Показване на Super Chat лентата",
       "backgroundColor": "Цвят на фона",
       "fontColor": "Цвят на шрифта",
       "fontFamily": "Шрифт",
       "fontSize": "Размер на шрифта",
-      "blur": "Размазване",
+      "blur": "Замъгляване",
       "space": "Разстояние",
       "footer": {
-        "donate": "Дарете",
+        "donate": "Дарение",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Добавяне на текущи настройки",
+      "addMessage": "Добави текущите настройки",
       "addItemTitle": "Без заглавие",
       "defaultTitle": "По подразбиране",
       "transparentTitle": "Прозрачен",
-      "simpleTitle": "Опостен",
-      "deleteConfirmationMessage": "Сигурни ли сте, че искате да изтриете?",
-      "delete": "Изтриване",
+      "simpleTitle": "Опростен",
+      "deleteConfirmationMessage": "Наистина ли искате да изтриете?",
+      "delete": "Изтрий",
       "cancel": "Отказ"
     }
   },
   "popup": {
-    "language": "Настройки на езика",
+    "language": "Езикови настройки",
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
-    "donate": "Дарете"
+    "donate": "Дарение"
   }
 }

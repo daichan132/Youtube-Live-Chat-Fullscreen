@@ -1,35 +1,42 @@
 # i18n-scripts
 
-A small CLI toolset to generate and translate i18n JSON assets for Chrome extensions (or other web projects).
+A small CLI toolset to generate and translate i18n JSON assets for Chrome extensions and other web projects using the OpenAI API.
+
+## Prerequisites
+
+- Python 3.13 or later
+- [uv](https://github.com/astral-sh/uv) (Python package installer and virtual environment manager)
+- An OpenAI API key set as an environment variable (`OPENAI_API_KEY`).
 
 ## Installation
 
-Install using uv (https://github.com/astral-sh/uv):
+1.  **Install uv** (if you haven't already):
+    Follow the instructions for your OS at [https://github.com/astral-sh/uv](https://github.com/astral-sh/uv). Examples:
+    ```bash
+    # macOS/Linux
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    # Windows (PowerShell)
+    powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+    # pip
+    pip install uv
+    # Homebrew
+    brew install uv
+    ```
 
-```bash
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-# Windows
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-# pip
-pip install uv
-# Homebrew
-brew install uv
-# Cargo
-cargo install --git https://github.com/astral-sh/uv uv
-```
-
-Install project dependencies and sync the virtual environment:
-
-```bash
-uv sync
-```
+2.  **Install project dependencies:**
+    Navigate to the `i18n_scripts` directory in your terminal and run:
+    ```bash
+    uv sync
+    ```
+    This command installs the required Python packages into a virtual environment managed by `uv`.
 
 ## Configuration
 
-The scripts are configured using the `config.json` file in the root of the i18n_scripts directory. Configuration is managed through Pydantic models for type validation and schema enforcement.
+The scripts are configured using the `config.json` file located in the root of the `i18n_scripts` directory. If this file doesn't exist when you first run a script, it will be created automatically with default values.
 
-Here's an example configuration:
+Configuration is managed using Pydantic for validation.
+
+**Default `config.json`:**
 
 ```json
 {
@@ -38,40 +45,40 @@ Here's an example configuration:
   "assets_dir": "../shared/i18n/assets",
   "lang_codes_file": "../shared/i18n/language_codes.json",
   "max_workers": 3,
-  "openai_model": "gpt-4o"
+  "openai_model": "gpt-4.1-2025-04-14"
 }
 ```
 
-Configuration options:
+**Configuration Options:**
 
-- `base_langs`: List of base language codes.
-- `locales_dir`: Path to the Chrome extension locales directory for JSON files.
-- `assets_dir`: Path to the i18n assets directory for JSON files.
-- `lang_codes_file`: Path to the JSON file containing language codes and display names.
-- `max_workers`: Number of parallel translation workers.
-- `openai_model`: OpenAI model to use for translations.
+-   `base_langs` (List[str]): A list of language codes (e.g., "en", "ja") that serve as the source languages for translations. The content from files corresponding to these languages will be combined and sent to the OpenAI API.
+-   `locales_dir` (str): The relative path from the `i18n_scripts` directory to the Chrome extension's `_locales` directory. This is used when translating Chrome-specific locale files (`messages.json`).
+-   `assets_dir` (str): The relative path from the `i18n_scripts` directory to the general i18n assets directory. This is used when translating standard i18n JSON files (e.g., `en.json`, `ja.json`).
+-   `lang_codes_file` (str): The relative path from the `i18n_scripts` directory to a JSON file containing the target language codes and their display names (e.g., `{"es": "Spanish", "fr": "French"}`). The script will generate translations for all languages listed in this file, excluding the `base_langs`.
+-   `max_workers` (int): The maximum number of translation tasks to run in parallel. Adjust based on your system resources and OpenAI API rate limits. Must be at least 1.
+-   `openai_model` (str): The specific OpenAI model ID to use for the translation task.
 
-If the configuration file doesn't exist, a default one will be created automatically when running the scripts.
+**Note on Paths:** All paths specified in `config.json` are relative to the `i18n_scripts` directory itself.
 
-## Available Commands
+## Usage
 
-Run the CLI using `uv run python`:
+Run the translation commands from within the `i18n_scripts` directory using `uv run python`.
+
+**1. Translate Chrome Extension Locales:**
+
+This command translates the `messages.json` files found within language-specific subdirectories inside the `locales_dir`.
 
 ```bash
-# Generate translated Chrome extension locale files
 uv run python -m src.cli --type locales
-
-# Generate translated JSON i18n asset files
-uv run python -m src.cli --type i18n
 ```
 
-## How It Works
+**2. Translate General i18n Assets:**
 
-The CLI will:
-1. Read settings from `config.json` using Pydantic models for validation
-2. Combine content from base languages (`en` and `ja` by default)
-3. Translate to all languages defined in the language codes file
-4. Save translated files to the appropriate directories
+This command translates JSON files named like `[lang_code].json` (e.g., `en.json`) found directly within the `assets_dir`.
+
+```bash
+uv run python -m src.cli --type i18n
+```
 
 ## License
 

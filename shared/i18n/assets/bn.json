@@ -5,18 +5,18 @@
         "preset": "প্রিসেট",
         "setting": "সেটিংস"
       },
-      "alwaysOnDisplay": "সবসময় প্রদর্শনে রাখুন",
-      "chatOnlyDisplay": "শুধু চ্যাট প্রদর্শন",
-      "userNameDisplay": "ব্যবহারকারীর নাম প্রদর্শন",
-      "userIconDisplay": "ব্যবহারকারীর আইকন প্রদর্শন",
-      "reactionButtonDisplay": "প্রতিক্রিয়া বোতাম প্রদর্শন",
+      "alwaysOnDisplay": "সবসময় প্রদর্শন করুন",
+      "chatOnlyDisplay": "শুধুমাত্র চ্যাট প্রদর্শন",
+      "userNameDisplay": "ইউজার নাম প্রদর্শন",
+      "userIconDisplay": "ইউজার আইকন প্রদর্শন",
+      "reactionButtonDisplay": "রিয়াকশন বাটন প্রদর্শন",
       "superChatBarDisplay": "সুপার চ্যাট বার প্রদর্শন",
-      "backgroundColor": "পটভূমি রঙ",
-      "fontColor": "অক্ষরের রঙ",
-      "fontFamily": "ফন্ট পরিবার",
+      "backgroundColor": "পটভূমির রং",
+      "fontColor": "ফন্টের রং",
+      "fontFamily": "ফন্ট ফ্যামিলি",
       "fontSize": "ফন্ট সাইজ",
       "blur": "ব্লার",
-      "space": "জায়গা",
+      "space": "স্পেস",
       "footer": {
         "donate": "দান করুন",
         "chrome": "ক্রোম",
@@ -28,16 +28,16 @@
       "addItemTitle": "শিরোনামহীন",
       "defaultTitle": "ডিফল্ট",
       "transparentTitle": "স্বচ্ছ",
-      "simpleTitle": "সহজ",
-      "deleteConfirmationMessage": "আপনি কি মুছতে চান, নিশ্চিত?",
+      "simpleTitle": "সরল",
+      "deleteConfirmationMessage": "আপনি কি নিশ্চিতভাবে মুছে ফেলতে চান?",
       "delete": "মুছে ফেলুন",
-      "cancel": "বাতিল"
+      "cancel": "বাতিল করুন"
     }
   },
   "popup": {
-    "language": "ভাষা সেটিংস",
-    "showChatOnFullscreen": "পূর্ণস্ক্রীনে চ্যাট",
-    "links": "লিঙ্ক",
+    "language": "ভাষার সেটিংস",
+    "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
+    "links": "লিঙ্কসমূহ",
     "donate": "দান করুন"
   }
 }

@@ -9,16 +9,16 @@
       "chatOnlyDisplay": "채팅만 표시",
       "userNameDisplay": "사용자 이름 표시",
       "userIconDisplay": "사용자 아이콘 표시",
-      "reactionButtonDisplay": "반응 버튼 표시",
-      "superChatBarDisplay": "슈퍼 채팅 바 표시",
+      "reactionButtonDisplay": "리액션 버튼 표시",
+      "superChatBarDisplay": "슈퍼챗 바 표시",
       "backgroundColor": "배경색",
-      "fontColor": "글꼴 색상",
+      "fontColor": "글자색",
       "fontFamily": "글꼴",
       "fontSize": "글꼴 크기",
-      "blur": "블러",
-      "space": "여백",
+      "blur": "블러 처리",
+      "space": "간격",
       "footer": {
-        "donate": "기부",
+        "donate": "후원하기",
         "chrome": "크롬",
         "firefox": "파이어폭스"
       }
@@ -26,10 +26,10 @@
     "preset": {
       "addMessage": "현재 설정 추가",
       "addItemTitle": "제목 없음",
-      "defaultTitle": "기본",
+      "defaultTitle": "기본값",
       "transparentTitle": "투명",
-      "simpleTitle": "단순",
-      "deleteConfirmationMessage": "정말 삭제하시겠습니까?",
+      "simpleTitle": "심플",
+      "deleteConfirmationMessage": "정말로 삭제하시겠습니까?",
       "delete": "삭제",
       "cancel": "취소"
     }
@@ -38,6 +38,6 @@
     "language": "언어 설정",
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
-    "donate": "기부"
+    "donate": "후원하기"
   }
 }

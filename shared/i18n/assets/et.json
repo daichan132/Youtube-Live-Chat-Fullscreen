@@ -5,39 +5,39 @@
         "preset": "Eelseadistus",
         "setting": "Seaded"
       },
-      "alwaysOnDisplay": "Alati Ekraanil",
-      "chatOnlyDisplay": "Ainult Vestluse Näitamine",
-      "userNameDisplay": "Kasutajanime Näitamine",
-      "userIconDisplay": "Kasutaja Ikooni Näitamine",
-      "reactionButtonDisplay": "Reaktsiooninupu Näitamine",
-      "superChatBarDisplay": "SuperVestlusriba Näitamine",
+      "alwaysOnDisplay": "Alati nähtav",
+      "chatOnlyDisplay": "Ainult vestlus",
+      "userNameDisplay": "Kasutajanime kuvamine",
+      "userIconDisplay": "Kasutajaikooni kuvamine",
+      "reactionButtonDisplay": "Reaktsiooninupu kuvamine",
+      "superChatBarDisplay": "SuperChat-riba kuvamine",
       "backgroundColor": "Taustavärv",
-      "fontColor": "Kirjavärv",
-      "fontFamily": "Fontide Pere",
-      "fontSize": "Kirjavahe",
-      "blur": "Udusus",
-      "space": "Ruum",
+      "fontColor": "Tekstivärv",
+      "fontFamily": "Font",
+      "fontSize": "Fondi suurus",
+      "blur": "Uduefekt",
+      "space": "Vahe",
       "footer": {
-        "donate": "Annetage",
+        "donate": "Toeta",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Lisa Praegused Seaded",
+      "addMessage": "Lisa praegused seaded",
       "addItemTitle": "Pealkirjata",
       "defaultTitle": "Vaikimisi",
       "transparentTitle": "Läbipaistev",
       "simpleTitle": "Lihtne",
-      "deleteConfirmationMessage": "Kas olete kindel, et soovite kustutada?",
+      "deleteConfirmationMessage": "Kas oled kindel, et soovid kustutada?",
       "delete": "Kustuta",
       "cancel": "Tühista"
     }
   },
   "popup": {
-    "language": "Keele Seaded",
-    "showChatOnFullscreen": "Täisekraanil Vestlus",
+    "language": "Keele seaded",
+    "showChatOnFullscreen": "Täisekraani vestlus",
     "links": "Lingid",
-    "donate": "Annetage"
+    "donate": "Toeta"
   }
 }

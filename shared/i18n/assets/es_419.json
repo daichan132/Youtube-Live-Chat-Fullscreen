@@ -3,20 +3,20 @@
     "setting": {
       "header": {
         "preset": "Preajuste",
-        "setting": "Configuraciones"
+        "setting": "Configuración"
       },
-      "alwaysOnDisplay": "Pantalla Siempre Activa",
-      "chatOnlyDisplay": "Pantalla Solo Chat",
-      "userNameDisplay": "Mostrar Nombre de Usuario",
-      "userIconDisplay": "Mostrar Icono de Usuario",
-      "reactionButtonDisplay": "Mostrar Botón de Reacción",
-      "superChatBarDisplay": "Mostrar Barra de Super Chat",
-      "backgroundColor": "Color de Fondo",
-      "fontColor": "Color de Fuente",
-      "fontFamily": "Familia de Fuente",
-      "fontSize": "Tamaño de Fuente",
+      "alwaysOnDisplay": "Mostrar siempre",
+      "chatOnlyDisplay": "Mostrar solo el chat",
+      "userNameDisplay": "Mostrar nombre de usuario",
+      "userIconDisplay": "Mostrar ícono de usuario",
+      "reactionButtonDisplay": "Mostrar botón de reacción",
+      "superChatBarDisplay": "Mostrar barra de Super Chat",
+      "backgroundColor": "Color de fondo",
+      "fontColor": "Color de fuente",
+      "fontFamily": "Tipo de letra",
+      "fontSize": "Tamaño de fuente",
       "blur": "Desenfoque",
-      "space": "Espacio",
+      "space": "Espaciado",
       "footer": {
         "donate": "Donar",
         "chrome": "Chrome",
@@ -24,19 +24,19 @@
       }
     },
     "preset": {
-      "addMessage": "Agregar Configuraciones Actuales",
+      "addMessage": "Agregar configuración actual",
       "addItemTitle": "Sin título",
-      "defaultTitle": "Predeterminado",
+      "defaultTitle": "Por defecto",
       "transparentTitle": "Transparente",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "¿Está seguro de que desea eliminar?",
+      "deleteConfirmationMessage": "¿Seguro que deseas eliminarlo?",
       "delete": "Eliminar",
       "cancel": "Cancelar"
     }
   },
   "popup": {
-    "language": "Configuración de Idioma",
-    "showChatOnFullscreen": "Chat en Pantalla Completa",
+    "language": "Configuración de idioma",
+    "showChatOnFullscreen": "Chat en pantalla completa",
     "links": "Enlaces",
     "donate": "Donar"
   }

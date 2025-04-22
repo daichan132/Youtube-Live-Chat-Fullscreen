@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "پیش تنظیم",
+        "preset": "پیش‌تنظیم",
         "setting": "تنظیمات"
       },
-      "alwaysOnDisplay": "نمایش دائمی",
-      "chatOnlyDisplay": "نمایش فقط چت",
+      "alwaysOnDisplay": "نمایش همیشگی",
+      "chatOnlyDisplay": "فقط نمایش چت",
       "userNameDisplay": "نمایش نام کاربری",
       "userIconDisplay": "نمایش آیکون کاربر",
       "reactionButtonDisplay": "نمایش دکمه واکنش",
-      "superChatBarDisplay": "نمایش سوپر چت",
-      "backgroundColor": "رنگ پس زمینه",
+      "superChatBarDisplay": "نمایش نوار سوپرچت",
+      "backgroundColor": "رنگ پس‌زمینه",
       "fontColor": "رنگ فونت",
       "fontFamily": "خانواده فونت",
       "fontSize": "اندازه فونت",
       "blur": "تاری",
-      "space": "فضا",
+      "space": "فاصله",
       "footer": {
         "donate": "حمایت مالی",
         "chrome": "کروم",
@@ -25,13 +25,13 @@
     },
     "preset": {
       "addMessage": "افزودن تنظیمات فعلی",
-      "addItemTitle": "بی‌عنوان",
+      "addItemTitle": "بدون عنوان",
       "defaultTitle": "پیش‌فرض",
       "transparentTitle": "شفاف",
       "simpleTitle": "ساده",
       "deleteConfirmationMessage": "آیا مطمئن هستید که می‌خواهید حذف کنید؟",
       "delete": "حذف",
-      "cancel": "لغو"
+      "cancel": "انصراف"
     }
   },
   "popup": {

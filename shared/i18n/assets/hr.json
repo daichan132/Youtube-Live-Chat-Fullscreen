@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Unaprijed postavljena postavka",
+        "preset": "Prijedlozi",
         "setting": "Postavke"
       },
-      "alwaysOnDisplay": "Uvijek uključen zaslon",
-      "chatOnlyDisplay": "Samo prikaz chata",
+      "alwaysOnDisplay": "Uvijek uključeno",
+      "chatOnlyDisplay": "Samo chat prikaz",
       "userNameDisplay": "Prikaz korisničkog imena",
-      "userIconDisplay": "Prikaz ikone korisnika",
-      "reactionButtonDisplay": "Prikaz gumba za reakciju",
+      "userIconDisplay": "Prikaz korisničke ikone",
+      "reactionButtonDisplay": "Prikaz tipke za reakciju",
       "superChatBarDisplay": "Prikaz Super Chat trake",
       "backgroundColor": "Boja pozadine",
       "fontColor": "Boja fonta",
-      "fontFamily": "Obitelj fonta",
+      "fontFamily": "Font",
       "fontSize": "Veličina fonta",
       "blur": "Zamućenje",
       "space": "Razmak",
@@ -36,8 +36,8 @@
   },
   "popup": {
     "language": "Postavke jezika",
-    "showChatOnFullscreen": "Prikaz chata na cijelom zaslonu",
-    "links": "Poveznice",
+    "showChatOnFullscreen": "Chat preko cijelog zaslona",
+    "links": "Linkovi",
     "donate": "Doniraj"
   }
 }

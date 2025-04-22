@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Ustawienie wstępne",
+        "preset": "Szablon",
         "setting": "Ustawienia"
       },
-      "alwaysOnDisplay": "Zawsze na ekranie",
+      "alwaysOnDisplay": "Zawsze wyświetlaj",
       "chatOnlyDisplay": "Wyświetlaj tylko czat",
-      "userNameDisplay": "Wyświetlaj nazwę użytkownika",
-      "userIconDisplay": "Wyświetlaj ikonę użytkownika",
-      "reactionButtonDisplay": "Wyświetlaj przycisk reakcji",
-      "superChatBarDisplay": "Wyświetlaj pasek Super Chat",
+      "userNameDisplay": "Wyświetlanie nazwy użytkownika",
+      "userIconDisplay": "Wyświetlanie ikony użytkownika",
+      "reactionButtonDisplay": "Wyświetlanie przycisku reakcji",
+      "superChatBarDisplay": "Wyświetlanie paska SuperChat",
       "backgroundColor": "Kolor tła",
       "fontColor": "Kolor czcionki",
-      "fontFamily": "Rodzina czcionek",
+      "fontFamily": "Krój czcionki",
       "fontSize": "Rozmiar czcionki",
       "blur": "Rozmycie",
-      "space": "Przestrzeń",
+      "space": "Odstępy",
       "footer": {
         "donate": "Wesprzyj",
         "chrome": "Chrome",

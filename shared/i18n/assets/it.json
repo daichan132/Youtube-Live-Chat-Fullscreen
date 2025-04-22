@@ -2,21 +2,21 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preset",
+        "preset": "Preimpostazioni",
         "setting": "Impostazioni"
       },
-      "alwaysOnDisplay": "Sempre Visualizza",
-      "chatOnlyDisplay": "Solo Chat Visualizza",
-      "userNameDisplay": "Visualizza Nome Utente",
-      "userIconDisplay": "Visualizza Icona Utente",
-      "reactionButtonDisplay": "Visualizza Pulsante di Reazione",
-      "superChatBarDisplay": "Visualizza Bar Super Chat",
-      "backgroundColor": "Colore di Sfondo",
-      "fontColor": "Colore del Font",
-      "fontFamily": "Famiglia di Font",
-      "fontSize": "Dimensione del Font",
+      "alwaysOnDisplay": "Sempre visibile",
+      "chatOnlyDisplay": "Solo chat visibile",
+      "userNameDisplay": "Visualizza nome utente",
+      "userIconDisplay": "Visualizza icona utente",
+      "reactionButtonDisplay": "Visualizza pulsante reazione",
+      "superChatBarDisplay": "Visualizza barra Super Chat",
+      "backgroundColor": "Colore di sfondo",
+      "fontColor": "Colore del carattere",
+      "fontFamily": "Tipo di carattere",
+      "fontSize": "Dimensione carattere",
       "blur": "Sfocatura",
-      "space": "Spazio",
+      "space": "Spaziatura",
       "footer": {
         "donate": "Dona",
         "chrome": "Chrome",
@@ -24,8 +24,8 @@
       }
     },
     "preset": {
-      "addMessage": "Aggiungi Impostazioni Correnti",
-      "addItemTitle": "Senza Titolo",
+      "addMessage": "Aggiungi impostazioni attuali",
+      "addItemTitle": "Senza titolo",
       "defaultTitle": "Predefinito",
       "transparentTitle": "Trasparente",
       "simpleTitle": "Semplice",
@@ -35,9 +35,9 @@
     }
   },
   "popup": {
-    "language": "Impostazioni della Lingua",
-    "showChatOnFullscreen": "Chat a Schermo Intero",
-    "links": "Collegamenti",
+    "language": "Impostazioni lingua",
+    "showChatOnFullscreen": "Chat a schermo intero",
+    "links": "Link",
     "donate": "Dona"
   }
 }

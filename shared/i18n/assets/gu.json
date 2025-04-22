@@ -5,18 +5,18 @@
         "preset": "પ્રીસેટ",
         "setting": "સેટિંગ્સ"
       },
-      "alwaysOnDisplay": "હંમેશાં ડિસ્પ્લે પર",
-      "chatOnlyDisplay": "ફક્ત ચેટ ડિસ્પ્લે",
-      "userNameDisplay": "યૂઝરના નામનો ડિસ્પ્લે",
-      "userIconDisplay": "યૂઝર آئકનનો ડિસ્પ્લે",
-      "reactionButtonDisplay": "પ્રતિસાદ બટન ડિસ્પ્લે",
-      "superChatBarDisplay": "સુપર ચેટ બાર ડિસ્પ્લે",
+      "alwaysOnDisplay": "હંમેશા દર્શાવો",
+      "chatOnlyDisplay": "માત્ર ચેટ દર્શાવો",
+      "userNameDisplay": "યૂઝર નામ દર્શાવો",
+      "userIconDisplay": "યૂઝર آئકન દર્શાવો",
+      "reactionButtonDisplay": "રિયેક્ટ બટન દર્શાવો",
+      "superChatBarDisplay": "સુપર ચેટ બાર દર્શાવો",
       "backgroundColor": "પૃષ્ઠભૂમિનો રંગ",
-      "fontColor": "ફોન્ટનો રંગ",
-      "fontFamily": "ફોન્ટ પરિવાર",
+      "fontColor": "અક્ષરનો રંગ",
+      "fontFamily": "ફોન્ટ οικογένεια",
       "fontSize": "ફોન્ટ કદ",
-      "blur": "ધૂંધળું",
-      "space": "અંતર",
+      "blur": "ધૂંધળાશ",
+      "space": "જગ્યા",
       "footer": {
         "donate": "દાન કરો",
         "chrome": "ક્રોમ",
@@ -24,20 +24,20 @@
       }
     },
     "preset": {
-      "addMessage": "વર્તમાન સેટિંગ્સ ઉમેરો",
-      "addItemTitle": "અનટાઇટલ",
-      "defaultTitle": "મૂળભૂત",
+      "addMessage": "હાલની સેટિંગ્સ ઉમેરો",
+      "addItemTitle": "શીર્ષક નથી",
+      "defaultTitle": "ડિફૉલ્ટ",
       "transparentTitle": "પારદર્શક",
       "simpleTitle": "સરળ",
-      "deleteConfirmationMessage": "શું તમે ખરેખર કાઢી નાખવા માંગો છો?",
+      "deleteConfirmationMessage": "શું તમે ખરેખર કાઢી નાખવું છે?",
       "delete": "કાઢી નાખો",
       "cancel": "રદ કરો"
     }
   },
   "popup": {
     "language": "ભાષા સેટિંગ્સ",
-    "showChatOnFullscreen": "ફુલસ્ક્રીન ચેટ",
+    "showChatOnFullscreen": "પૂર્ણ સ્ક્રીન ચેટ",
     "links": "લિંક્સ",
-    "donate": "દાન"
+    "donate": "દાન કરો"
   }
 }

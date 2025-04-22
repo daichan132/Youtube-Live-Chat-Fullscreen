@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ప్రీసెట్",
-        "setting": "సెట్టింగ్స్"
+        "preset": "ముందుగా ఏర్పాటు చేసినవి",
+        "setting": "సెట్టింగ్‌లు"
       },
-      "alwaysOnDisplay": "ఎప్పుడూ ప్రదర్శనలో",
-      "chatOnlyDisplay": "కేవలం చాట్ ప్రదర్శన",
-      "userNameDisplay": "వ్యవహారిక పేరు ప్రదర్శన",
-      "userIconDisplay": "వినియోగదారు ఐకాన్ ప్రదర్శన",
-      "reactionButtonDisplay": "ప్రতিক్రియ బటన్ ప్రదర్శన",
-      "superChatBarDisplay": "సూపర్ చాట్ బార్ ప్రదర్శన",
+      "alwaysOnDisplay": "ఎప్పుడూ ప్రదర్శనలో ఉంచు",
+      "chatOnlyDisplay": "కేవలం చాట్‌ మాత్రమే చూపించు",
+      "userNameDisplay": "వాడుకరి పేరు చూపించు",
+      "userIconDisplay": "వాడుకరి ఐకాన్ చూపించు",
+      "reactionButtonDisplay": "ప్రতিক్రియ బటన్ చూపించు",
+      "superChatBarDisplay": "సూపర్ చాట్ బార్ చూపించు",
       "backgroundColor": "నేపధ్య రంగు",
       "fontColor": "ఫాంట్ రంగు",
-      "fontFamily": "ఫాంట్ కుటుంబం",
+      "fontFamily": "ఫాంట్ ఫ్యామిలీ",
       "fontSize": "ఫాంట్ పరిమాణం",
-      "blur": "బ్లర్",
-      "space": "స్థలం",
+      "blur": "మబ్బు/బ్లర్",
+      "space": "ఖాళీ/స్పేస్",
       "footer": {
         "donate": "దానం చేయండి",
-        "chrome": "క్రోమ్",
-        "firefox": "ఫైర్‌ఫాక్స్"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "ప్రస్తుత సెట్టింగును జోడించండి",
-      "addItemTitle": "శీర్షిక లేని",
-      "defaultTitle": "నిర్దిష్టం",
-      "transparentTitle": "పారదర్శకత",
-      "simpleTitle": "సాధారణ",
-      "deleteConfirmationMessage": "మీరు తీసివేయాలని ఖచ్చితంగా ఖచ్చితంగా ఉన్నారా?",
+      "addMessage": "ప్రస్తుత సెట్టింగ్‌లు జోడించు",
+      "addItemTitle": "శీర్షికలేదు",
+      "defaultTitle": "డీఫాల్ట్",
+      "transparentTitle": "పారదర్శకంగా",
+      "simpleTitle": "సాధారణం",
+      "deleteConfirmationMessage": "మీరు నిజంగా తొలగించాలనుకుంటున్నారా?",
       "delete": "తొలగించు",
-      "cancel": "రద్దు"
+      "cancel": "రద్దు చేయండి"
     }
   },
   "popup": {
-    "language": "భాషా సెట్టింగులు",
-    "showChatOnFullscreen": "పూర్తి తెర చాటు",
-    "links": "లింక్స్",
+    "language": "భాషా సెట్టింగ్‌లు",
+    "showChatOnFullscreen": "పూర్తి తెర చాట్",
+    "links": "లింకులు",
     "donate": "దానం చేయండి"
   }
 }

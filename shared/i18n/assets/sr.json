@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Podešavanje",
+        "preset": "Predefinisano",
         "setting": "Podešavanja"
       },
-      "alwaysOnDisplay": "Uvek na ekranu",
-      "chatOnlyDisplay": "Samo prikaz četa",
-      "userNameDisplay": "Prikaz imena korisnika",
-      "userIconDisplay": "Prikaz ikone korisnika",
-      "reactionButtonDisplay": "Prikaz dugmeta za reakciju",
-      "superChatBarDisplay": "Prikaz trake Super četa",
+      "alwaysOnDisplay": "Uvek prikaži",
+      "chatOnlyDisplay": "Prikaži samo čet",
+      "userNameDisplay": "Prikaži korisničko ime",
+      "userIconDisplay": "Prikaži korisničku ikonu",
+      "reactionButtonDisplay": "Prikaži dugme za reakcije",
+      "superChatBarDisplay": "Prikaži Super Chat traku",
       "backgroundColor": "Boja pozadine",
       "fontColor": "Boja fonta",
-      "fontFamily": "Porodica fonta",
+      "fontFamily": "Font",
       "fontSize": "Veličina fonta",
       "blur": "Zamućenje",
       "space": "Razmak",
@@ -25,17 +25,17 @@
     },
     "preset": {
       "addMessage": "Dodaj trenutna podešavanja",
-      "addItemTitle": "Bez naziva",
+      "addItemTitle": "Bez naslova",
       "defaultTitle": "Podrazumevano",
       "transparentTitle": "Transparentno",
       "simpleTitle": "Jednostavno",
-      "deleteConfirmationMessage": "Da li ste sigurni da želite da izbrišete?",
-      "delete": "Izbriši",
+      "deleteConfirmationMessage": "Da li ste sigurni da želite da obrišete?",
+      "delete": "Obriši",
       "cancel": "Otkaži"
     }
   },
   "popup": {
-    "language": "Podešavanja jezika",
+    "language": "Podešavanje jezika",
     "showChatOnFullscreen": "Čet preko celog ekrana",
     "links": "Linkovi",
     "donate": "Doniraj"

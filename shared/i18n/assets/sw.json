@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Mapema",
+        "preset": "Pendeleo",
         "setting": "Mipangilio"
       },
-      "alwaysOnDisplay": "Onyesha Daima",
+      "alwaysOnDisplay": "Onyesho Kila Wakati",
       "chatOnlyDisplay": "Onyesha Gumzo Pekee",
       "userNameDisplay": "Onyesha Jina la Mtumiaji",
       "userIconDisplay": "Onyesha Ikoni ya Mtumiaji",
       "reactionButtonDisplay": "Onyesha Kitufe cha Mwitikio",
-      "superChatBarDisplay": "Onyesha Jopo la Super Chat",
-      "backgroundColor": "Rangi ya Mandharinyuma",
-      "fontColor": "Rangi ya Fonti",
-      "fontFamily": "Aina ya Fonti",
-      "fontSize": "Ukubwa wa Fonti",
-      "blur": "Fifisha",
+      "superChatBarDisplay": "Onyesha Super Chat Bar",
+      "backgroundColor": "Rangi ya Usuli",
+      "fontColor": "Rangi ya Herufi",
+      "fontFamily": "Aina ya Herufi",
+      "fontSize": "Ukubwa wa Herufi",
+      "blur": "Ukungu",
       "space": "Nafasi",
       "footer": {
         "donate": "Changia",
@@ -26,7 +26,7 @@
     "preset": {
       "addMessage": "Ongeza Mipangilio ya Sasa",
       "addItemTitle": "Bila Jina",
-      "defaultTitle": "Chaguo-msingi",
+      "defaultTitle": "Chaguomsingi",
       "transparentTitle": "Wazi",
       "simpleTitle": "Rahisi",
       "deleteConfirmationMessage": "Una uhakika unataka kufuta?",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Mipangilio ya Lugha",
-    "showChatOnFullscreen": "Gumzo la Skrini Kamili",
+    "showChatOnFullscreen": "Gumzo la Skrini Nzima",
     "links": "Viungo",
     "donate": "Changia"
   }

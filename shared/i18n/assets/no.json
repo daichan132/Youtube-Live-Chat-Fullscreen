@@ -5,12 +5,12 @@
         "preset": "Forhåndsinnstilling",
         "setting": "Innstillinger"
       },
-      "alwaysOnDisplay": "Alltid på visning",
-      "chatOnlyDisplay": "Kun chat visning",
-      "userNameDisplay": "Brukernavn visning",
-      "userIconDisplay": "Brukerikon visning",
-      "reactionButtonDisplay": "Reaksjonsknapp visning",
-      "superChatBarDisplay": "Superchat bar visning",
+      "alwaysOnDisplay": "Alltid på skjermen",
+      "chatOnlyDisplay": "Kun chat-visning",
+      "userNameDisplay": "Vis brukernavn",
+      "userIconDisplay": "Vis brukerikon",
+      "reactionButtonDisplay": "Vis reaksjonsknapper",
+      "superChatBarDisplay": "Vis SuperChat-felt",
       "backgroundColor": "Bakgrunnsfarge",
       "fontColor": "Skriftfarge",
       "fontFamily": "Skriftfamilie",
@@ -24,7 +24,7 @@
       }
     },
     "preset": {
-      "addMessage": "Legg til nåværende innstillinger",
+      "addMessage": "Legg til gjeldende innstillinger",
       "addItemTitle": "Uten tittel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gjennomsiktig",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Språkinnstillinger",
-    "showChatOnFullscreen": "Fullskjerm chat",
+    "showChatOnFullscreen": "Fullskjermchat",
     "links": "Lenker",
     "donate": "Doner"
   }

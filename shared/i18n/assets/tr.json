@@ -5,31 +5,31 @@
         "preset": "Ön Ayar",
         "setting": "Ayarlar"
       },
-      "alwaysOnDisplay": "Her Zaman Ekranda Görüntüle",
-      "chatOnlyDisplay": "Sadece Sohbeti Görüntüle",
-      "userNameDisplay": "Kullanıcı Adını Görüntüle",
-      "userIconDisplay": "Kullanıcı İkonunu Görüntüle",
-      "reactionButtonDisplay": "Tepki Butonunu Görüntüle",
-      "superChatBarDisplay": "Super Chat Çubuğunu Görüntüle",
+      "alwaysOnDisplay": "Her Zaman Görüntüle",
+      "chatOnlyDisplay": "Sadece Sohbeti Göster",
+      "userNameDisplay": "Kullanıcı Adını Göster",
+      "userIconDisplay": "Kullanıcı İkonunu Göster",
+      "reactionButtonDisplay": "Tepki Butonunu Göster",
+      "superChatBarDisplay": "Super Chat Çubuğunu Göster",
       "backgroundColor": "Arka Plan Rengi",
       "fontColor": "Yazı Rengi",
-      "fontFamily": "Yazı Tipi Ailesi",
+      "fontFamily": "Yazı Tipi",
       "fontSize": "Yazı Boyutu",
-      "blur": "Bulanıklık",
+      "blur": "Bulanıklaştırma",
       "space": "Boşluk",
       "footer": {
-        "donate": "Bağışta Bulun",
+        "donate": "Bağış Yap",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Geçerli Ayarları Ekle",
+      "addMessage": "Mevcut Ayarları Ekle",
       "addItemTitle": "Başlıksız",
       "defaultTitle": "Varsayılan",
       "transparentTitle": "Şeffaf",
       "simpleTitle": "Basit",
-      "deleteConfirmationMessage": "Silmek istediğinizden emin misiniz?",
+      "deleteConfirmationMessage": "Silmek istediğinize emin misiniz?",
       "delete": "Sil",
       "cancel": "İptal"
     }
@@ -38,6 +38,6 @@
     "language": "Dil Ayarları",
     "showChatOnFullscreen": "Tam Ekran Sohbet",
     "links": "Bağlantılar",
-    "donate": "Bağış"
+    "donate": "Bağış Yap"
   }
 }

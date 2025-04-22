@@ -2,15 +2,15 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Forudindstillet",
+        "preset": "Forudindstilling",
         "setting": "Indstillinger"
       },
-      "alwaysOnDisplay": "Altid På Display",
-      "chatOnlyDisplay": "Kun Chat Display",
-      "userNameDisplay": "Brugernavn Display",
-      "userIconDisplay": "Brugerikon Display",
-      "reactionButtonDisplay": "Reaktionsknap Display",
-      "superChatBarDisplay": "Super Chat Bar Display",
+      "alwaysOnDisplay": "Altid synlig",
+      "chatOnlyDisplay": "Kun chatvisning",
+      "userNameDisplay": "Vis brugernavn",
+      "userIconDisplay": "Vis brugerikon",
+      "reactionButtonDisplay": "Vis reaktionsknap",
+      "superChatBarDisplay": "Vis Super Chat-bar",
       "backgroundColor": "Baggrundsfarve",
       "fontColor": "Skriftfarve",
       "fontFamily": "Skrifttype",
@@ -18,17 +18,17 @@
       "blur": "Sløring",
       "space": "Mellemrum",
       "footer": {
-        "donate": "Doner",
+        "donate": "Donér",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Tilføj Nuværende Indstillinger",
-      "addItemTitle": "Unavngivet",
+      "addMessage": "Tilføj nuværende indstillinger",
+      "addItemTitle": "Uden titel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gennemsigtig",
-      "simpleTitle": "Enkel",
+      "simpleTitle": "Simpel",
       "deleteConfirmationMessage": "Er du sikker på, at du vil slette?",
       "delete": "Slet",
       "cancel": "Annuller"
@@ -36,8 +36,8 @@
   },
   "popup": {
     "language": "Sprogindstillinger",
-    "showChatOnFullscreen": "Fuldskærm Chat",
+    "showChatOnFullscreen": "Fuldskærmschat",
     "links": "Links",
-    "donate": "Doner"
+    "donate": "Donér"
   }
 }

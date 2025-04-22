@@ -1,8 +1,8 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Koko Näyttö"
+    "message": "YouTube Live Chat - koko näytön tila"
   },
   "extensionDescription": {
-    "message": "Tämän laajennuksen avulla voit näyttää keskustelupaneelin ja lähettää kommentteja samalla, kun pidät YouTube Live -videota koko näytöllä."
+    "message": "Tämän laajennuksen avulla voit näyttää chat-paneelin ja lähettää viestejä samalla kun YouTube Live on koko näytön tilassa."
   }
 }

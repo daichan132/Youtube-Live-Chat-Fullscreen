@@ -5,15 +5,15 @@
         "preset": "Voorinstelling",
         "setting": "Instellingen"
       },
-      "alwaysOnDisplay": "Altijd Aan Weergave",
-      "chatOnlyDisplay": "Alleen Chat Weergave",
-      "userNameDisplay": "Gebruikersnaam Weergave",
-      "userIconDisplay": "Gebruikerspictogram Weergave",
-      "reactionButtonDisplay": "Reactieknop Weergave",
-      "superChatBarDisplay": "Superchatbalk Weergave",
+      "alwaysOnDisplay": "Altijd Weergeven",
+      "chatOnlyDisplay": "Alleen Chat Weergeven",
+      "userNameDisplay": "Gebruikersnaam Weergeven",
+      "userIconDisplay": "Gebruikersicoon Weergeven",
+      "reactionButtonDisplay": "Reactieknoppen Weergeven",
+      "superChatBarDisplay": "Superchatbalk Weergeven",
       "backgroundColor": "Achtergrondkleur",
-      "fontColor": "Lettertypekleur",
-      "fontFamily": "Lettertypefamilie",
+      "fontColor": "Letterkleur",
+      "fontFamily": "Lettertype",
       "fontSize": "Lettergrootte",
       "blur": "Vervagen",
       "space": "Ruimte",
@@ -24,19 +24,19 @@
       }
     },
     "preset": {
-      "addMessage": "Huidige Instellingen Toevoegen",
+      "addMessage": "Huidige instellingen toevoegen",
       "addItemTitle": "Naamloos",
       "defaultTitle": "Standaard",
       "transparentTitle": "Transparant",
       "simpleTitle": "Eenvoudig",
-      "deleteConfirmationMessage": "Weet u zeker dat u wilt verwijderen?",
+      "deleteConfirmationMessage": "Weet je zeker dat je dit wilt verwijderen?",
       "delete": "Verwijderen",
       "cancel": "Annuleren"
     }
   },
   "popup": {
     "language": "Taalinstellingen",
-    "showChatOnFullscreen": "Volledig Scherm Chat",
+    "showChatOnFullscreen": "Chat in Volledig Scherm",
     "links": "Links",
     "donate": "Doneren"
   }

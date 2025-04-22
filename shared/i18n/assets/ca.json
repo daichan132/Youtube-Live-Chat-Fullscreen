@@ -2,42 +2,42 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preestablert",
-        "setting": "Configuracions"
+        "preset": "Predefinit",
+        "setting": "Configuració"
       },
-      "alwaysOnDisplay": "Sempre en pantalla",
-      "chatOnlyDisplay": "Només xat a la pantalla",
-      "userNameDisplay": "Visualització del nom d'usuari",
-      "userIconDisplay": "Visualització de la icona d'usuari",
-      "reactionButtonDisplay": "Botó de reacció",
-      "superChatBarDisplay": "Barra de Super Xat",
+      "alwaysOnDisplay": "Sempre visible",
+      "chatOnlyDisplay": "Només el xat",
+      "userNameDisplay": "Mostra el nom d’usuari",
+      "userIconDisplay": "Mostra la icona d’usuari",
+      "reactionButtonDisplay": "Mostra els botons de reaccions",
+      "superChatBarDisplay": "Mostra la barra de Super Chat",
       "backgroundColor": "Color de fons",
-      "fontColor": "Color de la lletra",
-      "fontFamily": "Tipografia",
-      "fontSize": "Tamany de la lletra",
+      "fontColor": "Color de lletra",
+      "fontFamily": "Tipus de lletra",
+      "fontSize": "Mida de lletra",
       "blur": "Desenfocament",
-      "space": "Espai",
+      "space": "Espaiat",
       "footer": {
-        "donate": "Donar",
+        "donate": "Fes una donació",
         "chrome": "Chrome",
         "firefox": "Firefox"
       }
     },
     "preset": {
-      "addMessage": "Afegir configuracions actuals",
+      "addMessage": "Afegeix la configuració actual",
       "addItemTitle": "Sense títol",
       "defaultTitle": "Per defecte",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "Esteu segur que voleu eliminar-ho?",
-      "delete": "Eliminar",
-      "cancel": "Cancel·lar"
+      "deleteConfirmationMessage": "Segur que vols eliminar-ho?",
+      "delete": "Elimina",
+      "cancel": "Cancel·la"
     }
   },
   "popup": {
     "language": "Configuració d'idioma",
-    "showChatOnFullscreen": "Xat en pantalla completa",
+    "showChatOnFullscreen": "Xat a pantalla completa",
     "links": "Enllaços",
-    "donate": "Donar"
+    "donate": "Fes una donació"
   }
 }
