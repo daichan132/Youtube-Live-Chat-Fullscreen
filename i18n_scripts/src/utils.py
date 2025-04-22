@@ -4,7 +4,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from openai import OpenAI
 
-from src.config import load_config
+from src.config import get_settings
 from src.logger import get_logger
 
 # Create a logger for this module
@@ -16,13 +16,13 @@ client = OpenAI()
 
 def get_lang_codes(lang_codes_path=None):
     """
-    Load language codes JSON from the given path or default shared/i18n location.
+    Load language codes JSON from the given path or default path from settings.
     """
-    # Determine default path if not provided
+    # Determine path if not provided
     if not lang_codes_path:
-        lang_codes_path = os.path.join(
-            os.getcwd(), "shared", "i18n", "language_codes.json"
-        )
+        settings = get_settings()
+        lang_codes_path = settings.get_absolute_path("lang_codes_file")
+
     with open(lang_codes_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
@@ -111,9 +111,9 @@ def build_response_format(file_path: str) -> dict:
 
 
 def translate(text: str, target_language: str, response_format: dict) -> dict:
-    """Translate text using OpenAI API with model from config.json"""
-    config = load_config()
-    model = config.get("openai_model", "gpt-4o")
+    """Translate text using OpenAI API with model from config"""
+    settings = get_settings()
+    model = settings.openai_model
 
     response = client.chat.completions.create(
         model=model,
@@ -133,15 +133,18 @@ def translate(text: str, target_language: str, response_format: dict) -> dict:
     return json.loads(response.choices[0].message.content)
 
 
-def process_translations(lang_codes, translate_func, max_workers=3):
+def process_translations(lang_codes, translate_func, max_workers=None):
     """
     Process all translations in parallel with limited concurrency
 
     Args:
         lang_codes: Dictionary of language codes and names
         translate_func: Function to translate a single language
-        max_workers: Maximum number of concurrent workers (default: 3)
+        max_workers: Maximum number of concurrent workers (default: from settings)
     """
+    if max_workers is None:
+        max_workers = get_settings().max_workers
+
     logger.info(f"Starting translations with {max_workers} concurrent workers...")
     with ProcessPoolExecutor(max_workers=max_workers) as executor:
         # Submit all translation tasks

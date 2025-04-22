@@ -1,12 +1,7 @@
 import json
 import os
 
-from src.config import (
-    get_base_langs,
-    get_lang_codes_file,
-    get_locales_dir,
-    get_max_workers,
-)
+from src.config import get_settings
 from src.logger import get_logger
 from src.utils import (
     build_response_format,
@@ -26,8 +21,11 @@ def translate_language(code, language):
     logger.info(f"Started translating to {language} ({code})...")
 
     # Get configuration
-    base_languages = get_base_langs()
-    locales_dir = get_locales_dir()
+    settings = get_settings()
+    base_languages = settings.base_langs
+
+    # Resolve the absolute path for locales_dir
+    locales_dir = settings.get_absolute_path("locales_dir")
 
     # Skip translation if the target language is one of the base languages
     if code in base_languages:
@@ -67,13 +65,18 @@ def translate_language(code, language):
 
 def main():
     # Load configuration
-    lang_codes_file = get_lang_codes_file()
-    max_workers = get_max_workers()
+    settings = get_settings()
+
+    # Resolve the absolute path for lang_codes_file
+    lang_codes_file = settings.get_absolute_path("lang_codes_file")
 
     # Load language codes from configured JSON
     lang_codes = get_lang_codes(lang_codes_file)
+
     # Start parallel translations with configured concurrency
-    process_translations(lang_codes, translate_language, max_workers=max_workers)
+    process_translations(
+        lang_codes, translate_language, max_workers=settings.max_workers
+    )
 
 
 if __name__ == "__main__":

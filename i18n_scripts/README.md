@@ -27,7 +27,9 @@ uv sync
 
 ## Configuration
 
-The scripts are configured using the `config.json` file in the root of the i18n_scripts directory. Here's an example configuration:
+The scripts are configured using the `config.json` file in the root of the i18n_scripts directory. Configuration is managed through Pydantic models for type validation and schema enforcement.
+
+Here's an example configuration:
 
 ```json
 {
@@ -35,7 +37,8 @@ The scripts are configured using the `config.json` file in the root of the i18n_
   "locales_dir": "../public/_locales",
   "assets_dir": "../shared/i18n/assets",
   "lang_codes_file": "../shared/i18n/language_codes.json",
-  "max_workers": 3
+  "max_workers": 3,
+  "openai_model": "gpt-4o"
 }
 ```
 
@@ -46,6 +49,7 @@ Configuration options:
 - `assets_dir`: Path to the i18n assets directory for JSON files.
 - `lang_codes_file`: Path to the JSON file containing language codes and display names.
 - `max_workers`: Number of parallel translation workers.
+- `openai_model`: OpenAI model to use for translations.
 
 If the configuration file doesn't exist, a default one will be created automatically when running the scripts.
 
@@ -66,7 +70,7 @@ Run the scripts using `uv run python`:
 ## How It Works
 
 Both scripts will:
-1. Read settings from `config.json`
+1. Read settings from `config.json` using Pydantic models for validation
 2. Combine content from base languages (`en` and `ja` by default)
 3. Translate to all languages defined in the language codes file
 4. Save translated files to the appropriate directories
