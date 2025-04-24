@@ -30,7 +30,7 @@
     "react": "19.1.0",
     "react-color": "^2.19.3",
     "react-dom": "19.1.0",
-    "react-i18next": "^15.4.1",
+    "react-i18next": "^15.5.1",
     "react-icons": "^5.5.0",
     "react-modal": "^3.16.3",
     "react-transition-group": "^4.4.5",
@@ -43,7 +43,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@playwright/test": "1.52.0",
-    "@types/chrome": "0.0.315",
+    "@types/chrome": "0.0.317",
     "@types/lodash-es": "4.17.12",
     "@types/react": "19.1.2",
     "@types/react-color": "3.0.13",
