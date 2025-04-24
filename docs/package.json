@@ -22,7 +22,7 @@
     "@biomejs/biome": "1.9.4",
     "@react-router/dev": "^7.5.2",
     "@tailwindcss/vite": "^4.0.0",
-    "@types/node": "^20",
+    "@types/node": "^22.0.0",
     "@types/react": "^19.0.1",
     "@types/react-dom": "^19.0.1",
     "react-router-devtools": "^1.1.0",
