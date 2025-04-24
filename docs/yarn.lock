@@ -1642,7 +1642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-router/dev@npm:^7.5.2":
+"@react-router/dev@npm:7.5.2":
   version: 7.5.2
   resolution: "@react-router/dev@npm:7.5.2"
   dependencies:
@@ -2033,7 +2033,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/vite@npm:^4.0.0":
+"@tailwindcss/vite@npm:4.1.4":
   version: 4.1.4
   resolution: "@tailwindcss/vite@npm:4.1.4"
   dependencies:
@@ -2069,7 +2069,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^20":
+"@types/node@npm:20.17.30":
   version: 20.17.30
   resolution: "@types/node@npm:20.17.30"
   dependencies:
@@ -2787,22 +2787,22 @@ __metadata:
   resolution: "docs@workspace:."
   dependencies:
     "@biomejs/biome": "npm:1.9.4"
-    "@react-router/dev": "npm:^7.5.2"
+    "@react-router/dev": "npm:7.5.2"
     "@react-router/node": "npm:^7.5.2"
     "@react-router/serve": "npm:^7.5.2"
-    "@tailwindcss/vite": "npm:^4.0.0"
-    "@types/node": "npm:^20"
+    "@tailwindcss/vite": "npm:4.1.4"
+    "@types/node": "npm:20.17.30"
     "@types/react": "npm:^19.0.1"
     "@types/react-dom": "npm:^19.0.1"
     isbot: "npm:^5.1.17"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     react-router: "npm:^7.5.2"
-    react-router-devtools: "npm:^1.1.0"
-    tailwindcss: "npm:^4.0.0"
-    typescript: "npm:^5.7.2"
-    vite: "npm:^5.4.11"
-    vite-tsconfig-paths: "npm:^5.1.4"
+    react-router-devtools: "npm:1.1.10"
+    tailwindcss: "npm:4.1.4"
+    typescript: "npm:5.8.3"
+    vite: "npm:5.4.18"
+    vite-tsconfig-paths: "npm:5.1.4"
   languageName: unknown
   linkType: soft
 
@@ -4631,7 +4631,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-devtools@npm:^1.1.0":
+"react-router-devtools@npm:1.1.10":
   version: 1.1.10
   resolution: "react-router-devtools@npm:1.1.10"
   dependencies:
@@ -5218,7 +5218,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.1.4, tailwindcss@npm:^4.0.0":
+"tailwindcss@npm:4.1.4":
   version: 4.1.4
   resolution: "tailwindcss@npm:4.1.4"
   checksum: 10c0/4927653b740861f0279b6b465c87e188652d3c0e311c633b4efe5d72bbb4dce12b9dddc674a386a3d0454ef4dd4951aac6fd7346dcd9b2b2b06952e431c1835d
@@ -5308,7 +5308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^5.7.2":
+"typescript@npm:5.8.3":
   version: 5.8.3
   resolution: "typescript@npm:5.8.3"
   bin:
@@ -5318,7 +5318,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A^5.7.2#optional!builtin<compat/typescript>":
+"typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>":
   version: 5.8.3
   resolution: "typescript@patch:typescript@npm%3A5.8.3#optional!builtin<compat/typescript>::version=5.8.3&hash=5786d5"
   bin:
@@ -5493,7 +5493,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-tsconfig-paths@npm:^5.1.4":
+"vite-tsconfig-paths@npm:5.1.4":
   version: 5.1.4
   resolution: "vite-tsconfig-paths@npm:5.1.4"
   dependencies:
@@ -5506,6 +5506,49 @@ __metadata:
     vite:
       optional: true
   checksum: 10c0/6228f23155ea25d92b1e1702284cf8dc52ad3c683c5ca691edd5a4c82d2913e7326d00708cef1cbfde9bb226261df0e0a12e03ef1d43b6a92d8f02b483ef37e3
+  languageName: node
+  linkType: hard
+
+"vite@npm:5.4.18":
+  version: 5.4.18
+  resolution: "vite@npm:5.4.18"
+  dependencies:
+    esbuild: "npm:^0.21.3"
+    fsevents: "npm:~2.3.3"
+    postcss: "npm:^8.4.43"
+    rollup: "npm:^4.20.0"
+  peerDependencies:
+    "@types/node": ^18.0.0 || >=20.0.0
+    less: "*"
+    lightningcss: ^1.21.0
+    sass: "*"
+    sass-embedded: "*"
+    stylus: "*"
+    sugarss: "*"
+    terser: ^5.4.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 10c0/a8cbbec6bdf399e62c386d70b8485e4f2f1b427beb19bc7c5d52b402a0c3750b7ff469fc20a8333755ea13bc1b0af5df3f22c8fd37d1739ee51d709b7a4740b6
   languageName: node
   linkType: hard
 
@@ -5561,49 +5604,6 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10c0/7ea27d2c80a9e0b7ccf6cbd6c251455501286568160e8b632984e5332440f21a6d05f9236408212ba7653f7d2d4790f848956d8a620bbf4dd2ecb792a2fe1ab1
-  languageName: node
-  linkType: hard
-
-"vite@npm:^5.4.11":
-  version: 5.4.18
-  resolution: "vite@npm:5.4.18"
-  dependencies:
-    esbuild: "npm:^0.21.3"
-    fsevents: "npm:~2.3.3"
-    postcss: "npm:^8.4.43"
-    rollup: "npm:^4.20.0"
-  peerDependencies:
-    "@types/node": ^18.0.0 || >=20.0.0
-    less: "*"
-    lightningcss: ^1.21.0
-    sass: "*"
-    sass-embedded: "*"
-    stylus: "*"
-    sugarss: "*"
-    terser: ^5.4.0
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  peerDependenciesMeta:
-    "@types/node":
-      optional: true
-    less:
-      optional: true
-    lightningcss:
-      optional: true
-    sass:
-      optional: true
-    sass-embedded:
-      optional: true
-    stylus:
-      optional: true
-    sugarss:
-      optional: true
-    terser:
-      optional: true
-  bin:
-    vite: bin/vite.js
-  checksum: 10c0/a8cbbec6bdf399e62c386d70b8485e4f2f1b427beb19bc7c5d52b402a0c3750b7ff469fc20a8333755ea13bc1b0af5df3f22c8fd37d1739ee51d709b7a4740b6
   languageName: node
   linkType: hard
 
