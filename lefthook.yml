@@ -7,5 +7,5 @@ pre-push:
 pre-commit:
   commands:
     check:
-      glob: "./{entrypoints,shared}/**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      glob: "./{entrypoints,shared,docs}/**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
       run: npx biome check --apply --no-errors-on-unmatched --files-ignore-unknown=true {staged_files} && git update-index --again
