@@ -1909,13 +1909,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wxt-dev/browser@npm:0.0.315":
-  version: 0.0.315
-  resolution: "@wxt-dev/browser@npm:0.0.315"
+"@wxt-dev/browser@npm:0.0.317":
+  version: 0.0.317
+  resolution: "@wxt-dev/browser@npm:0.0.317"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/4ab76e84aa6d15d8ee615df2386bb4b125ec369afaec9d5224b8c3741967ccc761d9acf5590827a9ddefc906614eaf4c58a1850a5237bdf5c68d1161c82a50d9
+  checksum: 10c0/a07480ce909eb968111a8b3958dae642bb80e82967bc42df629e38e43ff6e57aa49e1e2a18a82c8f29af9030edb1d585f104d1965a378d509b375a71371ff716
   languageName: node
   linkType: hard
 
@@ -7562,16 +7562,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wxt@npm:0.20.3":
-  version: 0.20.3
-  resolution: "wxt@npm:0.20.3"
+"wxt@npm:0.20.4":
+  version: 0.20.4
+  resolution: "wxt@npm:0.20.4"
   dependencies:
     "@1natsu/wait-element": "npm:^4.1.2"
     "@aklinker1/rollup-plugin-visualizer": "npm:5.12.0"
     "@webext-core/fake-browser": "npm:^1.3.2"
     "@webext-core/isolated-element": "npm:^1.1.2"
     "@webext-core/match-patterns": "npm:^1.0.3"
-    "@wxt-dev/browser": "npm:0.0.315"
+    "@wxt-dev/browser": "npm:0.0.317"
     "@wxt-dev/storage": "npm:^1.0.0"
     async-mutex: "npm:^0.5.0"
     c12: "npm:^3.0.3"
@@ -7614,7 +7614,7 @@ __metadata:
   bin:
     wxt: bin/wxt.mjs
     wxt-publish-extension: bin/wxt-publish-extension.cjs
-  checksum: 10c0/7a23da3e0780003043a5dc2327dc6a024bdf7b3f9d27e7c7150c35c45a4ac31ea647dc13c5fa160abe20b0786f0e585286af6eee3c4ee7965aeb4f53055f82a9
+  checksum: 10c0/c2f8d2c7eeae1c6f81767ade483ff6ede734d34649965a77ebcbd0e313848ba6b3db0f00bf17f32ddcf1a840c6610e0714bb0ce929b0f4872805ff95c7c1abb9
   languageName: node
   linkType: hard
 
@@ -7765,7 +7765,7 @@ __metadata:
     unocss: "npm:66.1.0-beta.12"
     uuid: "npm:^11.1.0"
     vite-tsconfig-paths: "npm:^5.1.4"
-    wxt: "npm:0.20.3"
+    wxt: "npm:0.20.4"
     zustand: "npm:^5.0.3"
   languageName: unknown
   linkType: soft
