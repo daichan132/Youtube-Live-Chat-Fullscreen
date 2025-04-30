@@ -3952,11 +3952,11 @@ __metadata:
   linkType: hard
 
 "i18next-browser-languagedetector@npm:^8.0.5":
-  version: 8.0.5
-  resolution: "i18next-browser-languagedetector@npm:8.0.5"
+  version: 8.1.0
+  resolution: "i18next-browser-languagedetector@npm:8.1.0"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-  checksum: 10c0/a57e4a152c63d76e28ca58a59ab57cab5b813cf03503ef89e6ac7c1bccb4ac45272785dd9b3c3dab609b1ae3b38c44e3782132d83c0e1e80e5e366ec41a8d5ad
+  checksum: 10c0/d55162f8062e4fdca07403273ef352e7122e1f9abe479404c6711f5a9b75ddb4b33d49b5a50416637d3a3f0553881ba6a570062c8f6e6c52b031eceb0bb8669e
   languageName: node
   linkType: hard
 
