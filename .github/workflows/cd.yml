@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+# Add explicit permissions to follow security best practices
+permissions:
+  contents: write # Need write access to create and push tags
+
 jobs:
   create_tag:
     runs-on: ubuntu-latest

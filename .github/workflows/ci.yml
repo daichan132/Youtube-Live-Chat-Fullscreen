@@ -8,6 +8,10 @@ on:
     branches:
       - main
 
+# Add explicit permissions to follow security best practices
+permissions:
+  contents: read # CI only needs read access to repository contents
+
 jobs:
   build:
     runs-on: ubuntu-latest
