@@ -10,7 +10,7 @@ export const useIsShow = () => {
 
   useEffect(() => {
     setIsChat(false)
-    // 30回300ms毎に定期実行して、iframeが読み込まれているか確認する
+    // Polls every second (up to 100 attempts) to check if the iframe has loaded
     let count = 0
     const interval = setInterval(() => {
       const liveChatReplay: HTMLIFrameElement | null = document.querySelector('iframe.ytd-live-chat-frame')
