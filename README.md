@@ -55,7 +55,7 @@ Before you begin, ensure you have the following software installed:
 > [!NOTE]
 > If Yarn is not installed, run `npm install -g yarn` to install it globally.
 
-### install
+### Install
 
 Clone the repository and install the dependencies:
 
@@ -67,7 +67,7 @@ yarn install
 
 Alternatively, you can fork the repository to create your own version and customize it.
 
-### commands
+### Commands
 - `dev`: Start development server.
 - `dev:firefox`: Start development server for Firefox.
 - `build`: Build the project.
