@@ -41,7 +41,7 @@
     "zustand": "^5.0.5"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.0.4",
     "@playwright/test": "1.52.0",
     "@types/chrome": "0.0.323",
     "@types/lodash-es": "4.17.12",
