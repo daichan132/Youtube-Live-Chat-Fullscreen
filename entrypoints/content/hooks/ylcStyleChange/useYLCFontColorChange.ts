@@ -1,8 +1,6 @@
 import { useCallback } from 'react'
-
-import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
-
 import type { RGBColor } from 'react-color'
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 const propertyList: string[] = ['--extension-yt-live-font-color']
 

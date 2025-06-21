@@ -42,7 +42,7 @@ export const useIsShow = () => {
     const ytdAppElement = document.querySelector('ytd-app')
     if (!ytdAppElement) return
     updateIsTopBasedOnMasthead(ytdAppElement)
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: mutations parameter from MutationObserver
     const mastheadHidden = (mutations: any) => {
       for (const mutation of mutations) {
         updateIsTopBasedOnMasthead(mutation.target)

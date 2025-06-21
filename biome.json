@@ -1,16 +1,14 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.4/schema.json",
   "extends": [],
   "files": {
     "ignoreUnknown": true
   },
-  "organizeImports": {
-    "enabled": true
-  },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": ["node_modules", "src/**/*.d.ts"],
+    "includes": ["**", "!**/node_modules", "!**/src/**/*.d.ts"],
     "indentWidth": 2,
     "indentStyle": "space",
     "lineWidth": 140
@@ -38,7 +36,7 @@
     }
   },
   "linter": {
-    "ignore": ["node_modules", "src/**/*.d.ts"],
+    "includes": ["**", "!**/node_modules", "!**/src/**/*.d.ts"],
     "rules": {
       "a11y": {
         "noDistractingElements": "error",
@@ -46,7 +44,8 @@
       },
       "complexity": {
         "noExtraBooleanCast": "error",
-        "noUselessRename": "error"
+        "noUselessRename": "error",
+        "noArguments": "error"
       },
       "correctness": {
         "noUnusedVariables": "warn"
@@ -58,11 +57,18 @@
         "noDangerouslySetInnerHtml": "warn"
       },
       "style": {
-        "noArguments": "error",
-        "noVar": "error",
         "useConst": "error",
         "useSelfClosingElements": "error",
-        "useTemplate": "error"
+        "useTemplate": "error",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "suspicious": {
         "noArrayIndexKey": "error",
@@ -70,7 +76,6 @@
         "noAsyncPromiseExecutor": "error",
         "noCatchAssign": "error",
         "noCommentText": "error",
-        "noConsoleLog": "error",
         "noDoubleEquals": "error",
         "noDuplicateCase": "error",
         "noDuplicateJsxProps": "error",
@@ -82,7 +87,9 @@
         "noRedundantUseStrict": "error",
         "noShadowRestrictedNames": "error",
         "noUnsafeDeclarationMerging": "error",
-        "useDefaultSwitchClauseLast": "error"
+        "useDefaultSwitchClauseLast": "error",
+        "noVar": "error",
+        "noConsole": { "level": "error", "options": { "allow": ["log"] } }
       }
     }
   }

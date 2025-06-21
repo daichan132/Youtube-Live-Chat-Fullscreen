@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCReactionButtonDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCReactionButtonDisplayChange'
@@ -32,11 +33,12 @@ export const ReactionButtonDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (reactionButtonDisplay: boolean) => void
 }) => {
+  const id = useId()
   return (
     <div className='w-[150px] flex justify-center'>
       <Switch
         checked={reactionButtonDisplay}
-        id='reaction-button-display-switch'
+        id={id}
         onChange={checked => {
           changeDisplay?.(checked)
           updateYLCStyle?.({ reactionButtonDisplay: checked })

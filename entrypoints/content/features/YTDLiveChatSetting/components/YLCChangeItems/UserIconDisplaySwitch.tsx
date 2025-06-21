@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCUserIconDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCUserIconDisplayChange'
@@ -26,11 +27,12 @@ export const UserIconDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (userIconDisplay: boolean) => void
 }) => {
+  const id = useId()
   return (
     <div className='w-[150px] flex justify-center'>
       <Switch
         checked={userIconDisplay}
-        id='user-icon-display-switch'
+        id={id}
         onChange={checked => {
           changeDisplay?.(checked)
           updateYLCStyle?.({ userIconDisplay: checked })

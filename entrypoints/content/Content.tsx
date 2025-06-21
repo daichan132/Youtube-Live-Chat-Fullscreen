@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import type { PublicPath } from 'wxt/browser'
-import { YTDLiveChat } from './YTDLiveChat'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
+import { YTDLiveChat } from './YTDLiveChat'
 
 function createShadowRoot(): ShadowRoot | null {
   const player = document.getElementById('movie_player')

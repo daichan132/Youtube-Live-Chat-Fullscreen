@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useId, useRef } from 'react'
 
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
@@ -7,6 +7,7 @@ import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useIframeLoader } from '../hooks/useIframeLoader'
 
 export const YTDLiveChatIframe = () => {
+  const id = useId()
   const { ref } = useIframeLoader()
   const nodeRef = useRef(null)
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor)
@@ -32,7 +33,7 @@ export const YTDLiveChatIframe = () => {
           opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
           backdropFilter: isIframeLoaded ? `blur(${blur}px)` : 'none',
         }}
-        id='live-chat-iframe-wrapper'
+        id={id}
         ref={ref}
       />
       <CSSTransition
@@ -57,14 +58,14 @@ export const YTDLiveChatIframe = () => {
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
           }}
         >
-          <div className='flex justify-center' aria-label='loading'>
+          <output className='flex justify-center' aria-label='loading'>
             <div
               className='animate-ping h-5 w-5 rounded-full'
               style={{
                 backgroundColor: `rgba(${fontColorRef.current.r}, ${fontColorRef.current.g}, ${fontColorRef.current.b}, ${fontColorRef.current.a})`,
               }}
             />
-          </div>
+          </output>
         </div>
       </CSSTransition>
     </>

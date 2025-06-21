@@ -1,15 +1,12 @@
 import type { Dispatch, SetStateAction } from 'react'
-import { useCallback, useRef, useState } from 'react'
-import React from 'react'
-
+import React, { useCallback, useRef, useState } from 'react'
+import type { ColorResult, RGBColor } from 'react-color'
 import { ChromePicker } from 'react-color'
 import { useShallow } from 'zustand/react/shallow'
-
 import { useYLCBgColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCBgColorChange'
-import { useYTDLiveChatStore } from '@/shared/stores'
 
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
-import type { ColorResult, RGBColor } from 'react-color'
+import { useYTDLiveChatStore } from '@/shared/stores'
 
 export const BgColorPicker = () => {
   const { changeColor } = useYLCBgColorChange()
@@ -42,14 +39,10 @@ export const BgColorPickerUI = React.forwardRef<
 >(({ rgba, display, setDisplay, onChange }, ref) => {
   return (
     <div ref={ref} className='relative'>
-      <div
+      <button
+        type='button'
         className='inline-block p-[5px] bg-white rounded-[1px] shadow-[0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer relative'
         onClick={() => setDisplay?.(d => !d)}
-        onKeyDown={e => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            setDisplay?.(d => !d)
-          }
-        }}
       >
         <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] bg-white rounded-[2px] w-full h-full'>
           <div
@@ -59,7 +52,7 @@ export const BgColorPickerUI = React.forwardRef<
             }}
           />
         </div>
-      </div>
+      </button>
       <div className='absolute right-0 z-1'>
         {display ? (
           <ChromePicker

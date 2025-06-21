@@ -1,7 +1,7 @@
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import { useCallback, useEffect } from 'react'
+import { useEffect } from 'react'
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
+import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useClipPathManagement } from '../../hooks/useClipPathManagement'
 
 interface ClipPathEffectProps {

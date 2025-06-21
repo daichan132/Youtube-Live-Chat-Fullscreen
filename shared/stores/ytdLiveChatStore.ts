@@ -1,14 +1,13 @@
+import type { Coordinates } from '@dnd-kit/core/dist/types'
 import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
-
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import i18n from '../i18n/config'
+import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
 import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils'
 
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
-import type { Coordinates } from '@dnd-kit/core/dist/types'
-import type { YLCStyleType, YLCStyleUpdateType, sizeType } from '../types/ytdLiveChatType'
 type YTDLiveChatStoreState = {
   presetItemIds: string[]
   presetItemStyles: { [key: string]: YLCStyleType }

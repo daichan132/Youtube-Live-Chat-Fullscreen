@@ -1,6 +1,6 @@
-import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
 import { useCallback } from 'react'
 import type { RGBColor } from 'react-color'
+import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 const propertyList: string[] = ['--yt-live-chat-background-color']

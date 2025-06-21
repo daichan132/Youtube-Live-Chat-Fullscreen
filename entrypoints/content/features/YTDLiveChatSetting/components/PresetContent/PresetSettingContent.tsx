@@ -1,5 +1,3 @@
-import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import classNames from 'classnames'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +5,8 @@ import { FaRegUserCircle } from 'react-icons/fa'
 import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
 import { MdBlurOn, MdExpand } from 'react-icons/md'
 import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri'
+import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
 import { BlurSliderUI, BlurToSliderValue } from '../YLCChangeItems/BlurSlider'
@@ -19,13 +19,7 @@ import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
 
-export const PresetSettingContent = ({
-  ylcStyle,
-  isOpen,
-}: {
-  ylcStyle: YLCStyleType
-  isOpen: boolean
-}) => {
+export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleType; isOpen: boolean }) => {
   const { t } = useTranslation()
   const {
     alwaysOnDisplay,

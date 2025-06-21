@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
-
-import language_codes from '@/shared/i18n/language_codes.json'
 import { useTranslation } from 'react-i18next'
+import language_codes from '@/shared/i18n/language_codes.json'
 
 export const LanguageSelector = () => {
   const languageOptions = Object.entries(language_codes).map(([code, name]) => ({

@@ -1,16 +1,13 @@
-import type { ComponentType } from 'react'
-
 import classNames from 'classnames'
+import type { ComponentType } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RiCloseLine } from 'react-icons/ri'
-import Modal from 'react-modal'
-import { useShallow } from 'zustand/react/shallow'
-
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
-
 import type { IconType } from 'react-icons'
 import { BiSlider } from 'react-icons/bi'
 import { HiOutlineCollection } from 'react-icons/hi'
+import { RiCloseLine } from 'react-icons/ri'
+import Modal from 'react-modal'
+import { useShallow } from 'zustand/react/shallow'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
 
@@ -67,8 +64,9 @@ export const YTDLiveChatSetting = () => {
         <div className='flex justify-between items-center px-5 py-3 border-1 border-b-solid border-gray-100'>
           <div className='flex text-base gap-4'>
             {tabs.map(item => (
-              <div
+              <button
                 key={item.key}
+                type='button'
                 className={classNames(
                   'px-3 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-4',
                   menuItem === item.key
@@ -76,11 +74,10 @@ export const YTDLiveChatSetting = () => {
                     : 'text-gray-700 hover:bg-gray-100 rounded-md',
                 )}
                 onClick={() => setMenuItem(item.key)}
-                onKeyUp={e => e.key === 'Enter' && setMenuItem(item.key)}
               >
                 <item.icon size={14} />
                 {item.label}
-              </div>
+              </button>
             ))}
           </div>
           <RiCloseLine

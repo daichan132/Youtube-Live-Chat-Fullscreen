@@ -1,7 +1,6 @@
-import type { ReactNode } from 'react'
-
 import { DndContext, type DragEndEvent } from '@dnd-kit/core'
 import { restrictToWindowEdges } from '@dnd-kit/modifiers'
+import type { ReactNode } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'

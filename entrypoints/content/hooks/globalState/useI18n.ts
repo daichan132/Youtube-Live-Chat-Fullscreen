@@ -1,6 +1,6 @@
-import { useMessage } from '@/shared/hooks/useMessage'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useMessage } from '@/shared/hooks/useMessage'
 
 export const useI18n = () => {
   const { i18n } = useTranslation()

@@ -1,7 +1,7 @@
-import { useMessage } from '@/shared/hooks/useMessage'
-import { useGlobalSettingStore } from '@/shared/stores'
 import { useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { useMessage } from '@/shared/hooks/useMessage'
+import { useGlobalSettingStore } from '@/shared/stores'
 
 export const useYtdLiveChat = () => {
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(

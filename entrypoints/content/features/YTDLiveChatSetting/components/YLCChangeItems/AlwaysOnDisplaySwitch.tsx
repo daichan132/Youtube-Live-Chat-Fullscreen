@@ -1,4 +1,4 @@
-import React from 'react'
+import { useId } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
@@ -24,11 +24,12 @@ export const AlwaysOnDisplaySwitchUI = ({
   alwaysOnDisplay: boolean
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
+  const id = useId()
   return (
     <div className='w-[150px] flex justify-center'>
       <Switch
         checked={alwaysOnDisplay}
-        id='always-on-display-switch'
+        id={id}
         onChange={checked => {
           updateYLCStyle?.({ alwaysOnDisplay: checked })
         }}

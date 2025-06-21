@@ -1,3 +1,4 @@
+import { useId } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { Switch } from '@/shared/components/Switch'
@@ -22,11 +23,12 @@ export const ChatOnlyDisplaySwitchUI = ({
   chatOnlyDisplay: boolean
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
+  const id = useId()
   return (
     <div className='w-[150px] flex justify-center'>
       <Switch
         checked={chatOnlyDisplay}
-        id='chat-only-display-switch'
+        id={id}
         onChange={checked => {
           updateYLCStyle?.({ chatOnlyDisplay: checked })
         }}

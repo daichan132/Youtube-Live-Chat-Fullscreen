@@ -1,7 +1,7 @@
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { NumberSize } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 import { useCallback, useRef } from 'react'
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 
 interface Size {
   width: number

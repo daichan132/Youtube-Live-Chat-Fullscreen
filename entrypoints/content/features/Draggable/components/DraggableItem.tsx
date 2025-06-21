@@ -70,7 +70,7 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
   const { handleMouseEnter, handleMouseLeave } = useDraggableItemEvents(setIsHover)
 
   return (
-    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div role='application' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <EffectsWrapper isDragging={isDragging} isResizing={isResizing} />
 
       <Resizable

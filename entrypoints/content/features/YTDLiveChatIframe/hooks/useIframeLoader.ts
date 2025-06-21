@@ -2,11 +2,9 @@
 import { useCallback, useEffect, useRef } from 'react'
 import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
-
+import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
-
-import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
 
 export const useIframeLoader = () => {
   const ref = useRef<HTMLDivElement>(null)

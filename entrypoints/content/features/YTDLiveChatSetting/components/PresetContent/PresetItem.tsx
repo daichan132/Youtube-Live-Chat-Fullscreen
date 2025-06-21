@@ -1,6 +1,3 @@
-import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
-import { useYTDLiveChatStore } from '@/shared/stores'
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { type ComponentType, useCallback, useState } from 'react'
@@ -9,6 +6,9 @@ import { IoTrashOutline } from 'react-icons/io5'
 import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
+import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
+import { useYTDLiveChatStore } from '@/shared/stores'
+import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 
 const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 

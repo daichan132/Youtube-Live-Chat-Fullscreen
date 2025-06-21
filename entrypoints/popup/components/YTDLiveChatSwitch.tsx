@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { useCallback, useId } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
 
@@ -6,6 +6,7 @@ import { Switch } from '@/shared/components/Switch'
 import { useGlobalSettingStore } from '@/shared/stores'
 
 export const YTDLiveChatSwitch = () => {
+  const id = useId()
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
@@ -29,7 +30,7 @@ export const YTDLiveChatSwitch = () => {
 
   return (
     <div className='w-[50px] flex justify-center'>
-      <Switch checked={ytdLiveChat} id='ytd-live-chat-switch' onChange={handleSwitchChange} />
+      <Switch checked={ytdLiveChat} id={id} onChange={handleSwitchChange} />
     </div>
   )
 }
