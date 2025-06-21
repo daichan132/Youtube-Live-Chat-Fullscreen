@@ -34,16 +34,18 @@ export const AddPresetItem = () => {
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
   }, [addPresetItem, t])
   return (
-    <button
-      type='button'
-      className={classNames(
-        'border-1 border-solid border-[rgba(0,0,0,0.1)] m-4 p-5 rounded-lg transition-colors duration-200 flex justify-center items-center cursor-pointer',
-        addPresetEnabled ? 'bg-white' : 'bg-[rgba(0,0,0,0.1)] opacity-[0.35] cursor-not-allowed',
-      )}
-      onClick={() => addPresetEnabled && addItem()}
-      disabled={!addPresetEnabled}
-    >
-      <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
-    </button>
+    <div className="m-4">
+      <button
+        type='button'
+        className={classNames(
+          'border-1 border-solid border-[rgba(0,0,0,0.1)] p-5 rounded-lg transition-colors duration-200 flex justify-center items-center cursor-pointer w-full',
+          addPresetEnabled ? 'bg-white' : 'bg-[rgba(0,0,0,0.1)] opacity-[0.35] cursor-not-allowed',
+        )}
+        onClick={() => addPresetEnabled && addItem()}
+        disabled={!addPresetEnabled}
+      >
+        <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
+      </button>
+    </div>
   )
 }
