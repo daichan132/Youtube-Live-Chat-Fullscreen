@@ -40,7 +40,7 @@ export const FontColorPickerUI = React.forwardRef<
     <div ref={ref} className='relative'>
       <button
         type='button'
-        className='inline-block p-[5px] bg-white rounded-[1px] shadow-[0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer relative'
+        className='inline-block p-[5px] bg-white rounded-[1px] shadow-[0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer relative border-none outline-none'
         onClick={() => setDisplay?.(d => !d)}
       >
         <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] bg-white rounded-[2px] w-full h-full'>

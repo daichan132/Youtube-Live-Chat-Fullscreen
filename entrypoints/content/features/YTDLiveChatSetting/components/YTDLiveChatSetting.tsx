@@ -68,7 +68,7 @@ export const YTDLiveChatSetting = () => {
                 key={item.key}
                 type='button'
                 className={classNames(
-                  'px-3 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-4',
+                  'px-3 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-4 border-none outline-none bg-transparent',
                   menuItem === item.key
                     ? 'text-[#333] bg-gray-100 cursor-default border-b-solid border-b-1 border-gray-800 rounded-tl-md rounded-tr-md'
                     : 'text-gray-700 hover:bg-gray-100 rounded-md',
