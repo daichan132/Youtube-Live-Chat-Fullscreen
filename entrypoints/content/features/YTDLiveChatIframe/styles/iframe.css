@@ -178,3 +178,7 @@ body.custom-yt-app-live-chat-extension yt-live-chat-paid-message-renderer #label
 body.custom-yt-app-live-chat-extension yt-live-chat-author-chip[disable-highlighting] #author-name.yt-live-chat-author-chip {
   color: var(--yt-live-chat-disable-highlight-message-author-name-color);
 }
+
+body.custom-yt-app-live-chat-extension ytvl-live-viewer-leaderboard-chat-entry-point-view-model {
+  display: none;
+}
