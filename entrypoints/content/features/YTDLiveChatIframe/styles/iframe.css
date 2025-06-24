@@ -42,22 +42,31 @@ body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker
 body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-buy-flow-renderer {
   background: none;
 }
-body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer,
-body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-message-renderer #input.yt-live-chat-text-input-field-renderer {
-  color: var(--yt-live-chat-text-input-field-color);
-}
-body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text,
 body.custom-yt-app-live-chat-extension yt-button-view-model .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text {
   color: var(--yt-spec-text-primary);
 }
+body.custom-yt-app-live-chat-extension yt-live-chat-author-chip[disable-highlighting] #author-name.yt-live-chat-author-chip {
+  color: var(--yt-live-chat-disable-highlight-message-author-name-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-message-renderer #input.yt-live-chat-text-input-field-renderer {
+  color: var(--yt-live-chat-text-input-field-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-message-renderer #label.yt-live-chat-text-input-field-renderer {
+  color: var(--yt-live-chat-text-input-field-placeholder-color);
+}
+body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension yt-dropdown-menu .yt-dropdown-menu[style-target="label-text"],
 body.custom-yt-app-live-chat-extension #label-icon.yt-dropdown-menu,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
 body.custom-yt-app-live-chat-extension
   yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji
   yt-icon.yt-live-chat-icon-toggle-button-renderer,
 body.custom-yt-app-live-chat-extension div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-restricted-participation-renderer[updated-input-visuals]
+  #icon.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items .yt-simple-endpoint,
 body.custom-yt-app-live-chat-extension
   yt-live-chat-message-input-renderer[system-icons]
@@ -94,9 +103,6 @@ body.custom-yt-app-live-chat-extension button.yt-reaction-control-panel-button-v
 body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension
-  yt-live-chat-restricted-participation-renderer[updated-input-visuals]
-  #icon.yt-live-chat-restricted-participation-renderer,
-body.custom-yt-app-live-chat-extension
   yt-live-chat-restricted-participation-renderer[system-icons]
   #picker-buttons.yt-live-chat-restricted-participation-renderer
   > *.yt-live-chat-restricted-participation-renderer,
@@ -107,8 +113,8 @@ body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-
 body.custom-yt-app-live-chat-extension .yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer {
   color: var(--yt-live-chat-primary-text-color, var(--yt-spec-text-primary));
 }
-body.custom-yt-app-live-chat-extension #label.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension #message.yt-live-chat-viewer-engagement-message-renderer,
+body.custom-yt-app-live-chat-extension #label.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension #timestamp.yt-live-chat-text-message-renderer,
 body.custom-yt-app-live-chat-extension #author-name.yt-live-chat-author-chip,
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer[whole-message-clickable] #menu.yt-live-chat-text-message-renderer,
