@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.4",
-    "@playwright/test": "1.53.1",
+    "@playwright/test": "1.54.1",
     "@types/chrome": "0.0.326",
     "@types/lodash-es": "4.17.12",
     "@types/react": "19.1.8",
