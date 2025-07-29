@@ -1,7 +1,7 @@
 {
   "name": "youtube-live-chat-fullscreen",
   "private": true,
-  "version": "2.1.15",
+  "version": "2.1.16",
   "type": "module",
   "scripts": {
     "dev": "wxt",
