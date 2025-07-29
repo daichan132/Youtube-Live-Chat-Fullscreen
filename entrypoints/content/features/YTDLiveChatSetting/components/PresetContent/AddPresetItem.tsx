@@ -34,7 +34,7 @@ export const AddPresetItem = () => {
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
   }, [addPresetItem, t])
   return (
-    <div className="m-4">
+    <div className='m-4'>
       <button
         type='button'
         className={classNames(
