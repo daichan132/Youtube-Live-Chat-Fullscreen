@@ -57,7 +57,7 @@
     "@wxt-dev/unocss": "1.0.1",
     "lefthook": "1.12.2",
     "typescript": "5.8.3",
-    "unocss": "66.3.3",
+    "unocss": "66.4.0",
     "wxt": "0.20.7"
   },
   "packageManager": "yarn@4.9.2",
