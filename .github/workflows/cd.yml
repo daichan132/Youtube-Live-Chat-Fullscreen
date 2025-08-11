@@ -16,7 +16,7 @@ jobs:
       tag_created: ${{ steps.check_tag.outputs.tag_created }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - name: Set up Git user
         run: |
           git config user.name "github-actions[bot]"
@@ -42,7 +42,7 @@ jobs:
     if: needs.create_tag.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+      - uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22.x
