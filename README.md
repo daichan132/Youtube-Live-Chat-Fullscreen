@@ -4,6 +4,11 @@
 <br>
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
 <p align="center">
+  <a href="README.md">English (US)</a> ·
+  <a href="README.ja.md">日本語</a> ·
+  <a href="README.zh-TW.md">繁體中文 (台灣)</a>
+</p>
+<p align="center">
   <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
     <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
   </a>
@@ -90,3 +95,9 @@ Your contributions help keep the project running and allow for future improvemen
 ## 📄 License
 Licensed under GPL-3.0. See [LICENSE](LICENSE) for details.
 
+## 🌍 Translations
+- English (US): README.md
+- 日本語: README.ja.md
+- 繁體中文 (台灣): README.zh-TW.md
+
+Contributions for additional languages are welcome. Follow the same filename pattern `README.<locale>.md`.
