@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { useIsFullScreen } from './useIsFullscreen'
 
 const gap = 10
 export const useIsShow = () => {
@@ -30,33 +31,37 @@ export const useIsShow = () => {
   }, [])
 
   const [isTop, setIsTop] = useState<boolean>(false)
-  const updateIsTopBasedOnMasthead = useCallback((element: Element) => {
-    if (element.hasAttribute('masthead-hidden') || element.hasAttribute('player-fullscreen')) {
+  const isFullscreen = useIsFullScreen()
+  const updateIsTopBasedOnMasthead = useCallback((element: Element, fs: boolean) => {
+    // Prefer explicit fullscreen state over DOM attributes which can flicker
+    // when the window loses focus or UI updates.
+    if (fs || element.hasAttribute('masthead-hidden')) {
       setIsTop(true)
     } else {
       setIsTop(false)
     }
   }, [])
   useEffect(() => {
-    setIsTop(true)
+    // Initialize based on current fullscreen state and masthead visibility
     const ytdAppElement = document.querySelector('ytd-app')
     if (!ytdAppElement) return
-    updateIsTopBasedOnMasthead(ytdAppElement)
+    updateIsTopBasedOnMasthead(ytdAppElement, isFullscreen)
     // biome-ignore lint/suspicious/noExplicitAny: mutations parameter from MutationObserver
     const mastheadHidden = (mutations: any) => {
       for (const mutation of mutations) {
-        updateIsTopBasedOnMasthead(mutation.target)
+        updateIsTopBasedOnMasthead(mutation.target, isFullscreen)
       }
     }
     const mutationObserver = new MutationObserver(mastheadHidden)
     mutationObserver.observe(ytdAppElement, {
-      attributeFilter: ['masthead-hidden', 'player-fullscreen'],
+      // Only need masthead-hidden here; fullscreen is derived from document state
+      attributeFilter: ['masthead-hidden'],
       attributes: true,
     })
     return () => {
       mutationObserver.disconnect()
     }
-  }, [updateIsTopBasedOnMasthead])
+  }, [updateIsTopBasedOnMasthead, isFullscreen])
 
   const [isTheaterChatMode, setIsTheaterChatMode] = useState<boolean>(false)
   useEffect(() => {

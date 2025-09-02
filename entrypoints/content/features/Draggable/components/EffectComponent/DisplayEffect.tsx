@@ -16,7 +16,11 @@ export const DisplayEffect = () => {
   const isIdle = useIdle(1e3)
 
   useEffect(() => {
-    setIsDisplay(isHover || !isIdle || isOpenSettingModal)
+    // Keep chat visible when the tab/window is unfocused to avoid
+    // unexpected disappearance while using a second monitor.
+    // Also show when hovering, active (not idle), or settings are open.
+    const isFocused = typeof document !== 'undefined' ? document.hasFocus() : true
+    setIsDisplay(isHover || !isIdle || isOpenSettingModal || !isFocused)
   }, [isHover, isIdle, setIsDisplay, isOpenSettingModal])
 
   return null
