@@ -30,8 +30,8 @@ export const PresetContent = () => {
           if (over == null || active.id === over.id) {
             return
           }
-          const oldIndex = presetItemIds.findIndex(item => item === active.id)
-          const newIndex = presetItemIds.findIndex(item => item === over.id)
+          const oldIndex = presetItemIds.indexOf(String(active.id))
+          const newIndex = presetItemIds.indexOf(String(over.id))
           const newItems = arrayMove(presetItemIds, oldIndex, newIndex)
           setPresetItemIds(newItems)
         }}
