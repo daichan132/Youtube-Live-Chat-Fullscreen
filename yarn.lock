@@ -389,18 +389,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/biome@npm:2.3.0"
+"@biomejs/biome@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/biome@npm:2.3.2"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:2.3.0"
-    "@biomejs/cli-darwin-x64": "npm:2.3.0"
-    "@biomejs/cli-linux-arm64": "npm:2.3.0"
-    "@biomejs/cli-linux-arm64-musl": "npm:2.3.0"
-    "@biomejs/cli-linux-x64": "npm:2.3.0"
-    "@biomejs/cli-linux-x64-musl": "npm:2.3.0"
-    "@biomejs/cli-win32-arm64": "npm:2.3.0"
-    "@biomejs/cli-win32-x64": "npm:2.3.0"
+    "@biomejs/cli-darwin-arm64": "npm:2.3.2"
+    "@biomejs/cli-darwin-x64": "npm:2.3.2"
+    "@biomejs/cli-linux-arm64": "npm:2.3.2"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.3.2"
+    "@biomejs/cli-linux-x64": "npm:2.3.2"
+    "@biomejs/cli-linux-x64-musl": "npm:2.3.2"
+    "@biomejs/cli-win32-arm64": "npm:2.3.2"
+    "@biomejs/cli-win32-x64": "npm:2.3.2"
   dependenciesMeta:
     "@biomejs/cli-darwin-arm64":
       optional: true
@@ -420,62 +420,62 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10c0/e51770543c80e8309f76b7e1326df4108dad66a3f2ef86c8d4558ad5c43d269c3c0ad4882cbafc57cc2dd58feac1c98efd4a34c8d253d2a516412fda9d50016a
+  checksum: 10c0/f9f132e87fd6ab00bcac7f24dffa89a838087b04ff983398f6ce5d2b2de6a45ee05ba05140a9718153780e5e7dc02ed18955e7a1fde4769484ed4a80df82efe1
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.0"
+"@biomejs/cli-darwin-arm64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-darwin-x64@npm:2.3.0"
+"@biomejs/cli-darwin-x64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-darwin-x64@npm:2.3.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.0"
+"@biomejs/cli-linux-arm64-musl@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.2"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-linux-arm64@npm:2.3.0"
+"@biomejs/cli-linux-arm64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-linux-arm64@npm:2.3.2"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.0"
+"@biomejs/cli-linux-x64-musl@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.2"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-linux-x64@npm:2.3.0"
+"@biomejs/cli-linux-x64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-linux-x64@npm:2.3.2"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-win32-arm64@npm:2.3.0"
+"@biomejs/cli-win32-arm64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-win32-arm64@npm:2.3.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@biomejs/cli-win32-x64@npm:2.3.0"
+"@biomejs/cli-win32-x64@npm:2.3.2":
+  version: 2.3.2
+  resolution: "@biomejs/cli-win32-x64@npm:2.3.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -1343,13 +1343,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.1.24":
-  version: 0.1.24
-  resolution: "@types/chrome@npm:0.1.24"
+"@types/chrome@npm:0.1.27":
+  version: 0.1.27
+  resolution: "@types/chrome@npm:0.1.27"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/6d79b98b206764c7c33faf8ddf49aaafe705671fdb5d339912471ee442c1eae2d9f483c9d30103a56e6c649081b268edca6171b3bc5f0cc20331f3d537244736
+  checksum: 10c0/8ff43ae668ab64a6dd8117ef51e6a80a8f19829333828a85c48b470f1f8145df0a42e5c981b5da6988def4846c719a6044bf412350f3557d05b44461e4667d7b
   languageName: node
   linkType: hard
 
@@ -3684,10 +3684,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^10.1.3":
-  version: 10.1.3
-  resolution: "immer@npm:10.1.3"
-  checksum: 10c0/b3929022c1999935c9c5e9491fce20d883c15a04072628056f3b8c51a63ac0876d1c1f25cec146e325c30c906bc7f15a636c29ed53156f0a3049150f152df4c8
+"immer@npm:^10.2.0":
+  version: 10.2.0
+  resolution: "immer@npm:10.2.0"
+  checksum: 10c0/35e66b0585b2aec4e85ae7a993f049405f170799ba89d79205bc3fdae2c5bdaa2b1d35f62803d8beee42b7e85c7f7315a6e93b6a5a510c5a46f03dbe63619e87
   languageName: node
   linkType: hard
 
@@ -4128,90 +4128,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook-darwin-arm64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-darwin-arm64@npm:2.0.1"
+"lefthook-darwin-arm64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-darwin-arm64@npm:2.0.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-darwin-x64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-darwin-x64@npm:2.0.1"
+"lefthook-darwin-x64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-darwin-x64@npm:2.0.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-arm64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-freebsd-arm64@npm:2.0.1"
+"lefthook-freebsd-arm64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-freebsd-arm64@npm:2.0.2"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-x64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-freebsd-x64@npm:2.0.1"
+"lefthook-freebsd-x64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-freebsd-x64@npm:2.0.2"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-linux-arm64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-linux-arm64@npm:2.0.1"
+"lefthook-linux-arm64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-linux-arm64@npm:2.0.2"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-linux-x64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-linux-x64@npm:2.0.1"
+"lefthook-linux-x64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-linux-x64@npm:2.0.2"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-arm64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-openbsd-arm64@npm:2.0.1"
+"lefthook-openbsd-arm64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-openbsd-arm64@npm:2.0.2"
   conditions: os=openbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-x64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-openbsd-x64@npm:2.0.1"
+"lefthook-openbsd-x64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-openbsd-x64@npm:2.0.2"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-windows-arm64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-windows-arm64@npm:2.0.1"
+"lefthook-windows-arm64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-windows-arm64@npm:2.0.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-windows-x64@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook-windows-x64@npm:2.0.1"
+"lefthook-windows-x64@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook-windows-x64@npm:2.0.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook@npm:2.0.1":
-  version: 2.0.1
-  resolution: "lefthook@npm:2.0.1"
+"lefthook@npm:2.0.2":
+  version: 2.0.2
+  resolution: "lefthook@npm:2.0.2"
   dependencies:
-    lefthook-darwin-arm64: "npm:2.0.1"
-    lefthook-darwin-x64: "npm:2.0.1"
-    lefthook-freebsd-arm64: "npm:2.0.1"
-    lefthook-freebsd-x64: "npm:2.0.1"
-    lefthook-linux-arm64: "npm:2.0.1"
-    lefthook-linux-x64: "npm:2.0.1"
-    lefthook-openbsd-arm64: "npm:2.0.1"
-    lefthook-openbsd-x64: "npm:2.0.1"
-    lefthook-windows-arm64: "npm:2.0.1"
-    lefthook-windows-x64: "npm:2.0.1"
+    lefthook-darwin-arm64: "npm:2.0.2"
+    lefthook-darwin-x64: "npm:2.0.2"
+    lefthook-freebsd-arm64: "npm:2.0.2"
+    lefthook-freebsd-x64: "npm:2.0.2"
+    lefthook-linux-arm64: "npm:2.0.2"
+    lefthook-linux-x64: "npm:2.0.2"
+    lefthook-openbsd-arm64: "npm:2.0.2"
+    lefthook-openbsd-x64: "npm:2.0.2"
+    lefthook-windows-arm64: "npm:2.0.2"
+    lefthook-windows-x64: "npm:2.0.2"
   dependenciesMeta:
     lefthook-darwin-arm64:
       optional: true
@@ -4235,7 +4235,7 @@ __metadata:
       optional: true
   bin:
     lefthook: bin/index.js
-  checksum: 10c0/aeca344a7784c3777f6b4171bd91d1204a9e336c86cd792be251c2b234a76d425dc9673e267e0873843058a6aa841f40a20a8ecfd13726cfe08cf0c285374ef5
+  checksum: 10c0/d987b1801bec49a77b21198d108b32ba572b37348e73b50c45eb3964f9de2696e2941c527086c409666b722829e6129dca3f296616ac9e8545f635dd9e693496
   languageName: node
   linkType: hard
 
@@ -5447,9 +5447,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^16.2.0":
-  version: 16.2.0
-  resolution: "react-i18next@npm:16.2.0"
+"react-i18next@npm:^16.2.3":
+  version: 16.2.3
+  resolution: "react-i18next@npm:16.2.3"
   dependencies:
     "@babel/runtime": "npm:^7.27.6"
     html-parse-stringify: "npm:^3.0.1"
@@ -5465,7 +5465,7 @@ __metadata:
       optional: true
     typescript:
       optional: true
-  checksum: 10c0/d10d733a64e691cf1924aee4e6c6a7b938eede33e3f34867491d97512a8e35efa8f427b7161e3e3c46191eead378832c023008cf75785ae7f8840cb27f7b3bc1
+  checksum: 10c0/510766f924fb93f348d0acdfe980d9bf2088f44161abc4756647204257285ff0fa0e1fab32438ff271c6d0d84f45ba47cfe684e1dcfe53bf8937d89a1fa99fa0
   languageName: node
   linkType: hard
 
@@ -7292,12 +7292,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "youtube-live-chat-fullscreen@workspace:."
   dependencies:
-    "@biomejs/biome": "npm:2.3.0"
+    "@biomejs/biome": "npm:2.3.2"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
     "@playwright/test": "npm:1.56.1"
-    "@types/chrome": "npm:0.1.24"
+    "@types/chrome": "npm:0.1.27"
     "@types/lodash-es": "npm:4.17.12"
     "@types/react": "npm:19.2.2"
     "@types/react-color": "npm:3.0.13"
@@ -7312,14 +7312,14 @@ __metadata:
     classnames: "npm:^2.5.1"
     i18next: "npm:^25.6.0"
     i18next-browser-languagedetector: "npm:^8.2.0"
-    immer: "npm:^10.1.3"
-    lefthook: "npm:2.0.1"
+    immer: "npm:^10.2.0"
+    lefthook: "npm:2.0.2"
     lodash-es: "npm:^4.17.21"
     re-resizable: "npm:^6.11.2"
     react: "npm:19.2.0"
     react-color: "npm:^2.19.3"
     react-dom: "npm:19.2.0"
-    react-i18next: "npm:^16.2.0"
+    react-i18next: "npm:^16.2.3"
     react-icons: "npm:^5.5.0"
     react-modal: "npm:^3.16.3"
     react-transition-group: "npm:^4.4.5"
