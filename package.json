@@ -58,7 +58,7 @@
     "lefthook": "1.12.3",
     "typescript": "5.9.2",
     "unocss": "66.5.0",
-    "wxt": "0.20.8"
+    "wxt": "0.20.13"
   },
   "packageManager": "yarn@4.9.4",
   "browserslist": [
