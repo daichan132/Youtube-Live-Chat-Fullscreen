@@ -78,10 +78,17 @@ html.${className} ${fullscreenRootSelector} #full-bleed-container {
 
 export const useFullscreenChatLayoutFix = (active: boolean) => {
   useEffect(() => {
-    const root = document.documentElement
-    if (!root) return
-
+    const timeouts: number[] = []
     let styleElement = document.getElementById(styleId) as HTMLStyleElement | null
+    const root = document.documentElement
+
+    if (!active) {
+      root.classList.remove(className)
+      if (styleElement) styleElement.remove()
+      return () => {}
+    }
+
+    root.classList.add(className)
     if (!styleElement) {
       styleElement = document.createElement('style')
       styleElement.id = styleId
@@ -89,30 +96,23 @@ export const useFullscreenChatLayoutFix = (active: boolean) => {
       document.head?.appendChild(styleElement)
     }
 
-    if (active) {
-      root.classList.add(className)
-    } else {
-      root.classList.remove(className)
+    const fireResize = () => {
+      window.dispatchEvent(new Event('resize'))
     }
-
-    if (active) {
-      const fireResize = () => {
-        window.dispatchEvent(new Event('resize'))
-      }
-      // YouTube sometimes recalculates the player size only after a resize tick.
-      // Fire a few times to cover async fullscreen/DOM updates.
-      const timeouts = [0, 150, 500].map(delay =>
+    // YouTube sometimes recalculates the player size only after a resize tick.
+    // Fire a few times to cover async fullscreen/DOM updates.
+    timeouts.push(
+      ...[0, 150, 500].map(delay =>
         window.setTimeout(() => {
           fireResize()
         }, delay),
-      )
-      return () => {
-        for (const id of timeouts) window.clearTimeout(id)
-      }
-    }
+      ),
+    )
 
     return () => {
+      for (const id of timeouts) window.clearTimeout(id)
       root.classList.remove(className)
+      styleElement?.remove()
     }
   }, [active])
 }

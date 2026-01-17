@@ -34,3 +34,25 @@
   - `#chat-container` と `#secondary` に `width/min-width/max-width/flex: 0` を付与
   - `#columns` / `#primary` / `#primary-inner` / `#full-bleed-container` に `width: 100%` を付与
   - `#full-bleed-container` / `#player` / `#player-container-*` / `#movie_player` に `width: 100vw` と `height: 100vh` を付与
+
+## 追加で発生した不具合（右側の YouTube ネイティブチャットが使えない）
+### 症状
+- 右カラムのネイティブチャットが表示されない、またはクリックできない
+- 全画面切替後に元のチャットが戻らないケースがある
+
+### 原因（今回の調査結果）
+- **チャット iframe の DOM 移動**  
+  オーバーレイ表示のため `ytd-live-chat-frame` 内の iframe を移動していたため、
+  右側のネイティブチャットが空になる。  
+  → 対応: ネイティブ iframe は元の場所に残し、拡張側は `cloneNode` で複製して表示。
+- **pointer-events が戻らない**  
+  ドラッグ中に `ytd-app` の `pointer-events: none` を設定していたが、
+  後始末が漏れるとネイティブ UI 全体が操作不可になる。  
+  → 対応: ドラッグ終了時と `useEffect` の cleanup で `pointer-events: auto` に復帰。
+- **全画面レイアウト修正の適用範囲が広い**  
+  全画面時のレイアウト修正が拡張 UI の ON/OFF と無関係に効くと、
+  ネイティブチャットの領域が常に潰される。  
+  → 対応: 全画面かつ拡張チャット ON のときだけ適用し、`html` にクラスを付けて CSS を限定。
+
+### 再発防止（テスト）
+- Playwright で「全画面切替後に右側のネイティブチャットが表示・操作可能か」を検証するテストを追加。
