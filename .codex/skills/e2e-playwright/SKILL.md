@@ -17,6 +17,10 @@ metadata:
    - `yarn build`
 2. Run E2E
    - `yarn e2e`
+3. If tests depend on a live stream URL
+   - Prefer search results (e.g. `https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D`)
+   - Pick a result with a "Live" badge; if it fails to open, fall back to the next one
+   - Avoid hardcoding a single live URL (streams end and cause flaky tests)
 3. If you need to focus on a single test/spec
    - Try passing Playwright args through yarn:
      - `yarn e2e -- <args>`（例: `yarn e2e -- e2e/foo.spec.ts`）
@@ -36,9 +40,11 @@ metadata:
 # Notes
 - `e2e/fixtures.ts` の拡張 `test/expect` を使う前提。
 - 非決定的挙動を増やす修正（ランダム待ち/過剰リトライ）は避ける。
+- ネイティブチャットの表示/操作可否は「拡張ON/OFFの前後」で必ず確認する。
 
 # Output format
 - Repro steps（実行したコマンド）
+- Live URL used（該当時）
 - Root cause（推定でなく根拠ベース）
 - Fix summary（どこをどう変えたか）
 - Verification（通ったコマンド）
