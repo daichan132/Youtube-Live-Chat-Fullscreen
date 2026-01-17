@@ -81,10 +81,25 @@ export const useFullscreenChatLayoutFix = (active: boolean) => {
     const timeouts: number[] = []
     let styleElement = document.getElementById(styleId) as HTMLStyleElement | null
     const root = document.documentElement
+    const fireResize = () => {
+      window.dispatchEvent(new Event('resize'))
+    }
+    const scheduleResizes = () => {
+      // YouTube sometimes recalculates the player size only after a resize tick.
+      // Fire a few times to cover async fullscreen/DOM updates.
+      timeouts.push(
+        ...[0, 150, 500].map(delay =>
+          window.setTimeout(() => {
+            fireResize()
+          }, delay),
+        ),
+      )
+    }
 
     if (!active) {
       root.classList.remove(className)
       if (styleElement) styleElement.remove()
+      scheduleResizes()
       return () => {}
     }
 
@@ -96,23 +111,13 @@ export const useFullscreenChatLayoutFix = (active: boolean) => {
       document.head?.appendChild(styleElement)
     }
 
-    const fireResize = () => {
-      window.dispatchEvent(new Event('resize'))
-    }
-    // YouTube sometimes recalculates the player size only after a resize tick.
-    // Fire a few times to cover async fullscreen/DOM updates.
-    timeouts.push(
-      ...[0, 150, 500].map(delay =>
-        window.setTimeout(() => {
-          fireResize()
-        }, delay),
-      ),
-    )
+    scheduleResizes()
 
     return () => {
       for (const id of timeouts) window.clearTimeout(id)
       root.classList.remove(className)
       styleElement?.remove()
+      scheduleResizes()
     }
   }, [active])
 }
