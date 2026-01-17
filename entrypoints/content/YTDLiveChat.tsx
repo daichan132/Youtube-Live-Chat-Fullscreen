@@ -5,6 +5,7 @@ import { useGlobalSettingStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
+import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 
 export const YTDLiveChat = () => {
@@ -14,6 +15,7 @@ export const YTDLiveChat = () => {
       ytdLiveChat: state.ytdLiveChat,
     })),
   )
+  useFullscreenChatLayoutFix(isShow && ytdLiveChat)
   const nodeRef = useRef(null)
   return (
     <>

@@ -1,0 +1,111 @@
+import { useEffect } from 'react'
+
+const styleId = 'ylc-fullscreen-chat-layout-fix'
+const className = 'ylc-fullscreen-chat-fix'
+const fullscreenFixCss = `
+html.${className} .html5-video-player.ytp-fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #chat-container,
+html.${className} ytd-watch-flexy.fullscreen #chat-container,
+html.${className} ytd-watch-flexy[fullscreen] #secondary,
+html.${className} ytd-watch-flexy.fullscreen #secondary,
+html.${className} ytd-watch-flexy[fullscreen] #secondary-inner,
+html.${className} ytd-watch-flexy.fullscreen #secondary-inner {
+  z-index: -1 !important;
+  width: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  flex: 0 0 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #secondary,
+html.${className} ytd-watch-flexy.fullscreen #secondary {
+  display: none !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #columns,
+html.${className} ytd-watch-flexy.fullscreen #columns,
+html.${className} ytd-watch-flexy[fullscreen] #primary,
+html.${className} ytd-watch-flexy.fullscreen #primary,
+html.${className} ytd-watch-flexy[fullscreen] #primary-inner,
+html.${className} ytd-watch-flexy.fullscreen #primary-inner,
+html.${className} ytd-watch-flexy[fullscreen] #full-bleed-container,
+html.${className} ytd-watch-flexy.fullscreen #full-bleed-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  flex: 1 1 auto !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #columns,
+html.${className} ytd-watch-flexy.fullscreen #columns {
+  display: block !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #full-bleed-container,
+html.${className} ytd-watch-flexy.fullscreen #full-bleed-container,
+html.${className} ytd-watch-flexy[fullscreen] #player,
+html.${className} ytd-watch-flexy.fullscreen #player,
+html.${className} ytd-watch-flexy[fullscreen] #player-container-outer,
+html.${className} ytd-watch-flexy.fullscreen #player-container-outer,
+html.${className} ytd-watch-flexy[fullscreen] #player-container-inner,
+html.${className} ytd-watch-flexy.fullscreen #player-container-inner,
+html.${className} ytd-watch-flexy[fullscreen] #movie_player,
+html.${className} ytd-watch-flexy.fullscreen #movie_player {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  margin: 0 !important;
+}
+html.${className} ytd-watch-flexy[fullscreen] #player-container-outer,
+html.${className} ytd-watch-flexy.fullscreen #player-container-outer,
+html.${className} ytd-watch-flexy[fullscreen] #player-container-inner,
+html.${className} ytd-watch-flexy.fullscreen #player-container-inner,
+html.${className} ytd-watch-flexy[fullscreen] #movie_player,
+html.${className} ytd-watch-flexy.fullscreen #movie_player {
+  height: 100vh !important;
+  max-height: 100vh !important;
+}
+`
+
+export const useFullscreenChatLayoutFix = (active: boolean) => {
+  useEffect(() => {
+    const root = document.documentElement
+    if (!root) return
+
+    let styleElement = document.getElementById(styleId) as HTMLStyleElement | null
+    if (!styleElement) {
+      styleElement = document.createElement('style')
+      styleElement.id = styleId
+      styleElement.textContent = fullscreenFixCss
+      document.head?.appendChild(styleElement)
+    }
+
+    if (active) {
+      root.classList.add(className)
+    } else {
+      root.classList.remove(className)
+    }
+
+    if (active) {
+      const fireResize = () => {
+        window.dispatchEvent(new Event('resize'))
+      }
+      // YouTube sometimes recalculates the player size only after a resize tick.
+      // Fire a few times to cover async fullscreen/DOM updates.
+      const timeouts = [0, 150, 500].map(delay =>
+        window.setTimeout(() => {
+          fireResize()
+        }, delay),
+      )
+      return () => {
+        for (const id of timeouts) window.clearTimeout(id)
+      }
+    }
+
+    return () => {
+      root.classList.remove(className)
+    }
+  }, [active])
+}
