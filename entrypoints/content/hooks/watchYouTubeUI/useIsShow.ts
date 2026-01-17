@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useIsFullScreen } from './useIsFullscreen'
 
 const gap = 10
@@ -14,9 +15,19 @@ export const useIsShow = () => {
     // Polls every second (up to 100 attempts) to check if the iframe has loaded
     let count = 0
     const interval = setInterval(() => {
-      const liveChatReplay: HTMLIFrameElement | null = document.querySelector('iframe.ytd-live-chat-frame')
+      const liveChatReplay: HTMLIFrameElement | null = document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
       const moviePlayer: HTMLElement | null = document.getElementById('movie_player')
-      if (liveChatReplay && moviePlayer && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')) {
+      const watchFlexy = document.querySelector('ytd-watch-flexy')
+      const watchGrid = document.querySelector('ytd-watch-grid')
+      const hasLiveChatAttribute =
+        watchFlexy?.hasAttribute('live-chat-present') ||
+        watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
+        watchGrid?.hasAttribute('live-chat-present') ||
+        watchGrid?.hasAttribute('live-chat-present-and-expanded')
+      const isLiveChatReady = !!liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')
+      const videoId = getYouTubeVideoId()
+
+      if (moviePlayer && (isLiveChatReady || hasLiveChatAttribute || videoId)) {
         setIsChat(true)
         clearInterval(interval)
       }
