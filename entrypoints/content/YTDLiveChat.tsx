@@ -6,6 +6,7 @@ import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
+import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 
 export const YTDLiveChat = () => {
@@ -15,7 +16,8 @@ export const YTDLiveChat = () => {
       ytdLiveChat: state.ytdLiveChat,
     })),
   )
-  useFullscreenChatLayoutFix(isShow && ytdLiveChat)
+  const isFullscreen = useIsFullScreen()
+  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat)
   const nodeRef = useRef(null)
   return (
     <>
