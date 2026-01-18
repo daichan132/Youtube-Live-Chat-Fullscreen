@@ -59,7 +59,7 @@ export const useIframeLoader = () => {
     if (!ref.current) return
     if (ref.current.querySelector('iframe')) return
 
-    let isCancelled = false
+    const isCancelled = false
     let retryId: number | null = null
 
     const resolveChatSrc = (chatIframe: HTMLIFrameElement | null, videoId: string | null) => {

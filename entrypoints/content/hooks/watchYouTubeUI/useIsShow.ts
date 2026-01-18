@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from 'react'
-
-import { useYTDLiveChatStore } from '@/shared/stores'
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { useYTDLiveChatStore } from '@/shared/stores'
 import { useIsFullScreen } from './useIsFullscreen'
 
 const gap = 10
@@ -81,8 +80,7 @@ export const useIsShow = () => {
       const watchFlexy = document.querySelector('ytd-watch-flexy')
       const watchGrid = document.querySelector('ytd-watch-grid')
       const hasExpandedChat =
-        watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-        watchGrid?.hasAttribute('live-chat-present-and-expanded')
+        watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
       const chatContainer = document.querySelector('#chat-container')
       const chatFrameHost = document.querySelector('ytd-live-chat-frame')
       const isHidden =
@@ -114,9 +112,7 @@ export const useIsShow = () => {
       if (isHidden) return false
 
       const pointerBlocked =
-        secondaryStyle.pointerEvents === 'none' ||
-        containerStyle.pointerEvents === 'none' ||
-        hostStyle.pointerEvents === 'none'
+        secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
       if (pointerBlocked) return false
 
       const secondaryBox = secondary.getBoundingClientRect()

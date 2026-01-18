@@ -8,9 +8,9 @@ import { RiCloseLine } from 'react-icons/ri'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
-import { getModalParentElement } from '../utils/getModalParentElement'
 
 const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 

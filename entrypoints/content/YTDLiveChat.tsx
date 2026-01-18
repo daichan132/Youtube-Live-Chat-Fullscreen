@@ -28,10 +28,9 @@ export const YTDLiveChat = () => {
       if (!button) return false
       if (button.closest('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')) return false
 
-      const label =
-        `${button.getAttribute('aria-label') ?? ''} ${button.getAttribute('title') ?? ''} ${
-          button.getAttribute('data-title-no-tooltip') ?? ''
-        } ${button.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
+      const label = `${button.getAttribute('aria-label') ?? ''} ${button.getAttribute('title') ?? ''} ${
+        button.getAttribute('data-title-no-tooltip') ?? ''
+      } ${button.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
       const isChatLabel = label.includes('chat') || label.includes('チャット')
       if (!isChatLabel) return false
 
