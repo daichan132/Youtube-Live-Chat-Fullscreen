@@ -24,9 +24,10 @@ export const useIsShow = () => {
         watchGrid?.hasAttribute('live-chat-present') ||
         watchGrid?.hasAttribute('live-chat-present-and-expanded')
       const isLiveChatReady = !!liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')
+      const liveChatHost = document.querySelector('ytd-live-chat-frame')
       const videoId = getYouTubeVideoId()
 
-      if (moviePlayer && (isLiveChatReady || hasLiveChatAttribute || videoId)) {
+      if (moviePlayer && (isLiveChatReady || hasLiveChatAttribute || (liveChatHost && videoId))) {
         setIsChat(true)
         clearInterval(interval)
       }
