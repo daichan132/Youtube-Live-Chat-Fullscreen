@@ -64,11 +64,17 @@ export const YTDLiveChat = () => {
   }, [ytdLiveChat, setYTDLiveChat])
 
   useEffect(() => {
+    const isNativeChatCurrentlyOpen = isNativeChatOpen || isNativeChatExpanded
     const prev = prevNativeChatOpenRef.current
-    prevNativeChatOpenRef.current = isNativeChatOpen || isNativeChatExpanded
-    if (prev === null) return
+    prevNativeChatOpenRef.current = isNativeChatCurrentlyOpen
+    if (prev === null) {
+      if (isNativeChatCurrentlyOpen && ytdLiveChat) {
+        setYTDLiveChat(false)
+      }
+      return
+    }
 
-    if (!prev && (isNativeChatOpen || isNativeChatExpanded) && ytdLiveChat) {
+    if (!prev && isNativeChatCurrentlyOpen && ytdLiveChat) {
       setYTDLiveChat(false)
     }
   }, [isNativeChatOpen, isNativeChatExpanded, ytdLiveChat, setYTDLiveChat])
