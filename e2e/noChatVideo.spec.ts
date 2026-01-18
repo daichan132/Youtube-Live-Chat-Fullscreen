@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures'
 import { acceptYouTubeConsent } from './utils/liveUrl'
-import { archiveReplayUrls } from './utils/testUrls'
+import { noChatUrls } from './utils/testUrls'
 
 const hasPlayableChat = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
@@ -33,31 +33,22 @@ const isExtensionChatLoaded = () => {
   return Boolean(doc && doc.readyState === 'complete')
 }
 
-test('youtube live archive test', async ({ page }) => {
+test('extension chat stays hidden on videos without live chat', async ({ page }) => {
   test.setTimeout(120000)
 
-  const candidateUrls = archiveReplayUrls
-  let selectedUrl: string | null = null
+  const noChatUrl = noChatUrls[0]
+  await page.goto(noChatUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
+  await acceptYouTubeConsent(page)
+  await page.waitForSelector('#movie_player', { state: 'attached' })
 
-  for (const url of candidateUrls) {
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 })
-      await acceptYouTubeConsent(page)
-      await page.waitForSelector('#movie_player', { state: 'attached' })
-      await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' }).catch(() => null)
-      await expect.poll(async () => page.evaluate(hasPlayableChat), { timeout: 20000 }).toBe(true)
-      selectedUrl = url
-      break
-    } catch {
-      continue
-    }
-  }
-
-  if (!selectedUrl) {
-    test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
-  }
+  await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
+  await page.waitForFunction(() => document.fullscreenElement !== null)
 
-  await page.waitForSelector('#shadow-root-live-chat', { state: 'attached' })
-  await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(true)
+  await page.locator('#movie_player').hover()
+  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')
+  await expect(switchButton).toHaveCount(0)
+
+  await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
+  await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(false)
 })

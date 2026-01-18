@@ -1,45 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from 'react'
-import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { useHasPlayableLiveChat } from './useHasPlayableLiveChat'
 import { useIsFullScreen } from './useIsFullscreen'
 
 const gap = 10
 export const useIsShow = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false)
-  const [isChat, setIsChat] = useState<boolean>(false)
-
-  useEffect(() => {
-    setIsChat(false)
-    // Polls every second (up to 100 attempts) to check if the iframe has loaded
-    let count = 0
-    const interval = setInterval(() => {
-      const liveChatReplay: HTMLIFrameElement | null = document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
-      const moviePlayer: HTMLElement | null = document.getElementById('movie_player')
-      const watchFlexy = document.querySelector('ytd-watch-flexy')
-      const watchGrid = document.querySelector('ytd-watch-grid')
-      const hasLiveChatAttribute =
-        watchFlexy?.hasAttribute('live-chat-present') ||
-        watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-        watchGrid?.hasAttribute('live-chat-present') ||
-        watchGrid?.hasAttribute('live-chat-present-and-expanded')
-      const isLiveChatReady = !!liveChatReplay && !liveChatReplay.contentDocument?.location.href?.includes('about:blank')
-      const liveChatHost = document.querySelector('ytd-live-chat-frame')
-      const videoId = getYouTubeVideoId()
-
-      if (moviePlayer && (isLiveChatReady || hasLiveChatAttribute || (liveChatHost && videoId))) {
-        setIsChat(true)
-        clearInterval(interval)
-      }
-      count++
-      if (count > 100) {
-        clearInterval(interval)
-      }
-    }, 1000)
-    return () => {
-      clearInterval(interval)
-    }
-  }, [])
+  const hasPlayableChat = useHasPlayableLiveChat()
 
   const [isTop, setIsTop] = useState<boolean>(false)
   const isFullscreen = useIsFullScreen()
@@ -158,7 +126,7 @@ export const useIsShow = () => {
     }
   }, [])
   useEffect(() => {
-    if (isChat && isTop) {
+    if (hasPlayableChat && isTop) {
       /* ----------------------- YLC is in outside of window ---------------------- */
       const innerWidth = window.innerWidth
       const innerHeight = window.innerHeight
@@ -174,6 +142,6 @@ export const useIsShow = () => {
     } else {
       setIsChecked(false)
     }
-  }, [isTop, isChat])
-  return { isShow: isChat && isTop && isChecked, isNativeChatOpen, isNativeChatExpanded }
+  }, [isTop, hasPlayableChat])
+  return { isShow: hasPlayableChat && isTop && isChecked, isNativeChatOpen, isNativeChatExpanded }
 }
