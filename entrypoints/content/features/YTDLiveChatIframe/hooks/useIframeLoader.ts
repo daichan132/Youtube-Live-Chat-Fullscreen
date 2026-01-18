@@ -83,7 +83,7 @@ export const useIframeLoader = () => {
       if (existingIframe instanceof HTMLIFrameElement) {
         const existingSrc = existingIframe.getAttribute('src') ?? ''
         if (!resolvedSrc) return
-        if (existingSrc === '' || existingSrc.includes('about:blank')) {
+        if (existingSrc === '' || existingSrc.includes('about:blank') || existingSrc !== resolvedSrc) {
           existingIframe.src = resolvedSrc
         }
         existingIframe.dataset.ylcChat = 'true'
