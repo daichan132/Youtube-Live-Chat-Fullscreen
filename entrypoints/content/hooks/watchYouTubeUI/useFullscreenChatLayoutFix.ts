@@ -38,6 +38,20 @@ html.${className} ${fullscreenRootSelector} #secondary-inner {
   overflow: hidden !important;
   pointer-events: none !important;
 }
+html.${className} ${fullscreenRootSelector} #panels-full-bleed-container,
+html.${className} ${fullscreenRootSelector} #panels {
+  z-index: -1 !important;
+  width: 0 !important;
+  height: 0 !important;
+  min-width: 0 !important;
+  max-width: 0 !important;
+  flex: 0 0 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
+}
 html.${className} ${fullscreenRootSelector} #secondary {
   display: none !important;
 }

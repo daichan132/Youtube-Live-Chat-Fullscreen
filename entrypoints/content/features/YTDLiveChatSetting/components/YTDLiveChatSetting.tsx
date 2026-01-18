@@ -10,6 +10,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
+import { getModalParentElement } from '../utils/getModalParentElement'
 
 const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 
@@ -58,7 +59,7 @@ export const YTDLiveChatSetting = () => {
       onRequestClose={() => setIsOpenSettingModal(false)}
       onAfterClose={() => setIsHover(false)}
       appElement={document.body}
-      parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
+      parentSelector={getModalParentElement}
     >
       <div className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'>
         <div className='flex justify-between items-center px-5 py-3 border-1 border-b-solid border-gray-100'>

@@ -46,7 +46,7 @@ export const useDraggableItemStyles = ({
     top,
     left,
     transition,
-    pointerEvents: isClipPath ? ('none' as const) : ('all' as const),
+    pointerEvents: isClipPath ? ('none' as const) : ('auto' as const),
   }
 
   // Styles for the inner div
