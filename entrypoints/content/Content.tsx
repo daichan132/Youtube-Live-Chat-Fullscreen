@@ -15,6 +15,12 @@ function createShadowRoot(): ShadowRoot | null {
   if (!host) {
     host = document.createElement('div')
     host.id = 'shadow-root-live-chat'
+    host.style.pointerEvents = 'none'
+    host.style.position = 'absolute'
+    host.style.top = '0'
+    host.style.left = '0'
+    host.style.width = '0'
+    host.style.height = '0'
     const root = host.attachShadow({ mode: 'open' })
     root.innerHTML = `<style>
   :host { font-size: 14px }
@@ -96,7 +102,7 @@ export const Content = () => {
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRootRef.current) return null
     return createPortal(
-      <div className='fixed top-0 right-0 w-full h-full z-1000 pointer-events-none'>
+      <div className='fixed top-0 right-0 w-full h-full z-1000' style={{ pointerEvents: 'none' }}>
         <YTDLiveChat />
       </div>,
       shadowRootRef.current,

@@ -16,7 +16,10 @@ export const HoverEffect = ({ isDragging }: HoverEffectProps) => {
     if (isDragging) {
       setYouTubePointerEvents('none')
     } else {
-      setYouTubePointerEvents('all')
+      setYouTubePointerEvents('auto')
+    }
+    return () => {
+      setYouTubePointerEvents('auto')
     }
   }, [isDragging, setYouTubePointerEvents])
 

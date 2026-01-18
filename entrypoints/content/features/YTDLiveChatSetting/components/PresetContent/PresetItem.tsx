@@ -9,6 +9,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { getModalParentElement } from '../../utils/getModalParentElement'
 
 const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 
@@ -85,7 +86,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
           onRequestClose={() => setIsDeleteModalOpen(false)}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/50 z-[1000001]'
           appElement={document.body}
-          parentSelector={() => (document.getElementById('shadow-root-live-chat')?.shadowRoot as unknown as HTMLElement) || document.body}
+          parentSelector={getModalParentElement}
         >
           <div className='mb-4 text-[1.5rem] font-bold text-[#333]'>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>
