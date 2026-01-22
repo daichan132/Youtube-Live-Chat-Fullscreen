@@ -1,0 +1,163 @@
+import { expect, test } from './fixtures'
+import { findLiveUrlWithChat } from './utils/liveUrl'
+
+const isExtensionChatLoaded = () => {
+  const host = document.getElementById('shadow-root-live-chat')
+  const root = host?.shadowRoot
+  if (!root) return false
+  const iframe = root.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  if (!iframe) return false
+  const src = iframe.getAttribute('src') ?? ''
+  if (!src || src.includes('about:blank')) return false
+  const doc = iframe.contentDocument
+  return Boolean(doc && doc.readyState === 'complete')
+}
+
+const getPointerState = () => {
+  const ytdApp = document.querySelector('ytd-app') as HTMLElement | null
+  const centerX = window.innerWidth / 2
+  const centerY = window.innerHeight / 2
+  const bottomY = Math.max(10, window.innerHeight - 10)
+
+  const centerElement = document.elementFromPoint(centerX, centerY) as HTMLElement | null
+  const bottomElement = document.elementFromPoint(centerX, bottomY) as HTMLElement | null
+
+  const centerRoot = centerElement?.getRootNode()
+  const bottomRoot = bottomElement?.getRootNode()
+
+  return {
+    ytdPointerEvents: ytdApp ? window.getComputedStyle(ytdApp).pointerEvents : null,
+    center: {
+      tag: centerElement?.tagName ?? null,
+      id: centerElement?.id ?? null,
+      shadowHostId: centerRoot instanceof ShadowRoot ? (centerRoot.host as HTMLElement | null)?.id ?? null : null,
+    },
+    bottom: {
+      tag: bottomElement?.tagName ?? null,
+      id: bottomElement?.id ?? null,
+      shadowHostId: bottomRoot instanceof ShadowRoot ? (bottomRoot.host as HTMLElement | null)?.id ?? null : null,
+    },
+  }
+}
+
+const getElementAtPoint = ({ x, y }: { x: number; y: number }) => {
+  const element = document.elementFromPoint(x, y) as HTMLElement | null
+  const rootNode = element?.getRootNode()
+  return {
+    tag: element?.tagName ?? null,
+    id: element?.id ?? null,
+    className: element?.className ?? null,
+    shadowHostId: rootNode instanceof ShadowRoot ? (rootNode.host as HTMLElement | null)?.id ?? null : null,
+  }
+}
+
+test('fullscreen chat does not block player clicks', async ({ page }) => {
+  test.setTimeout(140000)
+
+  await findLiveUrlWithChat(page)
+  await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
+
+  await page.locator('#movie_player').hover()
+  await page.click('button.ytp-fullscreen-button')
+  await page.waitForFunction(() => document.fullscreenElement !== null)
+
+  await page.locator('#movie_player').hover()
+  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  await expect(switchButton).toBeVisible()
+  if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
+    await switchButton.click({ force: true })
+  }
+  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
+
+  await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(true)
+
+  const pointerState = await page.evaluate(getPointerState)
+  await test.info().attach('pointer-state', {
+    body: JSON.stringify(pointerState, null, 2),
+    contentType: 'application/json',
+  })
+
+  await expect.poll(async () => page.evaluate(() => {
+    const ytdApp = document.querySelector('ytd-app') as HTMLElement | null
+    return ytdApp ? window.getComputedStyle(ytdApp).pointerEvents : null
+  })).toBe('auto')
+
+  await expect.poll(async () => page.evaluate(() => {
+    const centerX = window.innerWidth / 2
+    const centerY = window.innerHeight / 2
+    const elementAtPoint = document.elementFromPoint(centerX, centerY) as HTMLElement | null
+    const rootNode = elementAtPoint?.getRootNode()
+    return rootNode instanceof ShadowRoot ? (rootNode.host as HTMLElement | null)?.id ?? null : null
+  })).not.toBe('shadow-root-live-chat')
+
+  await expect.poll(async () => page.evaluate(() => {
+    const centerX = window.innerWidth / 2
+    const bottomY = Math.max(10, window.innerHeight - 10)
+    const elementAtPoint = document.elementFromPoint(centerX, bottomY) as HTMLElement | null
+    const rootNode = elementAtPoint?.getRootNode()
+    return rootNode instanceof ShadowRoot ? (rootNode.host as HTMLElement | null)?.id ?? null : null
+  })).not.toBe('shadow-root-live-chat')
+
+  await page.locator('#movie_player').hover()
+  const playButton = page.locator('button.ytp-play-button')
+  await expect(playButton).toBeVisible()
+
+  const wasPaused = await page.evaluate(() => {
+    const video = document.querySelector('video') as HTMLVideoElement | null
+    return video ? video.paused : null
+  })
+
+  await playButton.click()
+
+  if (wasPaused !== null) {
+    await expect.poll(async () => {
+      return page.evaluate(() => {
+        const video = document.querySelector('video') as HTMLVideoElement | null
+        return video ? video.paused : null
+      })
+    }).not.toBe(wasPaused)
+  }
+
+  await page.locator('#movie_player').hover()
+  const switchButtonControl = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  await expect(switchButtonControl).toBeVisible()
+  const switchBox = await switchButtonControl.boundingBox()
+  expect(switchBox).not.toBeNull()
+  if (switchBox) {
+    const switchHit = await page.evaluate(getElementAtPoint, {
+      x: switchBox.x + switchBox.width / 2,
+      y: switchBox.y + switchBox.height / 2,
+    })
+    await test.info().attach('switch-button-hit', {
+      body: JSON.stringify(switchHit, null, 2),
+      contentType: 'application/json',
+    })
+    expect(switchHit.shadowHostId).not.toBe('shadow-root-live-chat')
+  }
+
+  await switchButtonControl.click()
+  await expect(switchButtonControl).toHaveAttribute('aria-pressed', 'false')
+
+  await switchButtonControl.click()
+  await expect(switchButtonControl).toHaveAttribute('aria-pressed', 'true')
+
+  await page.locator('#movie_player').hover()
+  const fullscreenButton = page.locator('button.ytp-fullscreen-button')
+  await expect(fullscreenButton).toBeVisible()
+  const fullscreenBox = await fullscreenButton.boundingBox()
+  expect(fullscreenBox).not.toBeNull()
+  if (fullscreenBox) {
+    const fullscreenHit = await page.evaluate(getElementAtPoint, {
+      x: fullscreenBox.x + fullscreenBox.width / 2,
+      y: fullscreenBox.y + fullscreenBox.height / 2,
+    })
+    await test.info().attach('fullscreen-button-hit', {
+      body: JSON.stringify(fullscreenHit, null, 2),
+      contentType: 'application/json',
+    })
+    expect(fullscreenHit.shadowHostId).not.toBe('shadow-root-live-chat')
+  }
+
+  await fullscreenButton.click()
+  await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null)).toBe(true)
+})

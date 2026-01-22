@@ -1,16 +1,15 @@
 ---
 name: git-ops
-description: Safe git workflow for Codex. Use when asked to stage/commit/branch/revert/inspect changes, or mentions コミット/差分/ブランチ or "git add/commit/status/diff/switch/revert".
+description: Safe git workflow for Codex. Use when asked to stage/branch/revert/inspect changes, or mentions 差分/ブランチ or "git add/status/diff/switch/revert". For commit quality use git-smart-commit.
 metadata:
   short-description: Safe git operations workflow
 ---
 
 # Goal
-- Perform safe, minimal git operations (inspect, stage, commit, branch, revert) without destructive history rewrites.
+- Perform safe, minimal git operations (inspect, stage, branch, revert) without destructive history rewrites.
 
 # Inputs (ask only if missing)
-- The exact action requested (inspect / stage / commit / branch / revert / undo local changes).
-- Commit message (if a commit is requested).
+- The exact action requested (inspect / stage / branch / revert / undo local changes).
 - Target paths (if the request is broad).
 - If the user asks to "undo": whether to undo *staged*, *unstaged*, or a *committed* change.
 
@@ -27,16 +26,12 @@ metadata:
    - Stage only requested paths.
    - Prefer smallest possible scope:
      - Use `git add -p <path>` when partial staging is safer.
-3. If commit is requested
-   - Ensure staged content is what we intend: `git diff --staged`
-   - Commit with the provided message: `git commit -m "<message>"`
-   - (No amend unless explicitly asked.)
-4. If branching is requested
+3. If branching is requested
    - Create: `git switch -c <branch>`
    - Switch: `git switch <branch>`
-5. If revert is requested (safe undo for shared history)
+4. If revert is requested (safe undo for shared history)
    - Prefer `git revert <sha>` over reset.
-6. Finish by confirming state
+5. Finish by confirming state
    - `git status -sb`
 
 # Safety checks
@@ -46,11 +41,10 @@ metadata:
 
 # Output format
 - What was inspected (paths / branch).
-- What was staged (paths) and/or committed (hash + message).
+- What was staged (paths).
 - Any remaining dirty files (unstaged/untracked/staged).
 
 # Trigger examples
-- "コミットして"
 - "git add して"
 - "差分を確認して"
 - "ブランチを切って"

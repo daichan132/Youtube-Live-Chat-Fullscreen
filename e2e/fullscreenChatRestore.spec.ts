@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures'
-import { findLiveUrlWithChat } from './utils/liveUrl'
+import { acceptYouTubeConsent } from './utils/liveUrl'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -35,7 +35,13 @@ const isNativeChatUsable = () => {
 test('restore native chat after fullscreen toggle', async ({ page }) => {
   test.setTimeout(120000)
 
-  await findLiveUrlWithChat(page)
+  const liveUrl = process.env.YLC_LIVE_URL
+  if (!liveUrl) {
+    test.skip(true, 'Set YLC_LIVE_URL to run live tests.')
+    return
+  }
+  await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
+  await acceptYouTubeConsent(page)
   await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
 
   await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)

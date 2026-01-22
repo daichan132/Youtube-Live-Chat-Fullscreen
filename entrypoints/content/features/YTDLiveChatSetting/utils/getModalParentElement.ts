@@ -12,6 +12,8 @@ export const getModalParentElement = (): HTMLElement => {
     if (!modalRoot) {
       modalRoot = document.createElement('div')
       modalRoot.id = MODAL_ROOT_ID
+      // モーダルをクリック可能にする（親要素がpointer-events: noneのため）
+      modalRoot.style.pointerEvents = 'auto'
       shadowRoot.appendChild(modalRoot)
     }
     cachedModalRoot = modalRoot

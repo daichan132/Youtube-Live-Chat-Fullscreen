@@ -4,6 +4,7 @@ import type { PublicPath } from 'wxt/browser'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
+import { useHasPlayableLiveChat } from './hooks/watchYouTubeUI/useHasPlayableLiveChat'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { YTDLiveChat } from './YTDLiveChat'
 
@@ -75,6 +76,7 @@ export const Content = () => {
   useI18n()
   useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
+  const hasPlayableChat = useHasPlayableLiveChat()
 
   // Use refs to store DOM elements
   const shadowRootRef = useRef<ShadowRoot | null>(null)
@@ -85,7 +87,7 @@ export const Content = () => {
 
   // Create or remove DOM elements on isFullscreen change
   useEffect(() => {
-    if (isFullscreen) {
+    if (isFullscreen && hasPlayableChat) {
       shadowRootRef.current = createShadowRoot()
       switchButtonRef.current = createSwitchButtonContainer()
       // Ensure these new references are used on the next render
@@ -97,7 +99,7 @@ export const Content = () => {
       switchButtonRef.current = null
       setPortalsReady(false)
     }
-  }, [isFullscreen])
+  }, [isFullscreen, hasPlayableChat])
 
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRootRef.current) return null
