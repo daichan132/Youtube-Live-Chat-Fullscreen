@@ -3,11 +3,7 @@ const findStyleTag = (head: HTMLHeadElement, id: string) => {
   return element instanceof HTMLStyleElement ? element : null
 }
 
-export const upsertStyleTag = (
-  head: HTMLHeadElement | null | undefined,
-  id: string,
-  cssText: string,
-) => {
+export const upsertStyleTag = (head: HTMLHeadElement | null | undefined, id: string, cssText: string) => {
   if (!head) return
 
   const existing = findStyleTag(head, id)

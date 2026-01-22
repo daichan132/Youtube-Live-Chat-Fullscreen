@@ -56,9 +56,7 @@ export const useIframeLoader = () => {
 
   useEffect(() => {
     // チャットが存在するときのみ処理
-    const chatIframe: HTMLIFrameElement | null = document.querySelector(
-      'ytd-live-chat-frame iframe.ytd-live-chat-frame'
-    )
+    const chatIframe: HTMLIFrameElement | null = document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
     if (!chatIframe) return
 
     // 既存のiframeをそのままDOM移動
@@ -66,10 +64,7 @@ export const useIframeLoader = () => {
     setIFrameElement(iframeRef.current)
 
     // srcを設定（about:blankでない場合）
-    if (
-      iframeRef.current.contentDocument?.location.href &&
-      !iframeRef.current.contentDocument?.location.href?.includes('about:blank')
-    ) {
+    if (iframeRef.current.contentDocument?.location.href && !iframeRef.current.contentDocument?.location.href?.includes('about:blank')) {
       iframeRef.current.src = iframeRef.current.contentDocument.location.href
     }
 

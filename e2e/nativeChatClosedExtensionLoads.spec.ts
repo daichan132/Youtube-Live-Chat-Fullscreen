@@ -106,6 +106,7 @@ test('extension chat loads when native chat is closed', async ({ page }) => {
   const liveUrl = process.env.YLC_LIVE_URL
   if (!liveUrl) {
     test.skip(true, 'Set YLC_LIVE_URL to run live tests.')
+    return
   }
   await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
   await acceptYouTubeConsent(page)
