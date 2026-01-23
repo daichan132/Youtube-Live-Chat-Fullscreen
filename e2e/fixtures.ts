@@ -11,7 +11,7 @@ export const test = base.extend<{
   context: async ({}, use) => {
     const context = await chromium.launchPersistentContext('', {
       headless: false,
-      args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`],
+      args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
     })
     await use(context)
     await context.close()
