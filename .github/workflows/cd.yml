@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       tag_created: ${{ steps.check_tag.outputs.tag_created }}
+      version: ${{ steps.check_tag.outputs.version }}
     steps:
       - name: Checkout code
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
@@ -28,6 +29,7 @@ jobs:
         run: |
           git fetch --tags
           VERSION=$(grep -oP '(?<="version": ")[^"]*' package.json)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
           if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
             echo "Tag v$VERSION already exists."
             echo "tag_created=false" >> $GITHUB_OUTPUT
@@ -53,6 +55,15 @@ jobs:
         run: |
           yarn zip
           yarn zip:firefox
+      - name: Create GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v${{ needs.create_tag.outputs.version }}" \
+            --title "v${{ needs.create_tag.outputs.version }}" \
+            --generate-notes \
+            .output/*-chrome.zip \
+            .output/*-firefox.zip
       - name: Submit to stores
         run: |
           yarn wxt submit \
