@@ -1,5 +1,5 @@
 import { act, render } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, type vi } from 'vitest'
 import { useMessage } from './useMessage'
 
 type RuntimeWithHelpers = {

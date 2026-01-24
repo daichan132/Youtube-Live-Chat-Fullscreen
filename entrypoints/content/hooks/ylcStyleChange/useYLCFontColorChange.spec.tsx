@@ -23,10 +23,7 @@ describe('useYLCFontColorChange', () => {
     })
 
     expect(setProperty).toHaveBeenCalledWith('--extension-yt-live-font-color', 'rgba(10, 20, 30, 0.6)')
-    expect(setProperty).toHaveBeenCalledWith(
-      '--extension-yt-live-secondary-font-color',
-      `rgba(10, 20, 30, ${secondaryAlpha})`,
-    )
+    expect(setProperty).toHaveBeenCalledWith('--extension-yt-live-secondary-font-color', `rgba(10, 20, 30, ${secondaryAlpha})`)
     expect(setProperty).toHaveBeenCalledTimes(2)
   })
 })

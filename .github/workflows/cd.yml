@@ -66,11 +66,20 @@ jobs:
             .output/*-firefox.zip
       - name: Submit to stores
         run: |
+          CHROME_ZIP=".output/youtube-live-chat-fullscreen-${{ needs.create_tag.outputs.version }}-chrome.zip"
+          FIREFOX_ZIP=".output/youtube-live-chat-fullscreen-${{ needs.create_tag.outputs.version }}-firefox.zip"
+          SOURCES_ZIP=".output/youtube-live-chat-fullscreen-${{ needs.create_tag.outputs.version }}-sources.zip"
+
+          yarn submit:chrome:v2 -- \
+            --zip "$CHROME_ZIP" \
+            --expected-version "${{ needs.create_tag.outputs.version }}"
+
           yarn wxt submit \
-            --chrome-zip .output/*-chrome.zip \
-            --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/*-sources.zip
+            --firefox-zip "$FIREFOX_ZIP" \
+            --firefox-sources-zip "$SOURCES_ZIP"
         env:
           CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
           CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
