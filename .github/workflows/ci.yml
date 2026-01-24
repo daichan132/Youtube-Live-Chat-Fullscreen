@@ -67,4 +67,4 @@ jobs:
       - name: Build extension
         run: yarn build
       - name: Run E2E tests
-        run: yarn e2e
+        run: xvfb-run --auto-servernum yarn e2e
