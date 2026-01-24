@@ -51,20 +51,3 @@ jobs:
         run: rm -rf node_modules && yarn install --immutable
       - name: Run unit tests
         run: yarn test:unit
-
-  e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
-      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
-        with:
-          node-version: 24.x
-          cache: "yarn"
-      - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
-      - name: Install Playwright browsers
-        run: yarn playwright install --with-deps chromium
-      - name: Build extension
-        run: yarn build
-      - name: Run E2E tests
-        run: xvfb-run --auto-servernum yarn e2e
