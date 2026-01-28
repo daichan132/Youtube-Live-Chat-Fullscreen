@@ -30,6 +30,7 @@ export const useIframeLoader = () => {
         fontSize,
         fontFamily,
         bgColor,
+        blur,
         fontColor,
         userNameDisplay,
         space,
@@ -40,6 +41,7 @@ export const useIframeLoader = () => {
       body.classList.add('custom-yt-app-live-chat-extension')
       changeYLCStyle({
         bgColor,
+        blur,
         fontColor,
         fontFamily,
         fontSize,

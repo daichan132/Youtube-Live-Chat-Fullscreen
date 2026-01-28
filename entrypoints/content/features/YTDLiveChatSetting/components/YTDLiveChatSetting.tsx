@@ -61,7 +61,10 @@ export const YTDLiveChatSetting = () => {
       appElement={document.body}
       parentSelector={getModalParentElement}
     >
-      <div className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'>
+      <div
+        className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'
+        onWheel={e => e.stopPropagation()}
+      >
         <div className='flex justify-between items-center px-5 py-3 border-1 border-b-solid border-gray-100'>
           <div className='flex text-base gap-4'>
             {tabs.map(item => (
@@ -87,7 +90,7 @@ export const YTDLiveChatSetting = () => {
             size={20}
           />
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] p-3 bg-gray-100'>
+        <div className='flex-grow overflow-y-scroll h-[380px] p-3 bg-gray-100' style={{ overscrollBehavior: 'contain' }}>
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>

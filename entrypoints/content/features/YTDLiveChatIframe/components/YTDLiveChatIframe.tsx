@@ -31,7 +31,6 @@ export const YTDLiveChatIframe = () => {
         className='w-full h-full overflow-hidden rounded-md'
         style={{
           opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
-          backdropFilter: isIframeLoaded ? `blur(${blur}px)` : 'none',
         }}
         id={id}
         ref={ref}
