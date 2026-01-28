@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { useYLCBgColorChange } from './useYLCBgColorChange'
+import { useYLCBlurChange } from './useYLCBlurChange'
 import { useYLCFontColorChange } from './useYLCFontColorChange'
 import { useYLCFontFamilyChange } from './useYLCFontFamilyChange'
 import { useYLCFontSizeChange } from './useYLCFontSizeChange'
@@ -13,6 +14,7 @@ import { useYLCUserNameDisplayChange } from './useYLCUserNameDisplayChange'
 
 export const useChangeYLCStyle = () => {
   const { changeColor: changBgColor } = useYLCBgColorChange()
+  const { changeBlur } = useYLCBlurChange()
   const { changeColor: changFontColor } = useYLCFontColorChange()
   const { changeFontFamily } = useYLCFontFamilyChange()
   const { changeFontSize } = useYLCFontSizeChange()
@@ -24,6 +26,7 @@ export const useChangeYLCStyle = () => {
   const changeYLCStyle = useCallback(
     ({
       bgColor,
+      blur,
       fontColor,
       fontFamily,
       fontSize,
@@ -34,6 +37,7 @@ export const useChangeYLCStyle = () => {
       superChatBarDisplay,
     }: YLCStyleUpdateType) => {
       if (bgColor !== undefined) changBgColor(bgColor)
+      if (blur !== undefined) changeBlur(blur)
       if (fontColor !== undefined) changFontColor(fontColor)
       if (fontFamily !== undefined) changeFontFamily(fontFamily)
       if (fontSize !== undefined) changeFontSize(fontSize)
@@ -45,6 +49,7 @@ export const useChangeYLCStyle = () => {
     },
     [
       changBgColor,
+      changeBlur,
       changFontColor,
       changeFontFamily,
       changeFontSize,
