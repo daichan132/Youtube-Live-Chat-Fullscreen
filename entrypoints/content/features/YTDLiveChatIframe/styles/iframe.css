@@ -8,6 +8,11 @@ html {
   --extension-yt-live-secondary-font-color: rgba(0, 0, 0, 0.6);
 }
 
+html,
+body {
+  background: transparent !important;
+}
+
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 1;
 }

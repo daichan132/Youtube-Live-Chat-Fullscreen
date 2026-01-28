@@ -30,6 +30,7 @@ export const useIframeLoader = () => {
         fontSize,
         fontFamily,
         bgColor,
+        blur,
         fontColor,
         userNameDisplay,
         space,
@@ -38,6 +39,9 @@ export const useIframeLoader = () => {
         superChatBarDisplay,
       } = useYTDLiveChatStore.getState()
       body.classList.add('custom-yt-app-live-chat-extension')
+      // Apply blur directly to body for backdrop filter effect
+      body.style.backdropFilter = `blur(${blur}px)`
+      body.style.setProperty('-webkit-backdrop-filter', `blur(${blur}px)`)
       changeYLCStyle({
         bgColor,
         fontColor,
