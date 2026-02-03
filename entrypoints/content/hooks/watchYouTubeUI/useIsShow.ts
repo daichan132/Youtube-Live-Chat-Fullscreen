@@ -45,6 +45,12 @@ export const useIsShow = () => {
   const [isNativeChatOpen, setIsNativeChatOpen] = useState<boolean>(false)
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState<boolean>(false)
   useEffect(() => {
+    // Fullscreen hides native chat but leaves DOM in place; treat it as closed.
+    if (isFullscreen) {
+      setIsNativeChatOpen(false)
+      setIsNativeChatExpanded(false)
+      return
+    }
     const updateNativeChatExpanded = () => {
       const watchFlexy = document.querySelector('ytd-watch-flexy')
       const watchGrid = document.querySelector('ytd-watch-grid')
@@ -124,7 +130,7 @@ export const useIsShow = () => {
       observer.disconnect()
       resizeObserver.disconnect()
     }
-  }, [])
+  }, [isFullscreen])
   useEffect(() => {
     if (hasPlayableChat && isTop) {
       /* ----------------------- YLC is in outside of window ---------------------- */
