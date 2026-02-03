@@ -5,6 +5,7 @@ import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useHasPlayableLiveChat } from './hooks/watchYouTubeUI/useHasPlayableLiveChat'
+import { useEnsureArchiveChatOpen } from './hooks/watchYouTubeUI/useEnsureArchiveChatOpen'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { YTDLiveChat } from './YTDLiveChat'
 
@@ -74,9 +75,10 @@ function removeSwitchButtonContainer(container: HTMLElement | null) {
 
 export const Content = () => {
   useI18n()
-  useYtdLiveChat()
+  const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
   const hasPlayableChat = useHasPlayableLiveChat()
+  useEnsureArchiveChatOpen(isFullscreen && ytdLiveChat)
 
   // Use refs to store DOM elements
   const shadowRootRef = useRef<ShadowRoot | null>(null)
