@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
-import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
+import { isNativeChatToggleButton, isNativeChatTriggerTarget, openNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
+import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 interface UseNativeChatAutoDisableOptions {
@@ -40,6 +41,11 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
 
       if (isToggleButton && !nativeChatOpen) {
         setYTDLiveChat(false)
+        window.setTimeout(() => {
+          if (!isNativeChatOpen()) {
+            openNativeChatPanel()
+          }
+        }, 150)
       }
     }
 

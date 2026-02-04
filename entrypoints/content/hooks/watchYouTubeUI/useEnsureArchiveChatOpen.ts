@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { openNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
@@ -31,51 +32,12 @@ const hasChatFeature = () => {
   )
 }
 
-/** Attempts to click an element matching the selector */
-const tryClick = (selector: string) => {
-  const target = document.querySelector<HTMLElement>(selector)
-  if (!target) return false
-  if (target instanceof HTMLButtonElement && target.disabled) return false
-  target.click()
-  return true
-}
-
 /** Debug logging helper - only logs in development mode */
 const debugLog = (message: string, ...args: unknown[]) => {
   if (import.meta.env.DEV) {
     // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
     console.debug(`[YLC Archive Chat] ${message}`, ...args)
   }
-}
-
-/**
- * Attempts to open the native YouTube chat by clicking the show/open button.
- * Tries multiple selectors to handle different YouTube UI variations.
- */
-const openNativeChat = () => {
-  const selectors = [
-    'ytd-live-chat-frame #show-hide-button button',
-    'ytd-live-chat-frame #show-hide-button yt-icon-button',
-    '#chat-container #show-hide-button button',
-    '#chat-container #show-hide-button yt-icon-button',
-    'ytd-live-chat-frame button[aria-label*="Show chat"]',
-    'ytd-live-chat-frame button[title*="Show chat"]',
-    '#chat-container button[aria-label*="Show chat"]',
-    '#chat-container button[title*="Show chat"]',
-    'ytd-live-chat-frame button[aria-label*="Open chat"]',
-    'ytd-live-chat-frame button[title*="Open chat"]',
-    '#chat-container button[aria-label*="Open chat"]',
-    '#chat-container button[title*="Open chat"]',
-  ]
-
-  for (const selector of selectors) {
-    if (tryClick(selector)) {
-      debugLog('Opened native chat via selector:', selector)
-      return true
-    }
-  }
-  debugLog('Failed to open native chat - no matching button found')
-  return false
 }
 
 /**
@@ -173,9 +135,12 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         return
       }
       if (!isNativeChatOpen()) {
-        const didOpen = openNativeChat()
-        if (didOpen) {
+        const selector = openNativeChatPanel()
+        if (selector) {
+          debugLog('Opened native chat via selector:', selector)
           setIsAutoOpeningNativeChat(true)
+        } else {
+          debugLog('Failed to open native chat - no matching button found')
         }
       }
       attempts += 1

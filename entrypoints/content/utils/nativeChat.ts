@@ -3,6 +3,40 @@ import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domI
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
+const nativeChatOpenSelectors = [
+  'ytd-live-chat-frame #show-hide-button button',
+  'ytd-live-chat-frame #show-hide-button yt-icon-button',
+  '#chat-container #show-hide-button button',
+  '#chat-container #show-hide-button yt-icon-button',
+  'ytd-live-chat-frame button[aria-label*="Show chat"]',
+  'ytd-live-chat-frame button[title*="Show chat"]',
+  '#chat-container button[aria-label*="Show chat"]',
+  '#chat-container button[title*="Show chat"]',
+  'ytd-live-chat-frame button[aria-label*="Open chat"]',
+  'ytd-live-chat-frame button[title*="Open chat"]',
+  '#chat-container button[aria-label*="Open chat"]',
+  '#chat-container button[title*="Open chat"]',
+]
+
+const tryClick = (selector: string) => {
+  const target = document.querySelector<HTMLElement>(selector)
+  if (!target) return false
+  if (target instanceof HTMLButtonElement && target.disabled) return false
+  target.click()
+  return true
+}
+
+/**
+ * Attempts to open the native YouTube chat by clicking the show/open button.
+ * Returns the selector used when a click succeeds.
+ */
+export const openNativeChatPanel = () => {
+  for (const selector of nativeChatOpenSelectors) {
+    if (tryClick(selector)) return selector
+  }
+  return null
+}
+
 /**
  * Checks if the page has chat functionality (live chat frame or container).
  * Used for language-independent chat toggle detection.
@@ -31,18 +65,21 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   // Exclude our extension's button
   if (button.closest(`#${SWITCH_BUTTON_CONTAINER_ID}`)) return false
 
-  // Page must have chat functionality for this to be a chat toggle
-  if (!hasChatOnPage()) return false
-
   const isSidebarToggle = Boolean(button.closest('ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button'))
   if (isSidebarToggle) return true
 
   // Must be in player controls area for label-based matching
   const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
-  if (!isPlayerControls) return false
+  if (isPlayerControls) {
+    const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
+    if (isToggleViewModel) return true
 
-  const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
-  if (isToggleViewModel) return true
+    const label = getButtonLabelText(button)
+    if (isChatLabel(label)) return true
+  }
+
+  // Page must have chat functionality for non-player-controls toggles
+  if (!hasChatOnPage()) return false
 
   if (button.closest('#show-hide-button, #close-button')) return true
 
