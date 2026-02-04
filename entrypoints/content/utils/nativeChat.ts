@@ -41,6 +41,9 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
   if (!isPlayerControls) return false
 
+  const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
+  if (isToggleViewModel) return true
+
   if (button.closest('#show-hide-button, #close-button')) return true
 
   const label = getButtonLabelText(button)
