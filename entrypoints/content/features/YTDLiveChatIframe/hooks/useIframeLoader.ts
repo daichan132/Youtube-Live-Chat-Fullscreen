@@ -122,13 +122,26 @@ export const useIframeLoader = () => {
     }
 
     let observer: MutationObserver | null = null
-    if (!tryAttach() && document.body) {
-      observer = new MutationObserver(() => {
-        if (tryAttach()) {
-          observer?.disconnect()
-        }
-      })
-      observer.observe(document.body, { childList: true, subtree: true })
+    if (!tryAttach()) {
+      const getObserverTarget = () => {
+        const liveChatFrame = document.querySelector('ytd-live-chat-frame')
+        if (liveChatFrame) return liveChatFrame
+        const chatContainer = document.querySelector('#chat-container')
+        if (chatContainer) return chatContainer
+        const secondary = document.querySelector('#secondary')
+        if (secondary) return secondary
+        return document.body
+      }
+
+      const target = getObserverTarget()
+      if (target) {
+        observer = new MutationObserver(() => {
+          if (tryAttach()) {
+            observer?.disconnect()
+          }
+        })
+        observer.observe(target, { childList: true, subtree: true })
+      }
     }
 
     return () => {

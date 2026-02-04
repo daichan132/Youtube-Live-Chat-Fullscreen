@@ -12,6 +12,24 @@ import { useYLCSuperChatBarDisplayChange } from './useYLCSuperChatBarDisplayChan
 import { useYLCUserIconDisplayChange } from './useYLCUserIconDisplayChange'
 import { useYLCUserNameDisplayChange } from './useYLCUserNameDisplayChange'
 
+const HANDLED_KEYS = [
+  'bgColor',
+  'blur',
+  'fontColor',
+  'fontFamily',
+  'fontSize',
+  'space',
+  'userNameDisplay',
+  'userIconDisplay',
+  'reactionButtonDisplay',
+  'superChatBarDisplay',
+] as const
+
+type HandledKey = (typeof HANDLED_KEYS)[number]
+type HandlerMap = {
+  [Key in HandledKey]: (value: NonNullable<YLCStyleUpdateType[Key]>) => void
+}
+
 export const useChangeYLCStyle = () => {
   const { changeColor: changBgColor } = useYLCBgColorChange()
   const { changeBlur } = useYLCBlurChange()
@@ -23,28 +41,6 @@ export const useChangeYLCStyle = () => {
   const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange()
   const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange()
   const { changeDisplay: changeSuperChatBarDisplay } = useYLCSuperChatBarDisplayChange()
-
-  const handledKeys = useMemo(
-    () =>
-      [
-        'bgColor',
-        'blur',
-        'fontColor',
-        'fontFamily',
-        'fontSize',
-        'space',
-        'userNameDisplay',
-        'userIconDisplay',
-        'reactionButtonDisplay',
-        'superChatBarDisplay',
-      ] as const,
-    [],
-  )
-
-  type HandledKey = (typeof handledKeys)[number]
-  type HandlerMap = {
-    [Key in HandledKey]: (value: NonNullable<YLCStyleUpdateType[Key]>) => void
-  }
 
   const handlers: HandlerMap = useMemo(
     () => ({
@@ -80,11 +76,11 @@ export const useChangeYLCStyle = () => {
         handlers[key](value)
       }
 
-      for (const key of handledKeys) {
+      for (const key of HANDLED_KEYS) {
         apply(key, update[key])
       }
     },
-    [handledKeys, handlers],
+    [handlers],
   )
 
   return changeYLCStyle

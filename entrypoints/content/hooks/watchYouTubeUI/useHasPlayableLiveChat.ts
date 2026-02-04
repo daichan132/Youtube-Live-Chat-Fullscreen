@@ -1,43 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { usePollingWithNavigate } from './usePollingWithNavigate'
 
 export const useHasPlayableLiveChat = () => {
-  const [hasPlayableChat, setHasPlayableChat] = useState(false)
-
-  useEffect(() => {
-    let interval: number | null = null
-
-    const startCheck = () => {
-      setHasPlayableChat(false)
-      let count = 0
-      if (interval) window.clearInterval(interval)
-      interval = window.setInterval(() => {
-        if (hasPlayableLiveChat()) {
-          setHasPlayableChat(true)
-          if (interval) window.clearInterval(interval)
-          interval = null
-          return
-        }
-        count += 1
-        if (count > 100) {
-          if (interval) window.clearInterval(interval)
-          interval = null
-        }
-      }, 1000)
-    }
-
-    const handleNavigate = () => {
-      startCheck()
-    }
-
-    startCheck()
-    document.addEventListener('yt-navigate-finish', handleNavigate)
-
-    return () => {
-      if (interval) window.clearInterval(interval)
-      document.removeEventListener('yt-navigate-finish', handleNavigate)
-    }
-  }, [])
-
-  return hasPlayableChat
+  const checkFn = useCallback(() => hasPlayableLiveChat(), [])
+  return usePollingWithNavigate({ checkFn })
 }

@@ -139,12 +139,10 @@ test('extension chat loads when native chat is closed', async ({ page }) => {
   const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible({ timeout: 10000 })
   await switchButton.click({ force: true })
-  await page.evaluate(() => {
-    const button = document.querySelector<HTMLButtonElement>(
-      switchButtonSelector,
-    )
+  await page.evaluate((selector) => {
+    const button = document.querySelector<HTMLButtonElement>(selector)
     button?.click()
-  })
+  }, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
 
   let overlayReady = false

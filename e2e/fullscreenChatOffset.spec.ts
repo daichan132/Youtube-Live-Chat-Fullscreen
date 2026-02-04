@@ -172,12 +172,10 @@ test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
     return
   }
   await switchButton.click({ force: true })
-  await page.evaluate(() => {
-    const button = document.querySelector<HTMLButtonElement>(
-    switchButtonSelector,
-    )
+  await page.evaluate((selector) => {
+    const button = document.querySelector<HTMLButtonElement>(selector)
     button?.click()
-  })
+  }, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
   let overlayReady = false
   try {
