@@ -31,6 +31,9 @@ export const usePollingWithNavigate = ({
           interval = null
           return
         }
+        if (stopOnSuccess === false) {
+          return
+        }
         if (count >= maxAttempts) {
           if (interval) window.clearInterval(interval)
           interval = null
