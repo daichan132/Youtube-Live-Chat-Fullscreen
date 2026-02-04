@@ -1,6 +1,6 @@
+import { useEnsureChatInViewport } from './useEnsureChatInViewport'
 import { useHasPlayableLiveChat } from './useHasPlayableLiveChat'
 import { useIsFullScreen } from './useIsFullscreen'
-import { useEnsureChatInViewport } from './useEnsureChatInViewport'
 import { useMastheadTop } from './useMastheadTop'
 import { useNativeChatState } from './useNativeChatState'
 

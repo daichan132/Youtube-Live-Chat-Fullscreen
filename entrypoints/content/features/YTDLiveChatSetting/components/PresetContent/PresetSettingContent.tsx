@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { buildSettingItems, PRESET_ITEM_KEYS } from '../../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
 import { BlurSliderUI, BlurToSliderValue } from '../YLCChangeItems/BlurSlider'
@@ -13,7 +14,6 @@ import { ReactionButtonDisplaySwitchUI } from '../YLCChangeItems/ReactionButtonD
 import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider'
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
-import { buildSettingItems, PRESET_ITEM_KEYS } from '../../utils/settingItemDefinitions'
 
 export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleType; isOpen: boolean }) => {
   const { t } = useTranslation()

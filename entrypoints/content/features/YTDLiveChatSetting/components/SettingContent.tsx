@@ -3,6 +3,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { buildSettingItems, SETTING_ITEM_KEYS } from '../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
 import { BlurSlider } from './YLCChangeItems/BlurSlider'
@@ -14,7 +15,6 @@ import { SpaceSlider } from './YLCChangeItems/SpaceSlider'
 import { SuperChatBarDisplaySwitch } from './YLCChangeItems/SuperChatBarDisplaySwitch'
 import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch'
-import { buildSettingItems, SETTING_ITEM_KEYS } from '../utils/settingItemDefinitions'
 
 export const SettingContent = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
