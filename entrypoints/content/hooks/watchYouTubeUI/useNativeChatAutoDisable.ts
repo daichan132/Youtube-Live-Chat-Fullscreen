@@ -58,5 +58,5 @@ export const useNativeChatAutoDisable = ({
     if (!prev && nativeChatOpen) {
       setYTDLiveChat(false)
     }
-  }, [enabled, nativeChatOpen, setYTDLiveChat])
+  }, [autoDisableOnNativeOpen, enabled, nativeChatOpen, setYTDLiveChat])
 }

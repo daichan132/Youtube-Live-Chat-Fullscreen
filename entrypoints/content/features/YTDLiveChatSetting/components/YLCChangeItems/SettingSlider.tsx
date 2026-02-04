@@ -2,7 +2,7 @@ import React from 'react'
 import { Slider } from '@/shared/components/Slider'
 import { useInitializedSlider } from '@/shared/hooks/useInitializedSlider'
 
-type SettingSliderOptions<TElement extends HTMLElement> = {
+type SettingSliderOptions = {
   initialValue: number
   toSliderValue: (value: number) => number
   fromSliderValue: (value: number) => number
@@ -14,7 +14,7 @@ export const useSettingSlider = <TElement extends HTMLElement>({
   toSliderValue,
   fromSliderValue,
   onChange,
-}: SettingSliderOptions<TElement>) => {
+}: SettingSliderOptions) => {
   const { value, ref } = useInitializedSlider<TElement>({
     initialValue: toSliderValue(initialValue),
     onScrub: newValue => {
