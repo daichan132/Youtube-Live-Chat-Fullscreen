@@ -21,8 +21,7 @@ const setLocation = (path: string) => {
 
 const createLiveChatDoc = () => {
   const doc = document.implementation.createHTMLDocument('chat')
-  doc.body.innerHTML =
-    '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'
+  doc.body.innerHTML = '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'
   return doc as Document
 }
 

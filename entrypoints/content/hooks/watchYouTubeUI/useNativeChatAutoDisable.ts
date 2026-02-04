@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 interface UseNativeChatAutoDisableOptions {
   enabled: boolean
@@ -14,6 +16,12 @@ interface UseNativeChatAutoDisableOptions {
  */
 export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
+  const { isAutoOpeningNativeChat, setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore(
+    useShallow(state => ({
+      isAutoOpeningNativeChat: state.isAutoOpeningNativeChat,
+      setIsAutoOpeningNativeChat: state.setIsAutoOpeningNativeChat,
+    })),
+  )
 
   // Detect clicks on native chat toggle buttons
   useEffect(() => {
@@ -46,6 +54,9 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
   useEffect(() => {
     if (!enabled) {
       prevNativeChatOpenRef.current = null
+      if (isAutoOpeningNativeChat) {
+        setIsAutoOpeningNativeChat(false)
+      }
       return
     }
 
@@ -58,9 +69,15 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
       return
     }
 
+    // If we auto-opened native chat, clear the flag once it is observed open.
+    if (!prev && nativeChatOpen && isAutoOpeningNativeChat) {
+      setIsAutoOpeningNativeChat(false)
+      return
+    }
+
     // Only disable YLC when native chat transitions from closed to open
     if (!prev && nativeChatOpen) {
       setYTDLiveChat(false)
     }
-  }, [enabled, nativeChatOpen, setYTDLiveChat])
+  }, [enabled, nativeChatOpen, setYTDLiveChat, isAutoOpeningNativeChat, setIsAutoOpeningNativeChat])
 }

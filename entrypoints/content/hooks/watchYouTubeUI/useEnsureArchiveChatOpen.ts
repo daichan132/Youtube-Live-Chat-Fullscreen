@@ -109,12 +109,18 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
 
     let isActive = true
     let timeoutId: number | null = null
+    let autoOpenResetId: number | null = null
     let attempts = 0
     let startTime = 0
+    const { setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore.getState()
 
     const clearTimer = () => {
       if (timeoutId) window.clearTimeout(timeoutId)
       timeoutId = null
+    }
+    const clearAutoOpenResetTimer = () => {
+      if (autoOpenResetId) window.clearTimeout(autoOpenResetId)
+      autoOpenResetId = null
     }
 
     const getDelay = (attempt: number) => {
@@ -170,7 +176,15 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         return
       }
       if (!isNativeChatOpen()) {
-        openNativeChat()
+        const didOpen = openNativeChat()
+        if (didOpen) {
+          setIsAutoOpeningNativeChat(true)
+          clearAutoOpenResetTimer()
+          autoOpenResetId = window.setTimeout(() => {
+            setIsAutoOpeningNativeChat(false)
+            autoOpenResetId = null
+          }, 5000)
+        }
       }
       attempts += 1
       const remainingMs = getRemainingMs()
@@ -194,6 +208,8 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     return () => {
       isActive = false
       clearTimer()
+      clearAutoOpenResetTimer()
+      setIsAutoOpeningNativeChat(false)
       document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
   }, [enabled])

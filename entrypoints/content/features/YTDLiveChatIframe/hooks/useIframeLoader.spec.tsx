@@ -1,7 +1,6 @@
 import { render, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-vi.mock('uno.css', () => ({}), { virtual: true })
 vi.mock('@/entrypoints/content', () => ({}))
 
 import { useIframeLoader } from './useIframeLoader'
