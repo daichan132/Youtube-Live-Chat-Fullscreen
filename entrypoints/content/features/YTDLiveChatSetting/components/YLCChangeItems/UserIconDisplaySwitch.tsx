@@ -1,11 +1,10 @@
-import { useId } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCUserIconDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCUserIconDisplayChange'
-import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { SettingSwitch } from './SettingSwitch'
 
 export const UserIconDisplaySwitch = () => {
   const { userIconDisplay, updateYLCStyle } = useYTDLiveChatStore(
@@ -27,17 +26,13 @@ export const UserIconDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (userIconDisplay: boolean) => void
 }) => {
-  const id = useId()
   return (
-    <div className='w-[150px] flex justify-center'>
-      <Switch
-        checked={userIconDisplay}
-        id={id}
-        onChange={checked => {
-          changeDisplay?.(checked)
-          updateYLCStyle?.({ userIconDisplay: checked })
-        }}
-      />
-    </div>
+    <SettingSwitch
+      checked={userIconDisplay}
+      onChange={checked => {
+        changeDisplay?.(checked)
+        updateYLCStyle?.({ userIconDisplay: checked })
+      }}
+    />
   )
 }

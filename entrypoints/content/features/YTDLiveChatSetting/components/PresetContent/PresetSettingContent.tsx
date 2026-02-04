@@ -1,11 +1,6 @@
 import classNames from 'classnames'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaRegUserCircle } from 'react-icons/fa'
-import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
-import { MdBlurOn, MdExpand } from 'react-icons/md'
-import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri'
-import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
@@ -18,6 +13,7 @@ import { ReactionButtonDisplaySwitchUI } from '../YLCChangeItems/ReactionButtonD
 import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider'
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
+import { buildSettingItems, PRESET_ITEM_KEYS } from '../../utils/settingItemDefinitions'
 
 export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleType; isOpen: boolean }) => {
   const { t } = useTranslation()
@@ -34,64 +30,26 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
     userIconDisplay,
     reactionButtonDisplay,
   } = ylcStyle
-  const items: SettingItemType[] = [
-    {
-      icon: IoTimerOutline,
-      title: t('content.setting.alwaysOnDisplay'),
-      data: <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} />,
+  const items = buildSettingItems({
+    t,
+    keys: PRESET_ITEM_KEYS,
+    dataByKey: {
+      alwaysOnDisplay: <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} />,
+      chatOnlyDisplay: <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} />,
+      backgroundColor: <BgColorPickerUI rgba={bgColor} />,
+      fontColor: <FontColorPickerUI rgba={fontColor} />,
+      fontFamily: <FontFamilyInputUI value={fontFamily} />,
+      fontSize: <FontSizeSliderUI value={fontSizeToSliderValue(fontSize)} />,
+      blur: <BlurSliderUI value={BlurToSliderValue(blur)} />,
+      space: <SpaceSliderUI value={spaceToSliderValue(space)} />,
+      userNameDisplay: <UserNameDisplaySwitchUI userNameDisplay={userNameDisplay} />,
+      userIconDisplay: <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} />,
+      reactionButtonDisplay: <ReactionButtonDisplaySwitchUI reactionButtonDisplay={reactionButtonDisplay} />,
     },
-    {
-      icon: IoChatbubbleEllipsesOutline,
-      title: t('content.setting.chatOnlyDisplay'),
-      data: <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} />,
-      disable: !alwaysOnDisplay,
+    disableByKey: {
+      chatOnlyDisplay: !alwaysOnDisplay,
     },
-    {
-      icon: IoColorFillOutline,
-      title: t('content.setting.backgroundColor'),
-      data: <BgColorPickerUI rgba={bgColor} />,
-    },
-    {
-      icon: RiFontColor,
-      title: t('content.setting.fontColor'),
-      data: <FontColorPickerUI rgba={fontColor} />,
-    },
-    {
-      icon: RiFontFamily,
-      title: t('content.setting.fontFamily'),
-      data: <FontFamilyInputUI value={fontFamily} />,
-    },
-    {
-      icon: RiFontSize2,
-      title: t('content.setting.fontSize'),
-      data: <FontSizeSliderUI value={fontSizeToSliderValue(fontSize)} />,
-    },
-    {
-      icon: MdBlurOn,
-      title: t('content.setting.blur'),
-      data: <BlurSliderUI value={BlurToSliderValue(blur)} />,
-    },
-    {
-      icon: MdExpand,
-      title: t('content.setting.space'),
-      data: <SpaceSliderUI value={spaceToSliderValue(space)} />,
-    },
-    {
-      icon: RiUserLine,
-      title: t('content.setting.userNameDisplay'),
-      data: <UserNameDisplaySwitchUI userNameDisplay={userNameDisplay} />,
-    },
-    {
-      icon: FaRegUserCircle,
-      title: t('content.setting.userIconDisplay'),
-      data: <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} />,
-    },
-    {
-      icon: RiHeartFill,
-      title: t('content.setting.reactionButtonDisplay'),
-      data: <ReactionButtonDisplaySwitchUI reactionButtonDisplay={reactionButtonDisplay} />,
-    },
-  ]
+  })
   return (
     <div className={classNames('flex flex-col p-4 gap-y-4 transition-all', isOpen && 'opacity-100')}>
       <div className='flex flex-col gap-y-2'>
