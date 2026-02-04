@@ -22,6 +22,7 @@ export const YTDLiveChat = () => {
   useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isShow)
   const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
+  // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
     enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,
