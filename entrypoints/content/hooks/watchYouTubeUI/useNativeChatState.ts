@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   isNativeChatExpanded as getNativeChatExpanded,
   isNativeChatUsable as getNativeChatUsable,
@@ -7,18 +7,24 @@ import {
 export const useNativeChatState = (isFullscreen: boolean) => {
   const [isNativeChatUsable, setIsNativeChatUsable] = useState(false)
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState(false)
+  const isFullscreenRef = useRef(isFullscreen)
+  isFullscreenRef.current = isFullscreen
 
   useEffect(() => {
     // Debounce flags to prevent redundant updates when MutationObserver
     // and ResizeObserver both fire for the same DOM change
+    let cancelled = false
+    let expandedRafId: number | null = null
+    let usableRafId: number | null = null
     let expandedUpdatePending = false
     let usableUpdatePending = false
 
     const updateNativeChatExpanded = () => {
       if (expandedUpdatePending) return
       expandedUpdatePending = true
-      requestAnimationFrame(() => {
+      expandedRafId = requestAnimationFrame(() => {
         expandedUpdatePending = false
+        if (cancelled || isFullscreenRef.current) return
         setIsNativeChatExpanded(getNativeChatExpanded())
       })
     }
@@ -26,8 +32,9 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     const updateNativeChatUsable = () => {
       if (usableUpdatePending) return
       usableUpdatePending = true
-      requestAnimationFrame(() => {
+      usableRafId = requestAnimationFrame(() => {
         usableUpdatePending = false
+        if (cancelled || isFullscreenRef.current) return
         setIsNativeChatUsable(getNativeChatUsable())
       })
     }
@@ -97,6 +104,9 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     document.addEventListener('yt-navigate-finish', handleNavigate)
 
     return () => {
+      cancelled = true
+      if (expandedRafId !== null) cancelAnimationFrame(expandedRafId)
+      if (usableRafId !== null) cancelAnimationFrame(usableRafId)
       if (observer) observer.disconnect()
       if (resizeObserver) resizeObserver.disconnect()
       document.removeEventListener('yt-navigate-finish', handleNavigate)
