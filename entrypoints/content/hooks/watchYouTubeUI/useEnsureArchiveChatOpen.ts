@@ -78,8 +78,19 @@ const openNativeChat = () => {
   return false
 }
 
-/** Checks if we already have access to a live chat iframe */
-const hasLiveChatIframe = () => Boolean(getLiveChatIframe() || useYTDLiveChatNoLsStore.getState().iframeElement)
+/**
+ * Checks if we already have access to a live chat iframe that is connected to the DOM.
+ * Validates both the DOM query result and store state to avoid stale references.
+ */
+const hasLiveChatIframe = () => {
+  const domIframe = getLiveChatIframe()
+  if (domIframe?.isConnected) return true
+
+  const storeIframe = useYTDLiveChatNoLsStore.getState().iframeElement
+  if (storeIframe?.isConnected) return true
+
+  return false
+}
 
 /**
  * Hook that ensures archive chat is opened for the extension to use.
