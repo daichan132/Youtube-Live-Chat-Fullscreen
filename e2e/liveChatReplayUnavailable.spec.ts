@@ -3,7 +3,7 @@ import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonContainerSelector } from './utils/selectors'
 import { replayUnavailableUrls } from './utils/testUrls'
 
-test('hide fullscreen chat button when replay chat is unavailable', async ({ page }) => {
+test('show fullscreen chat button when replay chat is unavailable', async ({ page }) => {
   test.setTimeout(120000)
 
   let selectedUrl: string | null = null
@@ -36,7 +36,7 @@ test('hide fullscreen chat button when replay chat is unavailable', async ({ pag
   const switchButtonAppeared = await page
     .waitForSelector(switchButtonContainerSelector, { timeout: 10000 })
     .then(() => true, () => false)
-  expect(switchButtonAppeared).toBe(false)
+  expect(switchButtonAppeared).toBe(true)
 
   const shadowHostAppeared = await page.waitForSelector('#shadow-root-live-chat', { timeout: 10000 }).then(() => true, () => false)
   expect(shadowHostAppeared).toBe(false)

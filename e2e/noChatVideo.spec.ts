@@ -48,7 +48,7 @@ test('extension chat stays hidden on videos without live chat', async ({ page })
 
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonContainerSelector)
-  await expect(switchButton).toHaveCount(0)
+  await expect(switchButton).toHaveCount(1)
 
   await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
   await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(false)
