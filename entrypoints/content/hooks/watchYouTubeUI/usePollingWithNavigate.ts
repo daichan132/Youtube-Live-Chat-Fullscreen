@@ -3,7 +3,16 @@ import { useEffect, useState } from 'react'
 type UsePollingWithNavigateOptions = {
   checkFn: () => boolean
   intervalMs?: number
+  /**
+   * Maximum polling attempts before giving up (default: 100).
+   * Only applies when stopOnSuccess is true.
+   */
   maxAttempts?: number
+  /**
+   * If true (default), stops polling when checkFn returns true.
+   * If false, continues polling indefinitely for continuous monitoring.
+   * Use false when the state can change dynamically (e.g., chat availability).
+   */
   stopOnSuccess?: boolean
 }
 
@@ -31,9 +40,11 @@ export const usePollingWithNavigate = ({
           interval = null
           return
         }
-        if (stopOnSuccess === false) {
-          return
-        }
+
+        // Continuous monitoring mode: keep polling regardless of result
+        if (!stopOnSuccess) return
+
+        // Standard mode: stop after maxAttempts
         if (count >= maxAttempts) {
           if (interval) window.clearInterval(interval)
           interval = null

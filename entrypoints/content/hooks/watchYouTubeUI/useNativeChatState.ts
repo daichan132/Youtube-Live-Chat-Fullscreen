@@ -9,12 +9,21 @@ export const useNativeChatState = (isFullscreen: boolean) => {
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState(false)
 
   useEffect(() => {
+    // Debounce flag to prevent redundant updates when MutationObserver
+    // and ResizeObserver both fire for the same DOM change
+    let usableUpdatePending = false
+
     const updateNativeChatExpanded = () => {
       setIsNativeChatExpanded(getNativeChatExpanded())
     }
 
     const updateNativeChatUsable = () => {
-      setIsNativeChatUsable(getNativeChatUsable())
+      if (usableUpdatePending) return
+      usableUpdatePending = true
+      requestAnimationFrame(() => {
+        usableUpdatePending = false
+        setIsNativeChatUsable(getNativeChatUsable())
+      })
     }
 
     // Fullscreen hides native chat but leaves DOM in place; treat it as closed.
@@ -26,7 +35,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
 
     // Immediately sync with DOM state when exiting fullscreen
     updateNativeChatExpanded()
-    updateNativeChatUsable()
+    setIsNativeChatUsable(getNativeChatUsable())
     if (!document.body) return
 
     let observer: MutationObserver | null = null

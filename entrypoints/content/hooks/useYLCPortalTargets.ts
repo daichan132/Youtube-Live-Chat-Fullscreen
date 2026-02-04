@@ -66,10 +66,22 @@ const removeSwitchButtonContainer = (container: HTMLElement | null) => {
   }
 }
 
+type PortalTargets = {
+  portalsReady: boolean
+  shadowRoot: ShadowRoot | null
+  switchButtonContainer: HTMLElement | null
+}
+
+const initialTargets: PortalTargets = {
+  portalsReady: false,
+  shadowRoot: null,
+  switchButtonContainer: null,
+}
+
 export const useYLCPortalTargets = (enabled: boolean) => {
   const shadowRootRef = useRef<ShadowRoot | null>(null)
   const switchButtonRef = useRef<HTMLElement | null>(null)
-  const [portalsReady, setPortalsReady] = useState(false)
+  const [targets, setTargets] = useState<PortalTargets>(initialTargets)
 
   const retryIntervalMs = 100
   const retryMaxMs = 5000
@@ -88,7 +100,11 @@ export const useYLCPortalTargets = (enabled: boolean) => {
           switchButtonRef.current = ensureSwitchButtonContainer()
         }
         const ready = Boolean(shadowRootRef.current && switchButtonRef.current)
-        setPortalsReady(ready)
+        setTargets({
+          portalsReady: ready,
+          shadowRoot: shadowRootRef.current,
+          switchButtonContainer: switchButtonRef.current,
+        })
         return ready
       }
 
@@ -116,12 +132,8 @@ export const useYLCPortalTargets = (enabled: boolean) => {
     removeSwitchButtonContainer(switchButtonRef.current)
     shadowRootRef.current = null
     switchButtonRef.current = null
-    setPortalsReady(false)
+    setTargets(initialTargets)
   }, [contentCssUrl, enabled])
 
-  return {
-    portalsReady,
-    shadowRoot: shadowRootRef.current,
-    switchButtonContainer: switchButtonRef.current,
-  }
+  return targets
 }
