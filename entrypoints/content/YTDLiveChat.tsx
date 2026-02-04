@@ -26,7 +26,7 @@ export const YTDLiveChat = () => {
     enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,
     setYTDLiveChat,
-    autoDisableOnNativeOpen: !isFullscreen,
+    autoDisableOnNativeOpen: true,
   })
 
   return (
