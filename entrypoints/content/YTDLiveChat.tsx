@@ -34,7 +34,7 @@ export const YTDLiveChat = () => {
       <YTDLiveChatSetting />
       <CSSTransition
         nodeRef={nodeRef}
-        in={isShow && ytdLiveChat}
+        in={isShow && ytdLiveChat && !isNativeChatCurrentlyOpen}
         timeout={500}
         classNames={{
           appear: 'opacity-0',
