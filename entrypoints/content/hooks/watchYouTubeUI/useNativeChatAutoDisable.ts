@@ -32,7 +32,7 @@ export const useNativeChatAutoDisable = ({
       const isTriggerTarget = isToggleButton || isNativeChatTriggerTarget(target)
       if (!isTriggerTarget) return
 
-      if (isToggleButton) {
+      if (isToggleButton && !nativeChatOpen) {
         setYTDLiveChat(false)
       }
     }
@@ -41,7 +41,7 @@ export const useNativeChatAutoDisable = ({
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown, true)
     }
-  }, [autoDisableOnNativeOpen, enabled, setYTDLiveChat])
+  }, [autoDisableOnNativeOpen, enabled, nativeChatOpen, setYTDLiveChat])
 
   useEffect(() => {
     const prev = prevNativeChatOpenRef.current
