@@ -3,20 +3,34 @@ import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/ut
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
-// Retry timing constants
-const MAX_ENSURE_DURATION_MS = 120000
-const INITIAL_RETRY_DELAY_MS = 1000
-const MEDIUM_RETRY_DELAY_MS = 2000
-const MAX_RETRY_DELAY_MS = 5000
-const INITIAL_PHASE_ATTEMPTS = 10
-const MEDIUM_PHASE_ATTEMPTS = 20
+/**
+ * Retry timing constants for archive chat opening
+ *
+ * Archive videos may take time to load the chat iframe, so we use a progressive
+ * backoff strategy: fast retries initially, then slower as time passes.
+ */
+const MAX_ENSURE_DURATION_MS = 60000 // 1 minute (reduced from 2 minutes)
+const INITIAL_RETRY_DELAY_MS = 500 // Fast initial checks
+const MEDIUM_RETRY_DELAY_MS = 1500
+const MAX_RETRY_DELAY_MS = 3000
+const INITIAL_PHASE_ATTEMPTS = 10 // First 10 attempts: 500ms intervals
+const MEDIUM_PHASE_ATTEMPTS = 20 // Next 10 attempts: 1500ms intervals
 
+/** Checks if the current video is a live stream (not an archive) */
 const isLiveNow = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
   return Boolean(watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now'))
 }
 
+/** Checks if the page has any chat-related DOM elements */
+const hasChatFeature = () => {
+  return Boolean(
+    document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container') || document.querySelector('#chatframe'),
+  )
+}
+
+/** Attempts to click an element matching the selector */
 const tryClick = (selector: string) => {
   const target = document.querySelector<HTMLElement>(selector)
   if (!target) return false
@@ -25,6 +39,10 @@ const tryClick = (selector: string) => {
   return true
 }
 
+/**
+ * Attempts to open the native YouTube chat by clicking the show/open button.
+ * Tries multiple selectors to handle different YouTube UI variations.
+ */
 const openNativeChat = () => {
   const selectors = [
     'ytd-live-chat-frame #show-hide-button button',
@@ -47,8 +65,20 @@ const openNativeChat = () => {
   return false
 }
 
+/** Checks if we already have access to a live chat iframe */
 const hasLiveChatIframe = () => Boolean(getLiveChatIframe() || useYTDLiveChatNoLsStore.getState().iframeElement)
 
+/**
+ * Hook that ensures archive chat is opened for the extension to use.
+ *
+ * Problem: On archive videos, the native chat may be closed by the user.
+ * The extension needs the YouTube chat iframe to display chat in fullscreen.
+ *
+ * Solution: This hook automatically opens the native chat if it's closed,
+ * allowing the extension to "borrow" the iframe for fullscreen display.
+ *
+ * @param enabled - Whether to actively ensure the chat is open
+ */
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
@@ -94,11 +124,19 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         stopEnsure()
         return
       }
+      // Live streams don't need this - they handle chat differently
       if (isLiveNow()) {
         stopEnsure()
         return
       }
+      // Success: chat is ready
       if (hasPlayableLiveChat() && hasLiveChatIframe()) {
+        stopEnsure()
+        return
+      }
+      // Early exit: no chat feature on this page (e.g., regular video without chat replay)
+      // Wait a few attempts before giving up, as DOM may still be loading
+      if (attempts > 5 && !hasChatFeature()) {
         stopEnsure()
         return
       }

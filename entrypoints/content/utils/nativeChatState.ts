@@ -1,3 +1,12 @@
+/**
+ * Utilities for detecting the state of YouTube's native chat panel.
+ *
+ * These functions help determine whether the native chat is visible, expanded,
+ * or usable, which is important for deciding when to show the extension's
+ * fullscreen chat overlay.
+ */
+
+/** DOM elements related to YouTube's native chat */
 type NativeChatElements = {
   secondary: HTMLElement | null
   chatContainer: HTMLElement | null
@@ -5,6 +14,7 @@ type NativeChatElements = {
   chatFrame: HTMLIFrameElement | null
 }
 
+/** Retrieves all native chat-related DOM elements */
 export const getNativeChatElements = (): NativeChatElements => ({
   secondary: document.querySelector('#secondary') as HTMLElement | null,
   chatContainer: document.querySelector('#chat-container') as HTMLElement | null,
@@ -24,6 +34,12 @@ const isChatHiddenByStyle = (containerStyle: CSSStyleDeclaration, hostStyle: CSS
   hostStyle.display === 'none' ||
   hostStyle.visibility === 'hidden'
 
+/**
+ * Checks if the native chat is expanded (visible in the sidebar).
+ * This is determined by YouTube's `live-chat-present-and-expanded` attribute.
+ *
+ * @returns true if the chat panel is expanded and visible
+ */
 export const isNativeChatExpanded = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
@@ -35,6 +51,17 @@ export const isNativeChatExpanded = () => {
   return Boolean(hasExpandedChat && hasChatDom && !isHidden)
 }
 
+/**
+ * Checks if the native chat is fully usable (visible, interactive, and properly sized).
+ *
+ * This performs comprehensive checks:
+ * - All required DOM elements exist
+ * - Elements are not hidden by CSS (display/visibility)
+ * - Pointer events are not blocked
+ * - Elements have sufficient size to be functional
+ *
+ * @returns true if the native chat can be interacted with
+ */
 export const isNativeChatUsable = () => {
   const { secondary, chatContainer, chatFrameHost, chatFrame } = getNativeChatElements()
   if (!secondary || !chatContainer || !chatFrameHost || !chatFrame) return false
@@ -56,6 +83,15 @@ export const isNativeChatUsable = () => {
   return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
 }
 
+/**
+ * Checks if the native chat is open (not collapsed/hidden).
+ *
+ * Unlike `isNativeChatUsable`, this only checks visibility, not interactivity.
+ * A chat can be "open" but not "usable" (e.g., during fullscreen mode where
+ * the sidebar is hidden but the iframe still exists).
+ *
+ * @returns true if the chat iframe is loaded and not hidden
+ */
 export const isNativeChatOpen = () => {
   const { chatContainer, chatFrameHost } = getNativeChatElements()
   const chatFrame =
