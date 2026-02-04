@@ -71,14 +71,45 @@ export const useYLCPortalTargets = (enabled: boolean) => {
   const switchButtonRef = useRef<HTMLElement | null>(null)
   const [portalsReady, setPortalsReady] = useState(false)
 
+  const retryIntervalMs = 100
+  const retryMaxMs = 5000
   const contentCssUrl = useMemo(() => browser.runtime.getURL('content-scripts/content.css' as PublicPath), [])
 
   useEffect(() => {
     if (enabled) {
-      shadowRootRef.current = ensureShadowRoot(contentCssUrl)
-      switchButtonRef.current = ensureSwitchButtonContainer()
-      setPortalsReady(true)
-      return
+      let interval: number | null = null
+      const startedAt = Date.now()
+
+      const ensureTargets = () => {
+        if (!shadowRootRef.current) {
+          shadowRootRef.current = ensureShadowRoot(contentCssUrl)
+        }
+        if (!switchButtonRef.current) {
+          switchButtonRef.current = ensureSwitchButtonContainer()
+        }
+        const ready = Boolean(shadowRootRef.current && switchButtonRef.current)
+        setPortalsReady(ready)
+        return ready
+      }
+
+      if (!ensureTargets()) {
+        interval = window.setInterval(() => {
+          const ready = ensureTargets()
+          if (ready) {
+            if (interval) window.clearInterval(interval)
+            interval = null
+            return
+          }
+          if (Date.now() - startedAt >= retryMaxMs) {
+            if (interval) window.clearInterval(interval)
+            interval = null
+          }
+        }, retryIntervalMs)
+      }
+
+      return () => {
+        if (interval) window.clearInterval(interval)
+      }
     }
 
     removeShadowRoot(shadowRootRef.current)
