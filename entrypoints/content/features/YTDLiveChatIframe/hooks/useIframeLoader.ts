@@ -185,7 +185,9 @@ export const useIframeLoader = () => {
     }
 
     let observer: MutationObserver | null = null
-    if (!tryAttach()) {
+    const setupObserver = () => {
+      observer?.disconnect()
+
       const getObserverTarget = () => {
         const liveChatFrame = document.querySelector('ytd-live-chat-frame')
         if (liveChatFrame) return liveChatFrame
@@ -197,19 +199,25 @@ export const useIframeLoader = () => {
       }
 
       const target = getObserverTarget()
-      if (target) {
-        observer = new MutationObserver(() => {
-          if (tryAttach()) {
-            observer?.disconnect()
-          }
-        })
-        observer.observe(target, { childList: true, subtree: true })
-      }
+      if (!target) return
+
+      observer = new MutationObserver(() => {
+        if (tryAttach()) {
+          observer?.disconnect()
+        }
+      })
+      observer.observe(target, { childList: true, subtree: true })
+    }
+
+    if (!tryAttach()) {
+      setupObserver()
     }
 
     const handleNavigate = () => {
       detachIframe()
-      tryAttach()
+      if (!tryAttach()) {
+        setupObserver()
+      }
     }
 
     document.addEventListener('yt-navigate-finish', handleNavigate)
