@@ -27,15 +27,18 @@ export const YTDLiveChat = () => {
     enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,
     setYTDLiveChat,
-    autoDisableOnNativeOpen: true,
   })
+
+  // isNativeChatCurrentlyOpen is false during fullscreen (useNativeChatState returns false),
+  // but needed to hide overlay when native chat is opened after exiting fullscreen
+  const shouldShowOverlay = isShow && ytdLiveChat && !isNativeChatCurrentlyOpen
 
   return (
     <>
       <YTDLiveChatSetting />
       <CSSTransition
         nodeRef={nodeRef}
-        in={isShow && ytdLiveChat && !isNativeChatCurrentlyOpen}
+        in={shouldShowOverlay}
         timeout={500}
         classNames={{
           appear: 'opacity-0',

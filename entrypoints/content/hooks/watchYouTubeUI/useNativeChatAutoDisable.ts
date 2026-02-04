@@ -6,20 +6,18 @@ interface UseNativeChatAutoDisableOptions {
   enabled: boolean
   nativeChatOpen: boolean
   setYTDLiveChat: (value: boolean) => void
-  autoDisableOnNativeOpen?: boolean
 }
 
-export const useNativeChatAutoDisable = ({
-  enabled,
-  nativeChatOpen,
-  setYTDLiveChat,
-  autoDisableOnNativeOpen = true,
-}: UseNativeChatAutoDisableOptions) => {
+/**
+ * Automatically disables extension chat when user interacts with native chat.
+ * This respects user intent - if they want to use YouTube's native chat, we step aside.
+ */
+export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
 
+  // Detect clicks on native chat toggle buttons
   useEffect(() => {
     if (!enabled) return
-    if (!autoDisableOnNativeOpen) return
 
     const handlePointerDown = (event: Event) => {
       const target = event.target as HTMLElement | null
@@ -41,11 +39,11 @@ export const useNativeChatAutoDisable = ({
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown, true)
     }
-  }, [autoDisableOnNativeOpen, enabled, nativeChatOpen, setYTDLiveChat])
+  }, [enabled, nativeChatOpen, setYTDLiveChat])
 
+  // Detect when native chat state changes to open
   useEffect(() => {
-    // 無効時はrefをリセットして早期リターン
-    if (!enabled || !autoDisableOnNativeOpen) {
+    if (!enabled) {
       prevNativeChatOpenRef.current = null
       return
     }
@@ -58,5 +56,5 @@ export const useNativeChatAutoDisable = ({
     if (!prev && nativeChatOpen) {
       setYTDLiveChat(false)
     }
-  }, [autoDisableOnNativeOpen, enabled, nativeChatOpen, setYTDLiveChat])
+  }, [enabled, nativeChatOpen, setYTDLiveChat])
 }
