@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 // Retry timing constants
 const MAX_ENSURE_DURATION_MS = 120000
@@ -45,6 +46,8 @@ const openNativeChat = () => {
   }
   return false
 }
+
+const hasLiveChatIframe = () => Boolean(getLiveChatIframe() || useYTDLiveChatNoLsStore.getState().iframeElement)
 
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
@@ -95,7 +98,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         stopEnsure()
         return
       }
-      if (hasPlayableLiveChat() && getLiveChatIframe()) {
+      if (hasPlayableLiveChat() && hasLiveChatIframe()) {
         stopEnsure()
         return
       }
