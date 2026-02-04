@@ -31,12 +31,15 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   // Exclude our extension's button
   if (button.closest(`#${SWITCH_BUTTON_CONTAINER_ID}`)) return false
 
-  // Must be in player controls area
-  const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
-  if (!isPlayerControls) return false
-
   // Page must have chat functionality for this to be a chat toggle
   if (!hasChatOnPage()) return false
+
+  const isSidebarToggle = Boolean(button.closest('ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button'))
+  if (isSidebarToggle) return true
+
+  // Must be in player controls area for label-based matching
+  const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
+  if (!isPlayerControls) return false
 
   if (button.closest('#show-hide-button, #close-button')) return true
 
