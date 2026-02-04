@@ -44,11 +44,14 @@ export const useNativeChatAutoDisable = ({
   }, [autoDisableOnNativeOpen, enabled, nativeChatOpen, setYTDLiveChat])
 
   useEffect(() => {
+    // 無効時はrefをリセットして早期リターン
+    if (!enabled || !autoDisableOnNativeOpen) {
+      prevNativeChatOpenRef.current = null
+      return
+    }
+
     const prev = prevNativeChatOpenRef.current
     prevNativeChatOpenRef.current = nativeChatOpen
-
-    if (!enabled) return
-    if (!autoDisableOnNativeOpen) return
 
     if (prev === null) return
 
