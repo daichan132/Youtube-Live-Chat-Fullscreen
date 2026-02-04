@@ -18,7 +18,7 @@ export const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
   }
 }
 
-const getLiveChatVideoIdFromDocument = (doc: Document) => {
+export const getLiveChatVideoIdFromDocument = (doc: Document) => {
   try {
     const href = doc.location?.href ?? ''
     if (!href) return null
@@ -29,7 +29,7 @@ const getLiveChatVideoIdFromDocument = (doc: Document) => {
   }
 }
 
-const getLiveChatVideoIdFromIframe = (iframe: HTMLIFrameElement) => {
+export const getLiveChatVideoIdFromIframe = (iframe: HTMLIFrameElement) => {
   try {
     const src = iframe.src ?? ''
     if (!src) return null

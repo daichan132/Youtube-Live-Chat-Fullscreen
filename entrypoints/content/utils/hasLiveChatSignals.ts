@@ -1,4 +1,5 @@
-import { getLiveChatDocument, getLiveChatIframe, isLiveChatUnavailable } from './hasPlayableLiveChat'
+import { getYouTubeVideoId } from './getYouTubeVideoId'
+import { getLiveChatDocument, getLiveChatIframe, getLiveChatVideoIdFromIframe, isLiveChatUnavailable } from './hasPlayableLiveChat'
 
 const hasWatchChatAttributes = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
@@ -25,6 +26,9 @@ const hasLiveChatFrameReady = () => {
 export const hasLiveChatSignals = () => {
   const iframe = getLiveChatIframe()
   if (iframe) {
+    const currentVideoId = getYouTubeVideoId()
+    const iframeVideoId = getLiveChatVideoIdFromIframe(iframe)
+    if (currentVideoId && iframeVideoId && iframeVideoId !== currentVideoId) return false
     const doc = getLiveChatDocument(iframe)
     if (doc && isLiveChatUnavailable(doc)) return false
   }
