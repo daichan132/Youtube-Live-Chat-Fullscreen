@@ -9,12 +9,18 @@ export const useNativeChatState = (isFullscreen: boolean) => {
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState(false)
 
   useEffect(() => {
-    // Debounce flag to prevent redundant updates when MutationObserver
+    // Debounce flags to prevent redundant updates when MutationObserver
     // and ResizeObserver both fire for the same DOM change
+    let expandedUpdatePending = false
     let usableUpdatePending = false
 
     const updateNativeChatExpanded = () => {
-      setIsNativeChatExpanded(getNativeChatExpanded())
+      if (expandedUpdatePending) return
+      expandedUpdatePending = true
+      requestAnimationFrame(() => {
+        expandedUpdatePending = false
+        setIsNativeChatExpanded(getNativeChatExpanded())
+      })
     }
 
     const updateNativeChatUsable = () => {

@@ -1,5 +1,5 @@
 // useIframeLoader.js
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
@@ -82,20 +82,34 @@ export const useIframeLoader = () => {
     })),
   )
   const changeYLCStyle = useChangeYLCStyle()
-  const handleLoaded = useCallback(() => {
+
+  // Use refs to store callbacks to avoid dependency changes triggering effect re-runs
+  const changeYLCStyleRef = useRef(changeYLCStyle)
+  const setIsIframeLoadedRef = useRef(setIsIframeLoaded)
+  const setIsDisplayRef = useRef(setIsDisplay)
+
+  // Keep refs up to date
+  changeYLCStyleRef.current = changeYLCStyle
+  setIsIframeLoadedRef.current = setIsIframeLoaded
+  setIsDisplayRef.current = setIsDisplay
+
+  // Stable callback that won't change between renders
+  const handleLoadedRef = useRef<() => void>(() => {
     const iframe = iframeRef.current
     if (!iframe) return
-    applyInitialStyle(iframe, changeYLCStyle, setIsIframeLoaded, setIsDisplay)
-  }, [changeYLCStyle, setIsIframeLoaded, setIsDisplay])
+    applyInitialStyle(iframe, changeYLCStyleRef.current, setIsIframeLoadedRef.current, setIsDisplayRef.current)
+  })
 
   useEffect(() => {
+    const handleLoaded = handleLoadedRef.current
+
     const detachIframe = () => {
       const current = iframeRef.current
       if (!current) return
       current.removeEventListener('load', handleLoaded)
       restoreIframeToOriginal(current)
       setIFrameElement(null)
-      setIsIframeLoaded(false)
+      setIsIframeLoadedRef.current(false)
       iframeRef.current = null
     }
 
@@ -153,7 +167,8 @@ export const useIframeLoader = () => {
       observer?.disconnect()
       detachIframe()
     }
-  }, [handleLoaded, setIFrameElement, setIsIframeLoaded])
+    // Effect only needs to run once on mount - callbacks are accessed via stable refs
+  }, [setIFrameElement])
 
   return { ref }
 }

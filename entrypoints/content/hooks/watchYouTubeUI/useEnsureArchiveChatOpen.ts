@@ -40,6 +40,14 @@ const tryClick = (selector: string) => {
   return true
 }
 
+/** Debug logging helper - only logs in development mode */
+const debugLog = (message: string, ...args: unknown[]) => {
+  if (import.meta.env.DEV) {
+    // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
+    console.debug(`[YLC Archive Chat] ${message}`, ...args)
+  }
+}
+
 /**
  * Attempts to open the native YouTube chat by clicking the show/open button.
  * Tries multiple selectors to handle different YouTube UI variations.
@@ -61,8 +69,12 @@ const openNativeChat = () => {
   ]
 
   for (const selector of selectors) {
-    if (tryClick(selector)) return true
+    if (tryClick(selector)) {
+      debugLog('Opened native chat via selector:', selector)
+      return true
+    }
   }
+  debugLog('Failed to open native chat - no matching button found')
   return false
 }
 
@@ -122,16 +134,19 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     const runCheck = () => {
       if (!isActive) return
       if (hasTimedOut()) {
+        debugLog('Stopping: timeout reached')
         stopEnsure()
         return
       }
       // Live streams don't need this - they handle chat differently
       if (isLiveNow()) {
+        debugLog('Stopping: detected live stream')
         stopEnsure()
         return
       }
       // Success: chat is ready
       if (hasPlayableLiveChat() && hasLiveChatIframe()) {
+        debugLog('Success: chat is ready')
         stopEnsure()
         return
       }
@@ -139,6 +154,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
       // Wait 15 seconds before giving up, as DOM may still be loading on slow connections
       const elapsedMs = Date.now() - startTime
       if (elapsedMs > NO_CHAT_EARLY_EXIT_MS && !hasChatFeature()) {
+        debugLog('Stopping: no chat feature detected after', NO_CHAT_EARLY_EXIT_MS, 'ms')
         stopEnsure()
         return
       }
@@ -148,6 +164,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
       attempts += 1
       const remainingMs = getRemainingMs()
       if (remainingMs <= 0) {
+        debugLog('Stopping: no remaining time')
         stopEnsure()
         return
       }

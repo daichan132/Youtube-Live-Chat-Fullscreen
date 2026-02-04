@@ -26,19 +26,8 @@ export const isLiveChatUnavailable = (doc: Document) => {
   return hasUnavailableText(doc)
 }
 
-export const hasPlayableLiveChat = () => {
-  const iframe = getLiveChatIframe()
-  if (iframe) {
-    const doc = getLiveChatDocument(iframe)
-    if (!doc) return false
-    if (isLiveChatUnavailable(doc)) return false
-    const renderer = doc.querySelector('yt-live-chat-renderer')
-    if (!renderer) return false
-    const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-    if (!itemList) return false
-    return true
-  }
-
+/** Checks if watch element has live chat attributes */
+const hasLiveChatAttributes = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
   return Boolean(
@@ -47,4 +36,22 @@ export const hasPlayableLiveChat = () => {
       watchGrid?.hasAttribute('live-chat-present') ||
       watchGrid?.hasAttribute('live-chat-present-and-expanded'),
   )
+}
+
+export const hasPlayableLiveChat = () => {
+  const iframe = getLiveChatIframe()
+  if (iframe) {
+    const doc = getLiveChatDocument(iframe)
+    // If iframe exists but document isn't ready yet, fall back to attribute check
+    // This can happen during page load or when chat is still initializing
+    if (!doc) return hasLiveChatAttributes()
+    if (isLiveChatUnavailable(doc)) return false
+    const renderer = doc.querySelector('yt-live-chat-renderer')
+    if (!renderer) return false
+    const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+    if (!itemList) return false
+    return true
+  }
+
+  return hasLiveChatAttributes()
 }

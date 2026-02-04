@@ -1,4 +1,5 @@
 import { expect, test } from './fixtures'
+import { reliableClick } from './utils/actions'
 import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 
@@ -138,11 +139,7 @@ test('extension chat loads when native chat is closed', async ({ page }) => {
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible({ timeout: 10000 })
-  await switchButton.click({ force: true })
-  await page.evaluate((selector) => {
-    const button = document.querySelector<HTMLButtonElement>(selector)
-    button?.click()
-  }, switchButtonSelector)
+  await reliableClick(switchButton, page, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
 
   let overlayReady = false
