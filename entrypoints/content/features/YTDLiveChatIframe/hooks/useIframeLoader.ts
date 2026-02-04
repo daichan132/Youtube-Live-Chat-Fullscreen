@@ -3,12 +3,41 @@ import { useEffect, useRef } from 'react'
 import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
+import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
 
 type ChangeYLCStyle = ReturnType<typeof useChangeYLCStyle>
 
 const findChatIframe = () => document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
+const getIframeVideoId = (iframe: HTMLIFrameElement) => {
+  try {
+    const docHref = iframe.contentDocument?.location?.href ?? ''
+    if (docHref) {
+      const url = new URL(docHref, window.location.origin)
+      return url.searchParams.get('v')
+    }
+  } catch {
+    // Ignore CORS/DOM access errors and fall back to src
+  }
+
+  try {
+    const src = iframe.src ?? ''
+    if (!src) return null
+    const url = new URL(src, window.location.origin)
+    return url.searchParams.get('v')
+  } catch {
+    return null
+  }
+}
+
+const isIframeForCurrentVideo = (iframe: HTMLIFrameElement) => {
+  const currentVideoId = getYouTubeVideoId()
+  if (!currentVideoId) return true
+  const iframeVideoId = getIframeVideoId(iframe)
+  if (!iframeVideoId) return true
+  return iframeVideoId === currentVideoId
+}
 
 const attachIframeToContainer = (container: HTMLDivElement | null, iframe: HTMLIFrameElement) => {
   if (!container) return
@@ -108,6 +137,9 @@ export const useIframeLoader = () => {
       if (!current) return
       current.removeEventListener('load', handleLoaded)
       restoreIframeToOriginal(current)
+      if (current.parentElement === ref.current) {
+        ref.current?.removeChild(current)
+      }
       setIFrameElement(null)
       setIsIframeLoadedRef.current(false)
       iframeRef.current = null
@@ -147,6 +179,7 @@ export const useIframeLoader = () => {
     const tryAttach = () => {
       const chatIframe = findChatIframe()
       if (!chatIframe) return false
+      if (!isIframeForCurrentVideo(chatIframe)) return false
       return attachIframe(chatIframe)
     }
 
@@ -173,7 +206,14 @@ export const useIframeLoader = () => {
       }
     }
 
+    const handleNavigate = () => {
+      detachIframe()
+      tryAttach()
+    }
+
+    document.addEventListener('yt-navigate-finish', handleNavigate)
     return () => {
+      document.removeEventListener('yt-navigate-finish', handleNavigate)
       observer?.disconnect()
       detachIframe()
     }

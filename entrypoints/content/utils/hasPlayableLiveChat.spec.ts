@@ -22,8 +22,14 @@ const attachIframeDocument = (doc: Document) => {
   return iframe
 }
 
+const setLocation = (path: string) => {
+  const base = window.location.origin
+  window.history.pushState({}, '', `${base}${path}`)
+}
+
 beforeEach(() => {
   document.body.innerHTML = ''
+  setLocation('/watch?v=video-a')
 })
 
 describe('hasPlayableLiveChat', () => {
@@ -61,6 +67,28 @@ describe('hasPlayableLiveChat', () => {
   it('returns false when renderer nodes are missing', () => {
     const doc = createLiveChatDoc('<yt-live-chat-renderer></yt-live-chat-renderer>')
     attachIframeDocument(doc)
+
+    expect(hasPlayableLiveChat()).toBe(false)
+  })
+
+  it('returns false when live chat iframe is for another video', () => {
+    const doc = createLiveChatDoc(
+      '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>',
+    )
+    Object.defineProperty(doc, 'location', {
+      value: { href: 'https://www.youtube.com/live_chat?v=video-b' },
+      configurable: true,
+    })
+    attachIframeDocument(doc)
+
+    expect(hasPlayableLiveChat()).toBe(false)
+  })
+
+  it('returns false when iframe src points to another video and document is not ready', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-b'
+    document.body.appendChild(iframe)
 
     expect(hasPlayableLiveChat()).toBe(false)
   })

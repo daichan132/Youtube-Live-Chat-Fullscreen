@@ -1,3 +1,5 @@
+import { getYouTubeVideoId } from './getYouTubeVideoId'
+
 export const getLiveChatIframe = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
   if (chatFrame) return chatFrame
@@ -14,6 +16,36 @@ export const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
     // CORS restriction or iframe removed - cannot access document
     return null
   }
+}
+
+const getLiveChatVideoIdFromDocument = (doc: Document) => {
+  try {
+    const href = doc.location?.href ?? ''
+    if (!href) return null
+    const url = new URL(href, window.location.origin)
+    return url.searchParams.get('v')
+  } catch {
+    return null
+  }
+}
+
+const getLiveChatVideoIdFromIframe = (iframe: HTMLIFrameElement) => {
+  try {
+    const src = iframe.src ?? ''
+    if (!src) return null
+    const url = new URL(src, window.location.origin)
+    return url.searchParams.get('v')
+  } catch {
+    return null
+  }
+}
+
+const isLiveChatDocForCurrentVideo = (doc: Document) => {
+  const currentVideoId = getYouTubeVideoId()
+  if (!currentVideoId) return true
+  const liveChatVideoId = getLiveChatVideoIdFromDocument(doc)
+  if (!liveChatVideoId) return true
+  return liveChatVideoId === currentVideoId
 }
 
 const hasUnavailableText = (doc: Document) => {
@@ -49,7 +81,13 @@ export const hasPlayableLiveChat = () => {
     const doc = getLiveChatDocument(iframe)
     // If iframe exists but document isn't ready yet, fall back to attribute check
     // This can happen during page load or when chat is still initializing
-    if (!doc) return hasLiveChatAttributes()
+    if (!doc) {
+      const currentVideoId = getYouTubeVideoId()
+      const iframeVideoId = getLiveChatVideoIdFromIframe(iframe)
+      if (currentVideoId && iframeVideoId && iframeVideoId !== currentVideoId) return false
+      return hasLiveChatAttributes()
+    }
+    if (!isLiveChatDocForCurrentVideo(doc)) return false
     if (isLiveChatUnavailable(doc)) return false
     const renderer = doc.querySelector('yt-live-chat-renderer')
     if (!renderer) return false
