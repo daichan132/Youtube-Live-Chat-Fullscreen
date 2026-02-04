@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useState } from 'react'
+import {
+  isNativeChatExpanded as getNativeChatExpanded,
+  isNativeChatUsable as getNativeChatUsable,
+} from '@/entrypoints/content/utils/nativeChatState'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { useHasPlayableLiveChat } from './useHasPlayableLiveChat'
 import { useIsFullScreen } from './useIsFullscreen'
@@ -52,52 +56,11 @@ export const useIsShow = () => {
       return
     }
     const updateNativeChatExpanded = () => {
-      const watchFlexy = document.querySelector('ytd-watch-flexy')
-      const watchGrid = document.querySelector('ytd-watch-grid')
-      const hasExpandedChat =
-        watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
-      const chatContainer = document.querySelector('#chat-container')
-      const chatFrameHost = document.querySelector('ytd-live-chat-frame')
-      const isHidden =
-        chatContainer?.hasAttribute('hidden') ||
-        chatFrameHost?.hasAttribute('hidden') ||
-        chatContainer?.getAttribute('aria-hidden') === 'true' ||
-        chatFrameHost?.getAttribute('aria-hidden') === 'true'
-      const hasChatDom = Boolean(chatContainer && chatFrameHost)
-      setIsNativeChatExpanded(Boolean(hasExpandedChat && hasChatDom && !isHidden))
-    }
-
-    const isNativeChatUsable = () => {
-      const secondary = document.querySelector('#secondary') as HTMLElement | null
-      const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
-      const chatFrameHost = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
-      const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-      if (!secondary || !chatContainer || !chatFrameHost || !chatFrame) return false
-
-      const secondaryStyle = window.getComputedStyle(secondary)
-      const containerStyle = window.getComputedStyle(chatContainer)
-      const hostStyle = window.getComputedStyle(chatFrameHost)
-      const isHidden =
-        secondaryStyle.display === 'none' ||
-        secondaryStyle.visibility === 'hidden' ||
-        containerStyle.display === 'none' ||
-        containerStyle.visibility === 'hidden' ||
-        hostStyle.display === 'none' ||
-        hostStyle.visibility === 'hidden'
-      if (isHidden) return false
-
-      const pointerBlocked =
-        secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
-      if (pointerBlocked) return false
-
-      const secondaryBox = secondary.getBoundingClientRect()
-      const chatBox = chatFrameHost.getBoundingClientRect()
-      const frameBox = chatFrame.getBoundingClientRect()
-      return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
+      setIsNativeChatExpanded(getNativeChatExpanded())
     }
 
     const updateNativeChatOpen = () => {
-      setIsNativeChatOpen(isNativeChatUsable())
+      setIsNativeChatOpen(getNativeChatUsable())
     }
 
     updateNativeChatExpanded()

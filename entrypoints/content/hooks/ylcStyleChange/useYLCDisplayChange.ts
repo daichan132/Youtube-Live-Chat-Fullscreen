@@ -4,11 +4,7 @@ import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 type DisplayValue = 'inline' | 'block' | 'none'
 
-export const useYLCDisplayChange = (
-  property: string,
-  visibleValue: DisplayValue = 'inline',
-  hiddenValue: DisplayValue = 'none',
-) => {
+export const useYLCDisplayChange = (property: string, visibleValue: DisplayValue = 'inline', hiddenValue: DisplayValue = 'none') => {
   const { setProperty } = useYLCStylePropertyChange()
 
   const changeDisplay = useCallback(

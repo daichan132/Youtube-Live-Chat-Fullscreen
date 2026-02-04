@@ -5,10 +5,10 @@ import { useGlobalSettingStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
-import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
+import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 
 export const YTDLiveChat = () => {
   const { isShow, isNativeChatOpen, isNativeChatExpanded } = useIsShow()

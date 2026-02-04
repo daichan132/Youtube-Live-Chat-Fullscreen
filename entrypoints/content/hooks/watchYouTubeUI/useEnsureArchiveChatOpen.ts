@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 
 const isLiveNow = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
@@ -18,35 +19,6 @@ const hasReplayChatSignals = () => {
     return true
   }
   return Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chatframe'))
-}
-
-const isNativeChatOpen = () => {
-  const chatFrame =
-    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
-    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
-  const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
-  const chatFrameHost = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
-  if (chatContainer && chatFrameHost) {
-    const isHiddenAttr =
-      chatContainer.hasAttribute('hidden') ||
-      chatFrameHost.hasAttribute('hidden') ||
-      chatContainer.getAttribute('aria-hidden') === 'true' ||
-      chatFrameHost.getAttribute('aria-hidden') === 'true'
-    const containerStyle = window.getComputedStyle(chatContainer)
-    const hostStyle = window.getComputedStyle(chatFrameHost)
-    const isHiddenStyle =
-      containerStyle.display === 'none' ||
-      containerStyle.visibility === 'hidden' ||
-      hostStyle.display === 'none' ||
-      hostStyle.visibility === 'hidden'
-    if (!isHiddenAttr && !isHiddenStyle) return true
-  }
-  if (!chatFrame) return false
-
-  const doc = chatFrame.contentDocument ?? null
-  const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? ''
-  if (!href || href.includes('about:blank')) return false
-  return true
 }
 
 const tryClick = (selector: string) => {

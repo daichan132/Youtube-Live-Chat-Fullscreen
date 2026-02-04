@@ -10,6 +10,7 @@ html {
 
 html,
 body {
+  /* biome-ignore lint/complexity/noImportantStyles: Needed to override YouTube inline styles */
   background: transparent !important;
 }
 

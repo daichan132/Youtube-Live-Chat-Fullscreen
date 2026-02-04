@@ -7,11 +7,7 @@ interface UseNativeChatAutoDisableOptions {
   setYTDLiveChat: (value: boolean) => void
 }
 
-export const useNativeChatAutoDisable = ({
-  enabled,
-  nativeChatOpen,
-  setYTDLiveChat,
-}: UseNativeChatAutoDisableOptions) => {
+export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
 
   useEffect(() => {

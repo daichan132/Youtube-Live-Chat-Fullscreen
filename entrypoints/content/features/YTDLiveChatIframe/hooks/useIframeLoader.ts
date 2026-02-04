@@ -8,8 +8,7 @@ import iframeStyles from '../styles/iframe.css?inline'
 
 type ChangeYLCStyle = ReturnType<typeof useChangeYLCStyle>
 
-const findChatIframe = () =>
-  document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
+const findChatIframe = () => document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
 
 const attachIframeToContainer = (container: HTMLDivElement | null, iframe: HTMLIFrameElement) => {
   if (!container) return
