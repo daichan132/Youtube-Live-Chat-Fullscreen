@@ -4,5 +4,5 @@ import { usePollingWithNavigate } from './usePollingWithNavigate'
 
 export const useHasLiveChatSignals = () => {
   const checkFn = useCallback(() => hasLiveChatSignals(), [])
-  return usePollingWithNavigate({ checkFn })
+  return usePollingWithNavigate({ checkFn, stopOnSuccess: false })
 }

@@ -4,9 +4,15 @@ type UsePollingWithNavigateOptions = {
   checkFn: () => boolean
   intervalMs?: number
   maxAttempts?: number
+  stopOnSuccess?: boolean
 }
 
-export const usePollingWithNavigate = ({ checkFn, intervalMs = 1000, maxAttempts = 100 }: UsePollingWithNavigateOptions) => {
+export const usePollingWithNavigate = ({
+  checkFn,
+  intervalMs = 1000,
+  maxAttempts = 100,
+  stopOnSuccess = true,
+}: UsePollingWithNavigateOptions) => {
   const [result, setResult] = useState(false)
 
   useEffect(() => {
@@ -17,13 +23,14 @@ export const usePollingWithNavigate = ({ checkFn, intervalMs = 1000, maxAttempts
       let count = 0
       if (interval) window.clearInterval(interval)
       interval = window.setInterval(() => {
-        if (checkFn()) {
-          setResult(true)
+        const nextResult = checkFn()
+        setResult(nextResult)
+        count += 1
+        if (nextResult && stopOnSuccess) {
           if (interval) window.clearInterval(interval)
           interval = null
           return
         }
-        count += 1
         if (count >= maxAttempts) {
           if (interval) window.clearInterval(interval)
           interval = null
@@ -42,7 +49,7 @@ export const usePollingWithNavigate = ({ checkFn, intervalMs = 1000, maxAttempts
       if (interval) window.clearInterval(interval)
       document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
-  }, [checkFn, intervalMs, maxAttempts])
+  }, [checkFn, intervalMs, maxAttempts, stopOnSuccess])
 
   return result
 }
