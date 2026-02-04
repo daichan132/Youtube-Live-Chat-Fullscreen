@@ -6,6 +6,72 @@ import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/us
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
 
+type ChangeYLCStyle = ReturnType<typeof useChangeYLCStyle>
+
+const findChatIframe = () =>
+  document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
+
+const attachIframeToContainer = (container: HTMLDivElement | null, iframe: HTMLIFrameElement) => {
+  if (!container) return
+  container.appendChild(iframe)
+  iframe.style.width = '100%'
+  iframe.style.height = '100%'
+}
+
+const restoreIframeToOriginal = (iframe: HTMLIFrameElement | null) => {
+  const ytdLiveChatFrame: HTMLElement | null = document.querySelector('ytd-live-chat-frame')
+  if (!ytdLiveChatFrame || !iframe) return
+  const firstChild = ytdLiveChatFrame.firstChild
+  ytdLiveChatFrame.insertBefore(iframe, firstChild)
+}
+
+const applyInitialStyle = (
+  iframe: HTMLIFrameElement,
+  changeYLCStyle: ChangeYLCStyle,
+  setIsIframeLoaded: (value: boolean) => void,
+  setIsDisplay: (value: boolean) => void,
+) => {
+  const iframeDocument = iframe.contentDocument
+  if (!iframeDocument) return
+
+  const { head, body } = iframeDocument
+  if (head) {
+    const style = document.createElement('style')
+    style.textContent = iframeStyles
+    head.appendChild(style)
+  }
+
+  if (body) {
+    const {
+      fontSize,
+      fontFamily,
+      bgColor,
+      blur,
+      fontColor,
+      userNameDisplay,
+      space,
+      userIconDisplay,
+      reactionButtonDisplay,
+      superChatBarDisplay,
+    } = useYTDLiveChatStore.getState()
+    body.classList.add('custom-yt-app-live-chat-extension')
+    changeYLCStyle({
+      bgColor,
+      blur,
+      fontColor,
+      fontFamily,
+      fontSize,
+      space,
+      userNameDisplay,
+      userIconDisplay,
+      reactionButtonDisplay,
+      superChatBarDisplay,
+    })
+    setIsIframeLoaded(true)
+    setIsDisplay(true)
+  }
+}
+
 export const useIframeLoader = () => {
   const ref = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -18,47 +84,14 @@ export const useIframeLoader = () => {
   )
   const changeYLCStyle = useChangeYLCStyle()
   const handleLoaded = useCallback(() => {
-    const body = iframeRef.current?.contentDocument?.body
-    const head = iframeRef.current?.contentDocument?.head
-    if (head) {
-      const style = document.createElement('style')
-      style.textContent = iframeStyles
-      head.appendChild(style)
-    }
-    if (body) {
-      const {
-        fontSize,
-        fontFamily,
-        bgColor,
-        blur,
-        fontColor,
-        userNameDisplay,
-        space,
-        userIconDisplay,
-        reactionButtonDisplay,
-        superChatBarDisplay,
-      } = useYTDLiveChatStore.getState()
-      body.classList.add('custom-yt-app-live-chat-extension')
-      changeYLCStyle({
-        bgColor,
-        blur,
-        fontColor,
-        fontFamily,
-        fontSize,
-        space,
-        userNameDisplay,
-        userIconDisplay,
-        reactionButtonDisplay,
-        superChatBarDisplay,
-      })
-      setIsIframeLoaded(true)
-      setIsDisplay(true)
-    }
+    const iframe = iframeRef.current
+    if (!iframe) return
+    applyInitialStyle(iframe, changeYLCStyle, setIsIframeLoaded, setIsDisplay)
   }, [changeYLCStyle, setIsIframeLoaded, setIsDisplay])
 
   useEffect(() => {
     // チャットが存在するときのみ処理
-    const chatIframe: HTMLIFrameElement | null = document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
+    const chatIframe = findChatIframe()
     if (!chatIframe) return
 
     // 既存のiframeをそのままDOM移動
@@ -71,20 +104,12 @@ export const useIframeLoader = () => {
     }
 
     // iframeを拡張機能のコンテナに移動
-    ref.current?.appendChild(iframeRef.current)
-    iframeRef.current.style.width = '100%'
-    iframeRef.current.style.height = '100%'
-    iframeRef.current.addEventListener('load', handleLoaded)
+    attachIframeToContainer(ref.current, chatIframe)
+    chatIframe.addEventListener('load', handleLoaded)
 
     return () => {
-      iframeRef.current?.removeEventListener('load', handleLoaded)
-
-      // iframeを元の位置に戻す
-      const ytdLiveChatFrame: HTMLElement | null = document.querySelector('ytd-live-chat-frame')
-      if (!ytdLiveChatFrame || !iframeRef.current) return
-      const firstChild = ytdLiveChatFrame.firstChild
-      ytdLiveChatFrame.insertBefore(iframeRef.current, firstChild)
-
+      chatIframe.removeEventListener('load', handleLoaded)
+      restoreIframeToOriginal(chatIframe)
       setIFrameElement(null)
       setIsIframeLoaded(false)
       iframeRef.current = null
