@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures'
 import { acceptYouTubeConsent } from './utils/liveUrl'
+import { switchButtonSelector } from './utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -51,7 +52,7 @@ test('restore native chat after fullscreen toggle', async ({ page }) => {
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible()
   await switchButton.click()
 

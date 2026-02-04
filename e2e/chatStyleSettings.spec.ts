@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures'
 import { findLiveUrlWithChat } from './utils/liveUrl'
+import { switchButtonSelector } from './utils/selectors'
 
 const hasOverlayIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -32,7 +33,7 @@ test('settings update live chat font family', async ({ page }) => {
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButton = page.locator(switchButtonSelector)
   const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
   if (!switchReady) {
     test.skip(true, 'Fullscreen chat switch button did not appear.')

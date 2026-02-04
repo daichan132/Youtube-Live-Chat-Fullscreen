@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures'
 import { acceptYouTubeConsent } from './utils/liveUrl'
+import { switchButtonContainerSelector } from './utils/selectors'
 import { noChatUrls } from './utils/testUrls'
 
 const hasPlayableChat = () => {
@@ -46,7 +47,7 @@ test('extension chat stays hidden on videos without live chat', async ({ page })
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')
+  const switchButton = page.locator(switchButtonContainerSelector)
   await expect(switchButton).toHaveCount(0)
 
   await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)

@@ -41,38 +41,65 @@ const openNativeChat = () => {
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
-    let interval: number | null = null
+    let timeoutId: number | null = null
+    let attempts = 0
+    let startTime = 0
+    const maxDurationMs = 120000
+
+    const clearTimer = () => {
+      if (timeoutId) window.clearTimeout(timeoutId)
+      timeoutId = null
+    }
+
+    const getDelay = (attempt: number) => {
+      if (attempt < 10) return 1000
+      if (attempt < 20) return 2000
+      return 5000
+    }
+
+    const hasTimedOut = () => Date.now() - startTime >= maxDurationMs
+    const getRemainingMs = () => maxDurationMs - (Date.now() - startTime)
+
+    const scheduleNext = (delay: number) => {
+      clearTimer()
+      timeoutId = window.setTimeout(runCheck, delay)
+    }
+
+    const stopEnsure = () => {
+      clearTimer()
+    }
 
     const startEnsure = () => {
-      let attempts = 0
-      const maxAttempts = 120
-      if (interval) window.clearInterval(interval)
-      interval = window.setInterval(() => {
-        if (isLiveNow()) {
-          if (interval) window.clearInterval(interval)
-          interval = null
-          return
-        }
-        if (hasPlayableLiveChat() && getLiveChatIframe()) {
-          if (interval) window.clearInterval(interval)
-          interval = null
-          return
-        }
-        if (isNativeChatOpen()) {
-          attempts += 1
-          if (attempts >= maxAttempts) {
-            if (interval) window.clearInterval(interval)
-            interval = null
-          }
-          return
-        }
+      attempts = 0
+      startTime = Date.now()
+      clearTimer()
+      runCheck()
+    }
+
+    const runCheck = () => {
+      if (hasTimedOut()) {
+        stopEnsure()
+        return
+      }
+      if (isLiveNow()) {
+        stopEnsure()
+        return
+      }
+      if (hasPlayableLiveChat() && getLiveChatIframe()) {
+        stopEnsure()
+        return
+      }
+      if (!isNativeChatOpen()) {
         openNativeChat()
-        attempts += 1
-        if (attempts >= maxAttempts) {
-          if (interval) window.clearInterval(interval)
-          interval = null
-        }
-      }, 1000)
+      }
+      attempts += 1
+      const remainingMs = getRemainingMs()
+      if (remainingMs <= 0) {
+        stopEnsure()
+        return
+      }
+      const delay = Math.min(getDelay(attempts), remainingMs)
+      scheduleNext(delay)
     }
 
     const handleNavigate = () => {
@@ -83,7 +110,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     document.addEventListener('yt-navigate-finish', handleNavigate)
 
     return () => {
-      if (interval) window.clearInterval(interval)
+      clearTimer()
       document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
   }, [enabled])

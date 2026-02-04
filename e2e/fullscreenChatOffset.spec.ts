@@ -1,6 +1,7 @@
 import { writeFile } from 'node:fs/promises'
 import { expect, test } from './fixtures'
 import { findLiveUrlWithChat } from './utils/liveUrl'
+import { switchButtonSelector } from './utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -164,7 +165,7 @@ test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButton = page.locator(switchButtonSelector)
   const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
   if (!switchReady) {
     test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -173,7 +174,7 @@ test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
   await switchButton.click({ force: true })
   await page.evaluate(() => {
     const button = document.querySelector<HTMLButtonElement>(
-      '#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button',
+    switchButtonSelector,
     )
     button?.click()
   })
