@@ -18,8 +18,10 @@ export const useNativeChatAutoDisable = ({
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
 
   useEffect(() => {
+    if (!enabled) return
+    if (!autoDisableOnNativeOpen) return
+
     const handlePointerDown = (event: Event) => {
-      if (!enabled) return
       const target = event.target as HTMLElement | null
       if (!target) return
 
@@ -39,7 +41,7 @@ export const useNativeChatAutoDisable = ({
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown, true)
     }
-  }, [enabled, setYTDLiveChat])
+  }, [autoDisableOnNativeOpen, enabled, setYTDLiveChat])
 
   useEffect(() => {
     const prev = prevNativeChatOpenRef.current
