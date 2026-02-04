@@ -6,6 +6,13 @@
  * fullscreen chat overlay.
  */
 
+/**
+ * Minimum dimensions for native chat to be considered usable.
+ * These thresholds ensure the chat panel has enough space to be interactive.
+ */
+const MIN_USABLE_WIDTH = 80
+const MIN_USABLE_HEIGHT = 120
+
 /** DOM elements related to YouTube's native chat */
 type NativeChatElements = {
   secondary: HTMLElement | null
@@ -80,7 +87,12 @@ export const isNativeChatUsable = () => {
   const secondaryBox = secondary.getBoundingClientRect()
   const chatBox = chatFrameHost.getBoundingClientRect()
   const frameBox = chatFrame.getBoundingClientRect()
-  return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
+  return (
+    secondaryBox.width > MIN_USABLE_WIDTH &&
+    chatBox.width > MIN_USABLE_WIDTH &&
+    chatBox.height > MIN_USABLE_HEIGHT &&
+    frameBox.height > MIN_USABLE_HEIGHT
+  )
 }
 
 /**

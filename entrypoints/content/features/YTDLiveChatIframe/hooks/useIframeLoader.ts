@@ -106,8 +106,13 @@ export const useIframeLoader = () => {
       iframeRef.current = chatIframe
       setIFrameElement(iframeRef.current)
 
-      if (iframeRef.current.contentDocument?.location.href && !iframeRef.current.contentDocument?.location.href?.includes('about:blank')) {
-        iframeRef.current.src = iframeRef.current.contentDocument.location.href
+      try {
+        const href = iframeRef.current.contentDocument?.location?.href
+        if (href && !href.includes('about:blank')) {
+          iframeRef.current.src = href
+        }
+      } catch {
+        // CORS restriction - use existing src
       }
 
       attachIframeToContainer(ref.current, chatIframe)

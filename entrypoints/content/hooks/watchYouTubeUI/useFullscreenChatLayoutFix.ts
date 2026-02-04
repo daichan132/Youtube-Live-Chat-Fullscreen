@@ -114,7 +114,9 @@ export const useFullscreenChatLayoutFix = (active: boolean) => {
       root.classList.remove(className)
       if (styleElement) styleElement.remove()
       scheduleResizes()
-      return () => {}
+      return () => {
+        for (const id of timeouts) window.clearTimeout(id)
+      }
     }
 
     root.classList.add(className)
@@ -131,7 +133,6 @@ export const useFullscreenChatLayoutFix = (active: boolean) => {
       for (const id of timeouts) window.clearTimeout(id)
       root.classList.remove(className)
       styleElement?.remove()
-      scheduleResizes()
     }
   }, [active])
 }
