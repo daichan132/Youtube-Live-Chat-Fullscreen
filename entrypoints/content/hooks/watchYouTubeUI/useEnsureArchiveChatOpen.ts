@@ -41,33 +41,50 @@ const openNativeChat = () => {
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
-    let attempts = 0
-    const maxAttempts = 120
-    const interval = window.setInterval(() => {
-      if (isLiveNow()) {
-        window.clearInterval(interval)
-        return
-      }
-      if (hasPlayableLiveChat() && getLiveChatIframe()) {
-        window.clearInterval(interval)
-        return
-      }
-      if (isNativeChatOpen()) {
+    let interval: number | null = null
+
+    const startEnsure = () => {
+      let attempts = 0
+      const maxAttempts = 120
+      if (interval) window.clearInterval(interval)
+      interval = window.setInterval(() => {
+        if (isLiveNow()) {
+          if (interval) window.clearInterval(interval)
+          interval = null
+          return
+        }
+        if (hasPlayableLiveChat() && getLiveChatIframe()) {
+          if (interval) window.clearInterval(interval)
+          interval = null
+          return
+        }
+        if (isNativeChatOpen()) {
+          attempts += 1
+          if (attempts >= maxAttempts) {
+            if (interval) window.clearInterval(interval)
+            interval = null
+          }
+          return
+        }
+        openNativeChat()
         attempts += 1
         if (attempts >= maxAttempts) {
-          window.clearInterval(interval)
+          if (interval) window.clearInterval(interval)
+          interval = null
         }
-        return
-      }
-      openNativeChat()
-      attempts += 1
-      if (attempts >= maxAttempts) {
-        window.clearInterval(interval)
-      }
-    }, 1000)
+      }, 1000)
+    }
+
+    const handleNavigate = () => {
+      startEnsure()
+    }
+
+    startEnsure()
+    document.addEventListener('yt-navigate-finish', handleNavigate)
 
     return () => {
-      window.clearInterval(interval)
+      if (interval) window.clearInterval(interval)
+      document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
   }, [enabled])
 }
