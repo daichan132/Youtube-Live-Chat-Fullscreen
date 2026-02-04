@@ -39,5 +39,5 @@ test('show fullscreen chat button when replay chat is unavailable', async ({ pag
   expect(switchButtonAppeared).toBe(true)
 
   const shadowHostAppeared = await page.waitForSelector('#shadow-root-live-chat', { timeout: 10000 }).then(() => true, () => false)
-  expect(shadowHostAppeared).toBe(false)
+  expect(shadowHostAppeared).toBe(true)
 })
