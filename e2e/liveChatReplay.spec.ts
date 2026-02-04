@@ -47,8 +47,18 @@ const closeNativeChat = async (page: import('@playwright/test').Page) => {
     'ytd-live-chat-frame #show-hide-button yt-icon-button',
     'ytd-live-chat-frame #close-button button',
     'ytd-live-chat-frame #close-button yt-icon-button',
+    '#chat-container #show-hide-button button',
+    '#chat-container #show-hide-button yt-icon-button',
+    '#chat-container #close-button button',
+    '#chat-container #close-button yt-icon-button',
     'ytd-live-chat-frame button[aria-label="Close"]',
     'ytd-live-chat-frame button[title="Close"]',
+    '#chat-container button[aria-label="Close"]',
+    '#chat-container button[title="Close"]',
+    'ytd-live-chat-frame button[aria-label*="Hide chat"]',
+    'ytd-live-chat-frame button[title*="Hide chat"]',
+    '#chat-container button[aria-label*="Hide chat"]',
+    '#chat-container button[title*="Hide chat"]',
   ]
 
   for (const selector of selectors) {
@@ -152,13 +162,46 @@ const ensureVideoPlaying = async (page: import('@playwright/test').Page) => {
     .then(() => true, () => false)
 }
 
+const dumpChatDebug = async (page: import('@playwright/test').Page, label: string) => {
+  const state = await page.evaluate(() => {
+    const chatFrame =
+      (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
+      (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
+    const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
+    const chatFrameHost = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+    const showHideButton = document.querySelector('ytd-live-chat-frame #show-hide-button') as HTMLElement | null
+    const closeButton = document.querySelector('ytd-live-chat-frame #close-button') as HTMLElement | null
+    const containerShowHide = document.querySelector('#chat-container #show-hide-button') as HTMLElement | null
+    const containerClose = document.querySelector('#chat-container #close-button') as HTMLElement | null
+    const chatSrc = chatFrame?.getAttribute('src') ?? chatFrame?.src ?? ''
+    const docHref = chatFrame?.contentDocument?.location?.href ?? ''
+
+    return {
+      url: location.href,
+      hasChatFrameHost: Boolean(chatFrameHost),
+      hasChatContainer: Boolean(chatContainer),
+      hasChatFrame: Boolean(chatFrame),
+      hasShowHideButton: Boolean(showHideButton),
+      hasCloseButton: Boolean(closeButton),
+      hasContainerShowHide: Boolean(containerShowHide),
+      hasContainerClose: Boolean(containerClose),
+      chatSrc,
+      docHref,
+    }
+  })
+
+  // eslint-disable-next-line no-console
+  console.log(`[liveChatReplay][${label}]`, state)
+}
+
 test('youtube live archive test', async ({ page }) => {
   test.setTimeout(120000)
 
   const candidateUrls = archiveReplayUrls
+  const urlsToTry = candidateUrls
   let selectedUrl: string | null = null
 
-  for (const url of candidateUrls) {
+  for (const url of urlsToTry) {
     try {
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 })
       await acceptYouTubeConsent(page)
@@ -173,11 +216,13 @@ test('youtube live archive test', async ({ page }) => {
   }
 
   if (!selectedUrl) {
+    await dumpChatDebug(page, 'no-archive-url')
     test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
   }
 
   const closed = await closeNativeChat(page)
   if (!closed) {
+    await dumpChatDebug(page, 'close-native-chat-failed')
     test.skip(true, 'Could not close native chat via UI controls.')
   }
   await expect.poll(async () => page.evaluate(isNativeChatClosed), { timeout: 10000 }).toBe(true)
