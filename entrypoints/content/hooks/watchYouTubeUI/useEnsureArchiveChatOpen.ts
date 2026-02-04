@@ -2,6 +2,14 @@ import { useEffect } from 'react'
 import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 
+// Retry timing constants
+const MAX_ENSURE_DURATION_MS = 120000
+const INITIAL_RETRY_DELAY_MS = 1000
+const MEDIUM_RETRY_DELAY_MS = 2000
+const MAX_RETRY_DELAY_MS = 5000
+const INITIAL_PHASE_ATTEMPTS = 10
+const MEDIUM_PHASE_ATTEMPTS = 20
+
 const isLiveNow = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
@@ -41,10 +49,11 @@ const openNativeChat = () => {
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
+
+    let isActive = true
     let timeoutId: number | null = null
     let attempts = 0
     let startTime = 0
-    const maxDurationMs = 120000
 
     const clearTimer = () => {
       if (timeoutId) window.clearTimeout(timeoutId)
@@ -52,13 +61,13 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     }
 
     const getDelay = (attempt: number) => {
-      if (attempt < 10) return 1000
-      if (attempt < 20) return 2000
-      return 5000
+      if (attempt < INITIAL_PHASE_ATTEMPTS) return INITIAL_RETRY_DELAY_MS
+      if (attempt < MEDIUM_PHASE_ATTEMPTS) return MEDIUM_RETRY_DELAY_MS
+      return MAX_RETRY_DELAY_MS
     }
 
-    const hasTimedOut = () => Date.now() - startTime >= maxDurationMs
-    const getRemainingMs = () => maxDurationMs - (Date.now() - startTime)
+    const hasTimedOut = () => Date.now() - startTime >= MAX_ENSURE_DURATION_MS
+    const getRemainingMs = () => MAX_ENSURE_DURATION_MS - (Date.now() - startTime)
 
     const scheduleNext = (delay: number) => {
       clearTimer()
@@ -77,6 +86,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     }
 
     const runCheck = () => {
+      if (!isActive) return
       if (hasTimedOut()) {
         stopEnsure()
         return
@@ -103,6 +113,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     }
 
     const handleNavigate = () => {
+      if (!isActive) return
       startEnsure()
     }
 
@@ -110,6 +121,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     document.addEventListener('yt-navigate-finish', handleNavigate)
 
     return () => {
+      isActive = false
       clearTimer()
       document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
