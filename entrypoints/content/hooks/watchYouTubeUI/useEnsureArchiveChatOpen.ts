@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 
 const isLiveNow = () => {
@@ -48,7 +48,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         window.clearInterval(interval)
         return
       }
-      if (hasPlayableLiveChat()) {
+      if (hasPlayableLiveChat() && getLiveChatIframe()) {
         window.clearInterval(interval)
         return
       }
