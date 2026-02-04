@@ -41,6 +41,10 @@ export const usePollingWithNavigate = ({
     let interval: number | null = null
 
     const startCheck = () => {
+      if (interval) {
+        window.clearInterval(interval)
+        interval = null
+      }
       // Immediate check on start - don't wait for first interval
       const initialResult = safeCheck(checkFn)
       setResult(initialResult)
@@ -51,7 +55,6 @@ export const usePollingWithNavigate = ({
       }
 
       let count = 1 // Already did one check
-      if (interval) window.clearInterval(interval)
       interval = window.setInterval(() => {
         const nextResult = safeCheck(checkFn)
         setResult(nextResult)
