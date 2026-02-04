@@ -15,7 +15,8 @@ const getIframeVideoId = (iframe: HTMLIFrameElement) => {
     const docHref = iframe.contentDocument?.location?.href ?? ''
     if (docHref) {
       const url = new URL(docHref, window.location.origin)
-      return url.searchParams.get('v')
+      const videoId = url.searchParams.get('v')
+      if (videoId) return videoId
     }
   } catch {
     // Ignore CORS/DOM access errors and fall back to src
