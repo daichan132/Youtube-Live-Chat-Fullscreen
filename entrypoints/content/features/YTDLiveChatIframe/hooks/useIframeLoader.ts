@@ -4,12 +4,13 @@ import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
 
 type ChangeYLCStyle = ReturnType<typeof useChangeYLCStyle>
 
-const findChatIframe = () => document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
+const findChatIframe = () => getLiveChatIframe()
 const getIframeVideoId = (iframe: HTMLIFrameElement) => {
   try {
     const docHref = iframe.contentDocument?.location?.href ?? ''
@@ -36,15 +37,31 @@ const isIframeForCurrentVideo = (iframe: HTMLIFrameElement) => {
   const currentVideoId = getYouTubeVideoId()
   if (!currentVideoId) return true
   const iframeVideoId = getIframeVideoId(iframe)
-  if (!iframeVideoId) return true
+  if (!iframeVideoId) {
+    const watchFlexy = document.querySelector('ytd-watch-flexy')
+    const watchGrid = document.querySelector('ytd-watch-grid')
+    return Boolean(
+      watchFlexy?.hasAttribute('live-chat-present') ||
+        watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
+        watchGrid?.hasAttribute('live-chat-present') ||
+        watchGrid?.hasAttribute('live-chat-present-and-expanded'),
+    )
+  }
   return iframeVideoId === currentVideoId
 }
 
 const attachIframeToContainer = (container: HTMLDivElement | null, iframe: HTMLIFrameElement) => {
   if (!container) return
+  iframe.setAttribute('data-ylc-chat', 'true')
   container.appendChild(iframe)
   iframe.style.width = '100%'
   iframe.style.height = '100%'
+}
+
+const debugLog = (message: string, details?: Record<string, unknown>) => {
+  if (!import.meta.env.DEV) return
+  // biome-ignore lint/suspicious/noConsole: Intentional debug logging for troubleshooting
+  console.debug(`[useIframeLoader] ${message}`, details ?? '')
 }
 
 const restoreIframeToOriginal = (iframe: HTMLIFrameElement | null) => {
@@ -127,6 +144,11 @@ export const useIframeLoader = () => {
   const handleLoadedRef = useRef<() => void>(() => {
     const iframe = iframeRef.current
     if (!iframe) return
+    debugLog('iframe load event', {
+      src: iframe.getAttribute('src') ?? iframe.src ?? '',
+      docHref: iframe.contentDocument?.location?.href ?? '',
+      videoId: getYouTubeVideoId(),
+    })
     applyInitialStyle(iframe, changeYLCStyleRef.current, setIsIframeLoadedRef.current, setIsDisplayRef.current)
   })
 
@@ -136,7 +158,13 @@ export const useIframeLoader = () => {
     const detachIframe = () => {
       const current = iframeRef.current
       if (!current) return
+      debugLog('detach iframe', {
+        src: current.getAttribute('src') ?? current.src ?? '',
+        docHref: current.contentDocument?.location?.href ?? '',
+        videoId: getYouTubeVideoId(),
+      })
       current.removeEventListener('load', handleLoaded)
+      current.removeAttribute('data-ylc-chat')
       restoreIframeToOriginal(current)
       if (current.parentElement === ref.current) {
         ref.current?.removeChild(current)
@@ -157,6 +185,11 @@ export const useIframeLoader = () => {
 
       iframeRef.current = chatIframe
       setIFrameElement(iframeRef.current)
+      debugLog('attach iframe', {
+        src: chatIframe.getAttribute('src') ?? chatIframe.src ?? '',
+        docHref: chatIframe.contentDocument?.location?.href ?? '',
+        videoId: getYouTubeVideoId(),
+      })
 
       try {
         const href = iframeRef.current.contentDocument?.location?.href
@@ -180,11 +213,37 @@ export const useIframeLoader = () => {
     const tryAttach = () => {
       const chatIframe = findChatIframe()
       if (!chatIframe) return false
-      if (!isIframeForCurrentVideo(chatIframe)) return false
+      if (!isIframeForCurrentVideo(chatIframe)) {
+        debugLog('skip iframe (not current video)', {
+          src: chatIframe.getAttribute('src') ?? chatIframe.src ?? '',
+          docHref: chatIframe.contentDocument?.location?.href ?? '',
+          videoId: getYouTubeVideoId(),
+        })
+        return false
+      }
       return attachIframe(chatIframe)
     }
 
     let observer: MutationObserver | null = null
+    let retryInterval: number | null = null
+    const retryIntervalMs = 1000
+    const retryMaxMs = 30000
+    const retryStartedAt = Date.now()
+
+    const startRetry = () => {
+      if (retryInterval) return
+      retryInterval = window.setInterval(() => {
+        if (tryAttach()) {
+          if (retryInterval) window.clearInterval(retryInterval)
+          retryInterval = null
+          return
+        }
+        if (Date.now() - retryStartedAt >= retryMaxMs) {
+          if (retryInterval) window.clearInterval(retryInterval)
+          retryInterval = null
+        }
+      }, retryIntervalMs)
+    }
     const setupObserver = () => {
       observer?.disconnect()
 
@@ -204,6 +263,8 @@ export const useIframeLoader = () => {
       observer = new MutationObserver(() => {
         if (tryAttach()) {
           observer?.disconnect()
+          if (retryInterval) window.clearInterval(retryInterval)
+          retryInterval = null
         }
       })
       observer.observe(target, { childList: true, subtree: true })
@@ -211,12 +272,14 @@ export const useIframeLoader = () => {
 
     if (!tryAttach()) {
       setupObserver()
+      startRetry()
     }
 
     const handleNavigate = () => {
       detachIframe()
       if (!tryAttach()) {
         setupObserver()
+        startRetry()
       }
     }
 
@@ -224,6 +287,7 @@ export const useIframeLoader = () => {
     return () => {
       document.removeEventListener('yt-navigate-finish', handleNavigate)
       observer?.disconnect()
+      if (retryInterval) window.clearInterval(retryInterval)
       detachIframe()
     }
     // Effect only needs to run once on mount - callbacks are accessed via stable refs
