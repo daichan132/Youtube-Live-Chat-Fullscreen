@@ -15,6 +15,7 @@ const MEDIUM_RETRY_DELAY_MS = 1500
 const MAX_RETRY_DELAY_MS = 3000
 const INITIAL_PHASE_ATTEMPTS = 10 // First 10 attempts: 500ms intervals
 const MEDIUM_PHASE_ATTEMPTS = 20 // Next 10 attempts: 1500ms intervals
+const NO_CHAT_EARLY_EXIT_MS = 15000 // Give up early if no chat DOM after 15 seconds
 
 /** Checks if the current video is a live stream (not an archive) */
 const isLiveNow = () => {
@@ -135,8 +136,9 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         return
       }
       // Early exit: no chat feature on this page (e.g., regular video without chat replay)
-      // Wait a few attempts before giving up, as DOM may still be loading
-      if (attempts > 5 && !hasChatFeature()) {
+      // Wait 15 seconds before giving up, as DOM may still be loading on slow connections
+      const elapsedMs = Date.now() - startTime
+      if (elapsedMs > NO_CHAT_EARLY_EXIT_MS && !hasChatFeature()) {
         stopEnsure()
         return
       }
