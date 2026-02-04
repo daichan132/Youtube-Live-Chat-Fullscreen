@@ -5,10 +5,15 @@ export const getLiveChatIframe = () => {
 }
 
 export const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
-  const doc = iframe.contentDocument ?? null
-  const href = doc?.location?.href ?? ''
-  if (!doc || !href || href.includes('about:blank')) return null
-  return doc
+  try {
+    const doc = iframe.contentDocument ?? null
+    const href = doc?.location?.href ?? ''
+    if (!doc || !href || href.includes('about:blank')) return null
+    return doc
+  } catch {
+    // CORS restriction or iframe removed - cannot access document
+    return null
+  }
 }
 
 const hasUnavailableText = (doc: Document) => {

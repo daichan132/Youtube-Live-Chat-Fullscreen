@@ -42,6 +42,7 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
   }, [enabled, nativeChatOpen, setYTDLiveChat])
 
   // Detect when native chat state changes to open
+  // Only triggers on actual state TRANSITIONS (closed → open), not on initial observation
   useEffect(() => {
     if (!enabled) {
       prevNativeChatOpenRef.current = null
@@ -51,13 +52,13 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
     const prev = prevNativeChatOpenRef.current
     prevNativeChatOpenRef.current = nativeChatOpen
 
+    // Skip initial observation - we only care about state transitions
+    // This prevents disabling YLC when the extension is re-enabled while native chat is already open
     if (prev === null) {
-      if (nativeChatOpen) {
-        setYTDLiveChat(false)
-      }
       return
     }
 
+    // Only disable YLC when native chat transitions from closed to open
     if (!prev && nativeChatOpen) {
       setYTDLiveChat(false)
     }

@@ -168,7 +168,7 @@ test('youtube live archive test', async ({ page }) => {
       selectedUrl = url
       break
     } catch {
-      continue
+      // URL failed, try the next one
     }
   }
 
