@@ -14,10 +14,10 @@ export const Content = () => {
   const isFullscreen = useIsFullScreen()
   const hasPlayableChat = useHasPlayableLiveChat()
   useEnsureArchiveChatOpen(isFullscreen && ytdLiveChat)
-  const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen && hasPlayableChat)
+  const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen)
 
   const renderLiveChatPortal = () => {
-    if (!portalsReady || !shadowRoot) return null
+    if (!portalsReady || !shadowRoot || !hasPlayableChat) return null
     return createPortal(
       <div className='fixed top-0 right-0 w-full h-full z-1000' style={{ pointerEvents: 'none' }}>
         <YTDLiveChat />

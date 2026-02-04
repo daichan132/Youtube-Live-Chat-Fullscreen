@@ -7,20 +7,6 @@ const isLiveNow = () => {
   return Boolean(watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now'))
 }
 
-const hasReplayChatSignals = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  if (
-    watchFlexy?.hasAttribute('live-chat-present') ||
-    watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-    watchGrid?.hasAttribute('live-chat-present') ||
-    watchGrid?.hasAttribute('live-chat-present-and-expanded')
-  ) {
-    return true
-  }
-  return Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chatframe'))
-}
-
 const tryClick = (selector: string) => {
   const target = document.querySelector<HTMLElement>(selector)
   if (!target) return false
@@ -55,17 +41,10 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
     let attempts = 0
-    const maxAttempts = 20
+    const maxAttempts = 60
     const interval = window.setInterval(() => {
       if (isLiveNow()) {
         window.clearInterval(interval)
-        return
-      }
-      if (!hasReplayChatSignals()) {
-        attempts += 1
-        if (attempts >= maxAttempts) {
-          window.clearInterval(interval)
-        }
         return
       }
       if (isNativeChatOpen()) {

@@ -89,29 +89,54 @@ export const useIframeLoader = () => {
   }, [changeYLCStyle, setIsIframeLoaded, setIsDisplay])
 
   useEffect(() => {
-    // チャットが存在するときのみ処理
-    const chatIframe = findChatIframe()
-    if (!chatIframe) return
-
-    // 既存のiframeをそのままDOM移動
-    iframeRef.current = chatIframe
-    setIFrameElement(iframeRef.current)
-
-    // srcを設定（about:blankでない場合）
-    if (iframeRef.current.contentDocument?.location.href && !iframeRef.current.contentDocument?.location.href?.includes('about:blank')) {
-      iframeRef.current.src = iframeRef.current.contentDocument.location.href
-    }
-
-    // iframeを拡張機能のコンテナに移動
-    attachIframeToContainer(ref.current, chatIframe)
-    chatIframe.addEventListener('load', handleLoaded)
-
-    return () => {
-      chatIframe.removeEventListener('load', handleLoaded)
-      restoreIframeToOriginal(chatIframe)
+    const detachIframe = () => {
+      const current = iframeRef.current
+      if (!current) return
+      current.removeEventListener('load', handleLoaded)
+      restoreIframeToOriginal(current)
       setIFrameElement(null)
       setIsIframeLoaded(false)
       iframeRef.current = null
+    }
+
+    const attachIframe = (chatIframe: HTMLIFrameElement) => {
+      if (iframeRef.current === chatIframe) return true
+      if (iframeRef.current) detachIframe()
+
+      iframeRef.current = chatIframe
+      setIFrameElement(iframeRef.current)
+
+      if (
+        iframeRef.current.contentDocument?.location.href &&
+        !iframeRef.current.contentDocument?.location.href?.includes('about:blank')
+      ) {
+        iframeRef.current.src = iframeRef.current.contentDocument.location.href
+      }
+
+      attachIframeToContainer(ref.current, chatIframe)
+      chatIframe.addEventListener('load', handleLoaded)
+      return true
+    }
+
+    const tryAttach = () => {
+      const chatIframe = findChatIframe()
+      if (!chatIframe) return false
+      return attachIframe(chatIframe)
+    }
+
+    let observer: MutationObserver | null = null
+    if (!tryAttach() && document.body) {
+      observer = new MutationObserver(() => {
+        if (tryAttach()) {
+          observer?.disconnect()
+        }
+      })
+      observer.observe(document.body, { childList: true, subtree: true })
+    }
+
+    return () => {
+      observer?.disconnect()
+      detachIframe()
     }
   }, [handleLoaded, setIFrameElement, setIsIframeLoaded])
 
