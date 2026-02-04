@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { useYLCBgColorChange } from './useYLCBgColorChange'
@@ -23,42 +23,68 @@ export const useChangeYLCStyle = () => {
   const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange()
   const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange()
   const { changeDisplay: changeSuperChatBarDisplay } = useYLCSuperChatBarDisplayChange()
-  const changeYLCStyle = useCallback(
-    ({
-      bgColor,
-      blur,
-      fontColor,
-      fontFamily,
-      fontSize,
-      space,
-      userNameDisplay,
-      userIconDisplay,
-      reactionButtonDisplay,
-      superChatBarDisplay,
-    }: YLCStyleUpdateType) => {
-      if (bgColor !== undefined) changBgColor(bgColor)
-      if (blur !== undefined) changeBlur(blur)
-      if (fontColor !== undefined) changFontColor(fontColor)
-      if (fontFamily !== undefined) changeFontFamily(fontFamily)
-      if (fontSize !== undefined) changeFontSize(fontSize)
-      if (space !== undefined) changeSpace(space)
-      if (userNameDisplay !== undefined) changeUserNameDisplay(userNameDisplay)
-      if (userIconDisplay !== undefined) changeUserIconDisplay(userIconDisplay)
-      if (reactionButtonDisplay !== undefined) changeReactionButtonDisplay(reactionButtonDisplay)
-      if (superChatBarDisplay !== undefined) changeSuperChatBarDisplay(superChatBarDisplay)
-    },
+
+  const handledKeys = useMemo(
+    () =>
+      [
+        'bgColor',
+        'blur',
+        'fontColor',
+        'fontFamily',
+        'fontSize',
+        'space',
+        'userNameDisplay',
+        'userIconDisplay',
+        'reactionButtonDisplay',
+        'superChatBarDisplay',
+      ] as const,
+    [],
+  )
+
+  type HandledKey = (typeof handledKeys)[number]
+  type HandlerMap = {
+    [Key in HandledKey]: (value: NonNullable<YLCStyleUpdateType[Key]>) => void
+  }
+
+  const handlers: HandlerMap = useMemo(
+    () => ({
+      bgColor: changBgColor,
+      blur: changeBlur,
+      fontColor: changFontColor,
+      fontFamily: changeFontFamily,
+      fontSize: changeFontSize,
+      space: changeSpace,
+      userNameDisplay: changeUserNameDisplay,
+      userIconDisplay: changeUserIconDisplay,
+      reactionButtonDisplay: changeReactionButtonDisplay,
+      superChatBarDisplay: changeSuperChatBarDisplay,
+    }),
     [
       changBgColor,
       changeBlur,
       changFontColor,
       changeFontFamily,
       changeFontSize,
-      changeReactionButtonDisplay,
       changeSpace,
-      changeUserIconDisplay,
       changeUserNameDisplay,
+      changeUserIconDisplay,
+      changeReactionButtonDisplay,
       changeSuperChatBarDisplay,
     ],
+  )
+
+  const changeYLCStyle = useCallback(
+    (update: YLCStyleUpdateType) => {
+      const apply = <Key extends HandledKey>(key: Key, value: YLCStyleUpdateType[Key]) => {
+        if (value === undefined) return
+        handlers[key](value)
+      }
+
+      for (const key of handledKeys) {
+        apply(key, update[key])
+      }
+    },
+    [handledKeys, handlers],
   )
 
   return changeYLCStyle

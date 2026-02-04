@@ -2,37 +2,25 @@ import { useCallback } from 'react'
 import type { RGBColor } from 'react-color'
 import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
+import { YLC_BG_COLOR_PROPERTIES, YLC_BG_DARKEN_PROPERTIES, YLC_BG_TRANSPARENT_PROPERTIES } from './ylcStyleConstants'
 
-const propertyList: string[] = ['--yt-live-chat-background-color']
-const propertyListDarken = [
-  { property: '--yt-spec-icon-disabled', amount: 40 },
-  { property: '--yt-live-chat-vem-background-color', amount: 20 },
-]
-const propertyListTransparent = [
-  '--yt-live-chat-header-background-color',
-  '--yt-spec-general-background-b',
-  '--yt-live-chat-action-panel-background-color',
-  '--yt-live-chat-banner-gradient-scrim',
-  '--yt-live-chat-action-panel-gradient-scrim',
-  '--yt-live-chat-message-highlight-background-color',
-]
+const toRgbaString = (rgba: RGBColor) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`
 
 export const useYLCBgColorChange = () => {
-  const { setProperty } = useYLCStylePropertyChange()
+  const { setProperties } = useYLCStylePropertyChange()
 
   const changeColor = useCallback(
     (rgba: RGBColor) => {
-      for (const property of propertyList) {
-        setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
-      }
-      for (const item of propertyListDarken) {
-        setProperty(item.property, darkenRgbaColor(rgba, item.amount))
-      }
-      for (const property of propertyListTransparent) {
-        setProperty(property, 'transparent')
-      }
+      const baseColor = toRgbaString(rgba)
+      const properties: Array<readonly [string, string]> = [
+        ...YLC_BG_COLOR_PROPERTIES.map(property => [property, baseColor] as const),
+        ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
+        ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
+      ]
+
+      setProperties(properties)
     },
-    [setProperty],
+    [setProperties],
   )
 
   return { changeColor }
