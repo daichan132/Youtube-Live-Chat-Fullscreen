@@ -4,6 +4,7 @@ import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
 import { useEnsureArchiveChatOpen } from './hooks/watchYouTubeUI/useEnsureArchiveChatOpen'
+import { useHasLiveChatSignals } from './hooks/watchYouTubeUI/useHasLiveChatSignals'
 import { useHasPlayableLiveChat } from './hooks/watchYouTubeUI/useHasPlayableLiveChat'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { YTDLiveChat } from './YTDLiveChat'
@@ -13,8 +14,9 @@ export const Content = () => {
   const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
   const hasPlayableChat = useHasPlayableLiveChat()
+  const hasChatSignals = useHasLiveChatSignals()
   useEnsureArchiveChatOpen(isFullscreen && ytdLiveChat)
-  const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen)
+  const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen && hasChatSignals)
 
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRoot || !hasPlayableChat) return null

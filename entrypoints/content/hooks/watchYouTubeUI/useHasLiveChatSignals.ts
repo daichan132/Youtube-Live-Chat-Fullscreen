@@ -1,19 +1,19 @@
 import { useEffect, useState } from 'react'
-import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
 
-export const useHasPlayableLiveChat = () => {
-  const [hasPlayableChat, setHasPlayableChat] = useState(false)
+export const useHasLiveChatSignals = () => {
+  const [hasChatSignals, setHasChatSignals] = useState(false)
 
   useEffect(() => {
     let interval: number | null = null
 
     const startCheck = () => {
-      setHasPlayableChat(false)
+      setHasChatSignals(false)
       let count = 0
       if (interval) window.clearInterval(interval)
       interval = window.setInterval(() => {
-        if (hasPlayableLiveChat()) {
-          setHasPlayableChat(true)
+        if (hasLiveChatSignals()) {
+          setHasChatSignals(true)
           if (interval) window.clearInterval(interval)
           interval = null
           return
@@ -39,5 +39,5 @@ export const useHasPlayableLiveChat = () => {
     }
   }, [])
 
-  return hasPlayableChat
+  return hasChatSignals
 }

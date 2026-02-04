@@ -1,10 +1,10 @@
-const getLiveChatIframe = () => {
+export const getLiveChatIframe = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
   if (chatFrame) return chatFrame
   return document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
 }
 
-const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
+export const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
   const doc = iframe.contentDocument ?? null
   const href = doc?.location?.href ?? ''
   if (!doc || !href || href.includes('about:blank')) return null
@@ -21,7 +21,7 @@ const hasUnavailableText = (doc: Document) => {
   )
 }
 
-const isLiveChatUnavailable = (doc: Document) => {
+export const isLiveChatUnavailable = (doc: Document) => {
   if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
   return hasUnavailableText(doc)
 }
