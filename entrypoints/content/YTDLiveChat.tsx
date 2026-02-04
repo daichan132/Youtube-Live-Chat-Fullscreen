@@ -11,7 +11,7 @@ import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 
 export const YTDLiveChat = () => {
-  const { isShow, isNativeChatOpen, isNativeChatExpanded } = useIsShow()
+  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
@@ -21,7 +21,7 @@ export const YTDLiveChat = () => {
   const isFullscreen = useIsFullScreen()
   useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isShow)
   const nodeRef = useRef(null)
-  const isNativeChatCurrentlyOpen = isNativeChatOpen || isNativeChatExpanded
+  const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   useNativeChatAutoDisable({
     enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,

@@ -5,27 +5,28 @@ import {
 } from '@/entrypoints/content/utils/nativeChatState'
 
 export const useNativeChatState = (isFullscreen: boolean) => {
-  const [isNativeChatOpen, setIsNativeChatOpen] = useState(false)
+  const [isNativeChatUsable, setIsNativeChatUsable] = useState(false)
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState(false)
 
   useEffect(() => {
-    // Fullscreen hides native chat but leaves DOM in place; treat it as closed.
-    if (isFullscreen) {
-      setIsNativeChatOpen(false)
-      setIsNativeChatExpanded(false)
-      return
-    }
-
     const updateNativeChatExpanded = () => {
       setIsNativeChatExpanded(getNativeChatExpanded())
     }
 
-    const updateNativeChatOpen = () => {
-      setIsNativeChatOpen(getNativeChatUsable())
+    const updateNativeChatUsable = () => {
+      setIsNativeChatUsable(getNativeChatUsable())
     }
 
+    // Fullscreen hides native chat but leaves DOM in place; treat it as closed.
+    if (isFullscreen) {
+      setIsNativeChatUsable(false)
+      setIsNativeChatExpanded(false)
+      return
+    }
+
+    // Immediately sync with DOM state when exiting fullscreen
     updateNativeChatExpanded()
-    updateNativeChatOpen()
+    updateNativeChatUsable()
     if (!document.body) return
 
     let observer: MutationObserver | null = null
@@ -45,7 +46,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
       if (observer) observer.disconnect()
       observer = new MutationObserver(() => {
         updateNativeChatExpanded()
-        updateNativeChatOpen()
+        updateNativeChatUsable()
       })
       observer.observe(getObserverTarget(), {
         subtree: true,
@@ -58,7 +59,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     const attachResizeObserver = () => {
       if (!resizeObserver) {
         resizeObserver = new ResizeObserver(() => {
-          updateNativeChatOpen()
+          updateNativeChatUsable()
         })
       } else {
         resizeObserver.disconnect()
@@ -71,7 +72,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
 
     const handleNavigate = () => {
       updateNativeChatExpanded()
-      updateNativeChatOpen()
+      updateNativeChatUsable()
       attachObserver()
       attachResizeObserver()
     }
@@ -87,5 +88,5 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     }
   }, [isFullscreen])
 
-  return { isNativeChatOpen, isNativeChatExpanded }
+  return { isNativeChatUsable, isNativeChatExpanded }
 }

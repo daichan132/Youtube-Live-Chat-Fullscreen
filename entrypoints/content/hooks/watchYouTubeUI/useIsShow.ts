@@ -8,8 +8,8 @@ export const useIsShow = () => {
   const hasPlayableChat = useHasPlayableLiveChat()
   const isFullscreen = useIsFullScreen()
   const isTop = useMastheadTop(isFullscreen)
-  const { isNativeChatOpen, isNativeChatExpanded } = useNativeChatState(isFullscreen)
+  const { isNativeChatUsable, isNativeChatExpanded } = useNativeChatState(isFullscreen)
   const isChecked = useEnsureChatInViewport(hasPlayableChat && isTop)
 
-  return { isShow: hasPlayableChat && isTop && isChecked, isNativeChatOpen, isNativeChatExpanded }
+  return { isShow: hasPlayableChat && isTop && isChecked, isNativeChatUsable, isNativeChatExpanded }
 }
