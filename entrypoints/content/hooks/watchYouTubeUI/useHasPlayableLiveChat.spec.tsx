@@ -20,16 +20,28 @@ describe('useHasPlayableLiveChat', () => {
   })
 
   it('sets state to true once playable chat is detected', () => {
-    hasPlayableLiveChatMock.mockReturnValueOnce(true)
+    // First call (immediate check) returns false, second call returns true
+    hasPlayableLiveChatMock.mockReturnValueOnce(false).mockReturnValueOnce(true)
 
     const { result } = renderHook(() => useHasPlayableLiveChat())
 
+    // Immediate check returns false
     expect(result.current).toBe(false)
 
     act(() => {
       vi.advanceTimersByTime(1000)
     })
 
+    // After interval, returns true
+    expect(result.current).toBe(true)
+  })
+
+  it('sets state to true immediately when playable chat is detected on initial check', () => {
+    hasPlayableLiveChatMock.mockReturnValueOnce(true)
+
+    const { result } = renderHook(() => useHasPlayableLiveChat())
+
+    // Immediate check returns true - no need to wait
     expect(result.current).toBe(true)
   })
 
