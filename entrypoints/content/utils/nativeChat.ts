@@ -9,15 +9,20 @@ const nativeChatTriggerSelectors =
  */
 const hasChatOnPage = () => Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
 
+const getButtonLabelText = (button: HTMLButtonElement) =>
+  `${button.getAttribute('aria-label') ?? ''} ${button.getAttribute('title') ?? ''} ${
+    button.getAttribute('data-title-no-tooltip') ?? ''
+  } ${button.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
+
+const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
+
 /**
  * Detects if an element is a native YouTube chat toggle button.
  *
- * Uses a language-independent structural approach:
+ * Uses a conservative approach to avoid false positives:
  * 1. Must be a button in player controls area
- * 2. Must be a toggle-style button (toggle-button-view-model)
- * 3. Page must have chat functionality
- *
- * This avoids relying on localized button labels like "Chat", "チャット", etc.
+ * 2. Page must have chat functionality
+ * 3. Must match known chat toggle selectors or chat-related label text
  */
 export const isNativeChatToggleButton = (element: HTMLElement) => {
   const button = element.closest('button')
@@ -30,14 +35,13 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
   if (!isPlayerControls) return false
 
-  // Must be a toggle-style button (YouTube uses these for chat toggle)
-  const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
-  if (!isToggleViewModel) return false
-
   // Page must have chat functionality for this to be a chat toggle
   if (!hasChatOnPage()) return false
 
-  return true
+  if (button.closest('#show-hide-button, #close-button')) return true
+
+  const label = getButtonLabelText(button)
+  return isChatLabel(label)
 }
 
 export const isNativeChatTriggerTarget = (target: HTMLElement) => Boolean(target.closest(nativeChatTriggerSelectors))
