@@ -16,6 +16,19 @@ type UsePollingWithNavigateOptions = {
   stopOnSuccess?: boolean
 }
 
+/** Safely execute checkFn with error handling */
+const safeCheck = (checkFn: () => boolean): boolean => {
+  try {
+    return checkFn()
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
+      console.error('[usePollingWithNavigate] checkFn threw an error:', error)
+    }
+    return false
+  }
+}
+
 export const usePollingWithNavigate = ({
   checkFn,
   intervalMs = 1000,
@@ -29,7 +42,7 @@ export const usePollingWithNavigate = ({
 
     const startCheck = () => {
       // Immediate check on start - don't wait for first interval
-      const initialResult = checkFn()
+      const initialResult = safeCheck(checkFn)
       setResult(initialResult)
 
       // If immediate check succeeded and we should stop on success, don't start polling
@@ -40,7 +53,7 @@ export const usePollingWithNavigate = ({
       let count = 1 // Already did one check
       if (interval) window.clearInterval(interval)
       interval = window.setInterval(() => {
-        const nextResult = checkFn()
+        const nextResult = safeCheck(checkFn)
         setResult(nextResult)
         count += 1
         if (nextResult && stopOnSuccess) {

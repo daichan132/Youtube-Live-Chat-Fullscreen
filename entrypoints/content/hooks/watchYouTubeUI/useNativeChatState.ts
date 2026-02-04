@@ -11,30 +11,19 @@ export const useNativeChatState = (isFullscreen: boolean) => {
   isFullscreenRef.current = isFullscreen
 
   useEffect(() => {
-    // Debounce flags to prevent redundant updates when MutationObserver
-    // and ResizeObserver both fire for the same DOM change
+    // Single RAF for batched state updates - prevents excessive scheduling
+    // when MutationObserver and ResizeObserver both fire for the same DOM change
     let cancelled = false
-    let expandedRafId: number | null = null
-    let usableRafId: number | null = null
-    let expandedUpdatePending = false
-    let usableUpdatePending = false
+    let rafId: number | null = null
+    let updatePending = false
 
-    const updateNativeChatExpanded = () => {
-      if (expandedUpdatePending) return
-      expandedUpdatePending = true
-      expandedRafId = requestAnimationFrame(() => {
-        expandedUpdatePending = false
+    const scheduleUpdate = () => {
+      if (updatePending) return
+      updatePending = true
+      rafId = requestAnimationFrame(() => {
+        updatePending = false
         if (cancelled || isFullscreenRef.current) return
         setIsNativeChatExpanded(getNativeChatExpanded())
-      })
-    }
-
-    const updateNativeChatUsable = () => {
-      if (usableUpdatePending) return
-      usableUpdatePending = true
-      usableRafId = requestAnimationFrame(() => {
-        usableUpdatePending = false
-        if (cancelled || isFullscreenRef.current) return
         setIsNativeChatUsable(getNativeChatUsable())
       })
     }
@@ -47,7 +36,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     }
 
     // Immediately sync with DOM state when exiting fullscreen
-    updateNativeChatExpanded()
+    setIsNativeChatExpanded(getNativeChatExpanded())
     setIsNativeChatUsable(getNativeChatUsable())
     if (!document.body) return
 
@@ -67,8 +56,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     const attachObserver = () => {
       if (observer) observer.disconnect()
       observer = new MutationObserver(() => {
-        updateNativeChatExpanded()
-        updateNativeChatUsable()
+        scheduleUpdate()
       })
       observer.observe(getObserverTarget(), {
         subtree: true,
@@ -79,13 +67,11 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     }
 
     const attachResizeObserver = () => {
-      if (!resizeObserver) {
-        resizeObserver = new ResizeObserver(() => {
-          updateNativeChatUsable()
-        })
-      } else {
-        resizeObserver.disconnect()
-      }
+      // Always disconnect and create fresh observer to avoid tracking stale elements
+      if (resizeObserver) resizeObserver.disconnect()
+      resizeObserver = new ResizeObserver(() => {
+        scheduleUpdate()
+      })
       const secondary = document.querySelector('#secondary')
       const chatFrame = document.querySelector('ytd-live-chat-frame')
       if (secondary) resizeObserver.observe(secondary)
@@ -93,8 +79,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     }
 
     const handleNavigate = () => {
-      updateNativeChatExpanded()
-      updateNativeChatUsable()
+      scheduleUpdate()
       attachObserver()
       attachResizeObserver()
     }
@@ -105,8 +90,7 @@ export const useNativeChatState = (isFullscreen: boolean) => {
 
     return () => {
       cancelled = true
-      if (expandedRafId !== null) cancelAnimationFrame(expandedRafId)
-      if (usableRafId !== null) cancelAnimationFrame(usableRafId)
+      if (rafId !== null) cancelAnimationFrame(rafId)
       if (observer) observer.disconnect()
       if (resizeObserver) resizeObserver.disconnect()
       document.removeEventListener('yt-navigate-finish', handleNavigate)

@@ -114,8 +114,13 @@ export const useIframeLoader = () => {
     }
 
     const attachIframe = (chatIframe: HTMLIFrameElement) => {
+      // Guard: already attached to this exact iframe
       if (iframeRef.current === chatIframe) return true
-      if (iframeRef.current) detachIframe()
+
+      // Guard: different iframe - detach old one first
+      if (iframeRef.current && iframeRef.current !== chatIframe) {
+        detachIframe()
+      }
 
       iframeRef.current = chatIframe
       setIFrameElement(iframeRef.current)
@@ -125,8 +130,13 @@ export const useIframeLoader = () => {
         if (href && !href.includes('about:blank')) {
           iframeRef.current.src = href
         }
-      } catch {
-        // CORS restriction - use existing src
+      } catch (error) {
+        // Expected: CORS restriction when accessing cross-origin iframe
+        // Only log unexpected errors in development
+        if (import.meta.env.DEV && !(error instanceof DOMException)) {
+          // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
+          console.error('[useIframeLoader] Unexpected error accessing iframe:', error)
+        }
       }
 
       attachIframeToContainer(ref.current, chatIframe)
