@@ -6,9 +6,15 @@ interface UseNativeChatAutoDisableOptions {
   enabled: boolean
   nativeChatOpen: boolean
   setYTDLiveChat: (value: boolean) => void
+  autoDisableOnNativeOpen?: boolean
 }
 
-export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
+export const useNativeChatAutoDisable = ({
+  enabled,
+  nativeChatOpen,
+  setYTDLiveChat,
+  autoDisableOnNativeOpen = true,
+}: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
 
   useEffect(() => {
@@ -40,6 +46,7 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
     prevNativeChatOpenRef.current = nativeChatOpen
 
     if (!enabled) return
+    if (!autoDisableOnNativeOpen) return
 
     if (prev === null) {
       if (nativeChatOpen) {

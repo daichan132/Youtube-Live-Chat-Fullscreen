@@ -4,9 +4,8 @@ const getLiveChatIframe = () => {
   return document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
 }
 
-const getLiveChatDocument = () => {
-  const iframe = getLiveChatIframe()
-  const doc = iframe?.contentDocument ?? null
+const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
+  const doc = iframe.contentDocument ?? null
   const href = doc?.location?.href ?? ''
   if (!doc || !href || href.includes('about:blank')) return null
   return doc
@@ -28,21 +27,24 @@ const isLiveChatUnavailable = (doc: Document) => {
 }
 
 export const hasPlayableLiveChat = () => {
-  const doc = getLiveChatDocument()
-  if (!doc) {
-    const watchFlexy = document.querySelector('ytd-watch-flexy')
-    const watchGrid = document.querySelector('ytd-watch-grid')
-    return Boolean(
-      watchFlexy?.hasAttribute('live-chat-present') ||
-        watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-        watchGrid?.hasAttribute('live-chat-present') ||
-        watchGrid?.hasAttribute('live-chat-present-and-expanded'),
-    )
+  const iframe = getLiveChatIframe()
+  if (iframe) {
+    const doc = getLiveChatDocument(iframe)
+    if (!doc) return false
+    if (isLiveChatUnavailable(doc)) return false
+    const renderer = doc.querySelector('yt-live-chat-renderer')
+    if (!renderer) return false
+    const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+    if (!itemList) return false
+    return true
   }
-  if (isLiveChatUnavailable(doc)) return false
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  if (!renderer) return false
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-  if (!itemList) return false
-  return true
+
+  const watchFlexy = document.querySelector('ytd-watch-flexy')
+  const watchGrid = document.querySelector('ytd-watch-grid')
+  return Boolean(
+    watchFlexy?.hasAttribute('live-chat-present') ||
+      watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
+      watchGrid?.hasAttribute('live-chat-present') ||
+      watchGrid?.hasAttribute('live-chat-present-and-expanded'),
+  )
 }

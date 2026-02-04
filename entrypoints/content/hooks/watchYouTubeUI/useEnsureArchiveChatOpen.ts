@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 
 const isLiveNow = () => {
@@ -41,14 +42,21 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
     let attempts = 0
-    const maxAttempts = 60
+    const maxAttempts = 120
     const interval = window.setInterval(() => {
       if (isLiveNow()) {
         window.clearInterval(interval)
         return
       }
-      if (isNativeChatOpen()) {
+      if (hasPlayableLiveChat()) {
         window.clearInterval(interval)
+        return
+      }
+      if (isNativeChatOpen()) {
+        attempts += 1
+        if (attempts >= maxAttempts) {
+          window.clearInterval(interval)
+        }
         return
       }
       openNativeChat()

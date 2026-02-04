@@ -19,13 +19,14 @@ export const YTDLiveChat = () => {
     })),
   )
   const isFullscreen = useIsFullScreen()
-  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat)
+  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isShow)
   const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatOpen || isNativeChatExpanded
   useNativeChatAutoDisable({
     enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,
     setYTDLiveChat,
+    autoDisableOnNativeOpen: !isFullscreen,
   })
 
   return (
