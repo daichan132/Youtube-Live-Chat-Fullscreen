@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
 
 interface UseNativeChatAutoDisableOptions {
@@ -16,7 +17,7 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
       const target = event.target as HTMLElement | null
       if (!target) return
 
-      const shadowHost = document.getElementById('shadow-root-live-chat')
+      const shadowHost = document.getElementById(SHADOW_HOST_ID)
       if (shadowHost?.shadowRoot?.contains(target)) return
 
       const isToggleButton = isNativeChatToggleButton(target)

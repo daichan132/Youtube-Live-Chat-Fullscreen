@@ -1,10 +1,12 @@
+import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
+
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
 export const isNativeChatToggleButton = (element: HTMLElement) => {
   const button = element.closest('button')
   if (!button) return false
-  if (button.closest('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')) return false
+  if (button.closest(`#${SWITCH_BUTTON_CONTAINER_ID}`)) return false
 
   const label = `${button.getAttribute('aria-label') ?? ''} ${button.getAttribute('title') ?? ''} ${
     button.getAttribute('data-title-no-tooltip') ?? ''
