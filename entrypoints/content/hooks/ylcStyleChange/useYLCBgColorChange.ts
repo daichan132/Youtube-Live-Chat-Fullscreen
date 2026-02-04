@@ -20,7 +20,7 @@ const propertyListTransparent = [
 export const useYLCBgColorChange = () => {
   const { setProperty } = useYLCStylePropertyChange()
 
-  const changeIframeBackgroundColor = useCallback(
+  const changeColor = useCallback(
     (rgba: RGBColor) => {
       for (const property of propertyList) {
         setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
@@ -33,13 +33,6 @@ export const useYLCBgColorChange = () => {
       }
     },
     [setProperty],
-  )
-
-  const changeColor = useCallback(
-    (rgba: RGBColor) => {
-      changeIframeBackgroundColor(rgba)
-    },
-    [changeIframeBackgroundColor],
   )
 
   return { changeColor }

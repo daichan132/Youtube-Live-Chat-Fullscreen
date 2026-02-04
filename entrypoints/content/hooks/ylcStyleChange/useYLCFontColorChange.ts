@@ -9,7 +9,7 @@ const propertyLightList: string[] = ['--extension-yt-live-secondary-font-color']
 export const useYLCFontColorChange = () => {
   const { setProperty } = useYLCStylePropertyChange()
 
-  const changeIframeFontColor = useCallback(
+  const changeColor = useCallback(
     (rgba: RGBColor) => {
       for (const property of propertyList) {
         setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
@@ -20,13 +20,6 @@ export const useYLCFontColorChange = () => {
       }
     },
     [setProperty],
-  )
-
-  const changeColor = useCallback(
-    (rgba: RGBColor) => {
-      changeIframeFontColor(rgba)
-    },
-    [changeIframeFontColor],
   )
 
   return { changeColor }

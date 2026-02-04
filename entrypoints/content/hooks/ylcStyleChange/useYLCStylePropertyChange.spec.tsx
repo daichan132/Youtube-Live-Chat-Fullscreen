@@ -29,35 +29,11 @@ describe('useYLCStylePropertyChange', () => {
     expect(doc.documentElement.style.getPropertyValue('--test-color')).toBe('red')
   })
 
-  it('sets multiple CSS properties at once', () => {
-    const iframe = document.createElement('iframe') as HTMLIFrameElement
-    const doc = document.implementation.createHTMLDocument('')
-    Object.defineProperty(iframe, 'contentDocument', {
-      value: doc,
-      configurable: true,
-    })
-
-    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
-
-    const { result } = renderHook(() => useYLCStylePropertyChange())
-
-    act(() => {
-      result.current.setProperties({
-        '--primary': 'blue',
-        '--secondary': 'green',
-      })
-    })
-
-    expect(doc.documentElement.style.getPropertyValue('--primary')).toBe('blue')
-    expect(doc.documentElement.style.getPropertyValue('--secondary')).toBe('green')
-  })
-
   it('no-ops when iframe is missing', () => {
     const { result } = renderHook(() => useYLCStylePropertyChange())
 
     expect(() => {
       result.current.setProperty('--missing', 'value')
-      result.current.setProperties({ '--missing2': 'value2' })
     }).not.toThrow()
   })
 })

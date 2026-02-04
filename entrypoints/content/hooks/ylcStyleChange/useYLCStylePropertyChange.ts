@@ -22,22 +22,9 @@ export const useYLCStylePropertyChange = () => {
     [getIframeDocument],
   )
 
-  const setProperties = useCallback(
-    (propertyMap: Record<string, string>) => {
-      const iframeDocument = getIframeDocument()
-      if (!iframeDocument) return
-
-      for (const [property, value] of Object.entries(propertyMap)) {
-        iframeDocument.style.setProperty(property, value)
-      }
-    },
-    [getIframeDocument],
-  )
-
   return {
     getIframeDocument,
     getIframeWindow,
     setProperty,
-    setProperties,
   }
 }
