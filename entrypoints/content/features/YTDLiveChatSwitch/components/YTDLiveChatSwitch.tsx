@@ -14,6 +14,7 @@ export const YTDLiveChatSwitch = () => {
     const newYtdLiveChat = !ytdLiveChat
     setYTDLiveChat(newYtdLiveChat)
   }, [ytdLiveChat, setYTDLiveChat])
+  const isActive = ytdLiveChat
 
   return (
     <button
@@ -28,7 +29,7 @@ export const YTDLiveChatSwitch = () => {
         width: '100%',
         position: 'relative',
         cursor: 'pointer',
-        opacity: 0.9,
+        opacity: isActive ? 1 : 0.6,
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
       aria-pressed={ytdLiveChat}
@@ -38,7 +39,7 @@ export const YTDLiveChatSwitch = () => {
       <IoChatboxSharp
         size={'50%'}
         style={{
-          color: '#fff',
+          color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)',
           position: 'absolute',
           top: '50%',
           left: '50%',
