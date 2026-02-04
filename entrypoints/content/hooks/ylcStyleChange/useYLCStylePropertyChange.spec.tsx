@@ -17,6 +17,10 @@ describe('useYLCStylePropertyChange', () => {
       value: doc,
       configurable: true,
     })
+    Object.defineProperty(iframe, 'isConnected', {
+      value: true,
+      configurable: true,
+    })
 
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
@@ -34,6 +38,10 @@ describe('useYLCStylePropertyChange', () => {
     const doc = document.implementation.createHTMLDocument('')
     Object.defineProperty(iframe, 'contentDocument', {
       value: doc,
+      configurable: true,
+    })
+    Object.defineProperty(iframe, 'isConnected', {
+      value: true,
       configurable: true,
     })
 

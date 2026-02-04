@@ -7,12 +7,14 @@ type PropertyEntry = readonly [string, string]
 export const useYLCStylePropertyChange = () => {
   const getIframeDocument = useCallback(() => {
     const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    return iframeElement?.contentDocument?.documentElement
+    if (!iframeElement?.isConnected) return undefined
+    return iframeElement.contentDocument?.documentElement
   }, [])
 
   const getIframeWindow = useCallback(() => {
     const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
-    return iframeElement?.contentWindow
+    if (!iframeElement?.isConnected) return undefined
+    return iframeElement.contentWindow
   }, [])
 
   const setProperties = useCallback(

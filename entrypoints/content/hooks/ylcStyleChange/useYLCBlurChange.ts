@@ -11,7 +11,8 @@ export const useYLCBlurChange = () => {
 
   const changeBlur = useCallback(
     (blur: number) => {
-      const body = iframeElement?.contentDocument?.body
+      if (!iframeElement?.isConnected) return
+      const body = iframeElement.contentDocument?.body
       if (body) {
         body.style.backdropFilter = `blur(${blur}px)`
         body.style.setProperty('-webkit-backdrop-filter', `blur(${blur}px)`)

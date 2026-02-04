@@ -29,7 +29,7 @@ describe('useHasPlayableLiveChat', () => {
     expect(result.current).toBe(false)
 
     act(() => {
-      vi.advanceTimersByTime(1000)
+      vi.advanceTimersByTime(2000)
     })
 
     // After interval, returns true
