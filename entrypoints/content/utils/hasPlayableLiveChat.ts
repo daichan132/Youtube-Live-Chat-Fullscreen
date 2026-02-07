@@ -1,4 +1,5 @@
 import { getYouTubeVideoId } from './getYouTubeVideoId'
+import { isYouTubeLiveNow } from './isYouTubeLiveNow'
 
 export const getLiveChatIframe = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
@@ -75,6 +76,10 @@ const hasLiveChatAttributes = () => {
   )
 }
 
+const hasLiveChatDomContainer = () => {
+  return Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
+}
+
 export const hasPlayableLiveChat = () => {
   const iframe = getLiveChatIframe()
   if (iframe) {
@@ -85,6 +90,7 @@ export const hasPlayableLiveChat = () => {
       const currentVideoId = getYouTubeVideoId()
       const iframeVideoId = getLiveChatVideoIdFromIframe(iframe)
       if (currentVideoId && iframeVideoId && iframeVideoId !== currentVideoId) return false
+      if (isYouTubeLiveNow()) return true
       return hasLiveChatAttributes()
     }
     if (!isLiveChatDocForCurrentVideo(doc)) return false
@@ -96,5 +102,7 @@ export const hasPlayableLiveChat = () => {
     return true
   }
 
-  return hasLiveChatAttributes()
+  if (hasLiveChatAttributes()) return true
+  if (isYouTubeLiveNow() && hasLiveChatDomContainer()) return true
+  return false
 }

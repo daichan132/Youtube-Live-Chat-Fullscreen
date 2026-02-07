@@ -1,5 +1,5 @@
 import { expect, test } from './fixtures'
-import { acceptYouTubeConsent } from './utils/liveUrl'
+import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 
 const isNativeChatUsable = () => {
@@ -36,13 +36,17 @@ const isNativeChatUsable = () => {
 test('restore native chat after fullscreen toggle', async ({ page }) => {
   test.setTimeout(120000)
 
-  const liveUrl = process.env.YLC_LIVE_URL
+  const liveUrl = process.env.YLC_LIVE_URL ?? (await findLiveUrlWithChat(page))
   if (!liveUrl) {
-    test.skip(true, 'Set YLC_LIVE_URL to run live tests.')
+    test.skip(true, 'No live URL with chat found. Set YLC_LIVE_URL to override.')
     return
   }
   await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
   await acceptYouTubeConsent(page)
+  const liveNow = await isWatchPageLiveNow(page)
+  if (!liveNow) {
+    test.skip(true, 'Selected URL is not live now. Provide a currently live stream URL.')
+  }
   await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
 
   await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)

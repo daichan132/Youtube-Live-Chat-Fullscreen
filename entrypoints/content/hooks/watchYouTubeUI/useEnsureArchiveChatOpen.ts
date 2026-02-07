@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { openNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
@@ -17,13 +18,6 @@ const MAX_RETRY_DELAY_MS = 3000
 const INITIAL_PHASE_ATTEMPTS = 10 // First 10 attempts: 500ms intervals
 const MEDIUM_PHASE_ATTEMPTS = 20 // Next 10 attempts: 1500ms intervals
 const NO_CHAT_EARLY_EXIT_MS = 15000 // Give up early if no chat DOM after 15 seconds
-
-/** Checks if the current video is a live stream (not an archive) */
-const isLiveNow = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  return Boolean(watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now'))
-}
 
 /** Checks if the page has any chat-related DOM elements */
 const hasChatFeature = () => {
@@ -114,7 +108,7 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         return
       }
       // Live streams don't need this - they handle chat differently
-      if (isLiveNow()) {
+      if (isYouTubeLiveNow()) {
         debugLog('Stopping: detected live stream')
         stopEnsure()
         return

@@ -92,4 +92,23 @@ describe('hasPlayableLiveChat', () => {
 
     expect(hasPlayableLiveChat()).toBe(false)
   })
+
+  it('returns true for live stream UI signal even when iframe document is not ready', () => {
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('should-stamp-chat', '')
+    document.body.appendChild(watchFlexy)
+
+    const chatHost = document.createElement('ytd-live-chat-frame')
+    document.body.appendChild(chatHost)
+
+    const timeDisplay = document.createElement('div')
+    timeDisplay.className = 'ytp-time-display ytp-live'
+    document.body.appendChild(timeDisplay)
+
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    chatHost.appendChild(iframe)
+
+    expect(hasPlayableLiveChat()).toBe(true)
+  })
 })
