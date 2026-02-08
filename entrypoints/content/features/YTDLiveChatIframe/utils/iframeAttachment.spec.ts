@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
-import type { ChatSource } from './chatSourceResolver'
 import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from './iframeAttachment'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({

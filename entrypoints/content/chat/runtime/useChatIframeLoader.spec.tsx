@@ -1,10 +1,10 @@
 import { render, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
+import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 vi.mock('@/entrypoints/content', () => ({}))
-
-import { useIframeLoader } from './useIframeLoader'
 
 const setLocation = (path: string) => {
   const base = window.location.origin
@@ -51,8 +51,8 @@ const createChatIframe = (
   return iframe
 }
 
-const TestComponent = () => {
-  const { ref } = useIframeLoader()
+const TestComponent = ({ mode }: { mode: ChatMode }) => {
+  const { ref } = useChatIframeLoader(mode)
   return <div data-testid='container' ref={ref} />
 }
 
@@ -64,13 +64,13 @@ beforeEach(() => {
   useYTDLiveChatNoLsStore.setState(noLsStoreBaseState, true)
 })
 
-describe('useIframeLoader', () => {
+describe('useChatIframeLoader', () => {
   it('borrows archive iframe when native chat matches current video and is playable', async () => {
     const frame = attachLiveChatFrame()
     const iframe = createChatIframe('video-a')
     frame.appendChild(iframe)
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='archive' />)
     const container = getByTestId('container')
 
     await waitFor(() => {
@@ -85,7 +85,7 @@ describe('useIframeLoader', () => {
     const iframe = createChatIframe('video-a')
     frame.appendChild(iframe)
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='archive' />)
     const container = getByTestId('container')
 
     await waitFor(() => {
@@ -101,6 +101,29 @@ describe('useIframeLoader', () => {
     })
   })
 
+  it('detaches on video transition even when yt-navigate-finish is not fired', async () => {
+    const frame = attachLiveChatFrame()
+    const iframe = createChatIframe('video-a')
+    frame.appendChild(iframe)
+
+    const { getByTestId } = render(<TestComponent mode='archive' />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+    })
+
+    setLocation('/watch?v=video-b')
+
+    await waitFor(
+      () => {
+        expect(container.querySelector('iframe')).toBeNull()
+        expect(frame.contains(iframe)).toBe(true)
+      },
+      { timeout: 4000 },
+    )
+  })
+
   it('does not reattach stale archive iframe href after navigation until source changes', async () => {
     const frame = attachLiveChatFrame()
     const staleHref = 'https://www.youtube.com/live_chat_replay?continuation=stale-video-a'
@@ -110,7 +133,7 @@ describe('useIframeLoader', () => {
     })
     frame.appendChild(iframe)
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='archive' />)
     const container = getByTestId('container')
 
     await waitFor(() => {
@@ -142,7 +165,7 @@ describe('useIframeLoader', () => {
   it('attaches when playable archive iframe appears later via MutationObserver', async () => {
     const frame = attachLiveChatFrame()
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='archive' />)
     const container = getByTestId('container')
 
     expect(container.querySelector('iframe')).toBeNull()
@@ -165,7 +188,7 @@ describe('useIframeLoader', () => {
     watchFlexy.setAttribute('video-id', 'video-a')
     document.body.appendChild(watchFlexy)
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='live' />)
     const container = getByTestId('container')
 
     await waitFor(() => {
@@ -193,7 +216,7 @@ describe('useIframeLoader', () => {
     })
     frame.appendChild(iframe)
 
-    const { getByTestId } = render(<TestComponent />)
+    const { getByTestId } = render(<TestComponent mode='archive' />)
     const container = getByTestId('container')
 
     expect(container.contains(iframe)).toBe(false)
@@ -227,7 +250,7 @@ describe('useIframeLoader', () => {
     })
 
     try {
-      render(<TestComponent />)
+      render(<TestComponent mode='live' />)
 
       await waitFor(() => {
         const iframe = useYTDLiveChatNoLsStore.getState().iframeElement

@@ -1,6 +1,6 @@
+import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
-import type { ChatSource } from './chatSourceResolver'
 
 const YLC_OWNED_ATTR = 'data-ylc-owned'
 const YLC_CHAT_ATTR = 'data-ylc-chat'

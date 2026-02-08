@@ -4,7 +4,7 @@ import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
-import { useEnsureArchiveChatOpen } from './useEnsureArchiveChatOpen'
+import { useEnsureArchiveNativeChatOpen } from './useEnsureArchiveNativeChatOpen'
 
 vi.mock('@/entrypoints/content/utils/hasPlayableLiveChat', () => ({
   getLiveChatIframe: vi.fn(),
@@ -25,7 +25,7 @@ const isYouTubeLiveNowMock = vi.mocked(isYouTubeLiveNow)
 const openArchiveNativeChatPanelMock = vi.mocked(openArchiveNativeChatPanel)
 const noLsStoreBaseState = useYTDLiveChatNoLsStore.getState()
 
-describe('useEnsureArchiveChatOpen', () => {
+describe('useEnsureArchiveNativeChatOpen', () => {
   let fullscreenElement: Element | null = null
 
   beforeEach(() => {
@@ -58,7 +58,7 @@ describe('useEnsureArchiveChatOpen', () => {
 
   it('waits until fullscreen is active before opening native chat', () => {
     fullscreenElement = null
-    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
     expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
 
@@ -80,7 +80,7 @@ describe('useEnsureArchiveChatOpen', () => {
   it('does nothing on live streams', () => {
     isYouTubeLiveNowMock.mockReturnValue(true)
 
-    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
     expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
 
@@ -93,7 +93,7 @@ describe('useEnsureArchiveChatOpen', () => {
   })
 
   it('retries opening with cooldown while archive chat is not playable', () => {
-    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
     expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
 
@@ -114,7 +114,7 @@ describe('useEnsureArchiveChatOpen', () => {
   it('stops retrying once archive chat becomes playable', () => {
     isArchiveChatPlayableMock.mockReturnValueOnce(false).mockReturnValue(true)
 
-    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
     expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
 
@@ -134,7 +134,7 @@ describe('useEnsureArchiveChatOpen', () => {
       iframeElement: borrowedIframe,
     })
 
-    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
     expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
 

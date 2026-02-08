@@ -1,4 +1,4 @@
-import type { IframeLoadState } from './chatSourceResolver'
+import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
 import { getNonBlankIframeHref } from './iframeAttachment'
 
 const STYLE_MARKER_ATTR = 'data-ylc-style-injected'

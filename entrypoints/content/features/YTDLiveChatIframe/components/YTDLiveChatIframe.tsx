@@ -2,13 +2,17 @@ import { useId, useRef } from 'react'
 
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
-
+import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
+import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import { useIframeLoader } from '../hooks/useIframeLoader'
 
-export const YTDLiveChatIframe = () => {
+type YTDLiveChatIframeProps = {
+  mode: ChatMode
+}
+
+export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const id = useId()
-  const { ref } = useIframeLoader()
+  const { ref } = useChatIframeLoader(mode)
   const nodeRef = useRef(null)
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor)
   const fontColorRef = useRef(useYTDLiveChatStore.getState().fontColor)

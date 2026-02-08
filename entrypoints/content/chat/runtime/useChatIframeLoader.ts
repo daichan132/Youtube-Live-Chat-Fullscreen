@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react'
-import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
+import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
+import { resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import iframeStyles from '../styles/iframe.css?inline'
-import { type IframeLoadState, resolveChatSource } from '../utils/chatSourceResolver'
+import iframeStyles from '../../features/YTDLiveChatIframe/styles/iframe.css?inline'
 import {
   attachIframeToContainer,
   detachAttachedIframe,
@@ -13,13 +13,14 @@ import {
   getNonBlankIframeHref,
   isManagedLiveIframe,
   resolveSourceIframe,
-} from '../utils/iframeAttachment'
-import { createIframeInitializer } from '../utils/iframeInitializer'
+} from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
+import { createIframeInitializer } from '../../features/YTDLiveChatIframe/utils/iframeInitializer'
+import type { ChatMode, IframeLoadState } from './types'
 
 const debugLog = (message: string, details?: Record<string, unknown>) => {
   if (!import.meta.env.DEV) return
   // biome-ignore lint/suspicious/noConsole: Intentional debug logging for troubleshooting
-  console.debug(`[useIframeLoader] ${message}`, details ?? '')
+  console.debug(`[useChatIframeLoader] ${message}`, details ?? '')
 }
 
 const LOAD_STATE_ORDER: Record<IframeLoadState, number> = {
@@ -30,7 +31,26 @@ const LOAD_STATE_ORDER: Record<IframeLoadState, number> = {
   error: 4,
 }
 
-export const useIframeLoader = () => {
+const TRANSITION_CHECK_INTERVAL_MS = 1000
+
+const getPageVideoIdFromUrl = () => {
+  try {
+    const url = new URL(window.location.href)
+    const queryVideoId = url.searchParams.get('v')
+    if (queryVideoId) return queryVideoId
+    const livePathMatch = url.pathname.match(/\/live\/([a-zA-Z0-9_-]+)/)
+    if (livePathMatch?.[1]) return livePathMatch[1]
+  } catch {
+    // Ignore invalid URL parsing and fall back to DOM-derived ID.
+  }
+  return null
+}
+
+const getCurrentPageVideoId = () => getPageVideoIdFromUrl() ?? getYouTubeVideoId()
+
+const isArchiveMode = (mode: ChatMode) => mode === 'archive'
+
+export const useChatIframeLoader = (mode: ChatMode) => {
   const ref = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const loadStateRef = useRef<IframeLoadState>('idle')
@@ -46,12 +66,10 @@ export const useIframeLoader = () => {
   )
   const changeYLCStyle = useChangeYLCStyle()
 
-  // Use refs to store callbacks to avoid dependency changes triggering effect re-runs
   const changeYLCStyleRef = useRef(changeYLCStyle)
   const setIsIframeLoadedRef = useRef(setIsIframeLoaded)
   const setIsDisplayRef = useRef(setIsDisplay)
 
-  // Keep refs up to date
   changeYLCStyleRef.current = changeYLCStyle
   setIsIframeLoadedRef.current = setIsIframeLoaded
   setIsDisplayRef.current = setIsDisplay
@@ -88,7 +106,7 @@ export const useIframeLoader = () => {
     }
 
     const updateAttachedMetadata = (iframe: HTMLIFrameElement, href: string) => {
-      lastAttachedPageVideoIdRef.current = getYouTubeVideoId()
+      lastAttachedPageVideoIdRef.current = getCurrentPageVideoId()
       lastAttachedHrefRef.current = href || getNonBlankIframeHref(iframe)
     }
 
@@ -120,7 +138,6 @@ export const useIframeLoader = () => {
       })
     }
 
-    // Reset stale state from previous sessions before resolving sources.
     setIFrameElement(null)
     setIsIframeLoadedRef.current(false)
     setIsDisplayRef.current(false)
@@ -167,18 +184,30 @@ export const useIframeLoader = () => {
       resetLoadState()
     }
 
+    const resolveSourceByMode = () => {
+      if (mode === 'live') {
+        return resolveLiveSource(getCurrentPageVideoId(), iframeRef.current)
+      }
+      if (mode === 'archive') {
+        return resolveArchiveSource(iframeRef.current, {
+          allowBorrowedCurrent: !pendingTransitionGuardRef.current,
+        })
+      }
+      return null
+    }
+
     const syncChatSource = () => {
-      const source = resolveChatSource(iframeRef.current, {
-        allowBorrowedCurrent: !pendingTransitionGuardRef.current,
-      })
+      const source = resolveSourceByMode()
       if (!source) {
         if (iframeRef.current) {
           debugLog('source lost, detaching iframe', {
+            mode,
             managedLive: isManagedLiveIframe(iframeRef.current),
           })
           detachCurrentIframe()
         } else {
           debugLog('skip source (not resolved)', {
+            mode,
             hasCurrentIframe: Boolean(iframeRef.current),
           })
         }
@@ -188,8 +217,12 @@ export const useIframeLoader = () => {
       const nextIframe = resolveSourceIframe(source, iframeRef.current)
       const href = getNonBlankIframeHref(nextIframe)
       const previousAttachedHref = lastAttachedHrefRef.current
+      const previousPageVideoId = lastAttachedPageVideoIdRef.current
+      const currentPageVideoId = getCurrentPageVideoId()
+      const hasPageVideoChanged = Boolean(previousPageVideoId && currentPageVideoId && previousPageVideoId !== currentPageVideoId)
       if (!href) {
         debugLog('skip source (iframe not ready)', {
+          mode,
           sourceKind: source.kind,
           src: nextIframe.getAttribute('src') ?? nextIframe.src ?? '',
           docHref: getIframeDocumentHref(nextIframe),
@@ -197,10 +230,19 @@ export const useIframeLoader = () => {
         return false
       }
 
-      if (source.kind === 'archive_borrow' && pendingTransitionGuardRef.current && previousAttachedHref && href === previousAttachedHref) {
+      if (
+        source.kind === 'archive_borrow' &&
+        previousAttachedHref &&
+        href === previousAttachedHref &&
+        (pendingTransitionGuardRef.current || hasPageVideoChanged)
+      ) {
         debugLog('stale source rejected', {
+          mode,
           href,
           sourceKind: source.kind,
+          pendingTransitionGuard: pendingTransitionGuardRef.current,
+          previousPageVideoId,
+          currentPageVideoId,
         })
         return false
       }
@@ -208,6 +250,7 @@ export const useIframeLoader = () => {
       const container = ref.current
       if (!container) {
         debugLog('skip source (container not ready)', {
+          mode,
           sourceKind: source.kind,
           href,
         })
@@ -228,6 +271,7 @@ export const useIframeLoader = () => {
           })
         }
         debugLog('reuse attached iframe', {
+          mode,
           sourceKind: source.kind,
           href,
         })
@@ -244,6 +288,7 @@ export const useIframeLoader = () => {
       setIFrameElement(nextIframe)
 
       debugLog('attach iframe', {
+        mode,
         sourceKind: source.kind,
         src: nextIframe.getAttribute('src') ?? nextIframe.src ?? '',
         docHref: getIframeDocumentHref(nextIframe),
@@ -262,9 +307,49 @@ export const useIframeLoader = () => {
         })
       }
 
-      // Managed live iframes can fire load before listener attachment; initialize fail-open eagerly.
       if (getIframeDocumentHref(nextIframe) || isManagedLiveIframe(nextIframe)) {
         handleLoaded()
+      }
+
+      return true
+    }
+
+    const handleVideoTransition = (trigger: 'yt-navigate-finish' | 'video-id-watch') => {
+      if (!isArchiveMode(mode)) return false
+
+      const previousVideoId = lastAttachedPageVideoIdRef.current
+      const currentVideoId = getCurrentPageVideoId()
+      if (!previousVideoId || !currentVideoId || previousVideoId === currentVideoId) {
+        return false
+      }
+
+      const currentAttached = iframeRef.current
+      if (currentAttached) {
+        const currentHref =
+          getNonBlankIframeHref(currentAttached) ||
+          getIframeDocumentHref(currentAttached) ||
+          currentAttached.getAttribute('src') ||
+          currentAttached.src ||
+          ''
+        if (currentHref) {
+          lastAttachedHrefRef.current = currentHref
+        }
+      }
+
+      pendingTransitionGuardRef.current = true
+      lastAttachedPageVideoIdRef.current = currentVideoId
+      debugLog('transition-guard armed', {
+        mode,
+        fromVideoId: previousVideoId,
+        toVideoId: currentVideoId,
+        lastAttachedHref: lastAttachedHrefRef.current,
+        trigger,
+      })
+
+      detachCurrentIframe()
+      if (!syncChatSource()) {
+        setupObserver()
+        startRetry()
       }
 
       return true
@@ -330,16 +415,7 @@ export const useIframeLoader = () => {
     }
 
     const handleNavigate = () => {
-      const previousVideoId = lastAttachedPageVideoIdRef.current
-      const currentVideoId = getYouTubeVideoId()
-      if (previousVideoId && currentVideoId && previousVideoId !== currentVideoId) {
-        pendingTransitionGuardRef.current = true
-        debugLog('transition-guard armed', {
-          fromVideoId: previousVideoId,
-          toVideoId: currentVideoId,
-          lastAttachedHref: lastAttachedHrefRef.current,
-        })
-      }
+      if (handleVideoTransition('yt-navigate-finish')) return
       detachCurrentIframe()
       if (!syncChatSource()) {
         setupObserver()
@@ -347,11 +423,16 @@ export const useIframeLoader = () => {
       }
     }
 
+    const transitionCheckInterval = window.setInterval(() => {
+      if (!iframeRef.current || !isArchiveMode(mode)) return
+      handleVideoTransition('video-id-watch')
+    }, TRANSITION_CHECK_INTERVAL_MS)
+
     const handleFullscreenChange = () => {
       if (document.fullscreenElement !== null) return
       if (!iframeRef.current) return
       debugLog('fullscreen exited, detaching current iframe')
-      detachCurrentIframe({ ensureNativeVisible: true })
+      detachCurrentIframe({ ensureNativeVisible: mode === 'archive' })
     }
 
     document.addEventListener('yt-navigate-finish', handleNavigate)
@@ -362,13 +443,13 @@ export const useIframeLoader = () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
       observer?.disconnect()
       stopRetry()
+      window.clearInterval(transitionCheckInterval)
       initializer.cleanup()
       detachCurrentIframe({
-        ensureNativeVisible: document.fullscreenElement === null,
+        ensureNativeVisible: document.fullscreenElement === null && mode === 'archive',
       })
     }
-    // Effect only needs to run once on mount - callbacks are accessed via stable refs.
-  }, [setIFrameElement])
+  }, [mode, setIFrameElement])
 
   return { ref }
 }

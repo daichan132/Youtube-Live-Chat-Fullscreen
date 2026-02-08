@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { IframeLoadState } from './chatSourceResolver'
+import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
 import { createIframeInitializer } from './iframeInitializer'
 
 const createChatDoc = () => document.implementation.createHTMLDocument('chat') as Document

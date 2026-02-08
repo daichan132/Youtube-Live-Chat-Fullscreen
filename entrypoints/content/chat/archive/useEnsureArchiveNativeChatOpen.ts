@@ -16,7 +16,7 @@ const debugLog = (message: string, details?: Record<string, unknown>) => {
   console.debug(`[YLC Archive Chat] ${message}`, details ?? '')
 }
 
-export const useEnsureArchiveChatOpen = (enabled: boolean) => {
+export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
 
