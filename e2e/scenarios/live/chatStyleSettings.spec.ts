@@ -1,6 +1,6 @@
-import { expect, test } from './fixtures'
-import { findLiveUrlWithChat } from './utils/liveUrl'
-import { switchButtonSelector } from './utils/selectors'
+import { expect, test } from '../../fixtures'
+import { findLiveUrlWithChat } from '../../utils/liveUrl'
+import { switchButtonSelector } from '../../utils/selectors'
 
 const hasOverlayIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')

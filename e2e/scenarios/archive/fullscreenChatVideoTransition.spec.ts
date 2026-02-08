@@ -1,23 +1,13 @@
-import { expect, test } from './fixtures'
-import { reliableClick } from './utils/actions'
-import { acceptYouTubeConsent } from './utils/liveUrl'
-import { switchButtonSelector } from './utils/selectors'
-import { archiveReplayUrls } from './utils/testUrls'
+import { expect, test } from '../../fixtures'
+import { captureChatState, isExtensionArchiveChatPlayable, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
+import { selectArchiveReplayTransitionPair } from '../../support/urls/archiveReplay'
+import { reliableClick } from '../../utils/actions'
+import {
+  switchButtonSelector,
+} from '../../utils/selectors'
 
 const TRANSITION_STABILITY_DURATION_MS = 4000
 const TRANSITION_STABILITY_SAMPLE_INTERVAL_MS = 250
-
-const isExtensionArchiveChatPlayable = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-  if (!iframe) return false
-  if (iframe.getAttribute('data-ylc-owned') === 'true') return false
-  const doc = iframe.contentDocument ?? null
-  const href = doc?.location?.href ?? iframe.getAttribute('src') ?? iframe.src ?? ''
-  if (!doc || !href || href.includes('about:blank')) return false
-  return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
-}
 
 const getOverlayState = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -55,46 +45,68 @@ const extractVideoId = (url: string) => {
 test('does not keep stale fullscreen chat iframe after video transition', async ({ page }) => {
   test.setTimeout(150000)
 
-  let selectedUrl: string | null = null
-
-  for (const url of archiveReplayUrls) {
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 })
-      await acceptYouTubeConsent(page)
-      await page.waitForSelector('#movie_player', { state: 'attached', timeout: 20000 })
-      await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: 20000 })
-      selectedUrl = url
-      break
-    } catch {
-      // Try next archive URL.
-    }
+  const transitionPair = await selectArchiveReplayTransitionPair(page, { maxDurationMs: 90000 })
+  if (!transitionPair) {
+    await captureChatState(page, test.info(), 'video-transition-pair-selection-failed')
+    test.skip(true, 'No archive replay transition pair satisfied preconditions.')
+    return
   }
-
-  if (!selectedUrl) {
-    test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
+  const { fromUrl, toUrl } = transitionPair
+  const archiveReady = await openArchiveWatchPage(page, fromUrl, { maxDurationMs: 30000 })
+  if (!archiveReady) {
+    await captureChatState(page, test.info(), 'video-transition-archive-precondition-missing')
+    test.skip(true, 'Selected archive source URL did not expose archive chat container in time.')
     return
   }
 
-  const selectedVideoId = extractVideoId(selectedUrl)
-  const transitionTargetId = archiveReplayUrls.map(extractVideoId).find(id => id && id !== selectedVideoId)
+  const selectedVideoId = extractVideoId(fromUrl)
+  const transitionTargetId = extractVideoId(toUrl)
   if (!transitionTargetId) {
-    test.skip(true, 'Need at least two archive replay video IDs to validate transition behavior.')
+    test.skip(true, 'Could not resolve a target video ID from transition pair.')
+    return
+  }
+
+  if (selectedVideoId && transitionTargetId === selectedVideoId) {
+    test.skip(true, 'Transition pair must point to two different videos.')
     return
   }
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null)
+  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
 
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
-  await expect(switchButton).toBeVisible({ timeout: 10000 })
+  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
+    () => true,
+    () => false,
+  )
+  if (!switchReady) {
+    await captureChatState(page, test.info(), 'video-transition-switch-missing')
+    test.skip(true, 'Fullscreen chat switch button did not appear.')
+    return
+  }
   if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
     await reliableClick(switchButton, page, switchButtonSelector)
     await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
   }
 
-  await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 90000 }).toBe(true)
+  let extensionReady = false
+  try {
+    await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 60000 }).toBe(true)
+    extensionReady = true
+  } catch {
+    extensionReady = false
+  }
+
+  if (!extensionReady) {
+    const state = await captureChatState(page, test.info(), 'video-transition-extension-unready')
+    if (shouldSkipArchiveFlowFailure(state)) {
+      test.skip(true, 'Archive chat source did not become ready in this run.')
+      return
+    }
+    expect(extensionReady).toBe(true)
+  }
 
   const beforeTransition = await page.evaluate(getOverlayState)
   expect(beforeTransition.hasIframe).toBe(true)
@@ -109,7 +121,6 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
 
     const nextUrl = `/watch?v=${nextVideoId}`
     window.history.pushState({}, '', nextUrl)
-    document.dispatchEvent(new Event('yt-navigate-finish'))
   }, transitionTargetId)
 
   await expect

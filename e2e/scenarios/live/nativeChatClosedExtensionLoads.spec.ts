@@ -1,7 +1,7 @@
-import { expect, test } from './fixtures'
-import { reliableClick } from './utils/actions'
-import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from './utils/liveUrl'
-import { switchButtonSelector } from './utils/selectors'
+import { expect, test } from '../../fixtures'
+import { reliableClick } from '../../utils/actions'
+import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from '../../utils/liveUrl'
+import { switchButtonSelector } from '../../utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null

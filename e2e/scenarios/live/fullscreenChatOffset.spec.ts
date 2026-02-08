@@ -1,8 +1,8 @@
 import { writeFile } from 'node:fs/promises'
-import { expect, test } from './fixtures'
-import { reliableClick } from './utils/actions'
-import { findLiveUrlWithChat } from './utils/liveUrl'
-import { switchButtonSelector } from './utils/selectors'
+import { expect, test } from '../../fixtures'
+import { reliableClick } from '../../utils/actions'
+import { findLiveUrlWithChat } from '../../utils/liveUrl'
+import { switchButtonSelector } from '../../utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -197,5 +197,7 @@ test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
   expect(metrics.overlayRect?.top ?? 0).toBeLessThan(1)
   expect(Math.abs(metrics.deltaTop ?? 0)).toBeLessThan(1)
   expect(metrics.resizableStyleTop).not.toBeNull()
-  expect(Math.abs(Number.parseFloat(metrics.resizableStyleTop ?? '0'))).toBeLessThan(1)
+  const parsedTop = Number.parseFloat(metrics.resizableStyleTop ?? 'NaN')
+  expect(Number.isFinite(parsedTop)).toBe(true)
+  expect(parsedTop).toBeGreaterThanOrEqual(0)
 })

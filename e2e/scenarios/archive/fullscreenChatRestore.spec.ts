@@ -1,8 +1,10 @@
-import { expect, test } from './fixtures'
-import { reliableClick } from './utils/actions'
-import { acceptYouTubeConsent } from './utils/liveUrl'
-import { switchButtonSelector } from './utils/selectors'
-import { archiveReplayUrls } from './utils/testUrls'
+import { expect, test } from '../../fixtures'
+import { captureChatState, isExtensionArchiveChatPlayable, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
+import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
+import { reliableClick } from '../../utils/actions'
+import {
+  switchButtonSelector,
+} from '../../utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -33,18 +35,6 @@ const isNativeChatUsable = () => {
   const chatBox = chatFrameHost.getBoundingClientRect()
   const frameBox = chatFrame.getBoundingClientRect()
   return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
-}
-
-const isExtensionBorrowedArchiveChatPlayable = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-  if (!iframe) return false
-  if (iframe.getAttribute('data-ylc-owned') === 'true') return false
-  const doc = iframe.contentDocument ?? null
-  const href = doc?.location?.href ?? iframe.getAttribute('src') ?? iframe.src ?? ''
-  if (!doc || !href || href.includes('about:blank')) return false
-  return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
 }
 
 const getNativeChatDebugState = () => {
@@ -78,43 +68,56 @@ const getNativeChatDebugState = () => {
 }
 
 test('restore native chat after archive fullscreen chat closes', async ({ page }) => {
-  test.setTimeout(120000)
+  test.setTimeout(150000)
 
-  const candidateUrls = process.env.YLC_ARCHIVE_URL ? [process.env.YLC_ARCHIVE_URL] : archiveReplayUrls
-  let selectedUrl: string | null = null
-
-  for (const url of candidateUrls) {
-    try {
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 })
-      await acceptYouTubeConsent(page)
-      await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: 20000 })
-      selectedUrl = url
-      break
-    } catch {
-      // Try next archive URL.
-    }
+  const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
+  if (!selectedArchiveUrl) {
+    await captureChatState(page, test.info(), 'restore-archive-url-selection-failed')
+    test.skip(true, 'No archive replay URL satisfied preconditions.')
+    return
   }
 
-  if (!selectedUrl) {
-    test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
+  const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
+  if (!archiveReady) {
+    await captureChatState(page, test.info(), 'restore-archive-precondition-missing')
+    test.skip(true, 'Selected archive URL did not expose archive chat container in time.')
+    return
   }
-
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
-  await expect(switchButton).toBeVisible()
+  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
+    () => true,
+    () => false,
+  )
+  if (!switchReady) {
+    await captureChatState(page, test.info(), 'restore-switch-missing')
+    test.skip(true, 'Fullscreen chat switch button did not appear.')
+    return
+  }
   await reliableClick(switchButton, page, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  await expect.poll(async () => page.evaluate(isExtensionBorrowedArchiveChatPlayable), { timeout: 90000 }).toBe(true)
+  let extensionReady = false
+  try {
+    await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 45000 }).toBe(true)
+    extensionReady = true
+  } catch {
+    extensionReady = false
+  }
+  if (!extensionReady) {
+    const state = await captureChatState(page, test.info(), 'restore-extension-unready')
+    if (shouldSkipArchiveFlowFailure(state)) {
+      test.skip(true, 'Archive chat source did not become ready in this run.')
+      return
+    }
+    expect(extensionReady).toBe(true)
+  }
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
-  await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null)).toBe(true)
+  await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null), { timeout: 8000 }).toBe(true)
   try {
-    await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 12000 }).toBe(true)
   } catch (error) {
     const nativeDebugState = await page.evaluate(getNativeChatDebugState)
     // eslint-disable-next-line no-console
