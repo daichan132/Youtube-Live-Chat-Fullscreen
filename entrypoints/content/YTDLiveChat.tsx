@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
 import { resolveChatSource } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/chatSourceResolver'
+import { shouldShowOverlay } from '@/entrypoints/content/utils/overlayVisibility'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
@@ -48,14 +49,20 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
 
   // In archive mode, wait until native replay chat is actually playable before
   // showing the fullscreen chat overlay.
-  const shouldShowOverlay = ytdLiveChat && ((isFullscreen && canAttachFullscreenChat) || (isShow && !isNativeChatCurrentlyOpen))
+  const isOverlayVisible = shouldShowOverlay({
+    ytdLiveChat,
+    isFullscreen,
+    canAttachFullscreenChat,
+    isShow,
+    isNativeChatCurrentlyOpen,
+  })
 
   return (
     <>
       <YTDLiveChatSetting />
       <CSSTransition
         nodeRef={nodeRef}
-        in={shouldShowOverlay}
+        in={isOverlayVisible}
         timeout={500}
         classNames={{
           appear: 'opacity-0',

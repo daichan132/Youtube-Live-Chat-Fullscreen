@@ -30,6 +30,23 @@ const LOAD_STATE_ORDER: Record<IframeLoadState, number> = {
   error: 4,
 }
 
+const TRANSITION_CHECK_INTERVAL_MS = 1000
+
+const getPageVideoIdFromUrl = () => {
+  try {
+    const url = new URL(window.location.href)
+    const queryVideoId = url.searchParams.get('v')
+    if (queryVideoId) return queryVideoId
+    const livePathMatch = url.pathname.match(/\/live\/([a-zA-Z0-9_-]+)/)
+    if (livePathMatch?.[1]) return livePathMatch[1]
+  } catch {
+    // Ignore invalid URL parsing and fall back to DOM-derived ID.
+  }
+  return null
+}
+
+const getCurrentPageVideoId = () => getPageVideoIdFromUrl() ?? getYouTubeVideoId()
+
 export const useIframeLoader = () => {
   const ref = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
@@ -88,7 +105,7 @@ export const useIframeLoader = () => {
     }
 
     const updateAttachedMetadata = (iframe: HTMLIFrameElement, href: string) => {
-      lastAttachedPageVideoIdRef.current = getYouTubeVideoId()
+      lastAttachedPageVideoIdRef.current = getCurrentPageVideoId()
       lastAttachedHrefRef.current = href || getNonBlankIframeHref(iframe)
     }
 
@@ -188,6 +205,9 @@ export const useIframeLoader = () => {
       const nextIframe = resolveSourceIframe(source, iframeRef.current)
       const href = getNonBlankIframeHref(nextIframe)
       const previousAttachedHref = lastAttachedHrefRef.current
+      const previousPageVideoId = lastAttachedPageVideoIdRef.current
+      const currentPageVideoId = getCurrentPageVideoId()
+      const hasPageVideoChanged = Boolean(previousPageVideoId && currentPageVideoId && previousPageVideoId !== currentPageVideoId)
       if (!href) {
         debugLog('skip source (iframe not ready)', {
           sourceKind: source.kind,
@@ -197,10 +217,18 @@ export const useIframeLoader = () => {
         return false
       }
 
-      if (source.kind === 'archive_borrow' && pendingTransitionGuardRef.current && previousAttachedHref && href === previousAttachedHref) {
+      if (
+        source.kind === 'archive_borrow' &&
+        previousAttachedHref &&
+        href === previousAttachedHref &&
+        (pendingTransitionGuardRef.current || hasPageVideoChanged)
+      ) {
         debugLog('stale source rejected', {
           href,
           sourceKind: source.kind,
+          pendingTransitionGuard: pendingTransitionGuardRef.current,
+          previousPageVideoId,
+          currentPageVideoId,
         })
         return false
       }
@@ -270,6 +298,31 @@ export const useIframeLoader = () => {
       return true
     }
 
+    const handleVideoTransition = (trigger: 'yt-navigate-finish' | 'video-id-watch') => {
+      const previousVideoId = lastAttachedPageVideoIdRef.current
+      const currentVideoId = getCurrentPageVideoId()
+      if (!previousVideoId || !currentVideoId || previousVideoId === currentVideoId) {
+        return false
+      }
+
+      pendingTransitionGuardRef.current = true
+      lastAttachedPageVideoIdRef.current = currentVideoId
+      debugLog('transition-guard armed', {
+        fromVideoId: previousVideoId,
+        toVideoId: currentVideoId,
+        lastAttachedHref: lastAttachedHrefRef.current,
+        trigger,
+      })
+
+      detachCurrentIframe()
+      if (!syncChatSource()) {
+        setupObserver()
+        startRetry()
+      }
+
+      return true
+    }
+
     let observer: MutationObserver | null = null
     let retryInterval: number | null = null
     let retryStartedAt = 0
@@ -330,22 +383,18 @@ export const useIframeLoader = () => {
     }
 
     const handleNavigate = () => {
-      const previousVideoId = lastAttachedPageVideoIdRef.current
-      const currentVideoId = getYouTubeVideoId()
-      if (previousVideoId && currentVideoId && previousVideoId !== currentVideoId) {
-        pendingTransitionGuardRef.current = true
-        debugLog('transition-guard armed', {
-          fromVideoId: previousVideoId,
-          toVideoId: currentVideoId,
-          lastAttachedHref: lastAttachedHrefRef.current,
-        })
-      }
+      if (handleVideoTransition('yt-navigate-finish')) return
       detachCurrentIframe()
       if (!syncChatSource()) {
         setupObserver()
         startRetry()
       }
     }
+
+    const transitionCheckInterval = window.setInterval(() => {
+      if (!iframeRef.current) return
+      handleVideoTransition('video-id-watch')
+    }, TRANSITION_CHECK_INTERVAL_MS)
 
     const handleFullscreenChange = () => {
       if (document.fullscreenElement !== null) return
@@ -362,6 +411,7 @@ export const useIframeLoader = () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
       observer?.disconnect()
       stopRetry()
+      window.clearInterval(transitionCheckInterval)
       initializer.cleanup()
       detachCurrentIframe({
         ensureNativeVisible: document.fullscreenElement === null,

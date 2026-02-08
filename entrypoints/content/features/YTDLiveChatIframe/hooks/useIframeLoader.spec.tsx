@@ -101,6 +101,29 @@ describe('useIframeLoader', () => {
     })
   })
 
+  it('detaches on video transition even when yt-navigate-finish is not fired', async () => {
+    const frame = attachLiveChatFrame()
+    const iframe = createChatIframe('video-a')
+    frame.appendChild(iframe)
+
+    const { getByTestId } = render(<TestComponent />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+    })
+
+    setLocation('/watch?v=video-b')
+
+    await waitFor(
+      () => {
+        expect(container.querySelector('iframe')).toBeNull()
+        expect(frame.contains(iframe)).toBe(true)
+      },
+      { timeout: 4000 },
+    )
+  })
+
   it('does not reattach stale archive iframe href after navigation until source changes', async () => {
     const frame = attachLiveChatFrame()
     const staleHref = 'https://www.youtube.com/live_chat_replay?continuation=stale-video-a'
