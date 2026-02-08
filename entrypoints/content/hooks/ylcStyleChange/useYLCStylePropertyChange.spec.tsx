@@ -17,6 +17,10 @@ describe('useYLCStylePropertyChange', () => {
       value: doc,
       configurable: true,
     })
+    Object.defineProperty(iframe, 'isConnected', {
+      value: true,
+      configurable: true,
+    })
 
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
@@ -29,11 +33,15 @@ describe('useYLCStylePropertyChange', () => {
     expect(doc.documentElement.style.getPropertyValue('--test-color')).toBe('red')
   })
 
-  it('sets multiple CSS properties at once', () => {
+  it('sets multiple CSS properties on the iframe document element', () => {
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     const doc = document.implementation.createHTMLDocument('')
     Object.defineProperty(iframe, 'contentDocument', {
       value: doc,
+      configurable: true,
+    })
+    Object.defineProperty(iframe, 'isConnected', {
+      value: true,
       configurable: true,
     })
 
@@ -42,14 +50,14 @@ describe('useYLCStylePropertyChange', () => {
     const { result } = renderHook(() => useYLCStylePropertyChange())
 
     act(() => {
-      result.current.setProperties({
-        '--primary': 'blue',
-        '--secondary': 'green',
-      })
+      result.current.setProperties([
+        ['--test-size', '12px'],
+        ['--test-color', 'blue'],
+      ])
     })
 
-    expect(doc.documentElement.style.getPropertyValue('--primary')).toBe('blue')
-    expect(doc.documentElement.style.getPropertyValue('--secondary')).toBe('green')
+    expect(doc.documentElement.style.getPropertyValue('--test-size')).toBe('12px')
+    expect(doc.documentElement.style.getPropertyValue('--test-color')).toBe('blue')
   })
 
   it('no-ops when iframe is missing', () => {
@@ -57,7 +65,6 @@ describe('useYLCStylePropertyChange', () => {
 
     expect(() => {
       result.current.setProperty('--missing', 'value')
-      result.current.setProperties({ '--missing2': 'value2' })
     }).not.toThrow()
   })
 })

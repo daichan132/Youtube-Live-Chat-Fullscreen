@@ -1,5 +1,4 @@
-const SHADOW_HOST_ID = 'shadow-root-live-chat'
-const MODAL_ROOT_ID = 'shadow-root-live-chat-modal-root'
+import { MODAL_ROOT_ID, SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 
 let cachedModalRoot: HTMLElement | null = null
 

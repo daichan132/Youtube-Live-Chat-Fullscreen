@@ -1,8 +1,16 @@
+import { fileURLToPath } from 'node:url'
 import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
+const unoCssPath = fileURLToPath(new URL('./vitest.empty.css', import.meta.url))
+
 export default defineConfig({
   plugins: [tsconfigPaths()],
+  resolve: {
+    alias: {
+      'uno.css': unoCssPath,
+    },
+  },
   test: {
     clearMocks: true,
     environment: 'jsdom',

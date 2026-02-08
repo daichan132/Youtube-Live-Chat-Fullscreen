@@ -95,10 +95,46 @@ const hasChatSignals = () => {
 
 const isLiveNow = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
-  return Boolean(watchFlexy?.hasAttribute('is-live-now'))
+  const watchGrid = document.querySelector('ytd-watch-grid')
+  if (watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now')) return true
+
+  const moviePlayer = document.getElementById('movie_player') as
+    | (HTMLElement & { getVideoData?: () => { isLive?: boolean } })
+    | null
+  const videoData = moviePlayer?.getVideoData?.()
+  if (typeof videoData?.isLive === 'boolean') return videoData.isLive
+
+  const response = (
+    window as Window & {
+      ytInitialPlayerResponse?: {
+        microformat?: {
+          playerMicroformatRenderer?: {
+            liveBroadcastDetails?: {
+              isLiveNow?: boolean
+            }
+          }
+        }
+        videoDetails?: {
+          isLive?: boolean
+        }
+      }
+    }
+  ).ytInitialPlayerResponse
+
+  const liveBroadcastNow = response?.microformat?.playerMicroformatRenderer?.liveBroadcastDetails?.isLiveNow
+  if (typeof liveBroadcastNow === 'boolean') return liveBroadcastNow
+
+  const videoDetailsLive = response?.videoDetails?.isLive
+  if (typeof videoDetailsLive === 'boolean') return videoDetailsLive
+
+  return false
 }
 
 let cachedLiveUrl: string | null = null
+
+export const isWatchPageLiveNow = async (page: Page) => {
+  return page.evaluate(isLiveNow).then(Boolean, () => false)
+}
 
 export const findLiveUrlWithChat = async (
   page: Page,
@@ -110,10 +146,23 @@ export const findLiveUrlWithChat = async (
   if (cachedLiveUrl) {
     try {
       await page.goto(cachedLiveUrl, { waitUntil: 'domcontentloaded', timeout: gotoTimeout })
-      return cachedLiveUrl
+      await acceptYouTubeConsent(page)
+      const liveNow = await isWatchPageLiveNow(page)
+      if (!liveNow) {
+        cachedLiveUrl = null
+      } else {
+        const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: 8000 }).then(
+          () => true,
+          () => false,
+        )
+        if (hasChat) {
+          return cachedLiveUrl
+        }
+      }
     } catch {
       cachedLiveUrl = null
     }
+    cachedLiveUrl = null
   }
 
   await page.context().addCookies([
@@ -146,6 +195,8 @@ export const findLiveUrlWithChat = async (
         continue
       }
       await acceptYouTubeConsent(page)
+      const liveNow = await isWatchPageLiveNow(page)
+      if (!liveNow) continue
       const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: 8000 }).then(
         () => true,
         () => false,

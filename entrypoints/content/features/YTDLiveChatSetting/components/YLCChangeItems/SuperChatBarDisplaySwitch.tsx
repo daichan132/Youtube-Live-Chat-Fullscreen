@@ -1,11 +1,10 @@
-import { useId } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCSuperChatBarDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
-import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { SettingSwitch } from './SettingSwitch'
 
 export const SuperChatBarDisplaySwitch = () => {
   const { superChatBarDisplay, updateYLCStyle } = useYTDLiveChatStore(
@@ -29,17 +28,13 @@ export const SuperChatBarDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (superChatBarDisplay: boolean) => void
 }) => {
-  const id = useId()
   return (
-    <div className='w-[150px] flex justify-center'>
-      <Switch
-        checked={superChatBarDisplay}
-        id={id}
-        onChange={checked => {
-          changeDisplay?.(checked)
-          updateYLCStyle?.({ superChatBarDisplay: checked })
-        }}
-      />
-    </div>
+    <SettingSwitch
+      checked={superChatBarDisplay}
+      onChange={checked => {
+        changeDisplay?.(checked)
+        updateYLCStyle?.({ superChatBarDisplay: checked })
+      }}
+    />
   )
 }

@@ -48,6 +48,8 @@ export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }
 
   /**
    * Gets the current clip dimensions from the iframe content
+   * Note: We only depend on iframeElement, not its internal properties,
+   * since body/activeElement are live references that change frequently
    */
   const getClip = useCallback((): Clip => {
     const body = iframeElement?.contentDocument?.body
@@ -62,14 +64,14 @@ export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }
         0) - 4
 
     return { header, input }
-  }, [iframeElement?.contentDocument?.body])
+  }, [iframeElement])
 
   /**
    * Removes focus from any active elements in the iframe
    */
   const removeFocus = useCallback(() => {
     ;(iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
-  }, [iframeElement?.contentDocument?.activeElement])
+  }, [iframeElement])
 
   return {
     handleClipPathChange,

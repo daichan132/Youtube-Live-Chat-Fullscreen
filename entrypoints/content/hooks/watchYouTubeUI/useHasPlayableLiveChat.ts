@@ -1,27 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useCallback } from 'react'
 import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { usePollingWithNavigate } from './usePollingWithNavigate'
+
+// Continuous monitoring interval for chat availability changes
+const CONTINUOUS_MONITORING_INTERVAL_MS = 2000
 
 export const useHasPlayableLiveChat = () => {
-  const [hasPlayableChat, setHasPlayableChat] = useState(false)
-
-  useEffect(() => {
-    setHasPlayableChat(false)
-    let count = 0
-    const interval = window.setInterval(() => {
-      if (hasPlayableLiveChat()) {
-        setHasPlayableChat(true)
-        window.clearInterval(interval)
-        return
-      }
-      count += 1
-      if (count > 100) {
-        window.clearInterval(interval)
-      }
-    }, 1000)
-    return () => {
-      window.clearInterval(interval)
-    }
-  }, [])
-
-  return hasPlayableChat
+  const checkFn = useCallback(() => hasPlayableLiveChat(), [])
+  return usePollingWithNavigate({
+    checkFn,
+    stopOnSuccess: false,
+    intervalMs: CONTINUOUS_MONITORING_INTERVAL_MS,
+  })
 }

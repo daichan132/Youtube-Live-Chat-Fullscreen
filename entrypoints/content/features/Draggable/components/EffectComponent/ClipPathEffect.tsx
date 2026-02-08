@@ -53,9 +53,11 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
       isIframeLoaded && alwaysOnDisplay && chatOnlyDisplay && !isDragging && !isResizing && (isOpenSettingModal || !isHover)
 
     // Set clip path state with small delay
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsClipPath(shouldEnableClipPath)
     }, 10)
+
+    return () => clearTimeout(timer)
   }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing, setIsClipPath, isIframeLoaded])
 
   /* ------------------------- handle Clip Path change ------------------------ */

@@ -1,5 +1,7 @@
 import { expect, test } from './fixtures'
-import { acceptYouTubeConsent } from './utils/liveUrl'
+import { reliableClick } from './utils/actions'
+import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from './utils/liveUrl'
+import { switchButtonSelector } from './utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -103,13 +105,17 @@ const hasPlayableChat = () => {
 test('extension chat loads when native chat is closed', async ({ page }) => {
   test.setTimeout(140000)
 
-  const liveUrl = process.env.YLC_LIVE_URL
+  const liveUrl = process.env.YLC_LIVE_URL ?? (await findLiveUrlWithChat(page))
   if (!liveUrl) {
-    test.skip(true, 'Set YLC_LIVE_URL to run live tests.')
+    test.skip(true, 'No live URL with chat found. Set YLC_LIVE_URL to override.')
     return
   }
   await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
   await acceptYouTubeConsent(page)
+  const liveNow = await isWatchPageLiveNow(page)
+  if (!liveNow) {
+    test.skip(true, 'Selected URL is not live now. Provide a currently live stream URL.')
+  }
   await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
 
   await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
@@ -135,15 +141,9 @@ test('extension chat loads when native chat is closed', async ({ page }) => {
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible({ timeout: 10000 })
-  await switchButton.click({ force: true })
-  await page.evaluate(() => {
-    const button = document.querySelector<HTMLButtonElement>(
-      '#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button',
-    )
-    button?.click()
-  })
+  await reliableClick(switchButton, page, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
 
   let overlayReady = false

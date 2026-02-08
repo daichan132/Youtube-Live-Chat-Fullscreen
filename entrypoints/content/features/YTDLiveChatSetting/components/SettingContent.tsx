@@ -1,13 +1,9 @@
 import classNames from 'classnames'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
-import { FaRegUserCircle } from 'react-icons/fa'
-import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
-import { MdBlurOn, MdExpand } from 'react-icons/md'
-import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
-import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
+import { buildSettingItems, SETTING_ITEM_KEYS } from '../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
 import { BlurSlider } from './YLCChangeItems/BlurSlider'
@@ -27,64 +23,26 @@ export const SettingContent = () => {
     })),
   )
   const { t } = useTranslation()
-  const items: SettingItemType[] = [
-    {
-      icon: IoTimerOutline,
-      title: t('content.setting.alwaysOnDisplay'),
-      data: <AlwaysOnDisplaySwitch />,
+  const items = buildSettingItems({
+    t,
+    keys: SETTING_ITEM_KEYS,
+    dataByKey: {
+      alwaysOnDisplay: <AlwaysOnDisplaySwitch />,
+      chatOnlyDisplay: <ChatOnlyDisplaySwitch />,
+      backgroundColor: <BgColorPicker />,
+      fontColor: <FontColorPicker />,
+      fontFamily: <FontFamilyInput />,
+      fontSize: <FontSizeSlider />,
+      blur: <BlurSlider />,
+      space: <SpaceSlider />,
+      userNameDisplay: <UserNameDisplaySwitch />,
+      userIconDisplay: <UserIconDisplaySwitch />,
+      superChatBarDisplay: <SuperChatBarDisplaySwitch />,
     },
-    {
-      icon: IoChatbubbleEllipsesOutline,
-      title: t('content.setting.chatOnlyDisplay'),
-      data: <ChatOnlyDisplaySwitch />,
-      disable: !alwaysOnDisplay,
+    disableByKey: {
+      chatOnlyDisplay: !alwaysOnDisplay,
     },
-    {
-      icon: IoColorFillOutline,
-      title: t('content.setting.backgroundColor'),
-      data: <BgColorPicker />,
-    },
-    {
-      icon: RiFontColor,
-      title: t('content.setting.fontColor'),
-      data: <FontColorPicker />,
-    },
-    {
-      icon: RiFontFamily,
-      title: t('content.setting.fontFamily'),
-      data: <FontFamilyInput />,
-    },
-    {
-      icon: RiFontSize2,
-      title: t('content.setting.fontSize'),
-      data: <FontSizeSlider />,
-    },
-    {
-      icon: MdBlurOn,
-      title: t('content.setting.blur'),
-      data: <BlurSlider />,
-    },
-    {
-      icon: MdExpand,
-      title: t('content.setting.space'),
-      data: <SpaceSlider />,
-    },
-    {
-      icon: RiUserLine,
-      title: t('content.setting.userNameDisplay'),
-      data: <UserNameDisplaySwitch />,
-    },
-    {
-      icon: FaRegUserCircle,
-      title: t('content.setting.userIconDisplay'),
-      data: <UserIconDisplaySwitch />,
-    },
-    {
-      icon: IoChatbubbleEllipsesOutline,
-      title: t('content.setting.superChatBarDisplay'),
-      data: <SuperChatBarDisplaySwitch />,
-    },
-  ]
+  })
   return (
     <>
       {items.map((item, i) => (

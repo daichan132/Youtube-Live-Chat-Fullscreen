@@ -1,32 +1,26 @@
 import { useCallback } from 'react'
 import type { RGBColor } from 'react-color'
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
+import { YLC_FONT_COLOR_LIGHT_PROPERTIES, YLC_FONT_COLOR_PROPERTIES } from './ylcStyleConstants'
 
-const propertyList: string[] = ['--extension-yt-live-font-color']
-
-const propertyLightList: string[] = ['--extension-yt-live-secondary-font-color']
+const toRgbaString = (rgba: RGBColor, alpha: number | undefined) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`
 
 export const useYLCFontColorChange = () => {
-  const { setProperty } = useYLCStylePropertyChange()
-
-  const changeIframeFontColor = useCallback(
-    (rgba: RGBColor) => {
-      for (const property of propertyList) {
-        setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`)
-      }
-
-      for (const property of propertyLightList) {
-        setProperty(property, `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${Math.max(0, (rgba.a || 0) - 0.4)})`)
-      }
-    },
-    [setProperty],
-  )
+  const { setProperties } = useYLCStylePropertyChange()
 
   const changeColor = useCallback(
     (rgba: RGBColor) => {
-      changeIframeFontColor(rgba)
+      const primary = toRgbaString(rgba, rgba.a)
+      const secondaryAlpha = Math.max(0, (rgba.a ?? 0) - 0.4)
+      const secondary = toRgbaString(rgba, secondaryAlpha)
+      const properties: Array<readonly [string, string]> = [
+        ...YLC_FONT_COLOR_PROPERTIES.map(property => [property, primary] as const),
+        ...YLC_FONT_COLOR_LIGHT_PROPERTIES.map(property => [property, secondary] as const),
+      ]
+
+      setProperties(properties)
     },
-    [changeIframeFontColor],
+    [setProperties],
   )
 
   return { changeColor }

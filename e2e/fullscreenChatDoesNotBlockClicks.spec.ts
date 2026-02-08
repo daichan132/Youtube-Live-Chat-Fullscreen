@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures'
 import { findLiveUrlWithChat } from './utils/liveUrl'
+import { switchButtonSelector } from './utils/selectors'
 
 const isExtensionChatLoaded = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -60,7 +61,7 @@ test('fullscreen chat does not block player clicks', async ({ page }) => {
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButton = page.locator(switchButtonSelector)
   const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
   if (!switchReady) {
     test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -131,7 +132,7 @@ test('fullscreen chat does not block player clicks', async ({ page }) => {
   }
 
   await page.locator('#movie_player').hover()
-  const switchButtonControl = page.locator('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec button.ytp-button')
+  const switchButtonControl = page.locator(switchButtonSelector)
   await expect(switchButtonControl).toBeVisible()
   const switchBox = await switchButtonControl.boundingBox()
   expect(switchBox).not.toBeNull()

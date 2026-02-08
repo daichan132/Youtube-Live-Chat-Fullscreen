@@ -1,90 +1,61 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { resolveChatSource } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/chatSourceResolver'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
-import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
+import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
+import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 
-export const YTDLiveChat = () => {
-  const { isShow, isNativeChatOpen, isNativeChatExpanded } = useIsShow()
+type YTDLiveChatProps = {
+  isFullscreen: boolean
+}
+
+export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
+  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
+  const isIframeLoaded = useYTDLiveChatNoLsStore(state => state.isIframeLoaded)
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  const isFullscreen = useIsFullScreen()
-  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat)
+  // Keep native chat layout intact until extension iframe is actually ready.
+  // Archive replay can stay about:blank if we collapse the native container too early.
+  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isIframeLoaded)
   const nodeRef = useRef(null)
-  const prevNativeChatOpenRef = useRef<boolean | null>(null)
+  const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
+  // Disable extension chat when user opens native chat, respecting their intent
+  useNativeChatAutoDisable({
+    enabled: ytdLiveChat,
+    nativeChatOpen: isNativeChatCurrentlyOpen,
+    isFullscreen,
+    setYTDLiveChat,
+  })
 
-  useEffect(() => {
-    const isNativeChatToggleButton = (element: HTMLElement) => {
-      const button = element.closest('button')
-      if (!button) return false
-      if (button.closest('#switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')) return false
+  const canAttachFullscreenChat = usePollingWithNavigate({
+    checkFn: useCallback(() => resolveChatSource() !== null, []),
+    // Keep polling until first success, then latch to avoid fullscreen overlay
+    // remount loops when live/archive signals momentarily fluctuate.
+    stopOnSuccess: true,
+    maxAttempts: Number.POSITIVE_INFINITY,
+    intervalMs: 1000,
+  })
 
-      const label = `${button.getAttribute('aria-label') ?? ''} ${button.getAttribute('title') ?? ''} ${
-        button.getAttribute('data-title-no-tooltip') ?? ''
-      } ${button.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
-      const isChatLabel = label.includes('chat') || label.includes('チャット')
-      if (!isChatLabel) return false
-
-      const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
-      const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
-      return isPlayerControls || isToggleViewModel
-    }
-
-    const handlePointerDown = (event: Event) => {
-      if (!ytdLiveChat) return
-      const target = event.target as HTMLElement | null
-      if (!target) return
-
-      const shadowHost = document.getElementById('shadow-root-live-chat')
-      if (shadowHost?.shadowRoot?.contains(target)) return
-
-      const nativeChatTrigger = target.closest(
-        '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button',
-      )
-      if (!nativeChatTrigger && !isNativeChatToggleButton(target)) return
-
-      if (isNativeChatToggleButton(target)) {
-        setYTDLiveChat(false)
-      }
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown, true)
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown, true)
-    }
-  }, [ytdLiveChat, setYTDLiveChat])
-
-  useEffect(() => {
-    const isNativeChatCurrentlyOpen = isNativeChatOpen || isNativeChatExpanded
-    const prev = prevNativeChatOpenRef.current
-    prevNativeChatOpenRef.current = isNativeChatCurrentlyOpen
-    if (prev === null) {
-      if (isNativeChatCurrentlyOpen && ytdLiveChat) {
-        setYTDLiveChat(false)
-      }
-      return
-    }
-
-    if (!prev && isNativeChatCurrentlyOpen && ytdLiveChat) {
-      setYTDLiveChat(false)
-    }
-  }, [isNativeChatOpen, isNativeChatExpanded, ytdLiveChat, setYTDLiveChat])
+  // In archive mode, wait until native replay chat is actually playable before
+  // showing the fullscreen chat overlay.
+  const shouldShowOverlay = ytdLiveChat && ((isFullscreen && canAttachFullscreenChat) || (isShow && !isNativeChatCurrentlyOpen))
 
   return (
     <>
       <YTDLiveChatSetting />
       <CSSTransition
         nodeRef={nodeRef}
-        in={isShow && ytdLiveChat}
+        in={shouldShowOverlay}
         timeout={500}
         classNames={{
           appear: 'opacity-0',

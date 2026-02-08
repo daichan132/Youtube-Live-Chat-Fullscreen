@@ -9,6 +9,7 @@ interface YTDLiveChatNoLsStoreState {
   isDisplay: boolean
   isOpenSettingModal: boolean
   isIframeLoaded: boolean
+  isAutoOpeningNativeChat: boolean
   clip: clipState
   isClipPath: boolean | undefined
   iframeElement: HTMLIFrameElement | null
@@ -17,6 +18,7 @@ interface YTDLiveChatNoLsStoreState {
   setIsDisplay: (isDisplay: boolean) => void
   setIsOpenSettingModal: (isSettingModal: boolean) => void
   setIsIframeLoaded: (isIframeLoaded: boolean) => void
+  setIsAutoOpeningNativeChat: (isAutoOpeningNativeChat: boolean) => void
   setClip: (clip: clipState) => void
   setIsClipPath: (isClipPath: boolean | undefined) => void
   setIFrameElement: (iframeElement: HTMLIFrameElement | null) => void
@@ -28,6 +30,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   isDisplay: true,
   isOpenSettingModal: false,
   isIframeLoaded: false,
+  isAutoOpeningNativeChat: false,
   clip: {
     header: 0,
     input: 0,
@@ -39,6 +42,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   setIsDisplay: isDisplay => set(() => ({ isDisplay })),
   setIsOpenSettingModal: isOpenSettingModal => set(() => ({ isOpenSettingModal })),
   setIsIframeLoaded: isIframeLoaded => set(() => ({ isIframeLoaded })),
+  setIsAutoOpeningNativeChat: isAutoOpeningNativeChat => set(() => ({ isAutoOpeningNativeChat })),
   setClip: clip => set(() => ({ clip })),
   setIsClipPath: isClipPath => set(() => ({ isClipPath })),
   setIFrameElement: iframeElement => set(() => ({ iframeElement })),

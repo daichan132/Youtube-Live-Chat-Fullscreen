@@ -2,15 +2,15 @@ import { act, renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useYLCFontColorChange } from './useYLCFontColorChange'
 
-const setProperty = vi.fn()
+const setProperties = vi.fn()
 
 vi.mock('./useYLCStylePropertyChange', () => ({
-  useYLCStylePropertyChange: () => ({ setProperty }),
+  useYLCStylePropertyChange: () => ({ setProperties }),
 }))
 
 describe('useYLCFontColorChange', () => {
   beforeEach(() => {
-    setProperty.mockClear()
+    setProperties.mockClear()
   })
 
   it('applies primary and secondary font colors with adjusted alpha', () => {
@@ -22,8 +22,10 @@ describe('useYLCFontColorChange', () => {
       result.current.changeColor(rgba)
     })
 
-    expect(setProperty).toHaveBeenCalledWith('--extension-yt-live-font-color', 'rgba(10, 20, 30, 0.6)')
-    expect(setProperty).toHaveBeenCalledWith('--extension-yt-live-secondary-font-color', `rgba(10, 20, 30, ${secondaryAlpha})`)
-    expect(setProperty).toHaveBeenCalledTimes(2)
+    expect(setProperties).toHaveBeenCalledTimes(1)
+    const entries = setProperties.mock.calls[0]?.[0] ?? []
+    expect(entries).toContainEqual(['--extension-yt-live-font-color', 'rgba(10, 20, 30, 0.6)'])
+    expect(entries).toContainEqual(['--extension-yt-live-secondary-font-color', `rgba(10, 20, 30, ${secondaryAlpha})`])
+    expect(entries).toHaveLength(2)
   })
 })
