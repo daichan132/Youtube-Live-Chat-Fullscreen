@@ -12,11 +12,11 @@
       "reactionButtonDisplay": "リアクションボタン表示",
       "superChatBarDisplay": "スーパーチャットバー表示",
       "backgroundColor": "背景色",
-      "fontColor": "フォントの色",
+      "fontColor": "文字色",
       "fontFamily": "フォントファミリー",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
-      "space": "スペース",
+      "space": "間隔",
       "footer": {
         "donate": "寄付",
         "chrome": "Chrome",
@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "言語設定",
-    "showChatOnFullscreen": "全画面チャット",
+    "showChatOnFullscreen": "全画面でチャットを表示",
     "links": "リンク",
     "donate": "寄付"
   }

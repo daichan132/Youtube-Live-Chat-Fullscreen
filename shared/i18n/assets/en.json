@@ -7,16 +7,16 @@
       },
       "alwaysOnDisplay": "Always On Display",
       "chatOnlyDisplay": "Chat Only Display",
-      "userNameDisplay": "User Name Display",
-      "userIconDisplay": "User Icon Display",
-      "reactionButtonDisplay": "Reaction Button Display",
-      "superChatBarDisplay": "Super Chat Bar Display",
+      "userNameDisplay": "Show User Name",
+      "userIconDisplay": "Show User Icon",
+      "reactionButtonDisplay": "Show Reaction Button",
+      "superChatBarDisplay": "Show Super Chat Bar",
       "backgroundColor": "Background Color",
       "fontColor": "Font Color",
       "fontFamily": "Font Family",
       "fontSize": "Font Size",
       "blur": "Blur",
-      "space": "Space",
+      "space": "Spacing",
       "footer": {
         "donate": "Donate",
         "chrome": "Chrome",
@@ -29,14 +29,14 @@
       "defaultTitle": "Default",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
-      "deleteConfirmationMessage": "Are you sure you want to delete?",
+      "deleteConfirmationMessage": "Are you sure you want to delete this?",
       "delete": "Delete",
       "cancel": "Cancel"
     }
   },
   "popup": {
     "language": "Language Settings",
-    "showChatOnFullscreen": "Fullscreen Chat",
+    "showChatOnFullscreen": "Show Chat in Fullscreen",
     "links": "Links",
     "donate": "Donate"
   }

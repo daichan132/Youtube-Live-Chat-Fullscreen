@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "Language Settings",
-    "showChatOnFullscreen": "Fullscreen Chat",
+    "showChatOnFullscreen": "Show Chat in Fullscreen",
     "links": "Links",
     "donate": "Donate"
   }
