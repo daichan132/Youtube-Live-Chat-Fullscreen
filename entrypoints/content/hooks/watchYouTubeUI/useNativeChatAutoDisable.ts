@@ -82,9 +82,15 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen
       return
     }
 
+    // Fullscreen transitions can temporarily flip native chat state without user intent.
+    // In fullscreen, rely on explicit native toggle interactions (pointerdown) only.
+    if (isFullscreen) {
+      return
+    }
+
     // Only disable YLC when native chat transitions from closed to open
     if (!prev && nativeChatOpen) {
       setYTDLiveChat(false)
     }
-  }, [enabled, nativeChatOpen, setYTDLiveChat, isAutoOpeningNativeChat, setIsAutoOpeningNativeChat])
+  }, [enabled, nativeChatOpen, isFullscreen, setYTDLiveChat, isAutoOpeningNativeChat, setIsAutoOpeningNativeChat])
 }

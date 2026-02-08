@@ -103,4 +103,59 @@ describe('useNativeChatAutoDisable', () => {
 
     expect(setYTDLiveChat).not.toHaveBeenCalled()
   })
+
+  it('turns off extension chat when native chat transitions from closed to open outside fullscreen', () => {
+    const setYTDLiveChat = vi.fn()
+
+    const { rerender } = renderHook(
+      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
+        useNativeChatAutoDisable({
+          enabled: true,
+          nativeChatOpen,
+          isFullscreen,
+          setYTDLiveChat,
+        }),
+      {
+        initialProps: {
+          nativeChatOpen: false,
+          isFullscreen: false,
+        },
+      },
+    )
+
+    rerender({
+      nativeChatOpen: true,
+      isFullscreen: false,
+    })
+
+    expect(setYTDLiveChat).toHaveBeenCalledTimes(1)
+    expect(setYTDLiveChat).toHaveBeenCalledWith(false)
+  })
+
+  it('does not turn off extension chat when native chat opens during fullscreen', () => {
+    const setYTDLiveChat = vi.fn()
+
+    const { rerender } = renderHook(
+      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
+        useNativeChatAutoDisable({
+          enabled: true,
+          nativeChatOpen,
+          isFullscreen,
+          setYTDLiveChat,
+        }),
+      {
+        initialProps: {
+          nativeChatOpen: false,
+          isFullscreen: true,
+        },
+      },
+    )
+
+    rerender({
+      nativeChatOpen: true,
+      isFullscreen: true,
+    })
+
+    expect(setYTDLiveChat).not.toHaveBeenCalled()
+  })
 })
