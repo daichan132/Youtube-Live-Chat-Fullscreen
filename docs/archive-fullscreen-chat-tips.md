@@ -31,13 +31,13 @@
 - `YLC_REPLAY_UNAVAILABLE_URL`: replay-unavailable シナリオURL（必須）
 
 ## 主要 spec の意図
-- `e2e/liveChatReplay.spec.ts`
+- `e2e/scenarios/archive/liveChatReplay.spec.ts`
   - archive fullscreen で拡張チャットが成立するか（borrow iframe が playable か）
-- `e2e/fullscreenChatRestore.spec.ts`
+- `e2e/scenarios/archive/fullscreenChatRestore.spec.ts`
   - fullscreen chat OFF 後に native chat が復帰するか
-- `e2e/fullscreenChatVideoTransition.spec.ts`
+- `e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts`
   - 動画ID遷移後に旧動画の iframe が残留しないか
-- `e2e/liveChatReplayUnavailable.spec.ts`
+- `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`
   - replay unavailable では switch は出るが overlay は出ないか
 
 ## トラブルシュート最短チェック

@@ -22,11 +22,11 @@
 
 ```bash
 yarn build
-YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo' yarn playwright test e2e/liveChatReplay.spec.ts --workers=1 --repeat-each=2
-YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo' YLC_ARCHIVE_NEXT_URL='https://www.youtube.com/watch?v=GxNlHOX4nXI' yarn playwright test e2e/fullscreenChatVideoTransition.spec.ts --workers=1 --repeat-each=2
-YLC_REPLAY_UNAVAILABLE_URL='https://www.youtube.com/watch?v=Q7VwUlT53RY' yarn playwright test e2e/liveChatReplayUnavailable.spec.ts --workers=1
-yarn playwright test e2e/nativeChatClosedExtensionLoads.spec.ts --workers=1 --repeat-each=2
-yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=2
+YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=xyiEiNWaOfY&list=PLFZAmR0gqBTIoMCCUfEaKER4m6I98GrWj' yarn playwright test e2e/scenarios/archive/liveChatReplay.spec.ts --workers=1 --repeat-each=2
+YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=xyiEiNWaOfY&list=PLFZAmR0gqBTIoMCCUfEaKER4m6I98GrWj' YLC_ARCHIVE_NEXT_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo' yarn playwright test e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts --workers=1 --repeat-each=2
+YLC_REPLAY_UNAVAILABLE_URL='https://www.youtube.com/watch?v=Q7VwUlT53RY' yarn playwright test e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts --workers=1
+yarn playwright test e2e/scenarios/live/nativeChatClosedExtensionLoads.spec.ts --workers=1 --repeat-each=2
+yarn playwright test e2e/scenarios/live/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=2
 ```
 
 ## URL選定ルール
@@ -80,6 +80,21 @@ yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=
 - `skip` と `fail` の使い分けを固定する。
   - 外部前提不成立（動画状態・地域制限・一時的な再生不可）は `skip`。
   - 前提成立後に挙動が崩れた場合のみ `fail`。
+- archive URL 選定は `selectArchiveReplayUrl` / `selectArchiveReplayTransitionPair` を使う。
+  - 優先順位は `YLC_ARCHIVE_URL`（+ `YLC_ARCHIVE_NEXT_URL`）→ 既定 playlist 候補 → `skip`。
+
+## CI 判定
+- `yarn e2e:ci` は Playwright JSON を `scripts/validate-e2e-report.mjs` で検証する。
+- 合格条件:
+  - `unexpected=0`
+  - 必須 spec が `skipped` ではなく実行されていること
+- 必須 spec:
+  - `e2e/scenarios/live/fullscreenChatAutoOpen.spec.ts`
+  - `e2e/scenarios/live/fullscreenChatToggle.spec.ts`
+  - `e2e/scenarios/archive/liveChatReplay.spec.ts`
+  - `e2e/scenarios/archive/fullscreenChatRestore.spec.ts`
+  - `e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts`
+  - `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`
 
 ## Archiveで壊れやすい点
 - 正しい順序を崩すと失敗しやすい。

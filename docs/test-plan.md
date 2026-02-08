@@ -14,10 +14,10 @@
   - `YLC_REPLAY_UNAVAILABLE_URL`
 
 ### 主要 archive spec の目的
-- `e2e/liveChatReplay.spec.ts`: archive fullscreen で拡張チャット成立を確認
-- `e2e/fullscreenChatRestore.spec.ts`: fullscreen chat OFF 後の native chat 復帰を確認
-- `e2e/fullscreenChatVideoTransition.spec.ts`: 動画遷移後の stale iframe 非残留を確認
-- `e2e/liveChatReplayUnavailable.spec.ts`: replay unavailable で overlay 非表示を確認
+- `e2e/scenarios/archive/liveChatReplay.spec.ts`: archive fullscreen で拡張チャット成立を確認
+- `e2e/scenarios/archive/fullscreenChatRestore.spec.ts`: fullscreen chat OFF 後の native chat 復帰を確認
+- `e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts`: 動画遷移後の stale iframe 非残留を確認
+- `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`: replay unavailable で overlay 非表示を確認
 
 ---
 
@@ -40,7 +40,7 @@
   - `masthead-hidden`/fullscreen 変化で表示フラグが正しく更新される
 
 ### 3) iframe 移動・スタイル注入・復帰
-- 対象: `entrypoints/content/features/YTDLiveChatIframe/hooks/useIframeLoader.ts`
+- 対象: `entrypoints/content/chat/runtime/useChatIframeLoader.ts`
 - 目的: iframe 移動/復元・load時のスタイル適用
 - 種別: E2E（iframe DOM操作）
 - 想定テスト:
@@ -114,6 +114,7 @@
 - `yarn lint`
 - `yarn build`
 - `yarn e2e`（UI/挙動に影響がある場合）
+- `yarn e2e:ci`（必須spec実行済み + unexpected=0 を検証）
 
 ---
 
@@ -121,7 +122,7 @@
 
 ### 基本利用（ライブ/リプレイ → フルスクリーン → チャット表示）
 - フルスクリーン化 → 右下コントロールにスイッチ挿入 → スイッチONでチャットiframeを移動＆表示
-- 対象: `entrypoints/content/Content.tsx` `entrypoints/content/features/YTDLiveChatSwitch/components/YTDLiveChatSwitch.tsx` `entrypoints/content/features/YTDLiveChatIframe/hooks/useIframeLoader.ts`
+- 対象: `entrypoints/content/Content.tsx` `entrypoints/content/features/YTDLiveChatSwitch/components/YTDLiveChatSwitch.tsx` `entrypoints/content/chat/runtime/useChatIframeLoader.ts`
 
 ### チャット不可時の非表示
 - 再生不可/リプレイ不可ならスイッチ自体を出さない
