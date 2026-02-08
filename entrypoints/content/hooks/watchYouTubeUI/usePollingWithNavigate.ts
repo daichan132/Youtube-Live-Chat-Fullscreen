@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type UsePollingWithNavigateOptions = {
   checkFn: () => boolean
@@ -36,14 +36,9 @@ export const usePollingWithNavigate = ({
   stopOnSuccess = true,
 }: UsePollingWithNavigateOptions) => {
   const [result, setResult] = useState(false)
-  const resultRef = useRef(false)
 
   useEffect(() => {
     let interval: number | null = null
-    const setResultWithRef = (next: boolean) => {
-      resultRef.current = next
-      setResult(next)
-    }
 
     const startCheck = () => {
       if (interval) {
@@ -52,7 +47,7 @@ export const usePollingWithNavigate = ({
       }
       // Immediate check on start - don't wait for first interval
       const initialResult = safeCheck(checkFn)
-      setResultWithRef(initialResult)
+      setResult(initialResult)
 
       // If immediate check succeeded and we should stop on success, don't start polling
       if (initialResult && stopOnSuccess) {
@@ -62,7 +57,7 @@ export const usePollingWithNavigate = ({
       let count = 1 // Already did one check
       interval = window.setInterval(() => {
         const nextResult = safeCheck(checkFn)
-        setResultWithRef(nextResult)
+        setResult(nextResult)
         count += 1
         if (nextResult && stopOnSuccess) {
           if (interval) window.clearInterval(interval)
@@ -82,8 +77,6 @@ export const usePollingWithNavigate = ({
     }
 
     const handleNavigate = () => {
-      // Keep successful latch across YouTube navigation when stopOnSuccess is enabled.
-      if (stopOnSuccess && resultRef.current) return
       startCheck()
     }
 
