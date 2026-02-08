@@ -1,91 +1,36 @@
 import { useEffect } from 'react'
-import { getLiveChatIframe, hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
-import { openNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
-import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
-/**
- * Retry timing constants for archive chat opening
- *
- * Archive videos may take time to load the chat iframe, so we use a progressive
- * backoff strategy: fast retries initially, then slower as time passes.
- */
-const MAX_ENSURE_DURATION_MS = 60000 // 1 minute (reduced from 2 minutes)
-const INITIAL_RETRY_DELAY_MS = 500 // Fast initial checks
-const MEDIUM_RETRY_DELAY_MS = 1500
-const MAX_RETRY_DELAY_MS = 3000
-const INITIAL_PHASE_ATTEMPTS = 10 // First 10 attempts: 500ms intervals
-const MEDIUM_PHASE_ATTEMPTS = 20 // Next 10 attempts: 1500ms intervals
-const NO_CHAT_EARLY_EXIT_MS = 15000 // Give up early if no chat DOM after 15 seconds
+const MAX_ENSURE_DURATION_MS = 60000
+const RETRY_INTERVAL_MS = 1000
+const OPEN_CLICK_COOLDOWN_MS = 2000
 
-/** Checks if the page has any chat-related DOM elements */
-const hasChatFeature = () => {
-  return Boolean(
-    document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container') || document.querySelector('#chatframe'),
-  )
+const isFullscreenActive = () => document.fullscreenElement !== null
+
+const debugLog = (message: string, details?: Record<string, unknown>) => {
+  if (!import.meta.env.DEV) return
+  // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
+  console.debug(`[YLC Archive Chat] ${message}`, details ?? '')
 }
 
-/** Debug logging helper - only logs in development mode */
-const debugLog = (message: string, ...args: unknown[]) => {
-  if (import.meta.env.DEV) {
-    // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
-    console.debug(`[YLC Archive Chat] ${message}`, ...args)
-  }
-}
-
-/**
- * Checks if we already have access to a live chat iframe that is connected to the DOM.
- * Validates both the DOM query result and store state to avoid stale references.
- */
-const hasLiveChatIframe = () => {
-  const domIframe = getLiveChatIframe()
-  if (domIframe?.isConnected) return true
-
-  const storeIframe = useYTDLiveChatNoLsStore.getState().iframeElement
-  if (storeIframe?.isConnected) return true
-
-  return false
-}
-
-/**
- * Hook that ensures archive chat is opened for the extension to use.
- *
- * Problem: On archive videos, the native chat may be closed by the user.
- * The extension needs the YouTube chat iframe to display chat in fullscreen.
- *
- * Solution: This hook automatically opens the native chat if it's closed,
- * allowing the extension to "borrow" the iframe for fullscreen display.
- *
- * @param enabled - Whether to actively ensure the chat is open
- */
 export const useEnsureArchiveChatOpen = (enabled: boolean) => {
   useEffect(() => {
     if (!enabled) return
 
     let isActive = true
     let timeoutId: number | null = null
-    let attempts = 0
     let startTime = 0
+    let lastOpenClickedAt = 0
+    let playableStreak = 0
     const { setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore.getState()
 
     const clearTimer = () => {
-      if (timeoutId) window.clearTimeout(timeoutId)
+      if (!timeoutId) return
+      window.clearTimeout(timeoutId)
       timeoutId = null
-    }
-
-    const getDelay = (attempt: number) => {
-      if (attempt < INITIAL_PHASE_ATTEMPTS) return INITIAL_RETRY_DELAY_MS
-      if (attempt < MEDIUM_PHASE_ATTEMPTS) return MEDIUM_RETRY_DELAY_MS
-      return MAX_RETRY_DELAY_MS
-    }
-
-    const hasTimedOut = () => Date.now() - startTime >= MAX_ENSURE_DURATION_MS
-    const getRemainingMs = () => MAX_ENSURE_DURATION_MS - (Date.now() - startTime)
-
-    const scheduleNext = (delay: number) => {
-      clearTimer()
-      timeoutId = window.setTimeout(runCheck, delay)
     }
 
     const stopEnsure = () => {
@@ -93,59 +38,67 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
       setIsAutoOpeningNativeChat(false)
     }
 
-    const startEnsure = () => {
-      attempts = 0
-      startTime = Date.now()
+    const scheduleNext = () => {
       clearTimer()
-      runCheck()
+      timeoutId = window.setTimeout(runCheck, RETRY_INTERVAL_MS)
     }
+
+    const hasTimedOut = () => Date.now() - startTime >= MAX_ENSURE_DURATION_MS
 
     const runCheck = () => {
       if (!isActive) return
-      if (hasTimedOut()) {
-        debugLog('Stopping: timeout reached')
-        stopEnsure()
+
+      if (!isFullscreenActive()) {
+        scheduleNext()
         return
       }
-      // Live streams don't need this - they handle chat differently
+
       if (isYouTubeLiveNow()) {
-        debugLog('Stopping: detected live stream')
+        debugLog('stopped ensure loop because stream is live')
         stopEnsure()
         return
       }
-      // Success: chat is ready
-      if (hasPlayableLiveChat() && hasLiveChatIframe()) {
-        debugLog('Success: chat is ready')
-        setIsAutoOpeningNativeChat(false)
+
+      const nativeIframe = getLiveChatIframe() ?? useYTDLiveChatNoLsStore.getState().iframeElement
+      if (isArchiveChatPlayable(nativeIframe)) {
+        playableStreak += 1
+        if (playableStreak >= 2) {
+          debugLog('archive native chat became playable')
+          stopEnsure()
+          return
+        }
+        scheduleNext()
+        return
+      }
+      playableStreak = 0
+
+      if (hasTimedOut()) {
+        debugLog('stopped ensure loop because timeout reached')
         stopEnsure()
         return
       }
-      // Early exit: no chat feature on this page (e.g., regular video without chat replay)
-      // Wait 15 seconds before giving up, as DOM may still be loading on slow connections
-      const elapsedMs = Date.now() - startTime
-      if (elapsedMs > NO_CHAT_EARLY_EXIT_MS && !hasChatFeature()) {
-        debugLog('Stopping: no chat feature detected after', NO_CHAT_EARLY_EXIT_MS, 'ms')
-        stopEnsure()
-        return
-      }
-      if (!isNativeChatOpen()) {
-        const selector = openNativeChatPanel()
+
+      const canClickOpen = Date.now() - lastOpenClickedAt >= OPEN_CLICK_COOLDOWN_MS
+      if (canClickOpen) {
+        const selector = openArchiveNativeChatPanel()
         if (selector) {
-          debugLog('Opened native chat via selector:', selector)
+          lastOpenClickedAt = Date.now()
           setIsAutoOpeningNativeChat(true)
+          debugLog('requested archive native chat open', { selector })
         } else {
-          debugLog('Failed to open native chat - no matching button found')
+          debugLog('archive native chat open button not found')
         }
       }
-      attempts += 1
-      const remainingMs = getRemainingMs()
-      if (remainingMs <= 0) {
-        debugLog('Stopping: no remaining time')
-        stopEnsure()
-        return
-      }
-      const delay = Math.min(getDelay(attempts), remainingMs)
-      scheduleNext(delay)
+
+      scheduleNext()
+    }
+
+    const startEnsure = () => {
+      startTime = Date.now()
+      lastOpenClickedAt = 0
+      playableStreak = 0
+      clearTimer()
+      runCheck()
     }
 
     const handleNavigate = () => {

@@ -22,6 +22,19 @@ describe('iframeAttachment', () => {
     expect(reused).toBe(managed)
   })
 
+  it('returns native iframe directly for archive borrow source', () => {
+    const nativeIframe = document.createElement('iframe') as HTMLIFrameElement
+    nativeIframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+
+    const source: ChatSource = {
+      kind: 'archive_borrow',
+      iframe: nativeIframe,
+    }
+
+    const resolved = resolveSourceIframe(source, null)
+    expect(resolved).toBe(nativeIframe)
+  })
+
   it('attaches iframe to container with expected attributes and style', () => {
     const container = document.createElement('div') as HTMLDivElement
     const iframe = document.createElement('iframe') as HTMLIFrameElement
@@ -38,21 +51,30 @@ describe('iframeAttachment', () => {
     expect(iframe.style.outline).toBe('none')
   })
 
-  it('restores borrowed iframe back to native frame on detach', () => {
+  it('moves and restores only native iframe when borrowing archive source', () => {
     const container = document.createElement('div') as HTMLDivElement
-    const ytdFrame = document.createElement('ytd-live-chat-frame')
+    const originalParent = document.createElement('div')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
     const sentinel = document.createElement('div')
     sentinel.id = 'sentinel'
-    ytdFrame.appendChild(sentinel)
-    document.body.appendChild(ytdFrame)
+
+    host.appendChild(iframe)
+    originalParent.appendChild(sentinel)
+    originalParent.appendChild(host)
+    document.body.appendChild(originalParent)
     document.body.appendChild(container)
 
-    const borrowed = document.createElement('iframe') as HTMLIFrameElement
-    attachIframeToContainer(container, borrowed)
-    detachAttachedIframe(borrowed, container)
+    attachIframeToContainer(container, iframe)
+    expect(container.contains(host)).toBe(false)
+    expect(container.contains(iframe)).toBe(true)
+    expect(host.contains(iframe)).toBe(false)
 
-    expect(ytdFrame.firstChild).toBe(borrowed)
-    expect(borrowed.getAttribute('data-ylc-chat')).toBeNull()
+    detachAttachedIframe(iframe, container)
+    expect(originalParent.contains(host)).toBe(true)
+    expect(host.contains(iframe)).toBe(true)
+    expect(originalParent.children[1]).toBe(host)
+    expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
   })
 
   it('removes managed iframe on detach', () => {

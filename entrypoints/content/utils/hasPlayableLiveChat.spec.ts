@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { hasPlayableLiveChat } from './hasPlayableLiveChat'
+import { hasPlayableLiveChat, isArchiveChatPlayable } from './hasPlayableLiveChat'
 
 const createLiveChatDoc = (html: string) => {
   const baseDoc = document.implementation.createHTMLDocument('chat')
@@ -93,6 +93,19 @@ describe('hasPlayableLiveChat', () => {
     expect(hasPlayableLiveChat()).toBe(false)
   })
 
+  it('returns false for archive when iframe is about:blank even if chat-present attributes exist', () => {
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('live-chat-present', '')
+    document.body.appendChild(watchFlexy)
+
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    iframe.setAttribute('src', 'about:blank')
+    document.body.appendChild(iframe)
+
+    expect(hasPlayableLiveChat()).toBe(false)
+  })
+
   it('returns true for live stream UI signal even when iframe document is not ready', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('should-stamp-chat', '')
@@ -110,5 +123,27 @@ describe('hasPlayableLiveChat', () => {
     chatHost.appendChild(iframe)
 
     expect(hasPlayableLiveChat()).toBe(true)
+  })
+})
+
+describe('isArchiveChatPlayable', () => {
+  it('returns true when replay iframe has renderer and item list', () => {
+    const doc = createLiveChatDoc(
+      '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>',
+    )
+    const iframe = attachIframeDocument(doc)
+
+    expect(isArchiveChatPlayable(iframe)).toBe(true)
+  })
+
+  it('returns false when iframe is null or about:blank', () => {
+    expect(isArchiveChatPlayable(null)).toBe(false)
+
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    iframe.setAttribute('src', 'about:blank')
+    document.body.appendChild(iframe)
+
+    expect(isArchiveChatPlayable(iframe)).toBe(false)
   })
 })

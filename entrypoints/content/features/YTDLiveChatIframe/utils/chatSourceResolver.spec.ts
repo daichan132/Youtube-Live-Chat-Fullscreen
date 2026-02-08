@@ -25,6 +25,22 @@ const createNativeChatIframe = (videoId: string) => {
   iframe.id = 'chatframe'
   iframe.className = 'ytd-live-chat-frame'
   iframe.src = `https://www.youtube.com/live_chat?v=${videoId}`
+  const renderer = document.createElement('yt-live-chat-renderer')
+  const itemList = document.createElement('yt-live-chat-item-list-renderer')
+  const body = document.createElement('body')
+  const chatDocument = {
+    location: { href: `https://www.youtube.com/live_chat_replay?v=${videoId}` } as Location,
+    body,
+    querySelector: (selector: string) => {
+      if (selector === 'yt-live-chat-renderer') return renderer
+      if (selector === 'yt-live-chat-item-list-renderer') return itemList
+      return null
+    },
+  } as unknown as Document
+  Object.defineProperty(iframe, 'contentDocument', {
+    value: chatDocument,
+    configurable: true,
+  })
   frame.appendChild(iframe)
   document.body.appendChild(frame)
   return iframe
@@ -74,14 +90,41 @@ describe('resolveChatSource', () => {
     }
   })
 
-  it('returns archive_native when native iframe matches current video', () => {
+  it('returns archive_borrow when native iframe matches current video and replay is playable', () => {
     createWatchFlexy({ 'video-id': 'video-a' })
     const iframe = createNativeChatIframe('video-a')
 
     const source = resolveChatSource()
     expect(source).not.toBeNull()
-    expect(source?.kind).toBe('archive_native')
-    if (source?.kind === 'archive_native') {
+    expect(source?.kind).toBe('archive_borrow')
+    if (source?.kind === 'archive_borrow') {
+      expect(source.iframe).toBe(iframe)
+    }
+  })
+
+  it('keeps archive_borrow from current borrowed iframe when native query cannot find #chatframe', () => {
+    createWatchFlexy({ 'video-id': 'video-a' })
+    const iframe = createNativeChatIframe('video-a')
+    iframe.setAttribute('data-ylc-chat', 'true')
+
+    const shadowHost = document.createElement('div')
+    shadowHost.id = 'shadow-root-live-chat'
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open' })
+    const extensionContainer = document.createElement('div')
+    shadowRoot.appendChild(extensionContainer)
+    document.body.appendChild(shadowHost)
+
+    const frameHost = iframe.closest('ytd-live-chat-frame')
+    if (frameHost) {
+      extensionContainer.appendChild(frameHost)
+    }
+
+    expect(document.querySelector('#chatframe')).toBeNull()
+
+    const source = resolveChatSource(iframe)
+    expect(source).not.toBeNull()
+    expect(source?.kind).toBe('archive_borrow')
+    if (source?.kind === 'archive_borrow') {
       expect(source.iframe).toBe(iframe)
     }
   })
@@ -92,6 +135,52 @@ describe('resolveChatSource', () => {
 
     const source = resolveChatSource()
     expect(source).toBeNull()
+  })
+
+  it('returns null when native iframe exists but replay is not playable yet', () => {
+    createWatchFlexy({ 'video-id': 'video-a' })
+    const frame = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    iframe.className = 'ytd-live-chat-frame'
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: null,
+      configurable: true,
+    })
+    frame.appendChild(iframe)
+    document.body.appendChild(frame)
+
+    const source = resolveChatSource()
+    expect(source).toBeNull()
+  })
+
+  it('returns archive_borrow when native panel is expanded even before playable document access', () => {
+    createWatchFlexy({ 'video-id': 'video-a', 'live-chat-present-and-expanded': null })
+    const frame = document.createElement('ytd-live-chat-frame')
+    const showHideButton = document.createElement('div')
+    showHideButton.id = 'show-hide-button'
+    showHideButton.setAttribute('hidden', '')
+    frame.appendChild(showHideButton)
+
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.id = 'chatframe'
+    iframe.className = 'ytd-live-chat-frame'
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: null,
+      configurable: true,
+    })
+
+    frame.appendChild(iframe)
+    document.body.appendChild(frame)
+
+    const source = resolveChatSource()
+    expect(source).not.toBeNull()
+    expect(source?.kind).toBe('archive_borrow')
+    if (source?.kind === 'archive_borrow') {
+      expect(source.iframe).toBe(iframe)
+    }
   })
 
   it('returns null when no source is available', () => {

@@ -1,8 +1,8 @@
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
-import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 
-export type ChatSource = { kind: 'live_direct'; videoId: string; url: string } | { kind: 'archive_native'; iframe: HTMLIFrameElement }
+export type ChatSource = { kind: 'live_direct'; videoId: string; url: string } | { kind: 'archive_borrow'; iframe: HTMLIFrameElement }
 
 export type IframeLoadState = 'idle' | 'attaching' | 'initializing' | 'ready' | 'error'
 
@@ -43,13 +43,38 @@ const isIframeForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId: stri
   return iframeVideoId === currentVideoId
 }
 
+const isBorrowedArchiveIframe = (iframe: HTMLIFrameElement | null | undefined): iframe is HTMLIFrameElement => {
+  if (!iframe) return false
+  if (iframe.getAttribute('data-ylc-owned') === 'true') return false
+  return iframe.isConnected
+}
+
+const isNativeArchivePanelReady = (iframe: HTMLIFrameElement) => {
+  const chatHost =
+    (iframe.closest('ytd-live-chat-frame') as HTMLElement | null) ?? (document.querySelector('ytd-live-chat-frame') as HTMLElement | null)
+  const closeButton =
+    chatHost?.querySelector('#close-button') ?? document.querySelector('ytd-live-chat-frame #close-button, #chat-container #close-button')
+  if (closeButton) return true
+
+  const showHideButton =
+    (chatHost?.querySelector('#show-hide-button') as HTMLElement | null) ??
+    (document.querySelector('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button') as HTMLElement | null)
+  if (showHideButton?.hasAttribute('hidden')) return true
+
+  const watchFlexy = document.querySelector('ytd-watch-flexy')
+  const watchGrid = document.querySelector('ytd-watch-grid')
+  const hasExpandedChat =
+    watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
+  return Boolean(hasExpandedChat)
+}
+
 export const getLiveChatUrlForVideo = (videoId: string) => {
   const url = new URL('https://www.youtube.com/live_chat')
   url.searchParams.set('v', videoId)
   return url.toString()
 }
 
-export const resolveChatSource = (): ChatSource | null => {
+export const resolveChatSource = (currentIframe: HTMLIFrameElement | null = null): ChatSource | null => {
   const currentVideoId = getYouTubeVideoId()
 
   if (isYouTubeLiveNow()) {
@@ -61,12 +86,13 @@ export const resolveChatSource = (): ChatSource | null => {
     }
   }
 
-  const nativeIframe = getLiveChatIframe()
+  const nativeIframe = getLiveChatIframe() ?? (isBorrowedArchiveIframe(currentIframe) ? currentIframe : null)
   if (!nativeIframe) return null
   if (!isIframeForCurrentVideo(nativeIframe, currentVideoId)) return null
+  if (!isArchiveChatPlayable(nativeIframe) && !isNativeArchivePanelReady(nativeIframe)) return null
 
   return {
-    kind: 'archive_native',
+    kind: 'archive_borrow',
     iframe: nativeIframe,
   }
 }

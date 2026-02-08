@@ -22,20 +22,42 @@ type YouTubeInitialPlayerResponse = {
 let cachedScriptLiveNowHref = ''
 let cachedScriptLiveNowValue: boolean | null = null
 
+const hasReplayLabel = (value: string | null | undefined) => {
+  const normalized = (value ?? '').toLowerCase()
+  if (!normalized) return false
+  return normalized.includes('replay') || normalized.includes('リプレイ')
+}
+
 const hasLiveNowAttribute = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
   return Boolean(watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now'))
 }
 
-const hasLiveChatPresentAttribute = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  return Boolean(
-    watchFlexy?.hasAttribute('live-chat-present') ||
-      watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-      watchGrid?.hasAttribute('live-chat-present') ||
-      watchGrid?.hasAttribute('live-chat-present-and-expanded'),
+const hasArchiveReplaySignal = () => {
+  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
+  if (chatFrame) {
+    try {
+      const docHref = chatFrame.contentDocument?.location?.href ?? ''
+      if (docHref.includes('/live_chat_replay')) return true
+    } catch {
+      // Ignore and fallback to src attributes.
+    }
+
+    const src = chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
+    if (src.includes('/live_chat_replay')) return true
+  }
+
+  const replayButton = document.querySelector(
+    '#show-hide-button button, ytd-live-chat-frame #show-hide-button button, #chat-container #show-hide-button button',
+  ) as HTMLElement | null
+  if (!replayButton) return false
+
+  return (
+    hasReplayLabel(replayButton.getAttribute('aria-label')) ||
+    hasReplayLabel(replayButton.getAttribute('title')) ||
+    hasReplayLabel(replayButton.getAttribute('data-title-no-tooltip')) ||
+    hasReplayLabel(replayButton.getAttribute('data-tooltip-text'))
   )
 }
 
@@ -98,8 +120,7 @@ const getLiveFromInlinePlayerResponseScript = () => {
 
 export const isYouTubeLiveNow = () => {
   if (hasLiveNowAttribute()) return true
-  if (hasLiveChatPresentAttribute()) return true
-  if (hasPlayerLiveUiSignal()) return true
+  if (hasArchiveReplaySignal()) return false
 
   const moviePlayerLive = getLiveFromMoviePlayer()
   if (moviePlayerLive !== null) return moviePlayerLive
@@ -109,6 +130,8 @@ export const isYouTubeLiveNow = () => {
 
   const inlinePlayerResponseLive = getLiveFromInlinePlayerResponseScript()
   if (inlinePlayerResponseLive !== null) return inlinePlayerResponseLive
+
+  if (hasPlayerLiveUiSignal()) return true
 
   return false
 }

@@ -1,37 +1,41 @@
 import { useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
-import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 
-export const YTDLiveChat = () => {
+type YTDLiveChatProps = {
+  isFullscreen: boolean
+}
+
+export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
   const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
+  const isIframeLoaded = useYTDLiveChatNoLsStore(state => state.isIframeLoaded)
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  const isFullscreen = useIsFullScreen()
-  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isShow)
+  // Keep native chat layout intact until extension iframe is actually ready.
+  // Archive replay can stay about:blank if we collapse the native container too early.
+  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isIframeLoaded)
   const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
-    enabled: ytdLiveChat,
+    enabled: ytdLiveChat && !isFullscreen,
     nativeChatOpen: isNativeChatCurrentlyOpen,
     setYTDLiveChat,
   })
 
-  // isNativeChatCurrentlyOpen is false during fullscreen (useNativeChatState returns false),
-  // but needed to hide overlay when native chat is opened after exiting fullscreen
-  const shouldShowOverlay = isShow && ytdLiveChat && !isNativeChatCurrentlyOpen
+  // Archive flow may need native chat to be open while fullscreen chat is loading.
+  const shouldShowOverlay = ytdLiveChat && (isFullscreen || (isShow && !isNativeChatCurrentlyOpen))
 
   return (
     <>

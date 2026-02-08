@@ -11,7 +11,20 @@ const setLocation = (path: string) => {
   window.history.pushState({}, '', `${base}${path}`)
 }
 
-const createLiveChatDoc = () => document.implementation.createHTMLDocument('chat') as Document
+const createPlayableLiveChatDoc = (videoId: string) => {
+  const renderer = document.createElement('yt-live-chat-renderer')
+  const itemList = document.createElement('yt-live-chat-item-list-renderer')
+  const body = document.createElement('body')
+  return {
+    location: { href: `https://www.youtube.com/live_chat_replay?v=${videoId}` } as Location,
+    body,
+    querySelector: (selector: string) => {
+      if (selector === 'yt-live-chat-renderer') return renderer
+      if (selector === 'yt-live-chat-item-list-renderer') return itemList
+      return null
+    },
+  } as unknown as Document
+}
 
 const attachLiveChatFrame = () => {
   const frame = document.createElement('ytd-live-chat-frame')
@@ -23,7 +36,7 @@ const createChatIframe = (videoId: string) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.className = 'ytd-live-chat-frame'
   iframe.src = `https://www.youtube.com/live_chat?v=${videoId}`
-  const doc = createLiveChatDoc()
+  const doc = createPlayableLiveChatDoc(videoId)
   Object.defineProperty(iframe, 'contentDocument', {
     value: doc,
     configurable: true,
@@ -45,7 +58,7 @@ beforeEach(() => {
 })
 
 describe('useIframeLoader', () => {
-  it('attaches the live chat iframe when it matches the current video', async () => {
+  it('borrows archive iframe when native chat matches current video and is playable', async () => {
     const frame = attachLiveChatFrame()
     const iframe = createChatIframe('video-a')
     frame.appendChild(iframe)
@@ -55,6 +68,8 @@ describe('useIframeLoader', () => {
 
     await waitFor(() => {
       expect(container.contains(iframe)).toBe(true)
+      expect(iframe.getAttribute('data-ylc-owned')).toBeNull()
+      expect(iframe.getAttribute('data-ylc-chat')).toBe('true')
     })
   })
 
@@ -79,7 +94,7 @@ describe('useIframeLoader', () => {
     })
   })
 
-  it('attaches when iframe appears later via MutationObserver', async () => {
+  it('attaches when playable archive iframe appears later via MutationObserver', async () => {
     const frame = attachLiveChatFrame()
 
     const { getByTestId } = render(<TestComponent />)
@@ -118,16 +133,17 @@ describe('useIframeLoader', () => {
     })
   })
 
-  it('waits for iframe src to be ready before attaching', async () => {
+  it('waits until archive iframe becomes playable before attaching', async () => {
     const frame = attachLiveChatFrame()
     const watchFlexy = document.createElement('ytd-watch-flexy')
-    watchFlexy.setAttribute('should-stamp-chat', '')
+    watchFlexy.setAttribute('video-id', 'video-a')
     document.body.appendChild(watchFlexy)
 
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     iframe.className = 'ytd-live-chat-frame'
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
     Object.defineProperty(iframe, 'contentDocument', {
-      value: createLiveChatDoc(),
+      value: null,
       configurable: true,
     })
     frame.appendChild(iframe)
@@ -137,7 +153,10 @@ describe('useIframeLoader', () => {
 
     expect(container.contains(iframe)).toBe(false)
 
-    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: createPlayableLiveChatDoc('video-a'),
+      configurable: true,
+    })
 
     await waitFor(
       () => {

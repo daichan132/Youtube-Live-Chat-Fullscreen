@@ -102,6 +102,12 @@ export const useIframeLoader = () => {
       })
     }
 
+    // Reset stale state from previous sessions before resolving sources.
+    setIFrameElement(null)
+    setIsIframeLoadedRef.current(false)
+    setIsDisplayRef.current(false)
+    resetLoadState()
+
     const initializer = createIframeInitializer({
       iframeStyles,
       applyChatStyle: applyCurrentChatStyle,
@@ -141,9 +147,16 @@ export const useIframeLoader = () => {
     }
 
     const syncChatSource = () => {
-      const source = resolveChatSource()
+      const source = resolveChatSource(iframeRef.current)
       if (!source) {
-        debugLog('skip source (not resolved)')
+        if (iframeRef.current && isManagedLiveIframe(iframeRef.current)) {
+          debugLog('live source lost, detaching managed iframe')
+          detachCurrentIframe()
+        } else {
+          debugLog('skip source (not resolved)', {
+            hasCurrentIframe: Boolean(iframeRef.current),
+          })
+        }
         return false
       }
 
@@ -158,7 +171,19 @@ export const useIframeLoader = () => {
         return false
       }
 
+      const container = ref.current
+      if (!container) {
+        debugLog('skip source (container not ready)', {
+          sourceKind: source.kind,
+          href,
+        })
+        return false
+      }
+
       if (iframeRef.current === nextIframe) {
+        if (!nextIframe.hasAttribute('data-ylc-chat')) {
+          attachIframeToContainer(container, nextIframe)
+        }
         debugLog('reuse attached iframe', {
           sourceKind: source.kind,
           href,
@@ -181,7 +206,7 @@ export const useIframeLoader = () => {
         docHref: getIframeDocumentHref(nextIframe),
       })
 
-      attachIframeToContainer(ref.current, nextIframe)
+      attachIframeToContainer(container, nextIframe)
       nextIframe.addEventListener('load', handleLoaded)
 
       // Managed live iframes can fire load before listener attachment; initialize fail-open eagerly.
@@ -196,7 +221,7 @@ export const useIframeLoader = () => {
     let retryInterval: number | null = null
     let retryStartedAt = 0
     const retryIntervalMs = 1000
-    const retryMaxMs = 30000
+    const retryMaxMs = 120000
 
     const stopRetry = () => {
       if (retryInterval) {
@@ -210,6 +235,7 @@ export const useIframeLoader = () => {
       retryStartedAt = Date.now()
       retryInterval = window.setInterval(() => {
         if (syncChatSource()) {
+          observer?.disconnect()
           stopRetry()
           return
         }

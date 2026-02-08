@@ -136,6 +136,8 @@ export const isNativeChatOpen = () => {
     (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
     (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
 
+  if (!chatFrame) return false
+
   if (chatFrame) {
     if (!isChatIframeForCurrentVideo(chatFrame)) return false
     const doc = chatFrame.contentDocument ?? null
@@ -143,17 +145,12 @@ export const isNativeChatOpen = () => {
     if (!href || href.includes('about:blank')) return false
   }
 
-  if (chatContainer && chatFrameHost) {
+  if (chatContainer && chatFrameHost && chatFrame) {
     const isHiddenAttr = isChatHiddenByAttribute(chatContainer, chatFrameHost)
     const containerStyle = window.getComputedStyle(chatContainer)
     const hostStyle = window.getComputedStyle(chatFrameHost)
     const isHiddenStyle = isChatHiddenByStyle(containerStyle, hostStyle)
     if (!isHiddenAttr && !isHiddenStyle) return true
   }
-
-  if (!chatFrame) return false
-  const doc = chatFrame.contentDocument ?? null
-  const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? ''
-  if (!href || href.includes('about:blank')) return false
   return true
 }

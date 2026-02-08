@@ -80,26 +80,37 @@ const hasLiveChatDomContainer = () => {
   return Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
 }
 
+export const isArchiveChatPlayable = (iframe: HTMLIFrameElement | null) => {
+  if (!iframe) return false
+
+  const doc = getLiveChatDocument(iframe)
+  if (!doc) return false
+
+  if (!isLiveChatDocForCurrentVideo(doc)) return false
+  if (isLiveChatUnavailable(doc)) return false
+
+  const renderer = doc.querySelector('yt-live-chat-renderer')
+  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+  return Boolean(renderer && itemList)
+}
+
 export const hasPlayableLiveChat = () => {
   const iframe = getLiveChatIframe()
   if (iframe) {
+    if (isArchiveChatPlayable(iframe)) return true
+
     const doc = getLiveChatDocument(iframe)
-    // If iframe exists but document isn't ready yet, fall back to attribute check
-    // This can happen during page load or when chat is still initializing
+    // If iframe exists but document isn't ready yet:
+    // - live: fail-open (chat can still initialize asynchronously)
+    // - archive: keep waiting (about:blank must not be treated as playable)
     if (!doc) {
       const currentVideoId = getYouTubeVideoId()
       const iframeVideoId = getLiveChatVideoIdFromIframe(iframe)
       if (currentVideoId && iframeVideoId && iframeVideoId !== currentVideoId) return false
       if (isYouTubeLiveNow()) return true
-      return hasLiveChatAttributes()
+      return false
     }
-    if (!isLiveChatDocForCurrentVideo(doc)) return false
-    if (isLiveChatUnavailable(doc)) return false
-    const renderer = doc.querySelector('yt-live-chat-renderer')
-    if (!renderer) return false
-    const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-    if (!itemList) return false
-    return true
+    return false
   }
 
   if (hasLiveChatAttributes()) return true
