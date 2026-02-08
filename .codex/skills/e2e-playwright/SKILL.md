@@ -57,9 +57,11 @@ metadata:
    - Keep source-policy assumptions explicit:
      - Live: direct `live_chat?v=<videoId>` route
      - Archive: native iframe borrow route
+     - Archive borrow is valid only for `live_chat_replay` iframe
    - Archive の順序を崩さない:
      - `fullscreen -> native chat open -> replay playable -> extension attach`
    - `about:blank` は loaded 扱いしない（native playable まで待つ）
+   - Live fullscreen overlay should latch after first success; avoid remount loops from unstable polling signals
 6. Validate
    - Minimum:
      - `yarn lint`
@@ -94,6 +96,12 @@ metadata:
 - `switchPressed: true` かつ `hasExtensionIframe: false` は「拡張表示ONでもsource未解決」のサイン:
   - 多くは native iframe が `about:blank` のまま
   - 判定系（is-open）で false positive を出して再試行が止まっていないか確認する
+- live で extension iframe が繰り返し作り直される:
+  - overlay gating が polling で true/false を往復していないか確認
+  - `stopOnSuccess` 相当で一度成功したらラッチする
+- native chat トグル押下時の仕様確認:
+  - fullscreen chat を OFF にする
+  - native chat はそのまま維持する（強制 close しない）
 - fullscreen chat OFF 後に native chat が見えない:
   - detach 後の restore 先を確認
   - native open 状態判定が hidden でも true になっていないか確認

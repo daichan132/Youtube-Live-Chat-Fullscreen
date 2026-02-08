@@ -38,11 +38,21 @@ yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=
 - live:
   - extension iframe が attach される
   - `aria-pressed="true"` で switch が ON
+  - source が `live_direct` で安定し、native iframe borrow に落ちない
 - archive:
   - fullscreen 後に native chat を open できる
   - extension iframe が loaded
   - extension iframe 内に `yt-live-chat-renderer` と `yt-live-chat-item-list-renderer`
   - iframe が borrowed（`data-ylc-owned != 'true'`）
+
+## Live 合意仕様（2026-02）
+- live は direct `https://www.youtube.com/live_chat?v=<videoId>` のみを使う。
+- `archive_borrow` は `live_chat_replay` iframe のときだけ許可する。
+- fullscreen overlay は「初回 attach 成功後にラッチ」する。
+  - 一度 ready になったらポーリングで再び false に戻して unmount しない。
+- native chat ボタンを押したときの期待挙動:
+  - fullscreen chat は OFF
+  - native chat は開いたまま（close しない）
 
 ## Archive 合意仕様（2026-02）
 - live と archive の処理を混ぜない。
@@ -84,6 +94,11 @@ yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=
   - native iframe が playable になる前に extension 側が attach している可能性が高い。
 - fullscreen chat OFF 後に native chat が戻らない:
   - detach 後の restore 先と、native open 状態判定の false positive を確認する。
+- live で iframe が何度も読み込み直される:
+  - overlay 表示ゲートが polling で揺れて再マウントしていないかを確認する。
+  - `stopOnSuccess` / ラッチ設計で再attachループを止める。
+- live で native borrow が混入する:
+  - source resolver で `live_chat_replay` 以外を archive source から除外する。
 
 ## アンチパターン
 - `waitForTimeout` での固定待ちに依存する。
