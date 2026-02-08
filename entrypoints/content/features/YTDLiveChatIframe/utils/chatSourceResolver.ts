@@ -5,6 +5,9 @@ import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 export type ChatSource = { kind: 'live_direct'; videoId: string; url: string } | { kind: 'archive_borrow'; iframe: HTMLIFrameElement }
 
 export type IframeLoadState = 'idle' | 'attaching' | 'initializing' | 'ready' | 'error'
+export type ResolveChatSourceOptions = {
+  allowBorrowedCurrent?: boolean
+}
 
 const getIframeDocumentHref = (iframe: HTMLIFrameElement) => {
   try {
@@ -68,7 +71,11 @@ export const getLiveChatUrlForVideo = (videoId: string) => {
   return url.toString()
 }
 
-export const resolveChatSource = (currentIframe: HTMLIFrameElement | null = null): ChatSource | null => {
+export const resolveChatSource = (
+  currentIframe: HTMLIFrameElement | null = null,
+  options: ResolveChatSourceOptions = {},
+): ChatSource | null => {
+  const { allowBorrowedCurrent = true } = options
   const currentVideoId = getYouTubeVideoId()
 
   if (isYouTubeLiveNow()) {
@@ -80,7 +87,8 @@ export const resolveChatSource = (currentIframe: HTMLIFrameElement | null = null
     }
   }
 
-  const nativeIframe = getLiveChatIframe() ?? (isBorrowedArchiveIframe(currentIframe) ? currentIframe : null)
+  const borrowedCurrentIframe = allowBorrowedCurrent && isBorrowedArchiveIframe(currentIframe) ? currentIframe : null
+  const nativeIframe = getLiveChatIframe() ?? borrowedCurrentIframe
   if (!nativeIframe) return null
   if (!isIframeForCurrentVideo(nativeIframe, currentVideoId)) return null
   if (!isReplayChatIframe(nativeIframe)) return null

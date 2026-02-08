@@ -137,6 +137,29 @@ describe('resolveChatSource', () => {
     }
   })
 
+  it('does not reuse current borrowed iframe when allowBorrowedCurrent is false', () => {
+    createWatchFlexy({ 'video-id': 'video-a' })
+    const iframe = createNativeChatIframe('video-a')
+    iframe.setAttribute('data-ylc-chat', 'true')
+
+    const shadowHost = document.createElement('div')
+    shadowHost.id = 'shadow-root-live-chat'
+    const shadowRoot = shadowHost.attachShadow({ mode: 'open' })
+    const extensionContainer = document.createElement('div')
+    shadowRoot.appendChild(extensionContainer)
+    document.body.appendChild(shadowHost)
+
+    const frameHost = iframe.closest('ytd-live-chat-frame')
+    if (frameHost) {
+      extensionContainer.appendChild(frameHost)
+    }
+
+    expect(document.querySelector('#chatframe')).toBeNull()
+
+    const source = resolveChatSource(iframe, { allowBorrowedCurrent: false })
+    expect(source).toBeNull()
+  })
+
   it('returns null when native iframe video does not match current video', () => {
     createWatchFlexy({ 'video-id': 'video-a' })
     createNativeChatIframe('video-b')

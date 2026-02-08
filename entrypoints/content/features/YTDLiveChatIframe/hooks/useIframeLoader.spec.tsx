@@ -11,12 +11,13 @@ const setLocation = (path: string) => {
   window.history.pushState({}, '', `${base}${path}`)
 }
 
-const createPlayableLiveChatDoc = (videoId: string) => {
+const createPlayableLiveChatDoc = (videoId: string, options: { href?: string } = {}) => {
+  const href = options.href ?? `https://www.youtube.com/live_chat_replay?v=${videoId}`
   const renderer = document.createElement('yt-live-chat-renderer')
   const itemList = document.createElement('yt-live-chat-item-list-renderer')
   const body = document.createElement('body')
   return {
-    location: { href: `https://www.youtube.com/live_chat_replay?v=${videoId}` } as Location,
+    location: { href } as Location,
     body,
     querySelector: (selector: string) => {
       if (selector === 'yt-live-chat-renderer') return renderer
@@ -32,11 +33,17 @@ const attachLiveChatFrame = () => {
   return frame
 }
 
-const createChatIframe = (videoId: string) => {
+const createChatIframe = (
+  videoId: string,
+  options: {
+    src?: string
+    docHref?: string
+  } = {},
+) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.className = 'ytd-live-chat-frame'
-  iframe.src = `https://www.youtube.com/live_chat?v=${videoId}`
-  const doc = createPlayableLiveChatDoc(videoId)
+  iframe.src = options.src ?? `https://www.youtube.com/live_chat?v=${videoId}`
+  const doc = createPlayableLiveChatDoc(videoId, { href: options.docHref })
   Object.defineProperty(iframe, 'contentDocument', {
     value: doc,
     configurable: true,
@@ -91,6 +98,44 @@ describe('useIframeLoader', () => {
     await waitFor(() => {
       expect(container.querySelector('iframe')).toBeNull()
       expect(frame.contains(iframe)).toBe(true)
+    })
+  })
+
+  it('does not reattach stale archive iframe href after navigation until source changes', async () => {
+    const frame = attachLiveChatFrame()
+    const staleHref = 'https://www.youtube.com/live_chat_replay?continuation=stale-video-a'
+    const iframe = createChatIframe('video-a', {
+      src: staleHref,
+      docHref: staleHref,
+    })
+    frame.appendChild(iframe)
+
+    const { getByTestId } = render(<TestComponent />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+    })
+
+    setLocation('/watch?v=video-b')
+    document.dispatchEvent(new Event('yt-navigate-finish'))
+
+    await waitFor(() => {
+      expect(container.querySelector('iframe')).toBeNull()
+      expect(frame.contains(iframe)).toBe(true)
+    })
+
+    frame.replaceChildren()
+    const freshHref = 'https://www.youtube.com/live_chat_replay?continuation=fresh-video-b'
+    const nextIframe = createChatIframe('video-b', {
+      src: freshHref,
+      docHref: freshHref,
+    })
+    frame.appendChild(nextIframe)
+
+    await waitFor(() => {
+      expect(container.contains(nextIframe)).toBe(true)
+      expect(container.contains(iframe)).toBe(false)
     })
   })
 

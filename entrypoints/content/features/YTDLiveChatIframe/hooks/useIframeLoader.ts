@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react'
 import '@/entrypoints/content'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
+import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../styles/iframe.css?inline'
 import { type IframeLoadState, resolveChatSource } from '../utils/chatSourceResolver'
@@ -33,6 +34,9 @@ export const useIframeLoader = () => {
   const ref = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement | null>(null)
   const loadStateRef = useRef<IframeLoadState>('idle')
+  const lastAttachedPageVideoIdRef = useRef<string | null>(null)
+  const lastAttachedHrefRef = useRef<string>('')
+  const pendingTransitionGuardRef = useRef(false)
   const { setIsDisplay, setIsIframeLoaded, setIFrameElement } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       setIsDisplay: state.setIsDisplay,
@@ -74,6 +78,20 @@ export const useIframeLoader = () => {
       loadStateRef.current = 'idle'
     }
 
+    const clearTransitionGuard = (reason: string, details: Record<string, unknown> = {}) => {
+      if (!pendingTransitionGuardRef.current) return
+      pendingTransitionGuardRef.current = false
+      debugLog('transition-guard cleared', {
+        reason,
+        ...details,
+      })
+    }
+
+    const updateAttachedMetadata = (iframe: HTMLIFrameElement, href: string) => {
+      lastAttachedPageVideoIdRef.current = getYouTubeVideoId()
+      lastAttachedHrefRef.current = href || getNonBlankIframeHref(iframe)
+    }
+
     const applyCurrentChatStyle = () => {
       const {
         fontSize,
@@ -107,6 +125,9 @@ export const useIframeLoader = () => {
     setIsIframeLoadedRef.current(false)
     setIsDisplayRef.current(false)
     resetLoadState()
+    pendingTransitionGuardRef.current = false
+    lastAttachedPageVideoIdRef.current = null
+    lastAttachedHrefRef.current = ''
 
     const initializer = createIframeInitializer({
       iframeStyles,
@@ -147,7 +168,9 @@ export const useIframeLoader = () => {
     }
 
     const syncChatSource = () => {
-      const source = resolveChatSource(iframeRef.current)
+      const source = resolveChatSource(iframeRef.current, {
+        allowBorrowedCurrent: !pendingTransitionGuardRef.current,
+      })
       if (!source) {
         if (iframeRef.current) {
           debugLog('source lost, detaching iframe', {
@@ -164,11 +187,20 @@ export const useIframeLoader = () => {
 
       const nextIframe = resolveSourceIframe(source, iframeRef.current)
       const href = getNonBlankIframeHref(nextIframe)
+      const previousAttachedHref = lastAttachedHrefRef.current
       if (!href) {
         debugLog('skip source (iframe not ready)', {
           sourceKind: source.kind,
           src: nextIframe.getAttribute('src') ?? nextIframe.src ?? '',
           docHref: getIframeDocumentHref(nextIframe),
+        })
+        return false
+      }
+
+      if (source.kind === 'archive_borrow' && pendingTransitionGuardRef.current && previousAttachedHref && href === previousAttachedHref) {
+        debugLog('stale source rejected', {
+          href,
+          sourceKind: source.kind,
         })
         return false
       }
@@ -185,6 +217,15 @@ export const useIframeLoader = () => {
       if (iframeRef.current === nextIframe) {
         if (!nextIframe.hasAttribute('data-ylc-chat')) {
           attachIframeToContainer(container, nextIframe)
+        }
+        updateAttachedMetadata(nextIframe, href)
+        if (source.kind === 'live_direct') {
+          clearTransitionGuard('live source attached', { href })
+        } else if (href !== previousAttachedHref) {
+          clearTransitionGuard('archive source changed', {
+            fromHref: previousAttachedHref,
+            toHref: href,
+          })
         }
         debugLog('reuse attached iframe', {
           sourceKind: source.kind,
@@ -210,6 +251,16 @@ export const useIframeLoader = () => {
 
       attachIframeToContainer(container, nextIframe)
       nextIframe.addEventListener('load', handleLoaded)
+
+      updateAttachedMetadata(nextIframe, href)
+      if (source.kind === 'live_direct') {
+        clearTransitionGuard('live source attached', { href })
+      } else if (href !== previousAttachedHref) {
+        clearTransitionGuard('archive source changed', {
+          fromHref: previousAttachedHref,
+          toHref: href,
+        })
+      }
 
       // Managed live iframes can fire load before listener attachment; initialize fail-open eagerly.
       if (getIframeDocumentHref(nextIframe) || isManagedLiveIframe(nextIframe)) {
@@ -279,6 +330,16 @@ export const useIframeLoader = () => {
     }
 
     const handleNavigate = () => {
+      const previousVideoId = lastAttachedPageVideoIdRef.current
+      const currentVideoId = getYouTubeVideoId()
+      if (previousVideoId && currentVideoId && previousVideoId !== currentVideoId) {
+        pendingTransitionGuardRef.current = true
+        debugLog('transition-guard armed', {
+          fromVideoId: previousVideoId,
+          toVideoId: currentVideoId,
+          lastAttachedHref: lastAttachedHrefRef.current,
+        })
+      }
       detachCurrentIframe()
       if (!syncChatSource()) {
         setupObserver()
