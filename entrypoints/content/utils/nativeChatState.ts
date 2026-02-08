@@ -78,10 +78,8 @@ export const isNativeChatExpanded = () => {
   const watchGrid = document.querySelector('ytd-watch-grid')
   const hasExpandedChat =
     watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
-  const { chatContainer, chatFrameHost } = getNativeChatElements()
-  const isHidden = isChatHiddenByAttribute(chatContainer, chatFrameHost)
-  const hasChatDom = Boolean(chatContainer && chatFrameHost)
-  return Boolean(hasExpandedChat && hasChatDom && !isHidden)
+  if (!hasExpandedChat) return false
+  return isNativeChatOpen()
 }
 
 /**
