@@ -1,5 +1,6 @@
 import { expect, test } from './fixtures'
 import { reliableClick } from './utils/actions'
+import { logChatDiagnostics, waitForNativeArchiveReplayPlayable } from './utils/chatDiagnostics'
 import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 import { archiveReplayUrls } from './utils/testUrls'
@@ -71,6 +72,7 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
   }
 
   if (!selectedUrl) {
+    await logChatDiagnostics(page, 'fullscreen-transition-archive-url-not-found')
     test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
     return
   }
@@ -78,6 +80,7 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
   const selectedVideoId = extractVideoId(selectedUrl)
   const transitionTargetId = archiveReplayUrls.map(extractVideoId).find(id => id && id !== selectedVideoId)
   if (!transitionTargetId) {
+    await logChatDiagnostics(page, 'fullscreen-transition-target-id-not-found')
     test.skip(true, 'Need at least two archive replay video IDs to validate transition behavior.')
     return
   }
@@ -85,6 +88,13 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
   await page.waitForFunction(() => document.fullscreenElement !== null)
+
+  const archivePrecondition = await waitForNativeArchiveReplayPlayable(page)
+  if (!archivePrecondition.ok) {
+    await logChatDiagnostics(page, 'fullscreen-transition-archive-precondition-not-met')
+    test.skip(true, 'Native archive chat source did not become replay-playable in fullscreen.')
+    return
+  }
 
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
@@ -94,7 +104,12 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
     await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
   }
 
-  await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 90000 }).toBe(true)
+  try {
+    await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 90000 }).toBe(true)
+  } catch (error) {
+    await logChatDiagnostics(page, 'fullscreen-transition-overlay-not-playable')
+    throw error
+  }
 
   const beforeTransition = await page.evaluate(getOverlayState)
   expect(beforeTransition.hasIframe).toBe(true)
@@ -112,39 +127,49 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
     document.dispatchEvent(new Event('yt-navigate-finish'))
   }, transitionTargetId)
 
-  await expect
-    .poll(
-      async () => {
-        const state = await page.evaluate(getOverlayState)
-        return state.pageVideoId === transitionTargetId
-      },
-      { timeout: 20000 },
-    )
-    .toBe(true)
+  try {
+    await expect
+      .poll(
+        async () => {
+          const state = await page.evaluate(getOverlayState)
+          return state.pageVideoId === transitionTargetId
+        },
+        { timeout: 20000 },
+      )
+      .toBe(true)
 
-  await expect
-    .poll(
-      async () => {
-        const state = await page.evaluate(getOverlayState)
-        if (state.pageVideoId !== transitionTargetId) return false
-        if (!state.hasIframe) return true
-        if (!state.href || state.href.includes('about:blank')) return true
-        return state.href !== beforeTransition.href
-      },
-      { timeout: 20000 },
-    )
-    .toBe(true)
+    await expect
+      .poll(
+        async () => {
+          const state = await page.evaluate(getOverlayState)
+          if (state.pageVideoId !== transitionTargetId) return false
+          if (!state.hasIframe) return true
+          if (!state.href || state.href.includes('about:blank')) return true
+          return state.href !== beforeTransition.href
+        },
+        { timeout: 20000 },
+      )
+      .toBe(true)
+  } catch (error) {
+    await logChatDiagnostics(page, 'fullscreen-transition-stale-check-failed')
+    throw error
+  }
 
-  const sampleCount = Math.ceil(TRANSITION_STABILITY_DURATION_MS / TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
-  for (let index = 0; index < sampleCount; index += 1) {
-    const state = await page.evaluate(getOverlayState)
-    const staleOverlayVisible =
-      state.pageVideoId === transitionTargetId &&
-      state.hasIframe &&
-      Boolean(state.href) &&
-      !state.href.includes('about:blank') &&
-      state.href === beforeTransition.href
-    expect(staleOverlayVisible).toBe(false)
-    await page.waitForTimeout(TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
+  try {
+    const sampleCount = Math.ceil(TRANSITION_STABILITY_DURATION_MS / TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
+    for (let index = 0; index < sampleCount; index += 1) {
+      const state = await page.evaluate(getOverlayState)
+      const staleOverlayVisible =
+        state.pageVideoId === transitionTargetId &&
+        state.hasIframe &&
+        Boolean(state.href) &&
+        !state.href.includes('about:blank') &&
+        state.href === beforeTransition.href
+      expect(staleOverlayVisible).toBe(false)
+      await page.waitForTimeout(TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
+    }
+  } catch (error) {
+    await logChatDiagnostics(page, 'fullscreen-transition-stability-check-failed')
+    throw error
   }
 })
