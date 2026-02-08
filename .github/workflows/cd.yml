@@ -75,6 +75,7 @@ jobs:
             --expected-version "${{ needs.create_tag.outputs.version }}"
 
           node ./node_modules/publish-browser-extension/bin/publish-extension.mjs \
+            --firefox-extension-id "youtube-live-chat-fullscreen" \
             --firefox-zip "$FIREFOX_ZIP" \
             --firefox-sources-zip "$SOURCES_ZIP"
         env:
@@ -83,6 +84,5 @@ jobs:
           CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
           CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
           CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-          FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
           FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
           FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
