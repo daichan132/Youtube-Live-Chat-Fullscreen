@@ -1,6 +1,5 @@
 import { expect, test } from './fixtures'
 import { reliableClick } from './utils/actions'
-import { logChatDiagnostics, waitForNativeArchiveReplayPlayable } from './utils/chatDiagnostics'
 import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 import { archiveReplayUrls } from './utils/testUrls'
@@ -97,33 +96,19 @@ test('restore native chat after archive fullscreen chat closes', async ({ page }
   }
 
   if (!selectedUrl) {
-    await logChatDiagnostics(page, 'fullscreen-restore-archive-url-not-found')
     test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
-    return
   }
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
-  const archivePrecondition = await waitForNativeArchiveReplayPlayable(page)
-  if (!archivePrecondition.ok) {
-    await logChatDiagnostics(page, 'fullscreen-restore-archive-precondition-not-met')
-    test.skip(true, 'Native archive chat source did not become replay-playable in fullscreen.')
-    return
-  }
-
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible()
   await reliableClick(switchButton, page, switchButtonSelector)
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionBorrowedArchiveChatPlayable), { timeout: 90000 }).toBe(true)
-  } catch (error) {
-    await logChatDiagnostics(page, 'fullscreen-restore-overlay-not-playable')
-    throw error
-  }
+  await expect.poll(async () => page.evaluate(isExtensionBorrowedArchiveChatPlayable), { timeout: 90000 }).toBe(true)
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
@@ -131,7 +116,6 @@ test('restore native chat after archive fullscreen chat closes', async ({ page }
   try {
     await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 15000 }).toBe(true)
   } catch (error) {
-    await logChatDiagnostics(page, 'fullscreen-restore-native-not-restored')
     const nativeDebugState = await page.evaluate(getNativeChatDebugState)
     // eslint-disable-next-line no-console
     console.log('[fullscreenChatRestore][native-debug]', nativeDebugState)

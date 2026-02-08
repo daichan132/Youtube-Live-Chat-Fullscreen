@@ -1,6 +1,5 @@
 import { expect, test } from './fixtures'
 import { reliableClick } from './utils/actions'
-import { logChatDiagnostics, waitForNativeArchiveReplayPlayable } from './utils/chatDiagnostics'
 import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 import { archiveReplayUrls } from './utils/testUrls'
@@ -115,6 +114,54 @@ const closeNativeChat = async (page: import('@playwright/test').Page) => {
   return false
 }
 
+const dumpDebugState = async (page: import('@playwright/test').Page, label: string) => {
+  const state = await page.evaluate(
+    ({ currentLabel, currentSwitchSelector }) => {
+      const switchButton = document.querySelector<HTMLButtonElement>(currentSwitchSelector)
+      const host = document.getElementById('shadow-root-live-chat')
+      const root = host?.shadowRoot ?? null
+      const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
+      const showHideButton = document.querySelector('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button')
+      const closeButton = document.querySelector('ytd-live-chat-frame #close-button, #chat-container #close-button')
+      const nativeClosedInPage = Boolean(showHideButton && !closeButton)
+      const extensionDoc = iframe?.contentDocument ?? null
+      const extensionLoaded = Boolean(extensionDoc && extensionDoc.readyState === 'complete')
+      const extensionPlayable = Boolean(
+        extensionDoc &&
+          !extensionDoc.location.href.includes('about:blank') &&
+          extensionDoc.querySelector('yt-live-chat-renderer') &&
+          extensionDoc.querySelector('yt-live-chat-item-list-renderer'),
+      )
+      let extensionDocHref = ''
+      try {
+        extensionDocHref = iframe?.contentDocument?.location?.href ?? ''
+      } catch {
+        extensionDocHref = 'CORS_ERROR'
+      }
+
+      return {
+        label: currentLabel,
+        url: location.href,
+        fullscreen: document.fullscreenElement !== null,
+        switchPressed: switchButton?.getAttribute('aria-pressed') ?? '',
+        nativeClosed: nativeClosedInPage,
+        hasExtensionIframe: Boolean(iframe),
+        extensionLoaded,
+        extensionPlayable,
+        extensionBorrowed: Boolean(iframe && iframe.getAttribute('data-ylc-owned') !== 'true'),
+        extensionDocHref,
+      }
+    },
+    {
+      currentLabel: label,
+      currentSwitchSelector: switchButtonSelector,
+    },
+  )
+
+  // eslint-disable-next-line no-console
+  console.log(`[liveChatReplay][${label}]`, state)
+}
+
 test('youtube archive replay chat works in fullscreen', async ({ page }) => {
   test.setTimeout(150000)
   let selectedUrl: string | null = null
@@ -133,29 +180,18 @@ test('youtube archive replay chat works in fullscreen', async ({ page }) => {
   }
 
   if (!selectedUrl) {
-    await logChatDiagnostics(page, 'live-chat-replay-archive-url-not-found')
     test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
-    return
   }
 
   const closed = await closeNativeChat(page)
   if (!closed) {
-    await logChatDiagnostics(page, 'live-chat-replay-native-close-failed')
     test.skip(true, 'Could not close native chat via UI controls.')
-    return
   }
   await expect.poll(async () => page.evaluate(isNativeChatClosed), { timeout: 10000 }).toBe(true)
 
   await page.click('button.ytp-fullscreen-button')
   await page.waitForFunction(() => document.fullscreenElement !== null)
   await page.locator('#movie_player').hover()
-
-  const archivePrecondition = await waitForNativeArchiveReplayPlayable(page)
-  if (!archivePrecondition.ok) {
-    await logChatDiagnostics(page, 'live-chat-replay-archive-precondition-not-met')
-    test.skip(true, 'Native archive chat source did not become replay-playable in fullscreen.')
-    return
-  }
 
   const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible({ timeout: 10000 })
@@ -167,7 +203,7 @@ test('youtube archive replay chat works in fullscreen', async ({ page }) => {
     await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 90000 }).toBe(true)
     await expect.poll(async () => page.evaluate(isExtensionArchiveIframeBorrowed), { timeout: 10000 }).toBe(true)
   } catch (error) {
-    await logChatDiagnostics(page, 'live-chat-replay-overlay-attach-failed')
+    await dumpDebugState(page, 'archive-replay-failed')
     throw error
   }
 })
