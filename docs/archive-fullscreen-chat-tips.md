@@ -3,55 +3,52 @@
 更新日: 2026-02-08
 
 ## 目的
-- アーカイブ動画で fullscreen chat が壊れやすいポイントを先に固定し、実装をシンプルに保つ。
+- アーカイブ動画で fullscreen chat が壊れやすいポイントを先に固定し、実装とE2Eを安定化する。
 
-## まず守る前提
-- 順序は固定: `fullscreen` -> `native chat open` -> `replay iframe playable` -> `extension chat attach`
-- `about:blank` の iframe は「準備未完了」として扱う（成功扱いしない）。
-- native 側が安定する前に iframe を移動しない。
+## Runtime 方針（現行）
+- source 判定は 2 系統のみを使う。
+  - live: direct `https://www.youtube.com/live_chat?v=<videoId>`（公開iframe）
+  - archive: native replay iframe borrow（`live_chat_replay` のみ）
+- live と archive の経路を混在させない。
+- archive では stale iframe を残さない（動画遷移時に旧hrefを再利用しない）。
 
-## アーカイブ実装の最小ポリシー
-- source 判定は 2 系統だけに限定する:
-  - live: direct `live_chat?v=<videoId>`
-  - archive: native replay URL を使う managed iframe
-- archive は native iframe DOM を直接 borrow/move しない。
-- archive で source を返す条件:
-  - current video と一致
-  - `hasPlayableLiveChat()` が true
+## Archive ユーザーフロー契約
+- archive は以下の順序で成立する。
+  - `open archive url -> fullscreen -> switch ON -> extension iframe playable`
+- `#chatframe` の初期 `about:blank` は異常とは限らない。
+- 事前に native 側 `href` playable を必須にしない。
+  - 実ユーザーフローより厳しい前提になると flaky の原因になる。
 
-## よく壊れるパターン
-- fullscreen 直後に quick-action の「Live chat」だけを押して、実際は native iframe が開かない。
-- `switch` を ON にした瞬間の先走り open で、native 側が初期化前のまま止まる。
-- `about:blank` を loaded 扱いして retry が止まる。
+## E2E 設計ルール
+- 判定対象は extension 側を優先する。
+  - `#shadow-root-live-chat iframe[data-ylc-chat="true"]` が attach + playable
+- 外部要因で前提不成立なら `skip`、前提成立後の崩れだけ `fail`。
+- `sleep` ベースの待機を避け、`expect.poll` + 明示状態で待つ。
 
-## 安定化のコツ
-- open 操作は `ytd-live-chat-frame` / `#show-hide-button` 系を優先する。
-- retry は「短周期 + 上限あり」にする（無限 retry しない）。
-- state は単方向に寄せる:
-  - `idle -> attaching -> initializing -> ready`
-- attach 前に毎回チェック:
-  - fullscreen 中か
-  - source が解決済みか
-  - src/docHref が non-blank か
+## 環境変数（決定的実行）
+- `YLC_ARCHIVE_URL`: archive 系テストの起点URL（必須）
+- `YLC_ARCHIVE_NEXT_URL`: video transition の遷移先URL（必須）
+- `YLC_REPLAY_UNAVAILABLE_URL`: replay-unavailable シナリオURL（必須）
 
-## Playwright Tips（この領域）
-- 先に `yarn build` してから E2E を実行する（古い `.output` を使わない）。
-- archive URL は固定で渡す:
-  - `YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo'`
-- 判定は「message 件数増加」より「iframe loaded + playable」を優先する。
-- `yarn e2e -- ...` で引数が不安定な場合は `yarn playwright test ...` を使う。
+## 主要 spec の意図
+- `e2e/liveChatReplay.spec.ts`
+  - archive fullscreen で拡張チャットが成立するか（borrow iframe が playable か）
+- `e2e/fullscreenChatRestore.spec.ts`
+  - fullscreen chat OFF 後に native chat が復帰するか
+- `e2e/fullscreenChatVideoTransition.spec.ts`
+  - 動画ID遷移後に旧動画の iframe が残留しないか
+- `e2e/liveChatReplayUnavailable.spec.ts`
+  - replay unavailable では switch は出るが overlay は出ないか
 
 ## トラブルシュート最短チェック
-- native 側
-  - `#chatframe` が存在するか
-  - `src` / `contentDocument.location.href` が `about:blank` でないか
-  - `#show-hide-button` だけで `#close-button` が出ていない状態が続いていないか
-- extension 側
-  - `iframe[data-ylc-chat="true"]` が存在するか
-  - `src` が non-blank か
-  - `yt-live-chat-renderer` と `yt-live-chat-item-list-renderer` が見えるか
-
-## 次の簡素化で優先すること
-- 条件分岐を増やすより、`source resolve` と `open/retry` の責務を分ける。
-- 追加経路を作るときは「既存経路を削れるか」を先に検討する。
-- 新しい fallback を入れる場合は、必ず「発火条件」と「停止条件」をセットで書く。
+- switch
+  - 表示有無
+  - `aria-pressed`
+- native
+  - `#chatframe` の有無
+  - `src` / `contentDocument.location.href`
+  - `#show-hide-button` と `#close-button`
+- extension
+  - `iframe[data-ylc-chat="true"]` の有無
+  - `data-ylc-owned`
+  - `yt-live-chat-renderer` / `yt-live-chat-item-list-renderer`

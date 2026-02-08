@@ -7,6 +7,8 @@
 - 動画URLは固定できるなら環境変数で固定する。
   - live: `YLC_LIVE_URL='<url>'`
   - archive: `YLC_ARCHIVE_URL='<url>'`
+  - archive transition: `YLC_ARCHIVE_NEXT_URL='<url>'`
+  - replay unavailable: `YLC_REPLAY_UNAVAILABLE_URL='<url>'`
 - `yarn e2e -- ...` で引数が不安定な場合は `yarn playwright test ...` を使う。
 - flaky 対策は `sleep` 追加ではなく、`expect.poll` + 明示的な状態判定で行う。
 - 同一マシンで E2E を並列起動しない。
@@ -21,6 +23,8 @@
 ```bash
 yarn build
 YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo' yarn playwright test e2e/liveChatReplay.spec.ts --workers=1 --repeat-each=2
+YLC_ARCHIVE_URL='https://www.youtube.com/watch?v=CQaUs-vNgXo' YLC_ARCHIVE_NEXT_URL='https://www.youtube.com/watch?v=GxNlHOX4nXI' yarn playwright test e2e/fullscreenChatVideoTransition.spec.ts --workers=1 --repeat-each=2
+YLC_REPLAY_UNAVAILABLE_URL='https://www.youtube.com/watch?v=Q7VwUlT53RY' yarn playwright test e2e/liveChatReplayUnavailable.spec.ts --workers=1
 yarn playwright test e2e/nativeChatClosedExtensionLoads.spec.ts --workers=1 --repeat-each=2
 yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=2
 ```
@@ -62,6 +66,20 @@ yarn playwright test e2e/fullscreenChatToggle.spec.ts --workers=1 --repeat-each=
 - archive 開始順序を固定する。
   - `fullscreen -> native chat open -> replay playable -> extension attach`
 - fullscreen chat を閉じたら native chat を確実に復帰し、必要時のみ 1 回 open 補助する。
+
+## Archive E2E 前提判定ルール（2026-02）
+- `#chatframe` の `href` を事前前提にしない。
+  - アーカイブでも、初期状態では `about:blank` のままになるケースがある。
+  - 事前に `#chatframe` playable を要求すると、実ユーザーフローより厳しくなって flaky の原因になる。
+- archive 系 E2E は一気通貫の実操作で判定する。
+  - `open archive url -> fullscreen -> switch ON -> extension iframe playable`
+  - 判定対象は extension 側（`#shadow-root-live-chat iframe[data-ylc-chat="true"]`）を優先する。
+- URL は環境変数で固定する。
+  - `YLC_ARCHIVE_URL` を必須にし、未設定なら `skip`。
+  - video transition 系は `YLC_ARCHIVE_NEXT_URL` も使って遷移先を固定する。
+- `skip` と `fail` の使い分けを固定する。
+  - 外部前提不成立（動画状態・地域制限・一時的な再生不可）は `skip`。
+  - 前提成立後に挙動が崩れた場合のみ `fail`。
 
 ## Archiveで壊れやすい点
 - 正しい順序を崩すと失敗しやすい。

@@ -3,6 +3,22 @@
 ## 目的
 - 既存E2Eの補完とユニット/結合の穴埋めで、主要なユーザー価値（フルスクリーン表示/操作/設定/復元）を網羅する。
 
+## E2E 安定化メモ（2026-02）
+- archive 系は「実ユーザーフロー一気通貫」で判定する。
+  - `open archive url -> fullscreen -> switch ON -> extension iframe playable`
+- `#chatframe` の初期 `about:blank` を事前失敗条件にしない。
+- 外部要因で前提不成立の回は `skip`、前提成立後の崩れだけ `fail`。
+- URLは環境変数で固定する。
+  - `YLC_ARCHIVE_URL`
+  - `YLC_ARCHIVE_NEXT_URL`
+  - `YLC_REPLAY_UNAVAILABLE_URL`
+
+### 主要 archive spec の目的
+- `e2e/liveChatReplay.spec.ts`: archive fullscreen で拡張チャット成立を確認
+- `e2e/fullscreenChatRestore.spec.ts`: fullscreen chat OFF 後の native chat 復帰を確認
+- `e2e/fullscreenChatVideoTransition.spec.ts`: 動画遷移後の stale iframe 非残留を確認
+- `e2e/liveChatReplayUnavailable.spec.ts`: replay unavailable で overlay 非表示を確認
+
 ---
 
 ## 優先度 High
