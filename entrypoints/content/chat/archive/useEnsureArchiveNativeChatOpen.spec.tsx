@@ -145,4 +145,26 @@ describe('useEnsureArchiveNativeChatOpen', () => {
     expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
     unmount()
   })
+
+  it('stops ensure loop when extension iframe is already attached and loaded', () => {
+    const attachedIframe = document.createElement('iframe')
+    attachedIframe.setAttribute('data-ylc-chat', 'true')
+    attachedIframe.setAttribute('data-ylc-owned', 'true')
+    attachedIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    document.body.appendChild(attachedIframe)
+    useYTDLiveChatNoLsStore.setState({
+      iframeElement: attachedIframe,
+    })
+
+    const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
+
+    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+
+    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
+    unmount()
+  })
 })

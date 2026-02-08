@@ -14,14 +14,14 @@ const createWatchFlexy = (attrs: Record<string, string | null>) => {
   return watchFlexy
 }
 
-const createMoviePlayer = (isLive: boolean) => {
+const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive: boolean; isLiveContent?: boolean }) => {
   const moviePlayer = document.createElement('div') as HTMLElement & {
     getVideoData?: () => { isLive: boolean; isLiveContent: boolean }
   }
   moviePlayer.id = 'movie_player'
   moviePlayer.getVideoData = () => ({
     isLive,
-    isLiveContent: isLive,
+    isLiveContent,
   })
   document.body.appendChild(moviePlayer)
 }
@@ -67,20 +67,27 @@ describe('detectChatMode', () => {
 
   it('returns archive on non-live page when only generic chat signals are present', () => {
     createWatchFlexy({ 'live-chat-present': null })
-    createMoviePlayer(false)
+    createMoviePlayer({ isLive: false })
+
+    expect(detectChatMode()).toBe('archive')
+  })
+
+  it('returns archive when chat signals exist even if video metadata still says live content', () => {
+    createWatchFlexy({ 'live-chat-present': null })
+    createMoviePlayer({ isLive: false, isLiveContent: true })
 
     expect(detectChatMode()).toBe('archive')
   })
 
   it('returns live when video is live even if native iframe is missing', () => {
     createWatchFlexy({ 'live-chat-present': null })
-    createMoviePlayer(true)
+    createMoviePlayer({ isLive: true })
 
     expect(detectChatMode()).toBe('live')
   })
 
   it('returns none when no chat signals exist', () => {
-    createMoviePlayer(false)
+    createMoviePlayer({ isLive: false })
 
     expect(detectChatMode()).toBe('none')
   })

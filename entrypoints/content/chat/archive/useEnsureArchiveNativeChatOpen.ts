@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import { getNonBlankIframeHref } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
@@ -58,7 +59,18 @@ export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
         return
       }
 
-      const borrowedIframe = useYTDLiveChatNoLsStore.getState().iframeElement
+      const attachedIframe = useYTDLiveChatNoLsStore.getState().iframeElement
+      const hasAttachedExtensionIframe =
+        attachedIframe?.isConnected &&
+        attachedIframe.getAttribute('data-ylc-chat') === 'true' &&
+        Boolean(getNonBlankIframeHref(attachedIframe))
+      if (hasAttachedExtensionIframe) {
+        debugLog('stopped ensure loop because extension iframe is already attached')
+        stopEnsure()
+        return
+      }
+
+      const borrowedIframe = attachedIframe
       const isBorrowedArchiveIframe =
         borrowedIframe?.isConnected &&
         borrowedIframe.getAttribute('data-ylc-chat') === 'true' &&

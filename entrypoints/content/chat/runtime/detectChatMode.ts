@@ -32,10 +32,16 @@ export const detectChatMode = (): ChatMode => {
     if (isLiveChatIframe(nativeIframe)) return 'live'
   }
 
-  if (isYouTubeLiveNow() || isYouTubeLiveVideo()) return 'live'
+  if (isYouTubeLiveNow()) return 'live'
 
   // On non-live pages, generic chat signals imply replay/archive mode.
   if (hasLiveChatSignals()) return 'archive'
   if (hasChatHost()) return 'archive'
+
+  // Fallback for cases where YouTube has not rendered chat DOM yet.
+  // NOTE: `isLiveContent` can stay true on archived streams, so it must not
+  // override explicit archive signals above.
+  if (isYouTubeLiveVideo()) return 'live'
+
   return 'none'
 }
