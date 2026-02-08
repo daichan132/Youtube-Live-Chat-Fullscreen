@@ -49,25 +49,6 @@ const isBorrowedArchiveIframe = (iframe: HTMLIFrameElement | null | undefined): 
   return iframe.isConnected
 }
 
-const isNativeArchivePanelReady = (iframe: HTMLIFrameElement) => {
-  const chatHost =
-    (iframe.closest('ytd-live-chat-frame') as HTMLElement | null) ?? (document.querySelector('ytd-live-chat-frame') as HTMLElement | null)
-  const closeButton =
-    chatHost?.querySelector('#close-button') ?? document.querySelector('ytd-live-chat-frame #close-button, #chat-container #close-button')
-  if (closeButton) return true
-
-  const showHideButton =
-    (chatHost?.querySelector('#show-hide-button') as HTMLElement | null) ??
-    (document.querySelector('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button') as HTMLElement | null)
-  if (showHideButton?.hasAttribute('hidden')) return true
-
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  const hasExpandedChat =
-    watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
-  return Boolean(hasExpandedChat)
-}
-
 export const getLiveChatUrlForVideo = (videoId: string) => {
   const url = new URL('https://www.youtube.com/live_chat')
   url.searchParams.set('v', videoId)
@@ -89,7 +70,7 @@ export const resolveChatSource = (currentIframe: HTMLIFrameElement | null = null
   const nativeIframe = getLiveChatIframe() ?? (isBorrowedArchiveIframe(currentIframe) ? currentIframe : null)
   if (!nativeIframe) return null
   if (!isIframeForCurrentVideo(nativeIframe, currentVideoId)) return null
-  if (!isArchiveChatPlayable(nativeIframe) && !isNativeArchivePanelReady(nativeIframe)) return null
+  if (!isArchiveChatPlayable(nativeIframe)) return null
 
   return {
     kind: 'archive_borrow',

@@ -40,7 +40,7 @@ describe('useEnsureArchiveChatOpen', () => {
     getLiveChatIframeMock.mockReturnValue(document.createElement('iframe'))
     isArchiveChatPlayableMock.mockReturnValue(false)
     isYouTubeLiveNowMock.mockReturnValue(false)
-    openArchiveNativeChatPanelMock.mockReturnValue('.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]')
+    openArchiveNativeChatPanelMock.mockReturnValue(true)
   })
 
   afterEach(() => {
@@ -123,6 +123,26 @@ describe('useEnsureArchiveChatOpen', () => {
     })
 
     expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
+    unmount()
+  })
+
+  it('stops ensure loop when archive iframe is already borrowed by fullscreen chat', () => {
+    const borrowedIframe = document.createElement('iframe')
+    borrowedIframe.setAttribute('data-ylc-chat', 'true')
+    document.body.appendChild(borrowedIframe)
+    useYTDLiveChatNoLsStore.setState({
+      iframeElement: borrowedIframe,
+    })
+
+    const { unmount } = renderHook(() => useEnsureArchiveChatOpen(true))
+
+    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+
+    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
     unmount()
   })
 })

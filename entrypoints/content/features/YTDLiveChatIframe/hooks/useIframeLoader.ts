@@ -127,7 +127,7 @@ export const useIframeLoader = () => {
       initializer.initialize(iframe)
     }
 
-    const detachCurrentIframe = () => {
+    const detachCurrentIframe = (options?: { ensureNativeVisible?: boolean }) => {
       const current = iframeRef.current
       if (!current) return
 
@@ -138,7 +138,7 @@ export const useIframeLoader = () => {
 
       initializer.cleanup()
       current.removeEventListener('load', handleLoaded)
-      detachAttachedIframe(current, ref.current)
+      detachAttachedIframe(current, ref.current, options)
 
       setIFrameElement(null)
       setIsIframeLoadedRef.current(false)
@@ -149,8 +149,10 @@ export const useIframeLoader = () => {
     const syncChatSource = () => {
       const source = resolveChatSource(iframeRef.current)
       if (!source) {
-        if (iframeRef.current && isManagedLiveIframe(iframeRef.current)) {
-          debugLog('live source lost, detaching managed iframe')
+        if (iframeRef.current) {
+          debugLog('source lost, detaching iframe', {
+            managedLive: isManagedLiveIframe(iframeRef.current),
+          })
           detachCurrentIframe()
         } else {
           debugLog('skip source (not resolved)', {
@@ -284,14 +286,25 @@ export const useIframeLoader = () => {
       }
     }
 
+    const handleFullscreenChange = () => {
+      if (document.fullscreenElement !== null) return
+      if (!iframeRef.current) return
+      debugLog('fullscreen exited, detaching current iframe')
+      detachCurrentIframe({ ensureNativeVisible: true })
+    }
+
     document.addEventListener('yt-navigate-finish', handleNavigate)
+    document.addEventListener('fullscreenchange', handleFullscreenChange)
 
     return () => {
       document.removeEventListener('yt-navigate-finish', handleNavigate)
+      document.removeEventListener('fullscreenchange', handleFullscreenChange)
       observer?.disconnect()
       stopRetry()
       initializer.cleanup()
-      detachCurrentIframe()
+      detachCurrentIframe({
+        ensureNativeVisible: document.fullscreenElement === null,
+      })
     }
     // Effect only needs to run once on mount - callbacks are accessed via stable refs.
   }, [setIFrameElement])

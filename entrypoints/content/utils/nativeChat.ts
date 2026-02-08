@@ -7,15 +7,6 @@ type YouTubeLiveChatFrameElement = HTMLElement & {
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
-const archivePlayerChatToggleSelectors = [
-  '.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
-  '.ytp-right-controls button-view-model button[aria-pressed="false"]',
-  '#movie_player toggle-button-view-model button[aria-pressed="false"]',
-  '#movie_player button-view-model button[aria-pressed="false"]',
-  'toggle-button-view-model button[aria-pressed="false"]',
-  'button-view-model button[aria-pressed="false"]',
-]
-
 const archiveSidebarOpenSelectors = [
   'ytd-live-chat-frame #show-hide-button button',
   'ytd-live-chat-frame #show-hide-button yt-icon-button',
@@ -27,10 +18,25 @@ const archiveSidebarOpenSelectors = [
   '#chat-container #show-hide-button',
 ]
 
+const archivePlayerChatToggleSelectors = [
+  '.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
+  '.ytp-right-controls button-view-model button[aria-pressed="false"]',
+  '#movie_player toggle-button-view-model button[aria-pressed="false"]',
+  '#movie_player button-view-model button[aria-pressed="false"]',
+]
+
 const isNativeChatMarkedExpanded = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
   return Boolean(watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded'))
+}
+
+const isNativeChatHostVisible = () => {
+  const host = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+  if (!host) return false
+  if (host.hasAttribute('hidden') || host.getAttribute('aria-hidden') === 'true') return false
+  const style = window.getComputedStyle(host)
+  return style.display !== 'none' && style.visibility !== 'hidden'
 }
 
 const getNativeChatHref = () => {
@@ -51,32 +57,6 @@ const isNativeChatIframeBlank = () => {
   return href.includes('about:blank')
 }
 
-const isElementDisabled = (element: HTMLElement) => {
-  if (element instanceof HTMLButtonElement) return element.disabled
-  return element.hasAttribute('disabled') || element.getAttribute('aria-disabled') === 'true'
-}
-
-const isElementHiddenByStyle = (element: HTMLElement) => {
-  let current: HTMLElement | null = element
-  while (current) {
-    if (current.hasAttribute('hidden')) return true
-    if (current.getAttribute('aria-hidden') === 'true') return true
-
-    const style = window.getComputedStyle(current)
-    if (style.display === 'none' || style.visibility === 'hidden') return true
-    if (style.pointerEvents === 'none' && current === element) return true
-
-    current = current.parentElement
-  }
-  return false
-}
-
-const isRenderedForUser = (element: HTMLElement) => {
-  if (isElementHiddenByStyle(element)) return false
-  if (typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('jsdom')) return true
-  return element.getClientRects().length > 0
-}
-
 const resolveClickable = (target: HTMLElement) =>
   target.matches('button, yt-icon-button, tp-yt-paper-icon-button, [role="button"]')
     ? target
@@ -87,84 +67,36 @@ const getButtonLabelText = (element: HTMLElement) =>
 
 const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
 
-const clickElement = (element: HTMLElement) => {
-  if (typeof element.scrollIntoView === 'function') {
-    element.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' })
-  }
-
-  const dispatchMouseEvent = (type: 'mousedown' | 'mouseup' | 'click', buttons: number) => {
-    element.dispatchEvent(
-      new MouseEvent(type, {
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-        buttons,
-      }),
-    )
-  }
-
-  const dispatchPointerEvent = (type: 'pointerdown' | 'pointerup', buttons: number) => {
-    if (typeof PointerEvent === 'undefined') return
-    element.dispatchEvent(
-      new PointerEvent(type, {
-        bubbles: true,
-        cancelable: true,
-        composed: true,
-        buttons,
-        pointerType: 'mouse',
-        isPrimary: true,
-      }),
-    )
-  }
-
-  dispatchPointerEvent('pointerdown', 1)
-  dispatchMouseEvent('mousedown', 1)
-  element.click()
-  dispatchPointerEvent('pointerup', 0)
-  dispatchMouseEvent('mouseup', 0)
-  dispatchMouseEvent('click', 0)
-}
-
-const tryClickBySelector = (
-  selector: string,
-  {
-    requireVisible = true,
-    requireChatLabel = false,
-    allowDisabled = false,
-  }: {
-    requireVisible?: boolean
-    requireChatLabel?: boolean
-    allowDisabled?: boolean
-  } = {},
-) => {
-  const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
-  if (targets.length === 0) return false
-
-  for (const target of targets) {
-    const clickable = resolveClickable(target)
-    if (!allowDisabled && isElementDisabled(clickable)) continue
-    if (requireVisible && !isRenderedForUser(clickable)) continue
-    if (requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
-
-    clickElement(clickable)
-    return true
-  }
-
-  return false
+const isElementVisible = (element: HTMLElement) => {
+  if (element.hasAttribute('hidden')) return false
+  if (element.getAttribute('aria-hidden') === 'true') return false
+  const style = window.getComputedStyle(element)
+  if (style.display === 'none' || style.visibility === 'hidden') return false
+  if (typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('jsdom')) return true
+  return element.getClientRects().length > 0
 }
 
 const clickFirstMatchingSelector = (
   selectors: string[],
-  options?: {
-    requireVisible?: boolean
+  options: {
     requireChatLabel?: boolean
-    allowDisabled?: boolean
-  },
+    requireVisible?: boolean
+  } = {},
 ) => {
+  const requireVisible = options.requireVisible ?? true
   for (const selector of selectors) {
-    if (tryClickBySelector(selector, options)) return selector
+    const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
+    for (const target of targets) {
+      const clickable = resolveClickable(target)
+      if (requireVisible && !isElementVisible(clickable)) continue
+      if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
+      if (clickable.getAttribute('aria-disabled') === 'true') continue
+      if (options.requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
+      clickable.click()
+      return true
+    }
   }
-  return null
+  return false
 }
 
 const revealPlayerControls = () => {
@@ -188,49 +120,29 @@ const revealPlayerControls = () => {
 
 const tryInvokeChatFrameShowHide = () => {
   const host = document.querySelector('ytd-live-chat-frame') as YouTubeLiveChatFrameElement | null
-  if (!host) return null
-  if (typeof host.onShowHideChat !== 'function') return null
+  if (!host) return false
+  if (typeof host.onShowHideChat !== 'function') return false
   host.onShowHideChat()
-  return 'ytd-live-chat-frame#onShowHideChat'
+  return true
 }
 
 export const openArchiveNativeChatPanel = () => {
-  revealPlayerControls()
-
   // `#show-hide-button` is a toggle. If YouTube already marks expanded and
   // iframe is non-blank, avoid toggling it closed by mistake.
-  if (isNativeChatMarkedExpanded() && !isNativeChatIframeBlank()) {
-    return null
+  if (isNativeChatMarkedExpanded() && !isNativeChatIframeBlank() && isNativeChatHostVisible()) {
+    return false
   }
 
-  const sidebarSelector = clickFirstMatchingSelector(archiveSidebarOpenSelectors, {
-    requireVisible: true,
-    allowDisabled: true,
-  })
-  if (sidebarSelector) return sidebarSelector
+  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireVisible: true })) return true
+  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireVisible: false })) return true
 
-  const hiddenSidebarSelector = clickFirstMatchingSelector(archiveSidebarOpenSelectors, {
-    requireVisible: false,
-    allowDisabled: true,
-  })
-  if (hiddenSidebarSelector) return `${hiddenSidebarSelector} (force)`
+  revealPlayerControls()
 
-  const hostMethodSelector = tryInvokeChatFrameShowHide()
-  if (hostMethodSelector) return hostMethodSelector
+  if (clickFirstMatchingSelector(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: true })) return true
+  if (clickFirstMatchingSelector(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: false })) return true
+  if (tryInvokeChatFrameShowHide()) return true
 
-  const playerToggleSelector = clickFirstMatchingSelector(archivePlayerChatToggleSelectors, {
-    requireVisible: true,
-    requireChatLabel: true,
-  })
-  if (playerToggleSelector) return playerToggleSelector
-
-  const hiddenPlayerToggleSelector = clickFirstMatchingSelector(archivePlayerChatToggleSelectors, {
-    requireVisible: false,
-    requireChatLabel: true,
-  })
-  if (hiddenPlayerToggleSelector) return `${hiddenPlayerToggleSelector} (force)`
-
-  return null
+  return false
 }
 
 export const openNativeChatPanel = () => openArchiveNativeChatPanel()

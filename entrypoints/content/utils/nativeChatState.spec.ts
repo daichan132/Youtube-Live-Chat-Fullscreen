@@ -59,4 +59,13 @@ describe('isNativeChatOpen', () => {
 
     expect(isNativeChatOpen()).toBe(false)
   })
+
+  it('returns false when chat host is hidden even if iframe exists', () => {
+    createChatContainer()
+    const host = createChatFrameHost()
+    host.style.display = 'none'
+    createChatFrame('video-a')
+
+    expect(isNativeChatOpen()).toBe(false)
+  })
 })

@@ -24,7 +24,6 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     let timeoutId: number | null = null
     let startTime = 0
     let lastOpenClickedAt = 0
-    let playableStreak = 0
     const { setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore.getState()
 
     const clearTimer = () => {
@@ -59,18 +58,23 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
         return
       }
 
-      const nativeIframe = getLiveChatIframe() ?? useYTDLiveChatNoLsStore.getState().iframeElement
-      if (isArchiveChatPlayable(nativeIframe)) {
-        playableStreak += 1
-        if (playableStreak >= 2) {
-          debugLog('archive native chat became playable')
-          stopEnsure()
-          return
-        }
-        scheduleNext()
+      const borrowedIframe = useYTDLiveChatNoLsStore.getState().iframeElement
+      const isBorrowedArchiveIframe =
+        borrowedIframe?.isConnected &&
+        borrowedIframe.getAttribute('data-ylc-chat') === 'true' &&
+        borrowedIframe.getAttribute('data-ylc-owned') !== 'true'
+      if (isBorrowedArchiveIframe) {
+        debugLog('stopped ensure loop because archive iframe is already borrowed')
+        stopEnsure()
         return
       }
-      playableStreak = 0
+
+      const nativeIframe = getLiveChatIframe() ?? useYTDLiveChatNoLsStore.getState().iframeElement
+      if (isArchiveChatPlayable(nativeIframe)) {
+        debugLog('archive native chat became playable')
+        stopEnsure()
+        return
+      }
 
       if (hasTimedOut()) {
         debugLog('stopped ensure loop because timeout reached')
@@ -80,11 +84,11 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
 
       const canClickOpen = Date.now() - lastOpenClickedAt >= OPEN_CLICK_COOLDOWN_MS
       if (canClickOpen) {
-        const selector = openArchiveNativeChatPanel()
-        if (selector) {
+        const opened = openArchiveNativeChatPanel()
+        if (opened) {
           lastOpenClickedAt = Date.now()
           setIsAutoOpeningNativeChat(true)
-          debugLog('requested archive native chat open', { selector })
+          debugLog('requested archive native chat open')
         } else {
           debugLog('archive native chat open button not found')
         }
@@ -96,7 +100,6 @@ export const useEnsureArchiveChatOpen = (enabled: boolean) => {
     const startEnsure = () => {
       startTime = Date.now()
       lastOpenClickedAt = 0
-      playableStreak = 0
       clearTimer()
       runCheck()
     }

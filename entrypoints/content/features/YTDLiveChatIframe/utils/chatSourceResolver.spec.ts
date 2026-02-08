@@ -155,7 +155,7 @@ describe('resolveChatSource', () => {
     expect(source).toBeNull()
   })
 
-  it('returns archive_borrow when native panel is expanded even before playable document access', () => {
+  it('returns null when native panel is expanded but replay document is not playable yet', () => {
     createWatchFlexy({ 'video-id': 'video-a', 'live-chat-present-and-expanded': null })
     const frame = document.createElement('ytd-live-chat-frame')
     const showHideButton = document.createElement('div')
@@ -176,11 +176,7 @@ describe('resolveChatSource', () => {
     document.body.appendChild(frame)
 
     const source = resolveChatSource()
-    expect(source).not.toBeNull()
-    expect(source?.kind).toBe('archive_borrow')
-    if (source?.kind === 'archive_borrow') {
-      expect(source.iframe).toBe(iframe)
-    }
+    expect(source).toBeNull()
   })
 
   it('returns null when no source is available', () => {

@@ -150,7 +150,7 @@ export const isNativeChatOpen = () => {
     const containerStyle = window.getComputedStyle(chatContainer)
     const hostStyle = window.getComputedStyle(chatFrameHost)
     const isHiddenStyle = isChatHiddenByStyle(containerStyle, hostStyle)
-    if (!isHiddenAttr && !isHiddenStyle) return true
+    return !isHiddenAttr && !isHiddenStyle
   }
-  return true
+  return false
 }

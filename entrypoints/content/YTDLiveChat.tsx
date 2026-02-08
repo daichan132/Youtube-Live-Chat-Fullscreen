@@ -1,6 +1,8 @@
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
+import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
@@ -8,6 +10,7 @@ import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
+import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 
 type YTDLiveChatProps = {
   isFullscreen: boolean
@@ -34,8 +37,18 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
     setYTDLiveChat,
   })
 
-  // Archive flow may need native chat to be open while fullscreen chat is loading.
-  const shouldShowOverlay = ytdLiveChat && (isFullscreen || (isShow && !isNativeChatCurrentlyOpen))
+  const canAttachFullscreenChat = usePollingWithNavigate({
+    checkFn: useCallback(() => {
+      if (isYouTubeLiveNow()) return true
+      return isArchiveChatPlayable(getLiveChatIframe())
+    }, []),
+    stopOnSuccess: false,
+    intervalMs: 1000,
+  })
+
+  // In archive mode, wait until native replay chat is actually playable before
+  // showing the fullscreen chat overlay.
+  const shouldShowOverlay = ytdLiveChat && ((isFullscreen && canAttachFullscreenChat) || (isShow && !isNativeChatCurrentlyOpen))
 
   return (
     <>

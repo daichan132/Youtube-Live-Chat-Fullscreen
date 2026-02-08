@@ -57,6 +57,9 @@ metadata:
    - Keep source-policy assumptions explicit:
      - Live: direct `live_chat?v=<videoId>` route
      - Archive: native iframe borrow route
+   - Archive の順序を崩さない:
+     - `fullscreen -> native chat open -> replay playable -> extension attach`
+   - `about:blank` は loaded 扱いしない（native playable まで待つ）
 6. Validate
    - Minimum:
      - `yarn lint`
@@ -79,6 +82,7 @@ metadata:
 - Root cause（推定でなく根拠ベース）
 - Fix summary（どこをどう変えたか）
 - Verification（通ったコマンド + expected/skipped/unexpected）
+- Archive時は順序証跡（fullscreen後にnative openし、playable後にattachしたか）
 
 # Edge cases
 - `No live URL with chat found`: `YLC_LIVE_URL` を指定して再実行。
@@ -90,6 +94,9 @@ metadata:
 - `switchPressed: true` かつ `hasExtensionIframe: false` は「拡張表示ONでもsource未解決」のサイン:
   - 多くは native iframe が `about:blank` のまま
   - 判定系（is-open）で false positive を出して再試行が止まっていないか確認する
+- fullscreen chat OFF 後に native chat が見えない:
+  - detach 後の restore 先を確認
+  - native open 状態判定が hidden でも true になっていないか確認
 
 # Trigger examples
 - "playwrightが不安定なので直して"

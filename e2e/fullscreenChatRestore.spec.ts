@@ -1,6 +1,8 @@
 import { expect, test } from './fixtures'
-import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from './utils/liveUrl'
+import { reliableClick } from './utils/actions'
+import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
+import { archiveReplayUrls } from './utils/testUrls'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -33,23 +35,69 @@ const isNativeChatUsable = () => {
   return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
 }
 
-test('restore native chat after fullscreen toggle', async ({ page }) => {
+const isExtensionBorrowedArchiveChatPlayable = () => {
+  const host = document.getElementById('shadow-root-live-chat')
+  const root = host?.shadowRoot ?? null
+  const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  if (!iframe) return false
+  if (iframe.getAttribute('data-ylc-owned') === 'true') return false
+  const doc = iframe.contentDocument ?? null
+  const href = doc?.location?.href ?? iframe.getAttribute('src') ?? iframe.src ?? ''
+  if (!doc || !href || href.includes('about:blank')) return false
+  return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
+}
+
+const getNativeChatDebugState = () => {
+  const secondary = document.querySelector('#secondary') as HTMLElement | null
+  const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
+  const chatFrameHost = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
+  const secondaryStyle = secondary ? window.getComputedStyle(secondary) : null
+  const containerStyle = chatContainer ? window.getComputedStyle(chatContainer) : null
+  const hostStyle = chatFrameHost ? window.getComputedStyle(chatFrameHost) : null
+  return {
+    fullscreen: document.fullscreenElement !== null,
+    hasSecondary: Boolean(secondary),
+    hasContainer: Boolean(chatContainer),
+    hasHost: Boolean(chatFrameHost),
+    hasFrame: Boolean(chatFrame),
+    secondaryDisplay: secondaryStyle?.display ?? '',
+    secondaryVisibility: secondaryStyle?.visibility ?? '',
+    secondaryPointerEvents: secondaryStyle?.pointerEvents ?? '',
+    containerDisplay: containerStyle?.display ?? '',
+    containerVisibility: containerStyle?.visibility ?? '',
+    containerPointerEvents: containerStyle?.pointerEvents ?? '',
+    hostDisplay: hostStyle?.display ?? '',
+    hostVisibility: hostStyle?.visibility ?? '',
+    hostPointerEvents: hostStyle?.pointerEvents ?? '',
+    secondaryWidth: secondary?.getBoundingClientRect().width ?? 0,
+    hostWidth: chatFrameHost?.getBoundingClientRect().width ?? 0,
+    hostHeight: chatFrameHost?.getBoundingClientRect().height ?? 0,
+    frameHeight: chatFrame?.getBoundingClientRect().height ?? 0,
+  }
+}
+
+test('restore native chat after archive fullscreen chat closes', async ({ page }) => {
   test.setTimeout(120000)
 
-  const liveUrl = process.env.YLC_LIVE_URL ?? (await findLiveUrlWithChat(page))
-  if (!liveUrl) {
-    test.skip(true, 'No live URL with chat found. Set YLC_LIVE_URL to override.')
-    return
-  }
-  await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
-  await acceptYouTubeConsent(page)
-  const liveNow = await isWatchPageLiveNow(page)
-  if (!liveNow) {
-    test.skip(true, 'Selected URL is not live now. Provide a currently live stream URL.')
-  }
-  await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
+  const candidateUrls = process.env.YLC_ARCHIVE_URL ? [process.env.YLC_ARCHIVE_URL] : archiveReplayUrls
+  let selectedUrl: string | null = null
 
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
+  for (const url of candidateUrls) {
+    try {
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 })
+      await acceptYouTubeConsent(page)
+      await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: 20000 })
+      selectedUrl = url
+      break
+    } catch {
+      // Try next archive URL.
+    }
+  }
+
+  if (!selectedUrl) {
+    test.skip(true, 'No archive video with chat replay found. Set YLC_ARCHIVE_URL to run this test.')
+  }
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
@@ -58,11 +106,19 @@ test('restore native chat after fullscreen toggle', async ({ page }) => {
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
   await expect(switchButton).toBeVisible()
-  await switchButton.click()
+  await reliableClick(switchButton, page, switchButtonSelector)
+  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
+  await expect.poll(async () => page.evaluate(isExtensionBorrowedArchiveChatPlayable), { timeout: 90000 }).toBe(true)
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
   await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null)).toBe(true)
-
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
+  try {
+    await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 15000 }).toBe(true)
+  } catch (error) {
+    const nativeDebugState = await page.evaluate(getNativeChatDebugState)
+    // eslint-disable-next-line no-console
+    console.log('[fullscreenChatRestore][native-debug]', nativeDebugState)
+    throw error
+  }
 })

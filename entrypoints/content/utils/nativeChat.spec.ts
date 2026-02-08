@@ -46,9 +46,9 @@ describe('openArchiveNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toContain('.ytp-right-controls')
+    expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
@@ -57,9 +57,9 @@ describe('openArchiveNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toBeNull()
+    expect(opened).toBe(false)
     expect(clickSpy).not.toHaveBeenCalled()
   })
 
@@ -68,9 +68,9 @@ describe('openArchiveNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toBe('ytd-live-chat-frame #show-hide-button button')
+    expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
@@ -84,10 +84,28 @@ describe('openArchiveNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toBeNull()
+    expect(opened).toBe(false)
     expect(clickSpy).not.toHaveBeenCalled()
+  })
+
+  it('still tries to open when expanded marker exists but host is hidden', () => {
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('live-chat-present-and-expanded', '')
+    document.body.appendChild(watchFlexy)
+    createChatFrame('https://www.youtube.com/live_chat_replay?v=test')
+
+    const button = createSidebarShowHideButton()
+    const host = button.closest('ytd-live-chat-frame') as HTMLElement
+    host.style.display = 'none'
+    const clickSpy = vi.fn()
+    button.click = clickSpy
+
+    const opened = openArchiveNativeChatPanel()
+
+    expect(opened).toBe(true)
+    expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
   it('can click open when expanded marker exists but iframe is blank', () => {
@@ -100,13 +118,13 @@ describe('openArchiveNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toBe('ytd-live-chat-frame #show-hide-button button')
+    expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
-  it('falls back to ytd-live-chat-frame onShowHideChat when button clicks are unavailable', () => {
+  it('falls back to onShowHideChat when button selectors are unavailable', () => {
     const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
       onShowHideChat?: () => void
     }
@@ -114,9 +132,9 @@ describe('openArchiveNativeChatPanel', () => {
     host.onShowHideChat = showHideSpy
     document.body.appendChild(host)
 
-    const selector = openArchiveNativeChatPanel()
+    const opened = openArchiveNativeChatPanel()
 
-    expect(selector).toBe('ytd-live-chat-frame#onShowHideChat')
+    expect(opened).toBe(true)
     expect(showHideSpy).toHaveBeenCalledTimes(1)
   })
 })
@@ -127,9 +145,9 @@ describe('openNativeChatPanel', () => {
     const clickSpy = vi.fn()
     button.click = clickSpy
 
-    const selector = openNativeChatPanel()
+    const opened = openNativeChatPanel()
 
-    expect(selector).toBe('ytd-live-chat-frame #show-hide-button button')
+    expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 })
