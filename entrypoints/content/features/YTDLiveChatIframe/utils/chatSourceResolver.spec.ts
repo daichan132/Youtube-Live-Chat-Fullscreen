@@ -19,17 +19,25 @@ const createWatchFlexy = (attrs: Record<string, string | null> = {}) => {
   return watchFlexy
 }
 
-const createNativeChatIframe = (videoId: string) => {
+const createNativeChatIframe = (
+  videoId: string,
+  options: {
+    srcPath?: string
+    docPath?: string
+  } = {},
+) => {
+  const srcPath = options.srcPath ?? 'live_chat'
+  const docPath = options.docPath ?? 'live_chat_replay'
   const frame = document.createElement('ytd-live-chat-frame')
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.id = 'chatframe'
   iframe.className = 'ytd-live-chat-frame'
-  iframe.src = `https://www.youtube.com/live_chat?v=${videoId}`
+  iframe.src = `https://www.youtube.com/${srcPath}?v=${videoId}`
   const renderer = document.createElement('yt-live-chat-renderer')
   const itemList = document.createElement('yt-live-chat-item-list-renderer')
   const body = document.createElement('body')
   const chatDocument = {
-    location: { href: `https://www.youtube.com/live_chat_replay?v=${videoId}` } as Location,
+    location: { href: `https://www.youtube.com/${docPath}?v=${videoId}` } as Location,
     body,
     querySelector: (selector: string) => {
       if (selector === 'yt-live-chat-renderer') return renderer
@@ -132,6 +140,17 @@ describe('resolveChatSource', () => {
   it('returns null when native iframe video does not match current video', () => {
     createWatchFlexy({ 'video-id': 'video-a' })
     createNativeChatIframe('video-b')
+
+    const source = resolveChatSource()
+    expect(source).toBeNull()
+  })
+
+  it('returns null when native iframe is live chat (not replay) even if playable markers exist', () => {
+    createWatchFlexy({ 'video-id': 'video-a' })
+    createNativeChatIframe('video-a', {
+      srcPath: 'live_chat',
+      docPath: 'live_chat',
+    })
 
     const source = resolveChatSource()
     expect(source).toBeNull()

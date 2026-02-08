@@ -43,6 +43,19 @@ const isIframeForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId: stri
   return iframeVideoId === currentVideoId
 }
 
+const hasReplayPath = (href: string | null | undefined) => Boolean(href?.includes('/live_chat_replay'))
+
+const isReplayChatIframe = (iframe: HTMLIFrameElement) => {
+  const docHref = getIframeDocumentHref(iframe)
+  if (hasReplayPath(docHref)) return true
+
+  const srcAttr = iframe.getAttribute('src') ?? ''
+  if (hasReplayPath(srcAttr)) return true
+
+  const src = iframe.src ?? ''
+  return hasReplayPath(src)
+}
+
 const isBorrowedArchiveIframe = (iframe: HTMLIFrameElement | null | undefined): iframe is HTMLIFrameElement => {
   if (!iframe) return false
   if (iframe.getAttribute('data-ylc-owned') === 'true') return false
@@ -70,6 +83,7 @@ export const resolveChatSource = (currentIframe: HTMLIFrameElement | null = null
   const nativeIframe = getLiveChatIframe() ?? (isBorrowedArchiveIframe(currentIframe) ? currentIframe : null)
   if (!nativeIframe) return null
   if (!isIframeForCurrentVideo(nativeIframe, currentVideoId)) return null
+  if (!isReplayChatIframe(nativeIframe)) return null
   if (!isArchiveChatPlayable(nativeIframe)) return null
 
   return {

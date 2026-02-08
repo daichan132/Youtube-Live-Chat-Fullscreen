@@ -42,7 +42,10 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
       if (isYouTubeLiveNow()) return true
       return isArchiveChatPlayable(getLiveChatIframe())
     }, []),
-    stopOnSuccess: false,
+    // Keep polling until first success, then latch to avoid fullscreen overlay
+    // remount loops when live/archive signals momentarily fluctuate.
+    stopOnSuccess: true,
+    maxAttempts: Number.POSITIVE_INFINITY,
     intervalMs: 1000,
   })
 
