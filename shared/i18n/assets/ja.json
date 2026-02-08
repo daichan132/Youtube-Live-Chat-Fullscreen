@@ -36,7 +36,7 @@
   },
   "popup": {
     "language": "言語設定",
-    "showChatOnFullscreen": "全画面でチャットを表示",
+    "showChatOnFullscreen": "全画面チャット",
     "links": "リンク",
     "donate": "寄付"
   }

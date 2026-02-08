@@ -26,7 +26,7 @@
     "preset": {
       "addMessage": "Tambah Pengaturan Saat Ini",
       "addItemTitle": "Tanpa Judul",
-      "defaultTitle": "Default",
+      "defaultTitle": "Bawaan",
       "transparentTitle": "Transparan",
       "simpleTitle": "Sederhana",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus?",
