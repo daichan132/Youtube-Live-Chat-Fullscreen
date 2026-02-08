@@ -74,7 +74,7 @@ jobs:
             --zip "$CHROME_ZIP" \
             --expected-version "${{ needs.create_tag.outputs.version }}"
 
-          yarn wxt submit \
+          node ./node_modules/publish-browser-extension/bin/publish-extension.mjs \
             --firefox-zip "$FIREFOX_ZIP" \
             --firefox-sources-zip "$SOURCES_ZIP"
         env:
