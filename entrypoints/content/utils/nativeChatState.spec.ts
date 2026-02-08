@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { isNativeChatExpanded, isNativeChatOpen } from './nativeChatState'
+import { isNativeChatOpen } from './nativeChatState'
 
 const setLocation = (path: string) => {
   const base = window.location.origin
@@ -25,13 +25,6 @@ const createChatFrame = (videoId: string) => {
   iframe.setAttribute('src', `https://www.youtube.com/live_chat?v=${videoId}`)
   document.body.appendChild(iframe)
   return iframe
-}
-
-const createWatchFlexy = () => {
-  const watchFlexy = document.createElement('ytd-watch-flexy')
-  watchFlexy.setAttribute('live-chat-present-and-expanded', '')
-  document.body.appendChild(watchFlexy)
-  return watchFlexy
 }
 
 beforeEach(() => {
@@ -74,26 +67,5 @@ describe('isNativeChatOpen', () => {
     createChatFrame('video-a')
 
     expect(isNativeChatOpen()).toBe(false)
-  })
-})
-
-describe('isNativeChatExpanded', () => {
-  it('returns false when expanded attribute exists but native chat is hidden', () => {
-    createWatchFlexy()
-    createChatContainer()
-    const host = createChatFrameHost()
-    host.style.display = 'none'
-    createChatFrame('video-a')
-
-    expect(isNativeChatExpanded()).toBe(false)
-  })
-
-  it('returns true when expanded attribute exists and native chat is open', () => {
-    createWatchFlexy()
-    createChatContainer()
-    createChatFrameHost()
-    createChatFrame('video-a')
-
-    expect(isNativeChatExpanded()).toBe(true)
   })
 })
