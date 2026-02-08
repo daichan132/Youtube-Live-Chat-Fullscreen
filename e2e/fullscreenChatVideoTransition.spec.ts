@@ -4,6 +4,9 @@ import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonSelector } from './utils/selectors'
 import { archiveReplayUrls } from './utils/testUrls'
 
+const TRANSITION_STABILITY_DURATION_MS = 4000
+const TRANSITION_STABILITY_SAMPLE_INTERVAL_MS = 250
+
 const isExtensionArchiveChatPlayable = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
@@ -111,32 +114,37 @@ test('does not keep stale fullscreen chat iframe after video transition', async 
 
   await expect
     .poll(
-      async () =>
-        page.evaluate(({ oldHref, expectedVideoId }) => {
-          const host = document.getElementById('shadow-root-live-chat')
-          const root = host?.shadowRoot ?? null
-          const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-          const pageUrl = new URL(window.location.href)
-          const pageVideoId =
-            document.querySelector('ytd-watch-flexy')?.getAttribute('video-id') ??
-            document.getElementById('movie_player')?.getAttribute('video-id') ??
-            pageUrl.searchParams.get('v')
-          let href = ''
-          if (iframe) {
-            try {
-              href = iframe.contentDocument?.location?.href ?? iframe.getAttribute('src') ?? iframe.src ?? ''
-            } catch {
-              href = iframe.getAttribute('src') ?? iframe.src ?? ''
-            }
-          }
-
-          const pageVideoUpdated = pageVideoId === expectedVideoId
-          if (!pageVideoUpdated) return false
-          if (!iframe) return true
-          if (!href || href.includes('about:blank')) return true
-          return href !== oldHref
-        }, { oldHref: beforeTransition.href, expectedVideoId: transitionTargetId }),
+      async () => {
+        const state = await page.evaluate(getOverlayState)
+        return state.pageVideoId === transitionTargetId
+      },
       { timeout: 20000 },
     )
     .toBe(true)
+
+  await expect
+    .poll(
+      async () => {
+        const state = await page.evaluate(getOverlayState)
+        if (state.pageVideoId !== transitionTargetId) return false
+        if (!state.hasIframe) return true
+        if (!state.href || state.href.includes('about:blank')) return true
+        return state.href !== beforeTransition.href
+      },
+      { timeout: 20000 },
+    )
+    .toBe(true)
+
+  const sampleCount = Math.ceil(TRANSITION_STABILITY_DURATION_MS / TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
+  for (let index = 0; index < sampleCount; index += 1) {
+    const state = await page.evaluate(getOverlayState)
+    const staleOverlayVisible =
+      state.pageVideoId === transitionTargetId &&
+      state.hasIframe &&
+      Boolean(state.href) &&
+      !state.href.includes('about:blank') &&
+      state.href === beforeTransition.href
+    expect(staleOverlayVisible).toBe(false)
+    await page.waitForTimeout(TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
+  }
 })

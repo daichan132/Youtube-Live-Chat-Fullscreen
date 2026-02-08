@@ -1,4 +1,5 @@
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
 import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 
@@ -80,6 +81,7 @@ export const resolveChatSource = (
 
   if (isYouTubeLiveNow()) {
     if (!currentVideoId) return null
+    if (!hasLiveChatSignals()) return null
     return {
       kind: 'live_direct',
       videoId: currentVideoId,

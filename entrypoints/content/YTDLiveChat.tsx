@@ -1,8 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
-import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
-import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
+import { resolveChatSource } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/chatSourceResolver'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
@@ -39,10 +38,7 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
   })
 
   const canAttachFullscreenChat = usePollingWithNavigate({
-    checkFn: useCallback(() => {
-      if (isYouTubeLiveNow()) return true
-      return isArchiveChatPlayable(getLiveChatIframe())
-    }, []),
+    checkFn: useCallback(() => resolveChatSource() !== null, []),
     // Keep polling until first success, then latch to avoid fullscreen overlay
     // remount loops when live/archive signals momentarily fluctuate.
     stopOnSuccess: true,

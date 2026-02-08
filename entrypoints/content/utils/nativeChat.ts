@@ -161,9 +161,8 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
   if (isPlayerControls) {
     const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
-    if (isToggleViewModel) return true
-
     const label = getButtonLabelText(button)
+    if (isToggleViewModel) return isChatLabel(label)
     if (isChatLabel(label)) return true
   }
 

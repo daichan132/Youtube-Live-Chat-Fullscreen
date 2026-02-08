@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   isNativeChatExpanded as getNativeChatExpanded,
   isNativeChatUsable as getNativeChatUsable,
@@ -7,8 +7,6 @@ import {
 export const useNativeChatState = (isFullscreen: boolean) => {
   const [isNativeChatUsable, setIsNativeChatUsable] = useState(false)
   const [isNativeChatExpanded, setIsNativeChatExpanded] = useState(false)
-  const isFullscreenRef = useRef(isFullscreen)
-  isFullscreenRef.current = isFullscreen
 
   useEffect(() => {
     // Single RAF for batched state updates - prevents excessive scheduling
@@ -17,27 +15,25 @@ export const useNativeChatState = (isFullscreen: boolean) => {
     let rafId: number | null = null
     let updatePending = false
 
+    const updateNativeChatState = () => {
+      // Keep expanded-state tracking in fullscreen so native chat open transitions
+      // are still detectable by auto-disable logic, while usability remains false.
+      setIsNativeChatExpanded(getNativeChatExpanded())
+      setIsNativeChatUsable(isFullscreen ? false : getNativeChatUsable())
+    }
+
     const scheduleUpdate = () => {
       if (updatePending) return
       updatePending = true
       rafId = requestAnimationFrame(() => {
         updatePending = false
-        if (cancelled || isFullscreenRef.current) return
-        setIsNativeChatExpanded(getNativeChatExpanded())
-        setIsNativeChatUsable(getNativeChatUsable())
+        if (cancelled) return
+        updateNativeChatState()
       })
     }
 
-    // Fullscreen hides native chat but leaves DOM in place; treat it as closed.
-    if (isFullscreen) {
-      setIsNativeChatUsable(false)
-      setIsNativeChatExpanded(false)
-      return
-    }
-
-    // Immediately sync with DOM state when exiting fullscreen
-    setIsNativeChatExpanded(getNativeChatExpanded())
-    setIsNativeChatUsable(getNativeChatUsable())
+    // Immediately sync with current DOM state.
+    updateNativeChatState()
     if (!document.body) return
 
     let observer: MutationObserver | null = null

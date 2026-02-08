@@ -74,7 +74,7 @@ beforeEach(() => {
 
 describe('resolveChatSource', () => {
   it('returns live_direct when stream is live and video id is available', () => {
-    createWatchFlexy({ 'is-live-now': null, 'video-id': 'video-live' })
+    createWatchFlexy({ 'is-live-now': null, 'video-id': 'video-live', 'live-chat-present': null })
 
     const source = resolveChatSource()
     expect(source).not.toBeNull()
@@ -86,7 +86,7 @@ describe('resolveChatSource', () => {
   })
 
   it('returns live_direct when movie player reports live without is-live-now attribute', () => {
-    createWatchFlexy({ 'video-id': 'video-live' })
+    createWatchFlexy({ 'video-id': 'video-live', 'live-chat-present': null })
     createMoviePlayer('video-live', true)
 
     const source = resolveChatSource()
@@ -96,6 +96,13 @@ describe('resolveChatSource', () => {
       expect(source.videoId).toBe('video-live')
       expect(source.url).toBe('https://www.youtube.com/live_chat?v=video-live')
     }
+  })
+
+  it('returns null when stream is live but chat signals are absent', () => {
+    createWatchFlexy({ 'is-live-now': null, 'video-id': 'video-live' })
+
+    const source = resolveChatSource()
+    expect(source).toBeNull()
   })
 
   it('returns archive_borrow when native iframe matches current video and replay is playable', () => {

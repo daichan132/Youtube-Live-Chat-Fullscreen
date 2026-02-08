@@ -214,6 +214,7 @@ describe('useIframeLoader', () => {
   it('marks managed live iframe loaded when document access is restricted even if load event is missed', async () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('is-live-now', '')
+    watchFlexy.setAttribute('live-chat-present', '')
     watchFlexy.setAttribute('video-id', 'video-a')
     document.body.appendChild(watchFlexy)
 

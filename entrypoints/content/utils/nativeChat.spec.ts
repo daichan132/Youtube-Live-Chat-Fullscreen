@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { openArchiveNativeChatPanel, openNativeChatPanel } from './nativeChat'
+import { isNativeChatToggleButton, openArchiveNativeChatPanel, openNativeChatPanel } from './nativeChat'
 
 const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; pressed?: 'true' | 'false' }) => {
   const controls = document.createElement('div')
@@ -9,6 +9,21 @@ const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; p
   const button = document.createElement('button')
   button.setAttribute('aria-label', label)
   button.setAttribute('aria-pressed', pressed)
+
+  toggle.appendChild(button)
+  controls.appendChild(toggle)
+  document.body.appendChild(controls)
+
+  return button
+}
+
+const createPlayerViewModelToggleButton = (label: string) => {
+  const controls = document.createElement('div')
+  controls.className = 'ytp-right-controls'
+
+  const toggle = document.createElement('toggle-button-view-model')
+  const button = document.createElement('button')
+  button.setAttribute('aria-label', label)
 
   toggle.appendChild(button)
   controls.appendChild(toggle)
@@ -149,5 +164,19 @@ describe('openNativeChatPanel', () => {
 
     expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('isNativeChatToggleButton', () => {
+  it('returns false for non-chat toggle-view-model buttons in player controls', () => {
+    const subtitlesButton = createPlayerViewModelToggleButton('Subtitles')
+
+    expect(isNativeChatToggleButton(subtitlesButton)).toBe(false)
+  })
+
+  it('returns true for chat-labeled toggle-view-model buttons in player controls', () => {
+    const chatButton = createPlayerViewModelToggleButton('Chat')
+
+    expect(isNativeChatToggleButton(chatButton)).toBe(true)
   })
 })
