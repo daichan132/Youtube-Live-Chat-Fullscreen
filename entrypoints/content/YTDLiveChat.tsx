@@ -32,8 +32,9 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
-    enabled: ytdLiveChat && !isFullscreen,
+    enabled: ytdLiveChat,
     nativeChatOpen: isNativeChatCurrentlyOpen,
+    isFullscreen,
     setYTDLiveChat,
   })
 

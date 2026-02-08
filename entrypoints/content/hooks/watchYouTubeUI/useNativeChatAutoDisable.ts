@@ -7,6 +7,7 @@ import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 interface UseNativeChatAutoDisableOptions {
   enabled: boolean
   nativeChatOpen: boolean
+  isFullscreen: boolean
   setYTDLiveChat: (value: boolean) => void
 }
 
@@ -14,7 +15,7 @@ interface UseNativeChatAutoDisableOptions {
  * Automatically disables extension chat when user interacts with native chat.
  * This respects user intent - if they want to use YouTube's native chat, we step aside.
  */
-export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
+export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
   const { isAutoOpeningNativeChat, setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
@@ -32,11 +33,17 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
       if (!target) return
 
       const shadowHost = document.getElementById(SHADOW_HOST_ID)
+      if (shadowHost && (target === shadowHost || shadowHost.contains(target) || target.closest(`#${SHADOW_HOST_ID}`))) return
       if (shadowHost?.shadowRoot?.contains(target)) return
 
       const isToggleButton = isNativeChatToggleButton(target)
       const isTriggerTarget = isToggleButton || isNativeChatTriggerTarget(target)
       if (!isTriggerTarget) return
+
+      if (isToggleButton && isFullscreen) {
+        setYTDLiveChat(false)
+        return
+      }
 
       if (isToggleButton && !nativeChatOpen) {
         setYTDLiveChat(false)
@@ -47,7 +54,7 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, setYTDLiveCh
     return () => {
       document.removeEventListener('pointerdown', handlePointerDown, true)
     }
-  }, [enabled, nativeChatOpen, setYTDLiveChat])
+  }, [enabled, nativeChatOpen, isFullscreen, setYTDLiveChat])
 
   // Detect when native chat state changes to open
   // Only triggers on actual state TRANSITIONS (closed → open), not on initial observation
