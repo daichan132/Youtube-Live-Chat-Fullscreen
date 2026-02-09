@@ -24,6 +24,8 @@ type DiagnosticState = {
 }
 
 const isBlankHref = (href: string | null | undefined) => !href || href.includes('about:blank')
+// Keep this list consistent with `entrypoints/content/utils/nativeChat.ts`.
+// `tp-yt-paper-icon-button` is intentionally excluded as a legacy renderer.
 const archiveSidebarOpenSelectors = [
   'ytd-live-chat-frame #show-hide-button button',
   'ytd-live-chat-frame #show-hide-button yt-icon-button',
@@ -281,6 +283,8 @@ const tryOpenArchiveNativeChatPanel = async (page: Page) => {
   return page
     .evaluate(
       ({ sidebarSelectors, playerSelectors }) => {
+        // Keep this target list in sync with runtime nativeChat resolver.
+        // `tp-yt-paper-icon-button` is intentionally excluded.
         const resolveClickable = (target: HTMLElement) =>
           target.matches('button, yt-icon-button, [role="button"]')
             ? target

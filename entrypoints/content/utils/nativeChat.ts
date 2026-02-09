@@ -7,6 +7,9 @@ type YouTubeLiveChatFrameElement = HTMLElement & {
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
+// Keep this selector list aligned with currently supported YouTube controls.
+// `tp-yt-paper-icon-button` intentionally stays excluded because it is treated as
+// a legacy YouTube renderer in this project.
 const archiveSidebarOpenSelectors = [
   'ytd-live-chat-frame #show-hide-button button',
   'ytd-live-chat-frame #show-hide-button yt-icon-button',
@@ -55,6 +58,8 @@ const isNativeChatIframeBlank = () => {
   return href.includes('about:blank')
 }
 
+// Keep clickable targets restricted to current UI controls.
+// Do not re-add `tp-yt-paper-icon-button` unless product policy changes.
 const resolveClickable = (target: HTMLElement) =>
   target.matches('button, yt-icon-button, [role="button"]')
     ? target
