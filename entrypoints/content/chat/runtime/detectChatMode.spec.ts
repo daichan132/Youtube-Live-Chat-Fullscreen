@@ -1,22 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { detectChatMode } from './detectChatMode'
 
-const createWatchFlexy = (attrs: Record<string, string | null>) => {
-  const watchFlexy = document.createElement('ytd-watch-flexy')
-  for (const [key, value] of Object.entries(attrs)) {
-    if (value === null) {
-      watchFlexy.setAttribute(key, '')
-      continue
-    }
-    watchFlexy.setAttribute(key, value)
-  }
-  document.body.appendChild(watchFlexy)
-  return watchFlexy
-}
-
-const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive: boolean; isLiveContent?: boolean }) => {
+const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive?: boolean; isLiveContent?: boolean }) => {
   const moviePlayer = document.createElement('div') as HTMLElement & {
-    getVideoData?: () => { isLive: boolean; isLiveContent: boolean }
+    getVideoData?: () => { isLive?: boolean; isLiveContent?: boolean }
   }
   moviePlayer.id = 'movie_player'
   moviePlayer.getVideoData = () => ({
@@ -40,6 +27,17 @@ const attachExtensionIframe = (options: { src: string; owned?: boolean; source?:
   return iframe
 }
 
+const createArchiveOpenControl = () => {
+  const liveChatFrame = document.createElement('ytd-live-chat-frame')
+  const showHide = document.createElement('div')
+  showHide.id = 'show-hide-button'
+  const button = document.createElement('button')
+  button.setAttribute('aria-label', 'Show chat')
+  showHide.appendChild(button)
+  liveChatFrame.appendChild(showHide)
+  document.body.appendChild(liveChatFrame)
+}
+
 describe('detectChatMode', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
@@ -50,7 +48,6 @@ describe('detectChatMode', () => {
       src: 'https://www.youtube.com/live_chat_replay?v=archive-video',
       owned: false,
     })
-    createWatchFlexy({ 'live-chat-present': null })
 
     expect(detectChatMode()).toBe('archive')
   })
@@ -65,28 +62,34 @@ describe('detectChatMode', () => {
     expect(detectChatMode()).toBe('live')
   })
 
-  it('returns archive on non-live page when only generic chat signals are present', () => {
-    createWatchFlexy({ 'live-chat-present': null })
+  it('returns archive on non-live page when archive open control exists', () => {
     createMoviePlayer({ isLive: false })
+    createArchiveOpenControl()
 
     expect(detectChatMode()).toBe('archive')
   })
 
-  it('returns archive when chat signals exist even if video metadata still says live content', () => {
-    createWatchFlexy({ 'live-chat-present': null })
+  it('returns archive when open control exists even if metadata says live content', () => {
     createMoviePlayer({ isLive: false, isLiveContent: true })
+    createArchiveOpenControl()
 
     expect(detectChatMode()).toBe('archive')
   })
 
-  it('returns live when video is live even if native iframe is missing', () => {
-    createWatchFlexy({ 'live-chat-present': null })
+  it('returns live when video is live now even if archive open control exists', () => {
     createMoviePlayer({ isLive: true })
+    createArchiveOpenControl()
 
     expect(detectChatMode()).toBe('live')
   })
 
-  it('returns none when no chat signals exist', () => {
+  it('returns live when metadata says live content and archive open control is missing', () => {
+    createMoviePlayer({ isLiveContent: true })
+
+    expect(detectChatMode()).toBe('live')
+  })
+
+  it('returns none when no archive open control and no live signals exist', () => {
     createMoviePlayer({ isLive: false })
 
     expect(detectChatMode()).toBe('none')

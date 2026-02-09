@@ -94,48 +94,5 @@ export const selectReplayUnavailableUrl = async (page: Page, options: { maxDurat
   const replayUnavailable = await ensureNativeReplayUnavailable(page, {
     maxDurationMs: timeoutFromRemaining(remainingBeforeUnavailableCheck, 15000),
   })
-  if (replayUnavailable) return url
-
-  const fallbackNoPlayableReplay = await page
-    .evaluate(() => {
-      const iframe =
-        (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
-        (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
-      const host = document.querySelector('ytd-live-chat-frame')
-      const container = document.querySelector('#chat-container')
-      if (!host && !container) return false
-
-      const readIframeHref = (target: HTMLIFrameElement | null) => {
-        if (!target) return ''
-        try {
-          const docHref = target.contentDocument?.location?.href ?? ''
-          if (docHref) return docHref
-        } catch {
-          // Ignore CORS/DOM access errors and fall back to src.
-        }
-        return target.getAttribute('src') ?? target.src ?? ''
-      }
-
-      const href = readIframeHref(iframe)
-      const doc = iframe?.contentDocument ?? null
-      const text = doc?.body?.textContent?.toLowerCase() ?? ''
-      const unavailable =
-        Boolean(doc?.querySelector('yt-live-chat-unavailable-message-renderer')) ||
-        text.includes('live chat replay is not available') ||
-        text.includes('chat is disabled') ||
-        text.includes('live chat is disabled')
-
-      const playable =
-        Boolean(doc) &&
-        Boolean(href) &&
-        !href.includes('about:blank') &&
-        href.includes('/live_chat_replay') &&
-        !unavailable &&
-        Boolean(doc?.querySelector('yt-live-chat-renderer') && doc?.querySelector('yt-live-chat-item-list-renderer'))
-
-      return !playable
-    })
-    .catch(() => false)
-
-  return fallbackNoPlayableReplay ? url : null
+  return replayUnavailable ? url : null
 }

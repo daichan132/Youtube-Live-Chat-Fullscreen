@@ -36,6 +36,7 @@ export const Content = () => {
   }
 
   const renderSwitchButtonPortal = () => {
+    if (mode === 'none') return null
     if (!portalsReady || !switchButtonContainer) return null
     return createPortal(<YTDLiveChatSwitch disabled={!canToggleFullscreenChatSwitch} />, switchButtonContainer)
   }

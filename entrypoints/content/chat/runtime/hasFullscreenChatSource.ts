@@ -1,5 +1,6 @@
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { getLiveChatDocument, getLiveChatIframe, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
 import { resolveArchiveSource } from '../archive/resolveArchiveSource'
 import { resolveLiveSource } from '../live/resolveLiveSource'
 import { isIframeForCurrentVideo } from '../shared/iframeDom'
@@ -25,10 +26,10 @@ export const canToggleFullscreenChat = (mode: ChatMode): boolean => {
   if (nativeIframe) {
     if (!isIframeForCurrentVideo(nativeIframe, getYouTubeVideoId())) return false
     const doc = getLiveChatDocument(nativeIframe)
-    if (!doc) return false
+    if (!doc) return hasArchiveNativeOpenControl()
     if (isLiveChatUnavailable(doc)) return false
     return true
   }
 
-  return false
+  return hasArchiveNativeOpenControl()
 }

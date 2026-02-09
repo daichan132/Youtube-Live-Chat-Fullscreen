@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { getLiveChatDocument, getLiveChatIframe, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
 import { resolveArchiveSource } from '../archive/resolveArchiveSource'
 import { resolveLiveSource } from '../live/resolveLiveSource'
 import { isIframeForCurrentVideo } from '../shared/iframeDom'
@@ -24,6 +25,10 @@ vi.mock('@/entrypoints/content/utils/hasPlayableLiveChat', () => ({
   isLiveChatUnavailable: vi.fn(),
 }))
 
+vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
+  hasArchiveNativeOpenControl: vi.fn(),
+}))
+
 vi.mock('../shared/iframeDom', () => ({
   isIframeForCurrentVideo: vi.fn(),
 }))
@@ -38,6 +43,8 @@ describe('hasFullscreenChatSource', () => {
     vi.mocked(getLiveChatDocument).mockReset()
     vi.mocked(isLiveChatUnavailable).mockReset()
     vi.mocked(isIframeForCurrentVideo).mockReset()
+    vi.mocked(hasArchiveNativeOpenControl).mockReset()
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(false)
     vi.mocked(getYouTubeVideoId).mockReturnValue('video-a')
   })
 
@@ -85,6 +92,8 @@ describe('canToggleFullscreenChat', () => {
     vi.mocked(getLiveChatDocument).mockReset()
     vi.mocked(isLiveChatUnavailable).mockReset()
     vi.mocked(isIframeForCurrentVideo).mockReset()
+    vi.mocked(hasArchiveNativeOpenControl).mockReset()
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(false)
     vi.mocked(getYouTubeVideoId).mockReturnValue('video-a')
   })
 
@@ -124,14 +133,34 @@ describe('canToggleFullscreenChat', () => {
     expect(canToggleFullscreenChat('archive')).toBe(false)
   })
 
-  it('returns false for archive mode while native iframe is still preparing', () => {
+  it('returns true for archive mode while native iframe is preparing if open control exists', () => {
     vi.mocked(resolveArchiveSource).mockReturnValue(null)
     const iframe = document.createElement('iframe')
     vi.mocked(getLiveChatIframe).mockReturnValue(iframe)
     vi.mocked(isIframeForCurrentVideo).mockReturnValue(true)
     vi.mocked(getLiveChatDocument).mockReturnValue(null)
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(true)
+
+    expect(canToggleFullscreenChat('archive')).toBe(true)
+  })
+
+  it('returns false for archive mode while native iframe is preparing if open control is missing', () => {
+    vi.mocked(resolveArchiveSource).mockReturnValue(null)
+    const iframe = document.createElement('iframe')
+    vi.mocked(getLiveChatIframe).mockReturnValue(iframe)
+    vi.mocked(isIframeForCurrentVideo).mockReturnValue(true)
+    vi.mocked(getLiveChatDocument).mockReturnValue(null)
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(false)
 
     expect(canToggleFullscreenChat('archive')).toBe(false)
+  })
+
+  it('returns true for archive mode when open control exists without iframe yet', () => {
+    vi.mocked(resolveArchiveSource).mockReturnValue(null)
+    vi.mocked(getLiveChatIframe).mockReturnValue(null)
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(true)
+
+    expect(canToggleFullscreenChat('archive')).toBe(true)
   })
 
   it('returns false for archive mode when no source hints exist', () => {

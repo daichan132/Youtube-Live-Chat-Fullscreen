@@ -1,11 +1,9 @@
-import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
 import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { isYouTubeLiveVideo } from '@/entrypoints/content/utils/isYouTubeLiveVideo'
+import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
 import { isLiveChatIframe, isReplayChatIframe } from '../shared/iframeDom'
 import type { ChatMode } from './types'
-
-const hasChatHost = () => Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
 
 const getExtensionIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -34,13 +32,11 @@ export const detectChatMode = (): ChatMode => {
 
   if (isYouTubeLiveNow()) return 'live'
 
-  // On non-live pages, generic chat signals imply replay/archive mode.
-  if (hasLiveChatSignals()) return 'archive'
-  if (hasChatHost()) return 'archive'
+  if (hasArchiveNativeOpenControl()) return 'archive'
 
   // Fallback for cases where YouTube has not rendered chat DOM yet.
   // NOTE: `isLiveContent` can stay true on archived streams, so it must not
-  // override explicit archive signals above.
+  // override explicit archive open-control signals above.
   if (isYouTubeLiveVideo()) return 'live'
 
   return 'none'
