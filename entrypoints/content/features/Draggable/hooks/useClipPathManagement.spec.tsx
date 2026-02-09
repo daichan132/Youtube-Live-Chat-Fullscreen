@@ -88,4 +88,40 @@ describe('useClipPathManagement', () => {
 
     expect(result.current.getClip()).toEqual({ header: 32, input: 20 })
   })
+
+  it('clamps clip sizes to zero when clip elements are missing', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    const doc = document.implementation.createHTMLDocument('')
+
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+
+    const { result } = renderHook(() =>
+      useClipPathManagement({
+        setCoordinates: vi.fn(),
+        setSize: vi.fn(),
+        iframeElement: iframe,
+      }),
+    )
+
+    expect(result.current.getClip()).toEqual({ header: 0, input: 0 })
+  })
+
+  it('uses clip override when provided', () => {
+    useYTDLiveChatStore.setState({ coordinates: { x: 10, y: 20 }, size: { width: 300, height: 200 } })
+    useYTDLiveChatNoLsStore.setState({ clip: { header: 2, input: 1 } })
+
+    const setCoordinates = vi.fn()
+    const setSize = vi.fn()
+    const { result } = renderHook(() => useClipPathManagement({ setCoordinates, setSize, iframeElement: null }))
+
+    act(() => {
+      result.current.handleClipPathChange(true, { header: 12, input: 8 })
+    })
+
+    expect(setCoordinates).toHaveBeenCalledWith({ x: 10, y: 8 })
+    expect(setSize).toHaveBeenCalledWith({ width: 300, height: 220 })
+  })
 })
