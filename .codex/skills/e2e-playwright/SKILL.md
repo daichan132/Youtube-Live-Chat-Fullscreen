@@ -1,113 +1,50 @@
 ---
 name: e2e-playwright
-description: Playwright E2E workflow for this extension. Use when E2E fails/flaky, or mentions Playwright, fullscreen chat, live/replay URL, trace, PWDEBUG.
+description: この拡張の Playwright E2E 運用。E2E 失敗やフレーク、フルスクリーンチャット、チャットなし動画、リプレイ不可、アーカイブ遷移、trace、PWDEBUG の話題で使う。
 metadata:
-  short-description: Debug Playwright E2E tests
+  short-description: YouTube チャット E2E を安定化
 ---
 
-# Goal
-- Reproduce, debug, and fix Playwright E2E failures with minimal flakiness.
+# 目的
+- 回帰を隠さずに、E2E 失敗を再現・修正・再検証する。
 
-# Inputs (ask only if missing)
-- Which spec to focus on (file name / test title / failing step).
-- Target build (Chrome/Firefox) if relevant.
-- Test URL overrides (`YLC_LIVE_URL`, `YLC_ARCHIVE_URL`) if the user already has known-good URLs.
+# 入力（不足時のみ確認）
+- 対象 spec（ファイル名または失敗テスト名）
+- URL 固定値（`YLC_LIVE_URL`、`YLC_ARCHIVE_URL`、`YLC_ARCHIVE_NEXT_URL`、`YLC_REPLAY_UNAVAILABLE_URL`）
 
-# Non-goals / Guardrails
-- Do not run multiple E2E commands in parallel on the same machine/session.
-- Do not rely on search result "Live" badges alone (replay videos are mixed in).
-- Do not "fix" flaky tests by adding random sleeps or broad timeout inflation.
+# 非目標 / ガードレール
+- 同一マシンで Playwright コマンドを並列実行しない。
+- ランダム sleep や過剰な timeout 拡大で flaky を隠さない。
+- 実装不具合を `skip` に逃がさない。
 
-# Steps
-1. Ensure build artifact exists (E2E前提)
-   - `yarn build`
-   - If recent code edits are not reflected in E2E behavior, rebuild again explicitly before rerun (Playwright loads `.output/chrome-mv3`).
-2. Run target tests sequentially
-   - Prefer direct Playwright for focused runs and JSON stats:
-     - `yarn playwright test e2e/<spec>.spec.ts --reporter=json > /tmp/<name>.json`
-   - For repeat checks:
-     - `yarn playwright test e2e/<spec>.spec.ts --repeat-each=2 --reporter=json > /tmp/<name>.json`
-   - Note: `yarn e2e -- <args>` may not forward all Playwright flags consistently; if repeats/filters look ignored, switch to `yarn playwright test`.
-3. Live/replay URL strategy (YouTube-specific)
-   - Prefer explicit env override first:
-     - `YLC_LIVE_URL='<url>' yarn playwright test ...`
-     - `YLC_ARCHIVE_URL='<url>' yarn playwright test ...`
-   - If auto-discovering live URLs, validate with page signals, not badge text:
-     - Positive live-now signals:
-       - `.ytp-time-display.ytp-live`
-       - `.ytp-live-badge.ytp-live-badge-is-livehead`
-       - `ytd-watch-flexy[live-chat-present]` or `[live-chat-present-and-expanded]`
-       - Inline `ytInitialPlayerResponse` includes `"isLiveNow":true` or `"is_viewed_live":"True"`
-     - Reject candidates where only generic `ytp-live-badge` exists (often replay).
-4. Gather hard evidence when failing/skipping
-   - Parse JSON report and extract:
-     - `expected / skipped / unexpected`
-     - skip reason text (e.g. `Extension iframe did not load within the timeout.`)
-   - Capture DOM state at failure point:
-     - switch visibility / `aria-pressed`
-     - `#shadow-root-live-chat` iframe presence (`data-ylc-chat`, `data-ylc-owned`, `src`)
-     - native chat state (`#chatframe`, `ytd-live-chat-frame`, `#show-hide-button`, close button availability)
-     - `#chatframe` URL signals (`src`, `contentDocument.location.href`) and `about:blank` persistence
-     - fullscreen player control chat toggles (`.ytp-right-controls` chat button list and `aria-pressed`)
-5. Fix strategy (flakinessを増やさない)
-   - Avoid sleep/timeouts; wait on explicit UI/state:
-     - `await expect(locator).toBeVisible()`
-     - `await expect(locator).toHaveText(...)`
-   - Use stable selectors (role/text/testid など、プロジェクトの既存パターンに合わせる)
-   - Keep source-policy assumptions explicit:
-     - Live: direct `live_chat?v=<videoId>` route
-     - Archive: native iframe borrow route
-     - Archive borrow is valid only for `live_chat_replay` iframe
-   - Archive の順序を崩さない:
-     - `fullscreen -> native chat open -> replay playable -> extension attach`
-   - `about:blank` は loaded 扱いしない（native playable まで待つ）
-   - Live fullscreen overlay should latch after first success; avoid remount loops from unstable polling signals
-6. Validate
-   - Minimum:
-     - `yarn lint`
-     - `yarn build`
-   - E2E:
-     - target spec(s) with `--repeat-each=2`
-     - run full `yarn e2e` only when needed
+# 手順
+1. E2E 前にビルドする。
+- `yarn build`
+2. まず対象 spec を直列で実行する。
+- `yarn playwright test e2e/<spec>.spec.ts --workers=1`
+3. モード契約に沿って判定する。
+- live: `live_chat?v=<videoId>` を使う。
+- archive: native `live_chat_replay` borrow のみ許可。
+- no-chat / replay-unavailable: switch は表示するが disabled、拡張 iframe は出さない。
+4. `skip/fail` 境界を維持する。
+- `skip`: URL ドリフトや外部前提不足。
+- `fail`: 前提成立後に拡張挙動が崩れる。
+5. 失敗/skip 時は状態証跡を残す。
+- `url`、`fullscreen`、`aria-pressed`、`aria-disabled`
+- native iframe（href / playable）
+- extension iframe（`data-ylc-chat` / `data-ylc-owned` / `src`）
+6. 再検証する。
+- 対象 spec を `--repeat-each=2`
+- 最後に `yarn e2e`
 
-# Notes
-- `e2e/fixtures.ts` の拡張 `test/expect` を使う前提。
-- 非決定的挙動を増やす修正（ランダム待ち/過剰リトライ）は避ける。
-- ネイティブチャットの表示/操作可否は「拡張ON/OFFの前後」で必ず確認する。
-- 同一セッションでE2Eを並列起動すると `context setup timeout` が出ることがあるため直列実行を優先。
-- Archive replay E2Eでは「メッセージ件数増加」を必須にすると外部要因で不安定になりやすい。まず `iframe loaded + playable` を主判定にする。
+# 出力形式
+- 再現コマンド
+- 根本原因（推測でなく根拠）
+- 変更ファイル
+- 検証結果（passed/skipped/failed）
+- skip の妥当性（skip がある場合）
 
-# Output format
-- Repro steps（実行したコマンド）
-- Live URL used（該当時）
-- Live/Archive判定シグナル（何を根拠にURLを採用/除外したか）
-- Root cause（推定でなく根拠ベース）
-- Fix summary（どこをどう変えたか）
-- Verification（通ったコマンド + expected/skipped/unexpected）
-- Archive時は順序証跡（fullscreen後にnative openし、playable後にattachしたか）
-
-# Edge cases
-- `No live URL with chat found`: `YLC_LIVE_URL` を指定して再実行。
-- `No archive video with chat replay found`: `YLC_ARCHIVE_URL` を指定して再実行。
-- `Extension iframe did not load within the timeout`: switch表示可否・`aria-pressed`・overlay iframe属性を同時に採取して切り分け。
-- Archive + fullscreenで `player chat button` が0件になるケースがある:
-  - この場合、`.ytp-right-controls` 依存のみで開こうとしない
-  - `#show-hide-button` と `#chatframe` の `about:blank` 継続を合わせて確認する
-- `switchPressed: true` かつ `hasExtensionIframe: false` は「拡張表示ONでもsource未解決」のサイン:
-  - 多くは native iframe が `about:blank` のまま
-  - 判定系（is-open）で false positive を出して再試行が止まっていないか確認する
-- live で extension iframe が繰り返し作り直される:
-  - overlay gating が polling で true/false を往復していないか確認
-  - `stopOnSuccess` 相当で一度成功したらラッチする
-- native chat トグル押下時の仕様確認:
-  - fullscreen chat を OFF にする
-  - native chat はそのまま維持する（強制 close しない）
-- fullscreen chat OFF 後に native chat が見えない:
-  - detach 後の restore 先を確認
-  - native open 状態判定が hidden でも true になっていないか確認
-
-# Trigger examples
-- "playwrightが不安定なので直して"
-- "fullscreen chat の e2e を確認して"
-- "live と archive の見分け込みでテストして"
-- "PWDEBUG/trace で失敗原因を詰めて"
+# トリガー例
+- 「playwright が不安定なので直して」
+- 「fullscreenChatVideoTransition の失敗を見て」
+- 「noChatVideo のタイムアウト理由を調べて」

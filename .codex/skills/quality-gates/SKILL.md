@@ -1,37 +1,29 @@
 ---
 name: quality-gates
-description: Run repo quality gates. Use when asked to run tests/lint/build/CI checks, or mentions "lint/typecheck/build/e2e/Playwright/CI" or "動作確認/テストして".
+description: このリポジトリの品質ゲート実行手順。lint/typecheck/unit/build/e2e/CI 検証を求められたときに使う。
 metadata:
-  short-description: Run lint/build/e2e safely
+  short-description: 品質ゲートを正しい順序で実行
 ---
 
-# Goal
-- Run the right quality gates (lint/build/e2e) for the current change and summarize results.
+# 目的
+- 変更規模に応じた妥当な検証を実行し、結果を明確に報告する。
 
-# Inputs (ask only if missing)
-- Target browser build: Chrome only, Firefox only, or both.
-- Whether E2E is required (UI/behavior change usually => yes).
+# 手順
+1. 変更範囲を確認する。
+- `git status -sb`
+- 必要なら `git diff --name-only`
+2. 常に実行する。
+- `yarn lint`
+3. ロジック変更がある場合。
+- `yarn test:unit`
+4. ビルドする。
+- `yarn build`
+- 必要に応じて `yarn build:firefox`
+5. UI/挙動/E2E 変更がある場合。
+- 対象 spec を `yarn playwright test ... --workers=1`
+- 最後に `yarn e2e`
 
-# Steps
-1. Inspect what changed
-   - `git status -sb`
-   - If needed: `git diff --name-only`
-2. Always run lint/typecheck for code changes
-   - `yarn lint`
-3. Build
-   - Chrome: `yarn build`
-   - Firefox (if requested / relevant / uncertain): `yarn build:firefox`
-4. Format only when needed (formatting churnを最小化)
-   - `yarn format`（基本 `entrypoints/**` と `shared/**`）
-5. E2E when behavior/UI or e2e specs changed
-   - `yarn build` → `yarn e2e`
-6. Summarize pass/fail and next actions
-
-# Edge cases
-- If E2E fails/flaky, switch to the `e2e-playwright` skill to debug (trace/screenshots/etc).
-- If builds differ between Chrome/Firefox, call it out explicitly and propose a compatibility fix.
-
-# Output format
-- Commands executed
-- Result summary (pass/fail + key error excerpt)
-- What to do next (exact command or file to inspect)
+# 出力形式
+- 実行コマンド
+- 結果要約（passed/skipped/failed）
+- ブロッカーと次の具体手順

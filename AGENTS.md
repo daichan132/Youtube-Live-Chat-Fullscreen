@@ -1,91 +1,96 @@
-# AGENTS.md (Codex 用)
+# AGENTS.md (Codex用・簡易版)
 
-## TL;DR（最短ルート）
-- まず `rg` で該当箇所を特定してから編集する（推測で作らない）
-- 変更は最小・局所。共有化するなら `shared/` に寄せる
-- 変更後は基本 `yarn lint` → `yarn build`（必要なら `yarn build:firefox`）→ UI/挙動に影響があるなら `yarn e2e`
-- Skills に違和感があれば **即時に最小修正**（次回も迷わないように）
+## 0. 目的
+- このリポジトリで安全かつ再現性高く作業するための最小ルール。
+- 迷ったら「小さく直す」「根拠を取る」「検証する」を優先。
 
----
+## 1. 最初にやること
+- 推測で触らず、まず `rg` で対象箇所を特定する。
+- 生成物は編集しない。
+  - 例: `.output/**`
+- 変更は最小・局所。既存の hooks/store/utils パターンを優先する。
 
-## Project map（最短ナビ）
-- `entrypoints/`: 拡張のエントリ
-  - `content/`: コンテンツスクリプト UI（React）とフック
-  - `popup/`: ポップアップ（React + UnoCSS）
-- `shared/`: 共有コンポーネント / hooks / Zustand stores / i18n / utils
-- `e2e/`: Playwright 仕様・フィクスチャ
-- `public/`: 静的アセットと Chrome/Firefox 用 locales
-- `.output/`: ビルド成果物（例: `.output/chrome-mv3`）
-  - **生成物なので直接編集しない**
+## 2. プロジェクト構造（content 詳細）
+- `entrypoints/content/index.tsx`: content script のエントリポイント。
+- `entrypoints/content/Content.tsx`: fullscreen 時の portal 生成と switch 配置の起点。
+- `entrypoints/content/YTDLiveChat.tsx`: overlay 表示判定、native 連携、iframe 表示の中核。
 
----
+- `entrypoints/content/chat/live`: live 用 source 解決（公開 `live_chat` 直結）。
+- `entrypoints/content/chat/archive`: archive 用 source 解決（native `live_chat_replay` borrow）と native open 補助。
+- `entrypoints/content/chat/runtime`: mode 判定、overlay 可視判定、iframe ローダー、fullscreen source/toggle 判定。
+- `entrypoints/content/chat/shared`: iframe href/video-id 判定など mode 共通ユーティリティ。
 
-## Commands（コピペで通す）
-### Setup / Dev
-- Install deps: `yarn install`
-- Dev (Chrome): `yarn dev`
-- Dev (Firefox): `yarn dev:firefox`
+- `entrypoints/content/features/YTDLiveChatSwitch`: fullscreen 右下スイッチ UI。
+- `entrypoints/content/features/YTDLiveChatIframe`: chat iframe の attach/detach と初期化。
+- `entrypoints/content/features/YTDLiveChatSetting`: 設定モーダルとプリセット編集 UI。
+- `entrypoints/content/features/Draggable`: overlay のドラッグ/リサイズ/表示制御。
 
-### Quality gates（Definition of Done）
-- Build (Chrome): `yarn build`
-- Build (Firefox): `yarn build:firefox`
-- Lint + typecheck: `yarn lint`
-- Format（必要時）: `yarn format`（対象は基本 `entrypoints/**` と `shared/**`）
-- E2E: `yarn build` → `yarn e2e`
+- `entrypoints/content/hooks/globalState`: popup/ストレージ連動（言語・ON/OFF）。
+- `entrypoints/content/hooks/watchYouTubeUI`: fullscreen、native chat 状態、YouTube DOM 監視。
+- `entrypoints/content/hooks/ylcStyleChange`: 色/フォント/余白などの表示スタイル反映。
+- `entrypoints/content/hooks/dom`: DOM observer 系の共通フック。
 
----
+- `entrypoints/content/utils`: YouTube 状態判定（videoId/live/no-chat/native chat など）と DOM 補助。
+- `entrypoints/content/constants`: DOM id など content 内定数。
 
-## Code style / Naming（判定できるルール）
-- TypeScript + React 19
-- CSS は UnoCSS ユーティリティを優先（局所スタイルは最小）
-- Biome: 2スペース、シングルクォート、必要時のみセミコロン（`yarn lint` に従う）
-- コンポーネント: PascalCase（例: `Popup.tsx`）
-- フック: `useXxx`（camelCase）
-- テスト: `*.spec.ts`
-- `any` は避ける（Biome の警告・エラーを優先して解消）
+- `entrypoints/popup`: 拡張 popup UI。
+- `shared`: 共通 hooks / stores / i18n / utils。
+- `e2e`: Playwright テスト。
+- `public/_locales`: 拡張ストア表示文言。
 
----
+## 3. fullscreen chat の重要契約（最優先）
+1. live
+- 公開 iframe `live_chat?v=<videoId>` を使う。
+- native iframe を borrow しない。
 
-## Change guidelines（迷いやすいポイント）
-- **`.output/**` は生成物**：編集対象にしない（元は `entrypoints/` / `shared/` / `public/` 等）
-- 既存のパターンを踏襲：
-  - UI/状態管理は既存の hooks / Zustand stores をまず探す
-  - 同じ種類の処理がある場合、既存実装をコピーして差分最小で変更
-- 依存追加・置き換えは影響が大きい：
-  - **新規依存の追加は、まず目的と代替案を短く説明してから**
-- ユーザー向け文字列は原則 i18n 化（ハードコードを避ける）
+2. archive
+- native `live_chat_replay` iframe のみ borrow する。
+- 動画遷移後に stale iframe を再利用しない。
 
----
+3. no-chat / replay-unavailable
+- switch は表示する。
+- switch は disabled。
+- overlay / extension iframe は出さない。
 
-## Testing notes（E2Eの前提）
-- Playwright は `e2e/` 配下
-- `fixtures.ts` の拡張 `test` / `expect` を使用
-- 非決定的挙動やネットワーク依存は最小化（フレークの原因になる）
+4. 判定責務
+- `canToggle`（スイッチ有効化）と `sourceReady`（attach可否）を分離する。
+- archive で `sourceReady` だけを switch 有効条件にしない（deadlock回避）。
 
----
-
-## Docs / i18n（追加・変更手順の原則）
-- i18n 追加は **両方** 更新：
+## 4. 実装ルール
+- `any` は避ける。
+- ユーザー向け文言は原則 i18n 化する。
+- i18n 更新時は必ず両方を更新する。
   - `shared/i18n/assets`
   - `public/_locales`
-- UI 変更は必要ならスクリーンショットを添付（差分が分かるもの）
+- 依存追加は事前に「目的」と「代替案」を短く示す。
 
----
+## 5. テスト/検証ルール
+- 基本:
+  - `yarn lint`
+  - `yarn test:unit`
+  - `yarn build`
+- Firefox互換が関係する場合:
+  - `yarn build:firefox`
+- UI/挙動/E2Eに影響する場合:
+  - 対象 spec を先に実行（`yarn playwright test ... --workers=1`）
+  - 最後に `yarn e2e`
+- E2E方針:
+  - `skip`: 外部前提不足（URL drift 等）
+  - `fail`: 前提成立後の拡張不具合
+  - ランダム sleep での安定化は禁止
 
-## Security / Privacy（最低限の守り）
-- 秘密情報やトークンをハードコードしない（ログ出力も含む）
-- `dangerouslySetInnerHTML` は避ける（XSS対策）。やむを得ない場合は根拠と対策を明記
-- 権限（permissions / host_permissions）の追加・拡大は勝手に行わない（必ず一言確認）
+## 6. セキュリティ/安全運用
+- 秘密情報・トークンをハードコードしない。
+- `dangerouslySetInnerHTML` は原則禁止。
+- permissions / host_permissions の追加は勝手に行わない。
+- 破壊的操作を勝手に実行しない。
+  - `git reset --hard`
+  - `git checkout --`
+  - `rm -rf`
+- 履歴改変（rebase/force push/amend）は明示依頼がある場合のみ。
 
----
-
-## Guardrails（危険操作：明示依頼がない限りやらない）
-- 破壊的コマンド（`git reset --hard` / `git checkout --` / `rm -rf`）は勝手に実行しない
-- 履歴書き換え（rebase / force push / amend）は明示依頼がない限りしない
-- 大量のファイル移動・リネームは、目的と影響範囲を先に説明してから
-
----
-
-## Truthfulness / 確認ルール（幻覚対策）
-- 存在しない関数・設定・コマンドを作らない
-- 不確実なら `rg` で検索して「根拠（該当箇所）」を見つけてから作業する
+## 7. Skills 運用
+- 1 skill = 1責務で保つ。
+- 使いにくい skill はその場で最小修正する。
+- 詳細ルールは以下を参照:
+  - `docs/skills/skill-design-best-practices.md`

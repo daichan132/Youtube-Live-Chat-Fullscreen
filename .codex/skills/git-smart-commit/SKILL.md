@@ -1,60 +1,25 @@
 ---
 name: git-smart-commit
-description: Create one or more well-scoped commits with good messages. Use when asked to commit/save changes with good granularity, Conventional Commits, or "良い粒度でコミット".
+description: レビューしやすいコミットを作る手順。良い粒度でコミットしたい、履歴を整理したい、と言われたときに使う。
 metadata:
-  short-description: Create commits with good granularity and messages
+  short-description: 粒度の良いコミットを作成
 ---
 
-# Goal
-- Turn current changes into clean commit(s) with clear messages and minimal scope.
+# 目的
+- 変更意図が追えるコミットを、最小の混在で作る。
 
-# Inputs (ask only if missing)
-- Commit intent/topic (one sentence).
-- Whether to split into multiple commits (if unclear).
-- Required checks (if the user is specific).
+# 手順
+1. 関心ごとで分割する（runtime/e2e/docs など）。
+2. 各単位で実行する。
+- `git add <files>`
+- `git commit -m "<type>(<scope>): <summary>"`
+3. 仕上げ確認。
+- `git status -sb`
+- `git log --oneline -n <件数>`
 
-# Non-goals / Guardrails
-- Do not rewrite history (no amend/rebase/force-push) unless explicitly requested.
-- Do not touch unrelated files.
-- Do not discard local changes unless explicitly requested.
+# メッセージ方針
+- 何がどう変わったかを明示する。
+- ユーザー要望があれば日本語で書く。
 
-# Steps
-1) Inspect state
-- `git status --porcelain`
-- `git diff --stat`
-- If no changes: report and stop.
-
-2) Ensure a feature branch
-- `git branch --show-current`
-- If on default branch, create: `git switch -c codex/<topic>-<YYYYMMDD>`.
-
-3) Decide commit granularity (default: 1)
-- Split only when there is a clear separation (refactor/feature/tests/docs).
-- Explain the split briefly before staging.
-
-4) Stage and commit
-- Stage only relevant paths (use `git add -p` if partial staging is needed).
-- Compose Conventional Commit message: `type(scope): summary`.
-- Commit with `git commit -m "<subject>" -m "<optional body>"`.
-
-5) Verify and report
-- `git log -1 --oneline`
-- `git status --porcelain`
-- If checks are required by the repo, run the smallest relevant set:
-  - Prefer `yarn lint` for quick validation.
-  - If behavior changed, add `yarn build` (and `yarn build:firefox` if relevant).
-
-# Output format
-- Commit(s) created: hash + subject.
-- Files included per commit (short list).
-- Checks run (or explicitly skipped).
-- Remaining dirty files, if any.
-
-# Edge cases
-- Untracked files: confirm whether to include.
-- Mixed concerns in one file: use partial staging if requested.
-
-# Trigger examples
-- "良い粒度でコミットして"
-- "Conventional Commits でコミット作って"
-- "この変更をコミットして"
+# 出力形式
+- コミット一覧（sha / message / scope）
