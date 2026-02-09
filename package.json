@@ -17,7 +17,7 @@
     "lint": "biome check --write ./entrypoints/** ./shared/** && tsc --noEmit",
     "test:unit": "vitest run",
     "prepare": "lefthook install",
-    "e2e": "playwright test",
+    "e2e": "playwright test --workers=1",
     "e2e:ci": "playwright test --workers=1 --reporter=json > /tmp/ylc-e2e.json && node scripts/validate-e2e-report.mjs /tmp/ylc-e2e.json"
   },
   "dependencies": {

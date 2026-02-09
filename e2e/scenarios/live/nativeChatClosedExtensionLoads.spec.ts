@@ -105,9 +105,9 @@ const hasPlayableChat = () => {
 test('extension chat loads when native chat is closed', async ({ page }) => {
   test.setTimeout(140000)
 
-  const liveUrl = process.env.YLC_LIVE_URL ?? (await findLiveUrlWithChat(page))
+  const liveUrl = await findLiveUrlWithChat(page)
   if (!liveUrl) {
-    test.skip(true, 'No live URL with chat found. Set YLC_LIVE_URL to override.')
+    test.skip(true, 'No live URL with playable chat found from configured targets/search.')
     return
   }
   await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })

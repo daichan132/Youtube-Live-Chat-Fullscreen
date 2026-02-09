@@ -11,6 +11,7 @@ metadata:
 # 入力（不足時のみ確認）
 - 対象 spec（ファイル名または失敗テスト名）
 - URL 固定値（`YLC_LIVE_URL`、`YLC_ARCHIVE_URL`、`YLC_ARCHIVE_NEXT_URL`、`YLC_REPLAY_UNAVAILABLE_URL`）
+- URL 既定値は `e2e/config/testTargets.ts` を参照する。
 
 # 非目標 / ガードレール
 - 同一マシンで Playwright コマンドを並列実行しない。
@@ -36,6 +37,8 @@ metadata:
 6. 再検証する。
 - 対象 spec を `--repeat-each=2`
 - 最後に `yarn e2e`
+7. CI 判定を確認する。
+- `yarn e2e:ci` は required spec が `skip` だと失敗する。
 
 # 出力形式
 - 再現コマンド

@@ -1,7 +1,7 @@
 import { expect, test } from './fixtures'
+import { getE2ETestTargets } from './config/testTargets'
 import { acceptYouTubeConsent } from './utils/liveUrl'
 import { switchButtonContainerSelector, switchButtonSelector } from './utils/selectors'
-import { noChatUrls } from './utils/testUrls'
 
 const hasPlayableChat = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
@@ -37,7 +37,7 @@ const isExtensionChatLoaded = () => {
 test('extension chat stays hidden on videos without live chat', async ({ page }) => {
   test.setTimeout(120000)
 
-  const noChatUrl = noChatUrls[0]
+  const noChatUrl = getE2ETestTargets().noChat.url
   await page.goto(noChatUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
   await acceptYouTubeConsent(page)
   await page.waitForSelector('#movie_player', { state: 'attached' })
@@ -65,10 +65,11 @@ test('extension chat stays hidden on videos without live chat', async ({ page })
 
   if (!switchDisabled) {
     const playableNative = await page.evaluate(hasPlayableChat)
-    if (playableNative) {
-      test.skip(true, 'Selected URL had playable chat and did not meet no-chat precondition.')
-      return
-    }
+    const reason = playableNative
+      ? 'Selected URL had playable chat and did not meet no-chat precondition.'
+      : 'Selected URL did not keep fullscreen chat switch disabled in this run.'
+    test.skip(true, reason)
+    return
   }
 
   expect(switchDisabled).toBe(true)

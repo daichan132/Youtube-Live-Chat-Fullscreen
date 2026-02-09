@@ -1,4 +1,5 @@
 import { expect, test } from '../../fixtures'
+import { reliableClick } from '../../utils/actions'
 import { findLiveUrlWithChat } from '../../utils/liveUrl'
 import { switchButtonSelector } from '../../utils/selectors'
 
@@ -15,6 +16,44 @@ const isExtensionChatDetached = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   return !root?.querySelector('iframe[data-ylc-chat="true"]')
+}
+
+const safeToggleClick = async (page: import('@playwright/test').Page, switchButton: import('@playwright/test').Locator) => {
+  await reliableClick(switchButton, page, switchButtonSelector).catch(async () => {
+    await page.evaluate(selector => {
+      const button = document.querySelector<HTMLButtonElement>(selector)
+      button?.click()
+    }, switchButtonSelector)
+  })
+}
+
+const ensureDetached = async (
+  page: import('@playwright/test').Page,
+  switchButton: import('@playwright/test').Locator,
+) => {
+  let detached = await expect
+    .poll(async () => page.evaluate(isExtensionChatDetached), { timeout: 20000 })
+    .toBe(true)
+    .then(
+      () => true,
+      () => false,
+    )
+  if (detached) return true
+
+  const pressed = await switchButton.getAttribute('aria-pressed')
+  if (pressed !== 'false') {
+    await safeToggleClick(page, switchButton)
+    await page.waitForTimeout(300)
+  }
+
+  detached = await expect
+    .poll(async () => page.evaluate(isExtensionChatDetached), { timeout: 15000 })
+    .toBe(true)
+    .then(
+      () => true,
+      () => false,
+    )
+  return detached
 }
 
 test('toggle fullscreen chat on and off', async ({ page }) => {
@@ -41,24 +80,20 @@ test('toggle fullscreen chat on and off', async ({ page }) => {
   }
 
   if ((await switchButton.getAttribute('aria-pressed')) === 'true') {
-    await switchButton.click({ force: true })
-    await expect(switchButton).toHaveAttribute('aria-pressed', 'false')
+    await safeToggleClick(page, switchButton)
+    await page.waitForTimeout(300)
   }
 
-  let detached = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionChatDetached), { timeout: 15000 }).toBe(true)
-    detached = true
-  } catch {
-    detached = false
-  }
+  const detached = await ensureDetached(page, switchButton)
   if (!detached) {
     test.skip(true, 'Extension iframe did not detach in time.')
     return
   }
 
-  await switchButton.click({ force: true })
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
+  await safeToggleClick(page, switchButton)
+  await expect
+    .poll(async () => switchButton.getAttribute('aria-pressed'), { timeout: 10000 })
+    .toBe('true')
   let overlayReady = false
   try {
     await expect.poll(async () => page.evaluate(isExtensionChatReady), { timeout: 20000 }).toBe(true)
@@ -71,15 +106,11 @@ test('toggle fullscreen chat on and off', async ({ page }) => {
     return
   }
 
-  await switchButton.click({ force: true })
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'false')
-  let detachedAfter = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionChatDetached), { timeout: 20000 }).toBe(true)
-    detachedAfter = true
-  } catch {
-    detachedAfter = false
-  }
+  await safeToggleClick(page, switchButton)
+  await expect
+    .poll(async () => switchButton.getAttribute('aria-pressed'), { timeout: 10000 })
+    .toBe('false')
+  const detachedAfter = await ensureDetached(page, switchButton)
   if (!detachedAfter) {
     test.skip(true, 'Extension iframe did not detach after toggle off.')
     return

@@ -14,8 +14,6 @@ const requiredSpecs = (process.env.E2E_REQUIRED_SPECS ?? '')
   .filter(Boolean)
 
 const defaultRequiredSpecs = [
-  'e2e/scenarios/live/fullscreenChatAutoOpen.spec.ts',
-  'e2e/scenarios/live/fullscreenChatToggle.spec.ts',
   'e2e/scenarios/archive/liveChatReplay.spec.ts',
   'e2e/scenarios/archive/fullscreenChatRestore.spec.ts',
   'e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts',

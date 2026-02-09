@@ -85,6 +85,10 @@ test('restore native chat after archive fullscreen chat closes', async ({ page }
   }
 
   await page.locator('#movie_player').hover()
+  await page.click('button.ytp-fullscreen-button')
+  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
+  await page.locator('#movie_player').hover()
+
   const switchButton = page.locator(switchButtonSelector)
   const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
     () => true,
