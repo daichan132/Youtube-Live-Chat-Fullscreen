@@ -92,5 +92,5 @@
 ## 7. Skills 運用
 - 1 skill = 1責務で保つ。
 - 使いにくい skill はその場で最小修正する。
-- 詳細ルールは以下を参照:
-  - `docs/skills/skill-design-best-practices.md`
+- 詳細ルールは各 skill の `SKILL.md` を参照:
+  - `.codex/skills/*/SKILL.md`
