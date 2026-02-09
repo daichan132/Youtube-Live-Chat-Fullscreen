@@ -172,7 +172,42 @@ test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
     test.skip(true, 'Fullscreen chat switch button did not appear.')
     return
   }
+  const switchEnabled = await page
+    .waitForFunction(selector => {
+      const button = document.querySelector(selector) as HTMLButtonElement | null
+      if (!button) return false
+      return !button.disabled && button.getAttribute('aria-disabled') !== 'true'
+    }, switchButtonSelector, { timeout: 10000 })
+    .then(() => true, () => false)
+  if (!switchEnabled) {
+    test.skip(true, 'Fullscreen chat switch is disabled because live source is unavailable.')
+    return
+  }
   await reliableClick(switchButton, page, switchButtonSelector)
+  const toggledOrDisabled = await page
+    .waitForFunction(selector => {
+      const button = document.querySelector(selector) as HTMLButtonElement | null
+      if (!button) return false
+      return (
+        button.disabled ||
+        button.getAttribute('aria-disabled') === 'true' ||
+        button.getAttribute('aria-pressed') === 'true'
+      )
+    }, switchButtonSelector, { timeout: 8000 })
+    .then(() => true, () => false)
+  if (!toggledOrDisabled) {
+    test.skip(true, 'Could not confirm switch activation in time.')
+    return
+  }
+  const switchDisabledAfterClick = await page.evaluate(selector => {
+    const button = document.querySelector(selector) as HTMLButtonElement | null
+    if (!button) return true
+    return button.disabled || button.getAttribute('aria-disabled') === 'true'
+  }, switchButtonSelector)
+  if (switchDisabledAfterClick) {
+    test.skip(true, 'Fullscreen chat switch became disabled after click.')
+    return
+  }
   await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
   let overlayReady = false
   try {

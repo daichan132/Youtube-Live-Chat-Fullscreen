@@ -1,6 +1,6 @@
 import { expect, test } from './fixtures'
 import { acceptYouTubeConsent } from './utils/liveUrl'
-import { switchButtonContainerSelector } from './utils/selectors'
+import { switchButtonContainerSelector, switchButtonSelector } from './utils/selectors'
 import { noChatUrls } from './utils/testUrls'
 
 const hasPlayableChat = () => {
@@ -47,8 +47,35 @@ test('extension chat stays hidden on videos without live chat', async ({ page })
   await page.waitForFunction(() => document.fullscreenElement !== null)
 
   await page.locator('#movie_player').hover()
-  const switchButton = page.locator(switchButtonContainerSelector)
-  await expect(switchButton).toHaveCount(1)
+  const switchContainer = page.locator(switchButtonContainerSelector)
+  await expect(switchContainer).toHaveCount(1)
+  const switchButton = page.locator(switchButtonSelector)
+  await expect(switchButton).toBeVisible()
+  const switchDisabled = await page
+    .waitForFunction(selector => {
+      const button = document.querySelector(selector) as HTMLButtonElement | null
+      if (!button) return false
+      return (
+        button.disabled &&
+        button.getAttribute('aria-disabled') === 'true' &&
+        button.getAttribute('aria-pressed') === 'false'
+      )
+    }, switchButtonSelector, { timeout: 12000 })
+    .then(() => true, () => false)
+
+  if (!switchDisabled) {
+    const playableNative = await page.evaluate(hasPlayableChat)
+    if (playableNative) {
+      test.skip(true, 'Selected URL had playable chat and did not meet no-chat precondition.')
+      return
+    }
+  }
+
+  expect(switchDisabled).toBe(true)
+  await switchButton.evaluate(button => {
+    ;(button as HTMLButtonElement).click()
+  })
+  await expect(switchButton).toHaveAttribute('aria-pressed', 'false')
 
   await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
   await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(false)

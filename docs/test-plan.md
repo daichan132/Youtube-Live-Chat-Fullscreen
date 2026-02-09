@@ -17,7 +17,7 @@
 - `e2e/scenarios/archive/liveChatReplay.spec.ts`: archive fullscreen で拡張チャット成立を確認
 - `e2e/scenarios/archive/fullscreenChatRestore.spec.ts`: fullscreen chat OFF 後の native chat 復帰を確認
 - `e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts`: 動画遷移後の stale iframe 非残留を確認
-- `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`: replay unavailable で overlay 非表示を確認
+- `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`: replay unavailable で switch 無効化 + overlay 非表示を確認
 
 ---
 
@@ -29,7 +29,7 @@
 - 種別: E2E（実ブラウザのDOM連携が必要）
 - 想定テスト:
   - フルスクリーン入退出で shadow host・switch が生成/削除される
-  - `hasPlayableChat` 偽のとき UI が出ない
+  - チャット source 不成立のとき switch は表示されるが無効化され、拡張chatは起動しない
 
 ### 2) 表示判定とネイティブチャット連動
 - 対象: `entrypoints/content/hooks/watchYouTubeUI/useIsShow.ts` `entrypoints/content/YTDLiveChat.tsx`
@@ -124,8 +124,8 @@
 - フルスクリーン化 → 右下コントロールにスイッチ挿入 → スイッチONでチャットiframeを移動＆表示
 - 対象: `entrypoints/content/Content.tsx` `entrypoints/content/features/YTDLiveChatSwitch/components/YTDLiveChatSwitch.tsx` `entrypoints/content/chat/runtime/useChatIframeLoader.ts`
 
-### チャット不可時の非表示
-- 再生不可/リプレイ不可ならスイッチ自体を出さない
+### チャット不可時の無効化
+- 再生不可/リプレイ不可ならスイッチは表示するが無効化し、ONにできない
 - 対象: `entrypoints/content/hooks/watchYouTubeUI/useHasPlayableLiveChat.ts` `entrypoints/content/Content.tsx`
 
 ### ネイティブチャットとの排他

@@ -1,5 +1,4 @@
 import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
-import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import type { LiveChatSource } from '../runtime/types'
 
 const YLC_OWNED_ATTR = 'data-ylc-owned'
@@ -18,7 +17,7 @@ export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFr
   if (!videoId) return null
 
   const hasManagedLiveCurrent = isManagedLiveIframe(currentIframe)
-  if (!hasManagedLiveCurrent && !isYouTubeLiveNow() && !hasLiveChatSignals()) return null
+  if (!hasManagedLiveCurrent && !hasLiveChatSignals()) return null
 
   return {
     kind: 'live_direct',

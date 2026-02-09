@@ -1,8 +1,7 @@
 import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
-import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
-import { resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
+import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasFullscreenChatSource'
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
@@ -13,7 +12,6 @@ import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreen
 import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
-import { getYouTubeVideoId } from './utils/getYouTubeVideoId'
 
 type YTDLiveChatProps = {
   isFullscreen: boolean
@@ -43,15 +41,7 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   })
 
   const canAttachFullscreenChat = usePollingWithNavigate({
-    checkFn: useCallback(() => {
-      if (mode === 'live') {
-        return resolveLiveSource(getYouTubeVideoId()) !== null
-      }
-      if (mode === 'archive') {
-        return resolveArchiveSource() !== null
-      }
-      return false
-    }, [mode]),
+    checkFn: useCallback(() => hasFullscreenChatSource(mode), [mode]),
     // Keep polling until first success, then latch to avoid fullscreen overlay
     // remount loops when live/archive signals momentarily fluctuate.
     stopOnSuccess: true,

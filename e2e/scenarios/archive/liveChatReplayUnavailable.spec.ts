@@ -1,7 +1,7 @@
 import { expect, test } from '../../fixtures'
 import { captureChatState } from '../../support/diagnostics'
 import { selectReplayUnavailableUrl } from '../../support/urls/archiveReplay'
-import { switchButtonContainerSelector } from '../../utils/selectors'
+import { switchButtonContainerSelector, switchButtonSelector } from '../../utils/selectors'
 
 test('show fullscreen chat button when replay chat is unavailable', async ({ page }) => {
   test.setTimeout(90000)
@@ -40,6 +40,11 @@ test('show fullscreen chat button when replay chat is unavailable', async ({ pag
     await captureChatState(page, test.info(), 'replay-unavailable-switch-missing')
   }
   expect(switchButtonAppeared).toBe(true)
+  const switchButton = page.locator(switchButtonSelector)
+  await expect(switchButton).toBeVisible()
+  await expect(switchButton).toBeDisabled()
+  await expect(switchButton).toHaveAttribute('aria-disabled', 'true')
+  await expect(switchButton).toHaveAttribute('aria-pressed', 'false')
 
   const shadowHostAppeared = await page.waitForSelector('#shadow-root-live-chat', { timeout: 7000 }).then(
     () => true,

@@ -38,7 +38,7 @@
 - `e2e/scenarios/archive/fullscreenChatVideoTransition.spec.ts`
   - 動画ID遷移後に旧動画の iframe が残留しないか
 - `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`
-  - replay unavailable では switch は出るが overlay は出ないか
+  - replay unavailable では switch は出るが無効化され、overlay は出ないか
 
 ## トラブルシュート最短チェック
 - switch

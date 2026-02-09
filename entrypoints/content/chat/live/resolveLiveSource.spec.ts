@@ -40,8 +40,15 @@ describe('resolveLiveSource', () => {
     expect(source).toBeNull()
   })
 
-  it('returns null when neither live-now nor live chat signals are present', () => {
+  it('returns null when live chat signals are not present', () => {
     createWatchFlexy({ 'video-id': 'video-a' })
+
+    const source = resolveLiveSource('video-a')
+    expect(source).toBeNull()
+  })
+
+  it('returns null when stream is live-now but chat signals are missing', () => {
+    createWatchFlexy({ 'video-id': 'video-a', 'is-live-now': null })
 
     const source = resolveLiveSource('video-a')
     expect(source).toBeNull()
