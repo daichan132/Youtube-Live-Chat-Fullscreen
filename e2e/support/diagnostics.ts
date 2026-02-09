@@ -222,6 +222,111 @@ export const isNativeReplayUnavailable = () => {
   return hasUnavailableText(text)
 }
 
+const isNativeReplayUnavailableOrMissing = () => {
+  // NOTE: This function is executed inside `page.evaluate`, so keep all helper
+  // logic self-contained and do not reference outer lexical functions.
+  const unavailableMarkers = ['live chat replay is not available', 'chat is disabled', 'live chat is disabled']
+  const readIframeHref = (iframe: HTMLIFrameElement | null) => {
+    if (!iframe) return ''
+    try {
+      const docHref = iframe.contentDocument?.location?.href ?? ''
+      if (docHref) return docHref
+    } catch {
+      // Ignore CORS/DOM access errors and fall back to src.
+    }
+    return iframe.getAttribute('src') ?? iframe.src ?? ''
+  }
+  const hasUnavailableText = (text: string) => {
+    const normalized = text.toLowerCase()
+    return unavailableMarkers.some(marker => normalized.includes(marker))
+  }
+  const getNativeIframe = () => {
+    const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
+    if (chatFrame) return chatFrame
+    return document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
+  }
+  const resolveClickable = (target: HTMLElement) => {
+    if (target.matches('button, yt-icon-button, [role="button"]')) return target
+    return target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
+  }
+  const sidebarOpenSelectors = [
+    'ytd-live-chat-frame #show-hide-button button',
+    'ytd-live-chat-frame #show-hide-button yt-icon-button',
+    '#chat-container #show-hide-button button',
+    '#chat-container #show-hide-button yt-icon-button',
+    'ytd-live-chat-frame #show-hide-button',
+    '#chat-container #show-hide-button',
+  ]
+  const playerChatToggleSelectors = [
+    '.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
+    '.ytp-right-controls button-view-model button[aria-pressed="false"]',
+    '#movie_player toggle-button-view-model button[aria-pressed="false"]',
+    '#movie_player button-view-model button[aria-pressed="false"]',
+  ]
+  const isElementVisible = (element: HTMLElement) => {
+    if (element.hasAttribute('hidden')) return false
+    if (element.getAttribute('aria-hidden') === 'true') return false
+    const style = window.getComputedStyle(element)
+    if (style.display === 'none' || style.visibility === 'hidden') return false
+    return element.getClientRects().length > 0
+  }
+  const getButtonLabelText = (element: HTMLElement) =>
+    `${element.getAttribute('aria-label') ?? ''} ${element.getAttribute('title') ?? ''} ${element.getAttribute('data-title-no-tooltip') ?? ''} ${element.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
+  const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
+  const findFirstMatchingControl = (
+    selectors: string[],
+    options: {
+      requireVisible?: boolean
+      requireChatLabel?: boolean
+    } = {},
+  ) => {
+    const requireVisible = options.requireVisible ?? true
+    for (const selector of selectors) {
+      const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
+      for (const target of targets) {
+        const clickable = resolveClickable(target)
+        if (!clickable) continue
+        if (requireVisible && !isElementVisible(clickable)) continue
+        if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
+        if (clickable.getAttribute('aria-disabled') === 'true') continue
+        if (options.requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
+        return clickable
+      }
+    }
+    return null
+  }
+  const hasReplayOpenControl = () => {
+    if (findFirstMatchingControl(sidebarOpenSelectors, { requireVisible: true })) return true
+    if (findFirstMatchingControl(sidebarOpenSelectors, { requireVisible: false })) return true
+    if (findFirstMatchingControl(playerChatToggleSelectors, { requireVisible: true, requireChatLabel: true })) return true
+    if (findFirstMatchingControl(playerChatToggleSelectors, { requireVisible: false, requireChatLabel: true })) return true
+
+    const frameHost = document.querySelector('ytd-live-chat-frame') as (HTMLElement & { onShowHideChat?: () => void }) | null
+    if (typeof frameHost?.onShowHideChat !== 'function') return false
+    const slots = document.querySelectorAll<HTMLElement>('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button')
+    for (const slot of slots) {
+      const clickable = slot.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
+      if (clickable) return true
+      const text = slot.textContent?.trim() ?? ''
+      if (text.length > 0) return true
+    }
+    return false
+  }
+
+  const iframe = getNativeIframe()
+  const doc = iframe?.contentDocument ?? null
+  const href = readIframeHref(iframe)
+  if (doc) {
+    if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
+    const text = doc.body?.textContent ?? ''
+    if (hasUnavailableText(text)) return true
+  }
+
+  if (!iframe) return false
+  if (href && !href.includes('about:blank')) return false
+  return !hasReplayOpenControl()
+}
+
 export const isExtensionArchiveChatPlayable = () => {
   const unavailableMarkers = ['live chat replay is not available', 'chat is disabled', 'live chat is disabled']
   const readIframeHref = (iframe: HTMLIFrameElement | null) => {
@@ -285,10 +390,10 @@ const tryOpenArchiveNativeChatPanel = async (page: Page) => {
       ({ sidebarSelectors, playerSelectors }) => {
         // Keep this target list in sync with runtime nativeChat resolver.
         // `tp-yt-paper-icon-button` is intentionally excluded.
-        const resolveClickable = (target: HTMLElement) =>
-          target.matches('button, yt-icon-button, [role="button"]')
-            ? target
-            : (target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]') ?? target)
+        const resolveClickable = (target: HTMLElement) => {
+          if (target.matches('button, yt-icon-button, [role="button"]')) return target
+          return target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
+        }
 
         const isElementVisible = (element: HTMLElement) => {
           if (element.hasAttribute('hidden')) return false
@@ -306,6 +411,7 @@ const tryOpenArchiveNativeChatPanel = async (page: Page) => {
             const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
             for (const target of targets) {
               const clickable = resolveClickable(target)
+              if (!clickable) continue
               if (!isElementVisible(clickable)) continue
               if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
               if (clickable.getAttribute('aria-disabled') === 'true') continue
@@ -369,7 +475,7 @@ export const ensureNativeReplayUnavailable = async (page: Page, options: { maxDu
   const deadline = Date.now() + maxDurationMs
 
   while (Date.now() < deadline) {
-    const unavailable = await page.evaluate(isNativeReplayUnavailable).catch(() => false)
+    const unavailable = await page.evaluate(isNativeReplayUnavailableOrMissing).catch(() => false)
     if (unavailable) return true
     await tryOpenArchiveNativeChatPanel(page)
     await page.waitForTimeout(800)

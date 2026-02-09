@@ -1,9 +1,9 @@
 import { expect, test } from '../../fixtures'
 import { captureChatState } from '../../support/diagnostics'
 import { selectReplayUnavailableUrl } from '../../support/urls/archiveReplay'
-import { switchButtonContainerSelector } from '../../utils/selectors'
+import { switchButtonSelector } from '../../utils/selectors'
 
-test('show fullscreen chat button when replay chat is unavailable', async ({ page }) => {
+test('hide fullscreen chat button when replay chat is unavailable', async ({ page }) => {
   test.setTimeout(90000)
 
   const selectedUrl = await selectReplayUnavailableUrl(page, { maxDurationMs: 30000 })
@@ -34,7 +34,7 @@ test('show fullscreen chat button when replay chat is unavailable', async ({ pag
 
   await page.locator('#movie_player').hover()
   const switchHidden = await expect
-    .poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 8000 })
+    .poll(async () => page.locator(switchButtonSelector).count(), { timeout: 8000 })
     .toBe(0)
     .then(
       () => true,

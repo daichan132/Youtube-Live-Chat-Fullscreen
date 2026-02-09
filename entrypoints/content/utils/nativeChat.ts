@@ -60,10 +60,10 @@ const isNativeChatIframeBlank = () => {
 
 // Keep clickable targets restricted to current UI controls.
 // Do not re-add `tp-yt-paper-icon-button` unless product policy changes.
-const resolveClickable = (target: HTMLElement) =>
-  target.matches('button, yt-icon-button, [role="button"]')
-    ? target
-    : (target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]') ?? target)
+const resolveClickable = (target: HTMLElement) => {
+  if (target.matches('button, yt-icon-button, [role="button"]')) return target
+  return target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
+}
 
 const getButtonLabelText = (element: HTMLElement) =>
   `${element.getAttribute('aria-label') ?? ''} ${element.getAttribute('title') ?? ''} ${element.getAttribute('data-title-no-tooltip') ?? ''} ${element.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
@@ -104,6 +104,7 @@ const findFirstMatchingControl = (
     const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
     for (const target of targets) {
       const clickable = resolveClickable(target)
+      if (!clickable) continue
       if (requireVisible && !isElementVisible(clickable)) continue
       if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
       if (clickable.getAttribute('aria-disabled') === 'true') continue
@@ -146,12 +147,23 @@ const hasChatFrameShowHideHandler = () => {
   return typeof host?.onShowHideChat === 'function'
 }
 
+const hasArchiveShowHideSlotContent = () => {
+  const slots = document.querySelectorAll<HTMLElement>('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button')
+  for (const slot of slots) {
+    const clickable = slot.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
+    if (clickable) return true
+    const text = slot.textContent?.trim() ?? ''
+    if (text.length > 0) return true
+  }
+  return false
+}
+
 export const hasArchiveNativeOpenControl = () => {
   if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: true })) return true
   if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: false })) return true
   if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: true })) return true
   if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: false })) return true
-  return hasChatFrameShowHideHandler()
+  return hasChatFrameShowHideHandler() && hasArchiveShowHideSlotContent()
 }
 
 export const openArchiveNativeChatPanel = () => {

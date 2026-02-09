@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { Content } from './Content'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
+import { useChatMode } from './chat/runtime/useChatMode'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 
 vi.mock('./chat/archive/useEnsureArchiveNativeChatOpen', () => ({
@@ -53,23 +54,38 @@ describe('Content', () => {
   beforeEach(() => {
     vi.mocked(usePollingWithNavigate).mockReset()
     vi.mocked(canToggleFullscreenChat).mockReset()
+    vi.mocked(useChatMode).mockReset()
     vi.mocked(useEnsureArchiveNativeChatOpen).mockReset()
 
     vi.mocked(usePollingWithNavigate).mockReturnValue(true)
     vi.mocked(canToggleFullscreenChat).mockReturnValue(true)
+    vi.mocked(useChatMode).mockReturnValue('archive')
   })
 
-  it('latches switch polling once source becomes available', () => {
+  it('keeps archive switch polling in continuous monitoring mode', () => {
     render(<Content />)
 
     expect(usePollingWithNavigate).toHaveBeenCalledTimes(1)
     const options = vi.mocked(usePollingWithNavigate).mock.calls[0]?.[0]
-    expect(options?.stopOnSuccess).toBe(true)
+    expect(options?.stopOnSuccess).toBe(false)
     expect(options?.intervalMs).toBe(1000)
     expect(options?.maxAttempts).toBe(Number.POSITIVE_INFINITY)
 
     options?.checkFn()
     expect(canToggleFullscreenChat).toHaveBeenCalledWith('archive')
+  })
+
+  it('keeps live switch polling latched on success', () => {
+    vi.mocked(useChatMode).mockReturnValue('live')
+
+    render(<Content />)
+
+    expect(usePollingWithNavigate).toHaveBeenCalledTimes(1)
+    const options = vi.mocked(usePollingWithNavigate).mock.calls[0]?.[0]
+    expect(options?.stopOnSuccess).toBe(true)
+
+    options?.checkFn()
+    expect(canToggleFullscreenChat).toHaveBeenCalledWith('live')
   })
 
   it('enables archive native ensure only when archive + fullscreen + user enabled', () => {

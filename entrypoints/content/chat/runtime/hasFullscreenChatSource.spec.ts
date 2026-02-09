@@ -144,6 +144,16 @@ describe('canToggleFullscreenChat', () => {
     expect(canToggleFullscreenChat('archive')).toBe(true)
   })
 
+  it('returns false for archive mode when stale iframe mismatches current video', () => {
+    vi.mocked(resolveArchiveSource).mockReturnValue(null)
+    const iframe = document.createElement('iframe')
+    vi.mocked(getLiveChatIframe).mockReturnValue(iframe)
+    vi.mocked(isIframeForCurrentVideo).mockReturnValue(false)
+    vi.mocked(hasArchiveNativeOpenControl).mockReturnValue(true)
+
+    expect(canToggleFullscreenChat('archive')).toBe(false)
+  })
+
   it('returns false for archive mode while native iframe is preparing if open control is missing', () => {
     vi.mocked(resolveArchiveSource).mockReturnValue(null)
     const iframe = document.createElement('iframe')

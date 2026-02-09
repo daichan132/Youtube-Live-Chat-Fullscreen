@@ -17,11 +17,13 @@ export const Content = () => {
   const isFullscreen = useIsFullScreen()
   const mode = useChatMode()
   useEnsureArchiveNativeChatOpen(isFullscreen && ytdLiveChat && mode === 'archive')
-  // Latch once switch can be shown to avoid losing the fullscreen control
-  // during temporary source signal fluctuations.
+  // Archive availability can change from provisional true to unavailable after
+  // native iframe hydration. Keep archive in continuous monitoring to avoid
+  // latching an incorrect visible switch state.
+  const shouldLatchSwitchOnSuccess = mode === 'live'
   const canToggleFullscreenChatSwitch = usePollingWithNavigate({
     checkFn: useCallback(() => canToggleFullscreenChat(mode), [mode]),
-    stopOnSuccess: true,
+    stopOnSuccess: shouldLatchSwitchOnSuccess,
     maxAttempts: Number.POSITIVE_INFINITY,
     intervalMs: 1000,
   })

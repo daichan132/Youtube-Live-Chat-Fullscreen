@@ -1,5 +1,5 @@
-import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
 import { isLiveChatIframe, isReplayChatIframe } from '@/entrypoints/content/chat/shared/iframeDom'
+import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
 import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import type { LiveChatSource } from '../runtime/types'

@@ -11,6 +11,7 @@ const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive?: boolea
     isLiveContent,
   })
   document.body.appendChild(moviePlayer)
+  return moviePlayer
 }
 
 const attachExtensionIframe = (options: { src: string; owned?: boolean; source?: string }) => {
@@ -79,6 +80,20 @@ describe('detectChatMode', () => {
   it('returns live when video is live now even if archive open control exists', () => {
     createMoviePlayer({ isLive: true })
     createArchiveOpenControl()
+
+    expect(detectChatMode()).toBe('live')
+  })
+
+  it('returns live when stale native replay iframe exists but stream is live now', () => {
+    const frame = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.className = 'ytd-live-chat-frame'
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=stale-archive-video'
+    frame.appendChild(iframe)
+    document.body.appendChild(frame)
+
+    const moviePlayer = createMoviePlayer({ isLive: true })
+    moviePlayer.setAttribute('video-id', 'live-current-video')
 
     expect(detectChatMode()).toBe('live')
   })

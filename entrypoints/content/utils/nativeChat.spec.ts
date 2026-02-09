@@ -160,14 +160,38 @@ describe('hasArchiveNativeOpenControl', () => {
     expect(hasArchiveNativeOpenControl()).toBe(true)
   })
 
-  it('returns true when ytd-live-chat-frame has onShowHideChat handler', () => {
+  it('returns false when only empty show-hide host exists', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    const showHide = document.createElement('div')
+    showHide.id = 'show-hide-button'
+    host.appendChild(showHide)
+    document.body.appendChild(host)
+
+    expect(hasArchiveNativeOpenControl()).toBe(false)
+  })
+
+  it('returns true when ytd-live-chat-frame has onShowHideChat handler and show-hide content', () => {
+    const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
+      onShowHideChat?: () => void
+    }
+    const showHide = document.createElement('div')
+    showHide.id = 'show-hide-button'
+    showHide.textContent = 'Show chat replay'
+    host.appendChild(showHide)
+    host.onShowHideChat = vi.fn()
+    document.body.appendChild(host)
+
+    expect(hasArchiveNativeOpenControl()).toBe(true)
+  })
+
+  it('returns false when only onShowHideChat handler exists without show-hide content', () => {
     const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
       onShowHideChat?: () => void
     }
     host.onShowHideChat = vi.fn()
     document.body.appendChild(host)
 
-    expect(hasArchiveNativeOpenControl()).toBe(true)
+    expect(hasArchiveNativeOpenControl()).toBe(false)
   })
 
   it('returns false when no archive chat open control is available', () => {
