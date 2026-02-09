@@ -71,3 +71,43 @@
 ## Closing Note
 - 今回の本質は「バグ修正」よりも「仕様境界の扱い」と「テストの真偽判定設計」の問題だった。
 - したがって次回は、まず仕様の境界条件を固定してから runtime を直し、その後 E2E は fail/skip境界を最小変更で合わせる。
+
+---
+
+## Follow-up Learnings (2026-02-09, NoChat/Archive pass)
+
+### 1) `switch disabled` を `source ready` に直結すると archive で deadlock する
+- 起きたこと:
+  - archive で「source未解決中は switch disabled」にすると、ユーザーが ON にできず native chat を開くトリガーが走らない。
+  - その結果 `resolveArchiveSource()` が永遠に `null` のままになり、開けないまま固定される。
+- 学んだこと:
+  - switch 有効判定と overlay 表示判定は分離する必要がある。
+  - 実装上は `canToggleFullscreenChat`（操作可否）と `hasFullscreenChatSource`（表示可否）を分けるのが安全。
+
+### 2) archive fallback 判定は「チャット系UI」のみに限定する
+- 起きたこと:
+  - player control の汎用 selector を広く取りすぎると、NoChat動画でも誤って switch enabled になる。
+- 学んだこと:
+  - fallback 判定は `aria-label/title` の chat 文言を必須化する。
+  - 「ボタンがある」ではなく「チャットを開くボタンがある」を判定する。
+
+### 3) live は `isLiveNow` fail-open を使わない
+- 起きたこと:
+  - `isLiveNow` だけで source を許可すると、チャット無効ライブでも ON できてしまう。
+- 学んだこと:
+  - live source 解決は `hasLiveChatSignals()` を基準に統一する。
+  - `isLiveNow` は mode 判定の補助に留め、source 判定には使わない。
+
+### 4) E2Eは「前提不成立」と「不具合」を分けるが、待機には必ず timeout を付ける
+- 起きたこと:
+  - `waitForFunction` の timeout 未指定で spec timeout までハングし、原因切り分けが難しくなった。
+- 学んだこと:
+  - すべての `waitForFunction/expect.poll` に短めの個別 timeout を付ける。
+  - 前提不成立は `skip`、前提成立後の崩れは `fail` の境界を明示して維持する。
+
+### 5) NoChat spec は URL drift を考慮して precondition を明示する
+- 起きたこと:
+  - 固定URLが将来チャット有効化されると、NoChat想定の assert が偽陽性で落ちる。
+- 学んだこと:
+  - NoChat spec では「本当に no-chat 前提か」を実行時に確認し、前提不成立は `skip` に倒す。
+  - `disabled expected` を即断定せず、収束待ち + 前提チェックで安定化する。
