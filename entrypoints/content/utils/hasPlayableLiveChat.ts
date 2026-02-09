@@ -65,7 +65,7 @@ export const isLiveChatUnavailable = (doc: Document) => {
 }
 
 /** Checks if watch element has live chat attributes */
-const hasLiveChatAttributes = () => {
+export const hasWatchChatAttributes = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
   const watchGrid = document.querySelector('ytd-watch-grid')
   return Boolean(
@@ -80,6 +80,12 @@ const hasLiveChatDomContainer = () => {
   return Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
 }
 
+export const hasLiveChatRendererReady = (doc: Document) => {
+  const renderer = doc.querySelector('yt-live-chat-renderer')
+  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+  return Boolean(renderer && itemList)
+}
+
 export const isArchiveChatPlayable = (iframe: HTMLIFrameElement | null) => {
   if (!iframe) return false
 
@@ -89,9 +95,7 @@ export const isArchiveChatPlayable = (iframe: HTMLIFrameElement | null) => {
   if (!isLiveChatDocForCurrentVideo(doc)) return false
   if (isLiveChatUnavailable(doc)) return false
 
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-  return Boolean(renderer && itemList)
+  return hasLiveChatRendererReady(doc)
 }
 
 export const hasPlayableLiveChat = () => {
@@ -113,7 +117,7 @@ export const hasPlayableLiveChat = () => {
     return false
   }
 
-  if (hasLiveChatAttributes()) return true
+  if (hasWatchChatAttributes()) return true
   if (isYouTubeLiveNow() && hasLiveChatDomContainer()) return true
   return false
 }

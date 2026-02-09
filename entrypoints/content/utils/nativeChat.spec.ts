@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { isNativeChatToggleButton, openArchiveNativeChatPanel, openNativeChatPanel } from './nativeChat'
+import { hasArchiveNativeOpenControl, isNativeChatToggleButton, openArchiveNativeChatPanel, openNativeChatPanel } from './nativeChat'
 
 const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; pressed?: 'true' | 'false' }) => {
   const controls = document.createElement('div')
@@ -164,6 +164,27 @@ describe('openNativeChatPanel', () => {
 
     expect(opened).toBe(true)
     expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('hasArchiveNativeOpenControl', () => {
+  it('returns true when sidebar show-hide button exists', () => {
+    createSidebarShowHideButton()
+    expect(hasArchiveNativeOpenControl()).toBe(true)
+  })
+
+  it('returns true when ytd-live-chat-frame has onShowHideChat handler', () => {
+    const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
+      onShowHideChat?: () => void
+    }
+    host.onShowHideChat = vi.fn()
+    document.body.appendChild(host)
+
+    expect(hasArchiveNativeOpenControl()).toBe(true)
+  })
+
+  it('returns false when no archive chat open control is available', () => {
+    expect(hasArchiveNativeOpenControl()).toBe(false)
   })
 })
 

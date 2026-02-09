@@ -83,6 +83,19 @@ const clickFirstMatchingSelector = (
     requireVisible?: boolean
   } = {},
 ) => {
+  const target = findFirstMatchingControl(selectors, options)
+  if (!target) return false
+  target.click()
+  return true
+}
+
+const findFirstMatchingControl = (
+  selectors: string[],
+  options: {
+    requireChatLabel?: boolean
+    requireVisible?: boolean
+  } = {},
+) => {
   const requireVisible = options.requireVisible ?? true
   for (const selector of selectors) {
     const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
@@ -92,11 +105,10 @@ const clickFirstMatchingSelector = (
       if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
       if (clickable.getAttribute('aria-disabled') === 'true') continue
       if (options.requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
-      clickable.click()
-      return true
+      return clickable
     }
   }
-  return false
+  return null
 }
 
 const revealPlayerControls = () => {
@@ -124,6 +136,19 @@ const tryInvokeChatFrameShowHide = () => {
   if (typeof host.onShowHideChat !== 'function') return false
   host.onShowHideChat()
   return true
+}
+
+const hasChatFrameShowHideHandler = () => {
+  const host = document.querySelector('ytd-live-chat-frame') as YouTubeLiveChatFrameElement | null
+  return typeof host?.onShowHideChat === 'function'
+}
+
+export const hasArchiveNativeOpenControl = () => {
+  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: true })) return true
+  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: false })) return true
+  if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: true })) return true
+  if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: false })) return true
+  return hasChatFrameShowHideHandler()
 }
 
 export const openArchiveNativeChatPanel = () => {
