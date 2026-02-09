@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
@@ -24,6 +24,12 @@ export const Content = () => {
     intervalMs: 1000,
   })
   const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen)
+  const shouldRenderSwitch = mode !== 'none' && canToggleFullscreenChatSwitch && portalsReady && Boolean(switchButtonContainer)
+
+  useEffect(() => {
+    if (!switchButtonContainer) return
+    switchButtonContainer.style.display = shouldRenderSwitch ? 'inline-block' : 'none'
+  }, [shouldRenderSwitch, switchButtonContainer])
 
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRoot) return null
@@ -36,9 +42,8 @@ export const Content = () => {
   }
 
   const renderSwitchButtonPortal = () => {
-    if (mode === 'none') return null
-    if (!portalsReady || !switchButtonContainer) return null
-    return createPortal(<YTDLiveChatSwitch disabled={!canToggleFullscreenChatSwitch} />, switchButtonContainer)
+    if (!shouldRenderSwitch || !switchButtonContainer) return null
+    return createPortal(<YTDLiveChatSwitch />, switchButtonContainer)
   }
 
   return (

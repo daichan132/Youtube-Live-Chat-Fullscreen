@@ -3,11 +3,7 @@ import { IoChatboxSharp } from 'react-icons/io5'
 import { useShallow } from 'zustand/shallow'
 import { useGlobalSettingStore } from '@/shared/stores'
 
-type YTDLiveChatSwitchProps = {
-  disabled?: boolean
-}
-
-export const YTDLiveChatSwitch = ({ disabled = false }: YTDLiveChatSwitchProps) => {
+export const YTDLiveChatSwitch = () => {
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
@@ -15,11 +11,10 @@ export const YTDLiveChatSwitch = ({ disabled = false }: YTDLiveChatSwitchProps) 
     })),
   )
   const handleClick = useCallback(() => {
-    if (disabled) return
     const newYtdLiveChat = !ytdLiveChat
     setYTDLiveChat(newYtdLiveChat)
-  }, [disabled, ytdLiveChat, setYTDLiveChat])
-  const isActive = ytdLiveChat && !disabled
+  }, [ytdLiveChat, setYTDLiveChat])
+  const isActive = ytdLiveChat
 
   return (
     <button
@@ -33,12 +28,10 @@ export const YTDLiveChatSwitch = ({ disabled = false }: YTDLiveChatSwitchProps) 
         height: '100%',
         width: '100%',
         position: 'relative',
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.35 : isActive ? 1 : 0.6,
+        cursor: 'pointer',
+        opacity: isActive ? 1 : 0.6,
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
-      disabled={disabled}
-      aria-disabled={disabled}
       aria-pressed={isActive}
       onClick={handleClick}
       onKeyUp={() => {}}

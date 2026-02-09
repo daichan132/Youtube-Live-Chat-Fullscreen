@@ -48,8 +48,7 @@
 - 動画遷移後に stale iframe を再利用しない。
 
 3. no-chat / replay-unavailable
-- switch は表示する。
-- switch は disabled。
+- switch は表示しない。
 - overlay / extension iframe は出さない。
 
 4. 判定責務

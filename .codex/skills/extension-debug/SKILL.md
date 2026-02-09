@@ -19,7 +19,7 @@ metadata:
 2. 再現手順を1回通し、壊れる地点を固定する。
 3. その時点の状態を採取する。
 - fullscreen 状態
-- switch（`aria-pressed` / `aria-disabled`）
+- switch（存在有無 / `aria-pressed`）
 - native iframe（`#chatframe` href/playable）
 - extension iframe（`data-ylc-chat` / `data-ylc-owned` / `src`）
 4. 境界にマッピングする。

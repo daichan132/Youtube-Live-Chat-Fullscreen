@@ -24,34 +24,24 @@ describe('YTDLiveChatSwitch', () => {
     resetStore({ ytdLiveChat: false })
   })
 
-  it('toggles setting when enabled', () => {
+  it('toggles setting when clicked', () => {
     const { getByRole } = render(<YTDLiveChatSwitch />)
     const button = getByRole('button')
 
     fireEvent.click(button)
 
     expect(useGlobalSettingStore.getState().ytdLiveChat).toBe(true)
-    expect(button).toHaveAttribute('aria-disabled', 'false')
     expect(button).toHaveAttribute('aria-pressed', 'true')
   })
 
-  it('does not toggle when disabled', () => {
-    const { getByRole } = render(<YTDLiveChatSwitch disabled />)
+  it('toggles off when persisted setting is on', () => {
+    resetStore({ ytdLiveChat: true })
+    const { getByRole } = render(<YTDLiveChatSwitch />)
     const button = getByRole('button')
 
     fireEvent.click(button)
 
     expect(useGlobalSettingStore.getState().ytdLiveChat).toBe(false)
-    expect(button).toBeDisabled()
-    expect(button).toHaveAttribute('aria-disabled', 'true')
-    expect(button).toHaveAttribute('aria-pressed', 'false')
-  })
-
-  it('shows inactive pressed state when disabled even if persisted setting is on', () => {
-    resetStore({ ytdLiveChat: true })
-    const { getByRole } = render(<YTDLiveChatSwitch disabled />)
-    const button = getByRole('button')
-
     expect(button).toHaveAttribute('aria-pressed', 'false')
   })
 })

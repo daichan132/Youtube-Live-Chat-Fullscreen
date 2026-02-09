@@ -52,7 +52,8 @@ const ensureSwitchButtonContainer = (): HTMLElement | null => {
     container.id = SWITCH_BUTTON_CONTAINER_ID
     container.style.height = '100%'
     container.style.width = '54px'
-    container.style.display = 'inline-block'
+    // Keep the slot hidden until Content.tsx explicitly enables switch rendering.
+    container.style.display = 'none'
     container.style.verticalAlign = 'top'
     controls.prepend(container)
   }

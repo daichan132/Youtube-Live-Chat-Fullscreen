@@ -26,12 +26,12 @@ metadata:
 3. モード契約に沿って判定する。
 - live: `live_chat?v=<videoId>` を使う。
 - archive: native `live_chat_replay` borrow のみ許可。
-- no-chat / replay-unavailable: switch は表示するが disabled、拡張 iframe は出さない。
+- no-chat / replay-unavailable: switch は表示しない、拡張 iframe は出さない。
 4. `skip/fail` 境界を維持する。
 - `skip`: URL ドリフトや外部前提不足。
 - `fail`: 前提成立後に拡張挙動が崩れる。
 5. 失敗/skip 時は状態証跡を残す。
-- `url`、`fullscreen`、`aria-pressed`、`aria-disabled`
+- `url`、`fullscreen`、`aria-pressed`
 - native iframe（href / playable）
 - extension iframe（`data-ylc-chat` / `data-ylc-owned` / `src`）
 6. 再検証する。

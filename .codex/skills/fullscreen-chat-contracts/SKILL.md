@@ -18,8 +18,7 @@ metadata:
 - 動画遷移後の stale iframe 再利用を禁止する。
 
 3. no-chat / replay-unavailable
-- switch は表示する。
-- switch は disabled。
+- switch は表示しない。
 - overlay / extension iframe は表示しない。
 
 4. toggle 判定と source 判定の分離
@@ -29,7 +28,7 @@ metadata:
 # 必須確認
 - Unit:
   - live resolver が `isLiveNow` 単独で fail-open しない
-  - disabled switch でトグルできない
+  - 非表示条件で switch が描画されない
   - mode/source helper が期待通り
 - E2E 最低限:
   - `e2e/noChatVideo.spec.ts`
@@ -44,4 +43,5 @@ metadata:
 # トリガー例
 - 「live と archive の境界が壊れてないか確認して」
 - 「switch disabled 周りを修正したい」
+- 「押せない switch は非表示にしたい」
 - 「fullscreen chat の仕様を守ってリファクタしたい」
