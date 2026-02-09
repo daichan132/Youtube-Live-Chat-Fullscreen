@@ -1,38 +1,36 @@
 ---
 name: i18n-ops
-description: i18n workflow. Use when asked to add/update translations/locales/strings, or mentions i18n/locales/翻訳/文言/chrome.i18n/_locales.
+description: この拡張の i18n 更新手順。翻訳追加/改善、locale 品質確認、extensionName/description 更新、_locales 整合確認で使う。
 metadata:
-  short-description: Add/update i18n strings safely
+  short-description: locale 品質と整合性を維持
 ---
 
-# Goal
-- Add or update user-visible strings with consistent keys and locale updates.
+# 目的
+- 翻訳品質を上げつつ、`shared` と `public/_locales` の契約を壊さない。
 
-# Inputs (ask only if missing)
-- The UI text (source language) and where it appears (screen/feature).
-- Key naming preference if the project has one (otherwise infer from existing keys).
+# プロジェクトルール
+- 更新先は必ず両方。
+  - `shared/i18n/assets`
+  - `public/_locales`
+- `extensionName` は各言語へ翻訳する（英語 locale は英語維持）。
+- トグル系ラベルは原則名詞ベースで統一する。
 
-# Steps
-1. Find existing patterns
-   - Search for the same/similar text or key via `rg`
-2. Add/update the key in the shared assets
-   - `shared/i18n/assets`（既存構造に合わせる）
-3. Add/update extension locale files
-   - `public/_locales`（Chrome/Firefox分の運用があればそれに従う）
-4. Update the UI usage
-   - Hard-coded文字列を避けて i18n を参照
-5. Consistency checks
-   - Placeholder（例: `{name}`）は全localeで同じ名前にする
-   - 余った未使用キーを増やさない（必要なら削除・整理）
-6. Verify
-   - `yarn lint`
-   - `yarn build`（必要なら `yarn build:firefox`）
+# 手順
+1. `rg` で対象キーと使用箇所を特定する。
+2. `shared/i18n/assets/<locale>.json` を更新する。
+3. 拡張表示文言は `public/_locales/<locale>/messages.json` も更新する。
+4. 契約テストを実行する。
+- `yarn test:unit shared/i18n/assets.spec.ts shared/i18n/publicLocales.spec.ts`
+5. 品質ゲートを実行する。
+- `yarn lint`
+- `yarn build`
 
-# Guardrails
-- ユーザー向け文字列を `entrypoints/**` に直書きしない（例外はコメントで理由を書く）
-- 翻訳が不完全でも、少なくとも既存の fallback 規約に従う
+# ガードレール
+- placeholder 名を locale 間でずらさない。
+- 非英語 locale に英語取り残しを作らない。
+- 低確度な意訳は避ける。
 
-# Output format
-- Added/updated keys list
-- Files changed（`shared/...`, `public/_locales/...`）
-- Verification commands and results
+# 出力形式
+- 変更キー
+- 変更 locale
+- 検証結果

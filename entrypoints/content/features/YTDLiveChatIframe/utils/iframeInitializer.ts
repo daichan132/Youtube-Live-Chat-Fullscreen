@@ -1,8 +1,6 @@
-import type { IframeLoadState } from './chatSourceResolver'
+import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
+import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
 import { getNonBlankIframeHref } from './iframeAttachment'
-
-const STYLE_MARKER_ATTR = 'data-ylc-style-injected'
-const CHAT_BODY_CLASS = 'custom-yt-app-live-chat-extension'
 
 type IframeInitializerOptions = {
   iframeStyles: string
@@ -24,11 +22,11 @@ const getIframeDocument = (iframe: HTMLIFrameElement) => {
 }
 
 const ensureStyleInjected = (doc: Document, cssText: string) => {
-  const existing = doc.head?.querySelector(`style[${STYLE_MARKER_ATTR}="true"]`)
+  const existing = doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)
   if (existing) return false
-  const style = document.createElement('style')
+  const style = doc.createElement('style')
   style.textContent = cssText
-  style.setAttribute(STYLE_MARKER_ATTR, 'true')
+  style.setAttribute(IFRAME_STYLE_MARKER_ATTR, 'true')
   doc.head?.appendChild(style)
   return true
 }
@@ -61,9 +59,9 @@ export const createIframeInitializer = ({
     if (!doc || !doc.head || !doc.body) return false
 
     const styleInjected = ensureStyleInjected(doc, iframeStyles)
-    const classAdded = !doc.body.classList.contains(CHAT_BODY_CLASS)
+    const classAdded = !doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)
     if (classAdded) {
-      doc.body.classList.add(CHAT_BODY_CLASS)
+      doc.body.classList.add(IFRAME_CHAT_BODY_CLASS)
     }
 
     if (styleInjected || classAdded) {

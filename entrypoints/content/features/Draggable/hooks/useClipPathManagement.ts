@@ -21,9 +21,10 @@ export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }
    * Adjusts the position and size of the container when clip path state changes
    */
   const handleClipPathChange = useCallback(
-    (isClipPath: boolean) => {
+    (isClipPath: boolean, clipOverride?: Clip) => {
       const { size, coordinates } = useYTDLiveChatStore.getState()
-      const { clip } = useYTDLiveChatNoLsStore.getState()
+      const { clip: currentClip } = useYTDLiveChatNoLsStore.getState()
+      const clip = clipOverride ?? currentClip
       const topClip = clip.header
       const bottomClip = clip.input
 
@@ -55,13 +56,15 @@ export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }
     const body = iframeElement?.contentDocument?.body
 
     // Calculate header height (subtract 8px for padding/margin adjustments)
-    const header = (body?.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8
+    const header = Math.max(0, (body?.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8)
 
     // Calculate input area height (subtract 4px for adjustments)
-    const input =
+    const input = Math.max(
+      0,
       (body?.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
         body?.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||
-        0) - 4
+        0) - 4,
+    )
 
     return { header, input }
   }, [iframeElement])

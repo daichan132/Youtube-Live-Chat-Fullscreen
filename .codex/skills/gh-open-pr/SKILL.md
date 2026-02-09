@@ -1,65 +1,60 @@
 ---
 name: gh-open-pr
-description: Create a GitHub pull request with gh. Use when asked to open/create a PR (pull request), "PR作って", "draft PR", or "gh pr create".
+description: gh CLI で PR を作成する手順。PR 作成/ドラフトPR/PR更新依頼のときに使う。
 metadata:
-  short-description: Open a draft PR using GitHub CLI
+  short-description: gh で PR を作成
 ---
 
-# Goal
-- Create a draft PR for the current branch with a clear title/body and test notes.
+# 目的
+- レビュー担当が「何を、なぜ、どう直したか」を短時間で判断できる PR を作成する。
 
-# Inputs (ask only if missing)
-- Target base branch (if not default).
-- Issue reference (if any).
-- Whether to make it draft (default: draft).
+# 入力（不足時のみ確認）
+- base ブランチ（通常 `main`）
+- タイトル言語（デフォルト英語）
+- 本文言語方針（デフォルト: 英語先頭 + 日本語を `<details>`）
+- draft か ready か
 
-# Preconditions
-- `gh` is installed and authenticated.
-- Must be on a feature branch (not default).
+# ガードレール
+- 明示依頼なしに force push しない。
+- 大きい差分で `gh pr create --fill` だけに頼らない。
+- 実行していない検証コマンドを書かない。
+- E2E の `skip` は「外部前提不足」か「不具合」かを本文で区別する。
+- PR 説明を更新するときは、必ず `gh pr view` で反映内容を再確認する。
 
-# Non-goals / Guardrails
-- Do not push or create PRs without user approval when approvals are required.
-- Do not include secrets in PR body.
+# 手順
+1. 事前確認をする。
+- `git status -sb`
+- `git fetch origin <base>`
+- `git log --oneline origin/<base>..HEAD`
+- `git diff --stat origin/<base>..HEAD`
+- `gh pr list --state open --head <branch>`
+2. タイトルを決める。
+- 原則: 英語の要約タイトルにする。
+- 形式: `Type: concise impact summary`
+3. 本文を組み立てる。
+- 原則: 英語を上に置く。
+- 日本語が必要な場合: `<details><summary>日本語版</summary>...</details>` に入れる。
+- 読み手が判断しやすいように、必要に応じて表を使って整理する。
+- 特に大きな変更では、以下が分かるように書く。
+  - 何を改善したか（課題 / 設計判断 / 結果）
+  - どのレイヤをどう変えたか（責務分離や境界）
+  - 何で検証したか（実行コマンドと結果）
+  - 既知のリスクや前提
+4. PR を作成または更新する。
+- 新規: `gh pr create --base <base> --head <branch> --title \"...\" --body-file <file>`
+- 既存: `gh pr edit <number> --title \"...\" --body-file <file>`
+5. 反映確認をする。
+- `gh pr view <number> --json title,body,url`
+6. URL と要点を共有する。
 
-# Steps
-1) Validate auth + repo
-- `gh auth status`
-- `gh repo view`
-- If not authenticated: ask the user to run `gh auth login` and stop.
+# 出力形式
+- PR タイトル
+- PR URL
+- 変更点サマリ（3行以内）
+- 含めた検証と残リスク
 
-2) Determine base branch
-- If user specifies, use it.
-- Otherwise detect default:
-  - `gh repo view --json defaultBranchRef -q .defaultBranchRef.name`
-
-3) Ensure branch is pushed
-- If upstream missing: `git push -u origin HEAD`.
-
-4) Compose PR title/body
-- Title: use latest commit subject unless unclear.
-- Body must include:
-  - Summary (1–3 bullets)
-  - Key changes (bullets)
-  - How to test (exact commands)
-  - Risks/notes (optional)
-  - Issue links (e.g. "Fixes #123") if provided
-- If a PR template exists, prefer it and fill required sections:
-  - Check for `.github/PULL_REQUEST_TEMPLATE*` or `.github/pull_request_template*`.
-
-5) Create PR (draft by default)
-- `gh pr create --draft --base <base> --title "<title>" --body "<body>"`
-- If using a template: add `--template <template>`.
-
-# Output format
-- PR URL (from gh output).
-- Base branch and draft/non-draft status.
-- Summary of what went into the PR body.
-
-# Edge cases
-- If the branch is ahead but not pushed, push first.
-- If there are uncommitted changes, warn and confirm before PR creation.
-
-# Trigger examples
-- "PR作って"
-- "draft PR を作成して"
-- "gh pr create して"
+# トリガー例
+- 「main に PR 作って」
+- 「PR の説明を分かりやすくして」
+- 「英語版を上に、日本語は details にして」
+- 「表を使って設計意図を書いて」

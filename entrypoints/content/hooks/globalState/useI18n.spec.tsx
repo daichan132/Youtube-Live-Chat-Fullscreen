@@ -33,6 +33,18 @@ describe('useI18n', () => {
     expect(changeLanguage).toHaveBeenCalledWith('ja')
   })
 
+  it('normalizes regional language code before changing language', () => {
+    renderHook(() => useI18n())
+
+    const runtime = (chrome as unknown as { runtime: { __emitMessage: (message: unknown) => void } }).runtime
+
+    act(() => {
+      runtime.__emitMessage({ message: 'language', language: 'pt-BR' })
+    })
+
+    expect(changeLanguage).toHaveBeenCalledWith('pt_BR')
+  })
+
   it('ignores unrelated runtime messages', () => {
     renderHook(() => useI18n())
 

@@ -17,6 +17,6 @@ describe('YLC settings presets', () => {
   it('defines simple preset characteristics', () => {
     expect(ylcSimpleSetting.chatOnlyDisplay).toBe(true)
     expect(ylcSimpleSetting.userNameDisplay).toBe(false)
-    expect(ylcSimpleSetting.reactionButtonDisplay).toBe(false)
+    expect(ylcSimpleSetting.superChatBarDisplay).toBe(false)
   })
 })

@@ -2,13 +2,17 @@ import { useId, useRef } from 'react'
 
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
-
+import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
+import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import { useIframeLoader } from '../hooks/useIframeLoader'
 
-export const YTDLiveChatIframe = () => {
+type YTDLiveChatIframeProps = {
+  mode: ChatMode
+}
+
+export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const id = useId()
-  const { ref } = useIframeLoader()
+  const { ref } = useChatIframeLoader(mode)
   const nodeRef = useRef(null)
   const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor)
   const fontColorRef = useRef(useYTDLiveChatStore.getState().fontColor)
@@ -51,7 +55,7 @@ export const YTDLiveChatIframe = () => {
       >
         <div
           ref={nodeRef}
-          className='w-full h-full absolute top-0 flex justify-center items-center bg-opacity-[rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})] backdrop-blur-${blur} transition-opacity duration-500'
+          className='absolute top-0 flex h-full w-full items-center justify-center transition-opacity duration-500'
           style={{
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,

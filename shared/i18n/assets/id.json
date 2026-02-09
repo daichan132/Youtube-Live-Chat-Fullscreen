@@ -9,7 +9,6 @@
       "chatOnlyDisplay": "Hanya Tampilkan Chat",
       "userNameDisplay": "Tampilkan Nama Pengguna",
       "userIconDisplay": "Tampilkan Ikon Pengguna",
-      "reactionButtonDisplay": "Tampilkan Tombol Reaksi",
       "superChatBarDisplay": "Tampilkan Bar Super Chat",
       "backgroundColor": "Warna Latar Belakang",
       "fontColor": "Warna Font",
@@ -26,7 +25,7 @@
     "preset": {
       "addMessage": "Tambah Pengaturan Saat Ini",
       "addItemTitle": "Tanpa Judul",
-      "defaultTitle": "Default",
+      "defaultTitle": "Bawaan",
       "transparentTitle": "Transparan",
       "simpleTitle": "Sederhana",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus?",

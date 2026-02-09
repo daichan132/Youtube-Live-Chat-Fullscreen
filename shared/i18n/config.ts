@@ -1,7 +1,6 @@
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
-
 import am from './assets/am.json'
 import ar from './assets/ar.json'
 import bg from './assets/bg.json'
@@ -57,6 +56,7 @@ import uk from './assets/uk.json'
 import vi from './assets/vi.json'
 import zh_CN from './assets/zh_CN.json'
 import zh_TW from './assets/zh_TW.json'
+import { getSupportedLanguageCodes, resolveLanguageCode } from './language'
 
 const resources = {
   ar: { translation: ar },
@@ -115,10 +115,17 @@ const resources = {
   zh_CN: { translation: zh_CN },
   zh_TW: { translation: zh_TW },
 }
-i18n.use(LanguageDetector).use(initReactI18next).init({
-  resources,
-  fallbackLng: 'en',
-  debug: false,
-})
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    resources,
+    fallbackLng: 'en',
+    supportedLngs: getSupportedLanguageCodes(),
+    detection: {
+      convertDetectedLanguage: detectedLanguage => resolveLanguageCode(detectedLanguage),
+    },
+    debug: false,
+  })
 
 export default i18n

@@ -1,16 +1,12 @@
 import { getYouTubeVideoId } from './getYouTubeVideoId'
-import { getLiveChatDocument, getLiveChatIframe, getLiveChatVideoIdFromIframe, isLiveChatUnavailable } from './hasPlayableLiveChat'
-
-const hasWatchChatAttributes = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  return Boolean(
-    watchFlexy?.hasAttribute('live-chat-present') ||
-      watchFlexy?.hasAttribute('live-chat-present-and-expanded') ||
-      watchGrid?.hasAttribute('live-chat-present') ||
-      watchGrid?.hasAttribute('live-chat-present-and-expanded'),
-  )
-}
+import {
+  getLiveChatDocument,
+  getLiveChatIframe,
+  getLiveChatVideoIdFromIframe,
+  hasLiveChatRendererReady,
+  hasWatchChatAttributes,
+  isLiveChatUnavailable,
+} from './hasPlayableLiveChat'
 
 const hasLiveChatFrameReady = () => {
   const iframe = getLiveChatIframe()
@@ -18,9 +14,7 @@ const hasLiveChatFrameReady = () => {
   const doc = getLiveChatDocument(iframe)
   if (!doc) return false
   if (isLiveChatUnavailable(doc)) return false
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-  return Boolean(renderer && itemList)
+  return hasLiveChatRendererReady(doc)
 }
 
 export const hasLiveChatSignals = () => {

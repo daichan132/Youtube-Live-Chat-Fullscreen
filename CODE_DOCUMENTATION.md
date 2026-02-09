@@ -36,7 +36,10 @@ The main directories and their roles are as follows:
 ├── docs/                     # Documentation related (future use)
 ├── e2e/                      # End-to-End test code
 │   ├── fixtures.ts           # Playwright test fixtures
-│   └── liveChatReplay.spec.ts # Test spec file
+│   ├── scenarios/            # Live / archive scenario specs
+│   │   ├── live/             # Live-only validation specs
+│   │   └── archive/          # Archive-only validation specs
+│   └── support/              # Shared diagnostics and URL selection helpers
 ├── entrypoints/              # Extension entry points
 │   ├── content/              # Content Script related
 │   │   ├── Content.tsx       # Main component for Content Script
@@ -47,6 +50,11 @@ The main directories and their roles are as follows:
 │   │   │   ├── YTDLiveChatIframe/ # Chat iframe wrapper and style application
 │   │   │   ├── YTDLiveChatSetting/ # Settings modal
 │   │   │   └── YTDLiveChatSwitch/ # Chat display toggle switch
+│   │   ├── chat/             # Live/archive separated chat runtime
+│   │   │   ├── live/         # Live source resolution (`/live_chat?v=...`)
+│   │   │   ├── archive/      # Archive source resolution (`live_chat_replay` borrow)
+│   │   │   ├── runtime/      # Mode detection, overlay visibility, mode-aware loader
+│   │   │   └── shared/       # Iframe DOM helpers shared by both modes
 │   │   ├── hooks/            # Custom hooks specific to Content Script
 │   │   │   ├── globalState/  # Zustand store related hooks
 │   │   │   ├── watchYouTubeUI/ # YouTube UI monitoring hook
@@ -95,10 +103,15 @@ Injects into the YouTube page and handles the actual chat display and interactio
 *   **`features/Draggable/`**:
     *   Provides drag-and-drop movement and resizing functionality for the chat window using `dnd-kit` and `re-resizable`.
     *   Manages the logic for clipping (`clip-path`) to hide the chat header/input area using the `useClipPathManagement.ts` hook.
+*   **`chat/`**:
+    *   Separates runtime behavior by mode (`live` vs `archive`) to prevent source-mixing regressions.
+    *   `live/resolveLiveSource.ts` only allows public live iframe route (`/live_chat?v=...`).
+    *   `archive/resolveArchiveSource.ts` only allows native replay iframe borrow (`/live_chat_replay`).
+    *   `runtime/overlayVisibility.ts` centralizes pure overlay-visibility rules.
 *   **`features/YTDLiveChatIframe/`**:
-    *   Retrieves the YouTube Live Chat iframe (`#live-chat-iframe`) and places it within the `Draggable` component.
+    *   Renders the iframe container and loading indicator.
+    *   Actual source attach/detach logic is handled by `chat/runtime/useChatIframeLoader.ts`.
     *   Uses CSS (`iframe.css`) and style change hooks (`useYLCStyleChange`) to apply custom styles to elements within the iframe.
-    *   Also handles the loading indicator while the iframe is loading.
 *   **`features/YTDLiveChatSetting/`**:
     *   The modal UI for changing chat appearance (color, font, blur, etc.) and display settings (show username, show icon, etc.).
     *   Uses `react-modal`.

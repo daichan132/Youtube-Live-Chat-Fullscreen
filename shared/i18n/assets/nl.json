@@ -9,7 +9,6 @@
       "chatOnlyDisplay": "Alleen Chat Weergeven",
       "userNameDisplay": "Gebruikersnaam Weergeven",
       "userIconDisplay": "Gebruikersicoon Weergeven",
-      "reactionButtonDisplay": "Reactieknoppen Weergeven",
       "superChatBarDisplay": "Superchatbalk Weergeven",
       "backgroundColor": "Achtergrondkleur",
       "fontColor": "Letterkleur",
@@ -37,7 +36,7 @@
   "popup": {
     "language": "Taalinstellingen",
     "showChatOnFullscreen": "Chat in Volledig Scherm",
-    "links": "Links",
+    "links": "Koppelingen",
     "donate": "Doneren"
   }
 }

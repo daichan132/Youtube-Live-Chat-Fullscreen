@@ -9,7 +9,6 @@
       "chatOnlyDisplay": "Nur Chat anzeigen",
       "userNameDisplay": "Benutzernamen anzeigen",
       "userIconDisplay": "Benutzersymbol anzeigen",
-      "reactionButtonDisplay": "Reaktionsbutton anzeigen",
       "superChatBarDisplay": "Super-Chat-Leiste anzeigen",
       "backgroundColor": "Hintergrundfarbe",
       "fontColor": "Schriftfarbe",
@@ -37,7 +36,7 @@
   "popup": {
     "language": "Spracheinstellungen",
     "showChatOnFullscreen": "Vollbild-Chat",
-    "links": "Links",
+    "links": "Verknüpfungen",
     "donate": "Spenden"
   }
 }

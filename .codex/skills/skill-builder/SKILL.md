@@ -1,55 +1,32 @@
 ---
 name: skill-builder
-description: Create or update Codex Skills (SKILL.md). Use when asked to make/update a skill, add SKILL.md, skill template, or mentions Codex skills / Agent Skills / スキル作成.
+description: .codex/skills 配下のスキルを作成・更新する手順。スキル設計、SKILL.md 追加、スキル再編依頼のときに使う。
 metadata:
-  short-description: Create/update Codex skills
+  short-description: シンプルで効くスキルを作る
 ---
 
-# Goal
-- Design and create a small, triggerable, safe Codex Skill.
+# 目的
+- トリガーしやすく保守しやすいスキルを最小構成で作る。
 
-# Inputs (ask only if missing)
-- Purpose: what task the skill should help with (one sentence).
-- Trigger situations/keywords (Japanese/English).
-- Scope: repo-local (`.codex/skills/`) or user-wide (`~/.codex/skills/`).
+# 設計ルール
+- 1 skill = 1責務。
+- `description` は1行で「いつ使うか」を明示。
+- 手順は決定的に書く。
+- 出力形式を固定して報告を揃える。
 
-# Design principles
-- One skill = one job (single responsibility).
-- `description` is the trigger surface:
-  - Keep it single-line, concise.
-  - Include: "Use when ..." + concrete keywords.
-- Keep SKILL.md short:
-  - Goal / Inputs / Steps / Output format / Edge cases / Trigger examples.
-  - Long details go to `references/` instead of bloating the body.
-- If the skill feels wrong during use, fix it immediately (minimal change).
+# 手順
+1. 既存 skill の責務重複を確認する。
+2. 必要最小の skill セットを決める。
+3. 各 `SKILL.md` を以下で統一する。
+- 目的
+- 入力
+- ガードレール
+- 手順
+- 出力形式
+- トリガー例
+4. 実際の依頼文でトリガー妥当性を確認する。
 
-# Steps
-1. Pick a kebab-case name (1–64 chars) and create the folder with the same name.
-2. Write a single-line `description` that:
-   - States when to use the skill
-   - Contains 4–10 trigger keywords (terms users actually say)
-3. Draft the SKILL.md sections:
-   - Goal
-   - Inputs (ask only if missing)
-   - Non-goals / Guardrails
-   - Steps (commands or deterministic process)
-   - Output format (exactly what to return)
-   - Edge cases
-   - Trigger examples (2–6)
-4. Check overlap:
-   - If it overlaps with existing skills, split or narrow description.
-5. (Optional) If scripts are required:
-   - Put them under `scripts/`
-   - Document usage, dependencies, and failure modes clearly.
-   - Otherwise keep instruction-only.
-
-# Output format
-- File path(s) created/updated.
-- Short explanation of triggers and what the skill will do.
-- Any open questions (only if truly required).
-
-# Trigger examples
-- "skills を作って"
-- "SKILL.md を追加して"
-- "Agent Skills のテンプレ作って"
-- "この作業をスキル化したい"
+# 出力形式
+- 作成/更新した skill 一覧
+- トリガー対象
+- 分割理由

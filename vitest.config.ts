@@ -19,6 +19,7 @@ export default defineConfig({
       'shared/**/*.spec.tsx',
       'entrypoints/**/*.spec.ts',
       'entrypoints/**/*.spec.tsx',
+      'e2e/config/**/*.spec.ts',
     ],
     exclude: ['e2e/**', 'node_modules/**'],
     setupFiles: ['./vitest.setup.ts'],

@@ -24,6 +24,9 @@ describe('useNativeChatAutoDisable', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    // Reset potential test override on instance property.
+    // biome-ignore lint/performance/noDelete: test-only cleanup for configurable override
+    delete (document as { fullscreenElement?: Element | null }).fullscreenElement
   })
 
   it('turns off fullscreen chat when native toggle button is pressed in fullscreen', () => {
@@ -154,6 +157,38 @@ describe('useNativeChatAutoDisable', () => {
     rerender({
       nativeChatOpen: true,
       isFullscreen: true,
+    })
+
+    expect(setYTDLiveChat).not.toHaveBeenCalled()
+  })
+
+  it('does not turn off extension chat during fullscreen when React fullscreen state is stale', () => {
+    const setYTDLiveChat = vi.fn()
+
+    Object.defineProperty(document, 'fullscreenElement', {
+      configurable: true,
+      get: () => document.documentElement,
+    })
+
+    const { rerender } = renderHook(
+      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
+        useNativeChatAutoDisable({
+          enabled: true,
+          nativeChatOpen,
+          isFullscreen,
+          setYTDLiveChat,
+        }),
+      {
+        initialProps: {
+          nativeChatOpen: false,
+          isFullscreen: false,
+        },
+      },
+    )
+
+    rerender({
+      nativeChatOpen: true,
+      isFullscreen: false,
     })
 
     expect(setYTDLiveChat).not.toHaveBeenCalled()

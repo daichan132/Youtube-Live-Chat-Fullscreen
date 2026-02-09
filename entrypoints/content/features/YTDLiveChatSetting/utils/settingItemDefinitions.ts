@@ -4,7 +4,7 @@ import type { IconType } from 'react-icons'
 import { FaRegUserCircle } from 'react-icons/fa'
 import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
 import { MdBlurOn, MdExpand } from 'react-icons/md'
-import { RiFontColor, RiFontFamily, RiFontSize2, RiHeartFill, RiUserLine } from 'react-icons/ri'
+import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri'
 import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 
 export const BASE_SETTING_ITEM_KEYS = [
@@ -22,7 +22,7 @@ export const BASE_SETTING_ITEM_KEYS = [
 
 export const SETTING_ITEM_KEYS = [...BASE_SETTING_ITEM_KEYS, 'superChatBarDisplay'] as const
 
-export const PRESET_ITEM_KEYS = [...BASE_SETTING_ITEM_KEYS, 'reactionButtonDisplay'] as const
+export const PRESET_ITEM_KEYS = [...BASE_SETTING_ITEM_KEYS] as const
 
 export type SettingItemKey =
   | (typeof BASE_SETTING_ITEM_KEYS)[number]
@@ -41,7 +41,6 @@ const settingItemDefinitions: Record<SettingItemKey, { icon: IconType; titleKey:
   userNameDisplay: { icon: RiUserLine, titleKey: 'content.setting.userNameDisplay' },
   userIconDisplay: { icon: FaRegUserCircle, titleKey: 'content.setting.userIconDisplay' },
   superChatBarDisplay: { icon: IoChatbubbleEllipsesOutline, titleKey: 'content.setting.superChatBarDisplay' },
-  reactionButtonDisplay: { icon: RiHeartFill, titleKey: 'content.setting.reactionButtonDisplay' },
 }
 
 export const buildSettingItems = <Key extends SettingItemKey>({

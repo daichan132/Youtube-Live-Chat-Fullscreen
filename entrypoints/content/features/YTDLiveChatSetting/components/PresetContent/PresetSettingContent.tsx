@@ -10,26 +10,14 @@ import { ChatOnlyDisplaySwitchUI } from '../YLCChangeItems/ChatOnlyDisplaySwitch
 import { FontColorPickerUI } from '../YLCChangeItems/FontColorPicker'
 import { FontFamilyInputUI } from '../YLCChangeItems/FontFamilyInput'
 import { FontSizeSliderUI, fontSizeToSliderValue } from '../YLCChangeItems/FontSizeSlider'
-import { ReactionButtonDisplaySwitchUI } from '../YLCChangeItems/ReactionButtonDisplay'
 import { SpaceSliderUI, spaceToSliderValue } from '../YLCChangeItems/SpaceSlider'
 import { UserIconDisplaySwitchUI } from '../YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitchUI } from '../YLCChangeItems/UserNameDisplaySwitch'
 
 export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleType; isOpen: boolean }) => {
   const { t } = useTranslation()
-  const {
-    alwaysOnDisplay,
-    chatOnlyDisplay,
-    bgColor,
-    fontColor,
-    fontFamily,
-    fontSize,
-    blur,
-    space,
-    userNameDisplay,
-    userIconDisplay,
-    reactionButtonDisplay,
-  } = ylcStyle
+  const { alwaysOnDisplay, chatOnlyDisplay, bgColor, fontColor, fontFamily, fontSize, blur, space, userNameDisplay, userIconDisplay } =
+    ylcStyle
   const items = buildSettingItems({
     t,
     keys: PRESET_ITEM_KEYS,
@@ -44,7 +32,6 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
       space: <SpaceSliderUI value={spaceToSliderValue(space)} />,
       userNameDisplay: <UserNameDisplaySwitchUI userNameDisplay={userNameDisplay} />,
       userIconDisplay: <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} />,
-      reactionButtonDisplay: <ReactionButtonDisplaySwitchUI reactionButtonDisplay={reactionButtonDisplay} />,
     },
     disableByKey: {
       chatOnlyDisplay: !alwaysOnDisplay,

@@ -2,14 +2,13 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Presets",
+        "preset": "Mga Preset",
         "setting": "Mga Setting"
       },
       "alwaysOnDisplay": "Laging Nakikita",
       "chatOnlyDisplay": "Chat Lang ang Ipakita",
       "userNameDisplay": "Ipakita ang Username",
       "userIconDisplay": "Ipakita ang User Icon",
-      "reactionButtonDisplay": "Ipakita ang Reaction Button",
       "superChatBarDisplay": "Ipakita ang Super Chat Bar",
       "backgroundColor": "Kulay ng Background",
       "fontColor": "Kulay ng Font",
@@ -26,7 +25,7 @@
     "preset": {
       "addMessage": "Idagdag ang Kasalukuyang Mga Setting",
       "addItemTitle": "Walang Pamagat",
-      "defaultTitle": "Default",
+      "defaultTitle": "Karaniwan",
       "transparentTitle": "Transparent",
       "simpleTitle": "Simple",
       "deleteConfirmationMessage": "Sigurado ka bang gusto mong tanggalin ito?",
@@ -36,7 +35,7 @@
   },
   "popup": {
     "language": "Mga Setting ng Wika",
-    "showChatOnFullscreen": "Chat habang Buong Screen",
+    "showChatOnFullscreen": "Fullscreen na Chat",
     "links": "Mga Link",
     "donate": "Mag-donate"
   }

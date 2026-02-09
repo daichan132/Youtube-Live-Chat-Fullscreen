@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { isActuallyFullscreen } from '@/entrypoints/content/chat/runtime/fullscreen'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
@@ -32,6 +33,8 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen
       const target = event.target as HTMLElement | null
       if (!target) return
 
+      const fullscreenActive = isActuallyFullscreen(isFullscreen)
+
       const shadowHost = document.getElementById(SHADOW_HOST_ID)
       if (shadowHost && (target === shadowHost || shadowHost.contains(target) || target.closest(`#${SHADOW_HOST_ID}`))) return
       if (shadowHost?.shadowRoot?.contains(target)) return
@@ -40,7 +43,7 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen
       const isTriggerTarget = isToggleButton || isNativeChatTriggerTarget(target)
       if (!isTriggerTarget) return
 
-      if (isToggleButton && isFullscreen) {
+      if (isToggleButton && fullscreenActive) {
         setYTDLiveChat(false)
         return
       }
@@ -82,9 +85,11 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen
       return
     }
 
+    const fullscreenActive = isActuallyFullscreen(isFullscreen)
+
     // Fullscreen transitions can temporarily flip native chat state without user intent.
     // In fullscreen, rely on explicit native toggle interactions (pointerdown) only.
-    if (isFullscreen) {
+    if (fullscreenActive) {
       return
     }
 

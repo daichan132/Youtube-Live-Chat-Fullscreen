@@ -32,7 +32,7 @@ export const YTDLiveChatSwitch = () => {
         opacity: isActive ? 1 : 0.6,
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
-      aria-pressed={ytdLiveChat}
+      aria-pressed={isActive}
       onClick={handleClick}
       onKeyUp={() => {}}
     >

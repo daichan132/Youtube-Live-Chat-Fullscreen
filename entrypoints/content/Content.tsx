@@ -1,31 +1,52 @@
+import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
+import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
+import { useChatMode } from './chat/runtime/useChatMode'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useI18n } from './hooks/globalState/useI18n'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
-import { useEnsureArchiveChatOpen } from './hooks/watchYouTubeUI/useEnsureArchiveChatOpen'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
+import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 import { YTDLiveChat } from './YTDLiveChat'
 
 export const Content = () => {
   useI18n()
   const [ytdLiveChat] = useYtdLiveChat()
   const isFullscreen = useIsFullScreen()
-  useEnsureArchiveChatOpen(isFullscreen && ytdLiveChat)
+  const mode = useChatMode()
+  useEnsureArchiveNativeChatOpen(isFullscreen && ytdLiveChat && mode === 'archive')
+  // Archive availability can change from provisional true to unavailable after
+  // native iframe hydration. Keep archive in continuous monitoring to avoid
+  // latching an incorrect visible switch state.
+  const shouldLatchSwitchOnSuccess = mode === 'live'
+  const canToggleFullscreenChatSwitch = usePollingWithNavigate({
+    checkFn: useCallback(() => canToggleFullscreenChat(mode), [mode]),
+    stopOnSuccess: shouldLatchSwitchOnSuccess,
+    maxAttempts: Number.POSITIVE_INFINITY,
+    intervalMs: 1000,
+  })
   const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen)
+  const shouldRenderSwitch = mode !== 'none' && canToggleFullscreenChatSwitch && portalsReady && Boolean(switchButtonContainer)
+
+  useEffect(() => {
+    if (!switchButtonContainer) return
+    switchButtonContainer.style.display = shouldRenderSwitch ? 'inline-block' : 'none'
+  }, [shouldRenderSwitch, switchButtonContainer])
 
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRoot) return null
     return createPortal(
       <div className='fixed top-0 right-0 w-full h-full z-1000' style={{ pointerEvents: 'none' }}>
-        <YTDLiveChat isFullscreen={isFullscreen} />
+        <YTDLiveChat isFullscreen={isFullscreen} mode={mode} />
       </div>,
       shadowRoot,
     )
   }
 
   const renderSwitchButtonPortal = () => {
-    if (!portalsReady || !switchButtonContainer) return null
+    if (!shouldRenderSwitch || !switchButtonContainer) return null
     return createPortal(<YTDLiveChatSwitch />, switchButtonContainer)
   }
 

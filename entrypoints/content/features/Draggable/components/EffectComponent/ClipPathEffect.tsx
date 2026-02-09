@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
-import { usePrevious, useUnmount, useUpdateEffect } from 'react-use'
+import { useEffect, useRef } from 'react'
+import { useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
+import { IFRAME_CLIP_PATH_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useClipPathManagement } from '../../hooks/useClipPathManagement'
 
@@ -8,6 +9,13 @@ interface ClipPathEffectProps {
   isDragging: boolean
   isResizing: boolean
 }
+
+interface Clip {
+  header: number
+  input: number
+}
+
+const isSameClip = (a: Clip, b: Clip) => a.header === b.header && a.input === b.input
 
 /**
  * Component that handles clip path effects for the draggable chat window
@@ -37,7 +45,10 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
       })),
     )
 
-  const prevClipPath = usePrevious(isClipPath)
+  const isClipGeometryAppliedRef = useRef(false)
+  const appliedClipRef = useRef<Clip | null>(null)
+  const hasAutoCollapsedOnLoadRef = useRef(false)
+  const lastAutoCollapseIframeRef = useRef<HTMLIFrameElement | null>(null)
 
   // Extract clip path management logic to a custom hook
   const { handleClipPathChange, getClip, removeFocus } = useClipPathManagement({
@@ -60,27 +71,117 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
     return () => clearTimeout(timer)
   }, [isHover, alwaysOnDisplay, isOpenSettingModal, chatOnlyDisplay, isDragging, isResizing, setIsClipPath, isIframeLoaded])
 
+  // If hover is already true right after load, auto-clear once so chat-only clip can start without user action.
+  useEffect(() => {
+    if (lastAutoCollapseIframeRef.current !== iframeElement) {
+      lastAutoCollapseIframeRef.current = iframeElement
+      hasAutoCollapsedOnLoadRef.current = false
+    }
+
+    if (!isIframeLoaded || !alwaysOnDisplay || !chatOnlyDisplay) {
+      hasAutoCollapsedOnLoadRef.current = false
+      return
+    }
+
+    if (isOpenSettingModal || isDragging || isResizing) return
+    if (!isHover || isClipPath || hasAutoCollapsedOnLoadRef.current) return
+
+    const timer = setTimeout(() => {
+      setIsHover(false)
+      hasAutoCollapsedOnLoadRef.current = true
+    }, 80)
+
+    return () => clearTimeout(timer)
+  }, [
+    iframeElement,
+    isHover,
+    isClipPath,
+    alwaysOnDisplay,
+    isOpenSettingModal,
+    chatOnlyDisplay,
+    isDragging,
+    isResizing,
+    isIframeLoaded,
+    setIsHover,
+  ])
+
   /* ------------------------- handle Clip Path change ------------------------ */
   useUpdateEffect(() => {
     const body = iframeElement?.contentDocument?.body
-    if (isClipPath === undefined || prevClipPath === undefined || body === undefined) return
+    if (isClipPath === undefined || body === undefined) return
 
     // Remove focus from any active elements
     removeFocus()
 
     // Update clip settings and handle coordinate/size changes
     const newClip = getClip()
-    if (newClip) setClip(newClip)
-    handleClipPathChange(isClipPath)
-  }, [isClipPath])
+    setClip(newClip)
+
+    // Keep clip/height changes paired so visible chat height stays stable.
+    if (isClipPath && !isClipGeometryAppliedRef.current) {
+      handleClipPathChange(true, newClip)
+      appliedClipRef.current = newClip
+      hasAutoCollapsedOnLoadRef.current = true
+      isClipGeometryAppliedRef.current = true
+      return
+    }
+
+    if (!isClipPath && isClipGeometryAppliedRef.current) {
+      handleClipPathChange(false, appliedClipRef.current ?? newClip)
+      appliedClipRef.current = null
+      isClipGeometryAppliedRef.current = false
+    }
+  }, [isClipPath, isIframeLoaded, iframeElement])
+
+  // Keep clip geometry synchronized while clip mode is enabled.
+  // This covers cases where header/input render late and initial clip is measured as zero.
+  useEffect(() => {
+    const body = iframeElement?.contentDocument?.body
+    if (!isClipPath || !isIframeLoaded || !body) return
+
+    let retryCount = 0
+    let timer: ReturnType<typeof setTimeout> | undefined
+
+    const syncClipGeometry = () => {
+      const latestClip = getClip()
+      setClip(latestClip)
+
+      if (!isClipGeometryAppliedRef.current) {
+        handleClipPathChange(true, latestClip)
+        appliedClipRef.current = latestClip
+        hasAutoCollapsedOnLoadRef.current = true
+        isClipGeometryAppliedRef.current = true
+      } else if (appliedClipRef.current && !isSameClip(appliedClipRef.current, latestClip)) {
+        handleClipPathChange(false, appliedClipRef.current)
+        handleClipPathChange(true, latestClip)
+        appliedClipRef.current = latestClip
+      }
+
+      retryCount += 1
+      const shouldRetry = latestClip.header === 0 && latestClip.input === 0 && retryCount < 20
+      if (shouldRetry) {
+        timer = setTimeout(syncClipGeometry, 120)
+      }
+    }
+
+    timer = setTimeout(syncClipGeometry, 120)
+    return () => {
+      if (timer) clearTimeout(timer)
+    }
+  }, [isClipPath, isIframeLoaded, iframeElement, getClip, handleClipPathChange, setClip])
 
   // Clean up when component unmounts
   useUnmount(() => {
+    if (isClipGeometryAppliedRef.current) {
+      handleClipPathChange(false, appliedClipRef.current ?? getClip())
+      appliedClipRef.current = null
+      isClipGeometryAppliedRef.current = false
+    }
+
     if (isClipPath) {
       setIsClipPath(undefined)
-      setIsHover(false)
-      handleClipPathChange(false)
     }
+    setIsHover(false)
   })
 
   /* ---------------------------- add style change ---------------------------- */
@@ -90,9 +191,9 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
 
     // Toggle CSS class based on clip path state
     if (isClipPath) {
-      body.classList.add('clip-path-enable')
+      body.classList.add(IFRAME_CLIP_PATH_CLASS)
     } else {
-      body.classList.remove('clip-path-enable')
+      body.classList.remove(IFRAME_CLIP_PATH_CLASS)
     }
   }, [isClipPath])
 

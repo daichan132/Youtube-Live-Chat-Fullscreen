@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
-import type { ChatSource } from './chatSourceResolver'
 import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from './iframeAttachment'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
@@ -36,6 +36,43 @@ describe('iframeAttachment', () => {
 
     const reused = resolveSourceIframe(source, managed)
     expect(reused).toBe(managed)
+  })
+
+  it('does not reuse native live iframe for live source', () => {
+    const source: ChatSource = {
+      kind: 'live_direct',
+      videoId: 'video-a',
+      url: 'https://www.youtube.com/live_chat?v=video-a',
+    }
+    const nativeLiveIframe = document.createElement('iframe') as HTMLIFrameElement
+    nativeLiveIframe.src = source.url
+
+    const resolved = resolveSourceIframe(source, nativeLiveIframe)
+    expect(resolved).not.toBe(nativeLiveIframe)
+    expect(resolved.getAttribute('data-ylc-owned')).toBe('true')
+    expect(resolved.getAttribute('data-ylc-source')).toBe('live_direct')
+    expect(resolved.src).toContain('/live_chat?v=video-a')
+  })
+
+  it('creates a new managed iframe when live source video changes', () => {
+    const sourceA: ChatSource = {
+      kind: 'live_direct',
+      videoId: 'video-a',
+      url: 'https://www.youtube.com/live_chat?v=video-a',
+    }
+    const sourceB: ChatSource = {
+      kind: 'live_direct',
+      videoId: 'video-b',
+      url: 'https://www.youtube.com/live_chat?v=video-b',
+    }
+
+    const managedA = resolveSourceIframe(sourceA, null)
+    const managedB = resolveSourceIframe(sourceB, managedA)
+
+    expect(managedB).not.toBe(managedA)
+    expect(managedB.getAttribute('data-ylc-owned')).toBe('true')
+    expect(managedB.getAttribute('data-ylc-source')).toBe('live_direct')
+    expect(managedB.src).toContain('/live_chat?v=video-b')
   })
 
   it('returns native iframe directly for archive borrow source', () => {

@@ -1,7 +1,9 @@
 import { useCallback, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/shallow'
-import { resolveChatSource } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/chatSourceResolver'
+import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasFullscreenChatSource'
+import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
+import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
@@ -13,9 +15,10 @@ import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNav
 
 type YTDLiveChatProps = {
   isFullscreen: boolean
+  mode: ChatMode
 }
 
-export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
+export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
   const isIframeLoaded = useYTDLiveChatNoLsStore(state => state.isIframeLoaded)
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
@@ -38,7 +41,7 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
   })
 
   const canAttachFullscreenChat = usePollingWithNavigate({
-    checkFn: useCallback(() => resolveChatSource() !== null, []),
+    checkFn: useCallback(() => hasFullscreenChatSource(mode), [mode]),
     // Keep polling until first success, then latch to avoid fullscreen overlay
     // remount loops when live/archive signals momentarily fluctuate.
     stopOnSuccess: true,
@@ -48,14 +51,20 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
 
   // In archive mode, wait until native replay chat is actually playable before
   // showing the fullscreen chat overlay.
-  const shouldShowOverlay = ytdLiveChat && ((isFullscreen && canAttachFullscreenChat) || (isShow && !isNativeChatCurrentlyOpen))
+  const isOverlayVisible = shouldShowOverlay({
+    userToggleEnabled: ytdLiveChat,
+    isFullscreen,
+    fullscreenSourceReady: canAttachFullscreenChat,
+    inlineVisible: isShow,
+    nativeChatOpenIntent: isNativeChatCurrentlyOpen,
+  })
 
   return (
     <>
       <YTDLiveChatSetting />
       <CSSTransition
         nodeRef={nodeRef}
-        in={shouldShowOverlay}
+        in={isOverlayVisible}
         timeout={500}
         classNames={{
           appear: 'opacity-0',
@@ -68,7 +77,7 @@ export const YTDLiveChat = ({ isFullscreen }: YTDLiveChatProps) => {
       >
         <div ref={nodeRef}>
           <Draggable>
-            <YTDLiveChatIframe />
+            <YTDLiveChatIframe mode={mode} />
           </Draggable>
         </div>
       </CSSTransition>

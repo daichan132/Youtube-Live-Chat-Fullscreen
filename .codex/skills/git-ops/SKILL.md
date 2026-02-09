@@ -1,51 +1,28 @@
 ---
 name: git-ops
-description: Safe git workflow for Codex. Use when asked to stage/branch/revert/inspect changes, or mentions 差分/ブランチ or "git add/status/diff/switch/revert". For commit quality use git-smart-commit.
+description: このリポジトリ向けの安全な Git 操作手順。差分確認、ステージ、分割、ブランチ状態確認を求められたときに使う。
 metadata:
-  short-description: Safe git operations workflow
+  short-description: 非破壊で Git 操作を行う
 ---
 
-# Goal
-- Perform safe, minimal git operations (inspect, stage, branch, revert) without destructive history rewrites.
+# 目的
+- 安全性を保ちながら、差分の粒度と履歴の可読性を維持する。
 
-# Inputs (ask only if missing)
-- The exact action requested (inspect / stage / branch / revert / undo local changes).
-- Target paths (if the request is broad).
-- If the user asks to "undo": whether to undo *staged*, *unstaged*, or a *committed* change.
+# 手順
+1. 状態確認
+- `git status -sb`
+- `git diff --stat`
+- 必要箇所だけ `git diff -- <path>`
+2. 意図的にステージ
+- `git add <対象ファイル>`
+3. ステージ内容確認
+- `git diff --cached`
 
-# Non-goals
-- Do not rewrite history or use destructive commands unless explicitly requested:
-  - No `git reset --hard`, no force push, no implicit amend/rebase.
-- Do not discard local changes (`git restore <path>`) unless the user explicitly asks to discard *those exact files*.
+# ガードレール
+- 明示依頼なしに破壊的操作（reset/restore）をしない。
+- 無関係差分を同じコミットに混ぜない。
 
-# Steps
-1. Inspect current state
-   - `git status -sb`
-   - If needed: `git diff` and `git diff --staged`
-2. If staging is requested
-   - Stage only requested paths.
-   - Prefer smallest possible scope:
-     - Use `git add -p <path>` when partial staging is safer.
-3. If branching is requested
-   - Create: `git switch -c <branch>`
-   - Switch: `git switch <branch>`
-4. If revert is requested (safe undo for shared history)
-   - Prefer `git revert <sha>` over reset.
-5. Finish by confirming state
-   - `git status -sb`
-
-# Safety checks
-- If there are unrelated changes, do not touch them; mention them and continue only with requested files.
-- If unexpected changes appear (not explained by the task), stop and ask how to proceed.
-- Never delete files or reset history unless the user explicitly asks.
-
-# Output format
-- What was inspected (paths / branch).
-- What was staged (paths).
-- Any remaining dirty files (unstaged/untracked/staged).
-
-# Trigger examples
-- "git add して"
-- "差分を確認して"
-- "ブランチを切って"
-- "このコミットを取り消したい"
+# 出力形式
+- ブランチ状態
+- ステージ対象
+- コミット前リスク

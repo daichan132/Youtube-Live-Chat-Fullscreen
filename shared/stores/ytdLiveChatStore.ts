@@ -26,6 +26,52 @@ type YTDLiveChatStoreState = {
   setDefaultPosition: () => void
 } & YLCStyleType
 
+type PersistedYTDLiveChatState = Partial<
+  Pick<
+    YTDLiveChatStoreState,
+    'coordinates' | 'size' | 'presetItemIds' | 'presetItemStyles' | 'presetItemTitles' | 'addPresetEnabled' | keyof YLCStyleType
+  >
+> & {
+  reactionButtonDisplay?: boolean
+}
+
+const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
+  if (!('reactionButtonDisplay' in style)) {
+    return style
+  }
+
+  // Legacy persisted stores may contain the removed key.
+  const { reactionButtonDisplay: _removed, ...rest } = style
+  return rest
+}
+
+const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatState => {
+  if (!persistedState || typeof persistedState !== 'object') {
+    return {}
+  }
+
+  const state = persistedState as Record<string, unknown>
+  const { reactionButtonDisplay: _removed, presetItemStyles, ...restState } = state
+
+  if (!presetItemStyles || typeof presetItemStyles !== 'object') {
+    return restState as PersistedYTDLiveChatState
+  }
+
+  const migratedPresetItemStyles = Object.fromEntries(
+    Object.entries(presetItemStyles).map(([id, style]) => {
+      if (!style || typeof style !== 'object') {
+        return [id, style]
+      }
+      return [id, removeLegacyReactionButtonDisplay(style as Record<string, unknown>)]
+    }),
+  )
+
+  return {
+    ...restState,
+    presetItemStyles: migratedPresetItemStyles,
+  } as PersistedYTDLiveChatState
+}
+
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
   immer(
     persist(
@@ -88,6 +134,8 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       }),
       {
         name: 'ytdLiveChatStore',
+        version: 1,
+        migrate: persistedState => migratePersistedState(persistedState),
         storage: createJSONStorage(() => localStorage),
       },
     ),

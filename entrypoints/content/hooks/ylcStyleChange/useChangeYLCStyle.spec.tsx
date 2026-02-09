@@ -4,18 +4,21 @@ import { useChangeYLCStyle } from './useChangeYLCStyle'
 
 const spies = vi.hoisted(() => ({
   changeBg: vi.fn(),
+  changeBlur: vi.fn(),
   changeFontColor: vi.fn(),
   changeFontFamily: vi.fn(),
   changeFontSize: vi.fn(),
   changeSpace: vi.fn(),
   changeUserNameDisplay: vi.fn(),
   changeUserIconDisplay: vi.fn(),
-  changeReactionButtonDisplay: vi.fn(),
   changeSuperChatBarDisplay: vi.fn(),
 }))
 
 vi.mock('./useYLCBgColorChange', () => ({
   useYLCBgColorChange: () => ({ changeColor: spies.changeBg }),
+}))
+vi.mock('./useYLCBlurChange', () => ({
+  useYLCBlurChange: () => ({ changeBlur: spies.changeBlur }),
 }))
 vi.mock('./useYLCFontColorChange', () => ({
   useYLCFontColorChange: () => ({ changeColor: spies.changeFontColor }),
@@ -34,9 +37,6 @@ vi.mock('./useYLCUserNameDisplayChange', () => ({
 }))
 vi.mock('./useYLCUserIconDisplayChange', () => ({
   useYLCUserIconDisplayChange: () => ({ changeDisplay: spies.changeUserIconDisplay }),
-}))
-vi.mock('./useYLCReactionButtonDisplayChange', () => ({
-  useYLCReactionButtonDisplayChange: () => ({ changeDisplay: spies.changeReactionButtonDisplay }),
 }))
 vi.mock('./useYLCSuperChatBarDisplayChange', () => ({
   useYLCSuperChatBarDisplayChange: () => ({ changeDisplay: spies.changeSuperChatBarDisplay }),
@@ -64,11 +64,11 @@ describe('useChangeYLCStyle', () => {
     expect(spies.changeFontSize).toHaveBeenCalledWith(18)
     expect(spies.changeUserNameDisplay).toHaveBeenCalledWith(false)
 
+    expect(spies.changeBlur).not.toHaveBeenCalled()
     expect(spies.changeFontColor).not.toHaveBeenCalled()
     expect(spies.changeFontFamily).not.toHaveBeenCalled()
     expect(spies.changeSpace).not.toHaveBeenCalled()
     expect(spies.changeUserIconDisplay).not.toHaveBeenCalled()
-    expect(spies.changeReactionButtonDisplay).not.toHaveBeenCalled()
     expect(spies.changeSuperChatBarDisplay).not.toHaveBeenCalled()
   })
 })
