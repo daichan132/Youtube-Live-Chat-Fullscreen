@@ -1,4 +1,7 @@
 import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
+import { isLiveChatIframe, isReplayChatIframe } from '@/entrypoints/content/chat/shared/iframeDom'
+import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import type { LiveChatSource } from '../runtime/types'
 
 const YLC_OWNED_ATTR = 'data-ylc-owned'
@@ -16,8 +19,14 @@ export const getLiveChatUrlForVideo = (videoId: string) => {
 export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFrameElement | null = null): LiveChatSource | null => {
   if (!videoId) return null
 
+  const nativeIframe = getLiveChatIframe()
+  if (nativeIframe && isReplayChatIframe(nativeIframe)) return null
+
+  const hasStrongLiveSignal = isYouTubeLiveNow() || isLiveChatIframe(nativeIframe)
+  if (!hasStrongLiveSignal) return null
+
   const hasManagedLiveCurrent = isManagedLiveIframe(currentIframe)
-  if (!hasManagedLiveCurrent && !hasLiveChatSignals()) return null
+  if (!hasLiveChatSignals() && !hasManagedLiveCurrent) return null
 
   return {
     kind: 'live_direct',
