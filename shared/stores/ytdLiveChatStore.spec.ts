@@ -77,4 +77,32 @@ describe('useYTDLiveChatStore', () => {
     expect(reset.size).toEqual({ width: 400, height: 400 })
     expect(reset.coordinates).toEqual({ x: 20, y: 20 })
   })
+
+  it('migrates legacy persisted data that still contains reactionButtonDisplay', async () => {
+    const legacyStyle = {
+      ...ylcInitSetting,
+      reactionButtonDisplay: false,
+    }
+
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          reactionButtonDisplay: true,
+          presetItemIds: ['legacy'],
+          presetItemTitles: { legacy: 'Legacy' },
+          presetItemStyles: { legacy: legacyStyle },
+        },
+        version: 0,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState() as unknown as Record<string, unknown>
+    const presetStyles = state.presetItemStyles as Record<string, Record<string, unknown>>
+
+    expect('reactionButtonDisplay' in state).toBe(false)
+    expect('reactionButtonDisplay' in presetStyles.legacy).toBe(false)
+  })
 })

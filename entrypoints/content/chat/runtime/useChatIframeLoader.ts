@@ -111,18 +111,8 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     }
 
     const applyCurrentChatStyle = () => {
-      const {
-        fontSize,
-        fontFamily,
-        bgColor,
-        blur,
-        fontColor,
-        userNameDisplay,
-        space,
-        userIconDisplay,
-        reactionButtonDisplay,
-        superChatBarDisplay,
-      } = useYTDLiveChatStore.getState()
+      const { fontSize, fontFamily, bgColor, blur, fontColor, userNameDisplay, space, userIconDisplay, superChatBarDisplay } =
+        useYTDLiveChatStore.getState()
 
       changeYLCStyleRef.current({
         bgColor,
@@ -133,7 +123,6 @@ export const useChatIframeLoader = (mode: ChatMode) => {
         space,
         userNameDisplay,
         userIconDisplay,
-        reactionButtonDisplay,
         superChatBarDisplay,
       })
     }

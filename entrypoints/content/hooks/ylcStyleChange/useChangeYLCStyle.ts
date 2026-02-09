@@ -6,7 +6,6 @@ import { useYLCBlurChange } from './useYLCBlurChange'
 import { useYLCFontColorChange } from './useYLCFontColorChange'
 import { useYLCFontFamilyChange } from './useYLCFontFamilyChange'
 import { useYLCFontSizeChange } from './useYLCFontSizeChange'
-import { useYLCReactionButtonDisplayChange } from './useYLCReactionButtonDisplayChange'
 import { useYLCSpaceChange } from './useYLCSpaceChange'
 import { useYLCSuperChatBarDisplayChange } from './useYLCSuperChatBarDisplayChange'
 import { useYLCUserIconDisplayChange } from './useYLCUserIconDisplayChange'
@@ -21,7 +20,6 @@ const HANDLED_KEYS = [
   'space',
   'userNameDisplay',
   'userIconDisplay',
-  'reactionButtonDisplay',
   'superChatBarDisplay',
 ] as const
 
@@ -39,7 +37,6 @@ export const useChangeYLCStyle = () => {
   const { changeSpace } = useYLCSpaceChange()
   const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange()
   const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange()
-  const { changeDisplay: changeReactionButtonDisplay } = useYLCReactionButtonDisplayChange()
   const { changeDisplay: changeSuperChatBarDisplay } = useYLCSuperChatBarDisplayChange()
 
   const handlers: HandlerMap = useMemo(
@@ -52,7 +49,6 @@ export const useChangeYLCStyle = () => {
       space: changeSpace,
       userNameDisplay: changeUserNameDisplay,
       userIconDisplay: changeUserIconDisplay,
-      reactionButtonDisplay: changeReactionButtonDisplay,
       superChatBarDisplay: changeSuperChatBarDisplay,
     }),
     [
@@ -64,7 +60,6 @@ export const useChangeYLCStyle = () => {
       changeSpace,
       changeUserNameDisplay,
       changeUserIconDisplay,
-      changeReactionButtonDisplay,
       changeSuperChatBarDisplay,
     ],
   )

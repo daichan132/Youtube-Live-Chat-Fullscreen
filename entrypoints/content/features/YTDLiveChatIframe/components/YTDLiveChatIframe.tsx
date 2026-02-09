@@ -55,7 +55,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       >
         <div
           ref={nodeRef}
-          className='w-full h-full absolute top-0 flex justify-center items-center bg-opacity-[rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})] backdrop-blur-${blur} transition-opacity duration-500'
+          className='absolute top-0 flex h-full w-full items-center justify-center transition-opacity duration-500'
           style={{
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,

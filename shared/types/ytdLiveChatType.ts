@@ -16,7 +16,6 @@ export interface YLCStyleType {
   chatOnlyDisplay: boolean
   userNameDisplay: boolean
   userIconDisplay: boolean
-  reactionButtonDisplay: boolean
   superChatBarDisplay: boolean
 }
 
@@ -31,6 +30,5 @@ export interface YLCStyleUpdateType {
   chatOnlyDisplay?: boolean
   userNameDisplay?: boolean
   userIconDisplay?: boolean
-  reactionButtonDisplay?: boolean
   superChatBarDisplay?: boolean
 }

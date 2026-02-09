@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { usePrevious, useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
+import { IFRAME_CLIP_PATH_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useClipPathManagement } from '../../hooks/useClipPathManagement'
 
@@ -90,9 +91,9 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
 
     // Toggle CSS class based on clip path state
     if (isClipPath) {
-      body.classList.add('clip-path-enable')
+      body.classList.add(IFRAME_CLIP_PATH_CLASS)
     } else {
-      body.classList.remove('clip-path-enable')
+      body.classList.remove(IFRAME_CLIP_PATH_CLASS)
     }
   }, [isClipPath])
 

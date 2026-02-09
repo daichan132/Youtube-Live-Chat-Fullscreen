@@ -1,3 +1,11 @@
+/* ==========================================================================
+ * Fullscreen Chat iframe style contract
+ * - body class: custom-yt-app-live-chat-extension
+ * - clip class: custom-yt-app-live-chat-extension.clip-path-enable
+ * These names are defined in `constants/styleContract.ts`.
+ * ========================================================================== */
+
+/* ----------------------------- CSS variables ------------------------------ */
 html {
   --extension-user-name-display: inline;
   --extension-user-icon-display: inline;
@@ -8,12 +16,14 @@ html {
   --extension-yt-live-secondary-font-color: rgba(0, 0, 0, 0.6);
 }
 
+/* -------------------------- Frame base overrides -------------------------- */
 html,
 body {
   /* biome-ignore lint/complexity/noImportantStyles: Needed to override YouTube inline styles */
   background: transparent !important;
 }
 
+/* ------------------------- Layout / chrome cleanup ------------------------ */
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 0;
   background: transparent;
@@ -42,9 +52,7 @@ body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-li
   /* biome-ignore lint/complexity/noImportantStyles: Needed to override YouTube inline styles */
   padding-right: 0px !important;
 }
-body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer {
-  background: none;
-}
+body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer,
 body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker-renderer {
   background: none;
 }
@@ -52,7 +60,8 @@ body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-b
   background: none;
 }
 
-/* Base color overrides (placed before more specific selectors to avoid descending specificity) */
+/* ------------------------------ Color system ------------------------------ */
+/* Keep this base block before more specific selector overrides below. */
 body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer,
 body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension yt-dropdown-menu .yt-dropdown-menu[style-target="label-text"],
@@ -99,7 +108,6 @@ body.custom-yt-app-live-chat-extension
   > .paper-input-input,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension #info.yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension button.yt-reaction-control-panel-button-view-model,
 body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension
@@ -144,10 +152,12 @@ body.custom-yt-app-live-chat-extension #author-name.member.yt-live-chat-author-c
 body.custom-yt-app-live-chat-extension #title.yt-emoji-picker-category-renderer {
   color: hsla(0, 0%, 6.7%, 0.6);
 }
+
+/* --------------------------- Typography / sizing -------------------------- */
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
   font-size: var(--extension-yt-live-chat-font-size);
 }
-/* Place generic input sizing before more specific overrides */
+/* Place generic input sizing before more specific overrides. */
 body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer {
   max-height: none;
   min-height: calc(var(--extension-yt-live-chat-font-size) + 8px);
@@ -174,6 +184,8 @@ body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer > yt-i
   width: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
   height: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
 }
+
+/* ------------------------- Spacing / visibility --------------------------- */
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
   margin: var(--extension-yt-live-chat-spacing) 0;
 }

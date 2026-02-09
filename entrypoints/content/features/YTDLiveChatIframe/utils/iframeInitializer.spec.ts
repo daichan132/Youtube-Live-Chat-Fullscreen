@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
+import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
 import { createIframeInitializer } from './iframeInitializer'
 
 const createChatDoc = () => document.implementation.createHTMLDocument('chat') as Document
@@ -37,8 +38,8 @@ describe('iframeInitializer', () => {
 
     const initialized = initializer.initialize(iframe)
     expect(initialized).toBe(true)
-    expect(doc.head?.querySelector('style[data-ylc-style-injected="true"]')).not.toBeNull()
-    expect(doc.body.classList.contains('custom-yt-app-live-chat-extension')).toBe(true)
+    expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).not.toBeNull()
+    expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(true)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenLastCalledWith(true)
     expect(setIsDisplay).toHaveBeenLastCalledWith(true)
@@ -85,7 +86,7 @@ describe('iframeInitializer', () => {
     vi.advanceTimersByTime(100)
 
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
-    expect(doc.head?.querySelector('style[data-ylc-style-injected="true"]')).not.toBeNull()
+    expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).not.toBeNull()
   })
 
   it('does not inject duplicate styles when initialized repeatedly', () => {
@@ -109,7 +110,7 @@ describe('iframeInitializer', () => {
     initializer.initialize(iframe)
     initializer.initialize(iframe)
 
-    expect(doc.head?.querySelectorAll('style[data-ylc-style-injected="true"]').length).toBe(1)
+    expect(doc.head?.querySelectorAll(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`).length).toBe(1)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
   })
 })

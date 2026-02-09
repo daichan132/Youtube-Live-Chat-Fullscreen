@@ -28,7 +28,6 @@ export const AddPresetItem = () => {
       chatOnlyDisplay: state.chatOnlyDisplay,
       userNameDisplay: state.userNameDisplay,
       userIconDisplay: state.userIconDisplay,
-      reactionButtonDisplay: state.reactionButtonDisplay,
       superChatBarDisplay: state.superChatBarDisplay,
     }
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
