@@ -17,9 +17,11 @@ export const Content = () => {
   const isFullscreen = useIsFullScreen()
   const mode = useChatMode()
   useEnsureArchiveNativeChatOpen(isFullscreen && ytdLiveChat && mode === 'archive')
+  // Latch once switch can be shown to avoid losing the fullscreen control
+  // during temporary source signal fluctuations.
   const canToggleFullscreenChatSwitch = usePollingWithNavigate({
     checkFn: useCallback(() => canToggleFullscreenChat(mode), [mode]),
-    stopOnSuccess: false,
+    stopOnSuccess: true,
     maxAttempts: Number.POSITIVE_INFINITY,
     intervalMs: 1000,
   })

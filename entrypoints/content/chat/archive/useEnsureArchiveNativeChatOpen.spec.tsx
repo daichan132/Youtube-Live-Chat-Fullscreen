@@ -146,7 +146,7 @@ describe('useEnsureArchiveNativeChatOpen', () => {
     unmount()
   })
 
-  it('stops ensure loop when extension iframe is already attached and loaded', () => {
+  it('keeps ensure loop running when only managed live iframe is attached', () => {
     const attachedIframe = document.createElement('iframe')
     attachedIframe.setAttribute('data-ylc-chat', 'true')
     attachedIframe.setAttribute('data-ylc-owned', 'true')
@@ -158,13 +158,13 @@ describe('useEnsureArchiveNativeChatOpen', () => {
 
     const { unmount } = renderHook(() => useEnsureArchiveNativeChatOpen(true))
 
-    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
+    expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
 
     act(() => {
-      vi.advanceTimersByTime(5000)
+      vi.advanceTimersByTime(2000)
     })
 
-    expect(openArchiveNativeChatPanelMock).not.toHaveBeenCalled()
+    expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(2)
     unmount()
   })
 })
