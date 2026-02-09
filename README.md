@@ -81,7 +81,11 @@ Alternatively, you can fork the repository to create your own version and custom
 - `zip:firefox`: Create a Firefox zip package.
 - `format`: Format code.
 - `lint`: Run lint checks.
+- `storybook`: Start Storybook for UI development without loading the extension.
+- `storybook:build`: Build static Storybook files.
 - `e2e`: Run end-to-end tests.
+
+In Storybook, open `Catalog/CurrentUIDesigns` to review the current UI design in one place.
 
 ## 🤝 Contributing
 Contributions are welcome! If you have ideas, bug reports, or improvements, please feel free to open an issue or submit a pull request on GitHub.

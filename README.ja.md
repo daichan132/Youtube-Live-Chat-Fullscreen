@@ -79,7 +79,11 @@ yarn install
 - `zip:firefox`: Firefox 向け Zip パッケージを作成
 - `format`: コードを整形
 - `lint`: 静的解析 (Biome + TypeScript 型検査)
+- `storybook`: 拡張機能を起動せずに UI を確認する Storybook を起動
+- `storybook:build`: Storybook の静的ファイルをビルド
 - `e2e`: E2E テストを実行
+
+Storybook では `Catalog/CurrentUIDesigns` を開くと、現状 UI デザインを一覧で確認できます。
 
 ## 🤝 貢献
 アイデア、バグ報告、改善提案があれば、GitHub の Issue や Pull Request を歓迎します。

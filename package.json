@@ -16,6 +16,8 @@
     "format": "biome format --write ./entrypoints/** ./shared/**",
     "lint": "biome check --write ./entrypoints/** ./shared/** && tsc --noEmit",
     "test:unit": "vitest run",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build",
     "prepare": "lefthook install",
     "e2e": "playwright test --workers=1",
     "e2e:ci": "playwright test --workers=1 --reporter=json > /tmp/ylc-e2e.json && node scripts/validate-e2e-report.mjs /tmp/ylc-e2e.json"
@@ -46,6 +48,9 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.14",
     "@playwright/test": "1.58.2",
+    "@storybook/addon-a11y": "^10.2.8",
+    "@storybook/addon-docs": "^10.2.8",
+    "@storybook/react-vite": "^10.2.8",
     "@testing-library/dom": "10.4.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
@@ -63,8 +68,10 @@
     "@wxt-dev/unocss": "1.0.1",
     "jsdom": "28.0.0",
     "lefthook": "2.1.0",
+    "storybook": "^10.2.8",
     "typescript": "5.9.3",
     "unocss": "66.6.0",
+    "vite": "7.3.1",
     "vitest": "4.0.18",
     "wxt": "0.20.14"
   },
