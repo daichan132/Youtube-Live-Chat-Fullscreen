@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { hasArchiveNativeOpenControl, isNativeChatToggleButton, openArchiveNativeChatPanel, openNativeChatPanel } from './nativeChat'
+import { hasArchiveNativeOpenControl, isNativeChatToggleButton, openArchiveNativeChatPanel } from './nativeChat'
 
 const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; pressed?: 'true' | 'false' }) => {
   const controls = document.createElement('div')
@@ -151,19 +151,6 @@ describe('openArchiveNativeChatPanel', () => {
 
     expect(opened).toBe(true)
     expect(showHideSpy).toHaveBeenCalledTimes(1)
-  })
-})
-
-describe('openNativeChatPanel', () => {
-  it('is an alias of archive opener', () => {
-    const button = createSidebarShowHideButton()
-    const clickSpy = vi.fn()
-    button.click = clickSpy
-
-    const opened = openNativeChatPanel()
-
-    expect(opened).toBe(true)
-    expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 })
 

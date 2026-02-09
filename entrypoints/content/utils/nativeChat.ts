@@ -10,10 +10,8 @@ const nativeChatTriggerSelectors =
 const archiveSidebarOpenSelectors = [
   'ytd-live-chat-frame #show-hide-button button',
   'ytd-live-chat-frame #show-hide-button yt-icon-button',
-  'ytd-live-chat-frame #show-hide-button tp-yt-paper-icon-button',
   '#chat-container #show-hide-button button',
   '#chat-container #show-hide-button yt-icon-button',
-  '#chat-container #show-hide-button tp-yt-paper-icon-button',
   'ytd-live-chat-frame #show-hide-button',
   '#chat-container #show-hide-button',
 ]
@@ -58,9 +56,9 @@ const isNativeChatIframeBlank = () => {
 }
 
 const resolveClickable = (target: HTMLElement) =>
-  target.matches('button, yt-icon-button, tp-yt-paper-icon-button, [role="button"]')
+  target.matches('button, yt-icon-button, [role="button"]')
     ? target
-    : (target.querySelector<HTMLElement>('button, yt-icon-button, tp-yt-paper-icon-button, [role="button"]') ?? target)
+    : (target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]') ?? target)
 
 const getButtonLabelText = (element: HTMLElement) =>
   `${element.getAttribute('aria-label') ?? ''} ${element.getAttribute('title') ?? ''} ${element.getAttribute('data-title-no-tooltip') ?? ''} ${element.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
@@ -169,8 +167,6 @@ export const openArchiveNativeChatPanel = () => {
 
   return false
 }
-
-export const openNativeChatPanel = () => openArchiveNativeChatPanel()
 
 const hasChatOnPage = () => Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
 

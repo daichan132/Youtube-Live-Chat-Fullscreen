@@ -27,10 +27,8 @@ const isBlankHref = (href: string | null | undefined) => !href || href.includes(
 const archiveSidebarOpenSelectors = [
   'ytd-live-chat-frame #show-hide-button button',
   'ytd-live-chat-frame #show-hide-button yt-icon-button',
-  'ytd-live-chat-frame #show-hide-button tp-yt-paper-icon-button',
   '#chat-container #show-hide-button button',
   '#chat-container #show-hide-button yt-icon-button',
-  '#chat-container #show-hide-button tp-yt-paper-icon-button',
   'ytd-live-chat-frame #show-hide-button',
   '#chat-container #show-hide-button',
 ]
@@ -284,9 +282,9 @@ const tryOpenArchiveNativeChatPanel = async (page: Page) => {
     .evaluate(
       ({ sidebarSelectors, playerSelectors }) => {
         const resolveClickable = (target: HTMLElement) =>
-          target.matches('button, yt-icon-button, tp-yt-paper-icon-button, [role="button"]')
+          target.matches('button, yt-icon-button, [role="button"]')
             ? target
-            : (target.querySelector<HTMLElement>('button, yt-icon-button, tp-yt-paper-icon-button, [role="button"]') ?? target)
+            : (target.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]') ?? target)
 
         const isElementVisible = (element: HTMLElement) => {
           if (element.hasAttribute('hidden')) return false
