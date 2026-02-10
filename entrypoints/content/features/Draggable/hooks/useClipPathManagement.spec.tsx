@@ -44,17 +44,21 @@ describe('useClipPathManagement', () => {
     expect(result.current.getClip()).toEqual({ header: 0, input: 0 })
   })
 
-  it('uses restricted participation renderer when message input does not exist', () => {
+  it('prefers a visible restricted participation area over hidden message input', () => {
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     const doc = document.implementation.createHTMLDocument('')
 
     const header = doc.createElement('yt-live-chat-header-renderer')
     Object.defineProperty(header, 'clientHeight', { value: 40 })
 
+    const input = doc.createElement('yt-live-chat-message-input-renderer')
+    Object.defineProperty(input, 'clientHeight', { value: 0 })
+
     const restricted = doc.createElement('yt-live-chat-restricted-participation-renderer')
     Object.defineProperty(restricted, 'clientHeight', { value: 22 })
 
     doc.body.appendChild(header)
+    doc.body.appendChild(input)
     doc.body.appendChild(restricted)
 
     Object.defineProperty(iframe, 'contentDocument', {
@@ -64,6 +68,29 @@ describe('useClipPathManagement', () => {
 
     const { result } = renderHook(() => useClipPathManagement({ iframeElement: iframe }))
     expect(result.current.getClip()).toEqual({ header: 32, input: 18 })
+  })
+
+  it('uses input panel height as a fallback for sign-in style chat prompts', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    const doc = document.implementation.createHTMLDocument('')
+
+    const header = doc.createElement('yt-live-chat-header-renderer')
+    Object.defineProperty(header, 'clientHeight', { value: 40 })
+
+    const inputPanel = doc.createElement('div')
+    inputPanel.id = 'input-panel'
+    Object.defineProperty(inputPanel, 'clientHeight', { value: 28 })
+
+    doc.body.appendChild(header)
+    doc.body.appendChild(inputPanel)
+
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+
+    const { result } = renderHook(() => useClipPathManagement({ iframeElement: iframe }))
+    expect(result.current.getClip()).toEqual({ header: 32, input: 24 })
   })
 
   it('removes focus from iframe active element', () => {

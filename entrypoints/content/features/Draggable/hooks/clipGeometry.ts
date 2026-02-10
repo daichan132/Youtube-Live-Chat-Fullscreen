@@ -19,13 +19,22 @@ const INPUT_HEIGHT_OFFSET = 4
 
 const clampClipValue = (value: number) => Math.max(0, value)
 
-const getInputElement = (body: HTMLBodyElement | null | undefined) => {
-  return body?.querySelector('yt-live-chat-message-input-renderer') ?? body?.querySelector('yt-live-chat-restricted-participation-renderer')
-}
+const INPUT_HEIGHT_SELECTORS = [
+  'yt-live-chat-message-input-renderer',
+  'yt-live-chat-restricted-participation-renderer',
+  '#input-panel',
+  'yt-live-chat-sign-in-prompt-renderer',
+]
+
+const getMaxHeightBySelectors = (body: HTMLBodyElement | null | undefined, selectors: string[]) =>
+  selectors.reduce((maxHeight, selector) => {
+    const nextHeight = body?.querySelector(selector)?.clientHeight ?? 0
+    return nextHeight > maxHeight ? nextHeight : maxHeight
+  }, 0)
 
 export const measureClipFromBody = (body: HTMLBodyElement | null | undefined): Clip => {
   const headerHeight = body?.querySelector('yt-live-chat-header-renderer')?.clientHeight ?? 0
-  const inputHeight = getInputElement(body)?.clientHeight ?? 0
+  const inputHeight = getMaxHeightBySelectors(body, INPUT_HEIGHT_SELECTORS)
 
   return {
     header: clampClipValue(headerHeight - HEADER_HEIGHT_OFFSET),

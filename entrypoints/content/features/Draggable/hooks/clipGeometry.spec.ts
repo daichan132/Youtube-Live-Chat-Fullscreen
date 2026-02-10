@@ -19,19 +19,39 @@ describe('clipGeometry', () => {
     expect(measureClipFromBody(body)).toEqual({ header: 32, input: 20 })
   })
 
-  it('falls back to restricted participation renderer when message input does not exist', () => {
+  it('uses the taller input candidate when message input and restricted participation coexist', () => {
     const body = createBody()
 
     const header = body.ownerDocument.createElement('yt-live-chat-header-renderer')
     Object.defineProperty(header, 'clientHeight', { value: 40, configurable: true })
 
+    const input = body.ownerDocument.createElement('yt-live-chat-message-input-renderer')
+    Object.defineProperty(input, 'clientHeight', { value: 0, configurable: true })
+
     const restricted = body.ownerDocument.createElement('yt-live-chat-restricted-participation-renderer')
     Object.defineProperty(restricted, 'clientHeight', { value: 26, configurable: true })
 
     body.appendChild(header)
+    body.appendChild(input)
     body.appendChild(restricted)
 
     expect(measureClipFromBody(body)).toEqual({ header: 32, input: 22 })
+  })
+
+  it('falls back to input panel when renderer-specific elements are missing', () => {
+    const body = createBody()
+
+    const header = body.ownerDocument.createElement('yt-live-chat-header-renderer')
+    Object.defineProperty(header, 'clientHeight', { value: 40, configurable: true })
+
+    const inputPanel = body.ownerDocument.createElement('div')
+    inputPanel.id = 'input-panel'
+    Object.defineProperty(inputPanel, 'clientHeight', { value: 28, configurable: true })
+
+    body.appendChild(header)
+    body.appendChild(inputPanel)
+
+    expect(measureClipFromBody(body)).toEqual({ header: 32, input: 24 })
   })
 
   it('clamps missing clip elements to zero', () => {
