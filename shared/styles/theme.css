@@ -405,8 +405,11 @@
 }
 
 .ylc-theme-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: var(--ylc-border-width) solid transparent;
-  border-radius: 10px;
+  border-radius: 9999px;
   color: var(--ylc-text-secondary);
   transition:
     background-color 160ms ease,

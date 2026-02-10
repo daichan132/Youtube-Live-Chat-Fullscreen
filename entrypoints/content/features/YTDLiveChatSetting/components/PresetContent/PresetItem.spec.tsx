@@ -49,9 +49,10 @@ const resetStore = (overrides: Partial<typeof baseState> = {}) => {
 
 const findPresetCard = (input: HTMLInputElement) => {
   let node: HTMLElement | null = input
-  while (node && !node.className.includes('m-4')) {
+  while (node && !node.className.includes('ylc-theme-surface')) {
     node = node.parentElement
   }
+  if (!node) throw new Error('Preset card not found')
   return node as HTMLElement
 }
 

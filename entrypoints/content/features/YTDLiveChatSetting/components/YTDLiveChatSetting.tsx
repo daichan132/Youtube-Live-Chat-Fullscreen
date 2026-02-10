@@ -75,7 +75,7 @@ export const YTDLiveChatSetting = () => {
         className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
-        <div className='flex justify-between items-center px-3 py-2.5 border-b border-b-solid ylc-theme-border'>
+        <div className='flex justify-between items-center px-2 py-1.5'>
           <div className='ylc-theme-tablist'>
             {tabs.map(item => (
               <button
@@ -95,17 +95,17 @@ export const YTDLiveChatSetting = () => {
           </div>
           <div className='flex items-center'>
             <RiCloseLine
-              className='cursor-pointer rounded p-2 transition-colors duration-200 ylc-theme-icon-button'
+              className='cursor-pointer rounded-md p-2 transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)]'
               onClick={() => setIsOpenSettingModal(false)}
               size={22}
             />
           </div>
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2' style={{ overscrollBehavior: 'contain' }}>
+        <div className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2 rounded-2xl' style={{ overscrollBehavior: 'contain' }}>
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='flex justify-end items-center px-3 py-2 border-t border-t-solid ylc-theme-border ylc-theme-surface text-xs'>
+        <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface text-xs'>
           <div className='flex gap-4'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
@@ -122,6 +122,14 @@ export const YTDLiveChatSetting = () => {
               className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
             >
               {t('content.setting.footer.firefox')}
+            </a>
+            <a
+              href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+            >
+              GitHub
             </a>
             <a
               href='https://ko-fi.com/daichan132'

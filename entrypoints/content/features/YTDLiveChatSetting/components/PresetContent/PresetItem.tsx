@@ -17,6 +17,8 @@ interface PresetItemType {
 }
 
 export const PresetItem = ({ id }: PresetItemType) => {
+  const actionIconClassName =
+    'p-1.5 rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)]'
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
@@ -44,8 +46,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-theme-surface m-2 p-2 rounded-[12px] border border-solid ylc-theme-border relative ylc-theme-shadow-sm ${
-        isDragging ? 'z-1 cursor-grabbing' : ''
+      className={`ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
+        isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
       }`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
@@ -54,9 +56,9 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef}>
             <TbGripVertical
-              className={`transition-all duration-200 outline-none rounded ylc-theme-text-secondary ${
+              className={`transition-all duration-200 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
-                  ? 'w-5 h-5 p-0.5 opacity-100 cursor-grabbing ylc-theme-elevated'
+                  ? 'w-5 h-5 p-0.5 opacity-100 cursor-grabbing'
                   : 'w-0 h-0 p-0 group-hover:w-5 group-hover:h-5 group-hover:p-0.5 opacity-0 group-hover:opacity-100 cursor-grab'
               }`}
               size={14}
@@ -68,16 +70,12 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
-            className='ml-0 h-10 px-2 rounded-[10px] outline-none min-w-0 flex-1 max-w-[15rem] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
+            className='ml-1 h-7 px-1.5 rounded-[10px] outline-none min-w-0 flex-1 max-w-[15rem] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
         <div className='flex transition-opacity duration-200 shrink-0'>
-          <TbSparkles className='p-1.5 rounded ylc-theme-icon-button mx-1 cursor-pointer' size={18} onClick={() => updateStyle(ylcStyle)} />
-          <TbTrash
-            className='p-1.5 rounded ylc-theme-icon-button mx-1 cursor-pointer'
-            size={18}
-            onClick={() => setIsDeleteModalOpen(true)}
-          />
+          <TbSparkles className={actionIconClassName} size={18} onClick={() => updateStyle(ylcStyle)} />
+          <TbTrash className={actionIconClassName} size={18} onClick={() => setIsDeleteModalOpen(true)} />
         </div>
       </div>
       {isDeleteModalOpen && (
