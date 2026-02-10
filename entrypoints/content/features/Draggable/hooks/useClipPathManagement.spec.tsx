@@ -96,10 +96,11 @@ describe('useClipPathManagement', () => {
   it('removes focus from iframe active element', () => {
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     const doc = document.implementation.createHTMLDocument('')
-    const blur = vi.fn()
+    const activeElement = doc.createElement('button')
+    const blur = vi.spyOn(activeElement, 'blur')
 
     Object.defineProperty(doc, 'activeElement', {
-      value: { blur } as HTMLElement,
+      value: activeElement,
       configurable: true,
     })
 

@@ -26,15 +26,15 @@ const INPUT_HEIGHT_SELECTORS = [
   'yt-live-chat-sign-in-prompt-renderer',
 ]
 
-const getMaxHeightBySelectors = (body: HTMLBodyElement | null | undefined, selectors: string[]) =>
+const getMaxHeightBySelectors = (container: ParentNode | null | undefined, selectors: string[]) =>
   selectors.reduce((maxHeight, selector) => {
-    const nextHeight = body?.querySelector(selector)?.clientHeight ?? 0
+    const nextHeight = container?.querySelector(selector)?.clientHeight ?? 0
     return nextHeight > maxHeight ? nextHeight : maxHeight
   }, 0)
 
-export const measureClipFromBody = (body: HTMLBodyElement | null | undefined): Clip => {
-  const headerHeight = body?.querySelector('yt-live-chat-header-renderer')?.clientHeight ?? 0
-  const inputHeight = getMaxHeightBySelectors(body, INPUT_HEIGHT_SELECTORS)
+export const measureClipFromBody = (container: ParentNode | null | undefined): Clip => {
+  const headerHeight = container?.querySelector('yt-live-chat-header-renderer')?.clientHeight ?? 0
+  const inputHeight = getMaxHeightBySelectors(container, INPUT_HEIGHT_SELECTORS)
 
   return {
     header: clampClipValue(headerHeight - HEADER_HEIGHT_OFFSET),

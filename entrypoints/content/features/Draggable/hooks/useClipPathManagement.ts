@@ -20,7 +20,10 @@ export const useClipPathManagement = ({ iframeElement }: ClipPathManagementProps
    * Removes focus from any active elements in the iframe
    */
   const removeFocus = useCallback(() => {
-    ;(iframeElement?.contentDocument?.activeElement as HTMLElement)?.blur()
+    const activeElement = iframeElement?.contentDocument?.activeElement
+    if (activeElement instanceof HTMLElement) {
+      activeElement.blur()
+    }
   }, [iframeElement])
 
   return {
