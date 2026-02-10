@@ -46,7 +46,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-preset-card ylc-theme-surface m-3 p-3 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
+      className={`ylc-preset-card ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
         isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
       }`}
       ref={setNodeRef}

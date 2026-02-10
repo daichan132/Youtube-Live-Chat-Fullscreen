@@ -21,21 +21,31 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
   const { attributes, listeners, isDragging } = dragProps
   const colorString = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, ${fontColor.a})`
   const iconStrokeWidth = 1.55
+  const controlButtonSize = 40
+  const controlGap = 2
+  const controlTopOffset = 4
+  // Measured from YouTube chat iframe runtime: menu ("...") circle left edge is 48px from iframe right.
+  const youtubeMenuCircleLeftInset = 48
+  const dragRightOffset = youtubeMenuCircleLeftInset + controlGap
+  const settingsRightOffset = dragRightOffset + controlButtonSize + controlGap
 
   return (
     <>
       <div
-        className='absolute top-[6px] right-[44px] z-10 cursor-grab'
+        className='absolute z-10 cursor-grab'
         {...attributes}
         {...listeners}
-        style={{ opacity: isIconDisplay ? 1 : 0 }}
+        style={{ top: controlTopOffset, right: dragRightOffset, opacity: isIconDisplay ? 1 : 0 }}
       >
         <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
           <TbGripVertical size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </div>
       </div>
 
-      <div className='absolute top-[6px] right-[82px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
+      <div
+        className='absolute z-10 cursor-pointer'
+        style={{ top: controlTopOffset, right: settingsRightOffset, opacity: isIconDisplay ? 1 : 0 }}
+      >
         <button type='button' className='ylc-overlay-control-icon cursor-pointer' onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
