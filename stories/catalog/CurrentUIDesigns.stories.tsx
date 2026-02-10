@@ -59,13 +59,13 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
       >
         {children}
       </div>
-      <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface ylc-theme-glass-panel text-xs'>
-        <div className='flex gap-4'>
+      <div className='flex justify-end items-center px-3 py-2.5 ylc-theme-surface ylc-theme-glass-panel'>
+        <div className='ylc-theme-footer-links'>
           <a
             href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
             target='_blank'
             rel='noopener noreferrer'
-            className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+            className='ylc-theme-footer-link'
           >
             {t('content.setting.footer.chrome')}
           </a>
@@ -73,7 +73,7 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
             href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
             target='_blank'
             rel='noopener noreferrer'
-            className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+            className='ylc-theme-footer-link'
           >
             {t('content.setting.footer.firefox')}
           </a>
@@ -81,7 +81,7 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
             href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
             target='_blank'
             rel='noopener noreferrer'
-            className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+            className='ylc-theme-footer-link'
           >
             GitHub
           </a>
@@ -89,7 +89,7 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
             href='https://ko-fi.com/daichan132'
             target='_blank'
             rel='noopener noreferrer'
-            className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+            className='ylc-theme-footer-link'
           >
             {t('content.setting.footer.donate')}
           </a>

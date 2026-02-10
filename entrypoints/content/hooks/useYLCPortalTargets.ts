@@ -18,9 +18,20 @@ const ensureShadowRoot = (contentCssUrl: string): ShadowRoot | null => {
     host.style.height = '0'
     const root = host.attachShadow({ mode: 'open' })
     root.innerHTML = `<style>
-  :host { font-size: 14px }
-  div   { font-size: 14px }
-  p     { font-size: 14px }
+  :host {
+    display: block;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #0f172a;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Noto Sans",
+      sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  :host, :host *, :host *::before, :host *::after {
+    box-sizing: border-box;
+  }
 </style>`
 
     const link = document.createElement('link')

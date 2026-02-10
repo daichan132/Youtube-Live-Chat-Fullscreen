@@ -45,7 +45,7 @@ export const AddPresetItem = () => {
         onClick={() => addPresetEnabled && addItem()}
         disabled={!addPresetEnabled}
       >
-        <span className='ylc-theme-icon-badge ylc-theme-icon-badge-xs mr-2'>
+        <span className='ylc-theme-icon-badge ylc-theme-icon-badge-xs ylc-add-preset-icon mr-2'>
           <TbPlus size={16} />
         </span>
         <div>{t('content.preset.addMessage')}</div>

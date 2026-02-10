@@ -1,4 +1,3 @@
-:root,
 [data-ylc-theme] {
   --ylc-accent: #2563eb;
   --ylc-border-width: 2px;
@@ -212,6 +211,12 @@
 
 .ylc-setting-panel .ylc-add-preset-button {
   background-color: #ffffff;
+}
+
+.ylc-setting-panel .ylc-add-preset-button .ylc-add-preset-icon {
+  border: none;
+  background: transparent;
+  background-color: transparent;
 }
 
 .ylc-theme-surface-muted {
@@ -549,6 +554,42 @@
   background: var(--ylc-hover-surface);
   border-color: var(--ylc-border);
   color: var(--ylc-text-primary);
+}
+
+.ylc-theme-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  column-gap: 12px;
+  row-gap: 6px;
+}
+
+.ylc-theme-footer-link {
+  display: inline;
+  padding: 1px 0;
+  color: var(--ylc-text-secondary);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, var(--ylc-text-secondary) 40%, transparent);
+  text-underline-offset: 0.18em;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  transition:
+    text-decoration-color 160ms ease,
+    color 160ms ease;
+}
+
+.ylc-theme-footer-link:hover {
+  color: var(--ylc-text-primary);
+  text-decoration-color: color-mix(in srgb, var(--ylc-text-primary) 62%, transparent);
+}
+
+.ylc-theme-footer-link:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .ylc-theme-toggle {
@@ -910,9 +951,21 @@
 }
 
 .ylc-overlay-control-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  background: transparent;
   border-radius: 9999px;
-  padding: 6px;
+  line-height: 0;
   transition: background-color 120ms ease;
+}
+
+.ylc-overlay-control-icon > svg {
+  flex-shrink: 0;
 }
 
 .ylc-overlay-control-icon:hover {

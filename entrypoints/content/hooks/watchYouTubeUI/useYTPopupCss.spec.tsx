@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { useYTPopupCss } from './useYTPopupCss'
 
 const STYLE_ID = 'ylc-popup-enabled-style'
+const ENABLE_CLASS = 'ylc-popup-enabled'
 
 const TestComponent = ({ enabled }: { enabled: boolean }) => {
   useYTPopupCss(enabled)
@@ -11,6 +12,7 @@ const TestComponent = ({ enabled }: { enabled: boolean }) => {
 
 beforeEach(() => {
   document.head.innerHTML = ''
+  document.documentElement.classList.remove(ENABLE_CLASS)
 })
 
 describe('useYTPopupCss', () => {
@@ -19,7 +21,8 @@ describe('useYTPopupCss', () => {
 
     const style = document.getElementById(STYLE_ID) as HTMLStyleElement | null
     expect(style).not.toBeNull()
-    expect(style?.textContent).toContain('.html5-video-player')
+    expect(style?.textContent).toContain(`html.${ENABLE_CLASS} .html5-video-player`)
+    expect(document.documentElement.classList.contains(ENABLE_CLASS)).toBe(true)
   })
 
   it('removes the popup style when disabled', () => {
@@ -28,6 +31,7 @@ describe('useYTPopupCss', () => {
     rerender(<TestComponent enabled={false} />)
 
     expect(document.getElementById(STYLE_ID)).toBeNull()
+    expect(document.documentElement.classList.contains(ENABLE_CLASS)).toBe(false)
   })
 
   it('cleans up the style on unmount', () => {
@@ -36,5 +40,6 @@ describe('useYTPopupCss', () => {
     unmount()
 
     expect(document.getElementById(STYLE_ID)).toBeNull()
+    expect(document.documentElement.classList.contains(ENABLE_CLASS)).toBe(false)
   })
 })

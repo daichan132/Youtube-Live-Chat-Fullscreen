@@ -73,10 +73,10 @@ describe('PresetItem', () => {
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
     const actionContainer = card.querySelector('div.flex.transition-opacity') as HTMLElement
-    const icons = actionContainer.querySelectorAll('svg')
-    const deleteIcon = icons[icons.length - 1]
+    const actionButtons = actionContainer.querySelectorAll('button')
+    const deleteButtonInCard = actionButtons[actionButtons.length - 1]
 
-    fireEvent.click(deleteIcon)
+    fireEvent.click(deleteButtonInCard)
 
     const deleteButton = await findByText('content.preset.delete', { selector: 'button' })
     fireEvent.click(deleteButton)

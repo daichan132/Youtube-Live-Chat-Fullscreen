@@ -17,8 +17,8 @@ interface PresetItemType {
 }
 
 export const PresetItem = ({ id }: PresetItemType) => {
-  const actionIconClassName =
-    'p-1.5 rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)]'
+  const actionButtonClassName =
+    'rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none'
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
@@ -58,10 +58,10 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <TbGripVertical
               className={`transition-all duration-200 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
-                  ? 'w-[20px] h-[20px] p-[2px] opacity-100 cursor-grabbing'
-                  : 'w-[20px] h-[20px] p-[2px] opacity-0 group-hover:opacity-100 cursor-grab'
+                  ? 'w-[26px] h-[26px] p-[2px] opacity-100 pointer-events-auto cursor-grabbing'
+                  : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[26px] group-hover:h-[26px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
               }`}
-              size={18}
+              size={22}
               {...listeners}
               {...attributes}
             />
@@ -74,8 +74,22 @@ export const PresetItem = ({ id }: PresetItemType) => {
           />
         </div>
         <div className='flex transition-opacity duration-200 shrink-0'>
-          <TbSparkles className={actionIconClassName} size={18} onClick={() => updateStyle(ylcStyle)} />
-          <TbTrash className={actionIconClassName} size={18} onClick={() => setIsDeleteModalOpen(true)} />
+          <button
+            type='button'
+            className={actionButtonClassName}
+            style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => updateStyle(ylcStyle)}
+          >
+            <TbSparkles size={20} />
+          </button>
+          <button
+            type='button'
+            className={actionButtonClassName}
+            style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
+            <TbTrash size={20} />
+          </button>
         </div>
       </div>
       {isDeleteModalOpen && (
@@ -97,14 +111,16 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
-              className='h-9 px-3 rounded-md text-sm leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
+              className='rounded-md leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
+              style={{ height: 36, paddingInline: 12, fontSize: 14 }}
             >
               {t('content.preset.cancel')}
             </button>
             <button
               type='button'
               onClick={() => deletePresetItem(id)}
-              className='h-9 px-4 rounded-md text-sm leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90'
+              className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90'
+              style={{ height: 36, paddingInline: 16, fontSize: 14 }}
             >
               {t('content.preset.delete')}
             </button>

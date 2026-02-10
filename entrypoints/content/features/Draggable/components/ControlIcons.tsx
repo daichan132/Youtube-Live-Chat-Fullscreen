@@ -30,22 +30,15 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         {...listeners}
         style={{ opacity: isIconDisplay ? 1 : 0 }}
       >
-        <TbGripVertical
-          className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}
-          size={23}
-          color={colorString}
-          strokeWidth={iconStrokeWidth}
-        />
+        <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
+          <TbGripVertical size={22} color={colorString} strokeWidth={iconStrokeWidth} />
+        </div>
       </div>
 
       <div className='absolute top-[6px] right-[82px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
-        <TbAdjustmentsHorizontal
-          className='ylc-overlay-control-icon'
-          size={23}
-          onClick={onSettingsClick}
-          color={colorString}
-          strokeWidth={iconStrokeWidth}
-        />
+        <button type='button' className='ylc-overlay-control-icon' onClick={onSettingsClick}>
+          <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
+        </button>
       </div>
     </>
   )

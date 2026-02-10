@@ -93,25 +93,25 @@ export const YTDLiveChatSetting = () => {
               </button>
             ))}
           </div>
-          <div className='flex items-center'>
-            <RiCloseLine
-              className='cursor-pointer rounded-md p-2 transition-colors duration-200 ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-              onClick={() => setIsOpenSettingModal(false)}
-              size={22}
-            />
-          </div>
+          <button
+            type='button'
+            className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-200 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
+            onClick={() => setIsOpenSettingModal(false)}
+          >
+            <RiCloseLine size={24} />
+          </button>
         </div>
         <div className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl' style={{ overscrollBehavior: 'contain' }}>
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='flex justify-end items-center px-3 py-2 text-xs'>
-          <div className='flex gap-4'>
+        <div className='flex justify-end items-center px-3 py-2.5'>
+          <div className='ylc-theme-footer-links'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
               target='_blank'
               rel='noopener noreferrer'
-              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+              className='ylc-theme-footer-link'
             >
               {t('content.setting.footer.chrome')}
             </a>
@@ -119,7 +119,7 @@ export const YTDLiveChatSetting = () => {
               href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
               target='_blank'
               rel='noopener noreferrer'
-              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+              className='ylc-theme-footer-link'
             >
               {t('content.setting.footer.firefox')}
             </a>
@@ -127,16 +127,11 @@ export const YTDLiveChatSetting = () => {
               href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
               target='_blank'
               rel='noopener noreferrer'
-              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
+              className='ylc-theme-footer-link'
             >
               GitHub
             </a>
-            <a
-              href='https://ko-fi.com/daichan132'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
-            >
+            <a href='https://ko-fi.com/daichan132' target='_blank' rel='noopener noreferrer' className='ylc-theme-footer-link'>
               {t('content.setting.footer.donate')}
             </a>
           </div>
