@@ -320,8 +320,22 @@ test('chat-only clip enables after load without any overlay hover', async ({ pag
   expect(probeInstalled).toBe(true)
 
   await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+  await expect
+    .poll(
+      async () => {
+        const clipSnapshot = await page.evaluate(getOverlayClipSnapshot)
+        return clipSnapshot.enabled && clipSnapshot.clipTop + clipSnapshot.clipBottom > 0
+      },
+      { timeout: 15000 },
+    )
+    .toBe(true)
 
   const snapshot = await page.evaluate(getOverlayClipSnapshot)
+  const immediateVisibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+    sampleCount: 4,
+    intervalMs: 40,
+    settleMs: 220,
+  })
   const visibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
     sampleCount: 6,
     intervalMs: 180,
@@ -330,12 +344,13 @@ test('chat-only clip enables after load without any overlay hover', async ({ pag
   const hoverProbe = await page.evaluate(readOverlayHoverProbe)
 
   await test.info().attach('chat-only-auto-clip-no-hover', {
-    body: JSON.stringify({ snapshot, visibleHeightSamples, hoverProbe }, null, 2),
+    body: JSON.stringify({ snapshot, immediateVisibleHeightSamples, visibleHeightSamples, hoverProbe }, null, 2),
     contentType: 'application/json',
   })
 
   expect(snapshot.exists).toBe(true)
   expect(snapshot.enabled).toBe(true)
+  expect(immediateVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
   expect(visibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
   expect(hoverProbe?.enterCount ?? -1).toBe(0)
 })
@@ -348,6 +363,12 @@ test('chat-only clip re-enables automatically after first hover without pointer 
 
   const ready = await openArchiveOverlayWithExtensionChat(page)
   if (!ready) return
+
+  const movedAway = await movePointerAwayFromOverlay(page)
+  if (!movedAway) {
+    test.skip(true, 'Viewport was unavailable.')
+    return
+  }
 
   const probeInstalled = await page.evaluate(installOverlayHoverProbe)
   expect(probeInstalled).toBe(true)

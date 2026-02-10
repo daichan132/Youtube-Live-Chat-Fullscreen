@@ -6,7 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
-
+import { useClipAnimationPriming } from '../hooks/useClipAnimationPriming'
 import { useDisableTopTransition } from '../hooks/useDisableTopTransition'
 import { useDraggableItemEvents, useDraggableItemStyles } from '../hooks/useDraggableItemStyles'
 import { useResizableHandlers } from '../hooks/useResizableHandlers'
@@ -56,11 +56,13 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
   })
 
   const disableTopTransition = useDisableTopTransition(isDragging, isResizing)
+  const { isClipAnimationReady } = useClipAnimationPriming({ isClipPath, clip })
 
   const { resizableStyle, innerDivStyle } = useDraggableItemStyles({
     top,
     left,
     isClipPath,
+    isClipAnimationReady,
     disableTopTransition,
     isResizing,
     transform,
@@ -77,7 +79,7 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
         size={size}
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
-        className={`absolute ${isResizing ? '' : 'transition-all'}`}
+        className='absolute'
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeStop={onResizeStop}

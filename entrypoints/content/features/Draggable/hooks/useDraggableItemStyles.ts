@@ -1,5 +1,6 @@
 import { CSS } from '@dnd-kit/utilities'
 import type { CSSProperties } from 'react'
+import { CLIP_GEOMETRY_TRANSITION } from '../constants/animation'
 
 interface Transform {
   x: number
@@ -15,6 +16,7 @@ interface UseDraggableItemStylesProps {
   top: number
   left: number
   isClipPath: boolean
+  isClipAnimationReady: boolean
   disableTopTransition: boolean
   isResizing: boolean
   transform: Transform | null
@@ -33,13 +35,20 @@ export const useDraggableItemStyles = ({
   top,
   left,
   isClipPath,
+  isClipAnimationReady,
   disableTopTransition,
   isResizing,
   transform,
   clip,
 }: UseDraggableItemStylesProps): StyleResults => {
-  // Create transition string based on current state
-  const transition = [!disableTopTransition && 'top 250ms ease', !isResizing && 'height 250ms ease'].filter(Boolean).join(', ')
+  const shouldAnimateGeometry = isClipAnimationReady || !isClipPath
+  const transitionProperties = [
+    !disableTopTransition && `top ${CLIP_GEOMETRY_TRANSITION}`,
+    !isResizing && `height ${CLIP_GEOMETRY_TRANSITION}`,
+  ]
+    .filter(Boolean)
+    .join(', ')
+  const transition = shouldAnimateGeometry && transitionProperties.length > 0 ? transitionProperties : 'none'
 
   // Styles for the resizable container
   const resizableStyle = {
@@ -53,7 +62,7 @@ export const useDraggableItemStyles = ({
   const innerDivStyle = {
     transform: transform ? CSS.Translate.toString({ ...transform, scaleX: 1, scaleY: 1 }) : '',
     clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
-    transition: 'clip-path 250ms ease',
+    transition: shouldAnimateGeometry ? `clip-path ${CLIP_GEOMETRY_TRANSITION}` : 'none',
   }
 
   return { resizableStyle, innerDivStyle }
