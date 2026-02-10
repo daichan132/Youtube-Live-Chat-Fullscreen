@@ -7,6 +7,7 @@ import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import i18n from '../i18n/config'
 import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
 import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils'
+import { normalizeFontFamily } from '../utils/fontFamilyPolicy'
 
 type YTDLiveChatStoreState = {
   presetItemIds: string[]
@@ -46,6 +47,27 @@ const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
   return rest
 }
 
+const sanitizeFontFamilyInStyleObject = (style: Record<string, unknown>) => ({
+  ...style,
+  fontFamily: normalizeFontFamily(style.fontFamily),
+})
+
+const sanitizeStyleForPreset = (style: YLCStyleType): YLCStyleType => ({
+  ...style,
+  fontFamily: normalizeFontFamily(style.fontFamily),
+})
+
+const sanitizeStyleUpdate = (update: YLCStyleUpdateType): YLCStyleUpdateType => {
+  if (!Object.hasOwn(update, 'fontFamily')) {
+    return update
+  }
+
+  return {
+    ...update,
+    fontFamily: normalizeFontFamily(update.fontFamily),
+  }
+}
+
 const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatState => {
   if (!persistedState || typeof persistedState !== 'object') {
     return {}
@@ -53,9 +75,16 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
 
   const state = persistedState as Record<string, unknown>
   const { reactionButtonDisplay: _removed, presetItemStyles, ...restState } = state
+  const migratedState = {
+    ...restState,
+  } as PersistedYTDLiveChatState
+
+  if ('fontFamily' in state) {
+    migratedState.fontFamily = normalizeFontFamily(state.fontFamily)
+  }
 
   if (!presetItemStyles || typeof presetItemStyles !== 'object') {
-    return restState as PersistedYTDLiveChatState
+    return migratedState
   }
 
   const migratedPresetItemStyles = Object.fromEntries(
@@ -63,12 +92,13 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
       if (!style || typeof style !== 'object') {
         return [id, style]
       }
-      return [id, removeLegacyReactionButtonDisplay(style as Record<string, unknown>)]
+      const styleWithoutLegacyField = removeLegacyReactionButtonDisplay(style as Record<string, unknown>)
+      return [id, sanitizeFontFamilyInStyleObject(styleWithoutLegacyField)]
     }),
   )
 
   return {
-    ...restState,
+    ...migratedState,
     presetItemStyles: migratedPresetItemStyles,
   } as PersistedYTDLiveChatState
 }
@@ -95,7 +125,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         addPresetItem: (id, title, ylcStyle) =>
           set(state => {
             state.addPresetEnabled = false
-            state.presetItemStyles[id] = ylcStyle
+            state.presetItemStyles[id] = sanitizeStyleForPreset(ylcStyle)
             state.presetItemTitles[id] = title
             state.presetItemIds.push(id)
           }),
@@ -113,7 +143,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         updateYLCStyle: YLCStyleUpdate =>
           set(state => ({
             ...state,
-            ...YLCStyleUpdate,
+            ...sanitizeStyleUpdate(YLCStyleUpdate),
             addPresetEnabled: true,
           })),
         setPresetItemIds: presetItemIds => set(() => ({ presetItemIds })),
@@ -142,7 +172,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       }),
       {
         name: 'ytdLiveChatStore',
-        version: 1,
+        version: 2,
         migrate: persistedState => migratePersistedState(persistedState),
         storage: createJSONStorage(() => localStorage),
       },

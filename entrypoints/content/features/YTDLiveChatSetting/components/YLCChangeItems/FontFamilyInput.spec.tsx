@@ -70,15 +70,26 @@ describe('FontFamilyInputUI', () => {
     expect(onCommit).toHaveBeenCalledWith('Roboto Slab')
   })
 
-  it('commits custom font when no option matches and Enter is pressed', () => {
+  it('commits default when no option matches and Enter is pressed', () => {
     const onCommit = vi.fn()
-    const { getByRole, getByTestId } = render(<FontFamilyInputUI value='' onCommit={onCommit} />)
+    const { getByRole, getByTestId } = render(<FontFamilyInputUI value='Roboto' onCommit={onCommit} />)
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'My Custom Font' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(onCommit).toHaveBeenCalledWith('My Custom Font')
+    expect(onCommit).toHaveBeenCalledWith('')
+  })
+
+  it('normalizes a case-insensitive font input before committing', () => {
+    const onCommit = vi.fn()
+    const { getByRole, getByTestId } = render(<FontFamilyInputUI value='' onCommit={onCommit} />)
+
+    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.change(getByTestId('font-family-search'), { target: { value: 'roboto' } })
+    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
+
+    expect(onCommit).toHaveBeenCalledWith('Roboto')
   })
 
   it('supports arrow navigation before Enter selection', async () => {
@@ -119,6 +130,13 @@ describe('FontFamilyInputUI', () => {
 
     fireEvent.click(trigger)
     expect(queryByTestId('font-family-search')).toBeNull()
+  })
+
+  it('shows default label for invalid read-only value', () => {
+    const { getByRole } = render(<FontFamilyInputUI value='NotInListFont' onCommit={vi.fn()} readOnly />)
+
+    const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
+    expect(trigger).toHaveTextContent('Default')
   })
 
   it('loads preview fonts when menu opens', () => {

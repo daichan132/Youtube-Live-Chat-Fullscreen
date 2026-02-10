@@ -71,4 +71,34 @@ describe('useYLCFontFamilyChange', () => {
     expect(doc.head.querySelector('#custom-font-style')).toBeNull()
     expect(setProperty).toHaveBeenCalledWith('font-family', 'Roboto, Arial, sans-serif')
   })
+
+  it('falls back without importing when font family is invalid', () => {
+    const doc = document.implementation.createHTMLDocument('')
+    getIframeWindow.mockReturnValue({ document: doc })
+
+    const { result } = renderHook(() => useYLCFontFamilyChange())
+
+    act(() => {
+      result.current.changeFontFamily('NotInListFont')
+    })
+
+    expect(doc.head.querySelector('#custom-font-style')).toBeNull()
+    expect(setProperty).toHaveBeenCalledWith('font-family', 'Roboto, Arial, sans-serif')
+  })
+
+  it('normalizes case and whitespace before importing font', () => {
+    const doc = document.implementation.createHTMLDocument('')
+    getIframeWindow.mockReturnValue({ document: doc })
+
+    const { result } = renderHook(() => useYLCFontFamilyChange())
+
+    act(() => {
+      result.current.changeFontFamily('  roboto   slab ')
+    })
+
+    const styleElement = doc.head.querySelector('#custom-font-style') as HTMLStyleElement
+    expect(styleElement).not.toBeNull()
+    expect(styleElement.textContent).toBe("@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap');")
+    expect(setProperty).toHaveBeenCalledWith('font-family', '"Roboto Slab", Roboto, Arial, sans-serif')
+  })
 })

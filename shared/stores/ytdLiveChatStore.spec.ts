@@ -119,4 +119,60 @@ describe('useYTDLiveChatStore', () => {
     expect('reactionButtonDisplay' in state).toBe(false)
     expect('reactionButtonDisplay' in presetStyles.legacy).toBe(false)
   })
+
+  it('migrates invalid fontFamily values in root and presets to default', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          fontFamily: 'NotInListFont',
+          presetItemIds: ['legacy'],
+          presetItemTitles: { legacy: 'Legacy' },
+          presetItemStyles: {
+            legacy: {
+              ...ylcInitSetting,
+              fontFamily: 'Unknown Font',
+            },
+          },
+        },
+        version: 1,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.fontFamily).toBe('')
+    expect(state.presetItemStyles.legacy?.fontFamily).toBe('')
+  })
+
+  it('normalizes and saves fontFamily in updateYLCStyle', async () => {
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    state.updateYLCStyle({ fontFamily: '  roboto slab  ' })
+    expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto Slab')
+
+    state.updateYLCStyle({ fontFamily: 'NotInListFont' })
+    expect(useYTDLiveChatStore.getState().fontFamily).toBe('')
+  })
+
+  it('sanitizes fontFamily when adding preset item', async () => {
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    state.addPresetItem('invalid-font', 'Invalid Font', {
+      ...ylcInitSetting,
+      fontFamily: 'NotInListFont',
+    })
+    state.addPresetItem('normalized-font', 'Normalized Font', {
+      ...ylcInitSetting,
+      fontFamily: '  roboto   slab ',
+    })
+
+    const updated = useYTDLiveChatStore.getState()
+    expect(updated.presetItemStyles['invalid-font']?.fontFamily).toBe('')
+    expect(updated.presetItemStyles['normalized-font']?.fontFamily).toBe('Roboto Slab')
+  })
 })

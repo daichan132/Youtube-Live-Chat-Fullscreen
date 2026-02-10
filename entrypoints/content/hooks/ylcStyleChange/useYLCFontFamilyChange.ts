@@ -1,4 +1,5 @@
 import { useCallback } from 'react'
+import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
@@ -41,19 +42,18 @@ export const useYLCFontFamilyChange = () => {
 
   const changeIframeFontFamily = useCallback(
     (fontFamily: string) => {
-      const normalizedFontFamily = fontFamily.trim()
-      if (!normalizedFontFamily) {
+      if (!fontFamily) {
         setProperty('font-family', FALLBACK_FONT_FAMILY)
         return
       }
-      setProperty('font-family', `${toQuotedFontFamily(normalizedFontFamily)}, ${FALLBACK_FONT_FAMILY}`)
+      setProperty('font-family', `${toQuotedFontFamily(fontFamily)}, ${FALLBACK_FONT_FAMILY}`)
     },
     [setProperty],
   )
 
   const changeFontFamily = useCallback(
     (fontFamily: string) => {
-      const normalizedFontFamily = fontFamily.trim()
+      const normalizedFontFamily = normalizeFontFamily(fontFamily)
       if (!normalizedFontFamily) {
         removeImportedFont()
         changeIframeFontFamily('')

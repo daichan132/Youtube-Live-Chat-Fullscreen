@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontFamilyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { DEFAULT_FONT_OPTION, FEATURED_FONT_VALUES, FONT_FAMILY_OPTIONS } from './fontFamilyOptions'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
@@ -69,9 +70,10 @@ export const FontFamilyInputUI = ({
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const defaultLabel = t('content.preset.defaultTitle')
+  const normalizedValue = useMemo(() => normalizeFontFamily(value), [value])
   const options = useMemo(() => buildFontFamilyOptions(defaultLabel), [defaultLabel])
-  const selectedOption = useMemo(() => options.find(option => option.value === value), [options, value])
-  const displayLabel = selectedOption?.label ?? value
+  const selectedOption = useMemo(() => options.find(option => option.value === normalizedValue), [normalizedValue, options])
+  const displayLabel = selectedOption?.label ?? defaultLabel
   const filteredOptions = useMemo(() => {
     const normalizedSearchValue = normalizeSearchValue(searchValue)
     if (!normalizedSearchValue) {
@@ -82,13 +84,13 @@ export const FontFamilyInputUI = ({
 
   useEffect(() => {
     if (!isOpen) return
-    const selectedIndex = filteredOptions.findIndex(option => option.value === value)
+    const selectedIndex = filteredOptions.findIndex(option => option.value === normalizedValue)
     if (selectedIndex >= 0) {
       setActiveIndex(selectedIndex)
       return
     }
     setActiveIndex(filteredOptions.length > 0 ? 0 : -1)
-  }, [filteredOptions, isOpen, value])
+  }, [filteredOptions, isOpen, normalizedValue])
 
   useEffect(() => {
     if (!isOpen) return
@@ -120,12 +122,12 @@ export const FontFamilyInputUI = ({
 
   const commitFontFamily = useCallback(
     (nextFontFamily: string) => {
-      const normalizedFontFamily = nextFontFamily.trim()
+      const normalizedFontFamily = normalizeFontFamily(nextFontFamily)
       closeMenu()
-      if (normalizedFontFamily === value) return
+      if (normalizedFontFamily === normalizedValue) return
       onCommit?.(normalizedFontFamily)
     },
-    [closeMenu, onCommit, value],
+    [closeMenu, normalizedValue, onCommit],
   )
 
   const handleSelectOption = useCallback(
@@ -164,7 +166,7 @@ export const FontFamilyInputUI = ({
           handleSelectOption(activeOption.value)
           return
         }
-        commitFontFamily(searchValue)
+        commitFontFamily('')
         return
       }
 
@@ -173,7 +175,7 @@ export const FontFamilyInputUI = ({
         closeMenu()
       }
     },
-    [activeIndex, closeMenu, commitFontFamily, filteredOptions, handleSelectOption, searchValue],
+    [activeIndex, closeMenu, commitFontFamily, filteredOptions, handleSelectOption],
   )
 
   const handleToggleMenu = useCallback(() => {
@@ -199,7 +201,10 @@ export const FontFamilyInputUI = ({
         disabled={readOnly}
         data-ylc-font-combobox-trigger='true'
       >
-        <span className='ylc-font-combobox-trigger-text' style={value ? { fontFamily: toFontFamilyStyleValue(value) } : undefined}>
+        <span
+          className='ylc-font-combobox-trigger-text'
+          style={normalizedValue ? { fontFamily: toFontFamilyStyleValue(normalizedValue) } : undefined}
+        >
           {currentValue}
         </span>
       </button>
@@ -220,7 +225,7 @@ export const FontFamilyInputUI = ({
           <div className='ylc-font-combobox-options' role='listbox'>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option, index) => {
-                const isSelected = option.value === value
+                const isSelected = option.value === normalizedValue
                 const isActive = index === activeIndex
                 return (
                   <button
