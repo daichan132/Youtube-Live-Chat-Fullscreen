@@ -58,8 +58,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <TbGripVertical
               className={`transition-all duration-200 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
-                  ? 'w-[18px] h-[18px] p-0 opacity-100 cursor-grabbing'
-                  : 'w-0 h-0 p-0 group-hover:w-[18px] group-hover:h-[18px] group-hover:p-0 opacity-0 group-hover:opacity-100 cursor-grab'
+                  ? 'w-[20px] h-[20px] p-[2px] opacity-100 cursor-grabbing'
+                  : 'w-[20px] h-[20px] p-[2px] opacity-0 group-hover:opacity-100 cursor-grab'
               }`}
               size={18}
               {...listeners}
