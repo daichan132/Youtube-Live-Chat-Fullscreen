@@ -56,6 +56,9 @@
   --ylc-divider: #e1e7f0;
   --ylc-panel-glass-bg: rgba(255, 255, 255, 0.72);
   --ylc-panel-glass-muted-bg: rgba(248, 250, 252, 0.62);
+  --ylc-setting-header-bg: rgba(248, 251, 255, 0.84);
+  --ylc-setting-footer-bg: rgba(245, 249, 255, 0.9);
+  --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 78%, transparent);
   --ylc-focus-ring: rgba(37, 99, 235, 0.42);
   --ylc-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.08);
   --ylc-shadow-md: 0 14px 32px rgba(15, 23, 42, 0.12);
@@ -102,6 +105,9 @@
   --ylc-divider: #425167;
   --ylc-panel-glass-bg: rgba(17, 24, 39, 0.72);
   --ylc-panel-glass-muted-bg: rgba(15, 23, 42, 0.62);
+  --ylc-setting-header-bg: rgba(29, 38, 52, 0.78);
+  --ylc-setting-footer-bg: rgba(12, 19, 32, 0.84);
+  --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 72%, transparent);
   --ylc-focus-ring: rgba(96, 165, 250, 0.52);
   --ylc-shadow-sm: 0 10px 24px rgba(2, 6, 23, 0.55);
   --ylc-shadow-md: 0 16px 34px rgba(2, 6, 23, 0.7);
@@ -563,6 +569,16 @@
   align-items: center;
   column-gap: 12px;
   row-gap: 6px;
+}
+
+.ylc-theme-setting-header {
+  background-color: var(--ylc-setting-header-bg);
+  border-bottom: 1px solid var(--ylc-setting-section-border);
+}
+
+.ylc-theme-setting-footer {
+  background-color: var(--ylc-setting-footer-bg);
+  border-top: 1px solid var(--ylc-setting-section-border);
 }
 
 .ylc-theme-footer-link {

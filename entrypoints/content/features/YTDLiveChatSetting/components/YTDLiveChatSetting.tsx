@@ -75,7 +75,7 @@ export const YTDLiveChatSetting = () => {
         className='ylc-setting-panel flex flex-col w-[480px] rounded-xl ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
-        <div className='flex justify-between items-center px-2 py-1.5'>
+        <div className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
           <div className='ylc-theme-tablist'>
             {tabs.map(item => (
               <button
@@ -105,7 +105,7 @@ export const YTDLiveChatSetting = () => {
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='flex justify-end items-center px-3 py-2.5'>
+        <div className='ylc-theme-setting-footer flex justify-end items-center px-3 py-2.5'>
           <div className='ylc-theme-footer-links'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
