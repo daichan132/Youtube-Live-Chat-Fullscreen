@@ -23,6 +23,18 @@ body {
   background: transparent !important;
 }
 
+body.custom-yt-app-live-chat-extension,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #contents,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat-messages,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #item-scroller,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
+  /* biome-ignore lint/complexity/noImportantStyles: Keep chat surface transparent so overlay blur is visible */
+  background: transparent !important;
+}
+
 /* ------------------------- Layout / chrome cleanup ------------------------ */
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 0;

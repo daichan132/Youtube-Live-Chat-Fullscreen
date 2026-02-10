@@ -14,12 +14,12 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const id = useId()
   const { ref } = useChatIframeLoader(mode)
   const nodeRef = useRef(null)
-  const backgroundColorRef = useRef(useYTDLiveChatStore.getState().bgColor)
-  const fontColorRef = useRef(useYTDLiveChatStore.getState().fontColor)
-  const { blur, alwaysOnDisplay } = useYTDLiveChatStore(
+  const { blur, alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
       blur: state.blur,
       alwaysOnDisplay: state.alwaysOnDisplay,
+      bgColor: state.bgColor,
+      fontColor: state.fontColor,
     })),
   )
   const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
@@ -29,7 +29,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
-  const { r, g, b, a } = fontColorRef.current
+  const { r, g, b, a } = fontColor
   const baseAlpha = a ?? 1
   const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
   const desaturateMix = 0.68
@@ -37,19 +37,26 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const loaderColorG = Math.round(g * (1 - desaturateMix) + grayLuma * desaturateMix)
   const loaderColorB = Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix)
   const loaderColorA = Math.min(0.5, Math.max(0.22, baseAlpha * 0.55))
+  const backgroundAlpha = bgColor.a ?? 1
+  const overlayAlpha = blur > 0 ? Math.max(backgroundAlpha, 0.01) : backgroundAlpha
 
   return (
     <>
       <div
-        className='w-full h-full overflow-hidden rounded-md transition-[opacity,transform,filter] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform,filter]'
+        className='relative h-full w-full transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
         style={{
           opacity: isChatVisible ? 1 : 0,
-          transform: isChatVisible ? 'translateY(0) scale(1)' : 'translateY(2px) scale(0.996)',
-          filter: isChatVisible ? 'blur(0px)' : 'blur(1px)',
         }}
-        id={id}
-        ref={ref}
-      />
+      >
+        <div
+          id={id}
+          ref={ref}
+          className='h-full w-full overflow-hidden rounded-md transition-[background-color] duration-200 ease-out'
+          style={{
+            backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
+          }}
+        />
+      </div>
       <CSSTransition
         nodeRef={nodeRef}
         in={!isIframeLoaded}
@@ -67,10 +74,9 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       >
         <div
           ref={nodeRef}
-          className='absolute top-0 z-20 flex h-full w-full items-center justify-center pointer-events-auto'
+          className='absolute inset-0 z-20 flex items-center justify-center pointer-events-auto'
           style={{
-            backdropFilter: `blur(${blur}px)`,
-            backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
+            backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
           }}
         >
           <output className='flex justify-center' aria-label='loading'>

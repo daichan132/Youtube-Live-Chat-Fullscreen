@@ -14,6 +14,9 @@ type BorrowedIframeStyleSnapshot = {
   borderStyle: string
   borderWidth: string
   outline: string
+  position: string
+  zIndex: string
+  backgroundColor: string
 }
 
 type BorrowedIframeRestoreTarget = {
@@ -68,6 +71,10 @@ const applyChatIframeStyle = (iframe: HTMLIFrameElement) => {
   iframe.style.borderStyle = 'none'
   iframe.style.borderWidth = '0'
   iframe.style.outline = 'none'
+  iframe.style.position = 'relative'
+  iframe.style.zIndex = '1'
+  iframe.style.backgroundColor = 'transparent'
+  iframe.setAttribute('allowtransparency', 'true')
 }
 
 const syncBorrowedIframeSrcWithDocumentHref = (iframe: HTMLIFrameElement) => {
@@ -87,6 +94,9 @@ const captureBorrowedIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeSt
   borderStyle: iframe.style.borderStyle,
   borderWidth: iframe.style.borderWidth,
   outline: iframe.style.outline,
+  position: iframe.style.position,
+  zIndex: iframe.style.zIndex,
+  backgroundColor: iframe.style.backgroundColor,
 })
 
 const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIframeStyleSnapshot) => {
@@ -96,6 +106,9 @@ const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIf
   iframe.style.borderStyle = style.borderStyle
   iframe.style.borderWidth = style.borderWidth
   iframe.style.outline = style.outline
+  iframe.style.position = style.position
+  iframe.style.zIndex = style.zIndex
+  iframe.style.backgroundColor = style.backgroundColor
 }
 
 const rememberBorrowIframeRestoreTarget = (iframe: HTMLIFrameElement, container: HTMLDivElement) => {

@@ -22,7 +22,7 @@ describe('useYLCBgColorChange', () => {
 
     expect(setProperties).toHaveBeenCalledTimes(1)
     const entries = setProperties.mock.calls[0]?.[0] ?? []
-    expect(entries).toContainEqual(['--yt-live-chat-background-color', 'rgba(100, 120, 140, 0.8)'])
+    expect(entries).toContainEqual(['--yt-live-chat-background-color', 'transparent'])
     expect(entries).toContainEqual(['--yt-spec-icon-disabled', 'rgba(60, 80, 100, 0.8)'])
     expect(entries).toContainEqual(['--yt-live-chat-vem-background-color', 'rgba(80, 100, 120, 0.8)'])
     expect(entries).toContainEqual(['--yt-live-chat-header-background-color', 'transparent'])
