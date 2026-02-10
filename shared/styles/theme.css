@@ -212,11 +212,11 @@
 }
 
 .ylc-setting-panel .ylc-preset-card {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
 }
 
 .ylc-setting-panel .ylc-add-preset-button {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
 }
 
 .ylc-setting-panel .ylc-add-preset-button .ylc-add-preset-icon {
