@@ -28,10 +28,16 @@ type HandlerMap = {
   [Key in HandledKey]: (value: NonNullable<YLCStyleUpdateType[Key]>) => void
 }
 
+const applyStyleChange = <Key extends HandledKey>(handlers: HandlerMap, update: YLCStyleUpdateType, key: Key) => {
+  const value = update[key]
+  if (value === undefined) return
+  handlers[key](value)
+}
+
 export const useChangeYLCStyle = () => {
-  const { changeColor: changBgColor } = useYLCBgColorChange()
+  const { changeColor: changeBgColor } = useYLCBgColorChange()
   const { changeBlur } = useYLCBlurChange()
-  const { changeColor: changFontColor } = useYLCFontColorChange()
+  const { changeColor: changeFontColor } = useYLCFontColorChange()
   const { changeFontFamily } = useYLCFontFamilyChange()
   const { changeFontSize } = useYLCFontSizeChange()
   const { changeSpace } = useYLCSpaceChange()
@@ -41,9 +47,9 @@ export const useChangeYLCStyle = () => {
 
   const handlers: HandlerMap = useMemo(
     () => ({
-      bgColor: changBgColor,
+      bgColor: changeBgColor,
       blur: changeBlur,
-      fontColor: changFontColor,
+      fontColor: changeFontColor,
       fontFamily: changeFontFamily,
       fontSize: changeFontSize,
       space: changeSpace,
@@ -52,9 +58,9 @@ export const useChangeYLCStyle = () => {
       superChatBarDisplay: changeSuperChatBarDisplay,
     }),
     [
-      changBgColor,
+      changeBgColor,
       changeBlur,
-      changFontColor,
+      changeFontColor,
       changeFontFamily,
       changeFontSize,
       changeSpace,
@@ -66,13 +72,8 @@ export const useChangeYLCStyle = () => {
 
   const changeYLCStyle = useCallback(
     (update: YLCStyleUpdateType) => {
-      const apply = <Key extends HandledKey>(key: Key, value: YLCStyleUpdateType[Key]) => {
-        if (value === undefined) return
-        handlers[key](value)
-      }
-
       for (const key of HANDLED_KEYS) {
-        apply(key, update[key])
+        applyStyleChange(handlers, update, key)
       }
     },
     [handlers],

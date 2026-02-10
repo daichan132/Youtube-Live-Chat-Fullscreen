@@ -21,6 +21,23 @@ const createConnectedIframe = () => {
   return { iframe }
 }
 
+const createConnectedIframeWithThrowingDocument = () => {
+  const iframe = document.createElement('iframe') as HTMLIFrameElement
+
+  Object.defineProperty(iframe, 'contentDocument', {
+    configurable: true,
+    get: () => {
+      throw new Error('cross-origin')
+    },
+  })
+  Object.defineProperty(iframe, 'isConnected', {
+    value: true,
+    configurable: true,
+  })
+
+  return { iframe }
+}
+
 beforeEach(() => {
   useYTDLiveChatNoLsStore.setState({ ...initialState }, true)
 })
@@ -62,5 +79,15 @@ describe('useYLCBlurChange', () => {
     const body = iframe.contentDocument?.body as HTMLBodyElement
     expect(body.style.backdropFilter).toBe('blur(9px)')
     expect(iframe.style.filter).toBe('none')
+  })
+
+  it('no-ops when iframe document access throws', () => {
+    const { iframe } = createConnectedIframeWithThrowingDocument()
+    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+    const { result } = renderHook(() => useYLCBlurChange())
+
+    expect(() => {
+      result.current.changeBlur(12)
+    }).not.toThrow()
   })
 })

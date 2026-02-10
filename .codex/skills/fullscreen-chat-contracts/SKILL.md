@@ -25,11 +25,28 @@ metadata:
 - `canToggle`（操作可否）と `sourceReady`（attach 可否）は分ける。
 - archive で `sourceReady` だけを switch 有効条件にしない（deadlock 防止）。
 
+# スタイル契約（blur / background）
+1. blur 適用先
+- blur は iframe host ではなく iframe document の `body` に適用する。
+- `useYLCBlurChange` で `body.style.backdropFilter` と `-webkit-backdrop-filter` を更新する。
+- iframe host 側の `filter` は常に `none` に戻し、文字ぼけ回帰を防ぐ。
+
+2. background 適用先
+- `--yt-live-chat-background-color` は `transparent` を維持する。
+- 暗色化が必要な内部変数のみ darken 済み RGBA を適用する。
+
+3. iframe サーフェス透過
+- `entrypoints/content/features/YTDLiveChatIframe/styles/iframe.css` で
+  `html/body` と主要 chat コンテナ背景を透過させる。
+- これにより外側オーバーレイ背景と iframe body 側の blur を視認可能に保つ。
+
 # 必須確認
 - Unit:
   - live resolver が `isLiveNow` 単独で fail-open しない
   - 非表示条件で switch が描画されない
   - mode/source helper が期待通り
+  - `useYLCBlurChange` が iframe body に blur を適用し、例外時に no-op する
+  - `useYLCBgColorChange` が `--yt-live-chat-background-color: transparent` を維持する
 - E2E 最低限:
   - `e2e/noChatVideo.spec.ts`
   - `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`
