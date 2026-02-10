@@ -36,7 +36,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
       </div>
 
       <div className='absolute top-[6px] right-[82px] z-10 cursor-pointer' style={{ opacity: isIconDisplay ? 1 : 0 }}>
-        <button type='button' className='ylc-overlay-control-icon' onClick={onSettingsClick}>
+        <button type='button' className='ylc-overlay-control-icon cursor-pointer' onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
       </div>
