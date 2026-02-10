@@ -20,6 +20,12 @@
         "donate": "Підтримати",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Мова",
     "showChatOnFullscreen": "Чат на весь екран",
     "links": "Посилання",
-    "donate": "Підтримати"
+    "donate": "Підтримати",
+    "theme": "テーマ"
   }
 }

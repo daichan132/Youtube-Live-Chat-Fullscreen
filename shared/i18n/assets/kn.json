@@ -20,6 +20,12 @@
         "donate": "ದಾನಮಾಡಿ",
         "chrome": "ಕ್ರೋಮ್",
         "firefox": "ಫೈರ್ಫಾಕ್ಸ್"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
     "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ್ ಚಾಟ್",
     "links": "ಲಿಂಕ್‌ಗಳು",
-    "donate": "ದಾನಮಾಡಿ"
+    "donate": "ದಾನಮಾಡಿ",
+    "theme": "テーマ"
   }
 }

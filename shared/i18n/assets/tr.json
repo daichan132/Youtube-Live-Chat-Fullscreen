@@ -20,6 +20,12 @@
         "donate": "Bağış Yap",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Dil Ayarları",
     "showChatOnFullscreen": "Tam Ekran Sohbet",
     "links": "Bağlantılar",
-    "donate": "Bağış Yap"
+    "donate": "Bağış Yap",
+    "theme": "テーマ"
   }
 }

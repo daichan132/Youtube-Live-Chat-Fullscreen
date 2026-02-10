@@ -20,6 +20,12 @@
         "donate": "Přispět",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Nastavení jazyka",
     "showChatOnFullscreen": "Chat na celou obrazovku",
     "links": "Odkazy",
-    "donate": "Přispět"
+    "donate": "Přispět",
+    "theme": "テーマ"
   }
 }

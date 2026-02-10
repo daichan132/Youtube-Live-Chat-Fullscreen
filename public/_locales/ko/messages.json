@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "이 확장 프로그램을 사용하면 YouTube 라이브를 전체화면 모드로 유지하면서 채팅 패널을 표시하고 댓글을 남길 수 있습니다."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

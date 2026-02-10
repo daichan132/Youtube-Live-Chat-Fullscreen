@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "இந்த扩வேை பயன்படுத்தி, நீங்கள் YouTube நேரலையை முழுத்திரை பயன்முறையில் வைத்துக்கொண்டே அரட்டை பேனலை காணலாம் மற்றும் கருத்துகள் பதிவு செய்யலாம்."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

@@ -20,6 +20,12 @@
         "donate": "देणगी द्या",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "भाषा सेटिंग्ज",
     "showChatOnFullscreen": "फुलस्क्रीन चॅट",
     "links": "लिंक्स",
-    "donate": "देणगी द्या"
+    "donate": "देणगी द्या",
+    "theme": "テーマ"
   }
 }

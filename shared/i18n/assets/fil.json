@@ -20,6 +20,12 @@
         "donate": "Mag-donate",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Mga Setting ng Wika",
     "showChatOnFullscreen": "Fullscreen na Chat",
     "links": "Mga Link",
-    "donate": "Mag-donate"
+    "donate": "Mag-donate",
+    "theme": "テーマ"
   }
 }

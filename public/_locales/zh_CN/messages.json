@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "使用此扩展程序，您可以在 YouTube 直播全屏模式下显示聊天面板并发表评论。"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

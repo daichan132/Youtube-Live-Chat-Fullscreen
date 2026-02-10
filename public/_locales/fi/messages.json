@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Tämän laajennuksen avulla voit näyttää chat-paneelin ja lähettää viestejä samalla kun YouTube Live on koko näytön tilassa."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

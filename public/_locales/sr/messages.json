@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Pomoću ovog ekstenzije možete prikazati prozor za ćaskanje i slati komentare dok YouTube Live radi u režimu celog ekrana."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

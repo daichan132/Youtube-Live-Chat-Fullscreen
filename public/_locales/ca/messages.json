@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Amb aquesta extensió, pots mostrar el panell de xat i publicar comentaris mentre mantens YouTube Live en mode de pantalla completa."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

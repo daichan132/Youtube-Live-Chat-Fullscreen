@@ -20,6 +20,12 @@
         "donate": "Doniraj",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Postavke jezika",
     "showChatOnFullscreen": "Chat preko cijelog zaslona",
     "links": "Linkovi",
-    "donate": "Doniraj"
+    "donate": "Doniraj",
+    "theme": "テーマ"
   }
 }

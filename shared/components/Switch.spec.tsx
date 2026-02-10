@@ -7,7 +7,7 @@ describe('Switch', () => {
     const onChange = vi.fn()
     const { getByRole } = render(<Switch checked={false} id='switch' onChange={onChange} />)
 
-    fireEvent.click(getByRole('checkbox'))
+    fireEvent.click(getByRole('switch'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
     expect(onChange).toHaveBeenCalledWith(true)
@@ -17,7 +17,7 @@ describe('Switch', () => {
     const onChange = vi.fn()
     const { getByRole } = render(<Switch checked id='switch' onChange={onChange} />)
 
-    fireEvent.click(getByRole('checkbox'))
+    fireEvent.click(getByRole('switch'))
 
     expect(onChange).toHaveBeenCalledTimes(1)
     expect(onChange).toHaveBeenCalledWith(false)

@@ -20,6 +20,12 @@
         "donate": "Changia",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Mipangilio ya Lugha",
     "showChatOnFullscreen": "Gumzo la Skrini Nzima",
     "links": "Viungo",
-    "donate": "Changia"
+    "donate": "Changia",
+    "theme": "テーマ"
   }
 }

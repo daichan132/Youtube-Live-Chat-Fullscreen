@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Tiện ích này cho phép bạn hiển thị bảng trò chuyện và đăng bình luận khi xem YouTube Live ở chế độ toàn màn hình."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

@@ -5,4 +5,5 @@ export interface SettingItemType {
   title: string
   data: React.ReactNode
   disable?: boolean
+  actionWidth?: 'default' | 'wide'
 }

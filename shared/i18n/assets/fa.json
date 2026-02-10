@@ -20,6 +20,12 @@
         "donate": "حمایت مالی",
         "chrome": "کروم",
         "firefox": "فایرفاکس"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "تنظیمات زبان",
     "showChatOnFullscreen": "چت در حالت تمام‌صفحه",
     "links": "لینک‌ها",
-    "donate": "حمایت مالی"
+    "donate": "حمایت مالی",
+    "theme": "テーマ"
   }
 }

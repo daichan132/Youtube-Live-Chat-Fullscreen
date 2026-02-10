@@ -20,6 +20,12 @@
         "donate": "Пожертвовать",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Язык интерфейса",
     "showChatOnFullscreen": "Чат на весь экран",
     "links": "Ссылки",
-    "donate": "Пожертвовать"
+    "donate": "Пожертвовать",
+    "theme": "テーマ"
   }
 }

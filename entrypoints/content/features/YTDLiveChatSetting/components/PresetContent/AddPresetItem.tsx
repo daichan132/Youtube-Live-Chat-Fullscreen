@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { MdAdd } from 'react-icons/md'
+import { TbPlus } from 'react-icons/tb'
 import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -33,17 +33,22 @@ export const AddPresetItem = () => {
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
   }, [addPresetItem, t])
   return (
-    <div className='m-4'>
+    <div className='m-2'>
       <button
         type='button'
         className={classNames(
-          'border-1 border-solid border-[rgba(0,0,0,0.1)] p-5 rounded-lg transition-colors duration-200 flex justify-center items-center cursor-pointer w-full',
-          addPresetEnabled ? 'bg-white' : 'bg-[rgba(0,0,0,0.1)] opacity-[0.35] cursor-not-allowed',
+          'border border-solid ylc-theme-border p-2.5 rounded-[12px] transition-colors duration-200 flex justify-center items-center cursor-pointer w-full',
+          addPresetEnabled
+            ? 'ylc-theme-surface ylc-theme-text-primary'
+            : 'ylc-theme-elevated opacity-[0.35] cursor-not-allowed ylc-theme-text-secondary',
         )}
         onClick={() => addPresetEnabled && addItem()}
         disabled={!addPresetEnabled}
       >
-        <MdAdd size={20} /> <div>{t('content.preset.addMessage')}</div>
+        <span className='ylc-theme-icon-badge ylc-theme-icon-badge-xs mr-2'>
+          <TbPlus size={16} />
+        </span>
+        <div>{t('content.preset.addMessage')}</div>
       </button>
     </div>
   )

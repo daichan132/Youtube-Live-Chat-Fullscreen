@@ -20,6 +20,12 @@
         "donate": "இறையஞ்சல்",
         "chrome": "க்ரோம்",
         "firefox": "ஃபயர்ஃபாக்ஸ்"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "மொழி அமைப்புகள்",
     "showChatOnFullscreen": "முழுத்திரை சாட்",
     "links": "இணைப்புகள்",
-    "donate": "இறையஞ்சல்"
+    "donate": "இறையஞ்சல்",
+    "theme": "テーマ"
   }
 }

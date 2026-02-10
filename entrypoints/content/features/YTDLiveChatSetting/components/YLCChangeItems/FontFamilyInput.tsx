@@ -31,5 +31,11 @@ export const FontFamilyInputUI = ({
   value: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }) => {
-  return <input className='w-[145px] px-3 py-2 rounded-[2px] border border-black/10' value={value} onChange={event => onChange?.(event)} />
+  return (
+    <input
+      className='ylc-action-fill px-3 py-2 rounded-[10px] ylc-theme-input ylc-theme-focus-ring'
+      value={value}
+      onChange={event => onChange?.(event)}
+    />
+  )
 }

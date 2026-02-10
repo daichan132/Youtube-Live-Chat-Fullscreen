@@ -20,6 +20,12 @@
         "donate": "捐赠",
         "chrome": "Chrome 浏览器",
         "firefox": "Firefox 浏览器"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "语言设置",
     "showChatOnFullscreen": "全屏聊天",
     "links": "相关链接",
-    "donate": "捐赠"
+    "donate": "捐赠",
+    "theme": "テーマ"
   }
 }

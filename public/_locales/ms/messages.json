@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Dengan sambungan ini, anda boleh memaparkan panel sembang dan menghantar komen sambil mengekalkan mod skrin penuh untuk YouTube Live."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

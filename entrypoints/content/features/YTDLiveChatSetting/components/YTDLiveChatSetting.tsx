@@ -1,13 +1,13 @@
 import classNames from 'classnames'
-import type { ComponentType } from 'react'
+import { type ComponentType, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { IconType } from 'react-icons'
-import { BiSlider } from 'react-icons/bi'
-import { HiOutlineCollection } from 'react-icons/hi'
 import { RiCloseLine } from 'react-icons/ri'
+import { TbLayoutGrid, TbSettings2 } from 'react-icons/tb'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useResolvedThemeMode } from '@/shared/theme'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
@@ -35,6 +35,8 @@ const customStyles = {
 }
 
 export const YTDLiveChatSetting = () => {
+  const themeMode = useGlobalSettingStore(state => state.themeMode)
+  const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const { isOpenSettingModal, menuItem, setMenuItem, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       isOpenSettingModal: state.isOpenSettingModal,
@@ -47,9 +49,16 @@ export const YTDLiveChatSetting = () => {
   const { t } = useTranslation()
 
   const tabs: { key: 'preset' | 'setting'; label: string; icon: IconType }[] = [
-    { key: 'preset', label: t('content.setting.header.preset'), icon: HiOutlineCollection },
-    { key: 'setting', label: t('content.setting.header.setting'), icon: BiSlider },
+    { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
+    { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
   ]
+
+  useEffect(() => {
+    if (!isOpenSettingModal) return
+
+    const modalParent = getModalParentElement()
+    modalParent.setAttribute('data-ylc-theme', resolvedThemeMode)
+  }, [isOpenSettingModal, resolvedThemeMode])
 
   return (
     <ModalSafeForReact19
@@ -62,45 +71,47 @@ export const YTDLiveChatSetting = () => {
       parentSelector={getModalParentElement}
     >
       <div
-        className='flex flex-col w-[480px] rounded-xl bg-white text-black overflow-hidden border-2 border-solid border-gray-200'
+        data-ylc-theme={resolvedThemeMode}
+        className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
-        <div className='flex justify-between items-center px-5 py-3 border-1 border-b-solid border-gray-100'>
-          <div className='flex text-base gap-4'>
+        <div className='flex justify-between items-center px-3 py-2.5 border-b border-b-solid ylc-theme-border'>
+          <div className='ylc-theme-tablist'>
             {tabs.map(item => (
               <button
                 key={item.key}
                 type='button'
-                className={classNames(
-                  'px-3 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-4 border-none outline-none bg-transparent',
-                  menuItem === item.key
-                    ? 'text-[#333] bg-gray-100 cursor-default border-b-solid border-b-1 border-gray-800 rounded-tl-md rounded-tr-md'
-                    : 'text-gray-700 hover:bg-gray-100 rounded-md',
-                )}
-                onClick={() => setMenuItem(item.key)}
+                className={classNames('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
+                onClick={() => {
+                  if (menuItem === item.key) return
+                  setMenuItem(item.key)
+                }}
+                aria-pressed={menuItem === item.key}
               >
-                <item.icon size={14} />
+                <item.icon size={16} />
                 {item.label}
               </button>
             ))}
           </div>
-          <RiCloseLine
-            className='cursor-pointer rounded p-3 transition-colors duration-200 hover:bg-gray-100'
-            onClick={() => setIsOpenSettingModal(false)}
-            size={20}
-          />
+          <div className='flex items-center'>
+            <RiCloseLine
+              className='cursor-pointer rounded p-2 transition-colors duration-200 ylc-theme-icon-button'
+              onClick={() => setIsOpenSettingModal(false)}
+              size={22}
+            />
+          </div>
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] p-3 bg-gray-100' style={{ overscrollBehavior: 'contain' }}>
+        <div className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2' style={{ overscrollBehavior: 'contain' }}>
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='flex justify-end items-center px-7 py-6 border-t border-t-solid border-gray-200 bg-white text-xs'>
-          <div className='flex gap-6'>
+        <div className='flex justify-end items-center px-3 py-2 border-t border-t-solid ylc-theme-border ylc-theme-surface text-xs'>
+          <div className='flex gap-4'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-gray-400 hover:text-gray-700 transition-colors'
+              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
             >
               {t('content.setting.footer.chrome')}
             </a>
@@ -108,7 +119,7 @@ export const YTDLiveChatSetting = () => {
               href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-gray-400 hover:text-gray-700 transition-colors'
+              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
             >
               {t('content.setting.footer.firefox')}
             </a>
@@ -116,7 +127,7 @@ export const YTDLiveChatSetting = () => {
               href='https://ko-fi.com/daichan132'
               target='_blank'
               rel='noopener noreferrer'
-              className='text-gray-400 hover:text-gray-700 transition-colors'
+              className='ylc-theme-text-muted hover:text-[var(--ylc-text-primary)] transition-colors'
             >
               {t('content.setting.footer.donate')}
             </a>

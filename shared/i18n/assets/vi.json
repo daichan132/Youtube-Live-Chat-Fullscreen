@@ -20,6 +20,12 @@
         "donate": "Ủng hộ",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Cài đặt ngôn ngữ",
     "showChatOnFullscreen": "Trò chuyện toàn màn hình",
     "links": "Liên kết",
-    "donate": "Ủng hộ"
+    "donate": "Ủng hộ",
+    "theme": "テーマ"
   }
 }

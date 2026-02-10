@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "ይህን ኤክስቴንሽን በመጠቀም፣ የYouTube ቀጥታ ቪዲዮውን በፍሉ ስክሪን ሲያየው የቻት ፓኔሉን ማሳየት እና አስተያየት መስጠት ይችላሉ።"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

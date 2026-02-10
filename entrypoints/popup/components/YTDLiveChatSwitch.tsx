@@ -29,7 +29,7 @@ export const YTDLiveChatSwitch = () => {
   )
 
   return (
-    <div className='w-[50px] flex justify-center'>
+    <div className='ylc-action-fill ylc-action-inner'>
       <Switch checked={ytdLiveChat} id={id} onChange={handleSwitchChange} />
     </div>
   )

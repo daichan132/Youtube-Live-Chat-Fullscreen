@@ -20,6 +20,12 @@
         "donate": "സംഭാവന",
         "chrome": "ക്രോം",
         "firefox": "ഫയർഫോക്സ്"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "ഭാഷ ക്രമീകരണങ്ങൾ",
     "showChatOnFullscreen": "പൂർണ്ണ സ്ക്രീൻ ചാറ്റ്",
     "links": "ലിങ്കുകൾ",
-    "donate": "സംഭാവന"
+    "donate": "സംഭാവന",
+    "theme": "テーマ"
   }
 }

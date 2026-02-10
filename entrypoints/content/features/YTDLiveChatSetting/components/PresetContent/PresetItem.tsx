@@ -2,8 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { type ComponentType, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { IoTrashOutline } from 'react-icons/io5'
-import { MdAutoFixNormal, MdOutlineDragIndicator } from 'react-icons/md'
+import { TbGripVertical, TbSparkles, TbTrash } from 'react-icons/tb'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
@@ -45,20 +44,22 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`bg-white m-4 p-4 rounded-lg border border-solid border-black/10 relative ${isDragging ? 'z-1 cursor-grabbing' : ''}`}
+      className={`ylc-theme-surface m-2 p-2 rounded-[12px] border border-solid ylc-theme-border relative ylc-theme-shadow-sm ${
+        isDragging ? 'z-1 cursor-grabbing' : ''
+      }`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
-      <div className='flex justify-between items-center'>
-        <div className='group flex items-center'>
+      <div className='flex justify-between items-center gap-2'>
+        <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef}>
-            <MdOutlineDragIndicator
-              className={`transition-all duration-200 outline-0 rounded focus:ring-1 focus:ring-black/10 mt-1 ${
+            <TbGripVertical
+              className={`transition-all duration-200 outline-none rounded ylc-theme-text-secondary ${
                 isDragging
-                  ? 'w-7 px-1 opacity-100 cursor-grabbing bg-black/10'
-                  : 'w-0 group-hover:w-7 p-0 group-hover:px-1 opacity-0 group-hover:opacity-100 cursor-grab'
+                  ? 'w-5 h-5 p-0.5 opacity-100 cursor-grabbing ylc-theme-elevated'
+                  : 'w-0 h-0 p-0 group-hover:w-5 group-hover:h-5 group-hover:p-0.5 opacity-0 group-hover:opacity-100 cursor-grab'
               }`}
-              size={24}
+              size={14}
               {...listeners}
               {...attributes}
             />
@@ -67,14 +68,14 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
-            className='ml-1 tracking-widest border-none p-2 rounded w-60 outline-0 focus:ring-1 focus:ring-black/10'
+            className='ml-0 h-10 px-2 rounded-[10px] outline-none min-w-0 flex-1 max-w-[15rem] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
-        <div className='flex transition-opacity duration-200'>
-          <MdAutoFixNormal className='p-2 rounded hover:bg-black/10 mx-1 cursor-pointer' size={20} onClick={() => updateStyle(ylcStyle)} />
-          <IoTrashOutline
-            className='p-2 rounded hover:bg-black/10 mx-1 cursor-pointer'
-            size={20}
+        <div className='flex transition-opacity duration-200 shrink-0'>
+          <TbSparkles className='p-1.5 rounded ylc-theme-icon-button mx-1 cursor-pointer' size={18} onClick={() => updateStyle(ylcStyle)} />
+          <TbTrash
+            className='p-1.5 rounded ylc-theme-icon-button mx-1 cursor-pointer'
+            size={18}
             onClick={() => setIsDeleteModalOpen(true)}
           />
         </div>
@@ -82,27 +83,27 @@ export const PresetItem = ({ id }: PresetItemType) => {
       {isDeleteModalOpen && (
         <ModalSafeForReact19
           isOpen={isDeleteModalOpen}
-          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[320px] bg-white p-6 rounded-lg shadow-lg outline-none text-center border border-black/10'
+          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[320px] ylc-theme-surface p-6 rounded-[12px] ylc-theme-shadow-md outline-none text-center border ylc-theme-border'
           onRequestClose={() => setIsDeleteModalOpen(false)}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/50 z-[1000001]'
           appElement={document.body}
           parentSelector={getModalParentElement}
         >
-          <div className='mb-4 text-[1.5rem] font-bold text-[#333]'>
+          <div className='mb-4 text-[1.5rem] font-bold ylc-theme-text-primary'>
             <p>{t('content.preset.deleteConfirmationMessage')}</p>
           </div>
           <div className='flex justify-around mt-6 space-x-4'>
             <button
               type='button'
               onClick={() => deletePresetItem(id)}
-              className='w-[150px] bg-white text-[#f21616] border border-[#f21616] rounded-lg p-3 cursor-pointer font-bold transition-colors hover:bg-[#ffe9e9]'
+              className='w-[150px] ylc-theme-danger rounded-[10px] p-3 cursor-pointer font-bold transition-colors ylc-theme-focus-ring-soft'
             >
               {t('content.preset.delete')}
             </button>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
-              className='w-[150px] bg-white border border-black rounded-lg p-3 cursor-pointer transition-colors hover:bg-black/10'
+              className='w-[150px] ylc-theme-surface border ylc-theme-border rounded-[10px] p-3 cursor-pointer transition-colors ylc-theme-focus-ring-soft hover:bg-[var(--ylc-bg-surface-elevated)]'
             >
               {t('content.preset.cancel')}
             </button>

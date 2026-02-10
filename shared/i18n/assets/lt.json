@@ -20,6 +20,12 @@
         "donate": "Paaukoti",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Kalbos nustatymai",
     "showChatOnFullscreen": "Visas ekranas (pokalbis)",
     "links": "Nuorodos",
-    "donate": "Paaukoti"
+    "donate": "Paaukoti",
+    "theme": "テーマ"
   }
 }

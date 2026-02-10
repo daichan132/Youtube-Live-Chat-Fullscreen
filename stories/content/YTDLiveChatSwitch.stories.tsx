@@ -2,15 +2,17 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import { YTDLiveChatSwitch } from '@/entrypoints/content/features/YTDLiveChatSwitch/components/YTDLiveChatSwitch'
 import { useGlobalSettingStore } from '@/shared/stores'
+import type { ThemeMode } from '@/shared/theme'
 
 type ContentSwitchStoryProps = {
   enabled: boolean
+  themeMode: ThemeMode
 }
 
-const ContentSwitchPreview = ({ enabled }: ContentSwitchStoryProps) => {
+const ContentSwitchPreview = ({ enabled, themeMode }: ContentSwitchStoryProps) => {
   useEffect(() => {
-    useGlobalSettingStore.setState({ ytdLiveChat: enabled })
-  }, [enabled])
+    useGlobalSettingStore.setState({ ytdLiveChat: enabled, themeMode })
+  }, [enabled, themeMode])
 
   return (
     <div className='bg-[#212121] rounded-md p-2 w-[56px] h-[56px] flex items-center justify-center'>
@@ -27,10 +29,15 @@ const meta = {
   tags: ['autodocs'],
   args: {
     enabled: true,
+    themeMode: 'system',
   },
   argTypes: {
     enabled: {
       control: 'boolean',
+    },
+    themeMode: {
+      control: 'radio',
+      options: ['system', 'light', 'dark'],
     },
   },
   parameters: {

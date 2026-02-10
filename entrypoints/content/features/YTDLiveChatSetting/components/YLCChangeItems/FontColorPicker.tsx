@@ -8,6 +8,17 @@ import { useYLCFontColorChange } from '@/entrypoints/content/hooks/ylcStyleChang
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
+const getPreviewBorderColor = (rgba: RGBColor) => {
+  const alpha = typeof rgba.a === 'number' ? rgba.a : 1
+  const luminance = (0.2126 * rgba.r + 0.7152 * rgba.g + 0.0722 * rgba.b) / 255
+
+  if (alpha < 0.35) {
+    return 'rgba(100, 116, 139, 0.28)'
+  }
+
+  return luminance > 0.82 ? 'rgba(71, 85, 105, 0.32)' : 'rgba(255, 255, 255, 0.3)'
+}
+
 export const FontColorPicker = () => {
   const { changeColor } = useYLCFontColorChange()
   const stateRef = useRef(useYTDLiveChatStore.getState())
@@ -36,18 +47,21 @@ export const FontColorPickerUI = React.forwardRef<
     onChange?: (c: ColorResult) => void
   }
 >(({ rgba, display, setDisplay, onChange }, ref) => {
+  const previewBorderColor = getPreviewBorderColor(rgba)
+
   return (
-    <div ref={ref} className='relative'>
+    <div ref={ref} className='relative ylc-action-fill'>
       <button
         type='button'
-        className='inline-block p-[5px] bg-white rounded-[1px] shadow-[0_0_0_1px_rgba(0,0,0,0.1)] cursor-pointer relative border-none outline-none'
+        className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'
         onClick={() => setDisplay?.(d => !d)}
       >
-        <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] bg-white rounded-[2px] w-full h-full'>
+        <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] rounded-[6px] w-full h-full'>
           <div
-            className='w-[150px] h-[16px] rounded-[2px]'
+            className='ylc-action-fill h-full rounded-[5px]'
             style={{
               backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
+              border: `var(--ylc-border-width) solid ${previewBorderColor}`,
             }}
           />
         </div>
@@ -60,9 +74,10 @@ export const FontColorPickerUI = React.forwardRef<
             styles={{
               default: {
                 picker: {
-                  border: '1px solid rgba(0, 0, 0, 0.1)',
+                  border: 'var(--ylc-border-width) solid var(--ylc-border)',
                   borderRadius: 5,
                   overflow: 'hidden',
+                  boxShadow: 'none',
                 },
               },
             }}

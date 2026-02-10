@@ -49,18 +49,22 @@ export const SettingContent = () => {
         <React.Fragment key={item.title}>
           <div
             className={classNames(
-              'flex justify-between items-center transition-all duration-200 opacity-100',
-              !item.disable && 'px-4 py-3',
-              item.disable && 'h-0 py-0 px-4 opacity-0 pointer-events-none overflow-hidden',
+              'flex flex-wrap justify-between items-center transition-all duration-200 opacity-100 ylc-theme-text-primary',
+              !item.disable && 'px-3 py-2',
+              item.disable && 'h-0 py-0 px-3 opacity-0 pointer-events-none overflow-hidden',
             )}
           >
             <div className='flex items-center'>
-              <item.icon size={20} className='mr-6 border-1 border-solid border-[rgba(0,0,0,0.1)] text-[#333] rounded bg-white p-3' />
-              <p>{item.title}</p>
+              <span className='mr-3 ylc-theme-icon-badge'>
+                <item.icon size={18} />
+              </span>
+              <p className='ylc-theme-text-primary'>{item.title}</p>
             </div>
-            {item.data}
+            <div className={classNames('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}>
+              <div className='ylc-action-inner'>{item.data}</div>
+            </div>
           </div>
-          {!item.disable && i < items.length - 1 && <hr className='border-none h-[1px] bg-[rgba(0,0,0,0.1)]' />}
+          {!item.disable && i < items.length - 1 && <hr className='border-none ylc-theme-divider' />}
         </React.Fragment>
       ))}
     </>

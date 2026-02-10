@@ -38,21 +38,32 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
     },
   })
   return (
-    <div className={classNames('flex flex-col p-4 gap-y-4 transition-all', isOpen && 'opacity-100')}>
+    <div className={classNames('flex flex-col p-4 gap-y-4 transition-all ylc-theme-text-primary', isOpen && 'opacity-100')}>
       <div className='flex flex-col gap-y-2'>
-        <div className='text-lg font-bold'>Setting (View Only)</div>
+        <div className='text-lg font-bold ylc-theme-text-primary'>Setting (View Only)</div>
         <div>
           {items.map((item, i) => {
             return (
               <React.Fragment key={item.title}>
-                <div className={classNames('flex items-center justify-between py-2', item.disable && 'opacity-50 pointer-events-none')}>
-                  <div className='flex items-center gap-x-2'>
-                    {<item.icon size={16} />}
+                <div
+                  className={classNames(
+                    'flex flex-wrap items-center justify-between py-2 ylc-theme-text-primary',
+                    item.disable && 'opacity-50 pointer-events-none',
+                  )}
+                >
+                  <div className='flex items-center gap-x-3'>
+                    <span className='ylc-theme-icon-badge ylc-theme-icon-badge-sm'>
+                      <item.icon size={16} />
+                    </span>
                     <div>{item.title}</div>
                   </div>
-                  <div className='ml-auto'>{item.data}</div>
+                  <div
+                    className={classNames('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}
+                  >
+                    <div className='ylc-action-inner'>{item.data}</div>
+                  </div>
                 </div>
-                {item.disable || i === items.length - 1 ? null : <hr />}
+                {item.disable || i === items.length - 1 ? null : <hr className='border-none ylc-theme-divider' />}
               </React.Fragment>
             )
           })}

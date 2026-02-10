@@ -20,6 +20,12 @@
         "donate": "Δωρεά",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Ρυθμίσεις γλώσσας",
     "showChatOnFullscreen": "Συνομιλία σε πλήρη οθόνη",
     "links": "Σύνδεσμοι",
-    "donate": "Δωρεά"
+    "donate": "Δωρεά",
+    "theme": "テーマ"
   }
 }

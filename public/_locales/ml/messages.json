@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "ഈ എക്‌സ്റ്റെൻഷൻ ഉപയോഗിച്ച്, YouTube ലൈവ് ഫുള്‍സ്ക്രീൻ മോഡിൽ പോകുന്നുണ്ടായാലും ചാറ്റ് പാനൽ കാണിക്കാനും, കമന്റുകൾ പോസ്റ്റ് ചെയ്യാനും കഴിയുന്നതാണ്."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

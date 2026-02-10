@@ -20,6 +20,12 @@
         "donate": "దానం చేయండి",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "భాషా సెట్టింగ్‌లు",
     "showChatOnFullscreen": "పూర్తి తెర చాట్",
     "links": "లింకులు",
-    "donate": "దానం చేయండి"
+    "donate": "దానం చేయండి",
+    "theme": "テーマ"
   }
 }

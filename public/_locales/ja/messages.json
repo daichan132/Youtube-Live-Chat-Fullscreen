@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "この拡張機能を使うと、YouTubeライブを全画面表示のままチャットパネルを表示し、コメントを投稿できます。"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

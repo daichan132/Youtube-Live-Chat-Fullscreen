@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Ezzel a bővítménnyel teljes képernyős YouTube Live módban is megjelenítheted a csevegőpanelt, és küldhetsz hozzászólásokat."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

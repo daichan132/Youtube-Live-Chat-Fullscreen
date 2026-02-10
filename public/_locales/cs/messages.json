@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Tato rozšíření vám umožní zobrazit panel chatu a psát komentáře, zatímco máte YouTube Live v režimu celé obrazovky."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

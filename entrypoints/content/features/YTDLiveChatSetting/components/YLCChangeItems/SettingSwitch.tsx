@@ -4,7 +4,7 @@ import { Switch } from '@/shared/components/Switch'
 export const SettingSwitch = ({ checked, onChange }: { checked: boolean; onChange?: (checked: boolean) => void }) => {
   const id = useId()
   return (
-    <div className='w-[150px] flex justify-center'>
+    <div className='ylc-action-fill ylc-action-inner'>
       <Switch
         checked={checked}
         id={id}

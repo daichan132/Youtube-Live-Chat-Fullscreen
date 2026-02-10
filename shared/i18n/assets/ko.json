@@ -20,6 +20,12 @@
         "donate": "후원하기",
         "chrome": "크롬",
         "firefox": "파이어폭스"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "언어 설정",
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
-    "donate": "후원하기"
+    "donate": "후원하기",
+    "theme": "テーマ"
   }
 }

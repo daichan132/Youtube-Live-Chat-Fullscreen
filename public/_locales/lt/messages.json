@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Naudodami šį plėtinį galite matyti pokalbių skydelį ir rašyti komentarus, išlaikydami YouTube Live viso ekrano režimu."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

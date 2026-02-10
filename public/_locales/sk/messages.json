@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "S touto rozšírením môžete zobrazovať chat a pridávať komentáre aj pri sledovaní YouTube Live v režime celej obrazovky."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

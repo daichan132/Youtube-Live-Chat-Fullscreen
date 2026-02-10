@@ -20,6 +20,12 @@
         "donate": "দান করুন",
         "chrome": "ক্রোম",
         "firefox": "ফায়ারফক্স"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "ভাষার সেটিংস",
     "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
     "links": "লিঙ্কসমূহ",
-    "donate": "দান করুন"
+    "donate": "দান করুন",
+    "theme": "テーマ"
   }
 }

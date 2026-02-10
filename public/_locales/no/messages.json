@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Med denne utvidelsen kan du vise chat-panelet og skrive kommentarer mens YouTube Live vises i fullskjermmodus."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

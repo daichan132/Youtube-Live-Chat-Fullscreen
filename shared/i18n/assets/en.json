@@ -20,6 +20,12 @@
         "donate": "Donate",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "Theme",
+      "themeMode": {
+        "system": "Auto",
+        "light": "Light",
+        "dark": "Dark"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Language Settings",
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
-    "donate": "Donate"
+    "donate": "Donate",
+    "theme": "Theme"
   }
 }

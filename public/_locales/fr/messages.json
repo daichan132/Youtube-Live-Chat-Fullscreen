@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Avec cette extension, vous pouvez afficher le panneau de chat et poster des commentaires tout en gardant YouTube Live en mode plein écran."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

@@ -20,6 +20,12 @@
         "donate": "डोनेट करें",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "भाषा सेटिंग्स",
     "showChatOnFullscreen": "फुलस्क्रीन चैट",
     "links": "लिंक",
-    "donate": "डोनेट करें"
+    "donate": "डोनेट करें",
+    "theme": "テーマ"
   }
 }

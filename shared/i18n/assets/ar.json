@@ -20,6 +20,12 @@
         "donate": "تبرع",
         "chrome": "كروم",
         "firefox": "فايرفوكس"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "إعدادات اللغة",
     "showChatOnFullscreen": "دردشة وضع ملء الشاشة",
     "links": "روابط",
-    "donate": "تبرع"
+    "donate": "تبرع",
+    "theme": "テーマ"
   }
 }

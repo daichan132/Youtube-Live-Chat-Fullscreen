@@ -20,6 +20,12 @@
         "donate": "Wesprzyj",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Ustawienia języka",
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Linki",
-    "donate": "Wesprzyj"
+    "donate": "Wesprzyj",
+    "theme": "テーマ"
   }
 }

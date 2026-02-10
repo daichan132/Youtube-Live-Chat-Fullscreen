@@ -1,15 +1,18 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import { Draggable } from '@/entrypoints/content/features/Draggable/components/Draggable'
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+import type { ThemeMode } from '@/shared/theme'
 
 type DraggableStoryProps = {
   width: number
   height: number
+  themeMode: ThemeMode
 }
 
-const DraggablePreview = ({ width, height }: DraggableStoryProps) => {
+const DraggablePreview = ({ width, height, themeMode }: DraggableStoryProps) => {
   useEffect(() => {
+    useGlobalSettingStore.setState({ themeMode })
     useYTDLiveChatStore.setState({
       coordinates: { x: 40, y: 40 },
       size: { width, height },
@@ -22,12 +25,12 @@ const DraggablePreview = ({ width, height }: DraggableStoryProps) => {
       isClipPath: false,
       clip: { header: 0, input: 0 },
     })
-  }, [width, height])
+  }, [height, themeMode, width])
 
   return (
-    <div className='relative w-[960px] h-[540px] bg-[#0f0f0f] rounded-lg overflow-hidden'>
+    <div className='relative w-[960px] h-[540px] ylc-theme-surface-muted rounded-lg overflow-hidden'>
       <Draggable>
-        <div className='w-full h-full rounded-lg bg-gradient-to-br from-white/85 to-white/60 border border-white/50 p-6 text-black'>
+        <div className='w-full h-full rounded-lg border ylc-theme-border p-6 ylc-theme-text-primary' style={{ background: 'var(--ylc-overlay-panel)' }}>
           <h3 className='m-0 text-[18px]'>Overlay Preview</h3>
           <p className='mt-2 text-[14px]'>Drag with the handle on the top-right. Resize from window edges.</p>
         </div>
@@ -43,6 +46,7 @@ const meta = {
   args: {
     width: 400,
     height: 260,
+    themeMode: 'system',
   },
   argTypes: {
     width: {
@@ -50,6 +54,10 @@ const meta = {
     },
     height: {
       control: { type: 'range', min: 220, max: 420, step: 10 },
+    },
+    themeMode: {
+      control: 'radio',
+      options: ['system', 'light', 'dark'],
     },
   },
   parameters: {

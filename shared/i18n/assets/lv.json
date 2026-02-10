@@ -20,6 +20,12 @@
         "donate": "Ziedot",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Valodas iestatījumi",
     "showChatOnFullscreen": "Čats pilnekrānā",
     "links": "Saites",
-    "donate": "Ziedot"
+    "donate": "Ziedot",
+    "theme": "テーマ"
   }
 }

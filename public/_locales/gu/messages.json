@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "આએક્સ્ટેન્શન દ્વારા, તમે YouTube લાઈવ ફૂલ સ્ક્રીન મોડમાં રાખીને ચેટ પેનલ જોઈ શકો છો અને ટિપ્પણીઓ પણ પોસ્ટ કરી શકો છો."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

@@ -48,9 +48,9 @@ describe('SettingContent', () => {
 
     const alwaysOnLabel = getByText('content.setting.alwaysOnDisplay')
     const alwaysOnRow = alwaysOnLabel.parentElement?.parentElement as HTMLElement
-    const alwaysOnCheckbox = alwaysOnRow.querySelector('input[type="checkbox"]') as HTMLInputElement
+    const alwaysOnSwitch = alwaysOnRow.querySelector('[role="switch"]') as HTMLButtonElement
 
-    fireEvent.click(alwaysOnCheckbox)
+    fireEvent.click(alwaysOnSwitch)
 
     const updatedChatOnlyRow = getByText('content.setting.chatOnlyDisplay').parentElement?.parentElement as HTMLElement
     expect(useYTDLiveChatStore.getState().alwaysOnDisplay).toBe(true)

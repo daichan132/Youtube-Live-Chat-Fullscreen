@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Kwa kutumia kiendelezi hiki, unaweza kuonyesha paneli ya gumzo na kutuma maoni huku ukiendelea kutazama YouTube Mubashara katika hali ya skrini nzima."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

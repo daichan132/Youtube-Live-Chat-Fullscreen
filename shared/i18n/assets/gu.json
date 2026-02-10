@@ -20,6 +20,12 @@
         "donate": "દાન કરો",
         "chrome": "ક્રોમ",
         "firefox": "ફાયરફોક્સ"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "ભાષા સેટિંગ્સ",
     "showChatOnFullscreen": "પૂર્ણ સ્ક્રીન ચેટ",
     "links": "લિંક્સ",
-    "donate": "દાન કરો"
+    "donate": "દાન કરો",
+    "theme": "テーマ"
   }
 }

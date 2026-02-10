@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Dengan ekstensi ini, Anda dapat menampilkan panel chat dan mengirim komentar sambil tetap menonton YouTube Live dalam mode layar penuh."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

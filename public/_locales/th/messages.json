@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "ด้วยส่วนขยายนี้ คุณสามารถแสดงแผงแชทและโพสต์ความคิดเห็นได้โดยที่ YouTube Live ยังคงอยู่ในโหมดเต็มหน้าจอ"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Com esta extensão, você pode exibir o painel de chat e enviar comentários enquanto assiste ao YouTube Live em modo de tela cheia."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

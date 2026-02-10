@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "With this extension, you can display the chat panel and post comments while keeping YouTube Live in full-screen mode."
+  },
+  "popup.theme": {
+    "message": "Theme"
+  },
+  "content.setting.theme": {
+    "message": "Theme"
+  },
+  "content.setting.themeMode.system": {
+    "message": "Auto"
+  },
+  "content.setting.themeMode.light": {
+    "message": "Light"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "Dark"
   }
 }

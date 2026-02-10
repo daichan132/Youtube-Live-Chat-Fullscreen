@@ -20,6 +20,12 @@
         "donate": "Derma",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Tetapan Bahasa",
     "showChatOnFullscreen": "Sembang Skrin Penuh",
     "links": "Pautan",
-    "donate": "Derma"
+    "donate": "Derma",
+    "theme": "テーマ"
   }
 }

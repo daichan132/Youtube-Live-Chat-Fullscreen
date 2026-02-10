@@ -20,6 +20,12 @@
         "donate": "Faire un don",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Paramètres de langue",
     "showChatOnFullscreen": "Chat en plein écran",
     "links": "Liens",
-    "donate": "Faire un don"
+    "donate": "Faire un don",
+    "theme": "テーマ"
   }
 }

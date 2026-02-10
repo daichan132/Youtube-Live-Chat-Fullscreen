@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "با استفاده از این افزونه می‌توانید پنل چت را هنگام پخش زنده یوتیوب به صورت تمام‌صفحه نمایش دهید و نظر ثبت کنید."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

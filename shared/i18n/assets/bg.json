@@ -20,6 +20,12 @@
         "donate": "Дарение",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Езикови настройки",
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
-    "donate": "Дарение"
+    "donate": "Дарение",
+    "theme": "テーマ"
   }
 }

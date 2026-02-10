@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "הרחבה זו מאפשרת להציג את חלונית הצ'אט ולשלוח תגובות תוך כדי צפייה בשידור חי של YouTube במצב מסך מלא."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

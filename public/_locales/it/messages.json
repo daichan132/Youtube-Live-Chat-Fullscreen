@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Con questa estensione puoi visualizzare il pannello della chat e inviare commenti mentre guardi YouTube Live a schermo intero."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

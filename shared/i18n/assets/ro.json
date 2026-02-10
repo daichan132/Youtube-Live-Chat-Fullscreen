@@ -20,6 +20,12 @@
         "donate": "Donează",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Setări limbă",
     "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
-    "donate": "Donează"
+    "donate": "Donează",
+    "theme": "テーマ"
   }
 }

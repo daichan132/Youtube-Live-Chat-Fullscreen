@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "使用此擴充功能，您可以在保持 YouTube 直播全螢幕的同時顯示聊天面板並發送留言。"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

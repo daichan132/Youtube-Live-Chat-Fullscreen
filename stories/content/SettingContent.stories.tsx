@@ -1,14 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import { SettingContent } from '@/entrypoints/content/features/YTDLiveChatSetting/components/SettingContent'
-import { useYTDLiveChatStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatStore } from '@/shared/stores'
+import type { ThemeMode } from '@/shared/theme'
 
 type SettingContentStoryProps = {
   alwaysOnDisplay: boolean
+  themeMode: ThemeMode
 }
 
-const SettingContentPreview = ({ alwaysOnDisplay }: SettingContentStoryProps) => {
+const SettingContentPreview = ({ alwaysOnDisplay, themeMode }: SettingContentStoryProps) => {
   useEffect(() => {
+    useGlobalSettingStore.setState({ themeMode })
     useYTDLiveChatStore.setState({
       alwaysOnDisplay,
       chatOnlyDisplay: false,
@@ -16,10 +19,11 @@ const SettingContentPreview = ({ alwaysOnDisplay }: SettingContentStoryProps) =>
       userIconDisplay: true,
       superChatBarDisplay: true,
     })
-  }, [alwaysOnDisplay])
+  }, [alwaysOnDisplay, themeMode])
 
   return (
-    <div className='w-[480px] h-[560px] bg-gray-100 p-3 overflow-y-auto rounded-lg'>
+    <div className='w-[480px] max-w-full box-border h-[560px] ylc-theme-surface-muted p-3 overflow-y-auto rounded-lg'>
+      <p className='text-xs ylc-theme-text-muted mt-0 mb-3 px-1'>Action area is standardized with responsive width behavior.</p>
       <SettingContent />
     </div>
   )
@@ -31,10 +35,15 @@ const meta = {
   tags: ['autodocs'],
   args: {
     alwaysOnDisplay: true,
+    themeMode: 'system',
   },
   argTypes: {
     alwaysOnDisplay: {
       control: 'boolean',
+    },
+    themeMode: {
+      control: 'radio',
+      options: ['system', 'light', 'dark'],
     },
   },
 } satisfies Meta<typeof SettingContentPreview>

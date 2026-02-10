@@ -6,19 +6,33 @@ interface PopupItemRowProps {
   title: string
   data: React.ReactNode
   isLast: boolean
+  actionWidth?: 'default' | 'wide'
 }
 
-export const PopupItemRow = ({ icon: Icon, title, data, isLast }: PopupItemRowProps) => {
+export const PopupItemRow = ({ icon: Icon, title, data, isLast, actionWidth = 'default' }: PopupItemRowProps) => {
+  const actionSlotClass =
+    actionWidth === 'wide' ? 'ylc-action-slot ylc-action-slot-popup ylc-action-slot-wide' : 'ylc-action-slot ylc-action-slot-popup'
+
   return (
     <>
-      <div className='flex justify-between items-center gap-3 px-3 py-1 opacity-100 transition-all duration-200'>
-        <div className={Icon ? 'flex items-center text-sm min-w-0 flex-1' : 'text-sm min-w-0 flex-1'}>
-          {Icon ? <Icon size={16} className='mr-3 outline outline-1 outline-gray-300 text-gray-800 p-2 rounded bg-white shrink-0' /> : null}
+      <div className='flex flex-wrap justify-between items-center gap-3 px-3 py-2 opacity-100 transition-all duration-200'>
+        <div
+          className={
+            Icon ? 'flex items-center text-sm min-w-0 flex-1 ylc-theme-text-primary' : 'text-sm min-w-0 flex-1 ylc-theme-text-primary'
+          }
+        >
+          {Icon ? (
+            <span className='mr-3 ylc-theme-icon-badge'>
+              <Icon size={18} />
+            </span>
+          ) : null}
           <div className='min-w-0 break-words leading-5'>{title}</div>
         </div>
-        <div className='shrink-0'>{data}</div>
+        <div className={actionSlotClass}>
+          <div className='ylc-action-inner'>{data}</div>
+        </div>
       </div>
-      {isLast ? null : <hr className='border-none h-px bg-gray-300 mx-3' />}
+      {isLast ? null : <hr className='border-none ylc-theme-divider' />}
     </>
   )
 }

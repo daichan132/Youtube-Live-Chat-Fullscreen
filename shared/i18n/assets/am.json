@@ -20,6 +20,12 @@
         "donate": "ድጋፍ ይስጡ",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "የቋንቋ ቅንጅቶች",
     "showChatOnFullscreen": "በሙሉ ስክሪን ቻት",
     "links": "አገናኞች",
-    "donate": "ድጋፍ ይስጡ"
+    "donate": "ድጋፍ ይስጡ",
+    "theme": "テーマ"
   }
 }

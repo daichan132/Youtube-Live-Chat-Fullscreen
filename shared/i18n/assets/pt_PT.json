@@ -20,6 +20,12 @@
         "donate": "Doar",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Configurações de Idioma",
     "showChatOnFullscreen": "Chat em Tela Cheia",
     "links": "Links",
-    "donate": "Doar"
+    "donate": "Doar",
+    "theme": "テーマ"
   }
 }

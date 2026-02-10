@@ -1,10 +1,19 @@
 import type { TFunction } from 'i18next'
 import type { ReactNode } from 'react'
 import type { IconType } from 'react-icons'
-import { FaRegUserCircle } from 'react-icons/fa'
-import { IoChatbubbleEllipsesOutline, IoColorFillOutline, IoTimerOutline } from 'react-icons/io5'
-import { MdBlurOn, MdExpand } from 'react-icons/md'
-import { RiFontColor, RiFontFamily, RiFontSize2, RiUserLine } from 'react-icons/ri'
+import {
+  TbBlur,
+  TbClock,
+  TbCrown,
+  TbMessageCircle,
+  TbPaint,
+  TbPalette,
+  TbSpacingHorizontal,
+  TbTextSize,
+  TbTypography,
+  TbUser,
+  TbUserCircle,
+} from 'react-icons/tb'
 import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 
 export const BASE_SETTING_ITEM_KEYS = [
@@ -29,18 +38,20 @@ export type SettingItemKey =
   | (typeof SETTING_ITEM_KEYS)[number]
   | (typeof PRESET_ITEM_KEYS)[number]
 
-const settingItemDefinitions: Record<SettingItemKey, { icon: IconType; titleKey: string }> = {
-  alwaysOnDisplay: { icon: IoTimerOutline, titleKey: 'content.setting.alwaysOnDisplay' },
-  chatOnlyDisplay: { icon: IoChatbubbleEllipsesOutline, titleKey: 'content.setting.chatOnlyDisplay' },
-  backgroundColor: { icon: IoColorFillOutline, titleKey: 'content.setting.backgroundColor' },
-  fontColor: { icon: RiFontColor, titleKey: 'content.setting.fontColor' },
-  fontFamily: { icon: RiFontFamily, titleKey: 'content.setting.fontFamily' },
-  fontSize: { icon: RiFontSize2, titleKey: 'content.setting.fontSize' },
-  blur: { icon: MdBlurOn, titleKey: 'content.setting.blur' },
-  space: { icon: MdExpand, titleKey: 'content.setting.space' },
-  userNameDisplay: { icon: RiUserLine, titleKey: 'content.setting.userNameDisplay' },
-  userIconDisplay: { icon: FaRegUserCircle, titleKey: 'content.setting.userIconDisplay' },
-  superChatBarDisplay: { icon: IoChatbubbleEllipsesOutline, titleKey: 'content.setting.superChatBarDisplay' },
+type SettingItemDefinition = { icon: IconType; titleKey: string; actionWidth?: SettingItemType['actionWidth'] }
+
+const settingItemDefinitions: Record<SettingItemKey, SettingItemDefinition> = {
+  alwaysOnDisplay: { icon: TbClock, titleKey: 'content.setting.alwaysOnDisplay' },
+  chatOnlyDisplay: { icon: TbMessageCircle, titleKey: 'content.setting.chatOnlyDisplay' },
+  backgroundColor: { icon: TbPaint, titleKey: 'content.setting.backgroundColor' },
+  fontColor: { icon: TbPalette, titleKey: 'content.setting.fontColor' },
+  fontFamily: { icon: TbTypography, titleKey: 'content.setting.fontFamily' },
+  fontSize: { icon: TbTextSize, titleKey: 'content.setting.fontSize' },
+  blur: { icon: TbBlur, titleKey: 'content.setting.blur' },
+  space: { icon: TbSpacingHorizontal, titleKey: 'content.setting.space' },
+  userNameDisplay: { icon: TbUser, titleKey: 'content.setting.userNameDisplay' },
+  userIconDisplay: { icon: TbUserCircle, titleKey: 'content.setting.userIconDisplay' },
+  superChatBarDisplay: { icon: TbCrown, titleKey: 'content.setting.superChatBarDisplay' },
 }
 
 export const buildSettingItems = <Key extends SettingItemKey>({
@@ -55,12 +66,13 @@ export const buildSettingItems = <Key extends SettingItemKey>({
   disableByKey?: Partial<Record<Key, boolean>>
 }): SettingItemType[] => {
   return keys.map(key => {
-    const { icon, titleKey } = settingItemDefinitions[key]
+    const { icon, titleKey, actionWidth } = settingItemDefinitions[key]
     return {
       icon,
       title: t(titleKey),
       data: dataByKey[key],
       disable: disableByKey?.[key],
+      actionWidth,
     }
   })
 }

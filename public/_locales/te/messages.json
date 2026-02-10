@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "ఈ ఎక్స్‌టెన్షన్‌ను ఉపయోగించి, మీరు YouTube లైవ్‌ను పూర్తి స్క్రీన్ మోడ్‌లో ఉంచిన సమయంలో చాట్ ప్యానల్‌ను ప్రదర్శించి, కామెంట్లు పోస్ట్ చేయవచ్చు."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

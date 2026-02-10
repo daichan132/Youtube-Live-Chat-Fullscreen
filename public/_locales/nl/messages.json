@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "Met deze extensie kun je het chatpaneel weergeven en reacties plaatsen terwijl je YouTube Live in volledig scherm bekijkt."
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }

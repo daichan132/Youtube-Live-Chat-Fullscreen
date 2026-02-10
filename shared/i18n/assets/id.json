@@ -20,6 +20,12 @@
         "donate": "Donasi",
         "chrome": "Chrome",
         "firefox": "Firefox"
+      },
+      "theme": "テーマ",
+      "themeMode": {
+        "system": "自動",
+        "light": "ライト",
+        "dark": "ダーク"
       }
     },
     "preset": {
@@ -37,6 +43,7 @@
     "language": "Pengaturan Bahasa",
     "showChatOnFullscreen": "Chat Layar Penuh",
     "links": "Tautan",
-    "donate": "Donasi"
+    "donate": "Donasi",
+    "theme": "テーマ"
   }
 }

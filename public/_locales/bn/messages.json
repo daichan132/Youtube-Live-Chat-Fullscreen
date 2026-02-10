@@ -4,5 +4,20 @@
   },
   "extensionDescription": {
     "message": "এই এক্সটেনশনের মাধ্যমে, আপনি ইউটিউব লাইভ ফুলস্ক্রিন মোডে রেখেও চ্যাট প্যানেল দেখতে এবং মন্তব্য করতে পারবেন।"
+  },
+  "popup.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.theme": {
+    "message": "テーマ"
+  },
+  "content.setting.themeMode.system": {
+    "message": "自動"
+  },
+  "content.setting.themeMode.light": {
+    "message": "ライト"
+  },
+  "content.setting.themeMode.dark": {
+    "message": "ダーク"
   }
 }
