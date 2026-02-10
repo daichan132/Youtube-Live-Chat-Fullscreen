@@ -120,7 +120,6 @@ yarn build:firefox
 歡迎提出想法、回報問題或送出 Pull Request。
 
 - 建議先開 issue 說明需求或問題。
-- 若修改全螢幕聊天來源邏輯，請先閱讀 `docs/architecture/live-archive-boundary.md`。
 
 ## 支持
 若這個擴充功能對你有幫助，歡迎給專案一個 Star。

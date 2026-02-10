@@ -121,7 +121,6 @@ This extension uses a content script to control fullscreen chat behavior on YouT
 ## Contributing
 Contributions are welcome. If you have ideas, bugs, or improvements:
 - Open an issue or submit a pull request.
-- For fullscreen chat source behavior changes, check `docs/architecture/live-archive-boundary.md` first.
 
 ## Support
 If this extension improves your YouTube workflow, starring this repo helps a lot.

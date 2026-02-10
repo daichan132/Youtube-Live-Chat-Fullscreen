@@ -76,7 +76,6 @@
 - E2E方針:
   - 固定URL設定は `e2e/config/testTargets.ts` を正とする（`YLC_*` は上書き用途）。
   - `yarn e2e`: 開発向け。外部前提不足の `skip` は許容。
-  - `yarn e2e:ci`: 必須specが `skip` の場合は失敗。
   - `skip`: 外部前提不足（URL drift 等）
   - `fail`: 前提成立後の拡張不具合
   - ランダム sleep での安定化は禁止

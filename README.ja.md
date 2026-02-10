@@ -122,7 +122,6 @@ yarn build:firefox
 アイデア、バグ報告、改善提案を歓迎します。
 
 - Issue / Pull Request を作成してください。
-- フルスクリーンチャットのソース判定を変更する場合は、まず `docs/architecture/live-archive-boundary.md` を確認してください。
 
 ## サポート
 この拡張が役に立ったら、GitHub Star が継続開発の後押しになります。
