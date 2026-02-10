@@ -855,6 +855,176 @@
   outline-offset: 2px;
 }
 
+.ylc-font-combobox {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.ylc-font-combobox-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  height: 36px;
+  padding: 0 12px;
+  border: var(--ylc-border-width) solid var(--ylc-border);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 90%, var(--ylc-bg-surface) 10%);
+  color: var(--ylc-text-primary);
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.ylc-font-combobox-trigger::after {
+  content: "";
+  width: 7px;
+  height: 7px;
+  margin-left: 10px;
+  border-right: var(--ylc-border-width) solid color-mix(in srgb, var(--ylc-text-secondary) 88%, transparent);
+  border-bottom: var(--ylc-border-width) solid color-mix(in srgb, var(--ylc-text-secondary) 88%, transparent);
+  transform: translateY(-1px) rotate(45deg);
+  flex-shrink: 0;
+  transition: border-color 160ms ease;
+}
+
+.ylc-font-combobox-trigger:hover {
+  border-color: color-mix(in srgb, var(--ylc-accent) 18%, var(--ylc-border));
+  background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 84%, var(--ylc-hover-surface) 16%);
+}
+
+.ylc-font-combobox-trigger:hover::after {
+  border-color: color-mix(in srgb, var(--ylc-text-primary) 72%, transparent);
+}
+
+.ylc-font-combobox-trigger:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+}
+
+.ylc-font-combobox-trigger:disabled,
+.ylc-font-combobox-trigger-readonly {
+  cursor: default;
+  opacity: 0.82;
+}
+
+.ylc-font-combobox-trigger-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.ylc-font-combobox-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 4;
+  width: 100%;
+  min-width: 0;
+  border: var(--ylc-border-width) solid var(--ylc-border);
+  border-radius: 12px;
+  background: var(--ylc-bg-surface);
+  background-color: var(--ylc-bg-surface);
+  box-sizing: border-box;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ylc-font-combobox-search {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: var(--ylc-border-width) solid var(--ylc-border);
+  border-radius: 8px;
+  background: var(--ylc-bg-surface-elevated);
+  color: var(--ylc-text-primary);
+  font-size: 13px;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.ylc-font-combobox-search::placeholder {
+  color: var(--ylc-text-muted);
+}
+
+.ylc-font-combobox-search:hover {
+  border-color: color-mix(in srgb, var(--ylc-accent) 18%, var(--ylc-border));
+}
+
+.ylc-font-combobox-search:focus-visible {
+  border-color: color-mix(in srgb, var(--ylc-accent) 24%, var(--ylc-border));
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 1px;
+}
+
+.ylc-font-combobox-options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.ylc-font-combobox-option {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ylc-text-primary);
+  padding: 6px 9px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 140ms ease,
+    color 140ms ease;
+}
+
+.ylc-font-combobox-option:hover,
+.ylc-font-combobox-option-active {
+  background: color-mix(in srgb, var(--ylc-hover-surface) 76%, transparent);
+}
+
+.ylc-font-combobox-option-selected {
+  background: color-mix(in srgb, var(--ylc-accent) 16%, var(--ylc-hover-surface) 84%);
+  color: var(--ylc-text-primary);
+}
+
+.ylc-font-combobox-option-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 8px;
+}
+
+.ylc-font-combobox-empty {
+  font-size: 12px;
+  line-height: 1.3;
+  padding: 7px 10px;
+}
+
 .ylc-theme-segment {
   display: inline-flex;
   border: var(--ylc-border-width) solid var(--ylc-border);

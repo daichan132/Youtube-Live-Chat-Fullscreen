@@ -34,7 +34,10 @@ test('settings update live chat font family', async ({ page }) => {
 
   await page.locator('#movie_player').hover()
   const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
+  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
+    () => true,
+    () => false,
+  )
   if (!switchReady) {
     test.skip(true, 'Fullscreen chat switch button did not appear.')
     return
@@ -58,7 +61,10 @@ test('settings update live chat font family', async ({ page }) => {
   }
 
   const settingsIcon = page.locator('#shadow-root-live-chat div.cursor-pointer svg').first()
-  const settingsReady = await settingsIcon.waitFor({ state: 'visible', timeout: 5000 }).then(() => true, () => false)
+  const settingsReady = await settingsIcon.waitFor({ state: 'visible', timeout: 5000 }).then(
+    () => true,
+    () => false,
+  )
   if (!settingsReady) {
     test.skip(true, 'Settings icon did not appear.')
     return
@@ -72,7 +78,10 @@ test('settings update live chat font family', async ({ page }) => {
   })
 
   const modalContent = page.locator('#shadow-root-live-chat-modal-root [role="dialog"]')
-  const modalReady = await modalContent.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
+  const modalReady = await modalContent.waitFor({ state: 'visible', timeout: 10000 }).then(
+    () => true,
+    () => false,
+  )
   if (!modalReady) {
     test.skip(true, 'Settings modal did not open.')
     return
@@ -86,20 +95,38 @@ test('settings update live chat font family', async ({ page }) => {
   }
   await tabButtons.nth(1).click()
 
-  const fontInput = modalContent.locator('input[type="text"]').first()
-  const inputReady = await fontInput.waitFor({ state: 'visible', timeout: 5000 }).then(() => true, () => false)
-  if (!inputReady) {
-    test.skip(true, 'Font family input did not appear.')
+  const fontTrigger = modalContent.locator('[data-ylc-font-combobox-trigger="true"]').first()
+  const triggerReady = await fontTrigger.waitFor({ state: 'visible', timeout: 5000 }).then(
+    () => true,
+    () => false,
+  )
+  if (!triggerReady) {
+    test.skip(true, 'Font family combobox trigger did not appear.')
+    return
+  }
+  await fontTrigger.click({ force: true })
+
+  const desiredFont = 'Roboto Slab'
+  const fontSearchInput = modalContent.locator('[data-ylc-font-combobox-search="true"]').first()
+  const searchReady = await fontSearchInput.waitFor({ state: 'visible', timeout: 5000 }).then(
+    () => true,
+    () => false,
+  )
+  if (!searchReady) {
+    test.skip(true, 'Font family combobox search input did not appear.')
     return
   }
 
-  const desiredFont = 'Roboto Slab'
-  await fontInput.fill(desiredFont)
+  await fontSearchInput.fill(desiredFont)
+  await fontSearchInput.press('Enter')
 
   await expect
-    .poll(async () => {
-      const value = await page.evaluate(getOverlayFontFamily)
-      return value ?? ''
-    }, { timeout: 15000 })
+    .poll(
+      async () => {
+        const value = await page.evaluate(getOverlayFontFamily)
+        return value ?? ''
+      },
+      { timeout: 15000 },
+    )
     .toContain(desiredFont)
 })

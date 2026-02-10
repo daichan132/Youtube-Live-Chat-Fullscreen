@@ -2,22 +2,36 @@ import { useCallback } from 'react'
 
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
+const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
+const FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
+
+const toGoogleFontFamilyParam = (fontFamily: string) => encodeURIComponent(fontFamily.trim()).replace(/%20/g, '+')
+const toQuotedFontFamily = (fontFamily: string) => `"${fontFamily.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
+
 export const useYLCFontFamilyChange = () => {
   const { getIframeWindow, setProperty } = useYLCStylePropertyChange()
+
+  const removeImportedFont = useCallback(() => {
+    const contentWindow = getIframeWindow()
+    if (!contentWindow) return
+
+    const existingStyleElement = contentWindow.document.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
+    existingStyleElement?.remove()
+  }, [getIframeWindow])
 
   const importFont = useCallback(
     (fontFamily: string) => {
       const contentWindow = getIframeWindow()
       if (!contentWindow) return
 
-      const fontUrl = `@import url('https://fonts.googleapis.com/css2?family=${fontFamily.replace(/\s+/g, '+')}:wght@400;500&display=swap');`
-      const existingStyleElement = contentWindow.document.head.querySelector('#custom-font-style')
+      const fontUrl = `@import url('https://fonts.googleapis.com/css2?family=${toGoogleFontFamilyParam(fontFamily)}&display=swap');`
+      const existingStyleElement = contentWindow.document.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
 
       if (existingStyleElement) {
         existingStyleElement.textContent = fontUrl
       } else {
-        const styleElement = document.createElement('style')
-        styleElement.id = 'custom-font-style'
+        const styleElement = contentWindow.document.createElement('style')
+        styleElement.id = CUSTOM_FONT_STYLE_ID
         styleElement.textContent = fontUrl
         contentWindow.document.head.appendChild(styleElement)
       }
@@ -27,17 +41,29 @@ export const useYLCFontFamilyChange = () => {
 
   const changeIframeFontFamily = useCallback(
     (fontFamily: string) => {
-      setProperty('font-family', `${fontFamily}, Roboto, Arial, sans-serif`)
+      const normalizedFontFamily = fontFamily.trim()
+      if (!normalizedFontFamily) {
+        setProperty('font-family', FALLBACK_FONT_FAMILY)
+        return
+      }
+      setProperty('font-family', `${toQuotedFontFamily(normalizedFontFamily)}, ${FALLBACK_FONT_FAMILY}`)
     },
     [setProperty],
   )
 
   const changeFontFamily = useCallback(
     (fontFamily: string) => {
-      importFont(fontFamily)
-      changeIframeFontFamily(fontFamily)
+      const normalizedFontFamily = fontFamily.trim()
+      if (!normalizedFontFamily) {
+        removeImportedFont()
+        changeIframeFontFamily('')
+        return
+      }
+
+      importFont(normalizedFontFamily)
+      changeIframeFontFamily(normalizedFontFamily)
     },
-    [importFont, changeIframeFontFamily],
+    [changeIframeFontFamily, importFont, removeImportedFont],
   )
 
   return { changeFontFamily }
