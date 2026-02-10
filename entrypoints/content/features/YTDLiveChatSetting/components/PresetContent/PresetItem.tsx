@@ -81,29 +81,32 @@ export const PresetItem = ({ id }: PresetItemType) => {
       {isDeleteModalOpen && (
         <ModalSafeForReact19
           isOpen={isDeleteModalOpen}
-          className='fixed top-[15%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-4/5 max-w-[320px] ylc-theme-surface p-6 rounded-[12px] ylc-theme-shadow-md outline-none text-center border ylc-theme-border'
+          className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           onRequestClose={() => setIsDeleteModalOpen(false)}
-          overlayClassName='fixed top-0 left-0 w-full h-full bg-black/50 z-[1000001]'
+          overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35 z-[1000001]'
           appElement={document.body}
           parentSelector={getModalParentElement}
         >
-          <div className='mb-4 text-[1.5rem] font-bold ylc-theme-text-primary'>
-            <p>{t('content.preset.deleteConfirmationMessage')}</p>
+          <div className='px-5 py-4 ylc-theme-dialog-divider-bottom'>
+            <h3 className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>{t('content.preset.delete')}</h3>
           </div>
-          <div className='flex justify-around mt-6 space-x-4'>
-            <button
-              type='button'
-              onClick={() => deletePresetItem(id)}
-              className='w-[150px] ylc-theme-danger rounded-[10px] p-3 cursor-pointer font-bold transition-colors ylc-theme-focus-ring-soft'
-            >
-              {t('content.preset.delete')}
-            </button>
+          <div className='px-5 py-4'>
+            <p className='m-0 text-sm leading-6 ylc-theme-text-secondary'>{t('content.preset.deleteConfirmationMessage')}</p>
+          </div>
+          <div className='px-5 py-3 flex justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
-              className='w-[150px] ylc-theme-surface border ylc-theme-border rounded-[10px] p-3 cursor-pointer transition-colors ylc-theme-focus-ring-soft hover:bg-[var(--ylc-bg-surface-elevated)]'
+              className='h-9 px-3 rounded-md text-sm leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
             >
               {t('content.preset.cancel')}
+            </button>
+            <button
+              type='button'
+              onClick={() => deletePresetItem(id)}
+              className='h-9 px-4 rounded-md text-sm leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90'
+            >
+              {t('content.preset.delete')}
             </button>
           </div>
         </ModalSafeForReact19>

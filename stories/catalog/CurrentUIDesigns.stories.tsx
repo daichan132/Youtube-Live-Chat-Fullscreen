@@ -96,6 +96,38 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
   )
 }
 
+const PresetDeleteConfirmModalPreview = () => {
+  const { t } = useTranslation()
+
+  return (
+    <div className='relative w-[480px] max-w-full h-[300px] rounded-xl overflow-hidden ylc-theme-surface-muted border border-solid ylc-theme-border'>
+      <div className='absolute inset-0 bg-black/35' />
+      <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'>
+        <div className='px-5 py-4 ylc-theme-dialog-divider-bottom'>
+          <h3 className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>{t('content.preset.delete')}</h3>
+        </div>
+        <div className='px-5 py-4'>
+          <p className='m-0 text-sm leading-6 ylc-theme-text-secondary'>{t('content.preset.deleteConfirmationMessage')}</p>
+        </div>
+        <div className='px-5 py-3 flex justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
+          <button
+            type='button'
+            className='h-9 px-3 rounded-md text-sm leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
+          >
+            {t('content.preset.cancel')}
+          </button>
+          <button
+            type='button'
+            className='h-9 px-4 rounded-md text-sm leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90'
+          >
+            {t('content.preset.delete')}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const CurrentUIDesignsPreview = ({ ytdLiveChatEnabled, themeMode }: CurrentUIDesignsStoryProps) => {
   useEffect(() => {
     useGlobalSettingStore.setState({ ytdLiveChat: ytdLiveChatEnabled, themeMode })
@@ -169,6 +201,15 @@ const CurrentUIDesignsPreview = ({ ytdLiveChatEnabled, themeMode }: CurrentUIDes
             <SettingPanelFrame tab='preset'>
               <PresetContent />
             </SettingPanelFrame>
+          </div>
+        </section>
+      </div>
+      <div className='mt-6'>
+        <section className='ylc-theme-surface p-4 rounded-xl border border-solid ylc-theme-border'>
+          <h3 className='text-[16px] mt-0 mb-3 ylc-theme-text-primary'>Preset Delete Confirmation Modal</h3>
+          <p className='text-xs mt-0 mb-3 ylc-theme-text-muted'>Displayed when deleting a preset item.</p>
+          <div className='flex justify-center'>
+            <PresetDeleteConfirmModalPreview />
           </div>
         </section>
       </div>

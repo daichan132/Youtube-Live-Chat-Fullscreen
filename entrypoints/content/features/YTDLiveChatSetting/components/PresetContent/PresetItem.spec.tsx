@@ -78,7 +78,7 @@ describe('PresetItem', () => {
 
     fireEvent.click(deleteIcon)
 
-    const deleteButton = await findByText('content.preset.delete')
+    const deleteButton = await findByText('content.preset.delete', { selector: 'button' })
     fireEvent.click(deleteButton)
 
     expect(useYTDLiveChatStore.getState().presetItemIds).not.toContain('custom')

@@ -33,11 +33,11 @@ export const AddPresetItem = () => {
     addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
   }, [addPresetItem, t])
   return (
-    <div className='m-3'>
+    <div className='mx-3 my-3.5'>
       <button
         type='button'
         className={classNames(
-          'border border-solid ylc-theme-border p-2.5 rounded-[12px] transition-colors duration-200 flex justify-center items-center cursor-pointer w-full',
+          'border border-solid ylc-theme-border px-2.5 py-3 rounded-[12px] transition-colors duration-200 flex justify-center items-center cursor-pointer w-full',
           addPresetEnabled
             ? 'ylc-theme-surface ylc-theme-text-primary'
             : 'ylc-theme-elevated opacity-[0.35] cursor-not-allowed ylc-theme-text-secondary',

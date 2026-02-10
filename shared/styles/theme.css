@@ -161,6 +161,18 @@
   box-shadow: var(--ylc-shadow-md);
 }
 
+.ylc-theme-dialog-border {
+  border: 1px solid var(--ylc-border);
+}
+
+.ylc-theme-dialog-divider-top {
+  border-top: 1px solid var(--ylc-border);
+}
+
+.ylc-theme-dialog-divider-bottom {
+  border-bottom: 1px solid var(--ylc-border);
+}
+
 .ylc-theme-focus-ring:focus-visible {
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;

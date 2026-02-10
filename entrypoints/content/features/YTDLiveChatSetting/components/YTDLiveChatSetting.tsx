@@ -101,7 +101,10 @@ export const YTDLiveChatSetting = () => {
             />
           </div>
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2 rounded-2xl' style={{ overscrollBehavior: 'contain' }}>
+        <div
+          className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2 rounded-2xl'
+          style={{ overscrollBehavior: 'contain' }}
+        >
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
