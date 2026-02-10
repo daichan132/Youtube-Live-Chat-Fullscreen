@@ -1,73 +1,20 @@
 import { useCallback } from 'react'
-import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+import { type Clip, measureClipFromBody } from './clipGeometry'
 
-interface ClipPathSizeAdjustment {
-  setCoordinates: (coordinates: { x: number; y: number }) => void
-  setSize: (size: { width: number; height: number }) => void
+interface ClipPathManagementProps {
   iframeElement: HTMLIFrameElement | null
-}
-
-interface Clip {
-  header: number
-  input: number
 }
 
 /**
  * Hook that manages clip path functionality for the YouTube chat
- * Handles size and position adjustments when entering/exiting clip path mode
+ * Handles DOM-dependent clip measurement and focus cleanup.
  */
-export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }: ClipPathSizeAdjustment) => {
-  /**
-   * Adjusts the position and size of the container when clip path state changes
-   */
-  const handleClipPathChange = useCallback(
-    (isClipPath: boolean, clipOverride?: Clip) => {
-      const { size, coordinates } = useYTDLiveChatStore.getState()
-      const { clip: currentClip } = useYTDLiveChatNoLsStore.getState()
-      const clip = clipOverride ?? currentClip
-      const topClip = clip.header
-      const bottomClip = clip.input
-
-      if (isClipPath) {
-        // When enabling clip path, move up by header height and increase total height
-        setCoordinates({ x: coordinates.x, y: coordinates.y - topClip })
-        setSize({
-          width: size.width,
-          height: size.height + (topClip + bottomClip),
-        })
-      } else {
-        // When disabling clip path, move down by header height and decrease total height
-        setCoordinates({ x: coordinates.x, y: coordinates.y + topClip })
-        setSize({
-          width: size.width,
-          height: size.height - (topClip + bottomClip),
-        })
-      }
-    },
-    [setCoordinates, setSize],
-  )
-
+export const useClipPathManagement = ({ iframeElement }: ClipPathManagementProps) => {
   /**
    * Gets the current clip dimensions from the iframe content
-   * Note: We only depend on iframeElement, not its internal properties,
-   * since body/activeElement are live references that change frequently
+   * Note: We only depend on iframeElement, not its internal properties.
    */
-  const getClip = useCallback((): Clip => {
-    const body = iframeElement?.contentDocument?.body
-
-    // Calculate header height (subtract 8px for padding/margin adjustments)
-    const header = Math.max(0, (body?.querySelector('yt-live-chat-header-renderer')?.clientHeight || 0) - 8)
-
-    // Calculate input area height (subtract 4px for adjustments)
-    const input = Math.max(
-      0,
-      (body?.querySelector('yt-live-chat-message-input-renderer')?.clientHeight ||
-        body?.querySelector('yt-live-chat-restricted-participation-renderer')?.clientHeight ||
-        0) - 4,
-    )
-
-    return { header, input }
-  }, [iframeElement])
+  const getClip = useCallback((): Clip => measureClipFromBody(iframeElement?.contentDocument?.body), [iframeElement])
 
   /**
    * Removes focus from any active elements in the iframe
@@ -77,7 +24,6 @@ export const useClipPathManagement = ({ setCoordinates, setSize, iframeElement }
   }, [iframeElement])
 
   return {
-    handleClipPathChange,
     getClip,
     removeFocus,
   }

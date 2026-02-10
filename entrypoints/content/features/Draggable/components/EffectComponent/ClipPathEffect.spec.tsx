@@ -229,6 +229,53 @@ describe('ClipPathEffect', () => {
     expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -12 })
   })
 
+  it('keeps clipped geometry stable when clip is re-applied with the same values', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: undefined,
+        iframeElement: iframe,
+        clip: { header: 0, input: 0 },
+      },
+    })
+
+    render(<ClipPathEffect isDragging={false} isResizing={false} />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    const firstClippedLayout = useYTDLiveChatStore.getState()
+    expect(firstClippedLayout.size).toEqual({ width: 300, height: 252 })
+    expect(firstClippedLayout.coordinates).toEqual({ x: 10, y: -12 })
+
+    // Re-run clip application via iframe replacement with the same measurable clip values.
+    const replacementIframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+    act(() => {
+      useYTDLiveChatNoLsStore.getState().setIFrameElement(replacementIframe)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    const secondClippedLayout = useYTDLiveChatStore.getState()
+    expect(secondClippedLayout.size).toEqual({ width: 300, height: 252 })
+    expect(secondClippedLayout.coordinates).toEqual({ x: 10, y: -12 })
+  })
+
   it('reverts first hover geometry with the same clip that was applied on enable', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 

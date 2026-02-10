@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useUnmount, useUpdateEffect } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 import { IFRAME_CLIP_PATH_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+import { deriveClippedLayout, isSameClip, isSameLayoutGeometry, type LayoutGeometry } from '../../hooks/clipGeometry'
 import { useClipPathManagement } from '../../hooks/useClipPathManagement'
 
 interface ClipPathEffectProps {
@@ -10,24 +11,29 @@ interface ClipPathEffectProps {
   isResizing: boolean
 }
 
-interface Clip {
-  header: number
-  input: number
-}
-
-const isSameClip = (a: Clip, b: Clip) => a.header === b.header && a.input === b.input
+const toLayoutGeometry = (coordinates: { x: number; y: number }, size: { width: number; height: number }): LayoutGeometry => ({
+  coordinates: {
+    x: coordinates.x,
+    y: coordinates.y,
+  },
+  size: {
+    width: size.width,
+    height: size.height,
+  },
+})
 
 /**
  * Component that handles clip path effects for the draggable chat window
  * Manages when to show/hide header and input areas based on user interaction
  */
 export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) => {
-  const { alwaysOnDisplay, chatOnlyDisplay, setSize, setCoordinates } = useYTDLiveChatStore(
+  const { alwaysOnDisplay, chatOnlyDisplay, coordinates, size, setGeometry } = useYTDLiveChatStore(
     useShallow(state => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
       alwaysOnDisplay: state.alwaysOnDisplay,
-      setSize: state.setSize,
-      setCoordinates: state.setCoordinates,
+      coordinates: state.coordinates,
+      size: state.size,
+      setGeometry: state.setGeometry,
     })),
   )
 
@@ -45,17 +51,35 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
       })),
     )
 
-  const isClipGeometryAppliedRef = useRef(false)
-  const appliedClipRef = useRef<Clip | null>(null)
+  const baseLayoutRef = useRef<LayoutGeometry>(toLayoutGeometry(coordinates, size))
+  const prevIsClipPathRef = useRef<boolean | undefined>(isClipPath)
   const hasAutoCollapsedOnLoadRef = useRef(false)
   const lastAutoCollapseIframeRef = useRef<HTMLIFrameElement | null>(null)
 
-  // Extract clip path management logic to a custom hook
-  const { handleClipPathChange, getClip, removeFocus } = useClipPathManagement({
-    setCoordinates,
-    setSize,
-    iframeElement,
-  })
+  const { getClip, removeFocus } = useClipPathManagement({ iframeElement })
+
+  const applyGeometry = useCallback(
+    (nextLayout: LayoutGeometry) => {
+      const liveState = useYTDLiveChatStore.getState()
+      const currentLayout = toLayoutGeometry(liveState.coordinates, liveState.size)
+      if (isSameLayoutGeometry(currentLayout, nextLayout)) return
+      setGeometry(nextLayout)
+    },
+    [setGeometry],
+  )
+
+  // Keep the non-clip layout as the source of truth.
+  useEffect(() => {
+    const previousIsClipPath = prevIsClipPathRef.current
+    prevIsClipPathRef.current = isClipPath
+
+    if (isClipPath) return
+    // Skip one frame right after clip-path is disabled so base is not overwritten
+    // with the still-clipped geometry before restoration is applied.
+    if (previousIsClipPath === true) return
+
+    baseLayoutRef.current = toLayoutGeometry(coordinates, size)
+  }, [isClipPath, coordinates, size])
 
   /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
@@ -113,28 +137,25 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
     // Remove focus from any active elements
     removeFocus()
 
-    // Update clip settings and handle coordinate/size changes
+    // Update clip settings and apply layout from the base geometry.
     const newClip = getClip()
-    setClip(newClip)
+    const currentClip = useYTDLiveChatNoLsStore.getState().clip
+    if (!isSameClip(currentClip, newClip)) {
+      setClip(newClip)
+    }
 
-    // Keep clip/height changes paired so visible chat height stays stable.
-    if (isClipPath && !isClipGeometryAppliedRef.current) {
-      handleClipPathChange(true, newClip)
-      appliedClipRef.current = newClip
+    if (isClipPath) {
+      applyGeometry(deriveClippedLayout(baseLayoutRef.current, newClip))
       hasAutoCollapsedOnLoadRef.current = true
-      isClipGeometryAppliedRef.current = true
       return
     }
 
-    if (!isClipPath && isClipGeometryAppliedRef.current) {
-      handleClipPathChange(false, appliedClipRef.current ?? newClip)
-      appliedClipRef.current = null
-      isClipGeometryAppliedRef.current = false
-    }
-  }, [isClipPath, isIframeLoaded, iframeElement])
+    applyGeometry(baseLayoutRef.current)
+  }, [isClipPath, isIframeLoaded, iframeElement, applyGeometry, getClip, removeFocus, setClip])
 
   // Keep clip geometry synchronized while clip mode is enabled.
-  // This covers cases where header/input render late and initial clip is measured as zero.
+  // This covers cases where header/input render late and initial clip is measured as zero,
+  // while keeping geometry idempotent from a stable base layout.
   useEffect(() => {
     const body = iframeElement?.contentDocument?.body
     if (!isClipPath || !isIframeLoaded || !body) return
@@ -144,18 +165,11 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
 
     const syncClipGeometry = () => {
       const latestClip = getClip()
-      setClip(latestClip)
-
-      if (!isClipGeometryAppliedRef.current) {
-        handleClipPathChange(true, latestClip)
-        appliedClipRef.current = latestClip
-        hasAutoCollapsedOnLoadRef.current = true
-        isClipGeometryAppliedRef.current = true
-      } else if (appliedClipRef.current && !isSameClip(appliedClipRef.current, latestClip)) {
-        handleClipPathChange(false, appliedClipRef.current)
-        handleClipPathChange(true, latestClip)
-        appliedClipRef.current = latestClip
+      const currentClip = useYTDLiveChatNoLsStore.getState().clip
+      if (!isSameClip(currentClip, latestClip)) {
+        setClip(latestClip)
       }
+      applyGeometry(deriveClippedLayout(baseLayoutRef.current, latestClip))
 
       retryCount += 1
       const shouldRetry = latestClip.header === 0 && latestClip.input === 0 && retryCount < 20
@@ -168,19 +182,20 @@ export const ClipPathEffect = ({ isDragging, isResizing }: ClipPathEffectProps) 
     return () => {
       if (timer) clearTimeout(timer)
     }
-  }, [isClipPath, isIframeLoaded, iframeElement, getClip, handleClipPathChange, setClip])
+  }, [isClipPath, isIframeLoaded, iframeElement, getClip, setClip, applyGeometry])
 
   // Clean up when component unmounts
   useUnmount(() => {
-    if (isClipGeometryAppliedRef.current) {
-      handleClipPathChange(false, appliedClipRef.current ?? getClip())
-      appliedClipRef.current = null
-      isClipGeometryAppliedRef.current = false
-    }
-
-    if (isClipPath) {
+    const noLsState = useYTDLiveChatNoLsStore.getState()
+    if (noLsState.isClipPath) {
+      const liveState = useYTDLiveChatStore.getState()
+      const currentLayout = toLayoutGeometry(liveState.coordinates, liveState.size)
+      if (!isSameLayoutGeometry(currentLayout, baseLayoutRef.current)) {
+        liveState.setGeometry(baseLayoutRef.current)
+      }
       setIsClipPath(undefined)
     }
+
     setIsHover(false)
   })
 

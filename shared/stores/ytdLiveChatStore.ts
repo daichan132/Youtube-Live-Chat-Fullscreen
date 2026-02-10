@@ -23,6 +23,7 @@ type YTDLiveChatStoreState = {
   setAddPresetEnabled: (addPresetEnabled: boolean) => void
   setSize: (size: sizeType) => void
   setCoordinates: (coordinates: Coordinates) => void
+  setGeometry: (geometry: { coordinates: Coordinates; size: sizeType }) => void
   setDefaultPosition: () => void
 } & YLCStyleType
 
@@ -117,15 +118,22 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           })),
         setPresetItemIds: presetItemIds => set(() => ({ presetItemIds })),
         setAddPresetEnabled: addPresetEnabled => set(() => ({ addPresetEnabled })),
-        setSize: size => {
+        setSize: size =>
           set(() => ({
             size: {
               width: size.width < ResizableMinWidth ? ResizableMinWidth : size.width,
               height: size.height < ResizableMinHeight ? ResizableMinHeight : size.height,
             },
-          }))
-        },
+          })),
         setCoordinates: coordinates => set(() => ({ coordinates })),
+        setGeometry: geometry =>
+          set(() => ({
+            coordinates: geometry.coordinates,
+            size: {
+              width: geometry.size.width < ResizableMinWidth ? ResizableMinWidth : geometry.size.width,
+              height: geometry.size.height < ResizableMinHeight ? ResizableMinHeight : geometry.size.height,
+            },
+          })),
         setDefaultPosition: () =>
           set(() => ({
             size: { width: 400, height: 400 },

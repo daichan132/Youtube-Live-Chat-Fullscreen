@@ -60,6 +60,20 @@ describe('useYTDLiveChatStore', () => {
     expect(updated.coordinates).toEqual({ x: 48, y: 64 })
   })
 
+  it('updates geometry atomically with min-size enforcement', async () => {
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    state.setGeometry({
+      coordinates: { x: 120, y: 160 },
+      size: { width: 20, height: 30 },
+    })
+
+    const updated = useYTDLiveChatStore.getState()
+    expect(updated.coordinates).toEqual({ x: 120, y: 160 })
+    expect(updated.size).toEqual({ width: ResizableMinWidth, height: ResizableMinHeight })
+  })
+
   it('resets position and enables preset updates on style change', async () => {
     const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
     const state = useYTDLiveChatStore.getState()

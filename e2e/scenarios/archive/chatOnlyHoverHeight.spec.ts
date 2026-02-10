@@ -15,6 +15,7 @@ type OverlayClipSnapshot = {
   clipTop: number
   clipBottom: number
   height: number
+  visibleHeight: number
   width: number
 }
 
@@ -36,6 +37,7 @@ const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
       clipTop: 0,
       clipBottom: 0,
       height: 0,
+      visibleHeight: 0,
       width: 0,
     }
   }
@@ -52,6 +54,7 @@ const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
     clipTop,
     clipBottom,
     height: Math.round(box.height * 100) / 100,
+    visibleHeight: Math.round(Math.max(0, box.height - clipTop - clipBottom) * 100) / 100,
     width: Math.round(box.width * 100) / 100,
   }
 }
@@ -124,6 +127,51 @@ const readOverlayHoverProbe = () => {
     __ylcHoverProbe?: HoverProbeState
   }
   return win.__ylcHoverProbe ?? null
+}
+
+const sampleOverlayVisibleHeights = async ({
+  sampleCount,
+  intervalMs,
+  settleMs = 0,
+}: {
+  sampleCount: number
+  intervalMs: number
+  settleMs?: number
+}) => {
+  const readVisibleHeight = () => {
+    const host = document.getElementById('shadow-root-live-chat')
+    const root = host?.shadowRoot ?? null
+    const app = root?.querySelector('div[role="application"]') as HTMLElement | null
+    const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
+    const inner = resizable?.querySelector(':scope > div.relative.h-full.w-full.pointer-events-auto') as HTMLElement | null
+    if (!resizable || !inner) return 0
+
+    const box = resizable.getBoundingClientRect()
+    const clipPath = window.getComputedStyle(inner).clipPath ?? ''
+    const insetMatch = clipPath.match(/inset\(([-\d.]+)px\s+[-\d.]+px\s+([-\d.]+)px/i)
+    const clipTop = insetMatch?.[1] ? Number.parseFloat(insetMatch[1]) : 0
+    const clipBottom = insetMatch?.[2] ? Number.parseFloat(insetMatch[2]) : 0
+    return Math.round(Math.max(0, box.height - clipTop - clipBottom) * 100) / 100
+  }
+
+  const values: number[] = []
+  if (settleMs > 0) {
+    await new Promise(resolve => window.setTimeout(resolve, settleMs))
+  }
+  for (let i = 0; i < sampleCount; i += 1) {
+    values.push(readVisibleHeight())
+    await new Promise(resolve => window.setTimeout(resolve, intervalMs))
+  }
+
+  const min = values.length > 0 ? Math.min(...values) : 0
+  const max = values.length > 0 ? Math.max(...values) : 0
+
+  return {
+    values,
+    min,
+    max,
+    drift: Math.round((max - min) * 100) / 100,
+  }
 }
 
 const movePointerAwayFromOverlay = async (page: import('@playwright/test').Page) => {
@@ -274,15 +322,21 @@ test('chat-only clip enables after load without any overlay hover', async ({ pag
   await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
 
   const snapshot = await page.evaluate(getOverlayClipSnapshot)
+  const visibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+    sampleCount: 6,
+    intervalMs: 180,
+    settleMs: 350,
+  })
   const hoverProbe = await page.evaluate(readOverlayHoverProbe)
 
   await test.info().attach('chat-only-auto-clip-no-hover', {
-    body: JSON.stringify({ snapshot, hoverProbe }, null, 2),
+    body: JSON.stringify({ snapshot, visibleHeightSamples, hoverProbe }, null, 2),
     contentType: 'application/json',
   })
 
   expect(snapshot.exists).toBe(true)
   expect(snapshot.enabled).toBe(true)
+  expect(visibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
   expect(hoverProbe?.enterCount ?? -1).toBe(0)
 })
 
@@ -298,6 +352,9 @@ test('chat-only clip re-enables automatically after first hover without pointer 
   const probeInstalled = await page.evaluate(installOverlayHoverProbe)
   expect(probeInstalled).toBe(true)
 
+  await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+  const baselineSnapshot = await page.evaluate(getOverlayClipSnapshot)
+
   const center = await page.evaluate(getOverlayCenter)
   if (!center) {
     test.skip(true, 'Overlay center could not be resolved.')
@@ -310,14 +367,23 @@ test('chat-only clip re-enables automatically after first hover without pointer 
   await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
 
   const snapshot = await page.evaluate(getOverlayClipSnapshot)
+  const visibleHeightSamplesAfterHover = await page.evaluate(sampleOverlayVisibleHeights, {
+    sampleCount: 6,
+    intervalMs: 180,
+    settleMs: 350,
+  })
   const hoverProbe = await page.evaluate(readOverlayHoverProbe)
+  const visibleHeightDelta = snapshot.visibleHeight - baselineSnapshot.visibleHeight
 
   await test.info().attach('chat-only-auto-clip-hovered-once', {
-    body: JSON.stringify({ snapshot, hoverProbe, center }, null, 2),
+    body: JSON.stringify({ baselineSnapshot, snapshot, visibleHeightSamplesAfterHover, visibleHeightDelta, hoverProbe, center }, null, 2),
     contentType: 'application/json',
   })
 
   expect(snapshot.exists).toBe(true)
   expect(snapshot.enabled).toBe(true)
+  expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)
+  expect(visibleHeightDelta).toBeLessThanOrEqual(1.5)
+  expect(visibleHeightDelta).toBeGreaterThanOrEqual(-8)
   expect((hoverProbe?.enterCount ?? 0) > 0).toBe(true)
 })
