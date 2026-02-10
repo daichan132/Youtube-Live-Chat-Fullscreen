@@ -22,7 +22,7 @@ const SettingContentPreview = ({ alwaysOnDisplay, themeMode }: SettingContentSto
   }, [alwaysOnDisplay, themeMode])
 
   return (
-    <div className='w-[480px] max-w-full box-border h-[560px] ylc-theme-surface-muted p-3 overflow-y-auto rounded-lg'>
+    <div className='w-[480px] max-w-full box-border h-[560px] ylc-theme-surface-muted ylc-theme-glass-panel-muted p-3 overflow-y-auto rounded-lg border border-solid ylc-theme-border'>
       <p className='text-xs ylc-theme-text-muted mt-0 mb-3 px-1'>Action area is standardized with responsive width behavior.</p>
       <SettingContent />
     </div>

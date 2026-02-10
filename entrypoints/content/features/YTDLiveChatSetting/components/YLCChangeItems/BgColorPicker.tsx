@@ -13,10 +13,10 @@ const getPreviewBorderColor = (rgba: RGBColor) => {
   const luminance = (0.2126 * rgba.r + 0.7152 * rgba.g + 0.0722 * rgba.b) / 255
 
   if (alpha < 0.35) {
-    return 'rgba(100, 116, 139, 0.28)'
+    return 'var(--ylc-preview-border-muted)'
   }
 
-  return luminance > 0.82 ? 'rgba(71, 85, 105, 0.32)' : 'rgba(255, 255, 255, 0.3)'
+  return luminance > 0.82 ? 'var(--ylc-preview-border-strong)' : 'var(--ylc-preview-border-soft)'
 }
 
 export const BgColorPicker = () => {
@@ -57,7 +57,7 @@ export const BgColorPickerUI = React.forwardRef<
         className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'
         onClick={() => setDisplay?.(d => !d)}
       >
-        <div className='bg-[linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%),linear-gradient(45deg,#dddddd_25%,transparent_25%,transparent_75%,#dddddd_75%)] bg-[position:0_0,5px_5px] bg-[length:10px_10px] rounded-[6px] w-full h-full'>
+        <div className='ylc-theme-alpha-checker rounded-[6px] w-full h-full'>
           <div
             className='ylc-action-fill h-full rounded-[5px]'
             style={{

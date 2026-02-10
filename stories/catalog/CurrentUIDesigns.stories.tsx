@@ -31,7 +31,7 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
   ]
 
   return (
-    <div className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'>
+    <div className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'>
       <div className='flex justify-between items-center px-2 py-1.5'>
         <div className='ylc-theme-tablist'>
           {tabs.map(item => (
@@ -53,10 +53,13 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
           <RiCloseLine className='cursor-pointer rounded-md p-2 transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)]' size={22} />
         </div>
       </div>
-      <div className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2 rounded-2xl' style={{ overscrollBehavior: 'contain' }}>
+      <div
+        className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted ylc-theme-glass-panel-muted p-2 rounded-2xl'
+        style={{ overscrollBehavior: 'contain' }}
+      >
         {children}
       </div>
-      <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface text-xs'>
+      <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface ylc-theme-glass-panel text-xs'>
         <div className='flex gap-4'>
           <a
             href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'

@@ -30,6 +30,7 @@ export const YTDLiveChatSwitch = () => {
         position: 'relative',
         cursor: 'pointer',
         opacity: isActive ? 1 : 0.6,
+        color: 'var(--yt-spec-static-brand-white, #fff)',
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
       aria-pressed={isActive}
@@ -39,7 +40,8 @@ export const YTDLiveChatSwitch = () => {
       <IoChatboxSharp
         size={'50%'}
         style={{
-          color: isActive ? '#fff' : 'rgba(255, 255, 255, 0.7)',
+          color: 'currentColor',
+          opacity: isActive ? 1 : 0.72,
           position: 'absolute',
           top: '50%',
           left: '50%',

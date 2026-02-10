@@ -72,7 +72,7 @@ export const YTDLiveChatSetting = () => {
     >
       <div
         data-ylc-theme={resolvedThemeMode}
-        className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='flex flex-col w-[480px] rounded-xl ylc-theme-surface ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
         <div className='flex justify-between items-center px-2 py-1.5'>
@@ -102,13 +102,13 @@ export const YTDLiveChatSetting = () => {
           </div>
         </div>
         <div
-          className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted p-2 rounded-2xl'
+          className='flex-grow overflow-y-scroll h-[380px] ylc-theme-surface-muted ylc-theme-glass-panel-muted p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface text-xs'>
+        <div className='flex justify-end items-center px-3 py-2 ylc-theme-surface ylc-theme-glass-panel text-xs'>
           <div className='flex gap-4'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'

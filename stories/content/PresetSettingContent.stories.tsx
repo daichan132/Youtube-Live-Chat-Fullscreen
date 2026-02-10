@@ -16,7 +16,7 @@ const PresetSettingContentPreview = ({ preset, themeMode }: PresetSettingContent
   }, [themeMode])
 
   return (
-    <div className='w-[480px] max-w-full box-border ylc-theme-surface p-4 rounded-lg border border-solid ylc-theme-border'>
+    <div className='w-[480px] max-w-full box-border ylc-theme-surface ylc-theme-glass-panel p-4 rounded-lg border border-solid ylc-theme-border'>
       <p className='text-xs ylc-theme-text-muted mt-0 mb-3'>Preset rows share the same action width contract as Setting rows.</p>
       <PresetSettingContent ylcStyle={preset === 'transparent' ? ylcTransparentSetting : ylcSimpleSetting} isOpen={true} />
     </div>

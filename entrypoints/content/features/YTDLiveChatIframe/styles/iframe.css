@@ -12,8 +12,8 @@ html {
   --extension-super-chat-bar-display: block;
   --extension-yt-live-chat-font-size: 13px;
   --extension-yt-live-chat-spacing: 0px;
-  --extension-yt-live-font-color: black;
-  --extension-yt-live-secondary-font-color: rgba(0, 0, 0, 0.6);
+  --extension-yt-live-font-color: var(--yt-spec-text-primary, #0f0f0f);
+  --extension-yt-live-secondary-font-color: var(--yt-spec-text-secondary, rgba(15, 23, 42, 0.72));
 }
 
 /* -------------------------- Frame base overrides -------------------------- */
@@ -150,7 +150,7 @@ body.custom-yt-app-live-chat-extension #author-name.member.yt-live-chat-author-c
   color: var(--yt-live-chat-sponsor-color);
 }
 body.custom-yt-app-live-chat-extension #title.yt-emoji-picker-category-renderer {
-  color: hsla(0, 0%, 6.7%, 0.6);
+  color: var(--extension-yt-live-secondary-font-color);
 }
 
 /* --------------------------- Typography / sizing -------------------------- */
