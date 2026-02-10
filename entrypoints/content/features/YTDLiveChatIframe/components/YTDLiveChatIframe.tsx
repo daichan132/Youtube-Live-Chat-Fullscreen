@@ -29,6 +29,14 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
+  const { r, g, b, a } = fontColorRef.current
+  const baseAlpha = a ?? 1
+  const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
+  const desaturateMix = 0.68
+  const loaderColorR = Math.round(r * (1 - desaturateMix) + grayLuma * desaturateMix)
+  const loaderColorG = Math.round(g * (1 - desaturateMix) + grayLuma * desaturateMix)
+  const loaderColorB = Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix)
+  const loaderColorA = Math.min(0.5, Math.max(0.22, baseAlpha * 0.55))
 
   return (
     <>
@@ -59,7 +67,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       >
         <div
           ref={nodeRef}
-          className='absolute top-0 flex h-full w-full items-center justify-center pointer-events-none'
+          className='absolute top-0 z-20 flex h-full w-full items-center justify-center pointer-events-auto'
           style={{
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
@@ -69,7 +77,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
             <div
               className='animate-ping h-5 w-5 rounded-full'
               style={{
-                backgroundColor: `rgba(${fontColorRef.current.r}, ${fontColorRef.current.g}, ${fontColorRef.current.b}, ${fontColorRef.current.a})`,
+                backgroundColor: `rgba(${loaderColorR}, ${loaderColorG}, ${loaderColorB}, ${loaderColorA})`,
               }}
             />
           </output>

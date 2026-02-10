@@ -1155,9 +1155,9 @@
 }
 
 .ylc-overlay-control-icon:hover {
-  background-color: var(--ylc-overlay-control-hover);
+  background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
 }
 
 .ylc-overlay-control-icon-active {
-  background-color: var(--ylc-overlay-control-hover);
+  background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
 }

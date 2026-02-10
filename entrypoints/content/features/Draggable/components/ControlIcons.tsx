@@ -1,5 +1,6 @@
 import type { DraggableAttributes } from '@dnd-kit/core'
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
+import type { CSSProperties } from 'react'
 import type { RGBColor } from 'react-color'
 import { TbAdjustmentsHorizontal, TbGripVertical } from 'react-icons/tb'
 import { useIconDisplay } from '../hooks/useIconDisplay'
@@ -20,6 +21,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
   const isIconDisplay = useIconDisplay()
   const { attributes, listeners, isDragging } = dragProps
   const colorString = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, ${fontColor.a})`
+  const runtimeHoverColor = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, 0.1)`
   const iconStrokeWidth = 1.55
   const controlButtonSize = 40
   const controlGap = 2
@@ -28,6 +30,9 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
   const youtubeMenuCircleLeftInset = 48
   const dragRightOffset = youtubeMenuCircleLeftInset + controlGap
   const settingsRightOffset = dragRightOffset + controlButtonSize + controlGap
+  const runtimeHoverVarStyle = {
+    '--ylc-overlay-control-hover-runtime': runtimeHoverColor,
+  } as CSSProperties
 
   return (
     <>
@@ -35,7 +40,12 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         className='absolute z-10 cursor-grab'
         {...attributes}
         {...listeners}
-        style={{ top: controlTopOffset, right: dragRightOffset, opacity: isIconDisplay ? 1 : 0 }}
+        style={{
+          top: controlTopOffset,
+          right: dragRightOffset,
+          opacity: isIconDisplay ? 1 : 0,
+          ...runtimeHoverVarStyle,
+        }}
       >
         <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
           <TbGripVertical size={22} color={colorString} strokeWidth={iconStrokeWidth} />
@@ -44,7 +54,12 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
 
       <div
         className='absolute z-10 cursor-pointer'
-        style={{ top: controlTopOffset, right: settingsRightOffset, opacity: isIconDisplay ? 1 : 0 }}
+        style={{
+          top: controlTopOffset,
+          right: settingsRightOffset,
+          opacity: isIconDisplay ? 1 : 0,
+          ...runtimeHoverVarStyle,
+        }}
       >
         <button type='button' className='ylc-overlay-control-icon cursor-pointer' onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
