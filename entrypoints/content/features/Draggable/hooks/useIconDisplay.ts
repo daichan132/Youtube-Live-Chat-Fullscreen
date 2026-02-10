@@ -1,6 +1,10 @@
+import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
+
+// Match YTDLiveChatIframe loading overlay exit duration to avoid icon flash during handoff.
+const LOADING_OVERLAY_EXIT_MS = 320
 
 export const useIconDisplay = () => {
   const { alwaysOnDisplay } = useYTDLiveChatStore(
@@ -14,6 +18,22 @@ export const useIconDisplay = () => {
       isIframeLoaded: state.isIframeLoaded,
     })),
   )
+  const [isLoadingTransitionComplete, setIsLoadingTransitionComplete] = useState(false)
 
-  return isIframeLoaded && (isDisplay || alwaysOnDisplay)
+  useEffect(() => {
+    if (!isIframeLoaded) {
+      setIsLoadingTransitionComplete(false)
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsLoadingTransitionComplete(true)
+    }, LOADING_OVERLAY_EXIT_MS)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [isIframeLoaded])
+
+  return isLoadingTransitionComplete && (isDisplay || alwaysOnDisplay)
 }

@@ -28,13 +28,16 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       isIframeLoaded: state.isIframeLoaded,
     })),
   )
+  const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
 
   return (
     <>
       <div
-        className='w-full h-full overflow-hidden rounded-md'
+        className='w-full h-full overflow-hidden rounded-md transition-[opacity,transform,filter] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity,transform,filter]'
         style={{
-          opacity: isIframeLoaded && (isDisplay || alwaysOnDisplay) ? 1 : 0,
+          opacity: isChatVisible ? 1 : 0,
+          transform: isChatVisible ? 'translateY(0) scale(1)' : 'translateY(2px) scale(0.996)',
+          filter: isChatVisible ? 'blur(0px)' : 'blur(1px)',
         }}
         id={id}
         ref={ref}
@@ -42,20 +45,21 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       <CSSTransition
         nodeRef={nodeRef}
         in={!isIframeLoaded}
-        timeout={300}
+        timeout={{ appear: 140, enter: 140, exit: 320 }}
         classNames={{
-          appear: 'opacity-0',
-          appearActive: 'transition-opacity opacity-100 duration-200',
-          enter: 'opacity-0',
-          enterActive: 'transition-opacity opacity-100 duration-200',
-          exitActive: 'transition-opacity opacity-0 duration-200',
+          appear: 'opacity-0 scale-[0.995]',
+          appearActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
+          enter: 'opacity-0 scale-[0.995]',
+          enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
+          exit: 'opacity-100 scale-100',
+          exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
         }}
-        delay={150}
+        delay={70}
         unmountOnExit
       >
         <div
           ref={nodeRef}
-          className='absolute top-0 flex h-full w-full items-center justify-center transition-opacity duration-500'
+          className='absolute top-0 flex h-full w-full items-center justify-center pointer-events-none'
           style={{
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(${backgroundColorRef.current.r}, ${backgroundColorRef.current.g}, ${backgroundColorRef.current.b}, ${backgroundColorRef.current.a})`,
