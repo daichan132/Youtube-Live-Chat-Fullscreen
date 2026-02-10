@@ -1,4 +1,5 @@
-:root {
+:root,
+[data-ylc-theme] {
   --ylc-accent: #2563eb;
   --ylc-border-width: 2px;
   --ylc-divider-width: 2px;
@@ -59,6 +60,7 @@
   --ylc-focus-ring: rgba(37, 99, 235, 0.42);
   --ylc-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.08);
   --ylc-shadow-md: 0 14px 32px rgba(15, 23, 42, 0.12);
+  --ylc-setting-panel-glass-bg: rgba(255, 255, 255, 0.95);
   --ylc-switch-track-off-bg: #e3eaf3;
   --ylc-switch-track-off-border: #d3dce8;
   --ylc-switch-track-on-bg: #6bcc87;
@@ -104,6 +106,7 @@
   --ylc-focus-ring: rgba(96, 165, 250, 0.52);
   --ylc-shadow-sm: 0 10px 24px rgba(2, 6, 23, 0.55);
   --ylc-shadow-md: 0 16px 34px rgba(2, 6, 23, 0.7);
+  --ylc-setting-panel-glass-bg: rgba(15, 23, 42, 0.95);
   --ylc-switch-track-off-bg: #475b77;
   --ylc-switch-track-off-border: #8a9db7;
   --ylc-switch-track-on-bg: #44a86a;
@@ -149,6 +152,66 @@
   background-color: var(--ylc-panel-glass-muted-bg);
   backdrop-filter: blur(14px) saturate(125%);
   -webkit-backdrop-filter: blur(14px) saturate(125%);
+}
+
+.ylc-setting-panel.ylc-theme-glass-panel {
+  background-color: var(--ylc-setting-panel-glass-bg);
+}
+
+.ylc-setting-panel {
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+.ylc-setting-panel .ylc-theme-surface,
+.ylc-setting-panel .ylc-theme-surface-muted,
+.ylc-setting-panel .ylc-theme-elevated,
+.ylc-setting-panel .ylc-theme-input,
+.ylc-setting-panel .ylc-theme-input-borderless,
+.ylc-setting-panel .ylc-theme-select,
+.ylc-setting-panel .ylc-theme-icon-badge,
+.ylc-setting-panel .ylc-theme-icon-badge-sm,
+.ylc-setting-panel .ylc-theme-icon-badge-xs,
+.ylc-setting-panel .ylc-theme-alpha-checker,
+.ylc-setting-panel .ylc-theme-tab,
+.ylc-setting-panel .ylc-theme-tab:hover,
+.ylc-setting-panel .ylc-theme-tab-active,
+.ylc-setting-panel .ylc-theme-tab-active:hover,
+.ylc-setting-panel .ylc-theme-glass-panel-muted {
+  background: transparent;
+  background-color: transparent;
+}
+
+.ylc-setting-panel .ylc-theme-icon-badge,
+.ylc-setting-panel .ylc-theme-icon-badge-sm,
+.ylc-setting-panel .ylc-theme-icon-badge-xs {
+  background-color: #ffffff;
+}
+
+.ylc-setting-panel .ylc-theme-tab-active,
+.ylc-setting-panel .ylc-theme-tab-active:hover {
+  background-color: #ffffff;
+  border-color: color-mix(in srgb, var(--ylc-border) 82%, transparent);
+}
+
+.ylc-setting-panel .ylc-theme-glass-panel-muted {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ylc-setting-panel .ylc-theme-input-borderless:hover,
+.ylc-setting-panel .ylc-theme-select:hover {
+  background: transparent;
+}
+
+.ylc-setting-panel .ylc-preset-card {
+  background-color: #ffffff;
+}
+
+.ylc-setting-panel .ylc-add-preset-button {
+  background-color: #ffffff;
 }
 
 .ylc-theme-surface-muted {

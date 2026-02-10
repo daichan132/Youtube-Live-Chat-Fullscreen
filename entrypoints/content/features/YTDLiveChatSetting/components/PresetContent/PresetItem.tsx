@@ -46,7 +46,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
+      className={`ylc-preset-card ylc-theme-surface m-3 p-3 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
         isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
       }`}
       ref={setNodeRef}
@@ -54,14 +54,14 @@ export const PresetItem = ({ id }: PresetItemType) => {
     >
       <div className='flex justify-between items-center gap-2'>
         <div className='group flex items-center min-w-0 flex-1'>
-          <div ref={setActivatorNodeRef}>
+          <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
               className={`transition-all duration-200 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
-                  ? 'w-5 h-5 p-0.5 opacity-100 cursor-grabbing'
-                  : 'w-0 h-0 p-0 group-hover:w-5 group-hover:h-5 group-hover:p-0.5 opacity-0 group-hover:opacity-100 cursor-grab'
+                  ? 'w-[18px] h-[18px] p-0 opacity-100 cursor-grabbing'
+                  : 'w-0 h-0 p-0 group-hover:w-[18px] group-hover:h-[18px] group-hover:p-0 opacity-0 group-hover:opacity-100 cursor-grab'
               }`}
-              size={14}
+              size={18}
               {...listeners}
               {...attributes}
             />
@@ -70,7 +70,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
-            className='ml-1 h-7 px-1.5 rounded-[10px] outline-none min-w-0 flex-1 max-w-[15rem] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
+            className='ml-1 h-8 px-1.5 rounded-[8px] outline-none min-w-0 flex-1 max-w-[240px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
         <div className='flex transition-opacity duration-200 shrink-0'>
