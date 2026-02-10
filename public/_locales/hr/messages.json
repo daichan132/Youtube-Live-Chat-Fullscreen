@@ -5,19 +5,19 @@
   "extensionDescription": {
     "message": "Uz ovu ekstenziju možete prikazati chat panel i slati komentare dok gledate YouTube Live u načinu cijelog zaslona."
   },
-  "popup.theme": {
+  "popup_theme": {
     "message": "テーマ"
   },
-  "content.setting.theme": {
+  "content_setting_theme": {
     "message": "テーマ"
   },
-  "content.setting.themeMode.system": {
+  "content_setting_themeMode_system": {
     "message": "自動"
   },
-  "content.setting.themeMode.light": {
+  "content_setting_themeMode_light": {
     "message": "ライト"
   },
-  "content.setting.themeMode.dark": {
+  "content_setting_themeMode_dark": {
     "message": "ダーク"
   }
 }

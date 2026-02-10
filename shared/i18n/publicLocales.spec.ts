@@ -5,14 +5,11 @@ import { describe, expect, it } from 'vitest'
 
 const ENGLISH_FAMILY = new Set(['en', 'en_AU', 'en_GB', 'en_US'])
 
-type LocaleMessageFile = {
-  extensionName?: {
-    message?: string
-  }
-  extensionDescription?: {
-    message?: string
-  }
+type LocaleMessageEntry = {
+  message?: string
 }
+
+type LocaleMessageFile = Record<string, LocaleMessageEntry | undefined>
 
 const i18nDir = dirname(fileURLToPath(import.meta.url))
 const assetsDir = join(i18nDir, 'assets')
@@ -60,6 +57,17 @@ describe('public locale messages', () => {
       if (ENGLISH_FAMILY.has(locale)) continue
       const extensionName = loadLocaleMessages(locale).extensionName?.message ?? ''
       expect(extensionName, `untranslated extensionName locale=${locale}`).not.toBe(englishName)
+    }
+  })
+
+  it('uses only valid Chrome extension message keys', () => {
+    const locales = readdirSync(publicLocalesDir).filter(localeDirName => localeDirName !== '.DS_Store')
+    const keyPattern = /^[A-Za-z0-9_]+$/u
+
+    for (const locale of locales) {
+      const messages = loadLocaleMessages(locale)
+      const invalidKeys = Object.keys(messages).filter(key => !keyPattern.test(key))
+      expect(invalidKeys, `invalid message key locale=${locale}`).toEqual([])
     }
   })
 })

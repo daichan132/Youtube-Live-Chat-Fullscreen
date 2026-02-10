@@ -187,12 +187,12 @@
 .ylc-setting-panel .ylc-theme-icon-badge,
 .ylc-setting-panel .ylc-theme-icon-badge-sm,
 .ylc-setting-panel .ylc-theme-icon-badge-xs {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
 }
 
 .ylc-setting-panel .ylc-theme-tab-active,
 .ylc-setting-panel .ylc-theme-tab-active:hover {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
   border-color: color-mix(in srgb, var(--ylc-border) 82%, transparent);
 }
 
@@ -207,11 +207,11 @@
 }
 
 .ylc-setting-panel .ylc-preset-card {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
 }
 
 .ylc-setting-panel .ylc-add-preset-button {
-  background-color: #ffffff;
+  background-color: var(--ylc-bg-surface);
 }
 
 .ylc-theme-surface-muted {

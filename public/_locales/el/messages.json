@@ -5,19 +5,19 @@
   "extensionDescription": {
     "message": "Με αυτήν την επέκταση, μπορείτε να προβάλλετε το πάνελ συνομιλίας και να δημοσιεύετε σχόλια ενώ παρακολουθείτε το YouTube Live σε πλήρη οθόνη."
   },
-  "popup.theme": {
+  "popup_theme": {
     "message": "テーマ"
   },
-  "content.setting.theme": {
+  "content_setting_theme": {
     "message": "テーマ"
   },
-  "content.setting.themeMode.system": {
+  "content_setting_themeMode_system": {
     "message": "自動"
   },
-  "content.setting.themeMode.light": {
+  "content_setting_themeMode_light": {
     "message": "ライト"
   },
-  "content.setting.themeMode.dark": {
+  "content_setting_themeMode_dark": {
     "message": "ダーク"
   }
 }
