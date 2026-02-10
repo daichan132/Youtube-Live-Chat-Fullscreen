@@ -19,8 +19,7 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "prepare": "lefthook install",
-    "e2e": "playwright test --workers=1",
-    "e2e:ci": "playwright test --workers=1 --reporter=json > /tmp/ylc-e2e.json && node scripts/validate-e2e-report.mjs /tmp/ylc-e2e.json"
+    "e2e": "playwright test --workers=1"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
