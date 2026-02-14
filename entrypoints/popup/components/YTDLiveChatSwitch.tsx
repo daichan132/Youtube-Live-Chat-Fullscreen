@@ -18,12 +18,16 @@ export const YTDLiveChatSwitch = () => {
       setYTDLiveChat(checked)
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, {
-            message: 'ytdLiveChat',
-            ytdLiveChat: checked,
-          }, () => {
-            void chrome.runtime.lastError
-          })
+          chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              message: 'ytdLiveChat',
+              ytdLiveChat: checked,
+            },
+            () => {
+              void chrome.runtime.lastError
+            },
+          )
         }
       })
     },

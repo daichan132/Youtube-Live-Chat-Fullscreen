@@ -17,12 +17,16 @@ export const LanguageSelector = () => {
       i18n.changeLanguage(languageCode)
       chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
         if (tabs[0]?.id) {
-          chrome.tabs.sendMessage(tabs[0].id, {
-            message: 'language',
-            language: languageCode,
-          }, () => {
-            void chrome.runtime.lastError
-          })
+          chrome.tabs.sendMessage(
+            tabs[0].id,
+            {
+              message: 'language',
+              language: languageCode,
+            },
+            () => {
+              void chrome.runtime.lastError
+            },
+          )
         }
       })
     },
@@ -33,7 +37,12 @@ export const LanguageSelector = () => {
 
   return (
     <div className='ylc-theme-select-wrap ylc-action-fill'>
-      <select className='ylc-theme-select ylc-action-fill' value={selectedLanguage} onChange={handleChange} aria-label={t('content.aria.selectLanguage')}>
+      <select
+        className='ylc-theme-select ylc-action-fill'
+        value={selectedLanguage}
+        onChange={handleChange}
+        aria-label={t('content.aria.selectLanguage')}
+      >
         {languageOptions.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}

@@ -23,26 +23,30 @@ export const SettingContent = () => {
     })),
   )
   const { t } = useTranslation()
-  const items = useMemo(() => buildSettingItems({
-    t,
-    keys: SETTING_ITEM_KEYS,
-    dataByKey: {
-      alwaysOnDisplay: <AlwaysOnDisplaySwitch />,
-      chatOnlyDisplay: <ChatOnlyDisplaySwitch />,
-      backgroundColor: <BgColorPicker />,
-      fontColor: <FontColorPicker />,
-      fontFamily: <FontFamilyInput />,
-      fontSize: <FontSizeSlider />,
-      blur: <BlurSlider />,
-      space: <SpaceSlider />,
-      userNameDisplay: <UserNameDisplaySwitch />,
-      userIconDisplay: <UserIconDisplaySwitch />,
-      superChatBarDisplay: <SuperChatBarDisplaySwitch />,
-    },
-    disableByKey: {
-      chatOnlyDisplay: !alwaysOnDisplay,
-    },
-  }), [alwaysOnDisplay, t])
+  const items = useMemo(
+    () =>
+      buildSettingItems({
+        t,
+        keys: SETTING_ITEM_KEYS,
+        dataByKey: {
+          alwaysOnDisplay: <AlwaysOnDisplaySwitch />,
+          chatOnlyDisplay: <ChatOnlyDisplaySwitch />,
+          backgroundColor: <BgColorPicker />,
+          fontColor: <FontColorPicker />,
+          fontFamily: <FontFamilyInput />,
+          fontSize: <FontSizeSlider />,
+          blur: <BlurSlider />,
+          space: <SpaceSlider />,
+          userNameDisplay: <UserNameDisplaySwitch />,
+          userIconDisplay: <UserIconDisplaySwitch />,
+          superChatBarDisplay: <SuperChatBarDisplaySwitch />,
+        },
+        disableByKey: {
+          chatOnlyDisplay: !alwaysOnDisplay,
+        },
+      }),
+    [alwaysOnDisplay, t],
+  )
   return (
     <>
       {items.map((item, i) => (
@@ -55,7 +59,7 @@ export const SettingContent = () => {
             )}
           >
             <div className='flex items-center'>
-              <span className='mr-3 ylc-theme-icon-badge' aria-hidden="true">
+              <span className='mr-3 ylc-theme-icon-badge' aria-hidden='true'>
                 <item.icon size={18} />
               </span>
               <p className='ylc-theme-text-primary'>{item.title}</p>

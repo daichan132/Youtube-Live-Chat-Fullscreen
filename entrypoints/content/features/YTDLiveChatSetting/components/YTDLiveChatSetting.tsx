@@ -55,10 +55,13 @@ export const YTDLiveChatSetting = () => {
     activeTab?.focus({ preventScroll: true })
   }, [])
 
-  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(() => [
-    { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
-    { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
-  ], [t])
+  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
+    () => [
+      { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
+      { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
+    ],
+    [t],
+  )
 
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {

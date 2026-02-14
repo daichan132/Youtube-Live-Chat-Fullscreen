@@ -46,7 +46,7 @@ export const AddPresetItem = () => {
         disabled={!addPresetEnabled}
       >
         <span className='ylc-theme-icon-badge ylc-theme-icon-badge-xs ylc-add-preset-icon mr-2'>
-          <TbPlus size={16} aria-hidden="true" />
+          <TbPlus size={16} aria-hidden='true' />
         </span>
         <div>{t('content.preset.addMessage')}</div>
       </button>

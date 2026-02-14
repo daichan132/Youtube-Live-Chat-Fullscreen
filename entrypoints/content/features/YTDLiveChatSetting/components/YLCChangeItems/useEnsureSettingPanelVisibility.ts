@@ -9,9 +9,7 @@ type VerticalRange = {
 }
 
 const getCombinedVerticalRange = (elements: ReadonlyArray<HTMLElement | null>): VerticalRange | null => {
-  const rects = elements
-    .filter((element): element is HTMLElement => element !== null)
-    .map(element => element.getBoundingClientRect())
+  const rects = elements.filter((element): element is HTMLElement => element !== null).map(element => element.getBoundingClientRect())
 
   if (rects.length === 0) return null
 

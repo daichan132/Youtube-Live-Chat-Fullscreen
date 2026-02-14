@@ -19,7 +19,6 @@ html {
 /* -------------------------- Frame base overrides -------------------------- */
 html,
 body {
-  /* biome-ignore lint/complexity/noImportantStyles: Needed to override YouTube inline styles */
   background: transparent !important;
 }
 
@@ -31,7 +30,6 @@ body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat-messages,
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #item-scroller,
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
-  /* biome-ignore lint/complexity/noImportantStyles: Keep chat surface transparent so overlay blur is visible */
   background: transparent !important;
 }
 
@@ -61,7 +59,6 @@ body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-but
 body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-list-renderer {
   scrollbar-color: transparent transparent;
   scrollbar-width: none;
-  /* biome-ignore lint/complexity/noImportantStyles: Needed to override YouTube inline styles */
   padding-right: 0px !important;
 }
 body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer,

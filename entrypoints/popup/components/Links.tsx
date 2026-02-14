@@ -24,7 +24,7 @@ export const Links = () => {
     <div className='ylc-theme-links-wrap ylc-action-fill ylc-action-inner'>
       {linkItems.map(({ href, name, icon: Icon }) => (
         <a key={name} href={href} target='_blank' rel='noopener noreferrer' aria-label={name} title={name} className='ylc-theme-icon-link'>
-          <Icon size={20} aria-hidden="true" />
+          <Icon size={20} aria-hidden='true' />
         </a>
       ))}
     </div>

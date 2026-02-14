@@ -228,6 +228,7 @@ export const FontFamilyInputUI = ({
             onKeyDown={handleSearchKeyDown}
             placeholder={t('content.setting.fontFamily')}
             role='combobox'
+            aria-expanded={isOpen}
             aria-autocomplete='list'
             aria-controls='ylc-font-options-listbox'
             aria-label={t('content.setting.fontFamily')}
@@ -236,7 +237,17 @@ export const FontFamilyInputUI = ({
           />
           <span
             aria-live='polite'
-            style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+            style={{
+              position: 'absolute',
+              width: '1px',
+              height: '1px',
+              padding: 0,
+              margin: '-1px',
+              overflow: 'hidden',
+              clip: 'rect(0,0,0,0)',
+              whiteSpace: 'nowrap',
+              border: 0,
+            }}
           >
             {`${filteredOptions.length} fonts found`}
           </span>

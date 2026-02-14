@@ -56,7 +56,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
-              aria-hidden="true"
+              aria-hidden='true'
               className={`transition-all duration-160 outline-none ylc-theme-focus-ring-soft rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
                   ? 'w-[24px] h-[24px] p-[2px] opacity-100 pointer-events-auto cursor-grabbing'
@@ -83,7 +83,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             aria-label={t('content.aria.applyPreset')}
             onClick={() => updateStyle(ylcStyle)}
           >
-            <TbSparkles size={20} aria-hidden="true" />
+            <TbSparkles size={20} aria-hidden='true' />
           </button>
           <button
             type='button'
@@ -91,7 +91,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             aria-label={t('content.aria.deletePreset')}
             onClick={() => setIsDeleteModalOpen(true)}
           >
-            <TbTrash size={20} aria-hidden="true" />
+            <TbTrash size={20} aria-hidden='true' />
           </button>
         </div>
       </div>

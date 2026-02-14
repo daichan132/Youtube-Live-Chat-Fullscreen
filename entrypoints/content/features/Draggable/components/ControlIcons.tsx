@@ -38,14 +38,16 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
 
   return (
     <>
+      {/* biome-ignore lint/a11y/useSemanticElements: ドラッグハンドルにはdivが適切 */}
       <div
         className='absolute z-10 cursor-grab'
+        {...attributes}
+        {...listeners}
         role='button'
+        tabIndex={0}
         aria-label={t('content.aria.dragToMove')}
         aria-roledescription='drag handle'
         aria-describedby='ylc-drag-desc'
-        {...attributes}
-        {...listeners}
         style={{
           top: controlTopOffset,
           right: dragRightOffset,
@@ -83,7 +85,12 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
           ...runtimeHoverVarStyle,
         }}
       >
-        <button type='button' className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring' aria-label={t('content.aria.openSettings')} onClick={onSettingsClick}>
+        <button
+          type='button'
+          className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring'
+          aria-label={t('content.aria.openSettings')}
+          onClick={onSettingsClick}
+        >
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
       </div>

@@ -1,9 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import {
-  getSettingScrollContainer,
-  revealElementsInSettingPanel,
-  scrollSettingPanelRangeIntoView,
-} from './useEnsureSettingPanelVisibility'
+import { getSettingScrollContainer, revealElementsInSettingPanel, scrollSettingPanelRangeIntoView } from './useEnsureSettingPanelVisibility'
 
 const toRect = (top: number, bottom: number): DOMRect =>
   ({

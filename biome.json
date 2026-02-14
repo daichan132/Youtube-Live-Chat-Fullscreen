@@ -45,7 +45,8 @@
       "complexity": {
         "noExtraBooleanCast": "error",
         "noUselessRename": "error",
-        "noArguments": "error"
+        "noArguments": "error",
+        "noImportantStyles": "off"
       },
       "correctness": {
         "noUnusedVariables": "warn"
@@ -89,7 +90,7 @@
         "noUnsafeDeclarationMerging": "error",
         "useDefaultSwitchClauseLast": "error",
         "noVar": "error",
-        "noConsole": { "level": "error", "options": { "allow": ["log"] } }
+        "noConsole": { "level": "error", "options": { "allow": ["log", "warn"] } }
       }
     }
   }
