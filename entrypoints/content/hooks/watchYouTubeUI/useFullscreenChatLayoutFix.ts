@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 
 const styleId = 'ylc-fullscreen-chat-layout-fix'
 const className = 'ylc-fullscreen-chat-fix'
+const hiddenChatWidthPx = 400
+const hiddenChatHeightPx = 600
 const fullscreenRootSelector = `:is(${[
   'ytd-watch-flexy',
   'ytd-watch-flexy[fullscreen]',
@@ -29,20 +31,33 @@ html.${className} ${fullscreenRootSelector} #secondary {
   position: fixed !important;
   top: -200vh !important;
   left: 0 !important;
-  width: 400px !important;
+  width: ${hiddenChatWidthPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
   z-index: -9999 !important;
+}
+html.${className} ${fullscreenRootSelector} #secondary-inner,
+html.${className} ${fullscreenRootSelector} #chat-container,
+html.${className} ${fullscreenRootSelector} ytd-live-chat-frame {
+  width: ${hiddenChatWidthPx}px !important;
+  min-width: ${hiddenChatWidthPx}px !important;
+  max-width: ${hiddenChatWidthPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
   position: fixed !important;
   top: -200vh !important;
   left: 0 !important;
-  width: 400px !important;
-  height: 600px !important;
+  width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
   z-index: -9999 !important;
+}
+html.${className} ${fullscreenRootSelector} #panels-full-bleed-container #chat-container,
+html.${className} ${fullscreenRootSelector} #panels-full-bleed-container ytd-live-chat-frame {
+  width: ${hiddenChatWidthPx}px !important;
+  min-width: ${hiddenChatWidthPx}px !important;
+  max-width: ${hiddenChatWidthPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels {
   z-index: -1 !important;

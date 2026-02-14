@@ -29,6 +29,9 @@ describe('useFullscreenChatLayoutFix', () => {
     expect(document.documentElement.classList.contains(CLASS_NAME)).toBe(true)
     const style = document.getElementById(STYLE_ID)
     expect(style).not.toBeNull()
+    expect(style?.textContent).toContain('#secondary-inner')
+    expect(style?.textContent).toContain('#panels-full-bleed-container #chat-container')
+    expect(style?.textContent).toContain('width: 400px !important;')
 
     vi.runAllTimers()
     expect(dispatchSpy).toHaveBeenCalled()

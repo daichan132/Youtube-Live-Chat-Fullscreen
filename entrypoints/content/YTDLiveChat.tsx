@@ -27,9 +27,6 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  // Collapse native chat as soon as our iframe is attached to the container.
-  // The loading overlay covers the fullscreen chat area until styles are applied.
-  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && iframeElement !== null)
   const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
@@ -58,6 +55,8 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
     inlineVisible: isShow,
     nativeChatOpenIntent: isNativeChatCurrentlyOpen,
   })
+  // Keep YouTube native layout untouched unless our fullscreen overlay is actually visible.
+  useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible && iframeElement !== null)
 
   return (
     <>
