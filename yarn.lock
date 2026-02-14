@@ -534,18 +534,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/biome@npm:2.3.14"
+"@biomejs/biome@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/biome@npm:2.3.15"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:2.3.14"
-    "@biomejs/cli-darwin-x64": "npm:2.3.14"
-    "@biomejs/cli-linux-arm64": "npm:2.3.14"
-    "@biomejs/cli-linux-arm64-musl": "npm:2.3.14"
-    "@biomejs/cli-linux-x64": "npm:2.3.14"
-    "@biomejs/cli-linux-x64-musl": "npm:2.3.14"
-    "@biomejs/cli-win32-arm64": "npm:2.3.14"
-    "@biomejs/cli-win32-x64": "npm:2.3.14"
+    "@biomejs/cli-darwin-arm64": "npm:2.3.15"
+    "@biomejs/cli-darwin-x64": "npm:2.3.15"
+    "@biomejs/cli-linux-arm64": "npm:2.3.15"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.3.15"
+    "@biomejs/cli-linux-x64": "npm:2.3.15"
+    "@biomejs/cli-linux-x64-musl": "npm:2.3.15"
+    "@biomejs/cli-win32-arm64": "npm:2.3.15"
+    "@biomejs/cli-win32-x64": "npm:2.3.15"
   dependenciesMeta:
     "@biomejs/cli-darwin-arm64":
       optional: true
@@ -565,62 +565,62 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10c0/7dc4c0354c59046a24cc23e69465e0d7def81ba85e2039268b828461c5f0978693c68d917e08c554474392314a9b7039fed50487e8fc4b96d039f2f63b1b829a
+  checksum: 10c0/17fe84f92a282a4ac742324c84abae07ee746581e4bc34be82cfb36482fb9c5bf34b7d612a8463c7f656b40197470e9566080f91fa3660252ea32e08e20aa08c
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.14"
+"@biomejs/cli-darwin-arm64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.3.15"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-darwin-x64@npm:2.3.14"
+"@biomejs/cli-darwin-x64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-darwin-x64@npm:2.3.15"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.14"
+"@biomejs/cli-linux-arm64-musl@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.3.15"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-linux-arm64@npm:2.3.14"
+"@biomejs/cli-linux-arm64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-linux-arm64@npm:2.3.15"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.14"
+"@biomejs/cli-linux-x64-musl@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.3.15"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-linux-x64@npm:2.3.14"
+"@biomejs/cli-linux-x64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-linux-x64@npm:2.3.15"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-win32-arm64@npm:2.3.14"
+"@biomejs/cli-win32-arm64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-win32-arm64@npm:2.3.15"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:2.3.14":
-  version: 2.3.14
-  resolution: "@biomejs/cli-win32-x64@npm:2.3.14"
+"@biomejs/cli-win32-x64@npm:2.3.15":
+  version: 2.3.15
+  resolution: "@biomejs/cli-win32-x64@npm:2.3.15"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -2041,12 +2041,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.13":
-  version: 19.2.13
-  resolution: "@types/react@npm:19.2.13"
+"@types/react@npm:19.2.14":
+  version: 19.2.14
+  resolution: "@types/react@npm:19.2.14"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 10c0/e512dc53b805b9066f5c6ad42944372e1204290d618dbaec634d8bbd80d3aadcc1b8cdd7251329936bbdafae0425c02f531083213473bb370df903f20bb66e91
+  checksum: 10c0/7d25bf41b57719452d86d2ac0570b659210402707313a36ee612666bf11275a1c69824f8c3ee1fdca077ccfe15452f6da8f1224529b917050eb2d861e52b59b7
   languageName: node
   linkType: hard
 
@@ -4369,18 +4369,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next-browser-languagedetector@npm:^8.2.0":
-  version: 8.2.0
-  resolution: "i18next-browser-languagedetector@npm:8.2.0"
+"i18next-browser-languagedetector@npm:^8.2.1":
+  version: 8.2.1
+  resolution: "i18next-browser-languagedetector@npm:8.2.1"
   dependencies:
     "@babel/runtime": "npm:^7.23.2"
-  checksum: 10c0/4fcb6ec316e0fd4a10eee67a8d1e3d7e1407f14d5bed98978c50ed6f1853f5d559dc18ea7fd4b2de445ac0a4ed44df5b38f0b31b89b9ac883f99050d59ffec82
+  checksum: 10c0/d200847a79b4cb2764ef59b33e5399085d4d56b2b038e884bb54fffe17953b467899142a6ef6e985592234f10049d14d06b80f2c56441ae80648c5a6717704f3
   languageName: node
   linkType: hard
 
-"i18next@npm:^25.8.4":
-  version: 25.8.4
-  resolution: "i18next@npm:25.8.4"
+"i18next@npm:^25.8.7":
+  version: 25.8.7
+  resolution: "i18next@npm:25.8.7"
   dependencies:
     "@babel/runtime": "npm:^7.28.4"
   peerDependencies:
@@ -4388,7 +4388,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 10c0/c2582bd97893b4417c06c5b5f8f3bb37cdf77fc5918d00ff3a0e79c856b94bf8bb52377754bb5d62ade88b457f8ac541471987d359c1adc67bcaeea18121a2b5
+  checksum: 10c0/dfb476d1eef4cb8ec2ff9e2d7bdbf54bf3ba2f3cbf1f3a33bb751d66cb116b0436f81189e5e554fb83ffdb33b8916ca5a98798f45db7df7b4bb3d8a163dfcf29
   languageName: node
   linkType: hard
 
@@ -4408,10 +4408,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"immer@npm:^11.1.3":
-  version: 11.1.3
-  resolution: "immer@npm:11.1.3"
-  checksum: 10c0/2d0bcb7946274bb99254b8129026da9579591569afdd4f29e5ef3ebf231375c7ab97c344ffbfc9eeabea27a2145623fca1287c17e3ebd007c8cdcfd82954eeb7
+"immer@npm:^11.1.4":
+  version: 11.1.4
+  resolution: "immer@npm:11.1.4"
+  checksum: 10c0/77beca6b0a4e361b30414189d63c64beb7df40ac1d8cbf524308fcbabe755e9aa49db3c6e95a6e412911416fec621f2c8470be5ec79feedc6abd6e4f7f18a9ce
   languageName: node
   linkType: hard
 
@@ -4863,90 +4863,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook-darwin-arm64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-darwin-arm64@npm:2.1.0"
+"lefthook-darwin-arm64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-darwin-arm64@npm:2.1.1"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-darwin-x64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-darwin-x64@npm:2.1.0"
+"lefthook-darwin-x64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-darwin-x64@npm:2.1.1"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-arm64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-freebsd-arm64@npm:2.1.0"
+"lefthook-freebsd-arm64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-freebsd-arm64@npm:2.1.1"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-x64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-freebsd-x64@npm:2.1.0"
+"lefthook-freebsd-x64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-freebsd-x64@npm:2.1.1"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-linux-arm64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-linux-arm64@npm:2.1.0"
+"lefthook-linux-arm64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-linux-arm64@npm:2.1.1"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-linux-x64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-linux-x64@npm:2.1.0"
+"lefthook-linux-x64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-linux-x64@npm:2.1.1"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-arm64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-openbsd-arm64@npm:2.1.0"
+"lefthook-openbsd-arm64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-openbsd-arm64@npm:2.1.1"
   conditions: os=openbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-x64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-openbsd-x64@npm:2.1.0"
+"lefthook-openbsd-x64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-openbsd-x64@npm:2.1.1"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-windows-arm64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-windows-arm64@npm:2.1.0"
+"lefthook-windows-arm64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-windows-arm64@npm:2.1.1"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-windows-x64@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook-windows-x64@npm:2.1.0"
+"lefthook-windows-x64@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook-windows-x64@npm:2.1.1"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook@npm:2.1.0":
-  version: 2.1.0
-  resolution: "lefthook@npm:2.1.0"
+"lefthook@npm:2.1.1":
+  version: 2.1.1
+  resolution: "lefthook@npm:2.1.1"
   dependencies:
-    lefthook-darwin-arm64: "npm:2.1.0"
-    lefthook-darwin-x64: "npm:2.1.0"
-    lefthook-freebsd-arm64: "npm:2.1.0"
-    lefthook-freebsd-x64: "npm:2.1.0"
-    lefthook-linux-arm64: "npm:2.1.0"
-    lefthook-linux-x64: "npm:2.1.0"
-    lefthook-openbsd-arm64: "npm:2.1.0"
-    lefthook-openbsd-x64: "npm:2.1.0"
-    lefthook-windows-arm64: "npm:2.1.0"
-    lefthook-windows-x64: "npm:2.1.0"
+    lefthook-darwin-arm64: "npm:2.1.1"
+    lefthook-darwin-x64: "npm:2.1.1"
+    lefthook-freebsd-arm64: "npm:2.1.1"
+    lefthook-freebsd-x64: "npm:2.1.1"
+    lefthook-linux-arm64: "npm:2.1.1"
+    lefthook-linux-x64: "npm:2.1.1"
+    lefthook-openbsd-arm64: "npm:2.1.1"
+    lefthook-openbsd-x64: "npm:2.1.1"
+    lefthook-windows-arm64: "npm:2.1.1"
+    lefthook-windows-x64: "npm:2.1.1"
   dependenciesMeta:
     lefthook-darwin-arm64:
       optional: true
@@ -4970,7 +4970,7 @@ __metadata:
       optional: true
   bin:
     lefthook: bin/index.js
-  checksum: 10c0/427ff6d426a92c4c93bc3b7200ed63b9ee4d77610dcdfa8728889b028f550494a2385bb572552d8917ee3a5c96fbdd1e1356cdcc76f8c0ce6ffae02868cfafbf
+  checksum: 10c0/91d009e3c3c81f001e34cd266b34abafea55a974404daa282cb925bd419d8df44064a05f4cb9e82487fcc75d78ce670301d2d3d87ed8d4dd57336f5f66f61c7b
   languageName: node
   linkType: hard
 
@@ -7658,16 +7658,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite-tsconfig-paths@npm:^6.1.0":
-  version: 6.1.0
-  resolution: "vite-tsconfig-paths@npm:6.1.0"
+"vite-tsconfig-paths@npm:^6.1.1":
+  version: 6.1.1
+  resolution: "vite-tsconfig-paths@npm:6.1.1"
   dependencies:
     debug: "npm:^4.1.1"
     globrex: "npm:^0.1.2"
     tsconfck: "npm:^3.0.3"
   peerDependencies:
     vite: "*"
-  checksum: 10c0/b2c9edb43592f4c4e4c4b9f1a613a196e78b727a8ffdd77a4bad1833dcf903fb9a8b23eabf5113f800585f87c2e8e9f93cba9a0e21cfe9a7e58edc7e9edcb3f5
+  checksum: 10c0/5e61080991418fefa08c5b98995cdcada4931ae01ac97ef9e2ee941051f61b76890a6e7ba48bed3b2a229ec06fef33a06621bba4ce457b3f4233ad31dc0c1d1b
   languageName: node
   linkType: hard
 
@@ -8019,9 +8019,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wxt@npm:0.20.14":
-  version: 0.20.14
-  resolution: "wxt@npm:0.20.14"
+"wxt@npm:0.20.17":
+  version: 0.20.17
+  resolution: "wxt@npm:0.20.17"
   dependencies:
     "@1natsu/wait-element": "npm:^4.1.2"
     "@aklinker1/rollup-plugin-visualizer": "npm:5.12.0"
@@ -8068,10 +8068,15 @@ __metadata:
     vite: "npm:^5.4.19 || ^6.3.4 || ^7.0.0"
     vite-node: "npm:^3.2.4 || ^5.0.0"
     web-ext-run: "npm:^0.2.4"
+  peerDependencies:
+    eslint: ^8.57.0 || ^9.0.0
+  peerDependenciesMeta:
+    eslint:
+      optional: true
   bin:
     wxt: bin/wxt.mjs
-    wxt-publish-extension: bin/wxt-publish-extension.cjs
-  checksum: 10c0/2e1bf595f0a713834ae49335575e224cfe8166b611377bc6dc43b9989fb764d2b8d7d6274e8ff31809b7f5d96c97c993ed9d917348bbac37a63498cd007f9fa1
+    wxt-publish-extension: bin/wxt-publish-extension.mjs
+  checksum: 10c0/db5517ee2feedc44298010551a67b6967e5c8f50f072868c9f155fa010596c69d59aa720341da7772fad25b1a55d36f07af9c342d93c9e1047092a2916680c5d
   languageName: node
   linkType: hard
 
@@ -8174,7 +8179,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "youtube-live-chat-fullscreen@workspace:."
   dependencies:
-    "@biomejs/biome": "npm:2.3.14"
+    "@biomejs/biome": "npm:2.3.15"
     "@dnd-kit/core": "npm:^6.3.1"
     "@dnd-kit/modifiers": "npm:^9.0.0"
     "@dnd-kit/sortable": "npm:^10.0.0"
@@ -8187,7 +8192,7 @@ __metadata:
     "@testing-library/react": "npm:16.3.2"
     "@types/chrome": "npm:0.1.36"
     "@types/lodash-es": "npm:4.17.12"
-    "@types/react": "npm:19.2.13"
+    "@types/react": "npm:19.2.14"
     "@types/react-color": "npm:3.0.13"
     "@types/react-dom": "npm:19.2.3"
     "@types/react-modal": "npm:3.16.3"
@@ -8198,11 +8203,11 @@ __metadata:
     "@wxt-dev/module-react": "npm:1.1.5"
     "@wxt-dev/unocss": "npm:1.0.1"
     classnames: "npm:^2.5.1"
-    i18next: "npm:^25.8.4"
-    i18next-browser-languagedetector: "npm:^8.2.0"
-    immer: "npm:^11.1.3"
+    i18next: "npm:^25.8.7"
+    i18next-browser-languagedetector: "npm:^8.2.1"
+    immer: "npm:^11.1.4"
     jsdom: "npm:28.0.0"
-    lefthook: "npm:2.1.0"
+    lefthook: "npm:2.1.1"
     lodash-es: "npm:^4.17.23"
     re-resizable: "npm:^6.11.2"
     react: "npm:19.2.4"
@@ -8219,9 +8224,9 @@ __metadata:
     unocss: "npm:66.6.0"
     uuid: "npm:^13.0.0"
     vite: "npm:7.3.1"
-    vite-tsconfig-paths: "npm:^6.1.0"
+    vite-tsconfig-paths: "npm:^6.1.1"
     vitest: "npm:4.0.18"
-    wxt: "npm:0.20.14"
+    wxt: "npm:0.20.17"
     zustand: "npm:^5.0.11"
   languageName: unknown
   linkType: soft
