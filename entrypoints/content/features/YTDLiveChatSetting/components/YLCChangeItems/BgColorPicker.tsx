@@ -30,8 +30,8 @@ export const BgColorPicker = () => {
   const ref = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   useShadowClickAway(ref, () => {
+    if (!display) return
     setDisplay(false)
-    triggerRef.current?.focus()
   })
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export const BgColorPicker = () => {
       if (e.key === 'Escape') {
         e.stopPropagation()
         setDisplay(false)
-        triggerRef.current?.focus()
+        triggerRef.current?.focus({ preventScroll: true })
       }
     }
     document.addEventListener('keydown', handleKeyDown)
