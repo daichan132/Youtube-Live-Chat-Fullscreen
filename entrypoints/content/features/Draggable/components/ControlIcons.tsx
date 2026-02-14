@@ -2,6 +2,7 @@ import type { DraggableAttributes } from '@dnd-kit/core'
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 import type { CSSProperties } from 'react'
 import type { RGBColor } from 'react-color'
+import { useTranslation } from 'react-i18next'
 import { TbAdjustmentsHorizontal, TbGripVertical } from 'react-icons/tb'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 
@@ -18,6 +19,7 @@ interface ControlIconsProps {
 }
 
 export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlIconsProps) => {
+  const { t } = useTranslation()
   const isIconDisplay = useIconDisplay()
   const { attributes, listeners, isDragging } = dragProps
   const colorString = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, ${fontColor.a})`
@@ -39,7 +41,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
       <div
         className='absolute z-10 cursor-grab'
         role='button'
-        aria-label='Drag to move'
+        aria-label={t('content.aria.dragToMove')}
         aria-roledescription='drag handle'
         aria-describedby='ylc-drag-desc'
         {...attributes}
@@ -68,7 +70,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
             border: 0,
           }}
         >
-          Arrow keys to move
+          {t('content.aria.arrowKeysToMove')}
         </span>
       </div>
 
@@ -81,7 +83,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
           ...runtimeHoverVarStyle,
         }}
       >
-        <button type='button' className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring' aria-label='Open settings' onClick={onSettingsClick}>
+        <button type='button' className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring' aria-label={t('content.aria.openSettings')} onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
       </div>

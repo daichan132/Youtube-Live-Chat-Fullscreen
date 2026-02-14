@@ -1,9 +1,11 @@
 import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { IoChatboxSharp } from 'react-icons/io5'
 import { useShallow } from 'zustand/shallow'
 import { useGlobalSettingStore } from '@/shared/stores'
 
 export const YTDLiveChatSwitch = () => {
+  const { t } = useTranslation()
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
@@ -33,7 +35,7 @@ export const YTDLiveChatSwitch = () => {
         color: 'var(--yt-spec-static-brand-white, #fff)',
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
-      aria-label='Toggle live chat'
+      aria-label={t('content.aria.toggleLiveChat')}
       aria-pressed={isActive}
       onClick={handleClick}
     >

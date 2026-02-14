@@ -1,5 +1,5 @@
 import { useId, useRef } from 'react'
-
+import { useTranslation } from 'react-i18next'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
@@ -11,6 +11,7 @@ type YTDLiveChatIframeProps = {
 }
 
 export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
+  const { t } = useTranslation()
   const id = useId()
   const { ref } = useChatIframeLoader(mode)
   const nodeRef = useRef(null)
@@ -81,7 +82,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
             WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
           }}
         >
-          <output className='flex justify-center' aria-label='loading'>
+          <output className='flex justify-center' aria-label={t('content.aria.loading')}>
             <div
               className='animate-ping h-5 w-5 rounded-full'
               style={{

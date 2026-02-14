@@ -9,7 +9,7 @@ export const LanguageSelector = () => {
     label: name,
   }))
 
-  const { i18n } = useTranslation()
+  const { t, i18n } = useTranslation()
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -33,7 +33,7 @@ export const LanguageSelector = () => {
 
   return (
     <div className='ylc-theme-select-wrap ylc-action-fill'>
-      <select className='ylc-theme-select ylc-action-fill' value={selectedLanguage} onChange={handleChange} aria-label="Select language">
+      <select className='ylc-theme-select ylc-action-fill' value={selectedLanguage} onChange={handleChange} aria-label={t('content.aria.selectLanguage')}>
         {languageOptions.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}
