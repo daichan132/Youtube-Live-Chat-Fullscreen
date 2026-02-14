@@ -63,6 +63,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
                   : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[24px] group-hover:h-[24px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
               }`}
               size={20}
+              aria-label="Reorder preset"
               {...listeners}
               {...attributes}
             />
@@ -79,6 +80,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='button'
             className={actionButtonClassName}
             style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Apply preset"
             onClick={() => updateStyle(ylcStyle)}
           >
             <TbSparkles size={20} aria-hidden="true" />
@@ -87,6 +89,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='button'
             className={actionButtonClassName}
             style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+            aria-label="Delete preset"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             <TbTrash size={20} aria-hidden="true" />
