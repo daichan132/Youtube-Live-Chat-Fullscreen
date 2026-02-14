@@ -31,6 +31,7 @@ export const SuperChatBarDisplaySwitchUI = ({
   return (
     <SettingSwitch
       checked={superChatBarDisplay}
+      aria-label='Super chat bar display'
       onChange={checked => {
         changeDisplay?.(checked)
         updateYLCStyle?.({ superChatBarDisplay: checked })

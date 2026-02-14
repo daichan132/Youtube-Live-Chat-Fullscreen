@@ -25,6 +25,7 @@ export const ChatOnlyDisplaySwitchUI = ({
   return (
     <SettingSwitch
       checked={chatOnlyDisplay}
+      aria-label='Chat only display'
       onChange={checked => {
         updateYLCStyle?.({ chatOnlyDisplay: checked })
       }}

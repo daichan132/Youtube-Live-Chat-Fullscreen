@@ -40,7 +40,7 @@ export const FontSizeSlider = () => {
 }
 
 export const FontSizeSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
-  return <SettingSliderUI value={value} ref={ref} />
+  return <SettingSliderUI value={value} ref={ref} aria-label='Font size' />
 })
 
 FontSizeSliderUI.displayName = 'FontSizeSlider'

@@ -35,7 +35,7 @@ export const BlurSlider = () => {
 }
 
 export const BlurSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
-  return <SettingSliderUI value={value} ref={ref} />
+  return <SettingSliderUI value={value} ref={ref} aria-label='Blur' />
 })
 
 BlurSliderUI.displayName = 'BlurSlider'

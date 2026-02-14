@@ -29,6 +29,7 @@ export const UserNameDisplaySwitchUI = ({
   return (
     <SettingSwitch
       checked={userNameDisplay}
+      aria-label='User name display'
       onChange={checked => {
         changeDisplay?.(checked)
         updateYLCStyle?.({ userNameDisplay: checked })

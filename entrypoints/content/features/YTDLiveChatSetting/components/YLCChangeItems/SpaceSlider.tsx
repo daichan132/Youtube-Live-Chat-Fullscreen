@@ -40,7 +40,7 @@ export const SpaceSlider = () => {
 }
 
 export const SpaceSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
-  return <SettingSliderUI value={value} ref={ref} />
+  return <SettingSliderUI value={value} ref={ref} aria-label='Space' />
 })
 
 SpaceSliderUI.displayName = 'SpaceSlider'

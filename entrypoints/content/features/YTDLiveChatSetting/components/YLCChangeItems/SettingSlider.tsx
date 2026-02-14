@@ -25,8 +25,10 @@ export const useSettingSlider = <TElement extends HTMLElement>({
   return { value, ref }
 }
 
-export const SettingSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
-  return <Slider value={value} ref={ref} />
-})
+export const SettingSliderUI = React.forwardRef<HTMLDivElement, { value: number; 'aria-label'?: string }>(
+  ({ value, 'aria-label': ariaLabel }, ref) => {
+    return <Slider value={value} ref={ref} aria-label={ariaLabel} />
+  },
+)
 
 SettingSliderUI.displayName = 'SettingSlider'

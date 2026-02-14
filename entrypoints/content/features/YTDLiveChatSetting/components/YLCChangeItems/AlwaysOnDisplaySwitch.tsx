@@ -25,6 +25,7 @@ export const AlwaysOnDisplaySwitchUI = ({
   return (
     <SettingSwitch
       checked={alwaysOnDisplay}
+      aria-label='Always on display'
       onChange={checked => {
         updateYLCStyle?.({ alwaysOnDisplay: checked })
       }}
