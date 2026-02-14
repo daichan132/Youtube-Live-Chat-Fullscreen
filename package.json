@@ -55,7 +55,7 @@
     "@testing-library/react": "16.3.2",
     "@types/chrome": "0.1.36",
     "@types/lodash-es": "4.17.12",
-    "@types/react": "19.2.13",
+    "@types/react": "19.2.14",
     "@types/react-color": "3.0.13",
     "@types/react-dom": "19.2.3",
     "@types/react-modal": "3.16.3",
