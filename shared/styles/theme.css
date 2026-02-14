@@ -1161,3 +1161,34 @@
 .ylc-overlay-control-icon-active {
   background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
 }
+
+@media (prefers-reduced-motion: reduce) {
+  /* すべてのトランジションとアニメーションを無効化 */
+  [data-ylc-theme] *,
+  [data-ylc-theme] *::before,
+  [data-ylc-theme] *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  /* translateY ベースのホバーエフェクトを無効化 */
+  .ylc-theme-icon-link:hover,
+  .ylc-theme-donate-link:hover .ylc-theme-donate-image {
+    transform: none !important;
+  }
+
+  .ylc-theme-icon-link:active,
+  .ylc-theme-donate-link:active .ylc-theme-donate-image {
+    transform: none !important;
+  }
+
+  /* スイッチのホバー変形を無効化 */
+  .ylc-theme-toggle:hover {
+    transform: none !important;
+  }
+
+  .ylc-theme-toggle:active {
+    transform: none !important;
+  }
+}
