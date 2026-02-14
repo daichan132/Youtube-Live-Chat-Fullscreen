@@ -3,9 +3,10 @@ import { forwardRef } from 'react'
 interface SliderProps {
   value: number
   'aria-label'?: string
+  'aria-valuetext'?: string
 }
 
-export const Slider = forwardRef<HTMLDivElement, SliderProps>(({ value, 'aria-label': ariaLabel }, ref) => {
+export const Slider = forwardRef<HTMLDivElement, SliderProps>(({ value, 'aria-label': ariaLabel, 'aria-valuetext': ariaValuetext }, ref) => {
   const clampedValue = Math.min(1, Math.max(0, value))
   const position = `${clampedValue * 100}%`
 
@@ -18,6 +19,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(({ value, 'aria-la
       aria-valuemin={0}
       aria-valuemax={1}
       aria-label={ariaLabel}
+      aria-valuetext={ariaValuetext}
       tabIndex={0}
     >
       <div className='ylc-slider-track' />
