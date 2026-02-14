@@ -6,6 +6,7 @@ import { RiCloseLine } from 'react-icons/ri'
 import { TbLayoutGrid, TbSettings2 } from 'react-icons/tb'
 import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
+import { isRTL } from '@/shared/i18n/rtl'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { getModalParentElement } from '../utils/getModalParentElement'
@@ -46,7 +47,7 @@ export const YTDLiveChatSetting = () => {
       setIsHover: state.setIsHover,
     })),
   )
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const tablistRef = useRef<HTMLDivElement>(null)
 
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(() => [
@@ -93,6 +94,7 @@ export const YTDLiveChatSetting = () => {
     >
       <div
         data-ylc-theme={resolvedThemeMode}
+        dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
         className='ylc-setting-panel flex flex-col w-[480px] rounded-xl ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >

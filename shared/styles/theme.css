@@ -420,7 +420,7 @@
 
 .ylc-slider-fill {
   position: absolute;
-  left: 0;
+  inset-inline-start: 0;
   top: 50%;
   height: 8px;
   border-radius: 9999px;
@@ -706,7 +706,7 @@
 .ylc-theme-toggle-thumb {
   position: absolute;
   top: var(--ylc-switch-padding);
-  left: var(--ylc-switch-padding);
+  inset-inline-start: var(--ylc-switch-padding);
   z-index: 4;
   width: var(--ylc-switch-thumb-size);
   height: var(--ylc-switch-thumb-size);
@@ -787,7 +787,7 @@
 .ylc-theme-select-wrap::after {
   content: "";
   position: absolute;
-  right: 12px;
+  inset-inline-end: 12px;
   top: 50%;
   width: 7px;
   height: 7px;
@@ -810,7 +810,8 @@
   max-width: 100%;
   min-width: 0;
   height: 36px;
-  padding: 0 34px 0 12px;
+  padding-inline-start: 12px;
+  padding-inline-end: 34px;
   border: var(--ylc-border-width) solid var(--ylc-border);
   border-radius: var(--ylc-radius-xl);
   background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 90%, var(--ylc-bg-surface) 10%);
@@ -911,7 +912,7 @@
   content: "";
   width: 7px;
   height: 7px;
-  margin-left: 10px;
+  margin-inline-start: 10px;
   border-right: var(--ylc-border-width) solid color-mix(in srgb, var(--ylc-text-secondary) 88%, transparent);
   border-bottom: var(--ylc-border-width) solid color-mix(in srgb, var(--ylc-text-secondary) 88%, transparent);
   transform: translateY(-1px) rotate(45deg);
@@ -1046,7 +1047,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  padding-right: 8px;
+  padding-inline-end: 8px;
 }
 
 .ylc-font-combobox-empty {
