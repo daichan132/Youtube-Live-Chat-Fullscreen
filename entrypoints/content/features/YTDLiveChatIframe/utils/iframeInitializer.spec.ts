@@ -78,7 +78,7 @@ describe('iframeInitializer', () => {
 
     const initialized = initializer.initialize(iframe)
     expect(initialized).toBe(false)
-    expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
+    expect(setIsIframeLoaded).not.toHaveBeenCalled()
     expect(setIsDisplay).toHaveBeenCalledWith(true)
     expect(applyChatStyle).toHaveBeenCalledTimes(0)
 
@@ -86,7 +86,45 @@ describe('iframeInitializer', () => {
     vi.advanceTimersByTime(100)
 
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
+    expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
+    expect(setLoadState).toHaveBeenLastCalledWith('ready')
     expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).not.toBeNull()
+  })
+
+  it('falls back to showing content when retries are exhausted', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+
+    Object.defineProperty(iframe, 'contentDocument', {
+      get: () => {
+        throw new DOMException('Blocked by cross-origin policy', 'SecurityError')
+      },
+      configurable: true,
+    })
+
+    const applyChatStyle = vi.fn()
+    const setIsIframeLoaded = vi.fn()
+    const setIsDisplay = vi.fn()
+    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
+    const initializer = createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle,
+      setIsIframeLoaded,
+      setIsDisplay,
+      setLoadState,
+      retryIntervalMs: 100,
+      retryMaxAttempts: 3,
+    })
+
+    initializer.initialize(iframe)
+    expect(setIsIframeLoaded).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(100 * 2)
+    expect(setIsIframeLoaded).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(100)
+    expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
+    expect(setLoadState).toHaveBeenLastCalledWith('ready')
   })
 
   it('does not inject duplicate styles when initialized repeatedly', () => {

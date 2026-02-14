@@ -58,6 +58,15 @@ export const createIframeInitializer = ({
     const doc = getIframeDocument(iframe)
     if (!doc || !doc.head || !doc.body) return false
 
+    // Reject about:blank — a newly-created managed iframe starts with a blank
+    // same-origin document that will be replaced once navigation completes.
+    // Injecting styles here would be discarded and cause a flash of unstyled content.
+    try {
+      if (doc.location?.href === 'about:blank') return false
+    } catch {
+      // cross-origin doc.location access throws — the document is real, not blank.
+    }
+
     const styleInjected = ensureStyleInjected(doc, iframeStyles)
     const classAdded = !doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)
     if (classAdded) {
@@ -96,10 +105,12 @@ export const createIframeInitializer = ({
       }
 
       if (retryAttempts >= retryMaxAttempts) {
-        debugLog?.('initializer retry exhausted', {
+        debugLog?.('initializer retry exhausted, fail-open to show content', {
           attempts: retryAttempts,
           href: getNonBlankIframeHref(retryIframe),
         })
+        setIsIframeLoaded(true)
+        setLoadState('ready')
         clearRetry()
       }
     }, retryIntervalMs)
@@ -117,10 +128,9 @@ export const createIframeInitializer = ({
     if (!href) return false
 
     // Fail-open: if iframe URL is valid but document access is temporarily blocked,
-    // allow visibility and keep retrying style injection.
-    setIsIframeLoaded(true)
+    // keep iframe in DOM and retry style injection. Loading overlay stays visible
+    // until styles are applied (or retries exhaust as a fallback).
     setIsDisplay(true)
-    setLoadState('ready')
     startRetry(iframe)
     return false
   }

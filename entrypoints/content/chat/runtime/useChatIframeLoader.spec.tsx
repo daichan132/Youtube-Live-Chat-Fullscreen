@@ -292,6 +292,8 @@ describe('useChatIframeLoader', () => {
   })
 
   it('marks managed live iframe loaded when document access is restricted even if load event is missed', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('is-live-now', '')
     watchFlexy.setAttribute('live-chat-present', '')
@@ -315,13 +317,15 @@ describe('useChatIframeLoader', () => {
         expect(iframe?.getAttribute('data-ylc-owned')).toBe('true')
       })
 
-      await waitFor(() => {
-        expect(useYTDLiveChatNoLsStore.getState().isIframeLoaded).toBe(true)
-      })
+      // Advance past retry exhaustion (default: 10 retries * 1000ms)
+      await vi.advanceTimersByTimeAsync(10 * 1000)
+
+      expect(useYTDLiveChatNoLsStore.getState().isIframeLoaded).toBe(true)
     } finally {
       if (originalDescriptor) {
         Object.defineProperty(HTMLIFrameElement.prototype, 'contentDocument', originalDescriptor)
       }
+      vi.useRealTimers()
     }
   })
 })

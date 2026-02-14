@@ -77,6 +77,8 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
           className='absolute inset-0 z-20 flex items-center justify-center pointer-events-auto'
           style={{
             backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
+            backdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
+            WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
           }}
         >
           <output className='flex justify-center' aria-label='loading'>

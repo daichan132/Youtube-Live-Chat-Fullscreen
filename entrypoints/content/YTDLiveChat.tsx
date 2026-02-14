@@ -20,16 +20,16 @@ type YTDLiveChatProps = {
 
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
-  const isIframeLoaded = useYTDLiveChatNoLsStore(state => state.isIframeLoaded)
+  const iframeElement = useYTDLiveChatNoLsStore(state => state.iframeElement)
   const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
     useShallow(state => ({
       ytdLiveChat: state.ytdLiveChat,
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  // Keep native chat layout intact until extension iframe is actually ready.
-  // Archive replay can stay about:blank if we collapse the native container too early.
-  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && isIframeLoaded)
+  // Collapse native chat as soon as our iframe is attached to the container.
+  // The loading overlay covers the fullscreen chat area until styles are applied.
+  useFullscreenChatLayoutFix(isFullscreen && ytdLiveChat && iframeElement !== null)
   const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
