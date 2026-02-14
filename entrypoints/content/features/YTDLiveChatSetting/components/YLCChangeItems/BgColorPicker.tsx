@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react'
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ColorResult, RGBColor } from 'react-color'
 import { ChromePicker } from 'react-color'
 import { useShallow } from 'zustand/react/shallow'
@@ -28,6 +28,19 @@ export const BgColorPicker = () => {
 
   const ref = useRef<HTMLDivElement>(null)
   useShadowClickAway(ref, () => setDisplay(false))
+
+  useEffect(() => {
+    if (!display) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation()
+        setDisplay(false)
+      }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [display])
+
   const onChange = useCallback(
     (c: ColorResult) => {
       changeColor(c.rgb)
@@ -67,7 +80,7 @@ export const BgColorPickerUI = React.forwardRef<
           />
         </div>
       </button>
-      <div className='absolute right-0 z-1'>
+      <div className='absolute right-0 z-50'>
         {display ? (
           <ChromePicker
             color={rgba}

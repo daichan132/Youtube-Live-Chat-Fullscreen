@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { type ComponentType, useEffect } from 'react'
+import { type ComponentType, useCallback, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { IconType } from 'react-icons'
 import { RiCloseLine } from 'react-icons/ri'
@@ -47,11 +47,31 @@ export const YTDLiveChatSetting = () => {
     })),
   )
   const { t } = useTranslation()
+  const tablistRef = useRef<HTMLDivElement>(null)
 
   const tabs: { key: 'preset' | 'setting'; label: string; icon: IconType }[] = [
     { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
   ]
+
+  const handleTabKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      const currentIndex = tabs.findIndex(tab => tab.key === menuItem)
+      let nextIndex: number | null = null
+      if (e.key === 'ArrowRight') {
+        nextIndex = (currentIndex + 1) % tabs.length
+      } else if (e.key === 'ArrowLeft') {
+        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
+      }
+      if (nextIndex !== null) {
+        e.preventDefault()
+        setMenuItem(tabs[nextIndex].key)
+        const buttons = tablistRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
+        buttons?.[nextIndex]?.focus()
+      }
+    },
+    [menuItem, setMenuItem, tabs],
+  )
 
   useEffect(() => {
     if (!isOpenSettingModal) return
@@ -76,17 +96,22 @@ export const YTDLiveChatSetting = () => {
         onWheel={e => e.stopPropagation()}
       >
         <div className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
-          <div className='ylc-theme-tablist'>
+          <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
                 key={item.key}
+                id={`ylc-tab-${item.key}`}
                 type='button'
+                role='tab'
+                aria-selected={menuItem === item.key}
+                aria-controls={`ylc-tabpanel-${item.key}`}
+                tabIndex={menuItem === item.key ? 0 : -1}
                 className={classNames('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
                 onClick={() => {
                   if (menuItem === item.key) return
                   setMenuItem(item.key)
                 }}
-                aria-pressed={menuItem === item.key}
+                onKeyDown={handleTabKeyDown}
               >
                 <item.icon size={16} />
                 {item.label}
@@ -95,13 +120,20 @@ export const YTDLiveChatSetting = () => {
           </div>
           <button
             type='button'
+            aria-label='Close'
             className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-200 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
             onClick={() => setIsOpenSettingModal(false)}
           >
             <RiCloseLine size={24} />
           </button>
         </div>
-        <div className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl' style={{ overscrollBehavior: 'contain' }}>
+        <div
+          id={`ylc-tabpanel-${menuItem}`}
+          role='tabpanel'
+          aria-labelledby={`ylc-tab-${menuItem}`}
+          className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
+          style={{ overscrollBehavior: 'contain' }}
+        >
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
