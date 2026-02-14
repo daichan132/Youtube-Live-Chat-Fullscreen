@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen ロゴ" width="96" />
+  <img src="../public/icon/128.png" alt="YouTube Live Chat Fullscreen ロゴ" width="96" />
 </div>
 
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
+  <a href="../README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.zh-TW.md">繁體中文</a>
 </p>
@@ -42,7 +42,7 @@
 
 ## プレビュー
 
-![YouTubeライブ配信にフルスクリーンチャットオーバーレイを表示した画面](./.github/preview.png)
+![YouTubeライブ配信にフルスクリーンチャットオーバーレイを表示した画面](../.github/preview.png)
 
 ## 30秒クイックスタート
 
@@ -89,7 +89,7 @@
 
 ### システム概要
 
-![Content Script・Popup 間の通信を示すアーキテクチャ図](./.github/system_overview.drawio.png)
+![Content Script・Popup 間の通信を示すアーキテクチャ図](../.github/system_overview.drawio.png)
 
 この拡張機能は、ブラウザの `tabs` / `runtime` メッセージング API を介して通信する2つのエントリポイントで構成されています:
 
@@ -151,18 +151,13 @@ yarn install
 | コマンド | 説明 |
 | --- | --- |
 | `yarn dev` | 開発サーバー起動（Chrome） |
-| `yarn dev:firefox` | 開発サーバー起動（Firefox） |
 | `yarn build` | 本番ビルド（Chrome） |
-| `yarn build:firefox` | 本番ビルド（Firefox） |
-| `yarn zip` | Zip パッケージ作成 |
-| `yarn zip:firefox` | Firefox 用 Zip パッケージ作成 |
 | `yarn lint` | Biome チェック + TypeScript 型検査 |
 | `yarn test:unit` | ユニットテスト実行 |
-| `yarn storybook` | Storybook 起動 |
-| `yarn storybook:build` | Storybook 静的ビルド |
 | `yarn e2e` | E2E テスト実行 |
+| `yarn storybook` | Storybook 起動 |
 
-> Storybook では `Catalog/CurrentUIDesigns` を開くと、現状の UI デザインを一括確認できます。
+> Firefox 向けは末尾に `:firefox` を付けてください — 例: `yarn dev:firefox`, `yarn build:firefox`
 
 ### 品質チェック
 
@@ -181,7 +176,7 @@ Firefox 互換に関係する変更では `yarn build:firefox` も実行して�
 バグ報告・機能提案・Pull Request、すべて歓迎です!
 
 - [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) を作成するか、[Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls) を送ってください。
-- 翻訳のコントリビュートも歓迎です — `README.<locale>.md` を追加してください。
+- 翻訳のコントリビュートも歓迎です — `docs/README.<locale>.md` を追加してください。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
@@ -202,4 +197,4 @@ Firefox 互換に関係する変更では `yarn build:firefox` も実行して�
 
 ## ライセンス
 
-GPL-3.0 ライセンス。詳細は [LICENSE](LICENSE) を参照してください。
+GPL-3.0 ライセンス。詳細は [LICENSE](../LICENSE) を参照してください。

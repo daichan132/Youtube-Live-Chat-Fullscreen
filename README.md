@@ -10,8 +10,8 @@
 
 <p align="center">
   <a href="README.md">English</a> ·
-  <a href="README.ja.md">日本語</a> ·
-  <a href="README.zh-TW.md">繁體中文</a>
+  <a href="docs/README.ja.md">日本語</a> ·
+  <a href="docs/README.zh-TW.md">繁體中文</a>
 </p>
 
 <p align="center">
@@ -151,18 +151,13 @@ yarn install
 | Command | Description |
 | --- | --- |
 | `yarn dev` | Start dev server (Chrome) |
-| `yarn dev:firefox` | Start dev server (Firefox) |
 | `yarn build` | Production build (Chrome) |
-| `yarn build:firefox` | Production build (Firefox) |
-| `yarn zip` | Create zip package |
-| `yarn zip:firefox` | Create Firefox zip package |
 | `yarn lint` | Biome checks + TypeScript type checks |
 | `yarn test:unit` | Run unit tests |
-| `yarn storybook` | Launch Storybook |
-| `yarn storybook:build` | Build static Storybook output |
 | `yarn e2e` | Run E2E tests |
+| `yarn storybook` | Launch Storybook |
 
-> In Storybook, open `Catalog/CurrentUIDesigns` to review the current UI design in one place.
+> For Firefox, append `:firefox` — e.g. `yarn dev:firefox`, `yarn build:firefox`.
 
 ### Quality Checks
 
@@ -181,7 +176,7 @@ For Firefox compatibility changes, also run `yarn build:firefox`.
 Contributions are welcome! Whether it's bug reports, feature ideas, or pull requests — all help is appreciated.
 
 - Open an [issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) or submit a [pull request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls).
-- Translation contributions are also welcome — add a `README.<locale>.md` for your language.
+- Translation contributions are also welcome — add a `docs/README.<locale>.md` for your language.
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />

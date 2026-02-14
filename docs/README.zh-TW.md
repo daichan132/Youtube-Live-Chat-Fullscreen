@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="96" />
+  <img src="../public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="96" />
 </div>
 
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
+  <a href="../README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
   <a href="README.zh-TW.md">繁體中文</a>
 </p>
@@ -42,7 +42,7 @@
 
 ## 預覽
 
-![YouTube 直播全螢幕聊天覆蓋視窗預覽](./.github/preview.png)
+![YouTube 直播全螢幕聊天覆蓋視窗預覽](../.github/preview.png)
 
 ## 30 秒快速開始
 
@@ -89,7 +89,7 @@
 
 ### 系統概覽
 
-![Content Script 與 Popup 之間通訊的架構圖](./.github/system_overview.drawio.png)
+![Content Script 與 Popup 之間通訊的架構圖](../.github/system_overview.drawio.png)
 
 此擴充功能由兩個進入點組成，透過瀏覽器的 `tabs` / `runtime` 訊息 API 通訊：
 
@@ -151,18 +151,13 @@ yarn install
 | 指令 | 說明 |
 | --- | --- |
 | `yarn dev` | 啟動開發伺服器（Chrome） |
-| `yarn dev:firefox` | 啟動開發伺服器（Firefox） |
 | `yarn build` | 正式建置（Chrome） |
-| `yarn build:firefox` | 正式建置（Firefox） |
-| `yarn zip` | 建立 Zip 套件 |
-| `yarn zip:firefox` | 建立 Firefox Zip 套件 |
 | `yarn lint` | Biome 檢查 + TypeScript 型別檢查 |
 | `yarn test:unit` | 執行單元測試 |
-| `yarn storybook` | 啟動 Storybook |
-| `yarn storybook:build` | 建置 Storybook 靜態輸出 |
 | `yarn e2e` | 執行 E2E 測試 |
+| `yarn storybook` | 啟動 Storybook |
 
-> 在 Storybook 中開啟 `Catalog/CurrentUIDesigns` 可一覽目前的 UI 設計。
+> Firefox 版請在末尾加上 `:firefox` — 例如 `yarn dev:firefox`、`yarn build:firefox`
 
 ### 品質檢查
 
@@ -181,7 +176,7 @@ yarn build
 歡迎提出問題回報、功能建議或 Pull Request！
 
 - 建立 [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) 或送出 [Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls)。
-- 翻譯貢獻也十分歡迎 — 請新增 `README.<locale>.md` 檔案。
+- 翻譯貢獻也十分歡迎 — 請新增 `docs/README.<locale>.md` 檔案。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
@@ -202,4 +197,4 @@ yarn build
 
 ## 授權
 
-採用 GPL-3.0 授權，詳見 [LICENSE](LICENSE)。
+採用 GPL-3.0 授權，詳見 [LICENSE](../LICENSE)。
