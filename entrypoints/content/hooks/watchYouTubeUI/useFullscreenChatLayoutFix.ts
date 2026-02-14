@@ -25,20 +25,25 @@ html.${className} ${fullscreenRootSelector} {
   max-width: 100vw !important;
   margin: 0 !important;
 }
-html.${className} ${fullscreenRootSelector} #chat-container,
-html.${className} ${fullscreenRootSelector} #secondary,
-html.${className} ${fullscreenRootSelector} #secondary-inner {
-  z-index: -1 !important;
-  width: 0 !important;
-  min-width: 0 !important;
-  max-width: 0 !important;
-  flex: 0 0 0 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  overflow: hidden !important;
+html.${className} ${fullscreenRootSelector} #secondary {
+  position: fixed !important;
+  top: -200vh !important;
+  left: 0 !important;
+  width: 400px !important;
+  visibility: hidden !important;
   pointer-events: none !important;
+  z-index: -9999 !important;
 }
-html.${className} ${fullscreenRootSelector} #panels-full-bleed-container,
+html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
+  position: fixed !important;
+  top: -200vh !important;
+  left: 0 !important;
+  width: 400px !important;
+  height: 600px !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  z-index: -9999 !important;
+}
 html.${className} ${fullscreenRootSelector} #panels {
   z-index: -1 !important;
   width: 0 !important;
@@ -51,9 +56,6 @@ html.${className} ${fullscreenRootSelector} #panels {
   overflow: hidden !important;
   pointer-events: none !important;
   display: none !important;
-}
-html.${className} ${fullscreenRootSelector} #secondary {
-  visibility: hidden !important;
 }
 html.${className} ${fullscreenRootSelector} #columns,
 html.${className} ${fullscreenRootSelector} #primary,
