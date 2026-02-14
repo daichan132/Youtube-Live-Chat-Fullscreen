@@ -8,6 +8,7 @@ import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { DEFAULT_FONT_OPTION, FEATURED_FONT_VALUES, FONT_FAMILY_OPTIONS } from './fontFamilyOptions'
+import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
 const PREVIEW_FONT_STYLE_ID = 'ylc-font-family-preview-style'
@@ -67,7 +68,10 @@ export const FontFamilyInputUI = ({
   const [searchValue, setSearchValue] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
   const rootRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  useEnsureSettingPanelVisibility({ isOpen, anchorRef: triggerRef, popupRef: menuRef })
 
   const defaultLabel = t('content.preset.defaultTitle')
   const normalizedValue = useMemo(() => normalizeFontFamily(value), [value])
@@ -193,6 +197,7 @@ export const FontFamilyInputUI = ({
   return (
     <div className='ylc-font-combobox ylc-action-fill' ref={rootRef} data-ylc-font-combobox='true'>
       <button
+        ref={triggerRef}
         type='button'
         className={classNames(
           'ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring',
@@ -214,7 +219,7 @@ export const FontFamilyInputUI = ({
       </button>
 
       {!readOnly && isOpen && (
-        <div className='ylc-font-combobox-menu ylc-theme-shadow-sm ylc-theme-border' data-ylc-font-combobox-menu='true'>
+        <div ref={menuRef} className='ylc-font-combobox-menu ylc-theme-shadow-sm ylc-theme-border' data-ylc-font-combobox-menu='true'>
           <input
             ref={searchInputRef}
             className='ylc-font-combobox-search'

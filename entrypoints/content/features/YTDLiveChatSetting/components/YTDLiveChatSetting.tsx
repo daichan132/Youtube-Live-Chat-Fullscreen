@@ -141,6 +141,7 @@ export const YTDLiveChatSetting = () => {
           id={`ylc-tabpanel-${menuItem}`}
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
+          data-ylc-setting-scroll-container='true'
           className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >

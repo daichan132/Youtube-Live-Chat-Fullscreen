@@ -8,6 +8,7 @@ import { useYLCBgColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/
 
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const getPreviewBorderColor = (rgba: RGBColor) => {
   const alpha = typeof rgba.a === 'number' ? rgba.a : 1
@@ -29,6 +30,8 @@ export const BgColorPicker = () => {
 
   const ref = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
+  useEnsureSettingPanelVisibility({ isOpen: display, anchorRef: triggerRef, popupRef: menuRef })
   useShadowClickAway(ref, () => {
     if (!display) return
     setDisplay(false)
@@ -55,7 +58,17 @@ export const BgColorPicker = () => {
     },
     [changeColor, updateYLCStyle],
   )
-  return <BgColorPickerUI rgba={rgba} ref={ref} triggerRef={triggerRef} display={display} setDisplay={setDisplay} onChange={onChange} />
+  return (
+    <BgColorPickerUI
+      rgba={rgba}
+      ref={ref}
+      triggerRef={triggerRef}
+      menuRef={menuRef}
+      display={display}
+      setDisplay={setDisplay}
+      onChange={onChange}
+    />
+  )
 }
 
 export const BgColorPickerUI = React.forwardRef<
@@ -63,11 +76,12 @@ export const BgColorPickerUI = React.forwardRef<
   {
     rgba: RGBColor
     triggerRef?: React.RefObject<HTMLButtonElement | null>
+    menuRef?: React.RefObject<HTMLDivElement | null>
     display?: boolean
     setDisplay?: Dispatch<SetStateAction<boolean>>
     onChange?: (c: ColorResult) => void
   }
->(({ rgba, triggerRef, display, setDisplay, onChange }, ref) => {
+>(({ rgba, triggerRef, menuRef, display, setDisplay, onChange }, ref) => {
   const { t } = useTranslation()
   const previewBorderColor = getPreviewBorderColor(rgba)
 
@@ -99,7 +113,7 @@ export const BgColorPickerUI = React.forwardRef<
           />
         </div>
       </button>
-      <div className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
+      <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
         {display ? (
           <ChromePicker
             color={rgba}
