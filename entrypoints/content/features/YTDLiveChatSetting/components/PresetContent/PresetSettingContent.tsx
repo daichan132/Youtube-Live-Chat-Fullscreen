@@ -53,7 +53,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
                   )}
                 >
                   <div className='flex items-center gap-x-3'>
-                    <span className='ylc-theme-icon-badge ylc-theme-icon-badge-sm'>
+                    <span className='ylc-theme-icon-badge ylc-theme-icon-badge-sm' aria-hidden="true">
                       <item.icon size={16} />
                     </span>
                     <div>{item.title}</div>

@@ -56,7 +56,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
-              className={`transition-all duration-160 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
+              aria-hidden="true"
+              className={`transition-all duration-160 outline-none ylc-theme-focus-ring-soft rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
                   ? 'w-[24px] h-[24px] p-[2px] opacity-100 pointer-events-auto cursor-grabbing'
                   : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[24px] group-hover:h-[24px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
@@ -80,7 +81,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             onClick={() => updateStyle(ylcStyle)}
           >
-            <TbSparkles size={20} />
+            <TbSparkles size={20} aria-hidden="true" />
           </button>
           <button
             type='button'
@@ -88,7 +89,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
             onClick={() => setIsDeleteModalOpen(true)}
           >
-            <TbTrash size={20} />
+            <TbTrash size={20} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -55,7 +55,7 @@ export const SettingContent = () => {
             )}
           >
             <div className='flex items-center'>
-              <span className='mr-3 ylc-theme-icon-badge'>
+              <span className='mr-3 ylc-theme-icon-badge' aria-hidden="true">
                 <item.icon size={18} />
               </span>
               <p className='ylc-theme-text-primary'>{item.title}</p>
