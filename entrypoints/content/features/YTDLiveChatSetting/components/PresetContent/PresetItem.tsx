@@ -63,7 +63,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
                   : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[24px] group-hover:h-[24px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
               }`}
               size={20}
-              aria-label="Reorder preset"
+              aria-label={t('content.aria.reorderPreset')}
               {...listeners}
               {...attributes}
             />
@@ -72,25 +72,23 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
-            aria-label='Preset name'
+            aria-label={t('content.aria.presetName')}
             className='ml-1 h-8 px-1.5 rounded-[8px] outline-none min-w-0 flex-1 max-w-[240px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
         <div className='flex transition-opacity duration-160 shrink-0'>
           <button
             type='button'
-            className={actionButtonClassName}
-            style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-            aria-label="Apply preset"
+            className={`${actionButtonClassName} ylc-preset-action-btn`}
+            aria-label={t('content.aria.applyPreset')}
             onClick={() => updateStyle(ylcStyle)}
           >
             <TbSparkles size={20} aria-hidden="true" />
           </button>
           <button
             type='button'
-            className={actionButtonClassName}
-            style={{ width: 34, height: 34, padding: 7, display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-            aria-label="Delete preset"
+            className={`${actionButtonClassName} ylc-preset-action-btn`}
+            aria-label={t('content.aria.deletePreset')}
             onClick={() => setIsDeleteModalOpen(true)}
           >
             <TbTrash size={20} aria-hidden="true" />
@@ -117,16 +115,14 @@ export const PresetItem = ({ id }: PresetItemType) => {
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
-              className='rounded-md leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
-              style={{ height: 36, paddingInline: 12, fontSize: 14 }}
+              className='rounded-md leading-none font-medium cursor-pointer transition-colors border-none bg-transparent ylc-theme-focus-ring-soft ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)] ylc-dialog-btn'
             >
               {t('content.preset.cancel')}
             </button>
             <button
               type='button'
               onClick={() => deletePresetItem(id)}
-              className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90'
-              style={{ height: 36, paddingInline: 16, fontSize: 14 }}
+              className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90 ylc-dialog-btn-primary'
             >
               {t('content.preset.delete')}
             </button>

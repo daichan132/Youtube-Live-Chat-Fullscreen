@@ -1199,6 +1199,27 @@
   opacity: 0.5;
 }
 
+.ylc-preset-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 7px;
+}
+
+.ylc-dialog-btn {
+  height: 36px;
+  padding-inline: 12px;
+  font-size: 14px;
+}
+
+.ylc-dialog-btn-primary {
+  height: 36px;
+  padding-inline: 16px;
+  font-size: 14px;
+}
+
 /* ── Scrollbar ── */
 
 .ylc-setting-panel [role="tabpanel"] {
