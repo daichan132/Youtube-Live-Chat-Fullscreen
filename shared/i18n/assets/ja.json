@@ -28,6 +28,20 @@
         "dark": "ダーク"
       }
     },
+    "aria": {
+      "dragToMove": "ドラッグで移動",
+      "arrowKeysToMove": "矢印キーで移動",
+      "openSettings": "設定を開く",
+      "toggleLiveChat": "ライブチャットの切り替え",
+      "close": "閉じる",
+      "reorderPreset": "プリセットの並び替え",
+      "presetName": "プリセット名",
+      "applyPreset": "プリセットを適用",
+      "deletePreset": "プリセットを削除",
+      "colorPicker": "カラーピッカー",
+      "loading": "読み込み中",
+      "selectLanguage": "言語を選択"
+    },
     "preset": {
       "addMessage": "現在の設定を追加",
       "addItemTitle": "無題",
