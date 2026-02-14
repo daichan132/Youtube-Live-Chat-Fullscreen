@@ -67,6 +67,9 @@ export const BgColorPickerUI = React.forwardRef<
     <div ref={ref} className='relative ylc-action-fill'>
       <button
         type='button'
+        aria-label='Background color'
+        aria-haspopup='dialog'
+        aria-expanded={display ?? false}
         className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'
         onClick={() => setDisplay?.(d => !d)}
       >
@@ -80,7 +83,7 @@ export const BgColorPickerUI = React.forwardRef<
           />
         </div>
       </button>
-      <div className='absolute right-0 z-50'>
+      <div className='absolute right-0 z-50' role='dialog' aria-label='Color picker'>
         {display ? (
           <ChromePicker
             color={rgba}
