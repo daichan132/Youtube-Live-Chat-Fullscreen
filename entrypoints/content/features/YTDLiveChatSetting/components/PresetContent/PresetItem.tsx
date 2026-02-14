@@ -46,13 +46,13 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-preset-card ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-160 ${
+      className={`ylc-preset-card ylc-theme-surface m-3 p-2.5 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-160 ${
         isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
       }`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
-      <div className='flex justify-between items-center gap-2'>
+      <div className='flex justify-between items-center gap-2.5'>
         <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
@@ -73,7 +73,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
             aria-label={t('content.aria.presetName')}
-            className='ml-1 h-8 px-1.5 rounded-[8px] outline-none min-w-0 flex-1 max-w-[240px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
+            className='ml-1 h-[34px] p-2 rounded-[8px] outline-none min-w-0 flex-1 max-w-[228px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
         <div className='flex transition-opacity duration-160 shrink-0'>
