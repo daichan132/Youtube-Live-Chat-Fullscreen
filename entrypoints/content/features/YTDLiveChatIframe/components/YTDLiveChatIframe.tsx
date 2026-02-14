@@ -42,7 +42,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const loaderColorB = Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix)
   const loaderColorA = Math.min(0.5, Math.max(0.22, baseAlpha * 0.55))
   const backgroundAlpha = bgColor.a ?? 1
-  const overlayAlpha = blur > 0 ? Math.max(backgroundAlpha, 0.01) : backgroundAlpha
+  const overlayAlpha = backgroundAlpha
 
   return (
     <>
