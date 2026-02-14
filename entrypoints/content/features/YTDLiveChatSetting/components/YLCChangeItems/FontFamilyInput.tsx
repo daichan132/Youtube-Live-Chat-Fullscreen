@@ -218,11 +218,14 @@ export const FontFamilyInputUI = ({
             onChange={event => setSearchValue(event.target.value)}
             onKeyDown={handleSearchKeyDown}
             placeholder={t('content.setting.fontFamily')}
+            role='combobox'
+            aria-autocomplete='list'
+            aria-controls='ylc-font-options-listbox'
             aria-label={t('content.setting.fontFamily')}
             data-ylc-font-combobox-search='true'
             data-testid='font-family-search'
           />
-          <div className='ylc-font-combobox-options' role='listbox'>
+          <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox'>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option, index) => {
                 const isSelected = option.value === normalizedValue
