@@ -40,6 +40,8 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         className='absolute z-10 cursor-grab'
         role='button'
         aria-label='Drag to move'
+        aria-roledescription='drag handle'
+        aria-describedby='ylc-drag-desc'
         {...attributes}
         {...listeners}
         style={{
@@ -52,6 +54,22 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
           <TbGripVertical size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </div>
+        <span
+          id='ylc-drag-desc'
+          style={{
+            position: 'absolute',
+            width: '1px',
+            height: '1px',
+            padding: 0,
+            margin: '-1px',
+            overflow: 'hidden',
+            clip: 'rect(0,0,0,0)',
+            whiteSpace: 'nowrap',
+            border: 0,
+          }}
+        >
+          Arrow keys to move
+        </span>
       </div>
 
       <div

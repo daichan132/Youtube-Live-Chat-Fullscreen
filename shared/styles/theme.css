@@ -6,6 +6,10 @@
   --ylc-action-width-setting: 160px;
   --ylc-action-width-popup-wide: 188px;
   --ylc-action-width-setting-wide: 196px;
+  --ylc-radius-sm: 6px;
+  --ylc-radius-md: 8px;
+  --ylc-radius-lg: 10px;
+  --ylc-radius-xl: 12px;
 }
 
 [data-ylc-theme] {
@@ -1176,6 +1180,12 @@
 
 .ylc-overlay-control-icon-active {
   background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
+}
+
+.ylc-overlay-control-icon:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+  border-radius: 9999px;
 }
 
 /* ── Scrollbar ── */
