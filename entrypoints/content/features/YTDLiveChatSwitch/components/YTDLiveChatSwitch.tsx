@@ -33,9 +33,9 @@ export const YTDLiveChatSwitch = () => {
         color: 'var(--yt-spec-static-brand-white, #fff)',
         transition: 'opacity .1s cubic-bezier(0, 0, 0.2, 1)',
       }}
+      aria-label='Toggle live chat'
       aria-pressed={isActive}
       onClick={handleClick}
-      onKeyUp={() => {}}
     >
       <IoChatboxSharp
         size={'50%'}

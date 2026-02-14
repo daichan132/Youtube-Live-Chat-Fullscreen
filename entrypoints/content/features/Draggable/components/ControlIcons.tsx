@@ -38,6 +38,8 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
     <>
       <div
         className='absolute z-10 cursor-grab'
+        role='button'
+        aria-label='Drag to move'
         {...attributes}
         {...listeners}
         style={{
@@ -61,7 +63,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
           ...runtimeHoverVarStyle,
         }}
       >
-        <button type='button' className='ylc-overlay-control-icon cursor-pointer' onClick={onSettingsClick}>
+        <button type='button' className='ylc-overlay-control-icon cursor-pointer' aria-label='Open settings' onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
       </div>
