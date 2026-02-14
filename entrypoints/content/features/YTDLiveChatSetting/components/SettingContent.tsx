@@ -49,7 +49,7 @@ export const SettingContent = () => {
         <React.Fragment key={item.title}>
           <div
             className={classNames(
-              'flex flex-wrap justify-between items-center transition-all duration-200 opacity-100 ylc-theme-text-primary',
+              'flex flex-wrap justify-between items-center transition-all duration-160 opacity-100 ylc-theme-text-primary',
               !item.disable && 'px-3 py-2 rounded-lg hover:bg-[var(--ylc-hover-surface)]',
               item.disable && 'h-0 py-0 px-3 opacity-0 pointer-events-none overflow-hidden',
             )}

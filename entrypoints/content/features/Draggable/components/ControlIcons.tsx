@@ -63,7 +63,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
           ...runtimeHoverVarStyle,
         }}
       >
-        <button type='button' className='ylc-overlay-control-icon cursor-pointer' aria-label='Open settings' onClick={onSettingsClick}>
+        <button type='button' className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring' aria-label='Open settings' onClick={onSettingsClick}>
           <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
         </button>
       </div>

@@ -37,7 +37,7 @@ export const AddPresetItem = () => {
       <button
         type='button'
         className={classNames(
-          'ylc-add-preset-button border border-solid ylc-theme-border px-2.5 py-3 rounded-[12px] transition-colors duration-200 flex justify-center items-center cursor-pointer w-full ylc-theme-focus-ring-soft',
+          'ylc-add-preset-button border border-solid ylc-theme-border px-2.5 py-3 rounded-[12px] transition-colors duration-160 flex justify-center items-center cursor-pointer w-full ylc-theme-focus-ring-soft',
           addPresetEnabled
             ? 'ylc-theme-surface ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'
             : 'ylc-theme-elevated opacity-[0.35] cursor-not-allowed ylc-theme-text-secondary',

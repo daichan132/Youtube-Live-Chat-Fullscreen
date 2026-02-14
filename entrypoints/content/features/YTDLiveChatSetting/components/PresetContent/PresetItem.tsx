@@ -18,7 +18,7 @@ interface PresetItemType {
 
 export const PresetItem = ({ id }: PresetItemType) => {
   const actionButtonClassName =
-    'rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
+    'rounded-md mx-0.5 cursor-pointer transition-colors duration-160 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
@@ -46,7 +46,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-preset-card ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-200 ${
+      className={`ylc-preset-card ylc-theme-surface m-3 p-2 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-160 ${
         isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
       }`}
       ref={setNodeRef}
@@ -56,7 +56,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
-              className={`transition-all duration-200 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
+              className={`transition-all duration-160 outline-none rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
                   ? 'w-[24px] h-[24px] p-[2px] opacity-100 pointer-events-auto cursor-grabbing'
                   : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[24px] group-hover:h-[24px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
@@ -73,7 +73,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             className='ml-1 h-8 px-1.5 rounded-[8px] outline-none min-w-0 flex-1 max-w-[240px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
-        <div className='flex transition-opacity duration-200 shrink-0'>
+        <div className='flex transition-opacity duration-160 shrink-0'>
           <button
             type='button'
             className={actionButtonClassName}
