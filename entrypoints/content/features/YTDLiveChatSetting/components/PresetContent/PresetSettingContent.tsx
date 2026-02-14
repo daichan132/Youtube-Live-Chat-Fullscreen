@@ -48,7 +48,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
                 <div
                   className={classNames(
                     'flex flex-wrap items-center justify-between py-2 ylc-theme-text-primary',
-                    !item.disable && 'rounded-lg hover:bg-[var(--ylc-hover-surface)]',
+                    !item.disable && 'rounded-lg',
                     item.disable && 'opacity-50 pointer-events-none',
                   )}
                 >

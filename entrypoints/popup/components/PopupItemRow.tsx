@@ -15,7 +15,7 @@ export const PopupItemRow = ({ icon: Icon, title, data, isLast, actionWidth = 'd
 
   return (
     <>
-      <div className='flex flex-wrap justify-between items-center gap-3 px-3 py-2 opacity-100 transition-all duration-160 rounded-lg hover:bg-[var(--ylc-hover-surface)]'>
+      <div className='flex flex-wrap justify-between items-center gap-3 px-3 py-2 opacity-100 transition-all duration-160 rounded-lg'>
         <div
           className={
             Icon ? 'flex items-center text-sm min-w-0 flex-1 ylc-theme-text-primary' : 'text-sm min-w-0 flex-1 ylc-theme-text-primary'
