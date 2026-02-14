@@ -106,22 +106,48 @@
 ## 架構
 
 <details>
-<summary>系統概覽</summary>
+<summary>點擊展開</summary>
 
-此擴充功能由 content script 控制 YouTube 頁面的全螢幕聊天行為。popup 設定（語言、開關、主題）會與 content 端的執行狀態同步。
+### 系統概覽
 
-![Content Script、Popup、Background Service Worker 之間通訊的架構圖](./.github/system_overview.drawio.png)
+![Content Script 與 Popup 之間通訊的架構圖](./.github/system_overview.drawio.png)
 
-</details>
+此擴充功能由兩個進入點組成，透過瀏覽器的 `tabs` / `runtime` 訊息 API 通訊：
 
-<details>
-<summary>模式行為（直播 / 存檔 / 無聊天）</summary>
+| 元件 | 角色 |
+| --- | --- |
+| **Content Script** | 注入至 YouTube 頁面。負責聊天覆蓋視窗的繪製、拖曳/縮放處理，以及聊天來源的解析（直播 vs. 存檔）。 |
+| **Popup** | 擴充功能工具列 UI。控制語言、啟用/停用、主題，並即時同步狀態至 Content Script。 |
+| **Shared** | 兩個進入點共用的模組 — Store（Zustand）、i18n 資源、UI 元件、主題、工具函式。 |
 
-| 影片狀態 | 擴充功能使用的聊天來源 | 開關 / 覆蓋視窗 |
+### 聊天來源解析
+
+Content Script 自動偵測影片類型並選擇適當的聊天來源：
+
+| 影片狀態 | 聊天來源 | 開關 / 覆蓋視窗 |
 | --- | --- | --- |
 | 直播 | 公開 `live_chat?v=<videoId>` | 可用 |
 | 可重播聊天的存檔 | 原生 `live_chat_replay` iframe | 需重播可播放時才可用 |
 | 無聊天 / 重播不可用 | 無 | 隱藏 |
+
+### 專案結構
+
+```
+entrypoints/
+├── content/          # Content Script（注入至 YouTube）
+│   ├── chat/         # 聊天來源解析（live / archive）
+│   ├── features/     # UI 功能（Draggable, Iframe, Settings, Switch）
+│   └── hooks/        # Content 專用 React hooks
+├── popup/            # Popup UI（擴充功能工具列）
+│   ├── components/   # Popup 專用元件
+│   └── utils/        # Popup 工具函式
+shared/               # 跨進入點共用
+├── stores/           # Zustand 狀態管理
+├── i18n/             # 50 種以上語言資源
+├── components/       # 共用 UI 元件
+├── theme/            # 主題設定
+└── hooks/            # 共用 React hooks
+```
 
 </details>
 

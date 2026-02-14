@@ -106,22 +106,48 @@
 ## アーキテクチャ
 
 <details>
-<summary>システム概要</summary>
+<summary>クリックして展開</summary>
 
-この拡張機能は、YouTubeページ上の content script でフルスクリーンチャット挙動を制御します。popup 側の設定（言語・ON/OFF・テーマ）は content 側のランタイム状態と同期されます。
+### システム概要
 
-![Content Script・Popup・Background Service Worker 間の通信を示すアーキテクチャ図](./.github/system_overview.drawio.png)
+![Content Script・Popup 間の通信を示すアーキテクチャ図](./.github/system_overview.drawio.png)
 
-</details>
+この拡張機能は、ブラウザの `tabs` / `runtime` メッセージング API を介して通信する2つのエントリポイントで構成されています:
 
-<details>
-<summary>配信タイプごとの挙動（ライブ / アーカイブ / チャットなし）</summary>
+| コンポーネント | 役割 |
+| --- | --- |
+| **Content Script** | YouTube ページに注入。チャットオーバーレイの描画、ドラッグ/リサイズ処理、チャットソースの解決（ライブ vs. アーカイブ）を担当。 |
+| **Popup** | 拡張機能ツールバーの UI。言語・有効/無効・テーマを制御し、Content Script とリアルタイムに状態を同期。 |
+| **Shared** | 両エントリポイント共通のモジュール — ストア（Zustand）、i18n アセット、UI コンポーネント、テーマ、ユーティリティ関数。 |
 
-| 動画状態 | 拡張が使うチャットソース | スイッチ / オーバーレイ |
+### チャットソースの解決
+
+Content Script が動画タイプを自動検出し、適切なチャットソースを選択します:
+
+| 動画状態 | チャットソース | スイッチ / オーバーレイ |
 | --- | --- | --- |
 | ライブ配信 | 公開 `live_chat?v=<videoId>` | 表示される |
 | リプレイ可能なアーカイブ | ネイティブ `live_chat_replay` iframe | リプレイが再生可能な時のみ表示 |
 | チャットなし / リプレイ不可 | なし | 非表示 |
+
+### プロジェクト構成
+
+```
+entrypoints/
+├── content/          # Content Script（YouTube に注入）
+│   ├── chat/         # チャットソース解決（live / archive）
+│   ├── features/     # UI 機能（Draggable, Iframe, Settings, Switch）
+│   └── hooks/        # Content 固有の React hooks
+├── popup/            # Popup UI（拡張機能ツールバー）
+│   ├── components/   # Popup 固有のコンポーネント
+│   └── utils/        # Popup ユーティリティ
+shared/               # エントリポイント間で共有
+├── stores/           # Zustand 状態管理
+├── i18n/             # 50以上の言語アセット
+├── components/       # 共有 UI コンポーネント
+├── theme/            # テーマ設定
+└── hooks/            # 共有 React hooks
+```
 
 </details>
 

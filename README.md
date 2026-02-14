@@ -106,22 +106,48 @@
 ## Architecture
 
 <details>
-<summary>System Overview</summary>
+<summary>Click to expand</summary>
 
-This extension uses a content script to control fullscreen chat behavior on YouTube pages. Popup settings (language, on/off, theme) are synced with content runtime state.
+### System Overview
 
 ![Architecture diagram showing content script, popup, and background service worker communication](./.github/system_overview.drawio.png)
 
-</details>
+The extension consists of two entrypoints that communicate via the browser's `tabs` and `runtime` messaging APIs:
 
-<details>
-<summary>Mode Behavior (Live / Archive / No Chat)</summary>
+| Component | Role |
+| --- | --- |
+| **Content Script** | Injected into YouTube pages. Renders the chat overlay, handles drag/resize, and manages chat source resolution (live vs. archive). |
+| **Popup** | Extension toolbar UI. Controls language, enable/disable toggle, and theme. Syncs state to the content script in real time. |
+| **Shared** | Common modules used by both entrypoints — stores (Zustand), i18n assets, UI components, theme, and utility functions. |
 
-| Video state | Chat source used by extension | Switch / Overlay |
+### Chat Source Resolution
+
+The content script automatically detects the video type and selects the appropriate chat source:
+
+| Video state | Chat source | Switch / Overlay |
 | --- | --- | --- |
 | Live stream | Public `live_chat?v=<videoId>` | Available |
-| Archive with replay chat | Native `live_chat_replay` iframe | Available when replay is playable |
+| Archive with replay | Native `live_chat_replay` iframe | Available when replay is playable |
 | No chat / replay unavailable | None | Hidden |
+
+### Project Structure
+
+```
+entrypoints/
+├── content/          # Content script (injected into YouTube)
+│   ├── chat/         # Chat source resolution (live / archive)
+│   ├── features/     # UI features (Draggable, Iframe, Settings, Switch)
+│   └── hooks/        # Content-specific React hooks
+├── popup/            # Popup UI (extension toolbar)
+│   ├── components/   # Popup-specific components
+│   └── utils/        # Popup utilities
+shared/               # Shared across entrypoints
+├── stores/           # Zustand state management
+├── i18n/             # 50+ language assets
+├── components/       # Shared UI components
+├── theme/            # Theme configuration
+└── hooks/            # Shared React hooks
+```
 
 </details>
 
