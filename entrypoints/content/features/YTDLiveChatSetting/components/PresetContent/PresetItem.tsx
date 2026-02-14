@@ -18,7 +18,7 @@ interface PresetItemType {
 
 export const PresetItem = ({ id }: PresetItemType) => {
   const actionButtonClassName =
-    'rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none'
+    'rounded-md mx-0.5 cursor-pointer transition-colors duration-200 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
