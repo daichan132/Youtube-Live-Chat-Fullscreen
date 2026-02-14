@@ -50,6 +50,11 @@ export const YTDLiveChatSetting = () => {
   const { t, i18n } = useTranslation()
   const tablistRef = useRef<HTMLDivElement>(null)
 
+  const focusActiveTab = useCallback(() => {
+    const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
+    activeTab?.focus({ preventScroll: true })
+  }, [])
+
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(() => [
     { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
@@ -85,9 +90,11 @@ export const YTDLiveChatSetting = () => {
     <ModalSafeForReact19
       isOpen={isOpenSettingModal}
       style={customStyles}
+      shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
-      shouldReturnFocusAfterClose={true}
+      shouldReturnFocusAfterClose={false}
       onRequestClose={() => setIsOpenSettingModal(false)}
+      onAfterOpen={focusActiveTab}
       onAfterClose={() => setIsHover(false)}
       appElement={document.body}
       parentSelector={getModalParentElement}
