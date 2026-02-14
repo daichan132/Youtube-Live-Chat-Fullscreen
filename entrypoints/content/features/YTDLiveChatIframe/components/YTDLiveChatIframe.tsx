@@ -4,6 +4,7 @@ import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
+import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggable/constants/animation'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
 type YTDLiveChatIframeProps = {
@@ -23,10 +24,12 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       fontColor: state.fontColor,
     })),
   )
-  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
+  const { isDisplay, isIframeLoaded, clip, isClipPath } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       isDisplay: state.isDisplay,
       isIframeLoaded: state.isIframeLoaded,
+      clip: state.clip,
+      isClipPath: state.isClipPath,
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
@@ -75,8 +78,11 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       >
         <div
           ref={nodeRef}
-          className='absolute inset-0 z-20 flex items-center justify-center pointer-events-auto'
+          className='absolute left-0 right-0 z-20 flex items-center justify-center pointer-events-auto'
           style={{
+            top: isClipPath ? `${clip.header}px` : 0,
+            bottom: isClipPath ? `${clip.input}px` : 0,
+            transition: `top ${CLIP_GEOMETRY_TRANSITION}, bottom ${CLIP_GEOMETRY_TRANSITION}`,
             backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
             backdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
             WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
