@@ -107,10 +107,14 @@ export const FontFamilyInputUI = ({
     if (!isOpen || readOnly) return
     if (document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)) return
 
-    const styleElement = document.createElement('style')
-    styleElement.id = PREVIEW_FONT_STYLE_ID
-    styleElement.textContent = buildPreviewImportStyles()
-    document.head.appendChild(styleElement)
+    try {
+      const styleElement = document.createElement('style')
+      styleElement.id = PREVIEW_FONT_STYLE_ID
+      styleElement.textContent = buildPreviewImportStyles()
+      document.head.appendChild(styleElement)
+    } catch (e) {
+      console.warn('[YLC] Failed to load font preview styles:', e)
+    }
   }, [isOpen, readOnly])
 
   useShadowClickAway(rootRef, () => setIsOpen(false))

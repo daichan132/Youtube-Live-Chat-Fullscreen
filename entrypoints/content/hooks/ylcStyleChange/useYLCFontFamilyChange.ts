@@ -25,16 +25,20 @@ export const useYLCFontFamilyChange = () => {
       const contentWindow = getIframeWindow()
       if (!contentWindow) return
 
-      const fontUrl = `@import url('https://fonts.googleapis.com/css2?family=${toGoogleFontFamilyParam(fontFamily)}&display=swap');`
-      const existingStyleElement = contentWindow.document.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
+      try {
+        const fontUrl = `@import url('https://fonts.googleapis.com/css2?family=${toGoogleFontFamilyParam(fontFamily)}&display=swap');`
+        const existingStyleElement = contentWindow.document.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
 
-      if (existingStyleElement) {
-        existingStyleElement.textContent = fontUrl
-      } else {
-        const styleElement = contentWindow.document.createElement('style')
-        styleElement.id = CUSTOM_FONT_STYLE_ID
-        styleElement.textContent = fontUrl
-        contentWindow.document.head.appendChild(styleElement)
+        if (existingStyleElement) {
+          existingStyleElement.textContent = fontUrl
+        } else {
+          const styleElement = contentWindow.document.createElement('style')
+          styleElement.id = CUSTOM_FONT_STYLE_ID
+          styleElement.textContent = fontUrl
+          contentWindow.document.head.appendChild(styleElement)
+        }
+      } catch (e) {
+        console.warn('[YLC] Failed to load Google Font:', e)
       }
     },
     [getIframeWindow],
