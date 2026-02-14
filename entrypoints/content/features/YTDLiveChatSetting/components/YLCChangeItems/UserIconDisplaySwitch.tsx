@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCUserIconDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCUserIconDisplayChange'
@@ -26,10 +27,11 @@ export const UserIconDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (userIconDisplay: boolean) => void
 }) => {
+  const { t } = useTranslation()
   return (
     <SettingSwitch
       checked={userIconDisplay}
-      aria-label='User icon display'
+      aria-label={t('content.setting.userIconDisplay')}
       onChange={checked => {
         changeDisplay?.(checked)
         updateYLCStyle?.({ userIconDisplay: checked })

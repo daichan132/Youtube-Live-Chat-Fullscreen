@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useShallow } from 'zustand/react/shallow'
 
@@ -40,8 +41,9 @@ export const FontSizeSlider = () => {
 }
 
 export const FontSizeSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
+  const { t } = useTranslation()
   const fontSize = sliderValueToFontSize(value)
-  return <SettingSliderUI value={value} ref={ref} aria-label='Font size' aria-valuetext={`${Math.round(fontSize)}px`} />
+  return <SettingSliderUI value={value} ref={ref} aria-label={t('content.setting.fontSize')} aria-valuetext={`${Math.round(fontSize)}px`} />
 })
 
 FontSizeSliderUI.displayName = 'FontSizeSlider'

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCUserNameDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCUserNameDisplayChange'
@@ -26,10 +27,11 @@ export const UserNameDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (userNameDisplay: boolean) => void
 }) => {
+  const { t } = useTranslation()
   return (
     <SettingSwitch
       checked={userNameDisplay}
-      aria-label='User name display'
+      aria-label={t('content.setting.userNameDisplay')}
       onChange={checked => {
         changeDisplay?.(checked)
         updateYLCStyle?.({ userNameDisplay: checked })

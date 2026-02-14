@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -22,10 +23,11 @@ export const AlwaysOnDisplaySwitchUI = ({
   alwaysOnDisplay: boolean
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
+  const { t } = useTranslation()
   return (
     <SettingSwitch
       checked={alwaysOnDisplay}
-      aria-label='Always on display'
+      aria-label={t('content.setting.alwaysOnDisplay')}
       onChange={checked => {
         updateYLCStyle?.({ alwaysOnDisplay: checked })
       }}

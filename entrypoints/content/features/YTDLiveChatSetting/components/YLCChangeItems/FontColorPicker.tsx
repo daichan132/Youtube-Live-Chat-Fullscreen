@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ColorResult, RGBColor } from 'react-color'
 import { ChromePicker } from 'react-color'
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontColorChange'
 
@@ -66,6 +67,7 @@ export const FontColorPickerUI = React.forwardRef<
     onChange?: (c: ColorResult) => void
   }
 >(({ rgba, triggerRef, display, setDisplay, onChange }, ref) => {
+  const { t } = useTranslation()
   const previewBorderColor = getPreviewBorderColor(rgba)
 
   return (
@@ -79,7 +81,7 @@ export const FontColorPickerUI = React.forwardRef<
       <button
         ref={triggerRef}
         type='button'
-        aria-label='Font color'
+        aria-label={t('content.setting.fontColor')}
         aria-describedby='ylc-font-color-desc'
         aria-haspopup='dialog'
         aria-expanded={display ?? false}
@@ -96,7 +98,7 @@ export const FontColorPickerUI = React.forwardRef<
           />
         </div>
       </button>
-      <div className='absolute right-0 z-50' role='dialog' aria-label='Color picker'>
+      <div className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
         {display ? (
           <ChromePicker
             color={rgba}

@@ -1,4 +1,5 @@
 import React, { useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { useShallow } from 'zustand/react/shallow'
 
@@ -40,8 +41,9 @@ export const SpaceSlider = () => {
 }
 
 export const SpaceSliderUI = React.forwardRef<HTMLDivElement, { value: number }>(({ value }, ref) => {
+  const { t } = useTranslation()
   const space = sliderValueToSpace(value)
-  return <SettingSliderUI value={value} ref={ref} aria-label='Space' aria-valuetext={`${Math.round(space)}px`} />
+  return <SettingSliderUI value={value} ref={ref} aria-label={t('content.setting.space')} aria-valuetext={`${Math.round(space)}px`} />
 })
 
 SpaceSliderUI.displayName = 'SpaceSlider'

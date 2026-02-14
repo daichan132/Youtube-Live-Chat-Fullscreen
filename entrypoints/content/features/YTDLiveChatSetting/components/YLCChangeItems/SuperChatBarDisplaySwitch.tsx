@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCSuperChatBarDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
@@ -28,10 +29,11 @@ export const SuperChatBarDisplaySwitchUI = ({
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
   changeDisplay?: (superChatBarDisplay: boolean) => void
 }) => {
+  const { t } = useTranslation()
   return (
     <SettingSwitch
       checked={superChatBarDisplay}
-      aria-label='Super chat bar display'
+      aria-label={t('content.setting.superChatBarDisplay')}
       onChange={checked => {
         changeDisplay?.(checked)
         updateYLCStyle?.({ superChatBarDisplay: checked })

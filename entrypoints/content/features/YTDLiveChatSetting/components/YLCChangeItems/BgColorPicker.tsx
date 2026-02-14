@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from 'react'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { ColorResult, RGBColor } from 'react-color'
 import { ChromePicker } from 'react-color'
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYLCBgColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCBgColorChange'
 
@@ -67,6 +68,7 @@ export const BgColorPickerUI = React.forwardRef<
     onChange?: (c: ColorResult) => void
   }
 >(({ rgba, triggerRef, display, setDisplay, onChange }, ref) => {
+  const { t } = useTranslation()
   const previewBorderColor = getPreviewBorderColor(rgba)
 
   return (
@@ -80,7 +82,7 @@ export const BgColorPickerUI = React.forwardRef<
       <button
         ref={triggerRef}
         type='button'
-        aria-label='Background color'
+        aria-label={t('content.setting.backgroundColor')}
         aria-describedby='ylc-bg-color-desc'
         aria-haspopup='dialog'
         aria-expanded={display ?? false}
@@ -97,7 +99,7 @@ export const BgColorPickerUI = React.forwardRef<
           />
         </div>
       </button>
-      <div className='absolute right-0 z-50' role='dialog' aria-label='Color picker'>
+      <div className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
         {display ? (
           <ChromePicker
             color={rgba}

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -22,10 +23,11 @@ export const ChatOnlyDisplaySwitchUI = ({
   chatOnlyDisplay: boolean
   updateYLCStyle?: (ylcStyle: YLCStyleUpdateType) => void
 }) => {
+  const { t } = useTranslation()
   return (
     <SettingSwitch
       checked={chatOnlyDisplay}
-      aria-label='Chat only display'
+      aria-label={t('content.setting.chatOnlyDisplay')}
       onChange={checked => {
         updateYLCStyle?.({ chatOnlyDisplay: checked })
       }}
