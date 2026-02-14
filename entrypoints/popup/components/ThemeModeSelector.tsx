@@ -20,6 +20,8 @@ export const ThemeModeSelector = () => {
           chrome.tabs.sendMessage(tabs[0].id, {
             message: 'themeMode',
             themeMode: nextThemeMode,
+          }, () => {
+            void chrome.runtime.lastError
           })
         }
       })

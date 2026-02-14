@@ -20,6 +20,8 @@ export const LanguageSelector = () => {
           chrome.tabs.sendMessage(tabs[0].id, {
             message: 'language',
             language: languageCode,
+          }, () => {
+            void chrome.runtime.lastError
           })
         }
       })
