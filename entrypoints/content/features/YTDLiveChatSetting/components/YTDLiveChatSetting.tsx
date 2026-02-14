@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import { type ComponentType, useCallback, useEffect, useRef } from 'react'
+import { type ComponentType, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { IconType } from 'react-icons'
 import { RiCloseLine } from 'react-icons/ri'
@@ -49,10 +49,10 @@ export const YTDLiveChatSetting = () => {
   const { t } = useTranslation()
   const tablistRef = useRef<HTMLDivElement>(null)
 
-  const tabs: { key: 'preset' | 'setting'; label: string; icon: IconType }[] = [
+  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(() => [
     { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
-  ]
+  ], [t])
 
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {

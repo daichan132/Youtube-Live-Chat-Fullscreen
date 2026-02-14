@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -23,7 +23,7 @@ export const SettingContent = () => {
     })),
   )
   const { t } = useTranslation()
-  const items = buildSettingItems({
+  const items = useMemo(() => buildSettingItems({
     t,
     keys: SETTING_ITEM_KEYS,
     dataByKey: {
@@ -42,7 +42,7 @@ export const SettingContent = () => {
     disableByKey: {
       chatOnlyDisplay: !alwaysOnDisplay,
     },
-  })
+  }), [alwaysOnDisplay, t])
   return (
     <>
       {items.map((item, i) => (

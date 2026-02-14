@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -8,7 +9,7 @@ const Popup = () => {
   const { t } = useTranslation()
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const items = createPopupItems(t)
+  const items = useMemo(() => createPopupItems(t), [t])
 
   return (
     <div
