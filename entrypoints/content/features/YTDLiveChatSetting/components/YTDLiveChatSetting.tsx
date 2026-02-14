@@ -85,6 +85,7 @@ export const YTDLiveChatSetting = () => {
       isOpen={isOpenSettingModal}
       style={customStyles}
       shouldCloseOnOverlayClick={true}
+      shouldReturnFocusAfterClose={true}
       onRequestClose={() => setIsOpenSettingModal(false)}
       onAfterClose={() => setIsHover(false)}
       appElement={document.body}
@@ -95,7 +96,7 @@ export const YTDLiveChatSetting = () => {
         className='ylc-setting-panel flex flex-col w-[480px] rounded-xl ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
-        <div className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
+        <header className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -126,7 +127,7 @@ export const YTDLiveChatSetting = () => {
           >
             <RiCloseLine size={24} />
           </button>
-        </div>
+        </header>
         <div
           id={`ylc-tabpanel-${menuItem}`}
           role='tabpanel'
@@ -137,7 +138,7 @@ export const YTDLiveChatSetting = () => {
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <div className='ylc-theme-setting-footer flex justify-end items-center px-3 py-2.5'>
+        <footer className='ylc-theme-setting-footer flex justify-end items-center px-3 py-2.5'>
           <div className='ylc-theme-footer-links'>
             <a
               href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
@@ -167,7 +168,7 @@ export const YTDLiveChatSetting = () => {
               {t('content.setting.footer.donate')}
             </a>
           </div>
-        </div>
+        </footer>
       </div>
     </ModalSafeForReact19>
   )

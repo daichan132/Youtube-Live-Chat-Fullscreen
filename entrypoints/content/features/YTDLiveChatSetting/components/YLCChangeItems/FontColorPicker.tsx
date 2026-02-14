@@ -26,7 +26,11 @@ export const FontColorPicker = () => {
   const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
   const [display, setDisplay] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
-  useShadowClickAway(ref, () => setDisplay(false))
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  useShadowClickAway(ref, () => {
+    setDisplay(false)
+    triggerRef.current?.focus()
+  })
 
   useEffect(() => {
     if (!display) return
@@ -34,6 +38,7 @@ export const FontColorPicker = () => {
       if (e.key === 'Escape') {
         e.stopPropagation()
         setDisplay(false)
+        triggerRef.current?.focus()
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -48,23 +53,25 @@ export const FontColorPicker = () => {
     },
     [changeColor, updateYLCStyle],
   )
-  return <FontColorPickerUI rgba={rgba} ref={ref} display={display} setDisplay={setDisplay} onChange={onChange} />
+  return <FontColorPickerUI rgba={rgba} ref={ref} triggerRef={triggerRef} display={display} setDisplay={setDisplay} onChange={onChange} />
 }
 
 export const FontColorPickerUI = React.forwardRef<
   HTMLDivElement,
   {
     rgba: RGBColor
+    triggerRef?: React.RefObject<HTMLButtonElement | null>
     display?: boolean
     setDisplay?: Dispatch<SetStateAction<boolean>>
     onChange?: (c: ColorResult) => void
   }
->(({ rgba, display, setDisplay, onChange }, ref) => {
+>(({ rgba, triggerRef, display, setDisplay, onChange }, ref) => {
   const previewBorderColor = getPreviewBorderColor(rgba)
 
   return (
     <div ref={ref} className='relative ylc-action-fill'>
       <button
+        ref={triggerRef}
         type='button'
         aria-label='Font color'
         aria-haspopup='dialog'

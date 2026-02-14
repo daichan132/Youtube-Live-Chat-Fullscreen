@@ -27,7 +27,11 @@ export const BgColorPicker = () => {
   const [display, setDisplay] = useState(false)
 
   const ref = useRef<HTMLDivElement>(null)
-  useShadowClickAway(ref, () => setDisplay(false))
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  useShadowClickAway(ref, () => {
+    setDisplay(false)
+    triggerRef.current?.focus()
+  })
 
   useEffect(() => {
     if (!display) return
@@ -35,6 +39,7 @@ export const BgColorPicker = () => {
       if (e.key === 'Escape') {
         e.stopPropagation()
         setDisplay(false)
+        triggerRef.current?.focus()
       }
     }
     document.addEventListener('keydown', handleKeyDown)
@@ -49,25 +54,34 @@ export const BgColorPicker = () => {
     },
     [changeColor, updateYLCStyle],
   )
-  return <BgColorPickerUI rgba={rgba} ref={ref} display={display} setDisplay={setDisplay} onChange={onChange} />
+  return <BgColorPickerUI rgba={rgba} ref={ref} triggerRef={triggerRef} display={display} setDisplay={setDisplay} onChange={onChange} />
 }
 
 export const BgColorPickerUI = React.forwardRef<
   HTMLDivElement,
   {
     rgba: RGBColor
+    triggerRef?: React.RefObject<HTMLButtonElement | null>
     display?: boolean
     setDisplay?: Dispatch<SetStateAction<boolean>>
     onChange?: (c: ColorResult) => void
   }
->(({ rgba, display, setDisplay, onChange }, ref) => {
+>(({ rgba, triggerRef, display, setDisplay, onChange }, ref) => {
   const previewBorderColor = getPreviewBorderColor(rgba)
 
   return (
     <div ref={ref} className='relative ylc-action-fill'>
+      <span
+        id='ylc-bg-color-desc'
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+      >
+        {`Current color: rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+      </span>
       <button
+        ref={triggerRef}
         type='button'
         aria-label='Background color'
+        aria-describedby='ylc-bg-color-desc'
         aria-haspopup='dialog'
         aria-expanded={display ?? false}
         className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'

@@ -101,6 +101,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
           isOpen={isDeleteModalOpen}
           className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           onRequestClose={() => setIsDeleteModalOpen(false)}
+          shouldReturnFocusAfterClose={true}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35 z-[1000001]'
           appElement={document.body}
           parentSelector={getModalParentElement}
