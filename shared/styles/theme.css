@@ -450,9 +450,8 @@
 .ylc-slider-thumb::before {
   content: "";
   position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 4px;
+  inset-inline: 5px;
+  inset-block-start: 4px;
   height: 7px;
   border-radius: 9999px;
   background: var(--ylc-switch-thumb-sheen);
@@ -574,7 +573,7 @@
 .ylc-theme-footer-links {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: end;
   align-items: center;
   column-gap: 12px;
   row-gap: 6px;
@@ -680,9 +679,8 @@
 .ylc-theme-toggle-track::before {
   content: "";
   position: absolute;
-  left: 4px;
-  right: 4px;
-  top: 3px;
+  inset-inline: 4px;
+  inset-block-start: 3px;
   height: 10px;
   border-radius: 9999px;
   background: var(--ylc-switch-track-shine);
@@ -725,9 +723,8 @@
 .ylc-theme-toggle-thumb::before {
   content: "";
   position: absolute;
-  left: 5px;
-  right: 5px;
-  top: 4px;
+  inset-inline: 5px;
+  inset-block-start: 4px;
   height: 7px;
   border-radius: 9999px;
   background: var(--ylc-switch-thumb-sheen);
@@ -949,7 +946,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  text-align: left;
+  text-align: start;
   font-size: 13px;
   font-weight: 500;
   line-height: 1.2;
