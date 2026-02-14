@@ -28,6 +28,20 @@
         "dark": "ダーク"
       }
     },
+    "aria": {
+      "dragToMove": "Drag to move",
+      "arrowKeysToMove": "Arrow keys to move",
+      "openSettings": "Open settings",
+      "toggleLiveChat": "Toggle live chat",
+      "close": "Close",
+      "reorderPreset": "Reorder preset",
+      "presetName": "Preset name",
+      "applyPreset": "Apply preset",
+      "deletePreset": "Delete preset",
+      "colorPicker": "Color picker",
+      "loading": "Loading",
+      "selectLanguage": "Select language"
+    },
     "preset": {
       "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
       "addItemTitle": "Χωρίς τίτλο",

@@ -4,7 +4,22 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const ENGLISH_FAMILY = new Set(['en', 'en_AU', 'en_GB', 'en_US'])
-const ENGLISH_KEY_ALLOWLIST = new Set(['content.setting.footer.chrome', 'content.setting.footer.firefox'])
+const ENGLISH_KEY_ALLOWLIST = new Set([
+  'content.setting.footer.chrome',
+  'content.setting.footer.firefox',
+  'content.aria.dragToMove',
+  'content.aria.arrowKeysToMove',
+  'content.aria.openSettings',
+  'content.aria.toggleLiveChat',
+  'content.aria.close',
+  'content.aria.reorderPreset',
+  'content.aria.presetName',
+  'content.aria.applyPreset',
+  'content.aria.deletePreset',
+  'content.aria.colorPicker',
+  'content.aria.loading',
+  'content.aria.selectLanguage',
+])
 const ENGLISH_STRING_WHITELIST = new Set([
   'ca:content.preset.transparentTitle',
   'ca:content.preset.simpleTitle',
