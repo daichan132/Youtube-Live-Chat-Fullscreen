@@ -31,7 +31,7 @@ export const LanguageSelector = () => {
 
   return (
     <div className='ylc-theme-select-wrap ylc-action-fill'>
-      <select className='ylc-theme-select ylc-action-fill' value={selectedLanguage} onChange={handleChange}>
+      <select className='ylc-theme-select ylc-action-fill' value={selectedLanguage} onChange={handleChange} aria-label="Select language">
         {languageOptions.map(option => (
           <option key={option.value} value={option.value}>
             {option.label}

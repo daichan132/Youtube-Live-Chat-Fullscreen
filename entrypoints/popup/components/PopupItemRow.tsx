@@ -22,7 +22,7 @@ export const PopupItemRow = ({ icon: Icon, title, data, isLast, actionWidth = 'd
           }
         >
           {Icon ? (
-            <span className='mr-3 ylc-theme-icon-badge'>
+            <span className='mr-3 ylc-theme-icon-badge' aria-hidden="true">
               <Icon size={18} />
             </span>
           ) : null}

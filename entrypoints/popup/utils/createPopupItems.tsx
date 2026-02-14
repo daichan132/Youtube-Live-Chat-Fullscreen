@@ -40,7 +40,7 @@ export const createPopupItems = (t: TFunction) => {
       icon: TbHeartDollar,
       title: t('popup.donate'),
       data: (
-        <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noreferrer' className='ylc-theme-donate-link'>
+        <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-theme-donate-link'>
           <img
             height='36'
             className='ylc-theme-donate-image'
