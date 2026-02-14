@@ -72,6 +72,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             type='text'
             value={title}
             onChange={event => updateTitle(id, event.target.value)}
+            aria-label='Preset name'
             className='ml-1 h-8 px-1.5 rounded-[8px] outline-none min-w-0 flex-1 max-w-[240px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>

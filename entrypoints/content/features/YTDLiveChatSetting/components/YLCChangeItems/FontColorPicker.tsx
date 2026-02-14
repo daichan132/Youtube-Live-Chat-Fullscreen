@@ -70,10 +70,17 @@ export const FontColorPickerUI = React.forwardRef<
 
   return (
     <div ref={ref} className='relative ylc-action-fill'>
+      <span
+        id='ylc-font-color-desc'
+        style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+      >
+        {`Current color: rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+      </span>
       <button
         ref={triggerRef}
         type='button'
         aria-label='Font color'
+        aria-describedby='ylc-font-color-desc'
         aria-haspopup='dialog'
         aria-expanded={display ?? false}
         className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'

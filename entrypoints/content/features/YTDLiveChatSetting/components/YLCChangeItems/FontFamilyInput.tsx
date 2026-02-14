@@ -225,7 +225,13 @@ export const FontFamilyInputUI = ({
             data-ylc-font-combobox-search='true'
             data-testid='font-family-search'
           />
-          <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox'>
+          <span
+            aria-live='polite'
+            style={{ position: 'absolute', width: '1px', height: '1px', padding: 0, margin: '-1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap', border: 0 }}
+          >
+            {`${filteredOptions.length} fonts found`}
+          </span>
+          <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox' aria-live='polite'>
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option, index) => {
                 const isSelected = option.value === normalizedValue
