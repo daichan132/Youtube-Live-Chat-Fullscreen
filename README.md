@@ -30,21 +30,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
-    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&logo=github"/>
-  </a>
-  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/releases/latest">
-    <img alt="Version" src="https://img.shields.io/github/v/release/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&label=Version"/>
-  </a>
-  <a href="LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge"/>
-  </a>
-  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/actions/workflows/ci.yml">
-    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/daichan132/Youtube-Live-Chat-Fullscreen/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI"/>
-  </a>
-</p>
-
-<p align="center">
   <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
     <img alt="Install on Chrome" src="https://img.shields.io/badge/Chrome-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/>
   </a>
