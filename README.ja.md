@@ -1,81 +1,139 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen ロゴ" width="80" />
+  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen ロゴ" width="96" />
 </div>
-<br>
+
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
+
 <p align="center">
-  <a href="README.md">English (US)</a> ·
+  YouTube ライブチャットをフルスクリーン動画にオーバーレイ表示 — ドラッグ、リサイズ、スタイルを自由にカスタマイズ。
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
-  <a href="README.zh-TW.md">繁體中文 (台灣)</a>
+  <a href="README.zh-TW.md">繁體中文</a>
 </p>
+
 <p align="center">
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=for-the-badge&logo=googlechrome&logoColor=white&label=Chrome%20Rating"/>
   </a>
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/dlnjcbkmomenmieechnmgglgcljhoepd?style=for-the-badge&logo=googlechrome&logoColor=white&label=Chrome%20Users"/>
   </a>
-  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
-    <img alt="Firefox Add-ons Rating" src="https://img.shields.io/amo/rating/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
+  <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Rating" src="https://img.shields.io/amo/rating/youtube-live-chat-fullscreen?style=for-the-badge&logo=firefox&logoColor=white&label=Firefox%20Rating"/>
   </a>
-  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
-    <img alt="Firefox Add-ons Users" src="https://img.shields.io/amo/users/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
-  </a>
-  <a target="_blank" href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/daichan132/Youtube-Live-Chat-Fullscreen?style=social"/>
+  <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Users" src="https://img.shields.io/amo/users/youtube-live-chat-fullscreen?style=for-the-badge&logo=firefox&logoColor=white&label=Firefox%20Users"/>
   </a>
 </p>
 
 <p align="center">
-  YouTube Live を全画面のまま、レイアウトを崩さずチャットできます。
-</p>
-<p align="center">
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><strong>Chrome に追加</strong></a> ·
-  <a target="_blank" href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/"><strong>Firefox に追加</strong></a> ·
-  <a target="_blank" href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen"><strong>GitHubでStarする</strong></a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
+    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&logo=github"/>
+  </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/releases/latest">
+    <img alt="Version" src="https://img.shields.io/github/v/release/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&label=Version"/>
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge"/>
+  </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/actions/workflows/ci.yml">
+    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/daichan132/Youtube-Live-Chat-Fullscreen/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI"/>
+  </a>
 </p>
 
-## この拡張が選ばれる理由
-- フルスクリーン視聴を維持したまま、チャットの閲覧と投稿ができます。
-- チャットの位置とサイズを自由に調整でき、ゲームHUDや字幕と干渉しにくくできます。
-- 背景色・文字色・フォント・ぼかし・余白など、可読性を細かく調整できます。
-- プリセットを使って、視聴シーンごとに設定をすぐ切り替えられます。
-- ライブ配信と、チャットリプレイ付きアーカイブの両方に対応します。
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome に追加" src="https://img.shields.io/badge/Chrome-インストール-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/>
+  </a>
+  <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox に追加" src="https://img.shields.io/badge/Firefox-インストール-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
+  </a>
+</p>
+
+---
+
+## プレビュー
+
+![YouTubeライブ配信にフルスクリーンチャットオーバーレイを表示した画面](./.github/preview.png)
 
 ## 30秒クイックスタート
-1. [Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) または [Firefox アドオン](https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/) から導入します。
-2. YouTube のライブ配信、またはチャットリプレイ付きアーカイブ動画を開きます。
-3. フルスクリーンにして、右下のスイッチからチャット表示を切り替えます。
-4. オーバーレイをドラッグ/リサイズし、設定で見た目を調整します。
 
-## 配信タイプごとの挙動
+1. [Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) または [Firefox アドオン](https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/) からインストール。
+2. YouTube のライブ配信、またはチャットリプレイ付きアーカイブ動画を開く。
+3. フルスクリーンにして、右下のスイッチからチャット表示を切替。
+4. オーバーレイをドラッグ/リサイズし、設定でスタイルを調整。
+
+## 機能
+
+### 💬 フルスクリーンチャット
+
+- フルスクリーンを維持したまま、チャットの閲覧と投稿が可能
+- オーバーレイから直接 Super Chat を投稿
+- ライブ配信とチャットリプレイ付きアーカイブの両方に対応
+
+### 🎨 スタイルカスタマイズ
+
+- 背景色・文字色・フォント・文字サイズ・ぼかし・余白を自在に調整
+- ユーザー名・アイコン・Super Chat バー・チャットのみ表示を切替
+- オーバーレイのドラッグ・リサイズ・位置調整が自由自在
+
+### 📋 プリセット
+
+- 視聴シーンごとにスタイルプリセットを保存・切替
+- ワンクリックで設定を即座に切替
+
+### 🌐 多言語対応
+
+- 50以上の言語をビルトインでサポート
+
+## Tech Stack
+
+<p>
+  <img alt="React" src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black"/>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/>
+  <a href="https://wxt.dev"><img alt="WXT" src="https://img.shields.io/badge/WXT-FF6C2C?style=flat-square&logoColor=white"/></a>
+  <a href="https://zustand.docs.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-443E38?style=flat-square&logoColor=white"/></a>
+  <img alt="UnoCSS" src="https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white"/>
+  <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/>
+  <img alt="Playwright" src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white"/>
+  <img alt="Storybook" src="https://img.shields.io/badge/Storybook-FF4785?style=flat-square&logo=storybook&logoColor=white"/>
+  <img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?style=flat-square&logo=biome&logoColor=white"/>
+</p>
+
+## アーキテクチャ
+
+<details>
+<summary>システム概要</summary>
+
+この拡張機能は、YouTubeページ上の content script でフルスクリーンチャット挙動を制御します。popup 側の設定（言語・ON/OFF・テーマ）は content 側のランタイム状態と同期されます。
+
+![Content Script・Popup・Background Service Worker 間の通信を示すアーキテクチャ図](./.github/system_overview.drawio.png)
+
+</details>
+
+<details>
+<summary>配信タイプごとの挙動（ライブ / アーカイブ / チャットなし）</summary>
+
 | 動画状態 | 拡張が使うチャットソース | スイッチ / オーバーレイ |
 | --- | --- | --- |
 | ライブ配信 | 公開 `live_chat?v=<videoId>` | 表示される |
-| リプレイ可能なアーカイブ | native `live_chat_replay` iframe | リプレイが再生可能な時のみ表示 |
-| チャットなし / リプレイ不可 | なし | 表示されない |
+| リプレイ可能なアーカイブ | ネイティブ `live_chat_replay` iframe | リプレイが再生可能な時のみ表示 |
+| チャットなし / リプレイ不可 | なし | 非表示 |
 
-## プレビュー
-![Preview](./.github/preview.png)
-
-## 主な機能
-- フルスクリーン中のチャット投稿（Super Chat 投稿フローを含む）。
-- オーバーレイのドラッグ、リサイズ、位置調整。
-- 見た目調整: 背景色、文字色、フォント、文字サイズ、ぼかし、余白。
-- 表示切替: ユーザー名、ユーザーアイコン、Super Chatバー、チャットのみ表示。
-- プリセット管理によるスタイル切替。
-- 多言語対応。
-
-## ダウンロード
-- [Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)
-- [Firefox アドオン](https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/)
+</details>
 
 ## 開発者向けセットアップ
+
 ### 必須環境
-- **[Node.js](https://nodejs.org)** (v22.x)
-- **[Yarn](https://yarnpkg.com)**（Corepack経由を推奨）
+
+- **[Node.js](https://nodejs.org)** v22.x
+- **[Yarn](https://yarnpkg.com)**（Corepack 経由を推奨）
 
 ### インストール
+
 ```bash
 git clone https://github.com/daichan132/Youtube-Live-Chat-Fullscreen.git
 cd Youtube-Live-Chat-Fullscreen
@@ -83,23 +141,27 @@ corepack enable
 yarn install
 ```
 
-### 主要コマンド
-- `yarn dev`: 開発サーバーを起動
-- `yarn dev:firefox`: Firefox 用の開発サーバーを起動
-- `yarn build`: 本番ビルドを作成
-- `yarn build:firefox`: Firefox 向けにビルド
-- `yarn zip`: Zip パッケージを作成
-- `yarn zip:firefox`: Firefox 向け Zip パッケージを作成
-- `yarn lint`: Biomeチェック + TypeScript型検査
-- `yarn test:unit`: ユニットテストを実行
-- `yarn storybook`: Storybook を起動
-- `yarn storybook:build`: Storybook を静的ビルド
-- `yarn e2e`: E2E テストを実行
+### コマンド
 
-Storybook では `Catalog/CurrentUIDesigns` を開くと、現状UIを一括確認できます。
+| コマンド | 説明 |
+| --- | --- |
+| `yarn dev` | 開発サーバー起動（Chrome） |
+| `yarn dev:firefox` | 開発サーバー起動（Firefox） |
+| `yarn build` | 本番ビルド（Chrome） |
+| `yarn build:firefox` | 本番ビルド（Firefox） |
+| `yarn zip` | Zip パッケージ作成 |
+| `yarn zip:firefox` | Firefox 用 Zip パッケージ作成 |
+| `yarn lint` | Biome チェック + TypeScript 型検査 |
+| `yarn test:unit` | ユニットテスト実行 |
+| `yarn storybook` | Storybook 起動 |
+| `yarn storybook:build` | Storybook 静的ビルド |
+| `yarn e2e` | E2E テスト実行 |
 
-## 品質チェック
-Pull Request前は次を実行してください。
+> Storybook では `Catalog/CurrentUIDesigns` を開くと、現状の UI デザインを一括確認できます。
+
+### 品質チェック
+
+Pull Request 前に実行してください:
 
 ```bash
 yarn lint
@@ -107,36 +169,32 @@ yarn test:unit
 yarn build
 ```
 
-Firefox 互換に関係する変更では、次も実行してください。
+Firefox 互換に関係する変更では `yarn build:firefox` も実行してください。
 
-```bash
-yarn build:firefox
-```
+## コントリビュート
 
-## プロジェクト概要
-この拡張機能は、YouTubeページ上の content script でフルスクリーンチャット挙動を制御します。popup 側の設定（言語・ON/OFF・テーマ）は content 側と同期されます。
+バグ報告・機能提案・Pull Request、すべて歓迎です!
 
-![System](./.github/system_overview.drawio.png)
+- [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) を作成するか、[Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls) を送ってください。
+- 翻訳のコントリビュートも歓迎です — `README.<locale>.md` を追加してください。
 
-## 貢献
-アイデア、バグ報告、改善提案を歓迎します。
-
-- Issue / Pull Request を作成してください。
+<a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
+</a>
 
 ## サポート
-この拡張が役に立ったら、GitHub Star が継続開発の後押しになります。
 
-- [GitHubでStarする](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen)
-- [Ko-fiで支援する](https://ko-fi.com/D1D01A39U6)
+この拡張が役に立ったら、Star が継続開発の後押しになります!
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
+<p>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
+    <img alt="GitHub で Star する" src="https://img.shields.io/badge/GitHub_で_Star_する-yellow?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  <a href="https://ko-fi.com/D1D01A39U6">
+    <img alt="Ko-fi で支援する" src="https://img.shields.io/badge/Ko--fi_で支援する-F16061?style=for-the-badge&logo=ko-fi&logoColor=white"/>
+  </a>
+</p>
 
 ## ライセンス
+
 GPL-3.0 ライセンス。詳細は [LICENSE](LICENSE) を参照してください。
-
-## 翻訳
-- English (US): `README.md`
-- 日本語: `README.ja.md`
-- 繁體中文 (台灣): `README.zh-TW.md`
-
-他言語の翻訳コントリビュートも歓迎です。ファイル名は `README.<locale>.md` 形式で追加してください。

@@ -1,81 +1,139 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="80" />
+  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="96" />
 </div>
-<br>
+
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
+
 <p align="center">
-  <a href="README.md">English (US)</a> ·
+  A browser extension that overlays YouTube live chat on fullscreen video — drag, resize, and style it your way.
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
-  <a href="README.zh-TW.md">繁體中文 (台灣)</a>
+  <a href="README.zh-TW.md">繁體中文</a>
 </p>
+
 <p align="center">
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store Rating" src="https://img.shields.io/chrome-web-store/rating/dlnjcbkmomenmieechnmgglgcljhoepd?style=for-the-badge&logo=googlechrome&logoColor=white&label=Chrome%20Rating"/>
   </a>
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
-    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/dlnjcbkmomenmieechnmgglgcljhoepd?style=social&logo=googlechrome"/>
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Chrome Web Store Users" src="https://img.shields.io/chrome-web-store/users/dlnjcbkmomenmieechnmgglgcljhoepd?style=for-the-badge&logo=googlechrome&logoColor=white&label=Chrome%20Users"/>
   </a>
-  <a target="_blank" href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
-    <img alt="Firefox Add-ons Rating" src="https://img.shields.io/amo/rating/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
+  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Rating" src="https://img.shields.io/amo/rating/youtube-live-chat-fullscreen?style=for-the-badge&logo=firefox&logoColor=white&label=Firefox%20Rating"/>
   </a>
-  <a target="_blank" href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
-    <img alt="Firefox Add-ons Users" src="https://img.shields.io/amo/users/youtube-live-chat-fullscreen?style=social&logo=firefox"/>
-  </a>
-  <a target="_blank" href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen">
-    <img alt="GitHub stars" src="https://img.shields.io/github/stars/daichan132/Youtube-Live-Chat-Fullscreen?style=social"/>
+  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Firefox Users" src="https://img.shields.io/amo/users/youtube-live-chat-fullscreen?style=for-the-badge&logo=firefox&logoColor=white&label=Firefox%20Users"/>
   </a>
 </p>
 
 <p align="center">
-  Keep YouTube Live in fullscreen and keep chatting without layout compromises.
-</p>
-<p align="center">
-  <a target="_blank" href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><strong>Install on Chrome</strong></a> ·
-  <a target="_blank" href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/"><strong>Install on Firefox</strong></a> ·
-  <a target="_blank" href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen"><strong>Star on GitHub</strong></a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
+    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&logo=github"/>
+  </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/releases/latest">
+    <img alt="Version" src="https://img.shields.io/github/v/release/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge&label=Version"/>
+  </a>
+  <a href="LICENSE">
+    <img alt="License" src="https://img.shields.io/github/license/daichan132/Youtube-Live-Chat-Fullscreen?style=for-the-badge"/>
+  </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/actions/workflows/ci.yml">
+    <img alt="CI" src="https://img.shields.io/github/actions/workflow/status/daichan132/Youtube-Live-Chat-Fullscreen/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white&label=CI"/>
+  </a>
 </p>
 
-## Why This Extension
-- Watch streams in true fullscreen while still reading and sending chat messages.
-- Drag and resize the chat overlay so it fits your stream setup, game HUD, or subtitles.
-- Improve readability with chat style controls (background, font, blur, spacing, and more).
-- Save and switch presets for different viewing contexts.
-- Works with both live streams and archives that have chat replay.
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Install on Chrome" src="https://img.shields.io/badge/Chrome-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/>
+  </a>
+  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Install on Firefox" src="https://img.shields.io/badge/Firefox-Install-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
+  </a>
+</p>
+
+---
+
+## Preview
+
+![Fullscreen chat overlay on a YouTube live stream](./.github/preview.png)
 
 ## 30-Second Quick Start
+
 1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
-2. Open a YouTube live stream, or an archive video with replay chat.
+2. Open a YouTube live stream or an archive with chat replay.
 3. Enter fullscreen and toggle chat from the switch at the bottom-right.
 4. Drag/resize the overlay and tune styles from the extension settings.
 
-## Mode Behavior (Live / Archive / No Chat)
+## Features
+
+### 💬 Fullscreen Chat
+
+- Watch streams in true fullscreen while reading and sending chat messages
+- Post Super Chats directly from the overlay
+- Works with both live streams and archives with chat replay
+
+### 🎨 Style Customization
+
+- Background color, font color, font family, font size, blur, and spacing controls
+- Toggle username, user icon, Super Chat bar, and chat-only view
+- Drag, resize, and reposition the chat overlay freely
+
+### 📋 Presets
+
+- Save and switch style presets for different viewing contexts
+- Quick-switch between setups with one click
+
+### 🌐 Internationalization
+
+- 50+ languages supported out of the box
+
+## Tech Stack
+
+<p>
+  <img alt="React" src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black"/>
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/>
+  <a href="https://wxt.dev"><img alt="WXT" src="https://img.shields.io/badge/WXT-FF6C2C?style=flat-square&logoColor=white"/></a>
+  <a href="https://zustand.docs.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-443E38?style=flat-square&logoColor=white"/></a>
+  <img alt="UnoCSS" src="https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white"/>
+  <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/>
+  <img alt="Playwright" src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white"/>
+  <img alt="Storybook" src="https://img.shields.io/badge/Storybook-FF4785?style=flat-square&logo=storybook&logoColor=white"/>
+  <img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?style=flat-square&logo=biome&logoColor=white"/>
+</p>
+
+## Architecture
+
+<details>
+<summary>System Overview</summary>
+
+This extension uses a content script to control fullscreen chat behavior on YouTube pages. Popup settings (language, on/off, theme) are synced with content runtime state.
+
+![Architecture diagram showing content script, popup, and background service worker communication](./.github/system_overview.drawio.png)
+
+</details>
+
+<details>
+<summary>Mode Behavior (Live / Archive / No Chat)</summary>
+
 | Video state | Chat source used by extension | Switch / Overlay |
 | --- | --- | --- |
 | Live stream | Public `live_chat?v=<videoId>` | Available |
 | Archive with replay chat | Native `live_chat_replay` iframe | Available when replay is playable |
 | No chat / replay unavailable | None | Hidden |
 
-## Preview
-![Preview](./.github/preview.png)
-
-## Key Features
-- Fullscreen chat posting, including Super Chat posting flow.
-- Overlay drag, resize, and position control.
-- Visual customization: background color, font color, font family, font size, blur, spacing.
-- Display toggles: username, user icon, Super Chat bar, and chat-only view.
-- Preset management for quick style switching.
-- Multi-language support.
-
-## Download
-- [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)
-- [Firefox Browser Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/)
+</details>
 
 ## Development Setup
+
 ### Requirements
-- **[Node.js](https://nodejs.org)** (v22.x)
+
+- **[Node.js](https://nodejs.org)** v22.x
 - **[Yarn](https://yarnpkg.com)** (via Corepack recommended)
 
 ### Install
+
 ```bash
 git clone https://github.com/daichan132/Youtube-Live-Chat-Fullscreen.git
 cd Youtube-Live-Chat-Fullscreen
@@ -84,22 +142,26 @@ yarn install
 ```
 
 ### Commands
-- `yarn dev`: Start development server.
-- `yarn dev:firefox`: Start development server for Firefox.
-- `yarn build`: Build the project.
-- `yarn build:firefox`: Build for Firefox.
-- `yarn zip`: Create a zip package.
-- `yarn zip:firefox`: Create a Firefox zip package.
-- `yarn lint`: Run Biome checks and TypeScript type checks.
-- `yarn test:unit`: Run unit tests.
-- `yarn storybook`: Launch Storybook.
-- `yarn storybook:build`: Build static Storybook output.
-- `yarn e2e`: Run end-to-end tests.
 
-In Storybook, open `Catalog/CurrentUIDesigns` to review the current UI design in one place.
+| Command | Description |
+| --- | --- |
+| `yarn dev` | Start dev server (Chrome) |
+| `yarn dev:firefox` | Start dev server (Firefox) |
+| `yarn build` | Production build (Chrome) |
+| `yarn build:firefox` | Production build (Firefox) |
+| `yarn zip` | Create zip package |
+| `yarn zip:firefox` | Create Firefox zip package |
+| `yarn lint` | Biome checks + TypeScript type checks |
+| `yarn test:unit` | Run unit tests |
+| `yarn storybook` | Launch Storybook |
+| `yarn storybook:build` | Build static Storybook output |
+| `yarn e2e` | Run E2E tests |
 
-## Quality Checks
-Run these before opening a pull request:
+> In Storybook, open `Catalog/CurrentUIDesigns` to review the current UI design in one place.
+
+### Quality Checks
+
+Run before opening a pull request:
 
 ```bash
 yarn lint
@@ -107,35 +169,32 @@ yarn test:unit
 yarn build
 ```
 
-For Firefox compatibility changes, also run:
-
-```bash
-yarn build:firefox
-```
-
-## Project Overview
-This extension uses a content script to control fullscreen chat behavior on YouTube pages. Popup settings (language, on/off, theme) are synced with content runtime state.
-
-![System](./.github/system_overview.drawio.png)
+For Firefox compatibility changes, also run `yarn build:firefox`.
 
 ## Contributing
-Contributions are welcome. If you have ideas, bugs, or improvements:
-- Open an issue or submit a pull request.
+
+Contributions are welcome! Whether it's bug reports, feature ideas, or pull requests — all help is appreciated.
+
+- Open an [issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) or submit a [pull request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls).
+- Translation contributions are also welcome — add a `README.<locale>.md` for your language.
+
+<a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
+</a>
 
 ## Support
-If this extension improves your YouTube workflow, starring this repo helps a lot.
 
-- [Star this repository](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen)
-- [Support on Ko-fi](https://ko-fi.com/D1D01A39U6)
+If this extension improves your YouTube experience, a star helps a lot!
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/D1D01A39U6)
+<p>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
+    <img alt="Star on GitHub" src="https://img.shields.io/badge/Star_on_GitHub-yellow?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+  <a href="https://ko-fi.com/D1D01A39U6">
+    <img alt="Support on Ko-fi" src="https://img.shields.io/badge/Support_on_Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white"/>
+  </a>
+</p>
 
 ## License
+
 Licensed under GPL-3.0. See [LICENSE](LICENSE) for details.
-
-## Translations
-- English (US): `README.md`
-- 日本語: `README.ja.md`
-- 繁體中文 (台灣): `README.zh-TW.md`
-
-Contributions for additional languages are welcome. Follow the same filename pattern: `README.<locale>.md`.
