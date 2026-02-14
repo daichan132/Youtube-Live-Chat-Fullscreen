@@ -53,7 +53,7 @@ html.${className} ${fullscreenRootSelector} #panels {
   display: none !important;
 }
 html.${className} ${fullscreenRootSelector} #secondary {
-  display: none !important;
+  visibility: hidden !important;
 }
 html.${className} ${fullscreenRootSelector} #columns,
 html.${className} ${fullscreenRootSelector} #primary,
