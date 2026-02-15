@@ -5,21 +5,21 @@
         "preset": "প্রিসেট",
         "setting": "সেটিংস"
       },
-      "alwaysOnDisplay": "সবসময় প্রদর্শন করুন",
-      "chatOnlyDisplay": "শুধুমাত্র চ্যাট প্রদর্শন",
-      "userNameDisplay": "ইউজার নাম প্রদর্শন",
-      "userIconDisplay": "ইউজার আইকন প্রদর্শন",
-      "superChatBarDisplay": "সুপার চ্যাট বার প্রদর্শন",
-      "backgroundColor": "পটভূমির রং",
-      "fontColor": "ফন্টের রং",
+      "alwaysOnDisplay": "সবসময় দেখান",
+      "chatOnlyDisplay": "শুধু চ্যাট দেখান",
+      "userNameDisplay": "ব্যবহারকারীর নাম দেখান",
+      "userIconDisplay": "ব্যবহারকারীর আইকন দেখান",
+      "superChatBarDisplay": "Super Chat বার দেখান",
+      "backgroundColor": "পটভূমির রঙ",
+      "fontColor": "ফন্টের রঙ",
       "fontFamily": "ফন্ট ফ্যামিলি",
-      "fontSize": "ফন্ট সাইজ",
-      "blur": "ব্লার",
-      "space": "স্পেস",
+      "fontSize": "ফন্টের আকার",
+      "blur": "ঝাপসা",
+      "space": "ব্যবধান",
       "footer": {
         "donate": "দান করুন",
-        "chrome": "ক্রোম",
-        "firefox": "ফায়ারফক্স"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "থিম",
       "themeMode": {
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "সরাতে টেনে আনুন",
+      "arrowKeysToMove": "তীর কী দিয়ে সরান",
+      "openSettings": "সেটিংস খুলুন",
+      "toggleLiveChat": "লাইভ চ্যাট টগল করুন",
+      "close": "বন্ধ করুন",
+      "reorderPreset": "প্রিসেট পুনর্বিন্যাস করুন",
+      "presetName": "প্রিসেটের নাম",
+      "applyPreset": "প্রিসেট প্রয়োগ করুন",
+      "deletePreset": "প্রিসেট মুছুন",
+      "colorPicker": "রঙ নির্বাচন",
+      "loading": "লোড হচ্ছে",
+      "selectLanguage": "ভাষা নির্বাচন করুন"
     },
     "preset": {
       "addMessage": "বর্তমান সেটিংস যোগ করুন",
@@ -48,15 +48,15 @@
       "defaultTitle": "ডিফল্ট",
       "transparentTitle": "স্বচ্ছ",
       "simpleTitle": "সরল",
-      "deleteConfirmationMessage": "আপনি কি নিশ্চিতভাবে মুছে ফেলতে চান?",
-      "delete": "মুছে ফেলুন",
-      "cancel": "বাতিল করুন"
+      "deleteConfirmationMessage": "আপনি কি নিশ্চিত এটি মুছে ফেলতে চান?",
+      "delete": "মুছুন",
+      "cancel": "বাতিল"
     }
   },
   "popup": {
-    "language": "ভাষার সেটিংস",
+    "language": "ভাষা সেটিংস",
     "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
-    "links": "লিঙ্কসমূহ",
+    "links": "লিঙ্ক",
     "donate": "দান করুন",
     "theme": "থিম",
     "dataTransfer": "ব্যাকআপ",

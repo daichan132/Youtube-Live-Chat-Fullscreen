@@ -5,15 +5,15 @@
         "preset": "Cài đặt sẵn",
         "setting": "Cài đặt"
       },
-      "alwaysOnDisplay": "Luôn hiện trên màn hình",
-      "chatOnlyDisplay": "Chỉ hiện trò chuyện",
+      "alwaysOnDisplay": "Luôn hiển thị",
+      "chatOnlyDisplay": "Chỉ hiển thị chat",
       "userNameDisplay": "Hiển thị tên người dùng",
       "userIconDisplay": "Hiển thị biểu tượng người dùng",
       "superChatBarDisplay": "Hiển thị thanh Super Chat",
       "backgroundColor": "Màu nền",
       "fontColor": "Màu chữ",
       "fontFamily": "Phông chữ",
-      "fontSize": "Kích thước chữ",
+      "fontSize": "Cỡ chữ",
       "blur": "Làm mờ",
       "space": "Khoảng cách",
       "footer": {
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Kéo để di chuyển",
+      "arrowKeysToMove": "Dùng phím mũi tên để di chuyển",
+      "openSettings": "Mở cài đặt",
+      "toggleLiveChat": "Bật/tắt chat trực tiếp",
+      "close": "Đóng",
+      "reorderPreset": "Sắp xếp lại cài đặt sẵn",
+      "presetName": "Tên cài đặt sẵn",
+      "applyPreset": "Áp dụng cài đặt sẵn",
+      "deletePreset": "Xóa cài đặt sẵn",
+      "colorPicker": "Chọn màu",
+      "loading": "Đang tải",
+      "selectLanguage": "Chọn ngôn ngữ"
     },
     "preset": {
       "addMessage": "Thêm cài đặt hiện tại",
@@ -48,14 +48,14 @@
       "defaultTitle": "Mặc định",
       "transparentTitle": "Trong suốt",
       "simpleTitle": "Đơn giản",
-      "deleteConfirmationMessage": "Bạn có chắc chắn muốn xoá không?",
-      "delete": "Xoá",
-      "cancel": "Huỷ"
+      "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa mục này không?",
+      "delete": "Xóa",
+      "cancel": "Hủy"
     }
   },
   "popup": {
     "language": "Cài đặt ngôn ngữ",
-    "showChatOnFullscreen": "Trò chuyện toàn màn hình",
+    "showChatOnFullscreen": "Chat toàn màn hình",
     "links": "Liên kết",
     "donate": "Ủng hộ",
     "theme": "Giao diện",

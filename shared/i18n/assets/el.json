@@ -9,13 +9,13 @@
       "chatOnlyDisplay": "Μόνο συνομιλία",
       "userNameDisplay": "Εμφάνιση ονόματος χρήστη",
       "userIconDisplay": "Εμφάνιση εικονιδίου χρήστη",
-      "superChatBarDisplay": "Εμφάνιση Super Chat Bar",
+      "superChatBarDisplay": "Εμφάνιση μπάρας Super Chat",
       "backgroundColor": "Χρώμα φόντου",
       "fontColor": "Χρώμα γραμματοσειράς",
       "fontFamily": "Οικογένεια γραμματοσειράς",
       "fontSize": "Μέγεθος γραμματοσειράς",
-      "blur": "Θάμπωμα",
-      "space": "Κενό",
+      "blur": "Θόλωμα",
+      "space": "Διάκενο",
       "footer": {
         "donate": "Δωρεά",
         "chrome": "Chrome",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Σύρετε για μετακίνηση",
+      "arrowKeysToMove": "Βέλη για μετακίνηση",
+      "openSettings": "Άνοιγμα ρυθμίσεων",
+      "toggleLiveChat": "Εναλλαγή ζωντανής συνομιλίας",
+      "close": "Κλείσιμο",
+      "reorderPreset": "Αναδιάταξη προεπιλογής",
+      "presetName": "Όνομα προεπιλογής",
+      "applyPreset": "Εφαρμογή προεπιλογής",
+      "deletePreset": "Διαγραφή προεπιλογής",
+      "colorPicker": "Επιλογέας χρώματος",
+      "loading": "Φόρτωση",
+      "selectLanguage": "Επιλογή γλώσσας"
     },
     "preset": {
       "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
@@ -48,7 +48,7 @@
       "defaultTitle": "Προεπιλεγμένο",
       "transparentTitle": "Διαφανές",
       "simpleTitle": "Απλό",
-      "deleteConfirmationMessage": "Είστε σίγουροι ότι θέλετε να διαγράψετε;",
+      "deleteConfirmationMessage": "Θέλετε σίγουρα να το διαγράψετε;",
       "delete": "Διαγραφή",
       "cancel": "Ακύρωση"
     }

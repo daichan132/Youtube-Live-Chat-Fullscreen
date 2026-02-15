@@ -14,14 +14,14 @@
       "fontColor": "لون الخط",
       "fontFamily": "نوع الخط",
       "fontSize": "حجم الخط",
-      "blur": "تشويش",
-      "space": "المسافة",
+      "blur": "تمويه",
+      "space": "التباعد",
       "footer": {
-        "donate": "تبرع",
-        "chrome": "كروم",
-        "firefox": "فايرفوكس"
+        "donate": "تبرّع",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
-      "theme": "السمة",
+      "theme": "المظهر",
       "themeMode": {
         "system": "تلقائي",
         "light": "فاتح",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "اسحب للتحريك",
+      "arrowKeysToMove": "استخدم مفاتيح الأسهم للتحريك",
+      "openSettings": "فتح الإعدادات",
+      "toggleLiveChat": "تبديل الدردشة المباشرة",
+      "close": "إغلاق",
+      "reorderPreset": "إعادة ترتيب الإعدادات المسبقة",
+      "presetName": "اسم الإعداد المسبق",
+      "applyPreset": "تطبيق الإعداد المسبق",
+      "deletePreset": "حذف الإعداد المسبق",
+      "colorPicker": "منتقي الألوان",
+      "loading": "جارٍ التحميل",
+      "selectLanguage": "اختيار اللغة"
     },
     "preset": {
       "addMessage": "إضافة الإعدادات الحالية",
@@ -48,17 +48,17 @@
       "defaultTitle": "افتراضي",
       "transparentTitle": "شفاف",
       "simpleTitle": "بسيط",
-      "deleteConfirmationMessage": "هل أنت متأكد أنك تريد الحذف؟",
+      "deleteConfirmationMessage": "هل أنت متأكد من رغبتك في الحذف؟",
       "delete": "حذف",
       "cancel": "إلغاء"
     }
   },
   "popup": {
     "language": "إعدادات اللغة",
-    "showChatOnFullscreen": "دردشة وضع ملء الشاشة",
+    "showChatOnFullscreen": "الدردشة في وضع ملء الشاشة",
     "links": "روابط",
-    "donate": "تبرع",
-    "theme": "السمة",
+    "donate": "تبرّع",
+    "theme": "المظهر",
     "dataTransfer": "نسخ احتياطي",
     "export": "تصدير",
     "import": "استيراد"

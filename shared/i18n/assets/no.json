@@ -5,17 +5,17 @@
         "preset": "Forhåndsinnstilling",
         "setting": "Innstillinger"
       },
-      "alwaysOnDisplay": "Alltid på skjermen",
-      "chatOnlyDisplay": "Kun chat-visning",
+      "alwaysOnDisplay": "Alltid synlig",
+      "chatOnlyDisplay": "Vis kun chat",
       "userNameDisplay": "Vis brukernavn",
       "userIconDisplay": "Vis brukerikon",
-      "superChatBarDisplay": "Vis SuperChat-felt",
+      "superChatBarDisplay": "Vis Super Chat-felt",
       "backgroundColor": "Bakgrunnsfarge",
       "fontColor": "Skriftfarge",
-      "fontFamily": "Skriftfamilie",
+      "fontFamily": "Skrifttype",
       "fontSize": "Skriftstørrelse",
       "blur": "Uskarphet",
-      "space": "Mellomrom",
+      "space": "Avstand",
       "footer": {
         "donate": "Doner",
         "chrome": "Chrome",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Dra for å flytte",
+      "arrowKeysToMove": "Piltaster for å flytte",
+      "openSettings": "Åpne innstillinger",
+      "toggleLiveChat": "Slå livechat av/på",
+      "close": "Lukk",
+      "reorderPreset": "Endre rekkefølge",
+      "presetName": "Navn på forhåndsinnstilling",
+      "applyPreset": "Bruk forhåndsinnstilling",
+      "deletePreset": "Slett forhåndsinnstilling",
+      "colorPicker": "Fargevelger",
+      "loading": "Laster",
+      "selectLanguage": "Velg språk"
     },
     "preset": {
       "addMessage": "Legg til gjeldende innstillinger",
@@ -48,7 +48,7 @@
       "defaultTitle": "Standard",
       "transparentTitle": "Gjennomsiktig",
       "simpleTitle": "Enkel",
-      "deleteConfirmationMessage": "Er du sikker på at du vil slette?",
+      "deleteConfirmationMessage": "Er du sikker på at du vil slette denne?",
       "delete": "Slett",
       "cancel": "Avbryt"
     }

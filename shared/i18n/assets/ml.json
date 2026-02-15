@@ -9,17 +9,17 @@
       "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",
       "userNameDisplay": "ഉപയോക്തൃനാമം കാണിക്കുക",
       "userIconDisplay": "ഉപയോക്തൃ ഐക്കൺ കാണിക്കുക",
-      "superChatBarDisplay": "സൂപ്പർ ചാറ്റ് ബാർ കാണിക്കുക",
-      "backgroundColor": "പിന്തുണയുടെ നിറം",
+      "superChatBarDisplay": "Super Chat ബാർ കാണിക്കുക",
+      "backgroundColor": "പശ്ചാത്തല നിറം",
       "fontColor": "ഫോണ്ട് നിറം",
       "fontFamily": "ഫോണ്ട് ഫാമിലി",
       "fontSize": "ഫോണ്ട് വലുപ്പം",
-      "blur": "മങ്ങിയ നില",
-      "space": "സ്പേസ്",
+      "blur": "മങ്ങൽ",
+      "space": "ഇടയകലം",
       "footer": {
         "donate": "സംഭാവന",
-        "chrome": "ക്രോം",
-        "firefox": "ഫയർഫോക്സ്"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "തീം",
       "themeMode": {
@@ -29,27 +29,27 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "നീക്കാൻ വലിക്കുക",
+      "arrowKeysToMove": "നീക്കാൻ ആരോ കീകൾ ഉപയോഗിക്കുക",
+      "openSettings": "ക്രമീകരണങ്ങൾ തുറക്കുക",
+      "toggleLiveChat": "ലൈവ് ചാറ്റ് ടോഗിൾ ചെയ്യുക",
+      "close": "അടയ്ക്കുക",
+      "reorderPreset": "പ്രീസെറ്റ് ക്രമം മാറ്റുക",
+      "presetName": "പ്രീസെറ്റ് പേര്",
+      "applyPreset": "പ്രീസെറ്റ് പ്രയോഗിക്കുക",
+      "deletePreset": "പ്രീസെറ്റ് ഇല്ലാതാക്കുക",
+      "colorPicker": "നിറം തിരഞ്ഞെടുക്കൽ",
+      "loading": "ലോഡ് ചെയ്യുന്നു",
+      "selectLanguage": "ഭാഷ തിരഞ്ഞെടുക്കുക"
     },
     "preset": {
       "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
       "addItemTitle": "ശീർഷകമില്ലാത്തത്",
       "defaultTitle": "ഡിഫോൾട്ട്",
-      "transparentTitle": "സുതാര്യമായത്",
-      "simpleTitle": "സിംപിള്‍",
-      "deleteConfirmationMessage": "നിങ്ങൾക്ക് തീർച്ചയാണോ ഡിലീറ്റ് ചെയ്യാൻ?",
-      "delete": "ഇളക്കുക",
+      "transparentTitle": "സുതാര്യം",
+      "simpleTitle": "ലളിതം",
+      "deleteConfirmationMessage": "ഇത് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
+      "delete": "ഇല്ലാതാക്കുക",
       "cancel": "റദ്ദാക്കുക"
     }
   },

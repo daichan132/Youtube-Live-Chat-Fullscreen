@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Išankstiniai nustatymai",
+        "preset": "Šablonas",
         "setting": "Nustatymai"
       },
-      "alwaysOnDisplay": "Visada rodyti",
-      "chatOnlyDisplay": "Rodyti tik pokalbį",
+      "alwaysOnDisplay": "Rodyti visada",
+      "chatOnlyDisplay": "Tik pokalbis",
       "userNameDisplay": "Rodyti naudotojo vardą",
       "userIconDisplay": "Rodyti naudotojo piktogramą",
-      "superChatBarDisplay": "Rodyti „Super Chat“ juostą",
+      "superChatBarDisplay": "Rodyti Super Chat juostą",
       "backgroundColor": "Fono spalva",
       "fontColor": "Šrifto spalva",
       "fontFamily": "Šrifto šeima",
       "fontSize": "Šrifto dydis",
       "blur": "Suliejimas",
-      "space": "Tarpas",
+      "space": "Tarpai",
       "footer": {
         "donate": "Paaukoti",
         "chrome": "Chrome",
@@ -29,21 +29,21 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Vilkite norėdami perkelti",
+      "arrowKeysToMove": "Rodyklių klavišai perkėlimui",
+      "openSettings": "Atidaryti nustatymus",
+      "toggleLiveChat": "Įjungti / išjungti pokalbį",
+      "close": "Uždaryti",
+      "reorderPreset": "Pertvarkyti šabloną",
+      "presetName": "Šablono pavadinimas",
+      "applyPreset": "Taikyti šabloną",
+      "deletePreset": "Ištrinti šabloną",
+      "colorPicker": "Spalvų parinkiklis",
+      "loading": "Įkeliama",
+      "selectLanguage": "Pasirinkti kalbą"
     },
     "preset": {
-      "addMessage": "Įtraukti dabartinius nustatymus",
+      "addMessage": "Pridėti dabartinius nustatymus",
       "addItemTitle": "Be pavadinimo",
       "defaultTitle": "Numatytasis",
       "transparentTitle": "Permatomas",
@@ -55,7 +55,7 @@
   },
   "popup": {
     "language": "Kalbos nustatymai",
-    "showChatOnFullscreen": "Visas ekranas (pokalbis)",
+    "showChatOnFullscreen": "Pokalbis per visą ekraną",
     "links": "Nuorodos",
     "donate": "Paaukoti",
     "theme": "Tema",

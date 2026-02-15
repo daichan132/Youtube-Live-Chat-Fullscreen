@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Přednastavení",
+        "preset": "Předvolba",
         "setting": "Nastavení"
       },
-      "alwaysOnDisplay": "Stále zobrazit",
-      "chatOnlyDisplay": "Zobrazit pouze chat",
-      "userNameDisplay": "Zobrazit uživatelské jméno",
-      "userIconDisplay": "Zobrazit uživatelskou ikonu",
+      "alwaysOnDisplay": "Vždy zobrazovat",
+      "chatOnlyDisplay": "Pouze chat",
+      "userNameDisplay": "Zobrazit jméno uživatele",
+      "userIconDisplay": "Zobrazit ikonu uživatele",
       "superChatBarDisplay": "Zobrazit lištu Super Chat",
       "backgroundColor": "Barva pozadí",
       "fontColor": "Barva písma",
       "fontFamily": "Písmo",
       "fontSize": "Velikost písma",
       "blur": "Rozostření",
-      "space": "Mezera",
+      "space": "Rozestup",
       "footer": {
         "donate": "Přispět",
         "chrome": "Chrome",
@@ -29,32 +29,32 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Přetáhněte pro přesun",
+      "arrowKeysToMove": "Šipky pro přesun",
+      "openSettings": "Otevřít nastavení",
+      "toggleLiveChat": "Přepnout živý chat",
+      "close": "Zavřít",
+      "reorderPreset": "Změnit pořadí předvoleb",
+      "presetName": "Název předvolby",
+      "applyPreset": "Použít předvolbu",
+      "deletePreset": "Smazat předvolbu",
+      "colorPicker": "Výběr barvy",
+      "loading": "Načítání",
+      "selectLanguage": "Výběr jazyka"
     },
     "preset": {
       "addMessage": "Přidat aktuální nastavení",
       "addItemTitle": "Bez názvu",
       "defaultTitle": "Výchozí",
-      "transparentTitle": "Průhledné",
-      "simpleTitle": "Jednoduché",
+      "transparentTitle": "Průhledný",
+      "simpleTitle": "Jednoduchý",
       "deleteConfirmationMessage": "Opravdu chcete smazat?",
       "delete": "Smazat",
       "cancel": "Zrušit"
     }
   },
   "popup": {
-    "language": "Nastavení jazyka",
+    "language": "Jazyk",
     "showChatOnFullscreen": "Chat na celou obrazovku",
     "links": "Odkazy",
     "donate": "Přispět",

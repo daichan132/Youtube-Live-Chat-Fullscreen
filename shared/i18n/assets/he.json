@@ -2,14 +2,14 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "קביעות מוגדרות מראש",
+        "preset": "ערכות",
         "setting": "הגדרות"
       },
-      "alwaysOnDisplay": "תמיד בתצוגה",
-      "chatOnlyDisplay": "הצגת הצ'אט בלבד",
+      "alwaysOnDisplay": "תצוגה קבועה",
+      "chatOnlyDisplay": "הצגת צ׳אט בלבד",
       "userNameDisplay": "הצגת שם משתמש",
-      "userIconDisplay": "הצגת אייקון משתמש",
-      "superChatBarDisplay": "הצגת סופר-צ'אט",
+      "userIconDisplay": "הצגת סמל משתמש",
+      "superChatBarDisplay": "הצגת סרגל Super Chat",
       "backgroundColor": "צבע רקע",
       "fontColor": "צבע גופן",
       "fontFamily": "גופן",
@@ -29,26 +29,26 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "גרור להזזה",
+      "arrowKeysToMove": "מקשי חצים להזזה",
+      "openSettings": "פתיחת הגדרות",
+      "toggleLiveChat": "הצגה/הסתרה של צ׳אט חי",
+      "close": "סגירה",
+      "reorderPreset": "שינוי סדר ערכות",
+      "presetName": "שם ערכה",
+      "applyPreset": "החלת ערכה",
+      "deletePreset": "מחיקת ערכה",
+      "colorPicker": "בורר צבעים",
+      "loading": "טוען",
+      "selectLanguage": "בחירת שפה"
     },
     "preset": {
-      "addMessage": "הוסף את ההגדרות הנוכחיות",
-      "addItemTitle": "ללא כותרת",
+      "addMessage": "הוספת ההגדרות הנוכחיות",
+      "addItemTitle": "ללא שם",
       "defaultTitle": "ברירת מחדל",
       "transparentTitle": "שקוף",
       "simpleTitle": "פשוט",
-      "deleteConfirmationMessage": "האם אתה בטוח שברצונך למחוק?",
+      "deleteConfirmationMessage": "האם למחוק פריט זה?",
       "delete": "מחיקה",
       "cancel": "ביטול"
     }

@@ -9,17 +9,17 @@
       "chatOnlyDisplay": "채팅만 표시",
       "userNameDisplay": "사용자 이름 표시",
       "userIconDisplay": "사용자 아이콘 표시",
-      "superChatBarDisplay": "슈퍼챗 바 표시",
+      "superChatBarDisplay": "Super Chat 바 표시",
       "backgroundColor": "배경색",
       "fontColor": "글자색",
       "fontFamily": "글꼴",
       "fontSize": "글꼴 크기",
-      "blur": "블러 처리",
+      "blur": "블러",
       "space": "간격",
       "footer": {
         "donate": "후원하기",
-        "chrome": "크롬",
-        "firefox": "파이어폭스"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "테마",
       "themeMode": {
@@ -29,23 +29,23 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "드래그하여 이동",
+      "arrowKeysToMove": "방향키로 이동",
+      "openSettings": "설정 열기",
+      "toggleLiveChat": "라이브 채팅 전환",
+      "close": "닫기",
+      "reorderPreset": "프리셋 순서 변경",
+      "presetName": "프리셋 이름",
+      "applyPreset": "프리셋 적용",
+      "deletePreset": "프리셋 삭제",
+      "colorPicker": "색상 선택",
+      "loading": "로딩 중",
+      "selectLanguage": "언어 선택"
     },
     "preset": {
       "addMessage": "현재 설정 추가",
       "addItemTitle": "제목 없음",
-      "defaultTitle": "기본값",
+      "defaultTitle": "기본",
       "transparentTitle": "투명",
       "simpleTitle": "심플",
       "deleteConfirmationMessage": "정말로 삭제하시겠습니까?",

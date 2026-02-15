@@ -7,8 +7,8 @@
       },
       "alwaysOnDisplay": "Sempre visible",
       "chatOnlyDisplay": "Només el xat",
-      "userNameDisplay": "Mostra el nom d’usuari",
-      "userIconDisplay": "Mostra la icona d’usuari",
+      "userNameDisplay": "Mostra el nom d'usuari",
+      "userIconDisplay": "Mostra la icona d'usuari",
       "superChatBarDisplay": "Mostra la barra de Super Chat",
       "backgroundColor": "Color de fons",
       "fontColor": "Color de lletra",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Arrossega per moure",
+      "arrowKeysToMove": "Tecles de fletxa per moure",
+      "openSettings": "Obre la configuració",
+      "toggleLiveChat": "Activa o desactiva el xat en directe",
+      "close": "Tanca",
+      "reorderPreset": "Reordena el predefinit",
+      "presetName": "Nom del predefinit",
+      "applyPreset": "Aplica el predefinit",
+      "deletePreset": "Elimina el predefinit",
+      "colorPicker": "Selector de color",
+      "loading": "Carregant",
+      "selectLanguage": "Selecciona l'idioma"
     },
     "preset": {
       "addMessage": "Afegeix la configuració actual",
@@ -60,7 +60,7 @@
     "donate": "Fes una donació",
     "theme": "Tema",
     "dataTransfer": "Còpia de seguretat",
-    "export": "Exportar",
-    "import": "Importar"
+    "export": "Exporta",
+    "import": "Importa"
   }
 }

@@ -6,14 +6,14 @@
         "setting": "Asetukset"
       },
       "alwaysOnDisplay": "Näytä aina",
-      "chatOnlyDisplay": "Vain chat näkyy",
-      "userNameDisplay": "Näytä käyttäjännimi",
+      "chatOnlyDisplay": "Vain chat",
+      "userNameDisplay": "Näytä käyttäjänimi",
       "userIconDisplay": "Näytä käyttäjäkuvake",
       "superChatBarDisplay": "Näytä Super Chat -palkki",
       "backgroundColor": "Taustaväri",
       "fontColor": "Fontin väri",
       "fontFamily": "Fonttiperhe",
-      "fontSize": "Fontin koko",
+      "fontSize": "Fonttikoko",
       "blur": "Sumennus",
       "space": "Välistys",
       "footer": {
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Siirrä vetämällä",
+      "arrowKeysToMove": "Siirrä nuolinäppäimillä",
+      "openSettings": "Avaa asetukset",
+      "toggleLiveChat": "Vaihda live-chat",
+      "close": "Sulje",
+      "reorderPreset": "Järjestä esiasetus",
+      "presetName": "Esiasetuksen nimi",
+      "applyPreset": "Käytä esiasetusta",
+      "deletePreset": "Poista esiasetus",
+      "colorPicker": "Värinvalitsin",
+      "loading": "Ladataan",
+      "selectLanguage": "Valitse kieli"
     },
     "preset": {
       "addMessage": "Lisää nykyiset asetukset",
@@ -55,7 +55,7 @@
   },
   "popup": {
     "language": "Kieliasetukset",
-    "showChatOnFullscreen": "Kokonäyttö-chat",
+    "showChatOnFullscreen": "Koko näytön chat",
     "links": "Linkit",
     "donate": "Lahjoita",
     "theme": "Teema",

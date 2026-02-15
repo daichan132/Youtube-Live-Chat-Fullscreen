@@ -6,7 +6,7 @@
         "setting": "Indstillinger"
       },
       "alwaysOnDisplay": "Altid synlig",
-      "chatOnlyDisplay": "Kun chatvisning",
+      "chatOnlyDisplay": "Vis kun chat",
       "userNameDisplay": "Vis brugernavn",
       "userIconDisplay": "Vis brugerikon",
       "superChatBarDisplay": "Vis Super Chat-bar",
@@ -15,7 +15,7 @@
       "fontFamily": "Skrifttype",
       "fontSize": "Skriftstørrelse",
       "blur": "Sløring",
-      "space": "Mellemrum",
+      "space": "Afstand",
       "footer": {
         "donate": "Donér",
         "chrome": "Chrome",
@@ -29,26 +29,26 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Træk for at flytte",
+      "arrowKeysToMove": "Piletaster for at flytte",
+      "openSettings": "Åbn indstillinger",
+      "toggleLiveChat": "Slå livechat til/fra",
+      "close": "Luk",
+      "reorderPreset": "Omarranger forudindstilling",
+      "presetName": "Navn på forudindstilling",
+      "applyPreset": "Anvend forudindstilling",
+      "deletePreset": "Slet forudindstilling",
+      "colorPicker": "Farvevælger",
+      "loading": "Indlæser",
+      "selectLanguage": "Vælg sprog"
     },
     "preset": {
       "addMessage": "Tilføj nuværende indstillinger",
       "addItemTitle": "Uden titel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gennemsigtig",
-      "simpleTitle": "Simpel",
-      "deleteConfirmationMessage": "Er du sikker på, at du vil slette?",
+      "simpleTitle": "Enkel",
+      "deleteConfirmationMessage": "Er du sikker på, at du vil slette denne?",
       "delete": "Slet",
       "cancel": "Annuller"
     }

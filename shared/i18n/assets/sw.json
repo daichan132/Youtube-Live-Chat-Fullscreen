@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Pendeleo",
+        "preset": "Mipangilio tayari",
         "setting": "Mipangilio"
       },
-      "alwaysOnDisplay": "Onyesho Kila Wakati",
-      "chatOnlyDisplay": "Onyesha Gumzo Pekee",
-      "userNameDisplay": "Onyesha Jina la Mtumiaji",
-      "userIconDisplay": "Onyesha Ikoni ya Mtumiaji",
-      "superChatBarDisplay": "Onyesha Super Chat Bar",
-      "backgroundColor": "Rangi ya Usuli",
-      "fontColor": "Rangi ya Herufi",
-      "fontFamily": "Aina ya Herufi",
-      "fontSize": "Ukubwa wa Herufi",
+      "alwaysOnDisplay": "Onyesha kila wakati",
+      "chatOnlyDisplay": "Onyesha gumzo pekee",
+      "userNameDisplay": "Onyesha jina la mtumiaji",
+      "userIconDisplay": "Onyesha ikoni ya mtumiaji",
+      "superChatBarDisplay": "Onyesha upau wa Super Chat",
+      "backgroundColor": "Rangi ya mandharinyuma",
+      "fontColor": "Rangi ya herufi",
+      "fontFamily": "Aina ya herufi",
+      "fontSize": "Ukubwa wa herufi",
       "blur": "Ukungu",
-      "space": "Nafasi",
+      "space": "Mwanya",
       "footer": {
         "donate": "Changia",
         "chrome": "Chrome",
@@ -29,38 +29,38 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Buruta ili kusogeza",
+      "arrowKeysToMove": "Tumia vitufe vya mishale kusogeza",
+      "openSettings": "Fungua mipangilio",
+      "toggleLiveChat": "Washa/zima gumzo la moja kwa moja",
+      "close": "Funga",
+      "reorderPreset": "Panga upya mipangilio tayari",
+      "presetName": "Jina la mpangilio tayari",
+      "applyPreset": "Tumia mpangilio tayari",
+      "deletePreset": "Futa mpangilio tayari",
+      "colorPicker": "Kichaguzi cha rangi",
+      "loading": "Inapakia",
+      "selectLanguage": "Chagua lugha"
     },
     "preset": {
-      "addMessage": "Ongeza Mipangilio ya Sasa",
-      "addItemTitle": "Bila Jina",
+      "addMessage": "Ongeza mipangilio ya sasa",
+      "addItemTitle": "Bila jina",
       "defaultTitle": "Chaguomsingi",
       "transparentTitle": "Wazi",
       "simpleTitle": "Rahisi",
-      "deleteConfirmationMessage": "Una uhakika unataka kufuta?",
+      "deleteConfirmationMessage": "Una uhakika unataka kufuta hii?",
       "delete": "Futa",
       "cancel": "Ghairi"
     }
   },
   "popup": {
-    "language": "Mipangilio ya Lugha",
-    "showChatOnFullscreen": "Gumzo la Skrini Nzima",
+    "language": "Mipangilio ya lugha",
+    "showChatOnFullscreen": "Gumzo la skrini nzima",
     "links": "Viungo",
     "donate": "Changia",
     "theme": "Mandhari",
     "dataTransfer": "Hifadhi nakala",
-    "export": "Hamisha Nje",
-    "import": "Hamisha Ndani"
+    "export": "Hamisha nje",
+    "import": "Hamisha ndani"
   }
 }

@@ -2,19 +2,19 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Prednastavitev",
+        "preset": "Prednastavitve",
         "setting": "Nastavitve"
       },
       "alwaysOnDisplay": "Vedno na zaslonu",
       "chatOnlyDisplay": "Samo klepet",
       "userNameDisplay": "Prikaži uporabniško ime",
       "userIconDisplay": "Prikaži uporabniško ikono",
-      "superChatBarDisplay": "Prikaži Super Chat vrstico",
+      "superChatBarDisplay": "Prikaži vrstico Super Chat",
       "backgroundColor": "Barva ozadja",
       "fontColor": "Barva pisave",
-      "fontFamily": "Družina pisav",
+      "fontFamily": "Pisava",
       "fontSize": "Velikost pisave",
-      "blur": "Zabriši",
+      "blur": "Zameglitev",
       "space": "Razmik",
       "footer": {
         "donate": "Doniraj",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Povlecite za premik",
+      "arrowKeysToMove": "Puščice za premikanje",
+      "openSettings": "Odpri nastavitve",
+      "toggleLiveChat": "Vklopi/izklopi klepet v živo",
+      "close": "Zapri",
+      "reorderPreset": "Spremeni vrstni red prednastavitev",
+      "presetName": "Ime prednastavitve",
+      "applyPreset": "Uporabi prednastavitev",
+      "deletePreset": "Izbriši prednastavitev",
+      "colorPicker": "Izbirnik barv",
+      "loading": "Nalaganje",
+      "selectLanguage": "Izberi jezik"
     },
     "preset": {
       "addMessage": "Dodaj trenutne nastavitve",

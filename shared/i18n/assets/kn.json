@@ -2,62 +2,62 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ಮೂಲೆಗುಚ್ಛ",
+        "preset": "ಪ್ರಿಸೆಟ್",
         "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
       },
-      "alwaysOnDisplay": "ಯಾವಾಗಲೂ ಡಿಸ್ಪ್ಲೇ ಇದಿರಲಿ",
-      "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ಡಿಸ್ಪ್ಲೇ",
-      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ಪ್ರದರ್ಶನ",
-      "userIconDisplay": "ಬಳಕೆದಾರರ ಚಿಹ್ನೆ ಪ್ರದರ್ಶನ",
-      "superChatBarDisplay": "ಸೂಪರ್ ಚಾಟ್ ಬಾರ್ ಪ್ರದರ್ಶನ",
+      "alwaysOnDisplay": "ಯಾವಾಗಲೂ ತೋರಿಸಿ",
+      "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ತೋರಿಸಿ",
+      "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ತೋರಿಸಿ",
+      "userIconDisplay": "ಬಳಕೆದಾರರ ಐಕಾನ್ ತೋರಿಸಿ",
+      "superChatBarDisplay": "Super Chat ಬಾರ್ ತೋರಿಸಿ",
       "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
-      "fontColor": "ಅಕ್ಷರದ ಬಣ್ಣ",
-      "fontFamily": "ಅಕ್ಷರಶೈಲಿ",
-      "fontSize": "ಅಕ್ಷರ ಗಾತ್ರ",
-      "blur": "ಅಸ್ಪಷ್ಟತೆ",
-      "space": "ಸ್ಥಳ",
+      "fontColor": "ಫಾಂಟ್ ಬಣ್ಣ",
+      "fontFamily": "ಫಾಂಟ್ ಫ್ಯಾಮಿಲಿ",
+      "fontSize": "ಫಾಂಟ್ ಗಾತ್ರ",
+      "blur": "ಮಸುಕು",
+      "space": "ಅಂತರ",
       "footer": {
-        "donate": "ದಾನಮಾಡಿ",
-        "chrome": "ಕ್ರೋಮ್",
-        "firefox": "ಫೈರ್ಫಾಕ್ಸ್"
+        "donate": "ದಾನ ಮಾಡಿ",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "ಥೀಮ್",
       "themeMode": {
         "system": "ಸ್ವಯಂ",
-        "light": "ಬೆಳಕು",
-        "dark": "ಕತ್ತಲೆ"
+        "light": "ಲೈಟ್",
+        "dark": "ಡಾರ್ಕ್"
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "ಸರಿಸಲು ಎಳೆಯಿರಿ",
+      "arrowKeysToMove": "ಬಾಣದ ಕೀಗಳಿಂದ ಸರಿಸಿ",
+      "openSettings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
+      "toggleLiveChat": "ಲೈವ್ ಚಾಟ್ ಟಾಗಲ್ ಮಾಡಿ",
+      "close": "ಮುಚ್ಚಿ",
+      "reorderPreset": "ಪ್ರಿಸೆಟ್ ಕ್ರಮ ಬದಲಿಸಿ",
+      "presetName": "ಪ್ರಿಸೆಟ್ ಹೆಸರು",
+      "applyPreset": "ಪ್ರಿಸೆಟ್ ಅನ್ವಯಿಸಿ",
+      "deletePreset": "ಪ್ರಿಸೆಟ್ ಅಳಿಸಿ",
+      "colorPicker": "ಬಣ್ಣ ಆಯ್ಕೆ",
+      "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ",
+      "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ"
     },
     "preset": {
       "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
-      "addItemTitle": "ಶೀರ್ಷಿಕೆ ಇಲ್ಲ",
-      "defaultTitle": "ಸಹಜ",
+      "addItemTitle": "ಶೀರ್ಷಿಕೆರಹಿತ",
+      "defaultTitle": "ಡೀಫಾಲ್ಟ್",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
       "simpleTitle": "ಸರಳ",
-      "deleteConfirmationMessage": "ನೀವು ಖಂಡಿತವಾಗಿಯೂ ಅಳಿಸಬೇಕೆಂದು ಖಚಿತಪಡಿಸಿಕೊಳ್ಳುತ್ತೀರಾ?",
+      "deleteConfirmationMessage": "ನೀವು ಇದನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
       "delete": "ಅಳಿಸಿ",
       "cancel": "ರದ್ದುಮಾಡಿ"
     }
   },
   "popup": {
     "language": "ಭಾಷಾ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
-    "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ್ ಚಾಟ್",
+    "showChatOnFullscreen": "ಫುಲ್‌ಸ್ಕ್ರೀನ್ ಚಾಟ್",
     "links": "ಲಿಂಕ್‌ಗಳು",
-    "donate": "ದಾನಮಾಡಿ",
+    "donate": "ದಾನ ಮಾಡಿ",
     "theme": "ಥೀಮ್",
     "dataTransfer": "ಬ್ಯಾಕಪ್",
     "export": "ರಫ್ತು",

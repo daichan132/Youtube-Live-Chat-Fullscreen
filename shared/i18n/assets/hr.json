@@ -2,16 +2,16 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Prijedlozi",
+        "preset": "Predlošci",
         "setting": "Postavke"
       },
-      "alwaysOnDisplay": "Uvijek uključeno",
-      "chatOnlyDisplay": "Samo chat prikaz",
-      "userNameDisplay": "Prikaz korisničkog imena",
-      "userIconDisplay": "Prikaz korisničke ikone",
-      "superChatBarDisplay": "Prikaz Super Chat trake",
+      "alwaysOnDisplay": "Uvijek na zaslonu",
+      "chatOnlyDisplay": "Samo chat",
+      "userNameDisplay": "Prikaži korisničko ime",
+      "userIconDisplay": "Prikaži korisničku ikonu",
+      "superChatBarDisplay": "Prikaži Super Chat traku",
       "backgroundColor": "Boja pozadine",
-      "fontColor": "Boja fonta",
+      "fontColor": "Boja teksta",
       "fontFamily": "Font",
       "fontSize": "Veličina fonta",
       "blur": "Zamućenje",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Povucite za premještanje",
+      "arrowKeysToMove": "Strelice za premještanje",
+      "openSettings": "Otvori postavke",
+      "toggleLiveChat": "Uključi/isključi chat uživo",
+      "close": "Zatvori",
+      "reorderPreset": "Promijeni redoslijed predložaka",
+      "presetName": "Naziv predloška",
+      "applyPreset": "Primijeni predložak",
+      "deletePreset": "Izbriši predložak",
+      "colorPicker": "Odabir boje",
+      "loading": "Učitavanje",
+      "selectLanguage": "Odaberi jezik"
     },
     "preset": {
       "addMessage": "Dodaj trenutne postavke",
@@ -55,8 +55,8 @@
   },
   "popup": {
     "language": "Postavke jezika",
-    "showChatOnFullscreen": "Chat preko cijelog zaslona",
-    "links": "Linkovi",
+    "showChatOnFullscreen": "Chat na cijelom zaslonu",
+    "links": "Poveznice",
     "donate": "Doniraj",
     "theme": "Tema",
     "dataTransfer": "Sigurnosna kopija",

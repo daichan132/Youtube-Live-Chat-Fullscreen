@@ -5,8 +5,8 @@
         "preset": "Шаблони",
         "setting": "Настройки"
       },
-      "alwaysOnDisplay": "Винаги видим дисплей",
-      "chatOnlyDisplay": "Само чат изглед",
+      "alwaysOnDisplay": "Винаги на екрана",
+      "chatOnlyDisplay": "Само чат",
       "userNameDisplay": "Показване на потребителско име",
       "userIconDisplay": "Показване на потребителска икона",
       "superChatBarDisplay": "Показване на Super Chat лентата",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Плъзнете за преместване",
+      "arrowKeysToMove": "Стрелки за преместване",
+      "openSettings": "Отваряне на настройките",
+      "toggleLiveChat": "Превключване на чата на живо",
+      "close": "Затваряне",
+      "reorderPreset": "Пренареждане на шаблон",
+      "presetName": "Име на шаблон",
+      "applyPreset": "Прилагане на шаблон",
+      "deletePreset": "Изтриване на шаблон",
+      "colorPicker": "Избор на цвят",
+      "loading": "Зареждане",
+      "selectLanguage": "Избор на език"
     },
     "preset": {
       "addMessage": "Добави текущите настройки",

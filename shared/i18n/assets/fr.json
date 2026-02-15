@@ -2,7 +2,7 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Préréglages",
+        "preset": "Préréglage",
         "setting": "Paramètres"
       },
       "alwaysOnDisplay": "Affichage permanent",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Glisser pour déplacer",
+      "arrowKeysToMove": "Touches directionnelles pour déplacer",
+      "openSettings": "Ouvrir les paramètres",
+      "toggleLiveChat": "Activer ou désactiver le chat en direct",
+      "close": "Fermer",
+      "reorderPreset": "Réorganiser le préréglage",
+      "presetName": "Nom du préréglage",
+      "applyPreset": "Appliquer le préréglage",
+      "deletePreset": "Supprimer le préréglage",
+      "colorPicker": "Sélecteur de couleur",
+      "loading": "Chargement",
+      "selectLanguage": "Choisir la langue"
     },
     "preset": {
       "addMessage": "Ajouter les paramètres actuels",

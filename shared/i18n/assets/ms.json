@@ -6,16 +6,16 @@
         "setting": "Tetapan"
       },
       "alwaysOnDisplay": "Sentiasa Dipaparkan",
-      "chatOnlyDisplay": "Paparan Sembang Sahaja",
-      "userNameDisplay": "Paparan Nama Pengguna",
-      "userIconDisplay": "Paparan Ikon Pengguna",
-      "superChatBarDisplay": "Paparan Bar Super Chat",
-      "backgroundColor": "Warna Latar",
+      "chatOnlyDisplay": "Papar Sembang Sahaja",
+      "userNameDisplay": "Papar Nama Pengguna",
+      "userIconDisplay": "Papar Ikon Pengguna",
+      "superChatBarDisplay": "Papar Bar Super Chat",
+      "backgroundColor": "Warna Latar Belakang",
       "fontColor": "Warna Fon",
-      "fontFamily": "Keluarga Fon",
+      "fontFamily": "Jenis Fon",
       "fontSize": "Saiz Fon",
       "blur": "Kabur",
-      "space": "Ruang",
+      "space": "Jarak",
       "footer": {
         "donate": "Derma",
         "chrome": "Chrome",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Seret untuk memindahkan",
+      "arrowKeysToMove": "Gunakan kekunci anak panah untuk memindahkan",
+      "openSettings": "Buka tetapan",
+      "toggleLiveChat": "Togol sembang langsung",
+      "close": "Tutup",
+      "reorderPreset": "Susun semula praset",
+      "presetName": "Nama praset",
+      "applyPreset": "Gunakan praset",
+      "deletePreset": "Padam praset",
+      "colorPicker": "Pemilih warna",
+      "loading": "Memuatkan",
+      "selectLanguage": "Pilih bahasa"
     },
     "preset": {
       "addMessage": "Tambah Tetapan Semasa",
@@ -48,7 +48,7 @@
       "defaultTitle": "Lalai",
       "transparentTitle": "Telus",
       "simpleTitle": "Ringkas",
-      "deleteConfirmationMessage": "Adakah anda pasti mahu padamkan?",
+      "deleteConfirmationMessage": "Adakah anda pasti mahu memadamkan ini?",
       "delete": "Padam",
       "cancel": "Batal"
     }

@@ -2,7 +2,7 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preseturi",
+        "preset": "Presetări",
         "setting": "Setări"
       },
       "alwaysOnDisplay": "Afișare permanentă",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Trage pentru a muta",
+      "arrowKeysToMove": "Tastele săgeți pentru a muta",
+      "openSettings": "Deschide setările",
+      "toggleLiveChat": "Activează sau dezactivează chatul live",
+      "close": "Închide",
+      "reorderPreset": "Reordonează presetarea",
+      "presetName": "Numele presetării",
+      "applyPreset": "Aplică presetarea",
+      "deletePreset": "Șterge presetarea",
+      "colorPicker": "Selector de culoare",
+      "loading": "Se încarcă",
+      "selectLanguage": "Selectează limba"
     },
     "preset": {
       "addMessage": "Adaugă setările curente",
@@ -54,13 +54,13 @@
     }
   },
   "popup": {
-    "language": "Setări limbă",
+    "language": "Setări de limbă",
     "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
     "donate": "Donează",
     "theme": "Temă",
     "dataTransfer": "Copie de rezervă",
-    "export": "Exportare",
-    "import": "Importare"
+    "export": "Exportă",
+    "import": "Importă"
   }
 }

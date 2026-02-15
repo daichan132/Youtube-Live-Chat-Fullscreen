@@ -2,11 +2,11 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Előre beállított",
+        "preset": "Sablonok",
         "setting": "Beállítások"
       },
-      "alwaysOnDisplay": "Állandó megjelenítés",
-      "chatOnlyDisplay": "Csak chat megjelenítése",
+      "alwaysOnDisplay": "Mindig látható",
+      "chatOnlyDisplay": "Csak csevegés",
       "userNameDisplay": "Felhasználónév megjelenítése",
       "userIconDisplay": "Felhasználói ikon megjelenítése",
       "superChatBarDisplay": "Super Chat sáv megjelenítése",
@@ -14,10 +14,10 @@
       "fontColor": "Betűszín",
       "fontFamily": "Betűtípus",
       "fontSize": "Betűméret",
-      "blur": "Elmosódás",
+      "blur": "Elmosás",
       "space": "Térköz",
       "footer": {
-        "donate": "Adományozás",
+        "donate": "Támogatás",
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Húzza az áthelyezéshez",
+      "arrowKeysToMove": "Nyilakkal mozgatható",
+      "openSettings": "Beállítások megnyitása",
+      "toggleLiveChat": "Élő csevegés ki-/bekapcsolása",
+      "close": "Bezárás",
+      "reorderPreset": "Sablon átrendezése",
+      "presetName": "Sablon neve",
+      "applyPreset": "Sablon alkalmazása",
+      "deletePreset": "Sablon törlése",
+      "colorPicker": "Színválasztó",
+      "loading": "Betöltés",
+      "selectLanguage": "Nyelv kiválasztása"
     },
     "preset": {
       "addMessage": "Jelenlegi beállítások hozzáadása",
@@ -48,16 +48,16 @@
       "defaultTitle": "Alapértelmezett",
       "transparentTitle": "Átlátszó",
       "simpleTitle": "Egyszerű",
-      "deleteConfirmationMessage": "Biztosan törli?",
+      "deleteConfirmationMessage": "Biztosan törölni szeretné?",
       "delete": "Törlés",
       "cancel": "Mégse"
     }
   },
   "popup": {
     "language": "Nyelvi beállítások",
-    "showChatOnFullscreen": "Chat teljes képernyőn",
-    "links": "Linkek",
-    "donate": "Adományozás",
+    "showChatOnFullscreen": "Csevegés teljes képernyőn",
+    "links": "Hivatkozások",
+    "donate": "Támogatás",
     "theme": "Téma",
     "dataTransfer": "Biztonsági mentés",
     "export": "Exportálás",

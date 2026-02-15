@@ -9,13 +9,13 @@
       "chatOnlyDisplay": "Hanya Tampilkan Chat",
       "userNameDisplay": "Tampilkan Nama Pengguna",
       "userIconDisplay": "Tampilkan Ikon Pengguna",
-      "superChatBarDisplay": "Tampilkan Bar Super Chat",
+      "superChatBarDisplay": "Tampilkan Bilah Super Chat",
       "backgroundColor": "Warna Latar Belakang",
       "fontColor": "Warna Font",
       "fontFamily": "Jenis Huruf",
       "fontSize": "Ukuran Font",
-      "blur": "Efek Blur",
-      "space": "Spasi",
+      "blur": "Buram",
+      "space": "Jarak",
       "footer": {
         "donate": "Donasi",
         "chrome": "Chrome",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Seret untuk memindahkan",
+      "arrowKeysToMove": "Gunakan tombol panah untuk memindahkan",
+      "openSettings": "Buka pengaturan",
+      "toggleLiveChat": "Aktifkan/nonaktifkan live chat",
+      "close": "Tutup",
+      "reorderPreset": "Urutkan ulang prasetel",
+      "presetName": "Nama prasetel",
+      "applyPreset": "Terapkan prasetel",
+      "deletePreset": "Hapus prasetel",
+      "colorPicker": "Pemilih warna",
+      "loading": "Memuat",
+      "selectLanguage": "Pilih bahasa"
     },
     "preset": {
       "addMessage": "Tambah Pengaturan Saat Ini",
@@ -48,7 +48,7 @@
       "defaultTitle": "Bawaan",
       "transparentTitle": "Transparan",
       "simpleTitle": "Sederhana",
-      "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus?",
+      "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus ini?",
       "delete": "Hapus",
       "cancel": "Batal"
     }

@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Arrastrar para mover",
+      "arrowKeysToMove": "Teclas de flecha para mover",
+      "openSettings": "Abrir configuración",
+      "toggleLiveChat": "Activar o desactivar el chat en vivo",
+      "close": "Cerrar",
+      "reorderPreset": "Reordenar preajuste",
+      "presetName": "Nombre del preajuste",
+      "applyPreset": "Aplicar preajuste",
+      "deletePreset": "Eliminar preajuste",
+      "colorPicker": "Selector de color",
+      "loading": "Cargando",
+      "selectLanguage": "Seleccionar idioma"
     },
     "preset": {
       "addMessage": "Agregar configuración actual",

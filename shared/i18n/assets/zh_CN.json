@@ -9,7 +9,7 @@
       "chatOnlyDisplay": "仅显示聊天",
       "userNameDisplay": "显示用户名",
       "userIconDisplay": "显示用户头像",
-      "superChatBarDisplay": "显示Super Chat栏",
+      "superChatBarDisplay": "显示 Super Chat 栏",
       "backgroundColor": "背景色",
       "fontColor": "字体颜色",
       "fontFamily": "字体",
@@ -18,8 +18,8 @@
       "space": "间距",
       "footer": {
         "donate": "捐赠",
-        "chrome": "Chrome 浏览器",
-        "firefox": "Firefox 浏览器"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "主题",
       "themeMode": {
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "拖动以移动",
+      "arrowKeysToMove": "方向键移动",
+      "openSettings": "打开设置",
+      "toggleLiveChat": "切换实时聊天",
+      "close": "关闭",
+      "reorderPreset": "调整预设顺序",
+      "presetName": "预设名称",
+      "applyPreset": "应用预设",
+      "deletePreset": "删除预设",
+      "colorPicker": "颜色选择器",
+      "loading": "加载中",
+      "selectLanguage": "选择语言"
     },
     "preset": {
       "addMessage": "添加当前设置",
@@ -56,7 +56,7 @@
   "popup": {
     "language": "语言设置",
     "showChatOnFullscreen": "全屏聊天",
-    "links": "相关链接",
+    "links": "链接",
     "donate": "捐赠",
     "theme": "主题",
     "dataTransfer": "备份",

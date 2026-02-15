@@ -2,22 +2,22 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ముందుగా ఏర్పాటు చేసినవి",
+        "preset": "ప్రీసెట్",
         "setting": "సెట్టింగ్‌లు"
       },
-      "alwaysOnDisplay": "ఎప్పుడూ ప్రదర్శనలో ఉంచు",
-      "chatOnlyDisplay": "కేవలం చాట్‌ మాత్రమే చూపించు",
+      "alwaysOnDisplay": "ఎప్పుడూ చూపించు",
+      "chatOnlyDisplay": "చాట్ మాత్రమే చూపించు",
       "userNameDisplay": "వాడుకరి పేరు చూపించు",
       "userIconDisplay": "వాడుకరి ఐకాన్ చూపించు",
-      "superChatBarDisplay": "సూపర్ చాట్ బార్ చూపించు",
-      "backgroundColor": "నేపధ్య రంగు",
+      "superChatBarDisplay": "Super Chat బార్ చూపించు",
+      "backgroundColor": "నేపథ్య రంగు",
       "fontColor": "ఫాంట్ రంగు",
       "fontFamily": "ఫాంట్ ఫ్యామిలీ",
       "fontSize": "ఫాంట్ పరిమాణం",
-      "blur": "మబ్బు/బ్లర్",
-      "space": "ఖాళీ/స్పేస్",
+      "blur": "మసక",
+      "space": "అంతరం",
       "footer": {
-        "donate": "దానం చేయండి",
+        "donate": "విరాళం",
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
@@ -29,35 +29,35 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "తరలించడానికి లాగండి",
+      "arrowKeysToMove": "తరలించడానికి బాణం కీలు వాడండి",
+      "openSettings": "సెట్టింగ్‌లు తెరవండి",
+      "toggleLiveChat": "లైవ్ చాట్ టోగుల్ చేయండి",
+      "close": "మూసివేయండి",
+      "reorderPreset": "ప్రీసెట్ క్రమం మార్చండి",
+      "presetName": "ప్రీసెట్ పేరు",
+      "applyPreset": "ప్రీసెట్ వర్తింపజేయండి",
+      "deletePreset": "ప్రీసెట్ తొలగించండి",
+      "colorPicker": "రంగు ఎంపిక",
+      "loading": "లోడ్ అవుతోంది",
+      "selectLanguage": "భాష ఎంచుకోండి"
     },
     "preset": {
-      "addMessage": "ప్రస్తుత సెట్టింగ్‌లు జోడించు",
-      "addItemTitle": "శీర్షికలేదు",
-      "defaultTitle": "డీఫాల్ట్",
-      "transparentTitle": "పారదర్శకంగా",
-      "simpleTitle": "సాధారణం",
-      "deleteConfirmationMessage": "మీరు నిజంగా తొలగించాలనుకుంటున్నారా?",
+      "addMessage": "ప్రస్తుత సెట్టింగ్‌లను జోడించు",
+      "addItemTitle": "శీర్షిక లేదు",
+      "defaultTitle": "డిఫాల్ట్",
+      "transparentTitle": "పారదర్శకం",
+      "simpleTitle": "సరళం",
+      "deleteConfirmationMessage": "దీన్ని నిజంగా తొలగించాలనుకుంటున్నారా?",
       "delete": "తొలగించు",
-      "cancel": "రద్దు చేయండి"
+      "cancel": "రద్దు చేయి"
     }
   },
   "popup": {
     "language": "భాషా సెట్టింగ్‌లు",
     "showChatOnFullscreen": "పూర్తి తెర చాట్",
     "links": "లింకులు",
-    "donate": "దానం చేయండి",
+    "donate": "విరాళం",
     "theme": "థీమ్",
     "dataTransfer": "బ్యాకప్",
     "export": "ఎగుమతి",

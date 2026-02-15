@@ -7,19 +7,19 @@
       },
       "alwaysOnDisplay": "نمایش همیشگی",
       "chatOnlyDisplay": "فقط نمایش چت",
-      "userNameDisplay": "نمایش نام کاربری",
+      "userNameDisplay": "نمایش نام کاربر",
       "userIconDisplay": "نمایش آیکون کاربر",
-      "superChatBarDisplay": "نمایش نوار سوپرچت",
+      "superChatBarDisplay": "نمایش نوار Super Chat",
       "backgroundColor": "رنگ پس‌زمینه",
       "fontColor": "رنگ فونت",
-      "fontFamily": "خانواده فونت",
+      "fontFamily": "نوع فونت",
       "fontSize": "اندازه فونت",
-      "blur": "تاری",
-      "space": "فاصله",
+      "blur": "محو",
+      "space": "فاصله‌گذاری",
       "footer": {
         "donate": "حمایت مالی",
-        "chrome": "کروم",
-        "firefox": "فایرفاکس"
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "پوسته",
       "themeMode": {
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "بکشید برای جابه‌جایی",
+      "arrowKeysToMove": "کلیدهای جهت‌دار برای جابه‌جایی",
+      "openSettings": "باز کردن تنظیمات",
+      "toggleLiveChat": "نمایش/پنهان کردن چت زنده",
+      "close": "بستن",
+      "reorderPreset": "تغییر ترتیب پیش‌تنظیم‌ها",
+      "presetName": "نام پیش‌تنظیم",
+      "applyPreset": "اعمال پیش‌تنظیم",
+      "deletePreset": "حذف پیش‌تنظیم",
+      "colorPicker": "انتخاب‌گر رنگ",
+      "loading": "در حال بارگذاری",
+      "selectLanguage": "انتخاب زبان"
     },
     "preset": {
       "addMessage": "افزودن تنظیمات فعلی",
@@ -48,19 +48,19 @@
       "defaultTitle": "پیش‌فرض",
       "transparentTitle": "شفاف",
       "simpleTitle": "ساده",
-      "deleteConfirmationMessage": "آیا مطمئن هستید که می‌خواهید حذف کنید؟",
+      "deleteConfirmationMessage": "آیا از حذف این مورد مطمئن هستید؟",
       "delete": "حذف",
       "cancel": "انصراف"
     }
   },
   "popup": {
     "language": "تنظیمات زبان",
-    "showChatOnFullscreen": "چت در حالت تمام‌صفحه",
-    "links": "لینک‌ها",
+    "showChatOnFullscreen": "چت تمام‌صفحه",
+    "links": "پیوندها",
     "donate": "حمایت مالی",
     "theme": "پوسته",
     "dataTransfer": "پشتیبان‌گیری",
     "export": "خروجی",
-    "import": "ورودی"
+    "import": "واردسازی"
   }
 }

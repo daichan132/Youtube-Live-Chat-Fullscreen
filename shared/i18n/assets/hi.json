@@ -2,22 +2,22 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "प्रिसेट",
+        "preset": "प्रीसेट",
         "setting": "सेटिंग्स"
       },
-      "alwaysOnDisplay": "हमेशा डिस्प्ले पर रखें",
+      "alwaysOnDisplay": "हमेशा दिखाएं",
       "chatOnlyDisplay": "केवल चैट दिखाएं",
-      "userNameDisplay": "यूज़र नेम दिखाएं",
-      "userIconDisplay": "यूज़र आइकन दिखाएं",
-      "superChatBarDisplay": "सुपरचैट बार दिखाएं",
+      "userNameDisplay": "उपयोगकर्ता नाम दिखाएं",
+      "userIconDisplay": "उपयोगकर्ता आइकन दिखाएं",
+      "superChatBarDisplay": "Super Chat बार दिखाएं",
       "backgroundColor": "पृष्ठभूमि रंग",
       "fontColor": "फ़ॉन्ट रंग",
-      "fontFamily": "फ़ॉन्ट परिवार",
+      "fontFamily": "फ़ॉन्ट फ़ैमिली",
       "fontSize": "फ़ॉन्ट आकार",
       "blur": "धुंधलापन",
-      "space": "स्पेस",
+      "space": "अंतराल",
       "footer": {
-        "donate": "डोनेट करें",
+        "donate": "दान करें",
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
@@ -29,35 +29,35 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "खिसकाने के लिए खींचें",
+      "arrowKeysToMove": "तीर कुंजियों से खिसकाएं",
+      "openSettings": "सेटिंग्स खोलें",
+      "toggleLiveChat": "लाइव चैट टॉगल करें",
+      "close": "बंद करें",
+      "reorderPreset": "प्रीसेट क्रम बदलें",
+      "presetName": "प्रीसेट नाम",
+      "applyPreset": "प्रीसेट लागू करें",
+      "deletePreset": "प्रीसेट हटाएं",
+      "colorPicker": "रंग चुनें",
+      "loading": "लोड हो रहा है",
+      "selectLanguage": "भाषा चुनें"
     },
     "preset": {
       "addMessage": "वर्तमान सेटिंग्स जोड़ें",
       "addItemTitle": "शीर्षकहीन",
       "defaultTitle": "डिफ़ॉल्ट",
-      "transparentTitle": "ट्रांसपेरेंट",
-      "simpleTitle": "सिंपल",
-      "deleteConfirmationMessage": "क्या आप वाकई हटाना चाहते हैं?",
+      "transparentTitle": "पारदर्शी",
+      "simpleTitle": "सादा",
+      "deleteConfirmationMessage": "क्या आप वाकई इसे हटाना चाहते हैं?",
       "delete": "हटाएं",
       "cancel": "रद्द करें"
     }
   },
   "popup": {
     "language": "भाषा सेटिंग्स",
-    "showChatOnFullscreen": "फुलस्क्रीन चैट",
+    "showChatOnFullscreen": "फ़ुलस्क्रीन चैट",
     "links": "लिंक",
-    "donate": "डोनेट करें",
+    "donate": "दान करें",
     "theme": "थीम",
     "dataTransfer": "बैकअप",
     "export": "निर्यात",

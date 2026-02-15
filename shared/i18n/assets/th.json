@@ -5,14 +5,14 @@
         "preset": "ค่าตั้งล่วงหน้า",
         "setting": "การตั้งค่า"
       },
-      "alwaysOnDisplay": "แสดงผลตลอดเวลา",
+      "alwaysOnDisplay": "แสดงตลอดเวลา",
       "chatOnlyDisplay": "แสดงเฉพาะแชท",
       "userNameDisplay": "แสดงชื่อผู้ใช้",
       "userIconDisplay": "แสดงไอคอนผู้ใช้",
       "superChatBarDisplay": "แสดงแถบ Super Chat",
       "backgroundColor": "สีพื้นหลัง",
       "fontColor": "สีตัวอักษร",
-      "fontFamily": "แบบตัวอักษร",
+      "fontFamily": "แบบอักษร",
       "fontSize": "ขนาดตัวอักษร",
       "blur": "เบลอ",
       "space": "ระยะห่าง",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "ลากเพื่อย้าย",
+      "arrowKeysToMove": "ใช้ปุ่มลูกศรเพื่อย้าย",
+      "openSettings": "เปิดการตั้งค่า",
+      "toggleLiveChat": "เปิด/ปิดแชทสด",
+      "close": "ปิด",
+      "reorderPreset": "จัดเรียงค่าตั้งล่วงหน้า",
+      "presetName": "ชื่อค่าตั้งล่วงหน้า",
+      "applyPreset": "ใช้ค่าตั้งล่วงหน้า",
+      "deletePreset": "ลบค่าตั้งล่วงหน้า",
+      "colorPicker": "ตัวเลือกสี",
+      "loading": "กำลังโหลด",
+      "selectLanguage": "เลือกภาษา"
     },
     "preset": {
       "addMessage": "เพิ่มการตั้งค่าปัจจุบัน",
@@ -48,7 +48,7 @@
       "defaultTitle": "ค่าเริ่มต้น",
       "transparentTitle": "โปร่งใส",
       "simpleTitle": "เรียบง่าย",
-      "deleteConfirmationMessage": "คุณแน่ใจว่าต้องการลบหรือไม่?",
+      "deleteConfirmationMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งนี้?",
       "delete": "ลบ",
       "cancel": "ยกเลิก"
     }

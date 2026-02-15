@@ -2,24 +2,24 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "முன் அமைப்பு",
+        "preset": "முன்னமைவு",
         "setting": "அமைப்புகள்"
       },
-      "alwaysOnDisplay": "எப்போதும் காட்டவும்",
-      "chatOnlyDisplay": "சாட்டை மட்டும் காட்டவும்",
-      "userNameDisplay": "பயனர் பெயர் காட்டவும்",
-      "userIconDisplay": "பயனர் ஐகான் காட்டவும்",
-      "superChatBarDisplay": "சூப்பர் சாட் பாரைக் காட்டவும்",
+      "alwaysOnDisplay": "எப்போதும் காட்டு",
+      "chatOnlyDisplay": "அரட்டையை மட்டும் காட்டு",
+      "userNameDisplay": "பயனர் பெயரைக் காட்டு",
+      "userIconDisplay": "பயனர் ஐகானைக் காட்டு",
+      "superChatBarDisplay": "Super Chat பட்டியைக் காட்டு",
       "backgroundColor": "பின்னணி நிறம்",
-      "fontColor": "எழுத்து நிறம்",
-      "fontFamily": "எழுத்துரு",
-      "fontSize": "எழுத்து அளவு",
+      "fontColor": "எழுத்துரு நிறம்",
+      "fontFamily": "எழுத்துரு குடும்பம்",
+      "fontSize": "எழுத்துரு அளவு",
       "blur": "மங்கல்",
-      "space": "இடம்",
+      "space": "இடைவெளி",
       "footer": {
-        "donate": "இறையஞ்சல்",
-        "chrome": "க்ரோம்",
-        "firefox": "ஃபயர்ஃபாக்ஸ்"
+        "donate": "நன்கொடை",
+        "chrome": "Chrome",
+        "firefox": "Firefox"
       },
       "theme": "தீம்",
       "themeMode": {
@@ -29,35 +29,35 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "நகர்த்த இழுக்கவும்",
+      "arrowKeysToMove": "நகர்த்த அம்புக்குறி விசைகளைப் பயன்படுத்தவும்",
+      "openSettings": "அமைப்புகளைத் திற",
+      "toggleLiveChat": "நேரலை அரட்டையை நிலைமாற்று",
+      "close": "மூடு",
+      "reorderPreset": "முன்னமைவு வரிசையை மாற்று",
+      "presetName": "முன்னமைவு பெயர்",
+      "applyPreset": "முன்னமைவைப் பயன்படுத்து",
+      "deletePreset": "முன்னமைவை நீக்கு",
+      "colorPicker": "நிறத் தேர்வி",
+      "loading": "ஏற்றுகிறது",
+      "selectLanguage": "மொழியைத் தேர்வுசெய்"
     },
     "preset": {
       "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
-      "addItemTitle": "தலைப்பில்லை",
+      "addItemTitle": "தலைப்பிடப்படாதது",
       "defaultTitle": "இயல்புநிலை",
-      "transparentTitle": "ஒளிர்வானது",
+      "transparentTitle": "வெளிப்படை",
       "simpleTitle": "எளிமை",
-      "deleteConfirmationMessage": "நீக்க வேண்டுமா?",
+      "deleteConfirmationMessage": "இதை நிச்சயமாக நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
-      "cancel": "ரத்து"
+      "cancel": "ரத்துசெய்"
     }
   },
   "popup": {
     "language": "மொழி அமைப்புகள்",
-    "showChatOnFullscreen": "முழுத்திரை சாட்",
+    "showChatOnFullscreen": "முழுத்திரை அரட்டை",
     "links": "இணைப்புகள்",
-    "donate": "இறையஞ்சல்",
+    "donate": "நன்கொடை",
     "theme": "தீம்",
     "dataTransfer": "காப்புப்பிரதி",
     "export": "ஏற்றுமதி",

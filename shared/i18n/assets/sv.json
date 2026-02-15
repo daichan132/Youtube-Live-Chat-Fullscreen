@@ -6,7 +6,7 @@
         "setting": "Inställningar"
       },
       "alwaysOnDisplay": "Alltid synlig",
-      "chatOnlyDisplay": "Endast chatt",
+      "chatOnlyDisplay": "Visa bara chatt",
       "userNameDisplay": "Visa användarnamn",
       "userIconDisplay": "Visa användarikon",
       "superChatBarDisplay": "Visa Super Chat-fält",
@@ -15,7 +15,7 @@
       "fontFamily": "Teckensnitt",
       "fontSize": "Textstorlek",
       "blur": "Oskärpa",
-      "space": "Mellanrum",
+      "space": "Avstånd",
       "footer": {
         "donate": "Donera",
         "chrome": "Chrome",
@@ -29,18 +29,18 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "Dra för att flytta",
+      "arrowKeysToMove": "Piltangenter för att flytta",
+      "openSettings": "Öppna inställningar",
+      "toggleLiveChat": "Växla livechatt",
+      "close": "Stäng",
+      "reorderPreset": "Ändra ordning",
+      "presetName": "Namn på förinställning",
+      "applyPreset": "Använd förinställning",
+      "deletePreset": "Ta bort förinställning",
+      "colorPicker": "Färgväljare",
+      "loading": "Laddar",
+      "selectLanguage": "Välj språk"
     },
     "preset": {
       "addMessage": "Lägg till nuvarande inställningar",
@@ -48,8 +48,8 @@
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
       "simpleTitle": "Enkel",
-      "deleteConfirmationMessage": "Är du säker på att du vill radera?",
-      "delete": "Radera",
+      "deleteConfirmationMessage": "Är du säker på att du vill ta bort denna?",
+      "delete": "Ta bort",
       "cancel": "Avbryt"
     }
   },

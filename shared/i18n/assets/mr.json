@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "पूर्वनियोजित सेटिंग",
+        "preset": "प्रीसेट",
         "setting": "सेटिंग्ज"
       },
-      "alwaysOnDisplay": "नेहमी दृश्यमान ठेवा",
-      "chatOnlyDisplay": "फक्त चॅट दर्शवा",
-      "userNameDisplay": "वापरकर्त्याचे नाव दर्शवा",
-      "userIconDisplay": "वापरकर्त्याची प्रतिमा दर्शवा",
-      "superChatBarDisplay": "सुपर चॅट पट्टी दर्शवा",
+      "alwaysOnDisplay": "नेहमी दाखवा",
+      "chatOnlyDisplay": "फक्त चॅट दाखवा",
+      "userNameDisplay": "वापरकर्त्याचे नाव दाखवा",
+      "userIconDisplay": "वापरकर्त्याचे चिन्ह दाखवा",
+      "superChatBarDisplay": "Super Chat बार दाखवा",
       "backgroundColor": "पार्श्वभूमी रंग",
       "fontColor": "अक्षरांचा रंग",
       "fontFamily": "फॉन्ट फॅमिली",
       "fontSize": "फॉन्ट आकार",
       "blur": "अस्पष्टता",
-      "space": "स्पेस",
+      "space": "अंतर",
       "footer": {
         "donate": "देणगी द्या",
         "chrome": "Chrome",
@@ -29,27 +29,27 @@
       }
     },
     "aria": {
-      "dragToMove": "Drag to move",
-      "arrowKeysToMove": "Arrow keys to move",
-      "openSettings": "Open settings",
-      "toggleLiveChat": "Toggle live chat",
-      "close": "Close",
-      "reorderPreset": "Reorder preset",
-      "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
-      "colorPicker": "Color picker",
-      "loading": "Loading",
-      "selectLanguage": "Select language"
+      "dragToMove": "हलवण्यासाठी ड्रॅग करा",
+      "arrowKeysToMove": "हलवण्यासाठी ॲरो की वापरा",
+      "openSettings": "सेटिंग्ज उघडा",
+      "toggleLiveChat": "लाइव्ह चॅट टॉगल करा",
+      "close": "बंद करा",
+      "reorderPreset": "प्रीसेट क्रम बदला",
+      "presetName": "प्रीसेट नाव",
+      "applyPreset": "प्रीसेट लागू करा",
+      "deletePreset": "प्रीसेट हटवा",
+      "colorPicker": "रंग निवडक",
+      "loading": "लोड होत आहे",
+      "selectLanguage": "भाषा निवडा"
     },
     "preset": {
       "addMessage": "सध्याच्या सेटिंग्ज जोडा",
-      "addItemTitle": "शिर्षक नाही",
+      "addItemTitle": "शीर्षक नाही",
       "defaultTitle": "डीफॉल्ट",
       "transparentTitle": "पारदर्शक",
       "simpleTitle": "साधे",
-      "deleteConfirmationMessage": "आपण हे नक्की हटवू इच्छिता?",
-      "delete": "हटा",
+      "deleteConfirmationMessage": "तुम्हाला हे नक्की हटवायचे आहे का?",
+      "delete": "हटवा",
       "cancel": "रद्द करा"
     }
   },
