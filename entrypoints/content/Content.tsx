@@ -6,6 +6,7 @@ import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
 import { useChatMode } from './chat/runtime/useChatMode'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useI18n } from './hooks/globalState/useI18n'
+import { useSettingsImported } from './hooks/globalState/useSettingsImported'
 import { useThemeMode } from './hooks/globalState/useThemeMode'
 import { useYtdLiveChat } from './hooks/globalState/useYtdLiveChat'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
@@ -15,6 +16,7 @@ import { YTDLiveChat } from './YTDLiveChat'
 
 export const Content = () => {
   useI18n()
+  useSettingsImported()
   const [themeMode] = useThemeMode()
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const [ytdLiveChat] = useYtdLiveChat()

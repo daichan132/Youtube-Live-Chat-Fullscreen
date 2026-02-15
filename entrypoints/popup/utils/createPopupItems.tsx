@@ -1,7 +1,8 @@
 import type { TFunction } from 'i18next'
 import type React from 'react'
 import type { IconType } from 'react-icons'
-import { TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
+import { TbCloudUpload, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
+import { DataTransfer } from '../components/DataTransfer'
 import { LanguageSelector } from '../components/LanguageSelector'
 import { Links } from '../components/Links'
 import { ThemeModeSelector } from '../components/ThemeModeSelector'
@@ -35,6 +36,11 @@ export const createPopupItems = (t: TFunction) => {
       icon: TbLink,
       title: t('popup.links'),
       data: <Links />,
+    },
+    {
+      icon: TbCloudUpload,
+      title: t('popup.dataTransfer'),
+      data: <DataTransfer />,
     },
     {
       icon: TbHeartDollar,
