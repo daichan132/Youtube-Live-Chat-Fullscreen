@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next'
 import type React from 'react'
 import type { IconType } from 'react-icons'
-import { TbCloudUpload, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
+import { TbArchive, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
 import { DataTransfer } from '../components/DataTransfer'
 import { LanguageSelector } from '../components/LanguageSelector'
 import { Links } from '../components/Links'
@@ -18,9 +18,9 @@ export interface PopupItem {
 export const createPopupItems = (t: TFunction) => {
   const items: PopupItem[] = [
     {
-      icon: TbLanguage,
-      title: t('popup.language'),
-      data: <LanguageSelector />,
+      icon: TbMessageCircle,
+      title: t('popup.showChatOnFullscreen'),
+      data: <YTDLiveChatSwitch />,
     },
     {
       icon: TbSunMoon,
@@ -28,19 +28,19 @@ export const createPopupItems = (t: TFunction) => {
       data: <ThemeModeSelector />,
     },
     {
-      icon: TbMessageCircle,
-      title: t('popup.showChatOnFullscreen'),
-      data: <YTDLiveChatSwitch />,
+      icon: TbArchive,
+      title: t('popup.dataTransfer'),
+      data: <DataTransfer />,
+    },
+    {
+      icon: TbLanguage,
+      title: t('popup.language'),
+      data: <LanguageSelector />,
     },
     {
       icon: TbLink,
       title: t('popup.links'),
       data: <Links />,
-    },
-    {
-      icon: TbCloudUpload,
-      title: t('popup.dataTransfer'),
-      data: <DataTransfer />,
     },
     {
       icon: TbHeartDollar,

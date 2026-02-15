@@ -9,7 +9,7 @@ const handleExport = () => {
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
-  a.download = `ylc-settings-${new Date().toISOString().slice(0, 10)}.json`
+  a.download = `yt-livechat-fullscreen-backup-${new Date().toISOString().slice(0, 10)}.json`
   a.click()
   URL.revokeObjectURL(url)
 }
@@ -45,7 +45,7 @@ export const DataTransfer = () => {
         type='button'
         data-tooltip={t('popup.export')}
         aria-label={t('popup.export')}
-        className='ylc-theme-icon-link'
+        className='ylc-theme-action-button'
         onClick={handleExport}
       >
         <TbDownload size={20} aria-hidden='true' />
@@ -54,7 +54,7 @@ export const DataTransfer = () => {
         type='button'
         data-tooltip={t('popup.import')}
         aria-label={t('popup.import')}
-        className='ylc-theme-icon-link'
+        className='ylc-theme-action-button'
         onClick={() => fileInputRef.current?.click()}
       >
         <TbUpload size={20} aria-hidden='true' />
