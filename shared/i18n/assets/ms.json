@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Tema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automatik",
+        "light": "Cerah",
+        "dark": "Gelap"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Sembang Skrin Penuh",
     "links": "Pautan",
     "donate": "Derma",
-    "theme": "テーマ"
+    "theme": "Tema",
+    "dataTransfer": "Sandaran",
+    "export": "Eksport",
+    "import": "Import"
   }
 }

@@ -21,11 +21,11 @@
         "chrome": "ક્રોમ",
         "firefox": "ફાયરફોક્સ"
       },
-      "theme": "テーマ",
+      "theme": "થીમ",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "ઑટો",
+        "light": "લાઇટ",
+        "dark": "ડાર્ક"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "પૂર્ણ સ્ક્રીન ચેટ",
     "links": "લિંક્સ",
     "donate": "દાન કરો",
-    "theme": "テーマ"
+    "theme": "થીમ",
+    "dataTransfer": "બેકઅપ",
+    "export": "નિકાસ",
+    "import": "આયાત"
   }
 }

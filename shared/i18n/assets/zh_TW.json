@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "主題",
       "themeMode": {
         "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "light": "淺色",
+        "dark": "深色"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "全螢幕聊天室",
     "links": "連結",
     "donate": "贊助",
-    "theme": "テーマ"
+    "theme": "主題",
+    "dataTransfer": "備份",
+    "export": "匯出",
+    "import": "匯入"
   }
 }

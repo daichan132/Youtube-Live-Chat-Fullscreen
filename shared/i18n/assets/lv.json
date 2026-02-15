@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Motīvs",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automātisks",
+        "light": "Gaišs",
+        "dark": "Tumšs"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Čats pilnekrānā",
     "links": "Saites",
     "donate": "Ziedot",
-    "theme": "テーマ"
+    "theme": "Motīvs",
+    "dataTransfer": "Dublējums",
+    "export": "Eksportēt",
+    "import": "Importēt"
   }
 }

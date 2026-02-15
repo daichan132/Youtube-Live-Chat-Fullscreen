@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Tema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Awtomatiko",
+        "light": "Maliwanag",
+        "dark": "Madilim"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Fullscreen na Chat",
     "links": "Mga Link",
     "donate": "Mag-donate",
-    "theme": "テーマ"
+    "theme": "Tema",
+    "dataTransfer": "Backup",
+    "export": "I-export",
+    "import": "I-import"
   }
 }

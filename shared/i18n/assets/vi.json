@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Giao diện",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Tự động",
+        "light": "Sáng",
+        "dark": "Tối"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Trò chuyện toàn màn hình",
     "links": "Liên kết",
     "donate": "Ủng hộ",
-    "theme": "テーマ"
+    "theme": "Giao diện",
+    "dataTransfer": "Sao lưu",
+    "export": "Xuất",
+    "import": "Nhập"
   }
 }

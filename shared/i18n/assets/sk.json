@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Motív",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automaticky",
+        "light": "Svetlý",
+        "dark": "Tmavý"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Chat na celú obrazovku",
     "links": "Odkazy",
     "donate": "Prispieť",
-    "theme": "テーマ"
+    "theme": "Motív",
+    "dataTransfer": "Záloha",
+    "export": "Exportovať",
+    "import": "Importovať"
   }
 }

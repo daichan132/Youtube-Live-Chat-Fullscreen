@@ -21,11 +21,11 @@
         "chrome": "كروم",
         "firefox": "فايرفوكس"
       },
-      "theme": "テーマ",
+      "theme": "السمة",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "تلقائي",
+        "light": "فاتح",
+        "dark": "داكن"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "دردشة وضع ملء الشاشة",
     "links": "روابط",
     "donate": "تبرع",
-    "theme": "テーマ"
+    "theme": "السمة",
+    "dataTransfer": "نسخ احتياطي",
+    "export": "تصدير",
+    "import": "استيراد"
   }
 }

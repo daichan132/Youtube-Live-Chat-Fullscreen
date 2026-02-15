@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Тема",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Авто",
+        "light": "Светлая",
+        "dark": "Тёмная"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Чат на весь экран",
     "links": "Ссылки",
     "donate": "Пожертвовать",
-    "theme": "テーマ"
+    "theme": "Тема",
+    "dataTransfer": "Резервная копия",
+    "export": "Экспорт",
+    "import": "Импорт"
   }
 }

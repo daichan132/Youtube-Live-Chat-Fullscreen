@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "ገጽታ",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "ራስ-ሰር",
+        "light": "ብርሃን",
+        "dark": "ጨለማ"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "በሙሉ ስክሪን ቻት",
     "links": "አገናኞች",
     "donate": "ድጋፍ ይስጡ",
-    "theme": "テーマ"
+    "theme": "ገጽታ",
+    "dataTransfer": "ምትኬ",
+    "export": "ወደ ውጪ ላክ",
+    "import": "ወደ ውስጥ አስገባ"
   }
 }

@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Tema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Otomatis",
+        "light": "Terang",
+        "dark": "Gelap"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Chat Layar Penuh",
     "links": "Tautan",
     "donate": "Donasi",
-    "theme": "テーマ"
+    "theme": "Tema",
+    "dataTransfer": "Cadangan",
+    "export": "Ekspor",
+    "import": "Impor"
   }
 }

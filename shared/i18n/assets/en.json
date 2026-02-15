@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
     "donate": "Donate",
-    "theme": "Theme"
+    "theme": "Theme",
+    "dataTransfer": "Backup",
+    "export": "Export",
+    "import": "Import"
   }
 }

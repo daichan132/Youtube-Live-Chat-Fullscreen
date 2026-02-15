@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Tema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automatinė",
+        "light": "Šviesi",
+        "dark": "Tamsi"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Visas ekranas (pokalbis)",
     "links": "Nuorodos",
     "donate": "Paaukoti",
-    "theme": "テーマ"
+    "theme": "Tema",
+    "dataTransfer": "Atsarginė kopija",
+    "export": "Eksportuoti",
+    "import": "Importuoti"
   }
 }

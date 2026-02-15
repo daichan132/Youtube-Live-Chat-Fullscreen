@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "ธีม",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "อัตโนมัติ",
+        "light": "สว่าง",
+        "dark": "มืด"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค",
-    "theme": "テーマ"
+    "theme": "ธีม",
+    "dataTransfer": "สำรองข้อมูล",
+    "export": "ส่งออก",
+    "import": "นำเข้า"
   }
 }

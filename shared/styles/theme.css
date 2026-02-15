@@ -495,6 +495,7 @@
   border-radius: 9999px;
   background: var(--ylc-bg-surface-elevated);
   color: var(--ylc-text-secondary);
+  cursor: pointer;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
   transition:
     background-color 160ms ease,
@@ -519,6 +520,34 @@
 .ylc-theme-icon-link:focus-visible {
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;
+}
+
+.ylc-theme-icon-link[data-tooltip] {
+  position: relative;
+}
+
+.ylc-theme-icon-link[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--ylc-bg-surface-elevated);
+  border: var(--ylc-border-width) solid var(--ylc-border);
+  color: var(--ylc-text-primary);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ylc-theme-icon-link[data-tooltip]:hover::after {
+  opacity: 1;
 }
 
 .ylc-theme-donate-link {

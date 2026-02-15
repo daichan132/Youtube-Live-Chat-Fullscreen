@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Tema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automatiskt",
+        "light": "Ljust",
+        "dark": "Mörkt"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Chatt i helskärm",
     "links": "Länkar",
     "donate": "Donera",
-    "theme": "テーマ"
+    "theme": "Tema",
+    "dataTransfer": "Säkerhetskopia",
+    "export": "Exportera",
+    "import": "Importera"
   }
 }

@@ -21,11 +21,11 @@
         "chrome": "크롬",
         "firefox": "파이어폭스"
       },
-      "theme": "テーマ",
+      "theme": "테마",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "자동",
+        "light": "라이트",
+        "dark": "다크"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
     "donate": "후원하기",
-    "theme": "テーマ"
+    "theme": "테마",
+    "dataTransfer": "백업",
+    "export": "내보내기",
+    "import": "가져오기"
   }
 }

@@ -21,11 +21,11 @@
         "chrome": "کروم",
         "firefox": "فایرفاکس"
       },
-      "theme": "テーマ",
+      "theme": "پوسته",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "خودکار",
+        "light": "روشن",
+        "dark": "تاریک"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "چت در حالت تمام‌صفحه",
     "links": "لینک‌ها",
     "donate": "حمایت مالی",
-    "theme": "テーマ"
+    "theme": "پوسته",
+    "dataTransfer": "پشتیبان‌گیری",
+    "export": "خروجی",
+    "import": "ورودی"
   }
 }

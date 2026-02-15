@@ -21,11 +21,11 @@
         "chrome": "ಕ್ರೋಮ್",
         "firefox": "ಫೈರ್ಫಾಕ್ಸ್"
       },
-      "theme": "テーマ",
+      "theme": "ಥೀಮ್",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "ಸ್ವಯಂ",
+        "light": "ಬೆಳಕು",
+        "dark": "ಕತ್ತಲೆ"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "ಪೂರ್ಣಸ್ಕ್ರೀನ್ ಚಾಟ್",
     "links": "ಲಿಂಕ್‌ಗಳು",
     "donate": "ದಾನಮಾಡಿ",
-    "theme": "テーマ"
+    "theme": "ಥೀಮ್",
+    "dataTransfer": "ಬ್ಯಾಕಪ್",
+    "export": "ರಫ್ತು",
+    "import": "ಆಮದು"
   }
 }

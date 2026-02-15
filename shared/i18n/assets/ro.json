@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Temă",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automat",
+        "light": "Deschis",
+        "dark": "Întunecat"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
     "donate": "Donează",
-    "theme": "テーマ"
+    "theme": "Temă",
+    "dataTransfer": "Copie de rezervă",
+    "export": "Exportare",
+    "import": "Importare"
   }
 }

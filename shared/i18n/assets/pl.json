@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Motyw",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automatyczny",
+        "light": "Jasny",
+        "dark": "Ciemny"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Linki",
     "donate": "Wesprzyj",
-    "theme": "テーマ"
+    "theme": "Motyw",
+    "dataTransfer": "Kopia zapasowa",
+    "export": "Eksportuj",
+    "import": "Importuj"
   }
 }

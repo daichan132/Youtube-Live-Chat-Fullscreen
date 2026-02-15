@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Teema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automaattinen",
+        "light": "Vaalea",
+        "dark": "Tumma"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Kokonäyttö-chat",
     "links": "Linkit",
     "donate": "Lahjoita",
-    "theme": "テーマ"
+    "theme": "Teema",
+    "dataTransfer": "Varmuuskopio",
+    "export": "Vie",
+    "import": "Tuo"
   }
 }

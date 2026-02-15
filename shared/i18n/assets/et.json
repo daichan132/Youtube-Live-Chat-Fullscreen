@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Teema",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automaatne",
+        "light": "Hele",
+        "dark": "Tume"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Täisekraani vestlus",
     "links": "Lingid",
     "donate": "Toeta",
-    "theme": "テーマ"
+    "theme": "Teema",
+    "dataTransfer": "Varundus",
+    "export": "Ekspordi",
+    "import": "Impordi"
   }
 }

@@ -21,11 +21,11 @@
         "chrome": "ক্রোম",
         "firefox": "ফায়ারফক্স"
       },
-      "theme": "テーマ",
+      "theme": "থিম",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "স্বয়ংক্রিয়",
+        "light": "হালকা",
+        "dark": "গাঢ়"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
     "links": "লিঙ্কসমূহ",
     "donate": "দান করুন",
-    "theme": "テーマ"
+    "theme": "থিম",
+    "dataTransfer": "ব্যাকআপ",
+    "export": "রপ্তানি",
+    "import": "আমদানি"
   }
 }

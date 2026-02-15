@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Mandhari",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Otomatiki",
+        "light": "Angavu",
+        "dark": "Giza"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Gumzo la Skrini Nzima",
     "links": "Viungo",
     "donate": "Changia",
-    "theme": "テーマ"
+    "theme": "Mandhari",
+    "dataTransfer": "Hifadhi nakala",
+    "export": "Hamisha Nje",
+    "import": "Hamisha Ndani"
   }
 }

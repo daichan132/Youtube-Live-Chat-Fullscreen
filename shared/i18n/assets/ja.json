@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "全画面チャット",
     "links": "リンク",
     "donate": "寄付",
-    "theme": "テーマ"
+    "theme": "テーマ",
+    "dataTransfer": "バックアップ",
+    "export": "書き出し",
+    "import": "読み込み"
   }
 }

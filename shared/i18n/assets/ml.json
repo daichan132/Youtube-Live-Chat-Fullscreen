@@ -21,11 +21,11 @@
         "chrome": "ക്രോം",
         "firefox": "ഫയർഫോക്സ്"
       },
-      "theme": "テーマ",
+      "theme": "തീം",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "ഓട്ടോ",
+        "light": "ലൈറ്റ്",
+        "dark": "ഡാർക്ക്"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "പൂർണ്ണ സ്ക്രീൻ ചാറ്റ്",
     "links": "ലിങ്കുകൾ",
     "donate": "സംഭാവന",
-    "theme": "テーマ"
+    "theme": "തീം",
+    "dataTransfer": "ബാക്കപ്പ്",
+    "export": "എക്സ്പോർട്ട്",
+    "import": "ഇംപോർട്ട്"
   }
 }

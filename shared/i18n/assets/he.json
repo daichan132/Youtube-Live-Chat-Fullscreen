@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "ערכת נושא",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "אוטומטי",
+        "light": "בהיר",
+        "dark": "כהה"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "צ׳אט במסך מלא",
     "links": "קישורים",
     "donate": "תרומה",
-    "theme": "テーマ"
+    "theme": "ערכת נושא",
+    "dataTransfer": "גיבוי",
+    "export": "ייצוא",
+    "import": "ייבוא"
   }
 }

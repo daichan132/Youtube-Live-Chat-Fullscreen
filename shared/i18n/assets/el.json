@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Θέμα",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Αυτόματο",
+        "light": "Φωτεινό",
+        "dark": "Σκοτεινό"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Συνομιλία σε πλήρη οθόνη",
     "links": "Σύνδεσμοι",
     "donate": "Δωρεά",
-    "theme": "テーマ"
+    "theme": "Θέμα",
+    "dataTransfer": "Αντίγραφο ασφαλείας",
+    "export": "Εξαγωγή",
+    "import": "Εισαγωγή"
   }
 }

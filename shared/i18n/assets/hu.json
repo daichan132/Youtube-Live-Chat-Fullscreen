@@ -21,11 +21,11 @@
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
-      "theme": "テーマ",
+      "theme": "Téma",
       "themeMode": {
-        "system": "自動",
-        "light": "ライト",
-        "dark": "ダーク"
+        "system": "Automatikus",
+        "light": "Világos",
+        "dark": "Sötét"
       }
     },
     "aria": {
@@ -58,6 +58,9 @@
     "showChatOnFullscreen": "Chat teljes képernyőn",
     "links": "Linkek",
     "donate": "Adományozás",
-    "theme": "テーマ"
+    "theme": "Téma",
+    "dataTransfer": "Biztonsági mentés",
+    "export": "Exportálás",
+    "import": "Importálás"
   }
 }
