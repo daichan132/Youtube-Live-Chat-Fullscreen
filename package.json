@@ -65,7 +65,7 @@
     "@types/uuid": "11.0.0",
     "@wxt-dev/module-react": "1.1.5",
     "@wxt-dev/unocss": "1.0.1",
-    "jsdom": "28.0.0",
+    "jsdom": "28.1.0",
     "lefthook": "2.1.1",
     "storybook": "^10.2.8",
     "typescript": "5.9.3",
