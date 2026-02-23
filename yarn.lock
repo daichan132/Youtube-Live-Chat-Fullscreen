@@ -1859,13 +1859,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.1.36":
-  version: 0.1.36
-  resolution: "@types/chrome@npm:0.1.36"
+"@types/chrome@npm:0.1.37":
+  version: 0.1.37
+  resolution: "@types/chrome@npm:0.1.37"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/afeb5fe87d743b7db2bf0fa2df7e1bec5b700614512b1de5c0b25c0b71eba54cce41d36606801fa2d1c55c984c3b4ec13736ea132a8c269e16d445bda176bb29
+  checksum: 10c0/7de8f5be134035d4b764afd1f443fe842ad26975dbac914e977f94760be53bee3958ac2aed69d206ad8f18d8204b46075da78bd1ca22dab148193b6feb62e06f
   languageName: node
   linkType: hard
 
@@ -8190,7 +8190,7 @@ __metadata:
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.2"
-    "@types/chrome": "npm:0.1.36"
+    "@types/chrome": "npm:0.1.37"
     "@types/lodash-es": "npm:4.17.12"
     "@types/react": "npm:19.2.14"
     "@types/react-color": "npm:3.0.13"
