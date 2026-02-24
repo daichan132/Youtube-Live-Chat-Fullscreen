@@ -72,6 +72,7 @@ lerna-debug.log*
 
 node_modules
 .output
+/screenshots/
 storybook-static
 stats.html
 stats-*.json

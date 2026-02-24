@@ -19,7 +19,8 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "prepare": "lefthook install",
-    "e2e": "playwright test --workers=1"
+    "e2e": "playwright test --workers=1",
+    "screenshots": "playwright test --config e2e/screenshots/playwright.screenshots.config.ts --workers=1"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

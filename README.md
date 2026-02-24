@@ -44,6 +44,33 @@
 
 ![Fullscreen chat overlay on a YouTube live stream](./.github/preview.png)
 
+### Screenshots
+
+<table>
+<tr>
+<th align="center" colspan="2">Fullscreen Chat Overlay</th>
+</tr>
+<tr>
+<td colspan="2"><img src=".github/screenshots/fullscreen-chat-overview.png" alt="Fullscreen chat overlay on a YouTube stream" width="960" /></td>
+</tr>
+<tr>
+<th align="center">Popup — Light</th>
+<th align="center">Popup — Dark</th>
+</tr>
+<tr>
+<td align="center"><img src=".github/screenshots/popup-light.png" alt="Popup UI (light theme)" width="320" /></td>
+<td align="center"><img src=".github/screenshots/popup-dark.png" alt="Popup UI (dark theme)" width="320" /></td>
+</tr>
+<tr>
+<th align="center">Settings — Light</th>
+<th align="center">Settings — Dark</th>
+</tr>
+<tr>
+<td><img src=".github/screenshots/settings-setting-light.png" alt="Settings panel (light theme)" width="480" /></td>
+<td><img src=".github/screenshots/settings-setting-dark.png" alt="Settings panel (dark theme)" width="480" /></td>
+</tr>
+</table>
+
 ## 30-Second Quick Start
 
 1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
@@ -64,6 +91,11 @@
 - Background color, font color, font family, font size, blur, and spacing controls
 - Toggle username, user icon, Super Chat bar, and chat-only view
 - Drag, resize, and reposition the chat overlay freely
+
+### 🌗 Light & Dark Theme
+
+- Full light/dark theme support for the overlay, popup, and settings panel
+- Auto mode follows your system preference
 
 ### 📋 Presets
 

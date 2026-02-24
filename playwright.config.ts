@@ -2,7 +2,7 @@ import { defineConfig, devices } from '@playwright/test'
 
 export default defineConfig({
   testDir: 'e2e',
-  testIgnore: ['config/**/*.spec.ts'],
+  testIgnore: ['config/**/*.spec.ts', 'screenshots/**/*.spec.ts'],
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
