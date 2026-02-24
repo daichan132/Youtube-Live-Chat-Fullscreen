@@ -9,14 +9,19 @@ type VerticalRange = {
 }
 
 const getCombinedVerticalRange = (elements: ReadonlyArray<HTMLElement | null>): VerticalRange | null => {
-  const rects = elements.filter((element): element is HTMLElement => element !== null).map(element => element.getBoundingClientRect())
+  let top = Number.POSITIVE_INFINITY
+  let bottom = Number.NEGATIVE_INFINITY
+  let count = 0
 
-  if (rects.length === 0) return null
-
-  return {
-    top: Math.min(...rects.map(rect => rect.top)),
-    bottom: Math.max(...rects.map(rect => rect.bottom)),
+  for (const element of elements) {
+    if (element === null) continue
+    const rect = element.getBoundingClientRect()
+    if (rect.top < top) top = rect.top
+    if (rect.bottom > bottom) bottom = rect.bottom
+    count++
   }
+
+  return count === 0 ? null : { top, bottom }
 }
 
 export const getSettingScrollContainer = (anchor: HTMLElement | null): HTMLElement | null => {

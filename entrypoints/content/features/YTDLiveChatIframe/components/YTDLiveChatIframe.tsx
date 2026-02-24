@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react'
+import { useId, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
@@ -33,16 +33,19 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
-  const { r, g, b, a } = fontColor
-  const baseAlpha = a ?? 1
-  const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
-  const desaturateMix = 0.68
-  const loaderColorR = Math.round(r * (1 - desaturateMix) + grayLuma * desaturateMix)
-  const loaderColorG = Math.round(g * (1 - desaturateMix) + grayLuma * desaturateMix)
-  const loaderColorB = Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix)
-  const loaderColorA = Math.min(0.5, Math.max(0.22, baseAlpha * 0.55))
-  const backgroundAlpha = bgColor.a ?? 1
-  const overlayAlpha = backgroundAlpha
+  const loaderColor = useMemo(() => {
+    const { r, g, b, a } = fontColor
+    const baseAlpha = a ?? 1
+    const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
+    const desaturateMix = 0.68
+    return {
+      r: Math.round(r * (1 - desaturateMix) + grayLuma * desaturateMix),
+      g: Math.round(g * (1 - desaturateMix) + grayLuma * desaturateMix),
+      b: Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix),
+      a: Math.min(0.5, Math.max(0.22, baseAlpha * 0.55)),
+    }
+  }, [fontColor])
+  const overlayAlpha = bgColor.a ?? 1
 
   return (
     <>
@@ -92,7 +95,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
             <div
               className='animate-ping h-5 w-5 rounded-full'
               style={{
-                backgroundColor: `rgba(${loaderColorR}, ${loaderColorG}, ${loaderColorB}, ${loaderColorA})`,
+                backgroundColor: `rgba(${loaderColor.r}, ${loaderColor.g}, ${loaderColor.b}, ${loaderColor.a})`,
               }}
             />
           </output>

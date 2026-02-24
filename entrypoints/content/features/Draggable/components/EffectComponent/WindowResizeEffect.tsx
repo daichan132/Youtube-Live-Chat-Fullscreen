@@ -21,7 +21,7 @@ export const WindowResizeEffect = () => {
     }
   }, [])
   useLayoutEffect(() => {
-    window.addEventListener('resize', updatePosition)
+    window.addEventListener('resize', updatePosition, { passive: true })
     return () => window.removeEventListener('resize', updatePosition)
   }, [updatePosition])
   return null

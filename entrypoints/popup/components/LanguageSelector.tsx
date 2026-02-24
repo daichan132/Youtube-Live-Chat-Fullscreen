@@ -3,12 +3,12 @@ import { useTranslation } from 'react-i18next'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import language_codes from '@/shared/i18n/language_codes.json'
 
-export const LanguageSelector = () => {
-  const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
-    value: code,
-    label: name,
-  }))
+const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
+  value: code,
+  label: name,
+}))
 
+export const LanguageSelector = () => {
   const { t, i18n } = useTranslation()
 
   const handleChange = useCallback(

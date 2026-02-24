@@ -1,7 +1,9 @@
 import type { Dispatch, SetStateAction } from 'react'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import type { ColorResult, RGBColor } from 'react-color'
-import { ChromePicker } from 'react-color'
+
+const ChromePickerLazy = lazy(() => import('react-color').then(mod => ({ default: mod.ChromePicker })))
+
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontColorChange'
@@ -124,20 +126,22 @@ export const FontColorPickerUI = React.forwardRef<
       </button>
       <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
         {display ? (
-          <ChromePicker
-            color={rgba}
-            onChange={onChange}
-            styles={{
-              default: {
-                picker: {
-                  border: 'var(--ylc-border-width) solid var(--ylc-border)',
-                  borderRadius: 5,
-                  overflow: 'hidden',
-                  boxShadow: 'none',
+          <Suspense fallback={<div style={{ width: 225, height: 254 }} />}>
+            <ChromePickerLazy
+              color={rgba}
+              onChange={onChange}
+              styles={{
+                default: {
+                  picker: {
+                    border: 'var(--ylc-border-width) solid var(--ylc-border)',
+                    borderRadius: 5,
+                    overflow: 'hidden',
+                    boxShadow: 'none',
+                  },
                 },
-              },
-            }}
-          />
+              }}
+            />
+          </Suspense>
         ) : null}
       </div>
     </div>

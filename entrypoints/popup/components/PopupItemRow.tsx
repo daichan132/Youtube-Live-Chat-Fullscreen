@@ -1,4 +1,5 @@
 import type React from 'react'
+import { memo } from 'react'
 import type { IconType } from 'react-icons'
 
 interface PopupItemRowProps {
@@ -9,7 +10,7 @@ interface PopupItemRowProps {
   actionWidth?: 'default' | 'wide'
 }
 
-export const PopupItemRow = ({ icon: Icon, title, data, isLast, actionWidth = 'default' }: PopupItemRowProps) => {
+export const PopupItemRow = memo(({ icon: Icon, title, data, isLast, actionWidth = 'default' }: PopupItemRowProps) => {
   const actionSlotClass =
     actionWidth === 'wide' ? 'ylc-action-slot ylc-action-slot-popup ylc-action-slot-wide' : 'ylc-action-slot ylc-action-slot-popup'
 
@@ -35,4 +36,4 @@ export const PopupItemRow = ({ icon: Icon, title, data, isLast, actionWidth = 'd
       {isLast ? null : <hr className='border-none ylc-theme-divider' />}
     </>
   )
-}
+})

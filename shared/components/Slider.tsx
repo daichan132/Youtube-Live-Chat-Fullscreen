@@ -1,4 +1,4 @@
-import { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 
 interface SliderProps {
   value: number
@@ -6,8 +6,8 @@ interface SliderProps {
   'aria-valuetext'?: string
 }
 
-export const Slider = forwardRef<HTMLDivElement, SliderProps>(
-  ({ value, 'aria-label': ariaLabel, 'aria-valuetext': ariaValuetext }, ref) => {
+export const Slider = memo(
+  forwardRef<HTMLDivElement, SliderProps>(({ value, 'aria-label': ariaLabel, 'aria-valuetext': ariaValuetext }, ref) => {
     const clampedValue = Math.min(1, Math.max(0, value))
     const position = `${clampedValue * 100}%`
 
@@ -28,5 +28,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(
         <div className='ylc-slider-thumb' style={{ left: position }} />
       </div>
     )
-  },
+  }),
 )
+Slider.displayName = 'Slider'

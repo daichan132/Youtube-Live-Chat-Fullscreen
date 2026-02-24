@@ -8,7 +8,7 @@ export function useShadowClickAway(ref: RefObject<HTMLElement | null>, onClickAw
         onClickAway()
       }
     }
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener('mousedown', handleClickOutside, { passive: true })
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
