@@ -16,9 +16,10 @@ interface PresetItemType {
   id: string
 }
 
+const ACTION_BUTTON_CLASSNAME =
+  'rounded-md mx-0.5 cursor-pointer transition-colors duration-160 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
+
 export const PresetItem = ({ id }: PresetItemType) => {
-  const actionButtonClassName =
-    'rounded-md mx-0.5 cursor-pointer transition-colors duration-160 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
@@ -79,7 +80,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         <div className='flex transition-opacity duration-160 shrink-0'>
           <button
             type='button'
-            className={`${actionButtonClassName} ylc-preset-action-btn`}
+            className={`${ACTION_BUTTON_CLASSNAME} ylc-preset-action-btn`}
             aria-label={t('content.aria.applyPreset')}
             onClick={() => updateStyle(ylcStyle)}
           >
@@ -87,7 +88,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
           </button>
           <button
             type='button'
-            className={`${actionButtonClassName} ylc-preset-action-btn`}
+            className={`${ACTION_BUTTON_CLASSNAME} ylc-preset-action-btn`}
             aria-label={t('content.aria.deletePreset')}
             onClick={() => setIsDeleteModalOpen(true)}
           >

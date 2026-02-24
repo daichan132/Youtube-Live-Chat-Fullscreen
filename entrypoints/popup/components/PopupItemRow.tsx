@@ -10,9 +10,11 @@ interface PopupItemRowProps {
   actionWidth?: 'default' | 'wide'
 }
 
+const ACTION_SLOT_BASE = 'ylc-action-slot ylc-action-slot-popup'
+const ACTION_SLOT_WIDE = 'ylc-action-slot ylc-action-slot-popup ylc-action-slot-wide'
+
 export const PopupItemRow = memo(({ icon: Icon, title, data, isLast, actionWidth = 'default' }: PopupItemRowProps) => {
-  const actionSlotClass =
-    actionWidth === 'wide' ? 'ylc-action-slot ylc-action-slot-popup ylc-action-slot-wide' : 'ylc-action-slot ylc-action-slot-popup'
+  const actionSlotClass = actionWidth === 'wide' ? ACTION_SLOT_WIDE : ACTION_SLOT_BASE
 
   return (
     <>
