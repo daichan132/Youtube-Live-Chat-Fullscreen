@@ -1,8 +1,6 @@
 ---
 name: e2e-playwright
-description: この拡張の Playwright E2E 運用。E2E 失敗やフレーク、フルスクリーンチャット、チャットなし動画、リプレイ不可、アーカイブ遷移、trace、PWDEBUG の話題で使う。
-metadata:
-  short-description: YouTube チャット E2E を安定化
+description: この拡張の Playwright E2E 運用。E2E 失敗やフレーク調査、フルスクリーンチャット・チャットなし動画・リプレイ不可・アーカイブ遷移の E2E、trace/PWDEBUG デバッグで使う。
 ---
 
 # 目的
@@ -13,7 +11,7 @@ metadata:
 - URL 固定値（`YLC_LIVE_URL`、`YLC_ARCHIVE_URL`、`YLC_ARCHIVE_NEXT_URL`、`YLC_REPLAY_UNAVAILABLE_URL`）
 - URL 既定値は `e2e/config/testTargets.ts` を参照する。
 
-# 非目標 / ガードレール
+# ガードレール
 - 同一マシンで Playwright コマンドを並列実行しない。
 - ランダム sleep や過剰な timeout 拡大で flaky を隠さない。
 - 実装不具合を `skip` に逃がさない。
@@ -46,8 +44,3 @@ metadata:
 - 変更ファイル
 - 検証結果（passed/skipped/failed）
 - skip の妥当性（skip がある場合）
-
-# トリガー例
-- 「playwright が不安定なので直して」
-- 「fullscreenChatVideoTransition の失敗を見て」
-- 「noChatVideo のタイムアウト理由を調べて」

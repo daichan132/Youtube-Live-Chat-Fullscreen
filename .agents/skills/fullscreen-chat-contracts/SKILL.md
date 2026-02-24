@@ -1,8 +1,6 @@
 ---
 name: fullscreen-chat-contracts
-description: フルスクリーンチャットの実行時契約を守るためのガイド。Content/YTDLiveChat/ソース解決/スイッチ挙動を変更するときに使う。
-metadata:
-  short-description: フルスクリーンチャット契約を強制
+description: フルスクリーンチャットの実行時契約を守るためのガイド。Content/YTDLiveChat/ソース解決/スイッチ挙動/iframe 隠蔽方式/blur・background スタイルを変更するときに使う。
 ---
 
 # 目的
@@ -104,9 +102,3 @@ archive モードでは拡張が native `#chatframe` を shadow root に物理�
 - 契約チェック結果（pass/fail）
 - 破った契約と修正内容
 - 追加/更新した回帰テスト
-
-# トリガー例
-- 「live と archive の境界が壊れてないか確認して」
-- 「switch disabled 周りを修正したい」
-- 「押せない switch は非表示にしたい」
-- 「fullscreen chat の仕様を守ってリファクタしたい」

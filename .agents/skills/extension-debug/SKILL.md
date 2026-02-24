@@ -1,8 +1,6 @@
 ---
 name: extension-debug
-description: Chrome/Firefox 拡張の挙動調査。content script / popup / service worker の不具合再現、フルスクリーン/ネイティブチャットのループ調査で使う。
-metadata:
-  short-description: 拡張ランタイム不具合を切り分け
+description: Chrome/Firefox 拡張の挙動調査。content script / popup / service worker の不具合再現、フルスクリーン/ネイティブチャットのループ・表示崩れ・スロットリング調査で使う。
 ---
 
 # 目的

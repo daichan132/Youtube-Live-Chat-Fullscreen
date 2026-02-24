@@ -93,6 +93,10 @@ yarn zip:firefox          # Firefox用zipパッケージ
 - **i18n 更新時は2箇所を同時に更新する**:
   - `shared/i18n/assets/*.json` — ランタイム翻訳
   - `public/_locales/*/messages.json` — ストア表示文言
+- `extensionName` は各言語へ翻訳する（英語 locale は英語維持）
+- トグル系ラベルは原則名詞ベースで統一する
+- placeholder 名を locale 間でずらさない
+- i18n 契約テスト: `yarn test:unit shared/i18n/assets.spec.ts shared/i18n/publicLocales.spec.ts`
 - 依存追加は事前に「目的」と「代替案」を示す
 - 生成物（`.output/**`）は編集しない
 - 既存の hooks/store/utils パターンを優先する
@@ -100,6 +104,7 @@ yarn zip:firefox          # Firefox用zipパッケージ
 
 ## Testing Rules
 
+- 変更範囲を `git status -sb` で確認してから実行する
 - **基本3点**: `yarn lint` → `yarn test:unit` → `yarn build`
 - Firefox 互換が関係する場合: `yarn build:firefox` も実行
 - E2E: 対象 spec を先に単体実行 → 最後に `yarn e2e`
