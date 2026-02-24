@@ -1,27 +1,23 @@
 ---
-name: gh-open-pr
-description: gh CLI で PR を作成する手順。PR 作成/ドラフトPR/PR更新依頼のときに使う。
-metadata:
-  short-description: gh で PR を作成
+name: pr-ops
+description: gh CLI で PR を作成する手順。PR 作成/ドラフトPR/PR更新依頼のときに使う。回帰中心の PR レビュー手順。コードレビュー/PRレビュー/チェック依頼のときに使う。
 ---
 
 # 目的
 - レビュー担当が「何を、なぜ、どう直したか」を短時間で判断できる PR を作成する。
+- バグ、回帰、見落としやすいテスト不足を先に検出する。
 
-# 入力（不足時のみ確認）
+---
+
+# PR 作成
+
+## 入力（不足時のみ確認）
 - base ブランチ（通常 `main`）
 - タイトル言語（デフォルト英語）
 - 本文言語方針（デフォルト: 英語先頭 + 日本語を `<details>`）
 - draft か ready か
 
-# ガードレール
-- 明示依頼なしに force push しない。
-- 大きい差分で `gh pr create --fill` だけに頼らない。
-- 実行していない検証コマンドを書かない。
-- E2E の `skip` は「外部前提不足」か「不具合」かを本文で区別する。
-- PR 説明を更新するときは、必ず `gh pr view` で反映内容を再確認する。
-
-# 手順
+## 手順
 1. 事前確認をする。
 - `git status -sb`
 - `git fetch origin <base>`
@@ -41,20 +37,41 @@ metadata:
   - 何で検証したか（実行コマンドと結果）
   - 既知のリスクや前提
 4. PR を作成または更新する。
-- 新規: `gh pr create --base <base> --head <branch> --title \"...\" --body-file <file>`
-- 既存: `gh pr edit <number> --title \"...\" --body-file <file>`
+- 新規: `gh pr create --base <base> --head <branch> --title "..." --body-file <file>`
+- 既存: `gh pr edit <number> --title "..." --body-file <file>`
 5. 反映確認をする。
 - `gh pr view <number> --json title,body,url`
 6. URL と要点を共有する。
 
-# 出力形式
+## ガードレール
+- 明示依頼なしに force push しない。
+- 大きい差分で `gh pr create --fill` だけに頼らない。
+- 実行していない検証コマンドを書かない。
+- E2E の `skip` は「外部前提不足」か「不具合」かを本文で区別する。
+- PR 説明を更新するときは、必ず `gh pr view` で反映内容を再確認する。
+
+## 出力形式
 - PR タイトル
 - PR URL
 - 変更点サマリ（3行以内）
 - 含めた検証と残リスク
 
-# トリガー例
-- 「main に PR 作って」
-- 「PR の説明を分かりやすくして」
-- 「英語版を上に、日本語は details にして」
-- 「表を使って設計意図を書いて」
+---
+
+# PR レビュー
+
+## 手順
+1. 差分をファイル単位で確認する。
+2. 高リスク経路を優先確認する。
+- fullscreen トグル
+- mode/source 解決
+- native/extension の排他
+3. テスト妥当性を確認する。
+- ロジック変更に unit があるか
+- 挙動変更に E2E があるか
+4. 重大度順に findings を返す。
+
+## 出力形式
+- Findings（重大度順）
+- 不明点/前提
+- 要約（短く）
