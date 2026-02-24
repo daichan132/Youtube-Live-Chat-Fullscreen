@@ -7,21 +7,7 @@ description: フルスクリーンチャットの実行時契約を守るため�
 - live / archive / no-chat 境界の破壊を防ぎ、同種回帰を再発させない。
 
 # コア契約
-1. live
-- 公開 iframe URL `https://www.youtube.com/live_chat?v=<videoId>` を使う。
-- native iframe を borrow しない。
-
-2. archive
-- native `live_chat_replay` iframe のみ borrow する。
-- 動画遷移後の stale iframe 再利用を禁止する。
-
-3. no-chat / replay-unavailable
-- switch は表示しない。
-- overlay / extension iframe は表示しない。
-
-4. toggle 判定と source 判定の分離
-- `canToggle`（操作可否）と `sourceReady`（attach 可否）は分ける。
-- archive で `sourceReady` だけを switch 有効条件にしない（deadlock 防止）。
+CLAUDE.md「Fullscreen Chat の重要契約」に定義。変更前に必ず確認する。
 
 # YouTube DOM 再配置とフルスクリーンレイアウト契約
 
@@ -41,26 +27,22 @@ CSS を書くときは **フルスクリーン中の実際の親要素** を Pla
 ## iframe 隠蔽方式の選択基準
 
 Chrome は表示面積ゼロまたは `display: none` 配下の iframe に対してタイマースロットリングを行う。
-隠蔽方式の選択を誤ると、フルスクリーン解除後に native chat のコメント読み込みが遅延する。
 
-| 方式 | 描画ツリー | iframe タイマー | 用途 |
-|------|-----------|---------------|------|
-| `display: none` | 除外される | 強くスロットル | iframe を含まない要素（`#panels` 等） |
-| `visibility: hidden` + `position: fixed` + `width: 400px` | 維持される | スロットルされにくい | iframe を含む要素（`#secondary`, `#panels-full-bleed-container`） |
-| `width: 0` + `overflow: hidden` | 維持されるが面積ゼロ | スロットル | **使わない**（過去の回帰原因） |
+| 方式 | iframe タイマー | 用途 |
+|------|---------------|------|
+| `display: none` | 強くスロットル | iframe を含まない要素（`#panels` 等） |
+| `visibility: hidden` + `position: fixed` + `width: 400px` | スロットルされにくい | iframe を含む要素（`#secondary`, `#panels-full-bleed-container`） |
+| `width: 0` + `overflow: hidden` | スロットル | **使わない**（過去の回帰原因） |
 
 ### 必須ルール
-
 1. `#chatframe` iframe を含む可能性がある祖先要素には `display: none` を使わない
 2. `visibility: hidden` + `position: fixed` + `top: -200vh` で画面外に配置する
 3. `width: 400px`（チャットパネル標準幅）を明示して iframe に十分な描画面積を与える
 4. `pointer-events: none` + `z-index: -9999` で操作・表示の干渉を防ぐ
 
 ### archive borrow 時の注意
-
 archive モードでは拡張が native `#chatframe` を shadow root に物理移動（borrow）する。
-この場合、元のコンテナに iframe は残らないため CSS による幅維持の恩恵はない。
-ただしコンテナの描画ツリーを維持しておくことで、iframe 返却時の YouTube 再レイアウトが高速化する。
+元のコンテナに iframe は残らないが、描画ツリーを維持しておくことで iframe 返却時の YouTube 再レイアウトが高速化する。
 
 ## `useFullscreenChatLayoutFix.ts` のCSS構成
 
@@ -72,19 +54,9 @@ archive モードでは拡張が native `#chatframe` を shadow root に物理�
 ```
 
 # スタイル契約（blur / background）
-1. blur 適用先
-- blur は iframe host ではなく iframe document の `body` に適用する。
-- `useYLCBlurChange` で `body.style.backdropFilter` と `-webkit-backdrop-filter` を更新する。
-- iframe host 側の `filter` は常に `none` に戻し、文字ぼけ回帰を防ぐ。
-
-2. background 適用先
-- `--yt-live-chat-background-color` は `transparent` を維持する。
-- 暗色化が必要な内部変数のみ darken 済み RGBA を適用する。
-
-3. iframe サーフェス透過
-- `entrypoints/content/features/YTDLiveChatIframe/styles/iframe.css` で
-  `html/body` と主要 chat コンテナ背景を透過させる。
-- これにより外側オーバーレイ背景と iframe body 側の blur を視認可能に保つ。
+1. blur: iframe host ではなく iframe document の `body` に適用する。iframe host 側の `filter` は常に `none` に戻す。
+2. background: `--yt-live-chat-background-color` は `transparent` を維持する。暗色化は内部変数のみ。
+3. iframe サーフェス透過: `entrypoints/content/features/YTDLiveChatIframe/styles/iframe.css` で `html/body` と主要 chat コンテナ背景を透過させる。
 
 # 必須確認
 - Unit:
@@ -97,8 +69,3 @@ archive モードでは拡張が native `#chatframe` を shadow root に物理�
   - `e2e/noChatVideo.spec.ts`
   - `e2e/scenarios/archive/liveChatReplayUnavailable.spec.ts`
   - live/archive 正常系を各1本
-
-# 出力形式
-- 契約チェック結果（pass/fail）
-- 破った契約と修正内容
-- 追加/更新した回帰テスト

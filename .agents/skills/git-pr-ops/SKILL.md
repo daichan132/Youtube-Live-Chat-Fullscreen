@@ -6,34 +6,10 @@ description: このリポジトリ向けの Git 操作・コミット・PR 作�
 # 目的
 - 安全性を保ちながら、差分の粒度と履歴の可読性を維持する。
 - レビュー担当が「何を、なぜ、どう直したか」を短時間で判断できる PR を作成する。
-- バグ、回帰、見落としやすいテスト不足を先に検出する。
 
----
-
-# Git 操作
-
-## 1. 状態確認
-- `git status -sb`
-- `git diff --stat`
-- 必要箇所だけ `git diff -- <path>`
-
-## 2. 関心ごとで分割
-- runtime / e2e / docs など、関心ごとにファイルをグルーピングする。
-
-## 3. 意図的にステージ
-- `git add <対象ファイル>`
-- `git diff --cached` でステージ内容を確認。
-
-## 4. コミット
-- `git commit -m "<type>(<scope>): <summary>"`
-- 各単位ごとに繰り返す。
-
-## 5. 仕上げ確認
-- `git status -sb`
-- `git log --oneline -n <件数>`
-
-## メッセージ方針
-- 何がどう変わったかを明示する。
+# コミット方針
+- runtime / e2e / docs など、関心ごとにファイルをグルーピングして分割コミットする。
+- 形式: `<type>(<scope>): <summary>`
 - ユーザー要望があれば日本語で書く。
 
 ---
@@ -54,12 +30,9 @@ description: このリポジトリ向けの Git 操作・コミット・PR 作�
 - `git diff --stat origin/<base>..HEAD`
 - `gh pr list --state open --head <branch>`
 2. タイトルを決める。
-- 原則: 英語の要約タイトルにする。
 - 形式: `Type: concise impact summary`
 3. 本文を組み立てる。
-- 原則: 英語を上に置く。
-- 日本語が必要な場合: `<details><summary>日本語版</summary>...</details>` に入れる。
-- 読み手が判断しやすいように、必要に応じて表を使って整理する。
+- 英語を上に置く。日本語が必要な場合: `<details><summary>日本語版</summary>...</details>` に入れる。
 - 特に大きな変更では、以下が分かるように書く。
   - 何を改善したか（課題 / 設計判断 / 結果）
   - どのレイヤをどう変えたか（責務分離や境界）
@@ -68,29 +41,16 @@ description: このリポジトリ向けの Git 操作・コミット・PR 作�
 4. PR を作成または更新する。
 - 新規: `gh pr create --base <base> --head <branch> --title "..." --body-file <file>`
 - 既存: `gh pr edit <number> --title "..." --body-file <file>`
-5. 反映確認をする。
-- `gh pr view <number> --json title,body,url`
-6. URL と要点を共有する。
+5. `gh pr view <number> --json title,body,url` で反映を確認する。
 
 ---
 
 # PR レビュー
 
-## 手順
 1. 差分をファイル単位で確認する。
-2. 高リスク経路を優先確認する。
-- fullscreen トグル
-- mode/source 解決
-- native/extension の排他
-3. テスト妥当性を確認する。
-- ロジック変更に unit があるか
-- 挙動変更に E2E があるか
+2. 高リスク経路を優先確認する: fullscreen トグル、mode/source 解決、native/extension の排他。
+3. テスト妥当性を確認する: ロジック変更に unit、挙動変更に E2E があるか。
 4. 重大度順に findings を返す。
-
-## 出力形式
-- Findings（重大度順）
-- 不明点/前提
-- 要約（短く）
 
 ---
 
