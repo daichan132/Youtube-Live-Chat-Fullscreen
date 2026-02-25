@@ -157,5 +157,21 @@ describe('detectChatMode', () => {
       // so the extension iframe is skipped and isYouTubeLiveNow() returns live.
       expect(detectChatMode()).toBe('live')
     })
+
+    it('rejects stale #chatframe replay iframe when URL points to a new live video', () => {
+      setLocation('/watch?v=live-video-B')
+
+      // Stale native #chatframe from archive video A
+      const chatFrame = document.createElement('iframe')
+      chatFrame.id = 'chatframe'
+      chatFrame.src = 'https://www.youtube.com/live_chat_replay?v=archive-video-A'
+      document.body.appendChild(chatFrame)
+
+      createMoviePlayer({ isLive: true })
+
+      // #chatframe video ID (A) does not match URL video ID (B),
+      // so hasArchiveReplaySignal() skips it and movie player live signal wins.
+      expect(detectChatMode()).toBe('live')
+    })
   })
 })

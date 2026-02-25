@@ -1,3 +1,5 @@
+import { getVideoIdFromUrl } from './getYouTubeVideoId'
+
 type YouTubeVideoData = {
   isLive?: boolean
 }
@@ -34,9 +36,34 @@ const hasLiveNowAttribute = () => {
   return Boolean(watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now'))
 }
 
+const getChatFrameVideoId = (iframe: HTMLIFrameElement): string | null => {
+  try {
+    const docHref = iframe.contentDocument?.location?.href ?? ''
+    if (docHref) {
+      const v = new URL(docHref, window.location.origin).searchParams.get('v')
+      if (v) return v
+    }
+  } catch {
+    /* CORS */
+  }
+  try {
+    const src = iframe.getAttribute('src') ?? iframe.src ?? ''
+    if (src) return new URL(src, window.location.origin).searchParams.get('v')
+  } catch {}
+  return null
+}
+
+const isChatFrameForCurrentUrl = (iframe: HTMLIFrameElement): boolean => {
+  const urlVideoId = getVideoIdFromUrl()
+  if (!urlVideoId) return true
+  const frameVideoId = getChatFrameVideoId(iframe)
+  if (!frameVideoId) return true
+  return frameVideoId === urlVideoId
+}
+
 const hasArchiveReplaySignal = () => {
   const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-  if (chatFrame) {
+  if (chatFrame && isChatFrameForCurrentUrl(chatFrame)) {
     try {
       const docHref = chatFrame.contentDocument?.location?.href ?? ''
       if (docHref.includes('/live_chat_replay')) return true

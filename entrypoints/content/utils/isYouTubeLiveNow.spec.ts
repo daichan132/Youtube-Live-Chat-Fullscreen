@@ -161,4 +161,35 @@ describe('isYouTubeLiveNow', () => {
 
     expect(isYouTubeLiveNow()).toBe(true)
   })
+
+  describe('SPA navigation stale chatframe', () => {
+    it('ignores stale #chatframe replay when URL points to a different video', () => {
+      // URL is now live video B
+      window.history.pushState({}, '', `${window.location.origin}/watch?v=live-video-B`)
+
+      // Stale #chatframe still referencing archive video A
+      const chatFrame = document.createElement('iframe')
+      chatFrame.id = 'chatframe'
+      chatFrame.src = 'https://www.youtube.com/live_chat_replay?v=archive-video-A'
+      document.body.appendChild(chatFrame)
+
+      // Movie player says live
+      createMoviePlayer(true)
+
+      // Stale chatframe should be skipped, movie player live signal wins
+      expect(isYouTubeLiveNow()).toBe(true)
+    })
+
+    it('still detects archive replay from #chatframe when video ID matches', () => {
+      const videoId = 'same-video'
+      window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+
+      const chatFrame = document.createElement('iframe')
+      chatFrame.id = 'chatframe'
+      chatFrame.src = `https://www.youtube.com/live_chat_replay?v=${videoId}`
+      document.body.appendChild(chatFrame)
+
+      expect(isYouTubeLiveNow()).toBe(false)
+    })
+  })
 })
