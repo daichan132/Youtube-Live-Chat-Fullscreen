@@ -1,8 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react'
-import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { RgbaColor } from 'react-colorful'
-
-const RgbaColorPickerLazy = lazy(() => import('react-colorful').then(mod => ({ default: mod.RgbaColorPicker })))
+import { RgbaColorPicker } from 'react-colorful'
 
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
@@ -130,11 +129,7 @@ export const FontColorPickerUI = React.forwardRef<
         </div>
       </button>
       <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
-        {display ? (
-          <Suspense fallback={<div style={{ width: 200, height: 200 }} />}>
-            <RgbaColorPickerLazy color={toRgba(rgba)} onChange={onChange} />
-          </Suspense>
-        ) : null}
+        {display ? <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} /> : null}
       </div>
     </div>
   )
