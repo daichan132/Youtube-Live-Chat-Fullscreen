@@ -1,15 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 
 type TransitionClassNames = {
-  appear?: string
-  appearActive?: string
   enter?: string
   enterActive?: string
   exit?: string
   exitActive?: string
 }
 
-type TransitionTimeout = number | { appear?: number; enter?: number; exit?: number }
+type TransitionTimeout = number | { enter?: number; exit?: number }
 
 interface UseCSSTransitionOptions {
   in: boolean
@@ -18,9 +16,13 @@ interface UseCSSTransitionOptions {
   unmountOnExit?: boolean
 }
 
-type TransitionState = 'entered' | 'entering' | 'exited' | 'exiting' | 'unmounted'
+// enter: initial state class applied (e.g., opacity-0)
+// entering: target state + transition class applied (e.g., transition-opacity opacity-100)
+// entered: keep target state
+// exit/exiting/exited: mirror of enter phases
+type TransitionState = 'unmounted' | 'exited' | 'enter' | 'entering' | 'entered' | 'exit' | 'exiting'
 
-const getTimeout = (timeout: TransitionTimeout, phase: 'appear' | 'enter' | 'exit'): number =>
+const getTimeout = (timeout: TransitionTimeout, phase: 'enter' | 'exit'): number =>
   typeof timeout === 'number' ? timeout : (timeout[phase] ?? 0)
 
 export const useCSSTransition = ({ in: show, timeout, classNames, unmountOnExit = false }: UseCSSTransitionOptions) => {
@@ -39,20 +41,40 @@ export const useCSSTransition = ({ in: show, timeout, classNames, unmountOnExit 
     if (show === prevShow) return
 
     clearTimeout(timerRef.current)
+    let cancelled = false
 
     if (show) {
-      setState('entering')
+      // Phase 1: Apply enter class only (initial state, e.g., opacity-0)
+      setState('enter')
+      // Phase 2: After browser paints, switch to enterActive (target + transition)
       requestAnimationFrame(() => {
+        if (cancelled) return
         requestAnimationFrame(() => {
+          if (cancelled) return
+          setState('entering')
           timerRef.current = setTimeout(() => setState('entered'), getTimeout(timeoutRef.current, 'enter'))
         })
       })
     } else {
-      setState('exiting')
-      timerRef.current = setTimeout(
-        () => setState(unmountOnExitRef.current ? 'unmounted' : 'exited'),
-        getTimeout(timeoutRef.current, 'exit'),
-      )
+      // Phase 1: Apply exit class only (captures current visual state)
+      setState('exit')
+      // Phase 2: After browser paints, switch to exitActive (target + transition)
+      requestAnimationFrame(() => {
+        if (cancelled) return
+        requestAnimationFrame(() => {
+          if (cancelled) return
+          setState('exiting')
+          timerRef.current = setTimeout(
+            () => setState(unmountOnExitRef.current ? 'unmounted' : 'exited'),
+            getTimeout(timeoutRef.current, 'exit'),
+          )
+        })
+      })
+    }
+
+    return () => {
+      cancelled = true
+      clearTimeout(timerRef.current)
     }
   }, [show])
 
@@ -61,12 +83,14 @@ export const useCSSTransition = ({ in: show, timeout, classNames, unmountOnExit 
   const isMounted = state !== 'unmounted'
 
   let className = ''
-  if (state === 'entering') {
-    className = `${classNames.enter ?? ''} ${classNames.enterActive ?? ''}`.trim()
-  } else if (state === 'entered') {
+  if (state === 'enter') {
+    className = classNames.enter ?? ''
+  } else if (state === 'entering' || state === 'entered') {
     className = classNames.enterActive ?? ''
+  } else if (state === 'exit') {
+    className = classNames.exit ?? ''
   } else if (state === 'exiting') {
-    className = `${classNames.exit ?? ''} ${classNames.exitActive ?? ''}`.trim()
+    className = classNames.exitActive ?? ''
   }
 
   return { isMounted, className }

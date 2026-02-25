@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { Content } from './Content'
 import '@/shared/i18n/config'
 import '@/shared/styles/theme.css'
+import '@/shared/styles/react-colorful.css'
 import 'uno.css'
 
 export default defineContentScript({
