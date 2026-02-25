@@ -84,11 +84,15 @@ describe('resolveLiveSource', () => {
     expect(source).toBeNull()
   })
 
-  it('returns null when stream is live-now but chat signals are missing', () => {
+  it('returns live direct when stream is live-now even if chat signals are missing', () => {
+    // After native chat is closed, live-chat-present may be removed but
+    // is-live-now alone should be sufficient to resolve a live source.
     createWatchFlexy({ 'video-id': 'video-a', 'is-live-now': null })
 
     const source = resolveLiveSource('video-a')
-    expect(source).toBeNull()
+    expect(source).not.toBeNull()
+    expect(source?.kind).toBe('live_direct')
+    expect(source?.url).toBe('https://www.youtube.com/live_chat?v=video-a')
   })
 
   it('returns null when native iframe is replay even if watch reports live chat present', () => {
@@ -121,12 +125,14 @@ describe('resolveLiveSource', () => {
     expect(source?.url).toBe('https://www.youtube.com/live_chat?v=video-a')
   })
 
-  it('returns null for managed live iframe when strong live signal is missing', () => {
+  it('tolerates transient signal loss when managed live iframe exists', () => {
     const managedLiveIframe = document.createElement('iframe')
     managedLiveIframe.setAttribute('data-ylc-owned', 'true')
     managedLiveIframe.setAttribute('data-ylc-source', 'live_direct')
 
     const source = resolveLiveSource('video-a', managedLiveIframe)
-    expect(source).toBeNull()
+    expect(source).not.toBeNull()
+    expect(source?.kind).toBe('live_direct')
+    expect(source?.url).toBe('https://www.youtube.com/live_chat?v=video-a')
   })
 })

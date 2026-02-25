@@ -22,11 +22,15 @@ export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFr
   const nativeIframe = getLiveChatIframe()
   if (nativeIframe && isReplayChatIframe(nativeIframe)) return null
 
-  const hasStrongLiveSignal = isYouTubeLiveNow() || isLiveChatIframe(nativeIframe)
-  if (!hasStrongLiveSignal) return null
-
   const hasManagedLiveCurrent = isManagedLiveIframe(currentIframe)
-  if (!hasLiveChatSignals() && !hasManagedLiveCurrent) return null
+
+  const hasStrongLiveSignal = isYouTubeLiveNow() || isLiveChatIframe(nativeIframe)
+  if (!hasStrongLiveSignal && !hasManagedLiveCurrent) return null
+
+  // When a strong live signal already confirms the stream is live, skip the
+  // hasLiveChatSignals() check. Closing the native chat panel can remove DOM
+  // attributes (live-chat-present) that hasLiveChatSignals() depends on.
+  if (!hasStrongLiveSignal && !hasLiveChatSignals() && !hasManagedLiveCurrent) return null
 
   return {
     kind: 'live_direct',

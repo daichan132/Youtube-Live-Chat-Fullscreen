@@ -405,6 +405,17 @@ export const useChatIframeLoader = (mode: ChatMode) => {
 
     const handleNavigate = () => {
       if (handleVideoTransition('yt-navigate-finish')) return
+
+      // In live mode, skip teardown when the video hasn't changed to prevent
+      // unnecessary iframe destruction during same-page SPA transitions.
+      if (mode === 'live' && iframeRef.current) {
+        const currentVideoId = getCurrentPageVideoId()
+        if (currentVideoId && lastAttachedPageVideoIdRef.current === currentVideoId) {
+          syncChatSource()
+          return
+        }
+      }
+
       detachCurrentIframe()
       if (!syncChatSource()) {
         setupObserver()
