@@ -1,14 +1,24 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.3.14/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.4/schema.json",
   "extends": [],
   "files": {
     "ignoreUnknown": true
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "includes": ["**", "!**/node_modules", "!**/src/**/*.d.ts"],
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/src/**/*.d.ts"
+    ],
     "indentWidth": 2,
     "indentStyle": "space",
     "lineWidth": 140
@@ -36,7 +46,11 @@
     }
   },
   "linter": {
-    "includes": ["**", "!**/node_modules", "!**/src/**/*.d.ts"],
+    "includes": [
+      "**",
+      "!**/node_modules",
+      "!**/src/**/*.d.ts"
+    ],
     "rules": {
       "a11y": {
         "noDistractingElements": "error",
@@ -90,7 +104,15 @@
         "noUnsafeDeclarationMerging": "error",
         "useDefaultSwitchClauseLast": "error",
         "noVar": "error",
-        "noConsole": { "level": "error", "options": { "allow": ["log", "warn"] } }
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": [
+              "log",
+              "warn"
+            ]
+          }
+        }
       }
     }
   }
