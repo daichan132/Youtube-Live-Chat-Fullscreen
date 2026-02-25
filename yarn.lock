@@ -413,17 +413,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.28.4":
+"@babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.28.4":
   version: 7.28.6
   resolution: "@babel/runtime@npm:7.28.6"
   checksum: 10c0/358cf2429992ac1c466df1a21c1601d595c46930a13c1d4662fde908d44ee78ec3c183aaff513ecb01ef8c55c3624afe0309eeeb34715672dbfadb7feedb2c0d
-  languageName: node
-  linkType: hard
-
-"@babel/runtime@npm:^7.23.2":
-  version: 7.27.1
-  resolution: "@babel/runtime@npm:7.27.1"
-  checksum: 10c0/530a7332f86ac5a7442250456823a930906911d895c0b743bf1852efc88a20a016ed4cd26d442d0ca40ae6d5448111e02a08dd638a4f1064b47d080e2875dc05
   languageName: node
   linkType: hard
 
@@ -2950,13 +2943,6 @@ __metadata:
   version: 0.2.0
   resolution: "citty@npm:0.2.0"
   checksum: 10c0/da72051262ec0e0390dc9800e16bae72a5c85d61982e4f74e3c502d08a3099428964405eb1b4cdc07a7fd5658f78db97c0111c503cde592a41e75a299ac45fb5
-  languageName: node
-  linkType: hard
-
-"classnames@npm:^2.5.1":
-  version: 2.5.1
-  resolution: "classnames@npm:2.5.1"
-  checksum: 10c0/afff4f77e62cea2d79c39962980bf316bacb0d7c49e13a21adaadb9221e1c6b9d3cdb829d8bb1b23c406f4e740507f37e1dcf506f7e3b7113d17c5bab787aa69
   languageName: node
   linkType: hard
 
@@ -6049,15 +6035,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^5.5.0":
-  version: 5.5.0
-  resolution: "react-icons@npm:5.5.0"
-  peerDependencies:
-    react: "*"
-  checksum: 10c0/a24309bfc993c19cbcbfc928157e53a137851822779977b9588f6dd41ffc4d11ebc98b447f4039b0d309a858f0a42980f6bfb4477fb19f9f2d1bc2e190fcf79c
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^17.0.1":
   version: 17.0.2
   resolution: "react-is@npm:17.0.2"
@@ -7869,7 +7846,6 @@ __metadata:
     "@types/redux-persist-webextension-storage": "npm:1.0.3"
     "@wxt-dev/module-react": "npm:1.1.5"
     "@wxt-dev/unocss": "npm:1.0.1"
-    classnames: "npm:^2.5.1"
     i18next: "npm:^25.8.13"
     i18next-browser-languagedetector: "npm:^8.2.1"
     jsdom: "npm:28.1.0"
@@ -7879,7 +7855,6 @@ __metadata:
     react-colorful: "npm:^5.6.1"
     react-dom: "npm:19.2.4"
     react-i18next: "npm:^16.5.4"
-    react-icons: "npm:^5.5.0"
     redux-persist-webextension-storage: "npm:^1.0.2"
     storybook: "npm:^10.2.12"
     typescript: "npm:5.9.3"

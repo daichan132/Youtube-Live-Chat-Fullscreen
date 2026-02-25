@@ -1,9 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import classNames from 'classnames'
 import { type ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RiCloseLine } from 'react-icons/ri'
-import { TbLayoutGrid, TbSettings2 } from 'react-icons/tb'
+import { RiCloseLine, TbLayoutGrid, TbSettings2 } from '@/shared/components/icons'
+import { cn } from '@/shared/utils/cn'
 import Popup from '@/entrypoints/popup/Popup'
 import { YTDLiveChatSwitch } from '@/entrypoints/content/features/YTDLiveChatSwitch/components/YTDLiveChatSwitch'
 import { Draggable } from '@/entrypoints/content/features/Draggable/components/Draggable'
@@ -38,10 +37,7 @@ const SettingPanelFrame = ({ tab, children }: SettingPanelFrameProps) => {
             <button
               key={item.key}
               type='button'
-              className={classNames(
-                'ylc-theme-tab ylc-theme-focus-ring-soft',
-                tab === item.key && 'ylc-theme-tab-active',
-              )}
+              className={cn('ylc-theme-tab ylc-theme-focus-ring-soft', tab === item.key && 'ylc-theme-tab-active')}
               aria-pressed={tab === item.key}
             >
               <item.icon size={16} />

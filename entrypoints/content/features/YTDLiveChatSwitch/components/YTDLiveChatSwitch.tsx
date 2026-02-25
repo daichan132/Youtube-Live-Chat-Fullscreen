@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { IoChatboxSharp } from 'react-icons/io5'
 import { useShallow } from 'zustand/shallow'
+import { IoChatboxSharp } from '@/shared/components/icons'
 import { useGlobalSettingStore } from '@/shared/stores'
 
 export const YTDLiveChatSwitch = () => {

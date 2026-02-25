@@ -1,11 +1,11 @@
-import classNames from 'classnames'
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbCheck } from 'react-icons/tb'
 import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontFamilyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
+import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { cn } from '@/shared/utils/cn'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { DEFAULT_FONT_OPTION, FEATURED_FONT_VALUES, FONT_FAMILY_OPTIONS } from './fontFamilyOptions'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
@@ -199,10 +199,7 @@ export const FontFamilyInputUI = ({
       <button
         ref={triggerRef}
         type='button'
-        className={classNames(
-          'ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring',
-          readOnly && 'ylc-font-combobox-trigger-readonly',
-        )}
+        className={cn('ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring', readOnly && 'ylc-font-combobox-trigger-readonly')}
         onClick={handleToggleMenu}
         aria-label={t('content.setting.fontFamily')}
         aria-haspopup='listbox'
@@ -262,7 +259,7 @@ export const FontFamilyInputUI = ({
                     type='button'
                     role='option'
                     aria-selected={isSelected}
-                    className={classNames(
+                    className={cn(
                       'ylc-font-combobox-option ylc-theme-focus-ring-soft',
                       isActive && 'ylc-font-combobox-option-active',
                       isSelected && 'ylc-font-combobox-option-selected',

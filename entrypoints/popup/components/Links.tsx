@@ -1,5 +1,4 @@
-import { FaFirefox, FaGithub } from 'react-icons/fa'
-import { FaChrome } from 'react-icons/fa6'
+import { FaChrome, FaFirefox, FaGithub } from '@/shared/components/icons'
 
 const linkItems = [
   {

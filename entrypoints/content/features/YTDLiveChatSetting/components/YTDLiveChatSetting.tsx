@@ -1,14 +1,12 @@
-import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import type { IconType } from 'react-icons'
-import { RiCloseLine } from 'react-icons/ri'
-import { TbLayoutGrid, TbSettings2 } from 'react-icons/tb'
 import { useShallow } from 'zustand/react/shallow'
+import { type IconType, RiCloseLine, TbLayoutGrid, TbSettings2 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { isRTL } from '@/shared/i18n/rtl'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
+import { cn } from '@/shared/utils/cn'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
@@ -95,7 +93,7 @@ export const YTDLiveChatSetting = () => {
                 aria-selected={menuItem === item.key}
                 aria-controls={`ylc-tabpanel-${item.key}`}
                 tabIndex={menuItem === item.key ? 0 : -1}
-                className={classNames('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
+                className={cn('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
                 onClick={() => {
                   if (menuItem === item.key) return
                   setMenuItem(item.key)

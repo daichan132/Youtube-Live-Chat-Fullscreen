@@ -1,6 +1,6 @@
 import type React from 'react'
 import { memo } from 'react'
-import type { IconType } from 'react-icons'
+import type { IconType } from '@/shared/components/icons'
 
 interface PopupItemRowProps {
   icon?: IconType

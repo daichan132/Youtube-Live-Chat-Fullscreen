@@ -1,10 +1,10 @@
-import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbPlus } from 'react-icons/tb'
 import { useShallow } from 'zustand/react/shallow'
+import { TbPlus } from '@/shared/components/icons'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { cn } from '@/shared/utils/cn'
 
 export const AddPresetItem = () => {
   const { addPresetEnabled, addPresetItem } = useYTDLiveChatStore(
@@ -35,7 +35,7 @@ export const AddPresetItem = () => {
     <div className='mx-3 my-3.5'>
       <button
         type='button'
-        className={classNames(
+        className={cn(
           'ylc-add-preset-button border border-solid ylc-theme-border px-2.5 py-3 rounded-[12px] transition-colors duration-160 flex justify-center items-center cursor-pointer w-full ylc-theme-focus-ring-soft',
           addPresetEnabled
             ? 'ylc-theme-surface ylc-theme-text-primary hover:bg-[var(--ylc-hover-surface)]'

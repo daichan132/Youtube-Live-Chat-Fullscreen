@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbDownload, TbUpload } from 'react-icons/tb'
+import { TbDownload, TbUpload } from '@/shared/components/icons'
 import { buildExportData, isValidImportData, persistImportedSettings } from '../utils/dataTransfer'
 
 const handleExport = () => {

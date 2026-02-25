@@ -1,7 +1,7 @@
 import type { TFunction } from 'i18next'
 import type { ReactNode } from 'react'
-import type { IconType } from 'react-icons'
 import {
+  type IconType,
   TbBlur,
   TbClock,
   TbCrown,
@@ -13,7 +13,7 @@ import {
   TbTypography,
   TbUser,
   TbUserCircle,
-} from 'react-icons/tb'
+} from '@/shared/components/icons'
 import type { SettingItemType } from '@/shared/types/ytdLiveChatSetting'
 
 export const BASE_SETTING_ITEM_KEYS = [

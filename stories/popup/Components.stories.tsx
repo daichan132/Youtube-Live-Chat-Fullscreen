@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
+import { TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { LanguageSelector } from '@/entrypoints/popup/components/LanguageSelector'
 import { Links } from '@/entrypoints/popup/components/Links'
 import { PopupItemRow } from '@/entrypoints/popup/components/PopupItemRow'

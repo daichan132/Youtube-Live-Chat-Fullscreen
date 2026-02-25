@@ -1,7 +1,7 @@
-import classNames from 'classnames'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { cn } from '@/shared/utils/cn'
 import { buildSettingItems, PRESET_ITEM_KEYS } from '../../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
@@ -38,7 +38,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
     },
   })
   return (
-    <div className={classNames('flex flex-col p-4 gap-y-4 transition-all ylc-theme-text-primary', isOpen && 'opacity-100')}>
+    <div className={cn('flex flex-col p-4 gap-y-4 transition-all ylc-theme-text-primary', isOpen && 'opacity-100')}>
       <div className='flex flex-col gap-y-2'>
         <div className='text-lg font-bold ylc-theme-text-primary'>Setting (View Only)</div>
         <div>
@@ -46,7 +46,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
             return (
               <React.Fragment key={item.title}>
                 <div
-                  className={classNames(
+                  className={cn(
                     'flex flex-wrap items-center justify-between py-2 ylc-theme-text-primary',
                     !item.disable && 'rounded-lg',
                     item.disable && 'opacity-50 pointer-events-none',
@@ -58,9 +58,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
                     </span>
                     <div>{item.title}</div>
                   </div>
-                  <div
-                    className={classNames('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}
-                  >
+                  <div className={cn('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}>
                     <div className='ylc-action-inner'>{item.data}</div>
                   </div>
                 </div>

@@ -1,7 +1,6 @@
 import type { TFunction } from 'i18next'
 import type React from 'react'
-import type { IconType } from 'react-icons'
-import { TbArchive, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from 'react-icons/tb'
+import { type IconType, TbArchive, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { DataTransfer } from '../components/DataTransfer'
 import { LanguageSelector } from '../components/LanguageSelector'
 import { Links } from '../components/Links'

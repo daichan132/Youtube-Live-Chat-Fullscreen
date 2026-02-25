@@ -9,4 +9,9 @@ export default defineConfig({
     default_locale: 'en',
     permissions: ['activeTab', 'storage'],
   },
+  vite: () => ({
+    build: {
+      target: 'esnext',
+    },
+  }),
 })

@@ -1,4 +1,4 @@
-import type { IconType } from 'react-icons'
+import type { IconType } from '@/shared/components/icons'
 
 export interface SettingItemType {
   icon: IconType

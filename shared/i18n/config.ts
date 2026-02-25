@@ -123,7 +123,7 @@ i18n
     fallbackLng: 'en',
     supportedLngs: getSupportedLanguageCodes(),
     detection: {
-      convertDetectedLanguage: detectedLanguage => resolveLanguageCode(detectedLanguage),
+      convertDetectedLanguage: (detectedLanguage: string) => resolveLanguageCode(detectedLanguage),
     },
     debug: false,
   })

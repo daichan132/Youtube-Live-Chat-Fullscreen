@@ -1,8 +1,8 @@
-import classNames from 'classnames'
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { cn } from '@/shared/utils/cn'
 import { buildSettingItems, SETTING_ITEM_KEYS } from '../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitch } from './YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPicker } from './YLCChangeItems/BgColorPicker'
@@ -52,7 +52,7 @@ export const SettingContent = () => {
       {items.map((item, i) => (
         <React.Fragment key={item.title}>
           <div
-            className={classNames(
+            className={cn(
               'flex flex-wrap justify-between items-center transition-all duration-160 opacity-100 ylc-theme-text-primary',
               !item.disable && 'px-3 py-2 rounded-lg',
               item.disable && 'h-0 py-0 px-3 opacity-0 pointer-events-none overflow-hidden',
@@ -64,7 +64,7 @@ export const SettingContent = () => {
               </span>
               <p className='ylc-theme-text-primary'>{item.title}</p>
             </div>
-            <div className={classNames('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}>
+            <div className={cn('ylc-action-slot ylc-action-slot-setting', item.actionWidth === 'wide' && 'ylc-action-slot-wide')}>
               <div className='ylc-action-inner'>{item.data}</div>
             </div>
           </div>
