@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { detectChatMode } from './detectChatMode'
 
+const setLocation = (path: string) => {
+  const base = window.location.origin
+  window.history.pushState({}, '', `${base}${path}`)
+}
+
 const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive?: boolean; isLiveContent?: boolean }) => {
   const moviePlayer = document.createElement('div') as HTMLElement & {
     getVideoData?: () => { isLive?: boolean; isLiveContent?: boolean }
@@ -42,11 +47,12 @@ const createArchiveOpenControl = () => {
 describe('detectChatMode', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
+    setLocation('/watch?v=current-video')
   })
 
   it('returns archive when extension has borrowed replay iframe', () => {
     attachExtensionIframe({
-      src: 'https://www.youtube.com/live_chat_replay?v=archive-video',
+      src: 'https://www.youtube.com/live_chat_replay?v=current-video',
       owned: false,
     })
 
@@ -55,7 +61,7 @@ describe('detectChatMode', () => {
 
   it('returns live when extension has managed live iframe', () => {
     attachExtensionIframe({
-      src: 'https://www.youtube.com/live_chat?v=live-video',
+      src: 'https://www.youtube.com/live_chat?v=current-video',
       owned: true,
       source: 'live_direct',
     })
@@ -108,5 +114,48 @@ describe('detectChatMode', () => {
     createMoviePlayer({ isLive: false })
 
     expect(detectChatMode()).toBe('none')
+  })
+
+  describe('SPA navigation race condition', () => {
+    it('rejects stale native replay iframe when URL points to a new video', () => {
+      // Simulate: archive video A → live video B navigation.
+      // URL updated to B, but DOM video-id still shows A.
+      setLocation('/watch?v=live-video-B')
+
+      const watchFlexy = document.createElement('ytd-watch-flexy')
+      watchFlexy.setAttribute('video-id', 'archive-video-A')
+      document.body.appendChild(watchFlexy)
+
+      // Stale native replay iframe from video A
+      const frame = document.createElement('ytd-live-chat-frame')
+      const iframe = document.createElement('iframe')
+      iframe.className = 'ytd-live-chat-frame'
+      iframe.src = 'https://www.youtube.com/live_chat_replay?v=archive-video-A'
+      frame.appendChild(iframe)
+      document.body.appendChild(frame)
+
+      const moviePlayer = createMoviePlayer({ isLive: true })
+      moviePlayer.setAttribute('video-id', 'archive-video-A')
+
+      // URL-priority video ID (B) does not match iframe video ID (A),
+      // so the stale iframe is skipped and isYouTubeLiveNow() returns live.
+      expect(detectChatMode()).toBe('live')
+    })
+
+    it('rejects stale extension iframe when URL points to a new video', () => {
+      setLocation('/watch?v=live-video-B')
+
+      // Extension iframe still referencing old archive video A
+      attachExtensionIframe({
+        src: 'https://www.youtube.com/live_chat_replay?v=archive-video-A',
+        owned: false,
+      })
+
+      createMoviePlayer({ isLive: true })
+
+      // Extension iframe video ID (A) does not match URL video ID (B),
+      // so the extension iframe is skipped and isYouTubeLiveNow() returns live.
+      expect(detectChatMode()).toBe('live')
+    })
   })
 })

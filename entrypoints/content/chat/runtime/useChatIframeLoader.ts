@@ -3,7 +3,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
 import { resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
-import { getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { getVideoIdFromUrl, getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../../features/YTDLiveChatIframe/styles/iframe.css?inline'
 import {
@@ -33,20 +33,7 @@ const LOAD_STATE_ORDER: Record<IframeLoadState, number> = {
 
 const TRANSITION_CHECK_INTERVAL_MS = 1000
 
-const getPageVideoIdFromUrl = () => {
-  try {
-    const url = new URL(window.location.href)
-    const queryVideoId = url.searchParams.get('v')
-    if (queryVideoId) return queryVideoId
-    const livePathMatch = url.pathname.match(/\/live\/([a-zA-Z0-9_-]+)/)
-    if (livePathMatch?.[1]) return livePathMatch[1]
-  } catch {
-    // Ignore invalid URL parsing and fall back to DOM-derived ID.
-  }
-  return null
-}
-
-const getCurrentPageVideoId = () => getPageVideoIdFromUrl() ?? getYouTubeVideoId()
+const getCurrentPageVideoId = () => getVideoIdFromUrl() ?? getYouTubeVideoId()
 
 const isArchiveMode = (mode: ChatMode) => mode === 'archive'
 
