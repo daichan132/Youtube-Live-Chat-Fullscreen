@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
-
-import { useIdle } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
+import { useIdle } from '@/shared/hooks/useIdle'
 
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 

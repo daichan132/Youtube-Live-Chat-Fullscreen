@@ -1,8 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react'
 import React, { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
-import type { ColorResult, RGBColor } from 'react-color'
+import type { RgbaColor } from 'react-colorful'
 
-const ChromePickerLazy = lazy(() => import('react-color').then(mod => ({ default: mod.ChromePicker })))
+const RgbaColorPickerLazy = lazy(() => import('react-colorful').then(mod => ({ default: mod.RgbaColorPicker })))
 
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
@@ -10,7 +10,11 @@ import { useYLCBgColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/
 
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
+
+const toRgba = (c: RGBColor): RgbaColor => ({ r: c.r, g: c.g, b: c.b, a: c.a ?? 1 })
+const fromRgba = (c: RgbaColor): RGBColor => ({ r: c.r, g: c.g, b: c.b, a: c.a })
 
 const getPreviewBorderColor = (rgba: RGBColor) => {
   const alpha = typeof rgba.a === 'number' ? rgba.a : 1
@@ -53,10 +57,11 @@ export const BgColorPicker = () => {
   }, [display])
 
   const onChange = useCallback(
-    (c: ColorResult) => {
-      changeColor(c.rgb)
-      updateYLCStyle({ bgColor: c.rgb })
-      setRgba(c.rgb)
+    (c: RgbaColor) => {
+      const rgb = fromRgba(c)
+      changeColor(rgb)
+      updateYLCStyle({ bgColor: rgb })
+      setRgba(rgb)
     },
     [changeColor, updateYLCStyle],
   )
@@ -81,7 +86,7 @@ export const BgColorPickerUI = React.forwardRef<
     menuRef?: React.RefObject<HTMLDivElement | null>
     display?: boolean
     setDisplay?: Dispatch<SetStateAction<boolean>>
-    onChange?: (c: ColorResult) => void
+    onChange?: (c: RgbaColor) => void
   }
 >(({ rgba, triggerRef, menuRef, display, setDisplay, onChange }, ref) => {
   const { t } = useTranslation()
@@ -127,21 +132,8 @@ export const BgColorPickerUI = React.forwardRef<
       </button>
       <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
         {display ? (
-          <Suspense fallback={<div style={{ width: 225, height: 254 }} />}>
-            <ChromePickerLazy
-              color={rgba}
-              onChange={onChange}
-              styles={{
-                default: {
-                  picker: {
-                    border: 'var(--ylc-border-width) solid var(--ylc-border)',
-                    borderRadius: 5,
-                    overflow: 'hidden',
-                    boxShadow: 'none',
-                  },
-                },
-              }}
-            />
+          <Suspense fallback={<div style={{ width: 200, height: 200 }} />}>
+            <RgbaColorPickerLazy color={toRgba(rgba)} onChange={onChange} />
           </Suspense>
         ) : null}
       </div>

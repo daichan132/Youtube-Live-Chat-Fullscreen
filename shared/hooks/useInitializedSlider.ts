@@ -1,19 +1,24 @@
 import type React from 'react'
 import { useRef } from 'react'
 
-import { useSlider } from 'react-use'
+import { useSlider } from './useSlider'
 
-type Options = NonNullable<Parameters<typeof useSlider>[1]>
+type Options = {
+  onScrub?: (value: number) => void
+  onScrubStart?: () => void
+  onScrubStop?: (value: number) => void
+}
 
 interface InitializedSliderOptions extends Options {
   initialValue: number
 }
 
-interface InitializedSliderHook<TElement> extends ReturnType<typeof useSlider> {
+interface InitializedSliderHook<TElement> {
   ref: React.RefObject<TElement>
+  value: number
+  isSliding: boolean
 }
 
-// TODO: remove once https://github.com/streamich/react-use/pull/2164 gets merged
 export function useInitializedSlider<TElement extends HTMLElement>({
   initialValue,
   ...options

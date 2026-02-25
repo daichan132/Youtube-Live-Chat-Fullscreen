@@ -1,39 +1,17 @@
 import classNames from 'classnames'
-import { type ComponentType, useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { IconType } from 'react-icons'
 import { RiCloseLine } from 'react-icons/ri'
 import { TbLayoutGrid, TbSettings2 } from 'react-icons/tb'
-import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
+import { Modal } from '@/shared/components/Modal'
 import { isRTL } from '@/shared/i18n/rtl'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
-
-const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
-
-const customStyles = {
-  overlay: {
-    backgroundColor: 'rgba(0, 0, 0, 0)',
-    zIndex: 1000000,
-  },
-  content: {
-    top: '50%',
-    left: '50%',
-    right: 'auto',
-    bottom: 'auto',
-    marginRight: '-50%',
-    transform: 'translate(-50%, -50%)',
-    padding: 0,
-    outline: 'none',
-    border: 'none',
-    backgroundColor: 'transparent',
-    overflow: 'none',
-  },
-}
 
 export const YTDLiveChatSetting = () => {
   const themeMode = useGlobalSettingStore(state => state.themeMode)
@@ -90,16 +68,14 @@ export const YTDLiveChatSetting = () => {
   }, [isOpenSettingModal, resolvedThemeMode])
 
   return (
-    <ModalSafeForReact19
+    <Modal
       isOpen={isOpenSettingModal}
-      style={customStyles}
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
       onRequestClose={() => setIsOpenSettingModal(false)}
       onAfterOpen={focusActiveTab}
       onAfterClose={() => setIsHover(false)}
-      appElement={document.body}
       parentSelector={getModalParentElement}
     >
       <div
@@ -183,6 +159,6 @@ export const YTDLiveChatSetting = () => {
           </div>
         </footer>
       </div>
-    </ModalSafeForReact19>
+    </Modal>
   )
 }

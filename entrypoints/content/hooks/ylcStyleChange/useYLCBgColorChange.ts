@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
-import type { RGBColor } from 'react-color'
 import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
+import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 import { YLC_BG_COLOR_PROPERTIES, YLC_BG_DARKEN_PROPERTIES, YLC_BG_TRANSPARENT_PROPERTIES } from './ylcStyleConstants'
 

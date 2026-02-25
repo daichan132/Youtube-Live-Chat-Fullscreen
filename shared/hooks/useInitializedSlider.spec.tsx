@@ -7,7 +7,7 @@ const sliderState = vi.hoisted(() => ({
   lastOptions: null as null | { onScrub?: (value: number) => void },
 }))
 
-vi.mock('react-use', () => ({
+vi.mock('./useSlider', () => ({
   useSlider: (_ref: unknown, options: { onScrub?: (value: number) => void }) => {
     sliderState.lastOptions = options
     return { value: sliderState.sliderValue, isSliding: false }

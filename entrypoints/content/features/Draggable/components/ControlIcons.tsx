@@ -1,9 +1,9 @@
 import type { DraggableAttributes } from '@dnd-kit/core'
 import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
 import type { CSSProperties } from 'react'
-import type { RGBColor } from 'react-color'
 import { useTranslation } from 'react-i18next'
 import { TbAdjustmentsHorizontal, TbGripVertical } from 'react-icons/tb'
+import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 
 interface DragProps {

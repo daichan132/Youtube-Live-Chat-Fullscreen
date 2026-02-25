@@ -1,16 +1,12 @@
 import { render, waitFor } from '@testing-library/react'
-import { useIdle } from 'react-use'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useIdle } from '@/shared/hooks/useIdle'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { DisplayEffect } from './DisplayEffect'
 
-vi.mock('react-use', async () => {
-  const actual = await vi.importActual<typeof import('react-use')>('react-use')
-  return {
-    ...actual,
-    useIdle: vi.fn(),
-  }
-})
+vi.mock('@/shared/hooks/useIdle', () => ({
+  useIdle: vi.fn(),
+}))
 
 const baseState = useYTDLiveChatNoLsStore.getState()
 

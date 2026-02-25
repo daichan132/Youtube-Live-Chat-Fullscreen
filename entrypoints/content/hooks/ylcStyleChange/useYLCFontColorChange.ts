@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import type { RGBColor } from 'react-color'
+import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 import { YLC_FONT_COLOR_LIGHT_PROPERTIES, YLC_FONT_COLOR_PROPERTIES } from './ylcStyleConstants'
 

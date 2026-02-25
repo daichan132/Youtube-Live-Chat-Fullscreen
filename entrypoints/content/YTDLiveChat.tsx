@@ -1,9 +1,9 @@
-import { useCallback, useRef } from 'react'
-import { CSSTransition } from 'react-transition-group'
+import { useCallback } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasFullscreenChatSource'
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
+import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
@@ -27,7 +27,6 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
       setYTDLiveChat: state.setYTDLiveChat,
     })),
   )
-  const nodeRef = useRef(null)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
@@ -58,28 +57,27 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   // Keep YouTube native layout untouched unless our fullscreen overlay is actually visible.
   useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible && iframeElement !== null)
 
+  const overlayTransition = useCSSTransition({
+    in: isOverlayVisible,
+    timeout: { enter: 200, exit: 200 },
+    classNames: {
+      enter: 'opacity-0',
+      enterActive: 'transition-opacity opacity-100 duration-200',
+      exitActive: 'transition-opacity opacity-0 duration-200',
+    },
+    unmountOnExit: true,
+  })
+
   return (
     <>
       <YTDLiveChatSetting />
-      <CSSTransition
-        nodeRef={nodeRef}
-        in={isOverlayVisible}
-        timeout={500}
-        classNames={{
-          appear: 'opacity-0',
-          appearActive: 'transition-opacity opacity-100 duration-200',
-          enter: 'opacity-0',
-          enterActive: 'transition-opacity opacity-100 duration-200',
-          exitActive: 'transition-opacity opacity-0 duration-200',
-        }}
-        unmountOnExit
-      >
-        <div ref={nodeRef}>
+      {overlayTransition.isMounted && (
+        <div className={overlayTransition.className}>
           <Draggable>
             <YTDLiveChatIframe mode={mode} />
           </Draggable>
         </div>
-      </CSSTransition>
+      )}
     </>
   )
 }

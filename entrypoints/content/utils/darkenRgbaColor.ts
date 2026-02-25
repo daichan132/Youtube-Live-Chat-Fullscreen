@@ -1,4 +1,4 @@
-import type { RGBColor } from 'react-color'
+import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 
 export const darkenRgbaColor = (rgba: RGBColor, amount: number) => {
   let r = rgba.r

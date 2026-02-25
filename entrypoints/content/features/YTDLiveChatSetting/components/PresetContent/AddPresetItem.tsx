@@ -2,7 +2,6 @@ import classNames from 'classnames'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbPlus } from 'react-icons/tb'
-import { v4 as uuidv4 } from 'uuid'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
@@ -30,7 +29,7 @@ export const AddPresetItem = () => {
       userIconDisplay: state.userIconDisplay,
       superChatBarDisplay: state.superChatBarDisplay,
     }
-    addPresetItem(uuidv4(), t('content.preset.addItemTitle'), ylcStyle)
+    addPresetItem(crypto.randomUUID(), t('content.preset.addItemTitle'), ylcStyle)
   }, [addPresetItem, t])
   return (
     <div className='mx-3 my-3.5'>

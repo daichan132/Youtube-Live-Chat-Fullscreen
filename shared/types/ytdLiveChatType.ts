@@ -1,4 +1,9 @@
-import type { RGBColor } from 'react-color'
+export interface RGBColor {
+  r: number
+  g: number
+  b: number
+  a?: number
+}
 
 export interface sizeType {
   width: number

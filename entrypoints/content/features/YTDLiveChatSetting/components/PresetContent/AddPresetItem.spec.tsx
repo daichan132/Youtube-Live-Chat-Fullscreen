@@ -13,9 +13,10 @@ vi.mock('react-i18next', () => ({
   },
 }))
 
-vi.mock('uuid', () => ({
-  v4: () => 'preset-test-id',
-}))
+vi.stubGlobal('crypto', {
+  ...globalThis.crypto,
+  randomUUID: () => 'preset-test-id',
+})
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,

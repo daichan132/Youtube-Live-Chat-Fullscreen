@@ -1,10 +1,10 @@
-import { useId, useMemo, useRef } from 'react'
+import { useId, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { CSSTransition } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggable/constants/animation'
+import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
 type YTDLiveChatIframeProps = {
@@ -15,7 +15,6 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const { t } = useTranslation()
   const id = useId()
   const { ref } = useChatIframeLoader(mode)
-  const nodeRef = useRef(null)
   const { blur, alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
       blur: state.blur,
@@ -47,6 +46,18 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   }, [fontColor])
   const overlayAlpha = bgColor.a ?? 1
 
+  const loaderTransition = useCSSTransition({
+    in: !isIframeLoaded,
+    timeout: { enter: 140, exit: 320 },
+    classNames: {
+      enter: 'opacity-0 scale-[0.995]',
+      enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
+      exit: 'opacity-100 scale-100',
+      exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
+    },
+    unmountOnExit: true,
+  })
+
   return (
     <>
       <div
@@ -64,24 +75,9 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
           }}
         />
       </div>
-      <CSSTransition
-        nodeRef={nodeRef}
-        in={!isIframeLoaded}
-        timeout={{ appear: 140, enter: 140, exit: 320 }}
-        classNames={{
-          appear: 'opacity-0 scale-[0.995]',
-          appearActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
-          enter: 'opacity-0 scale-[0.995]',
-          enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
-          exit: 'opacity-100 scale-100',
-          exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
-        }}
-        delay={70}
-        unmountOnExit
-      >
+      {loaderTransition.isMounted && (
         <div
-          ref={nodeRef}
-          className='absolute left-0 right-0 z-20 flex items-center justify-center pointer-events-auto'
+          className={`absolute left-0 right-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
           style={{
             top: isClipPath ? `${clip.header}px` : 0,
             bottom: isClipPath ? `${clip.input}px` : 0,
@@ -100,7 +96,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
             />
           </output>
         </div>
-      </CSSTransition>
+      )}
     </>
   )
 }

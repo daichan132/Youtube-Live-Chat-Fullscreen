@@ -1,16 +1,14 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { type ComponentType, useCallback, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { TbGripVertical, TbSparkles, TbTrash } from 'react-icons/tb'
-import Modal from 'react-modal'
 import { useShallow } from 'zustand/react/shallow'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
+import { Modal } from '@/shared/components/Modal'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { getModalParentElement } from '../../utils/getModalParentElement'
-
-const ModalSafeForReact19 = Modal as ComponentType<ReactModal['props']>
 
 interface PresetItemType {
   id: string
@@ -97,13 +95,12 @@ export const PresetItem = ({ id }: PresetItemType) => {
         </div>
       </div>
       {isDeleteModalOpen && (
-        <ModalSafeForReact19
+        <Modal
           isOpen={isDeleteModalOpen}
-          className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           onRequestClose={() => setIsDeleteModalOpen(false)}
           shouldReturnFocusAfterClose={true}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35 z-[1000001]'
-          appElement={document.body}
+          contentClassName='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           parentSelector={getModalParentElement}
         >
           <div className='px-5 py-4 ylc-theme-dialog-divider-bottom'>
@@ -128,7 +125,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
               {t('content.preset.delete')}
             </button>
           </div>
-        </ModalSafeForReact19>
+        </Modal>
       )}
     </div>
   )
