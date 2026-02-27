@@ -1,5 +1,9 @@
+import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 import { type BrowserContext, test as base, chromium, type Worker } from '@playwright/test'
+import { selectArchiveReplayUrl } from './support/urls/archiveReplay'
+import { findLiveUrlWithChat } from './utils/liveUrl'
 
 const pathToExtension = path.resolve('.output/chrome-mv3')
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
@@ -13,6 +17,13 @@ export type Extension = {
     set(items: Record<string, unknown>): Promise<void>
     clear(): Promise<void>
   }
+}
+
+const launchExtensionContext = async (userDataDir: string) => {
+  return chromium.launchPersistentContext(userDataDir, {
+    headless: false,
+    args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
+  })
 }
 
 const waitForMv3Worker = async (context: BrowserContext) => {
@@ -115,21 +126,61 @@ const createPageStorageAccessor = (context: BrowserContext, extensionId: string)
   }
 }
 
-export const test = base.extend<{
-  context: BrowserContext
-  extensionId: string
-  extension: Extension
-}>({
+export const test = base.extend<
+  {
+    context: BrowserContext
+    extensionId: string
+    extension: Extension
+  },
+  {
+    urlLookupContext: BrowserContext
+    liveUrl: string | null
+    archiveReplayUrl: string | null
+  }
+>({
+  // Worker-scoped: a separate browser used only for URL lookups.
+  // Resolves liveUrl / archiveReplayUrl once per worker, eliminating
+  // redundant YouTube search navigation across tests.
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
+  urlLookupContext: [async ({}, use) => {
+    const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-url-lookup-'))
+    const ctx = await launchExtensionContext(userDataDir)
+    // Wait for extension boot so URL lookup pages can access YouTube properly
+    await waitForMv3Worker(ctx)
+    await use(ctx)
+    await ctx.close()
+    fs.rmSync(userDataDir, { recursive: true, force: true })
+  }, { scope: 'worker', timeout: 120000 }],
+
+  liveUrl: [async ({ urlLookupContext }, use) => {
+    const tempPage = await urlLookupContext.newPage()
+    try {
+      const url = await findLiveUrlWithChat(tempPage)
+      await use(url)
+    } finally {
+      await tempPage.close()
+    }
+  }, { scope: 'worker', timeout: 120000 }],
+
+  archiveReplayUrl: [async ({ urlLookupContext }, use) => {
+    const tempPage = await urlLookupContext.newPage()
+    try {
+      const url = await selectArchiveReplayUrl(tempPage)
+      await use(url)
+    } finally {
+      await tempPage.close()
+    }
+  }, { scope: 'worker', timeout: 120000 }],
+
+  // Test-scoped: each test gets a fresh browser context (required for fullscreen).
   // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
   context: async ({}, use, testInfo) => {
     const userDataDir = testInfo.outputPath('user-data-dir')
-    const context = await chromium.launchPersistentContext(userDataDir, {
-      headless: false,
-      args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
-    })
+    const context = await launchExtensionContext(userDataDir)
     await use(context)
     await context.close()
   },
+
   extension: [
     async ({ context }, use) => {
       const worker = await waitForMv3Worker(context)
@@ -153,6 +204,7 @@ export const test = base.extend<{
     },
     { timeout: 60000 },
   ],
+
   extensionId: async ({ extension }, use) => {
     await use(extension.id)
   },

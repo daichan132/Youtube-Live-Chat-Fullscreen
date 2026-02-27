@@ -2,7 +2,6 @@ import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
-import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
 
 const isExtensionArchiveIframeBorrowed = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -13,17 +12,16 @@ const isExtensionArchiveIframeBorrowed = () => {
 }
 
 test.describe('archive replay chat', { tag: '@archive' }, () => {
-  test('youtube archive replay chat works in fullscreen', async ({ page }) => {
+  test('youtube archive replay chat works in fullscreen', async ({ page, archiveReplayUrl }) => {
     test.setTimeout(150000)
 
-    const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
-    if (!selectedArchiveUrl) {
+    if (!archiveReplayUrl) {
       await captureChatState(page, test.info(), 'archive-replay-url-selection-failed')
       test.skip(true, 'No archive replay URL satisfied preconditions.')
       return
     }
 
-    const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
+    const archiveReady = await openArchiveWatchPage(page, archiveReplayUrl, { maxDurationMs: 30000 })
     if (!archiveReady) {
       await captureChatState(page, test.info(), 'archive-replay-precondition-missing')
       test.skip(true, 'Selected archive URL did not expose archive chat container in time.')

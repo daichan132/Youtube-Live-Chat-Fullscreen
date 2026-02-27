@@ -1,7 +1,6 @@
 import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 
 const hasOverlayIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -19,10 +18,9 @@ const getOverlayFontFamily = () => {
 }
 
 test.describe('chat style settings', { tag: '@live' }, () => {
-  test('settings update live chat font family', async ({ page }) => {
+  test('settings update live chat font family', async ({ page, liveUrl }) => {
     test.setTimeout(180000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
@@ -30,6 +28,8 @@ test.describe('chat style settings', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+
+    await yt.goto(liveUrl)
 
     await yt.waitForNativeChat()
     await yt.enterFullscreen()

@@ -2,7 +2,6 @@ import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
-import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -64,17 +63,16 @@ const getNativeChatDebugState = () => {
 }
 
 test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
-  test('restore native chat after archive fullscreen chat closes', async ({ page }) => {
+  test('restore native chat after archive fullscreen chat closes', async ({ page, archiveReplayUrl }) => {
     test.setTimeout(150000)
 
-    const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
-    if (!selectedArchiveUrl) {
+    if (!archiveReplayUrl) {
       await captureChatState(page, test.info(), 'restore-archive-url-selection-failed')
       test.skip(true, 'No archive replay URL satisfied preconditions.')
       return
     }
 
-    const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
+    const archiveReady = await openArchiveWatchPage(page, archiveReplayUrl, { maxDurationMs: 30000 })
     if (!archiveReady) {
       await captureChatState(page, test.info(), 'restore-archive-precondition-missing')
       test.skip(true, 'Selected archive URL did not expose archive chat container in time.')

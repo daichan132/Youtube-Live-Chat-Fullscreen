@@ -1,7 +1,6 @@
 import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 import { FULLSCREEN_BUTTON } from '../../utils/selectors'
 
 const getPointerState = () => {
@@ -43,10 +42,9 @@ const getElementAtPoint = ({ x, y }: { x: number; y: number }) => {
 }
 
 test.describe('fullscreen chat does not block clicks', { tag: '@live' }, () => {
-  test('fullscreen chat does not block player clicks', async ({ page }) => {
+  test('fullscreen chat does not block player clicks', async ({ page, liveUrl }) => {
     test.setTimeout(140000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with playable chat found.')
       return
@@ -54,6 +52,8 @@ test.describe('fullscreen chat does not block clicks', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+
+    await yt.goto(liveUrl)
 
     const nativeChatReady = await yt.waitForNativeChat()
     if (!nativeChatReady) {

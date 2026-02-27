@@ -1,6 +1,5 @@
 import { expect, test } from '../../fixtures'
 import { ExtensionPopup } from '../../pages/ExtensionPopup'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 import { importSettingsViaPopup, readStorageEntry } from '../../utils/popupHelpers'
 import { switchButtonSelector } from '../../utils/selectors'
 
@@ -71,7 +70,7 @@ const enterFullscreenAndActivateChat = async (page: import('@playwright/test').P
 }
 
 test.describe('imported settings fullscreen', { tag: '@live' }, () => {
-  test('imported settings are applied in fullscreen chat', async ({ page, extension }) => {
+  test('imported settings are applied in fullscreen chat', async ({ page, extension, liveUrl }) => {
     test.setTimeout(180000)
 
     await importSettingsViaPopup(page, extension, {
@@ -83,11 +82,12 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     await expect.poll(async () => (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state.fontSize ?? null).toBe(42)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
     }
+
+    await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
     const result = await enterFullscreenAndActivateChat(page)
     if (!result.ready) {
@@ -106,14 +106,15 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       .toBe('42px')
   })
 
-  test('settings imported while chat is active are applied without reload', async ({ context, page, extension }) => {
+  test('settings imported while chat is active are applied without reload', async ({ context, page, extension, liveUrl }) => {
     test.setTimeout(180000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
     }
+
+    await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
     const result = await enterFullscreenAndActivateChat(page)
     if (!result.ready) {
@@ -221,14 +222,15 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     await popup.close()
   })
 
-  test('sequential imports each overwrite previous settings and presets', async ({ context, page, extension }) => {
+  test('sequential imports each overwrite previous settings and presets', async ({ context, page, extension, liveUrl }) => {
     test.setTimeout(180000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
     }
+
+    await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
     const result = await enterFullscreenAndActivateChat(page)
     if (!result.ready) {

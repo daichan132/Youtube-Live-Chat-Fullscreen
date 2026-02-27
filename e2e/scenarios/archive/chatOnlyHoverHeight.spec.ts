@@ -2,7 +2,6 @@ import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
-import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
 
 type OverlayClipSnapshot = {
   exists: boolean
@@ -225,15 +224,14 @@ const setPersistedChatOnlyMode = async (extension: import('../../fixtures').Exte
   return true
 }
 
-const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/test').Page) => {
-  const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
-  if (!selectedArchiveUrl) {
+const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/test').Page, archiveReplayUrl: string | null) => {
+  if (!archiveReplayUrl) {
     await captureChatState(page, test.info(), 'chat-only-auto-clip-url-selection-failed')
     test.skip(true, 'No archive replay URL satisfied preconditions.')
     return false
   }
 
-  const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
+  const archiveReady = await openArchiveWatchPage(page, archiveReplayUrl, { maxDurationMs: 30000 })
   if (!archiveReady) {
     await captureChatState(page, test.info(), 'chat-only-auto-clip-precondition-missing')
     test.skip(true, 'Selected archive URL did not expose archive chat container in time.')
@@ -278,13 +276,13 @@ const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/tes
 }
 
 test.describe('chat-only hover height', { tag: '@archive' }, () => {
-  test('chat-only clip enables after load without any overlay hover', async ({ page, extension }) => {
+  test('chat-only clip enables after load without any overlay hover', async ({ page, extension, archiveReplayUrl }) => {
     test.setTimeout(180000)
 
     const configured = await setPersistedChatOnlyMode(extension)
     expect(configured).toBe(true)
 
-    const ready = await openArchiveOverlayWithExtensionChat(page)
+    const ready = await openArchiveOverlayWithExtensionChat(page, archiveReplayUrl)
     if (!ready) return
 
     const movedAway = await movePointerAwayFromOverlay(page)
@@ -332,13 +330,13 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(hoverProbe?.enterCount ?? -1).toBe(0)
   })
 
-  test('chat-only clip re-enables automatically after first hover without pointer leave', async ({ page, extension }) => {
+  test('chat-only clip re-enables automatically after first hover without pointer leave', async ({ page, extension, archiveReplayUrl }) => {
     test.setTimeout(180000)
 
     const configured = await setPersistedChatOnlyMode(extension)
     expect(configured).toBe(true)
 
-    const ready = await openArchiveOverlayWithExtensionChat(page)
+    const ready = await openArchiveOverlayWithExtensionChat(page, archiveReplayUrl)
     if (!ready) return
 
     const movedAway = await movePointerAwayFromOverlay(page)

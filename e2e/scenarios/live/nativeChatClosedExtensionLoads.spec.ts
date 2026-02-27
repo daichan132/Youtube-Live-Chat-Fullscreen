@@ -2,7 +2,6 @@ import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { hasPlayableChat } from '../../support/diagnostics'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -70,10 +69,9 @@ const closeNativeChat = async (page: import('@playwright/test').Page) => {
 }
 
 test.describe('native chat closed extension loads', { tag: '@live' }, () => {
-  test('extension chat loads when native chat is closed', async ({ page }) => {
+  test('extension chat loads when native chat is closed', async ({ page, liveUrl }) => {
     test.setTimeout(140000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with playable chat found from configured targets/search.')
       return
@@ -81,6 +79,8 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+
+    await yt.goto(liveUrl)
 
     await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
 

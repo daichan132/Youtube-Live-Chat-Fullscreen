@@ -2,13 +2,11 @@ import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { captureChatState, isExtensionChatLoaded, isNativeLiveChatPlayable } from '../../support/diagnostics'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 
 test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
-  test('auto show fullscreen chat when enabled', async ({ page }) => {
+  test('auto show fullscreen chat when enabled', async ({ page, liveUrl }) => {
     test.setTimeout(160000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
@@ -16,6 +14,8 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+
+    await yt.goto(liveUrl)
 
     await yt.waitForNativeChat()
     const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(

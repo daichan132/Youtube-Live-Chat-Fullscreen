@@ -2,7 +2,6 @@ import { writeFile } from 'node:fs/promises'
 import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { findLiveUrlWithChat } from '../../utils/liveUrl'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -140,10 +139,9 @@ const collectFullscreenChatOffset = () => {
 }
 
 test.describe('fullscreen chat offset', { tag: '@live' }, () => {
-  test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
+  test('fullscreen chat overlay aligns to viewport', async ({ page, liveUrl }) => {
     test.setTimeout(180000)
 
-    const liveUrl = await findLiveUrlWithChat(page)
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
       return
@@ -151,6 +149,8 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+
+    await yt.goto(liveUrl)
 
     await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
     await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
