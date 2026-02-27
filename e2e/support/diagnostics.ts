@@ -484,6 +484,59 @@ export const ensureNativeReplayUnavailable = async (page: Page, options: { maxDu
   return false
 }
 
+/**
+ * Check if native chat iframe has playable chat (live or archive).
+ * Self-contained for use with page.evaluate / page.waitForFunction.
+ */
+export const hasPlayableChat = () => {
+  const chatFrame =
+    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
+    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
+  const doc = chatFrame?.contentDocument ?? null
+  const href = doc?.location?.href ?? ''
+  if (!doc || !href || href.includes('about:blank')) return false
+  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
+  const text = doc.body?.textContent?.toLowerCase() ?? ''
+  if (text.includes('live chat replay is not available') || text.includes('chat is disabled') || text.includes('live chat is disabled')) {
+    return false
+  }
+  const renderer = doc.querySelector('yt-live-chat-renderer')
+  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+  return Boolean(renderer && itemList)
+}
+
+/**
+ * Check if native chat iframe has playable live chat (includes /live_chat href check).
+ * Self-contained for use with page.evaluate / page.waitForFunction.
+ */
+export const isNativeLiveChatPlayable = () => {
+  const iframe =
+    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
+    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
+  if (!iframe) return false
+
+  const readIframeHref = (target: HTMLIFrameElement) => {
+    try {
+      const docHref = target.contentDocument?.location?.href ?? ''
+      if (docHref) return docHref
+    } catch {
+      // Ignore CORS/DOM access errors and fall back to src.
+    }
+    return target.getAttribute('src') ?? target.src ?? ''
+  }
+
+  const href = readIframeHref(iframe)
+  const doc = iframe.contentDocument ?? null
+  if (!doc || !href || href.includes('about:blank')) return false
+  if (!href.includes('/live_chat')) return false
+  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
+  const text = doc.body?.textContent?.toLowerCase() ?? ''
+  if (text.includes('live chat replay is not available') || text.includes('chat is disabled') || text.includes('live chat is disabled')) {
+    return false
+  }
+  return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
+}
+
 const isNativeArchivePlayable = () => {
   const unavailableMarkers = ['live chat replay is not available', 'chat is disabled', 'live chat is disabled']
   const hasUnavailableText = (text: string) => {

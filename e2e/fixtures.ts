@@ -1,8 +1,19 @@
 import path from 'node:path'
-import { type BrowserContext, test as base, chromium } from '@playwright/test'
+import { type BrowserContext, test as base, chromium, type Worker } from '@playwright/test'
 
 const pathToExtension = path.resolve('.output/chrome-mv3')
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
+
+export type Extension = {
+  id: string
+  worker: Worker | null
+  url: (path: string) => string
+  storage: {
+    get(keys?: string | string[] | null): Promise<Record<string, unknown>>
+    set(items: Record<string, unknown>): Promise<void>
+    clear(): Promise<void>
+  }
+}
 
 const waitForMv3Worker = async (context: BrowserContext) => {
   const deadline = Date.now() + EXTENSION_BOOT_TIMEOUT_MS
@@ -22,17 +33,6 @@ const waitForMv3Worker = async (context: BrowserContext) => {
   await warmup.close()
 
   return worker
-}
-
-const waitForMv2Background = async (context: BrowserContext) => {
-  const deadline = Date.now() + EXTENSION_BOOT_TIMEOUT_MS
-  let page = context.backgroundPages().find(bg => bg.url().startsWith('chrome-extension://')) ?? null
-  while (!page && Date.now() < deadline) {
-    const timeout = Math.min(3000, Math.max(1, deadline - Date.now()))
-    await context.waitForEvent('backgroundpage', { timeout }).catch(() => null)
-    page = context.backgroundPages().find(bg => bg.url().startsWith('chrome-extension://')) ?? null
-  }
-  return page
 }
 
 const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
@@ -55,11 +55,72 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
   }
 }
 
+const createWorkerStorageAccessor = (worker: Worker): Extension['storage'] => ({
+  get: async (keys?: string | string[] | null) => {
+    return worker.evaluate(async k => {
+      if (k === undefined || k === null) return chrome.storage.local.get(null)
+      return chrome.storage.local.get(k)
+    }, keys ?? null)
+  },
+  set: async (items: Record<string, unknown>) => {
+    await worker.evaluate(async i => {
+      await chrome.storage.local.set(i)
+    }, items)
+  },
+  clear: async () => {
+    await worker.evaluate(async () => {
+      await chrome.storage.local.clear()
+    })
+  },
+})
+
+const createPageStorageAccessor = (context: BrowserContext, extensionId: string): Extension['storage'] => {
+  const popupUrl = `chrome-extension://${extensionId}/popup.html`
+
+  const withPopupPage = async <T>(fn: (page: import('@playwright/test').Page) => Promise<T>): Promise<T> => {
+    const page = await context.newPage()
+    try {
+      await page.goto(popupUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
+      const result = await fn(page)
+      await page.goto('about:blank')
+      return result
+    } finally {
+      await page.close().catch(() => null)
+    }
+  }
+
+  return {
+    get: async (keys?: string | string[] | null) => {
+      return withPopupPage(async page => {
+        return (await page.evaluate(async k => {
+          if (k === undefined || k === null) return chrome.storage.local.get(null)
+          return chrome.storage.local.get(k)
+        }, keys ?? null)) as Record<string, unknown>
+      })
+    },
+    set: async (items: Record<string, unknown>) => {
+      await withPopupPage(async page => {
+        await page.evaluate(async i => {
+          await chrome.storage.local.set(i)
+        }, items)
+      })
+    },
+    clear: async () => {
+      await withPopupPage(async page => {
+        await page.evaluate(async () => {
+          await chrome.storage.local.clear()
+        })
+      })
+    },
+  }
+}
+
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string
+  extension: Extension
 }>({
-  // biome-ignore lint/correctness/noEmptyPattern: <explanation>
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
   context: async ({}, use) => {
     const context = await chromium.launchPersistentContext('', {
       headless: false,
@@ -68,23 +129,31 @@ export const test = base.extend<{
     await use(context)
     await context.close()
   },
-  extensionId: [
+  extension: [
     async ({ context }, use) => {
-      let background: { url(): string } | null = null
-      if (pathToExtension.endsWith('-mv3')) {
-        background = await waitForMv3Worker(context)
-      } else {
-        background = await waitForMv2Background(context)
+      const worker = await waitForMv3Worker(context)
+
+      const extensionIdFromWorker = worker ? worker.url().split('/')[2] : null
+      const extensionId = extensionIdFromWorker ?? (await resolveExtensionIdFromChromePage(context))
+      if (!extensionId) {
+        throw new Error('Could not resolve extension ID from service worker or chrome://extensions.')
       }
 
-      const extensionIdFromBackground = background ? background.url().split('/')[2] : null
-      const extensionId = extensionIdFromBackground ?? (await resolveExtensionIdFromChromePage(context))
-      if (!extensionId) {
-        throw new Error('Could not resolve extension ID from background/service worker or chrome://extensions.')
+      const storage = worker ? createWorkerStorageAccessor(worker) : createPageStorageAccessor(context, extensionId)
+
+      const extension: Extension = {
+        id: extensionId,
+        worker,
+        url: (p: string) => `chrome-extension://${extensionId}/${p}`,
+        storage,
       }
-      await use(extensionId)
+
+      await use(extension)
     },
     { timeout: 60000 },
   ],
+  extensionId: async ({ extension }, use) => {
+    await use(extension.id)
+  },
 })
 export const expect = test.expect

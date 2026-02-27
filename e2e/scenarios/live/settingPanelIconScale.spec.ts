@@ -1,8 +1,8 @@
-import { expect, test } from '../../fixtures'
 import { getE2ETestTargets } from '../../config/testTargets'
-import { isExtensionArchiveChatPlayable, openArchiveWatchPage } from '../../support/diagnostics'
-import { reliableClick } from '../../utils/actions'
-import { switchButtonSelector } from '../../utils/selectors'
+import { expect, test } from '../../fixtures'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
+import { openArchiveWatchPage } from '../../support/diagnostics'
 
 type Box = { width: number; height: number }
 
@@ -55,12 +55,12 @@ const collectUiMetrics = (): UiMetrics => {
     .map(icon => getBox(icon))
     .filter((box): box is Box => Boolean(box))
   const closeButton = getBox(panel?.querySelector('.ylc-setting-close-button') ?? null)
-  const presetActionButtons = Array.from(panel?.querySelectorAll<HTMLButtonElement>('.ylc-preset-card .shrink-0 button') ?? []).map(button =>
-    getBox(button),
-  ).filter((box): box is Box => Boolean(box))
-  const modalButtons = Array.from(root?.querySelectorAll<HTMLElement>('.ylc-theme-dialog-border button') ?? []).map(button => getBox(button)).filter(
-    (box): box is Box => Boolean(box),
-  )
+  const presetActionButtons = Array.from(panel?.querySelectorAll<HTMLButtonElement>('.ylc-preset-card .shrink-0 button') ?? [])
+    .map(button => getBox(button))
+    .filter((box): box is Box => Boolean(box))
+  const modalButtons = Array.from(root?.querySelectorAll<HTMLElement>('.ylc-theme-dialog-border button') ?? [])
+    .map(button => getBox(button))
+    .filter((box): box is Box => Boolean(box))
   const dragIcon = panel?.querySelector('.ylc-preset-card .group svg') as SVGElement | null
   const dragIconBox = getBox(dragIcon)
   const dragIconOpacity = dragIcon ? window.getComputedStyle(dragIcon).opacity : ''
@@ -87,145 +87,142 @@ const getPresetRowCenter = () => {
   }
 }
 
-test('overlay/setting/preset control sizes stay readable on YouTube runtime', async ({ page }) => {
-  test.setTimeout(120000)
+test.describe('setting panel icon scale', { tag: '@live' }, () => {
+  test('overlay/setting/preset control sizes stay readable on YouTube runtime', async ({ page }) => {
+    test.setTimeout(120000)
 
-  const archiveReady = await openArchiveWatchPage(page, getE2ETestTargets().archive.replayUrl, { maxDurationMs: 30000 })
-  if (!archiveReady) {
-    test.skip(true, 'Archive replay URL did not expose archive chat container in time.')
-    return
-  }
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
-  await page.locator('#movie_player').hover()
+    const archiveReady = await openArchiveWatchPage(page, getE2ETestTargets().archive.replayUrl, { maxDurationMs: 30000 })
+    if (!archiveReady) {
+      test.skip(true, 'Archive replay URL did not expose archive chat container in time.')
+      return
+    }
 
-  const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!switchReady) {
-    test.skip(true, 'Fullscreen chat switch button did not appear.')
-    return
-  }
+    await yt.enterFullscreen()
 
-  if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-    await reliableClick(switchButton, page, switchButtonSelector)
-    await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  }
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
 
-  const extensionReady = await expect
-    .poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 60000 })
-    .toBe(true)
-    .then(
+    await overlay.toggleOn()
+
+    const extensionReady = await overlay.waitForArchiveChatPlayable()
+    if (!extensionReady) {
+      test.skip(true, 'Archive chat source did not become ready in this run.')
+      return
+    }
+
+    const appLocator = page.locator('#shadow-root-live-chat div[role="application"]').first()
+    const appVisible = await appLocator.waitFor({ state: 'visible', timeout: 10000 }).then(
       () => true,
       () => false,
     )
-  if (!extensionReady) {
-    test.skip(true, 'Archive chat source did not become ready in this run.')
-    return
-  }
+    if (!appVisible) {
+      test.skip(true, 'Overlay app container did not appear.')
+      return
+    }
 
-  const appLocator = page.locator('#shadow-root-live-chat div[role="application"]').first()
-  const appVisible = await appLocator.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!appVisible) {
-    test.skip(true, 'Overlay app container did not appear.')
-    return
-  }
+    const appBox = await appLocator.boundingBox()
+    if (!appBox) {
+      test.skip(true, 'Overlay app bounds could not be resolved.')
+      return
+    }
+    await page.mouse.move(appBox.x + appBox.width / 2, appBox.y + Math.min(appBox.height / 2, 100))
 
-  const appBox = await appLocator.boundingBox()
-  if (!appBox) {
-    test.skip(true, 'Overlay app bounds could not be resolved.')
-    return
-  }
-  await page.mouse.move(appBox.x + appBox.width / 2, appBox.y + Math.min(appBox.height / 2, 100))
+    const clickedSetting = await page.evaluate(clickSettingIcon)
+    if (!clickedSetting) {
+      test.skip(true, 'Setting icon did not appear.')
+      return
+    }
 
-  const clickedSetting = await page.evaluate(clickSettingIcon)
-  if (!clickedSetting) {
-    test.skip(true, 'Setting icon did not appear.')
-    return
-  }
+    const panelReady = await page
+      .waitForFunction(
+        () => {
+          const host = document.getElementById('shadow-root-live-chat')
+          const root = host?.shadowRoot ?? null
+          return Boolean(root?.querySelector('.ylc-setting-panel'))
+        },
+        undefined,
+        { timeout: 10000 },
+      )
+      .then(
+        () => true,
+        () => false,
+      )
+    if (!panelReady) {
+      test.skip(true, 'Setting panel did not open.')
+      return
+    }
 
-  const panelReady = await page
-    .waitForFunction(() => {
-      const host = document.getElementById('shadow-root-live-chat')
-      const root = host?.shadowRoot ?? null
-      return Boolean(root?.querySelector('.ylc-setting-panel'))
-    }, undefined, { timeout: 10000 })
-    .then(
-      () => true,
-      () => false,
-    )
-  if (!panelReady) {
-    test.skip(true, 'Setting panel did not open.')
-    return
-  }
+    const beforeHoverMetrics = await page.evaluate(collectUiMetrics)
+    const rowCenter = await page.evaluate(getPresetRowCenter)
+    if (!rowCenter) {
+      test.skip(true, 'Preset row was not found.')
+      return
+    }
+    await page.mouse.move(rowCenter.x, rowCenter.y)
+    await page.waitForTimeout(260)
+    const afterHoverMetrics = await page.evaluate(collectUiMetrics)
 
-  const beforeHoverMetrics = await page.evaluate(collectUiMetrics)
-  const rowCenter = await page.evaluate(getPresetRowCenter)
-  if (!rowCenter) {
-    test.skip(true, 'Preset row was not found.')
-    return
-  }
-  await page.mouse.move(rowCenter.x, rowCenter.y)
-  await page.waitForTimeout(260)
-  const afterHoverMetrics = await page.evaluate(collectUiMetrics)
+    const clickedDelete = await page.evaluate(clickPresetDeleteIcon)
+    if (!clickedDelete) {
+      test.skip(true, 'Preset delete icon did not appear.')
+      return
+    }
 
-  const clickedDelete = await page.evaluate(clickPresetDeleteIcon)
-  if (!clickedDelete) {
-    test.skip(true, 'Preset delete icon did not appear.')
-    return
-  }
+    const modalReady = await page
+      .waitForFunction(
+        () => {
+          const host = document.getElementById('shadow-root-live-chat')
+          const root = host?.shadowRoot ?? null
+          return Boolean(root?.querySelector('.ylc-theme-dialog-border button'))
+        },
+        undefined,
+        { timeout: 10000 },
+      )
+      .then(
+        () => true,
+        () => false,
+      )
+    if (!modalReady) {
+      test.skip(true, 'Preset delete confirmation modal did not open.')
+      return
+    }
 
-  const modalReady = await page
-    .waitForFunction(() => {
-      const host = document.getElementById('shadow-root-live-chat')
-      const root = host?.shadowRoot ?? null
-      return Boolean(root?.querySelector('.ylc-theme-dialog-border button'))
-    }, undefined, { timeout: 10000 })
-    .then(
-      () => true,
-      () => false,
-    )
-  if (!modalReady) {
-    test.skip(true, 'Preset delete confirmation modal did not open.')
-    return
-  }
+    const metrics = await page.evaluate(collectUiMetrics)
+    await test.info().attach('control-size-metrics', {
+      body: JSON.stringify({ beforeHoverMetrics, afterHoverMetrics, metrics }, null, 2),
+      contentType: 'application/json',
+    })
 
-  const metrics = await page.evaluate(collectUiMetrics)
-  await test.info().attach('control-size-metrics', {
-    body: JSON.stringify({ beforeHoverMetrics, afterHoverMetrics, metrics }, null, 2),
-    contentType: 'application/json',
+    expect(metrics.overlayIcons.length).toBeGreaterThanOrEqual(2)
+    expect(metrics.overlayIcons[0]?.width ?? 0).toBeGreaterThanOrEqual(34)
+    expect(metrics.overlayIcons[0]?.height ?? 0).toBeGreaterThanOrEqual(34)
+    expect(metrics.overlayIcons[1]?.width ?? 0).toBeGreaterThanOrEqual(34)
+    expect(metrics.overlayIcons[1]?.height ?? 0).toBeGreaterThanOrEqual(34)
+
+    expect(metrics.closeButton?.width ?? 0).toBeGreaterThanOrEqual(38)
+    expect(metrics.closeButton?.height ?? 0).toBeGreaterThanOrEqual(38)
+
+    expect(metrics.presetActionButtons.length).toBeGreaterThanOrEqual(2)
+    expect(metrics.presetActionButtons[0]?.width ?? 0).toBeGreaterThanOrEqual(32)
+    expect(metrics.presetActionButtons[0]?.height ?? 0).toBeGreaterThanOrEqual(32)
+    expect(metrics.presetActionButtons[1]?.width ?? 0).toBeGreaterThanOrEqual(32)
+    expect(metrics.presetActionButtons[1]?.height ?? 0).toBeGreaterThanOrEqual(32)
+
+    expect(beforeHoverMetrics.dragIconBox?.width ?? 0).toBeLessThanOrEqual(1)
+    expect(beforeHoverMetrics.dragIconBox?.height ?? 0).toBeLessThanOrEqual(1)
+    expect(beforeHoverMetrics.dragIconOpacity).toBe('0')
+    expect(afterHoverMetrics.dragIconBox?.width ?? 0).toBeGreaterThanOrEqual(24)
+    expect(afterHoverMetrics.dragIconBox?.height ?? 0).toBeGreaterThanOrEqual(24)
+    expect(Number(afterHoverMetrics.dragIconOpacity)).toBeGreaterThan(0.8)
+
+    expect(metrics.modalButtons.length).toBeGreaterThanOrEqual(2)
+    expect(metrics.modalButtons[0]?.height ?? 0).toBeGreaterThanOrEqual(36)
+    expect(metrics.modalButtons[1]?.height ?? 0).toBeGreaterThanOrEqual(36)
   })
-
-  expect(metrics.overlayIcons.length).toBeGreaterThanOrEqual(2)
-  expect(metrics.overlayIcons[0]?.width ?? 0).toBeGreaterThanOrEqual(34)
-  expect(metrics.overlayIcons[0]?.height ?? 0).toBeGreaterThanOrEqual(34)
-  expect(metrics.overlayIcons[1]?.width ?? 0).toBeGreaterThanOrEqual(34)
-  expect(metrics.overlayIcons[1]?.height ?? 0).toBeGreaterThanOrEqual(34)
-
-  expect(metrics.closeButton?.width ?? 0).toBeGreaterThanOrEqual(38)
-  expect(metrics.closeButton?.height ?? 0).toBeGreaterThanOrEqual(38)
-
-  expect(metrics.presetActionButtons.length).toBeGreaterThanOrEqual(2)
-  expect(metrics.presetActionButtons[0]?.width ?? 0).toBeGreaterThanOrEqual(32)
-  expect(metrics.presetActionButtons[0]?.height ?? 0).toBeGreaterThanOrEqual(32)
-  expect(metrics.presetActionButtons[1]?.width ?? 0).toBeGreaterThanOrEqual(32)
-  expect(metrics.presetActionButtons[1]?.height ?? 0).toBeGreaterThanOrEqual(32)
-
-  expect(beforeHoverMetrics.dragIconBox?.width ?? 0).toBeLessThanOrEqual(1)
-  expect(beforeHoverMetrics.dragIconBox?.height ?? 0).toBeLessThanOrEqual(1)
-  expect(beforeHoverMetrics.dragIconOpacity).toBe('0')
-  expect(afterHoverMetrics.dragIconBox?.width ?? 0).toBeGreaterThanOrEqual(24)
-  expect(afterHoverMetrics.dragIconBox?.height ?? 0).toBeGreaterThanOrEqual(24)
-  expect(Number(afterHoverMetrics.dragIconOpacity)).toBeGreaterThan(0.8)
-
-  expect(metrics.modalButtons.length).toBeGreaterThanOrEqual(2)
-  expect(metrics.modalButtons[0]?.height ?? 0).toBeGreaterThanOrEqual(36)
-  expect(metrics.modalButtons[1]?.height ?? 0).toBeGreaterThanOrEqual(36)
 })

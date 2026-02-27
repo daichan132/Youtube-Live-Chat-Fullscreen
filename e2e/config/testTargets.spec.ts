@@ -19,11 +19,11 @@ afterEach(() => {
 
 describe('getE2ETestTargets', () => {
   it('returns defaults when env overrides are missing', () => {
-    delete process.env.YLC_ARCHIVE_URL
-    delete process.env.YLC_ARCHIVE_NEXT_URL
-    delete process.env.YLC_REPLAY_UNAVAILABLE_URL
-    delete process.env.YLC_NOCHAT_URL
-    delete process.env.YLC_LIVE_URL
+    process.env.YLC_ARCHIVE_URL = undefined
+    process.env.YLC_ARCHIVE_NEXT_URL = undefined
+    process.env.YLC_REPLAY_UNAVAILABLE_URL = undefined
+    process.env.YLC_NOCHAT_URL = undefined
+    process.env.YLC_LIVE_URL = undefined
 
     const targets = getE2ETestTargets()
 

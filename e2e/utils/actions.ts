@@ -15,7 +15,7 @@ import type { Locator, Page } from '@playwright/test'
  */
 export const reliableClick = async (locator: Locator, page: Page, selector: string) => {
   await locator.click({ force: true })
-  await page.evaluate((sel) => {
+  await page.evaluate(sel => {
     const button = document.querySelector<HTMLButtonElement>(sel)
     button?.click()
   }, selector)

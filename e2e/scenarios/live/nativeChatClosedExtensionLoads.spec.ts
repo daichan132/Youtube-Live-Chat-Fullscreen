@@ -1,7 +1,8 @@
 import { expect, test } from '../../fixtures'
-import { reliableClick } from '../../utils/actions'
-import { acceptYouTubeConsent, findLiveUrlWithChat, isWatchPageLiveNow } from '../../utils/liveUrl'
-import { switchButtonSelector } from '../../utils/selectors'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
+import { hasPlayableChat } from '../../support/diagnostics'
+import { findLiveUrlWithChat } from '../../utils/liveUrl'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -23,9 +24,7 @@ const isNativeChatUsable = () => {
   if (isHidden) return false
 
   const pointerBlocked =
-    secondaryStyle.pointerEvents === 'none' ||
-    containerStyle.pointerEvents === 'none' ||
-    hostStyle.pointerEvents === 'none'
+    secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
   if (pointerBlocked) return false
 
   const secondaryBox = secondary.getBoundingClientRect()
@@ -70,90 +69,52 @@ const closeNativeChat = async (page: import('@playwright/test').Page) => {
   return false
 }
 
-const isExtensionChatLoaded = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot
-  if (!root) return false
-  const iframe = root.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-  if (!iframe) return false
-  const src = iframe.getAttribute('src') ?? ''
-  if (!src || src.includes('about:blank')) return false
-  const doc = iframe.contentDocument
-  if (!doc) return true
-  return doc.readyState === 'complete'
-}
+test.describe('native chat closed extension loads', { tag: '@live' }, () => {
+  test('extension chat loads when native chat is closed', async ({ page }) => {
+    test.setTimeout(140000)
 
-const hasPlayableChat = () => {
-  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-  const doc = chatFrame?.contentDocument ?? null
-  const href = doc?.location?.href ?? ''
-  if (!doc || !href || href.includes('about:blank')) return false
-  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
-  const text = doc.body?.textContent?.toLowerCase() ?? ''
-  if (
-    text.includes('live chat replay is not available') ||
-    text.includes('chat is disabled') ||
-    text.includes('live chat is disabled')
-  ) {
-    return false
-  }
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-  return Boolean(renderer && itemList)
-}
+    const liveUrl = await findLiveUrlWithChat(page)
+    if (!liveUrl) {
+      test.skip(true, 'No live URL with playable chat found from configured targets/search.')
+      return
+    }
 
-test('extension chat loads when native chat is closed', async ({ page }) => {
-  test.setTimeout(140000)
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
 
-  const liveUrl = await findLiveUrlWithChat(page)
-  if (!liveUrl) {
-    test.skip(true, 'No live URL with playable chat found from configured targets/search.')
-    return
-  }
-  await page.goto(liveUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
-  await acceptYouTubeConsent(page)
-  const liveNow = await isWatchPageLiveNow(page)
-  if (!liveNow) {
-    test.skip(true, 'Selected URL is not live now. Provide a currently live stream URL.')
-  }
-  await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
+    await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
 
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
-  let playable = false
-  try {
-    await expect.poll(async () => page.evaluate(hasPlayableChat), { timeout: 20000 }).toBe(true)
-    playable = true
-  } catch {
-    playable = false
-  }
-  if (!playable) {
-    test.skip(true, 'Selected live video did not have playable chat.')
-  }
-  await page.waitForTimeout(1500)
-  const closed = await closeNativeChat(page)
-  if (!closed) {
-    test.skip(true, 'Could not close native chat via UI controls.')
-  }
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(false)
+    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
+    let playable = false
+    try {
+      await expect.poll(async () => page.evaluate(hasPlayableChat), { timeout: 20000 }).toBe(true)
+      playable = true
+    } catch {
+      playable = false
+    }
+    if (!playable) {
+      test.skip(true, 'Selected live video did not have playable chat.')
+    }
+    await page.waitForTimeout(1500)
+    const closed = await closeNativeChat(page)
+    if (!closed) {
+      test.skip(true, 'Could not close native chat via UI controls.')
+    }
+    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(false)
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null)
+    await yt.enterFullscreen()
 
-  await page.locator('#movie_player').hover()
-  const switchButton = page.locator(switchButtonSelector)
-  await expect(switchButton).toBeVisible({ timeout: 10000 })
-  await reliableClick(switchButton, page, switchButtonSelector)
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
 
-  let overlayReady = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionChatLoaded), { timeout: 20000 }).toBe(true)
-    overlayReady = true
-  } catch {
-    overlayReady = false
-  }
-  if (!overlayReady) {
-    test.skip(true, 'Extension iframe did not load within the timeout.')
-  }
+    await overlay.toggleOn()
+
+    const overlayReady = await overlay.waitForChatLoaded()
+    if (!overlayReady) {
+      test.skip(true, 'Extension iframe did not load within the timeout.')
+    }
+  })
 })

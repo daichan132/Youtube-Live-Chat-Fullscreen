@@ -1,4 +1,5 @@
 import type { Page } from '@playwright/test'
+import type { Extension } from '../fixtures'
 
 type TestSettings = {
   version: number
@@ -7,8 +8,10 @@ type TestSettings = {
   ytdLiveChat: Record<string, unknown>
 }
 
-export const importSettingsViaPopup = async (page: Page, extensionId: string, settings: TestSettings) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+export type { TestSettings }
+
+export const importSettingsViaPopup = async (page: Page, extension: Extension, settings: TestSettings) => {
+  await page.goto(extension.url('popup.html'))
   await page.getByLabel('Select language').waitFor({ state: 'visible' })
   await page.evaluate(() => {
     window.close = () => {}
@@ -21,9 +24,27 @@ export const importSettingsViaPopup = async (page: Page, extensionId: string, se
   })
 }
 
-export const readStorageEntry = async (page: Page, key: string) => {
-  const stored = await page.evaluate(k => chrome.storage.local.get(k), key)
-  const raw = stored[key]
+/**
+ * Read a Zustand-persisted store entry from chrome.storage.local.
+ *
+ * Accepts either an Extension (uses SW or page-based storage) or a Page
+ * already on an extension URL (reads directly, avoiding temporary popup pages
+ * that could trigger Zustand re-initialization side effects).
+ */
+export function readStorageEntry(source: Extension, key: string): Promise<{ state: Record<string, unknown>; version: number } | null>
+export function readStorageEntry(source: Page, key: string): Promise<{ state: Record<string, unknown>; version: number } | null>
+export async function readStorageEntry(
+  source: Extension | Page,
+  key: string,
+): Promise<{ state: Record<string, unknown>; version: number } | null> {
+  let raw: unknown
+  if ('storage' in source) {
+    const stored = await source.storage.get(key)
+    raw = stored[key]
+  } else {
+    const stored = await source.evaluate(async k => chrome.storage.local.get(k), key)
+    raw = stored[key]
+  }
   if (!raw) return null
   return JSON.parse(raw as string) as { state: Record<string, unknown>; version: number }
 }

@@ -1,10 +1,10 @@
 import { expect, test } from './fixtures'
 import { importSettingsViaPopup, readStorageEntry } from './utils/popupHelpers'
 
-test('popup renders language selector and chat toggle', async ({ page, extensionId }) => {
+test('popup renders language selector and chat toggle', async ({ page, extension }) => {
   test.setTimeout(90000)
 
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await page.goto(extension.url('popup.html'))
 
   const languageSelect = page.getByLabel('Select language')
   await expect(languageSelect).toBeVisible()
@@ -25,7 +25,7 @@ test('popup renders language selector and chat toggle', async ({ page, extension
   await expect(donateLink).toHaveCount(1)
 })
 
-test('import persists settings and reflects on reopen', async ({ page, extensionId }) => {
+test('import persists settings and reflects on reopen', async ({ page, extension }) => {
   test.setTimeout(90000)
 
   const settings = {
@@ -35,26 +35,26 @@ test('import persists settings and reflects on reopen', async ({ page, extension
     ytdLiveChat: { fontSize: 42, blur: 10, alwaysOnDisplay: false },
   }
 
-  await importSettingsViaPopup(page, extensionId, settings)
+  await importSettingsViaPopup(page, extension, settings)
 
   // Wait for storage write
-  await expect.poll(async () => (await readStorageEntry(page, 'globalSettingStore'))?.state.themeMode ?? null).toBe('dark')
+  await expect.poll(async () => (await readStorageEntry(extension, 'globalSettingStore'))?.state.themeMode ?? null).toBe('dark')
 
   // Verify globalSettingStore
-  const globalState = await readStorageEntry(page, 'globalSettingStore')
+  const globalState = await readStorageEntry(extension, 'globalSettingStore')
   expect(globalState?.state.ytdLiveChat).toBe(false)
   expect(globalState?.state.themeMode).toBe('dark')
   expect(globalState?.version).toBe(1)
 
   // Verify ytdLiveChatStore
-  const ytdState = await readStorageEntry(page, 'ytdLiveChatStore')
+  const ytdState = await readStorageEntry(extension, 'ytdLiveChatStore')
   expect(ytdState?.state.fontSize).toBe(42)
   expect(ytdState?.state.blur).toBe(10)
   expect(ytdState?.state.alwaysOnDisplay).toBe(false)
   expect(ytdState?.version).toBe(2)
 
   // Reopen popup and verify Zustand hydration
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
+  await page.goto(extension.url('popup.html'))
   await page.getByLabel('Select language').waitFor({ state: 'visible' })
   await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
 })

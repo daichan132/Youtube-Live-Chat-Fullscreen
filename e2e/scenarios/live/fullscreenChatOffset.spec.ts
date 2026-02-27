@@ -1,8 +1,8 @@
 import { writeFile } from 'node:fs/promises'
 import { expect, test } from '../../fixtures'
-import { reliableClick } from '../../utils/actions'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { findLiveUrlWithChat } from '../../utils/liveUrl'
-import { switchButtonSelector } from '../../utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -24,9 +24,7 @@ const isNativeChatUsable = () => {
   if (isHidden) return false
 
   const pointerBlocked =
-    secondaryStyle.pointerEvents === 'none' ||
-    containerStyle.pointerEvents === 'none' ||
-    hostStyle.pointerEvents === 'none'
+    secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
   if (pointerBlocked) return false
 
   const secondaryBox = secondary.getBoundingClientRect()
@@ -72,16 +70,6 @@ const closeNativeChat = async (page: import('@playwright/test').Page) => {
     document.querySelector('#chat-container')?.setAttribute('hidden', 'true')
     document.querySelector('ytd-live-chat-frame')?.remove()
   })
-}
-
-const isExtensionChatLoaded = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot
-  if (!root) return false
-  const iframe = root.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-  if (!iframe) return false
-  const src = iframe.getAttribute('src') ?? ''
-  return Boolean(src && !src.includes('about:blank'))
 }
 
 const collectFullscreenChatOffset = () => {
@@ -151,88 +139,72 @@ const collectFullscreenChatOffset = () => {
   }
 }
 
-test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
-  test.setTimeout(180000)
+test.describe('fullscreen chat offset', { tag: '@live' }, () => {
+  test('fullscreen chat overlay aligns to viewport', async ({ page }) => {
+    test.setTimeout(180000)
 
-  const liveUrl = await findLiveUrlWithChat(page)
+    const liveUrl = await findLiveUrlWithChat(page)
+    if (!liveUrl) {
+      test.skip(true, 'No live URL with chat found.')
+      return
+    }
 
-  await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
-  await closeNativeChat(page)
-  await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(false)
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null)
+    await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
+    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
+    await closeNativeChat(page)
+    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(false)
 
-  await page.locator('#movie_player').hover()
-  const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)
-  if (!switchReady) {
-    test.skip(true, 'Fullscreen chat switch button did not appear.')
-    return
-  }
-  const switchEnabled = await page
-    .waitForFunction(selector => {
-      const button = document.querySelector(selector) as HTMLButtonElement | null
-      if (!button) return false
-      return !button.disabled && button.getAttribute('aria-disabled') !== 'true'
-    }, switchButtonSelector, { timeout: 10000 })
-    .then(() => true, () => false)
-  if (!switchEnabled) {
-    test.skip(true, 'Fullscreen chat switch is disabled because live source is unavailable.')
-    return
-  }
-  await reliableClick(switchButton, page, switchButtonSelector)
-  const toggledOrDisabled = await page
-    .waitForFunction(selector => {
-      const button = document.querySelector(selector) as HTMLButtonElement | null
-      if (!button) return false
-      return (
-        button.disabled ||
-        button.getAttribute('aria-disabled') === 'true' ||
-        button.getAttribute('aria-pressed') === 'true'
+    await yt.enterFullscreen()
+
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
+
+    const switchButton = overlay.switchButton()
+    const switchEnabled = await page
+      .waitForFunction(
+        selector => {
+          const button = document.querySelector(selector) as HTMLButtonElement | null
+          if (!button) return false
+          return !button.disabled && button.getAttribute('aria-disabled') !== 'true'
+        },
+        await switchButton.evaluate(el => {
+          const container = el.closest('[id]')
+          return container ? `#${container.id} button.ytp-button` : 'button.ytp-button'
+        }),
+        { timeout: 10000 },
       )
-    }, switchButtonSelector, { timeout: 8000 })
-    .then(() => true, () => false)
-  if (!toggledOrDisabled) {
-    test.skip(true, 'Could not confirm switch activation in time.')
-    return
-  }
-  const switchDisabledAfterClick = await page.evaluate(selector => {
-    const button = document.querySelector(selector) as HTMLButtonElement | null
-    if (!button) return true
-    return button.disabled || button.getAttribute('aria-disabled') === 'true'
-  }, switchButtonSelector)
-  if (switchDisabledAfterClick) {
-    test.skip(true, 'Fullscreen chat switch became disabled after click.')
-    return
-  }
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  let overlayReady = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionChatLoaded), { timeout: 20000 }).toBe(true)
-    overlayReady = true
-  } catch {
-    overlayReady = false
-  }
-  if (!overlayReady) {
-    test.skip(true, 'Extension iframe did not load in time.')
-    return
-  }
+      .then(
+        () => true,
+        () => false,
+      )
+    if (!switchEnabled) {
+      test.skip(true, 'Fullscreen chat switch is disabled because live source is unavailable.')
+      return
+    }
 
-  const metrics = await page.evaluate(collectFullscreenChatOffset)
-  const outputPath = test.info().outputPath('fullscreen-chat-offset.json')
-  await writeFile(
-    outputPath,
-    JSON.stringify({ liveUrl, capturedAt: new Date().toISOString(), metrics }, null, 2),
-    'utf-8',
-  )
+    await overlay.toggleOn()
 
-  expect(metrics.overlayRect?.top ?? 0).toBeLessThan(1)
-  expect(Math.abs(metrics.deltaTop ?? 0)).toBeLessThan(1)
-  expect(metrics.resizableStyleTop).not.toBeNull()
-  const parsedTop = Number.parseFloat(metrics.resizableStyleTop ?? 'NaN')
-  expect(Number.isFinite(parsedTop)).toBe(true)
-  expect(parsedTop).toBeGreaterThanOrEqual(0)
+    const overlayReady = await overlay.waitForChatLoaded()
+    if (!overlayReady) {
+      test.skip(true, 'Extension iframe did not load in time.')
+      return
+    }
+
+    const metrics = await page.evaluate(collectFullscreenChatOffset)
+    const outputPath = test.info().outputPath('fullscreen-chat-offset.json')
+    await writeFile(outputPath, JSON.stringify({ liveUrl, capturedAt: new Date().toISOString(), metrics }, null, 2), 'utf-8')
+
+    expect(metrics.overlayRect?.top ?? 0).toBeLessThan(1)
+    expect(Math.abs(metrics.deltaTop ?? 0)).toBeLessThan(1)
+    expect(metrics.resizableStyleTop).not.toBeNull()
+    const parsedTop = Number.parseFloat(metrics.resizableStyleTop ?? 'NaN')
+    expect(Number.isFinite(parsedTop)).toBe(true)
+    expect(parsedTop).toBeGreaterThanOrEqual(0)
+  })
 })

@@ -1,7 +1,8 @@
-import path from 'node:path'
 import fs from 'node:fs'
+import path from 'node:path'
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
+import type { Extension } from '../fixtures'
 import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '../support/diagnostics'
 import { reliableClick } from '../utils/actions'
 import { switchButtonSelector } from '../utils/selectors'
@@ -25,10 +26,8 @@ export const ensureScreenshotsDir = () => {
 
 export const screenshotPath = (name: string) => path.join(screenshotDir(), `${name}.png`)
 
-export { patchOverlayStore } from '../utils/storageHelper'
-
 export const seekVideo = async (page: Page, seconds: number) => {
-  await page.evaluate((s) => {
+  await page.evaluate(s => {
     const player = document.getElementById('movie_player') as HTMLElement & { seekTo?: (t: number, allowSeekAhead: boolean) => void }
     player?.seekTo?.(s, true)
   }, seconds)
@@ -42,9 +41,8 @@ export const pauseVideo = async (page: Page) => {
   })
 }
 
-export const setTheme = async (page: Page, extensionId: string, themeMode: 'light' | 'dark') => {
-  const popupUrl = `chrome-extension://${extensionId}/popup.html`
-  await page.goto(popupUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
+export const setTheme = async (page: Page, extension: Extension, themeMode: 'light' | 'dark') => {
+  await page.goto(extension.url('popup.html'), { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.getByLabel('Select language').waitFor({ state: 'visible', timeout: 15000 })
 
   const themeSelect = page.getByLabel('Theme')
@@ -166,13 +164,11 @@ export const getChatMessageDiagnostics = (): ChatMessageDiagnostics => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
-  if (!iframe)
-    return { iframeExists: false, iframeSrc: '', hasRenderer: false, hasItemList: false, messageCount: 0, isUnavailable: false }
+  if (!iframe) return { iframeExists: false, iframeSrc: '', hasRenderer: false, hasItemList: false, messageCount: 0, isUnavailable: false }
 
   const doc = iframe.contentDocument ?? null
   const src = iframe.getAttribute('src') ?? iframe.src ?? ''
-  if (!doc)
-    return { iframeExists: true, iframeSrc: src, hasRenderer: false, hasItemList: false, messageCount: 0, isUnavailable: false }
+  if (!doc) return { iframeExists: true, iframeSrc: src, hasRenderer: false, hasItemList: false, messageCount: 0, isUnavailable: false }
 
   const hasRenderer = Boolean(doc.querySelector('yt-live-chat-renderer'))
   const hasItemList = Boolean(doc.querySelector('yt-live-chat-item-list-renderer'))
@@ -315,7 +311,7 @@ export const hideYouTubeOverlays = async (page: Page): Promise<void> => {
       '.branding-img-container',
       '.annotation',
     ]
-      .map((s) => `${s} { display: none !important; }`)
+      .map(s => `${s} { display: none !important; }`)
       .join('\n')
     document.head.appendChild(style)
   })

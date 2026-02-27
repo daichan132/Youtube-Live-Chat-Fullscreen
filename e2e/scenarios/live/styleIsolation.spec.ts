@@ -1,6 +1,6 @@
-import { expect, test } from '../../fixtures'
 import { getE2ETestTargets } from '../../config/testTargets'
-import { acceptYouTubeConsent } from '../../utils/liveUrl'
+import { expect, test } from '../../fixtures'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 
 type StyleIsolationAudit = {
   hasShadowRoot: boolean
@@ -54,49 +54,47 @@ const auditStyleIsolation = (): StyleIsolationAudit => {
   }
 }
 
-test('content ui theme styles stay isolated from document stylesheets', async ({ page }) => {
-  test.setTimeout(120000)
+test.describe('style isolation', { tag: '@live' }, () => {
+  test('content ui theme styles stay isolated from document stylesheets', async ({ page }) => {
+    test.setTimeout(120000)
 
-  const targetUrl = getE2ETestTargets().noChat.url
-  await page.goto(targetUrl, { waitUntil: 'domcontentloaded', timeout: 45000 })
-  await acceptYouTubeConsent(page)
-  await page.waitForSelector('#movie_player', { state: 'attached' })
+    const targetUrl = getE2ETestTargets().noChat.url
+    const yt = new YouTubeWatchPage(page)
 
-  const fullscreenButton = page.locator('button.ytp-fullscreen-button')
-  const fullscreenButtonReady = await fullscreenButton.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!fullscreenButtonReady) {
-    test.skip(true, 'Fullscreen button did not appear.')
-    return
-  }
+    await yt.goto(targetUrl)
 
-  await page.locator('#movie_player').hover()
-  await fullscreenButton.click({ force: true })
-  const fullscreenReady = await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 15000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!fullscreenReady) {
-    test.skip(true, 'Could not enter fullscreen due page preconditions.')
-    return
-  }
+    const fullscreenReady = await page
+      .locator('button.ytp-fullscreen-button')
+      .waitFor({ state: 'visible', timeout: 10000 })
+      .then(
+        () => true,
+        () => false,
+      )
+    if (!fullscreenReady) {
+      test.skip(true, 'Fullscreen button did not appear.')
+      return
+    }
 
-  const shadowReady = await page
-    .waitForFunction(() => Boolean(document.getElementById('shadow-root-live-chat')?.shadowRoot), { timeout: 15000 })
-    .then(() => true, () => false)
-  if (!shadowReady) {
-    test.skip(true, 'Extension shadow root was not mounted in fullscreen.')
-    return
-  }
+    await yt.enterFullscreen()
 
-  const audit = await page.evaluate(auditStyleIsolation)
+    const shadowReady = await page
+      .waitForFunction(() => Boolean(document.getElementById('shadow-root-live-chat')?.shadowRoot), { timeout: 15000 })
+      .then(
+        () => true,
+        () => false,
+      )
+    if (!shadowReady) {
+      test.skip(true, 'Extension shadow root was not mounted in fullscreen.')
+      return
+    }
 
-  expect(audit.hasShadowRoot).toBe(true)
-  expect(audit.shadowHasContentCssLink).toBe(true)
-  expect(audit.documentHasContentCssLink).toBe(false)
-  expect(audit.documentThemeStyleTagCount).toBe(0)
-  expect(audit.documentThemeSelectorCount).toBe(0)
-  expect(audit.leakedRootVariableValue).toBe('')
+    const audit = await page.evaluate(auditStyleIsolation)
+
+    expect(audit.hasShadowRoot).toBe(true)
+    expect(audit.shadowHasContentCssLink).toBe(true)
+    expect(audit.documentHasContentCssLink).toBe(false)
+    expect(audit.documentThemeStyleTagCount).toBe(0)
+    expect(audit.documentThemeSelectorCount).toBe(0)
+    expect(audit.leakedRootVariableValue).toBe('')
+  })
 })

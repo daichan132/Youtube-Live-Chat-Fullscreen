@@ -1,13 +1,8 @@
 import { expect, test } from '../../fixtures'
-import {
-  captureChatState,
-  isExtensionArchiveChatPlayable,
-  openArchiveWatchPage,
-  shouldSkipArchiveFlowFailure,
-} from '../../support/diagnostics'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
+import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
 import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
-import { reliableClick } from '../../utils/actions'
-import { switchButtonSelector } from '../../utils/selectors'
 
 type OverlayClipSnapshot = {
   exists: boolean
@@ -184,56 +179,50 @@ const movePointerAwayFromOverlay = async (page: import('@playwright/test').Page)
   return true
 }
 
-const setPersistedChatOnlyMode = async (page: import('@playwright/test').Page, extensionId: string) => {
-  await page.goto(`chrome-extension://${extensionId}/popup.html`)
-
-  const configured = await page.evaluate(async () => {
-    const parsePersisted = (raw: unknown, fallbackVersion: number) => {
-      if (typeof raw !== 'string' || raw.length === 0) {
-        return { state: {}, version: fallbackVersion }
+const setPersistedChatOnlyMode = async (extension: import('../../fixtures').Extension) => {
+  const parsePersisted = (raw: unknown, fallbackVersion: number) => {
+    if (typeof raw !== 'string' || raw.length === 0) {
+      return { state: {} as Record<string, unknown>, version: fallbackVersion }
+    }
+    try {
+      const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number }
+      return {
+        state: parsed?.state && typeof parsed.state === 'object' ? parsed.state : {},
+        version: typeof parsed?.version === 'number' ? parsed.version : fallbackVersion,
       }
-      try {
-        const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number }
-        return {
-          state: parsed?.state && typeof parsed.state === 'object' ? parsed.state : {},
-          version: typeof parsed?.version === 'number' ? parsed.version : fallbackVersion,
-        }
-      } catch {
-        return { state: {}, version: fallbackVersion }
-      }
+    } catch {
+      return { state: {} as Record<string, unknown>, version: fallbackVersion }
     }
+  }
 
-    const { ytdLiveChatStore, globalSettingStore } = await chrome.storage.local.get(['ytdLiveChatStore', 'globalSettingStore'])
+  const stores = await extension.storage.get(['ytdLiveChatStore', 'globalSettingStore'])
 
-    const currentYlc = parsePersisted(ytdLiveChatStore, 1)
-    const currentGlobal = parsePersisted(globalSettingStore, 0)
+  const currentYlc = parsePersisted(stores.ytdLiveChatStore, 1)
+  const currentGlobal = parsePersisted(stores.globalSettingStore, 0)
 
-    const nextYlc = {
-      state: {
-        ...currentYlc.state,
-        alwaysOnDisplay: true,
-        chatOnlyDisplay: true,
-      },
-      version: currentYlc.version,
-    }
+  const nextYlc = {
+    state: {
+      ...currentYlc.state,
+      alwaysOnDisplay: true,
+      chatOnlyDisplay: true,
+    },
+    version: currentYlc.version,
+  }
 
-    const nextGlobal = {
-      state: {
-        ...currentGlobal.state,
-        ytdLiveChat: true,
-      },
-      version: currentGlobal.version,
-    }
+  const nextGlobal = {
+    state: {
+      ...currentGlobal.state,
+      ytdLiveChat: true,
+    },
+    version: currentGlobal.version,
+  }
 
-    await chrome.storage.local.set({
-      ytdLiveChatStore: JSON.stringify(nextYlc),
-      globalSettingStore: JSON.stringify(nextGlobal),
-    })
-
-    return true
+  await extension.storage.set({
+    ytdLiveChatStore: JSON.stringify(nextYlc),
+    globalSettingStore: JSON.stringify(nextGlobal),
   })
 
-  return configured
+  return true
 }
 
 const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/test').Page) => {
@@ -251,34 +240,21 @@ const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/tes
     return false
   }
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
-  await page.locator('#movie_player').hover()
+  const yt = new YouTubeWatchPage(page)
+  const overlay = new ExtensionOverlay(page)
 
-  const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
+  await yt.enterFullscreen()
+
+  const switchReady = await overlay.waitForSwitchReady()
   if (!switchReady) {
     await captureChatState(page, test.info(), 'chat-only-auto-clip-switch-missing')
     test.skip(true, 'Fullscreen chat switch button did not appear.')
     return false
   }
 
-  if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-    await reliableClick(switchButton, page, switchButtonSelector)
-    await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  }
+  await overlay.toggleOn()
 
-  let extensionReady = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 60000 }).toBe(true)
-    extensionReady = true
-  } catch {
-    extensionReady = false
-  }
+  const extensionReady = await overlay.waitForArchiveChatPlayable()
   if (!extensionReady) {
     const state = await captureChatState(page, test.info(), 'chat-only-auto-clip-extension-unready')
     if (shouldSkipArchiveFlowFailure(state)) {
@@ -301,110 +277,112 @@ const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/tes
   return true
 }
 
-test('chat-only clip enables after load without any overlay hover', async ({ page, extensionId }) => {
-  test.setTimeout(180000)
+test.describe('chat-only hover height', { tag: '@archive' }, () => {
+  test('chat-only clip enables after load without any overlay hover', async ({ page, extension }) => {
+    test.setTimeout(180000)
 
-  const configured = await setPersistedChatOnlyMode(page, extensionId)
-  expect(configured).toBe(true)
+    const configured = await setPersistedChatOnlyMode(extension)
+    expect(configured).toBe(true)
 
-  const ready = await openArchiveOverlayWithExtensionChat(page)
-  if (!ready) return
+    const ready = await openArchiveOverlayWithExtensionChat(page)
+    if (!ready) return
 
-  const movedAway = await movePointerAwayFromOverlay(page)
-  if (!movedAway) {
-    test.skip(true, 'Viewport was unavailable.')
-    return
-  }
+    const movedAway = await movePointerAwayFromOverlay(page)
+    if (!movedAway) {
+      test.skip(true, 'Viewport was unavailable.')
+      return
+    }
 
-  const probeInstalled = await page.evaluate(installOverlayHoverProbe)
-  expect(probeInstalled).toBe(true)
+    const probeInstalled = await page.evaluate(installOverlayHoverProbe)
+    expect(probeInstalled).toBe(true)
 
-  await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
-  await expect
-    .poll(
-      async () => {
-        const clipSnapshot = await page.evaluate(getOverlayClipSnapshot)
-        return clipSnapshot.enabled && clipSnapshot.clipTop + clipSnapshot.clipBottom > 0
-      },
-      { timeout: 15000 },
-    )
-    .toBe(true)
+    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    await expect
+      .poll(
+        async () => {
+          const clipSnapshot = await page.evaluate(getOverlayClipSnapshot)
+          return clipSnapshot.enabled && clipSnapshot.clipTop + clipSnapshot.clipBottom > 0
+        },
+        { timeout: 15000 },
+      )
+      .toBe(true)
 
-  const snapshot = await page.evaluate(getOverlayClipSnapshot)
-  const immediateVisibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
-    sampleCount: 4,
-    intervalMs: 40,
-    settleMs: 220,
-  })
-  const visibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
-    sampleCount: 6,
-    intervalMs: 180,
-    settleMs: 350,
-  })
-  const hoverProbe = await page.evaluate(readOverlayHoverProbe)
+    const snapshot = await page.evaluate(getOverlayClipSnapshot)
+    const immediateVisibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+      sampleCount: 4,
+      intervalMs: 40,
+      settleMs: 220,
+    })
+    const visibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+      sampleCount: 6,
+      intervalMs: 180,
+      settleMs: 350,
+    })
+    const hoverProbe = await page.evaluate(readOverlayHoverProbe)
 
-  await test.info().attach('chat-only-auto-clip-no-hover', {
-    body: JSON.stringify({ snapshot, immediateVisibleHeightSamples, visibleHeightSamples, hoverProbe }, null, 2),
-    contentType: 'application/json',
-  })
+    await test.info().attach('chat-only-auto-clip-no-hover', {
+      body: JSON.stringify({ snapshot, immediateVisibleHeightSamples, visibleHeightSamples, hoverProbe }, null, 2),
+      contentType: 'application/json',
+    })
 
-  expect(snapshot.exists).toBe(true)
-  expect(snapshot.enabled).toBe(true)
-  expect(immediateVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
-  expect(visibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
-  expect(hoverProbe?.enterCount ?? -1).toBe(0)
-})
-
-test('chat-only clip re-enables automatically after first hover without pointer leave', async ({ page, extensionId }) => {
-  test.setTimeout(180000)
-
-  const configured = await setPersistedChatOnlyMode(page, extensionId)
-  expect(configured).toBe(true)
-
-  const ready = await openArchiveOverlayWithExtensionChat(page)
-  if (!ready) return
-
-  const movedAway = await movePointerAwayFromOverlay(page)
-  if (!movedAway) {
-    test.skip(true, 'Viewport was unavailable.')
-    return
-  }
-
-  const probeInstalled = await page.evaluate(installOverlayHoverProbe)
-  expect(probeInstalled).toBe(true)
-
-  await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
-  const baselineSnapshot = await page.evaluate(getOverlayClipSnapshot)
-
-  const center = await page.evaluate(getOverlayCenter)
-  if (!center) {
-    test.skip(true, 'Overlay center could not be resolved.')
-    return
-  }
-
-  await page.mouse.move(center.x, center.y)
-
-  // No pointer leave after first hover.
-  await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
-
-  const snapshot = await page.evaluate(getOverlayClipSnapshot)
-  const visibleHeightSamplesAfterHover = await page.evaluate(sampleOverlayVisibleHeights, {
-    sampleCount: 6,
-    intervalMs: 180,
-    settleMs: 350,
-  })
-  const hoverProbe = await page.evaluate(readOverlayHoverProbe)
-  const visibleHeightDelta = snapshot.visibleHeight - baselineSnapshot.visibleHeight
-
-  await test.info().attach('chat-only-auto-clip-hovered-once', {
-    body: JSON.stringify({ baselineSnapshot, snapshot, visibleHeightSamplesAfterHover, visibleHeightDelta, hoverProbe, center }, null, 2),
-    contentType: 'application/json',
+    expect(snapshot.exists).toBe(true)
+    expect(snapshot.enabled).toBe(true)
+    expect(immediateVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
+    expect(visibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
+    expect(hoverProbe?.enterCount ?? -1).toBe(0)
   })
 
-  expect(snapshot.exists).toBe(true)
-  expect(snapshot.enabled).toBe(true)
-  expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)
-  expect(visibleHeightDelta).toBeLessThanOrEqual(1.5)
-  expect(visibleHeightDelta).toBeGreaterThanOrEqual(-8)
-  expect((hoverProbe?.enterCount ?? 0) > 0).toBe(true)
+  test('chat-only clip re-enables automatically after first hover without pointer leave', async ({ page, extension }) => {
+    test.setTimeout(180000)
+
+    const configured = await setPersistedChatOnlyMode(extension)
+    expect(configured).toBe(true)
+
+    const ready = await openArchiveOverlayWithExtensionChat(page)
+    if (!ready) return
+
+    const movedAway = await movePointerAwayFromOverlay(page)
+    if (!movedAway) {
+      test.skip(true, 'Viewport was unavailable.')
+      return
+    }
+
+    const probeInstalled = await page.evaluate(installOverlayHoverProbe)
+    expect(probeInstalled).toBe(true)
+
+    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    const baselineSnapshot = await page.evaluate(getOverlayClipSnapshot)
+
+    const center = await page.evaluate(getOverlayCenter)
+    if (!center) {
+      test.skip(true, 'Overlay center could not be resolved.')
+      return
+    }
+
+    await page.mouse.move(center.x, center.y)
+
+    // No pointer leave after first hover.
+    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+
+    const snapshot = await page.evaluate(getOverlayClipSnapshot)
+    const visibleHeightSamplesAfterHover = await page.evaluate(sampleOverlayVisibleHeights, {
+      sampleCount: 6,
+      intervalMs: 180,
+      settleMs: 350,
+    })
+    const hoverProbe = await page.evaluate(readOverlayHoverProbe)
+    const visibleHeightDelta = snapshot.visibleHeight - baselineSnapshot.visibleHeight
+
+    await test.info().attach('chat-only-auto-clip-hovered-once', {
+      body: JSON.stringify({ baselineSnapshot, snapshot, visibleHeightSamplesAfterHover, visibleHeightDelta, hoverProbe, center }, null, 2),
+      contentType: 'application/json',
+    })
+
+    expect(snapshot.exists).toBe(true)
+    expect(snapshot.enabled).toBe(true)
+    expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)
+    expect(visibleHeightDelta).toBeLessThanOrEqual(1.5)
+    expect(visibleHeightDelta).toBeGreaterThanOrEqual(-8)
+    expect((hoverProbe?.enterCount ?? 0) > 0).toBe(true)
+  })
 })

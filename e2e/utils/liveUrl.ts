@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import { getE2ETestTargets } from '../config/testTargets'
+import { hasPlayableChat } from '../support/diagnostics'
 
 const nonLiveSearchUrl = 'https://www.youtube.com/results?search_query=big%20buck%20bunny&sp=EgIQAQ%253D%253D'
 const archiveSearchUrls = [
@@ -78,38 +79,12 @@ const isChatUnavailable = () => {
   if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
   const text = doc.body?.textContent?.toLowerCase() ?? ''
   if (!text) return false
-  return (
-    text.includes('live chat replay is not available') ||
-    text.includes('chat is disabled') ||
-    text.includes('live chat is disabled')
-  )
-}
-
-const hasPlayableChat = () => {
-  const chatFrame =
-    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
-    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
-  const doc = chatFrame?.contentDocument ?? null
-  const href = doc?.location?.href ?? ''
-  if (!doc || !href || href.includes('about:blank')) return false
-  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
-  const text = doc.body?.textContent?.toLowerCase() ?? ''
-  if (
-    text.includes('live chat replay is not available') ||
-    text.includes('chat is disabled') ||
-    text.includes('live chat is disabled')
-  ) {
-    return false
-  }
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
-  return Boolean(renderer && itemList)
+  return text.includes('live chat replay is not available') || text.includes('chat is disabled') || text.includes('live chat is disabled')
 }
 
 const hasChatSignals = () => {
   const liveChatFrame = document.querySelector('ytd-live-chat-frame')
-  const chatFrame =
-    document.querySelector('#chatframe') ?? document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
+  const chatFrame = document.querySelector('#chatframe') ?? document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
   return Boolean(liveChatFrame && chatFrame)
 }
 
@@ -118,9 +93,7 @@ const isLiveNow = () => {
   const watchGrid = document.querySelector('ytd-watch-grid')
   if (watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now')) return true
 
-  const moviePlayer = document.getElementById('movie_player') as
-    | (HTMLElement & { getVideoData?: () => { isLive?: boolean } })
-    | null
+  const moviePlayer = document.getElementById('movie_player') as (HTMLElement & { getVideoData?: () => { isLive?: boolean } }) | null
   const videoData = moviePlayer?.getVideoData?.()
   if (typeof videoData?.isLive === 'boolean') return videoData.isLive
 
@@ -151,9 +124,10 @@ const isLiveNow = () => {
 }
 
 const isWatchPageReady = async (page: Page) => {
-  return page
-    .waitForSelector('#movie_player', { state: 'attached', timeout: 10000 })
-    .then(() => true, () => false)
+  return page.waitForSelector('#movie_player', { state: 'attached', timeout: 10000 }).then(
+    () => true,
+    () => false,
+  )
 }
 
 const isPlayableLiveCandidate = async (page: Page, url: string) => {
@@ -194,10 +168,7 @@ export const isWatchPageLiveNow = async (page: Page) => {
   return page.evaluate(isLiveNow).then(Boolean, () => false)
 }
 
-export const findLiveUrlWithChat = async (
-  page: Page,
-  options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {},
-) => {
+export const findLiveUrlWithChat = async (page: Page, options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {}) => {
   const targets = getE2ETestTargets()
   const { limit = LIVE_SEARCH_LIMIT, searchUrls = targets.liveSearch.urls, maxDurationMs = 60000 } = options
   const deadline = Date.now() + maxDurationMs
@@ -255,10 +226,7 @@ export const findLiveUrlWithChat = async (
   return null
 }
 
-export const findVideoUrlWithoutChat = async (
-  page: Page,
-  options: { limit?: number; searchUrl?: string; maxDurationMs?: number } = {},
-) => {
+export const findVideoUrlWithoutChat = async (page: Page, options: { limit?: number; searchUrl?: string; maxDurationMs?: number } = {}) => {
   const { limit = 8, searchUrl = nonLiveSearchUrl, maxDurationMs = 60000 } = options
   const deadline = Date.now() + maxDurationMs
   await addConsentCookies(page)

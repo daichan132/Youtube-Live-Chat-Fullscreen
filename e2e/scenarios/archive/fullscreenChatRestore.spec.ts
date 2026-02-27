@@ -1,10 +1,8 @@
 import { expect, test } from '../../fixtures'
-import { captureChatState, isExtensionArchiveChatPlayable, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
+import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
 import { selectArchiveReplayUrl } from '../../support/urls/archiveReplay'
-import { reliableClick } from '../../utils/actions'
-import {
-  switchButtonSelector,
-} from '../../utils/selectors'
 
 const isNativeChatUsable = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -26,9 +24,7 @@ const isNativeChatUsable = () => {
   if (isHidden) return false
 
   const pointerBlocked =
-    secondaryStyle.pointerEvents === 'none' ||
-    containerStyle.pointerEvents === 'none' ||
-    hostStyle.pointerEvents === 'none'
+    secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
   if (pointerBlocked) return false
 
   const secondaryBox = secondary.getBoundingClientRect()
@@ -67,65 +63,58 @@ const getNativeChatDebugState = () => {
   }
 }
 
-test('restore native chat after archive fullscreen chat closes', async ({ page }) => {
-  test.setTimeout(150000)
+test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
+  test('restore native chat after archive fullscreen chat closes', async ({ page }) => {
+    test.setTimeout(150000)
 
-  const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
-  if (!selectedArchiveUrl) {
-    await captureChatState(page, test.info(), 'restore-archive-url-selection-failed')
-    test.skip(true, 'No archive replay URL satisfied preconditions.')
-    return
-  }
-
-  const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
-  if (!archiveReady) {
-    await captureChatState(page, test.info(), 'restore-archive-precondition-missing')
-    test.skip(true, 'Selected archive URL did not expose archive chat container in time.')
-    return
-  }
-
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
-  await page.locator('#movie_player').hover()
-
-  const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!switchReady) {
-    await captureChatState(page, test.info(), 'restore-switch-missing')
-    test.skip(true, 'Fullscreen chat switch button did not appear.')
-    return
-  }
-  await reliableClick(switchButton, page, switchButtonSelector)
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
-  let extensionReady = false
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionArchiveChatPlayable), { timeout: 45000 }).toBe(true)
-    extensionReady = true
-  } catch {
-    extensionReady = false
-  }
-  if (!extensionReady) {
-    const state = await captureChatState(page, test.info(), 'restore-extension-unready')
-    if (shouldSkipArchiveFlowFailure(state)) {
-      test.skip(true, 'Archive chat source did not become ready in this run.')
+    const selectedArchiveUrl = await selectArchiveReplayUrl(page, { maxDurationMs: 45000 })
+    if (!selectedArchiveUrl) {
+      await captureChatState(page, test.info(), 'restore-archive-url-selection-failed')
+      test.skip(true, 'No archive replay URL satisfied preconditions.')
       return
     }
-    expect(extensionReady).toBe(true)
-  }
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null), { timeout: 8000 }).toBe(true)
-  try {
-    await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 12000 }).toBe(true)
-  } catch (error) {
-    const nativeDebugState = await page.evaluate(getNativeChatDebugState)
-    // eslint-disable-next-line no-console
-    console.log('[fullscreenChatRestore][native-debug]', nativeDebugState)
-    throw error
-  }
+    const archiveReady = await openArchiveWatchPage(page, selectedArchiveUrl, { maxDurationMs: 30000 })
+    if (!archiveReady) {
+      await captureChatState(page, test.info(), 'restore-archive-precondition-missing')
+      test.skip(true, 'Selected archive URL did not expose archive chat container in time.')
+      return
+    }
+
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
+
+    await yt.enterFullscreen()
+
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      await captureChatState(page, test.info(), 'restore-switch-missing')
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
+
+    await overlay.toggleOn()
+
+    const extensionReady = await overlay.waitForArchiveChatPlayable({ timeout: 45000 })
+    if (!extensionReady) {
+      const state = await captureChatState(page, test.info(), 'restore-extension-unready')
+      if (shouldSkipArchiveFlowFailure(state)) {
+        test.skip(true, 'Archive chat source did not become ready in this run.')
+        return
+      }
+      expect(extensionReady).toBe(true)
+    }
+
+    await yt.exitFullscreen()
+    await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null), { timeout: 8000 }).toBe(true)
+
+    try {
+      await expect.poll(async () => page.evaluate(isNativeChatUsable), { timeout: 12000 }).toBe(true)
+    } catch (error) {
+      const nativeDebugState = await page.evaluate(getNativeChatDebugState)
+      // eslint-disable-next-line no-console
+      console.log('[fullscreenChatRestore][native-debug]', nativeDebugState)
+      throw error
+    }
+  })
 })
