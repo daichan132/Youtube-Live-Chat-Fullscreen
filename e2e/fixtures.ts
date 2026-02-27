@@ -121,8 +121,9 @@ export const test = base.extend<{
   extension: Extension
 }>({
   // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
-  context: async ({}, use) => {
-    const context = await chromium.launchPersistentContext('', {
+  context: async ({}, use, testInfo) => {
+    const userDataDir = testInfo.outputPath('user-data-dir')
+    const context = await chromium.launchPersistentContext(userDataDir, {
       headless: false,
       args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
     })
