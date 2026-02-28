@@ -1,7 +1,5 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
-
 ## Project Overview
 
 YouTube Live Chat Fullscreen — YouTube のライブチャットをフルスクリーン上にオーバーレイ表示するブラウザ拡張。ドラッグ・リサイズ・スタイルカスタマイズ対応。Chrome / Firefox 両対応。
@@ -102,6 +100,13 @@ yarn zip:firefox          # Firefox用zipパッケージ
 - 既存の hooks/store/utils パターンを優先する
 - permissions / host_permissions の追加は確認なしに行わない
 
+## Security
+
+- 秘密情報・トークンをハードコードしない
+- `dangerouslySetInnerHTML` は原則禁止
+- permissions / host_permissions の追加は確認なしに行わない
+- 破壊的操作（`git reset --hard`, `rm -rf` 等）は明示依頼がある場合のみ
+
 ## Testing Rules
 
 - 変更範囲を `git status -sb` で確認してから実行する
@@ -115,3 +120,8 @@ yarn zip:firefox          # Firefox用zipパッケージ
 
 - **pre-commit**: `biome check --apply` (staged files)
 - **pre-push**: `biome check` (pushed files)
+
+## Skills
+
+プロジェクト固有のスキルは `.agents/skills/` に配置。`.claude/skills` はそのシンボリックリンク。
+変更前に関連スキルの SKILL.md を確認すること（特に `fullscreen-chat-contracts`, `ylc-e2e-playwright`）。

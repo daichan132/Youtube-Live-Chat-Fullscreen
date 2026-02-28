@@ -1,5 +1,5 @@
 ---
-name: e2e-playwright
+name: ylc-e2e-playwright
 description: この拡張の Playwright E2E 運用ガイド。E2E テスト実行・新テスト追加・失敗/フレーク調査・URL ドリフト修正・trace/PWDEBUG デバッグで使う。フルスクリーンチャット・チャットなし動画・リプレイ不可・アーカイブ遷移・SPA 遷移の E2E テストを扱う。
 ---
 
