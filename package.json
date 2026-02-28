@@ -19,9 +19,9 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "prepare": "lefthook install",
-    "e2e": "playwright test --project=e2e --workers=1",
-    "e2e:archive": "playwright test --project=e2e --grep @archive --workers=1",
-    "e2e:live": "playwright test --project=e2e --grep @live --workers=1",
+    "e2e": "playwright test --project=e2e",
+    "e2e:archive": "playwright test --project=e2e --grep @archive",
+    "e2e:live": "playwright test --project=e2e --grep @live",
     "screenshots": "playwright test --project=screenshots --workers=1"
   },
   "dependencies": {
