@@ -1,0 +1,45 @@
+{
+  "skill_name": "e2e-playwright",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "新しい live モードの E2E テストを追加したい。テスト内容: フルスクリーンでチャットを toggle on した後、チャットスタイル設定（fontSize を 24 に変更）が拡張 iframe 内に反映されることを確認する。e2e/scenarios/live/ に spec ファイルを作成して。既存のインフラ（fixtures, POM, helpers）を最大限活用すること。",
+      "expected_output": "liveUrl fixture を使い、YouTubeWatchPage と ExtensionOverlay の POM を活用した spec。precondition（liveUrl null チェック、native chat playable、switch ready）で test.skip。patchOverlayStore で fontSize を設定。captureChatState で失敗時診断。waitForTimeout 不使用。",
+      "files": [],
+      "expectations": [
+        "liveUrl fixture を使用し、null の場合 test.skip している",
+        "YouTubeWatchPage と ExtensionOverlay の Page Object を使用している",
+        "precondition 不成立時に captureChatState で診断を添付してから test.skip している",
+        "patchOverlayStore または extension.storage.set で fontSize を設定している",
+        "expect.poll() で拡張 iframe 内のスタイル反映を待機している（waitForTimeout 不使用）",
+        "test.describe に { tag: '@live' } を付けている"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "archive replay テストの liveChatReplay.spec.ts が CI で flaky skip になっている。HTML レポートの attachments に chat-diagnostics-archive-replay-extension-unready.json があり、native.playable が false、native.href が about:blank になっている。原因を調査して、対処方針を説明して。",
+      "expected_output": "shouldSkipArchiveFlowFailure の判定ロジックと照合し、native.href が about:blank → 環境問題と判定して skip が正しい動作であると説明。原因として URL ドリフト（動画の chat replay が無効化された）または YouTube 側の一時障害を挙げる。対処として testTargets.ts のデフォルト URL を更新し、repeat-each=2 で安定性確認を提案。",
+      "files": [],
+      "expectations": [
+        "shouldSkipArchiveFlowFailure の判定ロジック（native frame 不在 / unavailable / blank href）に言及している",
+        "DiagnosticState の native.href が about:blank であることから環境問題と判定している",
+        "URL ドリフト（動画削除・非公開化・replay 無効化）の可能性に言及している",
+        "testTargets.ts のデフォルト URL 更新を対処として提案している",
+        "repeat-each=2 での安定性確認を提案している"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "no-chat 動画の URL がドリフトして noChatVideo.spec.ts が失敗している。テスト実行すると switch button の count が 0 にならず、hasPlayableChat が true を返す。新しい no-chat 動画 URL を見つけて testTargets.ts を更新し、テストが pass することを確認して。",
+      "expected_output": "e2e/config/testTargets.ts の DEFAULT_NO_CHAT_URL を新しい URL に更新。新 URL の要件: ライブチャットフレームが存在しない通常動画。更新後に yarn build → yarn playwright test で検証し、repeat-each=2 で安定性確認。",
+      "files": [],
+      "expectations": [
+        "e2e/config/testTargets.ts の DEFAULT_NO_CHAT_URL を更新している",
+        "新しい URL がチャットなし動画であることを確認している（ytd-live-chat-frame が存在しない）",
+        "yarn build を実行してからテストを実行している",
+        "対象 spec を --workers=1 で実行して pass を確認している",
+        "--repeat-each=2 で安定性を確認している"
+      ]
+    }
+  ]
+}
