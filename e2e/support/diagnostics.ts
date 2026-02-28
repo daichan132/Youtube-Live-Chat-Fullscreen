@@ -150,22 +150,11 @@ export const shouldSkipArchiveFlowFailure = (state: DiagnosticState | null) => {
 	return false
 }
 
-const isNativeReplayUnavailableOrMissing = () => {
+const isNativeReplayUnavailableOrMissing = ({
+	sidebarOpenSelectors,
+	playerChatToggleSelectors,
+}: { sidebarOpenSelectors: string[]; playerChatToggleSelectors: string[] }) => {
 	const h = window.__ylcHelpers
-	const sidebarOpenSelectors = [
-		'ytd-live-chat-frame #show-hide-button button',
-		'ytd-live-chat-frame #show-hide-button yt-icon-button',
-		'#chat-container #show-hide-button button',
-		'#chat-container #show-hide-button yt-icon-button',
-		'ytd-live-chat-frame #show-hide-button',
-		'#chat-container #show-hide-button',
-	]
-	const playerChatToggleSelectors = [
-		'.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
-		'.ytp-right-controls button-view-model button[aria-pressed="false"]',
-		'#movie_player toggle-button-view-model button[aria-pressed="false"]',
-		'#movie_player button-view-model button[aria-pressed="false"]',
-	]
 	const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
 	const findFirstMatchingControl = (
 		selectors: string[],
@@ -326,7 +315,12 @@ export const ensureNativeReplayUnavailable = async (page: Page, options: { maxDu
 	const deadline = Date.now() + maxDurationMs
 
 	while (Date.now() < deadline) {
-		const unavailable = await page.evaluate(isNativeReplayUnavailableOrMissing).catch(() => false)
+		const unavailable = await page
+			.evaluate(isNativeReplayUnavailableOrMissing, {
+				sidebarOpenSelectors: archiveSidebarOpenSelectors,
+				playerChatToggleSelectors: archivePlayerChatToggleSelectors,
+			})
+			.catch(() => false)
 		if (unavailable) return true
 		await tryOpenArchiveNativeChatPanel(page)
 		await page.waitForTimeout(800)

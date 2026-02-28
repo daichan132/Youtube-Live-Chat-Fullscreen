@@ -2,6 +2,22 @@ import type { Extension } from '@e2e/fixtures'
 
 const STORE_KEY = 'ytdLiveChatStore'
 
+type StoreEntry = { state: Record<string, unknown>; version: number }
+
+const parseStoreValue = (rawValue: unknown): StoreEntry | null => {
+  if (typeof rawValue === 'string') {
+    try {
+      return JSON.parse(rawValue)
+    } catch {
+      return null
+    }
+  }
+  if (typeof rawValue === 'object' && rawValue !== null) {
+    return rawValue as StoreEntry
+  }
+  return null
+}
+
 /**
  * Patch properties in the ytdLiveChatStore persisted in chrome.storage.local.
  *
@@ -14,18 +30,7 @@ export const patchOverlayStore = async (
   overrides: Record<string, unknown>,
 ): Promise<Record<string, unknown> | null> => {
   const raw = await extension.storage.get(STORE_KEY)
-  const rawValue = raw[STORE_KEY]
-
-  let stored: { state: Record<string, unknown>; version: number } | null = null
-  if (typeof rawValue === 'string') {
-    try {
-      stored = JSON.parse(rawValue)
-    } catch {
-      stored = null
-    }
-  } else if (typeof rawValue === 'object' && rawValue !== null) {
-    stored = rawValue as { state: Record<string, unknown>; version: number }
-  }
+  let stored = parseStoreValue(raw[STORE_KEY])
 
   const existed = stored?.state != null
   if (stored?.state) {
@@ -37,17 +42,7 @@ export const patchOverlayStore = async (
   await extension.storage.set({ [STORE_KEY]: JSON.stringify(stored) })
 
   const verify = await extension.storage.get(STORE_KEY)
-  const verifyValue = verify[STORE_KEY]
-  let verifyState: Record<string, unknown> | null = null
-  if (typeof verifyValue === 'string') {
-    try {
-      verifyState = JSON.parse(verifyValue).state ?? null
-    } catch {
-      verifyState = null
-    }
-  } else if (typeof verifyValue === 'object' && verifyValue !== null) {
-    verifyState = (verifyValue as { state: Record<string, unknown> }).state ?? null
-  }
+  const verifyState = parseStoreValue(verify[STORE_KEY])?.state ?? null
 
   if (!verifyState) {
     console.warn('[patchOverlayStore] Write verification failed')
@@ -55,7 +50,7 @@ export const patchOverlayStore = async (
   }
 
   const overrideKeys = Object.keys(overrides)
-  const verified = overrideKeys.every(k => verifyState?.[k] !== undefined)
+  const verified = overrideKeys.every(k => verifyState[k] !== undefined)
   console.log(`[patchOverlayStore] existed=${existed}, overrides verified=${verified}, keys=${overrideKeys.join(',')}`)
 
   return verifyState

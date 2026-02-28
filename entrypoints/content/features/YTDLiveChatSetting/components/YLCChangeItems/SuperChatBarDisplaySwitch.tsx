@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCSuperChatBarDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCSuperChatBarDisplayChange'
+import { useYLCDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCDisplayChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
@@ -14,7 +14,7 @@ export const SuperChatBarDisplaySwitch = () => {
       updateYLCStyle: state.updateYLCStyle,
     })),
   )
-  const { changeDisplay } = useYLCSuperChatBarDisplayChange()
+  const { changeDisplay } = useYLCDisplayChange('--extension-super-chat-bar-display', 'block')
   return (
     <SuperChatBarDisplaySwitchUI superChatBarDisplay={superChatBarDisplay} updateYLCStyle={updateYLCStyle} changeDisplay={changeDisplay} />
   )

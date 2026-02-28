@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCSpaceChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCSpaceChange'
+import { useYLCStylePropertyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCStylePropertyChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
 
@@ -21,13 +21,13 @@ const sliderValueToSpace = (value: number) => {
 export const SpaceSlider = () => {
   const spaceRef = useRef(useYTDLiveChatStore.getState().space)
   const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
-  const { changeSpace } = useYLCSpaceChange()
+  const { setProperty } = useYLCStylePropertyChange()
   const updateSpace = useCallback(
     (space: number) => {
       updateYLCStyle({ space })
-      changeSpace(space)
+      setProperty('--extension-yt-live-chat-spacing', `${space}px`)
     },
-    [changeSpace, updateYLCStyle],
+    [setProperty, updateYLCStyle],
   )
 
   const { value, ref } = useSettingSlider<HTMLDivElement>({

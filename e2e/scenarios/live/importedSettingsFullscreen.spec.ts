@@ -1,7 +1,6 @@
 import type { Page } from '@playwright/test'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
-import { ExtensionPopup } from '@e2e/pages/ExtensionPopup'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 
@@ -134,10 +133,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     // returns the YouTube tab -- matching real popup behaviour.
     const popupPage = await context.newPage()
     await page.bringToFront()
-    const popup = new ExtensionPopup(popupPage, extension)
 
-    await popup.open()
-    await popup.importSettings({
+    await importSettingsViaPopup(popupPage, extension, {
       version: 1,
       exportedAt: '2024-01-01T00:00:00.000Z',
       globalSetting: { ytdLiveChat: true, themeMode: 'dark' },
@@ -208,14 +205,14 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       })
 
     // Verify preset data was persisted to storage (read from extension storage directly)
-    const ytdState = await popup.readStorage('ytdLiveChatStore')
+    const ytdState = await readStorageEntry(popupPage, 'ytdLiveChatStore')
     expect(ytdState?.state.presetItemIds).toEqual(['imported1', 'imported2'])
     expect((ytdState?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.imported1?.fontSize).toBe(20)
     expect((ytdState?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.imported2?.fontSize).toBe(16)
     expect((ytdState?.state.presetItemTitles as Record<string, string>)?.imported1).toBe('Dark Preset')
     expect((ytdState?.state.presetItemTitles as Record<string, string>)?.imported2).toBe('Semi-transparent')
 
-    await popup.close()
+    await popupPage.close()
   })
 
   test('sequential imports each overwrite previous settings and presets', async ({ context, page, extension, liveUrl }) => {

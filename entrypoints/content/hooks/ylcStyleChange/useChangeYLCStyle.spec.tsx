@@ -7,8 +7,7 @@ const spies = vi.hoisted(() => ({
   changeBlur: vi.fn(),
   changeFontColor: vi.fn(),
   changeFontFamily: vi.fn(),
-  changeFontSize: vi.fn(),
-  changeSpace: vi.fn(),
+  setProperty: vi.fn(),
   changeUserNameDisplay: vi.fn(),
   changeUserIconDisplay: vi.fn(),
   changeSuperChatBarDisplay: vi.fn(),
@@ -26,20 +25,17 @@ vi.mock('./useYLCFontColorChange', () => ({
 vi.mock('./useYLCFontFamilyChange', () => ({
   useYLCFontFamilyChange: () => ({ changeFontFamily: spies.changeFontFamily }),
 }))
-vi.mock('./useYLCFontSizeChange', () => ({
-  useYLCFontSizeChange: () => ({ changeFontSize: spies.changeFontSize }),
+vi.mock('./useYLCStylePropertyChange', () => ({
+  useYLCStylePropertyChange: () => ({ setProperty: spies.setProperty }),
 }))
-vi.mock('./useYLCSpaceChange', () => ({
-  useYLCSpaceChange: () => ({ changeSpace: spies.changeSpace }),
-}))
-vi.mock('./useYLCUserNameDisplayChange', () => ({
-  useYLCUserNameDisplayChange: () => ({ changeDisplay: spies.changeUserNameDisplay }),
-}))
-vi.mock('./useYLCUserIconDisplayChange', () => ({
-  useYLCUserIconDisplayChange: () => ({ changeDisplay: spies.changeUserIconDisplay }),
-}))
-vi.mock('./useYLCSuperChatBarDisplayChange', () => ({
-  useYLCSuperChatBarDisplayChange: () => ({ changeDisplay: spies.changeSuperChatBarDisplay }),
+vi.mock('./useYLCDisplayChange', () => ({
+  useYLCDisplayChange: (property: string, _visibleValue = 'inline') => ({
+    changeDisplay: (display: boolean) => {
+      if (property === '--extension-user-name-display') spies.changeUserNameDisplay(display)
+      else if (property === '--extension-user-icon-display') spies.changeUserIconDisplay(display)
+      else if (property === '--extension-super-chat-bar-display') spies.changeSuperChatBarDisplay(display)
+    },
+  }),
 }))
 
 describe('useChangeYLCStyle', () => {
@@ -61,13 +57,12 @@ describe('useChangeYLCStyle', () => {
     })
 
     expect(spies.changeBg).toHaveBeenCalledWith({ r: 10, g: 20, b: 30, a: 0.9 })
-    expect(spies.changeFontSize).toHaveBeenCalledWith(18)
+    expect(spies.setProperty).toHaveBeenCalledWith('--extension-yt-live-chat-font-size', '18px')
     expect(spies.changeUserNameDisplay).toHaveBeenCalledWith(false)
 
     expect(spies.changeBlur).not.toHaveBeenCalled()
     expect(spies.changeFontColor).not.toHaveBeenCalled()
     expect(spies.changeFontFamily).not.toHaveBeenCalled()
-    expect(spies.changeSpace).not.toHaveBeenCalled()
     expect(spies.changeUserIconDisplay).not.toHaveBeenCalled()
     expect(spies.changeSuperChatBarDisplay).not.toHaveBeenCalled()
   })

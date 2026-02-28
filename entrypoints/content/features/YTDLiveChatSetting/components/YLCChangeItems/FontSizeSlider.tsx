@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 
 import { useShallow } from 'zustand/react/shallow'
 
-import { useYLCFontSizeChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontSizeChange'
+import { useYLCStylePropertyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCStylePropertyChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
 
@@ -21,13 +21,13 @@ const sliderValueToFontSize = (value: number) => {
 export const FontSizeSlider = () => {
   const fontSizeRef = useRef(useYTDLiveChatStore.getState().fontSize)
   const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
-  const { changeFontSize } = useYLCFontSizeChange()
+  const { setProperty } = useYLCStylePropertyChange()
   const updateFontSize = useCallback(
     (fontSize: number) => {
       updateYLCStyle({ fontSize })
-      changeFontSize(fontSize)
+      setProperty('--extension-yt-live-chat-font-size', `${fontSize}px`)
     },
-    [changeFontSize, updateYLCStyle],
+    [setProperty, updateYLCStyle],
   )
 
   const { value, ref } = useSettingSlider<HTMLDivElement>({

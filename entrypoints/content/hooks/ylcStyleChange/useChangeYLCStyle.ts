@@ -3,13 +3,10 @@ import { useCallback, useMemo } from 'react'
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { useYLCBgColorChange } from './useYLCBgColorChange'
 import { useYLCBlurChange } from './useYLCBlurChange'
+import { useYLCDisplayChange } from './useYLCDisplayChange'
 import { useYLCFontColorChange } from './useYLCFontColorChange'
 import { useYLCFontFamilyChange } from './useYLCFontFamilyChange'
-import { useYLCFontSizeChange } from './useYLCFontSizeChange'
-import { useYLCSpaceChange } from './useYLCSpaceChange'
-import { useYLCSuperChatBarDisplayChange } from './useYLCSuperChatBarDisplayChange'
-import { useYLCUserIconDisplayChange } from './useYLCUserIconDisplayChange'
-import { useYLCUserNameDisplayChange } from './useYLCUserNameDisplayChange'
+import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 const HANDLED_KEYS = [
   'bgColor',
@@ -39,11 +36,24 @@ export const useChangeYLCStyle = () => {
   const { changeBlur } = useYLCBlurChange()
   const { changeColor: changeFontColor } = useYLCFontColorChange()
   const { changeFontFamily } = useYLCFontFamilyChange()
-  const { changeFontSize } = useYLCFontSizeChange()
-  const { changeSpace } = useYLCSpaceChange()
-  const { changeDisplay: changeUserNameDisplay } = useYLCUserNameDisplayChange()
-  const { changeDisplay: changeUserIconDisplay } = useYLCUserIconDisplayChange()
-  const { changeDisplay: changeSuperChatBarDisplay } = useYLCSuperChatBarDisplayChange()
+  const { setProperty } = useYLCStylePropertyChange()
+  const { changeDisplay: changeUserNameDisplay } = useYLCDisplayChange('--extension-user-name-display')
+  const { changeDisplay: changeUserIconDisplay } = useYLCDisplayChange('--extension-user-icon-display')
+  const { changeDisplay: changeSuperChatBarDisplay } = useYLCDisplayChange('--extension-super-chat-bar-display', 'block')
+
+  const changeFontSize = useCallback(
+    (fontSize: number) => {
+      setProperty('--extension-yt-live-chat-font-size', `${fontSize}px`)
+    },
+    [setProperty],
+  )
+
+  const changeSpace = useCallback(
+    (space: number) => {
+      setProperty('--extension-yt-live-chat-spacing', `${space}px`)
+    },
+    [setProperty],
+  )
 
   const handlers: HandlerMap = useMemo(
     () => ({

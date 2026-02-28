@@ -82,16 +82,15 @@ export const useCSSTransition = ({ in: show, timeout, classNames, unmountOnExit 
 
   const isMounted = state !== 'unmounted'
 
-  let className = ''
-  if (state === 'enter') {
-    className = classNames.enter ?? ''
-  } else if (state === 'entering' || state === 'entered') {
-    className = classNames.enterActive ?? ''
-  } else if (state === 'exit') {
-    className = classNames.exit ?? ''
-  } else if (state === 'exiting') {
-    className = classNames.exitActive ?? ''
+  const classNameMap: Record<TransitionState, string> = {
+    unmounted: '',
+    exited: '',
+    enter: classNames.enter ?? '',
+    entering: classNames.enterActive ?? '',
+    entered: classNames.enterActive ?? '',
+    exit: classNames.exit ?? '',
+    exiting: classNames.exitActive ?? '',
   }
 
-  return { isMounted, className }
+  return { isMounted, className: classNameMap[state] }
 }

@@ -31,8 +31,6 @@ export const importSettingsViaPopup = async (page: Page, extension: Extension, s
  * already on an extension URL (reads directly, avoiding temporary popup pages
  * that could trigger Zustand re-initialization side effects).
  */
-export function readStorageEntry(source: Extension, key: string): Promise<{ state: Record<string, unknown>; version: number } | null>
-export function readStorageEntry(source: Page, key: string): Promise<{ state: Record<string, unknown>; version: number } | null>
 export async function readStorageEntry(
   source: Extension | Page,
   key: string,
