@@ -1,6 +1,6 @@
 ---
 name: fullscreen-chat-contracts
-description: フルスクリーンチャットの実行時契約を守るためのガイド。Content/YTDLiveChat/ソース解決/スイッチ挙動/iframe 隠蔽方式/blur・background スタイルを変更するときに使う。live/archive/no-chat の境界、iframe の DOM 移動、CSS の隠蔽方式、スタイル適用先に関わるコードを触るときは必ず参照すること。
+description: フルスクリーンチャットの実行時契約とデバッグ手法。Content/YTDLiveChat/ソース解決/スイッチ挙動/iframe 隠蔽方式/blur・background スタイルを変更するとき、またはフルスクリーン/ネイティブチャットの表示崩れ・スロットリング問題を調査するときに使う。live/archive/no-chat の境界、iframe の DOM 移動、CSS の隠蔽方式、スタイル適用先に関わるコードを触るときは必ず参照すること。
 ---
 
 # Fullscreen Chat 契約
@@ -34,8 +34,24 @@ iframe を含む祖先要素を隠すときは `visibility: hidden` + `position:
 
 ## スタイル契約（blur / background）
 
-過去の回帰で学んだルール:
-
 1. **blur**: iframe host ではなく iframe document の `body` に適用する。host 側に `filter` をかけると iframe 全体がぼけて文字が読めなくなる
 2. **background**: `--yt-live-chat-background-color` は `transparent` を維持する。暗色化は内部変数のみで行う
 3. **iframe サーフェス透過**: `entrypoints/content/features/YTDLiveChatIframe/styles/iframe.css` で `html/body` と主要 chat コンテナ背景を透過させる
+
+## デバッグ: 状態採取チェックリスト
+
+不具合を再現したら、以下の状態を採取して壊れている境界を特定する:
+
+| 項目 | 確認方法 | 壊れている境界 |
+|------|----------|---------------|
+| fullscreen 状態 | `document.fullscreenElement` | DOM 移動（上記セクション参照） |
+| switch ボタン | 存在有無・`aria-pressed` 値 | toggle/overlay gating |
+| native iframe | `#chatframe` の href・playable 状態 | source resolver |
+| extension iframe | `data-ylc-chat`・`data-ylc-owned`・`src` | mode 判定・borrow/新規作成 |
+
+スロットリング問題の詳細な診断手順は [references/throttling-diagnostics.md](references/throttling-diagnostics.md) を参照。
+
+## ガードレール
+
+- デバッグ中に大規模リファクタを混ぜない。
+- permissions 変更は明示依頼がある場合のみ。
