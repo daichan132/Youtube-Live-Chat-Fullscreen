@@ -265,3 +265,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Skill eval workspaces (regenerable artifacts)
+.agents/skills/**/*-workspace/iteration-*/

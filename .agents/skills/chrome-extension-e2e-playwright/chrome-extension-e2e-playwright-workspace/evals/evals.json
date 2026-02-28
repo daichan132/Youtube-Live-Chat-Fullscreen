@@ -1,0 +1,45 @@
+{
+  "skill_name": "chrome-extension-e2e-playwright",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Playwright で Chrome 拡張の E2E テストを新規にセットアップしたい。拡張のビルド出力は dist/ にある（manifest.json 含む）。MV3 で Service Worker を使っている。テストでは拡張が正しくロードされ、SW が起動し、Extension ID を取得できることを確認したい。playwright.config.ts と fixtures.ts と最初のスモークテストを書いて。",
+      "expected_output": "launchPersistentContext + headless: false で拡張をロードし、SW の warmup polling で起動を待ち、Extension ID を SW URL から取得する fixtures.ts。playwright.config.ts には globalSetup でビルド出力チェック。スモークテストで拡張ロード・SW 起動・ID 取得を確認。",
+      "files": [],
+      "expectations": [
+        "fixtures.ts で chromium.launchPersistentContext を使い headless: false を設定している",
+        "拡張ロード引数に --disable-extensions-except と --load-extension を含む",
+        "Service Worker の起動を待つロジックがある（waitForEvent or serviceWorkers() のポーリング）",
+        "Extension ID を Service Worker の URL から取得している",
+        "playwright.config.ts で globalSetup を指定し、manifest.json の存在確認をしている",
+        "waitForTimeout() などの固定スリープを使っていない"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Chrome 拡張の E2E テストで、content script が挿入する Shadow DOM 内のボタンをクリックして状態変化を確認するテストを書きたい。ボタンは #extension-root の Shadow DOM 内にある [data-testid=\"toggle-btn\"] で、クリックすると aria-pressed が true になる。ホストサイトの要素が上に重なってクリックがブロックされる場合がある。Playwright で安定したテストを書くにはどうすればいい？",
+      "expected_output": "page.evaluate() で shadowRoot を直接トラバースしてボタンにアクセス。click({ force: true }) + JS 直接クリックの二重パターンでクリック。expect.poll() で aria-pressed の状態変化を待つ。waitForTimeout を使わない。",
+      "files": [],
+      "expectations": [
+        "page.evaluate() 内で shadowRoot を使って Shadow DOM 内の要素にアクセスしている",
+        "click({ force: true }) または page.evaluate 内での直接 .click() を使っている",
+        "expect.poll() または waitForFunction() で状態変化を待っている",
+        "waitForTimeout() などの固定スリープを使っていない",
+        "page.evaluate() に外部変数をクロージャ参照せず引数として渡している"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Chrome 拡張の E2E テストで chrome.storage.local にテストデータを事前設定したい。拡張は Zustand + persist ミドルウェアで状態管理しており、chrome.storage に JSON を書き込んでいる。テスト前にストレージを特定の値にセットして、テスト後にクリアしたいが、popup を開くと rehydration でストレージが上書きされてしまう。安定した方法を教えて。",
+      "expected_output": "Service Worker 経由で chrome.storage.local.set() を直接呼ぶ方法を推奨。SW が使えない場合は拡張ページ経由だが、操作後に即 about:blank に遷移して rehydration を防ぐ。persist ミドルウェアのフォーマット（{ state: {...}, version: N }）に合わせてデータを書き込む。",
+      "files": [],
+      "expectations": [
+        "Service Worker 経由で chrome.storage.local にアクセスする方法を示している",
+        "popup/拡張ページ経由のフォールバック方法も言及している",
+        "rehydration 問題への対策として about:blank への遷移を含んでいる",
+        "persist ミドルウェアのデータフォーマットに言及している",
+        "テスト後のストレージクリア方法を示している"
+      ]
+    }
+  ]
+}
