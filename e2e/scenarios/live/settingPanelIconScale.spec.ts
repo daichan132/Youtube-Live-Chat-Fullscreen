@@ -1,8 +1,8 @@
-import { getE2ETestTargets } from '../../config/testTargets'
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { openArchiveWatchPage } from '../../support/diagnostics'
+import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { openArchiveWatchPage } from '@e2e/support/diagnostics'
 
 type Box = { width: number; height: number }
 

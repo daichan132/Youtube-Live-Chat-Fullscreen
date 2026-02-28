@@ -1,8 +1,8 @@
-import { expect, test } from '../fixtures'
-import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '../support/diagnostics'
-import { reliableClick } from '../utils/actions'
-import { switchButtonSelector } from '../utils/selectors'
-import { patchOverlayStore } from '../utils/storageHelper'
+import { expect, test } from '@e2e/fixtures'
+import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { reliableClick } from '@e2e/utils/actions'
+import { switchButtonSelector } from '@e2e/utils/selectors'
+import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import {
   clickSettingIcon,
   ensureScreenshotsDir,

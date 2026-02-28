@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
-import type { Extension } from '../fixtures'
-import type { TestSettings } from '../utils/popupHelpers'
+import type { Extension } from '@e2e/fixtures'
+import type { TestSettings } from '@e2e/utils/popupHelpers'
 
 export class ExtensionPopup {
   constructor(

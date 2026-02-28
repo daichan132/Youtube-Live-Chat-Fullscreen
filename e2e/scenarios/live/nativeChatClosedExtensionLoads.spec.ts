@@ -1,8 +1,8 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { hasPlayableChat } from '../../support/diagnostics'
-import { closeNativeChat } from '../../utils/nativeChat'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasPlayableChat } from '@e2e/support/diagnostics'
+import { closeNativeChat } from '@e2e/utils/nativeChat'
 
 test.describe('native chat closed extension loads', { tag: '@live' }, () => {
   test('extension chat loads when native chat is closed', async ({ page, liveUrl }) => {

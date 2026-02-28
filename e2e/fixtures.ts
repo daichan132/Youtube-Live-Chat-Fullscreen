@@ -2,9 +2,9 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { type BrowserContext, test as base, chromium, type Page, type Worker } from '@playwright/test'
-import { PAGE_HELPERS_INIT_SCRIPT } from './support/pageHelpers'
-import { selectArchiveReplayUrl } from './support/urls/archiveReplay'
-import { findLiveUrlWithChat } from './utils/liveUrl'
+import { PAGE_HELPERS_INIT_SCRIPT } from '@e2e/support/pageHelpers'
+import { selectArchiveReplayUrl } from '@e2e/support/urls/archiveReplay'
+import { findLiveUrlWithChat } from '@e2e/utils/liveUrl'
 
 const pathToExtension = path.resolve('.output/chrome-mv3')
 const EXTENSION_BOOT_TIMEOUT_MS = 45000

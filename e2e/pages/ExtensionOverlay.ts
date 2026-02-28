@@ -1,9 +1,9 @@
 import { expect, type Page } from '@playwright/test'
 
-import { TIMEOUT } from '../support/constants'
-import { isExtensionArchiveChatPlayable, isExtensionChatLoaded } from '../support/diagnostics'
-import { reliableClick } from '../utils/actions'
-import { MOVIE_PLAYER, switchButtonSelector } from '../utils/selectors'
+import { TIMEOUT } from '@e2e/support/constants'
+import { isExtensionArchiveChatPlayable, isExtensionChatLoaded } from '@e2e/support/diagnostics'
+import { reliableClick } from '@e2e/utils/actions'
+import { MOVIE_PLAYER, switchButtonSelector } from '@e2e/utils/selectors'
 
 export class ExtensionOverlay {
   constructor(private page: Page) {}

@@ -1,6 +1,6 @@
 import type { Page } from '@playwright/test'
-import { getE2ETestTargets } from '../config/testTargets'
-import { hasPlayableChat } from '../support/diagnostics'
+import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { hasPlayableChat } from '@e2e/support/diagnostics'
 
 const nonLiveSearchUrl = 'https://www.youtube.com/results?search_query=big%20buck%20bunny&sp=EgIQAQ%253D%253D'
 const archiveSearchUrls = [

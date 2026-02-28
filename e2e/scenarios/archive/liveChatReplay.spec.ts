@@ -1,7 +1,7 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
 
 const isExtensionArchiveIframeBorrowed = () => {
   const host = document.getElementById('shadow-root-live-chat')

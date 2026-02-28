@@ -1,6 +1,6 @@
 import type { Page, TestInfo } from '@playwright/test'
-import { acceptYouTubeConsent } from '../utils/liveUrl'
-import { switchButtonSelector } from '../utils/selectors'
+import { acceptYouTubeConsent } from '@e2e/utils/liveUrl'
+import { switchButtonSelector } from '@e2e/utils/selectors'
 
 type DiagnosticState = {
 	reason: string

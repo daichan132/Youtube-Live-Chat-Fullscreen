@@ -1,8 +1,8 @@
-import { getE2ETestTargets } from '../../config/testTargets'
-import { expect, test } from '../../fixtures'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { hasPlayableChat, isExtensionChatLoaded } from '../../support/diagnostics'
-import { switchButtonSelector } from '../../utils/selectors'
+import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { expect, test } from '@e2e/fixtures'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasPlayableChat, isExtensionChatLoaded } from '@e2e/support/diagnostics'
+import { switchButtonSelector } from '@e2e/utils/selectors'
 
 test('extension chat stays hidden on videos without live chat', async ({ page }) => {
   test.setTimeout(120000)

@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test'
-import { TIMEOUT } from '../support/constants'
-import { acceptYouTubeConsent } from '../utils/liveUrl'
-import { FULLSCREEN_BUTTON, MOVIE_PLAYER, NATIVE_CHAT_FRAME } from '../utils/selectors'
+import { TIMEOUT } from '@e2e/support/constants'
+import { acceptYouTubeConsent } from '@e2e/utils/liveUrl'
+import { FULLSCREEN_BUTTON, MOVIE_PLAYER, NATIVE_CHAT_FRAME } from '@e2e/utils/selectors'
 
 export class YouTubeWatchPage {
   constructor(private page: Page) {}

@@ -1,7 +1,7 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { captureChatState, isExtensionChatLoaded, isNativeLiveChatPlayable } from '../../support/diagnostics'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { captureChatState, isExtensionChatLoaded, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
 
 test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
   test('auto show fullscreen chat when enabled', async ({ page, liveUrl }) => {

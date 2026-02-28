@@ -1,5 +1,5 @@
 import type { Page } from '@playwright/test'
-import type { Extension } from '../fixtures'
+import type { Extension } from '@e2e/fixtures'
 
 type TestSettings = {
   version: number

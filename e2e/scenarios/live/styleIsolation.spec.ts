@@ -1,6 +1,6 @@
-import { getE2ETestTargets } from '../../config/testTargets'
-import { expect, test } from '../../fixtures'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
+import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { expect, test } from '@e2e/fixtures'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 
 type StyleIsolationAudit = {
   hasShadowRoot: boolean

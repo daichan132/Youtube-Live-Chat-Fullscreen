@@ -1,7 +1,7 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { FULLSCREEN_BUTTON } from '../../utils/selectors'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { FULLSCREEN_BUTTON } from '@e2e/utils/selectors'
 
 const getPointerState = () => {
   const ytdApp = document.querySelector('ytd-app') as HTMLElement | null

@@ -1,9 +1,9 @@
-import { expect, test } from '../../fixtures'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { TIMEOUT } from '../../support/constants'
-import { captureChatState } from '../../support/diagnostics'
-import { selectReplayUnavailableUrl } from '../../support/urls/archiveReplay'
-import { SHADOW_HOST, switchButtonSelector } from '../../utils/selectors'
+import { expect, test } from '@e2e/fixtures'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { TIMEOUT } from '@e2e/support/constants'
+import { captureChatState } from '@e2e/support/diagnostics'
+import { selectReplayUnavailableUrl } from '@e2e/support/urls/archiveReplay'
+import { SHADOW_HOST, switchButtonSelector } from '@e2e/utils/selectors'
 
 test.describe('archive replay unavailable', { tag: '@archive' }, () => {
   test('hide fullscreen chat button when replay chat is unavailable', async ({ page }) => {

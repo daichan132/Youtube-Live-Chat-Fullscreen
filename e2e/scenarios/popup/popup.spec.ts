@@ -1,5 +1,5 @@
-import { expect, test } from '../../fixtures'
-import { importSettingsViaPopup, readStorageEntry } from '../../utils/popupHelpers'
+import { expect, test } from '@e2e/fixtures'
+import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 
 test('popup renders language selector and chat toggle', async ({ page, extension }) => {
   test.setTimeout(90000)

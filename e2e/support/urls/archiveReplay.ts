@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test'
-import { getE2ETestTargets } from '../../config/testTargets'
-import { acceptYouTubeConsent } from '../../utils/liveUrl'
-import { ensureArchiveNativeChatPlayable, ensureNativeReplayUnavailable, openArchiveWatchPage } from '../diagnostics'
+import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { acceptYouTubeConsent } from '@e2e/utils/liveUrl'
+import { ensureArchiveNativeChatPlayable, ensureNativeReplayUnavailable, openArchiveWatchPage } from '@e2e/support/diagnostics'
 
 const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
 

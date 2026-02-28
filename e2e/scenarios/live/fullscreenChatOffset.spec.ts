@@ -1,8 +1,8 @@
 import { writeFile } from 'node:fs/promises'
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { closeNativeChat } from '../../utils/nativeChat'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { closeNativeChat } from '@e2e/utils/nativeChat'
 
 const collectFullscreenChatOffset = () => {
   const host = document.getElementById('shadow-root-live-chat') as HTMLElement | null

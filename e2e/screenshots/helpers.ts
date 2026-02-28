@@ -2,10 +2,10 @@ import fs from 'node:fs'
 import path from 'node:path'
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
-import type { Extension } from '../fixtures'
-import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '../support/diagnostics'
-import { reliableClick } from '../utils/actions'
-import { switchButtonSelector } from '../utils/selectors'
+import type { Extension } from '@e2e/fixtures'
+import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { reliableClick } from '@e2e/utils/actions'
+import { switchButtonSelector } from '@e2e/utils/selectors'
 
 /**
  * Screenshot-dedicated archive URL (with chat replay).

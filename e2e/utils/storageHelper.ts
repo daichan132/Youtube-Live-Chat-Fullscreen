@@ -1,4 +1,4 @@
-import type { Extension } from '../fixtures'
+import type { Extension } from '@e2e/fixtures'
 
 const STORE_KEY = 'ytdLiveChatStore'
 

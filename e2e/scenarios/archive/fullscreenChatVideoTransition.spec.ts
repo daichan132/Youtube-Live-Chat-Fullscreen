@@ -1,8 +1,8 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '../../support/diagnostics'
-import { selectArchiveReplayTransitionPair } from '../../support/urls/archiveReplay'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import { selectArchiveReplayTransitionPair } from '@e2e/support/urls/archiveReplay'
 
 const TRANSITION_STABILITY_DURATION_MS = 4000
 const TRANSITION_STABILITY_SAMPLE_INTERVAL_MS = 250

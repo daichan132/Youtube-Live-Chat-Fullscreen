@@ -1,8 +1,8 @@
-import { expect, test } from '../../fixtures'
-import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
-import { ExtensionPopup } from '../../pages/ExtensionPopup'
-import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-import { importSettingsViaPopup, readStorageEntry } from '../../utils/popupHelpers'
+import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { ExtensionPopup } from '@e2e/pages/ExtensionPopup'
+import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 
 const getOverlayFontSize = () => {
   const host = document.getElementById('shadow-root-live-chat')
