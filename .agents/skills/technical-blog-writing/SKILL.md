@@ -224,6 +224,10 @@ If you're new to containers, start with [our intro post]."
 | Platform | Format | How to Post |
 |----------|--------|-------------|
 | Your blog | Full article | Primary — own your content |
+| Zenn | Full article (Markdown + Zenn syntax) | Zenn CLI or web editor |
+| Qiita | Full article (Markdown) | Web editor |
+| note | Adapted version for broader audience | Web editor |
+| Hatena Blog | Full article (Markdown) | Web editor |
 | Dev.to | Cross-post (canonical URL back to yours) | Markdown import |
 | Hashnode | Cross-post (canonical URL) | Markdown import |
 | Hacker News | Link submission | Show HN for projects, tell HN for stories |
