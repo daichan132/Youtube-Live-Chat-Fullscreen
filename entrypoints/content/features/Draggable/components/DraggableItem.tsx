@@ -8,7 +8,7 @@ import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import useYTDLiveChatStore from '@/shared/stores/ytdLiveChatStore'
 import { useClipAnimationPriming } from '../hooks/useClipAnimationPriming'
 import { useDisableTopTransition } from '../hooks/useDisableTopTransition'
-import { useDraggableItemEvents, useDraggableItemStyles } from '../hooks/useDraggableItemStyles'
+import { useDraggableItemStyles } from '../hooks/useDraggableItemStyles'
 import { useResizableHandlers } from '../hooks/useResizableHandlers'
 import { ControlIcons } from './ControlIcons'
 import { EffectsWrapper } from './EffectComponent/EffectsWrapper'
@@ -69,10 +69,8 @@ export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
     clip,
   })
 
-  const { handleMouseEnter, handleMouseLeave } = useDraggableItemEvents(setIsHover)
-
   return (
-    <div role='application' onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+    <div role='application' onMouseEnter={() => setIsHover(true)} onMouseLeave={() => setIsHover(false)}>
       <EffectsWrapper isDragging={isDragging} isResizing={isResizing} />
 
       <Resizable

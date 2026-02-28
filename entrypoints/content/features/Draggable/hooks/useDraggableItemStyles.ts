@@ -67,13 +67,3 @@ export const useDraggableItemStyles = ({
 
   return { resizableStyle, innerDivStyle }
 }
-
-/**
- * Hook that provides event handlers for mouse interactions
- */
-export const useDraggableItemEvents = (setIsHover: (value: boolean) => void) => {
-  const handleMouseEnter = () => setIsHover(true)
-  const handleMouseLeave = () => setIsHover(false)
-
-  return { handleMouseEnter, handleMouseLeave }
-}

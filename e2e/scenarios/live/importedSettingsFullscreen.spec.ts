@@ -1,4 +1,3 @@
-import type { Page } from '@playwright/test'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
@@ -36,30 +35,6 @@ const isExtensionChatWithMessages = () => {
   return doc.querySelectorAll('yt-live-chat-text-message-renderer, yt-live-chat-paid-message-renderer').length > 0
 }
 
-const enterFullscreenAndActivateChat = async (
-  yt: YouTubeWatchPage,
-  overlay: ExtensionOverlay,
-  page: Page,
-) => {
-  await yt.waitForNativeChat()
-  await yt.enterFullscreen()
-
-  const switchReady = await overlay.waitForSwitchReady()
-  if (!switchReady) return { ready: false as const, reason: 'Fullscreen chat switch button did not appear.' }
-
-  await overlay.toggleOn()
-
-  const loaded = await overlay.waitForChatLoaded()
-  if (!loaded) return { ready: false as const, reason: 'Extension iframe did not load in time.' }
-
-  try {
-    await expect.poll(async () => page.evaluate(isExtensionChatWithMessages), { timeout: 20000 }).toBe(true)
-  } catch {
-    return { ready: false as const, reason: 'Extension iframe loaded but no chat messages appeared.' }
-  }
-  return { ready: true as const }
-}
-
 test.describe('imported settings fullscreen', { tag: '@live' }, () => {
   test('imported settings are applied in fullscreen chat', async ({ page, extension, liveUrl }) => {
     test.setTimeout(180000)
@@ -82,9 +57,27 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(yt, overlay, page)
-    if (!result.ready) {
-      test.skip(true, result.reason)
+    await yt.waitForNativeChat()
+    await yt.enterFullscreen()
+
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
+
+    await overlay.toggleOn()
+
+    const loaded = await overlay.waitForChatLoaded()
+    if (!loaded) {
+      test.skip(true, 'Extension iframe did not load in time.')
+      return
+    }
+
+    try {
+      await expect.poll(async () => page.evaluate(isExtensionChatWithMessages), { timeout: 20000 }).toBe(true)
+    } catch {
+      test.skip(true, 'Extension iframe loaded but no chat messages appeared.')
       return
     }
 
@@ -107,13 +100,31 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
-    const yt2 = new YouTubeWatchPage(page)
-    const overlay2 = new ExtensionOverlay(page)
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(yt2, overlay2, page)
-    if (!result.ready) {
-      test.skip(true, result.reason)
+    await yt.waitForNativeChat()
+    await yt.enterFullscreen()
+
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
+
+    await overlay.toggleOn()
+
+    const loaded = await overlay.waitForChatLoaded()
+    if (!loaded) {
+      test.skip(true, 'Extension iframe did not load in time.')
+      return
+    }
+
+    try {
+      await expect.poll(async () => page.evaluate(isExtensionChatWithMessages), { timeout: 20000 }).toBe(true)
+    } catch {
+      test.skip(true, 'Extension iframe loaded but no chat messages appeared.')
       return
     }
 
@@ -223,13 +234,31 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
-    const yt3 = new YouTubeWatchPage(page)
-    const overlay3 = new ExtensionOverlay(page)
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(yt3, overlay3, page)
-    if (!result.ready) {
-      test.skip(true, result.reason)
+    await yt.waitForNativeChat()
+    await yt.enterFullscreen()
+
+    const switchReady = await overlay.waitForSwitchReady()
+    if (!switchReady) {
+      test.skip(true, 'Fullscreen chat switch button did not appear.')
+      return
+    }
+
+    await overlay.toggleOn()
+
+    const loaded = await overlay.waitForChatLoaded()
+    if (!loaded) {
+      test.skip(true, 'Extension iframe did not load in time.')
+      return
+    }
+
+    try {
+      await expect.poll(async () => page.evaluate(isExtensionChatWithMessages), { timeout: 20000 }).toBe(true)
+    } catch {
+      test.skip(true, 'Extension iframe loaded but no chat messages appeared.')
       return
     }
 
