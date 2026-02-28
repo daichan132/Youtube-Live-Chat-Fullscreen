@@ -50,52 +50,89 @@ await page.evaluate(() => window.__e2e.shadowQs('#host', '.target'))
 
 ## chrome.storage へのアクセス
 
+テストから `chrome.storage` を読み書きするには、拡張のコンテキスト（SW または拡張ページ）を経由する。
+
+### 起動時分岐（boot-time bifurcation）
+
+storage accessor のパスは **fixture 起動時に一度だけ決定** する。実行時にフォールバックチェーンを持たない設計が安定する。
+
 ```ts
-// 方法1: Service Worker 経由（推奨）
+// Worker パス: fixture 起動時に SW が取得できた場合
+// CDP セッションが Worker 参照を keep alive するため、
+// Chrome が SW を idle termination しても evaluate() は有効
 const data = await worker.evaluate((k) => chrome.storage.local.get(k), keys)
 await worker.evaluate((i) => chrome.storage.local.set(i), items)
 
-// 方法2: 拡張ページ経由（SW が使えない場合）
+// Page パス: SW が取得できなかった場合
+// 操作のたびに拡張ページを開き、完了後に即閉じる
 const popup = await context.newPage()
 await popup.goto(`chrome-extension://${extensionId}/popup.html`)
 const data = await popup.evaluate((k) => chrome.storage.local.get(k), keys)
-await popup.goto('about:blank') // rehydration 防止
+await popup.goto('about:blank') // rehydration 遮断（後述）
 await popup.close()
 ```
 
-### クラスにまとめる場合
+### ファクトリ関数でまとめる場合
 
 ```ts
-export class ExtensionStorage {
-  constructor(private worker: Worker | null, private context: BrowserContext, private extId: string) {}
+type StorageAccessor = {
+  get(keys?: string | string[] | null): Promise<Record<string, unknown>>
+  set(items: Record<string, unknown>): Promise<void>
+  clear(): Promise<void>
+}
 
-  async get(keys?: string | string[]) {
-    return this.worker
-      ? this.worker.evaluate((k) => chrome.storage.local.get(k), keys)
-      : this.viaPage((k) => chrome.storage.local.get(k), keys)
+function createStorageAccessor(
+  context: BrowserContext, extensionId: string, initialWorker: Worker | null
+): StorageAccessor {
+  // Worker パス: CDP が参照を keep alive するため直接使い続ける
+  if (initialWorker) {
+    return {
+      get: (keys) => initialWorker.evaluate(
+        (k) => chrome.storage.local.get(k), keys ?? null
+      ),
+      set: (items) => initialWorker.evaluate(
+        (i) => chrome.storage.local.set(i), items
+      ).then(() => {}),
+      clear: () => initialWorker.evaluate(
+        () => chrome.storage.local.clear()
+      ).then(() => {}),
+    }
   }
 
-  async set(items: Record<string, unknown>) {
-    return this.worker
-      ? this.worker.evaluate((i) => chrome.storage.local.set(i), items)
-      : this.viaPage((i) => chrome.storage.local.set(i), items)
+  // Page パス: 操作のたびに拡張ページを一時的に開く
+  const popupUrl = `chrome-extension://${extensionId}/popup.html`
+  const viaPopup = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
+    const page = await context.newPage()
+    try {
+      await page.goto(popupUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
+      const result = await fn(page)
+      await page.goto('about:blank') // rehydration 遮断
+      return result
+    } finally {
+      await page.close().catch(() => null)
+    }
   }
 
-  private async viaPage<T>(fn: (...a: any[]) => T, ...args: any[]) {
-    const p = await this.context.newPage()
-    await p.goto(`chrome-extension://${this.extId}/popup.html`)
-    const r = await p.evaluate(fn, ...args)
-    await p.goto('about:blank')
-    await p.close()
-    return r as T
+  return {
+    get: (keys) => viaPopup(p => p.evaluate(
+      (k) => chrome.storage.local.get(k), keys ?? null
+    )),
+    set: (items) => viaPopup(p => p.evaluate(
+      (i) => chrome.storage.local.set(i), items
+    ).then(() => {})),
+    clear: () => viaPopup(p => p.evaluate(
+      () => chrome.storage.local.clear()
+    ).then(() => {})),
   }
 }
 ```
 
+**なぜ runtime fallback ではなく boot-time bifurcation か**: 実行時に「Worker を試す → 失敗 → Page にフォールバック」とすると、Page パスで拡張ページを開いたときに persist ミドルウェアの rehydration が走り、テストが書き込んだデータがデフォルト値で上書きされる。起動時に一度パスを決めれば、この問題が起きない。
+
 ### Persist ミドルウェアの地雷 (Redux Persist, Zustand persist 等)
 
 1. **初回起動でキーが存在しない**: persist は `set()` 後にしか storage に書き込まない。persist フォーマット（例: `{ state: {...}, version: N }`）で直接書き込む
-2. **拡張ページの rehydration**: popup を開くとデフォルト値で storage が上書きされる。操作後は即 `about:blank` に遷移する
+2. **拡張ページの rehydration**: popup.html を開くと React アプリがマウント → persist ミドルウェアが storage を読み取り → マージしたデフォルト値を書き戻す。テストが事前にセットしたデータが上書きされる。Page パスでは操作完了後に即 `about:blank` へ遷移して rehydration を遮断する
 3. **async write レース**: `setState()` 後に即 `window.close()` すると書き込みが中断される。`chrome.storage.local.set()` を直接 `await` してから close する
 
 ---
@@ -112,16 +149,21 @@ await page.evaluate(() => {
 })
 ```
 
-### 信頼性の高いクリック
+### 信頼性の高いクリック（状態検証付きフォールバック）
 
-ホストサイトの要素に遮蔽される場合、Playwright の `click()` が失敗する。二重パターンで対処:
+ホストサイトの要素に遮蔽される場合、Playwright の `click()` が失敗する。「常に二重クリック」はトグル UI で元に戻るリスクがあるため、**verify-then-fallback** パターンで対処:
 
 ```ts
-async function reliableClick(locator: Locator, page: Page, selector: string) {
+async function reliableClick(locator: Locator, verify: () => Promise<boolean>) {
   await locator.click({ force: true })
-  await page.evaluate((s) => (document.querySelector(s) as HTMLElement)?.click(), selector)
+  if (await verify().catch(() => false)) return
+  // JS フォールバック（isTrusted:false になる点に注意）
+  await locator.evaluate(el => (el as HTMLElement).click())
 }
 ```
+
+- **`locator.evaluate()`** を使う理由: Shadow DOM 内の要素に `document.querySelector()` では到達できないが、locator 経由なら確実
+- **isTrusted:false の制約**: JS の `el.click()` はブラウザのネイティブイベントではないため一部フレームワークに無視される。Playwright クリックを優先し JS はフォールバックとして使う
 
 ### ポーリングアサーション
 
@@ -139,7 +181,8 @@ await expect.poll(
 
 ### よくある失敗
 
-- **`locator.click()` がタイムアウト**: ホストサイトの要素が上に重なっている → `reliableClick` を使う
+- **`locator.click()` がタイムアウト**: ホストサイトの要素が上に重なっている → `reliableClick` (verify-then-fallback) を使う
+- **トグルが2回反転する**: 常に二重クリックしている → verify で状態確認し、成功していればフォールバックしない
 - **`frameLocator()` が cross-origin iframe で動かない**: `page.evaluate()` で DOM を直接操作する
 
 ---

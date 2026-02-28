@@ -71,10 +71,29 @@ async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000)
 }
 ```
 
+### SW idle termination と Playwright CDP の関係
+
+MV3 の SW はアイドル状態が続くと Chrome に停止される。しかし **Playwright が `waitForEvent('serviceworker')` で取得した Worker 参照は、Chrome の idle termination 後も CDP セッション経由で有効**。つまり fixture 起動時に取得した Worker 参照は、テスト全体を通してそのまま `worker.evaluate()` に使える。
+
+`context.serviceWorkers()` は「現在アクティブな SW」のみ返すため、idle termination 後は空になる。これを使って毎回 Worker を取り直す設計は一見安全に見えるが、SW が見つからなかったときのフォールバック（拡張ページ経由）で副作用（Zustand rehydration 等）を踏むリスクがある。
+
+**推奨**: fixture の起動時に取得した Worker 参照を使い続ける（= boot-time bifurcation）。SW をアドホックに再取得したい場面では以下のヘルパーを使う:
+
+```ts
+async function getActiveWorker(context: BrowserContext): Promise<Worker | null> {
+  const worker = context.serviceWorkers().find(w =>
+    w.url().startsWith('chrome-extension://')
+  ) ?? null
+  if (worker) return worker
+  return context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
+}
+```
+
 ### よくある失敗
 
 - **`serviceWorkers()` が常に空**: warmup URL が `content_scripts.matches` に合っていない
 - **`channel: 'chromium'` を設定しても解決しない**: SW の起動には実際のページ遷移が必要
+- **fixture 起動時に Worker が null**: 並列 worker 起動時の負荷で SW 起動が遅れる。deadline polling のタイムアウトを十分に取る（45秒程度）
 
 ---
 
@@ -110,13 +129,20 @@ export default defineConfig({
   globalSetup: './e2e/global-setup.ts',
   workers: process.env.CI ? 1 : 4,
   retries: process.env.CI ? 2 : 0,
-  reporter: [['html', { open: 'never' }]],
+  reporter: 'html',
   projects: [
     {
       name: 'extension-e2e',
       testDir: './e2e/scenarios',
-      use: { trace: 'on-first-retry' },
+      use: {
+        trace: 'retain-on-failure',
+        video: 'retain-on-failure',
+        screenshot: 'only-on-failure',
+      },
     },
   ],
 })
 ```
+
+- `trace: 'retain-on-failure'` は失敗テストのトレースを確実に残す。`on-first-retry` だとリトライなし設定（ローカル開発）でトレースが取れない
+- `video: 'retain-on-failure'` はフルスクリーン遷移やアニメーション絡みの失敗で特に有用
