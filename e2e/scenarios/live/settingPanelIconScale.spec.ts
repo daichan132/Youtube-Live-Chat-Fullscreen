@@ -20,7 +20,7 @@ type UiMetrics = {
 const clickPresetDeleteIcon = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
-  const button = root?.querySelector('.ylc-preset-card .shrink-0 button:last-child') as HTMLButtonElement | null
+  const button = root?.querySelector('.ylc-preset-card [data-ylc-preset-actions] button:last-child') as HTMLButtonElement | null
   if (!button) return false
   button.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
   return true
@@ -44,13 +44,13 @@ const collectUiMetrics = (): UiMetrics => {
     .map(icon => getBox(icon))
     .filter((box): box is Box => Boolean(box))
   const closeButton = getBox(panel?.querySelector('.ylc-setting-close-button') ?? null)
-  const presetActionButtons = Array.from(panel?.querySelectorAll<HTMLButtonElement>('.ylc-preset-card .shrink-0 button') ?? [])
+  const presetActionButtons = Array.from(panel?.querySelectorAll<HTMLButtonElement>('.ylc-preset-card [data-ylc-preset-actions] button') ?? [])
     .map(button => getBox(button))
     .filter((box): box is Box => Boolean(box))
   const modalButtons = Array.from(root?.querySelectorAll<HTMLElement>('.ylc-theme-dialog-border button') ?? [])
     .map(button => getBox(button))
     .filter((box): box is Box => Boolean(box))
-  const dragIcon = panel?.querySelector('.ylc-preset-card .group svg') as SVGElement | null
+  const dragIcon = panel?.querySelector('.ylc-preset-card [data-ylc-preset-drag-icon]') as SVGElement | null
   const dragIconBox = getBox(dragIcon)
   const dragIconOpacity = dragIcon ? window.getComputedStyle(dragIcon).opacity : ''
 
@@ -67,7 +67,7 @@ const collectUiMetrics = (): UiMetrics => {
 const getPresetRowCenter = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
-  const row = root?.querySelector('.ylc-preset-card .group') as HTMLElement | null
+  const row = root?.querySelector('.ylc-preset-card [data-ylc-preset-row]') as HTMLElement | null
   if (!row) return null
   const rect = row.getBoundingClientRect()
   return {

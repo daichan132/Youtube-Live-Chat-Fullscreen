@@ -10,10 +10,8 @@ const collectFullscreenChatOffset = () => {
   const fullscreenElement = document.fullscreenElement as HTMLElement | null
   const root = host?.shadowRoot ?? null
 
-  const overlay = root?.querySelector('div.fixed') as HTMLElement | null
-  const resizableCandidates = root ? Array.from(root.querySelectorAll<HTMLElement>('div.absolute')) : []
-  const resizable =
-    resizableCandidates.find(element => element.style.top !== '' && element.style.left !== '') ?? resizableCandidates[0] ?? null
+  const overlay = root?.querySelector('[data-ylc-overlay-container]') as HTMLElement | null
+  const resizable = root?.querySelector('[data-ylc-resizable]') as HTMLElement | null
 
   const rectToJson = (element: HTMLElement | null) => {
     if (!element) return null

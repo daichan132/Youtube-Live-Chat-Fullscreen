@@ -52,9 +52,10 @@ export const PresetItem = ({ id }: PresetItemType) => {
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
       <div className='flex justify-between items-center gap-2.5'>
-        <div className='group flex items-center min-w-0 flex-1'>
+        <div data-ylc-preset-row className='group flex items-center min-w-0 flex-1'>
           <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
             <TbGripVertical
+              data-ylc-preset-drag-icon
               aria-hidden='true'
               className={`transition-all duration-160 outline-none ylc-theme-focus-ring-soft rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
                 isDragging
@@ -75,7 +76,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             className='ml-1 h-[34px] p-2 rounded-[8px] outline-none min-w-0 flex-1 max-w-[228px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
           />
         </div>
-        <div className='flex transition-opacity duration-160 shrink-0'>
+        <div data-ylc-preset-actions className='flex transition-opacity duration-160 shrink-0'>
           <button
             type='button'
             className={`${ACTION_BUTTON_CLASSNAME} ylc-preset-action-btn`}

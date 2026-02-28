@@ -54,8 +54,8 @@ test.describe('chat style settings', { tag: '@live' }, () => {
       return
     }
 
-    const settingsIcon = page.locator('#shadow-root-live-chat div.cursor-pointer svg').first()
-    const settingsReady = await settingsIcon.waitFor({ state: 'visible', timeout: 5000 }).then(
+    const settingsBtn = page.locator('#shadow-root-live-chat [data-ylc-settings-btn]').first()
+    const settingsReady = await settingsBtn.waitFor({ state: 'visible', timeout: 5000 }).then(
       () => true,
       () => false,
     )
@@ -63,12 +63,12 @@ test.describe('chat style settings', { tag: '@live' }, () => {
       test.skip(true, 'Settings icon did not appear.')
       return
     }
-    await settingsIcon.click({ force: true })
+    await settingsBtn.click({ force: true })
     await page.evaluate(() => {
       const host = document.getElementById('shadow-root-live-chat')
       const root = host?.shadowRoot ?? null
-      const icon = root?.querySelector('div.cursor-pointer svg') as SVGElement | null
-      icon?.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
+      const btn = root?.querySelector('[data-ylc-settings-btn]') as HTMLButtonElement | null
+      btn?.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
     })
 
     const modalContent = page.locator('#shadow-root-live-chat-modal-root [role="dialog"]')
@@ -81,13 +81,16 @@ test.describe('chat style settings', { tag: '@live' }, () => {
       return
     }
 
-    const tabButtons = modalContent.locator('.flex.text-base.gap-4 button')
-    const tabCount = await tabButtons.count()
-    if (tabCount < 2) {
-      test.skip(true, 'Settings tab buttons not found.')
+    const settingTab = modalContent.locator('#ylc-tab-setting')
+    const settingTabReady = await settingTab.waitFor({ state: 'visible', timeout: 5000 }).then(
+      () => true,
+      () => false,
+    )
+    if (!settingTabReady) {
+      test.skip(true, 'Settings tab button not found.')
       return
     }
-    await tabButtons.nth(1).click()
+    await settingTab.click()
 
     const fontTrigger = modalContent.locator('[data-ylc-font-combobox-trigger="true"]').first()
     const triggerReady = await fontTrigger.waitFor({ state: 'visible', timeout: 5000 }).then(

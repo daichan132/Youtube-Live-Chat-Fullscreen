@@ -25,8 +25,8 @@ const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
-  const inner = resizable?.querySelector(':scope > div.relative.h-full.w-full.pointer-events-auto') as HTMLElement | null
+  const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
+  const inner = resizable?.querySelector(':scope > [data-ylc-chat-inner]') as HTMLElement | null
   if (!resizable || !inner) {
     return {
       exists: false,
@@ -60,7 +60,7 @@ const getOverlayCenter = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
+  const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
   if (!resizable) return null
 
   const box = resizable.getBoundingClientRect()
@@ -125,8 +125,8 @@ const sampleOverlayVisibleHeights = async ({
     const host = document.getElementById('shadow-root-live-chat')
     const root = host?.shadowRoot ?? null
     const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-    const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
-    const inner = resizable?.querySelector(':scope > div.relative.h-full.w-full.pointer-events-auto') as HTMLElement | null
+    const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
+    const inner = resizable?.querySelector(':scope > [data-ylc-chat-inner]') as HTMLElement | null
     if (!resizable || !inner) return 0
 
     const box = resizable.getBoundingClientRect()

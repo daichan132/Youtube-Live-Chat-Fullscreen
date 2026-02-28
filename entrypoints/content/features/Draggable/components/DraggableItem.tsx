@@ -79,13 +79,14 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
         size={size}
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
+        data-ylc-resizable
         className='absolute'
         onResizeStart={onResizeStart}
         onResize={onResize}
         onResizeStop={onResizeStop}
         style={{ ...resizableStyle, pointerEvents: resizableStyle.pointerEvents as React.CSSProperties['pointerEvents'] }}
       >
-        <div className='relative h-full w-full pointer-events-auto' style={innerDivStyle} ref={setNodeRef}>
+        <div data-ylc-chat-inner className='relative h-full w-full pointer-events-auto' style={innerDivStyle} ref={setNodeRef}>
           <ControlIcons
             fontColor={fontColor}
             dragProps={{ attributes, listeners, isDragging }}

@@ -87,6 +87,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
       >
         <button
           type='button'
+          data-ylc-settings-btn
           className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring'
           aria-label={t('content.aria.openSettings')}
           onClick={onSettingsClick}

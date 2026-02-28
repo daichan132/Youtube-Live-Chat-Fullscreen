@@ -44,7 +44,7 @@ export const Content = () => {
   const renderLiveChatPortal = () => {
     if (!portalsReady || !shadowRoot) return null
     return createPortal(
-      <div data-ylc-theme={resolvedThemeMode} className='fixed top-0 right-0 w-full h-full z-1000' style={{ pointerEvents: 'none' }}>
+      <div data-ylc-theme={resolvedThemeMode} data-ylc-overlay-container className='fixed top-0 right-0 w-full h-full z-1000' style={{ pointerEvents: 'none' }}>
         <YTDLiveChat isFullscreen={isFullscreen} mode={mode} />
       </div>,
       shadowRoot,
