@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "6b8a1945921342906ce9eff9d60c8fd68b9f07f87ff6388848530ac2f7e2d1b4"
     },
+    "find-skills": {
+      "source": "vercel-labs/skills",
+      "sourceType": "github",
+      "computedHash": "6412eb4eb3b91595ebab937f0c69501240e7ba761b3d82510b5cf506ec5c7adc"
+    },
     "react-useeffect": {
       "source": "softaworks/agent-toolkit",
       "sourceType": "github",
@@ -15,6 +20,11 @@
       "source": "anthropics/skills",
       "sourceType": "github",
       "computedHash": "9b03bb78ec5c81c4e0546dbb78cfc970368c72dcae5482e8c59690175abbc8e7"
+    },
+    "technical-blog-writing": {
+      "source": "inference-sh-9/skills",
+      "sourceType": "github",
+      "computedHash": "16fc13acf2a73e95d1bfaa4de41f0bff39712ab35a12e2cb01ec601c7601f75c"
     },
     "vercel-react-best-practices": {
       "source": "vercel-labs/agent-skills",
