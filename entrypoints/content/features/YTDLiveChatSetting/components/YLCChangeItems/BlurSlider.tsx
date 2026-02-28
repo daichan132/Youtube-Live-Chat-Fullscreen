@@ -5,7 +5,7 @@ import { useYLCBlurChange } from '@/entrypoints/content/hooks/ylcStyleChange/use
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
 
-export const BlurToSliderValue = (blur: number) => {
+export const blurToSliderValue = (blur: number) => {
   return blur / 20
 }
 
@@ -26,7 +26,7 @@ export const BlurSlider = () => {
   )
   const { value, ref } = useSettingSlider<HTMLDivElement>({
     initialValue: blurRef.current,
-    toSliderValue: BlurToSliderValue,
+    toSliderValue: blurToSliderValue,
     fromSliderValue: sliderValueToBlur,
     onChange: updateBlur,
   })

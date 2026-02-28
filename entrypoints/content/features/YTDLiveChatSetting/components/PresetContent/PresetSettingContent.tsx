@@ -5,7 +5,7 @@ import { cn } from '@/shared/utils/cn'
 import { buildSettingItems, PRESET_ITEM_KEYS } from '../../utils/settingItemDefinitions'
 import { AlwaysOnDisplaySwitchUI } from '../YLCChangeItems/AlwaysOnDisplaySwitch'
 import { BgColorPickerUI } from '../YLCChangeItems/BgColorPicker'
-import { BlurSliderUI, BlurToSliderValue } from '../YLCChangeItems/BlurSlider'
+import { BlurSliderUI, blurToSliderValue } from '../YLCChangeItems/BlurSlider'
 import { ChatOnlyDisplaySwitchUI } from '../YLCChangeItems/ChatOnlyDisplaySwitch'
 import { FontColorPickerUI } from '../YLCChangeItems/FontColorPicker'
 import { FontFamilyInputUI } from '../YLCChangeItems/FontFamilyInput'
@@ -28,7 +28,7 @@ export const PresetSettingContent = ({ ylcStyle, isOpen }: { ylcStyle: YLCStyleT
       fontColor: <FontColorPickerUI rgba={fontColor} />,
       fontFamily: <FontFamilyInputUI value={fontFamily} readOnly />,
       fontSize: <FontSizeSliderUI value={fontSizeToSliderValue(fontSize)} />,
-      blur: <BlurSliderUI value={BlurToSliderValue(blur)} />,
+      blur: <BlurSliderUI value={blurToSliderValue(blur)} />,
       space: <SpaceSliderUI value={spaceToSliderValue(space)} />,
       userNameDisplay: <UserNameDisplaySwitchUI userNameDisplay={userNameDisplay} />,
       userIconDisplay: <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} />,

@@ -39,7 +39,7 @@ const normalizeVideoUrl = (rawUrl: string) => {
   }
 }
 
-export const acceptYouTubeConsent = async (page: Page) => {
+const acceptYouTubeConsent = async (page: Page) => {
   for (const selector of consentSelectors) {
     const button = page.locator(selector).first()
     if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {

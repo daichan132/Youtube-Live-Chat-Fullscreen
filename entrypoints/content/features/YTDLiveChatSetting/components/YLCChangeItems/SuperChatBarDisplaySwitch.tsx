@@ -15,7 +15,7 @@ export const SuperChatBarDisplaySwitch = () => {
   )
 }
 
-export const SuperChatBarDisplaySwitchUI = ({
+const SuperChatBarDisplaySwitchUI = ({
   superChatBarDisplay,
   updateYLCStyle,
   changeDisplay,

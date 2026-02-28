@@ -106,11 +106,6 @@ export const captureChatState = async (page: Page, testInfo: TestInfo, reason: s
 	}
 }
 
-const gotoAndPrepareWatchPage = async (page: Page, url: string, timeout: number) => {
-	await page.goto(url, { waitUntil: 'domcontentloaded', timeout })
-	await acceptYouTubeConsentWithRetry(page)
-}
-
 export const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
 
 export const openArchiveWatchPage = async (page: Page, url: string, options: { maxDurationMs?: number } = {}) => {
@@ -119,7 +114,8 @@ export const openArchiveWatchPage = async (page: Page, url: string, options: { m
 	const gotoTimeout = timeoutFromRemaining(deadline - Date.now(), 20000)
 
 	try {
-		await gotoAndPrepareWatchPage(page, url, gotoTimeout)
+		await page.goto(url, { waitUntil: 'domcontentloaded', timeout: gotoTimeout })
+		await acceptYouTubeConsentWithRetry(page)
 	} catch {
 		return false
 	}
