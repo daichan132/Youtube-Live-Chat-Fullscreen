@@ -1,6 +1,9 @@
+import type { Page } from '@playwright/test'
+import type { Extension } from '@e2e/fixtures'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { isClipPathEnabled, movePointerAwayFromOverlay } from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
 
 type OverlayClipSnapshot = {
@@ -51,20 +54,6 @@ const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
     visibleHeight: Math.round(Math.max(0, box.height - clipTop - clipBottom) * 100) / 100,
     width: Math.round(box.width * 100) / 100,
   }
-}
-
-const isClipPathEnabled = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
-  const inner = resizable?.querySelector(':scope > div.relative.h-full.w-full.pointer-events-auto') as HTMLElement | null
-  if (!inner) return false
-  const clipPath = window.getComputedStyle(inner).clipPath ?? ''
-  const insetMatch = clipPath.match(/inset\(([-\d.]+)px\s+[-\d.]+px\s+([-\d.]+)px/i)
-  const clipTop = insetMatch?.[1] ? Number.parseFloat(insetMatch[1]) : 0
-  const clipBottom = insetMatch?.[2] ? Number.parseFloat(insetMatch[2]) : 0
-  return clipTop > 0 || clipBottom > 0
 }
 
 const getOverlayCenter = () => {
@@ -168,17 +157,7 @@ const sampleOverlayVisibleHeights = async ({
   }
 }
 
-const movePointerAwayFromOverlay = async (page: import('@playwright/test').Page) => {
-  const viewport = page.viewportSize()
-  if (!viewport) return false
-
-  // Default overlay starts near top-left (20, 20) with width/height 400.
-  // Keep pointer in far top-right so hover is not triggered by our own actions.
-  await page.mouse.move(viewport.width - 20, 20)
-  return true
-}
-
-const setPersistedChatOnlyMode = async (extension: import('../../fixtures').Extension) => {
+const setPersistedChatOnlyMode = async (extension: Extension) => {
   const parsePersisted = (raw: unknown, fallbackVersion: number) => {
     if (typeof raw !== 'string' || raw.length === 0) {
       return { state: {} as Record<string, unknown>, version: fallbackVersion }
@@ -224,7 +203,7 @@ const setPersistedChatOnlyMode = async (extension: import('../../fixtures').Exte
   return true
 }
 
-const openArchiveOverlayWithExtensionChat = async (page: import('@playwright/test').Page, archiveReplayUrl: string | null) => {
+const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl: string | null) => {
   if (!archiveReplayUrl) {
     await captureChatState(page, test.info(), 'chat-only-auto-clip-url-selection-failed')
     test.skip(true, 'No archive replay URL satisfied preconditions.')

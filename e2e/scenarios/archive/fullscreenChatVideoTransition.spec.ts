@@ -1,8 +1,9 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
-import { selectArchiveReplayTransitionPair } from '@e2e/support/urls/archiveReplay'
+import { extractVideoId, selectArchiveReplayTransitionPair } from '@e2e/support/urls/archiveReplay'
 
 const TRANSITION_STABILITY_DURATION_MS = 4000
 const TRANSITION_STABILITY_SAMPLE_INTERVAL_MS = 250
@@ -33,14 +34,6 @@ const getOverlayState = () => {
   }
 }
 
-const extractVideoId = (url: string) => {
-  try {
-    return new URL(url).searchParams.get('v')
-  } catch {
-    return null
-  }
-}
-
 const getCurrentVideoId = () => {
   try {
     const url = new URL(window.location.href)
@@ -50,7 +43,7 @@ const getCurrentVideoId = () => {
   }
 }
 
-const waitForVideoId = async (page: import('@playwright/test').Page, videoId: string, timeout: number) => {
+const waitForVideoId = async (page: Page, videoId: string, timeout: number) => {
   return page
     .waitForFunction(
       expectedVideoId => {
@@ -70,7 +63,7 @@ const waitForVideoId = async (page: import('@playwright/test').Page, videoId: st
     )
 }
 
-const waitForVideoIdChange = async (page: import('@playwright/test').Page, previousVideoId: string, timeout: number) => {
+const waitForVideoIdChange = async (page: Page, previousVideoId: string, timeout: number) => {
   return page
     .waitForFunction(
       expectedPreviousVideoId => {
@@ -90,7 +83,7 @@ const waitForVideoIdChange = async (page: import('@playwright/test').Page, previ
     )
 }
 
-const clickNextButton = async (page: import('@playwright/test').Page) => {
+const clickNextButton = async (page: Page) => {
   await page.locator('#movie_player').hover()
   const nextButton = page.locator('.ytp-next-button').first()
   const visible = await nextButton.isVisible({ timeout: 5000 }).catch(() => false)
@@ -107,7 +100,7 @@ const clickNextButton = async (page: import('@playwright/test').Page) => {
   return true
 }
 
-const clickPlaylistTarget = async (page: import('@playwright/test').Page, targetVideoId: string) => {
+const clickPlaylistTarget = async (page: Page, targetVideoId: string) => {
   const selectors = [
     `ytd-playlist-panel-video-renderer a[href*="/watch?v=${targetVideoId}"]`,
     `#playlist ytd-playlist-panel-video-renderer a[href*="v=${targetVideoId}"]`,
@@ -125,7 +118,7 @@ const clickPlaylistTarget = async (page: import('@playwright/test').Page, target
 }
 
 const navigateToTransitionTarget = async (
-  page: import('@playwright/test').Page,
+  page: Page,
   options: {
     previousVideoId: string
     targetVideoId: string

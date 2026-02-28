@@ -6,15 +6,9 @@ import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/us
 import { getVideoIdFromUrl, getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../../features/YTDLiveChatIframe/styles/iframe.css?inline'
-import {
-  attachIframeToContainer,
-  detachAttachedIframe,
-  getIframeDocumentHref,
-  getNonBlankIframeHref,
-  isManagedLiveIframe,
-  resolveSourceIframe,
-} from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
+import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
 import { createIframeInitializer } from '../../features/YTDLiveChatIframe/utils/iframeInitializer'
+import { getIframeDocumentHref, getNonBlankIframeHref, isManagedLiveIframe } from '../shared/iframeDom'
 import type { ChatMode, IframeLoadState } from './types'
 
 const debugLog = (message: string, details?: Record<string, unknown>) => {

@@ -43,10 +43,11 @@ export class ExtensionOverlay {
 
   async ensureSwitchOff() {
     const btn = this.switchButton()
-    if ((await btn.getAttribute('aria-pressed')) === 'true') {
-      await reliableClick(btn, this.page, switchButtonSelector)
-      await this.page.waitForTimeout(300)
-    }
+    if ((await btn.getAttribute('aria-pressed')) !== 'true') return
+    await reliableClick(btn, this.page, switchButtonSelector)
+    await expect(btn)
+      .toHaveAttribute('aria-pressed', 'false', { timeout: 3000 })
+      .catch(() => {})
   }
 
   async waitForChatLoaded(options?: { timeout?: number }): Promise<boolean> {

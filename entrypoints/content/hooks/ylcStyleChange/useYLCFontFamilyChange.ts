@@ -1,13 +1,11 @@
 import { useCallback } from 'react'
+import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 
 import { useYLCStylePropertyChange } from './useYLCStylePropertyChange'
 
 const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
 const FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
-
-const toGoogleFontFamilyParam = (fontFamily: string) => encodeURIComponent(fontFamily.trim()).replace(/%20/g, '+')
-const toQuotedFontFamily = (fontFamily: string) => `"${fontFamily.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
 
 export const useYLCFontFamilyChange = () => {
   const { getIframeWindow, setProperty } = useYLCStylePropertyChange()

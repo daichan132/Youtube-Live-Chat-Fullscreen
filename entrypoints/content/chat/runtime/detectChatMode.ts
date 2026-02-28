@@ -3,7 +3,7 @@ import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveCh
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { isYouTubeLiveVideo } from '@/entrypoints/content/utils/isYouTubeLiveVideo'
 import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
-import { isIframeForCurrentVideo, isLiveChatIframe, isReplayChatIframe } from '../shared/iframeDom'
+import { isIframeForCurrentVideo, isLiveChatIframe, isManagedLiveIframe, isReplayChatIframe } from '../shared/iframeDom'
 import type { ChatMode } from './types'
 
 const getExtensionIframe = () => {
@@ -11,9 +11,6 @@ const getExtensionIframe = () => {
   const root = host?.shadowRoot ?? null
   return root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
 }
-
-const isManagedLiveExtensionIframe = (iframe: HTMLIFrameElement | null) =>
-  iframe?.getAttribute('data-ylc-owned') === 'true' && iframe.getAttribute('data-ylc-source') === 'live_direct'
 
 const isBorrowedArchiveExtensionIframe = (iframe: HTMLIFrameElement | null) =>
   Boolean(iframe && iframe.getAttribute('data-ylc-chat') === 'true' && iframe.getAttribute('data-ylc-owned') !== 'true')
@@ -25,7 +22,7 @@ export const detectChatMode = (): ChatMode => {
   const extensionIframe = getExtensionIframe()
   if (extensionIframe && isIframeForCurrentVideo(extensionIframe, currentVideoId)) {
     if (isReplayChatIframe(extensionIframe) || isBorrowedArchiveExtensionIframe(extensionIframe)) return 'archive'
-    if (isLiveChatIframe(extensionIframe) || isManagedLiveExtensionIframe(extensionIframe)) return 'live'
+    if (isLiveChatIframe(extensionIframe) || isManagedLiveIframe(extensionIframe)) return 'live'
   }
 
   const nativeIframe = getLiveChatIframe()

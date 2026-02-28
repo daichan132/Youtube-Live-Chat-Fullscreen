@@ -1,11 +1,17 @@
 import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
+import {
+  getIframeDocumentHref,
+  getNonBlankIframeHref,
+  isManagedIframe,
+  isManagedLiveIframe,
+  YLC_OWNED_ATTR,
+  YLC_SOURCE_ATTR,
+  YLC_SOURCE_LIVE,
+} from '@/entrypoints/content/chat/shared/iframeDom'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 
-const YLC_OWNED_ATTR = 'data-ylc-owned'
 const YLC_CHAT_ATTR = 'data-ylc-chat'
-const YLC_SOURCE_ATTR = 'data-ylc-source'
-const YLC_SOURCE_LIVE = 'live_direct'
 
 type BorrowedIframeStyleSnapshot = {
   width: string
@@ -30,31 +36,7 @@ const borrowedIframeRestoreMap = new WeakMap<HTMLIFrameElement, BorrowedIframeRe
 const pendingNativeHostRestoreIframes = new Set<HTMLIFrameElement>()
 let pendingNativeHostRestoreObserver: MutationObserver | null = null
 
-export const getIframeDocumentHref = (iframe: HTMLIFrameElement) => {
-  try {
-    return iframe.contentDocument?.location?.href ?? ''
-  } catch {
-    return ''
-  }
-}
-
-export const getNonBlankIframeHref = (iframe: HTMLIFrameElement) => {
-  const docHref = getIframeDocumentHref(iframe)
-  if (docHref && !docHref.includes('about:blank')) return docHref
-
-  const srcAttr = iframe.getAttribute('src') ?? ''
-  if (srcAttr && !srcAttr.includes('about:blank')) return srcAttr
-
-  const src = iframe.src ?? ''
-  if (src && !src.includes('about:blank')) return src
-
-  return ''
-}
-
-const isManagedIframe = (iframe: HTMLIFrameElement | null) => iframe?.getAttribute(YLC_OWNED_ATTR) === 'true'
-
-export const isManagedLiveIframe = (iframe: HTMLIFrameElement | null) =>
-  isManagedIframe(iframe) && iframe?.getAttribute(YLC_SOURCE_ATTR) === YLC_SOURCE_LIVE
+export { getIframeDocumentHref, getNonBlankIframeHref, isManagedLiveIframe }
 
 export const createManagedLiveIframe = (src: string) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement

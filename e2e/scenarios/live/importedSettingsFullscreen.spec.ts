@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { ExtensionPopup } from '@e2e/pages/ExtensionPopup'
@@ -39,7 +40,7 @@ const isExtensionChatWithMessages = () => {
 const enterFullscreenAndActivateChat = async (
   yt: YouTubeWatchPage,
   overlay: ExtensionOverlay,
-  page: import('@playwright/test').Page,
+  page: Page,
 ) => {
   await yt.waitForNativeChat()
   await yt.enterFullscreen()

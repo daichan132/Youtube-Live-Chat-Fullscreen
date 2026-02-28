@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -50,7 +50,7 @@ export const SettingContent = () => {
   return (
     <>
       {items.map((item, i) => (
-        <React.Fragment key={item.title}>
+        <Fragment key={item.title}>
           <div
             className={cn(
               'flex flex-wrap justify-between items-center transition-all duration-160 opacity-100 ylc-theme-text-primary',
@@ -69,7 +69,7 @@ export const SettingContent = () => {
             </div>
           </div>
           {!item.disable && i < items.length - 1 && <hr className='border-none ylc-theme-divider' />}
-        </React.Fragment>
+        </Fragment>
       ))}
     </>
   )

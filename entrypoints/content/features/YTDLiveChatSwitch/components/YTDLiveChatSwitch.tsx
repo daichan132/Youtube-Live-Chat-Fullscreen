@@ -1,6 +1,6 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/shallow'
+import { useShallow } from 'zustand/react/shallow'
 import { IoChatboxSharp } from '@/shared/components/icons'
 import { useGlobalSettingStore } from '@/shared/stores'
 

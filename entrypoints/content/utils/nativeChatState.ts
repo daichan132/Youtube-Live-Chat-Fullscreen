@@ -138,14 +138,12 @@ export const isNativeChatOpen = () => {
 
   if (!chatFrame) return false
 
-  if (chatFrame) {
-    if (!isChatIframeForCurrentVideo(chatFrame)) return false
-    const doc = chatFrame.contentDocument ?? null
-    const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
-    if (!href || href.includes('about:blank')) return false
-  }
+  if (!isChatIframeForCurrentVideo(chatFrame)) return false
+  const doc = chatFrame.contentDocument ?? null
+  const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
+  if (!href || href.includes('about:blank')) return false
 
-  if (chatContainer && chatFrameHost && chatFrame) {
+  if (chatContainer && chatFrameHost) {
     const isHiddenAttr = isChatHiddenByAttribute(chatContainer, chatFrameHost)
     const containerStyle = window.getComputedStyle(chatContainer)
     const hostStyle = window.getComputedStyle(chatFrameHost)

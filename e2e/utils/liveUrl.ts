@@ -2,11 +2,6 @@ import type { Page } from '@playwright/test'
 import { getE2ETestTargets } from '@e2e/config/testTargets'
 import { hasPlayableChat } from '@e2e/support/diagnostics'
 
-const nonLiveSearchUrl = 'https://www.youtube.com/results?search_query=big%20buck%20bunny&sp=EgIQAQ%253D%253D'
-const archiveSearchUrls = [
-  'https://www.youtube.com/results?search_query=live%20chat%20replay',
-  'https://www.youtube.com/results?search_query=%E3%83%A9%E3%82%A4%E3%83%96%20%E9%85%8D%E4%BF%A1%20%E3%82%A2%E3%83%BC%E3%82%AB%E3%82%A4%E3%83%96',
-]
 const consentSelectors = [
   'button:has-text("I agree")',
   'button:has-text("Accept all")',
@@ -50,6 +45,18 @@ export const acceptYouTubeConsent = async (page: Page) => {
       await button.click()
       return
     }
+  }
+}
+
+/**
+ * Accept YouTube consent and retry if the page is still on a consent URL.
+ * Consolidates the repeated consent-retry pattern found across E2E helpers.
+ */
+export const acceptYouTubeConsentWithRetry = async (page: Page) => {
+  await acceptYouTubeConsent(page)
+  if (page.url().includes('consent')) {
+    await page.waitForTimeout(1500)
+    await acceptYouTubeConsent(page)
   }
 }
 
@@ -125,10 +132,6 @@ const isPlayableLiveCandidate = async (page: Page, url: string) => {
 
 let cachedLiveUrl: string | null = null
 
-export const isWatchPageLiveNow = async (page: Page) => {
-  return page.evaluate(() => window.__ylcHelpers.isLiveNow()).then(Boolean, () => false)
-}
-
 export const findLiveUrlWithChat = async (page: Page, options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {}) => {
   const targets = getE2ETestTargets()
   const { limit = LIVE_SEARCH_LIMIT, searchUrls = targets.liveSearch.urls, maxDurationMs = 60000 } = options
@@ -158,11 +161,7 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
     } catch {
       continue
     }
-    await acceptYouTubeConsent(page)
-    if (page.url().includes('consent')) {
-      await page.waitForTimeout(1500)
-      await acceptYouTubeConsent(page)
-    }
+    await acceptYouTubeConsentWithRetry(page)
 
     await page.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, { timeout: 15000 }).catch(() => null)
     const urls = await page.evaluate(collectVideoUrls)
@@ -181,84 +180,6 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
         cachedLiveUrl = candidate
         return candidate
       }
-    }
-  }
-
-  return null
-}
-
-export const findVideoUrlWithoutChat = async (page: Page, options: { limit?: number; searchUrl?: string; maxDurationMs?: number } = {}) => {
-  const { limit = 8, searchUrl = nonLiveSearchUrl, maxDurationMs = 60000 } = options
-  const deadline = Date.now() + maxDurationMs
-  await addConsentCookies(page)
-
-  await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: SEARCH_PAGE_TIMEOUT_MS })
-  await acceptYouTubeConsent(page)
-  if (page.url().includes('consent')) {
-    await page.waitForTimeout(1500)
-    await acceptYouTubeConsent(page)
-  }
-
-  await page.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, { timeout: 15000 }).catch(() => null)
-  const urls = await page.evaluate(collectVideoUrls)
-  const candidates = urls.map(normalizeVideoUrl).filter(Boolean).slice(0, limit) as string[]
-
-  for (const url of candidates) {
-    if (Date.now() > deadline) return null
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: CANDIDATE_GOTO_TIMEOUT_MS })
-    await acceptYouTubeConsent(page)
-
-    const playerReady = await isWatchPageReady(page)
-    if (!playerReady) continue
-
-    const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: 8000 }).then(
-      () => true,
-      () => false,
-    )
-    if (hasChat) continue
-
-    const signals = await page.evaluate(hasChatSignals)
-    const unavailable = await page.evaluate(isChatUnavailable)
-    if (!signals || unavailable) return url
-  }
-
-  return null
-}
-
-export const findArchiveUrlWithChat = async (
-  page: Page,
-  options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {},
-) => {
-  const { limit = 12, searchUrls = archiveSearchUrls, maxDurationMs = 60000 } = options
-  const deadline = Date.now() + maxDurationMs
-  await addConsentCookies(page)
-
-  for (const searchUrl of searchUrls) {
-    if (Date.now() > deadline) return null
-    await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: SEARCH_PAGE_TIMEOUT_MS })
-    await acceptYouTubeConsent(page)
-    if (page.url().includes('consent')) {
-      await page.waitForTimeout(1500)
-      await acceptYouTubeConsent(page)
-    }
-
-    await page.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, { timeout: 15000 }).catch(() => null)
-    const urls = await page.evaluate(collectVideoUrls)
-    const candidates = urls.map(normalizeVideoUrl).filter(Boolean).slice(0, limit) as string[]
-
-    for (const url of candidates) {
-      if (Date.now() > deadline) return null
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: CANDIDATE_GOTO_TIMEOUT_MS })
-      await acceptYouTubeConsent(page)
-
-      const liveNow = await page.evaluate(() => window.__ylcHelpers.isLiveNow())
-      if (liveNow) continue
-
-      const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: 8000 }).then(
-        () => true,
-        () => false,
-      )
-      if (hasChat) return url
     }
   }
 

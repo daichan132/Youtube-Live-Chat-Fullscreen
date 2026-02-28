@@ -3,14 +3,14 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import type { ThemeMode } from '@/shared/theme'
 
-interface globalSettingStoreState {
+interface GlobalSettingStoreState {
   ytdLiveChat: boolean
   themeMode: ThemeMode
   setYTDLiveChat: (ytdLiveChat: boolean) => void
   setThemeMode: (themeMode: ThemeMode) => void
 }
 
-type PersistedGlobalSettingStoreState = Partial<Pick<globalSettingStoreState, 'themeMode' | 'ytdLiveChat'>>
+type PersistedGlobalSettingStoreState = Partial<Pick<GlobalSettingStoreState, 'themeMode' | 'ytdLiveChat'>>
 
 const migratePersistedState = (persistedState: unknown): PersistedGlobalSettingStoreState => {
   if (!persistedState || typeof persistedState !== 'object') {
@@ -29,7 +29,7 @@ const migratePersistedState = (persistedState: unknown): PersistedGlobalSettingS
   }
 }
 
-export const useGlobalSettingStore = create<globalSettingStoreState>()(
+export const useGlobalSettingStore = create<GlobalSettingStoreState>()(
   persist(
     set => ({
       ytdLiveChat: true,

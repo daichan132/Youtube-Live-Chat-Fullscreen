@@ -2,6 +2,7 @@ import { getE2ETestTargets } from '@e2e/config/testTargets'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { clickSettingIcon } from '@e2e/screenshots/helpers'
 import { openArchiveWatchPage } from '@e2e/support/diagnostics'
 
 type Box = { width: number; height: number }
@@ -13,19 +14,6 @@ type UiMetrics = {
   modalButtons: Box[]
   dragIconBox: Box | null
   dragIconOpacity: string
-}
-
-const clickSettingIcon = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  if (!root) return false
-
-  const candidates = Array.from(root.querySelectorAll<HTMLElement>('.ylc-overlay-control-icon'))
-  const settingsButton = candidates[1] ?? candidates[0] ?? null
-  if (!settingsButton) return false
-
-  settingsButton.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
-  return true
 }
 
 const clickPresetDeleteIcon = () => {

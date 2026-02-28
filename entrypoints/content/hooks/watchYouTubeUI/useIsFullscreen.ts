@@ -5,11 +5,7 @@ export const useIsFullScreen = () => {
 
   useEffect(() => {
     const handleFullscreenChange = () => {
-      if (document.fullscreenElement !== null) {
-        setIsFullscreen(true)
-      } else {
-        setIsFullscreen(false)
-      }
+      setIsFullscreen(document.fullscreenElement !== null)
     }
 
     document.addEventListener('fullscreenchange', handleFullscreenChange)

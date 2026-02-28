@@ -59,11 +59,10 @@ export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
       }
 
       const attachedIframe = useYTDLiveChatNoLsStore.getState().iframeElement
-      const borrowedIframe = attachedIframe
       const isBorrowedArchiveIframe =
-        borrowedIframe?.isConnected &&
-        borrowedIframe.getAttribute('data-ylc-chat') === 'true' &&
-        borrowedIframe.getAttribute('data-ylc-owned') !== 'true'
+        attachedIframe?.isConnected &&
+        attachedIframe.getAttribute('data-ylc-chat') === 'true' &&
+        attachedIframe.getAttribute('data-ylc-owned') !== 'true'
       if (isBorrowedArchiveIframe) {
         debugLog('stopped ensure loop because archive iframe is already borrowed')
         stopEnsure()

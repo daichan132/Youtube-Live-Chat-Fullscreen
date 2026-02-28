@@ -1,11 +1,14 @@
 import type { Page } from '@playwright/test'
 import { getE2ETestTargets } from '@e2e/config/testTargets'
-import { acceptYouTubeConsent } from '@e2e/utils/liveUrl'
-import { ensureArchiveNativeChatPlayable, ensureNativeReplayUnavailable, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
+import {
+  ensureArchiveNativeChatPlayable,
+  ensureNativeReplayUnavailable,
+  openArchiveWatchPage,
+  timeoutFromRemaining,
+} from '@e2e/support/diagnostics'
 
-const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
-
-const extractVideoId = (url: string) => {
+export const extractVideoId = (url: string) => {
   try {
     return new URL(url).searchParams.get('v')
   } catch {
@@ -71,11 +74,7 @@ export const selectReplayUnavailableUrl = async (page: Page, options: { maxDurat
   const gotoTimeout = timeoutFromRemaining(remainingBeforeGoto, 20000)
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: gotoTimeout })
-    await acceptYouTubeConsent(page)
-    if (page.url().includes('consent')) {
-      await page.waitForTimeout(1000)
-      await acceptYouTubeConsent(page)
-    }
+    await acceptYouTubeConsentWithRetry(page)
   } catch {
     return null
   }

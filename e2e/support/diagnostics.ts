@@ -1,5 +1,5 @@
 import type { Page, TestInfo } from '@playwright/test'
-import { acceptYouTubeConsent } from '@e2e/utils/liveUrl'
+import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
 import { switchButtonSelector } from '@e2e/utils/selectors'
 
 type DiagnosticState = {
@@ -42,7 +42,7 @@ const archivePlayerChatToggleSelectors = [
 	'#movie_player button-view-model button[aria-pressed="false"]',
 ]
 
-export const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; switchSelector: string }): DiagnosticState => {
+const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; switchSelector: string }): DiagnosticState => {
 	const h = window.__ylcHelpers
 	const detectModeFromHref = (href: string): DiagnosticState['mode'] => {
 		if (href.includes('/live_chat_replay')) return 'archive'
@@ -107,14 +107,10 @@ export const captureChatState = async (page: Page, testInfo: TestInfo, reason: s
 
 const gotoAndPrepareWatchPage = async (page: Page, url: string, timeout: number) => {
 	await page.goto(url, { waitUntil: 'domcontentloaded', timeout })
-	await acceptYouTubeConsent(page)
-	if (page.url().includes('consent')) {
-		await page.waitForTimeout(1000)
-		await acceptYouTubeConsent(page)
-	}
+	await acceptYouTubeConsentWithRetry(page)
 }
 
-const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
+export const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
 
 export const openArchiveWatchPage = async (page: Page, url: string, options: { maxDurationMs?: number } = {}) => {
 	const { maxDurationMs = 30000 } = options
@@ -152,18 +148,6 @@ export const shouldSkipArchiveFlowFailure = (state: DiagnosticState | null) => {
 	if (state.native.unavailable) return true
 	if (isBlankHref(state.native.href)) return true
 	return false
-}
-
-export const isNativeReplayUnavailable = () => {
-	const h = window.__ylcHelpers
-	const iframe = h.getNativeIframe()
-	const doc = iframe?.contentDocument ?? null
-	const href = h.readIframeHref(iframe)
-	if (!doc || !href || href.includes('about:blank')) return false
-
-	if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
-	const text = doc.body?.textContent ?? ''
-	return h.hasUnavailableText(text)
 }
 
 const isNativeReplayUnavailableOrMissing = () => {

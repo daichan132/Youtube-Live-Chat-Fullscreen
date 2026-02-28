@@ -1,6 +1,6 @@
 import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
+import { getNonBlankIframeHref } from '@/entrypoints/content/chat/shared/iframeDom'
 import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
-import { getNonBlankIframeHref } from './iframeAttachment'
 
 type IframeInitializerOptions = {
   iframeStyles: string

@@ -2,7 +2,7 @@ import type { Coordinates } from '@dnd-kit/core/dist/types'
 import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { DefaultCoordinates, DefaultSize, ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import i18n from '../i18n/config'
 import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
 import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils'
@@ -105,8 +105,8 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
   persist(
     set => ({
-      coordinates: { x: 20, y: 20 },
-      size: { width: 400, height: 400 },
+      coordinates: { ...DefaultCoordinates },
+      size: { ...DefaultSize },
       presetItemIds: ['default1', 'default2', 'default3'],
       presetItemStyles: {
         default1: ylcInitSetting,
@@ -139,12 +139,10 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         }),
       updateTitle: (id, title) =>
         set(state => ({
-          ...state,
           presetItemTitles: { ...state.presetItemTitles, [id]: title },
         })),
       updateYLCStyle: YLCStyleUpdate =>
-        set(state => ({
-          ...state,
+        set(() => ({
           ...sanitizeStyleUpdate(YLCStyleUpdate),
           addPresetEnabled: true,
         })),
@@ -168,8 +166,8 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         })),
       setDefaultPosition: () =>
         set(() => ({
-          size: { width: 400, height: 400 },
-          coordinates: { x: 20, y: 20 },
+          size: { ...DefaultSize },
+          coordinates: { ...DefaultCoordinates },
         })),
     }),
     {

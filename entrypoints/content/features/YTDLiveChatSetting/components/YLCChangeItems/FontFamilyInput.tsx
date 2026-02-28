@@ -6,6 +6,7 @@ import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { cn } from '@/shared/utils/cn'
+import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { DEFAULT_FONT_OPTION, FEATURED_FONT_VALUES, FONT_FAMILY_OPTIONS } from './fontFamilyOptions'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
@@ -13,10 +14,6 @@ import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibili
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
 const PREVIEW_FONT_STYLE_ID = 'ylc-font-family-preview-style'
 const PREVIEW_FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
-
-const toGoogleFontFamilyParam = (fontFamily: string) => encodeURIComponent(fontFamily.trim()).replace(/%20/g, '+')
-
-const toQuotedFontFamily = (fontFamily: string) => `"${fontFamily.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`
 
 const toFontFamilyStyleValue = (fontFamily: string) => `${toQuotedFontFamily(fontFamily)}, ${PREVIEW_FALLBACK_FONT_FAMILY}`
 
