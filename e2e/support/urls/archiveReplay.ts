@@ -1,12 +1,6 @@
+import { ensureArchiveNativeChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
 import type { Page } from '@playwright/test'
 import { getE2ETestTargets } from '@e2e/config/testTargets'
-import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
-import {
-  ensureArchiveNativeChatPlayable,
-  ensureNativeReplayUnavailable,
-  openArchiveWatchPage,
-  timeoutFromRemaining,
-} from '@e2e/support/diagnostics'
 
 export const extractVideoId = (url: string) => {
   try {
@@ -63,35 +57,3 @@ export const selectArchiveReplayTransitionPair = async (page: Page, options: { m
   }
 }
 
-export const selectReplayUnavailableUrl = async (page: Page, options: { maxDurationMs?: number } = {}) => {
-  const { maxDurationMs = 45000 } = options
-  const targets = getE2ETestTargets()
-  const url = targets.replayUnavailable.url
-  const deadline = Date.now() + maxDurationMs
-
-  const remainingBeforeGoto = deadline - Date.now()
-  if (remainingBeforeGoto <= 0) return null
-  const gotoTimeout = timeoutFromRemaining(remainingBeforeGoto, 20000)
-  try {
-    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: gotoTimeout })
-    await acceptYouTubeConsentWithRetry(page)
-  } catch {
-    return null
-  }
-
-  const remainingBeforePlayerCheck = deadline - Date.now()
-  if (remainingBeforePlayerCheck <= 0) return null
-  const playerTimeout = timeoutFromRemaining(remainingBeforePlayerCheck, 10000)
-  const hasPlayer = await page.waitForSelector('#movie_player', { state: 'attached', timeout: playerTimeout }).then(
-    () => true,
-    () => false,
-  )
-  if (!hasPlayer) return null
-
-  const remainingBeforeUnavailableCheck = deadline - Date.now()
-  if (remainingBeforeUnavailableCheck <= 0) return null
-  const replayUnavailable = await ensureNativeReplayUnavailable(page, {
-    maxDurationMs: timeoutFromRemaining(remainingBeforeUnavailableCheck, 15000),
-  })
-  return replayUnavailable ? url : null
-}

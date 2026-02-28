@@ -106,7 +106,7 @@ export const captureChatState = async (page: Page, testInfo: TestInfo, reason: s
 	}
 }
 
-export const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
+const timeoutFromRemaining = (remainingMs: number, maxMs: number) => Math.max(1000, Math.min(maxMs, remainingMs))
 
 export const openArchiveWatchPage = async (page: Page, url: string, options: { maxDurationMs?: number } = {}) => {
 	const { maxDurationMs = 30000 } = options
@@ -145,68 +145,6 @@ export const shouldSkipArchiveFlowFailure = (state: DiagnosticState | null) => {
 	if (state.native.unavailable) return true
 	if (isBlankHref(state.native.href)) return true
 	return false
-}
-
-const isNativeReplayUnavailableOrMissing = ({
-	sidebarOpenSelectors,
-	playerChatToggleSelectors,
-}: { sidebarOpenSelectors: string[]; playerChatToggleSelectors: string[] }) => {
-	const h = window.__ylcHelpers
-	const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
-	const findFirstMatchingControl = (
-		selectors: string[],
-		options: {
-			requireVisible?: boolean
-			requireChatLabel?: boolean
-		} = {},
-	) => {
-		const requireVisible = options.requireVisible ?? true
-		for (const selector of selectors) {
-			const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
-			for (const target of targets) {
-				const clickable = h.resolveClickable(target)
-				if (!clickable) continue
-				if (requireVisible && !h.isElementVisible(clickable)) continue
-				if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
-				if (clickable.getAttribute('aria-disabled') === 'true') continue
-				if (options.requireChatLabel && !isChatLabel(h.getButtonLabelText(clickable))) continue
-				return clickable
-			}
-		}
-		return null
-	}
-	const hasReplayOpenControl = () => {
-		if (findFirstMatchingControl(sidebarOpenSelectors, { requireVisible: true })) return true
-		if (findFirstMatchingControl(sidebarOpenSelectors, { requireVisible: false })) return true
-		if (findFirstMatchingControl(playerChatToggleSelectors, { requireVisible: true, requireChatLabel: true })) return true
-		if (findFirstMatchingControl(playerChatToggleSelectors, { requireVisible: false, requireChatLabel: true })) return true
-
-		const frameHost = document.querySelector('ytd-live-chat-frame') as (HTMLElement & { onShowHideChat?: () => void }) | null
-		if (typeof frameHost?.onShowHideChat !== 'function') return false
-		const slots = document.querySelectorAll<HTMLElement>(
-			'ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button',
-		)
-		for (const slot of slots) {
-			const clickable = slot.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
-			if (clickable) return true
-			const text = slot.textContent?.trim() ?? ''
-			if (text.length > 0) return true
-		}
-		return false
-	}
-
-	const iframe = h.getNativeIframe()
-	const doc = iframe?.contentDocument ?? null
-	const href = h.readIframeHref(iframe)
-	if (doc) {
-		if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
-		const text = doc.body?.textContent ?? ''
-		if (h.hasUnavailableText(text)) return true
-	}
-
-	if (!iframe) return false
-	if (href && !href.includes('about:blank')) return false
-	return !hasReplayOpenControl()
 }
 
 export const isExtensionArchiveChatPlayable = () => {
@@ -300,25 +238,6 @@ export const ensureArchiveNativeChatPlayable = async (page: Page, options: { max
 	while (Date.now() < deadline) {
 		const playable = await page.evaluate(isNativeArchivePlayable).catch(() => false)
 		if (playable) return true
-		await tryOpenArchiveNativeChatPanel(page)
-		await page.waitForTimeout(TIMING.ARCHIVE_CHAT_OPEN_INTERVAL_MS)
-	}
-
-	return false
-}
-
-export const ensureNativeReplayUnavailable = async (page: Page, options: { maxDurationMs?: number } = {}) => {
-	const { maxDurationMs = 30000 } = options
-	const deadline = Date.now() + maxDurationMs
-
-	while (Date.now() < deadline) {
-		const unavailable = await page
-			.evaluate(isNativeReplayUnavailableOrMissing, {
-				sidebarOpenSelectors: archiveSidebarOpenSelectors,
-				playerChatToggleSelectors: archivePlayerChatToggleSelectors,
-			})
-			.catch(() => false)
-		if (unavailable) return true
 		await tryOpenArchiveNativeChatPanel(page)
 		await page.waitForTimeout(TIMING.ARCHIVE_CHAT_OPEN_INTERVAL_MS)
 	}
