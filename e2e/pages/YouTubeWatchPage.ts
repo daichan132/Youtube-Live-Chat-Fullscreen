@@ -40,10 +40,6 @@ export class YouTubeWatchPage {
     )
   }
 
-  async isLiveNow() {
-    return this.page.evaluate(() => window.__ylcHelpers.isLiveNow()).then(Boolean, () => false)
-  }
-
   async ensureFullscreen(options?: { timeout?: number }): Promise<boolean> {
     if (await this.isInFullscreen()) return true
     try {
