@@ -165,30 +165,6 @@ const navigateToTransitionTarget = async (
   return waitForVideoIdChange(page, previousVideoId, NAVIGATION_SETTLE_TIMEOUT_MS)
 }
 
-const ensureFullscreen = async (page: import('@playwright/test').Page) => {
-  const active = await page.evaluate(() => document.fullscreenElement !== null)
-  if (active) return true
-
-  const playerReady = await page.waitForSelector('#movie_player', { state: 'attached', timeout: 8000 }).then(
-    () => true,
-    () => false,
-  )
-  if (!playerReady) return false
-
-  await page.locator('#movie_player').hover()
-  const fullscreenButton = page.locator('button.ytp-fullscreen-button').first()
-  const buttonVisible = await fullscreenButton.isVisible({ timeout: 4000 }).catch(() => false)
-  if (!buttonVisible) return false
-
-  await fullscreenButton.click({ force: true })
-  return page
-    .waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
-    .then(
-      () => true,
-      () => false,
-    )
-}
-
 test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
   test('does not keep stale fullscreen chat iframe after video transition', async ({ page }) => {
     test.setTimeout(150000)
@@ -262,7 +238,7 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
       return
     }
 
-    const fullscreenStillActive = await ensureFullscreen(page)
+    const fullscreenStillActive = await yt.ensureFullscreen()
     if (!fullscreenStillActive) {
       await captureChatState(page, test.info(), 'video-transition-fullscreen-lost')
       test.skip(true, 'Could not keep or restore fullscreen during transition navigation.')

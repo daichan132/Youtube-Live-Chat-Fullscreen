@@ -70,57 +70,18 @@ const collectVideoUrls = () => {
 }
 
 const isChatUnavailable = () => {
-  const chatFrame =
-    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
-    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
+  const h = window.__ylcHelpers
+  const chatFrame = h.getNativeIframe()
   const doc = chatFrame?.contentDocument ?? null
   const href = doc?.location?.href ?? ''
   if (!doc || !href || href.includes('about:blank')) return false
-  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
-  const text = doc.body?.textContent?.toLowerCase() ?? ''
-  if (!text) return false
-  return text.includes('live chat replay is not available') || text.includes('chat is disabled') || text.includes('live chat is disabled')
+  return h.isDocUnavailable(doc)
 }
 
 const hasChatSignals = () => {
   const liveChatFrame = document.querySelector('ytd-live-chat-frame')
   const chatFrame = document.querySelector('#chatframe') ?? document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame')
   return Boolean(liveChatFrame && chatFrame)
-}
-
-const isLiveNow = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  if (watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now')) return true
-
-  const moviePlayer = document.getElementById('movie_player') as (HTMLElement & { getVideoData?: () => { isLive?: boolean } }) | null
-  const videoData = moviePlayer?.getVideoData?.()
-  if (typeof videoData?.isLive === 'boolean') return videoData.isLive
-
-  const response = (
-    window as Window & {
-      ytInitialPlayerResponse?: {
-        microformat?: {
-          playerMicroformatRenderer?: {
-            liveBroadcastDetails?: {
-              isLiveNow?: boolean
-            }
-          }
-        }
-        videoDetails?: {
-          isLive?: boolean
-        }
-      }
-    }
-  ).ytInitialPlayerResponse
-
-  const liveBroadcastNow = response?.microformat?.playerMicroformatRenderer?.liveBroadcastDetails?.isLiveNow
-  if (typeof liveBroadcastNow === 'boolean') return liveBroadcastNow
-
-  const videoDetailsLive = response?.videoDetails?.isLive
-  if (typeof videoDetailsLive === 'boolean') return videoDetailsLive
-
-  return false
 }
 
 const isWatchPageReady = async (page: Page) => {
@@ -141,7 +102,7 @@ const isPlayableLiveCandidate = async (page: Page, url: string) => {
   const ready = await isWatchPageReady(page)
   if (!ready) return false
 
-  const liveNow = await page.evaluate(isLiveNow).then(Boolean, () => false)
+  const liveNow = await page.evaluate(() => window.__ylcHelpers.isLiveNow()).then(Boolean, () => false)
   if (!liveNow) return false
 
   const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: LIVE_CHAT_READY_TIMEOUT_MS }).then(
@@ -165,7 +126,7 @@ const isPlayableLiveCandidate = async (page: Page, url: string) => {
 let cachedLiveUrl: string | null = null
 
 export const isWatchPageLiveNow = async (page: Page) => {
-  return page.evaluate(isLiveNow).then(Boolean, () => false)
+  return page.evaluate(() => window.__ylcHelpers.isLiveNow()).then(Boolean, () => false)
 }
 
 export const findLiveUrlWithChat = async (page: Page, options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {}) => {
@@ -290,7 +251,7 @@ export const findArchiveUrlWithChat = async (
       await page.goto(url, { waitUntil: 'domcontentloaded', timeout: CANDIDATE_GOTO_TIMEOUT_MS })
       await acceptYouTubeConsent(page)
 
-      const liveNow = await page.evaluate(isLiveNow)
+      const liveNow = await page.evaluate(() => window.__ylcHelpers.isLiveNow())
       if (liveNow) continue
 
       const hasChat = await page.waitForFunction(hasPlayableChat, { timeout: 8000 }).then(

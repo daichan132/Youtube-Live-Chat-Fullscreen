@@ -45,45 +45,20 @@ export class YouTubeWatchPage {
   }
 
   async isLiveNow() {
-    return this.page.evaluate(isLiveNow).then(Boolean, () => false)
+    return this.page.evaluate(() => window.__ylcHelpers.isLiveNow()).then(Boolean, () => false)
+  }
+
+  async ensureFullscreen(options?: { timeout?: number }): Promise<boolean> {
+    if (await this.isInFullscreen()) return true
+    try {
+      await this.enterFullscreen(options)
+      return true
+    } catch {
+      return false
+    }
   }
 
   async isInFullscreen() {
     return this.page.evaluate(() => document.fullscreenElement !== null)
   }
-}
-
-const isLiveNow = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  if (watchFlexy?.hasAttribute('is-live-now') || watchGrid?.hasAttribute('is-live-now')) return true
-
-  const moviePlayer = document.getElementById('movie_player') as (HTMLElement & { getVideoData?: () => { isLive?: boolean } }) | null
-  const videoData = moviePlayer?.getVideoData?.()
-  if (typeof videoData?.isLive === 'boolean') return videoData.isLive
-
-  const response = (
-    window as Window & {
-      ytInitialPlayerResponse?: {
-        microformat?: {
-          playerMicroformatRenderer?: {
-            liveBroadcastDetails?: {
-              isLiveNow?: boolean
-            }
-          }
-        }
-        videoDetails?: {
-          isLive?: boolean
-        }
-      }
-    }
-  ).ytInitialPlayerResponse
-
-  const liveBroadcastNow = response?.microformat?.playerMicroformatRenderer?.liveBroadcastDetails?.isLiveNow
-  if (typeof liveBroadcastNow === 'boolean') return liveBroadcastNow
-
-  const videoDetailsLive = response?.videoDetails?.isLive
-  if (typeof videoDetailsLive === 'boolean') return videoDetailsLive
-
-  return false
 }

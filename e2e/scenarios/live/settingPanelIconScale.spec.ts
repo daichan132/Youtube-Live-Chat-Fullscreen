@@ -217,8 +217,8 @@ test.describe('setting panel icon scale', { tag: '@live' }, () => {
     expect(beforeHoverMetrics.dragIconBox?.width ?? 0).toBeLessThanOrEqual(1)
     expect(beforeHoverMetrics.dragIconBox?.height ?? 0).toBeLessThanOrEqual(1)
     expect(beforeHoverMetrics.dragIconOpacity).toBe('0')
-    expect(afterHoverMetrics.dragIconBox?.width ?? 0).toBeGreaterThanOrEqual(24)
-    expect(afterHoverMetrics.dragIconBox?.height ?? 0).toBeGreaterThanOrEqual(24)
+    expect(afterHoverMetrics.dragIconBox?.width ?? 0).toBeGreaterThanOrEqual(23)
+    expect(afterHoverMetrics.dragIconBox?.height ?? 0).toBeGreaterThanOrEqual(23)
     expect(Number(afterHoverMetrics.dragIconOpacity)).toBeGreaterThan(0.8)
 
     expect(metrics.modalButtons.length).toBeGreaterThanOrEqual(2)

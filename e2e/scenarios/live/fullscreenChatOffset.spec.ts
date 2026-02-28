@@ -2,74 +2,7 @@ import { writeFile } from 'node:fs/promises'
 import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
-
-const isNativeChatUsable = () => {
-  const secondary = document.querySelector('#secondary') as HTMLElement | null
-  const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
-  const chatFrameHost = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
-  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-  if (!secondary || !chatContainer || !chatFrameHost || !chatFrame) return false
-
-  const secondaryStyle = window.getComputedStyle(secondary)
-  const containerStyle = window.getComputedStyle(chatContainer)
-  const hostStyle = window.getComputedStyle(chatFrameHost)
-  const isHidden =
-    secondaryStyle.display === 'none' ||
-    secondaryStyle.visibility === 'hidden' ||
-    containerStyle.display === 'none' ||
-    containerStyle.visibility === 'hidden' ||
-    hostStyle.display === 'none' ||
-    hostStyle.visibility === 'hidden'
-  if (isHidden) return false
-
-  const pointerBlocked =
-    secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
-  if (pointerBlocked) return false
-
-  const secondaryBox = secondary.getBoundingClientRect()
-  const chatBox = chatFrameHost.getBoundingClientRect()
-  const frameBox = chatFrame.getBoundingClientRect()
-  return secondaryBox.width > 80 && chatBox.width > 80 && chatBox.height > 120 && frameBox.height > 120
-}
-
-const closeNativeChat = async (page: import('@playwright/test').Page) => {
-  const outerSelectors = [
-    'ytd-live-chat-frame #show-hide-button button',
-    'ytd-live-chat-frame #show-hide-button yt-icon-button',
-    'ytd-live-chat-frame #close-button button',
-    'ytd-live-chat-frame #close-button yt-icon-button',
-    'ytd-live-chat-frame button[aria-label="Close"]',
-    'ytd-live-chat-frame button[title="Close"]',
-  ]
-
-  for (const selector of outerSelectors) {
-    const button = page.locator(selector).first()
-    if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await button.click()
-      return
-    }
-  }
-
-  const frameLocator = page.frameLocator('#chatframe')
-  const innerSelectors = [
-    'yt-live-chat-header-renderer #close-button button',
-    'yt-live-chat-header-renderer #close-button yt-icon-button',
-    'yt-live-chat-header-renderer button[aria-label="Close"]',
-    'yt-live-chat-header-renderer button[title="Close"]',
-  ]
-  for (const selector of innerSelectors) {
-    const button = frameLocator.locator(selector).first()
-    if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await button.click()
-      return
-    }
-  }
-
-  await page.evaluate(() => {
-    document.querySelector('#chat-container')?.setAttribute('hidden', 'true')
-    document.querySelector('ytd-live-chat-frame')?.remove()
-  })
-}
+import { closeNativeChat } from '../../utils/nativeChat'
 
 const collectFullscreenChatOffset = () => {
   const host = document.getElementById('shadow-root-live-chat') as HTMLElement | null
@@ -153,9 +86,15 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
     await yt.goto(liveUrl)
 
     await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
-    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(true)
-    await closeNativeChat(page)
-    await expect.poll(async () => page.evaluate(isNativeChatUsable)).toBe(false)
+    await expect.poll(async () => page.evaluate(() => window.__ylcHelpers.isNativeChatUsable())).toBe(true)
+    const closed = await closeNativeChat(page)
+    if (!closed) {
+      await page.evaluate(() => {
+        document.querySelector('#chat-container')?.setAttribute('hidden', 'true')
+        document.querySelector('ytd-live-chat-frame')?.remove()
+      })
+    }
+    await expect.poll(async () => page.evaluate(() => window.__ylcHelpers.isNativeChatUsable())).toBe(false)
 
     await yt.enterFullscreen()
 

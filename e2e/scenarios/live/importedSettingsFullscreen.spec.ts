@@ -1,7 +1,8 @@
 import { expect, test } from '../../fixtures'
+import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { ExtensionPopup } from '../../pages/ExtensionPopup'
+import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 import { importSettingsViaPopup, readStorageEntry } from '../../utils/popupHelpers'
-import { switchButtonSelector } from '../../utils/selectors'
 
 const getOverlayFontSize = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -28,44 +29,34 @@ const getOverlayCSSProperties = () => {
   }
 }
 
-const isExtensionChatLoaded = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const iframe = root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
+const isExtensionChatWithMessages = () => {
+  const iframe = window.__ylcHelpers.getExtensionIframe()
   const doc = iframe?.contentDocument ?? null
   if (!doc) return false
   return doc.querySelectorAll('yt-live-chat-text-message-renderer, yt-live-chat-paid-message-renderer').length > 0
 }
 
-const enterFullscreenAndActivateChat = async (page: import('@playwright/test').Page) => {
-  await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
+const enterFullscreenAndActivateChat = async (
+  yt: YouTubeWatchPage,
+  overlay: ExtensionOverlay,
+  page: import('@playwright/test').Page,
+) => {
+  await yt.waitForNativeChat()
+  await yt.enterFullscreen()
 
-  await page.locator('#movie_player').hover()
-  await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null)
-
-  await page.locator('#movie_player').hover()
-  const switchButton = page.locator(switchButtonSelector)
-  const switchReady = await switchButton.waitFor({ state: 'visible', timeout: 10000 }).then(
-    () => true,
-    () => false,
-  )
+  const switchReady = await overlay.waitForSwitchReady()
   if (!switchReady) return { ready: false as const, reason: 'Fullscreen chat switch button did not appear.' }
 
-  if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-    await switchButton.click({ force: true })
-  }
-  await expect(switchButton).toHaveAttribute('aria-pressed', 'true')
+  await overlay.toggleOn()
 
-  let overlayReady = false
+  const loaded = await overlay.waitForChatLoaded()
+  if (!loaded) return { ready: false as const, reason: 'Extension iframe did not load in time.' }
+
   try {
-    await expect.poll(async () => page.evaluate(isExtensionChatLoaded), { timeout: 20000 }).toBe(true)
-    overlayReady = true
+    await expect.poll(async () => page.evaluate(isExtensionChatWithMessages), { timeout: 20000 }).toBe(true)
   } catch {
-    overlayReady = false
+    return { ready: false as const, reason: 'Extension iframe loaded but no chat messages appeared.' }
   }
-  if (!overlayReady) return { ready: false as const, reason: 'Extension iframe did not load in time.' }
-
   return { ready: true as const }
 }
 
@@ -87,9 +78,11 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
+    const yt = new YouTubeWatchPage(page)
+    const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(page)
+    const result = await enterFullscreenAndActivateChat(yt, overlay, page)
     if (!result.ready) {
       test.skip(true, result.reason)
       return
@@ -114,9 +107,11 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
+    const yt2 = new YouTubeWatchPage(page)
+    const overlay2 = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(page)
+    const result = await enterFullscreenAndActivateChat(yt2, overlay2, page)
     if (!result.ready) {
       test.skip(true, result.reason)
       return
@@ -230,9 +225,11 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
+    const yt3 = new YouTubeWatchPage(page)
+    const overlay3 = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    const result = await enterFullscreenAndActivateChat(page)
+    const result = await enterFullscreenAndActivateChat(yt3, overlay3, page)
     if (!result.ready) {
       test.skip(true, result.reason)
       return

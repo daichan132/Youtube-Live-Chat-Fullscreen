@@ -1,4 +1,4 @@
-import { test } from '../../fixtures'
+import { expect, test } from '../../fixtures'
 import { ExtensionOverlay } from '../../pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '../../pages/YouTubeWatchPage'
 
@@ -44,9 +44,6 @@ test.describe('fullscreen chat toggle', { tag: '@live' }, () => {
     await overlay.toggleOff()
 
     const detachedAfter = await overlay.waitForChatDetached()
-    if (!detachedAfter) {
-      test.skip(true, 'Extension iframe did not detach after toggle off.')
-      return
-    }
+    expect(detachedAfter).toBe(true)
   })
 })

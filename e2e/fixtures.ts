@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { type BrowserContext, test as base, chromium, type Page, type Worker } from '@playwright/test'
+import { PAGE_HELPERS_INIT_SCRIPT } from './support/pageHelpers'
 import { selectArchiveReplayUrl } from './support/urls/archiveReplay'
 import { findLiveUrlWithChat } from './utils/liveUrl'
 
@@ -20,10 +21,12 @@ export type Extension = {
 }
 
 const launchExtensionContext = async (userDataDir: string) => {
-	return chromium.launchPersistentContext(userDataDir, {
+	const ctx = await chromium.launchPersistentContext(userDataDir, {
 		headless: false,
 		args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
 	})
+	await ctx.addInitScript(PAGE_HELPERS_INIT_SCRIPT)
+	return ctx
 }
 
 const waitForMv3Worker = async (context: BrowserContext) => {

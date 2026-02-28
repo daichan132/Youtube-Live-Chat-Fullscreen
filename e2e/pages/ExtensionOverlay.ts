@@ -81,7 +81,5 @@ export class ExtensionOverlay {
 }
 
 const isExtensionChatDetached = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  return !root?.querySelector('iframe[data-ylc-chat="true"]')
+  return !window.__ylcHelpers.getExtensionIframe()
 }
