@@ -1,6 +1,1 @@
 export { Draggable } from './components/Draggable'
-export { DraggableItem } from './components/DraggableItem'
-export { useClipPathManagement } from './hooks/useClipPathManagement'
-export { useDraggableItemStyles } from './hooks/useDraggableItemStyles'
-export { useResizableHandlers } from './hooks/useResizableHandlers'
-export { useYouTubePointerEvents } from './hooks/useYouTubePointerEvents'

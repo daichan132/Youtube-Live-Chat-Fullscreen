@@ -1,4 +1,5 @@
 import type { Page, TestInfo } from '@playwright/test'
+import { TIMING } from '@e2e/support/constants'
 import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
 import { switchButtonSelector } from '@e2e/utils/selectors'
 
@@ -304,7 +305,7 @@ export const ensureArchiveNativeChatPlayable = async (page: Page, options: { max
 		const playable = await page.evaluate(isNativeArchivePlayable).catch(() => false)
 		if (playable) return true
 		await tryOpenArchiveNativeChatPanel(page)
-		await page.waitForTimeout(800)
+		await page.waitForTimeout(TIMING.ARCHIVE_CHAT_OPEN_INTERVAL_MS)
 	}
 
 	return false
@@ -323,7 +324,7 @@ export const ensureNativeReplayUnavailable = async (page: Page, options: { maxDu
 			.catch(() => false)
 		if (unavailable) return true
 		await tryOpenArchiveNativeChatPanel(page)
-		await page.waitForTimeout(800)
+		await page.waitForTimeout(TIMING.ARCHIVE_CHAT_OPEN_INTERVAL_MS)
 	}
 
 	return false

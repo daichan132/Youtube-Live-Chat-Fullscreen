@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test'
 import { getE2ETestTargets } from '@e2e/config/testTargets'
+import { TIMING } from '@e2e/support/constants'
 import { hasPlayableChat } from '@e2e/support/diagnostics'
 
 const consentSelectors = [
@@ -55,7 +56,7 @@ export const acceptYouTubeConsent = async (page: Page) => {
 export const acceptYouTubeConsentWithRetry = async (page: Page) => {
   await acceptYouTubeConsent(page)
   if (page.url().includes('consent')) {
-    await page.waitForTimeout(1500)
+    await page.waitForTimeout(TIMING.CONSENT_RETRY_DELAY_MS)
     await acceptYouTubeConsent(page)
   }
 }

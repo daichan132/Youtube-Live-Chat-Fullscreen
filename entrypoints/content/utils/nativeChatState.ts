@@ -5,6 +5,7 @@
  * or usable, which is important for deciding when to show the extension's
  * fullscreen chat overlay.
  */
+import { isIframeForCurrentVideo } from '../chat/shared/iframeDom'
 import { getYouTubeVideoId } from './getYouTubeVideoId'
 
 /**
@@ -20,31 +21,6 @@ type NativeChatElements = {
   chatContainer: HTMLElement | null
   chatFrameHost: HTMLElement | null
   chatFrame: HTMLIFrameElement | null
-}
-
-const getLiveChatVideoIdFromUrl = (href: string) => {
-  try {
-    if (!href) return null
-    const url = new URL(href, window.location.origin)
-    return url.searchParams.get('v')
-  } catch {
-    return null
-  }
-}
-
-const isChatIframeForCurrentVideo = (chatFrame: HTMLIFrameElement | null) => {
-  if (!chatFrame) return false
-  const currentVideoId = getYouTubeVideoId()
-  if (!currentVideoId) return true
-
-  const docHref = chatFrame.contentDocument?.location?.href ?? ''
-  const docVideoId = getLiveChatVideoIdFromUrl(docHref)
-  if (docVideoId) return docVideoId === currentVideoId
-
-  const srcVideoId = getLiveChatVideoIdFromUrl(chatFrame.getAttribute('src') ?? chatFrame.src ?? '')
-  if (srcVideoId) return srcVideoId === currentVideoId
-
-  return true
 }
 
 /** Retrieves all native chat-related DOM elements */
@@ -138,7 +114,7 @@ export const isNativeChatOpen = () => {
 
   if (!chatFrame) return false
 
-  if (!isChatIframeForCurrentVideo(chatFrame)) return false
+  if (!isIframeForCurrentVideo(chatFrame, getYouTubeVideoId())) return false
   const doc = chatFrame.contentDocument ?? null
   const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
   if (!href || href.includes('about:blank')) return false

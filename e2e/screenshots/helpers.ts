@@ -4,6 +4,7 @@ import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 import type { Extension } from '@e2e/fixtures'
 import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { TIMING } from '@e2e/support/constants'
 import { reliableClick } from '@e2e/utils/actions'
 import { switchButtonSelector } from '@e2e/utils/selectors'
 
@@ -31,7 +32,7 @@ export const seekVideo = async (page: Page, seconds: number) => {
     const player = document.getElementById('movie_player') as HTMLElement & { seekTo?: (t: number, allowSeekAhead: boolean) => void }
     player?.seekTo?.(s, true)
   }, seconds)
-  await page.waitForTimeout(2000)
+  await page.waitForTimeout(TIMING.SEEK_STABILIZE_MS)
 }
 
 export const pauseVideo = async (page: Page) => {
@@ -117,7 +118,7 @@ export const waitForAdsToFinish = async (page: Page, options: { maxDurationMs?: 
       })
       .catch(() => false)
 
-    await page.waitForTimeout(1000)
+    await page.waitForTimeout(TIMING.AD_CHECK_POLL_INTERVAL_MS)
   }
 }
 
@@ -145,7 +146,7 @@ export const hoverOverlay = async (page: Page) => {
   const appBox = await appLocator.boundingBox()
   if (!appBox) return false
   await page.mouse.move(appBox.x + appBox.width / 2, appBox.y + Math.min(appBox.height / 2, 100))
-  await page.waitForTimeout(300)
+  await page.waitForTimeout(TIMING.OVERLAY_HOVER_ANIMATION_MS)
   return true
 }
 

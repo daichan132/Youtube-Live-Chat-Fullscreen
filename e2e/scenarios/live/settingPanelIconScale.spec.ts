@@ -1,5 +1,6 @@
 import { getE2ETestTargets } from '@e2e/config/testTargets'
 import { expect, test } from '@e2e/fixtures'
+import { TIMING } from '@e2e/support/constants'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { clickSettingIcon } from '@e2e/screenshots/helpers'
@@ -153,7 +154,7 @@ test.describe('setting panel icon scale', { tag: '@live' }, () => {
       return
     }
     await page.mouse.move(rowCenter.x, rowCenter.y)
-    await page.waitForTimeout(260)
+    await page.waitForTimeout(TIMING.DRAG_ICON_TRANSITION_MS)
     const afterHoverMetrics = await page.evaluate(collectUiMetrics)
 
     const clickedDelete = await page.evaluate(clickPresetDeleteIcon)

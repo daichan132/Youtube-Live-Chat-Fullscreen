@@ -1,4 +1,5 @@
 import { expect, test } from '@e2e/fixtures'
+import { TIMING } from '@e2e/support/constants'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { hasPlayableChat } from '@e2e/support/diagnostics'
@@ -31,7 +32,7 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
     if (!playable) {
       test.skip(true, 'Selected live video did not have playable chat.')
     }
-    await page.waitForTimeout(1500)
+    await page.waitForTimeout(TIMING.NATIVE_CHAT_SETTLE_MS)
     const closed = await closeNativeChat(page)
     if (!closed) {
       test.skip(true, 'Could not close native chat via UI controls.')
