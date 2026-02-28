@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
 import { resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
 import { useChangeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/useChangeYLCStyle'
@@ -38,13 +37,9 @@ export const useChatIframeLoader = (mode: ChatMode) => {
   const lastAttachedPageVideoIdRef = useRef<string | null>(null)
   const lastAttachedHrefRef = useRef<string>('')
   const pendingTransitionGuardRef = useRef(false)
-  const { setIsDisplay, setIsIframeLoaded, setIFrameElement } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      setIsDisplay: state.setIsDisplay,
-      setIsIframeLoaded: state.setIsIframeLoaded,
-      setIFrameElement: state.setIFrameElement,
-    })),
-  )
+  const setIsDisplay = useYTDLiveChatNoLsStore(state => state.setIsDisplay)
+  const setIsIframeLoaded = useYTDLiveChatNoLsStore(state => state.setIsIframeLoaded)
+  const setIFrameElement = useYTDLiveChatNoLsStore(state => state.setIFrameElement)
   const changeYLCStyle = useChangeYLCStyle()
 
   const changeYLCStyleRef = useRef(changeYLCStyle)

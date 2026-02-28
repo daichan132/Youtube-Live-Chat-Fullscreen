@@ -7,6 +7,14 @@ import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggab
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
+const LOADER_TIMEOUT = { enter: 140, exit: 320 } as const
+const LOADER_CLASS_NAMES = {
+  enter: 'opacity-0 scale-[0.995]',
+  enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
+  exit: 'opacity-100 scale-100',
+  exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
+} as const
+
 type YTDLiveChatIframeProps = {
   mode: ChatMode
 }
@@ -48,13 +56,8 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
 
   const loaderTransition = useCSSTransition({
     in: !isIframeLoaded,
-    timeout: { enter: 140, exit: 320 },
-    classNames: {
-      enter: 'opacity-0 scale-[0.995]',
-      enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
-      exit: 'opacity-100 scale-100',
-      exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
-    },
+    timeout: LOADER_TIMEOUT,
+    classNames: LOADER_CLASS_NAMES,
     unmountOnExit: true,
   })
 

@@ -1,6 +1,5 @@
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontFamilyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
@@ -33,12 +32,8 @@ const buildPreviewImportStyles = () =>
 
 export const FontFamilyInput = () => {
   const { changeFontFamily } = useYLCFontFamilyChange()
-  const { fontFamily, updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({
-      fontFamily: state.fontFamily,
-      updateYLCStyle: state.updateYLCStyle,
-    })),
-  )
+  const fontFamily = useYTDLiveChatStore(state => state.fontFamily)
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
 
   const handleCommit = useCallback(
     (nextFontFamily: string) => {

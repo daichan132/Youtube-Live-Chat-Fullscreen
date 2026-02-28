@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
 
@@ -7,12 +6,8 @@ import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { SettingSwitch } from './SettingSwitch'
 
 export const AlwaysOnDisplaySwitch = () => {
-  const { alwaysOnDisplay, updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({
-      alwaysOnDisplay: state.alwaysOnDisplay,
-      updateYLCStyle: state.updateYLCStyle,
-    })),
-  )
+  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   return <AlwaysOnDisplaySwitchUI alwaysOnDisplay={alwaysOnDisplay} updateYLCStyle={updateYLCStyle} />
 }
 

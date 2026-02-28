@@ -1,6 +1,5 @@
 import { Fragment, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { cn } from '@/shared/utils/cn'
 import { buildSettingItems, SETTING_ITEM_KEYS } from '../utils/settingItemDefinitions'
@@ -17,11 +16,7 @@ import { UserIconDisplaySwitch } from './YLCChangeItems/UserIconDisplaySwitch'
 import { UserNameDisplaySwitch } from './YLCChangeItems/UserNameDisplaySwitch'
 
 export const SettingContent = () => {
-  const { alwaysOnDisplay } = useYTDLiveChatStore(
-    useShallow(state => ({
-      alwaysOnDisplay: state.alwaysOnDisplay,
-    })),
-  )
+  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const { t } = useTranslation()
   const items = useMemo(
     () =>

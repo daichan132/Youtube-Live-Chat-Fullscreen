@@ -1,16 +1,11 @@
 import { useEffect } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { useMessage } from '@/shared/hooks/useMessage'
 import { useGlobalSettingStore } from '@/shared/stores'
 import type { ThemeMode } from '@/shared/theme'
 
 export const useThemeMode = () => {
-  const { themeMode, setThemeMode } = useGlobalSettingStore(
-    useShallow(state => ({
-      themeMode: state.themeMode,
-      setThemeMode: state.setThemeMode,
-    })),
-  )
+  const themeMode = useGlobalSettingStore(state => state.themeMode)
+  const setThemeMode = useGlobalSettingStore(state => state.setThemeMode)
   const { message: themeModeMessage } = useMessage<{ message: 'themeMode'; themeMode: ThemeMode }>()
 
   useEffect(() => {

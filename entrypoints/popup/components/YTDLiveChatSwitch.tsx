@@ -1,18 +1,12 @@
 import { useCallback, useId } from 'react'
 
-import { useShallow } from 'zustand/react/shallow'
-
 import { Switch } from '@/shared/components/Switch'
 import { useGlobalSettingStore } from '@/shared/stores'
 
 export const YTDLiveChatSwitch = () => {
   const id = useId()
-  const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
-    useShallow(state => ({
-      ytdLiveChat: state.ytdLiveChat,
-      setYTDLiveChat: state.setYTDLiveChat,
-    })),
-  )
+  const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
+  const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const handleSwitchChange = useCallback(
     (checked: boolean) => {
       setYTDLiveChat(checked)

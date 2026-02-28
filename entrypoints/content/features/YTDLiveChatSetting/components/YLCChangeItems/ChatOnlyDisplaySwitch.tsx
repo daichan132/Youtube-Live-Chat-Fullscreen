@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 
 import { useYTDLiveChatStore } from '@/shared/stores'
 
@@ -7,12 +6,8 @@ import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { SettingSwitch } from './SettingSwitch'
 
 export const ChatOnlyDisplaySwitch = () => {
-  const { chatOnlyDisplay, updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({
-      chatOnlyDisplay: state.chatOnlyDisplay,
-      updateYLCStyle: state.updateYLCStyle,
-    })),
-  )
+  const chatOnlyDisplay = useYTDLiveChatStore(state => state.chatOnlyDisplay)
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   return <ChatOnlyDisplaySwitchUI chatOnlyDisplay={chatOnlyDisplay} updateYLCStyle={updateYLCStyle} />
 }
 

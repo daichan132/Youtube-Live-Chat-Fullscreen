@@ -14,23 +14,25 @@ import { ControlIcons } from './ControlIcons'
 import { EffectsWrapper } from './EffectComponent/EffectsWrapper'
 
 interface DraggableItemProps {
-  top: number
-  left: number
   children: React.ReactNode
 }
 
-export const DraggableItem = ({ top, left, children }: DraggableItemProps) => {
+export const DraggableItem = ({ children }: DraggableItemProps) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
   const [isResizing, setIsResizing] = useState(false)
 
-  const { size, setSize, setCoordinates, fontColor } = useYTDLiveChatStore(
+  const { coordinates, size, setSize, setCoordinates, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
+      coordinates: state.coordinates,
       size: state.size,
       setSize: state.setSize,
       setCoordinates: state.setCoordinates,
       fontColor: state.fontColor,
     })),
   )
+
+  const top = coordinates.y
+  const left = coordinates.x
 
   const {
     clip,

@@ -1,5 +1,4 @@
 import { useCallback } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasFullscreenChatSource'
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
@@ -13,6 +12,13 @@ import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 
+const OVERLAY_TIMEOUT = { enter: 200, exit: 200 } as const
+const OVERLAY_CLASS_NAMES = {
+  enter: 'opacity-0',
+  enterActive: 'transition-opacity opacity-100 duration-200',
+  exitActive: 'transition-opacity opacity-0 duration-200',
+} as const
+
 type YTDLiveChatProps = {
   isFullscreen: boolean
   mode: ChatMode
@@ -21,12 +27,8 @@ type YTDLiveChatProps = {
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
   const iframeElement = useYTDLiveChatNoLsStore(state => state.iframeElement)
-  const { ytdLiveChat, setYTDLiveChat } = useGlobalSettingStore(
-    useShallow(state => ({
-      ytdLiveChat: state.ytdLiveChat,
-      setYTDLiveChat: state.setYTDLiveChat,
-    })),
-  )
+  const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
+  const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
@@ -59,12 +61,8 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
 
   const overlayTransition = useCSSTransition({
     in: isOverlayVisible,
-    timeout: { enter: 200, exit: 200 },
-    classNames: {
-      enter: 'opacity-0',
-      enterActive: 'transition-opacity opacity-100 duration-200',
-      exitActive: 'transition-opacity opacity-0 duration-200',
-    },
+    timeout: OVERLAY_TIMEOUT,
+    classNames: OVERLAY_CLASS_NAMES,
     unmountOnExit: true,
   })
 

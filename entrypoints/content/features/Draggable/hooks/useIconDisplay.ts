@@ -1,19 +1,9 @@
-import { useShallow } from 'zustand/react/shallow'
-
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
 export const useIconDisplay = () => {
-  const { alwaysOnDisplay } = useYTDLiveChatStore(
-    useShallow(state => ({
-      alwaysOnDisplay: state.alwaysOnDisplay,
-    })),
-  )
-  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      isDisplay: state.isDisplay,
-      isIframeLoaded: state.isIframeLoaded,
-    })),
-  )
+  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
+  const isDisplay = useYTDLiveChatNoLsStore(state => state.isDisplay)
+  const isIframeLoaded = useYTDLiveChatNoLsStore(state => state.isIframeLoaded)
 
   return isIframeLoaded && (isDisplay || alwaysOnDisplay)
 }

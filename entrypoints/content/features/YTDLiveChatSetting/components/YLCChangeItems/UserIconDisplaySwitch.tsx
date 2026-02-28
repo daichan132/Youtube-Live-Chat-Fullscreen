@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 
 import { useYLCDisplayChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCDisplayChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -8,12 +7,8 @@ import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { SettingSwitch } from './SettingSwitch'
 
 export const UserIconDisplaySwitch = () => {
-  const { userIconDisplay, updateYLCStyle } = useYTDLiveChatStore(
-    useShallow(state => ({
-      userIconDisplay: state.userIconDisplay,
-      updateYLCStyle: state.updateYLCStyle,
-    })),
-  )
+  const userIconDisplay = useYTDLiveChatStore(state => state.userIconDisplay)
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const { changeDisplay } = useYLCDisplayChange('--extension-user-icon-display')
   return <UserIconDisplaySwitchUI userIconDisplay={userIconDisplay} updateYLCStyle={updateYLCStyle} changeDisplay={changeDisplay} />
 }

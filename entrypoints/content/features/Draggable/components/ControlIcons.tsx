@@ -6,6 +6,27 @@ import { TbAdjustmentsHorizontal, TbGripVertical } from '@/shared/components/ico
 import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { useIconDisplay } from '../hooks/useIconDisplay'
 
+const ICON_STROKE_WIDTH = 1.55
+const CONTROL_BUTTON_SIZE = 40
+const CONTROL_GAP = 2
+const CONTROL_TOP_OFFSET = 4
+// Measured from YouTube chat iframe runtime: menu ("...") circle left edge is 48px from iframe right.
+const YOUTUBE_MENU_CIRCLE_LEFT_INSET = 48
+const DRAG_RIGHT_OFFSET = YOUTUBE_MENU_CIRCLE_LEFT_INSET + CONTROL_GAP
+const SETTINGS_RIGHT_OFFSET = DRAG_RIGHT_OFFSET + CONTROL_BUTTON_SIZE + CONTROL_GAP
+
+const VISUALLY_HIDDEN_STYLE: CSSProperties = {
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  padding: 0,
+  margin: '-1px',
+  overflow: 'hidden',
+  clip: 'rect(0,0,0,0)',
+  whiteSpace: 'nowrap',
+  border: 0,
+}
+
 interface DragProps {
   attributes: DraggableAttributes
   listeners: SyntheticListenerMap | undefined
@@ -24,14 +45,6 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
   const { attributes, listeners, isDragging } = dragProps
   const colorString = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, ${fontColor.a})`
   const runtimeHoverColor = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, 0.1)`
-  const iconStrokeWidth = 1.55
-  const controlButtonSize = 40
-  const controlGap = 2
-  const controlTopOffset = 4
-  // Measured from YouTube chat iframe runtime: menu ("...") circle left edge is 48px from iframe right.
-  const youtubeMenuCircleLeftInset = 48
-  const dragRightOffset = youtubeMenuCircleLeftInset + controlGap
-  const settingsRightOffset = dragRightOffset + controlButtonSize + controlGap
   const runtimeHoverVarStyle = {
     '--ylc-overlay-control-hover-runtime': runtimeHoverColor,
   } as CSSProperties
@@ -49,29 +62,16 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
         aria-roledescription='drag handle'
         aria-describedby='ylc-drag-desc'
         style={{
-          top: controlTopOffset,
-          right: dragRightOffset,
+          top: CONTROL_TOP_OFFSET,
+          right: DRAG_RIGHT_OFFSET,
           opacity: isIconDisplay ? 1 : 0,
           ...runtimeHoverVarStyle,
         }}
       >
         <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
-          <TbGripVertical size={22} color={colorString} strokeWidth={iconStrokeWidth} />
+          <TbGripVertical size={22} color={colorString} strokeWidth={ICON_STROKE_WIDTH} />
         </div>
-        <span
-          id='ylc-drag-desc'
-          style={{
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            padding: 0,
-            margin: '-1px',
-            overflow: 'hidden',
-            clip: 'rect(0,0,0,0)',
-            whiteSpace: 'nowrap',
-            border: 0,
-          }}
-        >
+        <span id='ylc-drag-desc' style={VISUALLY_HIDDEN_STYLE}>
           {t('content.aria.arrowKeysToMove')}
         </span>
       </div>
@@ -79,8 +79,8 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
       <div
         className='absolute z-10 cursor-pointer'
         style={{
-          top: controlTopOffset,
-          right: settingsRightOffset,
+          top: CONTROL_TOP_OFFSET,
+          right: SETTINGS_RIGHT_OFFSET,
           opacity: isIconDisplay ? 1 : 0,
           ...runtimeHoverVarStyle,
         }}
@@ -91,7 +91,7 @@ export const ControlIcons = ({ fontColor, dragProps, onSettingsClick }: ControlI
           aria-label={t('content.aria.openSettings')}
           onClick={onSettingsClick}
         >
-          <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={iconStrokeWidth} />
+          <TbAdjustmentsHorizontal size={22} color={colorString} strokeWidth={ICON_STROKE_WIDTH} />
         </button>
       </div>
     </>

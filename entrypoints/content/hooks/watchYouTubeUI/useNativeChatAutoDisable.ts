@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { isActuallyFullscreen } from '@/entrypoints/content/chat/runtime/fullscreen'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
@@ -18,12 +17,8 @@ interface UseNativeChatAutoDisableOptions {
  */
 export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   const prevNativeChatOpenRef = useRef<boolean | null>(null)
-  const { isAutoOpeningNativeChat, setIsAutoOpeningNativeChat } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      isAutoOpeningNativeChat: state.isAutoOpeningNativeChat,
-      setIsAutoOpeningNativeChat: state.setIsAutoOpeningNativeChat,
-    })),
-  )
+  const isAutoOpeningNativeChat = useYTDLiveChatNoLsStore(state => state.isAutoOpeningNativeChat)
+  const setIsAutoOpeningNativeChat = useYTDLiveChatNoLsStore(state => state.setIsAutoOpeningNativeChat)
 
   // Detect clicks on native chat toggle buttons
   useEffect(() => {

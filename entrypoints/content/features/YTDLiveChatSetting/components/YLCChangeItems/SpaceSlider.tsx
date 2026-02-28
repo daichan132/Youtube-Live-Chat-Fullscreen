@@ -1,8 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useShallow } from 'zustand/react/shallow'
-
 import { useYLCStylePropertyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCStylePropertyChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
@@ -20,7 +18,7 @@ const sliderValueToSpace = (value: number) => {
 
 export const SpaceSlider = () => {
   const spaceRef = useRef(useYTDLiveChatStore.getState().space)
-  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const { setProperty } = useYLCStylePropertyChange()
   const updateSpace = useCallback(
     (space: number) => {

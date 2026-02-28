@@ -1,8 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useShallow } from 'zustand/react/shallow'
-
 import { useYLCBlurChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCBlurChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
@@ -17,7 +15,7 @@ const sliderValueToBlur = (value: number) => {
 
 export const BlurSlider = () => {
   const blurRef = useRef(useYTDLiveChatStore.getState().blur)
-  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const { changeBlur } = useYLCBlurChange()
   const updateBlur = useCallback(
     (blur: number) => {

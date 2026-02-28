@@ -22,42 +22,38 @@ interface UseResizableHandlersProps {
   setIsResizing: (isResizing: boolean) => void
 }
 
+const ensurePositiveCoordinate = (value: number): number => Math.max(0, value)
+
+const DIRECTION_COORDINATE_CHANGES: Record<Direction, (delta: NumberSize) => Coordinates> = {
+  top: delta => ({ x: 0, y: -delta.height }),
+  left: delta => ({ x: -delta.width, y: 0 }),
+  topLeft: delta => ({ x: -delta.width, y: -delta.height }),
+  bottomLeft: delta => ({ x: -delta.width, y: 0 }),
+  topRight: delta => ({ x: 0, y: -delta.height }),
+  right: () => ({ x: 0, y: 0 }),
+  bottom: () => ({ x: 0, y: 0 }),
+  bottomRight: () => ({ x: 0, y: 0 }),
+}
+
 /**
  * Hook to manage resizable element handlers
  * Handles coordinate adjustments during resize operations and enforces minimum sizes
  */
 export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates, setIsResizing }: UseResizableHandlersProps) => {
   const coordinateRef = useRef({ x: left, y: top })
+  const sizeRef = useRef(size)
+  sizeRef.current = size
 
   const handleResizeStart = useCallback(() => {
     setIsResizing(true)
     coordinateRef.current = { x: left, y: top }
   }, [left, top, setIsResizing])
 
-  /**
-   * Ensures coordinate values are non-negative
-   */
-  const ensurePositiveCoordinate = useCallback((value: number): number => {
-    return Math.max(0, value)
-  }, [])
-
   const handleResize = useCallback(
     (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
-      // Map of how each resize direction affects the element coordinates
-      const directionToCoordinateChanges: Record<Direction, Coordinates> = {
-        top: { x: 0, y: -delta.height },
-        left: { x: -delta.width, y: 0 },
-        topLeft: { x: -delta.width, y: -delta.height },
-        bottomLeft: { x: -delta.width, y: 0 },
-        topRight: { x: 0, y: -delta.height },
-        right: { x: 0, y: 0 },
-        bottom: { x: 0, y: 0 },
-        bottomRight: { x: 0, y: 0 },
-      }
+      const getChanges = DIRECTION_COORDINATE_CHANGES[direction]
+      const changes = getChanges ? getChanges(delta) : { x: 0, y: 0 }
 
-      const changes = directionToCoordinateChanges[direction] || { x: 0, y: 0 }
-
-      // Update coordinates only when needed
       if (changes.x !== 0 || changes.y !== 0) {
         const newLeft = coordinateRef.current.x + changes.x
         const newTop = coordinateRef.current.y + changes.y
@@ -68,20 +64,18 @@ export const useResizableHandlers = ({ size, setSize, left, top, setCoordinates,
         })
       }
 
-      // Update size
       setSize({
-        width: size.width + delta.width,
-        height: size.height + delta.height,
+        width: sizeRef.current.width + delta.width,
+        height: sizeRef.current.height + delta.height,
       })
     },
-    [setCoordinates, setSize, size.width, size.height, ensurePositiveCoordinate],
+    [setCoordinates, setSize],
   )
 
   const handleResizeStop = useCallback(
     (_event: MouseEvent | TouchEvent, _direction: Direction, _ref: HTMLElement, _delta: NumberSize) => {
       setIsResizing(false)
 
-      // Ensure final size respects minimum dimensions
       const finalSize = {
         width: Math.max(ResizableMinWidth, _ref.offsetWidth),
         height: Math.max(ResizableMinHeight, _ref.offsetHeight),

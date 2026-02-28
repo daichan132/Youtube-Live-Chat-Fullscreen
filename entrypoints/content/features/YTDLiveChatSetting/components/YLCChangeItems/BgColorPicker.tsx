@@ -4,7 +4,6 @@ import type { RgbaColor } from 'react-colorful'
 import { RgbaColorPicker } from 'react-colorful'
 
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { useYLCBgColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCBgColorChange'
 
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
@@ -16,7 +15,7 @@ import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibili
 export const BgColorPicker = () => {
   const { changeColor } = useYLCBgColorChange()
   const stateRef = useRef(useYTDLiveChatStore.getState())
-  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.bgColor)
   const [display, setDisplay] = useState(false)
 

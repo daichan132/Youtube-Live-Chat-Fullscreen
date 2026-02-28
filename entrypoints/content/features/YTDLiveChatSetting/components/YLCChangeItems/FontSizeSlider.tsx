@@ -1,8 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useShallow } from 'zustand/react/shallow'
-
 import { useYLCStylePropertyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCStylePropertyChange'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { SettingSliderUI, useSettingSlider } from './SettingSlider'
@@ -20,7 +18,7 @@ const sliderValueToFontSize = (value: number) => {
 
 export const FontSizeSlider = () => {
   const fontSizeRef = useRef(useYTDLiveChatStore.getState().fontSize)
-  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const { setProperty } = useYLCStylePropertyChange()
   const updateFontSize = useCallback(
     (fontSize: number) => {

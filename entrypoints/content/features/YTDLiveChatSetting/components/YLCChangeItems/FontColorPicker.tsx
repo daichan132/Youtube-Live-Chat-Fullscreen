@@ -4,7 +4,6 @@ import type { RgbaColor } from 'react-colorful'
 import { RgbaColorPicker } from 'react-colorful'
 
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { useYLCFontColorChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontColorChange'
 
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
@@ -17,7 +16,7 @@ export const FontColorPicker = () => {
   const { changeColor } = useYLCFontColorChange()
   const stateRef = useRef(useYTDLiveChatStore.getState())
   const [rgba, setRgba] = useState<RGBColor>(stateRef.current.fontColor)
-  const { updateYLCStyle } = useYTDLiveChatStore(useShallow(state => ({ updateYLCStyle: state.updateYLCStyle })))
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
   const [display, setDisplay] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)

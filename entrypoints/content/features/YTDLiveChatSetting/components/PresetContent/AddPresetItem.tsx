@@ -1,18 +1,13 @@
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { TbPlus } from '@/shared/components/icons'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { cn } from '@/shared/utils/cn'
 
 export const AddPresetItem = () => {
-  const { addPresetEnabled, addPresetItem } = useYTDLiveChatStore(
-    useShallow(state => ({
-      addPresetEnabled: state.addPresetEnabled,
-      addPresetItem: state.addPresetItem,
-    })),
-  )
+  const addPresetEnabled = useYTDLiveChatStore(state => state.addPresetEnabled)
+  const addPresetItem = useYTDLiveChatStore(state => state.addPresetItem)
   const { t } = useTranslation()
   const addItem = useCallback(() => {
     const state = useYTDLiveChatStore.getState()

@@ -2,7 +2,6 @@ import { closestCenter, DndContext, type DragEndEvent, MeasuringStrategy } from 
 import { restrictToParentElement, restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { arrayMove, SortableContext } from '@dnd-kit/sortable'
 import { useCallback } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { AddPresetItem } from './PresetContent/AddPresetItem'
 import { PresetItem } from './PresetContent/PresetItem'
@@ -16,12 +15,8 @@ const measuringConfig = {
 const dndModifiers = [restrictToVerticalAxis, restrictToParentElement]
 
 export const PresetContent = () => {
-  const { presetItemIds, setPresetItemIds } = useYTDLiveChatStore(
-    useShallow(state => ({
-      presetItemIds: state.presetItemIds,
-      setPresetItemIds: state.setPresetItemIds,
-    })),
-  )
+  const presetItemIds = useYTDLiveChatStore(state => state.presetItemIds)
+  const setPresetItemIds = useYTDLiveChatStore(state => state.setPresetItemIds)
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
@@ -29,12 +24,12 @@ export const PresetContent = () => {
       if (over == null || active.id === over.id) {
         return
       }
-      const oldIndex = presetItemIds.indexOf(String(active.id))
-      const newIndex = presetItemIds.indexOf(String(over.id))
-      const newItems = arrayMove(presetItemIds, oldIndex, newIndex)
-      setPresetItemIds(newItems)
+      const currentIds = useYTDLiveChatStore.getState().presetItemIds
+      const oldIndex = currentIds.indexOf(String(active.id))
+      const newIndex = currentIds.indexOf(String(over.id))
+      setPresetItemIds(arrayMove(currentIds, oldIndex, newIndex))
     },
-    [presetItemIds, setPresetItemIds],
+    [setPresetItemIds],
   )
 
   return (
