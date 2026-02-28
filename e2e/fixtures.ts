@@ -49,6 +49,13 @@ const waitForMv3Worker = async (context: BrowserContext) => {
 	return worker
 }
 
+/** Re-acquire the active extension Service Worker. Use this when the SW may have been terminated by Chrome's idle timeout. */
+const getActiveWorker = async (context: BrowserContext): Promise<Worker | null> => {
+	const worker = context.serviceWorkers().find(w => w.url().startsWith('chrome-extension://')) ?? null
+	if (worker) return worker
+	return context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
+}
+
 const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
 	const page = await context.newPage()
 	try {
@@ -69,29 +76,44 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
 	}
 }
 
-const createWorkerStorageAccessor = (worker: Worker): Extension['storage'] => ({
-	get: async (keys?: string | string[] | null) => {
-		return worker.evaluate(async k => {
-			if (k === undefined || k === null) return chrome.storage.local.get(null)
-			return chrome.storage.local.get(k)
-		}, keys ?? null)
-	},
-	set: async (items: Record<string, unknown>) => {
-		await worker.evaluate(async i => {
-			await chrome.storage.local.set(i)
-		}, items)
-	},
-	clear: async () => {
-		await worker.evaluate(async () => {
-			await chrome.storage.local.clear()
-		})
-	},
-})
+/**
+ * Storage accessor via chrome.storage.local API.
+ *
+ * Two distinct paths, chosen once at boot — no fallback chain:
+ *
+ * - **Worker path**: Playwright's CDP session keeps the captured Worker reference
+ *   alive even after Chrome's idle termination of the MV3 Service Worker.
+ *   Using the reference directly is both simpler and more reliable than
+ *   re-acquiring via context.serviceWorkers() on every call.
+ *
+ * - **Page path**: When no SW was available at boot, opens a temporary extension
+ *   page for each operation. This is slower but always works.
+ */
+const createStorageAccessor = (context: BrowserContext, extensionId: string, initialWorker: Worker | null): Extension['storage'] => {
+	if (initialWorker) {
+		return {
+			get: async (keys?: string | string[] | null) => {
+				return initialWorker.evaluate(async (k: string | string[] | null) => {
+					if (k === undefined || k === null) return chrome.storage.local.get(null)
+					return chrome.storage.local.get(k)
+				}, keys ?? null)
+			},
+			set: async (items: Record<string, unknown>) => {
+				await initialWorker.evaluate(async (i: Record<string, unknown>) => {
+					await chrome.storage.local.set(i)
+				}, items)
+			},
+			clear: async () => {
+				await initialWorker.evaluate(async () => {
+					await chrome.storage.local.clear()
+				})
+			},
+		}
+	}
 
-const createPageStorageAccessor = (context: BrowserContext, extensionId: string): Extension['storage'] => {
 	const popupUrl = `chrome-extension://${extensionId}/popup.html`
 
-	const withPopupPage = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
+	const viaPopup = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
 		const page = await context.newPage()
 		try {
 			await page.goto(popupUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
@@ -105,26 +127,26 @@ const createPageStorageAccessor = (context: BrowserContext, extensionId: string)
 
 	return {
 		get: async (keys?: string | string[] | null) => {
-			return withPopupPage(async page => {
-				return (await page.evaluate(async k => {
+			return viaPopup(page =>
+				page.evaluate(async (k: string | string[] | null) => {
 					if (k === undefined || k === null) return chrome.storage.local.get(null)
 					return chrome.storage.local.get(k)
-				}, keys ?? null)) as Record<string, unknown>
-			})
+				}, keys ?? null),
+			)
 		},
 		set: async (items: Record<string, unknown>) => {
-			await withPopupPage(async page => {
-				await page.evaluate(async i => {
+			await viaPopup(page =>
+				page.evaluate(async (i: Record<string, unknown>) => {
 					await chrome.storage.local.set(i)
-				}, items)
-			})
+				}, items),
+			)
 		},
 		clear: async () => {
-			await withPopupPage(async page => {
-				await page.evaluate(async () => {
+			await viaPopup(page =>
+				page.evaluate(async () => {
 					await chrome.storage.local.clear()
-				})
-			})
+				}),
+			)
 		},
 	}
 }
@@ -138,7 +160,7 @@ const resolveExtension = async (context: BrowserContext): Promise<Extension> => 
 		throw new Error('Could not resolve extension ID from service worker or chrome://extensions.')
 	}
 
-	const storage = worker ? createWorkerStorageAccessor(worker) : createPageStorageAccessor(context, extensionId)
+	const storage = createStorageAccessor(context, extensionId, worker)
 
 	return {
 		id: extensionId,

@@ -1,9 +1,8 @@
-import { expect, type Page } from '@playwright/test'
-
 import { TIMEOUT } from '@e2e/support/constants'
 import { isExtensionArchiveChatPlayable, isExtensionChatLoaded } from '@e2e/support/diagnostics'
 import { reliableClick } from '@e2e/utils/actions'
 import { MOVIE_PLAYER, switchButtonSelector } from '@e2e/utils/selectors'
+import { expect, type Page } from '@playwright/test'
 
 export class ExtensionOverlay {
   constructor(private page: Page) {}
@@ -27,7 +26,7 @@ export class ExtensionOverlay {
     const btn = this.switchButton()
     const pressed = await btn.getAttribute('aria-pressed')
     if (pressed !== 'true') {
-      await reliableClick(btn, this.page, switchButtonSelector)
+      await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'true')
     }
     await expect(btn).toHaveAttribute('aria-pressed', 'true', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
   }
@@ -36,18 +35,27 @@ export class ExtensionOverlay {
     const btn = this.switchButton()
     const pressed = await btn.getAttribute('aria-pressed')
     if (pressed !== 'false') {
-      await reliableClick(btn, this.page, switchButtonSelector)
+      await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'false')
     }
     await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
   }
 
-  async ensureSwitchOff() {
+  /**
+   * Ensure the switch is off.
+   * Returns `'was-off'` if the switch was already off (iframe was never attached),
+   * `'turned-off'` if it was toggled off successfully,
+   * or `'failed'` if the toggle did not take effect.
+   */
+  async ensureSwitchOff(): Promise<'was-off' | 'turned-off' | 'failed'> {
     const btn = this.switchButton()
-    if ((await btn.getAttribute('aria-pressed')) !== 'true') return
-    await reliableClick(btn, this.page, switchButtonSelector)
-    await expect(btn)
-      .toHaveAttribute('aria-pressed', 'false', { timeout: 3000 })
-      .catch(() => {})
+    if ((await btn.getAttribute('aria-pressed')) !== 'true') return 'was-off'
+    await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'false')
+    try {
+      await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
+      return 'turned-off'
+    } catch {
+      return 'failed'
+    }
   }
 
   async waitForChatLoaded(options?: { timeout?: number }): Promise<boolean> {

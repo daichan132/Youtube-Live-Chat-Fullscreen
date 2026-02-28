@@ -110,7 +110,7 @@ test.describe
       const switchButton = page.locator(switchButtonSelector)
       await switchButton.waitFor({ state: 'visible', timeout: 10000 })
       if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-        await reliableClick(switchButton, page, switchButtonSelector)
+        await reliableClick(switchButton, async () => (await switchButton.getAttribute('aria-pressed')) === 'true')
       }
 
       await page.waitForFunction(isExtensionArchiveChatPlayable, undefined, { timeout: 60000 })
@@ -185,7 +185,7 @@ test.describe
       await switchButton.waitFor({ state: 'visible', timeout: 10000 })
 
       if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-        await reliableClick(switchButton, page, switchButtonSelector)
+        await reliableClick(switchButton, async () => (await switchButton.getAttribute('aria-pressed')) === 'true')
       }
 
       await page.waitForFunction(isExtensionArchiveChatPlayable, undefined, { timeout: 60000 })

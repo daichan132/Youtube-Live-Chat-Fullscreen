@@ -71,7 +71,7 @@ export const enterFullscreenWithChat = async (page: Page) => {
   if (!switchReady) return false
 
   if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-    await reliableClick(switchButton, page, switchButtonSelector)
+    await reliableClick(switchButton, async () => (await switchButton.getAttribute('aria-pressed')) === 'true')
   }
 
   try {
