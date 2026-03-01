@@ -18,13 +18,15 @@
 
 Live URL 探索（VTuber 検索 → 最大 18 候補巡回）はテスト本体とは別の `urlLookupContext` で行う。テストコンテキストの cookie / storage を汚さないため。
 
-### about:blank rehydration 回避
-
-Zustand persist ストアへの direct write 後、popup ページ等を about:blank に遷移させる。popup.html を開くと React アプリがマウント → Zustand persist が storage を読み取り → マージしたデフォルト値を書き戻すため、テストが事前にセットした値が上書きされる。about:blank 遷移で React のアンマウントを強制し rehydration を遮断する。
-
 ### Storage accessor の boot-time bifurcation
 
-`e2e/fixtures.ts` の `createStorageAccessor` は、fixture 起動時の Worker 有無で2パスに分岐する。Worker パス（CDP keep-alive で参照が有効）と Page パス（毎回 popup を開く）の2つで、実行時のフォールバックチェーンは持たない。詳細は **chrome-extension-e2e-playwright** スキルの Section 4 を参照。
+`e2e/fixtures.ts` の `createStorageAccessor` は、fixture 起動時の Worker 有無で2パスに分岐する。Worker パス（CDP keep-alive で参照が有効）と Page パス（毎回 `e2e.html` を開く）の2つで、実行時のフォールバックチェーンは持たない。詳細は **chrome-extension-e2e-playwright** スキルの Section 4 を参照。
+
+**e2e.html bridge**: Page パスは `popup.html` ではなく `public/e2e.html`（React/Zustand なしの最小ページ）を使用。rehydration リスクがなく `about:blank` 遷移も不要。WXT が `.output/chrome-mv3/e2e.html` に自動コピーする。`global-setup.ts` でビルド出力に `e2e.html` が含まれることを検証している。
+
+### Consent handler
+
+`registerConsentHandler()` が `sharedPage`、`liveUrl`、`archiveReplayUrl` の各 fixture で登録済み。`page.addLocatorHandler()` で YouTube の同意ダイアログ（"Accept all"、"I agree"、"同意する"）を自動クリックする。Cookie 事前注入（`acceptYouTubeConsent()`）と補完関係で併用。
 
 ### data-ylc-* テストアンカー
 

@@ -23,3 +23,5 @@ Chrome 拡張の Playwright 汎用パターン（拡張ロード、SW 起動、e
 5. **addInitScript ヘルパーを使う** — `window.__ylcHelpers` の既存メソッドを活用する。evaluate 内で DOM ヘルパーを再実装しない
 6. **`data-ylc-*` セレクタを使う** — Tailwind クラス名でなく `data-ylc-*` カスタム属性で要素を特定する。プロダクトコードに属性がなければ追加してから E2E を書く
 7. **verify-then-fallback クリック** — `reliableClick(locator, verify)` を使う。常に二重クリックするとトグル UI が反転する
+8. **consent handler が共通 fixture に登録済み** — `registerConsentHandler()` が `sharedPage`、`liveUrl`、`archiveReplayUrl` の各 fixture で自動登録される。YouTube の同意ダイアログは `addLocatorHandler` で自動処理される
+9. **Storage は e2e.html bridge 経由** — `createStorageAccessor` の Page パスは `popup.html` ではなく `e2e.html`（React/Zustand なし）を使用。rehydration リスクなし、`about:blank` 遷移不要

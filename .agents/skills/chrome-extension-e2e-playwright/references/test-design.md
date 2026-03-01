@@ -20,6 +20,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   sharedContext: [async ({}, use) => {
     const ctx = await chromium.launchPersistentContext('', {
       headless: false,
+      ignoreDefaultArgs: ['--disable-extensions'],
       args: [`--disable-extensions-except=${EXT_PATH}`, `--load-extension=${EXT_PATH}`],
     })
     await use(ctx)
