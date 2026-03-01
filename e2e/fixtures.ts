@@ -23,6 +23,7 @@ export type Extension = {
 const launchExtensionContext = async (userDataDir: string) => {
 	const ctx = await chromium.launchPersistentContext(userDataDir, {
 		headless: false,
+		ignoreDefaultArgs: ['--disable-extensions'],
 		args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
 	})
 	await ctx.addInitScript(PAGE_HELPERS_INIT_SCRIPT)
@@ -45,6 +46,19 @@ const waitForMv3Worker = async (context: BrowserContext) => {
 		await context.waitForEvent('serviceworker', { timeout }).catch(() => null)
 	}
 	await warmup.close()
+
+	// CDP fallback: stop & restart all service workers if none found (Playwright #39075)
+	if (!worker) {
+		try {
+			const cdp = await context.newCDPSession(context.pages()[0] ?? (await context.newPage()))
+			await cdp.send('ServiceWorker.enable')
+			await cdp.send('ServiceWorker.stopAllWorkers')
+			await cdp.detach()
+			worker = await context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
+		} catch {
+			// CDP fallback is best-effort — ignore failures
+		}
+	}
 
 	return worker
 }
@@ -86,8 +100,9 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
  *   Using the reference directly is both simpler and more reliable than
  *   re-acquiring via context.serviceWorkers() on every call.
  *
- * - **Page path**: When no SW was available at boot, opens a temporary extension
- *   page for each operation. This is slower but always works.
+ * - **Page path**: When no SW was available at boot, opens e2e.html (a minimal
+ *   page without React/Zustand) for each operation. No about:blank navigation
+ *   needed since there is no rehydration risk.
  */
 const createStorageAccessor = (context: BrowserContext, extensionId: string, initialWorker: Worker | null): Extension['storage'] => {
 	if (initialWorker) {
@@ -111,15 +126,13 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 		}
 	}
 
-	const popupUrl = `chrome-extension://${extensionId}/popup.html`
+	const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
 
-	const viaPopup = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
+	const viaE2EPage = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
 		const page = await context.newPage()
 		try {
-			await page.goto(popupUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
-			const result = await fn(page)
-			await page.goto('about:blank')
-			return result
+			await page.goto(bridgeUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
+			return await fn(page)
 		} finally {
 			await page.close().catch(() => null)
 		}
@@ -127,7 +140,7 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 
 	return {
 		get: async (keys?: string | string[] | null) => {
-			return viaPopup(page =>
+			return viaE2EPage(page =>
 				page.evaluate(async (k: string | string[] | null) => {
 					if (k === undefined || k === null) return chrome.storage.local.get(null)
 					return chrome.storage.local.get(k)
@@ -135,20 +148,27 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 			)
 		},
 		set: async (items: Record<string, unknown>) => {
-			await viaPopup(page =>
+			await viaE2EPage(page =>
 				page.evaluate(async (i: Record<string, unknown>) => {
 					await chrome.storage.local.set(i)
 				}, items),
 			)
 		},
 		clear: async () => {
-			await viaPopup(page =>
+			await viaE2EPage(page =>
 				page.evaluate(async () => {
 					await chrome.storage.local.clear()
 				}),
 			)
 		},
 	}
+}
+
+/** Register addLocatorHandler for YouTube consent dialogs — complements acceptYouTubeConsent(). */
+const registerConsentHandler = async (page: Page) => {
+	await page.addLocatorHandler(page.locator('button:has-text("Accept all"), button:has-text("I agree"), button:has-text("同意する")'), async (btn) => {
+		await btn.first().click()
+	}, { noWaitAfter: true })
 }
 
 const resolveExtension = async (context: BrowserContext): Promise<Extension> => {
@@ -226,6 +246,7 @@ export const test = base.extend<
 	sharedPage: [
 		async ({ sharedContext }, use) => {
 			const page = await sharedContext.newPage()
+			await registerConsentHandler(page)
 			// Close any leftover pages (e.g., Chrome's initial about:blank tab) so sharedPage is the active tab.
 			for (const p of sharedContext.pages()) {
 				if (p !== page) await p.close().catch(() => null)
@@ -240,6 +261,7 @@ export const test = base.extend<
 	liveUrl: [
 		async ({ urlLookupContext }, use) => {
 			const tempPage = await urlLookupContext.newPage()
+			await registerConsentHandler(tempPage)
 			try {
 				const url = await findLiveUrlWithChat(tempPage)
 				await use(url)
@@ -253,6 +275,7 @@ export const test = base.extend<
 	archiveReplayUrl: [
 		async ({ urlLookupContext }, use) => {
 			const tempPage = await urlLookupContext.newPage()
+			await registerConsentHandler(tempPage)
 			try {
 				const url = await selectArchiveReplayUrl(tempPage)
 				await use(url)

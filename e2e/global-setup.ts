@@ -16,4 +16,11 @@ export default function globalSetup() {
 			`manifest.json not found in ${EXTENSION_OUTPUT_DIR}\nThe build output may be corrupted. Run "yarn build" again.`,
 		)
 	}
+
+	const e2eBridge = path.join(EXTENSION_OUTPUT_DIR, 'e2e.html')
+	if (!fs.existsSync(e2eBridge)) {
+		throw new Error(
+			`e2e.html not found in ${EXTENSION_OUTPUT_DIR}\nEnsure public/e2e.html exists and run "yarn build" again.`,
+		)
+	}
 }
