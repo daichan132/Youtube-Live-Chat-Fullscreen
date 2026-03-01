@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Livechatt Fullskärm"
+    "message": "YouTube Livechatt i helskärm"
   },
   "extensionDescription": {
-    "message": "Med detta tillägg kan du visa chattpanelen och skriva kommentarer samtidigt som du håller YouTube Live i helskärmsläge."
+    "message": "Se YouTube Live i helskärm utan att förlora chatten. Skriv kommentarer, skicka Super Chats och anpassa överlägget."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatiskt"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Ljust"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Mörkt"
   }
 }

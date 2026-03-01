@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat na pełnym ekranie"
   },
   "extensionDescription": {
-    "message": "Dzięki temu rozszerzeniu możesz wyświetlać panel czatu i wysyłać komentarze, zachowując tryb pełnoekranowy YouTube Live."
+    "message": "Oglądaj YouTube Live na pełnym ekranie bez utraty czatu. Pisz komentarze, wysyłaj Super Chat i dostosuj nakładkę."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Motyw"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Motyw"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatyczny"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Jasny"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Ciemny"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "የYouTube ቀጥታ ጋብዣ ፍሉ ስክሪን"
+    "message": "YouTube Live Chat ሙሉ ስክሪን"
   },
   "extensionDescription": {
-    "message": "ይህን ኤክስቴንሽን በመጠቀም፣ የYouTube ቀጥታ ቪዲዮውን በፍሉ ስክሪን ሲያየው የቻት ፓኔሉን ማሳየት እና አስተያየት መስጠት ይችላሉ።"
+    "message": "YouTube Liveን ሙሉ ስክሪን ላይ ቻት ሳያጡ ይመልከቱ። አስተያየት ይስጡ፣ Super Chat ይላኩ፣ ገጽታውን እንደፈለጉ ያስተካክሉ።"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "ገጽታ"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "ገጽታ"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "ራስ-ሰር"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "ብሩህ"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "ጨለማ"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube लाइव चैट फुलस्क्रीन"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "इस एक्सटेंशन की मदद से, आप YouTube लाइव को फुलस्क्रीन मोड में रखते हुए चैट पैनल देख सकते हैं और कमेंट भी पोस्ट कर सकते हैं।"
+    "message": "चैट खोए बिना YouTube Live फ़ुलस्क्रीन में देखें। टिप्पणी करें, Super Chat भेजें और ओवरले को अपने अनुसार बनाएँ।"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "थीम"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "थीम"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "ऑटो"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "लाइट"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "डार्क"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "Chat en direct YouTube en plein écran"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Avec cette extension, vous pouvez afficher le panneau de chat et poster des commentaires tout en gardant YouTube Live en mode plein écran."
+    "message": "Regardez YouTube Live en plein écran sans perdre le chat. Commentez, envoyez des Super Chats et personnalisez l'overlay."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Thème"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Thème"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Auto"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Clair"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Sombre"
   }
 }

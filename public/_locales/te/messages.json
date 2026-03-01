@@ -3,21 +3,21 @@
     "message": "YouTube లైవ్ చాట్ ఫుల్‌స్క్రీన్"
   },
   "extensionDescription": {
-    "message": "ఈ ఎక్స్‌టెన్షన్‌ను ఉపయోగించి, మీరు YouTube లైవ్‌ను పూర్తి స్క్రీన్ మోడ్‌లో ఉంచిన సమయంలో చాట్ ప్యానల్‌ను ప్రదర్శించి, కామెంట్లు పోస్ట్ చేయవచ్చు."
+    "message": "YouTube లైవ్‌ను చాట్ కోల్పోకుండా ఫుల్‌స్క్రీన్‌లో చూడండి. కామెంట్లు, Super Chat పంపండి, ఓవర్‌లేను మీ ఇష్టం ప్రకారం మార్చండి."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "థీమ్"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "థీమ్"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "ఆటో"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "లైట్"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "డార్క్"
   }
 }

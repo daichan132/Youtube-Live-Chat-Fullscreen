@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "Xat en directe de YouTube a pantalla completa"
+    "message": "YouTube Live Chat Pantalla Completa"
   },
   "extensionDescription": {
-    "message": "Amb aquesta extensió, pots mostrar el panell de xat i publicar comentaris mentre mantens YouTube Live en mode de pantalla completa."
+    "message": "Mira YouTube Live a pantalla completa sense perdre el xat. Publica comentaris, envia Super Chats i personalitza l'aparença."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automàtic"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Clar"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Fosc"
   }
 }

@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat na celú obrazovku"
   },
   "extensionDescription": {
-    "message": "S touto rozšírením môžete zobrazovať chat a pridávať komentáre aj pri sledovaní YouTube Live v režime celej obrazovky."
+    "message": "Sledujte YouTube Live na celej obrazovke bez straty chatu. Píšte komentáre, posielajte Super Chats a prispôsobte si prekrytie."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Téma"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Téma"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automaticky"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Svetlý"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tmavý"
   }
 }

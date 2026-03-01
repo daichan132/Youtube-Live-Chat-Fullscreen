@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "ইউটিউব লাইভ চ্যাট ফুলস্ক্রিন"
+    "message": "YouTube Live Chat ফুলস্ক্রিন"
   },
   "extensionDescription": {
-    "message": "এই এক্সটেনশনের মাধ্যমে, আপনি ইউটিউব লাইভ ফুলস্ক্রিন মোডে রেখেও চ্যাট প্যানেল দেখতে এবং মন্তব্য করতে পারবেন।"
+    "message": "ফুলস্ক্রিনে YouTube Live দেখুন চ্যাট না হারিয়ে। মন্তব্য করুন, Super Chat পাঠান এবং ওভারলে কাস্টমাইজ করুন।"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "থিম"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "থিম"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "স্বয়ংক্রিয়"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "লাইট"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "ডার্ক"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Élő Csevegés Teljes Képernyőn"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Ezzel a bővítménnyel teljes képernyős YouTube Live módban is megjelenítheted a csevegőpanelt, és küldhetsz hozzászólásokat."
+    "message": "Nézd a YouTube Live-ot teljes képernyőn a csevegés elvesztése nélkül. Küldj hozzászólásokat, Super Chatet, és szabd testre."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Téma"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Téma"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatikus"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Világos"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Sötét"
   }
 }

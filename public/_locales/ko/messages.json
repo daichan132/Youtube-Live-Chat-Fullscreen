@@ -3,21 +3,21 @@
     "message": "YouTube 라이브 채팅 전체화면"
   },
   "extensionDescription": {
-    "message": "이 확장 프로그램을 사용하면 YouTube 라이브를 전체화면 모드로 유지하면서 채팅 패널을 표시하고 댓글을 남길 수 있습니다."
+    "message": "YouTube 라이브를 전체화면으로 보면서 채팅도 함께. 댓글 작성, Super Chat 전송, 오버레이 스타일까지 자유롭게."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "테마"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "테마"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "자동"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "라이트"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "다크"
   }
 }

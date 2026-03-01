@@ -3,21 +3,21 @@
     "message": "YouTube tiešraides čata pilnekrāna režīms"
   },
   "extensionDescription": {
-    "message": "Ar šo paplašinājumu varat rādīt čata paneli un rakstīt komentārus, vienlaikus saglabājot YouTube tiešraidi pilnekrāna režīmā."
+    "message": "Skatieties YouTube tiešraidi pilnekrānā, nezaudējot čatu. Rakstiet komentārus, sūtiet Super Chat un pielāgojiet izskatu."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Motīvs"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Motīvs"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automātiski"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Gaišs"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tumšs"
   }
 }

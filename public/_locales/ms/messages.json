@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat Skrin Penuh"
   },
   "extensionDescription": {
-    "message": "Dengan sambungan ini, anda boleh memaparkan panel sembang dan menghantar komen sambil mengekalkan mod skrin penuh untuk YouTube Live."
+    "message": "Tonton YouTube Live dalam skrin penuh tanpa kehilangan sembang. Hantar komen, Super Chat dan sesuaikan tindanan mengikut citarasa."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Auto"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Cerah"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Gelap"
   }
 }

@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat Fullskjerm"
   },
   "extensionDescription": {
-    "message": "Med denne utvidelsen kan du vise chat-panelet og skrive kommentarer mens YouTube Live vises i fullskjermmodus."
+    "message": "Se YouTube Live i fullskjerm uten å miste chatten. Skriv kommentarer, send Super Chat og tilpass overlegget."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Auto"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Lys"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Mørk"
   }
 }

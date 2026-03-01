@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Chat Live pe Ecran Complet"
+    "message": "YouTube Live Chat pe Ecran Complet"
   },
   "extensionDescription": {
-    "message": "Cu ajutorul acestei extensii, poți afișa panoul de chat și posta comentarii în timp ce urmărești YouTube Live pe ecran complet."
+    "message": "Urmărește YouTube Live pe ecran complet fără a pierde chatul. Trimite comentarii, Super Chats și personalizează suprapunerea."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Temă"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Temă"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automat"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Deschis"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Întunecat"
   }
 }

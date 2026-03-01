@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "دردشة YouTube المباشرة بوضع ملء الشاشة"
+    "message": "YouTube Live Chat ملء الشاشة"
   },
   "extensionDescription": {
-    "message": "باستخدام هذه الإضافة، يمكنك عرض نافذة الدردشة وكتابة التعليقات أثناء مشاهدة YouTube Live بوضع ملء الشاشة."
+    "message": "شاهد YouTube Live بملء الشاشة دون فقدان الدردشة. أرسل تعليقات وSuper Chat وخصّص المظهر كما تشاء."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "المظهر"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "المظهر"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "تلقائي"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "فاتح"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "داكن"
   }
 }

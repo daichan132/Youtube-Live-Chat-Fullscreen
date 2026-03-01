@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube લાઈવ ચેટ પૂર્ણ સ્ક્રીન"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "આએક્સ્ટેન્શન દ્વારા, તમે YouTube લાઈવ ફૂલ સ્ક્રીન મોડમાં રાખીને ચેટ પેનલ જોઈ શકો છો અને ટિપ્પણીઓ પણ પોસ્ટ કરી શકો છો."
+    "message": "ચેટ ગુમાવ્યા વિના YouTube Live પૂર્ણ સ્ક્રીનમાં જુઓ. ટિપ્પણી કરો, Super Chat મોકલો અને ઓવરલે કસ્ટમાઇઝ કરો."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "થીમ"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "થીમ"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "ઓટો"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "લાઇટ"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "ડાર્ક"
   }
 }

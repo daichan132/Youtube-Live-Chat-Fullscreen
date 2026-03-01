@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "Πλήρης Οθόνη Συνομιλίας YouTube Live"
+    "message": "YouTube Live Chat Πλήρης Οθόνη"
   },
   "extensionDescription": {
-    "message": "Με αυτήν την επέκταση, μπορείτε να προβάλλετε το πάνελ συνομιλίας και να δημοσιεύετε σχόλια ενώ παρακολουθείτε το YouTube Live σε πλήρη οθόνη."
+    "message": "Δείτε YouTube Live σε πλήρη οθόνη χωρίς να χάσετε τη συνομιλία. Γράψτε σχόλια, στείλτε Super Chat και προσαρμόστε το στυλ."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Θέμα"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Θέμα"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Αυτόματο"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Φωτεινό"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Σκοτεινό"
   }
 }

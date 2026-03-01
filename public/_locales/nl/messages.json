@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat Volledig Scherm"
   },
   "extensionDescription": {
-    "message": "Met deze extensie kun je het chatpaneel weergeven en reacties plaatsen terwijl je YouTube Live in volledig scherm bekijkt."
+    "message": "Bekijk YouTube Live op volledig scherm zonder de chat te missen. Reageer, stuur Super Chats en pas de overlay aan."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Thema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Thema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatisch"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Licht"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Donker"
   }
 }

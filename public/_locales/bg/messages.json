@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube чат на живо на цял екран"
+    "message": "YouTube Live Chat на цял екран"
   },
   "extensionDescription": {
-    "message": "С това разширение можете да виждате панела за чат и да публикувате коментари, докато гледате YouTube Live в режим на цял екран."
+    "message": "Гледайте YouTube Live на цял екран, без да губите чата. Пишете коментари, изпращайте Super Chat и настройвайте облика."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Тема"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Тема"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Автоматично"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Светла"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Тъмна"
   }
 }

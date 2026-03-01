@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "چت زنده یوتیوب به صورت تمام‌صفحه"
+    "message": "YouTube Live Chat تمام‌صفحه"
   },
   "extensionDescription": {
-    "message": "با استفاده از این افزونه می‌توانید پنل چت را هنگام پخش زنده یوتیوب به صورت تمام‌صفحه نمایش دهید و نظر ثبت کنید."
+    "message": "YouTube Live را تمام‌صفحه ببینید بدون از دست دادن چت. نظر بگذارید، Super Chat بفرستید و ظاهر را تنظیم کنید."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "پوسته"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "پوسته"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "خودکار"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "روشن"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "تاریک"
   }
 }

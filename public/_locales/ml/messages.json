@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube ലൈവ് ചാറ്റ് ഫുള്‍സ്ക്രീന്‍"
+    "message": "YouTube ലൈവ് ചാറ്റ് ഫുൾസ്ക്രീൻ"
   },
   "extensionDescription": {
-    "message": "ഈ എക്‌സ്റ്റെൻഷൻ ഉപയോഗിച്ച്, YouTube ലൈവ് ഫുള്‍സ്ക്രീൻ മോഡിൽ പോകുന്നുണ്ടായാലും ചാറ്റ് പാനൽ കാണിക്കാനും, കമന്റുകൾ പോസ്റ്റ് ചെയ്യാനും കഴിയുന്നതാണ്."
+    "message": "ചാറ്റ് നഷ്ടപ്പെടാതെ YouTube ലൈവ് ഫുൾസ്ക്രീനിൽ കാണുക. കമന്റ് ചെയ്യുക, Super Chat അയയ്ക്കുക, ഓവർലേ ക്രമീകരിക്കുക."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "തീം"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "തീം"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "ഓട്ടോ"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "ലൈറ്റ്"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "ഡാർക്ക്"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Livechat Vollbild"
+    "message": "YouTube Live Chat Vollbild"
   },
   "extensionDescription": {
-    "message": "Mit dieser Erweiterung kannst du das Chatfenster anzeigen und Kommentare schreiben, während YouTube Live im Vollbildmodus bleibt."
+    "message": "YouTube Live im Vollbild schauen, ohne den Chat zu verlieren. Kommentare schreiben, Super Chats senden und das Overlay anpassen."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Design"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Design"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatisch"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Hell"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Dunkel"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Layar Penuh"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Dengan ekstensi ini, Anda dapat menampilkan panel chat dan mengirim komentar sambil tetap menonton YouTube Live dalam mode layar penuh."
+    "message": "Tonton YouTube Live dalam layar penuh tanpa kehilangan chat. Kirim komentar, Super Chat, dan sesuaikan tampilan overlay."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Otomatis"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Terang"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Gelap"
   }
 }

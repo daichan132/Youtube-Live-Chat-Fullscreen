@@ -3,21 +3,21 @@
     "message": "YouTube Klepet v živo na celotnem zaslonu"
   },
   "extensionDescription": {
-    "message": "S to razširitvijo lahko prikažete ploščo za klepet in objavljate komentarje, medtem ko ostane YouTube Live v celozaslonskem načinu."
+    "message": "Glejte YouTube v živo na celotnem zaslonu brez izgube klepeta. Pišite komentarje, pošiljajte Super Chats in prilagodite prekrivanje."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Samodejno"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Svetla"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Temna"
   }
 }

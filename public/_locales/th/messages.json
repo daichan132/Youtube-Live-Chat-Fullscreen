@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "แชทสด YouTube แบบเต็มหน้าจอ"
+    "message": "YouTube แชทสดแบบเต็มหน้าจอ"
   },
   "extensionDescription": {
-    "message": "ด้วยส่วนขยายนี้ คุณสามารถแสดงแผงแชทและโพสต์ความคิดเห็นได้โดยที่ YouTube Live ยังคงอยู่ในโหมดเต็มหน้าจอ"
+    "message": "ดู YouTube Live แบบเต็มหน้าจอโดยไม่พลาดแชท โพสต์ความคิดเห็น ส่ง Super Chat และปรับแต่งโอเวอร์เลย์ได้ตามใจ"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "ธีม"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "ธีม"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "อัตโนมัติ"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "สว่าง"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "มืด"
   }
 }

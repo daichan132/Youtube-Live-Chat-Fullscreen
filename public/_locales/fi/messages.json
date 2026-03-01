@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat - koko näytön tila"
+    "message": "YouTube Live Chat koko näytöllä"
   },
   "extensionDescription": {
-    "message": "Tämän laajennuksen avulla voit näyttää chat-paneelin ja lähettää viestejä samalla kun YouTube Live on koko näytön tilassa."
+    "message": "Katso YouTube Liveä koko näytöllä ilman chatin menettämistä. Kommentoi, lähetä Super Chatteja ja muokkaa ulkoasua."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Teema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Teema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Auto"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Vaalea"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tumma"
   }
 }

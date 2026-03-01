@@ -3,21 +3,21 @@
     "message": "YouTube 直播聊天室全螢幕"
   },
   "extensionDescription": {
-    "message": "使用此擴充功能，您可以在保持 YouTube 直播全螢幕的同時顯示聊天面板並發送留言。"
+    "message": "全螢幕觀看 YouTube 直播時保留聊天功能。發送留言和 Super Chat，自由自訂聊天覆蓋層樣式。"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "主題"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "主題"
   },
   "content_setting_themeMode_system": {
     "message": "自動"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "淺色"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "深色"
   }
 }

@@ -3,21 +3,21 @@
     "message": "YouTube Canlı Sohbet Tam Ekran"
   },
   "extensionDescription": {
-    "message": "Bu uzantı sayesinde, YouTube Canlı yayınını tam ekran modunda izlerken sohbet panelini görüntüleyebilir ve yorum yapabilirsiniz."
+    "message": "YouTube canlı yayını tam ekranda sohbeti kaçırmadan izleyin. Yorum yapın, Super Chat gönderin, katmanı özelleştirin."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Otomatik"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Açık"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Koyu"
   }
 }

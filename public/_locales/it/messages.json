@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat a Schermo Intero"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Con questa estensione puoi visualizzare il pannello della chat e inviare commenti mentre guardi YouTube Live a schermo intero."
+    "message": "Guarda YouTube Live a schermo intero senza perdere la chat. Commenta, invia Super Chat e personalizza l'overlay."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatico"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Chiaro"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Scuro"
   }
 }

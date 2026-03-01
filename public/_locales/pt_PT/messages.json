@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat em Tela Cheia"
+    "message": "YouTube Live Chat em Ecrã Inteiro"
   },
   "extensionDescription": {
-    "message": "Com esta extensão, você pode exibir o painel de chat e postar comentários enquanto assiste ao YouTube Live em modo de tela cheia."
+    "message": "Veja o YouTube Live em ecrã inteiro sem perder o chat. Envie comentários, Super Chats e personalize a sobreposição."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automático"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Claro"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Escuro"
   }
 }

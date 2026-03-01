@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat sa Buong Screen"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Sa pamamagitan ng extension na ito, maaari mong ipakita ang chat panel at mag-post ng mga komento habang naka-fullscreen pa rin ang YouTube Live."
+    "message": "Manood ng YouTube Live nang fullscreen nang hindi nawawala ang chat. Mag-comment, mag-Super Chat, at i-ayos ang overlay."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Auto"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Maliwanag"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Madilim"
   }
 }

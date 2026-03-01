@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live'i vestlus täisekraanil"
+    "message": "YouTube Live Chat täisekraanil"
   },
   "extensionDescription": {
-    "message": "Selle laiendiga saad kuvada vestluspaneeli ja postitada kommentaare, hoides YouTube Live'i täisekraanirežiimis."
+    "message": "Vaata YouTube Live'i täisekraanil ilma vestlust kaotamata. Kommenteeri, saada Super Chate ja kohanda ülekatet."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Teema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Teema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automaatne"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Hele"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tume"
   }
 }

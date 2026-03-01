@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube 直播聊天全屏版"
+    "message": "YouTube 直播聊天全屏"
   },
   "extensionDescription": {
-    "message": "使用此扩展程序，您可以在 YouTube 直播全屏模式下显示聊天面板并发表评论。"
+    "message": "全屏观看 YouTube 直播时保留聊天功能。发送评论和 Super Chat，自由定制聊天覆盖层样式。"
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "主题"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "主题"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "自动"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "浅色"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "深色"
   }
 }

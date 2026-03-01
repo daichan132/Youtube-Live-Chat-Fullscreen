@@ -3,21 +3,21 @@
     "message": "YouTube tiesioginio pokalbio viso ekrano režimas"
   },
   "extensionDescription": {
-    "message": "Naudodami šį plėtinį galite matyti pokalbių skydelį ir rašyti komentarus, išlaikydami YouTube Live viso ekrano režimu."
+    "message": "Žiūrėkite YouTube tiesioginę transliaciją viso ekrano režimu neprarasdami pokalbių. Rašykite komentarus, siųskite Super Chat."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatinė"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Šviesi"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tamsi"
   }
 }

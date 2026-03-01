@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "צ'אט חי של YouTube במסך מלא"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "הרחבה זו מאפשרת להציג את חלונית הצ'אט ולשלוח תגובות תוך כדי צפייה בשידור חי של YouTube במצב מסך מלא."
+    "message": "צפו ב-YouTube Live במסך מלא בלי לאבד את הצ'אט. כתבו תגובות, שלחו Super Chat והתאימו את התצוגה."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "ערכת נושא"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "ערכת נושא"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "אוטומטי"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "בהיר"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "כהה"
   }
 }

@@ -3,21 +3,21 @@
     "message": "YouTube Live Chat Toàn Màn Hình"
   },
   "extensionDescription": {
-    "message": "Tiện ích này cho phép bạn hiển thị bảng trò chuyện và đăng bình luận khi xem YouTube Live ở chế độ toàn màn hình."
+    "message": "Xem YouTube Live toàn màn hình mà không mất chat. Bình luận, gửi Super Chat và tùy chỉnh lớp phủ theo ý bạn."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Giao diện"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Giao diện"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Tự động"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Sáng"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tối"
   }
 }

@@ -1,23 +1,23 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat na cijelom zaslonu"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Uz ovu ekstenziju možete prikazati chat panel i slati komentare dok gledate YouTube Live u načinu cijelog zaslona."
+    "message": "Gledajte YouTube Live na cijelom zaslonu bez gubitka chata. Komentirajte, šaljite Super Chat i prilagodite prikaz."
   },
   "popup_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_theme": {
-    "message": "テーマ"
+    "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "自動"
+    "message": "Automatski"
   },
   "content_setting_themeMode_light": {
-    "message": "ライト"
+    "message": "Svijetla"
   },
   "content_setting_themeMode_dark": {
-    "message": "ダーク"
+    "message": "Tamna"
   }
 }
