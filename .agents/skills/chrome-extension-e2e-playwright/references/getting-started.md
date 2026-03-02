@@ -22,10 +22,12 @@ const context = await chromium.launchPersistentContext('', {
 })
 ```
 
-- `headless: false` は絶対に外せない。Chrome 拡張は headless モードで動作しない
-- `ignoreDefaultArgs: ['--disable-extensions']` は必須。Playwright のデフォルト引数に `--disable-extensions` が含まれている（[chromiumSwitches.ts](https://raw.githubusercontent.com/microsoft/playwright/main/packages/playwright-core/src/server/chromium/chromiumSwitches.ts)）
-- CI では `xvfb-run --auto-servernum` で仮想ディスプレイを提供する
+- `headless: false` が基本。CI で headless にするには `channel: 'chromium'`（New Headless）を使う
+- **Playwright 同梱 Chromium / Chrome for Testing を使う**。Chrome branded build は Chrome 137 で `--load-extension` を、Chrome 139 で `--disable-extensions-except` を削除した
+- `ignoreDefaultArgs: ['--disable-extensions']` は必要に応じて指定。Playwright のデフォルト引数に `--disable-extensions` が含まれている（[chromiumSwitches.ts](https://raw.githubusercontent.com/microsoft/playwright/main/packages/playwright-core/src/server/chromium/chromiumSwitches.ts)）。`--disable-extensions-except` で上書きされるため多くの場合は不要だが、環境差異で拡張がロードされない場合に有用
+- CI では `xvfb-run --auto-servernum` で仮想ディスプレイを提供するか `channel: 'chromium'` で headless
 - `userDataDir` は空文字列 `''` で worker-scoped 共有、`testInfo.outputPath('user-data-dir')` でテスト分離
+- **MV2 注意**: Playwright v1.55 で MV2 サポートが終了。MV2 拡張は Playwright 1.54 以下を使うこと
 
 ### Global setup でビルド確認
 
@@ -51,37 +53,50 @@ export default function globalSetup() {
 SW はイベント駆動で lazy 起動。`content_scripts.matches` に合う URL への遷移がトリガーになる。
 
 ```ts
+const isExtensionWorker = (w: Worker) => w.url().startsWith('chrome-extension://')
+
 async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000) {
+  const find = () => context.serviceWorkers().find(isExtensionWorker) ?? null
+
+  let worker = find()
+  if (worker) return worker
+
+  // waitForEvent を warmup 前に仕込む（レース削減）
+  // waitForEvent は NEW イベントのみキャプチャするため、先にリスナーを設定する
+  const swPromise = context
+    .waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: timeoutMs })
+    .catch(() => null)
+
   // warmup: matches に合う URL へ遷移して SW をトリガー
   const warmupPage = await context.newPage()
-  await warmupPage.goto('https://example.com') // 自分の拡張の matches に合わせる
+  await warmupPage.goto('https://example.com', {
+    waitUntil: 'domcontentloaded', timeout: 15_000,
+  }).catch(() => {})
 
-  const deadline = Date.now() + timeoutMs
-  let worker = null
-  while (Date.now() < deadline) {
-    worker = context.serviceWorkers()[0]
-    if (worker) break
-    worker = await context
-      .waitForEvent('serviceworker', { timeout: 5_000 })
-      .catch(() => null)
-    if (worker) break
-  }
-
+  worker = find() ?? await swPromise
   await warmupPage.close()
 
+  if (worker) return worker
+
   // CDP restart fallback (Playwright #39075)
-  // ウォームアップ + ポーリングで見つからない場合、
-  // CDP で全 SW を停止→再起動して再度待機する
-  if (!worker) {
-    try {
-      const cdp = await context.newCDPSession(context.pages()[0] ?? await context.newPage())
-      await cdp.send('ServiceWorker.enable')
-      await cdp.send('ServiceWorker.stopAllWorkers')
-      await cdp.detach()
-      worker = await context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
-    } catch {
-      // CDP fallback is best-effort
-    }
+  // 同じパターン: リスナーを先に仕込んでから再ウォームアップ
+  try {
+    const cdp = await context.newCDPSession(context.pages()[0] ?? await context.newPage())
+    await cdp.send('ServiceWorker.enable')
+    await cdp.send('ServiceWorker.stopAllWorkers')
+    await cdp.detach()
+
+    const retryPromise = context
+      .waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: 10_000 })
+      .catch(() => null)
+
+    const rewarmup = await context.newPage()
+    await rewarmup.goto('https://example.com', { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {})
+
+    worker = find() ?? await retryPromise
+    await rewarmup.close().catch(() => null)
+  } catch {
+    // CDP fallback is best-effort
   }
 
   if (!worker) throw new Error('Service Worker did not start')
@@ -91,11 +106,11 @@ async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000)
 
 ### SW idle termination と Playwright CDP の関係
 
-MV3 の SW はアイドル状態が続くと Chrome に停止される。しかし **Playwright が `waitForEvent('serviceworker')` で取得した Worker 参照は、Chrome の idle termination 後も CDP セッション経由で有効**。つまり fixture 起動時に取得した Worker 参照は、テスト全体を通してそのまま `worker.evaluate()` に使える。
+MV3 の SW はアイドル 30 秒程度で Chrome に停止される（[Chrome docs](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)）。経験上、Playwright が `waitForEvent('serviceworker')` で取得した Worker 参照は、Chrome の idle termination 後も CDP セッション経由で `worker.evaluate()` に使えるが、**これは仕様として保証された挙動ではない**。Playwright/Chrome のバージョン変更で振る舞いが変わる可能性がある。
 
 `context.serviceWorkers()` は「現在アクティブな SW」のみ返すため、idle termination 後は空になる。これを使って毎回 Worker を取り直す設計は一見安全に見えるが、SW が見つからなかったときのフォールバック（拡張ページ経由）で副作用（Zustand rehydration 等）を踏むリスクがある。
 
-**推奨**: fixture の起動時に取得した Worker 参照を使い続ける（= boot-time bifurcation）。SW をアドホックに再取得したい場面では以下のヘルパーを使う:
+**推奨**: fixture の起動時に取得した Worker 参照を使い続ける（= boot-time bifurcation）。`worker.evaluate()` が `Target closed` で失敗するようになったら Page パス（e2e.html bridge）に切り替える。SW をアドホックに再取得したい場面では以下のヘルパーを使う:
 
 ```ts
 async function getActiveWorker(context: BrowserContext): Promise<Worker | null> {

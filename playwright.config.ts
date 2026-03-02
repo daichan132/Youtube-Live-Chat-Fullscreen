@@ -12,6 +12,8 @@ export default defineConfig({
 			name: 'e2e',
 			testIgnore: ['screenshots/**', 'config/**'],
 			use: {
+				locale: 'en-US',
+				timezoneId: 'Asia/Tokyo',
 				trace: 'retain-on-failure',
 				video: 'retain-on-failure',
 				screenshot: 'only-on-failure',

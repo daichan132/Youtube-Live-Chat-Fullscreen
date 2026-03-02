@@ -18,11 +18,13 @@
 
 Live URL 探索（VTuber 検索 → 最大 18 候補巡回）はテスト本体とは別の `urlLookupContext` で行う。テストコンテキストの cookie / storage を汚さないため。
 
-### Storage accessor の boot-time bifurcation
+### Storage accessor のランタイムフォールバック
 
-`e2e/fixtures.ts` の `createStorageAccessor` は、fixture 起動時の Worker 有無で2パスに分岐する。Worker パス（CDP keep-alive で参照が有効）と Page パス（毎回 `e2e.html` を開く）の2つで、実行時のフォールバックチェーンは持たない。詳細は **chrome-extension-e2e-playwright** スキルの Section 4 を参照。
+`e2e/fixtures.ts` の `createStorageAccessor` は Worker → e2e.html bridge のランタイムフォールバックで設計されている。Worker が利用可能ならそちらを使い、`Target closed` 等で失敗したら自動的に e2e.html Page パスに切り替わる。一度切り替わったら以降は Page パスを使い続ける。
 
-**e2e.html bridge**: Page パスは `popup.html` ではなく `public/e2e.html`（React/Zustand なしの最小ページ）を使用。rehydration リスクがなく `about:blank` 遷移も不要。WXT が `.output/chrome-mv3/e2e.html` に自動コピーする。`global-setup.ts` でビルド出力に `e2e.html` が含まれることを検証している。
+以前は「起動時分岐（boot-time bifurcation）」で起動時にパスを固定していた。popup.html を Page パスに使う場合は Zustand persist の rehydration でデータが上書きされるため、この設計が必要だった。e2e.html（React/Zustand なし）にしたことでランタイムフォールバックが安全になり、Worker が mid-test で死んでも自動復旧できるようになった。
+
+**e2e.html bridge**: `public/e2e.html`（React/Zustand なしの最小ページ）。WXT が `.output/chrome-mv3/e2e.html` に自動コピーする。`global-setup.ts` でビルド出力に `e2e.html` が含まれることを検証している。
 
 ### Consent handler
 

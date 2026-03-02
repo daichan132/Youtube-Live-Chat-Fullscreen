@@ -20,7 +20,7 @@ export const test = base.extend<TestFixtures, WorkerFixtures>({
   sharedContext: [async ({}, use) => {
     const ctx = await chromium.launchPersistentContext('', {
       headless: false,
-      ignoreDefaultArgs: ['--disable-extensions'],
+      ignoreDefaultArgs: ['--disable-extensions'], // Playwright デフォルトに含まれる; 必要に応じて
       args: [`--disable-extensions-except=${EXT_PATH}`, `--load-extension=${EXT_PATH}`],
     })
     await use(ctx)

@@ -30,34 +30,48 @@ const launchExtensionContext = async (userDataDir: string) => {
 	return ctx
 }
 
+const isExtensionWorker = (w: Worker) => w.url().startsWith('chrome-extension://')
+
 const waitForMv3Worker = async (context: BrowserContext) => {
-	const deadline = Date.now() + EXTENSION_BOOT_TIMEOUT_MS
-	const findWorker = () => context.serviceWorkers().find(worker => worker.url().startsWith('chrome-extension://')) ?? null
+	const findWorker = () => context.serviceWorkers().find(isExtensionWorker) ?? null
 
 	let worker = findWorker()
 	if (worker) return worker
 
+	// Set up event listener BEFORE warmup to avoid missing the SW start during navigation.
+	// waitForEvent only captures NEW events — setting it up first reduces the race window.
+	const swPromise = context
+		.waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: EXTENSION_BOOT_TIMEOUT_MS })
+		.catch(() => null)
+
+	// Warmup: navigate to a URL matching content_scripts.matches to trigger SW startup
 	const warmup = await context.newPage()
 	await warmup.goto('https://www.youtube.com', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => null)
-	while (!worker && Date.now() < deadline) {
-		worker = findWorker()
-		if (worker) break
-		const timeout = Math.min(3000, Math.max(1, deadline - Date.now()))
-		await context.waitForEvent('serviceworker', { timeout }).catch(() => null)
-	}
+
+	worker = findWorker() ?? (await swPromise)
 	await warmup.close()
 
-	// CDP fallback: stop & restart all service workers if none found (Playwright #39075)
-	if (!worker) {
-		try {
-			const cdp = await context.newCDPSession(context.pages()[0] ?? (await context.newPage()))
-			await cdp.send('ServiceWorker.enable')
-			await cdp.send('ServiceWorker.stopAllWorkers')
-			await cdp.detach()
-			worker = await context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
-		} catch {
-			// CDP fallback is best-effort — ignore failures
-		}
+	if (worker) return worker
+
+	// CDP restart fallback (Playwright #39075): stop all SWs and re-trigger
+	try {
+		const cdp = await context.newCDPSession(context.pages()[0] ?? (await context.newPage()))
+		await cdp.send('ServiceWorker.enable')
+		await cdp.send('ServiceWorker.stopAllWorkers')
+		await cdp.detach()
+
+		// Set up listener before re-warmup (same pattern)
+		const retryPromise = context
+			.waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: 10_000 })
+			.catch(() => null)
+
+		const rewarmup = await context.newPage()
+		await rewarmup.goto('https://www.youtube.com', { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => null)
+
+		worker = findWorker() ?? (await retryPromise)
+		await rewarmup.close().catch(() => null)
+	} catch {
+		// CDP fallback is best-effort — ignore failures
 	}
 
 	return worker
@@ -65,22 +79,27 @@ const waitForMv3Worker = async (context: BrowserContext) => {
 
 /** Re-acquire the active extension Service Worker. Use this when the SW may have been terminated by Chrome's idle timeout. */
 const getActiveWorker = async (context: BrowserContext): Promise<Worker | null> => {
-	const worker = context.serviceWorkers().find(w => w.url().startsWith('chrome-extension://')) ?? null
+	const worker = context.serviceWorkers().find(isExtensionWorker) ?? null
 	if (worker) return worker
-	return context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
+	return context.waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: 10_000 }).catch(() => null)
 }
 
 const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
 	const page = await context.newPage()
 	try {
 		await page.goto('chrome://extensions', { waitUntil: 'domcontentloaded', timeout: 20000 })
+		// Collect all extension items and pick the first one with an ID.
+		// --disable-extensions-except should ensure only our extension is listed,
+		// but iterating all items is more defensive than querySelector for the first.
 		const extensionId = await page.evaluate(() => {
 			const manager = document.querySelector('extensions-manager')
-			const managerRoot = manager?.shadowRoot
-			const itemList = managerRoot?.querySelector('extensions-item-list')
-			const itemListRoot = itemList?.shadowRoot
-			const firstItem = itemListRoot?.querySelector('extensions-item')
-			return firstItem?.getAttribute('id') ?? null
+			const itemList = manager?.shadowRoot?.querySelector('extensions-item-list')
+			const items = Array.from(itemList?.shadowRoot?.querySelectorAll('extensions-item') ?? [])
+			for (const item of items) {
+				const id = item.getAttribute('id')
+				if (id) return id
+			}
+			return null
 		})
 		return extensionId
 	} catch {
@@ -93,39 +112,18 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
 /**
  * Storage accessor via chrome.storage.local API.
  *
- * Two distinct paths, chosen once at boot — no fallback chain:
+ * Runtime fallback: tries Worker first, falls back to e2e.html bridge on failure.
+ * e2e.html has no React/Zustand, so the fallback is free of rehydration side-effects.
+ * Once the Worker fails, all subsequent calls go through the Page path permanently.
  *
- * - **Worker path**: Playwright's CDP session keeps the captured Worker reference
- *   alive even after Chrome's idle termination of the MV3 Service Worker.
- *   Using the reference directly is both simpler and more reliable than
- *   re-acquiring via context.serviceWorkers() on every call.
- *
- * - **Page path**: When no SW was available at boot, opens e2e.html (a minimal
- *   page without React/Zustand) for each operation. No about:blank navigation
- *   needed since there is no rehydration risk.
+ * The original design (boot-time bifurcation) chose the path once at startup and
+ * never fell back at runtime. This was necessary when popup.html was the Page path
+ * — opening it triggered Zustand persist rehydration that overwrote test data.
+ * With e2e.html (no framework), runtime fallback is safe and more resilient:
+ * if the Worker dies mid-test (e.g. Target closed), recovery is automatic.
  */
 const createStorageAccessor = (context: BrowserContext, extensionId: string, initialWorker: Worker | null): Extension['storage'] => {
-	if (initialWorker) {
-		return {
-			get: async (keys?: string | string[] | null) => {
-				return initialWorker.evaluate(async (k: string | string[] | null) => {
-					if (k === undefined || k === null) return chrome.storage.local.get(null)
-					return chrome.storage.local.get(k)
-				}, keys ?? null)
-			},
-			set: async (items: Record<string, unknown>) => {
-				await initialWorker.evaluate(async (i: Record<string, unknown>) => {
-					await chrome.storage.local.set(i)
-				}, items)
-			},
-			clear: async () => {
-				await initialWorker.evaluate(async () => {
-					await chrome.storage.local.clear()
-				})
-			},
-		}
-	}
-
+	let worker = initialWorker
 	const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
 
 	const viaE2EPage = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
@@ -138,29 +136,42 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 		}
 	}
 
+	const withFallback = async <T>(workerFn: (w: Worker) => Promise<T>, pageFn: () => Promise<T>): Promise<T> => {
+		if (worker) {
+			try {
+				return await workerFn(worker)
+			} catch {
+				worker = null
+			}
+		}
+		return pageFn()
+	}
+
 	return {
-		get: async (keys?: string | string[] | null) => {
-			return viaE2EPage(page =>
-				page.evaluate(async (k: string | string[] | null) => {
-					if (k === undefined || k === null) return chrome.storage.local.get(null)
-					return chrome.storage.local.get(k)
-				}, keys ?? null),
-			)
-		},
-		set: async (items: Record<string, unknown>) => {
-			await viaE2EPage(page =>
-				page.evaluate(async (i: Record<string, unknown>) => {
-					await chrome.storage.local.set(i)
-				}, items),
-			)
-		},
-		clear: async () => {
-			await viaE2EPage(page =>
-				page.evaluate(async () => {
-					await chrome.storage.local.clear()
-				}),
-			)
-		},
+		get: (keys?: string | string[] | null) =>
+			withFallback(
+				(w) => w.evaluate((k) => chrome.storage.local.get(k), keys ?? null),
+				() => viaE2EPage((p) => p.evaluate((k) => chrome.storage.local.get(k), keys ?? null)),
+			),
+		set: (items: Record<string, unknown>) =>
+			withFallback(
+				(w) =>
+					w
+						.evaluate((i) => chrome.storage.local.set(i), items)
+						.then(() => {}),
+				() =>
+					viaE2EPage((p) =>
+						p
+							.evaluate((i) => chrome.storage.local.set(i), items)
+							.then(() => {}),
+					),
+			),
+		clear: () =>
+			withFallback(
+				(w) =>
+					w.evaluate(() => chrome.storage.local.clear()).then(() => {}),
+				() => viaE2EPage((p) => p.evaluate(() => chrome.storage.local.clear()).then(() => {})),
+			),
 	}
 }
 
