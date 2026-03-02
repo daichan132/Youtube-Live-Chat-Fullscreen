@@ -35,7 +35,7 @@ MV3 の SW はイベント駆動で lazy 起動。テスト開始時には起動
 
 **`waitForEvent` の predicate**: `context.waitForEvent('serviceworker', { predicate: w => w.url().startsWith('chrome-extension://') })` で拡張 SW だけをフィルタする。ホストページの SW（YouTube 等）を誤って拾うリスクを防ぐ。**必ず timeout を指定する** — CI で `waitForEvent` がハングする[報告](https://github.com/microsoft/playwright/issues/37347)がある。
 
-**CDP restart fallback**: Playwright には MV3 SW を取り逃がす既知のレースがある（[Playwright #39075](https://github.com/microsoft/playwright/issues/39075)）。warmup で見つからない場合、CDP 経由で `ServiceWorker.stopAllWorkers` → リスナー設定 → ウォームアップで再起動を促す → 再待機。CDP stop 後もリスナーを先に仕込むパターンは同じ。CI 負荷時に顕在化しやすい。
+**CDP restart fallback（最終手段）**: Playwright には MV3 SW を取り逃がす既知のレースがある（[Playwright #39075](https://github.com/microsoft/playwright/issues/39075)）。warmup で見つからない場合、CDP 経由で `ServiceWorker.stopAllWorkers` → リスナー設定 → ウォームアップで再起動を促す → 再待機。CDP stop 後もリスナーを先に仕込むパターンは同じ。CI 負荷時に顕在化しやすい。**`stopAllWorkers` はホスト側 SW も止めるため、サイト挙動に影響する可能性がある。通常の warmup で解決しない場合のみ使う。**
 
 **SW idle termination**: MV3 の SW はアイドル 30 秒程度で Chrome に停止される（[Chrome docs](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)）。Playwright が取得した Worker 参照は、経験上 CDP セッション経由で idle termination 後も有効だが、これは **仕様として保証された挙動ではない**。Playwright/Chrome のバージョン変更で振る舞いが変わる可能性がある。`worker.evaluate()` が `Target closed` で失敗するようになったら Page パス（e2e.html bridge）に切り替える。
 
@@ -44,6 +44,8 @@ MV3 の SW はイベント駆動で lazy 起動。テスト開始時には起動
 ## 3. page.evaluate() のスコープと World 境界
 
 `page.evaluate()` のコールバックはブラウザプロセスで実行される。Node.js スコープの変数・インポートは参照できず、**TypeScript はこのエラーを検出しない**。引数として明示的に渡すか、`context.addInitScript()` で共通ヘルパーを `window` に注入する。拡張 E2E は `page.evaluate()` を多用するため、addInitScript パターンはほぼ必須。
+
+**引数の型**: 基本は JSON シリアライズ可能な値のみ。ただし Playwright の Handle（`ElementHandle`/`JSHandle`）は例外的に渡せる。DOM 操作が必要なら `evaluateHandle` も選択肢だが、Playwright 的には locator ベースの操作が基本。
 
 **World 境界の整理:**
 - `page.evaluate()` → Host Page の **Main World** のみ（Content Script World には到達しない）
@@ -68,7 +70,7 @@ MV3 の SW はイベント駆動で lazy 起動。テスト開始時には起動
 
 ホストサイトの要素に遮蔽される場合は **3段階フォールバッククリック**（通常クリック → force クリック → JS クリック）で対処。通常クリックを最初に試すのが重要 — `force: true` は actionability check をスキップするため `addLocatorHandler()` が発火しない。常に二重クリックするとトグル UI が反転するため、各段階で verify してから昇格する。状態変化の待機には `expect.poll()` が有効。
 
-**予期せぬオーバーレイ（consent dialog 等）への対策**: `page.addLocatorHandler()` で YouTube の同意ダイアログ等を自動処理する。Cookie 事前注入と補完関係で併用する。`noWaitAfter: true` でテストフローをブロックしない。
+**予期せぬオーバーレイ（consent dialog 等）への対策**: `page.addLocatorHandler()` で YouTube の同意ダイアログ等を自動処理する。Cookie 事前注入と補完関係で併用する。同意ダイアログのように「クリックで消える UI」にはデフォルト動作（消滅を待機）が安定。`noWaitAfter: true` は常時表示される要素をトリガーにする特殊ケース向け。
 
 ## 6. iframe の取り扱い
 

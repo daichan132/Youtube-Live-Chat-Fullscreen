@@ -185,7 +185,7 @@ const registerConsentHandler = async (page: Page) => {
 const resolveExtension = async (context: BrowserContext): Promise<Extension> => {
 	const worker = await waitForMv3Worker(context)
 
-	const extensionIdFromWorker = worker ? worker.url().split('/')[2] : null
+	const extensionIdFromWorker = worker ? new URL(worker.url()).host : null
 	const extensionId = extensionIdFromWorker ?? (await resolveExtensionIdFromChromePage(context))
 	if (!extensionId) {
 		throw new Error('Could not resolve extension ID from service worker or chrome://extensions.')

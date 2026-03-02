@@ -134,7 +134,7 @@ async function getActiveWorker(context: BrowserContext): Promise<Worker | null> 
 
 ```ts
 // 方法1: SW の URL から（推奨）
-const extensionId = worker.url().split('/')[2]
+const extensionId = new URL(worker.url()).host
 
 // 方法2: chrome://extensions の Shadow DOM から（フォールバック）
 async function getExtensionIdFromChromePage(page: Page) {
