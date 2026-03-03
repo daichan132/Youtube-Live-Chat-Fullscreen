@@ -27,7 +27,11 @@ const DEFAULT_ARCHIVE_REPLAY_URL = 'https://www.youtube.com/watch?v=xyiEiNWaOfY&
 const DEFAULT_ARCHIVE_TRANSITION_FROM_URL = 'https://www.youtube.com/watch?v=xyiEiNWaOfY&list=PLFZAmR0gqBTIoMCCUfEaKER4m6I98GrWj'
 const DEFAULT_ARCHIVE_TRANSITION_TO_URL = 'https://www.youtube.com/watch?v=akIQbHSh_oU&list=PLFZAmR0gqBTIoMCCUfEaKER4m6I98GrWj&index=2'
 const DEFAULT_NO_CHAT_URL = 'https://www.youtube.com/watch?v=V8yKR1nI3L8'
-const DEFAULT_LIVE_SEARCH_URL = 'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D'
+const DEFAULT_LIVE_SEARCH_URLS = [
+	'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D',
+	'https://www.youtube.com/results?search_query=%E3%82%B2%E3%83%BC%E3%83%A0%E9%85%8D%E4%BF%A1&sp=EgJAAQ%253D%253D',
+	'https://www.youtube.com/results?search_query=live+stream+chat&sp=EgJAAQ%253D%253D',
+]
 
 const normalizeEnv = (value: string | undefined) => {
   const normalized = value?.trim()
@@ -54,7 +58,7 @@ export const getE2ETestTargets = (): E2ETestTargets => {
       preferredUrl: livePreferredUrl,
     },
     liveSearch: {
-      urls: [DEFAULT_LIVE_SEARCH_URL],
+      urls: DEFAULT_LIVE_SEARCH_URLS,
     },
   }
 }

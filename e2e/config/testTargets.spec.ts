@@ -29,7 +29,11 @@ describe('getE2ETestTargets', () => {
     expect(targets.archive.transitionToUrl).toContain('/watch?v=')
     expect(targets.noChat.url).toContain('/watch?v=')
     expect(targets.live.preferredUrl).toBeNull()
-    expect(targets.liveSearch.urls).toEqual(['https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D'])
+    expect(targets.liveSearch.urls).toEqual([
+      'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D',
+      'https://www.youtube.com/results?search_query=%E3%82%B2%E3%83%BC%E3%83%A0%E9%85%8D%E4%BF%A1&sp=EgJAAQ%253D%253D',
+      'https://www.youtube.com/results?search_query=live+stream+chat&sp=EgJAAQ%253D%253D',
+    ])
   })
 
   it('uses existing YLC_* env overrides', () => {
