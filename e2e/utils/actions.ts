@@ -37,4 +37,7 @@ export const reliableClick = async (
 
   // Stage 3: JS click — isTrusted:false, some frameworks may ignore
   await locator.evaluate(el => (el as HTMLElement).click())
+  if (!(await verify().catch(() => false))) {
+    throw new Error('reliableClick: all 3 stages failed to produce expected state')
+  }
 }

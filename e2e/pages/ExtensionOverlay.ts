@@ -49,8 +49,8 @@ export class ExtensionOverlay {
   async ensureSwitchOff(): Promise<'was-off' | 'turned-off' | 'failed'> {
     const btn = this.switchButton()
     if ((await btn.getAttribute('aria-pressed')) !== 'true') return 'was-off'
-    await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'false')
     try {
+      await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'false')
       await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
       return 'turned-off'
     } catch {

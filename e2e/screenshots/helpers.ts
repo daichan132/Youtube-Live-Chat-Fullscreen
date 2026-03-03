@@ -70,11 +70,10 @@ export const enterFullscreenWithChat = async (page: Page) => {
   )
   if (!switchReady) return false
 
-  if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
-    await reliableClick(switchButton, async () => (await switchButton.getAttribute('aria-pressed')) === 'true')
-  }
-
   try {
+    if ((await switchButton.getAttribute('aria-pressed')) !== 'true') {
+      await reliableClick(switchButton, async () => (await switchButton.getAttribute('aria-pressed')) === 'true')
+    }
     await page.waitForFunction(isExtensionArchiveChatPlayable, undefined, { timeout: 60000 })
   } catch {
     return false
