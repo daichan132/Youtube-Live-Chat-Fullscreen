@@ -1,9 +1,12 @@
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
 
 const EXTENSION_OUTPUT_DIR = path.resolve('.output/chrome-mv3')
+const SHARED_LIVE_URL_PATH = path.join(os.tmpdir(), 'ylc-e2e-live-url.txt')
 
 export default function globalSetup() {
+	if (fs.existsSync(SHARED_LIVE_URL_PATH)) fs.unlinkSync(SHARED_LIVE_URL_PATH)
 	if (!fs.existsSync(EXTENSION_OUTPUT_DIR)) {
 		throw new Error(
 			`Extension build output not found: ${EXTENSION_OUTPUT_DIR}\nRun "yarn build" before running E2E tests.`,
