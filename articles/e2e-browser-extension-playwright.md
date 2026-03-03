@@ -665,23 +665,32 @@ locale は `chrome.i18n.getUILanguage()` にも影響するため、拡張の i1
 
 #### ライブ配信 URL の動的探索
 
-ライブ配信 URL は本質的に不安定です。「今この瞬間にライブ配信中の URL」はハードコードできません。2 段構えで探索します。
+ライブ配信 URL は本質的に不安定です。「今この瞬間にライブ配信中の URL」はハードコードできません。3 段構えで探索します。
 
 ```typescript
 async function findLiveUrlWithChat(page: Page): Promise<string | null> {
   const targets = getE2ETestTargets()
+  const deadline = Date.now() + 60_000
 
-  // Tier 1: 環境変数で指定された優先 URL
+  // Tier 1: ワーカー間キャッシュ（他ワーカーが発見済みなら即利用）
+  const cached = readSharedLiveUrl()
+  if (cached && await isPlayableLiveCandidate(page, cached, deadline)) {
+    return cached
+  }
+
+  // Tier 2: 環境変数で指定された優先 URL
   if (targets.live.preferredUrl) {
-    if (await isPlayableLiveCandidate(page, targets.live.preferredUrl)) {
+    if (await isPlayableLiveCandidate(page, targets.live.preferredUrl, deadline)) {
+      writeSharedLiveUrl(targets.live.preferredUrl)
       return targets.live.preferredUrl
     }
   }
 
-  // Tier 2: YouTube 検索からライブ配信を探す
+  // Tier 3: YouTube 検索からライブ配信を探す
   for (const searchUrl of targets.liveSearch.urls) {
-    const found = await searchForLiveUrl(page, searchUrl)
+    const found = await searchForLiveUrl(page, searchUrl, deadline)
     if (found) {
+      writeSharedLiveUrl(found)
       return found
     }
   }
@@ -690,7 +699,9 @@ async function findLiveUrlWithChat(page: Page): Promise<string | null> {
 }
 ```
 
-Tier 2 の動的探索は「YouTube で "vtuber" をライブ配信フィルタ付きで検索し、チャットが再生可能な配信を見つける」という処理です。ハードコードした URL より遅いですが、「テスト実行時にライブ配信が 1 つも存在しない」以外では失敗しません。
+Playwright の Worker-scoped fixture は各ワーカーが独立に実行するため、同じ URL 探索を繰り返す無駄が生じます。Tier 1 のファイルキャッシュ（`$TMPDIR/ylc-e2e-live-url.txt`）で発見済み URL をワーカー間で共有し、`global-setup` で毎回削除することでクリーンスタートを保証しています。
+
+Tier 3 の動的探索は「YouTube でライブ配信フィルタ付き検索し、チャットが再生可能な配信を見つける」という処理です。候補検査では `ytd-live-chat-frame` コンテナの存在を先にチェックし、不在なら即スキップすることで検査時間を短縮しています。
 
 #### CONSENT Cookie 事前注入
 

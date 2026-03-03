@@ -69,6 +69,8 @@ Worker-scoped fixtures でコンテキストとページを共有すると、ブ
 
 外部サイトの URL はいつ無効化されるか予測できない。環境変数 → ハードコード → 動的探索の3層フォールバックと、前提条件不成立時の `test.skip()` で graceful degradation する。判断基準: **環境の問題 → skip、拡張の振る舞い → assert**。
 
+並列ワーカー実行時は、ファイルベースのキャッシュ（`$TMPDIR`）で発見済み URL をワーカー間共有し、重複探索を排除する。`global-setup` で毎回削除してクリーンスタートを保証。候補検査では DOM コンテナの存在チェックで早期脱出し、全ステップに deadline を適用する。
+
 ## 9. テスト失敗時の診断
 
 `testInfo.attach()` で拡張の内部状態を JSON として自動保存する。v1.56+ の `page.consoleMessages()` / `page.pageErrors()` で事後的にログを取得でき、v1.57+ の `worker.on('console')` で SW ログも拾える（SW 側で例外が出ているのにページは静かな事故が多い）。
