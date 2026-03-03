@@ -1,17 +1,21 @@
 <div align="center">
-  <img src="../public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="96" />
+  <img src="../public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="128" />
 </div>
 
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
 
 <p align="center">
-  將 YouTube 直播聊天疊加在全螢幕影片上 — 自由拖曳、縮放、自訂樣式。
+  YouTube 全螢幕模式下聊天會消失。這個擴充功能把它帶回來 — 自由拖曳、縮放、自訂覆蓋視窗的樣式。
+</p>
+
+<p align="center">
+  無需帳號 · 不收集資料 · 完全開源
 </p>
 
 <p align="center">
   <a href="../README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
-  <a href="README.zh-TW.md">繁體中文</a>
+  <strong>繁體中文</strong>
 </p>
 
 <p align="center">
@@ -44,35 +48,74 @@
 
 ![YouTube 直播全螢幕聊天覆蓋視窗預覽](../.github/preview.png)
 
+### 截圖
+
+<table>
+<tr>
+<th align="center" colspan="2">全螢幕聊天覆蓋視窗</th>
+</tr>
+<tr>
+<td colspan="2"><img src="../.github/screenshots/fullscreen-chat-overview.png" alt="YouTube 直播的全螢幕聊天覆蓋視窗" width="960" /></td>
+</tr>
+<tr>
+<th align="center">Popup — 亮色</th>
+<th align="center">Popup — 暗色</th>
+</tr>
+<tr>
+<td align="center"><img src="../.github/screenshots/popup-light.png" alt="Popup UI（亮色主題）" width="320" /></td>
+<td align="center"><img src="../.github/screenshots/popup-dark.png" alt="Popup UI（暗色主題）" width="320" /></td>
+</tr>
+<tr>
+<th align="center">設定 — 亮色</th>
+<th align="center">設定 — 暗色</th>
+</tr>
+<tr>
+<td><img src="../.github/screenshots/settings-setting-light.png" alt="設定面板（亮色主題）" width="480" /></td>
+<td><img src="../.github/screenshots/settings-setting-dark.png" alt="設定面板（暗色主題）" width="480" /></td>
+</tr>
+</table>
+
 ## 30 秒快速開始
 
 1. 從 [Chrome 線上應用程式商店](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) 或 [Firefox 附加元件](https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/) 安裝。
 2. 開啟 YouTube 直播，或有聊天重播的存檔影片。
-3. 進入全螢幕後，使用右下角開關切換聊天顯示。
-4. 依需求拖曳/縮放覆蓋視窗，並在設定中調整樣式。
+3. 進入全螢幕後，右下角會出現開關。點擊即可顯示聊天覆蓋視窗。
+4. 依需求拖曳、縮放，並在設定中調整樣式。
 
 ## 功能
 
 ### 💬 全螢幕聊天
 
-- 維持全螢幕觀看，同時閱讀與傳送聊天訊息
-- 直接從覆蓋視窗發送 Super Chat
+- 無需離開全螢幕，直接從覆蓋視窗發送留言和 Super Chat
 - 適用於直播與具備聊天重播的存檔影片
+- 可選的「常時顯示」模式，在非全螢幕下也能顯示覆蓋視窗
 
-### 🎨 樣式自訂
+### 🎨 樣式 & 外觀
 
-- 背景色、字色、字型、字級、模糊、間距自由調整
+- 調整背景色、字色、字型、字級、模糊、間距，讓覆蓋視窗融入你的觀看畫面
 - 切換使用者名稱、頭像、Super Chat bar、僅聊天模式
 - 聊天覆蓋視窗可自由拖曳、縮放、調整位置
+- 亮色、暗色、自動（跟隨系統）主題，覆蓋視窗、Popup 與設定面板一致套用
 
-### 📋 預設
+### 📋 預設 & 備份
 
-- 針對不同觀看情境儲存與切換樣式預設
-- 一鍵切換設定
+- 儲存命名樣式預設，一鍵切換
+- 以 JSON 匯出/匯入全部設定 — 方便備份或跨裝置同步
 
 ### 🌐 多語系
 
-- 內建支援 50 種以上語言
+- 內建支援 55 種語言，包含阿拉伯語、希伯來語、波斯語的 RTL 版面
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="安裝到 Chrome" src="https://img.shields.io/badge/Chrome-安裝-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/>
+  </a>
+  <a href="https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="安裝到 Firefox" src="https://img.shields.io/badge/Firefox-安裝-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
+  </a>
+</p>
+
+---
 
 ## Tech Stack
 
@@ -172,9 +215,10 @@ yarn build
 
 ## 貢獻
 
-歡迎提出問題回報、功能建議或 Pull Request！
+歡迎提出問題回報、功能建議或 Pull Request。
 
 - 建立 [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) 或送出 [Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls)。
+- PR 前請執行 `yarn lint && yarn test:unit && yarn build`。
 - 翻譯貢獻也十分歡迎 — 請新增 `docs/README.<locale>.md` 檔案。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
@@ -183,11 +227,11 @@ yarn build
 
 ## 支持
 
-如果這個擴充功能對你有幫助，歡迎給個 Star！
+如果這個擴充功能對你有幫助，給個 Star 有助於持續維護與更新。
 
 <p>
   <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
-    <img alt="GitHub Star" src="https://img.shields.io/badge/GitHub_Star-yellow?style=for-the-badge&logo=github&logoColor=white"/>
+    <img alt="在 GitHub 上給星" src="https://img.shields.io/badge/在_GitHub_上給星-yellow?style=for-the-badge&logo=github&logoColor=white"/>
   </a>
   <a href="https://ko-fi.com/D1D01A39U6">
     <img alt="Ko-fi 贊助" src="https://img.shields.io/badge/Ko--fi_贊助-F16061?style=for-the-badge&logo=ko-fi&logoColor=white"/>

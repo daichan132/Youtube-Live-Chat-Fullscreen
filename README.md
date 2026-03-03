@@ -1,15 +1,19 @@
 <div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="96" />
+  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen Logo" width="128" />
 </div>
 
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
 
 <p align="center">
-  A browser extension that overlays YouTube live chat on fullscreen video — drag, resize, and style it your way.
+  YouTube hides the chat in fullscreen. This extension brings it back — drag, resize, and style the overlay your way.
 </p>
 
 <p align="center">
-  <a href="README.md">English</a> ·
+  No account required · No data collected · Fully open source
+</p>
+
+<p align="center">
+  <strong>English</strong> ·
   <a href="docs/README.ja.md">日本語</a> ·
   <a href="docs/README.zh-TW.md">繁體中文</a>
 </p>
@@ -75,36 +79,43 @@
 
 1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
 2. Open a YouTube live stream or an archive with chat replay.
-3. Enter fullscreen and toggle chat from the switch at the bottom-right.
-4. Drag/resize the overlay and tune styles from the extension settings.
+3. Enter fullscreen — a toggle switch appears at the bottom-right. Click it to show the chat overlay.
+4. Drag, resize, and style it from the extension settings.
 
 ## Features
 
 ### 💬 Fullscreen Chat
 
-- Watch streams in true fullscreen while reading and sending chat messages
-- Post Super Chats directly from the overlay
-- Works with both live streams and archives with chat replay
+- Post comments and Super Chats directly from the overlay without leaving fullscreen
+- Works with both live streams and archived streams with chat replay
+- Optional "Always On" mode keeps the overlay visible outside fullscreen
 
-### 🎨 Style Customization
+### 🎨 Style & Appearance
 
-- Background color, font color, font family, font size, blur, and spacing controls
+- Adjust background color, text color, font, size, blur, and spacing so the overlay fits your stream layout
 - Toggle username, user icon, Super Chat bar, and chat-only view
 - Drag, resize, and reposition the chat overlay freely
+- Light, dark, and auto (system-follow) theme across the overlay, popup, and settings panel
 
-### 🌗 Light & Dark Theme
+### 📋 Presets & Backup
 
-- Full light/dark theme support for the overlay, popup, and settings panel
-- Auto mode follows your system preference
-
-### 📋 Presets
-
-- Save and switch style presets for different viewing contexts
-- Quick-switch between setups with one click
+- Save named style presets and switch between them with one click
+- Export and import all settings as JSON for backup or cross-device sync
 
 ### 🌐 Internationalization
 
-- 50+ languages supported out of the box
+- 55 languages supported, including RTL layout for Arabic, Hebrew, and Farsi
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
+    <img alt="Install on Chrome" src="https://img.shields.io/badge/Chrome-Install-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white"/>
+  </a>
+  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
+    <img alt="Install on Firefox" src="https://img.shields.io/badge/Firefox-Install-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
+  </a>
+</p>
+
+---
 
 ## Tech Stack
 
@@ -204,9 +215,10 @@ For Firefox compatibility changes, also run `yarn build:firefox`.
 
 ## Contributing
 
-Contributions are welcome! Whether it's bug reports, feature ideas, or pull requests — all help is appreciated.
+Contributions are welcome — bug reports, feature ideas, and pull requests all help.
 
 - Open an [issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) or submit a [pull request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls).
+- Run `yarn lint && yarn test:unit && yarn build` before submitting a PR.
 - Translation contributions are also welcome — add a `docs/README.<locale>.md` for your language.
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
@@ -215,7 +227,7 @@ Contributions are welcome! Whether it's bug reports, feature ideas, or pull requ
 
 ## Support
 
-If this extension improves your YouTube experience, a star helps a lot!
+If you find this extension useful, a star helps keep it maintained and updated.
 
 <p>
   <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
