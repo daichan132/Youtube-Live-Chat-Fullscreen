@@ -219,7 +219,7 @@ await expect.poll(
 
 - **`locator.click()` がタイムアウト**: ホストサイトの要素が上に重なっている → `reliableClick` (verify-then-fallback) を使う
 - **トグルが2回反転する**: 常に二重クリックしている → verify で状態確認し、成功していればフォールバックしない
-- **`frameLocator()` が cross-origin iframe で動かない**: `page.evaluate()` で DOM を直接操作する
+- **iframe 内の DOM を直接読み取りたい**（src 取得等）: `frameLocator()` は cross-origin でも locator 操作に使えるが、属性の直接読み取りには `page.evaluate()` を使う
 
 ---
 

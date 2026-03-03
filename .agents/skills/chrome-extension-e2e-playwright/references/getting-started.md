@@ -13,7 +13,7 @@ import path from 'node:path'
 const EXT_PATH = path.resolve(__dirname, '../dist') // manifest.json があるフォルダ
 
 const context = await chromium.launchPersistentContext('', {
-  headless: false, // 拡張は headed モード必須
+  headless: false, // headed が安定。CI では channel: 'chromium' で headless も可
   ignoreDefaultArgs: ['--disable-extensions'], // Playwright デフォルト引数を除去
   args: [
     `--disable-extensions-except=${EXT_PATH}`,
