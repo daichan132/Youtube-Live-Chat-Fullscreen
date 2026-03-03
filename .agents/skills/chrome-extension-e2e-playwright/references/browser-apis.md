@@ -110,13 +110,23 @@ function createStorageAccessor(
     }
   }
 
-  // Worker を試し、失敗したら e2e.html にフォールバック。
-  // 一度失敗したら以降は Page パスを使い続ける。
+  const isRecoverableWorkerError = (error: unknown): boolean => {
+    const msg = error instanceof Error ? error.message : String(error)
+    return ['Target closed', 'Execution context was destroyed', 'Most likely the page has been closed']
+      .some(token => msg.includes(token))
+  }
+
+  // Worker を試し、回復可能エラーなら e2e.html にフォールバック。
+  // 回復不能なエラー（引数ミス等）はそのまま throw する。
   const withFallback = async <T>(
     workerFn: (w: Worker) => Promise<T>, pageFn: () => Promise<T>
   ): Promise<T> => {
     if (worker) {
-      try { return await workerFn(worker) } catch { worker = null }
+      try { return await workerFn(worker) }
+      catch (error) {
+        if (!isRecoverableWorkerError(error)) throw error
+        worker = null
+      }
     }
     return pageFn()
   }
@@ -182,26 +192,46 @@ await page.addLocatorHandler(
 )
 ```
 
-### 信頼性の高いクリック（3段階フォールバック）
+### 信頼性の高いクリック（verify-then-escalate）
 
-ホストサイトの要素に遮蔽される場合、Playwright の `click()` が失敗する。「常に二重クリック」はトグル UI で元に戻るリスクがあるため、**3段階 verify-then-escalate** パターンで対処:
+ホストサイトの要素に遮蔽される場合、Playwright の `click()` が失敗する。「常に二重クリック」はトグル UI で元に戻るリスクがあるため、**verify-then-escalate** パターンで対処。Stage 3（JS fallback）は `isTrusted:false` になるため opt-in:
 
 ```ts
-async function reliableClick(locator: Locator, verify: () => Promise<boolean>) {
+type ReliableClickOptions = {
+  allowJsFallback?: boolean  // default: false
+  timeoutMs?: number         // default: 5000
+}
+
+async function reliableClick(
+  locator: Locator,
+  verify: () => Promise<boolean>,
+  options: ReliableClickOptions = {},
+) {
+  const { allowJsFallback = false, timeoutMs = 5_000 } = options
+
   // Stage 1: 通常クリック — actionability checks + addLocatorHandler が発火
-  try { await locator.click({ timeout: 5_000 }) } catch {}
+  try { await locator.click({ timeout: timeoutMs }) } catch {}
   if (await verify().catch(() => false)) return
 
   // Stage 2: force クリック — actionability check をスキップ
   try { await locator.click({ force: true }) } catch {}
   if (await verify().catch(() => false)) return
 
-  // Stage 3: JS フォールバック（isTrusted:false になる点に注意）
-  await locator.evaluate(el => (el as HTMLElement).click())
+  // Stage 3（opt-in）: JS click via dispatchEvent — isTrusted:false
+  if (!allowJsFallback) {
+    throw new Error('reliableClick: normal/force click did not produce expected state')
+  }
+  await locator.dispatchEvent('click')
   if (!(await verify().catch(() => false))) {
     throw new Error('reliableClick: all 3 stages failed to produce expected state')
   }
 }
+
+// 通常の Shadow DOM ボタン: 2段階で十分
+await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'true')
+
+// フルスクリーン切替など堅牢性が必要な場面: JS fallback を許可
+await reliableClick(btn, verify, { allowJsFallback: true })
 ```
 
 ### ポーリングアサーション
@@ -258,3 +288,55 @@ Chrome は `display: none` の iframe を強くスロットルする。画面外
 ### Stale iframe
 
 SPA 遷移後に前のページの iframe が DOM に残ることがある。`src` を現在ページの識別子と照合して検出する。
+
+---
+
+## テスト診断 API
+
+### page.consoleMessages() / page.pageErrors()（v1.56+）
+
+直近 200 件のコンソールメッセージ・ページエラーを取得する。`page.on('console')` のリスナー登録が不要で、`afterEach` でオンデマンド収集する用途に最適:
+
+```ts
+test.afterEach(async ({ page }, testInfo) => {
+  if (testInfo.status === testInfo.expectedStatus) return
+
+  const logs = await page.consoleMessages()
+  const errors = await page.pageErrors()
+
+  await testInfo.attach('console-logs', {
+    body: logs.map(m => `[${m.type()}] ${m.text()}`).join('\n'),
+    contentType: 'text/plain',
+  })
+  if (errors.length > 0) {
+    await testInfo.attach('page-errors', {
+      body: errors.map(e => String(e)).join('\n'),
+      contentType: 'text/plain',
+    })
+  }
+})
+```
+
+### worker.on('console')（v1.57+）
+
+Service Worker のコンソールをキャプチャする。SW 側で例外が出ているのにページのコンソールは静かという状況が頻発するため重要:
+
+```ts
+const swLogs: string[] = []
+
+// worker-scoped fixture 内で1回だけ呼ぶ
+worker.on('console', (msg) => {
+  swLogs.push(`[${msg.type()}] ${msg.text()}`)
+})
+
+// afterEach で失敗時に attach → テストごとにクリア
+test.afterEach(async ({}, testInfo) => {
+  if (testInfo.status !== testInfo.expectedStatus && swLogs.length > 0) {
+    await testInfo.attach('sw-console', {
+      body: swLogs.join('\n'),
+      contentType: 'text/plain',
+    })
+  }
+  swLogs.length = 0
+})
+```

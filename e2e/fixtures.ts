@@ -122,6 +122,11 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
  * With e2e.html (no framework), runtime fallback is safe and more resilient:
  * if the Worker dies mid-test (e.g. Target closed), recovery is automatic.
  */
+const isRecoverableWorkerError = (error: unknown): boolean => {
+	const message = error instanceof Error ? error.message : String(error)
+	return ['Target closed', 'Execution context was destroyed', 'Most likely the page has been closed'].some((token) => message.includes(token))
+}
+
 const createStorageAccessor = (context: BrowserContext, extensionId: string, initialWorker: Worker | null): Extension['storage'] => {
 	let worker = initialWorker
 	const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
@@ -140,7 +145,8 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 		if (worker) {
 			try {
 				return await workerFn(worker)
-			} catch {
+			} catch (error) {
+				if (!isRecoverableWorkerError(error)) throw error
 				worker = null
 			}
 		}
