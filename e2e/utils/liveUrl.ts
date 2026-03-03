@@ -131,23 +131,14 @@ const isPlayableLiveCandidate = async (page: Page, url: string) => {
   )
 }
 
-let cachedLiveUrl: string | null = null
-
 export const findLiveUrlWithChat = async (page: Page, options: { limit?: number; searchUrls?: string[]; maxDurationMs?: number } = {}) => {
   const targets = getE2ETestTargets()
   const { limit = LIVE_SEARCH_LIMIT, searchUrls = targets.liveSearch.urls, maxDurationMs = 60000 } = options
   const deadline = Date.now() + maxDurationMs
 
-  if (cachedLiveUrl) {
-    const reusable = await isPlayableLiveCandidate(page, cachedLiveUrl)
-    if (reusable) return cachedLiveUrl
-    cachedLiveUrl = null
-  }
-
   if (targets.live.preferredUrl) {
     const preferredReady = await isPlayableLiveCandidate(page, targets.live.preferredUrl)
     if (preferredReady) {
-      cachedLiveUrl = targets.live.preferredUrl
       return targets.live.preferredUrl
     }
   }
@@ -178,7 +169,6 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
 
       const ready = await isPlayableLiveCandidate(page, candidate)
       if (ready) {
-        cachedLiveUrl = candidate
         return candidate
       }
     }

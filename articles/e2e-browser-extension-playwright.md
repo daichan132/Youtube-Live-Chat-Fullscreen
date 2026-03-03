@@ -665,31 +665,23 @@ locale は `chrome.i18n.getUILanguage()` にも影響するため、拡張の i1
 
 #### ライブ配信 URL の動的探索
 
-ライブ配信 URL は本質的に不安定です。「今この瞬間にライブ配信中の URL」はハードコードできません。3 段構えで探索します。
+ライブ配信 URL は本質的に不安定です。「今この瞬間にライブ配信中の URL」はハードコードできません。2 段構えで探索します。
 
 ```typescript
 async function findLiveUrlWithChat(page: Page): Promise<string | null> {
   const targets = getE2ETestTargets()
 
-  // Tier 1: 前回のテストで見つけたキャッシュ
-  if (cachedLiveUrl) {
-    if (await isPlayableLiveCandidate(page, cachedLiveUrl)) return cachedLiveUrl
-    cachedLiveUrl = null
-  }
-
-  // Tier 2: 環境変数で指定された優先 URL
+  // Tier 1: 環境変数で指定された優先 URL
   if (targets.live.preferredUrl) {
     if (await isPlayableLiveCandidate(page, targets.live.preferredUrl)) {
-      cachedLiveUrl = targets.live.preferredUrl
       return targets.live.preferredUrl
     }
   }
 
-  // Tier 3: YouTube 検索からライブ配信を探す
+  // Tier 2: YouTube 検索からライブ配信を探す
   for (const searchUrl of targets.liveSearch.urls) {
     const found = await searchForLiveUrl(page, searchUrl)
     if (found) {
-      cachedLiveUrl = found
       return found
     }
   }
@@ -698,7 +690,7 @@ async function findLiveUrlWithChat(page: Page): Promise<string | null> {
 }
 ```
 
-Tier 3 の動的探索は「YouTube で "vtuber" をライブ配信フィルタ付きで検索し、チャットが再生可能な配信を見つける」という処理です。ハードコードした URL より遅いですが、「テスト実行時にライブ配信が 1 つも存在しない」以外では失敗しません。
+Tier 2 の動的探索は「YouTube で "vtuber" をライブ配信フィルタ付きで検索し、チャットが再生可能な配信を見つける」という処理です。ハードコードした URL より遅いですが、「テスト実行時にライブ配信が 1 つも存在しない」以外では失敗しません。
 
 #### CONSENT Cookie 事前注入
 
