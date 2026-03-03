@@ -8,11 +8,7 @@ published: false
 
 ## はじめに
 
-ブラウザ拡張の E2E テスト、情報が少なすぎませんか。
-
-Playwright の公式ドキュメントには「`--load-extension` で拡張をロードできます」という [1 ページ](https://playwright.dev/docs/chrome-extensions)があるだけで、実践的なパターンはほぼ書かれていません。Web アプリなら「Playwright E2E ベストプラクティス」で検索すれば山ほど出てくるのに、ブラウザ拡張となると途端に情報が枯れます。特に、拡張が動く外部サービス（YouTube、EC サイト、SNS など）の状態変化にテストが振り回される問題は、Web アプリの E2E とは質が違う難しさがあります。
-
-筆者は Chrome 拡張（[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlkeccegfeelbfmlfnikoefnpgfkondj)、ユーザー 1 万人超、[WXT](https://wxt.dev/) + React + TypeScript）の E2E テストを Playwright で 1 年以上運用してきました。その過程でハマったポイントと、試行錯誤の末にたどり着いた対処法をまとめます。**すでに拡張を開発していてテストを書きたい人**、あるいは **Playwright は使っているがブラウザ拡張のテストは初めてという人**を想定しています。
+Playwright の公式ドキュメントには「`--load-extension` で拡張をロードできます」という [1 ページ](https://playwright.dev/docs/chrome-extensions)があるだけで、ブラウザ拡張の E2E に関する実践的な情報はほぼ存在しません。筆者は Chrome 拡張（[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlkeccegfeelbfmlfnikoefnpgfkondj)、ユーザー 1 万人超、[WXT](https://wxt.dev/) + React + TypeScript）の E2E テストを Playwright で 1 年以上運用する中でハマった落とし穴と、試行錯誤の末にたどり着いた対処法をまとめます。
 
 :::message
 この記事は以下の環境を前提としています。
@@ -36,28 +32,7 @@ Chrome / Edge の通常版（branded build）は `--load-extension` を **Chrome
 | 6 | テスト対象 URL が腐る | 外部サービスの状態変化。フォールバック戦略で対処 |
 | 7 | 失敗原因がわからない | ホストページと拡張の切り分けを自動化 |
 
-必要なセクションだけ拾い読みしても大丈夫な構成にしています。この 7 つを押さえておけば、ブラウザ拡張 E2E で遭遇する主要な事故のほとんどを回避できるはずです。
-
-### 最短で動かすまでの手順
-
-1. `npx playwright install chromium` — Playwright 同梱の Chromium をインストール
-2. ビルド済み拡張を用意（WXT なら `wxt build` → `.output/chrome-mv3/`）
-3. 下記セクション 1 のテンプレート（`e2e/fixtures.ts`）をコピーし、`PATH_TO_EXTENSION` を書き換える
-4. `npx playwright test` で実行
-
-想定ディレクトリ構成:
-
-```
-e2e/
-├── fixtures.ts          # 拡張ロード用の共通 fixture
-├── config/
-│   └── testTargets.ts   # テスト対象 URL の管理
-├── scenarios/           # テストファイル
-│   ├── fullscreen.spec.ts
-│   └── archive.spec.ts
-└── support/             # ヘルパー関数
-    └── diagnostics.ts
-```
+必要なセクションだけ拾い読みしても大丈夫な構成にしています。
 
 ## 1. 拡張を Playwright にロードする
 
@@ -114,83 +89,11 @@ export const test = base.extend<{ context: BrowserContext; extensionId: string }
 export const expect = test.expect
 ```
 
-これで拡張入りの Chromium が立ち上がります。いくつか補足します。
-
-**`try/finally` で cleanup を堅くしています。** fixture の途中で例外が出ると `userDataDir` が残る可能性があります。特に CI では蓄積してディスクを圧迫するので、`finally` で確実に後始末します。
-
-**`predicate` で拡張の SW だけをフィルタしています。** YouTube のようなサイトは自身の Service Worker を持っているため、フィルタなしだとホストの SW を誤って拾うリスクがあります。`timeout` も必須です — CI で `waitForEvent` が[ハングする報告](https://github.com/microsoft/playwright/issues/37347)があるため、必ず指定してください。
-
-**`new URL(worker.url()).host` で Extension ID を取得しています。** `split('/')[2]` でも動きますが、URL から host を取得しているという意図が明確で事故りにくいです。
-
-**`ignoreDefaultArgs: ['--disable-extensions']` について。** Playwright の Chromium はデフォルト引数に `--disable-extensions` を含みます（[chromiumSwitches.ts](https://raw.githubusercontent.com/microsoft/playwright/main/packages/playwright-core/src/server/chromium/chromiumSwitches.ts)）。多くの環境では `--disable-extensions-except` が上書きしてくれるため不要ですが、**拡張がロードされない問題が出た場合のトラブルシュートとして有効**です。[公式ガイド](https://playwright.dev/docs/chrome-extensions)のサンプルには含まれていない点に注意してください — カスタム引数は Playwright の挙動を予期せず変えるリスクがあるため、必要になってから追加する方が安全です。
-
-**基本は `headless: false`（headed）が安定です。** Playwright はデフォルトの headless モードで [`chrome-headless-shell`](https://playwright.dev/docs/browsers) という軽量バイナリを使いますが、これは拡張 API をサポートしていません。一方、**`channel: 'chromium'` を指定すると「New Headless」モード**（フル機能の Chromium を画面なしで動かすモード）**で起動し、headless でも拡張をロードできます。** まずは headed で動くことを確認し、CI で headless が必要になったら `channel: 'chromium'` を試してください。
-
-**`launchPersistentContext` を使う理由。** 通常の `launch()` → `newContext()` では `--load-extension` が効きません。persistent context は User Data Directory を持つので、拡張をインストールした状態を再現できます。
-
-**一時ディレクトリを毎回作ります。** テスト間でプロファイルを共有すると、前のテストの状態（cookie、storage、拡張の内部状態）が漏れます。`mkdtempSync` でクリーンなプロファイルを毎回作り、`finally` で確実に削除します。
-
-### `addInitScript` でヘルパーを注入する
-
-全テストで共通のヘルパー関数が必要なら、`addInitScript` で注入しておくと `page.evaluate()` 内で使いまわせます。
-
-```typescript
-// テスト用のヘルパーをすべてのページに注入
-await context.addInitScript(() => {
-  window.__testHelpers = {
-    // Shadow DOM 内の拡張要素を探す汎用ヘルパー
-    getExtensionRoot: () => {
-      const host = document.querySelector('#my-extension-root')
-      return host?.shadowRoot ?? null
-    },
-  }
-})
-```
-
-ここで注入した関数はすべてのページ（YouTube だろうが popup だろうが）で使えるので、テストのたびに同じ DOM 操作コードを書かずに済みます。
-
-型定義も付けておくと `page.evaluate()` 内で補完が効きます。
-
-```typescript
-declare global {
-  interface Window {
-    __testHelpers?: {
-      getExtensionRoot: () => ShadowRoot | null
-    }
-  }
-}
-```
+`try/finally` で一時ディレクトリを確実に削除し、`predicate` でホストページの SW を除外しています。`launchPersistentContext` は User Data Directory を持つため拡張のインストール状態を再現でき、`mkdtempSync` で毎回クリーンなプロファイルを作ることでテスト間の状態リークを防ぎます。`headless: false`（headed）が安定ですが、CI では `channel: 'chromium'` で New Headless モードが使えます（後述）。
 
 ### CI で回す
 
-ローカルでは headed で十分ですが、CI 環境では画面がないため工夫が要ります。
-
-**headless で回す（推奨）:** `channel: 'chromium'` を指定すれば New Headless（フル機能の Chromium headless）で拡張が動きます。
-
-```typescript
-const context = await chromium.launchPersistentContext(userDataDir, {
-  channel: 'chromium', // New Headless — 拡張 API が使える
-  ignoreDefaultArgs: ['--disable-extensions'],
-  args: [
-    `--disable-extensions-except=${PATH_TO_EXTENSION}`,
-    `--load-extension=${PATH_TO_EXTENSION}`,
-  ],
-})
-```
-
-**headed で回す:** Linux CI では Xvfb（仮想フレームバッファ）を使います。GitHub Actions なら以下で動きます。
-
-```yaml
-- run: xvfb-run npx playwright test
-```
-
-:::message alert
-**Playwright 同梱の Chromium を使ってください。** Chrome / Edge の通常版（branded build）は `--load-extension` を Chrome 137 で、`--disable-extensions-except` を Chrome 139 で削除しています（[PSA](https://groups.google.com/a/chromium.org/g/chromium-extensions/c/FxMU1TvxWWg)）。`npx playwright install chromium` でインストールされる Chromium（または Chrome for Testing）なら問題ありません。
-:::
-
-### fixture のスコープ
-
-上のテンプレートはテストごとに User Data Directory を作り直す設計です。テスト間の状態分離が確実ですが、テスト数が増えると起動コストが気になってきます。その場合は fixture を worker スコープにして context を再利用する選択肢もあります。ただしテスト間の状態リーク（cookie、storage、拡張の内部状態）には注意が必要です。
+`channel: 'chromium'` を指定すれば New Headless（フル機能の Chromium headless）で拡張が動きます。テンプレートの `launchPersistentContext` に `channel: 'chromium'` を追加するだけです。Linux CI で headed のまま回す場合は `xvfb-run npx playwright test` を使ってください。
 
 ## 2. MV3 Service Worker の起動を待つ
 
@@ -271,60 +174,13 @@ async function waitForExtensionWorker(context: BrowserContext) {
 }
 ```
 
-やっていることを補足します。
+`waitForEvent` を warmup 前に仕込む（取りこぼし防止）→ content script の matches に該当するページで SW 起動を促す → CDP restart で再試行、という 3 段構えです。各ステップの意図はコード内のコメントを参照してください。
 
-1. **`waitForEvent` を warmup 前に仕込む** — `waitForEvent` は NEW イベントのみキャプチャします。warmup のページ遷移中に SW が起動すると取りこぼす可能性があるため、**先にリスナーを設定してから warmup に行く**のがポイントです。CI で `waitForEvent` が[ハングする報告](https://github.com/microsoft/playwright/issues/37347)もあるため、必ず timeout を指定してください
-2. **ウォームアップページ** — content script の `matches` に該当するページを開きます。たとえば `matches` が `*://www.youtube.com/*` なら `youtube.com` を開きます。content script がロードされると Service Worker の起動がトリガーされます
-3. **`waitForEvent` の `predicate`** — `predicate` で `chrome-extension://` から始まる URL の SW だけをフィルタします。YouTube のようなサイトは自身の SW を持っているため、フィルタなしだとホストの SW を誤って拾うリスクがあります
-4. **CDP restart fallback（最終手段）** — Playwright には MV3 の Service Worker を取り逃がす[既知のレース](https://github.com/microsoft/playwright/issues/39075)が報告されています。CI の負荷が高い環境で顕在化しやすく、最初の warmup だけでは見つからないケースがあります。CDP（Chrome DevTools Protocol）経由で全 Service Worker を停止し、**リスナーを先に設定してから再 warmup する**（同じパターン）ことで再起動を促します。`stopAllWorkers` はホスト側の SW も止めるため、サイト挙動に影響する可能性があります。通常の warmup で解決しない場合のみ使ってください
+Service Worker がどうしても取得できない場合、`chrome://extensions` を開いて Shadow DOM 経由で Extension ID を読む方法もありますが、Chrome バージョンで DOM 構造が変わるため最終手段です。`manifest.json` に [`"key"`](https://developer.chrome.com/docs/extensions/reference/manifest/key) を入れれば開発時の拡張 ID を固定でき、SW の起動を待たずに ID を確定できます（ストア提出物からは除去すること）。
 
-### フォールバック: `chrome://extensions` から ID を取得
+### Service Worker の idle termination
 
-Service Worker がどうしても起動しないケースでは、`chrome://extensions` ページを開いて Extension ID を直接読み取る手もあります。
-
-```typescript
-async function getExtensionIdFromChromePage(context: BrowserContext) {
-  const page = await context.newPage()
-  try {
-    await page.goto('chrome://extensions')
-    // chrome://extensions は Shadow DOM が深くネストしている
-    return await page.evaluate(() => {
-      const manager = document.querySelector('extensions-manager')
-      const list = manager?.shadowRoot?.querySelector('extensions-item-list')
-      const item = list?.shadowRoot?.querySelector('extensions-item')
-      return item?.getAttribute('id') ?? null
-    })
-  } finally {
-    await page.close()
-  }
-}
-```
-
-`chrome://extensions` 自体が Shadow DOM のネスト構造になっています。`querySelector` だけではたどり着けず、`shadowRoot` を 1 層ずつ掘る必要があります。ただし **`chrome://` ページの DOM 構造は Chrome のバージョンアップで変わる可能性が高い**ので、この方法は Service Worker からの取得がどうしてもできない場合の最終手段と考えてください。
-
-### 別解: `manifest.json` の `"key"` で Extension ID を固定する
-
-Chrome の公式ドキュメントでは、`manifest.json` に [`"key"`](https://developer.chrome.com/docs/extensions/reference/manifest/key) を入れることで開発時の拡張 ID を固定できると明示されています。E2E 用ビルドだけ `"key"` を注入すれば、Service Worker の起動を待たずに Extension ID を確定できます。ストア提出物からは除去してください。
-
-### Service Worker の idle termination — 参照はどうなるか
-
-MV3 の Service Worker はアイドル状態が約 30 秒続くと [Chrome に停止されます](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)。「テスト途中で `worker.evaluate()` が動かなくなるのでは？」と心配になりますが、**筆者の環境では、Playwright が取得した Worker 参照は Chrome の idle termination 後も CDP セッション経由で有効でした。** ただし、これは仕様として保証された挙動ではありません。Playwright や Chrome のバージョンアップで振る舞いが変わる可能性があります。
-
-実用上は、fixture 起動時に取得した Worker 参照をそのまま使い続ける設計で問題ないケースが多いです。筆者のプロジェクトでは当初「毎回 `context.serviceWorkers()` で取り直す」設計にしていましたが、これは Chrome が SW を停止すると空配列を返すため、次のセクションで述べるフォールバック処理に副作用を持ち込む原因になりました。最終的に **起動時に取得した参照をそのまま保持する設計**に落ち着いています。もし `worker.evaluate()` が `Target closed` エラーで失敗するようになったら、後述の Page パス（e2e.html bridge）に切り替えてください。
-
-:::message
-SW を意図的に再起動させたい場面（fixture 外でのアドホック操作など）では、以下のヘルパーが使えます。ただし storage accessor のような定常的な操作には不要です。
-
-```typescript
-async function getActiveWorker(context: BrowserContext): Promise<Worker | null> {
-  const worker = context.serviceWorkers().find(w =>
-    w.url().startsWith('chrome-extension://')
-  ) ?? null
-  if (worker) return worker
-  return context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
-}
-```
-:::
+MV3 の SW はアイドル約 30 秒で [Chrome に停止されます](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)が、筆者の環境では Playwright が取得した Worker 参照は停止後も有効でした（保証はされていません）。起動時に取得した参照をそのまま保持する設計で問題ないケースが多いです。`Target closed` エラーが出たら後述の e2e.html bridge に切り替えてください。
 
 ## 3. `page.evaluate()` の境界を理解する
 
@@ -385,28 +241,11 @@ await page.evaluate(async ({ key, value }) => {
 }, { key: 'theme', value: 'dark' })
 ```
 
-基本的に渡せるのは JSON シリアライズ可能な値のみです。関数やクラスインスタンスは渡せません。ただし **Playwright の [Handle](https://playwright.dev/docs/api/class-page#page-evaluate)（`ElementHandle`/`JSHandle`）は例外的に引数として渡せます**。DOM ノードを直接操作したい場面では `evaluateHandle` も選択肢に入りますが、Playwright 的には locator ベースの操作が基本です。
+渡せるのは JSON シリアライズ可能な値のみです（Playwright の [Handle](https://playwright.dev/docs/api/class-page#page-evaluate) は例外）。
 
 :::message alert
 `page.evaluate()`、`page.waitForFunction()`、`worker.evaluate()` すべてに同じ制約があります。コールバックの中は Node.js とは別の世界だということを意識しておいてください。
 :::
-
-### 応用: 名前付き関数を渡すパターン
-
-コールバックが長くなる場合、名前付き関数として切り出せます。ただし、その関数内で外部スコープを参照していないか注意が必要です。
-
-```typescript
-// ✅ 名前付き関数で切り出す（外部スコープに依存しないこと）
-const isExtensionReady = () => {
-  const root = document.querySelector('#my-extension')?.shadowRoot
-  return root?.querySelector('.loaded') !== null
-}
-
-// そのまま page.evaluate や page.waitForFunction に渡せる
-await page.waitForFunction(isExtensionReady, { timeout: 10_000 })
-```
-
-関数自体がシリアライズされてブラウザに送られるので動きます。ただし関数内で外側の変数を参照していると失敗するので注意してください。
 
 ## 4. `chrome.storage` にテストからアクセスする
 
@@ -426,12 +265,7 @@ storage 操作
 └─ Worker が死んだ / 取得できなかった → e2e.html を開いて page.evaluate() で操作
 ```
 
-Worker を試して失敗したら e2e.html にフォールバックする設計です。e2e.html は React/Zustand を一切載せない最小ページなので、フォールバック時の副作用がありません。Worker が mid-test で `Target closed` になっても自動復旧します。
-
-**注意: popup.html 経由のフォールバックは危険です。** 筆者は当初「Worker を試す → 失敗 → popup にフォールバック」というランタイムチェーンを実装しました。しかし popup.html を開くと React アプリがマウントされ、Zustand persist ミドルウェアが storage を読み取り → マージしたデフォルト値を書き戻します。テストが事前にセットしたデータが上書きされ、2 件のテストが常に失敗する状態になりました。この問題に対する解決策は 2 つあります:
-
-- **e2e.html bridge を用意する（推奨）** — フォールバック先が副作用ゼロなので、ランタイムフォールバックが安全になる
-- **起動時分岐（boot-time bifurcation）** — popup.html しか使えない場合の設計。fixture 起動時にパスを一度だけ決め、実行時フォールバックを持たない
+Worker を試して失敗したら e2e.html にフォールバックする設計です。e2e.html は React/Zustand を一切載せない最小ページなので、フォールバック時の副作用がありません。Worker が mid-test で `Target closed` になっても自動復旧します。popup.html 経由のフォールバックは React/Zustand の rehydration でテストデータが上書きされる危険があるため避けてください。
 
 ### Worker パス（推奨）
 
@@ -447,13 +281,9 @@ await worker.evaluate(
 )
 ```
 
-### Page パス（SW が起動しなかった場合）
+### Page パス: テスト専用の storage bridge ページ
 
-並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合は拡張ページ経由で操作します。
-
-#### 推奨: テスト専用の storage bridge ページを用意する
-
-popup.html を経由すると React/Vue がマウントされ、persist ミドルウェアが storage を上書きするリスクがあります。**React/Zustand を一切載せない最小ページ（`e2e.html`）** を用意するのが根本的な解決策です。
+並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合は **React/Zustand を一切載せない最小ページ（`e2e.html`）** を用意し、拡張ページ経由で操作します。
 
 ```html
 <!-- public/e2e.html — ビルド時に拡張パッケージに含まれる -->
@@ -481,35 +311,6 @@ async function withE2EBridge<T>(
   }
 }
 ```
-
-この方法なら rehydration の心配がなく、`about:blank` 遷移も不要です。拡張に 1 ファイル追加するだけで、Page パスの副作用が根本的に解消されます。
-
-#### 従来パターン: popup.html 経由（e2e.html が用意できない場合）
-
-e2e.html を追加できない事情がある場合は、popup.html 経由で操作し、**`about:blank` に遷移してから閉じる**ことで rehydration を遮断します。
-
-```typescript
-async function withExtensionPage<T>(
-  context: BrowserContext,
-  extensionId: string,
-  pagePath: string,
-  fn: (page: Page) => Promise<T>,
-): Promise<T> {
-  const url = `chrome-extension://${extensionId}/${pagePath}`
-  const page = await context.newPage()
-  try {
-    await page.goto(url, { waitUntil: 'domcontentloaded' })
-    const result = await fn(page)
-    // rehydration 遮断: React アンマウントを強制する
-    await page.goto('about:blank')
-    return result
-  } finally {
-    await page.close()
-  }
-}
-```
-
-popup.html を開くと React（や Vue 等）がマウントされ、Zustand persist や Redux Persist が `chrome.storage` を読み取ってデフォルト値とマージした結果を書き戻します。`about:blank` に遷移すれば React がアンマウントされ、rehydration が走る前に JavaScript を停止できます。
 
 ### ファクトリ関数でまとめる
 
@@ -580,18 +381,7 @@ function createStorageAccessor(
 }
 ```
 
-これが本文で述べた「ランタイムフォールバック」の実装です。Worker が mid-test で `Target closed` になっても、次の操作から自動的に e2e.html bridge に切り替わります。
-
-### 補足: storage を set するタイミング
-
-content script が初期化時に `chrome.storage` を読む拡張は多いです。テストでは以下の順序に注意してください。
-
-- **`page.goto(host)` の前に storage を seed する** — content script はページ読み込み時に storage を読むため、先にデータを入れておかないと反映されない
-- **ページ読み込み後に変える場合** — 拡張側が `chrome.storage.onChanged` を購読していること（または `page.reload()` すること）が前提になる
-
-### 補足: 状態管理ライブラリの永続化フォーマット
-
-Zustand + persist ミドルウェアを使っている場合、`chrome.storage` のデータは `{ state: {...}, version: N }` という JSON 文字列で保存されます。テストから直接パッチするなら、このフォーマットに合わせる必要があります。使っているライブラリの永続化フォーマットは事前に確認しておいてください。
+content script は初期化時に storage を読むため、`page.goto()` の前に seed してください。ページ読み込み後に変える場合は `chrome.storage.onChanged` の購読か `page.reload()` が必要です。
 
 ## 5. Shadow DOM 内の要素を確実にクリックする
 
@@ -654,11 +444,6 @@ await reliableClick(toggle, async () => {
 
 ポイントは **「常にすべての段階を踏む」のではなく「各段階で検証して、成功していれば即 return する」** 点です。
 
-- **通常クリックを最初に試す理由** — `force: true` は actionability check をスキップするため、`addLocatorHandler()`（後述の consent dialog 自動処理など）が発火しません。通常クリックなら Playwright のオーバーレイ検知が機能し、遮蔽要素を自動的に処理できます
-- **なぜ常に全段階ではダメか** — トグル UI（スイッチボタンなど）では、1 回目が成功しているのに 2 回目で元に戻ってしまいます
-- **`locator.evaluate()` を使う理由** — `document.querySelector()` は Shadow root の中を見られませんが、`locator.evaluate()` は Locator が指す要素を直接渡すので Shadow DOM 内でも確実に到達します
-- **JS クリック（`el.click()`）の注意点** — `isTrusted: false` になるため、サイトやフレームワークによっては無視されることがあります。だからこそ最終手段として使います
-
 :::message
 **片方で十分なケース:** Shadow DOM を使っていない、かつホストページにオーバーレイがない場合は、通常の `locator.click()` だけで問題ありません。まずは普通のクリックで書き始め、CI でフレークが出たらこのフォールバックパターンに昇格する、という段階的な導入をおすすめします。
 :::
@@ -679,18 +464,12 @@ await expect.poll(async () => {
 }, { timeout: 15_000 }).toBe(true)
 ```
 
-`expect.poll()` は関数を繰り返し呼び出してアサーションが通るまで待ちます。`waitForSelector` は DOM の存在しかチェックできませんが、`expect.poll()` なら属性値や複合条件もチェックできます。
-
 ### テスタビリティのための `data-*` 属性
 
-プロダクトコード側で `data-*` 属性を付けておくと、テストからの状態観測がかなり楽になります。
-
-```html
-<!-- プロダクトコード側 -->
-<iframe data-ext-chat="true" data-ext-state="ready" src="..."></iframe>
-```
+プロダクトコード側で `data-*` 属性を付けておくと、テストからの状態観測が楽になります。本番に残っても害がないので気軽に追加できます。
 
 ```typescript
+// プロダクトコード: <iframe data-ext-state="ready" src="...">
 // テスト側: 属性の変化をポーリング
 await expect.poll(async () => {
   return page.evaluate(() => {
@@ -700,19 +479,9 @@ await expect.poll(async () => {
 }).toBe(true)
 ```
 
-テスト用の `data-*` 属性は本番に残っても害がないので、気軽に追加できます。
-
 ## 6. 外部サービスに依存するテストを安定させる
 
-ブラウザ拡張は特定のサイト上で動くものが多いです。そうなると、テスト対象のページが外部サービスの都合で変わってしまう問題が出てきます。
-
-筆者の拡張は YouTube のライブ配信ページで動きます。実際に踏んだ問題を挙げます。
-
-- **ライブ配信 URL が腐る** — テストに使っていたライブ配信が終了し、翌朝の CI が全滅した
-- **アーカイブのチャットリプレイが無効化される** — 配信者がチャットリプレイを後から無効にし、「チャットが表示されること」のテストが壊れた
-- **チャットなし動画をテストに使っていたら、後日ライブ配信された** — 「チャットが表示されないこと」を検証するテストなのに、チャットが存在するようになった
-
-EC サイトの拡張なら商品ページの構造変更、SNS 拡張なら UI の A/B テストなど、同じ種類の問題は広く発生します。Web アプリの E2E では自分たちがサーバーを管理しているのでテストデータを安定させられますが、ブラウザ拡張は他人のサービス上で動く以上、この不安定さとは付き合い続ける必要があります。
+ブラウザ拡張は特定のサイト上で動くため、テスト対象のページが外部サービスの都合で変わる問題が避けられません。筆者の拡張（YouTube ライブ配信ページ用）では、配信終了による URL 腐り、チャットリプレイ無効化、予期せぬライブ配信開始などを経験しました。
 
 ### パターン 1: テスト種別ごとの URL 管理
 
@@ -740,8 +509,6 @@ type E2ETestTargets = {
   }
 }
 ```
-
-実装は単純で、各フィールドに `process.env.YLC_ARCHIVE_URL?.trim() || DEFAULT_URL` のパターンを当てはめるだけです。ポイントは **テスト種別ごとに URL を分けている** ことです。「アーカイブのチャットリプレイ付き」「チャットリプレイなし」「チャットなし動画」「ライブ配信」はそれぞれ前提条件が異なるので、1 つの URL で賄えません。環境変数が未設定ならデフォルト URL にフォールバックし、ローカルでも CI でもそのまま動きます。
 
 ### パターン 2: ライブ配信 URL の動的探索
 
@@ -795,7 +562,7 @@ test('archive replay chat works in fullscreen', async ({ page, archiveReplayUrl 
 })
 ```
 
-こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。筆者の拡張では、ライブ配信テストの skip 率は月に数回程度で、skip が頻発したら URL やフォールバック戦略を見直すシグナルにしています。
+こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。
 
 ### パターン 4: 同意ダイアログの自動処理（`addLocatorHandler` + Cookie 高速パス）
 
@@ -813,11 +580,7 @@ await page.addLocatorHandler(
 )
 ```
 
-`addLocatorHandler()` はページ上で指定した locator が出現したときに自動でハンドラを実行します。デフォルトでは **ハンドラ実行後にオーバーレイが消えるまで待機** してから後続のアクションに進むため、同意ダイアログのような「クリックで消える UI」には最適です。fixture で 1 回登録すれば全テストに効くので、個別テストで同意処理を書く必要がありません。
-
-:::message
-**`noWaitAfter` オプションについて。** `addLocatorHandler()` には `{ noWaitAfter: true }` を渡すとオーバーレイ消滅を待たないオプションがあります。これは「`<body>` のように常に表示される要素」をトリガーにする特殊ケース向けです。同意ダイアログのように消えるべき UI にはデフォルト（wait あり）の方が安定します。
-:::
+`addLocatorHandler()` はページ上で指定した locator が出現したときに自動でハンドラを実行します。デフォルトではハンドラ実行後にオーバーレイが消えるまで待機してから後続のアクションに進むため、同意ダイアログのような「クリックで消える UI」には最適です（常に表示される要素をトリガーにする場合は `{ noWaitAfter: true }` を使います）。
 
 **高速パス: Cookie 事前注入**
 
@@ -834,27 +597,17 @@ Cookie 注入はダイアログの表示自体を防ぐため、`addLocatorHandl
 
 ### パターン 5: locale / timezone を固定して DOM の揺れを減らす
 
-YouTube のような大規模サービスは A/B テストが多く、地域・言語設定で UI が変わります。`playwright.config.ts` で locale と timezone を固定しておくと、同意ダイアログの言語差やレイアウト差を減らせます。
-
 ```typescript
 // playwright.config.ts
 export default defineConfig({
   use: {
-    locale: 'en-US',          // テスト向けに英語に固定
-    timezoneId: 'Asia/Tokyo', // タイムゾーンを固定
+    locale: 'en-US',
+    timezoneId: 'Asia/Tokyo',
   },
 })
 ```
 
-:::message
-**注意: locale は Chrome 拡張の `chrome.i18n` にも影響します。** `locale: 'ja-JP'` を設定すると `chrome.i18n.getUILanguage()` が `ja` を返し、拡張の UI が日本語化されます。テストで `getByLabel('Select language')` のように英語ラベルを使っている場合は壊れます。拡張の i18n をテストする場合は locale の影響を意識してください。
-:::
-
-完全な安定化にはなりませんが、ローカルと CI で同じ UI が出る確率を上げるには十分です。
-
-### 補足: ネットワーク応答を固定したい場合
-
-Playwright の [`routeFromHAR()`](https://playwright.dev/docs/mock#recording-a-har-file) を使えば、過去に記録したネットワーク応答を再生してテストを安定させる手もあります。自チームで管理する API が相手なら有効ですが、YouTube のような大規模サービスでは HAR ファイルがすぐ陳腐化するため、筆者の環境では実用に至りませんでした。対象サービスの変化頻度に応じて検討してください。
+locale は `chrome.i18n.getUILanguage()` にも影響するため、拡張の i18n をテストする場合は注意が必要です。
 
 ### 設計指針: 実サービス E2E と疑似 E2E の使い分け
 
@@ -907,32 +660,7 @@ async function captureDiagnostics(page: Page, testInfo: TestInfo, label: string)
 }
 ```
 
-### 使い方: 条件分岐で skip / fail を判定
-
-```typescript
-test('extension shows overlay', async ({ page }) => {
-  await page.goto('https://example.com')
-
-  const ready = await waitForExtensionReady(page, { timeout: 15_000 })
-  if (!ready) {
-    const state = await captureDiagnostics(page, test.info(), 'not-ready')
-
-    // 診断結果を見て、外部要因ならスキップ
-    if (!state?.extensionRoot) {
-      test.skip(true, 'Extension root not injected — host page may have changed')
-      return
-    }
-    // 拡張自体は注入されているのに動かない → 拡張のバグ
-    expect(ready).toBe(true)
-  }
-})
-```
-
-Playwright の HTML レポートを開けば、失敗時に拡張がどんな状態だったかが JSON で残っています。スクリーンショットだけだと Shadow DOM の中身やフラグの状態はわからないので、地味に助かります。
-
-### おすすめ: Playwright の組み込み診断を有効にする
-
-`testInfo.attach()` による独自診断に加えて、Playwright の組み込み機能も有効にしておくと失敗時の調査が格段に楽になります。
+### Playwright の組み込み診断を有効にする
 
 ```typescript
 // playwright.config.ts
@@ -945,7 +673,7 @@ export default defineConfig({
 })
 ```
 
-特に **trace** は強力です。`npx playwright show-trace trace.zip` で Trace Viewer を開けば、失敗時のネットワークリクエスト、DOM スナップショット、コンソールログをステップごとに確認できます。ブラウザ拡張では「ホストページの問題か拡張の問題か」の切り分けが難しいので、タイムライン上で何が起きたかを追えるのは大きな助けになります。
+特に trace は強力で、Trace Viewer でネットワーク・DOM・コンソールをステップごとに追えるため、ホストページと拡張の切り分けに役立ちます。
 
 ### 新しい診断 API（Playwright v1.56+）
 
@@ -975,8 +703,6 @@ test.afterEach(async ({ page }, testInfo) => {
 })
 ```
 
-従来は `page.on('console', ...)` でリアルタイムにリスナーを登録する必要がありましたが、`page.consoleMessages()` なら「テストが落ちてからログを見る」ワークフローがシンプルになります。
-
 ### Service Worker のコンソールを拾う（Playwright v1.57+）
 
 Playwright v1.57 以降では `worker.on('console')` で Service Worker の console もキャプチャできます。拡張 E2E ではここが最も欲しい機能です — **SW 側で例外が出ているのにページのコンソールは静か**という状況が頻発するためです。
@@ -998,8 +724,6 @@ test.afterEach(async ({}, testInfo) => {
   }
 })
 ```
-
-SW の console には storage 操作の失敗、`chrome.runtime` メッセージの例外、権限不足のエラーなどが出ます。ページの診断と合わせて収集しておくと、「ホストページの問題か拡張の問題か」の切り分けが格段に速くなります。
 
 ## まとめ
 
@@ -1027,10 +751,7 @@ SW の console には storage 操作の失敗、`chrome.runtime` メッセージ
 - [Playwright - `addLocatorHandler()`](https://playwright.dev/docs/api/class-page#page-add-locator-handler) — 予期せぬオーバーレイの自動処理
 - [Playwright #39075](https://github.com/microsoft/playwright/issues/39075) — MV3 Service Worker を取り逃がす既知のレース
 - [Playwright #37347](https://github.com/microsoft/playwright/issues/37347) — `waitForEvent('serviceworker')` が CI でハングする問題（timeout 必須）
-- [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/) — Playwright v1.57+ が内部で使用するブラウザビルド
-- [Chromium Extensions PSA — `--load-extension` 削除](https://groups.google.com/a/chromium.org/g/chromium-extensions/c/FxMU1TvxWWg) — Chrome 137/139 でのフラグ削除
 - [Chrome for Developers - Service Worker Lifecycle](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle) — MV3 SW の idle termination（30 秒ルール）
-- [Chrome for Developers - Manifest V3](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3) — MV3 の概要
 - [Chrome for Developers - Manifest `"key"`](https://developer.chrome.com/docs/extensions/reference/manifest/key) — 開発時の拡張 ID 固定
 - [WXT - Next-gen Web Extension Framework](https://wxt.dev/) — 本記事で使用している拡張開発フレームワーク
 - [YouTube Live Chat Fullscreen - GitHub](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen) — 本記事のテストコードが含まれるリポジトリ（`e2e/` ディレクトリ）
