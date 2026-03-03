@@ -432,6 +432,9 @@ async function reliableClick(
 
   // Stage 3: JS クリック — 最終手段（isTrusted: false）
   await locator.evaluate(el => (el as HTMLElement).click())
+  if (!(await verify().catch(() => false))) {
+    throw new Error('reliableClick: all 3 stages failed to produce expected state')
+  }
 }
 
 // 使い方
@@ -708,13 +711,15 @@ test.afterEach(async ({ page }, testInfo) => {
 Playwright v1.57 以降では `worker.on('console')` で Service Worker の console もキャプチャできます。拡張 E2E ではここが最も欲しい機能です — **SW 側で例外が出ているのにページのコンソールは静か**という状況が頻発するためです。
 
 ```typescript
-// worker-scoped fixture で SW のログを収集開始
+// モジュールスコープで宣言し、worker fixture と afterEach で共有する
 const swLogs: string[] = []
+
+// worker-scoped fixture 内で1回だけ呼ぶ
 worker.on('console', (msg) => {
   swLogs.push(`[${msg.type()}] ${msg.text()}`)
 })
 
-// afterEach で失敗時に attach
+// afterEach で失敗時に attach → テストごとにクリア
 test.afterEach(async ({}, testInfo) => {
   if (testInfo.status !== testInfo.expectedStatus && swLogs.length > 0) {
     await testInfo.attach('sw-console', {
@@ -722,6 +727,7 @@ test.afterEach(async ({}, testInfo) => {
       contentType: 'text/plain',
     })
   }
+  swLogs.length = 0
 })
 ```
 

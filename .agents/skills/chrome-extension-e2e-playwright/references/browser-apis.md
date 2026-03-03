@@ -198,6 +198,9 @@ async function reliableClick(locator: Locator, verify: () => Promise<boolean>) {
 
   // Stage 3: JS フォールバック（isTrusted:false になる点に注意）
   await locator.evaluate(el => (el as HTMLElement).click())
+  if (!(await verify().catch(() => false))) {
+    throw new Error('reliableClick: all 3 stages failed to produce expected state')
+  }
 }
 ```
 
