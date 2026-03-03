@@ -147,8 +147,7 @@ function createStorageAccessor(
 ### Persist ミドルウェアの地雷 (Redux Persist, Zustand persist 等)
 
 1. **初回起動でキーが存在しない**: persist は `set()` 後にしか storage に書き込まない。persist フォーマット（例: `{ state: {...}, version: N }`）で直接書き込む
-2. **拡張ページの rehydration**: popup.html を開くと React アプリがマウント → persist ミドルウェアが storage を読み取り → マージしたデフォルト値を書き戻す。テストが事前にセットしたデータが上書きされる。Page パスでは操作完了後に即 `about:blank` へ遷移して rehydration を遮断する
-3. **async write レース**: `setState()` 後に即 `window.close()` すると書き込みが中断される。`chrome.storage.local.set()` を直接 `await` してから close する
+2. **async write レース**: `setState()` 後に即 `window.close()` すると書き込みが中断される。`chrome.storage.local.set()` を直接 `await` してから close する
 
 ---
 
@@ -201,10 +200,6 @@ async function reliableClick(locator: Locator, verify: () => Promise<boolean>) {
   await locator.evaluate(el => (el as HTMLElement).click())
 }
 ```
-
-- **通常クリックを最初に試す理由**: `force: true` は actionability check をスキップするため、`addLocatorHandler()`（consent dialog 自動処理等）が発火しない。通常クリックなら Playwright のオーバーレイ検知が機能する
-- **`locator.evaluate()`** を使う理由: Shadow DOM 内の要素に `document.querySelector()` では到達できないが、locator 経由なら確実
-- **isTrusted:false の制約**: JS の `el.click()` はブラウザのネイティブイベントではないため一部フレームワークに無視される。だからこそ最終手段
 
 ### ポーリングアサーション
 

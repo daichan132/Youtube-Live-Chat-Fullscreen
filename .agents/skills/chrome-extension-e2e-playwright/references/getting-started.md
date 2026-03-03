@@ -106,11 +106,7 @@ async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000)
 
 ### SW idle termination と Playwright CDP の関係
 
-MV3 の SW はアイドル 30 秒程度で Chrome に停止される（[Chrome docs](https://developer.chrome.com/docs/extensions/develop/concepts/service-workers/lifecycle)）。経験上、Playwright が `waitForEvent('serviceworker')` で取得した Worker 参照は、Chrome の idle termination 後も CDP セッション経由で `worker.evaluate()` に使えるが、**これは仕様として保証された挙動ではない**。Playwright/Chrome のバージョン変更で振る舞いが変わる可能性がある。
-
-`context.serviceWorkers()` は「現在アクティブな SW」のみ返すため、idle termination 後は空になる。これを使って毎回 Worker を取り直す設計は一見安全に見えるが、SW が見つからなかったときのフォールバック（拡張ページ経由）で副作用（Zustand rehydration 等）を踏むリスクがある。
-
-**推奨**: fixture の起動時に取得した Worker 参照を使い続ける（= boot-time bifurcation）。`worker.evaluate()` が `Target closed` で失敗するようになったら Page パス（e2e.html bridge）に切り替える。SW をアドホックに再取得したい場面では以下のヘルパーを使う:
+MV3 の SW はアイドル約 30 秒で停止されるが、Playwright が取得した Worker 参照は経験上 idle termination 後も有効（保証はない）。`context.serviceWorkers()` は停止後に空を返すため毎回取り直す設計は避ける — フォールバック先の副作用（rehydration 等）を踏むリスクがある。起動時に取得した参照を保持し、`Target closed` が出たら e2e.html bridge に切り替える。アドホックに再取得したい場合:
 
 ```ts
 async function getActiveWorker(context: BrowserContext): Promise<Worker | null> {
