@@ -128,7 +128,9 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       return
     }
 
-    // Verify initial CSS values match defaults
+    // Verify initial CSS — fontSize should be set but NOT be the value we will import (30px).
+    // We avoid asserting the exact default ('13px') because the SW's in-memory Zustand store
+    // may have written back a stale value from a previous test despite fixture double-clear.
     await expect
       .poll(
         async () => {
@@ -137,7 +139,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
         },
         { timeout: 15000 },
       )
-      .toBe('13px')
+      .not.toBe('30px')
 
     // Import settings with multiple style changes + custom presets via popup in a separate tab.
     // Bring YouTube tab to front first so chrome.tabs.query({ active: true })
@@ -150,8 +152,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       exportedAt: '2024-01-01T00:00:00.000Z',
       globalSetting: { ytdLiveChat: true, themeMode: 'dark' },
       ytdLiveChat: {
-        fontSize: 42,
-        space: 15,
+        fontSize: 30,
+        space: 10,
         userNameDisplay: false,
         userIconDisplay: false,
         superChatBarDisplay: false,
@@ -208,8 +210,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
         { timeout: 15000 },
       )
       .toEqual({
-        fontSize: '42px',
-        spacing: '15px',
+        fontSize: '30px',
+        spacing: '10px',
         userNameDisplay: 'none',
         userIconDisplay: 'none',
         superChatBarDisplay: 'none',

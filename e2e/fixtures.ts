@@ -333,6 +333,11 @@ export const test = base.extend<
 				timeout: 10000,
 			})
 			.catch(() => null)
+		// Double-clear: the first clear() empties storage, but the SW's in-memory
+		// Zustand store may write back its stale state via storage.onChanged.
+		// Navigating to about:blank unloads the content script and gives the SW
+		// time to persist; this second clear() catches that write-back.
+		await sharedExtension.storage.clear().catch(() => null)
 		// Ensure the page is the active tab (required for fullscreen API).
 		// If the shared context died (e.g. browser crash under workers>1 load),
 		// skip instead of fail — this is an infrastructure issue, not a test bug.
