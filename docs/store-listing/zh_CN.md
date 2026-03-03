@@ -1,4 +1,4 @@
-YouTube 直播聊天，叠加在全屏视频上。阅读消息、发送评论和 Super Chat — 无需退出全屏。
+YouTube 全屏模式下聊天会消失。这个扩展把它带回来 — 以透明、可拖动的覆盖层直接显示在视频上。
 
 功能：
 💬 全屏聊天 — 直接从覆盖层发送评论和 Super Chat。
@@ -9,13 +9,15 @@ YouTube 直播聊天，叠加在全屏视频上。阅读消息、发送评论和
 📼 支持录播 — 也适用于录播视频的聊天回放。
 🌐 支持 50+ 种语言。
 
+无需账号。不收集数据。完全开源。
+
 使用方法：
 1. 安装扩展程序。
 2. 打开 YouTube 直播或带有聊天回放的录播视频。
 3. 进入全屏 — 点击右下角的开关。
 4. 拖动、调整大小，按你的方式设置。
 
-发现 bug 或有功能建议？请在 GitHub 上提交 issue。
+有问题、建议或发现了 bug？欢迎在 GitHub 上告诉我们。
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+源代码: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+支持开发者: https://ko-fi.com/daichan132

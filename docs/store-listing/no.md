@@ -1,4 +1,4 @@
-YouTube live chat, vist som overlegg på fullskjermvideoen din. Les meldinger, skriv kommentarer og send Super Chat — uten å forlate fullskjerm.
+YouTubes fullskjermmodus skjuler chatten. Denne utvidelsen bringer den tilbake — som et gjennomsiktig, flyttbart overlegg rett på videoen din.
 
 Funksjoner:
 💬 Chat i fullskjerm — Skriv kommentarer og send Super Chat direkte fra overlegget.
@@ -9,13 +9,15 @@ Funksjoner:
 📼 Arkivstøtte — Fungerer også med chat-avspilling på arkiverte strømmer.
 🌐 Støtte for over 50 språk.
 
+Ingen konto nødvendig. Ingen data samles inn. Helt åpen kildekode.
+
 Slik bruker du:
 1. Installer utvidelsen.
 2. Åpne en YouTube-direktesending eller et arkiv med chat-avspilling.
 3. Gå til fullskjerm — slå på bryteren nederst til høyre.
 4. Dra, endre størrelse og gjør det til ditt eget.
 
-Funnet en feil eller har en idé til en funksjon? Opprett en sak på GitHub.
+Spørsmål, ideer eller feil å rapportere? Vi hører gjerne fra deg på GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Kildekode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Støtt utvikleren: https://ko-fi.com/daichan132

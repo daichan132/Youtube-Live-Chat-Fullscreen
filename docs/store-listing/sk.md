@@ -1,4 +1,4 @@
-Živý chat YouTube zobrazený cez video na celej obrazovke. Čítajte správy, píšte komentáre a posielajte Super Chats — bez opustenia režimu celej obrazovky.
+Režim celej obrazovky na YouTube skrýva chat. Toto rozšírenie ho vráti — ako priehľadnú, presúvateľnú vrstvu priamo na vašom videu.
 
 Funkcie:
 💬 Chat na celej obrazovke — Píšte komentáre a posielajte Super Chats cez prekrytie.
@@ -9,13 +9,15 @@ Funkcie:
 📼 Podpora archívov — Funguje aj s prehrávaním chatu na archivovaných prenosoch.
 🌐 Podpora viac ako 50 jazykov.
 
+Bez účtu. Bez zberu dát. Plne open source.
+
 Ako používať:
 1. Nainštalujte rozšírenie.
 2. Otvorte živý prenos alebo archív YouTube s prehrávaním chatu.
 3. Prepnite na celú obrazovku — aktivujte prepínač v pravom dolnom rohu.
 4. Presúvajte, meňte veľkosť a prispôsobte si to.
 
-Našli ste chybu alebo máte nápad? Otvorte issue na GitHub.
+Otázky, nápady alebo hlásenie chýb? Ozvite sa nám na GitHube.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Zdrojový kód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Podporte vývojára: https://ko-fi.com/daichan132

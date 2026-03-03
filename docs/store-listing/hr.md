@@ -1,4 +1,4 @@
-YouTube chat uživo, prikazan preko vašeg videa na cijelom zaslonu. Čitajte poruke, pišite komentare i šaljite Super Chat — bez napuštanja cijelog zaslona.
+Način cijelog zaslona na YouTubeu skriva chat. Ovo proširenje ga vraća — kao prozirni, pomični sloj izravno na vašem videu.
 
 Značajke:
 💬 Chat na cijelom zaslonu — Pišite komentare i šaljite Super Chat iz overlaya.
@@ -9,13 +9,15 @@ Značajke:
 📼 Podrška za arhive — Radi i s ponovnim prikazom chata na arhiviranim streamovima.
 🌐 Podržano 50+ jezika.
 
+Bez računa. Bez prikupljanja podataka. U potpunosti otvorenog koda.
+
 Kako koristiti:
 1. Instalirajte ekstenziju.
 2. Otvorite YouTube stream uživo ili arhivu s ponovnim prikazom chata.
 3. Idite na cijeli zaslon — uključite prekidač u donjem desnom kutu.
 4. Povucite, promijenite veličinu i prilagodite.
 
-Pronašli ste bug ili imate ideju za značajku? Otvorite issue na GitHubu.
+Pitanja, ideje ili prijave grešaka? Rado vas čujemo na GitHubu.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Izvorni kod: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Podržite razvijača: https://ko-fi.com/daichan132

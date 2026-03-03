@@ -1,4 +1,4 @@
-YouTube'i otsevestlus, kuvatuna sinu täisekraanvideo peal. Loe sõnumeid, postita kommentaare ja saada Super Chate — ilma täisekraanist lahkumata.
+YouTube'i täisekraanirežiim peidab vestluse. See laiendus toob selle tagasi — läbipaistva, lohistatava ülekattena otse sinu video peal.
 
 Funktsioonid:
 💬 Vestlus täisekraanil — Postita kommentaare ja Super Chate ülekattelt.
@@ -9,13 +9,15 @@ Funktsioonid:
 📼 Arhiivitugi — Töötab ka vestluse kordusesitusega arhiveeritud voogudel.
 🌐 Toetab üle 50 keele.
 
+Kontot pole vaja. Andmeid ei koguta. Täielikult avatud lähtekoodiga.
+
 Kuidas kasutada:
 1. Paigalda laiendus.
 2. Ava YouTube'i otsesaade või arhiiv vestluse kordusesitusega.
 3. Mine täisekraanile — lülita paremas alanurgas olev lüliti sisse.
 4. Lohista, muuda suurust ja tee see omaks.
 
-Leidsid vea või on sul idee? Ava probleem GitHubis.
+Küsimused, ideed või veateated? Kuuleme sinust hea meelega GitHubis.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Lähtekood: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Toeta arendajat: https://ko-fi.com/daichan132

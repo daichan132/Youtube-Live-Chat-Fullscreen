@@ -1,4 +1,4 @@
-Chat langsung YouTube, ditampilkan di atas video layar penuh Anda. Baca pesan, kirim komentar, dan kirim Super Chat — tanpa keluar dari layar penuh.
+Mode layar penuh YouTube menyembunyikan chat. Ekstensi ini mengembalikannya — sebagai overlay transparan yang bisa diseret langsung di atas video Anda.
 
 Fitur:
 💬 Chat di layar penuh — Kirim komentar dan Super Chat dari overlay.
@@ -9,13 +9,15 @@ Fitur:
 📼 Dukungan arsip — Berfungsi juga dengan pemutaran ulang chat di stream yang diarsipkan.
 🌐 Mendukung 50+ bahasa.
 
+Tidak perlu akun. Tidak mengumpulkan data. Sepenuhnya open source.
+
 Cara penggunaan:
 1. Instal ekstensi.
 2. Buka stream langsung YouTube atau arsip dengan pemutaran ulang chat.
 3. Buka layar penuh — aktifkan tombol di kanan bawah.
 4. Seret, ubah ukuran, dan sesuaikan sesuka Anda.
 
-Menemukan bug atau punya ide fitur? Buka issue di GitHub.
+Punya pertanyaan, ide, atau ingin melaporkan bug? Kami senang mendengar dari Anda di GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Kode sumber: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Dukung pengembang: https://ko-fi.com/daichan132

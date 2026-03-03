@@ -1,4 +1,4 @@
-YouTube 直播聊天室，疊加在全螢幕影片上。閱讀訊息、發送留言和 Super Chat — 無需離開全螢幕。
+YouTube 全螢幕模式下聊天室會消失。這個擴充功能把它帶回來 — 以透明、可拖曳的覆蓋層直接顯示在影片上。
 
 功能：
 💬 全螢幕聊天 — 直接從覆蓋層發送留言和 Super Chat。
@@ -9,13 +9,15 @@ YouTube 直播聊天室，疊加在全螢幕影片上。閱讀訊息、發送留
 📼 支援錄影回放 — 也適用於已封存直播的聊天回放。
 🌐 支援 50+ 種語言。
 
+不需帳號。不收集資料。完全開源。
+
 使用方式：
 1. 安裝擴充功能。
 2. 開啟 YouTube 直播或具有聊天回放的已封存影片。
 3. 進入全螢幕 — 點擊右下角的開關。
 4. 拖曳、調整大小，按你的方式設定。
 
-發現 bug 或有功能建議？請在 GitHub 上提交 issue。
+有問題、建議或發現了 bug？歡迎在 GitHub 上告訴我們。
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+原始碼: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+支持開發者: https://ko-fi.com/daichan132

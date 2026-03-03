@@ -1,4 +1,4 @@
-YouTube klepet v živo, prikazan čez video na celotnem zaslonu. Berite sporočila, pišite komentarje in pošiljajte Super Chats — brez zapuščanja celozaslonskega načina.
+Celozaslonski način na YouTubu skrije klepet. Ta razširitev ga povrne — kot prosojno, premakljivo prekrivanje neposredno na vašem videu.
 
 Funkcije:
 💬 Klepet na celotnem zaslonu — Pišite komentarje in pošiljajte Super Chats prek prekrivanja.
@@ -9,13 +9,15 @@ Funkcije:
 📼 Podpora za arhive — Deluje tudi s predvajanjem klepeta na arhiviranih prenosih.
 🌐 Podpora za več kot 50 jezikov.
 
+Brez računa. Brez zbiranja podatkov. Popolnoma odprtokoden.
+
 Kako uporabiti:
 1. Namestite razširitev.
 2. Odprite YouTube prenos v živo ali arhiv s predvajanjem klepeta.
 3. Preklopite na celoten zaslon — vklopite stikalo spodaj desno.
 4. Povlecite, spremenite velikost in prilagodite.
 
-Ste našli napako ali imate idejo? Odprite issue na GitHub.
+Vprašanja, ideje ali prijave napak? Z veseljem vas slišimo na GitHubu.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Izvorna koda: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Podprite razvijalca: https://ko-fi.com/daichan132

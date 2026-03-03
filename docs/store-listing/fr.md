@@ -1,4 +1,4 @@
-Le chat en direct YouTube, superposé sur votre vidéo en plein écran. Lisez les messages, postez des commentaires et envoyez des Super Chats — sans quitter le plein écran.
+Le mode plein écran de YouTube masque le chat. Cette extension le ramène — sous forme d'overlay transparent et déplaçable, directement sur votre vidéo.
 
 Fonctionnalités :
 💬 Chatter en plein écran — Postez des commentaires et des Super Chats depuis l'overlay.
@@ -9,13 +9,15 @@ Fonctionnalités :
 📼 Support des archives — Fonctionne aussi avec le replay du chat sur les streams archivés.
 🌐 Plus de 50 langues supportées.
 
+Aucun compte requis. Aucune donnée collectée. Entièrement open source.
+
 Comment utiliser :
 1. Installez l'extension.
 2. Ouvrez un stream YouTube en direct ou une archive avec replay du chat.
 3. Passez en plein écran — activez le bouton en bas à droite.
 4. Déplacez, redimensionnez et faites-en le vôtre.
 
-Vous avez trouvé un bug ou avez une idée de fonctionnalité ? Ouvrez une issue sur GitHub.
+Questions, idées ou bugs à signaler ? N'hésitez pas à nous écrire sur GitHub.
 
-GitHub : https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate : https://ko-fi.com/daichan132
+Code source : https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Soutenir le développeur : https://ko-fi.com/daichan132

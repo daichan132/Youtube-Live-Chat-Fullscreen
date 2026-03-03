@@ -1,4 +1,4 @@
-Xat en directe de YouTube, superposat al teu vídeo a pantalla completa. Llegeix missatges, publica comentaris i envia Super Chats — sense sortir de la pantalla completa.
+El mode de pantalla completa de YouTube amaga el xat. Aquesta extensió el recupera — com una superposició transparent i arrossegable, directament sobre el teu vídeo.
 
 Funcions:
 💬 Xat a pantalla completa — Publica comentaris i Super Chats des de la superposició.
@@ -9,13 +9,15 @@ Funcions:
 📼 Suport d'arxiu — Funciona també amb la reproducció del xat en emissions arxivades.
 🌐 Més de 50 idiomes compatibles.
 
+Sense compte. Sense recollida de dades. Codi obert.
+
 Com utilitzar-ho:
 1. Instal·la l'extensió.
 2. Obre una emissió en directe de YouTube o un arxiu amb reproducció del xat.
 3. Entra en pantalla completa — activa l'interruptor a baix a la dreta.
 4. Arrossega, redimensiona i fes-ho teu.
 
-Has trobat un error o tens una idea per a una funció? Obre un issue a GitHub.
+Preguntes, idees o errors? Ens encantaria saber la teva opinió a GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Codi font: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Dona suport al desenvolupador: https://ko-fi.com/daichan132

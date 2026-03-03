@@ -1,4 +1,4 @@
-YouTube tiešraides čats, parādīts pāri pilnekrāna video. Lasiet ziņas, rakstiet komentārus un sūtiet Super Chat — neizejot no pilnekrāna.
+YouTube pilnekrāna režīms paslēpj čatu. Šis paplašinājums to atgriež — kā caurspīdīgu, pārvelkamu pārklājumu tieši uz jūsu video.
 
 Funkcijas:
 💬 Čats pilnekrānā — Rakstiet komentārus un sūtiet Super Chat tieši no pārklājuma.
@@ -9,13 +9,15 @@ Funkcijas:
 📼 Arhīvu atbalsts — Darbojas arī ar čata atskaņošanu arhivētās translācijās.
 🌐 Vairāk nekā 50 atbalstītas valodas.
 
+Bez konta. Bez datu vākšanas. Pilnībā atvērtā pirmkoda.
+
 Kā lietot:
 1. Instalējiet paplašinājumu.
 2. Atveriet YouTube tiešraidi vai arhīvu ar čata atskaņošanu.
 3. Pārslēdzieties uz pilnekrānu — ieslēdziet slēdzi apakšējā labajā stūrī.
 4. Velciet, mainiet izmēru un pielāgojiet pēc savām vēlmēm.
 
-Atradāt kļūdu vai ir ideja jaunai funkcijai? Izveidojiet ziņojumu GitHub platformā.
+Jautājumi, idejas vai kļūdu ziņojumi? Labprāt uzklausīsim jūs GitHub platformā.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Pirmkods: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Atbalstiet izstrādātāju: https://ko-fi.com/daichan132

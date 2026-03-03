@@ -1,4 +1,4 @@
-YouTube-Livechat, als Overlay über dein Vollbildvideo gelegt. Nachrichten lesen, Kommentare schreiben und Super Chats senden — ohne den Vollbildmodus zu verlassen.
+Im Vollbildmodus von YouTube wird der Chat ausgeblendet. Diese Erweiterung bringt ihn zurück — als transparentes, verschiebbares Overlay direkt auf deinem Video.
 
 Funktionen:
 💬 Chat im Vollbild — Kommentare und Super Chats direkt aus dem Overlay senden.
@@ -9,13 +9,15 @@ Funktionen:
 📼 Archiv-Unterstützung — Funktioniert auch mit Chat-Replay bei archivierten Streams.
 🌐 Über 50 Sprachen unterstützt.
 
+Kein Konto erforderlich. Keine Daten gesammelt. Vollständig Open Source.
+
 So verwendest du es:
 1. Installiere die Erweiterung.
 2. Öffne einen YouTube-Livestream oder ein Archiv mit Chat-Replay.
 3. Wechsle in den Vollbildmodus — klicke auf den Schalter unten rechts.
 4. Ziehen, skalieren und nach deinen Wünschen anpassen.
 
-Einen Fehler gefunden oder eine Idee für ein Feature? Erstelle ein Issue auf GitHub.
+Fragen, Ideen oder Fehler gefunden? Wir freuen uns über dein Feedback auf GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Quellcode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Entwickler unterstützen: https://ko-fi.com/daichan132

@@ -1,4 +1,4 @@
-Czat YouTube na żywo, wyświetlany jako nakładka na wideo w trybie pełnoekranowym. Czytaj wiadomości, pisz komentarze i wysyłaj Super Chat — bez wychodzenia z pełnego ekranu.
+Tryb pełnoekranowy na YouTube ukrywa czat. To rozszerzenie przywraca go — jako przezroczystą, przesuwalną nakładkę bezpośrednio na wideo.
 
 Funkcje:
 💬 Czat na pełnym ekranie — Pisz komentarze i wysyłaj Super Chat bezpośrednio z nakładki.
@@ -9,13 +9,15 @@ Funkcje:
 📼 Obsługa archiwów — Działa również z odtwarzaniem czatu w zarchiwizowanych transmisjach.
 🌐 Obsługa ponad 50 języków.
 
+Bez konta. Bez zbierania danych. W pełni open source.
+
 Jak używać:
 1. Zainstaluj rozszerzenie.
 2. Otwórz transmisję na żywo YouTube lub archiwum z odtwarzaniem czatu.
 3. Przejdź na pełny ekran — włącz przełącznik w prawym dolnym rogu.
 4. Przeciągaj, zmieniaj rozmiar i dostosuj do swoich potrzeb.
 
-Znalazłeś błąd lub masz pomysł na nową funkcję? Zgłoś to na GitHub.
+Pytania, pomysły lub zgłoszenia błędów? Chętnie usłyszymy od Ciebie na GitHubie.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Kod źródłowy: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Wesprzyj twórcę: https://ko-fi.com/daichan132

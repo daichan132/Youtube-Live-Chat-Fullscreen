@@ -1,4 +1,4 @@
-Sembang langsung YouTube, ditindankan pada video skrin penuh anda. Baca mesej, hantar komen dan Super Chat — tanpa meninggalkan skrin penuh.
+Mod skrin penuh YouTube menyembunyikan sembang. Sambungan ini mengembalikannya — sebagai tindanan lutsinar yang boleh diseret terus di atas video anda.
 
 Ciri-ciri:
 💬 Sembang dalam skrin penuh — Hantar komen dan Super Chat terus dari tindanan.
@@ -9,13 +9,15 @@ Ciri-ciri:
 📼 Sokongan arkib — Berfungsi dengan main semula sembang pada strim yang diarkibkan.
 🌐 50+ bahasa disokong.
 
+Tiada akaun diperlukan. Tiada data dikumpulkan. Sumber terbuka sepenuhnya.
+
 Cara penggunaan:
 1. Pasang sambungan.
 2. Buka strim langsung YouTube atau arkib dengan main semula sembang.
 3. Pergi ke skrin penuh — togol suis di bahagian kanan bawah.
 4. Seret, ubah saiz dan sesuaikan mengikut kehendak anda.
 
-Jumpa pepijat atau ada idea ciri baharu? Buka isu di GitHub.
+Ada soalan, idea atau ingin laporkan pepijat? Kami ingin dengar daripada anda di GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Kod sumber: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Sokong pembangun: https://ko-fi.com/daichan132

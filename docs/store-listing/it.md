@@ -1,4 +1,4 @@
-Chat live di YouTube, sovrapposta al tuo video a schermo intero. Leggi i messaggi, scrivi commenti e invia Super Chat — senza uscire dallo schermo intero.
+La modalità a schermo intero di YouTube nasconde la chat. Questa estensione la riporta — come overlay trasparente e trascinabile, direttamente sul tuo video.
 
 Funzionalità:
 💬 Chatta a schermo intero — Scrivi commenti e invia Super Chat dall'overlay.
@@ -9,13 +9,15 @@ Funzionalità:
 📼 Supporto archivi — Funziona anche con la riproduzione della chat nelle dirette archiviate.
 🌐 Oltre 50 lingue supportate.
 
+Nessun account richiesto. Nessun dato raccolto. Completamente open source.
+
 Come usare:
 1. Installa l'estensione.
 2. Apri una diretta YouTube o un archivio con replay della chat.
 3. Vai a schermo intero — attiva l'interruttore in basso a destra.
 4. Trascina, ridimensiona e rendilo tuo.
 
-Hai trovato un bug o hai un'idea per una funzionalità? Apri una issue su GitHub.
+Domande, idee o bug da segnalare? Ci farebbe piacere sentirti su GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Codice sorgente: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Supporta lo sviluppatore: https://ko-fi.com/daichan132

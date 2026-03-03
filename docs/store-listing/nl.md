@@ -1,4 +1,4 @@
-YouTube live chat, als overlay op je video op volledig scherm. Lees berichten, plaats reacties en stuur Super Chats — zonder het volledige scherm te verlaten.
+De volledig-schermmodus van YouTube verbergt de chat. Deze extensie brengt hem terug — als een transparante, versleepbare overlay direct op je video.
 
 Functies:
 💬 Chat op volledig scherm — Plaats reacties en stuur Super Chats vanuit de overlay.
@@ -9,13 +9,15 @@ Functies:
 📼 Archiefondersteuning — Werkt ook met chat replay bij gearchiveerde streams.
 🌐 Meer dan 50 talen ondersteund.
 
+Geen account nodig. Geen gegevens verzameld. Volledig open source.
+
 Gebruik:
 1. Installeer de extensie.
 2. Open een YouTube livestream of archief met chat replay.
 3. Ga naar volledig scherm — zet de schakelaar rechtsonder aan.
 4. Sleep, pas het formaat aan en maak het helemaal van jou.
 
-Bug gevonden of een idee voor een functie? Open een issue op GitHub.
+Vragen, ideeën of bugs gevonden? We horen graag van je op GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Broncode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Steun de ontwikkelaar: https://ko-fi.com/daichan132

@@ -1,7 +1,7 @@
-YouTube live chat, overlaid on your fullscreen video. Read messages, post comments, and send Super Chats — without leaving fullscreen.
+YouTube's fullscreen mode hides the chat. This extension brings it back — as a transparent, draggable overlay right on your video.
 
 Features:
-💬 Chat in fullscreen — Post comments and Super Chats from the overlay.
+💬 Chat in fullscreen — Post comments and Super Chats directly from the overlay.
 🖱️ Drag, resize, reposition — Put the chat window exactly where you want it.
 🎨 Style it your way — Background, text color, font size, blur, spacing.
 📋 Save presets — One-click switch between styles for different streams.
@@ -9,13 +9,15 @@ Features:
 📼 Archive support — Works with chat replay on archived streams too.
 🌐 50+ languages supported.
 
+No account required. No data collected. Fully open source.
+
 How to use:
 1. Install the extension.
 2. Open a YouTube live stream or archive with chat replay.
 3. Go fullscreen — flip the switch at the bottom-right.
 4. Drag, resize, and make it yours.
 
-Found a bug or have a feature idea? Open an issue on GitHub.
+Questions, ideas, or bug reports? We'd love to hear from you on GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Source code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Support the developer: https://ko-fi.com/daichan132

@@ -1,4 +1,4 @@
-YouTube tiesioginio pokalbio langas, rodomas virš viso ekrano vaizdo įrašo. Skaitykite žinutes, rašykite komentarus ir siųskite Super Chat — neišeidami iš viso ekrano režimo.
+YouTube viso ekrano režimas paslepia pokalbį. Šis plėtinys jį grąžina — kaip skaidrų, vilkiamą perdangą tiesiai ant vaizdo įrašo.
 
 Funkcijos:
 💬 Pokalbis viso ekrano režimu — Rašykite komentarus ir siųskite Super Chat tiesiai iš perdangos.
@@ -9,13 +9,15 @@ Funkcijos:
 📼 Archyvų palaikymas — Veikia ir su pokalbių kartojimais archyvuotose transliacijose.
 🌐 Palaikomos daugiau nei 50 kalbų.
 
+Be paskyros. Be duomenų rinkimo. Visiškai atviro kodo.
+
 Kaip naudoti:
 1. Įdiekite plėtinį.
 2. Atidarykite YouTube tiesioginę transliaciją arba archyvą su pokalbių kartojimo funkcija.
 3. Įjunkite viso ekrano režimą — paspauskite jungiklį apatiniame dešiniajame kampe.
 4. Vilkite, keiskite dydį ir pritaikykite pagal savo poreikius.
 
-Radote klaidą ar turite idėją? Sukurkite pranešimą GitHub platformoje.
+Klausimai, idėjos ar pranešimai apie klaidas? Mielai išgirsime jus GitHub platformoje.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Šaltinio kodas: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Palaikykite kūrėją: https://ko-fi.com/daichan132

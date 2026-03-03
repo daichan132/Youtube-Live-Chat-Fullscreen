@@ -1,4 +1,4 @@
-YouTube canlı sohbet, tam ekran videonuzun üzerine yerleştirilir. Mesajları okuyun, yorum yapın ve Super Chat gönderin — tam ekrandan çıkmadan.
+YouTube'un tam ekran modu sohbeti gizler. Bu uzantı onu geri getirir — videonuzun üzerinde şeffaf, sürüklenebilir bir katman olarak.
 
 Özellikler:
 💬 Tam ekranda sohbet — Katmandan yorum ve Super Chat gönderin.
@@ -9,13 +9,15 @@ YouTube canlı sohbet, tam ekran videonuzun üzerine yerleştirilir. Mesajları 
 📼 Arşiv desteği — Arşivlenmiş yayınlarda sohbet tekrarıyla da çalışır.
 🌐 50'den fazla dil desteklenir.
 
+Hesap gerekmez. Veri toplanmaz. Tamamen açık kaynak.
+
 Nasıl kullanılır:
 1. Uzantıyı yükleyin.
 2. YouTube canlı yayın veya sohbet tekrarı olan bir arşiv açın.
 3. Tam ekrana geçin — sağ alttaki düğmeyi açın.
 4. Sürükleyin, boyutlandırın ve kendinize göre ayarlayın.
 
-Bir hata mı buldunuz veya özellik öneriniz mi var? GitHub'da bir issue açın.
+Sorularınız, fikirleriniz veya hata bildirileriniz mi var? GitHub'da sizden haber almaktan memnuniyet duyarız.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Kaynak kodu: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Geliştiriciye destek: https://ko-fi.com/daichan132

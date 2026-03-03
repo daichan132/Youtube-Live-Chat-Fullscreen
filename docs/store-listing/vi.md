@@ -1,4 +1,4 @@
-Chat trực tiếp YouTube, hiển thị chồng lên video toàn màn hình. Đọc tin nhắn, đăng bình luận và gửi Super Chat — mà không cần thoát toàn màn hình.
+Chế độ toàn màn hình của YouTube sẽ ẩn chat đi. Tiện ích này mang nó trở lại — dưới dạng lớp phủ trong suốt, có thể kéo thả ngay trên video của bạn.
 
 Tính năng:
 💬 Chat trong chế độ toàn màn hình — Đăng bình luận và gửi Super Chat từ lớp phủ.
@@ -9,13 +9,15 @@ Tính năng:
 📼 Hỗ trợ lưu trữ — Hoạt động với phát lại chat trên các buổi phát đã lưu trữ.
 🌐 Hỗ trợ hơn 50 ngôn ngữ.
 
+Không cần tài khoản. Không thu thập dữ liệu. Mã nguồn mở hoàn toàn.
+
 Cách sử dụng:
 1. Cài đặt tiện ích mở rộng.
 2. Mở một buổi phát trực tiếp YouTube hoặc video lưu trữ có phát lại chat.
 3. Chuyển sang toàn màn hình — bật công tắc ở góc dưới bên phải.
 4. Kéo, thay đổi kích thước và tùy chỉnh theo ý bạn.
 
-Phát hiện lỗi hoặc có ý tưởng tính năng mới? Mở issue trên GitHub.
+Có câu hỏi, ý tưởng hoặc muốn báo lỗi? Hãy cho chúng tôi biết trên GitHub.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Mã nguồn: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Ủng hộ nhà phát triển: https://ko-fi.com/daichan132

@@ -1,4 +1,4 @@
-YouTuben live-chat koko näytön videon päällä. Lue viestejä, kirjoita kommentteja ja lähetä Super Chatteja — poistumatta koko näytöstä.
+YouTuben koko näytön tila piilottaa chatin. Tämä laajennus tuo sen takaisin — läpinäkyvänä, vedettävänä kerroksena suoraan videosi päällä.
 
 Ominaisuudet:
 💬 Chat koko näytöllä — Kirjoita kommentteja ja lähetä Super Chatteja suoraan peittokuvasta.
@@ -9,13 +9,15 @@ Ominaisuudet:
 📼 Arkistotuki — Toimii myös chat-uusintojen kanssa arkistoiduissa lähetyksissä.
 🌐 Yli 50 kieltä tuettu.
 
+Ei tiliä tarvita. Ei tiedonkeruuta. Täysin avointa lähdekoodia.
+
 Näin käytät:
 1. Asenna laajennus.
 2. Avaa YouTuben suora lähetys tai arkistoitu lähetys, jossa on chat-uusinta.
 3. Siirry koko näyttöön — käytä kytkintä oikeassa alakulmassa.
 4. Vedä, muuta kokoa ja tee siitä omasi.
 
-Löysitkö virheen tai onko sinulla kehitysidea? Avaa issue GitHubissa.
+Kysymyksiä, ideoita tai virheraportteja? Kuulemme mielellämme sinusta GitHubissa.
 
-GitHub: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Donate: https://ko-fi.com/daichan132
+Lähdekoodi: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Tue kehittäjää: https://ko-fi.com/daichan132
