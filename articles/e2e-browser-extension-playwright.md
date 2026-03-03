@@ -29,14 +29,14 @@ Chrome / Edge の通常版（branded build）は `--load-extension` を **Chrome
 | 3 | `evaluate()` で `ReferenceError` | Node.js とブラウザのシリアライゼーション境界 |
 | 4 | `chrome.storage` にアクセスできない | `page.evaluate()` は拡張の world 外。まず Worker、必要時のみ e2e.html fallback |
 | 5 | Shadow DOM 内のクリックが効かない | actionability check とオーバーレイ遮蔽。通常→force→（必要時のみ）JS |
-| 6 | テスト対象 URL が腐る | 外部サービスの状態変化。フォールバック戦略で対処 |
+| 6 | テスト対象 URL が腐る | 外部サービスの状態変化。URL 管理 + skip + locale 固定で対処 |
 | 7 | 失敗原因がわからない | ホストページと拡張の切り分けを自動化 |
 
 必要なセクションだけ拾い読みしても大丈夫な構成にしています。
 
 :::message
-このガイドは「まず公式の標準パターンで書く」ことを前提にしています。  
-高度なフォールバック（Worker → e2e.html、3段階クリック）は、`force: true` でもフレークが残るケースだけに限定して導入してください。
+このガイドは「まず公式の標準パターンで書く」ことを前提にしています。
+高度なフォールバック（CDP restart、Worker → e2e.html 自動切替、JS クリック）は `:::details` で折りたたんでいます。まずは標準パターンだけ読み、自分のプロジェクトでフレークが残ったときだけ開いてください。
 :::
 
 ## 1. 拡張を Playwright にロードする
@@ -113,7 +113,7 @@ const context = await chromium.launchPersistentContext(/* ... */)
 console.log(context.serviceWorkers()) // [] ← まだ起動していない
 ```
 
-### 解決: ウォームアップ + ポーリング + フォールバック
+### 解決: ウォームアップ + `waitForEvent`
 
 ```typescript
 const BOOT_TIMEOUT_MS = 45_000
@@ -145,9 +145,42 @@ async function waitForExtensionWorker(context: BrowserContext) {
   worker = find() ?? await swPromise
   await warmup.close()
 
+  if (!worker) throw new Error('Extension Service Worker did not start')
+  return worker
+}
+```
+
+`waitForEvent` を warmup 前に仕込む（取りこぼし防止）→ content script の matches に該当するページで SW 起動を促す、という流れです。ほとんどのケースはこれだけで安定します。
+
+:::details 高度: CDP restart fallback（Playwright #39075 対策）
+CI の並列実行など負荷が高い環境では、上記の標準パターンだけでは SW を取得できないことがあります。CDP 経由で全 Worker を停止→再起動することで復旧を試みます。
+
+```typescript
+async function waitForExtensionWorkerWithCdpFallback(context: BrowserContext) {
+  const find = () =>
+    context.serviceWorkers().find(isExtensionWorker) ?? null
+
+  // --- 標準パターン（上記と同じ） ---
+  let worker = find()
   if (worker) return worker
 
-  // CDP restart fallback (Playwright #39075 対策)
+  const swPromise = context.waitForEvent('serviceworker', {
+    predicate: isExtensionWorker,
+    timeout: BOOT_TIMEOUT_MS,
+  }).catch(() => null)
+
+  const warmup = await context.newPage()
+  await warmup.goto('https://www.youtube.com', {
+    waitUntil: 'domcontentloaded',
+    timeout: 15_000,
+  }).catch(() => {})
+
+  worker = find() ?? await swPromise
+  await warmup.close()
+
+  if (worker) return worker
+
+  // --- CDP restart fallback ---
   try {
     const cdp = await context.newCDPSession(
       context.pages()[0] ?? await context.newPage()
@@ -156,7 +189,6 @@ async function waitForExtensionWorker(context: BrowserContext) {
     await cdp.send('ServiceWorker.stopAllWorkers')
     await cdp.detach()
 
-    // 同じパターン: リスナーを先に仕込んでから再ウォームアップ
     const retryPromise = context.waitForEvent('serviceworker', {
       predicate: isExtensionWorker,
       timeout: 10_000,
@@ -178,8 +210,7 @@ async function waitForExtensionWorker(context: BrowserContext) {
   return worker
 }
 ```
-
-`waitForEvent` を warmup 前に仕込む（取りこぼし防止）→ content script の matches に該当するページで SW 起動を促す → CDP restart で再試行、という 3 段構えです。各ステップの意図はコード内のコメントを参照してください。
+:::
 
 Service Worker がどうしても取得できない場合、`chrome://extensions` を開いて Shadow DOM 経由で Extension ID を読む方法もありますが、Chrome バージョンで DOM 構造が変わるため最終手段です。`manifest.json` に [`"key"`](https://developer.chrome.com/docs/extensions/reference/manifest/key) を入れれば開発時の拡張 ID を固定でき、SW の起動を待たずに ID を確定できます（ストア提出物からは除去すること）。
 
@@ -322,7 +353,7 @@ async function withE2EBridge<T>(
 }
 ```
 
-### ファクトリ関数でまとめる（標準 + 条件付きフォールバック）
+:::details 高度: ファクトリ関数でまとめる（Worker → e2e.html 自動切替）
 
 Worker を試して失敗したら e2e.html にフォールバックするファクトリ関数にまとめると、テストコードからはパスの違いを意識せずに使えます。
 
@@ -331,16 +362,7 @@ type StorageAccessor = {
   get(keys?: string | string[] | null): Promise<Record<string, unknown>>
   set(items: Record<string, unknown>): Promise<void>
   clear(): Promise<void>
-  dispose(): Promise<void>
 }
-
-type StorageAccessorOptions = {
-  enablePageFallback?: boolean
-  workerRetryIntervalMs?: number
-}
-
-const isExtensionWorker = (w: Worker) =>
-  w.url().startsWith('chrome-extension://')
 
 const isRecoverableWorkerError = (error: unknown): boolean => {
   const message = error instanceof Error ? error.message : String(error)
@@ -354,100 +376,59 @@ const isRecoverableWorkerError = (error: unknown): boolean => {
 function createStorageAccessor(
   context: BrowserContext,
   extensionId: string,
-  initialWorker: Worker | null,
-  options: StorageAccessorOptions = {},
+  worker: Worker | null,
 ): StorageAccessor {
-  let worker = initialWorker
   const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
-  const enablePageFallback = options.enablePageFallback ?? false
-  const workerRetryIntervalMs = options.workerRetryIntervalMs ?? 30_000
-  let workerRetryAfter = 0
-  let bridgePage: Page | null = null
-
-  const tryAcquireWorker = async (): Promise<Worker | null> => {
-    const found = context.serviceWorkers().find(isExtensionWorker) ?? null
-    if (found) return found
-    return context.waitForEvent('serviceworker', {
-      predicate: isExtensionWorker,
-      timeout: 2_000,
-    }).catch(() => null)
-  }
-
-  const viaE2EPage = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
-    if (!enablePageFallback) {
-      throw new Error(
-        'Storage Worker is unavailable. Set enablePageFallback: true to use e2e.html bridge.',
-      )
-    }
-    if (!bridgePage || bridgePage.isClosed()) {
-      bridgePage = await context.newPage()
-      await bridgePage.goto(bridgeUrl, {
-        waitUntil: 'domcontentloaded',
-        timeout: 15_000,
-      })
-    }
-    return fn(bridgePage)
-  }
 
   const withFallback = async <T>(
     workerFn: (w: Worker) => Promise<T>,
-    pageFn: () => Promise<T>,
+    pageFn: (p: Page) => Promise<T>,
   ): Promise<T> => {
-    // 一定間隔で Worker の復帰を再試行する（永続的に Page に固定しない）
-    if (!worker && Date.now() >= workerRetryAfter) {
-      worker = await tryAcquireWorker()
-    }
-
     if (worker) {
       try {
         return await workerFn(worker)
       } catch (error) {
         if (!isRecoverableWorkerError(error)) throw error
-        worker = null
-        workerRetryAfter = Date.now() + workerRetryIntervalMs
+        worker = null // 以降は e2e.html にフォールバック
       }
     }
-    return pageFn()
+
+    const page = await context.newPage()
+    try {
+      await page.goto(bridgeUrl, { waitUntil: 'domcontentloaded' })
+      return await pageFn(page)
+    } finally {
+      await page.close()
+    }
   }
 
   return {
     get: (keys) => withFallback(
       (w) => w.evaluate((k) => chrome.storage.local.get(k), keys ?? null),
-      () => viaE2EPage(p =>
-        p.evaluate((k) => chrome.storage.local.get(k), keys ?? null),
-      ),
+      (p) => p.evaluate((k) => chrome.storage.local.get(k), keys ?? null),
     ),
     set: (items) => withFallback(
       (w) => w.evaluate((i) => chrome.storage.local.set(i), items).then(() => {}),
-      () => viaE2EPage(p =>
-        p.evaluate((i) => chrome.storage.local.set(i), items).then(() => {}),
-      ),
+      (p) => p.evaluate((i) => chrome.storage.local.set(i), items).then(() => {}),
     ),
     clear: () => withFallback(
       (w) => w.evaluate(() => chrome.storage.local.clear()).then(() => {}),
-      () => viaE2EPage(p =>
-        p.evaluate(() => chrome.storage.local.clear()).then(() => {}),
-      ),
+      (p) => p.evaluate(() => chrome.storage.local.clear()).then(() => {}),
     ),
-    dispose: async () => {
-      await bridgePage?.close().catch(() => null)
-      bridgePage = null
-    },
   }
 }
 ```
 
 ```typescript
-// ローカル: 標準パターン（Worker のみ）
 const storage = createStorageAccessor(context, extensionId, worker)
 
-// CI: Worker 不安定が確認できた環境のみ fallback を有効化
-const storageWithFallback = createStorageAccessor(context, extensionId, worker, {
-  enablePageFallback: true,
-})
+// テストコードからはパスの違いを意識せずに使える
+await storage.set({ theme: 'dark' })
+const data = await storage.get('theme')
 ```
 
-`enablePageFallback` はデフォルト `false` にしておき、CI などで Worker 不安定が確認できたときだけ `true` にするのが安全です。`dispose()` は `afterAll` で呼んで bridge ページを閉じます。
+`isRecoverableWorkerError` が Worker の停止を検知すると、以降の操作は自動的に e2e.html 経由に切り替わります。
+:::
 
 content script は初期化時に storage を読むため、`page.goto()` の前に seed してください。ページ読み込み後に変える場合は `chrome.storage.onChanged` の購読か `page.reload()` が必要です。
 
@@ -508,6 +489,7 @@ async function reliableClick(
   if (await verify().catch(() => false)) return
 
   // Stage 3: JS fallback（最終手段、明示的に opt-in した場合のみ）
+  // 多くのプロジェクトでは Stage 2 までで十分です。
   if (!allowJsFallback) {
     throw new Error('reliableClick: normal/force click did not produce expected state')
   }
@@ -566,6 +548,15 @@ await expect.poll(async () => {
 
 ブラウザ拡張は特定のサイト上で動くため、テスト対象のページが外部サービスの都合で変わる問題が避けられません。筆者の拡張（YouTube ライブ配信ページ用）では、配信終了による URL 腐り、チャットリプレイ無効化、予期せぬライブ配信開始などを経験しました。
 
+### 設計指針: 実サービス E2E と疑似 E2E の使い分け
+
+外部サービスに依存する E2E テストは本質的に不安定です。すべてのテストを実サービスに向けるのではなく、2 レイヤーに分けると運用が楽になります。
+
+- **実サービス E2E（少数・skip 許容）** — 「拡張が実際のサイト上で動くか」を確認するスモークテスト。URL が腐ったらスキップする前提で設計する
+- **ローカル固定 HTML での疑似 E2E（多数・常に安定）** — 拡張のロジック検証に集中。テスト用の HTML ファイルを用意し、外部要因でフレークしない環境で細かく検証する
+
+筆者の拡張では、ライブ配信テスト（実サービス）は 2〜3 本に絞り、チャット表示ロジックや UI 操作の細かい検証はローカル HTML で回しています。実サービス E2E は「本当に動くか」の最終確認、疑似 E2E は「正しく動くか」の詳細検証、という役割分担です。
+
 ### パターン 1: テスト種別ごとの URL 管理
 
 URL をハードコードすると確実に腐ります。テスト種別ごとにデフォルト URL と環境変数オーバーライドを用意します。
@@ -593,7 +584,57 @@ type E2ETestTargets = {
 }
 ```
 
-### パターン 2: ライブ配信 URL の動的探索
+### パターン 2: `test.skip()` で前提条件と拡張バグを区別する
+
+URL が見つからない、またはページの状態が想定外の場合、テストを失敗ではなくスキップにします。
+
+```typescript
+test('archive replay chat works in fullscreen', async ({ page, archiveReplayUrl }) => {
+  if (!archiveReplayUrl) {
+    await captureChatState(page, test.info(), 'archive-replay-url-selection-failed')
+    test.skip(true, 'No archive replay URL satisfied preconditions.')
+    return
+  }
+  // テスト本体...
+})
+```
+
+こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。
+
+### パターン 3: 予期せぬダイアログの自動処理（`addLocatorHandler`）
+
+外部サービスのテストで地味にハマるのが GDPR 同意ダイアログです。[`addLocatorHandler()`](https://playwright.dev/docs/api/class-page#page-add-locator-handler) を共通 fixture で登録しておけば、ページ遷移のたびに自動で処理されます。
+
+```typescript
+// 共通 fixture で登録しておく — ページ遷移のたびに自動発火
+await page.addLocatorHandler(
+  page.locator('button:has-text("Accept all"), button:has-text("I agree"), button:has-text("同意する")'),
+  async (btn) => {
+    await btn.first().click()
+  },
+)
+```
+
+`addLocatorHandler()` はページ上で指定した locator が出現したときに自動でハンドラを実行します。デフォルトではハンドラ実行後にオーバーレイが消えるまで待機してから後続のアクションに進むため、同意ダイアログのような「クリックで消える UI」には最適です（常に表示される要素をトリガーにする場合は `{ noWaitAfter: true }` を使います）。
+
+### パターン 4: locale / timezone を固定して DOM の揺れを減らす
+
+```typescript
+// playwright.config.ts
+export default defineConfig({
+  use: {
+    locale: 'en-US',
+    timezoneId: 'Asia/Tokyo',
+  },
+})
+```
+
+locale は `chrome.i18n.getUILanguage()` にも影響するため、拡張の i18n をテストする場合は注意が必要です。
+
+:::details サービス固有の実装例（YouTube）
+以下は筆者の拡張（YouTube ライブ配信ページ用）で使っているパターンです。他のサービスでも考え方は応用できますが、実装はサービスの仕様に依存します。
+
+#### ライブ配信 URL の動的探索
 
 ライブ配信 URL は本質的に不安定です。「今この瞬間にライブ配信中の URL」はハードコードできません。3 段構えで探索します。
 
@@ -630,42 +671,9 @@ async function findLiveUrlWithChat(page: Page): Promise<string | null> {
 
 Tier 3 の動的探索は「YouTube で "vtuber" をライブ配信フィルタ付きで検索し、チャットが再生可能な配信を見つける」という処理です。ハードコードした URL より遅いですが、「テスト実行時にライブ配信が 1 つも存在しない」以外では失敗しません。
 
-### パターン 3: `test.skip()` で前提条件と拡張バグを区別する
+#### CONSENT Cookie 事前注入
 
-URL が見つからない、またはページの状態が想定外の場合、テストを失敗ではなくスキップにします。
-
-```typescript
-test('archive replay chat works in fullscreen', async ({ page, archiveReplayUrl }) => {
-  if (!archiveReplayUrl) {
-    await captureChatState(page, test.info(), 'archive-replay-url-selection-failed')
-    test.skip(true, 'No archive replay URL satisfied preconditions.')
-    return
-  }
-  // テスト本体...
-})
-```
-
-こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。
-
-### パターン 4: 同意ダイアログの自動処理（`addLocatorHandler` + Cookie 高速パス）
-
-外部サービスのテストで地味にハマるのが GDPR 同意ダイアログです。[`addLocatorHandler()`](https://playwright.dev/docs/api/class-page#page-add-locator-handler) を主セーフティネットとして登録し、Cookie 事前注入で高速パスを確保する 2 層構成で対処します。
-
-**主セーフティネット: `addLocatorHandler()`**
-
-```typescript
-// 共通 fixture で登録しておく — ページ遷移のたびに自動発火
-await page.addLocatorHandler(
-  page.locator('button:has-text("Accept all"), button:has-text("I agree"), button:has-text("同意する")'),
-  async (btn) => {
-    await btn.first().click()
-  },
-)
-```
-
-`addLocatorHandler()` はページ上で指定した locator が出現したときに自動でハンドラを実行します。デフォルトではハンドラ実行後にオーバーレイが消えるまで待機してから後続のアクションに進むため、同意ダイアログのような「クリックで消える UI」には最適です（常に表示される要素をトリガーにする場合は `{ noWaitAfter: true }` を使います）。
-
-**高速パス: Cookie 事前注入**
+`addLocatorHandler()` と併用して、Cookie 事前注入でダイアログの表示自体を防ぎます。
 
 ```typescript
 await page.context().addCookies([
@@ -677,29 +685,7 @@ await page.context().addCookies([
 ```
 
 Cookie 注入はダイアログの表示自体を防ぐため、`addLocatorHandler()` の発火コストをゼロにできます。YouTube の場合、`.google.com` にも CONSENT Cookie を設定しないとリダイレクトされることがあります。Cookie のフォーマットはサービス側で変更される可能性があるため、Cookie だけに頼らず `addLocatorHandler()` と併用するのがポイントです。
-
-### パターン 5: locale / timezone を固定して DOM の揺れを減らす
-
-```typescript
-// playwright.config.ts
-export default defineConfig({
-  use: {
-    locale: 'en-US',
-    timezoneId: 'Asia/Tokyo',
-  },
-})
-```
-
-locale は `chrome.i18n.getUILanguage()` にも影響するため、拡張の i18n をテストする場合は注意が必要です。
-
-### 設計指針: 実サービス E2E と疑似 E2E の使い分け
-
-外部サービスに依存する E2E テストは本質的に不安定です。すべてのテストを実サービスに向けるのではなく、2 レイヤーに分けると運用が楽になります。
-
-- **実サービス E2E（少数・skip 許容）** — 「拡張が実際のサイト上で動くか」を確認するスモークテスト。URL が腐ったらスキップする前提で設計する
-- **ローカル固定 HTML での疑似 E2E（多数・常に安定）** — 拡張のロジック検証に集中。テスト用の HTML ファイルを用意し、外部要因でフレークしない環境で細かく検証する
-
-筆者の拡張では、ライブ配信テスト（実サービス）は 2〜3 本に絞り、チャット表示ロジックや UI 操作の細かい検証はローカル HTML で回しています。実サービス E2E は「本当に動くか」の最終確認、疑似 E2E は「正しく動くか」の詳細検証、という役割分担です。
+:::
 
 ## 7. テスト失敗時の自動診断
 
@@ -821,7 +807,7 @@ test.afterEach(async ({}, testInfo) => {
 | `page.evaluate()` で `ReferenceError` | シリアライゼーション境界 | 第 2 引数で値を渡す |
 | `chrome.storage` にアクセスできない | `page.evaluate()` は拡張の world 外 | まず Worker パス。必要時のみ e2e.html fallback |
 | Shadow DOM 内のクリックが効かない | actionability check / オーバーレイ遮蔽 | 通常→force（標準）。必要時のみ JS fallback + `addLocatorHandler` |
-| テスト対象 URL が腐る | 外部サービスの状態変化 | 種別ごとの URL 管理 + 動的探索 + `test.skip()` + `addLocatorHandler` + locale 固定 |
+| テスト対象 URL が腐る | 外部サービスの状態変化 | URL 管理 + `test.skip()` + `addLocatorHandler` + locale 固定。**必要時のみ** 動的 URL 探索・Cookie 注入 |
 | 失敗原因がわからない | ホストページ / 拡張の切り分け困難 | `testInfo.attach()` + `page.consoleMessages()` + `worker.on('console')` で診断自動収集 |
 
 ブラウザ拡張の E2E テストは、仕組みができるまでが大変です。ただ一度回り始めると、E2E でバグを先に見つけてプロダクトコードを直す、というサイクルが回り始めます。筆者の拡張でも、SPA 遷移時の iframe リークや MutationObserver の過剰発火を E2E テストが先に検出して、プロダクトコードの修正に繋がりました。
