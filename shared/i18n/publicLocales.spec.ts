@@ -49,14 +49,14 @@ describe('public locale messages', () => {
     }
   })
 
-  it('does not keep extensionName as English in non-English locales', () => {
-    const englishName = loadLocaleMessages('en').extensionName?.message ?? ''
+  it('does not keep extensionDescription as English in non-English locales', () => {
+    const englishDesc = loadLocaleMessages('en').extensionDescription?.message ?? ''
     const locales = readdirSync(publicLocalesDir).filter(localeDirName => localeDirName !== '.DS_Store')
 
     for (const locale of locales) {
       if (ENGLISH_FAMILY.has(locale)) continue
-      const extensionName = loadLocaleMessages(locale).extensionName?.message ?? ''
-      expect(extensionName, `untranslated extensionName locale=${locale}`).not.toBe(englishName)
+      const desc = loadLocaleMessages(locale).extensionDescription?.message ?? ''
+      expect(desc, `untranslated extensionDescription locale=${locale}`).not.toBe(englishDesc)
     }
   })
 
