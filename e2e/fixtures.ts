@@ -30,7 +30,7 @@ const launchExtensionContext = async (userDataDir: string) => {
 	return ctx
 }
 
-const isExtensionWorker = (w: Worker) => w.url().startsWith('chrome-extension://')
+const isExtensionWorker = (worker: Worker) => worker.url().startsWith('chrome-extension://')
 
 const waitForMv3Worker = async (context: BrowserContext) => {
 	const findWorker = () => context.serviceWorkers().find(isExtensionWorker) ?? null
@@ -40,7 +40,7 @@ const waitForMv3Worker = async (context: BrowserContext) => {
 
 	// Set up event listener BEFORE warmup to avoid missing the SW start during navigation.
 	// waitForEvent only captures NEW events — setting it up first reduces the race window.
-	const swPromise = context
+	const workerPromise = context
 		.waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: EXTENSION_BOOT_TIMEOUT_MS })
 		.catch(() => null)
 
@@ -48,7 +48,7 @@ const waitForMv3Worker = async (context: BrowserContext) => {
 	const warmup = await context.newPage()
 	await warmup.goto('https://www.youtube.com', { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => null)
 
-	worker = findWorker() ?? (await swPromise)
+	worker = findWorker() ?? (await workerPromise)
 	await warmup.close()
 
 	if (worker) return worker
@@ -131,26 +131,26 @@ const createStorageAccessor = (context: BrowserContext, extensionId: string, ini
 	let worker = initialWorker
 	const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
 
-	const viaE2EPage = async <T>(fn: (page: Page) => Promise<T>): Promise<T> => {
+	const viaE2EPage = async <T>(operation: (page: Page) => Promise<T>): Promise<T> => {
 		const page = await context.newPage()
 		try {
 			await page.goto(bridgeUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
-			return await fn(page)
+			return await operation(page)
 		} finally {
 			await page.close().catch(() => null)
 		}
 	}
 
-	const withFallback = async <T>(workerFn: (w: Worker) => Promise<T>, pageFn: () => Promise<T>): Promise<T> => {
+	const withFallback = async <T>(viaWorker: (w: Worker) => Promise<T>, viaPage: () => Promise<T>): Promise<T> => {
 		if (worker) {
 			try {
-				return await workerFn(worker)
+				return await viaWorker(worker)
 			} catch (error) {
 				if (!isRecoverableWorkerError(error)) throw error
 				worker = null
 			}
 		}
-		return pageFn()
+		return viaPage()
 	}
 
 	return {

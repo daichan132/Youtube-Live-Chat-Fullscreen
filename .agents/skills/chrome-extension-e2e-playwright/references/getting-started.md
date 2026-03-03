@@ -10,14 +10,15 @@
 import { chromium } from '@playwright/test'
 import path from 'node:path'
 
-const EXT_PATH = path.resolve(__dirname, '../dist') // manifest.json があるフォルダ
+const pathToExtension = path.resolve(__dirname, '../dist') // manifest.json があるフォルダ
 
 const context = await chromium.launchPersistentContext('', {
-  headless: false, // headed が安定。CI では channel: 'chromium' で headless も可
+  // New Headless で拡張を動かすには channel: 'chromium' が必要。headed が安定
+  headless: false,
   ignoreDefaultArgs: ['--disable-extensions'], // Playwright デフォルト引数を除去
   args: [
-    `--disable-extensions-except=${EXT_PATH}`,
-    `--load-extension=${EXT_PATH}`,
+    `--disable-extensions-except=${pathToExtension}`,
+    `--load-extension=${pathToExtension}`,
   ],
 })
 ```
@@ -35,7 +36,7 @@ const context = await chromium.launchPersistentContext('', {
 import { existsSync } from 'node:fs'
 
 export default function globalSetup() {
-  if (!existsSync(path.join(EXT_PATH, 'manifest.json'))) {
+  if (!existsSync(path.join(pathToExtension, 'manifest.json'))) {
     throw new Error(`Extension build not found. Run your build command first.`)
   }
 }
@@ -53,17 +54,18 @@ export default function globalSetup() {
 SW はイベント駆動で lazy 起動。`content_scripts.matches` に合う URL への遷移がトリガーになる。
 
 ```ts
-const isExtensionWorker = (w: Worker) => w.url().startsWith('chrome-extension://')
+const isExtensionWorker = (worker: Worker) => worker.url().startsWith('chrome-extension://')
 
-async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000) {
-  const find = () => context.serviceWorkers().find(isExtensionWorker) ?? null
+/** MV3 Service Worker の起動を待ち、Worker 参照を返す */
+async function waitForMv3Worker(context: BrowserContext, timeoutMs = 45_000) {
+  const findWorker = () => context.serviceWorkers().find(isExtensionWorker) ?? null
 
-  let worker = find()
+  let worker = findWorker()
   if (worker) return worker
 
-  // waitForEvent を warmup 前に仕込む（レース削減）
-  // waitForEvent は NEW イベントのみキャプチャするため、先にリスナーを設定する
-  const swPromise = context
+  // waitForEvent は NEW イベントのみキャプチャするため、
+  // warmup 前にリスナーを設定して取りこぼしを防ぐ
+  const workerPromise = context
     .waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: timeoutMs })
     .catch(() => null)
 
@@ -73,28 +75,28 @@ async function waitForServiceWorker(context: BrowserContext, timeoutMs = 45_000)
     waitUntil: 'domcontentloaded', timeout: 15_000,
   }).catch(() => {})
 
-  worker = find() ?? await swPromise
+  worker = findWorker() ?? await workerPromise
   await warmupPage.close()
 
   if (worker) return worker
 
   // CDP restart fallback (Playwright #39075)
-  // 同じパターン: リスナーを先に仕込んでから再ウォームアップ
+  // CDP 経由で全 Service Worker を停止→再起動し、Playwright に再検出させる
   try {
     const cdp = await context.newCDPSession(context.pages()[0] ?? await context.newPage())
     await cdp.send('ServiceWorker.enable')
     await cdp.send('ServiceWorker.stopAllWorkers')
     await cdp.detach()
 
-    const retryPromise = context
+    const retryWorkerPromise = context
       .waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: 10_000 })
       .catch(() => null)
 
-    const rewarmup = await context.newPage()
-    await rewarmup.goto('https://example.com', { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {})
+    const retryWarmup = await context.newPage()
+    await retryWarmup.goto('https://example.com', { waitUntil: 'domcontentloaded', timeout: 15_000 }).catch(() => {})
 
-    worker = find() ?? await retryPromise
-    await rewarmup.close().catch(() => null)
+    worker = findWorker() ?? await retryWorkerPromise
+    await retryWarmup.close().catch(() => null)
   } catch {
     // CDP fallback is best-effort
   }
@@ -110,11 +112,9 @@ MV3 の SW はアイドル約 30 秒で停止されるが、Playwright が取得
 
 ```ts
 async function getActiveWorker(context: BrowserContext): Promise<Worker | null> {
-  const worker = context.serviceWorkers().find(w =>
-    w.url().startsWith('chrome-extension://')
-  ) ?? null
+  const worker = context.serviceWorkers().find(isExtensionWorker) ?? null
   if (worker) return worker
-  return context.waitForEvent('serviceworker', { timeout: 10_000 }).catch(() => null)
+  return context.waitForEvent('serviceworker', { predicate: isExtensionWorker, timeout: 10_000 }).catch(() => null)
 }
 ```
 
