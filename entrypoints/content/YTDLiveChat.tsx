@@ -3,7 +3,7 @@ import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasF
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
-import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
@@ -26,7 +26,6 @@ type YTDLiveChatProps = {
 
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
-  const iframeElement = useYTDLiveChatNoLsStore(state => state.iframeElement)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
@@ -57,7 +56,7 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
     nativeChatOpenIntent: isNativeChatCurrentlyOpen,
   })
   // Keep YouTube native layout untouched unless our fullscreen overlay is actually visible.
-  useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible && iframeElement !== null)
+  useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible)
 
   const overlayTransition = useCSSTransition({
     in: isOverlayVisible,

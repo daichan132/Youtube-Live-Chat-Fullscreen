@@ -6,6 +6,16 @@ import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeC
 import { isIframeForCurrentVideo, isLiveChatIframe, isManagedLiveIframe, isReplayChatIframe } from '../shared/iframeDom'
 import type { ChatMode } from './types'
 
+type MoviePlayerElement = HTMLElement & {
+  getVideoData?: () => { isLive?: boolean }
+}
+
+const getMoviePlayerIsLive = (): boolean | null => {
+  const player = document.getElementById('movie_player') as MoviePlayerElement | null
+  const data = player?.getVideoData?.()
+  return typeof data?.isLive === 'boolean' ? data.isLive : null
+}
+
 const getExtensionIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
@@ -33,7 +43,14 @@ export const detectChatMode = (): ChatMode => {
 
   if (isYouTubeLiveNow()) return 'live'
 
-  if (hasArchiveNativeOpenControl()) return 'archive'
+  if (hasArchiveNativeOpenControl()) {
+    // hasArchiveNativeOpenControl() はライブ・アーカイブ両方で true を返す。
+    // メタデータで確認し、ライブページでの誤検出を防ぐ。
+    const isLive = getMoviePlayerIsLive()
+    if (isLive === true) return 'live'
+    if (isLive === false) return 'archive'
+    // メタデータ未ロード → 確定できないので fall through
+  }
 
   // Fallback for cases where YouTube has not rendered chat DOM yet.
   // NOTE: `isLiveContent` can stay true on archived streams, so it must not
