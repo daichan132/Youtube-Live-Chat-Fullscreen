@@ -48,8 +48,10 @@ export const detectChatMode = (): ChatMode => {
     // メタデータで確認し、ライブページでの誤検出を防ぐ。
     const isLive = getMoviePlayerIsLive()
     if (isLive === true) return 'live'
-    if (isLive === false) return 'archive'
-    // メタデータ未ロード → 確定できないので fall through
+    // isLive === false または null（メタデータ未ロード）→ アーカイブとして扱う。
+    // null 時に fall through すると isYouTubeLiveVideo() も null を返し
+    // 'none' になってチャットが表示されない問題が発生する。
+    return 'archive'
   }
 
   // Fallback for cases where YouTube has not rendered chat DOM yet.
