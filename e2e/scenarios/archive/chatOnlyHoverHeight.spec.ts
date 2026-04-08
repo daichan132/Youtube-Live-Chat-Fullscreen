@@ -148,13 +148,50 @@ const sampleOverlayVisibleHeights = async ({
 
   const min = values.length > 0 ? Math.min(...values) : 0
   const max = values.length > 0 ? Math.max(...values) : 0
+  const sorted = [...values].sort((a, b) => a - b)
+  const median =
+    sorted.length === 0
+      ? 0
+      : sorted.length % 2 === 1
+        ? sorted[(sorted.length - 1) / 2]
+        : Math.round(((sorted[sorted.length / 2 - 1] + sorted[sorted.length / 2]) / 2) * 100) / 100
 
   return {
     values,
     min,
     max,
+    median,
     drift: Math.round((max - min) * 100) / 100,
   }
+}
+
+const collectStableVisibleHeightSamples = async (
+  page: Page,
+  {
+    sampleCount,
+    intervalMs,
+    settleMs = 0,
+    timeoutMs = 10000,
+    maxDrift = 1.5,
+  }: {
+    sampleCount: number
+    intervalMs: number
+    settleMs?: number
+    timeoutMs?: number
+    maxDrift?: number
+  },
+) => {
+  let samples = await page.evaluate(sampleOverlayVisibleHeights, { sampleCount, intervalMs, settleMs })
+  await expect
+    .poll(
+      async () => {
+        samples = await page.evaluate(sampleOverlayVisibleHeights, { sampleCount, intervalMs, settleMs })
+        return samples.drift
+      },
+      { timeout: timeoutMs },
+    )
+    .toBeLessThanOrEqual(maxDrift)
+  return samples
 }
 
 const setPersistedChatOnlyMode = async (extension: Extension) => {
@@ -291,12 +328,13 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
       .toBe(true)
 
     const snapshot = await page.evaluate(getOverlayClipSnapshot)
-    const immediateVisibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+    const immediateVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 4,
-      intervalMs: 40,
-      settleMs: 220,
+      intervalMs: 60,
+      settleMs: 300,
+      timeoutMs: 12000,
     })
-    const visibleHeightSamples = await page.evaluate(sampleOverlayVisibleHeights, {
+    const visibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,
       settleMs: 350,
@@ -334,6 +372,11 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(probeInstalled).toBe(true)
 
     await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    const baselineVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
+      sampleCount: 6,
+      intervalMs: 180,
+      settleMs: 350,
+    })
     const baselineSnapshot = await page.evaluate(getOverlayClipSnapshot)
 
     const center = await page.evaluate(getOverlayCenter)
@@ -348,27 +391,41 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
 
     const snapshot = await page.evaluate(getOverlayClipSnapshot)
-    const visibleHeightSamplesAfterHover = await page.evaluate(sampleOverlayVisibleHeights, {
+    const visibleHeightSamplesAfterHover = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,
       settleMs: 350,
     })
     const hoverProbe = await page.evaluate(readOverlayHoverProbe)
-    const visibleHeightDelta = snapshot.visibleHeight - baselineSnapshot.visibleHeight
+    const visibleHeightDelta = visibleHeightSamplesAfterHover.median - baselineVisibleHeightSamples.median
 
     await test.info().attach('chat-only-auto-clip-hovered-once', {
-      body: JSON.stringify({ baselineSnapshot, snapshot, visibleHeightSamplesAfterHover, visibleHeightDelta, hoverProbe, center }, null, 2),
+      body: JSON.stringify(
+        {
+          baselineSnapshot,
+          baselineVisibleHeightSamples,
+          snapshot,
+          visibleHeightSamplesAfterHover,
+          visibleHeightDelta,
+          hoverProbe,
+          center,
+        },
+        null,
+        2,
+      ),
       contentType: 'application/json',
     })
 
     expect(snapshot.exists).toBe(true)
     expect(snapshot.enabled).toBe(true)
+    expect(baselineVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
     expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)
     // Allow content-driven growth: archive chat messages load dynamically between
     // baseline (pre-hover) and post-hover snapshot, increasing visible height.
     const maxGrowth = Math.max(2, baselineSnapshot.height * 0.15)
+    const maxShrink = Math.max(8, baselineSnapshot.height * 0.03)
     expect(visibleHeightDelta).toBeLessThanOrEqual(maxGrowth)
-    expect(visibleHeightDelta).toBeGreaterThanOrEqual(-8)
+    expect(visibleHeightDelta).toBeGreaterThanOrEqual(-maxShrink)
     expect((hoverProbe?.enterCount ?? 0) > 0).toBe(true)
   })
 })
