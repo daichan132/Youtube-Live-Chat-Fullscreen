@@ -56,7 +56,7 @@ export const createIframeInitializer = ({
 
   const tryInitializeStyle = (iframe: HTMLIFrameElement) => {
     const doc = getIframeDocument(iframe)
-    if (!doc || !doc.head || !doc.body) return false
+    if (!doc?.head || !doc.body) return false
 
     // Reject about:blank — a newly-created managed iframe starts with a blank
     // same-origin document that will be replaced once navigation completes.

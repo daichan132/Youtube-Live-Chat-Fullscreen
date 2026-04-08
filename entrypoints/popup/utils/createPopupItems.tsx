@@ -8,6 +8,7 @@ import { ThemeModeSelector } from '../components/ThemeModeSelector'
 import { YTDLiveChatSwitch } from '../components/YTDLiveChatSwitch'
 
 export interface PopupItem {
+  id: string
   icon?: IconType
   title: string
   data: React.ReactNode
@@ -17,31 +18,37 @@ export interface PopupItem {
 export const createPopupItems = (t: TFunction) => {
   const items: PopupItem[] = [
     {
+      id: 'toggle-chat',
       icon: TbMessageCircle,
       title: t('popup.showChatOnFullscreen'),
       data: <YTDLiveChatSwitch />,
     },
     {
+      id: 'theme',
       icon: TbSunMoon,
       title: t('popup.theme'),
       data: <ThemeModeSelector />,
     },
     {
+      id: 'data-transfer',
       icon: TbArchive,
       title: t('popup.dataTransfer'),
       data: <DataTransfer />,
     },
     {
+      id: 'language',
       icon: TbLanguage,
       title: t('popup.language'),
       data: <LanguageSelector />,
     },
     {
+      id: 'links',
       icon: TbLink,
       title: t('popup.links'),
       data: <Links />,
     },
     {
+      id: 'donate',
       icon: TbHeartDollar,
       title: t('popup.donate'),
       data: (

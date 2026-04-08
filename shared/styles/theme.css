@@ -174,47 +174,6 @@
   text-size-adjust: 100%;
 }
 
-.ylc-setting-panel .ylc-theme-surface,
-.ylc-setting-panel .ylc-theme-surface-muted,
-.ylc-setting-panel .ylc-theme-elevated,
-.ylc-setting-panel .ylc-theme-input,
-.ylc-setting-panel .ylc-theme-input-borderless,
-.ylc-setting-panel .ylc-theme-select,
-.ylc-setting-panel .ylc-theme-icon-badge,
-.ylc-setting-panel .ylc-theme-icon-badge-sm,
-.ylc-setting-panel .ylc-theme-icon-badge-xs,
-.ylc-setting-panel .ylc-theme-alpha-checker,
-.ylc-setting-panel .ylc-theme-tab,
-.ylc-setting-panel .ylc-theme-tab:hover,
-.ylc-setting-panel .ylc-theme-tab-active,
-.ylc-setting-panel .ylc-theme-tab-active:hover,
-.ylc-setting-panel .ylc-theme-glass-panel-muted {
-  background: transparent;
-  background-color: transparent;
-}
-
-.ylc-setting-panel .ylc-theme-icon-badge,
-.ylc-setting-panel .ylc-theme-icon-badge-sm,
-.ylc-setting-panel .ylc-theme-icon-badge-xs {
-  background-color: var(--ylc-bg-surface);
-}
-
-.ylc-setting-panel .ylc-theme-tab-active,
-.ylc-setting-panel .ylc-theme-tab-active:hover {
-  background-color: var(--ylc-bg-surface);
-  border-color: color-mix(in srgb, var(--ylc-border) 82%, transparent);
-}
-
-.ylc-setting-panel .ylc-theme-glass-panel-muted {
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-}
-
-.ylc-setting-panel .ylc-theme-input-borderless:hover,
-.ylc-setting-panel .ylc-theme-select:hover {
-  background: transparent;
-}
-
 .ylc-setting-panel .ylc-preset-card {
   background-color: var(--ylc-bg-surface);
 }
@@ -1358,6 +1317,47 @@
   .ylc-overlay-control-icon {
     border: 1px solid ButtonText;
   }
+}
+
+.ylc-setting-panel .ylc-theme-surface,
+.ylc-setting-panel .ylc-theme-surface-muted,
+.ylc-setting-panel .ylc-theme-elevated,
+.ylc-setting-panel .ylc-theme-input,
+.ylc-setting-panel .ylc-theme-input-borderless,
+.ylc-setting-panel .ylc-theme-select,
+.ylc-setting-panel .ylc-theme-icon-badge,
+.ylc-setting-panel .ylc-theme-icon-badge-sm,
+.ylc-setting-panel .ylc-theme-icon-badge-xs,
+.ylc-setting-panel .ylc-theme-alpha-checker,
+.ylc-setting-panel .ylc-theme-tab,
+.ylc-setting-panel .ylc-theme-tab:hover,
+.ylc-setting-panel .ylc-theme-tab-active,
+.ylc-setting-panel .ylc-theme-tab-active:hover,
+.ylc-setting-panel .ylc-theme-glass-panel-muted {
+  background: transparent;
+  background-color: transparent;
+}
+
+.ylc-setting-panel .ylc-theme-icon-badge,
+.ylc-setting-panel .ylc-theme-icon-badge-sm,
+.ylc-setting-panel .ylc-theme-icon-badge-xs {
+  background-color: var(--ylc-bg-surface);
+}
+
+.ylc-setting-panel .ylc-theme-tab-active,
+.ylc-setting-panel .ylc-theme-tab-active:hover {
+  background-color: var(--ylc-bg-surface);
+  border-color: color-mix(in srgb, var(--ylc-border) 82%, transparent);
+}
+
+.ylc-setting-panel .ylc-theme-glass-panel-muted {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.ylc-setting-panel .ylc-theme-input-borderless:hover,
+.ylc-setting-panel .ylc-theme-select:hover {
+  background: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

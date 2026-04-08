@@ -21,7 +21,7 @@ const Popup = () => {
       <div className='flex-grow ylc-theme-surface-muted py-2'>
         {items.map((item, index) => (
           <PopupItemRow
-            key={`${item.title}-${index}`}
+            key={item.id}
             icon={item.icon}
             title={item.title}
             data={item.data}
