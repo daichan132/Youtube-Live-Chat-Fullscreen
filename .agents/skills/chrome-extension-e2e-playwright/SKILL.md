@@ -1,6 +1,6 @@
 ---
 name: chrome-extension-e2e-playwright
-description: Playwright E2E testing guide for Chrome extensions. Covers extension loading, MV3 Service Worker startup, page.evaluate() serialization boundary, chrome.storage test access, Shadow DOM interaction, iframe throttling, fixture design, and failure diagnostics — practical knowledge not found in official docs. Use this skill whenever writing, debugging, or stabilizing Playwright E2E tests for Chrome extensions, even if the user doesn't explicitly mention "E2E" — any mention of Playwright + extension testing should trigger this skill.
+description: Playwright E2E testing guide for Chrome extensions. Covers extension loading, MV3 Service Worker startup, page.evaluate() serialization boundary, chrome.storage test access, Shadow DOM interaction, iframe throttling, fixture design, and failure diagnostics. Use this skill only when writing, debugging, or stabilizing Playwright E2E tests for Chrome extensions. Do not use it for manual browser verification; use `agent-browser` or the project-specific `ylc-agent-browser` skill when the task is to open the site and inspect real browser behavior.
 ---
 
 # Chrome Extension E2E with Playwright

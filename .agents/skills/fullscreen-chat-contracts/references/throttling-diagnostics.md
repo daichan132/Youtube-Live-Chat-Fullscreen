@@ -2,13 +2,18 @@
 
 フルスクリーン解除後に native chat の読み込みが遅い場合、以下の手順で原因を特定する。
 
-## 1. Playwright で computed style を採取
+## 1. agent-browser で computed style を採取
 
-```typescript
-const getDiagnostics = () => {
+```bash
+agent-browser close --all
+agent-browser --headed --extension .output/chrome-mv3 open "https://www.youtube.com/watch?v=<VIDEO_ID>"
+agent-browser wait --load networkidle
+
+cat <<'EOF' | agent-browser eval --stdin
+(() => {
   const elements = ['#secondary', '#chat-container', 'ytd-live-chat-frame', '#chatframe']
-  return elements.map(sel => {
-    const el = document.querySelector(sel) as HTMLElement | null
+  return elements.map((sel) => {
+    const el = document.querySelector(sel)
     if (!el) return { sel, exists: false }
     const style = window.getComputedStyle(el)
     const rect = el.getBoundingClientRect()
@@ -24,7 +29,8 @@ const getDiagnostics = () => {
       parentId: el.parentElement?.id ?? '',
     }
   })
-}
+})()
+EOF
 ```
 
 ## 2. チェックポイント
@@ -42,11 +48,11 @@ const getDiagnostics = () => {
 |------|------|------|
 | `#chatframe` の `rectWidth` が 0 | 祖先に `display: none` or `width: 0` | `visibility: hidden` + `position: fixed` + `width: 400px` に変更 |
 | `#chatframe` が null | archive borrow で extension が iframe を移動済み | 正常。返却処理を確認 |
-| `#chat-container` の `parentId` が想定外 | YouTube の DOM 再配置 | Playwright で実際の親を確認し、CSS ターゲットを修正 |
+| `#chat-container` の `parentId` が想定外 | YouTube の DOM 再配置 | agent-browser で実際の親を確認し、CSS ターゲットを修正 |
 | 解除後 1s 付近でフリッカー | YouTube の DOM 再構成で一時的に非表示 | `#panels-full-bleed-container` の隠蔽方式を確認 |
 
 ## 4. 注意: YouTube の DOM 構造は変わりうる
 
 YouTube はフルスクリーン時に `#chat-container` を `#secondary` から `#panels-full-bleed-container` に移動する。
-この挙動は YouTube 側のアップデートで変わる可能性があるため、CSS の修正前には必ず Playwright で
-実際の DOM 階層を確認すること。詳細は `fullscreen-chat-contracts` スキルを参照。
+この挙動は YouTube 側のアップデートで変わる可能性があるため、CSS の修正前には必ず agent-browser で
+実際の DOM 階層を確認すること。詳細は `fullscreen-chat-contracts` と `ylc-agent-browser` を参照。

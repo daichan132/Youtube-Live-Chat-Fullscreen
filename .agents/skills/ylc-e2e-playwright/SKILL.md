@@ -1,11 +1,13 @@
 ---
 name: ylc-e2e-playwright
-description: この拡張の Playwright E2E 運用ガイド。E2E テスト実行・新テスト追加・失敗/フレーク調査・URL ドリフト修正・trace/PWDEBUG デバッグで使う。フルスクリーンチャット・チャットなし動画・リプレイ不可・アーカイブ遷移・SPA 遷移の E2E テストを扱う。
+description: この拡張の Playwright E2E テスト専用ガイド。E2E テスト実行・新テスト追加・失敗/フレーク調査・URL ドリフト修正・trace/PWDEBUG デバッグで使う。フルスクリーンチャット・チャットなし動画・リプレイ不可・アーカイブ遷移・SPA 遷移の E2E テストを扱う。実ブラウザでの手動動作確認や DOM/見た目の現物確認には使わず、その場合は `ylc-agent-browser` を使う。
 ---
 
 # E2E Playwright — YLC プロジェクト固有ガイド
 
 Chrome 拡張の Playwright 汎用パターン（拡張ロード、SW 起動、evaluate スコープ、chrome.storage、Shadow DOM、iframe）は **chrome-extension-e2e-playwright** スキルを参照。本スキルはこのプロジェクト固有のインフラ・契約に特化する。
+
+ブラウザ上の挙動を現物確認するときはこの skill に寄せない。YouTube を開いて switch や iframe の状態を直接調べる作業は **ylc-agent-browser** を使う。
 
 ## Reference table
 
