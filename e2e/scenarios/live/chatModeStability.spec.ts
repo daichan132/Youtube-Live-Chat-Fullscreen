@@ -76,7 +76,8 @@ const collectModeHistory = (durationMs: number) => {
 		const history: ModeSample[] = []
 		const startTime = Date.now()
 		const interval = setInterval(() => {
-			const sample = (window as Window & { __sampleDetectChatMode: typeof sampleDetectChatMode }).__sampleDetectChatMode()
+			const sample = (window as unknown as Window & { __sampleDetectChatMode: typeof sampleDetectChatMode })
+				.__sampleDetectChatMode()
 			history.push({ ...sample, ts: Date.now() - startTime })
 			if (Date.now() - startTime >= durationMs) {
 				clearInterval(interval)

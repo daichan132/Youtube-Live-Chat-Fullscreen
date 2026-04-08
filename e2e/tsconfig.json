@@ -10,6 +10,7 @@
 		"strict": true,
 		"skipLibCheck": true,
 		"jsx": "react-jsx",
+		"types": ["chrome"],
 		"baseUrl": ".",
 		"paths": {
 			"@e2e/*": ["./*"]
