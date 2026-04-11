@@ -5103,14 +5103,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react-dom@npm:19.2.4"
+"react-dom@npm:19.2.5":
+  version: 19.2.5
+  resolution: "react-dom@npm:19.2.5"
   dependencies:
     scheduler: "npm:^0.27.0"
   peerDependencies:
-    react: ^19.2.4
-  checksum: 10c0/f0c63f1794dedb154136d4d0f59af00b41907f4859571c155940296808f4b94bf9c0c20633db75b5b2112ec13d8d7dd4f9bf57362ed48782f317b11d05a44f35
+    react: ^19.2.5
+  checksum: 10c0/8067606e9f58e4c2e8cb5f09570217dbc71c4843ebcaa20ae2085912d3e3a351f17d8f7c1713313cdda7f272840c8c34ff6c860fcb840862071bceea218e0c63
   languageName: node
   linkType: hard
 
@@ -5143,10 +5143,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.4":
-  version: 19.2.4
-  resolution: "react@npm:19.2.4"
-  checksum: 10c0/cd2c9ff67a720799cc3b38a516009986f7fc4cb8d3e15716c6211cf098d1357ee3e348ab05ad0600042bbb0fd888530ba92e329198c92eafa0994f5213396596
+"react@npm:19.2.5":
+  version: 19.2.5
+  resolution: "react@npm:19.2.5"
+  checksum: 10c0/4b5f231dbef92886f602533c9ce3bde04d99f0e71dfb5d794c43e02726efaad0421c08688f75fc98a6d6e1dc017372e1af7abbfecdc86a79968f461675931a7a
   languageName: node
   linkType: hard
 
@@ -6739,9 +6739,9 @@ __metadata:
     jsdom: "npm:29.0.2"
     lefthook: "npm:2.1.5"
     re-resizable: "npm:^6.11.2"
-    react: "npm:19.2.4"
+    react: "npm:19.2.5"
     react-colorful: "npm:^5.6.1"
-    react-dom: "npm:19.2.4"
+    react-dom: "npm:19.2.5"
     react-i18next: "npm:^17.0.2"
     redux-persist-webextension-storage: "npm:^1.0.2"
     typescript: "npm:6.0.2"
