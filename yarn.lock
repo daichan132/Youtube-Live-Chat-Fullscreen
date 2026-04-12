@@ -1245,13 +1245,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.1.39":
-  version: 0.1.39
-  resolution: "@types/chrome@npm:0.1.39"
+"@types/chrome@npm:0.1.40":
+  version: 0.1.40
+  resolution: "@types/chrome@npm:0.1.40"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/18be5a0e2c95d8f6ad58b22906eb48c600cade716687bb94e43e5ab1f51619ccca9195ffa10b69719eb320ef9ae961ef64ce63ff3dcaa409a281fd39561c2c9f
+  checksum: 10c0/e32b69e967b6e02b3d71935ce12b679b0d443e5418241b27087bb13fc6d35005f3621261ff4abc83a1726463d56a7c07165811a5a6e526204717e22ade5a446c
   languageName: node
   linkType: hard
 
@@ -6728,7 +6728,7 @@ __metadata:
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:6.9.1"
     "@testing-library/react": "npm:16.3.2"
-    "@types/chrome": "npm:0.1.39"
+    "@types/chrome": "npm:0.1.40"
     "@types/react": "npm:19.2.14"
     "@types/react-dom": "npm:19.2.3"
     "@types/redux-persist-webextension-storage": "npm:1.0.3"
