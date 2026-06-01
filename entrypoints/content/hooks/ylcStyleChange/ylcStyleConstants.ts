@@ -14,7 +14,11 @@ export const YLC_BG_TRANSPARENT_PROPERTIES = [
   '--yt-live-chat-message-highlight-background-color',
 ] as const
 
-export const YLC_BG_SURFACE_PROPERTIES = ['--extension-yt-live-menu-background-color'] as const
+export const YLC_BG_SURFACE_PROPERTIES = [
+  '--extension-yt-live-menu-background-color',
+  '--yt-spec-menu-background',
+  '--yt-spec-raised-background',
+] as const
 
 export const YLC_FONT_COLOR_PROPERTIES = ['--extension-yt-live-font-color'] as const
 

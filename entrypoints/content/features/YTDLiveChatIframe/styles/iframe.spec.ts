@@ -37,10 +37,38 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('--extension-yt-live-control-border-color')
     expect(iframeStyles).toContain('--extension-yt-live-menu-hover-background-color')
     expect(iframeStyles).toContain('yt-live-chat-header-renderer .ytSpecButtonShapeNextHost')
+    expect(iframeStyles).toContain('yt-live-chat-header-renderer yt-button-shape')
     expect(iframeStyles).toContain('a.ytSpecButtonShapeNextTonal')
     expect(iframeStyles).toContain('ytd-menu-popup-renderer')
     expect(iframeStyles).toContain('ytd-menu-service-item-renderer yt-formatted-string')
     expect(iframeStyles).toContain('tp-yt-paper-listbox')
+    expect(iframeStyles).toContain('ytd-menu-service-item-renderer[aria-disabled="true"]')
+    expect(iframeStyles).toContain('border-radius: 8px;')
+    expect(iframeStyles).toContain('overflow: hidden;')
+    expect(iframeStyles).toContain(
+      'tp-yt-iron-dropdown {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
+    )
+    expect(iframeStyles).toContain('background-color: transparent !important;')
+    expect(iframeStyles).toContain('background: var(--extension-yt-live-menu-background-color) !important;')
+    expect(iframeStyles).toContain('background-color: var(--extension-yt-live-menu-background-color) !important;')
+    expect(iframeStyles).toContain('border-radius: inherit;')
+    expect(iframeStyles).toContain(
+      'ytd-menu-popup-renderer {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
+    )
+    expect(iframeStyles).toContain('background: transparent !important;')
+    expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer yt-icon')
+    expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer span')
+    expect(iframeStyles).toContain('tp-yt-iron-dropdown tp-yt-paper-item *')
+    expect(iframeStyles).toContain('fill: currentColor !important;')
+  })
+
+  it('themes logged-in support and Super Chat picker surfaces', () => {
+    expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model')
+    expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model')
+    expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #buy-flow')
+    expect(iframeStyles).toContain('.yt-live-chat-paid-sticker-panel-renderer')
+    expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model #text yt-attributed-string:not(:first-child)')
+    expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model .ytSpecIconShapeHost')
   })
 
   it('themes pinned banners without overriding owner badges', () => {

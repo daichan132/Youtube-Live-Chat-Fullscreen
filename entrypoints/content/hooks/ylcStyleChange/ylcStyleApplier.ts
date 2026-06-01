@@ -57,7 +57,12 @@ export const setYLCStyleProperty = (property: string, value: string) => {
 
 const toRgbaString = (rgba: RGBColor, alpha: number | undefined) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`
 
-const toReadableSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(rgba.a ?? 1, 0.92))
+const roundAlpha = (alpha: number) => Math.round(alpha * 1000) / 1000
+
+const toElevatedSurfaceColor = (rgba: RGBColor) => {
+  const alpha = rgba.a ?? 1
+  return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
+}
 
 const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, (rgba.a ?? 1) * 0.12))
 
@@ -66,7 +71,7 @@ export const changeYLCBgColor = (rgba: RGBColor) => {
     ...YLC_BG_COLOR_PROPERTIES.map(property => [property, 'transparent'] as const),
     ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
     ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
-    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toReadableSurfaceColor(rgba)] as const),
+    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toElevatedSurfaceColor(rgba)] as const),
   ])
 }
 
