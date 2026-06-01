@@ -260,14 +260,34 @@ body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #p
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer yt-live-chat-icon-toggle-button-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-top,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #left,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text *,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button yt-button-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button yt-button-shape,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-shape,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button yt-button-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button yt-button-shape,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button button,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button .ytSpecIconShapeHost,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #title,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #back-button,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #close-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer #title,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer #content,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer {
   color: var(--extension-yt-live-font-color) !important;
 }
@@ -275,8 +295,7 @@ body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-mo
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer {
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer {
   background: var(--extension-yt-live-menu-background-color) !important;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model #header,
@@ -295,7 +314,10 @@ body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #c
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #content-wrapper,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #buy-flow,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #content,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-top,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #left,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #content-wrapper,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #buy-flow,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #picker-container,
@@ -318,12 +340,25 @@ body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #h
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help path,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons svg,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons path,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button svg,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button path,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button svg,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button path,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button svg,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button path,
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #back-button svg,
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #back-button path,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer path,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer path {
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer path {
   color: var(--extension-yt-live-font-color) !important;
   fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer {
+  background: #fff !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer #title,
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer #content {
+  color: #0f0f0f !important;
 }
 body.custom-yt-app-live-chat-extension #message.yt-live-chat-viewer-engagement-message-renderer,
 body.custom-yt-app-live-chat-extension #label.yt-live-chat-text-input-field-renderer,

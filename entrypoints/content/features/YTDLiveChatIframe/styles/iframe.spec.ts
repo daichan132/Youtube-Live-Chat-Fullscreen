@@ -72,10 +72,17 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #help yt-button-renderer')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #price-input *')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #picker-buttons svg')
+    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #header-text *')
+    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-renderer')
+    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #close-button svg')
+    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #back-button path')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model:hover #container')
     expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-renderer #pack-stickers')
     expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-item-button-renderer:hover #sticker')
-    expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-backstory-renderer #content')
+    expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-backstory-renderer {\n  background: #fff !important;')
+    expect(iframeStyles).toContain(
+      'yt-live-chat-super-sticker-pack-backstory-renderer #title,\nbody.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-backstory-renderer #content {\n  color: #0f0f0f !important;',
+    )
     expect(iframeStyles).toContain('background: transparent !important;')
     expect(iframeStyles).toContain('background-color: transparent !important;')
     expect(iframeStyles).not.toContain('yt-live-chat-product-picker-panel-item-view-model:hover,\n')
@@ -83,6 +90,9 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension .yt-live-chat-paid-sticker-panel-renderer')
     expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension .yt-live-chat-super-sticker-preview-renderer')
     expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension .yt-live-chat-super-sticker-pack-backstory-renderer')
+    expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer svg')
+    expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer path')
+    expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer #content *')
   })
 
   it('themes pinned banners without overriding owner badges', () => {

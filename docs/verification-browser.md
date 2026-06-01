@@ -15,29 +15,31 @@ yarn verify:browser --port 9335 --url "https://www.youtube.com/watch?v=EWrX250Zh
 
 ## ログイン済み UI の検証
 
-Google ログインが必要な UI は Chrome for Testing ではなく、通常の Google Chrome を使う。
+Google ログインが必要な UI は Chrome for Testing ではなく、通常の Google Chrome を使う。UI 調整中は build ではなく dev 出力を使う。
 
 ```bash
-yarn build
-yarn verify:chrome --setup-extension --port 9336
+yarn dev
+yarn verify:dev --port 9336
 ```
 
 `verify:chrome` は `/Applications/Google Chrome.app` を直接起動し、Playwright の自動化 Chrome は使わない。プロファイルは既定で `~/Library/Application Support/YLC Verify Chrome` に作られる。一度 YouTube / Google にログインすると次回以降もその状態を再利用できる。
+`verify:dev` は `.output/chrome-mv3-dev` を対象にして、同名の別 path の拡張を成功扱いしない。`yarn dev` を先に起動して dev manifest を生成し、WXT dev server を動かしたまま使う。
 
 通常の Google Chrome 137+ は `--load-extension` で unpacked extension を読み込まないため、初回だけ `chrome://extensions` で次を行う。
 
 1. Developer mode をオンにする
 2. Load unpacked を押す
-3. `.output/chrome-mv3` を選択する
+3. UI 調整中は `.output/chrome-mv3-dev` を選択する
 
-`--setup-extension` はここで終了せず、拡張が読み込まれるまで待つ。読み込みを検出したら自動で検証用 YouTube URL を開く。待ち時間を変えたい場合は `--timeout-ms` を指定する。
+`verify:dev` はここで終了せず、dev 出力の拡張が読み込まれるまで待つ。さらに WXT dev server の WebSocket に接続できない場合は、別の localhost サーバーを誤って使わないように失敗する。読み込みを検出したら自動で検証用 YouTube URL を開く。待ち時間を変えたい場合は `--timeout-ms` を指定する。
 
-`yarn build` をやり直したあとは、`chrome://extensions` でこの拡張の reload を押してから検証する。`--load-extension` やプロセス引数では、今のビルドが読み込まれている証明にはならない。
+CSS / content script を変更したあとは、`chrome://extensions` でこの拡張の reload を押してから YouTube ページを reload する。`--load-extension` やプロセス引数では、今の dev 出力が読み込まれている証明にはならない。
 
-拡張を読み込んだあとは、同じプロファイルを再利用して YouTube を開く。
+配布前の build 出力を確認したいときだけ、明示的に build 用の入口を使う。
 
 ```bash
-yarn verify:chrome --port 9336 --url "https://www.youtube.com/watch?v=EWrX250Zhko"
+yarn build
+yarn verify:chrome --setup-extension --port 9336 --url "https://www.youtube.com/watch?v=EWrX250Zhko"
 ```
 
 同じ `--port` の Chrome がすでに起動している場合は、process args に `--remote-debugging-port=9336` と `--user-data-dir=~/Library/Application Support/YLC Verify Chrome` がある場合だけ再利用する。一致しない場合は誤った Chrome を触らないために停止する。
@@ -53,6 +55,7 @@ yarn verify:overlay --port 9335
 ```
 
 非フルスクリーンでは overlay が未生成でも正常。フルスクリーンに入ったあとに再実行すると、`data-ylc-resizable`、`data-ylc-control-rail`、drag handle、settings button の座標と表示状態を JSON で確認できる。
+フルスクリーン中に拡張 DOM が見つからない場合は `extensionDomMounted: false` を出して非ゼロ終了する。これは検証 Chrome に unpacked extension が読み込まれていない、または YouTube ページを reload していない状態を示す。非フルスクリーンでは `extensionDomExpected: false` なので、拡張 DOM が無くても正常。
 
 ログイン済み UI を通常 Google Chrome で見ている場合は、同じ検証 Chrome の CDP port を指定する。
 
@@ -75,6 +78,8 @@ yarn verify:screenshots --port 9335 --out /private/tmp/ylc-overlay-screenshots
 ## 見るポイント
 
 - `fullscreen: true`
+- `extensionDomExpected: true`
+- `extensionDomMounted: true`
 - `overlayMounted: true`
 - `elements.controlRail.opacity` がホバー時に `1`
 - `elements.controlRail.pointerEvents` がホバー時に `auto`
