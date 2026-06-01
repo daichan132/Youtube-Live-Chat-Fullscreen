@@ -4,8 +4,6 @@
   --ylc-divider-width: 2px;
   --ylc-action-width-popup: 156px;
   --ylc-action-width-setting: 160px;
-  --ylc-action-width-popup-wide: 188px;
-  --ylc-action-width-setting-wide: 196px;
   --ylc-radius-sm: 6px;
   --ylc-radius-md: 8px;
   --ylc-radius-lg: 10px;
@@ -89,6 +87,7 @@
   --ylc-danger-text: #ef4444;
   --ylc-danger-hover: rgba(239, 68, 68, 0.12);
   --ylc-overlay-panel: rgba(255, 255, 255, 0.82);
+  --ylc-overlay-control-rail-bg: rgba(255, 255, 255, 0.92);
   --ylc-overlay-control-hover: rgba(15, 23, 42, 0.1);
   --ylc-alpha-grid-dark: #d6dee8;
   --ylc-alpha-grid-light: #edf2f7;
@@ -138,6 +137,7 @@
   --ylc-danger-text: #fca5a5;
   --ylc-danger-hover: rgba(248, 113, 113, 0.16);
   --ylc-overlay-panel: rgba(15, 23, 42, 0.78);
+  --ylc-overlay-control-rail-bg: rgba(15, 23, 42, 0.9);
   --ylc-overlay-control-hover: rgba(248, 250, 252, 0.14);
   --ylc-alpha-grid-dark: #2f3e52;
   --ylc-alpha-grid-light: #1f2a3a;
@@ -319,14 +319,6 @@
 
 .ylc-action-slot-setting {
   width: min(100%, var(--ylc-action-width-setting));
-}
-
-.ylc-action-slot-popup.ylc-action-slot-wide {
-  width: min(100%, var(--ylc-action-width-popup-wide));
-}
-
-.ylc-action-slot-setting.ylc-action-slot-wide {
-  width: min(100%, var(--ylc-action-width-setting-wide));
 }
 
 .ylc-action-inner {
@@ -979,16 +971,6 @@
   outline-offset: 2px;
 }
 
-.ylc-font-combobox-trigger:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.ylc-font-combobox-trigger-readonly {
-  cursor: default;
-  opacity: 0.82;
-}
-
 .ylc-font-combobox-trigger-text {
   min-width: 0;
   overflow: hidden;
@@ -1215,7 +1197,28 @@
   background: transparent;
   border-radius: 9999px;
   line-height: 0;
-  transition: background-color 120ms ease;
+  transition:
+    background-color 160ms ease,
+    opacity 160ms ease,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ylc-overlay-control-rail {
+  padding: 2px;
+  border: none;
+  border-radius: 9999px;
+  background: var(--ylc-overlay-control-rail-bg-runtime, var(--ylc-overlay-control-rail-bg));
+  box-shadow: var(--ylc-shadow-sm);
+  backdrop-filter: blur(12px) saturate(125%);
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  color: inherit;
+  transform-origin: top right;
+  will-change: opacity, transform;
+  transition:
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 180ms ease,
+    box-shadow 180ms ease;
 }
 
 .ylc-overlay-control-icon > svg {

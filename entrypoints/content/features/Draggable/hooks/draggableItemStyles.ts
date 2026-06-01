@@ -12,7 +12,7 @@ interface Clip {
   input: number
 }
 
-interface UseDraggableItemStylesProps {
+interface DraggableItemStylesProps {
   top: number
   left: number
   isClipPath: boolean
@@ -24,14 +24,12 @@ interface UseDraggableItemStylesProps {
 }
 
 interface StyleResults {
+  frameStyle: CSSProperties
   resizableStyle: CSSProperties
   innerDivStyle: CSSProperties
 }
 
-/**
- * Hook that generates styles for the draggable item container and its inner content
- */
-export const useDraggableItemStyles = ({
+export const getDraggableItemStyles = ({
   top,
   left,
   isClipPath,
@@ -40,7 +38,7 @@ export const useDraggableItemStyles = ({
   isResizing,
   transform,
   clip,
-}: UseDraggableItemStylesProps): StyleResults => {
+}: DraggableItemStylesProps): StyleResults => {
   const shouldAnimateGeometry = isClipAnimationReady || !isClipPath
   const transitionProperties = [
     !disableTopTransition && `top ${CLIP_GEOMETRY_TRANSITION}`,
@@ -50,20 +48,19 @@ export const useDraggableItemStyles = ({
     .join(', ')
   const transition = shouldAnimateGeometry && transitionProperties.length > 0 ? transitionProperties : 'none'
 
-  // Styles for the resizable container
-  const resizableStyle = {
-    top,
-    left,
-    transition,
-    pointerEvents: isClipPath ? ('none' as const) : ('auto' as const),
+  return {
+    frameStyle: {
+      transform: transform ? CSS.Translate.toString({ ...transform, scaleX: 1, scaleY: 1 }) : '',
+    },
+    resizableStyle: {
+      top,
+      left,
+      transition,
+      pointerEvents: isClipPath ? 'none' : 'auto',
+    },
+    innerDivStyle: {
+      clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
+      transition: shouldAnimateGeometry ? `clip-path ${CLIP_GEOMETRY_TRANSITION}` : 'none',
+    },
   }
-
-  // Styles for the inner div
-  const innerDivStyle = {
-    transform: transform ? CSS.Translate.toString({ ...transform, scaleX: 1, scaleY: 1 }) : '',
-    clipPath: isClipPath ? `inset(${clip.header}px 0 ${clip.input}px 0 round 10px)` : 'inset(0 round 10px)',
-    transition: shouldAnimateGeometry ? `clip-path ${CLIP_GEOMETRY_TRANSITION}` : 'none',
-  }
-
-  return { resizableStyle, innerDivStyle }
 }

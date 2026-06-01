@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { CLIP_GEOMETRY_TRANSITION } from '../constants/animation'
-import { useDraggableItemStyles } from './useDraggableItemStyles'
+import { getDraggableItemStyles } from './draggableItemStyles'
 
 const baseProps = {
   top: 20,
@@ -11,9 +11,9 @@ const baseProps = {
   clip: { header: 32, input: 20 },
 }
 
-describe('useDraggableItemStyles', () => {
+describe('getDraggableItemStyles', () => {
   it('disables geometry animation on the first clip frame', () => {
-    const { resizableStyle, innerDivStyle } = useDraggableItemStyles({
+    const { resizableStyle, innerDivStyle } = getDraggableItemStyles({
       ...baseProps,
       isClipPath: true,
       isClipAnimationReady: false,
@@ -24,8 +24,20 @@ describe('useDraggableItemStyles', () => {
     expect(innerDivStyle.clipPath).toBe('inset(32px 0 20px 0 round 10px)')
   })
 
+  it('applies drag transform to the shared frame', () => {
+    const { frameStyle, innerDivStyle } = getDraggableItemStyles({
+      ...baseProps,
+      isClipPath: false,
+      isClipAnimationReady: true,
+      transform: { x: 12, y: 8 },
+    })
+
+    expect(frameStyle.transform).toBe('translate3d(12px, 8px, 0)')
+    expect(innerDivStyle.transform).toBeUndefined()
+  })
+
   it('animates top/height and clip-path after priming', () => {
-    const { resizableStyle, innerDivStyle } = useDraggableItemStyles({
+    const { resizableStyle, innerDivStyle } = getDraggableItemStyles({
       ...baseProps,
       isClipPath: true,
       isClipAnimationReady: true,
@@ -36,7 +48,7 @@ describe('useDraggableItemStyles', () => {
   })
 
   it('omits height transition while resizing', () => {
-    const { resizableStyle } = useDraggableItemStyles({
+    const { resizableStyle } = getDraggableItemStyles({
       ...baseProps,
       isClipPath: true,
       isClipAnimationReady: true,
@@ -47,7 +59,7 @@ describe('useDraggableItemStyles', () => {
   })
 
   it('omits top transition when disableTopTransition is enabled', () => {
-    const { resizableStyle } = useDraggableItemStyles({
+    const { resizableStyle } = getDraggableItemStyles({
       ...baseProps,
       isClipPath: true,
       isClipAnimationReady: true,

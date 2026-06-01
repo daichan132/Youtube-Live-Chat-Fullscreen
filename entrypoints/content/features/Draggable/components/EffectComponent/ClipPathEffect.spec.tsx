@@ -1,5 +1,6 @@
 import { act, render } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { IFRAME_CLIP_PATH_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { ClipPathEffect } from './ClipPathEffect'
 
@@ -119,6 +120,74 @@ describe('ClipPathEffect', () => {
     expect(liveState.size).toEqual({ width: 300, height: 252 })
   })
 
+  it('keeps clip path disabled while the external controls are fading out', () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: false,
+        iframeElement: iframe,
+      },
+    })
+
+    render(<ClipPathEffect isDragging={false} isResizing={false} isControlRailHiding />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(false)
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+  })
+
+  it('removes focus from the iframe when clip path is enabled', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+    const activeElement = iframe.contentDocument?.createElement('button') as HTMLButtonElement
+    const blur = vi.spyOn(activeElement, 'blur')
+    Object.defineProperty(iframe.contentDocument, 'activeElement', {
+      value: activeElement,
+      configurable: true,
+    })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: undefined,
+        iframeElement: iframe,
+        clip: { header: 0, input: 0 },
+      },
+    })
+
+    render(<ClipPathEffect isDragging={false} isResizing={false} />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(blur).toHaveBeenCalledTimes(1)
+  })
+
   it('auto-hides chrome after load even when hover is initially true', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
@@ -227,6 +296,100 @@ describe('ClipPathEffect', () => {
     // Unhover enables clip again and reapplies geometry offset.
     expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
     expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -12 })
+  })
+
+  it('restores base geometry when iframe unload disables clip path', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: undefined,
+        iframeElement: iframe,
+        clip: { header: 0, input: 0 },
+      },
+    })
+
+    render(<ClipPathEffect isDragging={false} isResizing={false} />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -12 })
+
+    act(() => {
+      useYTDLiveChatNoLsStore.getState().setIsIframeLoaded(false)
+    })
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(false)
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
+  })
+
+  it('toggles the iframe clip-path class with clip state', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: undefined,
+        iframeElement: iframe,
+        clip: { header: 0, input: 0 },
+      },
+    })
+
+    render(<ClipPathEffect isDragging={false} isResizing={false} />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(iframe.contentDocument?.body.classList.contains(IFRAME_CLIP_PATH_CLASS)).toBe(true)
+
+    act(() => {
+      useYTDLiveChatNoLsStore.getState().setIsHover(true)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(iframe.contentDocument?.body.classList.contains(IFRAME_CLIP_PATH_CLASS)).toBe(false)
   })
 
   it('keeps clipped geometry stable when clip is re-applied with the same values', async () => {
