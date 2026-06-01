@@ -22,6 +22,7 @@
     "e2e:live": "playwright test --project=e2e --grep @live",
     "screenshots": "playwright test --project=screenshots --workers=1",
     "verify:browser": "node scripts/verify/launch-browser.mjs",
+    "verify:chrome": "node scripts/verify/launch-chrome.mjs",
     "verify:overlay": "node scripts/verify/inspect-overlay.mjs",
     "verify:screenshots": "node scripts/verify/capture-overlay-screenshots.mjs"
   },
