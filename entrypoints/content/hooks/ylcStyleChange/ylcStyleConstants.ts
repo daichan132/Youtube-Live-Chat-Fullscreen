@@ -14,6 +14,20 @@ export const YLC_BG_TRANSPARENT_PROPERTIES = [
   '--yt-live-chat-message-highlight-background-color',
 ] as const
 
+export const YLC_BG_SURFACE_PROPERTIES = ['--extension-yt-live-menu-background-color'] as const
+
 export const YLC_FONT_COLOR_PROPERTIES = ['--extension-yt-live-font-color'] as const
 
 export const YLC_FONT_COLOR_LIGHT_PROPERTIES = ['--extension-yt-live-secondary-font-color'] as const
+
+export const YLC_FONT_COLOR_SURFACE_PROPERTIES = [
+  '--extension-yt-live-control-background-color',
+  '--extension-yt-live-menu-hover-background-color',
+  '--extension-yt-live-control-border-color',
+] as const
+
+export const YLC_FONT_SIZE_PROPERTY = '--extension-yt-live-chat-font-size'
+export const YLC_SPACING_PROPERTY = '--extension-yt-live-chat-spacing'
+export const YLC_USER_NAME_DISPLAY_PROPERTY = '--extension-user-name-display'
+export const YLC_USER_ICON_DISPLAY_PROPERTY = '--extension-user-icon-display'
+export const YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY = '--extension-super-chat-bar-display'

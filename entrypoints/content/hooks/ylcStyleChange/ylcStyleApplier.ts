@@ -1,0 +1,166 @@
+import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
+import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import type { RGBColor, YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
+import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import {
+  YLC_BG_COLOR_PROPERTIES,
+  YLC_BG_DARKEN_PROPERTIES,
+  YLC_BG_SURFACE_PROPERTIES,
+  YLC_BG_TRANSPARENT_PROPERTIES,
+  YLC_FONT_COLOR_LIGHT_PROPERTIES,
+  YLC_FONT_COLOR_PROPERTIES,
+  YLC_FONT_COLOR_SURFACE_PROPERTIES,
+  YLC_FONT_SIZE_PROPERTY,
+  YLC_SPACING_PROPERTY,
+  YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
+  YLC_USER_ICON_DISPLAY_PROPERTY,
+  YLC_USER_NAME_DISPLAY_PROPERTY,
+} from './ylcStyleConstants'
+
+export type PropertyEntry = readonly [string, string]
+
+const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
+const FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
+
+const getConnectedYLCIframe = () => {
+  const iframeElement = useYTDLiveChatNoLsStore.getState().iframeElement
+  if (!iframeElement?.isConnected) return undefined
+  return iframeElement
+}
+
+const getYLCIframeDocument = () => {
+  const iframeElement = getConnectedYLCIframe()
+  if (!iframeElement) return undefined
+
+  try {
+    return iframeElement.contentDocument ?? undefined
+  } catch {
+    return undefined
+  }
+}
+
+export const getYLCIframeDocumentElement = () => getYLCIframeDocument()?.documentElement
+
+export const setYLCStyleProperties = (properties: ReadonlyArray<PropertyEntry>) => {
+  const iframeDocument = getYLCIframeDocumentElement()
+  if (!iframeDocument) return
+
+  for (const [property, value] of properties) {
+    iframeDocument.style.setProperty(property, value)
+  }
+}
+
+export const setYLCStyleProperty = (property: string, value: string) => {
+  setYLCStyleProperties([[property, value]])
+}
+
+const toRgbaString = (rgba: RGBColor, alpha: number | undefined) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`
+
+const toReadableSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(rgba.a ?? 1, 0.92))
+
+const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, (rgba.a ?? 1) * 0.12))
+
+export const changeYLCBgColor = (rgba: RGBColor) => {
+  setYLCStyleProperties([
+    ...YLC_BG_COLOR_PROPERTIES.map(property => [property, 'transparent'] as const),
+    ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
+    ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
+    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toReadableSurfaceColor(rgba)] as const),
+  ])
+}
+
+export const changeYLCFontColor = (rgba: RGBColor) => {
+  const primary = toRgbaString(rgba, rgba.a)
+  const secondaryAlpha = Math.max(0, (rgba.a ?? 0) - 0.4)
+  const secondary = toRgbaString(rgba, secondaryAlpha)
+
+  setYLCStyleProperties([
+    ...YLC_FONT_COLOR_PROPERTIES.map(property => [property, primary] as const),
+    ...YLC_FONT_COLOR_LIGHT_PROPERTIES.map(property => [property, secondary] as const),
+    ...YLC_FONT_COLOR_SURFACE_PROPERTIES.map(property => [property, toSubtleSurfaceColor(rgba)] as const),
+  ])
+}
+
+export const changeYLCBlur = (blur: number) => {
+  const iframeElement = getConnectedYLCIframe()
+  const iframeDocument = getYLCIframeDocument()
+  const body = iframeDocument?.body
+  if (!iframeElement || !body) return
+
+  const blurValue = blur > 0 ? `blur(${blur}px)` : 'none'
+  body.style.backdropFilter = blurValue
+  body.style.setProperty('-webkit-backdrop-filter', blurValue)
+  iframeElement.style.filter = 'none'
+  iframeElement.style.setProperty('-webkit-filter', 'none')
+}
+
+const removeImportedFont = () => {
+  const iframeDocument = getYLCIframeDocument()
+  iframeDocument?.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)?.remove()
+}
+
+const importFont = (fontFamily: string) => {
+  const iframeDocument = getYLCIframeDocument()
+  if (!iframeDocument) return
+
+  try {
+    const fontUrl = `@import url('https://fonts.googleapis.com/css2?family=${toGoogleFontFamilyParam(fontFamily)}&display=swap');`
+    const existingStyleElement = iframeDocument.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
+
+    if (existingStyleElement) {
+      existingStyleElement.textContent = fontUrl
+      return
+    }
+
+    const styleElement = iframeDocument.createElement('style')
+    styleElement.id = CUSTOM_FONT_STYLE_ID
+    styleElement.textContent = fontUrl
+    iframeDocument.head.appendChild(styleElement)
+  } catch (e) {
+    console.warn('[YLC] Failed to load Google Font:', e)
+  }
+}
+
+const changeIframeFontFamily = (fontFamily: string) => {
+  if (!fontFamily) {
+    setYLCStyleProperty('font-family', FALLBACK_FONT_FAMILY)
+    return
+  }
+
+  setYLCStyleProperty('font-family', `${toQuotedFontFamily(fontFamily)}, ${FALLBACK_FONT_FAMILY}`)
+}
+
+export const changeYLCFontFamily = (fontFamily: string) => {
+  const normalizedFontFamily = normalizeFontFamily(fontFamily)
+  if (!normalizedFontFamily) {
+    removeImportedFont()
+    changeIframeFontFamily('')
+    return
+  }
+
+  importFont(normalizedFontFamily)
+  changeIframeFontFamily(normalizedFontFamily)
+}
+
+const setDisplayProperty = (property: string, display: boolean, visibleValue: 'inline' | 'block' = 'inline') => {
+  setYLCStyleProperty(property, display ? visibleValue : 'none')
+}
+
+export const changeYLCStyle = (update: YLCStyleUpdateType) => {
+  if (update.bgColor !== undefined) changeYLCBgColor(update.bgColor)
+  if (update.blur !== undefined) changeYLCBlur(update.blur)
+  if (update.fontColor !== undefined) changeYLCFontColor(update.fontColor)
+  if (update.fontFamily !== undefined) changeYLCFontFamily(update.fontFamily)
+  if (update.fontSize !== undefined) setYLCStyleProperty(YLC_FONT_SIZE_PROPERTY, `${update.fontSize}px`)
+  if (update.space !== undefined) setYLCStyleProperty(YLC_SPACING_PROPERTY, `${update.space}px`)
+  if (update.userNameDisplay !== undefined) {
+    setDisplayProperty(YLC_USER_NAME_DISPLAY_PROPERTY, update.userNameDisplay)
+  }
+  if (update.userIconDisplay !== undefined) {
+    setDisplayProperty(YLC_USER_ICON_DISPLAY_PROPERTY, update.userIconDisplay)
+  }
+  if (update.superChatBarDisplay !== undefined) {
+    setDisplayProperty(YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY, update.superChatBarDisplay, 'block')
+  }
+}

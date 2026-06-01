@@ -1,7 +1,6 @@
 /* ==========================================================================
  * Fullscreen Chat iframe style contract
  * - body class: custom-yt-app-live-chat-extension
- * - clip class: custom-yt-app-live-chat-extension.clip-path-enable
  * These names are defined in `constants/styleContract.ts`.
  * ========================================================================== */
 
@@ -14,9 +13,13 @@ html {
   --extension-yt-live-chat-spacing: 0px;
   --extension-yt-live-font-color: var(--yt-spec-text-primary, #0f0f0f);
   --extension-yt-live-secondary-font-color: var(--yt-spec-text-secondary, rgba(15, 23, 42, 0.72));
+  --extension-yt-live-menu-background-color: var(--yt-spec-menu-background, var(--yt-spec-base-background, #fff));
+  --extension-yt-live-control-background-color: rgba(15, 23, 42, 0.08);
+  --extension-yt-live-menu-hover-background-color: rgba(15, 23, 42, 0.1);
+  --extension-yt-live-control-border-color: rgba(15, 23, 42, 0.16);
 }
 
-/* -------------------------- Frame base overrides -------------------------- */
+/* ------------------------------ Frame surface ----------------------------- */
 html,
 body {
   background: transparent !important;
@@ -33,26 +36,16 @@ body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
   background: transparent !important;
 }
 
-/* ------------------------- Layout / chrome cleanup ------------------------ */
+/* --------------------------- YouTube chrome trim -------------------------- */
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 0;
   background: transparent;
 }
 body.custom-yt-app-live-chat-extension #panel-pages.yt-live-chat-renderer {
-  border-top: none;
-  border-left: none;
+  border: none;
 }
-body.custom-yt-app-live-chat-extension.clip-path-enable #contents > #separator {
-  opacity: 0;
-  transition: opacity 200ms ease;
-}
-body.custom-yt-app-live-chat-extension.clip-path-enable #panel-pages.yt-live-chat-renderer {
-  border-top: none;
-  transition: border-top 200ms ease;
-}
-body.custom-yt-app-live-chat-extension #panel-pages.yt-live-chat-renderer {
-  border-bottom: none;
-}
+/* Intentional direct display:none exception: this removes YouTube's native
+   close control inside the borrowed/archive chat iframe, not the iframe host. */
 body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-button {
   display: none;
 }
@@ -62,34 +55,111 @@ body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-li
   padding-right: 0px !important;
 }
 body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer,
-body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker-renderer {
-  background: none;
-}
+body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker-renderer,
 body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-buy-flow-renderer {
-  background: none;
+  background: transparent;
 }
 
 /* ------------------------------ Color system ------------------------------ */
-/* Keep this base block before more specific selector overrides below. */
+/* Keep primary color blocks before more specific selector overrides below. */
 body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer,
-body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension yt-dropdown-menu .yt-dropdown-menu[style-target="label-text"],
 body.custom-yt-app-live-chat-extension #label-icon.yt-dropdown-menu,
 body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer[author-type="owner"] #message,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextButtonTextContent,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-live-chat-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-icon,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal .ytSpecButtonShapeNextButtonTextContent,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items .yt-simple-endpoint,
+body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextOutline {
+  border-color: var(--extension-yt-live-control-border-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextHost:hover,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal {
+  background: var(--extension-yt-live-control-background-color);
+}
+
+/* Dropdowns and overflow menus are YouTube surfaces that otherwise keep their
+   default white background / black text inside customized fullscreen chat. */
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown,
+body.custom-yt-app-live-chat-extension tp-yt-paper-listbox,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer #items {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-menu-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-item,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-formatted-string,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer yt-formatted-string,
+body.custom-yt-app-live-chat-extension yt-list-item-view-model {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-item.iron-selected,
+body.custom-yt-app-live-chat-extension tp-yt-paper-item:hover,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer.iron-selected,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer:hover,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer:hover,
+body.custom-yt-app-live-chat-extension yt-list-item-view-model:hover {
+  background: var(--extension-yt-live-menu-hover-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer {
+  color: var(--extension-yt-live-font-color);
+  background: var(--extension-yt-live-control-background-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #contents,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message-container,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer a,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecButtonShapeNextHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecIconShapeHost {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu button,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon {
+  color: var(--extension-yt-live-secondary-font-color);
+}
+
+/* State-dependent input / restricted participation controls. */
+body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension
   yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji
   yt-icon.yt-live-chat-icon-toggle-button-renderer,
 body.custom-yt-app-live-chat-extension div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg,
-body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension
   yt-live-chat-restricted-participation-renderer[updated-input-visuals]
   #icon.yt-live-chat-restricted-participation-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items .yt-simple-endpoint,
 body.custom-yt-app-live-chat-extension
   yt-live-chat-message-input-renderer[system-icons]
   #picker-buttons.yt-live-chat-message-input-renderer
   > *.yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-restricted-participation-renderer[system-icons]
+  #picker-buttons.yt-live-chat-restricted-participation-renderer
+  > *.yt-live-chat-restricted-participation-renderer {
+  color: var(--extension-yt-live-font-color);
+}
+
+/* State-dependent Super Chat / sticker purchase flow. */
 body.custom-yt-app-live-chat-extension #close-button.yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension .yt-live-chat-paid-sticker-panel-renderer,
 body.custom-yt-app-live-chat-extension .yt-live-chat-super-sticker-preview-renderer,
@@ -116,19 +186,8 @@ body.custom-yt-app-live-chat-extension
   .input-content.tp-yt-paper-input-container
   > .paper-input-input,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension #info.yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
-body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
-body.custom-yt-app-live-chat-extension
-  yt-live-chat-restricted-participation-renderer[system-icons]
-  #picker-buttons.yt-live-chat-restricted-participation-renderer
-  > *.yt-live-chat-restricted-participation-renderer,
-body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
-body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
+body.custom-yt-app-live-chat-extension #info.yt-live-chat-message-buy-flow-renderer {
   color: var(--extension-yt-live-font-color);
-}
-body.custom-yt-app-live-chat-extension .yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer {
-  color: var(--yt-live-chat-primary-text-color, var(--yt-spec-text-primary));
 }
 body.custom-yt-app-live-chat-extension #message.yt-live-chat-viewer-engagement-message-renderer,
 body.custom-yt-app-live-chat-extension #label.yt-live-chat-text-input-field-renderer,
@@ -165,8 +224,8 @@ body.custom-yt-app-live-chat-extension #title.yt-emoji-picker-category-renderer 
 /* --------------------------- Typography / sizing -------------------------- */
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
   font-size: var(--extension-yt-live-chat-font-size);
+  margin: var(--extension-yt-live-chat-spacing) 0;
 }
-/* Place generic input sizing before more specific overrides. */
 body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer {
   max-height: none;
   min-height: calc(var(--extension-yt-live-chat-font-size) + 8px);
@@ -194,14 +253,13 @@ body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer > yt-i
   height: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
 }
 
-/* ------------------------- Spacing / visibility --------------------------- */
-body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
-  margin: var(--extension-yt-live-chat-spacing) 0;
-}
+/* ------------------------------ Visibility -------------------------------- */
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer.yt-live-chat-banner-renderer {
   margin: 0;
 }
-body.custom-yt-app-live-chat-extension div#items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
+/* User-facing display toggles. Keep these as display variables so the setting
+   removes the selected chat subpart from layout, while never hiding iframe hosts. */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
   display: var(--extension-user-name-display);
 }
 body.custom-yt-app-live-chat-extension #author-photo.yt-live-chat-text-message-renderer {
@@ -209,7 +267,4 @@ body.custom-yt-app-live-chat-extension #author-photo.yt-live-chat-text-message-r
 }
 body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
   display: var(--extension-super-chat-bar-display);
-}
-body.custom-yt-app-live-chat-extension ytvl-live-viewer-leaderboard-chat-entry-point-view-model {
-  display: none;
 }
