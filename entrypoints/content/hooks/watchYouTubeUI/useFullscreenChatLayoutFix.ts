@@ -32,6 +32,8 @@ html.${className} ${fullscreenRootSelector} #secondary {
   top: -200vh !important;
   left: 0 !important;
   width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
   z-index: -9999 !important;
@@ -42,6 +44,8 @@ html.${className} ${fullscreenRootSelector} ytd-live-chat-frame {
   width: ${hiddenChatWidthPx}px !important;
   min-width: ${hiddenChatWidthPx}px !important;
   max-width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
   position: fixed !important;
@@ -58,19 +62,23 @@ html.${className} ${fullscreenRootSelector} #panels-full-bleed-container ytd-liv
   width: ${hiddenChatWidthPx}px !important;
   min-width: ${hiddenChatWidthPx}px !important;
   max-width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels {
-  z-index: -1 !important;
-  width: 0 !important;
-  height: 0 !important;
-  min-width: 0 !important;
-  max-width: 0 !important;
-  flex: 0 0 0 !important;
+  position: fixed !important;
+  top: -200vh !important;
+  left: 0 !important;
+  width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-width: ${hiddenChatWidthPx}px !important;
+  max-width: ${hiddenChatWidthPx}px !important;
+  visibility: hidden !important;
+  z-index: -9999 !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
   pointer-events: none !important;
-  display: none !important;
 }
 html.${className} ${fullscreenRootSelector} #columns,
 html.${className} ${fullscreenRootSelector} #primary,

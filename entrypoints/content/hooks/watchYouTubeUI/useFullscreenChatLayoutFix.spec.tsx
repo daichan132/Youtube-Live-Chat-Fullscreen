@@ -32,6 +32,10 @@ describe('useFullscreenChatLayoutFix', () => {
     expect(style?.textContent).toContain('#secondary-inner')
     expect(style?.textContent).toContain('#panels-full-bleed-container #chat-container')
     expect(style?.textContent).toContain('width: 400px !important;')
+    expect(style?.textContent).toContain('height: 600px !important;')
+    expect(style?.textContent).toContain('min-height: 600px !important;')
+    expect(style?.textContent).not.toContain('display: none !important;')
+    expect(style?.textContent).not.toContain('width: 0 !important;')
 
     vi.runAllTimers()
     expect(dispatchSpy).toHaveBeenCalled()

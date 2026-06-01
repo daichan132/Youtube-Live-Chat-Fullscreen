@@ -8,6 +8,10 @@ type NoChatTargets = {
   url: string
 }
 
+type ReplayUnavailableTargets = {
+  url: string | null
+}
+
 type LiveTargets = {
   preferredUrl: string | null
 }
@@ -19,6 +23,7 @@ type LiveSearchTargets = {
 export type E2ETestTargets = {
   archive: ArchiveTargets
   noChat: NoChatTargets
+  replayUnavailable: ReplayUnavailableTargets
   live: LiveTargets
   liveSearch: LiveSearchTargets
 }
@@ -43,6 +48,7 @@ export const getE2ETestTargets = (): E2ETestTargets => {
   const archiveTransitionFromUrl = normalizeEnv(process.env.YLC_ARCHIVE_URL) ?? DEFAULT_ARCHIVE_TRANSITION_FROM_URL
   const archiveTransitionToUrl = normalizeEnv(process.env.YLC_ARCHIVE_NEXT_URL) ?? DEFAULT_ARCHIVE_TRANSITION_TO_URL
   const noChatUrl = normalizeEnv(process.env.YLC_NOCHAT_URL) ?? DEFAULT_NO_CHAT_URL
+  const replayUnavailableUrl = normalizeEnv(process.env.YLC_REPLAY_UNAVAILABLE_URL)
   const livePreferredUrl = normalizeEnv(process.env.YLC_LIVE_URL)
 
   return {
@@ -53,6 +59,9 @@ export const getE2ETestTargets = (): E2ETestTargets => {
     },
     noChat: {
       url: noChatUrl,
+    },
+    replayUnavailable: {
+      url: replayUnavailableUrl,
     },
     live: {
       preferredUrl: livePreferredUrl,

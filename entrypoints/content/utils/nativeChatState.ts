@@ -5,8 +5,8 @@
  * or usable, which is important for deciding when to show the extension's
  * fullscreen chat overlay.
  */
-import { isIframeForCurrentVideo } from '../chat/shared/iframeDom'
-import { getYouTubeVideoId } from './getYouTubeVideoId'
+import { getCurrentLiveChatHost, getCurrentLiveChatIframe, getNonBlankIframeHref, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 /**
  * Minimum dimensions for native chat to be considered usable.
@@ -27,8 +27,8 @@ type NativeChatElements = {
 export const getNativeChatElements = (): NativeChatElements => ({
   secondary: document.querySelector('#secondary') as HTMLElement | null,
   chatContainer: document.querySelector('#chat-container') as HTMLElement | null,
-  chatFrameHost: document.querySelector('ytd-live-chat-frame') as HTMLElement | null,
-  chatFrame: document.querySelector('#chatframe') as HTMLIFrameElement | null,
+  chatFrameHost: getCurrentLiveChatHost() ?? (document.querySelector('ytd-live-chat-frame') as HTMLElement | null),
+  chatFrame: getCurrentLiveChatIframe(getCurrentYouTubeVideoId()),
 })
 
 const isChatHiddenByAttribute = (chatContainer: HTMLElement | null, chatFrameHost: HTMLElement | null) =>
@@ -108,16 +108,12 @@ export const isNativeChatUsable = () => {
  */
 export const isNativeChatOpen = () => {
   const { chatContainer, chatFrameHost } = getNativeChatElements()
-  const chatFrame =
-    (document.querySelector('#chatframe') as HTMLIFrameElement | null) ??
-    (document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null)
+  const chatFrame = getCurrentLiveChatIframe(getCurrentYouTubeVideoId())
 
   if (!chatFrame) return false
 
-  if (!isIframeForCurrentVideo(chatFrame, getYouTubeVideoId())) return false
-  const doc = chatFrame.contentDocument ?? null
-  const href = doc?.location?.href ?? chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
-  if (!href || href.includes('about:blank')) return false
+  if (!isIframeForCurrentVideo(chatFrame, getCurrentYouTubeVideoId())) return false
+  if (!getNonBlankIframeHref(chatFrame)) return false
 
   if (chatContainer && chatFrameHost) {
     const isHiddenAttr = isChatHiddenByAttribute(chatContainer, chatFrameHost)

@@ -1,6 +1,6 @@
 import { SWITCH_BUTTON_CONTAINER_ID } from '../../entrypoints/content/constants/domIds'
 
-const switchButtonContainerSelector = `#${SWITCH_BUTTON_CONTAINER_ID}`
+export const switchButtonContainerSelector = `#${SWITCH_BUTTON_CONTAINER_ID}`
 export const switchButtonSelector = `${switchButtonContainerSelector} button.ytp-button`
 
 export const MOVIE_PLAYER = '#movie_player'

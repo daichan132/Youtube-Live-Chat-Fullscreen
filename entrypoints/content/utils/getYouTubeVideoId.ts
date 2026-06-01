@@ -11,16 +11,4 @@ export const getVideoIdFromUrl = () => {
   }
 }
 
-export const getYouTubeVideoId = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchFlexyId = watchFlexy?.getAttribute('video-id')
-  if (watchFlexyId) return watchFlexyId
-
-  const moviePlayer = document.getElementById('movie_player')
-  const moviePlayerId = moviePlayer?.getAttribute('video-id')
-  if (moviePlayerId) return moviePlayerId
-  const playerData = (moviePlayer as { getVideoData?: () => { video_id?: string } } | null)?.getVideoData?.()
-  if (playerData?.video_id) return playerData.video_id
-
-  return getVideoIdFromUrl()
-}
+export const getCurrentYouTubeVideoId = () => getVideoIdFromUrl()

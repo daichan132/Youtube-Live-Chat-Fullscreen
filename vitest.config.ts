@@ -1,12 +1,11 @@
 import { fileURLToPath } from 'node:url'
-import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
 const unoCssPath = fileURLToPath(new URL('./vitest.empty.css', import.meta.url))
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
   resolve: {
+    tsconfigPaths: true,
     alias: {
       'uno.css': unoCssPath,
     },
@@ -21,7 +20,7 @@ export default defineConfig({
       'entrypoints/**/*.spec.tsx',
       'e2e/config/**/*.spec.ts',
     ],
-    exclude: ['e2e/**', 'node_modules/**'],
+    exclude: ['node_modules/**'],
     setupFiles: ['./vitest.setup.ts'],
   },
 })

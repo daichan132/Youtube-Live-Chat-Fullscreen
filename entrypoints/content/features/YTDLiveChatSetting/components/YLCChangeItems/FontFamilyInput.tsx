@@ -1,13 +1,12 @@
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useYLCFontFamilyChange } from '@/entrypoints/content/hooks/ylcStyleChange/useYLCFontFamilyChange'
+import { changeYLCFontFamily } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { cn } from '@/shared/utils/cn'
 import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
-import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
-import { DEFAULT_FONT_OPTION, FEATURED_FONT_VALUES, FONT_FAMILY_OPTIONS } from './fontFamilyOptions'
+import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
@@ -16,13 +15,39 @@ const PREVIEW_FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
 
 const toFontFamilyStyleValue = (fontFamily: string) => `${toQuotedFontFamily(fontFamily)}, ${PREVIEW_FALLBACK_FONT_FAMILY}`
 
+type FontFamilyOption = {
+  value: string
+  label: string
+}
+
+const FEATURED_FONT_VALUES = [
+  'Roboto',
+  'Noto Sans',
+  'Noto Sans JP',
+  'Zen Maru Gothic',
+  'M PLUS 1p',
+  'BIZ UDPGothic',
+  'Open Sans',
+  'Montserrat',
+  'Poppins',
+  'Inter',
+] as const
+
 const FEATURED_FONT_VALUE_SET = new Set<string>(FEATURED_FONT_VALUES)
+const DEFAULT_FONT_OPTION: FontFamilyOption = {
+  value: '',
+  label: '',
+}
+const FONT_FAMILY_OPTIONS: FontFamilyOption[] = ALLOWED_FONT_FAMILIES.map(fontFamily => ({
+  value: fontFamily,
+  label: fontFamily,
+}))
 
 const buildFontFamilyOptions = (defaultLabel: string) => {
   const featuredOptions = FONT_FAMILY_OPTIONS.filter(option => FEATURED_FONT_VALUE_SET.has(option.value))
   const regularOptions = FONT_FAMILY_OPTIONS.filter(option => !FEATURED_FONT_VALUE_SET.has(option.value))
 
-  return [{ ...DEFAULT_FONT_OPTION, label: defaultLabel, featured: true }, ...featuredOptions, ...regularOptions]
+  return [{ ...DEFAULT_FONT_OPTION, label: defaultLabel }, ...featuredOptions, ...regularOptions]
 }
 
 const buildPreviewImportStyles = () =>
@@ -31,30 +56,21 @@ const buildPreviewImportStyles = () =>
   ).join('\n')
 
 export const FontFamilyInput = () => {
-  const { changeFontFamily } = useYLCFontFamilyChange()
   const fontFamily = useYTDLiveChatStore(state => state.fontFamily)
   const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
 
   const handleCommit = useCallback(
     (nextFontFamily: string) => {
       updateYLCStyle({ fontFamily: nextFontFamily })
-      changeFontFamily(nextFontFamily)
+      changeYLCFontFamily(nextFontFamily)
     },
-    [changeFontFamily, updateYLCStyle],
+    [updateYLCStyle],
   )
 
   return <FontFamilyInputUI value={fontFamily} onCommit={handleCommit} />
 }
 
-export const FontFamilyInputUI = ({
-  value,
-  onCommit,
-  readOnly = false,
-}: {
-  value: string
-  onCommit?: (fontFamily: string) => void
-  readOnly?: boolean
-}) => {
+const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (fontFamily: string) => void }) => {
   const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -100,7 +116,7 @@ export const FontFamilyInputUI = ({
   }, [isOpen])
 
   useEffect(() => {
-    if (!isOpen || readOnly) return
+    if (!isOpen) return
     if (document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)) return
 
     try {
@@ -111,7 +127,7 @@ export const FontFamilyInputUI = ({
     } catch (e) {
       console.warn('[YLC] Failed to load font preview styles:', e)
     }
-  }, [isOpen, readOnly])
+  }, [isOpen])
 
   useShadowClickAway(rootRef, () => setIsOpen(false))
 
@@ -125,16 +141,9 @@ export const FontFamilyInputUI = ({
       const normalizedFontFamily = normalizeFontFamily(nextFontFamily)
       closeMenu()
       if (normalizedFontFamily === normalizedValue) return
-      onCommit?.(normalizedFontFamily)
+      onCommit(normalizedFontFamily)
     },
     [closeMenu, normalizedValue, onCommit],
-  )
-
-  const handleSelectOption = useCallback(
-    (nextFontFamily: string) => {
-      commitFontFamily(nextFontFamily)
-    },
-    [commitFontFamily],
   )
 
   const handleSearchKeyDown = useCallback(
@@ -163,7 +172,7 @@ export const FontFamilyInputUI = ({
         event.preventDefault()
         const activeOption = activeIndex >= 0 ? filteredOptions[activeIndex] : undefined
         if (activeOption) {
-          handleSelectOption(activeOption.value)
+          commitFontFamily(activeOption.value)
           return
         }
         commitFontFamily('')
@@ -175,14 +184,13 @@ export const FontFamilyInputUI = ({
         closeMenu()
       }
     },
-    [activeIndex, closeMenu, commitFontFamily, filteredOptions, handleSelectOption],
+    [activeIndex, closeMenu, commitFontFamily, filteredOptions],
   )
 
   const handleToggleMenu = useCallback(() => {
-    if (readOnly) return
     setSearchValue('')
     setIsOpen(prev => !prev)
-  }, [readOnly])
+  }, [])
 
   const currentValue = displayLabel || defaultLabel
 
@@ -191,12 +199,11 @@ export const FontFamilyInputUI = ({
       <button
         ref={triggerRef}
         type='button'
-        className={cn('ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring', readOnly && 'ylc-font-combobox-trigger-readonly')}
+        className='ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring'
         onClick={handleToggleMenu}
         aria-label={t('content.setting.fontFamily')}
         aria-haspopup='listbox'
         aria-expanded={isOpen}
-        disabled={readOnly}
         data-ylc-font-combobox-trigger='true'
       >
         <span
@@ -207,7 +214,7 @@ export const FontFamilyInputUI = ({
         </span>
       </button>
 
-      {!readOnly && isOpen && (
+      {isOpen && (
         <div ref={menuRef} className='ylc-font-combobox-menu ylc-theme-shadow-sm ylc-theme-border' data-ylc-font-combobox-menu='true'>
           <input
             ref={searchInputRef}
@@ -258,7 +265,7 @@ export const FontFamilyInputUI = ({
                     )}
                     style={option.value ? { fontFamily: toFontFamilyStyleValue(option.value) } : undefined}
                     onMouseEnter={() => setActiveIndex(index)}
-                    onClick={() => handleSelectOption(option.value)}
+                    onClick={() => commitFontFamily(option.value)}
                   >
                     <span className='ylc-font-combobox-option-label'>{option.label}</span>
                     {isSelected && <TbCheck size={16} aria-hidden='true' />}

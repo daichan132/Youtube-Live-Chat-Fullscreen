@@ -1,7 +1,5 @@
 export type ChatMode = 'live' | 'archive' | 'none'
 
-export type IframeLoadState = 'idle' | 'attaching' | 'initializing' | 'ready' | 'error'
-
 export type LiveChatSource = {
   kind: 'live_direct'
   videoId: string

@@ -1,42 +1,49 @@
-import { getVideoIdFromUrl, getYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
-import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { isYouTubeLiveVideo } from '@/entrypoints/content/utils/isYouTubeLiveVideo'
 import { hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
-import { isIframeForCurrentVideo, isLiveChatIframe, isManagedLiveIframe, isReplayChatIframe } from '../shared/iframeDom'
+import {
+  getCurrentLiveChatIframe,
+  isIframeForCurrentVideo,
+  isLiveChatIframe,
+  isManagedLiveIframe,
+  isReplayChatIframe,
+  YLC_CHAT_ATTR,
+} from '../shared/iframeDom'
 import type { ChatMode } from './types'
 
 type MoviePlayerElement = HTMLElement & {
-  getVideoData?: () => { isLive?: boolean }
+  getVideoData?: () => { isLive?: boolean; video_id?: string; videoId?: string }
 }
 
-const getMoviePlayerIsLive = (): boolean | null => {
+const getMoviePlayerLiveState = (currentVideoId: string | null) => {
   const player = document.getElementById('movie_player') as MoviePlayerElement | null
   const data = player?.getVideoData?.()
-  return typeof data?.isLive === 'boolean' ? data.isLive : null
+  const playerVideoId = data?.video_id ?? data?.videoId ?? player?.getAttribute('video-id')
+  if (currentVideoId && playerVideoId && playerVideoId !== currentVideoId) {
+    return { isLive: null, isStale: true }
+  }
+  return { isLive: typeof data?.isLive === 'boolean' ? data.isLive : null, isStale: false }
 }
 
 const getExtensionIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
-  return root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  return root?.querySelector(`iframe[${YLC_CHAT_ATTR}="true"]`) as HTMLIFrameElement | null
 }
-
-const isBorrowedArchiveExtensionIframe = (iframe: HTMLIFrameElement | null) =>
-  Boolean(iframe && iframe.getAttribute('data-ylc-chat') === 'true' && iframe.getAttribute('data-ylc-owned') !== 'true')
 
 export const detectChatMode = (): ChatMode => {
   // URL updates immediately on SPA navigation; DOM attributes may lag.
-  const currentVideoId = getVideoIdFromUrl() ?? getYouTubeVideoId()
+  const currentVideoId = getCurrentYouTubeVideoId()
 
   const extensionIframe = getExtensionIframe()
   if (extensionIframe && isIframeForCurrentVideo(extensionIframe, currentVideoId)) {
-    if (isReplayChatIframe(extensionIframe) || isBorrowedArchiveExtensionIframe(extensionIframe)) return 'archive'
+    if (isReplayChatIframe(extensionIframe)) return 'archive'
     if (isLiveChatIframe(extensionIframe) || isManagedLiveIframe(extensionIframe)) return 'live'
   }
 
-  const nativeIframe = getLiveChatIframe()
-  if (nativeIframe && isIframeForCurrentVideo(nativeIframe, currentVideoId)) {
+  const nativeIframe = getCurrentLiveChatIframe(currentVideoId)
+  if (nativeIframe) {
     if (isReplayChatIframe(nativeIframe)) return 'archive'
     if (isLiveChatIframe(nativeIframe)) return 'live'
   }
@@ -46,7 +53,8 @@ export const detectChatMode = (): ChatMode => {
   if (hasArchiveNativeOpenControl()) {
     // hasArchiveNativeOpenControl() はライブ・アーカイブ両方で true を返す。
     // メタデータで確認し、ライブページでの誤検出を防ぐ。
-    const isLive = getMoviePlayerIsLive()
+    const { isLive, isStale } = getMoviePlayerLiveState(currentVideoId)
+    if (isStale) return 'none'
     if (isLive === true) return 'live'
     // isLive === false または null（メタデータ未ロード）→ アーカイブとして扱う。
     // null 時に fall through すると isYouTubeLiveVideo() も null を返し

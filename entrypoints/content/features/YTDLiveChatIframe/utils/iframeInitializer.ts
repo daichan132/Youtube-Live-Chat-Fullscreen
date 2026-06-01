@@ -1,4 +1,3 @@
-import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
 import { getNonBlankIframeHref } from '@/entrypoints/content/chat/shared/iframeDom'
 import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
 
@@ -7,8 +6,6 @@ type IframeInitializerOptions = {
   applyChatStyle: () => void
   setIsIframeLoaded: (value: boolean) => void
   setIsDisplay: (value: boolean) => void
-  setLoadState: (state: IframeLoadState) => void
-  debugLog?: (message: string, details?: Record<string, unknown>) => void
   retryIntervalMs?: number
   retryMaxAttempts?: number
 }
@@ -36,8 +33,6 @@ export const createIframeInitializer = ({
   applyChatStyle,
   setIsIframeLoaded,
   setIsDisplay,
-  setLoadState,
-  debugLog,
   retryIntervalMs = 1000,
   retryMaxAttempts = 10,
 }: IframeInitializerOptions) => {
@@ -79,7 +74,6 @@ export const createIframeInitializer = ({
 
     setIsIframeLoaded(true)
     setIsDisplay(true)
-    setLoadState('ready')
     return true
   }
 
@@ -96,28 +90,18 @@ export const createIframeInitializer = ({
       retryAttempts += 1
       const initialized = tryInitializeStyle(retryIframe)
       if (initialized) {
-        debugLog?.('initializer retry succeeded', {
-          attempts: retryAttempts,
-          href: getNonBlankIframeHref(retryIframe),
-        })
         clearRetry()
         return
       }
 
       if (retryAttempts >= retryMaxAttempts) {
-        debugLog?.('initializer retry exhausted, fail-open to show content', {
-          attempts: retryAttempts,
-          href: getNonBlankIframeHref(retryIframe),
-        })
         setIsIframeLoaded(true)
-        setLoadState('ready')
         clearRetry()
       }
     }, retryIntervalMs)
   }
 
   const initialize = (iframe: HTMLIFrameElement) => {
-    setLoadState('initializing')
     const initialized = tryInitializeStyle(iframe)
     if (initialized) {
       clearRetry()

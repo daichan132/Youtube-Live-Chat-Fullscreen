@@ -1,11 +1,6 @@
-import { getYouTubeVideoId } from './getYouTubeVideoId'
+import { getCurrentLiveChatIframe, getLiveChatIframes, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 import { isYouTubeLiveNow } from './isYouTubeLiveNow'
-
-export const getLiveChatIframe = () => {
-  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-  if (chatFrame) return chatFrame
-  return document.querySelector('ytd-live-chat-frame iframe.ytd-live-chat-frame') as HTMLIFrameElement | null
-}
 
 export const getLiveChatDocument = (iframe: HTMLIFrameElement) => {
   try {
@@ -30,20 +25,8 @@ const getLiveChatVideoIdFromDocument = (doc: Document) => {
   }
 }
 
-export const getLiveChatVideoIdFromIframe = (iframe: HTMLIFrameElement) => {
-  try {
-    const src = iframe.src ?? ''
-    if (!src) return null
-    const url = new URL(src, window.location.origin)
-    return url.searchParams.get('v')
-  } catch {
-    return null
-  }
-}
-
-const isLiveChatDocForCurrentVideo = (doc: Document) => {
-  const currentVideoId = getYouTubeVideoId()
-  if (!currentVideoId) return true
+const isLiveChatDocForCurrentVideo = (doc: Document, currentVideoId = getCurrentYouTubeVideoId()) => {
+  if (!currentVideoId) return false
   const liveChatVideoId = getLiveChatVideoIdFromDocument(doc)
   if (!liveChatVideoId) return true
   return liveChatVideoId === currentVideoId
@@ -92,14 +75,17 @@ export const isArchiveChatPlayable = (iframe: HTMLIFrameElement | null) => {
   const doc = getLiveChatDocument(iframe)
   if (!doc) return false
 
-  if (!isLiveChatDocForCurrentVideo(doc)) return false
+  const currentVideoId = getCurrentYouTubeVideoId()
+  if (!isIframeForCurrentVideo(iframe, currentVideoId)) return false
+  if (!isLiveChatDocForCurrentVideo(doc, currentVideoId)) return false
   if (isLiveChatUnavailable(doc)) return false
 
   return hasLiveChatRendererReady(doc)
 }
 
 export const hasPlayableLiveChat = () => {
-  const iframe = getLiveChatIframe()
+  const currentVideoId = getCurrentYouTubeVideoId()
+  const iframe = getCurrentLiveChatIframe(currentVideoId)
   if (iframe) {
     if (isArchiveChatPlayable(iframe)) return true
 
@@ -108,13 +94,15 @@ export const hasPlayableLiveChat = () => {
     // - live: fail-open (chat can still initialize asynchronously)
     // - archive: keep waiting (about:blank must not be treated as playable)
     if (!doc) {
-      const currentVideoId = getYouTubeVideoId()
-      const iframeVideoId = getLiveChatVideoIdFromIframe(iframe)
-      if (currentVideoId && iframeVideoId && iframeVideoId !== currentVideoId) return false
+      if (!isIframeForCurrentVideo(iframe, currentVideoId)) return false
       if (isYouTubeLiveNow()) return true
       return false
     }
     return false
+  }
+
+  if (getLiveChatIframes().length > 0) {
+    return isYouTubeLiveNow() && hasLiveChatDomContainer()
   }
 
   if (hasWatchChatAttributes()) return true

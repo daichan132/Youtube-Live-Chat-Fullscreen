@@ -1,20 +1,16 @@
 import { useEffect } from 'react'
-import { getLiveChatIframe, isArchiveChatPlayable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { getLiveChatDocument, isArchiveChatPlayable, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { getCurrentLiveChatIframe, isIframeForCurrentVideo, isReplayChatIframe, YLC_CHAT_ATTR, YLC_OWNED_ATTR } from '../shared/iframeDom'
 
 const MAX_ENSURE_DURATION_MS = 60000
 const RETRY_INTERVAL_MS = 1000
 const OPEN_CLICK_COOLDOWN_MS = 2000
 
 const isFullscreenActive = () => document.fullscreenElement !== null
-
-const debugLog = (message: string, details?: Record<string, unknown>) => {
-  if (!import.meta.env.DEV) return
-  // biome-ignore lint/suspicious/noConsole: Intentional debug logging for development troubleshooting
-  console.debug(`[YLC Archive Chat] ${message}`, details ?? '')
-}
 
 export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
   useEffect(() => {
@@ -53,31 +49,39 @@ export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
       }
 
       if (isYouTubeLiveNow()) {
-        debugLog('stopped ensure loop because stream is live')
         stopEnsure()
         return
       }
+      const currentVideoId = getCurrentYouTubeVideoId()
 
       const attachedIframe = useYTDLiveChatNoLsStore.getState().iframeElement
       const isBorrowedArchiveIframe =
         attachedIframe?.isConnected &&
-        attachedIframe.getAttribute('data-ylc-chat') === 'true' &&
-        attachedIframe.getAttribute('data-ylc-owned') !== 'true'
+        attachedIframe.getAttribute(YLC_CHAT_ATTR) === 'true' &&
+        attachedIframe.getAttribute(YLC_OWNED_ATTR) !== 'true' &&
+        isReplayChatIframe(attachedIframe) &&
+        isIframeForCurrentVideo(attachedIframe, currentVideoId)
       if (isBorrowedArchiveIframe) {
-        debugLog('stopped ensure loop because archive iframe is already borrowed')
         stopEnsure()
         return
       }
 
-      const nativeIframe = getLiveChatIframe() ?? useYTDLiveChatNoLsStore.getState().iframeElement
-      if (isArchiveChatPlayable(nativeIframe)) {
-        debugLog('archive native chat became playable')
-        stopEnsure()
-        return
+      const nativeIframe = getCurrentLiveChatIframe(currentVideoId) ?? useYTDLiveChatNoLsStore.getState().iframeElement
+      const nativeIframeMatchesCurrent = !nativeIframe || isIframeForCurrentVideo(nativeIframe, currentVideoId)
+      if (nativeIframeMatchesCurrent) {
+        const nativeDocument = nativeIframe ? getLiveChatDocument(nativeIframe) : null
+        if (nativeDocument && isLiveChatUnavailable(nativeDocument)) {
+          stopEnsure()
+          return
+        }
+
+        if (isArchiveChatPlayable(nativeIframe)) {
+          stopEnsure()
+          return
+        }
       }
 
       if (hasTimedOut()) {
-        debugLog('stopped ensure loop because timeout reached')
         stopEnsure()
         return
       }
@@ -88,9 +92,6 @@ export const useEnsureArchiveNativeChatOpen = (enabled: boolean) => {
         if (opened) {
           lastOpenClickedAt = Date.now()
           setIsAutoOpeningNativeChat(true)
-          debugLog('requested archive native chat open')
-        } else {
-          debugLog('archive native chat open button not found')
         }
       }
 

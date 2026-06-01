@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
 import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
 import { createIframeInitializer } from './iframeInitializer'
 
@@ -27,13 +26,11 @@ describe('iframeInitializer', () => {
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
     const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
       setIsDisplay,
-      setLoadState,
     })
 
     const initialized = initializer.initialize(iframe)
@@ -43,7 +40,6 @@ describe('iframeInitializer', () => {
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenLastCalledWith(true)
     expect(setIsDisplay).toHaveBeenLastCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
   })
 
   it('fails open and retries style initialization when document access is blocked', () => {
@@ -65,13 +61,11 @@ describe('iframeInitializer', () => {
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
     const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
       setIsDisplay,
-      setLoadState,
       retryIntervalMs: 100,
       retryMaxAttempts: 3,
     })
@@ -87,7 +81,6 @@ describe('iframeInitializer', () => {
 
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
     expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).not.toBeNull()
   })
 
@@ -105,13 +98,11 @@ describe('iframeInitializer', () => {
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
     const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
       setIsDisplay,
-      setLoadState,
       retryIntervalMs: 100,
       retryMaxAttempts: 3,
     })
@@ -124,7 +115,6 @@ describe('iframeInitializer', () => {
 
     vi.advanceTimersByTime(100)
     expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
   })
 
   it('does not inject duplicate styles when initialized repeatedly', () => {
@@ -142,7 +132,6 @@ describe('iframeInitializer', () => {
       applyChatStyle,
       setIsIframeLoaded: vi.fn(),
       setIsDisplay: vi.fn(),
-      setLoadState: vi.fn(),
     })
 
     initializer.initialize(iframe)

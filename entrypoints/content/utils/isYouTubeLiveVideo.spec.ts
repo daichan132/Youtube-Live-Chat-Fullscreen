@@ -3,6 +3,7 @@ import { isYouTubeLiveVideo } from './isYouTubeLiveVideo'
 
 beforeEach(() => {
   document.body.innerHTML = ''
+  window.history.pushState({}, '', `${window.location.origin}/watch?v=current-video`)
 })
 
 describe('isYouTubeLiveVideo', () => {
@@ -32,6 +33,17 @@ describe('isYouTubeLiveVideo', () => {
   })
 
   it('returns false when no data is available', () => {
+    expect(isYouTubeLiveVideo()).toBe(false)
+  })
+
+  it('ignores stale player data from another video', () => {
+    const moviePlayer = document.createElement('div') as HTMLDivElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'stale-video' })
+    document.body.appendChild(moviePlayer)
+
     expect(isYouTubeLiveVideo()).toBe(false)
   })
 })

@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
+import { markChatIframeObservedForCurrentVideo } from '@/entrypoints/content/chat/shared/iframeDom'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
 vi.mock('@/entrypoints/content', () => ({}))
@@ -31,6 +32,13 @@ const attachLiveChatFrame = () => {
   const frame = document.createElement('ytd-live-chat-frame')
   document.body.appendChild(frame)
   return frame
+}
+
+const createWatchFlexy = (videoId: string) => {
+  const watchFlexy = document.createElement('ytd-watch-flexy')
+  watchFlexy.setAttribute('video-id', videoId)
+  document.body.appendChild(watchFlexy)
+  return watchFlexy
 }
 
 const createChatIframe = (
@@ -88,6 +96,29 @@ describe('useChatIframeLoader', () => {
     })
   })
 
+  it('restores borrowed archive iframe when mode changes to none', async () => {
+    const frame = attachLiveChatFrame()
+    const iframe = createChatIframe('video-a')
+    frame.appendChild(iframe)
+
+    const { getByTestId, rerender } = render(<TestComponent mode='archive' />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+      expect(useYTDLiveChatNoLsStore.getState().iframeElement).toBe(iframe)
+    })
+
+    rerender(<TestComponent mode='none' />)
+
+    await waitFor(() => {
+      expect(container.querySelector('iframe')).toBeNull()
+      expect(frame.contains(iframe)).toBe(true)
+      expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
+      expect(useYTDLiveChatNoLsStore.getState().iframeElement).toBeNull()
+    })
+  })
+
   it('detaches on navigation and does not attach iframe for another video', async () => {
     const frame = attachLiveChatFrame()
     const iframe = createChatIframe('video-a')
@@ -105,7 +136,8 @@ describe('useChatIframeLoader', () => {
 
     await waitFor(() => {
       expect(container.querySelector('iframe')).toBeNull()
-      expect(frame.contains(iframe)).toBe(true)
+      expect(frame.contains(iframe)).toBe(false)
+      expect(iframe.isConnected).toBe(false)
     })
   })
 
@@ -126,7 +158,8 @@ describe('useChatIframeLoader', () => {
     await waitFor(
       () => {
         expect(container.querySelector('iframe')).toBeNull()
-        expect(frame.contains(iframe)).toBe(true)
+        expect(frame.contains(iframe)).toBe(false)
+        expect(iframe.isConnected).toBe(false)
       },
       { timeout: 4000 },
     )
@@ -134,11 +167,13 @@ describe('useChatIframeLoader', () => {
 
   it('does not reattach stale archive iframe href after navigation until source changes', async () => {
     const frame = attachLiveChatFrame()
+    const watchFlexy = createWatchFlexy('video-a')
     const staleHref = 'https://www.youtube.com/live_chat_replay?continuation=stale-video-a'
     const iframe = createChatIframe('video-a', {
       src: staleHref,
       docHref: staleHref,
     })
+    markChatIframeObservedForCurrentVideo(iframe, 'video-a')
     frame.appendChild(iframe)
 
     const { getByTestId } = render(<TestComponent mode='archive' />)
@@ -153,15 +188,18 @@ describe('useChatIframeLoader', () => {
 
     await waitFor(() => {
       expect(container.querySelector('iframe')).toBeNull()
-      expect(frame.contains(iframe)).toBe(true)
+      expect(frame.contains(iframe)).toBe(false)
+      expect(iframe.isConnected).toBe(false)
     })
 
     frame.replaceChildren()
+    watchFlexy.setAttribute('video-id', 'video-b')
     const freshHref = 'https://www.youtube.com/live_chat_replay?continuation=fresh-video-b'
     const nextIframe = createChatIframe('video-b', {
       src: freshHref,
       docHref: freshHref,
     })
+    markChatIframeObservedForCurrentVideo(nextIframe, 'video-b')
     frame.appendChild(nextIframe)
 
     await waitFor(() => {

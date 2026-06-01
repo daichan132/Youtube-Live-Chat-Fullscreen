@@ -25,7 +25,7 @@ type YTDLiveChatProps = {
 }
 
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
-  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
+  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded

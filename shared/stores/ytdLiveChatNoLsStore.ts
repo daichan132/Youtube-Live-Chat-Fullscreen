@@ -48,5 +48,3 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   setIFrameElement: iframeElement => set(() => ({ iframeElement })),
   setMenuItem: menuItem => set(() => ({ menuItem })),
 }))
-
-export default useYTDLiveChatNoLsStore

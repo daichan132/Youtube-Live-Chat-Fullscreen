@@ -1,6 +1,11 @@
-import { isLiveChatIframe, isManagedLiveIframe, isReplayChatIframe } from '@/entrypoints/content/chat/shared/iframeDom'
-import { hasLiveChatSignals } from '@/entrypoints/content/utils/hasLiveChatSignals'
-import { getLiveChatIframe } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import {
+  getCurrentLiveChatIframe,
+  isIframeForCurrentVideo,
+  isLiveChatIframe,
+  isManagedLiveIframe,
+  isReplayChatIframe,
+} from '@/entrypoints/content/chat/shared/iframeDom'
+import { getLiveChatDocument, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
 import type { LiveChatSource } from '../runtime/types'
 
@@ -13,18 +18,18 @@ export const getLiveChatUrlForVideo = (videoId: string) => {
 export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFrameElement | null = null): LiveChatSource | null => {
   if (!videoId) return null
 
-  const nativeIframe = getLiveChatIframe()
-  if (nativeIframe && isReplayChatIframe(nativeIframe)) return null
+  const nativeIframe = getCurrentLiveChatIframe(videoId)
+  const nativeIframeMatchesCurrentVideo = nativeIframe !== null
+  if (nativeIframe && nativeIframeMatchesCurrentVideo && isReplayChatIframe(nativeIframe)) return null
+  const nativeDocument = nativeIframe && nativeIframeMatchesCurrentVideo ? getLiveChatDocument(nativeIframe) : null
+  if (nativeDocument && isLiveChatUnavailable(nativeDocument)) return null
 
-  const hasManagedLiveCurrent = isManagedLiveIframe(currentIframe)
+  const managedLiveCurrent = currentIframe && isManagedLiveIframe(currentIframe) && isIframeForCurrentVideo(currentIframe, videoId)
+  const managedLiveDocument = managedLiveCurrent ? getLiveChatDocument(currentIframe) : null
+  if (managedLiveDocument && isLiveChatUnavailable(managedLiveDocument)) return null
 
-  const hasStrongLiveSignal = isYouTubeLiveNow() || isLiveChatIframe(nativeIframe)
-  if (!hasStrongLiveSignal && !hasManagedLiveCurrent) return null
-
-  // When a strong live signal already confirms the stream is live, skip the
-  // hasLiveChatSignals() check. Closing the native chat panel can remove DOM
-  // attributes (live-chat-present) that hasLiveChatSignals() depends on.
-  if (!hasStrongLiveSignal && !hasLiveChatSignals() && !hasManagedLiveCurrent) return null
+  const hasStrongLiveSignal = isYouTubeLiveNow() || (nativeIframeMatchesCurrentVideo && isLiveChatIframe(nativeIframe))
+  if (!hasStrongLiveSignal && !managedLiveCurrent) return null
 
   return {
     kind: 'live_direct',

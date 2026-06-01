@@ -24,16 +24,4 @@ export interface YLCStyleType {
   superChatBarDisplay: boolean
 }
 
-export interface YLCStyleUpdateType {
-  bgColor?: RGBColor
-  fontColor?: RGBColor
-  fontFamily?: string
-  fontSize?: number
-  blur?: number
-  space?: number
-  alwaysOnDisplay?: boolean
-  chatOnlyDisplay?: boolean
-  userNameDisplay?: boolean
-  userIconDisplay?: boolean
-  superChatBarDisplay?: boolean
-}
+export type YLCStyleUpdateType = Partial<YLCStyleType>

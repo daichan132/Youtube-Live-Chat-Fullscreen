@@ -15,8 +15,14 @@ vi.mock('@/entrypoints/content/utils/nativeChatState', () => ({
 const openArchiveNativeChatPanelMock = vi.mocked(openArchiveNativeChatPanel)
 const isNativeChatOpenMock = vi.mocked(isNativeChatOpen)
 
+const setLocation = (path: string) => {
+  const base = window.location.origin
+  window.history.pushState({}, '', `${base}${path}`)
+}
+
 beforeEach(() => {
   document.body.innerHTML = ''
+  setLocation('/watch?v=video-a')
   openArchiveNativeChatPanelMock.mockReset()
   isNativeChatOpenMock.mockReset()
   isNativeChatOpenMock.mockReturnValue(false)
@@ -177,6 +183,7 @@ describe('iframeAttachment', () => {
     // Simulate YouTube rebuilding the chat host while iframe is borrowed.
     originalParent.remove()
     const rebuiltHost = document.createElement('ytd-live-chat-frame')
+    rebuiltHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(rebuiltHost)
 
     detachAttachedIframe(iframe, container)
@@ -184,6 +191,93 @@ describe('iframeAttachment', () => {
     expect(rebuiltHost.contains(iframe)).toBe(true)
     expect(container.contains(iframe)).toBe(false)
     expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
+  })
+
+  it('falls back to native host identified through a current child iframe', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+
+    document.body.appendChild(originalParent)
+    document.body.appendChild(container)
+
+    attachIframeToContainer(container, iframe)
+    originalParent.remove()
+
+    const rebuiltHost = document.createElement('ytd-live-chat-frame')
+    const rebuiltIframe = document.createElement('iframe')
+    rebuiltIframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    rebuiltHost.appendChild(rebuiltIframe)
+    document.body.appendChild(rebuiltHost)
+
+    detachAttachedIframe(iframe, container)
+
+    expect(rebuiltHost.contains(iframe)).toBe(true)
+    expect(container.contains(iframe)).toBe(false)
+    expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
+  })
+
+  it('waits instead of falling back to a stale native host for another video', async () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+    document.body.appendChild(originalParent)
+    document.body.appendChild(container)
+
+    attachIframeToContainer(container, iframe)
+    originalParent.remove()
+    const staleHost = document.createElement('ytd-live-chat-frame')
+    staleHost.setAttribute('video-id', 'video-b')
+    document.body.appendChild(staleHost)
+
+    detachAttachedIframe(iframe, container)
+
+    expect(staleHost.contains(iframe)).toBe(false)
+    expect(container.contains(iframe)).toBe(false)
+    expect(iframe.isConnected).toBe(false)
+
+    const currentHost = document.createElement('ytd-live-chat-frame')
+    currentHost.setAttribute('video-id', 'video-a')
+    document.body.appendChild(currentHost)
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(currentHost.contains(iframe)).toBe(true)
+  })
+
+  it('restores a queued iframe when an existing host video marker catches up', async () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+    document.body.appendChild(originalParent)
+    document.body.appendChild(container)
+
+    attachIframeToContainer(container, iframe)
+    originalParent.remove()
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-b')
+    document.body.appendChild(host)
+
+    detachAttachedIframe(iframe, container)
+
+    expect(host.contains(iframe)).toBe(false)
+    host.setAttribute('video-id', 'video-a')
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(host.contains(iframe)).toBe(true)
   })
 
   it('queues restore safely when no native host exists at detach time', async () => {
@@ -207,11 +301,36 @@ describe('iframeAttachment', () => {
     expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
 
     const rebuiltHost = document.createElement('ytd-live-chat-frame')
+    rebuiltHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(rebuiltHost)
     await Promise.resolve()
     await Promise.resolve()
 
     expect(rebuiltHost.contains(iframe)).toBe(true)
+  })
+
+  it('does not restore a borrowed iframe into a host for another video', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+    document.body.appendChild(originalParent)
+    document.body.appendChild(container)
+
+    attachIframeToContainer(container, iframe)
+    originalParent.remove()
+    setLocation('/watch?v=video-b')
+    const rebuiltHost = document.createElement('ytd-live-chat-frame')
+    document.body.appendChild(rebuiltHost)
+
+    detachAttachedIframe(iframe, container)
+
+    expect(rebuiltHost.contains(iframe)).toBe(false)
+    expect(container.contains(iframe)).toBe(false)
+    expect(iframe.isConnected).toBe(false)
   })
 
   it('requests one native chat open after archive restore when ensureNativeVisible is enabled', () => {

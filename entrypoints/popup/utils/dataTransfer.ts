@@ -2,6 +2,7 @@ import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import { sendActiveTabMessage } from './sendActiveTabMessage'
 
 // Keep in sync with each store's persist config (name / version).
 const GLOBAL_SETTING_PERSIST = { key: 'globalSettingStore', version: 1 } as const
@@ -62,16 +63,10 @@ export const isValidImportData = (data: unknown): data is ExportData => {
 
 // ── Sanitize ─────────────────────────────────────────────
 
-export const isRGBColor = (v: unknown): boolean => !!v && typeof v === 'object' && typeof (v as Record<string, unknown>).r === 'number'
-
-const pick = <T extends Record<string, unknown>>(source: T, keys: readonly string[]): Partial<T> => {
-  const result: Record<string, unknown> = {}
-  for (const key of keys) {
-    if (Object.hasOwn(source, key)) {
-      result[key] = source[key]
-    }
-  }
-  return result as Partial<T>
+export const isRGBColor = (v: unknown): boolean => {
+  if (!v || typeof v !== 'object') return false
+  const color = v as Record<string, unknown>
+  return typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number'
 }
 
 export const sanitizeYLCStyle = (style: Record<string, unknown>): Partial<YLCStyleType> => {
@@ -112,7 +107,8 @@ export const sanitizeYTDLiveChat = (raw: Record<string, unknown>) => {
     typeof (raw.coordinates as Record<string, unknown>).x === 'number' &&
     typeof (raw.coordinates as Record<string, unknown>).y === 'number'
   ) {
-    result.coordinates = pick(raw.coordinates as Record<string, unknown>, ['x', 'y'])
+    const coordinates = raw.coordinates as Record<string, number>
+    result.coordinates = { x: coordinates.x, y: coordinates.y }
   }
   if (
     raw.size &&
@@ -120,7 +116,8 @@ export const sanitizeYTDLiveChat = (raw: Record<string, unknown>) => {
     typeof (raw.size as Record<string, unknown>).width === 'number' &&
     typeof (raw.size as Record<string, unknown>).height === 'number'
   ) {
-    result.size = pick(raw.size as Record<string, unknown>, ['width', 'height'])
+    const size = raw.size as Record<string, number>
+    result.size = { width: size.width, height: size.height }
   }
   if (raw.presetItemStyles && typeof raw.presetItemStyles === 'object') {
     const sanitized: Record<string, Partial<YLCStyleType>> = {}
@@ -167,11 +164,5 @@ export const persistImportedSettings = async (importData: ExportData) => {
     [YTD_LIVE_CHAT_PERSIST.key]: JSON.stringify({ state: mergedYtdState, version: YTD_LIVE_CHAT_PERSIST.version }),
   })
 
-  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    if (tabs[0]?.id) {
-      chrome.tabs.sendMessage(tabs[0].id, { message: 'settingsImported' }, () => {
-        void chrome.runtime.lastError
-      })
-    }
-  })
+  sendActiveTabMessage({ message: 'settingsImported' })
 }

@@ -1,17 +1,19 @@
 import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import {
   getIframeDocumentHref,
+  getIframeVideoId,
   getNonBlankIframeHref,
+  isChatHostForCurrentVideo,
   isManagedIframe,
   isManagedLiveIframe,
+  YLC_CHAT_ATTR,
   YLC_OWNED_ATTR,
   YLC_SOURCE_ATTR,
   YLC_SOURCE_LIVE,
 } from '@/entrypoints/content/chat/shared/iframeDom'
+import { getVideoIdFromUrl } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
-
-const YLC_CHAT_ATTR = 'data-ylc-chat'
 
 type BorrowedIframeStyleSnapshot = {
   width: string
@@ -30,15 +32,15 @@ type BorrowedIframeRestoreTarget = {
   nextSibling: ChildNode | null
   placeholder: Comment | null
   style: BorrowedIframeStyleSnapshot
+  videoId: string | null
 }
 
 const borrowedIframeRestoreMap = new WeakMap<HTMLIFrameElement, BorrowedIframeRestoreTarget>()
 const pendingNativeHostRestoreIframes = new Set<HTMLIFrameElement>()
+const pendingNativeHostRestoreVideoIds = new WeakMap<HTMLIFrameElement, string>()
 let pendingNativeHostRestoreObserver: MutationObserver | null = null
 
-export { getIframeDocumentHref, getNonBlankIframeHref, isManagedLiveIframe }
-
-export const createManagedLiveIframe = (src: string) => {
+const createManagedLiveIframe = (src: string) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.className = 'ytd-live-chat-frame'
   iframe.setAttribute(YLC_OWNED_ATTR, 'true')
@@ -93,6 +95,18 @@ const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIf
   iframe.style.backgroundColor = style.backgroundColor
 }
 
+const getBorrowedIframeVideoId = (iframe: HTMLIFrameElement) => getIframeVideoId(iframe) ?? getVideoIdFromUrl()
+
+const isBorrowedVideoCurrent = (videoId: string | null | undefined) => {
+  const currentVideoId = getVideoIdFromUrl()
+  return Boolean(videoId && currentVideoId && videoId === currentVideoId)
+}
+
+const discardBorrowedIframe = (iframe: HTMLIFrameElement) => {
+  iframe.removeAttribute(YLC_CHAT_ATTR)
+  iframe.remove()
+}
+
 const rememberBorrowIframeRestoreTarget = (iframe: HTMLIFrameElement, container: HTMLDivElement) => {
   if (borrowedIframeRestoreMap.has(iframe)) return
 
@@ -107,12 +121,21 @@ const rememberBorrowIframeRestoreTarget = (iframe: HTMLIFrameElement, container:
     nextSibling: iframe.nextSibling,
     placeholder,
     style: captureBorrowedIframeStyle(iframe),
+    videoId: getBorrowedIframeVideoId(iframe),
   })
 }
 
 const restoreBorrowedIframe = (iframe: HTMLIFrameElement) => {
   const restoreTarget = borrowedIframeRestoreMap.get(iframe)
   if (!restoreTarget) return false
+
+  const currentVideoId = getVideoIdFromUrl()
+  if (restoreTarget.videoId && currentVideoId && restoreTarget.videoId !== currentVideoId) {
+    restoreTarget.placeholder?.remove()
+    borrowedIframeRestoreMap.delete(iframe)
+    discardBorrowedIframe(iframe)
+    return true
+  }
 
   restoreBorrowedIframeStyle(iframe, restoreTarget.style)
 
@@ -147,18 +170,29 @@ const cleanupNativeRestoreObserverIfIdle = () => {
   pendingNativeHostRestoreObserver = null
 }
 
+const getCurrentNativeChatHost = () =>
+  Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(host => isChatHostForCurrentVideo(host)) ?? null
+
 const tryRestorePendingNativeIframes = () => {
   if (pendingNativeHostRestoreIframes.size === 0) {
     cleanupNativeRestoreObserverIfIdle()
     return
   }
 
-  const host = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+  const host = getCurrentNativeChatHost()
   if (!host) return
 
   for (const iframe of Array.from(pendingNativeHostRestoreIframes)) {
+    const restoreVideoId = pendingNativeHostRestoreVideoIds.get(iframe) ?? null
+    if (!isBorrowedVideoCurrent(restoreVideoId)) {
+      pendingNativeHostRestoreIframes.delete(iframe)
+      pendingNativeHostRestoreVideoIds.delete(iframe)
+      discardBorrowedIframe(iframe)
+      continue
+    }
     host.insertBefore(iframe, host.firstChild)
     pendingNativeHostRestoreIframes.delete(iframe)
+    pendingNativeHostRestoreVideoIds.delete(iframe)
   }
 
   cleanupNativeRestoreObserverIfIdle()
@@ -171,13 +205,20 @@ const ensureNativeRestoreObserver = () => {
     tryRestorePendingNativeIframes()
   })
   pendingNativeHostRestoreObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['video-id'],
     childList: true,
     subtree: true,
   })
 }
 
-const queueRestoreToNativeHost = (iframe: HTMLIFrameElement) => {
+const queueRestoreToNativeHost = (iframe: HTMLIFrameElement, videoId: string | null) => {
+  if (!videoId || !isBorrowedVideoCurrent(videoId)) {
+    discardBorrowedIframe(iframe)
+    return
+  }
   pendingNativeHostRestoreIframes.add(iframe)
+  pendingNativeHostRestoreVideoIds.set(iframe, videoId)
   iframe.remove()
   ensureNativeRestoreObserver()
   tryRestorePendingNativeIframes()
@@ -185,6 +226,7 @@ const queueRestoreToNativeHost = (iframe: HTMLIFrameElement) => {
 
 const cancelQueuedNativeRestore = (iframe: HTMLIFrameElement) => {
   if (!pendingNativeHostRestoreIframes.delete(iframe)) return
+  pendingNativeHostRestoreVideoIds.delete(iframe)
   cleanupNativeRestoreObserverIfIdle()
 }
 
@@ -218,8 +260,9 @@ export const attachIframeToContainer = (container: HTMLDivElement | null, iframe
   applyChatIframeStyle(iframe)
 }
 
-const restoreIframeToNativeHost = (iframe: HTMLIFrameElement) => {
-  const host = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+const restoreIframeToNativeHost = (iframe: HTMLIFrameElement, videoId: string | null) => {
+  if (!isBorrowedVideoCurrent(videoId)) return false
+  const host = getCurrentNativeChatHost()
   if (!host) return false
   if (iframe.parentElement === host) return true
   host.insertBefore(iframe, host.firstChild)
@@ -257,6 +300,7 @@ export const detachAttachedIframe = (
   } = {},
 ) => {
   const managed = isManagedIframe(iframe)
+  const borrowedVideoId = managed ? null : (borrowedIframeRestoreMap.get(iframe)?.videoId ?? getBorrowedIframeVideoId(iframe))
   iframe.removeAttribute(YLC_CHAT_ATTR)
 
   if (managed) {
@@ -283,9 +327,9 @@ export const detachAttachedIframe = (
   if (iframe.parentElement === container) {
     container?.removeChild(iframe)
   }
-  const restored = restoreIframeToNativeHost(iframe)
+  const restored = restoreIframeToNativeHost(iframe, borrowedVideoId)
   if (!restored) {
-    queueRestoreToNativeHost(iframe)
+    queueRestoreToNativeHost(iframe, borrowedVideoId)
   }
   if (options.ensureNativeVisible) {
     ensureNativeChatVisible()

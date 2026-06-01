@@ -41,10 +41,36 @@ describe('isNativeChatOpen', () => {
     expect(isNativeChatOpen()).toBe(false)
   })
 
+  it('returns false when URL points to a new video while DOM video marker is stale', () => {
+    setLocation('/watch?v=video-b')
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    document.body.appendChild(watchFlexy)
+    createChatContainer()
+    createChatFrameHost()
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.setAttribute('src', 'https://www.youtube.com/live_chat_replay?continuation=video-a')
+    document.body.appendChild(iframe)
+
+    expect(isNativeChatOpen()).toBe(false)
+  })
+
   it('returns true when chat container is visible and iframe matches current video', () => {
     createChatContainer()
     createChatFrameHost()
     createChatFrame('video-a')
+
+    expect(isNativeChatOpen()).toBe(true)
+  })
+
+  it('returns true when native iframe is only exposed through YouTube class selector', () => {
+    createChatContainer()
+    const host = createChatFrameHost()
+    const iframe = document.createElement('iframe')
+    iframe.className = 'ytd-live-chat-frame'
+    iframe.setAttribute('src', 'https://www.youtube.com/live_chat?v=video-a')
+    host.appendChild(iframe)
 
     expect(isNativeChatOpen()).toBe(true)
   })

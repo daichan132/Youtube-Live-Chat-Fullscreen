@@ -1,6 +1,40 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { hasArchiveNativeOpenControl, isNativeChatToggleButton, openArchiveNativeChatPanel } from './nativeChat'
 
+const CURRENT_VIDEO_ID = 'current-video'
+
+const setLocation = (path: string) => {
+  const base = window.location.origin
+  window.history.pushState({}, '', `${base}${path}`)
+}
+
+const markCurrentChatHost = (host: HTMLElement) => {
+  host.setAttribute('data-ylc-observed-video-id', CURRENT_VIDEO_ID)
+}
+
+const createCurrentChatHost = () => {
+  const host = document.createElement('ytd-live-chat-frame')
+  markCurrentChatHost(host)
+  document.body.appendChild(host)
+  return host
+}
+
+const createStaleChatHost = () => {
+  const host = document.createElement('ytd-live-chat-frame')
+  host.setAttribute('data-ylc-observed-video-id', 'stale-video')
+  document.body.appendChild(host)
+  return host
+}
+
+const createUnmarkedCurrentChatHost = () => {
+  const host = document.createElement('ytd-live-chat-frame')
+  const iframe = document.createElement('iframe')
+  iframe.src = `https://www.youtube.com/live_chat_replay?v=${CURRENT_VIDEO_ID}`
+  host.appendChild(iframe)
+  document.body.appendChild(host)
+  return host
+}
+
 const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; pressed?: 'true' | 'false' }) => {
   const controls = document.createElement('div')
   controls.className = 'ytp-right-controls'
@@ -34,6 +68,7 @@ const createPlayerViewModelToggleButton = (label: string) => {
 
 const createSidebarShowHideButton = () => {
   const host = document.createElement('ytd-live-chat-frame')
+  markCurrentChatHost(host)
   const showHide = document.createElement('div')
   showHide.id = 'show-hide-button'
   const button = document.createElement('button')
@@ -53,10 +88,37 @@ const createChatFrame = (src: string) => {
 
 beforeEach(() => {
   document.body.innerHTML = ''
+  setLocation(`/watch?v=${CURRENT_VIDEO_ID}`)
 })
 
 describe('openArchiveNativeChatPanel', () => {
   it('clicks player chat toggle when fullscreen control is available and unpressed', () => {
+    createCurrentChatHost()
+    const button = createPlayerChatToggle({ label: 'Live chat', pressed: 'false' })
+    const clickSpy = vi.fn()
+    button.click = clickSpy
+
+    const opened = openArchiveNativeChatPanel()
+
+    expect(opened).toBe(true)
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('clicks player chat toggle when current host is only identifiable through its iframe', () => {
+    createUnmarkedCurrentChatHost()
+    const button = createPlayerChatToggle({ label: 'Live chat', pressed: 'false' })
+    const clickSpy = vi.fn()
+    button.click = clickSpy
+
+    const opened = openArchiveNativeChatPanel()
+
+    expect(opened).toBe(true)
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('clicks player chat toggle when a stale host appears before the current host', () => {
+    createStaleChatHost()
+    createCurrentChatHost()
     const button = createPlayerChatToggle({ label: 'Live chat', pressed: 'false' })
     const clickSpy = vi.fn()
     button.click = clickSpy
@@ -93,7 +155,7 @@ describe('openArchiveNativeChatPanel', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('live-chat-present-and-expanded', '')
     document.body.appendChild(watchFlexy)
-    createChatFrame('https://www.youtube.com/live_chat_replay?v=test')
+    createChatFrame(`https://www.youtube.com/live_chat_replay?v=${CURRENT_VIDEO_ID}`)
 
     const button = createSidebarShowHideButton()
     const clickSpy = vi.fn()
@@ -109,7 +171,7 @@ describe('openArchiveNativeChatPanel', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('live-chat-present-and-expanded', '')
     document.body.appendChild(watchFlexy)
-    createChatFrame('https://www.youtube.com/live_chat_replay?v=test')
+    createChatFrame(`https://www.youtube.com/live_chat_replay?v=${CURRENT_VIDEO_ID}`)
 
     const button = createSidebarShowHideButton()
     const host = button.closest('ytd-live-chat-frame') as HTMLElement
@@ -139,10 +201,27 @@ describe('openArchiveNativeChatPanel', () => {
     expect(clickSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('ignores stale expanded state when the native iframe belongs to another video', () => {
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('live-chat-present-and-expanded', '')
+    document.body.appendChild(watchFlexy)
+    createChatFrame('https://www.youtube.com/live_chat_replay?v=stale-video')
+
+    const button = createSidebarShowHideButton()
+    const clickSpy = vi.fn()
+    button.click = clickSpy
+
+    const opened = openArchiveNativeChatPanel()
+
+    expect(opened).toBe(true)
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+
   it('falls back to onShowHideChat when button selectors are unavailable', () => {
     const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
       onShowHideChat?: () => void
     }
+    markCurrentChatHost(host)
     const showHideSpy = vi.fn()
     host.onShowHideChat = showHideSpy
     document.body.appendChild(host)
@@ -160,8 +239,20 @@ describe('hasArchiveNativeOpenControl', () => {
     expect(hasArchiveNativeOpenControl()).toBe(true)
   })
 
+  it('returns true when sidebar show-hide button is inside a host identified through its iframe', () => {
+    const host = createUnmarkedCurrentChatHost()
+    const showHide = document.createElement('div')
+    showHide.id = 'show-hide-button'
+    const button = document.createElement('button')
+    showHide.appendChild(button)
+    host.appendChild(showHide)
+
+    expect(hasArchiveNativeOpenControl()).toBe(true)
+  })
+
   it('returns false when only empty show-hide host exists', () => {
     const host = document.createElement('ytd-live-chat-frame')
+    markCurrentChatHost(host)
     const showHide = document.createElement('div')
     showHide.id = 'show-hide-button'
     host.appendChild(showHide)
@@ -174,6 +265,7 @@ describe('hasArchiveNativeOpenControl', () => {
     const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
       onShowHideChat?: () => void
     }
+    markCurrentChatHost(host)
     const showHide = document.createElement('div')
     showHide.id = 'show-hide-button'
     showHide.textContent = 'Show chat replay'
@@ -188,6 +280,7 @@ describe('hasArchiveNativeOpenControl', () => {
     const host = document.createElement('ytd-live-chat-frame') as HTMLElement & {
       onShowHideChat?: () => void
     }
+    markCurrentChatHost(host)
     host.onShowHideChat = vi.fn()
     document.body.appendChild(host)
 

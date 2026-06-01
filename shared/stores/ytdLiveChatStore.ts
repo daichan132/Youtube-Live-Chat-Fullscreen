@@ -67,6 +67,11 @@ const sanitizeStyleUpdate = (update: YLCStyleUpdateType): YLCStyleUpdateType => 
   }
 }
 
+const clampSize = (size: sizeType): sizeType => ({
+  width: Math.max(size.width, ResizableMinWidth),
+  height: Math.max(size.height, ResizableMinHeight),
+})
+
 const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatState => {
   if (!persistedState || typeof persistedState !== 'object') {
     return {}
@@ -148,21 +153,12 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         })),
       setPresetItemIds: presetItemIds => set(() => ({ presetItemIds })),
       setAddPresetEnabled: addPresetEnabled => set(() => ({ addPresetEnabled })),
-      setSize: size =>
-        set(() => ({
-          size: {
-            width: size.width < ResizableMinWidth ? ResizableMinWidth : size.width,
-            height: size.height < ResizableMinHeight ? ResizableMinHeight : size.height,
-          },
-        })),
+      setSize: size => set(() => ({ size: clampSize(size) })),
       setCoordinates: coordinates => set(() => ({ coordinates })),
       setGeometry: geometry =>
         set(() => ({
           coordinates: geometry.coordinates,
-          size: {
-            width: geometry.size.width < ResizableMinWidth ? ResizableMinWidth : geometry.size.width,
-            height: geometry.size.height < ResizableMinHeight ? ResizableMinHeight : geometry.size.height,
-          },
+          size: clampSize(geometry.size),
         })),
       setDefaultPosition: () =>
         set(() => ({
@@ -178,5 +174,3 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     },
   ),
 )
-
-export default useYTDLiveChatStore

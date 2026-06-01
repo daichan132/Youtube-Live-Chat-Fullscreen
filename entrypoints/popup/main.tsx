@@ -1,7 +1,7 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 
-import Popup from './Popup'
+import { Popup } from './Popup'
 import '@/shared/i18n/config'
 import '@/shared/styles/theme.css'
 import 'uno.css'

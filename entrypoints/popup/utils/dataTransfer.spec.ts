@@ -28,7 +28,7 @@ describe('isRGBColor', () => {
     expect(isRGBColor({ r: 0, g: 0, b: 0, a: 0.5 })).toBe(true)
   })
 
-  it.each([null, 'red', 42, { g: 0, b: 0 }])('rejects %j', v => {
+  it.each([null, 'red', 42, { g: 0, b: 0 }, { r: 0, b: 0 }, { r: 0, g: 0 }])('rejects %j', v => {
     expect(isRGBColor(v)).toBe(false)
   })
 })
