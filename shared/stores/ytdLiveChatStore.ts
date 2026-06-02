@@ -36,6 +36,19 @@ type PersistedYTDLiveChatState = Partial<
   reactionButtonDisplay?: boolean
 }
 
+const DEFAULT_PRESET_TITLE_KEYS = {
+  default1: 'content.preset.defaultTitle',
+  default2: 'content.preset.transparentTitle',
+  default3: 'content.preset.simpleTitle',
+} as const
+
+const getDefaultPresetTitleKey = (id: string) => {
+  if (!(id in DEFAULT_PRESET_TITLE_KEYS)) return undefined
+  return DEFAULT_PRESET_TITLE_KEYS[id as keyof typeof DEFAULT_PRESET_TITLE_KEYS]
+}
+
+const translateDefaultPresetTitle = (id: keyof typeof DEFAULT_PRESET_TITLE_KEYS) => i18n.t(DEFAULT_PRESET_TITLE_KEYS[id])
+
 const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
   if (!('reactionButtonDisplay' in style)) {
     return style
@@ -72,6 +85,19 @@ const clampSize = (size: sizeType): sizeType => ({
   height: Math.max(size.height, ResizableMinHeight),
 })
 
+const migratePresetItemTitles = (titles: unknown): YTDLiveChatStoreState['presetItemTitles'] | undefined => {
+  if (!titles || typeof titles !== 'object') return undefined
+
+  const migratedTitles = { ...(titles as Record<string, string>) }
+  for (const id of Object.keys(DEFAULT_PRESET_TITLE_KEYS) as Array<keyof typeof DEFAULT_PRESET_TITLE_KEYS>) {
+    if (typeof migratedTitles[id] !== 'string' || migratedTitles[id].trim().length === 0) {
+      migratedTitles[id] = translateDefaultPresetTitle(id)
+    }
+  }
+
+  return migratedTitles
+}
+
 const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatState => {
   if (!persistedState || typeof persistedState !== 'object') {
     return {}
@@ -82,6 +108,11 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
   const migratedState = {
     ...restState,
   } as PersistedYTDLiveChatState
+
+  const migratedTitles = migratePresetItemTitles(state.presetItemTitles)
+  if (migratedTitles) {
+    migratedState.presetItemTitles = migratedTitles
+  }
 
   if ('fontFamily' in state) {
     migratedState.fontFamily = normalizeFontFamily(state.fontFamily)
@@ -119,9 +150,9 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         default3: ylcSimpleSetting,
       },
       presetItemTitles: {
-        default1: i18n.t('content.preset.defaultTitle'), // i18nキーを使う
-        default2: i18n.t('content.preset.transparentTitle'),
-        default3: i18n.t('content.preset.simpleTitle'),
+        default1: translateDefaultPresetTitle('default1'),
+        default2: translateDefaultPresetTitle('default2'),
+        default3: translateDefaultPresetTitle('default3'),
       },
       addPresetEnabled: true,
       ...ylcInitSetting,
@@ -174,3 +205,5 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     },
   ),
 )
+
+export const getPresetTitleFallbackKey = getDefaultPresetTitleKey

@@ -32,8 +32,8 @@ type ResizeDelta = {
 
 export type ResizeDirection = 'top' | 'left' | 'topLeft' | 'bottomLeft' | 'topRight' | 'right' | 'bottom' | 'bottomRight'
 
-const HEADER_HEIGHT_OFFSET = 8
-const INPUT_HEIGHT_OFFSET = 4
+const HEADER_HEIGHT_OFFSET = 12
+const INPUT_HEIGHT_OFFSET = 0
 
 const clampClipValue = (value: number) => Math.max(0, value)
 const ensurePositiveCoordinate = (value: number): number => Math.max(0, value)

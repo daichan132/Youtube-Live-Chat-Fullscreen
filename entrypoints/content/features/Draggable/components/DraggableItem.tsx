@@ -304,6 +304,11 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     [scheduleControlRailHide, setIsHover, showControlRail],
   )
 
+  const handleControlHoverBridgeEnter = useCallback(() => {
+    setIsHover(true)
+    showControlRail()
+  }, [setIsHover, showControlRail])
+
   const [disableTopTransition, setDisableTopTransition] = useState(true)
   useEffect(() => {
     if (isDragging || isResizing) {
@@ -345,6 +350,17 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
   }
   const controlRailPlacement = isControlRailDisplayable ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
+  const visibleChatBottom = size.height - (isClipPath ? clip.input : 0)
+  const controlHoverBridgeHeight = Math.max(0, controlRailTop + CONTROL_RAIL_HEIGHT - visibleChatBottom)
+  const shouldRenderControlHoverBridge = controlHoverBridgeHeight > 0
+  const controlHoverBridgeStyle: React.CSSProperties = {
+    top: visibleChatBottom,
+    left: 0,
+    right: 0,
+    height: controlHoverBridgeHeight,
+    pointerEvents: isResizing ? 'none' : 'auto',
+    zIndex: 9,
+  }
 
   return (
     <div role='application'>
@@ -376,6 +392,18 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
               {children}
             </div>
           </div>
+
+          {shouldRenderControlHoverBridge && (
+            // biome-ignore lint/a11y/noStaticElementInteractions: This transparent bridge keeps hover state stable while moving toward the control rail.
+            <div
+              data-ylc-control-hover-bridge
+              className='absolute bg-transparent'
+              style={controlHoverBridgeStyle}
+              onMouseEnter={handleControlHoverBridgeEnter}
+              onMouseMove={handleControlHoverBridgeEnter}
+              onMouseLeave={handleChatMouseLeave}
+            />
+          )}
 
           <ControlIcons
             controlRailStyle={controlRailPlacement}

@@ -8,7 +8,7 @@ const baseProps = {
   disableTopTransition: false,
   isResizing: false,
   transform: null,
-  clip: { header: 32, input: 20 },
+  clip: { header: 28, input: 24 },
 }
 
 describe('getDraggableItemStyles', () => {
@@ -21,7 +21,7 @@ describe('getDraggableItemStyles', () => {
 
     expect(resizableStyle.transition).toBe('none')
     expect(innerDivStyle.transition).toBe('none')
-    expect(innerDivStyle.clipPath).toBe('inset(32px 0 20px 0 round 10px)')
+    expect(innerDivStyle.clipPath).toBe('inset(28px 0 24px 0 round 10px)')
   })
 
   it('applies drag transform to the shared frame', () => {

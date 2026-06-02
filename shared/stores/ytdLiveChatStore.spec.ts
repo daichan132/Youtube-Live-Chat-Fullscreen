@@ -147,6 +147,32 @@ describe('useYTDLiveChatStore', () => {
     expect(state.presetItemStyles.legacy?.fontFamily).toBe('')
   })
 
+  it('migrates empty default preset titles back to localized defaults', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          presetItemIds: ['default1', 'default2', 'default3'],
+          presetItemTitles: { default1: '', default2: 'Transparent', default3: 'Simple' },
+          presetItemStyles: {
+            default1: ylcInitSetting,
+            default2: ylcInitSetting,
+            default3: ylcInitSetting,
+          },
+        },
+        version: 1,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.presetItemTitles.default1).toBe('content.preset.defaultTitle')
+    expect(state.presetItemTitles.default2).toBe('Transparent')
+    expect(state.presetItemTitles.default3).toBe('Simple')
+  })
+
   it('normalizes and saves fontFamily in updateYLCStyle', async () => {
     const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
     const state = useYTDLiveChatStore.getState()

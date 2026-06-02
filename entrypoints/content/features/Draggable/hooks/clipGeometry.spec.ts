@@ -24,7 +24,7 @@ describe('clipGeometry', () => {
     body.appendChild(header)
     body.appendChild(input)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 32, input: 20 })
+    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 24 })
   })
 
   it('uses the taller input candidate when message input and restricted participation coexist', () => {
@@ -43,7 +43,7 @@ describe('clipGeometry', () => {
     body.appendChild(input)
     body.appendChild(restricted)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 32, input: 22 })
+    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 26 })
   })
 
   it('falls back to input panel when renderer-specific elements are missing', () => {
@@ -59,7 +59,7 @@ describe('clipGeometry', () => {
     body.appendChild(header)
     body.appendChild(inputPanel)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 32, input: 24 })
+    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 28 })
   })
 
   it('clamps missing clip elements to zero', () => {
@@ -72,8 +72,8 @@ describe('clipGeometry', () => {
       size: { width: 300, height: 200 },
     }
 
-    expect(deriveClippedLayout(baseLayout, { header: 32, input: 20 })).toEqual({
-      coordinates: { x: 10, y: -12 },
+    expect(deriveClippedLayout(baseLayout, { header: 28, input: 24 })).toEqual({
+      coordinates: { x: 10, y: -8 },
       size: { width: 300, height: 252 },
     })
   })

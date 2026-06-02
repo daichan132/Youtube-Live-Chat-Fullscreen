@@ -7,6 +7,7 @@ import { changeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/ylcSt
 import { TbGripVertical, TbSparkles, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { useYTDLiveChatStore } from '@/shared/stores'
+import { getPresetTitleFallbackKey } from '@/shared/stores/ytdLiveChatStore'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
 import { getModalParentElement } from '../../utils/getModalParentElement'
 
@@ -29,6 +30,9 @@ export const PresetItem = ({ id }: PresetItemType) => {
     })),
   )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const { t } = useTranslation()
+  const titleFallbackKey = getPresetTitleFallbackKey(id)
+  const displayTitle = typeof title === 'string' && title.trim().length > 0 ? title : titleFallbackKey ? t(titleFallbackKey) : ''
   const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
   })
@@ -40,7 +44,6 @@ export const PresetItem = ({ id }: PresetItemType) => {
     },
     [setAddPresetEnabled, updateYLCStyle],
   )
-  const { t } = useTranslation()
 
   return (
     <div
@@ -69,7 +72,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
           </div>
           <input
             type='text'
-            value={title}
+            value={displayTitle}
             onChange={event => updateTitle(id, event.target.value)}
             aria-label={t('content.aria.presetName')}
             className='ml-1 h-[34px] p-2 rounded-[8px] outline-none min-w-0 flex-1 max-w-[228px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'

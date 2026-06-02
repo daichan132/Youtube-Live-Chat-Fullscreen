@@ -26,6 +26,12 @@ body {
   background: transparent !important;
 }
 
+body.custom-yt-app-live-chat-extension {
+  margin: 0;
+  min-height: 100vh;
+  width: 100%;
+}
+
 body.custom-yt-app-live-chat-extension,
 body.custom-yt-app-live-chat-extension yt-live-chat-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-renderer #contents,
@@ -182,6 +188,97 @@ body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu 
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu button,
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon {
   color: var(--extension-yt-live-secondary-font-color);
+}
+
+/* Top fans / live viewer leaderboard uses ytd/ytvl surfaces outside the
+   normal live-chat renderer color inheritance. */
+body.custom-yt-app-live-chat-extension :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #header
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #title-container
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title-text
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #navigation-button
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #action-button
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-view-model),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelRankNumber),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelContent),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-channel-content-view-model
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemChannelContentViewModelChannelName
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      .ytSpecButtonShapeNextIcon
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      .ytSpecIconShapeHost
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer svg),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer path
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelPoints) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemActionContentViewModelActionDescription
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemActionContentViewModelActionDescription
+      span
+  ) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
 }
 
 /* State-dependent input / restricted participation controls. */

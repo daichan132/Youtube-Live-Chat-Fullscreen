@@ -199,7 +199,7 @@ describe('DraggableItem', () => {
     })
     resetNoLsStore({
       isClipPath: true,
-      clip: { header: 32, input: 20 },
+      clip: { header: 28, input: 24 },
     })
 
     const { getByTestId } = render(
@@ -208,7 +208,7 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
 
-    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '238px' })
+    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '234px' })
   })
 
   it('keeps the control rail inside the viewport bottom without shifting horizontally', () => {
@@ -498,6 +498,43 @@ describe('DraggableItem', () => {
 
     expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
     expect(controlRail).toHaveAttribute('data-visible', 'false')
+  })
+
+  it('extends the control hover area below the visible chat bottom', () => {
+    resetStore({
+      coordinates: { x: 100, y: 50 },
+      size: { width: 300, height: 200 },
+    })
+
+    const { container } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+    const bridge = container.querySelector('[data-ylc-control-hover-bridge]') as HTMLElement
+
+    expect(bridge).toHaveStyle({ top: '200px', left: '0px', right: '0px', height: '52px' })
+  })
+
+  it('shows controls from the extended hover area without first entering the chat body', () => {
+    vi.useFakeTimers()
+    resetNoLsStore({ isHover: false, isDisplay: false })
+
+    const { container, getByTestId } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+    const bridge = container.querySelector('[data-ylc-control-hover-bridge]') as HTMLElement
+
+    act(() => {
+      fireEvent.mouseEnter(bridge)
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
+    expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })
 
   it('only treats the visible clipped chat body as the chat hover area', () => {

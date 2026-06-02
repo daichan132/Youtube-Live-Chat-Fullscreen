@@ -83,4 +83,14 @@ describe('PresetItem', () => {
 
     expect(useYTDLiveChatStore.getState().presetItemIds).not.toContain('custom')
   })
+
+  it('falls back to the default preset title when persisted title is empty', () => {
+    useYTDLiveChatStore.setState({
+      presetItemTitles: { ...baseState.presetItemTitles, default1: '' },
+    })
+
+    const { getByDisplayValue } = render(<PresetItem id='default1' />)
+
+    expect(getByDisplayValue('content.preset.defaultTitle')).toBeTruthy()
+  })
 })

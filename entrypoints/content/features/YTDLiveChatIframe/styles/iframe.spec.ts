@@ -15,7 +15,24 @@ describe('iframe styles contract', () => {
     expect(directDisplayNoneSelectors()).toEqual(['body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-button'])
   })
 
+  it('keeps the iframe body covering the viewport so backdrop blur reaches the edges', () => {
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  width: 100%;\n}')
+  })
+
   it('does not suppress the live viewer leaderboard entry', () => {
+    expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
+  })
+
+  it('themes top fan leaderboard text and icons without hiding its entry point', () => {
+    expect(iframeStyles).toContain('ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]')
+    expect(iframeStyles).toContain('ytd-engagement-panel-title-header-renderer')
+    expect(iframeStyles).toContain('.ytvlLiveLeaderboardItemViewModelRankNumber')
+    expect(iframeStyles).toContain('.ytvlLiveLeaderboardItemChannelContentViewModelChannelName')
+    expect(iframeStyles).toContain('.ytvlLiveLeaderboardItemViewModelPoints')
+    expect(iframeStyles).toContain('.ytvlLiveLeaderboardItemActionContentViewModelActionDescription')
+    expect(iframeStyles).toContain('color: var(--extension-yt-live-font-color) !important;')
+    expect(iframeStyles).toContain('color: var(--extension-yt-live-secondary-font-color) !important;')
+    expect(iframeStyles).toContain('fill: currentColor !important;')
     expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
   })
 
