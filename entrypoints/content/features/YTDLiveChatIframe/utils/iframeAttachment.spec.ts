@@ -44,7 +44,21 @@ describe('iframeAttachment', () => {
     expect(reused).toBe(managed)
   })
 
-  it('does not reuse native live iframe for live source', () => {
+  it('returns native iframe directly for live borrow source', () => {
+    const nativeLiveIframe = document.createElement('iframe') as HTMLIFrameElement
+    nativeLiveIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+
+    const source: ChatSource = {
+      kind: 'live_borrow',
+      videoId: 'video-a',
+      iframe: nativeLiveIframe,
+    }
+
+    const resolved = resolveSourceIframe(source, null)
+    expect(resolved).toBe(nativeLiveIframe)
+  })
+
+  it('creates a managed iframe for live direct source instead of reusing unrelated native iframe', () => {
     const source: ChatSource = {
       kind: 'live_direct',
       videoId: 'video-a',

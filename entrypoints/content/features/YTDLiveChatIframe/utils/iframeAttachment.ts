@@ -231,7 +231,7 @@ const cancelQueuedNativeRestore = (iframe: HTMLIFrameElement) => {
 }
 
 export const resolveSourceIframe = (source: ChatSource, currentIframe: HTMLIFrameElement | null) => {
-  if (source.kind === 'archive_borrow') {
+  if (source.kind === 'archive_borrow' || source.kind === 'live_borrow') {
     return source.iframe
   }
 

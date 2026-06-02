@@ -12,6 +12,7 @@ import {
   YLC_FONT_COLOR_PROPERTIES,
   YLC_FONT_COLOR_SURFACE_PROPERTIES,
   YLC_FONT_SIZE_PROPERTY,
+  YLC_PANEL_BACKGROUND_PROPERTY,
   YLC_SPACING_PROPERTY,
   YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
   YLC_USER_ICON_DISPLAY_PROPERTY,
@@ -64,6 +65,10 @@ const toElevatedSurfaceColor = (rgba: RGBColor) => {
   return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
 }
 
+const toOpaquePanelColor = (rgba: RGBColor) => {
+  return toRgbaString(rgba, 1)
+}
+
 const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, (rgba.a ?? 1) * 0.12))
 
 export const changeYLCBgColor = (rgba: RGBColor) => {
@@ -72,6 +77,7 @@ export const changeYLCBgColor = (rgba: RGBColor) => {
     ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
     ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
     ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toElevatedSurfaceColor(rgba)] as const),
+    [YLC_PANEL_BACKGROUND_PROPERTY, toOpaquePanelColor(rgba)],
   ])
 }
 

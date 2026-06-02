@@ -33,6 +33,7 @@ describe('iframe styles contract', () => {
 
   it('themes YouTube menu and Material button surfaces with extension colors', () => {
     expect(iframeStyles).toContain('--extension-yt-live-menu-background-color')
+    expect(iframeStyles).toContain('--extension-yt-live-panel-background-color')
     expect(iframeStyles).toContain('--extension-yt-live-control-background-color')
     expect(iframeStyles).toContain('--extension-yt-live-control-border-color')
     expect(iframeStyles).toContain('--extension-yt-live-menu-hover-background-color')
@@ -49,9 +50,13 @@ describe('iframe styles contract', () => {
       'tp-yt-iron-dropdown {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
     )
     expect(iframeStyles).toContain('background-color: transparent !important;')
-    expect(iframeStyles).toContain('background: var(--extension-yt-live-menu-background-color) !important;')
-    expect(iframeStyles).toContain('background-color: var(--extension-yt-live-menu-background-color) !important;')
+    expect(iframeStyles).toContain('background: var(--extension-yt-live-panel-background-color) !important;')
+    expect(iframeStyles).toContain('background-color: var(--extension-yt-live-panel-background-color) !important;')
     expect(iframeStyles).toContain('border-radius: inherit;')
+    expect(iframeStyles).not.toContain('--extension-yt-live-panel-backdrop-filter')
+    expect(iframeStyles).not.toContain('tp-yt-paper-listbox::before')
+    expect(iframeStyles).not.toContain('ytd-menu-popup-renderer #items::before')
+    expect(iframeStyles).not.toContain('tp-yt-paper-listbox > *')
     expect(iframeStyles).toContain(
       'ytd-menu-popup-renderer {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
     )
@@ -67,6 +72,10 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #buy-flow')
     expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer')
+    expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-renderer::before')
+    expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-renderer > *')
+    expect(iframeStyles).not.toContain('isolation: isolate;')
+    expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-renderer {\n  overflow-x: hidden;\n  overflow-y: auto;\n}')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model #text yt-attributed-string:not(:first-child)')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model .ytSpecIconShapeHost')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #help yt-button-renderer')
@@ -93,6 +102,37 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer svg')
     expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer path')
     expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-backstory-renderer #content *')
+  })
+
+  it('themes chat input, emoji picker, and reaction controls', () => {
+    expect(iframeStyles).toContain('#send-button.yt-live-chat-message-input-renderer')
+    expect(iframeStyles).toContain('yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji')
+    expect(iframeStyles).toContain(
+      'yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {\n  background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;\n  transition-delay: 0s, 0s !important;\n}',
+    )
+    expect(iframeStyles).toContain(
+      'yt-reaction-control-panel-view-model #fab-container {\n  transition-property: height, background-color !important;\n  transition-duration: 0.3s, 0.12s !important;\n  transition-delay: 0s, 0.3s !important;\n}',
+    )
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model #hover-area')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model #expanded-buttons')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-button-view-model #button')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-button-view-model button')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-button-view-model:hover')
+    expect(iframeStyles).not.toContain('ylc-reaction-fab-expanded')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model {\n  background-color:')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-overlay-view-model')
+    expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model {\n  color:')
+    expect(iframeStyles).toContain('yt-emoji-picker-renderer #search-panel')
+    expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer')
+    expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer[active]')
+    expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer[aria-selected="true"]')
+    expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer svg')
+    expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer path')
+    expect(iframeStyles).not.toContain(
+      'yt-emoji-picker-category-button-renderer[active],\nbody.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"] {\n  background:',
+    )
+    expect(iframeStyles).toContain('#title.yt-emoji-picker-category-renderer {\n  color: var(--yt-spec-text-secondary) !important;\n}')
+    expect(iframeStyles).toContain('fill: currentColor !important;')
   })
 
   it('themes pinned banners without overriding owner badges', () => {

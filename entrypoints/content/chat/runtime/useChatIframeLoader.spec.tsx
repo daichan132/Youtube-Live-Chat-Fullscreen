@@ -224,7 +224,7 @@ describe('useChatIframeLoader', () => {
     })
   })
 
-  it('creates a managed iframe for live streams instead of borrowing native iframe', async () => {
+  it('borrows native iframe for live streams when available', async () => {
     const frame = attachLiveChatFrame()
     const nativeIframe = createChatIframe('video-a', {
       docHref: 'https://www.youtube.com/live_chat?v=video-a',
@@ -240,24 +240,14 @@ describe('useChatIframeLoader', () => {
     const container = getByTestId('container')
 
     await waitFor(() => {
-      const managedIframe = container.querySelector('iframe[data-ylc-owned="true"]') as HTMLIFrameElement | null
-      expect(managedIframe).not.toBeNull()
-      expect(managedIframe).not.toBe(nativeIframe)
-      if (!managedIframe) return
-      expectPublicLiveChatUrl(managedIframe, 'video-a')
-      expect(container.contains(nativeIframe)).toBe(false)
-      expect(frame.contains(nativeIframe)).toBe(true)
-      expect(nativeIframe.getAttribute('data-ylc-chat')).toBeNull()
+      expect(container.contains(nativeIframe)).toBe(true)
+      expect(nativeIframe.getAttribute('data-ylc-owned')).toBeNull()
+      expect(nativeIframe.getAttribute('data-ylc-chat')).toBe('true')
+      expect(frame.contains(nativeIframe)).toBe(false)
     })
   })
 
-  it('recreates managed public iframe on live video transition', async () => {
-    const frame = attachLiveChatFrame()
-    const nativeIframe = createChatIframe('video-a', {
-      docHref: 'https://www.youtube.com/live_chat?v=video-a',
-    })
-    frame.appendChild(nativeIframe)
-
+  it('upgrades a managed live iframe to a borrowed native iframe when native chat appears later', async () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('is-live-now', '')
     watchFlexy.setAttribute('live-chat-present', '')
@@ -275,24 +265,70 @@ describe('useChatIframeLoader', () => {
       expectPublicLiveChatUrl(firstManagedIframe, 'video-a')
     })
 
-    nativeIframe.src = 'https://www.youtube.com/live_chat?v=video-b'
-    Object.defineProperty(nativeIframe, 'contentDocument', {
-      value: createPlayableLiveChatDoc('video-b', { href: 'https://www.youtube.com/live_chat?v=video-b' }),
-      configurable: true,
+    const frame = attachLiveChatFrame()
+    frame.setAttribute('video-id', 'video-a')
+    const nativeUrl = 'https://www.youtube.com/live_chat?continuation=current-live-chat&authuser=0'
+    const nativeIframe = createChatIframe('video-a', {
+      src: '',
+      docHref: nativeUrl,
     })
+    frame.appendChild(nativeIframe)
+
+    await waitFor(
+      () => {
+        expect(container.contains(nativeIframe)).toBe(true)
+        expect(nativeIframe.getAttribute('data-ylc-owned')).toBeNull()
+        expect(nativeIframe.getAttribute('data-ylc-chat')).toBe('true')
+        expect(firstManagedIframe?.isConnected).toBe(false)
+        expect(frame.contains(nativeIframe)).toBe(false)
+      },
+      { timeout: 3000 },
+    )
+  })
+
+  it('borrows the next native iframe when it appears after a live video transition', async () => {
+    const frame = attachLiveChatFrame()
+    const nativeIframe = createChatIframe('video-a', {
+      docHref: 'https://www.youtube.com/live_chat?v=video-a',
+    })
+    frame.appendChild(nativeIframe)
+
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('is-live-now', '')
+    watchFlexy.setAttribute('live-chat-present', '')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    document.body.appendChild(watchFlexy)
+
+    const { getByTestId } = render(<TestComponent mode='live' />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(nativeIframe)).toBe(true)
+      expect(nativeIframe.getAttribute('data-ylc-chat')).toBe('true')
+    })
+
     watchFlexy.setAttribute('video-id', 'video-b')
     setLocation('/watch?v=video-b')
     document.dispatchEvent(new Event('yt-navigate-finish'))
 
     await waitFor(() => {
-      const nextManagedIframe = container.querySelector('iframe[data-ylc-owned="true"]') as HTMLIFrameElement | null
-      expect(nextManagedIframe).not.toBeNull()
-      expect(nextManagedIframe).not.toBe(firstManagedIframe)
-      if (!nextManagedIframe) return
-      expectPublicLiveChatUrl(nextManagedIframe, 'video-b')
-      expect(firstManagedIframe?.isConnected).toBe(false)
-      expect(frame.contains(nativeIframe)).toBe(true)
-      expect(nativeIframe.getAttribute('data-ylc-chat')).toBeNull()
+      const managedIframe = container.querySelector('iframe[data-ylc-owned="true"]') as HTMLIFrameElement | null
+      expect(managedIframe).not.toBeNull()
+      if (!managedIframe) return
+      expectPublicLiveChatUrl(managedIframe, 'video-b')
+      expect(nativeIframe.isConnected).toBe(false)
+    })
+
+    const nextNativeIframe = createChatIframe('video-b', {
+      docHref: 'https://www.youtube.com/live_chat?v=video-b',
+    })
+    frame.setAttribute('video-id', 'video-b')
+    frame.appendChild(nextNativeIframe)
+
+    await waitFor(() => {
+      expect(container.contains(nextNativeIframe)).toBe(true)
+      expect(nextNativeIframe.getAttribute('data-ylc-owned')).toBeNull()
+      expect(nextNativeIframe.getAttribute('data-ylc-chat')).toBe('true')
     })
   })
 

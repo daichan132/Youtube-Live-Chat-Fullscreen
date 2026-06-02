@@ -20,6 +20,8 @@ export const YLC_BG_SURFACE_PROPERTIES = [
   '--yt-spec-raised-background',
 ] as const
 
+export const YLC_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-panel-background-color'
+
 export const YLC_FONT_COLOR_PROPERTIES = ['--extension-yt-live-font-color'] as const
 
 export const YLC_FONT_COLOR_LIGHT_PROPERTIES = ['--extension-yt-live-secondary-font-color'] as const

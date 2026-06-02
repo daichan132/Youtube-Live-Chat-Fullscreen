@@ -18,6 +18,14 @@ export const getLiveChatUrlForVideo = (videoId: string) => {
 export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFrameElement | null = null): LiveChatSource | null => {
   if (!videoId) return null
 
+  if (currentIframe && !isManagedLiveIframe(currentIframe) && isLiveChatIframe(currentIframe)) {
+    return {
+      kind: 'live_borrow',
+      videoId,
+      iframe: currentIframe,
+    }
+  }
+
   const nativeIframe = getCurrentLiveChatIframe(videoId)
   const nativeIframeMatchesCurrentVideo = nativeIframe !== null
   if (nativeIframe && nativeIframeMatchesCurrentVideo && isReplayChatIframe(nativeIframe)) return null
@@ -30,6 +38,14 @@ export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFr
 
   const hasStrongLiveSignal = isYouTubeLiveNow() || (nativeIframeMatchesCurrentVideo && isLiveChatIframe(nativeIframe))
   if (!hasStrongLiveSignal && !managedLiveCurrent) return null
+
+  if (nativeIframe && isLiveChatIframe(nativeIframe)) {
+    return {
+      kind: 'live_borrow',
+      videoId,
+      iframe: nativeIframe,
+    }
+  }
 
   return {
     kind: 'live_direct',

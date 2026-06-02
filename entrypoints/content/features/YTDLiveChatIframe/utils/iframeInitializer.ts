@@ -10,12 +10,84 @@ type IframeInitializerOptions = {
   retryMaxAttempts?: number
 }
 
+type MembershipPickerData = {
+  onTapCommand?: {
+    parallelCommand?: {
+      commands?: Array<{
+        innertubeCommand?: {
+          ypcGetOffersEndpoint?: {
+            params?: string
+          }
+        }
+      }>
+    }
+  }
+}
+
 const getIframeDocument = (iframe: HTMLIFrameElement) => {
   try {
     return iframe.contentDocument ?? null
   } catch {
     return null
   }
+}
+
+const MEMBERSHIP_FALLBACK_MARKER_ATTR = 'data-ylc-membership-fallback'
+
+const decodeOfferParams = (params: string | null | undefined) => {
+  if (!params) return ''
+  const encoded = params.startsWith('sku-') ? params.slice(4) : params
+  try {
+    return atob(decodeURIComponent(encoded))
+  } catch {
+    return ''
+  }
+}
+
+const getMembershipChannelUrl = (item: Element) => {
+  const itemData = (item as Element & { data?: unknown }).data
+  const params =
+    typeof itemData === 'object' && itemData !== null
+      ? (itemData as MembershipPickerData).onTapCommand?.parallelCommand?.commands?.[0]?.innertubeCommand?.ypcGetOffersEndpoint?.params
+      : null
+  const decodedParams = decodeOfferParams(params)
+  const channelId = decodedParams.match(/UC[\w-]{20,}/)?.[0]
+  if (channelId) return `https://www.youtube.com/channel/${channelId}/join`
+
+  const ownerLink = window.document.querySelector<HTMLAnchorElement>(
+    'ytd-video-owner-renderer a[href^="/@"], ytd-video-owner-renderer a[href^="/channel/"], #owner a[href^="/@"], #owner a[href^="/channel/"]',
+  )
+  const href = ownerLink?.getAttribute('href')
+  if (!href) return null
+
+  const url = new URL(href, window.location.origin)
+  url.pathname = `${url.pathname.replace(/\/$/, '')}/join`
+  url.search = ''
+  url.hash = ''
+  return url.toString()
+}
+
+const installMembershipFallback = (doc: Document) => {
+  if (doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)) return
+  doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'true')
+  doc.body.addEventListener(
+    'click',
+    event => {
+      const target = event.target
+      if (!target || !('closest' in target)) return
+
+      const item = (target as Element).closest('yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]')
+      if (!item) return
+
+      const joinUrl = getMembershipChannelUrl(item)
+      if (!joinUrl) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      window.open(joinUrl, '_blank', 'noopener')
+    },
+    true,
+  )
 }
 
 const ensureStyleInjected = (doc: Document, cssText: string) => {
@@ -71,6 +143,7 @@ export const createIframeInitializer = ({
     if (styleInjected || classAdded) {
       applyChatStyle()
     }
+    installMembershipFallback(doc)
 
     setIsIframeLoaded(true)
     setIsDisplay(true)

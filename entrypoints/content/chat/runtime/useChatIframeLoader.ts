@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
-import { resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
+import { getLiveChatUrlForVideo, resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
 import { changeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
@@ -139,6 +139,17 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       return true
     }
 
+    const shouldKeepWatchingForLiveNativeUrl = () => {
+      if (mode !== 'live' || !isManagedLiveIframe(iframeRef.current)) return false
+      const currentIframe = iframeRef.current
+      if (!currentIframe) return false
+
+      const currentVideoId = getCurrentYouTubeVideoId()
+      if (!currentVideoId) return false
+
+      return getNonBlankIframeHref(currentIframe) === getLiveChatUrlForVideo(currentVideoId)
+    }
+
     const handleVideoTransition = () => {
       if (!isArchiveMode(mode)) return false
 
@@ -174,8 +185,10 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       retryStartedAt = Date.now()
       retryInterval = window.setInterval(() => {
         if (syncChatSource()) {
-          observer?.disconnect()
-          stopRetry()
+          if (!shouldKeepWatchingForLiveNativeUrl()) {
+            observer?.disconnect()
+            stopRetry()
+          }
           return
         }
         if (Date.now() - retryStartedAt >= retryMaxMs) {
@@ -202,8 +215,10 @@ export const useChatIframeLoader = (mode: ChatMode) => {
 
       observer = new MutationObserver(() => {
         if (syncChatSource()) {
-          observer?.disconnect()
-          stopRetry()
+          if (!shouldKeepWatchingForLiveNativeUrl()) {
+            observer?.disconnect()
+            stopRetry()
+          }
         }
       })
 
@@ -211,7 +226,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     }
 
     const syncOrWatch = () => {
-      if (syncChatSource()) return
+      if (syncChatSource() && !shouldKeepWatchingForLiveNativeUrl()) return
       setupObserver()
       startRetry()
     }

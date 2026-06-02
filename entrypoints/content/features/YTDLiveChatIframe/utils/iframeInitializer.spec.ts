@@ -140,4 +140,52 @@ describe('iframeInitializer', () => {
     expect(doc.head?.querySelectorAll(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`).length).toBe(1)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
   })
+
+  it('opens the channel join page when membership picker fallback is clicked', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    const item = doc.createElement('yt-live-chat-product-picker-panel-item-view-model')
+    item.setAttribute('item-id', 'Membership')
+    const endpoint = doc.createElement('a')
+    endpoint.id = 'endpoint'
+    endpoint.textContent = 'Membership'
+    item.appendChild(endpoint)
+    Object.defineProperty(item, 'data', {
+      value: {
+        onTapCommand: {
+          parallelCommand: {
+            commands: [
+              {
+                innertubeCommand: {
+                  ypcGetOffersEndpoint: {
+                    params: `sku-${encodeURIComponent(btoa('channel:UCSJ4gkVC6NrvII8umztf0Ow'))}`,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+      configurable: true,
+    })
+    doc.body.appendChild(item)
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
+    const initializer = createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+      setIsDisplay: vi.fn(),
+    })
+
+    initializer.initialize(iframe)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(openSpy).toHaveBeenCalledWith('https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow/join', '_blank', 'noopener')
+  })
 })
