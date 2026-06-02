@@ -7,6 +7,9 @@ import { DraggableItem } from './DraggableItem'
 
 type MockResizableProps = {
   children: ReactNode
+  style?: CSSProperties
+  handleStyles?: Record<string, CSSProperties | undefined>
+  handleWrapperStyle?: CSSProperties
   onResizeStart?: () => void
   onResize?: (
     event: MouseEvent | TouchEvent,
@@ -211,6 +214,24 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '234px' })
   })
 
+  it('keeps resize handles interactive while clipped chat passes through pointer events', () => {
+    resetNoLsStore({
+      isClipPath: true,
+      clip: { header: 28, input: 24 },
+    })
+
+    render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(resizableState.props?.style?.pointerEvents).toBe('none')
+    expect(resizableState.props?.handleWrapperStyle?.pointerEvents).toBe('none')
+    expect(resizableState.props?.handleStyles?.right?.pointerEvents).toBe('auto')
+    expect(resizableState.props?.handleStyles?.bottomRight?.pointerEvents).toBe('auto')
+  })
+
   it('keeps the control rail inside the viewport bottom without shifting horizontally', () => {
     resetStore({
       coordinates: { x: 0, y: 0 },
@@ -396,7 +417,7 @@ describe('DraggableItem', () => {
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
   })
 
-  it('keeps the chat expanded while hovering controls', () => {
+  it('keeps the chat visible while hovering controls without entering chat hover', () => {
     vi.useFakeTimers()
     resetNoLsStore({ isHover: false, isDisplay: false })
 
@@ -412,7 +433,7 @@ describe('DraggableItem', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
-    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
   })
 
   it('does not show controls just because document activity keeps chat visible', () => {
@@ -513,12 +534,34 @@ describe('DraggableItem', () => {
     )
     const bridge = container.querySelector('[data-ylc-control-hover-bridge]') as HTMLElement
 
-    expect(bridge).toHaveStyle({ top: '200px', left: '0px', right: '0px', height: '52px' })
+    expect(bridge).toHaveStyle({ top: '188px', left: '0px', right: '0px', height: '76px' })
   })
 
-  it('shows controls from the extended hover area without first entering the chat body', () => {
+  it('keeps chat hover while crossing from the lower edge through the hover bridge', () => {
     vi.useFakeTimers()
-    resetNoLsStore({ isHover: false, isDisplay: false })
+    resetNoLsStore({ isHover: true, isDisplay: true })
+
+    const { container, getByTestId } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+    const bridge = container.querySelector('[data-ylc-control-hover-bridge]') as HTMLElement
+
+    act(() => {
+      fireEvent.mouseLeave(container.querySelector('[data-ylc-chat-inner]') as HTMLElement)
+      vi.advanceTimersByTime(120)
+      fireEvent.mouseEnter(bridge)
+      vi.advanceTimersByTime(160)
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
+  })
+
+  it('shows controls from the extended hover area without entering chat hover', () => {
+    vi.useFakeTimers()
+    resetNoLsStore({ isClipPath: true, isHover: false, isDisplay: false })
 
     const { container, getByTestId } = render(
       <DraggableItem>
@@ -532,7 +575,8 @@ describe('DraggableItem', () => {
       vi.advanceTimersByTime(1000)
     })
 
-    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
+    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })

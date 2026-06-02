@@ -19,6 +19,12 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  width: 100%;\n}')
   })
 
+  it('removes the native chat edge shimmer from clipped chat-only mode', () => {
+    expect(iframeStyles).toContain('yt-live-chat-renderer #chat::after')
+    expect(iframeStyles).toContain('background-image: none !important;')
+    expect(iframeStyles).toContain('animation: none !important;')
+  })
+
   it('does not suppress the live viewer leaderboard entry', () => {
     expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
   })

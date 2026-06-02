@@ -92,15 +92,10 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
 
   /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
+    if (isDragging || isResizing || isControlRailHiding) return
+
     // Determine if clip path should be enabled
-    const shouldEnableClipPath =
-      isIframeLoaded &&
-      alwaysOnDisplay &&
-      chatOnlyDisplay &&
-      !isDragging &&
-      !isResizing &&
-      !isControlRailHiding &&
-      (isOpenSettingModal || !isHover)
+    const shouldEnableClipPath = isIframeLoaded && alwaysOnDisplay && chatOnlyDisplay && (isOpenSettingModal || !isHover)
 
     // Set clip path state with small delay
     const timer = setTimeout(() => {
@@ -189,7 +184,7 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
   // while keeping geometry idempotent from a stable base layout.
   useEffect(() => {
     const body = iframeElement?.contentDocument?.body
-    if (!isClipPath || !isIframeLoaded || !body) return
+    if (!isClipPath || !isIframeLoaded || !body || isResizing) return
 
     let retryCount = 0
     let timer: ReturnType<typeof setTimeout> | undefined
@@ -213,7 +208,7 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
     return () => {
       if (timer) clearTimeout(timer)
     }
-  }, [isClipPath, isIframeLoaded, iframeElement, getClip, setClip, applyGeometry])
+  }, [isClipPath, isIframeLoaded, iframeElement, isResizing, getClip, setClip, applyGeometry])
 
   unmountCleanupRef.current = () => {
     const noLsState = useYTDLiveChatNoLsStore.getState()

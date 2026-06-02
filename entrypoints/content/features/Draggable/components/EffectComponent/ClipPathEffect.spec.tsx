@@ -150,6 +150,54 @@ describe('ClipPathEffect', () => {
     expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
   })
 
+  it('keeps clipped geometry stable while resizing', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
+
+    resetStores({
+      liveOverrides: {
+        coordinates: { x: 10, y: 20 },
+        size: { width: 300, height: 200 },
+        alwaysOnDisplay: true,
+        chatOnlyDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isHover: false,
+        isOpenSettingModal: false,
+        isClipPath: undefined,
+        iframeElement: iframe,
+        clip: { header: 0, input: 0 },
+      },
+    })
+
+    const { rerender } = render(<ClipPathEffect isDragging={false} isResizing={false} />)
+
+    act(() => {
+      vi.advanceTimersByTime(20)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+
+    rerender(<ClipPathEffect isDragging={false} isResizing={true} />)
+    setIframeClipHeights(iframe, { headerHeight: 52, inputHeight: 30 })
+
+    act(() => {
+      vi.advanceTimersByTime(160)
+    })
+    await act(async () => {
+      await Promise.resolve()
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+  })
+
   it('removes focus from the iframe when clip path is enabled', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
     const activeElement = iframe.contentDocument?.createElement('button') as HTMLButtonElement

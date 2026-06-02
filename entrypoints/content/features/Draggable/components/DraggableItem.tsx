@@ -1,5 +1,5 @@
 import { useDraggable } from '@dnd-kit/core'
-import { type NumberSize, Resizable } from 're-resizable'
+import { type HandleStyles, type NumberSize, Resizable } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
@@ -24,6 +24,25 @@ const CONTROL_RAIL_HEIGHT = 46
 const CONTROL_VIEWPORT_PADDING = 4
 const CONTROL_HIDE_DELAY_MS = 160
 const CONTROL_FADE_OUT_MS = 180
+const CONTROL_HOVER_BRIDGE_OVERLAP = 12
+const CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM = 12
+const RESIZE_HANDLE_POINTER_STYLE: React.CSSProperties = {
+  pointerEvents: 'auto',
+  zIndex: 20,
+}
+const RESIZE_HANDLE_STYLES: HandleStyles = {
+  top: RESIZE_HANDLE_POINTER_STYLE,
+  right: RESIZE_HANDLE_POINTER_STYLE,
+  bottom: RESIZE_HANDLE_POINTER_STYLE,
+  left: RESIZE_HANDLE_POINTER_STYLE,
+  topRight: RESIZE_HANDLE_POINTER_STYLE,
+  bottomRight: RESIZE_HANDLE_POINTER_STYLE,
+  bottomLeft: RESIZE_HANDLE_POINTER_STYLE,
+  topLeft: RESIZE_HANDLE_POINTER_STYLE,
+}
+const RESIZE_HANDLE_WRAPPER_STYLE: React.CSSProperties = {
+  pointerEvents: 'none',
+}
 
 type VisibleChatBounds = {
   top: number
@@ -292,22 +311,26 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
   }, [scheduleControlRailHide])
 
   const handleControlsHoverChange = useCallback(
-    (nextIsHover: boolean) => {
-      setIsControlHover(nextIsHover)
-      if (nextIsHover) {
-        setIsHover(true)
+    (nextIsControlHover: boolean) => {
+      setIsControlHover(nextIsControlHover)
+      if (nextIsControlHover) {
         showControlRail()
         return
       }
       scheduleControlRailHide()
     },
-    [scheduleControlRailHide, setIsHover, showControlRail],
+    [scheduleControlRailHide, showControlRail],
   )
 
   const handleControlHoverBridgeEnter = useCallback(() => {
-    setIsHover(true)
+    setIsControlHover(true)
     showControlRail()
-  }, [setIsHover, showControlRail])
+  }, [showControlRail])
+
+  const handleControlHoverBridgeLeave = useCallback(() => {
+    setIsControlHover(false)
+    scheduleControlRailHide()
+  }, [scheduleControlRailHide])
 
   const [disableTopTransition, setDisableTopTransition] = useState(true)
   useEffect(() => {
@@ -351,10 +374,12 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
   }
   const controlRailPlacement = isControlRailDisplayable ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
   const visibleChatBottom = size.height - (isClipPath ? clip.input : 0)
-  const controlHoverBridgeHeight = Math.max(0, controlRailTop + CONTROL_RAIL_HEIGHT - visibleChatBottom)
+  const controlHoverBridgeTop = Math.max(0, visibleChatBottom - CONTROL_HOVER_BRIDGE_OVERLAP)
+  const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
+  const controlHoverBridgeHeight = Math.max(0, controlHoverBridgeBottom - controlHoverBridgeTop)
   const shouldRenderControlHoverBridge = controlHoverBridgeHeight > 0
   const controlHoverBridgeStyle: React.CSSProperties = {
-    top: visibleChatBottom,
+    top: controlHoverBridgeTop,
     left: 0,
     right: 0,
     height: controlHoverBridgeHeight,
@@ -375,6 +400,8 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
         onResizeStart={handleResizeStart}
         onResize={handleResize}
         onResizeStop={handleResizeStop}
+        handleStyles={RESIZE_HANDLE_STYLES}
+        handleWrapperStyle={RESIZE_HANDLE_WRAPPER_STYLE}
         style={{ ...resizableStyle, pointerEvents: resizableStyle.pointerEvents as React.CSSProperties['pointerEvents'] }}
       >
         <div ref={setNodeRef} data-ylc-draggable-frame className='relative h-full w-full' style={frameStyle}>
@@ -401,7 +428,7 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
               style={controlHoverBridgeStyle}
               onMouseEnter={handleControlHoverBridgeEnter}
               onMouseMove={handleControlHoverBridgeEnter}
-              onMouseLeave={handleChatMouseLeave}
+              onMouseLeave={handleControlHoverBridgeLeave}
             />
           )}
 

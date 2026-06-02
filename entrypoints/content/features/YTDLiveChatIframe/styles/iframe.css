@@ -43,6 +43,12 @@ body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
   background: transparent !important;
 }
 
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat::after {
+  background: transparent !important;
+  background-image: none !important;
+  animation: none !important;
+}
+
 /* --------------------------- YouTube chrome trim -------------------------- */
 body.custom-yt-app-live-chat-extension #contents > #separator {
   opacity: 0;
