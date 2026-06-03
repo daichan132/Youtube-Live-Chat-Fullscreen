@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Cor do nome de membro",
       "defaultColor": "Predefinido",
-      "resetToDefaultColor": "Repor cor predefinida"
+      "resetToDefaultColor": "Repor cor predefinida",
+      "group": {
+        "display": "Apresentação",
+        "colors": "Cores",
+        "text": "Texto",
+        "elements": "Elementos apresentados"
+      },
+      "requiresAlwaysOn": "Ative \"Mostrar sempre\" para configurar"
     },
     "aria": {
       "dragToMove": "Arrastar para mover",
@@ -57,7 +64,8 @@
       "darkTitle": "Escuro",
       "readableTitle": "Texto grande",
       "compactTitle": "Compacto",
-      "neonTitle": "Colorido"
+      "neonTitle": "Colorido",
+      "apply": "Aplicar"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Cópia de segurança",
     "export": "Exportar",
-    "import": "Importar"
+    "import": "Importar",
+    "importError": "Não foi possível importar o ficheiro de definições."
   }
 }

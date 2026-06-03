@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Χρώμα ονόματος μέλους",
       "defaultColor": "Προεπιλογή",
-      "resetToDefaultColor": "Επαναφορά στο προεπιλεγμένο χρώμα"
+      "resetToDefaultColor": "Επαναφορά στο προεπιλεγμένο χρώμα",
+      "group": {
+        "display": "Εμφάνιση",
+        "colors": "Χρώματα",
+        "text": "Κείμενο",
+        "elements": "Στοιχεία εμφάνισης"
+      },
+      "requiresAlwaysOn": "Ενεργοποιήστε το «Πάντα ορατό» για να το ρυθμίσετε"
     },
     "aria": {
       "dragToMove": "Σύρετε για μετακίνηση",
@@ -57,7 +64,8 @@
       "darkTitle": "Σκούρο",
       "readableTitle": "Μεγάλο κείμενο",
       "compactTitle": "Συμπαγές",
-      "neonTitle": "Πολύχρωμο"
+      "neonTitle": "Πολύχρωμο",
+      "apply": "Εφαρμογή"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Θέμα",
     "dataTransfer": "Αντίγραφο ασφαλείας",
     "export": "Εξαγωγή",
-    "import": "Εισαγωγή"
+    "import": "Εισαγωγή",
+    "importError": "Δεν ήταν δυνατή η εισαγωγή του αρχείου ρυθμίσεων."
   }
 }

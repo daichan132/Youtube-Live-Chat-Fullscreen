@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Farbe des Mitgliedsnamens",
       "defaultColor": "Standard",
-      "resetToDefaultColor": "Auf Standardfarbe zurücksetzen"
+      "resetToDefaultColor": "Auf Standardfarbe zurücksetzen",
+      "group": {
+        "display": "Anzeige",
+        "colors": "Farben",
+        "text": "Text",
+        "elements": "Anzeigeelemente"
+      },
+      "requiresAlwaysOn": "Aktiviere „Immer anzeigen“, um dies zu konfigurieren"
     },
     "aria": {
       "dragToMove": "Ziehen zum Verschieben",
@@ -57,7 +64,8 @@
       "darkTitle": "Dunkel",
       "readableTitle": "Großer Text",
       "compactTitle": "Kompakt",
-      "neonTitle": "Farbenfroh"
+      "neonTitle": "Farbenfroh",
+      "apply": "Übernehmen"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Design",
     "dataTransfer": "Sicherung",
     "export": "Exportieren",
-    "import": "Importieren"
+    "import": "Importieren",
+    "importError": "Die Einstellungsdatei konnte nicht importiert werden."
   }
 }

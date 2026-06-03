@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "צבע שם חבר",
       "defaultColor": "ברירת מחדל",
-      "resetToDefaultColor": "איפוס לצבע ברירת המחדל"
+      "resetToDefaultColor": "איפוס לצבע ברירת המחדל",
+      "group": {
+        "display": "תצוגה",
+        "colors": "צבעים",
+        "text": "טקסט",
+        "elements": "רכיבי תצוגה"
+      },
+      "requiresAlwaysOn": "הפעל \"תצוגה קבועה\" כדי להגדיר זאת"
     },
     "aria": {
       "dragToMove": "גרור להזזה",
@@ -57,7 +64,8 @@
       "darkTitle": "כהה",
       "readableTitle": "טקסט גדול",
       "compactTitle": "קומפקטי",
-      "neonTitle": "צבעוני"
+      "neonTitle": "צבעוני",
+      "apply": "החל"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "ערכת נושא",
     "dataTransfer": "גיבוי",
     "export": "ייצוא",
-    "import": "ייבוא"
+    "import": "ייבוא",
+    "importError": "לא ניתן לייבא את קובץ ההגדרות."
   }
 }

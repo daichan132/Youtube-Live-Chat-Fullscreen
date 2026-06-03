@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Barva imena člana",
       "defaultColor": "Privzeto",
-      "resetToDefaultColor": "Ponastavi na privzeto barvo"
+      "resetToDefaultColor": "Ponastavi na privzeto barvo",
+      "group": {
+        "display": "Prikaz",
+        "colors": "Barve",
+        "text": "Besedilo",
+        "elements": "Prikazani elementi"
+      },
+      "requiresAlwaysOn": "Vklopite »Vedno na zaslonu« za nastavitev tega"
     },
     "aria": {
       "dragToMove": "Povlecite za premik",
@@ -57,7 +64,8 @@
       "darkTitle": "Temno",
       "readableTitle": "Veliko besedilo",
       "compactTitle": "Kompaktno",
-      "neonTitle": "Barvito"
+      "neonTitle": "Barvito",
+      "apply": "Uporabi"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Varnostna kopija",
     "export": "Izvozi",
-    "import": "Uvozi"
+    "import": "Uvozi",
+    "importError": "Datoteke z nastavitvami ni mogoče uvoziti."
   }
 }

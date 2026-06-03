@@ -5,6 +5,13 @@
         "preset": "Preset",
         "setting": "Settings"
       },
+      "group": {
+        "display": "Display",
+        "colors": "Colors",
+        "text": "Text",
+        "elements": "Display Elements"
+      },
+      "requiresAlwaysOn": "Turn on \"Always On Display\" to configure this",
       "alwaysOnDisplay": "Always On Display",
       "chatOnlyDisplay": "Chat Only Display",
       "userNameDisplay": "Show User Name",
@@ -47,6 +54,7 @@
     },
     "preset": {
       "addMessage": "Add Current Settings",
+      "apply": "Apply",
       "addItemTitle": "Untitled",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
@@ -68,6 +76,7 @@
     "theme": "Theme",
     "dataTransfer": "Backup",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "importError": "Couldn't import the settings file."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Dalībnieka vārda krāsa",
       "defaultColor": "Noklusējums",
-      "resetToDefaultColor": "Atiestatīt uz noklusējuma krāsu"
+      "resetToDefaultColor": "Atiestatīt uz noklusējuma krāsu",
+      "group": {
+        "display": "Rādīšana",
+        "colors": "Krāsas",
+        "text": "Teksts",
+        "elements": "Rādītie elementi"
+      },
+      "requiresAlwaysOn": "Lai to konfigurētu, ieslēdziet “Vienmēr rādīt”"
     },
     "aria": {
       "dragToMove": "Velciet, lai pārvietotu",
@@ -57,7 +64,8 @@
       "darkTitle": "Tumšs",
       "readableTitle": "Liels teksts",
       "compactTitle": "Kompakts",
-      "neonTitle": "Krāsains"
+      "neonTitle": "Krāsains",
+      "apply": "Lietot"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Motīvs",
     "dataTransfer": "Dublējums",
     "export": "Eksportēt",
-    "import": "Importēt"
+    "import": "Importēt",
+    "importError": "Neizdevās importēt iestatījumu failu."
   }
 }

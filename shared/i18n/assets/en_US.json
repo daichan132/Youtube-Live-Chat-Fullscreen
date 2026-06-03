@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Membership name color",
       "defaultColor": "Default",
-      "resetToDefaultColor": "Reset to default color"
+      "resetToDefaultColor": "Reset to default color",
+      "group": {
+        "display": "Display",
+        "colors": "Colors",
+        "text": "Text",
+        "elements": "Display Elements"
+      },
+      "requiresAlwaysOn": "Turn on \"Always On Display\" to configure this"
     },
     "aria": {
       "dragToMove": "Drag to move",
@@ -57,7 +64,8 @@
       "darkTitle": "Dark",
       "readableTitle": "Large Text",
       "compactTitle": "Compact",
-      "neonTitle": "Colorful"
+      "neonTitle": "Colorful",
+      "apply": "Apply"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Theme",
     "dataTransfer": "Backup",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "importError": "Couldn't import the settings file."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "सदस्य नाम का रंग",
       "defaultColor": "डिफ़ॉल्ट",
-      "resetToDefaultColor": "डिफ़ॉल्ट रंग पर रीसेट करें"
+      "resetToDefaultColor": "डिफ़ॉल्ट रंग पर रीसेट करें",
+      "group": {
+        "display": "प्रदर्शन",
+        "colors": "रंग",
+        "text": "टेक्स्ट",
+        "elements": "प्रदर्शन तत्व"
+      },
+      "requiresAlwaysOn": "इसे कॉन्फ़िगर करने के लिए \"हमेशा दिखाएं\" चालू करें"
     },
     "aria": {
       "dragToMove": "खिसकाने के लिए खींचें",
@@ -57,7 +64,8 @@
       "darkTitle": "गहरा",
       "readableTitle": "बड़ा टेक्स्ट",
       "compactTitle": "कॉम्पैक्ट",
-      "neonTitle": "रंगीन"
+      "neonTitle": "रंगीन",
+      "apply": "लागू करें"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "थीम",
     "dataTransfer": "बैकअप",
     "export": "निर्यात",
-    "import": "आयात"
+    "import": "आयात",
+    "importError": "सेटिंग फ़ाइल आयात नहीं की जा सकी।"
   }
 }

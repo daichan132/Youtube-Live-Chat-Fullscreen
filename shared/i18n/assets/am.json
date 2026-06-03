@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "የአባል ስም ቀለም",
       "defaultColor": "ነባሪ",
-      "resetToDefaultColor": "ወደ ነባሪ ቀለም መመለስ"
+      "resetToDefaultColor": "ወደ ነባሪ ቀለም መመለስ",
+      "group": {
+        "display": "ማሳያ",
+        "colors": "ቀለሞች",
+        "text": "ጽሑፍ",
+        "elements": "የማሳያ አካላት"
+      },
+      "requiresAlwaysOn": "ይህን ለማዋቀር «ሁልጊዜ አሳይ»ን ያብሩ"
     },
     "aria": {
       "dragToMove": "ጎትተህ አንቀሳቅስ",
@@ -57,7 +64,8 @@
       "darkTitle": "ጨለማ",
       "readableTitle": "ትልቅ ጽሑፍ",
       "compactTitle": "የታመቀ",
-      "neonTitle": "ባለቀለም"
+      "neonTitle": "ባለቀለም",
+      "apply": "ተግብር"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "ገጽታ",
     "dataTransfer": "ምትኬ",
     "export": "ላክ",
-    "import": "አስገባ"
+    "import": "አስገባ",
+    "importError": "የቅንብር ፋይሉን ማስገባት አልተቻለም።"
   }
 }

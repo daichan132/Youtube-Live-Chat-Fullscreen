@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Färg på medlemsnamn",
       "defaultColor": "Standard",
-      "resetToDefaultColor": "Återställ standardfärg"
+      "resetToDefaultColor": "Återställ standardfärg",
+      "group": {
+        "display": "Visning",
+        "colors": "Färger",
+        "text": "Text",
+        "elements": "Visade element"
+      },
+      "requiresAlwaysOn": "Aktivera ”Alltid synlig” för att konfigurera detta"
     },
     "aria": {
       "dragToMove": "Dra för att flytta",
@@ -57,7 +64,8 @@
       "darkTitle": "Mörk",
       "readableTitle": "Stor text",
       "compactTitle": "Kompakt",
-      "neonTitle": "Färgglad"
+      "neonTitle": "Färgglad",
+      "apply": "Använd"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Säkerhetskopia",
     "export": "Exportera",
-    "import": "Importera"
+    "import": "Importera",
+    "importError": "Det gick inte att importera inställningsfilen."
   }
 }

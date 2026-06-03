@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Kulay ng pangalan ng miyembro",
       "defaultColor": "Default",
-      "resetToDefaultColor": "Ibalik sa default na kulay"
+      "resetToDefaultColor": "Ibalik sa default na kulay",
+      "group": {
+        "display": "Pagpapakita",
+        "colors": "Mga Kulay",
+        "text": "Teksto",
+        "elements": "Mga Ipinapakitang Elemento"
+      },
+      "requiresAlwaysOn": "I-on ang \"Laging Nakikita\" para i-configure ito"
     },
     "aria": {
       "dragToMove": "I-drag para ilipat",
@@ -57,7 +64,8 @@
       "darkTitle": "Madilim",
       "readableTitle": "Malaking teksto",
       "compactTitle": "Compact",
-      "neonTitle": "Makulay"
+      "neonTitle": "Makulay",
+      "apply": "Ilapat"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Backup",
     "export": "I-export",
-    "import": "I-import"
+    "import": "I-import",
+    "importError": "Hindi ma-import ang file ng mga setting."
   }
 }

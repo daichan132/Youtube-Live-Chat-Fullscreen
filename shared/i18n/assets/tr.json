@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Üye adı rengi",
       "defaultColor": "Varsayılan",
-      "resetToDefaultColor": "Varsayılan renge sıfırla"
+      "resetToDefaultColor": "Varsayılan renge sıfırla",
+      "group": {
+        "display": "Görünüm",
+        "colors": "Renkler",
+        "text": "Metin",
+        "elements": "Görüntülenen Öğeler"
+      },
+      "requiresAlwaysOn": "Bunu yapılandırmak için \"Her Zaman Göster\" özelliğini açın"
     },
     "aria": {
       "dragToMove": "Taşımak için sürükleyin",
@@ -57,7 +64,8 @@
       "darkTitle": "Koyu",
       "readableTitle": "Büyük metin",
       "compactTitle": "Kompakt",
-      "neonTitle": "Renkli"
+      "neonTitle": "Renkli",
+      "apply": "Uygula"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Yedekleme",
     "export": "Dışa Aktar",
-    "import": "İçe Aktar"
+    "import": "İçe Aktar",
+    "importError": "Ayar dosyası içe aktarılamadı."
   }
 }

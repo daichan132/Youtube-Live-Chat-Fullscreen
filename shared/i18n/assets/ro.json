@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Culoarea numelui de membru",
       "defaultColor": "Implicit",
-      "resetToDefaultColor": "Resetează la culoarea implicită"
+      "resetToDefaultColor": "Resetează la culoarea implicită",
+      "group": {
+        "display": "Afișare",
+        "colors": "Culori",
+        "text": "Text",
+        "elements": "Elemente afișate"
+      },
+      "requiresAlwaysOn": "Activează „Afișare permanentă” pentru a configura aceasta"
     },
     "aria": {
       "dragToMove": "Trage pentru a muta",
@@ -57,7 +64,8 @@
       "darkTitle": "Întunecat",
       "readableTitle": "Text mare",
       "compactTitle": "Compact",
-      "neonTitle": "Colorat"
+      "neonTitle": "Colorat",
+      "apply": "Aplică"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Temă",
     "dataTransfer": "Copie de rezervă",
     "export": "Exportă",
-    "import": "Importă"
+    "import": "Importă",
+    "importError": "Nu s-a putut importa fișierul de setări."
   }
 }

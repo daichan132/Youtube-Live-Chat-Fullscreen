@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Couleur du nom de membre",
       "defaultColor": "Défaut",
-      "resetToDefaultColor": "Rétablir la couleur par défaut"
+      "resetToDefaultColor": "Rétablir la couleur par défaut",
+      "group": {
+        "display": "Affichage",
+        "colors": "Couleurs",
+        "text": "Texte",
+        "elements": "Éléments affichés"
+      },
+      "requiresAlwaysOn": "Activez « Toujours afficher » pour le configurer"
     },
     "aria": {
       "dragToMove": "Glisser pour déplacer",
@@ -57,7 +64,8 @@
       "darkTitle": "Sombre",
       "readableTitle": "Grand texte",
       "compactTitle": "Compact",
-      "neonTitle": "Coloré"
+      "neonTitle": "Coloré",
+      "apply": "Appliquer"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Thème",
     "dataTransfer": "Sauvegarde",
     "export": "Exporter",
-    "import": "Importer"
+    "import": "Importer",
+    "importError": "Impossible d'importer le fichier de paramètres."
   }
 }

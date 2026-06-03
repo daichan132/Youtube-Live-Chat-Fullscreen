@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Color del nom de membre",
       "defaultColor": "Per defecte",
-      "resetToDefaultColor": "Torna al color predeterminat"
+      "resetToDefaultColor": "Torna al color predeterminat",
+      "group": {
+        "display": "Visualització",
+        "colors": "Colors",
+        "text": "Text",
+        "elements": "Elements visibles"
+      },
+      "requiresAlwaysOn": "Activa «Sempre visible» per configurar-ho"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",
@@ -57,7 +64,8 @@
       "darkTitle": "Fosc",
       "readableTitle": "Text gran",
       "compactTitle": "Compacte",
-      "neonTitle": "Colorit"
+      "neonTitle": "Colorit",
+      "apply": "Aplica"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Còpia de seguretat",
     "export": "Exporta",
-    "import": "Importa"
+    "import": "Importa",
+    "importError": "No s'ha pogut importar el fitxer de configuració."
   }
 }

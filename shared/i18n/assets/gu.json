@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "સભ્યના નામનો રંગ",
       "defaultColor": "ડિફૉલ્ટ",
-      "resetToDefaultColor": "ડિફોલ્ટ રંગ પર રીસેટ કરો"
+      "resetToDefaultColor": "ડિફોલ્ટ રંગ પર રીસેટ કરો",
+      "group": {
+        "display": "પ્રદર્શન",
+        "colors": "રંગો",
+        "text": "લખાણ",
+        "elements": "પ્રદર્શન ઘટકો"
+      },
+      "requiresAlwaysOn": "આ ગોઠવવા માટે \"હંમેશાં બતાવો\" ચાલુ કરો"
     },
     "aria": {
       "dragToMove": "ખસેડવા માટે ખેંચો",
@@ -57,7 +64,8 @@
       "darkTitle": "ઘાટું",
       "readableTitle": "મોટું લખાણ",
       "compactTitle": "કોમ્પેક્ટ",
-      "neonTitle": "રંગીન"
+      "neonTitle": "રંગીન",
+      "apply": "લાગુ કરો"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "થીમ",
     "dataTransfer": "બેકઅપ",
     "export": "નિકાસ",
-    "import": "આયાત"
+    "import": "આયાત",
+    "importError": "સેટિંગ ફાઇલ આયાત કરી શકાઈ નહીં."
   }
 }

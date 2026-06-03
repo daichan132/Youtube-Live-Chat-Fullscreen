@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Цвет имени спонсора",
       "defaultColor": "По умолчанию",
-      "resetToDefaultColor": "Вернуть цвет по умолчанию"
+      "resetToDefaultColor": "Вернуть цвет по умолчанию",
+      "group": {
+        "display": "Отображение",
+        "colors": "Цвета",
+        "text": "Текст",
+        "elements": "Элементы отображения"
+      },
+      "requiresAlwaysOn": "Включите «Всегда показывать», чтобы настроить"
     },
     "aria": {
       "dragToMove": "Перетащите для перемещения",
@@ -57,7 +64,8 @@
       "darkTitle": "Тёмный",
       "readableTitle": "Крупный текст",
       "compactTitle": "Компактный",
-      "neonTitle": "Цветной"
+      "neonTitle": "Цветной",
+      "apply": "Применить"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Тема",
     "dataTransfer": "Резервная копия",
     "export": "Экспорт",
-    "import": "Импорт"
+    "import": "Импорт",
+    "importError": "Не удалось импортировать файл настроек."
   }
 }

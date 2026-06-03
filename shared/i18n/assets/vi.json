@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Màu tên hội viên",
       "defaultColor": "Mặc định",
-      "resetToDefaultColor": "Đặt lại về màu mặc định"
+      "resetToDefaultColor": "Đặt lại về màu mặc định",
+      "group": {
+        "display": "Hiển thị",
+        "colors": "Màu sắc",
+        "text": "Văn bản",
+        "elements": "Thành phần hiển thị"
+      },
+      "requiresAlwaysOn": "Bật \"Luôn hiển thị\" để cấu hình mục này"
     },
     "aria": {
       "dragToMove": "Kéo để di chuyển",
@@ -57,7 +64,8 @@
       "darkTitle": "Tối",
       "readableTitle": "Chữ lớn",
       "compactTitle": "Gọn",
-      "neonTitle": "Nhiều màu"
+      "neonTitle": "Nhiều màu",
+      "apply": "Áp dụng"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Giao diện",
     "dataTransfer": "Sao lưu",
     "export": "Xuất",
-    "import": "Nhập"
+    "import": "Nhập",
+    "importError": "Không thể nhập tệp cài đặt."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Jäsenen nimen väri",
       "defaultColor": "Oletus",
-      "resetToDefaultColor": "Palauta oletusväri"
+      "resetToDefaultColor": "Palauta oletusväri",
+      "group": {
+        "display": "Näyttö",
+        "colors": "Värit",
+        "text": "Teksti",
+        "elements": "Näytettävät elementit"
+      },
+      "requiresAlwaysOn": "Ota käyttöön ”Näytä aina” määrittääksesi tämän"
     },
     "aria": {
       "dragToMove": "Siirrä vetämällä",
@@ -57,7 +64,8 @@
       "darkTitle": "Tumma",
       "readableTitle": "Suuri teksti",
       "compactTitle": "Kompakti",
-      "neonTitle": "Värikäs"
+      "neonTitle": "Värikäs",
+      "apply": "Käytä"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Teema",
     "dataTransfer": "Varmuuskopio",
     "export": "Vie",
-    "import": "Tuo"
+    "import": "Tuo",
+    "importError": "Asetustiedoston tuonti epäonnistui."
   }
 }

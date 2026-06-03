@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "ಸದಸ್ಯರ ಹೆಸರಿನ ಬಣ್ಣ",
       "defaultColor": "ಡೀಫಾಲ್ಟ್",
-      "resetToDefaultColor": "ಡಿಫಾಲ್ಟ್ ಬಣ್ಣಕ್ಕೆ ಮರುಹೊಂದಿಸಿ"
+      "resetToDefaultColor": "ಡಿಫಾಲ್ಟ್ ಬಣ್ಣಕ್ಕೆ ಮರುಹೊಂದಿಸಿ",
+      "group": {
+        "display": "ಪ್ರದರ್ಶನ",
+        "colors": "ಬಣ್ಣಗಳು",
+        "text": "ಪಠ್ಯ",
+        "elements": "ಪ್ರದರ್ಶನ ಅಂಶಗಳು"
+      },
+      "requiresAlwaysOn": "ಇದನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲು \"ಯಾವಾಗಲೂ ತೋರಿಸಿ\" ಆನ್ ಮಾಡಿ"
     },
     "aria": {
       "dragToMove": "ಸರಿಸಲು ಎಳೆಯಿರಿ",
@@ -57,7 +64,8 @@
       "darkTitle": "ಗಾಢ",
       "readableTitle": "ದೊಡ್ಡ ಪಠ್ಯ",
       "compactTitle": "ಕಾಂಪ್ಯಾಕ್ಟ್",
-      "neonTitle": "ಬಣ್ಣಬಣ್ಣದ"
+      "neonTitle": "ಬಣ್ಣಬಣ್ಣದ",
+      "apply": "ಅನ್ವಯಿಸಿ"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "ಥೀಮ್",
     "dataTransfer": "ಬ್ಯಾಕಪ್",
     "export": "ರಫ್ತು",
-    "import": "ಆಮದು"
+    "import": "ಆಮದು",
+    "importError": "ಸೆಟ್ಟಿಂಗ್‌ಗಳ ಫೈಲ್ ಆಮದು ಮಾಡಲಾಗಲಿಲ್ಲ."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "সদস্যের নামের রং",
       "defaultColor": "ডিফল্ট",
-      "resetToDefaultColor": "ডিফল্ট রঙে ফিরুন"
+      "resetToDefaultColor": "ডিফল্ট রঙে ফিরুন",
+      "group": {
+        "display": "প্রদর্শন",
+        "colors": "রং",
+        "text": "টেক্সট",
+        "elements": "প্রদর্শন উপাদান"
+      },
+      "requiresAlwaysOn": "এটি কনফিগার করতে \"সবসময় দেখান\" চালু করুন"
     },
     "aria": {
       "dragToMove": "সরাতে টেনে আনুন",
@@ -57,7 +64,8 @@
       "darkTitle": "গাঢ়",
       "readableTitle": "বড় লেখা",
       "compactTitle": "কমপ্যাক্ট",
-      "neonTitle": "রঙিন"
+      "neonTitle": "রঙিন",
+      "apply": "প্রয়োগ করুন"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "থিম",
     "dataTransfer": "ব্যাকআপ",
     "export": "রপ্তানি",
-    "import": "আমদানি"
+    "import": "আমদানি",
+    "importError": "সেটিংস ফাইল ইম্পোর্ট করা যায়নি।"
   }
 }

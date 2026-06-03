@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Rangi ya jina la mwanachama",
       "defaultColor": "Chaguomsingi",
-      "resetToDefaultColor": "Weka upya hadi rangi chaguomsingi"
+      "resetToDefaultColor": "Weka upya hadi rangi chaguomsingi",
+      "group": {
+        "display": "Onyesho",
+        "colors": "Rangi",
+        "text": "Maandishi",
+        "elements": "Vipengele vya onyesho"
+      },
+      "requiresAlwaysOn": "Washa \"Onyesha kila wakati\" ili kusanidi hii"
     },
     "aria": {
       "dragToMove": "Buruta ili kusogeza",
@@ -57,7 +64,8 @@
       "darkTitle": "Giza",
       "readableTitle": "Maandishi makubwa",
       "compactTitle": "Fupi",
-      "neonTitle": "Yenye rangi"
+      "neonTitle": "Yenye rangi",
+      "apply": "Tumia"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Mandhari",
     "dataTransfer": "Hifadhi nakala",
     "export": "Hamisha nje",
-    "import": "Hamisha ndani"
+    "import": "Hamisha ndani",
+    "importError": "Imeshindwa kuingiza faili ya mipangilio."
   }
 }

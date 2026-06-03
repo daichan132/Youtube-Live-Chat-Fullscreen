@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Farve på medlemsnavn",
       "defaultColor": "Standard",
-      "resetToDefaultColor": "Gendan standardfarve"
+      "resetToDefaultColor": "Gendan standardfarve",
+      "group": {
+        "display": "Visning",
+        "colors": "Farver",
+        "text": "Tekst",
+        "elements": "Viste elementer"
+      },
+      "requiresAlwaysOn": "Slå „Altid synlig“ til for at konfigurere dette"
     },
     "aria": {
       "dragToMove": "Træk for at flytte",
@@ -57,7 +64,8 @@
       "darkTitle": "Mørk",
       "readableTitle": "Stor tekst",
       "compactTitle": "Kompakt",
-      "neonTitle": "Farverig"
+      "neonTitle": "Farverig",
+      "apply": "Anvend"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Sikkerhedskopi",
     "export": "Eksportér",
-    "import": "Importér"
+    "import": "Importér",
+    "importError": "Indstillingsfilen kunne ikke importeres."
   }
 }

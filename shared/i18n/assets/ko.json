@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "멤버 이름 색상",
       "defaultColor": "기본값",
-      "resetToDefaultColor": "기본 색상으로 되돌리기"
+      "resetToDefaultColor": "기본 색상으로 되돌리기",
+      "group": {
+        "display": "표시",
+        "colors": "색상",
+        "text": "텍스트",
+        "elements": "표시 요소"
+      },
+      "requiresAlwaysOn": "\"항상 표시\"를 켜면 설정할 수 있습니다"
     },
     "aria": {
       "dragToMove": "드래그하여 이동",
@@ -57,7 +64,8 @@
       "darkTitle": "다크",
       "readableTitle": "큰 글자",
       "compactTitle": "컴팩트",
-      "neonTitle": "컬러풀"
+      "neonTitle": "컬러풀",
+      "apply": "적용"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "테마",
     "dataTransfer": "백업",
     "export": "내보내기",
-    "import": "가져오기"
+    "import": "가져오기",
+    "importError": "설정 파일을 가져올 수 없습니다."
   }
 }

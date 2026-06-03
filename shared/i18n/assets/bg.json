@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Цвят на името на члена",
       "defaultColor": "По подразбиране",
-      "resetToDefaultColor": "Връщане към цвета по подразбиране"
+      "resetToDefaultColor": "Връщане към цвета по подразбиране",
+      "group": {
+        "display": "Показване",
+        "colors": "Цветове",
+        "text": "Текст",
+        "elements": "Показвани елементи"
+      },
+      "requiresAlwaysOn": "Включете „Винаги на екрана“, за да настроите това"
     },
     "aria": {
       "dragToMove": "Плъзнете за преместване",
@@ -57,7 +64,8 @@
       "darkTitle": "Тъмен",
       "readableTitle": "Голям текст",
       "compactTitle": "Компактен",
-      "neonTitle": "Цветен"
+      "neonTitle": "Цветен",
+      "apply": "Приложи"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Тема",
     "dataTransfer": "Резервно копие",
     "export": "Експортиране",
-    "import": "Импортиране"
+    "import": "Импортиране",
+    "importError": "Файлът с настройки не можа да бъде импортиран."
   }
 }

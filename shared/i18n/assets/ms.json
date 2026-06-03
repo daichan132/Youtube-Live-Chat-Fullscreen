@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Warna nama ahli",
       "defaultColor": "Lalai",
-      "resetToDefaultColor": "Tetapkan semula kepada warna lalai"
+      "resetToDefaultColor": "Tetapkan semula kepada warna lalai",
+      "group": {
+        "display": "Paparan",
+        "colors": "Warna",
+        "text": "Teks",
+        "elements": "Elemen Paparan"
+      },
+      "requiresAlwaysOn": "Hidupkan \"Sentiasa Dipaparkan\" untuk mengkonfigurasi ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -57,7 +64,8 @@
       "darkTitle": "Gelap",
       "readableTitle": "Teks besar",
       "compactTitle": "Padat",
-      "neonTitle": "Berwarna-warni"
+      "neonTitle": "Berwarna-warni",
+      "apply": "Gunakan"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Sandaran",
     "export": "Eksport",
-    "import": "Import"
+    "import": "Import",
+    "importError": "Tidak dapat mengimport fail tetapan."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Cor do nome de membro",
       "defaultColor": "Padrão",
-      "resetToDefaultColor": "Redefinir para a cor padrão"
+      "resetToDefaultColor": "Redefinir para a cor padrão",
+      "group": {
+        "display": "Exibição",
+        "colors": "Cores",
+        "text": "Texto",
+        "elements": "Elementos exibidos"
+      },
+      "requiresAlwaysOn": "Ative \"Sempre exibir\" para configurar"
     },
     "aria": {
       "dragToMove": "Arrastar para mover",
@@ -57,7 +64,8 @@
       "darkTitle": "Escuro",
       "readableTitle": "Texto grande",
       "compactTitle": "Compacto",
-      "neonTitle": "Colorido"
+      "neonTitle": "Colorido",
+      "apply": "Aplicar"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Backup",
     "export": "Exportar",
-    "import": "Importar"
+    "import": "Importar",
+    "importError": "Não foi possível importar o arquivo de configurações."
   }
 }

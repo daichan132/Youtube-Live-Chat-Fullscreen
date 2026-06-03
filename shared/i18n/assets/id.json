@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Warna nama member",
       "defaultColor": "Bawaan",
-      "resetToDefaultColor": "Reset ke warna default"
+      "resetToDefaultColor": "Reset ke warna default",
+      "group": {
+        "display": "Tampilan",
+        "colors": "Warna",
+        "text": "Teks",
+        "elements": "Elemen Tampilan"
+      },
+      "requiresAlwaysOn": "Aktifkan \"Selalu Tampil\" untuk mengatur ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -57,7 +64,8 @@
       "darkTitle": "Gelap",
       "readableTitle": "Teks besar",
       "compactTitle": "Ringkas",
-      "neonTitle": "Berwarna"
+      "neonTitle": "Berwarna",
+      "apply": "Terapkan"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Tema",
     "dataTransfer": "Cadangan",
     "export": "Ekspor",
-    "import": "Impor"
+    "import": "Impor",
+    "importError": "Tidak dapat mengimpor file pengaturan."
   }
 }

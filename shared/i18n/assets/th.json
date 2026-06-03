@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "สีชื่อสมาชิก",
       "defaultColor": "ค่าเริ่มต้น",
-      "resetToDefaultColor": "รีเซ็ตเป็นสีเริ่มต้น"
+      "resetToDefaultColor": "รีเซ็ตเป็นสีเริ่มต้น",
+      "group": {
+        "display": "การแสดงผล",
+        "colors": "สี",
+        "text": "ข้อความ",
+        "elements": "องค์ประกอบการแสดงผล"
+      },
+      "requiresAlwaysOn": "เปิด \"แสดงตลอดเวลา\" เพื่อกำหนดค่านี้"
     },
     "aria": {
       "dragToMove": "ลากเพื่อย้าย",
@@ -57,7 +64,8 @@
       "darkTitle": "มืด",
       "readableTitle": "ข้อความใหญ่",
       "compactTitle": "กะทัดรัด",
-      "neonTitle": "สีสัน"
+      "neonTitle": "สีสัน",
+      "apply": "ใช้"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "ธีม",
     "dataTransfer": "สำรองข้อมูล",
     "export": "ส่งออก",
-    "import": "นำเข้า"
+    "import": "นำเข้า",
+    "importError": "ไม่สามารถนำเข้าไฟล์การตั้งค่าได้"
   }
 }

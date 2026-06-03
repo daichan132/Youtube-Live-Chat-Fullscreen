@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "సభ్యుని పేరు రంగు",
       "defaultColor": "డిఫాల్ట్",
-      "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి"
+      "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి",
+      "group": {
+        "display": "ప్రదర్శన",
+        "colors": "రంగులు",
+        "text": "టెక్స్ట్",
+        "elements": "ప్రదర్శన మూలకాలు"
+      },
+      "requiresAlwaysOn": "దీన్ని కాన్ఫిగర్ చేయడానికి \"ఎప్పుడూ చూపించు\" ఆన్ చేయండి"
     },
     "aria": {
       "dragToMove": "తరలించడానికి లాగండి",
@@ -57,7 +64,8 @@
       "darkTitle": "ముదురు",
       "readableTitle": "పెద్ద వచనం",
       "compactTitle": "కాంపాక్ట్",
-      "neonTitle": "రంగురంగుల"
+      "neonTitle": "రంగురంగుల",
+      "apply": "వర్తింపజేయి"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "థీమ్",
     "dataTransfer": "బ్యాకప్",
     "export": "ఎగుమతి",
-    "import": "దిగుమతి"
+    "import": "దిగుమతి",
+    "importError": "సెట్టింగ్‌ల ఫైల్‌ను దిగుమతి చేయడం సాధ్యపడలేదు."
   }
 }

@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "會員名稱顏色",
       "defaultColor": "預設",
-      "resetToDefaultColor": "重設為預設顏色"
+      "resetToDefaultColor": "重設為預設顏色",
+      "group": {
+        "display": "顯示",
+        "colors": "配色",
+        "text": "文字",
+        "elements": "顯示元素"
+      },
+      "requiresAlwaysOn": "開啟「常駐顯示」後即可設定"
     },
     "aria": {
       "dragToMove": "拖曳以移動",
@@ -57,7 +64,8 @@
       "darkTitle": "深色",
       "readableTitle": "大字",
       "compactTitle": "緊湊",
-      "neonTitle": "繽紛"
+      "neonTitle": "繽紛",
+      "apply": "套用"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "主題",
     "dataTransfer": "備份",
     "export": "匯出",
-    "import": "匯入"
+    "import": "匯入",
+    "importError": "無法匯入設定檔。"
   }
 }

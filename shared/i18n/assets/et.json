@@ -29,7 +29,14 @@
       },
       "membershipNameColor": "Liikme nime värv",
       "defaultColor": "Vaikimisi",
-      "resetToDefaultColor": "Lähtesta vaikevärvile"
+      "resetToDefaultColor": "Lähtesta vaikevärvile",
+      "group": {
+        "display": "Kuva",
+        "colors": "Värvid",
+        "text": "Tekst",
+        "elements": "Kuvatavad elemendid"
+      },
+      "requiresAlwaysOn": "Selle seadistamiseks lülitage sisse „Alati nähtav“"
     },
     "aria": {
       "dragToMove": "Lohista liigutamiseks",
@@ -57,7 +64,8 @@
       "darkTitle": "Tume",
       "readableTitle": "Suur tekst",
       "compactTitle": "Kompaktne",
-      "neonTitle": "Värviline"
+      "neonTitle": "Värviline",
+      "apply": "Rakenda"
     }
   },
   "popup": {
@@ -68,6 +76,7 @@
     "theme": "Teema",
     "dataTransfer": "Varundus",
     "export": "Ekspordi",
-    "import": "Impordi"
+    "import": "Impordi",
+    "importError": "Sätete faili ei õnnestunud importida."
   }
 }
