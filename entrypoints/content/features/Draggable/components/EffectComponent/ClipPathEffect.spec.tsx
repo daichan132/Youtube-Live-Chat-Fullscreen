@@ -81,7 +81,7 @@ describe('ClipPathEffect', () => {
     vi.useRealTimers()
   })
 
-  it('applies clip offset when clip path is first enabled', async () => {
+  it('measures clip without changing panel geometry when clip path is first enabled', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -115,9 +115,9 @@ describe('ClipPathEffect', () => {
     const noLsState = useYTDLiveChatNoLsStore.getState()
 
     expect(noLsState.isClipPath).toBe(true)
-    expect(noLsState.clip).toEqual({ header: 28, input: 24 })
-    expect(liveState.coordinates).toEqual({ x: 10, y: -8 })
-    expect(liveState.size).toEqual({ width: 300, height: 252 })
+    expect(noLsState.clip).toEqual({ header: 36, input: 24 })
+    expect(liveState.coordinates).toEqual({ x: 10, y: 20 })
+    expect(liveState.size).toEqual({ width: 300, height: 200 })
   })
 
   it('keeps clip path disabled while the external controls are fading out', () => {
@@ -150,7 +150,7 @@ describe('ClipPathEffect', () => {
     expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
   })
 
-  it('keeps clipped geometry stable while resizing', async () => {
+  it('keeps measured clip and panel geometry stable while resizing', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -180,8 +180,8 @@ describe('ClipPathEffect', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
 
     rerender(<ClipPathEffect isDragging={false} isResizing={true} />)
     setIframeClipHeights(iframe, { headerHeight: 52, inputHeight: 30 })
@@ -194,8 +194,8 @@ describe('ClipPathEffect', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
   })
 
   it('removes focus from the iframe when clip path is enabled', async () => {
@@ -275,11 +275,11 @@ describe('ClipPathEffect', () => {
     const noLsState = useYTDLiveChatNoLsStore.getState()
     expect(noLsState.isHover).toBe(false)
     expect(noLsState.isClipPath).toBe(true)
-    expect(liveState.coordinates).toEqual({ x: 10, y: -8 })
-    expect(liveState.size).toEqual({ width: 300, height: 252 })
+    expect(liveState.coordinates).toEqual({ x: 10, y: 20 })
+    expect(liveState.size).toEqual({ width: 300, height: 200 })
   })
 
-  it('pairs geometry changes when clip path toggles with hover', async () => {
+  it('toggles clip path with hover without changing panel geometry', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -308,8 +308,8 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
 
     act(() => {
       useYTDLiveChatNoLsStore.getState().setIsHover(true)
@@ -324,7 +324,7 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    // Hover disables clip and restores base geometry.
+    // Hover disables clip and keeps the visible panel geometry stable.
     expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
     expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
 
@@ -341,12 +341,12 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    // Unhover enables clip again and reapplies geometry offset.
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    // Unhover enables clip again while leaving geometry untouched.
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
   })
 
-  it('restores base geometry when iframe unload disables clip path', async () => {
+  it('keeps panel geometry when iframe unload disables clip path', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -375,8 +375,8 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
 
     act(() => {
       useYTDLiveChatNoLsStore.getState().setIsIframeLoaded(false)
@@ -440,7 +440,7 @@ describe('ClipPathEffect', () => {
     expect(iframe.contentDocument?.body.classList.contains(IFRAME_CLIP_PATH_CLASS)).toBe(false)
   })
 
-  it('keeps clipped geometry stable when clip is re-applied with the same values', async () => {
+  it('keeps panel geometry stable when clip is re-applied with the same values', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -470,8 +470,8 @@ describe('ClipPathEffect', () => {
     })
 
     const firstClippedLayout = useYTDLiveChatStore.getState()
-    expect(firstClippedLayout.size).toEqual({ width: 300, height: 252 })
-    expect(firstClippedLayout.coordinates).toEqual({ x: 10, y: -8 })
+    expect(firstClippedLayout.size).toEqual({ width: 300, height: 200 })
+    expect(firstClippedLayout.coordinates).toEqual({ x: 10, y: 20 })
 
     // Re-run clip application via iframe replacement with the same measurable clip values.
     const replacementIframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
@@ -483,11 +483,11 @@ describe('ClipPathEffect', () => {
     })
 
     const secondClippedLayout = useYTDLiveChatStore.getState()
-    expect(secondClippedLayout.size).toEqual({ width: 300, height: 252 })
-    expect(secondClippedLayout.coordinates).toEqual({ x: 10, y: -8 })
+    expect(secondClippedLayout.size).toEqual({ width: 300, height: 200 })
+    expect(secondClippedLayout.coordinates).toEqual({ x: 10, y: 20 })
   })
 
-  it('reverts first hover geometry with the same clip that was applied on enable', async () => {
+  it('keeps first hover geometry stable after clip measurement changes', async () => {
     const iframe = createIframeWithClipElements({ headerHeight: 40, inputHeight: 24 })
 
     resetStores({
@@ -536,8 +536,8 @@ describe('ClipPathEffect', () => {
     expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
   })
 
-  it('updates geometry when clip elements become measurable after initial zero clip', async () => {
-    const iframe = createIframeWithClipElements({ headerHeight: 12, inputHeight: 0 })
+  it('updates clip measurement when clip elements become measurable after initial zero clip', async () => {
+    const iframe = createIframeWithClipElements({ headerHeight: 4, inputHeight: 0 })
 
     resetStores({
       liveOverrides: {
@@ -579,11 +579,12 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    expect(useYTDLiveChatNoLsStore.getState().clip).toEqual({ header: 36, input: 24 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
   })
 
-  it('applies first clip adjustment once iframe body becomes available', async () => {
+  it('measures first clip once iframe body becomes available', async () => {
     resetStores({
       liveOverrides: {
         coordinates: { x: 10, y: 20 },
@@ -622,8 +623,9 @@ describe('ClipPathEffect', () => {
       await Promise.resolve()
     })
 
-    // Once body is available, first clip adjustment is applied.
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 252 })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: -8 })
+    // Once body is available, clip is measured without changing geometry.
+    expect(useYTDLiveChatNoLsStore.getState().clip).toEqual({ header: 36, input: 24 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 200 })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 10, y: 20 })
   })
 })

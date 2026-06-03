@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { IFRAME_CLIP_PATH_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import { deriveClippedLayout, isSameClip, isSameLayoutGeometry, type LayoutGeometry, measureClipFromBody } from '../../hooks/clipGeometry'
+import { isSameClip, measureClipFromBody } from '../../hooks/clipGeometry'
 
 interface ClipPathEffectProps {
   isDragging: boolean
@@ -10,29 +10,15 @@ interface ClipPathEffectProps {
   isControlRailHiding?: boolean
 }
 
-const toLayoutGeometry = (coordinates: { x: number; y: number }, size: { width: number; height: number }): LayoutGeometry => ({
-  coordinates: {
-    x: coordinates.x,
-    y: coordinates.y,
-  },
-  size: {
-    width: size.width,
-    height: size.height,
-  },
-})
-
 /**
- * Component that handles clip path effects for the draggable chat window
- * Manages when to show/hide header and input areas based on user interaction
+ * Measures chat chrome and controls chat-only crop state.
+ * The persisted panel geometry is intentionally left untouched.
  */
 export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = false }: ClipPathEffectProps) => {
-  const { alwaysOnDisplay, chatOnlyDisplay, coordinates, size, setGeometry } = useYTDLiveChatStore(
+  const { alwaysOnDisplay, chatOnlyDisplay } = useYTDLiveChatStore(
     useShallow(state => ({
       chatOnlyDisplay: state.chatOnlyDisplay,
       alwaysOnDisplay: state.alwaysOnDisplay,
-      coordinates: state.coordinates,
-      size: state.size,
-      setGeometry: state.setGeometry,
     })),
   )
 
@@ -50,8 +36,6 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
       })),
     )
 
-  const baseLayoutRef = useRef<LayoutGeometry>(toLayoutGeometry(coordinates, size))
-  const prevIsClipPathRef = useRef<boolean | undefined>(isClipPath)
   const hasAutoCollapsedOnLoadRef = useRef(false)
   const lastAutoCollapseIframeRef = useRef<HTMLIFrameElement | null>(null)
   const didObserveClipPathChangeRef = useRef(false)
@@ -67,37 +51,20 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
     }
   }, [iframeElement])
 
-  const applyGeometry = useCallback(
-    (nextLayout: LayoutGeometry) => {
-      const liveState = useYTDLiveChatStore.getState()
-      const currentLayout = toLayoutGeometry(liveState.coordinates, liveState.size)
-      if (isSameLayoutGeometry(currentLayout, nextLayout)) return
-      setGeometry(nextLayout)
-    },
-    [setGeometry],
-  )
+  const updateMeasuredClip = useCallback(() => {
+    const nextClip = getClip()
+    const currentClip = useYTDLiveChatNoLsStore.getState().clip
+    if (!isSameClip(currentClip, nextClip)) {
+      setClip(nextClip)
+    }
+    return nextClip
+  }, [getClip, setClip])
 
-  // Keep the non-clip layout as the source of truth.
-  useEffect(() => {
-    const previousIsClipPath = prevIsClipPathRef.current
-    prevIsClipPathRef.current = isClipPath
-
-    if (isClipPath) return
-    // Skip one frame right after clip-path is disabled so base is not overwritten
-    // with the still-clipped geometry before restoration is applied.
-    if (previousIsClipPath === true) return
-
-    baseLayoutRef.current = toLayoutGeometry(coordinates, size)
-  }, [isClipPath, coordinates, size])
-
-  /* ---------------------------- Clip Path update ---------------------------- */
   useEffect(() => {
     if (isDragging || isResizing || isControlRailHiding) return
 
-    // Determine if clip path should be enabled
     const shouldEnableClipPath = isIframeLoaded && alwaysOnDisplay && chatOnlyDisplay && (isOpenSettingModal || !isHover)
 
-    // Set clip path state with small delay
     const timer = setTimeout(() => {
       setIsClipPath(shouldEnableClipPath)
     }, 10)
@@ -115,7 +82,7 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
     isIframeLoaded,
   ])
 
-  // If hover is already true right after load, auto-clear once so chat-only clip can start without user action.
+  // If hover is already true right after load, auto-clear once so chat-only crop can start without user action.
   useEffect(() => {
     if (lastAutoCollapseIframeRef.current !== iframeElement) {
       lastAutoCollapseIframeRef.current = iframeElement
@@ -149,39 +116,20 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
     setIsHover,
   ])
 
-  /* ------------------------- handle Clip Path change ------------------------ */
   useEffect(() => {
     if (!didObserveClipPathChangeRef.current) {
       didObserveClipPathChangeRef.current = true
       return
     }
 
-    if (isClipPath === undefined) return
+    if (!isClipPath || !isIframeLoaded || iframeBody === undefined) return
 
-    if (!isClipPath) {
-      applyGeometry(baseLayoutRef.current)
-      return
-    }
-
-    if (!isIframeLoaded || iframeBody === undefined) return
-
-    // Remove focus from any active elements
     removeFocus()
-
-    // Update clip settings and apply layout from the base geometry.
-    const newClip = getClip()
-    const currentClip = useYTDLiveChatNoLsStore.getState().clip
-    if (!isSameClip(currentClip, newClip)) {
-      setClip(newClip)
-    }
-
-    applyGeometry(deriveClippedLayout(baseLayoutRef.current, newClip))
+    updateMeasuredClip()
     hasAutoCollapsedOnLoadRef.current = true
-  }, [isClipPath, isIframeLoaded, iframeBody, applyGeometry, getClip, removeFocus, setClip])
+  }, [isClipPath, isIframeLoaded, iframeBody, removeFocus, updateMeasuredClip])
 
-  // Keep clip geometry synchronized while clip mode is enabled.
-  // This covers cases where header/input render late and initial clip is measured as zero,
-  // while keeping geometry idempotent from a stable base layout.
+  // Header/input can become measurable after the iframe load event; keep the crop offsets fresh.
   useEffect(() => {
     const body = iframeElement?.contentDocument?.body
     if (!isClipPath || !isIframeLoaded || !body || isResizing) return
@@ -189,54 +137,40 @@ export const ClipPathEffect = ({ isDragging, isResizing, isControlRailHiding = f
     let retryCount = 0
     let timer: ReturnType<typeof setTimeout> | undefined
 
-    const syncClipGeometry = () => {
-      const latestClip = getClip()
-      const currentClip = useYTDLiveChatNoLsStore.getState().clip
-      if (!isSameClip(currentClip, latestClip)) {
-        setClip(latestClip)
-      }
-      applyGeometry(deriveClippedLayout(baseLayoutRef.current, latestClip))
+    const syncClipMeasurement = () => {
+      const latestClip = updateMeasuredClip()
 
       retryCount += 1
       const shouldRetry = latestClip.header === 0 && latestClip.input === 0 && retryCount < 20
       if (shouldRetry) {
-        timer = setTimeout(syncClipGeometry, 120)
+        timer = setTimeout(syncClipMeasurement, 120)
       }
     }
 
-    timer = setTimeout(syncClipGeometry, 120)
+    timer = setTimeout(syncClipMeasurement, 120)
     return () => {
       if (timer) clearTimeout(timer)
     }
-  }, [isClipPath, isIframeLoaded, iframeElement, isResizing, getClip, setClip, applyGeometry])
+  }, [isClipPath, isIframeLoaded, iframeElement, isResizing, updateMeasuredClip])
 
   unmountCleanupRef.current = () => {
-    const noLsState = useYTDLiveChatNoLsStore.getState()
-    if (noLsState.isClipPath) {
-      const liveState = useYTDLiveChatStore.getState()
-      const currentLayout = toLayoutGeometry(liveState.coordinates, liveState.size)
-      if (!isSameLayoutGeometry(currentLayout, baseLayoutRef.current)) {
-        liveState.setGeometry(baseLayoutRef.current)
-      }
+    if (useYTDLiveChatNoLsStore.getState().isClipPath) {
       setIsClipPath(undefined)
     }
 
     setIsHover(false)
   }
 
-  // Clean up when component unmounts
   useEffect(() => {
     return () => {
       unmountCleanupRef.current()
     }
   }, [])
 
-  /* ---------------------------- add style change ---------------------------- */
   useEffect(() => {
     if (isClipPath === undefined) return
     if (!iframeBody) return
 
-    // Toggle CSS class based on clip path state
     if (isClipPath) {
       iframeBody.classList.add(IFRAME_CLIP_PATH_CLASS)
     } else {

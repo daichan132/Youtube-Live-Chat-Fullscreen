@@ -195,10 +195,10 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '206px', right: '0px' })
   })
 
-  it('positions the control rail below the visible clipped chat bottom', () => {
+  it('positions the control rail below the visible panel while clipped', () => {
     resetStore({
       coordinates: { x: 100, y: 10 },
-      size: { width: 300, height: 252 },
+      size: { width: 300, height: 200 },
     })
     resetNoLsStore({
       isClipPath: true,
@@ -211,10 +211,10 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
 
-    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '234px' })
+    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '206px' })
   })
 
-  it('keeps resize handles interactive while clipped chat passes through pointer events', () => {
+  it('keeps resize handles on the interactive visible panel while clipped', () => {
     resetNoLsStore({
       isClipPath: true,
       clip: { header: 28, input: 24 },
@@ -226,7 +226,7 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
 
-    expect(resizableState.props?.style?.pointerEvents).toBe('none')
+    expect(resizableState.props?.style?.pointerEvents).toBe('auto')
     expect(resizableState.props?.handleWrapperStyle?.pointerEvents).toBe('none')
     expect(resizableState.props?.handleStyles?.right?.pointerEvents).toBe('auto')
     expect(resizableState.props?.handleStyles?.bottomRight?.pointerEvents).toBe('auto')
@@ -581,7 +581,7 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })
 
-  it('only treats the visible clipped chat body as the chat hover area', () => {
+  it('treats the visible panel as the clipped chat hover area', () => {
     vi.useFakeTimers()
     resetNoLsStore({
       isClipPath: true,
@@ -601,18 +601,11 @@ describe('DraggableItem', () => {
       fireEvent.mouseEnter(chatInner, { clientX: 20, clientY: 40 })
     })
 
-    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
-    expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'false')
-
-    act(() => {
-      fireEvent.mouseMove(chatInner, { clientX: 20, clientY: 120 })
-    })
-
     expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
 
     act(() => {
-      fireEvent.mouseMove(chatInner, { clientX: 20, clientY: 370 })
+      fireEvent.mouseMove(chatInner, { clientX: 20, clientY: 420 })
       vi.advanceTimersByTime(160)
     })
 

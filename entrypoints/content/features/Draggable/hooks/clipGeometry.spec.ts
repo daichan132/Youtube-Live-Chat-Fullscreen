@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
 import {
-  deriveClippedLayout,
   deriveResizedLayout,
   fitLayoutWithinViewportWidth,
   getControlRailTop,
@@ -24,7 +23,7 @@ describe('clipGeometry', () => {
     body.appendChild(header)
     body.appendChild(input)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 24 })
+    expect(measureClipFromBody(body)).toEqual({ header: 36, input: 24 })
   })
 
   it('uses the taller input candidate when message input and restricted participation coexist', () => {
@@ -43,7 +42,7 @@ describe('clipGeometry', () => {
     body.appendChild(input)
     body.appendChild(restricted)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 26 })
+    expect(measureClipFromBody(body)).toEqual({ header: 36, input: 26 })
   })
 
   it('falls back to input panel when renderer-specific elements are missing', () => {
@@ -59,23 +58,11 @@ describe('clipGeometry', () => {
     body.appendChild(header)
     body.appendChild(inputPanel)
 
-    expect(measureClipFromBody(body)).toEqual({ header: 28, input: 28 })
+    expect(measureClipFromBody(body)).toEqual({ header: 36, input: 28 })
   })
 
   it('clamps missing clip elements to zero', () => {
     expect(measureClipFromBody(createBody())).toEqual({ header: 0, input: 0 })
-  })
-
-  it('derives clipped layout from base layout and clip values', () => {
-    const baseLayout = {
-      coordinates: { x: 10, y: 20 },
-      size: { width: 300, height: 200 },
-    }
-
-    expect(deriveClippedLayout(baseLayout, { header: 28, input: 24 })).toEqual({
-      coordinates: { x: 10, y: -8 },
-      size: { width: 300, height: 252 },
-    })
   })
 
   it('matches clip and layout equality helpers', () => {
@@ -143,27 +130,23 @@ describe('clipGeometry', () => {
         containerTop: 50,
         controlHeight: 40,
         gap: 6,
-        isClipPath: false,
-        clipInput: 0,
         viewportHeight: 500,
         viewportPadding: 4,
       }),
     ).toBe(206)
   })
 
-  it('uses the clipped visible bottom when positioning the control rail', () => {
+  it('uses the visible panel bottom when positioning the control rail', () => {
     expect(
       getControlRailTop({
-        chatHeight: 252,
+        chatHeight: 200,
         containerTop: 10,
         controlHeight: 40,
         gap: 6,
-        isClipPath: true,
-        clipInput: 20,
         viewportHeight: 500,
         viewportPadding: 4,
       }),
-    ).toBe(238)
+    ).toBe(206)
   })
 
   it('keeps the control rail inside the viewport bottom', () => {
@@ -173,8 +156,6 @@ describe('clipGeometry', () => {
         containerTop: 0,
         controlHeight: 40,
         gap: 6,
-        isClipPath: false,
-        clipInput: 0,
         viewportHeight: 500,
         viewportPadding: 4,
       }),

@@ -6,11 +6,12 @@ import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { isClipPathEnabled, movePointerAwayFromOverlay } from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
 
-type OverlayClipSnapshot = {
+type OverlayCropSnapshot = {
   exists: boolean
   enabled: boolean
-  clipTop: number
-  clipBottom: number
+  cropTop: number
+  cropBottom: number
+  carrierHeight: number
   height: number
   visibleHeight: number
   width: number
@@ -21,18 +22,20 @@ type HoverProbeState = {
   leaveCount: number
 }
 
-const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
+const getOverlayCropSnapshot = (): OverlayCropSnapshot => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const app = root?.querySelector('div[role="application"]') as HTMLElement | null
   const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
-  const inner = resizable?.querySelector(':scope > [data-ylc-chat-inner]') as HTMLElement | null
-  if (!resizable || !inner) {
+  const viewport = resizable?.querySelector('[data-ylc-chat-viewport]') as HTMLElement | null
+  const carrier = resizable?.querySelector('[data-ylc-iframe-carrier]') as HTMLElement | null
+  if (!resizable || !viewport || !carrier) {
     return {
       exists: false,
       enabled: false,
-      clipTop: 0,
-      clipBottom: 0,
+      cropTop: 0,
+      cropBottom: 0,
+      carrierHeight: 0,
       height: 0,
       visibleHeight: 0,
       width: 0,
@@ -40,18 +43,20 @@ const getOverlayClipSnapshot = (): OverlayClipSnapshot => {
   }
 
   const box = resizable.getBoundingClientRect()
-  const clipPath = window.getComputedStyle(inner).clipPath ?? ''
-  const insetMatch = clipPath.match(/inset\(([-\d.]+)px\s+[-\d.]+px\s+([-\d.]+)px/i)
-  const clipTop = insetMatch?.[1] ? Number.parseFloat(insetMatch[1]) : 0
-  const clipBottom = insetMatch?.[2] ? Number.parseFloat(insetMatch[2]) : 0
+  const viewportBox = viewport.getBoundingClientRect()
+  const carrierBox = carrier.getBoundingClientRect()
+  const carrierTop = Number.parseFloat(window.getComputedStyle(carrier).top || '0')
+  const cropTop = Math.max(0, -carrierTop)
+  const cropBottom = Math.max(0, carrierBox.height - viewportBox.height - cropTop)
 
   return {
     exists: true,
-    enabled: clipTop > 0 || clipBottom > 0,
-    clipTop,
-    clipBottom,
+    enabled: cropTop > 0 || cropBottom > 0,
+    cropTop: Math.round(cropTop * 100) / 100,
+    cropBottom: Math.round(cropBottom * 100) / 100,
+    carrierHeight: Math.round(carrierBox.height * 100) / 100,
     height: Math.round(box.height * 100) / 100,
-    visibleHeight: Math.round(Math.max(0, box.height - clipTop - clipBottom) * 100) / 100,
+    visibleHeight: Math.round(viewportBox.height * 100) / 100,
     width: Math.round(box.width * 100) / 100,
   }
 }
@@ -126,15 +131,11 @@ const sampleOverlayVisibleHeights = async ({
     const root = host?.shadowRoot ?? null
     const app = root?.querySelector('div[role="application"]') as HTMLElement | null
     const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
-    const inner = resizable?.querySelector(':scope > [data-ylc-chat-inner]') as HTMLElement | null
-    if (!resizable || !inner) return 0
+    const viewport = resizable?.querySelector('[data-ylc-chat-viewport]') as HTMLElement | null
+    if (!viewport) return 0
 
-    const box = resizable.getBoundingClientRect()
-    const clipPath = window.getComputedStyle(inner).clipPath ?? ''
-    const insetMatch = clipPath.match(/inset\(([-\d.]+)px\s+[-\d.]+px\s+([-\d.]+)px/i)
-    const clipTop = insetMatch?.[1] ? Number.parseFloat(insetMatch[1]) : 0
-    const clipBottom = insetMatch?.[2] ? Number.parseFloat(insetMatch[2]) : 0
-    return Math.round(Math.max(0, box.height - clipTop - clipBottom) * 100) / 100
+    const box = viewport.getBoundingClientRect()
+    return Math.round(box.height * 100) / 100
   }
 
   const values: number[] = []
@@ -320,14 +321,14 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     await expect
       .poll(
         async () => {
-          const clipSnapshot = await page.evaluate(getOverlayClipSnapshot)
-          return clipSnapshot.enabled && clipSnapshot.clipTop + clipSnapshot.clipBottom > 0
+          const cropSnapshot = await page.evaluate(getOverlayCropSnapshot)
+          return cropSnapshot.enabled && cropSnapshot.cropTop + cropSnapshot.cropBottom > 0
         },
         { timeout: 15000 },
       )
       .toBe(true)
 
-    const snapshot = await page.evaluate(getOverlayClipSnapshot)
+    const snapshot = await page.evaluate(getOverlayCropSnapshot)
     const immediateVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 4,
       intervalMs: 60,
@@ -377,7 +378,7 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
       intervalMs: 180,
       settleMs: 350,
     })
-    const baselineSnapshot = await page.evaluate(getOverlayClipSnapshot)
+    const baselineSnapshot = await page.evaluate(getOverlayCropSnapshot)
 
     const center = await page.evaluate(getOverlayCenter)
     if (!center) {
@@ -390,7 +391,7 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     // No pointer leave after first hover.
     await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
 
-    const snapshot = await page.evaluate(getOverlayClipSnapshot)
+    const snapshot = await page.evaluate(getOverlayCropSnapshot)
     const visibleHeightSamplesAfterHover = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,

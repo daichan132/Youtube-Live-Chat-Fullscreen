@@ -19,8 +19,6 @@ export type ControlRailPlacement = {
   containerTop: number
   controlHeight: number
   gap: number
-  isClipPath: boolean
-  clipInput: number
   viewportHeight: number
   viewportPadding: number
 }
@@ -32,7 +30,7 @@ type ResizeDelta = {
 
 export type ResizeDirection = 'top' | 'left' | 'topLeft' | 'bottomLeft' | 'topRight' | 'right' | 'bottom' | 'bottomRight'
 
-const HEADER_HEIGHT_OFFSET = 12
+const HEADER_HEIGHT_OFFSET = 4
 const INPUT_HEIGHT_OFFSET = 0
 
 const clampClipValue = (value: number) => Math.max(0, value)
@@ -58,21 +56,6 @@ export const measureClipFromBody = (container: ParentNode | null | undefined): C
   return {
     header: clampClipValue(headerHeight - HEADER_HEIGHT_OFFSET),
     input: clampClipValue(inputHeight - INPUT_HEIGHT_OFFSET),
-  }
-}
-
-export const deriveClippedLayout = (baseLayout: LayoutGeometry, clip: Clip): LayoutGeometry => {
-  const nextHeight = baseLayout.size.height + clip.header + clip.input
-
-  return {
-    coordinates: {
-      x: baseLayout.coordinates.x,
-      y: baseLayout.coordinates.y - clip.header,
-    },
-    size: {
-      width: baseLayout.size.width,
-      height: nextHeight,
-    },
   }
 }
 
@@ -119,13 +102,10 @@ export const getControlRailTop = ({
   containerTop,
   controlHeight,
   gap,
-  isClipPath,
-  clipInput,
   viewportHeight,
   viewportPadding,
 }: ControlRailPlacement) => {
-  const visibleChatBottom = chatHeight - (isClipPath ? clipInput : 0)
-  const desiredTop = visibleChatBottom + gap
+  const desiredTop = chatHeight + gap
   const minTop = viewportPadding - containerTop
   const maxTop = viewportHeight - containerTop - controlHeight - viewportPadding
 

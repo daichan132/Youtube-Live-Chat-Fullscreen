@@ -9,7 +9,6 @@ import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import { deriveResizedLayout, fitLayoutWithinViewportWidth, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
 import { getDraggableItemStyles } from '../hooks/draggableItemStyles'
-import { useClipAnimationPriming } from '../hooks/useClipAnimationPriming'
 import { ControlIcons } from './ControlIcons'
 import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
 
@@ -107,19 +106,9 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
   const top = coordinates.y
   const left = coordinates.x
 
-  const {
-    clip,
-    isHover,
-    isClipPath = false,
-    isOpenSettingModal,
-    setIsOpenSettingModal,
-    setIsDisplay,
-    setIsHover,
-  } = useYTDLiveChatNoLsStore(
+  const { isHover, isOpenSettingModal, setIsOpenSettingModal, setIsDisplay, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
-      clip: state.clip,
       isHover: state.isHover,
-      isClipPath: state.isClipPath,
       isOpenSettingModal: state.isOpenSettingModal,
       setIsOpenSettingModal: state.setIsOpenSettingModal,
       setIsDisplay: state.setIsDisplay,
@@ -255,25 +244,17 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     [clearControlFadeTimer, clearControlHideTimer],
   )
 
-  const getVisibleChatBounds = useCallback(
-    (element: HTMLElement): VisibleChatBounds | null => {
-      const rect = element.getBoundingClientRect()
-      const topInset = isClipPath ? clip.header : 0
-      const bottomInset = isClipPath ? clip.input : 0
-      const topBound = rect.top + topInset
-      const bottomBound = rect.bottom - bottomInset
+  const getVisibleChatBounds = useCallback((element: HTMLElement): VisibleChatBounds | null => {
+    const rect = element.getBoundingClientRect()
+    if (rect.bottom <= rect.top || rect.right <= rect.left) return null
 
-      if (bottomBound <= topBound || rect.right <= rect.left) return null
-
-      return {
-        top: topBound,
-        right: rect.right,
-        bottom: bottomBound,
-        left: rect.left,
-      }
-    },
-    [clip.header, clip.input, isClipPath],
-  )
+    return {
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      left: rect.left,
+    }
+  }, [])
 
   const updateChatHoverFromPoint = useCallback(
     (element: HTMLElement, clientX: number, clientY: number) => {
@@ -332,38 +313,16 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     scheduleControlRailHide()
   }, [scheduleControlRailHide])
 
-  const [disableTopTransition, setDisableTopTransition] = useState(true)
-  useEffect(() => {
-    if (isDragging || isResizing) {
-      setDisableTopTransition(true)
-      return
-    }
-
-    const timer = setTimeout(() => {
-      setDisableTopTransition(false)
-    }, 10)
-    return () => clearTimeout(timer)
-  }, [isDragging, isResizing])
-
-  const { isClipAnimationReady } = useClipAnimationPriming({ isClipPath, clip })
-
   const { frameStyle, resizableStyle, innerDivStyle } = getDraggableItemStyles({
     top,
     left,
-    isClipPath,
-    isClipAnimationReady,
-    disableTopTransition,
-    isResizing,
     transform,
-    clip,
   })
   const controlRailTop = getControlRailTop({
     chatHeight: size.height,
     containerTop: top,
     controlHeight: CONTROL_RAIL_HEIGHT,
     gap: CONTROL_RAIL_GAP,
-    isClipPath,
-    clipInput: clip.input,
     viewportHeight,
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
@@ -373,7 +332,7 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
   }
   const controlRailPlacement = isControlRailDisplayable ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
-  const visibleChatBottom = size.height - (isClipPath ? clip.input : 0)
+  const visibleChatBottom = size.height
   const controlHoverBridgeTop = Math.max(0, visibleChatBottom - CONTROL_HOVER_BRIDGE_OVERLAP)
   const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
   const controlHoverBridgeHeight = Math.max(0, controlHoverBridgeBottom - controlHoverBridgeTop)

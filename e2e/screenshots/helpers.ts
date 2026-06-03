@@ -210,20 +210,20 @@ export const waitForChatMessages = async (
   }
 }
 
-// --- clip-path helpers (moved from chatOnlyHoverHeight.spec.ts) ---
+// --- chat-only crop helpers ---
 
 export const isClipPathEnabled = (): boolean => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
-  const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
-  const inner = resizable?.querySelector(':scope > div.relative.h-full.w-full.pointer-events-auto') as HTMLElement | null
-  if (!inner) return false
-  const clipPath = window.getComputedStyle(inner).clipPath ?? ''
-  const insetMatch = clipPath.match(/inset\(([-\d.]+)px\s+[-\d.]+px\s+([-\d.]+)px/i)
-  const clipTop = insetMatch?.[1] ? Number.parseFloat(insetMatch[1]) : 0
-  const clipBottom = insetMatch?.[2] ? Number.parseFloat(insetMatch[2]) : 0
-  return clipTop > 0 || clipBottom > 0
+  const viewport = root?.querySelector('[data-ylc-chat-viewport]') as HTMLElement | null
+  const carrier = root?.querySelector('[data-ylc-iframe-carrier]') as HTMLElement | null
+  if (!viewport || !carrier) return false
+
+  const carrierStyle = window.getComputedStyle(carrier)
+  const carrierTop = Number.parseFloat(carrierStyle.top || '0')
+  const viewportRect = viewport.getBoundingClientRect()
+  const carrierRect = carrier.getBoundingClientRect()
+  return carrierTop < 0 || carrierRect.height > viewportRect.height + 1
 }
 
 export const movePointerAwayFromOverlay = async (page: Page): Promise<boolean> => {

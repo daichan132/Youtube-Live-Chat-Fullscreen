@@ -124,7 +124,7 @@ test.describe
       await pauseVideo(page)
       await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
 
-      // chatOnlyDisplay: move pointer away and wait for clip-path + controls auto-hide
+      // chatOnlyDisplay: move pointer away and wait for chat crop + controls auto-hide
       await movePointerAwayFromOverlay(page)
       await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
       await waitForPlayerControlsHidden(page)
@@ -199,7 +199,7 @@ test.describe
       await pauseVideo(page)
       await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
 
-      // chatOnlyDisplay: move pointer away and wait for clip-path + controls auto-hide
+      // chatOnlyDisplay: move pointer away and wait for chat crop + controls auto-hide
       await movePointerAwayFromOverlay(page)
       await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
       await waitForPlayerControlsHidden(page)

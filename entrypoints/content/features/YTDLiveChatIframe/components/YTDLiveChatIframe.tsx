@@ -4,6 +4,7 @@ import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggable/constants/animation'
+import { useClipAnimationPriming } from '@/entrypoints/content/features/Draggable/hooks/useClipAnimationPriming'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
@@ -53,6 +54,11 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     }
   }, [fontColor])
   const overlayAlpha = bgColor.a ?? 1
+  const shouldCropChat = Boolean(isClipPath)
+  const { isClipAnimationReady } = useClipAnimationPriming({ isClipPath: shouldCropChat, clip })
+  const shouldAnimateCrop = isClipAnimationReady || !shouldCropChat
+  const cropTransition = shouldAnimateCrop ? `top ${CLIP_GEOMETRY_TRANSITION}, height ${CLIP_GEOMETRY_TRANSITION}` : 'none'
+  const carrierHeight = shouldCropChat ? `calc(100% + ${clip.header + clip.input}px)` : '100%'
 
   const loaderTransition = useCSSTransition({
     in: !isIframeLoaded,
@@ -71,20 +77,28 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
         }}
       />
       <div
-        className='relative h-full w-full transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
+        data-ylc-chat-viewport
+        className='relative h-full w-full overflow-hidden rounded-md transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
         style={{
           opacity: isChatVisible ? 1 : 0,
         }}
       >
-        <div id={id} ref={ref} className='h-full w-full overflow-hidden rounded-md' />
+        <div
+          id={id}
+          ref={ref}
+          data-ylc-iframe-carrier
+          className='absolute left-0 right-0'
+          style={{
+            top: shouldCropChat ? -clip.header : 0,
+            height: carrierHeight,
+            transition: cropTransition,
+          }}
+        />
       </div>
       {loaderTransition.isMounted && (
         <div
-          className={`absolute left-0 right-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
+          className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
           style={{
-            top: isClipPath ? `${clip.header}px` : 0,
-            bottom: isClipPath ? `${clip.input}px` : 0,
-            transition: `top ${CLIP_GEOMETRY_TRANSITION}, bottom ${CLIP_GEOMETRY_TRANSITION}`,
             backdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
             WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
           }}
