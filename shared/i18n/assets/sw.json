@@ -50,7 +50,11 @@
       "simpleTitle": "Rahisi",
       "deleteConfirmationMessage": "Una uhakika unataka kufuta hii?",
       "delete": "Futa",
-      "cancel": "Ghairi"
+      "cancel": "Ghairi",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

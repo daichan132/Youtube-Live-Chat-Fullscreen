@@ -50,7 +50,11 @@
       "simpleTitle": "簡約",
       "deleteConfirmationMessage": "確定要刪除嗎？",
       "delete": "刪除",
-      "cancel": "取消"
+      "cancel": "取消",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

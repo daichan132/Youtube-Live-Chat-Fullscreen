@@ -50,7 +50,11 @@
       "simpleTitle": "Απλό",
       "deleteConfirmationMessage": "Θέλετε σίγουρα να το διαγράψετε;",
       "delete": "Διαγραφή",
-      "cancel": "Ακύρωση"
+      "cancel": "Ακύρωση",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

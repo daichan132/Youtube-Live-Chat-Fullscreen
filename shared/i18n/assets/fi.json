@@ -50,7 +50,11 @@
       "simpleTitle": "Yksinkertainen",
       "deleteConfirmationMessage": "Haluatko varmasti poistaa tämän?",
       "delete": "Poista",
-      "cancel": "Peruuta"
+      "cancel": "Peruuta",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

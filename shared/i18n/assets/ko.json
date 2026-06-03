@@ -50,7 +50,11 @@
       "simpleTitle": "심플",
       "deleteConfirmationMessage": "정말로 삭제하시겠습니까?",
       "delete": "삭제",
-      "cancel": "취소"
+      "cancel": "취소",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

@@ -50,7 +50,11 @@
       "simpleTitle": "Sederhana",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus ini?",
       "delete": "Hapus",
-      "cancel": "Batal"
+      "cancel": "Batal",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

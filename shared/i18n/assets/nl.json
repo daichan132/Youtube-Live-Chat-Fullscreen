@@ -50,7 +50,11 @@
       "simpleTitle": "Eenvoudig",
       "deleteConfirmationMessage": "Weet je zeker dat je dit wilt verwijderen?",
       "delete": "Verwijderen",
-      "cancel": "Annuleren"
+      "cancel": "Annuleren",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

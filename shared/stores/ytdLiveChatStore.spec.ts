@@ -24,10 +24,20 @@ describe('useYTDLiveChatStore', () => {
 
     expect(state.coordinates).toEqual({ x: 20, y: 20 })
     expect(state.size).toEqual({ width: 400, height: 400 })
-    expect(state.presetItemIds).toEqual(['default1', 'default2', 'default3'])
+    expect(state.presetItemIds).toEqual(['default1', 'default2', 'default3', 'default4', 'default5', 'default6', 'default7'])
     expect(state.presetItemTitles.default1).toBe('content.preset.defaultTitle')
     expect(state.presetItemTitles.default2).toBe('content.preset.transparentTitle')
     expect(state.presetItemTitles.default3).toBe('content.preset.simpleTitle')
+    expect(state.presetItemTitles.default4).toBe('content.preset.darkTitle')
+    expect(state.presetItemTitles.default5).toBe('content.preset.readableTitle')
+    expect(state.presetItemTitles.default6).toBe('content.preset.compactTitle')
+    expect(state.presetItemTitles.default7).toBe('content.preset.neonTitle')
+    expect(state.presetItemStyles.default4?.fontFamily).toBe('Inter')
+    expect(state.presetItemStyles.default5?.fontSize).toBe(18)
+    expect(state.presetItemStyles.default5?.userNameDisplay).toBe(false)
+    expect(state.presetItemStyles.default5?.fontFamily).toBe('BIZ UDPGothic')
+    expect(state.presetItemStyles.default6?.chatOnlyDisplay).toBe(true)
+    expect(state.presetItemStyles.default7?.fontColor).toEqual({ r: 217, g: 249, b: 157, a: 1 })
   })
 
   it('adds and removes preset items', async () => {
@@ -147,7 +157,7 @@ describe('useYTDLiveChatStore', () => {
     expect(state.presetItemStyles.legacy?.fontFamily).toBe('')
   })
 
-  it('migrates empty default preset titles back to localized defaults', async () => {
+  it('migrates persisted default presets back to current built-in definitions', async () => {
     localStorage.setItem(
       'ytdLiveChatStore',
       JSON.stringify({
@@ -169,8 +179,58 @@ describe('useYTDLiveChatStore', () => {
     const state = useYTDLiveChatStore.getState()
 
     expect(state.presetItemTitles.default1).toBe('content.preset.defaultTitle')
-    expect(state.presetItemTitles.default2).toBe('Transparent')
-    expect(state.presetItemTitles.default3).toBe('Simple')
+    expect(state.presetItemTitles.default2).toBe('content.preset.transparentTitle')
+    expect(state.presetItemTitles.default3).toBe('content.preset.simpleTitle')
+    expect(state.presetItemTitles.default4).toBe('content.preset.darkTitle')
+    expect(state.presetItemStyles.default2?.blur).toBe(16)
+    expect(state.presetItemStyles.default3?.userIconDisplay).toBe(false)
+    expect(state.presetItemIds).toContain('default7')
+    expect(state.presetItemStyles.default7?.fontFamily).toBe('M PLUS Rounded 1c')
+  })
+
+  it('adds new default presets to legacy persisted preset lists', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          presetItemIds: ['default1', 'custom'],
+          presetItemTitles: { default1: 'Custom Default', custom: 'Custom' },
+          presetItemStyles: { default1: ylcInitSetting, custom: ylcInitSetting },
+        },
+        version: 2,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.presetItemIds).toEqual(['default1', 'custom', 'default4', 'default5', 'default6', 'default7'])
+    expect(state.presetItemTitles.default1).toBe('content.preset.defaultTitle')
+    expect(state.presetItemTitles.default4).toBe('content.preset.darkTitle')
+    expect(state.presetItemStyles.default5?.fontSize).toBe(18)
+  })
+
+  it('keeps custom-only persisted preset lists without adding built-in defaults', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          presetItemIds: ['custom'],
+          presetItemTitles: { custom: 'Custom' },
+          presetItemStyles: { custom: { ...ylcInitSetting, fontSize: 20 } },
+        },
+        version: 3,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.presetItemIds).toEqual(['custom'])
+    expect(state.presetItemTitles).toEqual({ custom: 'Custom' })
+    expect(state.presetItemStyles.custom?.fontSize).toBe(20)
   })
 
   it('normalizes and saves fontFamily in updateYLCStyle', async () => {

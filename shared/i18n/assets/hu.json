@@ -50,7 +50,11 @@
       "simpleTitle": "Egyszerű",
       "deleteConfirmationMessage": "Biztosan törölni szeretné?",
       "delete": "Törlés",
-      "cancel": "Mégse"
+      "cancel": "Mégse",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

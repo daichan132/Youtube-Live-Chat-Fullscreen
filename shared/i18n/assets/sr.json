@@ -50,7 +50,11 @@
       "simpleTitle": "Једноставно",
       "deleteConfirmationMessage": "Да ли сте сигурни да желите да обришете?",
       "delete": "Обриши",
-      "cancel": "Откажи"
+      "cancel": "Откажи",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

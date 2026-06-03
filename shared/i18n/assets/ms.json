@@ -50,7 +50,11 @@
       "simpleTitle": "Ringkas",
       "deleteConfirmationMessage": "Adakah anda pasti mahu memadamkan ini?",
       "delete": "Padam",
-      "cancel": "Batal"
+      "cancel": "Batal",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

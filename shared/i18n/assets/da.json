@@ -50,7 +50,11 @@
       "simpleTitle": "Enkel",
       "deleteConfirmationMessage": "Er du sikker på, at du vil slette denne?",
       "delete": "Slet",
-      "cancel": "Annuller"
+      "cancel": "Annuller",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

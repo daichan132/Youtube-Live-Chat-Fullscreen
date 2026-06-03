@@ -50,7 +50,11 @@
       "simpleTitle": "เรียบง่าย",
       "deleteConfirmationMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งนี้?",
       "delete": "ลบ",
-      "cancel": "ยกเลิก"
+      "cancel": "ยกเลิก",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

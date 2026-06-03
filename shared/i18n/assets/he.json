@@ -50,7 +50,11 @@
       "simpleTitle": "פשוט",
       "deleteConfirmationMessage": "האם למחוק פריט זה?",
       "delete": "מחיקה",
-      "cancel": "ביטול"
+      "cancel": "ביטול",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

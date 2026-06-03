@@ -50,7 +50,11 @@
       "simpleTitle": "Simplu",
       "deleteConfirmationMessage": "Sigur vrei să ștergi?",
       "delete": "Șterge",
-      "cancel": "Anulează"
+      "cancel": "Anulează",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

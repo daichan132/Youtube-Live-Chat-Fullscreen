@@ -50,7 +50,11 @@
       "simpleTitle": "ലളിതം",
       "deleteConfirmationMessage": "ഇത് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
       "delete": "ഇല്ലാതാക്കുക",
-      "cancel": "റദ്ദാക്കുക"
+      "cancel": "റദ്ദാക്കുക",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

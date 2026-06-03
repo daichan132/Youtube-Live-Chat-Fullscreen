@@ -45,9 +45,13 @@
     "preset": {
       "addMessage": "Add Current Settings",
       "addItemTitle": "Untitled",
-      "defaultTitle": "Default",
+      "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Comments Only",
+      "darkTitle": "Dark",
+      "readableTitle": "Large Text",
+      "compactTitle": "Compact",
+      "neonTitle": "Colorful",
       "deleteConfirmationMessage": "Are you sure you want to delete this?",
       "delete": "Delete",
       "cancel": "Cancel"

@@ -50,7 +50,11 @@
       "simpleTitle": "साधे",
       "deleteConfirmationMessage": "तुम्हाला हे नक्की हटवायचे आहे का?",
       "delete": "हटवा",
-      "cancel": "रद्द करा"
+      "cancel": "रद्द करा",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

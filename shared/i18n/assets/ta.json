@@ -50,7 +50,11 @@
       "simpleTitle": "எளிமை",
       "deleteConfirmationMessage": "இதை நிச்சயமாக நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
-      "cancel": "ரத்துசெய்"
+      "cancel": "ரத்துசெய்",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

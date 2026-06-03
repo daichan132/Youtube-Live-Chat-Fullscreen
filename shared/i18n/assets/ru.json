@@ -50,7 +50,11 @@
       "simpleTitle": "Простой",
       "deleteConfirmationMessage": "Вы уверены, что хотите удалить?",
       "delete": "Удалить",
-      "cancel": "Отмена"
+      "cancel": "Отмена",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

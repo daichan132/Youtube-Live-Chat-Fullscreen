@@ -50,7 +50,11 @@
       "simpleTitle": "Vienkāršs",
       "deleteConfirmationMessage": "Vai tiešām vēlaties dzēst?",
       "delete": "Dzēst",
-      "cancel": "Atcelt"
+      "cancel": "Atcelt",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

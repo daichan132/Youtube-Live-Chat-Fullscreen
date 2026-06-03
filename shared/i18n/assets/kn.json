@@ -50,7 +50,11 @@
       "simpleTitle": "ಸರಳ",
       "deleteConfirmationMessage": "ನೀವು ಇದನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
       "delete": "ಅಳಿಸಿ",
-      "cancel": "ರದ್ದುಮಾಡಿ"
+      "cancel": "ರದ್ದುಮಾಡಿ",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

@@ -50,7 +50,11 @@
       "simpleTitle": "সরল",
       "deleteConfirmationMessage": "আপনি কি নিশ্চিত এটি মুছে ফেলতে চান?",
       "delete": "মুছুন",
-      "cancel": "বাতিল"
+      "cancel": "বাতিল",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

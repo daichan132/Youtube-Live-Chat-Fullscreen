@@ -50,7 +50,11 @@
       "simpleTitle": "Simple",
       "deleteConfirmationMessage": "Sigurado ka bang gusto mong burahin ito?",
       "delete": "Burahin",
-      "cancel": "Kanselahin"
+      "cancel": "Kanselahin",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

@@ -50,7 +50,11 @@
       "simpleTitle": "Simple",
       "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer ?",
       "delete": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

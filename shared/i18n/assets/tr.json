@@ -50,7 +50,11 @@
       "simpleTitle": "Sade",
       "deleteConfirmationMessage": "Bunu silmek istediğinizden emin misiniz?",
       "delete": "Sil",
-      "cancel": "İptal"
+      "cancel": "İptal",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

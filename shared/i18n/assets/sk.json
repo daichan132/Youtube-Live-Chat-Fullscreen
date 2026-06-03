@@ -50,7 +50,11 @@
       "simpleTitle": "Jednoduchý",
       "deleteConfirmationMessage": "Naozaj chcete odstrániť?",
       "delete": "Odstrániť",
-      "cancel": "Zrušiť"
+      "cancel": "Zrušiť",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

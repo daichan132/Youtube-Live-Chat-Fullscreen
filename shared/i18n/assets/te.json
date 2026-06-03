@@ -50,7 +50,11 @@
       "simpleTitle": "సరళం",
       "deleteConfirmationMessage": "దీన్ని నిజంగా తొలగించాలనుకుంటున్నారా?",
       "delete": "తొలగించు",
-      "cancel": "రద్దు చేయి"
+      "cancel": "రద్దు చేయి",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

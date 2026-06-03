@@ -50,7 +50,11 @@
       "simpleTitle": "ساده",
       "deleteConfirmationMessage": "آیا از حذف این مورد مطمئن هستید؟",
       "delete": "حذف",
-      "cancel": "انصراف"
+      "cancel": "انصراف",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

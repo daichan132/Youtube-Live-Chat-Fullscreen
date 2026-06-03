@@ -50,7 +50,11 @@
       "simpleTitle": "Đơn giản",
       "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa mục này không?",
       "delete": "Xóa",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

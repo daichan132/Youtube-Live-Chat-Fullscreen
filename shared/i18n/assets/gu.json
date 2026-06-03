@@ -50,7 +50,11 @@
       "simpleTitle": "સરળ",
       "deleteConfirmationMessage": "શું તમે ખરેખર આને કાઢી નાખવા માગો છો?",
       "delete": "કાઢી નાખો",
-      "cancel": "રદ કરો"
+      "cancel": "રદ કરો",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

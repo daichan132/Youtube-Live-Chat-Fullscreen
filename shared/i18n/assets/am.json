@@ -50,7 +50,11 @@
       "simpleTitle": "ቀላል",
       "deleteConfirmationMessage": "ይህን ለመሰረዝ እርግጠኛ ነዎት?",
       "delete": "ሰርዝ",
-      "cancel": "ይቅር"
+      "cancel": "ይቅር",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

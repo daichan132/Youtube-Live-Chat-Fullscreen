@@ -50,7 +50,11 @@
       "simpleTitle": "Paprastas",
       "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
       "delete": "Ištrinti",
-      "cancel": "Atšaukti"
+      "cancel": "Atšaukti",
+      "darkTitle": "Dark",
+      "readableTitle": "Readable",
+      "compactTitle": "Compact",
+      "neonTitle": "Neon"
     }
   },
   "popup": {

@@ -45,9 +45,13 @@
     "preset": {
       "addMessage": "現在の設定を追加",
       "addItemTitle": "無題",
-      "defaultTitle": "デフォルト",
+      "defaultTitle": "スタンダード",
       "transparentTitle": "透明",
-      "simpleTitle": "シンプル",
+      "simpleTitle": "コメントのみ",
+      "darkTitle": "ダーク",
+      "readableTitle": "大きめ",
+      "compactTitle": "コンパクト",
+      "neonTitle": "カラフル",
       "deleteConfirmationMessage": "本当に削除しますか？",
       "delete": "削除",
       "cancel": "キャンセル"
