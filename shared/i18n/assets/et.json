@@ -26,7 +26,10 @@
         "system": "Automaatne",
         "light": "Hele",
         "dark": "Tume"
-      }
+      },
+      "membershipNameColor": "Liikme nime värv",
+      "defaultColor": "Vaikimisi",
+      "resetToDefaultColor": "Lähtesta vaikevärvile"
     },
     "aria": {
       "dragToMove": "Lohista liigutamiseks",

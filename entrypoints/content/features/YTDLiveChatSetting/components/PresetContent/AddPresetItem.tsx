@@ -14,6 +14,7 @@ export const AddPresetItem = () => {
     const ylcStyle: YLCStyleType = {
       bgColor: state.bgColor,
       fontColor: state.fontColor,
+      membershipNameColor: state.membershipNameColor,
       fontFamily: state.fontFamily,
       fontSize: state.fontSize,
       blur: state.blur,

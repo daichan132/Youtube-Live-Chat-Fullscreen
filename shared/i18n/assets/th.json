@@ -26,7 +26,10 @@
         "system": "อัตโนมัติ",
         "light": "สว่าง",
         "dark": "มืด"
-      }
+      },
+      "membershipNameColor": "สีชื่อสมาชิก",
+      "defaultColor": "ค่าเริ่มต้น",
+      "resetToDefaultColor": "รีเซ็ตเป็นสีเริ่มต้น"
     },
     "aria": {
       "dragToMove": "ลากเพื่อย้าย",

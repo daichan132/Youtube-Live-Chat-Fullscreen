@@ -26,7 +26,10 @@
         "system": "Otomatik",
         "light": "Açık",
         "dark": "Koyu"
-      }
+      },
+      "membershipNameColor": "Üye adı rengi",
+      "defaultColor": "Varsayılan",
+      "resetToDefaultColor": "Varsayılan renge sıfırla"
     },
     "aria": {
       "dragToMove": "Taşımak için sürükleyin",

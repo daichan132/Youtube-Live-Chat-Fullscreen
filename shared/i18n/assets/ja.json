@@ -26,7 +26,10 @@
         "system": "自動",
         "light": "ライト",
         "dark": "ダーク"
-      }
+      },
+      "membershipNameColor": "メンバー名の色",
+      "defaultColor": "既定",
+      "resetToDefaultColor": "既定色に戻す"
     },
     "aria": {
       "dragToMove": "ドラッグで移動",

@@ -26,7 +26,10 @@
         "system": "Аутоматски",
         "light": "Светла",
         "dark": "Тамна"
-      }
+      },
+      "membershipNameColor": "Боја имена члана",
+      "defaultColor": "Подразумевано",
+      "resetToDefaultColor": "Врати подразумевану боју"
     },
     "aria": {
       "dragToMove": "Превуците за померање",

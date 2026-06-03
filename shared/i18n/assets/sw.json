@@ -26,7 +26,10 @@
         "system": "Otomatiki",
         "light": "Angavu",
         "dark": "Giza"
-      }
+      },
+      "membershipNameColor": "Rangi ya jina la mwanachama",
+      "defaultColor": "Chaguomsingi",
+      "resetToDefaultColor": "Weka upya hadi rangi chaguomsingi"
     },
     "aria": {
       "dragToMove": "Buruta ili kusogeza",

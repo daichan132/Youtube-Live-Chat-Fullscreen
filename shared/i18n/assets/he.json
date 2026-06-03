@@ -26,7 +26,10 @@
         "system": "אוטומטי",
         "light": "בהיר",
         "dark": "כהה"
-      }
+      },
+      "membershipNameColor": "צבע שם חבר",
+      "defaultColor": "ברירת מחדל",
+      "resetToDefaultColor": "איפוס לצבע ברירת המחדל"
     },
     "aria": {
       "dragToMove": "גרור להזזה",

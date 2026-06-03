@@ -1,6 +1,7 @@
 import { darkenRgbaColor } from '@/entrypoints/content/utils/darkenRgbaColor'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 import type { RGBColor, YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/utils'
 import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import {
@@ -12,6 +13,7 @@ import {
   YLC_FONT_COLOR_PROPERTIES,
   YLC_FONT_COLOR_SURFACE_PROPERTIES,
   YLC_FONT_SIZE_PROPERTY,
+  YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
   YLC_PANEL_BACKGROUND_PROPERTY,
   YLC_SPACING_PROPERTY,
   YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
@@ -60,6 +62,44 @@ const toRgbaString = (rgba: RGBColor, alpha: number | undefined) => `rgba(${rgba
 
 const roundAlpha = (alpha: number) => Math.round(alpha * 1000) / 1000
 
+const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && (a.a ?? 1) === (b.a ?? 1)
+
+const parseCssColor = (value: string): RGBColor | undefined => {
+  const color = value.trim()
+  const rgbaMatch = color.match(/^rgba?\(\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)\s*,\s*(\d+(?:\.\d+)?)(?:\s*,\s*(\d+(?:\.\d+)?))?\s*\)$/i)
+  if (rgbaMatch) {
+    return {
+      r: Number(rgbaMatch[1]),
+      g: Number(rgbaMatch[2]),
+      b: Number(rgbaMatch[3]),
+      a: rgbaMatch[4] === undefined ? 1 : Number(rgbaMatch[4]),
+    }
+  }
+
+  const hexMatch = color.match(/^#([\da-f]{6})$/i)
+  if (!hexMatch) return undefined
+
+  const hex = hexMatch[1]
+  return {
+    r: Number.parseInt(hex.slice(0, 2), 16),
+    g: Number.parseInt(hex.slice(2, 4), 16),
+    b: Number.parseInt(hex.slice(4, 6), 16),
+    a: 1,
+  }
+}
+
+export const isFallbackMembershipNameColor = (rgba: RGBColor) => isSameColor(rgba, DEFAULT_MEMBERSHIP_NAME_COLOR)
+
+export const getYLCStandardMembershipNameColor = (): RGBColor => {
+  const iframeDocumentElement = getYLCIframeDocumentElement()
+  const sponsorColor = iframeDocumentElement ? getComputedStyle(iframeDocumentElement).getPropertyValue('--yt-live-chat-sponsor-color') : ''
+
+  return parseCssColor(sponsorColor) ?? { ...DEFAULT_MEMBERSHIP_NAME_COLOR }
+}
+
+export const resolveYLCMembershipNameColor = (rgba: RGBColor): RGBColor =>
+  isFallbackMembershipNameColor(rgba) ? getYLCStandardMembershipNameColor() : rgba
+
 const toElevatedSurfaceColor = (rgba: RGBColor) => {
   const alpha = rgba.a ?? 1
   return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
@@ -91,6 +131,11 @@ export const changeYLCFontColor = (rgba: RGBColor) => {
     ...YLC_FONT_COLOR_LIGHT_PROPERTIES.map(property => [property, secondary] as const),
     ...YLC_FONT_COLOR_SURFACE_PROPERTIES.map(property => [property, toSubtleSurfaceColor(rgba)] as const),
   ])
+}
+
+export const changeYLCMembershipNameColor = (rgba: RGBColor) => {
+  const resolvedColor = resolveYLCMembershipNameColor(rgba)
+  setYLCStyleProperty(YLC_MEMBERSHIP_NAME_COLOR_PROPERTY, toRgbaString(resolvedColor, resolvedColor.a))
 }
 
 export const changeYLCBlur = (blur: number) => {
@@ -162,6 +207,7 @@ export const changeYLCStyle = (update: YLCStyleUpdateType) => {
   if (update.bgColor !== undefined) changeYLCBgColor(update.bgColor)
   if (update.blur !== undefined) changeYLCBlur(update.blur)
   if (update.fontColor !== undefined) changeYLCFontColor(update.fontColor)
+  if (update.membershipNameColor !== undefined) changeYLCMembershipNameColor(update.membershipNameColor)
   if (update.fontFamily !== undefined) changeYLCFontFamily(update.fontFamily)
   if (update.fontSize !== undefined) setYLCStyleProperty(YLC_FONT_SIZE_PROPERTY, `${update.fontSize}px`)
   if (update.space !== undefined) setYLCStyleProperty(YLC_SPACING_PROPERTY, `${update.space}px`)

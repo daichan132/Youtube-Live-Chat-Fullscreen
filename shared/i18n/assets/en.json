@@ -26,7 +26,10 @@
         "system": "Auto",
         "light": "Light",
         "dark": "Dark"
-      }
+      },
+      "membershipNameColor": "Membership name color",
+      "defaultColor": "Default",
+      "resetToDefaultColor": "Reset to default color"
     },
     "aria": {
       "dragToMove": "Drag to move",

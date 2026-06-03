@@ -26,7 +26,10 @@
         "system": "تلقائي",
         "light": "فاتح",
         "dark": "داكن"
-      }
+      },
+      "membershipNameColor": "لون اسم العضو",
+      "defaultColor": "افتراضي",
+      "resetToDefaultColor": "إرجاع اللون الافتراضي"
     },
     "aria": {
       "dragToMove": "اسحب للتحريك",

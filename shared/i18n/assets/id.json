@@ -26,7 +26,10 @@
         "system": "Otomatis",
         "light": "Terang",
         "dark": "Gelap"
-      }
+      },
+      "membershipNameColor": "Warna nama member",
+      "defaultColor": "Bawaan",
+      "resetToDefaultColor": "Reset ke warna default"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",

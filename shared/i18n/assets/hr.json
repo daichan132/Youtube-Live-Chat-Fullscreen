@@ -26,7 +26,10 @@
         "system": "Automatski",
         "light": "Svijetla",
         "dark": "Tamna"
-      }
+      },
+      "membershipNameColor": "Boja imena člana",
+      "defaultColor": "Zadano",
+      "resetToDefaultColor": "Vrati na zadanu boju"
     },
     "aria": {
       "dragToMove": "Povucite za premještanje",

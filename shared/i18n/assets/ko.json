@@ -26,7 +26,10 @@
         "system": "자동",
         "light": "라이트",
         "dark": "다크"
-      }
+      },
+      "membershipNameColor": "멤버 이름 색상",
+      "defaultColor": "기본값",
+      "resetToDefaultColor": "기본 색상으로 되돌리기"
     },
     "aria": {
       "dragToMove": "드래그하여 이동",

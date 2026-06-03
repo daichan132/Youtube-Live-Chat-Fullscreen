@@ -26,7 +26,10 @@
         "system": "Авто",
         "light": "Светлая",
         "dark": "Тёмная"
-      }
+      },
+      "membershipNameColor": "Цвет имени спонсора",
+      "defaultColor": "По умолчанию",
+      "resetToDefaultColor": "Вернуть цвет по умолчанию"
     },
     "aria": {
       "dragToMove": "Перетащите для перемещения",

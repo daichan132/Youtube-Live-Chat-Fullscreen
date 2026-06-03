@@ -26,7 +26,10 @@
         "system": "Automatik",
         "light": "Cerah",
         "dark": "Gelap"
-      }
+      },
+      "membershipNameColor": "Warna nama ahli",
+      "defaultColor": "Lalai",
+      "resetToDefaultColor": "Tetapkan semula kepada warna lalai"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",

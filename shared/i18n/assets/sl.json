@@ -26,7 +26,10 @@
         "system": "Samodejno",
         "light": "Svetla",
         "dark": "Temna"
-      }
+      },
+      "membershipNameColor": "Barva imena člana",
+      "defaultColor": "Privzeto",
+      "resetToDefaultColor": "Ponastavi na privzeto barvo"
     },
     "aria": {
       "dragToMove": "Povlecite za premik",

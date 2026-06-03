@@ -26,7 +26,10 @@
         "system": "Tự động",
         "light": "Sáng",
         "dark": "Tối"
-      }
+      },
+      "membershipNameColor": "Màu tên hội viên",
+      "defaultColor": "Mặc định",
+      "resetToDefaultColor": "Đặt lại về màu mặc định"
     },
     "aria": {
       "dragToMove": "Kéo để di chuyển",

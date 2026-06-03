@@ -26,7 +26,10 @@
         "system": "தானியங்கு",
         "light": "ஒளி",
         "dark": "இருள்"
-      }
+      },
+      "membershipNameColor": "உறுப்பினர் பெயர் நிறம்",
+      "defaultColor": "இயல்புநிலை",
+      "resetToDefaultColor": "இயல்புநிலை நிறத்துக்கு மீட்டமை"
     },
     "aria": {
       "dragToMove": "நகர்த்த இழுக்கவும்",

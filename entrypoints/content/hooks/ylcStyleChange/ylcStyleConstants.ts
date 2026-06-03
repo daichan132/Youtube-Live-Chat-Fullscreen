@@ -32,6 +32,7 @@ export const YLC_FONT_COLOR_SURFACE_PROPERTIES = [
   '--extension-yt-live-control-border-color',
 ] as const
 
+export const YLC_MEMBERSHIP_NAME_COLOR_PROPERTY = '--extension-yt-live-membership-name-color'
 export const YLC_FONT_SIZE_PROPERTY = '--extension-yt-live-chat-font-size'
 export const YLC_SPACING_PROPERTY = '--extension-yt-live-chat-spacing'
 export const YLC_USER_NAME_DISPLAY_PROPERTY = '--extension-user-name-display'

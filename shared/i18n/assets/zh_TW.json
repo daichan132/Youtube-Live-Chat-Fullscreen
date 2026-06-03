@@ -26,7 +26,10 @@
         "system": "自動",
         "light": "淺色",
         "dark": "深色"
-      }
+      },
+      "membershipNameColor": "會員名稱顏色",
+      "defaultColor": "預設",
+      "resetToDefaultColor": "重設為預設顏色"
     },
     "aria": {
       "dragToMove": "拖曳以移動",

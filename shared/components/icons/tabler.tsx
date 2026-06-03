@@ -66,6 +66,13 @@ export const TbPalette = (props: IconProps) => (
   </Tabler>
 )
 
+export const TbReset = (props: IconProps) => (
+  <Tabler {...props}>
+    <path d='M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4' />
+    <path d='M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4' />
+  </Tabler>
+)
+
 export const TbSpacingHorizontal = (props: IconProps) => (
   <Tabler {...props}>
     <path d='M20 20h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h2' />

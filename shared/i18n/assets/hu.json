@@ -26,7 +26,10 @@
         "system": "Automatikus",
         "light": "Világos",
         "dark": "Sötét"
-      }
+      },
+      "membershipNameColor": "Tagsági név színe",
+      "defaultColor": "Alapértelmezett",
+      "resetToDefaultColor": "Visszaállítás alapértelmezett színre"
     },
     "aria": {
       "dragToMove": "Húzza az áthelyezéshez",

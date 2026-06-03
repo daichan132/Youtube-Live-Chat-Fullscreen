@@ -26,7 +26,10 @@
         "system": "خودکار",
         "light": "روشن",
         "dark": "تاریک"
-      }
+      },
+      "membershipNameColor": "رنگ نام عضو",
+      "defaultColor": "پیش‌فرض",
+      "resetToDefaultColor": "بازنشانی به رنگ پیش‌فرض"
     },
     "aria": {
       "dragToMove": "بکشید برای جابه‌جایی",

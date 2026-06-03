@@ -26,7 +26,10 @@
         "system": "ಸ್ವಯಂ",
         "light": "ಲೈಟ್",
         "dark": "ಡಾರ್ಕ್"
-      }
+      },
+      "membershipNameColor": "ಸದಸ್ಯರ ಹೆಸರಿನ ಬಣ್ಣ",
+      "defaultColor": "ಡೀಫಾಲ್ಟ್",
+      "resetToDefaultColor": "ಡಿಫಾಲ್ಟ್ ಬಣ್ಣಕ್ಕೆ ಮರುಹೊಂದಿಸಿ"
     },
     "aria": {
       "dragToMove": "ಸರಿಸಲು ಎಳೆಯಿರಿ",

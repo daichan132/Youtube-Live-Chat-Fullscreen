@@ -4,6 +4,9 @@ import {
   changeYLCBgColor,
   changeYLCBlur,
   changeYLCFontColor,
+  changeYLCMembershipNameColor,
+  getYLCStandardMembershipNameColor,
+  isFallbackMembershipNameColor,
   setYLCStyleProperty,
 } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import {
@@ -21,6 +24,7 @@ import {
   TbMessageCircle,
   TbPaint,
   TbPalette,
+  TbReset,
   TbSpacingHorizontal,
   TbTextSize,
   TbTypography,
@@ -29,7 +33,7 @@ import {
 } from '@/shared/components/icons'
 import { Switch } from '@/shared/components/Switch'
 import { useYTDLiveChatStore } from '@/shared/stores'
-import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import type { RGBColor, YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 import { cn } from '@/shared/utils/cn'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
@@ -45,6 +49,11 @@ type SettingItem = {
 
 type ToggleSettingKey = 'alwaysOnDisplay' | 'chatOnlyDisplay' | 'userNameDisplay' | 'userIconDisplay' | 'superChatBarDisplay'
 type VisibleDisplayValue = 'inline' | 'block'
+
+const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && (a.a ?? 1) === (b.a ?? 1)
+
+const isDefaultMembershipNameColor = (color: RGBColor) =>
+  isFallbackMembershipNameColor(color) || isSameColor(color, getYLCStandardMembershipNameColor())
 
 const applyFontSize = (fontSize: number) => setYLCStyleProperty(YLC_FONT_SIZE_PROPERTY, `${fontSize}px`)
 const applySpace = (space: number) => setYLCStyleProperty(YLC_SPACING_PROPERTY, `${space}px`)
@@ -95,6 +104,41 @@ const DisplayToggleSettingSwitch = ({
   )
 }
 
+const MembershipNameColorSetting = () => {
+  const { t } = useTranslation()
+  const membershipNameColor = useYTDLiveChatStore(state => state.membershipNameColor)
+  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
+  const isDefault = isDefaultMembershipNameColor(membershipNameColor)
+
+  const resetToDefault = () => {
+    const defaultColor = getYLCStandardMembershipNameColor()
+    changeYLCMembershipNameColor(defaultColor)
+    updateYLCStyle({ membershipNameColor: defaultColor })
+  }
+  const resetLabel = t('content.setting.resetToDefaultColor')
+
+  return (
+    <div className='flex items-center justify-end gap-2 ylc-action-fill'>
+      <YLCColorPicker
+        settingKey='membershipNameColor'
+        labelKey='content.setting.membershipNameColor'
+        applyColor={changeYLCMembershipNameColor}
+      />
+      <span className='ylc-theme-tooltip' data-tooltip={resetLabel}>
+        <button
+          type='button'
+          className='h-[36px] w-[36px] shrink-0 inline-flex items-center justify-center rounded-[10px] border border-solid ylc-theme-border ylc-theme-surface ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] cursor-pointer transition-colors duration-160 ylc-theme-focus-ring-soft disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[var(--ylc-text-secondary)]'
+          onClick={resetToDefault}
+          disabled={isDefault}
+          aria-label={resetLabel}
+        >
+          <TbReset size={18} />
+        </button>
+      </span>
+    </div>
+  )
+}
+
 export const SettingContent = () => {
   const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const { t } = useTranslation()
@@ -123,6 +167,12 @@ export const SettingContent = () => {
       icon: TbPalette,
       title: t('content.setting.fontColor'),
       data: <YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' applyColor={changeYLCFontColor} />,
+    },
+    {
+      id: 'membershipNameColor',
+      icon: TbUser,
+      title: t('content.setting.membershipNameColor'),
+      data: <MembershipNameColorSetting />,
     },
     { id: 'fontFamily', icon: TbTypography, title: t('content.setting.fontFamily'), data: <FontFamilyInput /> },
     {

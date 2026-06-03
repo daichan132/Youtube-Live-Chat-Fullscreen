@@ -63,12 +63,14 @@ describe('sanitizeYLCStyle', () => {
     expect(
       sanitizeYLCStyle({
         bgColor: { r: 0, g: 0, b: 0 },
+        membershipNameColor: { r: 10, g: 20, b: 30, a: 0.8 },
         fontSize: 14,
         blur: 5,
         alwaysOnDisplay: true,
       }),
     ).toEqual({
       bgColor: { r: 0, g: 0, b: 0 },
+      membershipNameColor: { r: 10, g: 20, b: 30, a: 0.8 },
       fontSize: 14,
       blur: 5,
       alwaysOnDisplay: true,
@@ -79,8 +81,14 @@ describe('sanitizeYLCStyle', () => {
     expect(sanitizeYLCStyle({ fontSize: 'big', blur: true, alwaysOnDisplay: 1 })).toEqual({})
   })
 
-  it('drops invalid colors', () => {
-    expect(sanitizeYLCStyle({ bgColor: 'red', fontColor: null })).toEqual({})
+  it('drops invalid base colors and normalizes invalid membership name color to the default', () => {
+    expect(sanitizeYLCStyle({ bgColor: 'red', fontColor: null, membershipNameColor: 'green' })).toEqual({
+      membershipNameColor: { r: 15, g: 157, b: 88, a: 1 },
+    })
+  })
+
+  it('normalizes legacy null membership name color to the default color', () => {
+    expect(sanitizeYLCStyle({ membershipNameColor: null })).toEqual({ membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } })
   })
 })
 
@@ -123,7 +131,7 @@ describe('sanitizeYTDLiveChat', () => {
       },
     })
     expect(result.presetItemStyles).toEqual({
-      a: { fontSize: 14, bgColor: { r: 0, g: 0, b: 0 } },
+      a: { fontSize: 14, bgColor: { r: 0, g: 0, b: 0 }, membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } },
     })
   })
 

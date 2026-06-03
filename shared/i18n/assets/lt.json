@@ -26,7 +26,10 @@
         "system": "Automatinė",
         "light": "Šviesi",
         "dark": "Tamsi"
-      }
+      },
+      "membershipNameColor": "Nario vardo spalva",
+      "defaultColor": "Numatytasis",
+      "resetToDefaultColor": "Atkurti numatytąją spalvą"
     },
     "aria": {
       "dragToMove": "Vilkite norėdami perkelti",

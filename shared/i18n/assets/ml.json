@@ -26,7 +26,10 @@
         "system": "ഓട്ടോ",
         "light": "ലൈറ്റ്",
         "dark": "ഡാർക്ക്"
-      }
+      },
+      "membershipNameColor": "അംഗത്തിന്റെ പേരിന്റെ നിറം",
+      "defaultColor": "ഡിഫോൾട്ട്",
+      "resetToDefaultColor": "ഡിഫോൾട്ട് നിറത്തിലേക്ക് പുനഃസജ്ജമാക്കുക"
     },
     "aria": {
       "dragToMove": "നീക്കാൻ വലിക്കുക",

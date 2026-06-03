@@ -26,7 +26,10 @@
         "system": "Automatisk",
         "light": "Lys",
         "dark": "Mørk"
-      }
+      },
+      "membershipNameColor": "Farge på medlemsnavn",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Tilbakestill til standardfarge"
     },
     "aria": {
       "dragToMove": "Dra for å flytte",

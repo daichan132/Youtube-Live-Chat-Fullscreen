@@ -26,7 +26,10 @@
         "system": "ራስ-ሰር",
         "light": "ብሩህ",
         "dark": "ጨለማ"
-      }
+      },
+      "membershipNameColor": "የአባል ስም ቀለም",
+      "defaultColor": "ነባሪ",
+      "resetToDefaultColor": "ወደ ነባሪ ቀለም መመለስ"
     },
     "aria": {
       "dragToMove": "ጎትተህ አንቀሳቅስ",

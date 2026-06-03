@@ -26,7 +26,10 @@
         "system": "Automático",
         "light": "Claro",
         "dark": "Escuro"
-      }
+      },
+      "membershipNameColor": "Cor do nome de membro",
+      "defaultColor": "Padrão",
+      "resetToDefaultColor": "Redefinir para a cor padrão"
     },
     "aria": {
       "dragToMove": "Arrastar para mover",

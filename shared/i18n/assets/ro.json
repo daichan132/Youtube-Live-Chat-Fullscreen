@@ -26,7 +26,10 @@
         "system": "Automat",
         "light": "Deschis",
         "dark": "Întunecat"
-      }
+      },
+      "membershipNameColor": "Culoarea numelui de membru",
+      "defaultColor": "Implicit",
+      "resetToDefaultColor": "Resetează la culoarea implicită"
     },
     "aria": {
       "dragToMove": "Trage pentru a muta",

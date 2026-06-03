@@ -26,7 +26,10 @@
         "system": "Automaattinen",
         "light": "Vaalea",
         "dark": "Tumma"
-      }
+      },
+      "membershipNameColor": "Jäsenen nimen väri",
+      "defaultColor": "Oletus",
+      "resetToDefaultColor": "Palauta oletusväri"
     },
     "aria": {
       "dragToMove": "Siirrä vetämällä",

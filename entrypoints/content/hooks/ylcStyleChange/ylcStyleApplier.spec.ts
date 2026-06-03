@@ -5,7 +5,10 @@ import {
   changeYLCBlur,
   changeYLCFontColor,
   changeYLCFontFamily,
+  changeYLCMembershipNameColor,
   changeYLCStyle,
+  getYLCStandardMembershipNameColor,
+  resolveYLCMembershipNameColor,
   setYLCStyleProperties,
   setYLCStyleProperty,
 } from './ylcStyleApplier'
@@ -118,6 +121,29 @@ describe('ylcStyleApplier', () => {
     expect(style.getPropertyValue('--extension-yt-live-control-border-color')).toBe('rgba(10, 20, 30, 0.08)')
   })
 
+  it('applies the membership name color', () => {
+    const { iframe, doc } = createConnectedIframe()
+    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+
+    changeYLCMembershipNameColor({ r: 12, g: 34, b: 56, a: 0.7 })
+
+    const style = doc.documentElement.style
+    expect(style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(12, 34, 56, 0.7)')
+  })
+
+  it('resolves the fallback membership color from YouTube sponsor color when available', () => {
+    const { iframe, doc } = createConnectedIframe()
+    doc.documentElement.style.setProperty('--yt-live-chat-sponsor-color', 'rgb(22, 163, 74)')
+    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+
+    expect(getYLCStandardMembershipNameColor()).toEqual({ r: 22, g: 163, b: 74, a: 1 })
+    expect(resolveYLCMembershipNameColor({ r: 15, g: 157, b: 88, a: 1 })).toEqual({ r: 22, g: 163, b: 74, a: 1 })
+
+    changeYLCMembershipNameColor({ r: 15, g: 157, b: 88, a: 1 })
+
+    expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
+  })
+
   it('applies blur to iframe body and clears host filter', () => {
     const { iframe } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
@@ -159,6 +185,7 @@ describe('ylcStyleApplier', () => {
 
     changeYLCStyle({
       bgColor: { r: 10, g: 20, b: 30, a: 0.9 },
+      membershipNameColor: { r: 40, g: 50, b: 60, a: 1 },
       fontSize: 18,
       userNameDisplay: false,
       superChatBarDisplay: true,
@@ -166,6 +193,7 @@ describe('ylcStyleApplier', () => {
 
     const style = doc.documentElement.style
     expect(style.getPropertyValue('--yt-live-chat-background-color')).toBe('transparent')
+    expect(style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(40, 50, 60, 1)')
     expect(style.getPropertyValue('--extension-yt-live-chat-font-size')).toBe('18px')
     expect(style.getPropertyValue('--extension-user-name-display')).toBe('none')
     expect(style.getPropertyValue('--extension-super-chat-bar-display')).toBe('block')

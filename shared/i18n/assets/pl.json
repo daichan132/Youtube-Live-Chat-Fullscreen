@@ -26,7 +26,10 @@
         "system": "Automatyczny",
         "light": "Jasny",
         "dark": "Ciemny"
-      }
+      },
+      "membershipNameColor": "Kolor nazwy członka",
+      "defaultColor": "Domyślny",
+      "resetToDefaultColor": "Przywróć kolor domyślny"
     },
     "aria": {
       "dragToMove": "Przeciągnij, aby przenieść",

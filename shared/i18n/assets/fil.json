@@ -26,7 +26,10 @@
         "system": "Awtomatiko",
         "light": "Maliwanag",
         "dark": "Madilim"
-      }
+      },
+      "membershipNameColor": "Kulay ng pangalan ng miyembro",
+      "defaultColor": "Default",
+      "resetToDefaultColor": "Ibalik sa default na kulay"
     },
     "aria": {
       "dragToMove": "I-drag para ilipat",

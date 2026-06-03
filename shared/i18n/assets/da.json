@@ -26,7 +26,10 @@
         "system": "Automatisk",
         "light": "Lys",
         "dark": "Mørk"
-      }
+      },
+      "membershipNameColor": "Farve på medlemsnavn",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Gendan standardfarve"
     },
     "aria": {
       "dragToMove": "Træk for at flytte",

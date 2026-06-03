@@ -26,7 +26,10 @@
         "system": "Automātisks",
         "light": "Gaišs",
         "dark": "Tumšs"
-      }
+      },
+      "membershipNameColor": "Dalībnieka vārda krāsa",
+      "defaultColor": "Noklusējums",
+      "resetToDefaultColor": "Atiestatīt uz noklusējuma krāsu"
     },
     "aria": {
       "dragToMove": "Velciet, lai pārvietotu",

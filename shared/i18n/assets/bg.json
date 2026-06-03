@@ -26,7 +26,10 @@
         "system": "Автоматично",
         "light": "Светла",
         "dark": "Тъмна"
-      }
+      },
+      "membershipNameColor": "Цвят на името на члена",
+      "defaultColor": "По подразбиране",
+      "resetToDefaultColor": "Връщане към цвета по подразбиране"
     },
     "aria": {
       "dragToMove": "Плъзнете за преместване",

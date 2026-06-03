@@ -166,4 +166,11 @@ describe('iframe styles contract', () => {
       '.yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer {\n  color: var(--yt-live-chat-primary-text-color',
     )
   })
+
+  it('uses the membership name color variable for member author names', () => {
+    expect(iframeStyles).toContain('--extension-yt-live-membership-name-color: var(--yt-live-chat-sponsor-color, rgba(15, 157, 88, 1));')
+    expect(iframeStyles).toContain(
+      '#author-name.member.yt-live-chat-author-chip {\n  color: var(--extension-yt-live-membership-name-color);\n}',
+    )
+  })
 })

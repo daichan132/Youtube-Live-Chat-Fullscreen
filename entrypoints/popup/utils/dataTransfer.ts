@@ -1,12 +1,13 @@
 import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/utils'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { sendActiveTabMessage } from './sendActiveTabMessage'
 
 // Keep in sync with each store's persist config (name / version).
 const GLOBAL_SETTING_PERSIST = { key: 'globalSettingStore', version: 1 } as const
-const YTD_LIVE_CHAT_PERSIST = { key: 'ytdLiveChatStore', version: 2 } as const
+const YTD_LIVE_CHAT_PERSIST = { key: 'ytdLiveChatStore', version: 5 } as const
 
 const YTD_LIVE_CHAT_DATA_KEYS = [
   'presetItemIds',
@@ -17,6 +18,7 @@ const YTD_LIVE_CHAT_DATA_KEYS = [
   'size',
   'bgColor',
   'fontColor',
+  'membershipNameColor',
   'fontFamily',
   'fontSize',
   'blur',
@@ -73,6 +75,9 @@ export const sanitizeYLCStyle = (style: Record<string, unknown>): Partial<YLCSty
   const result: Record<string, unknown> = {}
   if (isRGBColor(style.bgColor)) result.bgColor = style.bgColor
   if (isRGBColor(style.fontColor)) result.fontColor = style.fontColor
+  if (Object.hasOwn(style, 'membershipNameColor')) {
+    result.membershipNameColor = isRGBColor(style.membershipNameColor) ? style.membershipNameColor : { ...DEFAULT_MEMBERSHIP_NAME_COLOR }
+  }
   if (typeof style.fontFamily === 'string') result.fontFamily = normalizeFontFamily(style.fontFamily)
   if (typeof style.fontSize === 'number') result.fontSize = style.fontSize
   if (typeof style.blur === 'number') result.blur = style.blur
@@ -123,7 +128,11 @@ export const sanitizeYTDLiveChat = (raw: Record<string, unknown>) => {
     const sanitized: Record<string, Partial<YLCStyleType>> = {}
     for (const [id, s] of Object.entries(raw.presetItemStyles as Record<string, unknown>)) {
       if (s && typeof s === 'object') {
-        sanitized[id] = sanitizeYLCStyle(s as Record<string, unknown>)
+        const sanitizedStyle = sanitizeYLCStyle(s as Record<string, unknown>)
+        sanitized[id] = {
+          ...sanitizedStyle,
+          membershipNameColor: sanitizedStyle.membershipNameColor ?? { ...DEFAULT_MEMBERSHIP_NAME_COLOR },
+        }
       }
     }
     result.presetItemStyles = sanitized

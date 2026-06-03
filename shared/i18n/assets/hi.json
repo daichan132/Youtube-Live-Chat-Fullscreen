@@ -26,7 +26,10 @@
         "system": "स्वचालित",
         "light": "लाइट",
         "dark": "डार्क"
-      }
+      },
+      "membershipNameColor": "सदस्य नाम का रंग",
+      "defaultColor": "डिफ़ॉल्ट",
+      "resetToDefaultColor": "डिफ़ॉल्ट रंग पर रीसेट करें"
     },
     "aria": {
       "dragToMove": "खिसकाने के लिए खींचें",

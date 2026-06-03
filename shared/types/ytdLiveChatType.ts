@@ -13,6 +13,7 @@ export interface sizeType {
 export interface YLCStyleType {
   bgColor: RGBColor
   fontColor: RGBColor
+  membershipNameColor: RGBColor
   fontFamily: string
   fontSize: number
   blur: number

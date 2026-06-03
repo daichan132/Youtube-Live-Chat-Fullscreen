@@ -4,8 +4,9 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { DefaultCoordinates, DefaultSize, ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import i18n from '../i18n/config'
-import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
+import type { RGBColor, sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
 import {
+  DEFAULT_MEMBERSHIP_NAME_COLOR,
   ylcCompactSetting,
   ylcDarkSetting,
   ylcInitSetting,
@@ -97,25 +98,47 @@ const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
   return rest
 }
 
+const sanitizeMembershipNameColor = (value: unknown): RGBColor => {
+  if (value && typeof value === 'object') {
+    const color = value as Record<string, unknown>
+    if (typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number') {
+      return {
+        r: color.r,
+        g: color.g,
+        b: color.b,
+        ...(typeof color.a === 'number' ? { a: color.a } : {}),
+      }
+    }
+  }
+  return { ...DEFAULT_MEMBERSHIP_NAME_COLOR }
+}
+
 const sanitizeFontFamilyInStyleObject = (style: Record<string, unknown>) => ({
   ...style,
   fontFamily: normalizeFontFamily(style.fontFamily),
+  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
 })
 
 const sanitizeStyleForPreset = (style: YLCStyleType): YLCStyleType => ({
   ...style,
   fontFamily: normalizeFontFamily(style.fontFamily),
+  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
 })
 
 const sanitizeStyleUpdate = (update: YLCStyleUpdateType): YLCStyleUpdateType => {
-  if (!Object.hasOwn(update, 'fontFamily')) {
-    return update
+  const sanitizedUpdate = {
+    ...update,
   }
 
-  return {
-    ...update,
-    fontFamily: normalizeFontFamily(update.fontFamily),
+  if (Object.hasOwn(update, 'fontFamily')) {
+    sanitizedUpdate.fontFamily = normalizeFontFamily(update.fontFamily)
   }
+
+  if (Object.hasOwn(update, 'membershipNameColor')) {
+    sanitizedUpdate.membershipNameColor = sanitizeMembershipNameColor(update.membershipNameColor)
+  }
+
+  return sanitizedUpdate
 }
 
 const clampSize = (size: sizeType): sizeType => ({
@@ -176,6 +199,7 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
   if ('fontFamily' in state) {
     migratedState.fontFamily = normalizeFontFamily(state.fontFamily)
   }
+  migratedState.membershipNameColor = sanitizeMembershipNameColor(state.membershipNameColor)
 
   if (!presetItemStyles || typeof presetItemStyles !== 'object') {
     return migrateDefaultPresets(migratedState)
@@ -250,7 +274,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     }),
     {
       name: 'ytdLiveChatStore',
-      version: 4,
+      version: 5,
       migrate: persistedState => migratePersistedState(persistedState),
       storage: createJSONStorage(() => localStorage),
     },

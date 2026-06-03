@@ -6,7 +6,7 @@ import type { RGBColor, YLCStyleUpdateType } from '@/shared/types/ytdLiveChatTyp
 import { fromRgba } from './colorUtils'
 import { SettingColorPicker } from './SettingColorPicker'
 
-type ColorSettingKey = 'bgColor' | 'fontColor'
+type ColorSettingKey = 'bgColor' | 'fontColor' | 'membershipNameColor'
 
 type YLCColorPickerProps = {
   settingKey: ColorSettingKey
@@ -27,6 +27,5 @@ export const YLCColorPicker = ({ settingKey, labelKey, applyColor }: YLCColorPic
     },
     [applyColor, settingKey, updateYLCStyle],
   )
-
   return <SettingColorPicker rgba={rgba} label={t(labelKey)} onChange={onChange} />
 }

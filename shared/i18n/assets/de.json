@@ -26,7 +26,10 @@
         "system": "Automatisch",
         "light": "Hell",
         "dark": "Dunkel"
-      }
+      },
+      "membershipNameColor": "Farbe des Mitgliedsnamens",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Auf Standardfarbe zurücksetzen"
     },
     "aria": {
       "dragToMove": "Ziehen zum Verschieben",

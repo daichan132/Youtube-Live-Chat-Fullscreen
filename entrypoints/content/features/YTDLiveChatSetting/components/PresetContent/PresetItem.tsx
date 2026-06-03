@@ -3,7 +3,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { changeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
+import { changeYLCStyle, resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbGripVertical, TbSparkles, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { useYTDLiveChatStore } from '@/shared/stores'
@@ -38,8 +38,12 @@ export const PresetItem = ({ id }: PresetItemType) => {
   })
   const updateStyle = useCallback(
     (ylcStyle: YLCStyleType) => {
-      updateYLCStyle(ylcStyle)
-      changeYLCStyle(ylcStyle)
+      const resolvedStyle = {
+        ...ylcStyle,
+        membershipNameColor: resolveYLCMembershipNameColor(ylcStyle.membershipNameColor),
+      }
+      updateYLCStyle(resolvedStyle)
+      changeYLCStyle(resolvedStyle)
       setAddPresetEnabled(false)
     },
     [setAddPresetEnabled, updateYLCStyle],

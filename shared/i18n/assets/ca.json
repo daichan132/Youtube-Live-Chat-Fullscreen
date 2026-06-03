@@ -26,7 +26,10 @@
         "system": "Automàtic",
         "light": "Clar",
         "dark": "Fosc"
-      }
+      },
+      "membershipNameColor": "Color del nom de membre",
+      "defaultColor": "Per defecte",
+      "resetToDefaultColor": "Torna al color predeterminat"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",

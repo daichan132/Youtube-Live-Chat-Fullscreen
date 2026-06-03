@@ -26,7 +26,10 @@
         "system": "Automaticky",
         "light": "Svetlý",
         "dark": "Tmavý"
-      }
+      },
+      "membershipNameColor": "Farba mena člena",
+      "defaultColor": "Predvolené",
+      "resetToDefaultColor": "Obnoviť predvolenú farbu"
     },
     "aria": {
       "dragToMove": "Potiahnutím presuniete",

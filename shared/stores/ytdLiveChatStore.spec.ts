@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { ResizableMinHeight, ResizableMinWidth } from '../constants'
-import { ylcInitSetting } from '../utils'
+import { DEFAULT_MEMBERSHIP_NAME_COLOR, ylcInitSetting } from '../utils'
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
@@ -32,6 +32,8 @@ describe('useYTDLiveChatStore', () => {
     expect(state.presetItemTitles.default5).toBe('content.preset.readableTitle')
     expect(state.presetItemTitles.default6).toBe('content.preset.compactTitle')
     expect(state.presetItemTitles.default7).toBe('content.preset.neonTitle')
+    expect(state.membershipNameColor).toEqual(DEFAULT_MEMBERSHIP_NAME_COLOR)
+    expect(state.presetItemStyles.default1?.membershipNameColor).toEqual(DEFAULT_MEMBERSHIP_NAME_COLOR)
     expect(state.presetItemStyles.default4?.fontFamily).toBe('Inter')
     expect(state.presetItemStyles.default5?.fontSize).toBe(18)
     expect(state.presetItemStyles.default5?.userNameDisplay).toBe(false)
@@ -155,6 +157,60 @@ describe('useYTDLiveChatStore', () => {
 
     expect(state.fontFamily).toBe('')
     expect(state.presetItemStyles.legacy?.fontFamily).toBe('')
+  })
+
+  it('migrates missing or invalid membership name colors to the default color', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          membershipNameColor: 'green',
+          presetItemIds: ['legacy'],
+          presetItemTitles: { legacy: 'Legacy' },
+          presetItemStyles: {
+            legacy: {
+              ...ylcInitSetting,
+              membershipNameColor: 'invalid',
+            },
+          },
+        },
+        version: 4,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.membershipNameColor).toEqual(DEFAULT_MEMBERSHIP_NAME_COLOR)
+    expect(state.presetItemStyles.legacy?.membershipNameColor).toEqual(DEFAULT_MEMBERSHIP_NAME_COLOR)
+  })
+
+  it('keeps valid membership name colors during migration', async () => {
+    localStorage.setItem(
+      'ytdLiveChatStore',
+      JSON.stringify({
+        state: {
+          ...ylcInitSetting,
+          membershipNameColor: { r: 1, g: 2, b: 3, a: 0.4 },
+          presetItemIds: ['legacy'],
+          presetItemTitles: { legacy: 'Legacy' },
+          presetItemStyles: {
+            legacy: {
+              ...ylcInitSetting,
+              membershipNameColor: { r: 5, g: 6, b: 7 },
+            },
+          },
+        },
+        version: 4,
+      }),
+    )
+
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const state = useYTDLiveChatStore.getState()
+
+    expect(state.membershipNameColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
+    expect(state.presetItemStyles.legacy?.membershipNameColor).toEqual({ r: 5, g: 6, b: 7 })
   })
 
   it('migrates persisted default presets back to current built-in definitions', async () => {

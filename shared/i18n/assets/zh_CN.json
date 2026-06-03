@@ -26,7 +26,10 @@
         "system": "自动",
         "light": "浅色",
         "dark": "深色"
-      }
+      },
+      "membershipNameColor": "会员名称颜色",
+      "defaultColor": "默认",
+      "resetToDefaultColor": "重置为默认颜色"
     },
     "aria": {
       "dragToMove": "拖动以移动",

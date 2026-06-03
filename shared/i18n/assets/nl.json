@@ -26,7 +26,10 @@
         "system": "Automatisch",
         "light": "Licht",
         "dark": "Donker"
-      }
+      },
+      "membershipNameColor": "Kleur van ledennaam",
+      "defaultColor": "Standaard",
+      "resetToDefaultColor": "Standaardkleur herstellen"
     },
     "aria": {
       "dragToMove": "Slepen om te verplaatsen",

@@ -70,6 +70,7 @@ describe('SettingContent', () => {
       'content.setting.chatOnlyDisplay',
       'content.setting.backgroundColor',
       'content.setting.fontColor',
+      'content.setting.membershipNameColor',
       'content.setting.fontFamily',
       'content.setting.fontSize',
       'content.setting.blur',
@@ -88,11 +89,13 @@ describe('SettingContent', () => {
       useYTDLiveChatStore.setState({
         bgColor: { r: 1, g: 2, b: 3, a: 0.4 },
         fontColor: { r: 9, g: 8, b: 7, a: 0.6 },
+        membershipNameColor: { r: 15, g: 157, b: 88, a: 1 },
       })
     })
 
     expect(getByText('Current color: rgba(1, 2, 3, 0.4)')).not.toBeNull()
     expect(getByText('Current color: rgba(9, 8, 7, 0.6)')).not.toBeNull()
+    expect(getByText('Current color: rgba(15, 157, 88, 1)')).not.toBeNull()
   })
 
   it('keeps sliders in sync with store updates before interaction', () => {
@@ -129,5 +132,39 @@ describe('SettingContent', () => {
 
     fireEvent.click(getByRole('switch', { name: 'content.setting.superChatBarDisplay' }))
     expect(style?.getPropertyValue('--extension-super-chat-bar-display')).toBe('block')
+  })
+
+  it('keeps membership name color visible and resets it to the default color', () => {
+    const iframe = document.createElement('iframe')
+    document.body.appendChild(iframe)
+    iframe.contentDocument?.documentElement.style.setProperty('--yt-live-chat-sponsor-color', 'rgb(22, 163, 74)')
+    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+
+    const { getByRole, queryByText } = render(<SettingContent />)
+
+    expect(useYTDLiveChatStore.getState().membershipNameColor).toEqual({ r: 15, g: 157, b: 88, a: 1 })
+    expect(queryByText('Current color: rgba(15, 157, 88, 1)')).not.toBeNull()
+    const resetButton = getByRole('button', { name: 'content.setting.resetToDefaultColor' })
+    expect(resetButton).toBeDisabled()
+    expect(resetButton.parentElement?.getAttribute('data-tooltip')).toBe('content.setting.resetToDefaultColor')
+
+    fireEvent.click(getByRole('button', { name: 'content.setting.membershipNameColor' }))
+
+    const colorPicker = document.querySelector('.react-colorful') as HTMLElement
+    expect(colorPicker).not.toBeNull()
+
+    act(() => {
+      useYTDLiveChatStore.setState({ membershipNameColor: { r: 1, g: 2, b: 3, a: 0.4 } })
+    })
+
+    expect(queryByText('Current color: rgba(1, 2, 3, 0.4)')).not.toBeNull()
+    expect(getByRole('button', { name: 'content.setting.resetToDefaultColor' })).not.toBeDisabled()
+
+    fireEvent.click(getByRole('button', { name: 'content.setting.resetToDefaultColor' }))
+
+    expect(useYTDLiveChatStore.getState().membershipNameColor).toEqual({ r: 22, g: 163, b: 74, a: 1 })
+    expect(iframe.contentDocument?.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe(
+      'rgba(22, 163, 74, 1)',
+    )
   })
 })

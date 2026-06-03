@@ -561,6 +561,40 @@
   opacity: 1;
 }
 
+.ylc-theme-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.ylc-theme-tooltip[data-tooltip]::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  z-index: 70;
+  width: max-content;
+  max-width: 220px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--ylc-bg-surface-elevated);
+  border: var(--ylc-border-width) solid var(--ylc-border);
+  color: var(--ylc-text-primary);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.ylc-theme-tooltip[data-tooltip]:hover::after,
+.ylc-theme-tooltip[data-tooltip]:focus-within::after {
+  opacity: 1;
+}
+
 .ylc-theme-donate-link {
   display: inline-flex;
   align-items: center;

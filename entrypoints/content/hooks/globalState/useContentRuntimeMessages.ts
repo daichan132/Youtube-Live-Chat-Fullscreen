@@ -18,10 +18,31 @@ export const useContentRuntimeMessages = () => {
       await useGlobalSettingStore.persist.rehydrate()
       await useYTDLiveChatStore.persist.rehydrate()
 
-      const { fontSize, fontFamily, bgColor, blur, fontColor, userNameDisplay, space, userIconDisplay, superChatBarDisplay } =
-        useYTDLiveChatStore.getState()
+      const {
+        fontSize,
+        fontFamily,
+        bgColor,
+        blur,
+        fontColor,
+        membershipNameColor,
+        userNameDisplay,
+        space,
+        userIconDisplay,
+        superChatBarDisplay,
+      } = useYTDLiveChatStore.getState()
 
-      changeYLCStyle({ bgColor, blur, fontColor, fontFamily, fontSize, space, userNameDisplay, userIconDisplay, superChatBarDisplay })
+      changeYLCStyle({
+        bgColor,
+        blur,
+        fontColor,
+        membershipNameColor,
+        fontFamily,
+        fontSize,
+        space,
+        userNameDisplay,
+        userIconDisplay,
+        superChatBarDisplay,
+      })
     }
 
     const handleMessage = (message: unknown) => {

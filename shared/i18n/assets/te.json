@@ -26,7 +26,10 @@
         "system": "ఆటో",
         "light": "లైట్",
         "dark": "డార్క్"
-      }
+      },
+      "membershipNameColor": "సభ్యుని పేరు రంగు",
+      "defaultColor": "డిఫాల్ట్",
+      "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి"
     },
     "aria": {
       "dragToMove": "తరలించడానికి లాగండి",

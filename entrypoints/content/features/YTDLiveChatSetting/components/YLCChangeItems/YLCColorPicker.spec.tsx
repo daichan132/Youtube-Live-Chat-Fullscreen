@@ -92,4 +92,21 @@ describe('YLCColorPicker', () => {
     expect(useYTDLiveChatStore.getState().fontColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
     expect(useYTDLiveChatStore.getState().bgColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
   })
+
+  it('updates the membership name color setting', () => {
+    const applyColor = vi.fn()
+    useYTDLiveChatStore.setState({ membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } })
+
+    const { getByRole } = render(
+      <YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' applyColor={applyColor} />,
+    )
+    const button = getByRole('button', { name: 'content.setting.membershipNameColor' })
+
+    expect(button.getAttribute('data-rgba')).toBe('15,157,88,1')
+
+    fireEvent.click(button)
+
+    expect(applyColor).toHaveBeenCalledWith({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(useYTDLiveChatStore.getState().membershipNameColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+  })
 })

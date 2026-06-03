@@ -26,7 +26,10 @@
         "system": "Αυτόματο",
         "light": "Φωτεινό",
         "dark": "Σκοτεινό"
-      }
+      },
+      "membershipNameColor": "Χρώμα ονόματος μέλους",
+      "defaultColor": "Προεπιλογή",
+      "resetToDefaultColor": "Επαναφορά στο προεπιλεγμένο χρώμα"
     },
     "aria": {
       "dragToMove": "Σύρετε για μετακίνηση",

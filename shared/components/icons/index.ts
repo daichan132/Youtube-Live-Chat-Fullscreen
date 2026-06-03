@@ -16,6 +16,7 @@ export {
   TbPaint,
   TbPalette,
   TbPlus,
+  TbReset,
   TbSettings2,
   TbSpacingHorizontal,
   TbSparkles,

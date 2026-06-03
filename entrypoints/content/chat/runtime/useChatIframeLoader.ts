@@ -1,7 +1,11 @@
 import { useEffect, useRef } from 'react'
 import { resolveArchiveSource } from '@/entrypoints/content/chat/archive/resolveArchiveSource'
 import { getLiveChatUrlForVideo, resolveLiveSource } from '@/entrypoints/content/chat/live/resolveLiveSource'
-import { changeYLCStyle } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
+import {
+  changeYLCStyle,
+  isFallbackMembershipNameColor,
+  resolveYLCMembershipNameColor,
+} from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../../features/YTDLiveChatIframe/styles/iframe.css?inline'
@@ -34,13 +38,29 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     }
 
     const applyCurrentChatStyle = () => {
-      const { fontSize, fontFamily, bgColor, blur, fontColor, userNameDisplay, space, userIconDisplay, superChatBarDisplay } =
-        useYTDLiveChatStore.getState()
+      const {
+        fontSize,
+        fontFamily,
+        bgColor,
+        blur,
+        fontColor,
+        membershipNameColor,
+        userNameDisplay,
+        space,
+        userIconDisplay,
+        superChatBarDisplay,
+      } = useYTDLiveChatStore.getState()
+
+      const resolvedMembershipNameColor = resolveYLCMembershipNameColor(membershipNameColor)
+      if (isFallbackMembershipNameColor(membershipNameColor)) {
+        useYTDLiveChatStore.setState({ membershipNameColor: resolvedMembershipNameColor })
+      }
 
       changeYLCStyle({
         bgColor,
         blur,
         fontColor,
+        membershipNameColor: resolvedMembershipNameColor,
         fontFamily,
         fontSize,
         space,
