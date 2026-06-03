@@ -61,6 +61,44 @@ describe('YTDLiveChatIframe', () => {
     })
   })
 
+  it('hides the persistent background when loaded chat is not visible', () => {
+    resetStores({
+      liveOverrides: {
+        alwaysOnDisplay: false,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isDisplay: false,
+      },
+    })
+
+    const { container } = render(<YTDLiveChatIframe mode='live' />)
+    const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
+    const viewport = container.querySelector('[data-ylc-chat-viewport]') as HTMLElement
+
+    expect(viewport).toHaveStyle({ opacity: '0' })
+    expect(background).toHaveStyle({ opacity: '0' })
+  })
+
+  it('keeps the persistent background visible while always-on display keeps chat visible', () => {
+    resetStores({
+      liveOverrides: {
+        alwaysOnDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isDisplay: false,
+      },
+    })
+
+    const { container } = render(<YTDLiveChatIframe mode='live' />)
+    const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
+    const viewport = container.querySelector('[data-ylc-chat-viewport]') as HTMLElement
+
+    expect(viewport).toHaveStyle({ opacity: '1' })
+    expect(background).toHaveStyle({ opacity: '1' })
+  })
+
   it('shifts and expands the iframe carrier while chat-only crop is enabled', () => {
     resetStores({
       noLsOverrides: {

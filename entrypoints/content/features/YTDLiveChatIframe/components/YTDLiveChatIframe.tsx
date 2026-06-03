@@ -69,11 +69,13 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
 
   return (
     <>
-      {/* Persistent background — stays visible throughout the loader → chat cross-fade */}
+      {/* Persistent background — follows the same visibility gate as the chat surface. */}
       <div
-        className='absolute inset-0 rounded-md transition-[background-color] duration-200 ease-out'
+        data-ylc-chat-background
+        className='absolute inset-0 rounded-md transition-[background-color,opacity] duration-200 ease-out'
         style={{
           backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
+          opacity: isChatVisible ? 1 : 0,
         }}
       />
       <div

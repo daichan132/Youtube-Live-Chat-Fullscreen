@@ -5,7 +5,6 @@ type IframeInitializerOptions = {
   iframeStyles: string
   applyChatStyle: () => void
   setIsIframeLoaded: (value: boolean) => void
-  setIsDisplay: (value: boolean) => void
   retryIntervalMs?: number
   retryMaxAttempts?: number
 }
@@ -104,7 +103,6 @@ export const createIframeInitializer = ({
   iframeStyles,
   applyChatStyle,
   setIsIframeLoaded,
-  setIsDisplay,
   retryIntervalMs = 1000,
   retryMaxAttempts = 10,
 }: IframeInitializerOptions) => {
@@ -146,7 +144,6 @@ export const createIframeInitializer = ({
     installMembershipFallback(doc)
 
     setIsIframeLoaded(true)
-    setIsDisplay(true)
     return true
   }
 
@@ -187,7 +184,6 @@ export const createIframeInitializer = ({
     // Fail-open: if iframe URL is valid but document access is temporarily blocked,
     // keep iframe in DOM and retry style injection. Loading overlay stays visible
     // until styles are applied (or retries exhaust as a fallback).
-    setIsDisplay(true)
     startRetry(iframe)
     return false
   }

@@ -394,6 +394,18 @@ describe('DraggableItem', () => {
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
   })
 
+  it('does not treat mount as display activity', () => {
+    resetNoLsStore({ isHover: false, isDisplay: true })
+
+    render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
+  })
+
   it('keeps the chat visible when hovering even if idle', () => {
     vi.useFakeTimers()
     resetNoLsStore({ isHover: true, isDisplay: false })

@@ -79,7 +79,6 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       iframeStyles,
       applyChatStyle: applyCurrentChatStyle,
       setIsIframeLoaded: setIsIframeLoadedRef.current,
-      setIsDisplay: setIsDisplayRef.current,
     })
 
     const handleLoaded = () => {

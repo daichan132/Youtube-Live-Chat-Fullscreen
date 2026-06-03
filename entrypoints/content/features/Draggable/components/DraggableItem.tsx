@@ -53,7 +53,7 @@ type VisibleChatBounds = {
 type HoverRegion = 'none' | 'chat' | 'controls'
 
 const useDisplayIdle = () => {
-  const [idle, setIdle] = useState(false)
+  const [idle, setIdle] = useState(true)
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
@@ -64,7 +64,6 @@ const useDisplayIdle = () => {
       timer = setTimeout(() => setIdle(true), IDLE_TIMEOUT_MS)
     }
 
-    reset()
     for (const event of ACTIVITY_EVENTS) {
       document.addEventListener(event, reset, { passive: true })
     }
