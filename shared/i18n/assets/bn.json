@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "বর্তমান সেটিংস যোগ করুন",
       "addItemTitle": "শিরোনামহীন",
-      "defaultTitle": "ডিফল্ট",
+      "defaultTitle": "স্ট্যান্ডার্ড",
       "transparentTitle": "স্বচ্ছ",
-      "simpleTitle": "সরল",
+      "simpleTitle": "শুধু মন্তব্য",
       "deleteConfirmationMessage": "আপনি কি নিশ্চিত এটি মুছে ফেলতে চান?",
       "delete": "মুছুন",
       "cancel": "বাতিল",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "গাঢ়",
+      "readableTitle": "বড় লেখা",
+      "compactTitle": "কমপ্যাক্ট",
+      "neonTitle": "রঙিন"
     }
   },
   "popup": {

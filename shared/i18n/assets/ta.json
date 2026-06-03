@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
       "addItemTitle": "தலைப்பிடப்படாதது",
-      "defaultTitle": "இயல்புநிலை",
+      "defaultTitle": "நிலையான",
       "transparentTitle": "வெளிப்படை",
-      "simpleTitle": "எளிமை",
+      "simpleTitle": "கருத்துகள் மட்டும்",
       "deleteConfirmationMessage": "இதை நிச்சயமாக நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
       "cancel": "ரத்துசெய்",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "இருள்",
+      "readableTitle": "பெரிய உரை",
+      "compactTitle": "சுருக்கமான",
+      "neonTitle": "வண்ணமயமான"
     }
   },
   "popup": {

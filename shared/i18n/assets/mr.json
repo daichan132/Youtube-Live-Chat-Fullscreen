@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "सध्याच्या सेटिंग्ज जोडा",
       "addItemTitle": "शीर्षक नाही",
-      "defaultTitle": "डीफॉल्ट",
+      "defaultTitle": "मानक",
       "transparentTitle": "पारदर्शक",
-      "simpleTitle": "साधे",
+      "simpleTitle": "फक्त टिप्पण्या",
       "deleteConfirmationMessage": "तुम्हाला हे नक्की हटवायचे आहे का?",
       "delete": "हटवा",
       "cancel": "रद्द करा",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "गडद",
+      "readableTitle": "मोठा मजकूर",
+      "compactTitle": "कॉम्पॅक्ट",
+      "neonTitle": "रंगीत"
     }
   },
   "popup": {

@@ -47,14 +47,14 @@
       "addItemTitle": "Naamloos",
       "defaultTitle": "Standaard",
       "transparentTitle": "Transparant",
-      "simpleTitle": "Eenvoudig",
+      "simpleTitle": "Alleen reacties",
       "deleteConfirmationMessage": "Weet je zeker dat je dit wilt verwijderen?",
       "delete": "Verwijderen",
       "cancel": "Annuleren",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
+      "darkTitle": "Donker",
+      "readableTitle": "Grote tekst",
       "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "neonTitle": "Kleurrijk"
     }
   },
   "popup": {

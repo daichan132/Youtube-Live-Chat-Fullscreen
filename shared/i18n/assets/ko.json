@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "현재 설정 추가",
       "addItemTitle": "제목 없음",
-      "defaultTitle": "기본",
+      "defaultTitle": "표준",
       "transparentTitle": "투명",
-      "simpleTitle": "심플",
+      "simpleTitle": "댓글만",
       "deleteConfirmationMessage": "정말로 삭제하시겠습니까?",
       "delete": "삭제",
       "cancel": "취소",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "다크",
+      "readableTitle": "큰 글자",
+      "compactTitle": "컴팩트",
+      "neonTitle": "컬러풀"
     }
   },
   "popup": {

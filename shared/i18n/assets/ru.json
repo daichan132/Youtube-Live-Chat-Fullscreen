@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Добавить текущие настройки",
       "addItemTitle": "Без названия",
-      "defaultTitle": "По умолчанию",
+      "defaultTitle": "Стандартный",
       "transparentTitle": "Прозрачный",
-      "simpleTitle": "Простой",
+      "simpleTitle": "Только комментарии",
       "deleteConfirmationMessage": "Вы уверены, что хотите удалить?",
       "delete": "Удалить",
       "cancel": "Отмена",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Тёмный",
+      "readableTitle": "Крупный текст",
+      "compactTitle": "Компактный",
+      "neonTitle": "Цветной"
     }
   },
   "popup": {

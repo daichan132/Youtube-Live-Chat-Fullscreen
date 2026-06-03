@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "የአሁኑን ቅንብር አክል",
       "addItemTitle": "ያልተሰየመ",
-      "defaultTitle": "ነባሪ",
+      "defaultTitle": "መደበኛ",
       "transparentTitle": "ግልጽ",
-      "simpleTitle": "ቀላል",
+      "simpleTitle": "አስተያየቶች ብቻ",
       "deleteConfirmationMessage": "ይህን ለመሰረዝ እርግጠኛ ነዎት?",
       "delete": "ሰርዝ",
       "cancel": "ይቅር",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "ጨለማ",
+      "readableTitle": "ትልቅ ጽሑፍ",
+      "compactTitle": "የታመቀ",
+      "neonTitle": "ባለቀለም"
     }
   },
   "popup": {

@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "વર્તમાન સેટિંગ્સ ઉમેરો",
       "addItemTitle": "શીર્ષકહીન",
-      "defaultTitle": "ડિફૉલ્ટ",
+      "defaultTitle": "માનક",
       "transparentTitle": "પારદર્શક",
-      "simpleTitle": "સરળ",
+      "simpleTitle": "માત્ર ટિપ્પણીઓ",
       "deleteConfirmationMessage": "શું તમે ખરેખર આને કાઢી નાખવા માગો છો?",
       "delete": "કાઢી નાખો",
       "cancel": "રદ કરો",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "ઘાટું",
+      "readableTitle": "મોટું લખાણ",
+      "compactTitle": "કોમ્પેક્ટ",
+      "neonTitle": "રંગીન"
     }
   },
   "popup": {

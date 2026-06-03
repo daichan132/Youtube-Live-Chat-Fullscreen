@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "افزودن تنظیمات فعلی",
       "addItemTitle": "بدون عنوان",
-      "defaultTitle": "پیش‌فرض",
+      "defaultTitle": "استاندارد",
       "transparentTitle": "شفاف",
-      "simpleTitle": "ساده",
+      "simpleTitle": "فقط نظرها",
       "deleteConfirmationMessage": "آیا از حذف این مورد مطمئن هستید؟",
       "delete": "حذف",
       "cancel": "انصراف",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "تیره",
+      "readableTitle": "متن بزرگ",
+      "compactTitle": "فشرده",
+      "neonTitle": "رنگارنگ"
     }
   },
   "popup": {

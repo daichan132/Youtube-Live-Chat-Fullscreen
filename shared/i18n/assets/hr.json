@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Dodaj trenutne postavke",
       "addItemTitle": "Bez naslova",
-      "defaultTitle": "Zadano",
+      "defaultTitle": "Standardno",
       "transparentTitle": "Prozirno",
-      "simpleTitle": "Jednostavno",
+      "simpleTitle": "Samo komentari",
       "deleteConfirmationMessage": "Jeste li sigurni da želite izbrisati?",
       "delete": "Izbriši",
       "cancel": "Odustani",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tamno",
+      "readableTitle": "Veliki tekst",
+      "compactTitle": "Kompaktno",
+      "neonTitle": "Šareno"
     }
   },
   "popup": {

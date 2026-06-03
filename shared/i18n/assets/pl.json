@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Dodaj bieżące ustawienia",
       "addItemTitle": "Bez tytułu",
-      "defaultTitle": "Domyślny",
+      "defaultTitle": "Standardowy",
       "transparentTitle": "Przezroczysty",
-      "simpleTitle": "Prosty",
+      "simpleTitle": "Tylko komentarze",
       "deleteConfirmationMessage": "Czy na pewno chcesz usunąć?",
       "delete": "Usuń",
       "cancel": "Anuluj",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Ciemny",
+      "readableTitle": "Duży tekst",
+      "compactTitle": "Kompaktowy",
+      "neonTitle": "Kolorowy"
     }
   },
   "popup": {

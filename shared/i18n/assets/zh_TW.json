@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "新增目前設定",
       "addItemTitle": "未命名",
-      "defaultTitle": "預設",
+      "defaultTitle": "標準",
       "transparentTitle": "透明",
-      "simpleTitle": "簡約",
+      "simpleTitle": "僅留言",
       "deleteConfirmationMessage": "確定要刪除嗎？",
       "delete": "刪除",
       "cancel": "取消",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "深色",
+      "readableTitle": "大字",
+      "compactTitle": "緊湊",
+      "neonTitle": "繽紛"
     }
   },
   "popup": {

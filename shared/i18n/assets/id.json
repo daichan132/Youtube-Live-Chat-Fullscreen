@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Tambah Pengaturan Saat Ini",
       "addItemTitle": "Tanpa Judul",
-      "defaultTitle": "Bawaan",
+      "defaultTitle": "Standar",
       "transparentTitle": "Transparan",
-      "simpleTitle": "Sederhana",
+      "simpleTitle": "Hanya komentar",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus ini?",
       "delete": "Hapus",
       "cancel": "Batal",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Gelap",
+      "readableTitle": "Teks besar",
+      "compactTitle": "Ringkas",
+      "neonTitle": "Berwarna"
     }
   },
   "popup": {

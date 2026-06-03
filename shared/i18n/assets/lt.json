@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Pridėti dabartinius nustatymus",
       "addItemTitle": "Be pavadinimo",
-      "defaultTitle": "Numatytasis",
+      "defaultTitle": "Standartinis",
       "transparentTitle": "Permatomas",
-      "simpleTitle": "Paprastas",
+      "simpleTitle": "Tik komentarai",
       "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
       "delete": "Ištrinti",
       "cancel": "Atšaukti",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tamsus",
+      "readableTitle": "Didelis tekstas",
+      "compactTitle": "Kompaktiškas",
+      "neonTitle": "Spalvingas"
     }
   },
   "popup": {

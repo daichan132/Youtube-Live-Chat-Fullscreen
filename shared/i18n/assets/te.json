@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "ప్రస్తుత సెట్టింగ్‌లను జోడించు",
       "addItemTitle": "శీర్షిక లేదు",
-      "defaultTitle": "డిఫాల్ట్",
+      "defaultTitle": "ప్రామాణికం",
       "transparentTitle": "పారదర్శకం",
-      "simpleTitle": "సరళం",
+      "simpleTitle": "వ్యాఖ్యలు మాత్రమే",
       "deleteConfirmationMessage": "దీన్ని నిజంగా తొలగించాలనుకుంటున్నారా?",
       "delete": "తొలగించు",
       "cancel": "రద్దు చేయి",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "ముదురు",
+      "readableTitle": "పెద్ద వచనం",
+      "compactTitle": "కాంపాక్ట్",
+      "neonTitle": "రంగురంగుల"
     }
   },
   "popup": {

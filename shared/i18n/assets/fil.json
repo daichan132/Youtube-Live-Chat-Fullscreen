@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Idagdag ang Kasalukuyang Setting",
       "addItemTitle": "Walang Pamagat",
-      "defaultTitle": "Default",
+      "defaultTitle": "Karaniwan",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Mga komento lang",
       "deleteConfirmationMessage": "Sigurado ka bang gusto mong burahin ito?",
       "delete": "Burahin",
       "cancel": "Kanselahin",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
+      "darkTitle": "Madilim",
+      "readableTitle": "Malaking teksto",
       "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "neonTitle": "Makulay"
     }
   },
   "popup": {

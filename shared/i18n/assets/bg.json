@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Добави текущите настройки",
       "addItemTitle": "Без заглавие",
-      "defaultTitle": "По подразбиране",
+      "defaultTitle": "Стандартен",
       "transparentTitle": "Прозрачен",
-      "simpleTitle": "Опростен",
+      "simpleTitle": "Само коментари",
       "deleteConfirmationMessage": "Наистина ли искате да изтриете?",
       "delete": "Изтрий",
       "cancel": "Отказ",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Тъмен",
+      "readableTitle": "Голям текст",
+      "compactTitle": "Компактен",
+      "neonTitle": "Цветен"
     }
   },
   "popup": {

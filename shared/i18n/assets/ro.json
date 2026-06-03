@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Adaugă setările curente",
       "addItemTitle": "Fără titlu",
-      "defaultTitle": "Implicit",
+      "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simplu",
+      "simpleTitle": "Doar comentarii",
       "deleteConfirmationMessage": "Sigur vrei să ștergi?",
       "delete": "Șterge",
       "cancel": "Anulează",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
+      "darkTitle": "Întunecat",
+      "readableTitle": "Text mare",
       "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "neonTitle": "Colorat"
     }
   },
   "popup": {

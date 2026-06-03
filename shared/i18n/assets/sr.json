@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Додај тренутна подешавања",
       "addItemTitle": "Без наслова",
-      "defaultTitle": "Подразумевано",
+      "defaultTitle": "Стандардно",
       "transparentTitle": "Провидно",
-      "simpleTitle": "Једноставно",
+      "simpleTitle": "Само коментари",
       "deleteConfirmationMessage": "Да ли сте сигурни да желите да обришете?",
       "delete": "Обриши",
       "cancel": "Откажи",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Тамно",
+      "readableTitle": "Велики текст",
+      "compactTitle": "Компактно",
+      "neonTitle": "Шарено"
     }
   },
   "popup": {

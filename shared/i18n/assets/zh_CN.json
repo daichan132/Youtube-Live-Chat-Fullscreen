@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "添加当前设置",
       "addItemTitle": "未命名",
-      "defaultTitle": "默认",
+      "defaultTitle": "标准",
       "transparentTitle": "透明",
-      "simpleTitle": "简洁",
+      "simpleTitle": "仅评论",
       "deleteConfirmationMessage": "确定要删除吗？",
       "delete": "删除",
       "cancel": "取消",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "深色",
+      "readableTitle": "大字",
+      "compactTitle": "紧凑",
+      "neonTitle": "多彩"
     }
   },
   "popup": {

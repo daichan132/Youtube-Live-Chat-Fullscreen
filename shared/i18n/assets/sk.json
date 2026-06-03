@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Pridať aktuálne nastavenia",
       "addItemTitle": "Bez názvu",
-      "defaultTitle": "Predvolené",
+      "defaultTitle": "Štandardný",
       "transparentTitle": "Priehľadný",
-      "simpleTitle": "Jednoduchý",
+      "simpleTitle": "Iba komentáre",
       "deleteConfirmationMessage": "Naozaj chcete odstrániť?",
       "delete": "Odstrániť",
       "cancel": "Zrušiť",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tmavý",
+      "readableTitle": "Veľký text",
+      "compactTitle": "Kompaktný",
+      "neonTitle": "Farebný"
     }
   },
   "popup": {

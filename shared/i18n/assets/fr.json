@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Ajouter les paramètres actuels",
       "addItemTitle": "Sans titre",
-      "defaultTitle": "Défaut",
+      "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Commentaires uniquement",
       "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer ?",
       "delete": "Supprimer",
       "cancel": "Annuler",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
+      "darkTitle": "Sombre",
+      "readableTitle": "Grand texte",
       "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "neonTitle": "Coloré"
     }
   },
   "popup": {

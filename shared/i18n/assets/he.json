@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "הוספת ההגדרות הנוכחיות",
       "addItemTitle": "ללא שם",
-      "defaultTitle": "ברירת מחדל",
+      "defaultTitle": "רגיל",
       "transparentTitle": "שקוף",
-      "simpleTitle": "פשוט",
+      "simpleTitle": "תגובות בלבד",
       "deleteConfirmationMessage": "האם למחוק פריט זה?",
       "delete": "מחיקה",
       "cancel": "ביטול",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "כהה",
+      "readableTitle": "טקסט גדול",
+      "compactTitle": "קומפקטי",
+      "neonTitle": "צבעוני"
     }
   },
   "popup": {

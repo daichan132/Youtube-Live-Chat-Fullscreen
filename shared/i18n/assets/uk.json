@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Додати поточні налаштування",
       "addItemTitle": "Без назви",
-      "defaultTitle": "За замовчуванням",
+      "defaultTitle": "Стандартний",
       "transparentTitle": "Прозорий",
-      "simpleTitle": "Простий",
+      "simpleTitle": "Лише коментарі",
       "deleteConfirmationMessage": "Ви впевнені, що хочете видалити?",
       "delete": "Видалити",
       "cancel": "Скасувати",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Темний",
+      "readableTitle": "Великий текст",
+      "compactTitle": "Компактний",
+      "neonTitle": "Кольоровий"
     }
   },
   "popup": {

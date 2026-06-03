@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Jelenlegi beállítások hozzáadása",
       "addItemTitle": "Névtelen",
-      "defaultTitle": "Alapértelmezett",
+      "defaultTitle": "Normál",
       "transparentTitle": "Átlátszó",
-      "simpleTitle": "Egyszerű",
+      "simpleTitle": "Csak megjegyzések",
       "deleteConfirmationMessage": "Biztosan törölni szeretné?",
       "delete": "Törlés",
       "cancel": "Mégse",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Sötét",
+      "readableTitle": "Nagy szöveg",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Színes"
     }
   },
   "popup": {

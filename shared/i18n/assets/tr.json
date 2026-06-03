@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Mevcut Ayarları Ekle",
       "addItemTitle": "Başlıksız",
-      "defaultTitle": "Varsayılan",
+      "defaultTitle": "Standart",
       "transparentTitle": "Şeffaf",
-      "simpleTitle": "Sade",
+      "simpleTitle": "Yalnızca yorumlar",
       "deleteConfirmationMessage": "Bunu silmek istediğinizden emin misiniz?",
       "delete": "Sil",
       "cancel": "İptal",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Koyu",
+      "readableTitle": "Büyük metin",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Renkli"
     }
   },
   "popup": {

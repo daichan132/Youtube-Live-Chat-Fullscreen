@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
       "addItemTitle": "ಶೀರ್ಷಿಕೆರಹಿತ",
-      "defaultTitle": "ಡೀಫಾಲ್ಟ್",
+      "defaultTitle": "ಪ್ರಮಾಣಿತ",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
-      "simpleTitle": "ಸರಳ",
+      "simpleTitle": "ಕಾಮೆಂಟ್‌ಗಳು ಮಾತ್ರ",
       "deleteConfirmationMessage": "ನೀವು ಇದನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
       "delete": "ಅಳಿಸಿ",
       "cancel": "ರದ್ದುಮಾಡಿ",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "ಗಾಢ",
+      "readableTitle": "ದೊಡ್ಡ ಪಠ್ಯ",
+      "compactTitle": "ಕಾಂಪ್ಯಾಕ್ಟ್",
+      "neonTitle": "ಬಣ್ಣಬಣ್ಣದ"
     }
   },
   "popup": {

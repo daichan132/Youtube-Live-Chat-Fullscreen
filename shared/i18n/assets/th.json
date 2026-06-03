@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "เพิ่มการตั้งค่าปัจจุบัน",
       "addItemTitle": "ไม่มีชื่อ",
-      "defaultTitle": "ค่าเริ่มต้น",
+      "defaultTitle": "มาตรฐาน",
       "transparentTitle": "โปร่งใส",
-      "simpleTitle": "เรียบง่าย",
+      "simpleTitle": "เฉพาะความคิดเห็น",
       "deleteConfirmationMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งนี้?",
       "delete": "ลบ",
       "cancel": "ยกเลิก",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "มืด",
+      "readableTitle": "ข้อความใหญ่",
+      "compactTitle": "กะทัดรัด",
+      "neonTitle": "สีสัน"
     }
   },
   "popup": {

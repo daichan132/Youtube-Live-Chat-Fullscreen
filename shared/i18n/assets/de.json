@@ -47,14 +47,14 @@
       "addItemTitle": "Unbenannt",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Einfach",
+      "simpleTitle": "Nur Kommentare",
       "deleteConfirmationMessage": "Möchten Sie dies wirklich löschen?",
       "delete": "Löschen",
       "cancel": "Abbrechen",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Dunkel",
+      "readableTitle": "Großer Text",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Farbenfroh"
     }
   },
   "popup": {

@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Ongeza mipangilio ya sasa",
       "addItemTitle": "Bila jina",
-      "defaultTitle": "Chaguomsingi",
+      "defaultTitle": "Kawaida",
       "transparentTitle": "Wazi",
-      "simpleTitle": "Rahisi",
+      "simpleTitle": "Maoni pekee",
       "deleteConfirmationMessage": "Una uhakika unataka kufuta hii?",
       "delete": "Futa",
       "cancel": "Ghairi",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Giza",
+      "readableTitle": "Maandishi makubwa",
+      "compactTitle": "Fupi",
+      "neonTitle": "Yenye rangi"
     }
   },
   "popup": {

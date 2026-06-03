@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Lisää nykyiset asetukset",
       "addItemTitle": "Nimetön",
-      "defaultTitle": "Oletus",
+      "defaultTitle": "Vakio",
       "transparentTitle": "Läpinäkyvä",
-      "simpleTitle": "Yksinkertainen",
+      "simpleTitle": "Vain kommentit",
       "deleteConfirmationMessage": "Haluatko varmasti poistaa tämän?",
       "delete": "Poista",
       "cancel": "Peruuta",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tumma",
+      "readableTitle": "Suuri teksti",
+      "compactTitle": "Kompakti",
+      "neonTitle": "Värikäs"
     }
   },
   "popup": {

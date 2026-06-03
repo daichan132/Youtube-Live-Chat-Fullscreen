@@ -47,14 +47,14 @@
       "addItemTitle": "Uten tittel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gjennomsiktig",
-      "simpleTitle": "Enkel",
+      "simpleTitle": "Bare kommentarer",
       "deleteConfirmationMessage": "Er du sikker på at du vil slette denne?",
       "delete": "Slett",
       "cancel": "Avbryt",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Mørk",
+      "readableTitle": "Stor tekst",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Fargerik"
     }
   },
   "popup": {

@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Tambah Tetapan Semasa",
       "addItemTitle": "Tanpa Tajuk",
-      "defaultTitle": "Lalai",
+      "defaultTitle": "Standard",
       "transparentTitle": "Telus",
-      "simpleTitle": "Ringkas",
+      "simpleTitle": "Komen sahaja",
       "deleteConfirmationMessage": "Adakah anda pasti mahu memadamkan ini?",
       "delete": "Padam",
       "cancel": "Batal",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Gelap",
+      "readableTitle": "Teks besar",
+      "compactTitle": "Padat",
+      "neonTitle": "Berwarna-warni"
     }
   },
   "popup": {

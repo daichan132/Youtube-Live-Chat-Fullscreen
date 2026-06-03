@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
       "addItemTitle": "Χωρίς τίτλο",
-      "defaultTitle": "Προεπιλεγμένο",
+      "defaultTitle": "Τυπικό",
       "transparentTitle": "Διαφανές",
-      "simpleTitle": "Απλό",
+      "simpleTitle": "Μόνο σχόλια",
       "deleteConfirmationMessage": "Θέλετε σίγουρα να το διαγράψετε;",
       "delete": "Διαγραφή",
       "cancel": "Ακύρωση",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Σκούρο",
+      "readableTitle": "Μεγάλο κείμενο",
+      "compactTitle": "Συμπαγές",
+      "neonTitle": "Πολύχρωμο"
     }
   },
   "popup": {

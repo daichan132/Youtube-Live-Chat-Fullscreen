@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Agregar configuración actual",
       "addItemTitle": "Sin título",
-      "defaultTitle": "Por defecto",
+      "defaultTitle": "Estándar",
       "transparentTitle": "Transparente",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Solo comentarios",
       "deleteConfirmationMessage": "¿Seguro que deseas eliminarlo?",
       "delete": "Eliminar",
       "cancel": "Cancelar",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Oscuro",
+      "readableTitle": "Texto grande",
+      "compactTitle": "Compacto",
+      "neonTitle": "Colorido"
     }
   },
   "popup": {

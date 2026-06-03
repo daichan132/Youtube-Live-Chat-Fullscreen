@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "वर्तमान सेटिंग्स जोड़ें",
       "addItemTitle": "शीर्षकहीन",
-      "defaultTitle": "डिफ़ॉल्ट",
+      "defaultTitle": "मानक",
       "transparentTitle": "पारदर्शी",
-      "simpleTitle": "सादा",
+      "simpleTitle": "केवल टिप्पणियाँ",
       "deleteConfirmationMessage": "क्या आप वाकई इसे हटाना चाहते हैं?",
       "delete": "हटाएं",
       "cancel": "रद्द करें",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "गहरा",
+      "readableTitle": "बड़ा टेक्स्ट",
+      "compactTitle": "कॉम्पैक्ट",
+      "neonTitle": "रंगीन"
     }
   },
   "popup": {

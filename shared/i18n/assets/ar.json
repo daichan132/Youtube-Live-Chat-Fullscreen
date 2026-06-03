@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "إضافة الإعدادات الحالية",
       "addItemTitle": "بدون عنوان",
-      "defaultTitle": "افتراضي",
+      "defaultTitle": "قياسي",
       "transparentTitle": "شفاف",
-      "simpleTitle": "بسيط",
+      "simpleTitle": "التعليقات فقط",
       "deleteConfirmationMessage": "هل أنت متأكد من رغبتك في الحذف؟",
       "delete": "حذف",
       "cancel": "إلغاء",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "داكن",
+      "readableTitle": "نص كبير",
+      "compactTitle": "مضغوط",
+      "neonTitle": "ملون"
     }
   },
   "popup": {

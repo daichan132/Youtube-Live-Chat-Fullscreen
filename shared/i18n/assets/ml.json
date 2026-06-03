@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
       "addItemTitle": "ശീർഷകമില്ലാത്തത്",
-      "defaultTitle": "ഡിഫോൾട്ട്",
+      "defaultTitle": "സ്റ്റാൻഡേർഡ്",
       "transparentTitle": "സുതാര്യം",
-      "simpleTitle": "ലളിതം",
+      "simpleTitle": "അഭിപ്രായങ്ങൾ മാത്രം",
       "deleteConfirmationMessage": "ഇത് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
       "delete": "ഇല്ലാതാക്കുക",
       "cancel": "റദ്ദാക്കുക",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "ഇരുണ്ടത്",
+      "readableTitle": "വലിയ എഴുത്ത്",
+      "compactTitle": "കോംപാക്റ്റ്",
+      "neonTitle": "വർണ്ണാഭം"
     }
   },
   "popup": {

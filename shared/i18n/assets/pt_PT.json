@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Adicionar definições atuais",
       "addItemTitle": "Sem título",
-      "defaultTitle": "Predefinido",
+      "defaultTitle": "Padrão",
       "transparentTitle": "Transparente",
-      "simpleTitle": "Simples",
+      "simpleTitle": "Só comentários",
       "deleteConfirmationMessage": "Tem a certeza de que pretende eliminar?",
       "delete": "Eliminar",
       "cancel": "Cancelar",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Escuro",
+      "readableTitle": "Texto grande",
+      "compactTitle": "Compacto",
+      "neonTitle": "Colorido"
     }
   },
   "popup": {

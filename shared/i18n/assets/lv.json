@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Pievienot pašreizējos iestatījumus",
       "addItemTitle": "Bez nosaukuma",
-      "defaultTitle": "Noklusējums",
+      "defaultTitle": "Standarta",
       "transparentTitle": "Caurspīdīgs",
-      "simpleTitle": "Vienkāršs",
+      "simpleTitle": "Tikai komentāri",
       "deleteConfirmationMessage": "Vai tiešām vēlaties dzēst?",
       "delete": "Dzēst",
       "cancel": "Atcelt",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tumšs",
+      "readableTitle": "Liels teksts",
+      "compactTitle": "Kompakts",
+      "neonTitle": "Krāsains"
     }
   },
   "popup": {

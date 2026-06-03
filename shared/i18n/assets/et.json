@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Lisa praegused seaded",
       "addItemTitle": "Pealkirjata",
-      "defaultTitle": "Vaikimisi",
+      "defaultTitle": "Standardne",
       "transparentTitle": "Läbipaistev",
-      "simpleTitle": "Lihtne",
+      "simpleTitle": "Ainult kommentaarid",
       "deleteConfirmationMessage": "Kas soovid kindlasti kustutada?",
       "delete": "Kustuta",
       "cancel": "Tühista",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tume",
+      "readableTitle": "Suur tekst",
+      "compactTitle": "Kompaktne",
+      "neonTitle": "Värviline"
     }
   },
   "popup": {

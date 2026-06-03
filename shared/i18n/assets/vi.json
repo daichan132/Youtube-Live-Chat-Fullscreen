@@ -45,16 +45,16 @@
     "preset": {
       "addMessage": "Thêm cài đặt hiện tại",
       "addItemTitle": "Chưa đặt tên",
-      "defaultTitle": "Mặc định",
+      "defaultTitle": "Tiêu chuẩn",
       "transparentTitle": "Trong suốt",
-      "simpleTitle": "Đơn giản",
+      "simpleTitle": "Chỉ bình luận",
       "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa mục này không?",
       "delete": "Xóa",
       "cancel": "Hủy",
-      "darkTitle": "Dark",
-      "readableTitle": "Readable",
-      "compactTitle": "Compact",
-      "neonTitle": "Neon"
+      "darkTitle": "Tối",
+      "readableTitle": "Chữ lớn",
+      "compactTitle": "Gọn",
+      "neonTitle": "Nhiều màu"
     }
   },
   "popup": {
