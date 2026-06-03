@@ -136,6 +136,7 @@ const setElementRect = (element: HTMLElement, rect: Pick<DOMRect, 'top' | 'right
 describe('DraggableItem', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
+    document.body.style.cursor = ''
     draggableState.isDragging = false
     draggableState.transform = null
     draggableState.setNodeRef.mockClear()
@@ -344,6 +345,8 @@ describe('DraggableItem', () => {
 
   it('disables YouTube pointer events while dragging and restores them on cleanup', () => {
     const ytdApp = document.createElement('ytd-app')
+    document.body.style.cursor = 'wait'
+    ytdApp.style.cursor = 'progress'
     document.body.appendChild(ytdApp)
     draggableState.isDragging = true
 
@@ -353,6 +356,8 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
     expect(ytdApp.style.pointerEvents).toBe('none')
+    expect(document.body.style.cursor).toBe('grabbing')
+    expect(ytdApp.style.cursor).toBe('grabbing')
 
     draggableState.isDragging = false
     rerender(
@@ -361,10 +366,16 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
     expect(ytdApp.style.pointerEvents).toBe('auto')
+    expect(document.body.style.cursor).toBe('wait')
+    expect(ytdApp.style.cursor).toBe('progress')
 
     ytdApp.style.pointerEvents = 'none'
+    document.body.style.cursor = 'wait'
+    ytdApp.style.cursor = 'progress'
     unmount()
     expect(ytdApp.style.pointerEvents).toBe('auto')
+    expect(document.body.style.cursor).toBe('wait')
+    expect(ytdApp.style.cursor).toBe('progress')
   })
 
   it('hides the chat when idle, not hovering, focused, and settings are closed', () => {
@@ -483,7 +494,7 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'false')
   })
 
-  it('keeps chat hover while crossing the gap from chat to controls', () => {
+  it('keeps display visible but clears chat hover while crossing from chat to controls', () => {
     vi.useFakeTimers()
 
     const { container, getByTestId } = render(
@@ -509,7 +520,8 @@ describe('DraggableItem', () => {
       vi.advanceTimersByTime(160)
     })
 
-    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
     expect(controlRail).toHaveAttribute('data-visible', 'true')
 
     act(() => {
@@ -537,7 +549,7 @@ describe('DraggableItem', () => {
     expect(bridge).toHaveStyle({ top: '188px', left: '0px', right: '0px', height: '76px' })
   })
 
-  it('keeps chat hover while crossing from the lower edge through the hover bridge', () => {
+  it('keeps display visible but clears chat hover while crossing through the hover bridge', () => {
     vi.useFakeTimers()
     resetNoLsStore({ isHover: true, isDisplay: true })
 
@@ -555,7 +567,8 @@ describe('DraggableItem', () => {
       vi.advanceTimersByTime(160)
     })
 
-    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })
 

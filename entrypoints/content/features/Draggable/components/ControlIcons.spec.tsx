@@ -12,7 +12,7 @@ vi.mock('react-i18next', async importOriginal => ({
   useTranslation: () => ({ t: (key: string) => key }),
 }))
 
-const renderControlIcons = ({ isVisible = true, onSettingsClick = vi.fn(), onControlsHoverChange = vi.fn() } = {}) =>
+const renderControlIcons = ({ isDragging = false, isVisible = true, onSettingsClick = vi.fn(), onControlsHoverChange = vi.fn() } = {}) =>
   render(
     <ControlIcons
       controlRailStyle={{ top: 206, right: 0 }}
@@ -26,7 +26,7 @@ const renderControlIcons = ({ isVisible = true, onSettingsClick = vi.fn(), onCon
           'aria-describedby': 'dnd-kit-desc',
         },
         listeners: undefined,
-        isDragging: false,
+        isDragging,
       }}
       isVisible={isVisible}
       onControlsHoverChange={onControlsHoverChange}
@@ -84,6 +84,17 @@ describe('ControlIcons', () => {
 
     expect(railChildren.at(0)?.querySelector('[data-ylc-settings-btn]')).not.toBeNull()
     expect(railChildren.at(1)?.matches('[aria-roledescription="drag handle"]')).toBe(true)
+  })
+
+  it('uses grabbing cursor styles while dragging', () => {
+    useYTDLiveChatNoLsStore.setState({ isIframeLoaded: true, isDisplay: true })
+
+    const { container } = renderControlIcons({ isDragging: true })
+    const dragHandle = getDragHandle(container)
+
+    expect(dragHandle).toHaveClass('cursor-grabbing')
+    expect(dragHandle.firstElementChild).toHaveClass('cursor-grabbing')
+    expect(dragHandle.firstElementChild).toHaveClass('ylc-overlay-control-icon-active')
   })
 
   it('keeps controls hidden when only always-on display keeps chat visible', () => {

@@ -50,6 +50,7 @@ export const ControlIcons = ({ controlRailStyle, dragProps, isVisible, onSetting
   const backgroundColorString = `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${bgColor.a})`
   const colorString = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, ${fontColor.a})`
   const runtimeHoverColor = `rgba(${fontColor.r}, ${fontColor.g}, ${fontColor.b}, 0.1)`
+  const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
   const runtimeHoverVarStyle = {
     '--ylc-overlay-control-rail-bg-runtime': backgroundColorString,
     '--ylc-overlay-control-hover-runtime': runtimeHoverColor,
@@ -88,7 +89,7 @@ export const ControlIcons = ({ controlRailStyle, dragProps, isVisible, onSetting
 
       {/* biome-ignore lint/a11y/useSemanticElements: ドラッグハンドルにはdivが適切 */}
       <div
-        className='cursor-grab'
+        className={dragCursorClass}
         {...attributes}
         {...listeners}
         role='button'
@@ -97,7 +98,7 @@ export const ControlIcons = ({ controlRailStyle, dragProps, isVisible, onSetting
         aria-roledescription='drag handle'
         aria-describedby={dragDescriptionId}
       >
-        <div className={`ylc-overlay-control-icon cursor-grab ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
+        <div className={`ylc-overlay-control-icon ${dragCursorClass} ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
           <TbGripVertical size={22} color={colorString} strokeWidth={ICON_STROKE_WIDTH} />
         </div>
         <span id={dragDescriptionId} style={VISUALLY_HIDDEN_STYLE}>

@@ -50,6 +50,8 @@ type VisibleChatBounds = {
   left: number
 }
 
+type HoverRegion = 'none' | 'chat' | 'controls'
+
 const useDisplayIdle = () => {
   const [idle, setIdle] = useState(false)
 
@@ -78,20 +80,16 @@ const useDisplayIdle = () => {
   return idle
 }
 
-type PointerEventsValue = 'none' | 'auto'
-
-const setYouTubePointerEvents = (value: PointerEventsValue) => {
+const getYouTubeAppElement = () => {
   const ytdAppElement = document.body.querySelector('ytd-app')
-  if (!(ytdAppElement instanceof HTMLElement)) return
-  ytdAppElement.style.setProperty('pointer-events', value)
+  return ytdAppElement instanceof HTMLElement ? ytdAppElement : null
 }
 
 export const DraggableItem = ({ children }: DraggableItemProps) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
   const [isResizing, setIsResizing] = useState(false)
-  const [isControlHover, setIsControlHover] = useState(false)
   const [isControlRailHiding, setIsControlRailHiding] = useState(false)
-  const [isControlRailVisible, setIsControlRailVisible] = useState(false)
+  const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
   const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
 
   const { coordinates, size, setSize, setCoordinates } = useYTDLiveChatStore(
@@ -191,16 +189,27 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
   }, [keepWithinViewportWidth])
 
   useEffect(() => {
-    setYouTubePointerEvents(isDragging ? 'none' : 'auto')
+    const previousBodyCursor = document.body.style.cursor
+    const ytdAppElement = getYouTubeAppElement()
+    const previousYouTubeCursor = ytdAppElement?.style.cursor ?? ''
+
+    ytdAppElement?.style.setProperty('pointer-events', isDragging ? 'none' : 'auto')
+    if (isDragging) {
+      document.body.style.setProperty('cursor', 'grabbing')
+      ytdAppElement?.style.setProperty('cursor', 'grabbing')
+    }
+
     return () => {
-      setYouTubePointerEvents('auto')
+      ytdAppElement?.style.setProperty('pointer-events', 'auto')
+      document.body.style.cursor = previousBodyCursor
+      if (ytdAppElement) ytdAppElement.style.cursor = previousYouTubeCursor
     }
   }, [isDragging])
 
   useEffect(() => {
     const isFocused = typeof document !== 'undefined' ? document.hasFocus() : true
-    setIsDisplay(isHover || isControlHover || !isIdle || isOpenSettingModal || !isFocused)
-  }, [isHover, isControlHover, isIdle, isOpenSettingModal, setIsDisplay])
+    setIsDisplay(isHover || hoverRegion === 'controls' || !isIdle || isOpenSettingModal || !isFocused)
+  }, [isHover, hoverRegion, isIdle, isOpenSettingModal, setIsDisplay])
 
   const clearControlHideTimer = useCallback(() => {
     if (!controlHideTimerRef.current) return
@@ -214,18 +223,21 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     controlFadeTimerRef.current = null
   }, [])
 
-  const showControlRail = useCallback(() => {
-    clearControlHideTimer()
-    clearControlFadeTimer()
-    setIsControlRailHiding(false)
-    setIsControlRailVisible(true)
-  }, [clearControlFadeTimer, clearControlHideTimer])
+  const showControlRail = useCallback(
+    (region: Exclude<HoverRegion, 'none'>) => {
+      clearControlHideTimer()
+      clearControlFadeTimer()
+      setIsControlRailHiding(false)
+      setHoverRegion(region)
+    },
+    [clearControlFadeTimer, clearControlHideTimer],
+  )
 
   const scheduleControlRailHide = useCallback(() => {
     clearControlHideTimer()
     controlHideTimerRef.current = setTimeout(() => {
       setIsHover(false)
-      setIsControlRailVisible(false)
+      setHoverRegion('none')
       setIsControlRailHiding(true)
       controlHideTimerRef.current = null
       clearControlFadeTimer()
@@ -264,7 +276,7 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
 
       if (isInsideVisibleChat) {
         setIsHover(true)
-        showControlRail()
+        showControlRail('chat')
         return
       }
 
@@ -272,6 +284,11 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     },
     [getVisibleChatBounds, scheduleControlRailHide, setIsHover, showControlRail],
   )
+
+  const showControlsHover = useCallback(() => {
+    setIsHover(false)
+    showControlRail('controls')
+  }, [setIsHover, showControlRail])
 
   const handleChatMouseEnter = useCallback(
     (event: React.MouseEvent<HTMLElement>) => {
@@ -293,23 +310,20 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
 
   const handleControlsHoverChange = useCallback(
     (nextIsControlHover: boolean) => {
-      setIsControlHover(nextIsControlHover)
       if (nextIsControlHover) {
-        showControlRail()
+        showControlsHover()
         return
       }
       scheduleControlRailHide()
     },
-    [scheduleControlRailHide, showControlRail],
+    [scheduleControlRailHide, showControlsHover],
   )
 
   const handleControlHoverBridgeEnter = useCallback(() => {
-    setIsControlHover(true)
-    showControlRail()
-  }, [showControlRail])
+    showControlsHover()
+  }, [showControlsHover])
 
   const handleControlHoverBridgeLeave = useCallback(() => {
-    setIsControlHover(false)
     scheduleControlRailHide()
   }, [scheduleControlRailHide])
 
@@ -326,7 +340,7 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     viewportHeight,
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
-  const isControlRailDisplayable = !isResizing && (isHover || isControlHover || isControlRailVisible || isDragging || isOpenSettingModal)
+  const isControlRailDisplayable = !isResizing && (hoverRegion !== 'none' || isHover || isDragging || isOpenSettingModal)
   const lastVisibleControlRailPlacementRef = useRef({ top: controlRailTop, right: 0 })
   if (isControlRailDisplayable) {
     lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
