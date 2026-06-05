@@ -41,22 +41,19 @@ describe('SettingContent', () => {
     useYTDLiveChatNoLsStore.setState({ iframeElement: null })
   })
 
-  it('reveals chat-only display when always-on display is enabled', () => {
-    const { getByText } = render(<SettingContent />)
+  it('locks chat-only display until always-on display is enabled', () => {
+    const { getByText, getByRole } = render(<SettingContent />)
 
-    const chatOnlyLabel = getByText('content.setting.chatOnlyDisplay')
-    const chatOnlyRow = chatOnlyLabel.parentElement?.parentElement as HTMLElement
-    expect(chatOnlyRow.className).toContain('pointer-events-none')
+    const chatOnlyRow = getByText('content.setting.chatOnlyDisplay').closest('.ylc-row') as HTMLElement
+    expect(chatOnlyRow.className).toContain('is-disabled')
+    expect(chatOnlyRow.querySelector('[role="switch"]')).toBeDisabled()
 
-    const alwaysOnLabel = getByText('content.setting.alwaysOnDisplay')
-    const alwaysOnRow = alwaysOnLabel.parentElement?.parentElement as HTMLElement
-    const alwaysOnSwitch = alwaysOnRow.querySelector('[role="switch"]') as HTMLButtonElement
+    fireEvent.click(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' }))
 
-    fireEvent.click(alwaysOnSwitch)
-
-    const updatedChatOnlyRow = getByText('content.setting.chatOnlyDisplay').parentElement?.parentElement as HTMLElement
     expect(useYTDLiveChatStore.getState().alwaysOnDisplay).toBe(true)
-    expect(updatedChatOnlyRow.className).not.toContain('pointer-events-none')
+    const updatedChatOnlyRow = getByText('content.setting.chatOnlyDisplay').closest('.ylc-row') as HTMLElement
+    expect(updatedChatOnlyRow.className).not.toContain('is-disabled')
+    expect(updatedChatOnlyRow.querySelector('[role="switch"]')).not.toBeDisabled()
   })
 
   it('renders settings in the expected order without removed reaction button setting', () => {
@@ -64,7 +61,7 @@ describe('SettingContent', () => {
 
     const { container } = render(<SettingContent />)
 
-    const labels = Array.from(container.querySelectorAll('p')).map(label => label.textContent)
+    const labels = Array.from(container.querySelectorAll('.ylc-row-title')).map(label => label.textContent)
     expect(labels).toEqual([
       'content.setting.alwaysOnDisplay',
       'content.setting.chatOnlyDisplay',

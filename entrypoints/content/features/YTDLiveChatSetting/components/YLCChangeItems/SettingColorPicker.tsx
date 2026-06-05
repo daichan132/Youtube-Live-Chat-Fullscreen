@@ -4,7 +4,7 @@ import { RgbaColorPicker } from 'react-colorful'
 import { useTranslation } from 'react-i18next'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import type { RGBColor } from '@/shared/types/ytdLiveChatType'
-import { getPreviewBorderColor, toRgba } from './colorUtils'
+import { formatColorValue, getPreviewBorderColor, toRgba } from './colorUtils'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 type SettingColorPickerProps = {
@@ -66,18 +66,19 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
         aria-describedby={descriptionId}
         aria-haspopup='dialog'
         aria-expanded={display}
-        className='ylc-action-fill block h-[36px] p-[6px] ylc-theme-surface rounded-[10px] cursor-pointer relative border border-solid ylc-theme-border outline-none ylc-theme-focus-ring'
+        className='ylc-color-trigger ylc-action-fill'
         onClick={() => setDisplay(current => !current)}
       >
-        <div className='ylc-theme-alpha-checker rounded-[6px] w-full h-full'>
-          <div
-            className='ylc-action-fill h-full rounded-[5px]'
+        <span className='ylc-color-swatch'>
+          <span
+            className='ylc-color-swatch-fill'
             style={{
               backgroundColor: `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`,
-              border: `var(--ylc-border-width) solid ${previewBorderColor}`,
+              borderColor: previewBorderColor,
             }}
           />
-        </div>
+        </span>
+        <span className='ylc-color-value'>{formatColorValue(rgba)}</span>
       </button>
       {display ? (
         <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>

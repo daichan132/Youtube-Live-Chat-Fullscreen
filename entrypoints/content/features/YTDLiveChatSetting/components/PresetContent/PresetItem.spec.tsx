@@ -48,10 +48,7 @@ const resetStore = (overrides: Partial<typeof baseState> = {}) => {
 }
 
 const findPresetCard = (input: HTMLInputElement) => {
-  let node: HTMLElement | null = input
-  while (node && !node.className.includes('ylc-theme-surface')) {
-    node = node.parentElement
-  }
+  const node = input.closest('.ylc-preset')
   if (!node) throw new Error('Preset card not found')
   return node as HTMLElement
 }
@@ -72,7 +69,7 @@ describe('PresetItem', () => {
 
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
-    const actionContainer = card.querySelector('div.flex.transition-opacity') as HTMLElement
+    const actionContainer = card.querySelector('[data-ylc-preset-actions]') as HTMLElement
     const actionButtons = actionContainer.querySelectorAll('button')
     const deleteButtonInCard = actionButtons[actionButtons.length - 1]
 

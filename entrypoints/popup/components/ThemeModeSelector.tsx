@@ -19,5 +19,5 @@ export const ThemeModeSelector = () => {
     [setThemeMode],
   )
 
-  return <ThemeModeSegmentedControl value={themeMode} onChange={handleThemeChange} fill />
+  return <ThemeModeSegmentedControl value={themeMode} onChange={handleThemeChange} />
 }

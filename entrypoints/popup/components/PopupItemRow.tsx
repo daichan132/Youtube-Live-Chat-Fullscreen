@@ -6,28 +6,28 @@ interface PopupItemRowProps {
   title: string
   data: React.ReactNode
   isLast: boolean
+  /** Render the row as a <label> so clicking anywhere toggles the contained control. */
+  asLabel?: boolean
+  /** Size the action column to its content instead of the fixed column width. */
+  actionAuto?: boolean
 }
 
-export const PopupItemRow = ({ icon: Icon, title, data, isLast }: PopupItemRowProps) => {
+export const PopupItemRow = ({ icon: Icon, title, data, isLast, asLabel = false, actionAuto = false }: PopupItemRowProps) => {
+  const RowTag = asLabel ? 'label' : 'div'
+  const actionClassName = actionAuto ? 'ylc-row-action ylc-row-action--auto' : 'ylc-row-action'
   return (
     <>
-      <div className='flex flex-wrap justify-between items-center gap-3 px-3 py-2 opacity-100 transition-all duration-160 rounded-lg'>
-        <div
-          className={
-            Icon ? 'flex items-center text-sm min-w-0 flex-1 ylc-theme-text-primary' : 'text-sm min-w-0 flex-1 ylc-theme-text-primary'
-          }
-        >
+      <RowTag className='ylc-row'>
+        <div className='ylc-row-label'>
           {Icon ? (
-            <span className='mr-3 ylc-theme-icon-badge' aria-hidden='true'>
-              <Icon size={18} />
+            <span className='ylc-row-icon' aria-hidden='true'>
+              <Icon size={19} />
             </span>
           ) : null}
-          <div className='min-w-0 break-words leading-5'>{title}</div>
+          <p className='ylc-row-title'>{title}</p>
         </div>
-        <div className='ylc-action-slot ylc-action-slot-popup'>
-          <div className='ylc-action-inner'>{data}</div>
-        </div>
-      </div>
+        <div className={actionClassName}>{data}</div>
+      </RowTag>
       {isLast ? null : <hr className='border-none ylc-theme-divider' />}
     </>
   )

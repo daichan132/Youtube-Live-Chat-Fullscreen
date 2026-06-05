@@ -70,7 +70,7 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
       <YTDLiveChatSetting />
       {overlayTransition.isMounted && (
         <div className={overlayTransition.className}>
-          <Draggable>
+          <Draggable initialDisplayOnMount={isFullscreen}>
             <YTDLiveChatIframe mode={mode} />
           </Draggable>
         </div>

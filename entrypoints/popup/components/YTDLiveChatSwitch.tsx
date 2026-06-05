@@ -19,9 +19,5 @@ export const YTDLiveChatSwitch = () => {
     [setYTDLiveChat],
   )
 
-  return (
-    <div className='ylc-action-fill ylc-action-inner'>
-      <Switch checked={ytdLiveChat} id={id} onChange={handleSwitchChange} />
-    </div>
-  )
+  return <Switch checked={ytdLiveChat} id={id} onChange={handleSwitchChange} />
 }

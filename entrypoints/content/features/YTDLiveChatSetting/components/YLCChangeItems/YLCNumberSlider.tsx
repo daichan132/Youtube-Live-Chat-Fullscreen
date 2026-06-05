@@ -1,10 +1,9 @@
-import { useCallback, useMemo } from 'react'
+import type { CSSProperties } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { Slider } from '@/shared/components/Slider'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
-import { createIntegerRangeSliderScale, useSettingSlider } from './SettingSlider'
 
 export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'space'
 
@@ -18,25 +17,39 @@ type YLCNumberSliderProps = {
 
 export const YLCNumberSlider = ({ settingKey, labelKey, min, max, applyValue }: YLCNumberSliderProps) => {
   const { t } = useTranslation()
-  const initialValue = useYTDLiveChatStore(state => state[settingKey])
+  const storeValue = useYTDLiveChatStore(state => state[settingKey])
   const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
-  const sliderScale = useMemo(() => createIntegerRangeSliderScale(min, max), [min, max])
 
-  const updateValue = useCallback(
-    (value: number) => {
-      updateYLCStyle({ [settingKey]: value } as Pick<YLCStyleUpdateType, NumberSliderSettingKey>)
-      applyValue(value)
+  const value = Math.min(max, Math.max(min, storeValue))
+  const displayValue = Math.round(storeValue)
+  const progress = `${((value - min) / (max - min)) * 100}%`
+
+  const handleChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const next = Number(event.target.value)
+      updateYLCStyle({ [settingKey]: next } as Pick<YLCStyleUpdateType, NumberSliderSettingKey>)
+      applyValue(next)
     },
     [applyValue, settingKey, updateYLCStyle],
   )
 
-  const { value, ref } = useSettingSlider({
-    initialValue,
-    toSliderValue: sliderScale.toSliderValue,
-    fromSliderValue: sliderScale.fromSliderValue,
-    onChange: updateValue,
-  })
-  const displayValue = sliderScale.fromSliderValue(value)
-
-  return <Slider value={value} ref={ref} aria-label={t(labelKey)} aria-valuetext={`${Math.round(displayValue)}px`} />
+  return (
+    <div className='ylc-range-field'>
+      <input
+        type='range'
+        className='ylc-range'
+        min={min}
+        max={max}
+        step={1}
+        value={value}
+        aria-label={t(labelKey)}
+        aria-valuetext={`${displayValue}px`}
+        style={{ '--ylc-range-progress': progress } as CSSProperties}
+        onChange={handleChange}
+      />
+      <output className='ylc-range-value' aria-hidden='true'>
+        {displayValue}px
+      </output>
+    </div>
+  )
 }

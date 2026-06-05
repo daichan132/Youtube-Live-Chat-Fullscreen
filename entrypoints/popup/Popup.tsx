@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type IconType, TbArchive, TbHeartDollar, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
+import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { isRTL } from '@/shared/i18n/rtl'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -16,18 +16,28 @@ type PopupItem = {
   icon?: IconType
   title: string
   data: ReactNode
+  asLabel?: boolean
+  actionAuto?: boolean
 }
 
 export const Popup = () => {
   const { t, i18n } = useTranslation()
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-ylc-theme', resolvedThemeMode)
+    document.body.setAttribute('data-ylc-theme', resolvedThemeMode)
+  }, [resolvedThemeMode])
+
   const items: PopupItem[] = [
     {
       id: 'toggle-chat',
       icon: TbMessageCircle,
       title: t('popup.showChatOnFullscreen'),
       data: <YTDLiveChatSwitch />,
+      asLabel: true,
+      actionAuto: true,
     },
     {
       id: 'theme',
@@ -40,6 +50,7 @@ export const Popup = () => {
       icon: TbArchive,
       title: t('popup.dataTransfer'),
       data: <DataTransfer />,
+      actionAuto: true,
     },
     {
       id: 'language',
@@ -52,21 +63,19 @@ export const Popup = () => {
       icon: TbLink,
       title: t('popup.links'),
       data: <Links />,
+      actionAuto: true,
     },
     {
       id: 'donate',
-      icon: TbHeartDollar,
+      icon: TbHeart,
       title: t('popup.donate'),
       data: (
-        <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-theme-donate-link'>
-          <img
-            height='36'
-            className='ylc-theme-donate-image'
-            src='https://storage.ko-fi.com/cdn/kofi1.png?v=6'
-            alt='Buy Me a Coffee at ko-fi.com'
-          />
+        <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-btn'>
+          <TbHeart size={16} aria-hidden='true' />
+          Buy me a coffee
         </a>
       ),
+      actionAuto: true,
     },
   ]
 
@@ -74,11 +83,19 @@ export const Popup = () => {
     <div
       data-ylc-theme={resolvedThemeMode}
       dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
-      className='flex flex-col w-[450px] max-w-full box-border m-0 rounded-md border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
+      className='flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
     >
       <div className='flex-grow ylc-theme-surface-muted py-2'>
         {items.map((item, index) => (
-          <PopupItemRow key={item.id} icon={item.icon} title={item.title} data={item.data} isLast={index === items.length - 1} />
+          <PopupItemRow
+            key={item.id}
+            icon={item.icon}
+            title={item.title}
+            data={item.data}
+            isLast={index === items.length - 1}
+            asLabel={item.asLabel}
+            actionAuto={item.actionAuto}
+          />
         ))}
       </div>
     </div>

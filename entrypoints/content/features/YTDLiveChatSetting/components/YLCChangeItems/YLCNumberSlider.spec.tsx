@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { YLCNumberSlider } from './YLCNumberSlider'
@@ -14,18 +14,6 @@ vi.mock('react-i18next', () => ({
   initReactI18next: {
     type: '3rdParty',
     init: () => {},
-  },
-}))
-
-const sliderState = vi.hoisted(() => ({
-  sliderValue: 0,
-  lastOptions: null as null | { onScrub?: (value: number) => void },
-}))
-
-vi.mock('./useSlider', () => ({
-  useSlider: (_ref: unknown, options: { onScrub?: (value: number) => void }) => {
-    sliderState.lastOptions = options
-    return { value: sliderState.sliderValue, isSliding: false }
   },
 }))
 
@@ -47,8 +35,6 @@ const resetStore = () => {
 
 describe('YLCNumberSlider', () => {
   beforeEach(() => {
-    sliderState.sliderValue = 0
-    sliderState.lastOptions = null
     resetStore()
   })
 
@@ -59,18 +45,20 @@ describe('YLCNumberSlider', () => {
       <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} applyValue={vi.fn()} />,
     )
 
-    expect(getByRole('slider', { name: 'content.setting.fontSize' }).getAttribute('aria-valuetext')).toBe('25px')
+    const slider = getByRole('slider', { name: 'content.setting.fontSize' })
+    expect(slider.getAttribute('aria-valuetext')).toBe('25px')
+    expect((slider as HTMLInputElement).value).toBe('25')
   })
 
-  it('updates only the selected numeric setting and applies the derived value', () => {
+  it('updates only the selected numeric setting and applies the changed value', () => {
     const applyValue = vi.fn()
     useYTDLiveChatStore.setState({ fontSize: 12, blur: 4, space: 8 })
 
-    render(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} applyValue={applyValue} />)
+    const { getByRole } = render(
+      <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} applyValue={applyValue} />,
+    )
 
-    act(() => {
-      sliderState.lastOptions?.onScrub?.(0.5)
-    })
+    fireEvent.change(getByRole('slider', { name: 'content.setting.fontSize' }), { target: { value: '25' } })
 
     expect(applyValue).toHaveBeenCalledWith(25)
     expect(useYTDLiveChatStore.getState().fontSize).toBe(25)
@@ -82,11 +70,11 @@ describe('YLCNumberSlider', () => {
     const applyValue = vi.fn()
     useYTDLiveChatStore.setState({ blur: 2, space: 16 })
 
-    render(<YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} applyValue={applyValue} />)
+    const { getByRole } = render(
+      <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} applyValue={applyValue} />,
+    )
 
-    act(() => {
-      sliderState.lastOptions?.onScrub?.(0.75)
-    })
+    fireEvent.change(getByRole('slider', { name: 'content.setting.blur' }), { target: { value: '15' } })
 
     expect(applyValue).toHaveBeenCalledWith(15)
     expect(useYTDLiveChatStore.getState().blur).toBe(15)

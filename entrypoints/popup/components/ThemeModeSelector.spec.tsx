@@ -34,7 +34,7 @@ describe('ThemeModeSelector', () => {
   it('updates the theme mode and sends the themeMode payload', () => {
     const { getByRole } = render(<ThemeModeSelector />)
 
-    fireEvent.change(getByRole('combobox', { name: 'content.setting.theme' }), { target: { value: 'dark' } })
+    fireEvent.click(getByRole('radio', { name: 'content.setting.themeMode.dark' }))
 
     expect(useGlobalSettingStore.getState().themeMode).toBe('dark')
     expect(sendActiveTabMessage).toHaveBeenCalledWith({ message: 'themeMode', themeMode: 'dark' })

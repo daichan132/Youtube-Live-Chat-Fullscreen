@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { useCallback, useMemo } from 'react'
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { IoChatboxSharp } from '@/shared/components/icons'
 import { useGlobalSettingStore } from '@/shared/stores'
@@ -25,6 +25,18 @@ const ICON_BASE_STYLE: CSSProperties = {
   transform: 'translate(-50%, -50%)',
 }
 
+const ACTIVE_INDICATOR_STYLE: CSSProperties = {
+  position: 'absolute',
+  bottom: '20%',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: '40%',
+  height: '2px',
+  borderRadius: '2px',
+  backgroundColor: 'currentColor',
+  pointerEvents: 'none',
+}
+
 export const YTDLiveChatSwitch = () => {
   const { t } = useTranslation()
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
@@ -35,32 +47,17 @@ export const YTDLiveChatSwitch = () => {
   }, [setYTDLiveChat])
   const isActive = ytdLiveChat
 
-  const buttonStyle = useMemo<CSSProperties>(
-    () => ({
-      ...SWITCH_BUTTON_BASE_STYLE,
-      opacity: isActive ? 1 : 0.6,
-    }),
-    [isActive],
-  )
-
-  const iconStyle = useMemo<CSSProperties>(
-    () => ({
-      ...ICON_BASE_STYLE,
-      opacity: isActive ? 1 : 0.72,
-    }),
-    [isActive],
-  )
-
   return (
     <button
       type='button'
       className='ytp-button'
-      style={buttonStyle}
+      style={SWITCH_BUTTON_BASE_STYLE}
       aria-label={t('content.aria.toggleLiveChat')}
       aria-pressed={isActive}
       onClick={handleClick}
     >
-      <IoChatboxSharp size={'50%'} style={iconStyle} />
+      <IoChatboxSharp size={'50%'} style={ICON_BASE_STYLE} />
+      {isActive ? <span aria-hidden='true' style={ACTIVE_INDICATOR_STYLE} /> : null}
     </button>
   )
 }

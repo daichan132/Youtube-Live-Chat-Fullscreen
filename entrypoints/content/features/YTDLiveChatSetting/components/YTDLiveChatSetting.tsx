@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { type IconType, RiCloseLine, TbLayoutGrid, TbSettings2 } from '@/shared/components/icons'
+import { type IconType, RiCloseLine, TbBrandGithub, TbHeart, TbLayoutGrid, TbSettings2 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { isRTL } from '@/shared/i18n/rtl'
 import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
@@ -33,8 +33,8 @@ export const YTDLiveChatSetting = () => {
 
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
     () => [
-      { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
       { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
+      { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     ],
     [t],
   )
@@ -79,10 +79,10 @@ export const YTDLiveChatSetting = () => {
       <div
         data-ylc-theme={resolvedThemeMode}
         dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
-        className='ylc-setting-panel flex flex-col w-[480px] rounded-xl ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
+        <header className='ylc-theme-setting-header flex justify-between items-stretch px-4 min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -108,7 +108,7 @@ export const YTDLiveChatSetting = () => {
           <button
             type='button'
             aria-label={t('content.aria.close')}
-            className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
+            className='ylc-setting-close-button self-center inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
             onClick={() => setIsOpenSettingModal(false)}
           >
             <RiCloseLine size={24} />
@@ -125,33 +125,19 @@ export const YTDLiveChatSetting = () => {
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <footer className='ylc-theme-setting-footer flex justify-end items-center px-3 py-2.5'>
+        <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>
           <div className='ylc-theme-footer-links'>
-            <a
-              href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='ylc-theme-footer-link'
-            >
-              {t('content.setting.footer.chrome')}
-            </a>
-            <a
-              href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='ylc-theme-footer-link'
-            >
-              {t('content.setting.footer.firefox')}
-            </a>
             <a
               href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
               target='_blank'
               rel='noopener noreferrer'
               className='ylc-theme-footer-link'
             >
+              <TbBrandGithub size={15} aria-hidden='true' />
               GitHub
             </a>
             <a href='https://ko-fi.com/daichan132' target='_blank' rel='noopener noreferrer' className='ylc-theme-footer-link'>
+              <TbHeart size={15} aria-hidden='true' />
               {t('content.setting.footer.donate')}
             </a>
           </div>

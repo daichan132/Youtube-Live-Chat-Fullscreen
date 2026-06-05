@@ -4,3 +4,12 @@ body,
   margin: 0;
   padding: 0;
 }
+
+html,
+body {
+  background: var(--ylc-bg-surface-muted, transparent);
+}
+
+#root {
+  background: inherit;
+}

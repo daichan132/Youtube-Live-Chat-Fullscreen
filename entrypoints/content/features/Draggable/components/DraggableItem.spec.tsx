@@ -406,6 +406,25 @@ describe('DraggableItem', () => {
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
   })
 
+  it('treats fullscreen mount as temporary display activity', () => {
+    vi.useFakeTimers()
+    resetNoLsStore({ isHover: false, isDisplay: false })
+
+    render(
+      <DraggableItem initialDisplayOnMount>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
+
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
+  })
+
   it('keeps the chat visible when hovering even if idle', () => {
     vi.useFakeTimers()
     resetNoLsStore({ isHover: true, isDisplay: false })
@@ -438,6 +457,18 @@ describe('DraggableItem', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
+  })
+
+  it('hides the control rail while the settings panel is open', () => {
+    resetNoLsStore({ isOpenSettingModal: true, isHover: true, isDisplay: true })
+
+    const { getByTestId } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'false')
   })
 
   it('keeps the chat visible while hovering controls without entering chat hover', () => {

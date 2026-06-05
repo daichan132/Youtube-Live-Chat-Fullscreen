@@ -14,6 +14,7 @@ import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
 
 interface DraggableItemProps {
   children: React.ReactNode
+  initialDisplayOnMount?: boolean
 }
 
 const ACTIVITY_EVENTS: (keyof DocumentEventMap)[] = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll']
@@ -52,8 +53,8 @@ type VisibleChatBounds = {
 
 type HoverRegion = 'none' | 'chat' | 'controls'
 
-const useDisplayIdle = () => {
-  const [idle, setIdle] = useState(true)
+const useDisplayIdle = (initialDisplayOnMount: boolean) => {
+  const [idle, setIdle] = useState(!initialDisplayOnMount)
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout>
@@ -62,6 +63,10 @@ const useDisplayIdle = () => {
       setIdle(false)
       clearTimeout(timer)
       timer = setTimeout(() => setIdle(true), IDLE_TIMEOUT_MS)
+    }
+
+    if (initialDisplayOnMount) {
+      reset()
     }
 
     for (const event of ACTIVITY_EVENTS) {
@@ -74,7 +79,7 @@ const useDisplayIdle = () => {
         document.removeEventListener(event, reset)
       }
     }
-  }, [])
+  }, [initialDisplayOnMount])
 
   return idle
 }
@@ -84,7 +89,7 @@ const getYouTubeAppElement = () => {
   return ytdAppElement instanceof HTMLElement ? ytdAppElement : null
 }
 
-export const DraggableItem = ({ children }: DraggableItemProps) => {
+export const DraggableItem = ({ children, initialDisplayOnMount = false }: DraggableItemProps) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
   const [isResizing, setIsResizing] = useState(false)
   const [isControlRailHiding, setIsControlRailHiding] = useState(false)
@@ -112,7 +117,7 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
       setIsHover: state.setIsHover,
     })),
   )
-  const isIdle = useDisplayIdle()
+  const isIdle = useDisplayIdle(initialDisplayOnMount)
   const controlHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const controlFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -339,7 +344,8 @@ export const DraggableItem = ({ children }: DraggableItemProps) => {
     viewportHeight,
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
-  const isControlRailDisplayable = !isResizing && (hoverRegion !== 'none' || isHover || isDragging || isOpenSettingModal)
+  // Hide the floating control rail while the settings panel is open so it doesn't overlap the modal.
+  const isControlRailDisplayable = !isResizing && !isOpenSettingModal && (hoverRegion !== 'none' || isHover || isDragging)
   const lastVisibleControlRailPlacementRef = useRef({ top: controlRailTop, right: 0 })
   if (isControlRailDisplayable) {
     lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }

@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { changeYLCStyle, resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
-import { TbGripVertical, TbSparkles, TbTrash } from '@/shared/components/icons'
+import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { getPresetTitleFallbackKey } from '@/shared/stores/ytdLiveChatStore'
@@ -14,9 +14,6 @@ import { getModalParentElement } from '../../utils/getModalParentElement'
 interface PresetItemType {
   id: string
 }
-
-const ACTION_BUTTON_CLASSNAME =
-  'rounded-md mx-0.5 cursor-pointer transition-colors duration-160 ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] border-none ylc-theme-focus-ring-soft'
 
 export const PresetItem = ({ id }: PresetItemType) => {
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
@@ -51,55 +48,40 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-preset-card ylc-theme-surface m-3 p-2.5 rounded-[12px] border border-solid ylc-theme-border relative transition-shadow duration-160 ${
-        isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''
-      }`}
+      className={`ylc-preset ${isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
-      <div className='flex justify-between items-center gap-2.5'>
-        <div data-ylc-preset-row className='group flex items-center min-w-0 flex-1'>
-          <div ref={setActivatorNodeRef} className='flex items-center justify-center'>
-            <TbGripVertical
-              data-ylc-preset-drag-icon
-              aria-hidden='true'
-              className={`transition-all duration-160 outline-none ylc-theme-focus-ring-soft rounded-md ylc-theme-elevated ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] ${
-                isDragging
-                  ? 'w-[24px] h-[24px] p-[2px] opacity-100 pointer-events-auto cursor-grabbing'
-                  : 'w-0 h-0 p-0 opacity-0 pointer-events-none group-hover:w-[24px] group-hover:h-[24px] group-hover:p-[2px] group-hover:opacity-100 group-hover:pointer-events-auto cursor-grab'
-              }`}
-              size={20}
-              aria-label={t('content.aria.reorderPreset')}
-              {...listeners}
-              {...attributes}
-            />
-          </div>
-          <input
-            type='text'
-            value={displayTitle}
-            onChange={event => updateTitle(id, event.target.value)}
-            aria-label={t('content.aria.presetName')}
-            className='ml-1 h-[34px] p-2 rounded-[8px] outline-none min-w-0 flex-1 max-w-[228px] text-sm font-medium tracking-[0.01em] ylc-theme-input-borderless'
-          />
-        </div>
-        <div data-ylc-preset-actions className='flex transition-opacity duration-160 shrink-0'>
-          <button
-            type='button'
-            className={`${ACTION_BUTTON_CLASSNAME} ylc-preset-action-btn`}
-            aria-label={t('content.aria.applyPreset')}
-            onClick={() => updateStyle(ylcStyle)}
-          >
-            <TbSparkles size={20} aria-hidden='true' />
-          </button>
-          <button
-            type='button'
-            className={`${ACTION_BUTTON_CLASSNAME} ylc-preset-action-btn`}
-            aria-label={t('content.aria.deletePreset')}
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            <TbTrash size={20} aria-hidden='true' />
-          </button>
-        </div>
+      <button
+        type='button'
+        ref={setActivatorNodeRef}
+        className={`ylc-preset-grip ${isDragging ? 'cursor-grabbing' : ''}`}
+        {...listeners}
+        {...attributes}
+        aria-label={t('content.aria.reorderPreset')}
+      >
+        <TbGripVertical size={20} aria-hidden='true' />
+      </button>
+      <input
+        type='text'
+        value={displayTitle}
+        onChange={event => updateTitle(id, event.target.value)}
+        aria-label={t('content.aria.presetName')}
+        className='ylc-preset-name'
+      />
+      <div data-ylc-preset-actions className='ylc-preset-actions'>
+        <button type='button' className='ylc-preset-apply' aria-label={t('content.aria.applyPreset')} onClick={() => updateStyle(ylcStyle)}>
+          <TbCheck size={16} aria-hidden='true' />
+          <span>{t('content.preset.apply')}</span>
+        </button>
+        <button
+          type='button'
+          className='ylc-preset-del'
+          aria-label={t('content.aria.deletePreset')}
+          onClick={() => setIsDeleteModalOpen(true)}
+        >
+          <TbTrash size={18} aria-hidden='true' />
+        </button>
       </div>
       {isDeleteModalOpen && (
         <Modal

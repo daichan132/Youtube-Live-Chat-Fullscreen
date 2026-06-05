@@ -19,7 +19,7 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(state.clip).toEqual({ header: 0, input: 0 })
     expect(state.isClipPath).toBeUndefined()
     expect(state.iframeElement).toBeNull()
-    expect(state.menuItem).toBe('preset')
+    expect(state.menuItem).toBe('setting')
   })
 
   it('updates flags and values via setters', () => {
@@ -32,7 +32,7 @@ describe('useYTDLiveChatNoLsStore', () => {
     state.setIsAutoOpeningNativeChat(true)
     state.setClip({ header: 8, input: 4 })
     state.setIsClipPath(true)
-    state.setMenuItem('setting')
+    state.setMenuItem('preset')
 
     const updated = useYTDLiveChatNoLsStore.getState()
 
@@ -43,6 +43,6 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(updated.isAutoOpeningNativeChat).toBe(true)
     expect(updated.clip).toEqual({ header: 8, input: 4 })
     expect(updated.isClipPath).toBe(true)
-    expect(updated.menuItem).toBe('setting')
+    expect(updated.menuItem).toBe('preset')
   })
 })

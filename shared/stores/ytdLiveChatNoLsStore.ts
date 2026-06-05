@@ -37,7 +37,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   },
   isClipPath: undefined,
   iframeElement: null,
-  menuItem: 'preset',
+  menuItem: 'setting',
   setIsHover: isHover => set(() => ({ isHover })),
   setIsDisplay: isDisplay => set(() => ({ isDisplay })),
   setIsOpenSettingModal: isOpenSettingModal => set(() => ({ isOpenSettingModal })),

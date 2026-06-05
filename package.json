@@ -4,7 +4,7 @@
   "version": "2.3.7",
   "type": "module",
   "scripts": {
-    "dev": "wxt --host 127.0.0.1",
+    "dev": "wxt --host localhost",
     "dev:firefox": "wxt -b firefox",
     "build": "wxt build",
     "build:firefox": "wxt build -b firefox",
