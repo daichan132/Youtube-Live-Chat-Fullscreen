@@ -6,7 +6,7 @@ const iframeStyles = readFileSync(resolve(process.cwd(), 'entrypoints/content/fe
 const iframeStylesWithoutComments = iframeStyles.replace(/\/\*[\s\S]*?\*\//g, '')
 
 const directDisplayNoneSelectors = () =>
-  Array.from(iframeStylesWithoutComments.matchAll(/([^{}]+)\{\s*[^{}]*display\s*:\s*none\s*;[^{}]*\}/g)).map(match =>
+  Array.from(iframeStylesWithoutComments.matchAll(/([^{}]+)\{\s*[^{}]*display\s*:\s*none(?:\s*!important)?\s*;[^{}]*\}/g)).map(match =>
     match[1].replace(/\s+/g, ' ').trim(),
   )
 
@@ -15,11 +15,12 @@ describe('iframe styles contract', () => {
     expect(directDisplayNoneSelectors()).toEqual(['body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-button'])
   })
 
-  it('keeps the iframe body covering the viewport so backdrop blur reaches the edges', () => {
+  it('keeps the transparent iframe body covering the viewport', () => {
     expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  width: 100%;\n}')
   })
 
-  it('removes the native chat edge shimmer from clipped chat-only mode', () => {
+  it('removes the native chat edge shimmer from both clipped chat-only edges', () => {
+    expect(iframeStyles).toContain('yt-live-chat-renderer #chat::before')
     expect(iframeStyles).toContain('yt-live-chat-renderer #chat::after')
     expect(iframeStyles).toContain('background-image: none !important;')
     expect(iframeStyles).toContain('animation: none !important;')
@@ -42,8 +43,34 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
   })
 
-  it('does not keep stale clip-path iframe selectors', () => {
-    expect(iframeStyles).not.toContain('clip-path-enable')
+  it('animates chat-only chrome inside the iframe instead of shifting hidden chrome outside the panel', () => {
+    expect(iframeStyles).toContain('will-change: height, opacity, transform;')
+    expect(iframeStyles).toContain('transition-property: height, opacity, transform, margin, padding, border-width !important;')
+    expect(iframeStyles).toContain('transition-duration: 220ms, 160ms, 220ms, 220ms, 220ms, 220ms !important;')
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-header-renderer')
+    expect(iframeStyles).toContain(
+      'body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-restricted-participation-renderer',
+    )
+    expect(iframeStyles).toContain('height: var(--extension-chat-only-header-height) !important;')
+    expect(iframeStyles).toContain('height: var(--extension-chat-only-input-height) !important;')
+    expect(iframeStyles).toContain('height: var(--extension-chat-only-restricted-participation-height) !important;')
+    expect(iframeStyles).toContain('height: var(--extension-chat-only-input-panel-height) !important;')
+    expect(iframeStyles).toContain('height: var(--extension-chat-only-sign-in-height) !important;')
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-header-renderer')
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-message-input-renderer')
+    expect(iframeStyles).toContain(
+      'body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-restricted-participation-renderer',
+    )
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display #input-panel')
+    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-sign-in-prompt-renderer')
+    expect(iframeStyles).toContain('height: 0 !important;')
+    expect(iframeStyles).toContain('opacity: 0 !important;')
+    expect(iframeStyles).toContain('transform: translateY(-8px);')
+    expect(iframeStyles).not.toContain('height, 96px')
+    expect(iframeStyles).not.toContain('max-height: 0 !important;')
+    expect(iframeStyles).not.toContain(
+      'chat-only-display yt-live-chat-header-renderer,\nbody.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-message-input-renderer,\nbody.custom-yt-app-live-chat-extension.chat-only-display #input-panel,\nbody.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-sign-in-prompt-renderer {\n  display: none',
+    )
   })
 
   it('keeps user display settings as iframe-internal variables', () => {

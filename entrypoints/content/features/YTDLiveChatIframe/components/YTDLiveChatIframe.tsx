@@ -3,8 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
-import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggable/constants/animation'
-import { useClipAnimationPriming } from '@/entrypoints/content/features/Draggable/hooks/useClipAnimationPriming'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
@@ -24,20 +22,17 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const { t } = useTranslation()
   const id = useId()
   const { ref } = useChatIframeLoader(mode)
-  const { blur, alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
+  const { alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
-      blur: state.blur,
       alwaysOnDisplay: state.alwaysOnDisplay,
       bgColor: state.bgColor,
       fontColor: state.fontColor,
     })),
   )
-  const { isDisplay, isIframeLoaded, clip, isClipPath } = useYTDLiveChatNoLsStore(
+  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       isDisplay: state.isDisplay,
       isIframeLoaded: state.isIframeLoaded,
-      clip: state.clip,
-      isClipPath: state.isClipPath,
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
@@ -54,11 +49,6 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     }
   }, [fontColor])
   const overlayAlpha = bgColor.a ?? 1
-  const shouldCropChat = Boolean(isClipPath)
-  const { isClipAnimationReady } = useClipAnimationPriming({ isClipPath: shouldCropChat, clip })
-  const shouldAnimateCrop = isClipAnimationReady || !shouldCropChat
-  const cropTransition = shouldAnimateCrop ? `top ${CLIP_GEOMETRY_TRANSITION}, height ${CLIP_GEOMETRY_TRANSITION}` : 'none'
-  const carrierHeight = shouldCropChat ? `calc(100% + ${clip.header + clip.input}px)` : '100%'
 
   const loaderTransition = useCSSTransition({
     in: !isIframeLoaded,
@@ -85,26 +75,10 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
           opacity: isChatVisible ? 1 : 0,
         }}
       >
-        <div
-          id={id}
-          ref={ref}
-          data-ylc-iframe-carrier
-          className='absolute left-0 right-0'
-          style={{
-            top: shouldCropChat ? -clip.header : 0,
-            height: carrierHeight,
-            transition: cropTransition,
-          }}
-        />
+        <div id={id} ref={ref} data-ylc-iframe-carrier className='absolute inset-0' />
       </div>
       {loaderTransition.isMounted && (
-        <div
-          className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
-          style={{
-            backdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
-            WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
-          }}
-        >
+        <div className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}>
           <output className='flex justify-center' aria-label={t('content.aria.loading')}>
             <div
               className='animate-ping h-5 w-5 rounded-full'

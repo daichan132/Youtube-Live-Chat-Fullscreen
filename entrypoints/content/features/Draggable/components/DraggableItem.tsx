@@ -10,7 +10,7 @@ import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import { deriveResizedLayout, fitLayoutWithinViewportWidth, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
 import { getDraggableItemStyles } from '../hooks/draggableItemStyles'
 import { ControlIcons } from './ControlIcons'
-import { ClipPathEffect } from './EffectComponent/ClipPathEffect'
+import { ChatOnlyChromeEffect } from './EffectComponent/ChatOnlyChromeEffect'
 
 interface DraggableItemProps {
   children: React.ReactNode
@@ -367,7 +367,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
 
   return (
     <div role='application'>
-      <ClipPathEffect isDragging={isDragging} isResizing={isResizing} isControlRailHiding={isControlRailHiding} />
+      <ChatOnlyChromeEffect isDragging={isDragging} isResizing={isResizing} isControlRailHiding={isControlRailHiding} />
 
       <Resizable
         size={size}

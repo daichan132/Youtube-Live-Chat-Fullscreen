@@ -3,14 +3,15 @@ import type { Extension } from '@e2e/fixtures'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { isClipPathEnabled, movePointerAwayFromOverlay } from '@e2e/screenshots/helpers'
+import { getChatOnlyChromeCollapseSnapshot, isChatOnlyChromeHidden, movePointerAwayFromOverlay } from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
 
-type OverlayCropSnapshot = {
+type OverlayChatSurfaceSnapshot = {
   exists: boolean
-  enabled: boolean
-  cropTop: number
-  cropBottom: number
+  carrierMatchesViewport: boolean
+  carrierTopDelta: number
+  carrierHeightDelta: number
+  carrierWidthDelta: number
   carrierHeight: number
   height: number
   visibleHeight: number
@@ -22,7 +23,7 @@ type HoverProbeState = {
   leaveCount: number
 }
 
-const getOverlayCropSnapshot = (): OverlayCropSnapshot => {
+const getOverlayChatSurfaceSnapshot = (): OverlayChatSurfaceSnapshot => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const app = root?.querySelector('div[role="application"]') as HTMLElement | null
@@ -32,9 +33,10 @@ const getOverlayCropSnapshot = (): OverlayCropSnapshot => {
   if (!resizable || !viewport || !carrier) {
     return {
       exists: false,
-      enabled: false,
-      cropTop: 0,
-      cropBottom: 0,
+      carrierMatchesViewport: false,
+      carrierTopDelta: 0,
+      carrierHeightDelta: 0,
+      carrierWidthDelta: 0,
       carrierHeight: 0,
       height: 0,
       visibleHeight: 0,
@@ -45,15 +47,16 @@ const getOverlayCropSnapshot = (): OverlayCropSnapshot => {
   const box = resizable.getBoundingClientRect()
   const viewportBox = viewport.getBoundingClientRect()
   const carrierBox = carrier.getBoundingClientRect()
-  const carrierTop = Number.parseFloat(window.getComputedStyle(carrier).top || '0')
-  const cropTop = Math.max(0, -carrierTop)
-  const cropBottom = Math.max(0, carrierBox.height - viewportBox.height - cropTop)
+  const carrierTopDelta = Math.abs(carrierBox.top - viewportBox.top)
+  const carrierHeightDelta = Math.abs(carrierBox.height - viewportBox.height)
+  const carrierWidthDelta = Math.abs(carrierBox.width - viewportBox.width)
 
   return {
     exists: true,
-    enabled: cropTop > 0 || cropBottom > 0,
-    cropTop: Math.round(cropTop * 100) / 100,
-    cropBottom: Math.round(cropBottom * 100) / 100,
+    carrierMatchesViewport: carrierTopDelta <= 1 && carrierHeightDelta <= 1 && carrierWidthDelta <= 1,
+    carrierTopDelta: Math.round(carrierTopDelta * 100) / 100,
+    carrierHeightDelta: Math.round(carrierHeightDelta * 100) / 100,
+    carrierWidthDelta: Math.round(carrierWidthDelta * 100) / 100,
     carrierHeight: Math.round(carrierBox.height * 100) / 100,
     height: Math.round(box.height * 100) / 100,
     visibleHeight: Math.round(viewportBox.height * 100) / 100,
@@ -243,14 +246,14 @@ const setPersistedChatOnlyMode = async (extension: Extension) => {
 
 const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl: string | null) => {
   if (!archiveReplayUrl) {
-    await captureChatState(page, test.info(), 'chat-only-auto-clip-url-selection-failed')
+    await captureChatState(page, test.info(), 'chat-only-chrome-url-selection-failed')
     test.skip(true, 'No archive replay URL satisfied preconditions.')
     return false
   }
 
   const archiveReady = await openArchiveWatchPage(page, archiveReplayUrl, { maxDurationMs: 30000 })
   if (!archiveReady) {
-    await captureChatState(page, test.info(), 'chat-only-auto-clip-precondition-missing')
+    await captureChatState(page, test.info(), 'chat-only-chrome-precondition-missing')
     test.skip(true, 'Selected archive URL did not expose archive chat container in time.')
     return false
   }
@@ -261,14 +264,14 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
   try {
     await yt.enterFullscreen()
   } catch (error) {
-    await captureChatState(page, test.info(), 'chat-only-auto-clip-fullscreen-failed').catch(() => null)
+    await captureChatState(page, test.info(), 'chat-only-chrome-fullscreen-failed').catch(() => null)
     test.skip(true, `Fullscreen entry failed (browser may have closed): ${error instanceof Error ? error.message : String(error)}`)
     return false
   }
 
   const switchReady = await overlay.waitForSwitchReady()
   if (!switchReady) {
-    await captureChatState(page, test.info(), 'chat-only-auto-clip-switch-missing')
+    await captureChatState(page, test.info(), 'chat-only-chrome-switch-missing')
     test.skip(true, 'Fullscreen chat switch button did not appear.')
     return false
   }
@@ -277,7 +280,7 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
 
   const extensionReady = await overlay.waitForArchiveChatPlayable()
   if (!extensionReady) {
-    const state = await captureChatState(page, test.info(), 'chat-only-auto-clip-extension-unready')
+    const state = await captureChatState(page, test.info(), 'chat-only-chrome-extension-unready')
     if (shouldSkipArchiveFlowFailure(state)) {
       test.skip(true, 'Archive chat source did not become ready in this run.')
       return false
@@ -299,7 +302,7 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
 }
 
 test.describe('chat-only hover height', { tag: '@archive' }, () => {
-  test('chat-only clip enables after load without any overlay hover', async ({ page, extension, archiveReplayUrl }) => {
+  test('chat-only chrome hides after load without any overlay hover', async ({ page, extension, archiveReplayUrl }) => {
     test.setTimeout(180000)
 
     const configured = await setPersistedChatOnlyMode(extension)
@@ -317,18 +320,20 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     const probeInstalled = await page.evaluate(installOverlayHoverProbe)
     expect(probeInstalled).toBe(true)
 
-    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
     await expect
       .poll(
         async () => {
-          const cropSnapshot = await page.evaluate(getOverlayCropSnapshot)
-          return cropSnapshot.enabled && cropSnapshot.cropTop + cropSnapshot.cropBottom > 0
+          const surfaceSnapshot = await page.evaluate(getOverlayChatSurfaceSnapshot)
+          return surfaceSnapshot.exists && surfaceSnapshot.carrierMatchesViewport
         },
         { timeout: 15000 },
       )
       .toBe(true)
 
-    const snapshot = await page.evaluate(getOverlayCropSnapshot)
+    const snapshot = await page.evaluate(getOverlayChatSurfaceSnapshot)
+    const chromeSnapshot = await page.evaluate(getChatOnlyChromeCollapseSnapshot)
     const immediateVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 4,
       intervalMs: 60,
@@ -342,19 +347,20 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     })
     const hoverProbe = await page.evaluate(readOverlayHoverProbe)
 
-    await test.info().attach('chat-only-auto-clip-no-hover', {
-      body: JSON.stringify({ snapshot, immediateVisibleHeightSamples, visibleHeightSamples, hoverProbe }, null, 2),
+    await test.info().attach('chat-only-chrome-no-hover', {
+      body: JSON.stringify({ snapshot, chromeSnapshot, immediateVisibleHeightSamples, visibleHeightSamples, hoverProbe }, null, 2),
       contentType: 'application/json',
     })
 
     expect(snapshot.exists).toBe(true)
-    expect(snapshot.enabled).toBe(true)
+    expect(snapshot.carrierMatchesViewport).toBe(true)
+    expect(chromeSnapshot.allTargetsCollapsed).toBe(true)
     expect(immediateVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
     expect(visibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
     expect(hoverProbe?.enterCount ?? -1).toBe(0)
   })
 
-  test('chat-only clip re-enables automatically after first hover without pointer leave', async ({ page, extension, archiveReplayUrl }) => {
+  test('chat-only chrome re-hides automatically after first hover without pointer leave', async ({ page, extension, archiveReplayUrl }) => {
     test.setTimeout(180000)
 
     const configured = await setPersistedChatOnlyMode(extension)
@@ -372,13 +378,15 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     const probeInstalled = await page.evaluate(installOverlayHoverProbe)
     expect(probeInstalled).toBe(true)
 
-    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
     const baselineVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,
       settleMs: 350,
     })
-    const baselineSnapshot = await page.evaluate(getOverlayCropSnapshot)
+    const baselineSnapshot = await page.evaluate(getOverlayChatSurfaceSnapshot)
+    const baselineChromeSnapshot = await page.evaluate(getChatOnlyChromeCollapseSnapshot)
 
     const center = await page.evaluate(getOverlayCenter)
     if (!center) {
@@ -389,9 +397,11 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     await page.mouse.move(center.x, center.y)
 
     // No pointer leave after first hover.
-    await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
+    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
 
-    const snapshot = await page.evaluate(getOverlayCropSnapshot)
+    const snapshot = await page.evaluate(getOverlayChatSurfaceSnapshot)
+    const chromeSnapshot = await page.evaluate(getChatOnlyChromeCollapseSnapshot)
     const visibleHeightSamplesAfterHover = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,
@@ -400,12 +410,14 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     const hoverProbe = await page.evaluate(readOverlayHoverProbe)
     const visibleHeightDelta = visibleHeightSamplesAfterHover.median - baselineVisibleHeightSamples.median
 
-    await test.info().attach('chat-only-auto-clip-hovered-once', {
+    await test.info().attach('chat-only-chrome-hovered-once', {
       body: JSON.stringify(
         {
           baselineSnapshot,
+          baselineChromeSnapshot,
           baselineVisibleHeightSamples,
           snapshot,
+          chromeSnapshot,
           visibleHeightSamplesAfterHover,
           visibleHeightDelta,
           hoverProbe,
@@ -418,7 +430,10 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     })
 
     expect(snapshot.exists).toBe(true)
-    expect(snapshot.enabled).toBe(true)
+    expect(baselineSnapshot.carrierMatchesViewport).toBe(true)
+    expect(snapshot.carrierMatchesViewport).toBe(true)
+    expect(baselineChromeSnapshot.allTargetsCollapsed).toBe(true)
+    expect(chromeSnapshot.allTargetsCollapsed).toBe(true)
     expect(baselineVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
     expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)
     // Allow content-driven growth: archive chat messages load dynamically between

@@ -1,17 +1,12 @@
 import { create } from 'zustand'
 
-interface clipState {
-  header: number
-  input: number
-}
 interface YTDLiveChatNoLsStoreState {
   isHover: boolean
   isDisplay: boolean
   isOpenSettingModal: boolean
   isIframeLoaded: boolean
   isAutoOpeningNativeChat: boolean
-  clip: clipState
-  isClipPath: boolean | undefined
+  isChatOnlyChromeHidden: boolean | undefined
   iframeElement: HTMLIFrameElement | null
   menuItem: 'setting' | 'preset'
   setIsHover: (isHover: boolean) => void
@@ -19,8 +14,7 @@ interface YTDLiveChatNoLsStoreState {
   setIsOpenSettingModal: (isSettingModal: boolean) => void
   setIsIframeLoaded: (isIframeLoaded: boolean) => void
   setIsAutoOpeningNativeChat: (isAutoOpeningNativeChat: boolean) => void
-  setClip: (clip: clipState) => void
-  setIsClipPath: (isClipPath: boolean | undefined) => void
+  setIsChatOnlyChromeHidden: (isChatOnlyChromeHidden: boolean | undefined) => void
   setIFrameElement: (iframeElement: HTMLIFrameElement | null) => void
   setMenuItem: (menuItem: 'setting' | 'preset') => void
 }
@@ -31,11 +25,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   isOpenSettingModal: false,
   isIframeLoaded: false,
   isAutoOpeningNativeChat: false,
-  clip: {
-    header: 0,
-    input: 0,
-  },
-  isClipPath: undefined,
+  isChatOnlyChromeHidden: undefined,
   iframeElement: null,
   menuItem: 'setting',
   setIsHover: isHover => set(() => ({ isHover })),
@@ -43,8 +33,7 @@ export const useYTDLiveChatNoLsStore = create<YTDLiveChatNoLsStoreState>()(set =
   setIsOpenSettingModal: isOpenSettingModal => set(() => ({ isOpenSettingModal })),
   setIsIframeLoaded: isIframeLoaded => set(() => ({ isIframeLoaded })),
   setIsAutoOpeningNativeChat: isAutoOpeningNativeChat => set(() => ({ isAutoOpeningNativeChat })),
-  setClip: clip => set(() => ({ clip })),
-  setIsClipPath: isClipPath => set(() => ({ isClipPath })),
+  setIsChatOnlyChromeHidden: isChatOnlyChromeHidden => set(() => ({ isChatOnlyChromeHidden })),
   setIFrameElement: iframeElement => set(() => ({ iframeElement })),
   setMenuItem: menuItem => set(() => ({ menuItem })),
 }))

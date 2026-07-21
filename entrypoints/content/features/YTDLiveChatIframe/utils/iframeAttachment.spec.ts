@@ -2,6 +2,15 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import {
+  IFRAME_CHAT_BODY_CLASS,
+  IFRAME_CHAT_ONLY_CLASS,
+  IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_STYLE_MARKER_ATTR,
+} from '../constants/styleContract'
 import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from './iframeAttachment'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
@@ -178,6 +187,42 @@ describe('iframeAttachment', () => {
     expect(iframe.style.borderStyle).toBe('solid')
     expect(iframe.style.borderWidth).toBe('2px')
     expect(iframe.style.outline).toBe('1px solid red')
+  })
+
+  it('cleans extension iframe document styles when restoring a borrowed iframe', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    const doc = document.implementation.createHTMLDocument('')
+    doc.body.classList.add(IFRAME_CHAT_BODY_CLASS, IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+    doc.body.style.setProperty(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR, '54px')
+    doc.body.style.setProperty(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR, '112px')
+    doc.body.style.setProperty(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR, '48px')
+    const injectedStyle = doc.createElement('style')
+    injectedStyle.setAttribute(IFRAME_STYLE_MARKER_ATTR, 'true')
+    doc.head.appendChild(injectedStyle)
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+
+    host.appendChild(iframe)
+    originalParent.appendChild(host)
+    document.body.appendChild(originalParent)
+    document.body.appendChild(container)
+
+    attachIframeToContainer(container, iframe)
+    detachAttachedIframe(iframe, container)
+
+    expect(host.contains(iframe)).toBe(true)
+    expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
+    expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+    expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR)).toBe('')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR)).toBe('')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR)).toBe('')
+    expect(doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).toBeNull()
   })
 
   it('falls back to current native host when original restore target was removed', () => {

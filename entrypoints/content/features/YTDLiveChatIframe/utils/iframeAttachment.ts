@@ -14,6 +14,17 @@ import {
 import { getVideoIdFromUrl } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import {
+  IFRAME_CHAT_BODY_CLASS,
+  IFRAME_CHAT_ONLY_CLASS,
+  IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_INPUT_PANEL_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_SIGN_IN_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_STYLE_MARKER_ATTR,
+} from '../constants/styleContract'
 
 type BorrowedIframeStyleSnapshot = {
   width: string
@@ -95,6 +106,23 @@ const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIf
   iframe.style.backgroundColor = style.backgroundColor
 }
 
+const cleanupBorrowedIframeDocument = (iframe: HTMLIFrameElement) => {
+  let doc: Document | null = null
+  try {
+    doc = iframe.contentDocument
+  } catch {
+    return
+  }
+
+  doc?.body?.classList.remove(IFRAME_CHAT_BODY_CLASS, IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR)
+  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR)
+  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_INPUT_PANEL_HEIGHT_VAR)
+  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR)
+  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_SIGN_IN_HEIGHT_VAR)
+  doc?.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.remove()
+}
+
 const getBorrowedIframeVideoId = (iframe: HTMLIFrameElement) => getIframeVideoId(iframe) ?? getVideoIdFromUrl()
 
 const isBorrowedVideoCurrent = (videoId: string | null | undefined) => {
@@ -138,6 +166,7 @@ const restoreBorrowedIframe = (iframe: HTMLIFrameElement) => {
   }
 
   restoreBorrowedIframeStyle(iframe, restoreTarget.style)
+  cleanupBorrowedIframeDocument(iframe)
 
   const placeholderParent = restoreTarget.placeholder?.parentNode
   if (placeholderParent && (placeholderParent as Node).isConnected) {
@@ -190,6 +219,7 @@ const tryRestorePendingNativeIframes = () => {
       discardBorrowedIframe(iframe)
       continue
     }
+    cleanupBorrowedIframeDocument(iframe)
     host.insertBefore(iframe, host.firstChild)
     pendingNativeHostRestoreIframes.delete(iframe)
     pendingNativeHostRestoreVideoIds.delete(iframe)
@@ -264,6 +294,7 @@ const restoreIframeToNativeHost = (iframe: HTMLIFrameElement, videoId: string | 
   if (!isBorrowedVideoCurrent(videoId)) return false
   const host = getCurrentNativeChatHost()
   if (!host) return false
+  cleanupBorrowedIframeDocument(iframe)
   if (iframe.parentElement === host) return true
   host.insertBefore(iframe, host.firstChild)
   return true

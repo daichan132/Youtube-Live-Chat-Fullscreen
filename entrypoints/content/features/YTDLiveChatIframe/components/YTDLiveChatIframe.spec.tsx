@@ -38,7 +38,6 @@ const resetStores = ({
     {
       ...baseNoLsState,
       ...noLsOverrides,
-      clip: { ...baseNoLsState.clip, ...(noLsOverrides.clip ?? {}) },
     },
     true,
   )
@@ -55,10 +54,9 @@ describe('YTDLiveChatIframe', () => {
     const carrier = container.querySelector('[data-ylc-iframe-carrier]') as HTMLElement
 
     expect(viewport).toHaveClass('overflow-hidden')
-    expect(carrier).toHaveStyle({
-      top: '0px',
-      height: '100%',
-    })
+    expect(carrier).toHaveClass('inset-0')
+    expect(carrier.style.top).toBe('')
+    expect(carrier.style.height).toBe('')
   })
 
   it('hides the persistent background when loaded chat is not visible', () => {
@@ -99,29 +97,69 @@ describe('YTDLiveChatIframe', () => {
     expect(background).toHaveStyle({ opacity: '1' })
   })
 
-  it('shifts and expands the iframe carrier while chat-only crop is enabled', () => {
+  it('keeps the color layer even by avoiding panel backdrop blur', () => {
+    resetStores({
+      liveOverrides: {
+        blur: 12,
+        bgColor: { r: 0, g: 0, b: 0, a: 0.4 },
+        alwaysOnDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isDisplay: false,
+      },
+    })
+
+    const { container } = render(<YTDLiveChatIframe mode='live' />)
+    const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
+    const carrier = container.querySelector('[data-ylc-iframe-carrier]') as HTMLElement
+
+    expect(background.style.backgroundColor).toBe('rgba(0, 0, 0, 0.4)')
+    expect(background.style.backdropFilter).toBe('')
+    expect(carrier.style.filter).toBe('')
+  })
+
+  it('keeps chat-only mode free of panel backdrop blur', () => {
+    resetStores({
+      liveOverrides: {
+        blur: 12,
+        bgColor: { r: 0, g: 0, b: 0, a: 0.4 },
+        alwaysOnDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isDisplay: false,
+        isChatOnlyChromeHidden: true,
+      },
+    })
+
+    const { container } = render(<YTDLiveChatIframe mode='live' />)
+    const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
+
+    expect(background.style.backgroundColor).toBe('rgba(0, 0, 0, 0.4)')
+    expect(background.style.backdropFilter).toBe('')
+  })
+
+  it('keeps the iframe carrier fixed while chat-only chrome is hidden inside the iframe', () => {
     resetStores({
       noLsOverrides: {
-        isClipPath: true,
-        clip: { header: 28, input: 24 },
+        isChatOnlyChromeHidden: true,
       },
     })
 
     const { container } = render(<YTDLiveChatIframe mode='live' />)
     const carrier = container.querySelector('[data-ylc-iframe-carrier]') as HTMLElement
 
-    expect(carrier).toHaveStyle({
-      top: '-28px',
-      height: 'calc(100% + 52px)',
-    })
+    expect(carrier).toHaveClass('inset-0')
+    expect(carrier.style.top).toBe('')
+    expect(carrier.style.height).toBe('')
   })
 
   it('keeps the loader on the visible panel instead of applying clip offsets', () => {
     resetStores({
       noLsOverrides: {
         isIframeLoaded: false,
-        isClipPath: true,
-        clip: { header: 28, input: 24 },
+        isChatOnlyChromeHidden: true,
       },
     })
 
@@ -131,5 +169,6 @@ describe('YTDLiveChatIframe', () => {
     expect(loader).toHaveClass('inset-0')
     expect(loader.style.top).toBe('')
     expect(loader.style.bottom).toBe('')
+    expect(loader.style.backdropFilter).toBe('')
   })
 })

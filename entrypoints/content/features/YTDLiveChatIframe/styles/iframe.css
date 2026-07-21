@@ -44,6 +44,7 @@ body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
   background: transparent !important;
 }
 
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat::before,
 body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat::after {
   background: transparent !important;
   background-image: none !important;
@@ -68,6 +69,7 @@ body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-li
   scrollbar-width: none;
   padding-right: 0px !important;
 }
+
 body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer,
 body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker-renderer,
 body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-buy-flow-renderer {
@@ -384,6 +386,77 @@ body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model #fab
 body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {
   background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;
   transition-delay: 0s, 0s !important;
+}
+
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension #input-panel,
+body.custom-yt-app-live-chat-extension yt-live-chat-sign-in-prompt-renderer {
+  overflow: hidden !important;
+  opacity: 1 !important;
+  transform: translateY(0);
+  transition-property: height, opacity, transform, margin, padding, border-width !important;
+  transition-duration: 220ms, 160ms, 220ms, 220ms, 220ms, 220ms !important;
+  transition-timing-function:
+    cubic-bezier(0.22, 1, 0.36, 1), ease-out, cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1),
+    cubic-bezier(0.22, 1, 0.36, 1), cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-header-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready #input-panel,
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-sign-in-prompt-renderer {
+  will-change: height, opacity, transform;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-header-renderer {
+  height: var(--extension-chat-only-header-height) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-message-input-renderer {
+  height: var(--extension-chat-only-input-height) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-restricted-participation-renderer {
+  height: var(--extension-chat-only-restricted-participation-height) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready #input-panel {
+  height: var(--extension-chat-only-input-panel-height) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-sign-in-prompt-renderer {
+  height: var(--extension-chat-only-sign-in-height) !important;
+}
+
+body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-header-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension.chat-only-display #input-panel,
+body.custom-yt-app-live-chat-extension.chat-only-display yt-live-chat-sign-in-prompt-renderer {
+  height: 0 !important;
+  min-height: 0 !important;
+  opacity: 0 !important;
+  transform: translateY(-8px);
+  pointer-events: none !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer,
+  body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
+  body.custom-yt-app-live-chat-extension yt-live-chat-restricted-participation-renderer,
+  body.custom-yt-app-live-chat-extension #input-panel,
+  body.custom-yt-app-live-chat-extension yt-live-chat-sign-in-prompt-renderer {
+    transition-duration: 1ms !important;
+  }
 }
 
 /* State-dependent Super Chat / sticker purchase flow. */

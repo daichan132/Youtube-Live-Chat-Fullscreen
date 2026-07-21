@@ -210,20 +210,57 @@ export const waitForChatMessages = async (
   }
 }
 
-// --- chat-only crop helpers ---
+// --- chat-only helpers ---
 
-export const isClipPathEnabled = (): boolean => {
+export const isChatOnlyChromeHidden = (): boolean => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
-  const viewport = root?.querySelector('[data-ylc-chat-viewport]') as HTMLElement | null
-  const carrier = root?.querySelector('[data-ylc-iframe-carrier]') as HTMLElement | null
-  if (!viewport || !carrier) return false
+  const iframe = root?.querySelector('[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  return iframe?.contentDocument?.body.classList.contains('chat-only-display') ?? false
+}
 
-  const carrierStyle = window.getComputedStyle(carrier)
-  const carrierTop = Number.parseFloat(carrierStyle.top || '0')
-  const viewportRect = viewport.getBoundingClientRect()
-  const carrierRect = carrier.getBoundingClientRect()
-  return carrierTop < 0 || carrierRect.height > viewportRect.height + 1
+export type ChatOnlyChromeCollapseSnapshot = {
+  hidden: boolean
+  allTargetsCollapsed: boolean
+  targets: Array<{
+    selector: string
+    exists: boolean
+    height: number
+  }>
+}
+
+export const getChatOnlyChromeCollapseSnapshot = (): ChatOnlyChromeCollapseSnapshot => {
+  const host = document.getElementById('shadow-root-live-chat')
+  const root = host?.shadowRoot ?? null
+  const iframe = root?.querySelector('[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  const body = iframe?.contentDocument?.body ?? null
+  const selectors = [
+    'yt-live-chat-header-renderer',
+    'yt-live-chat-message-input-renderer',
+    'yt-live-chat-restricted-participation-renderer',
+    '#input-panel',
+    'yt-live-chat-sign-in-prompt-renderer',
+  ]
+
+  if (!body) {
+    return { hidden: false, allTargetsCollapsed: false, targets: selectors.map(selector => ({ selector, exists: false, height: 0 })) }
+  }
+
+  const targets = selectors.map(selector => {
+    const element = body.querySelector(selector)
+    return {
+      selector,
+      exists: Boolean(element),
+      height: element ? Math.round(element.getBoundingClientRect().height * 100) / 100 : 0,
+    }
+  })
+  const existingTargets = targets.filter(target => target.exists)
+
+  return {
+    hidden: body.classList.contains('chat-only-display'),
+    allTargetsCollapsed: existingTargets.length > 0 && existingTargets.every(target => target.height <= 1),
+    targets,
+  }
 }
 
 export const movePointerAwayFromOverlay = async (page: Page): Promise<boolean> => {

@@ -66,18 +66,18 @@ describe('YLCNumberSlider', () => {
     expect(useYTDLiveChatStore.getState().space).toBe(8)
   })
 
-  it('uses the provided range when updating blur', () => {
+  it('uses the provided range when updating space', () => {
     const applyValue = vi.fn()
     useYTDLiveChatStore.setState({ blur: 2, space: 16 })
 
     const { getByRole } = render(
-      <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} applyValue={applyValue} />,
+      <YLCNumberSlider settingKey='space' labelKey='content.setting.space' min={0} max={40} applyValue={applyValue} />,
     )
 
-    fireEvent.change(getByRole('slider', { name: 'content.setting.blur' }), { target: { value: '15' } })
+    fireEvent.change(getByRole('slider', { name: 'content.setting.space' }), { target: { value: '24' } })
 
-    expect(applyValue).toHaveBeenCalledWith(15)
-    expect(useYTDLiveChatStore.getState().blur).toBe(15)
-    expect(useYTDLiveChatStore.getState().space).toBe(16)
+    expect(applyValue).toHaveBeenCalledWith(24)
+    expect(useYTDLiveChatStore.getState().blur).toBe(2)
+    expect(useYTDLiveChatStore.getState().space).toBe(24)
   })
 })

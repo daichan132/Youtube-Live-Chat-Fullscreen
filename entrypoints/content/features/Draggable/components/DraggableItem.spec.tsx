@@ -81,8 +81,8 @@ vi.mock('./ControlIcons', () => ({
   ),
 }))
 
-vi.mock('./EffectComponent/ClipPathEffect', () => ({
-  ClipPathEffect: () => null,
+vi.mock('./EffectComponent/ChatOnlyChromeEffect', () => ({
+  ChatOnlyChromeEffect: () => null,
 }))
 
 const baseState = useYTDLiveChatStore.getState()
@@ -108,7 +108,6 @@ const resetNoLsStore = (overrides: Partial<typeof baseNoLsState> = {}) => {
     {
       ...baseNoLsState,
       ...overrides,
-      clip: { ...baseNoLsState.clip, ...(overrides.clip ?? {}) },
     },
     true,
   )
@@ -196,14 +195,13 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '206px', right: '0px' })
   })
 
-  it('positions the control rail below the visible panel while clipped', () => {
+  it('positions the control rail below the visible chat panel in chat-only mode', () => {
     resetStore({
       coordinates: { x: 100, y: 10 },
       size: { width: 300, height: 200 },
     })
     resetNoLsStore({
-      isClipPath: true,
-      clip: { header: 28, input: 24 },
+      isChatOnlyChromeHidden: true,
     })
 
     const { getByTestId } = render(
@@ -215,10 +213,9 @@ describe('DraggableItem', () => {
     expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '206px' })
   })
 
-  it('keeps resize handles on the interactive visible panel while clipped', () => {
+  it('keeps resize handles on the interactive visible panel in chat-only mode', () => {
     resetNoLsStore({
-      isClipPath: true,
-      clip: { header: 28, input: 24 },
+      isChatOnlyChromeHidden: true,
     })
 
     render(
@@ -617,7 +614,7 @@ describe('DraggableItem', () => {
 
   it('shows controls from the extended hover area without entering chat hover', () => {
     vi.useFakeTimers()
-    resetNoLsStore({ isClipPath: true, isHover: false, isDisplay: false })
+    resetNoLsStore({ isChatOnlyChromeHidden: true, isHover: false, isDisplay: false })
 
     const { container, getByTestId } = render(
       <DraggableItem>
@@ -632,17 +629,16 @@ describe('DraggableItem', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
-    expect(useYTDLiveChatNoLsStore.getState().isClipPath).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().isChatOnlyChromeHidden).toBe(true)
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })
 
-  it('treats the visible panel as the clipped chat hover area', () => {
+  it('treats the visible panel as the chat-only hover area', () => {
     vi.useFakeTimers()
     resetNoLsStore({
-      isClipPath: true,
+      isChatOnlyChromeHidden: true,
       isHover: false,
-      clip: { header: 80, input: 60 },
     })
 
     const { container, getByTestId } = render(

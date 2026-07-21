@@ -9,7 +9,7 @@ import {
   getChatMessageDiagnostics,
   hideYouTubeOverlays,
   hoverOverlay,
-  isClipPathEnabled,
+  isChatOnlyChromeHidden,
   movePointerAwayFromOverlay,
   pauseVideo,
   repositionOverlay,
@@ -124,9 +124,9 @@ test.describe
       await pauseVideo(page)
       await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
 
-      // chatOnlyDisplay: move pointer away and wait for chat crop + controls auto-hide
+      // chatOnlyDisplay: move pointer away and wait for chat chrome + controls auto-hide
       await movePointerAwayFromOverlay(page)
-      await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+      await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
       await waitForPlayerControlsHidden(page)
 
       await page.screenshot({ path: screenshotPath('fullscreen-chat-overview') })
@@ -199,9 +199,9 @@ test.describe
       await pauseVideo(page)
       await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
 
-      // chatOnlyDisplay: move pointer away and wait for chat crop + controls auto-hide
+      // chatOnlyDisplay: move pointer away and wait for chat chrome + controls auto-hide
       await movePointerAwayFromOverlay(page)
-      await expect.poll(async () => page.evaluate(isClipPathEnabled), { timeout: 15000 }).toBe(true)
+      await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
       await waitForPlayerControlsHidden(page)
 
       const hovered = await hoverOverlay(page)

@@ -1,8 +1,3 @@
-export interface Clip {
-  header: number
-  input: number
-}
-
 export interface LayoutGeometry {
   coordinates: {
     x: number
@@ -30,36 +25,7 @@ type ResizeDelta = {
 
 export type ResizeDirection = 'top' | 'left' | 'topLeft' | 'bottomLeft' | 'topRight' | 'right' | 'bottom' | 'bottomRight'
 
-const HEADER_HEIGHT_OFFSET = 4
-const INPUT_HEIGHT_OFFSET = 0
-
-const clampClipValue = (value: number) => Math.max(0, value)
 const ensurePositiveCoordinate = (value: number): number => Math.max(0, value)
-
-const INPUT_HEIGHT_SELECTORS = [
-  'yt-live-chat-message-input-renderer',
-  'yt-live-chat-restricted-participation-renderer',
-  '#input-panel',
-  'yt-live-chat-sign-in-prompt-renderer',
-]
-
-const getMaxHeightBySelectors = (container: ParentNode | null | undefined, selectors: string[]) =>
-  selectors.reduce((maxHeight, selector) => {
-    const nextHeight = container?.querySelector(selector)?.clientHeight ?? 0
-    return nextHeight > maxHeight ? nextHeight : maxHeight
-  }, 0)
-
-export const measureClipFromBody = (container: ParentNode | null | undefined): Clip => {
-  const headerHeight = container?.querySelector('yt-live-chat-header-renderer')?.clientHeight ?? 0
-  const inputHeight = getMaxHeightBySelectors(container, INPUT_HEIGHT_SELECTORS)
-
-  return {
-    header: clampClipValue(headerHeight - HEADER_HEIGHT_OFFSET),
-    input: clampClipValue(inputHeight - INPUT_HEIGHT_OFFSET),
-  }
-}
-
-export const isSameClip = (a: Clip, b: Clip) => a.header === b.header && a.input === b.input
 
 export const isSameLayoutGeometry = (a: LayoutGeometry, b: LayoutGeometry) =>
   a.coordinates.x === b.coordinates.x &&

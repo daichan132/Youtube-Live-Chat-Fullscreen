@@ -144,14 +144,16 @@ describe('ylcStyleApplier', () => {
     expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
   })
 
-  it('applies blur to iframe body and clears host filter', () => {
+  it('clears iframe body blur and host filter', () => {
     const { iframe } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+    const body = iframe.contentDocument?.body as HTMLBodyElement
+    body.style.backdropFilter = 'blur(4px)'
+    body.style.setProperty('-webkit-backdrop-filter', 'blur(4px)')
 
     changeYLCBlur(12)
 
-    const body = iframe.contentDocument?.body as HTMLBodyElement
-    expect(body.style.backdropFilter).toBe('blur(12px)')
+    expect(body.style.backdropFilter).toBe('none')
     expect(iframe.style.filter).toBe('none')
   })
 
