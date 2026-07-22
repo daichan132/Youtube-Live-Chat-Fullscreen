@@ -181,8 +181,6 @@ export const isExtensionOverlayRendered = () => {
 
 export const hasNativeChatControls = (extensionSwitchContainerSelector: string) => {
   const h = window.__ylcHelpers
-  if (document.querySelector('ytd-live-chat-frame, #chat-container')) return true
-
   const controls = Array.from(
     document.querySelectorAll<HTMLElement>(
       [

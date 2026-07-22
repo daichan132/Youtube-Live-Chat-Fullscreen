@@ -11,6 +11,7 @@ const NO_CHAT_VIDEO_ID = 'ylc-no-chat-fixture'
 const noChatFixtureHtml = buildWatchFixtureHtml({
   title: 'No chat fixture',
   videoId: NO_CHAT_VIDEO_ID,
+  extraBody: '<div id="chat-container"></div>',
 })
 
 test.describe('no chat video', { tag: '@live' }, () => {
@@ -29,6 +30,21 @@ test.describe('no chat video', { tag: '@live' }, () => {
     await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
     await expect.poll(async () => page.evaluate(isExtensionOverlayRendered)).toBe(false)
     await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(false)
+
+    expect(await page.evaluate(hasNativeChatControls, switchButtonContainerSelector)).toBe(false)
+
+    await page.evaluate(() => {
+      const chatContainer = document.getElementById('chat-container')
+      const showHideButton = document.createElement('div')
+      showHideButton.id = 'show-hide-button'
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.setAttribute('aria-label', 'Show chat')
+      showHideButton.append(button)
+      chatContainer?.append(showHideButton)
+    })
+
+    expect(await page.evaluate(hasNativeChatControls, switchButtonContainerSelector)).toBe(true)
   })
 
   test('extension chat stays hidden on a configured no-chat video', async ({ page }) => {
