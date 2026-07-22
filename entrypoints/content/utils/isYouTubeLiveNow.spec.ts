@@ -238,7 +238,8 @@ describe('isYouTubeLiveNow', () => {
   })
 
   it('returns true from inline ytInitialPlayerResponse script fallback', () => {
-    const videoId = currentUrlVideoId()
+    const videoId = 'inline-live-video'
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
     const script = document.createElement('script')
     script.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"responseContext":{"serviceTrackingParams":[{"params":[{"key":"is_viewed_live","value":"True"}]}]},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
     document.head.appendChild(script)
