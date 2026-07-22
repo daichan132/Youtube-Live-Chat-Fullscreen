@@ -1,7 +1,7 @@
-import { render } from '@testing-library/react'
+import { act, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Content } from './Content'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
@@ -14,6 +14,8 @@ const { ytdLiveChatMock, ytdLiveChatSwitchMock } = vi.hoisted(() => ({
   ytdLiveChatMock: vi.fn(() => null),
   ytdLiveChatSwitchMock: vi.fn(() => null),
 }))
+
+const noLsStoreBaseState = useYTDLiveChatNoLsStore.getState()
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
@@ -71,6 +73,8 @@ describe('Content', () => {
     ytdLiveChatMock.mockClear()
     ytdLiveChatSwitchMock.mockClear()
     useGlobalSettingStore.setState({ themeMode: 'system', ytdLiveChat: true })
+    useYTDLiveChatNoLsStore.setState(noLsStoreBaseState, true)
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=video-a`)
 
     vi.mocked(usePollingWithNavigate).mockReturnValue(true)
     vi.mocked(canToggleFullscreenChat).mockReturnValue(true)
@@ -97,6 +101,27 @@ describe('Content', () => {
     return { shadowRoot, switchButtonContainer }
   }
 
+  const createUnavailableNativeLiveIframe = () => {
+    const unavailable = document.createElement('yt-live-chat-unavailable-message-renderer')
+    const body = document.createElement('body')
+    body.appendChild(unavailable)
+    const doc = {
+      location: { href: 'https://www.youtube.com/live_chat?v=video-a' } as Location,
+      body,
+      querySelector: (selector: string) => (selector === 'yt-live-chat-unavailable-message-renderer' ? unavailable : null),
+    } as unknown as Document
+
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-a')
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.className = 'ytd-live-chat-frame'
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    Object.defineProperty(iframe, 'contentDocument', { value: doc, configurable: true })
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+  }
+
   it('keeps archive switch polling in continuous monitoring mode', () => {
     render(<Content />)
 
@@ -121,6 +146,43 @@ describe('Content', () => {
 
     options?.checkFn()
     expect(canToggleFullscreenChat).toHaveBeenCalledWith('live')
+  })
+
+  it('captures an unavailable native live iframe before starting source polling', () => {
+    vi.mocked(useChatMode).mockReturnValue('live')
+    createUnavailableNativeLiveIframe()
+
+    render(<Content />)
+
+    const options = vi.mocked(usePollingWithNavigate).mock.calls[0]?.[0]
+    expect(options?.stopWhen?.()).toBe(true)
+    expect(useYTDLiveChatNoLsStore.getState().unavailableLiveChatVideoId).toBe('video-a')
+    expect(canToggleFullscreenChat).not.toHaveBeenCalled()
+  })
+
+  it('restarts live source polling after terminal video changes without yt-navigate-finish', () => {
+    vi.useFakeTimers()
+    vi.mocked(useChatMode).mockReturnValue('live')
+    useYTDLiveChatNoLsStore.setState({ unavailableLiveChatVideoId: 'video-a' })
+
+    try {
+      render(<Content />)
+      const initialOptions = vi.mocked(usePollingWithNavigate).mock.calls[0]?.[0]
+      expect(initialOptions?.stopWhen?.()).toBe(true)
+
+      window.history.pushState({}, '', `${window.location.origin}/watch?v=video-b`)
+      act(() => {
+        vi.advanceTimersByTime(1000)
+      })
+
+      expect(useYTDLiveChatNoLsStore.getState().unavailableLiveChatVideoId).toBeNull()
+      const latestOptions = vi.mocked(usePollingWithNavigate).mock.calls.at(-1)?.[0]
+      expect(latestOptions?.stopWhen?.()).toBe(false)
+      latestOptions?.checkFn()
+      expect(canToggleFullscreenChat).toHaveBeenCalledWith('live')
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('enables archive native ensure only when archive + fullscreen + user enabled', () => {
@@ -182,5 +244,22 @@ describe('Content', () => {
 
     expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
     expect(switchButtonContainer.style.display).toBe('none')
+  })
+
+  it('hides both switch and overlay when current live chat is terminally unavailable', () => {
+    const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
+    vi.mocked(useChatMode).mockReturnValue('live')
+    vi.mocked(usePollingWithNavigate).mockReturnValue(true)
+    useYTDLiveChatNoLsStore.setState({ unavailableLiveChatVideoId: 'video-a' })
+
+    render(<Content />)
+
+    const options = vi.mocked(usePollingWithNavigate).mock.calls[0]?.[0]
+    expect(options?.checkFn()).toBe(false)
+    expect(canToggleFullscreenChat).not.toHaveBeenCalled()
+    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
+    expect(switchButtonContainer.style.display).toBe('none')
+    expect(ytdLiveChatMock).not.toHaveBeenCalled()
+    expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
   })
 })

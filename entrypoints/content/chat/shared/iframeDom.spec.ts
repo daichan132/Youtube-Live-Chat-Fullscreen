@@ -81,6 +81,53 @@ describe('isIframeForCurrentVideo', () => {
 
     expect(isIframeForCurrentVideo(iframe, 'next-video')).toBe(false)
   })
+
+  it('matches a native iframe on a channel live entry when strong page signals agree', () => {
+    setLocation('/@lofi/live')
+    createWatchFlexy('channel-live-video')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.src = 'https://www.youtube.com/live_chat?v=channel-live-video'
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+
+    expect(isIframeForCurrentVideo(iframe, 'channel-live-video')).toBe(true)
+    expect(getCurrentLiveChatIframe('channel-live-video')).toBe(iframe)
+  })
+
+  it('rejects native iframe matching when channel live page signals conflict', () => {
+    setLocation('/@lofi/live')
+    createWatchFlexy('next-video')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.src = 'https://www.youtube.com/live_chat?v=stale-video'
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+
+    expect(isIframeForCurrentVideo(iframe, null)).toBe(false)
+    expect(getCurrentLiveChatIframe()).toBeNull()
+  })
+
+  it('selects the next native iframe while the previous channel-live iframe is still borrowed', () => {
+    setLocation('/@lofi/live')
+    const watchFlexy = createWatchFlexy('video-b')
+    const borrowedIframe = document.createElement('iframe')
+    borrowedIframe.id = 'chatframe'
+    borrowedIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    borrowedIframe.setAttribute('data-ylc-chat', 'true')
+
+    const nextHost = document.createElement('ytd-live-chat-frame')
+    const nextIframe = document.createElement('iframe')
+    nextIframe.className = 'ytd-live-chat-frame'
+    nextIframe.src = 'https://www.youtube.com/live_chat?v=video-b'
+    nextHost.appendChild(nextIframe)
+    document.body.append(borrowedIframe, nextHost)
+
+    expect(watchFlexy.getAttribute('video-id')).toBe('video-b')
+    expect(getCurrentLiveChatIframe()).toBe(nextIframe)
+  })
 })
 
 describe('getLiveChatIframes', () => {

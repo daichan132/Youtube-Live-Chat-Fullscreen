@@ -14,6 +14,12 @@ type UsePollingWithNavigateOptions = {
    * Use false when the state can change dynamically (e.g., chat availability).
    */
   stopOnSuccess?: boolean
+  /**
+   * Stops polling without running checkFn when a terminal condition is met.
+   * The condition is re-evaluated after each check so checkFn may synchronize
+   * terminal state discovered during that check.
+   */
+  stopWhen?: () => boolean
 }
 
 /** Safely execute checkFn with error handling */
@@ -34,6 +40,7 @@ export const usePollingWithNavigate = ({
   intervalMs = 1000,
   maxAttempts = 100,
   stopOnSuccess = true,
+  stopWhen,
 }: UsePollingWithNavigateOptions) => {
   const [result, setResult] = useState(false)
 
@@ -45,21 +52,33 @@ export const usePollingWithNavigate = ({
         window.clearInterval(interval)
         interval = null
       }
+      if (stopWhen && safeCheck(stopWhen)) {
+        setResult(false)
+        return
+      }
+
       // Immediate check on start - don't wait for first interval
       const initialResult = safeCheck(checkFn)
       setResult(initialResult)
 
       // If immediate check succeeded and we should stop on success, don't start polling
-      if (initialResult && stopOnSuccess) {
+      if ((initialResult && stopOnSuccess) || (stopWhen && safeCheck(stopWhen))) {
         return
       }
 
       let count = 1 // Already did one check
       interval = window.setInterval(() => {
+        if (stopWhen && safeCheck(stopWhen)) {
+          setResult(false)
+          if (interval) window.clearInterval(interval)
+          interval = null
+          return
+        }
+
         const nextResult = safeCheck(checkFn)
         setResult(nextResult)
         count += 1
-        if (nextResult && stopOnSuccess) {
+        if ((nextResult && stopOnSuccess) || (stopWhen && safeCheck(stopWhen))) {
           if (interval) window.clearInterval(interval)
           interval = null
           return
@@ -87,7 +106,7 @@ export const usePollingWithNavigate = ({
       if (interval) window.clearInterval(interval)
       document.removeEventListener('yt-navigate-finish', handleNavigate)
     }
-  }, [checkFn, intervalMs, maxAttempts, stopOnSuccess])
+  }, [checkFn, intervalMs, maxAttempts, stopOnSuccess, stopWhen])
 
   return result
 }

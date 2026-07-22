@@ -16,6 +16,7 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(state.isOpenSettingModal).toBe(false)
     expect(state.isIframeLoaded).toBe(false)
     expect(state.isAutoOpeningNativeChat).toBe(false)
+    expect(state.unavailableLiveChatVideoId).toBeNull()
     expect(state.iframeElement).toBeNull()
     expect(state.menuItem).toBe('setting')
   })
@@ -28,6 +29,7 @@ describe('useYTDLiveChatNoLsStore', () => {
     state.setIsOpenSettingModal(true)
     state.setIsIframeLoaded(true)
     state.setIsAutoOpeningNativeChat(true)
+    state.setUnavailableLiveChatVideoId('video-a')
     state.setMenuItem('preset')
 
     const updated = useYTDLiveChatNoLsStore.getState()
@@ -37,6 +39,7 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(updated.isOpenSettingModal).toBe(true)
     expect(updated.isIframeLoaded).toBe(true)
     expect(updated.isAutoOpeningNativeChat).toBe(true)
+    expect(updated.unavailableLiveChatVideoId).toBe('video-a')
     expect(updated.menuItem).toBe('preset')
   })
 })

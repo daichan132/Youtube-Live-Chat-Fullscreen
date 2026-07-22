@@ -7,6 +7,7 @@ import {
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getLiveChatDocument, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { isYouTubeLiveNow } from '@/entrypoints/content/utils/isYouTubeLiveNow'
+import { getUnavailableCurrentLiveChatVideoId } from '../runtime/liveChatAvailability'
 import type { LiveChatSource } from '../runtime/types'
 
 export const getLiveChatUrlForVideo = (videoId: string) => {
@@ -18,7 +19,14 @@ export const getLiveChatUrlForVideo = (videoId: string) => {
 export const resolveLiveSource = (videoId: string | null, currentIframe: HTMLIFrameElement | null = null): LiveChatSource | null => {
   if (!videoId) return null
 
-  if (currentIframe && !isManagedLiveIframe(currentIframe) && isLiveChatIframe(currentIframe)) {
+  if (getUnavailableCurrentLiveChatVideoId(currentIframe)) return null
+
+  if (
+    currentIframe &&
+    !isManagedLiveIframe(currentIframe) &&
+    isIframeForCurrentVideo(currentIframe, videoId) &&
+    isLiveChatIframe(currentIframe)
+  ) {
     return {
       kind: 'live_borrow',
       videoId,

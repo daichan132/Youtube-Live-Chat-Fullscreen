@@ -1,4 +1,4 @@
-import { getVideoIdFromUrl } from '@/entrypoints/content/utils/getYouTubeVideoId'
+import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 
 export const YLC_OWNED_ATTR = 'data-ylc-owned'
 export const YLC_CHAT_ATTR = 'data-ylc-chat'
@@ -79,21 +79,21 @@ const markObservedElementForCurrentVideo = (element: Element | null | undefined,
   return true
 }
 
-export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId = getVideoIdFromUrl()) => {
+export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId = getCurrentYouTubeVideoId()) => {
   if (getDeclaredIframeVideoId(iframe)) return
   if (!isReplayChatIframe(iframe) && !isLiveChatIframe(iframe)) return
   if (!markObservedElementForCurrentVideo(iframe, currentVideoId)) return
   markObservedElementForCurrentVideo(getChatHost(iframe), currentVideoId)
 }
 
-const markChatHostObservedForCurrentVideo = (host: Element, currentVideoId = getVideoIdFromUrl()) => {
+const markChatHostObservedForCurrentVideo = (host: Element, currentVideoId = getCurrentYouTubeVideoId()) => {
   markObservedElementForCurrentVideo(host, currentVideoId)
   for (const iframe of Array.from(host.querySelectorAll<HTMLIFrameElement>('iframe'))) {
     markChatIframeObservedForCurrentVideo(iframe, currentVideoId)
   }
 }
 
-const markObservedChatNodes = (root: ParentNode, currentVideoId = getVideoIdFromUrl()) => {
+const markObservedChatNodes = (root: ParentNode, currentVideoId = getCurrentYouTubeVideoId()) => {
   if (root instanceof HTMLIFrameElement) {
     markChatIframeObservedForCurrentVideo(root, currentVideoId)
   }
@@ -121,7 +121,7 @@ export const ensureChatIframeObservation = () => {
 
   markObservedChatNodes(document)
   chatIframeObserver = new MutationObserver(mutations => {
-    const currentVideoId = getVideoIdFromUrl()
+    const currentVideoId = getCurrentYouTubeVideoId()
     for (const mutation of mutations) {
       if (mutation.type === 'attributes' && mutation.target instanceof HTMLIFrameElement) {
         markChatIframeObservedForCurrentVideo(mutation.target, currentVideoId)
@@ -152,7 +152,7 @@ export const ensureChatIframeObservation = () => {
 
 export const isChatHostForCurrentVideo = (host: HTMLElement | null | undefined) => {
   if (!host) return false
-  const currentVideoId = getVideoIdFromUrl()
+  const currentVideoId = getCurrentYouTubeVideoId()
   if (!currentVideoId) return false
   const hasCurrentIframe = Array.from(host.querySelectorAll<HTMLIFrameElement>('iframe')).some(iframe =>
     isIframeForCurrentVideo(iframe, currentVideoId),
@@ -220,15 +220,15 @@ export const getIframeVideoId = (iframe: HTMLIFrameElement) => {
 }
 
 export const isIframeForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId: string | null) => {
-  const urlVideoId = getVideoIdFromUrl()
-  if (!urlVideoId) return false
-  if (currentVideoId && currentVideoId !== urlVideoId) return false
+  const pageVideoId = getCurrentYouTubeVideoId()
+  if (!pageVideoId) return false
+  if (currentVideoId && currentVideoId !== pageVideoId) return false
   const iframeVideoId = getIframeVideoId(iframe)
   if (!iframeVideoId) return false
-  return iframeVideoId === urlVideoId
+  return iframeVideoId === pageVideoId
 }
 
-export const getCurrentLiveChatIframe = (currentVideoId = getVideoIdFromUrl()) =>
+export const getCurrentLiveChatIframe = (currentVideoId = getCurrentYouTubeVideoId()) =>
   getLiveChatIframes().find(iframe => isIframeForCurrentVideo(iframe, currentVideoId)) ?? null
 
 export const getCurrentLiveChatHost = () =>

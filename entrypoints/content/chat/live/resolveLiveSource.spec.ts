@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
+import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import type { LiveChatSource } from '../runtime/types'
 import { resolveLiveSource } from './resolveLiveSource'
 
@@ -84,14 +85,14 @@ const createUnscopedReplayButton = () => {
 const expectLiveDirectSource = (source: LiveChatSource | null) => {
   expect(source).not.toBeNull()
   expect(source?.kind).toBe('live_direct')
-  if (!source || source.kind !== 'live_direct') throw new Error('Expected live_direct source')
+  if (source?.kind !== 'live_direct') throw new Error('Expected live_direct source')
   return source
 }
 
 const expectLiveBorrowSource = (source: LiveChatSource | null) => {
   expect(source).not.toBeNull()
   expect(source?.kind).toBe('live_borrow')
-  if (!source || source.kind !== 'live_borrow') throw new Error('Expected live_borrow source')
+  if (source?.kind !== 'live_borrow') throw new Error('Expected live_borrow source')
   return source
 }
 
@@ -263,6 +264,7 @@ describe('resolveLiveSource', () => {
 
   it('keeps a borrowed live iframe during transient signal loss', () => {
     const borrowedLiveIframe = document.createElement('iframe')
+    borrowedLiveIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
     Object.defineProperty(borrowedLiveIframe, 'contentDocument', {
       value: createPlayableLiveChatDoc('video-a', 'live_chat', 'https://www.youtube.com/live_chat?continuation=current-live-chat'),
       configurable: true,
@@ -270,5 +272,65 @@ describe('resolveLiveSource', () => {
 
     const source = resolveLiveSource('video-a', borrowedLiveIframe)
     expect(expectLiveBorrowSource(source).iframe).toBe(borrowedLiveIframe)
+  })
+
+  it('rejects a borrowed live iframe from another video', () => {
+    createWatchFlexy({ 'video-id': 'video-a', 'is-live-now': null })
+    const borrowedLiveIframe = document.createElement('iframe')
+    borrowedLiveIframe.src = 'https://www.youtube.com/live_chat?v=video-b'
+
+    const source = resolveLiveSource('video-a', borrowedLiveIframe)
+    expect(expectLiveDirectSource(source).url).toBe('https://www.youtube.com/live_chat?v=video-a')
+  })
+
+  it('returns null when a borrowed current live iframe becomes unavailable', () => {
+    createWatchFlexy({ 'video-id': 'video-a', 'is-live-now': null })
+    const borrowedLiveIframe = document.createElement('iframe')
+    borrowedLiveIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    Object.defineProperty(borrowedLiveIframe, 'contentDocument', {
+      value: createUnavailableLiveChatDoc('video-a'),
+      configurable: true,
+    })
+
+    expect(resolveLiveSource('video-a', borrowedLiveIframe)).toBeNull()
+  })
+
+  it('borrows current native chat on a channel live entry', () => {
+    setLocation('/@lofi/live')
+    createWatchFlexy({ 'video-id': 'channel-live-video', 'is-live-now': null })
+    const nativeIframe = createNativeChatIframe('channel-live-video', 'live_chat')
+
+    const source = resolveLiveSource(getCurrentYouTubeVideoId())
+
+    expect(expectLiveBorrowSource(source).iframe).toBe(nativeIframe)
+  })
+
+  it('rejects unavailable native chat on a channel live entry', () => {
+    setLocation('/channel/UC123/live')
+    createWatchFlexy({ 'video-id': 'channel-live-video', 'is-live-now': null })
+    createNativeChatIframe('channel-live-video', 'live_chat', { unavailable: true })
+
+    expect(resolveLiveSource(getCurrentYouTubeVideoId())).toBeNull()
+  })
+
+  it('borrows the new current iframe after a video switch within a channel live entry', () => {
+    setLocation('/@lofi/live')
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    watchFlexy.setAttribute('is-live-now', '')
+    document.body.appendChild(watchFlexy)
+    const nativeIframe = createNativeChatIframe('video-a', 'live_chat')
+
+    expect(expectLiveBorrowSource(resolveLiveSource(getCurrentYouTubeVideoId())).iframe).toBe(nativeIframe)
+
+    watchFlexy.setAttribute('video-id', 'video-b')
+    nativeIframe.src = 'https://www.youtube.com/live_chat?v=video-b'
+    Object.defineProperty(nativeIframe, 'contentDocument', {
+      value: createPlayableLiveChatDoc('video-b'),
+      configurable: true,
+    })
+
+    expect(getCurrentYouTubeVideoId()).toBe('video-b')
+    expect(expectLiveBorrowSource(resolveLiveSource(getCurrentYouTubeVideoId())).iframe).toBe(nativeIframe)
   })
 })

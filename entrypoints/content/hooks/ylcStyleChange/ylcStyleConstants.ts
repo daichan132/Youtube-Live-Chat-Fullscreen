@@ -38,3 +38,22 @@ export const YLC_SPACING_PROPERTY = '--extension-yt-live-chat-spacing'
 export const YLC_USER_NAME_DISPLAY_PROPERTY = '--extension-user-name-display'
 export const YLC_USER_ICON_DISPLAY_PROPERTY = '--extension-user-icon-display'
 export const YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY = '--extension-super-chat-bar-display'
+
+/** Inline properties owned by the extension on the live-chat documentElement. */
+export const YLC_DOCUMENT_STYLE_PROPERTIES = [
+  ...YLC_BG_COLOR_PROPERTIES,
+  ...YLC_BG_DARKEN_PROPERTIES.map(({ property }) => property),
+  ...YLC_BG_TRANSPARENT_PROPERTIES,
+  ...YLC_BG_SURFACE_PROPERTIES,
+  YLC_PANEL_BACKGROUND_PROPERTY,
+  ...YLC_FONT_COLOR_PROPERTIES,
+  ...YLC_FONT_COLOR_LIGHT_PROPERTIES,
+  ...YLC_FONT_COLOR_SURFACE_PROPERTIES,
+  YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
+  YLC_FONT_SIZE_PROPERTY,
+  YLC_SPACING_PROPERTY,
+  YLC_USER_NAME_DISPLAY_PROPERTY,
+  YLC_USER_ICON_DISPLAY_PROPERTY,
+  YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
+  'font-family',
+] as const

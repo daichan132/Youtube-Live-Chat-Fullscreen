@@ -3,6 +3,7 @@ import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/s
 
 type IframeInitializerOptions = {
   iframeStyles: string
+  beforeApplyStyle?: (iframe: HTMLIFrameElement) => void
   applyChatStyle: () => void
   setIsIframeLoaded: (value: boolean) => void
   retryIntervalMs?: number
@@ -31,7 +32,14 @@ const getIframeDocument = (iframe: HTMLIFrameElement) => {
   }
 }
 
-const MEMBERSHIP_FALLBACK_MARKER_ATTR = 'data-ylc-membership-fallback'
+export const MEMBERSHIP_FALLBACK_MARKER_ATTR = 'data-ylc-membership-fallback'
+
+type MembershipFallbackRegistration = {
+  body: HTMLElement
+  listener: EventListener
+}
+
+const membershipFallbackRegistrations = new WeakMap<Document, MembershipFallbackRegistration>()
 
 const decodeOfferParams = (params: string | null | undefined) => {
   if (!params) return ''
@@ -67,26 +75,37 @@ const getMembershipChannelUrl = (item: Element) => {
 }
 
 const installMembershipFallback = (doc: Document) => {
-  if (doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)) return
-  doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'true')
-  doc.body.addEventListener(
-    'click',
-    event => {
-      const target = event.target
-      if (!target || !('closest' in target)) return
+  const body = doc.body
+  if (membershipFallbackRegistrations.has(doc) || body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)) return
 
-      const item = (target as Element).closest('yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]')
-      if (!item) return
+  const listener = (event: Event) => {
+    const target = event.target
+    if (!target || !('closest' in target)) return
 
-      const joinUrl = getMembershipChannelUrl(item)
-      if (!joinUrl) return
+    const item = (target as Element).closest('yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]')
+    if (!item) return
 
-      event.preventDefault()
-      event.stopPropagation()
-      window.open(joinUrl, '_blank', 'noopener')
-    },
-    true,
-  )
+    const joinUrl = getMembershipChannelUrl(item)
+    if (!joinUrl) return
+
+    event.preventDefault()
+    event.stopPropagation()
+    window.open(joinUrl, '_blank', 'noopener')
+  }
+
+  body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'true')
+  body.addEventListener('click', listener, true)
+  membershipFallbackRegistrations.set(doc, { body, listener })
+}
+
+export const uninstallMembershipFallback = (doc: Document) => {
+  const registration = membershipFallbackRegistrations.get(doc)
+  if (!registration) return false
+
+  registration.body.removeEventListener('click', registration.listener, true)
+  registration.body.removeAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)
+  membershipFallbackRegistrations.delete(doc)
+  return true
 }
 
 const ensureStyleInjected = (doc: Document, cssText: string) => {
@@ -101,6 +120,7 @@ const ensureStyleInjected = (doc: Document, cssText: string) => {
 
 export const createIframeInitializer = ({
   iframeStyles,
+  beforeApplyStyle,
   applyChatStyle,
   setIsIframeLoaded,
   retryIntervalMs = 1000,
@@ -132,6 +152,7 @@ export const createIframeInitializer = ({
       // cross-origin doc.location access throws — the document is real, not blank.
     }
 
+    beforeApplyStyle?.(iframe)
     const styleInjected = ensureStyleInjected(doc, iframeStyles)
     const classAdded = !doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)
     if (classAdded) {

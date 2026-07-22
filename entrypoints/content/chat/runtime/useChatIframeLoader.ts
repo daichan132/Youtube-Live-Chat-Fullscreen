@@ -9,14 +9,20 @@ import {
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import iframeStyles from '../../features/YTDLiveChatIframe/styles'
-import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
+import {
+  attachIframeToContainer,
+  captureAttachedBorrowedIframeDocumentStyle,
+  detachAttachedIframe,
+  resolveSourceIframe,
+} from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
 import { createIframeInitializer } from '../../features/YTDLiveChatIframe/utils/iframeInitializer'
 import { getIframeDocumentHref, getNonBlankIframeHref, isManagedLiveIframe, YLC_CHAT_ATTR } from '../shared/iframeDom'
+import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import type { ChatMode } from './types'
 
 const TRANSITION_CHECK_INTERVAL_MS = 1000
-
-const isArchiveMode = (mode: ChatMode) => mode === 'archive'
+const BORROWED_AVAILABILITY_CHECK_INTERVAL_MS = 1000
+const BORROWED_AVAILABILITY_MAX_ATTEMPTS = 30
 
 export const useChatIframeLoader = (mode: ChatMode) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -25,6 +31,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
   const setIsDisplay = useYTDLiveChatNoLsStore(state => state.setIsDisplay)
   const setIsIframeLoaded = useYTDLiveChatNoLsStore(state => state.setIsIframeLoaded)
   const setIFrameElement = useYTDLiveChatNoLsStore(state => state.setIFrameElement)
+  const setUnavailableLiveChatVideoId = useYTDLiveChatNoLsStore(state => state.setUnavailableLiveChatVideoId)
 
   const setIsIframeLoadedRef = useRef(setIsIframeLoaded)
   const setIsDisplayRef = useRef(setIsDisplay)
@@ -75,22 +82,97 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     setIsDisplayRef.current(false)
     lastAttachedPageVideoIdRef.current = null
 
+    const resetUnavailableLiveChatForNavigation = () => {
+      const currentVideoId = getCurrentYouTubeVideoId()
+      const unavailableVideoId = useYTDLiveChatNoLsStore.getState().unavailableLiveChatVideoId
+      if (unavailableVideoId && unavailableVideoId !== currentVideoId) {
+        setUnavailableLiveChatVideoId(null)
+      }
+    }
+
+    const isCurrentLiveChatTerminallyUnavailable = () => {
+      if (mode !== 'live') return false
+      const currentVideoId = getCurrentYouTubeVideoId()
+      return Boolean(currentVideoId && useYTDLiveChatNoLsStore.getState().unavailableLiveChatVideoId === currentVideoId)
+    }
+
+    const captureCurrentLiveChatUnavailable = (candidateIframe: HTMLIFrameElement | null = iframeRef.current) => {
+      if (mode !== 'live') return false
+      const unavailableVideoId = getUnavailableCurrentLiveChatVideoId(candidateIframe)
+      if (!unavailableVideoId) return false
+      setUnavailableLiveChatVideoId(unavailableVideoId)
+      return true
+    }
+
+    resetUnavailableLiveChatForNavigation()
+
     const initializer = createIframeInitializer({
       iframeStyles,
+      beforeApplyStyle: captureAttachedBorrowedIframeDocumentStyle,
       applyChatStyle: applyCurrentChatStyle,
       setIsIframeLoaded: setIsIframeLoadedRef.current,
     })
 
-    const handleLoaded = () => {
-      const iframe = iframeRef.current
-      if (!iframe) return
-      initializer.initialize(iframe)
+    let borrowedAvailabilityInterval: number | null = null
+    let borrowedAvailabilityIframe: HTMLIFrameElement | null = null
+    let borrowedAvailabilityAttempts = 0
+
+    const stopBorrowedAvailabilityWatch = () => {
+      if (borrowedAvailabilityInterval) {
+        window.clearInterval(borrowedAvailabilityInterval)
+        borrowedAvailabilityInterval = null
+      }
+      borrowedAvailabilityIframe = null
+      borrowedAvailabilityAttempts = 0
     }
 
-    const detachCurrentIframe = (options?: { ensureNativeVisible?: boolean }) => {
+    const startBorrowedAvailabilityWatch = (iframe: HTMLIFrameElement, restart = false) => {
+      if (mode !== 'live' || isManagedLiveIframe(iframe)) {
+        stopBorrowedAvailabilityWatch()
+        return
+      }
+      if (!restart && borrowedAvailabilityInterval && borrowedAvailabilityIframe === iframe) return
+
+      stopBorrowedAvailabilityWatch()
+      borrowedAvailabilityIframe = iframe
+      borrowedAvailabilityInterval = window.setInterval(() => {
+        if (iframeRef.current !== iframe || !iframe.isConnected) {
+          stopBorrowedAvailabilityWatch()
+          return
+        }
+
+        borrowedAvailabilityAttempts += 1
+        if (captureCurrentLiveChatUnavailable(iframe)) {
+          detachCurrentIframe()
+          observer?.disconnect()
+          stopRetry()
+          return
+        }
+
+        if (borrowedAvailabilityAttempts >= BORROWED_AVAILABILITY_MAX_ATTEMPTS) {
+          stopBorrowedAvailabilityWatch()
+        }
+      }, BORROWED_AVAILABILITY_CHECK_INTERVAL_MS)
+    }
+
+    function handleLoaded() {
+      const iframe = iframeRef.current
+      if (!iframe) return
+      if (captureCurrentLiveChatUnavailable(iframe)) {
+        detachCurrentIframe()
+        observer?.disconnect()
+        stopRetry()
+        return
+      }
+      initializer.initialize(iframe)
+      startBorrowedAvailabilityWatch(iframe, true)
+    }
+
+    function detachCurrentIframe(options?: { ensureNativeVisible?: boolean }) {
       const current = iframeRef.current
       if (!current) return
 
+      stopBorrowedAvailabilityWatch()
       initializer.cleanup()
       current.removeEventListener('load', handleLoaded)
       detachAttachedIframe(current, ref.current, options)
@@ -114,10 +196,19 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       updateAttachedVideoId()
       if (getIframeDocumentHref(iframe) || isManagedLiveIframe(iframe)) {
         handleLoaded()
+      } else {
+        startBorrowedAvailabilityWatch(iframe)
       }
     }
 
     const syncChatSource = () => {
+      if (isCurrentLiveChatTerminallyUnavailable() || captureCurrentLiveChatUnavailable()) {
+        if (iframeRef.current) {
+          detachCurrentIframe()
+        }
+        return false
+      }
+
       const source = resolveSourceByMode()
       if (!source) {
         if (iframeRef.current) {
@@ -170,7 +261,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     }
 
     const handleVideoTransition = () => {
-      if (!isArchiveMode(mode)) return false
+      if (mode === 'none') return false
 
       const previousVideoId = lastAttachedPageVideoIdRef.current
       const currentVideoId = getCurrentYouTubeVideoId()
@@ -210,6 +301,11 @@ export const useChatIframeLoader = (mode: ChatMode) => {
           }
           return
         }
+        if (isCurrentLiveChatTerminallyUnavailable()) {
+          observer?.disconnect()
+          stopRetry()
+          return
+        }
         if (Date.now() - retryStartedAt >= retryMaxMs) {
           stopRetry()
         }
@@ -238,6 +334,11 @@ export const useChatIframeLoader = (mode: ChatMode) => {
             observer?.disconnect()
             stopRetry()
           }
+          return
+        }
+        if (isCurrentLiveChatTerminallyUnavailable()) {
+          observer?.disconnect()
+          stopRetry()
         }
       })
 
@@ -246,6 +347,11 @@ export const useChatIframeLoader = (mode: ChatMode) => {
 
     const syncOrWatch = () => {
       if (syncChatSource() && !shouldKeepWatchingForLiveNativeUrl()) return
+      if (isCurrentLiveChatTerminallyUnavailable()) {
+        observer?.disconnect()
+        stopRetry()
+        return
+      }
       setupObserver()
       startRetry()
     }
@@ -253,6 +359,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     syncOrWatch()
 
     const handleNavigate = () => {
+      resetUnavailableLiveChatForNavigation()
       if (handleVideoTransition()) return
 
       // In live mode, skip teardown when the video hasn't changed to prevent
@@ -270,7 +377,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     }
 
     const transitionCheckInterval = window.setInterval(() => {
-      if (!iframeRef.current || !isArchiveMode(mode)) return
+      if (!iframeRef.current) return
       handleVideoTransition()
     }, TRANSITION_CHECK_INTERVAL_MS)
 
@@ -288,12 +395,13 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange)
       observer?.disconnect()
       stopRetry()
+      stopBorrowedAvailabilityWatch()
       window.clearInterval(transitionCheckInterval)
       detachCurrentIframe({
         ensureNativeVisible: document.fullscreenElement === null && mode === 'archive',
       })
     }
-  }, [mode, setIFrameElement])
+  }, [mode, setIFrameElement, setUnavailableLiveChatVideoId])
 
   return { ref }
 }

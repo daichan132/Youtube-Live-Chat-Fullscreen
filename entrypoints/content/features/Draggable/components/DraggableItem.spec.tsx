@@ -1,4 +1,4 @@
-import { act, fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import type { CSSProperties, ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
@@ -334,7 +334,7 @@ describe('DraggableItem', () => {
     expect(useYTDLiveChatStore.getState().size).toEqual({ width: ResizableMinWidth, height: ResizableMinHeight })
   })
 
-  it('disables YouTube pointer events while dragging and restores them on cleanup', () => {
+  it('disables YouTube pointer events only while dragging and restores an empty inline value', () => {
     const ytdApp = document.createElement('ytd-app')
     document.body.style.cursor = 'wait'
     ytdApp.style.cursor = 'progress'
@@ -357,17 +357,85 @@ describe('DraggableItem', () => {
         <div />
       </DraggableItem>,
     )
-    expect(ytdApp.style.pointerEvents).toBe('auto')
+    expect(ytdApp.style.pointerEvents).toBe('')
     expect(document.body.style.cursor).toBe('wait')
     expect(ytdApp.style.cursor).toBe('progress')
 
-    ytdApp.style.pointerEvents = 'none'
-    document.body.style.cursor = 'wait'
-    ytdApp.style.cursor = 'progress'
+    draggableState.isDragging = true
+    rerender(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+    expect(ytdApp.style.pointerEvents).toBe('none')
+
     unmount()
-    expect(ytdApp.style.pointerEvents).toBe('auto')
+    expect(ytdApp.style.pointerEvents).toBe('')
     expect(document.body.style.cursor).toBe('wait')
     expect(ytdApp.style.cursor).toBe('progress')
+  })
+
+  it('restores a pre-existing none pointer-events value and important priority', () => {
+    const ytdApp = document.createElement('ytd-app')
+    ytdApp.style.setProperty('pointer-events', 'none', 'important')
+    document.body.appendChild(ytdApp)
+    draggableState.isDragging = true
+
+    const { rerender } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(ytdApp.style.getPropertyValue('pointer-events')).toBe('none')
+
+    draggableState.isDragging = false
+    rerender(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(ytdApp.style.getPropertyValue('pointer-events')).toBe('none')
+    expect(ytdApp.style.getPropertyPriority('pointer-events')).toBe('important')
+  })
+
+  it('restores replaced ytd-app elements independently while dragging', async () => {
+    const firstYtdApp = document.createElement('ytd-app')
+    firstYtdApp.style.setProperty('pointer-events', 'auto', 'important')
+    firstYtdApp.style.cursor = 'crosshair'
+    document.body.appendChild(firstYtdApp)
+    draggableState.isDragging = true
+
+    const { rerender } = render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+    expect(firstYtdApp.style.pointerEvents).toBe('none')
+
+    const replacementYtdApp = document.createElement('ytd-app')
+    replacementYtdApp.style.setProperty('pointer-events', 'inherit', 'important')
+    replacementYtdApp.style.cursor = 'help'
+    firstYtdApp.replaceWith(replacementYtdApp)
+
+    await waitFor(() => {
+      expect(replacementYtdApp.style.pointerEvents).toBe('none')
+    })
+    expect(firstYtdApp.style.getPropertyValue('pointer-events')).toBe('auto')
+    expect(firstYtdApp.style.getPropertyPriority('pointer-events')).toBe('important')
+    expect(firstYtdApp.style.cursor).toBe('crosshair')
+
+    draggableState.isDragging = false
+    rerender(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    expect(replacementYtdApp.style.getPropertyValue('pointer-events')).toBe('inherit')
+    expect(replacementYtdApp.style.getPropertyPriority('pointer-events')).toBe('important')
+    expect(replacementYtdApp.style.cursor).toBe('help')
   })
 
   it('hides the chat when idle, not hovering, focused, and settings are closed', () => {

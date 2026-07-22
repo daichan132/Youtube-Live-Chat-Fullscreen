@@ -34,4 +34,50 @@ describe('usePollingWithNavigate', () => {
     expect(result.current).toBe(true)
     expect(checkFn).toHaveBeenCalledTimes(3)
   })
+
+  it('does not start polling when a terminal stop condition is already met', () => {
+    const checkFn = vi.fn(() => true)
+    const stopWhen = vi.fn(() => true)
+    const { result } = renderHook(() =>
+      usePollingWithNavigate({
+        checkFn,
+        intervalMs: 1000,
+        stopWhen,
+      }),
+    )
+
+    expect(result.current).toBe(false)
+    expect(checkFn).not.toHaveBeenCalled()
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+    expect(checkFn).not.toHaveBeenCalled()
+  })
+
+  it('stops polling when a terminal condition becomes true', () => {
+    let terminal = false
+    const checkFn = vi.fn(() => false)
+    const { result } = renderHook(() =>
+      usePollingWithNavigate({
+        checkFn,
+        intervalMs: 1000,
+        stopWhen: () => terminal,
+      }),
+    )
+
+    expect(checkFn).toHaveBeenCalledTimes(1)
+    terminal = true
+
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+    expect(result.current).toBe(false)
+    expect(checkFn).toHaveBeenCalledTimes(1)
+
+    act(() => {
+      vi.advanceTimersByTime(5000)
+    })
+    expect(checkFn).toHaveBeenCalledTimes(1)
+  })
 })

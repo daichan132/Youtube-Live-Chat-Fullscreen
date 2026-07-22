@@ -60,6 +60,27 @@ describe('isYouTubeLiveNow', () => {
     expect(isYouTubeLiveNow()).toBe(false)
   })
 
+  it('recognizes matching live signals on a channel live entry', () => {
+    window.history.pushState({}, '', `${window.location.origin}/@lofi/live`)
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'channel-live-video')
+    watchFlexy.setAttribute('is-live-now', '')
+    document.body.appendChild(watchFlexy)
+
+    expect(isYouTubeLiveNow()).toBe(true)
+  })
+
+  it('rejects conflicting live signals on a channel live entry', () => {
+    window.history.pushState({}, '', `${window.location.origin}/@lofi/live`)
+    createMoviePlayer(true, 'video-a')
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-b')
+    watchFlexy.setAttribute('is-live-now', '')
+    document.body.appendChild(watchFlexy)
+
+    expect(isYouTubeLiveNow()).toBe(false)
+  })
+
   it('returns false when only live-chat-present-and-expanded exists without live signals', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('live-chat-present-and-expanded', '')
@@ -253,6 +274,28 @@ describe('isYouTubeLiveNow', () => {
     script.textContent =
       'var ytInitialPlayerResponse = {"videoDetails":{"videoId":"stale-video"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};'
     document.head.appendChild(script)
+
+    expect(isYouTubeLiveNow()).toBe(false)
+  })
+
+  it('does not reuse inline live cache after a video switch on the same channel live URL', () => {
+    const videoA = `channel-live-a-${Math.random().toString(16).slice(2)}`
+    const videoB = `channel-live-b-${Math.random().toString(16).slice(2)}`
+    window.history.pushState({}, '', `${window.location.origin}/@lofi/live`)
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', videoA)
+    document.body.appendChild(watchFlexy)
+
+    const scriptA = document.createElement('script')
+    scriptA.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoA}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
+    document.head.appendChild(scriptA)
+
+    expect(isYouTubeLiveNow()).toBe(true)
+
+    watchFlexy.setAttribute('video-id', videoB)
+    const scriptB = document.createElement('script')
+    scriptB.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoB}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":false}}}};`
+    document.head.appendChild(scriptB)
 
     expect(isYouTubeLiveNow()).toBe(false)
   })

@@ -1,5 +1,5 @@
 import { getCurrentLiveChatIframe, isChatHostForCurrentVideo, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
-import { getVideoIdFromUrl } from './getYouTubeVideoId'
+import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 type YouTubeVideoData = {
   isLive?: boolean
@@ -25,7 +25,7 @@ type YouTubeInitialPlayerResponse = {
   }
 }
 
-let cachedScriptLiveNowHref = ''
+let cachedScriptLiveNowKey = ''
 let cachedScriptLiveNowResult: { live: boolean; videoId: string | null } | null = null
 
 const hasReplayLabel = (value: string | null | undefined) => {
@@ -35,20 +35,21 @@ const hasReplayLabel = (value: string | null | undefined) => {
 }
 
 const isExplicitVideoIdCurrent = (videoId: string | null | undefined) => {
-  const currentVideoId = getVideoIdFromUrl()
-  if (!currentVideoId) return true
+  const currentVideoId = getCurrentYouTubeVideoId()
+  if (!currentVideoId) return false
   return videoId === currentVideoId
 }
 
 const isKnownVideoIdCurrent = (videoId: string | null | undefined) => {
-  const currentVideoId = getVideoIdFromUrl()
-  if (!currentVideoId || !videoId) return true
+  const currentVideoId = getCurrentYouTubeVideoId()
+  if (!currentVideoId) return false
+  if (!videoId) return true
   return videoId === currentVideoId
 }
 
 const hasCurrentVideoMarker = (...videoIds: Array<string | null | undefined>) => {
-  const currentVideoId = getVideoIdFromUrl()
-  if (!currentVideoId) return true
+  const currentVideoId = getCurrentYouTubeVideoId()
+  if (!currentVideoId) return false
   return videoIds.some(videoId => videoId === currentVideoId)
 }
 
@@ -61,7 +62,7 @@ const hasLiveNowAttribute = () => {
   )
 }
 
-const isChatFrameForCurrentUrl = (iframe: HTMLIFrameElement): boolean => isIframeForCurrentVideo(iframe, getVideoIdFromUrl())
+const isChatFrameForCurrentUrl = (iframe: HTMLIFrameElement): boolean => isIframeForCurrentVideo(iframe, getCurrentYouTubeVideoId())
 
 const isReplayButtonForCurrentChat = (button: HTMLElement) => {
   const host = button.closest('ytd-live-chat-frame') as HTMLElement | null
@@ -87,7 +88,7 @@ const hasReplayButtonLabel = (button: HTMLElement) =>
   hasReplayLabel(button.getAttribute('data-tooltip-text'))
 
 const hasArchiveReplaySignal = () => {
-  const chatFrame = getCurrentLiveChatIframe(getVideoIdFromUrl())
+  const chatFrame = getCurrentLiveChatIframe(getCurrentYouTubeVideoId())
   if (chatFrame && isChatFrameForCurrentUrl(chatFrame)) {
     try {
       const docHref = chatFrame.contentDocument?.location?.href ?? ''
@@ -176,8 +177,13 @@ const parseLiveNowFromScript = (scriptText: string) => {
 }
 
 const getLiveFromInlinePlayerResponseScript = () => {
-  const href = window.location.href
-  if (cachedScriptLiveNowHref === href) return cachedScriptLiveNowResult?.live ?? null
+  const currentVideoId = getCurrentYouTubeVideoId()
+  if (!currentVideoId) return null
+
+  const cacheKey = `${window.location.href}\n${currentVideoId}`
+  if (cachedScriptLiveNowKey === cacheKey) {
+    return cachedScriptLiveNowResult?.videoId === currentVideoId ? cachedScriptLiveNowResult.live : null
+  }
 
   const scripts = document.querySelectorAll('script')
   for (const script of scripts) {
@@ -185,13 +191,13 @@ const getLiveFromInlinePlayerResponseScript = () => {
     if (!text.includes('ytInitialPlayerResponse')) continue
     const parsed = parseLiveNowFromScript(text)
     if (parsed !== null && isExplicitVideoIdCurrent(parsed.videoId)) {
-      cachedScriptLiveNowHref = href
+      cachedScriptLiveNowKey = cacheKey
       cachedScriptLiveNowResult = parsed
       return parsed.live
     }
   }
 
-  cachedScriptLiveNowHref = href
+  cachedScriptLiveNowKey = cacheKey
   cachedScriptLiveNowResult = null
   return null
 }

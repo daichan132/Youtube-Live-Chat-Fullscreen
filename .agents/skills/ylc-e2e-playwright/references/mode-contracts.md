@@ -6,7 +6,7 @@
 
 | モード | Native iframe | Switch | 拡張 iframe | `data-ylc-owned` |
 |--------|--------------|--------|------------|-----------------|
-| **live** | `live_chat?v=<id>` (playable) | 表示 (auto-open) | 新規作成 | `"true"` |
+| **live** | `live_chat?v=<id>` (playable) | 表示 (auto-open) | native iframe を borrow。取得できない場合のみ managed iframe を作成 | borrow: `!= "true"` / fallback: `"true"` |
 | **archive** | `live_chat_replay` (playable) | 表示 (手動 toggle) | borrow | `!= "true"` |
 | **no-chat** | なし or 無関係 | **非表示** | **なし** | — |
 | **replay-unavailable** | unavailable renderer | **非表示** | **なし** | — |

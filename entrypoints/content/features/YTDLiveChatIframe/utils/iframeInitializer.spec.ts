@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
-import { createIframeInitializer } from './iframeInitializer'
+import { createIframeInitializer, MEMBERSHIP_FALLBACK_MARKER_ATTR, uninstallMembershipFallback } from './iframeInitializer'
 
 const createChatDoc = () => document.implementation.createHTMLDocument('chat') as Document
 
@@ -37,6 +37,29 @@ describe('iframeInitializer', () => {
     expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(true)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenLastCalledWith(true)
+  })
+
+  it('captures a ready document before applying any extension style or body class', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    const beforeApplyStyle = vi.fn(() => {
+      expect(doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).toBeNull()
+      expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
+    })
+
+    createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      beforeApplyStyle,
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    }).initialize(iframe)
+
+    expect(beforeApplyStyle).toHaveBeenCalledOnce()
   })
 
   it('fails open and retries style initialization when document access is blocked', () => {
@@ -177,5 +200,34 @@ describe('iframeInitializer', () => {
     endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
 
     expect(openSpy).toHaveBeenCalledWith('https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow/join', '_blank', 'noopener')
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
+
+    expect(uninstallMembershipFallback(doc)).toBe(true)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe(false)
+    expect(uninstallMembershipFallback(doc)).toBe(false)
+  })
+
+  it('preserves a membership fallback marker it did not install', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'native-value')
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    const initializer = createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    })
+
+    initializer.initialize(iframe)
+
+    expect(uninstallMembershipFallback(doc)).toBe(false)
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('native-value')
   })
 })

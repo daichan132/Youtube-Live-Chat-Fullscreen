@@ -12,6 +12,7 @@ import {
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
 import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from './iframeAttachment'
+import { createIframeInitializer, MEMBERSHIP_FALLBACK_MARKER_ATTR } from './iframeInitializer'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
   openArchiveNativeChatPanel: vi.fn(),
@@ -177,6 +178,7 @@ describe('iframeAttachment', () => {
     expect(container.contains(host)).toBe(false)
     expect(container.contains(iframe)).toBe(true)
     expect(host.contains(iframe)).toBe(false)
+    expect(iframe.getAttribute('allowtransparency')).toBe('true')
 
     detachAttachedIframe(iframe, container)
     expect(originalParent.contains(host)).toBe(true)
@@ -188,6 +190,7 @@ describe('iframeAttachment', () => {
     expect(iframe.style.borderStyle).toBe('solid')
     expect(iframe.style.borderWidth).toBe('2px')
     expect(iframe.style.outline).toBe('1px solid red')
+    expect(iframe.hasAttribute('allowtransparency')).toBe(false)
   })
 
   it('cleans extension iframe document styles when restoring a borrowed iframe', () => {
@@ -195,24 +198,26 @@ describe('iframeAttachment', () => {
     const originalParent = document.createElement('div')
     const host = document.createElement('ytd-live-chat-frame')
     const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.setAttribute('allowtransparency', 'native-value')
     const doc = document.implementation.createHTMLDocument('')
-    doc.body.classList.add(
-      IFRAME_CHAT_BODY_CLASS,
-      IFRAME_CHAT_ONLY_CLASS,
-      IFRAME_CHAT_ONLY_TRANSITION_CLASS,
-      IFRAME_CHAT_ONLY_MEASURING_CLASS,
-    )
-    doc.body.style.setProperty('backdrop-filter', 'blur(8px)')
-    doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(8px)')
-    doc.body.style.setProperty('--extension-chat-only-header-height', '54px')
-    doc.body.style.setProperty('--extension-chat-only-input-panel-height', '112px')
-    doc.body.style.setProperty('--extension-chat-only-input-height', '96px')
+    doc.documentElement.style.setProperty('--yt-live-chat-background-color', 'rgb(1, 2, 3)', 'important')
+    doc.documentElement.style.setProperty('--extension-yt-live-font-color', 'rgb(4, 5, 6)')
+    doc.documentElement.style.setProperty('font-family', 'Native Chat', 'important')
+    const nativeFontFamilyValue = doc.documentElement.style.getPropertyValue('font-family')
+    doc.body.style.setProperty('backdrop-filter', 'blur(2px)', 'important')
+    doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(3px)')
+    const nativeWebkitBackdropFilterValue = doc.body.style.getPropertyValue('-webkit-backdrop-filter')
+    iframe.style.setProperty('filter', 'contrast(1.2)', 'important')
+    iframe.style.setProperty('-webkit-filter', 'saturate(0.8)')
+    const nativeWebkitFilterValue = iframe.style.getPropertyValue('-webkit-filter')
+    const nativeFontStyle = doc.createElement('style')
+    nativeFontStyle.id = 'custom-font-style'
+    nativeFontStyle.textContent = '@font-face { font-family: NativeChat; }'
+    doc.head.appendChild(nativeFontStyle)
+    const fontStyleNextSibling = doc.createElement('meta')
+    doc.head.appendChild(fontStyleNextSibling)
     const header = doc.createElement('yt-live-chat-header-renderer')
-    header.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, '54px')
     doc.body.appendChild(header)
-    const injectedStyle = doc.createElement('style')
-    injectedStyle.setAttribute(IFRAME_STYLE_MARKER_ATTR, 'true')
-    doc.head.appendChild(injectedStyle)
     Object.defineProperty(iframe, 'contentDocument', {
       value: doc,
       configurable: true,
@@ -224,20 +229,175 @@ describe('iframeAttachment', () => {
     document.body.appendChild(container)
 
     attachIframeToContainer(container, iframe)
+    expect(iframe.getAttribute('allowtransparency')).toBe('true')
+
+    doc.documentElement.style.setProperty('--yt-live-chat-background-color', 'transparent')
+    doc.documentElement.style.setProperty('--extension-yt-live-font-color', 'rgb(255, 255, 255)', 'important')
+    doc.documentElement.style.setProperty('--extension-user-name-display', 'none')
+    doc.documentElement.style.setProperty('font-family', 'Extension Font')
+    doc.body.classList.add(
+      IFRAME_CHAT_BODY_CLASS,
+      IFRAME_CHAT_ONLY_CLASS,
+      IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+      IFRAME_CHAT_ONLY_MEASURING_CLASS,
+    )
+    doc.body.style.setProperty('backdrop-filter', 'blur(8px)')
+    doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(8px)')
+    doc.body.style.setProperty('--extension-chat-only-header-height', '54px')
+    doc.body.style.setProperty('--extension-chat-only-input-panel-height', '112px')
+    doc.body.style.setProperty('--extension-chat-only-input-height', '96px')
+    header.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, '54px')
+    iframe.style.setProperty('filter', 'none')
+    iframe.style.setProperty('-webkit-filter', 'none', 'important')
+    nativeFontStyle.remove()
+    const extensionFontStyle = doc.createElement('style')
+    extensionFontStyle.id = 'custom-font-style'
+    extensionFontStyle.textContent = "@import url('https://fonts.googleapis.com/css2?family=Extension+Font');"
+    doc.head.appendChild(extensionFontStyle)
+    const injectedStyle = doc.createElement('style')
+    injectedStyle.setAttribute(IFRAME_STYLE_MARKER_ATTR, 'true')
+    doc.head.appendChild(injectedStyle)
+    // A duplicate load for the same Document must not overwrite the pristine snapshot.
+    iframe.dispatchEvent(new Event('load'))
     detachAttachedIframe(iframe, container)
 
     expect(host.contains(iframe)).toBe(true)
+    expect(iframe.getAttribute('allowtransparency')).toBe('native-value')
     expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_MEASURING_CLASS)).toBe(false)
-    expect(doc.body.style.getPropertyValue('backdrop-filter')).toBe('')
-    expect(doc.body.style.getPropertyValue('-webkit-backdrop-filter')).toBe('')
+    expect(doc.documentElement.style.getPropertyValue('--yt-live-chat-background-color')).toBe('rgb(1, 2, 3)')
+    expect(doc.documentElement.style.getPropertyPriority('--yt-live-chat-background-color')).toBe('important')
+    expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-font-color')).toBe('rgb(4, 5, 6)')
+    expect(doc.documentElement.style.getPropertyPriority('--extension-yt-live-font-color')).toBe('')
+    expect(doc.documentElement.style.getPropertyValue('--extension-user-name-display')).toBe('')
+    expect(doc.documentElement.style.getPropertyValue('font-family')).toBe(nativeFontFamilyValue)
+    expect(doc.documentElement.style.getPropertyPriority('font-family')).toBe('important')
+    expect(doc.body.style.getPropertyValue('backdrop-filter')).toBe('blur(2px)')
+    expect(doc.body.style.getPropertyPriority('backdrop-filter')).toBe('important')
+    expect(doc.body.style.getPropertyValue('-webkit-backdrop-filter')).toBe(nativeWebkitBackdropFilterValue)
+    expect(iframe.style.getPropertyValue('filter')).toBe('contrast(1.2)')
+    expect(iframe.style.getPropertyPriority('filter')).toBe('important')
+    expect(iframe.style.getPropertyValue('-webkit-filter')).toBe(nativeWebkitFilterValue)
+    expect(iframe.style.getPropertyPriority('-webkit-filter')).toBe('')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-header-height')).toBe('')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-input-panel-height')).toBe('')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-input-height')).toBe('')
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).toBeNull()
+    expect(doc.head.querySelector('#custom-font-style')).toBe(nativeFontStyle)
+    expect(nativeFontStyle.textContent).toBe('@font-face { font-family: NativeChat; }')
+    expect(nativeFontStyle.nextSibling).toBe(fontStyleNextSibling)
+    expect(extensionFontStyle.isConnected).toBe(false)
+  })
+
+  it('snapshots a replacement iframe document once before extension styles are applied', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    const firstDocument = document.implementation.createHTMLDocument('first')
+    const secondDocument = document.implementation.createHTMLDocument('second')
+    secondDocument.documentElement.style.setProperty('--yt-live-chat-background-color', 'rgb(7, 8, 9)', 'important')
+    let currentDocument = firstDocument
+    Object.defineProperty(iframe, 'contentDocument', {
+      get: () => currentDocument,
+      configurable: true,
+    })
+    host.appendChild(iframe)
+    document.body.append(host, container)
+
+    attachIframeToContainer(container, iframe)
+    currentDocument = secondDocument
+    iframe.dispatchEvent(new Event('load'))
+    secondDocument.documentElement.style.setProperty('--yt-live-chat-background-color', 'transparent')
+    iframe.dispatchEvent(new Event('load'))
+
+    detachAttachedIframe(iframe, container)
+
+    expect(host.contains(iframe)).toBe(true)
+    expect(secondDocument.documentElement.style.getPropertyValue('--yt-live-chat-background-color')).toBe('rgb(7, 8, 9)')
+    expect(secondDocument.documentElement.style.getPropertyPriority('--yt-live-chat-background-color')).toBe('important')
+  })
+
+  it('removes only the membership fallback listener and marker installed by the extension', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = document.implementation.createHTMLDocument('chat')
+    const item = doc.createElement('yt-live-chat-product-picker-panel-item-view-model')
+    item.setAttribute('item-id', 'Membership')
+    const endpoint = doc.createElement('a')
+    item.appendChild(endpoint)
+    Object.defineProperty(item, 'data', {
+      value: {
+        onTapCommand: {
+          parallelCommand: {
+            commands: [
+              {
+                innertubeCommand: {
+                  ypcGetOffersEndpoint: {
+                    params: `sku-${encodeURIComponent(btoa('channel:UCSJ4gkVC6NrvII8umztf0Ow'))}`,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+      configurable: true,
+    })
+    doc.body.appendChild(item)
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    host.appendChild(iframe)
+    document.body.append(host, container)
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
+
+    attachIframeToContainer(container, iframe)
+    createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    }).initialize(iframe)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
+
+    detachAttachedIframe(iframe, container)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(host.contains(iframe)).toBe(true)
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe(false)
+  })
+
+  it('preserves a pre-existing membership fallback marker when restoring native chat', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = document.implementation.createHTMLDocument('chat')
+    doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'pre-existing')
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    host.appendChild(iframe)
+    document.body.append(host, container)
+
+    attachIframeToContainer(container, iframe)
+    createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    }).initialize(iframe)
+    detachAttachedIframe(iframe, container)
+
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('pre-existing')
   })
 
   it('falls back to current native host when original restore target was removed', () => {
@@ -264,6 +424,31 @@ describe('iframeAttachment', () => {
 
     expect(rebuiltHost.contains(iframe)).toBe(true)
     expect(container.contains(iframe)).toBe(false)
+    expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
+  })
+
+  it('restores a borrowed iframe to a rebuilt host on a channel live entry', () => {
+    setLocation('/@lofi/live')
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+    document.body.append(watchFlexy, originalParent, container)
+
+    attachIframeToContainer(container, iframe)
+    originalParent.remove()
+    const rebuiltHost = document.createElement('ytd-live-chat-frame')
+    rebuiltHost.setAttribute('video-id', 'video-a')
+    document.body.appendChild(rebuiltHost)
+
+    detachAttachedIframe(iframe, container)
+
+    expect(rebuiltHost.contains(iframe)).toBe(true)
     expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
   })
 

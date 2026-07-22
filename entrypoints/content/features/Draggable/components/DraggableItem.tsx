@@ -57,6 +57,24 @@ type VisibleChatBounds = {
 
 type HoverRegion = 'none' | 'chat' | 'controls'
 
+type InlineStylePropertySnapshot = {
+  value: string
+  priority: string
+}
+
+const captureInlineStyleProperty = (style: CSSStyleDeclaration, property: string): InlineStylePropertySnapshot => ({
+  value: style.getPropertyValue(property),
+  priority: style.getPropertyPriority(property),
+})
+
+const restoreInlineStyleProperty = (style: CSSStyleDeclaration, property: string, snapshot: InlineStylePropertySnapshot) => {
+  if (snapshot.value) {
+    style.setProperty(property, snapshot.value, snapshot.priority)
+    return
+  }
+  style.removeProperty(property)
+}
+
 const useDisplayIdle = (initialDisplayOnMount: boolean) => {
   const [idle, setIdle] = useState(!initialDisplayOnMount)
 
@@ -197,20 +215,48 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   }, [keepWithinViewportWidth])
 
   useEffect(() => {
-    const previousBodyCursor = document.body.style.cursor
-    const ytdAppElement = getYouTubeAppElement()
-    const previousYouTubeCursor = ytdAppElement?.style.cursor ?? ''
+    if (!isDragging) return
 
-    ytdAppElement?.style.setProperty('pointer-events', isDragging ? 'none' : 'auto')
-    if (isDragging) {
-      document.body.style.setProperty('cursor', 'grabbing')
-      ytdAppElement?.style.setProperty('cursor', 'grabbing')
+    const body = document.body
+    const previousBodyCursor = captureInlineStyleProperty(body.style, 'cursor')
+    let ytdAppElement: HTMLElement | null = null
+    let previousPointerEvents: InlineStylePropertySnapshot | null = null
+    let previousYouTubeCursor: InlineStylePropertySnapshot | null = null
+
+    const restoreYouTubeApp = () => {
+      if (ytdAppElement && previousPointerEvents && previousYouTubeCursor) {
+        restoreInlineStyleProperty(ytdAppElement.style, 'pointer-events', previousPointerEvents)
+        restoreInlineStyleProperty(ytdAppElement.style, 'cursor', previousYouTubeCursor)
+      }
+      ytdAppElement = null
+      previousPointerEvents = null
+      previousYouTubeCursor = null
     }
 
+    const syncYouTubeApp = () => {
+      const nextYtdAppElement = getYouTubeAppElement()
+      if (nextYtdAppElement === ytdAppElement) return
+
+      restoreYouTubeApp()
+      if (!nextYtdAppElement) return
+
+      ytdAppElement = nextYtdAppElement
+      previousPointerEvents = captureInlineStyleProperty(ytdAppElement.style, 'pointer-events')
+      previousYouTubeCursor = captureInlineStyleProperty(ytdAppElement.style, 'cursor')
+      ytdAppElement.style.setProperty('pointer-events', 'none')
+      ytdAppElement.style.setProperty('cursor', 'grabbing')
+    }
+
+    body.style.setProperty('cursor', 'grabbing')
+    syncYouTubeApp()
+
+    const observer = new MutationObserver(syncYouTubeApp)
+    observer.observe(body, { childList: true, subtree: true })
+
     return () => {
-      ytdAppElement?.style.setProperty('pointer-events', 'auto')
-      document.body.style.cursor = previousBodyCursor
-      if (ytdAppElement) ytdAppElement.style.cursor = previousYouTubeCursor
+      observer.disconnect()
+      restoreYouTubeApp()
+      restoreInlineStyleProperty(body.style, 'cursor', previousBodyCursor)
     }
   }, [isDragging])
 
