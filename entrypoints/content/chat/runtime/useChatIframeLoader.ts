@@ -8,7 +8,7 @@ import {
 } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
-import iframeStyles from '../../features/YTDLiveChatIframe/styles/iframe.css?inline'
+import iframeStyles from '../../features/YTDLiveChatIframe/styles'
 import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from '../../features/YTDLiveChatIframe/utils/iframeAttachment'
 import { createIframeInitializer } from '../../features/YTDLiveChatIframe/utils/iframeInitializer'
 import { getIframeDocumentHref, getNonBlankIframeHref, isManagedLiveIframe, YLC_CHAT_ATTR } from '../shared/iframeDom'

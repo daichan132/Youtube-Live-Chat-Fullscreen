@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react'
 import type { CSSProperties, ReactNode } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { DraggableItem } from './DraggableItem'
 
@@ -220,6 +221,7 @@ describe('DraggableItem', () => {
     expect(resizableState.props?.handleWrapperStyle?.pointerEvents).toBe('none')
     expect(resizableState.props?.handleStyles?.right?.pointerEvents).toBe('auto')
     expect(resizableState.props?.handleStyles?.bottomRight?.pointerEvents).toBe('auto')
+    expect(resizableState.props?.handleStyles?.right?.zIndex).toBe(CHAT_PANEL_LAYER.interactionOverlay)
   })
 
   it('keeps the control rail inside the viewport bottom without shifting horizontally', () => {
@@ -339,7 +341,7 @@ describe('DraggableItem', () => {
     document.body.appendChild(ytdApp)
     draggableState.isDragging = true
 
-    const { rerender, unmount } = render(
+    const { container, rerender, unmount } = render(
       <DraggableItem>
         <div />
       </DraggableItem>,
@@ -347,6 +349,7 @@ describe('DraggableItem', () => {
     expect(ytdApp.style.pointerEvents).toBe('none')
     expect(document.body.style.cursor).toBe('grabbing')
     expect(ytdApp.style.cursor).toBe('grabbing')
+    expect(container.querySelector('[data-ylc-drag-shield]')).toHaveStyle({ zIndex: String(CHAT_PANEL_LAYER.dragShield) })
 
     draggableState.isDragging = false
     rerender(
@@ -578,7 +581,13 @@ describe('DraggableItem', () => {
     )
     const bridge = container.querySelector('[data-ylc-control-hover-bridge]') as HTMLElement
 
-    expect(bridge).toHaveStyle({ top: '188px', left: '0px', right: '0px', height: '76px' })
+    expect(bridge).toHaveStyle({
+      top: '188px',
+      left: '0px',
+      right: '0px',
+      height: '76px',
+      zIndex: String(CHAT_PANEL_LAYER.hoverBridge),
+    })
   })
 
   it('keeps display visible but clears chat hover while crossing through the hover bridge', () => {

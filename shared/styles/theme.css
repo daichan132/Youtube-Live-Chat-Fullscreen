@@ -8,6 +8,11 @@
   --ylc-radius-md: 8px;
   --ylc-radius-lg: 10px;
   --ylc-radius-xl: 12px;
+  /* Local component layers; top-level fullscreen surfaces live in shared/constants/zIndex.ts. */
+  --ylc-z-raised: 10;
+  --ylc-z-popover: 20;
+  --ylc-z-tooltip: 30;
+  --ylc-z-toast: 40;
 }
 
 [data-ylc-theme] {
@@ -46,6 +51,14 @@
 [data-ylc-theme] .border-y {
   border-top-width: var(--ylc-border-width);
   border-bottom-width: var(--ylc-border-width);
+}
+
+.ylc-theme-raised {
+  z-index: var(--ylc-z-raised);
+}
+
+.ylc-theme-popover {
+  z-index: var(--ylc-z-popover);
 }
 
 [data-ylc-theme="light"] {
@@ -522,7 +535,7 @@
     opacity 120ms ease,
     transform 120ms ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
-  z-index: 30;
+  z-index: var(--ylc-z-tooltip);
 }
 
 .ylc-theme-icon-link[data-tooltip]::before {
@@ -539,7 +552,7 @@
   transition:
     opacity 120ms ease,
     transform 120ms ease;
-  z-index: 30;
+  z-index: var(--ylc-z-tooltip);
 }
 
 .ylc-theme-icon-link[data-tooltip]:hover::after,
@@ -662,7 +675,7 @@
   position: fixed;
   bottom: 16px;
   inset-inline: 0;
-  z-index: 200;
+  z-index: var(--ylc-z-toast);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -727,7 +740,7 @@
   position: absolute;
   right: 0;
   bottom: calc(100% + 6px);
-  z-index: 70;
+  z-index: var(--ylc-z-tooltip);
   width: max-content;
   max-width: 220px;
   padding: 6px 10px;
@@ -1061,7 +1074,7 @@
   position: absolute;
   top: calc(100% + 6px);
   left: 0;
-  z-index: 4;
+  z-index: var(--ylc-z-popover);
   width: 100%;
   min-width: 0;
   border: var(--ylc-border-width) solid var(--ylc-border);

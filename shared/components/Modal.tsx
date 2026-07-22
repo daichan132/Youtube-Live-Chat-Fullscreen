@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useCallback, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 
 interface ModalProps {
   isOpen: boolean
@@ -93,7 +94,7 @@ export const Modal = ({
               position: 'fixed',
               inset: 0,
               backgroundColor: 'rgba(0, 0, 0, 0)',
-              zIndex: 1000000,
+              zIndex: CONTENT_UI_LAYER.modal,
               ...overlayStyle,
             }
       }

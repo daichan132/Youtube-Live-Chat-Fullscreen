@@ -81,7 +81,7 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
         <span className='ylc-color-value'>{formatColorValue(rgba)}</span>
       </button>
       {display ? (
-        <div ref={menuRef} className='absolute right-0 z-50' role='dialog' aria-label={t('content.aria.colorPicker')}>
+        <div ref={menuRef} className='absolute right-0 ylc-theme-popover' role='dialog' aria-label={t('content.aria.colorPicker')}>
           <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} />
         </div>
       ) : null}

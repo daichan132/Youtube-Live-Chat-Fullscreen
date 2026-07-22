@@ -26,7 +26,7 @@ describe('SettingColorPicker', () => {
     expect(queryByRole('dialog')).toBeNull()
 
     fireEvent.click(getByRole('button', { name: 'Background color' }))
-    expect(getByRole('dialog', { name: 'content.aria.colorPicker' })).not.toBeNull()
+    expect(getByRole('dialog', { name: 'content.aria.colorPicker' })).toHaveClass('ylc-theme-popover')
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(queryByRole('dialog')).toBeNull()

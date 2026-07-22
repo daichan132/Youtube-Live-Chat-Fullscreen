@@ -6,6 +6,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { changeYLCStyle, resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { getPresetTitleFallbackKey } from '@/shared/stores/ytdLiveChatStore'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
@@ -14,6 +15,10 @@ import { getModalParentElement } from '../../utils/getModalParentElement'
 interface PresetItemType {
   id: string
 }
+
+const DELETE_MODAL_OVERLAY_STYLE = {
+  zIndex: CONTENT_UI_LAYER.nestedModal,
+} as const
 
 export const PresetItem = ({ id }: PresetItemType) => {
   const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
@@ -48,7 +53,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
 
   return (
     <div
-      className={`ylc-preset ${isDragging ? 'z-1 cursor-grabbing ylc-theme-shadow-sm' : ''}`}
+      className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`}
       ref={setNodeRef}
       style={{ transform: CSS.Translate.toString(transform), transition }}
     >
@@ -88,7 +93,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
           isOpen={isDeleteModalOpen}
           onRequestClose={() => setIsDeleteModalOpen(false)}
           shouldReturnFocusAfterClose={true}
-          overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35 z-[1000001]'
+          overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35'
+          overlayStyle={DELETE_MODAL_OVERLAY_STYLE}
           contentClassName='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           parentSelector={getModalParentElement}
         >

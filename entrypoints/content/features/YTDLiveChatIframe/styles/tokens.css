@@ -1,0 +1,22 @@
+/* ==========================================================================
+ * Fullscreen Chat iframe style contract
+ * - body class: custom-yt-app-live-chat-extension
+ * These names are defined in `constants/styleContract.ts`.
+ * ========================================================================== */
+
+/* ----------------------------- CSS variables ------------------------------ */
+html {
+  --extension-user-name-display: inline;
+  --extension-user-icon-display: inline;
+  --extension-super-chat-bar-display: block;
+  --extension-yt-live-chat-font-size: 13px;
+  --extension-yt-live-chat-spacing: 0px;
+  --extension-yt-live-font-color: var(--yt-spec-text-primary, #0f0f0f);
+  --extension-yt-live-secondary-font-color: var(--yt-spec-text-secondary, rgba(15, 23, 42, 0.72));
+  --extension-yt-live-membership-name-color: var(--yt-live-chat-sponsor-color, rgba(15, 157, 88, 1));
+  --extension-yt-live-menu-background-color: var(--yt-spec-menu-background, var(--yt-spec-base-background, #fff));
+  --extension-yt-live-panel-background-color: var(--extension-yt-live-menu-background-color);
+  --extension-yt-live-control-background-color: rgba(15, 23, 42, 0.08);
+  --extension-yt-live-menu-hover-background-color: rgba(15, 23, 42, 0.1);
+  --extension-yt-live-control-border-color: rgba(15, 23, 42, 0.16);
+}

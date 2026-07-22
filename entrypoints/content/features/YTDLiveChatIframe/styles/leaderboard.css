@@ -1,0 +1,90 @@
+/* Top fans / live viewer leaderboard uses ytd/ytvl surfaces outside the
+   normal live-chat renderer color inheritance. */
+body.custom-yt-app-live-chat-extension :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #header
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #title-container
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title-text
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #navigation-button
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      #action-button
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-view-model),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelRankNumber),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelContent),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-channel-content-view-model
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemChannelContentViewModelChannelName
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      .ytSpecButtonShapeNextIcon
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      ytd-engagement-panel-title-header-renderer
+      .ytSpecIconShapeHost
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer svg),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer path
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelPoints) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemActionContentViewModelActionDescription
+  ),
+body.custom-yt-app-live-chat-extension
+  :where(
+    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
+      .ytvlLiveLeaderboardItemActionContentViewModelActionDescription
+      span
+  ) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}

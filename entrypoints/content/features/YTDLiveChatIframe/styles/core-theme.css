@@ -1,0 +1,33 @@
+/* ------------------------------ Color system ------------------------------ */
+/* Keep primary color blocks before more specific selector overrides below. */
+body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension yt-dropdown-menu .yt-dropdown-menu[style-target="label-text"],
+body.custom-yt-app-live-chat-extension yt-dropdown-menu #label,
+body.custom-yt-app-live-chat-extension yt-dropdown-menu #label-text,
+body.custom-yt-app-live-chat-extension #label-icon.yt-dropdown-menu,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer[author-type="owner"] #message,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-button-shape,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-button-shape button,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextButtonTextContent,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-live-chat-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer yt-icon,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal .ytSpecButtonShapeNextButtonTextContent,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items .yt-simple-endpoint,
+body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextOutline {
+  border-color: var(--extension-yt-live-control-border-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextHost:hover,
+body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal {
+  background: var(--extension-yt-live-control-background-color);
+}

@@ -14,6 +14,7 @@ import {
 import { getVideoIdFromUrl } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import {
   IFRAME_CHAT_BODY_CLASS,
   IFRAME_CHAT_ONLY_CLASS,
@@ -71,7 +72,7 @@ const applyChatIframeStyle = (iframe: HTMLIFrameElement) => {
   iframe.style.borderWidth = '0'
   iframe.style.outline = 'none'
   iframe.style.position = 'relative'
-  iframe.style.zIndex = '1'
+  iframe.style.zIndex = String(CHAT_PANEL_LAYER.iframe)
   iframe.style.backgroundColor = 'transparent'
   iframe.setAttribute('allowtransparency', 'true')
 }

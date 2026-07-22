@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { Content } from './Content'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
@@ -163,6 +164,14 @@ describe('Content', () => {
 
     expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
     expect(switchButtonContainer.style.display).toBe('none')
+  })
+
+  it('places the fullscreen overlay on the shared base layer', () => {
+    const { shadowRoot } = createReadyPortalTargets()
+
+    render(<Content />)
+
+    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.overlay) })
   })
 
   it('does not render overlay container when fullscreen chat cannot be toggled', () => {

@@ -1,8 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { iframeStyleModuleNames } from './index'
 
-const iframeStyles = readFileSync(resolve(process.cwd(), 'entrypoints/content/features/YTDLiveChatIframe/styles/iframe.css'), 'utf8')
+const stylesDirectory = resolve(process.cwd(), 'entrypoints/content/features/YTDLiveChatIframe/styles')
+const iframeStyles = iframeStyleModuleNames.map(moduleName => readFileSync(resolve(stylesDirectory, moduleName), 'utf8')).join('')
 const iframeStylesWithoutComments = iframeStyles.replace(/\/\*[\s\S]*?\*\//g, '')
 
 const directDisplayNoneSelectors = () =>
@@ -11,6 +13,21 @@ const directDisplayNoneSelectors = () =>
   )
 
 describe('iframe styles contract', () => {
+  it('assembles responsibility modules in cascade order', () => {
+    expect(iframeStyleModuleNames).toEqual([
+      'tokens.css',
+      'frame.css',
+      'core-theme.css',
+      'menus.css',
+      'banners.css',
+      'leaderboard.css',
+      'composer.css',
+      'chat-only.css',
+      'monetization.css',
+      'message-layout.css',
+    ])
+  })
+
   it('keeps direct display none limited to the native close control', () => {
     expect(directDisplayNoneSelectors()).toEqual(['body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-button'])
   })
@@ -74,6 +91,15 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display #ticker > yt-live-chat-ticker-renderer')
     expect(iframeStyles).toContain('margin-top: 8px;')
     expect(iframeStyles).toContain('transition: margin-top 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;')
+  })
+
+  it('lets header menus escape while expanded and clips them while collapsed', () => {
+    expect(iframeStyles).toContain(
+      'body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {\n  position: relative !important;\n  z-index: 2 !important;\n  overflow: visible !important;\n}',
+    )
+    expect(iframeStyles).toContain(
+      'height: 0 !important;\n  min-height: 0 !important;\n  overflow: hidden !important;\n  opacity: 0 !important;',
+    )
   })
 
   it('keeps user display settings as iframe-internal variables', () => {

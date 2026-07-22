@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
@@ -12,6 +13,11 @@ import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 import { YTDLiveChat } from './YTDLiveChat'
+
+const OVERLAY_STYLE = {
+  pointerEvents: 'none',
+  zIndex: CONTENT_UI_LAYER.overlay,
+} as const
 
 export const Content = () => {
   useEffect(() => {
@@ -50,8 +56,8 @@ export const Content = () => {
       <div
         data-ylc-theme={resolvedThemeMode}
         data-ylc-overlay-container
-        className='fixed top-0 right-0 w-full h-full z-1000'
-        style={{ pointerEvents: 'none' }}
+        className='fixed top-0 right-0 w-full h-full'
+        style={OVERLAY_STYLE}
       >
         <YTDLiveChat isFullscreen={isFullscreen} mode={mode} />
       </div>,

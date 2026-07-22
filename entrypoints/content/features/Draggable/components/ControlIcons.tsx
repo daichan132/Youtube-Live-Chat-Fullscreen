@@ -4,6 +4,7 @@ import { type CSSProperties, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { TbAdjustmentsHorizontal, TbGripVertical } from '@/shared/components/icons'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
 const ICON_STROKE_WIDTH = 1.55
@@ -61,7 +62,7 @@ export const ControlIcons = ({ controlRailStyle, dragProps, isVisible, onSetting
     // biome-ignore lint/a11y/noStaticElementInteractions: Hover only keeps controls visible; buttons inside remain semantic.
     <div
       data-ylc-control-rail
-      className='ylc-overlay-control-rail absolute z-10 flex items-center'
+      className='ylc-overlay-control-rail absolute flex items-center'
       onMouseEnter={() => onControlsHoverChange(true)}
       onMouseLeave={() => onControlsHoverChange(false)}
       style={{
@@ -69,6 +70,7 @@ export const ControlIcons = ({ controlRailStyle, dragProps, isVisible, onSetting
         gap: CONTROL_GAP,
         opacity: isIconDisplay ? 1 : 0,
         pointerEvents: isIconDisplay ? 'auto' : 'none',
+        zIndex: CHAT_PANEL_LAYER.controls,
         transform: isIconDisplay ? 'translateY(0) scale(1)' : 'translateY(-2px) scale(0.98)',
         ...runtimeHoverVarStyle,
       }}

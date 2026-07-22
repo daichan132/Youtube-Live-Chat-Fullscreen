@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { ControlIcons } from './ControlIcons'
 
@@ -59,7 +60,11 @@ describe('ControlIcons', () => {
 
     const { container } = renderControlIcons()
 
-    expect(getControlRail(container)).toHaveStyle({ opacity: '1', pointerEvents: 'auto' })
+    expect(getControlRail(container)).toHaveStyle({
+      opacity: '1',
+      pointerEvents: 'auto',
+      zIndex: String(CHAT_PANEL_LAYER.controls),
+    })
     expect(getControlRail(container)).toHaveClass('ylc-overlay-control-rail')
     expect(getDragHandle(container)).toHaveAttribute('tabIndex', '0')
     expect(getSettingsButtonElement(container)).not.toBeDisabled()

@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { ylcInitSetting } from '@/shared/utils'
 import { PresetItem } from './PresetItem'
@@ -65,7 +66,7 @@ describe('PresetItem', () => {
       presetItemStyles: { ...baseState.presetItemStyles, custom: ylcInitSetting },
     })
 
-    const { findByText, getByDisplayValue } = render(<PresetItem id='custom' />)
+    const { findByRole, findByText, getByDisplayValue } = render(<PresetItem id='custom' />)
 
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
@@ -75,6 +76,7 @@ describe('PresetItem', () => {
 
     fireEvent.click(deleteButtonInCard)
 
+    expect(await findByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.nestedModal) })
     const deleteButton = await findByText('content.preset.delete', { selector: 'button' })
     fireEvent.click(deleteButton)
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
@@ -12,6 +13,9 @@ const LOADER_CLASS_NAMES = {
   enterActive: 'transition-[opacity,transform] opacity-100 scale-100 duration-140 ease-out',
   exit: 'opacity-100 scale-100',
   exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
+} as const
+const LOADING_OVERLAY_STYLE = {
+  zIndex: CHAT_PANEL_LAYER.interactionOverlay,
 } as const
 
 type YTDLiveChatIframeProps = {
@@ -78,7 +82,11 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
         <div id={id} ref={ref} data-ylc-iframe-carrier className='absolute inset-0' />
       </div>
       {loaderTransition.isMounted && (
-        <div className={`absolute inset-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}>
+        <div
+          data-ylc-loading-overlay
+          className={`absolute inset-0 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
+          style={LOADING_OVERLAY_STYLE}
+        >
           <output className='flex justify-center' aria-label={t('content.aria.loading')}>
             <div
               className='animate-ping h-5 w-5 rounded-full'

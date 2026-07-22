@@ -5,6 +5,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { useShallow } from 'zustand/react/shallow'
 
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import { deriveResizedLayout, fitLayoutWithinViewportWidth, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
@@ -28,7 +29,7 @@ const CONTROL_HOVER_BRIDGE_OVERLAP = 12
 const CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM = 12
 const RESIZE_HANDLE_POINTER_STYLE: React.CSSProperties = {
   pointerEvents: 'auto',
-  zIndex: 20,
+  zIndex: CHAT_PANEL_LAYER.interactionOverlay,
 }
 const RESIZE_HANDLE_STYLES: HandleStyles = {
   top: RESIZE_HANDLE_POINTER_STYLE,
@@ -42,6 +43,9 @@ const RESIZE_HANDLE_STYLES: HandleStyles = {
 }
 const RESIZE_HANDLE_WRAPPER_STYLE: React.CSSProperties = {
   pointerEvents: 'none',
+}
+const DRAG_SHIELD_STYLE: React.CSSProperties = {
+  zIndex: CHAT_PANEL_LAYER.dragShield,
 }
 
 type VisibleChatBounds = {
@@ -362,7 +366,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     right: 0,
     height: controlHoverBridgeHeight,
     pointerEvents: isResizing ? 'none' : 'auto',
-    zIndex: 9,
+    zIndex: CHAT_PANEL_LAYER.hoverBridge,
   }
 
   return (
@@ -393,7 +397,9 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
             onMouseLeave={handleChatMouseLeave}
           >
             <div className='relative w-full h-full'>
-              {isDragging && <div className='absolute w-100% h-100% z-100 cursor-grabbing bg-transparent' />}
+              {isDragging && (
+                <div data-ylc-drag-shield className='absolute w-100% h-100% cursor-grabbing bg-transparent' style={DRAG_SHIELD_STYLE} />
+              )}
               {children}
             </div>
           </div>

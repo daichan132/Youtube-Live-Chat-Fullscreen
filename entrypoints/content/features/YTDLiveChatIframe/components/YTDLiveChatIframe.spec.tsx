@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { YTDLiveChatIframe } from './YTDLiveChatIframe'
 
@@ -162,5 +163,6 @@ describe('YTDLiveChatIframe', () => {
     expect(loader.style.top).toBe('')
     expect(loader.style.bottom).toBe('')
     expect(loader.style.backdropFilter).toBe('')
+    expect(loader).toHaveStyle({ zIndex: String(CHAT_PANEL_LAYER.interactionOverlay) })
   })
 })

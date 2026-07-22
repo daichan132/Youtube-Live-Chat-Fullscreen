@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import {
   IFRAME_CHAT_BODY_CLASS,
   IFRAME_CHAT_ONLY_CLASS,
@@ -130,6 +131,7 @@ describe('iframeAttachment', () => {
     expect(iframe.style.borderStyle).toBe('none')
     expect(iframe.style.borderWidth).toBe('0px')
     expect(iframe.style.outline).toBe('none')
+    expect(iframe.style.zIndex).toBe(String(CHAT_PANEL_LAYER.iframe))
   })
 
   it('syncs borrowed iframe src from non-blank document href before moving', () => {

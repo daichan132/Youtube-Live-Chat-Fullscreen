@@ -4,6 +4,8 @@ const styleId = 'ylc-fullscreen-chat-layout-fix'
 const className = 'ylc-fullscreen-chat-fix'
 const hiddenChatWidthPx = 400
 const hiddenChatHeightPx = 600
+const fullscreenPlayerLayer = 1
+const parkedNativeChatLayer = -9999
 const fullscreenRootSelector = `:is(${[
   'ytd-watch-flexy',
   'ytd-watch-flexy[fullscreen]',
@@ -20,7 +22,7 @@ const fullscreenFixCss = `
 html.${className} .html5-video-player.ytp-fullscreen {
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 1 !important;
+  z-index: ${fullscreenPlayerLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} {
   width: 100vw !important;
@@ -36,7 +38,7 @@ html.${className} ${fullscreenRootSelector} #secondary {
   min-height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: -9999 !important;
+  z-index: ${parkedNativeChatLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} #secondary-inner,
 html.${className} ${fullscreenRootSelector} #chat-container,
@@ -55,7 +57,7 @@ html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
   height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: -9999 !important;
+  z-index: ${parkedNativeChatLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container #chat-container,
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container ytd-live-chat-frame {
@@ -74,7 +76,7 @@ html.${className} ${fullscreenRootSelector} #panels {
   min-width: ${hiddenChatWidthPx}px !important;
   max-width: ${hiddenChatWidthPx}px !important;
   visibility: hidden !important;
-  z-index: -9999 !important;
+  z-index: ${parkedNativeChatLayer} !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;

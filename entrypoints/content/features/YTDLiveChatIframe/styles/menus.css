@@ -1,0 +1,67 @@
+/* Dropdowns and overflow menus are YouTube surfaces that otherwise keep their
+   default white background / black text inside customized fullscreen chat. */
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown {
+  color: var(--extension-yt-live-font-color) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer {
+  color: var(--extension-yt-live-font-color) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-listbox,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer #items {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+  border-radius: inherit;
+  overflow: hidden;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-item,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item *,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer tp-yt-paper-item *,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-formatted-string,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer yt-formatted-string,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-live-chat-toggle-renderer,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-live-chat-toggle-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-live-chat-toggle-renderer span,
+body.custom-yt-app-live-chat-extension yt-list-item-view-model {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown yt-icon,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown svg,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown path,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer svg,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer path {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-item[disabled],
+body.custom-yt-app-live-chat-extension tp-yt-paper-item[aria-disabled="true"],
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer[disabled],
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer[aria-disabled="true"],
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer[disabled],
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer[aria-disabled="true"] {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+  opacity: 1;
+}
+body.custom-yt-app-live-chat-extension tp-yt-paper-item.iron-selected,
+body.custom-yt-app-live-chat-extension tp-yt-paper-item:hover,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer.iron-selected,
+body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer:hover,
+body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer:hover,
+body.custom-yt-app-live-chat-extension yt-list-item-view-model:hover {
+  background: var(--extension-yt-live-menu-hover-background-color) !important;
+}
