@@ -1,10 +1,18 @@
-import type { Page } from '@playwright/test'
-import type { Extension } from '@e2e/fixtures'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { getChatOnlyChromeCollapseSnapshot, isChatOnlyChromeHidden, movePointerAwayFromOverlay } from '@e2e/screenshots/helpers'
+import {
+  expectContinuousChatOnlyMotion,
+  getChatOnlyChromeCollapseSnapshot,
+  getOverlayCenter,
+  installChatOnlyMotionProbe,
+  isChatOnlyChromeHidden,
+  movePointerAwayFromOverlay,
+  readChatOnlyMotionProbe,
+  setPersistedChatOnlyMode,
+} from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import type { Page } from '@playwright/test'
 
 type OverlayChatSurfaceSnapshot = {
   exists: boolean
@@ -61,22 +69,6 @@ const getOverlayChatSurfaceSnapshot = (): OverlayChatSurfaceSnapshot => {
     height: Math.round(box.height * 100) / 100,
     visibleHeight: Math.round(viewportBox.height * 100) / 100,
     width: Math.round(box.width * 100) / 100,
-  }
-}
-
-const getOverlayCenter = () => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
-  if (!resizable) return null
-
-  const box = resizable.getBoundingClientRect()
-  if (box.width <= 0 || box.height <= 0) return null
-
-  return {
-    x: Math.floor(box.left + box.width / 2),
-    y: Math.floor(box.top + box.height / 2),
   }
 }
 
@@ -198,52 +190,6 @@ const collectStableVisibleHeightSamples = async (
   return samples
 }
 
-const setPersistedChatOnlyMode = async (extension: Extension) => {
-  const parsePersisted = (raw: unknown, fallbackVersion: number) => {
-    if (typeof raw !== 'string' || raw.length === 0) {
-      return { state: {} as Record<string, unknown>, version: fallbackVersion }
-    }
-    try {
-      const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number }
-      return {
-        state: parsed?.state && typeof parsed.state === 'object' ? parsed.state : {},
-        version: typeof parsed?.version === 'number' ? parsed.version : fallbackVersion,
-      }
-    } catch {
-      return { state: {} as Record<string, unknown>, version: fallbackVersion }
-    }
-  }
-
-  const stores = await extension.storage.get(['ytdLiveChatStore', 'globalSettingStore'])
-
-  const currentYlc = parsePersisted(stores.ytdLiveChatStore, 1)
-  const currentGlobal = parsePersisted(stores.globalSettingStore, 0)
-
-  const nextYlc = {
-    state: {
-      ...currentYlc.state,
-      alwaysOnDisplay: true,
-      chatOnlyDisplay: true,
-    },
-    version: currentYlc.version,
-  }
-
-  const nextGlobal = {
-    state: {
-      ...currentGlobal.state,
-      ytdLiveChat: true,
-    },
-    version: currentGlobal.version,
-  }
-
-  await extension.storage.set({
-    ytdLiveChatStore: JSON.stringify(nextYlc),
-    globalSettingStore: JSON.stringify(nextGlobal),
-  })
-
-  return true
-}
-
 const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl: string | null) => {
   if (!archiveReplayUrl) {
     await captureChatState(page, test.info(), 'chat-only-chrome-url-selection-failed')
@@ -321,7 +267,9 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(probeInstalled).toBe(true)
 
     await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
-    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
+    await expect
+      .poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 })
+      .toBe(true)
     await expect
       .poll(
         async () => {
@@ -360,7 +308,7 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(hoverProbe?.enterCount ?? -1).toBe(0)
   })
 
-  test('chat-only chrome re-hides automatically after first hover without pointer leave', async ({ page, extension, archiveReplayUrl }) => {
+  test('chat-only chrome expands on first hover and re-hides after pointer leave', async ({ page, extension, archiveReplayUrl }) => {
     test.setTimeout(180000)
 
     const configured = await setPersistedChatOnlyMode(extension)
@@ -379,7 +327,9 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(probeInstalled).toBe(true)
 
     await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
-    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
+    await expect
+      .poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 })
+      .toBe(true)
     const baselineVisibleHeightSamples = await collectStableVisibleHeightSamples(page, {
       sampleCount: 6,
       intervalMs: 180,
@@ -394,11 +344,27 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
       return
     }
 
+    expect(await page.evaluate(installChatOnlyMotionProbe)).toBe(true)
     await page.mouse.move(center.x, center.y)
 
-    // No pointer leave after first hover.
+    await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(false)
+    await expect
+      .poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 })
+      .toBe(false)
+    const expandedChromeSnapshot = await page.evaluate(getChatOnlyChromeCollapseSnapshot)
+    await expect.poll(async () => page.evaluate(readChatOnlyMotionProbe).then(probe => probe?.done ?? false), { timeout: 2000 }).toBe(true)
+    const expansionMotion = await page.evaluate(readChatOnlyMotionProbe)
+    expectContinuousChatOnlyMotion(expansionMotion, 'expanding')
+
+    expect(await page.evaluate(installChatOnlyMotionProbe)).toBe(true)
+    await movePointerAwayFromOverlay(page)
     await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
-    await expect.poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 }).toBe(true)
+    await expect
+      .poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(result => result.allTargetsCollapsed), { timeout: 15000 })
+      .toBe(true)
+    await expect.poll(async () => page.evaluate(readChatOnlyMotionProbe).then(probe => probe?.done ?? false), { timeout: 2000 }).toBe(true)
+    const collapseMotion = await page.evaluate(readChatOnlyMotionProbe)
+    expectContinuousChatOnlyMotion(collapseMotion, 'collapsing')
 
     const snapshot = await page.evaluate(getOverlayChatSurfaceSnapshot)
     const chromeSnapshot = await page.evaluate(getChatOnlyChromeCollapseSnapshot)
@@ -416,6 +382,9 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
           baselineSnapshot,
           baselineChromeSnapshot,
           baselineVisibleHeightSamples,
+          expandedChromeSnapshot,
+          expansionMotion,
+          collapseMotion,
           snapshot,
           chromeSnapshot,
           visibleHeightSamplesAfterHover,
@@ -433,6 +402,8 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     expect(baselineSnapshot.carrierMatchesViewport).toBe(true)
     expect(snapshot.carrierMatchesViewport).toBe(true)
     expect(baselineChromeSnapshot.allTargetsCollapsed).toBe(true)
+    expect(expandedChromeSnapshot.hidden).toBe(false)
+    expect(expandedChromeSnapshot.allTargetsCollapsed).toBe(false)
     expect(chromeSnapshot.allTargetsCollapsed).toBe(true)
     expect(baselineVisibleHeightSamples.drift).toBeLessThanOrEqual(1.5)
     expect(visibleHeightSamplesAfterHover.drift).toBeLessThanOrEqual(1.5)

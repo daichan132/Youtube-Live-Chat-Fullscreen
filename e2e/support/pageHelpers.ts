@@ -3,6 +3,7 @@ export type YlcHelpers = {
 	readIframeHref: (iframe: HTMLIFrameElement | null) => string
 	getNativeIframe: () => HTMLIFrameElement | null
 	getExtensionIframe: () => HTMLIFrameElement | null
+	getChatOnlyChromeTargets: () => Array<{ selector: string; element: HTMLElement }>
 	hasUnavailableText: (text: string) => boolean
 	isDocUnavailable: (doc: Document | null) => boolean
 	isDocPlayable: (doc: Document | null) => boolean
@@ -48,6 +49,32 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 		const host = document.getElementById('shadow-root-live-chat')
 		const root = host?.shadowRoot ?? null
 		return (root?.querySelector('iframe[data-ylc-chat="true"]') as HTMLIFrameElement | null) ?? null
+	}
+
+	const getChatOnlyChromeTargets = () => {
+		const body = getExtensionIframe()?.contentDocument?.body ?? null
+		if (!body) return []
+
+		const targets: Array<{ selector: string; element: HTMLElement }> = []
+		const header = body.querySelector<HTMLElement>('yt-live-chat-header-renderer')
+		if (header) targets.push({ selector: 'header', element: header })
+
+		const inputPanel = body.querySelector<HTMLElement>('#input-panel')
+		if (inputPanel) {
+			targets.push({ selector: 'input', element: inputPanel })
+			return targets
+		}
+
+		const fallbackSelector = [
+			'yt-live-chat-message-input-renderer',
+			'yt-live-chat-restricted-participation-renderer',
+			'yt-live-chat-sign-in-prompt-renderer',
+		].join(', ')
+		const fallbackTargets = Array.from(body.querySelectorAll<HTMLElement>(fallbackSelector)).filter(
+			candidate => !candidate.parentElement?.closest(fallbackSelector),
+		)
+		fallbackTargets.forEach((element, index) => targets.push({ selector: `input-${index}`, element }))
+		return targets
 	}
 
 	const hasUnavailableText = (text: string) => {
@@ -151,6 +178,7 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 		readIframeHref,
 		getNativeIframe,
 		getExtensionIframe,
+		getChatOnlyChromeTargets,
 		hasUnavailableText,
 		isDocUnavailable,
 		isDocPlayable,

@@ -1,12 +1,12 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import type { Page } from '@playwright/test'
-import { expect } from '@playwright/test'
 import type { Extension } from '@e2e/fixtures'
-import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
 import { TIMING } from '@e2e/support/constants'
+import { ensureArchiveNativeChatPlayable, isExtensionArchiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
 import { reliableClick } from '@e2e/utils/actions'
 import { switchButtonSelector } from '@e2e/utils/selectors'
+import type { Page } from '@playwright/test'
+import { expect } from '@playwright/test'
 
 /**
  * Screenshot-dedicated archive URL (with chat replay).
@@ -212,11 +212,56 @@ export const waitForChatMessages = async (
 
 // --- chat-only helpers ---
 
+export const setPersistedChatOnlyMode = async (extension: Extension) => {
+  const parsePersisted = (raw: unknown, fallbackVersion: number) => {
+    if (typeof raw !== 'string' || raw.length === 0) {
+      return { state: {} as Record<string, unknown>, version: fallbackVersion }
+    }
+    try {
+      const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number }
+      return {
+        state: parsed?.state && typeof parsed.state === 'object' ? parsed.state : {},
+        version: typeof parsed?.version === 'number' ? parsed.version : fallbackVersion,
+      }
+    } catch {
+      return { state: {} as Record<string, unknown>, version: fallbackVersion }
+    }
+  }
+
+  const stores = await extension.storage.get(['ytdLiveChatStore', 'globalSettingStore'])
+  const currentYlc = parsePersisted(stores.ytdLiveChatStore, 1)
+  const currentGlobal = parsePersisted(stores.globalSettingStore, 0)
+
+  await extension.storage.set({
+    ytdLiveChatStore: JSON.stringify({
+      state: { ...currentYlc.state, alwaysOnDisplay: true, chatOnlyDisplay: true },
+      version: currentYlc.version,
+    }),
+    globalSettingStore: JSON.stringify({
+      state: { ...currentGlobal.state, ytdLiveChat: true },
+      version: currentGlobal.version,
+    }),
+  })
+
+  return true
+}
+
 export const isChatOnlyChromeHidden = (): boolean => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const iframe = root?.querySelector('[data-ylc-chat="true"]') as HTMLIFrameElement | null
   return iframe?.contentDocument?.body.classList.contains('chat-only-display') ?? false
+}
+
+export const getOverlayCenter = () => {
+  const host = document.getElementById('shadow-root-live-chat')
+  const app = host?.shadowRoot?.querySelector('div[role="application"]') as HTMLElement | null
+  const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
+  if (!resizable) return null
+
+  const box = resizable.getBoundingClientRect()
+  if (box.width <= 0 || box.height <= 0) return null
+  return { x: Math.floor(box.left + box.width / 2), y: Math.floor(box.top + box.height / 2) }
 }
 
 export type ChatOnlyChromeCollapseSnapshot = {
@@ -230,36 +275,183 @@ export type ChatOnlyChromeCollapseSnapshot = {
 }
 
 export const getChatOnlyChromeCollapseSnapshot = (): ChatOnlyChromeCollapseSnapshot => {
-  const host = document.getElementById('shadow-root-live-chat')
-  const root = host?.shadowRoot ?? null
-  const iframe = root?.querySelector('[data-ylc-chat="true"]') as HTMLIFrameElement | null
+  const iframe = window.__ylcHelpers.getExtensionIframe()
   const body = iframe?.contentDocument?.body ?? null
-  const selectors = [
-    'yt-live-chat-header-renderer',
-    'yt-live-chat-message-input-renderer',
-    'yt-live-chat-restricted-participation-renderer',
-    '#input-panel',
-    'yt-live-chat-sign-in-prompt-renderer',
-  ]
 
   if (!body) {
-    return { hidden: false, allTargetsCollapsed: false, targets: selectors.map(selector => ({ selector, exists: false, height: 0 })) }
+    return {
+      hidden: false,
+      allTargetsCollapsed: false,
+      targets: [
+        { selector: 'yt-live-chat-header-renderer', exists: false, height: 0 },
+        { selector: '#input-panel or outer input fallback', exists: false, height: 0 },
+      ],
+    }
   }
 
-  const targets = selectors.map(selector => {
-    const element = body.querySelector(selector)
-    return {
-      selector,
-      exists: Boolean(element),
-      height: element ? Math.round(element.getBoundingClientRect().height * 100) / 100 : 0,
-    }
-  })
+  const targets = window.__ylcHelpers.getChatOnlyChromeTargets().map(({ selector, element }) => ({
+    selector,
+    exists: true,
+    height: Math.round(element.getBoundingClientRect().height * 100) / 100,
+  }))
   const existingTargets = targets.filter(target => target.exists)
 
   return {
     hidden: body.classList.contains('chat-only-display'),
     allTargetsCollapsed: existingTargets.length > 0 && existingTargets.every(target => target.height <= 1),
     targets,
+  }
+}
+
+export type ChatOnlyMotionProbeState = {
+  done: boolean
+  sawTransition: boolean
+  timedOut: boolean
+  samples: Array<{
+    elapsedMs: number
+    transitionReady: boolean
+    hidden: boolean
+    targets: Array<{ selector: string; height: number; naturalHeight: number }>
+  }>
+}
+
+export const installChatOnlyMotionProbe = () => {
+  const win = window as typeof window & {
+    __ylcChatOnlyMotionProbe?: ChatOnlyMotionProbeState
+    __ylcChatOnlyMotionProbeFrame?: number
+  }
+  if (win.__ylcChatOnlyMotionProbeFrame !== undefined) cancelAnimationFrame(win.__ylcChatOnlyMotionProbeFrame)
+
+  const state: ChatOnlyMotionProbeState = { done: false, sawTransition: false, timedOut: false, samples: [] }
+  const startedAt = performance.now()
+  win.__ylcChatOnlyMotionProbe = state
+
+  const sample = () => {
+    const body = window.__ylcHelpers.getExtensionIframe()?.contentDocument?.body ?? null
+    const transitionReady = body?.classList.contains('chat-only-transition-ready') ?? false
+    state.sawTransition ||= transitionReady
+    const elapsedMs = performance.now() - startedAt
+    state.samples.push({
+      elapsedMs: Math.round(elapsedMs * 100) / 100,
+      transitionReady,
+      hidden: body?.classList.contains('chat-only-display') ?? false,
+      targets: window.__ylcHelpers.getChatOnlyChromeTargets().map(({ selector, element }) => {
+        const height = Math.round(element.getBoundingClientRect().height * 100) / 100
+        const measuredHeight = Number.parseFloat(element.style.getPropertyValue('--extension-chat-only-target-height')) || 0
+        return { selector, height, naturalHeight: Math.max(height, measuredHeight) }
+      }),
+    })
+
+    if (state.sawTransition && !transitionReady) {
+      state.done = true
+      win.__ylcChatOnlyMotionProbeFrame = undefined
+      return
+    }
+    if (elapsedMs >= 1500) {
+      state.done = true
+      state.timedOut = true
+      win.__ylcChatOnlyMotionProbeFrame = undefined
+      return
+    }
+    win.__ylcChatOnlyMotionProbeFrame = requestAnimationFrame(sample)
+  }
+
+  sample()
+  return true
+}
+
+export const readChatOnlyMotionProbe = () => {
+  const win = window as typeof window & { __ylcChatOnlyMotionProbe?: ChatOnlyMotionProbeState }
+  return win.__ylcChatOnlyMotionProbe ?? null
+}
+
+export const expectContinuousChatOnlyMotion = (
+  probe: ChatOnlyMotionProbeState | null,
+  direction: 'expanding' | 'collapsing',
+  { requireInput = false }: { requireInput?: boolean } = {},
+) => {
+  expect(probe?.done).toBe(true)
+  expect(probe?.sawTransition).toBe(true)
+  expect(probe?.timedOut).toBe(false)
+  const samples = probe?.samples ?? []
+  expect(samples.at(-1)?.transitionReady).toBe(false)
+  const baselineSelectors = new Set(
+    samples[0]?.targets.filter(target => target.naturalHeight >= 4).map(target => target.selector) ?? [],
+  )
+  expect(baselineSelectors.has('header'), 'header should exist before the motion starts').toBe(true)
+  if (requireInput) expect([...baselineSelectors].some(selector => selector.startsWith('input'))).toBe(true)
+
+  const selectors = new Set(samples.flatMap(sample => sample.targets.map(target => target.selector)))
+  const movingSelectors: string[] = []
+  const movementWindows: Array<{ selector: string; startFrame: number; endFrame: number }> = []
+
+  for (const selector of selectors) {
+    const heights = samples
+      .map(sample => sample.targets.find(target => target.selector === selector)?.height)
+      .filter((height): height is number => height !== undefined)
+    if (heights.length < 3) continue
+
+    const min = Math.min(...heights)
+    const max = Math.max(...heights)
+    if (max - min < 4) continue
+    movingSelectors.push(selector)
+
+    const start = heights[0]
+    const end = heights.at(-1) ?? start
+    if (direction === 'expanding') {
+      expect(start, `${selector} should start collapsed`).toBeLessThanOrEqual(1)
+      expect(end, `${selector} should finish at its measured endpoint`).toBeGreaterThanOrEqual(max - 1)
+    } else {
+      expect(start, `${selector} should start expanded`).toBeGreaterThanOrEqual(max - 1)
+      expect(end, `${selector} should finish collapsed`).toBeLessThanOrEqual(1)
+    }
+
+    let stagnantInteriorFrames = 0
+    let longestStagnantInteriorRun = 0
+    let startFrame = -1
+    let endFrame = -1
+    for (let index = 1; index < heights.length; index += 1) {
+      const delta = heights[index] - heights[index - 1]
+      if (direction === 'expanding') {
+        expect(delta, `${selector} should not reverse while expanding`).toBeGreaterThanOrEqual(-1)
+      } else {
+        expect(delta, `${selector} should not reverse while collapsing`).toBeLessThanOrEqual(1)
+      }
+
+      const progress = (heights[index] - min) / (max - min)
+      const directedProgress = direction === 'expanding' ? progress : 1 - progress
+      if (startFrame === -1 && directedProgress >= 0.05) startFrame = index
+      if (directedProgress <= 0.95) endFrame = index
+      const isInterior = progress >= 0.05 && progress <= 0.95
+      if (isInterior && Math.abs(delta) <= 0.15) {
+        stagnantInteriorFrames += 1
+        longestStagnantInteriorRun = Math.max(longestStagnantInteriorRun, stagnantInteriorFrames)
+      } else {
+        stagnantInteriorFrames = 0
+      }
+    }
+    expect(longestStagnantInteriorRun, `${selector} should not pause midway through the transition`).toBeLessThanOrEqual(2)
+    expect(startFrame, `${selector} should enter the motion interval`).toBeGreaterThanOrEqual(0)
+    expect(endFrame, `${selector} should leave the motion interval`).toBeGreaterThanOrEqual(startFrame)
+    movementWindows.push({ selector, startFrame, endFrame })
+  }
+
+  expect(movingSelectors.length).toBeGreaterThan(0)
+  for (const selector of baselineSelectors) {
+    expect(movingSelectors, `${selector} should traverse the full motion range`).toContain(selector)
+  }
+
+  if (movementWindows.length > 1) {
+    const startFrames = movementWindows.map(window => window.startFrame)
+    const endFrames = movementWindows.map(window => window.endFrame)
+    expect(
+      Math.max(...startFrames) - Math.min(...startFrames),
+      `chat chrome targets should start together: ${JSON.stringify(movementWindows)}`,
+    ).toBeLessThanOrEqual(2)
+    expect(
+      Math.max(...endFrames) - Math.min(...endFrames),
+      `chat chrome targets should finish together: ${JSON.stringify(movementWindows)}`,
+    ).toBeLessThanOrEqual(2)
   }
 }
 
