@@ -70,6 +70,7 @@ describe('SettingContent', () => {
       'content.setting.membershipNameColor',
       'content.setting.fontFamily',
       'content.setting.fontSize',
+      'content.setting.blur',
       'content.setting.space',
       'content.setting.userNameDisplay',
       'content.setting.userIconDisplay',
@@ -106,6 +107,7 @@ describe('SettingContent', () => {
     })
 
     expect(getByRole('slider', { name: 'content.setting.fontSize' }).getAttribute('aria-valuetext')).toBe('30px')
+    expect(getByRole('slider', { name: 'content.setting.blur' }).getAttribute('aria-valuetext')).toBe('12px')
     expect(getByRole('slider', { name: 'content.setting.space' }).getAttribute('aria-valuetext')).toBe('24px')
   })
 

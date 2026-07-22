@@ -200,10 +200,6 @@ describe('DraggableItem', () => {
       coordinates: { x: 100, y: 10 },
       size: { width: 300, height: 200 },
     })
-    resetNoLsStore({
-      isChatOnlyChromeHidden: true,
-    })
-
     const { getByTestId } = render(
       <DraggableItem>
         <div />
@@ -214,10 +210,6 @@ describe('DraggableItem', () => {
   })
 
   it('keeps resize handles on the interactive visible panel in chat-only mode', () => {
-    resetNoLsStore({
-      isChatOnlyChromeHidden: true,
-    })
-
     render(
       <DraggableItem>
         <div />
@@ -614,7 +606,7 @@ describe('DraggableItem', () => {
 
   it('shows controls from the extended hover area without entering chat hover', () => {
     vi.useFakeTimers()
-    resetNoLsStore({ isChatOnlyChromeHidden: true, isHover: false, isDisplay: false })
+    resetNoLsStore({ isHover: false, isDisplay: false })
 
     const { container, getByTestId } = render(
       <DraggableItem>
@@ -629,17 +621,13 @@ describe('DraggableItem', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isHover).toBe(false)
-    expect(useYTDLiveChatNoLsStore.getState().isChatOnlyChromeHidden).toBe(true)
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
     expect(getByTestId('ylc-control-rail')).toHaveAttribute('data-visible', 'true')
   })
 
   it('treats the visible panel as the chat-only hover area', () => {
     vi.useFakeTimers()
-    resetNoLsStore({
-      isChatOnlyChromeHidden: true,
-      isHover: false,
-    })
+    resetNoLsStore({ isHover: false })
 
     const { container, getByTestId } = render(
       <DraggableItem>

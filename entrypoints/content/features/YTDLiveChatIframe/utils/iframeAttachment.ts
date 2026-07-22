@@ -17,11 +17,8 @@ import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import {
   IFRAME_CHAT_BODY_CLASS,
   IFRAME_CHAT_ONLY_CLASS,
-  IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_INPUT_PANEL_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_SIGN_IN_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
@@ -49,6 +46,13 @@ type BorrowedIframeRestoreTarget = {
 const borrowedIframeRestoreMap = new WeakMap<HTMLIFrameElement, BorrowedIframeRestoreTarget>()
 const pendingNativeHostRestoreIframes = new Set<HTMLIFrameElement>()
 const pendingNativeHostRestoreVideoIds = new WeakMap<HTMLIFrameElement, string>()
+const legacyChatOnlyHeightVariables = [
+  '--extension-chat-only-header-height',
+  '--extension-chat-only-input-panel-height',
+  '--extension-chat-only-input-height',
+  '--extension-chat-only-restricted-participation-height',
+  '--extension-chat-only-sign-in-height',
+] as const
 let pendingNativeHostRestoreObserver: MutationObserver | null = null
 
 const createManagedLiveIframe = (src: string) => {
@@ -114,12 +118,20 @@ const cleanupBorrowedIframeDocument = (iframe: HTMLIFrameElement) => {
     return
   }
 
-  doc?.body?.classList.remove(IFRAME_CHAT_BODY_CLASS, IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS)
-  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR)
-  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR)
-  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_INPUT_PANEL_HEIGHT_VAR)
-  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR)
-  doc?.body?.style.removeProperty(IFRAME_CHAT_ONLY_SIGN_IN_HEIGHT_VAR)
+  doc?.body?.classList.remove(
+    IFRAME_CHAT_BODY_CLASS,
+    IFRAME_CHAT_ONLY_CLASS,
+    IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+    IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  )
+  doc?.body?.style.removeProperty('backdrop-filter')
+  doc?.body?.style.removeProperty('-webkit-backdrop-filter')
+  for (const target of doc?.body?.querySelectorAll<HTMLElement>(`[style*="${IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR}"]`) ?? []) {
+    target.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)
+  }
+  for (const variable of legacyChatOnlyHeightVariables) {
+    doc?.body?.style.removeProperty(variable)
+  }
   doc?.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.remove()
 }
 

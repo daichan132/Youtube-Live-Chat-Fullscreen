@@ -2,6 +2,7 @@ import { type ReactNode, useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   changeYLCBgColor,
+  changeYLCBlur,
   changeYLCFontColor,
   changeYLCMembershipNameColor,
   getYLCStandardMembershipNameColor,
@@ -17,6 +18,7 @@ import {
 } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants'
 import {
   type IconType,
+  TbBlur,
   TbCoin,
   TbCrown,
   TbEye,
@@ -239,6 +241,9 @@ export const SettingContent = () => {
         </ControlRow>
         <ControlRow icon={TbTextSize} title={t('content.setting.fontSize')}>
           <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} applyValue={applyFontSize} />
+        </ControlRow>
+        <ControlRow icon={TbBlur} title={t('content.setting.blur')}>
+          <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} applyValue={changeYLCBlur} />
         </ControlRow>
         <ControlRow icon={TbSpacingHorizontal} title={t('content.setting.space')}>
           <YLCNumberSlider settingKey='space' labelKey='content.setting.space' min={0} max={40} applyValue={applySpace} />

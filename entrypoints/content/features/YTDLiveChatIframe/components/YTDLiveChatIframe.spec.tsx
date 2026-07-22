@@ -129,7 +129,6 @@ describe('YTDLiveChatIframe', () => {
       noLsOverrides: {
         isIframeLoaded: true,
         isDisplay: false,
-        isChatOnlyChromeHidden: true,
       },
     })
 
@@ -140,13 +139,7 @@ describe('YTDLiveChatIframe', () => {
     expect(background.style.backdropFilter).toBe('')
   })
 
-  it('keeps the iframe carrier fixed while chat-only chrome is hidden inside the iframe', () => {
-    resetStores({
-      noLsOverrides: {
-        isChatOnlyChromeHidden: true,
-      },
-    })
-
+  it('keeps the iframe carrier fixed instead of clipping the iframe surface', () => {
     const { container } = render(<YTDLiveChatIframe mode='live' />)
     const carrier = container.querySelector('[data-ylc-iframe-carrier]') as HTMLElement
 
@@ -159,7 +152,6 @@ describe('YTDLiveChatIframe', () => {
     resetStores({
       noLsOverrides: {
         isIframeLoaded: false,
-        isChatOnlyChromeHidden: true,
       },
     })
 

@@ -144,17 +144,25 @@ describe('ylcStyleApplier', () => {
     expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
   })
 
-  it('clears iframe body blur and host filter', () => {
+  it('applies blur to iframe body and clears host filter', () => {
     const { iframe } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
-    const body = iframe.contentDocument?.body as HTMLBodyElement
-    body.style.backdropFilter = 'blur(4px)'
-    body.style.setProperty('-webkit-backdrop-filter', 'blur(4px)')
 
     changeYLCBlur(12)
 
-    expect(body.style.backdropFilter).toBe('none')
+    const body = iframe.contentDocument?.body as HTMLBodyElement
+    expect(body.style.backdropFilter).toBe('blur(12px)')
     expect(iframe.style.filter).toBe('none')
+  })
+
+  it('disables iframe body blur when the configured value is zero', () => {
+    const { iframe } = createConnectedIframe()
+    useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
+
+    changeYLCBlur(0)
+
+    const body = iframe.contentDocument?.body as HTMLBodyElement
+    expect(body.style.backdropFilter).toBe('none')
   })
 
   it('imports, overwrites, removes, and normalizes custom fonts', () => {

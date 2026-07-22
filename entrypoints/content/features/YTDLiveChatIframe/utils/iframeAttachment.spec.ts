@@ -5,9 +5,8 @@ import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import {
   IFRAME_CHAT_BODY_CLASS,
   IFRAME_CHAT_ONLY_CLASS,
-  IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR,
-  IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
@@ -195,10 +194,20 @@ describe('iframeAttachment', () => {
     const host = document.createElement('ytd-live-chat-frame')
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     const doc = document.implementation.createHTMLDocument('')
-    doc.body.classList.add(IFRAME_CHAT_BODY_CLASS, IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS)
-    doc.body.style.setProperty(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR, '54px')
-    doc.body.style.setProperty(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR, '112px')
-    doc.body.style.setProperty(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR, '48px')
+    doc.body.classList.add(
+      IFRAME_CHAT_BODY_CLASS,
+      IFRAME_CHAT_ONLY_CLASS,
+      IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+      IFRAME_CHAT_ONLY_MEASURING_CLASS,
+    )
+    doc.body.style.setProperty('backdrop-filter', 'blur(8px)')
+    doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(8px)')
+    doc.body.style.setProperty('--extension-chat-only-header-height', '54px')
+    doc.body.style.setProperty('--extension-chat-only-input-panel-height', '112px')
+    doc.body.style.setProperty('--extension-chat-only-input-height', '96px')
+    const header = doc.createElement('yt-live-chat-header-renderer')
+    header.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, '54px')
+    doc.body.appendChild(header)
     const injectedStyle = doc.createElement('style')
     injectedStyle.setAttribute(IFRAME_STYLE_MARKER_ATTR, 'true')
     doc.head.appendChild(injectedStyle)
@@ -219,9 +228,13 @@ describe('iframeAttachment', () => {
     expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
-    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_HEADER_HEIGHT_VAR)).toBe('')
-    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_INPUT_HEIGHT_VAR)).toBe('')
-    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_RESTRICTED_PARTICIPATION_HEIGHT_VAR)).toBe('')
+    expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_MEASURING_CLASS)).toBe(false)
+    expect(doc.body.style.getPropertyValue('backdrop-filter')).toBe('')
+    expect(doc.body.style.getPropertyValue('-webkit-backdrop-filter')).toBe('')
+    expect(doc.body.style.getPropertyValue('--extension-chat-only-header-height')).toBe('')
+    expect(doc.body.style.getPropertyValue('--extension-chat-only-input-panel-height')).toBe('')
+    expect(doc.body.style.getPropertyValue('--extension-chat-only-input-height')).toBe('')
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).toBeNull()
   })
 

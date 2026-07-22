@@ -16,7 +16,6 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(state.isOpenSettingModal).toBe(false)
     expect(state.isIframeLoaded).toBe(false)
     expect(state.isAutoOpeningNativeChat).toBe(false)
-    expect(state.isChatOnlyChromeHidden).toBeUndefined()
     expect(state.iframeElement).toBeNull()
     expect(state.menuItem).toBe('setting')
   })
@@ -29,7 +28,6 @@ describe('useYTDLiveChatNoLsStore', () => {
     state.setIsOpenSettingModal(true)
     state.setIsIframeLoaded(true)
     state.setIsAutoOpeningNativeChat(true)
-    state.setIsChatOnlyChromeHidden(true)
     state.setMenuItem('preset')
 
     const updated = useYTDLiveChatNoLsStore.getState()
@@ -39,7 +37,6 @@ describe('useYTDLiveChatNoLsStore', () => {
     expect(updated.isOpenSettingModal).toBe(true)
     expect(updated.isIframeLoaded).toBe(true)
     expect(updated.isAutoOpeningNativeChat).toBe(true)
-    expect(updated.isChatOnlyChromeHidden).toBe(true)
     expect(updated.menuItem).toBe('preset')
   })
 })

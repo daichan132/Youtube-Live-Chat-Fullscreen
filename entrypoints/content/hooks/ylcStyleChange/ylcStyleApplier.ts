@@ -138,14 +138,15 @@ export const changeYLCMembershipNameColor = (rgba: RGBColor) => {
   setYLCStyleProperty(YLC_MEMBERSHIP_NAME_COLOR_PROPERTY, toRgbaString(resolvedColor, resolvedColor.a))
 }
 
-export const changeYLCBlur = (_blur: number) => {
+export const changeYLCBlur = (blur: number) => {
   const iframeElement = getConnectedYLCIframe()
   const iframeDocument = getYLCIframeDocument()
   const body = iframeDocument?.body
-  if (!iframeElement) return
+  if (!iframeElement || !body) return
 
-  body?.style.setProperty('backdrop-filter', 'none')
-  body?.style.setProperty('-webkit-backdrop-filter', 'none')
+  const blurValue = blur > 0 ? `blur(${blur}px)` : 'none'
+  body.style.backdropFilter = blurValue
+  body.style.setProperty('-webkit-backdrop-filter', blurValue)
   iframeElement.style.filter = 'none'
   iframeElement.style.setProperty('-webkit-filter', 'none')
 }

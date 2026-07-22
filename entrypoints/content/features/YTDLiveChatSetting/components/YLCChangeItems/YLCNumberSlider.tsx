@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
 
-export type NumberSliderSettingKey = 'fontSize' | 'space'
+export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'space'
 
 type YLCNumberSliderProps = {
   settingKey: NumberSliderSettingKey
