@@ -25,7 +25,7 @@ jobs:
           cache: "yarn"
       - name: Verify dependency release age
         if: github.event_name == 'pull_request'
-        run: yarn verify:dependency-age --base "origin/${{ github.base_ref }}"
+        run: node scripts/verify/check-lockfile-age.mjs --base "origin/${{ github.base_ref }}"
       - name: Install dependencies
         run: rm -rf node_modules && yarn install --immutable
       - name: Build
