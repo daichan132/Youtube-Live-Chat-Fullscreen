@@ -19,6 +19,7 @@ body.custom-yt-app-live-chat-extension:not(:has(#input-panel))
 /* YouTube mounts the chat mode dropdown inside the header. Let its fixed
    surface escape the header while hover keeps the chrome expanded. */
 body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {
+  height: 56px !important;
   position: relative !important;
   z-index: 2 !important;
   overflow: visible !important;

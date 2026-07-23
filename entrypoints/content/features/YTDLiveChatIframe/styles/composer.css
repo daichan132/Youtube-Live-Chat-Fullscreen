@@ -1,4 +1,15 @@
 /* State-dependent input / restricted participation controls. */
+body.custom-yt-app-live-chat-extension #input-panel
+  > :is(
+    yt-live-chat-message-input-renderer,
+    yt-live-chat-restricted-participation-renderer,
+    yt-live-chat-sign-in-prompt-renderer,
+    yt-live-chat-message-renderer
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+}
 body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
 body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
@@ -58,10 +69,24 @@ body.custom-yt-app-live-chat-extension yt-live-chat-icon-toggle-button-renderer[
   color: var(--extension-yt-live-font-color) !important;
   fill: currentColor !important;
 }
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer {
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
 body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search-panel,
 body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search,
 body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer input {
   color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search-panel {
+  background: var(--extension-yt-live-control-background-color) !important;
+  background-color: var(--extension-yt-live-control-background-color) !important;
+  border: 1px solid var(--extension-yt-live-control-border-color);
+  box-sizing: border-box;
 }
 body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer,
 body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer yt-icon,
@@ -93,5 +118,7 @@ body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model #fab
 }
 body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {
   background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   transition-delay: 0s, 0s !important;
 }

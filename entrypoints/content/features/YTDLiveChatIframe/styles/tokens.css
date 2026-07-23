@@ -16,6 +16,7 @@ html {
   --extension-yt-live-membership-name-color: var(--yt-live-chat-sponsor-color, rgba(15, 157, 88, 1));
   --extension-yt-live-menu-background-color: var(--yt-spec-menu-background, var(--yt-spec-base-background, #fff));
   --extension-yt-live-panel-background-color: var(--extension-yt-live-menu-background-color);
+  --extension-yt-live-backdrop-filter: none;
   --extension-yt-live-control-background-color: rgba(15, 23, 42, 0.08);
   --extension-yt-live-menu-hover-background-color: rgba(15, 23, 42, 0.1);
   --extension-yt-live-control-border-color: rgba(15, 23, 42, 0.16);

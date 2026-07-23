@@ -17,7 +17,6 @@ const LOADER_CLASS_NAMES = {
 const LOADING_OVERLAY_STYLE = {
   zIndex: CHAT_PANEL_LAYER.interactionOverlay,
 } as const
-
 type YTDLiveChatIframeProps = {
   mode: ChatMode
 }
@@ -26,8 +25,9 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const { t } = useTranslation()
   const id = useId()
   const { ref } = useChatIframeLoader(mode)
-  const { alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
+  const { blur, alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
+      blur: state.blur,
       alwaysOnDisplay: state.alwaysOnDisplay,
       bgColor: state.bgColor,
       fontColor: state.fontColor,
@@ -40,6 +40,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
+  const backdropFilter = blur > 0 ? `blur(${blur}px)` : 'none'
   const loaderColor = useMemo(() => {
     const { r, g, b, a } = fontColor
     const baseAlpha = a ?? 1
@@ -69,6 +70,8 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
         className='absolute inset-0 rounded-md transition-[background-color,opacity] duration-200 ease-out'
         style={{
           backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
+          backdropFilter,
+          WebkitBackdropFilter: backdropFilter,
           opacity: isChatVisible ? 1 : 0,
         }}
       />

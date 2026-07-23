@@ -5,6 +5,7 @@ import { DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/utils'
 import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import {
+  YLC_BACKDROP_FILTER_PROPERTY,
   YLC_BG_COLOR_PROPERTIES,
   YLC_BG_DARKEN_PROPERTIES,
   YLC_BG_SURFACE_PROPERTIES,
@@ -100,13 +101,10 @@ export const getYLCStandardMembershipNameColor = (): RGBColor => {
 export const resolveYLCMembershipNameColor = (rgba: RGBColor): RGBColor =>
   isFallbackMembershipNameColor(rgba) ? getYLCStandardMembershipNameColor() : rgba
 
-const toElevatedSurfaceColor = (rgba: RGBColor) => {
+const toPanelSurfaceColor = (rgba: RGBColor) => {
   const alpha = rgba.a ?? 1
-  return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
-}
-
-const toOpaquePanelColor = (rgba: RGBColor) => {
-  return toRgbaString(rgba, 1)
+  if (alpha === 0) return toRgbaString(rgba, 0)
+  return toRgbaString(rgba, roundAlpha(Math.max(0.08, alpha * 0.28)))
 }
 
 const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, (rgba.a ?? 1) * 0.12))
@@ -116,8 +114,8 @@ export const changeYLCBgColor = (rgba: RGBColor) => {
     ...YLC_BG_COLOR_PROPERTIES.map(property => [property, 'transparent'] as const),
     ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
     ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
-    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toElevatedSurfaceColor(rgba)] as const),
-    [YLC_PANEL_BACKGROUND_PROPERTY, toOpaquePanelColor(rgba)],
+    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toPanelSurfaceColor(rgba)] as const),
+    [YLC_PANEL_BACKGROUND_PROPERTY, toPanelSurfaceColor(rgba)],
   ])
 }
 
@@ -145,8 +143,9 @@ export const changeYLCBlur = (blur: number) => {
   if (!iframeElement || !body) return
 
   const blurValue = blur > 0 ? `blur(${blur}px)` : 'none'
-  body.style.backdropFilter = blurValue
-  body.style.setProperty('-webkit-backdrop-filter', blurValue)
+  body.style.backdropFilter = 'none'
+  body.style.setProperty('-webkit-backdrop-filter', 'none')
+  iframeDocument.documentElement.style.setProperty(YLC_BACKDROP_FILTER_PROPERTY, blurValue)
   iframeElement.style.filter = 'none'
   iframeElement.style.setProperty('-webkit-filter', 'none')
 }

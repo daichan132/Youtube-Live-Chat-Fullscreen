@@ -88,23 +88,28 @@ describe('ylcStyleApplier', () => {
     expect(style.getPropertyValue('--yt-live-chat-background-color')).toBe('transparent')
     expect(style.getPropertyValue('--yt-spec-icon-disabled')).toBe('rgba(60, 80, 100, 0.8)')
     expect(style.getPropertyValue('--yt-live-chat-vem-background-color')).toBe('rgba(80, 100, 120, 0.8)')
-    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(100, 120, 140, 0.856)')
-    expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(100, 120, 140, 1)')
-    expect(style.getPropertyValue('--yt-spec-menu-background')).toBe('rgba(100, 120, 140, 0.856)')
-    expect(style.getPropertyValue('--yt-spec-raised-background')).toBe('rgba(100, 120, 140, 0.856)')
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(100, 120, 140, 0.224)')
+    expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(100, 120, 140, 0.224)')
+    expect(style.getPropertyValue('--yt-spec-menu-background')).toBe('rgba(100, 120, 140, 0.224)')
+    expect(style.getPropertyValue('--yt-spec-raised-background')).toBe('rgba(100, 120, 140, 0.224)')
     expect(style.getPropertyValue('--yt-live-chat-header-background-color')).toBe('transparent')
     expect(style.getPropertyValue('--yt-spec-general-background-b')).toBe('transparent')
   })
 
-  it('keeps panel surfaces fully opaque to cover chat text', () => {
+  it('derives a low-alpha tint for stacked menu and panel surfaces', () => {
     const { iframe, doc } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
     changeYLCBgColor({ r: 0, g: 0, b: 0, a: 0.3 })
 
     const style = doc.documentElement.style
-    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0.496)')
-    expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(0, 0, 0, 1)')
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0.084)')
+    expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(0, 0, 0, 0.084)')
+
+    changeYLCBgColor({ r: 0, g: 0, b: 0, a: 0 })
+
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0)')
+    expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(0, 0, 0, 0)')
   })
 
   it('applies primary and secondary font colors with adjusted alpha', () => {
@@ -144,14 +149,15 @@ describe('ylcStyleApplier', () => {
     expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
   })
 
-  it('applies blur to iframe body and clears host filter', () => {
+  it('publishes blur for iframe surfaces while keeping body and host filters clear', () => {
     const { iframe } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
     changeYLCBlur(12)
 
     const body = iframe.contentDocument?.body as HTMLBodyElement
-    expect(body.style.backdropFilter).toBe('blur(12px)')
+    expect(body.style.backdropFilter).toBe('none')
+    expect(iframe.contentDocument?.documentElement.style.getPropertyValue('--extension-yt-live-backdrop-filter')).toBe('blur(12px)')
     expect(iframe.style.filter).toBe('none')
   })
 
@@ -163,6 +169,7 @@ describe('ylcStyleApplier', () => {
 
     const body = iframe.contentDocument?.body as HTMLBodyElement
     expect(body.style.backdropFilter).toBe('none')
+    expect(iframe.contentDocument?.documentElement.style.getPropertyValue('--extension-yt-live-backdrop-filter')).toBe('none')
   })
 
   it('imports, overwrites, removes, and normalizes custom fonts', () => {

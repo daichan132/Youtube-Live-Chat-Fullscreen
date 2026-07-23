@@ -1,22 +1,7 @@
-/* Top fans / live viewer leaderboard uses ytd/ytvl surfaces outside the
-   normal live-chat renderer color inheritance. */
-body.custom-yt-app-live-chat-extension :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]),
+/* Theme only Top fans text and neutral controls. Rank badges retain the
+   foreground and background colors supplied by YouTube. */
 body.custom-yt-app-live-chat-extension
-  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer),
-body.custom-yt-app-live-chat-extension
-  :where(
-    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #header
-  ),
-body.custom-yt-app-live-chat-extension
-  :where(
-    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]
-      ytd-engagement-panel-title-header-renderer
-      #title-container
-  ),
-body.custom-yt-app-live-chat-extension
-  :where(
-    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title
-  ),
+:where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title),
 body.custom-yt-app-live-chat-extension
   :where(
     ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytd-engagement-panel-title-header-renderer #title-text
@@ -34,15 +19,7 @@ body.custom-yt-app-live-chat-extension
       #action-button
   ),
 body.custom-yt-app-live-chat-extension
-  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-view-model),
-body.custom-yt-app-live-chat-extension
   :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelRankNumber),
-body.custom-yt-app-live-chat-extension
-  :where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] .ytvlLiveLeaderboardItemViewModelContent),
-body.custom-yt-app-live-chat-extension
-  :where(
-    ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-channel-content-view-model
-  ),
 body.custom-yt-app-live-chat-extension
   :where(
     ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]

@@ -4,6 +4,8 @@ body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown {
   color: var(--extension-yt-live-font-color) !important;
   background: transparent !important;
   background-color: transparent !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -11,6 +13,8 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer {
   color: var(--extension-yt-live-font-color) !important;
   background: transparent !important;
   background-color: transparent !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -23,9 +27,13 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer #items {
   overflow: hidden;
 }
 body.custom-yt-app-live-chat-extension tp-yt-paper-item,
-body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item *,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item-body,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item .item,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item #subtitle,
 body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer,
-body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer tp-yt-paper-item *,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer tp-yt-paper-item-body,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer tp-yt-paper-item .item,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer tp-yt-paper-item #subtitle,
 body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-icon,
 body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer yt-formatted-string,
 body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer,
@@ -56,6 +64,16 @@ body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer[disable
 body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer[aria-disabled="true"] {
   color: var(--extension-yt-live-secondary-font-color) !important;
   opacity: 1;
+}
+body.custom-yt-app-live-chat-extension
+  :is(tp-yt-paper-item, ytd-menu-service-item-renderer, ytd-menu-navigation-item-renderer):is([disabled], [aria-disabled="true"])
+  :is(tp-yt-paper-item-body, .item, #subtitle, yt-formatted-string, yt-icon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  :is(tp-yt-paper-item, ytd-menu-service-item-renderer, ytd-menu-navigation-item-renderer):is([disabled], [aria-disabled="true"])
+  :is(yt-icon, .ytSpecIconShapeHost, svg, path) {
+  fill: currentColor !important;
 }
 body.custom-yt-app-live-chat-extension tp-yt-paper-item.iron-selected,
 body.custom-yt-app-live-chat-extension tp-yt-paper-item:hover,

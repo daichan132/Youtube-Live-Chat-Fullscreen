@@ -98,7 +98,7 @@ describe('YTDLiveChatIframe', () => {
     expect(background).toHaveStyle({ opacity: '1' })
   })
 
-  it('keeps the color layer even by avoiding panel backdrop blur', () => {
+  it('applies the configured color and blur to the background layer behind the iframe', () => {
     resetStores({
       liveOverrides: {
         blur: 12,
@@ -116,14 +116,14 @@ describe('YTDLiveChatIframe', () => {
     const carrier = container.querySelector('[data-ylc-iframe-carrier]') as HTMLElement
 
     expect(background.style.backgroundColor).toBe('rgba(0, 0, 0, 0.4)')
-    expect(background.style.backdropFilter).toBe('')
+    expect(background.style.backdropFilter).toBe('blur(12px)')
     expect(carrier.style.filter).toBe('')
   })
 
-  it('keeps chat-only mode free of panel backdrop blur', () => {
+  it('disables the background-layer blur when the configured value is zero', () => {
     resetStores({
       liveOverrides: {
-        blur: 12,
+        blur: 0,
         bgColor: { r: 0, g: 0, b: 0, a: 0.4 },
         alwaysOnDisplay: true,
       },
@@ -137,7 +137,7 @@ describe('YTDLiveChatIframe', () => {
     const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
 
     expect(background.style.backgroundColor).toBe('rgba(0, 0, 0, 0.4)')
-    expect(background.style.backdropFilter).toBe('')
+    expect(background.style.backdropFilter).toBe('none')
   })
 
   it('keeps the iframe carrier fixed instead of clipping the iframe surface', () => {

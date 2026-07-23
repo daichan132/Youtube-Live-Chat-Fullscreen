@@ -1,16 +1,38 @@
+// @vitest-environment jsdom
+
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { iframeStyleModuleNames } from './index'
 
 const stylesDirectory = resolve(process.cwd(), 'entrypoints/content/features/YTDLiveChatIframe/styles')
-const iframeStyles = iframeStyleModuleNames.map(moduleName => readFileSync(resolve(stylesDirectory, moduleName), 'utf8')).join('')
+const readStyleModule = (moduleName: (typeof iframeStyleModuleNames)[number]) => readFileSync(resolve(stylesDirectory, moduleName), 'utf8')
+const styleModules = Object.fromEntries(iframeStyleModuleNames.map(moduleName => [moduleName, readStyleModule(moduleName)])) as Record<
+  (typeof iframeStyleModuleNames)[number],
+  string
+>
+const iframeStyles = iframeStyleModuleNames.map(moduleName => styleModules[moduleName]).join('')
 const iframeStylesWithoutComments = iframeStyles.replace(/\/\*[\s\S]*?\*\//g, '')
 
 const directDisplayNoneSelectors = () =>
   Array.from(iframeStylesWithoutComments.matchAll(/([^{}]+)\{\s*[^{}]*display\s*:\s*none(?:\s*!important)?\s*;[^{}]*\}/g)).map(match =>
     match[1].replace(/\s+/g, ' ').trim(),
   )
+
+const mountStyleFixture = (styles: string, markup: string) => {
+  document.head.replaceChildren()
+  document.body.className = 'custom-yt-app-live-chat-extension'
+  document.body.innerHTML = markup
+  const style = document.createElement('style')
+  style.textContent = styles
+  document.head.append(style)
+}
+
+const getComputedColor = (selector: string) => {
+  const element = document.querySelector(selector)
+  if (!element) throw new Error(`Missing style fixture element: ${selector}`)
+  return getComputedStyle(element).color
+}
 
 describe('iframe styles contract', () => {
   it('assembles responsibility modules in cascade order', () => {
@@ -33,7 +55,9 @@ describe('iframe styles contract', () => {
   })
 
   it('keeps the transparent iframe body covering the viewport', () => {
-    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  width: 100%;\n}')
+    expect(iframeStyles).toContain(
+      'body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  position: relative;\n  width: 100%;\n}',
+    )
   })
 
   it('removes the native chat edge shimmer from both clipped chat-only edges', () => {
@@ -47,6 +71,38 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
   })
 
+  it('keeps header SVG controls themed while limiting the native-color exception to the Top fans crown', () => {
+    expect(styleModules['core-theme.css']).not.toContain('[style*="color:"]')
+    expect(styleModules['core-theme.css']).toContain(
+      '#viewer-leaderboard-entry-point\n  .ytSpecButtonShapeNextIcon\n  .ytSpecIconShapeHost {\n  color: inherit;\n}',
+    )
+    expect(styleModules['core-theme.css']).toContain('yt-live-chat-header-renderer .ytSpecIconShapeHost')
+
+    const coreThemeStyles = styleModules['core-theme.css'].replaceAll('var(--extension-yt-live-font-color)', 'rgb(18, 52, 86)')
+    mountStyleFixture(
+      coreThemeStyles,
+      `
+        <yt-live-chat-header-renderer>
+          <button aria-label="More options">
+            <span class="ytSpecButtonShapeNextIcon">
+              <span id="neutral-icon" class="ytSpecIconShapeHost"></span>
+            </span>
+          </button>
+          <div id="viewer-leaderboard-entry-point">
+            <button aria-label="0 XP">
+              <span class="ytSpecButtonShapeNextIcon" style="color: rgb(123, 62, 219)">
+                <span id="top-fans-crown" class="ytSpecIconShapeHost"></span>
+              </span>
+            </button>
+          </div>
+        </yt-live-chat-header-renderer>
+      `,
+    )
+
+    expect(getComputedColor('#neutral-icon')).toBe('rgb(18, 52, 86)')
+    expect(getComputedColor('#top-fans-crown')).toBe('rgb(123, 62, 219)')
+  })
+
   it('themes top fan leaderboard text and icons without hiding its entry point', () => {
     expect(iframeStyles).toContain('ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]')
     expect(iframeStyles).toContain('ytd-engagement-panel-title-header-renderer')
@@ -58,6 +114,12 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('color: var(--extension-yt-live-secondary-font-color) !important;')
     expect(iframeStyles).toContain('fill: currentColor !important;')
     expect(iframeStyles).not.toContain('ytvl-live-viewer-leaderboard-chat-entry-point-view-model')
+    expect(styleModules['leaderboard.css']).not.toContain(
+      ':where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]),',
+    )
+    expect(styleModules['leaderboard.css']).not.toContain(
+      ':where(ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"] ytvl-live-leaderboard-item-view-model)',
+    )
   })
 
   it('animates only the outer chat chrome boundaries inside the iframe', () => {
@@ -95,7 +157,7 @@ describe('iframe styles contract', () => {
 
   it('lets header menus escape while expanded and clips them while collapsed', () => {
     expect(iframeStyles).toContain(
-      'body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {\n  position: relative !important;\n  z-index: 2 !important;\n  overflow: visible !important;\n}',
+      'body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {\n  height: 56px !important;\n  position: relative !important;\n  z-index: 2 !important;\n  overflow: visible !important;\n}',
     )
     expect(iframeStyles).toContain(
       'height: 0 !important;\n  min-height: 0 !important;\n  overflow: hidden !important;\n  opacity: 0 !important;',
@@ -131,8 +193,11 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('background-color: transparent !important;')
     expect(iframeStyles).toContain('background: var(--extension-yt-live-panel-background-color) !important;')
     expect(iframeStyles).toContain('background-color: var(--extension-yt-live-panel-background-color) !important;')
+    expect(iframeStyles).toContain('backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;')
+    expect(iframeStyles).toContain('-webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;')
     expect(iframeStyles).toContain('border-radius: inherit;')
-    expect(iframeStyles).not.toContain('--extension-yt-live-panel-backdrop-filter')
+    expect(iframeStyles).toContain('--extension-yt-live-backdrop-filter: none;')
+    expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension::before')
     expect(iframeStyles).not.toContain('tp-yt-paper-listbox::before')
     expect(iframeStyles).not.toContain('ytd-menu-popup-renderer #items::before')
     expect(iframeStyles).not.toContain('tp-yt-paper-listbox > *')
@@ -142,15 +207,66 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('background: transparent !important;')
     expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer yt-icon')
     expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer span')
-    expect(iframeStyles).toContain('tp-yt-iron-dropdown tp-yt-paper-item *')
+    expect(styleModules['menus.css']).not.toContain('tp-yt-paper-item *')
+    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item-body')
+    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item .item')
+    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item #subtitle')
+    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown svg')
+    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown path')
     expect(iframeStyles).toContain('fill: currentColor !important;')
+
+    const menuStyles = styleModules['menus.css']
+      .replaceAll('var(--extension-yt-live-font-color)', 'rgb(18, 52, 86)')
+      .replaceAll('var(--extension-yt-live-secondary-font-color)', 'rgb(92, 104, 116)')
+    mountStyleFixture(
+      menuStyles,
+      `
+        <tp-yt-iron-dropdown>
+          <tp-yt-paper-item>
+            <tp-yt-paper-item-body>
+              <span id="menu-label" class="item">Menu item</span>
+              <yt-icon><span id="menu-icon" class="ytSpecIconShapeHost"></span></yt-icon>
+            </tp-yt-paper-item-body>
+          </tp-yt-paper-item>
+          <tp-yt-paper-item aria-disabled="true">
+            <tp-yt-paper-item-body>
+              <span id="disabled-menu-label" class="item">Disabled item</span>
+              <yt-icon><span id="disabled-menu-icon" class="ytSpecIconShapeHost"></span></yt-icon>
+            </tp-yt-paper-item-body>
+          </tp-yt-paper-item>
+        </tp-yt-iron-dropdown>
+      `,
+    )
+
+    expect(getComputedColor('#menu-label')).toBe('rgb(18, 52, 86)')
+    expect(getComputedColor('#menu-icon')).toBe('rgb(18, 52, 86)')
+    expect(getComputedColor('#disabled-menu-label')).toBe('rgb(92, 104, 116)')
+    expect(getComputedColor('#disabled-menu-icon')).toBe('rgb(92, 104, 116)')
   })
 
   it('themes logged-in support and Super Chat picker surfaces', () => {
+    expect(iframeStyles).toContain(
+      '#input-panel:has(yt-live-chat-message-input-renderer[product-picker-open]),\nbody.custom-yt-app-live-chat-extension #input-panel > yt-live-chat-message-input-renderer[product-picker-open] {\n  overflow: visible !important;\n}',
+    )
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #buy-flow')
     expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer')
+    expect(iframeStyles).toContain(
+      'yt-live-chat-product-picker-panel-view-model {\n  background: var(--extension-yt-live-panel-background-color) !important;',
+    )
+    expect(iframeStyles).toContain(
+      'yt-live-chat-message-buy-flow-renderer,\nbody.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer,\nbody.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer,\nbody.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer {\n  background: transparent !important;\n  background-color: transparent !important;\n  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;',
+    )
+    expect(iframeStyles).toContain(
+      'yt-live-chat-super-sticker-preview-renderer #footer {\n  background: transparent !important;\n  background-color: transparent !important;\n}',
+    )
+    expect(iframeStyles).toContain(
+      '#panel-pages > #loading.yt-live-chat-renderer {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;\n  background-color: transparent !important;\n}',
+    )
+    expect(iframeStyles).toContain(
+      '#panel-pages > #loading.yt-live-chat-renderer > tp-yt-paper-spinner-lite.yt-live-chat-renderer {\n  --paper-spinner-color: var(--extension-yt-live-font-color);\n}',
+    )
     expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-renderer::before')
     expect(iframeStyles).not.toContain('yt-live-chat-super-sticker-pack-renderer > *')
     expect(iframeStyles).not.toContain('isolation: isolate;')
@@ -184,10 +300,15 @@ describe('iframe styles contract', () => {
   })
 
   it('themes chat input, emoji picker, and reaction controls', () => {
+    expect(iframeStyles).toContain(
+      '#input-panel\n  > :is(\n    yt-live-chat-message-input-renderer,\n    yt-live-chat-restricted-participation-renderer,\n    yt-live-chat-sign-in-prompt-renderer,\n    yt-live-chat-message-renderer\n  )',
+    )
+    expect(iframeStyles).toContain('background: var(--extension-yt-live-panel-background-color) !important;')
+    expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension yt-live-chat-message-renderer {')
     expect(iframeStyles).toContain('#send-button.yt-live-chat-message-input-renderer')
     expect(iframeStyles).toContain('yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji')
     expect(iframeStyles).toContain(
-      'yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {\n  background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;\n  transition-delay: 0s, 0s !important;\n}',
+      'yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {\n  background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;\n  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;\n  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;\n  transition-delay: 0s, 0s !important;\n}',
     )
     expect(iframeStyles).toContain(
       'yt-reaction-control-panel-view-model #fab-container {\n  transition-property: height, background-color !important;\n  transition-duration: 0.3s, 0.12s !important;\n  transition-delay: 0s, 0.3s !important;\n}',
@@ -201,7 +322,14 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model {\n  background-color:')
     expect(iframeStyles).not.toContain('yt-reaction-control-panel-overlay-view-model')
     expect(iframeStyles).not.toContain('yt-reaction-control-panel-view-model {\n  color:')
+    expect(iframeStyles).toContain(
+      'yt-emoji-picker-renderer {\n  background: var(--extension-yt-live-panel-background-color) !important;\n  background-color: var(--extension-yt-live-panel-background-color) !important;\n  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;\n  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;\n  border-radius: 8px;\n  overflow: hidden;\n}',
+    )
     expect(iframeStyles).toContain('yt-emoji-picker-renderer #search-panel')
+    expect(iframeStyles).toContain(
+      'yt-emoji-picker-renderer #search-panel {\n  background: var(--extension-yt-live-control-background-color) !important;\n  background-color: var(--extension-yt-live-control-background-color) !important;',
+    )
+    expect(iframeStyles).toContain('border: 1px solid var(--extension-yt-live-control-border-color);')
     expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer')
     expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer[active]')
     expect(iframeStyles).toContain('yt-emoji-picker-category-button-renderer[aria-selected="true"]')

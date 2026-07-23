@@ -24,6 +24,14 @@ body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
 body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
   color: var(--extension-yt-live-font-color);
 }
+/* The Top fans crown is YouTube-owned semantic color. All other header icons
+   remain extension-colored for contrast against the configured background. */
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer
+  #viewer-leaderboard-entry-point
+  .ytSpecButtonShapeNextIcon
+  .ytSpecIconShapeHost {
+  color: inherit;
+}
 body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButtonShapeNextOutline {
   border-color: var(--extension-yt-live-control-border-color);
 }

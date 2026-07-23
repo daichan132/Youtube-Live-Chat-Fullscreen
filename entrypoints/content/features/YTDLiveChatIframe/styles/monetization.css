@@ -1,4 +1,12 @@
 /* State-dependent Super Chat / sticker purchase flow. */
+/* YouTube positions the product picker and purchase flows above a zero-height
+   input renderer. Let that open picker escape the chat-only clipping boundary
+   without making the resting input panel overflow permanently. */
+body.custom-yt-app-live-chat-extension #input-panel:has(yt-live-chat-message-input-renderer[product-picker-open]),
+body.custom-yt-app-live-chat-extension #input-panel > yt-live-chat-message-input-renderer[product-picker-open] {
+  overflow: visible !important;
+}
+
 body.custom-yt-app-live-chat-extension #close-button.yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension .dim.yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension
@@ -83,14 +91,34 @@ body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer 
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer {
   color: var(--extension-yt-live-font-color) !important;
 }
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model,
+body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  overflow: hidden;
+}
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer {
-  background: var(--extension-yt-live-panel-background-color) !important;
-  background-color: var(--extension-yt-live-panel-background-color) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   overflow: hidden;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #footer {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+body.custom-yt-app-live-chat-extension #panel-pages > #loading.yt-live-chat-renderer {
+  color: var(--extension-yt-live-font-color) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+body.custom-yt-app-live-chat-extension #panel-pages > #loading.yt-live-chat-renderer > tp-yt-paper-spinner-lite.yt-live-chat-renderer {
+  --paper-spinner-color: var(--extension-yt-live-font-color);
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer {
   overflow-x: hidden;
