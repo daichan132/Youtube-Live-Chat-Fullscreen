@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import type { IframeLoadState } from '@/entrypoints/content/chat/runtime/types'
 import { IFRAME_CHAT_BODY_CLASS, IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
-import { createIframeInitializer } from './iframeInitializer'
+import { createIframeInitializer, MEMBERSHIP_FALLBACK_MARKER_ATTR, uninstallMembershipFallback } from './iframeInitializer'
 
 const createChatDoc = () => document.implementation.createHTMLDocument('chat') as Document
 
@@ -26,14 +25,10 @@ describe('iframeInitializer', () => {
 
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
-    const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
-      setIsDisplay,
-      setLoadState,
     })
 
     const initialized = initializer.initialize(iframe)
@@ -42,8 +37,29 @@ describe('iframeInitializer', () => {
     expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(true)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenLastCalledWith(true)
-    expect(setIsDisplay).toHaveBeenLastCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
+  })
+
+  it('captures a ready document before applying any extension style or body class', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    const beforeApplyStyle = vi.fn(() => {
+      expect(doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).toBeNull()
+      expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
+    })
+
+    createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      beforeApplyStyle,
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    }).initialize(iframe)
+
+    expect(beforeApplyStyle).toHaveBeenCalledOnce()
   })
 
   it('fails open and retries style initialization when document access is blocked', () => {
@@ -64,14 +80,10 @@ describe('iframeInitializer', () => {
 
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
-    const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
-      setIsDisplay,
-      setLoadState,
       retryIntervalMs: 100,
       retryMaxAttempts: 3,
     })
@@ -79,7 +91,6 @@ describe('iframeInitializer', () => {
     const initialized = initializer.initialize(iframe)
     expect(initialized).toBe(false)
     expect(setIsIframeLoaded).not.toHaveBeenCalled()
-    expect(setIsDisplay).toHaveBeenCalledWith(true)
     expect(applyChatStyle).toHaveBeenCalledTimes(0)
 
     blocked = false
@@ -87,7 +98,6 @@ describe('iframeInitializer', () => {
 
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
     expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
     expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)).not.toBeNull()
   })
 
@@ -104,14 +114,10 @@ describe('iframeInitializer', () => {
 
     const applyChatStyle = vi.fn()
     const setIsIframeLoaded = vi.fn()
-    const setIsDisplay = vi.fn()
-    const setLoadState = vi.fn<(state: IframeLoadState) => void>()
     const initializer = createIframeInitializer({
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded,
-      setIsDisplay,
-      setLoadState,
       retryIntervalMs: 100,
       retryMaxAttempts: 3,
     })
@@ -124,7 +130,6 @@ describe('iframeInitializer', () => {
 
     vi.advanceTimersByTime(100)
     expect(setIsIframeLoaded).toHaveBeenCalledWith(true)
-    expect(setLoadState).toHaveBeenLastCalledWith('ready')
   })
 
   it('does not inject duplicate styles when initialized repeatedly', () => {
@@ -141,8 +146,6 @@ describe('iframeInitializer', () => {
       iframeStyles: 'body { color: red; }',
       applyChatStyle,
       setIsIframeLoaded: vi.fn(),
-      setIsDisplay: vi.fn(),
-      setLoadState: vi.fn(),
     })
 
     initializer.initialize(iframe)
@@ -150,5 +153,81 @@ describe('iframeInitializer', () => {
 
     expect(doc.head?.querySelectorAll(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`).length).toBe(1)
     expect(applyChatStyle).toHaveBeenCalledTimes(1)
+  })
+
+  it('opens the channel join page when membership picker fallback is clicked', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    const item = doc.createElement('yt-live-chat-product-picker-panel-item-view-model')
+    item.setAttribute('item-id', 'Membership')
+    const endpoint = doc.createElement('a')
+    endpoint.id = 'endpoint'
+    endpoint.textContent = 'Membership'
+    item.appendChild(endpoint)
+    Object.defineProperty(item, 'data', {
+      value: {
+        onTapCommand: {
+          parallelCommand: {
+            commands: [
+              {
+                innertubeCommand: {
+                  ypcGetOffersEndpoint: {
+                    params: `sku-${encodeURIComponent(btoa('channel:UCSJ4gkVC6NrvII8umztf0Ow'))}`,
+                  },
+                },
+              },
+            ],
+          },
+        },
+      },
+      configurable: true,
+    })
+    doc.body.appendChild(item)
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+
+    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
+    const initializer = createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    })
+
+    initializer.initialize(iframe)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(openSpy).toHaveBeenCalledWith('https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow/join', '_blank', 'noopener')
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
+
+    expect(uninstallMembershipFallback(doc)).toBe(true)
+    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+    expect(openSpy).toHaveBeenCalledTimes(1)
+    expect(doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe(false)
+    expect(uninstallMembershipFallback(doc)).toBe(false)
+  })
+
+  it('preserves a membership fallback marker it did not install', () => {
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const doc = createChatDoc()
+    doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'native-value')
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: doc,
+      configurable: true,
+    })
+    const initializer = createIframeInitializer({
+      iframeStyles: 'body { color: red; }',
+      applyChatStyle: vi.fn(),
+      setIsIframeLoaded: vi.fn(),
+    })
+
+    initializer.initialize(iframe)
+
+    expect(uninstallMembershipFallback(doc)).toBe(false)
+    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('native-value')
   })
 })

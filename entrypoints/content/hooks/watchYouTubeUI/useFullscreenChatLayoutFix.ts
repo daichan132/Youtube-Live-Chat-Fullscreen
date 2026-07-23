@@ -4,6 +4,8 @@ const styleId = 'ylc-fullscreen-chat-layout-fix'
 const className = 'ylc-fullscreen-chat-fix'
 const hiddenChatWidthPx = 400
 const hiddenChatHeightPx = 600
+const fullscreenPlayerLayer = 1
+const parkedNativeChatLayer = -9999
 const fullscreenRootSelector = `:is(${[
   'ytd-watch-flexy',
   'ytd-watch-flexy[fullscreen]',
@@ -20,7 +22,7 @@ const fullscreenFixCss = `
 html.${className} .html5-video-player.ytp-fullscreen {
   width: 100vw !important;
   height: 100vh !important;
-  z-index: 1 !important;
+  z-index: ${fullscreenPlayerLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} {
   width: 100vw !important;
@@ -32,9 +34,11 @@ html.${className} ${fullscreenRootSelector} #secondary {
   top: -200vh !important;
   left: 0 !important;
   width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: -9999 !important;
+  z-index: ${parkedNativeChatLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} #secondary-inner,
 html.${className} ${fullscreenRootSelector} #chat-container,
@@ -42,6 +46,8 @@ html.${className} ${fullscreenRootSelector} ytd-live-chat-frame {
   width: ${hiddenChatWidthPx}px !important;
   min-width: ${hiddenChatWidthPx}px !important;
   max-width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
   position: fixed !important;
@@ -51,26 +57,30 @@ html.${className} ${fullscreenRootSelector} #panels-full-bleed-container {
   height: ${hiddenChatHeightPx}px !important;
   visibility: hidden !important;
   pointer-events: none !important;
-  z-index: -9999 !important;
+  z-index: ${parkedNativeChatLayer} !important;
 }
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container #chat-container,
 html.${className} ${fullscreenRootSelector} #panels-full-bleed-container ytd-live-chat-frame {
   width: ${hiddenChatWidthPx}px !important;
   min-width: ${hiddenChatWidthPx}px !important;
   max-width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-height: ${hiddenChatHeightPx}px !important;
 }
 html.${className} ${fullscreenRootSelector} #panels {
-  z-index: -1 !important;
-  width: 0 !important;
-  height: 0 !important;
-  min-width: 0 !important;
-  max-width: 0 !important;
-  flex: 0 0 0 !important;
+  position: fixed !important;
+  top: -200vh !important;
+  left: 0 !important;
+  width: ${hiddenChatWidthPx}px !important;
+  height: ${hiddenChatHeightPx}px !important;
+  min-width: ${hiddenChatWidthPx}px !important;
+  max-width: ${hiddenChatWidthPx}px !important;
+  visibility: hidden !important;
+  z-index: ${parkedNativeChatLayer} !important;
   margin: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
   pointer-events: none !important;
-  display: none !important;
 }
 html.${className} ${fullscreenRootSelector} #columns,
 html.${className} ${fullscreenRootSelector} #primary,

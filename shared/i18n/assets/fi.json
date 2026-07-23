@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Esiasetus",
-        "setting": "Asetukset"
+        "setting": "Asetukset",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Näytä aina",
       "chatOnlyDisplay": "Vain chat",
@@ -26,7 +28,17 @@
         "system": "Automaattinen",
         "light": "Vaalea",
         "dark": "Tumma"
-      }
+      },
+      "membershipNameColor": "Jäsenen nimen väri",
+      "defaultColor": "Oletus",
+      "resetToDefaultColor": "Palauta oletusväri",
+      "group": {
+        "display": "Näyttö",
+        "colors": "Värit",
+        "text": "Teksti",
+        "elements": "Näytettävät elementit"
+      },
+      "requiresAlwaysOn": "Ota käyttöön ”Näytä aina” määrittääksesi tämän"
     },
     "aria": {
       "dragToMove": "Siirrä vetämällä",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Lisää nykyiset asetukset",
       "addItemTitle": "Nimetön",
-      "defaultTitle": "Oletus",
+      "defaultTitle": "Vakio",
       "transparentTitle": "Läpinäkyvä",
-      "simpleTitle": "Yksinkertainen",
+      "simpleTitle": "Vain kommentit",
       "deleteConfirmationMessage": "Haluatko varmasti poistaa tämän?",
       "delete": "Poista",
-      "cancel": "Peruuta"
+      "cancel": "Peruuta",
+      "darkTitle": "Tumma",
+      "readableTitle": "Suuri teksti",
+      "compactTitle": "Kompakti",
+      "neonTitle": "Värikäs",
+      "apply": "Käytä"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Teema",
     "dataTransfer": "Varmuuskopio",
     "export": "Vie",
-    "import": "Tuo"
+    "import": "Tuo",
+    "importError": "Asetustiedoston tuonti epäonnistui."
   }
 }

@@ -4,8 +4,17 @@ import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { DefaultCoordinates, DefaultSize, ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import i18n from '../i18n/config'
-import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
-import { ylcInitSetting, ylcSimpleSetting, ylcTransparentSetting } from '../utils'
+import type { RGBColor, sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
+import {
+  DEFAULT_MEMBERSHIP_NAME_COLOR,
+  ylcCompactSetting,
+  ylcDarkSetting,
+  ylcInitSetting,
+  ylcNeonSetting,
+  ylcReadableSetting,
+  ylcSimpleSetting,
+  ylcTransparentSetting,
+} from '../utils'
 import { normalizeFontFamily } from '../utils/fontFamilyPolicy'
 
 type YTDLiveChatStoreState = {
@@ -36,6 +45,49 @@ type PersistedYTDLiveChatState = Partial<
   reactionButtonDisplay?: boolean
 }
 
+const DEFAULT_PRESETS = [
+  { id: 'default1', titleKey: 'content.preset.defaultTitle', style: ylcInitSetting },
+  { id: 'default2', titleKey: 'content.preset.transparentTitle', style: ylcTransparentSetting },
+  { id: 'default3', titleKey: 'content.preset.simpleTitle', style: ylcSimpleSetting },
+  { id: 'default4', titleKey: 'content.preset.darkTitle', style: ylcDarkSetting },
+  { id: 'default5', titleKey: 'content.preset.readableTitle', style: ylcReadableSetting },
+  { id: 'default6', titleKey: 'content.preset.compactTitle', style: ylcCompactSetting },
+  { id: 'default7', titleKey: 'content.preset.neonTitle', style: ylcNeonSetting },
+] as const
+
+const DEFAULT_PRESET_TITLE_KEYS = Object.fromEntries(DEFAULT_PRESETS.map(preset => [preset.id, preset.titleKey])) as Record<
+  DefaultPresetId,
+  DefaultPresetTitleKey
+>
+
+const DEFAULT_PRESET_STYLES = Object.fromEntries(DEFAULT_PRESETS.map(preset => [preset.id, preset.style])) as Record<
+  DefaultPresetId,
+  YLCStyleType
+>
+
+type DefaultPreset = (typeof DEFAULT_PRESETS)[number]
+type DefaultPresetId = DefaultPreset['id']
+type DefaultPresetTitleKey = DefaultPreset['titleKey']
+const NEW_DEFAULT_PRESET_IDS = new Set<DefaultPresetId>(['default4', 'default5', 'default6', 'default7'])
+const LEGACY_DEFAULT_PRESET_IDS = new Set<DefaultPresetId>(['default1', 'default2', 'default3'])
+
+const getDefaultPresetTitleKey = (id: string) => {
+  if (!(id in DEFAULT_PRESET_TITLE_KEYS)) return undefined
+  return DEFAULT_PRESET_TITLE_KEYS[id as DefaultPresetId]
+}
+
+const translateDefaultPresetTitle = (id: DefaultPresetId) => i18n.t(DEFAULT_PRESET_TITLE_KEYS[id])
+
+const getDefaultPresetIds = () => DEFAULT_PRESETS.map(preset => preset.id)
+
+const getDefaultPresetStyles = () =>
+  Object.fromEntries(DEFAULT_PRESETS.map(preset => [preset.id, preset.style])) as YTDLiveChatStoreState['presetItemStyles']
+
+const getDefaultPresetTitles = () =>
+  Object.fromEntries(
+    DEFAULT_PRESETS.map(preset => [preset.id, translateDefaultPresetTitle(preset.id)]),
+  ) as YTDLiveChatStoreState['presetItemTitles']
+
 const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
   if (!('reactionButtonDisplay' in style)) {
     return style
@@ -46,24 +98,85 @@ const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
   return rest
 }
 
+const sanitizeMembershipNameColor = (value: unknown): RGBColor => {
+  if (value && typeof value === 'object') {
+    const color = value as Record<string, unknown>
+    if (typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number') {
+      return {
+        r: color.r,
+        g: color.g,
+        b: color.b,
+        ...(typeof color.a === 'number' ? { a: color.a } : {}),
+      }
+    }
+  }
+  return { ...DEFAULT_MEMBERSHIP_NAME_COLOR }
+}
+
 const sanitizeFontFamilyInStyleObject = (style: Record<string, unknown>) => ({
   ...style,
   fontFamily: normalizeFontFamily(style.fontFamily),
+  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
 })
 
 const sanitizeStyleForPreset = (style: YLCStyleType): YLCStyleType => ({
   ...style,
   fontFamily: normalizeFontFamily(style.fontFamily),
+  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
 })
 
 const sanitizeStyleUpdate = (update: YLCStyleUpdateType): YLCStyleUpdateType => {
-  if (!Object.hasOwn(update, 'fontFamily')) {
-    return update
+  const sanitizedUpdate = {
+    ...update,
+  }
+
+  if (Object.hasOwn(update, 'fontFamily')) {
+    sanitizedUpdate.fontFamily = normalizeFontFamily(update.fontFamily)
+  }
+
+  if (Object.hasOwn(update, 'membershipNameColor')) {
+    sanitizedUpdate.membershipNameColor = sanitizeMembershipNameColor(update.membershipNameColor)
+  }
+
+  return sanitizedUpdate
+}
+
+const clampSize = (size: sizeType): sizeType => ({
+  width: Math.max(size.width, ResizableMinWidth),
+  height: Math.max(size.height, ResizableMinHeight),
+})
+
+const migratePresetItemTitles = (titles: unknown): YTDLiveChatStoreState['presetItemTitles'] | undefined => {
+  if (!titles || typeof titles !== 'object') return undefined
+
+  const migratedTitles = { ...(titles as Record<string, string>) }
+  return migratedTitles
+}
+
+const migrateDefaultPresets = (state: PersistedYTDLiveChatState): PersistedYTDLiveChatState => {
+  const hasPersistedPresetIds = Array.isArray(state.presetItemIds)
+  const presetItemIds = hasPersistedPresetIds ? [...(state.presetItemIds as string[])] : getDefaultPresetIds()
+  const presetItemStyles = state.presetItemStyles && typeof state.presetItemStyles === 'object' ? { ...state.presetItemStyles } : {}
+  const presetItemTitles = state.presetItemTitles && typeof state.presetItemTitles === 'object' ? { ...state.presetItemTitles } : {}
+  const shouldAddNewDefaults = !hasPersistedPresetIds || presetItemIds.some(id => LEGACY_DEFAULT_PRESET_IDS.has(id as DefaultPresetId))
+
+  for (const preset of DEFAULT_PRESETS) {
+    const shouldKeepDefaultPreset =
+      !hasPersistedPresetIds || presetItemIds.includes(preset.id) || (shouldAddNewDefaults && NEW_DEFAULT_PRESET_IDS.has(preset.id))
+    if (!shouldKeepDefaultPreset) continue
+
+    if (!presetItemIds.includes(preset.id)) {
+      presetItemIds.push(preset.id)
+    }
+    presetItemStyles[preset.id] = DEFAULT_PRESET_STYLES[preset.id]
+    presetItemTitles[preset.id] = translateDefaultPresetTitle(preset.id)
   }
 
   return {
-    ...update,
-    fontFamily: normalizeFontFamily(update.fontFamily),
+    ...state,
+    presetItemIds,
+    presetItemStyles,
+    presetItemTitles,
   }
 }
 
@@ -78,12 +191,18 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
     ...restState,
   } as PersistedYTDLiveChatState
 
+  const migratedTitles = migratePresetItemTitles(state.presetItemTitles)
+  if (migratedTitles) {
+    migratedState.presetItemTitles = migratedTitles
+  }
+
   if ('fontFamily' in state) {
     migratedState.fontFamily = normalizeFontFamily(state.fontFamily)
   }
+  migratedState.membershipNameColor = sanitizeMembershipNameColor(state.membershipNameColor)
 
   if (!presetItemStyles || typeof presetItemStyles !== 'object') {
-    return migratedState
+    return migrateDefaultPresets(migratedState)
   }
 
   const migratedPresetItemStyles = Object.fromEntries(
@@ -96,10 +215,10 @@ const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatSta
     }),
   )
 
-  return {
+  return migrateDefaultPresets({
     ...migratedState,
     presetItemStyles: migratedPresetItemStyles,
-  } as PersistedYTDLiveChatState
+  } as PersistedYTDLiveChatState)
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -107,17 +226,9 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     set => ({
       coordinates: { ...DefaultCoordinates },
       size: { ...DefaultSize },
-      presetItemIds: ['default1', 'default2', 'default3'],
-      presetItemStyles: {
-        default1: ylcInitSetting,
-        default2: ylcTransparentSetting,
-        default3: ylcSimpleSetting,
-      },
-      presetItemTitles: {
-        default1: i18n.t('content.preset.defaultTitle'), // i18nキーを使う
-        default2: i18n.t('content.preset.transparentTitle'),
-        default3: i18n.t('content.preset.simpleTitle'),
-      },
+      presetItemIds: getDefaultPresetIds(),
+      presetItemStyles: getDefaultPresetStyles(),
+      presetItemTitles: getDefaultPresetTitles(),
       addPresetEnabled: true,
       ...ylcInitSetting,
       addPresetItem: (id, title, ylcStyle) =>
@@ -148,21 +259,12 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         })),
       setPresetItemIds: presetItemIds => set(() => ({ presetItemIds })),
       setAddPresetEnabled: addPresetEnabled => set(() => ({ addPresetEnabled })),
-      setSize: size =>
-        set(() => ({
-          size: {
-            width: size.width < ResizableMinWidth ? ResizableMinWidth : size.width,
-            height: size.height < ResizableMinHeight ? ResizableMinHeight : size.height,
-          },
-        })),
+      setSize: size => set(() => ({ size: clampSize(size) })),
       setCoordinates: coordinates => set(() => ({ coordinates })),
       setGeometry: geometry =>
         set(() => ({
           coordinates: geometry.coordinates,
-          size: {
-            width: geometry.size.width < ResizableMinWidth ? ResizableMinWidth : geometry.size.width,
-            height: geometry.size.height < ResizableMinHeight ? ResizableMinHeight : geometry.size.height,
-          },
+          size: clampSize(geometry.size),
         })),
       setDefaultPosition: () =>
         set(() => ({
@@ -172,11 +274,11 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
     }),
     {
       name: 'ytdLiveChatStore',
-      version: 2,
+      version: 5,
       migrate: persistedState => migratePersistedState(persistedState),
       storage: createJSONStorage(() => localStorage),
     },
   ),
 )
 
-export default useYTDLiveChatStore
+export const getPresetTitleFallbackKey = getDefaultPresetTitleKey

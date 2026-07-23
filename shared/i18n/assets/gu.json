@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "પ્રીસેટ",
-        "setting": "સેટિંગ્સ"
+        "setting": "સેટિંગ્સ",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "હંમેશાં બતાવો",
       "chatOnlyDisplay": "ફક્ત ચેટ બતાવો",
@@ -26,7 +28,17 @@
         "system": "ઑટો",
         "light": "લાઇટ",
         "dark": "ડાર્ક"
-      }
+      },
+      "membershipNameColor": "સભ્યના નામનો રંગ",
+      "defaultColor": "ડિફૉલ્ટ",
+      "resetToDefaultColor": "ડિફોલ્ટ રંગ પર રીસેટ કરો",
+      "group": {
+        "display": "પ્રદર્શન",
+        "colors": "રંગો",
+        "text": "લખાણ",
+        "elements": "પ્રદર્શન ઘટકો"
+      },
+      "requiresAlwaysOn": "આ ગોઠવવા માટે \"હંમેશાં બતાવો\" ચાલુ કરો"
     },
     "aria": {
       "dragToMove": "ખસેડવા માટે ખેંચો",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "વર્તમાન સેટિંગ્સ ઉમેરો",
       "addItemTitle": "શીર્ષકહીન",
-      "defaultTitle": "ડિફૉલ્ટ",
+      "defaultTitle": "માનક",
       "transparentTitle": "પારદર્શક",
-      "simpleTitle": "સરળ",
+      "simpleTitle": "માત્ર ટિપ્પણીઓ",
       "deleteConfirmationMessage": "શું તમે ખરેખર આને કાઢી નાખવા માગો છો?",
       "delete": "કાઢી નાખો",
-      "cancel": "રદ કરો"
+      "cancel": "રદ કરો",
+      "darkTitle": "ઘાટું",
+      "readableTitle": "મોટું લખાણ",
+      "compactTitle": "કોમ્પેક્ટ",
+      "neonTitle": "રંગીન",
+      "apply": "લાગુ કરો"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "થીમ",
     "dataTransfer": "બેકઅપ",
     "export": "નિકાસ",
-    "import": "આયાત"
+    "import": "આયાત",
+    "importError": "સેટિંગ ફાઇલ આયાત કરી શકાઈ નહીં."
   }
 }

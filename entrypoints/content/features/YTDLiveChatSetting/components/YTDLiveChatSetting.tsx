@@ -1,12 +1,22 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { type IconType, RiCloseLine, TbLayoutGrid, TbSettings2 } from '@/shared/components/icons'
+import {
+  type IconType,
+  RiCloseLine,
+  TbArrowBackUp,
+  TbArrowForwardUp,
+  TbBrandGithub,
+  TbHeart,
+  TbLayoutGrid,
+  TbSettings2,
+} from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { isRTL } from '@/shared/i18n/rtl'
-import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatHistoryStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
+import { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
@@ -25,6 +35,9 @@ export const YTDLiveChatSetting = () => {
   )
   const { t, i18n } = useTranslation()
   const tablistRef = useRef<HTMLDivElement>(null)
+  const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
+  const canUndo = useYTDLiveChatHistoryStore(state => state.past.length > 0)
+  const canRedo = useYTDLiveChatHistoryStore(state => state.future.length > 0)
 
   const focusActiveTab = useCallback(() => {
     const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
@@ -33,8 +46,8 @@ export const YTDLiveChatSetting = () => {
 
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
     () => [
-      { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
       { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
+      { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     ],
     [t],
   )
@@ -65,6 +78,66 @@ export const YTDLiveChatSetting = () => {
     modalParent.setAttribute('data-ylc-theme', resolvedThemeMode)
   }, [isOpenSettingModal, resolvedThemeMode])
 
+  useEffect(() => {
+    if (!isOpenSettingModal) {
+      finishYLCStyleGesture()
+    }
+  }, [isOpenSettingModal])
+
+  const handleUndo = useCallback(() => {
+    const handled = undoYLCStyle()
+    if (handled) {
+      setHistoryAnnouncement(current => ({
+        message: t('content.setting.header.undo'),
+        sequence: current.sequence + 1,
+      }))
+    }
+    return handled
+  }, [t])
+
+  const handleRedo = useCallback(() => {
+    const handled = redoYLCStyle()
+    if (handled) {
+      setHistoryAnnouncement(current => ({
+        message: t('content.setting.header.redo'),
+        sequence: current.sequence + 1,
+      }))
+    }
+    return handled
+  }, [t])
+
+  const handlePanelKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.altKey || event.nativeEvent.isComposing) return
+
+      const path = event.nativeEvent.composedPath()
+      const isTextEditing = path.some(target => {
+        if (!(target instanceof HTMLElement)) return false
+        if (target.isContentEditable || target instanceof HTMLTextAreaElement) return true
+        if (!(target instanceof HTMLInputElement)) return false
+        return !['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'].includes(target.type)
+      })
+      if (isTextEditing) return
+
+      const hasCommandModifier = event.metaKey !== event.ctrlKey && (event.metaKey || event.ctrlKey)
+      if (!hasCommandModifier) return
+
+      const key = event.key.toLowerCase()
+      const isUndo = key === 'z' && !event.shiftKey
+      const isRedo = (key === 'z' && event.shiftKey) || (key === 'y' && event.ctrlKey && !event.metaKey && !event.shiftKey)
+      if (!isUndo && !isRedo) return
+
+      event.preventDefault()
+      event.stopPropagation()
+      if (isUndo) {
+        handleUndo()
+      } else {
+        handleRedo()
+      }
+    },
+    [handleRedo, handleUndo],
+  )
+
   return (
     <Modal
       isOpen={isOpenSettingModal}
@@ -79,10 +152,11 @@ export const YTDLiveChatSetting = () => {
       <div
         data-ylc-theme={resolvedThemeMode}
         dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
-        className='ylc-setting-panel flex flex-col w-[480px] rounded-xl ylc-theme-glass-panel ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
+        onKeyDownCapture={handlePanelKeyDown}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-center px-2 py-1.5'>
+        <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -105,15 +179,41 @@ export const YTDLiveChatSetting = () => {
               </button>
             ))}
           </div>
-          <button
-            type='button'
-            aria-label={t('content.aria.close')}
-            className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-            onClick={() => setIsOpenSettingModal(false)}
-          >
-            <RiCloseLine size={24} />
-          </button>
+          <div className='self-center inline-flex items-center gap-0.5'>
+            <button
+              type='button'
+              aria-label={t('content.setting.header.undo')}
+              aria-keyshortcuts='Meta+Z Control+Z'
+              disabled={!canUndo}
+              className='ylc-setting-history-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
+              onClick={handleUndo}
+            >
+              <TbArrowBackUp size={20} />
+            </button>
+            <button
+              type='button'
+              aria-label={t('content.setting.header.redo')}
+              aria-keyshortcuts='Meta+Shift+Z Control+Shift+Z Control+Y'
+              disabled={!canRedo}
+              className='ylc-setting-history-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
+              onClick={handleRedo}
+            >
+              <TbArrowForwardUp size={20} />
+            </button>
+            <button
+              type='button'
+              data-ylc-setting-close-button
+              aria-label={t('content.aria.close')}
+              className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
+              onClick={() => setIsOpenSettingModal(false)}
+            >
+              <RiCloseLine size={24} />
+            </button>
+          </div>
         </header>
+        <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
+          {historyAnnouncement.message}
+        </span>
         <div
           id={`ylc-tabpanel-${menuItem}`}
           role='tabpanel'
@@ -125,33 +225,19 @@ export const YTDLiveChatSetting = () => {
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <footer className='ylc-theme-setting-footer flex justify-end items-center px-3 py-2.5'>
+        <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>
           <div className='ylc-theme-footer-links'>
-            <a
-              href='https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='ylc-theme-footer-link'
-            >
-              {t('content.setting.footer.chrome')}
-            </a>
-            <a
-              href='https://addons.mozilla.org/en-US/firefox/addon/youtube-live-chat-fullscreen/'
-              target='_blank'
-              rel='noopener noreferrer'
-              className='ylc-theme-footer-link'
-            >
-              {t('content.setting.footer.firefox')}
-            </a>
             <a
               href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
               target='_blank'
               rel='noopener noreferrer'
               className='ylc-theme-footer-link'
             >
+              <TbBrandGithub size={15} aria-hidden='true' />
               GitHub
             </a>
             <a href='https://ko-fi.com/daichan132' target='_blank' rel='noopener noreferrer' className='ylc-theme-footer-link'>
+              <TbHeart size={15} aria-hidden='true' />
               {t('content.setting.footer.donate')}
             </a>
           </div>

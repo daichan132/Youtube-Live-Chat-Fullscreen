@@ -52,7 +52,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     expect(ytdState?.state.fontSize).toBe(42)
     expect(ytdState?.state.blur).toBe(10)
     expect(ytdState?.state.alwaysOnDisplay).toBe(false)
-    expect(ytdState?.version).toBe(2)
+    expect(ytdState?.version).toBe(5)
 
     // Reopen popup and verify Zustand hydration
     await page.goto(extension.url('popup.html'))

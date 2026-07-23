@@ -1,7 +1,13 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { captureChatState, ensureArchiveNativeChatPlayable, isNativeLiveChatPlayable, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import {
+	captureChatState,
+	ensureArchiveNativeChatPlayable,
+	hasYouTubePlayerError,
+	isNativeLiveChatPlayable,
+	openArchiveWatchPage,
+} from '@e2e/support/diagnostics'
 
 /**
  * detectChatMode() がページ読み込み初期にモード振動を起こすかを検証する。
@@ -174,7 +180,16 @@ test.describe('chat mode stability on live page', { tag: '@live' }, () => {
 		)
 		expect(hasLayoutFixBefore).toBe(false)
 
-		await yt.enterFullscreen()
+		const fullscreenReady = await yt.ensureFullscreen()
+		if (!fullscreenReady) {
+			const state = await captureChatState(page, test.info(), 'layout-fix-fullscreen-unavailable')
+			const playerError = await page.evaluate(hasYouTubePlayerError)
+			if (playerError || !state?.native.playable) {
+				test.skip(true, 'YouTube live playback stopped meeting fullscreen test preconditions.')
+				return
+			}
+			expect(fullscreenReady).toBe(true)
+		}
 
 		// スイッチが表示されるまで待機
 		const switchReady = await overlay.waitForSwitchReady()

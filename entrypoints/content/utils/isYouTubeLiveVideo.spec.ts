@@ -3,6 +3,7 @@ import { isYouTubeLiveVideo } from './isYouTubeLiveVideo'
 
 beforeEach(() => {
   document.body.innerHTML = ''
+  window.history.pushState({}, '', `${window.location.origin}/watch?v=current-video`)
 })
 
 describe('isYouTubeLiveVideo', () => {
@@ -32,6 +33,57 @@ describe('isYouTubeLiveVideo', () => {
   })
 
   it('returns false when no data is available', () => {
+    expect(isYouTubeLiveVideo()).toBe(false)
+  })
+
+  it('ignores stale player data from another video', () => {
+    const moviePlayer = document.createElement('div') as HTMLDivElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'stale-video' })
+    document.body.appendChild(moviePlayer)
+
+    expect(isYouTubeLiveVideo()).toBe(false)
+  })
+
+  it('recognizes matching player data on a channel live entry', () => {
+    window.history.pushState({}, '', `${window.location.origin}/@lofi/live`)
+    const moviePlayer = document.createElement('div') as HTMLDivElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'channel-live-video' })
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'channel-live-video')
+    document.body.append(moviePlayer, watchFlexy)
+
+    expect(isYouTubeLiveVideo()).toBe(true)
+  })
+
+  it('rejects conflicting player data on a channel live entry', () => {
+    window.history.pushState({}, '', `${window.location.origin}/@lofi/live`)
+    const moviePlayer = document.createElement('div') as HTMLDivElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'video-a' })
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-b')
+    document.body.append(moviePlayer, watchFlexy)
+
+    expect(isYouTubeLiveVideo()).toBe(false)
+  })
+
+  it('does not adopt player data on a non-video feed URL', () => {
+    window.history.pushState({}, '', `${window.location.origin}/feed/subscriptions`)
+    const moviePlayer = document.createElement('div') as HTMLDivElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'stale-video' })
+    document.body.appendChild(moviePlayer)
+
     expect(isYouTubeLiveVideo()).toBe(false)
   })
 })

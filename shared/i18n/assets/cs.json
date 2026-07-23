@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Předvolba",
-        "setting": "Nastavení"
+        "setting": "Nastavení",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Vždy zobrazovat",
       "chatOnlyDisplay": "Pouze chat",
@@ -26,7 +28,17 @@
         "system": "Automaticky",
         "light": "Světlý",
         "dark": "Tmavý"
-      }
+      },
+      "membershipNameColor": "Barva jména člena",
+      "defaultColor": "Výchozí",
+      "resetToDefaultColor": "Vrátit výchozí barvu",
+      "group": {
+        "display": "Zobrazení",
+        "colors": "Barvy",
+        "text": "Text",
+        "elements": "Zobrazené prvky"
+      },
+      "requiresAlwaysOn": "Zapněte „Vždy zobrazovat“ pro nastavení této možnosti"
     },
     "aria": {
       "dragToMove": "Přetáhněte pro přesun",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Přidat aktuální nastavení",
       "addItemTitle": "Bez názvu",
-      "defaultTitle": "Výchozí",
+      "defaultTitle": "Standardní",
       "transparentTitle": "Průhledný",
-      "simpleTitle": "Jednoduchý",
+      "simpleTitle": "Pouze komentáře",
       "deleteConfirmationMessage": "Opravdu chcete smazat?",
       "delete": "Smazat",
-      "cancel": "Zrušit"
+      "cancel": "Zrušit",
+      "darkTitle": "Tmavý",
+      "readableTitle": "Velký text",
+      "compactTitle": "Kompaktní",
+      "neonTitle": "Barevný",
+      "apply": "Použít"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Motiv",
     "dataTransfer": "Záloha",
     "export": "Exportovat",
-    "import": "Importovat"
+    "import": "Importovat",
+    "importError": "Soubor s nastavením se nepodařilo importovat."
   }
 }

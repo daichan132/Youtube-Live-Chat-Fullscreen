@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "പ്രീസെറ്റ്",
-        "setting": "ക്രമീകരണങ്ങൾ"
+        "setting": "ക്രമീകരണങ്ങൾ",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "എപ്പോഴും പ്രദർശിപ്പിക്കുക",
       "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",
@@ -26,7 +28,17 @@
         "system": "ഓട്ടോ",
         "light": "ലൈറ്റ്",
         "dark": "ഡാർക്ക്"
-      }
+      },
+      "membershipNameColor": "അംഗത്തിന്റെ പേരിന്റെ നിറം",
+      "defaultColor": "ഡിഫോൾട്ട്",
+      "resetToDefaultColor": "ഡിഫോൾട്ട് നിറത്തിലേക്ക് പുനഃസജ്ജമാക്കുക",
+      "group": {
+        "display": "പ്രദർശനം",
+        "colors": "നിറങ്ങൾ",
+        "text": "ടെക്സ്റ്റ്",
+        "elements": "പ്രദർശന ഘടകങ്ങൾ"
+      },
+      "requiresAlwaysOn": "ഇത് ക്രമീകരിക്കാൻ \"എപ്പോഴും പ്രദർശിപ്പിക്കുക\" ഓണാക്കുക"
     },
     "aria": {
       "dragToMove": "നീക്കാൻ വലിക്കുക",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
       "addItemTitle": "ശീർഷകമില്ലാത്തത്",
-      "defaultTitle": "ഡിഫോൾട്ട്",
+      "defaultTitle": "സ്റ്റാൻഡേർഡ്",
       "transparentTitle": "സുതാര്യം",
-      "simpleTitle": "ലളിതം",
+      "simpleTitle": "അഭിപ്രായങ്ങൾ മാത്രം",
       "deleteConfirmationMessage": "ഇത് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
       "delete": "ഇല്ലാതാക്കുക",
-      "cancel": "റദ്ദാക്കുക"
+      "cancel": "റദ്ദാക്കുക",
+      "darkTitle": "ഇരുണ്ടത്",
+      "readableTitle": "വലിയ എഴുത്ത്",
+      "compactTitle": "കോംപാക്റ്റ്",
+      "neonTitle": "വർണ്ണാഭം",
+      "apply": "പ്രയോഗിക്കുക"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "തീം",
     "dataTransfer": "ബാക്കപ്പ്",
     "export": "എക്സ്പോർട്ട്",
-    "import": "ഇംപോർട്ട്"
+    "import": "ഇംപോർട്ട്",
+    "importError": "ക്രമീകരണ ഫയൽ ഇറക്കുമതി ചെയ്യാനായില്ല."
   }
 }

@@ -14,6 +14,48 @@ export const YLC_BG_TRANSPARENT_PROPERTIES = [
   '--yt-live-chat-message-highlight-background-color',
 ] as const
 
+export const YLC_BG_SURFACE_PROPERTIES = [
+  '--extension-yt-live-menu-background-color',
+  '--yt-spec-menu-background',
+  '--yt-spec-raised-background',
+] as const
+
+export const YLC_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-panel-background-color'
+export const YLC_BACKDROP_FILTER_PROPERTY = '--extension-yt-live-backdrop-filter'
+
 export const YLC_FONT_COLOR_PROPERTIES = ['--extension-yt-live-font-color'] as const
 
 export const YLC_FONT_COLOR_LIGHT_PROPERTIES = ['--extension-yt-live-secondary-font-color'] as const
+
+export const YLC_FONT_COLOR_SURFACE_PROPERTIES = [
+  '--extension-yt-live-control-background-color',
+  '--extension-yt-live-menu-hover-background-color',
+  '--extension-yt-live-control-border-color',
+] as const
+
+export const YLC_MEMBERSHIP_NAME_COLOR_PROPERTY = '--extension-yt-live-membership-name-color'
+export const YLC_FONT_SIZE_PROPERTY = '--extension-yt-live-chat-font-size'
+export const YLC_SPACING_PROPERTY = '--extension-yt-live-chat-spacing'
+export const YLC_USER_NAME_DISPLAY_PROPERTY = '--extension-user-name-display'
+export const YLC_USER_ICON_DISPLAY_PROPERTY = '--extension-user-icon-display'
+export const YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY = '--extension-super-chat-bar-display'
+
+/** Inline properties owned by the extension on the live-chat documentElement. */
+export const YLC_DOCUMENT_STYLE_PROPERTIES = [
+  ...YLC_BG_COLOR_PROPERTIES,
+  ...YLC_BG_DARKEN_PROPERTIES.map(({ property }) => property),
+  ...YLC_BG_TRANSPARENT_PROPERTIES,
+  ...YLC_BG_SURFACE_PROPERTIES,
+  YLC_PANEL_BACKGROUND_PROPERTY,
+  YLC_BACKDROP_FILTER_PROPERTY,
+  ...YLC_FONT_COLOR_PROPERTIES,
+  ...YLC_FONT_COLOR_LIGHT_PROPERTIES,
+  ...YLC_FONT_COLOR_SURFACE_PROPERTIES,
+  YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
+  YLC_FONT_SIZE_PROPERTY,
+  YLC_SPACING_PROPERTY,
+  YLC_USER_NAME_DISPLAY_PROPERTY,
+  YLC_USER_ICON_DISPLAY_PROPERTY,
+  YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
+  'font-family',
+] as const

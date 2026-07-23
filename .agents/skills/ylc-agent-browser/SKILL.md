@@ -11,13 +11,23 @@ description: この拡張の web 上の動作確認・手動検証・表示崩�
 
 1. **手動検証は agent-browser に寄せる**。DOM 確認、見た目確認、スクリーンショット、console/trace 採取のために Playwright を起動しない
 2. **Playwright はテスト専用**。spec 作成、fixture 修正、trace/PWDEBUG、flake 調査のときだけ `ylc-e2e-playwright` / `chrome-extension-e2e-playwright` を使う
-3. **毎回 build 済み extension を読む**。`.output/chrome-mv3/manifest.json` が前提。未生成なら先に `yarn build`
+3. **ログイン済み UI の調整は dev 出力を読む**。通常 Google Chrome で見るときは `yarn dev` で `.output/chrome-mv3-dev` を生成し、`yarn verify:dev` でその path を厳密確認する
 4. **headed で確認する**。YouTube の fullscreen・overlay・hover は `--headed` を基本にする
 5. **音量は毎回 0 にしてから検証する**。YouTube を開いたら最初に player を mute し、`video.volume = 0` と `video.muted = true` を確認する
 6. **fullscreen 進入は trusted click で行う**。`eval` から `element.click()` しても user activation にならず失敗することがある。`snapshot -i` で fullscreen button の ref を取り、`agent-browser click @ref` を使う
 7. **シナリオごとに証跡を残す**。少なくとも URL、screenshot、必要なら console/trace を採取する
 
 ## Quick Start
+
+ログイン済み UI の dev 確認:
+
+```bash
+yarn dev
+yarn verify:dev --port 9336 --url "https://www.youtube.com/watch?v=<VIDEO_ID>"
+yarn verify:overlay --port 9336
+```
+
+ログイン不要の通常確認:
 
 ```bash
 agent-browser close --all
@@ -42,13 +52,13 @@ agent-browser click @e123
 agent-browser snapshot -i
 ```
 
-`--extension .output/chrome-mv3` は毎回付ける。既存セッションを使い回して挙動が怪しいときは `agent-browser close --all` でリセットする。
+ログイン不要の通常確認で agent-browser を直接使うときだけ `--extension .output/chrome-mv3` を付ける。ログイン済み UI では `YLC Verify Chrome` と `verify:dev` を使い、fullscreen 後に `verify:overlay` の `extensionDomMounted: true` を確認する。
 
 ## Standard Workflow
 
-1. `yarn build` 済みを確認する
-2. `agent-browser --headed --extension .output/chrome-mv3 open <watch-url>` で対象ページを開く
-3. `agent-browser wait --load networkidle` の直後に `video.volume = 0` と `video.muted = true` を設定し、音量が 0 になったことを確認する
+1. ログイン済み UI なら `yarn dev` と `yarn verify:dev --port 9336 --url <watch-url>` を使う
+2. ログイン不要の通常確認なら `agent-browser --headed --extension .output/chrome-mv3 open <watch-url>` で対象ページを開く
+3. agent-browser を使う場合は `agent-browser wait --load networkidle` の直後に `video.volume = 0` と `video.muted = true` を設定し、音量が 0 になったことを確認する
 4. `agent-browser snapshot -i` で初期状態を確認する
 5. fullscreen が必要なら snapshot の ref を使って `agent-browser click @ref` で進入する
 6. switch 操作、native chat 開閉など必要な操作を行う

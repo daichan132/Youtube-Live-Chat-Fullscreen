@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predlošci",
-        "setting": "Postavke"
+        "setting": "Postavke",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Uvijek na zaslonu",
       "chatOnlyDisplay": "Samo chat",
@@ -26,7 +28,17 @@
         "system": "Automatski",
         "light": "Svijetla",
         "dark": "Tamna"
-      }
+      },
+      "membershipNameColor": "Boja imena člana",
+      "defaultColor": "Zadano",
+      "resetToDefaultColor": "Vrati na zadanu boju",
+      "group": {
+        "display": "Prikaz",
+        "colors": "Boje",
+        "text": "Tekst",
+        "elements": "Prikazani elementi"
+      },
+      "requiresAlwaysOn": "Uključite „Uvijek na zaslonu“ za konfiguraciju"
     },
     "aria": {
       "dragToMove": "Povucite za premještanje",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Dodaj trenutne postavke",
       "addItemTitle": "Bez naslova",
-      "defaultTitle": "Zadano",
+      "defaultTitle": "Standardno",
       "transparentTitle": "Prozirno",
-      "simpleTitle": "Jednostavno",
+      "simpleTitle": "Samo komentari",
       "deleteConfirmationMessage": "Jeste li sigurni da želite izbrisati?",
       "delete": "Izbriši",
-      "cancel": "Odustani"
+      "cancel": "Odustani",
+      "darkTitle": "Tamno",
+      "readableTitle": "Veliki tekst",
+      "compactTitle": "Kompaktno",
+      "neonTitle": "Šareno",
+      "apply": "Primijeni"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Sigurnosna kopija",
     "export": "Izvoz",
-    "import": "Uvoz"
+    "import": "Uvoz",
+    "importError": "Datoteku s postavkama nije moguće uvesti."
   }
 }

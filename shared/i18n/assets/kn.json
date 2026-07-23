@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ಪ್ರಿಸೆಟ್",
-        "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು"
+        "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "ಯಾವಾಗಲೂ ತೋರಿಸಿ",
       "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ತೋರಿಸಿ",
@@ -26,7 +28,17 @@
         "system": "ಸ್ವಯಂ",
         "light": "ಲೈಟ್",
         "dark": "ಡಾರ್ಕ್"
-      }
+      },
+      "membershipNameColor": "ಸದಸ್ಯರ ಹೆಸರಿನ ಬಣ್ಣ",
+      "defaultColor": "ಡೀಫಾಲ್ಟ್",
+      "resetToDefaultColor": "ಡಿಫಾಲ್ಟ್ ಬಣ್ಣಕ್ಕೆ ಮರುಹೊಂದಿಸಿ",
+      "group": {
+        "display": "ಪ್ರದರ್ಶನ",
+        "colors": "ಬಣ್ಣಗಳು",
+        "text": "ಪಠ್ಯ",
+        "elements": "ಪ್ರದರ್ಶನ ಅಂಶಗಳು"
+      },
+      "requiresAlwaysOn": "ಇದನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲು \"ಯಾವಾಗಲೂ ತೋರಿಸಿ\" ಆನ್ ಮಾಡಿ"
     },
     "aria": {
       "dragToMove": "ಸರಿಸಲು ಎಳೆಯಿರಿ",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
       "addItemTitle": "ಶೀರ್ಷಿಕೆರಹಿತ",
-      "defaultTitle": "ಡೀಫಾಲ್ಟ್",
+      "defaultTitle": "ಪ್ರಮಾಣಿತ",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
-      "simpleTitle": "ಸರಳ",
+      "simpleTitle": "ಕಾಮೆಂಟ್‌ಗಳು ಮಾತ್ರ",
       "deleteConfirmationMessage": "ನೀವು ಇದನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
       "delete": "ಅಳಿಸಿ",
-      "cancel": "ರದ್ದುಮಾಡಿ"
+      "cancel": "ರದ್ದುಮಾಡಿ",
+      "darkTitle": "ಗಾಢ",
+      "readableTitle": "ದೊಡ್ಡ ಪಠ್ಯ",
+      "compactTitle": "ಕಾಂಪ್ಯಾಕ್ಟ್",
+      "neonTitle": "ಬಣ್ಣಬಣ್ಣದ",
+      "apply": "ಅನ್ವಯಿಸಿ"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "ಥೀಮ್",
     "dataTransfer": "ಬ್ಯಾಕಪ್",
     "export": "ರಫ್ತು",
-    "import": "ಆಮದು"
+    "import": "ಆಮದು",
+    "importError": "ಸೆಟ್ಟಿಂಗ್‌ಗಳ ಫೈಲ್ ಆಮದು ಮಾಡಲಾಗಲಿಲ್ಲ."
   }
 }

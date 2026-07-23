@@ -1,0 +1,47 @@
+/* --------------------------- Typography / sizing -------------------------- */
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
+  font-size: var(--extension-yt-live-chat-font-size);
+  margin: var(--extension-yt-live-chat-spacing) 0;
+}
+body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer {
+  max-height: none;
+  min-height: calc(var(--extension-yt-live-chat-font-size) + 8px);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-text-input-field-renderer[is-chat-message-input]
+  #input.yt-live-chat-text-input-field-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-text-input-field-renderer[is-chat-message-input]
+  #label.yt-live-chat-text-input-field-renderer {
+  font-size: calc(var(--extension-yt-live-chat-font-size) + 1px);
+  line-height: normal;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-viewer-engagement-message-renderer,
+body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--call-to-action.yt-spec-button-shape-next--text {
+  font-size: calc(var(--extension-yt-live-chat-font-size) - 1px);
+  line-height: normal;
+}
+body.custom-yt-app-live-chat-extension #message.yt-live-chat-text-message-renderer .emoji.yt-live-chat-text-message-renderer {
+  width: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
+  height: calc(var(--yt-live-chat-emoji-size) + var(--extension-yt-live-chat-font-size) - 13px);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer > yt-img-shadow > img.yt-img-shadow {
+  width: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+  height: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+}
+
+/* ------------------------------ Visibility -------------------------------- */
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer.yt-live-chat-banner-renderer {
+  margin: 0;
+}
+/* User-facing display toggles. Keep these as display variables so the setting
+   removes the selected chat subpart from layout, while never hiding iframe hosts. */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-author-chip.yt-live-chat-text-message-renderer {
+  display: var(--extension-user-name-display);
+}
+body.custom-yt-app-live-chat-extension #author-photo.yt-live-chat-text-message-renderer {
+  display: var(--extension-user-icon-display);
+}
+body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
+  display: var(--extension-super-chat-bar-display);
+}

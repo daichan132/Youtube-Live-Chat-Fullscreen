@@ -17,10 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
         with:
           node-version: 24.x
           cache: "yarn"
+      - name: Verify dependency release age
+        if: github.event_name == 'pull_request'
+        run: node scripts/verify/check-lockfile-age.mjs --base "origin/${{ github.base_ref }}"
       - name: Install dependencies
         run: rm -rf node_modules && yarn install --immutable
       - name: Build

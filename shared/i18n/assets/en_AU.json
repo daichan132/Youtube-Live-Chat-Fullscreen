@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Preset",
-        "setting": "Settings"
+        "setting": "Settings",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Always On Display",
       "chatOnlyDisplay": "Chat Only Display",
@@ -26,7 +28,17 @@
         "system": "Auto",
         "light": "Light",
         "dark": "Dark"
-      }
+      },
+      "membershipNameColor": "Membership name colour",
+      "defaultColor": "Default",
+      "resetToDefaultColor": "Reset to default colour",
+      "group": {
+        "display": "Display",
+        "colors": "Colours",
+        "text": "Text",
+        "elements": "Display Elements"
+      },
+      "requiresAlwaysOn": "Turn on \"Always On Display\" to configure this"
     },
     "aria": {
       "dragToMove": "Drag to move",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Add Current Settings",
       "addItemTitle": "Untitled",
-      "defaultTitle": "Default",
+      "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Comments Only",
       "deleteConfirmationMessage": "Are you sure you want to delete this?",
       "delete": "Delete",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "darkTitle": "Dark",
+      "readableTitle": "Large Text",
+      "compactTitle": "Compact",
+      "neonTitle": "Colorful",
+      "apply": "Apply"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Theme",
     "dataTransfer": "Backup",
     "export": "Export",
-    "import": "Import"
+    "import": "Import",
+    "importError": "Couldn't import the settings file."
   }
 }

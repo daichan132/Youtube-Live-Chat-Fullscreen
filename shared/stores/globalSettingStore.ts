@@ -45,5 +45,3 @@ export const useGlobalSettingStore = create<GlobalSettingStoreState>()(
     },
   ),
 )
-
-export default useGlobalSettingStore

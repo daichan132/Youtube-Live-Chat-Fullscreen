@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Forhåndsinnstilling",
-        "setting": "Innstillinger"
+        "setting": "Innstillinger",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Alltid synlig",
       "chatOnlyDisplay": "Vis kun chat",
@@ -26,7 +28,17 @@
         "system": "Automatisk",
         "light": "Lys",
         "dark": "Mørk"
-      }
+      },
+      "membershipNameColor": "Farge på medlemsnavn",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Tilbakestill til standardfarge",
+      "group": {
+        "display": "Visning",
+        "colors": "Farger",
+        "text": "Tekst",
+        "elements": "Viste elementer"
+      },
+      "requiresAlwaysOn": "Slå på «Alltid synlig» for å konfigurere dette"
     },
     "aria": {
       "dragToMove": "Dra for å flytte",
@@ -47,10 +59,15 @@
       "addItemTitle": "Uten tittel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gjennomsiktig",
-      "simpleTitle": "Enkel",
+      "simpleTitle": "Bare kommentarer",
       "deleteConfirmationMessage": "Er du sikker på at du vil slette denne?",
       "delete": "Slett",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "darkTitle": "Mørk",
+      "readableTitle": "Stor tekst",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Fargerik",
+      "apply": "Bruk"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Sikkerhetskopi",
     "export": "Eksporter",
-    "import": "Importer"
+    "import": "Importer",
+    "importError": "Kunne ikke importere innstillingsfilen."
   }
 }

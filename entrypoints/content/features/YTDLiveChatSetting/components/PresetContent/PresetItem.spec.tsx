@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { ylcInitSetting } from '@/shared/utils'
 import { PresetItem } from './PresetItem'
@@ -48,10 +49,7 @@ const resetStore = (overrides: Partial<typeof baseState> = {}) => {
 }
 
 const findPresetCard = (input: HTMLInputElement) => {
-  let node: HTMLElement | null = input
-  while (node && !node.className.includes('ylc-theme-surface')) {
-    node = node.parentElement
-  }
+  const node = input.closest('.ylc-preset')
   if (!node) throw new Error('Preset card not found')
   return node as HTMLElement
 }
@@ -68,19 +66,30 @@ describe('PresetItem', () => {
       presetItemStyles: { ...baseState.presetItemStyles, custom: ylcInitSetting },
     })
 
-    const { findByText, getByDisplayValue } = render(<PresetItem id='custom' />)
+    const { findByRole, findByText, getByDisplayValue } = render(<PresetItem id='custom' />)
 
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
-    const actionContainer = card.querySelector('div.flex.transition-opacity') as HTMLElement
+    const actionContainer = card.querySelector('[data-ylc-preset-actions]') as HTMLElement
     const actionButtons = actionContainer.querySelectorAll('button')
     const deleteButtonInCard = actionButtons[actionButtons.length - 1]
 
     fireEvent.click(deleteButtonInCard)
 
+    expect(await findByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.nestedModal) })
     const deleteButton = await findByText('content.preset.delete', { selector: 'button' })
     fireEvent.click(deleteButton)
 
     expect(useYTDLiveChatStore.getState().presetItemIds).not.toContain('custom')
+  })
+
+  it('falls back to the default preset title when persisted title is empty', () => {
+    useYTDLiveChatStore.setState({
+      presetItemTitles: { ...baseState.presetItemTitles, default1: '' },
+    })
+
+    const { getByDisplayValue } = render(<PresetItem id='default1' />)
+
+    expect(getByDisplayValue('content.preset.defaultTitle')).toBeTruthy()
   })
 })

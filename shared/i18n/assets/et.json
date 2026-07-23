@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Eelseadistus",
-        "setting": "Seaded"
+        "setting": "Seaded",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Alati nähtav",
       "chatOnlyDisplay": "Ainult vestlus",
@@ -26,7 +28,17 @@
         "system": "Automaatne",
         "light": "Hele",
         "dark": "Tume"
-      }
+      },
+      "membershipNameColor": "Liikme nime värv",
+      "defaultColor": "Vaikimisi",
+      "resetToDefaultColor": "Lähtesta vaikevärvile",
+      "group": {
+        "display": "Kuva",
+        "colors": "Värvid",
+        "text": "Tekst",
+        "elements": "Kuvatavad elemendid"
+      },
+      "requiresAlwaysOn": "Selle seadistamiseks lülitage sisse „Alati nähtav“"
     },
     "aria": {
       "dragToMove": "Lohista liigutamiseks",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Lisa praegused seaded",
       "addItemTitle": "Pealkirjata",
-      "defaultTitle": "Vaikimisi",
+      "defaultTitle": "Standardne",
       "transparentTitle": "Läbipaistev",
-      "simpleTitle": "Lihtne",
+      "simpleTitle": "Ainult kommentaarid",
       "deleteConfirmationMessage": "Kas soovid kindlasti kustutada?",
       "delete": "Kustuta",
-      "cancel": "Tühista"
+      "cancel": "Tühista",
+      "darkTitle": "Tume",
+      "readableTitle": "Suur tekst",
+      "compactTitle": "Kompaktne",
+      "neonTitle": "Värviline",
+      "apply": "Rakenda"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Teema",
     "dataTransfer": "Varundus",
     "export": "Ekspordi",
-    "import": "Impordi"
+    "import": "Impordi",
+    "importError": "Sätete faili ei õnnestunud importida."
   }
 }

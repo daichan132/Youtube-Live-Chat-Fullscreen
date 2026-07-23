@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "預設方案",
-        "setting": "設定"
+        "setting": "設定",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "總是顯示",
       "chatOnlyDisplay": "僅顯示聊天室",
@@ -26,7 +28,17 @@
         "system": "自動",
         "light": "淺色",
         "dark": "深色"
-      }
+      },
+      "membershipNameColor": "會員名稱顏色",
+      "defaultColor": "預設",
+      "resetToDefaultColor": "重設為預設顏色",
+      "group": {
+        "display": "顯示",
+        "colors": "配色",
+        "text": "文字",
+        "elements": "顯示元素"
+      },
+      "requiresAlwaysOn": "開啟「常駐顯示」後即可設定"
     },
     "aria": {
       "dragToMove": "拖曳以移動",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "新增目前設定",
       "addItemTitle": "未命名",
-      "defaultTitle": "預設",
+      "defaultTitle": "標準",
       "transparentTitle": "透明",
-      "simpleTitle": "簡約",
+      "simpleTitle": "僅留言",
       "deleteConfirmationMessage": "確定要刪除嗎？",
       "delete": "刪除",
-      "cancel": "取消"
+      "cancel": "取消",
+      "darkTitle": "深色",
+      "readableTitle": "大字",
+      "compactTitle": "緊湊",
+      "neonTitle": "繽紛",
+      "apply": "套用"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "主題",
     "dataTransfer": "備份",
     "export": "匯出",
-    "import": "匯入"
+    "import": "匯入",
+    "importError": "無法匯入設定檔。"
   }
 }

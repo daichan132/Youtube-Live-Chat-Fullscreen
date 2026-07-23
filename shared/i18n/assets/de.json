@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Voreinstellung",
-        "setting": "Einstellungen"
+        "setting": "Einstellungen",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Immer sichtbar",
       "chatOnlyDisplay": "Nur Chat anzeigen",
@@ -26,7 +28,17 @@
         "system": "Automatisch",
         "light": "Hell",
         "dark": "Dunkel"
-      }
+      },
+      "membershipNameColor": "Farbe des Mitgliedsnamens",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Auf Standardfarbe zurücksetzen",
+      "group": {
+        "display": "Anzeige",
+        "colors": "Farben",
+        "text": "Text",
+        "elements": "Anzeigeelemente"
+      },
+      "requiresAlwaysOn": "Aktiviere „Immer anzeigen“, um dies zu konfigurieren"
     },
     "aria": {
       "dragToMove": "Ziehen zum Verschieben",
@@ -47,10 +59,15 @@
       "addItemTitle": "Unbenannt",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Einfach",
+      "simpleTitle": "Nur Kommentare",
       "deleteConfirmationMessage": "Möchten Sie dies wirklich löschen?",
       "delete": "Löschen",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "darkTitle": "Dunkel",
+      "readableTitle": "Großer Text",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Farbenfroh",
+      "apply": "Übernehmen"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Design",
     "dataTransfer": "Sicherung",
     "export": "Exportieren",
-    "import": "Importieren"
+    "import": "Importieren",
+    "importError": "Die Einstellungsdatei konnte nicht importiert werden."
   }
 }

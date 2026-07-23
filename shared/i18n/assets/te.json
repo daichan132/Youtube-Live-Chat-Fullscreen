@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ప్రీసెట్",
-        "setting": "సెట్టింగ్‌లు"
+        "setting": "సెట్టింగ్‌లు",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "ఎప్పుడూ చూపించు",
       "chatOnlyDisplay": "చాట్ మాత్రమే చూపించు",
@@ -26,7 +28,17 @@
         "system": "ఆటో",
         "light": "లైట్",
         "dark": "డార్క్"
-      }
+      },
+      "membershipNameColor": "సభ్యుని పేరు రంగు",
+      "defaultColor": "డిఫాల్ట్",
+      "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి",
+      "group": {
+        "display": "ప్రదర్శన",
+        "colors": "రంగులు",
+        "text": "టెక్స్ట్",
+        "elements": "ప్రదర్శన మూలకాలు"
+      },
+      "requiresAlwaysOn": "దీన్ని కాన్ఫిగర్ చేయడానికి \"ఎప్పుడూ చూపించు\" ఆన్ చేయండి"
     },
     "aria": {
       "dragToMove": "తరలించడానికి లాగండి",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "ప్రస్తుత సెట్టింగ్‌లను జోడించు",
       "addItemTitle": "శీర్షిక లేదు",
-      "defaultTitle": "డిఫాల్ట్",
+      "defaultTitle": "ప్రామాణికం",
       "transparentTitle": "పారదర్శకం",
-      "simpleTitle": "సరళం",
+      "simpleTitle": "వ్యాఖ్యలు మాత్రమే",
       "deleteConfirmationMessage": "దీన్ని నిజంగా తొలగించాలనుకుంటున్నారా?",
       "delete": "తొలగించు",
-      "cancel": "రద్దు చేయి"
+      "cancel": "రద్దు చేయి",
+      "darkTitle": "ముదురు",
+      "readableTitle": "పెద్ద వచనం",
+      "compactTitle": "కాంపాక్ట్",
+      "neonTitle": "రంగురంగుల",
+      "apply": "వర్తింపజేయి"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "థీమ్",
     "dataTransfer": "బ్యాకప్",
     "export": "ఎగుమతి",
-    "import": "దిగుమతి"
+    "import": "దిగుమతి",
+    "importError": "సెట్టింగ్‌ల ఫైల్‌ను దిగుమతి చేయడం సాధ్యపడలేదు."
   }
 }

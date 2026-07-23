@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Ön Ayar",
-        "setting": "Ayarlar"
+        "setting": "Ayarlar",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Her Zaman Göster",
       "chatOnlyDisplay": "Yalnızca Sohbet",
@@ -26,7 +28,17 @@
         "system": "Otomatik",
         "light": "Açık",
         "dark": "Koyu"
-      }
+      },
+      "membershipNameColor": "Üye adı rengi",
+      "defaultColor": "Varsayılan",
+      "resetToDefaultColor": "Varsayılan renge sıfırla",
+      "group": {
+        "display": "Görünüm",
+        "colors": "Renkler",
+        "text": "Metin",
+        "elements": "Görüntülenen Öğeler"
+      },
+      "requiresAlwaysOn": "Bunu yapılandırmak için \"Her Zaman Göster\" özelliğini açın"
     },
     "aria": {
       "dragToMove": "Taşımak için sürükleyin",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Mevcut Ayarları Ekle",
       "addItemTitle": "Başlıksız",
-      "defaultTitle": "Varsayılan",
+      "defaultTitle": "Standart",
       "transparentTitle": "Şeffaf",
-      "simpleTitle": "Sade",
+      "simpleTitle": "Yalnızca yorumlar",
       "deleteConfirmationMessage": "Bunu silmek istediğinizden emin misiniz?",
       "delete": "Sil",
-      "cancel": "İptal"
+      "cancel": "İptal",
+      "darkTitle": "Koyu",
+      "readableTitle": "Büyük metin",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Renkli",
+      "apply": "Uygula"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Yedekleme",
     "export": "Dışa Aktar",
-    "import": "İçe Aktar"
+    "import": "İçe Aktar",
+    "importError": "Ayar dosyası içe aktarılamadı."
   }
 }

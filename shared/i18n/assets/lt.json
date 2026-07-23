@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Šablonas",
-        "setting": "Nustatymai"
+        "setting": "Nustatymai",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Rodyti visada",
       "chatOnlyDisplay": "Tik pokalbis",
@@ -26,7 +28,17 @@
         "system": "Automatinė",
         "light": "Šviesi",
         "dark": "Tamsi"
-      }
+      },
+      "membershipNameColor": "Nario vardo spalva",
+      "defaultColor": "Numatytasis",
+      "resetToDefaultColor": "Atkurti numatytąją spalvą",
+      "group": {
+        "display": "Rodymas",
+        "colors": "Spalvos",
+        "text": "Tekstas",
+        "elements": "Rodomi elementai"
+      },
+      "requiresAlwaysOn": "Norėdami tai konfigūruoti, įjunkite „Rodyti visada“"
     },
     "aria": {
       "dragToMove": "Vilkite norėdami perkelti",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Pridėti dabartinius nustatymus",
       "addItemTitle": "Be pavadinimo",
-      "defaultTitle": "Numatytasis",
+      "defaultTitle": "Standartinis",
       "transparentTitle": "Permatomas",
-      "simpleTitle": "Paprastas",
+      "simpleTitle": "Tik komentarai",
       "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
       "delete": "Ištrinti",
-      "cancel": "Atšaukti"
+      "cancel": "Atšaukti",
+      "darkTitle": "Tamsus",
+      "readableTitle": "Didelis tekstas",
+      "compactTitle": "Kompaktiškas",
+      "neonTitle": "Spalvingas",
+      "apply": "Taikyti"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Atsarginė kopija",
     "export": "Eksportuoti",
-    "import": "Importuoti"
+    "import": "Importuoti",
+    "importError": "Nepavyko importuoti nustatymų failo."
   }
 }

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Шаблон",
-        "setting": "Налаштування"
+        "setting": "Налаштування",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Завжди на екрані",
       "chatOnlyDisplay": "Лише чат",
@@ -26,7 +28,17 @@
         "system": "Авто",
         "light": "Світла",
         "dark": "Темна"
-      }
+      },
+      "membershipNameColor": "Колір імені спонсора",
+      "defaultColor": "За замовчуванням",
+      "resetToDefaultColor": "Повернути колір за замовчуванням",
+      "group": {
+        "display": "Відображення",
+        "colors": "Кольори",
+        "text": "Текст",
+        "elements": "Відображувані елементи"
+      },
+      "requiresAlwaysOn": "Увімкніть «Завжди на екрані», щоб налаштувати це"
     },
     "aria": {
       "dragToMove": "Перетягніть для переміщення",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Додати поточні налаштування",
       "addItemTitle": "Без назви",
-      "defaultTitle": "За замовчуванням",
+      "defaultTitle": "Стандартний",
       "transparentTitle": "Прозорий",
-      "simpleTitle": "Простий",
+      "simpleTitle": "Лише коментарі",
       "deleteConfirmationMessage": "Ви впевнені, що хочете видалити?",
       "delete": "Видалити",
-      "cancel": "Скасувати"
+      "cancel": "Скасувати",
+      "darkTitle": "Темний",
+      "readableTitle": "Великий текст",
+      "compactTitle": "Компактний",
+      "neonTitle": "Кольоровий",
+      "apply": "Застосувати"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Тема",
     "dataTransfer": "Резервна копія",
     "export": "Експорт",
-    "import": "Імпорт"
+    "import": "Імпорт",
+    "importError": "Не вдалося імпортувати файл налаштувань."
   }
 }

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Prasetel",
-        "setting": "Pengaturan"
+        "setting": "Pengaturan",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Selalu Tampil",
       "chatOnlyDisplay": "Hanya Tampilkan Chat",
@@ -26,7 +28,17 @@
         "system": "Otomatis",
         "light": "Terang",
         "dark": "Gelap"
-      }
+      },
+      "membershipNameColor": "Warna nama member",
+      "defaultColor": "Bawaan",
+      "resetToDefaultColor": "Reset ke warna default",
+      "group": {
+        "display": "Tampilan",
+        "colors": "Warna",
+        "text": "Teks",
+        "elements": "Elemen Tampilan"
+      },
+      "requiresAlwaysOn": "Aktifkan \"Selalu Tampil\" untuk mengatur ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Tambah Pengaturan Saat Ini",
       "addItemTitle": "Tanpa Judul",
-      "defaultTitle": "Bawaan",
+      "defaultTitle": "Standar",
       "transparentTitle": "Transparan",
-      "simpleTitle": "Sederhana",
+      "simpleTitle": "Hanya komentar",
       "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus ini?",
       "delete": "Hapus",
-      "cancel": "Batal"
+      "cancel": "Batal",
+      "darkTitle": "Gelap",
+      "readableTitle": "Teks besar",
+      "compactTitle": "Ringkas",
+      "neonTitle": "Berwarna",
+      "apply": "Terapkan"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Cadangan",
     "export": "Ekspor",
-    "import": "Impor"
+    "import": "Impor",
+    "importError": "Tidak dapat mengimpor file pengaturan."
   }
 }

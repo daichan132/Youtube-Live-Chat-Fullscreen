@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Cài đặt sẵn",
-        "setting": "Cài đặt"
+        "setting": "Cài đặt",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Luôn hiển thị",
       "chatOnlyDisplay": "Chỉ hiển thị chat",
@@ -26,7 +28,17 @@
         "system": "Tự động",
         "light": "Sáng",
         "dark": "Tối"
-      }
+      },
+      "membershipNameColor": "Màu tên hội viên",
+      "defaultColor": "Mặc định",
+      "resetToDefaultColor": "Đặt lại về màu mặc định",
+      "group": {
+        "display": "Hiển thị",
+        "colors": "Màu sắc",
+        "text": "Văn bản",
+        "elements": "Thành phần hiển thị"
+      },
+      "requiresAlwaysOn": "Bật \"Luôn hiển thị\" để cấu hình mục này"
     },
     "aria": {
       "dragToMove": "Kéo để di chuyển",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Thêm cài đặt hiện tại",
       "addItemTitle": "Chưa đặt tên",
-      "defaultTitle": "Mặc định",
+      "defaultTitle": "Tiêu chuẩn",
       "transparentTitle": "Trong suốt",
-      "simpleTitle": "Đơn giản",
+      "simpleTitle": "Chỉ bình luận",
       "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa mục này không?",
       "delete": "Xóa",
-      "cancel": "Hủy"
+      "cancel": "Hủy",
+      "darkTitle": "Tối",
+      "readableTitle": "Chữ lớn",
+      "compactTitle": "Gọn",
+      "neonTitle": "Nhiều màu",
+      "apply": "Áp dụng"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Giao diện",
     "dataTransfer": "Sao lưu",
     "export": "Xuất",
-    "import": "Nhập"
+    "import": "Nhập",
+    "importError": "Không thể nhập tệp cài đặt."
   }
 }

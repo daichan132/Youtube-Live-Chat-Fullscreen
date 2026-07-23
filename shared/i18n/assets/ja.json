@@ -3,8 +3,17 @@
     "setting": {
       "header": {
         "preset": "プリセット",
-        "setting": "設定"
+        "setting": "設定",
+        "undo": "スタイル変更を元に戻す",
+        "redo": "スタイル変更をやり直す"
       },
+      "group": {
+        "display": "表示",
+        "colors": "配色",
+        "text": "テキスト",
+        "elements": "表示要素"
+      },
+      "requiresAlwaysOn": "「常時表示」をオンにすると設定できます",
       "alwaysOnDisplay": "常時表示",
       "chatOnlyDisplay": "チャットのみ表示",
       "userNameDisplay": "ユーザー名表示",
@@ -26,7 +35,10 @@
         "system": "自動",
         "light": "ライト",
         "dark": "ダーク"
-      }
+      },
+      "membershipNameColor": "メンバー名の色",
+      "defaultColor": "既定",
+      "resetToDefaultColor": "既定色に戻す"
     },
     "aria": {
       "dragToMove": "ドラッグで移動",
@@ -44,10 +56,15 @@
     },
     "preset": {
       "addMessage": "現在の設定を追加",
+      "apply": "適用",
       "addItemTitle": "無題",
-      "defaultTitle": "デフォルト",
+      "defaultTitle": "スタンダード",
       "transparentTitle": "透明",
-      "simpleTitle": "シンプル",
+      "simpleTitle": "コメントのみ",
+      "darkTitle": "ダーク",
+      "readableTitle": "大きめ",
+      "compactTitle": "コンパクト",
+      "neonTitle": "カラフル",
       "deleteConfirmationMessage": "本当に削除しますか？",
       "delete": "削除",
       "cancel": "キャンセル"
@@ -61,6 +78,7 @@
     "theme": "テーマ",
     "dataTransfer": "バックアップ",
     "export": "書き出し",
-    "import": "読み込み"
+    "import": "読み込み",
+    "importError": "設定ファイルを読み込めませんでした。"
   }
 }

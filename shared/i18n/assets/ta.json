@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "முன்னமைவு",
-        "setting": "அமைப்புகள்"
+        "setting": "அமைப்புகள்",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "எப்போதும் காட்டு",
       "chatOnlyDisplay": "அரட்டையை மட்டும் காட்டு",
@@ -26,7 +28,17 @@
         "system": "தானியங்கு",
         "light": "ஒளி",
         "dark": "இருள்"
-      }
+      },
+      "membershipNameColor": "உறுப்பினர் பெயர் நிறம்",
+      "defaultColor": "இயல்புநிலை",
+      "resetToDefaultColor": "இயல்புநிலை நிறத்துக்கு மீட்டமை",
+      "group": {
+        "display": "காட்சி",
+        "colors": "நிறங்கள்",
+        "text": "உரை",
+        "elements": "காட்சி கூறுகள்"
+      },
+      "requiresAlwaysOn": "இதை அமைக்க \"எப்போதும் காட்டு\" ஐ இயக்கவும்"
     },
     "aria": {
       "dragToMove": "நகர்த்த இழுக்கவும்",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
       "addItemTitle": "தலைப்பிடப்படாதது",
-      "defaultTitle": "இயல்புநிலை",
+      "defaultTitle": "நிலையான",
       "transparentTitle": "வெளிப்படை",
-      "simpleTitle": "எளிமை",
+      "simpleTitle": "கருத்துகள் மட்டும்",
       "deleteConfirmationMessage": "இதை நிச்சயமாக நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
-      "cancel": "ரத்துசெய்"
+      "cancel": "ரத்துசெய்",
+      "darkTitle": "இருள்",
+      "readableTitle": "பெரிய உரை",
+      "compactTitle": "சுருக்கமான",
+      "neonTitle": "வண்ணமயமான",
+      "apply": "பயன்படுத்து"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "தீம்",
     "dataTransfer": "காப்புப்பிரதி",
     "export": "ஏற்றுமதி",
-    "import": "இறக்குமதி"
+    "import": "இறக்குமதி",
+    "importError": "அமைப்புக் கோப்பை இறக்குமதி செய்ய முடியவில்லை."
   }
 }

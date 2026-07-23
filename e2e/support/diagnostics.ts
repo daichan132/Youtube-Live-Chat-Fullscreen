@@ -78,7 +78,7 @@ const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; sw
 			playable: Boolean(
 				nativeHref &&
 					!nativeHref.includes('about:blank') &&
-					nativeHref.includes('/live_chat_replay') &&
+					nativeHref.includes('/live_chat') &&
 					!nativeUnavailable &&
 					h.isDocPlayable(nativeDoc),
 			),
@@ -173,6 +173,46 @@ export const isExtensionChatLoaded = () => {
 	return Boolean(href && !href.includes('about:blank'))
 }
 
+export const isExtensionOverlayRendered = () => {
+  const host = document.getElementById('shadow-root-live-chat')
+  const root = host?.shadowRoot ?? null
+  return Boolean(root?.querySelector('[data-ylc-overlay-container]'))
+}
+
+export const hasNativeChatControls = (extensionSwitchContainerSelector: string) => {
+  const h = window.__ylcHelpers
+  const controls = Array.from(
+    document.querySelectorAll<HTMLElement>(
+      [
+        '.ytp-right-controls button',
+        '.ytp-right-controls yt-icon-button',
+        '.ytp-right-controls [role="button"]',
+        'ytd-live-chat-frame #show-hide-button',
+        '#chat-container #show-hide-button',
+      ].join(','),
+    ),
+  )
+
+  for (const target of controls) {
+    const clickable = h.resolveClickable(target)
+    if (!clickable) continue
+    if (clickable.closest(extensionSwitchContainerSelector)) continue
+    if (!h.isElementVisible(clickable)) continue
+    const label = h.getButtonLabelText(clickable)
+    if (label.includes('chat') || label.includes('チャット')) return true
+  }
+
+  return false
+}
+
+export const hasYouTubePlayerError = () => {
+  const player = document.querySelector('#movie_player')
+  if (!player) return false
+
+  const alertText = player.querySelector('[role="alert"], .ytp-error')?.textContent?.toLowerCase() ?? ''
+  return alertText.includes('something went wrong') || alertText.includes('try again later') || alertText.includes('video unavailable')
+}
+
 const tryOpenArchiveNativeChatPanel = async (page: Page) => {
 	return page
 		.evaluate(
@@ -256,6 +296,14 @@ export const hasPlayableChat = () => {
 	const href = doc?.location?.href ?? ''
 	if (!doc || !href || href.includes('about:blank')) return false
 	return h.isDocPlayable(doc)
+}
+
+export const isNativeChatUnavailable = () => {
+	const h = window.__ylcHelpers
+	const iframe = h.getNativeIframe()
+	const doc = iframe?.contentDocument ?? null
+	if (!doc) return false
+	return h.isDocUnavailable(doc)
 }
 
 /**

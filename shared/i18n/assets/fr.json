@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Préréglage",
-        "setting": "Paramètres"
+        "setting": "Paramètres",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Affichage permanent",
       "chatOnlyDisplay": "Afficher uniquement le chat",
@@ -26,7 +28,17 @@
         "system": "Automatique",
         "light": "Clair",
         "dark": "Sombre"
-      }
+      },
+      "membershipNameColor": "Couleur du nom de membre",
+      "defaultColor": "Défaut",
+      "resetToDefaultColor": "Rétablir la couleur par défaut",
+      "group": {
+        "display": "Affichage",
+        "colors": "Couleurs",
+        "text": "Texte",
+        "elements": "Éléments affichés"
+      },
+      "requiresAlwaysOn": "Activez « Toujours afficher » pour le configurer"
     },
     "aria": {
       "dragToMove": "Glisser pour déplacer",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Ajouter les paramètres actuels",
       "addItemTitle": "Sans titre",
-      "defaultTitle": "Défaut",
+      "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Commentaires uniquement",
       "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer ?",
       "delete": "Supprimer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "darkTitle": "Sombre",
+      "readableTitle": "Grand texte",
+      "compactTitle": "Compact",
+      "neonTitle": "Coloré",
+      "apply": "Appliquer"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Thème",
     "dataTransfer": "Sauvegarde",
     "export": "Exporter",
-    "import": "Importer"
+    "import": "Importer",
+    "importError": "Impossible d'importer le fichier de paramètres."
   }
 }

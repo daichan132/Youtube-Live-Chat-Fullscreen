@@ -1,4 +1,11 @@
 import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
+import {
+  getCurrentLiveChatHost,
+  getCurrentLiveChatIframe,
+  getNonBlankIframeHref,
+  isChatHostForCurrentVideo,
+  isIframeForCurrentVideo,
+} from '../chat/shared/iframeDom'
 
 type YouTubeLiveChatFrameElement = HTMLElement & {
   onShowHideChat?: () => void
@@ -32,30 +39,16 @@ const isNativeChatMarkedExpanded = () => {
   return Boolean(watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded'))
 }
 
-const isNativeChatHostVisible = () => {
-  const host = document.querySelector('ytd-live-chat-frame') as HTMLElement | null
+const isNativeChatHostVisible = (host = getCurrentLiveChatHost()) => {
   if (!host) return false
   if (host.hasAttribute('hidden') || host.getAttribute('aria-hidden') === 'true') return false
   const style = window.getComputedStyle(host)
   return style.display !== 'none' && style.visibility !== 'hidden'
 }
 
-const getNativeChatHref = () => {
-  const chatFrame = document.querySelector('#chatframe') as HTMLIFrameElement | null
-  if (!chatFrame) return ''
-  try {
-    const docHref = chatFrame.contentDocument?.location?.href ?? ''
-    if (docHref) return docHref
-  } catch {
-    // Ignore and fallback to src attributes.
-  }
-  return chatFrame.getAttribute('src') ?? chatFrame.src ?? ''
-}
-
-const isNativeChatIframeBlank = () => {
-  const href = getNativeChatHref()
-  if (!href) return true
-  return href.includes('about:blank')
+const hasCurrentNonBlankNativeChatIframe = () => {
+  const chatFrame = getCurrentLiveChatIframe()
+  return Boolean(chatFrame && isIframeForCurrentVideo(chatFrame, null) && getNonBlankIframeHref(chatFrame))
 }
 
 // Keep clickable targets restricted to current UI controls.
@@ -70,6 +63,16 @@ const getButtonLabelText = (element: HTMLElement) =>
 
 const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
 
+const getCurrentChatHost = () => {
+  return getCurrentLiveChatHost()
+}
+
+const isControlScopedToCurrentChatHost = (element: HTMLElement) => {
+  const host = element.closest('ytd-live-chat-frame') as HTMLElement | null
+  if (host) return isChatHostForCurrentVideo(host)
+  return getCurrentChatHost() !== null
+}
+
 const isElementVisible = (element: HTMLElement) => {
   if (element.hasAttribute('hidden')) return false
   if (element.getAttribute('aria-hidden') === 'true') return false
@@ -83,6 +86,7 @@ const clickFirstMatchingSelector = (
   selectors: string[],
   options: {
     requireChatLabel?: boolean
+    requireCurrentChatHost?: boolean
     requireVisible?: boolean
   } = {},
 ) => {
@@ -96,6 +100,7 @@ const findFirstMatchingControl = (
   selectors: string[],
   options: {
     requireChatLabel?: boolean
+    requireCurrentChatHost?: boolean
     requireVisible?: boolean
   } = {},
 ) => {
@@ -109,6 +114,7 @@ const findFirstMatchingControl = (
       if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
       if (clickable.getAttribute('aria-disabled') === 'true') continue
       if (options.requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
+      if (options.requireCurrentChatHost && !isControlScopedToCurrentChatHost(clickable)) continue
       return clickable
     }
   }
@@ -135,7 +141,7 @@ const revealPlayerControls = () => {
 }
 
 const tryInvokeChatFrameShowHide = () => {
-  const host = document.querySelector('ytd-live-chat-frame') as YouTubeLiveChatFrameElement | null
+  const host = getCurrentChatHost() as YouTubeLiveChatFrameElement | null
   if (!host) return false
   if (typeof host.onShowHideChat !== 'function') return false
   host.onShowHideChat()
@@ -143,12 +149,14 @@ const tryInvokeChatFrameShowHide = () => {
 }
 
 const hasChatFrameShowHideHandler = () => {
-  const host = document.querySelector('ytd-live-chat-frame') as YouTubeLiveChatFrameElement | null
+  const host = getCurrentChatHost() as YouTubeLiveChatFrameElement | null
   return typeof host?.onShowHideChat === 'function'
 }
 
 const hasArchiveShowHideSlotContent = () => {
-  const slots = document.querySelectorAll<HTMLElement>('ytd-live-chat-frame #show-hide-button, #chat-container #show-hide-button')
+  const host = getCurrentChatHost()
+  if (!host) return false
+  const slots = host.querySelectorAll<HTMLElement>('#show-hide-button')
   for (const slot of slots) {
     const clickable = slot.querySelector<HTMLElement>('button, yt-icon-button, [role="button"]')
     if (clickable) return true
@@ -159,27 +167,56 @@ const hasArchiveShowHideSlotContent = () => {
 }
 
 export const hasArchiveNativeOpenControl = () => {
-  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: true })) return true
-  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireVisible: false })) return true
-  if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: true })) return true
-  if (findFirstMatchingControl(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: false })) return true
+  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: true })) return true
+  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: false })) return true
+  if (
+    findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+      requireChatLabel: true,
+      requireCurrentChatHost: true,
+      requireVisible: true,
+    })
+  )
+    return true
+  if (
+    findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+      requireChatLabel: true,
+      requireCurrentChatHost: true,
+      requireVisible: false,
+    })
+  )
+    return true
   return hasChatFrameShowHideHandler() && hasArchiveShowHideSlotContent()
 }
 
 export const openArchiveNativeChatPanel = () => {
   // `#show-hide-button` is a toggle. If YouTube already marks expanded and
   // iframe is non-blank, avoid toggling it closed by mistake.
-  if (isNativeChatMarkedExpanded() && !isNativeChatIframeBlank() && isNativeChatHostVisible()) {
+  const currentHost = getCurrentChatHost()
+  if (isNativeChatMarkedExpanded() && currentHost && hasCurrentNonBlankNativeChatIframe() && isNativeChatHostVisible(currentHost)) {
     return false
   }
 
-  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireVisible: true })) return true
-  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireVisible: false })) return true
+  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: true })) return true
+  if (clickFirstMatchingSelector(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: false })) return true
 
   revealPlayerControls()
 
-  if (clickFirstMatchingSelector(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: true })) return true
-  if (clickFirstMatchingSelector(archivePlayerChatToggleSelectors, { requireChatLabel: true, requireVisible: false })) return true
+  if (
+    clickFirstMatchingSelector(archivePlayerChatToggleSelectors, {
+      requireChatLabel: true,
+      requireCurrentChatHost: true,
+      requireVisible: true,
+    })
+  )
+    return true
+  if (
+    clickFirstMatchingSelector(archivePlayerChatToggleSelectors, {
+      requireChatLabel: true,
+      requireCurrentChatHost: true,
+      requireVisible: false,
+    })
+  )
+    return true
   if (tryInvokeChatFrameShowHide()) return true
 
   return false

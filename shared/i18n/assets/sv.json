@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Förinställning",
-        "setting": "Inställningar"
+        "setting": "Inställningar",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Alltid synlig",
       "chatOnlyDisplay": "Visa bara chatt",
@@ -26,7 +28,17 @@
         "system": "Automatiskt",
         "light": "Ljust",
         "dark": "Mörkt"
-      }
+      },
+      "membershipNameColor": "Färg på medlemsnamn",
+      "defaultColor": "Standard",
+      "resetToDefaultColor": "Återställ standardfärg",
+      "group": {
+        "display": "Visning",
+        "colors": "Färger",
+        "text": "Text",
+        "elements": "Visade element"
+      },
+      "requiresAlwaysOn": "Aktivera ”Alltid synlig” för att konfigurera detta"
     },
     "aria": {
       "dragToMove": "Dra för att flytta",
@@ -47,10 +59,15 @@
       "addItemTitle": "Namnlös",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Enkel",
+      "simpleTitle": "Endast kommentarer",
       "deleteConfirmationMessage": "Är du säker på att du vill ta bort denna?",
       "delete": "Ta bort",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "darkTitle": "Mörk",
+      "readableTitle": "Stor text",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Färgglad",
+      "apply": "Använd"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Säkerhetskopia",
     "export": "Exportera",
-    "import": "Importera"
+    "import": "Importera",
+    "importError": "Det gick inte att importera inställningsfilen."
   }
 }

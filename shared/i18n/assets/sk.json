@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predvoľba",
-        "setting": "Nastavenia"
+        "setting": "Nastavenia",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Vždy zobrazovať",
       "chatOnlyDisplay": "Iba chat",
@@ -26,7 +28,17 @@
         "system": "Automaticky",
         "light": "Svetlý",
         "dark": "Tmavý"
-      }
+      },
+      "membershipNameColor": "Farba mena člena",
+      "defaultColor": "Predvolené",
+      "resetToDefaultColor": "Obnoviť predvolenú farbu",
+      "group": {
+        "display": "Zobrazenie",
+        "colors": "Farby",
+        "text": "Text",
+        "elements": "Zobrazené prvky"
+      },
+      "requiresAlwaysOn": "Zapnite „Vždy zobrazovať“ na nastavenie tejto možnosti"
     },
     "aria": {
       "dragToMove": "Potiahnutím presuniete",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Pridať aktuálne nastavenia",
       "addItemTitle": "Bez názvu",
-      "defaultTitle": "Predvolené",
+      "defaultTitle": "Štandardný",
       "transparentTitle": "Priehľadný",
-      "simpleTitle": "Jednoduchý",
+      "simpleTitle": "Iba komentáre",
       "deleteConfirmationMessage": "Naozaj chcete odstrániť?",
       "delete": "Odstrániť",
-      "cancel": "Zrušiť"
+      "cancel": "Zrušiť",
+      "darkTitle": "Tmavý",
+      "readableTitle": "Veľký text",
+      "compactTitle": "Kompaktný",
+      "neonTitle": "Farebný",
+      "apply": "Použiť"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Motív",
     "dataTransfer": "Záloha",
     "export": "Exportovať",
-    "import": "Importovať"
+    "import": "Importovať",
+    "importError": "Súbor s nastaveniami sa nepodarilo importovať."
   }
 }

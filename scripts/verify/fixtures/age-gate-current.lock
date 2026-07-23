@@ -1,0 +1,22 @@
+__metadata:
+  version: 10
+
+"existing@npm:^1.0.0":
+  version: 1.1.0
+  resolution: "existing@npm:1.1.0"
+
+"same-version@npm:2.0.0, same-version@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "same-version@npm:2.0.0"
+
+"@scope/new-package@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "@scope/new-package@npm:3.0.1"
+
+"local-package@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "local-package@workspace:."
+
+"git-package@git+https://example.com/repository.git#commit=abc":
+  version: 1.0.0
+  resolution: "git-package@git+https://example.com/repository.git#commit=abc"

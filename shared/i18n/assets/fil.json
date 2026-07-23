@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Mga Preset",
-        "setting": "Mga Setting"
+        "setting": "Mga Setting",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Laging Nakikita",
       "chatOnlyDisplay": "Chat Lang ang Ipakita",
@@ -26,7 +28,17 @@
         "system": "Awtomatiko",
         "light": "Maliwanag",
         "dark": "Madilim"
-      }
+      },
+      "membershipNameColor": "Kulay ng pangalan ng miyembro",
+      "defaultColor": "Default",
+      "resetToDefaultColor": "Ibalik sa default na kulay",
+      "group": {
+        "display": "Pagpapakita",
+        "colors": "Mga Kulay",
+        "text": "Teksto",
+        "elements": "Mga Ipinapakitang Elemento"
+      },
+      "requiresAlwaysOn": "I-on ang \"Laging Nakikita\" para i-configure ito"
     },
     "aria": {
       "dragToMove": "I-drag para ilipat",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Idagdag ang Kasalukuyang Setting",
       "addItemTitle": "Walang Pamagat",
-      "defaultTitle": "Default",
+      "defaultTitle": "Karaniwan",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Mga komento lang",
       "deleteConfirmationMessage": "Sigurado ka bang gusto mong burahin ito?",
       "delete": "Burahin",
-      "cancel": "Kanselahin"
+      "cancel": "Kanselahin",
+      "darkTitle": "Madilim",
+      "readableTitle": "Malaking teksto",
+      "compactTitle": "Compact",
+      "neonTitle": "Makulay",
+      "apply": "Ilapat"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Backup",
     "export": "I-export",
-    "import": "I-import"
+    "import": "I-import",
+    "importError": "Hindi ma-import ang file ng mga setting."
   }
 }

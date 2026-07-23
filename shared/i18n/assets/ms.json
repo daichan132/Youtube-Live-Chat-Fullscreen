@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Praset",
-        "setting": "Tetapan"
+        "setting": "Tetapan",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Sentiasa Dipaparkan",
       "chatOnlyDisplay": "Papar Sembang Sahaja",
@@ -26,7 +28,17 @@
         "system": "Automatik",
         "light": "Cerah",
         "dark": "Gelap"
-      }
+      },
+      "membershipNameColor": "Warna nama ahli",
+      "defaultColor": "Lalai",
+      "resetToDefaultColor": "Tetapkan semula kepada warna lalai",
+      "group": {
+        "display": "Paparan",
+        "colors": "Warna",
+        "text": "Teks",
+        "elements": "Elemen Paparan"
+      },
+      "requiresAlwaysOn": "Hidupkan \"Sentiasa Dipaparkan\" untuk mengkonfigurasi ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Tambah Tetapan Semasa",
       "addItemTitle": "Tanpa Tajuk",
-      "defaultTitle": "Lalai",
+      "defaultTitle": "Standard",
       "transparentTitle": "Telus",
-      "simpleTitle": "Ringkas",
+      "simpleTitle": "Komen sahaja",
       "deleteConfirmationMessage": "Adakah anda pasti mahu memadamkan ini?",
       "delete": "Padam",
-      "cancel": "Batal"
+      "cancel": "Batal",
+      "darkTitle": "Gelap",
+      "readableTitle": "Teks besar",
+      "compactTitle": "Padat",
+      "neonTitle": "Berwarna-warni",
+      "apply": "Gunakan"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Sandaran",
     "export": "Eksport",
-    "import": "Import"
+    "import": "Import",
+    "importError": "Tidak dapat mengimport fail tetapan."
   }
 }

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "预设",
-        "setting": "设置"
+        "setting": "设置",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "始终显示",
       "chatOnlyDisplay": "仅显示聊天",
@@ -26,7 +28,17 @@
         "system": "自动",
         "light": "浅色",
         "dark": "深色"
-      }
+      },
+      "membershipNameColor": "会员名称颜色",
+      "defaultColor": "默认",
+      "resetToDefaultColor": "重置为默认颜色",
+      "group": {
+        "display": "显示",
+        "colors": "配色",
+        "text": "文本",
+        "elements": "显示元素"
+      },
+      "requiresAlwaysOn": "开启“常驻显示”后即可设置"
     },
     "aria": {
       "dragToMove": "拖动以移动",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "添加当前设置",
       "addItemTitle": "未命名",
-      "defaultTitle": "默认",
+      "defaultTitle": "标准",
       "transparentTitle": "透明",
-      "simpleTitle": "简洁",
+      "simpleTitle": "仅评论",
       "deleteConfirmationMessage": "确定要删除吗？",
       "delete": "删除",
-      "cancel": "取消"
+      "cancel": "取消",
+      "darkTitle": "深色",
+      "readableTitle": "大字",
+      "compactTitle": "紧凑",
+      "neonTitle": "多彩",
+      "apply": "应用"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "主题",
     "dataTransfer": "备份",
     "export": "导出",
-    "import": "导入"
+    "import": "导入",
+    "importError": "无法导入设置文件。"
   }
 }

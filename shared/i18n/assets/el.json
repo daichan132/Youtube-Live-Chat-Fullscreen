@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Προεπιλογή",
-        "setting": "Ρυθμίσεις"
+        "setting": "Ρυθμίσεις",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Πάντα ορατό",
       "chatOnlyDisplay": "Μόνο συνομιλία",
@@ -26,7 +28,17 @@
         "system": "Αυτόματο",
         "light": "Φωτεινό",
         "dark": "Σκοτεινό"
-      }
+      },
+      "membershipNameColor": "Χρώμα ονόματος μέλους",
+      "defaultColor": "Προεπιλογή",
+      "resetToDefaultColor": "Επαναφορά στο προεπιλεγμένο χρώμα",
+      "group": {
+        "display": "Εμφάνιση",
+        "colors": "Χρώματα",
+        "text": "Κείμενο",
+        "elements": "Στοιχεία εμφάνισης"
+      },
+      "requiresAlwaysOn": "Ενεργοποιήστε το «Πάντα ορατό» για να το ρυθμίσετε"
     },
     "aria": {
       "dragToMove": "Σύρετε για μετακίνηση",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
       "addItemTitle": "Χωρίς τίτλο",
-      "defaultTitle": "Προεπιλεγμένο",
+      "defaultTitle": "Τυπικό",
       "transparentTitle": "Διαφανές",
-      "simpleTitle": "Απλό",
+      "simpleTitle": "Μόνο σχόλια",
       "deleteConfirmationMessage": "Θέλετε σίγουρα να το διαγράψετε;",
       "delete": "Διαγραφή",
-      "cancel": "Ακύρωση"
+      "cancel": "Ακύρωση",
+      "darkTitle": "Σκούρο",
+      "readableTitle": "Μεγάλο κείμενο",
+      "compactTitle": "Συμπαγές",
+      "neonTitle": "Πολύχρωμο",
+      "apply": "Εφαρμογή"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Θέμα",
     "dataTransfer": "Αντίγραφο ασφαλείας",
     "export": "Εξαγωγή",
-    "import": "Εισαγωγή"
+    "import": "Εισαγωγή",
+    "importError": "Δεν ήταν δυνατή η εισαγωγή του αρχείου ρυθμίσεων."
   }
 }

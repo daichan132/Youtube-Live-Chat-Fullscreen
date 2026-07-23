@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
-import { CLIP_GEOMETRY_TRANSITION } from '@/entrypoints/content/features/Draggable/constants/animation'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 
@@ -14,7 +14,9 @@ const LOADER_CLASS_NAMES = {
   exit: 'opacity-100 scale-100',
   exitActive: 'transition-[opacity,transform] opacity-0 scale-[1.004] duration-320 ease-[cubic-bezier(0.22,1,0.36,1)]',
 } as const
-
+const LOADING_OVERLAY_STYLE = {
+  zIndex: CHAT_PANEL_LAYER.interactionOverlay,
+} as const
 type YTDLiveChatIframeProps = {
   mode: ChatMode
 }
@@ -31,15 +33,14 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       fontColor: state.fontColor,
     })),
   )
-  const { isDisplay, isIframeLoaded, clip, isClipPath } = useYTDLiveChatNoLsStore(
+  const { isDisplay, isIframeLoaded } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
       isDisplay: state.isDisplay,
       isIframeLoaded: state.isIframeLoaded,
-      clip: state.clip,
-      isClipPath: state.isClipPath,
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
+  const backdropFilter = blur > 0 ? `blur(${blur}px)` : 'none'
   const loaderColor = useMemo(() => {
     const { r, g, b, a } = fontColor
     const baseAlpha = a ?? 1
@@ -63,31 +64,31 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
 
   return (
     <>
-      {/* Persistent background — stays visible throughout the loader → chat cross-fade */}
+      {/* Persistent background — follows the same visibility gate as the chat surface. */}
       <div
-        className='absolute inset-0 rounded-md transition-[background-color] duration-200 ease-out'
+        data-ylc-chat-background
+        className='absolute inset-0 rounded-md transition-[background-color,opacity] duration-200 ease-out'
         style={{
           backgroundColor: `rgba(${bgColor.r}, ${bgColor.g}, ${bgColor.b}, ${overlayAlpha})`,
+          backdropFilter,
+          WebkitBackdropFilter: backdropFilter,
+          opacity: isChatVisible ? 1 : 0,
         }}
       />
       <div
-        className='relative h-full w-full transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
+        data-ylc-chat-viewport
+        className='relative h-full w-full overflow-hidden rounded-md transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
         style={{
           opacity: isChatVisible ? 1 : 0,
         }}
       >
-        <div id={id} ref={ref} className='h-full w-full overflow-hidden rounded-md' />
+        <div id={id} ref={ref} data-ylc-iframe-carrier className='absolute inset-0' />
       </div>
       {loaderTransition.isMounted && (
         <div
-          className={`absolute left-0 right-0 z-20 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
-          style={{
-            top: isClipPath ? `${clip.header}px` : 0,
-            bottom: isClipPath ? `${clip.input}px` : 0,
-            transition: `top ${CLIP_GEOMETRY_TRANSITION}, bottom ${CLIP_GEOMETRY_TRANSITION}`,
-            backdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
-            WebkitBackdropFilter: blur > 0 ? `blur(${blur}px)` : undefined,
-          }}
+          data-ylc-loading-overlay
+          className={`absolute inset-0 flex items-center justify-center pointer-events-auto ${loaderTransition.className}`}
+          style={LOADING_OVERLAY_STYLE}
         >
           <output className='flex justify-center' aria-label={t('content.aria.loading')}>
             <div

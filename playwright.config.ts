@@ -14,6 +14,7 @@ export default defineConfig({
 			use: {
 				locale: 'en-US',
 				timezoneId: 'Asia/Tokyo',
+				contextOptions: { reducedMotion: 'no-preference' },
 				trace: 'retain-on-failure',
 				video: 'retain-on-failure',
 				screenshot: 'only-on-failure',

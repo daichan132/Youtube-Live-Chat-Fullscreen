@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ค่าตั้งล่วงหน้า",
-        "setting": "การตั้งค่า"
+        "setting": "การตั้งค่า",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "แสดงตลอดเวลา",
       "chatOnlyDisplay": "แสดงเฉพาะแชท",
@@ -26,7 +28,17 @@
         "system": "อัตโนมัติ",
         "light": "สว่าง",
         "dark": "มืด"
-      }
+      },
+      "membershipNameColor": "สีชื่อสมาชิก",
+      "defaultColor": "ค่าเริ่มต้น",
+      "resetToDefaultColor": "รีเซ็ตเป็นสีเริ่มต้น",
+      "group": {
+        "display": "การแสดงผล",
+        "colors": "สี",
+        "text": "ข้อความ",
+        "elements": "องค์ประกอบการแสดงผล"
+      },
+      "requiresAlwaysOn": "เปิด \"แสดงตลอดเวลา\" เพื่อกำหนดค่านี้"
     },
     "aria": {
       "dragToMove": "ลากเพื่อย้าย",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "เพิ่มการตั้งค่าปัจจุบัน",
       "addItemTitle": "ไม่มีชื่อ",
-      "defaultTitle": "ค่าเริ่มต้น",
+      "defaultTitle": "มาตรฐาน",
       "transparentTitle": "โปร่งใส",
-      "simpleTitle": "เรียบง่าย",
+      "simpleTitle": "เฉพาะความคิดเห็น",
       "deleteConfirmationMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งนี้?",
       "delete": "ลบ",
-      "cancel": "ยกเลิก"
+      "cancel": "ยกเลิก",
+      "darkTitle": "มืด",
+      "readableTitle": "ข้อความใหญ่",
+      "compactTitle": "กะทัดรัด",
+      "neonTitle": "สีสัน",
+      "apply": "ใช้"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "ธีม",
     "dataTransfer": "สำรองข้อมูล",
     "export": "ส่งออก",
-    "import": "นำเข้า"
+    "import": "นำเข้า",
+    "importError": "ไม่สามารถนำเข้าไฟล์การตั้งค่าได้"
   }
 }

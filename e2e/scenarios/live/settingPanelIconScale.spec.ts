@@ -11,6 +11,7 @@ type Box = { width: number; height: number }
 type UiMetrics = {
   overlayIcons: Box[]
   closeButton: Box | null
+  closeButtonInlineEndGap: number | null
   presetActionButtons: Box[]
   modalButtons: Box[]
   dragIconBox: Box | null
@@ -39,11 +40,19 @@ const collectUiMetrics = (): UiMetrics => {
   const host = document.getElementById('shadow-root-live-chat')
   const root = host?.shadowRoot ?? null
   const panel = root?.querySelector('.ylc-setting-panel') as HTMLElement | null
+  const closeButton = panel?.querySelector('[data-ylc-setting-close-button]') as HTMLButtonElement | null
+  const panelRect = panel?.getBoundingClientRect() ?? null
+  const closeButtonRect = closeButton?.getBoundingClientRect() ?? null
+  const closeButtonInlineEndGap =
+    panelRect && closeButtonRect
+      ? panel?.dir === 'rtl'
+        ? closeButtonRect.left - panelRect.left
+        : panelRect.right - closeButtonRect.right
+      : null
 
   const overlayIcons = Array.from(root?.querySelectorAll<HTMLElement>('.ylc-overlay-control-icon') ?? [])
     .map(icon => getBox(icon))
     .filter((box): box is Box => Boolean(box))
-  const closeButton = getBox(panel?.querySelector('.ylc-setting-close-button') ?? null)
   const presetActionButtons = Array.from(panel?.querySelectorAll<HTMLButtonElement>('.ylc-preset-card [data-ylc-preset-actions] button') ?? [])
     .map(button => getBox(button))
     .filter((box): box is Box => Boolean(box))
@@ -56,7 +65,8 @@ const collectUiMetrics = (): UiMetrics => {
 
   return {
     overlayIcons,
-    closeButton,
+    closeButton: getBox(closeButton),
+    closeButtonInlineEndGap,
     presetActionButtons,
     modalButtons,
     dragIconBox,
@@ -196,6 +206,7 @@ test.describe('setting panel icon scale', { tag: '@live' }, () => {
 
     expect(metrics.closeButton?.width ?? 0).toBeGreaterThanOrEqual(38)
     expect(metrics.closeButton?.height ?? 0).toBeGreaterThanOrEqual(38)
+    expect(metrics.closeButtonInlineEndGap ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(10)
 
     expect(metrics.presetActionButtons.length).toBeGreaterThanOrEqual(2)
     expect(metrics.presetActionButtons[0]?.width ?? 0).toBeGreaterThanOrEqual(32)

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predefinit",
-        "setting": "Configuració"
+        "setting": "Configuració",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Sempre visible",
       "chatOnlyDisplay": "Només el xat",
@@ -26,7 +28,17 @@
         "system": "Automàtic",
         "light": "Clar",
         "dark": "Fosc"
-      }
+      },
+      "membershipNameColor": "Color del nom de membre",
+      "defaultColor": "Per defecte",
+      "resetToDefaultColor": "Torna al color predeterminat",
+      "group": {
+        "display": "Visualització",
+        "colors": "Colors",
+        "text": "Text",
+        "elements": "Elements visibles"
+      },
+      "requiresAlwaysOn": "Activa «Sempre visible» per configurar-ho"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Afegeix la configuració actual",
       "addItemTitle": "Sense títol",
-      "defaultTitle": "Per defecte",
+      "defaultTitle": "Estàndard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Simple",
+      "simpleTitle": "Només comentaris",
       "deleteConfirmationMessage": "Segur que vols eliminar-ho?",
       "delete": "Elimina",
-      "cancel": "Cancel·la"
+      "cancel": "Cancel·la",
+      "darkTitle": "Fosc",
+      "readableTitle": "Text gran",
+      "compactTitle": "Compacte",
+      "neonTitle": "Colorit",
+      "apply": "Aplica"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Tema",
     "dataTransfer": "Còpia de seguretat",
     "export": "Exporta",
-    "import": "Importa"
+    "import": "Importa",
+    "importError": "No s'ha pogut importar el fitxer de configuració."
   }
 }

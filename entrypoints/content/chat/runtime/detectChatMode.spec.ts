@@ -6,14 +6,23 @@ const setLocation = (path: string) => {
   window.history.pushState({}, '', `${base}${path}`)
 }
 
-const createMoviePlayer = ({ isLive, isLiveContent = isLive }: { isLive?: boolean; isLiveContent?: boolean }) => {
+const createMoviePlayer = ({
+  isLive,
+  isLiveContent = isLive,
+  videoId,
+}: {
+  isLive?: boolean
+  isLiveContent?: boolean
+  videoId?: string
+}) => {
   const moviePlayer = document.createElement('div') as HTMLElement & {
-    getVideoData?: () => { isLive?: boolean; isLiveContent?: boolean }
+    getVideoData?: () => { isLive?: boolean; isLiveContent?: boolean; video_id?: string }
   }
   moviePlayer.id = 'movie_player'
   moviePlayer.getVideoData = () => ({
     isLive,
     isLiveContent,
+    video_id: videoId,
   })
   document.body.appendChild(moviePlayer)
   return moviePlayer
@@ -35,6 +44,8 @@ const attachExtensionIframe = (options: { src: string; owned?: boolean; source?:
 
 const createArchiveOpenControl = () => {
   const liveChatFrame = document.createElement('ytd-live-chat-frame')
+  const currentVideoId = new URL(window.location.href).searchParams.get('v')
+  if (currentVideoId) liveChatFrame.setAttribute('data-ylc-observed-video-id', currentVideoId)
   const showHide = document.createElement('div')
   showHide.id = 'show-hide-button'
   const button = document.createElement('button')
@@ -64,6 +75,15 @@ describe('detectChatMode', () => {
       src: 'https://www.youtube.com/live_chat?v=current-video',
       owned: true,
       source: 'live_direct',
+    })
+
+    expect(detectChatMode()).toBe('live')
+  })
+
+  it('does not classify non-owned live chat iframe as borrowed archive', () => {
+    attachExtensionIframe({
+      src: 'https://www.youtube.com/live_chat?v=current-video',
+      owned: false,
     })
 
     expect(detectChatMode()).toBe('live')
@@ -99,7 +119,7 @@ describe('detectChatMode', () => {
     document.body.appendChild(frame)
 
     const moviePlayer = createMoviePlayer({ isLive: true })
-    moviePlayer.setAttribute('video-id', 'live-current-video')
+    moviePlayer.setAttribute('video-id', 'current-video')
 
     expect(detectChatMode()).toBe('live')
   })
@@ -112,6 +132,55 @@ describe('detectChatMode', () => {
 
   it('returns none when no archive open control and no live signals exist', () => {
     createMoviePlayer({ isLive: false })
+
+    expect(detectChatMode()).toBe('none')
+  })
+
+  it('returns none when URL points to a new no-chat video and stale DOM still says live', () => {
+    setLocation('/watch?v=current-no-chat-video')
+
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'stale-live-video')
+    watchFlexy.setAttribute('is-live-now', '')
+    document.body.appendChild(watchFlexy)
+
+    expect(detectChatMode()).toBe('none')
+  })
+
+  it('does not classify a continuation-only stale extension replay iframe as archive', () => {
+    setLocation('/watch?v=current-no-chat-video')
+
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'stale-archive-video')
+    document.body.appendChild(watchFlexy)
+    attachExtensionIframe({
+      src: 'https://www.youtube.com/live_chat_replay?continuation=stale-archive-video',
+      owned: false,
+    })
+
+    expect(detectChatMode()).toBe('none')
+  })
+
+  it('does not let stale movie player live metadata override no-chat URL through archive open control', () => {
+    setLocation('/watch?v=current-no-chat-video')
+    createMoviePlayer({ isLive: true, videoId: 'stale-live-video' })
+    createArchiveOpenControl()
+
+    expect(detectChatMode()).toBe('none')
+  })
+
+  it('does not classify a stale archive open control as archive after navigation', () => {
+    setLocation('/watch?v=current-no-chat-video')
+    const liveChatFrame = document.createElement('ytd-live-chat-frame')
+    liveChatFrame.setAttribute('data-ylc-observed-video-id', 'stale-archive-video')
+    const showHide = document.createElement('div')
+    showHide.id = 'show-hide-button'
+    const button = document.createElement('button')
+    button.setAttribute('aria-label', 'Show chat')
+    showHide.appendChild(button)
+    liveChatFrame.appendChild(showHide)
+    document.body.appendChild(liveChatFrame)
+    createMoviePlayer({ isLive: false, videoId: 'current-no-chat-video' })
 
     expect(detectChatMode()).toBe('none')
   })
@@ -135,7 +204,7 @@ describe('detectChatMode', () => {
       document.body.appendChild(frame)
 
       const moviePlayer = createMoviePlayer({ isLive: true })
-      moviePlayer.setAttribute('video-id', 'archive-video-A')
+      moviePlayer.setAttribute('video-id', 'live-video-B')
 
       // URL-priority video ID (B) does not match iframe video ID (A),
       // so the stale iframe is skipped and isYouTubeLiveNow() returns live.

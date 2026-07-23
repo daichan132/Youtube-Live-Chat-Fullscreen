@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Voorinstelling",
-        "setting": "Instellingen"
+        "setting": "Instellingen",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Altijd weergeven",
       "chatOnlyDisplay": "Alleen chat weergeven",
@@ -26,7 +28,17 @@
         "system": "Automatisch",
         "light": "Licht",
         "dark": "Donker"
-      }
+      },
+      "membershipNameColor": "Kleur van ledennaam",
+      "defaultColor": "Standaard",
+      "resetToDefaultColor": "Standaardkleur herstellen",
+      "group": {
+        "display": "Weergave",
+        "colors": "Kleuren",
+        "text": "Tekst",
+        "elements": "Weergave-elementen"
+      },
+      "requiresAlwaysOn": "Schakel \"Altijd weergeven\" in om dit in te stellen"
     },
     "aria": {
       "dragToMove": "Slepen om te verplaatsen",
@@ -47,10 +59,15 @@
       "addItemTitle": "Naamloos",
       "defaultTitle": "Standaard",
       "transparentTitle": "Transparant",
-      "simpleTitle": "Eenvoudig",
+      "simpleTitle": "Alleen reacties",
       "deleteConfirmationMessage": "Weet je zeker dat je dit wilt verwijderen?",
       "delete": "Verwijderen",
-      "cancel": "Annuleren"
+      "cancel": "Annuleren",
+      "darkTitle": "Donker",
+      "readableTitle": "Grote tekst",
+      "compactTitle": "Compact",
+      "neonTitle": "Kleurrijk",
+      "apply": "Toepassen"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Thema",
     "dataTransfer": "Back-up",
     "export": "Exporteren",
-    "import": "Importeren"
+    "import": "Importeren",
+    "importError": "Kan het instellingenbestand niet importeren."
   }
 }

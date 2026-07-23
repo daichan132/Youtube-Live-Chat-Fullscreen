@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ערכות",
-        "setting": "הגדרות"
+        "setting": "הגדרות",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "תצוגה קבועה",
       "chatOnlyDisplay": "הצגת צ׳אט בלבד",
@@ -26,7 +28,17 @@
         "system": "אוטומטי",
         "light": "בהיר",
         "dark": "כהה"
-      }
+      },
+      "membershipNameColor": "צבע שם חבר",
+      "defaultColor": "ברירת מחדל",
+      "resetToDefaultColor": "איפוס לצבע ברירת המחדל",
+      "group": {
+        "display": "תצוגה",
+        "colors": "צבעים",
+        "text": "טקסט",
+        "elements": "רכיבי תצוגה"
+      },
+      "requiresAlwaysOn": "הפעל \"תצוגה קבועה\" כדי להגדיר זאת"
     },
     "aria": {
       "dragToMove": "גרור להזזה",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "הוספת ההגדרות הנוכחיות",
       "addItemTitle": "ללא שם",
-      "defaultTitle": "ברירת מחדל",
+      "defaultTitle": "רגיל",
       "transparentTitle": "שקוף",
-      "simpleTitle": "פשוט",
+      "simpleTitle": "תגובות בלבד",
       "deleteConfirmationMessage": "האם למחוק פריט זה?",
       "delete": "מחיקה",
-      "cancel": "ביטול"
+      "cancel": "ביטול",
+      "darkTitle": "כהה",
+      "readableTitle": "טקסט גדול",
+      "compactTitle": "קומפקטי",
+      "neonTitle": "צבעוני",
+      "apply": "החל"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "ערכת נושא",
     "dataTransfer": "גיבוי",
     "export": "ייצוא",
-    "import": "ייבוא"
+    "import": "ייבוא",
+    "importError": "לא ניתן לייבא את קובץ ההגדרות."
   }
 }

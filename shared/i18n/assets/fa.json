@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "پیش‌تنظیم",
-        "setting": "تنظیمات"
+        "setting": "تنظیمات",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "نمایش همیشگی",
       "chatOnlyDisplay": "فقط نمایش چت",
@@ -26,7 +28,17 @@
         "system": "خودکار",
         "light": "روشن",
         "dark": "تاریک"
-      }
+      },
+      "membershipNameColor": "رنگ نام عضو",
+      "defaultColor": "پیش‌فرض",
+      "resetToDefaultColor": "بازنشانی به رنگ پیش‌فرض",
+      "group": {
+        "display": "نمایش",
+        "colors": "رنگ‌ها",
+        "text": "متن",
+        "elements": "عناصر نمایش"
+      },
+      "requiresAlwaysOn": "برای پیکربندی این مورد، «نمایش همیشگی» را روشن کنید"
     },
     "aria": {
       "dragToMove": "بکشید برای جابه‌جایی",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "افزودن تنظیمات فعلی",
       "addItemTitle": "بدون عنوان",
-      "defaultTitle": "پیش‌فرض",
+      "defaultTitle": "استاندارد",
       "transparentTitle": "شفاف",
-      "simpleTitle": "ساده",
+      "simpleTitle": "فقط نظرها",
       "deleteConfirmationMessage": "آیا از حذف این مورد مطمئن هستید؟",
       "delete": "حذف",
-      "cancel": "انصراف"
+      "cancel": "انصراف",
+      "darkTitle": "تیره",
+      "readableTitle": "متن بزرگ",
+      "compactTitle": "فشرده",
+      "neonTitle": "رنگارنگ",
+      "apply": "اعمال"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "پوسته",
     "dataTransfer": "پشتیبان‌گیری",
     "export": "خروجی",
-    "import": "واردسازی"
+    "import": "واردسازی",
+    "importError": "وارد کردن فایل تنظیمات ممکن نشد."
   }
 }

@@ -1,0 +1,21 @@
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer {
+  color: var(--extension-yt-live-font-color);
+  background: var(--extension-yt-live-control-background-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #contents,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message-container,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer a,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecButtonShapeNextHost,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecButtonShapeNextIcon,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer #menu .ytSpecIconShapeHost {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon-button,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu button,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon {
+  color: var(--extension-yt-live-secondary-font-color);
+}

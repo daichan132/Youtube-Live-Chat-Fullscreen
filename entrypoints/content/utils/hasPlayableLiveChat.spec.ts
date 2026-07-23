@@ -7,7 +7,7 @@ const createLiveChatDoc = (html: string) => {
   return {
     body: baseDoc.body,
     querySelector: baseDoc.querySelector.bind(baseDoc),
-    location: { href: 'https://www.youtube.com/live_chat' },
+    location: { href: 'https://www.youtube.com/live_chat?v=video-a' },
   } as Document
 }
 
@@ -25,6 +25,13 @@ const attachIframeDocument = (doc: Document) => {
 const setLocation = (path: string) => {
   const base = window.location.origin
   window.history.pushState({}, '', `${base}${path}`)
+}
+
+const createWatchFlexy = (videoId: string) => {
+  const watchFlexy = document.createElement('ytd-watch-flexy')
+  watchFlexy.setAttribute('video-id', videoId)
+  document.body.appendChild(watchFlexy)
+  return watchFlexy
 }
 
 beforeEach(() => {
@@ -56,6 +63,7 @@ describe('hasPlayableLiveChat', () => {
   })
 
   it('returns true when live chat renderer and item list are present', () => {
+    createWatchFlexy('video-a')
     const doc = createLiveChatDoc(
       '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>',
     )
@@ -84,6 +92,24 @@ describe('hasPlayableLiveChat', () => {
     expect(hasPlayableLiveChat()).toBe(false)
   })
 
+  it('returns false when URL points to a new video while playable iframe has only stale page markers', () => {
+    setLocation('/watch?v=video-b')
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    document.body.appendChild(watchFlexy)
+    const doc = createLiveChatDoc(
+      '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>',
+    )
+    Object.defineProperty(doc, 'location', {
+      value: { href: 'https://www.youtube.com/live_chat_replay?continuation=video-a' },
+      configurable: true,
+    })
+    const iframe = attachIframeDocument(doc)
+    iframe.setAttribute('src', 'https://www.youtube.com/live_chat_replay?continuation=video-a')
+
+    expect(hasPlayableLiveChat()).toBe(false)
+  })
+
   it('returns false when iframe src points to another video and document is not ready', () => {
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     iframe.id = 'chatframe'
@@ -106,10 +132,44 @@ describe('hasPlayableLiveChat', () => {
     expect(hasPlayableLiveChat()).toBe(false)
   })
 
+  it('does not let a stale first iframe block current live UI signals', () => {
+    const staleIframe = document.createElement('iframe') as HTMLIFrameElement
+    staleIframe.id = 'chatframe'
+    staleIframe.src = 'https://www.youtube.com/live_chat?v=video-b'
+    document.body.appendChild(staleIframe)
+
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
+    document.body.appendChild(watchFlexy)
+
+    const moviePlayer = document.createElement('div') as HTMLElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'video-a' })
+    document.body.appendChild(moviePlayer)
+
+    const chatHost = document.createElement('ytd-live-chat-frame')
+    document.body.appendChild(chatHost)
+    const timeDisplay = document.createElement('div')
+    timeDisplay.className = 'ytp-time-display ytp-live'
+    document.body.appendChild(timeDisplay)
+
+    expect(hasPlayableLiveChat()).toBe(true)
+  })
+
   it('returns true for live stream UI signal even when iframe document is not ready', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('video-id', 'video-a')
     watchFlexy.setAttribute('should-stamp-chat', '')
     document.body.appendChild(watchFlexy)
+
+    const moviePlayer = document.createElement('div') as HTMLElement & {
+      getVideoData?: () => { isLive?: boolean; video_id?: string }
+    }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => ({ isLive: true, video_id: 'video-a' })
+    document.body.appendChild(moviePlayer)
 
     const chatHost = document.createElement('ytd-live-chat-frame')
     document.body.appendChild(chatHost)
@@ -120,6 +180,12 @@ describe('hasPlayableLiveChat', () => {
 
     const iframe = document.createElement('iframe') as HTMLIFrameElement
     iframe.id = 'chatframe'
+    iframe.setAttribute('video-id', 'video-a')
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: null,
+      configurable: true,
+    })
     chatHost.appendChild(iframe)
 
     expect(hasPlayableLiveChat()).toBe(true)
@@ -128,6 +194,7 @@ describe('hasPlayableLiveChat', () => {
 
 describe('isArchiveChatPlayable', () => {
   it('returns true when replay iframe has renderer and item list', () => {
+    createWatchFlexy('video-a')
     const doc = createLiveChatDoc(
       '<yt-live-chat-renderer></yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>',
     )

@@ -2,8 +2,9 @@ import { useCallback } from 'react'
 import { hasFullscreenChatSource } from '@/entrypoints/content/chat/runtime/hasFullscreenChatSource'
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
+import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
@@ -25,9 +26,10 @@ type YTDLiveChatProps = {
 }
 
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
-  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow()
+  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
+  const unavailableLiveChatVideoId = useYTDLiveChatNoLsStore(state => state.unavailableLiveChatVideoId)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
@@ -37,14 +39,19 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
     setYTDLiveChat,
   })
 
-  const canAttachFullscreenChat = usePollingWithNavigate({
-    checkFn: useCallback(() => hasFullscreenChatSource(mode), [mode]),
+  const isCurrentLiveChatUnavailable = mode === 'live' && unavailableLiveChatVideoId === getCurrentYouTubeVideoId()
+  const canAttachFullscreenChatResult = usePollingWithNavigate({
+    checkFn: useCallback(
+      () => (mode !== 'live' || unavailableLiveChatVideoId !== getCurrentYouTubeVideoId()) && hasFullscreenChatSource(mode),
+      [mode, unavailableLiveChatVideoId],
+    ),
     // Keep polling until first success, then latch to avoid fullscreen overlay
     // remount loops when live/archive signals momentarily fluctuate.
     stopOnSuccess: true,
     maxAttempts: Number.POSITIVE_INFINITY,
     intervalMs: 1000,
   })
+  const canAttachFullscreenChat = !isCurrentLiveChatUnavailable && canAttachFullscreenChatResult
 
   // In archive mode, wait until native replay chat is actually playable before
   // showing the fullscreen chat overlay.
@@ -70,7 +77,7 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
       <YTDLiveChatSetting />
       {overlayTransition.isMounted && (
         <div className={overlayTransition.className}>
-          <Draggable>
+          <Draggable initialDisplayOnMount={isFullscreen}>
             <YTDLiveChatIframe mode={mode} />
           </Draggable>
         </div>

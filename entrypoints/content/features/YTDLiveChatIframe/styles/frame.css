@@ -1,0 +1,55 @@
+/* ------------------------------ Frame surface ----------------------------- */
+html,
+body {
+  background: transparent !important;
+}
+
+body.custom-yt-app-live-chat-extension {
+  margin: 0;
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+}
+
+body.custom-yt-app-live-chat-extension,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #contents,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat-messages,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #item-scroller,
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items {
+  background: transparent !important;
+}
+
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat::before,
+body.custom-yt-app-live-chat-extension yt-live-chat-renderer #chat::after {
+  background: transparent !important;
+  background-image: none !important;
+  animation: none !important;
+}
+
+/* --------------------------- YouTube chrome trim -------------------------- */
+body.custom-yt-app-live-chat-extension #contents > #separator {
+  opacity: 0;
+  background: transparent;
+}
+body.custom-yt-app-live-chat-extension #panel-pages.yt-live-chat-renderer {
+  border: none;
+}
+/* Intentional direct display:none exception: this removes YouTube's native
+   close control inside the borrowed/archive chat iframe, not the iframe host. */
+body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-button {
+  display: none;
+}
+body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-list-renderer {
+  scrollbar-color: transparent transparent;
+  scrollbar-width: none;
+  padding-right: 0px !important;
+}
+
+body.custom-yt-app-live-chat-extension #right-arrow-container.yt-live-chat-ticker-renderer,
+body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker-renderer,
+body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-buy-flow-renderer {
+  background: transparent;
+}

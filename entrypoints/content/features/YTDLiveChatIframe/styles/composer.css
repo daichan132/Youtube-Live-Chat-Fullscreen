@@ -1,0 +1,124 @@
+/* State-dependent input / restricted participation controls. */
+body.custom-yt-app-live-chat-extension #input-panel
+  > :is(
+    yt-live-chat-message-input-renderer,
+    yt-live-chat-restricted-participation-renderer,
+    yt-live-chat-sign-in-prompt-renderer,
+    yt-live-chat-message-renderer
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension #container.yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension #icon.yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji
+  yt-icon.yt-live-chat-icon-toggle-button-renderer,
+body.custom-yt-app-live-chat-extension div#menu.yt-live-chat-text-message-renderer.custom > div.tooltip > svg,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-restricted-participation-renderer[updated-input-visuals]
+  #icon.yt-live-chat-restricted-participation-renderer,
+body.custom-yt-app-live-chat-extension yt-live-chat-message-input-renderer[system-icons] #send-button.yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #send-button.yt-live-chat-message-input-renderer
+  yt-icon,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #picker-buttons.yt-live-chat-message-input-renderer
+  > *.yt-live-chat-message-input-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-restricted-participation-renderer[system-icons]
+  #picker-buttons.yt-live-chat-restricted-participation-renderer
+  > *.yt-live-chat-restricted-participation-renderer {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #picker-buttons.yt-live-chat-message-input-renderer
+  > *.yt-live-chat-message-input-renderer
+  yt-icon,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #picker-buttons.yt-live-chat-message-input-renderer
+  > *.yt-live-chat-message-input-renderer
+  svg,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #picker-buttons.yt-live-chat-message-input-renderer
+  > *.yt-live-chat-message-input-renderer
+  path,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #send-button.yt-live-chat-message-input-renderer
+  svg,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-input-renderer[system-icons]
+  #send-button.yt-live-chat-message-input-renderer
+  path {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji,
+body.custom-yt-app-live-chat-extension yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji yt-icon,
+body.custom-yt-app-live-chat-extension yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji svg,
+body.custom-yt-app-live-chat-extension yt-live-chat-icon-toggle-button-renderer[use-toggled-active-state][active]#emoji path {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer {
+  background: var(--extension-yt-live-panel-background-color) !important;
+  background-color: var(--extension-yt-live-panel-background-color) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  border-radius: 8px;
+  overflow: hidden;
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search-panel,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer input {
+  color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer #search-panel {
+  background: var(--extension-yt-live-control-background-color) !important;
+  background-color: var(--extension-yt-live-control-background-color) !important;
+  border: 1px solid var(--extension-yt-live-control-border-color);
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer yt-icon,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer iron-icon {
+  color: var(--extension-yt-live-secondary-font-color);
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer svg,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer path {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[active],
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[active] yt-icon,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[active] iron-icon,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[active] svg,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[active] path,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"],
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"] yt-icon,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"] iron-icon,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"] svg,
+body.custom-yt-app-live-chat-extension yt-emoji-picker-category-button-renderer[aria-selected="true"] path {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model #fab-container {
+  transition-property: height, background-color !important;
+  transition-duration: 0.3s, 0.12s !important;
+  transition-delay: 0s, 0.3s !important;
+}
+body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {
+  background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  transition-delay: 0s, 0s !important;
+}

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Sablonok",
-        "setting": "Beállítások"
+        "setting": "Beállítások",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Mindig látható",
       "chatOnlyDisplay": "Csak csevegés",
@@ -26,7 +28,17 @@
         "system": "Automatikus",
         "light": "Világos",
         "dark": "Sötét"
-      }
+      },
+      "membershipNameColor": "Tagsági név színe",
+      "defaultColor": "Alapértelmezett",
+      "resetToDefaultColor": "Visszaállítás alapértelmezett színre",
+      "group": {
+        "display": "Megjelenítés",
+        "colors": "Színek",
+        "text": "Szöveg",
+        "elements": "Megjelenített elemek"
+      },
+      "requiresAlwaysOn": "Ennek beállításához kapcsolja be a „Mindig látható” lehetőséget"
     },
     "aria": {
       "dragToMove": "Húzza az áthelyezéshez",
@@ -45,12 +57,17 @@
     "preset": {
       "addMessage": "Jelenlegi beállítások hozzáadása",
       "addItemTitle": "Névtelen",
-      "defaultTitle": "Alapértelmezett",
+      "defaultTitle": "Normál",
       "transparentTitle": "Átlátszó",
-      "simpleTitle": "Egyszerű",
+      "simpleTitle": "Csak megjegyzések",
       "deleteConfirmationMessage": "Biztosan törölni szeretné?",
       "delete": "Törlés",
-      "cancel": "Mégse"
+      "cancel": "Mégse",
+      "darkTitle": "Sötét",
+      "readableTitle": "Nagy szöveg",
+      "compactTitle": "Kompakt",
+      "neonTitle": "Színes",
+      "apply": "Alkalmaz"
     }
   },
   "popup": {
@@ -61,6 +78,7 @@
     "theme": "Téma",
     "dataTransfer": "Biztonsági mentés",
     "export": "Exportálás",
-    "import": "Importálás"
+    "import": "Importálás",
+    "importError": "A beállításfájl importálása nem sikerült."
   }
 }

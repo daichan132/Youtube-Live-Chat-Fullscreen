@@ -9,7 +9,7 @@ live / archive / no-chat 境界の破壊を防ぎ、過去の回帰バグを再�
 
 ## コア契約
 
-1. **live**: 公開 iframe `live_chat?v=<videoId>` を使う。native iframe を borrow しない
+1. **live**: current video の native `live_chat` iframe が存在する場合はその iframe を borrow する。native iframe が取れない場合のみ managed iframe `live_chat?v=<videoId>` に fallback する
 2. **archive**: native `live_chat_replay` iframe のみ borrow する。動画遷移後に stale iframe を再利用しない
 3. **no-chat / replay-unavailable**: switch を表示しない。overlay / extension iframe を出さない
 4. **判定責務**: `canToggle`（スイッチ有効化）と `sourceReady`（attach 可否）は分離する。archive で `sourceReady` だけを switch 有効条件にしない（deadlock 回避）
