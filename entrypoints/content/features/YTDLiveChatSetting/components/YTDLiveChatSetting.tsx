@@ -156,7 +156,7 @@ export const YTDLiveChatSetting = () => {
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={handlePanelKeyDown}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-stretch px-4 min-h-[48px]'>
+        <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -185,7 +185,7 @@ export const YTDLiveChatSetting = () => {
               aria-label={t('content.setting.header.undo')}
               aria-keyshortcuts='Meta+Z Control+Z'
               disabled={!canUndo}
-              className='ylc-setting-close-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
+              className='ylc-setting-history-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
               onClick={handleUndo}
             >
               <TbArrowBackUp size={20} />
@@ -195,13 +195,14 @@ export const YTDLiveChatSetting = () => {
               aria-label={t('content.setting.header.redo')}
               aria-keyshortcuts='Meta+Shift+Z Control+Shift+Z Control+Y'
               disabled={!canRedo}
-              className='ylc-setting-close-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
+              className='ylc-setting-history-button inline-flex items-center justify-center w-[36px] h-[36px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] disabled:opacity-35 disabled:cursor-not-allowed'
               onClick={handleRedo}
             >
               <TbArrowForwardUp size={20} />
             </button>
             <button
               type='button'
+              data-ylc-setting-close-button
               aria-label={t('content.aria.close')}
               className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
               onClick={() => setIsOpenSettingModal(false)}

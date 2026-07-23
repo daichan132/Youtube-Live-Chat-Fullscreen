@@ -797,6 +797,8 @@
 }
 
 .ylc-theme-setting-header {
+  padding-inline-start: 16px;
+  padding-inline-end: 8px;
   background-color: transparent;
   border-bottom: var(--ylc-border-width) solid var(--ylc-divider);
 }
