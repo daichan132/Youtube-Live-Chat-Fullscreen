@@ -78,7 +78,7 @@ const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; sw
 			playable: Boolean(
 				nativeHref &&
 					!nativeHref.includes('about:blank') &&
-					nativeHref.includes('/live_chat_replay') &&
+					nativeHref.includes('/live_chat') &&
 					!nativeUnavailable &&
 					h.isDocPlayable(nativeDoc),
 			),

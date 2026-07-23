@@ -1,7 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { captureChatState } from '@e2e/support/diagnostics'
+import { captureChatState, hasYouTubePlayerError, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
 import {
   expectContinuousChatOnlyMotion,
   getChatOnlyChromeCollapseSnapshot,
@@ -26,10 +26,37 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await yt.goto(liveUrl)
     await yt.waitForNativeChat()
-    await yt.enterFullscreen()
+    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(
+      () => true,
+      () => false,
+    )
+    if (!nativeReady) {
+      await captureChatState(page, test.info(), 'live-chat-only-native-precondition-missing')
+      test.skip(true, 'Native live chat stopped meeting test preconditions.')
+      return
+    }
+
+    const fullscreenReady = await yt.ensureFullscreen()
+    if (!fullscreenReady) {
+      const state = await captureChatState(page, test.info(), 'live-chat-only-fullscreen-unavailable')
+      const playerError = await page.evaluate(hasYouTubePlayerError)
+      if (playerError || !state?.native.playable) {
+        test.skip(true, 'YouTube live playback stopped meeting fullscreen test preconditions.')
+        return
+      }
+      expect(fullscreenReady).toBe(true)
+    }
 
     const switchReady = await overlay.waitForSwitchReady()
-    if (!switchReady) await captureChatState(page, test.info(), 'live-chat-only-switch-missing')
+    if (!switchReady) {
+      await captureChatState(page, test.info(), 'live-chat-only-switch-missing')
+      const playerError = await page.evaluate(hasYouTubePlayerError)
+      const nativeStillPlayable = await page.evaluate(isNativeLiveChatPlayable)
+      if (playerError || !nativeStillPlayable) {
+        test.skip(true, 'Native live chat stopped meeting switch test preconditions.')
+        return
+      }
+    }
     expect(switchReady).toBe(true)
     await overlay.toggleOn()
     const chatLoaded = await overlay.waitForChatLoaded()

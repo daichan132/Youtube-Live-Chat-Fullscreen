@@ -154,6 +154,7 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 		const secondaryStyle = window.getComputedStyle(secondary)
 		const containerStyle = window.getComputedStyle(chatContainer)
 		const hostStyle = window.getComputedStyle(chatFrameHost)
+		const frameStyle = window.getComputedStyle(chatFrame)
 		const isHidden =
 			secondaryStyle.display === 'none' ||
 			secondaryStyle.visibility === 'hidden' ||
@@ -163,9 +164,7 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 			hostStyle.visibility === 'hidden'
 		if (isHidden) return false
 
-		const pointerBlocked =
-			secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
-		if (pointerBlocked) return false
+		if (frameStyle.pointerEvents === 'none') return false
 
 		const secondaryBox = secondary.getBoundingClientRect()
 		const chatBox = chatFrameHost.getBoundingClientRect()
