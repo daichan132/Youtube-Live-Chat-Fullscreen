@@ -78,13 +78,16 @@ export const isNativeChatUsable = () => {
   const secondaryStyle = window.getComputedStyle(secondary)
   const containerStyle = window.getComputedStyle(chatContainer)
   const hostStyle = window.getComputedStyle(chatFrameHost)
+  const frameStyle = window.getComputedStyle(chatFrame)
 
   if (isChatHiddenByStyle(containerStyle, hostStyle)) return false
   if (secondaryStyle.display === 'none' || secondaryStyle.visibility === 'hidden') return false
 
-  const pointerBlocked =
-    secondaryStyle.pointerEvents === 'none' || containerStyle.pointerEvents === 'none' || hostStyle.pointerEvents === 'none'
-  if (pointerBlocked) return false
+  // YouTube may disable pointer events on #secondary while restoring the
+  // sidebar, then explicitly re-enable them on the chat iframe subtree.
+  // CSS allows descendants to opt back in, so the interactive iframe's
+  // computed value is the reliable signal here.
+  if (frameStyle.pointerEvents === 'none') return false
 
   const secondaryBox = secondary.getBoundingClientRect()
   const chatBox = chatFrameHost.getBoundingClientRect()
