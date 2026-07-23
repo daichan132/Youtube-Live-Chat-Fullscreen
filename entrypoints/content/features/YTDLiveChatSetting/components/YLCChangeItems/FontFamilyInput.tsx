@@ -1,12 +1,12 @@
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { changeYLCFontFamily } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { cn } from '@/shared/utils/cn'
 import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import { commitYLCStyleUpdate } from '../../styleHistoryCommands'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
@@ -57,15 +57,10 @@ const buildPreviewImportStyles = () =>
 
 export const FontFamilyInput = () => {
   const fontFamily = useYTDLiveChatStore(state => state.fontFamily)
-  const updateYLCStyle = useYTDLiveChatStore(state => state.updateYLCStyle)
 
-  const handleCommit = useCallback(
-    (nextFontFamily: string) => {
-      updateYLCStyle({ fontFamily: nextFontFamily })
-      changeYLCFontFamily(nextFontFamily)
-    },
-    [updateYLCStyle],
-  )
+  const handleCommit = useCallback((nextFontFamily: string) => {
+    commitYLCStyleUpdate({ fontFamily: nextFontFamily }, 'fontFamily')
+  }, [])
 
   return <FontFamilyInputUI value={fontFamily} onCommit={handleCommit} />
 }

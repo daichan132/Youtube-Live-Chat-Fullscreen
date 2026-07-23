@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Šablonas",
-        "setting": "Nustatymai"
+        "setting": "Nustatymai",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Rodyti visada",
       "chatOnlyDisplay": "Tik pokalbis",

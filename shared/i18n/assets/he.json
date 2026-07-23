@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ערכות",
-        "setting": "הגדרות"
+        "setting": "הגדרות",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "תצוגה קבועה",
       "chatOnlyDisplay": "הצגת צ׳אט בלבד",

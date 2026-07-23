@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Eelseadistus",
-        "setting": "Seaded"
+        "setting": "Seaded",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Alati nähtav",
       "chatOnlyDisplay": "Ainult vestlus",

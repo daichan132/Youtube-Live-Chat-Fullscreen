@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predlošci",
-        "setting": "Postavke"
+        "setting": "Postavke",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Uvijek na zaslonu",
       "chatOnlyDisplay": "Samo chat",

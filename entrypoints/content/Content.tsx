@@ -14,6 +14,7 @@ import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntime
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
+import { useYLCStyleApplication } from './hooks/ylcStyleChange/useYLCStyleApplication'
 import { YTDLiveChat } from './YTDLiveChat'
 
 const OVERLAY_STYLE = {
@@ -27,6 +28,7 @@ export const Content = () => {
   }, [])
 
   useContentRuntimeMessages()
+  useYLCStyleApplication()
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ค่าตั้งล่วงหน้า",
-        "setting": "การตั้งค่า"
+        "setting": "การตั้งค่า",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "แสดงตลอดเวลา",
       "chatOnlyDisplay": "แสดงเฉพาะแชท",

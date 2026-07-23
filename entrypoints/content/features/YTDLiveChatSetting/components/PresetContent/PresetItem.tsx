@@ -3,13 +3,14 @@ import { CSS } from '@dnd-kit/utilities'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { changeYLCStyle, resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
+import { resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { getPresetTitleFallbackKey } from '@/shared/stores/ytdLiveChatStore'
 import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
+import { commitYLCStyleUpdate } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
 
 interface PresetItemType {
@@ -21,14 +22,12 @@ const DELETE_MODAL_OVERLAY_STYLE = {
 } as const
 
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, ylcStyle, updateTitle, updateYLCStyle, deletePresetItem, setAddPresetEnabled } = useYTDLiveChatStore(
+  const { title, ylcStyle, updateTitle, deletePresetItem } = useYTDLiveChatStore(
     useShallow(state => ({
       title: state.presetItemTitles[id],
       ylcStyle: state.presetItemStyles[id],
       updateTitle: state.updateTitle,
       deletePresetItem: state.deletePresetItem,
-      updateYLCStyle: state.updateYLCStyle,
-      setAddPresetEnabled: state.setAddPresetEnabled,
     })),
   )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
@@ -38,18 +37,13 @@ export const PresetItem = ({ id }: PresetItemType) => {
   const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
   })
-  const updateStyle = useCallback(
-    (ylcStyle: YLCStyleType) => {
-      const resolvedStyle = {
-        ...ylcStyle,
-        membershipNameColor: resolveYLCMembershipNameColor(ylcStyle.membershipNameColor),
-      }
-      updateYLCStyle(resolvedStyle)
-      changeYLCStyle(resolvedStyle)
-      setAddPresetEnabled(false)
-    },
-    [setAddPresetEnabled, updateYLCStyle],
-  )
+  const updateStyle = useCallback((ylcStyle: YLCStyleType) => {
+    const resolvedStyle = {
+      ...ylcStyle,
+      membershipNameColor: resolveYLCMembershipNameColor(ylcStyle.membershipNameColor),
+    }
+    commitYLCStyleUpdate(resolvedStyle, 'preset', false)
+  }, [])
 
   return (
     <div

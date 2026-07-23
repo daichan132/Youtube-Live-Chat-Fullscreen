@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Prasetel",
-        "setting": "Pengaturan"
+        "setting": "Pengaturan",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Selalu Tampil",
       "chatOnlyDisplay": "Hanya Tampilkan Chat",

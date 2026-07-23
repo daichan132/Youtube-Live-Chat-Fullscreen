@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Praset",
-        "setting": "Tetapan"
+        "setting": "Tetapan",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Sentiasa Dipaparkan",
       "chatOnlyDisplay": "Papar Sembang Sahaja",

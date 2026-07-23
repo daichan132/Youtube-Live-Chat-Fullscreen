@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Шаблон",
-        "setting": "Налаштування"
+        "setting": "Налаштування",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Завжди на екрані",
       "chatOnlyDisplay": "Лише чат",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ప్రీసెట్",
-        "setting": "సెట్టింగ్‌లు"
+        "setting": "సెట్టింగ్‌లు",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "ఎప్పుడూ చూపించు",
       "chatOnlyDisplay": "చాట్ మాత్రమే చూపించు",

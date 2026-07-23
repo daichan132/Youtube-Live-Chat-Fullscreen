@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Esiasetus",
-        "setting": "Asetukset"
+        "setting": "Asetukset",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Näytä aina",
       "chatOnlyDisplay": "Vain chat",

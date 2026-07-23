@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "プリセット",
-        "setting": "設定"
+        "setting": "設定",
+        "undo": "スタイル変更を元に戻す",
+        "redo": "スタイル変更をやり直す"
       },
       "group": {
         "display": "表示",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "پیش‌تنظیم",
-        "setting": "تنظیمات"
+        "setting": "تنظیمات",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "نمایش همیشگی",
       "chatOnlyDisplay": "فقط نمایش چت",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Шаблони",
-        "setting": "Подешавања"
+        "setting": "Подешавања",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Увек на екрану",
       "chatOnlyDisplay": "Само ћаскање",

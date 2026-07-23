@@ -3,10 +3,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { FontFamilyInput } from './FontFamilyInput'
 
-const { changeFontFamilyMock } = vi.hoisted(() => ({
-  changeFontFamilyMock: vi.fn(),
-}))
-
 const translate = (key: string) => {
   if (key === 'content.preset.defaultTitle') return 'Default'
   return key
@@ -15,10 +11,6 @@ const PREVIEW_FONT_STYLE_ID = 'ylc-font-family-preview-style'
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
-}))
-
-vi.mock('@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier', () => ({
-  changeYLCFontFamily: changeFontFamilyMock,
 }))
 
 vi.mock('react-i18next', () => ({
@@ -64,7 +56,6 @@ const renderFontFamilyInput = (fontFamily = '') => {
 describe('FontFamilyInput', () => {
   beforeEach(() => {
     document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)?.remove()
-    changeFontFamilyMock.mockClear()
     resetStore()
   })
 
@@ -104,7 +95,6 @@ describe('FontFamilyInput', () => {
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto Slab')
-    expect(changeFontFamilyMock).toHaveBeenCalledWith('Roboto Slab')
   })
 
   it('commits default when no option matches and Enter is pressed', () => {
@@ -115,7 +105,6 @@ describe('FontFamilyInput', () => {
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(useYTDLiveChatStore.getState().fontFamily).toBe('')
-    expect(changeFontFamilyMock).toHaveBeenCalledWith('')
   })
 
   it('normalizes a case-insensitive font input before committing', () => {
@@ -126,7 +115,6 @@ describe('FontFamilyInput', () => {
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto')
-    expect(changeFontFamilyMock).toHaveBeenCalledWith('Roboto')
   })
 
   it('supports arrow navigation before Enter selection', async () => {
@@ -141,7 +129,6 @@ describe('FontFamilyInput', () => {
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto')
-    expect(changeFontFamilyMock).toHaveBeenCalledWith('Roboto')
   })
 
   it('closes the menu with Escape and outside click', async () => {

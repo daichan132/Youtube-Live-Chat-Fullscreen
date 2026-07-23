@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "प्रीसेट",
-        "setting": "सेटिंग्ज"
+        "setting": "सेटिंग्ज",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "नेहमी दाखवा",
       "chatOnlyDisplay": "फक्त चॅट दाखवा",

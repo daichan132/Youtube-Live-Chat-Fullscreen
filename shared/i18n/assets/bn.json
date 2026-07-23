@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "প্রিসেট",
-        "setting": "সেটিংস"
+        "setting": "সেটিংস",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "সবসময় দেখান",
       "chatOnlyDisplay": "শুধু চ্যাট দেখান",

@@ -2,6 +2,8 @@ export { FaChrome, FaFirefox, FaGithub, IoChatboxSharp, RiCloseLine } from './ot
 export {
   TbAdjustmentsHorizontal,
   TbArchive,
+  TbArrowBackUp,
+  TbArrowForwardUp,
   TbBlur,
   TbBrandGithub,
   TbCheck,

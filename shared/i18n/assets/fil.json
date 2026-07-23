@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Mga Preset",
-        "setting": "Mga Setting"
+        "setting": "Mga Setting",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Laging Nakikita",
       "chatOnlyDisplay": "Chat Lang ang Ipakita",

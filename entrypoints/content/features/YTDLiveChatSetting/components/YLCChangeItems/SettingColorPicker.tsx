@@ -11,9 +11,13 @@ type SettingColorPickerProps = {
   rgba: RGBColor
   label: string
   onChange: (color: RgbaColor) => void
+  onInteractionStart?: () => void
+  onInteractionEnd?: () => void
 }
 
-export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPickerProps) => {
+const COLOR_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'])
+
+export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, onInteractionEnd }: SettingColorPickerProps) => {
   const { t } = useTranslation()
   const descriptionId = useId()
   const [display, setDisplay] = useState(false)
@@ -25,6 +29,7 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
   useEnsureSettingPanelVisibility({ isOpen: display, anchorRef: triggerRef, popupRef: menuRef })
   useShadowClickAway(rootRef, () => {
     if (!display) return
+    onInteractionEnd?.()
     setDisplay(false)
   })
 
@@ -33,13 +38,19 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation()
+        onInteractionEnd?.()
         setDisplay(false)
         triggerRef.current?.focus({ preventScroll: true })
       }
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [display])
+  }, [display, onInteractionEnd])
+
+  useEffect(() => {
+    if (!display) return
+    return () => onInteractionEnd?.()
+  }, [display, onInteractionEnd])
 
   return (
     <div ref={rootRef} className='relative ylc-action-fill'>
@@ -67,7 +78,12 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
         aria-haspopup='dialog'
         aria-expanded={display}
         className='ylc-color-trigger ylc-action-fill'
-        onClick={() => setDisplay(current => !current)}
+        onClick={() =>
+          setDisplay(current => {
+            if (current) onInteractionEnd?.()
+            return !current
+          })
+        }
       >
         <span className='ylc-color-swatch'>
           <span
@@ -81,8 +97,23 @@ export const SettingColorPicker = ({ rgba, label, onChange }: SettingColorPicker
         <span className='ylc-color-value'>{formatColorValue(rgba)}</span>
       </button>
       {display ? (
-        <div ref={menuRef} className='absolute right-0 ylc-theme-popover' role='dialog' aria-label={t('content.aria.colorPicker')}>
-          <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} />
+        <div
+          ref={menuRef}
+          className='absolute right-0 ylc-theme-popover'
+          role='dialog'
+          aria-label={t('content.aria.colorPicker')}
+          onPointerDownCapture={onInteractionStart}
+          onPointerUpCapture={onInteractionEnd}
+          onPointerCancelCapture={onInteractionEnd}
+          onLostPointerCapture={onInteractionEnd}
+          onKeyDownCapture={event => {
+            if (COLOR_ADJUSTMENT_KEYS.has(event.key)) onInteractionStart?.()
+          }}
+          onKeyUpCapture={event => {
+            if (COLOR_ADJUSTMENT_KEYS.has(event.key)) onInteractionEnd?.()
+          }}
+        >
+          <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} onChangeEnd={onInteractionEnd} />
         </div>
       ) : null}
     </div>

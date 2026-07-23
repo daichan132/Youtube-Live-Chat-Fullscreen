@@ -2,6 +2,7 @@ import { act, fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useYTDLiveChatStore } from '@/shared/stores'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
+import { useYLCStyleApplication } from '../../../hooks/ylcStyleChange/useYLCStyleApplication'
 import { SettingContent } from './SettingContent'
 
 vi.mock('redux-persist-webextension-storage', () => ({
@@ -33,6 +34,11 @@ const resetStore = (overrides: Partial<typeof baseState> = {}) => {
     },
     true,
   )
+}
+
+const SettingContentWithApplication = () => {
+  useYLCStyleApplication()
+  return <SettingContent />
 }
 
 describe('SettingContent', () => {
@@ -96,7 +102,7 @@ describe('SettingContent', () => {
   })
 
   it('keeps sliders in sync with store updates before interaction', () => {
-    const { getByRole } = render(<SettingContent />)
+    const { getByRole } = render(<SettingContentWithApplication />)
 
     act(() => {
       useYTDLiveChatStore.setState({
@@ -116,7 +122,7 @@ describe('SettingContent', () => {
     document.body.appendChild(iframe)
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
-    const { getByRole } = render(<SettingContent />)
+    const { getByRole } = render(<SettingContentWithApplication />)
 
     fireEvent.click(getByRole('switch', { name: 'content.setting.userNameDisplay' }))
     fireEvent.click(getByRole('switch', { name: 'content.setting.userIconDisplay' }))
@@ -137,7 +143,7 @@ describe('SettingContent', () => {
     iframe.contentDocument?.documentElement.style.setProperty('--yt-live-chat-sponsor-color', 'rgb(22, 163, 74)')
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
-    const { getByRole, queryByText } = render(<SettingContent />)
+    const { getByRole, queryByText } = render(<SettingContentWithApplication />)
 
     expect(useYTDLiveChatStore.getState().membershipNameColor).toEqual({ r: 15, g: 157, b: 88, a: 1 })
     expect(queryByText('Current color: rgba(15, 157, 88, 1)')).not.toBeNull()

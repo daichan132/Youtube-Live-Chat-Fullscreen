@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "ቅድመ-ቅንብር",
-        "setting": "ቅንብሮች"
+        "setting": "ቅንብሮች",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "ሁልጊዜ አሳይ",
       "chatOnlyDisplay": "ቻት ብቻ አሳይ",

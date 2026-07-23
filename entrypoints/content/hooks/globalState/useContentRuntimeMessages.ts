@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
+import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import type { ThemeMode } from '@/shared/theme'
 import { changeYLCStyle } from '../ylcStyleChange/ylcStyleApplier'
@@ -17,6 +18,7 @@ export const useContentRuntimeMessages = () => {
     const rehydrateAndApply = async () => {
       await useGlobalSettingStore.persist.rehydrate()
       await useYTDLiveChatStore.persist.rehydrate()
+      useYTDLiveChatHistoryStore.getState().clear()
 
       const {
         fontSize,

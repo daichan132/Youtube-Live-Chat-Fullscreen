@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "പ്രീസെറ്റ്",
-        "setting": "ക്രമീകരണങ്ങൾ"
+        "setting": "ക്രമീകരണങ്ങൾ",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "എപ്പോഴും പ്രദർശിപ്പിക്കുക",
       "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",

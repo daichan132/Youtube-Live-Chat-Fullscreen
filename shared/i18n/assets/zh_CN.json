@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "预设",
-        "setting": "设置"
+        "setting": "设置",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "始终显示",
       "chatOnlyDisplay": "仅显示聊天",

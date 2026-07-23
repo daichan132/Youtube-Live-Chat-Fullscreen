@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Sagatave",
-        "setting": "Iestatījumi"
+        "setting": "Iestatījumi",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Vienmēr rādīt",
       "chatOnlyDisplay": "Tikai čats",

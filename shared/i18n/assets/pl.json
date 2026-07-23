@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Szablon",
-        "setting": "Ustawienia"
+        "setting": "Ustawienia",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Zawsze wyświetlaj",
       "chatOnlyDisplay": "Tylko czat",

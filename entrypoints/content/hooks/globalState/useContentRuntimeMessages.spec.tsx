@@ -79,8 +79,15 @@ describe('useContentRuntimeMessages', () => {
   it('rehydrates stores and applies all style properties on settingsImported message', async () => {
     const { useContentRuntimeMessages } = await import('./useContentRuntimeMessages')
     const { useYTDLiveChatStore } = await import('@/shared/stores/ytdLiveChatStore')
+    const { useYTDLiveChatHistoryStore } = await import('@/shared/stores/ytdLiveChatHistoryStore')
 
     expect(useYTDLiveChatStore.getState().fontSize).toBe(13)
+    const currentStyle = useYTDLiveChatStore.getState()
+    useYTDLiveChatHistoryStore.getState().record({
+      before: { style: currentStyle, addPresetEnabled: true },
+      after: { style: { ...currentStyle, fontSize: 14 }, addPresetEnabled: true },
+      label: 'fontSize',
+    })
 
     renderHook(() => useContentRuntimeMessages())
 
@@ -112,6 +119,7 @@ describe('useContentRuntimeMessages', () => {
     await waitFor(() => {
       expect(mockChangeYLCStyle).toHaveBeenCalledTimes(1)
     })
+    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(0)
 
     expect(mockChangeYLCStyle).toHaveBeenCalledWith({
       fontSize: 42,

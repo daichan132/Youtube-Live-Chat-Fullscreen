@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Mipangilio tayari",
-        "setting": "Mipangilio"
+        "setting": "Mipangilio",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Onyesha kila wakati",
       "chatOnlyDisplay": "Onyesha gumzo pekee",

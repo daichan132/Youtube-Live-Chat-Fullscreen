@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Cài đặt sẵn",
-        "setting": "Cài đặt"
+        "setting": "Cài đặt",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Luôn hiển thị",
       "chatOnlyDisplay": "Chỉ hiển thị chat",

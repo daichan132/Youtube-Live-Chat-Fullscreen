@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Presetări",
-        "setting": "Setări"
+        "setting": "Setări",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Afișare permanentă",
       "chatOnlyDisplay": "Doar chat-ul",

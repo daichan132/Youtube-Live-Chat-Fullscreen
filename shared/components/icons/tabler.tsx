@@ -73,6 +73,20 @@ export const TbReset = (props: IconProps) => (
   </Tabler>
 )
 
+export const TbArrowBackUp = (props: IconProps) => (
+  <Tabler {...props}>
+    <path d='M9 14l-4 -4l4 -4' />
+    <path d='M5 10h10a4 4 0 1 1 0 8h-1' />
+  </Tabler>
+)
+
+export const TbArrowForwardUp = (props: IconProps) => (
+  <Tabler {...props}>
+    <path d='M15 14l4 -4l-4 -4' />
+    <path d='M19 10h-10a4 4 0 1 0 0 8h1' />
+  </Tabler>
+)
+
 export const TbSpacingHorizontal = (props: IconProps) => (
   <Tabler {...props}>
     <path d='M20 20h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h2' />

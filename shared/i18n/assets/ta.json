@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "முன்னமைவு",
-        "setting": "அமைப்புகள்"
+        "setting": "அமைப்புகள்",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "எப்போதும் காட்டு",
       "chatOnlyDisplay": "அரட்டையை மட்டும் காட்டு",

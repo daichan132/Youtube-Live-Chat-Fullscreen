@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predvoľba",
-        "setting": "Nastavenia"
+        "setting": "Nastavenia",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Vždy zobrazovať",
       "chatOnlyDisplay": "Iba chat",

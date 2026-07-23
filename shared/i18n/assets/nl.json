@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Voorinstelling",
-        "setting": "Instellingen"
+        "setting": "Instellingen",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Altijd weergeven",
       "chatOnlyDisplay": "Alleen chat weergeven",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Predefinit",
-        "setting": "Configuració"
+        "setting": "Configuració",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Sempre visible",
       "chatOnlyDisplay": "Només el xat",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Ön Ayar",
-        "setting": "Ayarlar"
+        "setting": "Ayarlar",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Her Zaman Göster",
       "chatOnlyDisplay": "Yalnızca Sohbet",

@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Sablonok",
-        "setting": "Beállítások"
+        "setting": "Beállítások",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Mindig látható",
       "chatOnlyDisplay": "Csak csevegés",

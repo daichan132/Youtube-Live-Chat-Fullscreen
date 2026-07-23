@@ -3,7 +3,9 @@
     "setting": {
       "header": {
         "preset": "Προεπιλογή",
-        "setting": "Ρυθμίσεις"
+        "setting": "Ρυθμίσεις",
+        "undo": "Undo style change",
+        "redo": "Redo style change"
       },
       "alwaysOnDisplay": "Πάντα ορατό",
       "chatOnlyDisplay": "Μόνο συνομιλία",
