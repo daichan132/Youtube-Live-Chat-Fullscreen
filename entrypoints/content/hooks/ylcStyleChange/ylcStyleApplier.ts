@@ -101,6 +101,11 @@ export const getYLCStandardMembershipNameColor = (): RGBColor => {
 export const resolveYLCMembershipNameColor = (rgba: RGBColor): RGBColor =>
   isFallbackMembershipNameColor(rgba) ? getYLCStandardMembershipNameColor() : rgba
 
+const toElevatedMenuSurfaceColor = (rgba: RGBColor) => {
+  const alpha = rgba.a ?? 1
+  return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
+}
+
 const toPanelSurfaceColor = (rgba: RGBColor) => {
   const alpha = rgba.a ?? 1
   if (alpha === 0) return toRgbaString(rgba, 0)
@@ -114,7 +119,7 @@ export const changeYLCBgColor = (rgba: RGBColor) => {
     ...YLC_BG_COLOR_PROPERTIES.map(property => [property, 'transparent'] as const),
     ...YLC_BG_DARKEN_PROPERTIES.map(({ property, amount }) => [property, darkenRgbaColor(rgba, amount)] as const),
     ...YLC_BG_TRANSPARENT_PROPERTIES.map(property => [property, 'transparent'] as const),
-    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toPanelSurfaceColor(rgba)] as const),
+    ...YLC_BG_SURFACE_PROPERTIES.map(property => [property, toElevatedMenuSurfaceColor(rgba)] as const),
     [YLC_PANEL_BACKGROUND_PROPERTY, toPanelSurfaceColor(rgba)],
   ])
 }
