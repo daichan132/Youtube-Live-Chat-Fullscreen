@@ -67,6 +67,19 @@ const getCurrentChatHost = () => {
   return getCurrentLiveChatHost()
 }
 
+const isStructurallyLinkedToCurrentChat = (element: HTMLElement) => {
+  const currentHost = getCurrentChatHost()
+  if (!currentHost) return false
+
+  const controlledIds = (element.getAttribute('aria-controls') ?? '').split(/\s+/).filter(Boolean)
+  return controlledIds.some(id => {
+    const controlled = document.getElementById(id)
+    return Boolean(controlled && (controlled === currentHost || controlled.contains(currentHost) || currentHost.contains(controlled)))
+  })
+}
+
+const isChatControl = (element: HTMLElement) => isStructurallyLinkedToCurrentChat(element) || isChatLabel(getButtonLabelText(element))
+
 const isControlScopedToCurrentChatHost = (element: HTMLElement) => {
   const host = element.closest('ytd-live-chat-frame') as HTMLElement | null
   if (host) return isChatHostForCurrentVideo(host)
@@ -113,7 +126,7 @@ const findFirstMatchingControl = (
       if (requireVisible && !isElementVisible(clickable)) continue
       if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
       if (clickable.getAttribute('aria-disabled') === 'true') continue
-      if (options.requireChatLabel && !isChatLabel(getButtonLabelText(clickable))) continue
+      if (options.requireChatLabel && !isChatControl(clickable)) continue
       if (options.requireCurrentChatHost && !isControlScopedToCurrentChatHost(clickable)) continue
       return clickable
     }
@@ -236,17 +249,15 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   const isPlayerControls = Boolean(button.closest('.ytp-right-controls'))
   if (isPlayerControls) {
     const isToggleViewModel = Boolean(button.closest('toggle-button-view-model, button-view-model'))
-    const label = getButtonLabelText(button)
-    if (isToggleViewModel) return isChatLabel(label)
-    if (isChatLabel(label)) return true
+    if (isToggleViewModel) return isChatControl(button)
+    if (isChatControl(button)) return true
   }
 
   if (!hasChatOnPage()) return false
 
   if (button.closest('#show-hide-button, #close-button')) return true
 
-  const label = getButtonLabelText(button)
-  return isChatLabel(label)
+  return isChatControl(button)
 }
 
 export const isNativeChatTriggerTarget = (target: HTMLElement) => Boolean(target.closest(nativeChatTriggerSelectors))

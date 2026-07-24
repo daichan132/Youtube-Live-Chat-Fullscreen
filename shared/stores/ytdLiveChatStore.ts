@@ -1,9 +1,9 @@
 import type { Coordinates } from '@dnd-kit/core/dist/types'
-import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { DefaultCoordinates, DefaultSize } from '@/shared/constants'
 import { normalizePersistedYTDLiveChatState, normalizeStoredGeometry, normalizeStyle } from '@/shared/settings/normalizeSettings'
+import { originAwareLocalStorage } from '@/shared/settings/originAwareStorage'
 import { YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
 import i18n from '../i18n/config'
 import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
@@ -76,6 +76,8 @@ const getDefaultPresetTitleKey = (id: string) => {
   return DEFAULT_PRESET_TITLE_KEYS[id as DefaultPresetId]
 }
 
+export const isDefaultPresetId = (id: string): id is DefaultPresetId => id in DEFAULT_PRESET_TITLE_KEYS
+
 const translateDefaultPresetTitle = (id: DefaultPresetId) => i18n.t(DEFAULT_PRESET_TITLE_KEYS[id])
 
 const getDefaultPresetIds = () => DEFAULT_PRESETS.map(preset => preset.id)
@@ -141,6 +143,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         })),
       deletePresetItem: id =>
         set(state => {
+          if (isDefaultPresetId(id)) return state
           const { [id]: _style, ...restStyles } = state.presetItemStyles
           const { [id]: _title, ...restTitles } = state.presetItemTitles
           return {
@@ -150,9 +153,13 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           }
         }),
       updateTitle: (id, title) =>
-        set(state => ({
-          presetItemTitles: { ...state.presetItemTitles, [id]: title },
-        })),
+        set(state =>
+          isDefaultPresetId(id)
+            ? state
+            : {
+                presetItemTitles: { ...state.presetItemTitles, [id]: title },
+              },
+        ),
       updateYLCStyle: YLCStyleUpdate =>
         set(state => ({
           ...normalizeStyle({ ...state, ...YLCStyleUpdate }),
@@ -187,7 +194,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       name: YTD_LIVE_CHAT_PERSIST.key,
       version: YTD_LIVE_CHAT_PERSIST.version,
       migrate: persistedState => migratePersistedState(persistedState),
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => originAwareLocalStorage),
     },
   ),
 )

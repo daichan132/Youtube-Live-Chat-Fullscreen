@@ -2,7 +2,6 @@ import { useCallback, useId } from 'react'
 
 import { Switch } from '@/shared/components/Switch'
 import { useGlobalSettingStore } from '@/shared/stores'
-import { sendActiveTabMessage } from '../utils/sendActiveTabMessage'
 
 export const YTDLiveChatSwitch = () => {
   const id = useId()
@@ -11,10 +10,6 @@ export const YTDLiveChatSwitch = () => {
   const handleSwitchChange = useCallback(
     (checked: boolean) => {
       setYTDLiveChat(checked)
-      sendActiveTabMessage({
-        message: 'ytdLiveChat',
-        ytdLiveChat: checked,
-      })
     },
     [setYTDLiveChat],
   )

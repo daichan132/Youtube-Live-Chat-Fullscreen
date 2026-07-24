@@ -21,8 +21,8 @@ import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import type { ChatMode } from './types'
 
 const TRANSITION_CHECK_INTERVAL_MS = 1000
-const BORROWED_AVAILABILITY_CHECK_INTERVAL_MS = 1000
-const BORROWED_AVAILABILITY_MAX_ATTEMPTS = 30
+const ATTACHED_AVAILABILITY_CHECK_INTERVAL_MS = 1000
+const ATTACHED_AVAILABILITY_MAX_ATTEMPTS = 30
 
 export const useChatIframeLoader = (mode: ChatMode) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -113,35 +113,35 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       setIsIframeLoaded: setIsIframeLoadedRef.current,
     })
 
-    let borrowedAvailabilityInterval: number | null = null
-    let borrowedAvailabilityIframe: HTMLIFrameElement | null = null
-    let borrowedAvailabilityAttempts = 0
+    let attachedAvailabilityInterval: number | null = null
+    let attachedAvailabilityIframe: HTMLIFrameElement | null = null
+    let attachedAvailabilityAttempts = 0
 
-    const stopBorrowedAvailabilityWatch = () => {
-      if (borrowedAvailabilityInterval) {
-        window.clearInterval(borrowedAvailabilityInterval)
-        borrowedAvailabilityInterval = null
+    const stopAttachedAvailabilityWatch = () => {
+      if (attachedAvailabilityInterval) {
+        window.clearInterval(attachedAvailabilityInterval)
+        attachedAvailabilityInterval = null
       }
-      borrowedAvailabilityIframe = null
-      borrowedAvailabilityAttempts = 0
+      attachedAvailabilityIframe = null
+      attachedAvailabilityAttempts = 0
     }
 
-    const startBorrowedAvailabilityWatch = (iframe: HTMLIFrameElement, restart = false) => {
-      if (mode !== 'live' || isManagedLiveIframe(iframe)) {
-        stopBorrowedAvailabilityWatch()
+    const startAttachedAvailabilityWatch = (iframe: HTMLIFrameElement, restart = false) => {
+      if (mode !== 'live') {
+        stopAttachedAvailabilityWatch()
         return
       }
-      if (!restart && borrowedAvailabilityInterval && borrowedAvailabilityIframe === iframe) return
+      if (!restart && attachedAvailabilityInterval && attachedAvailabilityIframe === iframe) return
 
-      stopBorrowedAvailabilityWatch()
-      borrowedAvailabilityIframe = iframe
-      borrowedAvailabilityInterval = window.setInterval(() => {
+      stopAttachedAvailabilityWatch()
+      attachedAvailabilityIframe = iframe
+      attachedAvailabilityInterval = window.setInterval(() => {
         if (iframeRef.current !== iframe || !iframe.isConnected) {
-          stopBorrowedAvailabilityWatch()
+          stopAttachedAvailabilityWatch()
           return
         }
 
-        borrowedAvailabilityAttempts += 1
+        attachedAvailabilityAttempts += 1
         if (captureCurrentLiveChatUnavailable(iframe)) {
           detachCurrentIframe()
           observer?.disconnect()
@@ -149,10 +149,10 @@ export const useChatIframeLoader = (mode: ChatMode) => {
           return
         }
 
-        if (borrowedAvailabilityAttempts >= BORROWED_AVAILABILITY_MAX_ATTEMPTS) {
-          stopBorrowedAvailabilityWatch()
+        if (attachedAvailabilityAttempts >= ATTACHED_AVAILABILITY_MAX_ATTEMPTS) {
+          stopAttachedAvailabilityWatch()
         }
-      }, BORROWED_AVAILABILITY_CHECK_INTERVAL_MS)
+      }, ATTACHED_AVAILABILITY_CHECK_INTERVAL_MS)
     }
 
     function handleLoaded() {
@@ -165,14 +165,14 @@ export const useChatIframeLoader = (mode: ChatMode) => {
         return
       }
       initializer.initialize(iframe)
-      startBorrowedAvailabilityWatch(iframe, true)
+      startAttachedAvailabilityWatch(iframe, true)
     }
 
     function detachCurrentIframe(options?: { ensureNativeVisible?: boolean }) {
       const current = iframeRef.current
       if (!current) return
 
-      stopBorrowedAvailabilityWatch()
+      stopAttachedAvailabilityWatch()
       initializer.cleanup()
       current.removeEventListener('load', handleLoaded)
       detachAttachedIframe(current, ref.current, options)
@@ -197,7 +197,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       if (getIframeDocumentHref(iframe) || isManagedLiveIframe(iframe)) {
         handleLoaded()
       } else {
-        startBorrowedAvailabilityWatch(iframe)
+        startAttachedAvailabilityWatch(iframe)
       }
     }
 
@@ -381,21 +381,13 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       handleVideoTransition()
     }, TRANSITION_CHECK_INTERVAL_MS)
 
-    const handleFullscreenChange = () => {
-      if (document.fullscreenElement !== null) return
-      if (!iframeRef.current) return
-      detachCurrentIframe({ ensureNativeVisible: mode === 'archive' })
-    }
-
     document.addEventListener('yt-navigate-finish', handleNavigate)
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
 
     return () => {
       document.removeEventListener('yt-navigate-finish', handleNavigate)
-      document.removeEventListener('fullscreenchange', handleFullscreenChange)
       observer?.disconnect()
       stopRetry()
-      stopBorrowedAvailabilityWatch()
+      stopAttachedAvailabilityWatch()
       window.clearInterval(transitionCheckInterval)
       detachCurrentIframe({
         ensureNativeVisible: document.fullscreenElement === null && mode === 'archive',

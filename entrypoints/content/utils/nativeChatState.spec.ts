@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { isNativeChatOpen, isNativeChatUsable } from './nativeChatState'
+import { isNativeChatExpanded, isNativeChatOpen, isNativeChatUsable } from './nativeChatState'
 
 const setLocation = (path: string) => {
   const base = window.location.origin
@@ -134,5 +134,24 @@ describe('isNativeChatUsable', () => {
     iframe.style.pointerEvents = 'none'
 
     expect(isNativeChatUsable()).toBe(false)
+  })
+
+  it('returns false while the current iframe is attached to the extension overlay', () => {
+    const { iframe } = createUsableChat()
+    iframe.setAttribute('data-ylc-chat', 'true')
+
+    expect(isNativeChatUsable()).toBe(false)
+  })
+})
+
+describe('isNativeChatExpanded', () => {
+  it('returns false while YouTube still has expanded markers but its iframe is attached to the extension', () => {
+    const watchFlexy = document.createElement('ytd-watch-flexy')
+    watchFlexy.setAttribute('live-chat-present-and-expanded', '')
+    document.body.appendChild(watchFlexy)
+    const { iframe } = createUsableChat()
+    iframe.setAttribute('data-ylc-chat', 'true')
+
+    expect(isNativeChatExpanded()).toBe(false)
   })
 })

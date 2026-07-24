@@ -60,6 +60,21 @@ describe('useYTDLiveChatStore', () => {
     expect(updated.presetItemTitles.custom).toBeUndefined()
   })
 
+  it('keeps built-in preset definitions immutable', async () => {
+    const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
+    const original = useYTDLiveChatStore.getState()
+    const originalTitle = original.presetItemTitles.default1
+    const originalStyle = original.presetItemStyles.default1
+
+    original.updateTitle('default1', 'Renamed')
+    original.deletePresetItem('default1')
+
+    const updated = useYTDLiveChatStore.getState()
+    expect(updated.presetItemIds).toContain('default1')
+    expect(updated.presetItemTitles.default1).toBe(originalTitle)
+    expect(updated.presetItemStyles.default1).toBe(originalStyle)
+  })
+
   it('enforces minimum size and updates coordinates', async () => {
     const { useYTDLiveChatStore } = await import('./ytdLiveChatStore')
     const state = useYTDLiveChatStore.getState()

@@ -608,6 +608,37 @@ describe('iframeAttachment', () => {
     expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
   })
 
+  it('stops native chat open retries after navigation changes the video', () => {
+    vi.useFakeTimers()
+    const userAgentDescriptor = Object.getOwnPropertyDescriptor(navigator, 'userAgent')
+    Object.defineProperty(navigator, 'userAgent', {
+      value: 'Mozilla/5.0 Chrome/126.0',
+      configurable: true,
+    })
+    const container = document.createElement('div') as HTMLDivElement
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    host.appendChild(iframe)
+    document.body.append(host, container)
+
+    try {
+      attachIframeToContainer(container, iframe)
+      detachAttachedIframe(iframe, container, { ensureNativeVisible: true })
+      expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
+
+      setLocation('/watch?v=video-b')
+      vi.advanceTimersByTime(500)
+
+      expect(openArchiveNativeChatPanelMock).toHaveBeenCalledTimes(1)
+    } finally {
+      vi.useRealTimers()
+      if (userAgentDescriptor) {
+        Object.defineProperty(navigator, 'userAgent', userAgentDescriptor)
+      }
+    }
+  })
+
   it('does not request native chat open when it is already open', () => {
     const container = document.createElement('div') as HTMLDivElement
     const originalParent = document.createElement('div')

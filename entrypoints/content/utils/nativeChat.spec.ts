@@ -35,18 +35,27 @@ const createUnmarkedCurrentChatHost = () => {
   return host
 }
 
-const createPlayerChatToggle = ({ label, pressed = 'false' }: { label: string; pressed?: 'true' | 'false' }) => {
-  const controls = document.createElement('div')
-  controls.className = 'ytp-right-controls'
+const createPlayerChatToggle = ({
+  label,
+  pressed = 'false',
+  controls,
+}: {
+  label: string
+  pressed?: 'true' | 'false'
+  controls?: string
+}) => {
+  const playerControls = document.createElement('div')
+  playerControls.className = 'ytp-right-controls'
 
   const toggle = document.createElement('toggle-button-view-model')
   const button = document.createElement('button')
   button.setAttribute('aria-label', label)
   button.setAttribute('aria-pressed', pressed)
+  if (controls) button.setAttribute('aria-controls', controls)
 
   toggle.appendChild(button)
-  controls.appendChild(toggle)
-  document.body.appendChild(controls)
+  playerControls.appendChild(toggle)
+  document.body.appendChild(playerControls)
 
   return button
 }
@@ -120,6 +129,23 @@ describe('openArchiveNativeChatPanel', () => {
     createStaleChatHost()
     createCurrentChatHost()
     const button = createPlayerChatToggle({ label: 'Live chat', pressed: 'false' })
+    const clickSpy = vi.fn()
+    button.click = clickSpy
+
+    const opened = openArchiveNativeChatPanel()
+
+    expect(opened).toBe(true)
+    expect(clickSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('clicks a structurally linked player chat toggle regardless of its localized label', () => {
+    const host = createCurrentChatHost()
+    host.id = 'chat'
+    const button = createPlayerChatToggle({
+      label: '显示实时聊天',
+      controls: 'chat',
+      pressed: 'false',
+    })
     const clickSpy = vi.fn()
     button.click = clickSpy
 
@@ -301,6 +327,17 @@ describe('isNativeChatToggleButton', () => {
 
   it('returns true for chat-labeled toggle-view-model buttons in player controls', () => {
     const chatButton = createPlayerViewModelToggleButton('Chat')
+
+    expect(isNativeChatToggleButton(chatButton)).toBe(true)
+  })
+
+  it('returns true for a structurally linked toggle with a localized label', () => {
+    const host = createCurrentChatHost()
+    host.id = 'chat'
+    const chatButton = createPlayerChatToggle({
+      label: '显示实时聊天',
+      controls: 'chat',
+    })
 
     expect(isNativeChatToggleButton(chatButton)).toBe(true)
   })

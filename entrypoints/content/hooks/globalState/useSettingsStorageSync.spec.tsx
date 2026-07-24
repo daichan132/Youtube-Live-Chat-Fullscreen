@@ -1,5 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { SETTINGS_STORAGE_ORIGIN_ID } from '@/shared/settings/originAwareStorage'
+import { YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
 import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
 import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
@@ -29,6 +31,23 @@ const emitStorageChange = (changes: Record<string, unknown>, areaName = 'local')
   for (const listener of storageListeners) listener(changes, areaName)
 }
 
+const serializeCurrentYTDLiveChatState = (overrides: Record<string, unknown> = {}, originId?: string) =>
+  JSON.stringify({
+    state: {
+      ...useYTDLiveChatStore.getState(),
+      ...overrides,
+    },
+    version: YTD_LIVE_CHAT_PERSIST.version,
+    ...(originId ? { originId } : {}),
+  })
+
+const serializeCurrentGlobalSettingState = (originId?: string) =>
+  JSON.stringify({
+    state: useGlobalSettingStore.getState(),
+    version: 1,
+    ...(originId ? { originId } : {}),
+  })
+
 describe('useSettingsStorageSync', () => {
   beforeEach(() => {
     storageListeners.clear()
@@ -45,12 +64,92 @@ describe('useSettingsStorageSync', () => {
     act(() => {
       emitStorageChange({
         globalSettingStore: {},
-        ytdLiveChatStore: {},
+        ytdLiveChatStore: {
+          newValue: serializeCurrentYTDLiveChatState({
+            fontSize: useYTDLiveChatStore.getState().fontSize + 1,
+          }),
+        },
       })
     })
 
     await waitFor(() => {
       expect(useGlobalSettingStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+      expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+      expect(useYTDLiveChatHistoryStore.getState().clear).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  it('keeps style history for its own save even when a newer local edit already exists', async () => {
+    useYTDLiveChatHistoryStore.setState({
+      past: [
+        {
+          before: {
+            style: useYTDLiveChatStore.getState(),
+            addPresetEnabled: true,
+          },
+          after: {
+            style: {
+              ...useYTDLiveChatStore.getState(),
+              fontSize: useYTDLiveChatStore.getState().fontSize + 1,
+            },
+            addPresetEnabled: true,
+          },
+          label: 'fontSize',
+        },
+      ],
+      future: [],
+      activeGesture: null,
+    })
+    renderHook(() => useSettingsStorageSync())
+
+    act(() => {
+      emitStorageChange({
+        ytdLiveChatStore: {
+          newValue: serializeCurrentYTDLiveChatState(
+            {
+              fontSize: useYTDLiveChatStore.getState().fontSize - 1,
+            },
+            SETTINGS_STORAGE_ORIGIN_ID,
+          ),
+        },
+      })
+    })
+
+    await waitFor(() => {
+      expect(useYTDLiveChatStore.persist.rehydrate).not.toHaveBeenCalled()
+      expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
+      expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(1)
+    })
+  })
+
+  it('does not rehydrate global settings for their own persisted state', async () => {
+    renderHook(() => useSettingsStorageSync())
+
+    act(() => {
+      emitStorageChange({
+        globalSettingStore: {
+          newValue: serializeCurrentGlobalSettingState(SETTINGS_STORAGE_ORIGIN_ID),
+        },
+      })
+    })
+
+    await waitFor(() => {
+      expect(useGlobalSettingStore.persist.rehydrate).not.toHaveBeenCalled()
+    })
+  })
+
+  it('rehydrates an identical state saved by another extension context', async () => {
+    renderHook(() => useSettingsStorageSync())
+
+    act(() => {
+      emitStorageChange({
+        ytdLiveChatStore: {
+          newValue: serializeCurrentYTDLiveChatState({}, 'another-context'),
+        },
+      })
+    })
+
+    await waitFor(() => {
       expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
       expect(useYTDLiveChatHistoryStore.getState().clear).toHaveBeenCalledTimes(1)
     })

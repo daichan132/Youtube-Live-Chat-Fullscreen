@@ -44,6 +44,7 @@ const hasUnavailableText = (doc: Document) => {
 
 export const isLiveChatUnavailable = (doc: Document) => {
   if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
+  if (doc.querySelector('yt-live-chat-message-renderer') && !doc.querySelector('yt-live-chat-renderer')) return true
   return hasUnavailableText(doc)
 }
 

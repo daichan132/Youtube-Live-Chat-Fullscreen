@@ -434,6 +434,7 @@ const restoreIframeToNativeHost = (iframe: HTMLIFrameElement, videoId: string | 
 }
 
 const ensureNativeChatVisible = () => {
+  const startingVideoId = getCurrentYouTubeVideoId()
   if (isNativeChatOpen()) return
   openArchiveNativeChatPanel()
   if (isNativeChatOpen()) return
@@ -443,6 +444,10 @@ const ensureNativeChatVisible = () => {
   const maxAttempts = 5
   const retryIntervalMs = 500
   const retryInterval = window.setInterval(() => {
+    if (getCurrentYouTubeVideoId() !== startingVideoId) {
+      window.clearInterval(retryInterval)
+      return
+    }
     if (isNativeChatOpen()) {
       window.clearInterval(retryInterval)
       return

@@ -8,6 +8,7 @@ import { DraggableItem } from './DraggableItem'
 
 type MockResizableProps = {
   children: ReactNode
+  size?: { width: number; height: number }
   style?: CSSProperties
   handleStyles?: Record<string, CSSProperties | undefined>
   handleWrapperStyle?: CSSProperties
@@ -264,7 +265,7 @@ describe('DraggableItem', () => {
     expect(draggableState.setNodeRef).not.toHaveBeenCalledWith(container.querySelector('[data-ylc-chat-inner]'))
   })
 
-  it('updates layout while resizing from the top-left corner', () => {
+  it('keeps resize layout as a local draft until resizing stops', () => {
     resetStore({
       coordinates: { x: 100, y: 80 },
       size: { width: 300, height: 200 },
@@ -283,8 +284,10 @@ describe('DraggableItem', () => {
     })
 
     const state = useYTDLiveChatStore.getState()
-    expect(state.coordinates).toEqual({ x: 60, y: 60 })
-    expect(state.size).toEqual({ width: 340, height: 220 })
+    expect(state.coordinates).toEqual({ x: 100, y: 80 })
+    expect(state.size).toEqual({ width: 300, height: 200 })
+    expect(resizableState.props?.size).toEqual({ width: 340, height: 220 })
+    expect(resizableState.props?.style).toMatchObject({ left: 60, top: 60 })
   })
 
   it('uses the resize-start size when cumulative resize deltas update repeatedly', () => {
@@ -308,7 +311,8 @@ describe('DraggableItem', () => {
 
     const state = useYTDLiveChatStore.getState()
     expect(state.coordinates).toEqual({ x: 100, y: 80 })
-    expect(state.size).toEqual({ width: 345, height: 225 })
+    expect(state.size).toEqual({ width: 300, height: 200 })
+    expect(resizableState.props?.size).toEqual({ width: 345, height: 225 })
   })
 
   it('clamps size to the minimum values when resize stops', () => {

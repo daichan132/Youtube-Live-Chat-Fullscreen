@@ -83,14 +83,15 @@ describe('PresetItem', () => {
     expect(useYTDLiveChatStore.getState().presetItemIds).not.toContain('custom')
   })
 
-  it('falls back to the default preset title when persisted title is empty', () => {
+  it('renders built-in presets from the localized catalog and prevents editing or deletion', () => {
     useYTDLiveChatStore.setState({
-      presetItemTitles: { ...baseState.presetItemTitles, default1: '' },
+      presetItemTitles: { ...baseState.presetItemTitles, default1: 'Stale localized title' },
     })
 
-    const { getByDisplayValue } = render(<PresetItem id='default1' />)
+    const { getByDisplayValue, queryByRole } = render(<PresetItem id='default1' />)
 
-    expect(getByDisplayValue('content.preset.defaultTitle')).toBeTruthy()
+    expect((getByDisplayValue('content.preset.defaultTitle') as HTMLInputElement).readOnly).toBe(true)
+    expect(queryByRole('button', { name: 'content.aria.deletePreset' })).toBeNull()
   })
 
   it('disables applying a preset when its style is unavailable', () => {

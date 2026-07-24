@@ -6,8 +6,8 @@ import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useFullscreenChatLayoutFix } from './hooks/watchYouTubeUI/useFullscreenChatLayoutFix'
-import { useIsShow } from './hooks/watchYouTubeUI/useIsShow'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
+import { useNativeChatState } from './hooks/watchYouTubeUI/useNativeChatState'
 
 const OVERLAY_TIMEOUT = { enter: 200, exit: 200 } as const
 const OVERLAY_CLASS_NAMES = {
@@ -23,7 +23,7 @@ type YTDLiveChatProps = {
 }
 
 export const YTDLiveChat = ({ isFullscreen, mode, sourceReady }: YTDLiveChatProps) => {
-  const { isNativeChatUsable, isNativeChatExpanded } = useIsShow(isFullscreen)
+  const { isNativeChatUsable, isNativeChatExpanded } = useNativeChatState(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
   const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)

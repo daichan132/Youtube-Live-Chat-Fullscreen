@@ -3,8 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { ThemeModeSelector } from './ThemeModeSelector'
 
-const sendActiveTabMessage = vi.hoisted(() => vi.fn())
-
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
 }))
@@ -19,24 +17,18 @@ vi.mock('react-i18next', () => ({
   },
 }))
 
-vi.mock('../utils/sendActiveTabMessage', () => ({
-  sendActiveTabMessage,
-}))
-
 const baseState = useGlobalSettingStore.getState()
 
 describe('ThemeModeSelector', () => {
   beforeEach(() => {
-    sendActiveTabMessage.mockClear()
     useGlobalSettingStore.setState(baseState, true)
   })
 
-  it('updates the theme mode and sends the themeMode payload', () => {
+  it('updates the persisted theme mode', () => {
     const { getByRole } = render(<ThemeModeSelector />)
 
     fireEvent.click(getByRole('radio', { name: 'content.setting.themeMode.dark' }))
 
     expect(useGlobalSettingStore.getState().themeMode).toBe('dark')
-    expect(sendActiveTabMessage).toHaveBeenCalledWith({ message: 'themeMode', themeMode: 'dark' })
   })
 })

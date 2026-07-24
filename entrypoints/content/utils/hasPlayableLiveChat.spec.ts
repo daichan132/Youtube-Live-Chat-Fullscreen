@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { hasPlayableLiveChat, isArchiveChatPlayable } from './hasPlayableLiveChat'
+import { hasPlayableLiveChat, isArchiveChatPlayable, isLiveChatUnavailable } from './hasPlayableLiveChat'
 
 const createLiveChatDoc = (html: string) => {
   const baseDoc = document.implementation.createHTMLDocument('chat')
@@ -60,6 +60,21 @@ describe('hasPlayableLiveChat', () => {
     attachIframeDocument(doc)
 
     expect(hasPlayableLiveChat()).toBe(false)
+  })
+
+  it('recognizes the structural disabled-chat message used by localized YouTube pages', () => {
+    const doc = createLiveChatDoc('<yt-live-chat-message-renderer>Localized unavailable message</yt-live-chat-message-renderer>')
+
+    expect(isLiveChatUnavailable(doc)).toBe(true)
+  })
+
+  it('does not treat a normal chat renderer with a system message as unavailable', () => {
+    const doc = createLiveChatDoc(`
+      <yt-live-chat-renderer></yt-live-chat-renderer>
+      <yt-live-chat-message-renderer>Welcome message</yt-live-chat-message-renderer>
+    `)
+
+    expect(isLiveChatUnavailable(doc)).toBe(false)
   })
 
   it('returns true when live chat renderer and item list are present', () => {

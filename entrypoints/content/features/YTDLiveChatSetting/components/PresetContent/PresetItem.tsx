@@ -33,7 +33,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const { t } = useTranslation()
   const titleFallbackKey = getPresetTitleFallbackKey(id)
-  const displayTitle = typeof title === 'string' && title.trim().length > 0 ? title : titleFallbackKey ? t(titleFallbackKey) : ''
+  const isBuiltIn = titleFallbackKey !== undefined
+  const displayTitle = titleFallbackKey ? t(titleFallbackKey) : typeof title === 'string' ? title : ''
   const canApply = ylcStyle !== undefined
   const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
@@ -66,6 +67,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
         type='text'
         value={displayTitle}
         onChange={event => updateTitle(id, event.target.value)}
+        readOnly={isBuiltIn}
         aria-label={t('content.aria.presetName')}
         className='ylc-preset-name'
       />
@@ -83,16 +85,18 @@ export const PresetItem = ({ id }: PresetItemType) => {
           <TbCheck size={16} aria-hidden='true' />
           <span>{t('content.preset.apply')}</span>
         </button>
-        <button
-          type='button'
-          className='ylc-preset-del'
-          aria-label={t('content.aria.deletePreset')}
-          onClick={() => setIsDeleteModalOpen(true)}
-        >
-          <TbTrash size={18} aria-hidden='true' />
-        </button>
+        {!isBuiltIn && (
+          <button
+            type='button'
+            className='ylc-preset-del'
+            aria-label={t('content.aria.deletePreset')}
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
+            <TbTrash size={18} aria-hidden='true' />
+          </button>
+        )}
       </div>
-      {isDeleteModalOpen && (
+      {!isBuiltIn && isDeleteModalOpen && (
         <Modal
           isOpen={isDeleteModalOpen}
           onRequestClose={() => setIsDeleteModalOpen(false)}

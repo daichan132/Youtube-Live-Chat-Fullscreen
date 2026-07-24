@@ -113,6 +113,26 @@ describe('useChatIframeLoader', () => {
     })
   })
 
+  it('keeps a borrowed live iframe attached when fullscreen exits while the overlay remains mounted', async () => {
+    const frame = attachLiveChatFrame()
+    const iframe = createChatIframe('video-a', {
+      docHref: 'https://www.youtube.com/live_chat?v=video-a',
+    })
+    frame.appendChild(iframe)
+
+    const { getByTestId } = render(<TestComponent mode='live' />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+    })
+
+    document.dispatchEvent(new Event('fullscreenchange'))
+
+    expect(container.contains(iframe)).toBe(true)
+    expect(iframe.getAttribute('data-ylc-chat')).toBe('true')
+  })
+
   it('restores borrowed archive iframe when mode changes to none', async () => {
     const frame = attachLiveChatFrame()
     const iframe = createChatIframe('video-a')

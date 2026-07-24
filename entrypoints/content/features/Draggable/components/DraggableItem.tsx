@@ -119,19 +119,23 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   const [isControlRailHiding, setIsControlRailHiding] = useState(false)
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
   const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
+  const [resizeDraft, setResizeDraft] = useState<{
+    coordinates: { x: number; y: number }
+    size: NumberSize
+  } | null>(null)
 
-  const { coordinates, size, setSize, setCoordinates, setGeometry } = useYTDLiveChatStore(
+  const { coordinates, size, setGeometry } = useYTDLiveChatStore(
     useShallow(state => ({
       coordinates: state.coordinates,
       size: state.size,
-      setSize: state.setSize,
-      setCoordinates: state.setCoordinates,
       setGeometry: state.setGeometry,
     })),
   )
 
-  const top = coordinates.y
-  const left = coordinates.x
+  const displayedCoordinates = resizeDraft?.coordinates ?? coordinates
+  const displayedSize = resizeDraft?.size ?? size
+  const top = displayedCoordinates.y
+  const left = displayedCoordinates.x
 
   const { isHover, isOpenSettingModal, setIsOpenSettingModal, setIsDisplay, setIsHover } = useYTDLiveChatNoLsStore(
     useShallow(state => ({
@@ -148,40 +152,35 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
 
   const resizeStartCoordinatesRef = useRef({ x: left, y: top })
   const resizeStartSizeRef = useRef(size)
+  const resizeDraftRef = useRef(resizeDraft)
 
   const handleResizeStart = useCallback(() => {
     setIsResizing(true)
     resizeStartCoordinatesRef.current = { x: left, y: top }
     resizeStartSizeRef.current = size
+    resizeDraftRef.current = null
+    setResizeDraft(null)
   }, [left, top, size])
 
-  const handleResize = useCallback(
-    (_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
-      const nextLayout = deriveResizedLayout({
-        startCoordinates: resizeStartCoordinatesRef.current,
-        currentSize: resizeStartSizeRef.current,
-        direction,
-        delta,
-      })
+  const handleResize = useCallback((_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
+    const nextLayout = deriveResizedLayout({
+      startCoordinates: resizeStartCoordinatesRef.current,
+      currentSize: resizeStartSizeRef.current,
+      direction,
+      delta,
+    })
 
-      if (
-        nextLayout.coordinates.x !== resizeStartCoordinatesRef.current.x ||
-        nextLayout.coordinates.y !== resizeStartCoordinatesRef.current.y
-      ) {
-        setCoordinates(nextLayout.coordinates)
-      }
-
-      setSize(nextLayout.size)
-    },
-    [setCoordinates, setSize],
-  )
+    resizeDraftRef.current = nextLayout
+    setResizeDraft(nextLayout)
+  }, [])
 
   const handleResizeStop = useCallback(
     (_event: MouseEvent | TouchEvent, _direction: Direction, ref: HTMLElement, _delta: NumberSize) => {
       setIsResizing(false)
+      const draftCoordinates = resizeDraftRef.current?.coordinates ?? resizeStartCoordinatesRef.current
       const nextGeometry = fitGeometryToViewport(
         {
-          coordinates: useYTDLiveChatStore.getState().coordinates,
+          coordinates: draftCoordinates,
           size: {
             width: Math.max(ResizableMinWidth, ref.offsetWidth),
             height: Math.max(ResizableMinHeight, ref.offsetHeight),
@@ -190,6 +189,8 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
         { width: window.innerWidth, height: window.innerHeight },
         GEOMETRY_VIEWPORT_PADDING,
       )
+      resizeDraftRef.current = null
+      setResizeDraft(null)
       setGeometry(nextGeometry)
     },
     [setGeometry],
@@ -392,7 +393,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     transform,
   })
   const controlRailTop = getControlRailTop({
-    chatHeight: size.height,
+    chatHeight: displayedSize.height,
     containerTop: top,
     controlHeight: CONTROL_RAIL_HEIGHT,
     gap: CONTROL_RAIL_GAP,
@@ -406,7 +407,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
   }
   const controlRailPlacement = isControlRailDisplayable ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
-  const visibleChatBottom = size.height
+  const visibleChatBottom = displayedSize.height
   const controlHoverBridgeTop = Math.max(0, visibleChatBottom - CONTROL_HOVER_BRIDGE_OVERLAP)
   const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
   const controlHoverBridgeHeight = Math.max(0, controlHoverBridgeBottom - controlHoverBridgeTop)
@@ -425,7 +426,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
       <ChatOnlyChromeEffect isDragging={isDragging} isResizing={isResizing} isControlRailHiding={isControlRailHiding} />
 
       <Resizable
-        size={size}
+        size={displayedSize}
         minWidth={ResizableMinWidth}
         minHeight={ResizableMinHeight}
         data-ylc-resizable

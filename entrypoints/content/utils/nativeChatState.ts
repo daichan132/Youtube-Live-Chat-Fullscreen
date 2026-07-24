@@ -5,7 +5,13 @@
  * or usable, which is important for deciding when to show the extension's
  * fullscreen chat overlay.
  */
-import { getCurrentLiveChatHost, getCurrentLiveChatIframe, getNonBlankIframeHref, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import {
+  getCurrentLiveChatHost,
+  getCurrentLiveChatIframe,
+  getNonBlankIframeHref,
+  isIframeForCurrentVideo,
+  YLC_CHAT_ATTR,
+} from '../chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 /**
@@ -54,9 +60,9 @@ export const isNativeChatExpanded = () => {
   const watchGrid = document.querySelector('ytd-watch-grid')
   const hasExpandedChat =
     watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
-  const { chatContainer, chatFrameHost } = getNativeChatElements()
+  const { chatContainer, chatFrameHost, chatFrame } = getNativeChatElements()
   const isHidden = isChatHiddenByAttribute(chatContainer, chatFrameHost)
-  const hasChatDom = Boolean(chatContainer && chatFrameHost)
+  const hasChatDom = Boolean(chatContainer && chatFrameHost && chatFrame && !chatFrame.hasAttribute(YLC_CHAT_ATTR))
   return Boolean(hasExpandedChat && hasChatDom && !isHidden)
 }
 
@@ -74,6 +80,7 @@ export const isNativeChatExpanded = () => {
 export const isNativeChatUsable = () => {
   const { secondary, chatContainer, chatFrameHost, chatFrame } = getNativeChatElements()
   if (!secondary || !chatContainer || !chatFrameHost || !chatFrame) return false
+  if (chatFrame.hasAttribute(YLC_CHAT_ATTR)) return false
 
   const secondaryStyle = window.getComputedStyle(secondary)
   const containerStyle = window.getComputedStyle(chatContainer)

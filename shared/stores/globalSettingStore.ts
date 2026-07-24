@@ -1,7 +1,7 @@
-import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
 import { normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
+import { originAwareLocalStorage } from '@/shared/settings/originAwareStorage'
 import { GLOBAL_SETTING_PERSIST } from '@/shared/settings/persistConfig'
 import type { ThemeMode } from '@/shared/theme'
 
@@ -38,7 +38,7 @@ export const useGlobalSettingStore = create<GlobalSettingStoreState>()(
       name: GLOBAL_SETTING_PERSIST.key,
       version: GLOBAL_SETTING_PERSIST.version,
       migrate: persistedState => migratePersistedState(persistedState),
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => originAwareLocalStorage),
     },
   ),
 )
