@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Volledig Scherm"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Bekijk YouTube Live op volledig scherm zonder de chat te missen. Reageer, stuur Super Chats en pas de overlay aan."
+    "message": "Bekijk YouTube Live op volledig scherm met chat. Chat mee, stuur Super Chats en pas de overlay naar wens aan."
   },
   "popup_theme": {
     "message": "Thema"

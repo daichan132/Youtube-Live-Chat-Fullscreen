@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Pantalla Completa"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Mira YouTube Live a pantalla completa sense perdre el xat. Publica comentaris, envia Super Chats i personalitza l'aparença."
+    "message": "Mira YouTube Live a pantalla completa amb el xat. Escriu-hi, envia Super Chats i personalitza la superposició al teu gust."
   },
   "popup_theme": {
     "message": "Tema"

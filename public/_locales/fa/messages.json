@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat تمام‌صفحه"
   },
   "extensionDescription": {
-    "message": "YouTube Live را تمام‌صفحه ببینید بدون از دست دادن چت. نظر بگذارید، Super Chat بفرستید و ظاهر را تنظیم کنید."
+    "message": "YouTube Live را تمام‌صفحه و همراه چت تماشا کنید. پیام و Super Chat بفرستید و نمای چت را شخصی‌سازی کنید."
   },
   "popup_theme": {
     "message": "پوسته"
@@ -18,6 +18,6 @@
     "message": "روشن"
   },
   "content_setting_themeMode_dark": {
-    "message": "تاریک"
+    "message": "تیره"
   }
 }

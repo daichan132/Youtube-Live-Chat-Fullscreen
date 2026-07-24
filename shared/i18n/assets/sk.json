@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Predvoľba",
+        "preset": "Predvoľby",
         "setting": "Nastavenia",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Vrátiť zmenu štýlu",
+        "redo": "Znova vykonať zmenu štýlu"
       },
-      "alwaysOnDisplay": "Vždy zobrazovať",
-      "chatOnlyDisplay": "Iba chat",
-      "userNameDisplay": "Zobraziť meno používateľa",
-      "userIconDisplay": "Zobraziť ikonu používateľa",
+      "alwaysOnDisplay": "Vždy zobrazovať chat",
+      "chatOnlyDisplay": "Zobraziť iba chat",
+      "userNameDisplay": "Zobraziť používateľské mená",
+      "userIconDisplay": "Zobraziť profilové obrázky",
       "superChatBarDisplay": "Zobraziť panel Super Chat",
       "backgroundColor": "Farba pozadia",
-      "fontColor": "Farba písma",
+      "fontColor": "Farba textu",
       "fontFamily": "Typ písma",
       "fontSize": "Veľkosť písma",
       "blur": "Rozmazanie",
@@ -29,38 +29,38 @@
         "light": "Svetlý",
         "dark": "Tmavý"
       },
-      "membershipNameColor": "Farba mena člena",
-      "defaultColor": "Predvolené",
+      "membershipNameColor": "Farba mien členov",
+      "defaultColor": "Predvolená",
       "resetToDefaultColor": "Obnoviť predvolenú farbu",
       "group": {
         "display": "Zobrazenie",
         "colors": "Farby",
         "text": "Text",
-        "elements": "Zobrazené prvky"
+        "elements": "Viditeľné prvky"
       },
-      "requiresAlwaysOn": "Zapnite „Vždy zobrazovať“ na nastavenie tejto možnosti"
+      "requiresAlwaysOn": "Ak chcete použiť túto možnosť, zapnite „Vždy zobrazovať chat“"
     },
     "aria": {
-      "dragToMove": "Potiahnutím presuniete",
-      "arrowKeysToMove": "Šípky na presun",
+      "dragToMove": "Presunúť potiahnutím",
+      "arrowKeysToMove": "Presunúť pomocou klávesov so šípkami",
       "openSettings": "Otvoriť nastavenia",
-      "toggleLiveChat": "Prepnúť živý chat",
+      "toggleLiveChat": "Zobraziť alebo skryť živý chat",
       "close": "Zavrieť",
-      "reorderPreset": "Zmeniť poradie predvolieb",
+      "reorderPreset": "Zmeniť poradie predvoľby",
       "presetName": "Názov predvoľby",
       "applyPreset": "Použiť predvoľbu",
       "deletePreset": "Odstrániť predvoľbu",
       "colorPicker": "Výber farby",
       "loading": "Načítava sa",
-      "selectLanguage": "Výber jazyka"
+      "selectLanguage": "Vybrať jazyk"
     },
     "preset": {
-      "addMessage": "Pridať aktuálne nastavenia",
+      "addMessage": "Uložiť aktuálne nastavenia",
       "addItemTitle": "Bez názvu",
       "defaultTitle": "Štandardný",
       "transparentTitle": "Priehľadný",
-      "simpleTitle": "Iba komentáre",
-      "deleteConfirmationMessage": "Naozaj chcete odstrániť?",
+      "simpleTitle": "Iba chat",
+      "deleteConfirmationMessage": "Naozaj chcete odstrániť túto predvoľbu?",
       "delete": "Odstrániť",
       "cancel": "Zrušiť",
       "darkTitle": "Tmavý",

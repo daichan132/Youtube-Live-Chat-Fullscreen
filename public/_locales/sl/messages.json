@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Klepet v živo na celotnem zaslonu"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Glejte YouTube v živo na celotnem zaslonu brez izgube klepeta. Pišite komentarje, pošiljajte Super Chats in prilagodite prekrivanje."
+    "message": "Glejte prenose v živo na YouTubu na celotnem zaslonu. Pišite v klepet, pošiljajte sporočila Super Chat in prilagodite videz klepeta."
   },
   "popup_theme": {
     "message": "Tema"
@@ -12,7 +12,7 @@
     "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "Samodejno"
+    "message": "Samodejna"
   },
   "content_setting_themeMode_light": {
     "message": "Svetla"

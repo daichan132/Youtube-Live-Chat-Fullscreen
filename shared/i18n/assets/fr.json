@@ -4,16 +4,16 @@
       "header": {
         "preset": "Préréglage",
         "setting": "Paramètres",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Annuler la modification du style",
+        "redo": "Rétablir la modification du style"
       },
-      "alwaysOnDisplay": "Affichage permanent",
+      "alwaysOnDisplay": "Toujours afficher le chat",
       "chatOnlyDisplay": "Afficher uniquement le chat",
       "userNameDisplay": "Afficher le nom d'utilisateur",
-      "userIconDisplay": "Afficher l'icône utilisateur",
-      "superChatBarDisplay": "Afficher la barre Super Chat",
+      "userIconDisplay": "Afficher la photo de profil",
+      "superChatBarDisplay": "Afficher la barre des Super Chats",
       "backgroundColor": "Couleur d'arrière-plan",
-      "fontColor": "Couleur de police",
+      "fontColor": "Couleur du texte",
       "fontFamily": "Police",
       "fontSize": "Taille de la police",
       "blur": "Flou",
@@ -29,44 +29,44 @@
         "light": "Clair",
         "dark": "Sombre"
       },
-      "membershipNameColor": "Couleur du nom de membre",
-      "defaultColor": "Défaut",
+      "membershipNameColor": "Couleur des noms des membres",
+      "defaultColor": "Par défaut",
       "resetToDefaultColor": "Rétablir la couleur par défaut",
       "group": {
-        "display": "Affichage",
+        "display": "Visibilité",
         "colors": "Couleurs",
         "text": "Texte",
-        "elements": "Éléments affichés"
+        "elements": "Éléments du chat"
       },
-      "requiresAlwaysOn": "Activez « Toujours afficher » pour le configurer"
+      "requiresAlwaysOn": "Activez « Toujours afficher le chat » pour modifier ce paramètre"
     },
     "aria": {
       "dragToMove": "Glisser pour déplacer",
-      "arrowKeysToMove": "Touches directionnelles pour déplacer",
+      "arrowKeysToMove": "Utiliser les touches fléchées pour déplacer",
       "openSettings": "Ouvrir les paramètres",
-      "toggleLiveChat": "Activer ou désactiver le chat en direct",
+      "toggleLiveChat": "Afficher ou masquer le chat en direct",
       "close": "Fermer",
-      "reorderPreset": "Réorganiser le préréglage",
+      "reorderPreset": "Déplacer le préréglage",
       "presetName": "Nom du préréglage",
       "applyPreset": "Appliquer le préréglage",
       "deletePreset": "Supprimer le préréglage",
       "colorPicker": "Sélecteur de couleur",
-      "loading": "Chargement",
+      "loading": "Chargement en cours",
       "selectLanguage": "Choisir la langue"
     },
     "preset": {
-      "addMessage": "Ajouter les paramètres actuels",
+      "addMessage": "Enregistrer les paramètres actuels",
       "addItemTitle": "Sans titre",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Commentaires uniquement",
-      "deleteConfirmationMessage": "Êtes-vous sûr de vouloir supprimer ?",
+      "simpleTitle": "Chat uniquement",
+      "deleteConfirmationMessage": "Supprimer ce préréglage ?",
       "delete": "Supprimer",
       "cancel": "Annuler",
       "darkTitle": "Sombre",
       "readableTitle": "Grand texte",
       "compactTitle": "Compact",
-      "neonTitle": "Coloré",
+      "neonTitle": "Multicolore",
       "apply": "Appliquer"
     }
   },

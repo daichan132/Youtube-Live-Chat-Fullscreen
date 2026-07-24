@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Regardez YouTube Live en plein écran sans perdre le chat. Commentez, envoyez des Super Chats et personnalisez l'overlay."
+    "message": "Profitez de YouTube Live en plein écran avec le chat. Discutez, envoyez des Super Chats et personnalisez son affichage."
   },
   "popup_theme": {
     "message": "Thème"
@@ -12,7 +12,7 @@
     "message": "Thème"
   },
   "content_setting_themeMode_system": {
-    "message": "Auto"
+    "message": "Automatique"
   },
   "content_setting_themeMode_light": {
     "message": "Clair"

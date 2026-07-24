@@ -4,13 +4,13 @@
       "header": {
         "preset": "പ്രീസെറ്റ്",
         "setting": "ക്രമീകരണങ്ങൾ",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "ശൈലി മാറ്റം പഴയപടിയാക്കുക",
+        "redo": "ശൈലി മാറ്റം വീണ്ടും ചെയ്യുക"
       },
       "alwaysOnDisplay": "എപ്പോഴും പ്രദർശിപ്പിക്കുക",
       "chatOnlyDisplay": "ചാറ്റ് മാത്രം പ്രദർശിപ്പിക്കുക",
       "userNameDisplay": "ഉപയോക്തൃനാമം കാണിക്കുക",
-      "userIconDisplay": "ഉപയോക്തൃ ഐക്കൺ കാണിക്കുക",
+      "userIconDisplay": "പ്രൊഫൈൽ ചിത്രം കാണിക്കുക",
       "superChatBarDisplay": "Super Chat ബാർ കാണിക്കുക",
       "backgroundColor": "പശ്ചാത്തല നിറം",
       "fontColor": "ഫോണ്ട് നിറം",
@@ -36,7 +36,7 @@
         "display": "പ്രദർശനം",
         "colors": "നിറങ്ങൾ",
         "text": "ടെക്സ്റ്റ്",
-        "elements": "പ്രദർശന ഘടകങ്ങൾ"
+        "elements": "ചാറ്റ് ഘടകങ്ങൾ"
       },
       "requiresAlwaysOn": "ഇത് ക്രമീകരിക്കാൻ \"എപ്പോഴും പ്രദർശിപ്പിക്കുക\" ഓണാക്കുക"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "ഭാഷ തിരഞ്ഞെടുക്കുക"
     },
     "preset": {
-      "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ ചേർക്കുക",
+      "addMessage": "നിലവിലെ ക്രമീകരണങ്ങൾ സംരക്ഷിക്കുക",
       "addItemTitle": "ശീർഷകമില്ലാത്തത്",
       "defaultTitle": "സ്റ്റാൻഡേർഡ്",
       "transparentTitle": "സുതാര്യം",
-      "simpleTitle": "അഭിപ്രായങ്ങൾ മാത്രം",
+      "simpleTitle": "ചാറ്റ് മാത്രം",
       "deleteConfirmationMessage": "ഇത് ഇല്ലാതാക്കണമെന്ന് ഉറപ്പാണോ?",
       "delete": "ഇല്ലാതാക്കുക",
       "cancel": "റദ്ദാക്കുക",

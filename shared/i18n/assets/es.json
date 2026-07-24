@@ -4,18 +4,18 @@
       "header": {
         "preset": "Preajuste",
         "setting": "Configuración",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Deshacer cambio de estilo",
+        "redo": "Rehacer cambio de estilo"
       },
-      "alwaysOnDisplay": "Mostrar siempre",
+      "alwaysOnDisplay": "Mostrar siempre el chat",
       "chatOnlyDisplay": "Mostrar solo el chat",
-      "userNameDisplay": "Mostrar nombre de usuario",
-      "userIconDisplay": "Mostrar icono de usuario",
-      "superChatBarDisplay": "Mostrar barra de Super Chat",
+      "userNameDisplay": "Mostrar el nombre de usuario",
+      "userIconDisplay": "Mostrar la foto de perfil",
+      "superChatBarDisplay": "Mostrar la barra de Super Chat",
       "backgroundColor": "Color de fondo",
-      "fontColor": "Color de fuente",
+      "fontColor": "Color del texto",
       "fontFamily": "Tipo de letra",
-      "fontSize": "Tamaño de fuente",
+      "fontSize": "Tamaño de letra",
       "blur": "Desenfoque",
       "space": "Espaciado",
       "footer": {
@@ -29,24 +29,24 @@
         "light": "Claro",
         "dark": "Oscuro"
       },
-      "membershipNameColor": "Color del nombre de miembro",
+      "membershipNameColor": "Color de los nombres de miembros",
       "defaultColor": "Predeterminado",
-      "resetToDefaultColor": "Restablecer color predeterminado",
+      "resetToDefaultColor": "Restablecer el color predeterminado",
       "group": {
-        "display": "Visualización",
+        "display": "Visibilidad",
         "colors": "Colores",
         "text": "Texto",
-        "elements": "Elementos visibles"
+        "elements": "Elementos del chat"
       },
-      "requiresAlwaysOn": "Activa \"Mostrar siempre\" para configurarlo"
+      "requiresAlwaysOn": "Activa «Mostrar siempre el chat» para cambiar este ajuste"
     },
     "aria": {
       "dragToMove": "Arrastrar para mover",
-      "arrowKeysToMove": "Teclas de flecha para mover",
+      "arrowKeysToMove": "Usar las teclas de flecha para mover",
       "openSettings": "Abrir configuración",
-      "toggleLiveChat": "Activar o desactivar el chat en directo",
+      "toggleLiveChat": "Mostrar u ocultar el chat en directo",
       "close": "Cerrar",
-      "reorderPreset": "Reordenar preajuste",
+      "reorderPreset": "Mover el preajuste",
       "presetName": "Nombre del preajuste",
       "applyPreset": "Aplicar preajuste",
       "deletePreset": "Eliminar preajuste",
@@ -55,12 +55,12 @@
       "selectLanguage": "Seleccionar idioma"
     },
     "preset": {
-      "addMessage": "Añadir configuración actual",
+      "addMessage": "Guardar la configuración actual",
       "addItemTitle": "Sin título",
       "defaultTitle": "Estándar",
       "transparentTitle": "Transparente",
-      "simpleTitle": "Solo comentarios",
-      "deleteConfirmationMessage": "¿Estás seguro de que quieres eliminar esto?",
+      "simpleTitle": "Solo chat",
+      "deleteConfirmationMessage": "¿Quieres eliminar este preajuste?",
       "delete": "Eliminar",
       "cancel": "Cancelar",
       "darkTitle": "Oscuro",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Configuración de idioma",
+    "language": "Configuración del idioma",
     "showChatOnFullscreen": "Chat en pantalla completa",
     "links": "Enlaces",
     "donate": "Donar",

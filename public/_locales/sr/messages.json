@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat преко целог екрана"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Гледајте YouTube Live преко целог екрана без губљења ћаскања. Шаљите коментаре, Super Chats и прилагодите преклапање."
+    "message": "Гледајте YouTube преносе уживо преко целог екрана. Пишите у ћаскању, шаљите Super Chat поруке и прилагодите изглед ћаскања."
   },
   "popup_theme": {
     "message": "Тема"
@@ -12,7 +12,7 @@
     "message": "Тема"
   },
   "content_setting_themeMode_system": {
-    "message": "Аутоматски"
+    "message": "Аутоматска"
   },
   "content_setting_themeMode_light": {
     "message": "Светла"

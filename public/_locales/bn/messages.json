@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat ফুলস্ক্রিন"
   },
   "extensionDescription": {
-    "message": "ফুলস্ক্রিনে YouTube Live দেখুন চ্যাট না হারিয়ে। মন্তব্য করুন, Super Chat পাঠান এবং ওভারলে কাস্টমাইজ করুন।"
+    "message": "YouTube Live ফুলস্ক্রিনে দেখার সময় চ্যাট পড়ুন ও বার্তা পাঠান। Super Chat পাঠান এবং ওভারলের চেহারা ও অবস্থান নিজের মতো সাজান।"
   },
   "popup_theme": {
     "message": "থিম"
@@ -15,9 +15,9 @@
     "message": "স্বয়ংক্রিয়"
   },
   "content_setting_themeMode_light": {
-    "message": "লাইট"
+    "message": "হালকা"
   },
   "content_setting_themeMode_dark": {
-    "message": "ডার্ক"
+    "message": "গাঢ়"
   }
 }

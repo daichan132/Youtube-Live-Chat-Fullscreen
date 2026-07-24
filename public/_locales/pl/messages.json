@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat na pełnym ekranie"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Oglądaj YouTube Live na pełnym ekranie bez utraty czatu. Pisz komentarze, wysyłaj Super Chat i dostosuj nakładkę."
+    "message": "Oglądaj transmisje na żywo w YouTube na pełnym ekranie. Pisz na czacie, wysyłaj wiadomości Super Chat i dostosuj wygląd czatu."
   },
   "popup_theme": {
     "message": "Motyw"

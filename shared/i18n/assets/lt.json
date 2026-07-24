@@ -4,17 +4,17 @@
       "header": {
         "preset": "Šablonas",
         "setting": "Nustatymai",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Anuliuoti stiliaus pakeitimą",
+        "redo": "Pakartoti stiliaus pakeitimą"
       },
-      "alwaysOnDisplay": "Rodyti visada",
-      "chatOnlyDisplay": "Tik pokalbis",
+      "alwaysOnDisplay": "Visada rodyti pokalbį",
+      "chatOnlyDisplay": "Rodyti tik pokalbį",
       "userNameDisplay": "Rodyti naudotojo vardą",
-      "userIconDisplay": "Rodyti naudotojo piktogramą",
-      "superChatBarDisplay": "Rodyti Super Chat juostą",
+      "userIconDisplay": "Rodyti profilio nuotrauką",
+      "superChatBarDisplay": "Rodyti „Super Chat“ juostą",
       "backgroundColor": "Fono spalva",
-      "fontColor": "Šrifto spalva",
-      "fontFamily": "Šrifto šeima",
+      "fontColor": "Teksto spalva",
+      "fontFamily": "Šriftas",
       "fontSize": "Šrifto dydis",
       "blur": "Suliejimas",
       "space": "Tarpai",
@@ -29,24 +29,24 @@
         "light": "Šviesi",
         "dark": "Tamsi"
       },
-      "membershipNameColor": "Nario vardo spalva",
-      "defaultColor": "Numatytasis",
+      "membershipNameColor": "Narių vardų spalva",
+      "defaultColor": "Numatytoji",
       "resetToDefaultColor": "Atkurti numatytąją spalvą",
       "group": {
-        "display": "Rodymas",
+        "display": "Matomumas",
         "colors": "Spalvos",
         "text": "Tekstas",
-        "elements": "Rodomi elementai"
+        "elements": "Pokalbio elementai"
       },
-      "requiresAlwaysOn": "Norėdami tai konfigūruoti, įjunkite „Rodyti visada“"
+      "requiresAlwaysOn": "Norėdami pakeisti šį nustatymą, įjunkite „Visada rodyti pokalbį“"
     },
     "aria": {
       "dragToMove": "Vilkite norėdami perkelti",
-      "arrowKeysToMove": "Rodyklių klavišai perkėlimui",
+      "arrowKeysToMove": "Norėdami perkelti, naudokite rodyklių klavišus",
       "openSettings": "Atidaryti nustatymus",
-      "toggleLiveChat": "Įjungti / išjungti pokalbį",
+      "toggleLiveChat": "Rodyti arba slėpti tiesioginį pokalbį",
       "close": "Uždaryti",
-      "reorderPreset": "Pertvarkyti šabloną",
+      "reorderPreset": "Perkelti šabloną",
       "presetName": "Šablono pavadinimas",
       "applyPreset": "Taikyti šabloną",
       "deletePreset": "Ištrinti šabloną",
@@ -55,12 +55,12 @@
       "selectLanguage": "Pasirinkti kalbą"
     },
     "preset": {
-      "addMessage": "Pridėti dabartinius nustatymus",
+      "addMessage": "Išsaugoti dabartinius nustatymus",
       "addItemTitle": "Be pavadinimo",
       "defaultTitle": "Standartinis",
       "transparentTitle": "Permatomas",
-      "simpleTitle": "Tik komentarai",
-      "deleteConfirmationMessage": "Ar tikrai norite ištrinti?",
+      "simpleTitle": "Tik pokalbis",
+      "deleteConfirmationMessage": "Ar ištrinti šį šabloną?",
       "delete": "Ištrinti",
       "cancel": "Atšaukti",
       "darkTitle": "Tamsus",
@@ -72,7 +72,7 @@
   },
   "popup": {
     "language": "Kalbos nustatymai",
-    "showChatOnFullscreen": "Pokalbis per visą ekraną",
+    "showChatOnFullscreen": "Pokalbis visame ekrane",
     "links": "Nuorodos",
     "donate": "Paaukoti",
     "theme": "Tema",

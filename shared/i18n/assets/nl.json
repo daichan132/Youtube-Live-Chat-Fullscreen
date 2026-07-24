@@ -4,20 +4,20 @@
       "header": {
         "preset": "Voorinstelling",
         "setting": "Instellingen",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Stijlwijziging ongedaan maken",
+        "redo": "Stijlwijziging opnieuw uitvoeren"
       },
-      "alwaysOnDisplay": "Altijd weergeven",
-      "chatOnlyDisplay": "Alleen chat weergeven",
-      "userNameDisplay": "Gebruikersnaam weergeven",
-      "userIconDisplay": "Gebruikersicoon weergeven",
-      "superChatBarDisplay": "Super Chat-balk weergeven",
+      "alwaysOnDisplay": "Chat altijd tonen",
+      "chatOnlyDisplay": "Alleen chat tonen",
+      "userNameDisplay": "Gebruikersnaam tonen",
+      "userIconDisplay": "Profielfoto tonen",
+      "superChatBarDisplay": "Super Chat-balk tonen",
       "backgroundColor": "Achtergrondkleur",
-      "fontColor": "Letterkleur",
+      "fontColor": "Tekstkleur",
       "fontFamily": "Lettertype",
       "fontSize": "Lettergrootte",
       "blur": "Vervaging",
-      "space": "Afstand",
+      "space": "Tussenruimte",
       "footer": {
         "donate": "Doneren",
         "chrome": "Chrome",
@@ -36,31 +36,31 @@
         "display": "Weergave",
         "colors": "Kleuren",
         "text": "Tekst",
-        "elements": "Weergave-elementen"
+        "elements": "Chatelementen"
       },
-      "requiresAlwaysOn": "Schakel \"Altijd weergeven\" in om dit in te stellen"
+      "requiresAlwaysOn": "Schakel \"Chat altijd tonen\" in om dit te wijzigen"
     },
     "aria": {
-      "dragToMove": "Slepen om te verplaatsen",
-      "arrowKeysToMove": "Pijltjestoetsen om te verplaatsen",
+      "dragToMove": "Sleep om te verplaatsen",
+      "arrowKeysToMove": "Gebruik de pijltoetsen om te verplaatsen",
       "openSettings": "Instellingen openen",
-      "toggleLiveChat": "Livechat in-/uitschakelen",
+      "toggleLiveChat": "Livechat tonen of verbergen",
       "close": "Sluiten",
-      "reorderPreset": "Voorinstelling herordenen",
-      "presetName": "Naam van voorinstelling",
+      "reorderPreset": "Voorinstelling verplaatsen",
+      "presetName": "Voorinstellingsnaam",
       "applyPreset": "Voorinstelling toepassen",
       "deletePreset": "Voorinstelling verwijderen",
       "colorPicker": "Kleurkiezer",
-      "loading": "Laden",
-      "selectLanguage": "Taal selecteren"
+      "loading": "Bezig met laden",
+      "selectLanguage": "Taal kiezen"
     },
     "preset": {
-      "addMessage": "Huidige instellingen toevoegen",
-      "addItemTitle": "Naamloos",
+      "addMessage": "Huidige instellingen opslaan",
+      "addItemTitle": "Zonder titel",
       "defaultTitle": "Standaard",
       "transparentTitle": "Transparant",
-      "simpleTitle": "Alleen reacties",
-      "deleteConfirmationMessage": "Weet je zeker dat je dit wilt verwijderen?",
+      "simpleTitle": "Alleen chat",
+      "deleteConfirmationMessage": "Deze voorinstelling verwijderen?",
       "delete": "Verwijderen",
       "cancel": "Annuleren",
       "darkTitle": "Donker",
@@ -72,7 +72,7 @@
   },
   "popup": {
     "language": "Taalinstellingen",
-    "showChatOnFullscreen": "Volledig scherm-chat",
+    "showChatOnFullscreen": "Chat op volledig scherm",
     "links": "Links",
     "donate": "Doneren",
     "theme": "Thema",

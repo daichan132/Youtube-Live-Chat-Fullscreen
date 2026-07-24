@@ -2,24 +2,24 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Ön Ayar",
+        "preset": "Ön ayar",
         "setting": "Ayarlar",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Stil değişikliğini geri al",
+        "redo": "Stil değişikliğini yinele"
       },
-      "alwaysOnDisplay": "Her Zaman Göster",
-      "chatOnlyDisplay": "Yalnızca Sohbet",
-      "userNameDisplay": "Kullanıcı Adını Göster",
-      "userIconDisplay": "Kullanıcı Simgesini Göster",
-      "superChatBarDisplay": "Super Chat Çubuğunu Göster",
-      "backgroundColor": "Arka Plan Rengi",
-      "fontColor": "Yazı Rengi",
-      "fontFamily": "Yazı Tipi",
-      "fontSize": "Yazı Boyutu",
+      "alwaysOnDisplay": "Sohbeti her zaman göster",
+      "chatOnlyDisplay": "Yalnızca sohbet",
+      "userNameDisplay": "Kullanıcı adlarını göster",
+      "userIconDisplay": "Profil resimlerini göster",
+      "superChatBarDisplay": "Super Chat çubuğunu göster",
+      "backgroundColor": "Arka plan rengi",
+      "fontColor": "Metin rengi",
+      "fontFamily": "Yazı tipi",
+      "fontSize": "Metin boyutu",
       "blur": "Bulanıklık",
-      "space": "Aralık",
+      "space": "Mesaj aralığı",
       "footer": {
-        "donate": "Bağış Yap",
+        "donate": "Bağış yap",
         "chrome": "Chrome",
         "firefox": "Firefox"
       },
@@ -29,24 +29,24 @@
         "light": "Açık",
         "dark": "Koyu"
       },
-      "membershipNameColor": "Üye adı rengi",
+      "membershipNameColor": "Üye adlarının rengi",
       "defaultColor": "Varsayılan",
-      "resetToDefaultColor": "Varsayılan renge sıfırla",
+      "resetToDefaultColor": "Varsayılan renge döndür",
       "group": {
         "display": "Görünüm",
         "colors": "Renkler",
         "text": "Metin",
-        "elements": "Görüntülenen Öğeler"
+        "elements": "Sohbet öğeleri"
       },
-      "requiresAlwaysOn": "Bunu yapılandırmak için \"Her Zaman Göster\" özelliğini açın"
+      "requiresAlwaysOn": "Bu seçeneği kullanmak için \"Sohbeti her zaman göster\" seçeneğini açın"
     },
     "aria": {
       "dragToMove": "Taşımak için sürükleyin",
       "arrowKeysToMove": "Ok tuşlarıyla taşıyın",
       "openSettings": "Ayarları aç",
-      "toggleLiveChat": "Canlı sohbeti aç / kapat",
+      "toggleLiveChat": "Canlı sohbeti göster veya gizle",
       "close": "Kapat",
-      "reorderPreset": "Ön ayarı yeniden sırala",
+      "reorderPreset": "Ön ayarı taşı",
       "presetName": "Ön ayar adı",
       "applyPreset": "Ön ayarı uygula",
       "deletePreset": "Ön ayarı sil",
@@ -55,12 +55,12 @@
       "selectLanguage": "Dil seçin"
     },
     "preset": {
-      "addMessage": "Mevcut Ayarları Ekle",
+      "addMessage": "Geçerli ayarları kaydet",
       "addItemTitle": "Başlıksız",
       "defaultTitle": "Standart",
       "transparentTitle": "Şeffaf",
-      "simpleTitle": "Yalnızca yorumlar",
-      "deleteConfirmationMessage": "Bunu silmek istediğinizden emin misiniz?",
+      "simpleTitle": "Yalnızca mesajlar",
+      "deleteConfirmationMessage": "Bu ön ayar silinsin mi?",
       "delete": "Sil",
       "cancel": "İptal",
       "darkTitle": "Koyu",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "Dil Ayarları",
-    "showChatOnFullscreen": "Tam Ekran Sohbet",
+    "language": "Dil",
+    "showChatOnFullscreen": "Tam ekran sohbeti",
     "links": "Bağlantılar",
-    "donate": "Bağış Yap",
+    "donate": "Bağış yap",
     "theme": "Tema",
     "dataTransfer": "Yedekleme",
-    "export": "Dışa Aktar",
-    "import": "İçe Aktar",
+    "export": "Dışa aktar",
+    "import": "İçe aktar",
     "importError": "Ayar dosyası içe aktarılamadı."
   }
 }

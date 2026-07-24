@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullskjerm"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Se YouTube Live i fullskjerm uten å miste chatten. Skriv kommentarer, send Super Chat og tilpass overlegget."
+    "message": "Se YouTube Live i fullskjerm med chatten synlig. Skriv i chatten, send Super Chats og tilpass overlegget slik du vil."
   },
   "popup_theme": {
     "message": "Tema"
@@ -12,7 +12,7 @@
     "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "Auto"
+    "message": "Automatisk"
   },
   "content_setting_themeMode_light": {
     "message": "Lys"

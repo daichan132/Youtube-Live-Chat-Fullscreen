@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Předvolba",
+        "preset": "Předvolby",
         "setting": "Nastavení",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Vrátit změnu stylu",
+        "redo": "Znovu provést změnu stylu"
       },
-      "alwaysOnDisplay": "Vždy zobrazovat",
-      "chatOnlyDisplay": "Pouze chat",
-      "userNameDisplay": "Zobrazit jméno uživatele",
-      "userIconDisplay": "Zobrazit ikonu uživatele",
+      "alwaysOnDisplay": "Vždy zobrazovat chat",
+      "chatOnlyDisplay": "Zobrazit pouze chat",
+      "userNameDisplay": "Zobrazit uživatelská jména",
+      "userIconDisplay": "Zobrazit profilové obrázky",
       "superChatBarDisplay": "Zobrazit lištu Super Chat",
       "backgroundColor": "Barva pozadí",
-      "fontColor": "Barva písma",
+      "fontColor": "Barva textu",
       "fontFamily": "Písmo",
       "fontSize": "Velikost písma",
       "blur": "Rozostření",
@@ -29,38 +29,38 @@
         "light": "Světlý",
         "dark": "Tmavý"
       },
-      "membershipNameColor": "Barva jména člena",
+      "membershipNameColor": "Barva jmen členů",
       "defaultColor": "Výchozí",
       "resetToDefaultColor": "Vrátit výchozí barvu",
       "group": {
         "display": "Zobrazení",
         "colors": "Barvy",
         "text": "Text",
-        "elements": "Zobrazené prvky"
+        "elements": "Viditelné prvky"
       },
-      "requiresAlwaysOn": "Zapněte „Vždy zobrazovat“ pro nastavení této možnosti"
+      "requiresAlwaysOn": "Pro použití této možnosti zapněte „Vždy zobrazovat chat“"
     },
     "aria": {
-      "dragToMove": "Přetáhněte pro přesun",
-      "arrowKeysToMove": "Šipky pro přesun",
+      "dragToMove": "Přetažením přesunout",
+      "arrowKeysToMove": "Přesunout pomocí kláves se šipkami",
       "openSettings": "Otevřít nastavení",
-      "toggleLiveChat": "Přepnout živý chat",
+      "toggleLiveChat": "Zobrazit nebo skrýt živý chat",
       "close": "Zavřít",
-      "reorderPreset": "Změnit pořadí předvoleb",
+      "reorderPreset": "Změnit pořadí předvolby",
       "presetName": "Název předvolby",
       "applyPreset": "Použít předvolbu",
       "deletePreset": "Smazat předvolbu",
       "colorPicker": "Výběr barvy",
       "loading": "Načítání",
-      "selectLanguage": "Výběr jazyka"
+      "selectLanguage": "Vybrat jazyk"
     },
     "preset": {
-      "addMessage": "Přidat aktuální nastavení",
+      "addMessage": "Uložit aktuální nastavení",
       "addItemTitle": "Bez názvu",
       "defaultTitle": "Standardní",
       "transparentTitle": "Průhledný",
-      "simpleTitle": "Pouze komentáře",
-      "deleteConfirmationMessage": "Opravdu chcete smazat?",
+      "simpleTitle": "Pouze chat",
+      "deleteConfirmationMessage": "Opravdu chcete tuto předvolbu smazat?",
       "delete": "Smazat",
       "cancel": "Zrušit",
       "darkTitle": "Tmavý",

@@ -2,22 +2,22 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Mipangilio tayari",
+        "preset": "Mipangilio iliyowekwa awali",
         "setting": "Mipangilio",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Tendua mabadiliko ya mtindo",
+        "redo": "Rudia mabadiliko ya mtindo"
       },
-      "alwaysOnDisplay": "Onyesha kila wakati",
-      "chatOnlyDisplay": "Onyesha gumzo pekee",
-      "userNameDisplay": "Onyesha jina la mtumiaji",
-      "userIconDisplay": "Onyesha ikoni ya mtumiaji",
+      "alwaysOnDisplay": "Onyesha gumzo kila wakati",
+      "chatOnlyDisplay": "Hali ya gumzo pekee",
+      "userNameDisplay": "Onyesha majina ya watumiaji",
+      "userIconDisplay": "Onyesha picha za wasifu",
       "superChatBarDisplay": "Onyesha upau wa Super Chat",
       "backgroundColor": "Rangi ya mandharinyuma",
-      "fontColor": "Rangi ya herufi",
-      "fontFamily": "Aina ya herufi",
-      "fontSize": "Ukubwa wa herufi",
+      "fontColor": "Rangi ya maandishi",
+      "fontFamily": "Fonti",
+      "fontSize": "Ukubwa wa maandishi",
       "blur": "Ukungu",
-      "space": "Mwanya",
+      "space": "Nafasi kati ya jumbe",
       "footer": {
         "donate": "Changia",
         "chrome": "Chrome",
@@ -29,56 +29,56 @@
         "light": "Angavu",
         "dark": "Giza"
       },
-      "membershipNameColor": "Rangi ya jina la mwanachama",
+      "membershipNameColor": "Rangi ya majina ya wanachama",
       "defaultColor": "Chaguomsingi",
-      "resetToDefaultColor": "Weka upya hadi rangi chaguomsingi",
+      "resetToDefaultColor": "Rejesha rangi chaguomsingi",
       "group": {
         "display": "Onyesho",
         "colors": "Rangi",
         "text": "Maandishi",
-        "elements": "Vipengele vya onyesho"
+        "elements": "Vipengele vya gumzo"
       },
-      "requiresAlwaysOn": "Washa \"Onyesha kila wakati\" ili kusanidi hii"
+      "requiresAlwaysOn": "Ili utumie chaguo hili, washa \"Onyesha gumzo kila wakati\""
     },
     "aria": {
       "dragToMove": "Buruta ili kusogeza",
       "arrowKeysToMove": "Tumia vitufe vya mishale kusogeza",
       "openSettings": "Fungua mipangilio",
-      "toggleLiveChat": "Washa/zima gumzo la moja kwa moja",
+      "toggleLiveChat": "Onyesha au ficha gumzo la moja kwa moja",
       "close": "Funga",
-      "reorderPreset": "Panga upya mipangilio tayari",
-      "presetName": "Jina la mpangilio tayari",
-      "applyPreset": "Tumia mpangilio tayari",
-      "deletePreset": "Futa mpangilio tayari",
+      "reorderPreset": "Sogeza mpangilio uliowekwa awali",
+      "presetName": "Jina la mpangilio uliowekwa awali",
+      "applyPreset": "Tumia mpangilio uliowekwa awali",
+      "deletePreset": "Futa mpangilio uliowekwa awali",
       "colorPicker": "Kichaguzi cha rangi",
       "loading": "Inapakia",
       "selectLanguage": "Chagua lugha"
     },
     "preset": {
-      "addMessage": "Ongeza mipangilio ya sasa",
+      "addMessage": "Hifadhi mipangilio ya sasa",
       "addItemTitle": "Bila jina",
       "defaultTitle": "Kawaida",
       "transparentTitle": "Wazi",
-      "simpleTitle": "Maoni pekee",
-      "deleteConfirmationMessage": "Una uhakika unataka kufuta hii?",
+      "simpleTitle": "Ujumbe pekee",
+      "deleteConfirmationMessage": "Unataka kufuta mpangilio huu?",
       "delete": "Futa",
       "cancel": "Ghairi",
       "darkTitle": "Giza",
       "readableTitle": "Maandishi makubwa",
-      "compactTitle": "Fupi",
+      "compactTitle": "Iliyobana",
       "neonTitle": "Yenye rangi",
       "apply": "Tumia"
     }
   },
   "popup": {
-    "language": "Mipangilio ya lugha",
+    "language": "Lugha",
     "showChatOnFullscreen": "Gumzo la skrini nzima",
     "links": "Viungo",
     "donate": "Changia",
     "theme": "Mandhari",
-    "dataTransfer": "Hifadhi nakala",
-    "export": "Hamisha nje",
-    "import": "Hamisha ndani",
-    "importError": "Imeshindwa kuingiza faili ya mipangilio."
+    "dataTransfer": "Hifadhi rudufu",
+    "export": "Hamisha",
+    "import": "Leta",
+    "importError": "Imeshindikana kuleta faili ya mipangilio."
   }
 }

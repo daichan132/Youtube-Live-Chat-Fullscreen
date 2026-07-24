@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Manood ng YouTube Live nang fullscreen nang hindi nawawala ang chat. Mag-comment, mag-Super Chat, at i-ayos ang overlay."
+    "message": "Manood ng YouTube Live sa fullscreen na may chat. Magpadala ng mensahe at Super Chat, at i-customize ang overlay."
   },
   "popup_theme": {
     "message": "Tema"
@@ -12,7 +12,7 @@
     "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "Auto"
+    "message": "Awtomatiko"
   },
   "content_setting_themeMode_light": {
     "message": "Maliwanag"

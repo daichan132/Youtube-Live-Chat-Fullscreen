@@ -4,20 +4,20 @@
       "header": {
         "preset": "الإعدادات المسبقة",
         "setting": "الإعدادات",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "التراجع عن تغيير التنسيق",
+        "redo": "إعادة تطبيق تغيير التنسيق"
       },
-      "alwaysOnDisplay": "العرض الدائم",
-      "chatOnlyDisplay": "عرض الدردشة فقط",
-      "userNameDisplay": "عرض اسم المستخدم",
-      "userIconDisplay": "عرض صورة المستخدم",
-      "superChatBarDisplay": "عرض شريط Super Chat",
+      "alwaysOnDisplay": "إظهار الدردشة دائمًا",
+      "chatOnlyDisplay": "وضع الدردشة فقط",
+      "userNameDisplay": "إظهار أسماء المستخدمين",
+      "userIconDisplay": "إظهار صور الملفات الشخصية",
+      "superChatBarDisplay": "إظهار شريط Super Chat",
       "backgroundColor": "لون الخلفية",
-      "fontColor": "لون الخط",
-      "fontFamily": "نوع الخط",
-      "fontSize": "حجم الخط",
+      "fontColor": "لون النص",
+      "fontFamily": "الخط",
+      "fontSize": "حجم النص",
       "blur": "تمويه",
-      "space": "التباعد",
+      "space": "المسافة بين الرسائل",
       "footer": {
         "donate": "تبرّع",
         "chrome": "Chrome",
@@ -29,24 +29,24 @@
         "light": "فاتح",
         "dark": "داكن"
       },
-      "membershipNameColor": "لون اسم العضو",
+      "membershipNameColor": "لون أسماء الأعضاء",
       "defaultColor": "افتراضي",
-      "resetToDefaultColor": "إرجاع اللون الافتراضي",
+      "resetToDefaultColor": "استعادة اللون الافتراضي",
       "group": {
         "display": "العرض",
         "colors": "الألوان",
         "text": "النص",
-        "elements": "عناصر العرض"
+        "elements": "عناصر الدردشة"
       },
-      "requiresAlwaysOn": "فعّل \"العرض الدائم\" لضبط هذا"
+      "requiresAlwaysOn": "فعّل «إظهار الدردشة دائمًا» لاستخدام هذا الخيار"
     },
     "aria": {
       "dragToMove": "اسحب للتحريك",
       "arrowKeysToMove": "استخدم مفاتيح الأسهم للتحريك",
       "openSettings": "فتح الإعدادات",
-      "toggleLiveChat": "تبديل الدردشة المباشرة",
+      "toggleLiveChat": "إظهار الدردشة المباشرة أو إخفاؤها",
       "close": "إغلاق",
-      "reorderPreset": "إعادة ترتيب الإعدادات المسبقة",
+      "reorderPreset": "نقل الإعداد المسبق",
       "presetName": "اسم الإعداد المسبق",
       "applyPreset": "تطبيق الإعداد المسبق",
       "deletePreset": "حذف الإعداد المسبق",
@@ -55,12 +55,12 @@
       "selectLanguage": "اختيار اللغة"
     },
     "preset": {
-      "addMessage": "إضافة الإعدادات الحالية",
+      "addMessage": "حفظ الإعدادات الحالية",
       "addItemTitle": "بدون عنوان",
       "defaultTitle": "قياسي",
       "transparentTitle": "شفاف",
-      "simpleTitle": "التعليقات فقط",
-      "deleteConfirmationMessage": "هل أنت متأكد من رغبتك في الحذف؟",
+      "simpleTitle": "الرسائل فقط",
+      "deleteConfirmationMessage": "هل تريد حذف هذا الإعداد المسبق؟",
       "delete": "حذف",
       "cancel": "إلغاء",
       "darkTitle": "داكن",
@@ -71,12 +71,12 @@
     }
   },
   "popup": {
-    "language": "إعدادات اللغة",
+    "language": "اللغة",
     "showChatOnFullscreen": "الدردشة في وضع ملء الشاشة",
-    "links": "روابط",
+    "links": "الروابط",
     "donate": "تبرّع",
     "theme": "المظهر",
-    "dataTransfer": "نسخ احتياطي",
+    "dataTransfer": "النسخ الاحتياطي",
     "export": "تصدير",
     "import": "استيراد",
     "importError": "تعذّر استيراد ملف الإعدادات."

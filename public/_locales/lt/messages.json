@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube tiesioginio pokalbio viso ekrano režimas"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Žiūrėkite YouTube tiesioginę transliaciją viso ekrano režimu neprarasdami pokalbių. Rašykite komentarus, siųskite Super Chat."
+    "message": "Žiūrėkite YouTube Live visame ekrane ir matykite pokalbį. Rašykite pokalbyje, siųskite „Super Chat“ žinutes ir keiskite jo stilių."
   },
   "popup_theme": {
     "message": "Tema"

@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Voreinstellung",
+        "preset": "Voreinstellungen",
         "setting": "Einstellungen",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Stiländerung rückgängig machen",
+        "redo": "Stiländerung wiederholen"
       },
-      "alwaysOnDisplay": "Immer sichtbar",
+      "alwaysOnDisplay": "Chat immer anzeigen",
       "chatOnlyDisplay": "Nur Chat anzeigen",
-      "userNameDisplay": "Benutzernamen anzeigen",
-      "userIconDisplay": "Benutzersymbol anzeigen",
+      "userNameDisplay": "Nutzernamen anzeigen",
+      "userIconDisplay": "Profilbilder anzeigen",
       "superChatBarDisplay": "Super Chat-Leiste anzeigen",
       "backgroundColor": "Hintergrundfarbe",
-      "fontColor": "Schriftfarbe",
+      "fontColor": "Textfarbe",
       "fontFamily": "Schriftart",
       "fontSize": "Schriftgröße",
       "blur": "Unschärfe",
@@ -29,24 +29,24 @@
         "light": "Hell",
         "dark": "Dunkel"
       },
-      "membershipNameColor": "Farbe des Mitgliedsnamens",
+      "membershipNameColor": "Farbe der Mitgliedsnamen",
       "defaultColor": "Standard",
       "resetToDefaultColor": "Auf Standardfarbe zurücksetzen",
       "group": {
         "display": "Anzeige",
         "colors": "Farben",
         "text": "Text",
-        "elements": "Anzeigeelemente"
+        "elements": "Angezeigte Elemente"
       },
-      "requiresAlwaysOn": "Aktiviere „Immer anzeigen“, um dies zu konfigurieren"
+      "requiresAlwaysOn": "Aktiviere „Chat immer anzeigen“, um diese Option zu verwenden"
     },
     "aria": {
-      "dragToMove": "Ziehen zum Verschieben",
-      "arrowKeysToMove": "Pfeiltasten zum Verschieben",
+      "dragToMove": "Zum Verschieben ziehen",
+      "arrowKeysToMove": "Mit den Pfeiltasten verschieben",
       "openSettings": "Einstellungen öffnen",
-      "toggleLiveChat": "Live-Chat ein-/ausblenden",
+      "toggleLiveChat": "Livechat ein- oder ausblenden",
       "close": "Schließen",
-      "reorderPreset": "Voreinstellung umsortieren",
+      "reorderPreset": "Voreinstellung neu anordnen",
       "presetName": "Name der Voreinstellung",
       "applyPreset": "Voreinstellung anwenden",
       "deletePreset": "Voreinstellung löschen",
@@ -55,12 +55,12 @@
       "selectLanguage": "Sprache auswählen"
     },
     "preset": {
-      "addMessage": "Aktuelle Einstellungen hinzufügen",
+      "addMessage": "Als Voreinstellung speichern",
       "addItemTitle": "Unbenannt",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Nur Kommentare",
-      "deleteConfirmationMessage": "Möchten Sie dies wirklich löschen?",
+      "simpleTitle": "Nur Chat",
+      "deleteConfirmationMessage": "Möchten Sie diese Voreinstellung wirklich löschen?",
       "delete": "Löschen",
       "cancel": "Abbrechen",
       "darkTitle": "Dunkel",
@@ -71,12 +71,12 @@
     }
   },
   "popup": {
-    "language": "Spracheinstellungen",
+    "language": "Sprache",
     "showChatOnFullscreen": "Vollbild-Chat",
     "links": "Links",
     "donate": "Spenden",
     "theme": "Design",
-    "dataTransfer": "Sicherung",
+    "dataTransfer": "Datensicherung",
     "export": "Exportieren",
     "import": "Importieren",
     "importError": "Die Einstellungsdatei konnte nicht importiert werden."

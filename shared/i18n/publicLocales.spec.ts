@@ -49,6 +49,39 @@ describe('public locale messages', () => {
     }
   })
 
+  it('keeps extension descriptions within the Chrome 132-character limit', () => {
+    const locales = readdirSync(publicLocalesDir).filter(localeDirName => localeDirName !== '.DS_Store')
+
+    for (const locale of locales) {
+      const description = loadLocaleMessages(locale).extensionDescription?.message ?? ''
+      expect(description.length, `extensionDescription too long locale=${locale}`).toBeLessThanOrEqual(132)
+    }
+  })
+
+  it('keeps manifest theme labels aligned with runtime translations', () => {
+    const locales = readdirSync(publicLocalesDir).filter(localeDirName => localeDirName !== '.DS_Store')
+
+    for (const locale of locales) {
+      const messages = loadLocaleMessages(locale)
+      const runtime = JSON.parse(readFileSync(join(assetsDir, `${locale}.json`), 'utf8')) as {
+        content: { setting: { theme: string; themeMode: { system: string; light: string; dark: string } } }
+        popup: { theme: string }
+      }
+
+      expect(messages.popup_theme?.message, `popup theme mismatch locale=${locale}`).toBe(runtime.popup.theme)
+      expect(messages.content_setting_theme?.message, `content theme mismatch locale=${locale}`).toBe(runtime.content.setting.theme)
+      expect(messages.content_setting_themeMode_system?.message, `system theme mismatch locale=${locale}`).toBe(
+        runtime.content.setting.themeMode.system,
+      )
+      expect(messages.content_setting_themeMode_light?.message, `light theme mismatch locale=${locale}`).toBe(
+        runtime.content.setting.themeMode.light,
+      )
+      expect(messages.content_setting_themeMode_dark?.message, `dark theme mismatch locale=${locale}`).toBe(
+        runtime.content.setting.themeMode.dark,
+      )
+    }
+  })
+
   it('does not keep extensionDescription as English in non-English locales', () => {
     const englishDesc = loadLocaleMessages('en').extensionDescription?.message ?? ''
     const locales = readdirSync(publicLocalesDir).filter(localeDirName => localeDirName !== '.DS_Store')

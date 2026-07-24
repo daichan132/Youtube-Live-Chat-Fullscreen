@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Πλήρης Οθόνη"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Δείτε YouTube Live σε πλήρη οθόνη χωρίς να χάσετε τη συνομιλία. Γράψτε σχόλια, στείλτε Super Chat και προσαρμόστε το στυλ."
+    "message": "Δείτε ζωντανά βίντεο YouTube σε πλήρη οθόνη. Γράψτε στη συνομιλία, στείλτε μηνύματα Super Chat και προσαρμόστε την εμφάνισή της."
   },
   "popup_theme": {
     "message": "Θέμα"

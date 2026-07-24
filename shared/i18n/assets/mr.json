@@ -4,13 +4,13 @@
       "header": {
         "preset": "प्रीसेट",
         "setting": "सेटिंग्ज",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "शैलीतील बदल पूर्ववत करा",
+        "redo": "शैलीतील बदल पुन्हा करा"
       },
       "alwaysOnDisplay": "नेहमी दाखवा",
       "chatOnlyDisplay": "फक्त चॅट दाखवा",
       "userNameDisplay": "वापरकर्त्याचे नाव दाखवा",
-      "userIconDisplay": "वापरकर्त्याचे चिन्ह दाखवा",
+      "userIconDisplay": "प्रोफाइल चित्र दाखवा",
       "superChatBarDisplay": "Super Chat बार दाखवा",
       "backgroundColor": "पार्श्वभूमी रंग",
       "fontColor": "अक्षरांचा रंग",
@@ -36,7 +36,7 @@
         "display": "प्रदर्शन",
         "colors": "रंग",
         "text": "मजकूर",
-        "elements": "प्रदर्शन घटक"
+        "elements": "चॅट घटक"
       },
       "requiresAlwaysOn": "हे कॉन्फिगर करण्यासाठी \"नेहमी दाखवा\" चालू करा"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "भाषा निवडा"
     },
     "preset": {
-      "addMessage": "सध्याच्या सेटिंग्ज जोडा",
+      "addMessage": "सध्याच्या सेटिंग्ज जतन करा",
       "addItemTitle": "शीर्षक नाही",
       "defaultTitle": "मानक",
       "transparentTitle": "पारदर्शक",
-      "simpleTitle": "फक्त टिप्पण्या",
+      "simpleTitle": "फक्त चॅट",
       "deleteConfirmationMessage": "तुम्हाला हे नक्की हटवायचे आहे का?",
       "delete": "हटवा",
       "cancel": "रद्द करा",

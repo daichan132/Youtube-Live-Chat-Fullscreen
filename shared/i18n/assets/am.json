@@ -4,20 +4,20 @@
       "header": {
         "preset": "ቅድመ-ቅንብር",
         "setting": "ቅንብሮች",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "የቅጥ ለውጡን ቀልብስ",
+        "redo": "የቅጥ ለውጡን ድገም"
       },
-      "alwaysOnDisplay": "ሁልጊዜ አሳይ",
-      "chatOnlyDisplay": "ቻት ብቻ አሳይ",
-      "userNameDisplay": "የተጠቃሚ ስም አሳይ",
-      "userIconDisplay": "የተጠቃሚ አዶ አሳይ",
-      "superChatBarDisplay": "የSuper Chat አሞሌ አሳይ",
+      "alwaysOnDisplay": "ቻቱን ሁልጊዜ አሳይ",
+      "chatOnlyDisplay": "ቻት ብቻ",
+      "userNameDisplay": "የተጠቃሚ ስሞችን አሳይ",
+      "userIconDisplay": "የመገለጫ ምስሎችን አሳይ",
+      "superChatBarDisplay": "የSuper Chat አሞሌውን አሳይ",
       "backgroundColor": "የበስተጀርባ ቀለም",
-      "fontColor": "የፊደል ቀለም",
-      "fontFamily": "የፊደል ዓይነት",
-      "fontSize": "የፊደል መጠን",
-      "blur": "ደብዛዛ",
-      "space": "ክፍተት",
+      "fontColor": "የጽሑፍ ቀለም",
+      "fontFamily": "የቅርጸ ቁምፊ ዓይነት",
+      "fontSize": "የጽሑፍ መጠን",
+      "blur": "ብዥታ",
+      "space": "የመልዕክት ክፍተት",
       "footer": {
         "donate": "ለግስ",
         "chrome": "Chrome",
@@ -29,38 +29,38 @@
         "light": "ብሩህ",
         "dark": "ጨለማ"
       },
-      "membershipNameColor": "የአባል ስም ቀለም",
+      "membershipNameColor": "የአባላት ስሞች ቀለም",
       "defaultColor": "ነባሪ",
-      "resetToDefaultColor": "ወደ ነባሪ ቀለም መመለስ",
+      "resetToDefaultColor": "ነባሪውን ቀለም መልስ",
       "group": {
         "display": "ማሳያ",
         "colors": "ቀለሞች",
         "text": "ጽሑፍ",
-        "elements": "የማሳያ አካላት"
+        "elements": "የቻት አካላት"
       },
-      "requiresAlwaysOn": "ይህን ለማዋቀር «ሁልጊዜ አሳይ»ን ያብሩ"
+      "requiresAlwaysOn": "ይህን አማራጭ ለመጠቀም «ቻቱን ሁልጊዜ አሳይ» የሚለውን ያብሩ"
     },
     "aria": {
-      "dragToMove": "ጎትተህ አንቀሳቅስ",
-      "arrowKeysToMove": "የቀስት ቁልፎችን ተጠቀም ለማንቀሳቀስ",
-      "openSettings": "ቅንብሮችን ክፈት",
-      "toggleLiveChat": "የቀጥታ ቻትን አብራ/አጥፋ",
-      "close": "ዝጋ",
-      "reorderPreset": "ቅድመ-ቅንብሮችን ደርድር",
+      "dragToMove": "ለማንቀሳቀስ ይጎትቱ",
+      "arrowKeysToMove": "ለማንቀሳቀስ የቀስት ቁልፎችን ይጠቀሙ",
+      "openSettings": "ቅንብሮችን ይክፈቱ",
+      "toggleLiveChat": "የቀጥታ ቻቱን ያሳዩ ወይም ይደብቁ",
+      "close": "ይዝጉ",
+      "reorderPreset": "ቅድመ-ቅንብሩን ያንቀሳቅሱ",
       "presetName": "የቅድመ-ቅንብር ስም",
-      "applyPreset": "ቅድመ-ቅንብር ተግብር",
-      "deletePreset": "ቅድመ-ቅንብር ሰርዝ",
+      "applyPreset": "ቅድመ-ቅንብሩን ይተግብሩ",
+      "deletePreset": "ቅድመ-ቅንብሩን ይሰርዙ",
       "colorPicker": "ቀለም መራጭ",
       "loading": "በመጫን ላይ",
-      "selectLanguage": "ቋንቋ ምረጥ"
+      "selectLanguage": "ቋንቋ ይምረጡ"
     },
     "preset": {
-      "addMessage": "የአሁኑን ቅንብር አክል",
+      "addMessage": "የአሁኑን ቅንብሮች ያስቀምጡ",
       "addItemTitle": "ያልተሰየመ",
       "defaultTitle": "መደበኛ",
       "transparentTitle": "ግልጽ",
-      "simpleTitle": "አስተያየቶች ብቻ",
-      "deleteConfirmationMessage": "ይህን ለመሰረዝ እርግጠኛ ነዎት?",
+      "simpleTitle": "መልዕክቶች ብቻ",
+      "deleteConfirmationMessage": "ይህን ቅድመ-ቅንብር መሰረዝ ይፈልጋሉ?",
       "delete": "ሰርዝ",
       "cancel": "ይቅር",
       "darkTitle": "ጨለማ",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "የቋንቋ ቅንብሮች",
-    "showChatOnFullscreen": "ሙሉ ስክሪን ቻት",
+    "language": "ቋንቋ",
+    "showChatOnFullscreen": "የሙሉ ማያ ገጽ ቻት",
     "links": "አገናኞች",
     "donate": "ለግስ",
     "theme": "ገጽታ",
     "dataTransfer": "ምትኬ",
-    "export": "ላክ",
-    "import": "አስገባ",
-    "importError": "የቅንብር ፋይሉን ማስገባት አልተቻለም።"
+    "export": "ወደ ውጭ ላክ",
+    "import": "አስመጣ",
+    "importError": "የቅንብሮች ፋይሉን ማስመጣት አልተቻለም።"
   }
 }

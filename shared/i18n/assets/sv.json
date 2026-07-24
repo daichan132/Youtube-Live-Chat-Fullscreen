@@ -4,20 +4,20 @@
       "header": {
         "preset": "Förinställning",
         "setting": "Inställningar",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Ångra stiländring",
+        "redo": "Gör om stiländring"
       },
-      "alwaysOnDisplay": "Alltid synlig",
-      "chatOnlyDisplay": "Visa bara chatt",
+      "alwaysOnDisplay": "Visa alltid chatten",
+      "chatOnlyDisplay": "Visa endast chatten",
       "userNameDisplay": "Visa användarnamn",
-      "userIconDisplay": "Visa användarikon",
-      "superChatBarDisplay": "Visa Super Chat-fält",
+      "userIconDisplay": "Visa profilbild",
+      "superChatBarDisplay": "Visa Super Chat-fältet",
       "backgroundColor": "Bakgrundsfärg",
       "fontColor": "Textfärg",
       "fontFamily": "Teckensnitt",
       "fontSize": "Textstorlek",
       "blur": "Oskärpa",
-      "space": "Avstånd",
+      "space": "Mellanrum",
       "footer": {
         "donate": "Donera",
         "chrome": "Chrome",
@@ -36,31 +36,31 @@
         "display": "Visning",
         "colors": "Färger",
         "text": "Text",
-        "elements": "Visade element"
+        "elements": "Chattelement"
       },
-      "requiresAlwaysOn": "Aktivera ”Alltid synlig” för att konfigurera detta"
+      "requiresAlwaysOn": "Aktivera ”Visa alltid chatten” för att ändra den här inställningen"
     },
     "aria": {
       "dragToMove": "Dra för att flytta",
-      "arrowKeysToMove": "Piltangenter för att flytta",
+      "arrowKeysToMove": "Använd piltangenterna för att flytta",
       "openSettings": "Öppna inställningar",
-      "toggleLiveChat": "Växla livechatt",
+      "toggleLiveChat": "Visa eller dölj livechatten",
       "close": "Stäng",
-      "reorderPreset": "Ändra ordning",
+      "reorderPreset": "Flytta förinställning",
       "presetName": "Namn på förinställning",
       "applyPreset": "Använd förinställning",
       "deletePreset": "Ta bort förinställning",
       "colorPicker": "Färgväljare",
-      "loading": "Laddar",
+      "loading": "Läser in",
       "selectLanguage": "Välj språk"
     },
     "preset": {
-      "addMessage": "Lägg till nuvarande inställningar",
+      "addMessage": "Spara aktuella inställningar",
       "addItemTitle": "Namnlös",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Endast kommentarer",
-      "deleteConfirmationMessage": "Är du säker på att du vill ta bort denna?",
+      "simpleTitle": "Endast chatt",
+      "deleteConfirmationMessage": "Vill du ta bort den här förinställningen?",
       "delete": "Ta bort",
       "cancel": "Avbryt",
       "darkTitle": "Mörk",

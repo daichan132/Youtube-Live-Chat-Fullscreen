@@ -4,8 +4,8 @@
       "header": {
         "preset": "프리셋",
         "setting": "설정",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "스타일 변경 실행 취소",
+        "redo": "스타일 변경 다시 실행"
       },
       "alwaysOnDisplay": "항상 표시",
       "chatOnlyDisplay": "채팅만 표시",
@@ -59,7 +59,7 @@
       "addItemTitle": "제목 없음",
       "defaultTitle": "표준",
       "transparentTitle": "투명",
-      "simpleTitle": "댓글만",
+      "simpleTitle": "채팅만",
       "deleteConfirmationMessage": "정말로 삭제하시겠습니까?",
       "delete": "삭제",
       "cancel": "취소",

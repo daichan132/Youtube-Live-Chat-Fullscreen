@@ -4,20 +4,20 @@
       "header": {
         "preset": "Cài đặt sẵn",
         "setting": "Cài đặt",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Hoàn tác thay đổi kiểu hiển thị",
+        "redo": "Làm lại thay đổi kiểu hiển thị"
       },
-      "alwaysOnDisplay": "Luôn hiển thị",
-      "chatOnlyDisplay": "Chỉ hiển thị chat",
+      "alwaysOnDisplay": "Luôn hiển thị chat",
+      "chatOnlyDisplay": "Chế độ chỉ hiển thị chat",
       "userNameDisplay": "Hiển thị tên người dùng",
-      "userIconDisplay": "Hiển thị biểu tượng người dùng",
+      "userIconDisplay": "Hiển thị ảnh hồ sơ",
       "superChatBarDisplay": "Hiển thị thanh Super Chat",
       "backgroundColor": "Màu nền",
       "fontColor": "Màu chữ",
       "fontFamily": "Phông chữ",
       "fontSize": "Cỡ chữ",
       "blur": "Làm mờ",
-      "space": "Khoảng cách",
+      "space": "Khoảng cách giữa các tin nhắn",
       "footer": {
         "donate": "Ủng hộ",
         "chrome": "Chrome",
@@ -31,36 +31,36 @@
       },
       "membershipNameColor": "Màu tên hội viên",
       "defaultColor": "Mặc định",
-      "resetToDefaultColor": "Đặt lại về màu mặc định",
+      "resetToDefaultColor": "Khôi phục màu mặc định",
       "group": {
         "display": "Hiển thị",
         "colors": "Màu sắc",
         "text": "Văn bản",
-        "elements": "Thành phần hiển thị"
+        "elements": "Thành phần chat"
       },
-      "requiresAlwaysOn": "Bật \"Luôn hiển thị\" để cấu hình mục này"
+      "requiresAlwaysOn": "Bật \"Luôn hiển thị chat\" để dùng tùy chọn này"
     },
     "aria": {
       "dragToMove": "Kéo để di chuyển",
       "arrowKeysToMove": "Dùng phím mũi tên để di chuyển",
       "openSettings": "Mở cài đặt",
-      "toggleLiveChat": "Bật/tắt chat trực tiếp",
+      "toggleLiveChat": "Hiển thị hoặc ẩn chat trực tiếp",
       "close": "Đóng",
-      "reorderPreset": "Sắp xếp lại cài đặt sẵn",
+      "reorderPreset": "Di chuyển cài đặt sẵn",
       "presetName": "Tên cài đặt sẵn",
       "applyPreset": "Áp dụng cài đặt sẵn",
       "deletePreset": "Xóa cài đặt sẵn",
-      "colorPicker": "Chọn màu",
+      "colorPicker": "Bộ chọn màu",
       "loading": "Đang tải",
       "selectLanguage": "Chọn ngôn ngữ"
     },
     "preset": {
-      "addMessage": "Thêm cài đặt hiện tại",
+      "addMessage": "Lưu cài đặt hiện tại",
       "addItemTitle": "Chưa đặt tên",
       "defaultTitle": "Tiêu chuẩn",
       "transparentTitle": "Trong suốt",
-      "simpleTitle": "Chỉ bình luận",
-      "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa mục này không?",
+      "simpleTitle": "Chỉ tin nhắn",
+      "deleteConfirmationMessage": "Xóa cài đặt sẵn này?",
       "delete": "Xóa",
       "cancel": "Hủy",
       "darkTitle": "Tối",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Cài đặt ngôn ngữ",
+    "language": "Ngôn ngữ",
     "showChatOnFullscreen": "Chat toàn màn hình",
     "links": "Liên kết",
     "donate": "Ủng hộ",

@@ -4,13 +4,13 @@
       "header": {
         "preset": "પ્રીસેટ",
         "setting": "સેટિંગ્સ",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "શૈલીમાં ફેરફાર પૂર્વવત્ કરો",
+        "redo": "શૈલીમાં ફેરફાર ફરી કરો"
       },
       "alwaysOnDisplay": "હંમેશાં બતાવો",
       "chatOnlyDisplay": "ફક્ત ચેટ બતાવો",
       "userNameDisplay": "વપરાશકર્તાનું નામ બતાવો",
-      "userIconDisplay": "વપરાશકર્તાનું આઇકન બતાવો",
+      "userIconDisplay": "પ્રોફાઇલ ચિત્ર બતાવો",
       "superChatBarDisplay": "Super Chat બાર બતાવો",
       "backgroundColor": "પૃષ્ઠભૂમિનો રંગ",
       "fontColor": "ફોન્ટનો રંગ",
@@ -36,7 +36,7 @@
         "display": "પ્રદર્શન",
         "colors": "રંગો",
         "text": "લખાણ",
-        "elements": "પ્રદર્શન ઘટકો"
+        "elements": "ચેટના ઘટકો"
       },
       "requiresAlwaysOn": "આ ગોઠવવા માટે \"હંમેશાં બતાવો\" ચાલુ કરો"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "ભાષા પસંદ કરો"
     },
     "preset": {
-      "addMessage": "વર્તમાન સેટિંગ્સ ઉમેરો",
+      "addMessage": "વર્તમાન સેટિંગ્સ સાચવો",
       "addItemTitle": "શીર્ષકહીન",
       "defaultTitle": "માનક",
       "transparentTitle": "પારદર્શક",
-      "simpleTitle": "માત્ર ટિપ્પણીઓ",
+      "simpleTitle": "માત્ર ચેટ",
       "deleteConfirmationMessage": "શું તમે ખરેખર આને કાઢી નાખવા માગો છો?",
       "delete": "કાઢી નાખો",
       "cancel": "રદ કરો",

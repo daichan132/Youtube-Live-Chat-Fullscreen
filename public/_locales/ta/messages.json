@@ -3,7 +3,7 @@
     "message": "YouTube நேரலை அரட்டை முழுத்திரை"
   },
   "extensionDescription": {
-    "message": "YouTube நேரலையை முழுத்திரையில் அரட்டையுடன் பாருங்கள். கருத்துகள் இடவும், Super Chat அனுப்பவும், மேலடுக்கை மாற்றவும்."
+    "message": "YouTube Live-ஐ முழுத்திரையில் அரட்டையுடன் பாருங்கள். செய்திகளையும் Super Chat-ஐயும் அனுப்பி, மேலடுக்கை விருப்பப்படி மாற்றுங்கள்."
   },
   "popup_theme": {
     "message": "தீம்"
@@ -12,7 +12,7 @@
     "message": "தீம்"
   },
   "content_setting_themeMode_system": {
-    "message": "தானியங்கி"
+    "message": "தானியங்கு"
   },
   "content_setting_themeMode_light": {
     "message": "ஒளி"

@@ -4,16 +4,16 @@
       "header": {
         "preset": "Prednastavitve",
         "setting": "Nastavitve",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Razveljavi spremembo sloga",
+        "redo": "Uveljavi spremembo sloga"
       },
-      "alwaysOnDisplay": "Vedno na zaslonu",
-      "chatOnlyDisplay": "Samo klepet",
-      "userNameDisplay": "Prikaži uporabniško ime",
-      "userIconDisplay": "Prikaži uporabniško ikono",
+      "alwaysOnDisplay": "Vedno prikaži klepet",
+      "chatOnlyDisplay": "Prikaži samo klepet",
+      "userNameDisplay": "Prikaži uporabniška imena",
+      "userIconDisplay": "Prikaži profilne slike",
       "superChatBarDisplay": "Prikaži vrstico Super Chat",
       "backgroundColor": "Barva ozadja",
-      "fontColor": "Barva pisave",
+      "fontColor": "Barva besedila",
       "fontFamily": "Pisava",
       "fontSize": "Velikost pisave",
       "blur": "Zameglitev",
@@ -25,28 +25,28 @@
       },
       "theme": "Tema",
       "themeMode": {
-        "system": "Samodejno",
+        "system": "Samodejna",
         "light": "Svetla",
         "dark": "Temna"
       },
-      "membershipNameColor": "Barva imena člana",
-      "defaultColor": "Privzeto",
+      "membershipNameColor": "Barva imen članov",
+      "defaultColor": "Privzeta",
       "resetToDefaultColor": "Ponastavi na privzeto barvo",
       "group": {
         "display": "Prikaz",
         "colors": "Barve",
         "text": "Besedilo",
-        "elements": "Prikazani elementi"
+        "elements": "Vidni elementi"
       },
-      "requiresAlwaysOn": "Vklopite »Vedno na zaslonu« za nastavitev tega"
+      "requiresAlwaysOn": "Za uporabo te možnosti vklopi »Vedno prikaži klepet«"
     },
     "aria": {
-      "dragToMove": "Povlecite za premik",
-      "arrowKeysToMove": "Puščice za premikanje",
+      "dragToMove": "Povleci za premik",
+      "arrowKeysToMove": "Premakni s puščičnimi tipkami",
       "openSettings": "Odpri nastavitve",
-      "toggleLiveChat": "Vklopi/izklopi klepet v živo",
+      "toggleLiveChat": "Prikaži ali skrij klepet v živo",
       "close": "Zapri",
-      "reorderPreset": "Spremeni vrstni red prednastavitev",
+      "reorderPreset": "Spremeni vrstni red prednastavitve",
       "presetName": "Ime prednastavitve",
       "applyPreset": "Uporabi prednastavitev",
       "deletePreset": "Izbriši prednastavitev",
@@ -55,12 +55,12 @@
       "selectLanguage": "Izberi jezik"
     },
     "preset": {
-      "addMessage": "Dodaj trenutne nastavitve",
+      "addMessage": "Shrani trenutne nastavitve",
       "addItemTitle": "Brez naslova",
       "defaultTitle": "Standardno",
       "transparentTitle": "Prosojno",
-      "simpleTitle": "Samo komentarji",
-      "deleteConfirmationMessage": "Ali ste prepričani, da želite izbrisati?",
+      "simpleTitle": "Samo klepet",
+      "deleteConfirmationMessage": "Ali želiš izbrisati to prednastavitev?",
       "delete": "Izbriši",
       "cancel": "Prekliči",
       "darkTitle": "Temno",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Nastavitve jezika",
+    "language": "Jezik",
     "showChatOnFullscreen": "Klepet na celotnem zaslonu",
     "links": "Povezave",
     "donate": "Doniraj",

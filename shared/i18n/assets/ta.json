@@ -4,13 +4,13 @@
       "header": {
         "preset": "முன்னமைவு",
         "setting": "அமைப்புகள்",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "பாணி மாற்றத்தைச் செயல்தவிர்",
+        "redo": "பாணி மாற்றத்தை மீண்டும் செய்"
       },
       "alwaysOnDisplay": "எப்போதும் காட்டு",
       "chatOnlyDisplay": "அரட்டையை மட்டும் காட்டு",
       "userNameDisplay": "பயனர் பெயரைக் காட்டு",
-      "userIconDisplay": "பயனர் ஐகானைக் காட்டு",
+      "userIconDisplay": "சுயவிவரப் படத்தைக் காட்டு",
       "superChatBarDisplay": "Super Chat பட்டியைக் காட்டு",
       "backgroundColor": "பின்னணி நிறம்",
       "fontColor": "எழுத்துரு நிறம்",
@@ -36,7 +36,7 @@
         "display": "காட்சி",
         "colors": "நிறங்கள்",
         "text": "உரை",
-        "elements": "காட்சி கூறுகள்"
+        "elements": "அரட்டை கூறுகள்"
       },
       "requiresAlwaysOn": "இதை அமைக்க \"எப்போதும் காட்டு\" ஐ இயக்கவும்"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "மொழியைத் தேர்வுசெய்"
     },
     "preset": {
-      "addMessage": "தற்போதைய அமைப்புகளைச் சேர்",
+      "addMessage": "தற்போதைய அமைப்புகளைச் சேமி",
       "addItemTitle": "தலைப்பிடப்படாதது",
       "defaultTitle": "நிலையான",
       "transparentTitle": "வெளிப்படை",
-      "simpleTitle": "கருத்துகள் மட்டும்",
+      "simpleTitle": "அரட்டை மட்டும்",
       "deleteConfirmationMessage": "இதை நிச்சயமாக நீக்க வேண்டுமா?",
       "delete": "நீக்கு",
       "cancel": "ரத்துசெய்",

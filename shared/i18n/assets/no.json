@@ -4,20 +4,20 @@
       "header": {
         "preset": "Forhåndsinnstilling",
         "setting": "Innstillinger",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Angre stilendring",
+        "redo": "Gjør om stilendring"
       },
-      "alwaysOnDisplay": "Alltid synlig",
-      "chatOnlyDisplay": "Vis kun chat",
+      "alwaysOnDisplay": "Vis alltid chatten",
+      "chatOnlyDisplay": "Vis bare chatten",
       "userNameDisplay": "Vis brukernavn",
-      "userIconDisplay": "Vis brukerikon",
-      "superChatBarDisplay": "Vis Super Chat-felt",
+      "userIconDisplay": "Vis profilbilde",
+      "superChatBarDisplay": "Vis Super Chat-linjen",
       "backgroundColor": "Bakgrunnsfarge",
-      "fontColor": "Skriftfarge",
+      "fontColor": "Tekstfarge",
       "fontFamily": "Skrifttype",
       "fontSize": "Skriftstørrelse",
       "blur": "Uskarphet",
-      "space": "Avstand",
+      "space": "Mellomrom",
       "footer": {
         "donate": "Doner",
         "chrome": "Chrome",
@@ -36,17 +36,17 @@
         "display": "Visning",
         "colors": "Farger",
         "text": "Tekst",
-        "elements": "Viste elementer"
+        "elements": "Chattelementer"
       },
-      "requiresAlwaysOn": "Slå på «Alltid synlig» for å konfigurere dette"
+      "requiresAlwaysOn": "Aktiver «Vis alltid chatten» for å endre denne innstillingen"
     },
     "aria": {
       "dragToMove": "Dra for å flytte",
-      "arrowKeysToMove": "Piltaster for å flytte",
+      "arrowKeysToMove": "Bruk piltastene til å flytte",
       "openSettings": "Åpne innstillinger",
-      "toggleLiveChat": "Slå livechat av/på",
+      "toggleLiveChat": "Vis eller skjul livechat",
       "close": "Lukk",
-      "reorderPreset": "Endre rekkefølge",
+      "reorderPreset": "Flytt forhåndsinnstilling",
       "presetName": "Navn på forhåndsinnstilling",
       "applyPreset": "Bruk forhåndsinnstilling",
       "deletePreset": "Slett forhåndsinnstilling",
@@ -55,12 +55,12 @@
       "selectLanguage": "Velg språk"
     },
     "preset": {
-      "addMessage": "Legg til gjeldende innstillinger",
+      "addMessage": "Lagre gjeldende innstillinger",
       "addItemTitle": "Uten tittel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gjennomsiktig",
-      "simpleTitle": "Bare kommentarer",
-      "deleteConfirmationMessage": "Er du sikker på at du vil slette denne?",
+      "simpleTitle": "Bare chat",
+      "deleteConfirmationMessage": "Vil du slette denne forhåndsinnstillingen?",
       "delete": "Slett",
       "cancel": "Avbryt",
       "darkTitle": "Mørk",

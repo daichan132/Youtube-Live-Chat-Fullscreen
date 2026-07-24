@@ -3,7 +3,7 @@
     "message": "YouTubeライブチャットフルスクリーン"
   },
   "extensionDescription": {
-    "message": "フルスクリーンのままYouTube Liveのチャットを表示。コメント・スパチャ投稿も、見た目や配置の調整も自由自在。"
+    "message": "YouTube Liveを全画面で視聴しながらチャットを表示・投稿。スーパーチャットの送信や、オーバーレイの見た目・配置の調整もできます。"
   },
   "popup_theme": {
     "message": "テーマ"

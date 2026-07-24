@@ -4,16 +4,16 @@
       "header": {
         "preset": "Sablonok",
         "setting": "Beállítások",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Stílusmódosítás visszavonása",
+        "redo": "Stílusmódosítás megismétlése"
       },
-      "alwaysOnDisplay": "Mindig látható",
-      "chatOnlyDisplay": "Csak csevegés",
-      "userNameDisplay": "Felhasználónév megjelenítése",
-      "userIconDisplay": "Felhasználói ikon megjelenítése",
-      "superChatBarDisplay": "Super Chat sáv megjelenítése",
+      "alwaysOnDisplay": "Csevegés állandó megjelenítése",
+      "chatOnlyDisplay": "Csak a csevegés megjelenítése",
+      "userNameDisplay": "Felhasználónevek megjelenítése",
+      "userIconDisplay": "Profilképek megjelenítése",
+      "superChatBarDisplay": "Super Chat-sáv megjelenítése",
       "backgroundColor": "Háttérszín",
-      "fontColor": "Betűszín",
+      "fontColor": "Szövegszín",
       "fontFamily": "Betűtípus",
       "fontSize": "Betűméret",
       "blur": "Elmosás",
@@ -29,38 +29,38 @@
         "light": "Világos",
         "dark": "Sötét"
       },
-      "membershipNameColor": "Tagsági név színe",
+      "membershipNameColor": "Tagok nevének színe",
       "defaultColor": "Alapértelmezett",
-      "resetToDefaultColor": "Visszaállítás alapértelmezett színre",
+      "resetToDefaultColor": "Alapértelmezett szín visszaállítása",
       "group": {
         "display": "Megjelenítés",
         "colors": "Színek",
         "text": "Szöveg",
-        "elements": "Megjelenített elemek"
+        "elements": "Látható elemek"
       },
-      "requiresAlwaysOn": "Ennek beállításához kapcsolja be a „Mindig látható” lehetőséget"
+      "requiresAlwaysOn": "A használatához kapcsolja be a „Csevegés állandó megjelenítése” beállítást"
     },
     "aria": {
       "dragToMove": "Húzza az áthelyezéshez",
-      "arrowKeysToMove": "Nyilakkal mozgatható",
+      "arrowKeysToMove": "Mozgatás a nyílbillentyűkkel",
       "openSettings": "Beállítások megnyitása",
-      "toggleLiveChat": "Élő csevegés ki-/bekapcsolása",
+      "toggleLiveChat": "Élő csevegés megjelenítése vagy elrejtése",
       "close": "Bezárás",
       "reorderPreset": "Sablon átrendezése",
       "presetName": "Sablon neve",
       "applyPreset": "Sablon alkalmazása",
       "deletePreset": "Sablon törlése",
       "colorPicker": "Színválasztó",
-      "loading": "Betöltés",
+      "loading": "Betöltés folyamatban",
       "selectLanguage": "Nyelv kiválasztása"
     },
     "preset": {
-      "addMessage": "Jelenlegi beállítások hozzáadása",
+      "addMessage": "Aktuális beállítások mentése",
       "addItemTitle": "Névtelen",
       "defaultTitle": "Normál",
       "transparentTitle": "Átlátszó",
-      "simpleTitle": "Csak megjegyzések",
-      "deleteConfirmationMessage": "Biztosan törölni szeretné?",
+      "simpleTitle": "Csak csevegés",
+      "deleteConfirmationMessage": "Biztosan törölni szeretné ezt a sablont?",
       "delete": "Törlés",
       "cancel": "Mégse",
       "darkTitle": "Sötét",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Nyelvi beállítások",
+    "language": "Nyelv",
     "showChatOnFullscreen": "Csevegés teljes képernyőn",
     "links": "Hivatkozások",
     "donate": "Támogatás",

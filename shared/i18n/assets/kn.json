@@ -4,13 +4,13 @@
       "header": {
         "preset": "ಪ್ರಿಸೆಟ್",
         "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ರದ್ದುಗೊಳಿಸಿ",
+        "redo": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ಮರುಮಾಡಿ"
       },
       "alwaysOnDisplay": "ಯಾವಾಗಲೂ ತೋರಿಸಿ",
       "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ತೋರಿಸಿ",
       "userNameDisplay": "ಬಳಕೆದಾರರ ಹೆಸರು ತೋರಿಸಿ",
-      "userIconDisplay": "ಬಳಕೆದಾರರ ಐಕಾನ್ ತೋರಿಸಿ",
+      "userIconDisplay": "ಪ್ರೊಫೈಲ್ ಚಿತ್ರವನ್ನು ತೋರಿಸಿ",
       "superChatBarDisplay": "Super Chat ಬಾರ್ ತೋರಿಸಿ",
       "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
       "fontColor": "ಫಾಂಟ್ ಬಣ್ಣ",
@@ -36,7 +36,7 @@
         "display": "ಪ್ರದರ್ಶನ",
         "colors": "ಬಣ್ಣಗಳು",
         "text": "ಪಠ್ಯ",
-        "elements": "ಪ್ರದರ್ಶನ ಅಂಶಗಳು"
+        "elements": "ಚಾಟ್ ಅಂಶಗಳು"
       },
       "requiresAlwaysOn": "ಇದನ್ನು ಕಾನ್ಫಿಗರ್ ಮಾಡಲು \"ಯಾವಾಗಲೂ ತೋರಿಸಿ\" ಆನ್ ಮಾಡಿ"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ"
     },
     "preset": {
-      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಸೇರಿಸಿ",
+      "addMessage": "ಪ್ರಸ್ತುತ ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ಉಳಿಸಿ",
       "addItemTitle": "ಶೀರ್ಷಿಕೆರಹಿತ",
       "defaultTitle": "ಪ್ರಮಾಣಿತ",
       "transparentTitle": "ಪಾರದರ್ಶಕ",
-      "simpleTitle": "ಕಾಮೆಂಟ್‌ಗಳು ಮಾತ್ರ",
+      "simpleTitle": "ಚಾಟ್ ಮಾತ್ರ",
       "deleteConfirmationMessage": "ನೀವು ಇದನ್ನು ಅಳಿಸಲು ಖಚಿತವಾಗಿದ್ದೀರಾ?",
       "delete": "ಅಳಿಸಿ",
       "cancel": "ರದ್ದುಮಾಡಿ",

@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Gledajte YouTube Live na cijelom zaslonu bez gubitka chata. Komentirajte, šaljite Super Chat i prilagodite prikaz."
+    "message": "Gledajte YouTube prijenose uživo na cijelom zaslonu. Pišite u chatu, šaljite Super Chat poruke i prilagodite prikaz chata."
   },
   "popup_theme": {
     "message": "Tema"
@@ -12,7 +12,7 @@
     "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "Automatski"
+    "message": "Automatska"
   },
   "content_setting_themeMode_light": {
     "message": "Svijetla"

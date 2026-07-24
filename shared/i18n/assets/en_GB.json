@@ -2,20 +2,20 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preset",
+        "preset": "Presets",
         "setting": "Settings",
         "undo": "Undo style change",
         "redo": "Redo style change"
       },
-      "alwaysOnDisplay": "Always On Display",
-      "chatOnlyDisplay": "Chat Only Display",
-      "userNameDisplay": "Show User Name",
-      "userIconDisplay": "Show User Icon",
-      "superChatBarDisplay": "Show Super Chat Bar",
-      "backgroundColor": "Background Colour",
-      "fontColor": "Font Colour",
-      "fontFamily": "Font Family",
-      "fontSize": "Font Size",
+      "alwaysOnDisplay": "Always show chat",
+      "chatOnlyDisplay": "Chat-only mode",
+      "userNameDisplay": "Show user names",
+      "userIconDisplay": "Show profile pictures",
+      "superChatBarDisplay": "Show Super Chat bar",
+      "backgroundColor": "Background colour",
+      "fontColor": "Text colour",
+      "fontFamily": "Font family",
+      "fontSize": "Font size",
       "blur": "Blur",
       "space": "Spacing",
       "footer": {
@@ -29,16 +29,16 @@
         "light": "Light",
         "dark": "Dark"
       },
-      "membershipNameColor": "Membership name colour",
+      "membershipNameColor": "Member name colour",
       "defaultColor": "Default",
-      "resetToDefaultColor": "Reset to default colour",
+      "resetToDefaultColor": "Reset to default",
       "group": {
         "display": "Display",
         "colors": "Colours",
         "text": "Text",
-        "elements": "Display Elements"
+        "elements": "Visible elements"
       },
-      "requiresAlwaysOn": "Turn on \"Always On Display\" to configure this"
+      "requiresAlwaysOn": "Turn on \"Always show chat\" to use this option"
     },
     "aria": {
       "dragToMove": "Drag to move",
@@ -55,23 +55,23 @@
       "selectLanguage": "Select language"
     },
     "preset": {
-      "addMessage": "Add Current Settings",
+      "addMessage": "Save current settings",
       "addItemTitle": "Untitled",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Comments Only",
-      "deleteConfirmationMessage": "Are you sure you want to delete this?",
+      "simpleTitle": "Chat only",
+      "deleteConfirmationMessage": "Delete this preset?",
       "delete": "Delete",
       "cancel": "Cancel",
       "darkTitle": "Dark",
-      "readableTitle": "Large Text",
+      "readableTitle": "Large text",
       "compactTitle": "Compact",
-      "neonTitle": "Colorful",
+      "neonTitle": "Colourful",
       "apply": "Apply"
     }
   },
   "popup": {
-    "language": "Language Settings",
+    "language": "Language",
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
     "donate": "Donate",
@@ -79,6 +79,6 @@
     "dataTransfer": "Backup",
     "export": "Export",
     "import": "Import",
-    "importError": "Couldn't import the settings file."
+    "importError": "Could not import the settings file."
   }
 }

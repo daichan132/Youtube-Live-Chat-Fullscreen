@@ -2,18 +2,18 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Szablon",
+        "preset": "Szablony",
         "setting": "Ustawienia",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Cofnij zmianę stylu",
+        "redo": "Ponów zmianę stylu"
       },
-      "alwaysOnDisplay": "Zawsze wyświetlaj",
-      "chatOnlyDisplay": "Tylko czat",
-      "userNameDisplay": "Pokaż nazwę użytkownika",
-      "userIconDisplay": "Pokaż ikonę użytkownika",
+      "alwaysOnDisplay": "Zawsze wyświetlaj czat",
+      "chatOnlyDisplay": "Wyświetlaj tylko czat",
+      "userNameDisplay": "Pokaż nazwy użytkowników",
+      "userIconDisplay": "Pokaż zdjęcia profilowe",
       "superChatBarDisplay": "Pokaż pasek Super Chat",
       "backgroundColor": "Kolor tła",
-      "fontColor": "Kolor czcionki",
+      "fontColor": "Kolor tekstu",
       "fontFamily": "Krój czcionki",
       "fontSize": "Rozmiar czcionki",
       "blur": "Rozmycie",
@@ -29,38 +29,38 @@
         "light": "Jasny",
         "dark": "Ciemny"
       },
-      "membershipNameColor": "Kolor nazwy członka",
+      "membershipNameColor": "Kolor nazw członków",
       "defaultColor": "Domyślny",
       "resetToDefaultColor": "Przywróć kolor domyślny",
       "group": {
         "display": "Wyświetlanie",
         "colors": "Kolory",
         "text": "Tekst",
-        "elements": "Wyświetlane elementy"
+        "elements": "Widoczne elementy"
       },
-      "requiresAlwaysOn": "Włącz „Zawsze wyświetlaj”, aby to skonfigurować"
+      "requiresAlwaysOn": "Włącz „Zawsze wyświetlaj czat”, aby użyć tej opcji"
     },
     "aria": {
       "dragToMove": "Przeciągnij, aby przenieść",
-      "arrowKeysToMove": "Strzałki do przesuwania",
+      "arrowKeysToMove": "Przenieś za pomocą klawiszy strzałek",
       "openSettings": "Otwórz ustawienia",
-      "toggleLiveChat": "Przełącz czat na żywo",
+      "toggleLiveChat": "Pokaż lub ukryj czat na żywo",
       "close": "Zamknij",
-      "reorderPreset": "Zmień kolejność szablonów",
+      "reorderPreset": "Zmień położenie szablonu",
       "presetName": "Nazwa szablonu",
       "applyPreset": "Zastosuj szablon",
       "deletePreset": "Usuń szablon",
       "colorPicker": "Wybór koloru",
       "loading": "Ładowanie",
-      "selectLanguage": "Wybór języka"
+      "selectLanguage": "Wybierz język"
     },
     "preset": {
-      "addMessage": "Dodaj bieżące ustawienia",
+      "addMessage": "Zapisz bieżące ustawienia",
       "addItemTitle": "Bez tytułu",
       "defaultTitle": "Standardowy",
       "transparentTitle": "Przezroczysty",
-      "simpleTitle": "Tylko komentarze",
-      "deleteConfirmationMessage": "Czy na pewno chcesz usunąć?",
+      "simpleTitle": "Tylko czat",
+      "deleteConfirmationMessage": "Czy na pewno chcesz usunąć ten szablon?",
       "delete": "Usuń",
       "cancel": "Anuluj",
       "darkTitle": "Ciemny",

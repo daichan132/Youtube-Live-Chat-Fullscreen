@@ -4,18 +4,18 @@
       "header": {
         "preset": "Presetări",
         "setting": "Setări",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Anulează modificarea stilului",
+        "redo": "Refă modificarea stilului"
       },
-      "alwaysOnDisplay": "Afișare permanentă",
-      "chatOnlyDisplay": "Doar chat-ul",
-      "userNameDisplay": "Afișează numele utilizatorului",
-      "userIconDisplay": "Afișează iconița utilizatorului",
+      "alwaysOnDisplay": "Afișează mereu chatul",
+      "chatOnlyDisplay": "Afișează doar chatul",
+      "userNameDisplay": "Afișează numele utilizatorilor",
+      "userIconDisplay": "Afișează fotografiile de profil",
       "superChatBarDisplay": "Afișează bara Super Chat",
-      "backgroundColor": "Culoare de fundal",
-      "fontColor": "Culoare font",
-      "fontFamily": "Familia fontului",
-      "fontSize": "Dimensiune font",
+      "backgroundColor": "Culoarea fundalului",
+      "fontColor": "Culoarea textului",
+      "fontFamily": "Font",
+      "fontSize": "Dimensiunea fontului",
       "blur": "Estompare",
       "space": "Spațiere",
       "footer": {
@@ -29,22 +29,22 @@
         "light": "Deschis",
         "dark": "Întunecat"
       },
-      "membershipNameColor": "Culoarea numelui de membru",
-      "defaultColor": "Implicit",
+      "membershipNameColor": "Culoarea numelor membrilor",
+      "defaultColor": "Implicită",
       "resetToDefaultColor": "Resetează la culoarea implicită",
       "group": {
         "display": "Afișare",
         "colors": "Culori",
         "text": "Text",
-        "elements": "Elemente afișate"
+        "elements": "Elemente vizibile"
       },
-      "requiresAlwaysOn": "Activează „Afișare permanentă” pentru a configura aceasta"
+      "requiresAlwaysOn": "Activează „Afișează mereu chatul” pentru a folosi această opțiune"
     },
     "aria": {
       "dragToMove": "Trage pentru a muta",
-      "arrowKeysToMove": "Tastele săgeți pentru a muta",
+      "arrowKeysToMove": "Folosește tastele săgeată pentru a muta",
       "openSettings": "Deschide setările",
-      "toggleLiveChat": "Activează sau dezactivează chatul live",
+      "toggleLiveChat": "Afișează sau ascunde chatul live",
       "close": "Închide",
       "reorderPreset": "Reordonează presetarea",
       "presetName": "Numele presetării",
@@ -55,12 +55,12 @@
       "selectLanguage": "Selectează limba"
     },
     "preset": {
-      "addMessage": "Adaugă setările curente",
+      "addMessage": "Salvează setările curente",
       "addItemTitle": "Fără titlu",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Doar comentarii",
-      "deleteConfirmationMessage": "Sigur vrei să ștergi?",
+      "simpleTitle": "Doar chat",
+      "deleteConfirmationMessage": "Sigur vrei să ștergi această presetare?",
       "delete": "Șterge",
       "cancel": "Anulează",
       "darkTitle": "Întunecat",

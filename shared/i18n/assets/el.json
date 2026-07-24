@@ -2,19 +2,19 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Προεπιλογή",
+        "preset": "Προεπιλογές",
         "setting": "Ρυθμίσεις",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Αναίρεση αλλαγής στυλ",
+        "redo": "Επανάληψη αλλαγής στυλ"
       },
-      "alwaysOnDisplay": "Πάντα ορατό",
-      "chatOnlyDisplay": "Μόνο συνομιλία",
-      "userNameDisplay": "Εμφάνιση ονόματος χρήστη",
-      "userIconDisplay": "Εμφάνιση εικονιδίου χρήστη",
-      "superChatBarDisplay": "Εμφάνιση μπάρας Super Chat",
+      "alwaysOnDisplay": "Μόνιμη εμφάνιση συνομιλίας",
+      "chatOnlyDisplay": "Εμφάνιση μόνο της συνομιλίας",
+      "userNameDisplay": "Εμφάνιση ονομάτων χρηστών",
+      "userIconDisplay": "Εμφάνιση εικόνων προφίλ",
+      "superChatBarDisplay": "Εμφάνιση γραμμής Super Chat",
       "backgroundColor": "Χρώμα φόντου",
-      "fontColor": "Χρώμα γραμματοσειράς",
-      "fontFamily": "Οικογένεια γραμματοσειράς",
+      "fontColor": "Χρώμα κειμένου",
+      "fontFamily": "Γραμματοσειρά",
       "fontSize": "Μέγεθος γραμματοσειράς",
       "blur": "Θόλωμα",
       "space": "Διάκενο",
@@ -29,22 +29,22 @@
         "light": "Φωτεινό",
         "dark": "Σκοτεινό"
       },
-      "membershipNameColor": "Χρώμα ονόματος μέλους",
-      "defaultColor": "Προεπιλογή",
+      "membershipNameColor": "Χρώμα ονομάτων μελών",
+      "defaultColor": "Προεπιλεγμένο",
       "resetToDefaultColor": "Επαναφορά στο προεπιλεγμένο χρώμα",
       "group": {
         "display": "Εμφάνιση",
         "colors": "Χρώματα",
         "text": "Κείμενο",
-        "elements": "Στοιχεία εμφάνισης"
+        "elements": "Ορατά στοιχεία"
       },
-      "requiresAlwaysOn": "Ενεργοποιήστε το «Πάντα ορατό» για να το ρυθμίσετε"
+      "requiresAlwaysOn": "Ενεργοποιήστε τη «Μόνιμη εμφάνιση συνομιλίας» για να χρησιμοποιήσετε αυτήν την επιλογή"
     },
     "aria": {
       "dragToMove": "Σύρετε για μετακίνηση",
-      "arrowKeysToMove": "Βέλη για μετακίνηση",
+      "arrowKeysToMove": "Μετακινήστε με τα πλήκτρα βέλους",
       "openSettings": "Άνοιγμα ρυθμίσεων",
-      "toggleLiveChat": "Εναλλαγή ζωντανής συνομιλίας",
+      "toggleLiveChat": "Εμφάνιση ή απόκρυψη ζωντανής συνομιλίας",
       "close": "Κλείσιμο",
       "reorderPreset": "Αναδιάταξη προεπιλογής",
       "presetName": "Όνομα προεπιλογής",
@@ -55,12 +55,12 @@
       "selectLanguage": "Επιλογή γλώσσας"
     },
     "preset": {
-      "addMessage": "Προσθήκη τρεχουσών ρυθμίσεων",
+      "addMessage": "Αποθήκευση τρεχουσών ρυθμίσεων",
       "addItemTitle": "Χωρίς τίτλο",
       "defaultTitle": "Τυπικό",
       "transparentTitle": "Διαφανές",
-      "simpleTitle": "Μόνο σχόλια",
-      "deleteConfirmationMessage": "Θέλετε σίγουρα να το διαγράψετε;",
+      "simpleTitle": "Μόνο συνομιλία",
+      "deleteConfirmationMessage": "Θέλετε να διαγράψετε αυτήν την προεπιλογή;",
       "delete": "Διαγραφή",
       "cancel": "Ακύρωση",
       "darkTitle": "Σκούρο",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Ρυθμίσεις γλώσσας",
+    "language": "Γλώσσα",
     "showChatOnFullscreen": "Συνομιλία σε πλήρη οθόνη",
     "links": "Σύνδεσμοι",
     "donate": "Δωρεά",

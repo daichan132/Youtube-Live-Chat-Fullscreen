@@ -4,16 +4,16 @@
       "header": {
         "preset": "Esiasetus",
         "setting": "Asetukset",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Kumoa tyylimuutos",
+        "redo": "Tee tyylimuutos uudelleen"
       },
-      "alwaysOnDisplay": "Näytä aina",
-      "chatOnlyDisplay": "Vain chat",
+      "alwaysOnDisplay": "Näytä chat aina",
+      "chatOnlyDisplay": "Näytä vain chat",
       "userNameDisplay": "Näytä käyttäjänimi",
-      "userIconDisplay": "Näytä käyttäjäkuvake",
+      "userIconDisplay": "Näytä profiilikuva",
       "superChatBarDisplay": "Näytä Super Chat -palkki",
       "backgroundColor": "Taustaväri",
-      "fontColor": "Fontin väri",
+      "fontColor": "Tekstin väri",
       "fontFamily": "Fonttiperhe",
       "fontSize": "Fonttikoko",
       "blur": "Sumennus",
@@ -33,20 +33,20 @@
       "defaultColor": "Oletus",
       "resetToDefaultColor": "Palauta oletusväri",
       "group": {
-        "display": "Näyttö",
+        "display": "Näkyvyys",
         "colors": "Värit",
         "text": "Teksti",
-        "elements": "Näytettävät elementit"
+        "elements": "Chatin osat"
       },
-      "requiresAlwaysOn": "Ota käyttöön ”Näytä aina” määrittääksesi tämän"
+      "requiresAlwaysOn": "Ota ”Näytä chat aina” käyttöön, jotta voit muuttaa tätä asetusta"
     },
     "aria": {
       "dragToMove": "Siirrä vetämällä",
       "arrowKeysToMove": "Siirrä nuolinäppäimillä",
       "openSettings": "Avaa asetukset",
-      "toggleLiveChat": "Vaihda live-chat",
+      "toggleLiveChat": "Näytä tai piilota livechat",
       "close": "Sulje",
-      "reorderPreset": "Järjestä esiasetus",
+      "reorderPreset": "Siirrä esiasetusta",
       "presetName": "Esiasetuksen nimi",
       "applyPreset": "Käytä esiasetusta",
       "deletePreset": "Poista esiasetus",
@@ -55,12 +55,12 @@
       "selectLanguage": "Valitse kieli"
     },
     "preset": {
-      "addMessage": "Lisää nykyiset asetukset",
+      "addMessage": "Tallenna nykyiset asetukset",
       "addItemTitle": "Nimetön",
       "defaultTitle": "Vakio",
       "transparentTitle": "Läpinäkyvä",
-      "simpleTitle": "Vain kommentit",
-      "deleteConfirmationMessage": "Haluatko varmasti poistaa tämän?",
+      "simpleTitle": "Vain chat",
+      "deleteConfirmationMessage": "Poistetaanko tämä esiasetus?",
       "delete": "Poista",
       "cancel": "Peruuta",
       "darkTitle": "Tumma",

@@ -4,13 +4,13 @@
       "header": {
         "preset": "Predlošci",
         "setting": "Postavke",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Poništi promjenu stila",
+        "redo": "Ponovi promjenu stila"
       },
-      "alwaysOnDisplay": "Uvijek na zaslonu",
-      "chatOnlyDisplay": "Samo chat",
-      "userNameDisplay": "Prikaži korisničko ime",
-      "userIconDisplay": "Prikaži korisničku ikonu",
+      "alwaysOnDisplay": "Uvijek prikazuj chat",
+      "chatOnlyDisplay": "Prikaži samo chat",
+      "userNameDisplay": "Prikaži korisnička imena",
+      "userIconDisplay": "Prikaži profilne slike",
       "superChatBarDisplay": "Prikaži Super Chat traku",
       "backgroundColor": "Boja pozadine",
       "fontColor": "Boja teksta",
@@ -25,28 +25,28 @@
       },
       "theme": "Tema",
       "themeMode": {
-        "system": "Automatski",
+        "system": "Automatska",
         "light": "Svijetla",
         "dark": "Tamna"
       },
-      "membershipNameColor": "Boja imena člana",
-      "defaultColor": "Zadano",
+      "membershipNameColor": "Boja imena članova",
+      "defaultColor": "Zadana",
       "resetToDefaultColor": "Vrati na zadanu boju",
       "group": {
         "display": "Prikaz",
         "colors": "Boje",
         "text": "Tekst",
-        "elements": "Prikazani elementi"
+        "elements": "Vidljivi elementi"
       },
-      "requiresAlwaysOn": "Uključite „Uvijek na zaslonu“ za konfiguraciju"
+      "requiresAlwaysOn": "Za ovu opciju uključi „Uvijek prikazuj chat”"
     },
     "aria": {
-      "dragToMove": "Povucite za premještanje",
-      "arrowKeysToMove": "Strelice za premještanje",
+      "dragToMove": "Povuci za premještanje",
+      "arrowKeysToMove": "Premjesti tipkama sa strelicama",
       "openSettings": "Otvori postavke",
-      "toggleLiveChat": "Uključi/isključi chat uživo",
+      "toggleLiveChat": "Prikaži ili sakrij chat uživo",
       "close": "Zatvori",
-      "reorderPreset": "Promijeni redoslijed predložaka",
+      "reorderPreset": "Promijeni redoslijed predloška",
       "presetName": "Naziv predloška",
       "applyPreset": "Primijeni predložak",
       "deletePreset": "Izbriši predložak",
@@ -55,12 +55,12 @@
       "selectLanguage": "Odaberi jezik"
     },
     "preset": {
-      "addMessage": "Dodaj trenutne postavke",
+      "addMessage": "Spremi trenutačne postavke",
       "addItemTitle": "Bez naslova",
       "defaultTitle": "Standardno",
       "transparentTitle": "Prozirno",
-      "simpleTitle": "Samo komentari",
-      "deleteConfirmationMessage": "Jeste li sigurni da želite izbrisati?",
+      "simpleTitle": "Samo chat",
+      "deleteConfirmationMessage": "Želiš li izbrisati ovaj predložak?",
       "delete": "Izbriši",
       "cancel": "Odustani",
       "darkTitle": "Tamno",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "Postavke jezika",
+    "language": "Jezik",
     "showChatOnFullscreen": "Chat na cijelom zaslonu",
     "links": "Poveznice",
     "donate": "Doniraj",
     "theme": "Tema",
     "dataTransfer": "Sigurnosna kopija",
-    "export": "Izvoz",
-    "import": "Uvoz",
+    "export": "Izvezi",
+    "import": "Uvezi",
     "importError": "Datoteku s postavkama nije moguće uvesti."
   }
 }

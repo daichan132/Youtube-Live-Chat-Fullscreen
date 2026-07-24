@@ -4,8 +4,8 @@
       "header": {
         "preset": "预设",
         "setting": "设置",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "撤销样式更改",
+        "redo": "重做样式更改"
       },
       "alwaysOnDisplay": "始终显示",
       "chatOnlyDisplay": "仅显示聊天",
@@ -38,7 +38,7 @@
         "text": "文本",
         "elements": "显示元素"
       },
-      "requiresAlwaysOn": "开启“常驻显示”后即可设置"
+      "requiresAlwaysOn": "开启“始终显示”后即可设置"
     },
     "aria": {
       "dragToMove": "拖动以移动",
@@ -59,7 +59,7 @@
       "addItemTitle": "未命名",
       "defaultTitle": "标准",
       "transparentTitle": "透明",
-      "simpleTitle": "仅评论",
+      "simpleTitle": "仅聊天",
       "deleteConfirmationMessage": "确定要删除吗？",
       "delete": "删除",
       "cancel": "取消",

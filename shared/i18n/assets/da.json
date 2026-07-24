@@ -4,20 +4,20 @@
       "header": {
         "preset": "Forudindstilling",
         "setting": "Indstillinger",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Fortryd stilændring",
+        "redo": "Gentag stilændring"
       },
-      "alwaysOnDisplay": "Altid synlig",
-      "chatOnlyDisplay": "Vis kun chat",
+      "alwaysOnDisplay": "Vis altid chatten",
+      "chatOnlyDisplay": "Vis kun chatten",
       "userNameDisplay": "Vis brugernavn",
-      "userIconDisplay": "Vis brugerikon",
-      "superChatBarDisplay": "Vis Super Chat-bar",
+      "userIconDisplay": "Vis profilbillede",
+      "superChatBarDisplay": "Vis Super Chat-bjælke",
       "backgroundColor": "Baggrundsfarve",
-      "fontColor": "Skriftfarve",
+      "fontColor": "Tekstfarve",
       "fontFamily": "Skrifttype",
       "fontSize": "Skriftstørrelse",
       "blur": "Sløring",
-      "space": "Afstand",
+      "space": "Mellemrum",
       "footer": {
         "donate": "Donér",
         "chrome": "Chrome",
@@ -29,24 +29,24 @@
         "light": "Lys",
         "dark": "Mørk"
       },
-      "membershipNameColor": "Farve på medlemsnavn",
+      "membershipNameColor": "Farve på medlemsnavne",
       "defaultColor": "Standard",
       "resetToDefaultColor": "Gendan standardfarve",
       "group": {
         "display": "Visning",
         "colors": "Farver",
         "text": "Tekst",
-        "elements": "Viste elementer"
+        "elements": "Chatelementer"
       },
-      "requiresAlwaysOn": "Slå „Altid synlig“ til for at konfigurere dette"
+      "requiresAlwaysOn": "Slå \"Vis altid chatten\" til for at ændre denne indstilling"
     },
     "aria": {
       "dragToMove": "Træk for at flytte",
-      "arrowKeysToMove": "Piletaster for at flytte",
+      "arrowKeysToMove": "Brug piletasterne til at flytte",
       "openSettings": "Åbn indstillinger",
-      "toggleLiveChat": "Slå livechat til/fra",
+      "toggleLiveChat": "Vis eller skjul livechat",
       "close": "Luk",
-      "reorderPreset": "Omarranger forudindstilling",
+      "reorderPreset": "Flyt forudindstilling",
       "presetName": "Navn på forudindstilling",
       "applyPreset": "Anvend forudindstilling",
       "deletePreset": "Slet forudindstilling",
@@ -55,12 +55,12 @@
       "selectLanguage": "Vælg sprog"
     },
     "preset": {
-      "addMessage": "Tilføj nuværende indstillinger",
+      "addMessage": "Gem aktuelle indstillinger",
       "addItemTitle": "Uden titel",
       "defaultTitle": "Standard",
       "transparentTitle": "Gennemsigtig",
-      "simpleTitle": "Kun kommentarer",
-      "deleteConfirmationMessage": "Er du sikker på, at du vil slette denne?",
+      "simpleTitle": "Kun chat",
+      "deleteConfirmationMessage": "Vil du slette denne forudindstilling?",
       "delete": "Slet",
       "cancel": "Annuller",
       "darkTitle": "Mørk",

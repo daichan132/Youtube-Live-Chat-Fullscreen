@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube tiešraides čata pilnekrāna režīms"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Skatieties YouTube tiešraidi pilnekrānā, nezaudējot čatu. Rakstiet komentārus, sūtiet Super Chat un pielāgojiet izskatu."
+    "message": "Skatieties YouTube Live pilnekrānā ar redzamu čatu. Rakstiet čatā, sūtiet Super Chat ziņojumus un pielāgojiet pārklājumu."
   },
   "popup_theme": {
     "message": "Motīvs"
@@ -12,7 +12,7 @@
     "message": "Motīvs"
   },
   "content_setting_themeMode_system": {
-    "message": "Automātiski"
+    "message": "Automātisks"
   },
   "content_setting_themeMode_light": {
     "message": "Gaišs"

@@ -4,18 +4,18 @@
       "header": {
         "preset": "Predefinit",
         "setting": "Configuració",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Desfés el canvi d'estil",
+        "redo": "Refés el canvi d'estil"
       },
-      "alwaysOnDisplay": "Sempre visible",
-      "chatOnlyDisplay": "Només el xat",
+      "alwaysOnDisplay": "Mostra sempre el xat",
+      "chatOnlyDisplay": "Mostra només el xat",
       "userNameDisplay": "Mostra el nom d'usuari",
-      "userIconDisplay": "Mostra la icona d'usuari",
+      "userIconDisplay": "Mostra la foto de perfil",
       "superChatBarDisplay": "Mostra la barra de Super Chat",
       "backgroundColor": "Color de fons",
-      "fontColor": "Color de lletra",
+      "fontColor": "Color del text",
       "fontFamily": "Tipus de lletra",
-      "fontSize": "Mida de lletra",
+      "fontSize": "Mida de la lletra",
       "blur": "Desenfocament",
       "space": "Espaiat",
       "footer": {
@@ -29,49 +29,49 @@
         "light": "Clar",
         "dark": "Fosc"
       },
-      "membershipNameColor": "Color del nom de membre",
+      "membershipNameColor": "Color dels noms dels membres",
       "defaultColor": "Per defecte",
-      "resetToDefaultColor": "Torna al color predeterminat",
+      "resetToDefaultColor": "Restaura el color per defecte",
       "group": {
-        "display": "Visualització",
+        "display": "Visibilitat",
         "colors": "Colors",
         "text": "Text",
-        "elements": "Elements visibles"
+        "elements": "Elements del xat"
       },
-      "requiresAlwaysOn": "Activa «Sempre visible» per configurar-ho"
+      "requiresAlwaysOn": "Activa «Mostra sempre el xat» per canviar aquesta opció"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",
-      "arrowKeysToMove": "Tecles de fletxa per moure",
+      "arrowKeysToMove": "Fes servir les tecles de fletxa per moure",
       "openSettings": "Obre la configuració",
-      "toggleLiveChat": "Activa o desactiva el xat en directe",
+      "toggleLiveChat": "Mostra o amaga el xat en directe",
       "close": "Tanca",
-      "reorderPreset": "Reordena el predefinit",
+      "reorderPreset": "Mou el predefinit",
       "presetName": "Nom del predefinit",
       "applyPreset": "Aplica el predefinit",
       "deletePreset": "Elimina el predefinit",
       "colorPicker": "Selector de color",
-      "loading": "Carregant",
-      "selectLanguage": "Selecciona l'idioma"
+      "loading": "S'està carregant",
+      "selectLanguage": "Selecciona la llengua"
     },
     "preset": {
-      "addMessage": "Afegeix la configuració actual",
+      "addMessage": "Desa la configuració actual",
       "addItemTitle": "Sense títol",
       "defaultTitle": "Estàndard",
       "transparentTitle": "Transparent",
-      "simpleTitle": "Només comentaris",
-      "deleteConfirmationMessage": "Segur que vols eliminar-ho?",
+      "simpleTitle": "Només xat",
+      "deleteConfirmationMessage": "Vols eliminar aquest predefinit?",
       "delete": "Elimina",
       "cancel": "Cancel·la",
       "darkTitle": "Fosc",
       "readableTitle": "Text gran",
       "compactTitle": "Compacte",
-      "neonTitle": "Colorit",
+      "neonTitle": "Colors vius",
       "apply": "Aplica"
     }
   },
   "popup": {
-    "language": "Configuració d'idioma",
+    "language": "Configuració de la llengua",
     "showChatOnFullscreen": "Xat a pantalla completa",
     "links": "Enllaços",
     "donate": "Fes una donació",

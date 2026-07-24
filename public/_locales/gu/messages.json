@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "ચેટ ગુમાવ્યા વિના YouTube Live પૂર્ણ સ્ક્રીનમાં જુઓ. ટિપ્પણી કરો, Super Chat મોકલો અને ઓવરલે કસ્ટમાઇઝ કરો."
+    "message": "YouTube Live પૂર્ણ સ્ક્રીનમાં જોતી વખતે ચેટ વાંચો અને સંદેશા મોકલો. Super Chat મોકલો અને ઓવરલેનો દેખાવ તથા સ્થાન તમારી રીતે ગોઠવો."
   },
   "popup_theme": {
     "message": "થીમ"
@@ -12,7 +12,7 @@
     "message": "થીમ"
   },
   "content_setting_themeMode_system": {
-    "message": "ઓટો"
+    "message": "ઑટો"
   },
   "content_setting_themeMode_light": {
     "message": "લાઇટ"

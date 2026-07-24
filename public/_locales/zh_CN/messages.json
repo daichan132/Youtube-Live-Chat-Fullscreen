@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube 直播聊天全屏"
+    "message": "YouTube 直播全屏聊天"
   },
   "extensionDescription": {
-    "message": "全屏观看 YouTube 直播时保留聊天功能。发送评论和 Super Chat，自由定制聊天覆盖层样式。"
+    "message": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。"
   },
   "popup_theme": {
     "message": "主题"

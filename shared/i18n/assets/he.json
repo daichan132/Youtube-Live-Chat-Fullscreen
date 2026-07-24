@@ -2,22 +2,22 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "ערכות",
+        "preset": "הגדרות קבועות מראש",
         "setting": "הגדרות",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "ביטול שינוי העיצוב",
+        "redo": "ביצוע מחדש של שינוי העיצוב"
       },
-      "alwaysOnDisplay": "תצוגה קבועה",
-      "chatOnlyDisplay": "הצגת צ׳אט בלבד",
-      "userNameDisplay": "הצגת שם משתמש",
-      "userIconDisplay": "הצגת סמל משתמש",
+      "alwaysOnDisplay": "הצגת הצ׳אט תמיד",
+      "chatOnlyDisplay": "מצב צ׳אט בלבד",
+      "userNameDisplay": "הצגת שמות משתמשים",
+      "userIconDisplay": "הצגת תמונות פרופיל",
       "superChatBarDisplay": "הצגת סרגל Super Chat",
       "backgroundColor": "צבע רקע",
-      "fontColor": "צבע גופן",
+      "fontColor": "צבע טקסט",
       "fontFamily": "גופן",
-      "fontSize": "גודל גופן",
+      "fontSize": "גודל טקסט",
       "blur": "טשטוש",
-      "space": "ריווח",
+      "space": "מרווח בין הודעות",
       "footer": {
         "donate": "תרומה",
         "chrome": "Chrome",
@@ -29,49 +29,49 @@
         "light": "בהיר",
         "dark": "כהה"
       },
-      "membershipNameColor": "צבע שם חבר",
+      "membershipNameColor": "צבע שמות החברים",
       "defaultColor": "ברירת מחדל",
-      "resetToDefaultColor": "איפוס לצבע ברירת המחדל",
+      "resetToDefaultColor": "שחזור צבע ברירת המחדל",
       "group": {
         "display": "תצוגה",
         "colors": "צבעים",
         "text": "טקסט",
-        "elements": "רכיבי תצוגה"
+        "elements": "רכיבי צ׳אט"
       },
-      "requiresAlwaysOn": "הפעל \"תצוגה קבועה\" כדי להגדיר זאת"
+      "requiresAlwaysOn": "יש להפעיל את \"הצגת הצ׳אט תמיד\" כדי להשתמש באפשרות הזו"
     },
     "aria": {
-      "dragToMove": "גרור להזזה",
-      "arrowKeysToMove": "מקשי חצים להזזה",
+      "dragToMove": "גרירה להזזה",
+      "arrowKeysToMove": "שימוש במקשי החצים להזזה",
       "openSettings": "פתיחת הגדרות",
-      "toggleLiveChat": "הצגה/הסתרה של צ׳אט חי",
+      "toggleLiveChat": "הצגה או הסתרה של הצ׳אט החי",
       "close": "סגירה",
-      "reorderPreset": "שינוי סדר ערכות",
-      "presetName": "שם ערכה",
-      "applyPreset": "החלת ערכה",
-      "deletePreset": "מחיקת ערכה",
+      "reorderPreset": "הזזת ההגדרה הקבועה מראש",
+      "presetName": "שם ההגדרה הקבועה מראש",
+      "applyPreset": "החלת ההגדרה הקבועה מראש",
+      "deletePreset": "מחיקת ההגדרה הקבועה מראש",
       "colorPicker": "בורר צבעים",
-      "loading": "טוען",
+      "loading": "בטעינה",
       "selectLanguage": "בחירת שפה"
     },
     "preset": {
-      "addMessage": "הוספת ההגדרות הנוכחיות",
+      "addMessage": "שמירת ההגדרות הנוכחיות",
       "addItemTitle": "ללא שם",
-      "defaultTitle": "רגיל",
-      "transparentTitle": "שקוף",
-      "simpleTitle": "תגובות בלבד",
-      "deleteConfirmationMessage": "האם למחוק פריט זה?",
+      "defaultTitle": "רגילה",
+      "transparentTitle": "שקופה",
+      "simpleTitle": "הודעות בלבד",
+      "deleteConfirmationMessage": "למחוק את ההגדרה הקבועה מראש?",
       "delete": "מחיקה",
       "cancel": "ביטול",
       "darkTitle": "כהה",
       "readableTitle": "טקסט גדול",
-      "compactTitle": "קומפקטי",
-      "neonTitle": "צבעוני",
-      "apply": "החל"
+      "compactTitle": "קומפקטית",
+      "neonTitle": "צבעונית",
+      "apply": "החלה"
     }
   },
   "popup": {
-    "language": "הגדרות שפה",
+    "language": "שפה",
     "showChatOnFullscreen": "צ׳אט במסך מלא",
     "links": "קישורים",
     "donate": "תרומה",
@@ -79,6 +79,6 @@
     "dataTransfer": "גיבוי",
     "export": "ייצוא",
     "import": "ייבוא",
-    "importError": "לא ניתן לייבא את קובץ ההגדרות."
+    "importError": "ייבוא קובץ ההגדרות נכשל."
   }
 }

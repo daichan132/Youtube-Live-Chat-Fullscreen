@@ -4,20 +4,20 @@
       "header": {
         "preset": "Prasetel",
         "setting": "Pengaturan",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Urungkan perubahan gaya",
+        "redo": "Ulangi perubahan gaya"
       },
-      "alwaysOnDisplay": "Selalu Tampil",
-      "chatOnlyDisplay": "Hanya Tampilkan Chat",
-      "userNameDisplay": "Tampilkan Nama Pengguna",
-      "userIconDisplay": "Tampilkan Ikon Pengguna",
-      "superChatBarDisplay": "Tampilkan Bilah Super Chat",
-      "backgroundColor": "Warna Latar Belakang",
-      "fontColor": "Warna Font",
-      "fontFamily": "Jenis Huruf",
-      "fontSize": "Ukuran Font",
-      "blur": "Buram",
-      "space": "Jarak",
+      "alwaysOnDisplay": "Selalu tampilkan chat",
+      "chatOnlyDisplay": "Mode chat saja",
+      "userNameDisplay": "Tampilkan nama pengguna",
+      "userIconDisplay": "Tampilkan foto profil",
+      "superChatBarDisplay": "Tampilkan bilah Super Chat",
+      "backgroundColor": "Warna latar belakang",
+      "fontColor": "Warna teks",
+      "fontFamily": "Font",
+      "fontSize": "Ukuran teks",
+      "blur": "Efek buram",
+      "space": "Jarak antarpesan",
       "footer": {
         "donate": "Donasi",
         "chrome": "Chrome",
@@ -29,24 +29,24 @@
         "light": "Terang",
         "dark": "Gelap"
       },
-      "membershipNameColor": "Warna nama member",
+      "membershipNameColor": "Warna nama anggota",
       "defaultColor": "Bawaan",
-      "resetToDefaultColor": "Reset ke warna default",
+      "resetToDefaultColor": "Pulihkan warna bawaan",
       "group": {
         "display": "Tampilan",
         "colors": "Warna",
         "text": "Teks",
-        "elements": "Elemen Tampilan"
+        "elements": "Elemen chat"
       },
-      "requiresAlwaysOn": "Aktifkan \"Selalu Tampil\" untuk mengatur ini"
+      "requiresAlwaysOn": "Aktifkan \"Selalu tampilkan chat\" untuk menggunakan opsi ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
       "arrowKeysToMove": "Gunakan tombol panah untuk memindahkan",
       "openSettings": "Buka pengaturan",
-      "toggleLiveChat": "Aktifkan/nonaktifkan live chat",
+      "toggleLiveChat": "Tampilkan atau sembunyikan live chat",
       "close": "Tutup",
-      "reorderPreset": "Urutkan ulang prasetel",
+      "reorderPreset": "Pindahkan prasetel",
       "presetName": "Nama prasetel",
       "applyPreset": "Terapkan prasetel",
       "deletePreset": "Hapus prasetel",
@@ -55,28 +55,28 @@
       "selectLanguage": "Pilih bahasa"
     },
     "preset": {
-      "addMessage": "Tambah Pengaturan Saat Ini",
-      "addItemTitle": "Tanpa Judul",
+      "addMessage": "Simpan pengaturan saat ini",
+      "addItemTitle": "Tanpa judul",
       "defaultTitle": "Standar",
       "transparentTitle": "Transparan",
-      "simpleTitle": "Hanya komentar",
-      "deleteConfirmationMessage": "Apakah Anda yakin ingin menghapus ini?",
+      "simpleTitle": "Hanya pesan",
+      "deleteConfirmationMessage": "Hapus prasetel ini?",
       "delete": "Hapus",
       "cancel": "Batal",
       "darkTitle": "Gelap",
       "readableTitle": "Teks besar",
       "compactTitle": "Ringkas",
-      "neonTitle": "Berwarna",
+      "neonTitle": "Warna-warni",
       "apply": "Terapkan"
     }
   },
   "popup": {
-    "language": "Pengaturan Bahasa",
-    "showChatOnFullscreen": "Chat Layar Penuh",
+    "language": "Bahasa",
+    "showChatOnFullscreen": "Chat layar penuh",
     "links": "Tautan",
     "donate": "Donasi",
     "theme": "Tema",
-    "dataTransfer": "Cadangan",
+    "dataTransfer": "Pencadangan",
     "export": "Ekspor",
     "import": "Impor",
     "importError": "Tidak dapat mengimpor file pengaturan."

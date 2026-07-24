@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Skrini Nzima"
   },
   "extensionDescription": {
-    "message": "Tazama YouTube Live kwa skrini nzima bila kupoteza gumzo. Tuma maoni, Super Chats na ubadilishe muonekano wa ovelei."
+    "message": "Tazama YouTube Live kwenye skrini nzima pamoja na gumzo. Tuma ujumbe na Super Chat, kisha ubinafsishe mwonekano."
   },
   "popup_theme": {
     "message": "Mandhari"
@@ -15,7 +15,7 @@
     "message": "Otomatiki"
   },
   "content_setting_themeMode_light": {
-    "message": "Mwanga"
+    "message": "Angavu"
   },
   "content_setting_themeMode_dark": {
     "message": "Giza"

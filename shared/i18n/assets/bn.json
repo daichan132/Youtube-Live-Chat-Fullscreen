@@ -4,13 +4,13 @@
       "header": {
         "preset": "প্রিসেট",
         "setting": "সেটিংস",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "স্টাইলের পরিবর্তন পূর্বাবস্থায় ফেরান",
+        "redo": "স্টাইলের পরিবর্তন আবার করুন"
       },
       "alwaysOnDisplay": "সবসময় দেখান",
       "chatOnlyDisplay": "শুধু চ্যাট দেখান",
       "userNameDisplay": "ব্যবহারকারীর নাম দেখান",
-      "userIconDisplay": "ব্যবহারকারীর আইকন দেখান",
+      "userIconDisplay": "প্রোফাইল ছবি দেখান",
       "superChatBarDisplay": "Super Chat বার দেখান",
       "backgroundColor": "পটভূমির রঙ",
       "fontColor": "ফন্টের রঙ",
@@ -36,7 +36,7 @@
         "display": "প্রদর্শন",
         "colors": "রং",
         "text": "টেক্সট",
-        "elements": "প্রদর্শন উপাদান"
+        "elements": "চ্যাটের উপাদান"
       },
       "requiresAlwaysOn": "এটি কনফিগার করতে \"সবসময় দেখান\" চালু করুন"
     },
@@ -55,11 +55,11 @@
       "selectLanguage": "ভাষা নির্বাচন করুন"
     },
     "preset": {
-      "addMessage": "বর্তমান সেটিংস যোগ করুন",
+      "addMessage": "বর্তমান সেটিংস সংরক্ষণ করুন",
       "addItemTitle": "শিরোনামহীন",
       "defaultTitle": "স্ট্যান্ডার্ড",
       "transparentTitle": "স্বচ্ছ",
-      "simpleTitle": "শুধু মন্তব্য",
+      "simpleTitle": "শুধু চ্যাট",
       "deleteConfirmationMessage": "আপনি কি নিশ্চিত এটি মুছে ফেলতে চান?",
       "delete": "মুছুন",
       "cancel": "বাতিল",

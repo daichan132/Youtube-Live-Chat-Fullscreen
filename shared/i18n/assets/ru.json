@@ -4,20 +4,20 @@
       "header": {
         "preset": "Пресет",
         "setting": "Настройки",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Отменить изменение оформления",
+        "redo": "Повторить изменение оформления"
       },
-      "alwaysOnDisplay": "Всегда отображать",
+      "alwaysOnDisplay": "Всегда показывать чат",
       "chatOnlyDisplay": "Только чат",
-      "userNameDisplay": "Показывать имя пользователя",
-      "userIconDisplay": "Показывать иконку пользователя",
+      "userNameDisplay": "Показывать имена пользователей",
+      "userIconDisplay": "Показывать аватары",
       "superChatBarDisplay": "Показывать панель Super Chat",
       "backgroundColor": "Цвет фона",
       "fontColor": "Цвет текста",
       "fontFamily": "Шрифт",
-      "fontSize": "Размер шрифта",
+      "fontSize": "Размер текста",
       "blur": "Размытие",
-      "space": "Интервал",
+      "space": "Интервал между сообщениями",
       "footer": {
         "donate": "Поддержать",
         "chrome": "Chrome",
@@ -29,38 +29,38 @@
         "light": "Светлая",
         "dark": "Тёмная"
       },
-      "membershipNameColor": "Цвет имени спонсора",
+      "membershipNameColor": "Цвет имён спонсоров",
       "defaultColor": "По умолчанию",
-      "resetToDefaultColor": "Вернуть цвет по умолчанию",
+      "resetToDefaultColor": "Восстановить цвет по умолчанию",
       "group": {
         "display": "Отображение",
         "colors": "Цвета",
         "text": "Текст",
-        "elements": "Элементы отображения"
+        "elements": "Элементы чата"
       },
-      "requiresAlwaysOn": "Включите «Всегда показывать», чтобы настроить"
+      "requiresAlwaysOn": "Включите «Всегда показывать чат», чтобы использовать эту настройку"
     },
     "aria": {
-      "dragToMove": "Перетащите для перемещения",
-      "arrowKeysToMove": "Стрелки для перемещения",
+      "dragToMove": "Перетащите, чтобы переместить",
+      "arrowKeysToMove": "Используйте клавиши со стрелками для перемещения",
       "openSettings": "Открыть настройки",
-      "toggleLiveChat": "Переключить живой чат",
+      "toggleLiveChat": "Показать или скрыть чат",
       "close": "Закрыть",
-      "reorderPreset": "Изменить порядок пресетов",
+      "reorderPreset": "Переместить пресет",
       "presetName": "Название пресета",
       "applyPreset": "Применить пресет",
       "deletePreset": "Удалить пресет",
       "colorPicker": "Выбор цвета",
       "loading": "Загрузка",
-      "selectLanguage": "Выбор языка"
+      "selectLanguage": "Выберите язык"
     },
     "preset": {
-      "addMessage": "Добавить текущие настройки",
+      "addMessage": "Сохранить текущие настройки",
       "addItemTitle": "Без названия",
       "defaultTitle": "Стандартный",
       "transparentTitle": "Прозрачный",
-      "simpleTitle": "Только комментарии",
-      "deleteConfirmationMessage": "Вы уверены, что хотите удалить?",
+      "simpleTitle": "Только сообщения",
+      "deleteConfirmationMessage": "Удалить этот пресет?",
       "delete": "Удалить",
       "cancel": "Отмена",
       "darkTitle": "Тёмный",
@@ -76,9 +76,9 @@
     "links": "Ссылки",
     "donate": "Поддержать",
     "theme": "Тема",
-    "dataTransfer": "Резервная копия",
-    "export": "Экспорт",
-    "import": "Импорт",
-    "importError": "Не удалось импортировать файл настроек."
+    "dataTransfer": "Резервное копирование",
+    "export": "Экспортировать",
+    "import": "Импортировать",
+    "importError": "Не удалось импортировать файл с настройками."
   }
 }

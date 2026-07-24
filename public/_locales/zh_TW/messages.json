@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube 直播聊天室全螢幕"
+    "message": "YouTube 直播全螢幕聊天室"
   },
   "extensionDescription": {
-    "message": "全螢幕觀看 YouTube 直播時保留聊天功能。發送留言和 Super Chat，自由自訂聊天覆蓋層樣式。"
+    "message": "全螢幕觀看 YouTube 直播時也能查看及傳送聊天訊息、傳送 Super Chat，並自由調整聊天室浮動視窗的樣式與位置。"
   },
   "popup_theme": {
     "message": "主題"

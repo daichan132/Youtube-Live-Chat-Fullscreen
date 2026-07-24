@@ -4,16 +4,16 @@
       "header": {
         "preset": "Шаблони",
         "setting": "Настройки",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Отмени промяната на стила",
+        "redo": "Повтори промяната на стила"
       },
-      "alwaysOnDisplay": "Винаги на екрана",
-      "chatOnlyDisplay": "Само чат",
-      "userNameDisplay": "Показване на потребителско име",
-      "userIconDisplay": "Показване на потребителска икона",
-      "superChatBarDisplay": "Показване на Super Chat лентата",
+      "alwaysOnDisplay": "Постоянно показване на чата",
+      "chatOnlyDisplay": "Показване само на чата",
+      "userNameDisplay": "Показване на потребителските имена",
+      "userIconDisplay": "Показване на профилните снимки",
+      "superChatBarDisplay": "Показване на лентата Super Chat",
       "backgroundColor": "Цвят на фона",
-      "fontColor": "Цвят на шрифта",
+      "fontColor": "Цвят на текста",
       "fontFamily": "Шрифт",
       "fontSize": "Размер на шрифта",
       "blur": "Замъгляване",
@@ -25,42 +25,42 @@
       },
       "theme": "Тема",
       "themeMode": {
-        "system": "Автоматично",
+        "system": "Автоматична",
         "light": "Светла",
         "dark": "Тъмна"
       },
-      "membershipNameColor": "Цвят на името на члена",
+      "membershipNameColor": "Цвят на имената на членовете",
       "defaultColor": "По подразбиране",
       "resetToDefaultColor": "Връщане към цвета по подразбиране",
       "group": {
         "display": "Показване",
         "colors": "Цветове",
         "text": "Текст",
-        "elements": "Показвани елементи"
+        "elements": "Видими елементи"
       },
-      "requiresAlwaysOn": "Включете „Винаги на екрана“, за да настроите това"
+      "requiresAlwaysOn": "Включете „Постоянно показване на чата“, за да използвате тази опция"
     },
     "aria": {
-      "dragToMove": "Плъзнете за преместване",
-      "arrowKeysToMove": "Стрелки за преместване",
-      "openSettings": "Отваряне на настройките",
-      "toggleLiveChat": "Превключване на чата на живо",
-      "close": "Затваряне",
-      "reorderPreset": "Пренареждане на шаблон",
-      "presetName": "Име на шаблон",
-      "applyPreset": "Прилагане на шаблон",
-      "deletePreset": "Изтриване на шаблон",
+      "dragToMove": "Плъзнете, за да преместите",
+      "arrowKeysToMove": "Преместете с клавишите със стрелки",
+      "openSettings": "Отворете настройките",
+      "toggleLiveChat": "Покажете или скрийте чата на живо",
+      "close": "Затворете",
+      "reorderPreset": "Променете позицията на шаблона",
+      "presetName": "Име на шаблона",
+      "applyPreset": "Приложете шаблона",
+      "deletePreset": "Изтрийте шаблона",
       "colorPicker": "Избор на цвят",
       "loading": "Зареждане",
-      "selectLanguage": "Избор на език"
+      "selectLanguage": "Изберете език"
     },
     "preset": {
-      "addMessage": "Добави текущите настройки",
+      "addMessage": "Запази текущите настройки",
       "addItemTitle": "Без заглавие",
       "defaultTitle": "Стандартен",
       "transparentTitle": "Прозрачен",
-      "simpleTitle": "Само коментари",
-      "deleteConfirmationMessage": "Наистина ли искате да изтриете?",
+      "simpleTitle": "Само чат",
+      "deleteConfirmationMessage": "Да се изтрие ли този шаблон?",
       "delete": "Изтрий",
       "cancel": "Отказ",
       "darkTitle": "Тъмен",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Езикови настройки",
+    "language": "Език",
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
     "donate": "Дарение",

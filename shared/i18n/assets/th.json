@@ -4,20 +4,20 @@
       "header": {
         "preset": "ค่าตั้งล่วงหน้า",
         "setting": "การตั้งค่า",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "เลิกทำการเปลี่ยนรูปแบบ",
+        "redo": "ทำซ้ำการเปลี่ยนรูปแบบ"
       },
-      "alwaysOnDisplay": "แสดงตลอดเวลา",
-      "chatOnlyDisplay": "แสดงเฉพาะแชท",
+      "alwaysOnDisplay": "แสดงแชทตลอดเวลา",
+      "chatOnlyDisplay": "โหมดแสดงเฉพาะแชท",
       "userNameDisplay": "แสดงชื่อผู้ใช้",
-      "userIconDisplay": "แสดงไอคอนผู้ใช้",
+      "userIconDisplay": "แสดงรูปโปรไฟล์",
       "superChatBarDisplay": "แสดงแถบ Super Chat",
       "backgroundColor": "สีพื้นหลัง",
-      "fontColor": "สีตัวอักษร",
+      "fontColor": "สีข้อความ",
       "fontFamily": "แบบอักษร",
-      "fontSize": "ขนาดตัวอักษร",
-      "blur": "เบลอ",
-      "space": "ระยะห่าง",
+      "fontSize": "ขนาดข้อความ",
+      "blur": "ความเบลอ",
+      "space": "ระยะห่างระหว่างข้อความ",
       "footer": {
         "donate": "บริจาค",
         "chrome": "Chrome",
@@ -31,47 +31,47 @@
       },
       "membershipNameColor": "สีชื่อสมาชิก",
       "defaultColor": "ค่าเริ่มต้น",
-      "resetToDefaultColor": "รีเซ็ตเป็นสีเริ่มต้น",
+      "resetToDefaultColor": "คืนค่าสีเริ่มต้น",
       "group": {
         "display": "การแสดงผล",
         "colors": "สี",
         "text": "ข้อความ",
-        "elements": "องค์ประกอบการแสดงผล"
+        "elements": "องค์ประกอบแชท"
       },
-      "requiresAlwaysOn": "เปิด \"แสดงตลอดเวลา\" เพื่อกำหนดค่านี้"
+      "requiresAlwaysOn": "เปิด \"แสดงแชทตลอดเวลา\" เพื่อใช้ตัวเลือกนี้"
     },
     "aria": {
       "dragToMove": "ลากเพื่อย้าย",
       "arrowKeysToMove": "ใช้ปุ่มลูกศรเพื่อย้าย",
       "openSettings": "เปิดการตั้งค่า",
-      "toggleLiveChat": "เปิด/ปิดแชทสด",
+      "toggleLiveChat": "แสดงหรือซ่อนแชทสด",
       "close": "ปิด",
-      "reorderPreset": "จัดเรียงค่าตั้งล่วงหน้า",
+      "reorderPreset": "ย้ายค่าตั้งล่วงหน้า",
       "presetName": "ชื่อค่าตั้งล่วงหน้า",
       "applyPreset": "ใช้ค่าตั้งล่วงหน้า",
       "deletePreset": "ลบค่าตั้งล่วงหน้า",
-      "colorPicker": "ตัวเลือกสี",
+      "colorPicker": "เครื่องมือเลือกสี",
       "loading": "กำลังโหลด",
       "selectLanguage": "เลือกภาษา"
     },
     "preset": {
-      "addMessage": "เพิ่มการตั้งค่าปัจจุบัน",
+      "addMessage": "บันทึกการตั้งค่าปัจจุบัน",
       "addItemTitle": "ไม่มีชื่อ",
       "defaultTitle": "มาตรฐาน",
       "transparentTitle": "โปร่งใส",
-      "simpleTitle": "เฉพาะความคิดเห็น",
-      "deleteConfirmationMessage": "คุณแน่ใจหรือไม่ว่าต้องการลบสิ่งนี้?",
+      "simpleTitle": "เฉพาะข้อความ",
+      "deleteConfirmationMessage": "ลบค่าตั้งล่วงหน้านี้หรือไม่",
       "delete": "ลบ",
       "cancel": "ยกเลิก",
       "darkTitle": "มืด",
       "readableTitle": "ข้อความใหญ่",
       "compactTitle": "กะทัดรัด",
-      "neonTitle": "สีสัน",
+      "neonTitle": "สีสันสดใส",
       "apply": "ใช้"
     }
   },
   "popup": {
-    "language": "ตั้งค่าภาษา",
+    "language": "ภาษา",
     "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค",

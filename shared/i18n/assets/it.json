@@ -4,16 +4,16 @@
       "header": {
         "preset": "Preimpostazioni",
         "setting": "Impostazioni",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Annulla modifica allo stile",
+        "redo": "Ripeti modifica allo stile"
       },
-      "alwaysOnDisplay": "Sempre visibile",
-      "chatOnlyDisplay": "Solo chat visibile",
-      "userNameDisplay": "Visualizza nome utente",
-      "userIconDisplay": "Visualizza icona utente",
-      "superChatBarDisplay": "Visualizza barra Super Chat",
+      "alwaysOnDisplay": "Mostra sempre la chat",
+      "chatOnlyDisplay": "Mostra solo la chat",
+      "userNameDisplay": "Mostra i nomi utente",
+      "userIconDisplay": "Mostra le immagini del profilo",
+      "superChatBarDisplay": "Mostra la barra Super Chat",
       "backgroundColor": "Colore di sfondo",
-      "fontColor": "Colore del carattere",
+      "fontColor": "Colore del testo",
       "fontFamily": "Tipo di carattere",
       "fontSize": "Dimensione carattere",
       "blur": "Sfocatura",
@@ -29,38 +29,38 @@
         "light": "Chiaro",
         "dark": "Scuro"
       },
-      "membershipNameColor": "Colore del nome membro",
+      "membershipNameColor": "Colore dei nomi dei membri",
       "defaultColor": "Predefinito",
       "resetToDefaultColor": "Ripristina colore predefinito",
       "group": {
         "display": "Visualizzazione",
         "colors": "Colori",
         "text": "Testo",
-        "elements": "Elementi visualizzati"
+        "elements": "Elementi visibili"
       },
-      "requiresAlwaysOn": "Attiva \"Mostra sempre\" per configurarlo"
+      "requiresAlwaysOn": "Attiva «Mostra sempre la chat» per usare questa opzione"
     },
     "aria": {
       "dragToMove": "Trascina per spostare",
-      "arrowKeysToMove": "Tasti freccia per spostare",
+      "arrowKeysToMove": "Usa i tasti freccia per spostare",
       "openSettings": "Apri impostazioni",
-      "toggleLiveChat": "Attiva o disattiva la chat live",
+      "toggleLiveChat": "Mostra o nascondi la chat dal vivo",
       "close": "Chiudi",
-      "reorderPreset": "Riordina preimpostazione",
-      "presetName": "Nome preimpostazione",
-      "applyPreset": "Applica preimpostazione",
-      "deletePreset": "Elimina preimpostazione",
-      "colorPicker": "Selettore colore",
-      "loading": "Caricamento",
-      "selectLanguage": "Seleziona lingua"
+      "reorderPreset": "Riordina la preimpostazione",
+      "presetName": "Nome della preimpostazione",
+      "applyPreset": "Applica la preimpostazione",
+      "deletePreset": "Elimina la preimpostazione",
+      "colorPicker": "Selettore del colore",
+      "loading": "Caricamento in corso",
+      "selectLanguage": "Seleziona la lingua"
     },
     "preset": {
-      "addMessage": "Aggiungi impostazioni attuali",
+      "addMessage": "Salva impostazioni correnti",
       "addItemTitle": "Senza titolo",
       "defaultTitle": "Standard",
       "transparentTitle": "Trasparente",
-      "simpleTitle": "Solo commenti",
-      "deleteConfirmationMessage": "Sei sicuro di voler eliminare?",
+      "simpleTitle": "Solo chat",
+      "deleteConfirmationMessage": "Vuoi eliminare questa preimpostazione?",
       "delete": "Elimina",
       "cancel": "Annulla",
       "darkTitle": "Scuro",
@@ -71,7 +71,7 @@
     }
   },
   "popup": {
-    "language": "Impostazioni lingua",
+    "language": "Lingua",
     "showChatOnFullscreen": "Chat a schermo intero",
     "links": "Link",
     "donate": "Dona",

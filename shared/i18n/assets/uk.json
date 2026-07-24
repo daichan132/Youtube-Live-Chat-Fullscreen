@@ -2,22 +2,22 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Шаблон",
+        "preset": "Пресет",
         "setting": "Налаштування",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Скасувати зміну оформлення",
+        "redo": "Повторити зміну оформлення"
       },
-      "alwaysOnDisplay": "Завжди на екрані",
+      "alwaysOnDisplay": "Завжди показувати чат",
       "chatOnlyDisplay": "Лише чат",
-      "userNameDisplay": "Показувати ім'я користувача",
-      "userIconDisplay": "Показувати іконку користувача",
+      "userNameDisplay": "Показувати імена користувачів",
+      "userIconDisplay": "Показувати аватари",
       "superChatBarDisplay": "Показувати панель Super Chat",
       "backgroundColor": "Колір фону",
-      "fontColor": "Колір шрифту",
+      "fontColor": "Колір тексту",
       "fontFamily": "Шрифт",
-      "fontSize": "Розмір шрифту",
+      "fontSize": "Розмір тексту",
       "blur": "Розмиття",
-      "space": "Інтервал",
+      "space": "Інтервал між повідомленнями",
       "footer": {
         "donate": "Підтримати",
         "chrome": "Chrome",
@@ -29,38 +29,38 @@
         "light": "Світла",
         "dark": "Темна"
       },
-      "membershipNameColor": "Колір імені спонсора",
+      "membershipNameColor": "Колір імен спонсорів",
       "defaultColor": "За замовчуванням",
-      "resetToDefaultColor": "Повернути колір за замовчуванням",
+      "resetToDefaultColor": "Відновити колір за замовчуванням",
       "group": {
         "display": "Відображення",
         "colors": "Кольори",
         "text": "Текст",
-        "elements": "Відображувані елементи"
+        "elements": "Елементи чату"
       },
-      "requiresAlwaysOn": "Увімкніть «Завжди на екрані», щоб налаштувати це"
+      "requiresAlwaysOn": "Увімкніть «Завжди показувати чат», щоб скористатися цим параметром"
     },
     "aria": {
-      "dragToMove": "Перетягніть для переміщення",
-      "arrowKeysToMove": "Стрілки для переміщення",
+      "dragToMove": "Перетягніть, щоб перемістити",
+      "arrowKeysToMove": "Для переміщення використовуйте клавіші зі стрілками",
       "openSettings": "Відкрити налаштування",
-      "toggleLiveChat": "Перемкнути живий чат",
+      "toggleLiveChat": "Показати або приховати чат",
       "close": "Закрити",
-      "reorderPreset": "Змінити порядок шаблонів",
-      "presetName": "Назва шаблону",
-      "applyPreset": "Застосувати шаблон",
-      "deletePreset": "Видалити шаблон",
+      "reorderPreset": "Перемістити пресет",
+      "presetName": "Назва пресету",
+      "applyPreset": "Застосувати пресет",
+      "deletePreset": "Видалити пресет",
       "colorPicker": "Вибір кольору",
       "loading": "Завантаження",
-      "selectLanguage": "Вибір мови"
+      "selectLanguage": "Виберіть мову"
     },
     "preset": {
-      "addMessage": "Додати поточні налаштування",
+      "addMessage": "Зберегти поточні налаштування",
       "addItemTitle": "Без назви",
       "defaultTitle": "Стандартний",
       "transparentTitle": "Прозорий",
-      "simpleTitle": "Лише коментарі",
-      "deleteConfirmationMessage": "Ви впевнені, що хочете видалити?",
+      "simpleTitle": "Лише повідомлення",
+      "deleteConfirmationMessage": "Видалити цей пресет?",
       "delete": "Видалити",
       "cancel": "Скасувати",
       "darkTitle": "Темний",
@@ -72,13 +72,13 @@
   },
   "popup": {
     "language": "Мова",
-    "showChatOnFullscreen": "Чат на весь екран",
+    "showChatOnFullscreen": "Чат у повноекранному режимі",
     "links": "Посилання",
     "donate": "Підтримати",
     "theme": "Тема",
-    "dataTransfer": "Резервна копія",
-    "export": "Експорт",
-    "import": "Імпорт",
-    "importError": "Не вдалося імпортувати файл налаштувань."
+    "dataTransfer": "Резервне копіювання",
+    "export": "Експортувати",
+    "import": "Імпортувати",
+    "importError": "Не вдалося імпортувати файл із налаштуваннями."
   }
 }

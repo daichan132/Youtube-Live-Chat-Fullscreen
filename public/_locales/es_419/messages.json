@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat en pantalla completa"
+    "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Mira YouTube Live en pantalla completa sin perder el chat. Comenta, envía Super Chats y personaliza la ventana."
+    "message": "Mira YouTube Live en pantalla completa con el chat visible. Chatea, envía Super Chats y personaliza la superposición a tu gusto."
   },
   "popup_theme": {
     "message": "Tema"
@@ -12,7 +12,7 @@
     "message": "Tema"
   },
   "content_setting_themeMode_system": {
-    "message": "Auto"
+    "message": "Automático"
   },
   "content_setting_themeMode_light": {
     "message": "Claro"

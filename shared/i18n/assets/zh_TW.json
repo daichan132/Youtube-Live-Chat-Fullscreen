@@ -4,8 +4,8 @@
       "header": {
         "preset": "預設方案",
         "setting": "設定",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "復原樣式變更",
+        "redo": "重做樣式變更"
       },
       "alwaysOnDisplay": "總是顯示",
       "chatOnlyDisplay": "僅顯示聊天室",
@@ -38,7 +38,7 @@
         "text": "文字",
         "elements": "顯示元素"
       },
-      "requiresAlwaysOn": "開啟「常駐顯示」後即可設定"
+      "requiresAlwaysOn": "開啟「總是顯示」後即可設定"
     },
     "aria": {
       "dragToMove": "拖曳以移動",
@@ -59,7 +59,7 @@
       "addItemTitle": "未命名",
       "defaultTitle": "標準",
       "transparentTitle": "透明",
-      "simpleTitle": "僅留言",
+      "simpleTitle": "僅聊天室",
       "deleteConfirmationMessage": "確定要刪除嗎？",
       "delete": "刪除",
       "cancel": "取消",

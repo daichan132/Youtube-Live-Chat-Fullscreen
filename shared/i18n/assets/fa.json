@@ -4,20 +4,20 @@
       "header": {
         "preset": "پیش‌تنظیم",
         "setting": "تنظیمات",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "واگردانی تغییر ظاهر",
+        "redo": "انجام دوبارهٔ تغییر ظاهر"
       },
-      "alwaysOnDisplay": "نمایش همیشگی",
-      "chatOnlyDisplay": "فقط نمایش چت",
-      "userNameDisplay": "نمایش نام کاربر",
-      "userIconDisplay": "نمایش آیکون کاربر",
+      "alwaysOnDisplay": "نمایش همیشگی چت",
+      "chatOnlyDisplay": "حالت فقط چت",
+      "userNameDisplay": "نمایش نام کاربران",
+      "userIconDisplay": "نمایش عکس‌های نمایه",
       "superChatBarDisplay": "نمایش نوار Super Chat",
       "backgroundColor": "رنگ پس‌زمینه",
-      "fontColor": "رنگ فونت",
-      "fontFamily": "نوع فونت",
-      "fontSize": "اندازه فونت",
-      "blur": "محو",
-      "space": "فاصله‌گذاری",
+      "fontColor": "رنگ متن",
+      "fontFamily": "فونت",
+      "fontSize": "اندازهٔ متن",
+      "blur": "تاری",
+      "space": "فاصلهٔ بین پیام‌ها",
       "footer": {
         "donate": "حمایت مالی",
         "chrome": "Chrome",
@@ -27,26 +27,26 @@
       "themeMode": {
         "system": "خودکار",
         "light": "روشن",
-        "dark": "تاریک"
+        "dark": "تیره"
       },
-      "membershipNameColor": "رنگ نام عضو",
+      "membershipNameColor": "رنگ نام اعضا",
       "defaultColor": "پیش‌فرض",
-      "resetToDefaultColor": "بازنشانی به رنگ پیش‌فرض",
+      "resetToDefaultColor": "بازگرداندن رنگ پیش‌فرض",
       "group": {
         "display": "نمایش",
         "colors": "رنگ‌ها",
         "text": "متن",
-        "elements": "عناصر نمایش"
+        "elements": "عناصر چت"
       },
-      "requiresAlwaysOn": "برای پیکربندی این مورد، «نمایش همیشگی» را روشن کنید"
+      "requiresAlwaysOn": "برای استفاده از این گزینه، «نمایش همیشگی چت» را روشن کنید"
     },
     "aria": {
-      "dragToMove": "بکشید برای جابه‌جایی",
-      "arrowKeysToMove": "کلیدهای جهت‌دار برای جابه‌جایی",
+      "dragToMove": "برای جابه‌جایی بکشید",
+      "arrowKeysToMove": "برای جابه‌جایی از کلیدهای جهت‌دار استفاده کنید",
       "openSettings": "باز کردن تنظیمات",
-      "toggleLiveChat": "نمایش/پنهان کردن چت زنده",
+      "toggleLiveChat": "نمایش یا پنهان کردن چت زنده",
       "close": "بستن",
-      "reorderPreset": "تغییر ترتیب پیش‌تنظیم‌ها",
+      "reorderPreset": "جابه‌جایی پیش‌تنظیم",
       "presetName": "نام پیش‌تنظیم",
       "applyPreset": "اعمال پیش‌تنظیم",
       "deletePreset": "حذف پیش‌تنظیم",
@@ -55,12 +55,12 @@
       "selectLanguage": "انتخاب زبان"
     },
     "preset": {
-      "addMessage": "افزودن تنظیمات فعلی",
+      "addMessage": "ذخیرهٔ تنظیمات فعلی",
       "addItemTitle": "بدون عنوان",
       "defaultTitle": "استاندارد",
       "transparentTitle": "شفاف",
-      "simpleTitle": "فقط نظرها",
-      "deleteConfirmationMessage": "آیا از حذف این مورد مطمئن هستید؟",
+      "simpleTitle": "فقط پیام‌ها",
+      "deleteConfirmationMessage": "این پیش‌تنظیم حذف شود؟",
       "delete": "حذف",
       "cancel": "انصراف",
       "darkTitle": "تیره",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "تنظیمات زبان",
+    "language": "زبان",
     "showChatOnFullscreen": "چت تمام‌صفحه",
     "links": "پیوندها",
     "donate": "حمایت مالی",
     "theme": "پوسته",
     "dataTransfer": "پشتیبان‌گیری",
-    "export": "خروجی",
-    "import": "واردسازی",
-    "importError": "وارد کردن فایل تنظیمات ممکن نشد."
+    "export": "صادر کردن",
+    "import": "وارد کردن",
+    "importError": "فایل تنظیمات وارد نشد."
   }
 }

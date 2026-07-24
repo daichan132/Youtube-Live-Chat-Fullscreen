@@ -4,18 +4,18 @@
       "header": {
         "preset": "Шаблони",
         "setting": "Подешавања",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Опозови промену стила",
+        "redo": "Понови промену стила"
       },
-      "alwaysOnDisplay": "Увек на екрану",
-      "chatOnlyDisplay": "Само ћаскање",
-      "userNameDisplay": "Прикажи корисничко име",
-      "userIconDisplay": "Прикажи корисничку икону",
+      "alwaysOnDisplay": "Увек приказуј ћаскање",
+      "chatOnlyDisplay": "Прикажи само ћаскање",
+      "userNameDisplay": "Прикажи корисничка имена",
+      "userIconDisplay": "Прикажи слике профила",
       "superChatBarDisplay": "Прикажи Super Chat траку",
       "backgroundColor": "Боја позадине",
-      "fontColor": "Боја слова",
+      "fontColor": "Боја текста",
       "fontFamily": "Фонт",
-      "fontSize": "Величина слова",
+      "fontSize": "Величина фонта",
       "blur": "Замућење",
       "space": "Размак",
       "footer": {
@@ -25,42 +25,42 @@
       },
       "theme": "Тема",
       "themeMode": {
-        "system": "Аутоматски",
+        "system": "Аутоматска",
         "light": "Светла",
         "dark": "Тамна"
       },
-      "membershipNameColor": "Боја имена члана",
-      "defaultColor": "Подразумевано",
+      "membershipNameColor": "Боја имена чланова",
+      "defaultColor": "Подразумевана",
       "resetToDefaultColor": "Врати подразумевану боју",
       "group": {
         "display": "Приказ",
         "colors": "Боје",
         "text": "Текст",
-        "elements": "Приказани елементи"
+        "elements": "Видљиви елементи"
       },
-      "requiresAlwaysOn": "Укључите „Увек на екрану“ да бисте ово подесили"
+      "requiresAlwaysOn": "За ову опцију укључи „Увек приказуј ћаскање“"
     },
     "aria": {
-      "dragToMove": "Превуците за померање",
-      "arrowKeysToMove": "Стрелице за померање",
+      "dragToMove": "Превуци за померање",
+      "arrowKeysToMove": "Помери помоћу тастера са стрелицама",
       "openSettings": "Отвори подешавања",
-      "toggleLiveChat": "Укључи/искључи ћаскање уживо",
+      "toggleLiveChat": "Прикажи или сакриј ћаскање уживо",
       "close": "Затвори",
-      "reorderPreset": "Промени редослед шаблона",
+      "reorderPreset": "Премести шаблон",
       "presetName": "Назив шаблона",
       "applyPreset": "Примени шаблон",
       "deletePreset": "Обриши шаблон",
-      "colorPicker": "Избор боје",
+      "colorPicker": "Бирач боје",
       "loading": "Учитавање",
-      "selectLanguage": "Избор језика"
+      "selectLanguage": "Изабери језик"
     },
     "preset": {
-      "addMessage": "Додај тренутна подешавања",
+      "addMessage": "Сачувај тренутна подешавања",
       "addItemTitle": "Без наслова",
       "defaultTitle": "Стандардно",
       "transparentTitle": "Провидно",
-      "simpleTitle": "Само коментари",
-      "deleteConfirmationMessage": "Да ли сте сигурни да желите да обришете?",
+      "simpleTitle": "Само ћаскање",
+      "deleteConfirmationMessage": "Желиш ли да обришеш овај шаблон?",
       "delete": "Обриши",
       "cancel": "Откажи",
       "darkTitle": "Тамно",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "Подешавање језика",
+    "language": "Језик",
     "showChatOnFullscreen": "Ћаскање преко целог екрана",
     "links": "Везе",
     "donate": "Донирај",
     "theme": "Тема",
     "dataTransfer": "Резервна копија",
-    "export": "Извоз",
-    "import": "Увоз",
+    "export": "Извези",
+    "import": "Увези",
     "importError": "Није могуће увести датотеку са подешавањима."
   }
 }

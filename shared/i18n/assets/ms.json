@@ -4,20 +4,20 @@
       "header": {
         "preset": "Praset",
         "setting": "Tetapan",
-        "undo": "Undo style change",
-        "redo": "Redo style change"
+        "undo": "Buat asal perubahan gaya",
+        "redo": "Buat semula perubahan gaya"
       },
-      "alwaysOnDisplay": "Sentiasa Dipaparkan",
-      "chatOnlyDisplay": "Papar Sembang Sahaja",
-      "userNameDisplay": "Papar Nama Pengguna",
-      "userIconDisplay": "Papar Ikon Pengguna",
-      "superChatBarDisplay": "Papar Bar Super Chat",
-      "backgroundColor": "Warna Latar Belakang",
-      "fontColor": "Warna Fon",
-      "fontFamily": "Jenis Fon",
-      "fontSize": "Saiz Fon",
+      "alwaysOnDisplay": "Sentiasa paparkan sembang",
+      "chatOnlyDisplay": "Mod sembang sahaja",
+      "userNameDisplay": "Papar nama pengguna",
+      "userIconDisplay": "Papar gambar profil",
+      "superChatBarDisplay": "Papar bar Super Chat",
+      "backgroundColor": "Warna latar belakang",
+      "fontColor": "Warna teks",
+      "fontFamily": "Jenis fon",
+      "fontSize": "Saiz teks",
       "blur": "Kabur",
-      "space": "Jarak",
+      "space": "Jarak antara mesej",
       "footer": {
         "donate": "Derma",
         "chrome": "Chrome",
@@ -31,22 +31,22 @@
       },
       "membershipNameColor": "Warna nama ahli",
       "defaultColor": "Lalai",
-      "resetToDefaultColor": "Tetapkan semula kepada warna lalai",
+      "resetToDefaultColor": "Pulihkan warna lalai",
       "group": {
         "display": "Paparan",
         "colors": "Warna",
         "text": "Teks",
-        "elements": "Elemen Paparan"
+        "elements": "Elemen sembang"
       },
-      "requiresAlwaysOn": "Hidupkan \"Sentiasa Dipaparkan\" untuk mengkonfigurasi ini"
+      "requiresAlwaysOn": "Hidupkan \"Sentiasa paparkan sembang\" untuk menggunakan pilihan ini"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
       "arrowKeysToMove": "Gunakan kekunci anak panah untuk memindahkan",
       "openSettings": "Buka tetapan",
-      "toggleLiveChat": "Togol sembang langsung",
+      "toggleLiveChat": "Papar atau sembunyikan sembang langsung",
       "close": "Tutup",
-      "reorderPreset": "Susun semula praset",
+      "reorderPreset": "Alihkan praset",
       "presetName": "Nama praset",
       "applyPreset": "Gunakan praset",
       "deletePreset": "Padam praset",
@@ -55,12 +55,12 @@
       "selectLanguage": "Pilih bahasa"
     },
     "preset": {
-      "addMessage": "Tambah Tetapan Semasa",
-      "addItemTitle": "Tanpa Tajuk",
+      "addMessage": "Simpan tetapan semasa",
+      "addItemTitle": "Tanpa tajuk",
       "defaultTitle": "Standard",
       "transparentTitle": "Telus",
-      "simpleTitle": "Komen sahaja",
-      "deleteConfirmationMessage": "Adakah anda pasti mahu memadamkan ini?",
+      "simpleTitle": "Mesej sahaja",
+      "deleteConfirmationMessage": "Padamkan praset ini?",
       "delete": "Padam",
       "cancel": "Batal",
       "darkTitle": "Gelap",
@@ -71,14 +71,14 @@
     }
   },
   "popup": {
-    "language": "Tetapan Bahasa",
-    "showChatOnFullscreen": "Sembang Skrin Penuh",
+    "language": "Bahasa",
+    "showChatOnFullscreen": "Sembang skrin penuh",
     "links": "Pautan",
     "donate": "Derma",
     "theme": "Tema",
     "dataTransfer": "Sandaran",
     "export": "Eksport",
     "import": "Import",
-    "importError": "Tidak dapat mengimport fail tetapan."
+    "importError": "Fail tetapan tidak dapat diimport."
   }
 }
