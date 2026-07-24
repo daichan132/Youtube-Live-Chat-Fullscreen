@@ -184,6 +184,8 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('ytd-menu-popup-renderer')
     expect(iframeStyles).toContain('ytd-menu-service-item-renderer yt-formatted-string')
     expect(iframeStyles).toContain('tp-yt-paper-listbox')
+    expect(styleModules['menus.css']).toContain('background: var(--extension-yt-live-menu-background-color) !important;')
+    expect(styleModules['menus.css']).toContain('background-color: var(--extension-yt-live-menu-background-color) !important;')
     expect(iframeStyles).toContain('ytd-menu-service-item-renderer[aria-disabled="true"]')
     expect(iframeStyles).toContain('border-radius: 8px;')
     expect(iframeStyles).toContain('overflow: hidden;')

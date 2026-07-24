@@ -21,8 +21,8 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer {
 body.custom-yt-app-live-chat-extension tp-yt-paper-listbox,
 body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer #items {
   color: var(--extension-yt-live-font-color) !important;
-  background: var(--extension-yt-live-panel-background-color) !important;
-  background-color: var(--extension-yt-live-panel-background-color) !important;
+  background: var(--extension-yt-live-menu-background-color) !important;
+  background-color: var(--extension-yt-live-menu-background-color) !important;
   border-radius: inherit;
   overflow: hidden;
 }

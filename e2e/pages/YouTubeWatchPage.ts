@@ -53,4 +53,26 @@ export class YouTubeWatchPage {
   async isInFullscreen() {
     return this.page.evaluate(() => document.fullscreenElement !== null)
   }
+
+  async getFullscreenNativeChatLayout() {
+    return this.page.evaluate(() => {
+      const player = document.querySelector('.html5-video-player.ytp-fullscreen') as HTMLElement | null
+      const chatContainer = document.querySelector('#chat-container') as HTMLElement | null
+      const playerRect = player?.getBoundingClientRect()
+      const chatRect = chatContainer?.getBoundingClientRect()
+
+      return {
+        fullscreen: document.fullscreenElement !== null,
+        playerWidth: playerRect?.width ?? 0,
+        playerRight: playerRect?.right ?? 0,
+        chatWidth: chatRect?.width ?? 0,
+        chatLeft: chatRect?.left ?? 0,
+        overlapPx: playerRect && chatRect ? Math.max(0, playerRect.right - chatRect.left) : Number.POSITIVE_INFINITY,
+        hasExtensionLayoutFix: document.documentElement.classList.contains('ylc-fullscreen-chat-fix'),
+        hasPlayerFootprintOverride:
+          document.documentElement.classList.contains('ylc-fullscreen-player-footprint') ||
+          document.getElementById('ylc-fullscreen-player-footprint') !== null,
+      }
+    })
+  }
 }

@@ -88,27 +88,27 @@ describe('ylcStyleApplier', () => {
     expect(style.getPropertyValue('--yt-live-chat-background-color')).toBe('transparent')
     expect(style.getPropertyValue('--yt-spec-icon-disabled')).toBe('rgba(60, 80, 100, 0.8)')
     expect(style.getPropertyValue('--yt-live-chat-vem-background-color')).toBe('rgba(80, 100, 120, 0.8)')
-    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(100, 120, 140, 0.224)')
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(100, 120, 140, 0.856)')
     expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(100, 120, 140, 0.224)')
-    expect(style.getPropertyValue('--yt-spec-menu-background')).toBe('rgba(100, 120, 140, 0.224)')
-    expect(style.getPropertyValue('--yt-spec-raised-background')).toBe('rgba(100, 120, 140, 0.224)')
+    expect(style.getPropertyValue('--yt-spec-menu-background')).toBe('rgba(100, 120, 140, 0.856)')
+    expect(style.getPropertyValue('--yt-spec-raised-background')).toBe('rgba(100, 120, 140, 0.856)')
     expect(style.getPropertyValue('--yt-live-chat-header-background-color')).toBe('transparent')
     expect(style.getPropertyValue('--yt-spec-general-background-b')).toBe('transparent')
   })
 
-  it('derives a low-alpha tint for stacked menu and panel surfaces', () => {
+  it('keeps menus readable while retaining a low-alpha tint for embedded panels', () => {
     const { iframe, doc } = createConnectedIframe()
     useYTDLiveChatNoLsStore.setState({ iframeElement: iframe })
 
     changeYLCBgColor({ r: 0, g: 0, b: 0, a: 0.3 })
 
     const style = doc.documentElement.style
-    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0.084)')
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0.496)')
     expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(0, 0, 0, 0.084)')
 
     changeYLCBgColor({ r: 0, g: 0, b: 0, a: 0 })
 
-    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0)')
+    expect(style.getPropertyValue('--extension-yt-live-menu-background-color')).toBe('rgba(0, 0, 0, 0.28)')
     expect(style.getPropertyValue('--extension-yt-live-panel-background-color')).toBe('rgba(0, 0, 0, 0)')
   })
 
