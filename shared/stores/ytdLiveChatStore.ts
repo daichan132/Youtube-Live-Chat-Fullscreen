@@ -2,11 +2,12 @@ import type { Coordinates } from '@dnd-kit/core/dist/types'
 import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { DefaultCoordinates, DefaultSize, ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { DefaultCoordinates, DefaultSize } from '@/shared/constants'
+import { normalizePersistedYTDLiveChatState, normalizeStoredGeometry, normalizeStyle } from '@/shared/settings/normalizeSettings'
+import { YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
 import i18n from '../i18n/config'
-import type { RGBColor, sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
+import type { sizeType, YLCStyleType, YLCStyleUpdateType } from '../types/ytdLiveChatType'
 import {
-  DEFAULT_MEMBERSHIP_NAME_COLOR,
   ylcCompactSetting,
   ylcDarkSetting,
   ylcInitSetting,
@@ -15,7 +16,6 @@ import {
   ylcSimpleSetting,
   ylcTransparentSetting,
 } from '../utils'
-import { normalizeFontFamily } from '../utils/fontFamilyPolicy'
 
 type YTDLiveChatStoreState = {
   presetItemIds: string[]
@@ -88,71 +88,6 @@ const getDefaultPresetTitles = () =>
     DEFAULT_PRESETS.map(preset => [preset.id, translateDefaultPresetTitle(preset.id)]),
   ) as YTDLiveChatStoreState['presetItemTitles']
 
-const removeLegacyReactionButtonDisplay = (style: Record<string, unknown>) => {
-  if (!('reactionButtonDisplay' in style)) {
-    return style
-  }
-
-  // Legacy persisted stores may contain the removed key.
-  const { reactionButtonDisplay: _removed, ...rest } = style
-  return rest
-}
-
-const sanitizeMembershipNameColor = (value: unknown): RGBColor => {
-  if (value && typeof value === 'object') {
-    const color = value as Record<string, unknown>
-    if (typeof color.r === 'number' && typeof color.g === 'number' && typeof color.b === 'number') {
-      return {
-        r: color.r,
-        g: color.g,
-        b: color.b,
-        ...(typeof color.a === 'number' ? { a: color.a } : {}),
-      }
-    }
-  }
-  return { ...DEFAULT_MEMBERSHIP_NAME_COLOR }
-}
-
-const sanitizeFontFamilyInStyleObject = (style: Record<string, unknown>) => ({
-  ...style,
-  fontFamily: normalizeFontFamily(style.fontFamily),
-  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
-})
-
-const sanitizeStyleForPreset = (style: YLCStyleType): YLCStyleType => ({
-  ...style,
-  fontFamily: normalizeFontFamily(style.fontFamily),
-  membershipNameColor: sanitizeMembershipNameColor(style.membershipNameColor),
-})
-
-const sanitizeStyleUpdate = (update: YLCStyleUpdateType): YLCStyleUpdateType => {
-  const sanitizedUpdate = {
-    ...update,
-  }
-
-  if (Object.hasOwn(update, 'fontFamily')) {
-    sanitizedUpdate.fontFamily = normalizeFontFamily(update.fontFamily)
-  }
-
-  if (Object.hasOwn(update, 'membershipNameColor')) {
-    sanitizedUpdate.membershipNameColor = sanitizeMembershipNameColor(update.membershipNameColor)
-  }
-
-  return sanitizedUpdate
-}
-
-const clampSize = (size: sizeType): sizeType => ({
-  width: Math.max(size.width, ResizableMinWidth),
-  height: Math.max(size.height, ResizableMinHeight),
-})
-
-const migratePresetItemTitles = (titles: unknown): YTDLiveChatStoreState['presetItemTitles'] | undefined => {
-  if (!titles || typeof titles !== 'object') return undefined
-
-  const migratedTitles = { ...(titles as Record<string, string>) }
-  return migratedTitles
-}
-
 const migrateDefaultPresets = (state: PersistedYTDLiveChatState): PersistedYTDLiveChatState => {
   const hasPersistedPresetIds = Array.isArray(state.presetItemIds)
   const presetItemIds = hasPersistedPresetIds ? [...(state.presetItemIds as string[])] : getDefaultPresetIds()
@@ -181,44 +116,10 @@ const migrateDefaultPresets = (state: PersistedYTDLiveChatState): PersistedYTDLi
 }
 
 const migratePersistedState = (persistedState: unknown): PersistedYTDLiveChatState => {
-  if (!persistedState || typeof persistedState !== 'object') {
-    return {}
-  }
-
-  const state = persistedState as Record<string, unknown>
-  const { reactionButtonDisplay: _removed, presetItemStyles, ...restState } = state
-  const migratedState = {
-    ...restState,
-  } as PersistedYTDLiveChatState
-
-  const migratedTitles = migratePresetItemTitles(state.presetItemTitles)
-  if (migratedTitles) {
-    migratedState.presetItemTitles = migratedTitles
-  }
-
-  if ('fontFamily' in state) {
-    migratedState.fontFamily = normalizeFontFamily(state.fontFamily)
-  }
-  migratedState.membershipNameColor = sanitizeMembershipNameColor(state.membershipNameColor)
-
-  if (!presetItemStyles || typeof presetItemStyles !== 'object') {
-    return migrateDefaultPresets(migratedState)
-  }
-
-  const migratedPresetItemStyles = Object.fromEntries(
-    Object.entries(presetItemStyles).map(([id, style]) => {
-      if (!style || typeof style !== 'object') {
-        return [id, style]
-      }
-      const styleWithoutLegacyField = removeLegacyReactionButtonDisplay(style as Record<string, unknown>)
-      return [id, sanitizeFontFamilyInStyleObject(styleWithoutLegacyField)]
-    }),
+  const stateWithCurrentBuiltIns = migrateDefaultPresets(
+    persistedState && typeof persistedState === 'object' ? (persistedState as PersistedYTDLiveChatState) : {},
   )
-
-  return migrateDefaultPresets({
-    ...migratedState,
-    presetItemStyles: migratedPresetItemStyles,
-  } as PersistedYTDLiveChatState)
+  return migrateDefaultPresets(normalizePersistedYTDLiveChatState(stateWithCurrentBuiltIns) as PersistedYTDLiveChatState)
 }
 
 export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
@@ -234,7 +135,7 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
       addPresetItem: (id, title, ylcStyle) =>
         set(state => ({
           addPresetEnabled: false,
-          presetItemStyles: { ...state.presetItemStyles, [id]: sanitizeStyleForPreset(ylcStyle) },
+          presetItemStyles: { ...state.presetItemStyles, [id]: normalizeStyle(ylcStyle) },
           presetItemTitles: { ...state.presetItemTitles, [id]: title },
           presetItemIds: [...state.presetItemIds, id],
         })),
@@ -253,19 +154,29 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
           presetItemTitles: { ...state.presetItemTitles, [id]: title },
         })),
       updateYLCStyle: YLCStyleUpdate =>
-        set(() => ({
-          ...sanitizeStyleUpdate(YLCStyleUpdate),
+        set(state => ({
+          ...normalizeStyle({ ...state, ...YLCStyleUpdate }),
           addPresetEnabled: true,
         })),
       setPresetItemIds: presetItemIds => set(() => ({ presetItemIds })),
       setAddPresetEnabled: addPresetEnabled => set(() => ({ addPresetEnabled })),
-      setSize: size => set(() => ({ size: clampSize(size) })),
-      setCoordinates: coordinates => set(() => ({ coordinates })),
-      setGeometry: geometry =>
-        set(() => ({
-          coordinates: geometry.coordinates,
-          size: clampSize(geometry.size),
+      setSize: size =>
+        set(state => ({
+          size: normalizeStoredGeometry({ coordinates: state.coordinates, size }, { coordinates: state.coordinates, size: state.size })
+            .size,
         })),
+      setCoordinates: coordinates =>
+        set(state => ({
+          coordinates: normalizeStoredGeometry({ coordinates, size: state.size }, { coordinates: state.coordinates, size: state.size })
+            .coordinates,
+        })),
+      setGeometry: geometry =>
+        set(state =>
+          normalizeStoredGeometry(geometry, {
+            coordinates: state.coordinates,
+            size: state.size,
+          }),
+        ),
       setDefaultPosition: () =>
         set(() => ({
           size: { ...DefaultSize },
@@ -273,8 +184,8 @@ export const useYTDLiveChatStore = create<YTDLiveChatStoreState>()(
         })),
     }),
     {
-      name: 'ytdLiveChatStore',
-      version: 5,
+      name: YTD_LIVE_CHAT_PERSIST.key,
+      version: YTD_LIVE_CHAT_PERSIST.version,
       migrate: persistedState => migratePersistedState(persistedState),
       storage: createJSONStorage(() => localStorage),
     },

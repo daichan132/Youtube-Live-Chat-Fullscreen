@@ -95,7 +95,7 @@ describe('useContentRuntimeMessages', () => {
       'ytdLiveChatStore',
       JSON.stringify({
         state: {
-          fontSize: 42,
+          fontSize: 32,
           bgColor: { r: 100, g: 150, b: 200, a: 0.8 },
           fontColor: { r: 255, g: 100, b: 50, a: 0.9 },
           membershipNameColor: { r: 10, g: 20, b: 30, a: 1 },
@@ -122,7 +122,7 @@ describe('useContentRuntimeMessages', () => {
     expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(0)
 
     expect(mockChangeYLCStyle).toHaveBeenCalledWith({
-      fontSize: 42,
+      fontSize: 32,
       bgColor: { r: 100, g: 150, b: 200, a: 0.8 },
       fontColor: { r: 255, g: 100, b: 50, a: 0.9 },
       membershipNameColor: { r: 10, g: 20, b: 30, a: 1 },
@@ -285,7 +285,7 @@ describe('useContentRuntimeMessages', () => {
     localStorage.setItem(
       'ytdLiveChatStore',
       JSON.stringify({
-        state: { fontSize: 99 },
+        state: { fontSize: 39 },
         version: 2,
       }),
     )
@@ -298,8 +298,8 @@ describe('useContentRuntimeMessages', () => {
       expect(mockChangeYLCStyle).toHaveBeenCalled()
     })
 
-    expect(mockChangeYLCStyle).toHaveBeenCalledWith(expect.objectContaining({ fontSize: 99 }))
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(99)
+    expect(mockChangeYLCStyle).toHaveBeenCalledWith(expect.objectContaining({ fontSize: 39 }))
+    expect(useYTDLiveChatStore.getState().fontSize).toBe(39)
   })
 
   it('handles sequential imports, each overwriting the previous values and presets', async () => {
@@ -312,7 +312,7 @@ describe('useContentRuntimeMessages', () => {
       'ytdLiveChatStore',
       JSON.stringify({
         state: {
-          fontSize: 42,
+          fontSize: 32,
           space: 15,
           userNameDisplay: false,
           superChatBarDisplay: false,
@@ -346,7 +346,7 @@ describe('useContentRuntimeMessages', () => {
       expect(mockChangeYLCStyle).toHaveBeenCalledTimes(1)
     })
 
-    expect(mockChangeYLCStyle).toHaveBeenLastCalledWith(expect.objectContaining({ fontSize: 42, space: 15, userNameDisplay: false }))
+    expect(mockChangeYLCStyle).toHaveBeenLastCalledWith(expect.objectContaining({ fontSize: 32, space: 15, userNameDisplay: false }))
     expect(useYTDLiveChatStore.getState().presetItemIds).toEqual(['dark1'])
     expect(useYTDLiveChatStore.getState().presetItemTitles.dark1).toBe('Dark Mode')
 

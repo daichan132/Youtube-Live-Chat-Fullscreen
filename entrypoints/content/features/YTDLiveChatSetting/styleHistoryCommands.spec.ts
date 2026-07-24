@@ -101,7 +101,7 @@ describe('styleHistoryCommands', () => {
 
   it('keeps at most fifty history entries', () => {
     for (let index = 0; index < 55; index += 1) {
-      commitYLCStyleUpdate({ fontSize: 100 + index }, 'fontSize')
+      commitYLCStyleUpdate({ fontColor: { r: index, g: 0, b: 0, a: 1 } }, 'fontColor')
     }
 
     expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(50)

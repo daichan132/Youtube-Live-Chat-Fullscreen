@@ -33,7 +33,7 @@ export const getYLCStyleSnapshot = (style: YLCStyleType): YLCStyleType => ({
 })
 
 const areColorsEqual = (left: RGBColor, right: RGBColor) =>
-  left.r === right.r && left.g === right.g && left.b === right.b && (left.a ?? 1) === (right.a ?? 1)
+  left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
 
 const areStyleValuesEqual = <Key extends keyof YLCStyleType>(key: Key, left: YLCStyleType[Key], right: YLCStyleType[Key]) => {
   if (key === 'bgColor' || key === 'fontColor' || key === 'membershipNameColor') {

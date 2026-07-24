@@ -34,6 +34,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
   const { t } = useTranslation()
   const titleFallbackKey = getPresetTitleFallbackKey(id)
   const displayTitle = typeof title === 'string' && title.trim().length > 0 ? title : titleFallbackKey ? t(titleFallbackKey) : ''
+  const canApply = ylcStyle !== undefined
   const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
   })
@@ -69,7 +70,16 @@ export const PresetItem = ({ id }: PresetItemType) => {
         className='ylc-preset-name'
       />
       <div data-ylc-preset-actions className='ylc-preset-actions'>
-        <button type='button' className='ylc-preset-apply' aria-label={t('content.aria.applyPreset')} onClick={() => updateStyle(ylcStyle)}>
+        <button
+          type='button'
+          disabled={!canApply}
+          className='ylc-preset-apply'
+          aria-label={t('content.aria.applyPreset')}
+          onClick={() => {
+            if (!ylcStyle) return
+            updateStyle(ylcStyle)
+          }}
+        >
           <TbCheck size={16} aria-hidden='true' />
           <span>{t('content.preset.apply')}</span>
         </button>

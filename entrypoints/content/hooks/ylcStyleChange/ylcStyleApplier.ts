@@ -59,11 +59,11 @@ export const setYLCStyleProperty = (property: string, value: string) => {
   setYLCStyleProperties([[property, value]])
 }
 
-const toRgbaString = (rgba: RGBColor, alpha: number | undefined) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`
+const toRgbaString = (rgba: RGBColor, alpha: number) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`
 
 const roundAlpha = (alpha: number) => Math.round(alpha * 1000) / 1000
 
-const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && (a.a ?? 1) === (b.a ?? 1)
+const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
 
 const parseCssColor = (value: string): RGBColor | undefined => {
   const color = value.trim()
@@ -102,17 +102,17 @@ export const resolveYLCMembershipNameColor = (rgba: RGBColor): RGBColor =>
   isFallbackMembershipNameColor(rgba) ? getYLCStandardMembershipNameColor() : rgba
 
 const toElevatedMenuSurfaceColor = (rgba: RGBColor) => {
-  const alpha = rgba.a ?? 1
+  const alpha = rgba.a
   return toRgbaString(rgba, roundAlpha(alpha + (1 - alpha) * 0.28))
 }
 
 const toPanelSurfaceColor = (rgba: RGBColor) => {
-  const alpha = rgba.a ?? 1
+  const alpha = rgba.a
   if (alpha === 0) return toRgbaString(rgba, 0)
   return toRgbaString(rgba, roundAlpha(Math.max(0.08, alpha * 0.28)))
 }
 
-const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, (rgba.a ?? 1) * 0.12))
+const toSubtleSurfaceColor = (rgba: RGBColor) => toRgbaString(rgba, Math.max(0.08, rgba.a * 0.12))
 
 export const changeYLCBgColor = (rgba: RGBColor) => {
   setYLCStyleProperties([
@@ -126,7 +126,7 @@ export const changeYLCBgColor = (rgba: RGBColor) => {
 
 export const changeYLCFontColor = (rgba: RGBColor) => {
   const primary = toRgbaString(rgba, rgba.a)
-  const secondaryAlpha = Math.max(0, (rgba.a ?? 0) - 0.4)
+  const secondaryAlpha = Math.max(0, rgba.a - 0.4)
   const secondary = toRgbaString(rgba, secondaryAlpha)
 
   setYLCStyleProperties([

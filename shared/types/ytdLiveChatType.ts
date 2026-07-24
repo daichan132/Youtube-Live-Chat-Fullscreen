@@ -2,7 +2,7 @@ export interface RGBColor {
   r: number
   g: number
   b: number
-  a?: number
+  a: number
 }
 
 export interface sizeType {

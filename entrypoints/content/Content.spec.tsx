@@ -7,6 +7,7 @@ import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveN
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
 import { useChatMode } from './chat/runtime/useChatMode'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
+import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
@@ -42,6 +43,10 @@ vi.mock('./hooks/globalState/useContentRuntimeMessages', () => ({
   useContentRuntimeMessages: vi.fn(),
 }))
 
+vi.mock('./hooks/globalState/useSettingsStorageSync', () => ({
+  useSettingsStorageSync: vi.fn(),
+}))
+
 vi.mock('./hooks/useYLCPortalTargets', () => ({
   useYLCPortalTargets: vi.fn(() => ({
     overlayRoot: null,
@@ -68,6 +73,7 @@ describe('Content', () => {
     vi.mocked(canToggleFullscreenChat).mockReset()
     vi.mocked(useChatMode).mockReset()
     vi.mocked(useContentRuntimeMessages).mockReset()
+    vi.mocked(useSettingsStorageSync).mockReset()
     vi.mocked(useEnsureArchiveNativeChatOpen).mockReset()
     vi.mocked(useYLCPortalTargets).mockReset()
     vi.mocked(useIsFullScreen).mockReset()

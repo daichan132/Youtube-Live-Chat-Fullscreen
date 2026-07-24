@@ -92,4 +92,15 @@ describe('PresetItem', () => {
 
     expect(getByDisplayValue('content.preset.defaultTitle')).toBeTruthy()
   })
+
+  it('disables applying a preset when its style is unavailable', () => {
+    useYTDLiveChatStore.setState({
+      presetItemIds: [...baseState.presetItemIds, 'broken'],
+      presetItemTitles: { ...baseState.presetItemTitles, broken: 'Broken' },
+    })
+
+    const { getByRole } = render(<PresetItem id='broken' />)
+
+    expect(getByRole('button', { name: 'content.aria.applyPreset' })).toBeDisabled()
+  })
 })

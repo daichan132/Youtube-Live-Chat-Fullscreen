@@ -43,7 +43,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
   const backdropFilter = blur > 0 ? `blur(${blur}px)` : 'none'
   const loaderColor = useMemo(() => {
     const { r, g, b, a } = fontColor
-    const baseAlpha = a ?? 1
+    const baseAlpha = a
     const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
     const desaturateMix = 0.68
     return {
@@ -53,7 +53,7 @@ export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
       a: Math.min(0.5, Math.max(0.22, baseAlpha * 0.55)),
     }
   }, [fontColor])
-  const overlayAlpha = bgColor.a ?? 1
+  const overlayAlpha = bgColor.a
 
   const loaderTransition = useCSSTransition({
     in: !isIframeLoaded,

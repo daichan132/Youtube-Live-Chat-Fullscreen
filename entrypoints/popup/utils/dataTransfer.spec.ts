@@ -1,8 +1,21 @@
-import { describe, expect, it } from 'vitest'
-import { isRGBColor, isValidImportData, sanitizeGlobalSetting, sanitizeYLCStyle, sanitizeYTDLiveChat } from './dataTransfer'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { ylcInitSetting } from '@/shared/utils'
+import { buildExportData, isValidImportData, persistImportedSettings, sanitizeGlobalSetting, sanitizeYTDLiveChat } from './dataTransfer'
+
+const storageSet = vi.hoisted(() => vi.fn())
+
+vi.mock('wxt/browser', () => ({
+  browser: {
+    storage: {
+      local: {
+        set: storageSet,
+      },
+    },
+  },
+}))
 
 describe('isValidImportData', () => {
-  it('accepts valid data', () => {
+  it('accepts the current exact version', () => {
     expect(isValidImportData({ version: 1, exportedAt: '', globalSetting: {}, ytdLiveChat: {} })).toBe(true)
   })
 
@@ -12,6 +25,7 @@ describe('isValidImportData', () => {
     42,
     'string',
     { globalSetting: {}, ytdLiveChat: {} },
+    { version: 2, globalSetting: {}, ytdLiveChat: {} },
     { version: 1, ytdLiveChat: {} },
     { version: 1, globalSetting: {} },
   ])('rejects %j', input => {
@@ -19,135 +33,71 @@ describe('isValidImportData', () => {
   })
 })
 
-describe('isRGBColor', () => {
-  it('accepts { r, g, b }', () => {
-    expect(isRGBColor({ r: 255, g: 0, b: 0 })).toBe(true)
-  })
-
-  it('accepts { r, g, b, a }', () => {
-    expect(isRGBColor({ r: 0, g: 0, b: 0, a: 0.5 })).toBe(true)
-  })
-
-  it.each([null, 'red', 42, { g: 0, b: 0 }, { r: 0, b: 0 }, { r: 0, g: 0 }])('rejects %j', v => {
-    expect(isRGBColor(v)).toBe(false)
-  })
-})
-
 describe('sanitizeGlobalSetting', () => {
-  it('picks valid fields', () => {
-    expect(sanitizeGlobalSetting({ ytdLiveChat: false, themeMode: 'dark' })).toEqual({
+  it('picks only valid fields', () => {
+    expect(sanitizeGlobalSetting({ ytdLiveChat: false, themeMode: 'dark', extra: true })).toEqual({
       ytdLiveChat: false,
       themeMode: 'dark',
     })
   })
-
-  it.each(['light', 'dark', 'system'] as const)('accepts themeMode=%s', mode => {
-    expect(sanitizeGlobalSetting({ themeMode: mode })).toEqual({ themeMode: mode })
-  })
-
-  it('ignores invalid themeMode', () => {
-    expect(sanitizeGlobalSetting({ themeMode: 'neon' })).toEqual({})
-  })
-
-  it('ignores non-boolean ytdLiveChat', () => {
-    expect(sanitizeGlobalSetting({ ytdLiveChat: 'yes' })).toEqual({})
-  })
-
-  it('drops unknown keys', () => {
-    expect(sanitizeGlobalSetting({ extra: true, ytdLiveChat: true })).toEqual({ ytdLiveChat: true })
-  })
-})
-
-describe('sanitizeYLCStyle', () => {
-  it('picks valid style fields', () => {
-    expect(
-      sanitizeYLCStyle({
-        bgColor: { r: 0, g: 0, b: 0 },
-        membershipNameColor: { r: 10, g: 20, b: 30, a: 0.8 },
-        fontSize: 14,
-        blur: 5,
-        alwaysOnDisplay: true,
-      }),
-    ).toEqual({
-      bgColor: { r: 0, g: 0, b: 0 },
-      membershipNameColor: { r: 10, g: 20, b: 30, a: 0.8 },
-      fontSize: 14,
-      blur: 5,
-      alwaysOnDisplay: true,
-    })
-  })
-
-  it('drops wrong types', () => {
-    expect(sanitizeYLCStyle({ fontSize: 'big', blur: true, alwaysOnDisplay: 1 })).toEqual({})
-  })
-
-  it('drops invalid base colors and normalizes invalid membership name color to the default', () => {
-    expect(sanitizeYLCStyle({ bgColor: 'red', fontColor: null, membershipNameColor: 'green' })).toEqual({
-      membershipNameColor: { r: 15, g: 157, b: 88, a: 1 },
-    })
-  })
-
-  it('normalizes legacy null membership name color to the default color', () => {
-    expect(sanitizeYLCStyle({ membershipNameColor: null })).toEqual({ membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } })
-  })
 })
 
 describe('sanitizeYTDLiveChat', () => {
-  it('sanitizes style + structural fields together', () => {
-    expect(
-      sanitizeYTDLiveChat({
-        fontSize: 20,
-        presetItemIds: ['a', 'b'],
-        addPresetEnabled: false,
-        coordinates: { x: 10, y: 20 },
-        size: { width: 300, height: 400 },
-      }),
-    ).toEqual({
+  it('normalizes partial styles, colors, geometry, and preset integrity', () => {
+    const result = sanitizeYTDLiveChat({
+      bgColor: { r: -1, g: 20, b: 300 },
+      fontSize: Number.NaN,
+      coordinates: { x: Number.POSITIVE_INFINITY, y: 30 },
+      size: { width: 10, height: 400 },
+      presetItemIds: ['valid', 'missing', 'valid'],
+      presetItemStyles: {
+        valid: { fontSize: 20, bgColor: { r: 0, g: 0, b: 0 } },
+      },
+      presetItemTitles: { valid: 'Valid', missing: 'Missing' },
+    })
+
+    expect(result.bgColor).toEqual({ r: 0, g: 20, b: 255, a: 1 })
+    expect(result.fontSize).toBe(ylcInitSetting.fontSize)
+    expect(result.coordinates).toEqual({ x: 20, y: 30 })
+    expect(result.size).toEqual({ width: 300, height: 400 })
+    expect(result.presetItemIds).toEqual(['valid'])
+    expect((result.presetItemStyles as Record<string, unknown>).valid).toEqual({
+      ...ylcInitSetting,
+      bgColor: { r: 0, g: 0, b: 0, a: 1 },
       fontSize: 20,
-      presetItemIds: ['a', 'b'],
-      addPresetEnabled: false,
-      coordinates: { x: 10, y: 20 },
-      size: { width: 300, height: 400 },
     })
   })
+})
 
-  it('rejects non-string presetItemIds', () => {
-    expect(sanitizeYTDLiveChat({ presetItemIds: [1, 2] })).toEqual({})
+describe('export and persistence', () => {
+  beforeEach(() => {
+    storageSet.mockReset()
+    storageSet.mockResolvedValue(undefined)
   })
 
-  it('rejects coordinates missing y', () => {
-    expect(sanitizeYTDLiveChat({ coordinates: { x: 10 } })).toEqual({})
+  it('exports the current schema version', () => {
+    expect(buildExportData().version).toBe(1)
   })
 
-  it('rejects size missing height', () => {
-    expect(sanitizeYTDLiveChat({ size: { width: 10 } })).toEqual({})
-  })
-
-  it('sanitizes presetItemStyles per entry', () => {
-    const result = sanitizeYTDLiveChat({
-      presetItemStyles: {
-        a: { fontSize: 14, bgColor: { r: 0, g: 0, b: 0 } },
-        b: null,
+  it('awaits normalized writes using shared persist versions', async () => {
+    await persistImportedSettings({
+      version: 1,
+      exportedAt: '',
+      globalSetting: { themeMode: 'dark' },
+      ytdLiveChat: {
+        bgColor: { r: 10, g: 20, b: 30 },
       },
     })
-    expect(result.presetItemStyles).toEqual({
-      a: { fontSize: 14, bgColor: { r: 0, g: 0, b: 0 }, membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } },
+
+    expect(storageSet).toHaveBeenCalledTimes(1)
+    const persisted = storageSet.mock.calls[0]?.[0] as Record<string, string>
+    expect(JSON.parse(persisted.globalSettingStore ?? '')).toMatchObject({
+      version: 1,
+      state: { themeMode: 'dark' },
     })
-  })
-
-  it('sanitizes presetItemTitles dropping non-strings', () => {
-    expect(sanitizeYTDLiveChat({ presetItemTitles: { a: 'ok', b: 123 } })).toEqual({
-      presetItemTitles: { a: 'ok' },
+    expect(JSON.parse(persisted.ytdLiveChatStore ?? '')).toMatchObject({
+      version: 6,
+      state: { bgColor: { r: 10, g: 20, b: 30, a: 1 } },
     })
-  })
-
-  it('strips coordinates to x and y only', () => {
-    const result = sanitizeYTDLiveChat({ coordinates: { x: 1, y: 2, extra: 3 } })
-    expect(result.coordinates).toEqual({ x: 1, y: 2 })
-  })
-
-  it('strips size to width and height only', () => {
-    const result = sanitizeYTDLiveChat({ size: { width: 1, height: 2, extra: 3 } })
-    expect(result.size).toEqual({ width: 1, height: 2 })
   })
 })

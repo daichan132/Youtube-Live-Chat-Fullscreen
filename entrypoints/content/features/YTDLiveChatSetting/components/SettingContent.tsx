@@ -30,7 +30,7 @@ import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
 import { YLCNumberSlider } from './YLCChangeItems/YLCNumberSlider'
 
 type ToggleSettingKey = 'alwaysOnDisplay' | 'chatOnlyDisplay' | 'userNameDisplay' | 'userIconDisplay' | 'superChatBarDisplay'
-const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && (a.a ?? 1) === (b.a ?? 1)
+const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
 
 const isDefaultMembershipNameColor = (color: RGBColor) =>
   isFallbackMembershipNameColor(color) || isSameColor(color, getYLCStandardMembershipNameColor())

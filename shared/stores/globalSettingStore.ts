@@ -1,6 +1,8 @@
 import { localStorage } from 'redux-persist-webextension-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
+import { GLOBAL_SETTING_PERSIST } from '@/shared/settings/persistConfig'
 import type { ThemeMode } from '@/shared/theme'
 
 interface GlobalSettingStoreState {
@@ -17,15 +19,10 @@ const migratePersistedState = (persistedState: unknown): PersistedGlobalSettingS
     return { themeMode: 'light' }
   }
 
-  const state = persistedState as PersistedGlobalSettingStoreState
-
-  if (state.themeMode === 'light' || state.themeMode === 'dark' || state.themeMode === 'system') {
-    return state
-  }
-
+  const normalized = normalizeGlobalSetting(persistedState)
   return {
-    ...state,
-    themeMode: 'light',
+    ...normalized,
+    themeMode: normalized.themeMode ?? 'light',
   }
 }
 
@@ -38,8 +35,8 @@ export const useGlobalSettingStore = create<GlobalSettingStoreState>()(
       setThemeMode: themeMode => set(() => ({ themeMode })),
     }),
     {
-      name: 'globalSettingStore',
-      version: 1,
+      name: GLOBAL_SETTING_PERSIST.key,
+      version: GLOBAL_SETTING_PERSIST.version,
       migrate: persistedState => migratePersistedState(persistedState),
       storage: createJSONStorage(() => localStorage),
     },

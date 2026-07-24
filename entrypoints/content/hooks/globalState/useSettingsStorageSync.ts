@@ -1,0 +1,53 @@
+import { useEffect } from 'react'
+import { browser } from 'wxt/browser'
+import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
+import { GLOBAL_SETTING_PERSIST, YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
+import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
+import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
+import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
+
+const GEOMETRY_VIEWPORT_PADDING = 10
+
+const fitRehydratedGeometry = () => {
+  const { coordinates, size, setGeometry } = useYTDLiveChatStore.getState()
+  const next = fitGeometryToViewport(
+    { coordinates, size },
+    { width: window.innerWidth, height: window.innerHeight },
+    GEOMETRY_VIEWPORT_PADDING,
+  )
+  if (
+    next.coordinates.x === coordinates.x &&
+    next.coordinates.y === coordinates.y &&
+    next.size.width === size.width &&
+    next.size.height === size.height
+  ) {
+    return
+  }
+  setGeometry(next)
+}
+
+export const useSettingsStorageSync = () => {
+  useEffect(() => {
+    const handleChanged = (changes: Record<string, unknown>, areaName: string) => {
+      if (areaName !== 'local') return
+
+      const globalChanged = GLOBAL_SETTING_PERSIST.key in changes
+      const ytdChanged = YTD_LIVE_CHAT_PERSIST.key in changes
+      if (!globalChanged && !ytdChanged) return
+
+      void Promise.all([
+        globalChanged ? useGlobalSettingStore.persist.rehydrate() : Promise.resolve(),
+        ytdChanged ? useYTDLiveChatStore.persist.rehydrate() : Promise.resolve(),
+      ]).then(() => {
+        if (!ytdChanged) return
+        useYTDLiveChatHistoryStore.getState().clear()
+        fitRehydratedGeometry()
+      })
+    }
+
+    browser.storage.onChanged.addListener(handleChanged)
+    return () => {
+      browser.storage.onChanged.removeListener(handleChanged)
+    }
+  }, [])
+}

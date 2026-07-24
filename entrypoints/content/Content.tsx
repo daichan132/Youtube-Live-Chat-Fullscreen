@@ -11,6 +11,7 @@ import { useCurrentVideoId } from './chat/runtime/useCurrentVideoId'
 import { ensureChatIframeObservation } from './chat/shared/iframeDom'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
+import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
 import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
@@ -28,6 +29,7 @@ export const Content = () => {
   }, [])
 
   useContentRuntimeMessages()
+  useSettingsStorageSync()
   useYLCStyleApplication()
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
