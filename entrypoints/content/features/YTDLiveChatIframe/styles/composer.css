@@ -1,5 +1,6 @@
 /* State-dependent input / restricted participation controls. */
-body.custom-yt-app-live-chat-extension #input-panel
+body.custom-yt-app-live-chat-extension
+  #input-panel
   > :is(
     yt-live-chat-message-input-renderer,
     yt-live-chat-restricted-participation-renderer,
