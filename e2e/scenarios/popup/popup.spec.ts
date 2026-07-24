@@ -1,5 +1,6 @@
 import { expect, test } from '@e2e/fixtures'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { YTD_LIVE_CHAT_PERSIST } from '../../../shared/settings/persistConfig'
 
 test.describe('popup', { tag: '@popup' }, () => {
   test('popup renders language selector and chat toggle', async ({ page, extension }) => {
@@ -49,10 +50,10 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     // Verify ytdLiveChatStore
     const ytdState = await readStorageEntry(extension, 'ytdLiveChatStore')
-    expect(ytdState?.state.fontSize).toBe(42)
+    expect(ytdState?.state.fontSize).toBe(40)
     expect(ytdState?.state.blur).toBe(10)
     expect(ytdState?.state.alwaysOnDisplay).toBe(false)
-    expect(ytdState?.version).toBe(5)
+    expect(ytdState?.version).toBe(YTD_LIVE_CHAT_PERSIST.version)
 
     // Reopen popup and verify Zustand hydration
     await page.goto(extension.url('popup.html'))

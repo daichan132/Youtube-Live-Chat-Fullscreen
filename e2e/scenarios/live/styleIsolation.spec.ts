@@ -78,7 +78,7 @@ test.describe('style isolation', { tag: '@live' }, () => {
     await yt.enterFullscreen()
 
     const shadowReady = await page
-      .waitForFunction(() => Boolean(document.getElementById('shadow-root-live-chat')?.shadowRoot), { timeout: 15000 })
+      .waitForFunction(() => Boolean(document.getElementById('shadow-root-live-chat')?.shadowRoot), undefined, { timeout: 15000 })
       .then(
         () => true,
         () => false,

@@ -136,7 +136,7 @@ const isPlayableLiveCandidate = async (page: Page, url: string, deadline: number
 
 	if (Date.now() >= deadline) return false
 	const status = await page
-		.waitForFunction(checkLiveChatStatus, { timeout: Math.min(deadline - Date.now(), 10000) })
+		.waitForFunction(checkLiveChatStatus, undefined, { timeout: Math.min(deadline - Date.now(), 10000) })
 		.then(handle => handle.jsonValue() as Promise<ChatStatus>)
 		.catch(() => false as const)
 
@@ -189,7 +189,9 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
 		}
 		await acceptYouTubeConsentWithRetry(page)
 
-		await page.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, { timeout: 15000 }).catch(() => null)
+		await page
+			.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, undefined, { timeout: 15000 })
+			.catch(() => null)
 		const urls = await page.evaluate(collectVideoUrls)
 		const candidates = urls.map(normalizeVideoUrl).filter(Boolean) as string[]
 		log(`search ${i + 1}/${searchUrls.length}: ${candidates.length} candidates`)

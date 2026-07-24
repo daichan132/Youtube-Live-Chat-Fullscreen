@@ -60,7 +60,7 @@ export const enterFullscreenWithChat = async (page: Page) => {
 
   await page.locator('#movie_player').hover()
   await page.click('button.ytp-fullscreen-button')
-  await page.waitForFunction(() => document.fullscreenElement !== null, { timeout: 8000 })
+  await page.waitForFunction(() => document.fullscreenElement !== null, undefined, { timeout: 8000 })
   await page.locator('#movie_player').hover()
 
   const switchButton = page.locator(switchButtonSelector)

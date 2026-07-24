@@ -17,7 +17,7 @@ export class YouTubeWatchPage {
     const timeout = options?.timeout ?? TIMEOUT.FULLSCREEN
     await this.page.locator(MOVIE_PLAYER).hover()
     await this.page.click(FULLSCREEN_BUTTON)
-    await this.page.waitForFunction(() => document.fullscreenElement !== null, { timeout })
+    await this.page.waitForFunction(() => document.fullscreenElement !== null, undefined, { timeout })
   }
 
   async exitFullscreen(options?: { timeout?: number }): Promise<boolean> {
@@ -25,7 +25,7 @@ export class YouTubeWatchPage {
     await this.page.locator(MOVIE_PLAYER).hover()
     await this.page.click(FULLSCREEN_BUTTON)
     return this.page
-      .waitForFunction(() => document.fullscreenElement === null, { timeout })
+      .waitForFunction(() => document.fullscreenElement === null, undefined, { timeout })
       .then(
         () => true,
         () => false,

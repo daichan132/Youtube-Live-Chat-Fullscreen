@@ -15,7 +15,7 @@ const noChatFixtureHtml = buildWatchFixtureHtml({
 })
 
 test.describe('no chat video', { tag: '@live' }, () => {
-  test('extension chat stays hidden on a deterministic no-chat fixture', async ({ page }) => {
+  test('extension chat stays hidden on a deterministic no-chat fixture', { tag: '@fixture' }, async ({ page }) => {
     test.setTimeout(120000)
 
     await routeYouTubeWatchFixture(page, NO_CHAT_VIDEO_ID, noChatFixtureHtml)
@@ -24,8 +24,8 @@ test.describe('no chat video', { tag: '@live' }, () => {
     await watchPage.goto(NO_CHAT_FIXTURE_URL)
     await watchPage.enterFullscreen()
 
-    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(1)
-    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(1)
+    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(0)
+    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(0)
     await expect.poll(async () => page.locator(switchButtonSelector).count(), { timeout: 12000 }).toBe(0)
     await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
     await expect.poll(async () => page.evaluate(isExtensionOverlayRendered)).toBe(false)
@@ -58,30 +58,15 @@ test.describe('no chat video', { tag: '@live' }, () => {
     }
     await watchPage.enterFullscreen()
 
-    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(1)
-    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(1)
-
     await page.locator('#movie_player').hover()
     const playableNative = await page.evaluate(hasPlayableChat)
     if (playableNative) {
       test.skip(true, 'Selected URL had playable chat and did not meet no-chat precondition.')
     }
 
-    const hiddenSwitch = await expect
-      .poll(async () => page.locator(switchButtonSelector).count(), { timeout: 12000 })
-      .toBe(0)
-      .then(
-        () => true,
-        () => false,
-      )
-    if (!hiddenSwitch) {
-      const hasNativeControls = await page.evaluate(hasNativeChatControls, switchButtonContainerSelector)
-      if (hasNativeControls) {
-        test.skip(true, 'Selected URL exposed native chat controls and did not meet no-chat precondition.')
-        return
-      }
-      expect(await page.locator(switchButtonSelector).count()).toBe(0)
-    }
+    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(0)
+    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(0)
+    await expect.poll(async () => page.locator(switchButtonSelector).count(), { timeout: 12000 }).toBe(0)
     await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)
     await expect.poll(async () => page.evaluate(isExtensionOverlayRendered)).toBe(false)
     await expect.poll(async () => page.evaluate(isExtensionChatLoaded)).toBe(false)

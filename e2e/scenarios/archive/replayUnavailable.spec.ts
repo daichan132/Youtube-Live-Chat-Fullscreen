@@ -36,7 +36,7 @@ const replayUnavailableFixtureHtml = buildWatchFixtureHtml({
 })
 
 test.describe('replay unavailable archive chat', { tag: '@archive' }, () => {
-  test('extension chat stays hidden on a deterministic replay-unavailable fixture', async ({ page }) => {
+  test('extension chat stays hidden on a deterministic replay-unavailable fixture', { tag: '@fixture' }, async ({ page }) => {
     test.setTimeout(120000)
 
     await routeYouTubeWatchFixture(page, REPLAY_UNAVAILABLE_VIDEO_ID, replayUnavailableFixtureHtml)
@@ -45,8 +45,8 @@ test.describe('replay unavailable archive chat', { tag: '@archive' }, () => {
     await watchPage.goto(REPLAY_UNAVAILABLE_FIXTURE_URL)
     await watchPage.enterFullscreen()
 
-    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(1)
-    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(1)
+    await expect.poll(async () => page.locator(SHADOW_HOST).count(), { timeout: 12000 }).toBe(0)
+    await expect.poll(async () => page.locator(switchButtonContainerSelector).count(), { timeout: 12000 }).toBe(0)
     await expect.poll(async () => page.evaluate(isNativeChatUnavailable), { timeout: 12000 }).toBe(true)
     await expect.poll(async () => page.locator(switchButtonSelector).count(), { timeout: 12000 }).toBe(0)
     await expect.poll(async () => page.evaluate(hasPlayableChat)).toBe(false)

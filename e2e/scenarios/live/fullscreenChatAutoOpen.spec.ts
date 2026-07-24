@@ -18,7 +18,7 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
     await yt.goto(liveUrl)
 
     await yt.waitForNativeChat()
-    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(
+    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
       () => true,
       () => false,
     )
@@ -44,7 +44,7 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
     if (!overlayReady) {
       const state = await captureChatState(page, test.info(), 'auto-open-extension-unready')
       if (state?.native.playable === false) {
-        const nativeRecovered = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 15000 }).then(
+        const nativeRecovered = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 15000 }).then(
           () => true,
           () => false,
         )

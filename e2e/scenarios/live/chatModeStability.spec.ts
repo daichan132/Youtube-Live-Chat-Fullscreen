@@ -117,7 +117,7 @@ test.describe('chat mode stability on live page', { tag: '@live' }, () => {
 
 		await yt.goto(liveUrl)
 
-		const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(
+		const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
 			() => true,
 			() => false,
 		)
@@ -164,7 +164,7 @@ test.describe('chat mode stability on live page', { tag: '@live' }, () => {
 		await yt.goto(liveUrl)
 
 		// ネイティブチャット準備待ち
-		const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(
+		const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
 			() => true,
 			() => false,
 		)

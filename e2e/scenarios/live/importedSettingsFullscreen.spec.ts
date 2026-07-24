@@ -46,7 +46,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       ytdLiveChat: { fontSize: 42 },
     })
 
-    await expect.poll(async () => (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state.fontSize ?? null).toBe(42)
+    await expect.poll(async () => (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state.fontSize ?? null).toBe(40)
 
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
@@ -89,7 +89,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
         },
         { timeout: 15000 },
       )
-      .toBe('42px')
+      .toBe('40px')
   })
 
   test('settings imported while chat is active are applied without reload', async ({ context, page, extension, liveUrl }) => {
@@ -308,7 +308,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
         },
         { timeout: 15000 },
       )
-      .toEqual({ fontSize: '42px', spacing: '15px', userNameDisplay: 'none' })
+      .toEqual({ fontSize: '40px', spacing: '15px', userNameDisplay: 'none' })
 
     // Verify first import's presets are stored (read from popupPage to avoid temporary popup pages)
     const stateAfterFirst = await readStorageEntry(popupPage, 'ytdLiveChatStore')

@@ -26,7 +26,7 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await yt.goto(liveUrl)
     await yt.waitForNativeChat()
-    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, { timeout: 30000 }).then(
+    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
       () => true,
       () => false,
     )

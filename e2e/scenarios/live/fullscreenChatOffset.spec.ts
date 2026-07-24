@@ -3,6 +3,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
+import { YTD_LIVE_CHAT_PERSIST } from '../../../shared/settings/persistConfig'
 
 const collectFullscreenChatOffset = () => {
   const host = document.getElementById('shadow-root-live-chat') as HTMLElement | null
@@ -70,7 +71,7 @@ const collectFullscreenChatOffset = () => {
 }
 
 test.describe('fullscreen chat offset', { tag: '@live' }, () => {
-  test('fullscreen chat overlay aligns to viewport', async ({ page, liveUrl }) => {
+  test('fullscreen chat overlay aligns to viewport', async ({ page, extension, liveUrl }) => {
     test.setTimeout(180000)
 
     if (!liveUrl) {
@@ -81,6 +82,12 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
 
+    await extension.storage.set({
+      [YTD_LIVE_CHAT_PERSIST.key]: JSON.stringify({
+        state: { alwaysOnDisplay: false },
+        version: YTD_LIVE_CHAT_PERSIST.version,
+      }),
+    })
     await yt.goto(liveUrl)
 
     await page.waitForSelector('ytd-live-chat-frame', { state: 'attached' })
