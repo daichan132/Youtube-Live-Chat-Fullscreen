@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
-import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import { canToggleFullscreenChat, hasFullscreenChatSource } from './hasFullscreenChatSource'
+import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import type { ChatMode } from './types'
 
 export type ChatAvailability = {

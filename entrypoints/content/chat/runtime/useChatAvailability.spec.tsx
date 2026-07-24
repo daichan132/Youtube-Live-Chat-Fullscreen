@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores'
-import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import { canToggleFullscreenChat, hasFullscreenChatSource } from './hasFullscreenChatSource'
+import { getUnavailableCurrentLiveChatVideoId } from './liveChatAvailability'
 import { useChatAvailability } from './useChatAvailability'
 
 vi.mock('redux-persist-webextension-storage', () => ({
