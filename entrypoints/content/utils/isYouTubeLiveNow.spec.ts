@@ -268,6 +268,19 @@ describe('isYouTubeLiveNow', () => {
     expect(isYouTubeLiveNow()).toBe(true)
   })
 
+  it('rescans when the inline player response appears after the first check', () => {
+    const videoId = `late-inline-live-${Math.random().toString(16).slice(2)}`
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+
+    expect(isYouTubeLiveNow()).toBe(false)
+
+    const script = document.createElement('script')
+    script.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
+    document.head.appendChild(script)
+
+    expect(isYouTubeLiveNow()).toBe(true)
+  })
+
   it('ignores stale inline live script from another video', () => {
     window.history.pushState({}, '', `${window.location.origin}/watch?v=current-video`)
     const script = document.createElement('script')

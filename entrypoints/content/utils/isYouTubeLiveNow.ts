@@ -197,8 +197,6 @@ const getLiveFromInlinePlayerResponseScript = () => {
     }
   }
 
-  cachedScriptLiveNowKey = cacheKey
-  cachedScriptLiveNowResult = null
   return null
 }
 
