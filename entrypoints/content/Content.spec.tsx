@@ -1,13 +1,14 @@
 import { act, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { Content } from './Content'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
 import { useChatMode } from './chat/runtime/useChatMode'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
+import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
 import { usePollingWithNavigate } from './hooks/watchYouTubeUI/usePollingWithNavigate'
 
 const { ytdLiveChatMock, ytdLiveChatSwitchMock } = vi.hoisted(() => ({
@@ -43,9 +44,8 @@ vi.mock('./hooks/globalState/useContentRuntimeMessages', () => ({
 
 vi.mock('./hooks/useYLCPortalTargets', () => ({
   useYLCPortalTargets: vi.fn(() => ({
-    portalsReady: false,
-    shadowRoot: null,
-    switchButtonContainer: null,
+    overlayRoot: null,
+    switchContainer: null,
   })),
 }))
 
@@ -70,19 +70,21 @@ describe('Content', () => {
     vi.mocked(useContentRuntimeMessages).mockReset()
     vi.mocked(useEnsureArchiveNativeChatOpen).mockReset()
     vi.mocked(useYLCPortalTargets).mockReset()
+    vi.mocked(useIsFullScreen).mockReset()
     ytdLiveChatMock.mockClear()
     ytdLiveChatSwitchMock.mockClear()
     useGlobalSettingStore.setState({ themeMode: 'system', ytdLiveChat: true })
+    useYTDLiveChatStore.setState({ alwaysOnDisplay: true })
     useYTDLiveChatNoLsStore.setState(noLsStoreBaseState, true)
     window.history.pushState({}, '', `${window.location.origin}/watch?v=video-a`)
 
     vi.mocked(usePollingWithNavigate).mockReturnValue(true)
     vi.mocked(canToggleFullscreenChat).mockReturnValue(true)
     vi.mocked(useChatMode).mockReturnValue('archive')
+    vi.mocked(useIsFullScreen).mockReturnValue(true)
     vi.mocked(useYLCPortalTargets).mockReturnValue({
-      portalsReady: false,
-      shadowRoot: null,
-      switchButtonContainer: null,
+      overlayRoot: null,
+      switchContainer: null,
     })
   })
 
@@ -93,9 +95,8 @@ describe('Content', () => {
     document.body.append(host, switchButtonContainer)
 
     vi.mocked(useYLCPortalTargets).mockReturnValue({
-      portalsReady: true,
-      shadowRoot,
-      switchButtonContainer,
+      overlayRoot: shadowRoot,
+      switchContainer: switchButtonContainer,
     })
 
     return { shadowRoot, switchButtonContainer }
@@ -234,6 +235,27 @@ describe('Content', () => {
     render(<Content />)
 
     expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.overlay) })
+  })
+
+  it('keeps the inline Always On overlay independent from the fullscreen switch target', () => {
+    const host = document.createElement('div')
+    const shadowRoot = host.attachShadow({ mode: 'open' })
+    document.body.append(host)
+    useYTDLiveChatStore.setState({ alwaysOnDisplay: true })
+    vi.mocked(useIsFullScreen).mockReturnValue(false)
+    vi.mocked(useYLCPortalTargets).mockReturnValue({
+      overlayRoot: shadowRoot,
+      switchContainer: null,
+    })
+
+    render(<Content />)
+
+    expect(useYLCPortalTargets).toHaveBeenCalledWith({
+      overlayEnabled: true,
+      switchEnabled: false,
+    })
+    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).not.toBeNull()
+    expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
   })
 
   it('does not render overlay container when fullscreen chat cannot be toggled', () => {

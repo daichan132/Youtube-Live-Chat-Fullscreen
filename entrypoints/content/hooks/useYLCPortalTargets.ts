@@ -1,14 +1,35 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { PublicPath } from 'wxt/browser'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { browser, type PublicPath } from 'wxt/browser'
 import { SHADOW_HOST_ID, SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
 
-const ensureShadowRoot = (contentCssUrl: string): ShadowRoot | null => {
-  const player = document.getElementById('movie_player')
-  if (!player) return null
+type UseYLCPortalTargetsOptions = {
+  overlayEnabled: boolean
+  switchEnabled: boolean
+}
 
-  let host = document.getElementById(SHADOW_HOST_ID)
-  if (!host) {
-    host = document.createElement('div')
+type PortalTargets = {
+  overlayRoot: ShadowRoot | null
+  switchContainer: HTMLElement | null
+}
+
+const initialTargets: PortalTargets = {
+  overlayRoot: null,
+  switchContainer: null,
+}
+
+const getCurrentPlayer = () => document.getElementById('movie_player')
+
+const getCurrentRightControls = (player: HTMLElement | null) =>
+  player?.getElementsByClassName('ytp-right-controls')[0] as HTMLElement | undefined
+
+const createOverlayRoot = (player: HTMLElement, contentCssUrl: string) => {
+  const existingHost = document.getElementById(SHADOW_HOST_ID)
+  if (existingHost && existingHost.parentElement !== player) {
+    existingHost.remove()
+  }
+
+  const host = existingHost?.isConnected ? existingHost : document.createElement('div')
+  if (!host.isConnected) {
     host.id = SHADOW_HOST_ID
     host.style.pointerEvents = 'none'
     host.style.position = 'absolute'
@@ -16,6 +37,7 @@ const ensureShadowRoot = (contentCssUrl: string): ShadowRoot | null => {
     host.style.left = '0'
     host.style.width = '0'
     host.style.height = '0'
+
     const root = host.attachShadow({ mode: 'open' })
     root.innerHTML = `<style>
   :host {
@@ -38,114 +60,146 @@ const ensureShadowRoot = (contentCssUrl: string): ShadowRoot | null => {
     link.rel = 'stylesheet'
     link.href = contentCssUrl
     root.appendChild(link)
-
     player.appendChild(host)
-    return root
   }
-  return host.shadowRoot ?? null
+
+  return host.shadowRoot
 }
 
-const removeShadowRoot = (root: ShadowRoot | null) => {
-  if (!root) return
-  const host = root.host
-  if (host?.parentNode) {
-    host.parentNode.removeChild(host)
+const createSwitchContainer = (rightControls: HTMLElement) => {
+  const existingContainer = document.getElementById(SWITCH_BUTTON_CONTAINER_ID)
+  if (existingContainer && existingContainer.parentElement !== rightControls) {
+    existingContainer.remove()
   }
-}
 
-const ensureSwitchButtonContainer = (): HTMLElement | null => {
-  const controls = document.getElementById('movie_player')?.getElementsByClassName('ytp-right-controls')[0]
-  if (!controls) return null
-
-  let container = document.getElementById(SWITCH_BUTTON_CONTAINER_ID)
-  if (!container) {
-    container = document.createElement('div')
+  const container = existingContainer?.isConnected ? existingContainer : document.createElement('div')
+  if (!container.isConnected) {
     container.id = SWITCH_BUTTON_CONTAINER_ID
     container.style.height = '100%'
     container.style.width = '54px'
-    // Keep the slot hidden until Content.tsx explicitly enables switch rendering.
     container.style.display = 'none'
     container.style.verticalAlign = 'top'
-    controls.prepend(container)
+    rightControls.prepend(container)
   }
+
   return container
 }
 
-const removeSwitchButtonContainer = (container: HTMLElement | null) => {
-  if (!container) return
-  if (container.parentNode) {
-    container.parentNode.removeChild(container)
+const mutationTouchesPortalBoundary = (mutation: MutationRecord) => {
+  if (mutation.type !== 'childList') return false
+
+  const isRelevant = (node: Node) => {
+    if (!(node instanceof Element)) return false
+    return Boolean(
+      node.matches(`#movie_player, .ytp-right-controls, #${SHADOW_HOST_ID}, #${SWITCH_BUTTON_CONTAINER_ID}`) ||
+        node.querySelector(`#movie_player, .ytp-right-controls, #${SHADOW_HOST_ID}, #${SWITCH_BUTTON_CONTAINER_ID}`),
+    )
   }
+
+  return [...mutation.addedNodes, ...mutation.removedNodes].some(isRelevant)
 }
 
-type PortalTargets = {
-  portalsReady: boolean
-  shadowRoot: ShadowRoot | null
-  switchButtonContainer: HTMLElement | null
-}
-
-const initialTargets: PortalTargets = {
-  portalsReady: false,
-  shadowRoot: null,
-  switchButtonContainer: null,
-}
-
-export const useYLCPortalTargets = (enabled: boolean) => {
-  const shadowRootRef = useRef<ShadowRoot | null>(null)
-  const switchButtonRef = useRef<HTMLElement | null>(null)
+export const useYLCPortalTargets = ({ overlayEnabled, switchEnabled }: UseYLCPortalTargetsOptions): PortalTargets => {
+  const overlayRootRef = useRef<ShadowRoot | null>(null)
+  const switchContainerRef = useRef<HTMLElement | null>(null)
   const [targets, setTargets] = useState<PortalTargets>(initialTargets)
-
-  const retryIntervalMs = 100
-  const retryMaxMs = 5000
   const contentCssUrl = useMemo(() => browser.runtime.getURL('content-scripts/content.css' as PublicPath), [])
 
+  const syncTargets = useCallback(() => {
+    const player = getCurrentPlayer()
+    const rightControls = getCurrentRightControls(player) ?? null
+
+    const overlayIsCurrent = overlayRootRef.current?.host.isConnected === true && overlayRootRef.current.host.parentElement === player
+    if (!overlayEnabled || !player) {
+      overlayRootRef.current?.host.remove()
+      overlayRootRef.current = null
+    } else if (!overlayIsCurrent) {
+      overlayRootRef.current?.host.remove()
+      overlayRootRef.current = createOverlayRoot(player, contentCssUrl)
+    }
+
+    const switchIsCurrent = switchContainerRef.current?.isConnected === true && switchContainerRef.current.parentElement === rightControls
+    if (!switchEnabled || !rightControls) {
+      switchContainerRef.current?.remove()
+      switchContainerRef.current = null
+    } else if (!switchIsCurrent) {
+      switchContainerRef.current?.remove()
+      switchContainerRef.current = createSwitchContainer(rightControls)
+    }
+
+    setTargets(current => {
+      if (current.overlayRoot === overlayRootRef.current && current.switchContainer === switchContainerRef.current) {
+        return current
+      }
+      return {
+        overlayRoot: overlayRootRef.current,
+        switchContainer: switchContainerRef.current,
+      }
+    })
+
+    return {
+      overlayResolved: !overlayEnabled || overlayRootRef.current !== null,
+      switchResolved: !switchEnabled || switchContainerRef.current !== null,
+    }
+  }, [contentCssUrl, overlayEnabled, switchEnabled])
+
   useEffect(() => {
-    if (enabled) {
-      let interval: number | null = null
-      const startedAt = Date.now()
+    let retryTimer: number | null = null
+    let animationFrame: number | null = null
 
-      const ensureTargets = () => {
-        if (!shadowRootRef.current) {
-          shadowRootRef.current = ensureShadowRoot(contentCssUrl)
-        }
-        if (!switchButtonRef.current) {
-          switchButtonRef.current = ensureSwitchButtonContainer()
-        }
-        const ready = Boolean(shadowRootRef.current && switchButtonRef.current)
-        setTargets({
-          portalsReady: ready,
-          shadowRoot: shadowRootRef.current,
-          switchButtonContainer: switchButtonRef.current,
-        })
-        return ready
-      }
-
-      if (!ensureTargets()) {
-        interval = window.setInterval(() => {
-          const ready = ensureTargets()
-          if (ready) {
-            if (interval) window.clearInterval(interval)
-            interval = null
-            return
-          }
-          if (Date.now() - startedAt >= retryMaxMs) {
-            if (interval) window.clearInterval(interval)
-            interval = null
-          }
-        }, retryIntervalMs)
-      }
-
-      return () => {
-        if (interval) window.clearInterval(interval)
+    const stopRetryWhenResolved = () => {
+      const resolved = syncTargets()
+      if (resolved.overlayResolved && resolved.switchResolved && retryTimer !== null) {
+        window.clearInterval(retryTimer)
+        retryTimer = null
       }
     }
 
-    removeShadowRoot(shadowRootRef.current)
-    removeSwitchButtonContainer(switchButtonRef.current)
-    shadowRootRef.current = null
-    switchButtonRef.current = null
-    setTargets(initialTargets)
-  }, [contentCssUrl, enabled])
+    const scheduleSync = () => {
+      if (animationFrame !== null) return
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = null
+        stopRetryWhenResolved()
+      })
+    }
+
+    stopRetryWhenResolved()
+    const initialResolved = {
+      overlay: !overlayEnabled || overlayRootRef.current !== null,
+      switch: !switchEnabled || switchContainerRef.current !== null,
+    }
+    if (!initialResolved.overlay || !initialResolved.switch) {
+      retryTimer = window.setInterval(stopRetryWhenResolved, 250)
+    }
+
+    const observer = new MutationObserver(mutations => {
+      if (mutations.some(mutationTouchesPortalBoundary)) scheduleSync()
+    })
+    if (document.documentElement) {
+      observer.observe(document.documentElement, { childList: true, subtree: true })
+    }
+
+    document.addEventListener('fullscreenchange', scheduleSync)
+    document.addEventListener('yt-navigate-finish', scheduleSync)
+
+    return () => {
+      if (retryTimer !== null) window.clearInterval(retryTimer)
+      if (animationFrame !== null) window.cancelAnimationFrame(animationFrame)
+      observer.disconnect()
+      document.removeEventListener('fullscreenchange', scheduleSync)
+      document.removeEventListener('yt-navigate-finish', scheduleSync)
+    }
+  }, [overlayEnabled, switchEnabled, syncTargets])
+
+  useEffect(
+    () => () => {
+      overlayRootRef.current?.host.remove()
+      switchContainerRef.current?.remove()
+      overlayRootRef.current = null
+      switchContainerRef.current = null
+    },
+    [],
+  )
 
   return targets
 }

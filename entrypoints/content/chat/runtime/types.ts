@@ -22,9 +22,9 @@ export type ArchiveChatSource = {
 export type ChatSource = LiveChatSource | ArchiveChatSource
 
 export type OverlayVisibilityInput = {
-  userToggleEnabled: boolean
+  enabled: boolean
+  sourceReady: boolean
   isFullscreen: boolean
-  fullscreenSourceReady: boolean
-  inlineVisible: boolean
-  nativeChatOpenIntent: boolean
+  alwaysOnDisplay: boolean
+  nativeChatOpen: boolean
 }

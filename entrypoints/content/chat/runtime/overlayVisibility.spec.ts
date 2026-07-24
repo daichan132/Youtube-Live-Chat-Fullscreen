@@ -5,11 +5,11 @@ describe('shouldShowOverlay', () => {
   it('returns false when user toggle is disabled', () => {
     expect(
       shouldShowOverlay({
-        userToggleEnabled: false,
+        enabled: false,
+        sourceReady: true,
         isFullscreen: true,
-        fullscreenSourceReady: true,
-        inlineVisible: true,
-        nativeChatOpenIntent: false,
+        alwaysOnDisplay: true,
+        nativeChatOpen: false,
       }),
     ).toBe(false)
   })
@@ -17,33 +17,53 @@ describe('shouldShowOverlay', () => {
   it('shows overlay in fullscreen only when source is ready', () => {
     expect(
       shouldShowOverlay({
-        userToggleEnabled: true,
+        enabled: true,
+        sourceReady: true,
         isFullscreen: true,
-        fullscreenSourceReady: true,
-        inlineVisible: false,
-        nativeChatOpenIntent: true,
+        alwaysOnDisplay: false,
+        nativeChatOpen: true,
       }),
     ).toBe(true)
 
     expect(
       shouldShowOverlay({
-        userToggleEnabled: true,
+        enabled: true,
+        sourceReady: false,
         isFullscreen: true,
-        fullscreenSourceReady: false,
-        inlineVisible: true,
-        nativeChatOpenIntent: false,
+        alwaysOnDisplay: true,
+        nativeChatOpen: false,
       }),
     ).toBe(false)
   })
 
-  it('keeps inline overlay hidden when native chat is open', () => {
+  it('shows inline only when Always On is enabled and native chat is closed', () => {
     expect(
       shouldShowOverlay({
-        userToggleEnabled: true,
+        enabled: true,
+        sourceReady: true,
         isFullscreen: false,
-        fullscreenSourceReady: false,
-        inlineVisible: true,
-        nativeChatOpenIntent: true,
+        alwaysOnDisplay: true,
+        nativeChatOpen: false,
+      }),
+    ).toBe(true)
+
+    expect(
+      shouldShowOverlay({
+        enabled: true,
+        sourceReady: true,
+        isFullscreen: false,
+        alwaysOnDisplay: true,
+        nativeChatOpen: true,
+      }),
+    ).toBe(false)
+
+    expect(
+      shouldShowOverlay({
+        enabled: true,
+        sourceReady: true,
+        isFullscreen: false,
+        alwaysOnDisplay: false,
+        nativeChatOpen: false,
       }),
     ).toBe(false)
   })

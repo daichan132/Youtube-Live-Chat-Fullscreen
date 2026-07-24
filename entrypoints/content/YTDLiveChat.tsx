@@ -4,7 +4,7 @@ import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVis
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
-import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
@@ -26,14 +26,15 @@ type YTDLiveChatProps = {
 }
 
 export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
-  const { isShow, isNativeChatUsable, isNativeChatExpanded } = useIsShow(isFullscreen)
+  const { isNativeChatUsable, isNativeChatExpanded } = useIsShow(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
+  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const unavailableLiveChatVideoId = useYTDLiveChatNoLsStore(state => state.unavailableLiveChatVideoId)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
   useNativeChatAutoDisable({
-    enabled: ytdLiveChat,
+    enabled: ytdLiveChat && isFullscreen,
     nativeChatOpen: isNativeChatCurrentlyOpen,
     isFullscreen,
     setYTDLiveChat,
@@ -56,11 +57,11 @@ export const YTDLiveChat = ({ isFullscreen, mode }: YTDLiveChatProps) => {
   // In archive mode, wait until native replay chat is actually playable before
   // showing the fullscreen chat overlay.
   const isOverlayVisible = shouldShowOverlay({
-    userToggleEnabled: ytdLiveChat,
+    enabled: ytdLiveChat,
+    sourceReady: canAttachFullscreenChat,
     isFullscreen,
-    fullscreenSourceReady: canAttachFullscreenChat,
-    inlineVisible: isShow,
-    nativeChatOpenIntent: isNativeChatCurrentlyOpen,
+    alwaysOnDisplay,
+    nativeChatOpen: isNativeChatCurrentlyOpen,
   })
   // Keep YouTube native layout untouched unless our fullscreen overlay is actually visible.
   useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible)

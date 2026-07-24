@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useGlobalSettingStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore, useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { canToggleFullscreenChat } from './chat/runtime/hasFullscreenChatSource'
@@ -32,6 +32,7 @@ export const Content = () => {
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
+  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const unavailableLiveChatVideoId = useYTDLiveChatNoLsStore(state => state.unavailableLiveChatVideoId)
   const setUnavailableLiveChatVideoId = useYTDLiveChatNoLsStore(state => state.setUnavailableLiveChatVideoId)
   const isFullscreen = useIsFullScreen()
@@ -70,17 +71,21 @@ export const Content = () => {
     stopWhen: shouldStopLiveChatPolling,
   })
   const canToggleFullscreenChatSwitch = !isCurrentLiveChatUnavailable && canToggleFullscreenChatResult
-  const { portalsReady, shadowRoot, switchButtonContainer } = useYLCPortalTargets(isFullscreen)
-  const shouldRenderSwitch = mode !== 'none' && canToggleFullscreenChatSwitch && portalsReady && Boolean(switchButtonContainer)
-  const shouldRenderLiveChat = mode !== 'none' && canToggleFullscreenChatSwitch && portalsReady && Boolean(shadowRoot)
+  const portalEnabled = mode !== 'none' && canToggleFullscreenChatSwitch
+  const { overlayRoot, switchContainer } = useYLCPortalTargets({
+    overlayEnabled: portalEnabled && (isFullscreen || alwaysOnDisplay),
+    switchEnabled: portalEnabled && isFullscreen,
+  })
+  const shouldRenderSwitch = portalEnabled && switchContainer !== null
+  const shouldRenderLiveChat = portalEnabled && overlayRoot !== null
 
   useEffect(() => {
-    if (!switchButtonContainer) return
-    switchButtonContainer.style.display = shouldRenderSwitch ? 'inline-block' : 'none'
-  }, [shouldRenderSwitch, switchButtonContainer])
+    if (!switchContainer) return
+    switchContainer.style.display = shouldRenderSwitch ? 'inline-block' : 'none'
+  }, [shouldRenderSwitch, switchContainer])
 
   const renderLiveChatPortal = () => {
-    if (!shouldRenderLiveChat || !shadowRoot) return null
+    if (!shouldRenderLiveChat || !overlayRoot) return null
     return createPortal(
       <div
         data-ylc-theme={resolvedThemeMode}
@@ -90,13 +95,13 @@ export const Content = () => {
       >
         <YTDLiveChat isFullscreen={isFullscreen} mode={mode} />
       </div>,
-      shadowRoot,
+      overlayRoot,
     )
   }
 
   const renderSwitchButtonPortal = () => {
-    if (!shouldRenderSwitch || !switchButtonContainer) return null
-    return createPortal(<YTDLiveChatSwitch />, switchButtonContainer)
+    if (!shouldRenderSwitch || !switchContainer) return null
+    return createPortal(<YTDLiveChatSwitch />, switchContainer)
   }
 
   return (
