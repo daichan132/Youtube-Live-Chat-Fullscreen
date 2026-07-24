@@ -8,12 +8,11 @@ on:
     branches:
       - main
 
-# Add explicit permissions to follow security best practices
 permissions:
-  contents: read # CI only needs read access to repository contents
+  contents: read
 
 jobs:
-  build:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -27,32 +26,12 @@ jobs:
         if: github.event_name == 'pull_request'
         run: node scripts/verify/check-lockfile-age.mjs --base "origin/${{ github.base_ref }}"
       - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
-      - name: Build
-        run: yarn build
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24.x
-          cache: "yarn"
-      - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
-      - name: Lint
-        run: yarn lint
-
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24.x
-          cache: "yarn"
-      - name: Install dependencies
-        run: rm -rf node_modules && yarn install --immutable
+        run: yarn install --immutable
+      - name: Check source
+        run: yarn check
       - name: Run unit tests
         run: yarn test:unit
+      - name: Build Chrome extension
+        run: yarn build
+      - name: Build Firefox extension
+        run: yarn build:firefox

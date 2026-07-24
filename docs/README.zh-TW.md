@@ -177,7 +177,7 @@ shared/               # 跨進入點共用
 
 ### 環境需求
 
-- **[Node.js](https://nodejs.org)** v22.x
+- **[Node.js](https://nodejs.org)** v24.x
 - **[Yarn](https://yarnpkg.com)**（建議使用 Corepack）
 
 ### 安裝
@@ -195,7 +195,8 @@ yarn install
 | --- | --- |
 | `yarn dev` | 啟動開發伺服器（Chrome） |
 | `yarn build` | 正式建置（Chrome） |
-| `yarn lint` | Biome 檢查 + TypeScript 型別檢查 |
+| `yarn check` | 唯讀 Biome 檢查 + TypeScript 型別檢查 |
+| `yarn fix` | 套用 Biome 的安全格式化與 lint 修正 |
 | `yarn test:unit` | 執行單元測試 |
 | `yarn e2e` | 執行 E2E 測試 |
 
@@ -206,7 +207,7 @@ yarn install
 提交 Pull Request 前，建議執行：
 
 ```bash
-yarn lint
+yarn check
 yarn test:unit
 yarn build
 ```
@@ -218,7 +219,7 @@ yarn build
 歡迎提出問題回報、功能建議或 Pull Request。
 
 - 建立 [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) 或送出 [Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls)。
-- PR 前請執行 `yarn lint && yarn test:unit && yarn build`。
+- PR 前請執行 `yarn check && yarn test:unit && yarn build && yarn build:firefox`。
 - 翻譯貢獻也十分歡迎 — 請新增 `docs/README.<locale>.md` 檔案。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">

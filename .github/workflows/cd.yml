@@ -1,51 +1,159 @@
-name: CD
+name: Release
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
-# Add explicit permissions to follow security best practices
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
-  contents: write # Need write access to create and push tags
+  contents: write
 
 jobs:
-  create_tag:
+  verify-and-package:
     runs-on: ubuntu-latest
     outputs:
-      tag_created: ${{ steps.check_tag.outputs.tag_created }}
-      version: ${{ steps.check_tag.outputs.version }}
+      version: ${{ steps.version.outputs.version }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - name: Set up Git user
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+          cache: "yarn"
+      - name: Validate release version and ref
+        id: version
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Get version from package.json and create tag
-        id: check_tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git fetch --tags
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "Releases must run from main, got: $GITHUB_REF"
+            exit 1
+          fi
+
           VERSION=$(node -p "require('./package.json').version")
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
             echo "Invalid version in package.json: $VERSION"
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1; then
-            echo "Tag v$VERSION already exists."
-            echo "tag_created=false" >> "$GITHUB_OUTPUT"
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Check source
+        run: yarn check
+      - name: Run unit tests
+        run: yarn test:unit
+      - name: Build extensions
+        run: |
+          yarn build
+          yarn build:firefox
+      - name: Package extensions
+        run: |
+          yarn zip
+          yarn zip:firefox
+      - name: Validate package versions and files
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          node -e "
+            const fs = require('node:fs');
+            for (const target of ['chrome-mv3', 'firefox-mv2']) {
+              const manifest = JSON.parse(fs.readFileSync('.output/' + target + '/manifest.json', 'utf8'));
+              if (manifest.version !== process.env.RELEASE_VERSION) {
+                throw new Error(target + ' manifest version ' + manifest.version + ' does not match ' + process.env.RELEASE_VERSION);
+              }
+            }
+          "
+          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip"
+          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip"
+          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
+      - name: Upload release packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: extension-packages
+          path: |
+            .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-chrome.zip
+            .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-firefox.zip
+            .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-sources.zip
+          include-hidden-files: true
+          if-no-files-found: error
+
+  prepare-release:
+    needs: verify-and-package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - name: Download verified packages
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: extension-packages
+          path: .output
+      - name: Create or verify tag
+        env:
+          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
+        run: |
+          git fetch --tags --force
+          TAG="v$RELEASE_VERSION"
+          if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            TAG_COMMIT=$(git rev-list -n 1 "$TAG")
+            if [[ "$TAG_COMMIT" != "$GITHUB_SHA" ]]; then
+              echo "$TAG already points to $TAG_COMMIT, expected $GITHUB_SHA"
+              exit 1
+            fi
           else
-            git tag -a "v$VERSION" -m "Release v$VERSION"
-            git push origin "refs/tags/v$VERSION"
-            echo "tag_created=true" >> "$GITHUB_OUTPUT"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag -a "$TAG" -m "Release $TAG" "$GITHUB_SHA"
+            git push origin "refs/tags/$TAG"
+          fi
+      - name: Create or update GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
+        run: |
+          TAG="v$RELEASE_VERSION"
+          PACKAGES=(
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip"
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip"
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
+          )
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "${PACKAGES[@]}" --clobber
+          else
+            gh release create "$TAG" "${PACKAGES[@]}" --title "$TAG" --generate-notes --verify-tag
           fi
 
-  submit:
-    needs: create_tag
-    if: needs.create_tag.outputs.tag_created == 'true'
+  publish-chrome:
+    needs: [verify-and-package, prepare-release]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+      - name: Download verified packages
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: extension-packages
+          path: .output
+      - name: Publish Chrome extension
+        env:
+          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: |
+          node scripts/cws-v2-submit.mjs \
+            --zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip" \
+            --expected-version "$RELEASE_VERSION"
+
+  publish-firefox:
+    needs: [verify-and-package, prepare-release]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -53,42 +161,20 @@ jobs:
         with:
           node-version: 24.x
           cache: "yarn"
-      - name: Install dependencies
+      - name: Install publishing dependencies
         run: yarn install --immutable
-      - name: Zip extensions
-        run: |
-          yarn zip
-          yarn zip:firefox
-      - name: Create GitHub Release
+      - name: Download verified packages
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: extension-packages
+          path: .output
+      - name: Publish Firefox extension
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_VERSION: ${{ needs.create_tag.outputs.version }}
-        run: |
-          gh release create "v$RELEASE_VERSION" \
-            --title "v$RELEASE_VERSION" \
-            --generate-notes \
-            .output/*-chrome.zip \
-            .output/*-firefox.zip
-      - name: Submit to stores
-        env:
-          RELEASE_VERSION: ${{ needs.create_tag.outputs.version }}
-          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
           FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
           FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
         run: |
-          CHROME_ZIP=".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip"
-          FIREFOX_ZIP=".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip"
-          SOURCES_ZIP=".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
-
-          yarn submit:chrome:v2 -- \
-            --zip "$CHROME_ZIP" \
-            --expected-version "$RELEASE_VERSION"
-
           node ./node_modules/publish-browser-extension/bin/publish-extension.mjs \
             --firefox-extension-id "youtube-live-chat-fullscreen" \
-            --firefox-zip "$FIREFOX_ZIP" \
-            --firefox-sources-zip "$SOURCES_ZIP"
+            --firefox-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip" \
+            --firefox-sources-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"

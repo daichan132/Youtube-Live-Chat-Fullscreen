@@ -177,7 +177,7 @@ shared/               # Shared across entrypoints
 
 ### Requirements
 
-- **[Node.js](https://nodejs.org)** v22.x
+- **[Node.js](https://nodejs.org)** v24.x
 - **[Yarn](https://yarnpkg.com)** (via Corepack recommended)
 
 ### Install
@@ -195,7 +195,8 @@ yarn install
 | --- | --- |
 | `yarn dev` | Start dev server (Chrome) |
 | `yarn build` | Production build (Chrome) |
-| `yarn lint` | Biome checks + TypeScript type checks |
+| `yarn check` | Read-only Biome checks + TypeScript type checks |
+| `yarn fix` | Apply safe Biome formatting and lint fixes |
 | `yarn test:unit` | Run unit tests |
 | `yarn e2e` | Run E2E tests |
 
@@ -206,7 +207,7 @@ yarn install
 Run before opening a pull request:
 
 ```bash
-yarn lint
+yarn check
 yarn test:unit
 yarn build
 ```
@@ -218,7 +219,7 @@ For Firefox compatibility changes, also run `yarn build:firefox`.
 Contributions are welcome — bug reports, feature ideas, and pull requests all help.
 
 - Open an [issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) or submit a [pull request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls).
-- Run `yarn lint && yarn test:unit && yarn build` before submitting a PR.
+- Run `yarn check && yarn test:unit && yarn build && yarn build:firefox` before submitting a PR.
 - Translation contributions are also welcome — add a `docs/README.<locale>.md` for your language.
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">

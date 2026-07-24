@@ -177,7 +177,7 @@ shared/               # エントリポイント間で共有
 
 ### 必須環境
 
-- **[Node.js](https://nodejs.org)** v22.x
+- **[Node.js](https://nodejs.org)** v24.x
 - **[Yarn](https://yarnpkg.com)**（Corepack 経由を推奨）
 
 ### インストール
@@ -195,7 +195,8 @@ yarn install
 | --- | --- |
 | `yarn dev` | 開発サーバー起動（Chrome） |
 | `yarn build` | 本番ビルド（Chrome） |
-| `yarn lint` | Biome チェック + TypeScript 型検査 |
+| `yarn check` | 読み取り専用の Biome チェック + TypeScript 型検査 |
+| `yarn fix` | Biome の安全な整形・lint 修正を適用 |
 | `yarn test:unit` | ユニットテスト実行 |
 | `yarn e2e` | E2E テスト実行 |
 
@@ -206,7 +207,7 @@ yarn install
 Pull Request 前に実行してください:
 
 ```bash
-yarn lint
+yarn check
 yarn test:unit
 yarn build
 ```
@@ -218,7 +219,7 @@ Firefox 互換に関係する変更では `yarn build:firefox` も実行して�
 バグ報告・機能提案・Pull Request、すべて歓迎です。
 
 - [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) を作成するか、[Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls) を送ってください。
-- PR 前に `yarn lint && yarn test:unit && yarn build` を実行してください。
+- PR 前に `yarn check && yarn test:unit && yarn build && yarn build:firefox` を実行してください。
 - 翻訳のコントリビュートも歓迎です — `docs/README.<locale>.md` を追加してください。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
