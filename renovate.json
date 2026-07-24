@@ -1,5 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:best-practices", "customManagers:biomeVersions"],
+  "packageRules": [
+    {
+      "description": "Keep uuid compatible with node-notifier 10, which requires uuid through CommonJS",
+      "matchPackageNames": ["uuid"],
+      "allowedVersions": "<12"
+    }
+  ],
   "timezone": "Asia/Tokyo"
 }
