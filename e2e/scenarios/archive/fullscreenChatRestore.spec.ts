@@ -74,6 +74,29 @@ test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
       expect(extensionReady).toBe(true)
     }
 
+    await overlay.toggleOff()
+    await expect
+      .poll(
+        async () => {
+          const layout = await yt.getFullscreenNativeChatLayout()
+          return (
+            layout.fullscreen &&
+            layout.playerWidth > 0 &&
+            layout.chatWidth > 0 &&
+            layout.overlapPx <= 1 &&
+            !layout.hasExtensionLayoutFix &&
+            !layout.hasPlayerFootprintOverride
+          )
+        },
+        { timeout: 12000 },
+      )
+      .toBe(true)
+
+    await test.info().attach('fullscreen-native-chat-layout', {
+      body: JSON.stringify(await yt.getFullscreenNativeChatLayout(), null, 2),
+      contentType: 'application/json',
+    })
+
     await yt.exitFullscreen()
     await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null), { timeout: 8000 }).toBe(true)
 
