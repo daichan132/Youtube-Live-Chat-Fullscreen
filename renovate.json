@@ -6,6 +6,11 @@
       "description": "Keep uuid compatible with node-notifier 10, which requires uuid through CommonJS",
       "matchPackageNames": ["uuid"],
       "allowedVersions": "<12"
+    },
+    {
+      "description": "Keep minimatch compatible with multimatch 6, which imports the minimatch v3 default API",
+      "matchPackageNames": ["minimatch"],
+      "allowedVersions": "<4"
     }
   ],
   "timezone": "Asia/Tokyo"
