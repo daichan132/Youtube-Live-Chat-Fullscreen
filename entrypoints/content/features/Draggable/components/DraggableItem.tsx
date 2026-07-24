@@ -6,9 +6,10 @@ import { useShallow } from 'zustand/react/shallow'
 
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
+import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
-import { deriveResizedLayout, fitLayoutWithinViewportWidth, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
+import { deriveResizedLayout, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
 import { getDraggableItemStyles } from '../hooks/draggableItemStyles'
 import { ControlIcons } from './ControlIcons'
 import { ChatOnlyChromeEffect } from './EffectComponent/ChatOnlyChromeEffect'
@@ -27,6 +28,7 @@ const CONTROL_HIDE_DELAY_MS = 160
 const CONTROL_FADE_OUT_MS = 180
 const CONTROL_HOVER_BRIDGE_OVERLAP = 12
 const CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM = 12
+const GEOMETRY_VIEWPORT_PADDING = 10
 const RESIZE_HANDLE_POINTER_STYLE: React.CSSProperties = {
   pointerEvents: 'auto',
   zIndex: CHAT_PANEL_LAYER.interactionOverlay,
@@ -118,12 +120,13 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
   const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
 
-  const { coordinates, size, setSize, setCoordinates } = useYTDLiveChatStore(
+  const { coordinates, size, setSize, setCoordinates, setGeometry } = useYTDLiveChatStore(
     useShallow(state => ({
       coordinates: state.coordinates,
       size: state.size,
       setSize: state.setSize,
       setCoordinates: state.setCoordinates,
+      setGeometry: state.setGeometry,
     })),
   )
 
@@ -176,43 +179,45 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   const handleResizeStop = useCallback(
     (_event: MouseEvent | TouchEvent, _direction: Direction, ref: HTMLElement, _delta: NumberSize) => {
       setIsResizing(false)
-      setSize({
-        width: Math.max(ResizableMinWidth, ref.offsetWidth),
-        height: Math.max(ResizableMinHeight, ref.offsetHeight),
-      })
+      const nextGeometry = fitGeometryToViewport(
+        {
+          coordinates: useYTDLiveChatStore.getState().coordinates,
+          size: {
+            width: Math.max(ResizableMinWidth, ref.offsetWidth),
+            height: Math.max(ResizableMinHeight, ref.offsetHeight),
+          },
+        },
+        { width: window.innerWidth, height: window.innerHeight },
+        GEOMETRY_VIEWPORT_PADDING,
+      )
+      setGeometry(nextGeometry)
     },
-    [setSize],
+    [setGeometry],
   )
 
-  const keepWithinViewportWidth = useCallback(() => {
-    const {
-      size: currentSize,
-      coordinates: currentCoordinates,
-      setCoordinates: updateCoordinates,
-      setSize: updateSize,
-    } = useYTDLiveChatStore.getState()
+  const keepWithinViewport = useCallback(() => {
+    const { size: currentSize, coordinates: currentCoordinates, setGeometry: updateGeometry } = useYTDLiveChatStore.getState()
     const currentLayout = { coordinates: currentCoordinates, size: currentSize }
-    const nextLayout = fitLayoutWithinViewportWidth(currentLayout, window.innerWidth)
+    const nextLayout = fitGeometryToViewport(
+      currentLayout,
+      { width: window.innerWidth, height: window.innerHeight },
+      GEOMETRY_VIEWPORT_PADDING,
+    )
 
     if (isSameLayoutGeometry(currentLayout, nextLayout)) return
-
-    if (currentCoordinates.x !== nextLayout.coordinates.x || currentCoordinates.y !== nextLayout.coordinates.y) {
-      updateCoordinates(nextLayout.coordinates)
-      return
-    }
-
-    updateSize(nextLayout.size)
+    updateGeometry(nextLayout)
   }, [])
 
   useLayoutEffect(() => {
     const handleWindowResize = () => {
       setViewportHeight(window.innerHeight)
-      keepWithinViewportWidth()
+      keepWithinViewport()
     }
 
+    handleWindowResize()
     window.addEventListener('resize', handleWindowResize, { passive: true })
     return () => window.removeEventListener('resize', handleWindowResize)
-  }, [keepWithinViewportWidth])
+  }, [keepWithinViewport])
 
   useEffect(() => {
     if (!isDragging) return

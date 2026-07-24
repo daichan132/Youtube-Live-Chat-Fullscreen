@@ -1,12 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 import { hasPlayableLiveChat } from '@/entrypoints/content/utils/hasPlayableLiveChat'
-import { useYTDLiveChatStore } from '@/shared/stores'
 import { useNativeChatState } from './useNativeChatState'
 import { usePollingWithNavigate } from './usePollingWithNavigate'
 
 const CHAT_AVAILABILITY_INTERVAL_MS = 2000
-const CHAT_VIEWPORT_GAP_PX = 10
-
 export const useIsShow = (isFullscreen: boolean) => {
   const checkPlayableChat = useCallback(() => hasPlayableLiveChat(), [])
   const hasPlayableChat = usePollingWithNavigate({
@@ -48,25 +45,7 @@ export const useIsShow = (isFullscreen: boolean) => {
   }, [isFullscreen])
 
   useEffect(() => {
-    if (!(hasPlayableChat && isTop)) {
-      setIsChatPositionChecked(false)
-      return
-    }
-
-    const {
-      size: { width, height },
-      coordinates: { x, y },
-      setDefaultPosition,
-    } = useYTDLiveChatStore.getState()
-    if (
-      x + CHAT_VIEWPORT_GAP_PX < 0 ||
-      window.innerWidth + CHAT_VIEWPORT_GAP_PX < width + x ||
-      y + CHAT_VIEWPORT_GAP_PX < 0 ||
-      window.innerHeight + CHAT_VIEWPORT_GAP_PX < height + y
-    ) {
-      setDefaultPosition()
-    }
-    setIsChatPositionChecked(true)
+    setIsChatPositionChecked(hasPlayableChat && isTop)
   }, [hasPlayableChat, isTop])
 
   return { isShow: hasPlayableChat && isTop && isChatPositionChecked, isNativeChatUsable, isNativeChatExpanded }

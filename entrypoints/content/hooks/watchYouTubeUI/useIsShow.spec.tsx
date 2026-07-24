@@ -150,7 +150,7 @@ describe('useIsShow', () => {
     expect(result.current.isShow).toBe(false)
   })
 
-  it('resets an offscreen chat position before showing', async () => {
+  it('does not reset saved geometry while resolving visibility', async () => {
     const ytdApp = appendYtdApp()
     ytdApp.setAttribute('masthead-hidden', '')
     useYTDLiveChatStore.setState({
@@ -163,7 +163,10 @@ describe('useIsShow', () => {
     await waitFor(() => {
       expect(result.current.isShow).toBe(true)
     })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual(baseState.coordinates)
-    expect(useYTDLiveChatStore.getState().size).toEqual(baseState.size)
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({
+      x: window.innerWidth + 100,
+      y: window.innerHeight + 100,
+    })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 400, height: 600 })
   })
 })

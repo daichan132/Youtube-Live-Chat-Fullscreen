@@ -160,7 +160,7 @@ describe('DraggableItem', () => {
     vi.useRealTimers()
   })
 
-  it('keeps the chat within the viewport width when the window resizes', () => {
+  it('keeps the chat within the padded viewport when the window resizes', () => {
     resetStore({
       coordinates: { x: 200, y: 10 },
       size: { width: 400, height: 300 },
@@ -177,7 +177,7 @@ describe('DraggableItem', () => {
     })
 
     const state = useYTDLiveChatStore.getState()
-    expect(state.coordinates).toEqual({ x: 100, y: 10 })
+    expect(state.coordinates).toEqual({ x: 90, y: 10 })
     expect(state.size).toEqual({ width: 400, height: 300 })
   })
 
