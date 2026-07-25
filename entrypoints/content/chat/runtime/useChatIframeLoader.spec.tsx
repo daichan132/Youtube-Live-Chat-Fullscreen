@@ -1,5 +1,5 @@
 import { render, waitFor } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, onTestFinished, vi } from 'vitest'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useChatIframeLoader } from '@/entrypoints/content/chat/runtime/useChatIframeLoader'
 import { markChatIframeObservedForCurrentVideo } from '@/entrypoints/content/chat/shared/iframeDom'
@@ -29,6 +29,24 @@ const createPlayableLiveChatDoc = (videoId: string, options: { href?: string } =
       return null
     },
   } as unknown as Document
+}
+
+const makeInitializableLiveChatDoc = (doc: Document) => {
+  Object.defineProperties(doc, {
+    head: {
+      value: document.createElement('head'),
+      configurable: true,
+    },
+    createElement: {
+      value: document.createElement.bind(document),
+      configurable: true,
+    },
+    documentElement: {
+      value: document.createElement('html'),
+      configurable: true,
+    },
+  })
+  return doc
 }
 
 const createUnavailableLiveChatDoc = (videoId: string) => {
@@ -496,7 +514,16 @@ describe('useChatIframeLoader', () => {
     }
   })
 
-  it('upgrades a managed live iframe to a borrowed native iframe when native chat appears later', async () => {
+  it('upgrades a managed live iframe without re-entering loading during a brief native readiness gap', async () => {
+    const loadedTransitions: boolean[] = []
+    let previousLoaded = useYTDLiveChatNoLsStore.getState().isIframeLoaded
+    const unsubscribe = useYTDLiveChatNoLsStore.subscribe(state => {
+      if (state.isIframeLoaded === previousLoaded) return
+      previousLoaded = state.isIframeLoaded
+      loadedTransitions.push(state.isIframeLoaded)
+    })
+    onTestFinished(unsubscribe)
+
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('is-live-now', '')
     watchFlexy.setAttribute('live-chat-present', '')
@@ -513,6 +540,7 @@ describe('useChatIframeLoader', () => {
       if (!firstManagedIframe) return
       expectPublicLiveChatUrl(firstManagedIframe, 'video-a')
     })
+    useYTDLiveChatNoLsStore.getState().setIsIframeLoaded(true)
 
     const frame = attachLiveChatFrame()
     frame.setAttribute('video-id', 'video-a')
@@ -533,6 +561,13 @@ describe('useChatIframeLoader', () => {
       },
       { timeout: 3000 },
     )
+
+    makeInitializableLiveChatDoc(nativeIframe.contentDocument as Document)
+    nativeIframe.dispatchEvent(new Event('load'))
+    await waitFor(() => {
+      expect(useYTDLiveChatNoLsStore.getState().isIframeLoaded).toBe(true)
+    })
+    expect(loadedTransitions).toEqual([true])
   })
 
   it('borrows the next native iframe when it appears after a live video transition', async () => {

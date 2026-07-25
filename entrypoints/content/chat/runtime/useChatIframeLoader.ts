@@ -23,6 +23,7 @@ import type { ChatMode } from './types'
 const TRANSITION_CHECK_INTERVAL_MS = 1000
 const ATTACHED_AVAILABILITY_CHECK_INTERVAL_MS = 1000
 const ATTACHED_AVAILABILITY_MAX_ATTEMPTS = 30
+const SOURCE_HANDOFF_LOADING_DELAY_MS = 500
 
 export const useChatIframeLoader = (mode: ChatMode) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -106,11 +107,22 @@ export const useChatIframeLoader = (mode: ChatMode) => {
 
     resetUnavailableLiveChatForNavigation()
 
+    let sourceHandoffLoadingTimer: number | null = null
+    const clearSourceHandoffLoadingTimer = () => {
+      if (sourceHandoffLoadingTimer === null) return
+      window.clearTimeout(sourceHandoffLoadingTimer)
+      sourceHandoffLoadingTimer = null
+    }
+    const updateIframeLoaded = (loaded: boolean) => {
+      if (loaded) clearSourceHandoffLoadingTimer()
+      setIsIframeLoadedRef.current(loaded)
+    }
+
     const initializer = createIframeInitializer({
       iframeStyles,
       beforeApplyStyle: captureAttachedBorrowedIframeDocumentStyle,
       applyChatStyle: applyCurrentChatStyle,
-      setIsIframeLoaded: setIsIframeLoadedRef.current,
+      setIsIframeLoaded: updateIframeLoaded,
     })
 
     let attachedAvailabilityInterval: number | null = null
@@ -157,28 +169,32 @@ export const useChatIframeLoader = (mode: ChatMode) => {
 
     function handleLoaded() {
       const iframe = iframeRef.current
-      if (!iframe) return
+      if (!iframe) return false
       if (captureCurrentLiveChatUnavailable(iframe)) {
         detachCurrentIframe()
         observer?.disconnect()
         stopRetry()
-        return
+        return false
       }
-      initializer.initialize(iframe)
+      const initialized = initializer.initialize(iframe)
       startAttachedAvailabilityWatch(iframe, true)
+      return initialized
     }
 
-    function detachCurrentIframe(options?: { ensureNativeVisible?: boolean }) {
+    function detachCurrentIframe(options?: { ensureNativeVisible?: boolean; preserveLoadedState?: boolean }) {
       const current = iframeRef.current
       if (!current) return
 
       stopAttachedAvailabilityWatch()
+      clearSourceHandoffLoadingTimer()
       initializer.cleanup()
       current.removeEventListener('load', handleLoaded)
       detachAttachedIframe(current, ref.current, options)
 
       setIFrameElement(null)
-      setIsIframeLoadedRef.current(false)
+      if (!options?.preserveLoadedState) {
+        setIsIframeLoadedRef.current(false)
+      }
       iframeRef.current = null
     }
 
@@ -195,10 +211,10 @@ export const useChatIframeLoader = (mode: ChatMode) => {
     const finalizeAttachedSource = (iframe: HTMLIFrameElement) => {
       updateAttachedVideoId()
       if (getIframeDocumentHref(iframe) || isManagedLiveIframe(iframe)) {
-        handleLoaded()
-      } else {
-        startAttachedAvailabilityWatch(iframe)
+        return handleLoaded()
       }
+      startAttachedAvailabilityWatch(iframe)
+      return false
     }
 
     const syncChatSource = () => {
@@ -236,7 +252,8 @@ export const useChatIframeLoader = (mode: ChatMode) => {
         return true
       }
 
-      detachCurrentIframe()
+      const preserveLoadedState = useYTDLiveChatNoLsStore.getState().isIframeLoaded
+      detachCurrentIframe({ preserveLoadedState })
 
       iframeRef.current = nextIframe
       setIFrameElement(nextIframe)
@@ -244,7 +261,15 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       attachIframeToContainer(container, nextIframe)
       nextIframe.addEventListener('load', handleLoaded)
 
-      finalizeAttachedSource(nextIframe)
+      const initialized = finalizeAttachedSource(nextIframe)
+      if (preserveLoadedState && !initialized) {
+        sourceHandoffLoadingTimer = window.setTimeout(() => {
+          sourceHandoffLoadingTimer = null
+          if (iframeRef.current === nextIframe) {
+            setIsIframeLoadedRef.current(false)
+          }
+        }, SOURCE_HANDOFF_LOADING_DELAY_MS)
+      }
 
       return true
     }
@@ -388,6 +413,7 @@ export const useChatIframeLoader = (mode: ChatMode) => {
       observer?.disconnect()
       stopRetry()
       stopAttachedAvailabilityWatch()
+      clearSourceHandoffLoadingTimer()
       window.clearInterval(transitionCheckInterval)
       detachCurrentIframe({
         ensureNativeVisible: document.fullscreenElement === null && mode === 'archive',
