@@ -42,7 +42,9 @@ export const YTDLiveChatIframe = ({ videoId = null, mode, runtimeRevision = 0 }:
     })),
   )
   const isChatVisible = isIframeLoaded && (isDisplay || alwaysOnDisplay)
-  const backdropFilter = blur > 0 ? `blur(${blur}px)` : 'none'
+  // Firefox/WebRender cannot reliably combine a promoted HDR video surface
+  // with a backdrop filter without changing the video's compositing path.
+  const backdropFilter = blur > 0 && !import.meta.env.FIREFOX ? `blur(${blur}px)` : 'none'
   const loaderColor = useMemo(() => {
     const { r, g, b, a } = fontColor
     const baseAlpha = a

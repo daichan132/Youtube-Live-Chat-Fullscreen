@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { browser, type PublicPath } from 'wxt/browser'
 import { SHADOW_HOST_ID, SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
+import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 
 type UseYLCPortalTargetsOptions = {
   overlayEnabled: boolean
@@ -33,10 +34,14 @@ const createOverlayRoot = (player: HTMLElement, contentCssUrl: string) => {
     host.id = SHADOW_HOST_ID
     host.style.pointerEvents = 'none'
     host.style.position = 'absolute'
-    host.style.top = '0'
-    host.style.left = '0'
-    host.style.width = '0'
-    host.style.height = '0'
+    host.style.inset = '0'
+    host.style.width = '100%'
+    host.style.height = '100%'
+    host.style.zIndex = String(CONTENT_UI_LAYER.overlay)
+    host.style.isolation = 'isolate'
+    // Brave needs an explicit compositor surface to keep the chat above video.
+    // Firefox must retain its native video surface to avoid HDR color changes.
+    host.style.transform = import.meta.env.FIREFOX ? '' : 'translateZ(0)'
 
     const root = host.attachShadow({ mode: 'open' })
     root.innerHTML = `<style>

@@ -31,6 +31,7 @@ describe('useYLCPortalTargets', () => {
 
   afterEach(() => {
     vi.useRealTimers()
+    vi.unstubAllEnvs()
   })
 
   it('keeps retrying when the player appears after the old five second limit', () => {
@@ -91,6 +92,44 @@ describe('useYLCPortalTargets', () => {
 
     expect(result.current.overlayRoot).not.toBeNull()
     expect(result.current.switchContainer).toBeNull()
+  })
+
+  it('gives the overlay host an explicit full-player compositing layer', () => {
+    const player = createPlayer({ withControls: false })
+
+    const { result } = renderHook(() =>
+      useYLCPortalTargets({
+        overlayEnabled: true,
+        switchEnabled: false,
+      }),
+    )
+
+    const host = result.current.overlayRoot?.host as HTMLElement
+    expect(host.parentElement).toBe(player)
+    expect(host.style.inset).toBe('0px')
+    expect(host.style.width).toBe('100%')
+    expect(host.style.height).toBe('100%')
+    expect(host.style.zIndex).toBe('1000')
+    expect(host.style.isolation).toBe('isolate')
+    expect(host.style.transform).toBe('translateZ(0)')
+    expect(host.style.pointerEvents).toBe('none')
+  })
+
+  it('does not force a new video compositing surface in Firefox', () => {
+    vi.stubEnv('FIREFOX', 'true')
+    createPlayer({ withControls: false })
+
+    const { result } = renderHook(() =>
+      useYLCPortalTargets({
+        overlayEnabled: true,
+        switchEnabled: false,
+      }),
+    )
+
+    const host = result.current.overlayRoot?.host as HTMLElement
+    expect(host.style.zIndex).toBe('1000')
+    expect(host.style.isolation).toBe('isolate')
+    expect(host.style.transform).toBe('')
   })
 
   it('removes extension-owned targets on unmount', () => {

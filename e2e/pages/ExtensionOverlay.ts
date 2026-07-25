@@ -97,6 +97,31 @@ export class ExtensionOverlay {
       return false
     }
   }
+
+  async getHostCompositingState() {
+    return this.page.locator(SHADOW_HOST).evaluate((host, playerSelector) => {
+      const hostElement = host as HTMLElement
+      const player = document.querySelector(playerSelector) as HTMLElement | null
+      const hostStyle = window.getComputedStyle(hostElement)
+      const hostRect = hostElement.getBoundingClientRect()
+      const playerRect = player?.getBoundingClientRect() ?? null
+
+      return {
+        width: hostRect.width,
+        height: hostRect.height,
+        matchesPlayer:
+          playerRect !== null &&
+          Math.abs(hostRect.left - playerRect.left) < 1 &&
+          Math.abs(hostRect.top - playerRect.top) < 1 &&
+          Math.abs(hostRect.width - playerRect.width) < 1 &&
+          Math.abs(hostRect.height - playerRect.height) < 1,
+        zIndex: hostStyle.zIndex,
+        isolation: hostStyle.isolation,
+        transform: hostStyle.transform,
+        pointerEvents: hostStyle.pointerEvents,
+      }
+    }, MOVIE_PLAYER)
+  }
 }
 
 const isExtensionChatDetached = () => {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useYTDLiveChatNoLsStore, useYTDLiveChatStore } from '@/shared/stores'
 import { YTDLiveChatIframe } from './YTDLiveChatIframe'
@@ -47,6 +47,10 @@ const resetStores = ({
 describe('YTDLiveChatIframe', () => {
   beforeEach(() => {
     resetStores()
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
   })
 
   it('renders the iframe carrier at full visible panel size without crop', () => {
@@ -118,6 +122,27 @@ describe('YTDLiveChatIframe', () => {
     expect(background.style.backgroundColor).toBe('rgba(0, 0, 0, 0.4)')
     expect(background.style.backdropFilter).toBe('blur(12px)')
     expect(carrier.style.filter).toBe('')
+  })
+
+  it('does not change the Firefox video compositing path with a backdrop filter', () => {
+    vi.stubEnv('FIREFOX', 'true')
+    resetStores({
+      liveOverrides: {
+        blur: 16,
+        bgColor: { r: 0, g: 0, b: 0, a: 0.22 },
+        alwaysOnDisplay: true,
+      },
+      noLsOverrides: {
+        isIframeLoaded: true,
+        isDisplay: false,
+      },
+    })
+
+    const { container } = render(<YTDLiveChatIframe mode='live' />)
+    const background = container.querySelector('[data-ylc-chat-background]') as HTMLElement
+
+    expect(background.style.backdropFilter).toBe('none')
+    expect(background.style.getPropertyValue('-webkit-backdrop-filter')).not.toContain('blur')
   })
 
   it('disables the background-layer blur when the configured value is zero', () => {

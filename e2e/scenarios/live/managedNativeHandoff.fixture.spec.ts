@@ -41,6 +41,22 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
 
     expect(await overlay.waitForSwitchReady({ timeout: 12000 })).toBe(true)
     expect(await overlay.waitForChatLoaded({ timeout: 12000 })).toBe(true)
+    const expectCompositedOverlayHost = async () => {
+      await expect
+        .poll(() => overlay.getHostCompositingState())
+        .toMatchObject({
+          matchesPlayer: true,
+          zIndex: '1000',
+          isolation: 'isolate',
+          pointerEvents: 'none',
+        })
+      const state = await overlay.getHostCompositingState()
+      expect(state.width).toBeGreaterThan(0)
+      expect(state.height).toBeGreaterThan(0)
+      expect(state.transform).not.toBe('none')
+    }
+
+    await expectCompositedOverlayHost()
     await expect
       .poll(() =>
         page.evaluate(() => {
@@ -76,5 +92,12 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
         }),
       )
       .toEqual({ id: 'chatframe', owned: null, managedCount: 0 })
+
+    await overlay.toggleOff()
+    expect(await overlay.waitForChatDetached({ timeout: 12000 })).toBe(true)
+    await expectCompositedOverlayHost()
+    await overlay.toggleOn()
+    expect(await overlay.waitForChatLoaded({ timeout: 12000 })).toBe(true)
+    await expectCompositedOverlayHost()
   })
 })
