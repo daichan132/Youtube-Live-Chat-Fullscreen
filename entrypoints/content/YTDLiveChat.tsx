@@ -1,7 +1,7 @@
 import { shouldShowOverlay } from '@/entrypoints/content/chat/runtime/overlayVisibility'
 import type { ChatMode } from '@/entrypoints/content/chat/runtime/types'
 import { useCSSTransition } from '@/shared/hooks/useCSSTransition'
-import { useGlobalSettingStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { Draggable } from './features/Draggable'
 import { YTDLiveChatIframe } from './features/YTDLiveChatIframe'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
@@ -25,7 +25,6 @@ type YTDLiveChatProps = {
 export const YTDLiveChat = ({ isFullscreen, mode, sourceReady }: YTDLiveChatProps) => {
   const { isNativeChatUsable, isNativeChatExpanded } = useNativeChatState(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
-  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
   const isNativeChatCurrentlyOpen = isNativeChatUsable || isNativeChatExpanded
   // Disable extension chat when user opens native chat, respecting their intent
@@ -42,8 +41,6 @@ export const YTDLiveChat = ({ isFullscreen, mode, sourceReady }: YTDLiveChatProp
     enabled: ytdLiveChat,
     sourceReady,
     isFullscreen,
-    alwaysOnDisplay,
-    nativeChatOpen: isNativeChatCurrentlyOpen,
   })
   // Keep YouTube native layout untouched unless our fullscreen overlay is actually visible.
   useFullscreenChatLayoutFix(isFullscreen && isOverlayVisible)

@@ -8,8 +8,6 @@ describe('shouldShowOverlay', () => {
         enabled: false,
         sourceReady: true,
         isFullscreen: true,
-        alwaysOnDisplay: true,
-        nativeChatOpen: false,
       }),
     ).toBe(false)
   })
@@ -20,8 +18,6 @@ describe('shouldShowOverlay', () => {
         enabled: true,
         sourceReady: true,
         isFullscreen: true,
-        alwaysOnDisplay: false,
-        nativeChatOpen: true,
       }),
     ).toBe(true)
 
@@ -30,30 +26,16 @@ describe('shouldShowOverlay', () => {
         enabled: true,
         sourceReady: false,
         isFullscreen: true,
-        alwaysOnDisplay: true,
-        nativeChatOpen: false,
       }),
     ).toBe(false)
   })
 
-  it('shows inline only when Always On is enabled and native chat is closed', () => {
+  it('hides the overlay after fullscreen exits even when Always On is enabled', () => {
     expect(
       shouldShowOverlay({
         enabled: true,
         sourceReady: true,
         isFullscreen: false,
-        alwaysOnDisplay: true,
-        nativeChatOpen: false,
-      }),
-    ).toBe(true)
-
-    expect(
-      shouldShowOverlay({
-        enabled: true,
-        sourceReady: true,
-        isFullscreen: false,
-        alwaysOnDisplay: true,
-        nativeChatOpen: true,
       }),
     ).toBe(false)
 
@@ -62,8 +44,14 @@ describe('shouldShowOverlay', () => {
         enabled: true,
         sourceReady: true,
         isFullscreen: false,
-        alwaysOnDisplay: false,
-        nativeChatOpen: false,
+      }),
+    ).toBe(false)
+
+    expect(
+      shouldShowOverlay({
+        enabled: true,
+        sourceReady: true,
+        isFullscreen: false,
       }),
     ).toBe(false)
   })

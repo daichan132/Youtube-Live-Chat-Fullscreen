@@ -25,6 +25,4 @@ export type OverlayVisibilityInput = {
   enabled: boolean
   sourceReady: boolean
   isFullscreen: boolean
-  alwaysOnDisplay: boolean
-  nativeChatOpen: boolean
 }

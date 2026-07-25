@@ -154,7 +154,7 @@ describe('Content', () => {
     expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.overlay) })
   })
 
-  it('keeps the inline Always On overlay independent from the fullscreen switch target', () => {
+  it('removes the overlay after fullscreen exits even when Always On is enabled', () => {
     const host = document.createElement('div')
     const shadowRoot = host.attachShadow({ mode: 'open' })
     document.body.append(host)
@@ -168,10 +168,10 @@ describe('Content', () => {
     render(<Content />)
 
     expect(useYLCPortalTargets).toHaveBeenCalledWith({
-      overlayEnabled: true,
+      overlayEnabled: false,
       switchEnabled: false,
     })
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).not.toBeNull()
+    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
     expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
   })
 

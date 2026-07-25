@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useGlobalSettingStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
 import { useChatAvailability } from './chat/runtime/useChatAvailability'
@@ -32,7 +32,6 @@ export const Content = () => {
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
-  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const isFullscreen = useIsFullScreen()
   const mode = useChatMode()
   const currentVideoId = useCurrentVideoId()
@@ -40,11 +39,11 @@ export const Content = () => {
   const availability = useChatAvailability(mode, currentVideoId)
   const portalEnabled = mode !== 'none' && availability.canShowSwitch && !availability.terminallyUnavailable
   const { overlayRoot, switchContainer } = useYLCPortalTargets({
-    overlayEnabled: portalEnabled && (isFullscreen || alwaysOnDisplay),
+    overlayEnabled: portalEnabled && isFullscreen,
     switchEnabled: portalEnabled && isFullscreen,
   })
   const shouldRenderSwitch = portalEnabled && switchContainer !== null
-  const shouldRenderLiveChat = portalEnabled && overlayRoot !== null
+  const shouldRenderLiveChat = portalEnabled && isFullscreen && overlayRoot !== null
 
   useEffect(() => {
     if (!switchContainer) return
