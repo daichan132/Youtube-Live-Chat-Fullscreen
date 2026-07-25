@@ -4,8 +4,7 @@ import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { useGlobalSettingStore, useYTDLiveChatStore } from '@/shared/stores'
 import { Content } from './Content'
 import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
-import { useChatAvailability } from './chat/runtime/useChatAvailability'
-import { useChatMode } from './chat/runtime/useChatMode'
+import { useYouTubeChatRuntime } from './chat/runtime/useYouTubeChatRuntime'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
 import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
 import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
@@ -24,12 +23,8 @@ vi.mock('./chat/archive/useEnsureArchiveNativeChatOpen', () => ({
   useEnsureArchiveNativeChatOpen: vi.fn(),
 }))
 
-vi.mock('./chat/runtime/useChatAvailability', () => ({
-  useChatAvailability: vi.fn(),
-}))
-
-vi.mock('./chat/runtime/useChatMode', () => ({
-  useChatMode: vi.fn(() => 'archive'),
+vi.mock('./chat/runtime/useYouTubeChatRuntime', () => ({
+  useYouTubeChatRuntime: vi.fn(),
 }))
 
 vi.mock('./features/YTDLiveChatSwitch', () => ({
@@ -62,8 +57,7 @@ vi.mock('./YTDLiveChat', () => ({
 describe('Content', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
-    vi.mocked(useChatAvailability).mockReset()
-    vi.mocked(useChatMode).mockReset()
+    vi.mocked(useYouTubeChatRuntime).mockReset()
     vi.mocked(useContentRuntimeMessages).mockReset()
     vi.mocked(useSettingsStorageSync).mockReset()
     vi.mocked(useEnsureArchiveNativeChatOpen).mockReset()
@@ -75,14 +69,14 @@ describe('Content', () => {
     useYTDLiveChatStore.setState({ alwaysOnDisplay: true })
     window.history.pushState({}, '', `${window.location.origin}/watch?v=video-a`)
 
-    vi.mocked(useChatAvailability).mockReturnValue({
+    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
       videoId: 'video-a',
       mode: 'archive',
       canShowSwitch: true,
       sourceReady: true,
       terminallyUnavailable: false,
+      revision: 0,
     })
-    vi.mocked(useChatMode).mockReturnValue('archive')
     vi.mocked(useIsFullScreen).mockReturnValue(true)
     vi.mocked(useYLCPortalTargets).mockReturnValue({
       overlayRoot: null,
@@ -120,7 +114,14 @@ describe('Content', () => {
 
   it('does not render overlay container in none mode', () => {
     const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useChatMode).mockReturnValue('none')
+    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
+      videoId: 'video-a',
+      mode: 'none',
+      canShowSwitch: false,
+      sourceReady: false,
+      terminallyUnavailable: false,
+      revision: 1,
+    })
 
     render(<Content />)
 
@@ -133,7 +134,23 @@ describe('Content', () => {
 
   it('removes existing overlay and hides switch when mode changes to none', () => {
     const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useChatMode).mockReturnValueOnce('archive').mockReturnValue('none')
+    vi.mocked(useYouTubeChatRuntime)
+      .mockReturnValueOnce({
+        videoId: 'video-a',
+        mode: 'archive',
+        canShowSwitch: true,
+        sourceReady: true,
+        terminallyUnavailable: false,
+        revision: 0,
+      })
+      .mockReturnValue({
+        videoId: 'video-a',
+        mode: 'none',
+        canShowSwitch: false,
+        sourceReady: false,
+        terminallyUnavailable: false,
+        revision: 1,
+      })
 
     const { rerender } = render(<Content />)
 
@@ -177,12 +194,13 @@ describe('Content', () => {
 
   it('does not render overlay container when fullscreen chat cannot be toggled', () => {
     const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useChatAvailability).mockReturnValue({
+    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
       videoId: 'video-a',
       mode: 'archive',
       canShowSwitch: false,
       sourceReady: false,
       terminallyUnavailable: false,
+      revision: 0,
     })
 
     render(<Content />)
@@ -193,13 +211,13 @@ describe('Content', () => {
 
   it('hides both switch and overlay when current live chat is terminally unavailable', () => {
     const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useChatMode).mockReturnValue('live')
-    vi.mocked(useChatAvailability).mockReturnValue({
+    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
       videoId: 'video-a',
       mode: 'live',
       canShowSwitch: false,
       sourceReady: false,
       terminallyUnavailable: true,
+      revision: 0,
     })
 
     render(<Content />)

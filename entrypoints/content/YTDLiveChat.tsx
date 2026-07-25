@@ -18,11 +18,13 @@ const OVERLAY_CLASS_NAMES = {
 
 type YTDLiveChatProps = {
   isFullscreen: boolean
+  videoId: string | null
   mode: ChatMode
   sourceReady: boolean
+  runtimeRevision: number
 }
 
-export const YTDLiveChat = ({ isFullscreen, mode, sourceReady }: YTDLiveChatProps) => {
+export const YTDLiveChat = ({ isFullscreen, videoId, mode, sourceReady, runtimeRevision }: YTDLiveChatProps) => {
   const { isNativeChatUsable, isNativeChatExpanded } = useNativeChatState(isFullscreen)
   const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
   const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
@@ -58,7 +60,7 @@ export const YTDLiveChat = ({ isFullscreen, mode, sourceReady }: YTDLiveChatProp
       {overlayTransition.isMounted && (
         <div className={overlayTransition.className}>
           <Draggable initialDisplayOnMount={isFullscreen}>
-            <YTDLiveChatIframe mode={mode} />
+            <YTDLiveChatIframe videoId={videoId} mode={mode} runtimeRevision={runtimeRevision} />
           </Draggable>
         </div>
       )}

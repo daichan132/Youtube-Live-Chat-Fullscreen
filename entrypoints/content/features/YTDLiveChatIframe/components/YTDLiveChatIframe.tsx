@@ -18,13 +18,15 @@ const LOADING_OVERLAY_STYLE = {
   zIndex: CHAT_PANEL_LAYER.interactionOverlay,
 } as const
 type YTDLiveChatIframeProps = {
+  videoId?: string | null
   mode: ChatMode
+  runtimeRevision?: number
 }
 
-export const YTDLiveChatIframe = ({ mode }: YTDLiveChatIframeProps) => {
+export const YTDLiveChatIframe = ({ videoId = null, mode, runtimeRevision = 0 }: YTDLiveChatIframeProps) => {
   const { t } = useTranslation()
   const id = useId()
-  const { ref } = useChatIframeLoader(mode)
+  const { ref } = useChatIframeLoader({ videoId, mode, revision: runtimeRevision })
   const { blur, alwaysOnDisplay, bgColor, fontColor } = useYTDLiveChatStore(
     useShallow(state => ({
       blur: state.blur,

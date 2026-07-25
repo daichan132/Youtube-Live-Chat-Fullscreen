@@ -102,8 +102,16 @@ const expectPublicLiveChatUrl = (iframe: HTMLIFrameElement, expectedVideoId: str
   expect(url.searchParams.toString()).toBe(`v=${expectedVideoId}`)
 }
 
-const TestComponent = ({ mode }: { mode: ChatMode }) => {
-  const { ref } = useChatIframeLoader(mode)
+const TestComponent = ({ mode, revision }: { mode: ChatMode; revision?: number }) => {
+  const { ref } = useChatIframeLoader(
+    revision === undefined
+      ? mode
+      : {
+          videoId: 'video-a',
+          mode,
+          revision,
+        },
+  )
   return <div data-testid='container' ref={ref} />
 }
 
@@ -129,6 +137,29 @@ describe('useChatIframeLoader', () => {
       expect(iframe.getAttribute('data-ylc-owned')).toBeNull()
       expect(iframe.getAttribute('data-ylc-chat')).toBe('true')
     })
+  })
+
+  it('keeps the attached archive iframe during a transient document gap on runtime reconciliation', async () => {
+    const frame = attachLiveChatFrame()
+    const iframe = createChatIframe('video-a')
+    frame.appendChild(iframe)
+
+    const { getByTestId, rerender } = render(<TestComponent mode='archive' revision={0} />)
+    const container = getByTestId('container')
+
+    await waitFor(() => {
+      expect(container.contains(iframe)).toBe(true)
+    })
+
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: null,
+      configurable: true,
+    })
+    rerender(<TestComponent mode='archive' revision={1} />)
+
+    expect(container.contains(iframe)).toBe(true)
+    expect(frame.contains(iframe)).toBe(false)
+    expect(iframe.getAttribute('data-ylc-chat')).toBe('true')
   })
 
   it('keeps a borrowed live iframe attached when fullscreen exits while the overlay remains mounted', async () => {
@@ -795,5 +826,113 @@ describe('useChatIframeLoader', () => {
       expect(managedIframe).not.toBeNull()
       if (managedIframe) expectPublicLiveChatUrl(managedIframe, 'video-b')
     })
+  })
+
+  it('does not restart attached availability monitoring for the same iframe on same-video navigation', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const frame = attachLiveChatFrame()
+    const nativeIframe = createChatIframe('video-a', {
+      docHref: 'https://www.youtube.com/live_chat?v=video-a',
+    })
+    const nativeDocument = nativeIframe.contentDocument as Document
+    frame.appendChild(nativeIframe)
+    const watchFlexy = createWatchFlexy('video-a')
+    watchFlexy.setAttribute('is-live-now', '')
+
+    try {
+      const { getByTestId } = render(<TestComponent mode='live' />)
+      const container = getByTestId('container')
+      await waitFor(() => {
+        expect(container.contains(nativeIframe)).toBe(true)
+      })
+
+      await vi.advanceTimersByTimeAsync(29_000)
+      document.dispatchEvent(new Event('yt-navigate-finish'))
+      await vi.advanceTimersByTimeAsync(2_000)
+
+      const unavailable = document.createElement('yt-live-chat-unavailable-message-renderer')
+      const originalQuerySelector = nativeDocument.querySelector.bind(nativeDocument)
+      Object.defineProperty(nativeDocument, 'querySelector', {
+        value: (selector: string) =>
+          selector === 'yt-live-chat-unavailable-message-renderer' ? unavailable : originalQuerySelector(selector),
+        configurable: true,
+      })
+
+      await vi.advanceTimersByTimeAsync(1_000)
+
+      expect(useYTDLiveChatNoLsStore.getState().unavailableLiveChatVideoId).toBeNull()
+      expect(container.contains(nativeIframe)).toBe(true)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('stops managed-to-native discovery after the 120 second deadline', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true })
+    const watchFlexy = createWatchFlexy('video-a')
+    watchFlexy.setAttribute('is-live-now', '')
+
+    try {
+      const { getByTestId } = render(<TestComponent mode='live' />)
+      const container = getByTestId('container')
+      let managedIframe: HTMLIFrameElement | null = null
+      await waitFor(() => {
+        managedIframe = container.querySelector('iframe[data-ylc-owned="true"]') as HTMLIFrameElement | null
+        expect(managedIframe).not.toBeNull()
+      })
+
+      await vi.advanceTimersByTimeAsync(120_000)
+
+      const frame = attachLiveChatFrame()
+      frame.setAttribute('video-id', 'video-a')
+      const nativeIframe = createChatIframe('video-a', {
+        docHref: 'https://www.youtube.com/live_chat?v=video-a',
+      })
+      frame.appendChild(nativeIframe)
+      await vi.advanceTimersByTimeAsync(2_000)
+
+      expect(container.contains(managedIframe)).toBe(true)
+      expect(container.contains(nativeIframe)).toBe(false)
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('restarts source discovery after same-video navigation removes the current live source', async () => {
+    const watchFlexy = createWatchFlexy('video-a')
+    watchFlexy.setAttribute('is-live-now', '')
+
+    const { getByTestId } = render(<TestComponent mode='live' />)
+    const container = getByTestId('container')
+    await waitFor(() => {
+      expect(container.querySelector('iframe[data-ylc-owned="true"]')).not.toBeNull()
+    })
+    const managedIframe = container.querySelector('iframe[data-ylc-owned="true"]') as HTMLIFrameElement | null
+    if (!managedIframe) throw new Error('Expected managed live iframe')
+
+    watchFlexy.removeAttribute('is-live-now')
+    managedIframe.src = 'about:blank'
+    Object.defineProperty(managedIframe, 'contentDocument', {
+      value: null,
+      configurable: true,
+    })
+    managedIframe.remove()
+    document.dispatchEvent(new Event('yt-navigate-finish'))
+
+    const nextNativeIframe = createChatIframe('video-a', {
+      docHref: 'https://www.youtube.com/live_chat?v=video-a',
+    })
+    watchFlexy.setAttribute('is-live-now', '')
+    const nextFrame = attachLiveChatFrame()
+    nextFrame.setAttribute('video-id', 'video-a')
+    nextFrame.appendChild(nextNativeIframe)
+
+    await waitFor(
+      () => {
+        expect(container.contains(nextNativeIframe)).toBe(true)
+        expect(useYTDLiveChatNoLsStore.getState().iframeElement).toBe(nextNativeIframe)
+      },
+      { timeout: 3_000 },
+    )
   })
 })
