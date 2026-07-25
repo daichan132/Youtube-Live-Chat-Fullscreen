@@ -3,11 +3,28 @@ import type { Page } from '@playwright/test'
 type WatchFixtureHtmlOptions = {
   title: string
   videoId: string
+  isLive?: boolean
   extraStyle?: string
   extraBody?: string
 }
 
-export const buildWatchFixtureHtml = ({ title, videoId, extraStyle = '', extraBody = '' }: WatchFixtureHtmlOptions) => `<!doctype html>
+export const buildPlayableChatHtml = (title: string) => `<!doctype html>
+<html>
+  <head><title>${title}</title></head>
+  <body>
+    <yt-live-chat-renderer>
+      <yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>
+    </yt-live-chat-renderer>
+  </body>
+</html>`
+
+export const buildWatchFixtureHtml = ({
+  title,
+  videoId,
+  isLive = false,
+  extraStyle = '',
+  extraBody = '',
+}: WatchFixtureHtmlOptions) => `<!doctype html>
 <html>
   <head>
     <title>${title}</title>
@@ -20,7 +37,7 @@ export const buildWatchFixtureHtml = ({ title, videoId, extraStyle = '', extraBo
     </style>
   </head>
   <body>
-    <ytd-watch-flexy video-id="${videoId}"></ytd-watch-flexy>
+    <ytd-watch-flexy video-id="${videoId}"${isLive ? ' is-live-now' : ''}></ytd-watch-flexy>
     <div id="movie_player" video-id="${videoId}">
       <div class="ytp-right-controls">
         <button type="button" class="ytp-button ytp-fullscreen-button" aria-label="Full screen">Full screen</button>
@@ -29,9 +46,13 @@ export const buildWatchFixtureHtml = ({ title, videoId, extraStyle = '', extraBo
     ${extraBody}
     <script>
       const player = document.getElementById('movie_player');
-      player.getVideoData = () => ({ isLive: false, isLiveContent: false, video_id: '${videoId}' });
-      document.querySelector('.ytp-fullscreen-button').addEventListener('click', () => {
-        player.requestFullscreen();
+      player.getVideoData = () => ({ isLive: ${isLive}, isLiveContent: ${isLive}, video_id: '${videoId}' });
+      document.querySelector('.ytp-fullscreen-button').addEventListener('click', async () => {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+          return;
+        }
+        await player.requestFullscreen();
       });
     </script>
   </body>
