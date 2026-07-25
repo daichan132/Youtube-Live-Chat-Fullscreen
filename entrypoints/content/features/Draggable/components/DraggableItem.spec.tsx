@@ -161,7 +161,7 @@ describe('DraggableItem', () => {
     vi.useRealTimers()
   })
 
-  it('keeps the chat within the padded viewport when the window resizes', () => {
+  it('fits the chat locally without overwriting preferred geometry when the window resizes', () => {
     resetStore({
       coordinates: { x: 200, y: 10 },
       size: { width: 400, height: 300 },
@@ -178,8 +178,10 @@ describe('DraggableItem', () => {
     })
 
     const state = useYTDLiveChatStore.getState()
-    expect(state.coordinates).toEqual({ x: 90, y: 10 })
+    expect(state.coordinates).toEqual({ x: 200, y: 10 })
     expect(state.size).toEqual({ width: 400, height: 300 })
+    expect(resizableState.props?.style).toMatchObject({ left: 90, top: 10 })
+    expect(resizableState.props?.size).toEqual({ width: 400, height: 300 })
   })
 
   it('positions the control rail below the chat bottom', () => {
@@ -237,7 +239,8 @@ describe('DraggableItem', () => {
       </DraggableItem>,
     )
 
-    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '450px', right: '0px' })
+    expect(getByTestId('ylc-control-rail')).toHaveStyle({ top: '440px', right: '0px' })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 300, height: 500 })
   })
 
   it('applies drag transform to the frame that contains chat and controls', () => {
@@ -750,6 +753,34 @@ describe('DraggableItem', () => {
     })
 
     expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
+  })
+
+  it('recomputes display visibility when document focus changes', () => {
+    vi.useFakeTimers()
+    resetNoLsStore({ isDisplay: true })
+
+    render(
+      <DraggableItem>
+        <div />
+      </DraggableItem>,
+    )
+
+    act(() => {
+      vi.advanceTimersByTime(1_000)
+    })
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
+
+    setHasFocus(false)
+    act(() => {
+      window.dispatchEvent(new Event('blur'))
+    })
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(true)
+
+    setHasFocus(true)
+    act(() => {
+      window.dispatchEvent(new Event('focus'))
+    })
+    expect(useYTDLiveChatNoLsStore.getState().isDisplay).toBe(false)
   })
 
   it('resets the idle timer after document activity', () => {

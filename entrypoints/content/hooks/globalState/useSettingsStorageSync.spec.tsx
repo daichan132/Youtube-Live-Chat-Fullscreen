@@ -59,6 +59,10 @@ describe('useSettingsStorageSync', () => {
   })
 
   it('rehydrates both stores and clears style history for an imported backup', async () => {
+    const nextFontSize = useYTDLiveChatStore.getState().fontSize + 1
+    vi.mocked(useYTDLiveChatStore.persist.rehydrate).mockImplementationOnce(async () => {
+      useYTDLiveChatStore.setState({ fontSize: nextFontSize })
+    })
     renderHook(() => useSettingsStorageSync())
 
     act(() => {
@@ -66,7 +70,7 @@ describe('useSettingsStorageSync', () => {
         globalSettingStore: {},
         ytdLiveChatStore: {
           newValue: serializeCurrentYTDLiveChatState({
-            fontSize: useYTDLiveChatStore.getState().fontSize + 1,
+            fontSize: nextFontSize,
           }),
         },
       })
@@ -151,8 +155,41 @@ describe('useSettingsStorageSync', () => {
 
     await waitFor(() => {
       expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
-      expect(useYTDLiveChatHistoryStore.getState().clear).toHaveBeenCalledTimes(1)
+      expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
     })
+  })
+
+  it('does not persist viewport fitting or clear style history for an external geometry-only change', async () => {
+    const setGeometry = vi.spyOn(useYTDLiveChatStore.getState(), 'setGeometry')
+    vi.mocked(useYTDLiveChatStore.persist.rehydrate).mockImplementationOnce(async () => {
+      useYTDLiveChatStore.setState({
+        coordinates: { x: 1_000, y: 700 },
+        size: { width: 800, height: 600 },
+      })
+    })
+    renderHook(() => useSettingsStorageSync())
+
+    act(() => {
+      emitStorageChange({
+        ytdLiveChatStore: {
+          newValue: serializeCurrentYTDLiveChatState(
+            {
+              coordinates: { x: 1_000, y: 700 },
+              size: { width: 800, height: 600 },
+            },
+            'another-context',
+          ),
+        },
+      })
+    })
+
+    await waitFor(() => {
+      expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+    })
+    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 1_000, y: 700 })
+    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 800, height: 600 })
+    expect(setGeometry).not.toHaveBeenCalled()
+    expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
   })
 
   it('ignores unrelated keys and non-local storage', () => {

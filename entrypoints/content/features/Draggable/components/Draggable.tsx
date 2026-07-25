@@ -17,16 +17,18 @@ export const Draggable = ({ children, initialDisplayOnMount = false }: Draggable
   const handleDragEnd = (event: DragEndEvent) => {
     const { delta } = event
     const { coordinates, size, setGeometry } = useYTDLiveChatStore.getState()
+    const viewport = { width: window.innerWidth, height: window.innerHeight }
+    const displayGeometry = fitGeometryToViewport({ coordinates, size }, viewport, 10)
     setGeometry(
       fitGeometryToViewport(
         {
           coordinates: {
-            x: coordinates.x + delta.x,
-            y: coordinates.y + delta.y,
+            x: displayGeometry.coordinates.x + delta.x,
+            y: displayGeometry.coordinates.y + delta.y,
           },
-          size,
+          size: displayGeometry.size,
         },
-        { width: window.innerWidth, height: window.innerHeight },
+        viewport,
         10,
       ),
     )

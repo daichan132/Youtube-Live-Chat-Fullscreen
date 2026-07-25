@@ -3,13 +3,13 @@ import { type HandleStyles, type NumberSize, Resizable } from 're-resizable'
 import type { Direction } from 're-resizable/lib/resizer'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-
+import { useDocumentFocus } from '@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus'
 import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import { useYTDLiveChatNoLsStore } from '@/shared/stores/ytdLiveChatNoLsStore'
 import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
-import { deriveResizedLayout, getControlRailTop, isSameLayoutGeometry } from '../hooks/clipGeometry'
+import { deriveResizedLayout, getControlRailTop } from '../hooks/clipGeometry'
 import { getDraggableItemStyles } from '../hooks/draggableItemStyles'
 import { ControlIcons } from './ControlIcons'
 import { ChatOnlyChromeEffect } from './EffectComponent/ChatOnlyChromeEffect'
@@ -118,7 +118,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   const [isResizing, setIsResizing] = useState(false)
   const [isControlRailHiding, setIsControlRailHiding] = useState(false)
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
-  const [viewportHeight, setViewportHeight] = useState(() => window.innerHeight)
+  const [viewport, setViewport] = useState(() => ({ width: window.innerWidth, height: window.innerHeight }))
   const [resizeDraft, setResizeDraft] = useState<{
     coordinates: { x: number; y: number }
     size: NumberSize
@@ -132,8 +132,9 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     })),
   )
 
-  const displayedCoordinates = resizeDraft?.coordinates ?? coordinates
-  const displayedSize = resizeDraft?.size ?? size
+  const displayGeometry = fitGeometryToViewport({ coordinates, size }, viewport, GEOMETRY_VIEWPORT_PADDING)
+  const displayedCoordinates = resizeDraft?.coordinates ?? displayGeometry.coordinates
+  const displayedSize = resizeDraft?.size ?? displayGeometry.size
   const top = displayedCoordinates.y
   const left = displayedCoordinates.x
 
@@ -157,10 +158,10 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
   const handleResizeStart = useCallback(() => {
     setIsResizing(true)
     resizeStartCoordinatesRef.current = { x: left, y: top }
-    resizeStartSizeRef.current = size
+    resizeStartSizeRef.current = displayedSize
     resizeDraftRef.current = null
     setResizeDraft(null)
-  }, [left, top, size])
+  }, [displayedSize, left, top])
 
   const handleResize = useCallback((_event: MouseEvent | TouchEvent, direction: Direction, _ref: HTMLElement, delta: NumberSize) => {
     const nextLayout = deriveResizedLayout({
@@ -196,29 +197,16 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     [setGeometry],
   )
 
-  const keepWithinViewport = useCallback(() => {
-    const { size: currentSize, coordinates: currentCoordinates, setGeometry: updateGeometry } = useYTDLiveChatStore.getState()
-    const currentLayout = { coordinates: currentCoordinates, size: currentSize }
-    const nextLayout = fitGeometryToViewport(
-      currentLayout,
-      { width: window.innerWidth, height: window.innerHeight },
-      GEOMETRY_VIEWPORT_PADDING,
-    )
-
-    if (isSameLayoutGeometry(currentLayout, nextLayout)) return
-    updateGeometry(nextLayout)
-  }, [])
-
   useLayoutEffect(() => {
     const handleWindowResize = () => {
-      setViewportHeight(window.innerHeight)
-      keepWithinViewport()
+      const nextViewport = { width: window.innerWidth, height: window.innerHeight }
+      setViewport(current => (current.width === nextViewport.width && current.height === nextViewport.height ? current : nextViewport))
     }
 
     handleWindowResize()
     window.addEventListener('resize', handleWindowResize, { passive: true })
     return () => window.removeEventListener('resize', handleWindowResize)
-  }, [keepWithinViewport])
+  }, [])
 
   useEffect(() => {
     if (!isDragging) return
@@ -266,10 +254,11 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     }
   }, [isDragging])
 
+  const isDocumentFocused = useDocumentFocus()
+
   useEffect(() => {
-    const isFocused = typeof document !== 'undefined' ? document.hasFocus() : true
-    setIsDisplay(isHover || hoverRegion === 'controls' || !isIdle || isOpenSettingModal || !isFocused)
-  }, [isHover, hoverRegion, isIdle, isOpenSettingModal, setIsDisplay])
+    setIsDisplay(isHover || hoverRegion === 'controls' || !isIdle || isOpenSettingModal || !isDocumentFocused)
+  }, [isDocumentFocused, isHover, hoverRegion, isIdle, isOpenSettingModal, setIsDisplay])
 
   const clearControlHideTimer = useCallback(() => {
     if (!controlHideTimerRef.current) return
@@ -397,7 +386,7 @@ export const DraggableItem = ({ children, initialDisplayOnMount = false }: Dragg
     containerTop: top,
     controlHeight: CONTROL_RAIL_HEIGHT,
     gap: CONTROL_RAIL_GAP,
-    viewportHeight,
+    viewportHeight: viewport.height,
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
   // Hide the floating control rail while the settings panel is open so it doesn't overlap the modal.
