@@ -1,7 +1,7 @@
 import { TIMEOUT } from '@e2e/support/constants'
 import { isExtensionArchiveChatPlayable, isExtensionChatLoaded } from '@e2e/support/diagnostics'
 import { reliableClick } from '@e2e/utils/actions'
-import { MOVIE_PLAYER, switchButtonSelector } from '@e2e/utils/selectors'
+import { MOVIE_PLAYER, SHADOW_HOST, switchButtonSelector } from '@e2e/utils/selectors'
 import { expect, type Page } from '@playwright/test'
 
 export class ExtensionOverlay {
@@ -82,6 +82,16 @@ export class ExtensionOverlay {
     const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
     try {
       await expect.poll(async () => this.page.evaluate(isExtensionChatDetached), { timeout }).toBe(true)
+      return true
+    } catch {
+      return false
+    }
+  }
+
+  async waitForOverlayRemoved(options?: { timeout?: number }): Promise<boolean> {
+    const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
+    try {
+      await expect.poll(async () => this.page.locator(SHADOW_HOST).count(), { timeout }).toBe(0)
       return true
     } catch {
       return false

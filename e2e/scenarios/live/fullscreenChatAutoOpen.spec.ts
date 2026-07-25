@@ -39,7 +39,7 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     await expect(overlay.switchButton()).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 })
 
-    const overlayReady = await overlay.waitForChatLoaded()
+    let overlayReady = await overlay.waitForChatLoaded()
 
     if (!overlayReady) {
       const state = await captureChatState(page, test.info(), 'auto-open-extension-unready')
@@ -56,15 +56,19 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
               () => true,
               () => false,
             )
-          if (overlayRecovered) return
+          if (overlayRecovered) overlayReady = true
         }
       }
 
-      if (!state || !state.native.playable) {
+      if (!overlayReady && (!state || !state.native.playable)) {
         test.skip(true, 'Native chat source was not playable, so auto-open precondition was not met.')
         return
       }
       expect(overlayReady).toBe(true)
     }
+
+    const exitedFullscreen = await yt.exitFullscreen()
+    expect(exitedFullscreen).toBe(true)
+    expect(await overlay.waitForOverlayRemoved()).toBe(true)
   })
 })
