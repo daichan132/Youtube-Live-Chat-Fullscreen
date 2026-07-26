@@ -7,7 +7,7 @@
         "undo": "Desfés el canvi d'estil",
         "redo": "Refés el canvi d'estil"
       },
-      "alwaysOnDisplay": "Mostra sempre el xat",
+      "alwaysOnDisplay": "Mostra el xat quan no hi ha activitat",
       "chatOnlyDisplay": "Mostra només el xat",
       "userNameDisplay": "Mostra el nom d'usuari",
       "userIconDisplay": "Mostra la foto de perfil",

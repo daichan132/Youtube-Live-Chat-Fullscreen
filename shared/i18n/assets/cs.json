@@ -7,7 +7,7 @@
         "undo": "Vrátit změnu stylu",
         "redo": "Znovu provést změnu stylu"
       },
-      "alwaysOnDisplay": "Vždy zobrazovat chat",
+      "alwaysOnDisplay": "Zobrazit chat při nečinnosti",
       "chatOnlyDisplay": "Zobrazit pouze chat",
       "userNameDisplay": "Zobrazit uživatelská jména",
       "userIconDisplay": "Zobrazit profilové obrázky",

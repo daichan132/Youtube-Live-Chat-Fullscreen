@@ -3,12 +3,12 @@ import type { RgbaColor } from 'react-colorful'
 import { RgbaColorPicker } from 'react-colorful'
 import { useTranslation } from 'react-i18next'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
-import type { RGBColor } from '@/shared/types/ytdLiveChatType'
+import type { RGBA } from '@/shared/settings/model'
 import { formatColorValue, getPreviewBorderColor, toRgba } from './colorUtils'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 type SettingColorPickerProps = {
-  rgba: RGBColor
+  rgba: RGBA
   label: string
   onChange: (color: RgbaColor) => void
   onInteractionStart?: () => void

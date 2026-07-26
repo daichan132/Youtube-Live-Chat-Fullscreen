@@ -7,7 +7,7 @@
         "undo": "ביטול שינוי העיצוב",
         "redo": "ביצוע מחדש של שינוי העיצוב"
       },
-      "alwaysOnDisplay": "הצגת הצ׳אט תמיד",
+      "alwaysOnDisplay": "הצגת הצ׳אט כשאין פעילות",
       "chatOnlyDisplay": "מצב צ׳אט בלבד",
       "userNameDisplay": "הצגת שמות משתמשים",
       "userIconDisplay": "הצגת תמונות פרופיל",

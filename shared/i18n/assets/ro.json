@@ -7,7 +7,7 @@
         "undo": "Anulează modificarea stilului",
         "redo": "Refă modificarea stilului"
       },
-      "alwaysOnDisplay": "Afișează mereu chatul",
+      "alwaysOnDisplay": "Afișează chatul când nu există activitate",
       "chatOnlyDisplay": "Afișează doar chatul",
       "userNameDisplay": "Afișează numele utilizatorilor",
       "userIconDisplay": "Afișează fotografiile de profil",

@@ -7,7 +7,7 @@
         "undo": "Annulla modifica allo stile",
         "redo": "Ripeti modifica allo stile"
       },
-      "alwaysOnDisplay": "Mostra sempre la chat",
+      "alwaysOnDisplay": "Mostra la chat quando non interagisci",
       "chatOnlyDisplay": "Mostra solo la chat",
       "userNameDisplay": "Mostra i nomi utente",
       "userIconDisplay": "Mostra le immagini del profilo",

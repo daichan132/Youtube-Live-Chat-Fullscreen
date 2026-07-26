@@ -7,7 +7,7 @@
         "undo": "Võta stiilimuudatus tagasi",
         "redo": "Tee stiilimuudatus uuesti"
       },
-      "alwaysOnDisplay": "Näita vestlust alati",
+      "alwaysOnDisplay": "Näita vestlust tegevusetuse ajal",
       "chatOnlyDisplay": "Näita ainult vestlust",
       "userNameDisplay": "Näita kasutajanime",
       "userIconDisplay": "Näita profiilipilti",

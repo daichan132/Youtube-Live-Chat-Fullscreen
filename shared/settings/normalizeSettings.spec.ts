@@ -1,116 +1,118 @@
 import { describe, expect, it } from 'vitest'
-import { ylcInitSetting } from '@/shared/utils'
+import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import {
-  normalizeColor,
-  normalizePersistedYTDLiveChatState,
-  normalizePresetCollections,
-  normalizeSettingsBackup,
-  normalizeStyle,
+  normalizeChatGeometry,
+  normalizeChatProfile,
+  normalizeChatSettings,
+  normalizeMembershipNameColor,
+  normalizePresets,
+  normalizeRGBA,
 } from './normalizeSettings'
 
-describe('normalizeColor', () => {
-  it('adds alpha and clamps invalid channels', () => {
-    expect(normalizeColor({ r: -10, g: 999, b: Number.NaN }, { r: 10, g: 20, b: 30, a: 0.5 })).toEqual({ r: 0, g: 255, b: 30, a: 1 })
-  })
-
-  it('replaces non-finite alpha and channels', () => {
-    expect(
-      normalizeColor({ r: Number.POSITIVE_INFINITY, g: 20, b: 30, a: Number.NEGATIVE_INFINITY }, { r: 1, g: 2, b: 3, a: 0.4 }),
-    ).toEqual({ r: 1, g: 20, b: 30, a: 1 })
+describe('normalizeRGBA', () => {
+  it('clamps channels and preserves the fallback alpha for invalid input', () => {
+    expect(normalizeRGBA({ r: -10, g: 999, b: Number.NaN }, { r: 10, g: 20, b: 30, a: 0.5 })).toEqual({
+      r: 0,
+      g: 255,
+      b: 30,
+      a: 0.5,
+    })
   })
 })
 
-describe('normalizeStyle', () => {
-  it('completes a partial style and clamps numeric fields', () => {
-    expect(
-      normalizeStyle({
-        bgColor: { r: 0, g: 10, b: 20 },
+describe('normalizeChatProfile', () => {
+  it('normalizes the nested v7 profile without creating legacy fields', () => {
+    const result = normalizeChatProfile({
+      appearance: {
+        backgroundColor: { r: 0, g: 10, b: 20 },
+        membershipNameColor: { mode: 'custom', value: { r: 1, g: 2, b: 3 } },
         fontSize: 100,
         blur: -5,
-        alwaysOnDisplay: false,
+        fontFamily: '',
+      },
+      display: {
+        idleVisibility: 'auto-hide',
+        contentMode: 'messages-only',
+      },
+    })
+
+    expect(result.appearance.backgroundColor).toEqual({ r: 0, g: 10, b: 20, a: 1 })
+    expect(result.appearance.membershipNameColor).toEqual({
+      mode: 'custom',
+      value: { r: 1, g: 2, b: 3, a: 1 },
+    })
+    expect(result.appearance.fontSize).toBe(40)
+    expect(result.appearance.blur).toBe(0)
+    expect(result.appearance.fontFamily).toBeNull()
+    expect(result.display).toEqual({
+      idleVisibility: 'auto-hide',
+      contentMode: 'messages-only',
+    })
+    expect(result).not.toHaveProperty('bgColor')
+    expect(result).not.toHaveProperty('alwaysOnDisplay')
+  })
+
+  it('keeps the YouTube membership color as an explicit mode', () => {
+    expect(normalizeMembershipNameColor({ mode: 'youtube-default' })).toEqual({ mode: 'youtube-default' })
+  })
+})
+
+describe('normalizeChatGeometry', () => {
+  it('enforces finite coordinates and minimum sizes', () => {
+    expect(
+      normalizeChatGeometry({
+        coordinates: { x: Number.POSITIVE_INFINITY, y: 25 },
+        size: { width: 10, height: 500 },
       }),
     ).toEqual({
-      ...ylcInitSetting,
-      bgColor: { r: 0, g: 10, b: 20, a: 1 },
-      fontSize: 40,
-      blur: 0,
-      alwaysOnDisplay: false,
+      coordinates: { x: 20, y: 25 },
+      size: { width: 300, height: 500 },
     })
   })
 })
 
-describe('normalizePresetCollections', () => {
-  it('deduplicates ids and removes entries without an object style', () => {
-    const result = normalizePresetCollections({
-      presetItemIds: ['valid', 'missing', '', 'valid'],
-      presetItemStyles: {
-        valid: { fontSize: 18 },
-        orphan: { fontSize: 12 },
-      },
-      presetItemTitles: {
-        valid: 'Valid',
-        orphan: 'Orphan',
-      },
-    })
-
-    expect(result.presetItemIds).toEqual(['valid'])
-    expect(result.presetItemStyles.valid).toEqual({
-      ...ylcInitSetting,
-      fontSize: 18,
-    })
-    expect(result.presetItemTitles).toEqual({ valid: 'Valid' })
-  })
-})
-
-describe('normalizePersistedYTDLiveChatState', () => {
-  it('normalizes style, geometry, and presets through one boundary', () => {
-    const result = normalizePersistedYTDLiveChatState({
-      fontSize: Number.NaN,
-      bgColor: { r: 1, g: 2, b: 3 },
-      coordinates: { x: Number.POSITIVE_INFINITY, y: 25 },
-      size: { width: 10, height: 500 },
-      presetItemIds: ['preset'],
-      presetItemStyles: { preset: { fontSize: 16 } },
-      presetItemTitles: { preset: 'Preset' },
-    })
-
-    expect(result.fontSize).toBe(ylcInitSetting.fontSize)
-    expect(result.bgColor).toEqual({ r: 1, g: 2, b: 3, a: 1 })
-    expect(result.coordinates).toEqual({ x: 20, y: 25 })
-    expect(result.size).toEqual({ width: 300, height: 500 })
-    expect(result.presetItemIds).toEqual(['preset'])
-  })
-})
-
-describe('normalizeSettingsBackup', () => {
-  const current = {
-    globalSetting: { ytdLiveChat: true, themeMode: 'system' },
-    ytdLiveChat: {
-      ...ylcInitSetting,
-      coordinates: { x: 20, y: 20 },
-      size: { width: 400, height: 400 },
-      presetItemIds: [],
-      presetItemStyles: {},
-      presetItemTitles: {},
-      addPresetEnabled: true,
-    },
-  }
-
-  it('requires the exact export version', () => {
-    expect(normalizeSettingsBackup({ version: 2, globalSetting: {}, ytdLiveChat: {} }, current)).toBeNull()
-  })
-
-  it('normalizes imported partial data against current state', () => {
-    const result = normalizeSettingsBackup(
-      {
-        version: 1,
-        globalSetting: { themeMode: 'dark' },
-        ytdLiveChat: { bgColor: { r: 10, g: 20, b: 30 } },
-      },
-      current,
+describe('normalizePresets', () => {
+  it('keeps one self-contained entry per id', () => {
+    const presets = normalizePresets(
+      [
+        { kind: 'builtin', id: 'standard' },
+        { kind: 'builtin', id: 'standard' },
+        {
+          kind: 'custom',
+          id: 'custom',
+          name: 'Custom',
+          profile: { appearance: { fontSize: 18 } },
+        },
+        { kind: 'custom', id: 'transparent', name: 'Collision', profile: {} },
+      ],
+      [],
     )
 
-    expect(result?.globalSetting).toEqual({ ytdLiveChat: true, themeMode: 'dark' })
-    expect(result?.ytdLiveChat.bgColor).toEqual({ r: 10, g: 20, b: 30, a: 1 })
+    expect(presets).toHaveLength(2)
+    expect(presets[0]).toEqual({ kind: 'builtin', id: 'standard' })
+    expect(presets[1]).toMatchObject({
+      kind: 'custom',
+      id: 'custom',
+      name: 'Custom',
+      profile: { appearance: { fontSize: 18 } },
+    })
+  })
+})
+
+describe('normalizeChatSettings', () => {
+  it('returns only profile, geometry, and presets', () => {
+    const result = normalizeChatSettings(
+      {
+        profile: {},
+        geometry: {},
+        presets: [],
+        addPresetEnabled: false,
+        presetItemIds: ['legacy'],
+      },
+      DEFAULT_CHAT_SETTINGS,
+    )
+
+    expect(Object.keys(result)).toEqual(['profile', 'geometry', 'presets'])
+    expect(result.presets).toEqual([])
   })
 })

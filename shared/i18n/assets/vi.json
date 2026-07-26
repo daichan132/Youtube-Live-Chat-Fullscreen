@@ -7,7 +7,7 @@
         "undo": "Hoàn tác thay đổi kiểu hiển thị",
         "redo": "Làm lại thay đổi kiểu hiển thị"
       },
-      "alwaysOnDisplay": "Luôn hiển thị chat",
+      "alwaysOnDisplay": "Hiển thị chat khi không hoạt động",
       "chatOnlyDisplay": "Chế độ chỉ hiển thị chat",
       "userNameDisplay": "Hiển thị tên người dùng",
       "userIconDisplay": "Hiển thị ảnh hồ sơ",

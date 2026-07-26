@@ -7,7 +7,7 @@
         "undo": "Urungkan perubahan gaya",
         "redo": "Ulangi perubahan gaya"
       },
-      "alwaysOnDisplay": "Selalu tampilkan chat",
+      "alwaysOnDisplay": "Tampilkan chat saat tidak aktif",
       "chatOnlyDisplay": "Mode chat saja",
       "userNameDisplay": "Tampilkan nama pengguna",
       "userIconDisplay": "Tampilkan foto profil",

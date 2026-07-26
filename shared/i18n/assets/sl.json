@@ -7,7 +7,7 @@
         "undo": "Razveljavi spremembo sloga",
         "redo": "Uveljavi spremembo sloga"
       },
-      "alwaysOnDisplay": "Vedno prikaži klepet",
+      "alwaysOnDisplay": "Prikaži klepet med nedejavnostjo",
       "chatOnlyDisplay": "Prikaži samo klepet",
       "userNameDisplay": "Prikaži uporabniška imena",
       "userIconDisplay": "Prikaži profilne slike",

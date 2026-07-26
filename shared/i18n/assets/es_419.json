@@ -7,7 +7,7 @@
         "undo": "Deshacer cambio de estilo",
         "redo": "Rehacer cambio de estilo"
       },
-      "alwaysOnDisplay": "Mostrar siempre el chat",
+      "alwaysOnDisplay": "Mostrar el chat cuando no haya actividad",
       "chatOnlyDisplay": "Mostrar solo el chat",
       "userNameDisplay": "Mostrar el nombre de usuario",
       "userIconDisplay": "Mostrar la foto de perfil",

@@ -1,13 +1,13 @@
 import { fireEvent, render, waitFor } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useYTDLiveChatStore } from '@/shared/stores'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { FontFamilyInput } from './FontFamilyInput'
 
 const translate = (key: string) => {
   if (key === 'content.preset.defaultTitle') return 'Default'
   return key
 }
-const PREVIEW_FONT_STYLE_ID = 'ylc-font-family-preview-style'
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
@@ -31,36 +31,27 @@ const dispatchMouseDown = (target: EventTarget, path: EventTarget[]) => {
   target.dispatchEvent(outsideEvent)
 }
 
-const baseState = useYTDLiveChatStore.getState()
-
-const resetStore = (overrides: Partial<typeof baseState> = {}) => {
-  useYTDLiveChatStore.setState(
-    {
-      ...baseState,
-      ...overrides,
-      coordinates: { ...baseState.coordinates },
-      size: { ...baseState.size },
-      presetItemIds: [...baseState.presetItemIds],
-      presetItemStyles: { ...baseState.presetItemStyles },
-      presetItemTitles: { ...baseState.presetItemTitles },
+const resetStore = (fontFamily: string | null = null) => {
+  useChatSettingsStore.setState({
+    ...DEFAULT_CHAT_SETTINGS,
+    profile: {
+      ...DEFAULT_CHAT_SETTINGS.profile,
+      appearance: {
+        ...DEFAULT_CHAT_SETTINGS.profile.appearance,
+        fontFamily,
+      },
     },
-    true,
-  )
+  })
 }
 
 const renderFontFamilyInput = (fontFamily = '') => {
-  resetStore({ fontFamily })
+  resetStore(fontFamily || null)
   return render(<FontFamilyInput />)
 }
 
 describe('FontFamilyInput', () => {
   beforeEach(() => {
-    document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)?.remove()
     resetStore()
-  })
-
-  afterEach(() => {
-    document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)?.remove()
   })
 
   it('toggles menu visibility from trigger button', () => {
@@ -94,7 +85,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'Roboto Slab' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto Slab')
+    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto Slab')
   })
 
   it('commits default when no option matches and Enter is pressed', () => {
@@ -104,7 +95,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'My Custom Font' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useYTDLiveChatStore.getState().fontFamily).toBe('')
+    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBeNull()
   })
 
   it('normalizes a case-insensitive font input before committing', () => {
@@ -114,7 +105,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'roboto' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto')
+    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto')
   })
 
   it('supports arrow navigation before Enter selection', async () => {
@@ -128,7 +119,7 @@ describe('FontFamilyInput', () => {
     })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useYTDLiveChatStore.getState().fontFamily).toBe('Roboto')
+    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto')
   })
 
   it('closes the menu with Escape and outside click', async () => {
@@ -151,16 +142,5 @@ describe('FontFamilyInput', () => {
 
     const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
     expect(trigger).toHaveTextContent('Default')
-  })
-
-  it('loads preview fonts when menu opens', () => {
-    const { getByRole } = renderFontFamilyInput()
-
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
-
-    const styleElement = document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`) as HTMLStyleElement | null
-    expect(styleElement).not.toBeNull()
-    expect(styleElement?.textContent).toContain('family=Roboto&display=swap')
-    expect(styleElement?.textContent).toContain('family=Roboto+Slab&display=swap')
   })
 })

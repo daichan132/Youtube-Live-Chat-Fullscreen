@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
-import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import {
   beginYLCStyleGesture,
   clearYLCStyleHistory,
@@ -15,95 +16,70 @@ vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
 }))
 
-const baseState = useYTDLiveChatStore.getState()
-
 const resetStores = () => {
-  useYTDLiveChatStore.setState(
-    {
-      ...baseState,
-      bgColor: { ...baseState.bgColor },
-      fontColor: { ...baseState.fontColor },
-      membershipNameColor: { ...baseState.membershipNameColor },
-      coordinates: { ...baseState.coordinates },
-      size: { ...baseState.size },
-      presetItemIds: [...baseState.presetItemIds],
-      presetItemStyles: { ...baseState.presetItemStyles },
-      presetItemTitles: { ...baseState.presetItemTitles },
-    },
-    true,
-  )
+  useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
   clearYLCStyleHistory()
 }
 
 describe('styleHistoryCommands', () => {
   beforeEach(resetStores)
 
-  it('records a committed style change and restores it through undo and redo', () => {
-    const initialFontSize = useYTDLiveChatStore.getState().fontSize
+  it('records a committed profile change and restores it through undo and redo', () => {
+    const initialFontSize = useChatSettingsStore.getState().profile.appearance.fontSize
 
-    commitYLCStyleUpdate({ fontSize: initialFontSize + 4 }, 'fontSize')
+    commitYLCStyleUpdate({ appearance: { fontSize: initialFontSize + 4 } }, 'fontSize')
 
-    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(1)
+    expect(useChatEditorStore.getState().past).toHaveLength(1)
     expect(undoYLCStyle()).toBe(true)
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(initialFontSize)
-    expect(useYTDLiveChatHistoryStore.getState().future).toHaveLength(1)
-    expect(useYTDLiveChatStore.getState().bgColor).not.toBe(useYTDLiveChatHistoryStore.getState().future[0].before.style.bgColor)
+    expect(useChatSettingsStore.getState().profile.appearance.fontSize).toBe(initialFontSize)
+    expect(useChatEditorStore.getState().future).toHaveLength(1)
 
     expect(redoYLCStyle()).toBe(true)
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(initialFontSize + 4)
-    expect(useYTDLiveChatStore.getState().bgColor).not.toBe(useYTDLiveChatHistoryStore.getState().past[0].after.style.bgColor)
+    expect(useChatSettingsStore.getState().profile.appearance.fontSize).toBe(initialFontSize + 4)
   })
 
-  it('groups a continuous gesture into one complete-snapshot history entry', () => {
-    const initialBlur = useYTDLiveChatStore.getState().blur
+  it('keeps gesture previews in draft and persists once at gesture completion', () => {
+    const store = useChatSettingsStore.getState()
+    const commitProfile = vi.spyOn(store, 'commitProfile')
+    const initialBlur = store.profile.appearance.blur
 
     beginYLCStyleGesture('range:blur', 'blur')
-    previewYLCStyleUpdate('range:blur', { blur: initialBlur + 2 }, 'blur')
-    previewYLCStyleUpdate('range:blur', { blur: initialBlur + 6 }, 'blur')
+    previewYLCStyleUpdate('range:blur', { appearance: { blur: initialBlur + 2 } }, 'blur')
+    previewYLCStyleUpdate('range:blur', { appearance: { blur: initialBlur + 6 } }, 'blur')
+
+    expect(useChatSettingsStore.getState().profile.appearance.blur).toBe(initialBlur)
+    expect(useChatEditorStore.getState().draftProfile?.appearance.blur).toBe(initialBlur + 6)
+    expect(commitProfile).not.toHaveBeenCalled()
+
     finishYLCStyleGesture('range:blur')
 
-    const history = useYTDLiveChatHistoryStore.getState()
-    expect(history.past).toHaveLength(1)
-    expect(history.past[0].before.style.blur).toBe(initialBlur)
-    expect(history.past[0].after.style.blur).toBe(initialBlur + 6)
-    expect(history.activeGesture).toBeNull()
+    expect(commitProfile).toHaveBeenCalledTimes(1)
+    expect(useChatSettingsStore.getState().profile.appearance.blur).toBe(initialBlur + 6)
+    expect(useChatEditorStore.getState().past).toHaveLength(1)
+    expect(useChatEditorStore.getState().activeGesture).toBeNull()
+    expect(useChatEditorStore.getState().draftProfile).toBeNull()
   })
 
   it('does not record no-op changes and clears redo after a new edit', () => {
-    const initialSpace = useYTDLiveChatStore.getState().space
+    const initialSpacing = useChatSettingsStore.getState().profile.appearance.spacing
 
-    commitYLCStyleUpdate({ space: initialSpace }, 'space')
-    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(0)
+    commitYLCStyleUpdate({ appearance: { spacing: initialSpacing } }, 'spacing')
+    expect(useChatEditorStore.getState().past).toHaveLength(0)
 
-    commitYLCStyleUpdate({ space: initialSpace + 1 }, 'space')
+    commitYLCStyleUpdate({ appearance: { spacing: initialSpacing + 1 } }, 'spacing')
     expect(undoYLCStyle()).toBe(true)
-    expect(useYTDLiveChatHistoryStore.getState().future).toHaveLength(1)
+    expect(useChatEditorStore.getState().future).toHaveLength(1)
 
-    commitYLCStyleUpdate({ blur: 7 }, 'blur')
-    expect(useYTDLiveChatHistoryStore.getState().future).toHaveLength(0)
+    commitYLCStyleUpdate({ appearance: { blur: 7 } }, 'blur')
+    expect(useChatEditorStore.getState().future).toHaveLength(0)
     expect(redoYLCStyle()).toBe(false)
   })
 
-  it('restores the preset dirty state together with style changes', () => {
-    const initialFontSize = useYTDLiveChatStore.getState().fontSize
-
-    commitYLCStyleUpdate({ fontSize: initialFontSize + 5 }, 'preset', false)
-    expect(useYTDLiveChatStore.getState().addPresetEnabled).toBe(false)
-
-    expect(undoYLCStyle()).toBe(true)
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(initialFontSize)
-    expect(useYTDLiveChatStore.getState().addPresetEnabled).toBe(true)
-
-    expect(redoYLCStyle()).toBe(true)
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(initialFontSize + 5)
-    expect(useYTDLiveChatStore.getState().addPresetEnabled).toBe(false)
-  })
-
-  it('keeps at most fifty history entries', () => {
+  it('keeps at most fifty history profiles', () => {
     for (let index = 0; index < 55; index += 1) {
-      commitYLCStyleUpdate({ fontColor: { r: index, g: 0, b: 0, a: 1 } }, 'fontColor')
+      commitYLCStyleUpdate({ appearance: { fontColor: { r: index, g: 0, b: 0, a: 1 } } }, 'fontColor')
     }
 
-    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(50)
+    expect(useChatEditorStore.getState().past).toHaveLength(50)
   })
 })

@@ -7,7 +7,7 @@
         "undo": "Stiländerung rückgängig machen",
         "redo": "Stiländerung wiederholen"
       },
-      "alwaysOnDisplay": "Chat immer anzeigen",
+      "alwaysOnDisplay": "Chat bei Inaktivität anzeigen",
       "chatOnlyDisplay": "Nur Chat anzeigen",
       "userNameDisplay": "Nutzernamen anzeigen",
       "userIconDisplay": "Profilbilder anzeigen",

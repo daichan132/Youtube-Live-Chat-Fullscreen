@@ -1,0 +1,7 @@
+export { ChatSurface } from './ChatSurface'
+export { OverlayControlRail } from './OverlayControlRail'
+export type { OverlayFrameProps } from './OverlayFrame'
+export { OverlayFrame } from './OverlayFrame'
+export { useOverlayGeometry } from './useOverlayGeometry'
+export type { OverlayInteractionState } from './useOverlayInteraction'
+export { useOverlayInteraction } from './useOverlayInteraction'

@@ -1,4 +1,3 @@
-import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
 import {
   getIframeDocumentHref,
   getIframeVideoId,
@@ -12,6 +11,7 @@ import {
   YLC_SOURCE_LIVE,
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { YLC_DOCUMENT_STYLE_PROPERTIES } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants'
+import type { ChatSource } from '@/entrypoints/content/runtime/types'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
@@ -81,7 +81,6 @@ const legacyChatOnlyHeightVariables = [
   '--extension-chat-only-sign-in-height',
 ] as const
 const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
-let pendingNativeHostRestoreObserver: MutationObserver | null = null
 
 const captureInlineStyleProperty = (style: CSSStyleDeclaration, property: string): InlineStylePropertySnapshot => ({
   value: style.getPropertyValue(property),
@@ -325,21 +324,11 @@ const restoreBorrowedIframe = (iframe: HTMLIFrameElement) => {
   return false
 }
 
-const cleanupNativeRestoreObserverIfIdle = () => {
-  if (pendingNativeHostRestoreIframes.size > 0) return
-
-  pendingNativeHostRestoreObserver?.disconnect()
-  pendingNativeHostRestoreObserver = null
-}
-
 const getCurrentNativeChatHost = () =>
   Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(host => isChatHostForCurrentVideo(host)) ?? null
 
-const tryRestorePendingNativeIframes = () => {
-  if (pendingNativeHostRestoreIframes.size === 0) {
-    cleanupNativeRestoreObserverIfIdle()
-    return
-  }
+export const reconcilePendingNativeIframeRestores = () => {
+  if (pendingNativeHostRestoreIframes.size === 0) return
 
   const host = getCurrentNativeChatHost()
   if (!host) return
@@ -357,22 +346,6 @@ const tryRestorePendingNativeIframes = () => {
     pendingNativeHostRestoreIframes.delete(iframe)
     pendingNativeHostRestoreVideoIds.delete(iframe)
   }
-
-  cleanupNativeRestoreObserverIfIdle()
-}
-
-const ensureNativeRestoreObserver = () => {
-  if (pendingNativeHostRestoreObserver || !document.body) return
-
-  pendingNativeHostRestoreObserver = new MutationObserver(() => {
-    tryRestorePendingNativeIframes()
-  })
-  pendingNativeHostRestoreObserver.observe(document.body, {
-    attributes: true,
-    attributeFilter: ['video-id'],
-    childList: true,
-    subtree: true,
-  })
 }
 
 const queueRestoreToNativeHost = (iframe: HTMLIFrameElement, videoId: string | null) => {
@@ -383,14 +356,12 @@ const queueRestoreToNativeHost = (iframe: HTMLIFrameElement, videoId: string | n
   pendingNativeHostRestoreIframes.add(iframe)
   pendingNativeHostRestoreVideoIds.set(iframe, videoId)
   iframe.remove()
-  ensureNativeRestoreObserver()
-  tryRestorePendingNativeIframes()
+  reconcilePendingNativeIframeRestores()
 }
 
 const cancelQueuedNativeRestore = (iframe: HTMLIFrameElement) => {
   if (!pendingNativeHostRestoreIframes.delete(iframe)) return
   pendingNativeHostRestoreVideoIds.delete(iframe)
-  cleanupNativeRestoreObserverIfIdle()
 }
 
 export const resolveSourceIframe = (source: ChatSource, currentIframe: HTMLIFrameElement | null) => {
@@ -434,31 +405,8 @@ const restoreIframeToNativeHost = (iframe: HTMLIFrameElement, videoId: string | 
 }
 
 const ensureNativeChatVisible = () => {
-  const startingVideoId = getCurrentYouTubeVideoId()
   if (isNativeChatOpen()) return
   openArchiveNativeChatPanel()
-  if (isNativeChatOpen()) return
-  if (typeof navigator !== 'undefined' && navigator.userAgent.toLowerCase().includes('jsdom')) return
-
-  let attempts = 0
-  const maxAttempts = 5
-  const retryIntervalMs = 500
-  const retryInterval = window.setInterval(() => {
-    if (getCurrentYouTubeVideoId() !== startingVideoId) {
-      window.clearInterval(retryInterval)
-      return
-    }
-    if (isNativeChatOpen()) {
-      window.clearInterval(retryInterval)
-      return
-    }
-
-    attempts += 1
-    openArchiveNativeChatPanel()
-    if (attempts >= maxAttempts) {
-      window.clearInterval(retryInterval)
-    }
-  }, retryIntervalMs)
 }
 
 export const detachAttachedIframe = (

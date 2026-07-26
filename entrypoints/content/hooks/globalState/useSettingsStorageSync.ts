@@ -1,34 +1,32 @@
 import { useEffect } from 'react'
 import { browser } from 'wxt/browser'
-import { getStorageChangeOriginId, SETTINGS_STORAGE_ORIGIN_ID } from '@/shared/settings/originAwareStorage'
-import { GLOBAL_SETTING_PERSIST, YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import type { ChatProfile } from '@/shared/settings/model'
+import { resolveSettingsStorageSync } from '@/shared/settings/storageSync'
 import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
-import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
-import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
-import { areYLCStylesEqual, getYLCStyleSnapshot } from '@/shared/utils/ylcStyleSnapshot'
 
-const isOwnStorageChange = (change: unknown) => getStorageChangeOriginId(change) === SETTINGS_STORAGE_ORIGIN_ID
+const profilesEqual = (left: ChatProfile, right: ChatProfile) => JSON.stringify(left) === JSON.stringify(right)
 
 export const useSettingsStorageSync = () => {
   useEffect(() => {
     const handleChanged = (changes: Record<string, unknown>, areaName: string) => {
-      if (areaName !== 'local') return
+      const decision = resolveSettingsStorageSync(changes, areaName)
+      if (!decision.rehydrateGlobal && !decision.rehydrateChatSettings) return
 
-      const globalChanged = GLOBAL_SETTING_PERSIST.key in changes
-      const ytdChanged = YTD_LIVE_CHAT_PERSIST.key in changes
-      if (!globalChanged && !ytdChanged) return
-      const shouldRehydrateGlobal = globalChanged && !isOwnStorageChange(changes[GLOBAL_SETTING_PERSIST.key])
-      const shouldRehydrateYTD = ytdChanged && !isOwnStorageChange(changes[YTD_LIVE_CHAT_PERSIST.key])
-      const previousStyle = shouldRehydrateYTD ? getYLCStyleSnapshot(useYTDLiveChatStore.getState()) : null
+      const previousProfile = decision.rehydrateChatSettings ? useChatSettingsStore.getState().profile : null
+      const editorWasActive =
+        decision.rehydrateChatSettings &&
+        (useChatEditorStore.getState().draftProfile !== null || useChatEditorStore.getState().activeGesture !== null)
 
       void Promise.all([
-        shouldRehydrateGlobal ? useGlobalSettingStore.persist.rehydrate() : Promise.resolve(),
-        shouldRehydrateYTD ? useYTDLiveChatStore.persist.rehydrate() : Promise.resolve(),
+        decision.rehydrateGlobal ? useGlobalSettingStore.persist.rehydrate() : Promise.resolve(),
+        decision.rehydrateChatSettings ? useChatSettingsStore.persist.rehydrate() : Promise.resolve(),
       ]).then(() => {
-        if (!shouldRehydrateYTD || !previousStyle) return
-        const nextStyle = getYLCStyleSnapshot(useYTDLiveChatStore.getState())
-        if (!areYLCStylesEqual(previousStyle, nextStyle)) {
-          useYTDLiveChatHistoryStore.getState().clear()
+        if (!decision.rehydrateChatSettings || !previousProfile) return
+        const nextProfile = useChatSettingsStore.getState().profile
+        if (editorWasActive || !profilesEqual(previousProfile, nextProfile)) {
+          useChatEditorStore.getState().clear()
         }
       })
     }

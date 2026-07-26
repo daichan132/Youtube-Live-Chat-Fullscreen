@@ -7,7 +7,7 @@
         "undo": "Anuliuoti stiliaus pakeitimą",
         "redo": "Pakartoti stiliaus pakeitimą"
       },
-      "alwaysOnDisplay": "Visada rodyti pokalbį",
+      "alwaysOnDisplay": "Rodyti pokalbį neaktyvumo metu",
       "chatOnlyDisplay": "Rodyti tik pokalbį",
       "userNameDisplay": "Rodyti naudotojo vardą",
       "userIconDisplay": "Rodyti profilio nuotrauką",

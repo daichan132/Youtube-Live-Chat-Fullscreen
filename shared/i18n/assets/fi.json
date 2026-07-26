@@ -7,7 +7,7 @@
         "undo": "Kumoa tyylimuutos",
         "redo": "Tee tyylimuutos uudelleen"
       },
-      "alwaysOnDisplay": "Näytä chat aina",
+      "alwaysOnDisplay": "Näytä chat käyttämättömänä",
       "chatOnlyDisplay": "Näytä vain chat",
       "userNameDisplay": "Näytä käyttäjänimi",
       "userIconDisplay": "Näytä profiilikuva",

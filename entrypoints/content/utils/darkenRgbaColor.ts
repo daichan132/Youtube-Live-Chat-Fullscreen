@@ -1,6 +1,6 @@
-import type { RGBColor } from '@/shared/types/ytdLiveChatType'
+import type { RGBA } from '@/shared/settings/model'
 
-export const darkenRgbaColor = (rgba: RGBColor, amount: number) => {
+export const darkenRgbaColor = (rgba: RGBA, amount: number) => {
   let r = rgba.r
   let g = rgba.g
   let b = rgba.b

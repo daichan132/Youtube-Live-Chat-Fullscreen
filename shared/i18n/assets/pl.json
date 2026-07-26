@@ -7,7 +7,7 @@
         "undo": "Cofnij zmianę stylu",
         "redo": "Ponów zmianę stylu"
       },
-      "alwaysOnDisplay": "Zawsze wyświetlaj czat",
+      "alwaysOnDisplay": "Pokazuj czat podczas bezczynności",
       "chatOnlyDisplay": "Wyświetlaj tylko czat",
       "userNameDisplay": "Pokaż nazwy użytkowników",
       "userIconDisplay": "Pokaż zdjęcia profilowe",

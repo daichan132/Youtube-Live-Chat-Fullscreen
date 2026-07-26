@@ -7,7 +7,7 @@
         "undo": "復原樣式變更",
         "redo": "重做樣式變更"
       },
-      "alwaysOnDisplay": "總是顯示",
+      "alwaysOnDisplay": "閒置時顯示聊天室",
       "chatOnlyDisplay": "僅顯示聊天室",
       "userNameDisplay": "顯示使用者名稱",
       "userIconDisplay": "顯示使用者頭像",

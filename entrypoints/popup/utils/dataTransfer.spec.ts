@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { ylcInitSetting } from '@/shared/utils'
-import { buildExportData, isValidImportData, persistImportedSettings, sanitizeGlobalSetting, sanitizeYTDLiveChat } from './dataTransfer'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { buildExportData, isValidImportData, persistImportedSettings, sanitizeChatSettings, sanitizeGlobalSetting } from './dataTransfer'
 
 const storageSet = vi.hoisted(() => vi.fn())
 
@@ -14,8 +15,13 @@ vi.mock('wxt/browser', () => ({
   },
 }))
 
-describe('isValidImportData', () => {
-  it('accepts the current exact version', () => {
+vi.mock('redux-persist-webextension-storage', () => ({
+  localStorage: globalThis.localStorage,
+}))
+
+describe('backup validation', () => {
+  it('accepts v2 and legacy v1 backups', () => {
+    expect(isValidImportData({ version: 2, exportedAt: '', globalSetting: {}, chatSettings: {} })).toBe(true)
     expect(isValidImportData({ version: 1, exportedAt: '', globalSetting: {}, ytdLiveChat: {} })).toBe(true)
   })
 
@@ -24,48 +30,44 @@ describe('isValidImportData', () => {
     undefined,
     42,
     'string',
-    { globalSetting: {}, ytdLiveChat: {} },
-    { version: 2, globalSetting: {}, ytdLiveChat: {} },
-    { version: 1, ytdLiveChat: {} },
-    { version: 1, globalSetting: {} },
+    { globalSetting: {}, chatSettings: {} },
+    { version: 3, globalSetting: {}, chatSettings: {} },
+    { version: 2, globalSetting: {} },
   ])('rejects %j', input => {
     expect(isValidImportData(input)).toBe(false)
   })
 })
 
-describe('sanitizeGlobalSetting', () => {
-  it('picks only valid fields', () => {
+describe('sanitizers', () => {
+  it('picks only valid global fields', () => {
     expect(sanitizeGlobalSetting({ ytdLiveChat: false, themeMode: 'dark', extra: true })).toEqual({
       ytdLiveChat: false,
       themeMode: 'dark',
     })
   })
-})
 
-describe('sanitizeYTDLiveChat', () => {
-  it('normalizes partial styles, colors, geometry, and preset integrity', () => {
-    const result = sanitizeYTDLiveChat({
-      bgColor: { r: -1, g: 20, b: 300 },
-      fontSize: Number.NaN,
-      coordinates: { x: Number.POSITIVE_INFINITY, y: 30 },
-      size: { width: 10, height: 400 },
-      presetItemIds: ['valid', 'missing', 'valid'],
-      presetItemStyles: {
-        valid: { fontSize: 20, bgColor: { r: 0, g: 0, b: 0 } },
+  it('normalizes v7 nested settings', () => {
+    const result = sanitizeChatSettings({
+      profile: {
+        appearance: {
+          backgroundColor: { r: -1, g: 20, b: 300 },
+          fontSize: Number.NaN,
+        },
       },
-      presetItemTitles: { valid: 'Valid', missing: 'Missing' },
+      geometry: {
+        coordinates: { x: Number.POSITIVE_INFINITY, y: 30 },
+        size: { width: 10, height: 400 },
+      },
+      presets: [],
     })
 
-    expect(result.bgColor).toEqual({ r: 0, g: 20, b: 255, a: 1 })
-    expect(result.fontSize).toBe(ylcInitSetting.fontSize)
-    expect(result.coordinates).toEqual({ x: 20, y: 30 })
-    expect(result.size).toEqual({ width: 300, height: 400 })
-    expect(result.presetItemIds).toEqual(['valid'])
-    expect((result.presetItemStyles as Record<string, unknown>).valid).toEqual({
-      ...ylcInitSetting,
-      bgColor: { r: 0, g: 0, b: 0, a: 1 },
-      fontSize: 20,
+    expect(result.profile.appearance.backgroundColor).toEqual({ r: 0, g: 20, b: 255, a: 1 })
+    expect(result.profile.appearance.fontSize).toBe(DEFAULT_CHAT_SETTINGS.profile.appearance.fontSize)
+    expect(result.geometry).toEqual({
+      coordinates: { x: 20, y: 30 },
+      size: { width: 300, height: 400 },
     })
+    expect(result.presets).toEqual([])
   })
 })
 
@@ -73,13 +75,17 @@ describe('export and persistence', () => {
   beforeEach(() => {
     storageSet.mockReset()
     storageSet.mockResolvedValue(undefined)
+    useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
   })
 
-  it('exports the current schema version', () => {
-    expect(buildExportData().version).toBe(1)
+  it('exports the current schema without legacy collections', () => {
+    const exported = buildExportData()
+    expect(exported.version).toBe(2)
+    expect(exported.chatSettings).toEqual(DEFAULT_CHAT_SETTINGS)
+    expect(exported).not.toHaveProperty('ytdLiveChat')
   })
 
-  it('awaits normalized writes using shared persist versions', async () => {
+  it('awaits v7 normalized writes', async () => {
     await persistImportedSettings({
       version: 1,
       exportedAt: '',
@@ -96,8 +102,16 @@ describe('export and persistence', () => {
       state: { themeMode: 'dark' },
     })
     expect(JSON.parse(persisted.ytdLiveChatStore ?? '')).toMatchObject({
-      version: 6,
-      state: { bgColor: { r: 10, g: 20, b: 30, a: 1 } },
+      version: 7,
+      state: {
+        profile: {
+          appearance: {
+            backgroundColor: { r: 10, g: 20, b: 30, a: 1 },
+          },
+        },
+        geometry: {},
+        presets: DEFAULT_CHAT_SETTINGS.presets,
+      },
     })
   })
 })

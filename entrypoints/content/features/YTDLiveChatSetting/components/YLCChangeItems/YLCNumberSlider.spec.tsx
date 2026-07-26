@@ -1,6 +1,8 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useYTDLiveChatHistoryStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { YLCNumberSlider } from './YLCNumberSlider'
 
 vi.mock('redux-persist-webextension-storage', () => ({
@@ -17,30 +19,21 @@ vi.mock('react-i18next', () => ({
   },
 }))
 
-const baseState = useYTDLiveChatStore.getState()
-
 const resetStore = () => {
-  useYTDLiveChatStore.setState(
-    {
-      ...baseState,
-      coordinates: { ...baseState.coordinates },
-      size: { ...baseState.size },
-      presetItemIds: [...baseState.presetItemIds],
-      presetItemStyles: { ...baseState.presetItemStyles },
-      presetItemTitles: { ...baseState.presetItemTitles },
-    },
-    true,
-  )
+  useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
 }
 
 describe('YLCNumberSlider', () => {
   beforeEach(() => {
     resetStore()
-    useYTDLiveChatHistoryStore.getState().clear()
+    useChatEditorStore.getState().clear()
   })
 
   it('uses the matching store value for the slider label and aria value', () => {
-    useYTDLiveChatStore.setState({ fontSize: 25 })
+    const profile = useChatSettingsStore.getState().profile
+    useChatSettingsStore.setState({
+      profile: { ...profile, appearance: { ...profile.appearance, fontSize: 25 } },
+    })
 
     const { getByRole } = render(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />)
 
@@ -50,7 +43,13 @@ describe('YLCNumberSlider', () => {
   })
 
   it('updates only the selected numeric setting and records a drag as one history entry', () => {
-    useYTDLiveChatStore.setState({ fontSize: 12, blur: 4, space: 8 })
+    const profile = useChatSettingsStore.getState().profile
+    useChatSettingsStore.setState({
+      profile: {
+        ...profile,
+        appearance: { ...profile.appearance, fontSize: 12, blur: 4, spacing: 8 },
+      },
+    })
 
     const { getByRole } = render(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />)
 
@@ -62,21 +61,30 @@ describe('YLCNumberSlider', () => {
     fireEvent.change(slider, { target: { value: '25' } })
     fireEvent.pointerUp(slider)
 
-    expect(useYTDLiveChatStore.getState().fontSize).toBe(25)
-    expect(useYTDLiveChatStore.getState().blur).toBe(4)
-    expect(useYTDLiveChatStore.getState().space).toBe(8)
-    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(1)
+    expect(useChatSettingsStore.getState().profile.appearance.fontSize).toBe(25)
+    expect(useChatSettingsStore.getState().profile.appearance.blur).toBe(4)
+    expect(useChatSettingsStore.getState().profile.appearance.spacing).toBe(8)
+    expect(useChatEditorStore.getState().past).toHaveLength(1)
     expect(setPointerCapture).toHaveBeenCalled()
   })
 
   it('uses the provided range when updating space', () => {
-    useYTDLiveChatStore.setState({ blur: 2, space: 16 })
+    const profile = useChatSettingsStore.getState().profile
+    useChatSettingsStore.setState({
+      profile: {
+        ...profile,
+        appearance: { ...profile.appearance, blur: 2, spacing: 16 },
+      },
+    })
 
-    const { getByRole } = render(<YLCNumberSlider settingKey='space' labelKey='content.setting.space' min={0} max={40} />)
+    const { getByRole } = render(<YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' min={0} max={40} />)
 
-    fireEvent.change(getByRole('slider', { name: 'content.setting.space' }), { target: { value: '24' } })
+    const slider = getByRole('slider', { name: 'content.setting.space' })
+    fireEvent.pointerDown(slider)
+    fireEvent.change(slider, { target: { value: '24' } })
+    fireEvent.pointerUp(slider)
 
-    expect(useYTDLiveChatStore.getState().blur).toBe(2)
-    expect(useYTDLiveChatStore.getState().space).toBe(24)
+    expect(useChatSettingsStore.getState().profile.appearance.blur).toBe(2)
+    expect(useChatSettingsStore.getState().profile.appearance.spacing).toBe(24)
   })
 })

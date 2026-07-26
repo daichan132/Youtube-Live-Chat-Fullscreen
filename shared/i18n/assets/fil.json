@@ -7,7 +7,7 @@
         "undo": "I-undo ang pagbabago sa estilo",
         "redo": "I-redo ang pagbabago sa estilo"
       },
-      "alwaysOnDisplay": "Palaging ipakita ang chat",
+      "alwaysOnDisplay": "Ipakita ang chat kapag walang aktibidad",
       "chatOnlyDisplay": "Chat lang ang ipakita",
       "userNameDisplay": "Ipakita ang mga username",
       "userIconDisplay": "Ipakita ang mga profile picture",

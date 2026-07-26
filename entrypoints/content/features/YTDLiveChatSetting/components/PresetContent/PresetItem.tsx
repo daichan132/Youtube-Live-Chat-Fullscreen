@@ -3,14 +3,13 @@ import { CSS } from '@dnd-kit/utilities'
 import { useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { resolveYLCMembershipNameColor } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useYTDLiveChatStore } from '@/shared/stores'
-import { getPresetTitleFallbackKey } from '@/shared/stores/ytdLiveChatStore'
-import type { YLCStyleType } from '@/shared/types/ytdLiveChatType'
-import { commitYLCStyleUpdate } from '../../styleHistoryCommands'
+import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import type { ChatProfile } from '@/shared/settings/model'
+import { commitYLCProfile } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
 
 interface PresetItemType {
@@ -22,29 +21,24 @@ const DELETE_MODAL_OVERLAY_STYLE = {
 } as const
 
 export const PresetItem = ({ id }: PresetItemType) => {
-  const { title, ylcStyle, updateTitle, deletePresetItem } = useYTDLiveChatStore(
+  const { preset, updatePresetName, deletePreset } = useChatSettingsStore(
     useShallow(state => ({
-      title: state.presetItemTitles[id],
-      ylcStyle: state.presetItemStyles[id],
-      updateTitle: state.updateTitle,
-      deletePresetItem: state.deletePresetItem,
+      preset: state.presets.find(entry => entry.id === id),
+      updatePresetName: state.updatePresetName,
+      deletePreset: state.deletePreset,
     })),
   )
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const { t } = useTranslation()
-  const titleFallbackKey = getPresetTitleFallbackKey(id)
-  const isBuiltIn = titleFallbackKey !== undefined
-  const displayTitle = titleFallbackKey ? t(titleFallbackKey) : typeof title === 'string' ? title : ''
-  const canApply = ylcStyle !== undefined
+  const isBuiltIn = preset?.kind === 'builtin'
+  const displayTitle = preset?.kind === 'builtin' ? t(BUILTIN_PRESETS[preset.id].labelKey) : (preset?.name ?? '')
+  const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
+  const canApply = profile !== undefined
   const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
     id: id,
   })
-  const updateStyle = useCallback((ylcStyle: YLCStyleType) => {
-    const resolvedStyle = {
-      ...ylcStyle,
-      membershipNameColor: resolveYLCMembershipNameColor(ylcStyle.membershipNameColor),
-    }
-    commitYLCStyleUpdate(resolvedStyle, 'preset', false)
+  const updateStyle = useCallback((nextProfile: ChatProfile) => {
+    commitYLCProfile(nextProfile, 'preset')
   }, [])
 
   return (
@@ -66,7 +60,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
       <input
         type='text'
         value={displayTitle}
-        onChange={event => updateTitle(id, event.target.value)}
+        onChange={event => updatePresetName(id, event.target.value)}
         readOnly={isBuiltIn}
         aria-label={t('content.aria.presetName')}
         className='ylc-preset-name'
@@ -78,8 +72,8 @@ export const PresetItem = ({ id }: PresetItemType) => {
           className='ylc-preset-apply'
           aria-label={t('content.aria.applyPreset')}
           onClick={() => {
-            if (!ylcStyle) return
-            updateStyle(ylcStyle)
+            if (!profile) return
+            updateStyle(profile)
           }}
         >
           <TbCheck size={16} aria-hidden='true' />
@@ -122,7 +116,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
             </button>
             <button
               type='button'
-              onClick={() => deletePresetItem(id)}
+              onClick={() => deletePreset(id)}
               className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90 ylc-dialog-btn-primary'
             >
               {t('content.preset.delete')}

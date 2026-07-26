@@ -7,7 +7,6 @@ export const YLC_SOURCE_LIVE = 'live_direct'
 export const YLC_OBSERVED_VIDEO_ATTR = 'data-ylc-observed-video-id'
 
 const getIframeHrefFromSrc = (iframe: HTMLIFrameElement) => iframe.getAttribute('src') ?? iframe.src ?? ''
-let chatIframeObserver: MutationObserver | null = null
 
 export const getLiveChatIframes = () => {
   const iframes = new Set<HTMLIFrameElement>()
@@ -84,70 +83,6 @@ export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement,
   if (!isReplayChatIframe(iframe) && !isLiveChatIframe(iframe)) return
   if (!markObservedElementForCurrentVideo(iframe, currentVideoId)) return
   markObservedElementForCurrentVideo(getChatHost(iframe), currentVideoId)
-}
-
-const markChatHostObservedForCurrentVideo = (host: Element, currentVideoId = getCurrentYouTubeVideoId()) => {
-  markObservedElementForCurrentVideo(host, currentVideoId)
-  for (const iframe of Array.from(host.querySelectorAll<HTMLIFrameElement>('iframe'))) {
-    markChatIframeObservedForCurrentVideo(iframe, currentVideoId)
-  }
-}
-
-const markObservedChatNodes = (root: ParentNode, currentVideoId = getCurrentYouTubeVideoId()) => {
-  if (root instanceof HTMLIFrameElement) {
-    markChatIframeObservedForCurrentVideo(root, currentVideoId)
-  }
-  if (root instanceof Element && root.matches('ytd-live-chat-frame')) {
-    markChatHostObservedForCurrentVideo(root, currentVideoId)
-  }
-  for (const host of Array.from(root.querySelectorAll?.('ytd-live-chat-frame') ?? [])) {
-    markChatHostObservedForCurrentVideo(host, currentVideoId)
-  }
-  for (const iframe of Array.from(root.querySelectorAll?.('iframe') ?? [])) {
-    markChatIframeObservedForCurrentVideo(iframe as HTMLIFrameElement, currentVideoId)
-  }
-}
-
-const shouldRetryObservedChatMarkers = (target: EventTarget | null) => {
-  if (!(target instanceof Element)) return false
-  return target.matches('ytd-watch-flexy, ytd-watch-grid') || target.id === 'movie_player'
-}
-
-const containsPageVideoMarker = (element: Element) =>
-  shouldRetryObservedChatMarkers(element) || Boolean(element.querySelector('ytd-watch-flexy, ytd-watch-grid, #movie_player'))
-
-export const ensureChatIframeObservation = () => {
-  if (chatIframeObserver || !document.documentElement) return
-
-  markObservedChatNodes(document)
-  chatIframeObserver = new MutationObserver(mutations => {
-    const currentVideoId = getCurrentYouTubeVideoId()
-    for (const mutation of mutations) {
-      if (mutation.type === 'attributes' && mutation.target instanceof HTMLIFrameElement) {
-        markChatIframeObservedForCurrentVideo(mutation.target, currentVideoId)
-        continue
-      }
-      if (mutation.type === 'attributes' && shouldRetryObservedChatMarkers(mutation.target)) {
-        markObservedChatNodes(document, currentVideoId)
-        continue
-      }
-      for (const node of Array.from(mutation.addedNodes)) {
-        if (node instanceof Element) {
-          if (containsPageVideoMarker(node)) {
-            markObservedChatNodes(document, currentVideoId)
-            continue
-          }
-          markObservedChatNodes(node, currentVideoId)
-        }
-      }
-    }
-  })
-  chatIframeObserver.observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['src', 'video-id'],
-    childList: true,
-    subtree: true,
-  })
 }
 
 export const isChatHostForCurrentVideo = (host: HTMLElement | null | undefined) => {

@@ -1,6 +1,8 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useYTDLiveChatStore } from '@/shared/stores'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { AddPresetItem } from './AddPresetItem'
 
 vi.mock('react-i18next', () => ({
@@ -22,37 +24,33 @@ vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
 }))
 
-const baseState = useYTDLiveChatStore.getState()
-
-const resetStore = (overrides: Partial<typeof baseState> = {}) => {
-  useYTDLiveChatStore.setState(
-    {
-      ...baseState,
-      ...overrides,
-      coordinates: { ...baseState.coordinates },
-      size: { ...baseState.size },
-      presetItemIds: [...baseState.presetItemIds],
-      presetItemStyles: { ...baseState.presetItemStyles },
-      presetItemTitles: { ...baseState.presetItemTitles },
-    },
-    true,
-  )
-}
-
 describe('AddPresetItem', () => {
   beforeEach(() => {
-    resetStore({ addPresetEnabled: true })
+    useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
+    useChatEditorStore.getState().clear()
   })
 
-  it('adds a new preset from the current style and disables the button', () => {
+  it('always allows adding a self-contained preset from the effective profile', () => {
+    const profile = useChatSettingsStore.getState().profile
+    useChatEditorStore.setState({
+      draftProfile: {
+        ...profile,
+        appearance: { ...profile.appearance, fontSize: 24 },
+      },
+    })
     const { getByText } = render(<AddPresetItem />)
 
     const addButton = getByText('content.preset.addMessage').closest('button') as HTMLButtonElement
     fireEvent.click(addButton)
 
-    const state = useYTDLiveChatStore.getState()
-    expect(state.presetItemIds).toContain('preset-test-id')
-    expect(state.addPresetEnabled).toBe(false)
-    expect(addButton.disabled).toBe(true)
+    expect(useChatSettingsStore.getState().presets.at(-1)).toMatchObject({
+      kind: 'custom',
+      id: 'preset-test-id',
+      name: 'content.preset.addItemTitle',
+      profile: {
+        appearance: { fontSize: 24 },
+      },
+    })
+    expect(addButton.disabled).toBe(false)
   })
 })

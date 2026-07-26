@@ -13,8 +13,8 @@
         "text": "テキスト",
         "elements": "表示要素"
       },
-      "requiresAlwaysOn": "「常時表示」をオンにすると設定できます",
-      "alwaysOnDisplay": "常時表示",
+      "requiresAlwaysOn": "「操作していないときも表示」をオンにすると設定できます",
+      "alwaysOnDisplay": "操作していないときも表示",
       "chatOnlyDisplay": "チャットのみ表示",
       "userNameDisplay": "ユーザー名を表示",
       "userIconDisplay": "ユーザーアイコンを表示",

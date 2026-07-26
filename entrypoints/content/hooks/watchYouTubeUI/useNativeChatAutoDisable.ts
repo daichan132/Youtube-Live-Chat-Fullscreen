@@ -1,25 +1,17 @@
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
-import { useYTDLiveChatNoLsStore } from '@/shared/stores'
 
-interface UseNativeChatAutoDisableOptions {
+type UseNativeChatAutoDisableOptions = {
   enabled: boolean
-  nativeChatOpen: boolean
-  isFullscreen: boolean
   setYTDLiveChat: (value: boolean) => void
 }
 
 /**
- * Automatically disables extension chat when user interacts with native chat.
- * This respects user intent - if they want to use YouTube's native chat, we step aside.
+ * The runtime owns native chat observation. React only handles the explicit
+ * user action that asks YouTube to open its own chat while our overlay is on.
  */
-export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
-  const prevNativeChatOpenRef = useRef<boolean | null>(null)
-  const isAutoOpeningNativeChat = useYTDLiveChatNoLsStore(state => state.isAutoOpeningNativeChat)
-  const setIsAutoOpeningNativeChat = useYTDLiveChatNoLsStore(state => state.setIsAutoOpeningNativeChat)
-
-  // Detect clicks on native chat toggle buttons
+export const useNativeChatAutoDisable = ({ enabled, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
   useEffect(() => {
     if (!enabled) return
 
@@ -27,69 +19,15 @@ export const useNativeChatAutoDisable = ({ enabled, nativeChatOpen, isFullscreen
       const target = event.target as HTMLElement | null
       if (!target) return
 
-      const fullscreenActive = isFullscreen || Boolean(document.fullscreenElement)
-
       const shadowHost = document.getElementById(SHADOW_HOST_ID)
       if (shadowHost && (target === shadowHost || shadowHost.contains(target) || target.closest(`#${SHADOW_HOST_ID}`))) return
       if (shadowHost?.shadowRoot?.contains(target)) return
 
-      const isToggleButton = isNativeChatToggleButton(target)
-      const isTriggerTarget = isToggleButton || isNativeChatTriggerTarget(target)
-      if (!isTriggerTarget) return
-
-      if (isToggleButton && fullscreenActive) {
-        setYTDLiveChat(false)
-        return
-      }
-
-      if (isToggleButton && !nativeChatOpen) {
-        setYTDLiveChat(false)
-      }
+      if (!isNativeChatToggleButton(target) && !isNativeChatTriggerTarget(target)) return
+      setYTDLiveChat(false)
     }
 
     document.addEventListener('pointerdown', handlePointerDown, true)
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown, true)
-    }
-  }, [enabled, nativeChatOpen, isFullscreen, setYTDLiveChat])
-
-  // Detect when native chat state changes to open
-  // Only triggers on actual state TRANSITIONS (closed → open), not on initial observation
-  useEffect(() => {
-    if (!enabled) {
-      prevNativeChatOpenRef.current = null
-      if (isAutoOpeningNativeChat) {
-        setIsAutoOpeningNativeChat(false)
-      }
-      return
-    }
-
-    const prev = prevNativeChatOpenRef.current
-    prevNativeChatOpenRef.current = nativeChatOpen
-
-    // Skip initial observation - we only care about state transitions
-    // This prevents disabling YLC when the extension is re-enabled while native chat is already open
-    if (prev === null) {
-      return
-    }
-
-    // If we auto-opened native chat, clear the flag once it is observed open.
-    if (!prev && nativeChatOpen && isAutoOpeningNativeChat) {
-      setIsAutoOpeningNativeChat(false)
-      return
-    }
-
-    const fullscreenActive = isFullscreen || Boolean(document.fullscreenElement)
-
-    // Fullscreen transitions can temporarily flip native chat state without user intent.
-    // In fullscreen, rely on explicit native toggle interactions (pointerdown) only.
-    if (fullscreenActive) {
-      return
-    }
-
-    // Only disable YLC when native chat transitions from closed to open
-    if (!prev && nativeChatOpen) {
-      setYTDLiveChat(false)
-    }
-  }, [enabled, nativeChatOpen, isFullscreen, setYTDLiveChat, isAutoOpeningNativeChat, setIsAutoOpeningNativeChat])
+    return () => document.removeEventListener('pointerdown', handlePointerDown, true)
+  }, [enabled, setYTDLiveChat])
 }

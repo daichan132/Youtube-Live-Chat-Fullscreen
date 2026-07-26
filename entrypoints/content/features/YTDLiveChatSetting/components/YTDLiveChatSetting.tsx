@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
 import {
   type IconType,
   RiCloseLine,
@@ -13,7 +13,7 @@ import {
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { isRTL } from '@/shared/i18n/rtl'
-import { useGlobalSettingStore, useYTDLiveChatHistoryStore, useYTDLiveChatNoLsStore } from '@/shared/stores'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
 import { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } from '../styleHistoryCommands'
@@ -21,23 +21,20 @@ import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
 
-export const YTDLiveChatSetting = () => {
+type YTDLiveChatSettingProps = {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+}
+
+export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const { isOpenSettingModal, menuItem, setMenuItem, setIsOpenSettingModal, setIsHover } = useYTDLiveChatNoLsStore(
-    useShallow(state => ({
-      isOpenSettingModal: state.isOpenSettingModal,
-      menuItem: state.menuItem,
-      setMenuItem: state.setMenuItem,
-      setIsOpenSettingModal: state.setIsOpenSettingModal,
-      setIsHover: state.setIsHover,
-    })),
-  )
+  const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
   const { t, i18n } = useTranslation()
   const tablistRef = useRef<HTMLDivElement>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
-  const canUndo = useYTDLiveChatHistoryStore(state => state.past.length > 0)
-  const canRedo = useYTDLiveChatHistoryStore(state => state.future.length > 0)
+  const canUndo = useChatEditorStore(state => state.past.length > 0)
+  const canRedo = useChatEditorStore(state => state.future.length > 0)
 
   const focusActiveTab = useCallback(() => {
     const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
@@ -72,17 +69,17 @@ export const YTDLiveChatSetting = () => {
   )
 
   useEffect(() => {
-    if (!isOpenSettingModal) return
+    if (!open) return
 
     const modalParent = getModalParentElement()
     modalParent.setAttribute('data-ylc-theme', resolvedThemeMode)
-  }, [isOpenSettingModal, resolvedThemeMode])
+  }, [open, resolvedThemeMode])
 
   useEffect(() => {
-    if (!isOpenSettingModal) {
+    if (!open) {
       finishYLCStyleGesture()
     }
-  }, [isOpenSettingModal])
+  }, [open])
 
   const handleUndo = useCallback(() => {
     const handled = undoYLCStyle()
@@ -140,13 +137,12 @@ export const YTDLiveChatSetting = () => {
 
   return (
     <Modal
-      isOpen={isOpenSettingModal}
+      isOpen={open}
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
-      onRequestClose={() => setIsOpenSettingModal(false)}
+      onRequestClose={() => onOpenChange(false)}
       onAfterOpen={focusActiveTab}
-      onAfterClose={() => setIsHover(false)}
       parentSelector={getModalParentElement}
     >
       <div
@@ -205,7 +201,7 @@ export const YTDLiveChatSetting = () => {
               data-ylc-setting-close-button
               aria-label={t('content.aria.close')}
               className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-              onClick={() => setIsOpenSettingModal(false)}
+              onClick={() => onOpenChange(false)}
             >
               <RiCloseLine size={24} />
             </button>

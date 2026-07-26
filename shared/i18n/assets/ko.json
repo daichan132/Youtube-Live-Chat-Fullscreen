@@ -7,7 +7,7 @@
         "undo": "스타일 변경 실행 취소",
         "redo": "스타일 변경 다시 실행"
       },
-      "alwaysOnDisplay": "항상 표시",
+      "alwaysOnDisplay": "조작하지 않을 때도 표시",
       "chatOnlyDisplay": "채팅만 표시",
       "userNameDisplay": "사용자 이름 표시",
       "userIconDisplay": "사용자 아이콘 표시",

@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  ensureChatIframeObservation,
   getCurrentLiveChatIframe,
   getLiveChatIframes,
   isChatHostForCurrentVideo,
@@ -19,8 +18,6 @@ const createWatchFlexy = (videoId: string) => {
   document.body.appendChild(watchFlexy)
   return watchFlexy
 }
-
-const flushMutationObserver = () => new Promise(resolve => setTimeout(resolve, 0))
 
 describe('isIframeForCurrentVideo', () => {
   beforeEach(() => {
@@ -176,41 +173,6 @@ describe('getLiveChatIframes', () => {
     document.body.appendChild(currentHost)
 
     expect(getCurrentLiveChatIframe('current-video')).toBe(currentIframe)
-  })
-
-  it('marks continuation-only iframe after the page video marker catches up', async () => {
-    setLocation('/watch?v=current-video')
-    const watchFlexy = createWatchFlexy('stale-video')
-    const host = document.createElement('ytd-live-chat-frame')
-    const iframe = document.createElement('iframe')
-    iframe.src = 'https://www.youtube.com/live_chat_replay?continuation=current-replay'
-    host.appendChild(iframe)
-    document.body.appendChild(host)
-
-    ensureChatIframeObservation()
-    expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(false)
-
-    watchFlexy.setAttribute('video-id', 'current-video')
-    await flushMutationObserver()
-
-    expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(true)
-  })
-
-  it('marks continuation-only iframe after the page video marker is added', async () => {
-    setLocation('/watch?v=current-video')
-    const host = document.createElement('ytd-live-chat-frame')
-    const iframe = document.createElement('iframe')
-    iframe.src = 'https://www.youtube.com/live_chat_replay?continuation=current-replay'
-    host.appendChild(iframe)
-    document.body.appendChild(host)
-
-    ensureChatIframeObservation()
-    expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(false)
-
-    createWatchFlexy('current-video')
-    await flushMutationObserver()
-
-    expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(true)
   })
 })
 

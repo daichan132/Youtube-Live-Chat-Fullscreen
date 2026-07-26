@@ -14,7 +14,6 @@ const isNativeChatTriggerTargetMock = vi.mocked(isNativeChatTriggerTarget)
 
 describe('useNativeChatAutoDisable', () => {
   beforeEach(() => {
-    vi.useFakeTimers()
     document.body.innerHTML = ''
     isNativeChatToggleButtonMock.mockReset()
     isNativeChatTriggerTargetMock.mockReset()
@@ -23,7 +22,6 @@ describe('useNativeChatAutoDisable', () => {
   })
 
   afterEach(() => {
-    vi.useRealTimers()
     // Reset potential test override on instance property.
     // biome-ignore lint/performance/noDelete: test-only cleanup for configurable override
     delete (document as { fullscreenElement?: Element | null }).fullscreenElement
@@ -37,8 +35,6 @@ describe('useNativeChatAutoDisable', () => {
     renderHook(() =>
       useNativeChatAutoDisable({
         enabled: true,
-        nativeChatOpen: false,
-        isFullscreen: true,
         setYTDLiveChat,
       }),
     )
@@ -54,7 +50,7 @@ describe('useNativeChatAutoDisable', () => {
     expect(setYTDLiveChat).toHaveBeenCalledWith(false)
   })
 
-  it('turns off extension chat when not fullscreen and native chat is closed', () => {
+  it('turns off extension chat for an explicit native chat trigger', () => {
     const setYTDLiveChat = vi.fn()
     isNativeChatToggleButtonMock.mockReturnValue(true)
     isNativeChatTriggerTargetMock.mockReturnValue(true)
@@ -62,8 +58,6 @@ describe('useNativeChatAutoDisable', () => {
     renderHook(() =>
       useNativeChatAutoDisable({
         enabled: true,
-        nativeChatOpen: false,
-        isFullscreen: false,
         setYTDLiveChat,
       }),
     )
@@ -87,8 +81,6 @@ describe('useNativeChatAutoDisable', () => {
     renderHook(() =>
       useNativeChatAutoDisable({
         enabled: true,
-        nativeChatOpen: false,
-        isFullscreen: true,
         setYTDLiveChat,
       }),
     )
@@ -107,90 +99,20 @@ describe('useNativeChatAutoDisable', () => {
     expect(setYTDLiveChat).not.toHaveBeenCalled()
   })
 
-  it('turns off extension chat when native chat transitions from closed to open outside fullscreen', () => {
+  it('does not listen while disabled', () => {
     const setYTDLiveChat = vi.fn()
-
-    const { rerender } = renderHook(
-      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
-        useNativeChatAutoDisable({
-          enabled: true,
-          nativeChatOpen,
-          isFullscreen,
-          setYTDLiveChat,
-        }),
-      {
-        initialProps: {
-          nativeChatOpen: false,
-          isFullscreen: false,
-        },
-      },
+    isNativeChatToggleButtonMock.mockReturnValue(true)
+    renderHook(() =>
+      useNativeChatAutoDisable({
+        enabled: false,
+        setYTDLiveChat,
+      }),
     )
-
-    rerender({
-      nativeChatOpen: true,
-      isFullscreen: false,
+    const nativeButton = document.createElement('button')
+    document.body.appendChild(nativeButton)
+    act(() => {
+      nativeButton.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }))
     })
-
-    expect(setYTDLiveChat).toHaveBeenCalledTimes(1)
-    expect(setYTDLiveChat).toHaveBeenCalledWith(false)
-  })
-
-  it('does not turn off extension chat when native chat opens during fullscreen', () => {
-    const setYTDLiveChat = vi.fn()
-
-    const { rerender } = renderHook(
-      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
-        useNativeChatAutoDisable({
-          enabled: true,
-          nativeChatOpen,
-          isFullscreen,
-          setYTDLiveChat,
-        }),
-      {
-        initialProps: {
-          nativeChatOpen: false,
-          isFullscreen: true,
-        },
-      },
-    )
-
-    rerender({
-      nativeChatOpen: true,
-      isFullscreen: true,
-    })
-
-    expect(setYTDLiveChat).not.toHaveBeenCalled()
-  })
-
-  it('does not turn off extension chat during fullscreen when React fullscreen state is stale', () => {
-    const setYTDLiveChat = vi.fn()
-
-    Object.defineProperty(document, 'fullscreenElement', {
-      configurable: true,
-      get: () => document.documentElement,
-    })
-
-    const { rerender } = renderHook(
-      ({ nativeChatOpen, isFullscreen }: { nativeChatOpen: boolean; isFullscreen: boolean }) =>
-        useNativeChatAutoDisable({
-          enabled: true,
-          nativeChatOpen,
-          isFullscreen,
-          setYTDLiveChat,
-        }),
-      {
-        initialProps: {
-          nativeChatOpen: false,
-          isFullscreen: false,
-        },
-      },
-    )
-
-    rerender({
-      nativeChatOpen: true,
-      isFullscreen: false,
-    })
-
     expect(setYTDLiveChat).not.toHaveBeenCalled()
   })
 })

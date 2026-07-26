@@ -7,7 +7,7 @@
         "undo": "Fortryd stilændring",
         "redo": "Gentag stilændring"
       },
-      "alwaysOnDisplay": "Vis altid chatten",
+      "alwaysOnDisplay": "Vis chatten ved inaktivitet",
       "chatOnlyDisplay": "Vis kun chatten",
       "userNameDisplay": "Vis brugernavn",
       "userIconDisplay": "Vis profilbillede",

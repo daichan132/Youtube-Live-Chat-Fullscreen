@@ -7,7 +7,7 @@
         "undo": "Buat asal perubahan gaya",
         "redo": "Buat semula perubahan gaya"
       },
-      "alwaysOnDisplay": "Sentiasa paparkan sembang",
+      "alwaysOnDisplay": "Paparkan sembang ketika tidak aktif",
       "chatOnlyDisplay": "Mod sembang sahaja",
       "userNameDisplay": "Papar nama pengguna",
       "userIconDisplay": "Papar gambar profil",

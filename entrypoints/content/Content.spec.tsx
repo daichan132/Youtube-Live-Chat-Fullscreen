@@ -1,231 +1,101 @@
 import { render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useGlobalSettingStore, useYTDLiveChatStore } from '@/shared/stores'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
+import { useGlobalSettingStore } from '@/shared/stores'
 import { Content } from './Content'
-import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
-import { useYouTubeChatRuntime } from './chat/runtime/useYouTubeChatRuntime'
-import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
-import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
-import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
-import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
-
-const { ytdLiveChatMock, ytdLiveChatSwitchMock } = vi.hoisted(() => ({
-  ytdLiveChatMock: vi.fn(() => null),
-  ytdLiveChatSwitchMock: vi.fn(() => null),
-}))
+import { chatRuntime } from './runtime/ChatRuntime'
+import { useChatRuntime } from './runtime/useChatRuntime'
 
 vi.mock('redux-persist-webextension-storage', () => ({
   localStorage: globalThis.localStorage,
 }))
 
-vi.mock('./chat/archive/useEnsureArchiveNativeChatOpen', () => ({
-  useEnsureArchiveNativeChatOpen: vi.fn(),
-}))
-
-vi.mock('./chat/runtime/useYouTubeChatRuntime', () => ({
-  useYouTubeChatRuntime: vi.fn(),
-}))
-
-vi.mock('./features/YTDLiveChatSwitch', () => ({
-  YTDLiveChatSwitch: ytdLiveChatSwitchMock,
-}))
-
 vi.mock('./hooks/globalState/useContentRuntimeMessages', () => ({
   useContentRuntimeMessages: vi.fn(),
 }))
-
 vi.mock('./hooks/globalState/useSettingsStorageSync', () => ({
   useSettingsStorageSync: vi.fn(),
 }))
-
-vi.mock('./hooks/useYLCPortalTargets', () => ({
-  useYLCPortalTargets: vi.fn(() => ({
-    overlayRoot: null,
-    switchContainer: null,
-  })),
+vi.mock('./runtime/ChatRuntime', () => ({
+  chatRuntime: {
+    start: vi.fn(),
+    stop: vi.fn(),
+    setEnabled: vi.fn(),
+    setProfile: vi.fn(),
+  },
 }))
-
-vi.mock('./hooks/watchYouTubeUI/useIsFullscreen', () => ({
-  useIsFullScreen: vi.fn(() => true),
+vi.mock('./runtime/useChatRuntime', () => ({
+  useChatRuntime: vi.fn(),
 }))
-
 vi.mock('./YTDLiveChat', () => ({
-  YTDLiveChat: ytdLiveChatMock,
+  YTDLiveChat: ({ loading }: { loading: boolean }) => <div data-testid='live-chat'>{loading ? 'loading' : 'ready'}</div>,
 }))
+vi.mock('./features/YTDLiveChatSwitch', () => ({
+  YTDLiveChatSwitch: () => <button type='button'>switch</button>,
+}))
+
+const inactiveView = {
+  status: 'inactive' as const,
+  mode: null,
+  showSwitch: false,
+  showOverlay: false,
+  loading: false,
+  overlayRoot: null,
+  switchContainer: null,
+}
 
 describe('Content', () => {
   beforeEach(() => {
-    document.body.innerHTML = ''
-    vi.mocked(useYouTubeChatRuntime).mockReset()
-    vi.mocked(useContentRuntimeMessages).mockReset()
-    vi.mocked(useSettingsStorageSync).mockReset()
-    vi.mocked(useEnsureArchiveNativeChatOpen).mockReset()
-    vi.mocked(useYLCPortalTargets).mockReset()
-    vi.mocked(useIsFullScreen).mockReset()
-    ytdLiveChatMock.mockClear()
-    ytdLiveChatSwitchMock.mockClear()
-    useGlobalSettingStore.setState({ themeMode: 'system', ytdLiveChat: true })
-    useYTDLiveChatStore.setState({ alwaysOnDisplay: true })
-    window.history.pushState({}, '', `${window.location.origin}/watch?v=video-a`)
-
-    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
-      videoId: 'video-a',
-      mode: 'archive',
-      canShowSwitch: true,
-      sourceReady: true,
-      terminallyUnavailable: false,
-      revision: 0,
-    })
-    vi.mocked(useIsFullScreen).mockReturnValue(true)
-    vi.mocked(useYLCPortalTargets).mockReturnValue({
-      overlayRoot: null,
-      switchContainer: null,
-    })
+    vi.clearAllMocks()
+    vi.mocked(useChatRuntime).mockReturnValue(inactiveView)
+    useGlobalSettingStore.setState({ ytdLiveChat: true, themeMode: 'system' })
+    useChatSettingsStore.setState({ profile: DEFAULT_CHAT_PROFILE })
   })
 
-  const createReadyPortalTargets = () => {
+  afterEach(() => {
+    document.body.replaceChildren()
+  })
+
+  it('starts the runtime and sends effective settings', () => {
+    const { unmount } = render(<Content />)
+
+    expect(chatRuntime.start).toHaveBeenCalledTimes(1)
+    expect(chatRuntime.setEnabled).toHaveBeenCalledWith(true)
+    expect(chatRuntime.setProfile).toHaveBeenCalledWith(DEFAULT_CHAT_PROFILE)
+
+    unmount()
+    expect(chatRuntime.stop).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders overlay and switch only into runtime-owned portal targets', () => {
     const host = document.createElement('div')
-    const shadowRoot = host.attachShadow({ mode: 'open' })
-    const switchButtonContainer = document.createElement('div')
-    document.body.append(host, switchButtonContainer)
-
-    vi.mocked(useYLCPortalTargets).mockReturnValue({
-      overlayRoot: shadowRoot,
-      switchContainer: switchButtonContainer,
-    })
-
-    return { shadowRoot, switchButtonContainer }
-  }
-
-  it('enables archive native ensure only when archive + fullscreen + user enabled', () => {
-    render(<Content />)
-
-    expect(useEnsureArchiveNativeChatOpen).toHaveBeenCalledWith(true)
-  })
-
-  it('disables archive native ensure when the user setting is off', () => {
-    useGlobalSettingStore.setState({ ytdLiveChat: false })
-
-    render(<Content />)
-
-    expect(useEnsureArchiveNativeChatOpen).toHaveBeenCalledWith(false)
-  })
-
-  it('does not render overlay container in none mode', () => {
-    const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
-      videoId: 'video-a',
-      mode: 'none',
-      canShowSwitch: false,
-      sourceReady: false,
-      terminallyUnavailable: false,
-      revision: 1,
-    })
-
-    render(<Content />)
-
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(switchButtonContainer.style.display).toBe('none')
-    expect(useEnsureArchiveNativeChatOpen).toHaveBeenCalledWith(false)
-    expect(ytdLiveChatMock).not.toHaveBeenCalled()
-    expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
-  })
-
-  it('removes the overlay but keeps the switch when the same video temporarily changes to none mode', () => {
-    const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useYouTubeChatRuntime)
-      .mockReturnValueOnce({
-        videoId: 'video-a',
-        mode: 'archive',
-        canShowSwitch: true,
-        sourceReady: true,
-        terminallyUnavailable: false,
-        revision: 0,
-      })
-      .mockReturnValue({
-        videoId: 'video-a',
-        mode: 'none',
-        canShowSwitch: true,
-        sourceReady: true,
-        terminallyUnavailable: false,
-        revision: 1,
-      })
-
-    const { rerender } = render(<Content />)
-
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).not.toBeNull()
-    expect(switchButtonContainer.style.display).toBe('inline-block')
-
-    rerender(<Content />)
-
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(switchButtonContainer.style.display).toBe('inline-block')
-    expect(ytdLiveChatSwitchMock).toHaveBeenCalledTimes(2)
-  })
-
-  it('places the fullscreen overlay on the shared base layer', () => {
-    const { shadowRoot } = createReadyPortalTargets()
-
-    render(<Content />)
-
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.overlay) })
-  })
-
-  it('removes the overlay after fullscreen exits even when Always On is enabled', () => {
-    const host = document.createElement('div')
-    const shadowRoot = host.attachShadow({ mode: 'open' })
-    document.body.append(host)
-    useYTDLiveChatStore.setState({ alwaysOnDisplay: true })
-    vi.mocked(useIsFullScreen).mockReturnValue(false)
-    vi.mocked(useYLCPortalTargets).mockReturnValue({
-      overlayRoot: shadowRoot,
-      switchContainer: null,
-    })
-
-    render(<Content />)
-
-    expect(useYLCPortalTargets).toHaveBeenCalledWith({
-      overlayEnabled: false,
-      switchEnabled: false,
-    })
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
-  })
-
-  it('does not render overlay container when fullscreen chat cannot be toggled', () => {
-    const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
-      videoId: 'video-a',
-      mode: 'archive',
-      canShowSwitch: false,
-      sourceReady: false,
-      terminallyUnavailable: false,
-      revision: 0,
-    })
-
-    render(<Content />)
-
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(switchButtonContainer.style.display).toBe('none')
-  })
-
-  it('hides both switch and overlay when current live chat is terminally unavailable', () => {
-    const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
-    vi.mocked(useYouTubeChatRuntime).mockReturnValue({
-      videoId: 'video-a',
+    const overlayRoot = host.attachShadow({ mode: 'open' })
+    const switchContainer = document.createElement('div')
+    document.body.append(host, switchContainer)
+    vi.mocked(useChatRuntime).mockReturnValue({
+      status: 'recovering',
       mode: 'live',
-      canShowSwitch: false,
-      sourceReady: false,
-      terminallyUnavailable: true,
-      revision: 0,
+      showSwitch: true,
+      showOverlay: true,
+      loading: true,
+      overlayRoot,
+      switchContainer,
     })
 
     render(<Content />)
 
-    expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(switchButtonContainer.style.display).toBe('none')
-    expect(ytdLiveChatMock).not.toHaveBeenCalled()
-    expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
+    expect(overlayRoot.querySelector('[data-testid="live-chat"]')?.textContent).toBe('loading')
+    expect(switchContainer.querySelector('button')?.textContent).toBe('switch')
+  })
+
+  it('does not create React-owned DOM for an unavailable video', () => {
+    vi.mocked(useChatRuntime).mockReturnValue({
+      ...inactiveView,
+      status: 'unavailable',
+    })
+
+    const { container } = render(<Content />)
+    expect(container).toBeEmptyDOMElement()
   })
 })

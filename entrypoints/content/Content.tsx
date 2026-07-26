@@ -1,17 +1,15 @@
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { useGlobalSettingStore } from '@/shared/stores'
 import { useResolvedThemeMode } from '@/shared/theme'
-import { useEnsureArchiveNativeChatOpen } from './chat/archive/useEnsureArchiveNativeChatOpen'
-import { useYouTubeChatRuntime } from './chat/runtime/useYouTubeChatRuntime'
-import { ensureChatIframeObservation } from './chat/shared/iframeDom'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
 import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
-import { useYLCPortalTargets } from './hooks/useYLCPortalTargets'
-import { useIsFullScreen } from './hooks/watchYouTubeUI/useIsFullscreen'
-import { useYLCStyleApplication } from './hooks/ylcStyleChange/useYLCStyleApplication'
+import { chatRuntime } from './runtime/ChatRuntime'
+import { useChatRuntime } from './runtime/useChatRuntime'
+import { useChatEditorStore } from './settings/ChatEditorStore'
 import { YTDLiveChat } from './YTDLiveChat'
 
 const OVERLAY_STYLE = {
@@ -20,64 +18,52 @@ const OVERLAY_STYLE = {
 } as const
 
 export const Content = () => {
-  useEffect(() => {
-    ensureChatIframeObservation()
-  }, [])
-
   useContentRuntimeMessages()
   useSettingsStorageSync()
-  useYLCStyleApplication()
+
   const themeMode = useGlobalSettingStore(state => state.themeMode)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
-  const isFullscreen = useIsFullScreen()
-  const runtime = useYouTubeChatRuntime()
-  const { mode } = runtime
-  useEnsureArchiveNativeChatOpen(isFullscreen && ytdLiveChat && mode === 'archive')
-  const switchEnabled = runtime.canShowSwitch && !runtime.terminallyUnavailable
-  const overlayEnabled = mode !== 'none' && switchEnabled
-  const { overlayRoot, switchContainer } = useYLCPortalTargets({
-    overlayEnabled: overlayEnabled && isFullscreen,
-    switchEnabled: switchEnabled && isFullscreen,
-  })
-  const shouldRenderSwitch = switchEnabled && isFullscreen && switchContainer !== null
-  const shouldRenderLiveChat = overlayEnabled && isFullscreen && overlayRoot !== null
+  const enabled = useGlobalSettingStore(state => state.ytdLiveChat)
+  const profile = useChatSettingsStore(state => state.profile)
+  const draftProfile = useChatEditorStore(state => state.draftProfile)
+  const effectiveProfile = draftProfile ?? profile
+  const runtimeView = useChatRuntime()
 
   useEffect(() => {
-    if (!switchContainer) return
-    switchContainer.style.display = shouldRenderSwitch ? 'inline-block' : 'none'
-  }, [shouldRenderSwitch, switchContainer])
+    chatRuntime.start()
+    return () => chatRuntime.stop()
+  }, [])
 
-  const renderLiveChatPortal = () => {
-    if (!shouldRenderLiveChat || !overlayRoot) return null
-    return createPortal(
-      <div
-        data-ylc-theme={resolvedThemeMode}
-        data-ylc-overlay-container
-        className='fixed top-0 right-0 w-full h-full'
-        style={OVERLAY_STYLE}
-      >
-        <YTDLiveChat
-          isFullscreen={isFullscreen}
-          videoId={runtime.videoId}
-          mode={mode}
-          sourceReady={runtime.sourceReady}
-          runtimeRevision={runtime.revision}
-        />
-      </div>,
-      overlayRoot,
-    )
-  }
+  useEffect(() => {
+    chatRuntime.setEnabled(enabled)
+  }, [enabled])
 
-  const renderSwitchButtonPortal = () => {
-    if (!shouldRenderSwitch || !switchContainer) return null
-    return createPortal(<YTDLiveChatSwitch />, switchContainer)
-  }
+  useEffect(() => {
+    chatRuntime.setProfile(effectiveProfile)
+  }, [effectiveProfile])
+
+  const liveChatPortal =
+    runtimeView.showOverlay && runtimeView.overlayRoot
+      ? createPortal(
+          <div
+            data-ylc-theme={resolvedThemeMode}
+            data-ylc-overlay-container
+            className='fixed top-0 right-0 w-full h-full'
+            style={OVERLAY_STYLE}
+          >
+            <YTDLiveChat loading={runtimeView.loading} />
+          </div>,
+          runtimeView.overlayRoot,
+        )
+      : null
+
+  const switchPortal =
+    runtimeView.showSwitch && runtimeView.switchContainer ? createPortal(<YTDLiveChatSwitch />, runtimeView.switchContainer) : null
 
   return (
     <>
-      {renderLiveChatPortal()}
-      {renderSwitchButtonPortal()}
+      {liveChatPortal}
+      {switchPortal}
     </>
   )
 }

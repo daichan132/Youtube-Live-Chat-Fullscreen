@@ -7,7 +7,7 @@
         "undo": "เลิกทำการเปลี่ยนรูปแบบ",
         "redo": "ทำซ้ำการเปลี่ยนรูปแบบ"
       },
-      "alwaysOnDisplay": "แสดงแชทตลอดเวลา",
+      "alwaysOnDisplay": "แสดงแชทเมื่อไม่มีการใช้งาน",
       "chatOnlyDisplay": "โหมดแสดงเฉพาะแชท",
       "userNameDisplay": "แสดงชื่อผู้ใช้",
       "userIconDisplay": "แสดงรูปโปรไฟล์",

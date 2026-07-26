@@ -7,7 +7,7 @@
         "undo": "Angre stilendring",
         "redo": "Gjør om stilendring"
       },
-      "alwaysOnDisplay": "Vis alltid chatten",
+      "alwaysOnDisplay": "Vis chatten ved inaktivitet",
       "chatOnlyDisplay": "Vis bare chatten",
       "userNameDisplay": "Vis brukernavn",
       "userIconDisplay": "Vis profilbilde",

@@ -1,6 +1,8 @@
 import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useYTDLiveChatHistoryStore, useYTDLiveChatStore } from '@/shared/stores'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { YLCColorPicker } from './YLCColorPicker'
 
 vi.mock('redux-persist-webextension-storage', () => ({
@@ -46,46 +48,47 @@ vi.mock('./SettingColorPicker', () => ({
   ),
 }))
 
-const baseState = useYTDLiveChatStore.getState()
-
 const resetStore = () => {
-  useYTDLiveChatStore.setState(
-    {
-      ...baseState,
-      coordinates: { ...baseState.coordinates },
-      size: { ...baseState.size },
-      presetItemIds: [...baseState.presetItemIds],
-      presetItemStyles: { ...baseState.presetItemStyles },
-      presetItemTitles: { ...baseState.presetItemTitles },
-    },
-    true,
-  )
+  useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
 }
 
 describe('YLCColorPicker', () => {
   beforeEach(() => {
     resetStore()
-    useYTDLiveChatHistoryStore.getState().clear()
+    useChatEditorStore.getState().clear()
   })
 
   it('updates the background color setting and records one history entry', () => {
-    useYTDLiveChatStore.setState({ bgColor: { r: 1, g: 2, b: 3, a: 0.4 } })
+    const profile = useChatSettingsStore.getState().profile
+    useChatSettingsStore.setState({
+      profile: {
+        ...profile,
+        appearance: { ...profile.appearance, backgroundColor: { r: 1, g: 2, b: 3, a: 0.4 } },
+      },
+    })
 
-    const { getByRole } = render(<YLCColorPicker settingKey='bgColor' labelKey='content.setting.backgroundColor' />)
+    const { getByRole } = render(<YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />)
     const button = getByRole('button', { name: 'content.setting.backgroundColor' })
 
     expect(button.getAttribute('data-rgba')).toBe('1,2,3,0.4')
 
     fireEvent.click(button)
 
-    expect(useYTDLiveChatStore.getState().bgColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
-    expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(1)
+    expect(useChatSettingsStore.getState().profile.appearance.backgroundColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(useChatEditorStore.getState().past).toHaveLength(1)
   })
 
   it('updates the font color setting without changing the background color setting', () => {
-    useYTDLiveChatStore.setState({
-      bgColor: { r: 1, g: 2, b: 3, a: 0.4 },
-      fontColor: { r: 4, g: 5, b: 6, a: 0.7 },
+    const profile = useChatSettingsStore.getState().profile
+    useChatSettingsStore.setState({
+      profile: {
+        ...profile,
+        appearance: {
+          ...profile.appearance,
+          backgroundColor: { r: 1, g: 2, b: 3, a: 0.4 },
+          fontColor: { r: 4, g: 5, b: 6, a: 0.7 },
+        },
+      },
     })
 
     const { getByRole } = render(<YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />)
@@ -95,13 +98,11 @@ describe('YLCColorPicker', () => {
 
     fireEvent.click(button)
 
-    expect(useYTDLiveChatStore.getState().fontColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
-    expect(useYTDLiveChatStore.getState().bgColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
+    expect(useChatSettingsStore.getState().profile.appearance.fontColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(useChatSettingsStore.getState().profile.appearance.backgroundColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
   })
 
   it('updates the membership name color setting', () => {
-    useYTDLiveChatStore.setState({ membershipNameColor: { r: 15, g: 157, b: 88, a: 1 } })
-
     const { getByRole } = render(<YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' />)
     const button = getByRole('button', { name: 'content.setting.membershipNameColor' })
 
@@ -109,6 +110,9 @@ describe('YLCColorPicker', () => {
 
     fireEvent.click(button)
 
-    expect(useYTDLiveChatStore.getState().membershipNameColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(useChatSettingsStore.getState().profile.appearance.membershipNameColor).toEqual({
+      mode: 'custom',
+      value: { r: 9, g: 8, b: 7, a: 0.6 },
+    })
   })
 })

@@ -13,8 +13,8 @@
         "text": "Text",
         "elements": "Chat Elements"
       },
-      "requiresAlwaysOn": "Turn on \"Always Show Chat\" to use this option",
-      "alwaysOnDisplay": "Always Show Chat",
+      "requiresAlwaysOn": "Turn on \"Show When Idle\" to use this option",
+      "alwaysOnDisplay": "Show When Idle",
       "chatOnlyDisplay": "Chat-Only Mode",
       "userNameDisplay": "Show Usernames",
       "userIconDisplay": "Show Profile Pictures",

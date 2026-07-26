@@ -7,7 +7,7 @@
         "undo": "Atsaukt stila izmaiņas",
         "redo": "Atkārtot stila izmaiņas"
       },
-      "alwaysOnDisplay": "Vienmēr rādīt čatu",
+      "alwaysOnDisplay": "Rādīt čatu neaktivitātes laikā",
       "chatOnlyDisplay": "Rādīt tikai čatu",
       "userNameDisplay": "Rādīt lietotājvārdu",
       "userIconDisplay": "Rādīt profila attēlu",

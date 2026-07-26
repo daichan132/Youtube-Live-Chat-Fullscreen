@@ -7,7 +7,7 @@
         "undo": "Stílusmódosítás visszavonása",
         "redo": "Stílusmódosítás megismétlése"
       },
-      "alwaysOnDisplay": "Csevegés állandó megjelenítése",
+      "alwaysOnDisplay": "Csevegés megjelenítése inaktivitáskor",
       "chatOnlyDisplay": "Csak a csevegés megjelenítése",
       "userNameDisplay": "Felhasználónevek megjelenítése",
       "userIconDisplay": "Profilképek megjelenítése",

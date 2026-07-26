@@ -7,7 +7,7 @@
         "undo": "واگردانی تغییر ظاهر",
         "redo": "انجام دوبارهٔ تغییر ظاهر"
       },
-      "alwaysOnDisplay": "نمایش همیشگی چت",
+      "alwaysOnDisplay": "نمایش چت هنگام عدم فعالیت",
       "chatOnlyDisplay": "حالت فقط چت",
       "userNameDisplay": "نمایش نام کاربران",
       "userIconDisplay": "نمایش عکس‌های نمایه",

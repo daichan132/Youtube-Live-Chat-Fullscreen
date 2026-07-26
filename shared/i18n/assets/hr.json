@@ -7,7 +7,7 @@
         "undo": "Poništi promjenu stila",
         "redo": "Ponovi promjenu stila"
       },
-      "alwaysOnDisplay": "Uvijek prikazuj chat",
+      "alwaysOnDisplay": "Prikaži chat tijekom neaktivnosti",
       "chatOnlyDisplay": "Prikaži samo chat",
       "userNameDisplay": "Prikaži korisnička imena",
       "userIconDisplay": "Prikaži profilne slike",

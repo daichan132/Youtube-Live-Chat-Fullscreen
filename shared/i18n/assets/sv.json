@@ -7,7 +7,7 @@
         "undo": "Ångra stiländring",
         "redo": "Gör om stiländring"
       },
-      "alwaysOnDisplay": "Visa alltid chatten",
+      "alwaysOnDisplay": "Visa chatten vid inaktivitet",
       "chatOnlyDisplay": "Visa endast chatten",
       "userNameDisplay": "Visa användarnamn",
       "userIconDisplay": "Visa profilbild",

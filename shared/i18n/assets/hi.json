@@ -7,7 +7,7 @@
         "undo": "स्टाइल में बदलाव पूर्ववत करें",
         "redo": "स्टाइल में बदलाव फिर से करें"
       },
-      "alwaysOnDisplay": "हमेशा दिखाएं",
+      "alwaysOnDisplay": "निष्क्रिय होने पर चैट दिखाएं",
       "chatOnlyDisplay": "केवल चैट दिखाएं",
       "userNameDisplay": "उपयोगकर्ता नाम दिखाएं",
       "userIconDisplay": "प्रोफ़ाइल चित्र दिखाएं",

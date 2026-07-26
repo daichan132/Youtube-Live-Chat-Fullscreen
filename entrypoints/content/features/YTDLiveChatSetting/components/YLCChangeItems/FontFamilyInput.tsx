@@ -1,16 +1,16 @@
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
+import { ensureFontLoaded } from '@/entrypoints/content/style/fontLoader'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
-import { useYTDLiveChatStore } from '@/shared/stores'
 import { cn } from '@/shared/utils/cn'
-import { toGoogleFontFamilyParam, toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
+import { toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { commitYLCStyleUpdate } from '../../styleHistoryCommands'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
-const PREVIEW_FONT_STYLE_ID = 'ylc-font-family-preview-style'
 const PREVIEW_FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
 
 const toFontFamilyStyleValue = (fontFamily: string) => `${toQuotedFontFamily(fontFamily)}, ${PREVIEW_FALLBACK_FONT_FAMILY}`
@@ -50,19 +50,14 @@ const buildFontFamilyOptions = (defaultLabel: string) => {
   return [{ ...DEFAULT_FONT_OPTION, label: defaultLabel }, ...featuredOptions, ...regularOptions]
 }
 
-const buildPreviewImportStyles = () =>
-  FONT_FAMILY_OPTIONS.map(
-    option => `@import url('https://fonts.googleapis.com/css2?family=${toGoogleFontFamilyParam(option.value)}&display=swap');`,
-  ).join('\n')
-
 export const FontFamilyInput = () => {
-  const fontFamily = useYTDLiveChatStore(state => state.fontFamily)
+  const fontFamily = useEffectiveChatProfile().appearance.fontFamily
 
   const handleCommit = useCallback((nextFontFamily: string) => {
-    commitYLCStyleUpdate({ fontFamily: nextFontFamily }, 'fontFamily')
+    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } }, 'fontFamily')
   }, [])
 
-  return <FontFamilyInputUI value={fontFamily} onCommit={handleCommit} />
+  return <FontFamilyInputUI value={fontFamily ?? ''} onCommit={handleCommit} />
 }
 
 const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (fontFamily: string) => void }) => {
@@ -90,6 +85,10 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   }, [options, searchValue])
 
   useEffect(() => {
+    ensureFontLoaded(document, normalizedValue, 'ylc-selected-font-preview-style')
+  }, [normalizedValue])
+
+  useEffect(() => {
     if (!isOpen) return
     const selectedIndex = filteredOptions.findIndex(option => option.value === normalizedValue)
     if (selectedIndex >= 0) {
@@ -107,20 +106,6 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
     })
     return () => {
       window.cancelAnimationFrame(id)
-    }
-  }, [isOpen])
-
-  useEffect(() => {
-    if (!isOpen) return
-    if (document.head.querySelector(`#${PREVIEW_FONT_STYLE_ID}`)) return
-
-    try {
-      const styleElement = document.createElement('style')
-      styleElement.id = PREVIEW_FONT_STYLE_ID
-      styleElement.textContent = buildPreviewImportStyles()
-      document.head.appendChild(styleElement)
-    } catch (e) {
-      console.warn('[YLC] Failed to load font preview styles:', e)
     }
   }, [isOpen])
 
@@ -258,7 +243,6 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
                       isActive && 'ylc-font-combobox-option-active',
                       isSelected && 'ylc-font-combobox-option-selected',
                     )}
-                    style={option.value ? { fontFamily: toFontFamilyStyleValue(option.value) } : undefined}
                     onMouseEnter={() => setActiveIndex(index)}
                     onClick={() => commitFontFamily(option.value)}
                   >

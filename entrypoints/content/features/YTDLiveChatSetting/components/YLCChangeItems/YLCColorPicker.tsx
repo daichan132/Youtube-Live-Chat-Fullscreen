@@ -1,13 +1,13 @@
 import { useCallback } from 'react'
 import type { RgbaColor } from 'react-colorful'
 import { useTranslation } from 'react-i18next'
-import { useYTDLiveChatStore } from '@/shared/stores'
-import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
+import { LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/settings/defaults'
 import { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } from '../../styleHistoryCommands'
 import { fromRgba } from './colorUtils'
 import { SettingColorPicker } from './SettingColorPicker'
 
-type ColorSettingKey = 'bgColor' | 'fontColor' | 'membershipNameColor'
+type ColorSettingKey = 'backgroundColor' | 'fontColor' | 'membershipNameColor'
 
 type YLCColorPickerProps = {
   settingKey: ColorSettingKey
@@ -16,13 +16,27 @@ type YLCColorPickerProps = {
 
 export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) => {
   const { t } = useTranslation()
-  const rgba = useYTDLiveChatStore(state => state[settingKey])
+  const appearance = useEffectiveChatProfile().appearance
+  const rgba =
+    settingKey === 'membershipNameColor'
+      ? appearance.membershipNameColor.mode === 'custom'
+        ? appearance.membershipNameColor.value
+        : LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR
+      : appearance[settingKey]
   const gestureId = `color:${settingKey}`
 
   const onChange = useCallback(
     (color: RgbaColor) => {
       const rgb = fromRgba(color)
-      previewYLCStyleUpdate(gestureId, { [settingKey]: rgb } as Pick<YLCStyleUpdateType, ColorSettingKey>, settingKey)
+      previewYLCStyleUpdate(
+        gestureId,
+        {
+          appearance: {
+            [settingKey]: settingKey === 'membershipNameColor' ? { mode: 'custom', value: rgb } : rgb,
+          },
+        },
+        settingKey,
+      )
     },
     [gestureId, settingKey],
   )

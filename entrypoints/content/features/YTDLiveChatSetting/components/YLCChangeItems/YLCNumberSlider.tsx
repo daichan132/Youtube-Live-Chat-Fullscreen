@@ -2,11 +2,10 @@ import type { CSSProperties } from 'react'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { useYTDLiveChatStore } from '@/shared/stores'
-import type { YLCStyleUpdateType } from '@/shared/types/ytdLiveChatType'
+import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
 import { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } from '../../styleHistoryCommands'
 
-export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'space'
+export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'spacing'
 
 type YLCNumberSliderProps = {
   settingKey: NumberSliderSettingKey
@@ -19,7 +18,7 @@ const RANGE_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Ar
 
 export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSliderProps) => {
   const { t } = useTranslation()
-  const storeValue = useYTDLiveChatStore(state => state[settingKey])
+  const storeValue = useEffectiveChatProfile().appearance[settingKey]
   const gestureId = `range:${settingKey}`
 
   const value = Math.min(max, Math.max(min, storeValue))
@@ -29,7 +28,7 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const next = Number(event.target.value)
-      previewYLCStyleUpdate(gestureId, { [settingKey]: next } as Pick<YLCStyleUpdateType, NumberSliderSettingKey>, settingKey)
+      previewYLCStyleUpdate(gestureId, { appearance: { [settingKey]: next } }, settingKey)
     },
     [gestureId, settingKey],
   )

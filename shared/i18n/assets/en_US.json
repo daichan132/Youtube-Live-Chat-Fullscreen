@@ -7,7 +7,7 @@
         "undo": "Undo style change",
         "redo": "Redo style change"
       },
-      "alwaysOnDisplay": "Always Show Chat",
+      "alwaysOnDisplay": "Show When Idle",
       "chatOnlyDisplay": "Chat-Only Mode",
       "userNameDisplay": "Show Usernames",
       "userIconDisplay": "Show Profile Pictures",
@@ -38,7 +38,7 @@
         "text": "Text",
         "elements": "Chat Elements"
       },
-      "requiresAlwaysOn": "Turn on \"Always Show Chat\" to use this option"
+      "requiresAlwaysOn": "Turn on \"Show When Idle\" to use this option"
     },
     "aria": {
       "dragToMove": "Drag to move",

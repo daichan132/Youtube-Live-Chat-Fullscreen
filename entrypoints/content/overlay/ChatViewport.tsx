@@ -1,0 +1,69 @@
+import { useId, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
+import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
+import { chatRuntime } from '../runtime/ChatRuntime'
+
+type ChatViewportProps = {
+  loading: boolean
+  visible: boolean
+}
+
+const LOADING_OVERLAY_STYLE = {
+  zIndex: CHAT_PANEL_LAYER.interactionOverlay,
+} as const
+
+export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
+  const { t } = useTranslation()
+  const carrierId = useId()
+  const appearance = useEffectiveChatProfile().appearance
+  const chatVisible = visible && !loading
+  const loaderColor = useMemo(() => {
+    const { r, g, b, a } = appearance.fontColor
+    const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
+    const desaturateMix = 0.68
+    return {
+      r: Math.round(r * (1 - desaturateMix) + grayLuma * desaturateMix),
+      g: Math.round(g * (1 - desaturateMix) + grayLuma * desaturateMix),
+      b: Math.round(b * (1 - desaturateMix) + grayLuma * desaturateMix),
+      a: Math.min(0.5, Math.max(0.22, a * 0.55)),
+    }
+  }, [appearance.fontColor])
+  const backgroundColor = appearance.backgroundColor
+
+  return (
+    <>
+      <div
+        data-ylc-chat-background
+        className='absolute inset-0 rounded-md transition-[background-color,opacity] duration-200 ease-out'
+        style={{
+          backgroundColor: `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, ${backgroundColor.a})`,
+          opacity: chatVisible ? 1 : 0,
+        }}
+      />
+      <div
+        data-ylc-chat-viewport
+        className='relative h-full w-full overflow-hidden rounded-md transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
+        style={{ opacity: chatVisible ? 1 : 0 }}
+      >
+        <div id={carrierId} ref={chatRuntime.setOverlayContainer} data-ylc-iframe-carrier className='absolute inset-0' />
+      </div>
+      {loading ? (
+        <div
+          data-ylc-loading-overlay
+          className='absolute inset-0 flex items-center justify-center pointer-events-auto transition-opacity duration-140 ease-out'
+          style={LOADING_OVERLAY_STYLE}
+        >
+          <output className='flex justify-center' aria-label={t('content.aria.loading')}>
+            <div
+              className='animate-ping h-5 w-5 rounded-full'
+              style={{
+                backgroundColor: `rgba(${loaderColor.r}, ${loaderColor.g}, ${loaderColor.b}, ${loaderColor.a})`,
+              }}
+            />
+          </output>
+        </div>
+      ) : null}
+    </>
+  )
+}

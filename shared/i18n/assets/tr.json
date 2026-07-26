@@ -7,7 +7,7 @@
         "undo": "Stil değişikliğini geri al",
         "redo": "Stil değişikliğini yinele"
       },
-      "alwaysOnDisplay": "Sohbeti her zaman göster",
+      "alwaysOnDisplay": "Etkin değilken sohbeti göster",
       "chatOnlyDisplay": "Yalnızca sohbet",
       "userNameDisplay": "Kullanıcı adlarını göster",
       "userIconDisplay": "Profil resimlerini göster",

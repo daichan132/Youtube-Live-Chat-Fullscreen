@@ -7,7 +7,7 @@
         "undo": "Stijlwijziging ongedaan maken",
         "redo": "Stijlwijziging opnieuw uitvoeren"
       },
-      "alwaysOnDisplay": "Chat altijd tonen",
+      "alwaysOnDisplay": "Chat tonen bij inactiviteit",
       "chatOnlyDisplay": "Alleen chat tonen",
       "userNameDisplay": "Gebruikersnaam tonen",
       "userIconDisplay": "Profielfoto tonen",

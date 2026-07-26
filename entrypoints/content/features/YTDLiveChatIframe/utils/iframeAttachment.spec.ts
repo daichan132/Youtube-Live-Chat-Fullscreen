@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ChatSource } from '@/entrypoints/content/chat/runtime/types'
+import type { ChatSource } from '@/entrypoints/content/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
@@ -11,8 +11,13 @@ import {
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
-import { attachIframeToContainer, detachAttachedIframe, resolveSourceIframe } from './iframeAttachment'
-import { createIframeInitializer, MEMBERSHIP_FALLBACK_MARKER_ATTR } from './iframeInitializer'
+import {
+  attachIframeToContainer,
+  detachAttachedIframe,
+  reconcilePendingNativeIframeRestores,
+  resolveSourceIframe,
+} from './iframeAttachment'
+import { installMembershipFallback, MEMBERSHIP_FALLBACK_MARKER_ATTR } from './iframeInitializer'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
   openArchiveNativeChatPanel: vi.fn(),
@@ -358,11 +363,7 @@ describe('iframeAttachment', () => {
     const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
 
     attachIframeToContainer(container, iframe)
-    createIframeInitializer({
-      iframeStyles: 'body { color: red; }',
-      applyChatStyle: vi.fn(),
-      setIsIframeLoaded: vi.fn(),
-    }).initialize(iframe)
+    installMembershipFallback(doc)
     endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
     expect(openSpy).toHaveBeenCalledTimes(1)
     expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
@@ -390,11 +391,7 @@ describe('iframeAttachment', () => {
     document.body.append(host, container)
 
     attachIframeToContainer(container, iframe)
-    createIframeInitializer({
-      iframeStyles: 'body { color: red; }',
-      applyChatStyle: vi.fn(),
-      setIsIframeLoaded: vi.fn(),
-    }).initialize(iframe)
+    installMembershipFallback(doc)
     detachAttachedIframe(iframe, container)
 
     expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('pre-existing')
@@ -506,8 +503,7 @@ describe('iframeAttachment', () => {
     const currentHost = document.createElement('ytd-live-chat-frame')
     currentHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(currentHost)
-    await Promise.resolve()
-    await Promise.resolve()
+    reconcilePendingNativeIframeRestores()
 
     expect(currentHost.contains(iframe)).toBe(true)
   })
@@ -533,8 +529,7 @@ describe('iframeAttachment', () => {
 
     expect(host.contains(iframe)).toBe(false)
     host.setAttribute('video-id', 'video-a')
-    await Promise.resolve()
-    await Promise.resolve()
+    reconcilePendingNativeIframeRestores()
 
     expect(host.contains(iframe)).toBe(true)
   })
@@ -562,8 +557,7 @@ describe('iframeAttachment', () => {
     const rebuiltHost = document.createElement('ytd-live-chat-frame')
     rebuiltHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(rebuiltHost)
-    await Promise.resolve()
-    await Promise.resolve()
+    reconcilePendingNativeIframeRestores()
 
     expect(rebuiltHost.contains(iframe)).toBe(true)
   })

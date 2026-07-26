@@ -5,7 +5,7 @@ export const GLOBAL_SETTING_PERSIST = {
 
 export const YTD_LIVE_CHAT_PERSIST = {
   key: 'ytdLiveChatStore',
-  version: 6,
+  version: 7,
 } as const
 
-export const SETTINGS_EXPORT_VERSION = 1
+export const SETTINGS_EXPORT_VERSION = 2

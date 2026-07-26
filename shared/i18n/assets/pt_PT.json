@@ -7,7 +7,7 @@
         "undo": "Anular alteração de estilo",
         "redo": "Refazer alteração de estilo"
       },
-      "alwaysOnDisplay": "Mostrar sempre o chat",
+      "alwaysOnDisplay": "Mostrar o chat quando inativo",
       "chatOnlyDisplay": "Mostrar apenas o chat",
       "userNameDisplay": "Mostrar nomes de utilizador",
       "userIconDisplay": "Mostrar imagens de perfil",

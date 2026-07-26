@@ -1,10 +1,10 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { SETTINGS_STORAGE_ORIGIN_ID } from '@/shared/settings/originAwareStorage'
 import { YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
 import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
-import { useYTDLiveChatHistoryStore } from '@/shared/stores/ytdLiveChatHistoryStore'
-import { useYTDLiveChatStore } from '@/shared/stores/ytdLiveChatStore'
 import { useSettingsStorageSync } from './useSettingsStorageSync'
 
 type StorageListener = (changes: Record<string, unknown>, areaName: string) => void
@@ -31,20 +31,14 @@ const emitStorageChange = (changes: Record<string, unknown>, areaName = 'local')
   for (const listener of storageListeners) listener(changes, areaName)
 }
 
-const serializeCurrentYTDLiveChatState = (overrides: Record<string, unknown> = {}, originId?: string) =>
+const serializeChatSettings = (originId?: string) =>
   JSON.stringify({
     state: {
-      ...useYTDLiveChatStore.getState(),
-      ...overrides,
+      profile: useChatSettingsStore.getState().profile,
+      geometry: useChatSettingsStore.getState().geometry,
+      presets: useChatSettingsStore.getState().presets,
     },
     version: YTD_LIVE_CHAT_PERSIST.version,
-    ...(originId ? { originId } : {}),
-  })
-
-const serializeCurrentGlobalSettingState = (originId?: string) =>
-  JSON.stringify({
-    state: useGlobalSettingStore.getState(),
-    version: 1,
     ...(originId ? { originId } : {}),
   })
 
@@ -53,15 +47,24 @@ describe('useSettingsStorageSync', () => {
     storageListeners.clear()
     onChanged.addListener.mockClear()
     onChanged.removeListener.mockClear()
+    useChatEditorStore.getState().clear()
     vi.spyOn(useGlobalSettingStore.persist, 'rehydrate').mockResolvedValue(undefined)
-    vi.spyOn(useYTDLiveChatStore.persist, 'rehydrate').mockResolvedValue(undefined)
-    vi.spyOn(useYTDLiveChatHistoryStore.getState(), 'clear')
+    vi.spyOn(useChatSettingsStore.persist, 'rehydrate').mockResolvedValue(undefined)
   })
 
-  it('rehydrates both stores and clears style history for an imported backup', async () => {
-    const nextFontSize = useYTDLiveChatStore.getState().fontSize + 1
-    vi.mocked(useYTDLiveChatStore.persist.rehydrate).mockImplementationOnce(async () => {
-      useYTDLiveChatStore.setState({ fontSize: nextFontSize })
+  it('rehydrates external global and chat settings and clears history when the profile changed', async () => {
+    const previous = useChatSettingsStore.getState().profile
+    useChatEditorStore.setState({ past: [previous] })
+    vi.mocked(useChatSettingsStore.persist.rehydrate).mockImplementationOnce(async () => {
+      useChatSettingsStore.setState({
+        profile: {
+          ...previous,
+          appearance: {
+            ...previous.appearance,
+            fontSize: previous.appearance.fontSize + 1,
+          },
+        },
+      })
     })
     renderHook(() => useSettingsStorageSync())
 
@@ -69,102 +72,69 @@ describe('useSettingsStorageSync', () => {
       emitStorageChange({
         globalSettingStore: {},
         ytdLiveChatStore: {
-          newValue: serializeCurrentYTDLiveChatState({
-            fontSize: nextFontSize,
-          }),
+          newValue: serializeChatSettings(),
         },
       })
     })
 
     await waitFor(() => {
       expect(useGlobalSettingStore.persist.rehydrate).toHaveBeenCalledTimes(1)
-      expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
-      expect(useYTDLiveChatHistoryStore.getState().clear).toHaveBeenCalledTimes(1)
+      expect(useChatSettingsStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+      expect(useChatEditorStore.getState().past).toEqual([])
     })
   })
 
-  it('keeps style history for its own save even when a newer local edit already exists', async () => {
-    useYTDLiveChatHistoryStore.setState({
-      past: [
-        {
-          before: {
-            style: useYTDLiveChatStore.getState(),
-            addPresetEnabled: true,
-          },
-          after: {
-            style: {
-              ...useYTDLiveChatStore.getState(),
-              fontSize: useYTDLiveChatStore.getState().fontSize + 1,
-            },
-            addPresetEnabled: true,
-          },
-          label: 'fontSize',
-        },
-      ],
-      future: [],
-      activeGesture: null,
+  it('discards an active draft for an external chat settings change', async () => {
+    const profile = useChatSettingsStore.getState().profile
+    useChatEditorStore.setState({
+      draftProfile: {
+        ...profile,
+        appearance: { ...profile.appearance, blur: 10 },
+      },
+      activeGesture: { id: 'blur', before: profile },
     })
     renderHook(() => useSettingsStorageSync())
 
     act(() => {
       emitStorageChange({
         ytdLiveChatStore: {
-          newValue: serializeCurrentYTDLiveChatState(
-            {
-              fontSize: useYTDLiveChatStore.getState().fontSize - 1,
-            },
-            SETTINGS_STORAGE_ORIGIN_ID,
-          ),
+          newValue: serializeChatSettings('another-context'),
         },
       })
     })
 
     await waitFor(() => {
-      expect(useYTDLiveChatStore.persist.rehydrate).not.toHaveBeenCalled()
-      expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
-      expect(useYTDLiveChatHistoryStore.getState().past).toHaveLength(1)
+      expect(useChatSettingsStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+      expect(useChatEditorStore.getState().draftProfile).toBeNull()
+      expect(useChatEditorStore.getState().activeGesture).toBeNull()
     })
   })
 
-  it('does not rehydrate global settings for their own persisted state', async () => {
-    renderHook(() => useSettingsStorageSync())
-
-    act(() => {
-      emitStorageChange({
-        globalSettingStore: {
-          newValue: serializeCurrentGlobalSettingState(SETTINGS_STORAGE_ORIGIN_ID),
-        },
-      })
-    })
-
-    await waitFor(() => {
-      expect(useGlobalSettingStore.persist.rehydrate).not.toHaveBeenCalled()
-    })
-  })
-
-  it('rehydrates an identical state saved by another extension context', async () => {
+  it('ignores its own persisted state', async () => {
     renderHook(() => useSettingsStorageSync())
 
     act(() => {
       emitStorageChange({
         ytdLiveChatStore: {
-          newValue: serializeCurrentYTDLiveChatState({}, 'another-context'),
+          newValue: serializeChatSettings(SETTINGS_STORAGE_ORIGIN_ID),
         },
       })
     })
 
     await waitFor(() => {
-      expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
-      expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
+      expect(useChatSettingsStore.persist.rehydrate).not.toHaveBeenCalled()
     })
   })
 
-  it('does not persist viewport fitting or clear style history for an external geometry-only change', async () => {
-    const setGeometry = vi.spyOn(useYTDLiveChatStore.getState(), 'setGeometry')
-    vi.mocked(useYTDLiveChatStore.persist.rehydrate).mockImplementationOnce(async () => {
-      useYTDLiveChatStore.setState({
-        coordinates: { x: 1_000, y: 700 },
-        size: { width: 800, height: 600 },
+  it('does not clear history for an external geometry-only change', async () => {
+    const profile = useChatSettingsStore.getState().profile
+    useChatEditorStore.setState({ past: [profile] })
+    vi.mocked(useChatSettingsStore.persist.rehydrate).mockImplementationOnce(async () => {
+      useChatSettingsStore.setState({
+        geometry: {
+          coordinates: { x: 1_000, y: 700 },
+          size: { width: 800, height: 600 },
+        },
       })
     })
     renderHook(() => useSettingsStorageSync())
@@ -172,38 +142,15 @@ describe('useSettingsStorageSync', () => {
     act(() => {
       emitStorageChange({
         ytdLiveChatStore: {
-          newValue: serializeCurrentYTDLiveChatState(
-            {
-              coordinates: { x: 1_000, y: 700 },
-              size: { width: 800, height: 600 },
-            },
-            'another-context',
-          ),
+          newValue: serializeChatSettings('another-context'),
         },
       })
     })
 
     await waitFor(() => {
-      expect(useYTDLiveChatStore.persist.rehydrate).toHaveBeenCalledTimes(1)
+      expect(useChatSettingsStore.persist.rehydrate).toHaveBeenCalledTimes(1)
     })
-    expect(useYTDLiveChatStore.getState().coordinates).toEqual({ x: 1_000, y: 700 })
-    expect(useYTDLiveChatStore.getState().size).toEqual({ width: 800, height: 600 })
-    expect(setGeometry).not.toHaveBeenCalled()
-    expect(useYTDLiveChatHistoryStore.getState().clear).not.toHaveBeenCalled()
-  })
-
-  it('ignores unrelated keys and non-local storage', () => {
-    const { unmount } = renderHook(() => useSettingsStorageSync())
-
-    act(() => {
-      emitStorageChange({ other: {} })
-      emitStorageChange({ globalSettingStore: {} }, 'sync')
-    })
-
-    expect(useGlobalSettingStore.persist.rehydrate).not.toHaveBeenCalled()
-    expect(useYTDLiveChatStore.persist.rehydrate).not.toHaveBeenCalled()
-
-    unmount()
-    expect(onChanged.removeListener).toHaveBeenCalledTimes(1)
+    expect(useChatSettingsStore.getState().geometry.coordinates).toEqual({ x: 1_000, y: 700 })
+    expect(useChatEditorStore.getState().past).toHaveLength(1)
   })
 })

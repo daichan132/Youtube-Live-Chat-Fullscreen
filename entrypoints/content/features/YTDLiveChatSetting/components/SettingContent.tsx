@@ -1,9 +1,6 @@
 import { type ReactNode, useId } from 'react'
 import { useTranslation } from 'react-i18next'
-import {
-  getYLCStandardMembershipNameColor,
-  isFallbackMembershipNameColor,
-} from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleApplier'
+import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
 import {
   type IconType,
   TbBlur,
@@ -21,19 +18,13 @@ import {
   TbUserCircle,
 } from '@/shared/components/icons'
 import { Switch } from '@/shared/components/Switch'
-import { useYTDLiveChatStore } from '@/shared/stores'
-import type { RGBColor } from '@/shared/types/ytdLiveChatType'
 import { cn } from '@/shared/utils/cn'
 import { commitYLCStyleUpdate } from '../styleHistoryCommands'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
 import { YLCNumberSlider } from './YLCChangeItems/YLCNumberSlider'
 
-type ToggleSettingKey = 'alwaysOnDisplay' | 'chatOnlyDisplay' | 'userNameDisplay' | 'userIconDisplay' | 'superChatBarDisplay'
-const isSameColor = (a: RGBColor, b: RGBColor) => a.r === b.r && a.g === b.g && a.b === b.b && a.a === b.a
-
-const isDefaultMembershipNameColor = (color: RGBColor) =>
-  isFallbackMembershipNameColor(color) || isSameColor(color, getYLCStandardMembershipNameColor())
+type ToggleSettingKey = 'idleVisibility' | 'contentMode' | 'showUserName' | 'showUserIcon' | 'showSuperChatBar'
 
 const SettingGroup = ({ legend, children }: { legend: string; children: ReactNode }) => (
   <fieldset className='ylc-setting-group'>
@@ -106,7 +97,13 @@ const ToggleSettingSwitch = ({
   onCheckedChange?: (checked: boolean) => void
 }) => {
   const id = useId()
-  const checked = useYTDLiveChatStore(state => state[settingKey])
+  const profile = useEffectiveChatProfile()
+  const checked =
+    settingKey === 'idleVisibility'
+      ? profile.display.idleVisibility === 'always-visible'
+      : settingKey === 'contentMode'
+        ? profile.display.contentMode === 'messages-only'
+        : profile.appearance[settingKey]
 
   return (
     <Switch
@@ -117,7 +114,15 @@ const ToggleSettingSwitch = ({
       aria-describedby={describedById}
       onChange={nextChecked => {
         onCheckedChange?.(nextChecked)
-        commitYLCStyleUpdate({ [settingKey]: nextChecked }, settingKey)
+        if (settingKey === 'idleVisibility') {
+          commitYLCStyleUpdate({ display: { idleVisibility: nextChecked ? 'always-visible' : 'auto-hide' } }, settingKey)
+          return
+        }
+        if (settingKey === 'contentMode') {
+          commitYLCStyleUpdate({ display: { contentMode: nextChecked ? 'messages-only' : 'full-chat' } }, settingKey)
+          return
+        }
+        commitYLCStyleUpdate({ appearance: { [settingKey]: nextChecked } }, settingKey)
       }}
     />
   )
@@ -127,7 +132,7 @@ const DisplayToggleSettingSwitch = ({
   settingKey,
   label,
 }: {
-  settingKey: Extract<ToggleSettingKey, 'userNameDisplay' | 'userIconDisplay' | 'superChatBarDisplay'>
+  settingKey: Extract<ToggleSettingKey, 'showUserName' | 'showUserIcon' | 'showSuperChatBar'>
   label: string
 }) => {
   return <ToggleSettingSwitch settingKey={settingKey} label={label} />
@@ -135,12 +140,11 @@ const DisplayToggleSettingSwitch = ({
 
 const MembershipNameColorSetting = () => {
   const { t } = useTranslation()
-  const membershipNameColor = useYTDLiveChatStore(state => state.membershipNameColor)
-  const isDefault = isDefaultMembershipNameColor(membershipNameColor)
+  const membershipNameColor = useEffectiveChatProfile().appearance.membershipNameColor
+  const isDefault = membershipNameColor.mode === 'youtube-default'
 
   const resetToDefault = () => {
-    const defaultColor = getYLCStandardMembershipNameColor()
-    commitYLCStyleUpdate({ membershipNameColor: defaultColor }, 'membershipNameColor')
+    commitYLCStyleUpdate({ appearance: { membershipNameColor: { mode: 'youtube-default' } } }, 'membershipNameColor')
   }
   const resetLabel = t('content.setting.resetToDefaultColor')
 
@@ -163,36 +167,22 @@ const MembershipNameColorSetting = () => {
 }
 
 export const SettingContent = () => {
-  const alwaysOnDisplay = useYTDLiveChatStore(state => state.alwaysOnDisplay)
   const { t } = useTranslation()
-  const chatOnlyHintId = useId()
 
   return (
     <>
       <SettingGroup legend={t('content.setting.group.display')}>
         <ToggleRow icon={TbEye} title={t('content.setting.alwaysOnDisplay')}>
-          <ToggleSettingSwitch settingKey='alwaysOnDisplay' label={t('content.setting.alwaysOnDisplay')} />
+          <ToggleSettingSwitch settingKey='idleVisibility' label={t('content.setting.alwaysOnDisplay')} />
         </ToggleRow>
-        <ToggleRow
-          icon={TbMessageCircle}
-          title={t('content.setting.chatOnlyDisplay')}
-          nested
-          disabled={!alwaysOnDisplay}
-          hint={t('content.setting.requiresAlwaysOn')}
-          hintId={chatOnlyHintId}
-        >
-          <ToggleSettingSwitch
-            settingKey='chatOnlyDisplay'
-            label={t('content.setting.chatOnlyDisplay')}
-            disabled={!alwaysOnDisplay}
-            describedById={!alwaysOnDisplay ? chatOnlyHintId : undefined}
-          />
+        <ToggleRow icon={TbMessageCircle} title={t('content.setting.chatOnlyDisplay')}>
+          <ToggleSettingSwitch settingKey='contentMode' label={t('content.setting.chatOnlyDisplay')} />
         </ToggleRow>
       </SettingGroup>
 
       <SettingGroup legend={t('content.setting.group.colors')}>
         <ControlRow icon={TbPaint} title={t('content.setting.backgroundColor')}>
-          <YLCColorPicker settingKey='bgColor' labelKey='content.setting.backgroundColor' />
+          <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
         </ControlRow>
         <ControlRow icon={TbPalette} title={t('content.setting.fontColor')}>
           <YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />
@@ -213,19 +203,19 @@ export const SettingContent = () => {
           <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} />
         </ControlRow>
         <ControlRow icon={TbSpacingHorizontal} title={t('content.setting.space')}>
-          <YLCNumberSlider settingKey='space' labelKey='content.setting.space' min={0} max={40} />
+          <YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' min={0} max={40} />
         </ControlRow>
       </SettingGroup>
 
       <SettingGroup legend={t('content.setting.group.elements')}>
         <ToggleRow icon={TbUser} title={t('content.setting.userNameDisplay')}>
-          <DisplayToggleSettingSwitch settingKey='userNameDisplay' label={t('content.setting.userNameDisplay')} />
+          <DisplayToggleSettingSwitch settingKey='showUserName' label={t('content.setting.userNameDisplay')} />
         </ToggleRow>
         <ToggleRow icon={TbUserCircle} title={t('content.setting.userIconDisplay')}>
-          <DisplayToggleSettingSwitch settingKey='userIconDisplay' label={t('content.setting.userIconDisplay')} />
+          <DisplayToggleSettingSwitch settingKey='showUserIcon' label={t('content.setting.userIconDisplay')} />
         </ToggleRow>
         <ToggleRow icon={TbCoin} title={t('content.setting.superChatBarDisplay')}>
-          <DisplayToggleSettingSwitch settingKey='superChatBarDisplay' label={t('content.setting.superChatBarDisplay')} />
+          <DisplayToggleSettingSwitch settingKey='showSuperChatBar' label={t('content.setting.superChatBarDisplay')} />
         </ToggleRow>
       </SettingGroup>
     </>
