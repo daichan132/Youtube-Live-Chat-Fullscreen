@@ -1,6 +1,9 @@
 name: Release
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
@@ -11,7 +14,43 @@ permissions:
   contents: write
 
 jobs:
+  release-gate:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.release.outputs.should_release }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+      - name: Determine whether this version needs publishing
+        id: release
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
+            echo "Invalid version in package.json: $VERSION"
+            exit 1
+          fi
+
+          git fetch --tags --force
+          SHOULD_RELEASE=true
+          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1 && [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            SHOULD_RELEASE=false
+            echo "v$VERSION already exists; skipping automatic publishing"
+          elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            echo "Manual release requested for v$VERSION"
+          else
+            echo "v$VERSION is new; automatic publishing is required"
+          fi
+
+          echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
+
   verify-and-package:
+    needs: release-gate
+    if: ${{ needs.release-gate.outputs.should_release == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
