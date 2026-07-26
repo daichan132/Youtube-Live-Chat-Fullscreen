@@ -34,17 +34,21 @@ const mutationTouchesChatBoundary = (mutation: MutationRecord) => {
 }
 
 const createRuntime = (snapshot: YouTubeChatSnapshot, latch: AvailabilityLatch, revision: number): YouTubeChatRuntime => {
-  if (latch.videoId !== snapshot.videoId || latch.mode !== snapshot.mode) {
+  if (latch.videoId !== snapshot.videoId) {
     latch.videoId = snapshot.videoId
+    latch.mode = snapshot.mode
+    latch.canShowSwitch = false
+    latch.sourceReady = false
+  } else if (snapshot.mode !== 'none' && latch.mode !== snapshot.mode) {
     latch.mode = snapshot.mode
     latch.canShowSwitch = false
     latch.sourceReady = false
   }
 
-  if (snapshot.terminallyUnavailable || snapshot.mode === 'none' || !snapshot.videoId) {
+  if (snapshot.terminallyUnavailable || !snapshot.videoId) {
     latch.canShowSwitch = false
     latch.sourceReady = false
-  } else {
+  } else if (snapshot.mode !== 'none') {
     if (snapshot.mode === 'live' && snapshot.canShowSwitch) latch.canShowSwitch = true
     if (snapshot.sourceReady) latch.sourceReady = true
   }
@@ -52,7 +56,7 @@ const createRuntime = (snapshot: YouTubeChatSnapshot, latch: AvailabilityLatch, 
   return {
     videoId: snapshot.videoId,
     mode: snapshot.mode,
-    canShowSwitch: snapshot.mode === 'live' ? latch.canShowSwitch : snapshot.canShowSwitch,
+    canShowSwitch: snapshot.mode === 'live' || snapshot.mode === 'none' ? latch.canShowSwitch : snapshot.canShowSwitch,
     sourceReady: latch.sourceReady,
     terminallyUnavailable: snapshot.terminallyUnavailable,
     revision,

@@ -71,6 +71,36 @@ describe('useYouTubeChatRuntime', () => {
     expect(result.current.sourceReady).toBe(true)
   })
 
+  it('keeps the live switch available while the same video temporarily reports no chat mode', () => {
+    const { result } = renderHook(() => useYouTubeChatRuntime())
+
+    vi.mocked(detectChatMode).mockReturnValue('none')
+    vi.mocked(canToggleFullscreenChat).mockReturnValue(false)
+    vi.mocked(hasFullscreenChatSource).mockReturnValue(false)
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(result.current).toMatchObject({
+      videoId: 'video-a',
+      mode: 'none',
+      canShowSwitch: true,
+      sourceReady: true,
+    })
+
+    vi.mocked(getCurrentYouTubeVideoId).mockReturnValue('video-b')
+    act(() => {
+      vi.advanceTimersByTime(1000)
+    })
+
+    expect(result.current).toMatchObject({
+      videoId: 'video-b',
+      mode: 'none',
+      canShowSwitch: false,
+      sourceReady: false,
+    })
+  })
+
   it('continuously monitors the archive switch while keeping a resolved source latched', () => {
     vi.mocked(detectChatMode).mockReturnValue('archive')
     const { result } = renderHook(() => useYouTubeChatRuntime())

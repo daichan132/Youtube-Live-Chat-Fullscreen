@@ -132,7 +132,7 @@ describe('Content', () => {
     expect(ytdLiveChatSwitchMock).not.toHaveBeenCalled()
   })
 
-  it('removes existing overlay and hides switch when mode changes to none', () => {
+  it('removes the overlay but keeps the switch when the same video temporarily changes to none mode', () => {
     const { shadowRoot, switchButtonContainer } = createReadyPortalTargets()
     vi.mocked(useYouTubeChatRuntime)
       .mockReturnValueOnce({
@@ -146,8 +146,8 @@ describe('Content', () => {
       .mockReturnValue({
         videoId: 'video-a',
         mode: 'none',
-        canShowSwitch: false,
-        sourceReady: false,
+        canShowSwitch: true,
+        sourceReady: true,
         terminallyUnavailable: false,
         revision: 1,
       })
@@ -160,7 +160,8 @@ describe('Content', () => {
     rerender(<Content />)
 
     expect(shadowRoot.querySelector('[data-ylc-overlay-container]')).toBeNull()
-    expect(switchButtonContainer.style.display).toBe('none')
+    expect(switchButtonContainer.style.display).toBe('inline-block')
+    expect(ytdLiveChatSwitchMock).toHaveBeenCalledTimes(2)
   })
 
   it('places the fullscreen overlay on the shared base layer', () => {

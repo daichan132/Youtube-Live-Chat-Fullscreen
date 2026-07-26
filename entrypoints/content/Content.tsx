@@ -34,13 +34,14 @@ export const Content = () => {
   const runtime = useYouTubeChatRuntime()
   const { mode } = runtime
   useEnsureArchiveNativeChatOpen(isFullscreen && ytdLiveChat && mode === 'archive')
-  const portalEnabled = mode !== 'none' && runtime.canShowSwitch && !runtime.terminallyUnavailable
+  const switchEnabled = runtime.canShowSwitch && !runtime.terminallyUnavailable
+  const overlayEnabled = mode !== 'none' && switchEnabled
   const { overlayRoot, switchContainer } = useYLCPortalTargets({
-    overlayEnabled: portalEnabled && isFullscreen,
-    switchEnabled: portalEnabled && isFullscreen,
+    overlayEnabled: overlayEnabled && isFullscreen,
+    switchEnabled: switchEnabled && isFullscreen,
   })
-  const shouldRenderSwitch = portalEnabled && switchContainer !== null
-  const shouldRenderLiveChat = portalEnabled && isFullscreen && overlayRoot !== null
+  const shouldRenderSwitch = switchEnabled && isFullscreen && switchContainer !== null
+  const shouldRenderLiveChat = overlayEnabled && isFullscreen && overlayRoot !== null
 
   useEffect(() => {
     if (!switchContainer) return
