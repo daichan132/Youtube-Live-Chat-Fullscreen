@@ -88,7 +88,7 @@
 
 - Post comments and Super Chats directly from the overlay without leaving fullscreen
 - Works with both live streams and archived streams with chat replay
-- Optional "Always On" mode keeps the overlay visible outside fullscreen
+- Optional "Show When Idle" mode keeps the overlay visible when controls are inactive
 
 ### 🎨 Style & Appearance
 
