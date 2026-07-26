@@ -35,6 +35,23 @@ const isExtensionChatWithMessages = () => {
   return doc.querySelectorAll('yt-live-chat-text-message-renderer, yt-live-chat-paid-message-renderer').length > 0
 }
 
+type StoredCustomPreset = {
+  kind: 'custom'
+  id: string
+  name: string
+  profile: {
+    appearance: {
+      fontSize: number
+    }
+  }
+}
+
+const getStoredCustomPresets = (state: Record<string, unknown> | undefined) =>
+  (Array.isArray(state?.presets) ? state.presets : []).filter(
+    (preset): preset is StoredCustomPreset =>
+      typeof preset === 'object' && preset !== null && (preset as { kind?: unknown }).kind === 'custom',
+  )
+
 test.describe('imported settings fullscreen', { tag: '@live' }, () => {
   test('imported settings are applied in fullscreen chat', async ({ page, extension, liveUrl }) => {
     test.setTimeout(180000)
@@ -46,7 +63,13 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       ytdLiveChat: { fontSize: 42 },
     })
 
-    await expect.poll(async () => (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state.fontSize ?? null).toBe(40)
+    await expect
+      .poll(async () => {
+        const state = (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state
+        const profile = state?.profile as { appearance?: { fontSize?: number } } | undefined
+        return profile?.appearance?.fontSize ?? null
+      })
+      .toBe(40)
 
     if (!liveUrl) {
       test.skip(true, 'No live URL with chat found.')
@@ -219,11 +242,12 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     // Verify preset data was persisted to storage (read from extension storage directly)
     const ytdState = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    expect(ytdState?.state.presetItemIds).toEqual(['imported1', 'imported2'])
-    expect((ytdState?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.imported1?.fontSize).toBe(20)
-    expect((ytdState?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.imported2?.fontSize).toBe(16)
-    expect((ytdState?.state.presetItemTitles as Record<string, string>)?.imported1).toBe('Dark Preset')
-    expect((ytdState?.state.presetItemTitles as Record<string, string>)?.imported2).toBe('Semi-transparent')
+    const importedPresets = getStoredCustomPresets(ytdState?.state)
+    expect(importedPresets.map(preset => preset.id)).toEqual(['imported1', 'imported2'])
+    expect(importedPresets[0]?.profile.appearance.fontSize).toBe(20)
+    expect(importedPresets[1]?.profile.appearance.fontSize).toBe(16)
+    expect(importedPresets[0]?.name).toBe('Dark Preset')
+    expect(importedPresets[1]?.name).toBe('Semi-transparent')
 
     await popupPage.close()
   })
@@ -312,7 +336,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     // Verify first import's presets are stored (read from popupPage to avoid temporary popup pages)
     const stateAfterFirst = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    expect(stateAfterFirst?.state.presetItemIds).toEqual(['dark1'])
+    expect(getStoredCustomPresets(stateAfterFirst?.state).map(preset => preset.id)).toEqual(['dark1'])
 
     // -- Second import: small font, all visible, presets "light1"+"light2" --
     await importSettingsViaPopup(popupPage, extension, {
@@ -384,13 +408,13 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     // Verify presets are fully replaced -- "dark1" from the first import must not remain
     const stateAfterSecond = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    expect(stateAfterSecond?.state.presetItemIds).toEqual(['light1', 'light2'])
-    expect(stateAfterSecond?.state.presetItemStyles).not.toHaveProperty('dark1')
-    expect(stateAfterSecond?.state.presetItemTitles).not.toHaveProperty('dark1')
-    expect((stateAfterSecond?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.light1?.fontSize).toBe(14)
-    expect((stateAfterSecond?.state.presetItemStyles as Record<string, Record<string, unknown>>)?.light2?.fontSize).toBe(24)
-    expect((stateAfterSecond?.state.presetItemTitles as Record<string, string>)?.light1).toBe('Light')
-    expect((stateAfterSecond?.state.presetItemTitles as Record<string, string>)?.light2).toBe('Large Light')
+    const secondPresets = getStoredCustomPresets(stateAfterSecond?.state)
+    expect(secondPresets.map(preset => preset.id)).toEqual(['light1', 'light2'])
+    expect(secondPresets.some(preset => preset.id === 'dark1')).toBe(false)
+    expect(secondPresets[0]?.profile.appearance.fontSize).toBe(14)
+    expect(secondPresets[1]?.profile.appearance.fontSize).toBe(24)
+    expect(secondPresets[0]?.name).toBe('Light')
+    expect(secondPresets[1]?.name).toBe('Large Light')
 
     // Verify globalSetting was also overwritten by the second import
     const globalState = await readStorageEntry(popupPage, 'globalSettingStore')

@@ -210,7 +210,12 @@ export const hasYouTubePlayerError = () => {
   if (!player) return false
 
   const alertText = player.querySelector('[role="alert"], .ytp-error')?.textContent?.toLowerCase() ?? ''
-  return alertText.includes('something went wrong') || alertText.includes('try again later') || alertText.includes('video unavailable')
+  return (
+    alertText.includes('something went wrong') ||
+    alertText.includes('try again later') ||
+    alertText.includes('video unavailable') ||
+    alertText.includes('live stream recording is not available')
+  )
 }
 
 const tryOpenArchiveNativeChatPanel = async (page: Page) => {

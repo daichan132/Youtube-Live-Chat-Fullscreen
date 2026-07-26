@@ -50,9 +50,15 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     // Verify ytdLiveChatStore
     const ytdState = await readStorageEntry(extension, 'ytdLiveChatStore')
-    expect(ytdState?.state.fontSize).toBe(40)
-    expect(ytdState?.state.blur).toBe(10)
-    expect(ytdState?.state.alwaysOnDisplay).toBe(false)
+    const profile = ytdState?.state.profile as
+      | {
+          appearance?: { fontSize?: number; blur?: number }
+          display?: { idleVisibility?: string }
+        }
+      | undefined
+    expect(profile?.appearance?.fontSize).toBe(40)
+    expect(profile?.appearance?.blur).toBe(10)
+    expect(profile?.display?.idleVisibility).toBe('auto-hide')
     expect(ytdState?.version).toBe(YTD_LIVE_CHAT_PERSIST.version)
 
     // Reopen popup and verify Zustand hydration

@@ -10,6 +10,7 @@ import {
   movePointerAwayFromOverlay,
   readChatOnlyMotionProbe,
   setPersistedChatOnlyMode,
+  stabilizeYouTubePlaybackUi,
 } from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
 import type { Page } from '@playwright/test'
@@ -204,6 +205,8 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
     return false
   }
 
+  expect(await stabilizeYouTubePlaybackUi(page), 'YouTube ads and playback prompts should settle before fullscreen').toBe(true)
+
   const yt = new YouTubeWatchPage(page)
   const overlay = new ExtensionOverlay(page)
 
@@ -344,7 +347,7 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
       return
     }
 
-    expect(await page.evaluate(installChatOnlyMotionProbe)).toBe(true)
+    expect(await page.evaluate(installChatOnlyMotionProbe, {})).toBe(true)
     await page.mouse.move(center.x, center.y)
 
     await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(false)
@@ -356,7 +359,7 @@ test.describe('chat-only hover height', { tag: '@archive' }, () => {
     const expansionMotion = await page.evaluate(readChatOnlyMotionProbe)
     expectContinuousChatOnlyMotion(expansionMotion, 'expanding')
 
-    expect(await page.evaluate(installChatOnlyMotionProbe)).toBe(true)
+    expect(await page.evaluate(installChatOnlyMotionProbe, {})).toBe(true)
     await movePointerAwayFromOverlay(page)
     await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(true)
     await expect

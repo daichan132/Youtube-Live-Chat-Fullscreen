@@ -13,7 +13,13 @@ export class ExtensionOverlay {
 
   async waitForSwitchReady(options?: { timeout?: number }): Promise<boolean> {
     const timeout = options?.timeout ?? TIMEOUT.SWITCH_VISIBLE
-    await this.page.locator(MOVIE_PLAYER).hover()
+    // A playing video (and especially an ad transition) can keep the player
+    // bounding box "unstable" indefinitely. Revealing controls does not need
+    // Playwright's stability wait, so keep this action bounded.
+    await this.page
+      .locator(MOVIE_PLAYER)
+      .hover({ force: true, timeout: 5000 })
+      .catch(() => undefined)
     return this.switchButton()
       .waitFor({ state: 'visible', timeout })
       .then(

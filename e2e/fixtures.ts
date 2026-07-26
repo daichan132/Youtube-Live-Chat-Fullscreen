@@ -1,13 +1,28 @@
+import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { type BrowserContext, test as base, chromium, type Page, type Worker } from '@playwright/test'
+import { resolveExtensionLaunchMode } from '@e2e/support/extensionLaunchMode'
 import { PAGE_HELPERS_INIT_SCRIPT } from '@e2e/support/pageHelpers'
 import { selectArchiveReplayUrl } from '@e2e/support/urls/archiveReplay'
 import { findLiveUrlWithChat } from '@e2e/utils/liveUrl'
+import { type BrowserContext, test as base, chromium, type Page, type Worker } from '@playwright/test'
 
 const pathToExtension = path.resolve('.output/chrome-mv3')
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
+let bundledChromiumVersion: string | null = null
+
+const resolveBundledChromiumVersion = () => {
+	if (bundledChromiumVersion) return bundledChromiumVersion
+
+	const versionOutput = execFileSync(chromium.executablePath(), ['--version'], { encoding: 'utf8' })
+	const version = versionOutput.match(/\d+(?:\.\d+){3}/)?.[0]
+	if (!version) {
+		throw new Error(`Could not resolve bundled Chromium version from: ${versionOutput.trim()}`)
+	}
+	bundledChromiumVersion = version
+	return version
+}
 
 export type Extension = {
 	id: string
@@ -22,7 +37,7 @@ export type Extension = {
 
 const launchExtensionContext = async (userDataDir: string) => {
 	const ctx = await chromium.launchPersistentContext(userDataDir, {
-		headless: false,
+		...resolveExtensionLaunchMode(process.env, { browserVersion: resolveBundledChromiumVersion() }),
 		ignoreDefaultArgs: ['--disable-extensions'],
 		args: [`--disable-extensions-except=${pathToExtension}`, `--load-extension=${pathToExtension}`, '--mute-audio'],
 	})
@@ -328,6 +343,10 @@ export const test = base.extend<
 		// is dead (browser crash under heavy parallel load), the page-path fallback
 		// will also fail. Catch here so cleanup doesn't mask the real issue.
 		await sharedExtension.storage.clear().catch(() => null)
+		// Fixture specs install request routes on this worker-scoped page. Remove
+		// every previous-test handler before navigation so a synthetic chat
+		// response cannot leak into a later real-YouTube scenario.
+		await sharedPage.unrouteAll({ behavior: 'wait' }).catch(() => null)
 		await sharedPage
 			.evaluate(() => {
 				if (document.fullscreenElement) return document.exitFullscreen()

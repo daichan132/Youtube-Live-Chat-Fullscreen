@@ -1,7 +1,6 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { captureChatState, hasYouTubePlayerError, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
 import {
   expectContinuousChatOnlyMotion,
   getChatOnlyChromeCollapseSnapshot,
@@ -11,7 +10,9 @@ import {
   movePointerAwayFromOverlay,
   readChatOnlyMotionProbe,
   setPersistedChatOnlyMode,
+  stabilizeYouTubePlaybackUi,
 } from '@e2e/screenshots/helpers'
+import { captureChatState, hasYouTubePlayerError, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
 
 test.describe('live chat-only hover height', { tag: '@live' }, () => {
   test('live input boundary expands in one continuous transition', async ({ page, extension, liveUrl }) => {
@@ -35,6 +36,8 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
       test.skip(true, 'Native live chat stopped meeting test preconditions.')
       return
     }
+
+    expect(await stabilizeYouTubePlaybackUi(page), 'YouTube ads and playback prompts should settle before fullscreen').toBe(true)
 
     const fullscreenReady = await yt.ensureFullscreen()
     if (!fullscreenReady) {
@@ -76,8 +79,16 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
     expect(center).not.toBeNull()
     if (!center) throw new Error('Overlay center could not be resolved.')
 
-    expect(await page.evaluate(installChatOnlyMotionProbe)).toBe(true)
+    await expect
+      .poll(async () => page.evaluate(installChatOnlyMotionProbe, { requireInput: true }), { timeout: 15000 })
+      .toBe(true)
     await page.mouse.move(center.x, center.y)
+    await expect.poll(async () => page.evaluate(isChatOnlyChromeHidden), { timeout: 15000 }).toBe(false)
+    await expect
+      .poll(async () => page.evaluate(getChatOnlyChromeCollapseSnapshot).then(snapshot => snapshot.allTargetsCollapsed), {
+        timeout: 15000,
+      })
+      .toBe(false)
     await expect.poll(async () => page.evaluate(readChatOnlyMotionProbe).then(probe => probe?.done ?? false), { timeout: 2500 }).toBe(true)
 
     const expansionMotion = await page.evaluate(readChatOnlyMotionProbe)

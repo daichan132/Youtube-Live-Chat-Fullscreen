@@ -75,22 +75,31 @@ test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
     }
 
     await overlay.toggleOff()
-    await expect
-      .poll(
-        async () => {
-          const layout = await yt.getFullscreenNativeChatLayout()
-          return (
-            layout.fullscreen &&
-            layout.playerWidth > 0 &&
-            layout.chatWidth > 0 &&
-            layout.overlapPx <= 1 &&
-            !layout.hasExtensionLayoutFix &&
-            !layout.hasPlayerFootprintOverride
-          )
-        },
-        { timeout: 12000 },
-      )
-      .toBe(true)
+    let restoredLayout = await yt.getFullscreenNativeChatLayout()
+    try {
+      await expect
+        .poll(
+          async () => {
+            restoredLayout = await yt.getFullscreenNativeChatLayout()
+            return (
+              restoredLayout.fullscreen &&
+              restoredLayout.playerWidth > 0 &&
+              restoredLayout.chatWidth > 0 &&
+              restoredLayout.overlapPx <= 1 &&
+              !restoredLayout.hasExtensionLayoutFix &&
+              !restoredLayout.hasPlayerFootprintOverride
+            )
+          },
+          { timeout: 12000 },
+        )
+        .toBe(true)
+    } catch (error) {
+      await test.info().attach('fullscreen-native-chat-layout-failed', {
+        body: JSON.stringify(restoredLayout, null, 2),
+        contentType: 'application/json',
+      })
+      throw error
+    }
 
     await test.info().attach('fullscreen-native-chat-layout', {
       body: JSON.stringify(await yt.getFullscreenNativeChatLayout(), null, 2),

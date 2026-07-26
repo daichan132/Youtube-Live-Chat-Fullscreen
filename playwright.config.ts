@@ -5,12 +5,14 @@ export default defineConfig({
 	testDir: 'e2e',
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 2 : 0,
-	workers: process.env.CI ? 1 : 4,
+	// Persistent fullscreen/live contexts are most stable when run serially, especially on macOS.
+	// Use Playwright's explicit --workers CLI option when parallel speed is worth the reduced isolation.
+	workers: 1,
 	reporter: 'html',
 	projects: [
 		{
 			name: 'e2e',
-			testIgnore: ['screenshots/**', 'config/**'],
+			testIgnore: ['screenshots/**', 'config/**', 'support/**/*.spec.ts'],
 			use: {
 				locale: 'en-US',
 				timezoneId: 'Asia/Tokyo',

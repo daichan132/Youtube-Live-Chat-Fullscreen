@@ -18,7 +18,7 @@ Chrome 拡張の Playwright 汎用パターン（拡張ロード、SW 起動、e
 
 ## Guardrails
 
-1. **CI は workers=1** — ローカルは `workers: 4` で高速化するが、CI は `workers: 1`。YouTube のフルスクリーン状態が Worker-scoped で共有されるため並列化すると干渉する
+1. **既定は workers=1** — CI・ローカルとも直列実行する。YouTube のフルスクリーン状態と persistent context は並列 Worker 間で不安定になりやすく、macOS Chromium では競合によるフレークも起きる。速度を優先するときだけ CLI の `--workers` で明示的に上書きする
 2. **ランダム sleep 禁止** — `waitForTimeout()` で flaky を隠さない。`expect.poll()` / `waitForFunction()` を使う
 3. **skip で実装不具合を隠さない** — 環境の問題 → skip、拡張のバグ → fail。詳細は `references/mode-contracts.md` の Skip vs Fail tree
 4. **POM を使う** — `YouTubeWatchPage` / `ExtensionOverlay` を経由する。spec 内で直接 DOM 操作しない

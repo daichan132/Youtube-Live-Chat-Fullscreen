@@ -27,13 +27,19 @@ const SCREENSHOT_FRAME_SECONDS = 1840
 
 /** Frosted glass style: semi-transparent white bg, blur, white text, compact */
 const OVERLAY_OVERRIDES = {
-  bgColor: { r: 255, g: 255, b: 255, a: 0.1 },
-  fontColor: { r: 255, g: 255, b: 255, a: 1 },
-  fontFamily: 'Zen Maru Gothic',
-  blur: 15,
-  userNameDisplay: false,
-  chatOnlyDisplay: true,
-  alwaysOnDisplay: true,
+  profile: {
+    appearance: {
+      backgroundColor: { r: 255, g: 255, b: 255, a: 0.1 },
+      fontColor: { r: 255, g: 255, b: 255, a: 1 },
+      fontFamily: 'Zen Maru Gothic',
+      blur: 15,
+      showUserName: false,
+    },
+    display: {
+      contentMode: 'messages-only' as const,
+      idleVisibility: 'always-visible' as const,
+    },
+  },
 }
 
 /** Overlay position & size (applied via DOM after render, not via store) */

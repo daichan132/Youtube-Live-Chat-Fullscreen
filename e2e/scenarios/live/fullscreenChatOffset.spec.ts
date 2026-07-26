@@ -3,6 +3,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
+import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import { YTD_LIVE_CHAT_PERSIST } from '../../../shared/settings/persistConfig'
 
 const collectFullscreenChatOffset = () => {
@@ -84,7 +85,16 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
 
     await extension.storage.set({
       [YTD_LIVE_CHAT_PERSIST.key]: JSON.stringify({
-        state: { alwaysOnDisplay: false },
+        state: {
+          ...DEFAULT_CHAT_SETTINGS,
+          profile: {
+            ...DEFAULT_CHAT_SETTINGS.profile,
+            display: {
+              ...DEFAULT_CHAT_SETTINGS.profile.display,
+              idleVisibility: 'auto-hide',
+            },
+          },
+        },
         version: YTD_LIVE_CHAT_PERSIST.version,
       }),
     })

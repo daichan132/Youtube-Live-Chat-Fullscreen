@@ -6,6 +6,13 @@ import { FULLSCREEN_BUTTON, MOVIE_PLAYER, NATIVE_CHAT_FRAME } from '@e2e/utils/s
 export class YouTubeWatchPage {
   constructor(private page: Page) {}
 
+  private async revealPlayerControls() {
+    await this.page
+      .locator(MOVIE_PLAYER)
+      .hover({ force: true, timeout: 5000 })
+      .catch(() => undefined)
+  }
+
   async goto(url: string, options?: { timeout?: number }) {
     const timeout = options?.timeout ?? TIMEOUT.PAGE_GOTO
     await this.page.goto(url, { waitUntil: 'domcontentloaded', timeout })
@@ -15,14 +22,14 @@ export class YouTubeWatchPage {
 
   async enterFullscreen(options?: { timeout?: number }) {
     const timeout = options?.timeout ?? TIMEOUT.FULLSCREEN
-    await this.page.locator(MOVIE_PLAYER).hover()
+    await this.revealPlayerControls()
     await this.page.click(FULLSCREEN_BUTTON)
     await this.page.waitForFunction(() => document.fullscreenElement !== null, undefined, { timeout })
   }
 
   async exitFullscreen(options?: { timeout?: number }): Promise<boolean> {
     const timeout = options?.timeout ?? TIMEOUT.FULLSCREEN
-    await this.page.locator(MOVIE_PLAYER).hover()
+    await this.revealPlayerControls()
     await this.page.click(FULLSCREEN_BUTTON)
     return this.page
       .waitForFunction(() => document.fullscreenElement === null, undefined, { timeout })

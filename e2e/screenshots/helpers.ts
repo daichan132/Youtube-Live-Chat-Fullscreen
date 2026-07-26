@@ -7,6 +7,9 @@ import { reliableClick } from '@e2e/utils/actions'
 import { switchButtonSelector } from '@e2e/utils/selectors'
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
+import { DEFAULT_CHAT_SETTINGS } from '../../shared/settings/migrateSettings'
+import { normalizeChatSettings } from '../../shared/settings/normalizeSettings'
+import { YTD_LIVE_CHAT_PERSIST } from '../../shared/settings/persistConfig'
 
 /**
  * Screenshot-dedicated archive URL (with chat replay).
@@ -82,7 +85,26 @@ export const enterFullscreenWithChat = async (page: Page) => {
   return true
 }
 
-export const waitForAdsToFinish = async (page: Page, options: { maxDurationMs?: number } = {}) => {
+export const dismissYouTubePremiumPrompt = async (page: Page) => {
+  const decline = page.getByRole('button', { name: /^(No thanks|Not now|結構です|今はしない)$/i }).first()
+  const visible = await decline.waitFor({ state: 'visible', timeout: 750 }).then(
+    () => true,
+    () => false,
+  )
+  if (!visible) return true
+
+  const clicked = await decline.click({ force: true }).then(
+    () => true,
+    () => false,
+  )
+  if (!clicked) return false
+  return decline.waitFor({ state: 'hidden', timeout: 5000 }).then(
+    () => true,
+    () => false,
+  )
+}
+
+export const waitForAdsToFinish = async (page: Page, options: { maxDurationMs?: number } = {}): Promise<boolean> => {
   const { maxDurationMs = 60000 } = options
   const deadline = Date.now() + maxDurationMs
 
@@ -94,7 +116,7 @@ export const waitForAdsToFinish = async (page: Page, options: { maxDurationMs?: 
       if (player.querySelector('.ytp-ad-player-overlay')) return true
       return false
     })
-    if (!isAdPlaying) return
+    if (!isAdPlaying) return true
 
     // Try to click skip button if available
     await page
@@ -119,6 +141,15 @@ export const waitForAdsToFinish = async (page: Page, options: { maxDurationMs?: 
 
     await page.waitForTimeout(TIMING.AD_CHECK_POLL_INTERVAL_MS)
   }
+
+  return false
+}
+
+export const stabilizeYouTubePlaybackUi = async (page: Page, options: { maxDurationMs?: number } = {}) => {
+  const promptDismissedBeforeAd = await dismissYouTubePremiumPrompt(page)
+  const adsFinished = await waitForAdsToFinish(page, options)
+  const promptDismissedAfterAd = await dismissYouTubePremiumPrompt(page)
+  return promptDismissedBeforeAd && adsFinished && promptDismissedAfterAd
 }
 
 export const clickSettingIcon = () => {
@@ -229,13 +260,25 @@ export const setPersistedChatOnlyMode = async (extension: Extension) => {
   }
 
   const stores = await extension.storage.get(['ytdLiveChatStore', 'globalSettingStore'])
-  const currentYlc = parsePersisted(stores.ytdLiveChatStore, 1)
+  const currentYlc = parsePersisted(stores.ytdLiveChatStore, YTD_LIVE_CHAT_PERSIST.version)
   const currentGlobal = parsePersisted(stores.globalSettingStore, 0)
 
   await extension.storage.set({
     ytdLiveChatStore: JSON.stringify({
-      state: { ...currentYlc.state, alwaysOnDisplay: true, chatOnlyDisplay: true },
-      version: currentYlc.version,
+      state: normalizeChatSettings(
+        {
+          ...currentYlc.state,
+          profile: {
+            ...normalizeChatSettings(currentYlc.state, DEFAULT_CHAT_SETTINGS).profile,
+            display: {
+              idleVisibility: 'always-visible',
+              contentMode: 'messages-only',
+            },
+          },
+        },
+        DEFAULT_CHAT_SETTINGS,
+      ),
+      version: YTD_LIVE_CHAT_PERSIST.version,
     }),
     globalSettingStore: JSON.stringify({
       state: { ...currentGlobal.state, ytdLiveChat: true },
@@ -306,6 +349,7 @@ export const getChatOnlyChromeCollapseSnapshot = (): ChatOnlyChromeCollapseSnaps
 export type ChatOnlyMotionProbeState = {
   done: boolean
   sawTransition: boolean
+  sawMovement: boolean
   timedOut: boolean
   samples: Array<{
     elapsedMs: number
@@ -315,15 +359,35 @@ export type ChatOnlyMotionProbeState = {
   }>
 }
 
-export const installChatOnlyMotionProbe = () => {
+export const installChatOnlyMotionProbe = ({ requireInput = false }: { requireInput?: boolean } = {}) => {
   const win = window as typeof window & {
     __ylcChatOnlyMotionProbe?: ChatOnlyMotionProbeState
     __ylcChatOnlyMotionProbeFrame?: number
   }
   if (win.__ylcChatOnlyMotionProbeFrame !== undefined) cancelAnimationFrame(win.__ylcChatOnlyMotionProbeFrame)
 
-  const state: ChatOnlyMotionProbeState = { done: false, sawTransition: false, timedOut: false, samples: [] }
+  const startingTargets = window.__ylcHelpers.getChatOnlyChromeTargets()
+  const hasMeasurableNaturalHeight = ({ element }: (typeof startingTargets)[number]) => {
+    const height = element.getBoundingClientRect().height
+    const measuredHeight = Number.parseFloat(element.style.getPropertyValue('--extension-chat-only-target-height')) || 0
+    return Math.max(height, measuredHeight) >= 4
+  }
+  const headerTarget = startingTargets.find(target => target.selector === 'header')
+  if (!headerTarget || !hasMeasurableNaturalHeight(headerTarget)) return false
+  if (requireInput) {
+    const inputTarget = startingTargets.find(target => target.selector.startsWith('input'))
+    if (!inputTarget || !hasMeasurableNaturalHeight(inputTarget)) return false
+  }
+
+  const state: ChatOnlyMotionProbeState = {
+    done: false,
+    sawTransition: false,
+    sawMovement: false,
+    timedOut: false,
+    samples: [],
+  }
   const startedAt = performance.now()
+  const initialHeights = new Map<string, number>()
   win.__ylcChatOnlyMotionProbe = state
 
   const sample = () => {
@@ -331,18 +395,24 @@ export const installChatOnlyMotionProbe = () => {
     const transitionReady = body?.classList.contains('chat-only-transition-ready') ?? false
     state.sawTransition ||= transitionReady
     const elapsedMs = performance.now() - startedAt
+    const targets = window.__ylcHelpers.getChatOnlyChromeTargets().map(({ selector, element }) => {
+      const height = Math.round(element.getBoundingClientRect().height * 100) / 100
+      const measuredHeight = Number.parseFloat(element.style.getPropertyValue('--extension-chat-only-target-height')) || 0
+      const initialHeight = initialHeights.get(selector)
+      if (initialHeight === undefined) initialHeights.set(selector, height)
+      else if (Math.abs(height - initialHeight) >= 4) state.sawMovement = true
+      return { selector, height, naturalHeight: Math.max(height, measuredHeight) }
+    })
     state.samples.push({
       elapsedMs: Math.round(elapsedMs * 100) / 100,
       transitionReady,
       hidden: body?.classList.contains('chat-only-display') ?? false,
-      targets: window.__ylcHelpers.getChatOnlyChromeTargets().map(({ selector, element }) => {
-        const height = Math.round(element.getBoundingClientRect().height * 100) / 100
-        const measuredHeight = Number.parseFloat(element.style.getPropertyValue('--extension-chat-only-target-height')) || 0
-        return { selector, height, naturalHeight: Math.max(height, measuredHeight) }
-      }),
+      targets,
     })
 
-    if (state.sawTransition && !transitionReady) {
+    // A short/stale transition-ready pulse can precede the actual CSS interpolation.
+    // Do not finish the probe until a target has measurably traversed its range.
+    if (state.sawTransition && state.sawMovement && !transitionReady) {
       state.done = true
       win.__ylcChatOnlyMotionProbeFrame = undefined
       return
@@ -372,6 +442,7 @@ export const expectContinuousChatOnlyMotion = (
 ) => {
   expect(probe?.done).toBe(true)
   expect(probe?.sawTransition).toBe(true)
+  expect(probe?.sawMovement).toBe(true)
   expect(probe?.timedOut).toBe(false)
   const samples = probe?.samples ?? []
   expect(samples.at(-1)?.transitionReady).toBe(false)
