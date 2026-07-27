@@ -1,6 +1,6 @@
 import { expect, test } from '@e2e/fixtures'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
-import { YTD_LIVE_CHAT_PERSIST } from '../../../shared/settings/persistConfig'
+import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 test.describe('popup', { tag: '@popup' }, () => {
   test('popup renders language selector and chat toggle', async ({ page, extension }) => {
@@ -40,17 +40,17 @@ test.describe('popup', { tag: '@popup' }, () => {
     await importSettingsViaPopup(page, extension, settings)
 
     // Wait for storage write
-    await expect.poll(async () => (await readStorageEntry(extension, 'globalSettingStore'))?.state.themeMode ?? null).toBe('dark')
+    await expect.poll(async () => (await readStorageEntry(extension, GLOBAL_STORAGE_KEY))?.value.themeMode ?? null).toBe('dark')
 
-    // Verify globalSettingStore
-    const globalState = await readStorageEntry(extension, 'globalSettingStore')
-    expect(globalState?.state.ytdLiveChat).toBe(false)
-    expect(globalState?.state.themeMode).toBe('dark')
-    expect(globalState?.version).toBe(1)
+    // Verify global settings repository value
+    const globalState = await readStorageEntry(extension, GLOBAL_STORAGE_KEY)
+    expect(globalState?.value.ytdLiveChat).toBe(false)
+    expect(globalState?.value.themeMode).toBe('dark')
+    expect(globalState?.schemaVersion).toBe(1)
 
-    // Verify ytdLiveChatStore
-    const ytdState = await readStorageEntry(extension, 'ytdLiveChatStore')
-    const profile = ytdState?.state.profile as
+    // Verify chat settings repository value
+    const ytdState = await readStorageEntry(extension, CHAT_STORAGE_KEY)
+    const profile = ytdState?.value.profile as
       | {
           appearance?: { fontSize?: number; blur?: number }
           display?: { idleVisibility?: string }
@@ -59,9 +59,9 @@ test.describe('popup', { tag: '@popup' }, () => {
     expect(profile?.appearance?.fontSize).toBe(40)
     expect(profile?.appearance?.blur).toBe(10)
     expect(profile?.display?.idleVisibility).toBe('auto-hide')
-    expect(ytdState?.version).toBe(YTD_LIVE_CHAT_PERSIST.version)
+    expect(ytdState?.schemaVersion).toBe(1)
 
-    // Reopen popup and verify Zustand hydration
+    // Reopen popup and verify runtime hydration
     await page.goto(extension.url('popup.html'))
     await page.getByLabel('Select language').waitFor({ state: 'visible' })
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')

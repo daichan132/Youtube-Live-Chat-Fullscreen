@@ -75,7 +75,7 @@ test.describe
       await page.getByLabel('Select language').waitFor({ state: 'visible', timeout: 30000 })
 
       // Light theme popup
-      const popupRoot = page.locator('[data-ylc-theme]')
+      const popupRoot = page.locator('div[data-ylc-theme]').filter({ has: page.getByLabel('Select language') })
       await popupRoot.screenshot({ path: screenshotPath('popup-light') })
 
       // Dark theme popup

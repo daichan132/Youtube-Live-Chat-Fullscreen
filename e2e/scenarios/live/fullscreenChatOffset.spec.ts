@@ -4,7 +4,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
-import { YTD_LIVE_CHAT_PERSIST } from '../../../shared/settings/persistConfig'
+import { CHAT_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const collectFullscreenChatOffset = () => {
   const host = document.getElementById('shadow-root-live-chat') as HTMLElement | null
@@ -84,8 +84,10 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
 
     await extension.storage.set({
-      [YTD_LIVE_CHAT_PERSIST.key]: JSON.stringify({
-        state: {
+      [CHAT_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'ylc-e2e',
+        value: {
           ...DEFAULT_CHAT_SETTINGS,
           profile: {
             ...DEFAULT_CHAT_SETTINGS.profile,
@@ -95,8 +97,7 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
             },
           },
         },
-        version: YTD_LIVE_CHAT_PERSIST.version,
-      }),
+      },
     })
     await yt.goto(liveUrl)
 

@@ -1,5 +1,6 @@
-import type { Page } from '@playwright/test'
 import type { Extension } from '@e2e/fixtures'
+import type { Page } from '@playwright/test'
+import type { StoredEnvelope } from '../../shared/settings/repository'
 
 type TestSettings = {
   version: number
@@ -25,16 +26,13 @@ export const importSettingsViaPopup = async (page: Page, extension: Extension, s
 }
 
 /**
- * Read a Zustand-persisted store entry from chrome.storage.local.
+ * Read a settings repository envelope from chrome.storage.local.
  *
  * Accepts either an Extension (uses SW or page-based storage) or a Page
  * already on an extension URL (reads directly, avoiding temporary popup pages
- * that could trigger Zustand re-initialization side effects).
+ * that could trigger runtime re-initialization side effects).
  */
-export async function readStorageEntry(
-  source: Extension | Page,
-  key: string,
-): Promise<{ state: Record<string, unknown>; version: number } | null> {
+export async function readStorageEntry(source: Extension | Page, key: string): Promise<StoredEnvelope<Record<string, unknown>> | null> {
   let raw: unknown
   if ('storage' in source) {
     const stored = await source.storage.get(key)
@@ -43,6 +41,9 @@ export async function readStorageEntry(
     const stored = await source.evaluate(async k => chrome.storage.local.get(k), key)
     raw = stored[key]
   }
-  if (!raw) return null
-  return JSON.parse(raw as string) as { state: Record<string, unknown>; version: number }
+  if (!raw || typeof raw !== 'object') return null
+  const envelope = raw as Partial<StoredEnvelope<Record<string, unknown>>>
+  if (envelope.schemaVersion !== 1 || typeof envelope.writerId !== 'string' || !envelope.value || typeof envelope.value !== 'object')
+    return null
+  return envelope as StoredEnvelope<Record<string, unknown>>
 }

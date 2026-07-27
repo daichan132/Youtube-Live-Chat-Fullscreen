@@ -9,7 +9,7 @@ import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 import { DEFAULT_CHAT_SETTINGS } from '../../shared/settings/migrateSettings'
 import { normalizeChatSettings } from '../../shared/settings/normalizeSettings'
-import { YTD_LIVE_CHAT_PERSIST } from '../../shared/settings/persistConfig'
+import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../shared/settings/storageKeys'
 
 /**
  * Screenshot-dedicated archive URL (with chat replay).
@@ -49,9 +49,12 @@ export const setTheme = async (page: Page, extension: Extension, themeMode: 'lig
   await page.goto(extension.url('popup.html'), { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.getByLabel('Select language').waitFor({ state: 'visible', timeout: 15000 })
 
-  const themeSelect = page.getByLabel('Theme')
-  await themeSelect.selectOption(themeMode)
-  await page.locator(`[data-ylc-theme="${themeMode}"]`).waitFor({ state: 'visible', timeout: 5000 })
+  const themeRadio = page.getByRole('radio', { name: new RegExp(`^${themeMode}$`, 'i') })
+  await themeRadio.check({ force: true })
+  await page
+    .locator(`div[data-ylc-theme="${themeMode}"]`)
+    .filter({ has: page.getByLabel('Select language') })
+    .waitFor({ state: 'visible', timeout: 5000 })
 }
 
 export const enterFullscreenWithChat = async (page: Page) => {
@@ -157,8 +160,7 @@ export const clickSettingIcon = () => {
   const root = host?.shadowRoot ?? null
   if (!root) return false
 
-  const candidates = Array.from(root.querySelectorAll<HTMLElement>('.ylc-overlay-control-icon'))
-  const settingsButton = candidates[1] ?? candidates[0] ?? null
+  const settingsButton = root.querySelector<HTMLElement>('[data-ylc-settings-btn]')
   if (!settingsButton) return false
 
   settingsButton.dispatchEvent(new MouseEvent('click', { bubbles: true, composed: true }))
@@ -244,32 +246,25 @@ export const waitForChatMessages = async (
 // --- chat-only helpers ---
 
 export const setPersistedChatOnlyMode = async (extension: Extension) => {
-  const parsePersisted = (raw: unknown, fallbackVersion: number) => {
-    if (typeof raw !== 'string' || raw.length === 0) {
-      return { state: {} as Record<string, unknown>, version: fallbackVersion }
-    }
-    try {
-      const parsed = JSON.parse(raw) as { state?: Record<string, unknown>; version?: number }
-      return {
-        state: parsed?.state && typeof parsed.state === 'object' ? parsed.state : {},
-        version: typeof parsed?.version === 'number' ? parsed.version : fallbackVersion,
-      }
-    } catch {
-      return { state: {} as Record<string, unknown>, version: fallbackVersion }
-    }
+  const parseEnvelope = (raw: unknown) => {
+    if (!raw || typeof raw !== 'object') return { value: {} as Record<string, unknown> }
+    const parsed = raw as { value?: unknown }
+    return { value: parsed.value && typeof parsed.value === 'object' ? (parsed.value as Record<string, unknown>) : {} }
   }
 
-  const stores = await extension.storage.get(['ytdLiveChatStore', 'globalSettingStore'])
-  const currentYlc = parsePersisted(stores.ytdLiveChatStore, YTD_LIVE_CHAT_PERSIST.version)
-  const currentGlobal = parsePersisted(stores.globalSettingStore, 0)
+  const stores = await extension.storage.get([CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY])
+  const currentYlc = parseEnvelope(stores[CHAT_STORAGE_KEY])
+  const currentGlobal = parseEnvelope(stores[GLOBAL_STORAGE_KEY])
 
   await extension.storage.set({
-    ytdLiveChatStore: JSON.stringify({
-      state: normalizeChatSettings(
+    [CHAT_STORAGE_KEY]: {
+      schemaVersion: 1,
+      writerId: 'ylc-e2e',
+      value: normalizeChatSettings(
         {
-          ...currentYlc.state,
+          ...currentYlc.value,
           profile: {
-            ...normalizeChatSettings(currentYlc.state, DEFAULT_CHAT_SETTINGS).profile,
+            ...normalizeChatSettings(currentYlc.value, DEFAULT_CHAT_SETTINGS).profile,
             display: {
               idleVisibility: 'always-visible',
               contentMode: 'messages-only',
@@ -278,12 +273,12 @@ export const setPersistedChatOnlyMode = async (extension: Extension) => {
         },
         DEFAULT_CHAT_SETTINGS,
       ),
-      version: YTD_LIVE_CHAT_PERSIST.version,
-    }),
-    globalSettingStore: JSON.stringify({
-      state: { ...currentGlobal.state, ytdLiveChat: true },
-      version: currentGlobal.version,
-    }),
+    },
+    [GLOBAL_STORAGE_KEY]: {
+      schemaVersion: 1,
+      writerId: 'ylc-e2e',
+      value: { ...currentGlobal.value, ytdLiveChat: true },
+    },
   })
 
   return true
@@ -446,9 +441,7 @@ export const expectContinuousChatOnlyMotion = (
   expect(probe?.timedOut).toBe(false)
   const samples = probe?.samples ?? []
   expect(samples.at(-1)?.transitionReady).toBe(false)
-  const baselineSelectors = new Set(
-    samples[0]?.targets.filter(target => target.naturalHeight >= 4).map(target => target.selector) ?? [],
-  )
+  const baselineSelectors = new Set(samples[0]?.targets.filter(target => target.naturalHeight >= 4).map(target => target.selector) ?? [])
   expect(baselineSelectors.has('header'), 'header should exist before the motion starts').toBe(true)
   if (requireInput) expect([...baselineSelectors].some(selector => selector.startsWith('input'))).toBe(true)
 
@@ -559,7 +552,7 @@ export const waitForPlayerControlsHidden = async (page: Page, options: { timeout
 /**
  * Reposition and resize the overlay by directly setting CSS on the shadow DOM element.
  * Used for screenshots because patchOverlayStore coordinates/size are overwritten
- * by the popup's Zustand persist initialization race.
+ * by the popup runtime initialization race.
  */
 export const repositionOverlay = async (
   page: Page,

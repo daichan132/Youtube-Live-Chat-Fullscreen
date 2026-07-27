@@ -2,11 +2,11 @@ import type { Extension } from '@e2e/fixtures'
 import { DEFAULT_CHAT_SETTINGS } from '../../shared/settings/migrateSettings'
 import type { ChatAppearance, ChatDisplay, ChatGeometry, PresetEntry } from '../../shared/settings/model'
 import { normalizeChatSettings } from '../../shared/settings/normalizeSettings'
-import { YTD_LIVE_CHAT_PERSIST } from '../../shared/settings/persistConfig'
+import { CHAT_STORAGE_KEY } from '../../shared/settings/storageKeys'
 
-const STORE_KEY = 'ytdLiveChatStore'
+const STORE_KEY = CHAT_STORAGE_KEY
 
-type StoreEntry = { state: Record<string, unknown>; version: number }
+type StoreEntry = { schemaVersion: 1; writerId: string; value: Record<string, unknown> }
 
 type OverlayStorePatch = {
   profile?: {
@@ -35,7 +35,7 @@ const parseStoreValue = (rawValue: unknown): StoreEntry | null => {
 }
 
 /**
- * Patch properties in the ytdLiveChatStore persisted in chrome.storage.local.
+ * Patch properties in the chat settings repository envelope in chrome.storage.local.
  *
  * Uses extension.storage (SW-backed or popup-based) for read-modify-write.
  *
@@ -44,8 +44,8 @@ const parseStoreValue = (rawValue: unknown): StoreEntry | null => {
 export const patchOverlayStore = async (extension: Extension, overrides: OverlayStorePatch): Promise<Record<string, unknown> | null> => {
   const raw = await extension.storage.get(STORE_KEY)
   const stored = parseStoreValue(raw[STORE_KEY])
-  const existed = stored?.state != null
-  const current = normalizeChatSettings(stored?.state, DEFAULT_CHAT_SETTINGS)
+  const existed = stored?.value != null
+  const current = normalizeChatSettings(stored?.value, DEFAULT_CHAT_SETTINGS)
   const state = normalizeChatSettings(
     {
       profile: {
@@ -73,14 +73,15 @@ export const patchOverlayStore = async (extension: Extension, overrides: Overlay
     current,
   )
   const nextStored: StoreEntry = {
-    state,
-    version: YTD_LIVE_CHAT_PERSIST.version,
+    schemaVersion: 1,
+    writerId: 'ylc-e2e',
+    value: state,
   }
 
-  await extension.storage.set({ [STORE_KEY]: JSON.stringify(nextStored) })
+  await extension.storage.set({ [STORE_KEY]: nextStored })
 
   const verify = await extension.storage.get(STORE_KEY)
-  const verifyState = parseStoreValue(verify[STORE_KEY])?.state ?? null
+  const verifyState = parseStoreValue(verify[STORE_KEY])?.value ?? null
 
   if (!verifyState) {
     console.warn('[patchOverlayStore] Write verification failed')

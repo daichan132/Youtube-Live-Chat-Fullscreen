@@ -2,6 +2,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const getOverlayFontSize = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -65,7 +66,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     await expect
       .poll(async () => {
-        const state = (await readStorageEntry(extension, 'ytdLiveChatStore'))?.state
+        const state = (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value
         const profile = state?.profile as { appearance?: { fontSize?: number } } | undefined
         return profile?.appearance?.fontSize ?? null
       })
@@ -152,7 +153,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     }
 
     // Verify initial CSS — fontSize should be set but NOT be the value we will import (30px).
-    // We avoid asserting the exact default ('13px') because the SW's in-memory Zustand store
+    // We avoid asserting the exact default ('13px') because the service worker's in-memory runtime state
     // may have written back a stale value from a previous test despite fixture double-clear.
     await expect
       .poll(
@@ -241,8 +242,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       })
 
     // Verify preset data was persisted to storage (read from extension storage directly)
-    const ytdState = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    const importedPresets = getStoredCustomPresets(ytdState?.state)
+    const ytdState = await readStorageEntry(popupPage, CHAT_STORAGE_KEY)
+    const importedPresets = getStoredCustomPresets(ytdState?.value)
     expect(importedPresets.map(preset => preset.id)).toEqual(['imported1', 'imported2'])
     expect(importedPresets[0]?.profile.appearance.fontSize).toBe(20)
     expect(importedPresets[1]?.profile.appearance.fontSize).toBe(16)
@@ -335,8 +336,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       .toEqual({ fontSize: '40px', spacing: '15px', userNameDisplay: 'none' })
 
     // Verify first import's presets are stored (read from popupPage to avoid temporary popup pages)
-    const stateAfterFirst = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    expect(getStoredCustomPresets(stateAfterFirst?.state).map(preset => preset.id)).toEqual(['dark1'])
+    const stateAfterFirst = await readStorageEntry(popupPage, CHAT_STORAGE_KEY)
+    expect(getStoredCustomPresets(stateAfterFirst?.value).map(preset => preset.id)).toEqual(['dark1'])
 
     // -- Second import: small font, all visible, presets "light1"+"light2" --
     await importSettingsViaPopup(popupPage, extension, {
@@ -407,8 +408,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
       })
 
     // Verify presets are fully replaced -- "dark1" from the first import must not remain
-    const stateAfterSecond = await readStorageEntry(popupPage, 'ytdLiveChatStore')
-    const secondPresets = getStoredCustomPresets(stateAfterSecond?.state)
+    const stateAfterSecond = await readStorageEntry(popupPage, CHAT_STORAGE_KEY)
+    const secondPresets = getStoredCustomPresets(stateAfterSecond?.value)
     expect(secondPresets.map(preset => preset.id)).toEqual(['light1', 'light2'])
     expect(secondPresets.some(preset => preset.id === 'dark1')).toBe(false)
     expect(secondPresets[0]?.profile.appearance.fontSize).toBe(14)
@@ -417,8 +418,8 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     expect(secondPresets[1]?.name).toBe('Large Light')
 
     // Verify globalSetting was also overwritten by the second import
-    const globalState = await readStorageEntry(popupPage, 'globalSettingStore')
-    expect(globalState?.state.themeMode).toBe('light')
+    const globalState = await readStorageEntry(popupPage, GLOBAL_STORAGE_KEY)
+    expect(globalState?.value.themeMode).toBe('light')
 
     await popupPage.close()
   })
