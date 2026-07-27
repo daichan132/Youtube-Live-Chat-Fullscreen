@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { useGlobalSettingStore } from '@/shared/stores'
 import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { ChatViewport } from './overlay/ChatViewport'
@@ -13,12 +12,7 @@ type YTDLiveChatProps = {
 export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chatVisible, setChatVisible] = useState(true)
-  const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
-
-  useNativeChatAutoDisable({
-    enabled: true,
-    setYTDLiveChat,
-  })
+  useNativeChatAutoDisable({ enabled: true })
 
   return (
     <>

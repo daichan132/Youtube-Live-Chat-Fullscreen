@@ -1,12 +1,14 @@
+import { useSetAtom } from 'jotai'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { getEffectiveChatProfile } from '@/entrypoints/content/features/YTDLiveChatSetting/styleHistoryCommands'
+import { useStyleHistoryCommands } from '@/entrypoints/content/features/YTDLiveChatSetting/styleHistoryCommands'
 import { TbPlus } from '@/shared/components/icons'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { useT } from '@/shared/i18n/react'
+import { addPresetAtom } from '@/shared/state'
 
 export const AddPresetItem = () => {
-  const addPreset = useChatSettingsStore(state => state.addPreset)
-  const { t } = useTranslation()
+  const addPreset = useSetAtom(addPresetAtom)
+  const { getEffectiveChatProfile } = useStyleHistoryCommands()
+  const t = useT()
   const addItem = useCallback(() => {
     addPreset({
       kind: 'custom',

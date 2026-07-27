@@ -1,9 +1,7 @@
-import type { DraggableAttributes } from '@dnd-kit/core'
-import type { SyntheticListenerMap } from '@dnd-kit/core/dist/hooks/utilities'
-import { type CSSProperties, useId } from 'react'
-import { useTranslation } from 'react-i18next'
+import { type CSSProperties, type KeyboardEvent, type PointerEvent, useId } from 'react'
 import { TbAdjustmentsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
+import { useT } from '@/shared/i18n/react'
 import type { RGBA } from '@/shared/settings/model'
 
 const ICON_STROKE_WIDTH = 1.55
@@ -21,8 +19,6 @@ const VISUALLY_HIDDEN_STYLE: CSSProperties = {
 }
 
 type OverlayControlRailProps = {
-  attributes: DraggableAttributes
-  listeners: SyntheticListenerMap | undefined
   isDragging: boolean
   isReady: boolean
   isVisible: boolean
@@ -30,6 +26,8 @@ type OverlayControlRailProps = {
   backgroundColor: RGBA
   fontColor: RGBA
   onSettingsClick: () => void
+  onPointerDown: (event: PointerEvent<HTMLElement>) => void
+  onKeyDown: (event: KeyboardEvent<HTMLElement>) => void
   onEnterControls: () => void
   onLeaveControls: () => void
 }
@@ -37,8 +35,6 @@ type OverlayControlRailProps = {
 const toRgba = (color: RGBA, alpha = color.a) => `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
 
 export const OverlayControlRail = ({
-  attributes,
-  listeners,
   isDragging,
   isReady,
   isVisible,
@@ -46,10 +42,12 @@ export const OverlayControlRail = ({
   backgroundColor,
   fontColor,
   onSettingsClick,
+  onPointerDown: handlePointerDown,
+  onKeyDown,
   onEnterControls,
   onLeaveControls,
 }: OverlayControlRailProps) => {
-  const { t } = useTranslation()
+  const t = useT()
   const dragDescriptionId = useId()
   const displayed = isReady && isVisible
   const color = toRgba(fontColor)
@@ -77,26 +75,24 @@ export const OverlayControlRail = ({
         ...runtimeStyle,
       }}
     >
-      <div className='cursor-pointer'>
-        <button
-          type='button'
-          data-ylc-settings-btn
-          className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring'
-          aria-label={t('content.aria.openSettings')}
-          disabled={!displayed}
-          tabIndex={displayed ? 0 : -1}
-          onClick={onSettingsClick}
-        >
-          <TbAdjustmentsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
-        </button>
-      </div>
-
-      {/* biome-ignore lint/a11y/useSemanticElements: A div preserves dnd-kit's drag handle semantics and listeners. */}
-      <div
+      <button
+        type='button'
+        data-ylc-settings-btn
+        className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring'
+        aria-label={t('content.aria.openSettings')}
+        disabled={!displayed}
+        tabIndex={displayed ? 0 : -1}
+        onClick={onSettingsClick}
+      >
+        <TbAdjustmentsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
+      </button>
+      <button
+        type='button'
         className={dragCursorClass}
-        {...attributes}
-        {...listeners}
-        role='button'
+        style={{ border: 0, background: 'transparent', padding: 0, color: 'inherit' }}
+        onPointerDown={handlePointerDown}
+        onKeyDown={onKeyDown}
+        disabled={!displayed}
         tabIndex={displayed ? 0 : -1}
         aria-label={t('content.aria.dragToMove')}
         aria-roledescription='drag handle'
@@ -108,7 +104,7 @@ export const OverlayControlRail = ({
         <span id={dragDescriptionId} style={VISUALLY_HIDDEN_STYLE}>
           {t('content.aria.arrowKeysToMove')}
         </span>
-      </div>
+      </button>
     </div>
   )
 }

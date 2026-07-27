@@ -79,6 +79,8 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Check generated locales
+        run: yarn locales:check
       - name: Check source
         run: yarn check
       - name: Run unit tests
@@ -91,6 +93,8 @@ jobs:
         run: |
           yarn zip
           yarn zip:firefox
+      - name: Gate extension package size
+        run: node scripts/verify/check-package-size.mjs
       - name: Validate package versions and files
         env:
           RELEASE_VERSION: ${{ steps.version.outputs.version }}

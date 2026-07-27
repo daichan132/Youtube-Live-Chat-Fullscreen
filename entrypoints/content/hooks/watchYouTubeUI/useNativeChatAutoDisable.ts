@@ -1,17 +1,21 @@
+import { useSetAtom } from 'jotai'
 import { useEffect } from 'react'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
 import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
+import { setYTDLiveChatEnabledAtom } from '@/shared/state'
 
 type UseNativeChatAutoDisableOptions = {
   enabled: boolean
-  setYTDLiveChat: (value: boolean) => void
+  setYTDLiveChat?: (value: boolean) => void
 }
 
 /**
  * The runtime owns native chat observation. React only handles the explicit
  * user action that asks YouTube to open its own chat while our overlay is on.
  */
-export const useNativeChatAutoDisable = ({ enabled, setYTDLiveChat }: UseNativeChatAutoDisableOptions) => {
+export const useNativeChatAutoDisable = ({ enabled, setYTDLiveChat: injectedSetter }: UseNativeChatAutoDisableOptions) => {
+  const atomSetter = useSetAtom(setYTDLiveChatEnabledAtom)
+  const setYTDLiveChat = injectedSetter ?? atomSetter
   useEffect(() => {
     if (!enabled) return
 

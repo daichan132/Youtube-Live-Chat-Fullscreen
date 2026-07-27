@@ -1,13 +1,14 @@
+import { useAtomValue } from 'jotai'
 import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
 import { ensureFontLoaded } from '@/entrypoints/content/style/fontLoader'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
+import { useT } from '@/shared/i18n/react'
+import { effectiveProfileAtom } from '@/shared/state'
 import { cn } from '@/shared/utils/cn'
 import { toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
-import { commitYLCStyleUpdate } from '../../styleHistoryCommands'
+import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
@@ -51,7 +52,8 @@ const buildFontFamilyOptions = (defaultLabel: string) => {
 }
 
 export const FontFamilyInput = () => {
-  const fontFamily = useEffectiveChatProfile().appearance.fontFamily
+  const fontFamily = useAtomValue(effectiveProfileAtom).appearance.fontFamily
+  const { commitYLCStyleUpdate } = useStyleHistoryCommands()
 
   const handleCommit = useCallback((nextFontFamily: string) => {
     commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } }, 'fontFamily')
@@ -61,7 +63,7 @@ export const FontFamilyInput = () => {
 }
 
 const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (fontFamily: string) => void }) => {
-  const { t } = useTranslation()
+  const t = useT()
   const [isOpen, setIsOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)

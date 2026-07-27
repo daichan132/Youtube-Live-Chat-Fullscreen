@@ -1,34 +1,22 @@
-import { fireEvent, render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { fireEvent } from '@testing-library/react'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { globalSettingsStateAtom } from '@/shared/state/atoms'
+import { renderWithStore } from '@/shared/state/testUtils'
 import { ThemeModeSelector } from './ThemeModeSelector'
 
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
-}))
-
-const baseState = useGlobalSettingStore.getState()
+const store = createStore()
 
 describe('ThemeModeSelector', () => {
   beforeEach(() => {
-    useGlobalSettingStore.setState(baseState, true)
+    store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
   })
 
   it('updates the persisted theme mode', () => {
-    const { getByRole } = render(<ThemeModeSelector />)
+    const { getByRole } = renderWithStore(<ThemeModeSelector />, store)
 
     fireEvent.click(getByRole('radio', { name: 'content.setting.themeMode.dark' }))
 
-    expect(useGlobalSettingStore.getState().themeMode).toBe('dark')
+    expect(store.get(globalSettingsStateAtom).themeMode).toBe('dark')
   })
 })

@@ -1,9 +1,9 @@
 import { useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { resolveLanguageCode } from '@/shared/i18n/language'
+import { useAppRuntime } from '@/shared/runtime/AppProvider'
 
 export const useContentRuntimeMessages = () => {
-  const { i18n } = useTranslation()
+  const runtime = useAppRuntime()
 
   useEffect(() => {
     const handleMessage = (message: unknown) => {
@@ -12,7 +12,7 @@ export const useContentRuntimeMessages = () => {
       const runtimeMessage = message as Record<string, unknown>
 
       if (runtimeMessage.message === 'language' && typeof runtimeMessage.language === 'string') {
-        i18n.changeLanguage(resolveLanguageCode(runtimeMessage.language))
+        void runtime.setLocale(resolveLanguageCode(runtimeMessage.language))
       }
     }
 
@@ -20,5 +20,5 @@ export const useContentRuntimeMessages = () => {
     return () => {
       chrome.runtime.onMessage.removeListener(handleMessage)
     }
-  }, [i18n])
+  }, [runtime])
 }

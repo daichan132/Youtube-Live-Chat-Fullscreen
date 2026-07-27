@@ -1,18 +1,10 @@
 import { act, renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const changeLanguage = vi.hoisted(() => vi.fn())
+const setLocale = vi.hoisted(() => vi.fn())
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    i18n: {
-      changeLanguage,
-    },
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
+vi.mock('@/shared/runtime/AppProvider', () => ({
+  useAppRuntime: () => ({ setLocale }),
 }))
 
 const emitMessage = (message: unknown) => {
@@ -22,7 +14,7 @@ const emitMessage = (message: unknown) => {
 
 describe('useContentRuntimeMessages', () => {
   beforeEach(() => {
-    changeLanguage.mockClear()
+    setLocale.mockClear()
     vi.resetModules()
   })
 
@@ -34,7 +26,7 @@ describe('useContentRuntimeMessages', () => {
       emitMessage({ message: 'language', language: 'pt-BR' })
     })
 
-    expect(changeLanguage).toHaveBeenCalledWith('pt_BR')
+    expect(setLocale).toHaveBeenCalledWith('pt_BR')
   })
 
   it('ignores settings messages handled through storage and invalid language payloads', async () => {
@@ -49,6 +41,6 @@ describe('useContentRuntimeMessages', () => {
       emitMessage(null)
     })
 
-    expect(changeLanguage).not.toHaveBeenCalled()
+    expect(setLocale).not.toHaveBeenCalled()
   })
 })

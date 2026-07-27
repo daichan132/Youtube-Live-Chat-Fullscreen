@@ -1,21 +1,15 @@
-import { render } from '@testing-library/react'
+import { createStore } from 'jotai/vanilla'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { chatSettingsStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
+import { renderWithStore } from '@/shared/state/testUtils'
 import { Content } from './Content'
 import { chatRuntime } from './runtime/ChatRuntime'
 import { useChatRuntime } from './runtime/useChatRuntime'
 
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
 vi.mock('./hooks/globalState/useContentRuntimeMessages', () => ({
   useContentRuntimeMessages: vi.fn(),
-}))
-vi.mock('./hooks/globalState/useSettingsStorageSync', () => ({
-  useSettingsStorageSync: vi.fn(),
 }))
 vi.mock('./runtime/ChatRuntime', () => ({
   chatRuntime: {
@@ -46,11 +40,12 @@ const inactiveView = {
 }
 
 describe('Content', () => {
+  const store = createStore()
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useChatRuntime).mockReturnValue(inactiveView)
-    useGlobalSettingStore.setState({ ytdLiveChat: true, themeMode: 'system' })
-    useChatSettingsStore.setState({ profile: DEFAULT_CHAT_PROFILE })
+    store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
+    store.set(chatSettingsStateAtom, { ...DEFAULT_CHAT_SETTINGS, profile: DEFAULT_CHAT_PROFILE })
   })
 
   afterEach(() => {
@@ -58,7 +53,7 @@ describe('Content', () => {
   })
 
   it('starts the runtime and sends effective settings', () => {
-    const { unmount } = render(<Content />)
+    const { unmount } = renderWithStore(<Content />, store)
 
     expect(chatRuntime.start).toHaveBeenCalledTimes(1)
     expect(chatRuntime.setEnabled).toHaveBeenCalledWith(true)
@@ -83,7 +78,7 @@ describe('Content', () => {
       switchContainer,
     })
 
-    render(<Content />)
+    renderWithStore(<Content />, store)
 
     expect(overlayRoot.querySelector('[data-testid="live-chat"]')?.textContent).toBe('loading')
     expect(switchContainer.querySelector('button')?.textContent).toBe('switch')
@@ -95,7 +90,7 @@ describe('Content', () => {
       status: 'unavailable',
     })
 
-    const { container } = render(<Content />)
+    const { container } = renderWithStore(<Content />, store)
     expect(container).toBeEmptyDOMElement()
   })
 })

@@ -1,13 +1,8 @@
-import { render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
+import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
+import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { ChatViewport } from './ChatViewport'
-
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
 
 vi.mock('../runtime/ChatRuntime', () => ({
   chatRuntime: {
@@ -16,28 +11,35 @@ vi.mock('../runtime/ChatRuntime', () => ({
 }))
 
 describe('ChatViewport', () => {
+  const store = createTestStore()
   beforeEach(() => {
-    useChatSettingsStore.setState({ profile: DEFAULT_CHAT_PROFILE })
-    useChatEditorStore.getState().clear()
+    store.set(chatSettingsStateAtom, { ...store.get(chatSettingsStateAtom), profile: DEFAULT_CHAT_PROFILE })
+    store.set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
   })
 
   it('previews the editor draft without persisting it first', () => {
-    useChatEditorStore.getState().setDraftProfile({
-      ...DEFAULT_CHAT_PROFILE,
-      appearance: {
-        ...DEFAULT_CHAT_PROFILE.appearance,
-        backgroundColor: { r: 10, g: 20, b: 30, a: 0.4 },
+    store.set(editorSessionStateAtom, {
+      draftProfile: {
+        ...DEFAULT_CHAT_PROFILE,
+        appearance: {
+          ...DEFAULT_CHAT_PROFILE.appearance,
+          backgroundColor: { r: 10, g: 20, b: 30, a: 0.4 },
+        },
       },
+      past: [],
+      future: [],
+      activeGesture: null,
     })
 
-    const { container } = render(<ChatViewport loading={false} visible />)
+    const { container } = renderWithStore(<ChatViewport loading={false} visible />, store)
 
     expect(container.querySelector<HTMLElement>('[data-ylc-chat-background]')?.style.backgroundColor).toBe('rgba(10, 20, 30, 0.4)')
-    expect(useChatSettingsStore.getState().profile.appearance.backgroundColor).toEqual(DEFAULT_CHAT_PROFILE.appearance.backgroundColor)
+    expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual(DEFAULT_CHAT_PROFILE.appearance.backgroundColor)
   })
 
   it('keeps configured blur off the parent-page background layer', () => {
-    useChatSettingsStore.setState({
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
       profile: {
         ...DEFAULT_CHAT_PROFILE,
         appearance: {
@@ -47,7 +49,7 @@ describe('ChatViewport', () => {
       },
     })
 
-    const { container } = render(<ChatViewport loading={false} visible />)
+    const { container } = renderWithStore(<ChatViewport loading={false} visible />, store)
     const background = container.querySelector<HTMLElement>('[data-ylc-chat-background]')
 
     expect(background?.style.backdropFilter).toBe('')

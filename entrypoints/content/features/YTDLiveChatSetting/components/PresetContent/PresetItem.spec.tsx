@@ -1,35 +1,16 @@
-import { fireEvent, render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fireEvent } from '@testing-library/react'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { chatSettingsStateAtom } from '@/shared/state/atoms'
+import { renderWithStore } from '@/shared/state/testUtils'
 import { PresetItem } from './PresetItem'
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
-}))
-
-vi.mock('@dnd-kit/sortable', () => ({
-  useSortable: () => ({
-    attributes: {},
-    listeners: {},
-    setActivatorNodeRef: () => {},
-    setNodeRef: () => {},
-    transform: null,
-    transition: undefined,
-    isDragging: false,
-  }),
-}))
-
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
+const reorder = {
+  activeId: null,
+  getHandleProps: () => ({ onPointerDown: () => {}, onKeyDown: () => {} }),
+}
 
 const findPresetCard = (input: HTMLInputElement) => {
   const node = input.closest('.ylc-preset')
@@ -38,17 +19,19 @@ const findPresetCard = (input: HTMLInputElement) => {
 }
 
 describe('PresetItem', () => {
+  const store = createStore()
   beforeEach(() => {
-    useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
+    store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
   })
 
   it('deletes a custom preset after confirmation', async () => {
-    const profile = useChatSettingsStore.getState().profile
-    useChatSettingsStore.setState({
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...DEFAULT_CHAT_SETTINGS,
       presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Custom Preset', profile }],
     })
 
-    const { findByRole, findByText, getByDisplayValue } = render(<PresetItem id='custom' />)
+    const { findByRole, findByText, getByDisplayValue } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
 
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
@@ -59,18 +42,18 @@ describe('PresetItem', () => {
     expect(await findByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.nestedModal) })
     fireEvent.click(await findByText('content.preset.delete', { selector: 'button' }))
 
-    expect(useChatSettingsStore.getState().presets.some(preset => preset.id === 'custom')).toBe(false)
+    expect(store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'custom')).toBe(false)
   })
 
   it('renders built-in presets from the code catalog and prevents editing or deletion', () => {
-    const { getByDisplayValue, queryByRole } = render(<PresetItem id='standard' />)
+    const { getByDisplayValue, queryByRole } = renderWithStore(<PresetItem id='standard' reorder={reorder} />, store)
 
     expect((getByDisplayValue('content.preset.defaultTitle') as HTMLInputElement).readOnly).toBe(true)
     expect(queryByRole('button', { name: 'content.aria.deletePreset' })).toBeNull()
   })
 
   it('disables applying a missing preset', () => {
-    const { getByRole } = render(<PresetItem id='missing' />)
+    const { getByRole } = renderWithStore(<PresetItem id='missing' reorder={reorder} />, store)
     expect(getByRole('button', { name: 'content.aria.applyPreset' })).toBeDisabled()
   })
 })

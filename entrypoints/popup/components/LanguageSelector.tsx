@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import language_codes from '@/shared/i18n/language_codes.json'
+import { useLocaleCode, useT } from '@/shared/i18n/react'
+import { useAppRuntime } from '@/shared/runtime/AppProvider'
 import { sendActiveTabMessage } from '../utils/sendActiveTabMessage'
 
 const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
@@ -10,21 +11,23 @@ const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
 }))
 
 export const LanguageSelector = () => {
-  const { t, i18n } = useTranslation()
+  const t = useT()
+  const localeCode = useLocaleCode()
+  const runtime = useAppRuntime()
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const languageCode = resolveLanguageCode(e.target.value)
-      i18n.changeLanguage(languageCode)
+      void runtime.setLocale(languageCode)
       sendActiveTabMessage({
         message: 'language',
         language: languageCode,
       })
     },
-    [i18n],
+    [runtime],
   )
 
-  const selectedLanguage = resolveLanguageCode(i18n.resolvedLanguage ?? i18n.language)
+  const selectedLanguage = resolveLanguageCode(localeCode)
 
   return (
     <div className='ylc-theme-select-wrap ylc-action-fill'>

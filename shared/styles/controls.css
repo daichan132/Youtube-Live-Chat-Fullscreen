@@ -1912,3 +1912,15 @@ label.ylc-row:has(:focus-visible) {
     transform: none !important;
   }
 }
+/* Semantic controls and theme rules share one Tailwind component entrypoint. */
+@theme inline {
+  --color-canvas: var(--ylc-bg-canvas);
+  --color-surface: var(--ylc-bg-surface);
+  --color-surface-elevated: var(--ylc-bg-surface-elevated);
+  --color-fg: var(--ylc-text-primary);
+  --color-fg-secondary: var(--ylc-text-secondary);
+  --color-fg-muted: var(--ylc-text-muted);
+  --color-border: var(--ylc-border);
+  --color-accent: var(--ylc-accent);
+  --color-danger: var(--ylc-danger-border);
+}

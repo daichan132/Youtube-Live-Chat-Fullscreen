@@ -1,23 +1,9 @@
-import { fireEvent, render } from '@testing-library/react'
+import { fireEvent } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
+import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { YLCColorPicker } from './YLCColorPicker'
-
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
-}))
 
 vi.mock('./SettingColorPicker', () => ({
   SettingColorPicker: ({
@@ -48,39 +34,40 @@ vi.mock('./SettingColorPicker', () => ({
   ),
 }))
 
-const resetStore = () => {
-  useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
-}
+const store = createTestStore()
+const resetStore = () => store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
 
 describe('YLCColorPicker', () => {
   beforeEach(() => {
     resetStore()
-    useChatEditorStore.getState().clear()
+    store.set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
   })
 
   it('updates the background color setting and records one history entry', () => {
-    const profile = useChatSettingsStore.getState().profile
-    useChatSettingsStore.setState({
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
       profile: {
         ...profile,
         appearance: { ...profile.appearance, backgroundColor: { r: 1, g: 2, b: 3, a: 0.4 } },
       },
     })
 
-    const { getByRole } = render(<YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />)
+    const { getByRole } = renderWithStore(<YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />, store)
     const button = getByRole('button', { name: 'content.setting.backgroundColor' })
 
     expect(button.getAttribute('data-rgba')).toBe('1,2,3,0.4')
 
     fireEvent.click(button)
 
-    expect(useChatSettingsStore.getState().profile.appearance.backgroundColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
-    expect(useChatEditorStore.getState().past).toHaveLength(1)
+    expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
   })
 
   it('updates the font color setting without changing the background color setting', () => {
-    const profile = useChatSettingsStore.getState().profile
-    useChatSettingsStore.setState({
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
       profile: {
         ...profile,
         appearance: {
@@ -91,26 +78,29 @@ describe('YLCColorPicker', () => {
       },
     })
 
-    const { getByRole } = render(<YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />)
+    const { getByRole } = renderWithStore(<YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />, store)
     const button = getByRole('button', { name: 'content.setting.fontColor' })
 
     expect(button.getAttribute('data-rgba')).toBe('4,5,6,0.7')
 
     fireEvent.click(button)
 
-    expect(useChatSettingsStore.getState().profile.appearance.fontColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
-    expect(useChatSettingsStore.getState().profile.appearance.backgroundColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontColor).toEqual({ r: 9, g: 8, b: 7, a: 0.6 })
+    expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 1, g: 2, b: 3, a: 0.4 })
   })
 
   it('updates the membership name color setting', () => {
-    const { getByRole } = render(<YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' />)
+    const { getByRole } = renderWithStore(
+      <YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' />,
+      store,
+    )
     const button = getByRole('button', { name: 'content.setting.membershipNameColor' })
 
     expect(button.getAttribute('data-rgba')).toBe('15,157,88,1')
 
     fireEvent.click(button)
 
-    expect(useChatSettingsStore.getState().profile.appearance.membershipNameColor).toEqual({
+    expect(store.get(chatSettingsStateAtom).profile.appearance.membershipNameColor).toEqual({
       mode: 'custom',
       value: { r: 9, g: 8, b: 7, a: 0.6 },
     })

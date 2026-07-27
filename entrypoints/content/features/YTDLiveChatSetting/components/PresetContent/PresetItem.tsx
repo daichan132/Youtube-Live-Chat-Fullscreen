@@ -1,58 +1,52 @@
-import { useSortable } from '@dnd-kit/sortable'
-import { CSS } from '@dnd-kit/utilities'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useShallow } from 'zustand/react/shallow'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
+import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
 import type { ChatProfile } from '@/shared/settings/model'
-import { commitYLCProfile } from '../../styleHistoryCommands'
+import { deletePresetAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
+import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
 
 interface PresetItemType {
   id: string
+  reorder: {
+    activeId: string | null
+    getHandleProps: (id: string) => {
+      onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => void
+      onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void
+    }
+  }
 }
 
 const DELETE_MODAL_OVERLAY_STYLE = {
   zIndex: CONTENT_UI_LAYER.nestedModal,
 } as const
 
-export const PresetItem = ({ id }: PresetItemType) => {
-  const { preset, updatePresetName, deletePreset } = useChatSettingsStore(
-    useShallow(state => ({
-      preset: state.presets.find(entry => entry.id === id),
-      updatePresetName: state.updatePresetName,
-      deletePreset: state.deletePreset,
-    })),
-  )
+export const PresetItem = ({ id, reorder }: PresetItemType) => {
+  const preset = useAtomValue(presetsAtom).find(entry => entry.id === id)
+  const updatePresetName = useSetAtom(updatePresetNameAtom)
+  const deletePreset = useSetAtom(deletePresetAtom)
+  const { commitYLCProfile } = useStyleHistoryCommands()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
-  const { t } = useTranslation()
+  const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
   const displayTitle = preset?.kind === 'builtin' ? t(BUILTIN_PRESETS[preset.id].labelKey) : (preset?.name ?? '')
   const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
   const canApply = profile !== undefined
-  const { attributes, setActivatorNodeRef, listeners, setNodeRef, transform, isDragging, transition } = useSortable({
-    id: id,
-  })
+  const isDragging = reorder.activeId === id
   const updateStyle = useCallback((nextProfile: ChatProfile) => {
     commitYLCProfile(nextProfile, 'preset')
   }, [])
 
   return (
-    <div
-      className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`}
-      ref={setNodeRef}
-      style={{ transform: CSS.Translate.toString(transform), transition }}
-    >
+    <div className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`} data-ylc-preset-item={id}>
       <button
         type='button'
-        ref={setActivatorNodeRef}
         className={`ylc-preset-grip ${isDragging ? 'cursor-grabbing' : ''}`}
-        {...listeners}
-        {...attributes}
+        {...reorder.getHandleProps(id)}
         aria-label={t('content.aria.reorderPreset')}
       >
         <TbGripVertical size={20} aria-hidden='true' />
@@ -60,7 +54,7 @@ export const PresetItem = ({ id }: PresetItemType) => {
       <input
         type='text'
         value={displayTitle}
-        onChange={event => updatePresetName(id, event.target.value)}
+        onChange={event => updatePresetName({ id, name: event.target.value })}
         readOnly={isBuiltIn}
         aria-label={t('content.aria.presetName')}
         className='ylc-preset-name'

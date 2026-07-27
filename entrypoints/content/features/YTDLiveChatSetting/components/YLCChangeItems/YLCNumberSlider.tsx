@@ -1,9 +1,9 @@
+import { useAtomValue } from 'jotai'
 import type { CSSProperties } from 'react'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-
-import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
-import { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } from '../../styleHistoryCommands'
+import { useT } from '@/shared/i18n/react'
+import { effectiveProfileAtom } from '@/shared/state'
+import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 
 export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'spacing'
 
@@ -17,8 +17,9 @@ type YLCNumberSliderProps = {
 const RANGE_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'])
 
 export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSliderProps) => {
-  const { t } = useTranslation()
-  const storeValue = useEffectiveChatProfile().appearance[settingKey]
+  const t = useT()
+  const storeValue = useAtomValue(effectiveProfileAtom).appearance[settingKey]
+  const { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
   const gestureId = `range:${settingKey}`
 
   const value = Math.min(max, Math.max(min, storeValue))

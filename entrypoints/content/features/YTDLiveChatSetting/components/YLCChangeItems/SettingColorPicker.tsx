@@ -1,8 +1,8 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { RgbaColor } from 'react-colorful'
 import { RgbaColorPicker } from 'react-colorful'
-import { useTranslation } from 'react-i18next'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
+import { useT } from '@/shared/i18n/react'
 import type { RGBA } from '@/shared/settings/model'
 import { formatColorValue, getPreviewBorderColor, toRgba } from './colorUtils'
 import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
@@ -18,7 +18,7 @@ type SettingColorPickerProps = {
 const COLOR_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'])
 
 export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, onInteractionEnd }: SettingColorPickerProps) => {
-  const { t } = useTranslation()
+  const t = useT()
   const descriptionId = useId()
   const [display, setDisplay] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)

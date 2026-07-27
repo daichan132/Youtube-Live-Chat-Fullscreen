@@ -1,8 +1,8 @@
+import { useAtomValue } from 'jotai'
 import { type ReactNode, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
-import { isRTL } from '@/shared/i18n/rtl'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useLocaleDirection, useT } from '@/shared/i18n/react'
+import { themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { DataTransfer } from './components/DataTransfer'
 import { LanguageSelector } from './components/LanguageSelector'
@@ -21,8 +21,9 @@ type PopupItem = {
 }
 
 export const Popup = () => {
-  const { t, i18n } = useTranslation()
-  const themeMode = useGlobalSettingStore(state => state.themeMode)
+  const t = useT()
+  const direction = useLocaleDirection()
+  const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
 
   useEffect(() => {
@@ -82,7 +83,7 @@ export const Popup = () => {
   return (
     <div
       data-ylc-theme={resolvedThemeMode}
-      dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
+      dir={direction}
       className='flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
     >
       <div className='flex-grow ylc-theme-surface-muted py-2'>

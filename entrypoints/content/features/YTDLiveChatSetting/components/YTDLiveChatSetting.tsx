@@ -1,6 +1,5 @@
+import { useAtomValue } from 'jotai'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useChatEditorStore } from '@/entrypoints/content/settings/ChatEditorStore'
 import {
   type IconType,
   RiCloseLine,
@@ -12,11 +11,11 @@ import {
   TbSettings2,
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
-import { isRTL } from '@/shared/i18n/rtl'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useLocaleDirection, useT } from '@/shared/i18n/react'
+import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
-import { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } from '../styleHistoryCommands'
+import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
@@ -27,14 +26,16 @@ type YTDLiveChatSettingProps = {
 }
 
 export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
-  const themeMode = useGlobalSettingStore(state => state.themeMode)
+  const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
-  const { t, i18n } = useTranslation()
+  const t = useT()
+  const direction = useLocaleDirection()
   const tablistRef = useRef<HTMLDivElement>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
-  const canUndo = useChatEditorStore(state => state.past.length > 0)
-  const canRedo = useChatEditorStore(state => state.future.length > 0)
+  const canUndo = useAtomValue(canUndoAtom)
+  const canRedo = useAtomValue(canRedoAtom)
+  const { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } = useStyleHistoryCommands()
 
   const focusActiveTab = useCallback(() => {
     const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
@@ -147,7 +148,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     >
       <div
         data-ylc-theme={resolvedThemeMode}
-        dir={isRTL(i18n.language) ? 'rtl' : 'ltr'}
+        dir={direction}
         className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={handlePanelKeyDown}

@@ -1,9 +1,10 @@
+import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import type { RgbaColor } from 'react-colorful'
-import { useTranslation } from 'react-i18next'
-import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
+import { useT } from '@/shared/i18n/react'
 import { LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/settings/defaults'
-import { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } from '../../styleHistoryCommands'
+import { effectiveProfileAtom } from '@/shared/state'
+import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { fromRgba } from './colorUtils'
 import { SettingColorPicker } from './SettingColorPicker'
 
@@ -15,8 +16,9 @@ type YLCColorPickerProps = {
 }
 
 export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) => {
-  const { t } = useTranslation()
-  const appearance = useEffectiveChatProfile().appearance
+  const t = useT()
+  const appearance = useAtomValue(effectiveProfileAtom).appearance
+  const { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
   const rgba =
     settingKey === 'membershipNameColor'
       ? appearance.membershipNameColor.mode === 'custom'

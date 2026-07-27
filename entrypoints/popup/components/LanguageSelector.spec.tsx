@@ -2,24 +2,13 @@ import { fireEvent, render } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { LanguageSelector } from './LanguageSelector'
 
-const { changeLanguage, sendActiveTabMessage } = vi.hoisted(() => ({
-  changeLanguage: vi.fn(),
+const { setLocale, sendActiveTabMessage } = vi.hoisted(() => ({
+  setLocale: vi.fn(),
   sendActiveTabMessage: vi.fn(),
 }))
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: {
-      language: 'en',
-      resolvedLanguage: 'en',
-      changeLanguage,
-    },
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
+vi.mock('@/shared/runtime/AppProvider', () => ({
+  useAppRuntime: () => ({ setLocale }),
 }))
 
 vi.mock('../utils/sendActiveTabMessage', () => ({
@@ -28,7 +17,7 @@ vi.mock('../utils/sendActiveTabMessage', () => ({
 
 describe('LanguageSelector', () => {
   beforeEach(() => {
-    changeLanguage.mockClear()
+    setLocale.mockClear()
     sendActiveTabMessage.mockClear()
   })
 
@@ -37,7 +26,7 @@ describe('LanguageSelector', () => {
 
     fireEvent.change(getByRole('combobox', { name: 'content.aria.selectLanguage' }), { target: { value: 'pt_BR' } })
 
-    expect(changeLanguage).toHaveBeenCalledWith('pt_BR')
+    expect(setLocale).toHaveBeenCalledWith('pt_BR')
     expect(sendActiveTabMessage).toHaveBeenCalledWith({ message: 'language', language: 'pt_BR' })
   })
 })

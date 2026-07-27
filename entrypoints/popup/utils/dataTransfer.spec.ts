@@ -1,28 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import { buildExportData, isValidImportData, persistImportedSettings, sanitizeChatSettings, sanitizeGlobalSetting } from './dataTransfer'
+import { chatSettingsStateAtom } from '@/shared/state/atoms'
+import { buildExportData, isValidImportData, normalizeImport, sanitizeChatSettings, sanitizeGlobalSetting } from './dataTransfer'
 
-const storageSet = vi.hoisted(() => vi.fn())
-
-vi.mock('wxt/browser', () => ({
-  browser: {
-    storage: {
-      local: {
-        set: storageSet,
-      },
-    },
-  },
-}))
-
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
+const store = createStore()
 
 describe('backup validation', () => {
   it('accepts v2 and legacy v1 backups', () => {
-    expect(isValidImportData({ version: 2, exportedAt: '', globalSetting: {}, chatSettings: {} })).toBe(true)
-    expect(isValidImportData({ version: 1, exportedAt: '', globalSetting: {}, ytdLiveChat: {} })).toBe(true)
+    expect(isValidImportData(store, { version: 2, exportedAt: '', globalSetting: {}, chatSettings: {} })).toBe(true)
+    expect(isValidImportData(store, { version: 1, exportedAt: '', globalSetting: {}, ytdLiveChat: {} })).toBe(true)
   })
 
   it.each([
@@ -34,7 +21,7 @@ describe('backup validation', () => {
     { version: 3, globalSetting: {}, chatSettings: {} },
     { version: 2, globalSetting: {} },
   ])('rejects %j', input => {
-    expect(isValidImportData(input)).toBe(false)
+    expect(isValidImportData(store, input)).toBe(false)
   })
 })
 
@@ -47,7 +34,7 @@ describe('sanitizers', () => {
   })
 
   it('normalizes v7 nested settings', () => {
-    const result = sanitizeChatSettings({
+    const result = sanitizeChatSettings(store, {
       profile: {
         appearance: {
           backgroundColor: { r: -1, g: 20, b: 300 },
@@ -73,20 +60,18 @@ describe('sanitizers', () => {
 
 describe('export and persistence', () => {
   beforeEach(() => {
-    storageSet.mockReset()
-    storageSet.mockResolvedValue(undefined)
-    useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
+    store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
   })
 
   it('exports the current schema without legacy collections', () => {
-    const exported = buildExportData()
+    const exported = buildExportData(store)
     expect(exported.version).toBe(2)
     expect(exported.chatSettings).toEqual(DEFAULT_CHAT_SETTINGS)
     expect(exported).not.toHaveProperty('ytdLiveChat')
   })
 
-  it('awaits v7 normalized writes', async () => {
-    await persistImportedSettings({
+  it('normalizes legacy data before the runtime persists it', () => {
+    const normalized = normalizeImport(store, {
       version: 1,
       exportedAt: '',
       globalSetting: { themeMode: 'dark' },
@@ -94,24 +79,7 @@ describe('export and persistence', () => {
         bgColor: { r: 10, g: 20, b: 30 },
       },
     })
-
-    expect(storageSet).toHaveBeenCalledTimes(1)
-    const persisted = storageSet.mock.calls[0]?.[0] as Record<string, string>
-    expect(JSON.parse(persisted.globalSettingStore ?? '')).toMatchObject({
-      version: 1,
-      state: { themeMode: 'dark' },
-    })
-    expect(JSON.parse(persisted.ytdLiveChatStore ?? '')).toMatchObject({
-      version: 7,
-      state: {
-        profile: {
-          appearance: {
-            backgroundColor: { r: 10, g: 20, b: 30, a: 1 },
-          },
-        },
-        geometry: {},
-        presets: DEFAULT_CHAT_SETTINGS.presets,
-      },
-    })
+    expect(normalized.globalSetting.themeMode).toBe('dark')
+    expect(normalized.chatSettings.profile.appearance.backgroundColor).toEqual({ r: 10, g: 20, b: 30, a: 1 })
   })
 })

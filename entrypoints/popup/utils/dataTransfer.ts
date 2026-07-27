@@ -1,70 +1,25 @@
-import { browser } from 'wxt/browser'
-import { buildSettingsBackup, type NormalizedSettingsBackup, normalizeSettingsBackup } from '@/shared/settings/backup'
-import { getPersistedChatSettings, useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
-import type { ChatSettings } from '@/shared/settings/model'
+import type { Store } from 'jotai/vanilla/store'
+import { buildSettingsBackup, normalizeSettingsBackup, type SettingsBackup } from '@/shared/settings/backup'
 import { normalizeChatSettings, normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
-import { GLOBAL_SETTING_PERSIST, YTD_LIVE_CHAT_PERSIST } from '@/shared/settings/persistConfig'
-import { useGlobalSettingStore } from '@/shared/stores/globalSettingStore'
+import { chatSettingsStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 
-const extractGlobalSettingData = () => {
-  const { ytdLiveChat, themeMode } = useGlobalSettingStore.getState()
-  return { ytdLiveChat, themeMode }
-}
+export type ExportData = SettingsBackup
 
-const extractChatSettings = () => getPersistedChatSettings(useChatSettingsStore.getState())
-
-export type ExportData = {
-  version: 2
-  exportedAt: string
-  globalSetting: Record<string, unknown>
-  chatSettings: ChatSettings
-}
-
-export type LegacyExportData = {
-  version: 1
-  exportedAt?: string
-  globalSetting: Record<string, unknown>
-  ytdLiveChat: Record<string, unknown>
-}
-
-export type ImportData = ExportData | LegacyExportData
-
-const currentSettings = () => ({
-  globalSetting: extractGlobalSettingData(),
-  chatSettings: extractChatSettings(),
+export const currentSettings = (store: Store) => ({
+  globalSetting: store.get(globalSettingsStateAtom),
+  chatSettings: store.get(chatSettingsStateAtom),
 })
 
-export const isValidImportData = (data: unknown): data is ImportData => normalizeSettingsBackup(data, currentSettings()) !== null
+export const isValidImportData = (store: Store, data: unknown): boolean => normalizeSettingsBackup(data, currentSettings(store)) !== null
 
-export const sanitizeGlobalSetting = (raw: Record<string, unknown>) => normalizeGlobalSetting(raw)
+export const buildExportData = (store: Store): ExportData => buildSettingsBackup(currentSettings(store))
 
-export const sanitizeChatSettings = (raw: Record<string, unknown>) => normalizeChatSettings(raw, extractChatSettings())
+export const sanitizeGlobalSetting = (input: Record<string, unknown>) => normalizeGlobalSetting(input)
+export const sanitizeChatSettings = (store: Store, input: Record<string, unknown>) =>
+  normalizeChatSettings(input, currentSettings(store).chatSettings)
 
-export const buildExportData = (): ExportData => buildSettingsBackup(currentSettings())
-
-const normalizeImport = (importData: unknown): NormalizedSettingsBackup => {
-  const normalized = normalizeSettingsBackup(importData, currentSettings())
-  if (!normalized) {
-    const version =
-      importData !== null && typeof importData === 'object' && 'version' in importData
-        ? (importData as { version?: unknown }).version
-        : undefined
-    throw new Error(`Unsupported settings backup version: ${String(version)}`)
-  }
+export const normalizeImport = (store: Store, input: unknown) => {
+  const normalized = normalizeSettingsBackup(input, currentSettings(store))
+  if (!normalized) throw new Error('Unsupported settings backup')
   return normalized
-}
-
-export const persistImportedSettings = async (importData: unknown) => {
-  const normalized = normalizeImport(importData)
-
-  await browser.storage.local.set({
-    [GLOBAL_SETTING_PERSIST.key]: JSON.stringify({
-      state: normalized.globalSetting,
-      version: GLOBAL_SETTING_PERSIST.version,
-    }),
-    [YTD_LIVE_CHAT_PERSIST.key]: JSON.stringify({
-      state: normalized.chatSettings,
-      version: YTD_LIVE_CHAT_PERSIST.version,
-    }),
-  })
 }

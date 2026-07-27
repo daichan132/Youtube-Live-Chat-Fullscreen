@@ -1,11 +1,12 @@
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback } from 'react'
 import { ThemeModeSegmentedControl } from '@/shared/components/ThemeModeSegmentedControl'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { setThemeModeAtom, themeModeAtom } from '@/shared/state'
 import type { ThemeMode } from '@/shared/theme'
 
 export const ThemeModeSelector = () => {
-  const themeMode = useGlobalSettingStore(state => state.themeMode)
-  const setThemeMode = useGlobalSettingStore(state => state.setThemeMode)
+  const themeMode = useAtomValue(themeModeAtom)
+  const setThemeMode = useSetAtom(setThemeModeAtom)
 
   const handleThemeChange = useCallback(
     (nextThemeMode: ThemeMode) => {

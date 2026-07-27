@@ -2,13 +2,22 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { Popup } from './Popup'
-import '@/shared/i18n/config'
-import '@/shared/styles/theme.css'
-import 'uno.css'
 import './main.css'
+import { AppProvider } from '@/shared/runtime/AppProvider'
+import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 
-createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Popup />
-  </React.StrictMode>,
-)
+const main = async () => {
+  const rootElement = document.getElementById('root')
+  if (!rootElement) throw new Error('Popup root was not found')
+  const runtime = await createAppRuntime()
+  createRoot(rootElement).render(
+    <React.StrictMode>
+      <AppProvider runtime={runtime}>
+        <Popup />
+      </AppProvider>
+    </React.StrictMode>,
+  )
+  window.addEventListener('unload', () => runtime.dispose(), { once: true })
+}
+
+void main()

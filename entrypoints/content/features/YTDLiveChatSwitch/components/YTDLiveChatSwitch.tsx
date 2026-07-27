@@ -1,8 +1,9 @@
+import { useAtomValue, useSetAtom } from 'jotai'
 import type { CSSProperties } from 'react'
 import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
 import { IoChatboxSharp } from '@/shared/components/icons'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { useT } from '@/shared/i18n/react'
+import { setYTDLiveChatEnabledAtom, ytdLiveChatEnabledAtom } from '@/shared/state'
 
 const SWITCH_BUTTON_BASE_STYLE: CSSProperties = {
   display: 'flex',
@@ -38,13 +39,12 @@ const ACTIVE_INDICATOR_STYLE: CSSProperties = {
 }
 
 export const YTDLiveChatSwitch = () => {
-  const { t } = useTranslation()
-  const ytdLiveChat = useGlobalSettingStore(state => state.ytdLiveChat)
-  const setYTDLiveChat = useGlobalSettingStore(state => state.setYTDLiveChat)
+  const t = useT()
+  const ytdLiveChat = useAtomValue(ytdLiveChatEnabledAtom)
+  const setYTDLiveChat = useSetAtom(setYTDLiveChatEnabledAtom)
   const handleClick = useCallback(() => {
-    const current = useGlobalSettingStore.getState().ytdLiveChat
-    setYTDLiveChat(!current)
-  }, [setYTDLiveChat])
+    setYTDLiveChat(!ytdLiveChat)
+  }, [setYTDLiveChat, ytdLiveChat])
   const isActive = ytdLiveChat
 
   return (

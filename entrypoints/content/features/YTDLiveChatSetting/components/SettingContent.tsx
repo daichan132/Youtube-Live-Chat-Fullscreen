@@ -1,6 +1,5 @@
+import { useAtomValue } from 'jotai'
 import { type ReactNode, useId } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
 import {
   type IconType,
   TbBlur,
@@ -18,8 +17,10 @@ import {
   TbUserCircle,
 } from '@/shared/components/icons'
 import { Switch } from '@/shared/components/Switch'
+import { useT } from '@/shared/i18n/react'
+import { effectiveProfileAtom } from '@/shared/state'
 import { cn } from '@/shared/utils/cn'
-import { commitYLCStyleUpdate } from '../styleHistoryCommands'
+import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
 import { YLCNumberSlider } from './YLCChangeItems/YLCNumberSlider'
@@ -97,7 +98,8 @@ const ToggleSettingSwitch = ({
   onCheckedChange?: (checked: boolean) => void
 }) => {
   const id = useId()
-  const profile = useEffectiveChatProfile()
+  const profile = useAtomValue(effectiveProfileAtom)
+  const { commitYLCStyleUpdate } = useStyleHistoryCommands()
   const checked =
     settingKey === 'idleVisibility'
       ? profile.display.idleVisibility === 'always-visible'
@@ -139,8 +141,10 @@ const DisplayToggleSettingSwitch = ({
 }
 
 const MembershipNameColorSetting = () => {
-  const { t } = useTranslation()
-  const membershipNameColor = useEffectiveChatProfile().appearance.membershipNameColor
+  const profile = useAtomValue(effectiveProfileAtom)
+  const { commitYLCStyleUpdate } = useStyleHistoryCommands()
+  const t = useT()
+  const membershipNameColor = profile.appearance.membershipNameColor
   const isDefault = membershipNameColor.mode === 'youtube-default'
 
   const resetToDefault = () => {
@@ -167,7 +171,7 @@ const MembershipNameColorSetting = () => {
 }
 
 export const SettingContent = () => {
-  const { t } = useTranslation()
+  const t = useT()
 
   return (
     <>

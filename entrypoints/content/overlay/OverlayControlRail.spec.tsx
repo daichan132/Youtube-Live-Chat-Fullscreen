@@ -1,9 +1,6 @@
-import type { DraggableAttributes } from '@dnd-kit/core'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { OverlayControlRail } from './OverlayControlRail'
-
-const DRAG_ATTRIBUTES = {} as DraggableAttributes
 
 describe('OverlayControlRail', () => {
   it('preserves semantic settings and drag controls inside an RTL surface', () => {
@@ -14,8 +11,6 @@ describe('OverlayControlRail', () => {
     render(
       <div dir='rtl'>
         <OverlayControlRail
-          attributes={DRAG_ATTRIBUTES}
-          listeners={{}}
           isDragging={false}
           isReady
           isVisible
@@ -23,6 +18,8 @@ describe('OverlayControlRail', () => {
           backgroundColor={{ r: 1, g: 2, b: 3, a: 0.5 }}
           fontColor={{ r: 4, g: 5, b: 6, a: 0.8 }}
           onSettingsClick={onSettingsClick}
+          onPointerDown={() => {}}
+          onKeyDown={() => {}}
           onEnterControls={onEnterControls}
           onLeaveControls={onLeaveControls}
         />
@@ -49,8 +46,6 @@ describe('OverlayControlRail', () => {
   it('removes hidden controls from keyboard navigation until the runtime is ready', () => {
     render(
       <OverlayControlRail
-        attributes={DRAG_ATTRIBUTES}
-        listeners={{}}
         isDragging={false}
         isReady={false}
         isVisible
@@ -58,6 +53,8 @@ describe('OverlayControlRail', () => {
         backgroundColor={{ r: 0, g: 0, b: 0, a: 0 }}
         fontColor={{ r: 255, g: 255, b: 255, a: 1 }}
         onSettingsClick={() => {}}
+        onPointerDown={() => {}}
+        onKeyDown={() => {}}
         onEnterControls={() => {}}
         onLeaveControls={() => {}}
       />,

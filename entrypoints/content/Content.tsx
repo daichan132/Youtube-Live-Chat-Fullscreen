@@ -1,15 +1,13 @@
+import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { effectiveProfileAtom, themeModeAtom, ytdLiveChatEnabledAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
 import { useContentRuntimeMessages } from './hooks/globalState/useContentRuntimeMessages'
-import { useSettingsStorageSync } from './hooks/globalState/useSettingsStorageSync'
 import { chatRuntime } from './runtime/ChatRuntime'
 import { useChatRuntime } from './runtime/useChatRuntime'
-import { useChatEditorStore } from './settings/ChatEditorStore'
 import { YTDLiveChat } from './YTDLiveChat'
 
 const OVERLAY_STYLE = {
@@ -19,14 +17,11 @@ const OVERLAY_STYLE = {
 
 export const Content = () => {
   useContentRuntimeMessages()
-  useSettingsStorageSync()
 
-  const themeMode = useGlobalSettingStore(state => state.themeMode)
+  const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const enabled = useGlobalSettingStore(state => state.ytdLiveChat)
-  const profile = useChatSettingsStore(state => state.profile)
-  const draftProfile = useChatEditorStore(state => state.draftProfile)
-  const effectiveProfile = draftProfile ?? profile
+  const enabled = useAtomValue(ytdLiveChatEnabledAtom)
+  const effectiveProfile = useAtomValue(effectiveProfileAtom)
   const runtimeView = useChatRuntime()
 
   useEffect(() => {

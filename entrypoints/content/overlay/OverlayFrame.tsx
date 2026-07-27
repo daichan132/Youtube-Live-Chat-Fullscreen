@@ -1,40 +1,20 @@
-import { DndContext, type DragCancelEvent, type DragEndEvent, useDraggable } from '@dnd-kit/core'
-import { restrictToWindowEdges } from '@dnd-kit/modifiers'
-import { type HandleStyles, Resizable } from 're-resizable'
-import { type CSSProperties, type ReactNode, useEffect, useRef } from 'react'
+import { useAtomValue } from 'jotai'
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef } from 'react'
 import { useDocumentFocus } from '@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus'
-import { useEffectiveChatProfile } from '@/entrypoints/content/settings/ChatEditorStore'
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
-import type { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { effectiveProfileAtom } from '@/shared/state'
 import { getControlRailTop } from '../features/Draggable/hooks/clipGeometry'
-import { getDraggableItemStyles } from '../features/Draggable/hooks/draggableItemStyles'
 import { ChatSurface } from './ChatSurface'
 import { OverlayControlRail } from './OverlayControlRail'
+import { ResizeHandles } from './ResizeHandles'
 import { useOverlayGeometry } from './useOverlayGeometry'
 import { useOverlayInteraction } from './useOverlayInteraction'
 
-const DRAG_MODIFIERS = [restrictToWindowEdges]
 const CONTROL_RAIL_GAP = 6
 const CONTROL_RAIL_HEIGHT = 46
 const CONTROL_VIEWPORT_PADDING = 4
 const CONTROL_HOVER_BRIDGE_OVERLAP = 12
 const CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM = 12
-const RESIZE_HANDLE_POINTER_STYLE: CSSProperties = {
-  pointerEvents: 'auto',
-  zIndex: CHAT_PANEL_LAYER.interactionOverlay,
-}
-const RESIZE_HANDLE_STYLES: HandleStyles = {
-  top: RESIZE_HANDLE_POINTER_STYLE,
-  right: RESIZE_HANDLE_POINTER_STYLE,
-  bottom: RESIZE_HANDLE_POINTER_STYLE,
-  left: RESIZE_HANDLE_POINTER_STYLE,
-  topRight: RESIZE_HANDLE_POINTER_STYLE,
-  bottomRight: RESIZE_HANDLE_POINTER_STYLE,
-  bottomLeft: RESIZE_HANDLE_POINTER_STYLE,
-  topLeft: RESIZE_HANDLE_POINTER_STYLE,
-}
-const RESIZE_HANDLE_WRAPPER_STYLE: CSSProperties = { pointerEvents: 'none' }
 
 export type OverlayFrameProps = {
   children: ReactNode
@@ -46,28 +26,28 @@ export type OverlayFrameProps = {
   onInteractionStateChange?: (state: ReturnType<typeof useOverlayInteraction>['state']) => void
 }
 
-type OverlayFrameContentProps = Pick<OverlayFrameProps, 'children' | 'ready' | 'onOpenSettings'> & {
-  profile: ReturnType<typeof useChatSettingsStore.getState>['profile']
-  geometry: ReturnType<typeof useOverlayGeometry>
-  interaction: ReturnType<typeof useOverlayInteraction>
-}
-
-const OverlayFrameContent = ({
+export const OverlayFrame = ({
   children,
   ready = true,
+  initialDisplayOnMount = false,
+  settingsOpen = false,
   onOpenSettings = () => {},
-  profile,
-  geometry,
-  interaction,
-}: OverlayFrameContentProps) => {
-  const { attributes, isDragging, listeners, setNodeRef, transform } = useDraggable({ id: 'wrapper' })
-
-  const { coordinates, size } = geometry.displayGeometry
-  const { frameStyle, resizableStyle, innerDivStyle } = getDraggableItemStyles({
-    top: coordinates.y,
-    left: coordinates.x,
-    transform,
+  onChatVisibilityChange,
+  onInteractionStateChange,
+}: OverlayFrameProps) => {
+  const profile = useAtomValue(effectiveProfileAtom)
+  const documentFocused = useDocumentFocus()
+  const interaction = useOverlayInteraction({
+    initialDisplayOnMount,
+    settingsOpen,
+    documentFocused,
+    alwaysVisible: profile.display.idleVisibility === 'always-visible',
   })
+  const geometry = useOverlayGeometry({
+    onGestureStart: type => (type === 'resize' ? interaction.startResizing() : interaction.startDragging()),
+    onGestureEnd: interaction.finishDragging,
+  })
+  const { coordinates, size } = geometry.displayGeometry
   const controlRailTop = getControlRailTop({
     chatHeight: size.height,
     containerTop: coordinates.y,
@@ -77,9 +57,7 @@ const OverlayFrameContent = ({
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
   const lastVisibleControlRailPlacementRef = useRef({ top: controlRailTop, right: 0 })
-  if (interaction.controlsVisible) {
-    lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
-  }
+  if (interaction.controlsVisible) lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
   const controlRailPlacement = interaction.controlsVisible ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
   const controlHoverBridgeTop = Math.max(0, size.height - CONTROL_HOVER_BRIDGE_OVERLAP)
   const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
@@ -92,38 +70,47 @@ const OverlayFrameContent = ({
     pointerEvents: interaction.state === 'resizing' ? 'none' : 'auto',
     zIndex: CHAT_PANEL_LAYER.hoverBridge,
   }
+  const frameStyle = useMemo<CSSProperties>(
+    () => ({ left: coordinates.x, top: coordinates.y, width: size.width, height: size.height, pointerEvents: 'auto' }),
+    [coordinates.x, coordinates.y, size.height, size.width],
+  )
+
+  useEffect(() => onChatVisibilityChange?.(interaction.chatVisible), [interaction.chatVisible, onChatVisibilityChange])
+  useEffect(() => onInteractionStateChange?.(interaction.state), [interaction.state, onInteractionStateChange])
+
+  const handleKeyboardMove = (event: KeyboardEvent<HTMLElement>) => {
+    if (
+      !event.altKey &&
+      !event.ctrlKey &&
+      !event.metaKey &&
+      !event.shiftKey &&
+      ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)
+    ) {
+      event.preventDefault()
+      const delta =
+        event.key === 'ArrowUp'
+          ? { x: 0, y: -10 }
+          : event.key === 'ArrowDown'
+            ? { x: 0, y: 10 }
+            : event.key === 'ArrowLeft'
+              ? { x: -10, y: 0 }
+              : { x: 10, y: 0 }
+      geometry.moveByKeyboard(delta)
+    }
+  }
 
   return (
-    <div role='application'>
-      <Resizable
-        size={size}
-        minWidth={ResizableMinWidth}
-        minHeight={ResizableMinHeight}
-        data-ylc-resizable
-        className='absolute'
-        onResizeStart={() => {
-          interaction.startResizing()
-          geometry.startResizing()
-        }}
-        onResize={geometry.resize}
-        onResizeStop={(event, direction, element, delta) => {
-          geometry.finishResizing(event, direction, element, delta)
-          interaction.finishResizing()
-        }}
-        handleStyles={RESIZE_HANDLE_STYLES}
-        handleWrapperStyle={RESIZE_HANDLE_WRAPPER_STYLE}
-        style={{ ...resizableStyle, pointerEvents: resizableStyle.pointerEvents as CSSProperties['pointerEvents'] }}
-      >
-        <div ref={setNodeRef} data-ylc-draggable-frame className='relative h-full w-full' style={frameStyle}>
+    <div className='absolute inset-0 overflow-hidden' style={{ pointerEvents: 'none' }}>
+      <div role='application' data-ylc-resizable className='absolute' style={frameStyle}>
+        <div data-ylc-draggable-frame className='relative h-full w-full'>
           <ChatSurface
-            innerStyle={innerDivStyle}
-            isDragging={isDragging}
+            innerStyle={{ overflow: 'hidden', borderRadius: 6 }}
+            isDragging={interaction.state === 'dragging'}
             onEnterChat={interaction.enterChat}
             onLeaveChat={interaction.leaveChat}
           >
             {children}
           </ChatSurface>
-
           {controlHoverBridgeHeight > 0 ? (
             // biome-ignore lint/a11y/noStaticElementInteractions: This transparent bridge preserves hover between chat and controls.
             <div
@@ -135,69 +122,24 @@ const OverlayFrameContent = ({
               onMouseLeave={interaction.leaveControls}
             />
           ) : null}
-
+          <ResizeHandles onPointerDown={geometry.onPointerDown} />
           <OverlayControlRail
-            attributes={attributes}
-            listeners={listeners}
-            isDragging={isDragging}
+            isDragging={interaction.state === 'dragging'}
             isReady={ready}
             isVisible={interaction.controlsVisible}
             placement={controlRailPlacement}
             backgroundColor={profile.appearance.backgroundColor}
             fontColor={profile.appearance.fontColor}
             onSettingsClick={onOpenSettings}
+            onPointerDown={event => {
+              geometry.onPointerDown(event)
+            }}
+            onKeyDown={handleKeyboardMove}
             onEnterControls={interaction.enterControls}
             onLeaveControls={interaction.leaveControls}
           />
         </div>
-      </Resizable>
-    </div>
-  )
-}
-
-export const OverlayFrame = (props: OverlayFrameProps) => {
-  const profile = useEffectiveChatProfile()
-  const geometry = useOverlayGeometry()
-  const documentFocused = useDocumentFocus()
-  const interaction = useOverlayInteraction({
-    initialDisplayOnMount: props.initialDisplayOnMount ?? false,
-    settingsOpen: props.settingsOpen ?? false,
-    documentFocused,
-    alwaysVisible: profile.display.idleVisibility === 'always-visible',
-  })
-
-  useEffect(() => {
-    props.onChatVisibilityChange?.(interaction.chatVisible)
-  }, [interaction.chatVisible, props.onChatVisibilityChange])
-
-  useEffect(() => {
-    props.onInteractionStateChange?.(interaction.state)
-  }, [interaction.state, props.onInteractionStateChange])
-
-  return (
-    <div className='absolute overflow-hidden top-0 left-0 w-screen h-screen' style={{ pointerEvents: 'none' }}>
-      <DndContext
-        onDragStart={interaction.startDragging}
-        onDragEnd={(event: DragEndEvent) => {
-          geometry.finishDragging(event)
-          interaction.finishDragging()
-        }}
-        onDragCancel={(_event: DragCancelEvent) => {
-          // dnd-kit owns the transient transform and clears it on cancel. No
-          // persistent geometry write is needed.
-          interaction.finishDragging()
-        }}
-        modifiers={DRAG_MODIFIERS}
-      >
-        <OverlayFrameContent
-          children={props.children}
-          ready={props.ready}
-          onOpenSettings={props.onOpenSettings}
-          profile={profile}
-          geometry={geometry}
-          interaction={interaction}
-        />
-      </DndContext>
+      </div>
     </div>
   )
 }

@@ -27,6 +27,8 @@ jobs:
         run: node scripts/verify/check-lockfile-age.mjs --base "origin/${{ github.base_ref }}"
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Check generated locales
+        run: yarn locales:check
       - name: Check source
         run: yarn check
       - name: Run unit tests
@@ -35,6 +37,11 @@ jobs:
         run: yarn build
       - name: Build Firefox extension
         run: yarn build:firefox
+      - name: Package and gate extension size
+        run: |
+          yarn zip
+          yarn zip:firefox
+          node scripts/verify/check-package-size.mjs
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
       - name: Run deterministic end-to-end tests

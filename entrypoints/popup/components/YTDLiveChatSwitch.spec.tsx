@@ -1,24 +1,22 @@
-import { fireEvent, render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useGlobalSettingStore } from '@/shared/stores'
+import { fireEvent } from '@testing-library/react'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
+import { globalSettingsStateAtom } from '@/shared/state/atoms'
+import { renderWithStore } from '@/shared/state/testUtils'
 import { YTDLiveChatSwitch } from './YTDLiveChatSwitch'
 
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
-const baseState = useGlobalSettingStore.getState()
+const store = createStore()
 
 describe('YTDLiveChatSwitch', () => {
   beforeEach(() => {
-    useGlobalSettingStore.setState(baseState, true)
+    store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
   })
 
   it('updates the persisted global toggle', () => {
-    const { getByRole } = render(<YTDLiveChatSwitch />)
+    const { getByRole } = renderWithStore(<YTDLiveChatSwitch />, store)
 
     fireEvent.click(getByRole('switch'))
 
-    expect(useGlobalSettingStore.getState().ytdLiveChat).toBe(false)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(false)
   })
 })

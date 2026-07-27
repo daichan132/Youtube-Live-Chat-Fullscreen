@@ -1,27 +1,9 @@
-import { fireEvent, render, waitFor } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { fireEvent, waitFor } from '@testing-library/react'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { chatSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
+import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { FontFamilyInput } from './FontFamilyInput'
-
-const translate = (key: string) => {
-  if (key === 'content.preset.defaultTitle') return 'Default'
-  return key
-}
-
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: translate,
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
-}))
 
 const dispatchMouseDown = (target: EventTarget, path: EventTarget[]) => {
   const outsideEvent = new MouseEvent('mousedown', { bubbles: true })
@@ -31,8 +13,10 @@ const dispatchMouseDown = (target: EventTarget, path: EventTarget[]) => {
   target.dispatchEvent(outsideEvent)
 }
 
+const store = createTestStore()
+
 const resetStore = (fontFamily: string | null = null) => {
-  useChatSettingsStore.setState({
+  store.set(chatSettingsStateAtom, {
     ...DEFAULT_CHAT_SETTINGS,
     profile: {
       ...DEFAULT_CHAT_SETTINGS.profile,
@@ -46,7 +30,7 @@ const resetStore = (fontFamily: string | null = null) => {
 
 const renderFontFamilyInput = (fontFamily = '') => {
   resetStore(fontFamily || null)
-  return render(<FontFamilyInput />)
+  return renderWithStore(<FontFamilyInput />, store)
 }
 
 describe('FontFamilyInput', () => {
@@ -85,7 +69,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'Roboto Slab' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto Slab')
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
   })
 
   it('commits default when no option matches and Enter is pressed', () => {
@@ -95,7 +79,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'My Custom Font' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBeNull()
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBeNull()
   })
 
   it('normalizes a case-insensitive font input before committing', () => {
@@ -105,7 +89,7 @@ describe('FontFamilyInput', () => {
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'roboto' } })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto')
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')
   })
 
   it('supports arrow navigation before Enter selection', async () => {
@@ -119,7 +103,7 @@ describe('FontFamilyInput', () => {
     })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
-    expect(useChatSettingsStore.getState().profile.appearance.fontFamily).toBe('Roboto')
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')
   })
 
   it('closes the menu with Escape and outside click', async () => {
@@ -138,6 +122,10 @@ describe('FontFamilyInput', () => {
   })
 
   it('shows default label for invalid stored value', () => {
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: { ...store.get(localeStateAtom).messages, 'content.preset.defaultTitle': 'Default' },
+    })
     const { getByRole } = renderFontFamilyInput('NotInListFont')
 
     const trigger = getByRole('button', { name: 'content.setting.fontFamily' })

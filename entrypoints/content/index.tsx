@@ -1,16 +1,17 @@
 import { createRoot } from 'react-dom/client'
 
 import { Content } from './Content'
-import '@/shared/i18n/config'
-import '@/shared/styles/theme.css'
 import '@/shared/styles/react-colorful.css'
-import 'uno.css'
+import './content.css'
+import { AppProvider } from '@/shared/runtime/AppProvider'
+import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 
 export default defineContentScript({
   matches: ['*://www.youtube.com/*'],
   cssInjectionMode: 'ui',
 
   async main(ctx) {
+    const runtime = await createAppRuntime()
     const ui = await createShadowRootUi(ctx, {
       name: 'wxt-react-content',
       position: 'inline',
@@ -20,15 +21,21 @@ export default defineContentScript({
         // Create a wrapper element
         const wrapper = document.createElement('div')
         wrapper.id = 'wxt-react-content'
+        wrapper.dataset.ylcRoot = ''
         container.append(wrapper)
 
         const root = createRoot(wrapper)
-        root.render(<Content />)
+        root.render(
+          <AppProvider runtime={runtime}>
+            <Content />
+          </AppProvider>,
+        )
         return { root, wrapper }
       },
       onRemove: elements => {
         elements?.root.unmount()
         elements?.wrapper.remove()
+        runtime.dispose()
       },
     })
 

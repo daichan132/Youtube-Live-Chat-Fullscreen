@@ -31,7 +31,7 @@ describe('ChatSurface', () => {
     expect(onLeaveChat).toHaveBeenCalledOnce()
   })
 
-  it('adds a pointer shield only while dnd-kit reports an active drag', () => {
+  it('adds a pointer shield only while an active pointer gesture is reported', () => {
     const { container, rerender } = render(
       <ChatSurface innerStyle={{}} isDragging={false} onEnterChat={() => {}} onLeaveChat={() => {}}>
         chat

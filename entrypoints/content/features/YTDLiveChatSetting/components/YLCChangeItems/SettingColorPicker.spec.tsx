@@ -2,12 +2,6 @@ import { fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { SettingColorPicker } from './SettingColorPicker'
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}))
-
 describe('SettingColorPicker', () => {
   it('describes the current color from an internal id', () => {
     const { getByRole, getByText } = render(

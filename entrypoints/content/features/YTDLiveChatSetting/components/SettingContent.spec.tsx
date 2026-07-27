@@ -1,31 +1,21 @@
-import { act, fireEvent, render } from '@testing-library/react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { useChatSettingsStore } from '@/shared/settings/chatSettingsStore'
+import { act, fireEvent } from '@testing-library/react'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
+import { chatSettingsStateAtom } from '@/shared/state/atoms'
+import { renderWithStore } from '@/shared/state/testUtils'
 import { SettingContent } from './SettingContent'
 
-vi.mock('redux-persist-webextension-storage', () => ({
-  localStorage: globalThis.localStorage,
-}))
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-  initReactI18next: {
-    type: '3rdParty',
-    init: () => {},
-  },
-}))
-
 describe('SettingContent', () => {
+  const store = createStore()
   beforeEach(() => {
-    useChatSettingsStore.setState(DEFAULT_CHAT_SETTINGS)
+    store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
   })
 
   it('updates idle visibility and content mode independently', () => {
-    const profile = useChatSettingsStore.getState().profile
-    useChatSettingsStore.setState({
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
       profile: {
         ...profile,
         display: {
@@ -34,19 +24,19 @@ describe('SettingContent', () => {
         },
       },
     })
-    const { getByRole } = render(<SettingContent />)
+    const { getByRole } = renderWithStore(<SettingContent />, store)
 
     fireEvent.click(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' }))
     fireEvent.click(getByRole('switch', { name: 'content.setting.chatOnlyDisplay' }))
 
-    expect(useChatSettingsStore.getState().profile.display).toEqual({
+    expect(store.get(chatSettingsStateAtom).profile.display).toEqual({
       idleVisibility: 'always-visible',
       contentMode: 'messages-only',
     })
   })
 
   it('renders settings in the expected order without removed settings', () => {
-    const { container } = render(<SettingContent />)
+    const { container } = renderWithStore(<SettingContent />, store)
 
     const labels = Array.from(container.querySelectorAll('.ylc-row-title')).map(label => label.textContent)
     expect(labels).toEqual([
@@ -67,11 +57,12 @@ describe('SettingContent', () => {
   })
 
   it('keeps color pickers and sliders in sync with nested profile updates', () => {
-    const { getByRole, getByText } = render(<SettingContent />)
-    const profile = useChatSettingsStore.getState().profile
+    const { getByRole, getByText } = renderWithStore(<SettingContent />, store)
+    const profile = store.get(chatSettingsStateAtom).profile
 
     act(() => {
-      useChatSettingsStore.setState({
+      store.set(chatSettingsStateAtom, {
+        ...store.get(chatSettingsStateAtom),
         profile: {
           ...profile,
           appearance: {
@@ -96,8 +87,9 @@ describe('SettingContent', () => {
   })
 
   it('resets a custom membership name color to YouTube default mode', () => {
-    const profile = useChatSettingsStore.getState().profile
-    useChatSettingsStore.setState({
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
       profile: {
         ...profile,
         appearance: {
@@ -106,11 +98,11 @@ describe('SettingContent', () => {
         },
       },
     })
-    const { getByRole } = render(<SettingContent />)
+    const { getByRole } = renderWithStore(<SettingContent />, store)
 
     fireEvent.click(getByRole('button', { name: 'content.setting.resetToDefaultColor' }))
 
-    expect(useChatSettingsStore.getState().profile.appearance.membershipNameColor).toEqual({
+    expect(store.get(chatSettingsStateAtom).profile.appearance.membershipNameColor).toEqual({
       mode: 'youtube-default',
     })
   })

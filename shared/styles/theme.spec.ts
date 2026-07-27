@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-const themeStyles = readFileSync(resolve(process.cwd(), 'shared/styles/theme.css'), 'utf8')
+const themeStyles = readFileSync(resolve(process.cwd(), 'shared/styles/controls.css'), 'utf8')
 
 describe('theme layer scale', () => {
   it('defines ordered local surface layers', () => {

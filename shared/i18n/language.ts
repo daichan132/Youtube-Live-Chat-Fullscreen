@@ -1,4 +1,7 @@
-import languageCodes from './language_codes.json'
+import type { LocaleCode } from './generated/translationTypes'
+import languageCodes from './language_codes.json' with { type: 'json' }
+
+export type { LocaleCode }
 
 export const DEFAULT_LANGUAGE = 'en'
 
@@ -10,7 +13,7 @@ export const normalizeLanguageCode = (languageCode?: string | null) => {
   return languageCode.replaceAll('-', '_')
 }
 
-export const resolveLanguageCode = (languageCode?: string | null) => {
+export const resolveLanguageCode = (languageCode?: string | null): LocaleCode => {
   const normalizedLanguageCode = normalizeLanguageCode(languageCode)
 
   if (!normalizedLanguageCode) {
@@ -18,7 +21,7 @@ export const resolveLanguageCode = (languageCode?: string | null) => {
   }
 
   if (supportedLanguageCodes.has(normalizedLanguageCode)) {
-    return normalizedLanguageCode
+    return normalizedLanguageCode as LocaleCode
   }
 
   const [baseLanguageCode] = normalizedLanguageCode.split('_')
@@ -28,11 +31,11 @@ export const resolveLanguageCode = (languageCode?: string | null) => {
   }
 
   if (supportedLanguageCodes.has(baseLanguageCode)) {
-    return baseLanguageCode
+    return baseLanguageCode as LocaleCode
   }
 
   const regionalVariant = supportedLanguageCodeList.find(code => code.startsWith(`${baseLanguageCode}_`))
-  return regionalVariant ?? DEFAULT_LANGUAGE
+  return (regionalVariant ?? DEFAULT_LANGUAGE) as LocaleCode
 }
 
 export const getSupportedLanguageCodes = () => supportedLanguageCodeList

@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { TbDownload, TbUpload } from '@/shared/components/icons'
-import { buildExportData, isValidImportData, persistImportedSettings } from '../utils/dataTransfer'
+import { useT } from '@/shared/i18n/react'
+import { useAppRuntime } from '@/shared/runtime/AppProvider'
 
-const handleExport = () => {
-  const data = buildExportData()
+const handleExport = (data: unknown) => {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -15,7 +14,8 @@ const handleExport = () => {
 }
 
 export const DataTransfer = () => {
-  const { t } = useTranslation()
+  const t = useT()
+  const runtime = useAppRuntime()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const dismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -39,11 +39,7 @@ export const DataTransfer = () => {
     reader.onload = async () => {
       try {
         const data = JSON.parse(reader.result as string)
-        if (!isValidImportData(data)) {
-          showError(t('popup.importError'))
-          return
-        }
-        await persistImportedSettings(data)
+        await runtime.importSettings(data)
         window.close()
       } catch {
         showError(t('popup.importError'))
@@ -61,7 +57,7 @@ export const DataTransfer = () => {
           aria-label={t('popup.export')}
           data-tooltip={t('popup.export')}
           className='ylc-theme-icon-link'
-          onClick={handleExport}
+          onClick={() => handleExport(runtime.exportSettings())}
         >
           <TbDownload size={18} aria-hidden='true' />
         </button>

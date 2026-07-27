@@ -1,6 +1,6 @@
 import { useId } from 'react'
-import { useTranslation } from 'react-i18next'
 import { type IconType, TbDeviceDesktop, TbMoon, TbSun } from '@/shared/components/icons'
+import { useT } from '@/shared/i18n/react'
 import type { ThemeMode } from '@/shared/theme'
 
 interface ThemeModeSegmentedControlProps {
@@ -16,7 +16,7 @@ const themeModeOptions: { mode: ThemeMode; icon: IconType }[] = [
 ]
 
 export const ThemeModeSegmentedControl = ({ value, onChange, ariaLabel }: ThemeModeSegmentedControlProps) => {
-  const { t } = useTranslation()
+  const t = useT()
   const groupName = useId()
 
   return (

@@ -1,14 +1,10 @@
-import { fileURLToPath } from 'node:url'
 import { defineConfig } from 'vitest/config'
-
-const unoCssPath = fileURLToPath(new URL('./vitest.empty.css', import.meta.url))
+import { WxtVitest } from 'wxt/testing/vitest-plugin'
 
 export default defineConfig({
+  plugins: [WxtVitest()],
   resolve: {
     tsconfigPaths: true,
-    alias: {
-      'uno.css': unoCssPath,
-    },
   },
   test: {
     clearMocks: true,
