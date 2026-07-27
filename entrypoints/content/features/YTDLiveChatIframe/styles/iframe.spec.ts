@@ -123,6 +123,8 @@ describe('iframe styles contract', () => {
   })
 
   it('animates only the outer chat chrome boundaries inside the iframe', () => {
+    expect(iframeStyles).toContain('box-sizing: border-box !important;\n  opacity: 1 !important;\n  transform: translateY(0);')
+    expect(iframeStyles).not.toContain('box-sizing: border-box !important;\n  overflow: hidden !important;\n  opacity: 1 !important;')
     expect(iframeStyles).toContain('will-change: height, opacity, transform;')
     expect(iframeStyles).toContain('transition-property: height, opacity, transform, margin, padding, border-width !important;')
     expect(iframeStyles).toContain('transition-duration: 260ms, 260ms, 260ms, 260ms, 260ms, 260ms !important;')

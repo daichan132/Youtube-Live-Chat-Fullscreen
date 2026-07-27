@@ -6,7 +6,6 @@ body.custom-yt-app-live-chat-extension:not(:has(#input-panel))
       :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer)
   ) {
   box-sizing: border-box !important;
-  overflow: hidden !important;
   opacity: 1 !important;
   transform: translateY(0);
   transition-property: height, opacity, transform, margin, padding, border-width !important;
