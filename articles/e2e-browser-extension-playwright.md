@@ -311,7 +311,7 @@ storage 操作
 1. **標準（推奨）**: Worker 固定（`worker.evaluate()` のみ）
 2. **拡張（必要時のみ）**: Worker が不安定な環境だけ e2e.html にフォールバック
 
-e2e.html は React/Zustand を一切載せない最小ページなので、フォールバック時の副作用がありません。popup.html 経由のフォールバックは React/Zustand の rehydration でテストデータが上書きされる危険があるため避けてください。
+e2e.html はアプリケーションランタイムを一切載せない最小ページなので、フォールバック時の副作用がありません。popup.html 経由のフォールバックはアプリケーションの hydration でテストデータが上書きされる危険があるため避けてください。
 
 ### Worker パス（推奨）
 
@@ -329,7 +329,7 @@ await worker.evaluate(
 
 ### Page パス: テスト専用の storage bridge ページ
 
-並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合は **React/Zustand を一切載せない最小ページ（`e2e.html`）** を用意し、拡張ページ経由で操作します。
+並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合は **アプリケーションランタイムを一切載せない最小ページ（`e2e.html`）** を用意し、拡張ページ経由で操作します。
 
 ```html
 <!-- public/e2e.html — ビルド時に拡張パッケージに含まれる -->
@@ -352,7 +352,7 @@ async function withE2EBridge<T>(
   try {
     await page.goto(bridgeUrl, { waitUntil: 'domcontentloaded' })
     return await operation(page)
-    // about:blank 不要 — React/Zustand が載らないので rehydration リスクなし
+	// about:blank 不要 — アプリケーションランタイムが載らないので hydration リスクなし
   } finally {
     await page.close()
   }
@@ -384,8 +384,8 @@ const isRecoverableWorkerError = (error: unknown): boolean => {
  *
  * Worker が生きていれば worker.evaluate() で高速に操作し、
  * Worker が停止（Target closed 等）したら e2e.html 経由に自動切替する。
- * e2e.html は React/Zustand を載せない最小ページなので rehydration の副作用がない。
- * （popup.html 経由だと Zustand persist の rehydration でテストデータが上書きされる）
+ * e2e.html はアプリケーションランタイムを載せない最小ページなので hydration の副作用がない。
+ * （popup.html 経由だとアプリケーションの hydration でテストデータが上書きされる）
  */
 function createStorageAccessor(
   context: BrowserContext,

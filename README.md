@@ -122,7 +122,7 @@
 | Category | Stack | Role in this project |
 | --- | --- | --- |
 | **Core** | <img alt="React" src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black"/> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <a href="https://wxt.dev"><img alt="WXT" src="https://img.shields.io/badge/WXT-FF6C2C?style=flat-square&logoColor=white"/></a> | React 19 for overlay UI, TypeScript for type safety, [WXT](https://wxt.dev) as the cross-browser extension framework |
-| **State & Style** | <a href="https://zustand.docs.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-443E38?style=flat-square&logoColor=white"/></a> <img alt="UnoCSS" src="https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white"/> | Zustand for lightweight cross-entrypoint state, UnoCSS for atomic styling |
+| **State & Style** | <a href="https://jotai.org"><img alt="Jotai" src="https://img.shields.io/badge/Jotai-2C2C2C?style=flat-square&logoColor=white"/></a> <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/></a> | Jotai for synchronized state transitions, Tailwind CSS v4 for styling |
 | **Quality** | <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/> <img alt="Playwright" src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white"/> <img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?style=flat-square&logo=biome&logoColor=white"/> | Vitest for unit tests, Playwright for E2E, Biome for lint & format |
 
 ## Architecture
@@ -140,7 +140,7 @@ The extension consists of two entrypoints that communicate via the browser's `ta
 | --- | --- |
 | **Content Script** | Injected into YouTube pages. Renders the chat overlay, handles drag/resize, and manages chat source resolution (live vs. archive). |
 | **Popup** | Extension toolbar UI. Controls language, enable/disable toggle, and theme. Syncs state to the content script in real time. |
-| **Shared** | Common modules used by both entrypoints — stores (Zustand), i18n assets, UI components, theme, and utility functions. |
+| **Shared** | Common modules used by both entrypoints — Jotai state, generated i18n assets, UI components, theme, and utility functions. |
 
 ### Chat Source Resolution
 
@@ -164,7 +164,7 @@ entrypoints/
 │   ├── components/   # Popup-specific components
 │   └── utils/        # Popup utilities
 shared/               # Shared across entrypoints
-├── stores/           # Zustand state management
+├── state/            # Jotai state and write-only commands
 ├── i18n/             # 50+ language assets
 ├── components/       # Shared UI components
 ├── theme/            # Theme configuration

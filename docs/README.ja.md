@@ -122,7 +122,7 @@
 | カテゴリ | スタック | プロジェクトでの役割 |
 | --- | --- | --- |
 | **Core** | <img alt="React" src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black"/> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <a href="https://wxt.dev"><img alt="WXT" src="https://img.shields.io/badge/WXT-FF6C2C?style=flat-square&logoColor=white"/></a> | React 19 でオーバーレイ UI を構築、TypeScript で型安全を確保、[WXT](https://wxt.dev) をクロスブラウザ拡張フレームワークとして採用 |
-| **State & Style** | <a href="https://zustand.docs.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-443E38?style=flat-square&logoColor=white"/></a> <img alt="UnoCSS" src="https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white"/> | Zustand で軽量なエントリポイント間状態管理、UnoCSS でアトミックスタイリング |
+| **State & Style** | <a href="https://jotai.org"><img alt="Jotai" src="https://img.shields.io/badge/Jotai-2C2C2C?style=flat-square&logoColor=white"/></a> <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/></a> | Jotai で同期状態と状態遷移、Tailwind CSS v4 でスタイリング |
 | **Quality** | <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/> <img alt="Playwright" src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white"/> <img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?style=flat-square&logo=biome&logoColor=white"/> | Vitest でユニットテスト、Playwright で E2E、Biome で lint & format |
 
 ## アーキテクチャ
@@ -140,7 +140,7 @@
 | --- | --- |
 | **Content Script** | YouTube ページに注入。チャットオーバーレイの描画、ドラッグ/リサイズ処理、チャットソースの解決（ライブ vs. アーカイブ）を担当。 |
 | **Popup** | 拡張機能ツールバーの UI。言語・有効/無効・テーマを制御し、Content Script とリアルタイムに状態を同期。 |
-| **Shared** | 両エントリポイント共通のモジュール — ストア（Zustand）、i18n アセット、UI コンポーネント、テーマ、ユーティリティ関数。 |
+| **Shared** | 両エントリポイント共通のモジュール — Jotai 状態、生成済み i18n アセット、UI コンポーネント、テーマ、ユーティリティ関数。 |
 
 ### チャットソースの解決
 
@@ -164,7 +164,7 @@ entrypoints/
 │   ├── components/   # Popup 固有のコンポーネント
 │   └── utils/        # Popup ユーティリティ
 shared/               # エントリポイント間で共有
-├── stores/           # Zustand 状態管理
+├── state/            # Jotai 状態と write-only command
 ├── i18n/             # 50以上の言語アセット
 ├── components/       # 共有 UI コンポーネント
 ├── theme/            # テーマ設定

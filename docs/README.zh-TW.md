@@ -122,7 +122,7 @@
 | 分類 | 技術棧 | 在此專案中的角色 |
 | --- | --- | --- |
 | **Core** | <img alt="React" src="https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black"/> <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white"/> <a href="https://wxt.dev"><img alt="WXT" src="https://img.shields.io/badge/WXT-FF6C2C?style=flat-square&logoColor=white"/></a> | React 19 建構覆蓋 UI、TypeScript 確保型別安全、[WXT](https://wxt.dev) 作為跨瀏覽器擴充框架 |
-| **State & Style** | <a href="https://zustand.docs.pmnd.rs"><img alt="Zustand" src="https://img.shields.io/badge/Zustand-443E38?style=flat-square&logoColor=white"/></a> <img alt="UnoCSS" src="https://img.shields.io/badge/UnoCSS-333333?style=flat-square&logo=unocss&logoColor=white"/> | Zustand 輕量跨進入點狀態管理、UnoCSS 原子化樣式 |
+| **State & Style** | <a href="https://jotai.org"><img alt="Jotai" src="https://img.shields.io/badge/Jotai-2C2C2C?style=flat-square&logoColor=white"/></a> <a href="https://tailwindcss.com"><img alt="Tailwind CSS" src="https://img.shields.io/badge/Tailwind_CSS_v4-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white"/></a> | Jotai 輕量同步狀態與狀態遷移、Tailwind CSS v4 原子化樣式 |
 | **Quality** | <img alt="Vitest" src="https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white"/> <img alt="Playwright" src="https://img.shields.io/badge/Playwright-2EAD33?style=flat-square&logo=playwright&logoColor=white"/> <img alt="Biome" src="https://img.shields.io/badge/Biome-60A5FA?style=flat-square&logo=biome&logoColor=white"/> | Vitest 單元測試、Playwright E2E 測試、Biome lint & format |
 
 ## 架構
@@ -140,7 +140,7 @@
 | --- | --- |
 | **Content Script** | 注入至 YouTube 頁面。負責聊天覆蓋視窗的繪製、拖曳/縮放處理，以及聊天來源的解析（直播 vs. 存檔）。 |
 | **Popup** | 擴充功能工具列 UI。控制語言、啟用/停用、主題，並即時同步狀態至 Content Script。 |
-| **Shared** | 兩個進入點共用的模組 — Store（Zustand）、i18n 資源、UI 元件、主題、工具函式。 |
+| **Shared** | 兩個進入點共用的模組 — Jotai 狀態、產生的 i18n 資源、UI 元件、主題、工具函式。 |
 
 ### 聊天來源解析
 
@@ -164,7 +164,7 @@ entrypoints/
 │   ├── components/   # Popup 專用元件
 │   └── utils/        # Popup 工具函式
 shared/               # 跨進入點共用
-├── stores/           # Zustand 狀態管理
+├── state/            # Jotai 狀態與 write-only command
 ├── i18n/             # 50 種以上語言資源
 ├── components/       # 共用 UI 元件
 ├── theme/            # 主題設定
