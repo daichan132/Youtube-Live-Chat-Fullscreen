@@ -105,7 +105,7 @@ jobs:
         run: xvfb-run --auto-servernum yarn playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1
       - name: Upload browser diagnostics
         if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: release-browser-contracts-${{ github.sha }}
           path: |
@@ -114,7 +114,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
       - name: Upload release packages
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: extension-packages
           path: |
@@ -132,7 +132,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download verified packages
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: extension-packages
           path: .output
@@ -180,7 +180,7 @@ jobs:
         with:
           node-version: 24.x
       - name: Download verified packages
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: extension-packages
           path: .output
@@ -209,7 +209,7 @@ jobs:
       - name: Install publishing dependencies
         run: yarn install --immutable
       - name: Download verified packages
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: extension-packages
           path: .output
