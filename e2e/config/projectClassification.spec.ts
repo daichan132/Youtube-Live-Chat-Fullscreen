@@ -2,7 +2,14 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { CANARY_SPECS, FIXTURE_SPECS } from './projectClassification'
+import {
+  ACCESSIBILITY_PROJECT_NAME,
+  CANARY_SPECS,
+  DETERMINISTIC_PROJECT_NAMES,
+  FIXTURE_PROJECT_NAME,
+  FIXTURE_SPECS,
+  VISUAL_PROJECT_NAME,
+} from './projectClassification'
 
 const scenariosDir = fileURLToPath(new URL('../scenarios', import.meta.url))
 
@@ -31,5 +38,9 @@ describe('Playwright project classification', () => {
   it('keeps the deterministic project limited to fixtures and popup tests', () => {
     expect(FIXTURE_SPECS.every(spec => spec.endsWith('.fixture.spec.ts') || spec.startsWith('popup/'))).toBe(true)
     expect(CANARY_SPECS.every(spec => !spec.endsWith('.fixture.spec.ts') && !spec.startsWith('popup/'))).toBe(true)
+  })
+
+  it('classifies fixture, visual, and accessibility projects as network independent', () => {
+    expect(DETERMINISTIC_PROJECT_NAMES).toEqual([FIXTURE_PROJECT_NAME, VISUAL_PROJECT_NAME, ACCESSIBILITY_PROJECT_NAME])
   })
 })

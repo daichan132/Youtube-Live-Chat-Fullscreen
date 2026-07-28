@@ -1,5 +1,14 @@
 export const FIXTURE_PROJECT_NAME = 'fixture'
 export const CANARY_PROJECT_NAME = 'canary'
+export const VISUAL_PROJECT_NAME = 'visual'
+export const ACCESSIBILITY_PROJECT_NAME = 'accessibility'
+export const STORE_ASSETS_PROJECT_NAME = 'store-assets'
+
+export const DETERMINISTIC_PROJECT_NAMES = [
+  FIXTURE_PROJECT_NAME,
+  VISUAL_PROJECT_NAME,
+  ACCESSIBILITY_PROJECT_NAME,
+] as const
 
 /**
  * Playwright scenarios are classified explicitly so adding a spec cannot

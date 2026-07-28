@@ -1,10 +1,13 @@
 import { defineConfig } from '@playwright/test'
 import {
+  ACCESSIBILITY_PROJECT_NAME,
   CANARY_PROJECT_NAME,
   CANARY_SPECS,
   FIXTURE_PROJECT_NAME,
   FIXTURE_SPECS,
+  STORE_ASSETS_PROJECT_NAME,
   toPlaywrightTestMatch,
+  VISUAL_PROJECT_NAME,
 } from './e2e/config/projectClassification'
 
 const extensionUse = {
@@ -13,6 +16,18 @@ const extensionUse = {
   contextOptions: { reducedMotion: 'no-preference' as const },
   trace: 'retain-on-failure' as const,
   video: 'retain-on-failure' as const,
+  screenshot: 'only-on-failure' as const,
+}
+
+const deterministicUse = {
+  locale: 'en-US',
+  timezoneId: 'Asia/Tokyo',
+  viewport: { width: 1280, height: 720 },
+  deviceScaleFactor: 1,
+  colorScheme: 'light' as const,
+  reducedMotion: 'reduce' as const,
+  trace: 'retain-on-failure' as const,
+  video: 'off' as const,
   screenshot: 'only-on-failure' as const,
 }
 
@@ -39,7 +54,30 @@ export default defineConfig({
       use: extensionUse,
     },
     {
-      name: 'screenshots',
+      name: VISUAL_PROJECT_NAME,
+      testDir: 'e2e/visual',
+      testMatch: '**/*.visual.spec.ts',
+      retries: 0,
+      snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
+      expect: {
+        toHaveScreenshot: {
+          animations: 'disabled',
+          caret: 'hide',
+          maxDiffPixelRatio: 0.002,
+          threshold: 0.2,
+        },
+      },
+      use: deterministicUse,
+    },
+    {
+      name: ACCESSIBILITY_PROJECT_NAME,
+      testDir: 'e2e/accessibility',
+      testMatch: '**/*.accessibility.spec.ts',
+      retries: 0,
+      use: deterministicUse,
+    },
+    {
+      name: STORE_ASSETS_PROJECT_NAME,
       testDir: 'e2e/screenshots',
       testMatch: '**/*.spec.ts',
       timeout: 300000,

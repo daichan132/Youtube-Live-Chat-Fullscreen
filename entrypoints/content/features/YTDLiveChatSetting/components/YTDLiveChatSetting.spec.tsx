@@ -1,4 +1,5 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -111,5 +112,17 @@ describe('YTDLiveChatSetting history controls', () => {
 
     expect(event.defaultPrevented).toBe(true)
     expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
+  })
+
+  it('focuses the active tab on open and requests close with Escape', async () => {
+    const user = userEvent.setup()
+    const onOpenChange = vi.fn()
+    const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    const settingsTab = getByRole('tab', { name: 'content.setting.header.setting' })
+
+    await waitFor(() => expect(settingsTab).toHaveFocus())
+    await user.keyboard('{Escape}')
+
+    expect(onOpenChange).toHaveBeenCalledWith(false)
   })
 })

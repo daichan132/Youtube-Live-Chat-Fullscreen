@@ -159,6 +159,7 @@ const restoreBorrowedDocumentStyle = (doc: Document, snapshot: BorrowedDocumentS
 const createManagedLiveIframe = (src: string) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.className = 'ytd-live-chat-frame'
+  iframe.title = 'YouTube live chat'
   iframe.setAttribute(YLC_OWNED_ATTR, 'true')
   iframe.setAttribute(YLC_SOURCE_ATTR, YLC_SOURCE_LIVE)
   iframe.src = src

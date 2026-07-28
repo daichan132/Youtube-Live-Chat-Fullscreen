@@ -1,9 +1,10 @@
-import { FIXTURE_PROJECT_NAME } from '@e2e/config/projectClassification'
+import { DETERMINISTIC_PROJECT_NAMES } from '@e2e/config/projectClassification'
 import type { Extension } from '@e2e/support/extension/extensionIdentity'
 import type { BrowserContext, Page } from '@playwright/test'
 import { LOCALE_STORAGE_KEY } from '../../shared/settings/storageKeys'
 
-export const isDeterministicProject = (projectName: string) => projectName === FIXTURE_PROJECT_NAME
+export const isDeterministicProject = (projectName: string) =>
+  DETERMINISTIC_PROJECT_NAMES.includes(projectName as (typeof DETERMINISTIC_PROJECT_NAMES)[number])
 
 export const blockExternalNetwork = (context: BrowserContext) =>
   context.route(/^https?:\/\//, route => route.abort('blockedbyclient'))

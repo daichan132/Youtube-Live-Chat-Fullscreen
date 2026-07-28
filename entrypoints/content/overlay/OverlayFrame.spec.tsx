@@ -50,4 +50,24 @@ describe('OverlayFrame', () => {
     expect(onInteractionStateChange).toHaveBeenLastCalledWith('idle')
     expect(store.get(chatSettingsStateAtom).geometry).toEqual(DEFAULT_CHAT_GEOMETRY)
   })
+
+  it('moves the overlay from the focused drag handle with arrow keys', () => {
+    const { getByRole } = renderWithStore(
+      <OverlayFrame initialDisplayOnMount>
+        <div>chat</div>
+      </OverlayFrame>,
+      store,
+    )
+    const handle = getByRole('button', { name: 'content.aria.dragToMove' })
+    handle.focus()
+
+    fireEvent.keyDown(handle, { key: 'ArrowRight' })
+    fireEvent.keyDown(handle, { key: 'ArrowDown' })
+
+    expect(handle).toHaveFocus()
+    expect(store.get(chatSettingsStateAtom).geometry.coordinates).toEqual({
+      x: DEFAULT_CHAT_GEOMETRY.coordinates.x + 10,
+      y: DEFAULT_CHAT_GEOMETRY.coordinates.y + 10,
+    })
+  })
 })

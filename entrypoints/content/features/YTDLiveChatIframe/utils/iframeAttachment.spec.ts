@@ -53,6 +53,7 @@ describe('iframeAttachment', () => {
 
     const managed = resolveSourceIframe(source, null)
     expect(managed.getAttribute('data-ylc-owned')).toBe('true')
+    expect(managed).toHaveAttribute('title', 'YouTube live chat')
     expect(managed.src).toContain('/live_chat?v=video-a')
 
     const reused = resolveSourceIframe(source, managed)

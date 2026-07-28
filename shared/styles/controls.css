@@ -1404,6 +1404,11 @@
   scrollbar-color: var(--ylc-border) transparent;
 }
 
+.ylc-setting-panel[data-ylc-theme="light"] {
+  /* 4.96:1 on the light panel surface for 11–14px secondary labels. */
+  --ylc-text-muted: #66717f;
+}
+
 .ylc-setting-panel [role="tabpanel"]::-webkit-scrollbar {
   width: 6px;
 }
