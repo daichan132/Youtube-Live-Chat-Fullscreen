@@ -3,6 +3,14 @@ import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import { createSettingsRepository, type StoredEnvelope } from './repository'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
 
+const createBarrier = () => {
+  let release!: () => void
+  const promise = new Promise<void>(resolve => {
+    release = resolve
+  })
+  return { promise, release }
+}
+
 describe('settings envelopes', () => {
   it('carry schema and writer identity for external-change filtering', () => {
     const envelope: StoredEnvelope<{ themeMode: 'dark' }> = { schemaVersion: 1, writerId: 'test-writer', value: { themeMode: 'dark' } }
@@ -226,6 +234,73 @@ describe('settings envelopes', () => {
 
       const reloaded = await createSettingsRepository('precedence-reload-test').load()
       expect(reloaded.chat).toEqual(snapshot.chat)
+    })
+
+    it('keeps a concurrent migration that completes while another context reads legacy data', async () => {
+      localStorage.setItem('i18nextLng', 'ja')
+      await chrome.storage.local.set({
+        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false, themeMode: 'dark' }, version: 1 }),
+        ytdLiveChatStore: JSON.stringify({
+          state: {
+            fontSize: 23,
+            coordinates: { x: 80, y: 90 },
+            size: { width: 600, height: 500 },
+            presetItemIds: ['custom'],
+            presetItemTitles: { custom: '並行移行' },
+            presetItemStyles: { custom: { fontSize: 24 } },
+          },
+          version: 6,
+        }),
+      })
+      const legacyReadStarted = createBarrier()
+      const releaseLegacyRead = createBarrier()
+      const originalGet = chrome.storage.local.get.bind(chrome.storage.local)
+      let blockedFirstLegacyRead = false
+      const interceptGet = async (keys?: string | string[] | Record<string, unknown> | null) => {
+        if (!blockedFirstLegacyRead && Array.isArray(keys) && keys.includes('globalSettingStore')) {
+          blockedFirstLegacyRead = true
+          legacyReadStarted.release()
+          await releaseLegacyRead.promise
+        }
+        return (originalGet as (storageKeys?: typeof keys) => Promise<Record<string, unknown>>)(keys)
+      }
+      vi.spyOn(chrome.storage.local, 'get').mockImplementation(interceptGet as typeof chrome.storage.local.get)
+
+      const racedLoad = createSettingsRepository('raced-writer', localStorage).load()
+      await legacyReadStarted.promise
+      const winningSnapshot = await createSettingsRepository('winning-writer', localStorage).load()
+      releaseLegacyRead.release()
+      const racedSnapshot = await racedLoad
+
+      expect(winningSnapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
+      expect(winningSnapshot.chat.profile.appearance.fontSize).toBe(23)
+      expect(winningSnapshot.chat.geometry).toEqual({
+        coordinates: { x: 80, y: 90 },
+        size: { width: 600, height: 500 },
+      })
+      expect(winningSnapshot.chat.presets).toEqual([
+        expect.objectContaining({
+          id: 'custom',
+          name: '並行移行',
+          profile: expect.objectContaining({
+            appearance: expect.objectContaining({ fontSize: 24 }),
+          }),
+        }),
+      ])
+      expect(winningSnapshot.locale).toBe('ja')
+      expect(racedSnapshot).toEqual(winningSnapshot)
+      expect((await chrome.storage.local.get(GLOBAL_STORAGE_KEY))[GLOBAL_STORAGE_KEY]).toMatchObject({
+        writerId: 'winning-writer',
+        value: winningSnapshot.global,
+      })
+      expect((await chrome.storage.local.get(CHAT_STORAGE_KEY))[CHAT_STORAGE_KEY]).toMatchObject({
+        writerId: 'winning-writer',
+        value: winningSnapshot.chat,
+      })
+      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
+        writerId: 'winning-writer',
+        value: 'ja',
+      })
     })
 
     it('prefers valid v6 chat data over a malformed current chat envelope', async () => {

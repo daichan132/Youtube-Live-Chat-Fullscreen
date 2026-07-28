@@ -155,6 +155,24 @@ const readCurrentValues = async () => {
   return { global: values[0], chat: values[1], locale: values[2] }
 }
 
+const readNormalizedCurrentValues = async () => {
+  const current = await readCurrentValues()
+  const globalEnvelope = isStoredEnvelope<GlobalSettings>(current.global) ? current.global : null
+  const chatEnvelope =
+    isStoredEnvelope<unknown>(current.chat) && isStoredChatSettings(current.chat.value)
+      ? (current.chat as StoredEnvelope<ChatSettings>)
+      : null
+  const localeEnvelope = isStoredEnvelope<LocaleCode>(current.locale) ? current.locale : null
+  return {
+    globalEnvelope,
+    chatEnvelope,
+    localeEnvelope,
+    global: globalEnvelope ? normalizeGlobal(globalEnvelope.value) : null,
+    chat: chatEnvelope ? normalizeChatSettings(chatEnvelope.value, DEFAULT_CHAT_SETTINGS) : null,
+    locale: localeEnvelope ? resolveLanguageCode(localeEnvelope.value) : null,
+  }
+}
+
 const readLegacySnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
   const values = await browser.storage.local.get([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
   const global = normalizeLegacyGlobal(values[LEGACY_GLOBAL_KEY])
@@ -185,42 +203,40 @@ export const createSettingsRepository = (
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
 
   const load = async () => {
-    const current = await readCurrentValues()
-    const currentGlobal = isStoredEnvelope<GlobalSettings>(current.global) ? normalizeGlobal(current.global.value) : null
-    const currentChat =
-      isStoredEnvelope<unknown>(current.chat) && isStoredChatSettings(current.chat.value)
-        ? normalizeChatSettings(current.chat.value, DEFAULT_CHAT_SETTINGS)
-        : null
-    const currentLocale = isStoredEnvelope<LocaleCode>(current.locale) ? resolveLanguageCode(current.locale.value) : null
-    if (currentGlobal && currentChat && currentLocale) {
+    const initial = await readNormalizedCurrentValues()
+    if (initial.global && initial.chat && initial.locale) {
       removeLegacyLocale(legacyLocaleStorage)
-      return { global: currentGlobal, chat: currentChat, locale: currentLocale }
+      return { global: initial.global, chat: initial.chat, locale: initial.locale }
     }
 
     const legacy = await readLegacySnapshot(legacyLocaleStorage)
+    // Another extension context may finish the same migration while the legacy
+    // snapshot is being read. Re-read every envelope before deciding which
+    // values this writer owns so a completed migration always wins.
+    const current = await readNormalizedCurrentValues()
     const migrated = {
-      global: currentGlobal ?? legacy.snapshot.global,
-      chat: currentChat ?? legacy.snapshot.chat,
-      locale: currentLocale ?? legacy.snapshot.locale,
+      global: current.global ?? legacy.snapshot.global,
+      chat: current.chat ?? legacy.snapshot.chat,
+      locale: current.locale ?? legacy.snapshot.locale,
     }
-    const persistLocale = currentLocale !== null || legacy.canPersistLocale
+    const persistLocale = current.locale !== null || legacy.canPersistLocale
     await enqueue(async () => {
       const writes: Promise<void>[] = []
-      if (!currentGlobal) writes.push(globalItem.setValue(envelope(migrated.global)))
-      if (!currentChat) writes.push(chatItem.setValue(envelope(migrated.chat)))
-      if (!currentLocale && persistLocale) writes.push(localeItem.setValue(envelope(migrated.locale)))
+      if (!current.global) writes.push(globalItem.setValue(envelope(migrated.global)))
+      if (!current.chat) writes.push(chatItem.setValue(envelope(migrated.chat)))
+      if (!current.locale && persistLocale) writes.push(localeItem.setValue(envelope(migrated.locale)))
       await Promise.all(writes)
       const written = await readCurrentValues()
       const verified =
         isStoredEnvelope<GlobalSettings>(written.global) &&
-        (currentGlobal !== null || written.global.writerId === writerId) &&
+        (current.global !== null || written.global.writerId === writerId) &&
         areGlobalSettingsEqual(normalizeGlobal(written.global.value), migrated.global) &&
         isStoredEnvelope<ChatSettings>(written.chat) &&
-        (currentChat !== null || written.chat.writerId === writerId) &&
+        (current.chat !== null || written.chat.writerId === writerId) &&
         areChatSettingsEqual(normalizeChatSettings(written.chat.value, DEFAULT_CHAT_SETTINGS), migrated.chat) &&
         (!persistLocale ||
           (isStoredEnvelope<LocaleCode>(written.locale) &&
-            (currentLocale !== null || written.locale.writerId === writerId) &&
+            (current.locale !== null || written.locale.writerId === writerId) &&
             resolveLanguageCode(written.locale.value) === migrated.locale))
       if (verified) await removeLegacyKeys(legacyLocaleStorage)
     })

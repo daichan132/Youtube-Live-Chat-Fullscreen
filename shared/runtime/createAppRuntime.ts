@@ -5,7 +5,12 @@ import { resolveLanguageCode } from '@/shared/i18n/language'
 import { loadLocaleMessages } from '@/shared/i18n/loader'
 import { normalizeSettingsBackup } from '@/shared/settings/backup'
 import { areChatSettingsEqual, areGlobalSettingsEqual } from '@/shared/settings/equality'
-import { buildRepositoryBackup, createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
+import {
+  buildRepositoryBackup,
+  createSettingsRepository,
+  type SettingsRepository,
+  type SettingsSnapshot,
+} from '@/shared/settings/repository'
 import {
   chatSettingsStateAtom,
   globalSettingsStateAtom,
@@ -80,6 +85,11 @@ export const createAppRuntime = async (
   const store = createStore()
   let applyingExternal = false
   let disposed = false
+  let initialized = false
+  let pendingGlobal: SettingsSnapshot['global'] | undefined
+  let pendingChat: SettingsSnapshot['chat'] | undefined
+  let pendingLocale: LocaleCode | undefined
+  let localeRequestId = 0
   const applyExternal = (action: () => void) => {
     applyingExternal = true
     try {
@@ -88,32 +98,73 @@ export const createAppRuntime = async (
       applyingExternal = false
     }
   }
-  const snapshot = await repository.load()
-  let localeRequestId = 0
-  const messages = await loadMessagesWithEnglishFallback(snapshot.locale, dependencies.loadMessages)
-  store.set(hydrateAppAtom, {
-    global: snapshot.global,
-    chat: snapshot.chat,
-    locale: localeStateFromMessages(snapshot.locale, messages),
-  })
 
-  const unbindPersistence = bindPersistence(store, repository, () => applyingExternal)
-  const unwatch = repository.watch({
-    onGlobal: value => applyExternal(() => store.set(replaceExternalGlobalSettingsAtom, value)),
-    onChat: value => applyExternal(() => store.set(replaceExternalChatSettingsAtom, value)),
-    onLocale: locale => {
-      const requestId = ++localeRequestId
-      void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
-        .then(messages => {
-          if (!disposed && requestId === localeRequestId) {
-            applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
-          }
-        })
-        .catch(() => {
-          // Keep the currently rendered locale when even the English base asset is unavailable.
-        })
-    },
-  })
+  const applyWatchedLocale = (locale: LocaleCode) => {
+    const requestId = ++localeRequestId
+    void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
+      .then(messages => {
+        if (!disposed && initialized && requestId === localeRequestId) {
+          applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
+        }
+      })
+      .catch(() => {
+        // Keep the currently rendered locale when even the English base asset is unavailable.
+      })
+  }
+
+  let unwatch = () => {}
+  let unbindPersistence = () => {}
+  try {
+    unwatch = repository.watch({
+      onGlobal: value => {
+        if (disposed) return
+        if (!initialized) {
+          pendingGlobal = value
+          return
+        }
+        applyExternal(() => store.set(replaceExternalGlobalSettingsAtom, value))
+      },
+      onChat: value => {
+        if (disposed) return
+        if (!initialized) {
+          pendingChat = value
+          return
+        }
+        applyExternal(() => store.set(replaceExternalChatSettingsAtom, value))
+      },
+      onLocale: locale => {
+        if (disposed) return
+        if (!initialized) {
+          pendingLocale = locale
+          localeRequestId += 1
+          return
+        }
+        applyWatchedLocale(locale)
+      },
+    })
+
+    const snapshot = await repository.load()
+    let hydratedLocale = pendingLocale ?? snapshot.locale
+    let messages: Awaited<ReturnType<typeof loadLocaleMessages>>
+    while (true) {
+      const requestId = localeRequestId
+      messages = await loadMessagesWithEnglishFallback(hydratedLocale, dependencies.loadMessages)
+      if (requestId === localeRequestId) break
+      hydratedLocale = pendingLocale ?? snapshot.locale
+    }
+    store.set(hydrateAppAtom, {
+      global: pendingGlobal ?? snapshot.global,
+      chat: pendingChat ?? snapshot.chat,
+      locale: localeStateFromMessages(hydratedLocale, messages),
+    })
+    unbindPersistence = bindPersistence(store, repository, () => applyingExternal)
+    initialized = true
+  } catch (error) {
+    disposed = true
+    unbindPersistence()
+    unwatch()
+    throw error
+  }
 
   return {
     store,
@@ -149,6 +200,7 @@ export const createAppRuntime = async (
       applyExternal(() => store.set(replaceImportedSettingsAtom, normalized))
     },
     dispose() {
+      if (disposed) return
       disposed = true
       unbindPersistence()
       unwatch()
