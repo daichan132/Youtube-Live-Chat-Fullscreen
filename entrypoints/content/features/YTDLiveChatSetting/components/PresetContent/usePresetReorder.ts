@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 type ItemLayout = { id: string; top: number; height: number }
 
+const hasOrderChanged = (before: string[], after: string[]) =>
+  before.length !== after.length || before.some((id, index) => id !== after[index])
+
 export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (ids: string[]) => void }) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [previewIds, setPreviewIds] = useState(ids)
@@ -28,7 +31,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
       window.removeEventListener('pointerup', handleUp)
       window.removeEventListener('pointercancel', handleCancel)
       window.removeEventListener('keydown', handleKeyDown)
-      if (commit) onCommit(previewIdsRef.current)
+      if (commit && hasOrderChanged(startIdsRef.current, previewIdsRef.current)) onCommit(previewIdsRef.current)
       else {
         previewIdsRef.current = startIdsRef.current
         setPreviewIds(startIdsRef.current)
@@ -64,7 +67,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
 
   const begin = useCallback(
     (id: string, event: React.PointerEvent) => {
-      if (event.button !== 0 || activeIdRef.current) return
+      if (event.button !== 0 || activeIdRef.current || !previewIdsRef.current.includes(id)) return
       const elements = [...document.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
       layoutsRef.current = elements.map(element => ({
         id: element.dataset.ylcPresetItem ?? '',
@@ -87,7 +90,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
   useEffect(() => () => finish(false), [finish])
 
   const beginKeyboard = (id: string) => {
-    if (activeIdRef.current) return
+    if (activeIdRef.current || !previewIdsRef.current.includes(id)) return
     startIdsRef.current = previewIdsRef.current
     activeIdRef.current = id
     setActiveId(id)
