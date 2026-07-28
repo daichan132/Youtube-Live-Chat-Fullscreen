@@ -80,5 +80,7 @@
     "export": "ರಫ್ತು",
     "import": "ಆಮದು",
     "importError": "ಸೆಟ್ಟಿಂಗ್‌ಗಳ ಫೈಲ್ ಆಮದು ಮಾಡಲಾಗಲಿಲ್ಲ."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "YouTube Live ಅನ್ನು ಪೂರ್ಣ ಪರದೆಯಲ್ಲಿ ಚಾಟ್‌ನೊಂದಿಗೆ ನೋಡಿ. ಸಂದೇಶ ಮತ್ತು Super Chat ಕಳುಹಿಸಿ, ಓವರ್‌ಲೇಯನ್ನು ನಿಮಗೆ ಬೇಕಾದಂತೆ ಬದಲಿಸಿ."
 }

@@ -80,5 +80,7 @@
     "export": "Exportera",
     "import": "Importera",
     "importError": "Det gick inte att importera inställningsfilen."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Se YouTube Live i helskärm med chatten synlig. Skriv i chatten, skicka Super Chats och anpassa överlägget som du vill."
 }

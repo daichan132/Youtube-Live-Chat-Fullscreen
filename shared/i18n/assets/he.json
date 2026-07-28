@@ -80,5 +80,7 @@
     "export": "ייצוא",
     "import": "ייבוא",
     "importError": "ייבוא קובץ ההגדרות נכשל."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "צפו בשידורים חיים ב-YouTube במסך מלא בלי לסגור את הצ׳אט. כתבו בצ׳אט, שלחו הודעות Super Chat והתאימו אישית את תצוגת הצ׳אט."
 }

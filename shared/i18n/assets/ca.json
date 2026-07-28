@@ -80,5 +80,7 @@
     "export": "Exporta",
     "import": "Importa",
     "importError": "No s'ha pogut importar el fitxer de configuració."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Mira YouTube Live a pantalla completa amb el xat. Escriu-hi, envia Super Chats i personalitza la superposició al teu gust."
 }

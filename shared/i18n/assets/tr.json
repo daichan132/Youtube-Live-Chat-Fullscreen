@@ -80,5 +80,7 @@
     "export": "Dışa aktar",
     "import": "İçe aktar",
     "importError": "Ayar dosyası içe aktarılamadı."
-  }
+  },
+  "extensionName": "YouTube Canlı Sohbet Tam Ekran",
+  "extensionDescription": "YouTube canlı yayınlarını sohbetle tam ekranda izleyin. Mesaj ve Super Chat gönderip sohbet katmanını özelleştirin."
 }

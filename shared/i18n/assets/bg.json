@@ -80,5 +80,7 @@
     "export": "Експортиране",
     "import": "Импортиране",
     "importError": "Файлът с настройки не можа да бъде импортиран."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Гледайте предавания на живо в YouTube на цял екран. Пишете в чата, изпращайте съобщения Super Chat и настройте изгледа на чата."
 }

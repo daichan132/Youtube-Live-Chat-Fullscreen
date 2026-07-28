@@ -80,5 +80,7 @@
     "export": "Извези",
     "import": "Увези",
     "importError": "Није могуће увести датотеку са подешавањима."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Гледајте YouTube преносе уживо преко целог екрана. Пишите у ћаскању, шаљите Super Chat поруке и прилагодите изглед ћаскања."
 }

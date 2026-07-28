@@ -80,5 +80,7 @@
     "export": "Ekspor",
     "import": "Impor",
     "importError": "Tidak dapat mengimpor file pengaturan."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Tonton YouTube Live dalam layar penuh dengan chat. Kirim pesan dan Super Chat, lalu sesuaikan tampilan chat."
 }

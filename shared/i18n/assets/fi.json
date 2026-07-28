@@ -80,5 +80,7 @@
     "export": "Vie",
     "import": "Tuo",
     "importError": "Asetustiedoston tuonti epäonnistui."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Katso YouTube Liveä koko näytöllä ja seuraa chatia. Kirjoita viestejä, lähetä Super Chat -viestejä ja mukauta chatin ulkoasua."
 }

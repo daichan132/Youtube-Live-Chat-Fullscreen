@@ -80,5 +80,7 @@
     "export": "Hamisha",
     "import": "Leta",
     "importError": "Imeshindikana kuleta faili ya mipangilio."
-  }
+  },
+  "extensionName": "YouTube Live Chat Skrini Nzima",
+  "extensionDescription": "Tazama YouTube Live kwenye skrini nzima pamoja na gumzo. Tuma ujumbe na Super Chat, kisha ubinafsishe mwonekano."
 }

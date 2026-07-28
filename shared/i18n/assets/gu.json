@@ -80,5 +80,7 @@
     "export": "નિકાસ",
     "import": "આયાત",
     "importError": "સેટિંગ ફાઇલ આયાત કરી શકાઈ નહીં."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "YouTube Live પૂર્ણ સ્ક્રીનમાં જોતી વખતે ચેટ વાંચો અને સંદેશા મોકલો. Super Chat મોકલો અને ઓવરલેનો દેખાવ તથા સ્થાન તમારી રીતે ગોઠવો."
 }

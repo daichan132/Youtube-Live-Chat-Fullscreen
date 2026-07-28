@@ -80,5 +80,7 @@
     "export": "Eksportēt",
     "import": "Importēt",
     "importError": "Neizdevās importēt iestatījumu failu."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Skatieties YouTube Live pilnekrānā ar redzamu čatu. Rakstiet čatā, sūtiet Super Chat ziņojumus un pielāgojiet pārklājumu."
 }

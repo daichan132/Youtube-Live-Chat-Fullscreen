@@ -80,5 +80,7 @@
     "export": "রপ্তানি",
     "import": "আমদানি",
     "importError": "সেটিংস ফাইল ইম্পোর্ট করা যায়নি।"
-  }
+  },
+  "extensionName": "YouTube Live Chat ফুলস্ক্রিন",
+  "extensionDescription": "YouTube Live ফুলস্ক্রিনে দেখার সময় চ্যাট পড়ুন ও বার্তা পাঠান। Super Chat পাঠান এবং ওভারলের চেহারা ও অবস্থান নিজের মতো সাজান।"
 }

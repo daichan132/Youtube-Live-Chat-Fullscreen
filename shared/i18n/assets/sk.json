@@ -80,5 +80,7 @@
     "export": "Exportovať",
     "import": "Importovať",
     "importError": "Súbor s nastaveniami sa nepodarilo importovať."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Sledujte živé vysielania na YouTube na celej obrazovke. Píšte do chatu, posielajte správy Super Chat a prispôsobte si vzhľad chatu."
 }

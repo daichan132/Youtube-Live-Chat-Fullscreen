@@ -80,5 +80,7 @@
     "export": "Exportă",
     "import": "Importă",
     "importError": "Nu s-a putut importa fișierul de setări."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Urmărește transmisiuni live pe YouTube pe ecran complet. Scrie în chat, trimite mesaje Super Chat și personalizează suprapunerea."
 }

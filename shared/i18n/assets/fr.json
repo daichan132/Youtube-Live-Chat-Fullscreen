@@ -80,5 +80,7 @@
     "export": "Exporter",
     "import": "Importer",
     "importError": "Impossible d'importer le fichier de paramètres."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Profitez de YouTube Live en plein écran avec le chat. Discutez, envoyez des Super Chats et personnalisez son affichage."
 }

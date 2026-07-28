@@ -80,5 +80,7 @@
     "export": "I-export",
     "import": "I-import",
     "importError": "Hindi ma-import ang file ng mga setting."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Manood ng YouTube Live sa fullscreen na may chat. Magpadala ng mensahe at Super Chat, at i-customize ang overlay."
 }

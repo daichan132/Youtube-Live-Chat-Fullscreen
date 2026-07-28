@@ -80,5 +80,7 @@
     "export": "匯出",
     "import": "匯入",
     "importError": "無法匯入設定檔。"
-  }
+  },
+  "extensionName": "YouTube 直播全螢幕聊天室",
+  "extensionDescription": "全螢幕觀看 YouTube 直播時也能查看及傳送聊天訊息、傳送 Super Chat，並自由調整聊天室浮動視窗的樣式與位置。"
 }

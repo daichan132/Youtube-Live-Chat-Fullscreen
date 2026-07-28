@@ -80,5 +80,7 @@
     "export": "تصدير",
     "import": "استيراد",
     "importError": "تعذّر استيراد ملف الإعدادات."
-  }
+  },
+  "extensionName": "YouTube Live Chat ملء الشاشة",
+  "extensionDescription": "شاهد YouTube Live بملء الشاشة مع الدردشة. اكتب في الدردشة، وأرسل Super Chat، وخصّص الواجهة العائمة."
 }

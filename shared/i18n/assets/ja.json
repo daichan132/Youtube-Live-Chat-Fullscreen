@@ -80,5 +80,7 @@
     "export": "書き出し",
     "import": "読み込み",
     "importError": "設定ファイルを読み込めませんでした。"
-  }
+  },
+  "extensionName": "YouTubeライブチャットフルスクリーン",
+  "extensionDescription": "YouTube Liveを全画面で視聴しながらチャットを表示・投稿。スーパーチャットの送信や、オーバーレイの見た目・配置の調整もできます。"
 }

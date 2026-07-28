@@ -80,5 +80,7 @@
     "export": "صادر کردن",
     "import": "وارد کردن",
     "importError": "فایل تنظیمات وارد نشد."
-  }
+  },
+  "extensionName": "YouTube Live Chat تمام‌صفحه",
+  "extensionDescription": "YouTube Live را تمام‌صفحه و همراه چت تماشا کنید. پیام و Super Chat بفرستید و نمای چت را شخصی‌سازی کنید."
 }

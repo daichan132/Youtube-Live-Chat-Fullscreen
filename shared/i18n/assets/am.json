@@ -80,5 +80,7 @@
     "export": "ወደ ውጭ ላክ",
     "import": "አስመጣ",
     "importError": "የቅንብሮች ፋይሉን ማስመጣት አልተቻለም።"
-  }
+  },
+  "extensionName": "YouTube Live Chat ሙሉ ስክሪን",
+  "extensionDescription": "ቻቱን ሳይዘጉ የYouTube የቀጥታ ስርጭቶችን በሙሉ ማያ ገጽ ይመልከቱ። በቻት መልዕክት ይላኩ፣ Super Chat ይላኩ እና የቻቱን ገጽታ እንደፈለጉ ያስተካክሉ።"
 }

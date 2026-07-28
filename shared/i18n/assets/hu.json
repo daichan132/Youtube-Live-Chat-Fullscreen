@@ -80,5 +80,7 @@
     "export": "Exportálás",
     "import": "Importálás",
     "importError": "A beállításfájl importálása nem sikerült."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Nézz élő YouTube-közvetítéseket teljes képernyőn. Írj a csevegésbe, küldj Super Chat-üzeneteket, és szabd személyre a megjelenést."
 }

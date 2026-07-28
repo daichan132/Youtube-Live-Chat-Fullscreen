@@ -80,5 +80,7 @@
     "export": "Eksportuoti",
     "import": "Importuoti",
     "importError": "Nepavyko importuoti nustatymų failo."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Žiūrėkite YouTube Live visame ekrane ir matykite pokalbį. Rašykite pokalbyje, siųskite „Super Chat“ žinutes ir keiskite jo stilių."
 }

@@ -80,5 +80,7 @@
     "export": "Экспортировать",
     "import": "Импортировать",
     "importError": "Не удалось импортировать файл с настройками."
-  }
+  },
+  "extensionName": "YouTube Live Chat на весь экран",
+  "extensionDescription": "Смотрите YouTube Live на весь экран вместе с чатом. Пишите в чат, отправляйте Super Chat и настраивайте оверлей."
 }

@@ -80,5 +80,7 @@
     "export": "निर्यात",
     "import": "आयात",
     "importError": "सेटिंग फ़ाइल आयात नहीं की जा सकी।"
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "YouTube Live को फ़ुलस्क्रीन में देखते हुए चैट पढ़ें और संदेश भेजें। Super Chat भेजें और ओवरले का रूप व स्थान अपने अनुसार बदलें।"
 }

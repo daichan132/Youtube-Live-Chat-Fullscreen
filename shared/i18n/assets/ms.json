@@ -80,5 +80,7 @@
     "export": "Eksport",
     "import": "Import",
     "importError": "Fail tetapan tidak dapat diimport."
-  }
+  },
+  "extensionName": "YouTube Live Chat Skrin Penuh",
+  "extensionDescription": "Tonton YouTube Live dalam skrin penuh dengan sembang. Hantar mesej dan Super Chat, kemudian sesuaikan tindanan."
 }

@@ -80,5 +80,7 @@
     "export": "Xuất",
     "import": "Nhập",
     "importError": "Không thể nhập tệp cài đặt."
-  }
+  },
+  "extensionName": "YouTube Live Chat Toàn Màn Hình",
+  "extensionDescription": "Xem YouTube Live toàn màn hình cùng chat. Gửi tin nhắn và Super Chat, rồi tùy chỉnh lớp phủ theo ý bạn."
 }

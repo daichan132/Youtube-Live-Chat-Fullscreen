@@ -80,5 +80,7 @@
     "export": "Εξαγωγή",
     "import": "Εισαγωγή",
     "importError": "Δεν ήταν δυνατή η εισαγωγή του αρχείου ρυθμίσεων."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Δείτε ζωντανά βίντεο YouTube σε πλήρη οθόνη. Γράψτε στη συνομιλία, στείλτε μηνύματα Super Chat και προσαρμόστε την εμφάνισή της."
 }

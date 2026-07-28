@@ -80,5 +80,7 @@
     "export": "导出",
     "import": "导入",
     "importError": "无法导入设置文件。"
-  }
+  },
+  "extensionName": "YouTube 直播全屏聊天",
+  "extensionDescription": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。"
 }

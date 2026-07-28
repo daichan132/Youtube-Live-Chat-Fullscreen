@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
+import { localeDisplayNames } from '@/shared/i18n/generated/localeMetadata'
 import { resolveLanguageCode } from '@/shared/i18n/language'
-import language_codes from '@/shared/i18n/language_codes.json'
 import { useLocaleCode, useT } from '@/shared/i18n/react'
 import { useAppRuntime } from '@/shared/runtime/AppProvider'
 import { sendActiveTabMessage } from '../utils/sendActiveTabMessage'
 
-const languageOptions = Object.entries(language_codes).map(([code, name]) => ({
+const languageOptions = Object.entries(localeDisplayNames).map(([code, name]) => ({
   value: code,
   label: name,
 }))

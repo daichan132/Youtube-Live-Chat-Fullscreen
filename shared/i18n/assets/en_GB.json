@@ -80,5 +80,7 @@
     "export": "Export",
     "import": "Import",
     "importError": "Could not import the settings file."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Watch YouTube Live in full screen without losing the chat. Post messages, send Super Chats and customise the overlay."
 }

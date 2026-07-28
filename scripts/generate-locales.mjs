@@ -1,53 +1,54 @@
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { compileLocales } from './locales/compiler.mjs'
 
-const assetsDir = new URL('../shared/i18n/assets/', import.meta.url)
-const publicDir = new URL('../public/locales/', import.meta.url)
+const runtimeDir = new URL('../public/locales/', import.meta.url)
+const manifestDir = new URL('../public/_locales/', import.meta.url)
 const generatedDir = new URL('../shared/i18n/generated/', import.meta.url)
 const checkOnly = process.argv.includes('--check')
 
-const flatten = (value, prefix = '', output = {}) => {
-  for (const [key, child] of Object.entries(value)) {
-    const path = prefix ? `${prefix}.${key}` : key
-    if (child && typeof child === 'object' && !Array.isArray(child)) flatten(child, path, output)
-    else if (typeof child === 'string' && child.trim()) output[path] = child
-    else throw new Error(`Invalid locale value at ${path}`)
+const readTree = async (directory, prefix = '') => {
+  const files = new Map()
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = prefix ? `${prefix}/${entry.name}` : entry.name
+    if (entry.isDirectory()) {
+      for (const [childPath, content] of await readTree(new URL(`${entry.name}/`, directory), path)) {
+        files.set(childPath, content)
+      }
+    } else if (entry.isFile()) {
+      files.set(path, await readFile(new URL(entry.name, directory), 'utf8'))
+    } else {
+      files.set(path, null)
+    }
   }
-  return output
+  return files
 }
 
-const files = (await readdir(assetsDir)).filter(file => file.endsWith('.json')).sort()
-const localeCodes = files.map(file => file.slice(0, -5))
-if (localeCodes.some(locale => !/^[a-z]{2,3}(?:_(?:[A-Z]{2}|\d{3}))?$/u.test(locale))) {
-  throw new Error(`Invalid locale code: ${localeCodes.find(locale => !/^[a-z]{2,3}(?:_(?:[A-Z]{2}|\d{3}))?$/u.test(locale))}`)
-}
-const english = flatten(JSON.parse(await readFile(new URL('en.json', assetsDir), 'utf8')))
-const englishKeys = Object.keys(english).sort()
-
-if (!checkOnly) await mkdir(publicDir, { recursive: true })
-for (const file of files) {
-  const locale = file.slice(0, -5)
-  const messages = flatten(JSON.parse(await readFile(new URL(file, assetsDir), 'utf8')))
-  const keys = Object.keys(messages).sort()
-  if (keys.join('\0') !== englishKeys.join('\0')) throw new Error(`Locale keys differ: ${locale}`)
-  const target = new URL(`${locale}.json`, publicDir)
-  const expected = `${JSON.stringify(messages, null, 2)}\n`
-  if (checkOnly) {
-    if ((await readFile(target, 'utf8')) !== expected) throw new Error(`Generated locale is stale: ${locale}`)
-  } else {
-    await writeFile(target, expected)
+const verifyFiles = async (directory, expectedFiles, label) => {
+  const actualFiles = await readTree(directory)
+  const paths = new Set([...actualFiles.keys(), ...expectedFiles.keys()])
+  for (const path of paths) {
+    if (actualFiles.get(path) !== expectedFiles.get(path)) throw new Error(`${label} is stale: ${path}`)
   }
 }
 
-const quote = value => `'${value}'`
-const union = values => `\n${values.map(value => `  | ${quote(value)}`).join('\n')}`
-const generatedTypes = `export type LocaleCode =${union(localeCodes)}\n\nexport type TranslationKey =${union(englishKeys)}\n\nexport type LocaleMessages = Readonly<Record<TranslationKey, string>>\n\nexport type LocaleState = {\n  code: LocaleCode\n  direction: 'ltr' | 'rtl'\n  messages: LocaleMessages\n}\n`
+const writeFiles = async (directory, files) => {
+  await rm(directory, { recursive: true, force: true })
+  for (const [path, content] of files) {
+    const target = new URL(path, directory)
+    await mkdir(new URL('./', target), { recursive: true })
+    await writeFile(target, content)
+  }
+}
+
+const compiled = await compileLocales()
 if (checkOnly) {
-  if ((await readFile(new URL('translationTypes.ts', generatedDir), 'utf8')) !== generatedTypes) throw new Error('Generated translation types are stale')
-  const entries = await readdir(publicDir, { withFileTypes: true })
-  const unexpected = entries.filter(entry => !entry.isFile() || !files.includes(entry.name)).map(entry => entry.name)
-  if (unexpected.length > 0) throw new Error(`Unexpected public locale entries: ${unexpected.join(', ')}`)
+  await verifyFiles(runtimeDir, compiled.runtimeFiles, 'Runtime locale output')
+  await verifyFiles(manifestDir, compiled.manifestFiles, 'Manifest locale output')
+  await verifyFiles(generatedDir, compiled.generatedFiles, 'Generated locale metadata')
 } else {
-  await mkdir(generatedDir, { recursive: true })
-  await writeFile(new URL('translationTypes.ts', generatedDir), generatedTypes)
+  await writeFiles(runtimeDir, compiled.runtimeFiles)
+  await writeFiles(manifestDir, compiled.manifestFiles)
+  await writeFiles(generatedDir, compiled.generatedFiles)
 }
-console.log(`${checkOnly ? 'Checked' : 'Generated'} ${localeCodes.length} locale assets`)
+
+console.log(`${checkOnly ? 'Checked' : 'Generated'} ${compiled.localeCodes.length} locale assets`)

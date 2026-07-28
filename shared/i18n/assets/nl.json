@@ -80,5 +80,7 @@
     "export": "Exporteren",
     "import": "Importeren",
     "importError": "Kan het instellingenbestand niet importeren."
-  }
+  },
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Bekijk YouTube Live op volledig scherm met chat. Chat mee, stuur Super Chats en pas de overlay naar wens aan."
 }
