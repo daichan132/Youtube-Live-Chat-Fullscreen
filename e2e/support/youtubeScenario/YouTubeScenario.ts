@@ -13,6 +13,7 @@ import type {
   ExtensionIframeIdentity,
   NativeIframeMutation,
   NativeSlotObservation,
+  ScenarioDocumentObservation,
   ScenarioRuntimeObservation,
   YouTubeScenarioState,
 } from './types'
@@ -22,6 +23,7 @@ const FIXTURE_PREFLIGHT_URL = 'https://www.youtube.com/?ylc-fixture-preflight=1'
 export class YouTubeScenario {
   private readonly watchPage: YouTubeWatchPage
   private state: YouTubeScenarioState | null = null
+  private generation = 0
 
   constructor(private readonly page: Page) {
     this.watchPage = new YouTubeWatchPage(page)
@@ -29,6 +31,7 @@ export class YouTubeScenario {
 
   async load(state: YouTubeScenarioState) {
     this.state = state
+    this.generation = 0
     const compiled = compileYouTubeScenario(state)
 
     await this.page.route(
@@ -58,18 +61,56 @@ export class YouTubeScenario {
         }),
       { times: 1 },
     )
-    for (const chatRoute of compiled.chatRoutes) {
-      await this.page.route(chatRoute.pattern, route =>
-        route.fulfill({
-          status: 200,
-          contentType: 'text/html',
-          body: chatRoute.body,
-        }),
-      )
-    }
+    await this.installChatRoutes(compiled.chatRoutes)
 
     await this.watchPage.goto(compiled.watchUrl)
     if (state.fullscreen) await this.enterFullscreen()
+  }
+
+  async spaNavigate(state: YouTubeScenarioState) {
+    this.requireState()
+    const compiled = compileYouTubeScenario(state)
+    const generation = this.generation + 1
+    await this.installChatRoutes(compiled.chatRoutes)
+    await this.page.evaluate(
+      async ({ generation, spaDocument, watchUrl }) => {
+        if (document.fullscreenElement) await document.exitFullscreen()
+        document.dispatchEvent(new Event('yt-navigate-start'))
+        window.history.pushState({}, '', watchUrl)
+        document.title = spaDocument.title
+        document.body.innerHTML = spaDocument.bodyHtml
+
+        const player = document.getElementById('movie_player')
+        const fullscreenButton = document.querySelector<HTMLButtonElement>('.ytp-fullscreen-button')
+        const boundaryProbe = document.querySelector<HTMLButtonElement>('[data-ylc-player-boundary-probe]')
+        if (!player || !fullscreenButton || !boundaryProbe) throw new Error('Compiled SPA document is missing its player contract.')
+
+        player.dataset.ylcFixtureGeneration = String(generation)
+        Object.assign(player, {
+          getVideoData: () => ({
+            isLive: spaDocument.isLive,
+            isLiveContent: spaDocument.isLive,
+            video_id: spaDocument.videoId,
+          }),
+        })
+        fullscreenButton.addEventListener('click', async () => {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen()
+            return
+          }
+          await player.requestFullscreen()
+        })
+        boundaryProbe.addEventListener('click', event => {
+          const target = event.currentTarget as HTMLElement
+          target.dataset.ylcClicks = String(Number(target.dataset.ylcClicks ?? 0) + 1)
+        })
+        document.dispatchEvent(new Event('yt-page-data-updated'))
+        document.dispatchEvent(new Event('yt-navigate-finish'))
+      },
+      { generation, spaDocument: compiled.spaDocument, watchUrl: compiled.watchUrl },
+    )
+    this.state = state
+    this.generation = generation
   }
 
   enterFullscreen(options?: { timeout?: number }) {
@@ -155,6 +196,10 @@ export class YouTubeScenario {
     })
   }
 
+  observeExtensionIframeHref(): Promise<string | null> {
+    return this.page.evaluate(() => window.__ylcHelpers.getExtensionIframe()?.src ?? null)
+  }
+
   observeNativeSlot(): Promise<NativeSlotObservation> {
     return this.page.evaluate(() => {
       const host = document.querySelector('ytd-live-chat-frame')
@@ -196,6 +241,34 @@ export class YouTubeScenario {
       nativeControls,
       extensionOverlayRendered,
       extensionChatLoaded,
+    }
+  }
+
+  observeDocument(): Promise<ScenarioDocumentObservation> {
+    return this.page.evaluate(() => {
+      const watch = document.querySelector('ytd-watch-flexy')
+      const player = document.getElementById('movie_player')
+      const rawGeneration = player?.dataset.ylcFixtureGeneration
+      return {
+        url: window.location.href,
+        title: document.title,
+        videoId: watch?.getAttribute('video-id') ?? null,
+        playerVideoId: player?.getAttribute('video-id') ?? null,
+        generation: rawGeneration === undefined ? null : Number(rawGeneration),
+        fullscreen: document.fullscreenElement !== null,
+      }
+    })
+  }
+
+  private async installChatRoutes(chatRoutes: Array<{ pattern: string; body: string }>) {
+    for (const chatRoute of chatRoutes) {
+      await this.page.route(chatRoute.pattern, route =>
+        route.fulfill({
+          status: 200,
+          contentType: 'text/html',
+          body: chatRoute.body,
+        }),
+      )
     }
   }
 

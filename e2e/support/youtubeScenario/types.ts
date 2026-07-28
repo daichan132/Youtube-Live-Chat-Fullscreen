@@ -79,3 +79,12 @@ export type ScenarioRuntimeObservation = {
   extensionOverlayRendered: boolean
   extensionChatLoaded: boolean
 }
+
+export type ScenarioDocumentObservation = {
+  url: string
+  title: string
+  videoId: string | null
+  playerVideoId: string | null
+  generation: number | null
+  fullscreen: boolean
+}

@@ -2,10 +2,14 @@ import { TIMEOUT } from '@e2e/support/constants'
 import { isExtensionArchiveChatPlayable, isExtensionChatLoaded } from '@e2e/support/diagnostics'
 import { reliableClick } from '@e2e/utils/actions'
 import { MOVIE_PLAYER, SHADOW_HOST, switchButtonSelector } from '@e2e/utils/selectors'
-import { expect, type Page } from '@playwright/test'
+import { expect, type Locator, type Page } from '@playwright/test'
 
 export class ExtensionOverlay {
   constructor(private page: Page) {}
+
+  frame() {
+    return this.page.locator(`${SHADOW_HOST} [data-ylc-resizable]`)
+  }
 
   switchButton() {
     return this.page.locator(switchButtonSelector)
@@ -89,6 +93,74 @@ export class ExtensionOverlay {
         pointerEvents: hostStyle.pointerEvents,
       }
     }, MOVIE_PLAYER)
+  }
+
+  async getGeometry() {
+    return this.frame().evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return {
+        x: rect.x,
+        y: rect.y,
+        width: rect.width,
+        height: rect.height,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+      }
+    })
+  }
+
+  getResizeDirections() {
+    return this.frame()
+      .locator('[data-ylc-resize-direction]')
+      .evaluateAll(elements => elements.map(element => element.getAttribute('data-ylc-resize-direction')))
+  }
+
+  async revealControls() {
+    await this.frame().hover({ force: true })
+    await expect(this.dragHandle()).toBeVisible()
+    await expect(this.dragHandle()).toBeEnabled()
+  }
+
+  async startDrag(delta: { x: number; y: number }) {
+    await this.revealControls()
+    await this.startPointerGesture(this.dragHandle(), delta)
+  }
+
+  async startResize(direction: string, delta: { x: number; y: number }) {
+    await this.startPointerGesture(this.frame().locator(`[data-ylc-resize-direction="${direction}"]`), delta)
+  }
+
+  finishPointerGesture() {
+    return this.page.mouse.up()
+  }
+
+  async moveWithKeyboard(key: 'ArrowUp' | 'ArrowDown' | 'ArrowLeft' | 'ArrowRight') {
+    await this.revealControls()
+    await this.dragHandle().press(key)
+  }
+
+  async clickPlayerBoundaryProbe() {
+    await this.page.getByRole('button', { name: 'Player boundary probe' }).click()
+  }
+
+  boundaryProbeClicks() {
+    return this.page
+      .getByRole('button', { name: 'Player boundary probe' })
+      .getAttribute('data-ylc-clicks')
+      .then(value => Number(value ?? 0))
+  }
+
+  private dragHandle() {
+    return this.page.getByRole('button', { name: 'Drag to move' })
+  }
+
+  private async startPointerGesture(target: Locator, delta: { x: number; y: number }) {
+    const box = await target.boundingBox()
+    if (!box) throw new Error('Overlay interaction target has no browser bounding box.')
+    const start = { x: box.x + box.width / 2, y: box.y + box.height / 2 }
+    await this.page.mouse.move(start.x, start.y)
+    await this.page.mouse.down()
+    await this.page.mouse.move(start.x + delta.x, start.y + delta.y)
   }
 }
 

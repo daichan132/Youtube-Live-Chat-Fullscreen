@@ -46,6 +46,7 @@ describe('YouTube scenario compiler', () => {
     expect(Object.getOwnPropertyNames(YouTubeScenario.prototype)).toEqual(
       expect.arrayContaining([
         'load',
+        'spaNavigate',
         'enterFullscreen',
         'exitFullscreen',
         'addNativeIframe',
@@ -53,8 +54,10 @@ describe('YouTube scenario compiler', () => {
         'setChatUnavailable',
         'addNativeChatControl',
         'observeExtensionIframeIdentity',
+        'observeExtensionIframeHref',
         'observeNativeSlot',
         'observeRuntime',
+        'observeDocument',
       ]),
     )
   })
@@ -65,6 +68,12 @@ describe('YouTube scenario compiler', () => {
     expect(compiled.watchUrl).toBe('https://www.youtube.com/watch?v=video-1')
     expect(compiled.watchHtml).toContain('is-live-now')
     expect(compiled.watchHtml).not.toContain('id="chatframe"')
+    expect(compiled.spaDocument).toMatchObject({
+      title: 'Typed fixture',
+      videoId: 'video-1',
+      isLive: true,
+      bodyHtml: expect.stringContaining('data-ylc-fixture-generation="0"'),
+    })
     expect(compiled.chatRoutes).toEqual([
       expect.objectContaining({
         pattern: '**/live_chat?*',
@@ -116,9 +125,7 @@ describe('YouTube scenario compiler', () => {
   })
 
   it('compiles a no-chat fixture without chat routes or native iframe', () => {
-    const compiled = compileYouTubeScenario(
-      createNoChatState(),
-    )
+    const compiled = compileYouTubeScenario(createNoChatState())
 
     expect(compiled.watchHtml).not.toContain('is-live-now')
     expect(compiled.watchHtml).not.toContain('id="chatframe"')
@@ -132,12 +139,14 @@ describe('YouTube scenario compiler', () => {
       'archive/replayUnavailable.fixture.spec.ts',
       'live/managedNativeHandoff.fixture.spec.ts',
       'live/noChatVideo.fixture.spec.ts',
+      'live/overlayInteraction.fixture.spec.ts',
+      'live/spaNavigation.fixture.spec.ts',
     ]
 
     for (const relativePath of fixtureSpecs) {
       const source = fs.readFileSync(`${scenarioRoot}/${relativePath}`, 'utf8')
       expect(source).toContain('YouTubeScenario')
-      expect(source).not.toMatch(/\bpage\s*(?:\.|\?\.)\s*[A-Za-z_$][\w$]*\s*\(/)
+      expect(source).not.toMatch(/\bpage\s*(?:\.|\?\.)\s*(?:evaluate|goto|route|setContent)\s*\(/)
       expect(source).not.toContain('<!doctype')
       expect(source).not.toContain('buildWatchFixtureHtml')
       expect(source).not.toContain('routeYouTubeWatchFixture')

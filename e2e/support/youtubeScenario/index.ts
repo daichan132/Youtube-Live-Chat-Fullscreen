@@ -3,6 +3,7 @@ export type {
   ExtensionIframeIdentity,
   NativeIframeMutation,
   NativeSlotObservation,
+  ScenarioDocumentObservation,
   ScenarioRuntimeObservation,
   YouTubeScenarioState,
 } from './types'

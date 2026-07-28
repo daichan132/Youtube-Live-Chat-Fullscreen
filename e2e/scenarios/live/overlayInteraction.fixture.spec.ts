@@ -1,0 +1,123 @@
+import { E2E_BRIDGE_FILE } from '@e2e/config/buildOutput'
+import { type Extension, expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { patchOverlayStore } from '@e2e/utils/storageHelper'
+import type { Page } from '@playwright/test'
+import type { ChatGeometry } from '../../../shared/settings/model'
+import { CHAT_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+
+const scenarioState = {
+  video: { id: 'ylc-overlay-boundary', title: 'Overlay interaction fixture', mode: 'live' },
+  page: { chatContainer: 'present', chatDimensions: 'standard' },
+  fullscreen: false,
+  chat: {
+    mode: 'live',
+    native: { state: 'absent' },
+    response: 'playable',
+  },
+} satisfies YouTubeScenarioState
+
+const SEEDED_GEOMETRY: ChatGeometry = {
+  coordinates: { x: 100, y: 80 },
+  size: { width: 400, height: 300 },
+}
+
+const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> =>
+  storagePage.evaluate(async key => {
+    const stored = (await chrome.storage.local.get(key))[key] as { value?: { geometry?: ChatGeometry } } | undefined
+    return stored?.value?.geometry ?? null
+  }, CHAT_STORAGE_KEY)
+
+const expectPersistedGeometry = async (storagePage: Page, geometry: ChatGeometry) => {
+  await expect.poll(() => readPersistedGeometry(storagePage)).toEqual(geometry)
+}
+
+const openStoragePage = async (extension: Extension, page: Page) => {
+  const storagePage = await page.context().newPage()
+  await storagePage.goto(extension.url(E2E_BRIDGE_FILE), { waitUntil: 'domcontentloaded', timeout: 15000 })
+  await page.bringToFront()
+  return storagePage
+}
+
+test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
+  test('wires drag, eight resize handles, clamp, passthrough, keyboard, and operation-end persistence', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }) => {
+    test.setTimeout(120000)
+
+    expect(await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })).not.toBeNull()
+    const storagePage = await openStoragePage(extension, page)
+    try {
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectSwitchReady({ timeout: 12000 })
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      await expect
+        .poll(() => overlay.getGeometry())
+        .toMatchObject({
+          x: SEEDED_GEOMETRY.coordinates.x,
+          y: SEEDED_GEOMETRY.coordinates.y,
+          width: SEEDED_GEOMETRY.size.width,
+          height: SEEDED_GEOMETRY.size.height,
+        })
+      const viewport = await overlay.getGeometry()
+
+      expect((await overlay.getResizeDirections()).sort()).toEqual(
+        ['top', 'right', 'bottom', 'left', 'topRight', 'bottomRight', 'bottomLeft', 'topLeft'].sort(),
+      )
+
+      await overlay.clickPlayerBoundaryProbe()
+      await expect.poll(() => overlay.boundaryProbeClicks()).toBe(1)
+
+      await overlay.startDrag({ x: 2000, y: 2000 })
+      const clampedCoordinates = {
+        x: viewport.viewportWidth - SEEDED_GEOMETRY.size.width - 10,
+        y: viewport.viewportHeight - SEEDED_GEOMETRY.size.height - 10,
+      }
+      await expect
+        .poll(() => overlay.getGeometry())
+        .toMatchObject({
+          ...clampedCoordinates,
+          width: SEEDED_GEOMETRY.size.width,
+          height: SEEDED_GEOMETRY.size.height,
+        })
+      expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
+
+      await overlay.finishPointerGesture()
+      const draggedGeometry: ChatGeometry = {
+        coordinates: clampedCoordinates,
+        size: { width: 400, height: 300 },
+      }
+      await expectPersistedGeometry(storagePage, draggedGeometry)
+
+      await overlay.startResize('bottomRight', { x: -80, y: -60 })
+      await expect
+        .poll(() => overlay.getGeometry())
+        .toMatchObject({
+          ...clampedCoordinates,
+          width: 320,
+          height: 240,
+        })
+      expect(await readPersistedGeometry(storagePage)).toEqual(draggedGeometry)
+
+      await overlay.finishPointerGesture()
+      const resizedGeometry: ChatGeometry = {
+        coordinates: clampedCoordinates,
+        size: { width: 320, height: 240 },
+      }
+      await expectPersistedGeometry(storagePage, resizedGeometry)
+
+      await overlay.moveWithKeyboard('ArrowLeft')
+      await expectPersistedGeometry(storagePage, {
+        coordinates: { x: clampedCoordinates.x - 10, y: clampedCoordinates.y },
+        size: { width: 320, height: 240 },
+      })
+    } finally {
+      await storagePage.close()
+    }
+  })
+})
