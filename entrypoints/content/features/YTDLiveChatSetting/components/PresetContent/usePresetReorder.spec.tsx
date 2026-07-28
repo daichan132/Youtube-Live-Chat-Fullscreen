@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { usePresetReorder } from './usePresetReorder'
 
@@ -16,7 +16,7 @@ const ReorderHarness = ({
   const reorder = usePresetReorder({ ids, onCommit })
 
   return (
-    <>
+    <div data-ylc-setting-scroll-container data-testid='scroll-container'>
       <output data-testid='order'>{reorder.previewIds.join(',')}</output>
       <output data-testid='active'>{reorder.activeId ?? ''}</output>
       {reorder.previewIds.map(id => (
@@ -32,7 +32,7 @@ const ReorderHarness = ({
           Unknown
         </button>
       )}
-    </>
+    </div>
   )
 }
 
@@ -52,6 +52,48 @@ const arrangePresetRows = (container: HTMLElement) => {
   container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]').forEach((item, index) => {
     vi.spyOn(item, 'getBoundingClientRect').mockReturnValue(rectAt(index * 40))
   })
+}
+
+const arrangeScrollablePresetRows = (container: HTMLElement) => {
+  const scrollContainer = container.querySelector<HTMLElement>('[data-ylc-setting-scroll-container]')
+  if (!scrollContainer) throw new Error('Expected the preset scroll container')
+  Object.defineProperties(scrollContainer, {
+    clientHeight: { configurable: true, value: 380 },
+    scrollHeight: { configurable: true, value: 800 },
+  })
+  vi.spyOn(scrollContainer, 'getBoundingClientRect').mockReturnValue({
+    ...rectAt(0),
+    bottom: 380,
+    height: 380,
+  })
+  container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]').forEach(item => {
+    vi.spyOn(item, 'getBoundingClientRect').mockImplementation(() => {
+      const items = [...scrollContainer.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
+      return rectAt(items.indexOf(item) * 40 - scrollContainer.scrollTop)
+    })
+  })
+  return scrollContainer
+}
+
+const installAnimationFrameHarness = () => {
+  let nextId = 0
+  const callbacks = new Map<number, FrameRequestCallback>()
+  const request = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+    nextId += 1
+    callbacks.set(nextId, callback)
+    return nextId
+  })
+  const cancel = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => {
+    callbacks.delete(id)
+  })
+  const runNext = () => {
+    const next = callbacks.entries().next().value as [number, FrameRequestCallback] | undefined
+    if (!next) return false
+    callbacks.delete(next[0])
+    act(() => next[1](performance.now()))
+    return true
+  }
+  return { callbacks, cancel, request, runNext }
 }
 
 const order = (getByTestId: (id: string) => HTMLElement) => getByTestId('order').textContent
@@ -204,6 +246,87 @@ describe('usePresetReorder', () => {
     for (const [type, listener] of reorderListeners) {
       expect(removeListener).toHaveBeenCalledWith(type, listener)
     }
+    expect(onCommit).not.toHaveBeenCalled()
+  })
+
+  it('auto-scrolls at the container edge, remeasures rows, and commits only on pointer up', () => {
+    const ids = Array.from({ length: 12 }, (_, index) => `preset-${index + 1}`)
+    const onCommit = vi.fn()
+    const animationFrames = installAnimationFrameHarness()
+    const view = render(<ReorderHarness ids={ids} onCommit={onCommit} />)
+    const scrollContainer = arrangeScrollablePresetRows(view.container)
+    const rows = [...view.container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
+    const firstRowRect = vi.mocked(rows[0].getBoundingClientRect)
+
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-1' }), {
+      button: 0,
+      clientY: 379,
+      pointerId: 7,
+    })
+    expect(onCommit).not.toHaveBeenCalled()
+    expect(firstRowRect).toHaveBeenCalledTimes(1)
+
+    expect(animationFrames.runNext()).toBe(true)
+    expect(scrollContainer.scrollTop).toBeGreaterThan(0)
+    expect(firstRowRect.mock.calls.length).toBeGreaterThan(1)
+    expect(order(view.getByTestId)).not.toBe(ids.join(','))
+    expect(onCommit).not.toHaveBeenCalled()
+
+    animationFrames.runNext()
+    animationFrames.runNext()
+    fireEvent.pointerUp(window, { pointerId: 7 })
+
+    expect(onCommit).toHaveBeenCalledOnce()
+    expect(onCommit).toHaveBeenCalledWith(order(view.getByTestId)?.split(','))
+    expect(animationFrames.cancel).toHaveBeenCalledOnce()
+    expect(animationFrames.callbacks).toHaveLength(0)
+  })
+
+  it('auto-scrolls upward when the pointer stays at the top edge', () => {
+    const ids = Array.from({ length: 12 }, (_, index) => `preset-${index + 1}`)
+    const onCommit = vi.fn()
+    const animationFrames = installAnimationFrameHarness()
+    const view = render(<ReorderHarness ids={ids} onCommit={onCommit} />)
+    const scrollContainer = arrangeScrollablePresetRows(view.container)
+    scrollContainer.scrollTop = 200
+
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-12' }), {
+      button: 0,
+      clientY: 1,
+      pointerId: 9,
+    })
+    animationFrames.runNext()
+
+    expect(scrollContainer.scrollTop).toBeLessThan(200)
+    expect(onCommit).not.toHaveBeenCalled()
+
+    fireEvent.pointerCancel(window, { pointerId: 9 })
+    expect(order(view.getByTestId)).toBe(ids.join(','))
+    expect(onCommit).not.toHaveBeenCalled()
+  })
+
+  it.each(['pointercancel', 'unmount'] as const)('stops edge auto-scroll on %s without committing', endGesture => {
+    const ids = Array.from({ length: 12 }, (_, index) => `preset-${index + 1}`)
+    const onCommit = vi.fn()
+    const animationFrames = installAnimationFrameHarness()
+    const view = render(<ReorderHarness ids={ids} onCommit={onCommit} />)
+    const scrollContainer = arrangeScrollablePresetRows(view.container)
+
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-1' }), {
+      button: 0,
+      clientY: 379,
+      pointerId: 8,
+    })
+    animationFrames.runNext()
+    const stoppedAt = scrollContainer.scrollTop
+
+    if (endGesture === 'unmount') view.unmount()
+    else fireEvent.pointerCancel(window, { pointerId: 8 })
+
+    expect(animationFrames.cancel).toHaveBeenCalledOnce()
+    expect(animationFrames.callbacks).toHaveLength(0)
+    expect(animationFrames.runNext()).toBe(false)
+    expect(scrollContainer.scrollTop).toBe(stoppedAt)
     expect(onCommit).not.toHaveBeenCalled()
   })
 })
