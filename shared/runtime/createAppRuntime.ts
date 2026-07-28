@@ -64,6 +64,15 @@ type AppRuntimeDependencies = {
   loadMessages: typeof loadLocaleMessages
 }
 
+const loadMessagesWithEnglishFallback = async (locale: LocaleCode, loadMessages: typeof loadLocaleMessages) => {
+  try {
+    return await loadMessages(locale)
+  } catch (error) {
+    if (locale === 'en') throw error
+    return loadMessages('en')
+  }
+}
+
 export const createAppRuntime = async (
   repository = createSettingsRepository(),
   dependencies: AppRuntimeDependencies = { loadMessages: loadLocaleMessages },
@@ -81,7 +90,7 @@ export const createAppRuntime = async (
   }
   const snapshot = await repository.load()
   let localeRequestId = 0
-  const messages = await dependencies.loadMessages(snapshot.locale)
+  const messages = await loadMessagesWithEnglishFallback(snapshot.locale, dependencies.loadMessages)
   store.set(hydrateAppAtom, {
     global: snapshot.global,
     chat: snapshot.chat,
@@ -94,11 +103,15 @@ export const createAppRuntime = async (
     onChat: value => applyExternal(() => store.set(replaceExternalChatSettingsAtom, value)),
     onLocale: locale => {
       const requestId = ++localeRequestId
-      void dependencies.loadMessages(locale).then(messages => {
-        if (!disposed && requestId === localeRequestId) {
-          applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
-        }
-      })
+      void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
+        .then(messages => {
+          if (!disposed && requestId === localeRequestId) {
+            applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
+          }
+        })
+        .catch(() => {
+          // Keep the currently rendered locale when even the English base asset is unavailable.
+        })
     },
   })
 
@@ -107,7 +120,10 @@ export const createAppRuntime = async (
     async setLocale(locale) {
       const resolved = resolveLanguageCode(locale)
       const requestId = ++localeRequestId
-      const [messages] = await Promise.all([dependencies.loadMessages(resolved), repository.saveLocale(resolved)])
+      const [messages] = await Promise.all([
+        loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages),
+        repository.saveLocale(resolved),
+      ])
       if (!disposed && requestId === localeRequestId) {
         applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
       }

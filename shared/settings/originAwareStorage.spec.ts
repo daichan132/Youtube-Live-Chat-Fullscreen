@@ -11,6 +11,7 @@ describe('settings envelopes', () => {
 
   describe('settings repository migration', () => {
     beforeEach(async () => {
+      localStorage.clear()
       await chrome.storage.local.remove([
         'globalSettingStore',
         'ytdLiveChatStore',
@@ -19,6 +20,92 @@ describe('settings envelopes', () => {
         CHAT_STORAGE_KEY,
         LOCALE_STORAGE_KEY,
       ])
+    })
+
+    it('migrates the extension-page i18next locale before the defensive browser-storage fallback', async () => {
+      localStorage.setItem('i18nextLng', 'ja')
+      await chrome.storage.local.set({ i18nextLng: 'fr' })
+
+      const snapshot = await createSettingsRepository('extension-locale-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('ja')
+      expect(localStorage.getItem('i18nextLng')).toBeNull()
+      expect(await chrome.storage.local.get('i18nextLng')).toEqual({})
+      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toEqual({
+        schemaVersion: 1,
+        writerId: 'extension-locale-test',
+        value: 'ja',
+      })
+    })
+
+    it('preserves an explicit English legacy locale instead of replacing it with the browser UI locale', async () => {
+      localStorage.setItem('i18nextLng', 'en')
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('ja')
+
+      const snapshot = await createSettingsRepository('english-locale-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('en')
+      expect(chrome.i18n.getUILanguage).not.toHaveBeenCalled()
+    })
+
+    it('gives the current locale envelope precedence over stale extension-page localStorage', async () => {
+      localStorage.setItem('i18nextLng', 'ja')
+      await chrome.storage.local.set({
+        [GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: { ytdLiveChat: true, themeMode: 'system' } },
+        [CHAT_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: DEFAULT_CHAT_SETTINGS },
+        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: 'fr' },
+      })
+
+      const snapshot = await createSettingsRepository('locale-precedence-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('fr')
+      expect(localStorage.getItem('i18nextLng')).toBeNull()
+      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
+        writerId: 'existing-writer',
+        value: 'fr',
+      })
+    })
+
+    it('defers the locale envelope outside extension pages so popup migration cannot be preempted', async () => {
+      localStorage.setItem('i18nextLng', 'ja')
+
+      const contentSnapshot = await createSettingsRepository('content-writer', null).load()
+
+      expect(contentSnapshot.locale).toBe('en')
+      expect(localStorage.getItem('i18nextLng')).toBe('ja')
+      expect(await chrome.storage.local.get(LOCALE_STORAGE_KEY)).toEqual({})
+
+      const popupSnapshot = await createSettingsRepository('popup-writer', localStorage).load()
+
+      expect(popupSnapshot.locale).toBe('ja')
+      expect(localStorage.getItem('i18nextLng')).toBeNull()
+      expect((await chrome.storage.local.get(GLOBAL_STORAGE_KEY))[GLOBAL_STORAGE_KEY]).toMatchObject({
+        writerId: 'content-writer',
+      })
+      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
+        writerId: 'popup-writer',
+        value: 'ja',
+      })
+    })
+
+    it('preserves the light theme migration for version 0 global settings', async () => {
+      await chrome.storage.local.set({
+        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false }, version: 0 }),
+      })
+
+      const snapshot = await createSettingsRepository('v0-theme-test').load()
+
+      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'light' })
+    })
+
+    it('uses the system theme for missing themeMode outside the version 0 migration', async () => {
+      await chrome.storage.local.set({
+        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false }, version: 1 }),
+      })
+
+      const snapshot = await createSettingsRepository('current-theme-default-test').load()
+
+      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'system' })
     })
 
     it('migrates the legacy stores into the WXT storage envelope and removes legacy keys', async () => {
@@ -222,6 +309,20 @@ describe('settings envelopes', () => {
         ytdLiveChatStore: expect.any(String),
         i18nextLng: 'ja',
       })
+    })
+
+    it('keeps the extension-page locale until its new envelope can be read back', async () => {
+      localStorage.setItem('i18nextLng', 'ja')
+      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
+      const originalRemove = chrome.storage.local.remove.bind(chrome.storage.local)
+      vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
+        await originalSet(values)
+        if (LOCALE_STORAGE_KEY in values) await originalRemove(LOCALE_STORAGE_KEY)
+      })
+
+      await createSettingsRepository('locale-readback-test', localStorage).load()
+
+      expect(localStorage.getItem('i18nextLng')).toBe('ja')
     })
 
     it('ignores self-written events and forwards external envelope changes', async () => {

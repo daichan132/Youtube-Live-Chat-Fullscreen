@@ -41,6 +41,8 @@ const LEGACY_GLOBAL_KEY = 'globalSettingStore'
 const LEGACY_CHAT_KEY = 'ytdLiveChatStore'
 const LEGACY_LOCALE_KEY = 'i18nextLng'
 
+type LegacyLocaleStorage = Pick<Storage, 'getItem' | 'removeItem'>
+
 const globalItem = storage.defineItem<StoredEnvelope<GlobalSettings>>(GLOBAL_KEY)
 const chatItem = storage.defineItem<StoredEnvelope<ChatSettings>>(CHAT_KEY)
 const localeItem = storage.defineItem<StoredEnvelope<LocaleCode>>(LOCALE_KEY)
@@ -77,6 +79,15 @@ const normalizeGlobal = (input: unknown): GlobalSettings => {
   }
 }
 
+const normalizeLegacyGlobal = (input: unknown): GlobalSettings => {
+  const parsed = parseLegacy(input)
+  const normalized = normalizeGlobalSetting(legacyState(parsed))
+  return {
+    ytdLiveChat: normalized.ytdLiveChat ?? DEFAULT_GLOBAL_SETTINGS.ytdLiveChat,
+    themeMode: normalized.themeMode ?? (parsed.version === 0 ? 'light' : DEFAULT_GLOBAL_SETTINGS.themeMode),
+  }
+}
+
 const enqueueWrites = () => {
   let queue = Promise.resolve()
   return (task: () => Promise<void>) => {
@@ -85,8 +96,38 @@ const enqueueWrites = () => {
   }
 }
 
-const removeLegacyKeys = async () => {
+const readLegacyLocale = (legacyLocaleStorage: LegacyLocaleStorage | null) => {
+  try {
+    return legacyLocaleStorage?.getItem(LEGACY_LOCALE_KEY) ?? undefined
+  } catch {
+    return undefined
+  }
+}
+
+const removeLegacyLocale = (legacyLocaleStorage: LegacyLocaleStorage | null) => {
+  try {
+    legacyLocaleStorage?.removeItem(LEGACY_LOCALE_KEY)
+  } catch {
+    // A restricted extension context can deny access to localStorage.
+  }
+}
+
+const getExtensionPageLegacyLocaleStorage = (): LegacyLocaleStorage | null => {
+  if (typeof globalThis.location === 'undefined') return null
+  try {
+    if (typeof globalThis.localStorage === 'undefined') return null
+    const currentUrl = new URL(globalThis.location.href)
+    const extensionUrl = new URL(browser.runtime.getURL('/'))
+    if (currentUrl.protocol !== extensionUrl.protocol || currentUrl.host !== extensionUrl.host) return null
+    return globalThis.localStorage
+  } catch {
+    return null
+  }
+}
+
+const removeLegacyKeys = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
   await browser.storage.local.remove([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
+  removeLegacyLocale(legacyLocaleStorage)
 }
 
 const isStoredEnvelope = <T>(value: unknown): value is StoredEnvelope<T> =>
@@ -114,22 +155,31 @@ const readCurrentValues = async () => {
   return { global: values[0], chat: values[1], locale: values[2] }
 }
 
-const readLegacySnapshot = async (): Promise<SettingsSnapshot> => {
+const readLegacySnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
   const values = await browser.storage.local.get([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
-  const global = normalizeGlobal(legacyState(values[LEGACY_GLOBAL_KEY]))
+  const global = normalizeLegacyGlobal(values[LEGACY_GLOBAL_KEY])
   const chat = migrateSettings(legacyState(values[LEGACY_CHAT_KEY]))
-  let locale: LocaleCode = resolveLanguageCode(typeof values[LEGACY_LOCALE_KEY] === 'string' ? values[LEGACY_LOCALE_KEY] : undefined)
-  if (locale === 'en' && typeof browser.i18n?.getUILanguage === 'function') {
+  const extensionPageLocale = readLegacyLocale(legacyLocaleStorage)
+  const browserStorageLocale = typeof values[LEGACY_LOCALE_KEY] === 'string' ? values[LEGACY_LOCALE_KEY] : undefined
+  const storedLocale = extensionPageLocale ?? browserStorageLocale
+  let locale: LocaleCode = resolveLanguageCode(storedLocale)
+  if (storedLocale === undefined && typeof browser.i18n?.getUILanguage === 'function') {
     try {
       locale = resolveLanguageCode(browser.i18n.getUILanguage())
     } catch {
       // Some extension test environments do not implement i18n.getUILanguage.
     }
   }
-  return { global, chat, locale }
+  return {
+    snapshot: { global, chat, locale },
+    canPersistLocale: legacyLocaleStorage !== null || browserStorageLocale !== undefined,
+  }
 }
 
-export const createSettingsRepository = (writerId = createWriterId()): SettingsRepository => {
+export const createSettingsRepository = (
+  writerId = createWriterId(),
+  legacyLocaleStorage = getExtensionPageLegacyLocaleStorage(),
+): SettingsRepository => {
   const enqueue = enqueueWrites()
 
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
@@ -142,32 +192,37 @@ export const createSettingsRepository = (writerId = createWriterId()): SettingsR
         ? normalizeChatSettings(current.chat.value, DEFAULT_CHAT_SETTINGS)
         : null
     const currentLocale = isStoredEnvelope<LocaleCode>(current.locale) ? resolveLanguageCode(current.locale.value) : null
-    if (currentGlobal && currentChat && currentLocale) return { global: currentGlobal, chat: currentChat, locale: currentLocale }
-
-    const legacy = await readLegacySnapshot()
-    const migrated = {
-      global: currentGlobal ?? legacy.global,
-      chat: currentChat ?? legacy.chat,
-      locale: currentLocale ?? legacy.locale,
+    if (currentGlobal && currentChat && currentLocale) {
+      removeLegacyLocale(legacyLocaleStorage)
+      return { global: currentGlobal, chat: currentChat, locale: currentLocale }
     }
+
+    const legacy = await readLegacySnapshot(legacyLocaleStorage)
+    const migrated = {
+      global: currentGlobal ?? legacy.snapshot.global,
+      chat: currentChat ?? legacy.snapshot.chat,
+      locale: currentLocale ?? legacy.snapshot.locale,
+    }
+    const persistLocale = currentLocale !== null || legacy.canPersistLocale
     await enqueue(async () => {
-      await Promise.all([
-        globalItem.setValue(envelope(migrated.global)),
-        chatItem.setValue(envelope(migrated.chat)),
-        localeItem.setValue(envelope(migrated.locale)),
-      ])
+      const writes: Promise<void>[] = []
+      if (!currentGlobal) writes.push(globalItem.setValue(envelope(migrated.global)))
+      if (!currentChat) writes.push(chatItem.setValue(envelope(migrated.chat)))
+      if (!currentLocale && persistLocale) writes.push(localeItem.setValue(envelope(migrated.locale)))
+      await Promise.all(writes)
       const written = await readCurrentValues()
       const verified =
         isStoredEnvelope<GlobalSettings>(written.global) &&
-        written.global.writerId === writerId &&
+        (currentGlobal !== null || written.global.writerId === writerId) &&
         areGlobalSettingsEqual(normalizeGlobal(written.global.value), migrated.global) &&
         isStoredEnvelope<ChatSettings>(written.chat) &&
-        written.chat.writerId === writerId &&
+        (currentChat !== null || written.chat.writerId === writerId) &&
         areChatSettingsEqual(normalizeChatSettings(written.chat.value, DEFAULT_CHAT_SETTINGS), migrated.chat) &&
-        isStoredEnvelope<LocaleCode>(written.locale) &&
-        written.locale.writerId === writerId &&
-        resolveLanguageCode(written.locale.value) === migrated.locale
-      if (verified) await removeLegacyKeys()
+        (!persistLocale ||
+          (isStoredEnvelope<LocaleCode>(written.locale) &&
+            (currentLocale !== null || written.locale.writerId === writerId) &&
+            resolveLanguageCode(written.locale.value) === migrated.locale))
+      if (verified) await removeLegacyKeys(legacyLocaleStorage)
     })
     return migrated
   }
