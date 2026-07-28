@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
@@ -81,10 +82,14 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    await yt.waitForNativeChat()
+    const nativeChatReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -92,7 +97,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const loaded = await overlay.waitForChatLoaded()
+    const loaded = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
     if (!loaded) {
       test.skip(true, 'Extension iframe did not load in time.')
       return
@@ -128,10 +133,14 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    await yt.waitForNativeChat()
+    const nativeChatReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -139,7 +148,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const loaded = await overlay.waitForChatLoaded()
+    const loaded = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
     if (!loaded) {
       test.skip(true, 'Extension iframe did not load in time.')
       return
@@ -265,10 +274,14 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
     const overlay = new ExtensionOverlay(page)
     await page.goto(liveUrl, { waitUntil: 'domcontentloaded' })
 
-    await yt.waitForNativeChat()
+    const nativeChatReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -276,7 +289,7 @@ test.describe('imported settings fullscreen', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const loaded = await overlay.waitForChatLoaded()
+    const loaded = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
     if (!loaded) {
       test.skip(true, 'Extension iframe did not load in time.')
       return

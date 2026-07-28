@@ -11,21 +11,13 @@ export class ExtensionOverlay {
     return this.page.locator(switchButtonSelector)
   }
 
-  async waitForSwitchReady(options?: { timeout?: number }): Promise<boolean> {
+  async expectSwitchReady(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.SWITCH_VISIBLE
     // A playing video (and especially an ad transition) can keep the player
     // bounding box "unstable" indefinitely. Revealing controls does not need
     // Playwright's stability wait, so keep this action bounded.
-    await this.page
-      .locator(MOVIE_PLAYER)
-      .hover({ force: true, timeout: 5000 })
-      .catch(() => undefined)
-    return this.switchButton()
-      .waitFor({ state: 'visible', timeout })
-      .then(
-        () => true,
-        () => false,
-      )
+    await this.page.locator(MOVIE_PLAYER).hover({ force: true, timeout: 5000 })
+    await expect(this.switchButton()).toBeVisible({ timeout })
   }
 
   async toggleOn() {
@@ -46,62 +38,32 @@ export class ExtensionOverlay {
     await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
   }
 
-  /**
-   * Ensure the switch is off.
-   * Returns `'was-off'` if the switch was already off (iframe was never attached),
-   * `'turned-off'` if it was toggled off successfully,
-   * or `'failed'` if the toggle did not take effect.
-   */
-  async ensureSwitchOff(): Promise<'was-off' | 'turned-off' | 'failed'> {
+  async expectSwitchOff(): Promise<void> {
     const btn = this.switchButton()
-    if ((await btn.getAttribute('aria-pressed')) !== 'true') return 'was-off'
-    try {
+    if ((await btn.getAttribute('aria-pressed')) === 'true') {
       await reliableClick(btn, async () => (await btn.getAttribute('aria-pressed')) === 'false')
-      await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
-      return 'turned-off'
-    } catch {
-      return 'failed'
     }
+    await expect(btn).toHaveAttribute('aria-pressed', 'false', { timeout: TIMEOUT.SWITCH_ATTRIBUTE })
   }
 
-  async waitForChatLoaded(options?: { timeout?: number }): Promise<boolean> {
+  async expectChatLoaded(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
-    try {
-      await expect.poll(async () => this.page.evaluate(isExtensionChatLoaded), { timeout }).toBe(true)
-      return true
-    } catch {
-      return false
-    }
+    await expect.poll(async () => this.page.evaluate(isExtensionChatLoaded), { timeout }).toBe(true)
   }
 
-  async waitForArchiveChatPlayable(options?: { timeout?: number }): Promise<boolean> {
+  async expectArchiveChatPlayable(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.ARCHIVE_CHAT
-    try {
-      await expect.poll(async () => this.page.evaluate(isExtensionArchiveChatPlayable), { timeout }).toBe(true)
-      return true
-    } catch {
-      return false
-    }
+    await expect.poll(async () => this.page.evaluate(isExtensionArchiveChatPlayable), { timeout }).toBe(true)
   }
 
-  async waitForChatDetached(options?: { timeout?: number }): Promise<boolean> {
+  async expectChatDetached(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
-    try {
-      await expect.poll(async () => this.page.evaluate(isExtensionChatDetached), { timeout }).toBe(true)
-      return true
-    } catch {
-      return false
-    }
+    await expect.poll(async () => this.page.evaluate(isExtensionChatDetached), { timeout }).toBe(true)
   }
 
-  async waitForOverlayRemoved(options?: { timeout?: number }): Promise<boolean> {
+  async expectOverlayRemoved(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
-    try {
-      await expect.poll(async () => this.page.locator(SHADOW_HOST).count(), { timeout }).toBe(0)
-      return true
-    } catch {
-      return false
-    }
+    await expect.poll(async () => this.page.locator(SHADOW_HOST).count(), { timeout }).toBe(0)
   }
 
   async getHostCompositingState() {

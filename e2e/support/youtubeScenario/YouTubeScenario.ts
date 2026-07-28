@@ -49,7 +49,7 @@ export class YouTubeScenario {
     await this.page.goto('about:blank', { waitUntil: 'domcontentloaded', timeout: 10000 })
 
     await this.page.route(
-      `**/watch?v=${state.video.id}`,
+      compiled.watchUrl,
       route =>
         route.fulfill({
           status: 200,
@@ -77,7 +77,7 @@ export class YouTubeScenario {
   }
 
   exitFullscreen(options?: { timeout?: number }) {
-    return this.watchPage.exitFullscreen(options)
+    return this.watchPage.expectFullscreenExited(options)
   }
 
   async addNativeIframe(mutation: NativeIframeMutation) {
@@ -142,11 +142,14 @@ export class YouTubeScenario {
   observeExtensionIframeIdentity(): Promise<ExtensionIframeIdentity> {
     return this.page.evaluate(() => {
       const iframe = window.__ylcHelpers.getExtensionIframe()
+      const overlayRoot = document.getElementById('shadow-root-live-chat')?.shadowRoot ?? null
       return {
-        id: iframe?.id ?? null,
+        id: iframe?.getAttribute('id') ?? null,
         owned: iframe?.getAttribute('data-ylc-owned') ?? null,
         source: iframe?.getAttribute('data-ylc-source') ?? null,
-        managedCount: document.querySelectorAll('iframe[data-ylc-owned="true"]').length,
+        managedCount:
+          document.querySelectorAll('iframe[data-ylc-owned="true"]').length +
+          (overlayRoot?.querySelectorAll('iframe[data-ylc-owned="true"]').length ?? 0),
         nativeCount: document.querySelectorAll('ytd-live-chat-frame > #chatframe').length,
       }
     })

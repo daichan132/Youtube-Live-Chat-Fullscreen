@@ -2,6 +2,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 const getNativeChatDebugState = () => {
   const secondary = document.querySelector('#secondary') as HTMLElement | null
@@ -55,7 +56,7 @@ test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       await captureChatState(page, test.info(), 'restore-switch-missing')
       test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -64,7 +65,7 @@ test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
 
     await overlay.toggleOn()
 
-    const extensionReady = await overlay.waitForArchiveChatPlayable({ timeout: 45000 })
+    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable({ timeout: 45000 }))
     if (!extensionReady) {
       const state = await captureChatState(page, test.info(), 'restore-extension-unready')
       if (shouldSkipArchiveFlowFailure(state)) {
@@ -106,7 +107,7 @@ test.describe('fullscreen chat restore', { tag: '@archive' }, () => {
       contentType: 'application/json',
     })
 
-    await yt.exitFullscreen()
+    await yt.expectFullscreenExited()
     await expect.poll(async () => page.evaluate(() => document.fullscreenElement === null), { timeout: 8000 }).toBe(true)
 
     try {

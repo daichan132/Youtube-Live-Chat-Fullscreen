@@ -1,7 +1,6 @@
-export type YouTubeScenarioVideo = {
+type YouTubeScenarioVideoBase = {
   id: string
   title: string
-  mode: 'live' | 'archive' | 'ordinary'
 }
 
 export type YouTubeScenarioPage = {
@@ -21,20 +20,34 @@ export type NativeChatDefinition = {
   hostVideoId?: boolean
 }
 
-export type YouTubeScenarioChat =
-  | { mode: 'none' }
-  | {
-      mode: 'live' | 'archive'
-      native: NativeChatDefinition
-      response: 'playable' | 'unavailable'
-    }
-
-export type YouTubeScenarioState = {
-  video: YouTubeScenarioVideo
+type YouTubeScenarioBase = {
   page: YouTubeScenarioPage
   fullscreen: boolean
-  chat: YouTubeScenarioChat
 }
+
+export type YouTubeScenarioState = YouTubeScenarioBase &
+  (
+    | {
+        video: YouTubeScenarioVideoBase & { mode: 'live' }
+        chat: {
+          mode: 'live'
+          native: NativeChatDefinition
+          response: 'playable' | 'unavailable'
+        }
+      }
+    | {
+        video: YouTubeScenarioVideoBase & { mode: 'archive' }
+        chat: {
+          mode: 'archive'
+          native: NativeChatDefinition
+          response: 'playable' | 'unavailable'
+        }
+      }
+    | {
+        video: YouTubeScenarioVideoBase & { mode: 'ordinary' }
+        chat: { mode: 'none' }
+      }
+  )
 
 export type NativeIframeMutation = {
   mode: 'live' | 'archive'

@@ -1,5 +1,7 @@
 import type { NativeChatDefinition, YouTubeScenarioState } from './types'
 
+const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]+$/
+
 export type CompiledYouTubeScenario = {
   watchUrl: string
   watchHtml: string
@@ -111,6 +113,10 @@ const renderWatchHtml = (state: YouTubeScenarioState) => {
 }
 
 export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYouTubeScenario => {
+  if (!VIDEO_ID_PATTERN.test(state.video.id)) {
+    throw new Error(`Invalid YouTube scenario video ID: ${JSON.stringify(state.video.id)}`)
+  }
+
   const chatRoutes =
     state.chat.mode === 'none'
       ? []

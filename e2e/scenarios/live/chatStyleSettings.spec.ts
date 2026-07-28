@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 const hasOverlayIframe = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -31,10 +32,14 @@ test.describe('chat style settings', { tag: '@live' }, () => {
 
     await yt.goto(liveUrl)
 
-    await yt.waitForNativeChat()
+    const nativeChatReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return

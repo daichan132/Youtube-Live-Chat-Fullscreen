@@ -3,6 +3,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import { extractVideoId, selectArchiveReplayTransitionPair } from '@e2e/support/urls/archiveReplay'
 
 const TRANSITION_STABILITY_DURATION_MS = 4000
@@ -197,7 +198,7 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       await captureChatState(page, test.info(), 'video-transition-switch-missing')
       test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -206,7 +207,7 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
 
     await overlay.toggleOn()
 
-    const extensionReady = await overlay.waitForArchiveChatPlayable()
+    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
     if (!extensionReady) {
       const state = await captureChatState(page, test.info(), 'video-transition-extension-unready')
       if (shouldSkipArchiveFlowFailure(state)) {
@@ -231,7 +232,7 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
       return
     }
 
-    const fullscreenStillActive = await yt.ensureFullscreen()
+    const fullscreenStillActive = await hasCanaryPrecondition(() => yt.expectFullscreen())
     if (!fullscreenStillActive) {
       await captureChatState(page, test.info(), 'video-transition-fullscreen-lost')
       test.skip(true, 'Could not keep or restore fullscreen during transition navigation.')

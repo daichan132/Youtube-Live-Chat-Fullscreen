@@ -23,8 +23,8 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
     await scenario.load(scenarioState)
     await scenario.enterFullscreen()
 
-    expect(await overlay.waitForSwitchReady({ timeout: 12000 })).toBe(true)
-    expect(await overlay.waitForChatLoaded({ timeout: 12000 })).toBe(true)
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectChatLoaded({ timeout: 12000 })
     const expectCompositedOverlayHost = async () => {
       await expect
         .poll(() => overlay.getHostCompositingState())
@@ -41,17 +41,43 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
     }
 
     await expectCompositedOverlayHost()
-    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({ owned: 'true', source: 'live_direct' })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
+      id: null,
+      owned: 'true',
+      source: 'live_direct',
+      managedCount: 1,
+      nativeCount: 0,
+    })
 
     await scenario.addNativeIframe({ mode: 'live', state: 'playable' })
 
-    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({ id: 'chatframe', owned: null, managedCount: 0 })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
+      id: 'chatframe',
+      owned: null,
+      source: null,
+      managedCount: 0,
+      nativeCount: 0,
+    })
 
     await overlay.toggleOff()
-    expect(await overlay.waitForChatDetached({ timeout: 12000 })).toBe(true)
+    await overlay.expectChatDetached({ timeout: 12000 })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
+      id: null,
+      owned: null,
+      source: null,
+      managedCount: 0,
+      nativeCount: 1,
+    })
     await expectCompositedOverlayHost()
     await overlay.toggleOn()
-    expect(await overlay.waitForChatLoaded({ timeout: 12000 })).toBe(true)
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
+      id: 'chatframe',
+      owned: null,
+      source: null,
+      managedCount: 0,
+      nativeCount: 0,
+    })
     await expectCompositedOverlayHost()
   })
 })

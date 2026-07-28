@@ -3,6 +3,7 @@ import { TIMING } from '@e2e/support/constants'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { hasPlayableChat } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
 
 test.describe('native chat closed extension loads', { tag: '@live' }, () => {
@@ -41,7 +42,7 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -49,7 +50,6 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const overlayReady = await overlay.waitForChatLoaded()
-    expect(overlayReady).toBe(true)
+    await overlay.expectChatLoaded()
   })
 })

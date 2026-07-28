@@ -2,6 +2,7 @@ import { writeFile } from 'node:fs/promises'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import { CHAT_STORAGE_KEY } from '../../../shared/settings/storageKeys'
@@ -114,7 +115,7 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -145,7 +146,7 @@ test.describe('fullscreen chat offset', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const overlayReady = await overlay.waitForChatLoaded()
+    const overlayReady = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
     if (!overlayReady) {
       test.skip(true, 'Extension iframe did not load in time.')
       return

@@ -2,6 +2,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 const isExtensionArchiveIframeBorrowed = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -33,7 +34,7 @@ test.describe('archive replay chat', { tag: '@archive' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       await captureChatState(page, test.info(), 'archive-replay-switch-missing')
       test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -42,7 +43,7 @@ test.describe('archive replay chat', { tag: '@archive' }, () => {
 
     await overlay.toggleOn()
 
-    const extensionReady = await overlay.waitForArchiveChatPlayable()
+    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
     if (!extensionReady) {
       const state = await captureChatState(page, test.info(), 'archive-replay-extension-unready')
       if (shouldSkipArchiveFlowFailure(state)) {

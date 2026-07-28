@@ -13,6 +13,7 @@ import {
   stabilizeYouTubePlaybackUi,
 } from '@e2e/screenshots/helpers'
 import { captureChatState, hasYouTubePlayerError, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 test.describe('live chat-only hover height', { tag: '@live' }, () => {
   test('live input boundary expands in one continuous transition', async ({ page, extension, liveUrl }) => {
@@ -26,7 +27,11 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
     await yt.goto(liveUrl)
-    await yt.waitForNativeChat()
+    const nativeChatFrameReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatFrameReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
       () => true,
       () => false,
@@ -39,7 +44,7 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
 
     expect(await stabilizeYouTubePlaybackUi(page), 'YouTube ads and playback prompts should settle before fullscreen').toBe(true)
 
-    const fullscreenReady = await yt.ensureFullscreen()
+    const fullscreenReady = await hasCanaryPrecondition(() => yt.expectFullscreen())
     if (!fullscreenReady) {
       const state = await captureChatState(page, test.info(), 'live-chat-only-fullscreen-unavailable')
       const playerError = await page.evaluate(hasYouTubePlayerError)
@@ -50,7 +55,7 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
       expect(fullscreenReady).toBe(true)
     }
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       await captureChatState(page, test.info(), 'live-chat-only-switch-missing')
       const playerError = await page.evaluate(hasYouTubePlayerError)
@@ -62,7 +67,7 @@ test.describe('live chat-only hover height', { tag: '@live' }, () => {
     }
     expect(switchReady).toBe(true)
     await overlay.toggleOn()
-    const chatLoaded = await overlay.waitForChatLoaded()
+    const chatLoaded = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
     if (!chatLoaded) await captureChatState(page, test.info(), 'live-chat-only-iframe-unloaded')
     expect(chatLoaded).toBe(true)
 

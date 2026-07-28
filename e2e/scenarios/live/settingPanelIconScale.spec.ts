@@ -5,6 +5,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { clickSettingIcon } from '@e2e/screenshots/helpers'
 import { openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 type Box = { width: number; height: number }
 
@@ -101,7 +102,7 @@ test.describe('setting panel icon scale', { tag: '@live' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       test.skip(true, 'Fullscreen chat switch button did not appear.')
       return
@@ -109,7 +110,7 @@ test.describe('setting panel icon scale', { tag: '@live' }, () => {
 
     await overlay.toggleOn()
 
-    const extensionReady = await overlay.waitForArchiveChatPlayable()
+    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
     if (!extensionReady) {
       test.skip(true, 'Archive chat source did not become ready in this run.')
       return

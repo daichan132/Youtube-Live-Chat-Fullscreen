@@ -5,7 +5,11 @@ import { compileYouTubeScenario } from './compiler'
 import type { YouTubeScenarioState } from './types'
 import { YouTubeScenario } from './YouTubeScenario'
 
-const createState = (overrides: Partial<YouTubeScenarioState> = {}): YouTubeScenarioState => ({
+type LiveScenarioState = Extract<YouTubeScenarioState, { video: { mode: 'live' } }>
+type ArchiveScenarioState = Extract<YouTubeScenarioState, { video: { mode: 'archive' } }>
+type NoChatScenarioState = Extract<YouTubeScenarioState, { video: { mode: 'ordinary' } }>
+
+const createLiveState = (overrides: Partial<LiveScenarioState> = {}): LiveScenarioState => ({
   video: { id: 'video-1', title: 'Typed fixture', mode: 'live' },
   page: { chatContainer: 'present', chatDimensions: 'standard' },
   fullscreen: false,
@@ -14,6 +18,26 @@ const createState = (overrides: Partial<YouTubeScenarioState> = {}): YouTubeScen
     native: { state: 'absent' },
     response: 'playable',
   },
+  ...overrides,
+})
+
+const createArchiveState = (overrides: Partial<ArchiveScenarioState> = {}): ArchiveScenarioState => ({
+  video: { id: 'archive-1', title: 'Archive fixture', mode: 'archive' },
+  page: { chatContainer: 'present', chatDimensions: 'standard' },
+  fullscreen: false,
+  chat: {
+    mode: 'archive',
+    native: { state: 'playable' },
+    response: 'playable',
+  },
+  ...overrides,
+})
+
+const createNoChatState = (overrides: Partial<NoChatScenarioState> = {}): NoChatScenarioState => ({
+  video: { id: 'ordinary-1', title: 'No chat fixture', mode: 'ordinary' },
+  page: { chatContainer: 'present', chatDimensions: 'standard' },
+  fullscreen: false,
+  chat: { mode: 'none' },
   ...overrides,
 })
 
@@ -36,7 +60,7 @@ describe('YouTube scenario compiler', () => {
   })
 
   it('compiles a live managed-source fixture without a native iframe', () => {
-    const compiled = compileYouTubeScenario(createState())
+    const compiled = compileYouTubeScenario(createLiveState())
 
     expect(compiled.watchUrl).toBe('https://www.youtube.com/watch?v=video-1')
     expect(compiled.watchHtml).toContain('is-live-now')
@@ -51,8 +75,7 @@ describe('YouTube scenario compiler', () => {
 
   it('preserves the exact native slot order for an archive borrow fixture', () => {
     const compiled = compileYouTubeScenario(
-      createState({
-        video: { id: 'archive-1', title: 'Archive fixture', mode: 'archive' },
+      createArchiveState({
         chat: {
           mode: 'archive',
           native: {
@@ -78,7 +101,7 @@ describe('YouTube scenario compiler', () => {
 
   it('renders an unavailable native replay marker and response', () => {
     const compiled = compileYouTubeScenario(
-      createState({
+      createArchiveState({
         video: { id: 'archive-unavailable', title: 'Unavailable fixture', mode: 'archive' },
         chat: {
           mode: 'archive',
@@ -94,10 +117,7 @@ describe('YouTube scenario compiler', () => {
 
   it('compiles a no-chat fixture without chat routes or native iframe', () => {
     const compiled = compileYouTubeScenario(
-      createState({
-        video: { id: 'ordinary-1', title: 'No chat fixture', mode: 'ordinary' },
-        chat: { mode: 'none' },
-      }),
+      createNoChatState(),
     )
 
     expect(compiled.watchHtml).not.toContain('is-live-now')
@@ -117,7 +137,7 @@ describe('YouTube scenario compiler', () => {
     for (const relativePath of fixtureSpecs) {
       const source = fs.readFileSync(`${scenarioRoot}/${relativePath}`, 'utf8')
       expect(source).toContain('YouTubeScenario')
-      expect(source).not.toMatch(/page\.(?:evaluate|route)\s*\(/)
+      expect(source).not.toMatch(/\bpage\s*(?:\.|\?\.)\s*[A-Za-z_$][\w$]*\s*\(/)
       expect(source).not.toContain('<!doctype')
       expect(source).not.toContain('buildWatchFixtureHtml')
       expect(source).not.toContain('routeYouTubeWatchFixture')

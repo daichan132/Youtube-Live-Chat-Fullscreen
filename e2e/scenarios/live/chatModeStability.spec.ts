@@ -8,6 +8,7 @@ import {
 	isNativeLiveChatPlayable,
 	openArchiveWatchPage,
 } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 
 /**
  * detectChatMode() がページ読み込み初期にモード振動を起こすかを検証する。
@@ -180,7 +181,7 @@ test.describe('chat mode stability on live page', { tag: '@live' }, () => {
 		)
 		expect(hasLayoutFixBefore).toBe(false)
 
-		const fullscreenReady = await yt.ensureFullscreen()
+		const fullscreenReady = await hasCanaryPrecondition(() => yt.expectFullscreen())
 		if (!fullscreenReady) {
 			const state = await captureChatState(page, test.info(), 'layout-fix-fullscreen-unavailable')
 			const playerError = await page.evaluate(hasYouTubePlayerError)
@@ -192,7 +193,7 @@ test.describe('chat mode stability on live page', { tag: '@live' }, () => {
 		}
 
 		// スイッチが表示されるまで待機
-		const switchReady = await overlay.waitForSwitchReady()
+		const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
 		if (!switchReady) {
 			await captureChatState(page, test.info(), 'layout-fix-switch-missing')
 			test.skip(true, 'Fullscreen chat switch button did not appear.')

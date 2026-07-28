@@ -29,12 +29,12 @@ test.describe('archive iframe borrow and restore', { tag: '@archive' }, () => {
 
     await scenario.enterFullscreen()
 
-    expect(await overlay.waitForSwitchReady({ timeout: 12000 })).toBe(true)
-    expect(await overlay.waitForArchiveChatPlayable({ timeout: 12000 })).toBe(true)
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectArchiveChatPlayable({ timeout: 12000 })
     await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({ id: 'chatframe', owned: null, nativeCount: 0 })
 
-    expect(await scenario.exitFullscreen()).toBe(true)
-    expect(await overlay.waitForOverlayRemoved({ timeout: 12000 })).toBe(true)
+    await scenario.exitFullscreen()
+    await overlay.expectOverlayRemoved({ timeout: 12000 })
 
     await expect
       .poll(() => scenario.observeNativeSlot())

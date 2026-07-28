@@ -13,6 +13,7 @@ import {
   stabilizeYouTubePlaybackUi,
 } from '@e2e/screenshots/helpers'
 import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import type { Page } from '@playwright/test'
 
 type OverlayChatSurfaceSnapshot = {
@@ -218,7 +219,7 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
     return false
   }
 
-  const switchReady = await overlay.waitForSwitchReady()
+  const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
   if (!switchReady) {
     await captureChatState(page, test.info(), 'chat-only-chrome-switch-missing')
     test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -227,7 +228,7 @@ const openArchiveOverlayWithExtensionChat = async (page: Page, archiveReplayUrl:
 
   await overlay.toggleOn()
 
-  const extensionReady = await overlay.waitForArchiveChatPlayable()
+  const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
   if (!extensionReady) {
     const state = await captureChatState(page, test.info(), 'chat-only-chrome-extension-unready')
     if (shouldSkipArchiveFlowFailure(state)) {

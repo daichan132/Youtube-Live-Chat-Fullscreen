@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
+import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
 import { captureChatState, isExtensionChatLoaded, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
 
 test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
@@ -17,7 +18,11 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     await yt.goto(liveUrl)
 
-    await yt.waitForNativeChat()
+    const nativeChatFrameReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    if (!nativeChatFrameReady) {
+      test.skip(true, 'Live URL did not expose native chat frame in time.')
+      return
+    }
     const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
       () => true,
       () => false,
@@ -30,7 +35,7 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     await yt.enterFullscreen()
 
-    const switchReady = await overlay.waitForSwitchReady()
+    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
     if (!switchReady) {
       await captureChatState(page, test.info(), 'auto-open-switch-missing')
       test.skip(true, 'Fullscreen chat switch button did not appear.')
@@ -39,7 +44,7 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     await expect(overlay.switchButton()).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 })
 
-    let overlayReady = await overlay.waitForChatLoaded()
+    let overlayReady = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
 
     if (!overlayReady) {
       const state = await captureChatState(page, test.info(), 'auto-open-extension-unready')
@@ -64,11 +69,10 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
         test.skip(true, 'Native chat source was not playable, so auto-open precondition was not met.')
         return
       }
-      expect(overlayReady).toBe(true)
+      await overlay.expectChatLoaded({ timeout: 15000 })
     }
 
-    const exitedFullscreen = await yt.exitFullscreen()
-    expect(exitedFullscreen).toBe(true)
-    expect(await overlay.waitForOverlayRemoved()).toBe(true)
+    await yt.expectFullscreenExited()
+    await overlay.expectOverlayRemoved()
   })
 })
