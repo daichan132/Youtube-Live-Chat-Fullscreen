@@ -17,9 +17,10 @@ assert.match(
   'Packaging must only run when the release gate opens',
 )
 assert.ok(workflow.indexOf('run: yarn locales:check') < workflow.indexOf('run: yarn check'), 'Locale check must precede source checks')
+assert.match(workflow, /run: yarn verify:package-contracts/, 'Release workflow must verify production package contracts')
 assert.ok(
-  workflow.indexOf('run: node scripts/verify/check-package-size.mjs') < workflow.indexOf('- name: Validate package versions and files'),
-  'Package size gate must precede package validation',
+  workflow.indexOf('run: yarn verify:package-contracts') < workflow.indexOf('- name: Upload release packages'),
+  'Production package contracts must pass before packages are uploaded',
 )
 
 console.log('Release workflow contract is valid')

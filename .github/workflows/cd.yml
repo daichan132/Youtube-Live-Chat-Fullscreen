@@ -93,24 +93,8 @@ jobs:
         run: |
           yarn zip
           yarn zip:firefox
-      - name: Gate extension package size
-        run: node scripts/verify/check-package-size.mjs
-      - name: Validate package versions and files
-        env:
-          RELEASE_VERSION: ${{ steps.version.outputs.version }}
-        run: |
-          node -e "
-            const fs = require('node:fs');
-            for (const target of ['chrome-mv3', 'firefox-mv2']) {
-              const manifest = JSON.parse(fs.readFileSync('.output/' + target + '/manifest.json', 'utf8'));
-              if (manifest.version !== process.env.RELEASE_VERSION) {
-                throw new Error(target + ' manifest version ' + manifest.version + ' does not match ' + process.env.RELEASE_VERSION);
-              }
-            }
-          "
-          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip"
-          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip"
-          test -f ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
+      - name: Verify production package contracts
+        run: yarn verify:package-contracts
       - name: Upload release packages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

@@ -37,11 +37,13 @@ jobs:
         run: yarn build
       - name: Build Firefox extension
         run: yarn build:firefox
-      - name: Package and gate extension size
+      - name: Package and verify production extensions
         run: |
           yarn zip
           yarn zip:firefox
-          node scripts/verify/check-package-size.mjs
+          yarn verify:package-contracts
+      - name: Build testing extension
+        run: yarn build:e2e
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
       - name: Run deterministic end-to-end tests

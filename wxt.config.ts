@@ -1,5 +1,8 @@
+import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'wxt'
+
+const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta.url))
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -15,6 +18,15 @@ export default defineConfig({
         matches: ['https://www.youtube.com/*'],
       },
     ],
+  },
+  hooks: {
+    'build:publicAssets': (wxt, files) => {
+      if (wxt.config.mode !== 'testing') return
+      files.push({
+        absoluteSrc: e2eBridgePath,
+        relativeDest: 'e2e.html',
+      })
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],

@@ -63,6 +63,10 @@ describe('production package source policy', () => {
     expect(packageJson.version).toMatch(/^\d+\.\d+\.\d+$/)
     expect(packageJson.scripts.build).toBe('wxt build')
     expect(packageJson.scripts['build:firefox']).toBe('wxt build -b firefox')
+    expect(packageJson.scripts['build:e2e']).toBe('wxt build --mode testing')
+    expect(packageJson.scripts['test:package']).toBe(
+      'yarn build && yarn build:firefox && yarn zip && yarn zip:firefox && yarn verify:package-contracts',
+    )
     expect(Object.keys(budgets).sort()).toEqual(['chrome-mv3', 'firefox-mv2'])
     expect(budgets['chrome-mv3'].browser).toBe('chrome')
     expect(budgets['firefox-mv2'].browser).toBe('firefox')

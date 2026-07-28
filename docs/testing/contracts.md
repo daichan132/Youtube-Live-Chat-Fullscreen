@@ -16,12 +16,18 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 
 - `yarn test:core`: pure logic and data contracts in Node.
 - `yarn test:dom`: React, DOM, and extension API integration in jsdom. WXT's fake browser is reset for every test in this project only.
-- `yarn test:contracts`: Node-side package/configuration contracts. It reads source policy and does not require pre-existing `.output` artifacts.
+- `yarn test:contracts`: Node-side source/configuration contracts. It does not require pre-existing `.output` artifacts.
+- `yarn test:package`: freshly builds and packages production Chrome/Firefox extensions, then verifies their manifests, locale inventory, file inventory, ZIP contents, and size budgets.
+- `yarn build:e2e`: creates `.output/chrome-mv3-testing` with the storage bridge required by Playwright. Production builds never contain this bridge.
 - `yarn test:unit`: compatibility gate that runs all three Vitest projects.
-- `yarn e2e`: existing browser tests. Deterministic fixture and real-YouTube scenarios remain in the existing Playwright project during this first migration slice.
+- `yarn e2e`: builds the testing extension and runs existing browser tests. Deterministic fixture and real-YouTube scenarios remain in the existing Playwright project.
 
 New tests should use `*.unit.spec.ts`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts`. Existing tests remain named as-is and are classified explicitly in `vitest.config.ts` to avoid a risky bulk rename.
 
+## Production/testing package boundary
+
+`e2e/assets/e2e.html` is added by WXT only in `testing` mode. Playwright loads `.output/chrome-mv3-testing`; release and package scripts consume `.output/chrome-mv3` and `.output/firefox-mv2`. The package contract rejects the E2E bridge, source maps, test files, and fixture assets in both unpacked production output and ZIP files.
+
 ## Deferred boundaries
 
-The next slices should split deterministic fixture E2E from real-YouTube canaries, introduce a testing-only WXT build so `e2e.html` is absent from production packages, and validate freshly built Chrome/Firefox archives. Runtime model extraction, assertion-oriented page objects, visual regression, accessibility checks, and CI job separation are also intentionally deferred.
+The next slices should split deterministic fixture E2E from real-YouTube canaries. Runtime model extraction, assertion-oriented page objects, visual regression, accessibility checks, and broader CI job separation are also intentionally deferred.

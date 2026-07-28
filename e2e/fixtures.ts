@@ -2,14 +2,15 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { E2E_BRIDGE_FILE, E2E_EXTENSION_OUTPUT_DIR } from '@e2e/config/buildOutput'
 import { resolveExtensionLaunchMode } from '@e2e/support/extensionLaunchMode'
 import { PAGE_HELPERS_INIT_SCRIPT } from '@e2e/support/pageHelpers'
 import { selectArchiveReplayUrl } from '@e2e/support/urls/archiveReplay'
 import { findLiveUrlWithChat } from '@e2e/utils/liveUrl'
-import { LOCALE_STORAGE_KEY } from '../shared/settings/storageKeys'
 import { type BrowserContext, test as base, chromium, type Page, type Worker } from '@playwright/test'
+import { LOCALE_STORAGE_KEY } from '../shared/settings/storageKeys'
 
-const pathToExtension = path.resolve('.output/chrome-mv3')
+const pathToExtension = path.resolve(E2E_EXTENSION_OUTPUT_DIR)
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
 let bundledChromiumVersion: string | null = null
 
@@ -126,14 +127,14 @@ const resolveExtensionIdFromChromePage = async (context: BrowserContext) => {
 /**
  * Storage accessor via chrome.storage.local API.
  *
- * Runtime fallback: tries Worker first, falls back to e2e.html bridge on failure.
- * e2e.html has no application runtime, so the fallback is free of hydration side-effects.
+ * Runtime fallback: tries Worker first, falls back to the testing-only bridge on failure.
+ * The bridge has no application runtime, so the fallback is free of hydration side-effects.
  * Once the Worker fails, all subsequent calls go through the Page path permanently.
  *
  * The original design (boot-time bifurcation) chose the path once at startup and
  * never fell back at runtime. This was necessary when popup.html was the Page path
  * — opening it triggered application hydration that overwrote test data.
- * With e2e.html (no framework), runtime fallback is safe and more resilient:
+ * With the testing-only bridge (no framework), runtime fallback is safe and more resilient:
  * if the Worker dies mid-test (e.g. Target closed), recovery is automatic.
  */
 const isRecoverableWorkerError = (error: unknown): boolean => {
@@ -143,7 +144,7 @@ const isRecoverableWorkerError = (error: unknown): boolean => {
 
 const createStorageAccessor = (context: BrowserContext, extensionId: string, initialWorker: Worker | null): Extension['storage'] => {
   let worker = initialWorker
-  const bridgeUrl = `chrome-extension://${extensionId}/e2e.html`
+  const bridgeUrl = `chrome-extension://${extensionId}/${E2E_BRIDGE_FILE}`
 
   const viaE2EPage = async <T>(operation: (page: Page) => Promise<T>): Promise<T> => {
     const page = await context.newPage()
