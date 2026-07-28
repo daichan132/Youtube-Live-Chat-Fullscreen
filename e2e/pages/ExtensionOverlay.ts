@@ -109,6 +109,123 @@ export class ExtensionOverlay {
     })
   }
 
+  getAppliedFontSize() {
+    return this.page.evaluate(() => {
+      const iframe = window.__ylcHelpers.getExtensionIframe()
+      return iframe?.contentDocument?.documentElement.style.getPropertyValue('--extension-yt-live-chat-font-size') ?? null
+    })
+  }
+
+  async installChatOnlyGeometryProbe() {
+    await this.page.evaluate(() => {
+      const iframe = window.__ylcHelpers.getExtensionIframe()
+      const document = iframe?.contentDocument
+      if (!iframe || !document?.head || !document.body) throw new Error('Extension chat document is unavailable.')
+
+      const style = document.createElement('style')
+      style.dataset.ylcGeometryProbe = 'true'
+      style.textContent = `
+        yt-live-chat-renderer { display: block; position: relative; width: 100%; height: 100%; }
+        #input-panel { height: 64px; }
+        [data-ylc-reaction-probe] { position: absolute; right: 16px; bottom: 16px; width: 44px; height: 44px; }
+        [data-ylc-popover-probe] { position: absolute; left: 20px; top: 48px; width: 180px; height: 96px; }
+      `
+      document.head.append(style)
+      document.body.innerHTML = `
+        <yt-live-chat-renderer>
+          <yt-live-chat-header-renderer style="display: block">
+            <button type="button" data-ylc-header-button>Chat menu</button>
+            <div data-ylc-popover-probe>Chat menu popover</div>
+          </yt-live-chat-header-renderer>
+          <div id="ticker"><yt-live-chat-ticker-renderer>Super Chat</yt-live-chat-ticker-renderer></div>
+          <yt-live-chat-item-list-renderer>Messages</yt-live-chat-item-list-renderer>
+          <div id="input-panel"><yt-live-chat-message-input-renderer>Say something</yt-live-chat-message-input-renderer></div>
+          <yt-reaction-control-panel-view-model data-ylc-reaction-probe>
+            <button type="button">React</button>
+          </yt-reaction-control-panel-view-model>
+        </yt-live-chat-renderer>
+      `
+    })
+  }
+
+  getChatOnlyGeometryState() {
+    return this.page.evaluate(() => {
+      const iframe = window.__ylcHelpers.getExtensionIframe()
+      const document = iframe?.contentDocument
+      const overlayRoot = window.document.getElementById('shadow-root-live-chat')?.shadowRoot
+      const viewport = overlayRoot?.querySelector<HTMLElement>('[data-ylc-chat-viewport]')
+      const carrier = overlayRoot?.querySelector<HTMLElement>('[data-ylc-iframe-carrier]')
+      const header = document?.querySelector<HTMLElement>('yt-live-chat-header-renderer')
+      const input = document?.querySelector<HTMLElement>('#input-panel')
+      const reaction = document?.querySelector<HTMLElement>('[data-ylc-reaction-probe]')
+      const popover = document?.querySelector<HTMLElement>('[data-ylc-popover-probe]')
+      if (!iframe || !document?.body || !viewport || !carrier || !header || !input || !reaction || !popover) {
+        throw new Error('Chat-only geometry probe is incomplete.')
+      }
+
+      const rect = (element: Element) => {
+        const bounds = element.getBoundingClientRect()
+        return {
+          left: bounds.left,
+          top: bounds.top,
+          right: bounds.right,
+          bottom: bounds.bottom,
+          width: bounds.width,
+          height: bounds.height,
+        }
+      }
+      const fullyInside = (inner: DOMRect, outer: DOMRect) =>
+        inner.left >= outer.left && inner.top >= outer.top && inner.right <= outer.right && inner.bottom <= outer.bottom
+      const isHit = (element: HTMLElement, x: number, y: number) => {
+        const hit = document.elementFromPoint(x, y)
+        return hit === element || (hit instanceof Node && element.contains(hit))
+      }
+      const centerHitTestVisible = (element: HTMLElement, bounds: DOMRect) =>
+        isHit(element, bounds.left + bounds.width / 2, bounds.top + bounds.height / 2)
+      const cornerHitTestVisible = (element: HTMLElement, bounds: DOMRect) => {
+        const inset = 4
+        const points = [
+          [bounds.left + inset, bounds.top + inset],
+          [bounds.right - inset, bounds.top + inset],
+          [bounds.left + inset, bounds.bottom - inset],
+          [bounds.right - inset, bounds.bottom - inset],
+        ] as const
+        return points.every(([x, y]) => isHit(element, x, y))
+      }
+      const iframeRect = iframe.getBoundingClientRect()
+      const viewportRect = viewport.getBoundingClientRect()
+      const carrierRect = carrier.getBoundingClientRect()
+      const documentViewport = new DOMRect(0, 0, iframe.contentWindow?.innerWidth ?? 0, iframe.contentWindow?.innerHeight ?? 0)
+      const reactionRect = reaction.getBoundingClientRect()
+      const popoverRect = popover.getBoundingClientRect()
+
+      return {
+        collapsed: document.body.classList.contains('chat-only-display'),
+        header: rect(header),
+        input: rect(input),
+        iframe: rect(iframe),
+        viewport: rect(viewport),
+        carrier: rect(carrier),
+        reaction: rect(reaction),
+        popover: rect(popover),
+        iframeMatchesViewport:
+          Math.abs(iframeRect.left - viewportRect.left) < 1 &&
+          Math.abs(iframeRect.top - viewportRect.top) < 1 &&
+          Math.abs(iframeRect.width - viewportRect.width) < 1 &&
+          Math.abs(iframeRect.height - viewportRect.height) < 1,
+        carrierMatchesViewport:
+          Math.abs(carrierRect.left - viewportRect.left) < 1 &&
+          Math.abs(carrierRect.top - viewportRect.top) < 1 &&
+          Math.abs(carrierRect.width - viewportRect.width) < 1 &&
+          Math.abs(carrierRect.height - viewportRect.height) < 1,
+        reactionFullyVisible: fullyInside(reactionRect, documentViewport),
+        popoverFullyVisible: fullyInside(popoverRect, documentViewport),
+        reactionHitTestVisible: centerHitTestVisible(reaction, reactionRect),
+        popoverHitTestVisible: cornerHitTestVisible(popover, popoverRect),
+      }
+    })
+  }
+
   getResizeDirections() {
     return this.frame()
       .locator('[data-ylc-resize-direction]')

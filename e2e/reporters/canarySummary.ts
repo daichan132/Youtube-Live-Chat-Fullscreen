@@ -25,10 +25,12 @@ export const summarizeCanaryOutcomes = (outcomes: readonly CanaryTestOutcome[], 
   const failed = outcomes.filter(outcome => outcome.status === 'failed').length
   const executed = outcomes.length - skipped
   const state =
-    outcomes.length === 0 ? 'not-run' : failed > 0 || runStatus !== 'passed' ? 'failed' : skipped > 0 || flaky > 0 ? 'degraded' : 'passed'
+    executed === 0 ? 'not-run' : failed > 0 || runStatus !== 'passed' ? 'failed' : skipped > 0 || flaky > 0 ? 'degraded' : 'passed'
 
   return { state, executed, passed, flaky, skipped, failed }
 }
+
+export const shouldFailCanaryRun = (summary: CanarySummary) => summary.executed === 0
 
 const escapeCell = (value: string) => value.replaceAll('|', '\\|').replaceAll(/\r?\n/g, ' ')
 
@@ -65,8 +67,7 @@ class CanarySummaryReporter implements Reporter {
   }
 
   async onEnd(result: FullResult) {
-    const summaryPath = process.env.GITHUB_STEP_SUMMARY
-    if (!summaryPath || !this.suite) return
+    if (!this.suite) return
 
     const canaryTests = this.suite.allTests().filter(test => test.parent.project()?.name === CANARY_PROJECT_NAME)
     if (canaryTests.length === 0) return
@@ -84,7 +85,10 @@ class CanarySummaryReporter implements Reporter {
       }
     })
 
-    await appendFile(summaryPath, `\n${renderCanarySummary(outcomes, result.status)}\n`, 'utf8')
+    const summary = summarizeCanaryOutcomes(outcomes, result.status)
+    const summaryPath = process.env.GITHUB_STEP_SUMMARY
+    if (summaryPath) await appendFile(summaryPath, `\n${renderCanarySummary(outcomes, result.status)}\n`, 'utf8')
+    if (shouldFailCanaryRun(summary)) return { status: 'failed' as const }
   }
 
   printsToStdio() {

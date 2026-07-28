@@ -1,6 +1,42 @@
 import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
+import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
+import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+
+const activeOverlayScenario = {
+  video: { id: 'ylc-import-active-overlay', title: 'Active overlay import fixture', mode: 'live' },
+  page: { chatContainer: 'present', chatDimensions: 'standard' },
+  fullscreen: false,
+  chat: {
+    mode: 'live',
+    native: { state: 'absent' },
+    response: 'playable',
+  },
+} satisfies YouTubeScenarioState
+
+const profileWithFontSize = (fontSize: number): ChatProfile => ({
+  appearance: {
+    ...DEFAULT_CHAT_SETTINGS.profile.appearance,
+    backgroundColor: { ...DEFAULT_CHAT_SETTINGS.profile.appearance.backgroundColor },
+    fontColor: { ...DEFAULT_CHAT_SETTINGS.profile.appearance.fontColor },
+    membershipNameColor: { mode: 'youtube-default' },
+    fontSize,
+  },
+  display: { ...DEFAULT_CHAT_SETTINGS.profile.display },
+})
+
+const importedSettings = (fontSize: number, customPreset: PresetEntry): ChatSettings => ({
+  profile: profileWithFontSize(fontSize),
+  geometry: {
+    coordinates: { x: 80 + fontSize, y: 60 + fontSize },
+    size: { width: 320 + fontSize, height: 240 + fontSize },
+  },
+  presets: [{ kind: 'builtin', id: 'standard' }, customPreset],
+})
 
 test.describe('popup', { tag: '@popup' }, () => {
   test('popup renders language selector and chat toggle', async ({ page, extension }) => {
@@ -65,5 +101,75 @@ test.describe('popup', { tag: '@popup' }, () => {
     await page.goto(extension.url('popup.html'))
     await page.getByLabel('Select language').waitFor({ state: 'visible' })
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
+  })
+
+  test('repeated imports update an active overlay and replace custom presets', async ({ page, extension }) => {
+    test.setTimeout(120000)
+
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(activeOverlayScenario)
+    await scenario.enterFullscreen()
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectChatLoaded({ timeout: 12000 })
+
+    const popup = await page.context().newPage()
+    const firstPreset: PresetEntry = {
+      kind: 'custom',
+      id: 'first-import',
+      name: 'First import',
+      profile: profileWithFontSize(22),
+    }
+    const secondPreset: PresetEntry = {
+      kind: 'custom',
+      id: 'replacement-import',
+      name: 'Replacement import',
+      profile: profileWithFontSize(31),
+    }
+    const importBackup = (chatSettings: ChatSettings) => ({
+      version: SETTINGS_EXPORT_VERSION,
+      exportedAt: '2026-07-28T00:00:00.000Z',
+      globalSetting: { ytdLiveChat: true, themeMode: 'dark' },
+      chatSettings,
+    })
+
+    try {
+      const first = importedSettings(22, firstPreset)
+      await importSettingsViaPopup(popup, extension, importBackup(first))
+      await page.bringToFront()
+      await expect.poll(() => overlay.getAppliedFontSize()).toBe('22px')
+      await expect
+        .poll(() => overlay.getGeometry())
+        .toMatchObject({
+          x: first.geometry.coordinates.x,
+          y: first.geometry.coordinates.y,
+          width: first.geometry.size.width,
+          height: first.geometry.size.height,
+        })
+
+      const second = importedSettings(31, secondPreset)
+      await importSettingsViaPopup(popup, extension, importBackup(second))
+      await page.bringToFront()
+      await expect.poll(() => overlay.getAppliedFontSize()).toBe('31px')
+      await expect
+        .poll(() => overlay.getGeometry())
+        .toMatchObject({
+          x: second.geometry.coordinates.x,
+          y: second.geometry.coordinates.y,
+          width: second.geometry.size.width,
+          height: second.geometry.size.height,
+        })
+      await expect.poll(async () => (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).toEqual(second.presets)
+
+      // The file input is reset after every import, so importing the same file again
+      // must still complete and keep the replacement set stable.
+      await importSettingsViaPopup(popup, extension, importBackup(second))
+      await page.bringToFront()
+      await expect.poll(async () => (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).toEqual(second.presets)
+      expect((await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).not.toContainEqual(firstPreset)
+    } finally {
+      await popup.close()
+      await page.bringToFront()
+    }
   })
 })

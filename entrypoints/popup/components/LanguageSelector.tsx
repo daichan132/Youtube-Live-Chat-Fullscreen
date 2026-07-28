@@ -3,7 +3,6 @@ import { localeDisplayNames } from '@/shared/i18n/generated/localeMetadata'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { useLocaleCode, useT } from '@/shared/i18n/react'
 import { useAppRuntime } from '@/shared/runtime/AppProvider'
-import { sendActiveTabMessage } from '../utils/sendActiveTabMessage'
 
 const languageOptions = Object.entries(localeDisplayNames).map(([code, name]) => ({
   value: code,
@@ -19,10 +18,6 @@ export const LanguageSelector = () => {
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const languageCode = resolveLanguageCode(e.target.value)
       void runtime.setLocale(languageCode)
-      sendActiveTabMessage({
-        message: 'language',
-        language: languageCode,
-      })
     },
     [runtime],
   )

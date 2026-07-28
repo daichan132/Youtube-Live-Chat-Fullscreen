@@ -6,7 +6,8 @@ type TestSettings = {
   version: number
   exportedAt: string
   globalSetting: Record<string, unknown>
-  ytdLiveChat: Record<string, unknown>
+  ytdLiveChat?: Record<string, unknown>
+  chatSettings?: Record<string, unknown>
 }
 
 export type { TestSettings }

@@ -120,4 +120,71 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await storagePage.close()
     }
   })
+
+  test('collapses messages-only chrome at idle and preserves interactive geometry while expanded', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }) => {
+    test.setTimeout(90000)
+
+    expect(
+      await patchOverlayStore(extension, {
+        profile: {
+          display: {
+            idleVisibility: 'always-visible',
+            contentMode: 'messages-only',
+          },
+        },
+      }),
+    ).not.toBeNull()
+
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.installChatOnlyGeometryProbe()
+
+    await expect
+      .poll(() => overlay.getChatOnlyGeometryState())
+      .toMatchObject({
+        collapsed: true,
+        header: { height: 0 },
+        input: { height: 0 },
+        iframe: { width: 400, height: 400 },
+        viewport: { width: 400, height: 400 },
+        carrier: { width: 400, height: 400 },
+        iframeMatchesViewport: true,
+        carrierMatchesViewport: true,
+      })
+
+    await overlay.frame().hover({ position: { x: 200, y: 160 } })
+    await expect
+      .poll(() => overlay.getChatOnlyGeometryState())
+      .toMatchObject({
+        collapsed: false,
+        header: { height: 56 },
+        input: { height: 64 },
+        reaction: { width: 44, height: 44 },
+        popover: { width: 180, height: 96 },
+        iframeMatchesViewport: true,
+        carrierMatchesViewport: true,
+        reactionFullyVisible: true,
+        popoverFullyVisible: true,
+        reactionHitTestVisible: true,
+        popoverHitTestVisible: true,
+      })
+
+    await page.mouse.move(1000, 600)
+    await expect
+      .poll(() => overlay.getChatOnlyGeometryState())
+      .toMatchObject({
+        collapsed: true,
+        header: { height: 0 },
+        input: { height: 0 },
+        iframeMatchesViewport: true,
+        carrierMatchesViewport: true,
+      })
+  })
 })

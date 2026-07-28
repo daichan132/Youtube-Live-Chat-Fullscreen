@@ -8,9 +8,6 @@ import { Content } from './Content'
 import { chatRuntime } from './runtime/ChatRuntime'
 import { useChatRuntime } from './runtime/useChatRuntime'
 
-vi.mock('./hooks/globalState/useContentRuntimeMessages', () => ({
-  useContentRuntimeMessages: vi.fn(),
-}))
 vi.mock('./runtime/ChatRuntime', () => ({
   chatRuntime: {
     start: vi.fn(),
