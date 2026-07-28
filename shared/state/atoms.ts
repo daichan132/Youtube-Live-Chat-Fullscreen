@@ -2,15 +2,10 @@ import { atom } from 'jotai'
 import type { LocaleMessages, LocaleState } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_LANGUAGE } from '@/shared/i18n/language'
 import { isRTL } from '@/shared/i18n/rtl'
+import { areChatProfilesEqual } from '@/shared/settings/equality'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import type { ChatGeometry, ChatProfile, ChatSettings, PresetEntry } from '@/shared/settings/model'
+import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from '@/shared/settings/model'
 import { normalizeChatSettings, normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
-import type { ThemeMode } from '@/shared/theme'
-
-export type GlobalSettings = {
-  ytdLiveChat: boolean
-  themeMode: ThemeMode
-}
 
 export type EditorSession = {
   draftProfile: ChatProfile | null
@@ -98,7 +93,7 @@ export const replaceExternalChatSettingsAtom = atom(null, (get, set, next: ChatS
   const current = get(chatSettingsStateAtom)
   const editor = get(editorSessionStateAtom)
   set(chatSettingsStateAtom, next)
-  if (editor.activeGesture || editor.draftProfile || JSON.stringify(current.profile) !== JSON.stringify(next.profile)) {
+  if (editor.activeGesture || editor.draftProfile || !areChatProfilesEqual(current.profile, next.profile)) {
     set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
   }
 })
@@ -119,4 +114,4 @@ export type StateSnapshot = {
   locale: LocaleState
 }
 
-export type { ChatGeometry, ChatProfile, PresetEntry }
+export type { ChatGeometry, ChatProfile, GlobalSettings, PresetEntry }

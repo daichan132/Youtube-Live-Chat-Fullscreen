@@ -5,6 +5,11 @@ export type RGBA = {
   a: number
 }
 
+export type GlobalSettings = {
+  ytdLiveChat: boolean
+  themeMode: 'light' | 'dark' | 'system'
+}
+
 export type MembershipNameColor =
   | {
       mode: 'youtube-default'

@@ -1,6 +1,7 @@
 export * from './backup'
 export * from './builtinPresets'
 export * from './defaults'
+export * from './equality'
 export * from './migrateSettings'
 export * from './model'
 export * from './normalizeSettings'

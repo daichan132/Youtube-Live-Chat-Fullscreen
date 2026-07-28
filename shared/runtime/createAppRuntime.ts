@@ -4,6 +4,7 @@ import type { LocaleCode } from '@/shared/i18n/generated/translationTypes'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { loadLocaleMessages } from '@/shared/i18n/loader'
 import { normalizeSettingsBackup } from '@/shared/settings/backup'
+import { areChatSettingsEqual, areGlobalSettingsEqual } from '@/shared/settings/equality'
 import { buildRepositoryBackup, createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
 import {
   chatSettingsStateAtom,
@@ -32,14 +33,14 @@ const bindPersistence = (store: Store, repository: SettingsRepository, isApplyin
   const unsubs = [
     store.sub(globalSettingsStateAtom, () => {
       const next = store.get(globalSettingsStateAtom)
-      if (JSON.stringify(previousGlobal) !== JSON.stringify(next)) {
+      if (!areGlobalSettingsEqual(previousGlobal, next)) {
         previousGlobal = next
         if (!isApplyingExternal()) void repository.saveGlobal(next)
       }
     }),
     store.sub(chatSettingsStateAtom, () => {
       const next = store.get(chatSettingsStateAtom)
-      if (JSON.stringify(previousChat) !== JSON.stringify(next)) {
+      if (!areChatSettingsEqual(previousChat, next)) {
         previousChat = next
         if (!isApplyingExternal()) void repository.saveChat(next)
       }
@@ -59,7 +60,14 @@ const bindPersistence = (store: Store, repository: SettingsRepository, isApplyin
   }
 }
 
-export const createAppRuntime = async (repository = createSettingsRepository()): Promise<AppRuntime> => {
+type AppRuntimeDependencies = {
+  loadMessages: typeof loadLocaleMessages
+}
+
+export const createAppRuntime = async (
+  repository = createSettingsRepository(),
+  dependencies: AppRuntimeDependencies = { loadMessages: loadLocaleMessages },
+): Promise<AppRuntime> => {
   const store = createStore()
   let applyingExternal = false
   let disposed = false
@@ -72,7 +80,8 @@ export const createAppRuntime = async (repository = createSettingsRepository()):
     }
   }
   const snapshot = await repository.load()
-  const messages = await loadLocaleMessages(snapshot.locale)
+  let localeRequestId = 0
+  const messages = await dependencies.loadMessages(snapshot.locale)
   store.set(hydrateAppAtom, {
     global: snapshot.global,
     chat: snapshot.chat,
@@ -84,8 +93,11 @@ export const createAppRuntime = async (repository = createSettingsRepository()):
     onGlobal: value => applyExternal(() => store.set(replaceExternalGlobalSettingsAtom, value)),
     onChat: value => applyExternal(() => store.set(replaceExternalChatSettingsAtom, value)),
     onLocale: locale => {
-      void loadLocaleMessages(locale).then(messages => {
-        if (!disposed) applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
+      const requestId = ++localeRequestId
+      void dependencies.loadMessages(locale).then(messages => {
+        if (!disposed && requestId === localeRequestId) {
+          applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(locale, messages)))
+        }
       })
     },
   })
@@ -94,9 +106,11 @@ export const createAppRuntime = async (repository = createSettingsRepository()):
     store,
     async setLocale(locale) {
       const resolved = resolveLanguageCode(locale)
-      const messages = await loadLocaleMessages(resolved)
-      await repository.saveLocale(resolved)
-      if (!disposed) applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
+      const requestId = ++localeRequestId
+      const [messages] = await Promise.all([dependencies.loadMessages(resolved), repository.saveLocale(resolved)])
+      if (!disposed && requestId === localeRequestId) {
+        applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
+      }
     },
     exportSettings: () =>
       buildRepositoryBackup({

@@ -2,8 +2,9 @@ import { browser } from 'wxt/browser'
 import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
+import { areChatSettingsEqual, areGlobalSettingsEqual } from './equality'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
-import type { ChatSettings } from './model'
+import type { ChatSettings, GlobalSettings } from './model'
 import { normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
 
@@ -11,11 +12,6 @@ export type StoredEnvelope<T> = {
   schemaVersion: 1
   writerId: string
   value: T
-}
-
-export type GlobalSettings = {
-  ytdLiveChat: boolean
-  themeMode: 'light' | 'dark' | 'system'
 }
 
 export type SettingsSnapshot = {
@@ -96,8 +92,6 @@ const removeLegacyKeys = async () => {
 const isStoredEnvelope = <T>(value: unknown): value is StoredEnvelope<T> =>
   isRecord(value) && value.schemaVersion === 1 && typeof value.writerId === 'string' && 'value' in value
 
-const sameValue = (left: unknown, right: unknown) => JSON.stringify(left) === JSON.stringify(right)
-
 const readCurrentValues = async () => {
   const values = await Promise.all(
     [globalItem, chatItem, localeItem].map(async item => {
@@ -156,10 +150,10 @@ export const createSettingsRepository = (writerId = createWriterId()): SettingsR
       const verified =
         isStoredEnvelope<GlobalSettings>(written.global) &&
         written.global.writerId === writerId &&
-        sameValue(normalizeGlobal(written.global.value), migrated.global) &&
+        areGlobalSettingsEqual(normalizeGlobal(written.global.value), migrated.global) &&
         isStoredEnvelope<ChatSettings>(written.chat) &&
         written.chat.writerId === writerId &&
-        sameValue(normalizeChatSettings(written.chat.value, DEFAULT_CHAT_SETTINGS), migrated.chat) &&
+        areChatSettingsEqual(normalizeChatSettings(written.chat.value, DEFAULT_CHAT_SETTINGS), migrated.chat) &&
         isStoredEnvelope<LocaleCode>(written.locale) &&
         written.locale.writerId === writerId &&
         resolveLanguageCode(written.locale.value) === migrated.locale
