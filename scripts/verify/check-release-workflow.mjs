@@ -18,9 +18,22 @@ assert.match(
 )
 assert.ok(workflow.indexOf('run: yarn locales:check') < workflow.indexOf('run: yarn check'), 'Locale check must precede source checks')
 assert.match(workflow, /run: yarn verify:package-contracts/, 'Release workflow must verify production package contracts')
+assert.match(workflow, /run: yarn build:e2e/, 'Release workflow must build the testing extension')
+assert.match(
+  workflow,
+  /run: yarn playwright install --with-deps chromium/,
+  'Release workflow must install Playwright Chromium',
+)
+const fixtureCommand =
+  'run: xvfb-run --auto-servernum yarn playwright test --project=fixture --retries=0 --max-failures=1'
+assert.ok(workflow.includes(fixtureCommand), 'Release workflow must run deterministic fixtures without retries')
 assert.ok(
   workflow.indexOf('run: yarn verify:package-contracts') < workflow.indexOf('- name: Upload release packages'),
   'Production package contracts must pass before packages are uploaded',
+)
+assert.ok(
+  workflow.indexOf(fixtureCommand) < workflow.indexOf('- name: Upload release packages'),
+  'Deterministic fixtures must pass before packages are uploaded',
 )
 
 console.log('Release workflow contract is valid')

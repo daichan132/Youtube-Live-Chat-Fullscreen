@@ -95,6 +95,12 @@ jobs:
           yarn zip:firefox
       - name: Verify production package contracts
         run: yarn verify:package-contracts
+      - name: Build testing extension
+        run: yarn build:e2e
+      - name: Install Playwright Chromium
+        run: yarn playwright install --with-deps chromium
+      - name: Run deterministic end-to-end tests
+        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --retries=0 --max-failures=1
       - name: Upload release packages
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:

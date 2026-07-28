@@ -17,12 +17,16 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 - `yarn test:core`: pure logic and data contracts in Node.
 - `yarn test:dom`: React, DOM, and extension API integration in jsdom. WXT's fake browser is reset for every test in this project only.
 - `yarn test:contracts`: Node-side source/configuration contracts. It does not require pre-existing `.output` artifacts.
+- `yarn test:coverage`: runs the core and DOM projects with coverage, then verifies the coverage contract.
 - `yarn test:package`: freshly builds and packages production Chrome/Firefox extensions, then verifies their manifests, locale inventory, file inventory, ZIP contents, and size budgets.
 - `yarn build:e2e`: creates `.output/chrome-mv3-testing` with the storage bridge required by Playwright. Production builds never contain this bridge.
 - `yarn test:unit`: compatibility gate that runs all three Vitest projects.
 - `yarn e2e` / `yarn e2e:fixture`: builds the testing extension and runs only popup and synthetic YouTube fixtures. External HTTP(S) requests are blocked, retries are disabled, and this is the pull-request gate.
 - `yarn e2e:canary`: builds the testing extension and runs real YouTube live, archive, no-chat, and replay-unavailable scenarios. URL discovery and environment-dependent skips remain isolated here.
+- `yarn test:visual`: runs the deterministic visual regression project.
+- `yarn test:accessibility`: runs the deterministic accessibility project.
 - `yarn screenshots`: builds the testing extension and runs the separate screenshot project.
+- `yarn capture:store-assets`: captures store-listing assets through its dedicated Playwright project.
 
 New tests should use `*.unit.spec.ts`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts`. Existing tests remain named as-is and are classified explicitly in `vitest.config.ts` to avoid a risky bulk rename.
 
@@ -34,6 +38,12 @@ Deterministic YouTube specs use the typed API in `e2e/support/youtubeScenario/`.
 
 `e2e/assets/e2e.html` is added by WXT only in `testing` mode. Playwright loads `.output/chrome-mv3-testing`; release and package scripts consume `.output/chrome-mv3` and `.output/firefox-mv2`. The package contract rejects the E2E bridge, source maps, test files, and fixture assets in both unpacked production output and ZIP files.
 
-## Deferred boundaries
+## CI ownership
 
-Runtime model extraction, assertion-oriented page objects, visual regression, accessibility checks, and broader CI job separation are intentionally deferred.
+- `quality` owns generated locale checks, source checks, coverage, and Node-side contract tests.
+- `package` owns fresh Chrome/Firefox production builds and ZIPs, the production package contract, and the exact testing extension artifact used by browser checks.
+- `browser-contracts` downloads that testing artifact and runs fixture, visual, and accessibility projects with retries disabled.
+- The release workflow independently rebuilds and verifies production packages, then requires the deterministic fixture project to pass before uploading or publishing them.
+- The canary workflow remains responsible for compatibility with the changing real YouTube surface; it is not a deterministic pull-request gate.
+
+Visual baselines are evaluated in CI on Ubuntu with the installed Playwright Chromium. Baselines must therefore be captured and approved for that environment. Initial OS rendering differences are baseline-alignment work, not a reason to loosen deterministic thresholds.
