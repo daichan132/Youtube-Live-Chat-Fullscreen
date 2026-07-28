@@ -58,7 +58,7 @@ export default defineConfig({
       testDir: 'e2e/visual',
       testMatch: '**/*.visual.spec.ts',
       retries: 0,
-      snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}{ext}',
+      snapshotPathTemplate: '{testDir}/{testFilePath}-snapshots/{arg}-{platform}{ext}',
       expect: {
         toHaveScreenshot: {
           animations: 'disabled',
