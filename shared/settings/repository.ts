@@ -3,7 +3,7 @@ import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { areChatSettingsEqual, areGlobalSettingsEqual } from './equality'
-import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
+import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
 import type { ChatSettings, GlobalSettings } from './model'
 import { normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
@@ -92,6 +92,15 @@ const removeLegacyKeys = async () => {
 const isStoredEnvelope = <T>(value: unknown): value is StoredEnvelope<T> =>
   isRecord(value) && value.schemaVersion === 1 && typeof value.writerId === 'string' && 'value' in value
 
+const isStoredChatSettings = (value: unknown): value is ChatSettings => {
+  if (!isRecord(value) || !isRecord(value.profile) || !isRecord(value.geometry) || !Array.isArray(value.presets)) return false
+  try {
+    return areChatSettingsEqual(value as ChatSettings, normalizeChatSettings(value, DEFAULT_CHAT_SETTINGS))
+  } catch {
+    return false
+  }
+}
+
 const readCurrentValues = async () => {
   const values = await Promise.all(
     [globalItem, chatItem, localeItem].map(async item => {
@@ -108,7 +117,7 @@ const readCurrentValues = async () => {
 const readLegacySnapshot = async (): Promise<SettingsSnapshot> => {
   const values = await browser.storage.local.get([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
   const global = normalizeGlobal(legacyState(values[LEGACY_GLOBAL_KEY]))
-  const chat = normalizeChatSettings(legacyState(values[LEGACY_CHAT_KEY]), DEFAULT_CHAT_SETTINGS)
+  const chat = migrateSettings(legacyState(values[LEGACY_CHAT_KEY]))
   let locale: LocaleCode = resolveLanguageCode(typeof values[LEGACY_LOCALE_KEY] === 'string' ? values[LEGACY_LOCALE_KEY] : undefined)
   if (locale === 'en' && typeof browser.i18n?.getUILanguage === 'function') {
     try {
@@ -128,9 +137,10 @@ export const createSettingsRepository = (writerId = createWriterId()): SettingsR
   const load = async () => {
     const current = await readCurrentValues()
     const currentGlobal = isStoredEnvelope<GlobalSettings>(current.global) ? normalizeGlobal(current.global.value) : null
-    const currentChat = isStoredEnvelope<ChatSettings>(current.chat)
-      ? normalizeChatSettings(current.chat.value, DEFAULT_CHAT_SETTINGS)
-      : null
+    const currentChat =
+      isStoredEnvelope<unknown>(current.chat) && isStoredChatSettings(current.chat.value)
+        ? normalizeChatSettings(current.chat.value, DEFAULT_CHAT_SETTINGS)
+        : null
     const currentLocale = isStoredEnvelope<LocaleCode>(current.locale) ? resolveLanguageCode(current.locale.value) : null
     if (currentGlobal && currentChat && currentLocale) return { global: currentGlobal, chat: currentChat, locale: currentLocale }
 
