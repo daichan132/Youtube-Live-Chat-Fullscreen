@@ -6,26 +6,7 @@ import { fileURLToPath } from 'node:url'
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const outputRoot = join(root, '.output')
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-
-// Baseline captured from the current production build on 2026-07-28. Budgets allow
-// a small reviewable increase while keeping the extension's expensive surfaces bounded.
-const BASELINES = {
-  zipBytes: 310_020,
-  contentJsBytes: 381_052,
-  popupJsBytes: 240_063,
-  contentCssBytes: 54_184,
-  popupCssBytes: 45_178,
-  localeBytes: 231_607,
-}
-
-const BUDGETS = {
-  zipBytes: 500_000,
-  contentJsBytes: 400_000,
-  popupJsBytes: 260_000,
-  contentCssBytes: 65_000,
-  popupCssBytes: 55_000,
-  localeBytes: 240_000,
-}
+const policy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
 
 const sumFiles = async (directory, predicate) => {
   let total = 0
@@ -37,32 +18,32 @@ const sumFiles = async (directory, predicate) => {
   return total
 }
 
-const measureTarget = async target => {
+const measureTarget = async (target, config) => {
   const directory = join(outputRoot, target)
-  const browser = target === 'chrome-mv3' ? 'chrome' : 'firefox'
-  const zip = `youtube-live-chat-fullscreen-${packageJson.version}-${browser}.zip`
+  const zip = `youtube-live-chat-fullscreen-${packageJson.version}-${config.browser}.zip`
   const metrics = {
     zipBytes: await stat(join(outputRoot, zip)).then(file => file.size).catch(() => null),
     contentJsBytes: await sumFiles(directory, (_path, name) => name === 'content.js' && _path.includes('content-scripts')),
     popupJsBytes: await sumFiles(directory, (_path, name) => name.startsWith('popup-') && name.endsWith('.js')),
     contentCssBytes: await sumFiles(directory, (_path, name) => name === 'content.css' && _path.includes('content-scripts')),
     popupCssBytes: await sumFiles(directory, (_path, name) => name.startsWith('popup-') && name.endsWith('.css')),
-    localeBytes: await sumFiles(directory, (path, name) => name.endsWith('.json') && path.includes(join('locales', ''))),
+    runtimeLocaleBytes: await sumFiles(join(directory, 'locales'), (_path, name) => name.endsWith('.json')),
+    manifestLocaleBytes: await sumFiles(join(directory, '_locales'), (_path, name) => name.endsWith('.json')),
   }
-  return { target, zip, metrics }
+  return { target, zip, baselines: config.baselines, budgets: config.budgets, metrics }
 }
 
-const reports = await Promise.all(['chrome-mv3', 'firefox-mv2'].map(measureTarget))
+const reports = await Promise.all(Object.entries(policy).map(([target, config]) => measureTarget(target, config)))
 const failures = []
 for (const report of reports) {
-  for (const [metric, budget] of Object.entries(BUDGETS)) {
+  for (const [metric, budget] of Object.entries(report.budgets)) {
     const value = report.metrics[metric]
     if (value == null) failures.push(`${report.target}.${metric}: package zip is missing`)
     else if (value > budget) failures.push(`${report.target}.${metric}: ${value} > ${budget}`)
   }
 }
 
-console.log(JSON.stringify({ baselines: BASELINES, budgets: BUDGETS, reports }, null, 2))
+console.log(JSON.stringify({ reports }, null, 2))
 if (failures.length > 0) {
   console.error(`Package size budget failed:\n- ${failures.join('\n- ')}`)
   process.exitCode = 1
