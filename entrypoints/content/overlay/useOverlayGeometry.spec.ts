@@ -78,6 +78,38 @@ describe('useOverlayGeometry', () => {
     expect(store.get(chatSettingsStateAtom).geometry.size).toEqual({ width: 340, height: 240 })
   })
 
+  it('keeps the opposite edges fixed while resizing from the bottom-left handle', () => {
+    Object.defineProperty(window, 'innerWidth', { value: 800, writable: true, configurable: true })
+    Object.defineProperty(window, 'innerHeight', { value: 600, writable: true, configurable: true })
+    store.set(chatSettingsStateAtom, {
+      ...store.get(chatSettingsStateAtom),
+      geometry: { coordinates: { x: 100, y: 50 }, size: { width: 400, height: 200 } },
+    })
+    const { result } = renderHook(() => useOverlayGeometry(), { wrapper })
+    const handle = document.createElement('div')
+    handle.dataset.ylcResizeDirection = 'bottomLeft'
+    const pointerDown = {
+      button: 0,
+      pointerId: 3,
+      clientX: 100,
+      clientY: 100,
+      currentTarget: handle,
+      preventDefault: () => {},
+    } as unknown as React.PointerEvent<HTMLDivElement>
+
+    act(() => result.current.onPointerDown(pointerDown))
+    act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 3, clientX: 60, clientY: 120 })))
+    expect(result.current.draftGeometry).toEqual({
+      coordinates: { x: 60, y: 50 },
+      size: { width: 440, height: 220 },
+    })
+    act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 3, clientX: 60, clientY: 120 })))
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      coordinates: { x: 60, y: 50 },
+      size: { width: 440, height: 220 },
+    })
+  })
+
   it('starts from the settings default shape when reset by the store', () => {
     store.set(chatSettingsStateAtom, { ...store.get(chatSettingsStateAtom), geometry: DEFAULT_CHAT_GEOMETRY })
     const { result } = renderHook(() => useOverlayGeometry(), { wrapper })

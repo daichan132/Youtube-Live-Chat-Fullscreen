@@ -96,34 +96,24 @@ describe('clipGeometry', () => {
     ).toBe(456)
   })
 
-  it('derives resized layout for top-left resizing', () => {
-    expect(
-      deriveResizedLayout({
-        startCoordinates: { x: 100, y: 80 },
-        currentSize: { width: 300, height: 200 },
-        direction: 'topLeft',
-        delta: { width: 40, height: 20 },
-      }),
-    ).toEqual({
-      coordinates: { x: 60, y: 60 },
-      size: { width: 340, height: 220 },
-    })
-  })
-
   it.each([
-    ['top', { width: 0, height: 20 }, { x: 100, y: 60 }],
-    ['left', { width: 40, height: 0 }, { x: 60, y: 80 }],
-    ['bottomLeft', { width: 40, height: 20 }, { x: 60, y: 80 }],
-    ['topRight', { width: 40, height: 20 }, { x: 100, y: 60 }],
-  ] as const)('derives resized coordinates for %s resizing', (direction, delta, coordinates) => {
+    ['top', { width: 0, height: -20 }, { x: 100, y: 60 }, { width: 300, height: 220 }],
+    ['right', { width: 40, height: 0 }, { x: 100, y: 80 }, { width: 340, height: 200 }],
+    ['bottom', { width: 0, height: 20 }, { x: 100, y: 80 }, { width: 300, height: 220 }],
+    ['left', { width: -40, height: 0 }, { x: 60, y: 80 }, { width: 340, height: 200 }],
+    ['topRight', { width: 40, height: -20 }, { x: 100, y: 60 }, { width: 340, height: 220 }],
+    ['bottomRight', { width: 40, height: 20 }, { x: 100, y: 80 }, { width: 340, height: 220 }],
+    ['bottomLeft', { width: -40, height: 20 }, { x: 60, y: 80 }, { width: 340, height: 220 }],
+    ['topLeft', { width: -40, height: -20 }, { x: 60, y: 60 }, { width: 340, height: 220 }],
+  ] as const)('derives resized layout for %s using raw pointer movement', (direction, delta, coordinates, size) => {
     expect(
       deriveResizedLayout({
         startCoordinates: { x: 100, y: 80 },
         currentSize: { width: 300, height: 200 },
         direction,
         delta,
-      }).coordinates,
-    ).toEqual(coordinates)
+      }),
+    ).toEqual({ coordinates, size })
   })
 
   it('clamps resized coordinates to the viewport origin', () => {
@@ -132,22 +122,8 @@ describe('clipGeometry', () => {
         startCoordinates: { x: 10, y: 8 },
         currentSize: { width: 300, height: 200 },
         direction: 'topLeft',
-        delta: { width: 40, height: 20 },
+        delta: { width: -40, height: -20 },
       }).coordinates,
     ).toEqual({ x: 0, y: 0 })
-  })
-
-  it('keeps coordinates while resizing from the bottom-right corner', () => {
-    expect(
-      deriveResizedLayout({
-        startCoordinates: { x: 100, y: 80 },
-        currentSize: { width: 300, height: 200 },
-        direction: 'bottomRight',
-        delta: { width: 40, height: 20 },
-      }),
-    ).toEqual({
-      coordinates: { x: 100, y: 80 },
-      size: { width: 340, height: 220 },
-    })
   })
 })

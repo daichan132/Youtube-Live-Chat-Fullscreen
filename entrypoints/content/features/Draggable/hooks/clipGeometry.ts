@@ -1,3 +1,5 @@
+import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+
 export interface LayoutGeometry {
   coordinates: {
     x: number
@@ -92,17 +94,22 @@ export const deriveResizedLayout = ({
   direction: ResizeDirection
   delta: ResizeDelta
 }): LayoutGeometry => {
-  const xDelta = shiftsLeftEdge(direction) ? -delta.width : 0
-  const yDelta = shiftsTopEdge(direction) ? -delta.height : 0
+  const movesLeftEdge = shiftsLeftEdge(direction)
+  const movesTopEdge = shiftsTopEdge(direction)
+  const fixedRight = startCoordinates.x + currentSize.width
+  const fixedBottom = startCoordinates.y + currentSize.height
+  const requestedWidth = movesLeftEdge ? currentSize.width - delta.width : currentSize.width + delta.width
+  const requestedHeight = movesTopEdge ? currentSize.height - delta.height : currentSize.height + delta.height
+  const width = Math.max(ResizableMinWidth, requestedWidth)
+  const height = Math.max(ResizableMinHeight, requestedHeight)
+  const x = movesLeftEdge ? ensurePositiveCoordinate(fixedRight - width) : startCoordinates.x
+  const y = movesTopEdge ? ensurePositiveCoordinate(fixedBottom - height) : startCoordinates.y
 
   return {
-    coordinates: {
-      x: ensurePositiveCoordinate(startCoordinates.x + xDelta),
-      y: ensurePositiveCoordinate(startCoordinates.y + yDelta),
-    },
+    coordinates: { x, y },
     size: {
-      width: currentSize.width + delta.width,
-      height: currentSize.height + delta.height,
+      width: movesLeftEdge ? fixedRight - x : width,
+      height: movesTopEdge ? fixedBottom - y : height,
     },
   }
 }
