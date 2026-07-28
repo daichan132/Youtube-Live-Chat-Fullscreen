@@ -2,6 +2,7 @@ import { getE2ETestTargets } from '@e2e/config/testTargets'
 import { expect, test } from '@e2e/fixtures'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { hasPlayableChat, hasYouTubePlayerError, isExtensionChatLoaded, isExtensionOverlayRendered } from '@e2e/support/diagnostics'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 import { SHADOW_HOST, switchButtonContainerSelector, switchButtonSelector } from '@e2e/utils/selectors'
 
 test.describe('no chat video', { tag: '@live' }, () => {
@@ -14,7 +15,11 @@ test.describe('no chat video', { tag: '@live' }, () => {
     if (await page.evaluate(hasYouTubePlayerError)) {
       test.skip(true, 'Selected no-chat URL showed a YouTube player error and did not meet test preconditions.')
     }
-    await watchPage.enterFullscreen()
+    const fullscreenReady = await meetsExternalYouTubePrecondition('fullscreen-ui', () => watchPage.enterFullscreen())
+    if (!fullscreenReady) {
+      test.skip(true, 'YouTube fullscreen UI did not meet the canary precondition.')
+      return
+    }
 
     await page.locator('#movie_player').hover()
     const playableNative = await page.evaluate(hasPlayableChat)

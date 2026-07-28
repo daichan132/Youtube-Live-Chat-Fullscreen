@@ -24,22 +24,11 @@ export const FIXTURE_SPECS = [
 ] as const
 
 export const CANARY_SPECS = [
-  'archive/chatOnlyHoverHeight.spec.ts',
-  'archive/fullscreenChatRestore.spec.ts',
   'archive/fullscreenChatVideoTransition.spec.ts',
   'archive/liveChatReplay.spec.ts',
-  'archive/replayUnavailable.spec.ts',
-  'live/chatModeStability.spec.ts',
-  'live/chatOnlyHoverHeight.spec.ts',
-  'live/chatStyleSettings.spec.ts',
   'live/fullscreenChatAutoOpen.spec.ts',
-  'live/fullscreenChatDoesNotBlockClicks.spec.ts',
-  'live/fullscreenChatOffset.spec.ts',
-  'live/importedSettingsFullscreen.spec.ts',
   'live/nativeChatClosedExtensionLoads.spec.ts',
   'live/noChatVideo.spec.ts',
-  'live/settingPanelIconScale.spec.ts',
-  'live/styleIsolation.spec.ts',
 ] as const
 
 export const toPlaywrightTestMatch = (specs: readonly string[]) => specs.map(spec => `**/${spec}`)

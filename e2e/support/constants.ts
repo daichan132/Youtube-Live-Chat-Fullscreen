@@ -8,10 +8,6 @@ export const TIMING = {
   OVERLAY_HOVER_ANIMATION_MS: 300,
   /** Delay before retrying YouTube consent dismissal */
   CONSENT_RETRY_DELAY_MS: 1500,
-  /** Wait for drag-icon transition animation to settle */
-  DRAG_ICON_TRANSITION_MS: 260,
-  /** Wait for native chat DOM to settle after page load */
-  NATIVE_CHAT_SETTLE_MS: 1500,
   /** Polling interval while opening archive chat panel */
   ARCHIVE_CHAT_OPEN_INTERVAL_MS: 800,
 } as const

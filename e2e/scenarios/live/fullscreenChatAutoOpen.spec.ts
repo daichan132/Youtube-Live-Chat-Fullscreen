@@ -1,8 +1,8 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
-import { captureChatState, isExtensionChatLoaded, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
+import { captureChatState, isNativeLiveChatPlayable } from '@e2e/support/diagnostics'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 
 test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
   test('auto show fullscreen chat when enabled', async ({ page, liveUrl }) => {
@@ -18,14 +18,13 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
 
     await yt.goto(liveUrl)
 
-    const nativeChatFrameReady = await hasCanaryPrecondition(() => yt.expectNativeChat())
+    const nativeChatFrameReady = await meetsExternalYouTubePrecondition('native-chat-frame', () => yt.expectNativeChat())
     if (!nativeChatFrameReady) {
       test.skip(true, 'Live URL did not expose native chat frame in time.')
       return
     }
-    const nativeReady = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(
-      () => true,
-      () => false,
+    const nativeReady = await meetsExternalYouTubePrecondition('native-chat-source', () =>
+      page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 30000 }).then(() => {}),
     )
     if (!nativeReady) {
       await captureChatState(page, test.info(), 'auto-open-native-precondition-missing')
@@ -33,44 +32,16 @@ test.describe('fullscreen chat auto open', { tag: '@live' }, () => {
       return
     }
 
-    await yt.enterFullscreen()
-
-    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
-    if (!switchReady) {
-      await captureChatState(page, test.info(), 'auto-open-switch-missing')
-      test.skip(true, 'Fullscreen chat switch button did not appear.')
+    const fullscreenReady = await meetsExternalYouTubePrecondition('fullscreen-ui', () => yt.enterFullscreen())
+    if (!fullscreenReady) {
+      await captureChatState(page, test.info(), 'auto-open-fullscreen-precondition-missing')
+      test.skip(true, 'YouTube fullscreen UI did not meet the canary precondition.')
       return
     }
 
+    await overlay.expectSwitchReady()
     await expect(overlay.switchButton()).toHaveAttribute('aria-pressed', 'true', { timeout: 15000 })
-
-    let overlayReady = await hasCanaryPrecondition(() => overlay.expectChatLoaded())
-
-    if (!overlayReady) {
-      const state = await captureChatState(page, test.info(), 'auto-open-extension-unready')
-      if (state?.native.playable === false) {
-        const nativeRecovered = await page.waitForFunction(isNativeLiveChatPlayable, undefined, { timeout: 15000 }).then(
-          () => true,
-          () => false,
-        )
-        if (nativeRecovered) {
-          const overlayRecovered = await expect
-            .poll(async () => page.evaluate(isExtensionChatLoaded), { timeout: 15000 })
-            .toBe(true)
-            .then(
-              () => true,
-              () => false,
-            )
-          if (overlayRecovered) overlayReady = true
-        }
-      }
-
-      if (!overlayReady && (!state || !state.native.playable)) {
-        test.skip(true, 'Native chat source was not playable, so auto-open precondition was not met.')
-        return
-      }
-      await overlay.expectChatLoaded({ timeout: 15000 })
-    }
+    await overlay.expectChatLoaded({ timeout: 15000 })
 
     await yt.expectFullscreenExited()
     await overlay.expectOverlayRemoved()

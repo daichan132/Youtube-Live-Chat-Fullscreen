@@ -24,7 +24,6 @@ type DiagnosticState = {
 	}
 }
 
-const isBlankHref = (href: string | null | undefined) => !href || href.includes('about:blank')
 // Keep this list consistent with `entrypoints/content/utils/nativeChat.ts`.
 // `tp-yt-paper-icon-button` is intentionally excluded as a legacy renderer.
 const archiveSidebarOpenSelectors = [
@@ -137,14 +136,6 @@ export const openArchiveWatchPage = async (page: Page, url: string, options: { m
 		() => false,
 	)
 	return hasNativeFrame
-}
-
-export const shouldSkipArchiveFlowFailure = (state: DiagnosticState | null) => {
-	if (!state) return false
-	if (!state.native.hasFrame) return true
-	if (state.native.unavailable) return true
-	if (isBlankHref(state.native.href)) return true
-	return false
 }
 
 export const isExtensionArchiveChatPlayable = () => {

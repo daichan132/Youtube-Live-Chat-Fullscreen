@@ -22,7 +22,7 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 - `yarn build:e2e`: creates `.output/chrome-mv3-testing` with the storage bridge required by Playwright. Production builds never contain this bridge.
 - `yarn test:unit`: compatibility gate that runs all three Vitest projects.
 - `yarn e2e` / `yarn e2e:fixture`: builds the testing extension and runs only popup and synthetic YouTube fixtures. External HTTP(S) requests are blocked, retries are disabled, and this is the pull-request gate.
-- `yarn e2e:canary`: builds the testing extension and runs real YouTube live, archive, no-chat, and replay-unavailable scenarios. URL discovery and environment-dependent skips remain isolated here.
+- `yarn e2e:canary`: builds the testing extension and runs five real YouTube compatibility checks for live, archive, navigation, managed fallback, and no-chat boundaries. URL discovery and environment-dependent skips remain isolated here; replay-unavailable is owned by the deterministic fixture.
 - `yarn test:visual`: runs the deterministic visual regression project.
 - `yarn test:accessibility`: runs the deterministic accessibility project.
 - `yarn screenshots`: builds the testing extension and runs the separate screenshot project.
@@ -45,5 +45,6 @@ Deterministic YouTube specs use the typed API in `e2e/support/youtubeScenario/`.
 - `browser-contracts` downloads that testing artifact and runs fixture, visual, and accessibility projects with retries disabled.
 - The release workflow independently rebuilds and verifies production packages, then requires the deterministic fixture project to pass before uploading or publishing them.
 - The canary workflow remains responsible for compatibility with the changing real YouTube surface; it is not a deterministic pull-request gate.
+- Canary skips are limited to YouTube-owned preconditions. Once a usable source and fullscreen state exist, missing extension UI or chat is a test failure. The workflow writes executed/skipped/failed counts to the job summary and retains Playwright diagnostics.
 
 Visual baselines are evaluated in CI on Ubuntu with the installed Playwright Chromium. Baselines must therefore be captured and approved for that environment. Initial OS rendering differences are baseline-alignment work, not a reason to loosen deterministic thresholds.

@@ -1,8 +1,8 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
-import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
+import { captureChatState, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 
 const isExtensionArchiveIframeBorrowed = () => {
   const host = document.getElementById('shadow-root-live-chat')
@@ -32,27 +32,16 @@ test.describe('archive replay chat', { tag: '@archive' }, () => {
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
 
-    await yt.enterFullscreen()
-
-    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
-    if (!switchReady) {
-      await captureChatState(page, test.info(), 'archive-replay-switch-missing')
-      test.skip(true, 'Fullscreen chat switch button did not appear.')
+    const fullscreenReady = await meetsExternalYouTubePrecondition('fullscreen-ui', () => yt.enterFullscreen())
+    if (!fullscreenReady) {
+      await captureChatState(page, test.info(), 'archive-replay-fullscreen-precondition-missing')
+      test.skip(true, 'YouTube fullscreen UI did not meet the canary precondition.')
       return
     }
 
+    await overlay.expectSwitchReady()
     await overlay.toggleOn()
-
-    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
-    if (!extensionReady) {
-      const state = await captureChatState(page, test.info(), 'archive-replay-extension-unready')
-      if (shouldSkipArchiveFlowFailure(state)) {
-        test.skip(true, 'Archive chat source did not become ready in this run.')
-        return
-      }
-      expect(extensionReady).toBe(true)
-    }
-
+    await overlay.expectArchiveChatPlayable()
     await expect.poll(async () => page.evaluate(isExtensionArchiveIframeBorrowed), { timeout: 10000 }).toBe(true)
   })
 })

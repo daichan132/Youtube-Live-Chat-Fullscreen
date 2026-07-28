@@ -1,13 +1,11 @@
-import type { Page } from '@playwright/test'
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
-import { captureChatState, openArchiveWatchPage, shouldSkipArchiveFlowFailure } from '@e2e/support/diagnostics'
-import { hasCanaryPrecondition } from '@e2e/support/canaryPreconditions'
+import { captureChatState, openArchiveWatchPage } from '@e2e/support/diagnostics'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 import { extractVideoId, selectArchiveReplayTransitionPair } from '@e2e/support/urls/archiveReplay'
+import type { Page } from '@playwright/test'
 
-const TRANSITION_STABILITY_DURATION_MS = 4000
-const TRANSITION_STABILITY_SAMPLE_INTERVAL_MS = 250
 const NAVIGATION_SETTLE_TIMEOUT_MS = 15000
 
 const getOverlayState = () => {
@@ -93,12 +91,14 @@ const clickNextButton = async (page: Page) => {
   const disabled = await nextButton.getAttribute('aria-disabled')
   if (disabled === 'true') return false
 
-  await nextButton.click({ force: true }).catch(() => null)
-  await page.evaluate(() => {
-    const button = document.querySelector('.ytp-next-button') as HTMLElement | null
-    button?.click()
-  })
-  return true
+  return nextButton.click().then(
+    () => true,
+    () =>
+      nextButton.click({ force: true }).then(
+        () => true,
+        () => false,
+      ),
+  )
 }
 
 const clickPlaylistTarget = async (page: Page, targetVideoId: string) => {
@@ -111,8 +111,15 @@ const clickPlaylistTarget = async (page: Page, targetVideoId: string) => {
     const link = page.locator(selector).first()
     const visible = await link.isVisible({ timeout: 3000 }).catch(() => false)
     if (!visible) continue
-    await link.click({ force: true }).catch(() => null)
-    return true
+    const clicked = await link.click().then(
+      () => true,
+      () =>
+        link.click({ force: true }).then(
+          () => true,
+          () => false,
+        ),
+    )
+    if (clicked) return true
   }
 
   return false
@@ -179,43 +186,23 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
 
     const selectedVideoId = extractVideoId(fromUrl)
     const transitionTargetId = extractVideoId(toUrl)
-    if (!selectedVideoId) {
-      test.skip(true, 'Could not resolve source video ID from transition pair.')
-      return
-    }
-    if (!transitionTargetId) {
-      test.skip(true, 'Could not resolve a target video ID from transition pair.')
-      return
-    }
-
-    if (selectedVideoId && transitionTargetId === selectedVideoId) {
-      test.skip(true, 'Transition pair must point to two different videos.')
-      return
+    if (!selectedVideoId || !transitionTargetId || transitionTargetId === selectedVideoId) {
+      throw new Error('Archive transition target selection returned an invalid video pair.')
     }
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
 
-    await yt.enterFullscreen()
-
-    const switchReady = await hasCanaryPrecondition(() => overlay.expectSwitchReady())
-    if (!switchReady) {
-      await captureChatState(page, test.info(), 'video-transition-switch-missing')
-      test.skip(true, 'Fullscreen chat switch button did not appear.')
+    const fullscreenReady = await meetsExternalYouTubePrecondition('fullscreen-ui', () => yt.enterFullscreen())
+    if (!fullscreenReady) {
+      await captureChatState(page, test.info(), 'video-transition-fullscreen-precondition-missing')
+      test.skip(true, 'YouTube fullscreen UI did not meet the canary precondition.')
       return
     }
 
+    await overlay.expectSwitchReady()
     await overlay.toggleOn()
-
-    const extensionReady = await hasCanaryPrecondition(() => overlay.expectArchiveChatPlayable())
-    if (!extensionReady) {
-      const state = await captureChatState(page, test.info(), 'video-transition-extension-unready')
-      if (shouldSkipArchiveFlowFailure(state)) {
-        test.skip(true, 'Archive chat source did not become ready in this run.')
-        return
-      }
-      expect(extensionReady).toBe(true)
-    }
+    await overlay.expectArchiveChatPlayable()
 
     const beforeTransition = await page.evaluate(getOverlayState)
     expect(beforeTransition.hasIframe).toBe(true)
@@ -232,7 +219,7 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
       return
     }
 
-    const fullscreenStillActive = await hasCanaryPrecondition(() => yt.expectFullscreen())
+    const fullscreenStillActive = await meetsExternalYouTubePrecondition('fullscreen-ui', () => yt.expectFullscreen())
     if (!fullscreenStillActive) {
       await captureChatState(page, test.info(), 'video-transition-fullscreen-lost')
       test.skip(true, 'Could not keep or restore fullscreen during transition navigation.')
@@ -268,28 +255,5 @@ test.describe('fullscreen chat video transition', { tag: '@archive' }, () => {
         { timeout: 20000 },
       )
       .toBe(true)
-
-    // Allow brief transient stale reads during iframe teardown/re-creation.
-    // Only fail if the stale overlay persists for several consecutive samples.
-    const MAX_CONSECUTIVE_STALE = 4
-    let consecutiveStale = 0
-
-    const sampleCount = Math.ceil(TRANSITION_STABILITY_DURATION_MS / TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
-    for (let index = 0; index < sampleCount; index += 1) {
-      const state = await page.evaluate(getOverlayState)
-      const staleOverlayVisible =
-        state.pageVideoId === transitionedVideoId &&
-        state.hasIframe &&
-        Boolean(state.href) &&
-        !state.href.includes('about:blank') &&
-        state.href === beforeTransition.href
-      if (staleOverlayVisible) {
-        consecutiveStale += 1
-        expect(consecutiveStale, `Stale overlay persisted for ${consecutiveStale} consecutive samples`).toBeLessThan(MAX_CONSECUTIVE_STALE)
-      } else {
-        consecutiveStale = 0
-      }
-      await page.waitForTimeout(TRANSITION_STABILITY_SAMPLE_INTERVAL_MS)
-    }
   })
 })

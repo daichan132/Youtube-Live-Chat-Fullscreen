@@ -37,7 +37,7 @@ export default defineConfig({
   // Persistent fullscreen/live contexts are most stable when run serially, especially on macOS.
   // Use Playwright's explicit --workers CLI option when parallel speed is worth the reduced isolation.
   workers: 1,
-  reporter: 'html',
+  reporter: [['html'], ['./e2e/reporters/canarySummary.ts']],
   projects: [
     {
       name: FIXTURE_PROJECT_NAME,

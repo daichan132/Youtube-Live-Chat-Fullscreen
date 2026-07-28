@@ -8,10 +8,6 @@ type NoChatTargets = {
   url: string
 }
 
-type ReplayUnavailableTargets = {
-  url: string | null
-}
-
 type LiveTargets = {
   preferredUrl: string | null
 }
@@ -23,7 +19,6 @@ type LiveSearchTargets = {
 export type E2ETestTargets = {
   archive: ArchiveTargets
   noChat: NoChatTargets
-  replayUnavailable: ReplayUnavailableTargets
   live: LiveTargets
   liveSearch: LiveSearchTargets
 }
@@ -33,9 +28,9 @@ const DEFAULT_ARCHIVE_TRANSITION_FROM_URL = 'https://www.youtube.com/watch?v=xyi
 const DEFAULT_ARCHIVE_TRANSITION_TO_URL = 'https://www.youtube.com/watch?v=akIQbHSh_oU&list=PLFZAmR0gqBTIoMCCUfEaKER4m6I98GrWj&index=2'
 const DEFAULT_NO_CHAT_URL = 'https://www.youtube.com/watch?v=jNQXAC9IVRw'
 const DEFAULT_LIVE_SEARCH_URLS = [
-	'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D',
-	'https://www.youtube.com/results?search_query=%E3%82%B2%E3%83%BC%E3%83%A0%E9%85%8D%E4%BF%A1&sp=EgJAAQ%253D%253D',
-	'https://www.youtube.com/results?search_query=live+stream+chat&sp=EgJAAQ%253D%253D',
+  'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%253D%253D',
+  'https://www.youtube.com/results?search_query=%E3%82%B2%E3%83%BC%E3%83%A0%E9%85%8D%E4%BF%A1&sp=EgJAAQ%253D%253D',
+  'https://www.youtube.com/results?search_query=live+stream+chat&sp=EgJAAQ%253D%253D',
 ]
 
 const normalizeEnv = (value: string | undefined) => {
@@ -48,7 +43,6 @@ export const getE2ETestTargets = (): E2ETestTargets => {
   const archiveTransitionFromUrl = normalizeEnv(process.env.YLC_ARCHIVE_URL) ?? DEFAULT_ARCHIVE_TRANSITION_FROM_URL
   const archiveTransitionToUrl = normalizeEnv(process.env.YLC_ARCHIVE_NEXT_URL) ?? DEFAULT_ARCHIVE_TRANSITION_TO_URL
   const noChatUrl = normalizeEnv(process.env.YLC_NOCHAT_URL) ?? DEFAULT_NO_CHAT_URL
-  const replayUnavailableUrl = normalizeEnv(process.env.YLC_REPLAY_UNAVAILABLE_URL)
   const livePreferredUrl = normalizeEnv(process.env.YLC_LIVE_URL)
 
   return {
@@ -59,9 +53,6 @@ export const getE2ETestTargets = (): E2ETestTargets => {
     },
     noChat: {
       url: noChatUrl,
-    },
-    replayUnavailable: {
-      url: replayUnavailableUrl,
     },
     live: {
       preferredUrl: livePreferredUrl,
