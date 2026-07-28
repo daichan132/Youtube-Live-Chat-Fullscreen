@@ -206,6 +206,43 @@ describe('ChatRuntime', () => {
     harness.runtime.stop()
   })
 
+  it('releases the old lease before attaching a different iframe for the same video', () => {
+    const firstIframe = document.createElement('iframe')
+    firstIframe.src = '/live_chat?v=video-1'
+    const secondIframe = document.createElement('iframe')
+    secondIframe.src = '/live_chat?v=video-1&source=replacement'
+    const firstLease = createLease(firstIframe)
+    const secondLease = createLease(secondIframe)
+    const harness = createHarness({
+      decisions: [
+        {
+          kind: 'available',
+          videoId: 'video-1',
+          mode: 'live',
+          source: createBorrowSource(firstIframe),
+        },
+        {
+          kind: 'available',
+          videoId: 'video-1',
+          mode: 'live',
+          source: createBorrowSource(secondIframe),
+        },
+      ],
+      snapshots: [createSnapshot({ chatIframe: firstIframe }), createSnapshot({ chatIframe: secondIframe })],
+      leases: [firstLease, secondLease],
+    })
+
+    flushFrame()
+    dispatchNavigation()
+
+    expect(firstLease.release).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(firstLease.release).mock.invocationCallOrder[0]).toBeLessThan(harness.createLeaseFactory.mock.invocationCallOrder[1])
+    expect(harness.createLeaseFactory).toHaveBeenCalledTimes(2)
+    expect(harness.carrier.querySelectorAll('iframe')).toHaveLength(1)
+    expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
+    harness.runtime.stop()
+  })
+
   it('releases the lease but keeps the switch available when the user turns chat off', () => {
     const iframe = document.createElement('iframe')
     iframe.src = '/live_chat?v=video-1'
@@ -278,6 +315,8 @@ describe('ChatRuntime', () => {
     })
 
     flushFrame()
+    expect(document.documentElement).toHaveClass('ylc-fullscreen-chat-fix')
+    expect(document.getElementById('ylc-fullscreen-chat-layout-fix')).not.toBeNull()
     document.dispatchEvent(new Event('fullscreenchange'))
     flushFrame()
 
@@ -286,6 +325,8 @@ describe('ChatRuntime', () => {
     expect(harness.portalHost.clear).toHaveBeenCalled()
     expect(harness.runtime.getSnapshot().status).toBe('inactive')
     expect(vi.getTimerCount()).toBe(0)
+    expect(document.documentElement).not.toHaveClass('ylc-fullscreen-chat-fix')
+    expect(document.getElementById('ylc-fullscreen-chat-layout-fix')).toBeNull()
     harness.runtime.stop()
     disconnect.mockRestore()
   })
@@ -345,6 +386,8 @@ describe('ChatRuntime', () => {
     dispatchNavigation()
     expect(vi.getTimerCount()).toBeGreaterThan(0)
     expect(harness.carrier.querySelector('iframe')).toBe(iframe)
+    expect(document.documentElement).toHaveClass('ylc-fullscreen-chat-fix')
+    expect(document.getElementById('ylc-fullscreen-chat-layout-fix')).not.toBeNull()
 
     harness.runtime.stop()
 
@@ -362,6 +405,8 @@ describe('ChatRuntime', () => {
       switchContainer: null,
     })
     expect(vi.getTimerCount()).toBe(0)
+    expect(document.documentElement).not.toHaveClass('ylc-fullscreen-chat-fix')
+    expect(document.getElementById('ylc-fullscreen-chat-layout-fix')).toBeNull()
     disconnect.mockRestore()
   })
 })

@@ -6,6 +6,7 @@ import {
   markRuntimeRetryFired,
   type RuntimeLeaseSnapshot,
   type RuntimeModel,
+  resetRuntimeRetry,
   settleRuntimeLeaseInitialization,
   stopRuntimeModel,
   transitionRuntimeModel,
@@ -123,6 +124,30 @@ describe('runtimeModel', () => {
     ])
   })
 
+  it('releases the lease and clears the runtime when leaving the watch page', () => {
+    const decision = available('archive-video', 'archive')
+    const active = activate(decision)
+    const transition = transitionRuntimeModel(active.model, {
+      enabled: true,
+      decision: { kind: 'inactive', reason: 'not-watch-page' },
+      lease: active.lease,
+    })
+
+    expect(transition.model.state).toEqual({ status: 'inactive', reason: 'not-watch-page' })
+    expect(transition.model.view).toEqual({
+      status: 'inactive',
+      mode: null,
+      showSwitch: false,
+      showOverlay: false,
+      loading: false,
+    })
+    expect(transition.actions).toEqual([
+      { type: 'release-lease', ensureNativeVisible: false },
+      { type: 'disconnect-observer' },
+      { type: 'clear-runtime' },
+    ])
+  })
+
   it('releases the old lease before creating one for an SPA video transition', () => {
     const first = available('video-1', 'live')
     const active = activate(first)
@@ -134,6 +159,23 @@ describe('runtimeModel', () => {
     })
 
     expect(transition.actions.map(action => action.type)).toEqual(['release-lease', 'create-lease', 'initialize-lease'])
+  })
+
+  it('replaces a borrowed lease when the same video resolves to a different iframe', () => {
+    const first = available('video-1', 'live', iframe('first-source'))
+    const active = activate(first)
+    const second = available('video-1', 'live', iframe('replacement-source'))
+    const transition = transitionRuntimeModel(active.model, {
+      enabled: true,
+      decision: second,
+      lease: active.lease,
+    })
+
+    expect(transition.actions.map(action => action.type)).toEqual(['release-lease', 'create-lease', 'initialize-lease'])
+    expect(transition.actions[1]).toMatchObject({
+      type: 'create-lease',
+      decision: second,
+    })
   })
 
   it('keeps one matching lease during temporary source loss', () => {
@@ -184,6 +226,54 @@ describe('runtimeModel', () => {
       showOverlay: false,
       keepOverlayHost: false,
     })
+  })
+
+  it('resets a pending retry and recovers after lease initialization becomes available', () => {
+    const decision = available('video-1', 'live')
+    const lease = leaseFor(decision)
+    const planned = transitionRuntimeModel(createInitialRuntimeModel(), {
+      enabled: true,
+      decision,
+      lease: null,
+    })
+    const failed = settleRuntimeLeaseInitialization(planned.model, {
+      decision,
+      lease,
+      initialized: false,
+    })
+
+    expect(failed.model).toMatchObject({
+      retryAttempts: 1,
+      retryPending: true,
+      state: { status: 'recovering', videoId: 'video-1' },
+    })
+    expect(failed.actions).toContainEqual({ type: 'schedule-retry', delayMs: 250 })
+
+    const reset = resetRuntimeRetry(failed.model)
+    expect(reset.actions).toEqual([{ type: 'cancel-retry' }])
+    expect(reset.model).toMatchObject({
+      retryAttempts: 0,
+      retryPending: false,
+    })
+
+    const retry = transitionRuntimeModel(reset.model, {
+      enabled: true,
+      decision,
+      lease,
+    })
+    expect(retry.actions.map(action => action.type)).toEqual(['initialize-lease'])
+
+    const recovered = settleRuntimeLeaseInitialization(retry.model, {
+      decision,
+      lease,
+      initialized: true,
+    })
+    expect(recovered.model).toMatchObject({
+      retryAttempts: 0,
+      retryPending: false,
+      state: { status: 'active', videoId: 'video-1', mode: 'live' },
+    })
+    expect(recovered.model.view.loading).toBe(false)
   })
 
   it('releases an active archive lease while retaining the available switch when disabled', () => {
