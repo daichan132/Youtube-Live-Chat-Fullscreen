@@ -94,6 +94,11 @@ const flushFrame = () => {
   vi.advanceTimersByTime(20)
 }
 
+const dispatchNavigation = () => {
+  document.dispatchEvent(new Event('yt-navigate-finish'))
+  flushFrame()
+}
+
 describe('ChatRuntime', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -155,11 +160,11 @@ describe('ChatRuntime', () => {
     expect(harness.runtime.getSnapshot().status).toBe('active')
     const attachedIdentity = harness.carrier.querySelector('iframe')
 
-    ;(harness.runtime as unknown as { reconcile: () => void }).reconcile()
+    dispatchNavigation()
     expect(harness.runtime.getSnapshot().status).toBe('recovering')
     expect(lease.release).not.toHaveBeenCalled()
 
-    ;(harness.runtime as unknown as { reconcile: () => void }).reconcile()
+    dispatchNavigation()
     expect(harness.runtime.getSnapshot().status).toBe('active')
     expect(harness.carrier.querySelector('iframe')).toBe(attachedIdentity)
     expect(harness.createLeaseFactory).toHaveBeenCalledTimes(1)
@@ -193,9 +198,10 @@ describe('ChatRuntime', () => {
     })
 
     flushFrame()
-    ;(harness.runtime as unknown as { reconcile: () => void }).reconcile()
+    dispatchNavigation()
 
     expect(firstLease.release).toHaveBeenCalledTimes(1)
+    expect(vi.mocked(firstLease.release).mock.invocationCallOrder[0]).toBeLessThan(harness.createLeaseFactory.mock.invocationCallOrder[1])
     expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
     harness.runtime.stop()
   })
@@ -272,7 +278,8 @@ describe('ChatRuntime', () => {
     })
 
     flushFrame()
-    ;(harness.runtime as unknown as { reconcile: () => void }).reconcile()
+    document.dispatchEvent(new Event('fullscreenchange'))
+    flushFrame()
 
     expect(lease.release).toHaveBeenCalledTimes(1)
     expect(disconnect).toHaveBeenCalledTimes(2)
@@ -295,5 +302,66 @@ describe('ChatRuntime', () => {
     expect(setIntervalSpy).not.toHaveBeenCalled()
     harness.runtime.stop()
     setIntervalSpy.mockRestore()
+  })
+
+  it('physically disables portal hosts when retry exhaustion becomes unavailable', () => {
+    const harness = createHarness({
+      decisions: [{ kind: 'pending', videoId: 'video-1', mode: 'archive', canToggle: true }],
+    })
+
+    vi.runAllTimers()
+
+    expect(harness.runtime.getSnapshot()).toMatchObject({
+      status: 'unavailable',
+      showSwitch: false,
+      showOverlay: false,
+    })
+    expect(harness.portalHost.sync).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        overlayEnabled: false,
+        switchEnabled: false,
+      }),
+    )
+    harness.runtime.stop()
+  })
+
+  it('cleans timers, observers, the lease, and runtime-owned DOM on stop', () => {
+    const iframe = document.createElement('iframe')
+    iframe.src = '/live_chat?v=video-1'
+    const lease = createLease(iframe)
+    const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
+    const available: ChatDecision = {
+      kind: 'available',
+      videoId: 'video-1',
+      mode: 'live',
+      source: createBorrowSource(iframe),
+    }
+    const harness = createHarness({
+      decisions: [available, { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: true }],
+      leases: [lease],
+    })
+
+    flushFrame()
+    dispatchNavigation()
+    expect(vi.getTimerCount()).toBeGreaterThan(0)
+    expect(harness.carrier.querySelector('iframe')).toBe(iframe)
+
+    harness.runtime.stop()
+
+    expect(lease.release).toHaveBeenCalledTimes(1)
+    expect(disconnect).toHaveBeenCalled()
+    expect(harness.portalHost.clear).toHaveBeenCalled()
+    expect(harness.carrier.querySelector('iframe')).toBeNull()
+    expect(harness.runtime.getSnapshot()).toEqual({
+      status: 'inactive',
+      mode: null,
+      showSwitch: false,
+      showOverlay: false,
+      loading: false,
+      overlayRoot: null,
+      switchContainer: null,
+    })
+    expect(vi.getTimerCount()).toBe(0)
+    disconnect.mockRestore()
   })
 })

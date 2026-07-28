@@ -19,32 +19,21 @@ import { createIframeLease, type IframeLease } from './iframeLease'
 import { createPortalHost, type PortalHost } from './portalHost'
 import { type PageSnapshot, readPageSnapshot } from './readPageSnapshot'
 import { type ChatDecision, resolveChatDecision } from './resolveChatDecision'
+import {
+  createInitialRuntimeModel,
+  markRuntimeRetryFired,
+  type RuntimeLeaseSnapshot,
+  type RuntimeModel,
+  type RuntimeModelAction,
+  type RuntimeModelTransition,
+  type RuntimeState,
+  resetRuntimeRetry,
+  settleRuntimeLeaseInitialization,
+  stopRuntimeModel,
+  transitionRuntimeModel,
+} from './runtimeModel'
 
-export type RuntimeState =
-  | {
-      status: 'inactive'
-      reason: 'disabled' | 'not-watch-page' | 'not-fullscreen'
-    }
-  | {
-      status: 'searching'
-      videoId: string | null
-    }
-  | {
-      status: 'active'
-      videoId: string
-      mode: 'live' | 'archive'
-      sourceKind: 'borrowed' | 'managed'
-    }
-  | {
-      status: 'recovering'
-      videoId: string
-      mode: 'live' | 'archive'
-      sourceKind: 'borrowed' | 'managed'
-    }
-  | {
-      status: 'unavailable'
-      videoId: string
-    }
+export type { RuntimeState } from './runtimeModel'
 
 export type RuntimeView = {
   status: RuntimeState['status']
@@ -67,8 +56,6 @@ export interface ChatRuntime {
   setOverlayInteraction(state: 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open'): void
 }
 
-const RETRY_DELAYS_MS = [250, 500, 1000, 2000, 5000] as const
-const MAX_RETRY_ATTEMPTS = 12
 const ARCHIVE_OPEN_COOLDOWN_MS = 2000
 const CHAT_BOUNDARY_SELECTOR =
   'ytd-watch-flexy, ytd-watch-grid, #movie_player, .ytp-right-controls, ytd-live-chat-frame, #chatframe, #chat-container, #show-hide-button, #secondary, #panels-full-bleed-container'
@@ -99,15 +86,7 @@ export const mutationTouchesChatBoundary = (mutation: MutationRecord) => {
   return relevant(mutation.target) || [...mutation.addedNodes, ...mutation.removedNodes].some(relevant)
 }
 
-const sourceMatchesLease = (decision: Extract<ChatDecision, { kind: 'available' }>, lease: IframeLease | null) => {
-  if (!lease || lease.videoId !== decision.videoId) return false
-  if (decision.source.kind === 'live_direct') return lease.kind === 'managed'
-  return lease.kind === 'borrowed' && lease.iframe === decision.source.iframe
-}
-
-const getModeForState = (state: RuntimeState): RuntimeView['mode'] =>
-  state.status === 'active' || state.status === 'recovering' ? state.mode : null
-
+/** DOM/timer driver that observes the page and executes pure runtimeModel actions. */
 export class ChatRuntimeImpl implements ChatRuntime {
   private readonly listeners = new Set<() => void>()
   private readonly portalHost: PortalHost
@@ -115,7 +94,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private readonly resolveDecision: (snapshot: PageSnapshot) => ChatDecision
   private readonly createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string) => IframeLease
   private readonly chatOnlyChrome = createChatOnlyChromeController()
-  private state: RuntimeState = { status: 'inactive', reason: 'disabled' }
+  private model: RuntimeModel = createInitialRuntimeModel()
   private view = initialView
   private started = false
   private enabled = false
@@ -125,7 +104,6 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private observer: MutationObserver | null = null
   private scheduledFrame: number | null = null
   private retryTimer: number | null = null
-  private retryAttempts = 0
   private lastArchiveOpenAt = 0
   private loadListenerIframe: HTMLIFrameElement | null = null
   private overlayInteraction: Parameters<ChatRuntime['setOverlayInteraction']>[0] = 'idle'
@@ -157,16 +135,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.started = false
     document.removeEventListener('fullscreenchange', this.scheduleReconcile)
     document.removeEventListener('yt-navigate-finish', this.handleNavigation)
-    this.disconnectObserver()
     this.cancelScheduledFrame()
-    this.cancelRetry()
-    this.releaseLease()
-    this.portalHost.clear()
-    clearFullscreenChatLayout()
+    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), null)
     this.chatOnlyChrome.dispose()
     this.overlayContainer = null
-    this.state = { status: 'inactive', reason: 'disabled' }
-    this.publish(initialView)
   }
 
   subscribe = (listener: () => void) => {
@@ -208,7 +180,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private handleNavigation = () => {
-    this.retryAttempts = 0
+    this.applyModelActions(resetRuntimeRetry(this.model))
     this.scheduleReconcile()
   }
 
@@ -253,35 +225,18 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.observer = null
   }
 
-  private scheduleRetry = () => {
-    if (this.retryTimer !== null) return
-    if (this.retryAttempts >= MAX_RETRY_ATTEMPTS) {
-      const videoId = this.state.status === 'searching' || this.state.status === 'recovering' ? this.state.videoId : null
-      this.releaseLease()
-      this.cancelRetry()
-      if (videoId) {
-        this.state = { status: 'unavailable', videoId }
-        this.publishFromState(false, false)
-      }
-      return
-    }
-
-    const delay = RETRY_DELAYS_MS[Math.min(this.retryAttempts, RETRY_DELAYS_MS.length - 1)]
-    this.retryAttempts += 1
-    this.retryTimer = window.setTimeout(() => {
-      this.retryTimer = null
-      this.reconcile()
-    }, delay)
-  }
-
   private cancelRetry = () => {
     if (this.retryTimer !== null) window.clearTimeout(this.retryTimer)
     this.retryTimer = null
   }
 
-  private resetRetry = () => {
-    this.cancelRetry()
-    this.retryAttempts = 0
+  private scheduleRetry = (delayMs: number) => {
+    if (this.retryTimer !== null) return
+    this.retryTimer = window.setTimeout(() => {
+      this.retryTimer = null
+      this.model = markRuntimeRetryFired(this.model)
+      this.reconcile()
+    }, delayMs)
   }
 
   private releaseLease = (ensureNativeVisible = false) => {
@@ -299,7 +254,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private handleIframeLoad = () => {
-    this.retryAttempts = 0
+    this.applyModelActions(resetRuntimeRetry(this.model))
     this.scheduleReconcile()
   }
 
@@ -366,152 +321,118 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (openArchiveNativeChatPanel()) this.lastArchiveOpenAt = now
   }
 
+  private getLeaseSnapshot = (): RuntimeLeaseSnapshot | null =>
+    this.lease
+      ? {
+          videoId: this.lease.videoId,
+          kind: this.lease.kind,
+          iframe: this.lease.iframe,
+        }
+      : null
+
   private reconcile = () => {
     if (!this.started) return
     reconcilePendingNativeIframeRestores()
     const snapshot = this.readSnapshot(this.lease?.iframe ?? null)
-
-    if (!snapshot.isWatchPage) {
-      this.transitionInactive('not-watch-page')
-      return
-    }
-    if (!snapshot.isFullscreen) {
-      this.transitionInactive('not-fullscreen')
-      return
-    }
-
-    this.ensureObserver()
     const decision = this.resolveDecision(snapshot)
+    this.applyModelTransition(
+      transitionRuntimeModel(this.model, {
+        enabled: this.enabled,
+        decision,
+        lease: this.getLeaseSnapshot(),
+      }),
+      snapshot,
+    )
+  }
 
-    if (!this.enabled) {
-      const showSwitch = decision.kind === 'available' || (decision.kind === 'pending' && decision.canToggle)
-      this.transitionDisabled(snapshot, showSwitch)
-      return
-    }
-
-    if (decision.kind === 'inactive') {
-      this.transitionInactive(decision.reason)
-      return
-    }
-
-    if (this.lease && decision.videoId !== this.lease.videoId) {
-      this.releaseLease()
-      this.retryAttempts = 0
-    }
-
-    if (decision.kind === 'unavailable') {
-      this.releaseLease()
-      this.resetRetry()
-      this.state = { status: 'unavailable', videoId: decision.videoId }
-      this.syncPortals(snapshot, false, false)
-      return
-    }
-
-    if (decision.kind === 'pending') {
-      const previousLease = this.lease
-      const recoveringMode =
-        previousLease && this.state.status !== 'inactive'
-          ? this.state.status === 'active' || this.state.status === 'recovering'
-            ? this.state.mode
-            : decision.mode
-          : null
-      if (previousLease && decision.videoId === previousLease.videoId && recoveringMode) {
-        this.state = {
-          status: 'recovering',
-          videoId: previousLease.videoId,
-          mode: recoveringMode,
-          sourceKind: previousLease.kind,
-        }
-      } else {
-        this.state = { status: 'searching', videoId: decision.videoId }
+  private applyModelActions = (transition: RuntimeModelTransition) => {
+    this.model = transition.model
+    for (const action of transition.actions) {
+      if (action.type === 'cancel-retry') {
+        this.cancelRetry()
+        continue
       }
-      if (decision.mode === 'archive' && decision.canToggle) this.ensureArchivePanelOpen()
-      this.syncPortals(snapshot, decision.canToggle, decision.canToggle || Boolean(previousLease))
-      this.scheduleRetry()
-      return
+      throw new Error(`Unexpected standalone runtime action: ${action.type}`)
     }
-
-    if (!sourceMatchesLease(decision, this.lease)) {
-      this.releaseLease()
-      this.lease = this.createLease(decision.source, decision.videoId)
-    }
-
-    const initialized = this.initializeLease()
-    if (!initialized) {
-      this.state = this.lease
-        ? {
-            status: 'recovering',
-            videoId: decision.videoId,
-            mode: decision.mode,
-            sourceKind: this.lease.kind,
-          }
-        : { status: 'searching', videoId: decision.videoId }
-      this.syncPortals(snapshot, true, true)
-      this.scheduleRetry()
-      return
-    }
-
-    this.resetRetry()
-    this.state = {
-      status: 'active',
-      videoId: decision.videoId,
-      mode: decision.mode,
-      sourceKind: this.lease?.kind ?? 'borrowed',
-    }
-    this.syncPortals(snapshot, true, true)
   }
 
-  private transitionDisabled = (snapshot: PageSnapshot, showSwitch: boolean) => {
-    const ensureNativeVisible = (this.state.status === 'active' || this.state.status === 'recovering') && this.state.mode === 'archive'
-    // Remove our fullscreen footprint before restoring/clicking YouTube's
-    // native archive chat. Visibility checks and the native toggle must see
-    // YouTube's real layout, not the parked extension layout.
-    setFullscreenChatLayout(false)
-    this.releaseLease(ensureNativeVisible)
-    this.resetRetry()
-    this.state = { status: 'inactive', reason: 'disabled' }
-    this.syncPortals(snapshot, showSwitch, false, showSwitch)
-  }
-
-  private transitionInactive = (reason: Extract<RuntimeState, { status: 'inactive' }>['reason']) => {
-    const ensureNativeVisible =
-      reason === 'not-fullscreen' && (this.state.status === 'active' || this.state.status === 'recovering') && this.state.mode === 'archive'
-    this.releaseLease(ensureNativeVisible)
-    this.resetRetry()
-    this.state = { status: 'inactive', reason }
-    this.disconnectObserver()
-    this.portalHost.clear()
-    clearFullscreenChatLayout()
-    this.publish(initialView)
-  }
-
-  private syncPortals = (snapshot: PageSnapshot, showSwitch: boolean, showOverlay: boolean, keepOverlayHost = showOverlay) => {
-    setFullscreenChatLayout(showOverlay && snapshot.isFullscreen)
-    const targets = this.portalHost.sync({
-      player: snapshot.player,
-      rightControls: snapshot.rightControls,
-      overlayEnabled: keepOverlayHost,
-      switchEnabled: showSwitch,
-    })
-    this.publishFromState(showSwitch, showOverlay, targets)
-  }
-
-  private publishFromState(
-    showSwitch: boolean,
-    showOverlay: boolean,
-    targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null } = {
+  private applyModelTransition = (transition: RuntimeModelTransition, snapshot: PageSnapshot | null) => {
+    this.model = transition.model
+    const targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null } = {
       overlayRoot: null,
       switchContainer: null,
-    },
-  ) {
+    }
+
+    for (const action of transition.actions) {
+      const initialized = this.executeModelAction(action, snapshot, targets)
+      if (initialized === null) continue
+      const settled = settleRuntimeLeaseInitialization(this.model, {
+        decision: initialized.decision,
+        lease: this.getLeaseSnapshot(),
+        initialized: initialized.success,
+      })
+      this.applyModelTransition(settled, snapshot)
+      return
+    }
+
     this.publish({
-      status: this.state.status,
-      mode: getModeForState(this.state),
-      showSwitch,
-      showOverlay,
-      loading: this.state.status === 'searching' || this.state.status === 'recovering',
+      ...this.model.view,
       ...targets,
     })
+  }
+
+  private executeModelAction = (
+    action: RuntimeModelAction,
+    snapshot: PageSnapshot | null,
+    targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null },
+  ): { decision: Extract<ChatDecision, { kind: 'available' }>; success: boolean } | null => {
+    switch (action.type) {
+      case 'ensure-observer':
+        this.ensureObserver()
+        return null
+      case 'disconnect-observer':
+        this.disconnectObserver()
+        return null
+      case 'clear-layout':
+        setFullscreenChatLayout(false)
+        return null
+      case 'clear-runtime':
+        this.portalHost.clear()
+        clearFullscreenChatLayout()
+        targets.overlayRoot = null
+        targets.switchContainer = null
+        return null
+      case 'release-lease':
+        this.releaseLease(action.ensureNativeVisible)
+        return null
+      case 'create-lease':
+        this.lease = this.createLease(action.decision.source, action.decision.videoId)
+        return null
+      case 'initialize-lease':
+        return { decision: action.decision, success: this.initializeLease() }
+      case 'cancel-retry':
+        this.cancelRetry()
+        return null
+      case 'schedule-retry':
+        this.scheduleRetry(action.delayMs)
+        return null
+      case 'open-archive-panel':
+        this.ensureArchivePanelOpen()
+        return null
+      case 'sync-portals': {
+        if (!snapshot) throw new Error('A page snapshot is required to synchronize runtime portals.')
+        setFullscreenChatLayout(action.showOverlay && snapshot.isFullscreen)
+        const nextTargets = this.portalHost.sync({
+          player: snapshot.player,
+          rightControls: snapshot.rightControls,
+          overlayEnabled: action.keepOverlayHost,
+          switchEnabled: action.showSwitch,
+        })
+        targets.overlayRoot = nextTargets.overlayRoot
+        targets.switchContainer = nextTargets.switchContainer
+        return null
+      }
+    }
   }
 
   private publish = (next: RuntimeView) => {
