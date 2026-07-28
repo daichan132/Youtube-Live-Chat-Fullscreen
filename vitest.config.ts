@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config'
 import { WxtVitest } from 'wxt/testing/vitest-plugin'
+import { coverageConfig } from './vitest.coverage'
 
 const legacyCoreSpecs = [
   'entrypoints/content/features/Draggable/hooks/clipGeometry.spec.ts',
@@ -36,6 +37,7 @@ export default defineConfig({
   test: {
     clearMocks: true,
     restoreMocks: true,
+    coverage: coverageConfig,
     projects: [
       {
         extends: true,
