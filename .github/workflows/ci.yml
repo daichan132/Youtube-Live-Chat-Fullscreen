@@ -91,3 +91,13 @@ jobs:
         run: yarn playwright install --with-deps chromium
       - name: Run deterministic browser contracts
         run: xvfb-run --auto-servernum yarn playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1
+      - name: Upload browser diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-contracts-${{ github.sha }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 14
