@@ -47,4 +47,4 @@ jobs:
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
       - name: Run deterministic end-to-end tests
-        run: xvfb-run --auto-servernum yarn playwright test --project=e2e --grep "@popup|@fixture"
+        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --max-failures=1

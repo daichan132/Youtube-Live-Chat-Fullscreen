@@ -3,6 +3,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { E2E_BRIDGE_FILE, E2E_EXTENSION_OUTPUT_DIR } from '@e2e/config/buildOutput'
+import { FIXTURE_PROJECT_NAME } from '@e2e/config/projectClassification'
 import { resolveExtensionLaunchMode } from '@e2e/support/extensionLaunchMode'
 import { PAGE_HELPERS_INIT_SCRIPT } from '@e2e/support/pageHelpers'
 import { selectArchiveReplayUrl } from '@e2e/support/urls/archiveReplay'
@@ -198,8 +199,8 @@ const registerConsentHandler = async (page: Page) => {
   )
 }
 
-const resolveExtension = async (context: BrowserContext): Promise<Extension> => {
-  const worker = await waitForMv3Worker(context)
+const resolveExtension = async (context: BrowserContext, waitForWorker: boolean): Promise<Extension> => {
+  const worker = waitForWorker ? await waitForMv3Worker(context) : (context.serviceWorkers().find(isExtensionWorker) ?? null)
 
   const extensionIdFromWorker = worker ? new URL(worker.url()).host : null
   const extensionId = extensionIdFromWorker ?? (await resolveExtensionIdFromChromePage(context))
@@ -237,7 +238,10 @@ export const test = base.extend<
   // Separate browser for URL lookups (keeps the test context clean).
   urlLookupContext: [
     // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
-    async ({}, use) => {
+    async ({}, use, workerInfo) => {
+      if (workerInfo.project.name === FIXTURE_PROJECT_NAME) {
+        throw new Error(`URL lookup is not available to the network-independent ${FIXTURE_PROJECT_NAME} project.`)
+      }
       const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-url-lookup-'))
       const ctx = await launchExtensionContext(userDataDir)
       await waitForMv3Worker(ctx)
@@ -251,9 +255,12 @@ export const test = base.extend<
   // Single browser context shared across all tests in a worker.
   sharedContext: [
     // biome-ignore lint/correctness/noEmptyPattern: Playwright fixture requires destructuring
-    async ({}, use) => {
+    async ({}, use, workerInfo) => {
       const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-ext-'))
       const ctx = await launchExtensionContext(userDataDir)
+      if (workerInfo.project.name === FIXTURE_PROJECT_NAME) {
+        await ctx.route(/^https?:\/\//, route => route.abort('blockedbyclient'))
+      }
       await use(ctx)
       await ctx.close()
       fs.rmSync(userDataDir, { recursive: true, force: true })
@@ -263,8 +270,8 @@ export const test = base.extend<
 
   // Extension booted once per worker in the shared test context.
   sharedExtension: [
-    async ({ sharedContext }, use) => {
-      await use(await resolveExtension(sharedContext))
+    async ({ sharedContext }, use, workerInfo) => {
+      await use(await resolveExtension(sharedContext, workerInfo.project.name !== FIXTURE_PROJECT_NAME))
     },
     { scope: 'worker', timeout: 120000 },
   ],

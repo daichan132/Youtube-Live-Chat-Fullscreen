@@ -20,9 +20,13 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 - `yarn test:package`: freshly builds and packages production Chrome/Firefox extensions, then verifies their manifests, locale inventory, file inventory, ZIP contents, and size budgets.
 - `yarn build:e2e`: creates `.output/chrome-mv3-testing` with the storage bridge required by Playwright. Production builds never contain this bridge.
 - `yarn test:unit`: compatibility gate that runs all three Vitest projects.
-- `yarn e2e`: builds the testing extension and runs existing browser tests. Deterministic fixture and real-YouTube scenarios remain in the existing Playwright project.
+- `yarn e2e` / `yarn e2e:fixture`: builds the testing extension and runs only popup and synthetic YouTube fixtures. External HTTP(S) requests are blocked, retries are disabled, and this is the pull-request gate.
+- `yarn e2e:canary`: builds the testing extension and runs real YouTube live, archive, no-chat, and replay-unavailable scenarios. URL discovery and environment-dependent skips remain isolated here.
+- `yarn screenshots`: builds the testing extension and runs the separate screenshot project.
 
 New tests should use `*.unit.spec.ts`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts`. Existing tests remain named as-is and are classified explicitly in `vitest.config.ts` to avoid a risky bulk rename.
+
+Playwright scenarios are explicitly listed in `e2e/config/projectClassification.ts`. Its Node/Vitest contract fails when a scenario is missing, classified twice, or placed in the deterministic project without the `.fixture.spec.ts` or popup boundary. Tags remain descriptive and may narrow a canary command, but they do not decide which project owns a test.
 
 ## Production/testing package boundary
 
@@ -30,4 +34,4 @@ New tests should use `*.unit.spec.ts`, `*.dom.spec.ts(x)`, or `*.contract.spec.t
 
 ## Deferred boundaries
 
-The next slices should split deterministic fixture E2E from real-YouTube canaries. Runtime model extraction, assertion-oriented page objects, visual regression, accessibility checks, and broader CI job separation are also intentionally deferred.
+Runtime model extraction, assertion-oriented page objects, visual regression, accessibility checks, and broader CI job separation are intentionally deferred.
