@@ -28,6 +28,8 @@ New tests should use `*.unit.spec.ts`, `*.dom.spec.ts(x)`, or `*.contract.spec.t
 
 Playwright scenarios are explicitly listed in `e2e/config/projectClassification.ts`. Its Node/Vitest contract fails when a scenario is missing, classified twice, or placed in the deterministic project without the `.fixture.spec.ts` or popup boundary. Tags remain descriptive and may narrow a canary command, but they do not decide which project owns a test.
 
+Deterministic YouTube specs use the typed API in `e2e/support/youtubeScenario/`. That boundary owns fixture HTML, request routing, YouTube DOM mutation, fullscreen control, and identity/order observations; scenario specs describe state and assertions without embedding raw DOM operations.
+
 ## Production/testing package boundary
 
 `e2e/assets/e2e.html` is added by WXT only in `testing` mode. Playwright loads `.output/chrome-mv3-testing`; release and package scripts consume `.output/chrome-mv3` and `.output/firefox-mv2`. The package contract rejects the E2E bridge, source maps, test files, and fixture assets in both unpacked production output and ZIP files.
