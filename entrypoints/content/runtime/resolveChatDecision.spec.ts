@@ -2,12 +2,14 @@ import { describe, expect, it } from 'vitest'
 import type { PageSnapshot } from './readPageSnapshot'
 import { resolveChatDecision } from './resolveChatDecision'
 
+const element = <T extends HTMLElement>() => ({}) as T
+
 const createSnapshot = (overrides: Partial<PageSnapshot> = {}): PageSnapshot => ({
   videoId: 'video-1',
   isWatchPage: true,
   isFullscreen: true,
-  player: document.createElement('div'),
-  rightControls: document.createElement('div'),
+  player: element<HTMLDivElement>(),
+  rightControls: element<HTMLDivElement>(),
   chatHost: null,
   chatIframe: null,
   nativeChatIframe: null,
@@ -29,7 +31,7 @@ describe('resolveChatDecision', () => {
   })
 
   it('uses the current native live iframe before managed fallback', () => {
-    const iframe = document.createElement('iframe')
+    const iframe = element<HTMLIFrameElement>()
     expect(
       resolveChatDecision(
         createSnapshot({
@@ -65,7 +67,7 @@ describe('resolveChatDecision', () => {
   })
 
   it('keeps an existing managed live iframe on the managed source path', () => {
-    const iframe = document.createElement('iframe')
+    const iframe = element<HTMLIFrameElement>()
     expect(
       resolveChatDecision(
         createSnapshot({
@@ -88,7 +90,7 @@ describe('resolveChatDecision', () => {
   })
 
   it('keeps archive pending until the replay document is ready', () => {
-    const iframe = document.createElement('iframe')
+    const iframe = element<HTMLIFrameElement>()
     expect(
       resolveChatDecision(
         createSnapshot({
@@ -107,7 +109,7 @@ describe('resolveChatDecision', () => {
   })
 
   it('borrows the playable archive iframe without creating a managed replay', () => {
-    const iframe = document.createElement('iframe')
+    const iframe = element<HTMLIFrameElement>()
     expect(
       resolveChatDecision(
         createSnapshot({

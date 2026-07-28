@@ -208,11 +208,8 @@ describe('settings envelopes', () => {
         ytdLiveChatStore: JSON.stringify({ state: DEFAULT_CHAT_SETTINGS, version: 7 }),
         i18nextLng: 'ja',
       })
-      const originalSetImplementation = vi.mocked(chrome.storage.local.set).getMockImplementation()
-      const originalRemoveImplementation = vi.mocked(chrome.storage.local.remove).getMockImplementation()
-      if (!originalSetImplementation || !originalRemoveImplementation) throw new Error('storage mocks are not initialized')
-      const originalSet = originalSetImplementation as unknown as (values: Record<string, unknown>) => Promise<void>
-      const originalRemove = originalRemoveImplementation as unknown as (keys: string | string[]) => Promise<void>
+      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
+      const originalRemove = chrome.storage.local.remove.bind(chrome.storage.local)
       vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
         await originalSet(values)
         if (GLOBAL_STORAGE_KEY in values) await originalRemove(GLOBAL_STORAGE_KEY)
@@ -244,9 +241,7 @@ describe('settings envelopes', () => {
     it('serializes bulk writes before flush resolves', async () => {
       const repository = createSettingsRepository('queue-test')
       const writes: string[] = []
-      const originalSetImplementation = vi.mocked(chrome.storage.local.set).getMockImplementation()
-      if (!originalSetImplementation) throw new Error('storage mock is not initialized')
-      const originalSet = originalSetImplementation as unknown as (values: Record<string, unknown>) => Promise<void>
+      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
       vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
         writes.push(...Object.keys(values))
         await originalSet(values)

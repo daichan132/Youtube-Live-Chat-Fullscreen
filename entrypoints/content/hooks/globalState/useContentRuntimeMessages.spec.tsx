@@ -1,16 +1,12 @@
 import { act, renderHook } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { fakeBrowser } from 'wxt/testing/fake-browser'
 
 const setLocale = vi.hoisted(() => vi.fn())
 
 vi.mock('@/shared/runtime/AppProvider', () => ({
   useAppRuntime: () => ({ setLocale }),
 }))
-
-const emitMessage = (message: unknown) => {
-  const runtime = (chrome as unknown as { runtime: { __emitMessage: (value: unknown) => void } }).runtime
-  runtime.__emitMessage(message)
-}
 
 describe('useContentRuntimeMessages', () => {
   beforeEach(() => {
@@ -22,8 +18,8 @@ describe('useContentRuntimeMessages', () => {
     const { useContentRuntimeMessages } = await import('./useContentRuntimeMessages')
     renderHook(() => useContentRuntimeMessages())
 
-    act(() => {
-      emitMessage({ message: 'language', language: 'pt-BR' })
+    await act(async () => {
+      await fakeBrowser.runtime.onMessage.trigger({ message: 'language', language: 'pt-BR' }, {})
     })
 
     expect(setLocale).toHaveBeenCalledWith('pt_BR')
@@ -33,12 +29,12 @@ describe('useContentRuntimeMessages', () => {
     const { useContentRuntimeMessages } = await import('./useContentRuntimeMessages')
     renderHook(() => useContentRuntimeMessages())
 
-    act(() => {
-      emitMessage({ message: 'themeMode', themeMode: 'dark' })
-      emitMessage({ message: 'ytdLiveChat', ytdLiveChat: false })
-      emitMessage({ message: 'settingsImported' })
-      emitMessage({ message: 'language', language: 123 })
-      emitMessage(null)
+    await act(async () => {
+      await fakeBrowser.runtime.onMessage.trigger({ message: 'themeMode', themeMode: 'dark' }, {})
+      await fakeBrowser.runtime.onMessage.trigger({ message: 'ytdLiveChat', ytdLiveChat: false }, {})
+      await fakeBrowser.runtime.onMessage.trigger({ message: 'settingsImported' }, {})
+      await fakeBrowser.runtime.onMessage.trigger({ message: 'language', language: 123 }, {})
+      await fakeBrowser.runtime.onMessage.trigger(null, {})
     })
 
     expect(setLocale).not.toHaveBeenCalled()
