@@ -17,6 +17,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
   const activeIdRef = useRef<string | null>(null)
   const previewIdsRef = useRef(ids)
   const pointerGestureRef = useRef(false)
+  const activePointerIdRef = useRef<number | null>(null)
   const pointerClientYRef = useRef<number | null>(null)
   const scrollContainerRef = useRef<HTMLElement | null>(null)
   const autoScrollFrameRef = useRef<number | null>(null)
@@ -34,6 +35,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
       if (!nextActive) return
       activeIdRef.current = null
       pointerGestureRef.current = false
+      activePointerIdRef.current = null
       pointerClientYRef.current = null
       scrollContainerRef.current = null
       if (autoScrollFrameRef.current !== null) {
@@ -87,7 +89,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
 
   const handleMove = useCallback(
     (event: PointerEvent) => {
-      if (!pointerGestureRef.current) return
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
       pointerClientYRef.current = event.clientY
       measureLayouts()
       updatePointerPreview(event.clientY)
@@ -134,8 +136,20 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
     }
   }, [measureLayouts, updatePointerPreview])
 
-  const handleUp = useCallback(() => finish(true), [finish])
-  const handleCancel = useCallback(() => finish(false), [finish])
+  const handleUp = useCallback(
+    (event: PointerEvent) => {
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      finish(true)
+    },
+    [finish],
+  )
+  const handleCancel = useCallback(
+    (event: PointerEvent) => {
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      finish(false)
+    },
+    [finish],
+  )
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
       if (event.key === 'Escape') finish(false)
@@ -148,6 +162,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
       if (event.button !== 0 || activeIdRef.current || !previewIdsRef.current.includes(id)) return
       scrollContainerRef.current = event.currentTarget.closest<HTMLElement>('[data-ylc-setting-scroll-container]')
       pointerGestureRef.current = true
+      activePointerIdRef.current = event.pointerId
       pointerClientYRef.current = event.clientY
       measureLayouts()
       startIdsRef.current = previewIdsRef.current

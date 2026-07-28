@@ -305,6 +305,38 @@ describe('usePresetReorder', () => {
     expect(onCommit).not.toHaveBeenCalled()
   })
 
+  it('ignores move, up, and cancel events from a different pointer', () => {
+    const onCommit = vi.fn()
+    const animationFrames = installAnimationFrameHarness()
+    const view = render(<ReorderHarness onCommit={onCommit} />)
+    arrangePresetRows(view.container)
+
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder first' }), {
+      button: 0,
+      clientY: 0,
+      pointerId: 10,
+    })
+    fireEvent.pointerMove(window, { clientY: 200, pointerId: 11 })
+    fireEvent.pointerUp(window, { pointerId: 11 })
+    fireEvent.pointerCancel(window, { pointerId: 11 })
+
+    expect(order(view.getByTestId)).toBe(INITIAL_IDS.join(','))
+    expect(view.getByTestId('active')).toHaveTextContent('first')
+    expect(onCommit).not.toHaveBeenCalled()
+    expect(animationFrames.cancel).not.toHaveBeenCalled()
+    expect(animationFrames.callbacks).toHaveLength(1)
+
+    fireEvent.pointerMove(window, { clientY: 200, pointerId: 10 })
+    expect(order(view.getByTestId)).toBe('middle,last,first')
+    fireEvent.pointerUp(window, { pointerId: 10 })
+
+    expect(onCommit).toHaveBeenCalledOnce()
+    expect(onCommit).toHaveBeenCalledWith(['middle', 'last', 'first'])
+    expect(view.getByTestId('active')).toHaveTextContent('')
+    expect(animationFrames.cancel).toHaveBeenCalledOnce()
+    expect(animationFrames.callbacks).toHaveLength(0)
+  })
+
   it.each(['pointercancel', 'unmount'] as const)('stops edge auto-scroll on %s without committing', endGesture => {
     const ids = Array.from({ length: 12 }, (_, index) => `preset-${index + 1}`)
     const onCommit = vi.fn()
