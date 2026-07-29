@@ -81,7 +81,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@axe-core/playwright@npm:^4.12.1":
+"@axe-core/playwright@npm:4.12.1":
   version: 4.12.1
   resolution: "@axe-core/playwright@npm:4.12.1"
   dependencies:
@@ -591,7 +591,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@fontsource/inter@npm:^5.3.0":
+"@fontsource/inter@npm:5.3.0":
   version: 5.3.0
   resolution: "@fontsource/inter@npm:5.3.0"
   checksum: 10c0/568601c10c83601c23005f8cd7434499df6e007eaa22c4dabbb1dcae327cc8e4a148ece8d4a4edaa8bafc5d2371ea97a37d1cc91ffbed77a43e2d8c15a6e831b
@@ -982,7 +982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/vite@npm:^4.1.11":
+"@tailwindcss/vite@npm:4.3.3":
   version: 4.3.3
   resolution: "@tailwindcss/vite@npm:4.3.3"
   dependencies:
@@ -1047,7 +1047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/user-event@npm:^14.6.1":
+"@testing-library/user-event@npm:14.6.1":
   version: 14.6.1
   resolution: "@testing-library/user-event@npm:14.6.1"
   peerDependencies:
@@ -4812,7 +4812,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.3.3, tailwindcss@npm:^4.1.11":
+"tailwindcss@npm:4.3.3":
   version: 4.3.3
   resolution: "tailwindcss@npm:4.3.3"
   checksum: 10c0/7e9cd7553cd890ffa5350efb0ca8971ba5435257d0f98bf0714994ac8f1fee5c7cdf9a9da47fe83e8ac995d728410837ac49d3ef5ea66b5afe1db312086ffae2
@@ -5714,15 +5714,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "youtube-live-chat-fullscreen@workspace:."
   dependencies:
-    "@axe-core/playwright": "npm:^4.12.1"
+    "@axe-core/playwright": "npm:4.12.1"
     "@biomejs/biome": "npm:2.5.5"
-    "@fontsource/inter": "npm:^5.3.0"
+    "@fontsource/inter": "npm:5.3.0"
     "@playwright/test": "npm:1.61.1"
-    "@tailwindcss/vite": "npm:^4.1.11"
+    "@tailwindcss/vite": "npm:4.3.3"
     "@testing-library/dom": "npm:10.4.1"
     "@testing-library/jest-dom": "npm:7.0.0"
     "@testing-library/react": "npm:16.3.2"
-    "@testing-library/user-event": "npm:^14.6.1"
+    "@testing-library/user-event": "npm:14.6.1"
     "@types/chrome": "npm:0.2.2"
     "@types/react": "npm:19.2.17"
     "@types/react-dom": "npm:19.2.3"
@@ -5735,7 +5735,7 @@ __metadata:
     react: "npm:^19.2.7"
     react-colorful: "npm:^5.8.0"
     react-dom: "npm:^19.2.7"
-    tailwindcss: "npm:^4.1.11"
+    tailwindcss: "npm:4.3.3"
     typescript: "npm:7.0.2"
     vite: "npm:8.1.5"
     vitest: "npm:4.1.10"
