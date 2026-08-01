@@ -19,7 +19,6 @@ import {
 import { Switch } from '@/shared/components/Switch'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
-import { cn } from '@/shared/utils/cn'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
@@ -46,57 +45,20 @@ const ControlRow = ({ icon: Icon, title, children }: { icon: IconType; title: st
   </div>
 )
 
-const ToggleRow = ({
-  icon: Icon,
-  title,
-  hint,
-  hintId,
-  nested,
-  disabled,
-  children,
-}: {
-  icon: IconType
-  title: string
-  hint?: string
-  hintId?: string
-  nested?: boolean
-  disabled?: boolean
-  children: ReactNode
-}) => (
+const ToggleRow = ({ icon: Icon, title, children }: { icon: IconType; title: string; children: ReactNode }) => (
   // biome-ignore lint/a11y/noLabelWithoutControl: the toggle <input> control is supplied through the children prop
-  <label className={cn('ylc-row', nested && 'ylc-row-nested', disabled && 'is-disabled')}>
+  <label className='ylc-row'>
     <span className='ylc-row-label'>
       <span className='ylc-row-icon' aria-hidden='true'>
         <Icon size={19} />
       </span>
-      {hint ? (
-        <span className='ylc-row-textcol'>
-          <p className='ylc-row-title'>{title}</p>
-          <span className='ylc-row-hint' id={hintId}>
-            {hint}
-          </span>
-        </span>
-      ) : (
-        <p className='ylc-row-title'>{title}</p>
-      )}
+      <p className='ylc-row-title'>{title}</p>
     </span>
     <span className='ylc-row-action ylc-row-action--auto'>{children}</span>
   </label>
 )
 
-const ToggleSettingSwitch = ({
-  settingKey,
-  label,
-  disabled,
-  describedById,
-  onCheckedChange,
-}: {
-  settingKey: ToggleSettingKey
-  label: string
-  disabled?: boolean
-  describedById?: string
-  onCheckedChange?: (checked: boolean) => void
-}) => {
+const ToggleSettingSwitch = ({ settingKey, label }: { settingKey: ToggleSettingKey; label: string }) => {
   const id = useId()
   const profile = useAtomValue(effectiveProfileAtom)
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
@@ -111,11 +73,8 @@ const ToggleSettingSwitch = ({
     <Switch
       checked={checked}
       id={id}
-      disabled={disabled}
       aria-label={label}
-      aria-describedby={describedById}
       onChange={nextChecked => {
-        onCheckedChange?.(nextChecked)
         if (settingKey === 'idleVisibility') {
           commitYLCStyleUpdate({ display: { idleVisibility: nextChecked ? 'always-visible' : 'auto-hide' } }, settingKey)
           return
@@ -172,6 +131,7 @@ const MembershipNameColorSetting = () => {
 
 export const SettingContent = () => {
   const t = useT()
+  const showWhenIdle = useAtomValue(effectiveProfileAtom).display.idleVisibility === 'always-visible'
 
   return (
     <>
@@ -179,9 +139,11 @@ export const SettingContent = () => {
         <ToggleRow icon={TbEye} title={t('content.setting.alwaysOnDisplay')}>
           <ToggleSettingSwitch settingKey='idleVisibility' label={t('content.setting.alwaysOnDisplay')} />
         </ToggleRow>
-        <ToggleRow icon={TbMessageCircle} title={t('content.setting.chatOnlyDisplay')}>
-          <ToggleSettingSwitch settingKey='contentMode' label={t('content.setting.chatOnlyDisplay')} />
-        </ToggleRow>
+        {showWhenIdle && (
+          <ToggleRow icon={TbMessageCircle} title={t('content.setting.chatOnlyDisplay')}>
+            <ToggleSettingSwitch settingKey='contentMode' label={t('content.setting.chatOnlyDisplay')} />
+          </ToggleRow>
+        )}
       </SettingGroup>
 
       <SettingGroup legend={t('content.setting.group.colors')}>

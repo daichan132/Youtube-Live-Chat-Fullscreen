@@ -1589,20 +1589,6 @@ label.ylc-row:has(:focus-visible) {
   text-wrap: pretty;
 }
 
-.ylc-row-textcol {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.ylc-row-hint {
-  display: none;
-  margin: 2px 0 0;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--ylc-text-muted);
-}
-
 .ylc-row-action {
   flex-shrink: 0;
   display: inline-flex;
@@ -1616,43 +1602,6 @@ label.ylc-row:has(:focus-visible) {
 .ylc-row-action--auto {
   width: auto;
   max-width: none;
-}
-
-/* Dependent row locked until its parent toggle is on */
-.ylc-row.is-disabled {
-  cursor: default;
-}
-
-.ylc-row.is-disabled:hover {
-  background: transparent;
-}
-
-.ylc-row.is-disabled .ylc-row-title {
-  color: var(--ylc-text-secondary);
-}
-
-.ylc-row.is-disabled .ylc-row-icon {
-  opacity: 0.6;
-}
-
-.ylc-row.is-disabled .ylc-row-hint {
-  display: block;
-}
-
-.ylc-row-nested {
-  position: relative;
-  margin-inline-start: 14px;
-  padding-inline-start: 16px;
-}
-
-.ylc-row-nested::before {
-  content: "";
-  position: absolute;
-  inset-inline-start: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: var(--ylc-divider);
 }
 
 /* Preset card */

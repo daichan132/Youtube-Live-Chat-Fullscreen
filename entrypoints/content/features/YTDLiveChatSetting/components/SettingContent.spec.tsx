@@ -12,7 +12,7 @@ describe('SettingContent', () => {
     store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
   })
 
-  it('updates idle visibility and content mode independently', () => {
+  it('only shows chat-only mode while idle display is enabled', () => {
     const profile = store.get(chatSettingsStateAtom).profile
     store.set(chatSettingsStateAtom, {
       ...store.get(chatSettingsStateAtom),
@@ -24,13 +24,22 @@ describe('SettingContent', () => {
         },
       },
     })
-    const { getByRole } = renderWithStore(<SettingContent />, store)
+    const { getByRole, queryByRole } = renderWithStore(<SettingContent />, store)
 
+    expect(queryByRole('switch', { name: 'content.setting.chatOnlyDisplay' })).toBeNull()
     fireEvent.click(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' }))
     fireEvent.click(getByRole('switch', { name: 'content.setting.chatOnlyDisplay' }))
 
     expect(store.get(chatSettingsStateAtom).profile.display).toEqual({
       idleVisibility: 'always-visible',
+      contentMode: 'messages-only',
+    })
+
+    fireEvent.click(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' }))
+
+    expect(queryByRole('switch', { name: 'content.setting.chatOnlyDisplay' })).toBeNull()
+    expect(store.get(chatSettingsStateAtom).profile.display).toEqual({
+      idleVisibility: 'auto-hide',
       contentMode: 'messages-only',
     })
   })
