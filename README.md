@@ -5,7 +5,8 @@
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
 
 <p align="center">
-  YouTube hides the chat in fullscreen. This extension brings it back — drag, resize, and style the overlay your way.
+  Fullscreen keeps the video and drops the conversation.<br />
+  This extension brings live chat back as a draggable, resizable overlay — without making you leave fullscreen.
 </p>
 
 <p align="center">
@@ -47,7 +48,7 @@
 </p>
 
 <p align="center">
-  Enjoying fullscreen chat? Star the project so more YouTube viewers and extension developers can discover it.
+  If the overlay earns a place in your streams, a GitHub star helps the next viewer find it.
 </p>
 
 ---
@@ -83,21 +84,29 @@
 </tr>
 </table>
 
-## 30-Second Quick Start
+## From Install to Fullscreen Chat
+
+There is no account to create and no setup wizard to finish.
 
 1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
 2. Open a YouTube live stream or an archive with chat replay.
-3. Enter fullscreen — a toggle switch appears at the bottom-right. Click it to show the chat overlay.
-4. Drag, resize, and style it from the extension settings.
+3. Enter fullscreen. A toggle appears at the bottom-right; click it to restore the chat.
+4. Drag or resize the overlay, then adjust its appearance from the extension settings.
 
-## Privacy & Permissions
+The video stays fullscreen. The conversation stays with it.
 
-- No account, analytics, tracking, or personal-data collection
-- Settings stay in browser storage
-- Only `activeTab` and `storage` extension permissions
-- Source code and the release pipeline are publicly reviewable
+## What Stays in Your Browser
+
+The overlay runs in the browser, and its settings stay there. The extension does not send viewing activity to an analytics or tracking service.
+
+- **No extension account or data collection:** the extension does not collect personal data
+- **Local settings:** appearance, layout, presets, and backups remain in browser storage
+- **Minimal permissions:** only `activeTab` and `storage`
+- **Public implementation:** the source code and release pipeline can be reviewed in this repository
 
 ## Features
+
+Restoring a read-only chat window would solve only half the problem. The overlay keeps the parts of YouTube chat that viewers use while the video remains fullscreen.
 
 ### 💬 Fullscreen Chat
 
@@ -132,20 +141,21 @@
 
 ---
 
-## Production Browser Extension Reference
+## A Production Extension on a Moving Page
 
-This is a production WXT codebase serving 20,000+ Chrome viewers, not just an extension source dump.
+The extension serves 20,000+ Chrome viewers, but the YouTube page beneath it never stays entirely still. URLs change without full reloads, chat DOM is replaced, and live chat and archive replay do not share the same source rules. The codebase treats those differences as explicit runtime contracts instead of scattered exceptions.
 
 - Cross-browser Chrome and Firefox builds from one WXT codebase
 - React 19, TypeScript, Jotai, and Tailwind CSS v4
 - 55 generated locales with RTL support
-- Unit, contract, deterministic Playwright E2E, visual, accessibility, and live canary tests
-- Resilient handling of YouTube SPA navigation, DOM replacement, live chat, and archive replay
+- Pure chat-source decisions separated from YouTube DOM side effects
+- Unit, contract, deterministic Playwright E2E, visual, accessibility, and live canary coverage
+- Explicit handling of SPA navigation, DOM replacement, live chat, and archive replay
 - Versioned settings migration and synchronization across extension contexts
 - Release artifacts rebuilt and verified before Chrome and Firefox publication
 - Minimal permissions and no personal-data collection
 
-See [Engineering YouTube Live Chat Fullscreen](docs/engineering.md) for the runtime boundaries, test strategy, settings ownership, and release-safety design.
+The runtime boundaries, test strategy, settings ownership, and release safeguards are documented in [Engineering YouTube Live Chat Fullscreen](docs/engineering.md).
 
 ## Tech Stack
 
@@ -160,11 +170,11 @@ See [Engineering YouTube Live Chat Fullscreen](docs/engineering.md) for the runt
 <details>
 <summary>Click to expand</summary>
 
-### System Overview
+### Runtime Overview
 
 ![Architecture diagram showing content script, popup, and background service worker communication](./.github/system_overview.drawio.png)
 
-The extension consists of two entrypoints that communicate via the browser's `tabs` and `runtime` messaging APIs:
+The browser shows one extension, but two runtime entrypoints do the work. The content script owns YouTube-facing behavior; the popup owns viewer controls. They communicate through the browser's `tabs` and `runtime` messaging APIs, while shared modules keep settings and UI contracts consistent.
 
 | Component | Role |
 | --- | --- |
@@ -174,7 +184,7 @@ The extension consists of two entrypoints that communicate via the browser's `ta
 
 ### Chat Source Resolution
 
-The content script automatically detects the video type and selects the appropriate chat source:
+Live and archived streams look similar in the player, but their chat sources are not interchangeable. A live stream can use a public `live_chat` URL. An archive depends on YouTube's playable `live_chat_replay` iframe; when replay is unavailable, the extension hides the switch instead of offering a broken overlay.
 
 | Video state | Chat source | Switch / Overlay |
 | --- | --- | --- |
@@ -246,7 +256,7 @@ For Firefox compatibility changes, also run `yarn build:firefox`.
 
 ## Contributing
 
-Contributions are welcome — bug reports, feature ideas, and pull requests all help.
+Focused bug reports, feature ideas, documentation fixes, translations, and pull requests are welcome. A reproducible YouTube state — live, archive with replay, or no chat — makes behavior changes much easier to verify.
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, translation, screenshot, and pull-request guidance. Report security issues through the private process in [SECURITY.md](SECURITY.md).
 
@@ -256,7 +266,7 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, translation, scre
 
 ## Support
 
-If you find this extension useful, a star helps keep it maintained and updated.
+If chat stayed beside the stream when you needed it, a star helps more viewers discover the extension and supports its continued maintenance.
 
 <p>
   <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/stargazers">
