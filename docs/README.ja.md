@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  アカウント不要 · データ収集なし · 完全オープンソース
+  <strong>Chromeで20,000人以上が利用</strong><br />
+  Chrome・Firefox対応 · 55言語 · アカウント不要 · トラッキングなし · オープンソース
 </p>
 
 <p align="center">
@@ -40,6 +41,13 @@
   <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/">
     <img alt="Firefox に追加" src="https://img.shields.io/badge/Firefox-インストール-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
   </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen">
+    <img alt="GitHub で Star する" src="https://img.shields.io/badge/GitHub_で_Star_する-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+</p>
+
+<p align="center">
+  フルスクリーンチャットが便利だと感じたら、YouTube視聴者や拡張機能開発者がこのプロジェクトを見つけられるよう、GitHubでStarしてください。
 </p>
 
 ---

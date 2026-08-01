@@ -1,0 +1,75 @@
+name: Bug report
+description: Report a reproducible problem with fullscreen chat
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve YouTube Live Chat Fullscreen. Please remove personal information from screenshots and logs.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Describe the behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open a live stream or archive
+        2. Enter fullscreen
+        3. ...
+    validations:
+      required: true
+  - type: dropdown
+    id: video-state
+    attributes:
+      label: YouTube video state
+      options:
+        - Live stream
+        - Archive with chat replay
+        - Archive without chat replay
+        - Video without chat
+        - Channel /live page
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 140, Firefox 142, Zen 1.15, etc.
+    validations:
+      required: true
+  - type: input
+    id: extension-version
+    attributes:
+      label: Extension version
+      placeholder: "2.3.13"
+    validations:
+      required: true
+  - type: input
+    id: operating-system
+    attributes:
+      label: Operating system
+      placeholder: macOS 16, Windows 11, Ubuntu 24.04, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots, recording, or additional context
+      description: Drag files here. Include a public YouTube URL only when it is safe to share.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I reproduced this with the latest published extension version.
+          required: true
+        - label: I removed personal information from the report.
+          required: true

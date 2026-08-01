@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  無需帳號 · 不收集資料 · 完全開源
+  <strong>20,000+ 名 Chrome 使用者</strong><br />
+  Chrome + Firefox · 55 種語言 · 無需帳號 · 無追蹤 · 開源
 </p>
 
 <p align="center">
@@ -40,6 +41,13 @@
   <a href="https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/">
     <img alt="安裝到 Firefox" src="https://img.shields.io/badge/Firefox-安裝-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
   </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen">
+    <img alt="在 GitHub 上給 Star" src="https://img.shields.io/badge/在_GitHub_上給_Star-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+</p>
+
+<p align="center">
+  喜歡全螢幕聊天嗎？在 GitHub 上給專案一顆 Star，讓更多 YouTube 觀眾與擴充功能開發者找到它。
 </p>
 
 ---

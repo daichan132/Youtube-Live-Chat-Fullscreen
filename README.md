@@ -9,7 +9,8 @@
 </p>
 
 <p align="center">
-  No account required · No data collected · Fully open source
+  <strong>Used by 20,000+ Chrome viewers</strong><br />
+  Chrome + Firefox · 55 languages · No account · No tracking · Open source
 </p>
 
 <p align="center">
@@ -40,6 +41,13 @@
   <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/">
     <img alt="Install on Firefox" src="https://img.shields.io/badge/Firefox-Install-FF7139?style=for-the-badge&logo=firefox&logoColor=white"/>
   </a>
+  <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen">
+    <img alt="Star on GitHub" src="https://img.shields.io/badge/Star_on_GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
+  </a>
+</p>
+
+<p align="center">
+  Enjoying fullscreen chat? Star the project so more YouTube viewers and extension developers can discover it.
 </p>
 
 ---
@@ -82,6 +90,13 @@
 3. Enter fullscreen — a toggle switch appears at the bottom-right. Click it to show the chat overlay.
 4. Drag, resize, and style it from the extension settings.
 
+## Privacy & Permissions
+
+- No account, analytics, tracking, or personal-data collection
+- Settings stay in browser storage
+- Only `activeTab` and `storage` extension permissions
+- Source code and the release pipeline are publicly reviewable
+
 ## Features
 
 ### 💬 Fullscreen Chat
@@ -116,6 +131,21 @@
 </p>
 
 ---
+
+## Production Browser Extension Reference
+
+This is a production WXT codebase serving 20,000+ Chrome viewers, not just an extension source dump.
+
+- Cross-browser Chrome and Firefox builds from one WXT codebase
+- React 19, TypeScript, Jotai, and Tailwind CSS v4
+- 55 generated locales with RTL support
+- Unit, contract, deterministic Playwright E2E, visual, accessibility, and live canary tests
+- Resilient handling of YouTube SPA navigation, DOM replacement, live chat, and archive replay
+- Versioned settings migration and synchronization across extension contexts
+- Release artifacts rebuilt and verified before Chrome and Firefox publication
+- Minimal permissions and no personal-data collection
+
+See [Engineering YouTube Live Chat Fullscreen](docs/engineering.md) for the runtime boundaries, test strategy, settings ownership, and release-safety design.
 
 ## Tech Stack
 
@@ -218,9 +248,7 @@ For Firefox compatibility changes, also run `yarn build:firefox`.
 
 Contributions are welcome — bug reports, feature ideas, and pull requests all help.
 
-- Open an [issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) or submit a [pull request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls).
-- Run `yarn check && yarn test:unit && yarn build && yarn build:firefox` before submitting a PR.
-- Translation contributions are also welcome — add a `docs/README.<locale>.md` for your language.
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, translation, screenshot, and pull-request guidance. Report security issues through the private process in [SECURITY.md](SECURITY.md).
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
