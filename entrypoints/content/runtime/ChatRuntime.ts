@@ -13,8 +13,8 @@ import {
   markRuntimeRetryFired,
   type RuntimeLeaseSnapshot,
   type RuntimeModel,
-  type RuntimeModelAction,
   type RuntimeModelTransition,
+  type RuntimePlan,
   type RuntimeState,
   resetRuntimeRetry,
   settleRuntimeLeaseInitialization,
@@ -159,7 +159,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private handleNavigation = () => {
-    this.applyModelActions(resetRuntimeRetry(this.model))
+    this.applyStandaloneTransition(resetRuntimeRetry(this.model))
     this.scheduleReconcile()
   }
 
@@ -238,7 +238,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (!scope) return false
     return this.resources.initializeIframe(scope, () => {
       if (scope !== this.sessionScope || scope.signal.aborted) return
-      this.applyModelActions(resetRuntimeRetry(this.model))
+      this.applyStandaloneTransition(resetRuntimeRetry(this.model))
       this.scheduleReconcile(scope.generation)
     })
   }
@@ -291,7 +291,6 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private reconcile = () => {
     if (!this.started) return
     let observation = this.readObservation(this.resources.lease?.iframe ?? null)
-    this.resources.reconcileRestoring(observation.targets)
     this.ensureSessionScope(observation)
     observation = withObservationGeneration(observation, this.generation)
     const decision = this.resolveDecision(observation)
@@ -305,31 +304,25 @@ export class ChatRuntimeImpl implements ChatRuntime {
     )
   }
 
-  private applyModelActions = (transition: RuntimeModelTransition) => {
+  private applyStandaloneTransition = (transition: RuntimeModelTransition) => {
     this.model = transition.model
-    for (const action of transition.actions) {
-      if (action.type === 'cancel-retry') {
-        this.cancelRetry()
-        continue
-      }
-      throw new Error(`Unexpected standalone runtime action: ${action.type}`)
-    }
+    this.applyRuntimeOperations(transition.plan)
   }
 
   private applyModelTransition = (transition: RuntimeModelTransition, observation: PageObservation | null) => {
     this.model = transition.model
-    const targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null } = {
-      overlayRoot: null,
-      switchContainer: null,
-    }
-
-    for (const action of transition.actions) {
-      const initialized = this.executeModelAction(action, observation, targets)
-      if (initialized === null) continue
+    this.applyRuntimeOperations(transition.plan)
+    const scope = this.sessionScope
+    const result = this.resources.reconcilePlan(transition.plan, observation, scope, () => {
+      if (!scope || scope !== this.sessionScope || scope.signal.aborted) return
+      this.applyStandaloneTransition(resetRuntimeRetry(this.model))
+      this.scheduleReconcile(scope.generation)
+    })
+    if (result.initialization) {
       const settled = settleRuntimeLeaseInitialization(this.model, {
-        decision: initialized.decision,
+        decision: result.initialization.decision,
         lease: this.getLeaseSnapshot(),
-        initialized: initialized.success,
+        initialized: result.initialization.success,
       })
       this.applyModelTransition(settled, observation)
       return
@@ -337,56 +330,16 @@ export class ChatRuntimeImpl implements ChatRuntime {
 
     this.publish({
       ...this.model.view,
-      ...targets,
+      ...result.targets,
     })
   }
 
-  private executeModelAction = (
-    action: RuntimeModelAction,
-    observation: PageObservation | null,
-    targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null },
-  ): { decision: Extract<ChatDecision, { kind: 'available' }>; success: boolean } | null => {
-    switch (action.type) {
-      case 'ensure-observer':
-        this.ensureObserver()
-        return null
-      case 'disconnect-observer':
-        this.disconnectObserver()
-        return null
-      case 'clear-layout':
-        this.resources.clearLayout()
-        return null
-      case 'clear-runtime':
-        this.resources.clear(observation?.targets)
-        targets.overlayRoot = null
-        targets.switchContainer = null
-        return null
-      case 'release-lease':
-        this.resources.releaseIframe(observation?.targets ?? null, action.ensureNativeVisible)
-        return null
-      case 'create-lease':
-        this.resources.createIframe(action.decision, this.generation)
-        return null
-      case 'initialize-lease':
-        return { decision: action.decision, success: this.initializeLease() }
-      case 'cancel-retry':
-        this.cancelRetry()
-        return null
-      case 'schedule-retry':
-        this.scheduleRetry(action.delayMs)
-        return null
-      case 'open-archive-panel':
-        this.ensureArchivePanelOpen()
-        return null
-      case 'sync-portals': {
-        if (!observation) throw new Error('A page observation is required to synchronize runtime portals.')
-        if (!this.sessionScope) throw new Error('A session scope is required to synchronize runtime resources.')
-        const nextTargets = this.resources.syncPresentation(observation, action, this.sessionScope)
-        targets.overlayRoot = nextTargets.overlayRoot
-        targets.switchContainer = nextTargets.switchContainer
-        return null
-      }
-    }
+  private applyRuntimeOperations = (plan: RuntimePlan) => {
+    if (plan.monitoring === 'active') this.ensureObserver()
+    else if (plan.monitoring === 'inactive') this.disconnectObserver()
+    if (plan.retry.kind === 'none') this.cancelRetry()
+    else if (plan.retry.kind === 'scheduled') this.scheduleRetry(plan.retry.delayMs)
+    if (plan.openArchivePanel) this.ensureArchivePanelOpen()
   }
 
   private publish = (next: RuntimeView) => {

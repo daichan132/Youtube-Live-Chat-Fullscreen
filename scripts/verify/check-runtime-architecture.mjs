@@ -15,6 +15,7 @@ const layoutSource = read('entrypoints/content/runtime/resources/PlayerLayoutLea
 const iframeLeaseSource = read('entrypoints/content/runtime/resources/ChatIframeLease.ts')
 const presentationLeaseSource = read('entrypoints/content/runtime/resources/PresentationLease.ts')
 const chatChromeLeaseSource = read('entrypoints/content/runtime/resources/ChatChromeLease.ts')
+const runtimeModelSource = read('entrypoints/content/runtime/runtimeModel.ts')
 
 if (/export\s+const\s+chatRuntime\s*=/.test(runtimeSource)) {
   failures.push('ChatRuntime must be created per content session, not exported as a module singleton')
@@ -27,6 +28,9 @@ if (!contentSource.includes('new ChatRuntimeImpl()') || !contentSource.includes(
 }
 if (!runtimeSource.includes('new ResourceReconciler(') || !reconcilerSource.includes('restoringLeases')) {
   failures.push('runtime resources and pending iframe restoration must be owned by ResourceReconciler instances')
+}
+if (!runtimeModelSource.includes('RuntimePlan') || /ensure-observer|sync-portals|clear-layout|clear-runtime/.test(runtimeModelSource)) {
+  failures.push('the pure runtime model must emit semantic RuntimePlan values, not low-level DOM actions')
 }
 if (
   !iframeLeaseSource.includes('ChatIframeLease') ||

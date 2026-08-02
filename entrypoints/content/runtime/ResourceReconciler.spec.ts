@@ -8,6 +8,7 @@ import type { ChatChromeLease } from './resources/ChatChromeLease'
 import type { ChatIframeLease } from './resources/ChatIframeLease'
 import type { PlayerLayoutLease } from './resources/PlayerLayoutLease'
 import type { PresentationLease } from './resources/PresentationLease'
+import type { RuntimePlan } from './runtimeModel'
 
 vi.mock('wxt/browser', () => ({
   browser: { runtime: { getURL: (path: string) => `chrome-extension://test/${path}` } },
@@ -71,6 +72,14 @@ const createFakeLease = (log: string[], iframe = document.createElement('iframe'
   return { lease, setState: (next: ChatIframeLease['state']) => (state = next) }
 }
 
+const acquirePlan = (decision: Extract<ChatDecision, { kind: 'available' }>): RuntimePlan => ({
+  monitoring: 'active',
+  presentation: 'overlay-and-switch',
+  chat: { kind: 'acquire', decision },
+  layout: 'floating',
+  retry: { kind: 'none' },
+})
+
 describe('ResourceReconciler', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -116,9 +125,7 @@ describe('ResourceReconciler', () => {
 
     resources.setProfile(DEFAULT_CHAT_PROFILE)
     resources.setOverlayContainer(document.createElement('div'))
-    resources.createIframe(decision, 1)
-    resources.syncPresentation(observation, { showSwitch: true, showOverlay: true, keepOverlayHost: true }, scope)
-    resources.initializeIframe(scope, vi.fn())
+    resources.reconcilePlan(acquirePlan(decision), observation, scope, vi.fn())
 
     expect(log.slice(0, 3)).toEqual(['presentation-acquire', 'layout-acquire', 'iframe-acquire'])
     resources.clear(observation.targets)
@@ -144,18 +151,27 @@ describe('ResourceReconciler', () => {
     })
     const observation = createObservation()
     const scope = createSessionScope(1)
-    resources.createIframe(
-      {
-        kind: 'available',
-        videoId: 'video-1',
-        mode: 'live',
-        source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
-      },
-      1,
-    )
-    resources.syncPresentation(observation, { showSwitch: true, showOverlay: true, keepOverlayHost: true }, scope)
+    const decision: Extract<ChatDecision, { kind: 'available' }> = {
+      kind: 'available',
+      videoId: 'video-1',
+      mode: 'live',
+      source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
+    }
+    resources.reconcilePlan(acquirePlan(decision), observation, scope, vi.fn())
+    log.length = 0
 
-    resources.clear(observation.targets)
+    resources.reconcilePlan(
+      {
+        monitoring: 'inactive',
+        presentation: 'none',
+        chat: { kind: 'none', ensureNativeVisible: false },
+        layout: 'none',
+        retry: { kind: 'none' },
+      },
+      observation,
+      scope,
+      vi.fn(),
+    )
 
     expect(log).toEqual(['iframe-release', 'layout-release', 'presentation-release'])
     scope.dispose()

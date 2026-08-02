@@ -15,6 +15,7 @@ import { type ChatChromeLease, type ChatOnlyChromeIntent, createChatChromeLease 
 import { type ChatIframeLease, createIframeLease } from './resources/ChatIframeLease'
 import { createPlayerLayoutLease, type PlayerLayoutLease } from './resources/PlayerLayoutLease'
 import { createPresentationLease, type PortalTargets, type PresentationLease } from './resources/PresentationLease'
+import type { RuntimePlan } from './runtimeModel'
 
 type AvailableDecision = Extract<ChatDecision, { kind: 'available' }>
 
@@ -31,6 +32,7 @@ export class ResourceReconciler {
   private overlayContainer: HTMLElement | null = null
   private loadListenerIframe: HTMLIFrameElement | null = null
   private removeLoadListener: (() => void) | null = null
+  private portalTargets: PortalTargets = { overlayRoot: null, switchContainer: null }
   private interaction: 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open' = 'idle'
 
   constructor(
@@ -49,6 +51,53 @@ export class ResourceReconciler {
 
   get lease() {
     return this.iframeLease
+  }
+
+  reconcilePlan(plan: RuntimePlan, observation: PageObservation | null, scope: SessionScope | null, onLoad: () => void) {
+    const pageTargets = observation?.targets ?? null
+    if (pageTargets) this.reconcileRestoring(pageTargets)
+
+    if (plan.chat.kind === 'none') this.releaseIframe(pageTargets, plan.chat.ensureNativeVisible)
+    if (plan.chat.kind === 'acquire' && !this.sourceMatches(plan.chat.decision)) this.releaseIframe(pageTargets)
+
+    if (plan.layout === 'none') {
+      if (plan.monitoring === 'inactive') {
+        this.layoutLease?.release()
+        this.layoutLease = null
+        this.layoutScope = null
+      } else {
+        this.layoutLease?.reconcile(false)
+      }
+    }
+    if (plan.presentation === 'none') {
+      this.presentation.clear()
+      this.portalTargets = { overlayRoot: null, switchContainer: null }
+    }
+
+    const presentationFlags = this.getPresentationFlags(plan.presentation)
+    if (presentationFlags) {
+      if (!observation) throw new Error('Missing page observation')
+      this.portalTargets = this.presentation.sync({
+        player: observation.targets.player,
+        rightControls: observation.targets.rightControls,
+        ...presentationFlags,
+      })
+    }
+    if (plan.layout === 'floating') {
+      if (!scope) throw new Error('Missing session scope')
+      this.ensureLayoutLease(scope).reconcile(true)
+    }
+
+    if (plan.chat.kind !== 'acquire') return { targets: this.portalTargets, initialization: null }
+    if (!this.iframeLease) this.createIframe(plan.chat.decision, scope?.generation ?? 0)
+    if (!scope) throw new Error('Missing session scope')
+    return {
+      targets: this.portalTargets,
+      initialization: {
+        decision: plan.chat.decision,
+        success: this.initializeIframe(scope, onLoad),
+      },
+    }
   }
 
   setProfile(profile: ChatProfile) {
@@ -115,27 +164,6 @@ export class ResourceReconciler {
     this.iframeLease = null
   }
 
-  clearLayout() {
-    this.layoutLease?.reconcile(false)
-  }
-
-  syncPresentation(
-    observation: PageObservation,
-    input: { showSwitch: boolean; showOverlay: boolean; keepOverlayHost: boolean },
-    scope: SessionScope,
-  ): PortalTargets {
-    // Acquire order is presentation -> layout -> iframe (attached by React once
-    // the overlay container mounted) -> profile/style.
-    const targets = this.presentation.sync({
-      player: observation.targets.player,
-      rightControls: observation.targets.rightControls,
-      overlayEnabled: input.keepOverlayHost,
-      switchEnabled: input.showSwitch,
-    })
-    this.ensureLayoutLease(scope).reconcile(input.showOverlay && observation.evidence.fullscreen)
-    return targets
-  }
-
   clear(targets: PageTargets | null = null) {
     // Restore the borrowed iframe before removing layout/presentation targets.
     this.releaseIframe(targets)
@@ -143,6 +171,7 @@ export class ResourceReconciler {
     this.layoutLease = null
     this.layoutScope = null
     this.presentation.clear()
+    this.portalTargets = { overlayRoot: null, switchContainer: null }
     this.chatChrome.release()
   }
 
@@ -152,6 +181,21 @@ export class ResourceReconciler {
     this.layoutScope = scope
     this.layoutLease = this.createLayout(scope)
     return this.layoutLease
+  }
+
+  private sourceMatches(decision: AvailableDecision) {
+    const lease = this.iframeLease
+    if (!lease || lease.videoId !== decision.videoId) return false
+    if (decision.source.kind === 'live_direct') return lease.ownership === 'managed'
+    return lease.ownership === 'borrowed' && lease.iframe === decision.source.iframe
+  }
+
+  private getPresentationFlags(mode: RuntimePlan['presentation']) {
+    if (mode === 'preserve' || mode === 'none') return null
+    return {
+      overlayEnabled: mode === 'switch-only' || mode === 'overlay-only' || mode === 'overlay-and-switch',
+      switchEnabled: mode === 'switch-only' || mode === 'overlay-and-switch',
+    }
   }
 
   private clearLoadListener() {

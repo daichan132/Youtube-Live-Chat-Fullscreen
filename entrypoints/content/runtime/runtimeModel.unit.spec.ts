@@ -65,7 +65,12 @@ describe('runtimeModel', () => {
       lease: null,
     })
 
-    expect(planned.actions.map(action => action.type)).toEqual(['ensure-observer', 'create-lease', 'initialize-lease'])
+    expect(planned.plan).toMatchObject({
+      monitoring: 'active',
+      presentation: 'overlay-and-switch',
+      layout: 'floating',
+      chat: { kind: 'acquire', decision },
+    })
 
     const settled = settleRuntimeLeaseInitialization(planned.model, {
       decision,
@@ -98,13 +103,8 @@ describe('runtimeModel', () => {
       showSwitch: false,
       showOverlay: false,
     })
-    expect(transition.actions).toContainEqual({
-      type: 'sync-portals',
-      showSwitch: false,
-      showOverlay: false,
-      keepOverlayHost: false,
-    })
-    expect(transition.actions.some(action => action.type === 'create-lease')).toBe(false)
+    expect(transition.plan.presentation).toBe('none')
+    expect(transition.plan.chat.kind).not.toBe('acquire')
   })
 
   it('releases an archive lease and clears the runtime on fullscreen exit', () => {
@@ -117,11 +117,12 @@ describe('runtimeModel', () => {
     })
 
     expect(transition.model.view.showOverlay).toBe(false)
-    expect(transition.actions).toEqual([
-      { type: 'release-lease', ensureNativeVisible: true },
-      { type: 'disconnect-observer' },
-      { type: 'clear-runtime' },
-    ])
+    expect(transition.plan).toMatchObject({
+      monitoring: 'inactive',
+      presentation: 'none',
+      chat: { kind: 'none', ensureNativeVisible: true },
+      layout: 'none',
+    })
   })
 
   it('releases the lease and clears the runtime when leaving the watch page', () => {
@@ -141,11 +142,12 @@ describe('runtimeModel', () => {
       showOverlay: false,
       loading: false,
     })
-    expect(transition.actions).toEqual([
-      { type: 'release-lease', ensureNativeVisible: false },
-      { type: 'disconnect-observer' },
-      { type: 'clear-runtime' },
-    ])
+    expect(transition.plan).toMatchObject({
+      monitoring: 'inactive',
+      presentation: 'none',
+      chat: { kind: 'none', ensureNativeVisible: false },
+      layout: 'none',
+    })
   })
 
   it('releases the old lease before creating one for an SPA video transition', () => {
@@ -158,7 +160,7 @@ describe('runtimeModel', () => {
       lease: active.lease,
     })
 
-    expect(transition.actions.map(action => action.type)).toEqual(['release-lease', 'create-lease', 'initialize-lease'])
+    expect(transition.plan.chat).toEqual({ kind: 'acquire', decision: second })
   })
 
   it('replaces a borrowed lease when the same video resolves to a different iframe', () => {
@@ -171,11 +173,7 @@ describe('runtimeModel', () => {
       lease: active.lease,
     })
 
-    expect(transition.actions.map(action => action.type)).toEqual(['release-lease', 'create-lease', 'initialize-lease'])
-    expect(transition.actions[1]).toMatchObject({
-      type: 'create-lease',
-      decision: second,
-    })
+    expect(transition.plan.chat).toEqual({ kind: 'acquire', decision: second })
   })
 
   it('keeps one matching lease during temporary source loss', () => {
@@ -192,7 +190,7 @@ describe('runtimeModel', () => {
       videoId: 'video-1',
     })
     expect(transition.model.view.showOverlay).toBe(true)
-    expect(transition.actions.some(action => action.type === 'release-lease' || action.type === 'create-lease')).toBe(false)
+    expect(transition.plan.chat).toEqual({ kind: 'preserve' })
   })
 
   it('does not create a second lease when the available source still matches', () => {
@@ -204,7 +202,7 @@ describe('runtimeModel', () => {
       lease: active.lease,
     })
 
-    expect(transition.actions.map(action => action.type)).toEqual(['initialize-lease'])
+    expect(transition.plan.chat).toEqual({ kind: 'acquire', decision })
   })
 
   it('ends retry exhaustion as unavailable and physically disables portal hosts', () => {
@@ -213,19 +211,14 @@ describe('runtimeModel', () => {
     let finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
 
     for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt += 1) {
-      expect(finalTransition.actions.some(action => action.type === 'schedule-retry')).toBe(true)
+      expect(finalTransition.plan.retry.kind).toBe('scheduled')
       model = markRuntimeRetryFired(finalTransition.model)
       finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
     }
 
     expect(finalTransition.model.state).toEqual({ status: 'unavailable', videoId: 'video-1' })
     expect(finalTransition.model.view.showOverlay).toBe(false)
-    expect(finalTransition.actions.at(-1)).toEqual({
-      type: 'sync-portals',
-      showSwitch: false,
-      showOverlay: false,
-      keepOverlayHost: false,
-    })
+    expect(finalTransition.plan.presentation).toBe('none')
   })
 
   it('resets a pending retry and recovers after lease initialization becomes available', () => {
@@ -247,10 +240,10 @@ describe('runtimeModel', () => {
       retryPending: true,
       state: { status: 'recovering', videoId: 'video-1' },
     })
-    expect(failed.actions).toContainEqual({ type: 'schedule-retry', delayMs: 250 })
+    expect(failed.plan.retry).toMatchObject({ kind: 'scheduled', delayMs: 250 })
 
     const reset = resetRuntimeRetry(failed.model)
-    expect(reset.actions).toEqual([{ type: 'cancel-retry' }])
+    expect(reset.plan.retry).toEqual({ kind: 'none' })
     expect(reset.model).toMatchObject({
       retryAttempts: 0,
       retryPending: false,
@@ -261,7 +254,7 @@ describe('runtimeModel', () => {
       decision,
       lease,
     })
-    expect(retry.actions.map(action => action.type)).toEqual(['initialize-lease'])
+    expect(retry.plan.chat).toEqual({ kind: 'acquire', decision })
 
     const recovered = settleRuntimeLeaseInitialization(retry.model, {
       decision,
@@ -287,7 +280,7 @@ describe('runtimeModel', () => {
 
     expect(transition.model.state).toEqual({ status: 'inactive', reason: 'disabled' })
     expect(transition.model.view).toMatchObject({ showSwitch: true, showOverlay: false })
-    expect(transition.actions).toContainEqual({ type: 'release-lease', ensureNativeVisible: true })
+    expect(transition.plan.chat).toEqual({ kind: 'none', ensureNativeVisible: true })
   })
 
   it('declares complete cleanup for stop while a retry and lease are owned', () => {
@@ -301,6 +294,12 @@ describe('runtimeModel', () => {
     const stopped = stopRuntimeModel(pending.model, active.lease)
 
     expect(stopped.model).toEqual(createInitialRuntimeModel())
-    expect(stopped.actions.map(action => action.type)).toEqual(['release-lease', 'cancel-retry', 'disconnect-observer', 'clear-runtime'])
+    expect(stopped.plan).toMatchObject({
+      monitoring: 'inactive',
+      presentation: 'none',
+      chat: { kind: 'none', ensureNativeVisible: false },
+      layout: 'none',
+      retry: { kind: 'none' },
+    })
   })
 })

@@ -422,12 +422,7 @@ describe('ChatRuntime', () => {
       showSwitch: false,
       showOverlay: false,
     })
-    expect(harness.portalHost.sync).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        overlayEnabled: false,
-        switchEnabled: false,
-      }),
-    )
+    expect(harness.portalHost.clear).toHaveBeenCalled()
     harness.runtime.stop()
   })
 
