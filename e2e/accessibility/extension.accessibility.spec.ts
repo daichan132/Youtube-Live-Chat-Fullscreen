@@ -1,5 +1,6 @@
 import AxeBuilder from '@axe-core/playwright'
 import { expect, test } from '@e2e/fixtures'
+import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { openDeterministicOverlay } from '@e2e/support/deterministicSurfaces'
 import { switchButtonContainerSelector } from '@e2e/utils/selectors'
 
@@ -40,10 +41,8 @@ test.describe('extension accessibility', () => {
 
   test('settings modal has no automated WCAG A/AA violations', async ({ page }) => {
     await openDeterministicOverlay(page)
-    const overlay = page.locator('[data-ylc-resizable]')
-    await overlay.hover()
-    await page.locator('[data-ylc-settings-btn]').click()
-    await expect(page.getByRole('dialog')).toBeVisible()
+    const overlay = new ExtensionOverlay(page)
+    await overlay.openSettings()
 
     const results = await new AxeBuilder({ page })
       .include('#shadow-root-live-chat')

@@ -11,6 +11,14 @@ export class ExtensionOverlay {
     return this.page.locator(`${SHADOW_HOST} [data-ylc-resizable]`)
   }
 
+  settingsFrame() {
+    return this.page.frameLocator(`${SHADOW_HOST} iframe[data-ylc-settings-frame]`)
+  }
+
+  settingsDialog() {
+    return this.settingsFrame().getByRole('dialog')
+  }
+
   switchButton() {
     return this.page.locator(switchButtonSelector)
   }
@@ -236,6 +244,12 @@ export class ExtensionOverlay {
     await this.frame().hover({ force: true })
     await expect(this.dragHandle()).toBeVisible()
     await expect(this.dragHandle()).toBeEnabled()
+  }
+
+  async openSettings() {
+    await this.revealControls()
+    await reliableClick(this.page.locator(`${SHADOW_HOST} [data-ylc-settings-btn]`), async () => this.settingsDialog().isVisible())
+    await expect(this.settingsDialog()).toBeVisible()
   }
 
   async startDrag(delta: { x: number; y: number }) {
