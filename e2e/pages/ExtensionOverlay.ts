@@ -248,8 +248,12 @@ export class ExtensionOverlay {
 
   async openSettings() {
     await this.revealControls()
-    await reliableClick(this.page.locator(`${SHADOW_HOST} [data-ylc-settings-btn]`), async () => this.settingsDialog().isVisible())
-    await expect(this.settingsDialog()).toBeVisible()
+    const dialog = this.settingsDialog()
+    if (await dialog.isVisible()) return
+    await reliableClick(this.page.locator(`${SHADOW_HOST} [data-ylc-settings-btn]`), async () => dialog.isVisible(), {
+      verifyTimeoutMs: TIMEOUT.SETTINGS_DIALOG,
+    })
+    await expect(dialog).toBeVisible()
   }
 
   async startDrag(delta: { x: number; y: number }) {

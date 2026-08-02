@@ -1,4 +1,4 @@
-import type { ChatGeometry, ChatProfile, RGBA } from './model'
+import type { ChatGeometryV2, ChatProfile, RGBA } from './model'
 
 export const LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR: RGBA = {
   r: 15,
@@ -26,7 +26,7 @@ export const DEFAULT_CHAT_PROFILE: ChatProfile = {
   },
 }
 
-export const DEFAULT_CHAT_GEOMETRY: ChatGeometry = {
+export const DEFAULT_CHAT_GEOMETRY: ChatGeometryV2 = {
   reference: 'player',
   rect: {
     x: 0.015625,

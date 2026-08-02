@@ -84,6 +84,30 @@ describe('normalizeChatGeometry', () => {
       pinned: true,
     })
   })
+
+  it('preserves valid geometry fallbacks when stored values are incomplete', () => {
+    const playerFallback = {
+      reference: 'player',
+      rect: { x: 0.1, y: 0.2, width: 0.3, height: 0.4 },
+      pinned: true,
+    } as const
+    expect(
+      normalizeChatGeometry(
+        {
+          reference: 'player',
+          rect: { x: Number.NaN, y: null, width: undefined, height: 'invalid' },
+        },
+        playerFallback,
+      ),
+    ).toEqual(playerFallback)
+
+    const legacyFallback = {
+      reference: 'legacy-viewport-px',
+      coordinates: { x: 32, y: 48 },
+      size: { width: 420, height: 360 },
+    } as const
+    expect(normalizeChatGeometry({}, legacyFallback)).toEqual(legacyFallback)
+  })
 })
 
 describe('normalizePresets', () => {

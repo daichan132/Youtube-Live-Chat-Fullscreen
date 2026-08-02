@@ -5,6 +5,8 @@ export type ReliableClickOptions = {
   allowJsFallback?: boolean
   /** Timeout for the normal click (Stage 1). Default: 5000. */
   timeoutMs?: number
+  /** Wait for the expected state before escalating to another click. Default: 0. */
+  verifyTimeoutMs?: number
 }
 
 /**
@@ -30,7 +32,15 @@ export const reliableClick = async (
   verify: () => Promise<boolean>,
   options: ReliableClickOptions = {},
 ) => {
-  const { allowJsFallback = false, timeoutMs = 5_000 } = options
+  const { allowJsFallback = false, timeoutMs = 5_000, verifyTimeoutMs = 0 } = options
+  const verifyWithinTimeout = async () => {
+    const deadline = Date.now() + verifyTimeoutMs
+    do {
+      if (await verify().catch(() => false)) return true
+      if (Date.now() >= deadline) return false
+      await new Promise(resolve => setTimeout(resolve, 25))
+    } while (true)
+  }
 
   // Stage 1: Normal click — actionability checks + addLocatorHandler active
   try {
@@ -38,7 +48,7 @@ export const reliableClick = async (
   } catch {
     // actionability failure — escalate
   }
-  if (await verify().catch(() => false)) return
+  if (await verifyWithinTimeout()) return
 
   // Stage 2: Force click — skip actionability checks
   try {
@@ -46,7 +56,7 @@ export const reliableClick = async (
   } catch {
     // click dispatch failure — escalate
   }
-  if (await verify().catch(() => false)) return
+  if (await verifyWithinTimeout()) return
 
   if (!allowJsFallback) {
     throw new Error('reliableClick: normal/force click did not produce expected state')
@@ -54,7 +64,7 @@ export const reliableClick = async (
 
   // Stage 3: JS click via dispatchEvent — isTrusted:false, some frameworks may ignore
   await locator.dispatchEvent('click')
-  if (!(await verify().catch(() => false))) {
+  if (!(await verifyWithinTimeout())) {
     throw new Error('reliableClick: all 3 stages failed to produce expected state')
   }
 }

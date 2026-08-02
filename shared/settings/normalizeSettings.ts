@@ -102,7 +102,6 @@ export const normalizeChatGeometry = (input: unknown, fallback: ChatGeometry = D
   const raw = isRecord(input) ? input : {}
   if (raw.reference === 'player' && isRecord(raw.rect)) {
     const fallbackV2 = fallback.reference === 'player' ? fallback : DEFAULT_CHAT_GEOMETRY
-    if (fallbackV2.reference !== 'player') throw new Error('Default geometry must use the player reference')
     return normalizeChatGeometryV2({
       reference: 'player',
       rect: {
