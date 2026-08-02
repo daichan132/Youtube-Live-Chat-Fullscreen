@@ -1,4 +1,4 @@
-import type { PageSnapshot } from './readPageSnapshot'
+import type { PageEvidence, PageTargets } from '../platform/youtube/types'
 import type { ChatSource } from './types'
 
 export const getManagedLiveChatUrl = (videoId: string) => {
@@ -29,84 +29,84 @@ export type ChatDecision =
       videoId: string
     }
 
-export const resolveChatDecision = (snapshot: PageSnapshot): ChatDecision => {
-  if (!snapshot.isWatchPage) return { kind: 'inactive', reason: 'not-watch-page' }
-  if (!snapshot.isFullscreen) return { kind: 'inactive', reason: 'not-fullscreen' }
-  if (!snapshot.videoId) return { kind: 'pending', videoId: null, mode: null, canToggle: false }
-  if (snapshot.chatUnavailable) return { kind: 'unavailable', videoId: snapshot.videoId }
+export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets): ChatDecision => {
+  if (evidence.route === 'other') return { kind: 'inactive', reason: 'not-watch-page' }
+  if (!evidence.fullscreen) return { kind: 'inactive', reason: 'not-fullscreen' }
+  if (!evidence.videoId) return { kind: 'pending', videoId: null, mode: null, canToggle: false }
+  if (evidence.chatAvailability === 'unavailable') return { kind: 'unavailable', videoId: evidence.videoId }
 
-  if (snapshot.iframeMode === 'archive') {
-    if (!snapshot.chatIframe || !snapshot.chatDocumentReady) {
+  if (evidence.sourceKind === 'native-replay') {
+    if (!targets.chatIframe || evidence.chatAvailability !== 'ready') {
       return {
         kind: 'pending',
-        videoId: snapshot.videoId,
+        videoId: evidence.videoId,
         mode: 'archive',
-        canToggle: snapshot.archiveOpenControlAvailable,
+        canToggle: evidence.capabilities.canOpenArchiveChat,
       }
     }
     return {
       kind: 'available',
-      videoId: snapshot.videoId,
+      videoId: evidence.videoId,
       mode: 'archive',
-      source: { kind: 'archive_borrow', iframe: snapshot.chatIframe },
+      source: { kind: 'archive_borrow', iframe: targets.chatIframe },
     }
   }
 
-  if (snapshot.iframeMode === 'live' && snapshot.chatIframe) {
-    if (snapshot.chatIframeManaged) {
+  if ((evidence.sourceKind === 'native-live' || evidence.sourceKind === 'managed-live') && targets.chatIframe) {
+    if (evidence.sourceKind === 'managed-live') {
       return {
         kind: 'available',
-        videoId: snapshot.videoId,
+        videoId: evidence.videoId,
         mode: 'live',
         source: {
           kind: 'live_direct',
-          videoId: snapshot.videoId,
-          url: getManagedLiveChatUrl(snapshot.videoId),
+          videoId: evidence.videoId,
+          url: getManagedLiveChatUrl(evidence.videoId),
         },
       }
     }
     return {
       kind: 'available',
-      videoId: snapshot.videoId,
+      videoId: evidence.videoId,
       mode: 'live',
       source: {
         kind: 'live_borrow',
-        videoId: snapshot.videoId,
-        iframe: snapshot.chatIframe,
+        videoId: evidence.videoId,
+        iframe: targets.chatIframe,
       },
     }
   }
 
-  if (snapshot.playerIsLive === true) {
+  if (evidence.videoMode === 'live' && evidence.capabilities.canCreateManagedLiveChat) {
     return {
       kind: 'available',
-      videoId: snapshot.videoId,
+      videoId: evidence.videoId,
       mode: 'live',
       source: {
         kind: 'live_direct',
-        videoId: snapshot.videoId,
-        url: getManagedLiveChatUrl(snapshot.videoId),
+        videoId: evidence.videoId,
+        url: getManagedLiveChatUrl(evidence.videoId),
       },
     }
   }
 
-  if (snapshot.archiveOpenControlAvailable) {
+  if (evidence.capabilities.canOpenArchiveChat) {
     return {
       kind: 'pending',
-      videoId: snapshot.videoId,
+      videoId: evidence.videoId,
       mode: 'archive',
       canToggle: true,
     }
   }
 
-  if (snapshot.playerIsLive === null) {
+  if (evidence.videoMode === 'unknown') {
     return {
       kind: 'pending',
-      videoId: snapshot.videoId,
+      videoId: evidence.videoId,
       mode: null,
       canToggle: false,
     }
   }
 
-  return { kind: 'unavailable', videoId: snapshot.videoId }
+  return { kind: 'unavailable', videoId: evidence.videoId }
 }

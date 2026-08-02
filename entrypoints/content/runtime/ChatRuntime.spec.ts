@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
+import type { PageObservation } from '../platform/youtube/types'
 import { ChatRuntimeImpl, mutationTouchesChatBoundary } from './ChatRuntime'
 import type { IframeLease } from './iframeLease'
 import type { PortalHost } from './portalHost'
-import type { PageSnapshot } from './readPageSnapshot'
 import type { ChatDecision } from './resolveChatDecision'
 import type { ChatSource } from './types'
 
@@ -15,23 +15,55 @@ vi.mock('wxt/browser', () => ({
   },
 }))
 
-const createSnapshot = (overrides: Partial<PageSnapshot> = {}): PageSnapshot => ({
-  videoId: 'video-1',
-  isWatchPage: true,
-  isFullscreen: true,
-  player: document.createElement('div'),
-  rightControls: document.createElement('div'),
-  chatHost: null,
-  chatIframe: null,
-  nativeChatIframe: null,
-  chatIframeManaged: false,
-  playerIsLive: true,
-  archiveOpenControlAvailable: false,
-  chatUnavailable: false,
-  chatDocumentReady: true,
-  iframeMode: 'live',
-  ...overrides,
-})
+type TestSnapshot = {
+  videoId: string | null
+  isWatchPage: boolean
+  isFullscreen: boolean
+  player: HTMLElement | null
+  rightControls: HTMLElement | null
+  chatIframe: HTMLIFrameElement | null
+}
+
+const createSnapshot = (overrides: Partial<TestSnapshot> = {}): PageObservation => {
+  const snapshot: TestSnapshot = {
+    videoId: 'video-1',
+    isWatchPage: true,
+    isFullscreen: true,
+    player: document.createElement('div'),
+    rightControls: document.createElement('div'),
+    chatIframe: null,
+    ...overrides,
+  }
+  return {
+    evidence: {
+      generation: 0,
+      videoId: snapshot.videoId,
+      route: snapshot.isWatchPage ? 'watch' : 'other',
+      fullscreen: snapshot.isFullscreen,
+      videoMode: 'live',
+      chatAvailability: 'ready',
+      capabilities: {
+        canBorrowNativeChat: snapshot.chatIframe !== null,
+        canCreateManagedLiveChat: true,
+        canOpenArchiveChat: false,
+        canRestoreNativeChat: false,
+        canMountOverlay: snapshot.player !== null,
+        canMountPlayerSwitch: snapshot.rightControls !== null,
+      },
+      sourceKind: snapshot.chatIframe ? 'native-live' : null,
+      probeIds: [],
+    },
+    targets: {
+      player: snapshot.player,
+      fullscreenRoot: snapshot.isFullscreen ? snapshot.player : null,
+      rightControls: snapshot.rightControls,
+      nativeChatHost: null,
+      nativeChatIframe: snapshot.chatIframe,
+      chatIframe: snapshot.chatIframe,
+      archiveOpenControl: null,
+    },
+  }
+}
 
 const createBorrowSource = (iframe: HTMLIFrameElement, videoId = 'video-1'): ChatSource => ({
   kind: 'live_borrow',
@@ -59,7 +91,7 @@ const createLease = (iframe: HTMLIFrameElement, videoId = 'video-1'): IframeLeas
   }
 }
 
-const createHarness = (options: { decisions: ChatDecision[]; snapshots?: PageSnapshot[]; leases?: IframeLease[] }) => {
+const createHarness = (options: { decisions: ChatDecision[]; snapshots?: PageObservation[]; leases?: IframeLease[] }) => {
   let decisionIndex = 0
   let snapshotIndex = 0
   let leaseIndex = 0
@@ -77,7 +109,7 @@ const createHarness = (options: { decisions: ChatDecision[]; snapshots?: PageSna
   })
   const runtime = new ChatRuntimeImpl({
     portalHost,
-    readSnapshot,
+    readObservation: readSnapshot,
     resolveDecision,
     createLease: createLeaseFactory,
   })
@@ -334,7 +366,7 @@ describe('ChatRuntime', () => {
         },
         { kind: 'inactive', reason: 'not-fullscreen' },
       ],
-      snapshots: [createSnapshot({ iframeMode: 'archive' }), createSnapshot({ isFullscreen: false })],
+      snapshots: [createSnapshot(), createSnapshot({ isFullscreen: false })],
       leases: [lease],
     })
 

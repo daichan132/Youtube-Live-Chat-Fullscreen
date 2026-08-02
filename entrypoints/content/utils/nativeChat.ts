@@ -1,4 +1,5 @@
 import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
+import { archivePlayerChatToggleSelectors, archiveSidebarOpenSelectors } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import {
   getCurrentLiveChatHost,
   getCurrentLiveChatIframe,
@@ -13,25 +14,6 @@ type YouTubeLiveChatFrameElement = HTMLElement & {
 
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
-
-// Keep this selector list aligned with currently supported YouTube controls.
-// `tp-yt-paper-icon-button` intentionally stays excluded because it is treated as
-// a legacy YouTube renderer in this project.
-const archiveSidebarOpenSelectors = [
-  'ytd-live-chat-frame #show-hide-button button',
-  'ytd-live-chat-frame #show-hide-button yt-icon-button',
-  '#chat-container #show-hide-button button',
-  '#chat-container #show-hide-button yt-icon-button',
-  'ytd-live-chat-frame #show-hide-button',
-  '#chat-container #show-hide-button',
-]
-
-const archivePlayerChatToggleSelectors = [
-  '.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
-  '.ytp-right-controls button-view-model button[aria-pressed="false"]',
-  '#movie_player toggle-button-view-model button[aria-pressed="false"]',
-  '#movie_player button-view-model button[aria-pressed="false"]',
-]
 
 const isNativeChatMarkedExpanded = () => {
   const watchFlexy = document.querySelector('ytd-watch-flexy')
@@ -96,7 +78,7 @@ const isElementVisible = (element: HTMLElement) => {
 }
 
 const clickFirstMatchingSelector = (
-  selectors: string[],
+  selectors: readonly string[],
   options: {
     requireChatLabel?: boolean
     requireCurrentChatHost?: boolean
@@ -110,7 +92,7 @@ const clickFirstMatchingSelector = (
 }
 
 const findFirstMatchingControl = (
-  selectors: string[],
+  selectors: readonly string[],
   options: {
     requireChatLabel?: boolean
     requireCurrentChatHost?: boolean
@@ -179,27 +161,22 @@ const hasArchiveShowHideSlotContent = () => {
   return false
 }
 
-export const hasArchiveNativeOpenControl = () => {
-  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: true })) return true
-  if (findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: false })) return true
-  if (
-    findFirstMatchingControl(archivePlayerChatToggleSelectors, {
-      requireChatLabel: true,
-      requireCurrentChatHost: true,
-      requireVisible: true,
-    })
-  )
-    return true
-  if (
-    findFirstMatchingControl(archivePlayerChatToggleSelectors, {
-      requireChatLabel: true,
-      requireCurrentChatHost: true,
-      requireVisible: false,
-    })
-  )
-    return true
-  return hasChatFrameShowHideHandler() && hasArchiveShowHideSlotContent()
-}
+export const getArchiveNativeOpenControl = () =>
+  findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: true }) ??
+  findFirstMatchingControl(archiveSidebarOpenSelectors, { requireCurrentChatHost: true, requireVisible: false }) ??
+  findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+    requireChatLabel: true,
+    requireCurrentChatHost: true,
+    requireVisible: true,
+  }) ??
+  findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+    requireChatLabel: true,
+    requireCurrentChatHost: true,
+    requireVisible: false,
+  })
+
+export const hasArchiveNativeOpenControl = () =>
+  getArchiveNativeOpenControl() !== null || (hasChatFrameShowHideHandler() && hasArchiveShowHideSlotContent())
 
 export const openArchiveNativeChatPanel = () => {
   // `#show-hide-button` is a toggle. If YouTube already marks expanded and

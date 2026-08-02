@@ -14,12 +14,6 @@ export const createSessionScope = (generation: number): SessionScope => {
   const controller = new AbortController()
   const timers = new Set<number>()
   const frames = new Set<number>()
-  const cleanups = new Set<() => void>()
-
-  const removeCleanup = (cleanup: () => void) => {
-    if (!cleanups.delete(cleanup)) return
-    cleanup()
-  }
 
   return {
     generation,
@@ -50,18 +44,17 @@ export const createSessionScope = (generation: number): SessionScope => {
     },
     listen(target, type, listener) {
       if (controller.signal.aborted) return () => {}
-      target.addEventListener(type, listener)
+      target.addEventListener(type, listener, { signal: controller.signal })
       const cleanup = () => target.removeEventListener(type, listener)
-      cleanups.add(cleanup)
-      return () => removeCleanup(cleanup)
+      return cleanup
     },
     addCleanup(cleanup) {
       if (controller.signal.aborted) {
         cleanup()
         return () => {}
       }
-      cleanups.add(cleanup)
-      return () => removeCleanup(cleanup)
+      controller.signal.addEventListener('abort', cleanup, { once: true })
+      return () => controller.signal.removeEventListener('abort', cleanup)
     },
     dispose() {
       if (controller.signal.aborted) return
@@ -70,7 +63,6 @@ export const createSessionScope = (generation: number): SessionScope => {
       timers.clear()
       for (const frame of frames) window.cancelAnimationFrame(frame)
       frames.clear()
-      for (const cleanup of [...cleanups]) removeCleanup(cleanup)
     },
   }
 }

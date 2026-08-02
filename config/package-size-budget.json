@@ -12,7 +12,7 @@
     },
     "budgets": {
       "zipBytes": 300000,
-      "contentJsBytes": 390000,
+      "contentJsBytes": 392000,
       "popupJsBytes": 250000,
       "contentCssBytes": 60000,
       "popupCssBytes": 50000,
@@ -33,7 +33,7 @@
     },
     "budgets": {
       "zipBytes": 300000,
-      "contentJsBytes": 390000,
+      "contentJsBytes": 392000,
       "popupJsBytes": 250000,
       "contentCssBytes": 60000,
       "popupCssBytes": 50000,

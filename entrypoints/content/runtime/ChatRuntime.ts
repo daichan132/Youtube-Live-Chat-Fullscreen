@@ -14,11 +14,13 @@ import { applyChatProfileToDocument } from '@/entrypoints/content/style/applySty
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import type { ChatProfile } from '@/shared/settings/model'
 import { createSessionScope, type SessionScope } from '../bootstrap/SessionScope'
+import { collectPageObservation } from '../platform/youtube/collectPageObservation'
+import { runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
+import { type PageObservation, withObservationGeneration } from '../platform/youtube/types'
 import { type ChatOnlyChromeIntent, createChatOnlyChromeController } from './chatOnlyChrome'
 import { clearFullscreenChatLayout, setFullscreenChatLayout } from './fullscreenChatLayout'
 import { createIframeLease, type IframeLease } from './iframeLease'
 import { createPortalHost, type PortalHost } from './portalHost'
-import { type PageSnapshot, readPageSnapshot } from './readPageSnapshot'
 import { type ChatDecision, resolveChatDecision } from './resolveChatDecision'
 import {
   createInitialRuntimeModel,
@@ -59,8 +61,7 @@ export interface ChatRuntime {
 }
 
 const ARCHIVE_OPEN_COOLDOWN_MS = 2000
-const CHAT_BOUNDARY_SELECTOR =
-  'ytd-watch-flexy, ytd-watch-grid, #movie_player, .ytp-right-controls, ytd-live-chat-frame, #chatframe, #chat-container, #show-hide-button, #secondary, #panels-full-bleed-container'
+const CHAT_BOUNDARY_SELECTOR = runtimeBoundarySelector
 
 const initialView: RuntimeView = {
   status: 'inactive',
@@ -92,8 +93,8 @@ export const mutationTouchesChatBoundary = (mutation: MutationRecord) => {
 export class ChatRuntimeImpl implements ChatRuntime {
   private readonly listeners = new Set<() => void>()
   private readonly portalHost: PortalHost
-  private readonly readSnapshot: (leasedIframe?: HTMLIFrameElement | null) => PageSnapshot
-  private readonly resolveDecision: (snapshot: PageSnapshot) => ChatDecision
+  private readonly readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
+  private readonly resolveDecision: (observation: PageObservation) => ChatDecision
   private readonly createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string) => IframeLease
   private readonly chatOnlyChrome = createChatOnlyChromeController()
   private model: RuntimeModel = createInitialRuntimeModel()
@@ -118,14 +119,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
   constructor(
     dependencies: Partial<{
       portalHost: PortalHost
-      readSnapshot: (leasedIframe?: HTMLIFrameElement | null) => PageSnapshot
-      resolveDecision: (snapshot: PageSnapshot) => ChatDecision
+      readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
+      resolveDecision: (observation: PageObservation) => ChatDecision
       createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string) => IframeLease
     }> = {},
   ) {
     this.portalHost = dependencies.portalHost ?? createPortalHost()
-    this.readSnapshot = dependencies.readSnapshot ?? readPageSnapshot
-    this.resolveDecision = dependencies.resolveDecision ?? resolveChatDecision
+    this.readObservation = dependencies.readObservation ?? collectPageObservation
+    this.resolveDecision = dependencies.resolveDecision ?? (observation => resolveChatDecision(observation.evidence, observation.targets))
     this.createLease = dependencies.createLease ?? createIframeLease
   }
 
@@ -356,11 +357,12 @@ export class ChatRuntimeImpl implements ChatRuntime {
         }
       : null
 
-  private ensureSessionScope = (snapshot: PageSnapshot) => {
+  private ensureSessionScope = (observation: PageObservation) => {
+    const { evidence, targets } = observation
     const nextIdentity = {
-      videoId: snapshot.videoId,
-      player: snapshot.player,
-      fullscreenRoot: snapshot.isFullscreen ? (document.fullscreenElement ?? snapshot.player) : null,
+      videoId: evidence.videoId,
+      player: targets.player,
+      fullscreenRoot: evidence.fullscreen ? (targets.fullscreenRoot ?? targets.player) : null,
     }
     const changed =
       this.sessionIdentity !== null &&
@@ -390,16 +392,17 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private reconcile = () => {
     if (!this.started) return
     reconcilePendingNativeIframeRestores()
-    const snapshot = this.readSnapshot(this.lease?.iframe ?? null)
-    this.ensureSessionScope(snapshot)
-    const decision = this.resolveDecision(snapshot)
+    let observation = this.readObservation(this.lease?.iframe ?? null)
+    this.ensureSessionScope(observation)
+    observation = withObservationGeneration(observation, this.generation)
+    const decision = this.resolveDecision(observation)
     this.applyModelTransition(
       transitionRuntimeModel(this.model, {
         enabled: this.enabled,
         decision,
         lease: this.getLeaseSnapshot(),
       }),
-      snapshot,
+      observation,
     )
   }
 
@@ -414,7 +417,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     }
   }
 
-  private applyModelTransition = (transition: RuntimeModelTransition, snapshot: PageSnapshot | null) => {
+  private applyModelTransition = (transition: RuntimeModelTransition, observation: PageObservation | null) => {
     this.model = transition.model
     const targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null } = {
       overlayRoot: null,
@@ -422,14 +425,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
     }
 
     for (const action of transition.actions) {
-      const initialized = this.executeModelAction(action, snapshot, targets)
+      const initialized = this.executeModelAction(action, observation, targets)
       if (initialized === null) continue
       const settled = settleRuntimeLeaseInitialization(this.model, {
         decision: initialized.decision,
         lease: this.getLeaseSnapshot(),
         initialized: initialized.success,
       })
-      this.applyModelTransition(settled, snapshot)
+      this.applyModelTransition(settled, observation)
       return
     }
 
@@ -441,7 +444,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
 
   private executeModelAction = (
     action: RuntimeModelAction,
-    snapshot: PageSnapshot | null,
+    observation: PageObservation | null,
     targets: { overlayRoot: ShadowRoot | null; switchContainer: HTMLElement | null },
   ): { decision: Extract<ChatDecision, { kind: 'available' }>; success: boolean } | null => {
     switch (action.type) {
@@ -478,11 +481,11 @@ export class ChatRuntimeImpl implements ChatRuntime {
         this.ensureArchivePanelOpen()
         return null
       case 'sync-portals': {
-        if (!snapshot) throw new Error('A page snapshot is required to synchronize runtime portals.')
-        setFullscreenChatLayout(action.showOverlay && snapshot.isFullscreen)
+        if (!observation) throw new Error('A page observation is required to synchronize runtime portals.')
+        setFullscreenChatLayout(action.showOverlay && observation.evidence.fullscreen)
         const nextTargets = this.portalHost.sync({
-          player: snapshot.player,
-          rightControls: snapshot.rightControls,
+          player: observation.targets.player,
+          rightControls: observation.targets.rightControls,
           overlayEnabled: action.keepOverlayHost,
           switchEnabled: action.showSwitch,
         })

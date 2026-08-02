@@ -2,6 +2,10 @@ import type { Page, TestInfo } from '@playwright/test'
 import { TIMING } from '@e2e/support/constants'
 import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
 import { switchButtonSelector } from '@e2e/utils/selectors'
+import {
+	archivePlayerChatToggleSelectors,
+	archiveSidebarOpenSelectors,
+} from '../../entrypoints/content/platform/youtube/selectorCatalog'
 
 type DiagnosticState = {
 	reason: string
@@ -23,24 +27,6 @@ type DiagnosticState = {
 		playable: boolean
 	}
 }
-
-// Keep this list consistent with `entrypoints/content/utils/nativeChat.ts`.
-// `tp-yt-paper-icon-button` is intentionally excluded as a legacy renderer.
-const archiveSidebarOpenSelectors = [
-	'ytd-live-chat-frame #show-hide-button button',
-	'ytd-live-chat-frame #show-hide-button yt-icon-button',
-	'#chat-container #show-hide-button button',
-	'#chat-container #show-hide-button yt-icon-button',
-	'ytd-live-chat-frame #show-hide-button',
-	'#chat-container #show-hide-button',
-]
-
-const archivePlayerChatToggleSelectors = [
-	'.ytp-right-controls toggle-button-view-model button[aria-pressed="false"]',
-	'.ytp-right-controls button-view-model button[aria-pressed="false"]',
-	'#movie_player toggle-button-view-model button[aria-pressed="false"]',
-	'#movie_player button-view-model button[aria-pressed="false"]',
-]
 
 const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; switchSelector: string }): DiagnosticState => {
 	const h = window.__ylcHelpers
@@ -212,10 +198,10 @@ export const hasYouTubePlayerError = () => {
 const tryOpenArchiveNativeChatPanel = async (page: Page) => {
 	return page
 		.evaluate(
-			({ sidebarSelectors, playerSelectors }) => {
+			({ sidebarSelectors, playerSelectors }: { sidebarSelectors: readonly string[]; playerSelectors: readonly string[] }) => {
 				const h = window.__ylcHelpers
 
-				const clickFirstMatching = (selectors: string[], options: { requireChatLabel?: boolean } = {}) => {
+				const clickFirstMatching = (selectors: readonly string[], options: { requireChatLabel?: boolean } = {}) => {
 					for (const selector of selectors) {
 						const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
 						for (const target of targets) {

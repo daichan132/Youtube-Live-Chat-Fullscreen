@@ -1,3 +1,4 @@
+import { nativeChatIframeProbe, queryAllProbes } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 
 export const YLC_OWNED_ATTR = 'data-ylc-owned'
@@ -9,14 +10,7 @@ export const YLC_OBSERVED_VIDEO_ATTR = 'data-ylc-observed-video-id'
 const getIframeHrefFromSrc = (iframe: HTMLIFrameElement) => iframe.getAttribute('src') ?? iframe.src ?? ''
 
 export const getLiveChatIframes = () => {
-  const iframes = new Set<HTMLIFrameElement>()
-  for (const iframe of Array.from(document.querySelectorAll<HTMLIFrameElement>('#chatframe'))) {
-    iframes.add(iframe)
-  }
-  for (const iframe of Array.from(document.querySelectorAll<HTMLIFrameElement>('ytd-live-chat-frame iframe.ytd-live-chat-frame'))) {
-    iframes.add(iframe)
-  }
-  return Array.from(iframes)
+  return queryAllProbes<HTMLIFrameElement>(document, nativeChatIframeProbe).elements
 }
 
 const getMoviePlayerVideoId = () => {

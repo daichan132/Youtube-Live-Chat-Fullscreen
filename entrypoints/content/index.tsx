@@ -22,7 +22,6 @@ export default defineContentScript({
       anchor: 'body',
       append: 'first',
       onMount: container => {
-        // Create a wrapper element
         const wrapper = document.createElement('div')
         wrapper.id = 'wxt-react-content'
         wrapper.dataset.ylcRoot = ''
