@@ -29,11 +29,11 @@ describe('production package source policy', () => {
     expect(manifest).not.toHaveProperty('optional_permissions')
   })
 
-  it('exposes runtime locale files only to YouTube pages', () => {
+  it('exposes runtime locale files and the settings page only to YouTube pages', () => {
     expect(wxtConfig.manifest).toMatchObject({
       web_accessible_resources: [
         {
-          resources: ['locales/*.json'],
+          resources: ['locales/*.json', 'settings.html'],
           matches: ['https://www.youtube.com/*'],
         },
       ],

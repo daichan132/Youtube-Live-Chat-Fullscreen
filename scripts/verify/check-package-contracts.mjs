@@ -97,16 +97,20 @@ const localeCodes = (files, pattern) =>
 const findForbiddenFiles = files =>
   forbiddenProductionFiles.flatMap(rule => files.filter(rule.matches).map(file => `${rule.label}: ${file}`))
 
-const hasRuntimeLocaleResource = manifest => {
+const hasRuntimeResources = manifest => {
   const resources = manifest.web_accessible_resources ?? []
-  const localeResources = resources.filter(resource =>
-    typeof resource === 'string' ? resource === 'locales/*.json' : resource.resources?.includes('locales/*.json'),
+  const expectedResources = ['locales/*.json', 'settings.html']
+  if (manifest.manifest_version === 2) {
+    return expectedResources.every(resource => resources.includes(resource))
+  }
+
+  const runtimeResources = resources.filter(resource =>
+    typeof resource === 'object' ? resource.resources?.includes('locales/*.json') : false,
   )
-  if (localeResources.length !== 1) return false
-  const [resource] = localeResources
-  if (typeof resource === 'string') return manifest.manifest_version === 2
+  if (runtimeResources.length !== 1) return false
+  const [resource] = runtimeResources
   return (
-    JSON.stringify(resource.resources) === JSON.stringify(['locales/*.json']) &&
+    JSON.stringify(resource.resources) === JSON.stringify(expectedResources) &&
     JSON.stringify(resource.matches) === JSON.stringify(['https://www.youtube.com/*'])
   )
 }
@@ -150,7 +154,10 @@ const verifyTarget = async report => {
   if (manifest.host_permissions?.length) failures.push(`host_permissions must be absent, got ${manifest.host_permissions.join(', ')}`)
   if (manifest.optional_permissions?.length)
     failures.push(`optional_permissions must be absent, got ${manifest.optional_permissions.join(', ')}`)
-  if (!hasRuntimeLocaleResource(manifest)) failures.push('web_accessible_resources must expose locales/*.json only to YouTube')
+  if (!hasRuntimeResources(manifest)) {
+    failures.push('web_accessible_resources must expose locales/*.json and settings.html to YouTube')
+  }
+  if (!files.includes('settings.html')) failures.push('settings extension page is missing')
 
   if (manifest.content_scripts?.length !== 1) failures.push(`expected one content script, got ${manifest.content_scripts?.length ?? 0}`)
   const contentScript = manifest.content_scripts?.[0]

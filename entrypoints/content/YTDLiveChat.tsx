@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { ChatViewport } from './overlay/ChatViewport'
 import { OverlayFrame } from './overlay/OverlayFrame'
 import { useChatRuntimeInstance } from './runtime/ChatRuntimeContext'
+import { SettingsFrame } from './settings/SettingsFrame'
 
 type YTDLiveChatProps = {
   loading: boolean
@@ -17,7 +17,7 @@ export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
 
   return (
     <>
-      <YTDLiveChatSetting open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <SettingsFrame open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <OverlayFrame
         initialDisplayOnMount
         ready={!loading}

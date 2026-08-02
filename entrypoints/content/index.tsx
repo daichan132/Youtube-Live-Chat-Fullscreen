@@ -2,7 +2,6 @@ import { createRoot } from 'react-dom/client'
 
 import { CONTENT_SCRIPT_MATCHES } from '../../config/packagePolicy'
 import { Content } from './Content'
-import '@/shared/styles/react-colorful.css'
 import './content.css'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'

@@ -14,7 +14,7 @@ export default defineConfig({
     permissions: ['activeTab', 'storage'],
     web_accessible_resources: [
       {
-        resources: ['locales/*.json'],
+        resources: ['locales/*.json', 'settings.html'],
         matches: ['https://www.youtube.com/*'],
       },
     ],
