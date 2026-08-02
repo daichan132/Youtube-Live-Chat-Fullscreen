@@ -11,6 +11,7 @@ vi.mock('wxt/browser', () => ({
   browser: {
     runtime: {
       getURL: (path: string) => `chrome-extension://test/${path}`,
+      getManifest: () => ({ version: '2.3.14' }),
     },
   },
 }))
@@ -305,6 +306,52 @@ describe('ChatRuntime', () => {
     expect(harness.portalHost.clear).toHaveBeenCalled()
     expect(harness.carrier.querySelectorAll('iframe')).toHaveLength(1)
     expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
+    harness.runtime.stop()
+  })
+
+  it('restarts only the current session while preserving settings and enabling a new generation', () => {
+    const firstIframe = document.createElement('iframe')
+    firstIframe.src = '/live_chat?v=video-1'
+    const secondIframe = document.createElement('iframe')
+    secondIframe.src = '/live_chat?v=video-1&restart=1'
+    const firstLease = createLease(firstIframe)
+    const secondLease = createLease(secondIframe)
+    const harness = createHarness({
+      decisions: [
+        { kind: 'available', videoId: 'video-1', mode: 'live', source: createBorrowSource(firstIframe) },
+        { kind: 'available', videoId: 'video-1', mode: 'live', source: createBorrowSource(secondIframe) },
+      ],
+      snapshots: [createSnapshot({ chatIframe: firstIframe }), createSnapshot({ chatIframe: secondIframe })],
+      leases: [firstLease, secondLease],
+    })
+
+    flushFrame()
+    expect(harness.runtime.getSnapshot().status).toBe('active')
+    harness.runtime.restart()
+    flushFrame()
+
+    expect(firstLease.release).toHaveBeenCalledOnce()
+    expect(harness.runtime.getGeneration()).toBe(2)
+    expect(harness.runtime.getSnapshot().status).toBe('active')
+    expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
+    harness.runtime.stop()
+  })
+
+  it('exports a bounded sanitized diagnostic report without the current video identity', () => {
+    const harness = createHarness({
+      decisions: [{ kind: 'pending', videoId: 'private-video-id', mode: 'live', canToggle: false }],
+      snapshots: [createSnapshot({ videoId: 'private-video-id' })],
+    })
+
+    flushFrame()
+    const report = harness.runtime.getDiagnosticReport()
+
+    expect(report).toMatchObject({
+      extensionVersion: '2.3.14',
+      runtime: { generation: 1, status: 'searching', failureCode: 'CHAT_SOURCE_PENDING' },
+    })
+    expect(report.events.length).toBeGreaterThan(0)
+    expect(JSON.stringify(report)).not.toContain('private-video-id')
     harness.runtime.stop()
   })
 

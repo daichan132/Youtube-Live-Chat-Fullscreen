@@ -1,4 +1,4 @@
-type SelectorProbe = {
+export type SelectorProbe = {
   readonly probeId: string
   readonly selectors: readonly string[]
 }
@@ -68,6 +68,17 @@ export const queryAllProbes = <T extends Element>(root: ParentNode, probe: Selec
     for (const element of matches) elements.add(element)
   }
   return { elements: [...elements], probeIds }
+}
+
+export const identifyProbeForElement = (root: ParentNode, probe: SelectorProbe, element: Element | null) => {
+  if (!element) return null
+  for (let index = 0; index < probe.selectors.length; index += 1) {
+    const candidates = root.querySelectorAll(probe.selectors[index])
+    if ([...candidates].some(candidate => candidate === element || candidate.contains(element) || element.contains(candidate))) {
+      return candidateProbeId(probe, index)
+    }
+  }
+  return null
 }
 
 export const archiveSidebarOpenSelectors = archiveSidebarOpenControlProbe.selectors

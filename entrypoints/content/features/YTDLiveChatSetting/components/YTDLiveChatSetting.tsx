@@ -23,9 +23,10 @@ import { SettingContent } from './SettingContent'
 type YTDLiveChatSettingProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  diagnostics?: React.ReactNode
 }
 
-export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
+export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
@@ -219,7 +220,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
-          {menuItem === 'setting' && <SettingContent />}
+          {menuItem === 'setting' && <SettingContent diagnostics={diagnostics} />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

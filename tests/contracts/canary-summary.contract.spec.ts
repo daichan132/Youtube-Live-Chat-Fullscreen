@@ -72,6 +72,15 @@ describe('Real YouTube canary summary', () => {
     })
   })
 
+  it('promotes fallback fingerprints to degraded and missing capabilities to failed', () => {
+    expect(summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'degraded' }], 'passed').state).toBe('degraded')
+    const failed = summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'failed' }], 'passed')
+
+    expect(failed.state).toBe('failed')
+    expect(shouldFailCanaryRun(failed)).toBe(true)
+    expect(renderCanarySummary([{ ...passed, compatibilityState: 'degraded' }], 'passed')).toContain('compatibility: degraded')
+  })
+
   it('makes an all-skipped canary non-green instead of silently passing', () => {
     const summary = summarizeCanaryOutcomes(
       [

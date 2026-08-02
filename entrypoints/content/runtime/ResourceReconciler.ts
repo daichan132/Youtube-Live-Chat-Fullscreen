@@ -19,6 +19,16 @@ import type { RuntimePlan } from './runtimeModel'
 
 type AvailableDecision = Extract<ChatDecision, { kind: 'available' }>
 
+export type ResourceDiagnosticSnapshot = {
+  chat: {
+    kind: ChatIframeLease['kind'] | 'none'
+    state: ChatIframeLease['state'] | 'none'
+  }
+  presentation: 'none' | 'switch-only' | 'overlay-only' | 'overlay-and-switch'
+  layout: 'none' | 'floating'
+  restoringChatCount: number
+}
+
 export class ResourceReconciler {
   private readonly presentation: PresentationLease
   private readonly chatChrome: ChatChromeLease
@@ -34,6 +44,8 @@ export class ResourceReconciler {
   private removeLoadListener: (() => void) | null = null
   private portalTargets: PortalTargets = { overlayRoot: null, switchContainer: null }
   private interaction: 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open' = 'idle'
+  private presentationState: ResourceDiagnosticSnapshot['presentation'] = 'none'
+  private layoutState: ResourceDiagnosticSnapshot['layout'] = 'none'
 
   constructor(
     dependencies: Partial<{
@@ -53,6 +65,13 @@ export class ResourceReconciler {
     return this.iframeLease
   }
 
+  getDiagnosticSnapshot = (): ResourceDiagnosticSnapshot => ({
+    chat: this.iframeLease ? { kind: this.iframeLease.kind, state: this.iframeLease.state } : { kind: 'none', state: 'none' },
+    presentation: this.presentationState,
+    layout: this.layoutState,
+    restoringChatCount: this.restoringLeases.size,
+  })
+
   reconcilePlan(plan: RuntimePlan, observation: PageObservation | null, scope: SessionScope | null, onLoad: () => void) {
     const pageTargets = observation?.targets ?? null
     if (pageTargets) this.reconcileRestoring(pageTargets)
@@ -61,6 +80,7 @@ export class ResourceReconciler {
     if (plan.chat.kind === 'acquire' && !this.sourceMatches(plan.chat.decision)) this.releaseIframe(pageTargets)
 
     if (plan.layout === 'none') {
+      this.layoutState = 'none'
       if (plan.monitoring === 'inactive') {
         this.layoutLease?.release()
         this.layoutLease = null
@@ -72,11 +92,13 @@ export class ResourceReconciler {
     if (plan.presentation === 'none') {
       this.presentation.clear()
       this.portalTargets = { overlayRoot: null, switchContainer: null }
+      this.presentationState = 'none'
     }
 
     const presentationFlags = this.getPresentationFlags(plan.presentation)
     if (presentationFlags) {
       if (!observation) throw new Error('Missing page observation')
+      if (plan.presentation !== 'preserve' && plan.presentation !== 'none') this.presentationState = plan.presentation
       this.portalTargets = this.presentation.sync({
         player: observation.targets.player,
         rightControls: observation.targets.rightControls,
@@ -85,6 +107,7 @@ export class ResourceReconciler {
     }
     if (plan.layout === 'floating') {
       if (!scope) throw new Error('Missing session scope')
+      this.layoutState = 'floating'
       this.ensureLayoutLease(scope).reconcile(true)
     }
 
@@ -172,6 +195,8 @@ export class ResourceReconciler {
     this.layoutScope = null
     this.presentation.clear()
     this.portalTargets = { overlayRoot: null, switchContainer: null }
+    this.presentationState = 'none'
+    this.layoutState = 'none'
     this.chatChrome.release()
   }
 

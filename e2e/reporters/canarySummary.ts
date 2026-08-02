@@ -7,6 +7,7 @@ export type CanaryTestOutcome = {
   file: string
   status: 'passed' | 'failed' | 'flaky' | 'skipped'
   detail?: string
+  compatibilityState?: 'passed' | 'degraded' | 'failed'
 }
 
 export type CanarySummary = {
@@ -25,12 +26,18 @@ export const summarizeCanaryOutcomes = (outcomes: readonly CanaryTestOutcome[], 
   const failed = outcomes.filter(outcome => outcome.status === 'failed').length
   const executed = outcomes.length - skipped
   const state =
-    executed === 0 ? 'not-run' : failed > 0 || runStatus !== 'passed' ? 'failed' : skipped > 0 || flaky > 0 ? 'degraded' : 'passed'
+    executed === 0
+      ? 'not-run'
+      : failed > 0 || runStatus !== 'passed' || outcomes.some(outcome => outcome.compatibilityState === 'failed')
+        ? 'failed'
+        : skipped > 0 || flaky > 0 || outcomes.some(outcome => outcome.compatibilityState === 'degraded')
+          ? 'degraded'
+          : 'passed'
 
   return { state, executed, passed, flaky, skipped, failed }
 }
 
-export const shouldFailCanaryRun = (summary: CanarySummary) => summary.executed === 0
+export const shouldFailCanaryRun = (summary: CanarySummary) => summary.executed === 0 || summary.state === 'failed'
 
 const escapeCell = (value: string) => value.replaceAll('|', '\\|').replaceAll(/\r?\n/g, ' ')
 
@@ -52,7 +59,10 @@ export const renderCanarySummary = (outcomes: readonly CanaryTestOutcome[], runS
   if (outcomes.length > 0) {
     lines.push('', '| Test | Outcome | Detail |', '| --- | --- | --- |')
     for (const outcome of outcomes) {
-      lines.push(`| ${escapeCell(outcome.title)} | ${outcome.status} | ${escapeCell(outcome.detail ?? '')} |`)
+      const detail = [outcome.detail, outcome.compatibilityState ? `compatibility: ${outcome.compatibilityState}` : undefined]
+        .filter(Boolean)
+        .join('; ')
+      lines.push(`| ${escapeCell(outcome.title)} | ${outcome.status} | ${escapeCell(detail)} |`)
     }
   }
 
@@ -77,11 +87,14 @@ class CanarySummaryReporter implements Reporter {
       const lastResult = test.results.at(-1)
       const skipReason = lastResult?.annotations.find(annotation => annotation.type === 'skip')?.description
       const failure = lastResult?.error?.message?.split('\n')[0]
+      const compatibility = lastResult?.annotations.find(annotation => annotation.type === 'compatibility')?.description
       return {
         title: test.titlePath().slice(1).join(' › '),
         file: test.location.file,
         status: outcome === 'expected' ? 'passed' : outcome === 'unexpected' ? 'failed' : outcome,
         detail: outcome === 'skipped' ? skipReason : failure,
+        compatibilityState:
+          compatibility === 'passed' || compatibility === 'degraded' || compatibility === 'failed' ? compatibility : undefined,
       }
     })
 

@@ -17,7 +17,7 @@ export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
 
   return (
     <>
-      <SettingsFrame open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsFrame open={settingsOpen} onClose={() => setSettingsOpen(false)} runtime={chatRuntime} />
       <OverlayFrame
         initialDisplayOnMount
         ready={!loading}

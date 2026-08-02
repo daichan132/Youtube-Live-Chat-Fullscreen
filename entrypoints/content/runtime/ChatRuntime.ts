@@ -1,6 +1,14 @@
+import { browser } from 'wxt/browser'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import type { ChatProfile } from '@/shared/settings/model'
 import { createSessionScope, type SessionScope } from '../bootstrap/SessionScope'
+import type { RuntimeFailureCode } from '../diagnostics/failureCodes'
+import { type DiagnosticEventName, RuntimeTrace } from '../diagnostics/RuntimeTrace'
+import {
+  createSanitizedDiagnosticReport,
+  detectBrowserFamily,
+  type SanitizedDiagnosticReport,
+} from '../diagnostics/sanitizeDiagnosticReport'
 import { collectPageObservation } from '../platform/youtube/collectPageObservation'
 import { runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { type PageObservation, withObservationGeneration } from '../platform/youtube/types'
@@ -37,8 +45,10 @@ export type RuntimeView = {
 export interface ChatRuntime {
   start(): void
   stop(): void
+  restart(): void
   subscribe(listener: () => void): () => void
   getSnapshot(): RuntimeView
+  getDiagnosticReport(): SanitizedDiagnosticReport
   getGeneration(): number
   setEnabled(enabled: boolean): void
   setProfile(profile: ChatProfile): void
@@ -81,6 +91,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private readonly resources: ResourceReconciler
   private readonly readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
   private readonly resolveDecision: (observation: PageObservation) => ChatDecision
+  private readonly trace: RuntimeTrace
   private model: RuntimeModel = createInitialRuntimeModel()
   private view = initialView
   private started = false
@@ -93,6 +104,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private scheduledFrame: number | null = null
   private retryTimer: number | null = null
   private lastArchiveOpenAt = 0
+  private lastObservation: PageObservation | null = null
+  private lastObservationSignature = ''
+  private lastPlanSignature = ''
+  private lastFailure: RuntimeFailureCode | undefined
 
   constructor(
     dependencies: Partial<{
@@ -100,6 +115,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
       readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
       resolveDecision: (observation: PageObservation) => ChatDecision
       createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string, generation: number) => ChatIframeLease
+      trace: RuntimeTrace
     }> = {},
   ) {
     this.resources = new ResourceReconciler({
@@ -108,6 +124,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     })
     this.readObservation = dependencies.readObservation ?? collectPageObservation
     this.resolveDecision = dependencies.resolveDecision ?? (observation => resolveChatDecision(observation.evidence, observation.targets))
+    this.trace = dependencies.trace ?? new RuntimeTrace()
   }
 
   start = () => {
@@ -123,10 +140,22 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (!this.started) return
     this.started = false
     this.cancelScheduledFrame()
-    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), null)
+    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), this.lastObservation)
     this.disposeSessionScope()
     this.contentScope?.dispose()
     this.contentScope = null
+  }
+
+  restart = () => {
+    if (!this.started) return
+    this.cancelScheduledFrame()
+    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), this.lastObservation)
+    this.disposeSessionScope()
+    this.lastObservation = null
+    this.lastObservationSignature = ''
+    this.lastPlanSignature = ''
+    this.lastFailure = undefined
+    this.scheduleReconcile()
   }
 
   subscribe = (listener: () => void) => {
@@ -135,6 +164,25 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   getSnapshot = () => this.view
+
+  getDiagnosticReport = (): SanitizedDiagnosticReport => {
+    let extensionVersion = 'unknown'
+    try {
+      extensionVersion = browser.runtime.getManifest?.().version ?? extensionVersion
+    } catch {
+      // An invalidated extension context can no longer expose its manifest.
+    }
+    return createSanitizedDiagnosticReport({
+      extensionVersion,
+      browserFamily: detectBrowserFamily(globalThis.navigator?.userAgent ?? ''),
+      generation: this.generation,
+      evidence: this.lastObservation?.evidence ?? null,
+      state: this.model.state,
+      leases: this.resources.getDiagnosticSnapshot(),
+      failureCode: this.lastFailure,
+      events: this.trace.snapshot(),
+    })
+  }
 
   getGeneration = () => this.generation
 
@@ -276,8 +324,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
       this.disposeSessionScope()
     }
 
+    const created = !this.sessionScope
     if (!this.sessionScope) this.sessionScope = createSessionScope(++this.generation)
     this.sessionIdentity = nextIdentity
+    return created
   }
 
   private disposeSessionScope = () => {
@@ -291,9 +341,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private reconcile = () => {
     if (!this.started) return
     let observation = this.readObservation(this.resources.lease?.iframe ?? null)
-    this.ensureSessionScope(observation)
+    const sessionStarted = this.ensureSessionScope(observation)
     observation = withObservationGeneration(observation, this.generation)
+    this.lastObservation = observation
+    if (sessionStarted) this.recordTrace('session-started')
+    this.recordObservation(observation)
     const decision = this.resolveDecision(observation)
+    if (decision.kind === 'pending') this.lastFailure = 'CHAT_SOURCE_PENDING'
+    else if (decision.kind === 'unavailable') this.lastFailure = 'CHAT_SOURCE_UNAVAILABLE'
     this.applyModelTransition(
       transitionRuntimeModel(this.model, {
         enabled: this.enabled,
@@ -310,7 +365,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private applyModelTransition = (transition: RuntimeModelTransition, observation: PageObservation | null) => {
+    const previousStatus = this.model.state.status
+    const previousResources = this.resources.getDiagnosticSnapshot()
     this.model = transition.model
+    this.recordPlan(transition.plan)
     this.applyRuntimeOperations(transition.plan)
     const scope = this.sessionScope
     const result = this.resources.reconcilePlan(transition.plan, observation, scope, () => {
@@ -318,7 +376,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
       this.applyStandaloneTransition(resetRuntimeRetry(this.model))
       this.scheduleReconcile(scope.generation)
     })
+    this.recordResourceChanges(previousResources, this.resources.getDiagnosticSnapshot())
     if (result.initialization) {
+      if (!result.initialization.success) this.lastFailure = 'IFRAME_DOCUMENT_NOT_READY'
       const settled = settleRuntimeLeaseInitialization(this.model, {
         decision: result.initialization.decision,
         lease: this.getLeaseSnapshot(),
@@ -327,6 +387,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
       this.applyModelTransition(settled, observation)
       return
     }
+
+    this.updateFailure(previousStatus, observation)
+    this.recordStatusTransition(previousStatus, this.model.state.status)
 
     this.publish({
       ...this.model.view,
@@ -338,7 +401,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (plan.monitoring === 'active') this.ensureObserver()
     else if (plan.monitoring === 'inactive') this.disconnectObserver()
     if (plan.retry.kind === 'none') this.cancelRetry()
-    else if (plan.retry.kind === 'scheduled') this.scheduleRetry(plan.retry.delayMs)
+    else if (plan.retry.kind === 'scheduled') {
+      this.scheduleRetry(plan.retry.delayMs)
+      this.recordTrace('retry-scheduled', this.lastFailure)
+    }
     if (plan.openArchivePanel) this.ensureArchivePanelOpen()
   }
 
@@ -346,5 +412,83 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (isSameView(this.view, next)) return
     this.view = next
     for (const listener of this.listeners) listener()
+  }
+
+  private recordTrace = (event: DiagnosticEventName, failureCode?: RuntimeFailureCode) => {
+    this.trace.record({
+      generation: this.generation,
+      event,
+      status: this.model.state.status,
+      probeIds: this.lastObservation?.evidence.probeIds ?? [],
+      ...(failureCode ? { failureCode } : {}),
+    })
+  }
+
+  private recordObservation = (observation: PageObservation) => {
+    const { evidence } = observation
+    const signature = JSON.stringify({
+      generation: evidence.generation,
+      route: evidence.route,
+      fullscreen: evidence.fullscreen,
+      videoMode: evidence.videoMode,
+      chatAvailability: evidence.chatAvailability,
+      capabilities: evidence.capabilities,
+      sourceKind: evidence.sourceKind,
+      probeIds: evidence.probeIds,
+    })
+    if (signature === this.lastObservationSignature) return
+    this.lastObservationSignature = signature
+    this.recordTrace('observation-changed')
+  }
+
+  private recordPlan = (plan: RuntimePlan) => {
+    const signature = JSON.stringify({
+      monitoring: plan.monitoring,
+      presentation: plan.presentation,
+      chat: plan.chat.kind,
+      layout: plan.layout,
+      retry: plan.retry.kind,
+      openArchivePanel: Boolean(plan.openArchivePanel),
+    })
+    if (signature === this.lastPlanSignature) return
+    this.lastPlanSignature = signature
+    this.recordTrace('plan-changed')
+  }
+
+  private recordResourceChanges = (
+    previous: ReturnType<ResourceReconciler['getDiagnosticSnapshot']>,
+    next: ReturnType<ResourceReconciler['getDiagnosticSnapshot']>,
+  ) => {
+    if (previous.chat.kind === 'none' && next.chat.kind !== 'none') this.recordTrace('lease-acquired')
+    if (previous.chat.kind !== 'none' && next.chat.kind === 'none') {
+      this.recordTrace(next.restoringChatCount > previous.restoringChatCount ? 'lease-restoring' : 'lease-released')
+    }
+    if (previous.restoringChatCount > next.restoringChatCount) this.recordTrace('lease-released')
+  }
+
+  private updateFailure = (previousStatus: RuntimeState['status'], observation: PageObservation | null) => {
+    if (this.model.state.status === 'active') {
+      this.lastFailure = undefined
+      return
+    }
+    if (this.model.state.status === 'unavailable' && (previousStatus === 'searching' || previousStatus === 'recovering')) {
+      this.lastFailure = 'RETRY_EXHAUSTED'
+      return
+    }
+    const evidence = observation?.evidence
+    if (!evidence) return
+    if (evidence.fullscreen && !evidence.capabilities.canMountOverlay) this.lastFailure = 'PLAYER_TARGET_MISSING'
+    else if (evidence.fullscreen && !evidence.capabilities.canMountPlayerSwitch) this.lastFailure = 'CONTROL_TARGET_MISSING'
+    else if (evidence.chatAvailability === 'unavailable') this.lastFailure = 'CHAT_SOURCE_UNAVAILABLE'
+    else if (evidence.chatAvailability === 'pending') this.lastFailure = 'CHAT_SOURCE_PENDING'
+  }
+
+  private recordStatusTransition = (previousStatus: RuntimeState['status'], nextStatus: RuntimeState['status']) => {
+    if ((previousStatus === 'recovering' || previousStatus === 'searching') && nextStatus === 'active') {
+      this.recordTrace('recovered')
+    }
+    if (previousStatus !== 'unavailable' && nextStatus === 'unavailable') {
+      this.recordTrace('failed', this.lastFailure)
+    }
   }
 }

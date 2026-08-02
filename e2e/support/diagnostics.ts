@@ -9,19 +9,16 @@ import {
 
 type DiagnosticState = {
 	reason: string
-	url: string
 	mode: 'live' | 'archive' | 'unknown'
 	fullscreen: boolean
 	switchPressed: string | null
 	native: {
 		hasFrame: boolean
-		href: string
 		unavailable: boolean
 		playable: boolean
 	}
 	extension: {
 		hasFrame: boolean
-		href: string
 		owned: boolean
 		unavailable: boolean
 		playable: boolean
@@ -52,13 +49,11 @@ const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; sw
 
 	return {
 		reason,
-		url: window.location.href,
 		mode,
 		fullscreen: document.fullscreenElement !== null,
 		switchPressed: switchButton?.getAttribute('aria-pressed') ?? null,
 		native: {
 			hasFrame: Boolean(nativeIframe),
-			href: nativeHref,
 			unavailable: nativeUnavailable,
 			playable: Boolean(
 				nativeHref &&
@@ -70,7 +65,6 @@ const getChatDiagnosticState = ({ reason, switchSelector }: { reason: string; sw
 		},
 		extension: {
 			hasFrame: Boolean(extensionIframe),
-			href: extensionHref,
 			owned: Boolean(extensionIframe && extensionIframe.getAttribute('data-ylc-owned') === 'true'),
 			unavailable: extensionUnavailable,
 			playable: Boolean(extensionHref && !extensionHref.includes('about:blank') && !extensionUnavailable && h.isDocPlayable(extensionDoc)),

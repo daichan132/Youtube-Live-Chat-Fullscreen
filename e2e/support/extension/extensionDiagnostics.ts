@@ -1,5 +1,5 @@
-import type { Page, TestInfo } from '@playwright/test'
 import { switchButtonContainerSelector, switchButtonSelector } from '@e2e/utils/selectors'
+import type { Page, TestInfo } from '@playwright/test'
 
 export type BrowserLogBuffer = {
   console: string[]
@@ -48,7 +48,7 @@ const readExtensionDiagnostics = (selectors: { switchContainer: string; switchBu
     nativeIframe: nativeIframe
       ? {
           id: nativeIframe.id,
-          href: helpers.readIframeHref(nativeIframe),
+          documentReady: Boolean(helpers.readIframeHref(nativeIframe)),
           connected: nativeIframe.isConnected,
           unavailable: helpers.isDocUnavailable(nativeIframe.contentDocument),
         }
@@ -56,7 +56,7 @@ const readExtensionDiagnostics = (selectors: { switchContainer: string; switchBu
     extensionIframe: extensionIframe
       ? {
           id: extensionIframe.id,
-          href: helpers.readIframeHref(extensionIframe),
+          documentReady: Boolean(helpers.readIframeHref(extensionIframe)),
           owned: extensionIframe.getAttribute('data-ylc-owned'),
           source: extensionIframe.getAttribute('data-ylc-source'),
           connected: extensionIframe.isConnected,
@@ -79,10 +79,11 @@ export const attachFailureDiagnostics = async (page: Page, testInfo: TestInfo, l
   await testInfo.attach('extension-diagnostics', {
     body: JSON.stringify(
       {
-        url: page.url(),
         page: pageState,
-        console: logs.console,
-        pageErrors: logs.pageErrors,
+        logs: {
+          consoleCount: logs.console.length,
+          pageErrorCount: logs.pageErrors.length,
+        },
       },
       null,
       2,

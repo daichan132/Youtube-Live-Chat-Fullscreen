@@ -9,6 +9,9 @@ import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTube
 import { getLiveChatDocument, hasLiveChatRendererReady, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { getArchiveNativeOpenControl, hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
 import {
+  archivePlayerChatToggleProbe,
+  archiveSidebarOpenControlProbe,
+  identifyProbeForElement,
   nativeChatHostProbe,
   nativeChatIframeProbe,
   playerProbe,
@@ -108,6 +111,10 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
     : null
   const playerIsLive = getPlayerLiveState(player, videoId, watchProbe.element)
   const archiveOpenControl = getArchiveNativeOpenControl()
+  const archiveOpenProbeId =
+    identifyProbeForElement(document, archiveSidebarOpenControlProbe, archiveOpenControl) ??
+    identifyProbeForElement(document, archivePlayerChatToggleProbe, archiveOpenControl)
+  if (archiveOpenProbeId) probeIds.add(archiveOpenProbeId)
   const canOpenArchiveChat = archiveOpenControl !== null || hasArchiveNativeOpenControl()
   const videoMode = getVideoMode(sourceKind, playerIsLive)
   const chatAvailability: PageEvidence['chatAvailability'] = chatUnavailable

@@ -6,4 +6,5 @@
 @import "../../shared/styles/controls.css" layer(components);
 
 @source "./**/*.{ts,tsx}";
+@source "../settings/**/*.{ts,tsx}";
 @source "../../shared/**/*.{ts,tsx}";
