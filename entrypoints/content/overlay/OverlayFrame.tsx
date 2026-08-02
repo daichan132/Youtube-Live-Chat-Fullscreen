@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef } from 'react'
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useDocumentFocus } from '@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { effectiveProfileAtom } from '@/shared/state'
@@ -43,7 +43,11 @@ export const OverlayFrame = ({
     documentFocused,
     alwaysVisible: profile.display.idleVisibility === 'always-visible',
   })
+  const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
   const geometry = useOverlayGeometry({
+    referenceElement,
+    settingsOpen,
+    interactionState: interaction.state,
     onGestureStart: type => (type === 'resize' ? interaction.startResizing() : interaction.startDragging()),
     onGestureEnd: interaction.finishDragging,
   })
@@ -100,7 +104,7 @@ export const OverlayFrame = ({
   }
 
   return (
-    <div className='absolute inset-0 overflow-hidden' style={{ pointerEvents: 'none' }}>
+    <div ref={setReferenceElement} className='absolute inset-0 overflow-hidden' style={{ pointerEvents: 'none' }}>
       <div role='application' data-ylc-resizable className='absolute' style={frameStyle}>
         <div data-ylc-draggable-frame className='relative h-full w-full'>
           <ChatSurface

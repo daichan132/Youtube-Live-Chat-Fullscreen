@@ -180,6 +180,7 @@ describe('createAppRuntime', () => {
     const externalChat = structuredClone(DEFAULT_CHAT_SETTINGS)
     externalChat.profile.appearance.fontSize = 27
     externalChat.geometry = {
+      reference: 'legacy-viewport-px',
       coordinates: { x: 120, y: 160 },
       size: { width: 640, height: 520 },
     }

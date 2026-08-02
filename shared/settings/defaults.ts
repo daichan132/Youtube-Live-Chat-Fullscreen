@@ -1,4 +1,3 @@
-import { DefaultCoordinates, DefaultSize } from '@/shared/constants'
 import type { ChatGeometry, ChatProfile, RGBA } from './model'
 
 export const LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR: RGBA = {
@@ -28,6 +27,12 @@ export const DEFAULT_CHAT_PROFILE: ChatProfile = {
 }
 
 export const DEFAULT_CHAT_GEOMETRY: ChatGeometry = {
-  coordinates: { ...DefaultCoordinates },
-  size: { ...DefaultSize },
+  reference: 'player',
+  rect: {
+    x: 0.015625,
+    y: 0.027778,
+    width: 0.3125,
+    height: 0.555556,
+  },
+  pinned: false,
 }

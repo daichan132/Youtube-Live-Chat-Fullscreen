@@ -1,6 +1,6 @@
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { ThemeMode } from '@/shared/theme'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import { normalizeChatGeometryV2, normalizeLegacyChatGeometry } from './chatGeometry'
 import { DEFAULT_CHAT_GEOMETRY, DEFAULT_CHAT_PROFILE } from './defaults'
 import {
   BUILTIN_PRESET_IDS,
@@ -100,19 +100,35 @@ export const normalizeChatProfile = (input: unknown, fallback: ChatProfile = DEF
 
 export const normalizeChatGeometry = (input: unknown, fallback: ChatGeometry = DEFAULT_CHAT_GEOMETRY): ChatGeometry => {
   const raw = isRecord(input) ? input : {}
+  if (raw.reference === 'player' && isRecord(raw.rect)) {
+    const fallbackV2 = fallback.reference === 'player' ? fallback : DEFAULT_CHAT_GEOMETRY
+    if (fallbackV2.reference !== 'player') throw new Error('Default geometry must use the player reference')
+    return normalizeChatGeometryV2({
+      reference: 'player',
+      rect: {
+        x: clampFinite(raw.rect.x, 0, 1, fallbackV2.rect.x),
+        y: clampFinite(raw.rect.y, 0, 1, fallbackV2.rect.y),
+        width: clampFinite(raw.rect.width, 0, 1, fallbackV2.rect.width),
+        height: clampFinite(raw.rect.height, 0, 1, fallbackV2.rect.height),
+      },
+      pinned: booleanOr(raw.pinned, fallbackV2.pinned),
+    })
+  }
+
   const coordinates = isRecord(raw.coordinates) ? raw.coordinates : {}
   const size = isRecord(raw.size) ? raw.size : {}
-
-  return {
-    coordinates: {
-      x: clampFinite(coordinates.x, -Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, fallback.coordinates.x),
-      y: clampFinite(coordinates.y, -Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, fallback.coordinates.y),
+  if (!('coordinates' in raw) && !('size' in raw)) return normalizeChatGeometry(fallback, DEFAULT_CHAT_GEOMETRY)
+  const fallbackLegacy = fallback.reference === 'legacy-viewport-px' ? fallback : null
+  return normalizeLegacyChatGeometry(
+    {
+      x: clampFinite(coordinates.x, -Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, fallbackLegacy?.coordinates.x ?? 20),
+      y: clampFinite(coordinates.y, -Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER, fallbackLegacy?.coordinates.y ?? 20),
     },
-    size: {
-      width: clampFinite(size.width, ResizableMinWidth, Number.MAX_SAFE_INTEGER, fallback.size.width),
-      height: clampFinite(size.height, ResizableMinHeight, Number.MAX_SAFE_INTEGER, fallback.size.height),
+    {
+      width: clampFinite(size.width, 0, Number.MAX_SAFE_INTEGER, fallbackLegacy?.size.width ?? 400),
+      height: clampFinite(size.height, 0, Number.MAX_SAFE_INTEGER, fallbackLegacy?.size.height ?? 400),
     },
-  }
+  )
 }
 
 export const isBuiltinPresetId = (value: string): value is BuiltinPresetId => BUILTIN_PRESET_ID_SET.has(value)

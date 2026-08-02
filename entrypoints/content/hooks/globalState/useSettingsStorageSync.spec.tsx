@@ -85,9 +85,13 @@ describe('AppRuntime settings ownership', () => {
     runtime.store.set(editorSessionStateAtom, { draftProfile: null, past: [profile], future: [], activeGesture: null })
     externalHandlers?.onChat({
       ...DEFAULT_CHAT_SETTINGS,
-      geometry: { coordinates: { x: 1000, y: 700 }, size: { width: 800, height: 600 } },
+      geometry: {
+        reference: 'legacy-viewport-px',
+        coordinates: { x: 1000, y: 700 },
+        size: { width: 800, height: 600 },
+      },
     })
-    expect(runtime.store.get(chatSettingsStateAtom).geometry.coordinates).toEqual({ x: 1000, y: 700 })
+    expect(runtime.store.get(chatSettingsStateAtom).geometry).toMatchObject({ coordinates: { x: 1000, y: 700 } })
     expect(runtime.store.get(editorSessionStateAtom).past).toHaveLength(1)
     runtime.dispose()
   })

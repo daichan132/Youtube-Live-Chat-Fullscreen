@@ -13,10 +13,7 @@ type OverlayStorePatch = {
     appearance?: Partial<ChatAppearance>
     display?: Partial<ChatDisplay>
   }
-  geometry?: {
-    coordinates?: Partial<ChatGeometry['coordinates']>
-    size?: Partial<ChatGeometry['size']>
-  }
+  geometry?: ChatGeometry
   presets?: PresetEntry[]
 }
 
@@ -58,16 +55,7 @@ export const patchOverlayStore = async (extension: Extension, overrides: Overlay
           ...overrides.profile?.display,
         },
       },
-      geometry: {
-        coordinates: {
-          ...current.geometry.coordinates,
-          ...overrides.geometry?.coordinates,
-        },
-        size: {
-          ...current.geometry.size,
-          ...overrides.geometry?.size,
-        },
-      },
+      geometry: overrides.geometry ?? current.geometry,
       presets: overrides.presets ?? current.presets,
     },
     current,

@@ -4,7 +4,8 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
-import type { ChatGeometry } from '../../../shared/settings/model'
+import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
+import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
 import { CHAT_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const scenarioState = {
@@ -18,10 +19,12 @@ const scenarioState = {
   },
 } satisfies YouTubeScenarioState
 
-const SEEDED_GEOMETRY: ChatGeometry = {
+const FIXTURE_REFERENCE = { width: 1280, height: 720 }
+const SEEDED_LAYOUT: PixelChatGeometry = {
   coordinates: { x: 100, y: 80 },
   size: { width: 400, height: 300 },
 }
+const SEEDED_GEOMETRY = layoutGeometryToV2(SEEDED_LAYOUT, FIXTURE_REFERENCE, true)
 
 const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> =>
   storagePage.evaluate(async key => {
@@ -59,10 +62,10 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: SEEDED_GEOMETRY.coordinates.x,
-          y: SEEDED_GEOMETRY.coordinates.y,
-          width: SEEDED_GEOMETRY.size.width,
-          height: SEEDED_GEOMETRY.size.height,
+          x: SEEDED_LAYOUT.coordinates.x,
+          y: SEEDED_LAYOUT.coordinates.y,
+          width: SEEDED_LAYOUT.size.width,
+          height: SEEDED_LAYOUT.size.height,
         })
       const viewport = await overlay.getGeometry()
 
@@ -75,23 +78,24 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
 
       await overlay.startDrag({ x: 2000, y: 2000 })
       const clampedCoordinates = {
-        x: viewport.viewportWidth - SEEDED_GEOMETRY.size.width - 10,
-        y: viewport.viewportHeight - SEEDED_GEOMETRY.size.height - 10,
+        x: viewport.viewportWidth - SEEDED_LAYOUT.size.width - 10,
+        y: viewport.viewportHeight - SEEDED_LAYOUT.size.height - 10,
       }
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
           ...clampedCoordinates,
-          width: SEEDED_GEOMETRY.size.width,
-          height: SEEDED_GEOMETRY.size.height,
+          width: SEEDED_LAYOUT.size.width,
+          height: SEEDED_LAYOUT.size.height,
         })
       expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
 
       await overlay.finishPointerGesture()
-      const draggedGeometry: ChatGeometry = {
-        coordinates: clampedCoordinates,
-        size: { width: 400, height: 300 },
-      }
+      const draggedGeometry: ChatGeometryV2 = layoutGeometryToV2(
+        { coordinates: clampedCoordinates, size: SEEDED_LAYOUT.size },
+        { width: viewport.viewportWidth, height: viewport.viewportHeight },
+        true,
+      )
       await expectPersistedGeometry(storagePage, draggedGeometry)
 
       await overlay.startResize('bottomRight', { x: -80, y: -60 })
@@ -105,17 +109,22 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       expect(await readPersistedGeometry(storagePage)).toEqual(draggedGeometry)
 
       await overlay.finishPointerGesture()
-      const resizedGeometry: ChatGeometry = {
-        coordinates: clampedCoordinates,
-        size: { width: 320, height: 240 },
-      }
+      const resizedGeometry: ChatGeometryV2 = layoutGeometryToV2(
+        { coordinates: clampedCoordinates, size: { width: 320, height: 240 } },
+        { width: viewport.viewportWidth, height: viewport.viewportHeight },
+        true,
+      )
       await expectPersistedGeometry(storagePage, resizedGeometry)
 
       await overlay.moveWithKeyboard('ArrowLeft')
-      await expectPersistedGeometry(storagePage, {
-        coordinates: { x: clampedCoordinates.x - 10, y: clampedCoordinates.y },
-        size: { width: 320, height: 240 },
-      })
+      await expectPersistedGeometry(
+        storagePage,
+        layoutGeometryToV2(
+          { coordinates: { x: clampedCoordinates.x - 10, y: clampedCoordinates.y }, size: { width: 320, height: 240 } },
+          { width: viewport.viewportWidth, height: viewport.viewportHeight },
+          true,
+        ),
+      )
     } finally {
       await storagePage.close()
     }

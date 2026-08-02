@@ -2,6 +2,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings/chatGeometry'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
@@ -31,10 +32,14 @@ const profileWithFontSize = (fontSize: number): ChatProfile => ({
 
 const importedSettings = (fontSize: number, customPreset: PresetEntry): ChatSettings => ({
   profile: profileWithFontSize(fontSize),
-  geometry: {
-    coordinates: { x: 80 + fontSize, y: 60 + fontSize },
-    size: { width: 320 + fontSize, height: 240 + fontSize },
-  },
+  geometry: layoutGeometryToV2(
+    {
+      coordinates: { x: 80 + fontSize, y: 60 + fontSize },
+      size: { width: 320 + fontSize, height: 240 + fontSize },
+    },
+    { width: 1280, height: 720 },
+    true,
+  ),
   presets: [{ kind: 'builtin', id: 'standard' }, customPreset],
 })
 
@@ -135,29 +140,31 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     try {
       const first = importedSettings(22, firstPreset)
+      const firstLayout = renderChatGeometry(first.geometry, { width: 1280, height: 720 })
       await importSettingsViaPopup(popup, extension, importBackup(first))
       await page.bringToFront()
       await expect.poll(() => overlay.getAppliedFontSize()).toBe('22px')
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: first.geometry.coordinates.x,
-          y: first.geometry.coordinates.y,
-          width: first.geometry.size.width,
-          height: first.geometry.size.height,
+          x: firstLayout.coordinates.x,
+          y: firstLayout.coordinates.y,
+          width: firstLayout.size.width,
+          height: firstLayout.size.height,
         })
 
       const second = importedSettings(31, secondPreset)
+      const secondLayout = renderChatGeometry(second.geometry, { width: 1280, height: 720 })
       await importSettingsViaPopup(popup, extension, importBackup(second))
       await page.bringToFront()
       await expect.poll(() => overlay.getAppliedFontSize()).toBe('31px')
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: second.geometry.coordinates.x,
-          y: second.geometry.coordinates.y,
-          width: second.geometry.size.width,
-          height: second.geometry.size.height,
+          x: secondLayout.coordinates.x,
+          y: secondLayout.coordinates.y,
+          width: secondLayout.size.width,
+          height: secondLayout.size.height,
         })
       await expect.poll(async () => (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).toEqual(second.presets)
 

@@ -23,10 +23,11 @@ describe('settings equality', () => {
     const left = copySettings()
     const right = copySettings()
     expect(areChatSettingsEqual(left, right)).toBe(true)
-    right.geometry.coordinates.x += 1
+    if (right.geometry.reference !== 'player' || left.geometry.reference !== 'player') throw new Error('Expected player geometry')
+    right.geometry.rect.x += 0.01
     expect(areChatSettingsEqual(left, right)).toBe(false)
 
-    right.geometry.coordinates.x = left.geometry.coordinates.x
+    right.geometry.rect.x = left.geometry.rect.x
     right.presets.reverse()
     expect(areChatSettingsEqual(left, right)).toBe(false)
   })

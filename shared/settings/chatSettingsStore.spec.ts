@@ -29,14 +29,16 @@ describe('chat settings commands', () => {
       appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 100 },
     })
     store.set(commitGeometryAtom, {
-      coordinates: { x: 48, y: 64 },
-      size: { width: 100, height: 100 },
+      reference: 'player',
+      rect: { x: 0.1, y: 0.2, width: 0.8, height: 1 },
+      pinned: true,
     })
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(40)
-    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
-      coordinates: { x: 48, y: 64 },
-      size: { width: 300, height: 200 },
-    })
+    expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ reference: 'player', pinned: true })
+    expect(store.get(chatSettingsStateAtom).geometry).toHaveProperty('rect.x', 0.1)
+    expect(store.get(chatSettingsStateAtom).geometry).toHaveProperty('rect.width', 0.65)
+    expect(store.get(chatSettingsStateAtom).geometry).toHaveProperty('rect.height', 0.9)
+    expect(store.get(chatSettingsStateAtom).geometry).toHaveProperty('rect.y', expect.closeTo(0.1))
   })
 
   it('keeps normalized defaults and supports preset lifecycle commands', () => {
@@ -69,7 +71,10 @@ describe('chat settings commands', () => {
       presetItemStyles: { custom: { fontSize: 18 } },
     })
     expect(state.profile.appearance.fontSize).toBe(21)
-    expect(state.geometry.coordinates).toEqual({ x: 80, y: 90 })
+    expect(state.geometry).toMatchObject({
+      reference: 'legacy-viewport-px',
+      coordinates: { x: 80, y: 90 },
+    })
     expect(state.presets).toMatchObject([{ kind: 'custom', id: 'custom', name: 'Legacy' }])
     expect(state).not.toHaveProperty('fontSize')
   })

@@ -51,8 +51,9 @@ describe('sanitizers', () => {
     expect(result.profile.appearance.backgroundColor).toEqual({ r: 0, g: 20, b: 255, a: 1 })
     expect(result.profile.appearance.fontSize).toBe(DEFAULT_CHAT_SETTINGS.profile.appearance.fontSize)
     expect(result.geometry).toEqual({
+      reference: 'legacy-viewport-px',
       coordinates: { x: 20, y: 30 },
-      size: { width: 300, height: 400 },
+      size: { width: 240, height: 400 },
     })
     expect(result.presets).toEqual([])
   })

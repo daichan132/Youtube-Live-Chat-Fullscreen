@@ -161,6 +161,7 @@ describe('settings envelopes', () => {
 
       expect(snapshot.chat.profile.appearance.fontSize).toBe(21)
       expect(snapshot.chat.geometry).toEqual({
+        reference: 'legacy-viewport-px',
         coordinates: { x: 80, y: 90 },
         size: { width: 600, height: 500 },
       })
@@ -275,6 +276,7 @@ describe('settings envelopes', () => {
       expect(winningSnapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
       expect(winningSnapshot.chat.profile.appearance.fontSize).toBe(23)
       expect(winningSnapshot.chat.geometry).toEqual({
+        reference: 'legacy-viewport-px',
         coordinates: { x: 80, y: 90 },
         size: { width: 600, height: 500 },
       })
@@ -327,6 +329,7 @@ describe('settings envelopes', () => {
 
       expect(snapshot.chat.profile.appearance.fontSize).toBe(22)
       expect(snapshot.chat.geometry).toEqual({
+        reference: 'legacy-viewport-px',
         coordinates: { x: 70, y: 80 },
         size: { width: 620, height: 510 },
       })

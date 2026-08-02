@@ -12,6 +12,19 @@ export const nativeChatIframeProbe = {
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
 } as const
 export const fullscreenButtonProbe = { probeId: 'controls.fullscreen.v1', selectors: ['button.ytp-fullscreen-button'] } as const
+export const captionObstacleProbe = {
+  probeId: 'obstacle.caption.v1',
+  selectors: ['.ytp-caption-window-container', '.caption-window'],
+} as const
+export const playerControlsObstacleProbe = { probeId: 'obstacle.controls.v1', selectors: ['.ytp-chrome-bottom'] } as const
+export const playerMenuObstacleProbe = {
+  probeId: 'obstacle.menu.v1',
+  selectors: ['.ytp-popup:not(.ytp-settings-menu-hidden)', '.ytp-panel-menu'],
+} as const
+export const endScreenObstacleProbe = {
+  probeId: 'obstacle.endscreen.v1',
+  selectors: ['.html5-endscreen', '.ytp-ce-element'],
+} as const
 export const runtimeBoundarySelector =
   'ytd-watch-flexy, ytd-watch-grid, #movie_player, .ytp-right-controls, ytd-live-chat-frame, #chatframe, #chat-container, #show-hide-button, #secondary, #panels-full-bleed-container'
 export const archiveSidebarOpenControlProbe = {
@@ -42,6 +55,10 @@ export const youtubeSelectorCatalog = {
   nativeChatHost: nativeChatHostProbe,
   nativeChatIframe: nativeChatIframeProbe,
   fullscreenButton: fullscreenButtonProbe,
+  captionObstacle: captionObstacleProbe,
+  playerControlsObstacle: playerControlsObstacleProbe,
+  playerMenuObstacle: playerMenuObstacleProbe,
+  endScreenObstacle: endScreenObstacleProbe,
   archiveSidebarOpenControl: archiveSidebarOpenControlProbe,
   archivePlayerChatToggle: archivePlayerChatToggleProbe,
 } as const satisfies Record<string, SelectorProbe>

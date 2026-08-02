@@ -55,7 +55,7 @@ describe('fitGeometryToViewport', () => {
 
     expect(result).toEqual({
       coordinates: { x: 10, y: 10 },
-      size: { width: 300, height: 200 },
+      size: { width: 240, height: 180 },
     })
   })
 })

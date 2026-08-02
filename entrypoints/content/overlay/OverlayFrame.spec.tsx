@@ -1,6 +1,7 @@
 import { act, fireEvent } from '@testing-library/react'
 import { createStore } from 'jotai/vanilla'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { renderChatGeometry } from '@/shared/settings/chatGeometry'
 import { DEFAULT_CHAT_GEOMETRY, DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
 import { renderWithStore } from '@/shared/state/testUtils'
@@ -30,10 +31,9 @@ describe('OverlayFrame', () => {
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 120, clientY: 110 })))
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, clientX: 120, clientY: 110 })))
     expect(onInteractionStateChange).toHaveBeenLastCalledWith('idle')
-    expect(store.get(chatSettingsStateAtom).geometry.coordinates).toEqual({
-      x: DEFAULT_CHAT_GEOMETRY.coordinates.x + 20,
-      y: DEFAULT_CHAT_GEOMETRY.coordinates.y + 10,
-    })
+    const coordinates = renderChatGeometry(store.get(chatSettingsStateAtom).geometry, { width: 800, height: 600 }).coordinates
+    expect(coordinates.x).toBeCloseTo(renderChatGeometry(DEFAULT_CHAT_GEOMETRY, { width: 800, height: 600 }).coordinates.x + 20)
+    expect(coordinates.y).toBeCloseTo(renderChatGeometry(DEFAULT_CHAT_GEOMETRY, { width: 800, height: 600 }).coordinates.y + 10)
   })
 
   it('cancels a pointer gesture without leaving the interaction state active', () => {
@@ -65,9 +65,8 @@ describe('OverlayFrame', () => {
     fireEvent.keyDown(handle, { key: 'ArrowDown' })
 
     expect(handle).toHaveFocus()
-    expect(store.get(chatSettingsStateAtom).geometry.coordinates).toEqual({
-      x: DEFAULT_CHAT_GEOMETRY.coordinates.x + 10,
-      y: DEFAULT_CHAT_GEOMETRY.coordinates.y + 10,
-    })
+    const coordinates = renderChatGeometry(store.get(chatSettingsStateAtom).geometry, { width: 800, height: 600 }).coordinates
+    expect(coordinates.x).toBeCloseTo(renderChatGeometry(DEFAULT_CHAT_GEOMETRY, { width: 800, height: 600 }).coordinates.x + 10)
+    expect(coordinates.y).toBeCloseTo(renderChatGeometry(DEFAULT_CHAT_GEOMETRY, { width: 800, height: 600 }).coordinates.y + 10)
   })
 })

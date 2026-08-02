@@ -27,11 +27,26 @@ export const areChatProfilesEqual = (left: ChatProfile, right: ChatProfile) => {
   )
 }
 
-const areGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) =>
-  left.coordinates.x === right.coordinates.x &&
-  left.coordinates.y === right.coordinates.y &&
-  left.size.width === right.size.width &&
-  left.size.height === right.size.height
+const areGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) => {
+  if (left.reference !== right.reference) return false
+  if (left.reference === 'legacy-viewport-px') {
+    return (
+      right.reference === 'legacy-viewport-px' &&
+      left.coordinates.x === right.coordinates.x &&
+      left.coordinates.y === right.coordinates.y &&
+      left.size.width === right.size.width &&
+      left.size.height === right.size.height
+    )
+  }
+  return (
+    right.reference === 'player' &&
+    left.rect.x === right.rect.x &&
+    left.rect.y === right.rect.y &&
+    left.rect.width === right.rect.width &&
+    left.rect.height === right.rect.height &&
+    left.pinned === right.pinned
+  )
+}
 
 const arePresetsEqual = (left: PresetEntry, right: PresetEntry) =>
   left.kind === right.kind &&

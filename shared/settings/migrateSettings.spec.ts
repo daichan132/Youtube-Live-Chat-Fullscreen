@@ -49,6 +49,7 @@ describe('migrateV6ToV7', () => {
       },
     })
     expect(migrated.geometry).toEqual({
+      reference: 'legacy-viewport-px',
       coordinates: { x: 72, y: 48 },
       size: { width: 640, height: 480 },
     })

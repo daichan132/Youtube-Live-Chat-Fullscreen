@@ -42,7 +42,8 @@ export type ChatProfile = {
   display: ChatDisplay
 }
 
-export type ChatGeometry = {
+export type LegacyChatGeometry = {
+  reference: 'legacy-viewport-px'
   coordinates: {
     x: number
     y: number
@@ -52,6 +53,19 @@ export type ChatGeometry = {
     height: number
   }
 }
+
+export type ChatGeometryV2 = {
+  reference: 'player'
+  rect: {
+    x: number
+    y: number
+    width: number
+    height: number
+  }
+  pinned: boolean
+}
+
+export type ChatGeometry = LegacyChatGeometry | ChatGeometryV2
 
 export const BUILTIN_PRESET_IDS = ['standard', 'transparent', 'simple', 'dark', 'readable', 'compact', 'neon'] as const
 

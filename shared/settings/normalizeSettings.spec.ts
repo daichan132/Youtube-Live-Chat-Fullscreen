@@ -65,8 +65,23 @@ describe('normalizeChatGeometry', () => {
         size: { width: 10, height: 500 },
       }),
     ).toEqual({
+      reference: 'legacy-viewport-px',
       coordinates: { x: 20, y: 25 },
-      size: { width: 300, height: 500 },
+      size: { width: 240, height: 500 },
+    })
+  })
+
+  it('clamps player ratios while preserving the manual pin state', () => {
+    expect(
+      normalizeChatGeometry({
+        reference: 'player',
+        rect: { x: 0.8, y: -1, width: 0.8, height: 2 },
+        pinned: true,
+      }),
+    ).toEqual({
+      reference: 'player',
+      rect: { x: 0.35, y: 0, width: 0.65, height: 0.9 },
+      pinned: true,
     })
   })
 })
