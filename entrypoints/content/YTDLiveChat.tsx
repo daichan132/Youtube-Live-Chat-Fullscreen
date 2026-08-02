@@ -3,13 +3,14 @@ import { YTDLiveChatSetting } from './features/YTDLiveChatSetting'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { ChatViewport } from './overlay/ChatViewport'
 import { OverlayFrame } from './overlay/OverlayFrame'
-import { chatRuntime } from './runtime/ChatRuntime'
+import { useChatRuntimeInstance } from './runtime/ChatRuntimeContext'
 
 type YTDLiveChatProps = {
   loading: boolean
 }
 
 export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
+  const chatRuntime = useChatRuntimeInstance()
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chatVisible, setChatVisible] = useState(true)
   useNativeChatAutoDisable({ enabled: true })

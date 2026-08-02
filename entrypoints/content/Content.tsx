@@ -5,8 +5,7 @@ import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { effectiveProfileAtom, themeModeAtom, ytdLiveChatEnabledAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { YTDLiveChatSwitch } from './features/YTDLiveChatSwitch'
-import { chatRuntime } from './runtime/ChatRuntime'
-import { useChatRuntime } from './runtime/useChatRuntime'
+import { useChatRuntime, useChatRuntimeInstance } from './runtime/ChatRuntimeContext'
 import { YTDLiveChat } from './YTDLiveChat'
 
 const OVERLAY_STYLE = {
@@ -19,6 +18,7 @@ export const Content = () => {
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const enabled = useAtomValue(ytdLiveChatEnabledAtom)
   const effectiveProfile = useAtomValue(effectiveProfileAtom)
+  const chatRuntime = useChatRuntimeInstance()
   const runtimeView = useChatRuntime()
 
   useEffect(() => {

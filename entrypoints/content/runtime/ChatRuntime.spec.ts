@@ -67,7 +67,8 @@ const createHarness = (options: { decisions: ChatDecision[]; snapshots?: PageSna
     sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })),
     clear: vi.fn(),
   }
-  const readSnapshot = vi.fn(() => options.snapshots?.[Math.min(snapshotIndex++, options.snapshots.length - 1)] ?? createSnapshot())
+  const defaultSnapshot = createSnapshot()
+  const readSnapshot = vi.fn(() => options.snapshots?.[Math.min(snapshotIndex++, options.snapshots.length - 1)] ?? defaultSnapshot)
   const resolveDecision = vi.fn(() => options.decisions[Math.min(decisionIndex++, options.decisions.length - 1)])
   const createLeaseFactory = vi.fn(() => {
     const lease = options.leases?.[Math.min(leaseIndex++, options.leases.length - 1)]
@@ -203,6 +204,29 @@ describe('ChatRuntime', () => {
     expect(firstLease.release).toHaveBeenCalledTimes(1)
     expect(vi.mocked(firstLease.release).mock.invocationCallOrder[0]).toBeLessThan(harness.createLeaseFactory.mock.invocationCallOrder[1])
     expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
+    harness.runtime.stop()
+  })
+
+  it('cancels retry callbacks owned by the previous video generation', () => {
+    const firstPlayer = document.createElement('div')
+    const secondPlayer = document.createElement('div')
+    const harness = createHarness({
+      decisions: [
+        { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false },
+        { kind: 'pending', videoId: 'video-2', mode: 'live', canToggle: false },
+      ],
+      snapshots: [createSnapshot({ player: firstPlayer }), createSnapshot({ videoId: 'video-2', player: secondPlayer })],
+    })
+
+    flushFrame()
+    expect(harness.runtime.getGeneration()).toBe(1)
+
+    dispatchNavigation()
+    expect(harness.runtime.getGeneration()).toBe(2)
+
+    vi.advanceTimersByTime(250)
+
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(3)
     harness.runtime.stop()
   })
 

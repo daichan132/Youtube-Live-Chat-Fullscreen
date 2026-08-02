@@ -3,7 +3,7 @@ import { useId, useMemo } from 'react'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
-import { chatRuntime } from '../runtime/ChatRuntime'
+import { useChatRuntimeInstance } from '../runtime/ChatRuntimeContext'
 
 type ChatViewportProps = {
   loading: boolean
@@ -15,6 +15,7 @@ const LOADING_OVERLAY_STYLE = {
 } as const
 
 export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
+  const chatRuntime = useChatRuntimeInstance()
   const t = useT()
   const carrierId = useId()
   const appearance = useAtomValue(effectiveProfileAtom).appearance

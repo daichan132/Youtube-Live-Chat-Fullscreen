@@ -13,6 +13,7 @@ import {
 import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import type { ChatProfile } from '@/shared/settings/model'
+import { createSessionScope, type SessionScope } from '../bootstrap/SessionScope'
 import { type ChatOnlyChromeIntent, createChatOnlyChromeController } from './chatOnlyChrome'
 import { clearFullscreenChatLayout, setFullscreenChatLayout } from './fullscreenChatLayout'
 import { createIframeLease, type IframeLease } from './iframeLease'
@@ -50,6 +51,7 @@ export interface ChatRuntime {
   stop(): void
   subscribe(listener: () => void): () => void
   getSnapshot(): RuntimeView
+  getGeneration(): number
   setEnabled(enabled: boolean): void
   setProfile(profile: ChatProfile): void
   setOverlayContainer(container: HTMLElement | null): void
@@ -101,11 +103,16 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private profile: ChatProfile | null = null
   private overlayContainer: HTMLElement | null = null
   private lease: IframeLease | null = null
+  private contentScope: SessionScope | null = null
+  private sessionScope: SessionScope | null = null
+  private generation = 0
+  private sessionIdentity: { videoId: string | null; player: HTMLElement | null; fullscreenRoot: Element | null } | null = null
   private observer: MutationObserver | null = null
   private scheduledFrame: number | null = null
   private retryTimer: number | null = null
   private lastArchiveOpenAt = 0
   private loadListenerIframe: HTMLIFrameElement | null = null
+  private removeLoadListenerCleanup: (() => void) | null = null
   private overlayInteraction: Parameters<ChatRuntime['setOverlayInteraction']>[0] = 'idle'
 
   constructor(
@@ -125,18 +132,20 @@ export class ChatRuntimeImpl implements ChatRuntime {
   start = () => {
     if (this.started) return
     this.started = true
-    document.addEventListener('fullscreenchange', this.scheduleReconcile)
-    document.addEventListener('yt-navigate-finish', this.handleNavigation)
+    this.contentScope = createSessionScope(0)
+    this.contentScope.listen(document, 'fullscreenchange', this.handlePageSignal)
+    this.contentScope.listen(document, 'yt-navigate-finish', this.handleNavigation)
     this.scheduleReconcile()
   }
 
   stop = () => {
     if (!this.started) return
     this.started = false
-    document.removeEventListener('fullscreenchange', this.scheduleReconcile)
-    document.removeEventListener('yt-navigate-finish', this.handleNavigation)
     this.cancelScheduledFrame()
     this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), null)
+    this.disposeSessionScope()
+    this.contentScope?.dispose()
+    this.contentScope = null
     this.chatOnlyChrome.dispose()
     this.overlayContainer = null
   }
@@ -147,6 +156,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   getSnapshot = () => this.view
+
+  getGeneration = () => this.generation
 
   setEnabled = (enabled: boolean) => {
     if (this.enabled === enabled) return
@@ -184,26 +195,35 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.scheduleReconcile()
   }
 
-  private scheduleReconcile = () => {
+  private handlePageSignal = () => {
+    this.scheduleReconcile()
+  }
+
+  private scheduleReconcile = (expectedGeneration?: number) => {
     if (!this.started || this.scheduledFrame !== null) return
-    this.scheduledFrame = window.requestAnimationFrame(() => {
+    const scope = this.contentScope
+    if (!scope) return
+    this.scheduledFrame = scope.requestAnimationFrame(() => {
       this.scheduledFrame = null
+      if (expectedGeneration !== undefined && expectedGeneration !== this.sessionScope?.generation) return
       this.reconcile()
     })
   }
 
   private cancelScheduledFrame = () => {
     if (this.scheduledFrame === null) return
-    window.cancelAnimationFrame(this.scheduledFrame)
+    this.contentScope?.cancelAnimationFrame(this.scheduledFrame)
     this.scheduledFrame = null
   }
 
   private ensureObserver = () => {
-    if (this.observer || !document.documentElement) return
-    this.observer = new MutationObserver(mutations => {
-      if (mutations.some(mutationTouchesChatBoundary)) this.scheduleReconcile()
+    const scope = this.sessionScope
+    if (this.observer || !document.documentElement || !scope) return
+    const observer = new MutationObserver(mutations => {
+      if (mutations.some(mutationTouchesChatBoundary)) this.scheduleReconcile(scope.generation)
     })
-    this.observer.observe(document.documentElement, {
+    this.observer = observer
+    observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: [
         'aria-hidden',
@@ -218,6 +238,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
       childList: true,
       subtree: true,
     })
+    scope.addCleanup(() => {
+      observer.disconnect()
+      if (this.observer === observer) this.observer = null
+    })
   }
 
   private disconnectObserver = () => {
@@ -226,13 +250,15 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private cancelRetry = () => {
-    if (this.retryTimer !== null) window.clearTimeout(this.retryTimer)
+    if (this.retryTimer !== null) this.sessionScope?.clearTimeout(this.retryTimer)
     this.retryTimer = null
   }
 
   private scheduleRetry = (delayMs: number) => {
-    if (this.retryTimer !== null) return
-    this.retryTimer = window.setTimeout(() => {
+    const scope = this.sessionScope
+    if (this.retryTimer !== null || !scope) return
+    this.retryTimer = scope.setTimeout(() => {
+      if (scope !== this.sessionScope || scope.signal.aborted) return
       this.retryTimer = null
       this.model = markRuntimeRetryFired(this.model)
       this.reconcile()
@@ -248,20 +274,20 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private removeLoadListener = () => {
-    if (!this.loadListenerIframe) return
-    this.loadListenerIframe.removeEventListener('load', this.handleIframeLoad)
+    this.removeLoadListenerCleanup?.()
+    this.removeLoadListenerCleanup = null
     this.loadListenerIframe = null
   }
 
-  private handleIframeLoad = () => {
-    this.applyModelActions(resetRuntimeRetry(this.model))
-    this.scheduleReconcile()
-  }
-
   private installLoadListener = (iframe: HTMLIFrameElement) => {
-    if (this.loadListenerIframe === iframe) return
+    const scope = this.sessionScope
+    if (this.loadListenerIframe === iframe || !scope) return
     this.removeLoadListener()
-    iframe.addEventListener('load', this.handleIframeLoad)
+    this.removeLoadListenerCleanup = scope.listen(iframe, 'load', () => {
+      if (scope !== this.sessionScope || scope.signal.aborted) return
+      this.applyModelActions(resetRuntimeRetry(this.model))
+      this.scheduleReconcile(scope.generation)
+    })
     this.loadListenerIframe = iframe
   }
 
@@ -330,10 +356,42 @@ export class ChatRuntimeImpl implements ChatRuntime {
         }
       : null
 
+  private ensureSessionScope = (snapshot: PageSnapshot) => {
+    const nextIdentity = {
+      videoId: snapshot.videoId,
+      player: snapshot.player,
+      fullscreenRoot: snapshot.isFullscreen ? (document.fullscreenElement ?? snapshot.player) : null,
+    }
+    const changed =
+      this.sessionIdentity !== null &&
+      (this.sessionIdentity.videoId !== nextIdentity.videoId ||
+        this.sessionIdentity.player !== nextIdentity.player ||
+        this.sessionIdentity.fullscreenRoot !== nextIdentity.fullscreenRoot)
+
+    if (changed) {
+      this.disposeSessionScope()
+      this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), null)
+    }
+
+    if (!this.sessionScope) this.sessionScope = createSessionScope(++this.generation)
+    this.sessionIdentity = nextIdentity
+  }
+
+  private disposeSessionScope = () => {
+    this.sessionScope?.dispose()
+    this.sessionScope = null
+    this.sessionIdentity = null
+    this.observer = null
+    this.retryTimer = null
+    this.loadListenerIframe = null
+    this.removeLoadListenerCleanup = null
+  }
+
   private reconcile = () => {
     if (!this.started) return
     reconcilePendingNativeIframeRestores()
     const snapshot = this.readSnapshot(this.lease?.iframe ?? null)
+    this.ensureSessionScope(snapshot)
     const decision = this.resolveDecision(snapshot)
     this.applyModelTransition(
       transitionRuntimeModel(this.model, {
@@ -441,5 +499,3 @@ export class ChatRuntimeImpl implements ChatRuntime {
     for (const listener of this.listeners) listener()
   }
 }
-
-export const chatRuntime = new ChatRuntimeImpl()

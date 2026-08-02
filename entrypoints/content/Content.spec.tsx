@@ -5,19 +5,18 @@ import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 import { renderWithStore } from '@/shared/state/testUtils'
 import { Content } from './Content'
-import { chatRuntime } from './runtime/ChatRuntime'
-import { useChatRuntime } from './runtime/useChatRuntime'
+import { useChatRuntime, useChatRuntimeInstance } from './runtime/ChatRuntimeContext'
 
-vi.mock('./runtime/ChatRuntime', () => ({
-  chatRuntime: {
-    start: vi.fn(),
-    stop: vi.fn(),
-    setEnabled: vi.fn(),
-    setProfile: vi.fn(),
-  },
-}))
-vi.mock('./runtime/useChatRuntime', () => ({
+const chatRuntime = {
+  start: vi.fn(),
+  stop: vi.fn(),
+  setEnabled: vi.fn(),
+  setProfile: vi.fn(),
+}
+
+vi.mock('./runtime/ChatRuntimeContext', () => ({
   useChatRuntime: vi.fn(),
+  useChatRuntimeInstance: vi.fn(),
 }))
 vi.mock('./YTDLiveChat', () => ({
   YTDLiveChat: ({ loading }: { loading: boolean }) => <div data-testid='live-chat'>{loading ? 'loading' : 'ready'}</div>,
@@ -41,6 +40,7 @@ describe('Content', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(useChatRuntime).mockReturnValue(inactiveView)
+    vi.mocked(useChatRuntimeInstance).mockReturnValue(chatRuntime as never)
     store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
     store.set(chatSettingsStateAtom, { ...DEFAULT_CHAT_SETTINGS, profile: DEFAULT_CHAT_PROFILE })
   })

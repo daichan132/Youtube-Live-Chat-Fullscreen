@@ -4,10 +4,10 @@ import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/at
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { ChatViewport } from './ChatViewport'
 
-vi.mock('../runtime/ChatRuntime', () => ({
-  chatRuntime: {
+vi.mock('../runtime/ChatRuntimeContext', () => ({
+  useChatRuntimeInstance: () => ({
     setOverlayContainer: vi.fn(),
-  },
+  }),
 }))
 
 describe('ChatViewport', () => {
