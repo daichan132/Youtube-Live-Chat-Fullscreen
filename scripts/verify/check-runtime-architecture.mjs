@@ -8,6 +8,8 @@ const failures = []
 
 const runtimeSource = read('entrypoints/content/runtime/ChatRuntime.ts')
 const contentSource = read('entrypoints/content/index.tsx')
+const contentSessionSource = read('entrypoints/content/bootstrap/createContentSession.tsx')
+const contentBootstrapSource = read('entrypoints/content/bootstrap/ContentBootstrap.ts')
 const nativeChatSource = read('entrypoints/content/utils/nativeChat.ts')
 const e2eSelectorSource = read('e2e/utils/selectors.ts')
 const reconcilerSource = read('entrypoints/content/runtime/ResourceReconciler.ts')
@@ -25,8 +27,11 @@ if (/export\s+const\s+chatRuntime\s*=/.test(runtimeSource)) {
 if (/window\.(?:setTimeout|setInterval|requestAnimationFrame)\s*\(/.test(runtimeSource)) {
   failures.push('ChatRuntime async work must be issued through SessionScope')
 }
-if (!contentSource.includes('new ChatRuntimeImpl()') || !contentSource.includes('<ChatRuntimeProvider')) {
+if (!contentSessionSource.includes('new ChatRuntimeImpl()') || !contentSessionSource.includes('<ChatRuntimeProvider')) {
   failures.push('content bootstrap must create and provide its own ChatRuntime instance')
+}
+if (contentSource.includes('createAppRuntime()') || !contentBootstrapSource.includes('isYouTubeWatchSurface')) {
+  failures.push('the top-level content script must defer runtime initialization until a watch surface is active')
 }
 if (!runtimeSource.includes('new ResourceReconciler(') || !reconcilerSource.includes('restoringLeases')) {
   failures.push('runtime resources and pending iframe restoration must be owned by ResourceReconciler instances')
