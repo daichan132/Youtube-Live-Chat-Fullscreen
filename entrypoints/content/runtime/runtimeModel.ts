@@ -207,8 +207,8 @@ export const transitionRuntimeModel = (
   if (!input.enabled) {
     const showSwitch = input.decision.kind === 'available' || (input.decision.kind === 'pending' && input.decision.canToggle)
     const ensureNativeVisible = (model.state.status === 'active' || model.state.status === 'recovering') && model.state.mode === 'archive'
-    actions.push({ type: 'clear-layout' })
     if (lease) actions.push({ type: 'release-lease', ensureNativeVisible })
+    actions.push({ type: 'clear-layout' })
     next = resetRetry(next, actions)
     const state: RuntimeState = { status: 'inactive', reason: 'disabled' }
     actions.push({ type: 'sync-portals', showSwitch, showOverlay: false, keepOverlayHost: showSwitch })

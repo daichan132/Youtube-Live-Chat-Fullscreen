@@ -1,3 +1,5 @@
+import type { SessionScope } from '../../bootstrap/SessionScope'
+
 const styleId = 'ylc-fullscreen-chat-layout-fix'
 const className = 'ylc-fullscreen-chat-fix'
 const hiddenChatWidthPx = 400
@@ -115,52 +117,61 @@ html.${className} ${fullscreenRootSelector} #full-bleed-container {
 }
 `
 
-let resizeTimeouts: number[] = []
-let applied = false
-
-const clearResizeTimeouts = () => {
-  for (const id of resizeTimeouts) window.clearTimeout(id)
-  resizeTimeouts = []
+export type PlayerLayoutLease = {
+  reconcile(active: boolean): void
+  release(): void
 }
 
-const scheduleResizes = () => {
-  clearResizeTimeouts()
-  resizeTimeouts = [0, 150, 500].map(delay =>
-    window.setTimeout(() => {
-      window.dispatchEvent(new Event('resize'))
-    }, delay),
-  )
-}
+export const createPlayerLayoutLease = (scope: SessionScope): PlayerLayoutLease => {
+  let resizeTimeouts: number[] = []
+  let applied = false
 
-export const setFullscreenChatLayout = (active: boolean) => {
-  if (applied === active) return
-  applied = active
-  const root = document.documentElement
-  let styleElement = document.getElementById(styleId) as HTMLStyleElement | null
+  const clearResizeTimeouts = () => {
+    for (const id of resizeTimeouts) scope.clearTimeout(id)
+    resizeTimeouts = []
+  }
 
-  if (!active) {
+  const scheduleResizes = () => {
     clearResizeTimeouts()
-    root.classList.remove(className)
-    styleElement?.remove()
-    // YouTube can recalculate the fullscreen player/chat split on a later
-    // layout tick. Mirror the activation cadence when returning native chat.
-    scheduleResizes()
-    return
+    resizeTimeouts = [0, 150, 500].map(delay =>
+      scope.setTimeout(() => {
+        window.dispatchEvent(new Event('resize'))
+      }, delay),
+    )
   }
 
-  root.classList.add(className)
-  if (!styleElement) {
-    styleElement = document.createElement('style')
-    styleElement.id = styleId
-    styleElement.textContent = fullscreenFixCss
-    document.head?.appendChild(styleElement)
+  const removeLayout = () => {
+    document.documentElement.classList.remove(className)
+    document.getElementById(styleId)?.remove()
   }
-  scheduleResizes()
-}
 
-export const clearFullscreenChatLayout = () => {
-  clearResizeTimeouts()
-  applied = false
-  document.documentElement.classList.remove(className)
-  document.getElementById(styleId)?.remove()
+  return {
+    reconcile(active) {
+      if (applied === active) return
+      applied = active
+      clearResizeTimeouts()
+      if (!active) {
+        removeLayout()
+        // YouTube can recalculate the fullscreen player/chat split on a later
+        // layout tick. Mirror the activation cadence when returning native chat.
+        scheduleResizes()
+        return
+      }
+
+      document.documentElement.classList.add(className)
+      let styleElement = document.getElementById(styleId) as HTMLStyleElement | null
+      if (!styleElement) {
+        styleElement = document.createElement('style')
+        styleElement.id = styleId
+        styleElement.textContent = fullscreenFixCss
+        document.head?.appendChild(styleElement)
+      }
+      scheduleResizes()
+    },
+    release() {
+      clearResizeTimeouts()
+      applied = false
+      removeLayout()
+    },
+  }
 }

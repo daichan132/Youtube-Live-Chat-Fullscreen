@@ -1,17 +1,15 @@
 import {
   getIframeDocumentHref,
   getIframeVideoId,
-  getNonBlankIframeHref,
   isChatHostForCurrentVideo,
   isManagedIframe,
-  isManagedLiveIframe,
   YLC_CHAT_ATTR,
   YLC_OWNED_ATTR,
   YLC_SOURCE_ATTR,
   YLC_SOURCE_LIVE,
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { YLC_DOCUMENT_STYLE_PROPERTIES } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants'
-import type { ChatSource } from '@/entrypoints/content/runtime/types'
+import type { PageTargets } from '@/entrypoints/content/platform/youtube/types'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
@@ -25,6 +23,8 @@ import {
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
 import { uninstallMembershipFallback } from './iframeInitializer'
+
+type InlineStylePropertySnapshot = { value: string; priority: string }
 
 type BorrowedIframeStyleSnapshot = {
   width: string
@@ -41,11 +41,6 @@ type BorrowedIframeStyleSnapshot = {
   webkitFilter: InlineStylePropertySnapshot
 }
 
-type InlineStylePropertySnapshot = {
-  value: string
-  priority: string
-}
-
 type CustomFontStyleSnapshot = {
   element: Element | null
   parent: ParentNode | null
@@ -60,19 +55,26 @@ type BorrowedDocumentStyleSnapshot = {
   customFontStyle: CustomFontStyleSnapshot
 }
 
-type BorrowedIframeRestoreTarget = {
-  parent: ParentNode | null
-  nextSibling: ChildNode | null
+type BorrowedRestoreState = {
+  originalParent: ParentNode | null
+  originalNextSibling: ChildNode | null
   placeholder: Comment | null
-  style: BorrowedIframeStyleSnapshot
-  videoId: string | null
-  documentStyleSnapshots: WeakMap<Document, BorrowedDocumentStyleSnapshot>
-  handleDocumentLoad: () => void
+  iframeStyle: BorrowedIframeStyleSnapshot
+  sourceVideoId: string | null
+  documentStyles: WeakMap<Document, BorrowedDocumentStyleSnapshot>
+  loadListener: EventListener
 }
 
-const borrowedIframeRestoreMap = new WeakMap<HTMLIFrameElement, BorrowedIframeRestoreTarget>()
-const pendingNativeHostRestoreIframes = new Set<HTMLIFrameElement>()
-const pendingNativeHostRestoreVideoIds = new WeakMap<HTMLIFrameElement, string>()
+export type IframeAttachmentState = 'created' | 'attached' | 'restoring' | 'released'
+
+export type IframeAttachment = {
+  readonly state: IframeAttachmentState
+  attach(container: HTMLElement): void
+  captureDocumentStyle(): boolean
+  release(options?: { ensureNativeVisible?: boolean }, targets?: PageTargets | null): void
+  reconcile(targets?: PageTargets | null): void
+}
+
 const legacyChatOnlyHeightVariables = [
   '--extension-chat-only-header-height',
   '--extension-chat-only-input-panel-height',
@@ -88,11 +90,8 @@ const captureInlineStyleProperty = (style: CSSStyleDeclaration, property: string
 })
 
 const restoreInlineStyleProperty = (style: CSSStyleDeclaration, property: string, snapshot: InlineStylePropertySnapshot) => {
-  if (snapshot.value) {
-    style.setProperty(property, snapshot.value, snapshot.priority)
-    return
-  }
-  style.removeProperty(property)
+  if (snapshot.value) style.setProperty(property, snapshot.value, snapshot.priority)
+  else style.removeProperty(property)
 }
 
 const getIframeDocument = (iframe: HTMLIFrameElement) => {
@@ -103,12 +102,11 @@ const getIframeDocument = (iframe: HTMLIFrameElement) => {
   }
 }
 
-const captureBorrowedDocumentStyle = (iframe: HTMLIFrameElement, restoreTarget: BorrowedIframeRestoreTarget) => {
+const captureDocumentStyle = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
-  if (!doc?.documentElement || !doc.head || !doc.body || restoreTarget.documentStyleSnapshots.has(doc)) return false
-
+  if (!doc?.documentElement || !doc.head || !doc.body || restore.documentStyles.has(doc)) return false
   const customFontStyle = doc.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
-  restoreTarget.documentStyleSnapshots.set(doc, {
+  restore.documentStyles.set(doc, {
     documentElementStyles: new Map(
       YLC_DOCUMENT_STYLE_PROPERTIES.map(property => [property, captureInlineStyleProperty(doc.documentElement.style, property)]),
     ),
@@ -124,39 +122,30 @@ const captureBorrowedDocumentStyle = (iframe: HTMLIFrameElement, restoreTarget: 
   return true
 }
 
-export const captureAttachedBorrowedIframeDocumentStyle = (iframe: HTMLIFrameElement) => {
-  const restoreTarget = borrowedIframeRestoreMap.get(iframe)
-  if (!restoreTarget) return false
-  return captureBorrowedDocumentStyle(iframe, restoreTarget)
-}
-
 const restoreCustomFontStyle = (doc: Document, snapshot: CustomFontStyleSnapshot) => {
   const current = doc.head?.querySelector(`#${CUSTOM_FONT_STYLE_ID}`) ?? null
   if (!snapshot.element) {
     current?.remove()
     return
   }
-
   if (current && current !== snapshot.element) current.remove()
   snapshot.element.textContent = snapshot.textContent
   if (snapshot.element.ownerDocument !== doc || snapshot.element.isConnected) return
-
   const parent = snapshot.parent && (snapshot.parent as Node).ownerDocument === doc ? snapshot.parent : doc.head
   if (!parent) return
-  const nextSibling = snapshot.nextSibling?.parentNode === parent ? snapshot.nextSibling : null
-  parent.insertBefore(snapshot.element, nextSibling)
+  parent.insertBefore(snapshot.element, snapshot.nextSibling?.parentNode === parent ? snapshot.nextSibling : null)
 }
 
-const restoreBorrowedDocumentStyle = (doc: Document, snapshot: BorrowedDocumentStyleSnapshot) => {
-  for (const [property, propertySnapshot] of snapshot.documentElementStyles) {
-    restoreInlineStyleProperty(doc.documentElement.style, property, propertySnapshot)
+const restoreDocumentStyle = (doc: Document, snapshot: BorrowedDocumentStyleSnapshot) => {
+  for (const [property, value] of snapshot.documentElementStyles) {
+    restoreInlineStyleProperty(doc.documentElement.style, property, value)
   }
   restoreInlineStyleProperty(doc.body.style, 'backdrop-filter', snapshot.bodyBackdropFilter)
   restoreInlineStyleProperty(doc.body.style, '-webkit-backdrop-filter', snapshot.bodyWebkitBackdropFilter)
   restoreCustomFontStyle(doc, snapshot.customFontStyle)
 }
 
-const createManagedLiveIframe = (src: string) => {
+export const createManagedLiveIframe = (src: string) => {
   const iframe = document.createElement('iframe') as HTMLIFrameElement
   iframe.className = 'ytd-live-chat-frame'
   iframe.title = 'YouTube live chat'
@@ -181,14 +170,11 @@ const applyChatIframeStyle = (iframe: HTMLIFrameElement) => {
 const syncBorrowedIframeSrcWithDocumentHref = (iframe: HTMLIFrameElement) => {
   const docHref = getIframeDocumentHref(iframe)
   if (!docHref || docHref.includes('about:blank')) return
-
   const currentSrc = iframe.getAttribute('src') ?? iframe.src ?? ''
-  if (currentSrc && !currentSrc.includes('about:blank')) return
-
-  iframe.src = docHref
+  if (!currentSrc || currentSrc.includes('about:blank')) iframe.src = docHref
 }
 
-const captureBorrowedIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => ({
+const captureIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => ({
   width: iframe.style.width,
   height: iframe.style.height,
   maxWidth: iframe.style.maxWidth,
@@ -203,7 +189,7 @@ const captureBorrowedIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeSt
   webkitFilter: captureInlineStyleProperty(iframe.style, '-webkit-filter'),
 })
 
-const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIframeStyleSnapshot) => {
+const restoreIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIframeStyleSnapshot) => {
   iframe.style.width = style.width
   iframe.style.height = style.height
   iframe.style.maxWidth = style.maxWidth
@@ -213,243 +199,150 @@ const restoreBorrowedIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIf
   iframe.style.position = style.position
   iframe.style.zIndex = style.zIndex
   iframe.style.backgroundColor = style.backgroundColor
-  if (style.allowTransparency === null) {
-    iframe.removeAttribute('allowtransparency')
-  } else {
-    iframe.setAttribute('allowtransparency', style.allowTransparency)
-  }
+  if (style.allowTransparency === null) iframe.removeAttribute('allowtransparency')
+  else iframe.setAttribute('allowtransparency', style.allowTransparency)
   restoreInlineStyleProperty(iframe.style, 'filter', style.filter)
   restoreInlineStyleProperty(iframe.style, '-webkit-filter', style.webkitFilter)
 }
 
-const cleanupBorrowedIframeDocument = (iframe: HTMLIFrameElement) => {
+const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
   if (!doc?.documentElement || !doc.head || !doc.body) return
-
-  const documentStyleSnapshot = borrowedIframeRestoreMap.get(iframe)?.documentStyleSnapshots.get(doc)
-  if (documentStyleSnapshot) restoreBorrowedDocumentStyle(doc, documentStyleSnapshot)
+  const snapshot = restore.documentStyles.get(doc)
+  if (snapshot) restoreDocumentStyle(doc, snapshot)
   uninstallMembershipFallback(doc)
-
-  doc?.body?.classList.remove(
+  doc.body.classList.remove(
     IFRAME_CHAT_BODY_CLASS,
     IFRAME_CHAT_ONLY_CLASS,
     IFRAME_CHAT_ONLY_TRANSITION_CLASS,
     IFRAME_CHAT_ONLY_MEASURING_CLASS,
   )
-  for (const target of doc?.body?.querySelectorAll<HTMLElement>(`[style*="${IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR}"]`) ?? []) {
+  for (const target of doc.body.querySelectorAll<HTMLElement>(`[style*="${IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR}"]`)) {
     target.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)
   }
-  for (const variable of legacyChatOnlyHeightVariables) {
-    doc?.body?.style.removeProperty(variable)
-  }
-  doc?.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.remove()
+  for (const variable of legacyChatOnlyHeightVariables) doc.body.style.removeProperty(variable)
+  doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.remove()
 }
 
-const getBorrowedIframeVideoId = (iframe: HTMLIFrameElement) => getIframeVideoId(iframe) ?? getCurrentYouTubeVideoId()
-
-const isBorrowedVideoCurrent = (videoId: string | null | undefined) => {
+const isVideoCurrent = (videoId: string | null | undefined) => {
   const currentVideoId = getCurrentYouTubeVideoId()
   return Boolean(videoId && currentVideoId && videoId === currentVideoId)
 }
 
-const discardBorrowedIframe = (iframe: HTMLIFrameElement) => {
-  iframe.removeAttribute(YLC_CHAT_ATTR)
-  iframe.remove()
-}
-
-const rememberBorrowIframeRestoreTarget = (iframe: HTMLIFrameElement, container: HTMLDivElement) => {
-  if (borrowedIframeRestoreMap.has(iframe)) return
-
-  const parent = iframe.parentNode
-  const restoreParent = parent && parent !== container ? parent : null
-  const placeholder = restoreParent ? document.createComment('ylc-borrowed-iframe-anchor') : null
-  if (placeholder) restoreParent?.insertBefore(placeholder, iframe)
-  const documentStyleSnapshots = new WeakMap<Document, BorrowedDocumentStyleSnapshot>()
-  const restoreTarget: BorrowedIframeRestoreTarget = {
-    parent: restoreParent,
-    nextSibling: iframe.nextSibling,
-    placeholder,
-    style: captureBorrowedIframeStyle(iframe),
-    videoId: getBorrowedIframeVideoId(iframe),
-    documentStyleSnapshots,
-    handleDocumentLoad: () => {
-      captureBorrowedDocumentStyle(iframe, restoreTarget)
-    },
-  }
-  borrowedIframeRestoreMap.set(iframe, restoreTarget)
-  iframe.addEventListener('load', restoreTarget.handleDocumentLoad)
-  captureBorrowedDocumentStyle(iframe, restoreTarget)
-}
-
-const forgetBorrowedIframeRestoreTarget = (iframe: HTMLIFrameElement, restoreTarget: BorrowedIframeRestoreTarget) => {
-  iframe.removeEventListener('load', restoreTarget.handleDocumentLoad)
-  borrowedIframeRestoreMap.delete(iframe)
-}
-
-const restoreBorrowedIframe = (iframe: HTMLIFrameElement) => {
-  const restoreTarget = borrowedIframeRestoreMap.get(iframe)
-  if (!restoreTarget) return false
-
-  const currentVideoId = getCurrentYouTubeVideoId()
-  if (restoreTarget.videoId && currentVideoId && restoreTarget.videoId !== currentVideoId) {
-    restoreTarget.placeholder?.remove()
-    forgetBorrowedIframeRestoreTarget(iframe, restoreTarget)
-    discardBorrowedIframe(iframe)
-    return true
-  }
-
-  restoreBorrowedIframeStyle(iframe, restoreTarget.style)
-  cleanupBorrowedIframeDocument(iframe)
-
-  const placeholderParent = restoreTarget.placeholder?.parentNode
-  if (placeholderParent && (placeholderParent as Node).isConnected) {
-    placeholderParent.insertBefore(iframe, restoreTarget.placeholder?.nextSibling ?? null)
-    restoreTarget.placeholder?.remove()
-    forgetBorrowedIframeRestoreTarget(iframe, restoreTarget)
-    return true
-  }
-
-  if (restoreTarget.parent && (restoreTarget.parent as Node).isConnected) {
-    if (restoreTarget.nextSibling && restoreTarget.parent.contains(restoreTarget.nextSibling)) {
-      restoreTarget.parent.insertBefore(iframe, restoreTarget.nextSibling)
-    } else {
-      restoreTarget.parent.appendChild(iframe)
-    }
-    restoreTarget.placeholder?.remove()
-    forgetBorrowedIframeRestoreTarget(iframe, restoreTarget)
-    return true
-  }
-
-  restoreTarget.placeholder?.remove()
-  forgetBorrowedIframeRestoreTarget(iframe, restoreTarget)
-  return false
-}
-
-const getCurrentNativeChatHost = () =>
-  Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(host => isChatHostForCurrentVideo(host)) ?? null
-
-export const reconcilePendingNativeIframeRestores = () => {
-  if (pendingNativeHostRestoreIframes.size === 0) return
-
-  const host = getCurrentNativeChatHost()
-  if (!host) return
-
-  for (const iframe of Array.from(pendingNativeHostRestoreIframes)) {
-    const restoreVideoId = pendingNativeHostRestoreVideoIds.get(iframe) ?? null
-    if (!isBorrowedVideoCurrent(restoreVideoId)) {
-      pendingNativeHostRestoreIframes.delete(iframe)
-      pendingNativeHostRestoreVideoIds.delete(iframe)
-      discardBorrowedIframe(iframe)
-      continue
-    }
-    cleanupBorrowedIframeDocument(iframe)
-    host.insertBefore(iframe, host.firstChild)
-    pendingNativeHostRestoreIframes.delete(iframe)
-    pendingNativeHostRestoreVideoIds.delete(iframe)
-  }
-}
-
-const queueRestoreToNativeHost = (iframe: HTMLIFrameElement, videoId: string | null) => {
-  if (!videoId || !isBorrowedVideoCurrent(videoId)) {
-    discardBorrowedIframe(iframe)
-    return
-  }
-  pendingNativeHostRestoreIframes.add(iframe)
-  pendingNativeHostRestoreVideoIds.set(iframe, videoId)
-  iframe.remove()
-  reconcilePendingNativeIframeRestores()
-}
-
-const cancelQueuedNativeRestore = (iframe: HTMLIFrameElement) => {
-  if (!pendingNativeHostRestoreIframes.delete(iframe)) return
-  pendingNativeHostRestoreVideoIds.delete(iframe)
-}
-
-export const resolveSourceIframe = (source: ChatSource, currentIframe: HTMLIFrameElement | null) => {
-  if (source.kind === 'archive_borrow' || source.kind === 'live_borrow') {
-    return source.iframe
-  }
-
-  if (isManagedLiveIframe(currentIframe) && currentIframe) {
-    const href = getNonBlankIframeHref(currentIframe)
-    if (href === source.url) return currentIframe
-  }
-  return createManagedLiveIframe(source.url)
-}
-
-export const attachIframeToContainer = (container: HTMLDivElement | null, iframe: HTMLIFrameElement) => {
-  if (!container) return
-
-  cancelQueuedNativeRestore(iframe)
-  iframe.setAttribute(YLC_CHAT_ATTR, 'true')
-
-  if (!isManagedIframe(iframe)) {
-    rememberBorrowIframeRestoreTarget(iframe, container)
-    syncBorrowedIframeSrcWithDocumentHref(iframe)
-  }
-
-  if (iframe.parentElement !== container) {
-    container.appendChild(iframe)
-  }
-
-  applyChatIframeStyle(iframe)
-}
-
-const restoreIframeToNativeHost = (iframe: HTMLIFrameElement, videoId: string | null) => {
-  if (!isBorrowedVideoCurrent(videoId)) return false
-  const host = getCurrentNativeChatHost()
-  if (!host) return false
-  cleanupBorrowedIframeDocument(iframe)
-  if (iframe.parentElement === host) return true
-  host.insertBefore(iframe, host.firstChild)
-  return true
+const resolveNativeHost = (targets?: PageTargets | null) => {
+  const candidate = targets?.nativeChatHost
+  if (candidate && isChatHostForCurrentVideo(candidate)) return candidate
+  return Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(isChatHostForCurrentVideo) ?? null
 }
 
 const ensureNativeChatVisible = () => {
-  if (isNativeChatOpen()) return
-  openArchiveNativeChatPanel()
+  if (!isNativeChatOpen()) openArchiveNativeChatPanel()
 }
 
-export const detachAttachedIframe = (
-  iframe: HTMLIFrameElement,
-  container: HTMLDivElement | null,
-  options: {
-    ensureNativeVisible?: boolean
-  } = {},
-) => {
+export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: string): IframeAttachment => {
   const managed = isManagedIframe(iframe)
-  const borrowedVideoId = managed ? null : (borrowedIframeRestoreMap.get(iframe)?.videoId ?? getBorrowedIframeVideoId(iframe))
-  iframe.removeAttribute(YLC_CHAT_ATTR)
+  let state: IframeAttachmentState = 'created'
+  let restore: BorrowedRestoreState | null = null
 
-  if (managed) {
-    if (iframe.parentElement === container) {
-      container?.removeChild(iframe)
-    } else {
-      iframe.remove()
-    }
-    iframe.removeAttribute(YLC_OWNED_ATTR)
-    iframe.removeAttribute(YLC_SOURCE_ATTR)
-    return
+  const finalizeBorrowedRestore = () => {
+    if (!restore) return
+    iframe.removeEventListener('load', restore.loadListener)
+    restore.placeholder?.remove()
+    restore = null
+    state = 'released'
   }
 
-  if (borrowedIframeRestoreMap.has(iframe)) {
-    const restored = restoreBorrowedIframe(iframe)
-    if (restored) {
-      if (options.ensureNativeVisible) {
-        ensureNativeChatVisible()
+  const discardBorrowed = () => {
+    iframe.removeAttribute(YLC_CHAT_ATTR)
+    iframe.remove()
+    finalizeBorrowedRestore()
+  }
+
+  const restoreToAvailableTarget = (targets?: PageTargets | null) => {
+    if (!restore) return false
+    if (!isVideoCurrent(restore.sourceVideoId)) {
+      discardBorrowed()
+      return true
+    }
+    const placeholderParent = restore.placeholder?.parentNode
+    if (placeholderParent && (placeholderParent as Node).isConnected) {
+      placeholderParent.insertBefore(iframe, restore.placeholder?.nextSibling ?? null)
+      finalizeBorrowedRestore()
+      return true
+    }
+    if (restore.originalParent && (restore.originalParent as Node).isConnected) {
+      const sibling = restore.originalNextSibling
+      if (sibling && restore.originalParent.contains(sibling)) restore.originalParent.insertBefore(iframe, sibling)
+      else restore.originalParent.appendChild(iframe)
+      finalizeBorrowedRestore()
+      return true
+    }
+    const host = resolveNativeHost(targets)
+    if (!host) return false
+    host.insertBefore(iframe, host.firstChild)
+    finalizeBorrowedRestore()
+    return true
+  }
+
+  const captureRestoreState = (nextContainer: HTMLElement) => {
+    if (managed || restore) return
+    const parent = iframe.parentNode
+    const originalParent = parent && parent !== nextContainer ? parent : null
+    const placeholder = originalParent ? document.createComment('ylc-borrowed-iframe-anchor') : null
+    if (placeholder) originalParent?.insertBefore(placeholder, iframe)
+    const nextRestore = {} as BorrowedRestoreState
+    nextRestore.originalParent = originalParent
+    nextRestore.originalNextSibling = iframe.nextSibling
+    nextRestore.placeholder = placeholder
+    nextRestore.iframeStyle = captureIframeStyle(iframe)
+    nextRestore.sourceVideoId = getIframeVideoId(iframe) ?? videoId
+    nextRestore.documentStyles = new WeakMap()
+    nextRestore.loadListener = () => captureDocumentStyle(iframe, nextRestore)
+    restore = nextRestore
+    iframe.addEventListener('load', nextRestore.loadListener)
+    captureDocumentStyle(iframe, nextRestore)
+  }
+
+  return {
+    get state() {
+      return state
+    },
+    attach(nextContainer) {
+      if (state === 'released' || state === 'restoring') return
+      iframe.setAttribute(YLC_CHAT_ATTR, 'true')
+      captureRestoreState(nextContainer)
+      if (!managed) syncBorrowedIframeSrcWithDocumentHref(iframe)
+      if (iframe.parentElement !== nextContainer) nextContainer.appendChild(iframe)
+      applyChatIframeStyle(iframe)
+      state = 'attached'
+    },
+    captureDocumentStyle() {
+      return restore ? captureDocumentStyle(iframe, restore) : false
+    },
+    release(options = {}, targets: PageTargets | null = null) {
+      if (state === 'released' || state === 'restoring') return
+      iframe.removeAttribute(YLC_CHAT_ATTR)
+      if (managed) {
+        iframe.remove()
+        iframe.removeAttribute(YLC_OWNED_ATTR)
+        iframe.removeAttribute(YLC_SOURCE_ATTR)
+        state = 'released'
+      } else if (restore) {
+        restoreIframeStyle(iframe, restore.iframeStyle)
+        cleanupBorrowedDocument(iframe, restore)
+        if (!restoreToAvailableTarget(targets)) {
+          iframe.remove()
+          state = 'restoring'
+        }
+      } else {
+        iframe.remove()
+        state = 'released'
       }
-      return
-    }
-  }
-
-  if (iframe.parentElement === container) {
-    container?.removeChild(iframe)
-  }
-  const restored = restoreIframeToNativeHost(iframe, borrowedVideoId)
-  if (!restored) {
-    queueRestoreToNativeHost(iframe, borrowedVideoId)
-  }
-  if (options.ensureNativeVisible) {
-    ensureNativeChatVisible()
+      if (options.ensureNativeVisible) ensureNativeChatVisible()
+    },
+    reconcile(targets) {
+      if (state !== 'restoring') return
+      restoreToAvailableTarget(targets)
+    },
   }
 }

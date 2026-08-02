@@ -1,15 +1,26 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { clearFullscreenChatLayout, setFullscreenChatLayout } from './fullscreenChatLayout'
+import { createSessionScope } from '../bootstrap/SessionScope'
+import { createPlayerLayoutLease, type PlayerLayoutLease } from './resources/PlayerLayoutLease'
+
+let lease: PlayerLayoutLease | null = null
+
+const createLease = () => {
+  const scope = createSessionScope(1)
+  lease = createPlayerLayoutLease(scope)
+  return { lease, scope }
+}
 
 describe('fullscreenChatLayout', () => {
   afterEach(() => {
-    clearFullscreenChatLayout()
+    lease?.release()
+    lease = null
     vi.useRealTimers()
   })
 
   it('parks both native chat locations without collapsing iframe area', () => {
     vi.useFakeTimers()
-    setFullscreenChatLayout(true)
+    const { lease } = createLease()
+    lease.reconcile(true)
 
     const style = document.getElementById('ylc-fullscreen-chat-layout-fix')
     expect(document.documentElement.classList.contains('ylc-fullscreen-chat-fix')).toBe(true)
@@ -20,13 +31,14 @@ describe('fullscreenChatLayout', () => {
     expect(style?.textContent).not.toContain('width: 0')
   })
 
-  it('cleans the injected style and pending timers', () => {
+  it('cleans the injected style and pending timers on release', () => {
     vi.useFakeTimers()
     const resize = vi.fn()
     window.addEventListener('resize', resize)
+    const { lease } = createLease()
 
-    setFullscreenChatLayout(true)
-    clearFullscreenChatLayout()
+    lease.reconcile(true)
+    lease.release()
     vi.runAllTimers()
 
     expect(document.getElementById('ylc-fullscreen-chat-layout-fix')).toBeNull()
@@ -39,9 +51,10 @@ describe('fullscreenChatLayout', () => {
     vi.useFakeTimers()
     const resize = vi.fn()
     window.addEventListener('resize', resize)
+    const { lease } = createLease()
 
-    setFullscreenChatLayout(true)
-    setFullscreenChatLayout(false)
+    lease.reconcile(true)
+    lease.reconcile(false)
     vi.runAllTimers()
 
     expect(resize).toHaveBeenCalledTimes(3)

@@ -4,7 +4,7 @@ import {
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
-import { createChatOnlyChromeController } from './chatOnlyChrome'
+import { createChatChromeLease } from './resources/ChatChromeLease'
 
 describe('chatOnlyChrome', () => {
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('chatOnlyChrome', () => {
     iframeDocument.body.append(header, input)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
-    const controller = createChatOnlyChromeController()
+    const controller = createChatChromeLease()
 
     controller.sync(iframe, 'collapsed')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
@@ -37,14 +37,14 @@ describe('chatOnlyChrome', () => {
     vi.runAllTimers()
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
 
-    controller.dispose()
+    controller.release()
   })
 
   it('cleans the old iframe document when the lease changes', () => {
     const first = document.createElement('iframe')
     const second = document.createElement('iframe')
     document.body.append(first, second)
-    const controller = createChatOnlyChromeController()
+    const controller = createChatChromeLease()
 
     controller.sync(first, 'collapsed')
     expect(first.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
@@ -53,7 +53,7 @@ describe('chatOnlyChrome', () => {
     expect(first.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     expect(second.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
 
-    controller.dispose()
+    controller.release()
   })
 
   it('measures a current signed-out input panel mounted after collapse', async () => {
@@ -64,7 +64,7 @@ describe('chatOnlyChrome', () => {
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
     iframeDocument.body.appendChild(header)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
-    const controller = createChatOnlyChromeController()
+    const controller = createChatChromeLease()
 
     controller.sync(iframe, 'collapsed')
 
@@ -77,7 +77,7 @@ describe('chatOnlyChrome', () => {
 
     expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('64px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
-    controller.dispose()
+    controller.release()
   })
 
   it('remeasures a replaced input target while remaining collapsed', async () => {
@@ -91,7 +91,7 @@ describe('chatOnlyChrome', () => {
     iframeDocument.body.append(header, input)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
-    const controller = createChatOnlyChromeController()
+    const controller = createChatChromeLease()
     controller.sync(iframe, 'collapsed')
 
     const replacement = iframeDocument.createElement('div')
@@ -103,7 +103,7 @@ describe('chatOnlyChrome', () => {
     expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('72px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
-    controller.dispose()
+    controller.release()
   })
 
   it('disconnects its iframe observer and clears measurements on cleanup', () => {
@@ -115,7 +115,7 @@ describe('chatOnlyChrome', () => {
     iframeDocument.body.appendChild(header)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
-    const controller = createChatOnlyChromeController()
+    const controller = createChatChromeLease()
 
     controller.sync(iframe, 'collapsed')
     controller.sync(iframe, 'inactive')
@@ -123,6 +123,6 @@ describe('chatOnlyChrome', () => {
     expect(disconnect).toHaveBeenCalledTimes(1)
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
-    controller.dispose()
+    controller.release()
   })
 })

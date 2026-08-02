@@ -1,27 +1,13 @@
-import { getIframeDocumentHref } from '@/entrypoints/content/chat/shared/iframeDom'
-import { IFRAME_CHAT_BODY_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
-import iframeStyles from '@/entrypoints/content/features/YTDLiveChatIframe/styles'
-import {
-  captureAttachedBorrowedIframeDocumentStyle,
-  reconcilePendingNativeIframeRestores,
-} from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment'
-import {
-  ensureStyleInjected,
-  getIframeDocument,
-  installMembershipFallback,
-} from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
-import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import type { ChatProfile } from '@/shared/settings/model'
 import { createSessionScope, type SessionScope } from '../bootstrap/SessionScope'
 import { collectPageObservation } from '../platform/youtube/collectPageObservation'
 import { runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { type PageObservation, withObservationGeneration } from '../platform/youtube/types'
-import { type ChatOnlyChromeIntent, createChatOnlyChromeController } from './chatOnlyChrome'
-import { clearFullscreenChatLayout, setFullscreenChatLayout } from './fullscreenChatLayout'
-import { createIframeLease, type IframeLease } from './iframeLease'
-import { createPortalHost, type PortalHost } from './portalHost'
+import { ResourceReconciler } from './ResourceReconciler'
 import { type ChatDecision, resolveChatDecision } from './resolveChatDecision'
+import type { ChatIframeLease } from './resources/ChatIframeLease'
+import type { PresentationLease } from './resources/PresentationLease'
 import {
   createInitialRuntimeModel,
   markRuntimeRetryFired,
@@ -92,18 +78,13 @@ export const mutationTouchesChatBoundary = (mutation: MutationRecord) => {
 /** DOM/timer driver that observes the page and executes pure runtimeModel actions. */
 export class ChatRuntimeImpl implements ChatRuntime {
   private readonly listeners = new Set<() => void>()
-  private readonly portalHost: PortalHost
+  private readonly resources: ResourceReconciler
   private readonly readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
   private readonly resolveDecision: (observation: PageObservation) => ChatDecision
-  private readonly createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string) => IframeLease
-  private readonly chatOnlyChrome = createChatOnlyChromeController()
   private model: RuntimeModel = createInitialRuntimeModel()
   private view = initialView
   private started = false
   private enabled = false
-  private profile: ChatProfile | null = null
-  private overlayContainer: HTMLElement | null = null
-  private lease: IframeLease | null = null
   private contentScope: SessionScope | null = null
   private sessionScope: SessionScope | null = null
   private generation = 0
@@ -112,22 +93,21 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private scheduledFrame: number | null = null
   private retryTimer: number | null = null
   private lastArchiveOpenAt = 0
-  private loadListenerIframe: HTMLIFrameElement | null = null
-  private removeLoadListenerCleanup: (() => void) | null = null
-  private overlayInteraction: Parameters<ChatRuntime['setOverlayInteraction']>[0] = 'idle'
 
   constructor(
     dependencies: Partial<{
-      portalHost: PortalHost
+      portalHost: PresentationLease
       readObservation: (leasedIframe?: HTMLIFrameElement | null) => PageObservation
       resolveDecision: (observation: PageObservation) => ChatDecision
-      createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string) => IframeLease
+      createLease: (source: Extract<ChatDecision, { kind: 'available' }>['source'], videoId: string, generation: number) => ChatIframeLease
     }> = {},
   ) {
-    this.portalHost = dependencies.portalHost ?? createPortalHost()
+    this.resources = new ResourceReconciler({
+      presentation: dependencies.portalHost,
+      createLease: dependencies.createLease,
+    })
     this.readObservation = dependencies.readObservation ?? collectPageObservation
     this.resolveDecision = dependencies.resolveDecision ?? (observation => resolveChatDecision(observation.evidence, observation.targets))
-    this.createLease = dependencies.createLease ?? createIframeLease
   }
 
   start = () => {
@@ -147,8 +127,6 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.disposeSessionScope()
     this.contentScope?.dispose()
     this.contentScope = null
-    this.chatOnlyChrome.dispose()
-    this.overlayContainer = null
   }
 
   subscribe = (listener: () => void) => {
@@ -167,28 +145,17 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   setProfile = (profile: ChatProfile) => {
-    if (this.profile === profile) return
-    this.profile = profile
-    if (this.lease) {
-      this.applyCurrentProfile(this.lease.iframe)
-      this.syncChatOnlyChrome()
-    }
+    this.resources.setProfile(profile)
   }
 
   setOverlayContainer = (container: HTMLElement | null) => {
-    if (this.overlayContainer === container) return
-    this.overlayContainer = container
-    if (container && this.lease) {
-      this.lease.attach(container)
-      this.initializeLease()
-    }
+    this.resources.setOverlayContainer(container)
+    if (container && this.resources.lease && this.sessionScope) this.initializeLease()
     this.scheduleReconcile()
   }
 
   setOverlayInteraction = (state: Parameters<ChatRuntime['setOverlayInteraction']>[0]) => {
-    if (this.overlayInteraction === state) return
-    this.overlayInteraction = state
-    this.syncChatOnlyChrome()
+    this.resources.setInteraction(state)
   }
 
   private handleNavigation = () => {
@@ -266,80 +233,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
     }, delayMs)
   }
 
-  private releaseLease = (ensureNativeVisible = false) => {
-    if (!this.lease) return
-    this.removeLoadListener()
-    this.lease.release({ ensureNativeVisible })
-    this.lease = null
-    this.chatOnlyChrome.sync(null, 'inactive')
-  }
-
-  private removeLoadListener = () => {
-    this.removeLoadListenerCleanup?.()
-    this.removeLoadListenerCleanup = null
-    this.loadListenerIframe = null
-  }
-
-  private installLoadListener = (iframe: HTMLIFrameElement) => {
+  private initializeLease = () => {
     const scope = this.sessionScope
-    if (this.loadListenerIframe === iframe || !scope) return
-    this.removeLoadListener()
-    this.removeLoadListenerCleanup = scope.listen(iframe, 'load', () => {
+    if (!scope) return false
+    return this.resources.initializeIframe(scope, () => {
       if (scope !== this.sessionScope || scope.signal.aborted) return
       this.applyModelActions(resetRuntimeRetry(this.model))
       this.scheduleReconcile(scope.generation)
     })
-    this.loadListenerIframe = iframe
-  }
-
-  private applyCurrentProfile = (iframe: HTMLIFrameElement) => {
-    if (!this.profile) return false
-    const document = getIframeDocument(iframe)
-    if (!document?.documentElement || !document.head || !document.body) return false
-    try {
-      if (document.location?.href === 'about:blank') return false
-    } catch {
-      // A real document can deny location access; contentDocument remains enough.
-    }
-    applyChatProfileToDocument(document, this.profile)
-    return true
-  }
-
-  private initializeLease = () => {
-    const lease = this.lease
-    if (!lease || !this.overlayContainer) return false
-    lease.attach(this.overlayContainer)
-    this.installLoadListener(lease.iframe)
-
-    const document = getIframeDocument(lease.iframe)
-    if (!document?.documentElement || !document.head || !document.body) return false
-    try {
-      if (document.location?.href === 'about:blank' && !getIframeDocumentHref(lease.iframe)) return false
-    } catch {
-      // Cross-origin access can throw; the document object is still usable here.
-    }
-
-    if (lease.kind === 'borrowed') captureAttachedBorrowedIframeDocumentStyle(lease.iframe)
-    ensureStyleInjected(document, iframeStyles)
-    document.body.classList.add(IFRAME_CHAT_BODY_CLASS)
-    installMembershipFallback(document)
-    const applied = this.applyCurrentProfile(lease.iframe)
-    this.syncChatOnlyChrome()
-    return applied
-  }
-
-  private getChatOnlyIntent = (): ChatOnlyChromeIntent => {
-    const display = this.profile?.display
-    if (display?.idleVisibility !== 'always-visible' || display.contentMode !== 'messages-only') {
-      return 'inactive'
-    }
-    if (this.overlayInteraction === 'dragging' || this.overlayInteraction === 'resizing') return 'hold'
-    if (this.overlayInteraction === 'hovering-chat') return 'expanded'
-    return 'collapsed'
-  }
-
-  private syncChatOnlyChrome = () => {
-    this.chatOnlyChrome.sync(this.lease?.iframe ?? null, this.getChatOnlyIntent())
   }
 
   private ensureArchivePanelOpen = () => {
@@ -349,11 +250,11 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private getLeaseSnapshot = (): RuntimeLeaseSnapshot | null =>
-    this.lease
+    this.resources.lease
       ? {
-          videoId: this.lease.videoId,
-          kind: this.lease.kind,
-          iframe: this.lease.iframe,
+          videoId: this.resources.lease.videoId,
+          kind: this.resources.lease.ownership,
+          iframe: this.resources.lease.iframe,
         }
       : null
 
@@ -371,8 +272,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
         this.sessionIdentity.fullscreenRoot !== nextIdentity.fullscreenRoot)
 
     if (changed) {
+      this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), observation)
       this.disposeSessionScope()
-      this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), null)
     }
 
     if (!this.sessionScope) this.sessionScope = createSessionScope(++this.generation)
@@ -385,14 +286,12 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.sessionIdentity = null
     this.observer = null
     this.retryTimer = null
-    this.loadListenerIframe = null
-    this.removeLoadListenerCleanup = null
   }
 
   private reconcile = () => {
     if (!this.started) return
-    reconcilePendingNativeIframeRestores()
-    let observation = this.readObservation(this.lease?.iframe ?? null)
+    let observation = this.readObservation(this.resources.lease?.iframe ?? null)
+    this.resources.reconcileRestoring(observation.targets)
     this.ensureSessionScope(observation)
     observation = withObservationGeneration(observation, this.generation)
     const decision = this.resolveDecision(observation)
@@ -455,19 +354,18 @@ export class ChatRuntimeImpl implements ChatRuntime {
         this.disconnectObserver()
         return null
       case 'clear-layout':
-        setFullscreenChatLayout(false)
+        this.resources.clearLayout()
         return null
       case 'clear-runtime':
-        this.portalHost.clear()
-        clearFullscreenChatLayout()
+        this.resources.clear(observation?.targets)
         targets.overlayRoot = null
         targets.switchContainer = null
         return null
       case 'release-lease':
-        this.releaseLease(action.ensureNativeVisible)
+        this.resources.releaseIframe(observation?.targets ?? null, action.ensureNativeVisible)
         return null
       case 'create-lease':
-        this.lease = this.createLease(action.decision.source, action.decision.videoId)
+        this.resources.createIframe(action.decision, this.generation)
         return null
       case 'initialize-lease':
         return { decision: action.decision, success: this.initializeLease() }
@@ -482,13 +380,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
         return null
       case 'sync-portals': {
         if (!observation) throw new Error('A page observation is required to synchronize runtime portals.')
-        setFullscreenChatLayout(action.showOverlay && observation.evidence.fullscreen)
-        const nextTargets = this.portalHost.sync({
-          player: observation.targets.player,
-          rightControls: observation.targets.rightControls,
-          overlayEnabled: action.keepOverlayHost,
-          switchEnabled: action.showSwitch,
-        })
+        if (!this.sessionScope) throw new Error('A session scope is required to synchronize runtime resources.')
+        const nextTargets = this.resources.syncPresentation(observation, action, this.sessionScope)
         targets.overlayRoot = nextTargets.overlayRoot
         targets.switchContainer = nextTargets.switchContainer
         return null

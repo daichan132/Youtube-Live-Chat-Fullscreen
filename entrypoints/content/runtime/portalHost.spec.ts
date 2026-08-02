@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { SHADOW_HOST_ID, SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
-import { createPortalHost } from './portalHost'
+import { createPresentationLease } from './resources/PresentationLease'
 
 vi.mock('wxt/browser', () => ({
   browser: {
@@ -19,7 +19,7 @@ describe('portalHost', () => {
     const player = document.createElement('div')
     const controls = document.createElement('div')
     document.body.append(player, controls)
-    const host = createPortalHost()
+    const host = createPresentationLease()
 
     const initial = host.sync({
       player,
@@ -47,7 +47,7 @@ describe('portalHost', () => {
     const firstControls = document.createElement('div')
     const secondControls = document.createElement('div')
     document.body.append(firstPlayer, secondPlayer, firstControls, secondControls)
-    const host = createPortalHost()
+    const host = createPresentationLease()
 
     const first = host.sync({
       player: firstPlayer,
@@ -65,6 +65,8 @@ describe('portalHost', () => {
     expect(first.overlayRoot?.host.isConnected).toBe(false)
     expect(second.overlayRoot?.host.parentElement).toBe(secondPlayer)
     expect(second.switchContainer?.parentElement).toBe(secondControls)
+    expect(document.querySelectorAll(`#${SHADOW_HOST_ID}`)).toHaveLength(1)
+    expect(document.querySelectorAll(`#${SWITCH_BUTTON_CONTAINER_ID}`)).toHaveLength(1)
 
     host.clear()
     expect(document.getElementById(SHADOW_HOST_ID)).toBeNull()

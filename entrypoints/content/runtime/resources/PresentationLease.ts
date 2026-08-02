@@ -65,7 +65,7 @@ const createSwitchContainer = (rightControls: HTMLElement) => {
   return container
 }
 
-export type PortalHost = {
+export type PresentationLease = {
   sync(input: {
     player: HTMLElement | null
     rightControls: HTMLElement | null
@@ -75,7 +75,7 @@ export type PortalHost = {
   clear(): void
 }
 
-export const createPortalHost = (): PortalHost => {
+export const createPresentationLease = (): PresentationLease => {
   const contentCssUrl = browser.runtime.getURL('content-scripts/content.css' as PublicPath)
   let overlayRoot: ShadowRoot | null = null
   let switchContainer: HTMLElement | null = null

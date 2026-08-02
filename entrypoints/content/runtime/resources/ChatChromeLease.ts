@@ -56,7 +56,12 @@ const blurActiveElement = (body: HTMLElement) => {
   if (active && 'blur' in active && typeof active.blur === 'function') active.blur()
 }
 
-export const createChatOnlyChromeController = () => {
+export type ChatChromeLease = {
+  sync(iframe: HTMLIFrameElement | null, intent: ChatOnlyChromeIntent): void
+  release(): void
+}
+
+export const createChatChromeLease = (): ChatChromeLease => {
   let iframe: HTMLIFrameElement | null = null
   let body: HTMLElement | null = null
   let elements: HTMLElement[] = []
@@ -164,7 +169,7 @@ export const createChatOnlyChromeController = () => {
       else if (intent === 'collapsed') collapse()
       else expand()
     },
-    dispose() {
+    release() {
       cleanup()
       iframe = null
       body = null

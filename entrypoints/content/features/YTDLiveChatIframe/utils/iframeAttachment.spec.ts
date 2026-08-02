@@ -11,12 +11,7 @@ import {
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
-import {
-  attachIframeToContainer,
-  detachAttachedIframe,
-  reconcilePendingNativeIframeRestores,
-  resolveSourceIframe,
-} from './iframeAttachment'
+import { createIframeAttachment, createManagedLiveIframe, type IframeAttachment } from './iframeAttachment'
 import { installMembershipFallback, MEMBERSHIP_FALLBACK_MARKER_ATTR } from './iframeInitializer'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
@@ -29,6 +24,41 @@ vi.mock('@/entrypoints/content/utils/nativeChatState', () => ({
 
 const openArchiveNativeChatPanelMock = vi.mocked(openArchiveNativeChatPanel)
 const isNativeChatOpenMock = vi.mocked(isNativeChatOpen)
+
+type AttachmentCarrier = HTMLIFrameElement & { __testAttachment?: IframeAttachment }
+
+const resolveSourceIframe = (source: ChatSource, currentIframe: HTMLIFrameElement | null) => {
+  if (source.kind !== 'live_direct') return source.iframe
+  if (
+    currentIframe?.getAttribute('data-ylc-owned') === 'true' &&
+    currentIframe.getAttribute('data-ylc-source') === 'live_direct' &&
+    currentIframe.src === source.url
+  ) {
+    return currentIframe
+  }
+  return createManagedLiveIframe(source.url)
+}
+
+const attachIframeToContainer = (container: HTMLElement | null, iframe: HTMLIFrameElement) => {
+  if (!container) return null
+  const carrier = iframe as AttachmentCarrier
+  const attachment = carrier.__testAttachment ?? createIframeAttachment(iframe, 'video-a')
+  carrier.__testAttachment = attachment
+  attachment.attach(container)
+  return attachment
+}
+
+const detachAttachedIframe = (
+  iframe: HTMLIFrameElement,
+  _container: HTMLElement | null,
+  options: { ensureNativeVisible?: boolean } = {},
+) => {
+  const attachment = (iframe as AttachmentCarrier).__testAttachment
+  attachment?.release(options)
+  return attachment
+}
+
+const reconcilePendingNativeIframeRestores = (attachment?: IframeAttachment | null) => attachment?.reconcile()
 
 const setLocation = (path: string) => {
   const base = window.location.origin
@@ -489,7 +519,7 @@ describe('iframeAttachment', () => {
     document.body.appendChild(originalParent)
     document.body.appendChild(container)
 
-    attachIframeToContainer(container, iframe)
+    const attachment = attachIframeToContainer(container, iframe)
     originalParent.remove()
     const staleHost = document.createElement('ytd-live-chat-frame')
     staleHost.setAttribute('video-id', 'video-b')
@@ -504,7 +534,7 @@ describe('iframeAttachment', () => {
     const currentHost = document.createElement('ytd-live-chat-frame')
     currentHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(currentHost)
-    reconcilePendingNativeIframeRestores()
+    reconcilePendingNativeIframeRestores(attachment)
 
     expect(currentHost.contains(iframe)).toBe(true)
   })
@@ -520,7 +550,7 @@ describe('iframeAttachment', () => {
     document.body.appendChild(originalParent)
     document.body.appendChild(container)
 
-    attachIframeToContainer(container, iframe)
+    const attachment = attachIframeToContainer(container, iframe)
     originalParent.remove()
     const host = document.createElement('ytd-live-chat-frame')
     host.setAttribute('video-id', 'video-b')
@@ -530,7 +560,7 @@ describe('iframeAttachment', () => {
 
     expect(host.contains(iframe)).toBe(false)
     host.setAttribute('video-id', 'video-a')
-    reconcilePendingNativeIframeRestores()
+    reconcilePendingNativeIframeRestores(attachment)
 
     expect(host.contains(iframe)).toBe(true)
   })
@@ -546,7 +576,7 @@ describe('iframeAttachment', () => {
     document.body.appendChild(originalParent)
     document.body.appendChild(container)
 
-    attachIframeToContainer(container, iframe)
+    const attachment = attachIframeToContainer(container, iframe)
     expect(container.contains(iframe)).toBe(true)
 
     originalParent.remove()
@@ -558,7 +588,7 @@ describe('iframeAttachment', () => {
     const rebuiltHost = document.createElement('ytd-live-chat-frame')
     rebuiltHost.setAttribute('video-id', 'video-a')
     document.body.appendChild(rebuiltHost)
-    reconcilePendingNativeIframeRestores()
+    reconcilePendingNativeIframeRestores(attachment)
 
     expect(rebuiltHost.contains(iframe)).toBe(true)
   })

@@ -9,6 +9,12 @@ const runtimeSource = read('entrypoints/content/runtime/ChatRuntime.ts')
 const contentSource = read('entrypoints/content/index.tsx')
 const nativeChatSource = read('entrypoints/content/utils/nativeChat.ts')
 const e2eSelectorSource = read('e2e/utils/selectors.ts')
+const reconcilerSource = read('entrypoints/content/runtime/ResourceReconciler.ts')
+const iframeAttachmentSource = read('entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts')
+const layoutSource = read('entrypoints/content/runtime/resources/PlayerLayoutLease.ts')
+const iframeLeaseSource = read('entrypoints/content/runtime/resources/ChatIframeLease.ts')
+const presentationLeaseSource = read('entrypoints/content/runtime/resources/PresentationLease.ts')
+const chatChromeLeaseSource = read('entrypoints/content/runtime/resources/ChatChromeLease.ts')
 
 if (/export\s+const\s+chatRuntime\s*=/.test(runtimeSource)) {
   failures.push('ChatRuntime must be created per content session, not exported as a module singleton')
@@ -18,6 +24,23 @@ if (/window\.(?:setTimeout|setInterval|requestAnimationFrame)\s*\(/.test(runtime
 }
 if (!contentSource.includes('new ChatRuntimeImpl()') || !contentSource.includes('<ChatRuntimeProvider')) {
   failures.push('content bootstrap must create and provide its own ChatRuntime instance')
+}
+if (!runtimeSource.includes('new ResourceReconciler(') || !reconcilerSource.includes('restoringLeases')) {
+  failures.push('runtime resources and pending iframe restoration must be owned by ResourceReconciler instances')
+}
+if (
+  !iframeLeaseSource.includes('ChatIframeLease') ||
+  !presentationLeaseSource.includes('PresentationLease') ||
+  !layoutSource.includes('PlayerLayoutLease') ||
+  !chatChromeLeaseSource.includes('ChatChromeLease')
+) {
+  failures.push('runtime DOM resources must expose the four scoped lease contracts')
+}
+if (/^const (?:borrowedIframeRestoreMap|pendingNativeHostRestoreIframes|pendingNativeHostRestoreVideoIds)\b/m.test(iframeAttachmentSource)) {
+  failures.push('iframe restore state must be owned by ChatIframeLease, not module-global collections')
+}
+if (/^let (?:applied|resizeTimeouts)\b/m.test(layoutSource)) {
+  failures.push('player layout state and timers must be owned by PlayerLayoutLease instances')
 }
 if (!nativeChatSource.includes("platform/youtube/selectorCatalog")) {
   failures.push('native chat controls must use the YouTube selector catalog')
