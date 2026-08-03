@@ -8,6 +8,7 @@ import {
   DETERMINISTIC_PROJECT_NAMES,
   FIXTURE_PROJECT_NAME,
   FIXTURE_SPECS,
+  PRODUCTION_CHROME_PROJECT_NAME,
   VISUAL_PROJECT_NAME,
 } from './projectClassification'
 
@@ -41,6 +42,11 @@ describe('Playwright project classification', () => {
   })
 
   it('classifies fixture, visual, and accessibility projects as network independent', () => {
-    expect(DETERMINISTIC_PROJECT_NAMES).toEqual([FIXTURE_PROJECT_NAME, VISUAL_PROJECT_NAME, ACCESSIBILITY_PROJECT_NAME])
+    expect(DETERMINISTIC_PROJECT_NAMES).toEqual([
+      FIXTURE_PROJECT_NAME,
+      VISUAL_PROJECT_NAME,
+      ACCESSIBILITY_PROJECT_NAME,
+      PRODUCTION_CHROME_PROJECT_NAME,
+    ])
   })
 })

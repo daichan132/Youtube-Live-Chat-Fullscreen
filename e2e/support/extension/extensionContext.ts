@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process'
+import { readFileSync } from 'node:fs'
 import path from 'node:path'
 import { E2E_EXTENSION_OUTPUT_DIR } from '@e2e/config/buildOutput'
 import { resolveExtensionLaunchMode } from '@e2e/support/extensionLaunchMode'
@@ -8,6 +9,11 @@ import { type BrowserContext, chromium, type Page, type Worker } from '@playwrig
 const extensionOutputPath = path.resolve(E2E_EXTENSION_OUTPUT_DIR)
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
 let bundledChromiumVersion: string | null = null
+
+export const extensionUsesServiceWorker = () => {
+  const manifest = JSON.parse(readFileSync(path.join(extensionOutputPath, 'manifest.json'), 'utf8'))
+  return typeof manifest.background?.service_worker === 'string'
+}
 
 const resolveBundledChromiumVersion = () => {
   if (bundledChromiumVersion) return bundledChromiumVersion

@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { fullscreenTest } from '@e2e/fixtures/fullscreen'
-import { launchExtensionContext, registerConsentHandler, waitForMv3Worker } from '@e2e/support/extension/extensionContext'
+import { launchExtensionContext, registerConsentHandler } from '@e2e/support/extension/extensionContext'
 import { selectArchiveReplayUrl } from '@e2e/support/urls/archiveReplay'
 import { findLiveUrlWithChat } from '@e2e/utils/liveUrl'
 import type { BrowserContext } from '@playwright/test'
@@ -23,7 +23,6 @@ export const test = fullscreenTest.extend<{}, CanaryWorkerFixtures>({
     async ({}, use) => {
       const userDataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'pw-url-lookup-'))
       const context = await launchExtensionContext(userDataDir)
-      await waitForMv3Worker(context)
       try {
         await use(context)
       } finally {

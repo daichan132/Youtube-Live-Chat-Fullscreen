@@ -5,6 +5,7 @@ import {
   CANARY_SPECS,
   FIXTURE_PROJECT_NAME,
   FIXTURE_SPECS,
+  PRODUCTION_CHROME_PROJECT_NAME,
   STORE_ASSETS_PROJECT_NAME,
   toPlaywrightTestMatch,
   VISUAL_PROJECT_NAME,
@@ -75,6 +76,13 @@ export default defineConfig({
       testMatch: '**/*.accessibility.spec.ts',
       retries: 0,
       use: deterministicUse,
+    },
+    {
+      name: PRODUCTION_CHROME_PROJECT_NAME,
+      testDir: 'e2e/production',
+      testMatch: '**/*.production.spec.ts',
+      retries: 0,
+      use: extensionUse,
     },
     {
       name: STORE_ASSETS_PROJECT_NAME,

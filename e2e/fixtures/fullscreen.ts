@@ -2,8 +2,8 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { blockExternalNetwork, isDeterministicProject, resetDeterministicPage } from '@e2e/fixtures/deterministic'
+import { extensionUsesServiceWorker, launchExtensionContext, registerConsentHandler } from '@e2e/support/extension/extensionContext'
 import { attachFailureDiagnostics, observeBrowserLogs } from '@e2e/support/extension/extensionDiagnostics'
-import { launchExtensionContext, registerConsentHandler } from '@e2e/support/extension/extensionContext'
 import { type Extension, resolveExtension } from '@e2e/support/extension/extensionIdentity'
 import { type BrowserContext, test as base, type Page } from '@playwright/test'
 
@@ -39,7 +39,7 @@ export const fullscreenTest = base.extend<ExtensionTestFixtures, FullscreenWorke
 
   sharedExtension: [
     async ({ sharedContext }, use, workerInfo) => {
-      await use(await resolveExtension(sharedContext, !isDeterministicProject(workerInfo.project.name)))
+      await use(await resolveExtension(sharedContext, extensionUsesServiceWorker() && !isDeterministicProject(workerInfo.project.name)))
     },
     { scope: 'worker', timeout: 120000 },
   ],

@@ -37,7 +37,7 @@ describe('ChatViewport', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual(DEFAULT_CHAT_PROFILE.appearance.backgroundColor)
   })
 
-  it('keeps configured blur off the parent-page background layer', () => {
+  it('applies configured blur only to the bounded chat background layer', () => {
     store.set(chatSettingsStateAtom, {
       ...store.get(chatSettingsStateAtom),
       profile: {
@@ -52,7 +52,6 @@ describe('ChatViewport', () => {
     const { container } = renderWithStore(<ChatViewport loading={false} visible />, store)
     const background = container.querySelector<HTMLElement>('[data-ylc-chat-background]')
 
-    expect(background?.style.backdropFilter).toBe('')
-    expect(background?.style.getPropertyValue('-webkit-backdrop-filter')).toBe('')
+    expect(background?.style.backdropFilter).toBe('blur(12px)')
   })
 })

@@ -99,6 +99,13 @@ describe('Real YouTube canary summary', () => {
     expect(renderCanarySummary([], 'passed')).toContain('| State | not-run |')
   })
 
+  it('rejects degraded evidence in the strict release-candidate lane', () => {
+    const degraded = summarizeCanaryOutcomes([passed, { ...passed, title: 'archive › replay', status: 'skipped' }], 'passed')
+
+    expect(shouldFailCanaryRun(degraded)).toBe(false)
+    expect(shouldFailCanaryRun(degraded, true)).toBe(true)
+  })
+
   it('keeps diagnostics after a non-green run on a fixed runner image', () => {
     const workflow = readFileSync(resolve(import.meta.dirname, '../../.github/workflows/canary.yml'), 'utf8')
 

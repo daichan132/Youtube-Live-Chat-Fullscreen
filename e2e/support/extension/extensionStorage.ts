@@ -1,4 +1,4 @@
-import { E2E_BRIDGE_FILE } from '@e2e/config/buildOutput'
+import { E2E_BRIDGE_FILE, E2E_BRIDGE_REQUIRED } from '@e2e/config/buildOutput'
 import type { BrowserContext, Page, Worker } from '@playwright/test'
 
 export type ExtensionStorage = {
@@ -18,12 +18,12 @@ export const createExtensionStorage = (
   initialWorker: Worker | null,
 ): ExtensionStorage => {
   let worker = initialWorker
-  const bridgeUrl = `chrome-extension://${extensionId}/${E2E_BRIDGE_FILE}`
+  const storagePageUrl = `chrome-extension://${extensionId}/${E2E_BRIDGE_REQUIRED ? E2E_BRIDGE_FILE : 'popup.html'}`
 
   const viaBridge = async <T>(operation: (page: Page) => Promise<T>): Promise<T> => {
     const page = await context.newPage()
     try {
-      await page.goto(bridgeUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
+      await page.goto(storagePageUrl, { waitUntil: 'domcontentloaded', timeout: 15000 })
       return await operation(page)
     } finally {
       await page.close().catch(() => null)

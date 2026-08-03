@@ -37,7 +37,8 @@ export const summarizeCanaryOutcomes = (outcomes: readonly CanaryTestOutcome[], 
   return { state, executed, passed, flaky, skipped, failed }
 }
 
-export const shouldFailCanaryRun = (summary: CanarySummary) => summary.executed === 0 || summary.state === 'failed'
+export const shouldFailCanaryRun = (summary: CanarySummary, requireClean = false) =>
+  summary.executed === 0 || summary.state === 'failed' || (requireClean && summary.state !== 'passed')
 
 const escapeCell = (value: string) => value.replaceAll('|', '\\|').replaceAll(/\r?\n/g, ' ')
 
@@ -101,7 +102,7 @@ class CanarySummaryReporter implements Reporter {
     const summary = summarizeCanaryOutcomes(outcomes, result.status)
     const summaryPath = process.env.GITHUB_STEP_SUMMARY
     if (summaryPath) await appendFile(summaryPath, `\n${renderCanarySummary(outcomes, result.status)}\n`, 'utf8')
-    if (shouldFailCanaryRun(summary)) return { status: 'failed' as const }
+    if (shouldFailCanaryRun(summary, process.env.YLC_CANARY_REQUIRE_CLEAN === '1')) return { status: 'failed' as const }
   }
 
   printsToStdio() {

@@ -32,6 +32,7 @@ export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
     }
   }, [appearance.fontColor])
   const backgroundColor = appearance.backgroundColor
+  const backdropFilter = appearance.blur > 0 ? `blur(${appearance.blur}px)` : 'none'
 
   return (
     <>
@@ -40,6 +41,8 @@ export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
         className='absolute inset-0 rounded-md transition-[background-color,opacity] duration-200 ease-out'
         style={{
           backgroundColor: `rgba(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b}, ${backgroundColor.a})`,
+          backdropFilter,
+          WebkitBackdropFilter: backdropFilter,
           opacity: chatVisible ? 1 : 0,
         }}
       />

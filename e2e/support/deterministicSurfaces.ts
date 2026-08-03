@@ -103,3 +103,13 @@ export const openDeterministicOverlay = async (page: Page) => {
   await stabilizeExtensionRendering(page)
   return { scenario, overlay }
 }
+
+export const installCheckerboardVideoSurface = (page: Page) =>
+  page.evaluate(() => {
+    const player = document.getElementById('movie_player')
+    if (!player) throw new Error('Deterministic player surface is missing.')
+    player.style.backgroundColor = '#fff'
+    player.style.backgroundImage = 'conic-gradient(from 90deg, #101010 0 25%, #f0f0f0 0 50%, #101010 0 75%, #f0f0f0 0)'
+    player.style.backgroundSize = '8px 8px'
+    for (const video of player.querySelectorAll<HTMLElement>('video, .html5-video-container')) video.style.visibility = 'hidden'
+  })

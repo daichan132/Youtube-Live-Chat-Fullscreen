@@ -24,6 +24,7 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 - `yarn e2e` / `yarn e2e:fixture`: builds the testing extension and runs only popup and synthetic YouTube fixtures. External HTTP(S) requests are blocked, retries are disabled, and this is the pull-request gate.
 - `yarn e2e:canary`: builds the testing extension and runs five real YouTube compatibility checks for live, archive, navigation, managed fallback, and no-chat boundaries. URL discovery and environment-dependent skips remain isolated here; replay-unavailable is owned by the deterministic fixture.
 - `yarn test:visual`: runs the deterministic visual regression project.
+- `yarn e2e:production:chrome`: extracts the versioned production Chrome ZIP and boots its popup and content runtime without the testing bridge.
 - `yarn test:accessibility`: runs the deterministic accessibility project.
 - `yarn screenshots`: builds the testing extension and runs the separate screenshot project.
 - `yarn capture:store-assets`: captures store-listing assets through its dedicated Playwright project.
@@ -43,8 +44,14 @@ Deterministic YouTube specs use the typed API in `e2e/support/youtubeScenario/`.
 - `quality` owns generated locale checks, source checks, coverage, and Node-side contract tests.
 - `package` owns fresh Chrome/Firefox production builds and ZIPs, the production package contract, and the exact testing extension artifact used by browser checks.
 - `browser-contracts` downloads that testing artifact and runs fixture, visual, and accessibility projects with retries disabled.
-- The release workflow independently rebuilds and verifies production packages, then requires the deterministic fixture project to pass before uploading or publishing them.
+- `production-package-smoke` downloads the exact Chrome ZIP built by `package`, extracts it, and boots the packaged popup and content runtime without test-only assets.
+- The release-candidate workflow independently rebuilds and verifies production packages, runs deterministic browser contracts, boots the exact Chrome ZIP, and runs a strict real-YouTube canary against that extracted ZIP. Skipped, flaky, or degraded canary evidence rejects the candidate.
+- A passing candidate produces `release-proof-v<version>.json` with the source commit, exact artifact SHA-256 hashes, required gates, and regression invariants. The ZIPs and proof are attached to a draft GitHub Release.
+- Store publication is a separate manual workflow. It downloads the draft assets, verifies their hashes and tag commit, passes through protected Chrome and Firefox environments, and never rebuilds the artifacts.
+- Repository administrators must configure required reviewers for the `chrome-web-store` and `firefox-add-ons` GitHub environments; naming an environment in YAML does not itself create an approval policy.
 - The canary workflow remains responsible for compatibility with the changing real YouTube surface; it is not a deterministic pull-request gate.
 - Canary skips are limited to YouTube-owned preconditions. Once a usable source and fullscreen state exist, missing extension UI or chat is a test failure. The workflow writes executed/skipped/failed counts to the job summary and retains Playwright diagnostics.
 
 Visual baselines are evaluated in CI on Ubuntu with the installed Playwright Chromium. Baselines must therefore be captured and approved for that environment. Initial OS rendering differences are baseline-alignment work, not a reason to loosen deterministic thresholds.
+
+The blur contract is metamorphic rather than baseline-only: a high-frequency player surface must lose edge energy inside the bounded chat background when blur changes from 0 to 16px, while an outside sample remains pixel-identical. This catches a syntactically valid `backdrop-filter` that is attached to the wrong compositor layer.

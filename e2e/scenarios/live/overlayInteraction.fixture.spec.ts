@@ -196,4 +196,28 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
         carrierMatchesViewport: true,
       })
   })
+
+  test('keeps auto-hidden chat visible while the document has lost focus', { tag: '@fixture' }, async ({ page, extension }) => {
+    expect(
+      await patchOverlayStore(extension, {
+        profile: { display: { idleVisibility: 'auto-hide' } },
+      }),
+    ).not.toBeNull()
+
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    const viewport = overlay.chatViewport()
+    await page.mouse.move(1100, 600)
+    await expect(viewport).toHaveCSS('opacity', '0', { timeout: 3000 })
+
+    await overlay.emulateDocumentFocus(false)
+    await expect(viewport).toHaveCSS('opacity', '1')
+
+    await overlay.emulateDocumentFocus(true)
+    await expect(viewport).toHaveCSS('opacity', '0')
+  })
 })

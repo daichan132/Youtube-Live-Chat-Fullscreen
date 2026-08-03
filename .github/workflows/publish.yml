@@ -1,0 +1,128 @@
+name: Publish proven release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Semver version from an existing draft release candidate
+        required: true
+        type: string
+
+concurrency:
+  group: publish-${{ inputs.version }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  validate-candidate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          ref: v${{ inputs.version }}
+      - name: Validate requested version
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [[ ! "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
+            echo "Invalid release version: $RELEASE_VERSION"
+            exit 1
+          fi
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          if [[ "$PACKAGE_VERSION" != "$RELEASE_VERSION" ]]; then
+            echo "Tag package version $PACKAGE_VERSION does not match $RELEASE_VERSION"
+            exit 1
+          fi
+          IS_DRAFT=$(gh release view "v$RELEASE_VERSION" --json isDraft --jq .isDraft)
+          if [[ "$IS_DRAFT" != "true" ]]; then
+            echo "v$RELEASE_VERSION is not an unpublished draft candidate"
+            exit 1
+          fi
+      - name: Download candidate assets without rebuilding
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p .output
+          gh release download "v$RELEASE_VERSION" --dir .output \
+            --pattern "youtube-live-chat-fullscreen-$RELEASE_VERSION-*.zip" \
+            --pattern "release-proof-v$RELEASE_VERSION.json"
+      - name: Verify artifact hashes and source commit
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: node scripts/verify/release-proof.mjs verify --proof ".output/release-proof-v$RELEASE_VERSION.json" --expected-commit "$(git rev-parse HEAD)"
+      - name: Forward the exact proven assets
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: proven-release-assets
+          path: .output
+          include-hidden-files: true
+          if-no-files-found: error
+
+  publish-chrome:
+    needs: validate-candidate
+    runs-on: ubuntu-24.04
+    environment: chrome-web-store
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: v${{ inputs.version }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: proven-release-assets
+          path: .output
+      - name: Publish proven Chrome ZIP
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
+          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
+          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
+          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
+          CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: node scripts/cws-v2-submit.mjs --zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip" --expected-version "$RELEASE_VERSION"
+
+  publish-firefox:
+    needs: validate-candidate
+    runs-on: ubuntu-24.04
+    environment: firefox-add-ons
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: v${{ inputs.version }}
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+          cache: "yarn"
+      - name: Install publishing dependencies
+        run: yarn install --immutable
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: proven-release-assets
+          path: .output
+      - name: Publish proven Firefox ZIP
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
+          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
+        run: |
+          node ./node_modules/publish-browser-extension/bin/publish-extension.mjs \
+            --firefox-extension-id "youtube-live-chat-fullscreen" \
+            --firefox-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip" \
+            --firefox-sources-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
+
+  publish-github-release:
+    needs: [publish-chrome, publish-firefox]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Publish the already-proven draft release
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: gh release edit "v$RELEASE_VERSION" --draft=false --latest

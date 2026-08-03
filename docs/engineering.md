@@ -59,7 +59,9 @@ Architecture checks reject module-global runtime ownership, direct runtime timer
 
 One WXT codebase produces Chrome and Firefox packages. CI builds both browsers from a clean checkout, verifies package contents and size budgets, and builds a separate testing extension for browser contracts.
 
-The release workflow repeats source checks, tests, production builds, package verification, fixture E2E, visual checks, and accessibility checks before publication. Testing-only assets are injected only in WXT's `testing` mode; package contracts reject them from release ZIP files. See [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), [`.github/workflows/cd.yml`](../.github/workflows/cd.yml), and [`scripts/verify/check-package-contracts.mjs`](../scripts/verify/check-package-contracts.mjs).
+The release-candidate workflow repeats source checks, tests, production builds, package verification, fixture E2E, visual checks, and accessibility checks. It then extracts the exact Chrome production ZIP, boots it without the testing bridge, and runs the real-YouTube canary with degraded, flaky, and skipped outcomes treated as failures. Passing ZIPs receive a commit-bound SHA-256 proof and are attached to a draft release.
+
+Publication is a separate manual promotion workflow with protected Chrome and Firefox environments. It downloads and verifies the draft assets, submits those exact bytes to the stores, and never rebuilds after proof. Testing-only assets are injected only in WXT's `testing` mode; package contracts reject them from release ZIP files. See [`.github/workflows/ci.yml`](../.github/workflows/ci.yml), [`.github/workflows/cd.yml`](../.github/workflows/cd.yml), [`.github/workflows/publish.yml`](../.github/workflows/publish.yml), and [`scripts/verify/check-package-contracts.mjs`](../scripts/verify/check-package-contracts.mjs).
 
 ## 9. Internationalization
 

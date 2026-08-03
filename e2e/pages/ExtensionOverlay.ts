@@ -11,6 +11,10 @@ export class ExtensionOverlay {
     return this.page.locator(`${SHADOW_HOST} [data-ylc-resizable]`)
   }
 
+  chatViewport() {
+    return this.page.locator(`${SHADOW_HOST} [data-ylc-chat-viewport]`)
+  }
+
   settingsFrame() {
     return this.page.frameLocator(`${SHADOW_HOST} iframe[data-ylc-settings-frame]`)
   }
@@ -76,6 +80,30 @@ export class ExtensionOverlay {
   async expectOverlayRemoved(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.EXTENSION_CHAT
     await expect.poll(async () => this.page.locator(SHADOW_HOST).count(), { timeout }).toBe(0)
+  }
+
+  async emulateDocumentFocus(focused: boolean) {
+    const cdp = await this.page.context().newCDPSession(this.page)
+    const executionContexts = new Set<number>()
+    cdp.on('Runtime.executionContextCreated', event => executionContexts.add(event.context.id))
+    try {
+      await cdp.send('Runtime.enable')
+      await expect.poll(() => executionContexts.size).toBeGreaterThan(1)
+      await Promise.all(
+        [...executionContexts].map(contextId =>
+          cdp
+            .send('Runtime.evaluate', {
+              contextId,
+              expression: `Object.defineProperty(document, 'hasFocus', { configurable: true, value: () => ${focused} }); window.dispatchEvent(new Event('${focused ? 'focus' : 'blur'}'))`,
+            })
+            .catch(() => null),
+        ),
+      )
+      await expect.poll(() => this.page.evaluate(() => document.hasFocus())).toBe(focused)
+    } finally {
+      await cdp.send('Runtime.disable').catch(() => null)
+      await cdp.detach()
+    }
   }
 
   async getHostCompositingState() {

@@ -30,6 +30,7 @@
     "e2e": "yarn e2e:fixture",
     "e2e:fixture": "yarn build:e2e && playwright test --project=fixture",
     "e2e:canary": "yarn build:e2e && playwright test --project=canary",
+    "e2e:production:chrome": "yarn prepare:production-smoke && YLC_EXTENSION_OUTPUT_DIR=.output/production-smoke/chrome YLC_REQUIRE_E2E_BRIDGE=0 playwright test --project=production-chrome --retries=0",
     "e2e:archive": "yarn build:e2e && playwright test --project=canary --grep @archive",
     "e2e:live": "yarn build:e2e && playwright test --project=canary --grep @live",
     "test:visual": "yarn build:e2e && playwright test --project=visual",
@@ -44,7 +45,10 @@
     "verify:dev": "node scripts/verify/launch-chrome.mjs --dev --setup-extension",
     "verify:overlay": "node scripts/verify/inspect-overlay.mjs",
     "verify:package-contracts": "node scripts/verify/check-package-contracts.mjs",
-    "verify:screenshots": "node scripts/verify/capture-overlay-screenshots.mjs"
+    "verify:screenshots": "node scripts/verify/capture-overlay-screenshots.mjs",
+    "prepare:production-smoke": "node scripts/verify/prepare-production-smoke.mjs",
+    "create:release-proof": "node scripts/verify/release-proof.mjs create",
+    "verify:release-proof": "node scripts/verify/release-proof.mjs verify"
   },
   "dependencies": {
     "jotai": "^2.12.5",

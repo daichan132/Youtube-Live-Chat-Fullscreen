@@ -1,57 +1,19 @@
-name: Release
+name: Release candidate
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
 concurrency:
-  group: release-${{ github.ref }}
+  group: release-candidate-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
   contents: write
 
 jobs:
-  release-gate:
-    runs-on: ubuntu-latest
-    outputs:
-      should_release: ${{ steps.release.outputs.should_release }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24.x
-      - name: Determine whether this version needs publishing
-        id: release
-        shell: bash
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
-            echo "Invalid version in package.json: $VERSION"
-            exit 1
-          fi
-
-          git fetch --tags --force
-          SHOULD_RELEASE=true
-          if git rev-parse "refs/tags/v$VERSION" >/dev/null 2>&1 && [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-            SHOULD_RELEASE=false
-            echo "v$VERSION already exists; skipping automatic publishing"
-          elif [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
-            echo "Manual release requested for v$VERSION"
-          else
-            echo "v$VERSION is new; automatic publishing is required"
-          fi
-
-          echo "should_release=$SHOULD_RELEASE" >> "$GITHUB_OUTPUT"
-
   verify-and-package:
-    needs: release-gate
-    if: ${{ needs.release-gate.outputs.should_release == 'true' }}
     runs-on: ubuntu-24.04
+    timeout-minutes: 120
     outputs:
       version: ${{ steps.version.outputs.version }}
     steps:
@@ -62,15 +24,14 @@ jobs:
         with:
           node-version: 24.x
           cache: "yarn"
-      - name: Validate release version and ref
+      - name: Validate candidate version and ref
         id: version
         shell: bash
         run: |
           if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
-            echo "Releases must run from main, got: $GITHUB_REF"
+            echo "Release candidates must run from main, got: $GITHUB_REF"
             exit 1
           fi
-
           VERSION=$(node -p "require('./package.json').version")
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
             echo "Invalid version in package.json: $VERSION"
@@ -87,12 +48,10 @@ jobs:
         run: yarn test:coverage
       - name: Run contract tests
         run: yarn test:contracts
-      - name: Build extensions
+      - name: Build and package production extensions
         run: |
           yarn build
           yarn build:firefox
-      - name: Package extensions
-        run: |
           yarn zip
           yarn zip:firefox
       - name: Verify production package contracts
@@ -101,40 +60,51 @@ jobs:
         run: yarn build:e2e
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
-      - name: Run deterministic end-to-end tests
+      - name: Run deterministic browser contracts
         run: xvfb-run --auto-servernum yarn playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1
+      - name: Smoke exact production Chrome ZIP
+        run: xvfb-run --auto-servernum yarn e2e:production:chrome
+      - name: Run strict canary against the exact production Chrome ZIP
+        env:
+          YLC_EXTENSION_OUTPUT_DIR: .output/production-smoke/chrome
+          YLC_REQUIRE_E2E_BRIDGE: "0"
+          YLC_CANARY_REQUIRE_CLEAN: "1"
+        run: xvfb-run --auto-servernum yarn playwright test --project=canary --retries=0 --max-failures=1
+      - name: Create release proof
+        run: node scripts/verify/release-proof.mjs create --commit "$GITHUB_SHA"
       - name: Upload browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: release-browser-contracts-${{ github.sha }}
+          name: release-candidate-browser-${{ github.sha }}
           path: |
             playwright-report
             test-results
           if-no-files-found: ignore
           retention-days: 14
-      - name: Upload release packages
+      - name: Upload proven candidate
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: extension-packages
+          name: release-candidate-${{ github.sha }}
           path: |
             .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-chrome.zip
             .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-firefox.zip
             .output/youtube-live-chat-fullscreen-${{ steps.version.outputs.version }}-sources.zip
+            .output/release-proof-v${{ steps.version.outputs.version }}.json
           include-hidden-files: true
           if-no-files-found: error
 
-  prepare-release:
+  draft-release:
     needs: verify-and-package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
-      - name: Download verified packages
+      - name: Download proven candidate
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
-          name: extension-packages
+          name: release-candidate-${{ github.sha }}
           path: .output
       - name: Create or verify tag
         env:
@@ -151,10 +121,10 @@ jobs:
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git tag -a "$TAG" -m "Release $TAG" "$GITHUB_SHA"
+            git tag -a "$TAG" -m "Release candidate $TAG" "$GITHUB_SHA"
             git push origin "refs/tags/$TAG"
           fi
-      - name: Create or update GitHub Release
+      - name: Create or update draft GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
@@ -164,62 +134,15 @@ jobs:
             ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip"
             ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip"
             ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
+            ".output/release-proof-v$RELEASE_VERSION.json"
           )
           if gh release view "$TAG" >/dev/null 2>&1; then
+            IS_DRAFT=$(gh release view "$TAG" --json isDraft --jq .isDraft)
+            if [[ "$IS_DRAFT" != "true" ]]; then
+              echo "$TAG is already published and cannot be replaced by a candidate"
+              exit 1
+            fi
             gh release upload "$TAG" "${PACKAGES[@]}" --clobber
           else
-            gh release create "$TAG" "${PACKAGES[@]}" --title "$TAG" --generate-notes --verify-tag
+            gh release create "$TAG" "${PACKAGES[@]}" --draft --title "$TAG" --generate-notes --verify-tag
           fi
-
-  publish-chrome:
-    needs: [verify-and-package, prepare-release]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24.x
-      - name: Download verified packages
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: extension-packages
-          path: .output
-      - name: Publish Chrome extension
-        env:
-          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
-          CHROME_EXTENSION_ID: ${{ secrets.CHROME_EXTENSION_ID }}
-          CHROME_PUBLISHER_ID: ${{ secrets.CHROME_PUBLISHER_ID }}
-          CHROME_CLIENT_ID: ${{ secrets.CHROME_CLIENT_ID }}
-          CHROME_CLIENT_SECRET: ${{ secrets.CHROME_CLIENT_SECRET }}
-          CHROME_REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-        run: |
-          node scripts/cws-v2-submit.mjs \
-            --zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip" \
-            --expected-version "$RELEASE_VERSION"
-
-  publish-firefox:
-    needs: [verify-and-package, prepare-release]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
-        with:
-          node-version: 24.x
-          cache: "yarn"
-      - name: Install publishing dependencies
-        run: yarn install --immutable
-      - name: Download verified packages
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
-        with:
-          name: extension-packages
-          path: .output
-      - name: Publish Firefox extension
-        env:
-          RELEASE_VERSION: ${{ needs.verify-and-package.outputs.version }}
-          FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
-          FIREFOX_JWT_SECRET: ${{ secrets.FIREFOX_JWT_SECRET }}
-        run: |
-          node ./node_modules/publish-browser-extension/bin/publish-extension.mjs \
-            --firefox-extension-id "youtube-live-chat-fullscreen" \
-            --firefox-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip" \
-            --firefox-sources-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"

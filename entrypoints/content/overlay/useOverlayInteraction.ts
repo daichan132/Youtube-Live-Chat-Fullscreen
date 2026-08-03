@@ -3,12 +3,41 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 export type OverlayInteractionState = 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open'
 
 type HoverRegion = 'none' | 'chat' | 'controls'
+type Gesture = 'none' | 'dragging' | 'resizing'
 
 type UseOverlayInteractionOptions = {
   initialDisplayOnMount: boolean
   settingsOpen: boolean
   documentFocused: boolean
   alwaysVisible: boolean
+}
+
+export type OverlayPresentationInput = Omit<UseOverlayInteractionOptions, 'initialDisplayOnMount'> & {
+  hoverRegion: HoverRegion
+  gesture: Gesture
+  idle: boolean
+}
+
+export const deriveOverlayPresentation = ({
+  settingsOpen,
+  documentFocused,
+  alwaysVisible,
+  hoverRegion,
+  gesture,
+  idle,
+}: OverlayPresentationInput) => {
+  let state: OverlayInteractionState = 'idle'
+  if (settingsOpen) state = 'settings-open'
+  else if (gesture === 'dragging') state = 'dragging'
+  else if (gesture === 'resizing') state = 'resizing'
+  else if (hoverRegion === 'controls') state = 'hovering-controls'
+  else if (hoverRegion === 'chat') state = 'hovering-chat'
+
+  return {
+    state,
+    controlsVisible: !settingsOpen && gesture !== 'resizing' && (hoverRegion !== 'none' || gesture === 'dragging'),
+    chatVisible: alwaysVisible || hoverRegion !== 'none' || gesture !== 'none' || !idle || settingsOpen || !documentFocused,
+  }
 }
 
 const ACTIVITY_EVENTS: (keyof DocumentEventMap)[] = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll']
@@ -50,7 +79,7 @@ export const useOverlayInteraction = ({
   alwaysVisible,
 }: UseOverlayInteractionOptions) => {
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
-  const [gesture, setGesture] = useState<'none' | 'dragging' | 'resizing'>('none')
+  const [gesture, setGesture] = useState<Gesture>('none')
   const [controlsHiding, setControlsHiding] = useState(false)
   const controlHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const controlFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -105,21 +134,18 @@ export const useOverlayInteraction = ({
   const startResizing = useCallback(() => setGesture('resizing'), [])
   const finishResizing = useCallback(() => setGesture('none'), [])
 
-  let state: OverlayInteractionState = 'idle'
-  if (settingsOpen) state = 'settings-open'
-  else if (gesture === 'dragging') state = 'dragging'
-  else if (gesture === 'resizing') state = 'resizing'
-  else if (hoverRegion === 'controls') state = 'hovering-controls'
-  else if (hoverRegion === 'chat') state = 'hovering-chat'
-
-  const controlsVisible = !settingsOpen && gesture !== 'resizing' && (hoverRegion !== 'none' || gesture === 'dragging')
-  const chatVisible = alwaysVisible || hoverRegion !== 'none' || gesture !== 'none' || !idle || settingsOpen || !documentFocused
+  const presentation = deriveOverlayPresentation({
+    settingsOpen,
+    documentFocused,
+    alwaysVisible,
+    hoverRegion,
+    gesture,
+    idle,
+  })
 
   return {
-    state,
-    controlsVisible,
+    ...presentation,
     controlsHiding,
-    chatVisible,
     enterChat: () => showControlRail('chat'),
     leaveChat: scheduleControlRailHide,
     enterControls: () => showControlRail('controls'),

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { useOverlayInteraction } from './useOverlayInteraction'
+import { deriveOverlayPresentation, useOverlayInteraction } from './useOverlayInteraction'
 
 const renderInteraction = (overrides: Partial<Parameters<typeof useOverlayInteraction>[0]> = {}) =>
   renderHook(() =>
@@ -66,5 +66,23 @@ describe('useOverlayInteraction', () => {
     rerender()
     act(() => result.current.finishResizing())
     expect(result.current.state).toBe('idle')
+  })
+
+  it.each([
+    { name: 'focused idle', documentFocused: true, idle: true, chatVisible: false },
+    { name: 'window blur', documentFocused: false, idle: true, chatVisible: true },
+    { name: 'focus restored', documentFocused: true, idle: true, chatVisible: false },
+    { name: 'recent activity', documentFocused: true, idle: false, chatVisible: true },
+  ])('derives the focus and idle contract for $name', ({ documentFocused, idle, chatVisible }) => {
+    expect(
+      deriveOverlayPresentation({
+        settingsOpen: false,
+        documentFocused,
+        alwaysVisible: false,
+        hoverRegion: 'none',
+        gesture: 'none',
+        idle,
+      }),
+    ).toEqual({ state: 'idle', controlsVisible: false, chatVisible })
   })
 })
