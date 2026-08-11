@@ -67,7 +67,7 @@
     "@types/react-dom": "19.2.3",
     "@vitest/coverage-v8": "4.1.10",
     "@wxt-dev/module-react": "1.2.2",
-    "jsdom": "29.1.1",
+    "jsdom": "30.0.1",
     "lefthook": "2.1.10",
     "playwright-core": "1.62.0",
     "tailwindcss": "4.3.3",
