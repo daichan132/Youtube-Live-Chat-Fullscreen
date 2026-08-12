@@ -72,13 +72,35 @@ describe('Real YouTube canary summary', () => {
     })
   })
 
-  it('promotes fallback fingerprints to degraded and missing capabilities to failed', () => {
+  it('keeps uncorroborated fingerprint failures degraded outside the strict release lane', () => {
     expect(summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'degraded' }], 'passed').state).toBe('degraded')
-    const failed = summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'failed' }], 'passed')
+    const degraded = summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'failed' }], 'passed')
 
-    expect(failed.state).toBe('failed')
-    expect(shouldFailCanaryRun(failed)).toBe(true)
+    expect(degraded.state).toBe('degraded')
+    expect(shouldFailCanaryRun(degraded)).toBe(false)
+    expect(shouldFailCanaryRun(degraded, true)).toBe(true)
     expect(renderCanarySummary([{ ...passed, compatibilityState: 'degraded' }], 'passed')).toContain('compatibility: degraded')
+  })
+
+  it('still fails interrupted or timed-out runs', () => {
+    expect(summarizeCanaryOutcomes([passed], 'interrupted').state).toBe('failed')
+    expect(summarizeCanaryOutcomes([passed], 'timedout').state).toBe('failed')
+  })
+
+  it('reports the observed three-flaky two-skipped scheduled run as degraded', () => {
+    const outcomes: CanaryTestOutcome[] = [
+      { ...passed, title: 'archive › transition', status: 'flaky', compatibilityState: 'failed' },
+      { ...passed, title: 'archive › replay', status: 'flaky', compatibilityState: 'failed' },
+      { ...passed, title: 'live › no chat', status: 'flaky', compatibilityState: 'failed' },
+      { ...passed, title: 'live › auto open', status: 'skipped' },
+      { ...passed, title: 'live › native fallback', status: 'skipped' },
+    ]
+
+    const summary = summarizeCanaryOutcomes(outcomes, 'passed')
+
+    expect(summary).toMatchObject({ state: 'degraded', executed: 3, flaky: 3, skipped: 2, failed: 0 })
+    expect(shouldFailCanaryRun(summary)).toBe(false)
+    expect(shouldFailCanaryRun(summary, true)).toBe(true)
   })
 
   it('makes an all-skipped canary non-green instead of silently passing', () => {

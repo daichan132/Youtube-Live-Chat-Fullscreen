@@ -25,12 +25,16 @@ export const summarizeCanaryOutcomes = (outcomes: readonly CanaryTestOutcome[], 
   const skipped = outcomes.filter(outcome => outcome.status === 'skipped').length
   const failed = outcomes.filter(outcome => outcome.status === 'failed').length
   const executed = outcomes.length - skipped
+  const runFailed = runStatus !== 'passed'
+  const observedCompatibilityDrift = outcomes.some(
+    outcome => outcome.compatibilityState === 'degraded' || outcome.compatibilityState === 'failed',
+  )
   const state =
     executed === 0
       ? 'not-run'
-      : failed > 0 || runStatus !== 'passed' || outcomes.some(outcome => outcome.compatibilityState === 'failed')
+      : failed > 0 || runFailed
         ? 'failed'
-        : skipped > 0 || flaky > 0 || outcomes.some(outcome => outcome.compatibilityState === 'degraded')
+        : skipped > 0 || flaky > 0 || observedCompatibilityDrift
           ? 'degraded'
           : 'passed'
 
