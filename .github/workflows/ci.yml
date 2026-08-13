@@ -64,6 +64,7 @@ jobs:
         with:
           name: production-chrome-${{ github.sha }}
           path: .output/youtube-live-chat-fullscreen-*-chrome.zip
+          include-hidden-files: true
           if-no-files-found: error
       - name: Build testing extension
         run: yarn build:e2e
