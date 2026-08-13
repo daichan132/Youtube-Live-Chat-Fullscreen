@@ -7,6 +7,7 @@ import wxtConfig from '../../wxt.config'
 const root = resolve(import.meta.dirname, '../..')
 
 const readJson = async <T>(path: string): Promise<T> => JSON.parse(await readFile(resolve(root, path), 'utf8')) as T
+const readText = (path: string) => readFile(resolve(root, path), 'utf8')
 
 const localeNames = async (directory: string, layout: 'files' | 'directories') =>
   (await readdir(resolve(root, directory), { withFileTypes: true }))
@@ -72,5 +73,19 @@ describe('production package source policy', () => {
     expect(budgets['firefox-mv2'].browser).toBe('firefox')
     expect(budgets['chrome-mv3'].budgets.zipBytes).toBeGreaterThan(0)
     expect(budgets['firefox-mv2'].budgets.zipBytes).toBeGreaterThan(0)
+  })
+
+  it('uploads the verified production ZIP before building the testing extension', async () => {
+    const workflow = await readText('.github/workflows/ci.yml')
+    const packageJob = workflow.slice(workflow.indexOf('  package:'), workflow.indexOf('  browser-contracts:'))
+    const verifyIndex = packageJob.indexOf('yarn verify:package-contracts')
+    const uploadIndex = packageJob.indexOf('- name: Upload production Chrome ZIP for startup smoke')
+    const testingBuildIndex = packageJob.indexOf('- name: Build testing extension')
+
+    expect(verifyIndex).toBeGreaterThan(-1)
+    expect(uploadIndex).toBeGreaterThan(verifyIndex)
+    expect(testingBuildIndex).toBeGreaterThan(uploadIndex)
+    expect(packageJob).toContain('path: .output/youtube-live-chat-fullscreen-*-chrome.zip')
+    expect(packageJob).toContain('if-no-files-found: error')
   })
 })

@@ -57,6 +57,14 @@ jobs:
           yarn zip
           yarn zip:firefox
           yarn verify:package-contracts
+      # Keep this before build:e2e: a later WXT mode build may refresh .output
+      # before the production artifact has been captured.
+      - name: Upload production Chrome ZIP for startup smoke
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: production-chrome-${{ github.sha }}
+          path: .output/youtube-live-chat-fullscreen-*-chrome.zip
+          if-no-files-found: error
       - name: Build testing extension
         run: yarn build:e2e
       - name: Upload testing extension
@@ -65,12 +73,6 @@ jobs:
           name: testing-extension-${{ github.sha }}
           path: .output/chrome-mv3-testing
           include-hidden-files: true
-          if-no-files-found: error
-      - name: Upload production Chrome ZIP for startup smoke
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
-        with:
-          name: production-chrome-${{ github.sha }}
-          path: .output/youtube-live-chat-fullscreen-*-chrome.zip
           if-no-files-found: error
 
   browser-contracts:
