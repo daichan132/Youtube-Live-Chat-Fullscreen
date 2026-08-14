@@ -15,8 +15,8 @@ const iframeStyles = iframeStyleModuleNames.map(moduleName => styleModules[modul
 const iframeStylesWithoutComments = iframeStyles.replace(/\/\*[\s\S]*?\*\//g, '')
 
 const directDisplayNoneSelectors = () =>
-  Array.from(iframeStylesWithoutComments.matchAll(/([^{}]+)\{\s*[^{}]*display\s*:\s*none(?:\s*!important)?\s*;[^{}]*\}/g)).map(match =>
-    match[1].replace(/\s+/g, ' ').trim(),
+  Array.from(iframeStylesWithoutComments.matchAll(/([^{}]+)\{\s*[^{}]*display\s*:\s*none(?:\s*!important)?\s*;[^{}]*\}/g)).flatMap(match =>
+    match[1] ? [match[1].replace(/\s+/g, ' ').trim()] : [],
   )
 
 const mountStyleFixture = (styles: string, markup: string) => {

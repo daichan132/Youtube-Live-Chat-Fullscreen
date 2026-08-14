@@ -3,7 +3,7 @@
   "compilerOptions": {
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "types": ["chrome", "node"],
     "paths": {
       "@/*": ["./*"],

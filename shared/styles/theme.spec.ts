@@ -13,7 +13,7 @@ describe('theme layer scale', () => {
   })
 
   it('uses named layers instead of independent numeric z-index values', () => {
-    const declarations = Array.from(themeStyles.matchAll(/z-index:\s*([^;]+);/g), match => match[1].trim())
+    const declarations = Array.from(themeStyles.matchAll(/z-index:\s*([^;]+);/g)).flatMap(match => (match[1] ? [match[1].trim()] : []))
 
     expect(declarations).not.toHaveLength(0)
     expect(declarations.every(value => value.startsWith('var(--ylc-z-'))).toBe(true)

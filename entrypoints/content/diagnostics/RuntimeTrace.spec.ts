@@ -23,8 +23,10 @@ describe('RuntimeTrace', () => {
     probeIds.push('secret')
 
     const first = trace.snapshot()
-    ;(first[0].probeIds as string[]).push('mutated')
+    const firstEvent = first[0]
+    if (!firstEvent) throw new Error('Expected one trace event.')
+    ;(firstEvent.probeIds as string[]).push('mutated')
 
-    expect(trace.snapshot()[0].probeIds).toEqual(['player.v1.1'])
+    expect(trace.snapshot().at(0)?.probeIds).toEqual(['player.v1.1'])
   })
 })

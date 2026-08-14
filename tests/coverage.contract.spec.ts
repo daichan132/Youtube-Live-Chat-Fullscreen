@@ -45,6 +45,7 @@ describe('coverage policy', () => {
       scripts: Record<string, string>
     }
     const coverageScript = packageJson.scripts['test:coverage']
+    if (!coverageScript) throw new Error('Missing test:coverage script.')
 
     expect(coverageScript).toBe(
       'vitest run --coverage --project core --project dom && vitest run --project contracts tests/coverage.contract.spec.ts',

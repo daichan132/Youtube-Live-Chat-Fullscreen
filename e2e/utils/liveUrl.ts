@@ -179,8 +179,7 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
 	await addConsentCookies(page)
 	const tried = new Set<string>()
 
-	for (let i = 0; i < searchUrls.length; i++) {
-		const searchUrl = searchUrls[i]
+	for (const [i, searchUrl] of searchUrls.entries()) {
 		if (Date.now() > deadline) break
 		try {
 			await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: Math.min(deadline - Date.now(), SEARCH_PAGE_TIMEOUT_MS) })

@@ -11,6 +11,12 @@ export type PixelRect = { x: number; y: number; width: number; height: number }
 
 const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
 
+const byteAt = (bytes: Uint8Array, index: number, context: string) => {
+  const value = bytes[index]
+  if (value === undefined) throw new Error(`${context} is truncated at byte ${index}.`)
+  return value
+}
+
 export const decodePng = (png: Buffer): PixelImage => {
   if (!png.subarray(0, 8).equals(PNG_SIGNATURE)) throw new Error('Screenshot is not a PNG image.')
 
@@ -38,6 +44,10 @@ export const decodePng = (png: Buffer): PixelImage => {
 
   const filtered = inflateSync(Buffer.concat(imageData))
   const stride = width * channels
+  const expectedFilteredLength = (stride + 1) * height
+  if (filtered.length !== expectedFilteredLength) {
+    throw new Error(`PNG image data has ${filtered.length} bytes; expected ${expectedFilteredLength}.`)
+  }
   const pixels = new Uint8Array(stride * height)
   const paeth = (left: number, above: number, upperLeft: number) => {
     const prediction = left + above - upperLeft
@@ -52,14 +62,14 @@ export const decodePng = (png: Buffer): PixelImage => {
   }
 
   for (let y = 0; y < height; y += 1) {
-    const filter = filtered[y * (stride + 1)]
+    const filter = byteAt(filtered, y * (stride + 1), 'PNG image data')
     const rowOffset = y * stride
     const sourceOffset = y * (stride + 1) + 1
     for (let x = 0; x < stride; x += 1) {
-      const raw = filtered[sourceOffset + x]
-      const left = x >= channels ? pixels[rowOffset + x - channels] : 0
-      const above = y > 0 ? pixels[rowOffset + x - stride] : 0
-      const upperLeft = y > 0 && x >= channels ? pixels[rowOffset + x - stride - channels] : 0
+      const raw = byteAt(filtered, sourceOffset + x, 'PNG image data')
+      const left = x >= channels ? byteAt(pixels, rowOffset + x - channels, 'Decoded PNG') : 0
+      const above = y > 0 ? byteAt(pixels, rowOffset + x - stride, 'Decoded PNG') : 0
+      const upperLeft = y > 0 && x >= channels ? byteAt(pixels, rowOffset + x - stride - channels, 'Decoded PNG') : 0
       const predictor =
         filter === 0 ? 0 : filter === 1 ? left : filter === 2 ? above : filter === 3 ? (left + above) >> 1 : paeth(left, above, upperLeft)
       if (filter < 0 || filter > 4) throw new Error(`Unsupported PNG row filter: ${filter}`)
@@ -85,7 +95,11 @@ const assertRect = (image: PixelImage, rect: PixelRect) => {
 
 const lumaAt = (image: PixelImage, x: number, y: number) => {
   const offset = (y * image.width + x) * image.channels
-  return image.pixels[offset] * 0.299 + image.pixels[offset + 1] * 0.587 + image.pixels[offset + 2] * 0.114
+  return (
+    byteAt(image.pixels, offset, 'Pixel image') * 0.299 +
+    byteAt(image.pixels, offset + 1, 'Pixel image') * 0.587 +
+    byteAt(image.pixels, offset + 2, 'Pixel image') * 0.114
+  )
 }
 
 export const edgeEnergy = (image: PixelImage, rect: PixelRect) => {
@@ -120,7 +134,9 @@ export const meanPixelDifference = (left: PixelImage, right: PixelImage, rect: P
     for (let x = rect.x; x < rect.x + rect.width; x += 1) {
       const offset = (y * left.width + x) * left.channels
       for (let channel = 0; channel < 3; channel += 1) {
-        difference += Math.abs(left.pixels[offset + channel] - right.pixels[offset + channel])
+        difference += Math.abs(
+          byteAt(left.pixels, offset + channel, 'Left pixel image') - byteAt(right.pixels, offset + channel, 'Right pixel image'),
+        )
         samples += 1
       }
     }

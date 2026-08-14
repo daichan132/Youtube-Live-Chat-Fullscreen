@@ -1,3 +1,4 @@
+/* biome-ignore-all lint/style/noDescendingSpecificity: YouTube monetization custom elements are mutually exclusive selector scopes. */
 /* State-dependent Super Chat / sticker purchase flow. */
 /* YouTube positions the product picker and purchase flows above a zero-height
    input renderer. Let that open picker escape the chat-only clipping boundary

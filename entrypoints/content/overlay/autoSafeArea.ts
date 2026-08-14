@@ -52,15 +52,20 @@ export const chooseAutoSafePlacement = (
 ): { current: ScoredPlacement; best: ScoredPlacement } => {
   const maxX = Math.max(padding, reference.width - padding - current.size.width)
   const maxY = Math.max(padding, reference.height - padding - current.size.height)
+  const currentPlacement = { geometry: current, score: scorePlacement(current, current, reference, obstacles) }
   const candidates: PixelChatGeometry[] = [
-    current,
     { coordinates: { x: padding, y: padding }, size: current.size },
     { coordinates: { x: maxX, y: padding }, size: current.size },
     { coordinates: { x: padding, y: maxY }, size: current.size },
     { coordinates: { x: maxX, y: maxY }, size: current.size },
   ]
-  const scored = candidates.map(geometry => ({ geometry, score: scorePlacement(geometry, current, reference, obstacles) }))
-  return { current: scored[0], best: [...scored].sort((left, right) => compareScore(left.score, right.score))[0] }
+  const best = candidates
+    .map(geometry => ({ geometry, score: scorePlacement(geometry, current, reference, obstacles) }))
+    .reduce(
+      (bestPlacement, placement) => (compareScore(placement.score, bestPlacement.score) < 0 ? placement : bestPlacement),
+      currentPlacement,
+    )
+  return { current: currentPlacement, best }
 }
 
 export const shouldApplyAutoSafePlacement = ({ current, best }: { current: ScoredPlacement; best: ScoredPlacement }) => {

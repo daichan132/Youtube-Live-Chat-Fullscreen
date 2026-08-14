@@ -109,7 +109,11 @@ const createHarness = (options: { decisions: ChatDecision[]; snapshots?: PageObs
   }
   const defaultSnapshot = createSnapshot()
   const readSnapshot = vi.fn(() => options.snapshots?.[Math.min(snapshotIndex++, options.snapshots.length - 1)] ?? defaultSnapshot)
-  const resolveDecision = vi.fn(() => options.decisions[Math.min(decisionIndex++, options.decisions.length - 1)])
+  const resolveDecision = vi.fn(() => {
+    const decision = options.decisions[Math.min(decisionIndex++, options.decisions.length - 1)]
+    if (!decision) throw new Error('missing test decision')
+    return decision
+  })
   const createLeaseFactory = vi.fn(() => {
     const lease = options.leases?.[Math.min(leaseIndex++, options.leases.length - 1)]
     if (!lease) throw new Error('missing test lease')
@@ -242,7 +246,10 @@ describe('ChatRuntime', () => {
     dispatchNavigation()
 
     expect(firstLease.release).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(firstLease.release).mock.invocationCallOrder[0]).toBeLessThan(harness.createLeaseFactory.mock.invocationCallOrder[1])
+    const releaseOrder = vi.mocked(firstLease.release).mock.invocationCallOrder[0]
+    const createOrder = harness.createLeaseFactory.mock.invocationCallOrder[1]
+    if (releaseOrder === undefined || createOrder === undefined) throw new Error('Missing lease invocation order.')
+    expect(releaseOrder).toBeLessThan(createOrder)
     expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
     harness.runtime.stop()
   })
@@ -300,7 +307,10 @@ describe('ChatRuntime', () => {
     dispatchNavigation()
 
     expect(firstLease.release).toHaveBeenCalledTimes(1)
-    expect(vi.mocked(firstLease.release).mock.invocationCallOrder[0]).toBeLessThan(harness.createLeaseFactory.mock.invocationCallOrder[1])
+    const releaseOrder = vi.mocked(firstLease.release).mock.invocationCallOrder[0]
+    const createOrder = harness.createLeaseFactory.mock.invocationCallOrder[1]
+    if (releaseOrder === undefined || createOrder === undefined) throw new Error('Missing lease invocation order.')
+    expect(releaseOrder).toBeLessThan(createOrder)
     expect(harness.createLeaseFactory).toHaveBeenCalledTimes(2)
     expect(harness.runtime.getGeneration()).toBe(2)
     expect(harness.portalHost.clear).toHaveBeenCalled()

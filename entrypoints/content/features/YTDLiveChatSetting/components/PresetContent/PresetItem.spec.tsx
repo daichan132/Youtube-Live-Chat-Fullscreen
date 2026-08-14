@@ -37,7 +37,9 @@ describe('PresetItem', () => {
     const card = findPresetCard(titleInput)
     const actionContainer = card.querySelector('[data-ylc-preset-actions]') as HTMLElement
     const actionButtons = actionContainer.querySelectorAll('button')
-    fireEvent.click(actionButtons[actionButtons.length - 1])
+    const deleteButton = actionButtons.item(actionButtons.length - 1)
+    if (!deleteButton) throw new Error('Missing preset delete button.')
+    fireEvent.click(deleteButton)
 
     expect(await findByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.nestedModal) })
     fireEvent.click(await findByText('content.preset.delete', { selector: 'button' }))

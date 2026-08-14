@@ -475,14 +475,17 @@ export const expectContinuousChatOnlyMotion = (
     let startFrame = -1
     let endFrame = -1
     for (let index = 1; index < heights.length; index += 1) {
-      const delta = heights[index] - heights[index - 1]
+      const currentHeight = heights[index]
+      const previousHeight = heights[index - 1]
+      if (currentHeight === undefined || previousHeight === undefined) throw new Error(`Missing height sample for ${selector}.`)
+      const delta = currentHeight - previousHeight
       if (direction === 'expanding') {
         expect(delta, `${selector} should not reverse while expanding`).toBeGreaterThanOrEqual(-1)
       } else {
         expect(delta, `${selector} should not reverse while collapsing`).toBeLessThanOrEqual(1)
       }
 
-      const progress = (heights[index] - min) / (max - min)
+      const progress = (currentHeight - min) / (max - min)
       const directedProgress = direction === 'expanding' ? progress : 1 - progress
       if (startFrame === -1 && directedProgress >= 0.05) startFrame = index
       if (directedProgress <= 0.95) endFrame = index

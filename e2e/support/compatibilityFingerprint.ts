@@ -70,8 +70,8 @@ const readFingerprint = (probes: {
   archivePlayer: typeof archivePlayerChatToggleProbe
 }): CompatibilityFingerprint => {
   const firstProbe = (root: ParentNode, probe: { probeId: string; selectors: readonly string[] }, fallback?: Element | null) => {
-    for (let index = 0; index < probe.selectors.length; index += 1) {
-      if (root.querySelector(probe.selectors[index]) || fallback?.matches(probe.selectors[index])) {
+    for (const [index, selector] of probe.selectors.entries()) {
+      if (root.querySelector(selector) || fallback?.matches(selector)) {
         return `${probe.probeId}.${index + 1}`
       }
     }

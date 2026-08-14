@@ -61,8 +61,10 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
         nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
       }
       if (nextIndex !== null) {
+        const nextTab = tabs[nextIndex]
+        if (!nextTab) return
         e.preventDefault()
-        setMenuItem(tabs[nextIndex].key)
+        setMenuItem(nextTab.key)
         const buttons = tablistRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
         buttons?.[nextIndex]?.focus()
       }

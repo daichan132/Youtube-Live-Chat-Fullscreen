@@ -256,7 +256,9 @@ describe('usePresetReorder', () => {
     const view = render(<ReorderHarness ids={ids} onCommit={onCommit} />)
     const scrollContainer = arrangeScrollablePresetRows(view.container)
     const rows = [...view.container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
-    const firstRowRect = vi.mocked(rows[0].getBoundingClientRect)
+    const firstRow = rows[0]
+    if (!firstRow) throw new Error('Missing first preset row.')
+    const firstRowRect = vi.mocked(firstRow.getBoundingClientRect)
 
     fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-1' }), {
       button: 0,

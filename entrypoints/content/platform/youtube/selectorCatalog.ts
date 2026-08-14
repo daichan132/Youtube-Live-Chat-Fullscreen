@@ -69,8 +69,8 @@ export const queryFirstProbe = <T extends Element>(
   root: ParentNode,
   probe: SelectorProbe,
 ): { element: T | null; probeId: string | null } => {
-  for (let index = 0; index < probe.selectors.length; index += 1) {
-    const element = root.querySelector<T>(probe.selectors[index])
+  for (const [index, selector] of probe.selectors.entries()) {
+    const element = root.querySelector<T>(selector)
     if (element) return { element, probeId: candidateProbeId(probe, index) }
   }
   return { element: null, probeId: null }
@@ -79,8 +79,8 @@ export const queryFirstProbe = <T extends Element>(
 export const queryAllProbes = <T extends Element>(root: ParentNode, probe: SelectorProbe) => {
   const elements = new Set<T>()
   const probeIds: string[] = []
-  for (let index = 0; index < probe.selectors.length; index += 1) {
-    const matches = root.querySelectorAll<T>(probe.selectors[index])
+  for (const [index, selector] of probe.selectors.entries()) {
+    const matches = root.querySelectorAll<T>(selector)
     if (matches.length > 0) probeIds.push(candidateProbeId(probe, index))
     for (const element of matches) elements.add(element)
   }
@@ -89,8 +89,8 @@ export const queryAllProbes = <T extends Element>(root: ParentNode, probe: Selec
 
 export const identifyProbeForElement = (root: ParentNode, probe: SelectorProbe, element: Element | null) => {
   if (!element) return null
-  for (let index = 0; index < probe.selectors.length; index += 1) {
-    const candidates = root.querySelectorAll(probe.selectors[index])
+  for (const [index, selector] of probe.selectors.entries()) {
+    const candidates = root.querySelectorAll(selector)
     if ([...candidates].some(candidate => candidate === element || candidate.contains(element) || element.contains(candidate))) {
       return candidateProbeId(probe, index)
     }

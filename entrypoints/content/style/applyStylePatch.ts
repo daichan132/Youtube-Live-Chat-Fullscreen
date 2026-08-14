@@ -24,6 +24,7 @@ const parseCssColor = (value: string): RGBA | null => {
   if (!hexMatch) return null
 
   const hex = hexMatch[1]
+  if (!hex) return null
   return {
     r: Number.parseInt(hex.slice(0, 2), 16),
     g: Number.parseInt(hex.slice(2, 4), 16),

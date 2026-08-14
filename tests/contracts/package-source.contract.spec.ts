@@ -69,10 +69,13 @@ describe('production package source policy', () => {
       'yarn build && yarn build:firefox && yarn zip && yarn zip:firefox && yarn verify:package-contracts',
     )
     expect(Object.keys(budgets).sort()).toEqual(['chrome-mv3', 'firefox-mv2'])
-    expect(budgets['chrome-mv3'].browser).toBe('chrome')
-    expect(budgets['firefox-mv2'].browser).toBe('firefox')
-    expect(budgets['chrome-mv3'].budgets.zipBytes).toBeGreaterThan(0)
-    expect(budgets['firefox-mv2'].budgets.zipBytes).toBeGreaterThan(0)
+    const chromeBudget = budgets['chrome-mv3']
+    const firefoxBudget = budgets['firefox-mv2']
+    if (!chromeBudget || !firefoxBudget) throw new Error('Missing browser package size budget.')
+    expect(chromeBudget.browser).toBe('chrome')
+    expect(firefoxBudget.browser).toBe('firefox')
+    expect(chromeBudget.budgets.zipBytes).toBeGreaterThan(0)
+    expect(firefoxBudget.budgets.zipBytes).toBeGreaterThan(0)
   })
 
   it('uploads the verified production ZIP before building the testing extension', async () => {
@@ -89,5 +92,15 @@ describe('production package source policy', () => {
     expect(productionUpload).toContain('path: .output/youtube-live-chat-fullscreen-*-chrome.zip')
     expect(productionUpload).toContain('include-hidden-files: true')
     expect(productionUpload).toContain('if-no-files-found: error')
+  })
+
+  it('checks dependency release age for pull requests and direct pushes to main', async () => {
+    const workflow = await readText('.github/workflows/ci.yml')
+    const qualityJob = workflow.slice(workflow.indexOf('  quality:'), workflow.indexOf('  package:'))
+
+    expect(qualityJob).toContain("if: github.event_name == 'pull_request'")
+    expect(qualityJob).toContain(`--base "origin/\${{ github.base_ref }}"`)
+    expect(qualityJob).toContain("if: github.event_name == 'push'")
+    expect(qualityJob).toContain(`--base "\${{ github.event.before }}"`)
   })
 })

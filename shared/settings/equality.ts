@@ -57,4 +57,7 @@ export const areChatSettingsEqual = (left: ChatSettings, right: ChatSettings) =>
   areChatProfilesEqual(left.profile, right.profile) &&
   areGeometriesEqual(left.geometry, right.geometry) &&
   left.presets.length === right.presets.length &&
-  left.presets.every((preset, index) => arePresetsEqual(preset, right.presets[index]))
+  left.presets.every((preset, index) => {
+    const rightPreset = right.presets[index]
+    return rightPreset !== undefined && arePresetsEqual(preset, rightPreset)
+  })

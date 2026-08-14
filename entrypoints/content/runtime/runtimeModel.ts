@@ -110,7 +110,7 @@ const scheduleRetry = (model: RuntimeModel, lease: RuntimeLeaseSnapshot | null, 
     const state: RuntimeState = { status: 'unavailable', videoId: model.state.videoId }
     return { ...model, state, view: createView(state, false, false) }
   }
-  const delayMs = RETRY_DELAYS_MS[Math.min(model.retryAttempts, RETRY_DELAYS_MS.length - 1)]
+  const delayMs = RETRY_DELAYS_MS[Math.min(model.retryAttempts, RETRY_DELAYS_MS.length - 1)] ?? RETRY_DELAYS_MS[0]
   plan.retry = { kind: 'scheduled', delayMs }
   return { ...model, retryAttempts: model.retryAttempts + 1, retryPending: true }
 }

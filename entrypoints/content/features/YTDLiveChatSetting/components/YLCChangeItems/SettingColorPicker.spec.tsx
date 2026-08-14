@@ -55,6 +55,7 @@ describe('SettingColorPicker', () => {
 
     fireEvent.click(getByRole('button', { name: 'Background color' }))
     const slider = getAllByRole('slider')[0]
+    if (!slider) throw new Error('Missing color slider.')
     slider.getBoundingClientRect = () =>
       ({
         bottom: 100,

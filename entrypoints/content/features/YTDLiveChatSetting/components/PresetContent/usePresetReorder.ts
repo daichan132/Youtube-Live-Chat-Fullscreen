@@ -81,6 +81,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
     if (from < 0 || from === targetIndex) return
     const next = [...current]
     const [item] = next.splice(from, 1)
+    if (item === undefined) return
     next.splice(targetIndex, 0, item)
     previewIdsRef.current = next
     setPreviewIds(next)
