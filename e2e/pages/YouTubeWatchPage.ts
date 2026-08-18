@@ -1,13 +1,13 @@
-import { expect, type Page } from '@playwright/test'
 import { TIMEOUT } from '@e2e/support/constants'
 import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
 import { FULLSCREEN_BUTTON, MOVIE_PLAYER, NATIVE_CHAT_FRAME } from '@e2e/utils/selectors'
+import { expect, type Page } from '@playwright/test'
 
 export class YouTubeWatchPage {
   constructor(private page: Page) {}
 
-  private async revealPlayerControls() {
-    await this.page.locator(MOVIE_PLAYER).hover({ force: true, timeout: 5000 })
+  private async revealPlayerControls(timeout: number) {
+    await this.page.locator(MOVIE_PLAYER).hover({ force: true, timeout: Math.min(timeout, 5000) })
   }
 
   async goto(url: string, options?: { timeout?: number }) {
@@ -19,16 +19,24 @@ export class YouTubeWatchPage {
 
   async enterFullscreen(options?: { timeout?: number }) {
     const timeout = options?.timeout ?? TIMEOUT.FULLSCREEN
-    await this.revealPlayerControls()
-    await this.page.click(FULLSCREEN_BUTTON)
-    await this.page.waitForFunction(() => document.fullscreenElement !== null, undefined, { timeout })
+    const deadline = Date.now() + timeout
+    const remainingTimeout = () => Math.max(1, deadline - Date.now())
+
+    await this.revealPlayerControls(remainingTimeout())
+    await this.page.click(FULLSCREEN_BUTTON, { timeout: remainingTimeout() })
+    await this.page.waitForFunction(() => document.fullscreenElement !== null, undefined, {
+      timeout: remainingTimeout(),
+    })
   }
 
   async expectFullscreenExited(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.FULLSCREEN
-    await this.revealPlayerControls()
-    await this.page.click(FULLSCREEN_BUTTON)
-    await expect.poll(async () => this.isInFullscreen(), { timeout }).toBe(false)
+    const deadline = Date.now() + timeout
+    const remainingTimeout = () => Math.max(1, deadline - Date.now())
+
+    await this.revealPlayerControls(remainingTimeout())
+    await this.page.click(FULLSCREEN_BUTTON, { timeout: remainingTimeout() })
+    await expect.poll(async () => this.isInFullscreen(), { timeout: remainingTimeout() }).toBe(false)
   }
 
   async expectNativeChat(options?: { timeout?: number }): Promise<void> {
