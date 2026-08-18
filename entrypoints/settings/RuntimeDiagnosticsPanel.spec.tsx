@@ -9,7 +9,7 @@ import { RuntimeDiagnosticsPanel } from './RuntimeDiagnosticsPanel'
 const report: SanitizedDiagnosticReport = {
   schemaVersion: 1,
   extensionVersion: '2.3.14',
-  browserFamily: 'chrome',
+  browserFamily: 'opera',
   page: {
     mode: 'live',
     fullscreen: true,
@@ -57,6 +57,7 @@ describe('RuntimeDiagnosticsPanel', () => {
     const { getByRole, getByText } = renderWithStore(<RuntimeDiagnosticsPanel report={report} onRestart={onRestart} />, store)
 
     expect(getByText('正常')).toBeInTheDocument()
+    expect(getByText('opera · live · active · borrowed-live')).toBeInTheDocument()
     fireEvent.click(getByRole('button', { name: 'Runtimeを再起動' }))
     expect(onRestart).toHaveBeenCalledOnce()
   })

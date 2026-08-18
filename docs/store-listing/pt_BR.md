@@ -17,6 +17,8 @@ Como usar:
 3. Entre em tela cheia — ative o botão no canto inferior direito.
 4. Arraste, redimensione e deixe do seu jeito.
 
+No Opera, se o botão não aparecer, abra `opera://extensions`, confirme que a extensão está ativada e que ela tem acesso ao `youtube.com`. Depois, recarregue uma transmissão ao vivo ou um arquivo com replay de chat e entre em tela cheia. O botão só aparece quando o chat está disponível para o vídeo.
+
 Perguntas, ideias ou bugs? Adoraríamos ouvir você no GitHub.
 
 Código-fonte: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen

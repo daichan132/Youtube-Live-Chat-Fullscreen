@@ -1,8 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import type { PageEvidence } from '../platform/youtube/types'
-import { createSanitizedDiagnosticReport } from './sanitizeDiagnosticReport'
+import { createSanitizedDiagnosticReport, detectBrowserFamily } from './sanitizeDiagnosticReport'
 
 describe('createSanitizedDiagnosticReport', () => {
+  it('identifies Opera before its shared Chrome product token', () => {
+    expect(
+      detectBrowserFamily(
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/149.0.0.0 Safari/537.36 OPR/134.0.0.0',
+      ),
+    ).toBe('opera')
+  })
+
   it('omits page identity and DOM data from exported diagnostics', () => {
     const evidence: PageEvidence = {
       generation: 2,

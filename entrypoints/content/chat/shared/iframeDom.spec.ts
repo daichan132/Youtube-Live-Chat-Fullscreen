@@ -4,6 +4,8 @@ import {
   getLiveChatIframes,
   isChatHostForCurrentVideo,
   isIframeForCurrentVideo,
+  isLiveChatIframe,
+  isReplayChatIframe,
   markChatIframeObservedForCurrentVideo,
 } from './iframeDom'
 
@@ -46,6 +48,51 @@ describe('isIframeForCurrentVideo', () => {
     markChatIframeObservedForCurrentVideo(iframe, 'current-video')
 
     expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(true)
+  })
+
+  it('retains replay identity when Opera blanks the observed native iframe during fullscreen', () => {
+    createWatchFlexy('current-video')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=current-video'
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+    markChatIframeObservedForCurrentVideo(iframe, 'current-video')
+
+    iframe.removeAttribute('src')
+
+    expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(true)
+    expect(isReplayChatIframe(iframe)).toBe(true)
+  })
+
+  it('carries observed replay identity to a blank replacement iframe in the same host', () => {
+    createWatchFlexy('current-video')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=current-video'
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+    markChatIframeObservedForCurrentVideo(iframe, 'current-video')
+
+    const replacement = document.createElement('iframe')
+    iframe.replaceWith(replacement)
+
+    expect(isIframeForCurrentVideo(replacement, 'current-video')).toBe(true)
+    expect(isReplayChatIframe(replacement)).toBe(true)
+  })
+
+  it('does not retain live identity after YouTube blanks an observed native iframe', () => {
+    createWatchFlexy('current-video')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat?v=current-video'
+    host.appendChild(iframe)
+    document.body.appendChild(host)
+    markChatIframeObservedForCurrentVideo(iframe, 'current-video')
+
+    iframe.removeAttribute('src')
+
+    expect(isLiveChatIframe(iframe)).toBe(false)
   })
 
   it('rejects unobserved continuation-only iframe URLs even when page DOM points at the current video', () => {

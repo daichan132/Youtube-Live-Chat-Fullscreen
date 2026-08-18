@@ -8,25 +8,35 @@ import { type BrowserContext, chromium, type Page, type Worker } from '@playwrig
 
 const extensionOutputPath = path.resolve(E2E_EXTENSION_OUTPUT_DIR)
 const EXTENSION_BOOT_TIMEOUT_MS = 45000
-let bundledChromiumVersion: string | null = null
+let resolvedBrowserVersion: { executablePath: string; version: string } | null = null
 
 export const extensionUsesServiceWorker = () => {
   const manifest = JSON.parse(readFileSync(path.join(extensionOutputPath, 'manifest.json'), 'utf8'))
   return typeof manifest.background?.service_worker === 'string'
 }
 
-const resolveBundledChromiumVersion = () => {
-  if (bundledChromiumVersion) return bundledChromiumVersion
-  const versionOutput = execFileSync(chromium.executablePath(), ['--version'], { encoding: 'utf8' })
+const resolveBrowserVersion = (executablePath: string) => {
+  if (resolvedBrowserVersion?.executablePath === executablePath) return resolvedBrowserVersion.version
+  const versionOutput = execFileSync(executablePath, ['--version'], { encoding: 'utf8' })
   const version = versionOutput.match(/\d+(?:\.\d+){3}/)?.[0]
-  if (!version) throw new Error(`Could not resolve bundled Chromium version from: ${versionOutput.trim()}`)
-  bundledChromiumVersion = version
+  if (!version) throw new Error(`Could not resolve browser version from: ${versionOutput.trim()}`)
+  resolvedBrowserVersion = { executablePath, version }
   return version
 }
 
 export const launchExtensionContext = async (userDataDir: string) => {
+  const customExecutablePath = process.env.YLC_BROWSER_EXECUTABLE_PATH?.trim()
+  const executablePath = customExecutablePath || chromium.executablePath()
+  const launchMode = resolveExtensionLaunchMode(process.env, {
+    browserVersion: resolveBrowserVersion(executablePath),
+  })
+  if (customExecutablePath) {
+    delete launchMode.channel
+    delete launchMode.userAgent
+  }
   const context = await chromium.launchPersistentContext(userDataDir, {
-    ...resolveExtensionLaunchMode(process.env, { browserVersion: resolveBundledChromiumVersion() }),
+    ...launchMode,
+    ...(customExecutablePath ? { executablePath } : {}),
     ignoreDefaultArgs: ['--disable-extensions'],
     args: [`--disable-extensions-except=${extensionOutputPath}`, `--load-extension=${extensionOutputPath}`, '--mute-audio'],
   })

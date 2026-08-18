@@ -96,6 +96,10 @@ const createLease = (iframe: HTMLIFrameElement, videoId = 'video-1'): ChatIframe
       released = true
       iframe.remove()
     }),
+    abandonRestore: vi.fn(() => {
+      released = true
+      iframe.remove()
+    }),
   }
 }
 
@@ -184,6 +188,24 @@ describe('ChatRuntime', () => {
       removedNodes: [],
     } as unknown as MutationRecord
     expect(mutationTouchesChatBoundary(boundaryMutation)).toBe(true)
+  })
+
+  it('reobserves a native chat iframe when it finishes loading before fullscreen', () => {
+    const harness = createHarness({
+      decisions: [{ kind: 'inactive', reason: 'not-fullscreen' }],
+      snapshots: [createSnapshot({ isFullscreen: false })],
+    })
+    flushFrame()
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(1)
+
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    document.body.appendChild(iframe)
+    iframe.dispatchEvent(new Event('load'))
+    flushFrame()
+
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(2)
+    harness.runtime.stop()
   })
 
   it('keeps the same iframe lease through a temporary source loss', () => {

@@ -41,7 +41,7 @@ export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets
         kind: 'pending',
         videoId: evidence.videoId,
         mode: 'archive',
-        canToggle: evidence.capabilities.canOpenArchiveChat,
+        canToggle: targets.chatIframe !== null || evidence.capabilities.canOpenArchiveChat,
       }
     }
     return {

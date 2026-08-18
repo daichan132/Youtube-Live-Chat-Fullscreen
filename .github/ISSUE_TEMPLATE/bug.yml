@@ -63,7 +63,12 @@ body:
     id: evidence
     attributes:
       label: Screenshots, recording, or additional context
-      description: Drag files here. Include a public YouTube URL only when it is safe to share.
+      description: Drag files here or paste the sanitized diagnostic report. Include a public YouTube URL only when it is safe to share.
+  - type: textarea
+    id: isolation
+    attributes:
+      label: Browser isolation result
+      description: For Opera or another browser-specific failure, confirm the extension is enabled, has access to youtube.com, and note whether the same steps fail in a profile with only YLC enabled.
   - type: checkboxes
     id: checks
     attributes:

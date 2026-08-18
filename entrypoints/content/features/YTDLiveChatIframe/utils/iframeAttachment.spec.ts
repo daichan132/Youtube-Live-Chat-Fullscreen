@@ -593,6 +593,31 @@ describe('iframeAttachment', () => {
     expect(rebuiltHost.contains(iframe)).toBe(true)
   })
 
+  it('abandons a queued restore without retaining its detached iframe or placeholder', () => {
+    const container = document.createElement('div') as HTMLDivElement
+    const originalParent = document.createElement('div')
+    const originalHost = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe') as HTMLIFrameElement
+
+    originalHost.appendChild(iframe)
+    originalParent.appendChild(originalHost)
+    document.body.append(originalParent, container)
+
+    const attachment = attachIframeToContainer(container, iframe)
+    originalParent.remove()
+    detachAttachedIframe(iframe, container)
+
+    expect(attachment?.state).toBe('restoring')
+    expect(originalHost.childNodes).toHaveLength(1)
+
+    attachment?.abandonRestore()
+    attachment?.abandonRestore()
+
+    expect(attachment?.state).toBe('released')
+    expect(iframe.isConnected).toBe(false)
+    expect(originalHost.childNodes).toHaveLength(0)
+  })
+
   it('does not restore a borrowed iframe into a host for another video', () => {
     const container = document.createElement('div') as HTMLDivElement
     const originalParent = document.createElement('div')

@@ -173,6 +173,34 @@ describe('resolveChatDecision', () => {
     })
   })
 
+  it('keeps the switch available while an observed Opera replay iframe is temporarily blank', () => {
+    const iframe = element<HTMLIFrameElement>()
+    expect(
+      decide(
+        createSnapshot({
+          chatIframe: iframe,
+          nativeChatIframe: iframe,
+          iframeMode: 'archive',
+          archiveOpenControlAvailable: false,
+        }),
+      ),
+    ).toEqual({
+      kind: 'pending',
+      videoId: 'video-1',
+      mode: 'archive',
+      canToggle: true,
+    })
+  })
+
+  it('keeps the switch unavailable when an archive has neither an observed iframe nor an open control', () => {
+    expect(decide(createSnapshot({ iframeMode: 'archive' }))).toEqual({
+      kind: 'pending',
+      videoId: 'video-1',
+      mode: 'archive',
+      canToggle: false,
+    })
+  })
+
   it('borrows the playable archive iframe without creating a managed replay', () => {
     const iframe = element<HTMLIFrameElement>()
     expect(

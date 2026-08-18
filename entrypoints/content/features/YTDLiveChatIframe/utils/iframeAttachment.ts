@@ -73,6 +73,7 @@ export type IframeAttachment = {
   captureDocumentStyle(): boolean
   release(options?: { ensureNativeVisible?: boolean }, targets?: PageTargets | null): void
   reconcile(targets?: PageTargets | null): void
+  abandonRestore(): void
 }
 
 const legacyChatOnlyHeightVariables = [
@@ -343,6 +344,10 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     reconcile(targets) {
       if (state !== 'restoring') return
       restoreToAvailableTarget(targets)
+    },
+    abandonRestore() {
+      if (state !== 'restoring') return
+      discardBorrowed()
     },
   }
 }
