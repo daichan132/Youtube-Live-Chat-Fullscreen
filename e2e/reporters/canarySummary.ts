@@ -1,4 +1,5 @@
-import { appendFile } from 'node:fs/promises'
+import { appendFile, mkdir, writeFile } from 'node:fs/promises'
+import path from 'node:path'
 import type { FullResult, Reporter, Suite } from '@playwright/test/reporter'
 import { CANARY_PROJECT_NAME } from '../config/projectClassification'
 
@@ -106,6 +107,11 @@ class CanarySummaryReporter implements Reporter {
     const summary = summarizeCanaryOutcomes(outcomes, result.status)
     const summaryPath = process.env.GITHUB_STEP_SUMMARY
     if (summaryPath) await appendFile(summaryPath, `\n${renderCanarySummary(outcomes, result.status)}\n`, 'utf8')
+    const jsonPath = process.env.YLC_CANARY_SUMMARY_PATH
+    if (jsonPath) {
+      await mkdir(path.dirname(jsonPath), { recursive: true })
+      await writeFile(jsonPath, `${JSON.stringify({ summary, outcomes, runStatus: result.status }, null, 2)}\n`, 'utf8')
+    }
     if (shouldFailCanaryRun(summary, process.env.YLC_CANARY_REQUIRE_CLEAN === '1')) return { status: 'failed' as const }
   }
 
