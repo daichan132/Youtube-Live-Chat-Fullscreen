@@ -125,4 +125,8 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.version }}
           GH_TOKEN: ${{ github.token }}
-        run: gh release edit "v$RELEASE_VERSION" --draft=false --latest
+        run: >-
+          gh release edit "v$RELEASE_VERSION"
+          --repo "$GITHUB_REPOSITORY"
+          --draft=false
+          --latest
