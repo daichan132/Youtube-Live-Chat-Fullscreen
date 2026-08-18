@@ -7,7 +7,6 @@ export const YLC_SOURCE_ATTR = 'data-ylc-source'
 export const YLC_SOURCE_LIVE = 'live_direct'
 export const YLC_OBSERVED_VIDEO_ATTR = 'data-ylc-observed-video-id'
 const YLC_OBSERVED_MODE_ATTR = 'data-ylc-observed-chat-mode'
-type ObservedChatMode = 'live' | 'archive'
 
 const getIframeHrefFromSrc = (iframe: HTMLIFrameElement) => iframe.getAttribute('src') ?? iframe.src ?? ''
 
@@ -65,10 +64,7 @@ const getDeclaredIframeVideoId = (iframe: HTMLIFrameElement) => {
 }
 
 const getObservedVideoId = (element: Element | null | undefined) => element?.getAttribute(YLC_OBSERVED_VIDEO_ATTR) ?? null
-const getObservedChatMode = (element: Element | null | undefined): ObservedChatMode | null => {
-  const mode = element?.getAttribute(YLC_OBSERVED_MODE_ATTR)
-  return mode === 'live' || mode === 'archive' ? mode : null
-}
+const hasObservedArchiveMode = (element: Element | null | undefined) => element?.getAttribute(YLC_OBSERVED_MODE_ATTR) === 'archive'
 
 const markObservedElementForCurrentVideo = (element: Element | null | undefined, currentVideoId: string | null) => {
   if (!element || !currentVideoId || !hasCurrentPageVideoMarker(currentVideoId)) return false
@@ -79,14 +75,14 @@ const markObservedElementForCurrentVideo = (element: Element | null | undefined,
 }
 
 export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId = getCurrentYouTubeVideoId()) => {
-  const mode: ObservedChatMode | null = isReplayChatIframe(iframe) ? 'archive' : isLiveChatIframe(iframe) ? 'live' : null
-  if (!mode) return
+  const isReplay = isReplayChatIframe(iframe)
+  if (!isReplay && !isLiveChatIframe(iframe)) return
   const declaredVideoId = getDeclaredIframeVideoId(iframe)
   if (declaredVideoId && declaredVideoId !== currentVideoId) return
   if (!markObservedElementForCurrentVideo(iframe, currentVideoId)) return
-  iframe.setAttribute(YLC_OBSERVED_MODE_ATTR, mode)
+  if (isReplay) iframe.setAttribute(YLC_OBSERVED_MODE_ATTR, 'archive')
   const host = getChatHost(iframe)
-  if (markObservedElementForCurrentVideo(host, currentVideoId)) host?.setAttribute(YLC_OBSERVED_MODE_ATTR, mode)
+  if (markObservedElementForCurrentVideo(host, currentVideoId) && isReplay) host?.setAttribute(YLC_OBSERVED_MODE_ATTR, 'archive')
 }
 
 export const isChatHostForCurrentVideo = (host: HTMLElement | null | undefined) => {
@@ -136,7 +132,7 @@ export const isReplayChatIframe = (iframe: HTMLIFrameElement) => {
   if (hasReplayPath(docHref)) return true
 
   const srcHref = getIframeHrefFromSrc(iframe)
-  return hasReplayPath(srcHref) || getObservedChatMode(iframe) === 'archive' || getObservedChatMode(getChatHost(iframe)) === 'archive'
+  return hasReplayPath(srcHref) || hasObservedArchiveMode(iframe) || hasObservedArchiveMode(getChatHost(iframe))
 }
 
 export const isLiveChatIframe = (iframe: HTMLIFrameElement | null | undefined) => {
@@ -149,9 +145,9 @@ export const isLiveChatIframe = (iframe: HTMLIFrameElement | null | undefined) =
   }
 
   const srcHref = getIframeHrefFromSrc(iframe)
-  if (!srcHref) return getObservedChatMode(iframe) === 'live' || getObservedChatMode(getChatHost(iframe)) === 'live'
+  if (!srcHref) return false
   if (hasReplayPath(srcHref)) return false
-  return hasLivePath(srcHref) || getObservedChatMode(iframe) === 'live' || getObservedChatMode(getChatHost(iframe)) === 'live'
+  return hasLivePath(srcHref)
 }
 
 export const getIframeVideoId = (iframe: HTMLIFrameElement) => {
