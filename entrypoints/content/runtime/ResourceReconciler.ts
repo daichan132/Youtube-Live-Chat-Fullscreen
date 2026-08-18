@@ -78,6 +78,7 @@ export class ResourceReconciler {
 
     if (plan.chat.kind === 'none') this.releaseIframe(pageTargets, plan.chat.ensureNativeVisible)
     if (plan.chat.kind === 'acquire' && !this.sourceMatches(plan.chat.decision)) this.releaseIframe(pageTargets)
+    if (plan.monitoring === 'inactive') this.abandonRestoring()
 
     if (plan.layout === 'none') {
       this.layoutState = 'none'
@@ -190,6 +191,7 @@ export class ResourceReconciler {
   clear(targets: PageTargets | null = null) {
     // Restore the borrowed iframe before removing layout/presentation targets.
     this.releaseIframe(targets)
+    this.abandonRestoring()
     this.layoutLease?.release()
     this.layoutLease = null
     this.layoutScope = null
@@ -198,6 +200,11 @@ export class ResourceReconciler {
     this.presentationState = 'none'
     this.layoutState = 'none'
     this.chatChrome.release()
+  }
+
+  private abandonRestoring() {
+    for (const lease of this.restoringLeases) lease.abandonRestore()
+    this.restoringLeases.clear()
   }
 
   private ensureLayoutLease(scope: SessionScope) {

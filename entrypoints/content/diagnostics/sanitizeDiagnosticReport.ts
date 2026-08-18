@@ -5,7 +5,7 @@ import { assessCompatibilityFingerprint, buildCompatibilityFingerprint, type Com
 import type { RuntimeFailureCode } from './failureCodes'
 import type { DiagnosticEvent } from './RuntimeTrace'
 
-export type BrowserFamily = 'chrome' | 'firefox' | 'other'
+export type BrowserFamily = 'chrome' | 'firefox' | 'opera' | 'other'
 
 export type SanitizedDiagnosticReport = {
   schemaVersion: 1
@@ -33,6 +33,7 @@ export type SanitizedDiagnosticReport = {
 
 export const detectBrowserFamily = (userAgent: string): BrowserFamily => {
   const normalized = userAgent.toLowerCase()
+  if (normalized.includes('opr/')) return 'opera'
   if (normalized.includes('firefox')) return 'firefox'
   if (normalized.includes('chrome') || normalized.includes('chromium')) return 'chrome'
   return 'other'

@@ -17,6 +17,7 @@ export type ChatIframeLease = {
   captureDocumentStyle(): boolean
   reconcile(targets?: PageTargets | null): void
   release(options?: { ensureNativeVisible?: boolean }, targets?: PageTargets | null): void
+  abandonRestore(): void
 }
 
 const createLease = (iframe: HTMLIFrameElement, videoId: string, kind: ChatIframeLease['kind'], generation: number): ChatIframeLease => {
@@ -34,6 +35,7 @@ const createLease = (iframe: HTMLIFrameElement, videoId: string, kind: ChatIfram
     captureDocumentStyle: () => attachment.captureDocumentStyle(),
     reconcile: targets => attachment.reconcile(targets),
     release: (options, targets) => attachment.release(options, targets),
+    abandonRestore: () => attachment.abandonRestore(),
   }
 }
 

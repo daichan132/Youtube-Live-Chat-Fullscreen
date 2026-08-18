@@ -133,6 +133,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.contentScope = createSessionScope(0)
     this.contentScope.listen(document, 'fullscreenchange', this.handlePageSignal)
     this.contentScope.listen(document, 'yt-navigate-finish', this.handleNavigation)
+    document.addEventListener('load', this.handleResourceLoad, true)
+    this.contentScope.addCleanup(() => document.removeEventListener('load', this.handleResourceLoad, true))
     this.scheduleReconcile()
   }
 
@@ -212,6 +214,13 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private handlePageSignal = () => {
+    this.scheduleReconcile()
+  }
+
+  private handleResourceLoad = (event: Event) => {
+    const target = event.target
+    if (!(target instanceof HTMLIFrameElement)) return
+    if (target.id !== 'chatframe' && !target.matches('ytd-live-chat-frame iframe.ytd-live-chat-frame')) return
     this.scheduleReconcile()
   }
 

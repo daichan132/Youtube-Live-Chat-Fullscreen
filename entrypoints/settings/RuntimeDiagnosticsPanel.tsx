@@ -50,7 +50,9 @@ export const RuntimeDiagnosticsPanel = ({ report, onRestart }: RuntimeDiagnostic
         : text.failed
   const lastRecovery = report?.events.findLast(event => event.event === 'recovered')
   const detail = report
-    ? [report.page.mode, report.runtime.status, report.runtime.leases.chat.kind].filter(value => value !== 'none').join(' · ')
+    ? [report.browserFamily, report.page.mode, report.runtime.status, report.runtime.leases.chat.kind]
+        .filter(value => value !== 'none')
+        .join(' · ')
     : ''
 
   const copyReport = async () => {

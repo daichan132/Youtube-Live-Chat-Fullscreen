@@ -46,6 +46,18 @@ yarn verify:chrome --setup-extension --port 9336 --url "https://www.youtube.com/
 
 Computer Use を使う場合の対象アプリ名は `Google Chrome` だが、同じアプリ名の普段使い Chrome と混ざりやすい。操作前に `verify:chrome` の出力にある `profileDir` と、表示中の URL が検証対象であることを確認する。
 
+## Opera など Chromium 系ブラウザの fixture 検証
+
+Chrome 以外の Chromium 系ブラウザで content script、fullscreen、チャット切替を確認するときは、testing build と専用の一時プロファイルを使う。
+
+```bash
+yarn build:e2e
+YLC_BROWSER_EXECUTABLE_PATH="/path/to/browser" YLC_E2E_HEADED=1 \
+  yarn playwright test --project=fixture e2e/scenarios/live/spaNavigation.fixture.spec.ts
+```
+
+`YLC_BROWSER_EXECUTABLE_PATH` 指定時は、対象ブラウザ本来の User-Agent を維持し、Playwright 同梱 Chromium 用の `channel` と Chrome User-Agent override を適用しない。通常プロファイルや既存の拡張状態は再利用しない。
+
 ## 状態確認
 
 別ターミナルで次を実行する。
