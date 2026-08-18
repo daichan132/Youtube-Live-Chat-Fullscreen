@@ -1172,7 +1172,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wxt-dev/browser@npm:*, @wxt-dev/browser@npm:>=0.1, @wxt-dev/browser@npm:^0.2.2":
+"@wxt-dev/browser@npm:*, @wxt-dev/browser@npm:>=0.1":
   version: 0.2.5
   resolution: "@wxt-dev/browser@npm:0.2.5"
   dependencies:
@@ -1786,13 +1786,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-port-please@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "get-port-please@npm:3.2.0"
-  checksum: 10c0/7e48443110b463e76ef47efc381c9f16d78798f9ea9f6d928dad2b5cee53a199cf64e6e2f22603e5f8a1f742e3d4a144cd367f6ef82ac48759bfd2beb48ee9e5
-  languageName: node
-  linkType: hard
-
 "giget@npm:^1.2.3 || ^2.0.0 || ^3.0.0, giget@npm:^3.2.0":
   version: 3.3.1
   resolution: "giget@npm:3.3.1"
@@ -1874,30 +1867,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-docker@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "is-docker@npm:3.0.0"
-  bin:
-    is-docker: cli.js
-  checksum: 10c0/d2c4f8e6d3e34df75a5defd44991b6068afad4835bb783b902fa12d13ebdb8f41b2a199dcb0b5ed2cb78bfee9e4c0bbdb69c2d9646f4106464674d3e697a5856
-  languageName: node
-  linkType: hard
-
 "is-fullwidth-code-point@npm:^3.0.0":
   version: 3.0.0
   resolution: "is-fullwidth-code-point@npm:3.0.0"
   checksum: 10c0/bb11d825e049f38e04c06373a8d72782eee0205bda9d908cc550ccb3c59b99d750ff9537982e01733c1c94a58e35400661f57042158ff5e8f3e90cf936daf0fc
-  languageName: node
-  linkType: hard
-
-"is-inside-container@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "is-inside-container@npm:1.0.0"
-  dependencies:
-    is-docker: "npm:^3.0.0"
-  bin:
-    is-inside-container: cli.js
-  checksum: 10c0/a8efb0e84f6197e6ff5c64c52890fa9acb49b7b74fed4da7c95383965da6f0fa592b4dbd5e38a79f87fc108196937acdbcd758fcefc9b140e479b39ce1fcd1cd
   languageName: node
   linkType: hard
 
@@ -1914,15 +1887,6 @@ __metadata:
   dependencies:
     is-docker: "npm:^2.0.0"
   checksum: 10c0/a6fa2d370d21be487c0165c7a440d567274fbba1a817f2f0bfa41cc5e3af25041d84267baa22df66696956038a43973e72fca117918c91431920bdef490fa25e
-  languageName: node
-  linkType: hard
-
-"is-wsl@npm:^3.1.1":
-  version: 3.1.1
-  resolution: "is-wsl@npm:3.1.1"
-  dependencies:
-    is-inside-container: "npm:^1.0.0"
-  checksum: 10c0/7e5023522bfb8f27de4de960b0d82c4a8146c0bddb186529a3616d78b5bbbfc19ef0c5fc60d0b3a3cc0bf95a415fbdedc18454310ea3049587c879b07ace5107
   languageName: node
   linkType: hard
 
@@ -2538,28 +2502,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nano-spawn@npm:^2.0.0":
-  version: 2.1.0
-  resolution: "nano-spawn@npm:2.1.0"
-  checksum: 10c0/3becc67ed9ab630b6572feab69a4ef468891ad1f89d5c8643f14a2044cf32ba64533033506208039b1e3d9ddcb2f5f4f87ec360f13b3c4f0774304aedf0f0290
-  languageName: node
-  linkType: hard
-
 "nanoid@npm:^3.3.17":
   version: 3.3.18
   resolution: "nanoid@npm:3.3.18"
   bin:
     nanoid: bin/nanoid.cjs
   checksum: 10c0/b994b4e396730f8be2520923284e2040d61eaee55cc6d4935ef6d38d34bafdc46133eda4d3faea5073bda545aa6079d82b886caeac5c731cf9ac18bcc1301425
-  languageName: node
-  linkType: hard
-
-"nanospinner@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "nanospinner@npm:1.2.2"
-  dependencies:
-    picocolors: "npm:^1.1.1"
-  checksum: 10c0/07264f63816a8ec24d84ffe216a605cf11dffd8b098d4c5e6790437304b47e10ce4fc341de8dbcfc1b59aa42107f9949c89bcc201239eb61a80e14b6b1a20c90
   languageName: node
   linkType: hard
 
@@ -2591,13 +2539,6 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: 10c0/980d89257f9587f3e1f77877ddbf905d6aa3b738ec33e49a4fa1a059a0dd82eb28063982b150654a7ae9de386f2ead60e56172db7d37cf56de545f7392a2a26a
-  languageName: node
-  linkType: hard
-
-"normalize-path@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "normalize-path@npm:3.0.0"
-  checksum: 10c0/e008c8142bcc335b5e38cf0d63cfd39d6cf2d97480af9abdbe9a439221fd4d749763bab492a8ee708ce7a194bb00c9da6d0a115018672310850489137b3da046
   languageName: node
   linkType: hard
 
@@ -3622,9 +3563,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wxt@npm:0.21.3":
-  version: 0.21.3
-  resolution: "wxt@npm:0.21.3"
+"wxt@npm:0.21.4":
+  version: 0.21.4
+  resolution: "wxt@npm:0.21.4"
   dependencies:
     "@1natsu/wait-element": "npm:^4.1.2"
     "@aklinker1/rollup-plugin-visualizer": "npm:5.12.0"
@@ -3633,7 +3574,7 @@ __metadata:
     "@webext-core/fake-browser": "npm:^2.0.1"
     "@webext-core/isolated-element": "npm:^1.1.3 || ^2 || ^3"
     "@webext-core/match-patterns": "npm:^2.0.0"
-    "@wxt-dev/browser": "npm:^0.2.2"
+    "@wxt-dev/browser": "npm:>=0.1"
     "@wxt-dev/storage": "npm:^1.0.0"
     c12: "npm:^3.3.4"
     cac: "npm:^6.7.14 || ^7.0.0"
@@ -3642,23 +3583,17 @@ __metadata:
     defu: "npm:^6.1.4"
     dotenv-expand: "npm:^13.0.0"
     filesize: "npm:^11.0.17"
-    get-port-please: "npm:^3.2.0"
     giget: "npm:^1.2.3 || ^2.0.0 || ^3.0.0"
     hookable: "npm:^6.1.0"
-    is-wsl: "npm:^3.1.1"
     json5: "npm:^2.2.3"
     linkedom: "npm:^0.18.12"
     magicast: "npm:^0.5.2"
-    nano-spawn: "npm:^2.0.0"
-    nanospinner: "npm:^1.2.2"
-    normalize-path: "npm:^3.0.0"
     nypm: "npm:^0.6.5"
-    ohash: "npm:^2.0.11"
     picomatch: "npm:^4.0.3"
     publish-browser-extension: "npm:^5.1.0 || ^6.0.0"
-    scule: "npm:^1.3.0"
     superlock: "npm:^1.3.2"
     tiny-open: "npm:^1.3.0"
+    tinyexec: "npm:^1.2.4"
     tinyglobby: "npm:^0.2.16"
     unimport: "npm:^3.13.1 || ^4.0.0 || ^5.0.0 || ^6.0.0"
   peerDependencies:
@@ -3676,7 +3611,7 @@ __metadata:
   bin:
     wxt: bin/wxt.mjs
     wxt-publish-extension: bin/wxt-publish-extension.mjs
-  checksum: 10c0/38addd8db8755ab1f48aca8e3fb9187119349706c715627bf93357236ee77723acd4d00b9d586060a3dd48290dbf48d75a24edd63caa4702b9e4545b49a1171c
+  checksum: 10c0/3d8caebecb18f9b198edb81176c6c7e1c76b83fe52b7f748d7e6cf0e5a7f18f85de4067a6045835970c3dc401bc469f81b2149b6c227bc6a0786978f2500e0eb
   languageName: node
   linkType: hard
 
@@ -3760,7 +3695,7 @@ __metadata:
     typescript: "npm:7.0.2"
     vite: "npm:8.2.1"
     vitest: "npm:4.1.10"
-    wxt: "npm:0.21.3"
+    wxt: "npm:0.21.4"
   dependenciesMeta:
     esbuild:
       built: true
