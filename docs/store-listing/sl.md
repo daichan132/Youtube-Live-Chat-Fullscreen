@@ -45,7 +45,7 @@ KAKO ZAČETI
 3. Klepet je spet nad videom — ničesar ni treba vklopiti.
 4. Nov gumb v obliki oblačka, spodaj desno v vrstici s kontrolniki, ga izklopi in vklopi; gumb za nastavitve na plošči spremeni videz. Oboje ostane tudi pri naslednjem prenosu.
 
-Plošča se pokaže samo na celem zaslonu in samo na strani za ogled, ki ima klepet — pri navadnem videu ali prenosu, ki ponovitve nima več, se gumb sploh ne prikaže. V oknu in v kinodvorani je klepet že tako ob predvajalniku. Ta različica za Chrome teče tudi v brskalniku Opera in drugih brskalnikih Chromium; Firefox ima svojo različico na addons.mozilla.org.
+Plošča se pokaže samo na celem zaslonu in samo na strani za ogled, ki ima klepet — pri navadnem videu ali prenosu, ki ponovitve nima več, se gumb sploh ne prikaže. V oknu in v kinodvorani je klepet že tako ob predvajalniku. Ta različica za Chrome teče tudi v brskalniku Opera; Firefox ima svojo različico na addons.mozilla.org.
 
 TIPKOVNICA IN ODPRAVLJANJE TEŽAV
 Vsaka nastavitev ima oznako za bralnik zaslona, drsniki in izbirniki barv pa se odzivajo na puščice; miško potrebujeta le spreminjanje velikosti in vrsta gumbov, ki se pokaže ob prehodu z miško. Sporočila so YouTubova, zato jih bralnik zaslona bere enako kot v stranski vrstici. Samodejni pregledi WCAG 2.1 AA tečejo ob vsaki spremembi kode in pokrivajo pojavno okno, vrsto gumbov in ploščo nastavitev.

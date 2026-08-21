@@ -45,7 +45,7 @@ JAK ZACZĄĆ
 3. Czat jest z powrotem na wideo — niczego nie musisz włączać.
 4. Nowy przycisk z dymkiem na pasku sterowania, na dole po prawej, włącza go i wyłącza; przycisk ustawień na panelu zmienia wygląd. Jedno i drugie przechodzi na następną transmisję.
 
-Panel pojawia się tylko na pełnym ekranie i tylko na stronie odtwarzania, która ma czat — przy zwykłym filmie albo transmisji, której zapis czatu już wygasł, przycisk w ogóle się nie pokazuje. W oknie i w trybie kinowym czat i tak stoi obok odtwarzacza. Ta wersja dla Chrome działa też w przeglądarce Opera i w innych przeglądarkach opartych na Chromium; Firefox ma własną wersję na addons.mozilla.org.
+Panel pojawia się tylko na pełnym ekranie i tylko na stronie odtwarzania, która ma czat — przy zwykłym filmie albo transmisji, której zapis czatu już wygasł, przycisk w ogóle się nie pokazuje. W oknie i w trybie kinowym czat i tak stoi obok odtwarzacza. Ta wersja dla Chrome działa też w przeglądarce Opera; Firefox ma własną wersję na addons.mozilla.org.
 
 OBSŁUGA Z KLAWIATURY I ROZWIĄZYWANIE PROBLEMÓW
 Każde ustawienie ma etykietę dla czytnika ekranu, a suwaki i próbniki barw reagują na strzałki; myszy wymaga tylko skalowanie oraz rząd przycisków, który pojawia się po najechaniu. Wiadomości są od YouTube, więc czytnik ekranu odczytuje je tak samo jak w panelu bocznym. Automatyczne testy WCAG 2.1 AA uruchamiają się przy każdej zmianie kodu i obejmują okienko na pasku narzędzi, rząd przycisków i panel ustawień.

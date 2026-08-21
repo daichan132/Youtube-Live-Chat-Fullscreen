@@ -45,7 +45,7 @@ ZO BEGIN JE
 3. De chat ligt weer over de video – je hoeft niets aan te zetten.
 4. Een nieuwe tekstballonknop rechtsonder in de bedieningsbalk zet hem uit en aan; de instellingenknop op het paneel verandert het uiterlijk. Beide gaan mee naar de volgende stream.
 
-Het paneel verschijnt alleen op volledig scherm en alleen op een kijkpagina met chat – bij een gewone video of een stream waarvan de herhaling weg is, komt de knop er niet eens. In venster- en theatermodus staat de chat toch al naast de speler. Deze Chrome-versie draait ook in Opera en andere Chromium-browsers; voor Firefox is er een eigen versie op addons.mozilla.org.
+Het paneel verschijnt alleen op volledig scherm en alleen op een kijkpagina met chat – bij een gewone video of een stream waarvan de herhaling weg is, komt de knop er niet eens. In venster- en theatermodus staat de chat toch al naast de speler. Deze Chrome-versie draait ook in Opera; voor Firefox is er een eigen versie op addons.mozilla.org.
 
 TOETSENBORD EN PROBLEMEN OPLOSSEN
 Elke instelling heeft een label voor schermlezers, en schuifregelaars en kleurkiezers werken met de pijltoetsen; een muis heb je alleen nodig voor het formaat en voor het rijtje knoppen dat bij aanwijzen verschijnt. De berichten zijn van YouTube zelf, dus een schermlezer leest ze net als in de zijbalk. Automatische controles op WCAG 2.1 AA draaien bij elke codewijziging, voor de pop-up, het knoppenrijtje en het instellingenpaneel.

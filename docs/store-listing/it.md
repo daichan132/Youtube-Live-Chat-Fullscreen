@@ -45,7 +45,7 @@ COME SI COMINCIA
 3. La chat è di nuovo sopra il video — non c'è niente da attivare.
 4. Un nuovo pulsante a fumetto nella barra dei comandi, in basso a destra, la spegne e la riaccende; il pulsante delle impostazioni sul pannello ne cambia l'aspetto. Restano tutti e due per la diretta successiva.
 
-Il pannello compare solo a schermo intero e solo su una pagina di visione che ha una chat: su un video normale, o su una diretta la cui replica non c'è più, il pulsante non compare proprio. In modalità finestra e in modalità cinema la chat è già accanto al player. Questa versione per Chrome funziona anche in Opera e negli altri browser Chromium; Firefox ha la sua versione su addons.mozilla.org.
+Il pannello compare solo a schermo intero e solo su una pagina di visione che ha una chat: su un video normale, o su una diretta la cui replica non c'è più, il pulsante non compare proprio. In modalità finestra e in modalità cinema la chat è già accanto al player. Questa versione per Chrome funziona anche in Opera; Firefox ha la sua versione su addons.mozilla.org.
 
 TASTIERA E PROBLEMI
 Ogni impostazione è etichettata per gli screen reader, e cursori e selettori rispondono ai tasti freccia; solo il ridimensionamento e la riga di comandi, che appare al passaggio del puntatore, richiedono il mouse. I messaggi sono quelli di YouTube, quindi uno screen reader li legge come nella colonna laterale. Controlli automatici WCAG 2.1 AA girano a ogni modifica del codice e coprono popup, riga di comandi e pannello delle impostazioni.

@@ -45,7 +45,7 @@ SÅ KOMMER DU IGÅNG
 3. Chatten ligger ovanpå videon igen – inget att slå på.
 4. En ny pratbubbelknapp nere till höger i kontrollraden stänger av och sätter på den; inställningsknappen på panelen ändrar utseendet. Båda följer med till nästa sändning.
 
-Panelen dyker upp bara i helskärm och bara på en visningssida med chatt – på en vanlig video, eller en sändning vars repris är borta, syns knappen inte alls. I fönster- och bioläge står chatten redan bredvid spelaren. Den här Chrome-versionen fungerar även i Opera och andra Chromium-webbläsare; Firefox har en egen version på addons.mozilla.org.
+Panelen dyker upp bara i helskärm och bara på en visningssida med chatt – på en vanlig video, eller en sändning vars repris är borta, syns knappen inte alls. I fönster- och bioläge står chatten redan bredvid spelaren. Den här Chrome-versionen fungerar även i Opera; Firefox har en egen version på addons.mozilla.org.
 
 TANGENTBORD OCH FELSÖKNING
 Varje inställning är märkt för skärmläsare, och reglage och färgväljare tar piltangenter; mus behövs bara för att ändra storlek och för raden som dyker upp när du för pekaren över panelen. Meddelandena är YouTubes egna, så en skärmläsare läser dem precis som i sidofältet. Automatiska kontroller mot WCAG 2.1 AA körs vid varje kodändring och omfattar popupen, knappraden och inställningspanelen.

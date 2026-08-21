@@ -45,7 +45,7 @@ POUR COMMENCER
 3. Le chat est de retour sur la vidéo — rien à activer.
 4. Un nouveau bouton en forme de bulle, en bas à droite de la barre de contrôle, l'éteint et le rallume ; le bouton des réglages du panneau en change l'apparence. Les deux sont conservés pour le live suivant.
 
-Le panneau n'apparaît qu'en plein écran, et uniquement sur une page de visionnage qui a un chat : sur une vidéo ordinaire, ou sur un live dont le replay a disparu, le bouton ne s'affiche jamais. En mode fenêtré et en mode cinéma, le chat est déjà à côté du lecteur. Cette version Chrome fonctionne aussi dans Opera et les autres navigateurs Chromium ; Firefox a sa propre version sur addons.mozilla.org.
+Le panneau n'apparaît qu'en plein écran, et uniquement sur une page de visionnage qui a un chat : sur une vidéo ordinaire, ou sur un live dont le replay a disparu, le bouton ne s'affiche jamais. En mode fenêtré et en mode cinéma, le chat est déjà à côté du lecteur. Cette version Chrome fonctionne aussi dans Opera ; Firefox a sa propre version sur addons.mozilla.org.
 
 CLAVIER ET DÉPANNAGE
 Chaque réglage porte une étiquette pour les lecteurs d'écran, et les curseurs comme les sélecteurs répondent aux touches fléchées ; seuls le redimensionnement et la rangée de commandes, qui n'apparaît qu'au survol, demandent une souris. Les messages sont ceux de YouTube : un lecteur d'écran les lit comme dans la colonne de droite. Des contrôles WCAG 2.1 AA automatisés tournent à chaque modification du code et couvrent la fenêtre de la barre d'outils, la rangée de commandes et le panneau de réglages.

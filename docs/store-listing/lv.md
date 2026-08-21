@@ -45,7 +45,7 @@ KĀ SĀKT
 3. Čats atkal ir virs video — nekas nav jāieslēdz.
 4. Jauna runas burbuļa poga vadības joslā apakšējā labajā stūrī to izslēdz un ieslēdz, bet paneļa iestatījumu poga maina izskatu. Abas izvēles saglabājas arī nākamajai tiešraidei.
 
-Panelis parādās tikai pilnekrāna režīmā un tikai skatīšanās lapā, kurai ir čats: parastam video vai tiešraidei, kurai atkārtojums vairs nav pieejams, poga nemaz neparādās. Loga un kinozāles režīmā čats jau tāpat ir blakus atskaņotājam. Šī Chrome versija darbojas arī pārlūkā Opera un citos Chromium pārlūkos; Firefox ir sava versija vietnē addons.mozilla.org.
+Panelis parādās tikai pilnekrāna režīmā un tikai skatīšanās lapā, kurai ir čats: parastam video vai tiešraidei, kurai atkārtojums vairs nav pieejams, poga nemaz neparādās. Loga un kinozāles režīmā čats jau tāpat ir blakus atskaņotājam. Šī Chrome versija darbojas arī pārlūkā Opera; Firefox ir sava versija vietnē addons.mozilla.org.
 
 TASTATŪRA UN PROBLĒMU RISINĀŠANA
 Katram iestatījumam ir ekrānlasītāja marķējums, bet slīdņi un krāsu atlasītāji klausa bultiņu taustiņus; pele vajadzīga tikai izmēra maiņai un pogu rindai, kas parādās, uzvedot peli. Ziņas ir paša YouTube, tāpēc ekrānlasītājs tās nolasa tāpat kā sānjoslā. Automātiskās WCAG 2.1 AA pārbaudes notiek ar katru koda izmaiņu un aptver uznirstošo logu, pogu rindu un iestatījumu paneli.

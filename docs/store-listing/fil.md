@@ -45,7 +45,7 @@ PAANO MAGSIMULA
 3. Nasa ibabaw na ulit ng video ang chat — walang kailangang buksan.
 4. Ang bagong speech-bubble button sa control bar, sa kanang baba, ang nagpapatay at nagbubukas nito; ang settings button ng panel ang nagpapalit ng itsura. Dala pareho ang mga ito sa susunod na stream.
 
-Lumilitaw lang ang panel sa fullscreen, at sa watch page lang na may chat — sa ordinaryong video, o sa stream na wala nang replay, hindi lumilitaw ang button. Sa windowed at theater mode, nasa tabi na ng player ang chat. Tumatakbo rin ang Chrome build na ito sa Opera at iba pang Chromium browser; may sariling build ang Firefox sa addons.mozilla.org.
+Lumilitaw lang ang panel sa fullscreen, at sa watch page lang na may chat — sa ordinaryong video, o sa stream na wala nang replay, hindi lumilitaw ang button. Sa windowed at theater mode, nasa tabi na ng player ang chat. Tumatakbo rin ang Chrome build na ito sa Opera; may sariling build ang Firefox sa addons.mozilla.org.
 
 KEYBOARD ACCESS AT PAG-AAYOS NG PROBLEMA
 May label para sa screen reader ang bawat setting, at tumatanggap ng arrow key ang mga slider at picker; ang pag-resize lang at ang hanay ng kontrol na lumilitaw kapag itinuro ang cursor ang nangangailangan ng mouse. Sa YouTube mismo galing ang mga mensahe, kaya binabasa ito ng screen reader gaya sa sidebar. Tumatakbo ang awtomatikong pagsusuri sa WCAG 2.1 AA sa bawat pagbabago sa code, sakop ang popup, ang hanay ng kontrol, at ang settings panel.

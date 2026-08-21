@@ -45,7 +45,7 @@ JAK ZAČÍT
 3. Chat je zpátky nad videem — nic nemusíte zapínat.
 4. Nové tlačítko s bublinou v ovládací liště vpravo dole ho vypíná a zapíná; tlačítko nastavení na panelu mění vzhled. Obojí se přenese i na další přenos.
 
-Panel se objeví jen na celé obrazovce a jen na stránce s videem, které má chat — u běžného videa nebo u přenosu, jehož přehrání chatu už zmizelo, se tlačítko vůbec neukáže. V okně a v režimu divadla je chat stejně vedle přehrávače. Tahle verze pro Chrome běží i v prohlížeči Opera a v dalších prohlížečích s jádrem Chromium; Firefox má vlastní verzi na addons.mozilla.org.
+Panel se objeví jen na celé obrazovce a jen na stránce s videem, které má chat — u běžného videa nebo u přenosu, jehož přehrání chatu už zmizelo, se tlačítko vůbec neukáže. V okně a v režimu divadla je chat stejně vedle přehrávače. Tahle verze pro Chrome běží i v prohlížeči Opera; Firefox má vlastní verzi na addons.mozilla.org.
 
 OVLÁDÁNÍ Z KLÁVESNICE A CO DĚLAT, KDYŽ TO NEJDE
 Každé nastavení má popisek pro čtečku obrazovky a posuvníky i výběr barev berou šipky; myš potřebuje jen změna velikosti a řádek ovládání, který se objeví po najetí. Zprávy jsou od YouTube, takže je čtečka obrazovky čte stejně jako v postranním panelu. Automatické kontroly WCAG 2.1 AA běží při každé změně kódu a pokrývají okno na liště, řádek ovládání i panel nastavení.

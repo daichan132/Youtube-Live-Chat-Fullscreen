@@ -45,7 +45,7 @@ HOGYAN KEZDD EL
 3. A csevegés ott van a videó fölött — semmit nem kell bekapcsolnod.
 4. Egy új, szövegbuborékos gomb a vezérlősávban, jobbra lent, ki-be kapcsolja; a panel beállításgombja a külsőt változtatja. Mindkettő megmarad a következő adásra is.
 
-A panel csak teljes képernyőn jelenik meg, és csak olyan megtekintési oldalon, amelyen van csevegés — hétköznapi videónál vagy olyan közvetítésnél, amelynek már nincs visszajátszása, a gomb meg sem jelenik. Ablakos és színházi módban a csevegés amúgy is ott van a lejátszó mellett. Ez a Chrome-változat az Opera böngészőben és más Chromium-alapú böngészőkben is fut; a Firefoxnak saját változata van az addons.mozilla.org oldalon.
+A panel csak teljes képernyőn jelenik meg, és csak olyan megtekintési oldalon, amelyen van csevegés — hétköznapi videónál vagy olyan közvetítésnél, amelynek már nincs visszajátszása, a gomb meg sem jelenik. Ablakos és színházi módban a csevegés amúgy is ott van a lejátszó mellett. Ez a Chrome-változat az Opera böngészőben is fut; a Firefoxnak saját változata van az addons.mozilla.org oldalon.
 
 BILLENTYŰZETES HASZNÁLAT ÉS HIBAELHÁRÍTÁS
 Minden beállításnak van képernyőolvasó-felirata, a csúszkák és a színválasztók pedig fogadják a nyílbillentyűket; egér csak az átméretezéshez és a rámutatásra megjelenő vezérlősorhoz kell. Az üzenetek a YouTube sajátjai, így a képernyőolvasó ugyanúgy olvassa fel őket, mint az oldalsávban. Automatikus WCAG 2.1 AA ellenőrzések futnak minden kódmódosításnál, és lefedik a felugró ablakot, a vezérlősort és a beállítási panelt.

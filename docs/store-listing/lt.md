@@ -45,7 +45,7 @@ KAIP PRADĖTI
 3. Pokalbis vėl ant vaizdo – nieko įjungti nereikia.
 4. Naujas debesėlio formos mygtukas valdymo juostos apačioje dešinėje jį išjungia ir įjungia, o skydelio nustatymų mygtukas keičia išvaizdą. Abu pasirinkimai išlieka ir kitai transliacijai.
 
-Skydelis rodomas tik visame ekrane ir tik žiūrėjimo puslapyje, kuriame yra pokalbis: prie įprasto vaizdo įrašo arba transliacijos, kurios pakartojimo nebeliko, mygtukas išvis nepasirodo. Lango ir kino režimu pokalbis ir taip yra šalia grotuvo. Ši „Chrome“ laida veikia ir „Opera“, ir kitose „Chromium“ naršyklėse; „Firefox“ turi savo laidą adresu addons.mozilla.org.
+Skydelis rodomas tik visame ekrane ir tik žiūrėjimo puslapyje, kuriame yra pokalbis: prie įprasto vaizdo įrašo arba transliacijos, kurios pakartojimo nebeliko, mygtukas išvis nepasirodo. Lango ir kino režimu pokalbis ir taip yra šalia grotuvo. Ši „Chrome“ laida veikia ir „Opera“ naršyklėje; „Firefox“ turi savo laidą adresu addons.mozilla.org.
 
 KLAVIATŪRA IR TRIKČIŲ ŠALINIMAS
 Kiekvienas nustatymas turi etiketę ekrano skaitytuvui, o slankikliai ir spalvų parinkikliai klauso rodyklių; pelės reikia tik dydžiui keisti ir mygtukų eilutei, kuri pasirodo užvedus žymeklį. Žinutės yra paties „YouTube“, tad ekrano skaitytuvas jas skaito taip pat kaip šoninėje juostoje. Automatinės WCAG 2.1 AA patikros atliekamos su kiekvienu kodo pakeitimu ir apima iškylantįjį langą, mygtukų eilutę ir nustatymų skydelį.

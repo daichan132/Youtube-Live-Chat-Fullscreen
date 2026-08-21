@@ -45,7 +45,7 @@ KAKO POČETI
 3. Chat je opet preko videa — ništa ne moraš uključivati.
 4. Novi gumb u obliku oblačića, dolje desno na traci s kontrolama, isključuje ga i uključuje; gumb za postavke na ploči mijenja izgled. Oba izbora prenose se na sljedeći prijenos.
 
-Ploča se pojavljuje samo na cijelom zaslonu i samo na stranici za gledanje koja ima chat — na običnom videu ili na prijenosu kojem je repriza nestala gumb se uopće ne prikazuje. U prozorskom i kino načinu chat je ionako uz player. Ovo Chrome izdanje radi i u pregledniku Opera i u drugim Chromium preglednicima; Firefox ima svoje izdanje na addons.mozilla.org.
+Ploča se pojavljuje samo na cijelom zaslonu i samo na stranici za gledanje koja ima chat — na običnom videu ili na prijenosu kojem je repriza nestala gumb se uopće ne prikazuje. U prozorskom i kino načinu chat je ionako uz player. Ovo Chrome izdanje radi i u pregledniku Opera; Firefox ima svoje izdanje na addons.mozilla.org.
 
 TIPKOVNICA I RJEŠAVANJE PROBLEMA
 Svaka postavka ima oznaku za čitač zaslona, a klizači i birači boja slušaju strelice; miš traže samo promjena veličine i red gumba koji se pojavljuje na prijelaz mišem. Poruke su YouTubeove, pa ih čitač zaslona čita isto kao u bočnoj traci. Automatske WCAG 2.1 AA provjere idu uz svaku izmjenu koda i pokrivaju skočni prozor, red gumba i ploču postavki.

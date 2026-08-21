@@ -45,7 +45,7 @@ CARA BERMULA
 3. Sembang sudah kembali di atas video — tiada apa-apa perlu dihidupkan.
 4. Butang gelembung kata yang baharu pada bar kawalan, di kanan bawah, mematikan dan menghidupkannya; butang tetapan pada panel mengubah rupanya. Kedua-duanya dibawa ke siaran seterusnya.
 
-Panel hanya muncul dalam skrin penuh, dan hanya pada halaman tontonan yang mempunyai sembang — pada video biasa, atau siaran yang tayangan semula sembangnya sudah tiada, butang itu langsung tidak muncul. Dalam mod tetingkap dan mod teater, sembang memang sudah berada di sebelah pemain video. Binaan Chrome ini turut berjalan pada Opera dan penyemak imbas Chromium yang lain; Firefox mempunyai binaannya sendiri di addons.mozilla.org.
+Panel hanya muncul dalam skrin penuh, dan hanya pada halaman tontonan yang mempunyai sembang — pada video biasa, atau siaran yang tayangan semula sembangnya sudah tiada, butang itu langsung tidak muncul. Dalam mod tetingkap dan mod teater, sembang memang sudah berada di sebelah pemain video. Binaan Chrome ini turut berjalan pada Opera; Firefox mempunyai binaannya sendiri di addons.mozilla.org.
 
 CAPAIAN PAPAN KEKUNCI DAN PENYELESAIAN MASALAH
 Setiap tetapan berlabel untuk pembaca skrin, dan penggelongsor serta pemilih menerima kekunci anak panah; hanya pengubahan saiz dan baris kawalan yang muncul apabila dituding memerlukan tetikus. Mesejnya milik YouTube sendiri, jadi pembaca skrin membacanya sama seperti di ruangan tepi. Semakan automatik WCAG 2.1 AA dijalankan pada setiap perubahan kod, meliputi tetingkap timbul, baris kawalan dan panel tetapan.

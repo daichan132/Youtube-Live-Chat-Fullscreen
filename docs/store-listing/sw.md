@@ -45,7 +45,7 @@ JINSI YA KUANZA
 3. Gumzo limerudi juu ya video — hakuna cha kuwasha.
 4. Kitufe kipya chenye umbo la kiputo cha maneno kwenye upau wa vidhibiti, chini kulia, kinalizima na kuliwasha; kitufe cha mipangilio kwenye paneli hubadilisha mwonekano. Vyote viwili hubebwa hadi tangazo linalofuata.
 
-Paneli hutokea tu kwenye skrini nzima, na tu kwenye ukurasa wa kutazama wenye gumzo — kwenye video ya kawaida, au tangazo ambalo urudiaji wake wa gumzo umeisha, kitufe hakitokei kabisa. Katika hali ya dirisha na ya jumba la sinema, gumzo tayari liko kando ya kichezeshi. Toleo hili la Chrome hufanya kazi pia kwenye Opera na vivinjari vingine vya Chromium; Firefox ina toleo lake kwenye addons.mozilla.org.
+Paneli hutokea tu kwenye skrini nzima, na tu kwenye ukurasa wa kutazama wenye gumzo — kwenye video ya kawaida, au tangazo ambalo urudiaji wake wa gumzo umeisha, kitufe hakitokei kabisa. Katika hali ya dirisha na ya jumba la sinema, gumzo tayari liko kando ya kichezeshi. Toleo hili la Chrome hufanya kazi pia kwenye Opera; Firefox ina toleo lake kwenye addons.mozilla.org.
 
 UFIKIAJI KWA KIBODI NA KUTATUA MATATIZO
 Kila mpangilio una lebo kwa ajili ya kisomaji skrini, na vitelezi na vichagua rangi hupokea vitufe vya mishale; ni kubadilisha ukubwa pekee na safu ya vidhibiti inayotokea unapoelekeza kishale ndivyo vinavyohitaji kipanya. Jumbe ni za YouTube yenyewe, kwa hivyo kisomaji skrini huzisoma kama kinavyofanya kwenye upau wa pembeni. Ukaguzi wa kiotomatiki wa WCAG 2.1 AA hufanyika kwa kila mabadiliko ya msimbo, ukigusa kidirisha ibukizi, safu ya vidhibiti na paneli ya mipangilio.

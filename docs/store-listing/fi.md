@@ -45,7 +45,7 @@ NÄIN PÄÄSET ALKUUN
 3. Chat on taas videon päällä – mitään ei tarvitse kytkeä päälle.
 4. Hallintapalkin oikeaan alakulmaan ilmestyvä puhekuplapainike sammuttaa ja sytyttää sen; paneelin asetuspainike muuttaa ulkoasua. Molemmat siirtyvät seuraavaan lähetykseen.
 
-Paneeli ilmestyy vain koko näytön tilassa ja vain katselusivulla, jolla on chat – tavallisessa videossa tai lähetyksessä, jonka uusinta on poistunut, painiketta ei näy lainkaan. Ikkuna- ja teatteritilassa chat on jo valmiiksi soittimen vieressä. Tämä Chrome-versio toimii myös Operassa ja muissa Chromium-selaimissa; Firefoxille on oma versionsa osoitteessa addons.mozilla.org.
+Paneeli ilmestyy vain koko näytön tilassa ja vain katselusivulla, jolla on chat – tavallisessa videossa tai lähetyksessä, jonka uusinta on poistunut, painiketta ei näy lainkaan. Ikkuna- ja teatteritilassa chat on jo valmiiksi soittimen vieressä. Tämä Chrome-versio toimii myös Operassa; Firefoxille on oma versionsa osoitteessa addons.mozilla.org.
 
 NÄPPÄIMISTÖ JA VIANETSINTÄ
 Jokainen asetus on nimetty ruudunlukijaa varten, ja liukusäätimet ja värinvalitsimet tottelevat nuolinäppäimiä; hiirtä tarvitaan vain koon muuttamiseen ja riviin, joka ilmestyy vasta, kun viet osoittimen paneelin päälle. Viestit ovat YouTuben omia, joten ruudunlukija lukee ne kuten sivupalkissa. Automaattiset WCAG 2.1 AA -tarkistukset ajetaan jokaisen koodimuutoksen yhteydessä, ja ne kattavat ponnahdusikkunan, painikerivin ja asetuspaneelin.

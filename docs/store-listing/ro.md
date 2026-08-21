@@ -45,7 +45,7 @@ CUM ÎNCEPI
 3. Chatul e din nou peste videoclip — nu ai ce să pornești.
 4. Un buton nou, în formă de bulă de dialog, în bara de comenzi, jos-dreapta, îl oprește și îl pornește; butonul de setări al panoului schimbă aspectul. Amândouă se păstrează la următoarea transmisiune.
 
-Panoul apare doar pe ecran complet și doar pe o pagină de vizionare care are chat — la un videoclip obișnuit sau la o transmisiune a cărei reluare a dispărut, butonul nici nu se arată. În fereastră și în modul cinema, chatul e oricum lângă player. Această versiune pentru Chrome rulează și în Opera și în alte browsere bazate pe Chromium; Firefox are propria versiune pe addons.mozilla.org.
+Panoul apare doar pe ecran complet și doar pe o pagină de vizionare care are chat — la un videoclip obișnuit sau la o transmisiune a cărei reluare a dispărut, butonul nici nu se arată. În fereastră și în modul cinema, chatul e oricum lângă player. Această versiune pentru Chrome rulează și în Opera; Firefox are propria versiune pe addons.mozilla.org.
 
 ACCES DE LA TASTATURĂ ȘI DEPANARE
 Fiecare setare are etichetă pentru cititorul de ecran, iar glisoarele și selectoarele de culoare răspund la tastele săgeți; mouse-ul e necesar doar pentru redimensionare și pentru rândul de comenzi, care apare la trecerea cursorului. Mesajele sunt ale YouTube, așa că un cititor de ecran le citește la fel ca în bara laterală. Verificări automate WCAG 2.1 AA rulează la fiecare modificare de cod și acoperă fereastra din bara de instrumente, rândul de comenzi și panoul de setări.

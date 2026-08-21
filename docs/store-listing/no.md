@@ -45,7 +45,7 @@ SLIK KOMMER DU I GANG
 3. Chatten ligger oppå videoen igjen – ingenting å slå på.
 4. En ny snakkeboble-knapp nederst til høyre i kontrollraden slår den av og på; innstillingsknappen på panelet endrer utseendet. Begge deler følger med til neste sending.
 
-Panelet dukker bare opp i fullskjerm og bare på en visningsside med chat – på en vanlig video, eller en sending der reprisen er borte, kommer knappen ikke fram i det hele tatt. I vindus- og kinomodus står chatten allerede ved siden av spilleren. Denne Chrome-versjonen kjører også i Opera og andre Chromium-nettlesere; Firefox har sin egen versjon på addons.mozilla.org.
+Panelet dukker bare opp i fullskjerm og bare på en visningsside med chat – på en vanlig video, eller en sending der reprisen er borte, kommer knappen ikke fram i det hele tatt. I vindus- og kinomodus står chatten allerede ved siden av spilleren. Denne Chrome-versjonen kjører også i Opera; Firefox har sin egen versjon på addons.mozilla.org.
 
 TASTATUR OG FEILSØKING
 Hver innstilling er merket for skjermlesere, og glidebrytere og fargevelgere tar imot piltaster; mus trenger du bare for å endre størrelsen og for raden som dukker opp når du fører musen over panelet. Meldingene er YouTubes egne, så en skjermleser leser dem akkurat som i sidefeltet. Automatiske kontroller mot WCAG 2.1 AA kjøres ved hver kodeendring og dekker popupvinduet, knapperaden og innstillingspanelet.

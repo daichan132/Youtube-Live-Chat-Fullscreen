@@ -45,7 +45,7 @@ CÓMO EMPEZAR
 3. El chat ya está sobre el vídeo: no hay nada que activar.
 4. Un botón nuevo con forma de bocadillo, abajo a la derecha de la barra de controles, lo apaga y lo enciende; el botón de ajustes del panel le cambia el aspecto. Los dos siguen igual en el siguiente directo.
 
-El panel solo aparece a pantalla completa y solo en una página de reproducción que tenga chat: en un vídeo normal, o en un directo cuya repetición ya no está, el botón ni siquiera se muestra. En modo ventana y en modo cine el chat ya está junto al reproductor. Esta versión de Chrome también funciona en Opera y en el resto de navegadores Chromium; Firefox tiene la suya en addons.mozilla.org.
+El panel solo aparece a pantalla completa y solo en una página de reproducción que tenga chat: en un vídeo normal, o en un directo cuya repetición ya no está, el botón ni siquiera se muestra. En modo ventana y en modo cine el chat ya está junto al reproductor. Esta versión de Chrome también funciona en Opera; Firefox tiene la suya en addons.mozilla.org.
 
 TECLADO Y SOLUCIÓN DE PROBLEMAS
 Cada ajuste está etiquetado para los lectores de pantalla, y los deslizadores y los selectores responden a las teclas de flecha; solo redimensionar y la fila de controles, que aparece al pasar el puntero, piden ratón. Los mensajes son los de YouTube, así que un lector de pantalla los lee igual que en la columna lateral. En cada cambio de código se ejecutan comprobaciones automáticas WCAG 2.1 AA sobre la ventana de la barra de herramientas, la fila de controles y el panel de ajustes.

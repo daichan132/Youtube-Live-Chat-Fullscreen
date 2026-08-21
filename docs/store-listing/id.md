@@ -45,7 +45,7 @@ CARA MEMULAI
 3. Chat-nya sudah kembali di atas video — tidak ada yang perlu dinyalakan.
 4. Tombol balon percakapan baru di bilah kontrol, kanan bawah, mematikan dan menyalakannya; tombol pengaturan di panel mengubah tampilannya. Keduanya terbawa ke siaran berikutnya.
 
-Panel hanya muncul di layar penuh dan hanya di halaman tonton yang punya chat — pada video biasa, atau siaran yang chat replay-nya sudah hilang, tombolnya tidak pernah tampil. Di mode jendela dan mode teater, chat memang sudah ada di samping pemutar. Versi Chrome ini juga berjalan di Opera dan browser Chromium lain; Firefox punya versinya sendiri di addons.mozilla.org.
+Panel hanya muncul di layar penuh dan hanya di halaman tonton yang punya chat — pada video biasa, atau siaran yang chat replay-nya sudah hilang, tombolnya tidak pernah tampil. Di mode jendela dan mode teater, chat memang sudah ada di samping pemutar. Versi Chrome ini juga berjalan di Opera; Firefox punya versinya sendiri di addons.mozilla.org.
 
 AKSES KEYBOARD DAN PEMECAHAN MASALAH
 Setiap setelan punya label untuk pembaca layar, dan penggeser serta pemilih warna menerima tombol panah; hanya pengubahan ukuran dan deret kontrol yang muncul saat kursor diarahkan yang butuh mouse. Pesan-pesannya milik YouTube sendiri, jadi pembaca layar membacanya sama seperti di kolom samping. Pemeriksaan WCAG 2.1 AA otomatis berjalan pada tiap perubahan kode, mencakup popup, deret kontrol, dan panel pengaturan.

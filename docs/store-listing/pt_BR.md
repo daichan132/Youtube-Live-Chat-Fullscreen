@@ -45,7 +45,7 @@ COMO COMEÇAR
 3. O chat já está por cima do vídeo — não tem nada para ativar.
 4. Um botão novo em formato de balão, no canto inferior direito da barra de controles, desliga e liga o chat; o botão de configurações do painel muda a aparência. Os dois continuam valendo na próxima transmissão.
 
-O painel só aparece em tela cheia e só numa página de reprodução que tenha chat: num vídeo comum, ou numa transmissão cujo replay já sumiu, o botão nem chega a aparecer. No modo janela e no modo cinema o chat já fica do lado do player. Esta versão para Chrome também funciona no Opera e nos outros navegadores Chromium; o Firefox tem a dele em addons.mozilla.org.
+O painel só aparece em tela cheia e só numa página de reprodução que tenha chat: num vídeo comum, ou numa transmissão cujo replay já sumiu, o botão nem chega a aparecer. No modo janela e no modo cinema o chat já fica do lado do player. Esta versão para Chrome também funciona no Opera; o Firefox tem a dele em addons.mozilla.org.
 
 TECLADO E QUANDO ALGO DÁ ERRADO
 Toda configuração tem rótulo para leitores de tela, e os controles deslizantes e os seletores respondem às setas; só o redimensionamento e a fila de controles, que aparece quando o ponteiro passa por cima, pedem mouse. As mensagens são as do YouTube, então um leitor de tela lê tudo como lê na coluna lateral. Verificações automáticas WCAG 2.1 AA rodam a cada mudança de código e cobrem a janelinha da barra de ferramentas, a fila de controles e o painel de configurações.

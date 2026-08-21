@@ -45,7 +45,7 @@ COMO COMEÇAR
 3. O chat já está por cima do vídeo — não há nada para ligar.
 4. Um botão novo em forma de balão, no canto inferior direito da barra de controlos, desliga-o e liga-o; o botão de definições do painel muda-lhe o aspeto. Ambos se mantêm na transmissão seguinte.
 
-O painel só aparece em ecrã inteiro e só numa página de visualização que tenha chat: num vídeo normal, ou numa transmissão cuja repetição já desapareceu, o botão nunca chega a aparecer. Em modo de janela e em modo cinema o chat já está ao lado do leitor. Esta versão para Chrome funciona também no Opera e nos restantes navegadores Chromium; o Firefox tem a sua em addons.mozilla.org.
+O painel só aparece em ecrã inteiro e só numa página de visualização que tenha chat: num vídeo normal, ou numa transmissão cuja repetição já desapareceu, o botão nunca chega a aparecer. Em modo de janela e em modo cinema o chat já está ao lado do leitor. Esta versão para Chrome funciona também no Opera; o Firefox tem a sua em addons.mozilla.org.
 
 TECLADO E RESOLUÇÃO DE PROBLEMAS
 Todas as definições têm etiqueta para leitores de ecrã, e os cursores e os seletores respondem às teclas de seta; só o redimensionamento e a fila de comandos, que aparece ao passar o ponteiro, pedem rato. As mensagens são as do YouTube, por isso um leitor de ecrã lê-as como na coluna lateral. Verificações automáticas WCAG 2.1 AA correm a cada alteração de código e cobrem a janela da barra de ferramentas, a fila de comandos e o painel de definições.

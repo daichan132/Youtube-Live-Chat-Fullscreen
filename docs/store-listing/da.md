@@ -45,7 +45,7 @@ SÅDAN KOMMER DU I GANG
 3. Chatten ligger oven på videoen igen – der er ikke noget at slå til.
 4. En ny taleboble-knap nederst til højre i kontrolbjælken slår den fra og til; indstillingsknappen på panelet ændrer udseendet. Begge dele følger med til næste stream.
 
-Panelet dukker kun op i fuld skærm og kun på en visningsside med chat – på en almindelig video, eller et stream, hvis gengivelse er væk, kommer knappen slet ikke frem. I vindues- og biograftilstand står chatten allerede ved siden af afspilleren. Denne Chrome-udgave kører også i Opera og andre Chromium-browsere; Firefox har sin egen udgave på addons.mozilla.org.
+Panelet dukker kun op i fuld skærm og kun på en visningsside med chat – på en almindelig video, eller et stream, hvis gengivelse er væk, kommer knappen slet ikke frem. I vindues- og biograftilstand står chatten allerede ved siden af afspilleren. Denne Chrome-udgave kører også i Opera; Firefox har sin egen udgave på addons.mozilla.org.
 
 TASTATUR OG FEJLFINDING
 Hver indstilling er mærket til skærmlæsere, og skydere og farvevælgere tager imod piletaster; mus skal du kun bruge til at ændre størrelsen og til rækken, der dukker op, når du fører musen hen over panelet. Beskederne er YouTubes egne, så en skærmlæser læser dem præcis som i sidepanelet. Automatiske kontroller efter WCAG 2.1 AA kører ved hver kodeændring og dækker pop op-vinduet, knaprækken og indstillingspanelet.

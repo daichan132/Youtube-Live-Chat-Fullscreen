@@ -45,7 +45,7 @@ HOW TO START
 3. The chat is back over the video — nothing to switch on.
 4. A new speech-bubble button in the control bar, bottom right, turns it off and on; the panel's settings button changes the look. Both carry over to the next stream.
 
-The panel appears only in full screen, only on a watch page with chat — on an ordinary video, or a stream whose replay is gone, the button never shows. In windowed and theatre mode the chat is already beside the player. This Chrome build also runs in Opera and other Chromium browsers; Firefox has its own build on addons.mozilla.org.
+The panel appears only in full screen, only on a watch page with chat — on an ordinary video, or a stream whose replay is gone, the button never shows. In windowed and theatre mode the chat is already beside the player. This Chrome build also runs in Opera; Firefox has its own build on addons.mozilla.org.
 
 KEYBOARD ACCESS AND TROUBLESHOOTING
 Every setting is labelled for a screen reader, and sliders and pickers take arrow keys; only resizing and the control row, which appears on hover, need a mouse. Messages are YouTube's own, so a screen reader reads them as it does the sidebar. Automated WCAG 2.1 AA checks run on every code change, covering the popup, control row and settings panel.

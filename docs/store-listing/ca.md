@@ -45,7 +45,7 @@ COM COMENÇAR
 3. El xat ja és damunt del vídeo: no hi ha res per activar.
 4. Un botó nou en forma de bafarada, a baix a la dreta de la barra de controls, l'apaga i l'encén; el botó de configuració del plafó li canvia l'aparença. Tots dos es mantenen per al directe següent.
 
-El plafó només apareix a pantalla completa i només en una pàgina de reproducció que tingui xat: en un vídeo normal, o en un directe la repetició del qual ja no hi és, el botó ni tan sols surt. En mode finestra i en mode cinema el xat ja és al costat del reproductor. Aquesta versió per a Chrome també funciona a Opera i a la resta de navegadors Chromium; el Firefox té la seva a addons.mozilla.org.
+El plafó només apareix a pantalla completa i només en una pàgina de reproducció que tingui xat: en un vídeo normal, o en un directe la repetició del qual ja no hi és, el botó ni tan sols surt. En mode finestra i en mode cinema el xat ja és al costat del reproductor. Aquesta versió per a Chrome també funciona a Opera; el Firefox té la seva a addons.mozilla.org.
 
 TECLAT I QUAN ALGUNA COSA FALLA
 Cada opció té etiqueta per als lectors de pantalla, i els controls lliscants i els selectors responen a les tecles de fletxa; només el redimensionament i la filera de controls, que apareix quan hi passes el punter, demanen ratolí. Els missatges són els de YouTube, així que un lector de pantalla els llegeix igual que a la columna lateral. A cada canvi de codi s'executen comprovacions automàtiques WCAG 2.1 AA sobre la finestreta de la barra d'eines, la filera de controls i el plafó de configuració.

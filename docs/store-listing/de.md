@@ -45,7 +45,7 @@ SO FÄNGST DU AN
 3. Der Chat liegt wieder über dem Video – nichts einzuschalten.
 4. Ein neuer Sprechblasen-Button unten rechts in der Steuerleiste schaltet ihn aus und ein; der Einstellungs-Button am Panel ändert das Aussehen. Beides gilt auch beim nächsten Stream.
 
-Das Panel erscheint nur im Vollbild und nur auf einer Videoseite mit Chat – bei einem gewöhnlichen Video oder einem Stream, dessen Wiedergabe verschwunden ist, taucht der Button gar nicht erst auf. Im Fenster- und im Kinomodus steht der Chat ohnehin neben dem Player. Diese Chrome-Version läuft auch in Opera und anderen Chromium-Browsern; für Firefox gibt es eine eigene Version auf addons.mozilla.org.
+Das Panel erscheint nur im Vollbild und nur auf einer Videoseite mit Chat – bei einem gewöhnlichen Video oder einem Stream, dessen Wiedergabe verschwunden ist, taucht der Button gar nicht erst auf. Im Fenster- und im Kinomodus steht der Chat ohnehin neben dem Player. Diese Chrome-Version läuft auch in Opera; für Firefox gibt es eine eigene Version auf addons.mozilla.org.
 
 TASTATUR UND FEHLERSUCHE
 Jede Einstellung ist für Screenreader beschriftet, Schieberegler und Farbauswahl nehmen Pfeiltasten; eine Maus brauchen nur das Ändern der Größe und die Leiste, die beim Darüberfahren erscheint. Die Nachrichten sind YouTubes eigene, ein Screenreader liest sie also wie in der Seitenleiste. Automatische Prüfungen nach WCAG 2.1 AA laufen bei jeder Codeänderung, für Popup, Leiste und Einstellungspanel.

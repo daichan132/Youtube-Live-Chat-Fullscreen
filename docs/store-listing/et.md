@@ -45,7 +45,7 @@ KUIDAS ALUSTADA
 3. Vestlus on jälle video peal — midagi pole vaja sisse lülitada.
 4. Uus jutumullinupp juhtriba all paremas nurgas lülitab selle välja ja sisse; paneeli seadete nupp muudab välimust. Mõlemad kanduvad üle ka järgmisele ülekandele.
 
-Paneel ilmub ainult täisekraanil ja ainult vaatamislehel, millel on vestlus — tavalise video puhul või ülekande puhul, mille kordus on kadunud, ei ilmu nuppu üldse. Akna- ja kinorežiimis on vestlus niikuinii mängija kõrval. See Chrome'i versioon töötab ka brauseris Opera ja teistes Chromiumi brauserites; Firefoxil on oma versioon aadressil addons.mozilla.org.
+Paneel ilmub ainult täisekraanil ja ainult vaatamislehel, millel on vestlus — tavalise video puhul või ülekande puhul, mille kordus on kadunud, ei ilmu nuppu üldse. Akna- ja kinorežiimis on vestlus niikuinii mängija kõrval. See Chrome'i versioon töötab ka brauseris Opera; Firefoxil on oma versioon aadressil addons.mozilla.org.
 
 KLAVIATUUR JA TÕRKEOTSING
 Igal seadel on ekraanilugejale mõeldud silt ning liugurid ja värvivalijad kuulavad nooleklahve; hiirt vajavad ainult suuruse muutmine ja nupurida, mis ilmub kursori peale viies. Sõnumid on YouTube'i enda omad, nii et ekraanilugeja loeb neid samamoodi nagu külgribal. Automaatsed WCAG 2.1 AA kontrollid käivad iga koodimuudatusega ja katavad hüpikakna, nupurea ja seadete paneeli.

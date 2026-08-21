@@ -45,7 +45,7 @@ BẮT ĐẦU THẾ NÀO
 3. Chat đã trở lại trên video — không phải bật gì cả.
 4. Nút bong bóng thoại mới trên thanh điều khiển, phía dưới bên phải, dùng để tắt bật; nút cài đặt trên bảng dùng để đổi diện mạo. Cả hai được giữ cho buổi phát kế tiếp.
 
-Bảng chat chỉ xuất hiện khi đang toàn màn hình và chỉ trên trang xem có chat — với video thường, hoặc buổi phát đã mất chat replay, nút sẽ không hiện ra. Ở chế độ cửa sổ và rạp phim, chat vốn đã nằm cạnh trình phát. Bản Chrome này cũng chạy trên Opera và các trình duyệt Chromium khác; Firefox có bản riêng trên addons.mozilla.org.
+Bảng chat chỉ xuất hiện khi đang toàn màn hình và chỉ trên trang xem có chat — với video thường, hoặc buổi phát đã mất chat replay, nút sẽ không hiện ra. Ở chế độ cửa sổ và rạp phim, chat vốn đã nằm cạnh trình phát. Bản Chrome này cũng chạy trên Opera; Firefox có bản riêng trên addons.mozilla.org.
 
 TRUY CẬP BẰNG BÀN PHÍM VÀ XỬ LÝ SỰ CỐ
 Mọi tùy chọn đều có nhãn cho trình đọc màn hình, còn thanh trượt và bảng chọn màu nhận phím mũi tên; chỉ việc đổi kích thước và hàng điều khiển hiện khi rê chuột là cần đến chuột. Tin nhắn là của chính YouTube, nên trình đọc màn hình đọc chúng như ở cột bên. Kiểm tra WCAG 2.1 AA tự động chạy sau mỗi thay đổi mã, bao trùm cửa sổ bật lên, hàng điều khiển và bảng cài đặt.

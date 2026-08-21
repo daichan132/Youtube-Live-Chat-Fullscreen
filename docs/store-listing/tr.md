@@ -45,7 +45,7 @@ NASIL BAŞLANIR
 3. Sohbet videonun üzerinde geri döner — açmanız gereken bir şey yok.
 4. Kontrol çubuğunun sağ alt köşesindeki yeni konuşma balonu düğmesi onu kapatıp açar; panelin ayarlar düğmesi görünümü değiştirir. İkisi de bir sonraki yayına taşınır.
 
-Panel yalnızca tam ekranda ve yalnızca sohbeti olan bir izleme sayfasında görünür — sıradan bir videoda ya da sohbet tekrarı silinmiş bir yayında düğme hiç çıkmaz. Pencere ve tiyatro modunda sohbet zaten oynatıcının yanındadır. Bu Chrome sürümü Opera'da ve diğer Chromium tarayıcılarında da çalışır; Firefox'un addons.mozilla.org'da kendi sürümü var.
+Panel yalnızca tam ekranda ve yalnızca sohbeti olan bir izleme sayfasında görünür — sıradan bir videoda ya da sohbet tekrarı silinmiş bir yayında düğme hiç çıkmaz. Pencere ve tiyatro modunda sohbet zaten oynatıcının yanındadır. Bu Chrome sürümü Opera'da da çalışır; Firefox'un addons.mozilla.org'da kendi sürümü var.
 
 KLAVYE ERİŞİMİ VE SORUN GİDERME
 Her ayarın ekran okuyucu için etiketi vardır, kaydırıcılar ve seçiciler ok tuşlarıyla çalışır; yalnızca yeniden boyutlandırma ve üzerine gelince beliren kontrol satırı fare ister. Mesajlar YouTube'un kendi mesajları olduğundan ekran okuyucu bunları kenar çubuğundaki gibi okur. Otomatik WCAG 2.1 AA denetimleri her kod değişikliğinde çalışır; açılır pencereyi, kontrol satırını ve ayarlar panelini kapsar.
