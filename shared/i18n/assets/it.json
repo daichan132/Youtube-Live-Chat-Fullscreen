@@ -37,8 +37,19 @@
         "colors": "Colori",
         "text": "Testo",
         "elements": "Elementi visibili"
-      },
-      "requiresAlwaysOn": "Attiva «Mostra sempre la chat» per usare questa opzione"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilità",
+      "healthy": "Funzionamento normale",
+      "degraded": "Funzionamento in modalità di compatibilità",
+      "failed": "Rilevato un problema di compatibilità",
+      "waiting": "Raccolta dei dati di diagnostica in corso",
+      "lastRecovery": "Ultimo ripristino automatico",
+      "restart": "Riavvia l'estensione",
+      "copy": "Copia il rapporto di diagnostica",
+      "copied": "Il rapporto di diagnostica è stato copiato",
+      "copyFailed": "Impossibile copiare il rapporto di diagnostica"
     },
     "aria": {
       "dragToMove": "Trascina per spostare",
@@ -52,7 +63,8 @@
       "deletePreset": "Elimina la preimpostazione",
       "colorPicker": "Selettore del colore",
       "loading": "Caricamento in corso",
-      "selectLanguage": "Seleziona la lingua"
+      "selectLanguage": "Seleziona la lingua",
+      "fontsFound": "Tipi di carattere trovati: {count}"
     },
     "preset": {
       "addMessage": "Salva impostazioni correnti",
@@ -82,5 +94,5 @@
     "importError": "Impossibile importare il file delle impostazioni."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Guarda le dirette YouTube a schermo intero senza perdere la chat. Scrivi messaggi, invia Super Chat e personalizza l'overlay."
+  "extensionDescription": "La chat sparisce a schermo intero? Tieni la chat live di YouTube in overlay sul video: leggi, commenta e invia Super Chat."
 }

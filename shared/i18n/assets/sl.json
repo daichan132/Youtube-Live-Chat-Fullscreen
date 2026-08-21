@@ -37,8 +37,19 @@
         "colors": "Barve",
         "text": "Besedilo",
         "elements": "Vidni elementi"
-      },
-      "requiresAlwaysOn": "Za uporabo te možnosti vklopi »Vedno prikaži klepet«"
+      }
+    },
+    "diagnostics": {
+      "legend": "Združljivost",
+      "healthy": "Deluje pravilno",
+      "degraded": "Uporablja se nadomestni način združljivosti",
+      "failed": "Zaznana je težava z združljivostjo",
+      "waiting": "Zbiranje diagnostičnih podatkov",
+      "lastRecovery": "Zadnja samodejna obnovitev",
+      "restart": "Znova zaženi razširitev",
+      "copy": "Kopiraj diagnostično poročilo",
+      "copied": "Diagnostično poročilo je kopirano",
+      "copyFailed": "Diagnostičnega poročila ni mogoče kopirati"
     },
     "aria": {
       "dragToMove": "Povleci za premik",
@@ -52,7 +63,8 @@
       "deletePreset": "Izbriši prednastavitev",
       "colorPicker": "Izbirnik barv",
       "loading": "Nalaganje",
-      "selectLanguage": "Izberi jezik"
+      "selectLanguage": "Izberi jezik",
+      "fontsFound": "Število najdenih pisav: {count}"
     },
     "preset": {
       "addMessage": "Shrani trenutne nastavitve",
@@ -82,5 +94,5 @@
     "importError": "Datoteke z nastavitvami ni mogoče uvoziti."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Glejte prenose v živo na YouTubu na celotnem zaslonu. Pišite v klepet, pošiljajte sporočila Super Chat in prilagodite videz klepeta."
+  "extensionDescription": "Na celem zaslonu klepet izgine? Prekrivalo vrne YouTubov klepet v živo nad video: piši komentarje in pošiljaj Super Chat."
 }

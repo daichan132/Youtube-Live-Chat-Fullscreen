@@ -37,8 +37,19 @@
         "colors": "Warna",
         "text": "Teks",
         "elements": "Elemen sembang"
-      },
-      "requiresAlwaysOn": "Hidupkan \"Sentiasa paparkan sembang\" untuk menggunakan pilihan ini"
+      }
+    },
+    "diagnostics": {
+      "legend": "Keserasian",
+      "healthy": "Berfungsi seperti biasa",
+      "degraded": "Menggunakan kaedah keserasian sandaran",
+      "failed": "Masalah keserasian dikesan",
+      "waiting": "Sedang mengumpulkan data diagnostik",
+      "lastRecovery": "Pemulihan automatik terakhir",
+      "restart": "Mulakan semula sambungan",
+      "copy": "Salin laporan diagnostik",
+      "copied": "Laporan diagnostik telah disalin",
+      "copyFailed": "Laporan diagnostik tidak dapat disalin"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -52,7 +63,8 @@
       "deletePreset": "Padam praset",
       "colorPicker": "Pemilih warna",
       "loading": "Memuatkan",
-      "selectLanguage": "Pilih bahasa"
+      "selectLanguage": "Pilih bahasa",
+      "fontsFound": "{count} jenis fon ditemui"
     },
     "preset": {
       "addMessage": "Simpan tetapan semasa",
@@ -82,5 +94,5 @@
     "importError": "Fail tetapan tidak dapat diimport."
   },
   "extensionName": "YouTube Live Chat Skrin Penuh",
-  "extensionDescription": "Tonton YouTube Live dalam skrin penuh dengan sembang. Hantar mesej dan Super Chat, kemudian sesuaikan tindanan."
+  "extensionDescription": "Sembang hilang dalam skrin penuh? Tindanan sembang langsung YouTube di atas video: baca komen, balas, hantar Super Chat."
 }

@@ -37,8 +37,19 @@
         "colors": "Barvy",
         "text": "Text",
         "elements": "Viditelné prvky"
-      },
-      "requiresAlwaysOn": "Pro použití této možnosti zapněte „Vždy zobrazovat chat“"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilita",
+      "healthy": "Funguje správně",
+      "degraded": "Běží v režimu kompatibility",
+      "failed": "Zjištěn problém s kompatibilitou",
+      "waiting": "Načítání diagnostických údajů",
+      "lastRecovery": "Poslední automatická obnova",
+      "restart": "Restartovat rozšíření",
+      "copy": "Kopírovat diagnostickou zprávu",
+      "copied": "Diagnostická zpráva byla zkopírována",
+      "copyFailed": "Diagnostickou zprávu se nepodařilo zkopírovat"
     },
     "aria": {
       "dragToMove": "Přetažením přesunout",
@@ -52,7 +63,8 @@
       "deletePreset": "Smazat předvolbu",
       "colorPicker": "Výběr barvy",
       "loading": "Načítání",
-      "selectLanguage": "Vybrat jazyk"
+      "selectLanguage": "Vybrat jazyk",
+      "fontsFound": "Počet nalezených písem: {count}"
     },
     "preset": {
       "addMessage": "Uložit aktuální nastavení",
@@ -82,5 +94,5 @@
     "importError": "Soubor s nastavením se nepodařilo importovat."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Sledujte živé přenosy na YouTube na celé obrazovce. Pište do chatu, posílejte zprávy Super Chat a upravte si vzhled chatu."
+  "extensionDescription": "Na celé obrazovce zmizí chat? Překryv drží živý chat z YouTube nad videem: přesuňte, zvětšete, pište komentáře i Super Chaty."
 }

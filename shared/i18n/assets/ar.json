@@ -37,8 +37,19 @@
         "colors": "الألوان",
         "text": "النص",
         "elements": "عناصر الدردشة"
-      },
-      "requiresAlwaysOn": "فعّل «إظهار الدردشة دائمًا» لاستخدام هذا الخيار"
+      }
+    },
+    "diagnostics": {
+      "legend": "التوافق",
+      "healthy": "يعمل بشكل سليم",
+      "degraded": "يعمل باستخدام وضع توافق بديل",
+      "failed": "اكتُشفت مشكلة في التوافق",
+      "waiting": "جارٍ جمع بيانات التشخيص",
+      "lastRecovery": "آخر استعادة تلقائية",
+      "restart": "إعادة تشغيل الإضافة",
+      "copy": "نسخ تقرير التشخيص",
+      "copied": "تم نسخ تقرير التشخيص",
+      "copyFailed": "تعذّر نسخ تقرير التشخيص"
     },
     "aria": {
       "dragToMove": "اسحب للتحريك",
@@ -52,7 +63,8 @@
       "deletePreset": "حذف الإعداد المسبق",
       "colorPicker": "منتقي الألوان",
       "loading": "جارٍ التحميل",
-      "selectLanguage": "اختيار اللغة"
+      "selectLanguage": "اختيار اللغة",
+      "fontsFound": "عدد الخطوط المطابقة: {count}"
     },
     "preset": {
       "addMessage": "حفظ الإعدادات الحالية",
@@ -82,5 +94,5 @@
     "importError": "تعذّر استيراد ملف الإعدادات."
   },
   "extensionName": "YouTube Live Chat ملء الشاشة",
-  "extensionDescription": "شاهد YouTube Live بملء الشاشة مع الدردشة. اكتب في الدردشة، وأرسل Super Chat، وخصّص الواجهة العائمة."
+  "extensionDescription": "تختفي الدردشة في ملء الشاشة؟ طبقة تُبقي دردشة YouTube المباشرة فوق الفيديو: اسحبها، غيّر حجمها، اكتب تعليقاً وأرسل Super Chat."
 }

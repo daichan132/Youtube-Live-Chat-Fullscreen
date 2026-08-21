@@ -37,8 +37,19 @@
         "colors": "Colores",
         "text": "Texto",
         "elements": "Elementos del chat"
-      },
-      "requiresAlwaysOn": "Activa «Mostrar siempre el chat» para cambiar esta opción"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilidad",
+      "healthy": "Funcionamiento correcto",
+      "degraded": "Funcionamiento en modo de compatibilidad",
+      "failed": "Problema de compatibilidad detectado",
+      "waiting": "Recopilando datos de diagnóstico",
+      "lastRecovery": "Última recuperación automática",
+      "restart": "Reiniciar la extensión",
+      "copy": "Copiar el reporte de diagnóstico",
+      "copied": "Se copió el reporte de diagnóstico",
+      "copyFailed": "No se pudo copiar el reporte de diagnóstico"
     },
     "aria": {
       "dragToMove": "Arrastrar para mover",
@@ -52,7 +63,8 @@
       "deletePreset": "Eliminar preajuste",
       "colorPicker": "Selector de color",
       "loading": "Cargando",
-      "selectLanguage": "Seleccionar idioma"
+      "selectLanguage": "Seleccionar idioma",
+      "fontsFound": "Fuentes encontradas: {count}"
     },
     "preset": {
       "addMessage": "Guardar la configuración actual",
@@ -82,5 +94,5 @@
     "importError": "No se pudo importar el archivo de configuración."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Mira YouTube Live en pantalla completa con el chat visible. Chatea, envía Super Chats y personaliza la superposición a tu gusto."
+  "extensionDescription": "¿El chat desaparece en pantalla completa? Pon el chat en vivo de YouTube sobre el video: léelo, comenta y envía Super Chats."
 }

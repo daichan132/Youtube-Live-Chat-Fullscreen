@@ -37,8 +37,19 @@
         "colors": "Kolory",
         "text": "Tekst",
         "elements": "Widoczne elementy"
-      },
-      "requiresAlwaysOn": "Włącz „Zawsze wyświetlaj czat”, aby użyć tej opcji"
+      }
+    },
+    "diagnostics": {
+      "legend": "Zgodność",
+      "healthy": "Działa prawidłowo",
+      "degraded": "Działa w trybie zgodności",
+      "failed": "Wykryto problem ze zgodnością",
+      "waiting": "Zbieranie danych diagnostycznych",
+      "lastRecovery": "Ostatnia automatyczna naprawa",
+      "restart": "Uruchom ponownie rozszerzenie",
+      "copy": "Kopiuj raport diagnostyczny",
+      "copied": "Skopiowano raport diagnostyczny",
+      "copyFailed": "Nie udało się skopiować raportu diagnostycznego"
     },
     "aria": {
       "dragToMove": "Przeciągnij, aby przenieść",
@@ -52,7 +63,8 @@
       "deletePreset": "Usuń szablon",
       "colorPicker": "Wybór koloru",
       "loading": "Ładowanie",
-      "selectLanguage": "Wybierz język"
+      "selectLanguage": "Wybierz język",
+      "fontsFound": "Liczba znalezionych czcionek: {count}"
     },
     "preset": {
       "addMessage": "Zapisz bieżące ustawienia",
@@ -82,5 +94,5 @@
     "importError": "Nie udało się zaimportować pliku ustawień."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Oglądaj transmisje na żywo w YouTube na pełnym ekranie. Pisz na czacie, wysyłaj wiadomości Super Chat i dostosuj wygląd czatu."
+  "extensionDescription": "Czat znika na pełnym ekranie? Nakładka trzyma czat na żywo z YouTube na wideo: przesuwaj, skaluj, pisz komentarze i Super Chaty."
 }

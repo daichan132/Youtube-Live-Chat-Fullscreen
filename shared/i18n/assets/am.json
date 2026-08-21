@@ -37,8 +37,19 @@
         "colors": "ቀለሞች",
         "text": "ጽሑፍ",
         "elements": "የቻት አካላት"
-      },
-      "requiresAlwaysOn": "ይህን አማራጭ ለመጠቀም «ቻቱን ሁልጊዜ አሳይ» የሚለውን ያብሩ"
+      }
+    },
+    "diagnostics": {
+      "legend": "ተኳኋኝነት",
+      "healthy": "ጤናማ",
+      "degraded": "በተኳኋኝነት አማራጭ እየሠራ ነው",
+      "failed": "የተኳኋኝነት ችግር ተገኝቷል",
+      "waiting": "የመመርመሪያ መረጃ በመሰብሰብ ላይ",
+      "lastRecovery": "የመጨረሻው ራስ-ማገገም",
+      "restart": "ቅጥያውን እንደገና ያስጀምሩ",
+      "copy": "የመመርመሪያ ሪፖርቱን ይቅዱ",
+      "copied": "የመመርመሪያ ሪፖርቱ ተቀድቷል",
+      "copyFailed": "የመመርመሪያ ሪፖርቱን መቅዳት አልተቻለም"
     },
     "aria": {
       "dragToMove": "ለማንቀሳቀስ ይጎትቱ",
@@ -52,7 +63,8 @@
       "deletePreset": "ቅድመ-ቅንብሩን ይሰርዙ",
       "colorPicker": "ቀለም መራጭ",
       "loading": "በመጫን ላይ",
-      "selectLanguage": "ቋንቋ ይምረጡ"
+      "selectLanguage": "ቋንቋ ይምረጡ",
+      "fontsFound": "የተገኙ ቅርጸ ቁምፊዎች፦ {count}"
     },
     "preset": {
       "addMessage": "የአሁኑን ቅንብሮች ያስቀምጡ",
@@ -82,5 +94,5 @@
     "importError": "የቅንብሮች ፋይሉን ማስመጣት አልተቻለም።"
   },
   "extensionName": "YouTube Live Chat ሙሉ ስክሪን",
-  "extensionDescription": "ቻቱን ሳይዘጉ የYouTube የቀጥታ ስርጭቶችን በሙሉ ማያ ገጽ ይመልከቱ። በቻት መልዕክት ይላኩ፣ Super Chat ይላኩ እና የቻቱን ገጽታ እንደፈለጉ ያስተካክሉ።"
+  "extensionDescription": "በሙሉ ማያ ገጽ ቻቱ ይጠፋል? የYouTube ቀጥታ ቻትን በቪዲዮው ላይ የሚያቆይ ተደራቢ፦ ይጎትቱ፣ መጠኑን ይቀይሩ፣ አስተያየት ይጻፉ፣ Super Chat ይላኩ።"
 }

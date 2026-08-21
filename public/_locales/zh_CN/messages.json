@@ -3,7 +3,7 @@
     "message": "YouTube 直播全屏聊天"
   },
   "extensionDescription": {
-    "message": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。"
+    "message": "全屏时 YouTube 直播聊天会消失。本扩展把 YouTube 自己的实时聊天以悬浮面板叠在视频上方，全屏也能看留言、发评论、送 Super Chat 超级留言，还能拖动位置、调整大小、字号与配色，带聊天回放的录播同样适用。"
   },
   "popup_theme": {
     "message": "主题"

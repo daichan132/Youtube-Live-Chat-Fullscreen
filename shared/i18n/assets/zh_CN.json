@@ -37,8 +37,19 @@
         "colors": "配色",
         "text": "文本",
         "elements": "显示元素"
-      },
-      "requiresAlwaysOn": "开启“始终显示”后即可设置"
+      }
+    },
+    "diagnostics": {
+      "legend": "兼容性",
+      "healthy": "正常",
+      "degraded": "正在使用兼容性回退方案",
+      "failed": "检测到兼容性问题",
+      "waiting": "正在收集诊断信息",
+      "lastRecovery": "上次自动恢复",
+      "restart": "重启扩展程序",
+      "copy": "复制诊断报告",
+      "copied": "诊断报告已复制",
+      "copyFailed": "无法复制诊断报告"
     },
     "aria": {
       "dragToMove": "拖动以移动",
@@ -52,7 +63,8 @@
       "deletePreset": "删除预设",
       "colorPicker": "颜色选择器",
       "loading": "加载中",
-      "selectLanguage": "选择语言"
+      "selectLanguage": "选择语言",
+      "fontsFound": "找到 {count} 种字体"
     },
     "preset": {
       "addMessage": "添加当前设置",
@@ -82,5 +94,5 @@
     "importError": "无法导入设置文件。"
   },
   "extensionName": "YouTube 直播全屏聊天",
-  "extensionDescription": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。"
+  "extensionDescription": "全屏时 YouTube 直播聊天会消失。本扩展把 YouTube 自己的实时聊天以悬浮面板叠在视频上方，全屏也能看留言、发评论、送 Super Chat 超级留言，还能拖动位置、调整大小、字号与配色，带聊天回放的录播同样适用。"
 }

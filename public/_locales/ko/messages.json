@@ -3,7 +3,7 @@
     "message": "YouTube 라이브 채팅 전체화면"
   },
   "extensionDescription": {
-    "message": "YouTube 라이브를 전체 화면으로 시청하면서 채팅을 보고 메시지를 보내세요. 슈퍼챗 전송과 오버레이 모양·위치 조정도 가능합니다."
+    "message": "전체화면이면 채팅창이 사라지죠. 유튜브(YouTube) 라이브 채팅을 영상 위에 오버레이로 띄워, 풀스크린 그대로 댓글도 남기고 슈퍼챗(Super Chat)도 보냅니다. 위치와 크기는 자유롭게, 채팅 다시보기도 지원합니다."
   },
   "popup_theme": {
     "message": "테마"

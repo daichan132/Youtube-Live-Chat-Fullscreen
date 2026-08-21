@@ -13,7 +13,6 @@
         "text": "テキスト",
         "elements": "表示要素"
       },
-      "requiresAlwaysOn": "「操作していないときも表示」をオンにすると設定できます",
       "alwaysOnDisplay": "操作していないときも表示",
       "chatOnlyDisplay": "チャットのみ表示",
       "userNameDisplay": "ユーザー名を表示",
@@ -40,6 +39,18 @@
       "defaultColor": "既定",
       "resetToDefaultColor": "既定色に戻す"
     },
+    "diagnostics": {
+      "legend": "互換性",
+      "healthy": "正常",
+      "degraded": "互換フォールバックで動作中",
+      "failed": "互換性の問題を検出",
+      "waiting": "診断情報を収集中",
+      "lastRecovery": "前回の自己回復",
+      "restart": "拡張機能を再起動",
+      "copy": "診断レポートをコピー",
+      "copied": "診断レポートをコピーしました",
+      "copyFailed": "診断レポートをコピーできませんでした"
+    },
     "aria": {
       "dragToMove": "ドラッグで移動",
       "arrowKeysToMove": "矢印キーで移動",
@@ -52,7 +63,8 @@
       "deletePreset": "プリセットを削除",
       "colorPicker": "カラーピッカー",
       "loading": "読み込み中",
-      "selectLanguage": "言語を選択"
+      "selectLanguage": "言語を選択",
+      "fontsFound": "{count}件の書体が見つかりました"
     },
     "preset": {
       "addMessage": "現在の設定を追加",
@@ -82,5 +94,5 @@
     "importError": "設定ファイルを読み込めませんでした。"
   },
   "extensionName": "YouTubeライブチャットフルスクリーン",
-  "extensionDescription": "YouTube Liveを全画面で視聴しながらチャットを表示・投稿。スーパーチャットの送信や、オーバーレイの見た目・配置の調整もできます。"
+  "extensionDescription": "全画面にするとチャットが消える。YouTubeのライブチャットを、全画面のまま動画の上にオーバーレイ表示。ライブ配信中はコメントもスーパーチャット（スパチャ）も送れる。位置・大きさ・色は自由で、チャットリプレイ付きのアーカイブにも対応。"
 }

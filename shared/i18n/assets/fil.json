@@ -37,8 +37,19 @@
         "colors": "Mga kulay",
         "text": "Teksto",
         "elements": "Mga elemento ng chat"
-      },
-      "requiresAlwaysOn": "I-on ang \"Palaging ipakita ang chat\" para magamit ang opsiyong ito"
+      }
+    },
+    "diagnostics": {
+      "legend": "Pagkatugma",
+      "healthy": "Maayos ang paggana",
+      "degraded": "Gumagamit ng backup na paraan para sa pagkatugma",
+      "failed": "May natukoy na isyu sa pagkatugma",
+      "waiting": "Kinokolekta ang datos ng diagnostic",
+      "lastRecovery": "Huling awtomatikong pag-recover",
+      "restart": "I-restart ang extension",
+      "copy": "Kopyahin ang diagnostic report",
+      "copied": "Nakopya ang diagnostic report",
+      "copyFailed": "Hindi makopya ang diagnostic report"
     },
     "aria": {
       "dragToMove": "I-drag para ilipat",
@@ -52,7 +63,8 @@
       "deletePreset": "Burahin ang preset",
       "colorPicker": "Tagapili ng kulay",
       "loading": "Naglo-load",
-      "selectLanguage": "Pumili ng wika"
+      "selectLanguage": "Pumili ng wika",
+      "fontsFound": "{count} font ang nahanap"
     },
     "preset": {
       "addMessage": "I-save ang mga kasalukuyang setting",
@@ -82,5 +94,5 @@
     "importError": "Hindi ma-import ang file ng mga setting."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Manood ng YouTube Live sa fullscreen na may chat. Magpadala ng mensahe at Super Chat, at i-customize ang overlay."
+  "extensionDescription": "Nawawala ang chat sa fullscreen? Overlay ng live chat ng YouTube sa ibabaw ng video: magkomento at magpadala ng Super Chat."
 }

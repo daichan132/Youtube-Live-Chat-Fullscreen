@@ -37,8 +37,19 @@
         "colors": "Màu sắc",
         "text": "Văn bản",
         "elements": "Thành phần chat"
-      },
-      "requiresAlwaysOn": "Bật \"Luôn hiển thị chat\" để dùng tùy chọn này"
+      }
+    },
+    "diagnostics": {
+      "legend": "Tương thích",
+      "healthy": "Hoạt động bình thường",
+      "degraded": "Đang dùng chế độ tương thích dự phòng",
+      "failed": "Đã phát hiện sự cố tương thích",
+      "waiting": "Đang thu thập dữ liệu chẩn đoán",
+      "lastRecovery": "Lần tự khôi phục gần nhất",
+      "restart": "Khởi động lại tiện ích",
+      "copy": "Sao chép báo cáo chẩn đoán",
+      "copied": "Đã sao chép báo cáo chẩn đoán",
+      "copyFailed": "Không thể sao chép báo cáo chẩn đoán"
     },
     "aria": {
       "dragToMove": "Kéo để di chuyển",
@@ -52,7 +63,8 @@
       "deletePreset": "Xóa cài đặt sẵn",
       "colorPicker": "Bộ chọn màu",
       "loading": "Đang tải",
-      "selectLanguage": "Chọn ngôn ngữ"
+      "selectLanguage": "Chọn ngôn ngữ",
+      "fontsFound": "Tìm thấy {count} phông chữ"
     },
     "preset": {
       "addMessage": "Lưu cài đặt hiện tại",
@@ -82,5 +94,5 @@
     "importError": "Không thể nhập tệp cài đặt."
   },
   "extensionName": "YouTube Live Chat Toàn Màn Hình",
-  "extensionDescription": "Xem YouTube Live toàn màn hình cùng chat. Gửi tin nhắn và Super Chat, rồi tùy chỉnh lớp phủ theo ý bạn."
+  "extensionDescription": "Toàn màn hình là chat biến mất? Lớp phủ giữ chat trực tiếp YouTube ngay trên video: đọc và viết bình luận, gửi Super Chat."
 }

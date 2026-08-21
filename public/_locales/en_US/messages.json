@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen Overlay"
   },
   "extensionDescription": {
-    "message": "Watch YouTube live streams in full screen without losing chat. Post messages, send Super Chats, and customize the overlay."
+    "message": "Chat vanishes in full screen? A live chat overlay keeps YouTube's chat on the video: drag, resize, post comments and Super Chats."
   },
   "popup_theme": {
     "message": "Theme"

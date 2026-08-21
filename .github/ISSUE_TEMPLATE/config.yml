@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Troubleshooting guide
+    url: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/blob/main/docs/troubleshooting.md
+    about: Quick fixes for the most common problems, including Opera-specific checks.
+  - name: Project website
+    url: https://daichan132.github.io/Youtube-Live-Chat-Fullscreen-Docs/
+    about: Feature overview and installation links.

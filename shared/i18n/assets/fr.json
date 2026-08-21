@@ -37,8 +37,19 @@
         "colors": "Couleurs",
         "text": "Texte",
         "elements": "Éléments du chat"
-      },
-      "requiresAlwaysOn": "Activez « Toujours afficher le chat » pour modifier ce paramètre"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilité",
+      "healthy": "Fonctionnement normal",
+      "degraded": "Fonctionnement en mode de compatibilité",
+      "failed": "Problème de compatibilité détecté",
+      "waiting": "Collecte des données de diagnostic en cours",
+      "lastRecovery": "Dernière récupération automatique",
+      "restart": "Redémarrer l'extension",
+      "copy": "Copier le rapport de diagnostic",
+      "copied": "Le rapport de diagnostic a été copié",
+      "copyFailed": "Impossible de copier le rapport de diagnostic"
     },
     "aria": {
       "dragToMove": "Glisser pour déplacer",
@@ -52,7 +63,8 @@
       "deletePreset": "Supprimer le préréglage",
       "colorPicker": "Sélecteur de couleur",
       "loading": "Chargement en cours",
-      "selectLanguage": "Choisir la langue"
+      "selectLanguage": "Choisir la langue",
+      "fontsFound": "Polices trouvées : {count}"
     },
     "preset": {
       "addMessage": "Enregistrer les paramètres actuels",
@@ -82,5 +94,5 @@
     "importError": "Impossible d'importer le fichier de paramètres."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Profitez de YouTube Live en plein écran avec le chat. Discutez, envoyez des Super Chats et personnalisez son affichage."
+  "extensionDescription": "Le chat disparaît en plein écran ? Gardez le chat live YouTube en overlay sur la vidéo : lisez, commentez, envoyez des Super Chats."
 }

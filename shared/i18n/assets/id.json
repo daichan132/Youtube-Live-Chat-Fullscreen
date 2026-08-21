@@ -37,8 +37,19 @@
         "colors": "Warna",
         "text": "Teks",
         "elements": "Elemen chat"
-      },
-      "requiresAlwaysOn": "Aktifkan \"Selalu tampilkan chat\" untuk menggunakan opsi ini"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilitas",
+      "healthy": "Berfungsi normal",
+      "degraded": "Menggunakan mode kompatibilitas cadangan",
+      "failed": "Masalah kompatibilitas terdeteksi",
+      "waiting": "Mengumpulkan data diagnostik",
+      "lastRecovery": "Pemulihan otomatis terakhir",
+      "restart": "Mulai ulang ekstensi",
+      "copy": "Salin laporan diagnostik",
+      "copied": "Laporan diagnostik berhasil disalin",
+      "copyFailed": "Tidak dapat menyalin laporan diagnostik"
     },
     "aria": {
       "dragToMove": "Seret untuk memindahkan",
@@ -52,7 +63,8 @@
       "deletePreset": "Hapus prasetel",
       "colorPicker": "Pemilih warna",
       "loading": "Memuat",
-      "selectLanguage": "Pilih bahasa"
+      "selectLanguage": "Pilih bahasa",
+      "fontsFound": "{count} font ditemukan"
     },
     "preset": {
       "addMessage": "Simpan pengaturan saat ini",
@@ -82,5 +94,5 @@
     "importError": "Tidak dapat mengimpor file pengaturan."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Tonton YouTube Live dalam layar penuh dengan chat. Kirim pesan dan Super Chat, lalu sesuaikan tampilan chat."
+  "extensionDescription": "Chat hilang saat layar penuh? Overlay yang menahan live chat YouTube di atas video: baca komentar, balas, kirim Super Chat."
 }

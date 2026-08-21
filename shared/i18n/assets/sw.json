@@ -37,8 +37,19 @@
         "colors": "Rangi",
         "text": "Maandishi",
         "elements": "Vipengele vya gumzo"
-      },
-      "requiresAlwaysOn": "Ili utumie chaguo hili, washa \"Onyesha gumzo kila wakati\""
+      }
+    },
+    "diagnostics": {
+      "legend": "Uoanifu",
+      "healthy": "Inafanya kazi vizuri",
+      "degraded": "Inatumia njia mbadala ya uoanifu",
+      "failed": "Tatizo la uoanifu limegunduliwa",
+      "waiting": "Inakusanya taarifa za uchunguzi",
+      "lastRecovery": "Kujirekebisha mara ya mwisho",
+      "restart": "Anzisha upya kiendelezi",
+      "copy": "Nakili ripoti ya uchunguzi",
+      "copied": "Ripoti ya uchunguzi imenakiliwa",
+      "copyFailed": "Imeshindikana kunakili ripoti ya uchunguzi"
     },
     "aria": {
       "dragToMove": "Buruta ili kusogeza",
@@ -52,7 +63,8 @@
       "deletePreset": "Futa mpangilio uliowekwa awali",
       "colorPicker": "Kichaguzi cha rangi",
       "loading": "Inapakia",
-      "selectLanguage": "Chagua lugha"
+      "selectLanguage": "Chagua lugha",
+      "fontsFound": "Fonti zilizopatikana: {count}"
     },
     "preset": {
       "addMessage": "Hifadhi mipangilio ya sasa",
@@ -82,5 +94,5 @@
     "importError": "Imeshindikana kuleta faili ya mipangilio."
   },
   "extensionName": "YouTube Live Chat Skrini Nzima",
-  "extensionDescription": "Tazama YouTube Live kwenye skrini nzima pamoja na gumzo. Tuma ujumbe na Super Chat, kisha ubinafsishe mwonekano."
+  "extensionDescription": "Gumzo hupotea kwenye skrini nzima? Ovelei inayoweka gumzo la moja kwa moja la YouTube juu ya video: toa maoni, tuma Super Chat."
 }

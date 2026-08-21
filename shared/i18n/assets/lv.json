@@ -37,8 +37,19 @@
         "colors": "Krāsas",
         "text": "Teksts",
         "elements": "Čata elementi"
-      },
-      "requiresAlwaysOn": "Lai mainītu šo iestatījumu, ieslēdziet “Vienmēr rādīt čatu”"
+      }
+    },
+    "diagnostics": {
+      "legend": "Saderība",
+      "healthy": "Darbojas pareizi",
+      "degraded": "Tiek izmantots rezerves saderības režīms",
+      "failed": "Konstatēta saderības problēma",
+      "waiting": "Notiek diagnostikas datu vākšana",
+      "lastRecovery": "Pēdējā automātiskā atkopšanās",
+      "restart": "Restartēt paplašinājumu",
+      "copy": "Kopēt diagnostikas atskaiti",
+      "copied": "Diagnostikas atskaite ir nokopēta",
+      "copyFailed": "Neizdevās nokopēt diagnostikas atskaiti"
     },
     "aria": {
       "dragToMove": "Velciet, lai pārvietotu",
@@ -52,7 +63,8 @@
       "deletePreset": "Dzēst sagatavi",
       "colorPicker": "Krāsu atlasītājs",
       "loading": "Notiek ielāde",
-      "selectLanguage": "Izvēlēties valodu"
+      "selectLanguage": "Izvēlēties valodu",
+      "fontsFound": "Atrasto fontu skaits: {count}"
     },
     "preset": {
       "addMessage": "Saglabāt pašreizējos iestatījumus",
@@ -82,5 +94,5 @@
     "importError": "Neizdevās importēt iestatījumu failu."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Skatieties YouTube Live pilnekrānā ar redzamu čatu. Rakstiet čatā, sūtiet Super Chat ziņojumus un pielāgojiet pārklājumu."
+  "extensionDescription": "Pilnekrāna režīmā čats pazūd? Pārklājums atgriež YouTube tiešraides čatu virs video: rakstiet komentārus, sūtiet Super Chat."
 }

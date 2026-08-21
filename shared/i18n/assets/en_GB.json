@@ -37,8 +37,19 @@
         "colors": "Colours",
         "text": "Text",
         "elements": "Visible elements"
-      },
-      "requiresAlwaysOn": "Turn on \"Show when idle\" to use this option"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibility",
+      "healthy": "Healthy",
+      "degraded": "Using a compatibility fallback",
+      "failed": "Compatibility issue detected",
+      "waiting": "Collecting runtime diagnostics",
+      "lastRecovery": "Last self-recovery",
+      "restart": "Restart runtime",
+      "copy": "Copy diagnostic report",
+      "copied": "Diagnostic report copied",
+      "copyFailed": "Could not copy the diagnostic report"
     },
     "aria": {
       "dragToMove": "Drag to move",
@@ -52,7 +63,8 @@
       "deletePreset": "Delete preset",
       "colorPicker": "Colour picker",
       "loading": "Loading",
-      "selectLanguage": "Select language"
+      "selectLanguage": "Select language",
+      "fontsFound": "Fonts found: {count}"
     },
     "preset": {
       "addMessage": "Save current settings",
@@ -81,6 +93,6 @@
     "import": "Import",
     "importError": "Could not import the settings file."
   },
-  "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Watch YouTube Live in full screen without losing the chat. Post messages, send Super Chats and customise the overlay."
+  "extensionName": "YouTube Live Chat Fullscreen Overlay",
+  "extensionDescription": "Chat vanishes in full screen? A live chat overlay keeps YouTube's chat on the video: drag, resize, post comments and Super Chats."
 }

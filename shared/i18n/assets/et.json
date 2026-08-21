@@ -37,8 +37,19 @@
         "colors": "Värvid",
         "text": "Tekst",
         "elements": "Vestluse elemendid"
-      },
-      "requiresAlwaysOn": "Selle muutmiseks lülita sisse „Näita vestlust alati“"
+      }
+    },
+    "diagnostics": {
+      "legend": "Ühilduvus",
+      "healthy": "Töötab korralikult",
+      "degraded": "Kasutusel on ühilduvuse varulahendus",
+      "failed": "Tuvastati ühilduvusprobleem",
+      "waiting": "Diagnostikaandmete kogumine",
+      "lastRecovery": "Viimane automaatne taastumine",
+      "restart": "Taaskäivita laiendus",
+      "copy": "Kopeeri diagnostikaaruanne",
+      "copied": "Diagnostikaaruanne on kopeeritud",
+      "copyFailed": "Diagnostikaaruannet ei õnnestunud kopeerida"
     },
     "aria": {
       "dragToMove": "Lohista liigutamiseks",
@@ -52,7 +63,8 @@
       "deletePreset": "Kustuta eelseadistus",
       "colorPicker": "Värvivalija",
       "loading": "Laadimine",
-      "selectLanguage": "Vali keel"
+      "selectLanguage": "Vali keel",
+      "fontsFound": "Leitud kirjatüüpide arv: {count}"
     },
     "preset": {
       "addMessage": "Salvesta praegused seaded",
@@ -82,5 +94,5 @@
     "importError": "Sätete faili ei õnnestunud importida."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Vaata YouTube Live'i täisekraanil ja hoia vestlus nähtaval. Kirjuta vestlusesse, saada Super Chati sõnumeid ja kohanda ülekatet."
+  "extensionDescription": "Täisekraanil kaob vestlus? Ülekate toob YouTube'i otsevestluse video peale: kirjuta kommentaare, saada Super Chate, muuda välimust."
 }

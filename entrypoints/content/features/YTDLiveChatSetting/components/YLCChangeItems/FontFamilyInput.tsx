@@ -227,7 +227,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
               border: 0,
             }}
           >
-            {`${filteredOptions.length} fonts found`}
+            {t('content.aria.fontsFound').replace('{count}', String(filteredOptions.length))}
           </span>
           <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox' aria-live='polite'>
             {filteredOptions.length > 0 ? (

@@ -37,8 +37,19 @@
         "colors": "Spalvos",
         "text": "Tekstas",
         "elements": "Pokalbio elementai"
-      },
-      "requiresAlwaysOn": "Norėdami pakeisti šį nustatymą, įjunkite „Visada rodyti pokalbį“"
+      }
+    },
+    "diagnostics": {
+      "legend": "Suderinamumas",
+      "healthy": "Veikia tinkamai",
+      "degraded": "Naudojamas atsarginis suderinamumo režimas",
+      "failed": "Aptikta suderinamumo problema",
+      "waiting": "Renkami diagnostikos duomenys",
+      "lastRecovery": "Paskutinis automatinis atkūrimas",
+      "restart": "Iš naujo paleisti plėtinį",
+      "copy": "Kopijuoti diagnostikos ataskaitą",
+      "copied": "Diagnostikos ataskaita nukopijuota",
+      "copyFailed": "Nepavyko nukopijuoti diagnostikos ataskaitos"
     },
     "aria": {
       "dragToMove": "Vilkite norėdami perkelti",
@@ -52,7 +63,8 @@
       "deletePreset": "Ištrinti šabloną",
       "colorPicker": "Spalvų parinkiklis",
       "loading": "Įkeliama",
-      "selectLanguage": "Pasirinkti kalbą"
+      "selectLanguage": "Pasirinkti kalbą",
+      "fontsFound": "Rasta šriftų: {count}"
     },
     "preset": {
       "addMessage": "Išsaugoti dabartinius nustatymus",
@@ -82,5 +94,5 @@
     "importError": "Nepavyko importuoti nustatymų failo."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Žiūrėkite YouTube Live visame ekrane ir matykite pokalbį. Rašykite pokalbyje, siųskite „Super Chat“ žinutes ir keiskite jo stilių."
+  "extensionDescription": "Visame ekrane pokalbis dingsta? „YouTube“ tiesioginio pokalbio perdanga ant vaizdo: rašykite komentarus, siųskite „Super Chat“."
 }

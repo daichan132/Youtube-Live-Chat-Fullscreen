@@ -37,8 +37,19 @@
         "colors": "Boje",
         "text": "Tekst",
         "elements": "Vidljivi elementi"
-      },
-      "requiresAlwaysOn": "Za ovu opciju uključi „Uvijek prikazuj chat”"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilnost",
+      "healthy": "Radi ispravno",
+      "degraded": "Koristi se rezervni način kompatibilnosti",
+      "failed": "Otkriven je problem s kompatibilnošću",
+      "waiting": "Prikupljanje dijagnostičkih podataka",
+      "lastRecovery": "Zadnji samostalni oporavak",
+      "restart": "Ponovno pokreni dodatak",
+      "copy": "Kopiraj dijagnostičko izvješće",
+      "copied": "Dijagnostičko izvješće je kopirano",
+      "copyFailed": "Dijagnostičko izvješće nije moguće kopirati"
     },
     "aria": {
       "dragToMove": "Povuci za premještanje",
@@ -52,7 +63,8 @@
       "deletePreset": "Izbriši predložak",
       "colorPicker": "Odabir boje",
       "loading": "Učitavanje",
-      "selectLanguage": "Odaberi jezik"
+      "selectLanguage": "Odaberi jezik",
+      "fontsFound": "Broj pronađenih fontova: {count}"
     },
     "preset": {
       "addMessage": "Spremi trenutačne postavke",
@@ -82,5 +94,5 @@
     "importError": "Datoteku s postavkama nije moguće uvesti."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Gledajte YouTube prijenose uživo na cijelom zaslonu. Pišite u chatu, šaljite Super Chat poruke i prilagodite prikaz chata."
+  "extensionDescription": "Na cijelom zaslonu chat nestaje? Prekrivač vraća YouTube chat uživo preko videa: piši komentare, šalji Super Chat, mijenjaj izgled."
 }

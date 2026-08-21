@@ -37,8 +37,19 @@
         "colors": "Színek",
         "text": "Szöveg",
         "elements": "Látható elemek"
-      },
-      "requiresAlwaysOn": "A használatához kapcsolja be a „Csevegés állandó megjelenítése” beállítást"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilitás",
+      "healthy": "Megfelelően működik",
+      "degraded": "Kompatibilitási módban működik",
+      "failed": "Kompatibilitási probléma észlelve",
+      "waiting": "Diagnosztikai adatok gyűjtése folyamatban",
+      "lastRecovery": "Utolsó automatikus helyreállítás",
+      "restart": "Bővítmény újraindítása",
+      "copy": "Diagnosztikai jelentés másolása",
+      "copied": "A diagnosztikai jelentés a vágólapra másolva",
+      "copyFailed": "A diagnosztikai jelentés másolása nem sikerült"
     },
     "aria": {
       "dragToMove": "Húzza az áthelyezéshez",
@@ -52,7 +63,8 @@
       "deletePreset": "Sablon törlése",
       "colorPicker": "Színválasztó",
       "loading": "Betöltés folyamatban",
-      "selectLanguage": "Nyelv kiválasztása"
+      "selectLanguage": "Nyelv kiválasztása",
+      "fontsFound": "{count} betűtípus található"
     },
     "preset": {
       "addMessage": "Aktuális beállítások mentése",
@@ -82,5 +94,5 @@
     "importError": "A beállításfájl importálása nem sikerült."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Nézz élő YouTube-közvetítéseket teljes képernyőn. Írj a csevegésbe, küldj Super Chat-üzeneteket, és szabd személyre a megjelenést."
+  "extensionDescription": "Teljes képernyőn eltűnik a csevegés? Az overlay a videón tartja a YouTube élő chatjét: húzd, írj hozzászólást és Super Chatet."
 }

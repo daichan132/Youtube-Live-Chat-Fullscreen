@@ -37,8 +37,19 @@
         "colors": "Farben",
         "text": "Text",
         "elements": "Angezeigte Elemente"
-      },
-      "requiresAlwaysOn": "Aktiviere „Chat immer anzeigen“, um diese Option zu verwenden"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilität",
+      "healthy": "Alles in Ordnung",
+      "degraded": "Läuft über eine Kompatibilitätslösung",
+      "failed": "Kompatibilitätsproblem erkannt",
+      "waiting": "Diagnosedaten werden erfasst",
+      "lastRecovery": "Letzte automatische Wiederherstellung",
+      "restart": "Erweiterung neu starten",
+      "copy": "Diagnosebericht kopieren",
+      "copied": "Der Diagnosebericht wurde kopiert.",
+      "copyFailed": "Der Diagnosebericht konnte nicht kopiert werden."
     },
     "aria": {
       "dragToMove": "Zum Verschieben ziehen",
@@ -52,7 +63,8 @@
       "deletePreset": "Voreinstellung löschen",
       "colorPicker": "Farbauswahl",
       "loading": "Wird geladen",
-      "selectLanguage": "Sprache auswählen"
+      "selectLanguage": "Sprache auswählen",
+      "fontsFound": "Gefundene Schriftarten: {count}"
     },
     "preset": {
       "addMessage": "Als Voreinstellung speichern",
@@ -82,5 +94,5 @@
     "importError": "Die Einstellungsdatei konnte nicht importiert werden."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "YouTube Live im Vollbild ansehen und den Chat weiter nutzen. Nachrichten posten, Super Chats senden und das Overlay anpassen."
+  "extensionDescription": "Chat weg im Vollbild? Die Erweiterung legt YouTubes Livechat als Overlay aufs Video – lies mit, kommentiere und sende Super Chats."
 }

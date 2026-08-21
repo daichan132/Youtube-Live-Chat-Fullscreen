@@ -37,8 +37,19 @@
         "colors": "색상",
         "text": "텍스트",
         "elements": "표시 요소"
-      },
-      "requiresAlwaysOn": "\"항상 표시\"를 켜면 설정할 수 있습니다"
+      }
+    },
+    "diagnostics": {
+      "legend": "호환성",
+      "healthy": "정상",
+      "degraded": "호환 대체 방식으로 동작 중",
+      "failed": "호환성 문제가 감지됨",
+      "waiting": "진단 정보 수집 중",
+      "lastRecovery": "마지막 자동 복구",
+      "restart": "확장 프로그램 다시 시작",
+      "copy": "진단 보고서 복사",
+      "copied": "진단 보고서를 복사했습니다",
+      "copyFailed": "진단 보고서를 복사하지 못했습니다"
     },
     "aria": {
       "dragToMove": "드래그하여 이동",
@@ -52,7 +63,8 @@
       "deletePreset": "프리셋 삭제",
       "colorPicker": "색상 선택",
       "loading": "로딩 중",
-      "selectLanguage": "언어 선택"
+      "selectLanguage": "언어 선택",
+      "fontsFound": "글꼴 {count}개를 찾았습니다"
     },
     "preset": {
       "addMessage": "현재 설정 추가",
@@ -82,5 +94,5 @@
     "importError": "설정 파일을 가져올 수 없습니다."
   },
   "extensionName": "YouTube 라이브 채팅 전체화면",
-  "extensionDescription": "YouTube 라이브를 전체 화면으로 시청하면서 채팅을 보고 메시지를 보내세요. 슈퍼챗 전송과 오버레이 모양·위치 조정도 가능합니다."
+  "extensionDescription": "전체화면이면 채팅창이 사라지죠. 유튜브(YouTube) 라이브 채팅을 영상 위에 오버레이로 띄워, 풀스크린 그대로 댓글도 남기고 슈퍼챗(Super Chat)도 보냅니다. 위치와 크기는 자유롭게, 채팅 다시보기도 지원합니다."
 }

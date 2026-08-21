@@ -37,8 +37,19 @@
         "colors": "Colors",
         "text": "Text",
         "elements": "Elements del xat"
-      },
-      "requiresAlwaysOn": "Activa «Mostra sempre el xat» per canviar aquesta opció"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilitat",
+      "healthy": "Funcionament normal",
+      "degraded": "Funcionament en mode de compatibilitat",
+      "failed": "S'ha detectat un problema de compatibilitat",
+      "waiting": "S'estan recollint les dades de diagnòstic",
+      "lastRecovery": "Darrera recuperació automàtica",
+      "restart": "Reinicia l'extensió",
+      "copy": "Copia l'informe de diagnòstic",
+      "copied": "S'ha copiat l'informe de diagnòstic",
+      "copyFailed": "No s'ha pogut copiar l'informe de diagnòstic"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",
@@ -52,7 +63,8 @@
       "deletePreset": "Elimina el predefinit",
       "colorPicker": "Selector de color",
       "loading": "S'està carregant",
-      "selectLanguage": "Selecciona la llengua"
+      "selectLanguage": "Selecciona la llengua",
+      "fontsFound": "Tipus de lletra trobats: {count}"
     },
     "preset": {
       "addMessage": "Desa la configuració actual",
@@ -82,5 +94,5 @@
     "importError": "No s'ha pogut importar el fitxer de configuració."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Mira YouTube Live a pantalla completa amb el xat. Escriu-hi, envia Super Chats i personalitza la superposició al teu gust."
+  "extensionDescription": "El xat desapareix a pantalla completa? Posa el xat en directe de YouTube sobre el vídeo: llegeix-lo, comenta i envia Super Chats."
 }

@@ -37,8 +37,19 @@
         "colors": "Farver",
         "text": "Tekst",
         "elements": "Chatelementer"
-      },
-      "requiresAlwaysOn": "Slå \"Vis altid chatten\" til for at ændre denne indstilling"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilitet",
+      "healthy": "Alt fungerer",
+      "degraded": "Kører med en kompatibilitetsløsning",
+      "failed": "Kompatibilitetsproblem fundet",
+      "waiting": "Indsamler diagnosedata",
+      "lastRecovery": "Seneste automatiske gendannelse",
+      "restart": "Genstart udvidelsen",
+      "copy": "Kopiér diagnoserapport",
+      "copied": "Diagnoserapporten er kopieret.",
+      "copyFailed": "Diagnoserapporten kunne ikke kopieres."
     },
     "aria": {
       "dragToMove": "Træk for at flytte",
@@ -52,7 +63,8 @@
       "deletePreset": "Slet forudindstilling",
       "colorPicker": "Farvevælger",
       "loading": "Indlæser",
-      "selectLanguage": "Vælg sprog"
+      "selectLanguage": "Vælg sprog",
+      "fontsFound": "Fundne skrifttyper: {count}"
     },
     "preset": {
       "addMessage": "Gem aktuelle indstillinger",
@@ -82,5 +94,5 @@
     "importError": "Indstillingsfilen kunne ikke importeres."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Se YouTube Live på fuld skærm med chatten synlig. Skriv i chatten, send Super Chats og tilpas overlayet efter dine ønsker."
+  "extensionDescription": "Forsvinder chatten i fuld skærm? Udvidelsen lægger YouTubes livechat oven på videoen – læs, skriv kommentarer og send Super Chats."
 }

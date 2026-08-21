@@ -37,8 +37,19 @@
         "colors": "Värit",
         "text": "Teksti",
         "elements": "Chatin osat"
-      },
-      "requiresAlwaysOn": "Ota ”Näytä chat aina” käyttöön, jotta voit muuttaa tätä asetusta"
+      }
+    },
+    "diagnostics": {
+      "legend": "Yhteensopivuus",
+      "healthy": "Kaikki toimii",
+      "degraded": "Toimii yhteensopivuustilassa",
+      "failed": "Yhteensopivuusongelma havaittu",
+      "waiting": "Kerätään diagnostiikkatietoja",
+      "lastRecovery": "Viimeisin automaattinen palautuminen",
+      "restart": "Käynnistä laajennus uudelleen",
+      "copy": "Kopioi diagnostiikkaraportti",
+      "copied": "Diagnostiikkaraportti kopioitiin.",
+      "copyFailed": "Diagnostiikkaraportin kopiointi epäonnistui."
     },
     "aria": {
       "dragToMove": "Siirrä vetämällä",
@@ -52,7 +63,8 @@
       "deletePreset": "Poista esiasetus",
       "colorPicker": "Värinvalitsin",
       "loading": "Ladataan",
-      "selectLanguage": "Valitse kieli"
+      "selectLanguage": "Valitse kieli",
+      "fontsFound": "Fontteja löytyi: {count}"
     },
     "preset": {
       "addMessage": "Tallenna nykyiset asetukset",
@@ -82,5 +94,5 @@
     "importError": "Asetustiedoston tuonti epäonnistui."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Katso YouTube Liveä koko näytöllä ja seuraa chatia. Kirjoita viestejä, lähetä Super Chat -viestejä ja mukauta chatin ulkoasua."
+  "extensionDescription": "Katoaako chat koko näytöllä? Laajennus nostaa YouTuben livechatin videon päälle: lue, kommentoi ja lähetä Super Chat -viestejä."
 }

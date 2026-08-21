@@ -37,8 +37,19 @@
         "colors": "रंग",
         "text": "टेक्स्ट",
         "elements": "दिखाए जाने वाले तत्व"
-      },
-      "requiresAlwaysOn": "इसे कॉन्फ़िगर करने के लिए \"हमेशा दिखाएं\" चालू करें"
+      }
+    },
+    "diagnostics": {
+      "legend": "संगतता",
+      "healthy": "सामान्य",
+      "degraded": "वैकल्पिक संगतता मोड में चल रहा है",
+      "failed": "संगतता की समस्या मिली",
+      "waiting": "जाँच जानकारी एकत्र की जा रही है",
+      "lastRecovery": "पिछली स्वतः रिकवरी",
+      "restart": "एक्सटेंशन फिर से चालू करें",
+      "copy": "जाँच रिपोर्ट कॉपी करें",
+      "copied": "जाँच रिपोर्ट कॉपी हो गई",
+      "copyFailed": "जाँच रिपोर्ट कॉपी नहीं हो सकी"
     },
     "aria": {
       "dragToMove": "खिसकाने के लिए खींचें",
@@ -52,7 +63,8 @@
       "deletePreset": "प्रीसेट हटाएं",
       "colorPicker": "रंग चुनें",
       "loading": "लोड हो रहा है",
-      "selectLanguage": "भाषा चुनें"
+      "selectLanguage": "भाषा चुनें",
+      "fontsFound": "मिले फ़ॉन्ट: {count}"
     },
     "preset": {
       "addMessage": "वर्तमान सेटिंग्स सहेजें",
@@ -82,5 +94,5 @@
     "importError": "सेटिंग फ़ाइल आयात नहीं की जा सकी।"
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "YouTube Live को फ़ुलस्क्रीन में देखते हुए चैट पढ़ें और संदेश भेजें। Super Chat भेजें और ओवरले का रूप व स्थान अपने अनुसार बदलें।"
+  "extensionDescription": "फुलस्क्रीन में चैट गायब? यह ओवरले YouTube की लाइव चैट वीडियो के ऊपर लाता है — फुलस्क्रीन में ही कमेंट और Super Chat भेजें।"
 }
