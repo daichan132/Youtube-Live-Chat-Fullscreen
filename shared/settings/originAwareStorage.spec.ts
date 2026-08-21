@@ -3,6 +3,14 @@ import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import { createSettingsRepository, type StoredEnvelope } from './repository'
 import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
 
+/**
+ * chrome.i18n.getAcceptLanguages is typed as callback-only in @types/chrome, while the
+ * polyfill the extension uses returns a promise. The cast keeps the tests on the shape the
+ * runtime actually sees.
+ */
+const stubAcceptLanguages = (result: Promise<string[]>) =>
+  vi.spyOn(chrome.i18n, 'getAcceptLanguages').mockImplementation((() => result) as never)
+
 const createBarrier = () => {
   let release!: () => void
   const promise = new Promise<void>(resolve => {
@@ -44,6 +52,62 @@ describe('settings envelopes', () => {
         writerId: 'extension-locale-test',
         value: 'ja',
       })
+    })
+
+    // A fresh install has nothing stored, so the browser UI language is the only signal
+    // available. These cases also prove the resolver is wired in: each input is one the
+    // naive lookup used to get wrong.
+    it.each([
+      ['de-DE', 'de'],
+      ['ja', 'ja'],
+      ['nb-NO', 'no'],
+      ['zh-HK', 'zh_TW'],
+      ['es-MX', 'es_419'],
+      ['is-IS', 'en'],
+    ])('adopts the browser UI language %s as %s on a first run', async (uiLanguage, expected) => {
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue(uiLanguage)
+
+      const snapshot = await createSettingsRepository(`first-run-${uiLanguage}`, localStorage).load()
+
+      expect(snapshot.locale).toBe(expected)
+      expect(chrome.i18n.getUILanguage).toHaveBeenCalled()
+    })
+
+    it('falls back to the next accepted language when nothing is shipped for the UI language', async () => {
+      // Icelandic has no bundle; this user reads Danish before English.
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('is-IS')
+      stubAcceptLanguages(Promise.resolve(['is', 'da', 'en']))
+
+      const snapshot = await createSettingsRepository('accept-language-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('da')
+    })
+
+    it('keeps the UI language when one is shipped, without consulting accepted languages', async () => {
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('de')
+      stubAcceptLanguages(Promise.resolve(['fr']))
+
+      const snapshot = await createSettingsRepository('ui-language-wins-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('de')
+    })
+
+    it('still reaches English when no preferred language is shipped', async () => {
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('is-IS')
+      stubAcceptLanguages(Promise.resolve(['is', 'fo']))
+
+      const snapshot = await createSettingsRepository('no-match-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('en')
+    })
+
+    it('survives an environment where getAcceptLanguages rejects', async () => {
+      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('ja')
+      stubAcceptLanguages(Promise.reject(new Error('unavailable')))
+
+      const snapshot = await createSettingsRepository('accept-language-throws-test', localStorage).load()
+
+      expect(snapshot.locale).toBe('ja')
     })
 
     it('preserves an explicit English legacy locale instead of replacing it with the browser UI locale', async () => {

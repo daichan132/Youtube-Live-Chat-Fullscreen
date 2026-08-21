@@ -1,6 +1,6 @@
 import { browser } from 'wxt/browser'
 import { storage } from 'wxt/utils/storage'
-import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
+import { type LocaleCode, resolveLanguageCode, resolveLanguagePreference } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { areChatSettingsEqual, areGlobalSettingsEqual } from './equality'
 import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
@@ -173,6 +173,29 @@ const readNormalizedCurrentValues = async () => {
   }
 }
 
+/**
+ * Chooses a starting language for an install that has never picked one. The browser UI
+ * language comes first, because that is what Chrome itself uses to localise the extension's
+ * name, so the popup title and its contents agree. When we ship nothing for that language
+ * the user's own accept-languages order decides, which lands them on their second choice
+ * instead of dropping straight to English.
+ */
+const detectBrowserLocale = async (): Promise<LocaleCode> => {
+  const preferences: (string | undefined)[] = []
+  try {
+    preferences.push(browser.i18n?.getUILanguage?.())
+  } catch {
+    // Some extension test environments do not implement i18n.getUILanguage.
+  }
+  try {
+    const accepted = await browser.i18n?.getAcceptLanguages?.()
+    if (Array.isArray(accepted)) preferences.push(...accepted)
+  } catch {
+    // getAcceptLanguages is unavailable in some contexts and rejects in others.
+  }
+  return resolveLanguagePreference(preferences)
+}
+
 const readLegacySnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
   const values = await browser.storage.local.get([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
   const global = normalizeLegacyGlobal(values[LEGACY_GLOBAL_KEY])
@@ -181,12 +204,8 @@ const readLegacySnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | nul
   const browserStorageLocale = typeof values[LEGACY_LOCALE_KEY] === 'string' ? values[LEGACY_LOCALE_KEY] : undefined
   const storedLocale = extensionPageLocale ?? browserStorageLocale
   let locale: LocaleCode = resolveLanguageCode(storedLocale)
-  if (storedLocale === undefined && typeof browser.i18n?.getUILanguage === 'function') {
-    try {
-      locale = resolveLanguageCode(browser.i18n.getUILanguage())
-    } catch {
-      // Some extension test environments do not implement i18n.getUILanguage.
-    }
+  if (storedLocale === undefined) {
+    locale = await detectBrowserLocale()
   }
   return {
     snapshot: { global, chat, locale },
