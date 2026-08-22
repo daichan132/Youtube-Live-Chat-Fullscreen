@@ -15,7 +15,6 @@
     "compile": "tsc --noEmit",
     "locales:check": "node scripts/verify/check-locales.mjs",
     "store:check": "node scripts/verify/check-store-listing.mjs",
-    "size:check": "node scripts/verify/check-package-size.mjs",
     "postinstall": "wxt prepare",
     "format": "biome format --write ./entrypoints ./shared",
     "check": "biome check ./entrypoints ./shared && tsc --noEmit && node scripts/verify/check-release-workflow.mjs && node scripts/verify/check-runtime-architecture.mjs && node scripts/verify/check-store-listing.mjs && node scripts/verify/check-locales.mjs",

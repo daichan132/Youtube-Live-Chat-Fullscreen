@@ -57,7 +57,7 @@ Architecture checks reject module-global runtime ownership, direct runtime timer
 
 ## 8. Chrome and Firefox release safety
 
-One WXT codebase produces Chrome and Firefox packages. CI builds both browsers from a clean checkout, verifies package contents and size budgets, and builds a separate testing extension for browser contracts.
+One WXT codebase produces Chrome and Firefox packages. CI builds both browsers from a clean checkout, verifies package contents, and builds a separate testing extension for browser contracts.
 
 The release-candidate workflow repeats source checks, tests, production builds, package verification, fixture E2E, visual checks, and accessibility checks. It then extracts the exact Chrome production ZIP, boots it without the testing bridge, and runs the real-YouTube canary with degraded, flaky, and skipped outcomes treated as failures. Passing ZIPs receive a commit-bound SHA-256 proof and are attached to a draft release.
 

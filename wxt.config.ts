@@ -7,6 +7,9 @@ const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
+  zip: {
+    excludeSources: ['docs/store-listing/CLAUDE_CODE_HANDOFF.md', 'playwright-report/**', 'screenshots/**'],
+  },
   manifest: {
     description: '__MSG_extensionDescription__',
     name: '__MSG_extensionName__',

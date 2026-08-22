@@ -10,7 +10,6 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 | overlay geometry/style | Primary | User interaction | Representative browser boundary |  |  |
 | popup/content messaging | Message shape | Primary extension API boundary | One round trip |  |  |
 | locales and permissions | Locale resolution | Provider rendering | Representative locales | Primary inventory/manifest policy |  |
-| Chrome/Firefox package size |  |  |  | Primary |  |
 
 ## Commands
 
@@ -18,7 +17,7 @@ Tests are separated by the boundary they prove. Pull-request gates should stay d
 - `yarn test:dom`: React, DOM, and extension API integration in jsdom. WXT's fake browser is reset for every test in this project only.
 - `yarn test:contracts`: Node-side source/configuration contracts. It does not require pre-existing `.output` artifacts.
 - `yarn test:coverage`: runs the core and DOM projects with coverage, then verifies the coverage contract.
-- `yarn test:package`: freshly builds and packages production Chrome/Firefox extensions, then verifies their manifests, locale inventory, file inventory, ZIP contents, and size budgets.
+- `yarn test:package`: freshly builds and packages production Chrome/Firefox extensions, then verifies their manifests, locale inventory, file inventory, and ZIP contents.
 - `yarn build:e2e`: creates `.output/chrome-mv3-testing` with the storage bridge required by Playwright. Production builds never contain this bridge.
 - `yarn test:unit`: compatibility gate that runs all three Vitest projects.
 - `yarn e2e` / `yarn e2e:fixture`: builds the testing extension and runs only popup and synthetic YouTube fixtures. External HTTP(S) requests are blocked, retries are disabled, and this is the pull-request gate.

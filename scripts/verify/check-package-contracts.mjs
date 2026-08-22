@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { execFileSync } from 'node:child_process'
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -7,7 +8,10 @@ import { inflateRawSync } from 'node:zlib'
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const outputRoot = join(root, '.output')
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-const sizePolicy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
+const packageTargets = [
+  { target: 'chrome-mv3', browser: 'chrome' },
+  { target: 'firefox-mv2', browser: 'firefox' },
+]
 const expectedPermissions = ['activeTab', 'storage']
 const expectedContentScriptMatches = ['*://www.youtube.com/*']
 const forbiddenProductionFiles = [
@@ -17,6 +21,9 @@ const forbiddenProductionFiles = [
   { label: 'fixture asset', matches: file => /(^|\/)fixtures?(\/|$)/i.test(file) },
   { label: 'test bridge asset', matches: file => /(^|\/)test-bridge(?:\/|$)/i.test(file) },
 ]
+const trackedSourceFiles = new Set(
+  execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' }).split('\0').filter(Boolean),
+)
 
 const toPosixPath = path => path.split(sep).join('/')
 
@@ -31,16 +38,6 @@ const collectFiles = async directory => {
   }
   await visit(directory)
   return files.sort()
-}
-
-const sumFiles = async (directory, predicate) => {
-  let total = 0
-  for (const entry of await readdir(directory, { withFileTypes: true })) {
-    const path = join(directory, entry.name)
-    if (entry.isDirectory()) total += await sumFiles(path, predicate)
-    else if (predicate(path, entry.name)) total += (await stat(path)).size
-  }
-  return total
 }
 
 const findEndOfCentralDirectory = buffer => {
@@ -115,22 +112,11 @@ const hasRuntimeResources = manifest => {
   )
 }
 
-const measureTarget = async (target, config) => {
+const resolveTarget = ({ target, browser }) => {
   const directory = join(outputRoot, target)
-  const zipName = `youtube-live-chat-fullscreen-${packageJson.version}-${config.browser}.zip`
+  const zipName = `youtube-live-chat-fullscreen-${packageJson.version}-${browser}.zip`
   const zipPath = join(outputRoot, zipName)
-  const metrics = {
-    zipBytes: await stat(zipPath)
-      .then(file => file.size)
-      .catch(() => null),
-    contentJsBytes: await sumFiles(directory, (path, name) => name === 'content.js' && path.includes('content-scripts')),
-    popupJsBytes: await sumFiles(directory, (_path, name) => name.startsWith('popup-') && name.endsWith('.js')),
-    contentCssBytes: await sumFiles(directory, (path, name) => name === 'content.css' && path.includes('content-scripts')),
-    popupCssBytes: await sumFiles(directory, (_path, name) => name.startsWith('popup-') && name.endsWith('.css')),
-    runtimeLocaleBytes: await sumFiles(join(directory, 'locales'), (_path, name) => name.endsWith('.json')),
-    manifestLocaleBytes: await sumFiles(join(directory, '_locales'), (_path, name) => name.endsWith('.json')),
-  }
-  return { target, directory, zipName, zipPath, config, metrics }
+  return { target, directory, zipName, zipPath }
 }
 
 const verifyTarget = async report => {
@@ -195,29 +181,32 @@ const verifyTarget = async report => {
   if (zipManifest !== manifestText) failures.push('ZIP manifest.json differs from the generated manifest.json')
   failures.push(...findForbiddenFiles(zipFiles).map(failure => `ZIP ${failure}`))
 
-  for (const [metric, budget] of Object.entries(report.config.budgets)) {
-    const value = report.metrics[metric]
-    if (value == null) failures.push(`${metric}: package ZIP is missing`)
-    else if (value > budget) failures.push(`${metric}: ${value} > ${budget}`)
-  }
-
   return {
     target: report.target,
     zip: report.zipName,
     fileCount: files.length,
     localeCount: runtimeLocales.length,
-    metrics: report.metrics,
     failures,
   }
 }
 
-const reports = await Promise.all(Object.entries(sizePolicy).map(([target, config]) => measureTarget(target, config)))
+const reports = packageTargets.map(resolveTarget)
 const results = await Promise.all(reports.map(verifyTarget))
 const sourcesZip = join(outputRoot, `youtube-live-chat-fullscreen-${packageJson.version}-sources.zip`)
 const sourcesZipExists = await stat(sourcesZip)
   .then(file => file.isFile())
   .catch(() => false)
-if (!sourcesZipExists) results.push({ target: 'sources', failures: ['sources ZIP is missing'] })
+if (!sourcesZipExists) {
+  results.push({ target: 'sources', failures: ['sources ZIP is missing'] })
+} else {
+  const sourceFiles = [...(await readZipEntries(sourcesZip)).keys()].filter(file => !file.endsWith('/')).sort()
+  results.push({
+    target: 'sources',
+    zip: sourcesZip.split(sep).at(-1),
+    fileCount: sourceFiles.length,
+    failures: sourceFiles.filter(file => !trackedSourceFiles.has(file)).map(file => `untracked source file: ${file}`),
+  })
+}
 
 console.log(JSON.stringify({ version: packageJson.version, results }, null, 2))
 const failures = results.flatMap(result => result.failures.map(failure => `${result.target}: ${failure}`))

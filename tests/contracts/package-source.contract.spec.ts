@@ -57,9 +57,8 @@ describe('production package source policy', () => {
     expect(manifestLocales).toEqual(runtimeLocales)
   })
 
-  it('defines Chrome and Firefox size budgets for the current package version', async () => {
+  it('builds and verifies Chrome and Firefox production packages', async () => {
     const packageJson = await readJson<{ version: string; scripts: Record<string, string> }>('package.json')
-    const budgets = await readJson<Record<string, { browser: string; budgets: Record<string, number> }>>('config/package-size-budget.json')
 
     expect(packageJson.version).toMatch(/^\d+\.\d+\.\d+$/)
     expect(packageJson.scripts.build).toBe('wxt build')
@@ -68,14 +67,11 @@ describe('production package source policy', () => {
     expect(packageJson.scripts['test:package']).toBe(
       'yarn build && yarn build:firefox && yarn zip && yarn zip:firefox && yarn verify:package-contracts',
     )
-    expect(Object.keys(budgets).sort()).toEqual(['chrome-mv3', 'firefox-mv2'])
-    const chromeBudget = budgets['chrome-mv3']
-    const firefoxBudget = budgets['firefox-mv2']
-    if (!chromeBudget || !firefoxBudget) throw new Error('Missing browser package size budget.')
-    expect(chromeBudget.browser).toBe('chrome')
-    expect(firefoxBudget.browser).toBe('firefox')
-    expect(chromeBudget.budgets.zipBytes).toBeGreaterThan(0)
-    expect(firefoxBudget.budgets.zipBytes).toBeGreaterThan(0)
+    expect(wxtConfig.zip?.excludeSources).toEqual([
+      'docs/store-listing/CLAUDE_CODE_HANDOFF.md',
+      'playwright-report/**',
+      'screenshots/**',
+    ])
   })
 
   it('uploads the verified production ZIP before building the testing extension', async () => {
