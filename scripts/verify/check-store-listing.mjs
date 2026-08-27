@@ -43,7 +43,7 @@ const REQUIRED_TOKENS = ['YouTube', 'Opera', 'GitHub', 'GPL-3.0', 'activeTab', '
 // merge or split a little, but a large gap means missing content.
 const BLOCK_TOLERANCE = 3
 const REFERENCE_LOCALE = 'en'
-const NON_LOCALE_MARKDOWN = new Set(['CLAUDE_CODE_HANDOFF.md', 'asset-work-list.md'])
+const NON_LOCALE_MARKDOWN = new Set(['asset-work-list.md'])
 
 const assetsDir = fileURLToPath(new URL('../../shared/i18n/assets/', import.meta.url))
 const listingDir = fileURLToPath(new URL('../../docs/store-listing/', import.meta.url))

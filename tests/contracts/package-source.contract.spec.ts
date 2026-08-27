@@ -67,11 +67,7 @@ describe('production package source policy', () => {
     expect(packageJson.scripts['test:package']).toBe(
       'yarn build && yarn build:firefox && yarn zip && yarn zip:firefox && yarn verify:package-contracts',
     )
-    expect(wxtConfig.zip?.excludeSources).toEqual([
-      'docs/store-listing/CLAUDE_CODE_HANDOFF.md',
-      'playwright-report/**',
-      'screenshots/**',
-    ])
+    expect(wxtConfig.zip?.excludeSources).toEqual(['playwright-report/**', 'screenshots/**'])
   })
 
   it('uploads the verified production ZIP before building the testing extension', async () => {
