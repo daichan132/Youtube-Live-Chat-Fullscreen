@@ -40,7 +40,7 @@ export const ChatSurface = ({ children, innerStyle, isDragging, onEnterChat, onL
     >
       <div className='relative w-full h-full'>
         {isDragging ? (
-          <div data-ylc-drag-shield className='absolute w-100% h-100% cursor-grabbing bg-transparent' style={DRAG_SHIELD_STYLE} />
+          <div data-ylc-drag-shield className='absolute inset-0 cursor-grabbing bg-transparent' style={DRAG_SHIELD_STYLE} />
         ) : null}
         {children}
       </div>
