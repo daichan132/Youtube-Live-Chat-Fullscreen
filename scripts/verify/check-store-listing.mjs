@@ -8,7 +8,7 @@
 // description; descriptions are only required to be present here.
 //
 // SUMMARY_CAPABILITIES guards against one regression that shipped twice: a summary
-// that names sending a Super Chat while the ordinary-comment capability drops out
+// that names sending a Super Chat while the ordinary-message capability drops out
 // of the sentence entirely, so the listing reads as if only the paid action were
 // possible. It catches that, in all 55 locales.
 //
@@ -16,7 +16,10 @@
 // of this table in five locales out of five by rewriting "post a comment" as "read
 // comments": the noun survives, the capability does not. Patterns anchored on a
 // posting verb resist that; patterns anchored on a noun do not, and a 132-character
-// summary in 55 languages does not admit a reliable mechanical test for it. Treat a
+// summary in 55 languages does not admit a reliable mechanical test for it. The
+// patterns also refuse the locale's comment-section noun, so a summary cannot pass by
+// claiming the wrong surface: the overlay posts a live chat message, never a comment
+// under the video. Treat a
 // passing run as evidence that nothing vanished, never as evidence that a
 // translation is accurate or reads naturally. Only a native reader establishes that.
 //
@@ -79,11 +82,11 @@ for (const code of localeCodes) {
   if (summary.length > SUMMARY_LIMIT) fail(`${code}: extensionDescription is ${summary.length} characters (limit ${SUMMARY_LIMIT})`)
   const capabilities = SUMMARY_CAPABILITIES[code]
   if (capabilities === undefined) {
-    fail(`${code}: no SUMMARY_CAPABILITIES entry — add this locale's comment and Super Chat patterns before shipping it`)
+    fail(`${code}: no SUMMARY_CAPABILITIES entry — add this locale's reply and Super Chat patterns before shipping it`)
   }
   for (const pattern of capabilities ?? []) {
     if (!pattern.test(summary)) {
-      fail(`${code}: extensionDescription no longer matches ${pattern} — the ordinary-comment or Super Chat capability dropped out of this summary`)
+      fail(`${code}: extensionDescription no longer matches ${pattern} — the ordinary-message or Super Chat capability dropped out of this summary`)
     }
   }
 

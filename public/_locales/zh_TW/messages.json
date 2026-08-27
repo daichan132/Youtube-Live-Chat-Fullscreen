@@ -3,7 +3,7 @@
     "message": "YouTube 直播全螢幕聊天室"
   },
   "extensionDescription": {
-    "message": "全螢幕時 YouTube 直播聊天室會消失。本擴充功能把 YouTube 自己的即時聊天室以浮動面板疊在影片上方，全螢幕也能看留言、發訊息、送 Super Chat 超級留言，還能拖曳位置與調整大小，有聊天回放的存檔影片同樣適用。"
+    "message": "YouTube 直播一進全螢幕，聊天室就不見了。本擴充功能把 YouTube 自己的即時聊天室重新放回影片上，全螢幕也能讀訊息、發訊息，直播時還能送 Super Chat。位置、大小、字級與配色可調，有聊天重播的封存影片同樣適用。"
   },
   "popup_theme": {
     "message": "主題"

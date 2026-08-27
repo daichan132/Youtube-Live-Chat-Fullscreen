@@ -11,7 +11,7 @@
 
 <p align="center">
   <strong>Used by 20,000+ Chrome viewers</strong><br />
-  Chrome + Firefox · 55 locales · No account · No tracking · Open source
+  Chrome (also runs in Opera) + Firefox · 55 locales (49 languages) · No account · No tracking · Open source
 </p>
 
 <p align="center">
@@ -88,16 +88,16 @@
 
 There is no account to create and no setup wizard to finish.
 
-1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
+1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) (the Chrome build also runs in Opera) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
 2. Open a YouTube live stream or an archive with chat replay.
-3. Enter fullscreen. A toggle appears at the bottom-right; click it to restore the chat.
+3. Enter fullscreen — the chat is already there. The speech-bubble button in the player control bar toggles it off and back on.
 4. Drag or resize the overlay, then adjust its appearance from the extension settings.
 
 The video stays fullscreen. The conversation stays with it.
 
 ## What Stays in Your Browser
 
-The overlay runs in the browser, and its settings stay there. The extension does not send viewing activity to an analytics or tracking service.
+The overlay runs in the browser, and its settings stay there. No analytics, no tracking, nothing to the developer: the extension never collects, stores, or sends what you read or type. Only fonts beyond the default are fetched, from Google Fonts; nothing else leaves the browser.
 
 - **No extension account or data collection:** the extension does not collect personal data
 - **Local settings:** appearance, layout, presets, and backups remain in browser storage
@@ -110,14 +110,14 @@ Restoring a read-only chat window would solve only half the problem. The overlay
 
 ### 💬 Fullscreen Chat
 
-- Post comments and Super Chats directly from the overlay without leaving fullscreen
+- Post comments from the overlay without leaving fullscreen — and Super Chats on live streams
 - Works with both live streams and archived streams with chat replay
 - "Show When Idle" keeps the overlay visible while player controls are hidden — on by default, and switchable to auto-hide
 
 ### 🎨 Style & Appearance
 
 - Adjust background color, text color, font, size, blur, and spacing so the overlay fits your stream layout
-- Toggle username, user icon, Super Chat bar, and chat-only view
+- Hide usernames and profile pictures on ordinary messages (paid messages keep theirs), toggle the Super Chat bar, or switch to Chat-Only Mode while Show When Idle is on
 - Drag, resize, and reposition the chat overlay freely
 - Light, dark, and auto (system-follow) theme across the overlay, popup, and settings panel
 
@@ -145,7 +145,7 @@ Restoring a read-only chat window would solve only half the problem. The overlay
 
 The extension serves 20,000+ Chrome viewers, but the YouTube page beneath it never stays entirely still. URLs change without full reloads, chat DOM is replaced, and live chat and archive replay do not share the same source rules. The codebase treats those differences as explicit runtime contracts instead of scattered exceptions.
 
-- Cross-browser Chrome and Firefox builds from one WXT codebase
+- Cross-browser Chrome and Firefox builds from one WXT codebase, with the Chrome build also running in Opera
 - React 19, TypeScript, Jotai, and Tailwind CSS v4
 - 55 generated locales covering 49 languages, with RTL support
 - Pure chat-source decisions separated from YouTube DOM side effects
@@ -231,7 +231,7 @@ shared/               # Shared across all three entrypoints
 ├── settings/         # Storage repository, migration, geometry model, backup
 ├── state/            # Jotai atoms and write-only commands
 ├── runtime/          # Per-context app runtime bootstrap
-├── i18n/             # 55 locale assets and the generated artifacts
+├── i18n/             # 55 locale assets (49 languages) and the generated artifacts
 ├── components/       # Shared UI components
 ├── styles/           # Theme tokens
 └── hooks/            # Shared React hooks

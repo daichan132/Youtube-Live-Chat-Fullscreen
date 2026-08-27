@@ -26,8 +26,8 @@ The switch only appears when chat is available for the video, same as on Chrome.
 
 ## The overlay looks wrong or stops responding
 
-1. Open the overlay settings (gear icon) and use the restart control to restart the chat runtime.
-2. If the problem persists, copy the sanitized diagnostic report from the settings panel and attach it to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
+1. Hover the chat panel to bring up its control row, open the settings with the sliders button, then press Restart runtime under the Compatibility heading.
+2. If the problem persists, press Copy diagnostic report beside it and attach the sanitized report to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
 
 The report is sanitized before it reaches your clipboard: it contains no URLs, video IDs, chat text, or user names. It carries which page elements were found, a short code such as `IFRAME_DOCUMENT_NOT_READY` describing where the runtime stopped, and a compatibility fingerprint. Those codes are what make a report actionable, so it is worth including even if it looks opaque.
 

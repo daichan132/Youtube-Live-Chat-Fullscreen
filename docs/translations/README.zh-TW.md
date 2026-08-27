@@ -10,7 +10,7 @@
 
 <p align="center">
   <strong>20,000+ 名 Chrome 使用者</strong><br />
-  Chrome + Firefox · 55 個語系（49 種語言） · 無需帳號 · 無追蹤 · 開源
+  Chrome（也能在 Opera 上使用）+ Firefox · 55 個語系（49 種語言） · 無需帳號 · 無追蹤 · 開源
 </p>
 
 <p align="center">
@@ -85,32 +85,32 @@
 
 ## 30 秒快速開始
 
-1. 從 [Chrome 線上應用程式商店](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) 或 [Firefox 附加元件](https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/) 安裝。
+1. 從 [Chrome 線上應用程式商店](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) 或 [Firefox 附加元件](https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/) 安裝。Chrome 版同樣可以裝在 Opera 上使用。
 2. 開啟 YouTube 直播，或有聊天重播的存檔影片。
-3. 進入全螢幕後，右下角會出現開關。點擊即可顯示聊天覆蓋視窗。
+3. 把播放器切到全螢幕，聊天室已經在影片上了 — 預設就是開著的，不必先按什麼。開關是控制列裡多出來的那顆對話框按鈕。
 4. 依需求拖曳、縮放，並在設定中調整樣式。
 
 ## 留在瀏覽器裡的東西
 
-覆蓋視窗在瀏覽器內執行，其設定也留在瀏覽器內。本擴充功能不會將觀看行為傳送至任何分析或追蹤服務。
+沒有分析工具，也沒有追蹤。讀到的訊息和輸入的文字，都不收集、不保存、不外傳，開發者這邊也收不到資料。需要從外部取得的只有字型：選了預設以外的字型，才會從 Google Fonts 下載。
 
-- **無需帳號、不收集資料：** 不收集個人資料
-- **設定存於本機：** 外觀、版面、預設集與備份都留在瀏覽器儲存空間
-- **最小權限：** 僅 `activeTab` 與 `storage`
-- **實作公開：** 原始碼與發布流程都可在本儲存庫中檢視
+- **沒有東西可收集：** 不收集個人資料，也不必註冊帳號
+- **設定只留在這個瀏覽器：** 外觀、版面、預設方案與備份，都不會離開瀏覽器的儲存空間
+- **權限只有兩項：** `activeTab` 與 `storage`
+- **實作查得到：** 原始碼與發布流程都在本儲存庫裡
 
 ## 功能
 
 ### 💬 全螢幕聊天
 
-- 無需離開全螢幕，直接從覆蓋視窗發送留言和 Super Chat
+- 無需離開全螢幕，直接從覆蓋視窗發送留言；直播時還能送 Super Chat
 - 適用於直播與具備聊天重播的存檔影片
 - 「閒置時顯示聊天室」會在播放器控制列隱藏時繼續顯示覆蓋視窗（預設開啟，也可切換為自動隱藏）
 
 ### 🎨 樣式 & 外觀
 
 - 調整背景色、字色、字型、字級、模糊、間距，讓覆蓋視窗融入你的觀看畫面
-- 切換使用者名稱、頭像、Super Chat bar、僅聊天模式
+- 一般訊息可以分別關掉「顯示使用者名稱」和「顯示使用者頭像」（付費訊息的名稱和頭像仍然保留），「顯示 Super Chat 欄」也能切換；「僅顯示聊天室」則要在「閒置時顯示聊天室」開著時才能選
 - 聊天覆蓋視窗可自由拖曳、縮放、調整位置
 - 亮色、暗色、自動（跟隨系統）主題，覆蓋視窗、Popup 與設定面板一致套用
 
@@ -138,7 +138,7 @@
 
 本擴充功能服務超過 20,000 位 Chrome 使用者，但其下的 YouTube 頁面從未真正靜止。網址會在不完整重新載入的情況下改變、聊天 DOM 會被替換，而直播與存檔重播並不共用同一套聊天來源規則。這份程式碼將這些差異視為明確的執行期契約，而非散落各處的例外處理。
 
-- 以單一 WXT 程式碼庫建置 Chrome 與 Firefox
+- 以單一 WXT 程式碼庫建置 Chrome 與 Firefox（Chrome 版同樣可在 Opera 上執行）
 - React 19、TypeScript、Jotai 與 Tailwind CSS v4
 - 產生 55 個語系（涵蓋 49 種語言），支援 RTL
 - 將純粹的聊天來源判定與 YouTube DOM 副作用分離
