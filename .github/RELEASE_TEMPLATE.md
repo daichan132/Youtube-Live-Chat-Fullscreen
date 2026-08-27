@@ -8,8 +8,11 @@
 
 ## Compatibility
 
+<!-- The release candidate workflow requires real-browser verification on Chrome, Firefox, and Opera. Record the versions you verified. -->
+
 - Chrome:
 - Firefox:
+- Opera:
 - YouTube Live:
 - Chat Replay:
 

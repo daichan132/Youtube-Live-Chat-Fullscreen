@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="../public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="128" />
+  <img src="../../public/icon/128.png" alt="YouTube Live Chat Fullscreen 圖示" width="128" />
 </div>
 
 <h1 align="center">YouTube Live Chat Fullscreen</h1>
@@ -10,11 +10,11 @@
 
 <p align="center">
   <strong>20,000+ 名 Chrome 使用者</strong><br />
-  Chrome + Firefox · 55 種語言 · 無需帳號 · 無追蹤 · 開源
+  Chrome + Firefox · 55 個語系（49 種語言） · 無需帳號 · 無追蹤 · 開源
 </p>
 
 <p align="center">
-  <a href="../README.md">English</a> ·
+  <a href="../../README.md">English</a> ·
   <a href="README.ja.md">日本語</a> ·
   <strong>繁體中文</strong>
 </p>
@@ -54,7 +54,7 @@
 
 ## 預覽
 
-![YouTube 直播全螢幕聊天覆蓋視窗預覽](../.github/preview.png)
+![YouTube 直播全螢幕聊天覆蓋視窗預覽](../../.github/preview.png)
 
 ### 截圖
 
@@ -63,23 +63,23 @@
 <th align="center" colspan="2">全螢幕聊天覆蓋視窗</th>
 </tr>
 <tr>
-<td colspan="2"><img src="../.github/screenshots/fullscreen-chat-overview.png" alt="YouTube 直播的全螢幕聊天覆蓋視窗" width="960" /></td>
+<td colspan="2"><img src="../../.github/screenshots/fullscreen-chat-overview.png" alt="YouTube 直播的全螢幕聊天覆蓋視窗" width="960" /></td>
 </tr>
 <tr>
 <th align="center">Popup — 亮色</th>
 <th align="center">Popup — 暗色</th>
 </tr>
 <tr>
-<td align="center"><img src="../.github/screenshots/popup-light.png" alt="Popup UI（亮色主題）" width="320" /></td>
-<td align="center"><img src="../.github/screenshots/popup-dark.png" alt="Popup UI（暗色主題）" width="320" /></td>
+<td align="center"><img src="../../.github/screenshots/popup-light.png" alt="Popup UI（亮色主題）" width="320" /></td>
+<td align="center"><img src="../../.github/screenshots/popup-dark.png" alt="Popup UI（暗色主題）" width="320" /></td>
 </tr>
 <tr>
 <th align="center">設定 — 亮色</th>
 <th align="center">設定 — 暗色</th>
 </tr>
 <tr>
-<td><img src="../.github/screenshots/settings-setting-light.png" alt="設定面板（亮色主題）" width="480" /></td>
-<td><img src="../.github/screenshots/settings-setting-dark.png" alt="設定面板（暗色主題）" width="480" /></td>
+<td><img src="../../.github/screenshots/settings-setting-light.png" alt="設定面板（亮色主題）" width="480" /></td>
+<td><img src="../../.github/screenshots/settings-setting-dark.png" alt="設定面板（暗色主題）" width="480" /></td>
 </tr>
 </table>
 
@@ -90,13 +90,22 @@
 3. 進入全螢幕後，右下角會出現開關。點擊即可顯示聊天覆蓋視窗。
 4. 依需求拖曳、縮放，並在設定中調整樣式。
 
+## 留在瀏覽器裡的東西
+
+覆蓋視窗在瀏覽器內執行，其設定也留在瀏覽器內。本擴充功能不會將觀看行為傳送至任何分析或追蹤服務。
+
+- **無需帳號、不收集資料：** 不收集個人資料
+- **設定存於本機：** 外觀、版面、預設集與備份都留在瀏覽器儲存空間
+- **最小權限：** 僅 `activeTab` 與 `storage`
+- **實作公開：** 原始碼與發布流程都可在本儲存庫中檢視
+
 ## 功能
 
 ### 💬 全螢幕聊天
 
 - 無需離開全螢幕，直接從覆蓋視窗發送留言和 Super Chat
 - 適用於直播與具備聊天重播的存檔影片
-- 可選的「常時顯示」模式，在非全螢幕下也能顯示覆蓋視窗
+- 「閒置時顯示聊天室」會在播放器控制列隱藏時繼續顯示覆蓋視窗（預設開啟，也可切換為自動隱藏）
 
 ### 🎨 樣式 & 外觀
 
@@ -112,7 +121,7 @@
 
 ### 🌐 多語系
 
-- 內建支援 55 種語言，包含阿拉伯語、希伯來語、波斯語的 RTL 版面
+- 內建支援 55 個語系（49 種語言），包含阿拉伯語、希伯來語、波斯語的 RTL 版面
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
@@ -124,6 +133,21 @@
 </p>
 
 ---
+
+## 在一個不斷變動的頁面上運行的正式產品
+
+本擴充功能服務超過 20,000 位 Chrome 使用者，但其下的 YouTube 頁面從未真正靜止。網址會在不完整重新載入的情況下改變、聊天 DOM 會被替換，而直播與存檔重播並不共用同一套聊天來源規則。這份程式碼將這些差異視為明確的執行期契約，而非散落各處的例外處理。
+
+- 以單一 WXT 程式碼庫建置 Chrome 與 Firefox
+- React 19、TypeScript、Jotai 與 Tailwind CSS v4
+- 產生 55 個語系（涵蓋 49 種語言），支援 RTL
+- 將純粹的聊天來源判定與 YouTube DOM 副作用分離
+- 單元、契約、確定性 Playwright E2E、視覺、無障礙與實際 YouTube canary 測試
+- 明確處理 SPA 導覽、DOM 替換、直播聊天與存檔重播
+- 版本化的設定遷移，以及跨擴充功能情境的同步
+- 發布產物只建置一次、以雜湊證明，發布時不重新建置
+
+執行期邊界、測試策略、設定所有權與發布防護措施記載於 [Engineering YouTube Live Chat Fullscreen](../engineering.md)（英文）。
 
 ## Tech Stack
 
@@ -140,23 +164,42 @@
 
 ### 系統概覽
 
-![Content Script 與 Popup 之間通訊的架構圖](../.github/system_overview.drawio.png)
+```mermaid
+flowchart LR
+  subgraph Y["YouTube page"]
+    CS["Content script"]
+  end
+  P["Popup"]
+  S["Settings page"]
+  ST[("browser.storage.local")]
 
-此擴充功能由兩個進入點組成，透過瀏覽器的 `tabs` / `runtime` 訊息 API 通訊：
+  CS <--> ST
+  P <--> ST
+  S <--> ST
+  S -.->|postMessage| CS
+```
+
+此擴充功能由三個進入點組成，沒有 background service worker。
 
 | 元件 | 角色 |
 | --- | --- |
-| **Content Script** | 注入至 YouTube 頁面。負責聊天覆蓋視窗的繪製、拖曳/縮放處理，以及聊天來源的解析（直播 vs. 存檔）。 |
-| **Popup** | 擴充功能工具列 UI。控制語言、啟用/停用、主題，並即時同步狀態至 Content Script。 |
-| **Shared** | 兩個進入點共用的模組 — Jotai 狀態、產生的 i18n 資源、UI 元件、主題、工具函式。 |
+| **Content Script** | 注入至 YouTube 頁面。負責聊天覆蓋視窗的繪製、拖曳/縮放處理，以及聊天來源的解析（直播 / 存檔 / 無聊天）。 |
+| **Popup** | 擴充功能工具列 UI。啟用/停用、語言、主題，以及設定的匯出/匯入。 |
+| **設定頁面** | 獨立的 `settings.html`，以擴充功能 iframe 顯示於播放器之上，擁有自己的 React root 與狀態儲存。 |
+| **Shared** | 三者共用的模組 — 設定儲存與遷移、Jotai 狀態、產生的 i18n 資源、UI 元件、主題。 |
+
+三個情境之間不使用 `tabs` / `runtime` 訊息。每一方都將帶有寫入者識別碼的版本化封包寫入擴充功能儲存空間，其他情境的 watcher 接收變更並忽略自己的寫入。只有設定 iframe 會使用 `window.postMessage`，用於取得診斷報告、重新啟動執行期，以及關閉自身。
 
 ### 聊天來源解析
 
 Content Script 自動偵測影片類型並選擇適當的聊天來源：
 
+在可行的情況下，擴充功能會**借用 YouTube 自身的聊天 iframe**，而不是自行建立，因為這樣可以將驗證、留言發送與 Super Chat 保留在 YouTube 一側。自行建立的 iframe 僅作為直播的後備方案。
+
 | 影片狀態 | 聊天來源 | 開關 / 覆蓋視窗 |
 | --- | --- | --- |
-| 直播 | 公開 `live_chat?v=<videoId>` | 可用 |
+| 直播（有原生聊天） | 借用的原生 `live_chat` iframe | 可用 |
+| 直播（無原生 iframe） | 建立的 `live_chat?v=<videoId>` iframe | 可用 |
 | 可重播聊天的存檔 | 原生 `live_chat_replay` iframe | 需重播可播放時才可用 |
 | 無聊天 / 重播不可用 | 無 | 隱藏 |
 
@@ -165,19 +208,28 @@ Content Script 自動偵測影片類型並選擇適當的聊天來源：
 ```
 entrypoints/
 ├── content/          # Content Script（注入至 YouTube）
-│   ├── chat/         # 聊天來源解析（live / archive）
-│   ├── features/     # UI 功能（Draggable, Iframe, Settings, Switch）
-│   └── hooks/        # Content 專用 React hooks
+│   ├── bootstrap/    # 路由閘門、工作階段生命週期、範圍所有權
+│   ├── platform/     # YouTube 相容層與選擇器目錄
+│   ├── runtime/      # 聊天判定、純粹執行期模型、reconciler
+│   │   └── resources/  # 擁有頁面變更的四個 lease
+│   ├── overlay/      # 覆蓋視窗、幾何、拖曳/縮放、自動避讓配置
+│   ├── features/     # iframe 樣式、設定面板、播放器開關
+│   ├── style/        # 樣式 patch 的編譯與注入
+│   ├── diagnostics/  # 執行期追蹤、失敗代碼、診斷報告
+│   └── settings/     # 設定 iframe 的宿主端
 ├── popup/            # Popup UI（擴充功能工具列）
-│   ├── components/   # Popup 專用元件
-│   └── utils/        # Popup 工具函式
-shared/               # 跨進入點共用
+└── settings/         # settings.html — 設定應用程式本體
+shared/               # 三個進入點共用
+├── settings/         # 儲存、遷移、幾何模型、備份
 ├── state/            # Jotai 狀態與 write-only command
-├── i18n/             # 50 種以上語言資源
+├── runtime/          # 各情境的啟動流程
+├── i18n/             # 55 個語系資源與產生的檔案
 ├── components/       # 共用 UI 元件
-├── theme/            # 主題設定
+├── styles/           # 主題 token
 └── hooks/            # 共用 React hooks
 ```
+
+架構的詳細說明位於 [`docs/architecture/`](../architecture/)（英文）。
 
 </details>
 
@@ -227,8 +279,10 @@ yarn build
 歡迎提出問題回報、功能建議或 Pull Request。
 
 - 建立 [Issue](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues) 或送出 [Pull Request](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/pulls)。
-- PR 前請執行 `yarn check && yarn test:unit && yarn build && yarn build:firefox`。
-- 翻譯貢獻也十分歡迎 — 請新增 `docs/README.<locale>.md` 檔案。
+- PR 前請執行 `yarn check`、`yarn test:unit` 與 `yarn build`。若變更會影響跨瀏覽器行為，請一併執行 `yarn build:firefox`。
+- 安裝、驗證、翻譯與螢幕擷圖的完整步驟記載於 [CONTRIBUTING.md](../../CONTRIBUTING.md)（英文），其中也列出 CI 會執行但本機不會重現的檢查。
+- 安全性漏洞請依 [SECURITY.md](../../SECURITY.md) 的非公開流程回報，切勿開立公開 Issue。
+- README 翻譯也十分歡迎 — 請新增 `docs/translations/README.<locale>.md` 檔案。
 
 <a href="https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=daichan132/Youtube-Live-Chat-Fullscreen" alt="Contributors" />
@@ -249,4 +303,4 @@ yarn build
 
 ## 授權
 
-採用 GPL-3.0 授權，詳見 [LICENSE](../LICENSE)。
+採用 GPL-3.0 授權，詳見 [LICENSE](../../LICENSE)。

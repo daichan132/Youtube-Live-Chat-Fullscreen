@@ -1,5 +1,9 @@
 # Store asset work list
 
+> **Text side is stale relative to the dashboard.** All 55 listing manuscripts were rewritten on 2026-08-22, after the `chrome-dashboard-snapshot-2026-08-19.json` this file anchors to. `yarn store:check --snapshot` therefore reports drift on essentially every locale's description. That comparison is informational and does not fail `yarn check`; the fix is to apply the copy in the Chrome dashboard and then refresh the snapshot. The *asset* facts below are still current.
+>
+> **There is an unevaluated asset library.** [`../store-assets/concepts/`](../store-assets/concepts/) holds 100 finished 1280×800 compositions with Japanese copy — including the ja localization this file treats as blocked. They are marketing illustrations whose chat panel is a mockup rather than the real overlay, so they do not satisfy the screenshot slots below, but they are a plausible source for the promo tiles. Decide and record which, rather than planning around them again.
+
 Status as of 2026-08-19: the dashboard has 3 global screenshots, no localized screenshots, no promo video, and no promo tiles. `yarn capture:store-assets` reproduces five raw captures into `screenshots/` (`fullscreen-chat-overview`, `settings-setting-light`, `settings-setting-dark` at 2560x1440 and `popup-light`/`popup-dark` at 900x798). The Chrome Web Store accepts screenshots at 1280x800 or 640x400, a small promo tile at 440x280, and a marquee promo tile at 1400x560 (https://developer.chrome.com/docs/webstore/cws-dashboard-listing).
 
 ## What the current 3 screenshots do not show

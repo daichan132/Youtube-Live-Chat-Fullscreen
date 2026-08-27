@@ -11,13 +11,13 @@
 
 <p align="center">
   <strong>Used by 20,000+ Chrome viewers</strong><br />
-  Chrome + Firefox · 55 languages · No account · No tracking · Open source
+  Chrome + Firefox · 55 locales · No account · No tracking · Open source
 </p>
 
 <p align="center">
   <strong>English</strong> ·
-  <a href="docs/README.ja.md">日本語</a> ·
-  <a href="docs/README.zh-TW.md">繁體中文</a>
+  <a href="docs/translations/README.ja.md">日本語</a> ·
+  <a href="docs/translations/README.zh-TW.md">繁體中文</a>
 </p>
 
 <p align="center">
@@ -112,7 +112,7 @@ Restoring a read-only chat window would solve only half the problem. The overlay
 
 - Post comments and Super Chats directly from the overlay without leaving fullscreen
 - Works with both live streams and archived streams with chat replay
-- Optional "Show When Idle" mode keeps the overlay visible when controls are inactive
+- "Show When Idle" keeps the overlay visible while player controls are hidden — on by default, and switchable to auto-hide
 
 ### 🎨 Style & Appearance
 
@@ -128,7 +128,7 @@ Restoring a read-only chat window would solve only half the problem. The overlay
 
 ### 🌐 Internationalization
 
-- 55 languages supported, including RTL layout for Arabic, Hebrew, and Farsi
+- 55 locales covering 49 languages, including RTL layout for Arabic, Hebrew, and Farsi
 
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd">
@@ -147,12 +147,12 @@ The extension serves 20,000+ Chrome viewers, but the YouTube page beneath it nev
 
 - Cross-browser Chrome and Firefox builds from one WXT codebase
 - React 19, TypeScript, Jotai, and Tailwind CSS v4
-- 55 generated locales with RTL support
+- 55 generated locales covering 49 languages, with RTL support
 - Pure chat-source decisions separated from YouTube DOM side effects
 - Unit, contract, deterministic Playwright E2E, visual, accessibility, and live canary coverage
 - Explicit handling of SPA navigation, DOM replacement, live chat, and archive replay
 - Versioned settings migration and synchronization across extension contexts
-- Release artifacts rebuilt and verified before Chrome and Firefox publication
+- Release artifacts built once, hash-proven, and published without a rebuild
 - Minimal permissions and no personal-data collection
 
 The runtime boundaries, test strategy, settings ownership, and release safeguards are documented in [Engineering YouTube Live Chat Fullscreen](docs/engineering.md).
@@ -172,44 +172,72 @@ The runtime boundaries, test strategy, settings ownership, and release safeguard
 
 ### Runtime Overview
 
-![Architecture diagram showing content script, popup, and background service worker communication](./.github/system_overview.drawio.png)
+The browser shows one extension, but three runtime entrypoints do the work. There is no background service worker.
 
-The browser shows one extension, but two runtime entrypoints do the work. The content script owns YouTube-facing behavior; the popup owns viewer controls. They communicate through the browser's `tabs` and `runtime` messaging APIs, while shared modules keep settings and UI contracts consistent.
+```mermaid
+flowchart LR
+  subgraph Y["YouTube page"]
+    CS["Content script<br/>overlay · chat iframe lease<br/>· player layout"]
+  end
+  P["Popup<br/>on/off · language · theme<br/>· export/import"]
+  S["Settings page<br/>settings.html in an<br/>extension iframe"]
+  ST[("browser.storage.local<br/>versioned envelopes")]
+
+  CS <-->|watch / write| ST
+  P <-->|watch / write| ST
+  S <-->|watch / write| ST
+  S -.->|postMessage:<br/>diagnostics · restart · close| CS
+```
 
 | Component | Role |
 | --- | --- |
-| **Content Script** | Injected into YouTube pages. Renders the chat overlay, handles drag/resize, and manages chat source resolution (live vs. archive). |
-| **Popup** | Extension toolbar UI. Controls language, enable/disable toggle, and theme. Syncs state to the content script in real time. |
-| **Shared** | Common modules used by both entrypoints — Jotai state, generated i18n assets, UI components, theme, and utility functions. |
+| **Content script** | Injected into YouTube pages. Renders the chat overlay, handles drag and resize, and resolves the chat source (live vs. archive vs. none). |
+| **Popup** | Extension toolbar UI. Enable/disable, language, theme, and settings export/import. |
+| **Settings page** | A separate `settings.html` entrypoint displayed through an extension iframe over the player. It has its own React root and state store. |
+| **Shared** | Modules used by all three — settings repository and migration, Jotai state, generated i18n assets, UI components, and theme. |
+
+The three contexts do not exchange `tabs` or `runtime` messages. Each writes a versioned envelope carrying a writer identifier to extension storage, and watchers in the other contexts pick up the change while ignoring their own writes. The settings iframe additionally uses `window.postMessage` for the three things storage cannot carry: requesting a diagnostic report, restarting the chat runtime, and closing itself.
 
 ### Chat Source Resolution
 
-Live and archived streams look similar in the player, but their chat sources are not interchangeable. A live stream can use a public `live_chat` URL. An archive depends on YouTube's playable `live_chat_replay` iframe; when replay is unavailable, the extension hides the switch instead of offering a broken overlay.
+Live and archived streams look similar in the player, but their chat sources are not interchangeable. Where possible the extension **borrows YouTube's own chat iframe** rather than creating one, because that preserves YouTube-owned authentication, comment posting, and Super Chat. A created iframe is a live-only fallback.
 
 | Video state | Chat source | Switch / Overlay |
 | --- | --- | --- |
-| Live stream | Public `live_chat?v=<videoId>` | Available |
-| Archive with replay | Native `live_chat_replay` iframe | Available when replay is playable |
+| Live stream, native chat present | Borrowed native `live_chat` iframe | Available |
+| Live stream, no native iframe | Created `live_chat?v=<videoId>` iframe | Available |
+| Archive with replay | Borrowed native `live_chat_replay` iframe | Available when replay is playable |
 | No chat / replay unavailable | None | Hidden |
+
+Resolution is not always terminal. While a video is loading, or when an archive's chat panel exists but is not yet playable, the runtime holds a *pending* state in which the switch may be visible before the overlay can mount.
 
 ### Project Structure
 
 ```
 entrypoints/
 ├── content/          # Content script (injected into YouTube)
-│   ├── chat/         # Chat source resolution (live / archive)
-│   ├── features/     # UI features (Draggable, Iframe, Settings, Switch)
-│   └── hooks/        # Content-specific React hooks
+│   ├── bootstrap/    # Route gate, session lifecycle, scope ownership
+│   ├── platform/     # YouTube compatibility adapter and selector catalog
+│   ├── runtime/      # Chat decision, pure runtime model, reconciler
+│   │   └── resources/  # The four leases that own page mutations
+│   ├── overlay/      # Overlay frame, geometry, drag/resize, safe-area placement
+│   ├── features/     # Iframe styling, settings panel, player switch
+│   ├── style/        # Style patch compilation and injection
+│   ├── diagnostics/  # Runtime trace, failure codes, sanitized reports
+│   └── settings/     # Host side of the settings iframe
 ├── popup/            # Popup UI (extension toolbar)
-│   ├── components/   # Popup-specific components
-│   └── utils/        # Popup utilities
-shared/               # Shared across entrypoints
-├── state/            # Jotai state and write-only commands
-├── i18n/             # 50+ language assets
+└── settings/         # settings.html — the full settings application
+shared/               # Shared across all three entrypoints
+├── settings/         # Storage repository, migration, geometry model, backup
+├── state/            # Jotai atoms and write-only commands
+├── runtime/          # Per-context app runtime bootstrap
+├── i18n/             # 55 locale assets and the generated artifacts
 ├── components/       # Shared UI components
-├── theme/            # Theme configuration
+├── styles/           # Theme tokens
 └── hooks/            # Shared React hooks
 ```
+
+The architecture is documented in depth under [`docs/architecture/`](docs/architecture/).
 
 </details>
 
@@ -217,8 +245,9 @@ shared/               # Shared across entrypoints
 
 ### Requirements
 
-- **[Node.js](https://nodejs.org)** v24.x
+- **[Node.js](https://nodejs.org)** v24.x — pinned in `mise.toml`, so [mise](https://mise.jdx.dev) users get it automatically
 - **[Yarn](https://yarnpkg.com)** (via Corepack recommended)
+- A Playwright browser, if you plan to run E2E tests: `yarn playwright install --with-deps chromium`
 
 ### Install
 
@@ -235,12 +264,19 @@ yarn install
 | --- | --- |
 | `yarn dev` | Start dev server (Chrome) |
 | `yarn build` | Production build (Chrome) |
-| `yarn check` | Read-only Biome checks + TypeScript type checks |
+| `yarn check` | Biome, TypeScript, and four contract verifiers (see below) |
 | `yarn fix` | Apply safe Biome formatting and lint fixes |
-| `yarn test:unit` | Run unit tests |
-| `yarn e2e` | Run E2E tests |
+| `yarn test:unit` | All three Vitest projects: core, dom, contracts |
+| `yarn test:coverage` | Unit tests with the coverage thresholds CI enforces |
+| `yarn e2e` | Deterministic Playwright fixtures — the pull-request gate |
+| `yarn test:visual` | Visual regression project |
+| `yarn test:accessibility` | Accessibility project |
+| `yarn test:package` | Build, package, and verify the production ZIPs |
+| `yarn locales:check` | Verify generated locale artifacts are current |
 
-> For Firefox, append `:firefox` — e.g. `yarn dev:firefox`, `yarn build:firefox`.
+> `yarn dev`, `yarn build`, and `yarn zip` have `:firefox` variants. The other commands do not.
+
+`yarn check` is not only a linter. It runs Biome and `tsc --noEmit`, then four verifiers that enforce the release workflow shape, the runtime architecture contract, the 55 store listing manuscripts, and generated locale freshness. If it fails with a message like `Runtime architecture contract failed`, one of those is why — see [`docs/architecture/content-runtime.md`](docs/architecture/content-runtime.md) for the rule list.
 
 ### Quality Checks
 
@@ -252,7 +288,16 @@ yarn test:unit
 yarn build
 ```
 
-For Firefox compatibility changes, also run `yarn build:firefox`.
+For Firefox compatibility changes, also run `yarn build:firefox`. For runtime behavior changes, run the relevant Playwright project. [CONTRIBUTING.md](CONTRIBUTING.md) lists the gates CI applies that these three commands do not reproduce.
+
+### Documentation
+
+| Document | For |
+| --- | --- |
+| [Documentation index](docs/README.md) | Everything, grouped by audience |
+| [Engineering overview](docs/engineering.md) | Architecture, vocabulary, and where to change things |
+| [Test contracts](docs/testing/contracts.md) | Which test layer proves which boundary |
+| [Troubleshooting](docs/troubleshooting.md) | User-facing fixes |
 
 ## Contributing
 
