@@ -5,7 +5,9 @@
         "preset": "Šablonas",
         "setting": "Nustatymai",
         "undo": "Anuliuoti stiliaus pakeitimą",
-        "redo": "Pakartoti stiliaus pakeitimą"
+        "redo": "Pakartoti stiliaus pakeitimą",
+        "undone": "Stiliaus pakeitimas anuliuotas",
+        "redone": "Stiliaus pakeitimas pakartotas"
       },
       "alwaysOnDisplay": "Rodyti pokalbį neaktyvumo metu",
       "chatOnlyDisplay": "Rodyti tik pokalbį",
@@ -15,13 +17,14 @@
       "backgroundColor": "Fono spalva",
       "fontColor": "Teksto spalva",
       "fontFamily": "Šriftas",
+      "fontFamilyDefault": "Numatytasis",
+      "fontSearch": "Ieškoti šriftų",
+      "fontNotFound": "Atitinkančių šriftų nerasta",
       "fontSize": "Šrifto dydis",
       "blur": "Suliejimas",
       "space": "Tarpai",
       "footer": {
-        "donate": "Paaukoti",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Paaukoti"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tamsi"
       },
       "membershipNameColor": "Narių vardų spalva",
-      "defaultColor": "Numatytoji",
       "resetToDefaultColor": "Atkurti numatytąją spalvą",
       "group": {
         "display": "Matomumas",
@@ -46,7 +48,7 @@
       "failed": "Aptikta suderinamumo problema",
       "waiting": "Renkami diagnostikos duomenys",
       "lastRecovery": "Paskutinis automatinis atkūrimas",
-      "restart": "Iš naujo paleisti plėtinį",
+      "restart": "Iš naujo įkelti pokalbį",
       "copy": "Kopijuoti diagnostikos ataskaitą",
       "copied": "Diagnostikos ataskaita nukopijuota",
       "copyFailed": "Nepavyko nukopijuoti diagnostikos ataskaitos"
@@ -57,10 +59,13 @@
       "openSettings": "Atidaryti nustatymus",
       "toggleLiveChat": "Rodyti arba slėpti tiesioginį pokalbį",
       "close": "Uždaryti",
-      "reorderPreset": "Perkelti šabloną",
+      "dragHandle": "vilkimo rankenėlė",
+      "settingsFrameTitle": "Viso ekrano pokalbio nustatymai",
+      "reorderPreset": "Perkelti šabloną „{name}“",
       "presetName": "Šablono pavadinimas",
-      "applyPreset": "Taikyti šabloną",
-      "deletePreset": "Ištrinti šabloną",
+      "applyPreset": "Taikyti šabloną „{name}“",
+      "deletePreset": "Ištrinti šabloną „{name}“",
+      "presetMoved": "Šablonas „{name}“ perkeltas į {position} vietą",
       "colorPicker": "Spalvų parinkiklis",
       "loading": "Įkeliama",
       "selectLanguage": "Pasirinkti kalbą",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Pokalbis visame ekrane",
     "links": "Nuorodos",
     "donate": "Paaukoti",
+    "donateAction": "Paremti per „Ko-fi“",
     "theme": "Tema",
     "dataTransfer": "Atsarginė kopija",
     "export": "Eksportuoti",

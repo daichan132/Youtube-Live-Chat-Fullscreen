@@ -311,6 +311,8 @@ Read [CONTRIBUTING.md](CONTRIBUTING.md) for setup, validation, translation, scre
 
 ## Support
 
+Something not working? [Troubleshooting](docs/troubleshooting.md) covers the switch not appearing, the Opera checks, and how to send a sanitized diagnostic report.
+
 If chat stayed beside the stream when you needed it, a star helps more viewers discover the extension and supports its continued maintenance.
 
 <p>

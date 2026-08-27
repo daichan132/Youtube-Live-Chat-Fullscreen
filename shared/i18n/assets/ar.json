@@ -5,7 +5,9 @@
         "preset": "الإعدادات المسبقة",
         "setting": "الإعدادات",
         "undo": "التراجع عن تغيير التنسيق",
-        "redo": "إعادة تطبيق تغيير التنسيق"
+        "redo": "إعادة تطبيق تغيير التنسيق",
+        "undone": "تم التراجع عن تغيير التنسيق",
+        "redone": "تمت إعادة تطبيق تغيير التنسيق"
       },
       "alwaysOnDisplay": "عرض الدردشة عند عدم التفاعل",
       "chatOnlyDisplay": "وضع الدردشة فقط",
@@ -15,13 +17,14 @@
       "backgroundColor": "لون الخلفية",
       "fontColor": "لون النص",
       "fontFamily": "الخط",
+      "fontFamilyDefault": "افتراضي",
+      "fontSearch": "البحث عن الخطوط",
+      "fontNotFound": "لا توجد خطوط مطابقة لبحثك",
       "fontSize": "حجم النص",
       "blur": "تمويه",
       "space": "المسافة بين الرسائل",
       "footer": {
-        "donate": "تبرّع",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "تبرّع"
       },
       "theme": "المظهر",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "داكن"
       },
       "membershipNameColor": "لون أسماء الأعضاء",
-      "defaultColor": "افتراضي",
       "resetToDefaultColor": "استعادة اللون الافتراضي",
       "group": {
         "display": "العرض",
@@ -46,7 +48,7 @@
       "failed": "اكتُشفت مشكلة في التوافق",
       "waiting": "جارٍ جمع بيانات التشخيص",
       "lastRecovery": "آخر استعادة تلقائية",
-      "restart": "إعادة تشغيل الإضافة",
+      "restart": "إعادة تحميل الدردشة",
       "copy": "نسخ تقرير التشخيص",
       "copied": "تم نسخ تقرير التشخيص",
       "copyFailed": "تعذّر نسخ تقرير التشخيص"
@@ -57,10 +59,13 @@
       "openSettings": "فتح الإعدادات",
       "toggleLiveChat": "إظهار الدردشة المباشرة أو إخفاؤها",
       "close": "إغلاق",
-      "reorderPreset": "نقل الإعداد المسبق",
+      "dragHandle": "مقبض السحب",
+      "settingsFrameTitle": "إعدادات الدردشة في وضع ملء الشاشة",
+      "reorderPreset": "نقل {name}",
       "presetName": "اسم الإعداد المسبق",
-      "applyPreset": "تطبيق الإعداد المسبق",
-      "deletePreset": "حذف الإعداد المسبق",
+      "applyPreset": "تطبيق {name}",
+      "deletePreset": "حذف {name}",
+      "presetMoved": "تم نقل {name} إلى الموضع {position}",
       "colorPicker": "منتقي الألوان",
       "loading": "جارٍ التحميل",
       "selectLanguage": "اختيار اللغة",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "الدردشة في وضع ملء الشاشة",
     "links": "الروابط",
     "donate": "تبرّع",
+    "donateAction": "الدعم عبر Ko-fi",
     "theme": "المظهر",
     "dataTransfer": "النسخ الاحتياطي",
     "export": "تصدير",

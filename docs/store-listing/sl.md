@@ -4,10 +4,10 @@ GLAVNE MOŽNOSTI
 - Mesto in velikost: ploščo povlečeš kamor koli nad predvajalnik, raztegneš jo za katero koli stranico ali vogal. Oboje si zapomni glede na predvajalnik, zato postavitev, sestavljena na prenosniku, ustreza tudi 32-palčnemu zaslonu.
 - Besedilo: od 10 do 40 px (privzeto 13 px; 40 px je približno trikrat več od običajnega besedila v klepetu), svoja barva in ločena za imena članov, 50 pisav.
 - Ozadje: na začetku neprosojno belo; barvo in prosojnost izbereš v isti paleti, zraven pa »Zameglitev« od 0 do 20 px — prav ta nastavitev najlaže odnese tekočnost, zato na starejšem računalniku ne pretiravaj.
-- Vidnost: »Prikaži klepet med nedejavnostjo« je vklopljeno že od začetka, zato sporočila ostanejo na zaslonu tudi potem, ko kontrolniki izginejo; ob njem »Prikaži samo klepet« pusti gola sporočila, dokler nanje ne pelješ kazalca.
+- Vidnost: »Prikaži klepet med nedejavnostjo« je vklopljeno že od začetka, zato sporočila ostanejo na zaslonu tudi potem, ko kontrolniki izginejo; ob njem »Prikaži samo klepet« zloži glavo in polje za pisanje, dokler nanje ne pelješ kazalca.
 - Imena in razmik: »Prikaži uporabniška imena« in »Prikaži profilne slike« lahko za navadna sporočila izklopiš (plačana jih obdržijo); »Razmik« gre od 0 do 40 px.
 - Prednastavitve: sedem vgrajenih, vsaka z enim klikom, poleg njih tvoje lastne.
-- Tipkovnica: drsniki in izbirniki barv se odzivajo na puščice, vsak kontrolnik ima oznako za bralnik zaslona; miško potrebujeta le vrsta gumbov, ki se pokaže ob prehodu z miško, in spreminjanje velikosti. Samodejni pregledi WCAG 2.1 AA tečejo ob vsaki spremembi kode.
+- Tipkovnica: drsniki in izbirniki barv se odzivajo na puščice, vsak kontrolnik ima oznako za bralnik zaslona; miško potrebujejo le priklic vrste gumbov, vrnitev tega, kar »Prikaži samo klepet« zloži, in spreminjanje velikosti. Samodejni pregledi WCAG 2.1 AA ob vsaki spremembi kode zajamejo pojavno okno, vrsto gumbov in ploščo nastavitev.
 
 NI POSNEMOVALEC — TO JE YOUTUBOV KLEPET
 Plošča nad videom je tisti isti YouTubov klepet v živo iz stranske vrstice, le drugače oblečen, zato značke, emojiji, nalepke in klepet samo za člane delujejo kot vedno. Sporočila gredo skozi YouTubovo polje za pisanje, Super Chat pa skozi YouTubovo ploščo za nakup: plačilo prevzame YouTube, nikoli razširitev. Edino, kar razširitev tam spremeni, je gumb za včlanitev (»Membership«): odpre kanalovo stran za pristop v novem zavihku.
@@ -20,7 +20,7 @@ Nobene analitike, nobenega sledenja, do razvijalca ne pride nič: kar prebereš 
 KAKO ZAČNEŠ
 1. Namesti razširitev in odpri prenos v živo ali posnetek, ki ima ponovitev klepeta.
 2. Predvajalnik razpri čez cel zaslon — klepet je že tam.
-3. Gumb z oblačkom v vrstici s kontrolniki ga izklopi in vklopi, gumb nastavitev pa spremeni videz.
+3. Gumb z oblačkom v vrstici s kontrolniki ga izklopi in vklopi, s kazalcem pa pelji čez klepet in njegov lastni gumb nastavitev spremeni videz.
 
 KJE TEČE
 Samo na računalniku, samo na celem zaslonu in samo na strani za ogled, ki ima klepet. Ta različica za Chrome teče tudi v brskalniku Opera; Firefox ima svojo različico na addons.mozilla.org. Jezik vmesnika izbereš neodvisno od brskalnika: 55 možnosti za 49 jezikov.

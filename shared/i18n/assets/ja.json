@@ -5,7 +5,9 @@
         "preset": "プリセット",
         "setting": "設定",
         "undo": "スタイル変更を元に戻す",
-        "redo": "スタイル変更をやり直す"
+        "redo": "スタイル変更をやり直す",
+        "undone": "スタイル変更を元に戻しました",
+        "redone": "スタイル変更をやり直しました"
       },
       "group": {
         "display": "表示",
@@ -21,13 +23,14 @@
       "backgroundColor": "背景色",
       "fontColor": "文字色",
       "fontFamily": "フォントファミリー",
+      "fontFamilyDefault": "既定",
+      "fontSearch": "書体を検索",
+      "fontNotFound": "一致する書体がありません",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
       "space": "間隔",
       "footer": {
-        "donate": "寄付",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "寄付"
       },
       "theme": "テーマ",
       "themeMode": {
@@ -36,7 +39,6 @@
         "dark": "ダーク"
       },
       "membershipNameColor": "メンバー名の色",
-      "defaultColor": "既定",
       "resetToDefaultColor": "既定色に戻す"
     },
     "diagnostics": {
@@ -46,7 +48,7 @@
       "failed": "互換性の問題を検出",
       "waiting": "診断情報を収集中",
       "lastRecovery": "前回の自己回復",
-      "restart": "拡張機能を再起動",
+      "restart": "チャットを再読み込み",
       "copy": "診断レポートをコピー",
       "copied": "診断レポートをコピーしました",
       "copyFailed": "診断レポートをコピーできませんでした"
@@ -57,10 +59,13 @@
       "openSettings": "設定を開く",
       "toggleLiveChat": "ライブチャットの切り替え",
       "close": "閉じる",
-      "reorderPreset": "プリセットの並び替え",
+      "dragHandle": "ドラッグハンドル",
+      "settingsFrameTitle": "全画面チャットの設定",
+      "reorderPreset": "{name}を並び替え",
       "presetName": "プリセット名",
-      "applyPreset": "プリセットを適用",
-      "deletePreset": "プリセットを削除",
+      "applyPreset": "{name}を適用",
+      "deletePreset": "{name}を削除",
+      "presetMoved": "{name}を{position}番目に移動しました",
       "colorPicker": "カラーピッカー",
       "loading": "読み込み中",
       "selectLanguage": "言語を選択",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "全画面チャット",
     "links": "リンク",
     "donate": "寄付",
+    "donateAction": "Ko-fiで支援",
     "theme": "テーマ",
     "dataTransfer": "バックアップ",
     "export": "書き出し",

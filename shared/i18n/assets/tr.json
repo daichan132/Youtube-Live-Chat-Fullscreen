@@ -5,7 +5,9 @@
         "preset": "Ön ayar",
         "setting": "Ayarlar",
         "undo": "Stil değişikliğini geri al",
-        "redo": "Stil değişikliğini yinele"
+        "redo": "Stil değişikliğini yinele",
+        "undone": "Stil değişikliği geri alındı",
+        "redone": "Stil değişikliği yinelendi"
       },
       "alwaysOnDisplay": "Etkin değilken sohbeti göster",
       "chatOnlyDisplay": "Yalnızca sohbet",
@@ -15,13 +17,14 @@
       "backgroundColor": "Arka plan rengi",
       "fontColor": "Metin rengi",
       "fontFamily": "Yazı tipi",
+      "fontFamilyDefault": "Varsayılan",
+      "fontSearch": "Yazı tipi ara",
+      "fontNotFound": "Aramanızla eşleşen yazı tipi yok",
       "fontSize": "Metin boyutu",
       "blur": "Bulanıklık",
       "space": "Mesaj aralığı",
       "footer": {
-        "donate": "Bağış yap",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Bağış yap"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Koyu"
       },
       "membershipNameColor": "Üye adlarının rengi",
-      "defaultColor": "Varsayılan",
       "resetToDefaultColor": "Varsayılan renge döndür",
       "group": {
         "display": "Görünüm",
@@ -46,7 +48,7 @@
       "failed": "Uyumluluk sorunu algılandı",
       "waiting": "Tanılama bilgileri toplanıyor",
       "lastRecovery": "Son otomatik kurtarma",
-      "restart": "Uzantıyı yeniden başlat",
+      "restart": "Sohbet kaplamasını yeniden yükle",
       "copy": "Tanılama raporunu kopyala",
       "copied": "Tanılama raporu kopyalandı",
       "copyFailed": "Tanılama raporu kopyalanamadı"
@@ -57,10 +59,13 @@
       "openSettings": "Ayarları aç",
       "toggleLiveChat": "Canlı sohbeti göster veya gizle",
       "close": "Kapat",
-      "reorderPreset": "Ön ayarı taşı",
+      "dragHandle": "sürükleme tutamacı",
+      "settingsFrameTitle": "Tam ekran sohbet ayarları",
+      "reorderPreset": "{name} ön ayarını taşı",
       "presetName": "Ön ayar adı",
-      "applyPreset": "Ön ayarı uygula",
-      "deletePreset": "Ön ayarı sil",
+      "applyPreset": "{name} ön ayarını uygula",
+      "deletePreset": "{name} ön ayarını sil",
+      "presetMoved": "{name} {position}. sıraya taşındı",
       "colorPicker": "Renk seçici",
       "loading": "Yükleniyor",
       "selectLanguage": "Dil seçin",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Tam ekran sohbeti",
     "links": "Bağlantılar",
     "donate": "Bağış yap",
+    "donateAction": "Ko-fi'de destek ol",
     "theme": "Tema",
     "dataTransfer": "Yedekleme",
     "export": "Dışa aktar",

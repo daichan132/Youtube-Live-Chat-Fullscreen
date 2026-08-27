@@ -5,7 +5,9 @@
         "preset": "Voreinstellungen",
         "setting": "Einstellungen",
         "undo": "Stiländerung rückgängig machen",
-        "redo": "Stiländerung wiederholen"
+        "redo": "Stiländerung wiederholen",
+        "undone": "Stiländerung rückgängig gemacht",
+        "redone": "Stiländerung wiederholt"
       },
       "alwaysOnDisplay": "Chat bei Inaktivität anzeigen",
       "chatOnlyDisplay": "Nur Chat anzeigen",
@@ -15,13 +17,14 @@
       "backgroundColor": "Hintergrundfarbe",
       "fontColor": "Textfarbe",
       "fontFamily": "Schriftart",
+      "fontFamilyDefault": "Standardschrift",
+      "fontSearch": "Schriftarten suchen",
+      "fontNotFound": "Keine passende Schriftart gefunden",
       "fontSize": "Schriftgröße",
       "blur": "Unschärfe",
       "space": "Abstand",
       "footer": {
-        "donate": "Spenden",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Spenden"
       },
       "theme": "Design",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Dunkel"
       },
       "membershipNameColor": "Farbe der Mitgliedsnamen",
-      "defaultColor": "Standard",
       "resetToDefaultColor": "Auf Standardfarbe zurücksetzen",
       "group": {
         "display": "Anzeige",
@@ -46,7 +48,7 @@
       "failed": "Kompatibilitätsproblem erkannt",
       "waiting": "Diagnosedaten werden erfasst",
       "lastRecovery": "Letzte automatische Wiederherstellung",
-      "restart": "Erweiterung neu starten",
+      "restart": "Chat-Overlay neu laden",
       "copy": "Diagnosebericht kopieren",
       "copied": "Der Diagnosebericht wurde kopiert.",
       "copyFailed": "Der Diagnosebericht konnte nicht kopiert werden."
@@ -57,10 +59,13 @@
       "openSettings": "Einstellungen öffnen",
       "toggleLiveChat": "Livechat ein- oder ausblenden",
       "close": "Schließen",
-      "reorderPreset": "Voreinstellung neu anordnen",
+      "dragHandle": "Ziehpunkt",
+      "settingsFrameTitle": "Einstellungen für den Vollbild-Chat",
+      "reorderPreset": "{name} neu anordnen",
       "presetName": "Name der Voreinstellung",
-      "applyPreset": "Voreinstellung anwenden",
-      "deletePreset": "Voreinstellung löschen",
+      "applyPreset": "{name} anwenden",
+      "deletePreset": "{name} löschen",
+      "presetMoved": "{name} an Position {position} verschoben",
       "colorPicker": "Farbauswahl",
       "loading": "Wird geladen",
       "selectLanguage": "Sprache auswählen",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Vollbild-Chat",
     "links": "Links",
     "donate": "Spenden",
+    "donateAction": "Auf Ko-fi unterstützen",
     "theme": "Design",
     "dataTransfer": "Datensicherung",
     "export": "Exportieren",

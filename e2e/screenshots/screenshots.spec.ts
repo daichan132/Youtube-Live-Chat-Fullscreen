@@ -128,7 +128,8 @@ test.describe
       // Seek to cinematic frame and freeze
       await seekVideo(page, SCREENSHOT_FRAME_SECONDS)
       await pauseVideo(page)
-      await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
+      const repositioned = await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
+      expect(repositioned, 'Overlay should be repositioned').toBe(true)
 
       // chatOnlyDisplay: move pointer away and wait for chat chrome + controls auto-hide
       await movePointerAwayFromOverlay(page)
@@ -203,7 +204,8 @@ test.describe
       // Seek to cinematic frame and freeze
       await seekVideo(page, SCREENSHOT_FRAME_SECONDS)
       await pauseVideo(page)
-      await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
+      const repositioned = await repositionOverlay(page, OVERLAY_COORDINATES, OVERLAY_SIZE)
+      expect(repositioned, 'Overlay should be repositioned').toBe(true)
 
       // chatOnlyDisplay: move pointer away and wait for chat chrome + controls auto-hide
       await movePointerAwayFromOverlay(page)

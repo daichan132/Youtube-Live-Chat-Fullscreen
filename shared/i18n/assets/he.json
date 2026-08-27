@@ -5,7 +5,9 @@
         "preset": "הגדרות קבועות מראש",
         "setting": "הגדרות",
         "undo": "ביטול שינוי העיצוב",
-        "redo": "ביצוע מחדש של שינוי העיצוב"
+        "redo": "ביצוע מחדש של שינוי העיצוב",
+        "undone": "שינוי העיצוב בוטל",
+        "redone": "שינוי העיצוב בוצע מחדש"
       },
       "alwaysOnDisplay": "הצגת הצ׳אט כשאין פעילות",
       "chatOnlyDisplay": "מצב צ׳אט בלבד",
@@ -15,13 +17,14 @@
       "backgroundColor": "צבע רקע",
       "fontColor": "צבע טקסט",
       "fontFamily": "גופן",
+      "fontFamilyDefault": "ברירת מחדל",
+      "fontSearch": "חיפוש גופנים",
+      "fontNotFound": "לא נמצאו גופנים תואמים",
       "fontSize": "גודל טקסט",
       "blur": "טשטוש",
       "space": "מרווח בין הודעות",
       "footer": {
-        "donate": "תרומה",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "תרומה"
       },
       "theme": "ערכת נושא",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "כהה"
       },
       "membershipNameColor": "צבע שמות החברים",
-      "defaultColor": "ברירת מחדל",
       "resetToDefaultColor": "שחזור צבע ברירת המחדל",
       "group": {
         "display": "תצוגה",
@@ -46,7 +48,7 @@
       "failed": "זוהתה בעיית תאימות",
       "waiting": "באיסוף נתוני אבחון",
       "lastRecovery": "התאוששות עצמית אחרונה",
-      "restart": "הפעלה מחדש של התוסף",
+      "restart": "טעינה מחדש של הצ׳אט",
       "copy": "העתקת דוח האבחון",
       "copied": "דוח האבחון הועתק",
       "copyFailed": "העתקת דוח האבחון נכשלה"
@@ -57,10 +59,13 @@
       "openSettings": "פתיחת הגדרות",
       "toggleLiveChat": "הצגה או הסתרה של הצ׳אט החי",
       "close": "סגירה",
-      "reorderPreset": "הזזת ההגדרה הקבועה מראש",
+      "dragHandle": "ידית גרירה",
+      "settingsFrameTitle": "הגדרות הצ׳אט במסך מלא",
+      "reorderPreset": "הזזת {name}",
       "presetName": "שם ההגדרה הקבועה מראש",
-      "applyPreset": "החלת ההגדרה הקבועה מראש",
-      "deletePreset": "מחיקת ההגדרה הקבועה מראש",
+      "applyPreset": "החלת {name}",
+      "deletePreset": "מחיקת {name}",
+      "presetMoved": "{name} הועברה למקום {position}",
       "colorPicker": "בורר צבעים",
       "loading": "בטעינה",
       "selectLanguage": "בחירת שפה",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "צ׳אט במסך מלא",
     "links": "קישורים",
     "donate": "תרומה",
+    "donateAction": "תמיכה ב־Ko-fi",
     "theme": "ערכת נושא",
     "dataTransfer": "גיבוי",
     "export": "ייצוא",

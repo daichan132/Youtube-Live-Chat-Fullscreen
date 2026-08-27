@@ -5,7 +5,9 @@
         "preset": "Préréglage",
         "setting": "Paramètres",
         "undo": "Annuler la modification du style",
-        "redo": "Rétablir la modification du style"
+        "redo": "Rétablir la modification du style",
+        "undone": "Modification du style annulée",
+        "redone": "Modification du style rétablie"
       },
       "alwaysOnDisplay": "Afficher le chat en cas d’inactivité",
       "chatOnlyDisplay": "Afficher uniquement le chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Couleur d'arrière-plan",
       "fontColor": "Couleur du texte",
       "fontFamily": "Police",
+      "fontFamilyDefault": "Par défaut",
+      "fontSearch": "Rechercher une police",
+      "fontNotFound": "Aucune police ne correspond à votre recherche",
       "fontSize": "Taille de la police",
       "blur": "Flou",
       "space": "Espacement",
       "footer": {
-        "donate": "Faire un don",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Faire un don"
       },
       "theme": "Thème",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Sombre"
       },
       "membershipNameColor": "Couleur des noms des membres",
-      "defaultColor": "Par défaut",
       "resetToDefaultColor": "Rétablir la couleur par défaut",
       "group": {
         "display": "Visibilité",
@@ -46,7 +48,7 @@
       "failed": "Problème de compatibilité détecté",
       "waiting": "Collecte des données de diagnostic en cours",
       "lastRecovery": "Dernière récupération automatique",
-      "restart": "Redémarrer l'extension",
+      "restart": "Recharger le chat",
       "copy": "Copier le rapport de diagnostic",
       "copied": "Le rapport de diagnostic a été copié",
       "copyFailed": "Impossible de copier le rapport de diagnostic"
@@ -57,10 +59,13 @@
       "openSettings": "Ouvrir les paramètres",
       "toggleLiveChat": "Afficher ou masquer le chat en direct",
       "close": "Fermer",
-      "reorderPreset": "Déplacer le préréglage",
+      "dragHandle": "poignée de déplacement",
+      "settingsFrameTitle": "Paramètres du chat en plein écran",
+      "reorderPreset": "Déplacer {name}",
       "presetName": "Nom du préréglage",
-      "applyPreset": "Appliquer le préréglage",
-      "deletePreset": "Supprimer le préréglage",
+      "applyPreset": "Appliquer {name}",
+      "deletePreset": "Supprimer {name}",
+      "presetMoved": "{name} déplacé à la position {position}",
       "colorPicker": "Sélecteur de couleur",
       "loading": "Chargement en cours",
       "selectLanguage": "Choisir la langue",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat en plein écran",
     "links": "Liens",
     "donate": "Faire un don",
+    "donateAction": "Soutenir sur Ko-fi",
     "theme": "Thème",
     "dataTransfer": "Sauvegarde",
     "export": "Exporter",

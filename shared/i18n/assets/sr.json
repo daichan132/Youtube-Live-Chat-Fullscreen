@@ -5,7 +5,9 @@
         "preset": "Шаблони",
         "setting": "Подешавања",
         "undo": "Опозови промену стила",
-        "redo": "Понови промену стила"
+        "redo": "Понови промену стила",
+        "undone": "Промена стила је опозвана",
+        "redone": "Промена стила је поновљена"
       },
       "alwaysOnDisplay": "Прикажи ћаскање током неактивности",
       "chatOnlyDisplay": "Прикажи само ћаскање",
@@ -15,13 +17,14 @@
       "backgroundColor": "Боја позадине",
       "fontColor": "Боја текста",
       "fontFamily": "Фонт",
+      "fontFamilyDefault": "Подразумевани",
+      "fontSearch": "Претражи фонтове",
+      "fontNotFound": "Нема фонтова који одговарају претрази",
       "fontSize": "Величина фонта",
       "blur": "Замућење",
       "space": "Размак",
       "footer": {
-        "donate": "Донирај",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Донирај"
       },
       "theme": "Тема",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Тамна"
       },
       "membershipNameColor": "Боја имена чланова",
-      "defaultColor": "Подразумевана",
       "resetToDefaultColor": "Врати подразумевану боју",
       "group": {
         "display": "Приказ",
@@ -46,7 +48,7 @@
       "failed": "Откривен је проблем компатибилности",
       "waiting": "Прикупљање дијагностичких података",
       "lastRecovery": "Последњи самостални опоравак",
-      "restart": "Поново покрени додатак",
+      "restart": "Поново учитај ћаскање",
       "copy": "Копирај дијагностички извештај",
       "copied": "Дијагностички извештај је копиран",
       "copyFailed": "Није могуће копирати дијагностички извештај"
@@ -57,10 +59,13 @@
       "openSettings": "Отвори подешавања",
       "toggleLiveChat": "Прикажи или сакриј ћаскање уживо",
       "close": "Затвори",
-      "reorderPreset": "Премести шаблон",
+      "dragHandle": "ручка за превлачење",
+      "settingsFrameTitle": "Подешавања ћаскања преко целог екрана",
+      "reorderPreset": "Премести шаблон „{name}“",
       "presetName": "Назив шаблона",
-      "applyPreset": "Примени шаблон",
-      "deletePreset": "Обриши шаблон",
+      "applyPreset": "Примени шаблон „{name}“",
+      "deletePreset": "Обриши шаблон „{name}“",
+      "presetMoved": "Шаблон „{name}“ је премештен на позицију {position}",
       "colorPicker": "Бирач боје",
       "loading": "Учитавање",
       "selectLanguage": "Изабери језик",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Ћаскање преко целог екрана",
     "links": "Везе",
     "donate": "Донирај",
+    "donateAction": "Подржи на Ko-fi",
     "theme": "Тема",
     "dataTransfer": "Резервна копија",
     "export": "Извези",

@@ -5,7 +5,9 @@
         "preset": "Forudindstilling",
         "setting": "Indstillinger",
         "undo": "Fortryd stilændring",
-        "redo": "Gentag stilændring"
+        "redo": "Gentag stilændring",
+        "undone": "Stilændringen blev fortrudt",
+        "redone": "Stilændringen blev gentaget"
       },
       "alwaysOnDisplay": "Vis chatten ved inaktivitet",
       "chatOnlyDisplay": "Vis kun chatten",
@@ -15,13 +17,14 @@
       "backgroundColor": "Baggrundsfarve",
       "fontColor": "Tekstfarve",
       "fontFamily": "Skrifttype",
+      "fontFamilyDefault": "Standardskrifttype",
+      "fontSearch": "Søg efter skrifttyper",
+      "fontNotFound": "Ingen skrifttyper matcher søgningen",
       "fontSize": "Skriftstørrelse",
       "blur": "Sløring",
       "space": "Mellemrum",
       "footer": {
-        "donate": "Donér",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donér"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Mørk"
       },
       "membershipNameColor": "Farve på medlemsnavne",
-      "defaultColor": "Standard",
       "resetToDefaultColor": "Gendan standardfarve",
       "group": {
         "display": "Visning",
@@ -46,7 +48,7 @@
       "failed": "Kompatibilitetsproblem fundet",
       "waiting": "Indsamler diagnosedata",
       "lastRecovery": "Seneste automatiske gendannelse",
-      "restart": "Genstart udvidelsen",
+      "restart": "Genindlæs chatten",
       "copy": "Kopiér diagnoserapport",
       "copied": "Diagnoserapporten er kopieret.",
       "copyFailed": "Diagnoserapporten kunne ikke kopieres."
@@ -57,10 +59,13 @@
       "openSettings": "Åbn indstillinger",
       "toggleLiveChat": "Vis eller skjul livechat",
       "close": "Luk",
-      "reorderPreset": "Flyt forudindstilling",
+      "dragHandle": "trækhåndtag",
+      "settingsFrameTitle": "Indstillinger for fuldskærmschat",
+      "reorderPreset": "Flyt {name}",
       "presetName": "Navn på forudindstilling",
-      "applyPreset": "Anvend forudindstilling",
-      "deletePreset": "Slet forudindstilling",
+      "applyPreset": "Anvend {name}",
+      "deletePreset": "Slet {name}",
+      "presetMoved": "{name} blev flyttet til position {position}",
       "colorPicker": "Farvevælger",
       "loading": "Indlæser",
       "selectLanguage": "Vælg sprog",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Fuldskærmschat",
     "links": "Links",
     "donate": "Donér",
+    "donateAction": "Støt på Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Sikkerhedskopi",
     "export": "Eksportér",

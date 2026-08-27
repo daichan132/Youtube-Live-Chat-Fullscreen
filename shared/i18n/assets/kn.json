@@ -5,7 +5,9 @@
         "preset": "ಪ್ರಿಸೆಟ್",
         "setting": "ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
         "undo": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ರದ್ದುಗೊಳಿಸಿ",
-        "redo": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ಮರುಮಾಡಿ"
+        "redo": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ಮರುಮಾಡಿ",
+        "undone": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ರದ್ದುಗೊಳಿಸಲಾಗಿದೆ",
+        "redone": "ಶೈಲಿ ಬದಲಾವಣೆಯನ್ನು ಮರುಮಾಡಲಾಗಿದೆ"
       },
       "alwaysOnDisplay": "ನಿಷ್ಕ್ರಿಯವಾಗಿರುವಾಗ ಚಾಟ್ ತೋರಿಸಿ",
       "chatOnlyDisplay": "ಚಾಟ್ ಮಾತ್ರ ತೋರಿಸಿ",
@@ -15,13 +17,14 @@
       "backgroundColor": "ಹಿನ್ನೆಲೆ ಬಣ್ಣ",
       "fontColor": "ಫಾಂಟ್ ಬಣ್ಣ",
       "fontFamily": "ಫಾಂಟ್ ಫ್ಯಾಮಿಲಿ",
+      "fontFamilyDefault": "ಡೀಫಾಲ್ಟ್",
+      "fontSearch": "ಫಾಂಟ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+      "fontNotFound": "ನಿಮ್ಮ ಹುಡುಕಾಟಕ್ಕೆ ಹೊಂದುವ ಫಾಂಟ್‌ಗಳಿಲ್ಲ",
       "fontSize": "ಫಾಂಟ್ ಗಾತ್ರ",
       "blur": "ಮಸುಕು",
       "space": "ಅಂತರ",
       "footer": {
-        "donate": "ದಾನ ಮಾಡಿ",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "ದಾನ ಮಾಡಿ"
       },
       "theme": "ಥೀಮ್",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "ಡಾರ್ಕ್"
       },
       "membershipNameColor": "ಸದಸ್ಯರ ಹೆಸರಿನ ಬಣ್ಣ",
-      "defaultColor": "ಡೀಫಾಲ್ಟ್",
       "resetToDefaultColor": "ಡಿಫಾಲ್ಟ್ ಬಣ್ಣಕ್ಕೆ ಮರುಹೊಂದಿಸಿ",
       "group": {
         "display": "ಪ್ರದರ್ಶನ",
@@ -46,7 +48,7 @@
       "failed": "ಹೊಂದಾಣಿಕೆ ಸಮಸ್ಯೆ ಪತ್ತೆಯಾಗಿದೆ",
       "waiting": "ಡಯಾಗ್ನೋಸ್ಟಿಕ್ ಮಾಹಿತಿ ಸಂಗ್ರಹಿಸಲಾಗುತ್ತಿದೆ",
       "lastRecovery": "ಕೊನೆಯ ಸ್ವಯಂ ಚೇತರಿಕೆ",
-      "restart": "ವಿಸ್ತರಣೆಯನ್ನು ಮರುಪ್ರಾರಂಭಿಸಿ",
+      "restart": "ಚಾಟ್ ಅನ್ನು ಮರುಲೋಡ್ ಮಾಡಿ",
       "copy": "ಡಯಾಗ್ನೋಸ್ಟಿಕ್ ವರದಿಯನ್ನು ನಕಲಿಸಿ",
       "copied": "ಡಯಾಗ್ನೋಸ್ಟಿಕ್ ವರದಿಯನ್ನು ನಕಲಿಸಲಾಗಿದೆ",
       "copyFailed": "ಡಯಾಗ್ನೋಸ್ಟಿಕ್ ವರದಿಯನ್ನು ನಕಲಿಸಲಾಗಲಿಲ್ಲ"
@@ -57,10 +59,13 @@
       "openSettings": "ಸೆಟ್ಟಿಂಗ್‌ಗಳನ್ನು ತೆರೆಯಿರಿ",
       "toggleLiveChat": "ಲೈವ್ ಚಾಟ್ ಟಾಗಲ್ ಮಾಡಿ",
       "close": "ಮುಚ್ಚಿ",
-      "reorderPreset": "ಪ್ರಿಸೆಟ್ ಕ್ರಮ ಬದಲಿಸಿ",
+      "dragHandle": "ಡ್ರ್ಯಾಗ್ ಹ್ಯಾಂಡಲ್",
+      "settingsFrameTitle": "ಫುಲ್‌ಸ್ಕ್ರೀನ್ ಚಾಟ್ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+      "reorderPreset": "{name} ಕ್ರಮ ಬದಲಿಸಿ",
       "presetName": "ಪ್ರಿಸೆಟ್ ಹೆಸರು",
-      "applyPreset": "ಪ್ರಿಸೆಟ್ ಅನ್ವಯಿಸಿ",
-      "deletePreset": "ಪ್ರಿಸೆಟ್ ಅಳಿಸಿ",
+      "applyPreset": "{name} ಅನ್ನು ಅನ್ವಯಿಸಿ",
+      "deletePreset": "{name} ಅನ್ನು ಅಳಿಸಿ",
+      "presetMoved": "{name} ಅನ್ನು {position}ನೇ ಸ್ಥಾನಕ್ಕೆ ಸರಿಸಲಾಗಿದೆ",
       "colorPicker": "ಬಣ್ಣ ಆಯ್ಕೆ",
       "loading": "ಲೋಡ್ ಆಗುತ್ತಿದೆ",
       "selectLanguage": "ಭಾಷೆ ಆಯ್ಕೆಮಾಡಿ",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "ಫುಲ್‌ಸ್ಕ್ರೀನ್ ಚಾಟ್",
     "links": "ಲಿಂಕ್‌ಗಳು",
     "donate": "ದಾನ ಮಾಡಿ",
+    "donateAction": "Ko-fi ನಲ್ಲಿ ಬೆಂಬಲಿಸಿ",
     "theme": "ಥೀಮ್",
     "dataTransfer": "ಬ್ಯಾಕಪ್",
     "export": "ರಫ್ತು",

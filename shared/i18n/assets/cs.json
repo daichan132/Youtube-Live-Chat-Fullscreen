@@ -5,7 +5,9 @@
         "preset": "Předvolby",
         "setting": "Nastavení",
         "undo": "Vrátit změnu stylu",
-        "redo": "Znovu provést změnu stylu"
+        "redo": "Znovu provést změnu stylu",
+        "undone": "Změna stylu byla vrácena",
+        "redone": "Změna stylu byla znovu provedena"
       },
       "alwaysOnDisplay": "Zobrazit chat při nečinnosti",
       "chatOnlyDisplay": "Zobrazit pouze chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Barva pozadí",
       "fontColor": "Barva textu",
       "fontFamily": "Písmo",
+      "fontFamilyDefault": "Výchozí",
+      "fontSearch": "Hledat písma",
+      "fontNotFound": "Žádné písmo neodpovídá hledání",
       "fontSize": "Velikost písma",
       "blur": "Rozostření",
       "space": "Rozestup",
       "footer": {
-        "donate": "Přispět",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Přispět"
       },
       "theme": "Motiv",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tmavý"
       },
       "membershipNameColor": "Barva jmen členů",
-      "defaultColor": "Výchozí",
       "resetToDefaultColor": "Vrátit výchozí barvu",
       "group": {
         "display": "Zobrazení",
@@ -46,7 +48,7 @@
       "failed": "Zjištěn problém s kompatibilitou",
       "waiting": "Načítání diagnostických údajů",
       "lastRecovery": "Poslední automatická obnova",
-      "restart": "Restartovat rozšíření",
+      "restart": "Znovu načíst překryv chatu",
       "copy": "Kopírovat diagnostickou zprávu",
       "copied": "Diagnostická zpráva byla zkopírována",
       "copyFailed": "Diagnostickou zprávu se nepodařilo zkopírovat"
@@ -57,10 +59,13 @@
       "openSettings": "Otevřít nastavení",
       "toggleLiveChat": "Zobrazit nebo skrýt živý chat",
       "close": "Zavřít",
-      "reorderPreset": "Změnit pořadí předvolby",
+      "dragHandle": "úchyt pro přetažení",
+      "settingsFrameTitle": "Nastavení chatu na celé obrazovce",
+      "reorderPreset": "Změnit pořadí: {name}",
       "presetName": "Název předvolby",
-      "applyPreset": "Použít předvolbu",
-      "deletePreset": "Smazat předvolbu",
+      "applyPreset": "Použít {name}",
+      "deletePreset": "Smazat {name}",
+      "presetMoved": "{name} přesunuto na pozici {position}",
       "colorPicker": "Výběr barvy",
       "loading": "Načítání",
       "selectLanguage": "Vybrat jazyk",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat na celou obrazovku",
     "links": "Odkazy",
     "donate": "Přispět",
+    "donateAction": "Podpořit na Ko-fi",
     "theme": "Motiv",
     "dataTransfer": "Záloha",
     "export": "Exportovat",

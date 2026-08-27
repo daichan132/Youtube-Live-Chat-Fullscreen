@@ -3,7 +3,7 @@ import { createStore } from 'jotai/vanilla'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import { chatSettingsStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { renderWithStore } from '@/shared/state/testUtils'
 import { PresetItem } from './PresetItem'
 
@@ -20,8 +20,10 @@ const findPresetCard = (input: HTMLInputElement) => {
 
 describe('PresetItem', () => {
   const store = createStore()
+  const untranslatedLocale = store.get(localeStateAtom)
   beforeEach(() => {
     store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
+    store.set(localeStateAtom, untranslatedLocale)
   })
 
   it('deletes a custom preset after confirmation', async () => {
@@ -52,6 +54,49 @@ describe('PresetItem', () => {
 
     expect((getByDisplayValue('content.preset.defaultTitle') as HTMLInputElement).readOnly).toBe(true)
     expect(queryByRole('button', { name: 'content.aria.deletePreset' })).toBeNull()
+  })
+
+  it('names the preset in every row control so rows do not announce identically', () => {
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...DEFAULT_CHAT_SETTINGS,
+      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Movie Night', profile }],
+    })
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: {
+        ...store.get(localeStateAtom).messages,
+        'content.aria.reorderPreset': 'Reorder {name}',
+        'content.aria.applyPreset': 'Apply {name}',
+        'content.aria.deletePreset': 'Delete {name}',
+      },
+    })
+
+    const { getByRole } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
+
+    expect(getByRole('button', { name: 'Reorder Movie Night' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'Apply Movie Night' })).toBeInTheDocument()
+    expect(getByRole('button', { name: 'Delete Movie Night' })).toBeInTheDocument()
+  })
+
+  it('falls back to the untitled label when a custom preset has no name left', () => {
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...DEFAULT_CHAT_SETTINGS,
+      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'blank', name: '', profile }],
+    })
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: {
+        ...store.get(localeStateAtom).messages,
+        'content.aria.applyPreset': 'Apply {name}',
+        'content.preset.addItemTitle': 'Untitled',
+      },
+    })
+
+    const { getByRole } = renderWithStore(<PresetItem id='blank' reorder={reorder} />, store)
+
+    expect(getByRole('button', { name: 'Apply Untitled' })).toBeInTheDocument()
   })
 
   it('disables applying a missing preset', () => {

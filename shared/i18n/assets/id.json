@@ -5,7 +5,9 @@
         "preset": "Prasetel",
         "setting": "Pengaturan",
         "undo": "Urungkan perubahan gaya",
-        "redo": "Ulangi perubahan gaya"
+        "redo": "Ulangi perubahan gaya",
+        "undone": "Perubahan gaya diurungkan",
+        "redone": "Perubahan gaya diulangi"
       },
       "alwaysOnDisplay": "Tampilkan chat saat tidak aktif",
       "chatOnlyDisplay": "Mode chat saja",
@@ -15,13 +17,14 @@
       "backgroundColor": "Warna latar belakang",
       "fontColor": "Warna teks",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Bawaan",
+      "fontSearch": "Cari font",
+      "fontNotFound": "Tidak ada font yang cocok dengan pencarian Anda",
       "fontSize": "Ukuran teks",
       "blur": "Efek buram",
       "space": "Jarak antarpesan",
       "footer": {
-        "donate": "Donasi",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donasi"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Gelap"
       },
       "membershipNameColor": "Warna nama anggota",
-      "defaultColor": "Bawaan",
       "resetToDefaultColor": "Pulihkan warna bawaan",
       "group": {
         "display": "Tampilan",
@@ -46,7 +48,7 @@
       "failed": "Masalah kompatibilitas terdeteksi",
       "waiting": "Mengumpulkan data diagnostik",
       "lastRecovery": "Pemulihan otomatis terakhir",
-      "restart": "Mulai ulang ekstensi",
+      "restart": "Muat ulang overlay chat",
       "copy": "Salin laporan diagnostik",
       "copied": "Laporan diagnostik berhasil disalin",
       "copyFailed": "Tidak dapat menyalin laporan diagnostik"
@@ -57,10 +59,13 @@
       "openSettings": "Buka pengaturan",
       "toggleLiveChat": "Tampilkan atau sembunyikan live chat",
       "close": "Tutup",
-      "reorderPreset": "Pindahkan prasetel",
+      "dragHandle": "pegangan seret",
+      "settingsFrameTitle": "Pengaturan chat layar penuh",
+      "reorderPreset": "Ubah urutan {name}",
       "presetName": "Nama prasetel",
-      "applyPreset": "Terapkan prasetel",
-      "deletePreset": "Hapus prasetel",
+      "applyPreset": "Terapkan {name}",
+      "deletePreset": "Hapus {name}",
+      "presetMoved": "{name} dipindahkan ke posisi {position}",
       "colorPicker": "Pemilih warna",
       "loading": "Memuat",
       "selectLanguage": "Pilih bahasa",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat layar penuh",
     "links": "Tautan",
     "donate": "Donasi",
+    "donateAction": "Dukung di Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Pencadangan",
     "export": "Ekspor",

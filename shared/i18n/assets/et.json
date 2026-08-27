@@ -5,7 +5,9 @@
         "preset": "Eelseadistus",
         "setting": "Seaded",
         "undo": "Võta stiilimuudatus tagasi",
-        "redo": "Tee stiilimuudatus uuesti"
+        "redo": "Tee stiilimuudatus uuesti",
+        "undone": "Stiilimuudatus võeti tagasi",
+        "redone": "Stiilimuudatus tehti uuesti"
       },
       "alwaysOnDisplay": "Näita vestlust tegevusetuse ajal",
       "chatOnlyDisplay": "Näita ainult vestlust",
@@ -15,13 +17,14 @@
       "backgroundColor": "Taustavärv",
       "fontColor": "Teksti värv",
       "fontFamily": "Kirjatüüp",
+      "fontFamilyDefault": "Vaikimisi",
+      "fontSearch": "Otsi kirjatüüpe",
+      "fontNotFound": "Otsingule vastavaid kirjatüüpe ei leitud",
       "fontSize": "Kirjasuurus",
       "blur": "Hägusus",
       "space": "Vahekaugus",
       "footer": {
-        "donate": "Anneta",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Anneta"
       },
       "theme": "Teema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tume"
       },
       "membershipNameColor": "Liikmenime värv",
-      "defaultColor": "Vaikimisi",
       "resetToDefaultColor": "Taasta vaikevärv",
       "group": {
         "display": "Nähtavus",
@@ -46,7 +48,7 @@
       "failed": "Tuvastati ühilduvusprobleem",
       "waiting": "Diagnostikaandmete kogumine",
       "lastRecovery": "Viimane automaatne taastumine",
-      "restart": "Taaskäivita laiendus",
+      "restart": "Laadi vestlus uuesti",
       "copy": "Kopeeri diagnostikaaruanne",
       "copied": "Diagnostikaaruanne on kopeeritud",
       "copyFailed": "Diagnostikaaruannet ei õnnestunud kopeerida"
@@ -57,10 +59,13 @@
       "openSettings": "Ava seaded",
       "toggleLiveChat": "Näita või peida otsevestlus",
       "close": "Sulge",
-      "reorderPreset": "Teisalda eelseadistus",
+      "dragHandle": "lohistamispide",
+      "settingsFrameTitle": "Täisekraanivestluse seaded",
+      "reorderPreset": "Teisalda {name}",
       "presetName": "Eelseadistuse nimi",
-      "applyPreset": "Rakenda eelseadistus",
-      "deletePreset": "Kustuta eelseadistus",
+      "applyPreset": "Rakenda {name}",
+      "deletePreset": "Kustuta {name}",
+      "presetMoved": "{name} teisaldati kohale {position}",
       "colorPicker": "Värvivalija",
       "loading": "Laadimine",
       "selectLanguage": "Vali keel",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Täisekraanivestlus",
     "links": "Lingid",
     "donate": "Anneta",
+    "donateAction": "Toeta Ko-fis",
     "theme": "Teema",
     "dataTransfer": "Varundus",
     "export": "Ekspordi",

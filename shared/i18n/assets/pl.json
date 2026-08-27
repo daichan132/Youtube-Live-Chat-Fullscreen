@@ -5,7 +5,9 @@
         "preset": "Szablony",
         "setting": "Ustawienia",
         "undo": "Cofnij zmianę stylu",
-        "redo": "Ponów zmianę stylu"
+        "redo": "Ponów zmianę stylu",
+        "undone": "Cofnięto zmianę stylu",
+        "redone": "Ponowiono zmianę stylu"
       },
       "alwaysOnDisplay": "Pokazuj czat podczas bezczynności",
       "chatOnlyDisplay": "Wyświetlaj tylko czat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Kolor tła",
       "fontColor": "Kolor tekstu",
       "fontFamily": "Krój czcionki",
+      "fontFamilyDefault": "Domyślny",
+      "fontSearch": "Szukaj czcionek",
+      "fontNotFound": "Żadna czcionka nie pasuje do wyszukiwania",
       "fontSize": "Rozmiar czcionki",
       "blur": "Rozmycie",
       "space": "Odstęp",
       "footer": {
-        "donate": "Wesprzyj",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Wesprzyj"
       },
       "theme": "Motyw",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Ciemny"
       },
       "membershipNameColor": "Kolor nazw członków",
-      "defaultColor": "Domyślny",
       "resetToDefaultColor": "Przywróć kolor domyślny",
       "group": {
         "display": "Wyświetlanie",
@@ -46,7 +48,7 @@
       "failed": "Wykryto problem ze zgodnością",
       "waiting": "Zbieranie danych diagnostycznych",
       "lastRecovery": "Ostatnia automatyczna naprawa",
-      "restart": "Uruchom ponownie rozszerzenie",
+      "restart": "Wczytaj ponownie nakładkę czatu",
       "copy": "Kopiuj raport diagnostyczny",
       "copied": "Skopiowano raport diagnostyczny",
       "copyFailed": "Nie udało się skopiować raportu diagnostycznego"
@@ -57,10 +59,13 @@
       "openSettings": "Otwórz ustawienia",
       "toggleLiveChat": "Pokaż lub ukryj czat na żywo",
       "close": "Zamknij",
-      "reorderPreset": "Zmień położenie szablonu",
+      "dragHandle": "uchwyt przeciągania",
+      "settingsFrameTitle": "Ustawienia czatu na pełnym ekranie",
+      "reorderPreset": "Zmień kolejność: {name}",
       "presetName": "Nazwa szablonu",
-      "applyPreset": "Zastosuj szablon",
-      "deletePreset": "Usuń szablon",
+      "applyPreset": "Zastosuj {name}",
+      "deletePreset": "Usuń {name}",
+      "presetMoved": "Przeniesiono {name} na pozycję {position}",
       "colorPicker": "Wybór koloru",
       "loading": "Ładowanie",
       "selectLanguage": "Wybierz język",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Odnośniki",
     "donate": "Wesprzyj",
+    "donateAction": "Wesprzyj na Ko-fi",
     "theme": "Motyw",
     "dataTransfer": "Kopia zapasowa",
     "export": "Eksportuj",

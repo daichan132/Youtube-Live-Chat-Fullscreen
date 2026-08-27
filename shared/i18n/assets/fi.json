@@ -5,7 +5,9 @@
         "preset": "Esiasetus",
         "setting": "Asetukset",
         "undo": "Kumoa tyylimuutos",
-        "redo": "Tee tyylimuutos uudelleen"
+        "redo": "Tee tyylimuutos uudelleen",
+        "undone": "Tyylimuutos kumottiin",
+        "redone": "Tyylimuutos tehtiin uudelleen"
       },
       "alwaysOnDisplay": "Näytä chat käyttämättömänä",
       "chatOnlyDisplay": "Näytä vain chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Taustaväri",
       "fontColor": "Tekstin väri",
       "fontFamily": "Fonttiperhe",
+      "fontFamilyDefault": "Oletus",
+      "fontSearch": "Hae fontteja",
+      "fontNotFound": "Hakua vastaavia fontteja ei löytynyt",
       "fontSize": "Fonttikoko",
       "blur": "Sumennus",
       "space": "Välistys",
       "footer": {
-        "donate": "Lahjoita",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Lahjoita"
       },
       "theme": "Teema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tumma"
       },
       "membershipNameColor": "Jäsenen nimen väri",
-      "defaultColor": "Oletus",
       "resetToDefaultColor": "Palauta oletusväri",
       "group": {
         "display": "Näkyvyys",
@@ -46,7 +48,7 @@
       "failed": "Yhteensopivuusongelma havaittu",
       "waiting": "Kerätään diagnostiikkatietoja",
       "lastRecovery": "Viimeisin automaattinen palautuminen",
-      "restart": "Käynnistä laajennus uudelleen",
+      "restart": "Lataa chat uudelleen",
       "copy": "Kopioi diagnostiikkaraportti",
       "copied": "Diagnostiikkaraportti kopioitiin.",
       "copyFailed": "Diagnostiikkaraportin kopiointi epäonnistui."
@@ -57,10 +59,13 @@
       "openSettings": "Avaa asetukset",
       "toggleLiveChat": "Näytä tai piilota livechat",
       "close": "Sulje",
-      "reorderPreset": "Siirrä esiasetusta",
+      "dragHandle": "vetokahva",
+      "settingsFrameTitle": "Koko näytön chatin asetukset",
+      "reorderPreset": "Siirrä {name}",
       "presetName": "Esiasetuksen nimi",
-      "applyPreset": "Käytä esiasetusta",
-      "deletePreset": "Poista esiasetus",
+      "applyPreset": "Käytä {name}",
+      "deletePreset": "Poista {name}",
+      "presetMoved": "{name} siirrettiin kohtaan {position}",
       "colorPicker": "Värinvalitsin",
       "loading": "Ladataan",
       "selectLanguage": "Valitse kieli",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Koko näytön chat",
     "links": "Linkit",
     "donate": "Lahjoita",
+    "donateAction": "Tue Ko-fissa",
     "theme": "Teema",
     "dataTransfer": "Varmuuskopio",
     "export": "Vie",

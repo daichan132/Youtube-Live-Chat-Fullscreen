@@ -5,7 +5,9 @@
         "preset": "Sagatave",
         "setting": "Iestatījumi",
         "undo": "Atsaukt stila izmaiņas",
-        "redo": "Atkārtot stila izmaiņas"
+        "redo": "Atkārtot stila izmaiņas",
+        "undone": "Stila izmaiņas ir atsauktas",
+        "redone": "Stila izmaiņas ir atkārtotas"
       },
       "alwaysOnDisplay": "Rādīt čatu neaktivitātes laikā",
       "chatOnlyDisplay": "Rādīt tikai čatu",
@@ -15,13 +17,14 @@
       "backgroundColor": "Fona krāsa",
       "fontColor": "Teksta krāsa",
       "fontFamily": "Fontu saime",
+      "fontFamilyDefault": "Noklusējums",
+      "fontSearch": "Meklēt fontus",
+      "fontNotFound": "Nav atrasts neviens atbilstošs fonts",
       "fontSize": "Fonta izmērs",
       "blur": "Aizmiglojums",
       "space": "Atstarpe",
       "footer": {
-        "donate": "Ziedot",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Ziedot"
       },
       "theme": "Motīvs",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tumšs"
       },
       "membershipNameColor": "Dalībnieku vārdu krāsa",
-      "defaultColor": "Noklusējums",
       "resetToDefaultColor": "Atjaunot noklusējuma krāsu",
       "group": {
         "display": "Redzamība",
@@ -46,7 +48,7 @@
       "failed": "Konstatēta saderības problēma",
       "waiting": "Notiek diagnostikas datu vākšana",
       "lastRecovery": "Pēdējā automātiskā atkopšanās",
-      "restart": "Restartēt paplašinājumu",
+      "restart": "Pārlādēt čatu",
       "copy": "Kopēt diagnostikas atskaiti",
       "copied": "Diagnostikas atskaite ir nokopēta",
       "copyFailed": "Neizdevās nokopēt diagnostikas atskaiti"
@@ -57,10 +59,13 @@
       "openSettings": "Atvērt iestatījumus",
       "toggleLiveChat": "Rādīt vai paslēpt tiešraides čatu",
       "close": "Aizvērt",
-      "reorderPreset": "Pārvietot sagatavi",
+      "dragHandle": "vilkšanas rokturis",
+      "settingsFrameTitle": "Pilnekrāna čata iestatījumi",
+      "reorderPreset": "Pārvietot sagatavi „{name}“",
       "presetName": "Sagataves nosaukums",
-      "applyPreset": "Lietot sagatavi",
-      "deletePreset": "Dzēst sagatavi",
+      "applyPreset": "Lietot sagatavi „{name}“",
+      "deletePreset": "Dzēst sagatavi „{name}“",
+      "presetMoved": "Sagatave „{name}“ ir pārvietota uz pozīciju {position}",
       "colorPicker": "Krāsu atlasītājs",
       "loading": "Notiek ielāde",
       "selectLanguage": "Izvēlēties valodu",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Pilnekrāna čats",
     "links": "Saites",
     "donate": "Ziedot",
+    "donateAction": "Atbalstīt vietnē Ko-fi",
     "theme": "Motīvs",
     "dataTransfer": "Dublējums",
     "export": "Eksportēt",

@@ -31,7 +31,8 @@ describe('OverlayControlRail', () => {
     const rail = settingsButton.closest('[data-ylc-control-rail]') as HTMLElement
 
     expect(rail.closest('[dir="rtl"]')).not.toBeNull()
-    expect(dragHandle).toHaveAttribute('aria-roledescription', 'drag handle')
+    expect(dragHandle).toHaveAttribute('aria-roledescription', 'content.aria.dragHandle')
+    expect(dragHandle).toHaveAttribute('data-ylc-drag-handle')
     expect(dragHandle).toHaveAttribute('aria-describedby')
 
     fireEvent.mouseEnter(rail)

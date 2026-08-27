@@ -34,8 +34,10 @@ const renderFontFamilyInput = (fontFamily = '') => {
 }
 
 describe('FontFamilyInput', () => {
+  const untranslatedLocale = store.get(localeStateAtom)
   beforeEach(() => {
     resetStore()
+    store.set(localeStateAtom, untranslatedLocale)
   })
 
   it('toggles menu visibility from trigger button', () => {
@@ -124,11 +126,30 @@ describe('FontFamilyInput', () => {
   it('shows default label for invalid stored value', () => {
     store.set(localeStateAtom, {
       ...store.get(localeStateAtom),
-      messages: { ...store.get(localeStateAtom).messages, 'content.preset.defaultTitle': 'Default' },
+      messages: { ...store.get(localeStateAtom).messages, 'content.setting.fontFamilyDefault': 'Default' },
     })
     const { getByRole } = renderFontFamilyInput('NotInListFont')
 
     const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
     expect(trigger).toHaveTextContent('Default')
+  })
+
+  it('answers a failed search with its own message instead of the field label', () => {
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: {
+        ...store.get(localeStateAtom).messages,
+        'content.setting.fontFamily': 'Font',
+        'content.setting.fontNotFound': 'No fonts match your search',
+      },
+    })
+    const { container, getByRole, getByTestId } = renderFontFamilyInput()
+
+    fireEvent.click(getByRole('button', { name: 'Font' }))
+    fireEvent.change(getByTestId('font-family-search'), { target: { value: 'zzzznotafont' } })
+
+    expect(container.querySelectorAll('[role="option"]')).toHaveLength(0)
+    const empty = container.querySelector('.ylc-font-combobox-empty')
+    expect(empty?.textContent).toBe('No fonts match your search')
   })
 })

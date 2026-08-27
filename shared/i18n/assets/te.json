@@ -5,7 +5,9 @@
         "preset": "ప్రీసెట్",
         "setting": "సెట్టింగ్‌లు",
         "undo": "శైలి మార్పును రద్దు చేయి",
-        "redo": "శైలి మార్పును మళ్లీ చేయి"
+        "redo": "శైలి మార్పును మళ్లీ చేయి",
+        "undone": "శైలి మార్పు రద్దు చేయబడింది",
+        "redone": "శైలి మార్పు మళ్లీ చేయబడింది"
       },
       "alwaysOnDisplay": "నిష్క్రియంగా ఉన్నప్పుడు చాట్ చూపించు",
       "chatOnlyDisplay": "చాట్ మాత్రమే చూపించు",
@@ -15,13 +17,14 @@
       "backgroundColor": "నేపథ్య రంగు",
       "fontColor": "ఫాంట్ రంగు",
       "fontFamily": "ఫాంట్ ఫ్యామిలీ",
+      "fontFamilyDefault": "డిఫాల్ట్",
+      "fontSearch": "ఫాంట్‌లను వెతకండి",
+      "fontNotFound": "మీ శోధనకు సరిపోలే ఫాంట్‌లు లేవు",
       "fontSize": "ఫాంట్ పరిమాణం",
       "blur": "మసక",
       "space": "అంతరం",
       "footer": {
-        "donate": "విరాళం",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "విరాళం"
       },
       "theme": "థీమ్",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "డార్క్"
       },
       "membershipNameColor": "సభ్యుని పేరు రంగు",
-      "defaultColor": "డిఫాల్ట్",
       "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి",
       "group": {
         "display": "ప్రదర్శన",
@@ -46,7 +48,7 @@
       "failed": "అనుకూలత సమస్య కనుగొనబడింది",
       "waiting": "డయాగ్నస్టిక్ సమాచారం సేకరిస్తోంది",
       "lastRecovery": "చివరి స్వయం పునరుద్ధరణ",
-      "restart": "పొడిగింపును పునఃప్రారంభించండి",
+      "restart": "చాట్‌ను మళ్లీ లోడ్ చేయండి",
       "copy": "డయాగ్నస్టిక్ నివేదికను కాపీ చేయండి",
       "copied": "డయాగ్నస్టిక్ నివేదిక కాపీ చేయబడింది",
       "copyFailed": "డయాగ్నస్టిక్ నివేదికను కాపీ చేయడం సాధ్యపడలేదు"
@@ -57,10 +59,13 @@
       "openSettings": "సెట్టింగ్‌లు తెరవండి",
       "toggleLiveChat": "లైవ్ చాట్ టోగుల్ చేయండి",
       "close": "మూసివేయండి",
-      "reorderPreset": "ప్రీసెట్ క్రమం మార్చండి",
+      "dragHandle": "డ్రాగ్ హ్యాండిల్",
+      "settingsFrameTitle": "పూర్తి తెర చాట్ సెట్టింగ్‌లు",
+      "reorderPreset": "{name} క్రమం మార్చండి",
       "presetName": "ప్రీసెట్ పేరు",
-      "applyPreset": "ప్రీసెట్ వర్తింపజేయండి",
-      "deletePreset": "ప్రీసెట్ తొలగించండి",
+      "applyPreset": "{name}ను వర్తింపజేయండి",
+      "deletePreset": "{name}ను తొలగించండి",
+      "presetMoved": "{name} {position}వ స్థానానికి తరలించబడింది",
       "colorPicker": "రంగు ఎంపిక",
       "loading": "లోడ్ అవుతోంది",
       "selectLanguage": "భాష ఎంచుకోండి",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "పూర్తి తెర చాట్",
     "links": "లింకులు",
     "donate": "విరాళం",
+    "donateAction": "Ko-fiలో మద్దతు ఇవ్వండి",
     "theme": "థీమ్",
     "dataTransfer": "బ్యాకప్",
     "export": "ఎగుమతి",

@@ -4,6 +4,10 @@ import { usePresetReorder } from './usePresetReorder'
 
 const INITIAL_IDS = ['first', 'middle', 'last']
 
+const NAMES: Record<string, string> = { first: 'First preset', middle: 'Middle preset', last: 'Last preset' }
+
+const describeMove = (id: string, position: number) => `Moved ${NAMES[id] ?? id} to position ${position}`
+
 const ReorderHarness = ({
   ids = INITIAL_IDS,
   onCommit,
@@ -13,12 +17,13 @@ const ReorderHarness = ({
   onCommit: (ids: string[]) => void
   unknownHandle?: boolean
 }) => {
-  const reorder = usePresetReorder({ ids, onCommit })
+  const reorder = usePresetReorder({ ids, onCommit, describeMove })
 
   return (
     <div data-ylc-setting-scroll-container data-testid='scroll-container'>
       <output data-testid='order'>{reorder.previewIds.join(',')}</output>
       <output data-testid='active'>{reorder.activeId ?? ''}</output>
+      <output data-testid='live'>{reorder.liveMessage}</output>
       {reorder.previewIds.map(id => (
         <div key={id} data-ylc-preset-item={id}>
           <button type='button' aria-label={`reorder ${id}`} {...reorder.getHandleProps(id)}>
@@ -183,6 +188,19 @@ describe('usePresetReorder', () => {
     expect(onCommit).toHaveBeenNthCalledWith(2, INITIAL_IDS)
     expect(movedHandle).toHaveFocus()
     expect(order(view.getByTestId)).toBe(INITIAL_IDS.join(','))
+  })
+
+  it('announces the moved preset by name and 1-based position, never by id', () => {
+    const onCommit = vi.fn()
+    const view = render(<ReorderHarness onCommit={onCommit} />)
+    arrangePresetRows(view.container)
+
+    fireEvent.keyDown(view.getByRole('button', { name: 'reorder first' }), { key: 'ArrowDown' })
+    expect(view.getByTestId('live')).toHaveTextContent('Moved First preset to position 2')
+
+    drag({ ...view, clientY: 200 })
+    expect(view.getByTestId('live')).toHaveTextContent('Moved First preset to position 3')
+    expect(view.getByTestId('live').textContent).not.toContain('first')
   })
 
   it('does not move beyond either keyboard boundary', () => {

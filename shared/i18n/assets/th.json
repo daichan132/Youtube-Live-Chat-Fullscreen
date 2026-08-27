@@ -5,7 +5,9 @@
         "preset": "ค่าตั้งล่วงหน้า",
         "setting": "การตั้งค่า",
         "undo": "เลิกทำการเปลี่ยนรูปแบบ",
-        "redo": "ทำซ้ำการเปลี่ยนรูปแบบ"
+        "redo": "ทำซ้ำการเปลี่ยนรูปแบบ",
+        "undone": "เลิกทำการเปลี่ยนรูปแบบแล้ว",
+        "redone": "ทำซ้ำการเปลี่ยนรูปแบบแล้ว"
       },
       "alwaysOnDisplay": "แสดงแชทเมื่อไม่มีการใช้งาน",
       "chatOnlyDisplay": "โหมดแสดงเฉพาะแชท",
@@ -15,13 +17,14 @@
       "backgroundColor": "สีพื้นหลัง",
       "fontColor": "สีข้อความ",
       "fontFamily": "แบบอักษร",
+      "fontFamilyDefault": "ค่าเริ่มต้น",
+      "fontSearch": "ค้นหาแบบอักษร",
+      "fontNotFound": "ไม่พบแบบอักษรที่ตรงกับการค้นหา",
       "fontSize": "ขนาดข้อความ",
       "blur": "ความเบลอ",
       "space": "ระยะห่างระหว่างข้อความ",
       "footer": {
-        "donate": "บริจาค",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "บริจาค"
       },
       "theme": "ธีม",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "มืด"
       },
       "membershipNameColor": "สีชื่อสมาชิก",
-      "defaultColor": "ค่าเริ่มต้น",
       "resetToDefaultColor": "คืนค่าสีเริ่มต้น",
       "group": {
         "display": "การแสดงผล",
@@ -46,7 +48,7 @@
       "failed": "ตรวจพบปัญหาความเข้ากันได้",
       "waiting": "กำลังรวบรวมข้อมูลวินิจฉัยการทำงาน",
       "lastRecovery": "การกู้คืนอัตโนมัติล่าสุด",
-      "restart": "เริ่มส่วนขยายใหม่",
+      "restart": "โหลดโอเวอร์เลย์แชทใหม่",
       "copy": "คัดลอกรายงานการวินิจฉัย",
       "copied": "คัดลอกรายงานการวินิจฉัยแล้ว",
       "copyFailed": "ไม่สามารถคัดลอกรายงานการวินิจฉัยได้"
@@ -57,10 +59,13 @@
       "openSettings": "เปิดการตั้งค่า",
       "toggleLiveChat": "แสดงหรือซ่อนแชทสด",
       "close": "ปิด",
-      "reorderPreset": "ย้ายค่าตั้งล่วงหน้า",
+      "dragHandle": "ที่จับสำหรับลาก",
+      "settingsFrameTitle": "การตั้งค่าแชทเต็มหน้าจอ",
+      "reorderPreset": "จัดลำดับ {name}",
       "presetName": "ชื่อค่าตั้งล่วงหน้า",
-      "applyPreset": "ใช้ค่าตั้งล่วงหน้า",
-      "deletePreset": "ลบค่าตั้งล่วงหน้า",
+      "applyPreset": "ใช้ {name}",
+      "deletePreset": "ลบ {name}",
+      "presetMoved": "ย้าย {name} ไปที่ลำดับที่ {position} แล้ว",
       "colorPicker": "เครื่องมือเลือกสี",
       "loading": "กำลังโหลด",
       "selectLanguage": "เลือกภาษา",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค",
+    "donateAction": "สนับสนุนผ่าน Ko-fi",
     "theme": "ธีม",
     "dataTransfer": "สำรองข้อมูล",
     "export": "ส่งออก",

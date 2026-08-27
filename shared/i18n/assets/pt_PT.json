@@ -5,7 +5,9 @@
         "preset": "Predefinições",
         "setting": "Definições",
         "undo": "Anular alteração de estilo",
-        "redo": "Refazer alteração de estilo"
+        "redo": "Refazer alteração de estilo",
+        "undone": "Alteração de estilo anulada",
+        "redone": "Alteração de estilo refeita"
       },
       "alwaysOnDisplay": "Mostrar o chat quando inativo",
       "chatOnlyDisplay": "Mostrar apenas o chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Cor de fundo",
       "fontColor": "Cor do texto",
       "fontFamily": "Tipo de letra",
+      "fontFamilyDefault": "Predefinido",
+      "fontSearch": "Pesquisar tipos de letra",
+      "fontNotFound": "Nenhum tipo de letra corresponde à pesquisa",
       "fontSize": "Tamanho do tipo de letra",
       "blur": "Desfocagem",
       "space": "Espaçamento",
       "footer": {
-        "donate": "Doar",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Doar"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Escuro"
       },
       "membershipNameColor": "Cor dos nomes dos membros",
-      "defaultColor": "Predefinido",
       "resetToDefaultColor": "Repor cor predefinida",
       "group": {
         "display": "Apresentação",
@@ -46,7 +48,7 @@
       "failed": "Problema de compatibilidade detetado",
       "waiting": "A recolher dados de diagnóstico",
       "lastRecovery": "Última recuperação automática",
-      "restart": "Reiniciar a extensão",
+      "restart": "Recarregar o chat",
       "copy": "Copiar o relatório de diagnóstico",
       "copied": "O relatório de diagnóstico foi copiado",
       "copyFailed": "Não foi possível copiar o relatório de diagnóstico"
@@ -57,10 +59,13 @@
       "openSettings": "Abrir definições",
       "toggleLiveChat": "Mostrar ou ocultar o chat em direto",
       "close": "Fechar",
-      "reorderPreset": "Reordenar predefinição",
+      "dragHandle": "manípulo de arrastamento",
+      "settingsFrameTitle": "Definições do chat em ecrã inteiro",
+      "reorderPreset": "Reordenar {name}",
       "presetName": "Nome da predefinição",
-      "applyPreset": "Aplicar predefinição",
-      "deletePreset": "Eliminar predefinição",
+      "applyPreset": "Aplicar {name}",
+      "deletePreset": "Eliminar {name}",
+      "presetMoved": "{name} movido para a posição {position}",
       "colorPicker": "Seletor de cor",
       "loading": "A carregar",
       "selectLanguage": "Selecionar idioma",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat em ecrã inteiro",
     "links": "Ligações",
     "donate": "Doar",
+    "donateAction": "Apoiar no Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Cópia de segurança",
     "export": "Exportar",

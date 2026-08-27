@@ -73,7 +73,7 @@ export const Popup = () => {
       data: (
         <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-btn'>
           <TbHeart size={16} aria-hidden='true' />
-          Buy me a coffee
+          {t('popup.donateAction')}
         </a>
       ),
       actionAuto: true,

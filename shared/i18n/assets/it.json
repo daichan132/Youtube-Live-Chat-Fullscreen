@@ -5,7 +5,9 @@
         "preset": "Preimpostazioni",
         "setting": "Impostazioni",
         "undo": "Annulla modifica allo stile",
-        "redo": "Ripeti modifica allo stile"
+        "redo": "Ripeti modifica allo stile",
+        "undone": "Modifica allo stile annullata",
+        "redone": "Modifica allo stile ripetuta"
       },
       "alwaysOnDisplay": "Mostra la chat quando non interagisci",
       "chatOnlyDisplay": "Mostra solo la chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Colore di sfondo",
       "fontColor": "Colore del testo",
       "fontFamily": "Tipo di carattere",
+      "fontFamilyDefault": "Predefinito",
+      "fontSearch": "Cerca tipi di carattere",
+      "fontNotFound": "Nessun tipo di carattere corrisponde alla ricerca",
       "fontSize": "Dimensione carattere",
       "blur": "Sfocatura",
       "space": "Spaziatura",
       "footer": {
-        "donate": "Dona",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Dona"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Scuro"
       },
       "membershipNameColor": "Colore dei nomi dei membri",
-      "defaultColor": "Predefinito",
       "resetToDefaultColor": "Ripristina colore predefinito",
       "group": {
         "display": "Visualizzazione",
@@ -46,7 +48,7 @@
       "failed": "Rilevato un problema di compatibilità",
       "waiting": "Raccolta dei dati di diagnostica in corso",
       "lastRecovery": "Ultimo ripristino automatico",
-      "restart": "Riavvia l'estensione",
+      "restart": "Ricarica la chat",
       "copy": "Copia il rapporto di diagnostica",
       "copied": "Il rapporto di diagnostica è stato copiato",
       "copyFailed": "Impossibile copiare il rapporto di diagnostica"
@@ -57,10 +59,13 @@
       "openSettings": "Apri impostazioni",
       "toggleLiveChat": "Mostra o nascondi la chat dal vivo",
       "close": "Chiudi",
-      "reorderPreset": "Riordina la preimpostazione",
+      "dragHandle": "maniglia di trascinamento",
+      "settingsFrameTitle": "Impostazioni della chat a schermo intero",
+      "reorderPreset": "Riordina {name}",
       "presetName": "Nome della preimpostazione",
-      "applyPreset": "Applica la preimpostazione",
-      "deletePreset": "Elimina la preimpostazione",
+      "applyPreset": "Applica {name}",
+      "deletePreset": "Elimina {name}",
+      "presetMoved": "{name} spostato in posizione {position}",
       "colorPicker": "Selettore del colore",
       "loading": "Caricamento in corso",
       "selectLanguage": "Seleziona la lingua",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat a schermo intero",
     "links": "Link",
     "donate": "Dona",
+    "donateAction": "Sostieni su Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Backup",
     "export": "Esporta",

@@ -13,20 +13,20 @@ describe('SettingsFrame', () => {
   it('does not mount the extension page while settings are closed', () => {
     const { queryByTitle } = render(<SettingsFrame open={false} onClose={vi.fn()} runtime={createRuntime()} />)
 
-    expect(queryByTitle('YouTube Live Chat Fullscreen settings')).not.toBeInTheDocument()
+    expect(queryByTitle('content.aria.settingsFrameTitle')).not.toBeInTheDocument()
   })
 
   it('loads the settings extension page only while open', () => {
     const { getByTitle } = render(<SettingsFrame open onClose={vi.fn()} runtime={createRuntime()} />)
 
-    expect(getByTitle('YouTube Live Chat Fullscreen settings')).toHaveAttribute('src', expect.stringMatching(/settings\.html$/))
+    expect(getByTitle('content.aria.settingsFrameTitle')).toHaveAttribute('src', expect.stringMatching(/settings\.html$/))
   })
 
   it('accepts close messages only from its own extension frame', () => {
     const onClose = vi.fn()
     const runtime = createRuntime()
     const { getByTitle } = render(<SettingsFrame open onClose={onClose} runtime={runtime} />)
-    const frame = getByTitle('YouTube Live Chat Fullscreen settings') as HTMLIFrameElement
+    const frame = getByTitle('content.aria.settingsFrameTitle') as HTMLIFrameElement
 
     fireEvent(
       window,

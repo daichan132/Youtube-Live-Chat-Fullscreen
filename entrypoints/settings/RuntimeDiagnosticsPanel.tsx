@@ -20,11 +20,6 @@ export const RuntimeDiagnosticsPanel = ({ report, onRestart }: RuntimeDiagnostic
         ? t('content.diagnostics.degraded')
         : t('content.diagnostics.failed')
   const lastRecovery = report?.events.findLast(event => event.event === 'recovered')
-  const detail = report
-    ? [report.browserFamily, report.page.mode, report.runtime.status, report.runtime.leases.chat.kind]
-        .filter(value => value !== 'none')
-        .join(' · ')
-    : ''
 
   const copyReport = async () => {
     if (!report) return
@@ -48,11 +43,9 @@ export const RuntimeDiagnosticsPanel = ({ report, onRestart }: RuntimeDiagnostic
             }`}
           />
           <div className='min-w-0'>
+            {/* Internal identifiers (browser family, page mode, runtime status, lease kind, failure code) are
+                never rendered: they are English-only union members. They travel in the copied JSON report instead. */}
             <p className='m-0 text-sm font-semibold ylc-theme-text-primary'>{statusText}</p>
-            {detail && <p className='mt-1 mb-0 text-xs ylc-theme-text-secondary'>{detail}</p>}
-            {report?.runtime.failureCode && (
-              <p className='mt-1 mb-0 text-xs font-mono ylc-theme-text-secondary'>{report.runtime.failureCode}</p>
-            )}
           </div>
         </div>
         {lastRecovery && (

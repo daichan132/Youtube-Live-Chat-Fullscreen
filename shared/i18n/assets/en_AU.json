@@ -2,26 +2,35 @@
   "content": {
     "setting": {
       "header": {
-        "preset": "Preset",
+        "preset": "Presets",
         "setting": "Settings",
         "undo": "Undo style change",
-        "redo": "Redo style change"
+        "redo": "Redo style change",
+        "undone": "Style change undone",
+        "redone": "Style change redone"
+      },
+      "group": {
+        "display": "Display",
+        "colors": "Colours",
+        "text": "Text",
+        "elements": "Chat Elements"
       },
       "alwaysOnDisplay": "Show When Idle",
       "chatOnlyDisplay": "Chat-Only Mode",
-      "userNameDisplay": "Show Username",
-      "userIconDisplay": "Show Profile Picture",
+      "userNameDisplay": "Show Usernames",
+      "userIconDisplay": "Show Profile Pictures",
       "superChatBarDisplay": "Show Super Chat Bar",
       "backgroundColor": "Background Colour",
       "fontColor": "Text Colour",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Default",
+      "fontSearch": "Search fonts",
+      "fontNotFound": "No fonts match your search",
       "fontSize": "Text Size",
       "blur": "Blur",
       "space": "Message Spacing",
       "footer": {
-        "donate": "Donate",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donate"
       },
       "theme": "Theme",
       "themeMode": {
@@ -29,15 +38,8 @@
         "light": "Light",
         "dark": "Dark"
       },
-      "membershipNameColor": "Membership Name Colour",
-      "defaultColor": "Default",
-      "resetToDefaultColor": "Reset to default colour",
-      "group": {
-        "display": "Display",
-        "colors": "Colours",
-        "text": "Text",
-        "elements": "Chat Elements"
-      }
+      "membershipNameColor": "Member Name Colour",
+      "resetToDefaultColor": "Reset to default colour"
     },
     "diagnostics": {
       "legend": "Compatibility",
@@ -45,11 +47,11 @@
       "degraded": "Using a compatibility fallback",
       "failed": "Compatibility issue detected",
       "waiting": "Collecting runtime diagnostics",
-      "lastRecovery": "Last Self-Recovery",
-      "restart": "Restart Runtime",
-      "copy": "Copy Diagnostic Report",
+      "lastRecovery": "Last self-recovery",
+      "restart": "Reload chat overlay",
+      "copy": "Copy diagnostic report",
       "copied": "Diagnostic report copied",
-      "copyFailed": "Couldn't copy the diagnostic report"
+      "copyFailed": "Could not copy the diagnostic report"
     },
     "aria": {
       "dragToMove": "Drag to move",
@@ -57,10 +59,13 @@
       "openSettings": "Open settings",
       "toggleLiveChat": "Toggle live chat",
       "close": "Close",
-      "reorderPreset": "Reorder preset",
+      "dragHandle": "drag handle",
+      "settingsFrameTitle": "Fullscreen chat settings",
+      "reorderPreset": "Reorder {name}",
       "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
+      "applyPreset": "Apply {name}",
+      "deletePreset": "Delete {name}",
+      "presetMoved": "Moved {name} to position {position}",
       "colorPicker": "Colour picker",
       "loading": "Loading",
       "selectLanguage": "Select language",
@@ -68,30 +73,31 @@
     },
     "preset": {
       "addMessage": "Save Current Settings",
+      "apply": "Apply",
       "addItemTitle": "Untitled",
       "defaultTitle": "Standard",
       "transparentTitle": "Transparent",
       "simpleTitle": "Chat Only",
-      "deleteConfirmationMessage": "Delete this preset?",
-      "delete": "Delete",
-      "cancel": "Cancel",
       "darkTitle": "Dark",
       "readableTitle": "Large Text",
       "compactTitle": "Compact",
       "neonTitle": "Colourful",
-      "apply": "Apply"
+      "deleteConfirmationMessage": "Delete this preset?",
+      "delete": "Delete",
+      "cancel": "Cancel"
     }
   },
   "popup": {
-    "language": "Language Settings",
+    "language": "Language",
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
     "donate": "Donate",
+    "donateAction": "Support on Ko-fi",
     "theme": "Theme",
     "dataTransfer": "Backup",
     "export": "Export",
     "import": "Import",
-    "importError": "Couldn't import the settings file."
+    "importError": "Couldn't import this settings file."
   },
   "extensionName": "YouTube Live Chat Fullscreen Overlay",
   "extensionDescription": "Chat vanishes in full screen? A live chat overlay keeps YouTube's chat on the video: drag, resize, reply and send Super Chats."

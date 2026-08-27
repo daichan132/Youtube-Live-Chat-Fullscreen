@@ -6,11 +6,11 @@ Security fixes are applied to the latest published version of YouTube Live Chat 
 
 ## Scope
 
-The extension's attack surface is deliberately small, and the boundaries below are enforced by checks in this repository rather than by convention:
+The extension's attack surface is deliberately small. The permission set and the page-match pattern below are pinned by [`check-package-contracts.mjs`](scripts/verify/check-package-contracts.mjs); the rest hold by construction and are reviewable in this repository:
 
 - It requests only the `activeTab` and `storage` permissions, and no host permissions.
 - It runs on `www.youtube.com` only.
-- It has no account system, no analytics, and no external endpoint. The only network read in the extension source is loading its own bundled locale files.
+- It has no account system, no analytics, and no reporting endpoint. It reads the network in exactly two cases: its own bundled locale files, and — only once you choose a font other than the default — that font's stylesheet from Google Fonts.
 - Diagnostic reports are sanitized before export and cannot contain URLs, video IDs, chat text, or user names.
 
 Reports about any of those boundaries being broken are especially welcome. So are reports about the extension mishandling content from the YouTube page it runs alongside, or about anything that could leak settings between origins.

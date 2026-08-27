@@ -5,7 +5,9 @@
         "preset": "Cài đặt sẵn",
         "setting": "Cài đặt",
         "undo": "Hoàn tác thay đổi kiểu hiển thị",
-        "redo": "Làm lại thay đổi kiểu hiển thị"
+        "redo": "Làm lại thay đổi kiểu hiển thị",
+        "undone": "Đã hoàn tác thay đổi kiểu hiển thị",
+        "redone": "Đã làm lại thay đổi kiểu hiển thị"
       },
       "alwaysOnDisplay": "Hiển thị chat khi không hoạt động",
       "chatOnlyDisplay": "Chế độ chỉ hiển thị chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Màu nền",
       "fontColor": "Màu chữ",
       "fontFamily": "Phông chữ",
+      "fontFamilyDefault": "Mặc định",
+      "fontSearch": "Tìm phông chữ",
+      "fontNotFound": "Không có phông chữ nào khớp với tìm kiếm",
       "fontSize": "Cỡ chữ",
       "blur": "Làm mờ",
       "space": "Khoảng cách giữa các tin nhắn",
       "footer": {
-        "donate": "Ủng hộ",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Ủng hộ"
       },
       "theme": "Giao diện",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Tối"
       },
       "membershipNameColor": "Màu tên hội viên",
-      "defaultColor": "Mặc định",
       "resetToDefaultColor": "Khôi phục màu mặc định",
       "group": {
         "display": "Hiển thị",
@@ -46,7 +48,7 @@
       "failed": "Đã phát hiện sự cố tương thích",
       "waiting": "Đang thu thập dữ liệu chẩn đoán",
       "lastRecovery": "Lần tự khôi phục gần nhất",
-      "restart": "Khởi động lại tiện ích",
+      "restart": "Tải lại lớp phủ chat",
       "copy": "Sao chép báo cáo chẩn đoán",
       "copied": "Đã sao chép báo cáo chẩn đoán",
       "copyFailed": "Không thể sao chép báo cáo chẩn đoán"
@@ -57,10 +59,13 @@
       "openSettings": "Mở cài đặt",
       "toggleLiveChat": "Hiển thị hoặc ẩn chat trực tiếp",
       "close": "Đóng",
-      "reorderPreset": "Di chuyển cài đặt sẵn",
+      "dragHandle": "núm kéo",
+      "settingsFrameTitle": "Cài đặt chat toàn màn hình",
+      "reorderPreset": "Sắp xếp lại {name}",
       "presetName": "Tên cài đặt sẵn",
-      "applyPreset": "Áp dụng cài đặt sẵn",
-      "deletePreset": "Xóa cài đặt sẵn",
+      "applyPreset": "Áp dụng {name}",
+      "deletePreset": "Xóa {name}",
+      "presetMoved": "Đã chuyển {name} đến vị trí {position}",
       "colorPicker": "Bộ chọn màu",
       "loading": "Đang tải",
       "selectLanguage": "Chọn ngôn ngữ",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chat toàn màn hình",
     "links": "Liên kết",
     "donate": "Ủng hộ",
+    "donateAction": "Ủng hộ trên Ko-fi",
     "theme": "Giao diện",
     "dataTransfer": "Sao lưu",
     "export": "Xuất",

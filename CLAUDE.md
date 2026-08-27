@@ -129,5 +129,5 @@ lefthook が pre-commit で staged ファイルに `biome check --apply` をか�
 
 - **YouTube の DOM は動く。** セレクタを足すときは `selectorCatalog.ts` にフォールバック付きの probe として足す。1 か所に直書きしない。
 - **借りた iframe は返す。** ライブ／アーカイブでは YouTube 自身の live chat iframe を借用して使う（投稿・スーパーチャット・認証を YouTube 側に残すため）。借用した DOM への変更はすべて元に戻せる形にする。インライン style を新しく足したら `YLC_DOCUMENT_STYLE_PROPERTIES` にも足す。
-- **収集しない。** 診断レポートは URL・video ID・チャット本文・ユーザー名を含まない。外部送信も分析 SDK もない。`fetch` は同梱ロケール JSON の読み込み 1 か所のみ。
+- **収集しない。** 診断レポートは URL・video ID・チャット本文・ユーザー名を含まない。外部送信も分析 SDK もない。ネットワークを読むのは同梱ロケール JSON と、既定以外のフォントを選んだときだけ取得する Google Fonts のスタイルシートの 2 か所。
 - **ライブ・アーカイブ・チャット無しは別の状態。** 挙動を変えたら 3 つとも確認する。バグ報告テンプレートもこの区別で聞いている。

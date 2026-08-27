@@ -5,7 +5,9 @@
         "preset": "प्रीसेट",
         "setting": "सेटिंग्स",
         "undo": "स्टाइल में बदलाव पूर्ववत करें",
-        "redo": "स्टाइल में बदलाव फिर से करें"
+        "redo": "स्टाइल में बदलाव फिर से करें",
+        "undone": "स्टाइल में बदलाव पूर्ववत किया गया",
+        "redone": "स्टाइल में बदलाव फिर से किया गया"
       },
       "alwaysOnDisplay": "निष्क्रिय होने पर चैट दिखाएं",
       "chatOnlyDisplay": "केवल चैट दिखाएं",
@@ -15,13 +17,14 @@
       "backgroundColor": "पृष्ठभूमि रंग",
       "fontColor": "फ़ॉन्ट रंग",
       "fontFamily": "फ़ॉन्ट फ़ैमिली",
+      "fontFamilyDefault": "डिफ़ॉल्ट",
+      "fontSearch": "फ़ॉन्ट खोजें",
+      "fontNotFound": "आपकी खोज से कोई फ़ॉन्ट मेल नहीं खाता",
       "fontSize": "फ़ॉन्ट आकार",
       "blur": "धुंधलापन",
       "space": "अंतराल",
       "footer": {
-        "donate": "दान करें",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "दान करें"
       },
       "theme": "थीम",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "डार्क"
       },
       "membershipNameColor": "सदस्य नाम का रंग",
-      "defaultColor": "डिफ़ॉल्ट",
       "resetToDefaultColor": "डिफ़ॉल्ट रंग पर रीसेट करें",
       "group": {
         "display": "प्रदर्शन",
@@ -46,7 +48,7 @@
       "failed": "संगतता की समस्या मिली",
       "waiting": "जाँच जानकारी एकत्र की जा रही है",
       "lastRecovery": "पिछली स्वतः रिकवरी",
-      "restart": "एक्सटेंशन फिर से चालू करें",
+      "restart": "चैट फिर से लोड करें",
       "copy": "जाँच रिपोर्ट कॉपी करें",
       "copied": "जाँच रिपोर्ट कॉपी हो गई",
       "copyFailed": "जाँच रिपोर्ट कॉपी नहीं हो सकी"
@@ -57,10 +59,13 @@
       "openSettings": "सेटिंग्स खोलें",
       "toggleLiveChat": "लाइव चैट टॉगल करें",
       "close": "बंद करें",
-      "reorderPreset": "प्रीसेट क्रम बदलें",
+      "dragHandle": "ड्रैग हैंडल",
+      "settingsFrameTitle": "फ़ुलस्क्रीन चैट सेटिंग्स",
+      "reorderPreset": "{name} का क्रम बदलें",
       "presetName": "प्रीसेट नाम",
-      "applyPreset": "प्रीसेट लागू करें",
-      "deletePreset": "प्रीसेट हटाएं",
+      "applyPreset": "{name} लागू करें",
+      "deletePreset": "{name} को हटाएं",
+      "presetMoved": "{name} को {position} स्थान पर ले जाया गया",
       "colorPicker": "रंग चुनें",
       "loading": "लोड हो रहा है",
       "selectLanguage": "भाषा चुनें",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "फ़ुलस्क्रीन चैट",
     "links": "लिंक",
     "donate": "दान करें",
+    "donateAction": "Ko-fi पर सहयोग करें",
     "theme": "थीम",
     "dataTransfer": "बैकअप",
     "export": "निर्यात",

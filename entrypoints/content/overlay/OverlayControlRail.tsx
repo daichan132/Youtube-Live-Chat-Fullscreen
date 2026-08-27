@@ -88,6 +88,7 @@ export const OverlayControlRail = ({
       </button>
       <button
         type='button'
+        data-ylc-drag-handle
         className={dragCursorClass}
         style={{ border: 0, background: 'transparent', padding: 0, color: 'inherit' }}
         onPointerDown={handlePointerDown}
@@ -95,7 +96,7 @@ export const OverlayControlRail = ({
         disabled={!displayed}
         tabIndex={displayed ? 0 : -1}
         aria-label={t('content.aria.dragToMove')}
-        aria-roledescription='drag handle'
+        aria-roledescription={t('content.aria.dragHandle')}
         aria-describedby={dragDescriptionId}
       >
         <div className={`ylc-overlay-control-icon ${dragCursorClass} ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>

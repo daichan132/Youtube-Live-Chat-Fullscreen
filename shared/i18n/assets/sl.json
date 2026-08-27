@@ -5,7 +5,9 @@
         "preset": "Prednastavitve",
         "setting": "Nastavitve",
         "undo": "Razveljavi spremembo sloga",
-        "redo": "Uveljavi spremembo sloga"
+        "redo": "Uveljavi spremembo sloga",
+        "undone": "Sprememba sloga je razveljavljena",
+        "redone": "Sprememba sloga je uveljavljena"
       },
       "alwaysOnDisplay": "Prikaži klepet med nedejavnostjo",
       "chatOnlyDisplay": "Prikaži samo klepet",
@@ -15,13 +17,14 @@
       "backgroundColor": "Barva ozadja",
       "fontColor": "Barva besedila",
       "fontFamily": "Pisava",
+      "fontFamilyDefault": "Privzeta",
+      "fontSearch": "Poišči pisave",
+      "fontNotFound": "Ni pisav, ki bi ustrezale iskanju",
       "fontSize": "Velikost pisave",
       "blur": "Zameglitev",
       "space": "Razmik",
       "footer": {
-        "donate": "Doniraj",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Doniraj"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Temna"
       },
       "membershipNameColor": "Barva imen članov",
-      "defaultColor": "Privzeta",
       "resetToDefaultColor": "Ponastavi na privzeto barvo",
       "group": {
         "display": "Prikaz",
@@ -46,7 +48,7 @@
       "failed": "Zaznana je težava z združljivostjo",
       "waiting": "Zbiranje diagnostičnih podatkov",
       "lastRecovery": "Zadnja samodejna obnovitev",
-      "restart": "Znova zaženi razširitev",
+      "restart": "Znova naloži klepet",
       "copy": "Kopiraj diagnostično poročilo",
       "copied": "Diagnostično poročilo je kopirano",
       "copyFailed": "Diagnostičnega poročila ni mogoče kopirati"
@@ -57,10 +59,13 @@
       "openSettings": "Odpri nastavitve",
       "toggleLiveChat": "Prikaži ali skrij klepet v živo",
       "close": "Zapri",
-      "reorderPreset": "Spremeni vrstni red prednastavitve",
+      "dragHandle": "ročica za vlečenje",
+      "settingsFrameTitle": "Nastavitve klepeta na celotnem zaslonu",
+      "reorderPreset": "Spremeni vrstni red prednastavitve »{name}«",
       "presetName": "Ime prednastavitve",
-      "applyPreset": "Uporabi prednastavitev",
-      "deletePreset": "Izbriši prednastavitev",
+      "applyPreset": "Uporabi prednastavitev »{name}«",
+      "deletePreset": "Izbriši prednastavitev »{name}«",
+      "presetMoved": "Prednastavitev »{name}« je premaknjena na mesto {position}",
       "colorPicker": "Izbirnik barv",
       "loading": "Nalaganje",
       "selectLanguage": "Izberi jezik",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Klepet na celotnem zaslonu",
     "links": "Povezave",
     "donate": "Doniraj",
+    "donateAction": "Podpri na Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Varnostna kopija",
     "export": "Izvozi",

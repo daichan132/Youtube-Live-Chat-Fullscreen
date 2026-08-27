@@ -71,16 +71,31 @@ const report: SanitizedDiagnosticReport = {
 }
 
 describe('RuntimeDiagnosticsPanel', () => {
-  it('renders Japanese status and exposes restart without changing settings', () => {
+  it('renders Japanese status and exposes the reload control without changing settings', () => {
     const store = createJapaneseStore()
     const onRestart = vi.fn()
     const { getByRole, getByText } = renderWithStore(<RuntimeDiagnosticsPanel report={report} onRestart={onRestart} />, store)
 
     expect(getByText('互換性')).toBeInTheDocument()
     expect(getByText('正常')).toBeInTheDocument()
-    expect(getByText('opera · live · active · borrowed-live')).toBeInTheDocument()
-    fireEvent.click(getByRole('button', { name: '拡張機能を再起動' }))
+    fireEvent.click(getByRole('button', { name: 'チャットを再読み込み' }))
     expect(onRestart).toHaveBeenCalledOnce()
+  })
+
+  it('keeps internal runtime identifiers out of the rendered panel', () => {
+    const store = createJapaneseStore()
+    const failing: SanitizedDiagnosticReport = {
+      ...report,
+      runtime: { ...report.runtime, status: 'unavailable', failureCode: 'IFRAME_DOCUMENT_NOT_READY' },
+      compatibility: { ...report.compatibility, state: 'failed' },
+    }
+    const { container } = renderWithStore(<RuntimeDiagnosticsPanel report={failing} onRestart={vi.fn()} />, store)
+
+    const rendered = container.textContent ?? ''
+    for (const identifier of ['opera', 'live', 'active', 'borrowed-live', 'IFRAME_DOCUMENT_NOT_READY']) {
+      expect(rendered, `internal identifier leaked: ${identifier}`).not.toContain(identifier)
+    }
+    expect(rendered).toContain('互換性の問題を検出')
   })
 
   it('copies only the sanitized report', async () => {

@@ -5,7 +5,9 @@
         "preset": "Praset",
         "setting": "Tetapan",
         "undo": "Buat asal perubahan gaya",
-        "redo": "Buat semula perubahan gaya"
+        "redo": "Buat semula perubahan gaya",
+        "undone": "Perubahan gaya telah dibuat asal",
+        "redone": "Perubahan gaya telah dibuat semula"
       },
       "alwaysOnDisplay": "Paparkan sembang ketika tidak aktif",
       "chatOnlyDisplay": "Mod sembang sahaja",
@@ -15,13 +17,14 @@
       "backgroundColor": "Warna latar belakang",
       "fontColor": "Warna teks",
       "fontFamily": "Jenis fon",
+      "fontFamilyDefault": "Lalai",
+      "fontSearch": "Cari fon",
+      "fontNotFound": "Tiada fon sepadan dengan carian anda",
       "fontSize": "Saiz teks",
       "blur": "Kabur",
       "space": "Jarak antara mesej",
       "footer": {
-        "donate": "Derma",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Derma"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Gelap"
       },
       "membershipNameColor": "Warna nama ahli",
-      "defaultColor": "Lalai",
       "resetToDefaultColor": "Pulihkan warna lalai",
       "group": {
         "display": "Paparan",
@@ -46,7 +48,7 @@
       "failed": "Masalah keserasian dikesan",
       "waiting": "Sedang mengumpulkan data diagnostik",
       "lastRecovery": "Pemulihan automatik terakhir",
-      "restart": "Mulakan semula sambungan",
+      "restart": "Muat semula tindanan sembang",
       "copy": "Salin laporan diagnostik",
       "copied": "Laporan diagnostik telah disalin",
       "copyFailed": "Laporan diagnostik tidak dapat disalin"
@@ -57,10 +59,13 @@
       "openSettings": "Buka tetapan",
       "toggleLiveChat": "Papar atau sembunyikan sembang langsung",
       "close": "Tutup",
-      "reorderPreset": "Alihkan praset",
+      "dragHandle": "pemegang seret",
+      "settingsFrameTitle": "Tetapan sembang skrin penuh",
+      "reorderPreset": "Susun semula {name}",
       "presetName": "Nama praset",
-      "applyPreset": "Gunakan praset",
-      "deletePreset": "Padam praset",
+      "applyPreset": "Gunakan {name}",
+      "deletePreset": "Padam {name}",
+      "presetMoved": "{name} dialihkan ke kedudukan {position}",
       "colorPicker": "Pemilih warna",
       "loading": "Memuatkan",
       "selectLanguage": "Pilih bahasa",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Sembang skrin penuh",
     "links": "Pautan",
     "donate": "Derma",
+    "donateAction": "Sokong di Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Sandaran",
     "export": "Eksport",

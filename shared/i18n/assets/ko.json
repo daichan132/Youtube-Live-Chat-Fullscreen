@@ -5,7 +5,9 @@
         "preset": "프리셋",
         "setting": "설정",
         "undo": "스타일 변경 실행 취소",
-        "redo": "스타일 변경 다시 실행"
+        "redo": "스타일 변경 다시 실행",
+        "undone": "스타일 변경을 실행 취소했습니다",
+        "redone": "스타일 변경을 다시 실행했습니다"
       },
       "alwaysOnDisplay": "조작하지 않을 때도 표시",
       "chatOnlyDisplay": "채팅만 표시",
@@ -15,13 +17,14 @@
       "backgroundColor": "배경색",
       "fontColor": "글자색",
       "fontFamily": "글꼴",
+      "fontFamilyDefault": "기본값",
+      "fontSearch": "글꼴 검색",
+      "fontNotFound": "검색과 일치하는 글꼴이 없습니다",
       "fontSize": "글꼴 크기",
       "blur": "블러",
       "space": "간격",
       "footer": {
-        "donate": "후원하기",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "후원하기"
       },
       "theme": "테마",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "다크"
       },
       "membershipNameColor": "멤버 이름 색상",
-      "defaultColor": "기본값",
       "resetToDefaultColor": "기본 색상으로 되돌리기",
       "group": {
         "display": "표시",
@@ -46,7 +48,7 @@
       "failed": "호환성 문제가 감지됨",
       "waiting": "진단 정보 수집 중",
       "lastRecovery": "마지막 자동 복구",
-      "restart": "확장 프로그램 다시 시작",
+      "restart": "채팅 다시 불러오기",
       "copy": "진단 보고서 복사",
       "copied": "진단 보고서를 복사했습니다",
       "copyFailed": "진단 보고서를 복사하지 못했습니다"
@@ -57,10 +59,13 @@
       "openSettings": "설정 열기",
       "toggleLiveChat": "라이브 채팅 전환",
       "close": "닫기",
-      "reorderPreset": "프리셋 순서 변경",
+      "dragHandle": "드래그 핸들",
+      "settingsFrameTitle": "전체화면 채팅 설정",
+      "reorderPreset": "{name} 순서 변경",
       "presetName": "프리셋 이름",
-      "applyPreset": "프리셋 적용",
-      "deletePreset": "프리셋 삭제",
+      "applyPreset": "{name} 적용",
+      "deletePreset": "{name} 삭제",
+      "presetMoved": "{name} 프리셋을 {position}번째로 이동했습니다",
       "colorPicker": "색상 선택",
       "loading": "로딩 중",
       "selectLanguage": "언어 선택",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
     "donate": "후원하기",
+    "donateAction": "Ko-fi에서 후원하기",
     "theme": "테마",
     "dataTransfer": "백업",
     "export": "내보내기",

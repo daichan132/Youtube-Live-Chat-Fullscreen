@@ -5,7 +5,9 @@
         "preset": "Förinställning",
         "setting": "Inställningar",
         "undo": "Ångra stiländring",
-        "redo": "Gör om stiländring"
+        "redo": "Gör om stiländring",
+        "undone": "Stiländringen ångrades",
+        "redone": "Stiländringen gjordes om"
       },
       "alwaysOnDisplay": "Visa chatten vid inaktivitet",
       "chatOnlyDisplay": "Visa endast chatten",
@@ -15,13 +17,14 @@
       "backgroundColor": "Bakgrundsfärg",
       "fontColor": "Textfärg",
       "fontFamily": "Teckensnitt",
+      "fontFamilyDefault": "Standardteckensnitt",
+      "fontSearch": "Sök teckensnitt",
+      "fontNotFound": "Inga teckensnitt matchar sökningen",
       "fontSize": "Textstorlek",
       "blur": "Oskärpa",
       "space": "Mellanrum",
       "footer": {
-        "donate": "Donera",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donera"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,7 +33,6 @@
         "dark": "Mörkt"
       },
       "membershipNameColor": "Färg på medlemsnamn",
-      "defaultColor": "Standard",
       "resetToDefaultColor": "Återställ standardfärg",
       "group": {
         "display": "Visning",
@@ -46,7 +48,7 @@
       "failed": "Kompatibilitetsproblem upptäckt",
       "waiting": "Samlar in diagnostikdata",
       "lastRecovery": "Senaste automatiska återställning",
-      "restart": "Starta om tillägget",
+      "restart": "Ladda om chatten",
       "copy": "Kopiera diagnostikrapport",
       "copied": "Diagnostikrapporten har kopierats.",
       "copyFailed": "Det gick inte att kopiera diagnostikrapporten."
@@ -57,10 +59,13 @@
       "openSettings": "Öppna inställningar",
       "toggleLiveChat": "Visa eller dölj livechatten",
       "close": "Stäng",
-      "reorderPreset": "Flytta förinställning",
+      "dragHandle": "draghandtag",
+      "settingsFrameTitle": "Inställningar för chatt i helskärm",
+      "reorderPreset": "Flytta {name}",
       "presetName": "Namn på förinställning",
-      "applyPreset": "Använd förinställning",
-      "deletePreset": "Ta bort förinställning",
+      "applyPreset": "Använd {name}",
+      "deletePreset": "Ta bort {name}",
+      "presetMoved": "{name} flyttades till position {position}",
       "colorPicker": "Färgväljare",
       "loading": "Läser in",
       "selectLanguage": "Välj språk",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Chatt i helskärm",
     "links": "Länkar",
     "donate": "Donera",
+    "donateAction": "Stötta på Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Säkerhetskopia",
     "export": "Exportera",

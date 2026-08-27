@@ -5,7 +5,9 @@
         "preset": "Presets",
         "setting": "Settings",
         "undo": "Undo style change",
-        "redo": "Redo style change"
+        "redo": "Redo style change",
+        "undone": "Style change undone",
+        "redone": "Style change redone"
       },
       "group": {
         "display": "Display",
@@ -21,13 +23,14 @@
       "backgroundColor": "Background Color",
       "fontColor": "Text Color",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Default",
+      "fontSearch": "Search fonts",
+      "fontNotFound": "No fonts match your search",
       "fontSize": "Text Size",
       "blur": "Blur",
       "space": "Message Spacing",
       "footer": {
-        "donate": "Donate",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donate"
       },
       "theme": "Theme",
       "themeMode": {
@@ -36,7 +39,6 @@
         "dark": "Dark"
       },
       "membershipNameColor": "Member Name Color",
-      "defaultColor": "Default",
       "resetToDefaultColor": "Reset to default color"
     },
     "diagnostics": {
@@ -46,7 +48,7 @@
       "failed": "Compatibility issue detected",
       "waiting": "Collecting runtime diagnostics",
       "lastRecovery": "Last self-recovery",
-      "restart": "Restart runtime",
+      "restart": "Reload chat overlay",
       "copy": "Copy diagnostic report",
       "copied": "Diagnostic report copied",
       "copyFailed": "Could not copy the diagnostic report"
@@ -57,10 +59,13 @@
       "openSettings": "Open settings",
       "toggleLiveChat": "Toggle live chat",
       "close": "Close",
-      "reorderPreset": "Reorder preset",
+      "dragHandle": "drag handle",
+      "settingsFrameTitle": "Fullscreen chat settings",
+      "reorderPreset": "Reorder {name}",
       "presetName": "Preset name",
-      "applyPreset": "Apply preset",
-      "deletePreset": "Delete preset",
+      "applyPreset": "Apply {name}",
+      "deletePreset": "Delete {name}",
+      "presetMoved": "Moved {name} to position {position}",
       "colorPicker": "Color picker",
       "loading": "Loading",
       "selectLanguage": "Select language",
@@ -87,6 +92,7 @@
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
     "donate": "Donate",
+    "donateAction": "Support on Ko-fi",
     "theme": "Theme",
     "dataTransfer": "Backup",
     "export": "Export",

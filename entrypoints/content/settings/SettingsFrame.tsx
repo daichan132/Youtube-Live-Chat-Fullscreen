@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { browser, type PublicPath } from 'wxt/browser'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
+import { useT } from '@/shared/i18n/react'
 import type { ChatRuntime } from '../runtime/ChatRuntime'
 import { isSettingsFrameRequest, SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
@@ -15,6 +16,7 @@ const settingsPageUrl = new URL(browser.runtime.getURL('/'))
 const SETTINGS_PAGE_ORIGIN = `${settingsPageUrl.protocol}//${settingsPageUrl.host}`
 
 export const SettingsFrame = ({ open, onClose, runtime }: SettingsFrameProps) => {
+  const t = useT()
   const frameRef = useRef<HTMLIFrameElement>(null)
 
   const postDiagnosticReport = () => {
@@ -52,7 +54,7 @@ export const SettingsFrame = ({ open, onClose, runtime }: SettingsFrameProps) =>
       ref={frameRef}
       data-ylc-settings-frame
       src={browser.runtime.getURL(SETTINGS_PAGE_PATH)}
-      title='YouTube Live Chat Fullscreen settings'
+      title={t('content.aria.settingsFrameTitle')}
       onLoad={postDiagnosticReport}
       style={{
         position: 'fixed',

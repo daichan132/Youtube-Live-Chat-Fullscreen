@@ -1,13 +1,13 @@
 Pag-fullscreen mo ang isang YouTube live stream, nawawala ang chat. Ibinabalik ito ng extension na ito sa ibabaw ng video, para mabasa mo ang bawat mensahe, makasagot, at — sa live stream — makapagpadala ng Super Chat nang hindi umaalis sa fullscreen.
 
 MGA PANGUNAHING TAMPOK
-- Posisyon at laki: i-drag ang panel kahit saan sa ibabaw ng player, baguhin ang laki mula sa kahit anong gilid; sabay silang lumalaki at lumiliit kasama ng player, kaya kasya rin sa 32-pulgadang screen ang ayos na ginawa mo sa laptop.
+- Posisyon at laki: i-drag ang panel kahit saan sa ibabaw ng player, baguhin ang laki mula sa kahit anong gilid o sulok; sabay silang lumalaki at lumiliit kasama ng player, kaya kasya rin sa 32-pulgadang screen ang ayos na ginawa mo sa laptop.
 - Teksto: "Laki ng text" mula 10px hanggang 40px (13px ang default; mga tatlong beses ang laki ng 40px kaysa sa karaniwang text ng chat), sarili mong "Kulay ng text", hiwalay na "Kulay ng pangalan ng miyembro", at 50 font.
 - Background: puting-puti sa umpisa; "Kulay ng background" at transparency sa iisang picker, kasama ang 0-20px na "Blur" — ito ang setting na pinakamalamang magpabagal sa daloy, kaya dahan-dahan sa mga lumang makina.
-- Nananatiling nakikita: naka-on agad ang "Ipakita ang chat kapag walang aktibidad", kaya nananatili ang chat kahit mawala na ang mga kontrol ng player; kapag naka-on iyon, mga mensahe na lang ang iiwan ng "Chat lang ang ipakita" hanggang idantay mo ang cursor.
+- Nananatiling nakikita: naka-on agad ang "Ipakita ang chat kapag walang aktibidad", kaya nananatili ang chat kahit mawala na ang mga kontrol ng player; kapag naka-on iyon, titiklupin ng "Chat lang ang ipakita" ang header at ang kahon ng mensahe hanggang idantay mo ang cursor.
 - Mga username at agwat: puwedeng patayin ang "Ipakita ang mga username" at "Ipakita ang mga profile picture" para sa ordinaryong mensahe, pero nananatili ang pangalan at larawan sa mga bayad na mensahe; 0-40px ang "Agwat ng mga mensahe".
 - Mga preset: pito ang nakahanda, isang click bawat isa, saka ang sarili mong mase-save.
-- Keyboard: gumagana sa arrow keys ang mga slider at color picker, may label para sa screen reader ang bawat kontrol; mouse lang ang kailangan sa pagpapalabas ng hanay ng mga button at sa pagbabago ng laki. Awtomatikong tumatakbo ang mga pagsusuri sa WCAG 2.1 AA sa bawat pagbabago.
+- Keyboard: gumagana sa arrow keys ang mga slider at color picker, may label para sa screen reader ang bawat kontrol; mouse lang ang kailangan sa pagpapalabas ng hanay ng mga button, sa pagbabalik ng tinitiklop ng "Chat lang ang ipakita", at sa pagbabago ng laki. Sa bawat pagbabago, sumasaklaw sa popup, sa hanay ng mga button at sa settings panel ang awtomatikong pagsusuri sa WCAG 2.1 AA.
 
 ANG MISMONG CHAT NG YOUTUBE, HINDI KOPYA
 Ang panel sa ibabaw ng video ay ang mismong live chat ng YouTube mula sa sidebar, na binago ang itsura, kaya patuloy na gumagana ang mga badge, emoji, sticker, at ang members-only chat. Sa mismong message box ng YouTube dumadaan ang pagpapadala, at sa purchase panel ng YouTube ang Super Chat: sa YouTube napupunta ang bayad, hindi kailanman sa extension. Iisa lang ang kontrol na binabago nito roon — ang membership button: binubuksan nito sa bagong tab ang join page ng channel.
@@ -20,7 +20,7 @@ Walang analytics, walang tracking, walang anumang napupunta sa developer: hindi 
 PAANO MAGSIMULA
 1. I-install ito, tapos magbukas ng live stream o archive na may chat replay pa.
 2. Gawing fullscreen ang player — nandoon na agad ang chat.
-3. Ang button na hugis speech bubble sa control bar ang nagbubukas at nagsasara nito; ang settings button naman ang nagbabago ng itsura.
+3. Ang button na hugis speech bubble sa control bar ang nagbubukas at nagsasara nito; idantay mo ang cursor sa chat at ang sarili nitong settings button ang nagbabago ng itsura.
 
 SAAN ITO TUMATAKBO
 Desktop lang, sa fullscreen at sa watch page na may chat. Tumatakbo rin sa Opera ang Chrome build na ito; may sariling build ang Firefox sa addons.mozilla.org. May 55 pagpipilian ang interface, sa 49 na wika.

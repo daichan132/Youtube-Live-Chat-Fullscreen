@@ -1,13 +1,13 @@
 Du gehst bei einem YouTube-Livestream ins Vollbild – und der Chat ist weg. Diese Erweiterung holt ihn zurück, auf das Video: Du liest jede Nachricht, antwortest und schickst in einem Livestream Super Chats, ohne das Vollbild zu verlassen.
 
 HAUPTFUNKTIONEN
-- Position und Größe: Zieh das Panel an eine beliebige Stelle über dem Player, die Größe änderst du an jeder Kante; beides skaliert mit dem Player, ein am Laptop eingerichtetes Layout passt also auch auf einen 32-Zoll-Bildschirm.
+- Position und Größe: Zieh das Panel an eine beliebige Stelle über dem Player, die Größe änderst du an jeder Kante und Ecke; beides skaliert mit dem Player, ein am Laptop eingerichtetes Layout passt also auch auf einen 32-Zoll-Bildschirm.
 - Text: „Schriftgröße“ von 10 bis 40px (standardmäßig 13px; 40px ist rund dreimal so groß wie gewöhnliche Chatschrift), eigene Textfarbe, eine eigene Farbe für Mitgliedsnamen, 50 Schriftarten.
 - Hintergrund: Er startet deckend weiß; Farbe und Transparenz kommen aus einer Farbauswahl, dazu 0–20px „Unschärfe“ – die Einstellung, die am ehesten Ruckler verursacht, auf älteren Rechnern also sparsam einsetzen.
-- Anzeige: „Chat bei Inaktivität anzeigen“ ist von Anfang an eingeschaltet, der Chat bleibt also stehen, wenn die Steuerleiste ausgeblendet wird; ist die Option an, lässt „Nur Chat anzeigen“ nur die Nachrichten übrig, bis du mit der Maus darüberfährst.
+- Anzeige: „Chat bei Inaktivität anzeigen“ ist von Anfang an eingeschaltet, der Chat bleibt also stehen, wenn die Steuerleiste ausgeblendet wird; ist die Option an, klappt „Nur Chat anzeigen“ die Kopfzeile und das Eingabefeld weg, bis du mit der Maus darüberfährst.
 - Namen und Abstand: „Nutzernamen anzeigen“ und „Profilbilder anzeigen“ schaltest du für gewöhnliche Nachrichten ab, bezahlte behalten Name und Bild; „Abstand“ zwischen den Nachrichten 0–40px.
 - Voreinstellungen: sieben eingebaute, je ein Klick, dazu deine eigenen.
-- Tastatur: Schieberegler und Farbauswahl nehmen Pfeiltasten, jedes Bedienelement ist für Screenreader beschriftet; eine Maus brauchen nur die Leiste, die beim Darüberfahren erscheint, und das Ändern der Größe. Automatische Prüfungen nach WCAG 2.1 AA laufen bei jeder Änderung.
+- Tastatur: Schieberegler und Farbauswahl nehmen Pfeiltasten, jedes Bedienelement ist für Screenreader beschriftet; eine Maus brauchen nur das Hervorholen der Bedienleiste, das Zurückholen dessen, was „Nur Chat anzeigen“ wegklappt, und das Ändern der Größe. Automatische Prüfungen nach WCAG 2.1 AA decken bei jeder Änderung das Popup, die Bedienleiste und das Einstellungsfeld ab.
 
 YOUTUBES EIGENER CHAT, KEINE NACHBILDUNG
 Das Panel über dem Video ist YouTubes eigener Livechat aus der Seitenleiste, neu gestaltet – deshalb funktioniert alles weiter: Abzeichen, Emojis, Sticker und der Chat nur für Mitglieder. Geschrieben wird über YouTubes eigenes Eingabefeld, Super Chats laufen über dessen Kaufpanel: Die Zahlung geht an YouTube, nie an die Erweiterung. Das einzige Element, das die Erweiterung dort ändert, ist „Mitgliedschaft“ – es öffnet die Beitrittsseite des Kanals in einem neuen Tab.
@@ -20,7 +20,7 @@ Keine Analyse, kein Tracking, nichts an den Entwickler: Was du liest und tippst,
 SO FÄNGST DU AN
 1. Installieren, dann einen Livestream oder ein Archiv mit Chatwiedergabe öffnen.
 2. Den Player ins Vollbild schalten – der Chat ist schon da.
-3. Ein Sprechblasen-Button in der Steuerleiste schaltet ihn aus und ein; der Einstellungs-Button ändert das Aussehen.
+3. Ein Sprechblasen-Button in der Steuerleiste schaltet ihn aus und ein; fährst du mit der Maus über den Chat, ändert dessen eigener Einstellungs-Button das Aussehen.
 
 WO SIE LÄUFT
 Nur auf dem Desktop, nur im Vollbild auf einer Videoseite mit Chat. Diese Chrome-Version läuft auch in Opera; für Firefox gibt es eine eigene Version auf addons.mozilla.org. Die Oberfläche gibt es in 55 Varianten für 49 Sprachen.
