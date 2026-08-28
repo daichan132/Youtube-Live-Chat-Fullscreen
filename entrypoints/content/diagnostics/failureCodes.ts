@@ -8,6 +8,7 @@ export const RUNTIME_FAILURE_CODES = [
   'RESTORE_TARGET_MISSING',
   'PRESENTATION_TARGET_REPLACED',
   'RETRY_EXHAUSTED',
+  'UNEXPECTED_RUNTIME_ERROR',
 ] as const
 
 export type RuntimeFailureCode = (typeof RUNTIME_FAILURE_CODES)[number]

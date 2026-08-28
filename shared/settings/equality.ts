@@ -27,7 +27,7 @@ export const areChatProfilesEqual = (left: ChatProfile, right: ChatProfile) => {
   )
 }
 
-const areGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) => {
+export const areChatGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) => {
   if (left.reference !== right.reference) return false
   if (left.reference === 'legacy-viewport-px') {
     return (
@@ -48,16 +48,24 @@ const areGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) => {
   )
 }
 
-const arePresetsEqual = (left: PresetEntry, right: PresetEntry) =>
+export const arePresetEntriesEqual = (left: PresetEntry, right: PresetEntry) =>
   left.kind === right.kind &&
   left.id === right.id &&
   (left.kind === 'builtin' || (right.kind === 'custom' && left.name === right.name && areChatProfilesEqual(left.profile, right.profile)))
 
+export const arePresetListsEqual = (left: PresetEntry[], right: PresetEntry[]) =>
+  left.length === right.length &&
+  left.every((preset, index) => {
+    const rightPreset = right[index]
+    return rightPreset !== undefined && arePresetEntriesEqual(preset, rightPreset)
+  })
+
+export const areChatAppearanceSettingsEqual = (
+  left: Pick<ChatSettings, 'profile' | 'presets'>,
+  right: Pick<ChatSettings, 'profile' | 'presets'>,
+) => areChatProfilesEqual(left.profile, right.profile) && arePresetListsEqual(left.presets, right.presets)
+
 export const areChatSettingsEqual = (left: ChatSettings, right: ChatSettings) =>
   areChatProfilesEqual(left.profile, right.profile) &&
-  areGeometriesEqual(left.geometry, right.geometry) &&
-  left.presets.length === right.presets.length &&
-  left.presets.every((preset, index) => {
-    const rightPreset = right.presets[index]
-    return rightPreset !== undefined && arePresetsEqual(preset, rightPreset)
-  })
+  areChatGeometriesEqual(left.geometry, right.geometry) &&
+  arePresetListsEqual(left.presets, right.presets)

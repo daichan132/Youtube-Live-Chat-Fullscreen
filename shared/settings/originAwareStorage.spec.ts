@@ -1,503 +1,235 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import { createSettingsRepository, type StoredEnvelope } from './repository'
-import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
+import {
+  APPEARANCE_STORAGE_KEY,
+  ENABLED_STORAGE_KEY,
+  GEOMETRY_STORAGE_KEY,
+  LEGACY_CHAT_STORAGE_KEY,
+  LEGACY_GLOBAL_STORAGE_KEY,
+  LOCALE_STORAGE_KEY,
+  THEME_STORAGE_KEY,
+} from './storageKeys'
 
-/**
- * chrome.i18n.getAcceptLanguages is typed as callback-only in @types/chrome, while the
- * polyfill the extension uses returns a promise. The cast keeps the tests on the shape the
- * runtime actually sees.
- */
-const stubAcceptLanguages = (result: Promise<string[]>) =>
-  vi.spyOn(chrome.i18n, 'getAcceptLanguages').mockImplementation((() => result) as never)
+const ALL_KEYS = [
+  ENABLED_STORAGE_KEY,
+  THEME_STORAGE_KEY,
+  APPEARANCE_STORAGE_KEY,
+  GEOMETRY_STORAGE_KEY,
+  LOCALE_STORAGE_KEY,
+  LEGACY_GLOBAL_STORAGE_KEY,
+  LEGACY_CHAT_STORAGE_KEY,
+  'globalSettingStore',
+  'ytdLiveChatStore',
+  'i18nextLng',
+]
 
-const createBarrier = () => {
-  let release!: () => void
-  const promise = new Promise<void>(resolve => {
-    release = resolve
+const immediateRetry = { waitBeforeRetry: vi.fn(async () => {}) }
+
+describe('settings repository', () => {
+  beforeEach(async () => {
+    localStorage.clear()
+    await chrome.storage.local.remove(ALL_KEYS)
+    immediateRetry.waitBeforeRetry.mockClear()
   })
-  return { promise, release }
-}
 
-describe('settings envelopes', () => {
-  it('carry schema and writer identity for external-change filtering', () => {
-    const envelope: StoredEnvelope<{ themeMode: 'dark' }> = { schemaVersion: 1, writerId: 'test-writer', value: { themeMode: 'dark' } }
-    expect(envelope).toEqual({ schemaVersion: 1, writerId: 'test-writer', value: { themeMode: 'dark' } })
+  it('keeps one versioned envelope with writer identity', () => {
+    const envelope: StoredEnvelope<boolean> = { schemaVersion: 1, writerId: 'writer', value: true }
+    expect(envelope).toEqual({ schemaVersion: 1, writerId: 'writer', value: true })
   })
 
-  describe('settings repository migration', () => {
-    beforeEach(async () => {
-      localStorage.clear()
-      await chrome.storage.local.remove([
-        'globalSettingStore',
-        'ytdLiveChatStore',
-        'i18nextLng',
-        GLOBAL_STORAGE_KEY,
-        CHAT_STORAGE_KEY,
-        LOCALE_STORAGE_KEY,
-      ])
-    })
-
-    it('migrates the extension-page i18next locale before the defensive browser-storage fallback', async () => {
-      localStorage.setItem('i18nextLng', 'ja')
-      await chrome.storage.local.set({ i18nextLng: 'fr' })
-
-      const snapshot = await createSettingsRepository('extension-locale-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('ja')
-      expect(localStorage.getItem('i18nextLng')).toBeNull()
-      expect(await chrome.storage.local.get('i18nextLng')).toEqual({})
-      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toEqual({
+  it('loads through current and legacy formats without writing or deleting during startup', async () => {
+    localStorage.setItem('i18nextLng', 'ja')
+    await chrome.storage.local.set({
+      [LEGACY_GLOBAL_STORAGE_KEY]: {
         schemaVersion: 1,
-        writerId: 'extension-locale-test',
-        value: 'ja',
-      })
-    })
-
-    // A fresh install has nothing stored, so the browser UI language is the only signal
-    // available. These cases also prove the resolver is wired in: each input is one the
-    // naive lookup used to get wrong.
-    it.each([
-      ['de-DE', 'de'],
-      ['ja', 'ja'],
-      ['nb-NO', 'no'],
-      ['zh-HK', 'zh_TW'],
-      ['es-MX', 'es_419'],
-      ['is-IS', 'en'],
-    ])('adopts the browser UI language %s as %s on a first run', async (uiLanguage, expected) => {
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue(uiLanguage)
-
-      const snapshot = await createSettingsRepository(`first-run-${uiLanguage}`, localStorage).load()
-
-      expect(snapshot.locale).toBe(expected)
-      expect(chrome.i18n.getUILanguage).toHaveBeenCalled()
-    })
-
-    it('falls back to the next accepted language when nothing is shipped for the UI language', async () => {
-      // Icelandic has no bundle; this user reads Danish before English.
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('is-IS')
-      stubAcceptLanguages(Promise.resolve(['is', 'da', 'en']))
-
-      const snapshot = await createSettingsRepository('accept-language-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('da')
-    })
-
-    it('keeps the UI language when one is shipped, without consulting accepted languages', async () => {
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('de')
-      stubAcceptLanguages(Promise.resolve(['fr']))
-
-      const snapshot = await createSettingsRepository('ui-language-wins-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('de')
-    })
-
-    it('still reaches English when no preferred language is shipped', async () => {
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('is-IS')
-      stubAcceptLanguages(Promise.resolve(['is', 'fo']))
-
-      const snapshot = await createSettingsRepository('no-match-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('en')
-    })
-
-    it('survives an environment where getAcceptLanguages rejects', async () => {
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('ja')
-      stubAcceptLanguages(Promise.reject(new Error('unavailable')))
-
-      const snapshot = await createSettingsRepository('accept-language-throws-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('ja')
-    })
-
-    it('preserves an explicit English legacy locale instead of replacing it with the browser UI locale', async () => {
-      localStorage.setItem('i18nextLng', 'en')
-      vi.spyOn(chrome.i18n, 'getUILanguage').mockReturnValue('ja')
-
-      const snapshot = await createSettingsRepository('english-locale-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('en')
-      expect(chrome.i18n.getUILanguage).not.toHaveBeenCalled()
-    })
-
-    it('gives the current locale envelope precedence over stale extension-page localStorage', async () => {
-      localStorage.setItem('i18nextLng', 'ja')
-      await chrome.storage.local.set({
-        [GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: { ytdLiveChat: true, themeMode: 'system' } },
-        [CHAT_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: DEFAULT_CHAT_SETTINGS },
-        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: 'fr' },
-      })
-
-      const snapshot = await createSettingsRepository('locale-precedence-test', localStorage).load()
-
-      expect(snapshot.locale).toBe('fr')
-      expect(localStorage.getItem('i18nextLng')).toBeNull()
-      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
-        writerId: 'existing-writer',
-        value: 'fr',
-      })
-    })
-
-    it('defers the locale envelope outside extension pages so popup migration cannot be preempted', async () => {
-      localStorage.setItem('i18nextLng', 'ja')
-
-      const contentSnapshot = await createSettingsRepository('content-writer', null).load()
-
-      expect(contentSnapshot.locale).toBe('en')
-      expect(localStorage.getItem('i18nextLng')).toBe('ja')
-      expect(await chrome.storage.local.get(LOCALE_STORAGE_KEY)).toEqual({})
-
-      const popupSnapshot = await createSettingsRepository('popup-writer', localStorage).load()
-
-      expect(popupSnapshot.locale).toBe('ja')
-      expect(localStorage.getItem('i18nextLng')).toBeNull()
-      expect((await chrome.storage.local.get(GLOBAL_STORAGE_KEY))[GLOBAL_STORAGE_KEY]).toMatchObject({
-        writerId: 'content-writer',
-      })
-      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
-        writerId: 'popup-writer',
-        value: 'ja',
-      })
-    })
-
-    it('preserves the light theme migration for version 0 global settings', async () => {
-      await chrome.storage.local.set({
-        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false }, version: 0 }),
-      })
-
-      const snapshot = await createSettingsRepository('v0-theme-test').load()
-
-      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'light' })
-    })
-
-    it('uses the system theme for missing themeMode outside the version 0 migration', async () => {
-      await chrome.storage.local.set({
-        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false }, version: 1 }),
-      })
-
-      const snapshot = await createSettingsRepository('current-theme-default-test').load()
-
-      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'system' })
-    })
-
-    it('migrates the legacy stores into the WXT storage envelope and removes legacy keys', async () => {
-      await chrome.storage.local.set({
-        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false, themeMode: 'dark' }, version: 1 }),
-        ytdLiveChatStore: JSON.stringify({
-          state: {
-            ...DEFAULT_CHAT_SETTINGS,
-            profile: { ...DEFAULT_CHAT_SETTINGS.profile, appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 42 } },
+        writerId: 'old-current-writer',
+        value: { ytdLiveChat: false, themeMode: 'dark' },
+      },
+      [LEGACY_CHAT_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'old-current-writer',
+        value: {
+          ...DEFAULT_CHAT_SETTINGS,
+          profile: {
+            ...DEFAULT_CHAT_SETTINGS.profile,
+            appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 24 },
           },
-          version: 7,
-        }),
-        i18nextLng: 'ja',
-      })
-
-      const repository = createSettingsRepository('migration-test')
-      const snapshot = await repository.load()
-
-      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
-      expect(snapshot.chat.profile.appearance.fontSize).toBe(40)
-      expect(snapshot.locale).toBe('ja')
-      expect(await chrome.storage.local.get(['globalSettingStore', 'ytdLiveChatStore', 'i18nextLng'])).toEqual({})
-      expect((await chrome.storage.local.get(CHAT_STORAGE_KEY))[CHAT_STORAGE_KEY]).toMatchObject({
-        schemaVersion: 1,
-        writerId: 'migration-test',
-      })
+        },
+      },
     })
+    const set = vi.spyOn(chrome.storage.local, 'set')
+    const remove = vi.spyOn(chrome.storage.local, 'remove')
 
-    it('preserves v6 profile, geometry, and custom presets when migrating the legacy chat store', async () => {
-      await chrome.storage.local.set({
-        ytdLiveChatStore: JSON.stringify({
-          state: {
-            fontSize: 21,
-            coordinates: { x: 80, y: 90 },
-            size: { width: 600, height: 500 },
-            presetItemIds: ['custom'],
-            presetItemTitles: { custom: '配信用' },
-            presetItemStyles: { custom: { fontSize: 24 } },
-          },
-          version: 6,
-        }),
-      })
+    const snapshot = await createSettingsRepository('reader', localStorage, immediateRetry).load()
 
-      const snapshot = await createSettingsRepository('v6-migration-test').load()
+    expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
+    expect(snapshot.chat.profile.appearance.fontSize).toBe(24)
+    expect(snapshot.locale).toBe('ja')
+    expect(set).not.toHaveBeenCalled()
+    expect(remove).not.toHaveBeenCalled()
+    expect(localStorage.getItem('i18nextLng')).toBe('ja')
+  })
 
-      expect(snapshot.chat.profile.appearance.fontSize).toBe(21)
-      expect(snapshot.chat.geometry).toEqual({
-        reference: 'legacy-viewport-px',
-        coordinates: { x: 80, y: 90 },
-        size: { width: 600, height: 500 },
-      })
-      expect(snapshot.chat.presets).toEqual([
-        expect.objectContaining({
-          kind: 'custom',
-          id: 'custom',
-          name: '配信用',
-          profile: expect.objectContaining({
-            appearance: expect.objectContaining({ fontSize: 24 }),
-          }),
-        }),
-      ])
-
-      const reloaded = await createSettingsRepository('v6-reload-test').load()
-      expect(reloaded.chat).toEqual(snapshot.chat)
-      expect(await chrome.storage.local.get('ytdLiveChatStore')).toEqual({})
+  it('uses version-zero light theme compatibility without persisting it at startup', async () => {
+    await chrome.storage.local.set({
+      globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false }, version: 0 }),
     })
+    const set = vi.spyOn(chrome.storage.local, 'set')
 
-    it('loads current envelopes without rewriting them', async () => {
-      const current: StoredEnvelope<typeof DEFAULT_CHAT_SETTINGS> = {
+    const snapshot = await createSettingsRepository('v0-reader', null, immediateRetry).load()
+
+    expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'light' })
+    expect(set).not.toHaveBeenCalled()
+  })
+
+  it('fails closed when browser storage cannot be read', async () => {
+    const set = vi.spyOn(chrome.storage.local, 'set')
+    const remove = vi.spyOn(chrome.storage.local, 'remove')
+    vi.spyOn(chrome.storage.local, 'get').mockRejectedValue(new Error('storage unavailable'))
+
+    await expect(createSettingsRepository('failed-reader', null, immediateRetry).load()).rejects.toThrow('storage unavailable')
+    expect(set).not.toHaveBeenCalled()
+    expect(remove).not.toHaveBeenCalled()
+  })
+
+  it('gives each new ownership domain precedence over the compatibility snapshots', async () => {
+    await chrome.storage.local.set({
+      [LEGACY_GLOBAL_STORAGE_KEY]: {
         schemaVersion: 1,
-        writerId: 'existing-writer',
-        value: DEFAULT_CHAT_SETTINGS,
-      }
-      await chrome.storage.local.set({
-        [GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: { ytdLiveChat: true, themeMode: 'light' } },
-        [CHAT_STORAGE_KEY]: current,
-        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'existing-writer', value: 'en' },
-      })
-
-      const snapshot = await createSettingsRepository('reader-test').load()
-
-      expect(snapshot.global.themeMode).toBe('light')
-      expect((await chrome.storage.local.get(GLOBAL_STORAGE_KEY))[GLOBAL_STORAGE_KEY]).toEqual({
-        schemaVersion: 1,
-        writerId: 'existing-writer',
+        writerId: 'old',
         value: { ytdLiveChat: true, themeMode: 'light' },
-      })
-    })
-
-    it('gives valid new envelopes precedence over legacy values while filling missing entries', async () => {
-      await chrome.storage.local.set({
-        [GLOBAL_STORAGE_KEY]: {
-          schemaVersion: 1,
-          writerId: 'new-writer',
-          value: { ytdLiveChat: false, themeMode: 'dark' },
-        },
-        [CHAT_STORAGE_KEY]: {
-          schemaVersion: 1,
-          writerId: 'new-writer',
-          value: {
-            ...DEFAULT_CHAT_SETTINGS,
-            profile: {
-              ...DEFAULT_CHAT_SETTINGS.profile,
-              appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 30 },
-            },
-          },
-        },
-        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: true, themeMode: 'light' }, version: 1 }),
-        ytdLiveChatStore: JSON.stringify({ state: { fontSize: 18 }, version: 6 }),
-        i18nextLng: 'ja',
-      })
-
-      const snapshot = await createSettingsRepository('precedence-test').load()
-
-      expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
-      expect(snapshot.chat.profile.appearance.fontSize).toBe(30)
-      expect(snapshot.locale).toBe('ja')
-      expect(await chrome.storage.local.get(['globalSettingStore', 'ytdLiveChatStore', 'i18nextLng'])).toEqual({})
-
-      const reloaded = await createSettingsRepository('precedence-reload-test').load()
-      expect(reloaded.chat).toEqual(snapshot.chat)
-    })
-
-    it('keeps a concurrent migration that completes while another context reads legacy data', async () => {
-      localStorage.setItem('i18nextLng', 'ja')
-      await chrome.storage.local.set({
-        globalSettingStore: JSON.stringify({ state: { ytdLiveChat: false, themeMode: 'dark' }, version: 1 }),
-        ytdLiveChatStore: JSON.stringify({
-          state: {
-            fontSize: 23,
-            coordinates: { x: 80, y: 90 },
-            size: { width: 600, height: 500 },
-            presetItemIds: ['custom'],
-            presetItemTitles: { custom: '並行移行' },
-            presetItemStyles: { custom: { fontSize: 24 } },
-          },
-          version: 6,
-        }),
-      })
-      const legacyReadStarted = createBarrier()
-      const releaseLegacyRead = createBarrier()
-      const originalGet = chrome.storage.local.get.bind(chrome.storage.local)
-      let blockedFirstLegacyRead = false
-      const interceptGet = async (keys?: string | string[] | Record<string, unknown> | null) => {
-        if (!blockedFirstLegacyRead && Array.isArray(keys) && keys.includes('globalSettingStore')) {
-          blockedFirstLegacyRead = true
-          legacyReadStarted.release()
-          await releaseLegacyRead.promise
-        }
-        return (originalGet as (storageKeys?: typeof keys) => Promise<Record<string, unknown>>)(keys)
-      }
-      vi.spyOn(chrome.storage.local, 'get').mockImplementation(interceptGet as typeof chrome.storage.local.get)
-
-      const racedLoad = createSettingsRepository('raced-writer', localStorage).load()
-      await legacyReadStarted.promise
-      const winningSnapshot = await createSettingsRepository('winning-writer', localStorage).load()
-      releaseLegacyRead.release()
-      const racedSnapshot = await racedLoad
-
-      expect(winningSnapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
-      expect(winningSnapshot.chat.profile.appearance.fontSize).toBe(23)
-      expect(winningSnapshot.chat.geometry).toEqual({
-        reference: 'legacy-viewport-px',
-        coordinates: { x: 80, y: 90 },
-        size: { width: 600, height: 500 },
-      })
-      expect(winningSnapshot.chat.presets).toEqual([
-        expect.objectContaining({
-          id: 'custom',
-          name: '並行移行',
-          profile: expect.objectContaining({
-            appearance: expect.objectContaining({ fontSize: 24 }),
-          }),
-        }),
-      ])
-      expect(winningSnapshot.locale).toBe('ja')
-      expect(racedSnapshot).toEqual(winningSnapshot)
-      expect((await chrome.storage.local.get(GLOBAL_STORAGE_KEY))[GLOBAL_STORAGE_KEY]).toMatchObject({
-        writerId: 'winning-writer',
-        value: winningSnapshot.global,
-      })
-      expect((await chrome.storage.local.get(CHAT_STORAGE_KEY))[CHAT_STORAGE_KEY]).toMatchObject({
-        writerId: 'winning-writer',
-        value: winningSnapshot.chat,
-      })
-      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({
-        writerId: 'winning-writer',
-        value: 'ja',
-      })
-    })
-
-    it('prefers valid v6 chat data over a malformed current chat envelope', async () => {
-      await chrome.storage.local.set({
-        [CHAT_STORAGE_KEY]: {
-          schemaVersion: 1,
-          writerId: 'broken-writer',
-          value: { profile: {}, geometry: {}, presets: [] },
-        },
-        ytdLiveChatStore: JSON.stringify({
-          state: {
-            fontSize: 22,
-            coordinates: { x: 70, y: 80 },
-            size: { width: 620, height: 510 },
-            presetItemIds: ['custom'],
-            presetItemTitles: { custom: '復元用' },
-            presetItemStyles: { custom: { fontSize: 25 } },
-          },
-          version: 6,
-        }),
-      })
-
-      const snapshot = await createSettingsRepository('malformed-envelope-test').load()
-
-      expect(snapshot.chat.profile.appearance.fontSize).toBe(22)
-      expect(snapshot.chat.geometry).toEqual({
-        reference: 'legacy-viewport-px',
-        coordinates: { x: 70, y: 80 },
-        size: { width: 620, height: 510 },
-      })
-      expect(snapshot.chat.presets).toEqual([
-        expect.objectContaining({
-          kind: 'custom',
-          id: 'custom',
-          name: '復元用',
-          profile: expect.objectContaining({
-            appearance: expect.objectContaining({ fontSize: 25 }),
-          }),
-        }),
-      ])
-
-      expect((await chrome.storage.local.get(CHAT_STORAGE_KEY))[CHAT_STORAGE_KEY]).toMatchObject({
+      },
+      [LEGACY_CHAT_STORAGE_KEY]: {
         schemaVersion: 1,
-        writerId: 'malformed-envelope-test',
-      })
-      const reloaded = await createSettingsRepository('malformed-envelope-reload-test').load()
-      expect(reloaded.chat).toEqual(snapshot.chat)
-      expect(await chrome.storage.local.get('ytdLiveChatStore')).toEqual({})
+        writerId: 'old',
+        value: DEFAULT_CHAT_SETTINGS,
+      },
+      [ENABLED_STORAGE_KEY]: { schemaVersion: 1, writerId: 'new', value: false },
+      [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'new', value: 'dark' },
+      [APPEARANCE_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'new',
+        value: {
+          profile: {
+            ...DEFAULT_CHAT_SETTINGS.profile,
+            appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 31 },
+          },
+          presets: DEFAULT_CHAT_SETTINGS.presets,
+        },
+      },
+      [GEOMETRY_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'new',
+        value: {
+          reference: 'player',
+          rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 },
+          pinned: true,
+        },
+      },
+      [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'new', value: 'fr' },
     })
 
-    it('falls back from broken legacy JSON and missing values without throwing', async () => {
-      await chrome.storage.local.set({
-        globalSettingStore: '{broken',
-        ytdLiveChatStore: JSON.stringify({ state: { profile: {} }, version: 7 }),
-      })
+    const snapshot = await createSettingsRepository('new-reader', null, immediateRetry).load()
 
-      const snapshot = await createSettingsRepository('broken-legacy-test').load()
+    expect(snapshot.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
+    expect(snapshot.chat.profile.appearance.fontSize).toBe(31)
+    expect(snapshot.chat.geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 },
+      pinned: true,
+    })
+    expect(snapshot.locale).toBe('fr')
+  })
 
-      expect(snapshot.global).toEqual({ ytdLiveChat: true, themeMode: 'system' })
-      expect(snapshot.chat).toEqual(DEFAULT_CHAT_SETTINGS)
-      expect(snapshot.locale).toBe('en')
-      expect(await chrome.storage.local.get(['globalSettingStore', 'ytdLiveChatStore', 'i18nextLng'])).toEqual({})
+  it('preserves concurrent appearance and geometry writes from different contexts', async () => {
+    const appearanceWriter = createSettingsRepository('appearance-writer', null, immediateRetry)
+    const geometryWriter = createSettingsRepository('geometry-writer', null, immediateRetry)
+    const profile = structuredClone(DEFAULT_CHAT_SETTINGS.profile)
+    profile.appearance.fontSize = 29
+    const geometry = {
+      reference: 'player' as const,
+      rect: { x: 0.1, y: 0.2, width: 0.35, height: 0.45 },
+      pinned: true,
+    }
+
+    await Promise.all([
+      appearanceWriter.saveAppearance({ profile, presets: DEFAULT_CHAT_SETTINGS.presets }),
+      geometryWriter.saveGeometry(geometry),
+    ])
+
+    const snapshot = await createSettingsRepository('reader', null, immediateRetry).load()
+    expect(snapshot.chat.profile.appearance.fontSize).toBe(29)
+    expect(snapshot.chat.geometry).toEqual(geometry)
+  })
+
+  it('filters self-written events and forwards external ownership-domain changes', async () => {
+    const onEnabled = vi.fn()
+    const onGeometry = vi.fn()
+    const repository = createSettingsRepository('self-writer', null, immediateRetry)
+    const unwatch = repository.watch({
+      onEnabled,
+      onTheme: vi.fn(),
+      onAppearance: vi.fn(),
+      onGeometry,
+      onLocale: vi.fn(),
     })
 
-    it('keeps legacy data when the new envelope cannot be read back', async () => {
-      await chrome.storage.local.set({
-        globalSettingStore: JSON.stringify({ state: { themeMode: 'dark' }, version: 1 }),
-        ytdLiveChatStore: JSON.stringify({ state: DEFAULT_CHAT_SETTINGS, version: 7 }),
-        i18nextLng: 'ja',
-      })
-      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
-      const originalRemove = chrome.storage.local.remove.bind(chrome.storage.local)
-      vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-        await originalSet(values)
-        if (GLOBAL_STORAGE_KEY in values) await originalRemove(GLOBAL_STORAGE_KEY)
-      })
+    await repository.saveEnabled(false)
+    expect(onEnabled).not.toHaveBeenCalled()
 
-      await createSettingsRepository('readback-test').load()
-
-      expect(await chrome.storage.local.get(['globalSettingStore', 'ytdLiveChatStore', 'i18nextLng'])).toMatchObject({
-        globalSettingStore: expect.any(String),
-        ytdLiveChatStore: expect.any(String),
-        i18nextLng: 'ja',
-      })
+    await chrome.storage.local.set({
+      [ENABLED_STORAGE_KEY]: { schemaVersion: 1, writerId: 'other', value: true },
+      [GEOMETRY_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'other',
+        value: DEFAULT_CHAT_SETTINGS.geometry,
+      },
     })
 
-    it('keeps the extension-page locale until its new envelope can be read back', async () => {
-      localStorage.setItem('i18nextLng', 'ja')
-      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
-      const originalRemove = chrome.storage.local.remove.bind(chrome.storage.local)
-      vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-        await originalSet(values)
-        if (LOCALE_STORAGE_KEY in values) await originalRemove(LOCALE_STORAGE_KEY)
-      })
+    expect(onEnabled).toHaveBeenCalledWith(true)
+    expect(onGeometry).toHaveBeenCalledWith(DEFAULT_CHAT_SETTINGS.geometry)
+    unwatch()
+  })
 
-      await createSettingsRepository('locale-readback-test', localStorage).load()
-
-      expect(localStorage.getItem('i18nextLng')).toBe('ja')
+  it('retries one failed save and returns to idle after success', async () => {
+    const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
+    let attempts = 0
+    vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
+      attempts += 1
+      if (attempts === 1) throw new Error('transient write failure')
+      await originalSet(values)
     })
+    const repository = createSettingsRepository('retry-writer', null, immediateRetry)
 
-    it('ignores self-written events and forwards external envelope changes', async () => {
-      const onGlobal = vi.fn()
-      const repository = createSettingsRepository('self-writer')
-      const unwatch = repository.watch({ onGlobal, onChat: vi.fn(), onLocale: vi.fn() })
+    await repository.saveTheme('dark')
 
-      await repository.saveGlobal({ ytdLiveChat: true, themeMode: 'dark' })
-      expect(onGlobal).not.toHaveBeenCalled()
-      await chrome.storage.local.set({
-        [GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'other-writer', value: { ytdLiveChat: false, themeMode: 'light' } },
-      })
-      expect(onGlobal).toHaveBeenCalledWith({ ytdLiveChat: false, themeMode: 'light' })
-      unwatch()
+    expect(attempts).toBe(2)
+    expect(immediateRetry.waitBeforeRetry).toHaveBeenCalledTimes(1)
+    expect(repository.getPersistenceStatus()).toEqual({ status: 'idle', failedDomains: [] })
+  })
+
+  it('keeps a failed write visible, makes flush fail, and supports manual retry', async () => {
+    const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
+    let shouldFail = true
+    vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
+      if (shouldFail) throw new Error('persistent write failure')
+      await originalSet(values)
     })
+    const repository = createSettingsRepository('manual-retry-writer', null, immediateRetry)
+    const statuses: string[] = []
+    repository.subscribePersistence(status => statuses.push(status.status))
 
-    it('serializes bulk writes before flush resolves', async () => {
-      const repository = createSettingsRepository('queue-test')
-      const writes: string[] = []
-      const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
-      vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-        writes.push(...Object.keys(values))
-        await originalSet(values)
-      })
+    await expect(repository.saveEnabled(false)).rejects.toThrow('persistent write failure')
+    expect(repository.getPersistenceStatus()).toEqual({ status: 'error', failedDomains: ['enabled'] })
+    await expect(repository.flush()).rejects.toThrow('persistent write failure')
 
-      await Promise.all([
-        repository.saveGlobal({ ytdLiveChat: false, themeMode: 'dark' }),
-        repository.saveChat(DEFAULT_CHAT_SETTINGS),
-        repository.saveLocale('ja'),
-      ])
-      await repository.flush()
+    shouldFail = false
+    await repository.retryFailed()
+    await repository.flush()
 
-      expect(writes).toEqual([GLOBAL_STORAGE_KEY, CHAT_STORAGE_KEY, LOCALE_STORAGE_KEY])
-    })
+    expect(repository.getPersistenceStatus()).toEqual({ status: 'idle', failedDomains: [] })
+    expect(statuses).toContain('error')
+    expect((await chrome.storage.local.get(ENABLED_STORAGE_KEY))[ENABLED_STORAGE_KEY]).toMatchObject({ value: false })
   })
 })

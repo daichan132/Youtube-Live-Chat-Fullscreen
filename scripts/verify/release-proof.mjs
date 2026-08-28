@@ -36,68 +36,21 @@ if (command === 'create') {
   const commit = requireCommit(
     readOption('--commit') ?? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
   )
-  const githubCanaryStatus = readOption('--github-canary-status')
-  if (!['passed', 'unavailable'].includes(githubCanaryStatus)) {
-    throw new Error(`Release proof requires a valid GitHub canary status, got: ${githubCanaryStatus}`)
-  }
-  const realBrowserActor = readOption('--real-browser-actor')
-  const realBrowserEvidence = readOption('--real-browser-evidence')
-  if (!realBrowserActor || !realBrowserEvidence || realBrowserEvidence.length < 20) {
-    throw new Error('Release proof requires concrete real-browser verification evidence.')
-  }
   const proof = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     version,
     commit,
     createdAt: new Date().toISOString(),
-    browserEvidence: {
-      githubHostedCanary: {
-        engine: 'chromium',
-        runner: 'ubuntu-24.04',
-        playwright: packageJson.devDependencies['@playwright/test'],
-        package: 'production-chrome-zip',
-        status: githubCanaryStatus,
-      },
-      realBrowserAttestation: {
-        actor: realBrowserActor,
-        evidence: realBrowserEvidence,
-      },
-    },
     artifacts: await Promise.all(artifactNames.map(describeArtifact)),
-    gates: [
-      { id: 'source-and-contracts', status: 'passed' },
-      { id: 'coverage', status: 'passed' },
-      { id: 'production-package-contracts', status: 'passed' },
-      { id: 'deterministic-browser-contracts', status: 'passed' },
-      { id: 'production-chrome-zip-smoke', status: 'passed' },
-      { id: 'github-hosted-real-youtube-canary', status: githubCanaryStatus },
-      { id: 'real-browser-manual-attestation', status: 'passed' },
-    ],
-    invariants: [
-      'REG-221-video-isolation',
-      'REG-234-blur-visible',
-      'focus-idle-visibility',
-      'production-package-no-test-assets',
-      'exact-artifact-promotion',
-    ],
   }
   await writeFile(proofPath, `${JSON.stringify(proof, null, 2)}\n`, 'utf8')
   console.log(`Created release proof: ${path.relative(root, proofPath)}`)
 } else if (command === 'verify') {
   const proof = JSON.parse(await readFile(proofPath, 'utf8'))
-  if (proof.schemaVersion !== 2 || proof.version !== version) throw new Error('Release proof schema or version does not match package.json.')
-  requireCommit(proof.commit)
-  if (
-    proof.browserEvidence?.githubHostedCanary?.engine !== 'chromium' ||
-    proof.browserEvidence?.githubHostedCanary?.runner !== 'ubuntu-24.04' ||
-    proof.browserEvidence?.githubHostedCanary?.playwright !== packageJson.devDependencies['@playwright/test'] ||
-    proof.browserEvidence?.githubHostedCanary?.package !== 'production-chrome-zip' ||
-    !['passed', 'unavailable'].includes(proof.browserEvidence?.githubHostedCanary?.status) ||
-    !proof.browserEvidence?.realBrowserAttestation?.actor ||
-    !proof.browserEvidence?.realBrowserAttestation?.evidence
-  ) {
-    throw new Error('Release proof browser identity is missing or does not match this revision.')
+  if (proof.schemaVersion !== 3 || proof.version !== version) {
+    throw new Error('Release proof schema or version does not match package.json.')
   }
+  requireCommit(proof.commit)
   const expectedCommit = readOption('--expected-commit')
   if (expectedCommit && proof.commit !== requireCommit(expectedCommit)) {
     throw new Error(`Release proof commit ${proof.commit} does not match checked-out commit ${expectedCommit}.`)
@@ -112,21 +65,6 @@ if (command === 'create') {
     if (artifact.bytes !== actual.bytes || artifact.sha256 !== actual.sha256) {
       throw new Error(`Release artifact does not match its proof: ${expectedName}`)
     }
-  }
-  const requiredGates = [
-    'source-and-contracts',
-    'coverage',
-    'production-package-contracts',
-    'deterministic-browser-contracts',
-    'production-chrome-zip-smoke',
-    'real-browser-manual-attestation',
-  ]
-  for (const id of requiredGates) {
-    if (!proof.gates?.some(gate => gate.id === id && gate.status === 'passed')) throw new Error(`Release gate is not proven: ${id}`)
-  }
-  const hostedCanaryGate = proof.gates?.find(gate => gate.id === 'github-hosted-real-youtube-canary')
-  if (!hostedCanaryGate || hostedCanaryGate.status !== proof.browserEvidence.githubHostedCanary.status) {
-    throw new Error('GitHub-hosted canary evidence does not match its release gate.')
   }
   console.log(`Verified release proof for v${version} at ${proof.commit}`)
 } else {

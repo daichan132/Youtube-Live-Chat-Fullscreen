@@ -17,7 +17,9 @@ export const LanguageSelector = () => {
   const handleChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const languageCode = resolveLanguageCode(e.target.value)
-      void runtime.setLocale(languageCode)
+      void runtime.setLocale(languageCode).catch(() => {
+        // PersistenceNotice exposes the handled storage failure.
+      })
     },
     [runtime],
   )

@@ -1,0 +1,16 @@
+{
+  "chrome-mv3": {
+    "browser": "chrome",
+    "budgets": {
+      "zipBytes": 350000,
+      "contentJsBytes": 450000
+    }
+  },
+  "firefox-mv2": {
+    "browser": "firefox",
+    "budgets": {
+      "zipBytes": 350000,
+      "contentJsBytes": 450000
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { effectiveProfileAtom, themeModeAtom, ytdLiveChatEnabledAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -54,6 +55,7 @@ export const Content = () => {
 
   return (
     <>
+      <PersistenceNotice compact />
       {liveChatPortal}
       {switchPortal}
     </>

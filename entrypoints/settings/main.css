@@ -1,4 +1,9 @@
+@import "../../shared/styles/extension-base.css";
 @import "../../shared/styles/react-colorful.css";
+
+@source "../content/features/YTDLiveChatSetting/**/*.{ts,tsx}";
+@source "./**/*.{ts,tsx}";
+@source "../../shared/**/*.{ts,tsx}";
 
 html,
 body,

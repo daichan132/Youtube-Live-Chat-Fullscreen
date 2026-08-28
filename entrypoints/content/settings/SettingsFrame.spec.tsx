@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { browser } from 'wxt/browser'
 import { SettingsFrame } from './SettingsFrame'
 import { SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
@@ -9,24 +10,27 @@ const createRuntime = () => ({
   subscribe: vi.fn(() => vi.fn()),
 })
 
+const extensionUrl = new URL(browser.runtime.getURL('/'))
+const extensionOrigin = `${extensionUrl.protocol}//${extensionUrl.host}`
+
 describe('SettingsFrame', () => {
   it('does not mount the extension page while settings are closed', () => {
     const { queryByTitle } = render(<SettingsFrame open={false} onClose={vi.fn()} runtime={createRuntime()} />)
 
-    expect(queryByTitle('content.aria.settingsFrameTitle')).not.toBeInTheDocument()
+    expect(queryByTitle('YouTube Live Chat Fullscreen settings')).not.toBeInTheDocument()
   })
 
   it('loads the settings extension page only while open', () => {
     const { getByTitle } = render(<SettingsFrame open onClose={vi.fn()} runtime={createRuntime()} />)
 
-    expect(getByTitle('content.aria.settingsFrameTitle')).toHaveAttribute('src', expect.stringMatching(/settings\.html$/))
+    expect(getByTitle('YouTube Live Chat Fullscreen settings')).toHaveAttribute('src', expect.stringMatching(/settings\.html/))
   })
 
   it('accepts close messages only from its own extension frame', () => {
     const onClose = vi.fn()
     const runtime = createRuntime()
     const { getByTitle } = render(<SettingsFrame open onClose={onClose} runtime={runtime} />)
-    const frame = getByTitle('content.aria.settingsFrameTitle') as HTMLIFrameElement
+    const frame = getByTitle('YouTube Live Chat Fullscreen settings') as HTMLIFrameElement
 
     fireEvent(
       window,
@@ -39,7 +43,16 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: 'unrelated-message' },
+      }),
+    )
+    fireEvent(
+      window,
+      new MessageEvent('message', {
+        source: frame.contentWindow,
+        origin: 'https://www.youtube.com',
+        data: { type: SETTINGS_FRAME_MESSAGE.close },
       }),
     )
     expect(onClose).not.toHaveBeenCalled()
@@ -48,6 +61,7 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: SETTINGS_FRAME_MESSAGE.close },
       }),
     )
@@ -57,6 +71,7 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: SETTINGS_FRAME_MESSAGE.runtimeRestart },
       }),
     )

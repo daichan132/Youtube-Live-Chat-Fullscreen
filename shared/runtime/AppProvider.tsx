@@ -10,8 +10,10 @@ export const AppProvider = ({ runtime, children }: { runtime: AppRuntime; childr
   </AppRuntimeContext.Provider>
 )
 
+export const useOptionalAppRuntime = () => useContext(AppRuntimeContext)
+
 export const useAppRuntime = () => {
-  const runtime = useContext(AppRuntimeContext)
+  const runtime = useOptionalAppRuntime()
   if (!runtime) throw new Error('AppRuntime is not available')
   return runtime
 }
