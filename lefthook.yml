@@ -2,7 +2,7 @@ pre-push:
   commands:
     check:
       glob: "{entrypoints,shared}/**/*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
-      run: npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {pushed_files}
+      run: npx biome check --no-errors-on-unmatched --files-ignore-unknown=true {push_files}
 
 pre-commit:
   commands:
