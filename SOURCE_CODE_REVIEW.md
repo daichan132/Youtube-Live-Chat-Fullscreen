@@ -17,9 +17,9 @@ From the extracted source archive:
 ```bash
 corepack enable
 yarn install --immutable
-yarn zip:firefox
+yarn build:firefox
 ```
 
-The command creates the unpacked extension at `.output/firefox-mv2/`, the distributable Firefox ZIP, and the source ZIP.
+The command creates the unpacked extension at `.output/firefox-mv2/`. The release verifier compares that canonical file tree, by relative path and SHA-256, with the Firefox output built from the repository checkout. The repository's packaging command is `yarn zip:firefox`; source reviewers use `yarn build:firefox` so the extracted review archive does not create another nested source archive.
 
 Production artifacts are created once in the release-candidate workflow, checked against package and browser contracts, and bound to the source commit by SHA-256. Publication downloads and submits those exact bytes without rebuilding them.

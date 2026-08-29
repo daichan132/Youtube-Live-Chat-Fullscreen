@@ -17,6 +17,7 @@ export const FIREFOX_SOURCE_INCLUDE = [
   'mise.toml',
   'package.json',
   'public/**',
+  'scripts/generate-locales.mjs',
   'shared/**',
   'tsconfig.json',
   'wxt.config.ts',

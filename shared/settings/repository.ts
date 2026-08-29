@@ -4,7 +4,13 @@ import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from './model'
-import { isRecord, normalizeChatGeometry, normalizeChatProfile, normalizeGlobalSetting, normalizePresets } from './normalizeSettings'
+import {
+  isRecord,
+  normalizeChatGeometry,
+  normalizeChatProfile,
+  normalizeGlobalSetting,
+  normalizePresets,
+} from './normalizeSettings'
 import {
   APPEARANCE_STORAGE_KEY,
   ENABLED_STORAGE_KEY,
@@ -60,6 +66,7 @@ export type SettingsRepository = {
   flush: () => Promise<void>
 }
 
+const PERSISTENCE_DOMAINS: readonly PersistenceDomain[] = ['enabled', 'theme', 'appearance', 'geometry', 'locale']
 const localKey = <T extends string>(key: T) => `local:${key}` as const
 
 const enabledItem = storage.defineItem<StoredEnvelope<boolean>>(localKey(ENABLED_STORAGE_KEY))
@@ -180,7 +187,12 @@ const getDefaultLocale = () => {
   }
 }
 
-const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Promise<SettingsSnapshot> => {
+type SnapshotRead = {
+  snapshot: SettingsSnapshot
+  compatibilityLocaleToCopy: LocaleCode | null
+}
+
+const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Promise<SnapshotRead> => {
   // Any browser.storage failure is fatal. Missing data is represented by
   // undefined values returned from a successful read, never by an exception.
   const [currentValues, compatibilityValues] = await Promise.all([
@@ -212,30 +224,39 @@ const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Pr
 
   const extensionPageLocale = readLegacyLocale(legacyLocaleStorage)
   const browserLegacyLocale = compatibilityValues[2]?.value
-  const fallbackLocale = resolveLanguageCode(
-    extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined) ?? getDefaultLocale(),
-  )
+  const storedCompatibilityLocale =
+    extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined)
+  const fallbackLocale = resolveLanguageCode(storedCompatibilityLocale ?? getDefaultLocale())
+  const hasCurrentLocale = isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'
 
   return {
-    global: {
-      ytdLiveChat:
-        isStoredEnvelope<unknown>(enabledEnvelope) && typeof enabledEnvelope.value === 'boolean'
-          ? enabledEnvelope.value
-          : currentGlobal.ytdLiveChat,
-      themeMode: isStoredEnvelope<unknown>(themeEnvelope)
-        ? normalizeTheme(themeEnvelope.value, currentGlobal.themeMode)
-        : currentGlobal.themeMode,
+    snapshot: {
+      global: {
+        ytdLiveChat:
+          isStoredEnvelope<unknown>(enabledEnvelope) && typeof enabledEnvelope.value === 'boolean'
+            ? enabledEnvelope.value
+            : currentGlobal.ytdLiveChat,
+        themeMode: isStoredEnvelope<unknown>(themeEnvelope)
+          ? normalizeTheme(themeEnvelope.value, currentGlobal.themeMode)
+          : currentGlobal.themeMode,
+      },
+      chat: {
+        profile: appearance.profile,
+        presets: appearance.presets,
+        geometry,
+      },
+      locale: hasCurrentLocale ? resolveLanguageCode(localeEnvelope.value) : fallbackLocale,
     },
-    chat: {
-      profile: appearance.profile,
-      presets: appearance.presets,
-      geometry,
-    },
-    locale:
-      isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'
-        ? resolveLanguageCode(localeEnvelope.value)
-        : fallbackLocale,
+    // This is the only startup write: a non-destructive copy that lets the
+    // content script converge with an extension-page-only legacy locale.
+    compatibilityLocaleToCopy: !hasCurrentLocale && storedCompatibilityLocale !== undefined ? fallbackLocale : null,
   }
+}
+
+type FailedWrite = {
+  sequence: number
+  task: () => Promise<void>
+  error: unknown
 }
 
 export const createSettingsRepository = (
@@ -244,17 +265,21 @@ export const createSettingsRepository = (
   dependencies: RepositoryDependencies = defaultDependencies,
 ): SettingsRepository => {
   const tails = new Map<PersistenceDomain, Promise<void>>()
-  const sequences = new Map<PersistenceDomain, number>()
-  const activeDomains = new Set<PersistenceDomain>()
-  const failedWrites = new Map<PersistenceDomain, { sequence: number; task: () => Promise<void>; error: unknown }>()
+  const localSequences = new Map<PersistenceDomain, number>()
+  const supersessionVersions = new Map<PersistenceDomain, number>()
+  const activeCounts = new Map<PersistenceDomain, number>()
+  const failedWrites = new Map<PersistenceDomain, FailedWrite>()
   const listeners = new Set<(status: PersistenceStatus) => void>()
+  const watchHandlers = new Set<Parameters<SettingsRepository['watch']>[0]>()
+  let storageUnwatchers: (() => void)[] | null = null
 
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
 
+  const activeCount = () => [...activeCounts.values()].reduce((total, count) => total + count, 0)
   const getPersistenceStatus = (): PersistenceStatus => {
-    const failedDomains = [...failedWrites.keys()]
+    const failedDomains = PERSISTENCE_DOMAINS.filter(domain => failedWrites.has(domain))
     if (failedDomains.length > 0) return { status: 'error', failedDomains }
-    if (activeDomains.size > 0) return { status: 'saving', failedDomains: [] }
+    if (activeCount() > 0) return { status: 'saving', failedDomains: [] }
     return { status: 'idle', failedDomains: [] }
   }
 
@@ -267,36 +292,124 @@ export const createSettingsRepository = (
     for (const listener of listeners) listener(status)
   }
 
-  const runWithRetry = async (task: () => Promise<void>) => {
+  const nextLocalIntent = (domain: PersistenceDomain) => {
+    const sequence = (localSequences.get(domain) ?? 0) + 1
+    localSequences.set(domain, sequence)
+    supersessionVersions.set(domain, (supersessionVersions.get(domain) ?? 0) + 1)
+    failedWrites.delete(domain)
+    return {
+      sequence,
+      supersessionVersion: supersessionVersions.get(domain) ?? 0,
+    }
+  }
+
+  const acceptExternalCommit = (domain: PersistenceDomain) => {
+    supersessionVersions.set(domain, (supersessionVersions.get(domain) ?? 0) + 1)
+    failedWrites.delete(domain)
+    publishStatus()
+  }
+
+  const notifyCommitted = (domain: PersistenceDomain, value: unknown) => {
+    for (const handlers of watchHandlers) {
+      if (domain === 'enabled' && typeof value === 'boolean') handlers.onEnabled(value)
+      if (domain === 'theme') handlers.onTheme(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))
+      if (domain === 'appearance') {
+        handlers.onAppearance(
+          normalizeAppearance(value, {
+            profile: DEFAULT_CHAT_SETTINGS.profile,
+            presets: DEFAULT_CHAT_SETTINGS.presets,
+          }),
+        )
+      }
+      if (domain === 'geometry') handlers.onGeometry(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))
+      if (domain === 'locale' && typeof value === 'string') handlers.onLocale(resolveLanguageCode(value))
+    }
+  }
+
+  const readCommittedValue = async (domain: PersistenceDomain) => {
+    const item =
+      domain === 'enabled'
+        ? enabledItem
+        : domain === 'theme'
+          ? themeItem
+          : domain === 'appearance'
+            ? appearanceItem
+            : domain === 'geometry'
+              ? geometryItem
+              : localeItem
+    const [result] = await storage.getItems([item])
+    return isStoredEnvelope<unknown>(result?.value) ? result.value.value : undefined
+  }
+
+  const runWithRetry = async (
+    domain: PersistenceDomain,
+    sequence: number,
+    supersessionVersion: number,
+    task: () => Promise<void>,
+  ) => {
     try {
       await task()
-    } catch {
+      return true
+    } catch (firstError) {
       await dependencies.waitBeforeRetry(SAVE_RETRY_DELAY_MS)
-      await task()
+      // A newer local intent or an external commit supersedes this delayed
+      // retry. Do not replay an obsolete value after the wait.
+      if (
+        localSequences.get(domain) !== sequence ||
+        supersessionVersions.get(domain) !== supersessionVersion
+      )
+        return false
+      try {
+        await task()
+        return true
+      } catch {
+        throw firstError
+      }
     }
   }
 
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
-    const sequence = (sequences.get(domain) ?? 0) + 1
-    sequences.set(domain, sequence)
-    activeDomains.add(domain)
+    const { sequence, supersessionVersion } = nextLocalIntent(domain)
+    activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
     publishStatus()
 
     const previous = tails.get(domain) ?? Promise.resolve()
     const current = previous
       .catch(() => undefined)
       .then(async () => {
+        // Coalesce a queued value when a newer local value already exists.
+        if (localSequences.get(domain) !== sequence) return
         try {
-          await runWithRetry(task)
-          const failed = failedWrites.get(domain)
-          if (!failed || failed.sequence <= sequence) failedWrites.delete(domain)
+          const committed = await runWithRetry(domain, sequence, supersessionVersion, task)
+          if (!committed) return
+          if (localSequences.get(domain) === sequence) {
+            failedWrites.delete(domain)
+            // Ignore own browser.storage events and explicitly read the final
+            // committed value. This handles an external write racing with the
+            // local set without letting an older queued local event overwrite
+            // the newest in-memory intent.
+            try {
+              const value = await readCommittedValue(domain)
+              if (value !== undefined && localSequences.get(domain) === sequence) notifyCommitted(domain, value)
+            } catch {
+              // The write itself succeeded. A later storage event or reload
+              // will converge if this best-effort readback is unavailable.
+            }
+          }
         } catch (error) {
-          if (sequences.get(domain) === sequence) failedWrites.set(domain, { sequence, task, error })
+          if (
+            localSequences.get(domain) === sequence &&
+            supersessionVersions.get(domain) === supersessionVersion
+          )
+            failedWrites.set(domain, { sequence, task, error })
           throw error
-        } finally {
-          if (sequences.get(domain) === sequence) activeDomains.delete(domain)
-          publishStatus()
         }
+      })
+      .finally(() => {
+        const count = (activeCounts.get(domain) ?? 1) - 1
+        if (count > 0) activeCounts.set(domain, count)
+        else activeCounts.delete(domain)
+        publishStatus()
       })
     tails.set(domain, current)
     return current
@@ -320,52 +433,91 @@ export const createSettingsRepository = (
     enqueue('geometry', () => geometryItem.setValue(envelope(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))))
   const saveLocale = (value: LocaleCode) => enqueue('locale', () => localeItem.setValue(envelope(resolveLanguageCode(value))))
 
+  const flush = async () => {
+    while (true) {
+      const observedTails = [...tails.entries()]
+      await Promise.allSettled(observedTails.map(([, tail]) => tail))
+      const tailsAreStable = observedTails.every(([domain, tail]) => tails.get(domain) === tail)
+      if (tailsAreStable && activeCount() === 0) break
+    }
+
+    if (failedWrites.size > 0) {
+      throw [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
+    }
+  }
+
   return {
-    load: () => readSnapshot(legacyLocaleStorage),
+    load: async () => {
+      const result = await readSnapshot(legacyLocaleStorage)
+      if (result.compatibilityLocaleToCopy !== null) {
+        void saveLocale(result.compatibilityLocaleToCopy).catch(() => {
+          // Persistence status remains visible and the user can retry. Startup
+          // still uses the compatibility value without deleting it.
+        })
+      }
+      return result.snapshot
+    },
     saveEnabled,
     saveTheme,
     saveAppearance,
     saveGeometry,
     saveLocale,
     replaceSettings: async (global, chat) => {
-      await Promise.all([
-        saveEnabled(global.ytdLiveChat),
-        saveTheme(global.themeMode),
-        saveAppearance({ profile: chat.profile, presets: chat.presets }),
-        saveGeometry(chat.geometry),
+      await flush()
+      // A settings import is one browser.storage.set operation. It either
+      // writes all ownership domains or reports failure before in-memory state
+      // is replaced; it cannot leave a partially imported snapshot.
+      await storage.setItems([
+        { item: enabledItem, value: envelope(Boolean(global.ytdLiveChat)) },
+        { item: themeItem, value: envelope(normalizeTheme(global.themeMode, DEFAULT_GLOBAL_SETTINGS.themeMode)) },
+        {
+          item: appearanceItem,
+          value: envelope(
+            normalizeAppearance(
+              { profile: chat.profile, presets: chat.presets },
+              { profile: DEFAULT_CHAT_SETTINGS.profile, presets: DEFAULT_CHAT_SETTINGS.presets },
+            ),
+          ),
+        },
+        { item: geometryItem, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
       ])
     },
     watch: handlers => {
-      const unwatchEnabled = enabledItem.watch(next => {
-        if (next?.writerId !== writerId && typeof next?.value === 'boolean') handlers.onEnabled(next.value)
-      })
-      const unwatchTheme = themeItem.watch(next => {
-        if (next?.writerId !== writerId) handlers.onTheme(normalizeTheme(next?.value, DEFAULT_GLOBAL_SETTINGS.themeMode))
-      })
-      const unwatchAppearance = appearanceItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) {
-          handlers.onAppearance(
-            normalizeAppearance(next.value, {
-              profile: DEFAULT_CHAT_SETTINGS.profile,
-              presets: DEFAULT_CHAT_SETTINGS.presets,
-            }),
-          )
-        }
-      })
-      const unwatchGeometry = geometryItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) {
-          handlers.onGeometry(normalizeChatGeometry(next.value, DEFAULT_CHAT_SETTINGS.geometry))
-        }
-      })
-      const unwatchLocale = localeItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) handlers.onLocale(resolveLanguageCode(next.value))
-      })
+      watchHandlers.add(handlers)
+      if (!storageUnwatchers) {
+        storageUnwatchers = [
+          enabledItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId || typeof next.value !== 'boolean') return
+            acceptExternalCommit('enabled')
+            notifyCommitted('enabled', next.value)
+          }),
+          themeItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('theme')
+            notifyCommitted('theme', next.value)
+          }),
+          appearanceItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('appearance')
+            notifyCommitted('appearance', next.value)
+          }),
+          geometryItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('geometry')
+            notifyCommitted('geometry', next.value)
+          }),
+          localeItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId || typeof next.value !== 'string') return
+            acceptExternalCommit('locale')
+            notifyCommitted('locale', next.value)
+          }),
+        ]
+      }
       return () => {
-        unwatchEnabled()
-        unwatchTheme()
-        unwatchAppearance()
-        unwatchGeometry()
-        unwatchLocale()
+        watchHandlers.delete(handlers)
+        if (watchHandlers.size !== 0 || !storageUnwatchers) return
+        for (const unwatch of storageUnwatchers) unwatch()
+        storageUnwatchers = null
       }
     },
     getPersistenceStatus,
@@ -375,16 +527,12 @@ export const createSettingsRepository = (
       return () => listeners.delete(listener)
     },
     retryFailed: async () => {
-      const retries = [...failedWrites.entries()].map(([domain, failed]) => enqueue(domain, failed.task))
+      const retries = [...failedWrites.entries()].flatMap(([domain, failed]) =>
+        localSequences.get(domain) === failed.sequence ? [enqueue(domain, failed.task)] : [],
+      )
       await Promise.all(retries)
     },
-    flush: async () => {
-      const results = await Promise.allSettled([...tails.values()])
-      const rejection = results.find((result): result is PromiseRejectedResult => result.status === 'rejected')
-      if (failedWrites.size > 0 || rejection) {
-        throw rejection?.reason ?? [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
-      }
-    },
+    flush,
   }
 }
 

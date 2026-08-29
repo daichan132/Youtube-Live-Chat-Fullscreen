@@ -118,6 +118,7 @@ export const createAppRuntime = async (
   }
 
   const applyWatchedLocale = (locale: LocaleCode) => {
+    if (store.get(localeStateAtom).code === locale) return
     const requestId = ++localeRequestId
     void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
       .then(messages => {
@@ -219,13 +220,13 @@ export const createAppRuntime = async (
     async setLocale(locale) {
       const resolved = resolveLanguageCode(locale)
       const requestId = ++localeRequestId
-      const [messages] = await Promise.all([
-        loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages),
-        repository.saveLocale(resolved),
-      ])
-      if (!disposed && requestId === localeRequestId) {
-        applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
-      }
+      const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
+      if (disposed || requestId !== localeRequestId) return
+
+      // Keep the user's selected language visible even if persistence is
+      // temporarily unavailable. The repository owns retry and error status.
+      applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
+      await repository.saveLocale(resolved)
     },
     exportSettings: () =>
       buildRepositoryBackup({
