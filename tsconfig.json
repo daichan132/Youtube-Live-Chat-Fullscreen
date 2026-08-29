@@ -4,10 +4,6 @@
     "allowImportingTsExtensions": true,
     "jsx": "react-jsx",
     "noUncheckedIndexedAccess": true,
-    "types": ["chrome", "node"],
-    "paths": {
-      "@/*": ["./*"],
-      "@e2e/*": ["./e2e/*"]
-    }
+    "types": ["chrome", "node"]
   }
 }

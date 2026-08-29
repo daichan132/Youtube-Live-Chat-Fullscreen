@@ -11,6 +11,7 @@ import {
   TbSettings2,
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
+import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -89,7 +90,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     const handled = undoYLCStyle()
     if (handled) {
       setHistoryAnnouncement(current => ({
-        message: t('content.setting.header.undone'),
+        message: t('content.setting.header.undo'),
         sequence: current.sequence + 1,
       }))
     }
@@ -100,7 +101,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     const handled = redoYLCStyle()
     if (handled) {
       setHistoryAnnouncement(current => ({
-        message: t('content.setting.header.redone'),
+        message: t('content.setting.header.redo'),
         sequence: current.sequence + 1,
       }))
     }
@@ -211,6 +212,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
             </button>
           </div>
         </header>
+        <PersistenceNotice />
         <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
           {historyAnnouncement.message}
         </span>

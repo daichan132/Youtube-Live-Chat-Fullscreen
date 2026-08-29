@@ -108,6 +108,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private lastObservationSignature = ''
   private lastPlanSignature = ''
   private lastFailure: RuntimeFailureCode | undefined
+  private unexpectedRecoveryAttempts = 0
 
   constructor(
     dependencies: Partial<{
@@ -157,6 +158,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.lastObservationSignature = ''
     this.lastPlanSignature = ''
     this.lastFailure = undefined
+    this.unexpectedRecoveryAttempts = 0
     this.scheduleReconcile()
   }
 
@@ -231,7 +233,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.scheduledFrame = scope.requestAnimationFrame(() => {
       this.scheduledFrame = null
       if (expectedGeneration !== undefined && expectedGeneration !== this.sessionScope?.generation) return
-      this.reconcile()
+      this.reconcileSafely()
     })
   }
 
@@ -286,7 +288,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
       if (scope !== this.sessionScope || scope.signal.aborted) return
       this.retryTimer = null
       this.model = markRuntimeRetryFired(this.model)
-      this.reconcile()
+      this.reconcileSafely()
     }, delayMs)
   }
 
@@ -345,6 +347,32 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.sessionIdentity = null
     this.observer = null
     this.retryTimer = null
+  }
+
+  private reconcileSafely = () => {
+    try {
+      this.reconcile()
+      this.unexpectedRecoveryAttempts = 0
+    } catch {
+      this.lastFailure = 'UNEXPECTED_RUNTIME_ERROR'
+      this.recordTrace('failed', this.lastFailure)
+      this.cancelScheduledFrame()
+      try {
+        this.resources.clear(this.lastObservation?.targets ?? null)
+      } catch {
+        // Recovery must remain best-effort even when a page-owned node disappeared.
+      }
+      this.disposeSessionScope()
+      this.model = createInitialRuntimeModel()
+      this.lastObservation = null
+      this.lastObservationSignature = ''
+      this.lastPlanSignature = ''
+      this.publish(initialView)
+
+      if (!this.started || this.unexpectedRecoveryAttempts >= 1) return
+      this.unexpectedRecoveryAttempts += 1
+      this.scheduleReconcile()
+    }
   }
 
   private reconcile = () => {

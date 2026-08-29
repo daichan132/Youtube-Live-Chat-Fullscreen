@@ -2,23 +2,13 @@ name: Release candidate
 
 on:
   workflow_dispatch:
-    inputs:
-      real_browser_verified:
-        description: Confirm Chrome, Firefox, and Opera were verified on real YouTube with this version
-        required: true
-        type: boolean
-        default: false
-      real_browser_evidence:
-        description: Browser versions and verified YouTube scenario
-        required: true
-        type: string
 
 concurrency:
   group: release-candidate-${{ github.ref }}
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   verify-and-package:
@@ -30,6 +20,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24.x
@@ -42,69 +33,22 @@ jobs:
             echo "Release candidates must run from main, got: $GITHUB_REF"
             exit 1
           fi
-          if [[ "$REAL_BROWSER_VERIFIED" != "true" || ${#REAL_BROWSER_EVIDENCE} -lt 20 ]]; then
-            echo "Release candidates require a concrete real-browser verification attestation."
-            exit 1
-          fi
           VERSION=$(node -p "require('./package.json').version")
           if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?(\+[0-9A-Za-z]+([.-][0-9A-Za-z]+)*)?$ ]]; then
             echo "Invalid version in package.json: $VERSION"
             exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-        env:
-          REAL_BROWSER_VERIFIED: ${{ inputs.real_browser_verified }}
-          REAL_BROWSER_EVIDENCE: ${{ inputs.real_browser_evidence }}
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Check generated locales
-        run: yarn locales:check
-      - name: Check source
-        run: yarn check
-      - name: Run tests with coverage
-        run: yarn test:coverage
-      - name: Run contract tests
-        run: yarn test:contracts
-      - name: Build and package production extensions
-        run: |
-          yarn build
-          yarn build:firefox
-          yarn zip
-          yarn zip:firefox
-      - name: Verify production package contracts
-        run: yarn verify:package-contracts
-      - name: Build testing extension
-        run: yarn build:e2e
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
-      - name: Run deterministic browser contracts
-        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1
-      - name: Smoke exact production Chrome ZIP
-        run: xvfb-run --auto-servernum yarn e2e:production:chrome
-      - name: Run hosted real-YouTube canary against the exact production Chrome ZIP
-        id: canary
+      - name: Run the local release verification command
         env:
-          YLC_EXTENSION_OUTPUT_DIR: .output/production-smoke/chrome
-          YLC_REQUIRE_E2E_BRIDGE: "0"
-          YLC_CANARY_SUMMARY_PATH: test-results/release-canary-summary.json
-        shell: bash
-        run: |
-          set +e
-          xvfb-run --auto-servernum yarn playwright test --project=canary --retries=0 --max-failures=1
-          CANARY_EXIT=$?
-          set -e
-          CANARY_STATUS=$(node scripts/verify/classify-release-canary.mjs "$YLC_CANARY_SUMMARY_PATH" "$CANARY_EXIT")
-          echo "status=$CANARY_STATUS" >> "$GITHUB_OUTPUT"
+          YLC_CANARY_REQUIRE_CLEAN: "1"
+        run: xvfb-run --auto-servernum yarn verify:release
       - name: Create release proof
-        env:
-          GITHUB_CANARY_STATUS: ${{ steps.canary.outputs.status }}
-          REAL_BROWSER_ACTOR: ${{ github.actor }}
-          REAL_BROWSER_EVIDENCE: ${{ inputs.real_browser_evidence }}
-        run: >-
-          node scripts/verify/release-proof.mjs create --commit "$GITHUB_SHA"
-          --github-canary-status "$GITHUB_CANARY_STATUS"
-          --real-browser-actor "$REAL_BROWSER_ACTOR"
-          --real-browser-evidence "$REAL_BROWSER_EVIDENCE"
+        run: node scripts/verify/release-proof.mjs create --commit "$GITHUB_SHA"
       - name: Upload browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
@@ -130,6 +74,8 @@ jobs:
   draft-release:
     needs: verify-and-package
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:

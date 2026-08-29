@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { type ReactNode, useEffect } from 'react'
 import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
+import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -73,7 +74,7 @@ export const Popup = () => {
       data: (
         <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-btn'>
           <TbHeart size={16} aria-hidden='true' />
-          {t('popup.donateAction')}
+          Buy me a coffee
         </a>
       ),
       actionAuto: true,
@@ -86,6 +87,7 @@ export const Popup = () => {
       dir={direction}
       className='flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
     >
+      <PersistenceNotice />
       <div className='flex-grow ylc-theme-surface-muted py-2'>
         {items.map((item, index) => (
           <PopupItemRow

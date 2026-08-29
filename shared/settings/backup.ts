@@ -1,7 +1,7 @@
 import { migrateSettings } from './migrateSettings'
 import type { ChatSettings } from './model'
 import { isRecord, normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
-import { SETTINGS_EXPORT_VERSION } from './persistConfig'
+import { MAX_CUSTOM_PRESETS, SETTINGS_EXPORT_VERSION } from './persistConfig'
 
 export type SettingsBackup = {
   version: typeof SETTINGS_EXPORT_VERSION
@@ -16,6 +16,11 @@ export type NormalizedSettingsBackup = {
   globalSetting: Record<string, unknown>
   chatSettings: ChatSettings
 }
+
+const hasTooManyCustomPresets = (input: unknown) =>
+  isRecord(input) &&
+  Array.isArray(input.presets) &&
+  input.presets.filter(preset => isRecord(preset) && preset.kind === 'custom').length > MAX_CUSTOM_PRESETS
 
 type CurrentSettings = {
   globalSetting: Record<string, unknown>
@@ -41,7 +46,7 @@ export const normalizeSettingsBackup = (input: unknown, current: CurrentSettings
   }
 
   if (input.version === SETTINGS_EXPORT_VERSION) {
-    if (!isRecord(input.chatSettings)) return null
+    if (!isRecord(input.chatSettings) || hasTooManyCustomPresets(input.chatSettings)) return null
     return {
       version: SETTINGS_EXPORT_VERSION,
       exportedAt: typeof input.exportedAt === 'string' ? input.exportedAt : undefined,
@@ -58,11 +63,13 @@ export const normalizeSettingsBackup = (input: unknown, current: CurrentSettings
 
   if (input.version === 1) {
     if (!isRecord(input.ytdLiveChat)) return null
+    const chatSettings = migrateSettings(input.ytdLiveChat)
+    if (hasTooManyCustomPresets(chatSettings)) return null
     return {
       version: SETTINGS_EXPORT_VERSION,
       exportedAt: typeof input.exportedAt === 'string' ? input.exportedAt : undefined,
       globalSetting,
-      chatSettings: migrateSettings(input.ytdLiveChat),
+      chatSettings,
     }
   }
 

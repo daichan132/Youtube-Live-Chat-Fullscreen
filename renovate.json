@@ -1,6 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:best-practices", "customManagers:biomeVersions"],
+  "minimumReleaseAge": "3 days",
   "packageRules": [
     {
       "description": "Keep uuid compatible with node-notifier 10, which requires uuid through CommonJS",
@@ -11,6 +12,31 @@
       "description": "Keep minimatch compatible with multimatch 6, which imports the minimatch v3 default API",
       "matchPackageNames": ["minimatch"],
       "allowedVersions": "<4"
+    },
+    {
+      "description": "Update React and its type packages together",
+      "groupName": "react",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"]
+    },
+    {
+      "description": "Update Vitest packages together",
+      "groupName": "vitest",
+      "matchPackageNames": ["vitest", "@vitest/coverage-v8"]
+    },
+    {
+      "description": "Update Tailwind packages together",
+      "groupName": "tailwind",
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/vite"]
+    },
+    {
+      "description": "Update Testing Library packages together",
+      "groupName": "testing-library",
+      "matchPackageNames": [
+        "@testing-library/dom",
+        "@testing-library/jest-dom",
+        "@testing-library/react",
+        "@testing-library/user-event"
+      ]
     }
   ],
   "timezone": "Asia/Tokyo"

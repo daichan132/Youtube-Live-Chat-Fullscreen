@@ -1,55 +1,64 @@
 import { describe, expect, it, vi } from 'vitest'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import type { SettingsRepository } from '@/shared/settings/repository'
+import type { PersistenceStatus, SettingsRepository } from '@/shared/settings/repository'
 import { chatSettingsStateAtom, editorSessionStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 
 vi.mock('@/shared/i18n/loader', () => ({
   loadLocaleMessages: vi.fn(async () => ({})),
 }))
 
+const createRepository = (overrides: Partial<SettingsRepository> = {}): SettingsRepository => ({
+  load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
+  saveEnabled: async () => {},
+  saveTheme: async () => {},
+  saveAppearance: async () => {},
+  saveGeometry: async () => {},
+  saveLocale: async () => {},
+  replaceSettings: async () => {},
+  watch: () => () => {},
+  getPersistenceStatus: (): PersistenceStatus => ({ status: 'idle', failedDomains: [] }),
+  subscribePersistence: listener => {
+    listener({ status: 'idle', failedDomains: [] })
+    return () => {}
+  },
+  retryFailed: async () => {},
+  flush: async () => {},
+  ...overrides,
+})
+
 describe('AppRuntime settings ownership', () => {
   it('persists local atom changes and applies external updates without echoing them', async () => {
     let externalHandlers: Parameters<SettingsRepository['watch']>[0] | undefined
-    const saveGlobal = vi.fn(async () => {})
-    const repository: SettingsRepository = {
-      load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
-      saveGlobal,
-      saveChat: async () => {},
-      saveLocale: async () => {},
-      replaceSettings: async () => {},
+    const saveTheme = vi.fn(async () => {})
+    const repository = createRepository({
+      saveTheme,
       watch: handlers => {
         externalHandlers = handlers
         return () => {}
       },
-      flush: async () => {},
-    }
+    })
 
     const runtime = await createAppRuntime(repository)
     runtime.store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'dark' })
-    expect(saveGlobal).toHaveBeenCalledWith({ ytdLiveChat: true, themeMode: 'dark' })
+    expect(saveTheme).toHaveBeenCalledWith('dark')
 
-    saveGlobal.mockClear()
-    externalHandlers?.onGlobal({ ytdLiveChat: false, themeMode: 'light' })
+    saveTheme.mockClear()
+    externalHandlers?.onEnabled(false)
+    externalHandlers?.onTheme('light')
     expect(runtime.store.get(globalSettingsStateAtom)).toEqual({ ytdLiveChat: false, themeMode: 'light' })
-    expect(saveGlobal).not.toHaveBeenCalled()
+    expect(saveTheme).not.toHaveBeenCalled()
     runtime.dispose()
   })
 
   it('discards an active draft for an external profile change', async () => {
     let externalHandlers: Parameters<SettingsRepository['watch']>[0] | undefined
-    const repository: SettingsRepository = {
-      load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
-      saveGlobal: async () => {},
-      saveChat: async () => {},
-      saveLocale: async () => {},
-      replaceSettings: async () => {},
+    const repository = createRepository({
       watch: handlers => {
         externalHandlers = handlers
         return () => {}
       },
-      flush: async () => {},
-    }
+    })
     const runtime = await createAppRuntime(repository)
     const previous = runtime.store.get(chatSettingsStateAtom).profile
     runtime.store.set(editorSessionStateAtom, {
@@ -58,9 +67,9 @@ describe('AppRuntime settings ownership', () => {
       future: [],
       activeGesture: { id: 'blur', before: previous },
     })
-    externalHandlers?.onChat({
-      ...DEFAULT_CHAT_SETTINGS,
+    externalHandlers?.onAppearance({
       profile: { ...previous, appearance: { ...previous.appearance, blur: 14 } },
+      presets: DEFAULT_CHAT_SETTINGS.presets,
     })
     expect(runtime.store.get(editorSessionStateAtom)).toEqual({ draftProfile: null, past: [], future: [], activeGesture: null })
     runtime.dispose()
@@ -68,28 +77,19 @@ describe('AppRuntime settings ownership', () => {
 
   it('keeps history for an external geometry-only change', async () => {
     let externalHandlers: Parameters<SettingsRepository['watch']>[0] | undefined
-    const repository: SettingsRepository = {
-      load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
-      saveGlobal: async () => {},
-      saveChat: async () => {},
-      saveLocale: async () => {},
-      replaceSettings: async () => {},
+    const repository = createRepository({
       watch: handlers => {
         externalHandlers = handlers
         return () => {}
       },
-      flush: async () => {},
-    }
+    })
     const runtime = await createAppRuntime(repository)
     const profile = runtime.store.get(chatSettingsStateAtom).profile
     runtime.store.set(editorSessionStateAtom, { draftProfile: null, past: [profile], future: [], activeGesture: null })
-    externalHandlers?.onChat({
-      ...DEFAULT_CHAT_SETTINGS,
-      geometry: {
-        reference: 'legacy-viewport-px',
-        coordinates: { x: 1000, y: 700 },
-        size: { width: 800, height: 600 },
-      },
+    externalHandlers?.onGeometry({
+      reference: 'legacy-viewport-px',
+      coordinates: { x: 1000, y: 700 },
+      size: { width: 800, height: 600 },
     })
     expect(runtime.store.get(chatSettingsStateAtom).geometry).toMatchObject({ coordinates: { x: 1000, y: 700 } })
     expect(runtime.store.get(editorSessionStateAtom).past).toHaveLength(1)
@@ -99,20 +99,15 @@ describe('AppRuntime settings ownership', () => {
   it('flushes pending writes before bulk import replaces settings', async () => {
     const order: string[] = []
     let replaced: { global: unknown; chat: unknown } | null = null
-    const repository: SettingsRepository = {
-      load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
-      saveGlobal: async () => {},
-      saveChat: async () => {},
-      saveLocale: async () => {},
+    const repository = createRepository({
       replaceSettings: async (global, chat) => {
         order.push('replace')
         replaced = { global, chat }
       },
-      watch: () => () => {},
       flush: async () => {
         order.push('flush')
       },
-    }
+    })
     const runtime = await createAppRuntime(repository)
     await runtime.importSettings({
       version: 1,

@@ -4,7 +4,7 @@ import type { LocaleCode } from '@/shared/i18n/generated/translationTypes'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { loadLocaleMessages } from '@/shared/i18n/loader'
 import { normalizeSettingsBackup } from '@/shared/settings/backup'
-import { areChatSettingsEqual, areGlobalSettingsEqual } from '@/shared/settings/equality'
+import { areChatAppearanceSettingsEqual, areChatGeometriesEqual } from '@/shared/settings/equality'
 import {
   buildRepositoryBackup,
   createSettingsRepository,
@@ -17,10 +17,13 @@ import {
   hydrateAppAtom,
   localeStateAtom,
   localeStateFromMessages,
-  replaceExternalChatSettingsAtom,
-  replaceExternalGlobalSettingsAtom,
+  replaceExternalAppearanceAtom,
+  replaceExternalEnabledAtom,
+  replaceExternalGeometryAtom,
   replaceExternalLocaleAtom,
+  replaceExternalThemeAtom,
   replaceImportedSettingsAtom,
+  replacePersistenceStatusAtom,
 } from '@/shared/state/atoms'
 
 export type AppRuntime = {
@@ -28,40 +31,52 @@ export type AppRuntime = {
   setLocale: (locale: LocaleCode) => Promise<void>
   exportSettings: () => ReturnType<typeof buildRepositoryBackup>
   importSettings: (input: unknown) => Promise<void>
+  retryPersistence: () => Promise<void>
   dispose: () => void
+}
+
+const ignoreHandledPersistenceFailure = (promise: Promise<void>) => {
+  void promise.catch(() => {
+    // The repository publishes the failure through persistenceStatusAtom.
+  })
 }
 
 const bindPersistence = (store: Store, repository: SettingsRepository, isApplyingExternal: () => boolean) => {
   let previousGlobal = store.get(globalSettingsStateAtom)
   let previousChat = store.get(chatSettingsStateAtom)
   let previousLocale = store.get(localeStateAtom).code
+
   const unsubs = [
     store.sub(globalSettingsStateAtom, () => {
       const next = store.get(globalSettingsStateAtom)
-      if (!areGlobalSettingsEqual(previousGlobal, next)) {
-        previousGlobal = next
-        if (!isApplyingExternal()) void repository.saveGlobal(next)
-      }
+      const previous = previousGlobal
+      previousGlobal = next
+      if (isApplyingExternal()) return
+      if (previous.ytdLiveChat !== next.ytdLiveChat) ignoreHandledPersistenceFailure(repository.saveEnabled(next.ytdLiveChat))
+      if (previous.themeMode !== next.themeMode) ignoreHandledPersistenceFailure(repository.saveTheme(next.themeMode))
     }),
     store.sub(chatSettingsStateAtom, () => {
       const next = store.get(chatSettingsStateAtom)
-      if (!areChatSettingsEqual(previousChat, next)) {
-        previousChat = next
-        if (!isApplyingExternal()) void repository.saveChat(next)
+      const previous = previousChat
+      previousChat = next
+      if (isApplyingExternal()) return
+      if (!areChatAppearanceSettingsEqual(previous, next)) {
+        ignoreHandledPersistenceFailure(repository.saveAppearance({ profile: next.profile, presets: next.presets }))
+      }
+      if (!areChatGeometriesEqual(previous.geometry, next.geometry)) {
+        ignoreHandledPersistenceFailure(repository.saveGeometry(next.geometry))
       }
     }),
     store.sub(localeStateAtom, () => {
       const next = store.get(localeStateAtom).code
-      if (previousLocale !== next) {
-        previousLocale = next
-        if (!isApplyingExternal()) void repository.saveLocale(next)
-      }
+      const previous = previousLocale
+      previousLocale = next
+      if (!isApplyingExternal() && previous !== next) ignoreHandledPersistenceFailure(repository.saveLocale(next))
     }),
   ]
+
   return () => {
-    unsubs.forEach(unsubscribe => {
-      unsubscribe()
-    })
+    for (const unsubscribe of unsubs) unsubscribe()
   }
 }
 
@@ -86,10 +101,13 @@ export const createAppRuntime = async (
   let applyingExternal = false
   let disposed = false
   let initialized = false
-  let pendingGlobal: SettingsSnapshot['global'] | undefined
-  let pendingChat: SettingsSnapshot['chat'] | undefined
+  let pendingEnabled: boolean | undefined
+  let pendingTheme: SettingsSnapshot['global']['themeMode'] | undefined
+  let pendingAppearance: Pick<SettingsSnapshot['chat'], 'profile' | 'presets'> | undefined
+  let pendingGeometry: SettingsSnapshot['chat']['geometry'] | undefined
   let pendingLocale: LocaleCode | undefined
   let localeRequestId = 0
+
   const applyExternal = (action: () => void) => {
     applyingExternal = true
     try {
@@ -100,6 +118,7 @@ export const createAppRuntime = async (
   }
 
   const applyWatchedLocale = (locale: LocaleCode) => {
+    if (store.get(localeStateAtom).code === locale) return
     const requestId = ++localeRequestId
     void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
       .then(messages => {
@@ -113,24 +132,44 @@ export const createAppRuntime = async (
   }
 
   let unwatch = () => {}
+  let unsubscribePersistence = () => {}
   let unbindPersistence = () => {}
   try {
+    unsubscribePersistence = repository.subscribePersistence(status => {
+      if (!disposed) store.set(replacePersistenceStatusAtom, status)
+    })
     unwatch = repository.watch({
-      onGlobal: value => {
+      onEnabled: value => {
         if (disposed) return
         if (!initialized) {
-          pendingGlobal = value
+          pendingEnabled = value
           return
         }
-        applyExternal(() => store.set(replaceExternalGlobalSettingsAtom, value))
+        applyExternal(() => store.set(replaceExternalEnabledAtom, value))
       },
-      onChat: value => {
+      onTheme: value => {
         if (disposed) return
         if (!initialized) {
-          pendingChat = value
+          pendingTheme = value
           return
         }
-        applyExternal(() => store.set(replaceExternalChatSettingsAtom, value))
+        applyExternal(() => store.set(replaceExternalThemeAtom, value))
+      },
+      onAppearance: value => {
+        if (disposed) return
+        if (!initialized) {
+          pendingAppearance = value
+          return
+        }
+        applyExternal(() => store.set(replaceExternalAppearanceAtom, value))
+      },
+      onGeometry: value => {
+        if (disposed) return
+        if (!initialized) {
+          pendingGeometry = value
+          return
+        }
+        applyExternal(() => store.set(replaceExternalGeometryAtom, value))
       },
       onLocale: locale => {
         if (disposed) return
@@ -152,9 +191,18 @@ export const createAppRuntime = async (
       if (requestId === localeRequestId) break
       hydratedLocale = pendingLocale ?? snapshot.locale
     }
+
+    const appearance = pendingAppearance ?? snapshot.chat
     store.set(hydrateAppAtom, {
-      global: pendingGlobal ?? snapshot.global,
-      chat: pendingChat ?? snapshot.chat,
+      global: {
+        ytdLiveChat: pendingEnabled ?? snapshot.global.ytdLiveChat,
+        themeMode: pendingTheme ?? snapshot.global.themeMode,
+      },
+      chat: {
+        profile: appearance.profile,
+        presets: appearance.presets,
+        geometry: pendingGeometry ?? snapshot.chat.geometry,
+      },
       locale: localeStateFromMessages(hydratedLocale, messages),
     })
     unbindPersistence = bindPersistence(store, repository, () => applyingExternal)
@@ -163,6 +211,7 @@ export const createAppRuntime = async (
     disposed = true
     unbindPersistence()
     unwatch()
+    unsubscribePersistence()
     throw error
   }
 
@@ -171,13 +220,13 @@ export const createAppRuntime = async (
     async setLocale(locale) {
       const resolved = resolveLanguageCode(locale)
       const requestId = ++localeRequestId
-      const [messages] = await Promise.all([
-        loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages),
-        repository.saveLocale(resolved),
-      ])
-      if (!disposed && requestId === localeRequestId) {
-        applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
-      }
+      const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
+      if (disposed || requestId !== localeRequestId) return
+
+      // Keep the user's selected language visible even if persistence is
+      // temporarily unavailable. The repository owns retry and error status.
+      applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
+      await repository.saveLocale(resolved)
     },
     exportSettings: () =>
       buildRepositoryBackup({
@@ -199,11 +248,13 @@ export const createAppRuntime = async (
       )
       applyExternal(() => store.set(replaceImportedSettingsAtom, normalized))
     },
+    retryPersistence: () => repository.retryFailed(),
     dispose() {
       if (disposed) return
       disposed = true
       unbindPersistence()
       unwatch()
+      unsubscribePersistence()
     },
   }
 }

@@ -1,17 +1,35 @@
 import { browser } from 'wxt/browser'
 import { storage } from 'wxt/utils/storage'
-import { type LocaleCode, resolveLanguageCode, resolveLanguagePreference } from '@/shared/i18n/language'
+import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
-import { areChatSettingsEqual, areGlobalSettingsEqual } from './equality'
 import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
-import type { ChatSettings, GlobalSettings } from './model'
-import { normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
-import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY, LOCALE_STORAGE_KEY } from './storageKeys'
+import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from './model'
+import {
+  isRecord,
+  normalizeChatGeometry,
+  normalizeChatProfile,
+  normalizeGlobalSetting,
+  normalizePresets,
+} from './normalizeSettings'
+import {
+  APPEARANCE_STORAGE_KEY,
+  ENABLED_STORAGE_KEY,
+  GEOMETRY_STORAGE_KEY,
+  LEGACY_CHAT_STORAGE_KEY,
+  LEGACY_GLOBAL_STORAGE_KEY,
+  LOCALE_STORAGE_KEY,
+  THEME_STORAGE_KEY,
+} from './storageKeys'
 
 export type StoredEnvelope<T> = {
   schemaVersion: 1
   writerId: string
   value: T
+}
+
+export type ChatAppearanceSettings = {
+  profile: ChatProfile
+  presets: PresetEntry[]
 }
 
 export type SettingsSnapshot = {
@@ -20,36 +38,62 @@ export type SettingsSnapshot = {
   locale: LocaleCode
 }
 
+export type PersistenceDomain = 'enabled' | 'theme' | 'appearance' | 'geometry' | 'locale'
+
+export type PersistenceStatus =
+  | { status: 'idle'; failedDomains: readonly [] }
+  | { status: 'saving'; failedDomains: readonly [] }
+  | { status: 'error'; failedDomains: readonly PersistenceDomain[] }
+
 export type SettingsRepository = {
   load: () => Promise<SettingsSnapshot>
-  saveGlobal: (value: GlobalSettings) => Promise<void>
-  saveChat: (value: ChatSettings) => Promise<void>
+  saveEnabled: (value: boolean) => Promise<void>
+  saveTheme: (value: GlobalSettings['themeMode']) => Promise<void>
+  saveAppearance: (value: ChatAppearanceSettings) => Promise<void>
+  saveGeometry: (value: ChatGeometry) => Promise<void>
   saveLocale: (value: LocaleCode) => Promise<void>
   replaceSettings: (global: GlobalSettings, chat: ChatSettings) => Promise<void>
   watch: (handlers: {
-    onGlobal: (value: GlobalSettings) => void
-    onChat: (value: ChatSettings) => void
+    onEnabled: (value: boolean) => void
+    onTheme: (value: GlobalSettings['themeMode']) => void
+    onAppearance: (value: ChatAppearanceSettings) => void
+    onGeometry: (value: ChatGeometry) => void
     onLocale: (value: LocaleCode) => void
   }) => () => void
+  getPersistenceStatus: () => PersistenceStatus
+  subscribePersistence: (listener: (status: PersistenceStatus) => void) => () => void
+  retryFailed: () => Promise<void>
   flush: () => Promise<void>
 }
 
-const GLOBAL_KEY = `local:${GLOBAL_STORAGE_KEY}` as const
-const CHAT_KEY = `local:${CHAT_STORAGE_KEY}` as const
-const LOCALE_KEY = `local:${LOCALE_STORAGE_KEY}` as const
-const LEGACY_GLOBAL_KEY = 'globalSettingStore'
-const LEGACY_CHAT_KEY = 'ytdLiveChatStore'
-const LEGACY_LOCALE_KEY = 'i18nextLng'
+const PERSISTENCE_DOMAINS: readonly PersistenceDomain[] = ['enabled', 'theme', 'appearance', 'geometry', 'locale']
+const localKey = <T extends string>(key: T) => `local:${key}` as const
 
-type LegacyLocaleStorage = Pick<Storage, 'getItem' | 'removeItem'>
+const enabledItem = storage.defineItem<StoredEnvelope<boolean>>(localKey(ENABLED_STORAGE_KEY))
+const themeItem = storage.defineItem<StoredEnvelope<GlobalSettings['themeMode']>>(localKey(THEME_STORAGE_KEY))
+const appearanceItem = storage.defineItem<StoredEnvelope<ChatAppearanceSettings>>(localKey(APPEARANCE_STORAGE_KEY))
+const geometryItem = storage.defineItem<StoredEnvelope<ChatGeometry>>(localKey(GEOMETRY_STORAGE_KEY))
+const localeItem = storage.defineItem<StoredEnvelope<LocaleCode>>(localKey(LOCALE_STORAGE_KEY))
 
-const globalItem = storage.defineItem<StoredEnvelope<GlobalSettings>>(GLOBAL_KEY)
-const chatItem = storage.defineItem<StoredEnvelope<ChatSettings>>(CHAT_KEY)
-const localeItem = storage.defineItem<StoredEnvelope<LocaleCode>>(LOCALE_KEY)
+// Compatibility inputs are read-only. Startup never rewrites or removes them.
+const currentGlobalItem = storage.defineItem<unknown>(localKey(LEGACY_GLOBAL_STORAGE_KEY))
+const currentChatItem = storage.defineItem<unknown>(localKey(LEGACY_CHAT_STORAGE_KEY))
+const zustandGlobalItem = storage.defineItem<unknown>('local:globalSettingStore')
+const zustandChatItem = storage.defineItem<unknown>('local:ytdLiveChatStore')
+const legacyLocaleItem = storage.defineItem<unknown>('local:i18nextLng')
 
 const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = { ytdLiveChat: true, themeMode: 'system' }
+const SAVE_RETRY_DELAY_MS = 400
 
-const isRecord = (value: unknown): value is Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value)
+type LegacyLocaleStorage = Pick<Storage, 'getItem'>
+
+type RepositoryDependencies = {
+  waitBeforeRetry: (delayMs: number) => Promise<void>
+}
+
+const defaultDependencies: RepositoryDependencies = {
+  waitBeforeRetry: delayMs => new Promise(resolve => setTimeout(resolve, delayMs)),
+}
 
 const parseLegacy = (value: unknown): Record<string, unknown> => {
   if (typeof value !== 'string') return isRecord(value) ? value : {}
@@ -71,11 +115,26 @@ const createWriterId = () => {
   return `ylc-${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
-const normalizeGlobal = (input: unknown): GlobalSettings => {
-  const normalized = normalizeGlobalSetting(input)
+const isStoredEnvelope = <T>(value: unknown): value is StoredEnvelope<T> =>
+  isRecord(value) && value.schemaVersion === 1 && typeof value.writerId === 'string' && 'value' in value
+
+const normalizeTheme = (input: unknown, fallback: GlobalSettings['themeMode']): GlobalSettings['themeMode'] =>
+  input === 'light' || input === 'dark' || input === 'system' ? input : fallback
+
+const normalizeAppearance = (input: unknown, fallback: ChatAppearanceSettings): ChatAppearanceSettings => {
+  const raw = isRecord(input) ? input : {}
   return {
-    ytdLiveChat: normalized.ytdLiveChat ?? DEFAULT_GLOBAL_SETTINGS.ytdLiveChat,
-    themeMode: normalized.themeMode ?? DEFAULT_GLOBAL_SETTINGS.themeMode,
+    profile: normalizeChatProfile(raw.profile, fallback.profile),
+    presets: normalizePresets(raw.presets, fallback.presets),
+  }
+}
+
+const normalizeCurrentGlobal = (input: unknown, fallback: GlobalSettings): GlobalSettings => {
+  const value = isStoredEnvelope<unknown>(input) ? input.value : input
+  const normalized = normalizeGlobalSetting(value)
+  return {
+    ytdLiveChat: normalized.ytdLiveChat ?? fallback.ytdLiveChat,
+    themeMode: normalized.themeMode ?? fallback.themeMode,
   }
 }
 
@@ -88,27 +147,21 @@ const normalizeLegacyGlobal = (input: unknown): GlobalSettings => {
   }
 }
 
-const enqueueWrites = () => {
-  let queue = Promise.resolve()
-  return (task: () => Promise<void>) => {
-    queue = queue.then(task, task)
-    return queue
+const normalizeCurrentChat = (input: unknown, fallback: ChatSettings): ChatSettings => {
+  const value = isStoredEnvelope<unknown>(input) ? input.value : input
+  const raw = isRecord(value) ? value : {}
+  return {
+    profile: normalizeChatProfile(raw.profile, fallback.profile),
+    geometry: normalizeChatGeometry(raw.geometry, fallback.geometry),
+    presets: normalizePresets(raw.presets, fallback.presets),
   }
 }
 
 const readLegacyLocale = (legacyLocaleStorage: LegacyLocaleStorage | null) => {
   try {
-    return legacyLocaleStorage?.getItem(LEGACY_LOCALE_KEY) ?? undefined
+    return legacyLocaleStorage?.getItem('i18nextLng') ?? undefined
   } catch {
     return undefined
-  }
-}
-
-const removeLegacyLocale = (legacyLocaleStorage: LegacyLocaleStorage | null) => {
-  try {
-    legacyLocaleStorage?.removeItem(LEGACY_LOCALE_KEY)
-  } catch {
-    // A restricted extension context can deny access to localStorage.
   }
 }
 
@@ -125,178 +178,361 @@ const getExtensionPageLegacyLocaleStorage = (): LegacyLocaleStorage | null => {
   }
 }
 
-const removeLegacyKeys = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
-  await browser.storage.local.remove([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
-  removeLegacyLocale(legacyLocaleStorage)
-}
-
-const isStoredEnvelope = <T>(value: unknown): value is StoredEnvelope<T> =>
-  isRecord(value) && value.schemaVersion === 1 && typeof value.writerId === 'string' && 'value' in value
-
-const isStoredChatSettings = (value: unknown): value is ChatSettings => {
-  if (!isRecord(value) || !isRecord(value.profile) || !isRecord(value.geometry) || !Array.isArray(value.presets)) return false
+const getDefaultLocale = () => {
+  if (typeof browser.i18n?.getUILanguage !== 'function') return resolveLanguageCode(undefined)
   try {
-    return areChatSettingsEqual(value as ChatSettings, normalizeChatSettings(value, DEFAULT_CHAT_SETTINGS))
+    return resolveLanguageCode(browser.i18n.getUILanguage())
   } catch {
-    return false
+    return resolveLanguageCode(undefined)
   }
 }
 
-const readCurrentValues = async () => {
-  const values = await Promise.all(
-    [globalItem, chatItem, localeItem].map(async item => {
-      try {
-        return await item.getValue()
-      } catch {
-        return undefined
-      }
-    }),
-  )
-  return { global: values[0], chat: values[1], locale: values[2] }
+type SnapshotRead = {
+  snapshot: SettingsSnapshot
+  compatibilityLocaleToCopy: LocaleCode | null
 }
 
-const readNormalizedCurrentValues = async () => {
-  const current = await readCurrentValues()
-  const globalEnvelope = isStoredEnvelope<GlobalSettings>(current.global) ? current.global : null
-  const chatEnvelope =
-    isStoredEnvelope<unknown>(current.chat) && isStoredChatSettings(current.chat.value)
-      ? (current.chat as StoredEnvelope<ChatSettings>)
-      : null
-  const localeEnvelope = isStoredEnvelope<LocaleCode>(current.locale) ? current.locale : null
-  return {
-    globalEnvelope,
-    chatEnvelope,
-    localeEnvelope,
-    global: globalEnvelope ? normalizeGlobal(globalEnvelope.value) : null,
-    chat: chatEnvelope ? normalizeChatSettings(chatEnvelope.value, DEFAULT_CHAT_SETTINGS) : null,
-    locale: localeEnvelope ? resolveLanguageCode(localeEnvelope.value) : null,
-  }
-}
+const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Promise<SnapshotRead> => {
+  // Any browser.storage failure is fatal. Missing data is represented by
+  // undefined values returned from a successful read, never by an exception.
+  const [currentValues, compatibilityValues] = await Promise.all([
+    storage.getItems([enabledItem, themeItem, appearanceItem, geometryItem, localeItem, currentGlobalItem, currentChatItem]),
+    storage.getItems([zustandGlobalItem, zustandChatItem, legacyLocaleItem]),
+  ])
 
-/**
- * Chooses a starting language for an install that has never picked one. The browser UI
- * language comes first, because that is what Chrome itself uses to localise the extension's
- * name, so the popup title and its contents agree. When we ship nothing for that language
- * the user's own accept-languages order decides, which lands them on their second choice
- * instead of dropping straight to English.
- */
-const detectBrowserLocale = async (): Promise<LocaleCode> => {
-  const preferences: (string | undefined)[] = []
-  try {
-    preferences.push(browser.i18n?.getUILanguage?.())
-  } catch {
-    // Some extension test environments do not implement i18n.getUILanguage.
-  }
-  try {
-    const accepted = await browser.i18n?.getAcceptLanguages?.()
-    if (Array.isArray(accepted)) preferences.push(...accepted)
-  } catch {
-    // getAcceptLanguages is unavailable in some contexts and rejects in others.
-  }
-  return resolveLanguagePreference(preferences)
-}
+  const legacyGlobal = normalizeLegacyGlobal(compatibilityValues[0]?.value)
+  const legacyChat = migrateSettings(legacyState(compatibilityValues[1]?.value))
+  const currentGlobal = normalizeCurrentGlobal(currentValues[5]?.value, legacyGlobal)
+  const currentChat = normalizeCurrentChat(currentValues[6]?.value, legacyChat)
 
-const readLegacySnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null) => {
-  const values = await browser.storage.local.get([LEGACY_GLOBAL_KEY, LEGACY_CHAT_KEY, LEGACY_LOCALE_KEY])
-  const global = normalizeLegacyGlobal(values[LEGACY_GLOBAL_KEY])
-  const chat = migrateSettings(legacyState(values[LEGACY_CHAT_KEY]))
+  const enabledEnvelope = currentValues[0]?.value
+  const themeEnvelope = currentValues[1]?.value
+  const appearanceEnvelope = currentValues[2]?.value
+  const geometryEnvelope = currentValues[3]?.value
+  const localeEnvelope = currentValues[4]?.value
+
+  const fallbackAppearance: ChatAppearanceSettings = {
+    profile: currentChat.profile,
+    presets: currentChat.presets,
+  }
+  const appearance = isStoredEnvelope<unknown>(appearanceEnvelope)
+    ? normalizeAppearance(appearanceEnvelope.value, fallbackAppearance)
+    : fallbackAppearance
+  const geometry = isStoredEnvelope<unknown>(geometryEnvelope)
+    ? normalizeChatGeometry(geometryEnvelope.value, currentChat.geometry)
+    : currentChat.geometry
+
   const extensionPageLocale = readLegacyLocale(legacyLocaleStorage)
-  const browserStorageLocale = typeof values[LEGACY_LOCALE_KEY] === 'string' ? values[LEGACY_LOCALE_KEY] : undefined
-  const storedLocale = extensionPageLocale ?? browserStorageLocale
-  let locale: LocaleCode = resolveLanguageCode(storedLocale)
-  if (storedLocale === undefined) {
-    locale = await detectBrowserLocale()
-  }
+  const browserLegacyLocale = compatibilityValues[2]?.value
+  const storedCompatibilityLocale =
+    extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined)
+  const fallbackLocale = resolveLanguageCode(storedCompatibilityLocale ?? getDefaultLocale())
+  const hasCurrentLocale = isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'
+
   return {
-    snapshot: { global, chat, locale },
-    canPersistLocale: legacyLocaleStorage !== null || browserStorageLocale !== undefined,
+    snapshot: {
+      global: {
+        ytdLiveChat:
+          isStoredEnvelope<unknown>(enabledEnvelope) && typeof enabledEnvelope.value === 'boolean'
+            ? enabledEnvelope.value
+            : currentGlobal.ytdLiveChat,
+        themeMode: isStoredEnvelope<unknown>(themeEnvelope)
+          ? normalizeTheme(themeEnvelope.value, currentGlobal.themeMode)
+          : currentGlobal.themeMode,
+      },
+      chat: {
+        profile: appearance.profile,
+        presets: appearance.presets,
+        geometry,
+      },
+      locale: hasCurrentLocale ? resolveLanguageCode(localeEnvelope.value) : fallbackLocale,
+    },
+    // This is the only startup write: a non-destructive copy that lets the
+    // content script converge with an extension-page-only legacy locale.
+    compatibilityLocaleToCopy: !hasCurrentLocale && storedCompatibilityLocale !== undefined ? fallbackLocale : null,
   }
+}
+
+type FailedWrite = {
+  sequence: number
+  task: () => Promise<void>
+  error: unknown
 }
 
 export const createSettingsRepository = (
   writerId = createWriterId(),
   legacyLocaleStorage = getExtensionPageLegacyLocaleStorage(),
+  dependencies: RepositoryDependencies = defaultDependencies,
 ): SettingsRepository => {
-  const enqueue = enqueueWrites()
+  const tails = new Map<PersistenceDomain, Promise<void>>()
+  const localSequences = new Map<PersistenceDomain, number>()
+  const supersessionVersions = new Map<PersistenceDomain, number>()
+  const activeCounts = new Map<PersistenceDomain, number>()
+  const failedWrites = new Map<PersistenceDomain, FailedWrite>()
+  const listeners = new Set<(status: PersistenceStatus) => void>()
+  const watchHandlers = new Set<Parameters<SettingsRepository['watch']>[0]>()
+  let storageUnwatchers: (() => void)[] | null = null
 
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
 
-  const load = async () => {
-    const initial = await readNormalizedCurrentValues()
-    if (initial.global && initial.chat && initial.locale) {
-      removeLegacyLocale(legacyLocaleStorage)
-      return { global: initial.global, chat: initial.chat, locale: initial.locale }
-    }
-
-    const legacy = await readLegacySnapshot(legacyLocaleStorage)
-    // Another extension context may finish the same migration while the legacy
-    // snapshot is being read. Re-read every envelope before deciding which
-    // values this writer owns so a completed migration always wins.
-    const current = await readNormalizedCurrentValues()
-    const migrated = {
-      global: current.global ?? legacy.snapshot.global,
-      chat: current.chat ?? legacy.snapshot.chat,
-      locale: current.locale ?? legacy.snapshot.locale,
-    }
-    const persistLocale = current.locale !== null || legacy.canPersistLocale
-    await enqueue(async () => {
-      const writes: Promise<void>[] = []
-      if (!current.global) writes.push(globalItem.setValue(envelope(migrated.global)))
-      if (!current.chat) writes.push(chatItem.setValue(envelope(migrated.chat)))
-      if (!current.locale && persistLocale) writes.push(localeItem.setValue(envelope(migrated.locale)))
-      await Promise.all(writes)
-      const written = await readCurrentValues()
-      const verified =
-        isStoredEnvelope<GlobalSettings>(written.global) &&
-        (current.global !== null || written.global.writerId === writerId) &&
-        areGlobalSettingsEqual(normalizeGlobal(written.global.value), migrated.global) &&
-        isStoredEnvelope<ChatSettings>(written.chat) &&
-        (current.chat !== null || written.chat.writerId === writerId) &&
-        areChatSettingsEqual(normalizeChatSettings(written.chat.value, DEFAULT_CHAT_SETTINGS), migrated.chat) &&
-        (!persistLocale ||
-          (isStoredEnvelope<LocaleCode>(written.locale) &&
-            (current.locale !== null || written.locale.writerId === writerId) &&
-            resolveLanguageCode(written.locale.value) === migrated.locale))
-      if (verified) await removeLegacyKeys(legacyLocaleStorage)
-    })
-    return migrated
+  const activeCount = () => [...activeCounts.values()].reduce((total, count) => total + count, 0)
+  const getPersistenceStatus = (): PersistenceStatus => {
+    const failedDomains = PERSISTENCE_DOMAINS.filter(domain => failedWrites.has(domain))
+    if (failedDomains.length > 0) return { status: 'error', failedDomains }
+    if (activeCount() > 0) return { status: 'saving', failedDomains: [] }
+    return { status: 'idle', failedDomains: [] }
   }
 
-  const saveGlobal = (value: GlobalSettings) => enqueue(() => globalItem.setValue(envelope(normalizeGlobal(value))))
-  const saveChat = (value: ChatSettings) => enqueue(() => chatItem.setValue(envelope(normalizeChatSettings(value, DEFAULT_CHAT_SETTINGS))))
-  const saveLocale = (value: LocaleCode) => enqueue(() => localeItem.setValue(envelope(resolveLanguageCode(value))))
+  let previousStatus = JSON.stringify(getPersistenceStatus())
+  const publishStatus = () => {
+    const status = getPersistenceStatus()
+    const signature = JSON.stringify(status)
+    if (signature === previousStatus) return
+    previousStatus = signature
+    for (const listener of listeners) listener(status)
+  }
+
+  const nextLocalIntent = (domain: PersistenceDomain) => {
+    const sequence = (localSequences.get(domain) ?? 0) + 1
+    localSequences.set(domain, sequence)
+    supersessionVersions.set(domain, (supersessionVersions.get(domain) ?? 0) + 1)
+    failedWrites.delete(domain)
+    return {
+      sequence,
+      supersessionVersion: supersessionVersions.get(domain) ?? 0,
+    }
+  }
+
+  const acceptExternalCommit = (domain: PersistenceDomain) => {
+    supersessionVersions.set(domain, (supersessionVersions.get(domain) ?? 0) + 1)
+    failedWrites.delete(domain)
+    publishStatus()
+  }
+
+  const notifyCommitted = (domain: PersistenceDomain, value: unknown) => {
+    for (const handlers of watchHandlers) {
+      if (domain === 'enabled' && typeof value === 'boolean') handlers.onEnabled(value)
+      if (domain === 'theme') handlers.onTheme(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))
+      if (domain === 'appearance') {
+        handlers.onAppearance(
+          normalizeAppearance(value, {
+            profile: DEFAULT_CHAT_SETTINGS.profile,
+            presets: DEFAULT_CHAT_SETTINGS.presets,
+          }),
+        )
+      }
+      if (domain === 'geometry') handlers.onGeometry(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))
+      if (domain === 'locale' && typeof value === 'string') handlers.onLocale(resolveLanguageCode(value))
+    }
+  }
+
+  const readCommittedValue = async (domain: PersistenceDomain) => {
+    const item =
+      domain === 'enabled'
+        ? enabledItem
+        : domain === 'theme'
+          ? themeItem
+          : domain === 'appearance'
+            ? appearanceItem
+            : domain === 'geometry'
+              ? geometryItem
+              : localeItem
+    const [result] = await storage.getItems([item])
+    return isStoredEnvelope<unknown>(result?.value) ? result.value.value : undefined
+  }
+
+  const runWithRetry = async (
+    domain: PersistenceDomain,
+    sequence: number,
+    supersessionVersion: number,
+    task: () => Promise<void>,
+  ) => {
+    try {
+      await task()
+      return true
+    } catch (firstError) {
+      await dependencies.waitBeforeRetry(SAVE_RETRY_DELAY_MS)
+      // A newer local intent or an external commit supersedes this delayed
+      // retry. Do not replay an obsolete value after the wait.
+      if (
+        localSequences.get(domain) !== sequence ||
+        supersessionVersions.get(domain) !== supersessionVersion
+      )
+        return false
+      try {
+        await task()
+        return true
+      } catch {
+        throw firstError
+      }
+    }
+  }
+
+  const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
+    const { sequence, supersessionVersion } = nextLocalIntent(domain)
+    activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
+    publishStatus()
+
+    const previous = tails.get(domain) ?? Promise.resolve()
+    const current = previous
+      .catch(() => undefined)
+      .then(async () => {
+        // Coalesce a queued value when a newer local value already exists.
+        if (localSequences.get(domain) !== sequence) return
+        try {
+          const committed = await runWithRetry(domain, sequence, supersessionVersion, task)
+          if (!committed) return
+          if (localSequences.get(domain) === sequence) {
+            failedWrites.delete(domain)
+            // Ignore own browser.storage events and explicitly read the final
+            // committed value. This handles an external write racing with the
+            // local set without letting an older queued local event overwrite
+            // the newest in-memory intent.
+            try {
+              const value = await readCommittedValue(domain)
+              if (value !== undefined && localSequences.get(domain) === sequence) notifyCommitted(domain, value)
+            } catch {
+              // The write itself succeeded. A later storage event or reload
+              // will converge if this best-effort readback is unavailable.
+            }
+          }
+        } catch (error) {
+          if (
+            localSequences.get(domain) === sequence &&
+            supersessionVersions.get(domain) === supersessionVersion
+          )
+            failedWrites.set(domain, { sequence, task, error })
+          throw error
+        }
+      })
+      .finally(() => {
+        const count = (activeCounts.get(domain) ?? 1) - 1
+        if (count > 0) activeCounts.set(domain, count)
+        else activeCounts.delete(domain)
+        publishStatus()
+      })
+    tails.set(domain, current)
+    return current
+  }
+
+  const saveEnabled = (value: boolean) => enqueue('enabled', () => enabledItem.setValue(envelope(Boolean(value))))
+  const saveTheme = (value: GlobalSettings['themeMode']) =>
+    enqueue('theme', () => themeItem.setValue(envelope(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))))
+  const saveAppearance = (value: ChatAppearanceSettings) =>
+    enqueue('appearance', () =>
+      appearanceItem.setValue(
+        envelope(
+          normalizeAppearance(value, {
+            profile: DEFAULT_CHAT_SETTINGS.profile,
+            presets: DEFAULT_CHAT_SETTINGS.presets,
+          }),
+        ),
+      ),
+    )
+  const saveGeometry = (value: ChatGeometry) =>
+    enqueue('geometry', () => geometryItem.setValue(envelope(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))))
+  const saveLocale = (value: LocaleCode) => enqueue('locale', () => localeItem.setValue(envelope(resolveLanguageCode(value))))
+
+  const flush = async () => {
+    while (true) {
+      const observedTails = [...tails.entries()]
+      await Promise.allSettled(observedTails.map(([, tail]) => tail))
+      const tailsAreStable = observedTails.every(([domain, tail]) => tails.get(domain) === tail)
+      if (tailsAreStable && activeCount() === 0) break
+    }
+
+    if (failedWrites.size > 0) {
+      throw [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
+    }
+  }
 
   return {
-    load,
-    saveGlobal,
-    saveChat,
+    load: async () => {
+      const result = await readSnapshot(legacyLocaleStorage)
+      if (result.compatibilityLocaleToCopy !== null) {
+        void saveLocale(result.compatibilityLocaleToCopy).catch(() => {
+          // Persistence status remains visible and the user can retry. Startup
+          // still uses the compatibility value without deleting it.
+        })
+      }
+      return result.snapshot
+    },
+    saveEnabled,
+    saveTheme,
+    saveAppearance,
+    saveGeometry,
     saveLocale,
-    replaceSettings: (global, chat) =>
-      enqueue(() =>
-        Promise.all([
-          globalItem.setValue(envelope(normalizeGlobal(global))),
-          chatItem.setValue(envelope(normalizeChatSettings(chat, DEFAULT_CHAT_SETTINGS))),
-        ]).then(() => undefined),
-      ),
+    replaceSettings: async (global, chat) => {
+      await flush()
+      // A settings import is one browser.storage.set operation. It either
+      // writes all ownership domains or reports failure before in-memory state
+      // is replaced; it cannot leave a partially imported snapshot.
+      await storage.setItems([
+        { item: enabledItem, value: envelope(Boolean(global.ytdLiveChat)) },
+        { item: themeItem, value: envelope(normalizeTheme(global.themeMode, DEFAULT_GLOBAL_SETTINGS.themeMode)) },
+        {
+          item: appearanceItem,
+          value: envelope(
+            normalizeAppearance(
+              { profile: chat.profile, presets: chat.presets },
+              { profile: DEFAULT_CHAT_SETTINGS.profile, presets: DEFAULT_CHAT_SETTINGS.presets },
+            ),
+          ),
+        },
+        { item: geometryItem, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
+      ])
+    },
     watch: handlers => {
-      const unwatchGlobal = globalItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) handlers.onGlobal(normalizeGlobal(next.value))
-      })
-      const unwatchChat = chatItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) handlers.onChat(normalizeChatSettings(next.value, DEFAULT_CHAT_SETTINGS))
-      })
-      const unwatchLocale = localeItem.watch(next => {
-        if (next?.writerId !== writerId && next?.value) handlers.onLocale(resolveLanguageCode(next.value))
-      })
+      watchHandlers.add(handlers)
+      if (!storageUnwatchers) {
+        storageUnwatchers = [
+          enabledItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId || typeof next.value !== 'boolean') return
+            acceptExternalCommit('enabled')
+            notifyCommitted('enabled', next.value)
+          }),
+          themeItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('theme')
+            notifyCommitted('theme', next.value)
+          }),
+          appearanceItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('appearance')
+            notifyCommitted('appearance', next.value)
+          }),
+          geometryItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId) return
+            acceptExternalCommit('geometry')
+            notifyCommitted('geometry', next.value)
+          }),
+          localeItem.watch(next => {
+            if (!isStoredEnvelope<unknown>(next) || next.writerId === writerId || typeof next.value !== 'string') return
+            acceptExternalCommit('locale')
+            notifyCommitted('locale', next.value)
+          }),
+        ]
+      }
       return () => {
-        unwatchGlobal()
-        unwatchChat()
-        unwatchLocale()
+        watchHandlers.delete(handlers)
+        if (watchHandlers.size !== 0 || !storageUnwatchers) return
+        for (const unwatch of storageUnwatchers) unwatch()
+        storageUnwatchers = null
       }
     },
-    flush: async () => {
-      await enqueue(async () => {})
+    getPersistenceStatus,
+    subscribePersistence: listener => {
+      listeners.add(listener)
+      listener(getPersistenceStatus())
+      return () => listeners.delete(listener)
     },
+    retryFailed: async () => {
+      const retries = [...failedWrites.entries()].flatMap(([domain, failed]) =>
+        localSequences.get(domain) === failed.sequence ? [enqueue(domain, failed.task)] : [],
+      )
+      await Promise.all(retries)
+    },
+    flush,
   }
 }
 

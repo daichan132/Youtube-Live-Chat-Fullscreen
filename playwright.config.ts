@@ -34,7 +34,7 @@ const deterministicUse = {
 
 export default defineConfig({
   globalSetup: './e2e/global-setup',
-  forbidOnly: !!process.env.CI,
+  forbidOnly: process.env.YLC_ALLOW_ONLY !== '1',
   // Persistent fullscreen/live contexts are most stable when run serially, especially on macOS.
   // Use Playwright's explicit --workers CLI option when parallel speed is worth the reduced isolation.
   workers: 1,
