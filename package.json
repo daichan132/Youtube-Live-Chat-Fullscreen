@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
-    "@biomejs/biome": "2.5.8",
+    "@biomejs/biome": "2.5.10",
     "@fontsource/inter": "5.3.0",
     "@playwright/test": "1.62.1",
     "@tailwindcss/vite": "4.3.3",
@@ -71,7 +71,7 @@
     "@types/chrome": "0.2.7",
     "@types/node": "26.3.0",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
+    "@types/react-dom": "19.2.5",
     "@vitest/coverage-v8": "4.1.10",
     "@wxt-dev/module-react": "1.2.2",
     "jsdom": "30.0.1",
