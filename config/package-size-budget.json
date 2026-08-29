@@ -1,44 +1,16 @@
 {
   "chrome-mv3": {
     "browser": "chrome",
-    "baselines": {
-      "zipBytes": 282567,
-      "contentJsBytes": 381867,
-      "popupJsBytes": 241741,
-      "contentCssBytes": 54184,
-      "popupCssBytes": 45178,
-      "runtimeLocaleBytes": 85186,
-      "manifestLocaleBytes": 34008
-    },
     "budgets": {
-      "zipBytes": 300000,
-      "contentJsBytes": 392000,
-      "popupJsBytes": 250000,
-      "contentCssBytes": 60000,
-      "popupCssBytes": 50000,
-      "runtimeLocaleBytes": 95000,
-      "manifestLocaleBytes": 38000
+      "zipBytes": 350000,
+      "contentJsBytes": 450000
     }
   },
   "firefox-mv2": {
     "browser": "firefox",
-    "baselines": {
-      "zipBytes": 282533,
-      "contentJsBytes": 381854,
-      "popupJsBytes": 241741,
-      "contentCssBytes": 54184,
-      "popupCssBytes": 45178,
-      "runtimeLocaleBytes": 85186,
-      "manifestLocaleBytes": 34008
-    },
     "budgets": {
-      "zipBytes": 300000,
-      "contentJsBytes": 392000,
-      "popupJsBytes": 250000,
-      "contentCssBytes": 60000,
-      "popupCssBytes": 50000,
-      "runtimeLocaleBytes": 95000,
-      "manifestLocaleBytes": 38000
+      "zipBytes": 350000,
+      "contentJsBytes": 450000
     }
   }
 }

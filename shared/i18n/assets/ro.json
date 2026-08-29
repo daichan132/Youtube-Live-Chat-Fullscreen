@@ -5,7 +5,9 @@
         "preset": "Presetări",
         "setting": "Setări",
         "undo": "Anulează modificarea stilului",
-        "redo": "Refă modificarea stilului"
+        "redo": "Refă modificarea stilului",
+        "undone": "Modificarea stilului a fost anulată",
+        "redone": "Modificarea stilului a fost refăcută"
       },
       "alwaysOnDisplay": "Afișează chatul când nu există activitate",
       "chatOnlyDisplay": "Afișează doar chatul",
@@ -15,13 +17,14 @@
       "backgroundColor": "Culoarea fundalului",
       "fontColor": "Culoarea textului",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Implicit",
+      "fontSearch": "Caută fonturi",
+      "fontNotFound": "Niciun font nu corespunde căutării",
       "fontSize": "Dimensiunea fontului",
       "blur": "Estompare",
       "space": "Spațiere",
       "footer": {
-        "donate": "Donează",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donează"
       },
       "theme": "Temă",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Întunecat"
       },
       "membershipNameColor": "Culoarea numelor membrilor",
-      "defaultColor": "Implicită",
       "resetToDefaultColor": "Resetează la culoarea implicită",
       "group": {
         "display": "Afișare",
         "colors": "Culori",
         "text": "Text",
         "elements": "Elemente vizibile"
-      },
-      "requiresAlwaysOn": "Activează „Afișează mereu chatul” pentru a folosi această opțiune"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilitate",
+      "healthy": "Funcționează corect",
+      "degraded": "Funcționează în modul de compatibilitate",
+      "failed": "S-a detectat o problemă de compatibilitate",
+      "waiting": "Se colectează datele de diagnosticare",
+      "lastRecovery": "Ultima recuperare automată",
+      "restart": "Reîncarcă suprapunerea de chat",
+      "copy": "Copiază raportul de diagnosticare",
+      "copied": "Raportul de diagnosticare a fost copiat",
+      "copyFailed": "Nu s-a putut copia raportul de diagnosticare"
     },
     "aria": {
       "dragToMove": "Trage pentru a muta",
@@ -46,13 +59,17 @@
       "openSettings": "Deschide setările",
       "toggleLiveChat": "Afișează sau ascunde chatul live",
       "close": "Închide",
-      "reorderPreset": "Reordonează presetarea",
+      "dragHandle": "mâner de tragere",
+      "settingsFrameTitle": "Setări pentru chatul pe tot ecranul",
+      "reorderPreset": "Reordonează {name}",
       "presetName": "Numele presetării",
-      "applyPreset": "Aplică presetarea",
-      "deletePreset": "Șterge presetarea",
+      "applyPreset": "Aplică {name}",
+      "deletePreset": "Șterge {name}",
+      "presetMoved": "{name} a fost mutat pe poziția {position}",
       "colorPicker": "Selector de culoare",
       "loading": "Se încarcă",
-      "selectLanguage": "Selectează limba"
+      "selectLanguage": "Selectează limba",
+      "fontsFound": "Fonturi găsite: {count}"
     },
     "preset": {
       "addMessage": "Salvează setările curente",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
     "donate": "Donează",
+    "donateAction": "Susține pe Ko-fi",
     "theme": "Temă",
     "dataTransfer": "Copie de rezervă",
     "export": "Exportă",
@@ -82,5 +100,5 @@
     "importError": "Nu s-a putut importa fișierul de setări."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Urmărește transmisiuni live pe YouTube pe ecran complet. Scrie în chat, trimite mesaje Super Chat și personalizează suprapunerea."
+  "extensionDescription": "Chatul dispare pe ecran complet? Suprapunerea ține chatul live YouTube peste videoclip: citește, răspunde și trimite Super Chat."
 }

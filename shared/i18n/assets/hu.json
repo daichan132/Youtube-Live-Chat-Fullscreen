@@ -5,7 +5,9 @@
         "preset": "Sablonok",
         "setting": "Beállítások",
         "undo": "Stílusmódosítás visszavonása",
-        "redo": "Stílusmódosítás megismétlése"
+        "redo": "Stílusmódosítás megismétlése",
+        "undone": "Stílusmódosítás visszavonva",
+        "redone": "Stílusmódosítás megismételve"
       },
       "alwaysOnDisplay": "Csevegés megjelenítése inaktivitáskor",
       "chatOnlyDisplay": "Csak a csevegés megjelenítése",
@@ -15,13 +17,14 @@
       "backgroundColor": "Háttérszín",
       "fontColor": "Szövegszín",
       "fontFamily": "Betűtípus",
+      "fontFamilyDefault": "Alapértelmezett",
+      "fontSearch": "Betűtípus keresése",
+      "fontNotFound": "Nincs a keresésnek megfelelő betűtípus",
       "fontSize": "Betűméret",
       "blur": "Elmosás",
       "space": "Térköz",
       "footer": {
-        "donate": "Támogatás",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Támogatás"
       },
       "theme": "Téma",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Sötét"
       },
       "membershipNameColor": "Tagok nevének színe",
-      "defaultColor": "Alapértelmezett",
       "resetToDefaultColor": "Alapértelmezett szín visszaállítása",
       "group": {
         "display": "Megjelenítés",
         "colors": "Színek",
         "text": "Szöveg",
         "elements": "Látható elemek"
-      },
-      "requiresAlwaysOn": "A használatához kapcsolja be a „Csevegés állandó megjelenítése” beállítást"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilitás",
+      "healthy": "Megfelelően működik",
+      "degraded": "Kompatibilitási módban működik",
+      "failed": "Kompatibilitási probléma észlelve",
+      "waiting": "Diagnosztikai adatok gyűjtése folyamatban",
+      "lastRecovery": "Utolsó automatikus helyreállítás",
+      "restart": "Csevegés-overlay újratöltése",
+      "copy": "Diagnosztikai jelentés másolása",
+      "copied": "A diagnosztikai jelentés a vágólapra másolva",
+      "copyFailed": "A diagnosztikai jelentés másolása nem sikerült"
     },
     "aria": {
       "dragToMove": "Húzza az áthelyezéshez",
@@ -46,13 +59,17 @@
       "openSettings": "Beállítások megnyitása",
       "toggleLiveChat": "Élő csevegés megjelenítése vagy elrejtése",
       "close": "Bezárás",
-      "reorderPreset": "Sablon átrendezése",
+      "dragHandle": "húzófogantyú",
+      "settingsFrameTitle": "Teljes képernyős csevegés beállításai",
+      "reorderPreset": "{name} átrendezése",
       "presetName": "Sablon neve",
-      "applyPreset": "Sablon alkalmazása",
-      "deletePreset": "Sablon törlése",
+      "applyPreset": "{name} alkalmazása",
+      "deletePreset": "{name} törlése",
+      "presetMoved": "{name} áthelyezve. Új pozíció: {position}",
       "colorPicker": "Színválasztó",
       "loading": "Betöltés folyamatban",
-      "selectLanguage": "Nyelv kiválasztása"
+      "selectLanguage": "Nyelv kiválasztása",
+      "fontsFound": "{count} betűtípus található"
     },
     "preset": {
       "addMessage": "Aktuális beállítások mentése",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Csevegés teljes képernyőn",
     "links": "Hivatkozások",
     "donate": "Támogatás",
+    "donateAction": "Támogatás a Ko-fi oldalon",
     "theme": "Téma",
     "dataTransfer": "Biztonsági mentés",
     "export": "Exportálás",
@@ -82,5 +100,5 @@
     "importError": "A beállításfájl importálása nem sikerült."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Nézz élő YouTube-közvetítéseket teljes képernyőn. Írj a csevegésbe, küldj Super Chat-üzeneteket, és szabd személyre a megjelenést."
+  "extensionDescription": "Teljes képernyőn eltűnik a csevegés? Az overlay a videón tartja a YouTube élő chatjét: húzd, írj hozzászólást és Super Chatet."
 }

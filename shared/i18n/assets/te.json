@@ -5,7 +5,9 @@
         "preset": "ప్రీసెట్",
         "setting": "సెట్టింగ్‌లు",
         "undo": "శైలి మార్పును రద్దు చేయి",
-        "redo": "శైలి మార్పును మళ్లీ చేయి"
+        "redo": "శైలి మార్పును మళ్లీ చేయి",
+        "undone": "శైలి మార్పు రద్దు చేయబడింది",
+        "redone": "శైలి మార్పు మళ్లీ చేయబడింది"
       },
       "alwaysOnDisplay": "నిష్క్రియంగా ఉన్నప్పుడు చాట్ చూపించు",
       "chatOnlyDisplay": "చాట్ మాత్రమే చూపించు",
@@ -15,13 +17,14 @@
       "backgroundColor": "నేపథ్య రంగు",
       "fontColor": "ఫాంట్ రంగు",
       "fontFamily": "ఫాంట్ ఫ్యామిలీ",
+      "fontFamilyDefault": "డిఫాల్ట్",
+      "fontSearch": "ఫాంట్‌లను వెతకండి",
+      "fontNotFound": "మీ శోధనకు సరిపోలే ఫాంట్‌లు లేవు",
       "fontSize": "ఫాంట్ పరిమాణం",
       "blur": "మసక",
       "space": "అంతరం",
       "footer": {
-        "donate": "విరాళం",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "విరాళం"
       },
       "theme": "థీమ్",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "డార్క్"
       },
       "membershipNameColor": "సభ్యుని పేరు రంగు",
-      "defaultColor": "డిఫాల్ట్",
       "resetToDefaultColor": "డిఫాల్ట్ రంగుకు రీసెట్ చేయండి",
       "group": {
         "display": "ప్రదర్శన",
         "colors": "రంగులు",
         "text": "టెక్స్ట్",
         "elements": "చాట్ అంశాలు"
-      },
-      "requiresAlwaysOn": "దీన్ని కాన్ఫిగర్ చేయడానికి \"ఎప్పుడూ చూపించు\" ఆన్ చేయండి"
+      }
+    },
+    "diagnostics": {
+      "legend": "అనుకూలత",
+      "healthy": "సాధారణం",
+      "degraded": "ప్రత్యామ్నాయ అనుకూలత మోడ్‌లో నడుస్తోంది",
+      "failed": "అనుకూలత సమస్య కనుగొనబడింది",
+      "waiting": "డయాగ్నస్టిక్ సమాచారం సేకరిస్తోంది",
+      "lastRecovery": "చివరి స్వయం పునరుద్ధరణ",
+      "restart": "చాట్‌ను మళ్లీ లోడ్ చేయండి",
+      "copy": "డయాగ్నస్టిక్ నివేదికను కాపీ చేయండి",
+      "copied": "డయాగ్నస్టిక్ నివేదిక కాపీ చేయబడింది",
+      "copyFailed": "డయాగ్నస్టిక్ నివేదికను కాపీ చేయడం సాధ్యపడలేదు"
     },
     "aria": {
       "dragToMove": "తరలించడానికి లాగండి",
@@ -46,13 +59,17 @@
       "openSettings": "సెట్టింగ్‌లు తెరవండి",
       "toggleLiveChat": "లైవ్ చాట్ టోగుల్ చేయండి",
       "close": "మూసివేయండి",
-      "reorderPreset": "ప్రీసెట్ క్రమం మార్చండి",
+      "dragHandle": "డ్రాగ్ హ్యాండిల్",
+      "settingsFrameTitle": "పూర్తి తెర చాట్ సెట్టింగ్‌లు",
+      "reorderPreset": "{name} క్రమం మార్చండి",
       "presetName": "ప్రీసెట్ పేరు",
-      "applyPreset": "ప్రీసెట్ వర్తింపజేయండి",
-      "deletePreset": "ప్రీసెట్ తొలగించండి",
+      "applyPreset": "{name}ను వర్తింపజేయండి",
+      "deletePreset": "{name}ను తొలగించండి",
+      "presetMoved": "{name} {position}వ స్థానానికి తరలించబడింది",
       "colorPicker": "రంగు ఎంపిక",
       "loading": "లోడ్ అవుతోంది",
-      "selectLanguage": "భాష ఎంచుకోండి"
+      "selectLanguage": "భాష ఎంచుకోండి",
+      "fontsFound": "దొరికిన ఫాంట్‌లు: {count}"
     },
     "preset": {
       "addMessage": "ప్రస్తుత సెట్టింగ్‌లను సేవ్ చేయి",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "పూర్తి తెర చాట్",
     "links": "లింకులు",
     "donate": "విరాళం",
+    "donateAction": "Ko-fiలో మద్దతు ఇవ్వండి",
     "theme": "థీమ్",
     "dataTransfer": "బ్యాకప్",
     "export": "ఎగుమతి",
@@ -82,5 +100,5 @@
     "importError": "సెట్టింగ్‌ల ఫైల్‌ను దిగుమతి చేయడం సాధ్యపడలేదు."
   },
   "extensionName": "YouTube లైవ్ చాట్ ఫుల్‌స్క్రీన్",
-  "extensionDescription": "YouTube Liveను పూర్తి తెరలో చాట్‌తో చూడండి. సందేశాలు, Super Chat పంపి, ఓవర్‌లేను మీకు నచ్చినట్లు మార్చండి."
+  "extensionDescription": "ఫుల్‌స్క్రీన్‌లో చాట్ మాయమా? ఓవర్‌లే YouTube లైవ్ చాట్‌ను వీడియో పైకి తెస్తుంది — మెసేజ్ చదవండి, రిప్లై ఇవ్వండి, Super Chat పంపండి."
 }

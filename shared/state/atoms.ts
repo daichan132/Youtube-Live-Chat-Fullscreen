@@ -6,6 +6,7 @@ import { areChatProfilesEqual } from '@/shared/settings/equality'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from '@/shared/settings/model'
 import { normalizeChatSettings, normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
+import type { ChatAppearanceSettings, PersistenceStatus } from '@/shared/settings/repository'
 
 export type EditorSession = {
   draftProfile: ChatProfile | null
@@ -35,6 +36,8 @@ export const localeStateAtom = atom<LocaleState>({
   direction: 'ltr',
   messages: EMPTY_MESSAGES,
 })
+
+export const persistenceStatusAtom = atom<PersistenceStatus>({ status: 'idle', failedDomains: [] })
 
 export const themeModeAtom = atom(get => get(globalSettingsStateAtom).themeMode)
 export const ytdLiveChatEnabledAtom = atom(get => get(globalSettingsStateAtom).ytdLiveChat)
@@ -87,6 +90,34 @@ export const replaceImportedSettingsAtom = atom(
 
 export const replaceExternalGlobalSettingsAtom = atom(null, (_get, set, next: GlobalSettings) => {
   set(globalSettingsStateAtom, next)
+})
+
+export const replaceExternalEnabledAtom = atom(null, (get, set, enabled: boolean) => {
+  const current = get(globalSettingsStateAtom)
+  if (current.ytdLiveChat !== enabled) set(globalSettingsStateAtom, { ...current, ytdLiveChat: enabled })
+})
+
+export const replaceExternalThemeAtom = atom(null, (get, set, themeMode: GlobalSettings['themeMode']) => {
+  const current = get(globalSettingsStateAtom)
+  if (current.themeMode !== themeMode) set(globalSettingsStateAtom, { ...current, themeMode })
+})
+
+export const replaceExternalAppearanceAtom = atom(null, (get, set, next: ChatAppearanceSettings) => {
+  const current = get(chatSettingsStateAtom)
+  const editor = get(editorSessionStateAtom)
+  set(chatSettingsStateAtom, { ...current, profile: next.profile, presets: next.presets })
+  if (editor.activeGesture || editor.draftProfile || !areChatProfilesEqual(current.profile, next.profile)) {
+    set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
+  }
+})
+
+export const replaceExternalGeometryAtom = atom(null, (get, set, geometry: ChatGeometry) => {
+  const current = get(chatSettingsStateAtom)
+  set(chatSettingsStateAtom, { ...current, geometry })
+})
+
+export const replacePersistenceStatusAtom = atom(null, (_get, set, status: PersistenceStatus) => {
+  set(persistenceStatusAtom, status)
 })
 
 export const replaceExternalChatSettingsAtom = atom(null, (get, set, next: ChatSettings) => {

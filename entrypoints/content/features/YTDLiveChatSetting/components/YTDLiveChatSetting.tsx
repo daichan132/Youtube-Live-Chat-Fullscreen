@@ -11,6 +11,7 @@ import {
   TbSettings2,
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
+import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
@@ -211,6 +212,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
             </button>
           </div>
         </header>
+        <PersistenceNotice />
         <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
           {historyAnnouncement.message}
         </span>

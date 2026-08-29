@@ -5,7 +5,9 @@
         "preset": "Predlošci",
         "setting": "Postavke",
         "undo": "Poništi promjenu stila",
-        "redo": "Ponovi promjenu stila"
+        "redo": "Ponovi promjenu stila",
+        "undone": "Promjena stila je poništena",
+        "redone": "Promjena stila je ponovljena"
       },
       "alwaysOnDisplay": "Prikaži chat tijekom neaktivnosti",
       "chatOnlyDisplay": "Prikaži samo chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Boja pozadine",
       "fontColor": "Boja teksta",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Zadani",
+      "fontSearch": "Pretraži fontove",
+      "fontNotFound": "Nema fontova koji odgovaraju pretrazi",
       "fontSize": "Veličina fonta",
       "blur": "Zamućenje",
       "space": "Razmak",
       "footer": {
-        "donate": "Doniraj",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Doniraj"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Tamna"
       },
       "membershipNameColor": "Boja imena članova",
-      "defaultColor": "Zadana",
       "resetToDefaultColor": "Vrati na zadanu boju",
       "group": {
         "display": "Prikaz",
         "colors": "Boje",
         "text": "Tekst",
         "elements": "Vidljivi elementi"
-      },
-      "requiresAlwaysOn": "Za ovu opciju uključi „Uvijek prikazuj chat”"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilnost",
+      "healthy": "Radi ispravno",
+      "degraded": "Koristi se rezervni način kompatibilnosti",
+      "failed": "Otkriven je problem s kompatibilnošću",
+      "waiting": "Prikupljanje dijagnostičkih podataka",
+      "lastRecovery": "Zadnji samostalni oporavak",
+      "restart": "Ponovno učitaj chat",
+      "copy": "Kopiraj dijagnostičko izvješće",
+      "copied": "Dijagnostičko izvješće je kopirano",
+      "copyFailed": "Dijagnostičko izvješće nije moguće kopirati"
     },
     "aria": {
       "dragToMove": "Povuci za premještanje",
@@ -46,13 +59,17 @@
       "openSettings": "Otvori postavke",
       "toggleLiveChat": "Prikaži ili sakrij chat uživo",
       "close": "Zatvori",
-      "reorderPreset": "Promijeni redoslijed predloška",
+      "dragHandle": "ručka za povlačenje",
+      "settingsFrameTitle": "Postavke chata na cijelom zaslonu",
+      "reorderPreset": "Promijeni redoslijed predloška „{name}“",
       "presetName": "Naziv predloška",
-      "applyPreset": "Primijeni predložak",
-      "deletePreset": "Izbriši predložak",
+      "applyPreset": "Primijeni predložak „{name}“",
+      "deletePreset": "Izbriši predložak „{name}“",
+      "presetMoved": "Predložak „{name}“ je premješten na položaj {position}",
       "colorPicker": "Odabir boje",
       "loading": "Učitavanje",
-      "selectLanguage": "Odaberi jezik"
+      "selectLanguage": "Odaberi jezik",
+      "fontsFound": "Broj pronađenih fontova: {count}"
     },
     "preset": {
       "addMessage": "Spremi trenutačne postavke",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat na cijelom zaslonu",
     "links": "Poveznice",
     "donate": "Doniraj",
+    "donateAction": "Podrži na Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Sigurnosna kopija",
     "export": "Izvezi",
@@ -82,5 +100,5 @@
     "importError": "Datoteku s postavkama nije moguće uvesti."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Gledajte YouTube prijenose uživo na cijelom zaslonu. Pišite u chatu, šaljite Super Chat poruke i prilagodite prikaz chata."
+  "extensionDescription": "Na cijelom zaslonu chat nestaje? Prekrivač vraća YouTube chat uživo preko videa: čitaj poruke, odgovaraj, šalji Super Chat."
 }

@@ -42,14 +42,15 @@ body:
     id: browser
     attributes:
       label: Browser and version
-      placeholder: Chrome 140, Firefox 142, Zen 1.15, etc.
+      placeholder: Chrome 140, Firefox 142, Opera 120, etc.
     validations:
       required: true
   - type: input
     id: extension-version
     attributes:
       label: Extension version
-      placeholder: "2.3.13"
+      description: The version on the extension's card in chrome://extensions or about:addons.
+      placeholder: "x.y.z"
     validations:
       required: true
   - type: input

@@ -8,7 +8,7 @@ published: false
 
 ## はじめに
 
-Playwright の公式ドキュメントには「`--load-extension` で拡張をロードできます」という [1 ページ](https://playwright.dev/docs/chrome-extensions)があるだけで、ブラウザ拡張の E2E に関する実践的な情報はほぼ存在しません。筆者は Chrome 拡張（[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlkeccegfeelbfmlfnikoefnpgfkondj)、ユーザー 1 万人超、[WXT](https://wxt.dev/) + React + TypeScript）の E2E テストを Playwright で 1 年以上運用する中でハマった落とし穴と、試行錯誤の末にたどり着いた対処法をまとめます。
+Playwright の公式ドキュメントには「`--load-extension` で拡張をロードできます」という [1 ページ](https://playwright.dev/docs/chrome-extensions)があるだけで、ブラウザ拡張の E2E に関する実践的な情報はほぼ存在しません。筆者は Chrome 拡張（[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)、ユーザー 2 万人超、[WXT](https://wxt.dev/) + React + TypeScript）の E2E テストを Playwright で 1 年以上運用する中でハマった落とし穴と、試行錯誤の末にたどり着いた対処法をまとめます。
 
 :::message
 この記事は以下の環境を前提としています。

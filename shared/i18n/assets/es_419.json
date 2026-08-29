@@ -5,7 +5,9 @@
         "preset": "Preajuste",
         "setting": "Configuración",
         "undo": "Deshacer cambio de estilo",
-        "redo": "Rehacer cambio de estilo"
+        "redo": "Rehacer cambio de estilo",
+        "undone": "Cambio de estilo deshecho",
+        "redone": "Cambio de estilo rehecho"
       },
       "alwaysOnDisplay": "Mostrar el chat cuando no haya actividad",
       "chatOnlyDisplay": "Mostrar solo el chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Color de fondo",
       "fontColor": "Color del texto",
       "fontFamily": "Fuente",
+      "fontFamilyDefault": "Predeterminada",
+      "fontSearch": "Buscar fuentes",
+      "fontNotFound": "Ninguna fuente coincide con la búsqueda",
       "fontSize": "Tamaño de fuente",
       "blur": "Desenfoque",
       "space": "Espaciado",
       "footer": {
-        "donate": "Donar",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Donar"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Oscuro"
       },
       "membershipNameColor": "Color de los nombres de miembros",
-      "defaultColor": "Predeterminado",
       "resetToDefaultColor": "Restablecer el color predeterminado",
       "group": {
         "display": "Visibilidad",
         "colors": "Colores",
         "text": "Texto",
         "elements": "Elementos del chat"
-      },
-      "requiresAlwaysOn": "Activa «Mostrar siempre el chat» para cambiar esta opción"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilidad",
+      "healthy": "Funcionamiento correcto",
+      "degraded": "Funcionamiento en modo de compatibilidad",
+      "failed": "Problema de compatibilidad detectado",
+      "waiting": "Recopilando datos de diagnóstico",
+      "lastRecovery": "Última recuperación automática",
+      "restart": "Recargar el chat",
+      "copy": "Copiar el reporte de diagnóstico",
+      "copied": "Se copió el reporte de diagnóstico",
+      "copyFailed": "No se pudo copiar el reporte de diagnóstico"
     },
     "aria": {
       "dragToMove": "Arrastrar para mover",
@@ -46,13 +59,17 @@
       "openSettings": "Abrir configuración",
       "toggleLiveChat": "Mostrar u ocultar el chat en vivo",
       "close": "Cerrar",
-      "reorderPreset": "Mover el preajuste",
+      "dragHandle": "controlador de arrastre",
+      "settingsFrameTitle": "Configuración del chat en pantalla completa",
+      "reorderPreset": "Mover {name}",
       "presetName": "Nombre del preajuste",
-      "applyPreset": "Aplicar preajuste",
-      "deletePreset": "Eliminar preajuste",
+      "applyPreset": "Aplicar {name}",
+      "deletePreset": "Eliminar {name}",
+      "presetMoved": "Se movió {name} a la posición {position}",
       "colorPicker": "Selector de color",
       "loading": "Cargando",
-      "selectLanguage": "Seleccionar idioma"
+      "selectLanguage": "Seleccionar idioma",
+      "fontsFound": "Fuentes encontradas: {count}"
     },
     "preset": {
       "addMessage": "Guardar la configuración actual",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat en pantalla completa",
     "links": "Enlaces",
     "donate": "Donar",
+    "donateAction": "Apoyar en Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Copia de seguridad",
     "export": "Exportar",
@@ -82,5 +100,5 @@
     "importError": "No se pudo importar el archivo de configuración."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Mira YouTube Live en pantalla completa con el chat visible. Chatea, envía Super Chats y personaliza la superposición a tu gusto."
+  "extensionDescription": "¿El chat desaparece en pantalla completa? Pon el chat en vivo de YouTube sobre el video: léelo, responde y envía Super Chats."
 }

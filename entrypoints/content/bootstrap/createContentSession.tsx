@@ -17,12 +17,10 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
       anchor: 'body',
       append: 'first',
       onMount: container => {
-        const wrapper = document.createElement('div')
-        wrapper.id = 'wxt-react-content'
-        wrapper.dataset.ylcRoot = ''
-        container.append(wrapper)
+        container.id = 'wxt-react-content'
+        container.dataset.ylcRoot = ''
 
-        const root = createRoot(wrapper)
+        const root = createRoot(container)
         root.render(
           <AppProvider runtime={runtime}>
             <ChatRuntimeProvider runtime={chatRuntime}>
@@ -30,11 +28,10 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
             </ChatRuntimeProvider>
           </AppProvider>,
         )
-        return { root, wrapper }
+        return root
       },
-      onRemove: elements => {
-        elements?.root.unmount()
-        elements?.wrapper.remove()
+      onRemove: root => {
+        root?.unmount()
         chatRuntime.stop()
         runtime.dispose()
       },

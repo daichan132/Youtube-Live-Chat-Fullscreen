@@ -7,7 +7,7 @@ const linkItems = [
     icon: FaChrome,
   },
   {
-    href: 'https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/',
+    href: 'https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/',
     name: 'Firefox',
     icon: FaFirefox,
   },

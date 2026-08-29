@@ -5,7 +5,9 @@
         "preset": "프리셋",
         "setting": "설정",
         "undo": "스타일 변경 실행 취소",
-        "redo": "스타일 변경 다시 실행"
+        "redo": "스타일 변경 다시 실행",
+        "undone": "스타일 변경을 실행 취소했습니다",
+        "redone": "스타일 변경을 다시 실행했습니다"
       },
       "alwaysOnDisplay": "조작하지 않을 때도 표시",
       "chatOnlyDisplay": "채팅만 표시",
@@ -15,13 +17,14 @@
       "backgroundColor": "배경색",
       "fontColor": "글자색",
       "fontFamily": "글꼴",
+      "fontFamilyDefault": "기본값",
+      "fontSearch": "글꼴 검색",
+      "fontNotFound": "검색과 일치하는 글꼴이 없습니다",
       "fontSize": "글꼴 크기",
       "blur": "블러",
       "space": "간격",
       "footer": {
-        "donate": "후원하기",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "후원하기"
       },
       "theme": "테마",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "다크"
       },
       "membershipNameColor": "멤버 이름 색상",
-      "defaultColor": "기본값",
       "resetToDefaultColor": "기본 색상으로 되돌리기",
       "group": {
         "display": "표시",
         "colors": "색상",
         "text": "텍스트",
         "elements": "표시 요소"
-      },
-      "requiresAlwaysOn": "\"항상 표시\"를 켜면 설정할 수 있습니다"
+      }
+    },
+    "diagnostics": {
+      "legend": "호환성",
+      "healthy": "정상",
+      "degraded": "호환 대체 방식으로 동작 중",
+      "failed": "호환성 문제가 감지됨",
+      "waiting": "진단 정보 수집 중",
+      "lastRecovery": "마지막 자동 복구",
+      "restart": "채팅 다시 불러오기",
+      "copy": "진단 보고서 복사",
+      "copied": "진단 보고서를 복사했습니다",
+      "copyFailed": "진단 보고서를 복사하지 못했습니다"
     },
     "aria": {
       "dragToMove": "드래그하여 이동",
@@ -46,13 +59,17 @@
       "openSettings": "설정 열기",
       "toggleLiveChat": "라이브 채팅 전환",
       "close": "닫기",
-      "reorderPreset": "프리셋 순서 변경",
+      "dragHandle": "드래그 핸들",
+      "settingsFrameTitle": "전체화면 채팅 설정",
+      "reorderPreset": "{name} 순서 변경",
       "presetName": "프리셋 이름",
-      "applyPreset": "프리셋 적용",
-      "deletePreset": "프리셋 삭제",
+      "applyPreset": "{name} 적용",
+      "deletePreset": "{name} 삭제",
+      "presetMoved": "{name} 프리셋을 {position}번째로 이동했습니다",
       "colorPicker": "색상 선택",
       "loading": "로딩 중",
-      "selectLanguage": "언어 선택"
+      "selectLanguage": "언어 선택",
+      "fontsFound": "글꼴 {count}개를 찾았습니다"
     },
     "preset": {
       "addMessage": "현재 설정 추가",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
     "donate": "후원하기",
+    "donateAction": "Ko-fi에서 후원하기",
     "theme": "테마",
     "dataTransfer": "백업",
     "export": "내보내기",
@@ -82,5 +100,5 @@
     "importError": "설정 파일을 가져올 수 없습니다."
   },
   "extensionName": "YouTube 라이브 채팅 전체화면",
-  "extensionDescription": "YouTube 라이브를 전체 화면으로 시청하면서 채팅을 보고 메시지를 보내세요. 슈퍼챗 전송과 오버레이 모양·위치 조정도 가능합니다."
+  "extensionDescription": "전체화면이면 채팅이 사라집니다. YouTube 실시간 채팅을 영상 위로 다시 불러와, 전체화면 그대로 메시지를 읽고 채팅을 보내고, 실시간 스트리밍이라면 Super Chat까지. 위치와 크기는 자유롭게, 채팅 다시보기도 지원합니다."
 }

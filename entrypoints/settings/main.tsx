@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react'
-import { createRoot } from 'react-dom/client'
+import { useEffect, useState } from 'react'
 import type { SanitizedDiagnosticReport } from '@/entrypoints/content/diagnostics/sanitizeDiagnosticReport'
 import { YTDLiveChatSetting } from '@/entrypoints/content/features/YTDLiveChatSetting/components/YTDLiveChatSetting'
 import {
@@ -7,27 +6,26 @@ import {
   SETTINGS_FRAME_MESSAGE,
   type SettingsFrameRequest,
 } from '@/entrypoints/content/settings/settingsFrameMessages'
-import { AppProvider } from '@/shared/runtime/AppProvider'
-import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
+import { mountExtensionPage } from '@/shared/runtime/mountExtensionPage'
+import { getAllowedParentOrigin, isTrustedParentMessage } from './parentBridge'
 import { RuntimeDiagnosticsPanel } from './RuntimeDiagnosticsPanel'
 import './main.css'
 
-const getParentOrigin = () => {
-  try {
-    return new URL(document.referrer).origin
-  } catch {
-    return '*'
-  }
-}
+const getParentOrigin = () => getAllowedParentOrigin(location.href)
 
-const postToParent = (message: SettingsFrameRequest) => window.parent.postMessage(message, getParentOrigin())
+const postToParent = (message: SettingsFrameRequest) => {
+  const parentOrigin = getParentOrigin()
+  if (parentOrigin && window.parent !== window) window.parent.postMessage(message, parentOrigin)
+}
 
 const SettingsApp = () => {
   const [report, setReport] = useState<SanitizedDiagnosticReport | null>(null)
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      if (event.source === window.parent && isSettingsFrameReport(event.data)) setReport(event.data.report)
+      const parentOrigin = getParentOrigin()
+      if (parentOrigin && isTrustedParentMessage(event, parentOrigin, window.parent) && isSettingsFrameReport(event.data))
+        setReport(event.data.report)
     }
     window.addEventListener('message', handleMessage)
     postToParent({ type: SETTINGS_FRAME_MESSAGE.diagnosticsRequest })
@@ -47,28 +45,4 @@ const SettingsApp = () => {
   )
 }
 
-const main = async () => {
-  const rootElement = document.getElementById('root')
-  if (!rootElement) throw new Error('Settings root was not found')
-
-  const runtime = await createAppRuntime()
-  const root = createRoot(rootElement)
-  root.render(
-    <React.StrictMode>
-      <AppProvider runtime={runtime}>
-        <SettingsApp />
-      </AppProvider>
-    </React.StrictMode>,
-  )
-
-  window.addEventListener(
-    'pagehide',
-    () => {
-      root.unmount()
-      runtime.dispose()
-    },
-    { once: true },
-  )
-}
-
-void main()
+void mountExtensionPage(<SettingsApp />)

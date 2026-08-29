@@ -815,13 +815,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.2.6":
-  version: 0.2.6
-  resolution: "@types/chrome@npm:0.2.6"
+"@types/chrome@npm:0.2.7":
+  version: 0.2.7
+  resolution: "@types/chrome@npm:0.2.7"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/2aa41864e7e6db2b396b94fedaaf590957cf273410dfe1004ad73b4aebbc9b095dd9bd0b59be00da05e3ca362f41a3a5517b55b7c830d7fdcc19d96d5fccf580
+  checksum: 10c0/499c25d282b70733160f1c51dc86301cec89a19a54e1db3449fd586dcc6a2523cf51c26e7e2b14d865dc2c94f73fa91e242fc5718220bbe80841fb32edb0955b
   languageName: node
   linkType: hard
 
@@ -862,12 +862,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:26.2.0":
-  version: 26.2.0
-  resolution: "@types/node@npm:26.2.0"
+"@types/node@npm:26.3.0":
+  version: 26.3.0
+  resolution: "@types/node@npm:26.3.0"
   dependencies:
     undici-types: "npm:~8.3.0"
-  checksum: 10c0/f8566d88162241eb55a46f7e4ea097188eab0aaafefea7a58e63adab8c4144eb98c08b7911452c846104c339a0f82282f5e1ed4b26b578d60709614fe2843f4d
+  checksum: 10c0/b1b71d722cea67807abde4993d71aa6e4e24ae3072635ff5fbca3e5fbe7f0d4adc20507ab3f1e14b13720d742fb5cae4b12c7326fbe706fcda24e2aab8306374
   languageName: node
   linkType: hard
 
@@ -1942,8 +1942,8 @@ __metadata:
   linkType: hard
 
 "jotai@npm:^2.12.5":
-  version: 2.20.2
-  resolution: "jotai@npm:2.20.2"
+  version: 2.20.3
+  resolution: "jotai@npm:2.20.3"
   peerDependencies:
     "@babel/core": ">=7.0.0"
     "@babel/template": ">=7.0.0"
@@ -1958,7 +1958,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 10c0/8c9cbdcc2956cbe9b78f61e8ffe3018f7c7cd7efbb8260e7996dba4ac7cc9ee5e2fc53d5c218d9b5f04052672535be9fa7848293b8a35410d17112f95e6395b0
+  checksum: 10c0/a280f2dffb48ec2888e83d4f876bb7e6f26c2cc6bb5aa983ca789f8698e43b9d00e56f4ba023aaf3b4454725896c440d0520300c2a9b7b26fae8b0627d0d3207
   languageName: node
   linkType: hard
 
@@ -2626,7 +2626,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:4.0.5, picomatch@npm:^4.0.4, picomatch@npm:^4.0.5":
+"picomatch@npm:4.0.7":
+  version: 4.0.7
+  resolution: "picomatch@npm:4.0.7"
+  checksum: 10c0/beb6ae02c43ae44e84883b90830196d9046b1726ead292adcf7f57945e0bb0d992d68563d87e03b484b6f3c9a5c6defda7523477f047d7f0e663f126cc01787f
+  languageName: node
+  linkType: hard
+
+"picomatch@npm:^4.0.4, picomatch@npm:^4.0.5":
   version: 4.0.5
   resolution: "picomatch@npm:4.0.5"
   checksum: 10c0/947bc6b6e1ff1e6c5aaf95b107a0839d12802f4f7b867663f67d47accba939ca1cb582cf99dfc30438efa1c4648ac5990967e783e8929c36b03e8440704ef1bd
@@ -3688,8 +3695,8 @@ __metadata:
     "@testing-library/jest-dom": "npm:7.0.1"
     "@testing-library/react": "npm:16.3.2"
     "@testing-library/user-event": "npm:14.6.4"
-    "@types/chrome": "npm:0.2.6"
-    "@types/node": "npm:26.2.0"
+    "@types/chrome": "npm:0.2.7"
+    "@types/node": "npm:26.3.0"
     "@types/react": "npm:19.2.18"
     "@types/react-dom": "npm:19.2.4"
     "@vitest/coverage-v8": "npm:4.1.10"

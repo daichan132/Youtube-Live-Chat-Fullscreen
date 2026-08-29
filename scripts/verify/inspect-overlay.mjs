@@ -73,7 +73,7 @@ try {
     const resizable = findDeep(element => element.hasAttribute('data-ylc-resizable'))
     const chatInner = findDeep(element => element.hasAttribute('data-ylc-chat-inner'))
     const settingsButton = findDeep(element => element.hasAttribute('data-ylc-settings-btn'))
-    const dragHandle = findDeep(element => element.getAttribute('aria-roledescription') === 'drag handle')
+    const dragHandle = findDeep(element => element.hasAttribute('data-ylc-drag-handle'))
     const extensionHost = document.getElementById('shadow-root-live-chat')
     const switchButtonSlot = document.getElementById('switch-button-d774ba85-ed7c-42a2-bf6f-a74e8d8605ec')
     const overlayContainer = findDeep(element => element.hasAttribute('data-ylc-overlay-container'))

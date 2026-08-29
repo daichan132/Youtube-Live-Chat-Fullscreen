@@ -8,7 +8,16 @@ const AUTO_SCROLL_MAX_STEP_PX = 18
 const hasOrderChanged = (before: string[], after: string[]) =>
   before.length !== after.length || before.some((id, index) => id !== after[index])
 
-export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (ids: string[]) => void }) => {
+export const usePresetReorder = ({
+  ids,
+  onCommit,
+  describeMove,
+}: {
+  ids: string[]
+  onCommit: (ids: string[]) => void
+  /** Renders the translated "moved <name> to position <n>" announcement. Positions are 1-based. */
+  describeMove: (id: string, position: number) => string
+}) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [previewIds, setPreviewIds] = useState(ids)
   const [liveMessage, setLiveMessage] = useState('')
@@ -21,6 +30,10 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
   const pointerClientYRef = useRef<number | null>(null)
   const scrollContainerRef = useRef<HTMLElement | null>(null)
   const autoScrollFrameRef = useRef<number | null>(null)
+  // Held in a ref so a new translator or preset list never changes the identity of the pointer
+  // callbacks: the same function objects have to survive from addEventListener to removeEventListener.
+  const describeMoveRef = useRef(describeMove)
+  describeMoveRef.current = describeMove
 
   useEffect(() => {
     if (!activeIdRef.current) {
@@ -85,7 +98,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
     next.splice(targetIndex, 0, item)
     previewIdsRef.current = next
     setPreviewIds(next)
-    setLiveMessage(`${activeId} を ${targetIndex + 1} 番目に移動しました`)
+    setLiveMessage(describeMoveRef.current(activeId, targetIndex + 1))
   }, [])
 
   const handleMove = useCallback(
@@ -200,7 +213,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
     next.splice(nextIndex, 0, id)
     previewIdsRef.current = next
     setPreviewIds(next)
-    setLiveMessage(`${id} を ${nextIndex + 1} 番目に移動しました`)
+    setLiveMessage(describeMoveRef.current(id, nextIndex + 1))
   }
 
   const getHandleProps = (id: string) => ({
@@ -227,7 +240,7 @@ export const usePresetReorder = ({ ids, onCommit }: { ids: string[]; onCommit: (
       previewIdsRef.current = next
       setPreviewIds(next)
       onCommit(next)
-      setLiveMessage(`${id} を ${nextIndex + 1} 番目に移動しました`)
+      setLiveMessage(describeMoveRef.current(id, nextIndex + 1))
     },
   })
 

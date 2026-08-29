@@ -5,7 +5,9 @@
         "preset": "Шаблони",
         "setting": "Настройки",
         "undo": "Отмени промяната на стила",
-        "redo": "Повтори промяната на стила"
+        "redo": "Повтори промяната на стила",
+        "undone": "Промяната на стила е отменена",
+        "redone": "Промяната на стила е повторена"
       },
       "alwaysOnDisplay": "Показване на чата при неактивност",
       "chatOnlyDisplay": "Показване само на чата",
@@ -15,13 +17,14 @@
       "backgroundColor": "Цвят на фона",
       "fontColor": "Цвят на текста",
       "fontFamily": "Шрифт",
+      "fontFamilyDefault": "По подразбиране",
+      "fontSearch": "Търсене на шрифтове",
+      "fontNotFound": "Няма шрифтове, отговарящи на търсенето",
       "fontSize": "Размер на шрифта",
       "blur": "Замъгляване",
       "space": "Разстояние",
       "footer": {
-        "donate": "Дарение",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Дарение"
       },
       "theme": "Тема",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Тъмна"
       },
       "membershipNameColor": "Цвят на имената на членовете",
-      "defaultColor": "По подразбиране",
       "resetToDefaultColor": "Връщане към цвета по подразбиране",
       "group": {
         "display": "Показване",
         "colors": "Цветове",
         "text": "Текст",
         "elements": "Видими елементи"
-      },
-      "requiresAlwaysOn": "Включете „Постоянно показване на чата“, за да използвате тази опция"
+      }
+    },
+    "diagnostics": {
+      "legend": "Съвместимост",
+      "healthy": "Работи нормално",
+      "degraded": "Работи в режим на съвместимост",
+      "failed": "Открит е проблем със съвместимостта",
+      "waiting": "Събиране на диагностични данни",
+      "lastRecovery": "Последно автоматично възстановяване",
+      "restart": "Презареди наслагването на чата",
+      "copy": "Копирай диагностичния отчет",
+      "copied": "Диагностичният отчет е копиран",
+      "copyFailed": "Диагностичният отчет не можа да бъде копиран"
     },
     "aria": {
       "dragToMove": "Плъзнете, за да преместите",
@@ -46,13 +59,17 @@
       "openSettings": "Отворете настройките",
       "toggleLiveChat": "Покажете или скрийте чата на живо",
       "close": "Затворете",
-      "reorderPreset": "Променете позицията на шаблона",
+      "dragHandle": "дръжка за плъзгане",
+      "settingsFrameTitle": "Настройки на чата на цял екран",
+      "reorderPreset": "Променете позицията на {name}",
       "presetName": "Име на шаблона",
-      "applyPreset": "Приложете шаблона",
-      "deletePreset": "Изтрийте шаблона",
+      "applyPreset": "Приложете {name}",
+      "deletePreset": "Изтрийте {name}",
+      "presetMoved": "{name} е преместен на позиция {position}",
       "colorPicker": "Избор на цвят",
       "loading": "Зареждане",
-      "selectLanguage": "Изберете език"
+      "selectLanguage": "Изберете език",
+      "fontsFound": "Намерени шрифтове: {count}"
     },
     "preset": {
       "addMessage": "Запази текущите настройки",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
     "donate": "Дарение",
+    "donateAction": "Подкрепа в Ko-fi",
     "theme": "Тема",
     "dataTransfer": "Резервно копие",
     "export": "Експортиране",
@@ -82,5 +100,5 @@
     "importError": "Файлът с настройки не можа да бъде импортиран."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Гледайте предавания на живо в YouTube на цял екран. Пишете в чата, изпращайте съобщения Super Chat и настройте изгледа на чата."
+  "extensionDescription": "Чатът изчезва на цял екран? Наслагването държи живия чат на YouTube върху видеото: четете, отговаряйте, пращайте Super Chat."
 }

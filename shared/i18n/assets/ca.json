@@ -5,7 +5,9 @@
         "preset": "Predefinit",
         "setting": "Configuració",
         "undo": "Desfés el canvi d'estil",
-        "redo": "Refés el canvi d'estil"
+        "redo": "Refés el canvi d'estil",
+        "undone": "S'ha desfet el canvi d'estil",
+        "redone": "S'ha refet el canvi d'estil"
       },
       "alwaysOnDisplay": "Mostra el xat quan no hi ha activitat",
       "chatOnlyDisplay": "Mostra només el xat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Color de fons",
       "fontColor": "Color del text",
       "fontFamily": "Tipus de lletra",
+      "fontFamilyDefault": "Per defecte",
+      "fontSearch": "Cerca tipus de lletra",
+      "fontNotFound": "Cap tipus de lletra coincideix amb la cerca",
       "fontSize": "Mida de la lletra",
       "blur": "Desenfocament",
       "space": "Espaiat",
       "footer": {
-        "donate": "Fes una donació",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Fes una donació"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Fosc"
       },
       "membershipNameColor": "Color dels noms dels membres",
-      "defaultColor": "Per defecte",
       "resetToDefaultColor": "Restaura el color per defecte",
       "group": {
         "display": "Visibilitat",
         "colors": "Colors",
         "text": "Text",
         "elements": "Elements del xat"
-      },
-      "requiresAlwaysOn": "Activa «Mostra sempre el xat» per canviar aquesta opció"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibilitat",
+      "healthy": "Funcionament normal",
+      "degraded": "Funcionament en mode de compatibilitat",
+      "failed": "S'ha detectat un problema de compatibilitat",
+      "waiting": "S'estan recollint les dades de diagnòstic",
+      "lastRecovery": "Darrera recuperació automàtica",
+      "restart": "Recarrega el xat",
+      "copy": "Copia l'informe de diagnòstic",
+      "copied": "S'ha copiat l'informe de diagnòstic",
+      "copyFailed": "No s'ha pogut copiar l'informe de diagnòstic"
     },
     "aria": {
       "dragToMove": "Arrossega per moure",
@@ -46,13 +59,17 @@
       "openSettings": "Obre la configuració",
       "toggleLiveChat": "Mostra o amaga el xat en directe",
       "close": "Tanca",
-      "reorderPreset": "Mou el predefinit",
+      "dragHandle": "ansa d'arrossegament",
+      "settingsFrameTitle": "Configuració del xat a pantalla completa",
+      "reorderPreset": "Mou {name}",
       "presetName": "Nom del predefinit",
-      "applyPreset": "Aplica el predefinit",
-      "deletePreset": "Elimina el predefinit",
+      "applyPreset": "Aplica {name}",
+      "deletePreset": "Elimina {name}",
+      "presetMoved": "S'ha mogut {name} a la posició {position}",
       "colorPicker": "Selector de color",
       "loading": "S'està carregant",
-      "selectLanguage": "Selecciona la llengua"
+      "selectLanguage": "Selecciona la llengua",
+      "fontsFound": "Tipus de lletra trobats: {count}"
     },
     "preset": {
       "addMessage": "Desa la configuració actual",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Xat a pantalla completa",
     "links": "Enllaços",
     "donate": "Fes una donació",
+    "donateAction": "Dona suport a Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Còpia de seguretat",
     "export": "Exporta",
@@ -82,5 +100,5 @@
     "importError": "No s'ha pogut importar el fitxer de configuració."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Mira YouTube Live a pantalla completa amb el xat. Escriu-hi, envia Super Chats i personalitza la superposició al teu gust."
+  "extensionDescription": "El xat desapareix a pantalla completa? Posa el xat en directe de YouTube sobre el vídeo: llegeix-lo, respon i envia Super Chats."
 }

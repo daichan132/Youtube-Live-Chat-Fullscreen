@@ -5,7 +5,9 @@
         "preset": "پیش‌تنظیم",
         "setting": "تنظیمات",
         "undo": "واگردانی تغییر ظاهر",
-        "redo": "انجام دوبارهٔ تغییر ظاهر"
+        "redo": "انجام دوبارهٔ تغییر ظاهر",
+        "undone": "تغییر ظاهر واگردانی شد",
+        "redone": "تغییر ظاهر دوباره انجام شد"
       },
       "alwaysOnDisplay": "نمایش چت هنگام عدم فعالیت",
       "chatOnlyDisplay": "حالت فقط چت",
@@ -15,13 +17,14 @@
       "backgroundColor": "رنگ پس‌زمینه",
       "fontColor": "رنگ متن",
       "fontFamily": "فونت",
+      "fontFamilyDefault": "پیش‌فرض",
+      "fontSearch": "جست‌وجوی فونت",
+      "fontNotFound": "فونتی مطابق با جست‌وجوی شما پیدا نشد",
       "fontSize": "اندازهٔ متن",
       "blur": "تاری",
       "space": "فاصلهٔ بین پیام‌ها",
       "footer": {
-        "donate": "حمایت مالی",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "حمایت مالی"
       },
       "theme": "پوسته",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "تیره"
       },
       "membershipNameColor": "رنگ نام اعضا",
-      "defaultColor": "پیش‌فرض",
       "resetToDefaultColor": "بازگرداندن رنگ پیش‌فرض",
       "group": {
         "display": "نمایش",
         "colors": "رنگ‌ها",
         "text": "متن",
         "elements": "عناصر چت"
-      },
-      "requiresAlwaysOn": "برای استفاده از این گزینه، «نمایش همیشگی چت» را روشن کنید"
+      }
+    },
+    "diagnostics": {
+      "legend": "سازگاری",
+      "healthy": "بدون مشکل",
+      "degraded": "در حال کار با حالت سازگاری جایگزین",
+      "failed": "مشکل سازگاری شناسایی شد",
+      "waiting": "در حال جمع‌آوری اطلاعات عیب‌یابی",
+      "lastRecovery": "آخرین بازیابی خودکار",
+      "restart": "بارگذاری دوبارهٔ چت",
+      "copy": "کپی گزارش عیب‌یابی",
+      "copied": "گزارش عیب‌یابی کپی شد",
+      "copyFailed": "گزارش عیب‌یابی کپی نشد"
     },
     "aria": {
       "dragToMove": "برای جابه‌جایی بکشید",
@@ -46,13 +59,17 @@
       "openSettings": "باز کردن تنظیمات",
       "toggleLiveChat": "نمایش یا پنهان کردن چت زنده",
       "close": "بستن",
-      "reorderPreset": "جابه‌جایی پیش‌تنظیم",
+      "dragHandle": "دستگیرهٔ کشیدن",
+      "settingsFrameTitle": "تنظیمات چت تمام‌صفحه",
+      "reorderPreset": "جابه‌جایی {name}",
       "presetName": "نام پیش‌تنظیم",
-      "applyPreset": "اعمال پیش‌تنظیم",
-      "deletePreset": "حذف پیش‌تنظیم",
+      "applyPreset": "اعمال {name}",
+      "deletePreset": "حذف {name}",
+      "presetMoved": "{name} به جایگاه {position} منتقل شد",
       "colorPicker": "انتخاب‌گر رنگ",
       "loading": "در حال بارگذاری",
-      "selectLanguage": "انتخاب زبان"
+      "selectLanguage": "انتخاب زبان",
+      "fontsFound": "{count} فونت پیدا شد"
     },
     "preset": {
       "addMessage": "ذخیرهٔ تنظیمات فعلی",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "چت تمام‌صفحه",
     "links": "پیوندها",
     "donate": "حمایت مالی",
+    "donateAction": "حمایت از طریق Ko-fi",
     "theme": "پوسته",
     "dataTransfer": "پشتیبان‌گیری",
     "export": "صادر کردن",
@@ -82,5 +100,5 @@
     "importError": "فایل تنظیمات وارد نشد."
   },
   "extensionName": "YouTube Live Chat تمام‌صفحه",
-  "extensionDescription": "YouTube Live را تمام‌صفحه و همراه چت تماشا کنید. پیام و Super Chat بفرستید و نمای چت را شخصی‌سازی کنید."
+  "extensionDescription": "در تمام‌صفحه چت ناپدید می‌شود؟ روکشی که چت زندهٔ YouTube را روی ویدیو می‌آورد: پیام‌ها را بخوانید، پاسخ بدهید، Super Chat بفرستید."
 }

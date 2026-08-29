@@ -5,7 +5,9 @@
         "preset": "预设",
         "setting": "设置",
         "undo": "撤销样式更改",
-        "redo": "重做样式更改"
+        "redo": "重做样式更改",
+        "undone": "样式更改已撤销",
+        "redone": "样式更改已重做"
       },
       "alwaysOnDisplay": "空闲时显示聊天",
       "chatOnlyDisplay": "仅显示聊天",
@@ -15,13 +17,14 @@
       "backgroundColor": "背景色",
       "fontColor": "字体颜色",
       "fontFamily": "字体",
+      "fontFamilyDefault": "默认",
+      "fontSearch": "搜索字体",
+      "fontNotFound": "没有匹配的字体",
       "fontSize": "字体大小",
       "blur": "模糊",
       "space": "间距",
       "footer": {
-        "donate": "捐赠",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "捐赠"
       },
       "theme": "主题",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "深色"
       },
       "membershipNameColor": "会员名称颜色",
-      "defaultColor": "默认",
       "resetToDefaultColor": "重置为默认颜色",
       "group": {
         "display": "显示",
         "colors": "配色",
         "text": "文本",
         "elements": "显示元素"
-      },
-      "requiresAlwaysOn": "开启“始终显示”后即可设置"
+      }
+    },
+    "diagnostics": {
+      "legend": "兼容性",
+      "healthy": "正常",
+      "degraded": "正在使用兼容性回退方案",
+      "failed": "检测到兼容性问题",
+      "waiting": "正在收集诊断信息",
+      "lastRecovery": "上次自动恢复",
+      "restart": "重新加载聊天",
+      "copy": "复制诊断报告",
+      "copied": "诊断报告已复制",
+      "copyFailed": "无法复制诊断报告"
     },
     "aria": {
       "dragToMove": "拖动以移动",
@@ -46,13 +59,17 @@
       "openSettings": "打开设置",
       "toggleLiveChat": "切换实时聊天",
       "close": "关闭",
-      "reorderPreset": "调整预设顺序",
+      "dragHandle": "拖动手柄",
+      "settingsFrameTitle": "全屏聊天设置",
+      "reorderPreset": "调整 {name} 的顺序",
       "presetName": "预设名称",
-      "applyPreset": "应用预设",
-      "deletePreset": "删除预设",
+      "applyPreset": "应用 {name}",
+      "deletePreset": "删除 {name}",
+      "presetMoved": "已将 {name} 移至第 {position} 位",
       "colorPicker": "颜色选择器",
       "loading": "加载中",
-      "selectLanguage": "选择语言"
+      "selectLanguage": "选择语言",
+      "fontsFound": "找到 {count} 种字体"
     },
     "preset": {
       "addMessage": "添加当前设置",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "全屏聊天",
     "links": "链接",
     "donate": "捐赠",
+    "donateAction": "前往 Ko-fi 捐赠",
     "theme": "主题",
     "dataTransfer": "备份",
     "export": "导出",
@@ -82,5 +100,5 @@
     "importError": "无法导入设置文件。"
   },
   "extensionName": "YouTube 直播全屏聊天",
-  "extensionDescription": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。"
+  "extensionDescription": "YouTube 直播一进全屏，聊天就没了。本扩展把 YouTube 自己的实时聊天重新放回视频上，全屏也能读消息、发留言，直播时还能送 Super Chat。位置、大小、字号与配色可调，带聊天回放的存档视频同样适用。"
 }

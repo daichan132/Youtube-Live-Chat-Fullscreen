@@ -5,7 +5,9 @@
         "preset": "Ön ayar",
         "setting": "Ayarlar",
         "undo": "Stil değişikliğini geri al",
-        "redo": "Stil değişikliğini yinele"
+        "redo": "Stil değişikliğini yinele",
+        "undone": "Stil değişikliği geri alındı",
+        "redone": "Stil değişikliği yinelendi"
       },
       "alwaysOnDisplay": "Etkin değilken sohbeti göster",
       "chatOnlyDisplay": "Yalnızca sohbet",
@@ -15,13 +17,14 @@
       "backgroundColor": "Arka plan rengi",
       "fontColor": "Metin rengi",
       "fontFamily": "Yazı tipi",
+      "fontFamilyDefault": "Varsayılan",
+      "fontSearch": "Yazı tipi ara",
+      "fontNotFound": "Aramanızla eşleşen yazı tipi yok",
       "fontSize": "Metin boyutu",
       "blur": "Bulanıklık",
       "space": "Mesaj aralığı",
       "footer": {
-        "donate": "Bağış yap",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Bağış yap"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Koyu"
       },
       "membershipNameColor": "Üye adlarının rengi",
-      "defaultColor": "Varsayılan",
       "resetToDefaultColor": "Varsayılan renge döndür",
       "group": {
         "display": "Görünüm",
         "colors": "Renkler",
         "text": "Metin",
         "elements": "Sohbet öğeleri"
-      },
-      "requiresAlwaysOn": "Bu seçeneği kullanmak için \"Sohbeti her zaman göster\" seçeneğini açın"
+      }
+    },
+    "diagnostics": {
+      "legend": "Uyumluluk",
+      "healthy": "Sorunsuz çalışıyor",
+      "degraded": "Uyumluluk yedeği kullanılıyor",
+      "failed": "Uyumluluk sorunu algılandı",
+      "waiting": "Tanılama bilgileri toplanıyor",
+      "lastRecovery": "Son otomatik kurtarma",
+      "restart": "Sohbet kaplamasını yeniden yükle",
+      "copy": "Tanılama raporunu kopyala",
+      "copied": "Tanılama raporu kopyalandı",
+      "copyFailed": "Tanılama raporu kopyalanamadı"
     },
     "aria": {
       "dragToMove": "Taşımak için sürükleyin",
@@ -46,13 +59,17 @@
       "openSettings": "Ayarları aç",
       "toggleLiveChat": "Canlı sohbeti göster veya gizle",
       "close": "Kapat",
-      "reorderPreset": "Ön ayarı taşı",
+      "dragHandle": "sürükleme tutamacı",
+      "settingsFrameTitle": "Tam ekran sohbet ayarları",
+      "reorderPreset": "{name} ön ayarını taşı",
       "presetName": "Ön ayar adı",
-      "applyPreset": "Ön ayarı uygula",
-      "deletePreset": "Ön ayarı sil",
+      "applyPreset": "{name} ön ayarını uygula",
+      "deletePreset": "{name} ön ayarını sil",
+      "presetMoved": "{name} {position}. sıraya taşındı",
       "colorPicker": "Renk seçici",
       "loading": "Yükleniyor",
-      "selectLanguage": "Dil seçin"
+      "selectLanguage": "Dil seçin",
+      "fontsFound": "{count} yazı tipi bulundu"
     },
     "preset": {
       "addMessage": "Geçerli ayarları kaydet",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Tam ekran sohbeti",
     "links": "Bağlantılar",
     "donate": "Bağış yap",
+    "donateAction": "Ko-fi'de destek ol",
     "theme": "Tema",
     "dataTransfer": "Yedekleme",
     "export": "Dışa aktar",
@@ -82,5 +100,5 @@
     "importError": "Ayar dosyası içe aktarılamadı."
   },
   "extensionName": "YouTube Canlı Sohbet Tam Ekran",
-  "extensionDescription": "YouTube canlı yayınlarını sohbetle tam ekranda izleyin. Mesaj ve Super Chat gönderip sohbet katmanını özelleştirin."
+  "extensionDescription": "Tam ekranda sohbet mi kayboluyor? YouTube canlı sohbetini video üzerinde tutan kaplama: okuyun, yanıt yazın, Super Chat gönderin."
 }

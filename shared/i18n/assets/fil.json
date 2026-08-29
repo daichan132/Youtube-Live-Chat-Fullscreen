@@ -5,7 +5,9 @@
         "preset": "Mga preset",
         "setting": "Mga setting",
         "undo": "I-undo ang pagbabago sa estilo",
-        "redo": "I-redo ang pagbabago sa estilo"
+        "redo": "I-redo ang pagbabago sa estilo",
+        "undone": "Na-undo ang pagbabago sa estilo",
+        "redone": "Na-redo ang pagbabago sa estilo"
       },
       "alwaysOnDisplay": "Ipakita ang chat kapag walang aktibidad",
       "chatOnlyDisplay": "Chat lang ang ipakita",
@@ -15,13 +17,14 @@
       "backgroundColor": "Kulay ng background",
       "fontColor": "Kulay ng text",
       "fontFamily": "Font",
+      "fontFamilyDefault": "Default",
+      "fontSearch": "Maghanap ng font",
+      "fontNotFound": "Walang font na tumugma sa paghahanap",
       "fontSize": "Laki ng text",
       "blur": "Blur",
       "space": "Agwat ng mga mensahe",
       "footer": {
-        "donate": "Mag-donate",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Mag-donate"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Madilim"
       },
       "membershipNameColor": "Kulay ng pangalan ng miyembro",
-      "defaultColor": "Default",
       "resetToDefaultColor": "Ibalik ang default na kulay",
       "group": {
         "display": "Pagpapakita",
         "colors": "Mga kulay",
         "text": "Teksto",
         "elements": "Mga elemento ng chat"
-      },
-      "requiresAlwaysOn": "I-on ang \"Palaging ipakita ang chat\" para magamit ang opsiyong ito"
+      }
+    },
+    "diagnostics": {
+      "legend": "Pagkatugma",
+      "healthy": "Maayos ang paggana",
+      "degraded": "Gumagamit ng backup na paraan para sa pagkatugma",
+      "failed": "May natukoy na isyu sa pagkatugma",
+      "waiting": "Kinokolekta ang datos ng diagnostic",
+      "lastRecovery": "Huling awtomatikong pag-recover",
+      "restart": "I-reload ang chat overlay",
+      "copy": "Kopyahin ang diagnostic report",
+      "copied": "Nakopya ang diagnostic report",
+      "copyFailed": "Hindi makopya ang diagnostic report"
     },
     "aria": {
       "dragToMove": "I-drag para ilipat",
@@ -46,13 +59,17 @@
       "openSettings": "Buksan ang mga setting",
       "toggleLiveChat": "Ipakita o itago ang live chat",
       "close": "Isara",
-      "reorderPreset": "Ilipat ang preset",
+      "dragHandle": "hawakan para i-drag",
+      "settingsFrameTitle": "Mga setting ng chat sa fullscreen",
+      "reorderPreset": "Ilipat ang {name}",
       "presetName": "Pangalan ng preset",
-      "applyPreset": "Gamitin ang preset",
-      "deletePreset": "Burahin ang preset",
+      "applyPreset": "Gamitin ang {name}",
+      "deletePreset": "Burahin ang {name}",
+      "presetMoved": "Inilipat ang {name} sa posisyon {position}",
       "colorPicker": "Tagapili ng kulay",
       "loading": "Naglo-load",
-      "selectLanguage": "Pumili ng wika"
+      "selectLanguage": "Pumili ng wika",
+      "fontsFound": "{count} font ang nahanap"
     },
     "preset": {
       "addMessage": "I-save ang mga kasalukuyang setting",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat sa fullscreen",
     "links": "Mga link",
     "donate": "Mag-donate",
+    "donateAction": "Suportahan sa Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Backup",
     "export": "I-export",
@@ -82,5 +100,5 @@
     "importError": "Hindi ma-import ang file ng mga setting."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Manood ng YouTube Live sa fullscreen na may chat. Magpadala ng mensahe at Super Chat, at i-customize ang overlay."
+  "extensionDescription": "Nawawala ang chat sa fullscreen? Overlay ng live chat ng YouTube sa ibabaw ng video: basahin, sumagot, at magpadala ng Super Chat."
 }

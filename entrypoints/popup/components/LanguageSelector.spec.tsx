@@ -12,7 +12,8 @@ vi.mock('@/shared/runtime/AppProvider', () => ({
 
 describe('LanguageSelector', () => {
   beforeEach(() => {
-    setLocale.mockClear()
+    setLocale.mockReset()
+    setLocale.mockResolvedValue(undefined)
   })
 
   it('updates locale through the app runtime', () => {

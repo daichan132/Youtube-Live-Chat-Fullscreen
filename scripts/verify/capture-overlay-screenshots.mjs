@@ -69,7 +69,7 @@ const deepOverlayState = () => {
 	const resizable = findDeep(element => element.hasAttribute('data-ylc-resizable'))
 	const chatInner = findDeep(element => element.hasAttribute('data-ylc-chat-inner'))
 	const settingsButton = findDeep(element => element.hasAttribute('data-ylc-settings-btn'))
-	const dragHandle = findDeep(element => element.getAttribute('aria-roledescription') === 'drag handle')
+	const dragHandle = findDeep(element => element.hasAttribute('data-ylc-drag-handle'))
 	const extensionIframe = findDeep(element => element.matches?.('iframe[data-ylc-chat="true"]'))
 
 	return {

@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Katso YouTube Liveä koko näytöllä ja seuraa chatia. Kirjoita viestejä, lähetä Super Chat -viestejä ja mukauta chatin ulkoasua."
+    "message": "Katoaako chat koko näytöllä? Laajennus nostaa YouTuben livechatin videon päälle: lue viestit, vastaa ja lähetä Super Chat -viestejä."
   },
   "popup_theme": {
     "message": "Teema"

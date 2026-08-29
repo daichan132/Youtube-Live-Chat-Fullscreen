@@ -1,0 +1,855 @@
+{
+  "capturedAt": "2026-08-18T15:53:10.258Z",
+  "source": {
+    "surface": "Chrome Web Store Developer Dashboard",
+    "browserProfile": "daichan",
+    "publisherAccount": "daichan132",
+    "extensionId": "dlnjcbkmomenmieechnmgglgcljhoepd",
+    "pageUrl": "https://chrome.google.com/webstore/devconsole/d774ba85-ed7c-42a2-bf6f-a74e8d8605ec/dlnjcbkmomenmieechnmgglgcljhoepd/edit/listing?hl=ja",
+    "localeCount": 55,
+    "notes": [
+      "Read-only capture. Draft save and review submission were not used.",
+      "The dashboard accessibility layer truncates long description values. Each captured prefix was checked against the repository listing text; matching repository text was used to complete truncated tails.",
+      "pt-BR differs from the repository: the dashboard omits the Opera troubleshooting paragraph present in docs/store-listing/pt_BR.md."
+    ]
+  },
+  "global": {
+    "category": "ツール",
+    "storeIconPresent": true,
+    "globalPromoVideo": null,
+    "globalScreenshotCount": 3,
+    "smallPromoTilePresent": false,
+    "marqueePromoTilePresent": false,
+    "officialUrl": "https://daichan132.github.io/Youtube-Live-Chat-Fullscreen-Docs/",
+    "homepageUrl": "https://github.com/daichan132/Youtube-Live-Chat-Fullscreen",
+    "supportUrl": null,
+    "matureContent": "off"
+  },
+  "locales": {
+    "en": {
+      "dashboardLocaleLabel": "英語 – en （デフォルト）",
+      "repositoryLocale": "en",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Watch YouTube live streams in full screen without losing chat. Post messages, send Super Chats, and customize the overlay.",
+      "description": "YouTube's fullscreen mode hides the chat. This extension brings it back — as a transparent, draggable overlay right on your video.\n\nFeatures:\n💬 Chat in fullscreen — Post comments and Super Chats directly from the overlay.\n🖱️ Drag, resize, reposition — Put the chat window exactly where you want it.\n🎨 Style it your way — Background, text color, font size, blur, spacing.\n📋 Save presets — One-click switch between styles for different streams.\n🌗 Light and dark themes — Follows your system, or set it manually.\n📼 Archive support — Works with chat replay on archived streams too.\n🌐 50+ languages supported.\n\nNo account required. No data collected. Fully open source.\n\nHow to use:\n1. Install the extension.\n2. Open a YouTube live stream or archive with chat replay.\n3. Go fullscreen — flip the switch at the bottom-right.\n4. Drag, resize, and make it yours.\n\nQuestions, ideas, or bug reports? We'd love to hear from you on GitHub.\n\nSource code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSupport the developer: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1059,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1051,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "am": {
+      "dashboardLocaleLabel": "アムハラ語 – am",
+      "repositoryLocale": "am",
+      "title": "YouTube Live Chat ሙሉ ስክሪን",
+      "summary": "ቻቱን ሳይዘጉ የYouTube የቀጥታ ስርጭቶችን በሙሉ ማያ ገጽ ይመልከቱ። በቻት መልዕክት ይላኩ፣ Super Chat ይላኩ እና የቻቱን ገጽታ እንደፈለጉ ያስተካክሉ።",
+      "description": "የYouTube ሙሉ ስክሪን ሁነታ ቻቱን ይደብቃል። ይህ ኤክስቴንሽን መልሶ ያመጣዋል — በቪዲዮዎ ላይ ግልጽ፣ ሊጎተት የሚችል ተደራቢ ሆኖ።\n\nባህሪያት:\n💬 በሙሉ ስክሪን ቻት ያድርጉ — ከተደራቢው ላይ አስተያየት እና Super Chat ይላኩ።\n🖱️ ይጎትቱ፣ መጠን ይቀይሩ፣ ቦታ ያስተካክሉ — የቻት መስኮቱን በፈለጉት ቦታ ያስቀምጡ።\n🎨 እንደፈለጉ ያስተካክሉ — ዳራ፣ የፅሁፍ ቀለም፣ የፊደል መጠን፣ ብዥታ፣ ክፍተት።\n📋 ቅድመ-ቅንብሮችን ያስቀምጡ — ለተለያዩ ዥረቶች በአንድ ጠቅ ቅጦችን ይቀያይሩ።\n🌗 ብሩህ እና ጨለማ ገጽታዎች — የስርዓትዎን ይከተላል ወይም በእጅ ያዘጋጁ።\n📼 ማህደር ድጋፍ — በተቀዱ ዥረቶች የቻት ድጋሚ ማጫወትም ይሰራል።\n🌐 ከ50 በላይ ቋንቋዎች ይደገፋሉ።\n\nመለያ አያስፈልግም። ምንም ውሂብ አይሰበሰብም። ሙሉ በሙሉ ክፍት ምንጭ።\n\nእንዴት መጠቀም:\n1. ኤክስቴንሽኑን ይጫኑ።\n2. የYouTube ቀጥታ ዥረት ወይም የቻት ድጋሚ ማጫወት ያለው ማህደር ይክፈቱ።\n3. ሙሉ ስክሪን ይግቡ — ከታች-በቀኝ ያለውን ማብሪያ ይጫኑ።\n4. ይጎትቱ፣ መጠን ይቀይሩ እና የራስዎ ያድርጉት።\n\nጥያቄዎች፣ ሃሳቦች ወይም የስህተት ሪፖርቶች? በGitHub ላይ ከእርስዎ መስማት ደስ ይለናል።\n\nየምንጭ ኮድ: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nገንቢውን ይደግፉ: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 809,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 801,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ar": {
+      "dashboardLocaleLabel": "アラビア語 – ar",
+      "repositoryLocale": "ar",
+      "title": "YouTube Live Chat ملء الشاشة",
+      "summary": "شاهد YouTube Live بملء الشاشة مع الدردشة. اكتب في الدردشة، وأرسل Super Chat، وخصّص الواجهة العائمة.",
+      "description": "وضع ملء الشاشة في YouTube يُخفي الدردشة. هذه الإضافة تُعيدها — كطبقة شفافة قابلة للسحب فوق الفيديو مباشرةً.\n\nالميزات:\n💬 دردشة في ملء الشاشة — اكتب تعليقات وأرسل Super Chats من الطبقة العلوية.\n🖱️ اسحب، غيّر الحجم، أعد الترتيب — ضع نافذة الدردشة أينما تريد.\n🎨 خصّص المظهر — الخلفية، لون النص، حجم الخط، الضبابية، التباعد.\n📋 احفظ الإعدادات المسبقة — بدّل بين الأنماط بنقرة واحدة لمختلف البثوث.\n🌗 مظهر فاتح وداكن — يتبع نظامك، أو اضبطه يدوياً.\n📼 دعم الأرشيف — يعمل مع إعادة تشغيل الدردشة في البثوث المؤرشفة أيضاً.\n🌐 دعم أكثر من 50 لغة.\n\nلا حاجة لحساب. لا يتم جمع أي بيانات. مفتوح المصدر بالكامل.\n\nطريقة الاستخدام:\n1. ثبّت الإضافة.\n2. افتح بثاً مباشراً على YouTube أو أرشيفاً مع إعادة تشغيل الدردشة.\n3. انتقل إلى ملء الشاشة — اضغط على المفتاح أسفل اليمين.\n4. اسحب، غيّر الحجم، واجعله كما تحب.\n\nأسئلة، أفكار، أو بلاغات عن أخطاء؟ يسعدنا سماع رأيك على GitHub.\n\nالشيفرة المصدرية: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nدعم المطوّر: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 979,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 957,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "it": {
+      "dashboardLocaleLabel": "イタリア語 – it",
+      "repositoryLocale": "it",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Guarda le dirette YouTube a schermo intero senza perdere la chat. Scrivi messaggi, invia Super Chat e personalizza l'overlay.",
+      "description": "La modalità a schermo intero di YouTube nasconde la chat. Questa estensione la riporta — come overlay trasparente e trascinabile, direttamente sul tuo video.\n\nFunzionalità:\n💬 Chatta a schermo intero — Scrivi commenti e invia Super Chat dall'overlay.\n🖱️ Trascina, ridimensiona, riposiziona — Metti la finestra della chat esattamente dove vuoi.\n🎨 Personalizza a tuo piacimento — Sfondo, colore del testo, dimensione del font, sfocatura, spaziatura.\n📋 Salva i preset — Cambia stile con un clic per stream diversi.\n🌗 Temi chiaro e scuro — Segue il tuo sistema, oppure impostalo manualmente.\n📼 Supporto archivi — Funziona anche con la riproduzione della chat nelle dirette archiviate.\n🌐 Oltre 50 lingue supportate.\n\nNessun account richiesto. Nessun dato raccolto. Completamente open source.\n\nCome usare:\n1. Installa l'estensione.\n2. Apri una diretta YouTube o un archivio con replay della chat.\n3. Vai a schermo intero — attiva l'interruttore in basso a destra.\n4. Trascina, ridimensiona e rendilo tuo.\n\nDomande, idee o bug da segnalare? Ci farebbe piacere sentirti su GitHub.\n\nCodice sorgente: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSupporta lo sviluppatore: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1211,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1203,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "id": {
+      "dashboardLocaleLabel": "インドネシア語 – id",
+      "repositoryLocale": "id",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Tonton YouTube Live dalam layar penuh dengan chat. Kirim pesan dan Super Chat, lalu sesuaikan tampilan chat.",
+      "description": "Mode layar penuh YouTube menyembunyikan chat. Ekstensi ini mengembalikannya — sebagai overlay transparan yang bisa diseret langsung di atas video Anda.\n\nFitur:\n💬 Chat di layar penuh — Kirim komentar dan Super Chat dari overlay.\n🖱️ Seret, ubah ukuran, pindahkan — Letakkan jendela chat tepat di mana Anda mau.\n🎨 Sesuaikan gaya Anda — Latar belakang, warna teks, ukuran font, blur, jarak.\n📋 Simpan preset — Ganti gaya dengan satu klik untuk stream yang berbeda.\n🌗 Tema terang dan gelap — Mengikuti sistem Anda, atau atur secara manual.\n📼 Dukungan arsip — Berfungsi juga dengan pemutaran ulang chat di stream yang diarsipkan.\n🌐 Mendukung 50+ bahasa.\n\nTidak perlu akun. Tidak mengumpulkan data. Sepenuhnya open source.\n\nCara penggunaan:\n1. Instal ekstensi.\n2. Buka stream langsung YouTube atau arsip dengan pemutaran ulang chat.\n3. Buka layar penuh — aktifkan tombol di kanan bawah.\n4. Seret, ubah ukuran, dan sesuaikan sesuka Anda.\n\nPunya pertanyaan, ide, atau ingin melaporkan bug? Kami senang mendengar dari Anda di GitHub.\n\nKode sumber: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nDukung pengembang: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1151,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1143,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "uk": {
+      "dashboardLocaleLabel": "ウクライナ語 – uk",
+      "repositoryLocale": "uk",
+      "title": "YouTube Live Chat на весь екран",
+      "summary": "Дивіться YouTube наживо на весь екран із чатом. Пишіть у чат, надсилайте Super Chat і налаштовуйте оверлей.",
+      "description": "Повноекранний режим YouTube приховує чат. Це розширення повертає його — як прозору, перетягувану накладку прямо на відео.\n\nМожливості:\n💬 Чат у повноекранному режимі — Пишіть коментарі та надсилайте Super Chat прямо з накладки.\n🖱️ Перетягуйте, змінюйте розмір, переміщуйте — Розташуйте вікно чату саме там, де вам зручно.\n🎨 Налаштуйте під себе — Фон, колір тексту, розмір шрифту, розмиття, відступи.\n📋 Зберігайте пресети — Перемикайтеся між стилями для різних трансляцій одним кліком.\n🌗 Світла та темна теми — Слідує за системою або встановіть вручну.\n📼 Підтримка архівів — Працює з повтором чату в архівних трансляціях.\n🌐 Підтримка понад 50 мов.\n\nОбліковий запис не потрібен. Дані не збираються. Повністю відкритий код.\n\nЯк користуватися:\n1. Встановіть розширення.\n2. Відкрийте пряму трансляцію YouTube або архів із повтором чату.\n3. Перейдіть у повноекранний режим — увімкніть перемикач у нижньому правому куті.\n4. Перетягуйте, змінюйте розмір та налаштовуйте під себе.\n\nЗапитання, ідеї чи звіти про помилки? Будемо раді почути вас на GitHub.\n\nВихідний код: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nПідтримати розробника: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1177,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1169,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "et": {
+      "dashboardLocaleLabel": "エストニア語 – et",
+      "repositoryLocale": "et",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Vaata YouTube Live'i täisekraanil ja hoia vestlus nähtaval. Kirjuta vestlusesse, saada Super Chati sõnumeid ja kohanda ülekatet.",
+      "description": "YouTube'i täisekraanirežiim peidab vestluse. See laiendus toob selle tagasi — läbipaistva, lohistatava ülekattena otse sinu video peal.\n\nFunktsioonid:\n💬 Vestlus täisekraanil — Postita kommentaare ja Super Chate ülekattelt.\n🖱️ Lohista, muuda suurust, paiguta ümber — Aseta vestlusaken täpselt sinna, kuhu soovid.\n🎨 Kohanda välimust — Taust, teksti värv, fondi suurus, hägu, vahekaugus.\n📋 Salvesta eelseadistused — Vaheta ühe klõpsuga erinevate voogude jaoks stiile.\n🌗 Hele ja tume teema — Järgib süsteemi seadeid või määra käsitsi.\n📼 Arhiivitugi — Töötab ka vestluse kordusesitusega arhiveeritud voogudel.\n🌐 Toetab üle 50 keele.\n\nKontot pole vaja. Andmeid ei koguta. Täielikult avatud lähtekoodiga.\n\nKuidas kasutada:\n1. Paigalda laiendus.\n2. Ava YouTube'i otsesaade või arhiiv vestluse kordusesitusega.\n3. Mine täisekraanile — lülita paremas alanurgas olev lüliti sisse.\n4. Lohista, muuda suurust ja tee see omaks.\n\nKüsimused, ideed või veateated? Kuuleme sinust hea meelega GitHubis.\n\nLähtekood: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nToeta arendajat: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1108,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1100,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "nl": {
+      "dashboardLocaleLabel": "オランダ語 – nl",
+      "repositoryLocale": "nl",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Bekijk YouTube Live op volledig scherm met chat. Chat mee, stuur Super Chats en pas de overlay naar wens aan.",
+      "description": "De volledig-schermmodus van YouTube verbergt de chat. Deze extensie brengt hem terug — als een transparante, versleepbare overlay direct op je video.\n\nFuncties:\n💬 Chat op volledig scherm — Plaats reacties en stuur Super Chats vanuit de overlay.\n🖱️ Slepen, formaat wijzigen, verplaatsen — Zet het chatvenster precies waar je wilt.\n🎨 Stijl het naar wens — Achtergrond, tekstkleur, lettergrootte, vervaging, afstand.\n📋 Presets opslaan — Wissel met een klik tussen stijlen voor verschillende streams.\n🌗 Licht en donker thema — Volgt je systeem, of stel het handmatig in.\n📼 Archiefondersteuning — Werkt ook met chat replay bij gearchiveerde streams.\n🌐 Meer dan 50 talen ondersteund.\n\nGeen account nodig. Geen gegevens verzameld. Volledig open source.\n\nGebruik:\n1. Installeer de extensie.\n2. Open een YouTube livestream of archief met chat replay.\n3. Ga naar volledig scherm — zet de schakelaar rechtsonder aan.\n4. Sleep, pas het formaat aan en maak het helemaal van jou.\n\nVragen, ideeën of bugs gevonden? We horen graag van je op GitHub.\n\nBroncode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSteun de ontwikkelaar: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1162,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1154,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ca": {
+      "dashboardLocaleLabel": "カタロニア語 – ca",
+      "repositoryLocale": "ca",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Mira YouTube Live a pantalla completa amb el xat. Escriu-hi, envia Super Chats i personalitza la superposició al teu gust.",
+      "description": "El mode de pantalla completa de YouTube amaga el xat. Aquesta extensió el recupera — com una superposició transparent i arrossegable, directament sobre el teu vídeo.\n\nFuncions:\n💬 Xat a pantalla completa — Publica comentaris i Super Chats des de la superposició.\n🖱️ Arrossega, redimensiona, reposiciona — Col·loca la finestra del xat exactament on vulguis.\n🎨 Personalitza-ho — Fons, color del text, mida de la lletra, desenfocament, espaiat.\n📋 Desa configuracions — Canvia entre estils amb un sol clic per a diferents emissions.\n🌗 Temes clar i fosc — Segueix el teu sistema, o configura'l manualment.\n📼 Suport d'arxiu — Funciona també amb la reproducció del xat en emissions arxivades.\n🌐 Més de 50 idiomes compatibles.\n\nSense compte. Sense recollida de dades. Codi obert.\n\nCom utilitzar-ho:\n1. Instal·la l'extensió.\n2. Obre una emissió en directe de YouTube o un arxiu amb reproducció del xat.\n3. Entra en pantalla completa — activa l'interruptor a baix a la dreta.\n4. Arrossega, redimensiona i fes-ho teu.\n\nPreguntes, idees o errors? Ens encantaria saber la teva opinió a GitHub.\n\nCodi font: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nDona suport al desenvolupador: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1218,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1210,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "kn": {
+      "dashboardLocaleLabel": "カンナダ語 – kn",
+      "repositoryLocale": "kn",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "YouTube Live ಅನ್ನು ಪೂರ್ಣ ಪರದೆಯಲ್ಲಿ ಚಾಟ್‌ನೊಂದಿಗೆ ನೋಡಿ. ಸಂದೇಶ ಮತ್ತು Super Chat ಕಳುಹಿಸಿ, ಓವರ್‌ಲೇಯನ್ನು ನಿಮಗೆ ಬೇಕಾದಂತೆ ಬದಲಿಸಿ.",
+      "description": "YouTube ನ ಪೂರ್ಣ ಪರದೆ ಮೋಡ್ ಚಾಟ್ ಅನ್ನು ಮರೆಮಾಡುತ್ತದೆ. ಈ ಎಕ್ಸ್‌ಟೆನ್ಶನ್ ಅದನ್ನು ಮರಳಿ ತರುತ್ತದೆ — ನಿಮ್ಮ ವೀಡಿಯೊ ಮೇಲೆ ಪಾರದರ್ಶಕ, ಎಳೆಯಬಹುದಾದ ಓವರ್‌ಲೇ ಆಗಿ.\n\nವೈಶಿಷ್ಟ್ಯಗಳು:\n💬 ಪೂರ್ಣ ಪರದೆಯಲ್ಲಿ ಚಾಟ್ — ಓವರ್‌ಲೇನಿಂದ ಕಾಮೆಂಟ್ ಮತ್ತು Super Chat ಕಳುಹಿಸಿ.\n🖱️ ಎಳೆಯಿರಿ, ಗಾತ್ರ ಬದಲಿಸಿ, ಸ್ಥಾನ ಬದಲಿಸಿ — ಚಾಟ್ ವಿಂಡೋವನ್ನು ನಿಮಗೆ ಬೇಕಾದ ಸ್ಥಳದಲ್ಲಿ ಇಡಿ.\n🎨 ನಿಮ್ಮ ರೀತಿಯಲ್ಲಿ ಸ್ಟೈಲ್ ಮಾಡಿ — ಹಿನ್ನೆಲೆ, ಪಠ್ಯ ಬಣ್ಣ, ಫಾಂಟ್ ಗಾತ್ರ, ಬ್ಲರ್, ಅಂತರ.\n📋 ಪ್ರೀಸೆಟ್‌ಗಳನ್ನು ಉಳಿಸಿ — ವಿವಿಧ ಸ್ಟ್ರೀಮ್‌ಗಳಿಗೆ ಒಂದೇ ಕ್ಲಿಕ್‌ನಲ್ಲಿ ಸ್ಟೈಲ್ ಬದಲಿಸಿ.\n🌗 ಲೈಟ್ ಮತ್ತು ಡಾರ್ಕ್ ಥೀಮ್‌ಗಳು — ನಿಮ್ಮ ಸಿಸ್ಟಮ್ ಅನ್ನು ಅನುಸರಿಸುತ್ತದೆ, ಅಥವಾ ಹಸ್ತಚಾಲಿತವಾಗಿ ಹೊಂದಿಸಿ.\n📼 ಆರ್ಕೈವ್ ಬೆಂಬಲ — ಆರ್ಕೈವ್ ಆದ ಸ್ಟ್ರೀಮ್‌ಗಳಲ್ಲಿ ಚಾಟ್ ರಿಪ್ಲೇ ಜೊತೆಗೂ ಕೆಲಸ ಮಾಡುತ್ತದೆ.\n🌐 50+ ಭಾಷೆಗಳ ಬೆಂಬಲ.\n\nಯಾವುದೇ ಖಾತೆ ಅಗತ್ಯವಿಲ್ಲ. ಯಾವುದೇ ಡೇಟಾ ಸಂಗ್ರಹಿಸಲಾಗುವುದಿಲ್ಲ. ಸಂಪೂರ್ಣ ಓಪನ್ ಸೋರ್ಸ್.\n\nಬಳಸುವ ವಿಧಾನ:\n1. ಎಕ್ಸ್‌ಟೆನ್ಶನ್ ಇನ್‌ಸ್ಟಾಲ್ ಮಾಡಿ.\n2. ಚಾಟ್ ರಿಪ್ಲೇ ಇರುವ YouTube ಲೈವ್ ಸ್ಟ್ರೀಮ್ ಅಥವಾ ಆರ್ಕೈವ್ ತೆರೆಯಿರಿ.\n3. ಪೂರ್ಣ ಪರದೆಗೆ ಹೋಗಿ — ಕೆಳಗಿನ-ಬಲ ಮೂಲೆಯಲ್ಲಿ ಸ್ವಿಚ್ ಆನ್ ಮಾಡಿ.\n4. ಎಳೆಯಿರಿ, ಗಾತ್ರ ಬದಲಿಸಿ ಮತ್ತು ನಿಮ್ಮದಾಗಿಸಿ.\n\nಪ್ರಶ್ನೆಗಳು, ಸಲಹೆಗಳು ಅಥವಾ ಬಗ್ ವರದಿ? GitHub ನಲ್ಲಿ ನಮಗೆ ತಿಳಿಸಿ.\n\nಸೋರ್ಸ್ ಕೋಡ್: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nಡೆವಲಪರ್‌ಗೆ ಬೆಂಬಲ ನೀಡಿ: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1155,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 808,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "el": {
+      "dashboardLocaleLabel": "ギリシャ語 – el",
+      "repositoryLocale": "el",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Δείτε ζωντανά βίντεο YouTube σε πλήρη οθόνη. Γράψτε στη συνομιλία, στείλτε μηνύματα Super Chat και προσαρμόστε την εμφάνισή της.",
+      "description": "Η λειτουργία πλήρους οθόνης του YouTube κρύβει τη συνομιλία. Αυτή η επέκταση τη φέρνει πίσω — ως διαφανή, μετακινήσιμη επικάλυψη πάνω στο βίντεό σας.\n\nΧαρακτηριστικά:\n💬 Συνομιλία σε πλήρη οθόνη — Δημοσιεύστε σχόλια και Super Chats από την επικάλυψη.\n🖱️ Σύρετε, αλλάξτε μέγεθος, επανατοποθετήστε — Τοποθετήστε το παράθυρο συνομιλίας ακριβώς εκεί που θέλετε.\n🎨 Προσαρμόστε το — Φόντο, χρώμα κειμένου, μέγεθος γραμματοσειράς, θόλωση, αποστάσεις.\n📋 Αποθηκεύστε προεπιλογές — Εναλλαγή μεταξύ στυλ με ένα κλικ για διαφορετικές μεταδόσεις.\n🌗 Φωτεινό και σκοτεινό θέμα — Ακολουθεί το σύστημά σας ή ρυθμίστε το χειροκίνητα.\n📼 Υποστήριξη αρχείου — Λειτουργεί και με αναπαραγωγή συνομιλίας σε αρχειοθετημένες μεταδόσεις.\n🌐 Υποστήριξη πάνω από 50 γλωσσών.\n\nΧωρίς λογαριασμό. Χωρίς συλλογή δεδομένων. Πλήρως ανοιχτού κώδικα.\n\nΠώς να το χρησιμοποιήσετε:\n1. Εγκαταστήστε την επέκταση.\n2. Ανοίξτε μια ζωντανή μετάδοση YouTube ή αρχείο με αναπαραγωγή συνομιλίας.\n3. Μπείτε σε πλήρη οθόνη — πατήστε τον διακόπτη κάτω δεξιά.\n4. Σύρετε, αλλάξτε μέγεθος και κάντε το δικό σας.\n\nΕρωτήσεις, ιδέες ή αναφορές σφαλμάτων; Θα χαρούμε να σας ακούσουμε στο GitHub.\n\nΠηγαίος κώδικας: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nΥποστηρίξτε τον προγραμματιστή: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1281,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1273,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "gu": {
+      "dashboardLocaleLabel": "グジャラート語 – gu",
+      "repositoryLocale": "gu",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "YouTube Live પૂર્ણ સ્ક્રીનમાં જોતી વખતે ચેટ વાંચો અને સંદેશા મોકલો. Super Chat મોકલો અને ઓવરલેનો દેખાવ તથા સ્થાન તમારી રીતે ગોઠવો.",
+      "description": "YouTube નો ફુલસ્ક્રીન મોડ ચેટ છુપાવી દે છે. આ એક્સ્ટેન્શન તેને પાછી લાવે છે — તમારા વિડિઓ પર એક પારદર્શક, ખેંચી શકાય તેવા ઓવરલે તરીકે.\n\nસુવિધાઓ:\n💬 ફુલસ્ક્રીનમાં ચેટ — ઓવરલેમાંથી ટિપ્પણીઓ અને Super Chat પોસ્ટ કરો.\n🖱️ ખેંચો, રિસાઇઝ કરો, ફરી ગોઠવો — ચેટ વિન્ડોને તમે જ્યાં ઇચ્છો ત્યાં મૂકો.\n🎨 તમારી રીતે સ્ટાઇલ કરો — બેકગ્રાઉન્ડ, ટેક્સ્ટ રંગ, ફોન્ટ સાઇઝ, બ્લર, સ્પેસિંગ.\n📋 પ્રીસેટ સેવ કરો — વિવિધ સ્ટ્રીમ્સ માટે એક ક્લિકમાં સ્ટાઇલ બદલો.\n🌗 લાઇટ અને ડાર્ક થીમ — તમારી સિસ્ટમને અનુસરે છે, અથવા મેન્યુઅલી સેટ કરો.\n📼 આર્કાઇવ સપોર્ટ — આર્કાઇવ્ડ સ્ટ્રીમ્સ પર ચેટ રિપ્લે સાથે પણ કામ કરે છે.\n🌐 50+ ભાષાઓ સપોર્ટેડ.\n\nકોઈ એકાઉન્ટની જરૂર નથી. કોઈ ડેટા એકત્ર કરવામાં આવતો નથી. સંપૂર્ણ ઓપન સોર્સ.\n\nકેવી રીતે વાપરવું:\n1. એક્સ્ટેન્શન ઇન્સ્ટોલ કરો.\n2. ચેટ રિપ્લે સાથે YouTube લાઇવ સ્ટ્રીમ અથવા આર્કાઇવ ખોલો.\n3. ફુલસ્ક્રીન પર જાઓ — નીચે-જમણે બટન ચાલુ કરો.\n4. ખેંચો, રિસાઇઝ કરો અને તમારું બનાવો.\n\nપ્રશ્નો, સૂચનો અથવા બગ રિપોર્ટ? GitHub પર અમારો સંપર્ક કરો.\n\nસોર્સ કોડ: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nડેવલપરને સહાય કરો: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1060,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 726,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "hr": {
+      "dashboardLocaleLabel": "クロアチア語 – hr",
+      "repositoryLocale": "hr",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Gledajte YouTube prijenose uživo na cijelom zaslonu. Pišite u chatu, šaljite Super Chat poruke i prilagodite prikaz chata.",
+      "description": "Način cijelog zaslona na YouTubeu skriva chat. Ovo proširenje ga vraća — kao prozirni, pomični sloj izravno na vašem videu.\n\nZnačajke:\n💬 Chat na cijelom zaslonu — Pišite komentare i šaljite Super Chat iz overlaya.\n🖱️ Povucite, promijenite veličinu, premjestite — Postavite prozor chata točno gdje želite.\n🎨 Prilagodite po želji — Pozadina, boja teksta, veličina fonta, zamućenje, razmak.\n📋 Spremite postavke — Jednim klikom prebacujte između stilova za različite streamove.\n🌗 Svijetle i tamne teme — Prati vaš sustav ili postavite ručno.\n📼 Podrška za arhive — Radi i s ponovnim prikazom chata na arhiviranim streamovima.\n🌐 Podržano 50+ jezika.\n\nBez računa. Bez prikupljanja podataka. U potpunosti otvorenog koda.\n\nKako koristiti:\n1. Instalirajte ekstenziju.\n2. Otvorite YouTube stream uživo ili arhivu s ponovnim prikazom chata.\n3. Idite na cijeli zaslon — uključite prekidač u donjem desnom kutu.\n4. Povucite, promijenite veličinu i prilagodite.\n\nPitanja, ideje ili prijave grešaka? Rado vas čujemo na GitHubu.\n\nIzvorni kod: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nPodržite razvijača: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1141,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1133,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "sv": {
+      "dashboardLocaleLabel": "スウェーデン語 – sv",
+      "repositoryLocale": "sv",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Se YouTube Live i helskärm med chatten synlig. Skriv i chatten, skicka Super Chats och anpassa överlägget som du vill.",
+      "description": "YouTubes helskärmsläge döljer chatten. Det här tillägget tar tillbaka den — som ett transparent, dragbart överlägg direkt på din video.\n\nFunktioner:\n💬 Chatta i helskärm — Skriv kommentarer och skicka Super Chats från överlägget.\n🖱️ Dra, ändra storlek, flytta — Placera chattfönstret precis där du vill ha det.\n🎨 Anpassa efter din stil — Bakgrund, textfärg, teckenstorlek, oskärpa, avstånd.\n📋 Spara förinställningar — Växla mellan stilar med ett klick för olika sändningar.\n🌗 Ljust och mörkt tema — Följer systemet eller ställ in manuellt.\n📼 Stöd för arkiv — Fungerar med chattuppspelning på arkiverade sändningar.\n🌐 Stöd för över 50 språk.\n\nInget konto krävs. Ingen data samlas in. Helt öppen källkod.\n\nSå här använder du:\n1. Installera tillägget.\n2. Öppna en YouTube-livesändning eller ett arkiv med chattuppspelning.\n3. Gå till helskärm — aktivera knappen nere till höger.\n4. Dra, ändra storlek och gör den till din.\n\nFrågor, idéer eller buggar att rapportera? Vi vill gärna höra från dig på GitHub.\n\nKällkod: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nStöd utvecklaren: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1125,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1117,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "es": {
+      "dashboardLocaleLabel": "スペイン語 – es",
+      "repositoryLocale": "es",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Disfruta de YouTube Live a pantalla completa con el chat. Chatea, envía Super Chats y personaliza la superposición a tu gusto.",
+      "description": "El modo de pantalla completa de YouTube oculta el chat. Esta extensión lo recupera — como una ventana superpuesta, transparente y arrastrable, directamente sobre tu vídeo.\n\nFunciones:\n💬 Chat en pantalla completa — Publica comentarios y Super Chats desde la ventana superpuesta.\n🖱️ Arrastra, redimensiona, reposiciona — Coloca la ventana del chat exactamente donde quieras.\n🎨 Personaliza el estilo — Fondo, color de texto, tamaño de fuente, desenfoque, espaciado.\n📋 Guarda ajustes — Cambia entre estilos con un clic para diferentes transmisiones.\n🌗 Temas claro y oscuro — Se adapta a tu sistema o configúralo manualmente.\n📼 Soporte de archivos — También funciona con la repetición del chat en transmisiones archivadas.\n🌐 Más de 50 idiomas disponibles.\n\nSin cuenta. Sin recopilación de datos. Código abierto.\n\nCómo usar:\n1. Instala la extensión.\n2. Abre una transmisión en directo o un archivo de YouTube con repetición de chat.\n3. Activa la pantalla completa — pulsa el interruptor en la esquina inferior derecha.\n4. Arrastra, redimensiona y hazlo tuyo.\n\n¿Preguntas, ideas o errores? Nos encantaría saber de ti en GitHub.\n\nCódigo fuente: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nApoya al desarrollador: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1256,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1248,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "es-419": {
+      "dashboardLocaleLabel": "スペイン語 (ラテンアメリカ) – es-419",
+      "repositoryLocale": "es_419",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Mira YouTube Live en pantalla completa con el chat visible. Chatea, envía Super Chats y personaliza la superposición a tu gusto.",
+      "description": "El modo de pantalla completa de YouTube oculta el chat. Esta extensión lo trae de vuelta — como una ventana superpuesta, transparente y arrastrable, directamente sobre tu video.\n\nFunciones:\n💬 Chat en pantalla completa — Publica comentarios y Super Chats desde la ventana superpuesta.\n🖱️ Arrastra, redimensiona, reposiciona — Coloca la ventana del chat exactamente donde quieras.\n🎨 Personaliza el estilo — Fondo, color de texto, tamaño de fuente, desenfoque, espaciado.\n📋 Guarda ajustes — Cambia entre estilos con un clic para diferentes transmisiones.\n🌗 Temas claro y oscuro — Se adapta a tu sistema o configúralo manualmente.\n📼 Soporte de archivos — También funciona con la repetición del chat en transmisiones archivadas.\n🌐 Más de 50 idiomas disponibles.\n\nSin cuenta. Sin recopilación de datos. Código abierto.\n\nCómo usar:\n1. Instala la extensión.\n2. Abre una transmisión en vivo o un archivo de YouTube con repetición de chat.\n3. Activa la pantalla completa — presiona el interruptor en la esquina inferior derecha.\n4. Arrastra, redimensiona y hazlo tuyo.\n\n¿Preguntas, ideas o errores? Nos encantaría saber de ti en GitHub.\n\nCódigo fuente: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nApoya al desarrollador: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1262,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1254,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "sk": {
+      "dashboardLocaleLabel": "スロバキア語 – sk",
+      "repositoryLocale": "sk",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Sledujte živé vysielania na YouTube na celej obrazovke. Píšte do chatu, posielajte správy Super Chat a prispôsobte si vzhľad chatu.",
+      "description": "Režim celej obrazovky na YouTube skrýva chat. Toto rozšírenie ho vráti — ako priehľadnú, presúvateľnú vrstvu priamo na vašom videu.\n\nFunkcie:\n💬 Chat na celej obrazovke — Píšte komentáre a posielajte Super Chats cez prekrytie.\n🖱️ Presúvajte, meňte veľkosť, premiestňujte — Umiestnite okno chatu presne tam, kde chcete.\n🎨 Prispôsobte si to — Pozadie, farba textu, veľkosť písma, rozmazanie, odsadenie.\n📋 Uložte predvoľby — Prepínajte jedným kliknutím medzi štýlmi pre rôzne prenosy.\n🌗 Svetlý a tmavý motív — Nasleduje systém alebo nastavte manuálne.\n📼 Podpora archívov — Funguje aj s prehrávaním chatu na archivovaných prenosoch.\n🌐 Podpora viac ako 50 jazykov.\n\nBez účtu. Bez zberu dát. Plne open source.\n\nAko používať:\n1. Nainštalujte rozšírenie.\n2. Otvorte živý prenos alebo archív YouTube s prehrávaním chatu.\n3. Prepnite na celú obrazovku — aktivujte prepínač v pravom dolnom rohu.\n4. Presúvajte, meňte veľkosť a prispôsobte si to.\n\nOtázky, nápady alebo hlásenie chýb? Ozvite sa nám na GitHube.\n\nZdrojový kód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nPodporte vývojára: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1126,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1118,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "sl": {
+      "dashboardLocaleLabel": "スロベニア語 – sl",
+      "repositoryLocale": "sl",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Glejte prenose v živo na YouTubu na celotnem zaslonu. Pišite v klepet, pošiljajte sporočila Super Chat in prilagodite videz klepeta.",
+      "description": "Celozaslonski način na YouTubu skrije klepet. Ta razširitev ga povrne — kot prosojno, premakljivo prekrivanje neposredno na vašem videu.\n\nFunkcije:\n💬 Klepet na celotnem zaslonu — Pišite komentarje in pošiljajte Super Chats prek prekrivanja.\n🖱️ Povlecite, spremenite velikost, premaknite — Postavite okno klepeta natanko tja, kamor želite.\n🎨 Prilagodite po svoje — Ozadje, barva besedila, velikost pisave, zameglitev, razmiki.\n📋 Shranite prednastavitve — Z enim klikom preklapljajte med slogi za različne prenose.\n🌗 Svetla in temna tema — Sledi sistemu ali nastavite ročno.\n📼 Podpora za arhive — Deluje tudi s predvajanjem klepeta na arhiviranih prenosih.\n🌐 Podpora za več kot 50 jezikov.\n\nBrez računa. Brez zbiranja podatkov. Popolnoma odprtokoden.\n\nKako uporabiti:\n1. Namestite razširitev.\n2. Odprite YouTube prenos v živo ali arhiv s predvajanjem klepeta.\n3. Preklopite na celoten zaslon — vklopite stikalo spodaj desno.\n4. Povlecite, spremenite velikost in prilagodite.\n\nVprašanja, ideje ali prijave napak? Z veseljem vas slišimo na GitHubu.\n\nIzvorna koda: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nPodprite razvijalca: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1176,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1168,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "sw": {
+      "dashboardLocaleLabel": "スワヒリ語 – sw",
+      "repositoryLocale": "sw",
+      "title": "YouTube Live Chat Skrini Nzima",
+      "summary": "Tazama YouTube Live kwenye skrini nzima pamoja na gumzo. Tuma ujumbe na Super Chat, kisha ubinafsishe mwonekano.",
+      "description": "Hali ya skrini nzima ya YouTube huficha gumzo. Kiendelezi hiki hukirudisha — kama ovelei ya uwazi inayoburutwa moja kwa moja kwenye video yako.\n\nVipengele:\n💬 Gumzo katika skrini nzima — Tuma maoni na Super Chats kutoka kwenye ovelei.\n🖱️ Buruta, badilisha ukubwa, hamisha — Weka dirisha la gumzo mahali unapotaka.\n🎨 Pamba kwa njia yako — Mandharinyuma, rangi ya maandishi, ukubwa wa fonti, ukungu, nafasi.\n📋 Hifadhi mipangilio — Badilisha kati ya mitindo kwa kubofya mara moja kwa matangazo tofauti.\n🌗 Mandhari ya mwanga na giza — Inafuata mfumo wako au iweke mwenyewe.\n📼 Msaada wa kumbukumbu — Inafanya kazi na kucheza tena gumzo kwenye matangazo yaliyohifadhiwa.\n🌐 Lugha zaidi ya 50 zinasaidiwa.\n\nHakuna akaunti inayohitajika. Hakuna data inayokusanywa. Chanzo wazi kabisa.\n\nJinsi ya kutumia:\n1. Sakinisha kiendelezi.\n2. Fungua tangazo la moja kwa moja la YouTube au kumbukumbu yenye kucheza tena gumzo.\n3. Nenda skrini nzima — bonyeza swichi chini kulia.\n4. Buruta, badilisha ukubwa na uifanye yako.\n\nMaswali, mawazo au ripoti za hitilafu? Tungependa kusikia kutoka kwako kwenye GitHub.\n\nMsimbo wa chanzo: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nMsaada kwa msanidi: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1223,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1215,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "sr": {
+      "dashboardLocaleLabel": "セルビア語 – sr",
+      "repositoryLocale": "sr",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Гледајте YouTube преносе уживо преко целог екрана. Пишите у ћаскању, шаљите Super Chat поруке и прилагодите изглед ћаскања.",
+      "description": "Режим целог екрана на YouTube сакрива ћаскање. Овај додатак га враћа — као провидан, померљив преклоп директно на вашем видеу.\n\nФункције:\n💬 Ћаскање на целом екрану — Шаљите коментаре и Super Chats преко преклапања.\n🖱️ Превуците, промените величину, преместите — Поставите прозор за ћаскање тачно где желите.\n🎨 Прилагодите по жељи — Позадина, боја текста, величина фонта, замућење, размак.\n📋 Сачувајте подешавања — Пребацујте се између стилова једним кликом за различите преносе.\n🌗 Светла и тамна тема — Прати систем или подесите ручно.\n📼 Подршка за архиве — Ради и са репродукцијом ћаскања на архивираним преносима.\n🌐 Подршка за више од 50 језика.\n\nБез налога. Без прикупљања података. Потпуно отвореног кода.\n\nКако се користи:\n1. Инсталирајте додатак.\n2. Отворите YouTube пренос уживо или архиву са репродукцијом ћаскања.\n3. Пређите на цео екран — укључите прекидач у доњем десном углу.\n4. Превуците, промените величину и прилагодите.\n\nПитања, идеје или пријаве грешака? Радо бисмо чули од вас на GitHub.\n\nИзворни код: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nПодржите програмера: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1136,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1128,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "th": {
+      "dashboardLocaleLabel": "タイ語 – th",
+      "repositoryLocale": "th",
+      "title": "YouTube แชทสดแบบเต็มหน้าจอ",
+      "summary": "ดู YouTube Live แบบเต็มหน้าจอโดยไม่ต้องปิดแชท ส่งข้อความและ Super Chat พร้อมปรับแต่งโอเวอร์เลย์ได้ตามต้องการ",
+      "description": "โหมดเต็มหน้าจอของ YouTube จะซ่อนแชทไว้ ส่วนขยายนี้นำแชทกลับมา — เป็นโอเวอร์เลย์แบบโปร่งใสที่ลากได้ ซ้อนทับบนวิดีโอของคุณ\n\nคุณสมบัติ:\n💬 แชทในโหมดเต็มหน้าจอ — โพสต์ความคิดเห็นและ Super Chat จากโอเวอร์เลย์\n🖱️ ลาก ปรับขนาด จัดตำแหน่ง — วางหน้าต่างแชทไว้ตรงที่คุณต้องการ\n🎨 ปรับแต่งตามสไตล์คุณ — พื้นหลัง สีตัวอักษร ขนาดฟอนต์ เบลอ ระยะห่าง\n📋 บันทึกพรีเซ็ต — สลับสไตล์สำหรับสตรีมต่าง ๆ ได้ในคลิกเดียว\n🌗 ธีมสว่างและมืด — ตามระบบของคุณ หรือตั้งค่าเอง\n📼 รองรับอาร์ไคฟ์ — ใช้งานได้กับการเล่นซ้ำแชทในสตรีมที่บันทึกไว้\n🌐 รองรับกว่า 50 ภาษา\n\nไม่ต้องมีบัญชี ไม่เก็บข้อมูล โอเพนซอร์สทั้งหมด\n\nวิธีใช้งาน:\n1. ติดตั้งส่วนขยาย\n2. เปิดสตรีมสด YouTube หรืออาร์ไคฟ์ที่มีการเล่นซ้ำแชท\n3. เข้าสู่โหมดเต็มหน้าจอ — เปิดสวิตช์ที่มุมขวาล่าง\n4. ลาก ปรับขนาด และปรับแต่งตามใจชอบ\n\nมีคำถาม ไอเดีย หรือพบบั๊ก? เรายินดีรับฟังทุกเสียงบน GitHub\n\nซอร์สโค้ด: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nสนับสนุนผู้พัฒนา: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 933,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 769,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ta": {
+      "dashboardLocaleLabel": "タミル語 – ta",
+      "repositoryLocale": "ta",
+      "title": "YouTube நேரலை அரட்டை முழுத்திரை",
+      "summary": "YouTube Live-ஐ முழுத்திரையில் அரட்டையுடன் பாருங்கள். செய்திகளையும் Super Chat-ஐயும் அனுப்பி, மேலடுக்கை விருப்பப்படி மாற்றுங்கள்.",
+      "description": "YouTube-ன் முழுத்திரை பயன்முறையில் அரட்டை மறைக்கப்படுகிறது. இந்த நீட்சி அதை மீண்டும் கொண்டுவருகிறது — உங்கள் வீடியோவின் மேல் ஒரு ஒளிஊடுருவும், இழுக்கக்கூடிய மேலடுக்காக.\n\nஅம்சங்கள்:\n💬 முழுத்திரையில் அரட்டை — மேலடுக்கிலிருந்து கருத்துகளும் Super Chat-களும் அனுப்புங்கள்.\n🖱️ இழுக்கவும், அளவை மாற்றவும், இடம் மாற்றவும் — அரட்டை சாளரத்தை நீங்கள் விரும்பும் இடத்தில் வைக்கவும்.\n🎨 உங்கள் விருப்பப்படி வடிவமைக்கவும் — பின்னணி, எழுத்து நிறம், எழுத்துரு அளவு, மங்கல், இடைவெளி.\n📋 முன்னமைவுகளைச் சேமிக்கவும் — வெவ்வேறு நிகழ்ச்சிகளுக்கு ஒரே கிளிக்கில் பாணிகளை மாற்றவும்.\n🌗 ஒளி மற்றும் இருள் தீம்கள் — உங்கள் கணினியை பின்பற்றும், அல்லது கைமுறையாக அமைக்கவும்.\n📼 காப்பக ஆதரவு — காப்பகப்படுத்தப்பட்ட நிகழ்ச்சிகளின் அரட்டை மறுபதிவிலும் செயல்படும்.\n🌐 50+ மொழிகள் ஆதரிக்கப்படுகின்றன.\n\nகணக்கு தேவையில்லை. தரவு சேகரிக்கப்படுவதில்லை. முழுமையாக திறந்த மூலம்.\n\nபயன்படுத்தும் முறை:\n1. நீட்சியை நிறுவுங்கள்.\n2. YouTube நேரலை நிகழ்ச்சி அல்லது அரட்டை மறுபதிவுடன் காப்பகத்தைத் திறக்கவும்.\n3. முழுத்திரைக்குச் செல்லுங்கள் — கீழ்-வலது மூலையில் உள்ள சுவிட்சை இயக்குங்கள்.\n4. இழுக்கவும், அளவை மாற்றவும், உங்களுக்கேற்றவாறு அமைக்கவும்.\n\nகேள்விகள், யோசனைகள் அல்லது பிழை அறிக்கை? GitHub-இல் எங்களுக்குத் தெரிவியுங்கள்.\n\nமூலக் குறியீடு: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nடெவலப்பரை ஆதரிக்கவும்: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1316,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 903,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "cs": {
+      "dashboardLocaleLabel": "チェコ語 – cs",
+      "repositoryLocale": "cs",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Sledujte živé přenosy na YouTube na celé obrazovce. Pište do chatu, posílejte zprávy Super Chat a upravte si vzhled chatu.",
+      "description": "Režim celé obrazovky na YouTube skrývá chat. Toto rozšíření ho vrátí zpět — jako průhlednou, přetahovatelnou vrstvu přímo na vašem videu.\n\nFunkce:\n💬 Chat na celou obrazovku — Pište komentáře a posílejte Super Chaty z překryvné vrstvy.\n🖱️ Přetáhněte, změňte velikost, přemístěte — Umístěte okno chatu přesně tam, kde chcete.\n🎨 Upravte si vzhled — Pozadí, barva textu, velikost písma, rozmazání, rozestupy.\n📋 Uložte předvolby — Přepínejte mezi styly jedním kliknutím pro různé streamy.\n🌗 Světlý a tmavý motiv — Sleduje váš systém, nebo nastavte ručně.\n📼 Podpora archivů — Funguje i s přehráváním chatu u archivovaných streamů.\n🌐 Podpora více než 50 jazyků.\n\nBez účtu. Bez sběru dat. Plně open source.\n\nJak používat:\n1. Nainstalujte rozšíření.\n2. Otevřete živý stream na YouTube nebo archiv s přehráváním chatu.\n3. Přepněte na celou obrazovku — klikněte na přepínač vpravo dole.\n4. Přetahujte, měňte velikost a přizpůsobte si to.\n\nOtázky, nápady nebo hlášení chyb? Ozvěte se nám na GitHubu.\n\nZdrojový kód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nPodpořte vývojáře: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1117,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1109,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "te": {
+      "dashboardLocaleLabel": "テルグ語 – te",
+      "repositoryLocale": "te",
+      "title": "YouTube లైవ్ చాట్ ఫుల్‌స్క్రీన్",
+      "summary": "YouTube Liveను పూర్తి తెరలో చాట్‌తో చూడండి. సందేశాలు, Super Chat పంపి, ఓవర్‌లేను మీకు నచ్చినట్లు మార్చండి.",
+      "description": "YouTube ఫుల్‌స్క్రీన్ మోడ్‌లో చాట్ దాచబడుతుంది. ఈ ఎక్స్‌టెన్షన్ దాన్ని తిరిగి తీసుకొస్తుంది — మీ వీడియోపై పారదర్శకమైన, డ్రాగ్ చేయగల ఓవర్‌లే రూపంలో.\n\nఫీచర్లు:\n💬 ఫుల్‌స్క్రీన్‌లో చాట్ — ఓవర్‌లే నుండి కామెంట్లు మరియు Super Chat పంపండి.\n🖱️ డ్రాగ్, రీసైజ్, రీపొజిషన్ — చాట్ విండోను మీకు కావలసిన చోట ఉంచండి.\n🎨 మీ ఇష్టం ప్రకారం స్టైల్ చేయండి — బ్యాక్‌గ్రౌండ్, టెక్స్ట్ కలర్, ఫాంట్ సైజ్, బ్లర్, స్పేసింగ్.\n📋 ప్రీసెట్లు సేవ్ చేయండి — వేర్వేరు స్ట్రీమ్‌లకు ఒక్క క్లిక్‌తో స్టైల్ మార్చుకోండి.\n🌗 లైట్ మరియు డార్క్ థీమ్‌లు — మీ సిస్టమ్‌ను అనుసరిస్తుంది, లేదా మాన్యువల్‌గా సెట్ చేయండి.\n📼 ఆర్కైవ్ సపోర్ట్ — ఆర్కైవ్ చేయబడిన స్ట్రీమ్‌లలో చాట్ రీప్లేతో కూడా పనిచేస్తుంది.\n🌐 50+ భాషలు సపోర్ట్ చేయబడతాయి.\n\nఖాతా అవసరం లేదు. డేటా సేకరించబడదు. పూర్తిగా ఓపెన్ సోర్స్.\n\nఎలా ఉపయోగించాలి:\n1. ఎక్స్‌టెన్షన్‌ను ఇన్‌స్టాల్ చేయండి.\n2. YouTube లైవ్ స్ట్రీమ్ లేదా చాట్ రీప్లే ఉన్న ఆర్కైవ్‌ను తెరవండి.\n3. ఫుల్‌స్క్రీన్‌కి వెళ్లండి — కుడి దిగువన ఉన్న స్విచ్‌ను ఆన్ చేయండి.\n4. డ్రాగ్ చేయండి, రీసైజ్ చేయండి, మీకు నచ్చినట్లు సెట్ చేసుకోండి.\n\nప్రశ్నలు, సూచనలు లేదా బగ్ రిపోర్ట్? GitHub లో మాకు తెలియజేయండి.\n\nసోర్స్ కోడ్: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nడెవలపర్‌కు సహాయం చేయండి: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1202,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 723,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "da": {
+      "dashboardLocaleLabel": "デンマーク語 – da",
+      "repositoryLocale": "da",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Se YouTube Live på fuld skærm med chatten synlig. Skriv i chatten, send Super Chats og tilpas overlayet efter dine ønsker.",
+      "description": "YouTubes fuldskærmstilstand skjuler chatten. Denne udvidelse bringer den tilbage — som et gennemsigtigt, flytbart overlay direkte på din video.\n\nFunktioner:\n💬 Chat i fuldskærm — Skriv kommentarer og send Super Chats fra overlayet.\n🖱️ Træk, tilpas størrelse, flyt — Placer chatvinduet præcis hvor du vil have det.\n🎨 Tilpas udseendet — Baggrund, tekstfarve, skriftstørrelse, sløring, afstand.\n📋 Gem forudindstillinger — Skift mellem stilarter med ét klik til forskellige streams.\n🌗 Lyst og mørkt tema — Følger dit system, eller indstil det manuelt.\n📼 Arkivunderstøttelse — Fungerer også med chat-replay på arkiverede streams.\n🌐 Understøtter over 50 sprog.\n\nIngen konto nødvendig. Ingen data indsamlet. Fuldt open source.\n\nSådan bruger du det:\n1. Installer udvidelsen.\n2. Åbn et YouTube live stream eller arkiv med chat-replay.\n3. Gå i fuldskærm — tryk på kontakten nederst til højre.\n4. Træk, tilpas størrelse og gør det til dit eget.\n\nSpørgsmål, idéer eller fejl at rapportere? Vi vil gerne høre fra dig på GitHub.\n\nKildekode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nStøt udvikleren: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1138,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1130,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "de": {
+      "dashboardLocaleLabel": "ドイツ語 – de",
+      "repositoryLocale": "de",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "YouTube Live im Vollbild ansehen und den Chat weiter nutzen. Nachrichten posten, Super Chats senden und das Overlay anpassen.",
+      "description": "Im Vollbildmodus von YouTube wird der Chat ausgeblendet. Diese Erweiterung bringt ihn zurück — als transparentes, verschiebbares Overlay direkt auf deinem Video.\n\nFunktionen:\n💬 Chat im Vollbild — Kommentare und Super Chats direkt aus dem Overlay senden.\n🖱️ Ziehen, skalieren, verschieben — Das Chatfenster genau dort platzieren, wo du es willst.\n🎨 Nach deinem Geschmack — Hintergrund, Textfarbe, Schriftgröße, Unschärfe, Abstände.\n📋 Voreinstellungen speichern — Mit einem Klick zwischen Stilen für verschiedene Streams wechseln.\n🌗 Helles und dunkles Design — Folgt deinem System oder wird manuell eingestellt.\n📼 Archiv-Unterstützung — Funktioniert auch mit Chat-Replay bei archivierten Streams.\n🌐 Über 50 Sprachen unterstützt.\n\nKein Konto erforderlich. Keine Daten gesammelt. Vollständig Open Source.\n\nSo verwendest du es:\n1. Installiere die Erweiterung.\n2. Öffne einen YouTube-Livestream oder ein Archiv mit Chat-Replay.\n3. Wechsle in den Vollbildmodus — klicke auf den Schalter unten rechts.\n4. Ziehen, skalieren und nach deinen Wünschen anpassen.\n\nFragen, Ideen oder Fehler gefunden? Wir freuen uns über dein Feedback auf GitHub.\n\nQuellcode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nEntwickler unterstützen: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1265,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1257,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "tr": {
+      "dashboardLocaleLabel": "トルコ語 – tr",
+      "repositoryLocale": "tr",
+      "title": "YouTube Canlı Sohbet Tam Ekran",
+      "summary": "YouTube canlı yayınlarını sohbetle tam ekranda izleyin. Mesaj ve Super Chat gönderip sohbet katmanını özelleştirin.",
+      "description": "YouTube'un tam ekran modu sohbeti gizler. Bu uzantı onu geri getirir — videonuzun üzerinde şeffaf, sürüklenebilir bir katman olarak.\n\nÖzellikler:\n💬 Tam ekranda sohbet — Katmandan yorum ve Super Chat gönderin.\n🖱️ Sürükle, yeniden boyutlandır, konumlandır — Sohbet penceresini tam istediğiniz yere yerleştirin.\n🎨 İstediğiniz gibi özelleştirin — Arka plan, metin rengi, yazı tipi boyutu, bulanıklık, aralık.\n📋 Ön ayarları kaydedin — Farklı yayınlar için tek tıkla stiller arasında geçiş yapın.\n🌗 Açık ve koyu temalar — Sisteminizi takip eder veya manuel olarak ayarlayın.\n📼 Arşiv desteği — Arşivlenmiş yayınlarda sohbet tekrarıyla da çalışır.\n🌐 50'den fazla dil desteklenir.\n\nHesap gerekmez. Veri toplanmaz. Tamamen açık kaynak.\n\nNasıl kullanılır:\n1. Uzantıyı yükleyin.\n2. YouTube canlı yayın veya sohbet tekrarı olan bir arşiv açın.\n3. Tam ekrana geçin — sağ alttaki düğmeyi açın.\n4. Sürükleyin, boyutlandırın ve kendinize göre ayarlayın.\n\nSorularınız, fikirleriniz veya hata bildirileriniz mi var? GitHub'da sizden haber almaktan memnuniyet duyarız.\n\nKaynak kodu: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nGeliştiriciye destek: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1180,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1172,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "no": {
+      "dashboardLocaleLabel": "ノルウェー語 – no",
+      "repositoryLocale": "no",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Se YouTube Live i fullskjerm med chatten synlig. Skriv i chatten, send Super Chats og tilpass overlegget slik du vil.",
+      "description": "YouTubes fullskjermmodus skjuler chatten. Denne utvidelsen bringer den tilbake — som et gjennomsiktig, flyttbart overlegg rett på videoen din.\n\nFunksjoner:\n💬 Chat i fullskjerm — Skriv kommentarer og send Super Chat direkte fra overlegget.\n🖱️ Dra, endre størrelse, flytt — Plasser chatvinduet akkurat der du vil ha det.\n🎨 Tilpass utseendet — Bakgrunn, tekstfarge, skriftstørrelse, uskarphet, avstand.\n📋 Lagre forhåndsinnstillinger — Bytt mellom stiler med ett klikk for ulike strømmer.\n🌗 Lyst og mørkt tema — Følger systeminnstillingen, eller velg manuelt.\n📼 Arkivstøtte — Fungerer også med chat-avspilling på arkiverte strømmer.\n🌐 Støtte for over 50 språk.\n\nIngen konto nødvendig. Ingen data samles inn. Helt åpen kildekode.\n\nSlik bruker du:\n1. Installer utvidelsen.\n2. Åpne en YouTube-direktesending eller et arkiv med chat-avspilling.\n3. Gå til fullskjerm — slå på bryteren nederst til høyre.\n4. Dra, endre størrelse og gjør det til ditt eget.\n\nSpørsmål, ideer eller feil å rapportere? Vi hører gjerne fra deg på GitHub.\n\nKildekode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nStøtt utvikleren: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1148,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1140,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "hu": {
+      "dashboardLocaleLabel": "ハンガリー語 – hu",
+      "repositoryLocale": "hu",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Nézz élő YouTube-közvetítéseket teljes képernyőn. Írj a csevegésbe, küldj Super Chat-üzeneteket, és szabd személyre a megjelenést.",
+      "description": "A YouTube teljes képernyős módja elrejti a csevegést. Ez a bővítmény visszahozza — átlátszó, húzható rétegként közvetlenül a videódon.\n\nFunkciók:\n💬 Csevegés teljes képernyőn — Írj hozzászólásokat és küldj Super Chatet az overlayből.\n🖱️ Húzd, méretezd, helyezd át — Tedd a csevegőablakot pontosan oda, ahová szeretnéd.\n🎨 Alakítsd a stílusod szerint — Háttér, szövegszín, betűméret, elmosás, térköz.\n📋 Mentsd el a beállításokat — Egy kattintással válts stílust különböző streamekhez.\n🌗 Világos és sötét téma — Követi a rendszered, vagy állítsd be kézzel.\n📼 Archívum támogatás — Archivált streamek csevegés-visszajátszásával is működik.\n🌐 Több mint 50 nyelv támogatva.\n\nFiók nélkül. Adatgyűjtés nélkül. Teljesen nyílt forráskódú.\n\nHasználat:\n1. Telepítsd a bővítményt.\n2. Nyiss meg egy YouTube élő közvetítést vagy archívumot csevegés-visszajátszással.\n3. Lépj teljes képernyőre — kapcsold be a jobb alsó sarokban lévő kapcsolót.\n4. Húzd, méretezd és tedd a sajátoddá.\n\nKérdésed, ötleted vagy hibajelentésed van? Szívesen hallanánk rólad a GitHubon.\n\nForráskód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nTámogasd a fejlesztőt: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1177,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1169,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "hi": {
+      "dashboardLocaleLabel": "ヒンディー語 – hi",
+      "repositoryLocale": "hi",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "YouTube Live को फ़ुलस्क्रीन में देखते हुए चैट पढ़ें और संदेश भेजें। Super Chat भेजें और ओवरले का रूप व स्थान अपने अनुसार बदलें।",
+      "description": "YouTube का फ़ुलस्क्रीन मोड चैट को छिपा देता है। यह एक्सटेंशन उसे वापस लाता है — आपके वीडियो पर एक पारदर्शी, ड्रैग करने योग्य ओवरले के रूप में।\n\nविशेषताएँ:\n💬 फ़ुलस्क्रीन में चैट — ओवरले से टिप्पणी और Super Chat भेजें।\n🖱️ खींचें, आकार बदलें, स्थिति बदलें — चैट विंडो को जहाँ चाहें वहाँ रखें।\n🎨 अपनी शैली बनाएँ — बैकग्राउंड, टेक्स्ट रंग, फ़ॉन्ट आकार, ब्लर, स्पेसिंग।\n📋 प्रीसेट सहेजें — अलग-अलग स्ट्रीम्स के लिए एक क्लिक में स्टाइल बदलें।\n🌗 लाइट और डार्क थीम — आपके सिस्टम का अनुसरण करती है, या मैन्युअली सेट करें।\n📼 आर्काइव सपोर्ट — आर्काइव की गई स्ट्रीम्स पर चैट रिप्ले के साथ भी काम करता है।\n🌐 50+ भाषाएँ समर्थित।\n\nकोई अकाउंट ज़रूरी नहीं। कोई डेटा संग्रह नहीं। पूरी तरह ओपन सोर्स।\n\nकैसे उपयोग करें:\n1. एक्सटेंशन इंस्टॉल करें।\n2. चैट रिप्ले वाली YouTube लाइव स्ट्रीम या आर्काइव खोलें।\n3. फ़ुलस्क्रीन पर जाएँ — नीचे-दाएँ स्विच चालू करें।\n4. खींचें, आकार बदलें और अपना बनाएँ।\n\nसवाल, सुझाव या बग रिपोर्ट? GitHub पर हमसे संपर्क करें।\n\nसोर्स कोड: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nडेवलपर को सहयोग दें: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1056,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 734,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "fil": {
+      "dashboardLocaleLabel": "フィリピノ語 – fil",
+      "repositoryLocale": "fil",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Manood ng YouTube Live sa fullscreen na may chat. Magpadala ng mensahe at Super Chat, at i-customize ang overlay.",
+      "description": "Itinatago ng fullscreen mode ng YouTube ang chat. Ibinibalik ito ng extension na ito — bilang transparent at draggable na overlay sa ibabaw ng iyong video.\n\nMga Feature:\n💬 Chat sa fullscreen — Mag-post ng komento at Super Chats mula sa overlay.\n🖱️ I-drag, i-resize, i-reposition — Ilagay ang chat window kung saan mo gusto.\n🎨 I-style ayon sa gusto mo — Background, kulay ng text, laki ng font, blur, spacing.\n📋 I-save ang mga preset — Isang click lang para magpalit ng estilo para sa iba't ibang stream.\n🌗 Light at dark na tema — Sinusundan ang system mo, o i-set nang manu-mano.\n📼 Archive support — Gumagana rin sa chat replay ng mga naka-archive na stream.\n🌐 Mahigit 50 wika ang sinusuportahan.\n\nWalang account na kailangan. Walang data na kinokolekta. Fully open source.\n\nPaano gamitin:\n1. I-install ang extension.\n2. Buksan ang isang YouTube live stream o archive na may chat replay.\n3. Mag-fullscreen — i-flip ang switch sa kanang ibaba.\n4. I-drag, i-resize, at gawin itong sa iyo.\n\nMay tanong, ideya, o nakakita ng bug? Gusto naming marinig mula sa iyo sa GitHub.\n\nSource code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSuportahan ang developer: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1205,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1197,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "fi": {
+      "dashboardLocaleLabel": "フィンランド語 – fi",
+      "repositoryLocale": "fi",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Katso YouTube Liveä koko näytöllä ja seuraa chatia. Kirjoita viestejä, lähetä Super Chat -viestejä ja mukauta chatin ulkoasua.",
+      "description": "YouTuben koko näytön tila piilottaa chatin. Tämä laajennus tuo sen takaisin — läpinäkyvänä, vedettävänä kerroksena suoraan videosi päällä.\n\nOminaisuudet:\n💬 Chat koko näytöllä — Kirjoita kommentteja ja lähetä Super Chatteja suoraan peittokuvasta.\n🖱️ Vedä, muuta kokoa, sijoita uudelleen — Aseta chat-ikkuna juuri sinne, minne haluat.\n🎨 Muokkaa ulkoasua — Tausta, tekstin väri, fonttikoko, sumennus, välistys.\n📋 Tallenna esiasetukset — Vaihda tyylien välillä yhdellä napsautuksella eri lähetyksiä varten.\n🌗 Vaalea ja tumma teema — Seuraa järjestelmäasetuksia tai valitse manuaalisesti.\n📼 Arkistotuki — Toimii myös chat-uusintojen kanssa arkistoiduissa lähetyksissä.\n🌐 Yli 50 kieltä tuettu.\n\nEi tiliä tarvita. Ei tiedonkeruuta. Täysin avointa lähdekoodia.\n\nNäin käytät:\n1. Asenna laajennus.\n2. Avaa YouTuben suora lähetys tai arkistoitu lähetys, jossa on chat-uusinta.\n3. Siirry koko näyttöön — käytä kytkintä oikeassa alakulmassa.\n4. Vedä, muuta kokoa ja tee siitä omasi.\n\nKysymyksiä, ideoita tai virheraportteja? Kuulemme mielellämme sinusta GitHubissa.\n\nLähdekoodi: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nTue kehittäjää: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1177,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1169,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "fr": {
+      "dashboardLocaleLabel": "フランス語 – fr",
+      "repositoryLocale": "fr",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Profitez de YouTube Live en plein écran avec le chat. Discutez, envoyez des Super Chats et personnalisez son affichage.",
+      "description": "Le mode plein écran de YouTube masque le chat. Cette extension le ramène — sous forme d'overlay transparent et déplaçable, directement sur votre vidéo.\n\nFonctionnalités :\n💬 Chatter en plein écran — Postez des commentaires et des Super Chats depuis l'overlay.\n🖱️ Déplacer, redimensionner, repositionner — Placez la fenêtre de chat exactement où vous le souhaitez.\n🎨 Personnalisez à votre goût — Fond, couleur du texte, taille de police, flou, espacement.\n📋 Enregistrez des préréglages — Changez de style en un clic selon les streams.\n🌗 Thèmes clair et sombre — Suit votre système, ou réglez-le manuellement.\n📼 Support des archives — Fonctionne aussi avec le replay du chat sur les streams archivés.\n🌐 Plus de 50 langues supportées.\n\nAucun compte requis. Aucune donnée collectée. Entièrement open source.\n\nComment utiliser :\n1. Installez l'extension.\n2. Ouvrez un stream YouTube en direct ou une archive avec replay du chat.\n3. Passez en plein écran — activez le bouton en bas à droite.\n4. Déplacez, redimensionnez et faites-en le vôtre.\n\nQuestions, idées ou bugs à signaler ? N'hésitez pas à nous écrire sur GitHub.\n\nCode source : https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSoutenir le développeur : https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1251,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1243,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "bg": {
+      "dashboardLocaleLabel": "ブルガリア語 – bg",
+      "repositoryLocale": "bg",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Гледайте предавания на живо в YouTube на цял екран. Пишете в чата, изпращайте съобщения Super Chat и настройте изгледа на чата.",
+      "description": "Режимът на цял екран в YouTube скрива чата. Това разширение го връща — като прозрачно, преместваемо наслагване директно върху видеото ви.\n\nФункции:\n💬 Чат на цял екран — Публикувайте коментари и Super Chats от наслагването.\n🖱️ Плъзгане, преоразмеряване, преместване — Поставете прозореца за чат точно където искате.\n🎨 Персонализирайте го — Фон, цвят на текста, размер на шрифта, замъгляване, разстояние.\n📋 Запазване на настройки — Превключвайте между стилове с едно щракване за различни стриймове.\n🌗 Светла и тъмна тема — Следва системата ви или задайте ръчно.\n📼 Поддръжка на архив — Работи и с повторно възпроизвеждане на чат в архивирани стриймове.\n🌐 Поддръжка на над 50 езика.\n\nБез акаунт. Без събиране на данни. Изцяло с отворен код.\n\nКак да използвате:\n1. Инсталирайте разширението.\n2. Отворете YouTube стрийм на живо или архив с повторно възпроизвеждане на чат.\n3. Превключете на цял екран — натиснете превключвателя долу вдясно.\n4. Плъзгайте, преоразмерявайте и го направете ваш.\n\nВъпроси, идеи или намерени грешки? Ще се радваме да чуем от вас в GitHub.\n\nИзходен код: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nПодкрепете разработчика: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1195,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1187,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "vi": {
+      "dashboardLocaleLabel": "ベトナム語 – vi",
+      "repositoryLocale": "vi",
+      "title": "YouTube Live Chat Toàn Màn Hình",
+      "summary": "Xem YouTube Live toàn màn hình cùng chat. Gửi tin nhắn và Super Chat, rồi tùy chỉnh lớp phủ theo ý bạn.",
+      "description": "Chế độ toàn màn hình của YouTube sẽ ẩn chat đi. Tiện ích này mang nó trở lại — dưới dạng lớp phủ trong suốt, có thể kéo thả ngay trên video của bạn.\n\nTính năng:\n💬 Chat trong chế độ toàn màn hình — Đăng bình luận và gửi Super Chat từ lớp phủ.\n🖱️ Kéo, thay đổi kích thước, đặt lại vị trí — Đặt cửa sổ chat đúng nơi bạn muốn.\n🎨 Tùy chỉnh theo ý bạn — Nền, màu chữ, cỡ chữ, làm mờ, khoảng cách.\n📋 Lưu cài đặt sẵn — Chuyển đổi giữa các kiểu cho từng buổi phát chỉ với một cú nhấp.\n🌗 Giao diện sáng và tối — Theo hệ thống của bạn hoặc tự đặt thủ công.\n📼 Hỗ trợ lưu trữ — Hoạt động với phát lại chat trên các buổi phát đã lưu trữ.\n🌐 Hỗ trợ hơn 50 ngôn ngữ.\n\nKhông cần tài khoản. Không thu thập dữ liệu. Mã nguồn mở hoàn toàn.\n\nCách sử dụng:\n1. Cài đặt tiện ích mở rộng.\n2. Mở một buổi phát trực tiếp YouTube hoặc video lưu trữ có phát lại chat.\n3. Chuyển sang toàn màn hình — bật công tắc ở góc dưới bên phải.\n4. Kéo, thay đổi kích thước và tùy chỉnh theo ý bạn.\n\nCó câu hỏi, ý tưởng hoặc muốn báo lỗi? Hãy cho chúng tôi biết trên GitHub.\n\nMã nguồn: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nỦng hộ nhà phát triển: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1161,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1153,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "iw": {
+      "dashboardLocaleLabel": "ヘブライ語 – iw",
+      "repositoryLocale": "he",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "צפו בשידורים חיים ב-YouTube במסך מלא בלי לסגור את הצ׳אט. כתבו בצ׳אט, שלחו הודעות Super Chat והתאימו אישית את תצוגת הצ׳אט.",
+      "description": "מסך מלא ב-YouTube מסתיר את הצ'אט. התוסף הזה מחזיר אותו — כשכבה שקופה שניתן לגרור, ישירות מעל הווידאו.\n\nתכונות:\n💬 צ'אט במסך מלא — כתבו תגובות ושלחו Super Chat מהשכבה העליונה.\n🖱️ גררו, שנו גודל, מקמו מחדש — הציבו את חלון הצ'אט בדיוק איפה שתרצו.\n🎨 עצבו לפי טעמכם — רקע, צבע טקסט, גודל גופן, טשטוש, מרווחים.\n📋 שמרו הגדרות מוכנות — החלפת סגנון בלחיצה אחת לשידורים שונים.\n🌗 ערכות נושא בהירה וכהה — עוקב אחרי המערכת שלכם, או הגדירו ידנית.\n📼 תמיכה בארכיון — עובד גם עם שידור חוזר של צ'אט בשידורים מאורכבים.\n🌐 תמיכה ביותר מ-50 שפות.\n\nלא צריך חשבון. לא נאסף מידע. קוד פתוח לחלוטין.\n\nאיך להשתמש:\n1. התקינו את התוסף.\n2. פתחו שידור חי של YouTube או ארכיון עם שידור חוזר של צ'אט.\n3. עברו למסך מלא — הפעילו את המתג בפינה הימנית התחתונה.\n4. גררו, שנו גודל והתאימו אישית.\n\nשאלות, רעיונות או דיווחי באגים? נשמח לשמוע מכם ב-GitHub.\n\nקוד מקור: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nתמיכה במפתח: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 932,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 924,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "fa": {
+      "dashboardLocaleLabel": "ペルシア語 – fa",
+      "repositoryLocale": "fa",
+      "title": "YouTube Live Chat تمام‌صفحه",
+      "summary": "YouTube Live را تمام‌صفحه و همراه چت تماشا کنید. پیام و Super Chat بفرستید و نمای چت را شخصی‌سازی کنید.",
+      "description": "حالت تمام‌صفحه YouTube چت را مخفی می‌کند. این افزونه آن را برمی‌گرداند — به‌صورت یک پنجره شفاف و قابل جابه‌جایی، درست روی ویدیوی شما.\n\nویژگی‌ها:\n💬 چت در تمام‌صفحه — نظر بگذارید و Super Chat بفرستید از روی پنجره روکش.\n🖱️ بکشید، تغییر اندازه دهید، جابه‌جا کنید — پنجره چت را دقیقاً جایی که می‌خواهید قرار دهید.\n🎨 ظاهر را تنظیم کنید — پس‌زمینه، رنگ متن، اندازه فونت، تاری، فاصله‌گذاری.\n📋 ذخیره پیش‌تنظیم‌ها — با یک کلیک بین سبک‌های مختلف برای پخش‌های مختلف جابه‌جا شوید.\n🌗 پوسته روشن و تاریک — از تنظیمات سیستم پیروی می‌کند یا دستی تنظیم کنید.\n📼 پشتیبانی از آرشیو — روی پخش‌های آرشیوشده با بازپخش چت هم کار می‌کند.\n🌐 پشتیبانی از بیش از ۵۰ زبان.\n\nنیازی به حساب کاربری نیست. هیچ داده‌ای جمع‌آوری نمی‌شود. کاملاً متن‌باز.\n\nنحوه استفاده:\n1. افزونه را نصب کنید.\n2. یک پخش زنده یا آرشیو YouTube با بازپخش چت باز کنید.\n3. به تمام‌صفحه بروید — کلید تغییر وضعیت را در گوشه پایین سمت راست بزنید.\n4. بکشید، تغییر اندازه دهید و آن را به سلیقه خود تنظیم کنید.\n\nسؤال، ایده یا گزارش مشکل دارید؟ خوشحال می‌شویم نظرتان را در GitHub بشنویم.\n\nکد منبع: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nحمایت از توسعه‌دهنده: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1147,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1111,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "bn": {
+      "dashboardLocaleLabel": "ベンガル語 – bn",
+      "repositoryLocale": "bn",
+      "title": "YouTube Live Chat ফুলস্ক্রিন",
+      "summary": "YouTube Live ফুলস্ক্রিনে দেখার সময় চ্যাট পড়ুন ও বার্তা পাঠান। Super Chat পাঠান এবং ওভারলের চেহারা ও অবস্থান নিজের মতো সাজান।",
+      "description": "YouTube-এর ফুলস্ক্রিন মোডে চ্যাট লুকিয়ে যায়। এই এক্সটেনশন সেটি ফিরিয়ে আনে — আপনার ভিডিওর উপর একটি স্বচ্ছ, ড্র্যাগযোগ্য ওভারলে হিসেবে।\n\nবৈশিষ্ট্য:\n💬 ফুলস্ক্রিনে চ্যাট — ওভারলে থেকে মন্তব্য এবং Super Chat পাঠান।\n🖱️ ড্র্যাগ, রিসাইজ, রিপজিশন — চ্যাট উইন্ডোটি আপনার পছন্দমতো জায়গায় রাখুন।\n🎨 আপনার মতো করে সাজান — ব্যাকগ্রাউন্ড, টেক্সট রঙ, ফন্ট সাইজ, ব্লার, স্পেসিং।\n📋 প্রিসেট সেভ করুন — বিভিন্ন স্ট্রিমের জন্য এক ক্লিকে স্টাইল পরিবর্তন করুন।\n🌗 লাইট ও ডার্ক থিম — সিস্টেম অনুসরণ করে, অথবা ম্যানুয়ালি সেট করুন।\n📼 আর্কাইভ সাপোর্ট — আর্কাইভ করা স্ট্রিমের চ্যাট রিপ্লেতেও কাজ করে।\n🌐 ৫০+ ভাষা সমর্থিত।\n\nকোনো অ্যাকাউন্টের প্রয়োজন নেই। কোনো ডেটা সংগ্রহ করা হয় না। সম্পূর্ণ ওপেন সোর্স।\n\nব্যবহারের নিয়ম:\n1. এক্সটেনশনটি ইনস্টল করুন।\n2. YouTube লাইভ স্ট্রিম বা চ্যাট রিপ্লে সহ আর্কাইভ খুলুন।\n3. ফুলস্ক্রিনে যান — নিচে ডানদিকের সুইচটি চালু করুন।\n4. ড্র্যাগ করুন, রিসাইজ করুন এবং নিজের মতো করে নিন।\n\nপ্রশ্ন, পরামর্শ বা বাগ রিপোর্ট? GitHub-এ আমাদের জানান।\n\nসোর্স কোড: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nডেভেলপারকে সহায়তা করুন: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1077,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 733,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "pt-BR": {
+      "dashboardLocaleLabel": "ポルトガル語 (ブラジル) – pt-BR",
+      "repositoryLocale": "pt_BR",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Assista a transmissões ao vivo no YouTube em tela cheia. Converse no chat, envie Super Chats e personalize a sobreposição.",
+      "description": "O modo de tela cheia do YouTube esconde o chat. Esta extensão traz ele de volta — como uma sobreposição transparente e arrastável, direto no seu vídeo.\n\nRecursos:\n💬 Chat em tela cheia — Envie comentários e Super Chats pela sobreposição.\n🖱️ Arraste, redimensione, reposicione — Coloque a janela do chat exatamente onde quiser.\n🎨 Personalize do seu jeito — Fundo, cor do texto, tamanho da fonte, desfoque, espaçamento.\n📋 Salve predefinições — Troque entre estilos com um clique para diferentes transmissões.\n🌗 Temas claro e escuro — Segue o sistema ou defina manualmente.\n📼 Suporte a arquivos — Funciona com replay de chat em transmissões arquivadas.\n🌐 Mais de 50 idiomas suportados.\n\nSem conta. Sem coleta de dados. Totalmente open source.\n\nComo usar:\n1. Instale a extensão.\n2. Abra uma transmissão ao vivo ou arquivo do YouTube com replay de chat.\n3. Entre em tela cheia — ative o botão no canto inferior direito.\n4. Arraste, redimensione e deixe do seu jeito.\n\nPerguntas, ideias ou bugs? Adoraríamos ouvir você no GitHub.\n\nCódigo-fonte: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nApoie o desenvolvedor: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1156,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1148,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": false
+      }
+    },
+    "pt-PT": {
+      "dashboardLocaleLabel": "ポルトガル語 (ポルトガル) – pt-PT",
+      "repositoryLocale": "pt_PT",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Veja vídeos em direto no YouTube em ecrã inteiro. Escreva no chat, envie Super Chats e personalize a sobreposição.",
+      "description": "O modo de ecrã inteiro do YouTube esconde o chat. Esta extensão traz-lo de volta — como uma sobreposição transparente e arrastável, diretamente no seu vídeo.\n\nFuncionalidades:\n💬 Chat em ecrã inteiro — Envie comentários e Super Chats pela sobreposição.\n🖱️ Arraste, redimensione, reposicione — Coloque a janela do chat exatamente onde quiser.\n🎨 Personalize ao seu gosto — Fundo, cor do texto, tamanho da fonte, desfoque, espaçamento.\n📋 Guarde predefinições — Mude entre estilos com um clique para diferentes transmissões.\n🌗 Temas claro e escuro — Segue o sistema ou defina manualmente.\n📼 Suporte a arquivos — Funciona com repetição de chat em transmissões arquivadas.\n🌐 Mais de 50 idiomas suportados.\n\nSem conta. Sem recolha de dados. Totalmente open source.\n\nComo utilizar:\n1. Instale a extensão.\n2. Abra uma transmissão ao vivo ou arquivo do YouTube com repetição de chat.\n3. Entre em ecrã inteiro — ative o botão no canto inferior direito.\n4. Arraste, redimensione e personalize à sua maneira.\n\nPerguntas, ideias ou erros? Gostaríamos de ouvir a sua opinião no GitHub.\n\nCódigo-fonte: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nApoie o programador: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1201,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1193,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "pl": {
+      "dashboardLocaleLabel": "ポーランド語 – pl",
+      "repositoryLocale": "pl",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Oglądaj transmisje na żywo w YouTube na pełnym ekranie. Pisz na czacie, wysyłaj wiadomości Super Chat i dostosuj wygląd czatu.",
+      "description": "Tryb pełnoekranowy na YouTube ukrywa czat. To rozszerzenie przywraca go — jako przezroczystą, przesuwalną nakładkę bezpośrednio na wideo.\n\nFunkcje:\n💬 Czat na pełnym ekranie — Pisz komentarze i wysyłaj Super Chat bezpośrednio z nakładki.\n🖱️ Przeciągaj, zmieniaj rozmiar, przesuwaj — Ustaw okno czatu dokładnie tam, gdzie chcesz.\n🎨 Dostosuj wygląd — Tło, kolor tekstu, rozmiar czcionki, rozmycie, odstępy.\n📋 Zapisuj predefiniowane style — Przełączaj style jednym kliknięciem dla różnych transmisji.\n🌗 Jasny i ciemny motyw — Dostosowuje się do systemu lub ustaw ręcznie.\n📼 Obsługa archiwów — Działa również z odtwarzaniem czatu w zarchiwizowanych transmisjach.\n🌐 Obsługa ponad 50 języków.\n\nBez konta. Bez zbierania danych. W pełni open source.\n\nJak używać:\n1. Zainstaluj rozszerzenie.\n2. Otwórz transmisję na żywo YouTube lub archiwum z odtwarzaniem czatu.\n3. Przejdź na pełny ekran — włącz przełącznik w prawym dolnym rogu.\n4. Przeciągaj, zmieniaj rozmiar i dostosuj do swoich potrzeb.\n\nPytania, pomysły lub zgłoszenia błędów? Chętnie usłyszymy od Ciebie na GitHubie.\n\nKod źródłowy: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nWesprzyj twórcę: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1193,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1185,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "mr": {
+      "dashboardLocaleLabel": "マラーティー語 – mr",
+      "repositoryLocale": "mr",
+      "title": "YouTube लाइव्ह चॅट फुलस्क्रीन",
+      "summary": "YouTube लाइव्ह फुलस्क्रीनवर पाहताना चॅट वाचा आणि संदेश पाठवा. Super Chat पाठवा आणि ओव्हरलेचे रूप व स्थान आपल्या आवडीनुसार बदला.",
+      "description": "YouTube च्या फुलस्क्रीन मोडमध्ये चॅट लपवले जाते. हे एक्स्टेंशन ते परत आणते — तुमच्या व्हिडिओवर एक पारदर्शक, ड्रॅग करता येणारे ओव्हरले म्हणून.\n\nवैशिष्ट्ये:\n💬 फुलस्क्रीनमध्ये चॅट — ओव्हरलेमधून थेट टिप्पण्या आणि Super Chat पाठवा.\n🖱️ ड्रॅग करा, आकार बदला, स्थान बदला — चॅट विंडो तुम्हाला हवी तिथे ठेवा.\n🎨 तुमच्या पद्धतीने स्टाइल करा — पार्श्वभूमी, मजकूर रंग, फॉण्ट आकार, ब्लर, अंतर.\n📋 प्रीसेट जतन करा — वेगवेगळ्या स्ट्रीमसाठी एका क्लिकवर स्टाइल बदला.\n🌗 लाइट आणि डार्क थीम — सिस्टम सेटिंग फॉलो करते, किंवा मॅन्युअली सेट करा.\n📼 आर्काइव्ह सपोर्ट — आर्काइव्ह केलेल्या स्ट्रीममधील चॅट रिप्लेवरही काम करते.\n🌐 50+ भाषा समर्थित.\n\nकोणत्याही अकाउंटची गरज नाही. कोणताही डेटा गोळा केला जात नाही. पूर्णपणे ओपन सोर्स.\n\nकसे वापरायचे:\n1. एक्स्टेंशन इन्स्टॉल करा.\n2. YouTube लाइव्ह स्ट्रीम किंवा चॅट रिप्ले असलेला आर्काइव्ह उघडा.\n3. फुलस्क्रीनवर जा — खालच्या उजव्या कोपऱ्यातील स्विच चालू करा.\n4. ड्रॅग करा, आकार बदला आणि तुमच्या आवडीनुसार सानुकूलित करा.\n\nप्रश्न, सूचना किंवा बग रिपोर्ट? GitHub वर आम्हाला कळवा.\n\nसोर्स कोड: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nडेव्हलपरला सहाय्य करा: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1120,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 749,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ml": {
+      "dashboardLocaleLabel": "マラヤーラム語 – ml",
+      "repositoryLocale": "ml",
+      "title": "YouTube ലൈവ് ചാറ്റ് ഫുൾസ്ക്രീൻ",
+      "summary": "YouTube Live പൂർണ്ണ സ്ക്രീനിൽ ചാറ്റിനൊപ്പം കാണുക. സന്ദേശങ്ങളും Super Chat-ഉം അയച്ച് ഓവർലേ ഇഷ്ടാനുസരണം മാറ്റുക.",
+      "description": "YouTube-ന്റെ ഫുൾസ്ക്രീൻ മോഡിൽ ചാറ്റ് മറയ്ക്കപ്പെടുന്നു. ഈ എക്‌സ്‌റ്റൻഷൻ അത് തിരികെ കൊണ്ടുവരുന്നു — നിങ്ങളുടെ വീഡിയോയ്ക്ക് മുകളിൽ സുതാര്യമായ, വലിച്ചിടാവുന്ന ഓവർലേ ആയി.\n\nസവിശേഷതകൾ:\n💬 ഫുൾസ്ക്രീനിൽ ചാറ്റ് — ഓവർലേയിൽ നിന്ന് നേരിട്ട് കമന്റുകളും Super Chat-ഉം അയയ്ക്കുക.\n🖱️ വലിച്ചിടുക, വലുപ്പം മാറ്റുക, സ്ഥാനം മാറ്റുക — ചാറ്റ് വിൻഡോ നിങ്ങൾക്ക് ഇഷ്ടമുള്ള ഇടത്ത് വയ്ക്കുക.\n🎨 നിങ്ങളുടെ രീതിയിൽ സ്‌റ്റൈൽ ചെയ്യുക — പശ്ചാത്തലം, ടെക്‌സ്‌റ്റ് നിറം, ഫോണ്ട് വലുപ്പം, ബ്ലർ, സ്‌പേസിംഗ്.\n📋 പ്രീസെറ്റുകൾ സേവ് ചെയ്യുക — വ്യത്യസ്ത സ്ട്രീമുകൾക്കായി ഒരു ക്ലിക്കിൽ സ്‌റ്റൈൽ മാറ്റുക.\n🌗 ലൈറ്റ്, ഡാർക്ക് തീമുകൾ — സിസ്റ്റം ക്രമീകരണം പിന്തുടരുന്നു, അല്ലെങ്കിൽ മാനുവലായി സജ്ജീകരിക്കുക.\n📼 ആർക്കൈവ് പിന്തുണ — ആർക്കൈവ് ചെയ്ത സ്ട്രീമുകളിലെ ചാറ്റ് റീപ്ലേയിലും പ്രവർത്തിക്കും.\n🌐 50-ലധികം ഭാഷകൾ പിന്തുണയ്ക്കുന്നു.\n\nഅക്കൗണ്ട് ആവശ്യമില്ല. ഡേറ്റ ശേഖരിക്കുന്നില്ല. പൂർണ്ണമായും ഓപ്പൺ സോഴ്‌സ്.\n\nഉപയോഗിക്കേണ്ട വിധം:\n1. എക്‌സ്‌റ്റൻഷൻ ഇൻസ്‌റ്റാൾ ചെയ്യുക.\n2. YouTube ലൈവ് സ്ട്രീം അല്ലെങ്കിൽ ചാറ്റ് റീപ്ലേ ഉള്ള ആർക്കൈവ് തുറക്കുക.\n3. ഫുൾസ്ക്രീനിലേക്ക് പോകുക — താഴെ വലതുവശത്തുള്ള സ്വിച്ച് ഓൺ ചെയ്യുക.\n4. വലിച്ചിടുക, വലുപ്പം മാറ്റുക, നിങ്ങളുടേതാക്കുക.\n\nചോദ്യങ്ങൾ, നിർദ്ദേശങ്ങൾ അല്ലെങ്കിൽ ബഗ് റിപ്പോർട്ട്? GitHub-ൽ ഞങ്ങളെ അറിയിക്കുക.\n\nസോഴ്‌സ് കോഡ്: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nഡെവലപ്പറെ പിന്തുണയ്ക്കുക: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1316,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 759,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ms": {
+      "dashboardLocaleLabel": "マレー語 – ms",
+      "repositoryLocale": "ms",
+      "title": "YouTube Live Chat Skrin Penuh",
+      "summary": "Tonton YouTube Live dalam skrin penuh dengan sembang. Hantar mesej dan Super Chat, kemudian sesuaikan tindanan.",
+      "description": "Mod skrin penuh YouTube menyembunyikan sembang. Sambungan ini mengembalikannya — sebagai tindanan lutsinar yang boleh diseret terus di atas video anda.\n\nCiri-ciri:\n💬 Sembang dalam skrin penuh — Hantar komen dan Super Chat terus dari tindanan.\n🖱️ Seret, ubah saiz, atur semula — Letakkan tetingkap sembang di mana sahaja anda mahu.\n🎨 Gayakan mengikut citarasa — Latar belakang, warna teks, saiz fon, kabur, jarak.\n📋 Simpan pratetap — Tukar gaya dengan satu klik untuk strim berbeza.\n🌗 Tema cerah dan gelap — Mengikut sistem anda, atau tetapkan secara manual.\n📼 Sokongan arkib — Berfungsi dengan main semula sembang pada strim yang diarkibkan.\n🌐 50+ bahasa disokong.\n\nTiada akaun diperlukan. Tiada data dikumpulkan. Sumber terbuka sepenuhnya.\n\nCara penggunaan:\n1. Pasang sambungan.\n2. Buka strim langsung YouTube atau arkib dengan main semula sembang.\n3. Pergi ke skrin penuh — togol suis di bahagian kanan bawah.\n4. Seret, ubah saiz dan sesuaikan mengikut kehendak anda.\n\nAda soalan, idea atau ingin laporkan pepijat? Kami ingin dengar daripada anda di GitHub.\n\nKod sumber: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSokong pembangun: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1186,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1178,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "lv": {
+      "dashboardLocaleLabel": "ラトビア語 – lv",
+      "repositoryLocale": "lv",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Skatieties YouTube Live pilnekrānā ar redzamu čatu. Rakstiet čatā, sūtiet Super Chat ziņojumus un pielāgojiet pārklājumu.",
+      "description": "YouTube pilnekrāna režīms paslēpj čatu. Šis paplašinājums to atgriež — kā caurspīdīgu, pārvelkamu pārklājumu tieši uz jūsu video.\n\nFunkcijas:\n💬 Čats pilnekrānā — Rakstiet komentārus un sūtiet Super Chat tieši no pārklājuma.\n🖱️ Velciet, mainiet izmēru, pārvietojiet — Novietojiet čata logu tieši tur, kur vēlaties.\n🎨 Pielāgojiet izskatu — Fons, teksta krāsa, fonta lielums, izplūdums, atstarpes.\n📋 Saglabājiet iestatījumus — Pārslēdziet stilus ar vienu klikšķi dažādām translācijām.\n🌗 Gaišs un tumšs motīvs — Seko sistēmas iestatījumam vai iestatiet manuāli.\n📼 Arhīvu atbalsts — Darbojas arī ar čata atskaņošanu arhivētās translācijās.\n🌐 Vairāk nekā 50 atbalstītas valodas.\n\nBez konta. Bez datu vākšanas. Pilnībā atvērtā pirmkoda.\n\nKā lietot:\n1. Instalējiet paplašinājumu.\n2. Atveriet YouTube tiešraidi vai arhīvu ar čata atskaņošanu.\n3. Pārslēdzieties uz pilnekrānu — ieslēdziet slēdzi apakšējā labajā stūrī.\n4. Velciet, mainiet izmēru un pielāgojiet pēc savām vēlmēm.\n\nJautājumi, idejas vai kļūdu ziņojumi? Labprāt uzklausīsim jūs GitHub platformā.\n\nPirmkods: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nAtbalstiet izstrādātāju: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1181,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1173,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "lt": {
+      "dashboardLocaleLabel": "リトアニア語 – lt",
+      "repositoryLocale": "lt",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Žiūrėkite YouTube Live visame ekrane ir matykite pokalbį. Rašykite pokalbyje, siųskite „Super Chat“ žinutes ir keiskite jo stilių.",
+      "description": "YouTube viso ekrano režimas paslepia pokalbį. Šis plėtinys jį grąžina — kaip skaidrų, vilkiamą perdangą tiesiai ant vaizdo įrašo.\n\nFunkcijos:\n💬 Pokalbis viso ekrano režimu — Rašykite komentarus ir siųskite Super Chat tiesiai iš perdangos.\n🖱️ Vilkite, keiskite dydį, perkelkite — Pokalbių langą galite dėti ten, kur norite.\n🎨 Pritaikykite stilių — Fonas, teksto spalva, šrifto dydis, suliejimas, tarpai.\n📋 Išsaugokite nustatymus — Vienu paspaudimu perjunkite stilius skirtingoms transliacijom.\n🌗 Šviesi ir tamsi tema — Prisitaiko prie sistemos arba nustatykite rankiniu būdu.\n📼 Archyvų palaikymas — Veikia ir su pokalbių kartojimais archyvuotose transliacijose.\n🌐 Palaikomos daugiau nei 50 kalbų.\n\nBe paskyros. Be duomenų rinkimo. Visiškai atviro kodo.\n\nKaip naudoti:\n1. Įdiekite plėtinį.\n2. Atidarykite YouTube tiesioginę transliaciją arba archyvą su pokalbių kartojimo funkcija.\n3. Įjunkite viso ekrano režimą — paspauskite jungiklį apatiniame dešiniajame kampe.\n4. Vilkite, keiskite dydį ir pritaikykite pagal savo poreikius.\n\nKlausimai, idėjos ar pranešimai apie klaidas? Mielai išgirsime jus GitHub platformoje.\n\nŠaltinio kodas: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nPalaikykite kūrėją: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1248,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1240,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ro": {
+      "dashboardLocaleLabel": "ルーマニア語 – ro",
+      "repositoryLocale": "ro",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Urmărește transmisiuni live pe YouTube pe ecran complet. Scrie în chat, trimite mesaje Super Chat și personalizează suprapunerea.",
+      "description": "Modul ecran complet al YouTube ascunde chatul. Această extensie îl aduce înapoi — ca o suprapunere transparentă și mobilă, direct pe videoclipul tău.\n\nFuncții:\n💬 Chat pe ecran complet — Trimite comentarii și Super Chats din suprapunere.\n🖱️ Trage, redimensionează, repozitionează — Pune fereastra de chat exact unde vrei.\n🎨 Personalizează-l cum dorești — Fundal, culoare text, dimensiune font, blur, spațiere.\n📋 Salvează presetări — Comută între stiluri cu un singur clic pentru diferite transmisiuni.\n🌗 Teme deschise și întunecate — Urmează sistemul sau setează manual.\n📼 Suport pentru arhive — Funcționează și cu redarea chatului pe transmisiunile arhivate.\n🌐 Peste 50 de limbi acceptate.\n\nFără cont. Fără colectare de date. Complet open source.\n\nCum se folosește:\n1. Instalează extensia.\n2. Deschide o transmisiune live sau o arhivă YouTube cu redare chat.\n3. Treci pe ecran complet — activează comutatorul din colțul din dreapta jos.\n4. Trage, redimensionează și personalizează.\n\nÎntrebări, idei sau probleme? Ne-ar plăcea să auzim de la tine pe GitHub.\n\nCod sursă: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSusține dezvoltatorul: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1187,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1179,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ru": {
+      "dashboardLocaleLabel": "ロシア語 – ru",
+      "repositoryLocale": "ru",
+      "title": "YouTube Live Chat на весь экран",
+      "summary": "Смотрите YouTube Live на весь экран вместе с чатом. Пишите в чат, отправляйте Super Chat и настраивайте оверлей.",
+      "description": "Полноэкранный режим YouTube скрывает чат. Это расширение возвращает его — как прозрачную, перетаскиваемую накладку прямо на видео.\n\nВозможности:\n💬 Чат в полноэкранном режиме — Пишите комментарии и отправляйте Super Chats через оверлей.\n🖱️ Перетаскивайте, изменяйте размер, перемещайте — Расположите окно чата именно там, где вам удобно.\n🎨 Настройте по-своему — Фон, цвет текста, размер шрифта, размытие, отступы.\n📋 Сохраняйте пресеты — Переключайтесь между стилями одним кликом для разных трансляций.\n🌗 Светлая и тёмная темы — Следует за системой или задайте вручную.\n📼 Поддержка архивов — Работает с воспроизведением чата на архивных трансляциях.\n🌐 Поддержка более 50 языков.\n\nУчётная запись не нужна. Данные не собираются. Полностью открытый исходный код.\n\nКак использовать:\n1. Установите расширение.\n2. Откройте прямую трансляцию или архив YouTube с воспроизведением чата.\n3. Включите полноэкранный режим — нажмите переключатель в правом нижнем углу.\n4. Перетаскивайте, изменяйте размер и настраивайте под себя.\n\nВопросы, идеи или отчёты об ошибках? Будем рады вашей обратной связи на GitHub.\n\nИсходный код: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nПоддержать разработчика: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1231,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1223,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "en-US": {
+      "dashboardLocaleLabel": "英語 (アメリカ合衆国) – en-US",
+      "repositoryLocale": "en_US",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Watch YouTube live streams in full screen without losing chat. Post messages, send Super Chats, and customize the overlay.",
+      "description": "YouTube's fullscreen mode hides the chat. This extension brings it back — as a transparent, draggable overlay right on your video.\n\nFeatures:\n💬 Chat in fullscreen — Post comments and Super Chats directly from the overlay.\n🖱️ Drag, resize, reposition — Put the chat window exactly where you want it.\n🎨 Style it your way — Background, text color, font size, blur, spacing.\n📋 Save presets — One-click switch between styles for different streams.\n🌗 Light and dark themes — Follows your system, or set it manually.\n📼 Archive support — Works with chat replay on archived streams too.\n🌐 50+ languages supported.\n\nNo account required. No data collected. Fully open source.\n\nHow to use:\n1. Install the extension.\n2. Open a YouTube live stream or archive with chat replay.\n3. Go fullscreen — flip the switch at the bottom-right.\n4. Drag, resize, and make it yours.\n\nQuestions, ideas, or bug reports? We'd love to hear from you on GitHub.\n\nSource code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSupport the developer: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1060,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1052,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "en-GB": {
+      "dashboardLocaleLabel": "英語 (イギリス) – en-GB",
+      "repositoryLocale": "en_GB",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Watch YouTube Live in full screen without losing the chat. Post messages, send Super Chats and customise the overlay.",
+      "description": "YouTube's fullscreen mode hides the chat. This extension brings it back — as a transparent, draggable overlay right on your video.\n\nFeatures:\n💬 Chat in fullscreen — Post comments and Super Chats directly from the overlay.\n🖱️ Drag, resize, reposition — Put the chat window exactly where you want it.\n🎨 Style it your way — Background, text colour, font size, blur, spacing.\n📋 Save presets — One-click switch between styles for different streams.\n🌗 Light and dark themes — Follows your system, or set it manually.\n📼 Archive support — Works with chat replay on archived streams too.\n🌐 50+ languages supported.\n\nNo account required. No data collected. Fully open source.\n\nHow to use:\n1. Install the extension.\n2. Open a YouTube live stream or archive with chat replay.\n3. Go fullscreen — flip the switch at the bottom-right.\n4. Drag, resize, and make it yours.\n\nQuestions, ideas, or bug reports? We'd love to hear from you on GitHub.\n\nSource code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSupport the developer: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1061,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1053,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "en-AU": {
+      "dashboardLocaleLabel": "英語 (オーストラリア) – en-AU",
+      "repositoryLocale": "en_AU",
+      "title": "YouTube Live Chat Fullscreen",
+      "summary": "Watch YouTube Live in full screen with chat. Post comments, send Super Chats and customise the overlay to suit you.",
+      "description": "YouTube's fullscreen mode hides the chat. This extension brings it back — as a transparent, draggable overlay right on your video.\n\nFeatures:\n💬 Chat in fullscreen — Post comments and Super Chats directly from the overlay.\n🖱️ Drag, resize, reposition — Put the chat window exactly where you want it.\n🎨 Style it your way — Background, text colour, font size, blur, spacing.\n📋 Save presets — One-click switch between styles for different streams.\n🌗 Light and dark themes — Follows your system, or set it manually.\n📼 Archive support — Works with chat replay on archived streams too.\n🌐 50+ languages supported.\n\nNo account required. No data collected. Fully open source.\n\nHow to use:\n1. Install the extension.\n2. Open a YouTube live stream or archive with chat replay.\n3. Go fullscreen — flip the switch at the bottom-right.\n4. Drag, resize, and make it yours.\n\nQuestions, ideas, or bug reports? We'd love to hear from you on GitHub.\n\nSource code: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\nSupport the developer: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 1061,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 1053,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ko": {
+      "dashboardLocaleLabel": "韓国語 – ko",
+      "repositoryLocale": "ko",
+      "title": "YouTube 라이브 채팅 전체화면",
+      "summary": "YouTube 라이브를 전체 화면으로 시청하면서 채팅을 보고 메시지를 보내세요. 슈퍼챗 전송과 오버레이 모양·위치 조정도 가능합니다.",
+      "description": "YouTube의 전체화면 모드에서는 채팅이 사라집니다. 이 확장 프로그램이 채팅을 되살려 줍니다 — 영상 위에 투명하고 드래그 가능한 오버레이로 표시합니다.\n\n기능:\n💬 전체화면에서 채팅 — 오버레이에서 바로 댓글과 Super Chat을 보낼 수 있습니다.\n🖱️ 드래그, 크기 조절, 위치 변경 — 채팅 창을 원하는 곳에 배치하세요.\n🎨 나만의 스타일 — 배경, 글자 색, 글꼴 크기, 블러, 간격을 자유롭게 설정.\n📋 프리셋 저장 — 스트림에 맞는 스타일을 원클릭으로 전환.\n🌗 라이트 & 다크 테마 — 시스템 설정에 따르거나 수동으로 선택.\n📼 아카이브 지원 — 다시보기의 채팅 리플레이에서도 작동합니다.\n🌐 50개 이상의 언어 지원.\n\n계정 불필요. 데이터 수집 없음. 완전한 오픈 소스.\n\n사용 방법:\n1. 확장 프로그램을 설치합니다.\n2. YouTube 라이브 스트림 또는 채팅 리플레이가 있는 아카이브를 엽니다.\n3. 전체화면으로 전환 — 오른쪽 하단의 스위치를 켜세요.\n4. 드래그하고, 크기를 조절하고, 나만의 채팅 환경을 만드세요.\n\n질문, 아이디어, 버그 제보가 있으신가요? GitHub에서 알려주세요.\n\n소스 코드: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\n개발자 후원: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 683,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 675,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "zh-TW": {
+      "dashboardLocaleLabel": "中国語 (台湾) – zh-TW",
+      "repositoryLocale": "zh_TW",
+      "title": "YouTube 直播全螢幕聊天室",
+      "summary": "全螢幕觀看 YouTube 直播時也能查看及傳送聊天訊息、傳送 Super Chat，並自由調整聊天室浮動視窗的樣式與位置。",
+      "description": "YouTube 全螢幕模式下聊天室會消失。這個擴充功能把它帶回來 — 以透明、可拖曳的覆蓋層直接顯示在影片上。\n\n功能：\n💬 全螢幕聊天 — 直接從覆蓋層發送留言和 Super Chat。\n🖱️ 拖曳、調整大小、重新定位 — 將聊天視窗放在你想要的位置。\n🎨 自由自訂樣式 — 背景、文字顏色、字體大小、模糊、間距。\n📋 儲存預設 — 一鍵切換不同直播的樣式方案。\n🌗 淺色和深色主題 — 跟隨系統設定，或手動切換。\n📼 支援錄影回放 — 也適用於已封存直播的聊天回放。\n🌐 支援 50+ 種語言。\n\n不需帳號。不收集資料。完全開源。\n\n使用方式：\n1. 安裝擴充功能。\n2. 開啟 YouTube 直播或具有聊天回放的已封存影片。\n3. 進入全螢幕 — 點擊右下角的開關。\n4. 拖曳、調整大小，按你的方式設定。\n\n有問題、建議或發現了 bug？歡迎在 GitHub 上告訴我們。\n\n原始碼: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\n支持開發者: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 500,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 492,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "zh-CN": {
+      "dashboardLocaleLabel": "中国語 (中国) – zh-CN",
+      "repositoryLocale": "zh_CN",
+      "title": "YouTube 直播全屏聊天",
+      "summary": "全屏观看 YouTube 直播时也能查看和发送聊天消息、发送 Super Chat，并自由调整聊天浮层的样式和位置。",
+      "description": "YouTube 全屏模式下聊天会消失。这个扩展把它带回来 — 以透明、可拖动的覆盖层直接显示在视频上。\n\n功能：\n💬 全屏聊天 — 直接从覆盖层发送评论和 Super Chat。\n🖱️ 拖动、调整大小、重新定位 — 将聊天窗口放在你想要的位置。\n🎨 自由定制样式 — 背景、文字颜色、字体大小、模糊、间距。\n📋 保存预设 — 一键切换不同直播的样式方案。\n🌗 浅色和深色主题 — 跟随系统设置，或手动切换。\n📼 支持录播 — 也适用于录播视频的聊天回放。\n🌐 支持 50+ 种语言。\n\n无需账号。不收集数据。完全开源。\n\n使用方法：\n1. 安装扩展程序。\n2. 打开 YouTube 直播或带有聊天回放的录播视频。\n3. 进入全屏 — 点击右下角的开关。\n4. 拖动、调整大小，按你的方式设置。\n\n有问题、建议或发现了 bug？欢迎在 GitHub 上告诉我们。\n\n源代码: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\n支持开发者: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 490,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 482,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    },
+    "ja": {
+      "dashboardLocaleLabel": "日本語 – ja",
+      "repositoryLocale": "ja",
+      "title": "YouTubeライブチャットフルスクリーン",
+      "summary": "YouTube Liveを全画面で視聴しながらチャットを表示・投稿。スーパーチャットの送信や、オーバーレイの見た目・配置の調整もできます。",
+      "description": "YouTubeのフルスクリーンではチャットが消えてしまう。この拡張機能がそれを解決 — チャットを透過オーバーレイとして動画の上に表示します。\n\n機能:\n💬 フルスクリーンでチャット — コメントもスパチャもオーバーレイから直接投稿。\n🖱️ ドラッグ・リサイズ・移動 — チャットの位置とサイズを自由に配置。\n🎨 スタイル自由自在 — 背景色・文字色・フォントサイズ・ぼかし・余白。\n📋 プリセット保存 — 配信に合わせたスタイルをワンクリックで切り替え。\n🌗 ライト・ダークテーマ — システム設定に自動追従、手動切り替えも可能。\n📼 アーカイブ対応 — チャットリプレイ付きアーカイブもそのまま利用可能。\n🌐 50以上の言語に対応。\n\nアカウント不要。データ収集なし。完全オープンソース。\n\n使い方:\n1. 拡張機能をインストール。\n2. YouTubeのライブ配信またはアーカイブを開く。\n3. フルスクリーンにして、右下のスイッチをオン。\n4. あとは自由にドラッグ・リサイズ・カスタマイズ。\n\n質問・アイデア・バグ報告 — GitHubでお気軽にどうぞ。\n\nソースコード: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen\n開発を支援する: https://ko-fi.com/daichan132",
+      "dashboardDescriptionCharacterCount": 596,
+      "localizedPromoVideo": null,
+      "localizedScreenshotCount": 0,
+      "evidence": {
+        "accessibilityDescriptionCharacters": 588,
+        "accessibilityDescriptionIsPrefix": true,
+        "repositoryDescriptionMatchesDashboard": true
+      }
+    }
+  }
+}

@@ -5,7 +5,9 @@
         "preset": "Předvolby",
         "setting": "Nastavení",
         "undo": "Vrátit změnu stylu",
-        "redo": "Znovu provést změnu stylu"
+        "redo": "Znovu provést změnu stylu",
+        "undone": "Změna stylu byla vrácena",
+        "redone": "Změna stylu byla znovu provedena"
       },
       "alwaysOnDisplay": "Zobrazit chat při nečinnosti",
       "chatOnlyDisplay": "Zobrazit pouze chat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Barva pozadí",
       "fontColor": "Barva textu",
       "fontFamily": "Písmo",
+      "fontFamilyDefault": "Výchozí",
+      "fontSearch": "Hledat písma",
+      "fontNotFound": "Žádné písmo neodpovídá hledání",
       "fontSize": "Velikost písma",
       "blur": "Rozostření",
       "space": "Rozestup",
       "footer": {
-        "donate": "Přispět",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Přispět"
       },
       "theme": "Motiv",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Tmavý"
       },
       "membershipNameColor": "Barva jmen členů",
-      "defaultColor": "Výchozí",
       "resetToDefaultColor": "Vrátit výchozí barvu",
       "group": {
         "display": "Zobrazení",
         "colors": "Barvy",
         "text": "Text",
         "elements": "Viditelné prvky"
-      },
-      "requiresAlwaysOn": "Pro použití této možnosti zapněte „Vždy zobrazovat chat“"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilita",
+      "healthy": "Funguje správně",
+      "degraded": "Běží v režimu kompatibility",
+      "failed": "Zjištěn problém s kompatibilitou",
+      "waiting": "Načítání diagnostických údajů",
+      "lastRecovery": "Poslední automatická obnova",
+      "restart": "Znovu načíst překryv chatu",
+      "copy": "Kopírovat diagnostickou zprávu",
+      "copied": "Diagnostická zpráva byla zkopírována",
+      "copyFailed": "Diagnostickou zprávu se nepodařilo zkopírovat"
     },
     "aria": {
       "dragToMove": "Přetažením přesunout",
@@ -46,13 +59,17 @@
       "openSettings": "Otevřít nastavení",
       "toggleLiveChat": "Zobrazit nebo skrýt živý chat",
       "close": "Zavřít",
-      "reorderPreset": "Změnit pořadí předvolby",
+      "dragHandle": "úchyt pro přetažení",
+      "settingsFrameTitle": "Nastavení chatu na celé obrazovce",
+      "reorderPreset": "Změnit pořadí: {name}",
       "presetName": "Název předvolby",
-      "applyPreset": "Použít předvolbu",
-      "deletePreset": "Smazat předvolbu",
+      "applyPreset": "Použít {name}",
+      "deletePreset": "Smazat {name}",
+      "presetMoved": "{name} přesunuto na pozici {position}",
       "colorPicker": "Výběr barvy",
       "loading": "Načítání",
-      "selectLanguage": "Vybrat jazyk"
+      "selectLanguage": "Vybrat jazyk",
+      "fontsFound": "Počet nalezených písem: {count}"
     },
     "preset": {
       "addMessage": "Uložit aktuální nastavení",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat na celou obrazovku",
     "links": "Odkazy",
     "donate": "Přispět",
+    "donateAction": "Podpořit na Ko-fi",
     "theme": "Motiv",
     "dataTransfer": "Záloha",
     "export": "Exportovat",
@@ -82,5 +100,5 @@
     "importError": "Soubor s nastavením se nepodařilo importovat."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Sledujte živé přenosy na YouTube na celé obrazovce. Pište do chatu, posílejte zprávy Super Chat a upravte si vzhled chatu."
+  "extensionDescription": "Na celé obrazovce zmizí chat? Překryv drží živý chat z YouTube nad videem: čtěte zprávy, odpovídejte a posílejte Super Chaty."
 }

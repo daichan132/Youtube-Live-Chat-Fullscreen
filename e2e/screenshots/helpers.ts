@@ -293,8 +293,8 @@ export const isChatOnlyChromeHidden = (): boolean => {
 
 export const getOverlayCenter = () => {
   const host = document.getElementById('shadow-root-live-chat')
-  const app = host?.shadowRoot?.querySelector('div[role="application"]') as HTMLElement | null
-  const resizable = app?.querySelector(':scope > [data-ylc-resizable]') as HTMLElement | null
+  // data-ylc-resizable sits on the role="application" element itself, not on a child of it.
+  const resizable = host?.shadowRoot?.querySelector('[data-ylc-resizable]') as HTMLElement | null
   if (!resizable) return null
 
   const box = resizable.getBoundingClientRect()
@@ -566,8 +566,10 @@ export const repositionOverlay = async (
     ({ coords, sz }) => {
       const host = document.getElementById('shadow-root-live-chat')
       const root = host?.shadowRoot ?? null
-      const app = root?.querySelector('div[role="application"]') as HTMLElement | null
-      const resizable = app?.querySelector(':scope > div.absolute') as HTMLElement | null
+      // data-ylc-resizable is the documented external hook and sits on the frame element
+      // itself; querying for a child of it silently matched nothing and left every capture
+      // composed at the default geometry instead of the one the spec asks for.
+      const resizable = root?.querySelector('[data-ylc-resizable]') as HTMLElement | null
       if (!resizable) return false
       resizable.style.left = `${coords.x}px`
       resizable.style.top = `${coords.y}px`

@@ -5,7 +5,9 @@
         "preset": "প্রিসেট",
         "setting": "সেটিংস",
         "undo": "স্টাইলের পরিবর্তন পূর্বাবস্থায় ফেরান",
-        "redo": "স্টাইলের পরিবর্তন আবার করুন"
+        "redo": "স্টাইলের পরিবর্তন আবার করুন",
+        "undone": "স্টাইলের পরিবর্তন পূর্বাবস্থায় ফেরানো হয়েছে",
+        "redone": "স্টাইলের পরিবর্তন আবার করা হয়েছে"
       },
       "alwaysOnDisplay": "নিষ্ক্রিয় থাকলে চ্যাট দেখান",
       "chatOnlyDisplay": "শুধু চ্যাট দেখান",
@@ -15,13 +17,14 @@
       "backgroundColor": "পটভূমির রঙ",
       "fontColor": "ফন্টের রঙ",
       "fontFamily": "ফন্ট ফ্যামিলি",
+      "fontFamilyDefault": "ডিফল্ট",
+      "fontSearch": "ফন্ট খুঁজুন",
+      "fontNotFound": "আপনার খোঁজার সঙ্গে মেলে এমন কোনো ফন্ট নেই",
       "fontSize": "ফন্টের আকার",
       "blur": "ঝাপসা",
       "space": "ব্যবধান",
       "footer": {
-        "donate": "দান করুন",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "দান করুন"
       },
       "theme": "থিম",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "গাঢ়"
       },
       "membershipNameColor": "সদস্যের নামের রং",
-      "defaultColor": "ডিফল্ট",
       "resetToDefaultColor": "ডিফল্ট রঙে ফিরুন",
       "group": {
         "display": "প্রদর্শন",
         "colors": "রং",
         "text": "টেক্সট",
         "elements": "চ্যাটের উপাদান"
-      },
-      "requiresAlwaysOn": "এটি কনফিগার করতে \"সবসময় দেখান\" চালু করুন"
+      }
+    },
+    "diagnostics": {
+      "legend": "সামঞ্জস্য",
+      "healthy": "স্বাভাবিক",
+      "degraded": "বিকল্প সামঞ্জস্য মোডে চলছে",
+      "failed": "সামঞ্জস্যের সমস্যা শনাক্ত হয়েছে",
+      "waiting": "ডায়াগনস্টিক তথ্য সংগ্রহ করা হচ্ছে",
+      "lastRecovery": "শেষ স্বয়ংক্রিয় পুনরুদ্ধার",
+      "restart": "চ্যাট আবার লোড করুন",
+      "copy": "ডায়াগনস্টিক রিপোর্ট কপি করুন",
+      "copied": "ডায়াগনস্টিক রিপোর্ট কপি করা হয়েছে",
+      "copyFailed": "ডায়াগনস্টিক রিপোর্ট কপি করা যায়নি"
     },
     "aria": {
       "dragToMove": "সরাতে টেনে আনুন",
@@ -46,13 +59,17 @@
       "openSettings": "সেটিংস খুলুন",
       "toggleLiveChat": "লাইভ চ্যাট টগল করুন",
       "close": "বন্ধ করুন",
-      "reorderPreset": "প্রিসেট পুনর্বিন্যাস করুন",
+      "dragHandle": "ড্র্যাগ হ্যান্ডেল",
+      "settingsFrameTitle": "ফুলস্ক্রিন চ্যাট সেটিংস",
+      "reorderPreset": "{name} পুনর্বিন্যাস করুন",
       "presetName": "প্রিসেটের নাম",
-      "applyPreset": "প্রিসেট প্রয়োগ করুন",
-      "deletePreset": "প্রিসেট মুছুন",
+      "applyPreset": "{name} প্রয়োগ করুন",
+      "deletePreset": "{name} মুছুন",
+      "presetMoved": "{name} {position} নম্বর অবস্থানে সরানো হয়েছে",
       "colorPicker": "রঙ নির্বাচন",
       "loading": "লোড হচ্ছে",
-      "selectLanguage": "ভাষা নির্বাচন করুন"
+      "selectLanguage": "ভাষা নির্বাচন করুন",
+      "fontsFound": "{count}টি ফন্ট পাওয়া গেছে"
     },
     "preset": {
       "addMessage": "বর্তমান সেটিংস সংরক্ষণ করুন",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
     "links": "লিঙ্ক",
     "donate": "দান করুন",
+    "donateAction": "Ko-fi-তে সহায়তা করুন",
     "theme": "থিম",
     "dataTransfer": "ব্যাকআপ",
     "export": "রপ্তানি",
@@ -82,5 +100,5 @@
     "importError": "সেটিংস ফাইল ইম্পোর্ট করা যায়নি।"
   },
   "extensionName": "YouTube Live Chat ফুলস্ক্রিন",
-  "extensionDescription": "YouTube Live ফুলস্ক্রিনে দেখার সময় চ্যাট পড়ুন ও বার্তা পাঠান। Super Chat পাঠান এবং ওভারলের চেহারা ও অবস্থান নিজের মতো সাজান।"
+  "extensionDescription": "ফুলস্ক্রিনে চ্যাট উধাও? এই ওভারলে YouTube-এর লাইভ চ্যাট ভিডিওর উপরে আনে — মেসেজ পড়ুন, উত্তর দিন, Super Chat পাঠান।"
 }

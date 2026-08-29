@@ -5,7 +5,9 @@
         "preset": "Šablonas",
         "setting": "Nustatymai",
         "undo": "Anuliuoti stiliaus pakeitimą",
-        "redo": "Pakartoti stiliaus pakeitimą"
+        "redo": "Pakartoti stiliaus pakeitimą",
+        "undone": "Stiliaus pakeitimas anuliuotas",
+        "redone": "Stiliaus pakeitimas pakartotas"
       },
       "alwaysOnDisplay": "Rodyti pokalbį neaktyvumo metu",
       "chatOnlyDisplay": "Rodyti tik pokalbį",
@@ -15,13 +17,14 @@
       "backgroundColor": "Fono spalva",
       "fontColor": "Teksto spalva",
       "fontFamily": "Šriftas",
+      "fontFamilyDefault": "Numatytasis",
+      "fontSearch": "Ieškoti šriftų",
+      "fontNotFound": "Atitinkančių šriftų nerasta",
       "fontSize": "Šrifto dydis",
       "blur": "Suliejimas",
       "space": "Tarpai",
       "footer": {
-        "donate": "Paaukoti",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Paaukoti"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Tamsi"
       },
       "membershipNameColor": "Narių vardų spalva",
-      "defaultColor": "Numatytoji",
       "resetToDefaultColor": "Atkurti numatytąją spalvą",
       "group": {
         "display": "Matomumas",
         "colors": "Spalvos",
         "text": "Tekstas",
         "elements": "Pokalbio elementai"
-      },
-      "requiresAlwaysOn": "Norėdami pakeisti šį nustatymą, įjunkite „Visada rodyti pokalbį“"
+      }
+    },
+    "diagnostics": {
+      "legend": "Suderinamumas",
+      "healthy": "Veikia tinkamai",
+      "degraded": "Naudojamas atsarginis suderinamumo režimas",
+      "failed": "Aptikta suderinamumo problema",
+      "waiting": "Renkami diagnostikos duomenys",
+      "lastRecovery": "Paskutinis automatinis atkūrimas",
+      "restart": "Iš naujo įkelti pokalbį",
+      "copy": "Kopijuoti diagnostikos ataskaitą",
+      "copied": "Diagnostikos ataskaita nukopijuota",
+      "copyFailed": "Nepavyko nukopijuoti diagnostikos ataskaitos"
     },
     "aria": {
       "dragToMove": "Vilkite norėdami perkelti",
@@ -46,13 +59,17 @@
       "openSettings": "Atidaryti nustatymus",
       "toggleLiveChat": "Rodyti arba slėpti tiesioginį pokalbį",
       "close": "Uždaryti",
-      "reorderPreset": "Perkelti šabloną",
+      "dragHandle": "vilkimo rankenėlė",
+      "settingsFrameTitle": "Viso ekrano pokalbio nustatymai",
+      "reorderPreset": "Perkelti šabloną „{name}“",
       "presetName": "Šablono pavadinimas",
-      "applyPreset": "Taikyti šabloną",
-      "deletePreset": "Ištrinti šabloną",
+      "applyPreset": "Taikyti šabloną „{name}“",
+      "deletePreset": "Ištrinti šabloną „{name}“",
+      "presetMoved": "Šablonas „{name}“ perkeltas į {position} vietą",
       "colorPicker": "Spalvų parinkiklis",
       "loading": "Įkeliama",
-      "selectLanguage": "Pasirinkti kalbą"
+      "selectLanguage": "Pasirinkti kalbą",
+      "fontsFound": "Rasta šriftų: {count}"
     },
     "preset": {
       "addMessage": "Išsaugoti dabartinius nustatymus",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Pokalbis visame ekrane",
     "links": "Nuorodos",
     "donate": "Paaukoti",
+    "donateAction": "Paremti per „Ko-fi“",
     "theme": "Tema",
     "dataTransfer": "Atsarginė kopija",
     "export": "Eksportuoti",
@@ -82,5 +100,5 @@
     "importError": "Nepavyko importuoti nustatymų failo."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Žiūrėkite YouTube Live visame ekrane ir matykite pokalbį. Rašykite pokalbyje, siųskite „Super Chat“ žinutes ir keiskite jo stilių."
+  "extensionDescription": "Visame ekrane pokalbis dingsta? „YouTube“ tiesioginio pokalbio perdanga ant vaizdo: skaitykite, atsakykite, siųskite „Super Chat“."
 }

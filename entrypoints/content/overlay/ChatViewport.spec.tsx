@@ -1,3 +1,5 @@
+import { render } from '@testing-library/react'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -35,6 +37,22 @@ describe('ChatViewport', () => {
 
     expect(container.querySelector<HTMLElement>('[data-ylc-chat-background]')?.style.backgroundColor).toBe('rgba(10, 20, 30, 0.4)')
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual(DEFAULT_CHAT_PROFILE.appearance.backgroundColor)
+  })
+
+  it('announces the wait as live-region content that outlives the spinner', () => {
+    const wrapper = ({ children }: { children: React.ReactNode }) => <Provider store={store}>{children}</Provider>
+    const { container, rerender } = render(<ChatViewport loading={false} visible={false} />, { wrapper })
+    const region = container.querySelector('output')
+
+    expect(region).not.toBeNull()
+    expect(region?.textContent).toBe('')
+    expect(region?.getAttribute('aria-label')).toBeNull()
+
+    rerender(<ChatViewport loading visible={false} />)
+
+    expect(container.querySelector('output')).toBe(region)
+    expect(region?.textContent).toBe('content.aria.loading')
+    expect(container.querySelector('[data-ylc-loading-overlay]')?.getAttribute('aria-hidden')).toBe('true')
   })
 
   it('applies configured blur only to the bounded chat background layer', () => {

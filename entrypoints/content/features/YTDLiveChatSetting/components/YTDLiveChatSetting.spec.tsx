@@ -76,7 +76,7 @@ describe('YTDLiveChatSetting history controls', () => {
     fireEvent.click(undoButton)
     expect(store.get(chatSettingsStateAtom).profile.appearance.blur).toBe(originalBlur)
     expect(redoButton).not.toBeDisabled()
-    expect(getByRole('status')).toHaveTextContent('content.setting.header.undo')
+    expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
   })
 
   it('refreshes the live-region node for consecutive undo announcements', () => {
@@ -91,11 +91,11 @@ describe('YTDLiveChatSetting history controls', () => {
 
     fireEvent.click(undoButton)
     const firstAnnouncement = getByRole('status')
-    expect(firstAnnouncement).toHaveTextContent('content.setting.header.undo')
+    expect(firstAnnouncement).toHaveTextContent(/^content\.setting\.header\.undone$/)
 
     fireEvent.click(undoButton)
     expect(getByRole('status')).not.toBe(firstAnnouncement)
-    expect(getByRole('status')).toHaveTextContent('content.setting.header.undo')
+    expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
   })
 
   it('consumes recognized shortcuts inside the panel even when history is empty', () => {

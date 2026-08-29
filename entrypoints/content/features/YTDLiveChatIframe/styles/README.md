@@ -17,7 +17,7 @@ These styles are injected into YouTube's live chat iframe document. The module o
 
 ## Surface coverage
 
-Keep stateful surfaces on the component boundary that replaces the chat list. The shared frame and message list stay transparent. The React background layer behind the iframe owns the configured video blur so it can sample the parent-page video without blurring chat text. The iframe body must not become a backdrop root, otherwise nested menus cannot blur chat content behind them. Menu, composer, and monetization surfaces use a low-alpha tint derived from the configured background color so stacked surfaces do not become nearly opaque, and apply the configured blur to their own outer backdrop. The monetization loading panel clears only YouTube's opaque fill; the React background continues to own the configured color, opacity, and video blur.
+Keep stateful surfaces on the component boundary that replaces the chat list. The shared frame and message list stay transparent, and body transparency is owned by `frame.css` — a borrowed iframe must not gain an inline background that then needs restoring. Blur is applied in two places: the React background layer behind the iframe samples the parent-page video, and the iframe body carries its own `backdrop-filter` so surfaces inside the document blur what is behind them. Menu, composer, and monetization surfaces use a low-alpha tint derived from the configured background color so stacked surfaces do not become nearly opaque, and apply the configured blur to their own outer backdrop. The monetization loading panel clears only YouTube's opaque fill; the React background continues to own the configured color and opacity.
 
 | UI state | Surface owner | Boundary |
 |---|---|---|
@@ -35,7 +35,7 @@ Do not theme `yt-live-chat-message-renderer` globally. YouTube also uses it for 
 - Do not use CSS `@import`; the final string is installed in the iframe document and must be self-contained.
 - Do not add cascade layers without measuring them against YouTube's unlayered author styles.
 - Keep direct `display: none` limited to YouTube's native close control. Hiding an iframe or its ancestor this way can throttle chat updates.
-- The full-panel video blur belongs to the React background layer behind the iframe. `changeYLCBlur()` publishes the same blur through a document variable for nested iframe surfaces while keeping the iframe body and chat text unfiltered.
+- Blur is applied as `backdrop-filter`, never as `filter` on the iframe host, which would blur the chat text itself. `compileStylePatch` writes the configured value to the iframe body and publishes it as `--extension-yt-live-backdrop-filter` on the document element; `tokens.css` declares the variable's `none` default and menus, composer, and monetization surfaces reuse it for their own backdrops.
 - Keep the expanded chat header above the ticker and its overflow visible because YouTube mounts the chat mode dropdown inside a transformed header stacking context. Clip the header only in `chat-only-display`.
 - Add a rule to the narrowest responsible module and preserve the `custom-yt-app-live-chat-extension` scope.
 - Keep neutral SVG controls on the configured extension font color so they remain legible against customized panel backgrounds. Preserve a YouTube-owned semantic color only through a selector scoped to that semantic component; the Top fans crown entry point is the intentional header exception.

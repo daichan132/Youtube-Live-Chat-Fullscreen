@@ -5,7 +5,9 @@
         "preset": "Voorinstelling",
         "setting": "Instellingen",
         "undo": "Stijlwijziging ongedaan maken",
-        "redo": "Stijlwijziging opnieuw uitvoeren"
+        "redo": "Stijlwijziging opnieuw uitvoeren",
+        "undone": "Stijlwijziging ongedaan gemaakt",
+        "redone": "Stijlwijziging opnieuw uitgevoerd"
       },
       "alwaysOnDisplay": "Chat tonen bij inactiviteit",
       "chatOnlyDisplay": "Alleen chat tonen",
@@ -15,13 +17,14 @@
       "backgroundColor": "Achtergrondkleur",
       "fontColor": "Tekstkleur",
       "fontFamily": "Lettertype",
+      "fontFamilyDefault": "Standaardlettertype",
+      "fontSearch": "Lettertypen zoeken",
+      "fontNotFound": "Geen overeenkomende lettertypen gevonden",
       "fontSize": "Lettergrootte",
       "blur": "Vervaging",
       "space": "Tussenruimte",
       "footer": {
-        "donate": "Doneren",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Doneren"
       },
       "theme": "Thema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Donker"
       },
       "membershipNameColor": "Kleur van ledennaam",
-      "defaultColor": "Standaard",
       "resetToDefaultColor": "Standaardkleur herstellen",
       "group": {
         "display": "Weergave",
         "colors": "Kleuren",
         "text": "Tekst",
         "elements": "Chatelementen"
-      },
-      "requiresAlwaysOn": "Schakel \"Chat altijd tonen\" in om dit te wijzigen"
+      }
+    },
+    "diagnostics": {
+      "legend": "Compatibiliteit",
+      "healthy": "Alles in orde",
+      "degraded": "Werkt via een compatibiliteitsoplossing",
+      "failed": "Compatibiliteitsprobleem gevonden",
+      "waiting": "Bezig met verzamelen van diagnosegegevens",
+      "lastRecovery": "Laatste automatisch herstel",
+      "restart": "Chatoverlay opnieuw laden",
+      "copy": "Diagnoserapport kopiëren",
+      "copied": "Het diagnoserapport is gekopieerd.",
+      "copyFailed": "Het diagnoserapport kon niet worden gekopieerd."
     },
     "aria": {
       "dragToMove": "Sleep om te verplaatsen",
@@ -46,13 +59,17 @@
       "openSettings": "Instellingen openen",
       "toggleLiveChat": "Livechat tonen of verbergen",
       "close": "Sluiten",
-      "reorderPreset": "Voorinstelling verplaatsen",
+      "dragHandle": "sleepgreep",
+      "settingsFrameTitle": "Instellingen voor chat op volledig scherm",
+      "reorderPreset": "{name} verplaatsen",
       "presetName": "Voorinstellingsnaam",
-      "applyPreset": "Voorinstelling toepassen",
-      "deletePreset": "Voorinstelling verwijderen",
+      "applyPreset": "{name} toepassen",
+      "deletePreset": "{name} verwijderen",
+      "presetMoved": "{name} verplaatst naar positie {position}",
       "colorPicker": "Kleurkiezer",
       "loading": "Bezig met laden",
-      "selectLanguage": "Taal kiezen"
+      "selectLanguage": "Taal kiezen",
+      "fontsFound": "Gevonden lettertypen: {count}"
     },
     "preset": {
       "addMessage": "Huidige instellingen opslaan",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Chat op volledig scherm",
     "links": "Links",
     "donate": "Doneren",
+    "donateAction": "Steunen via Ko-fi",
     "theme": "Thema",
     "dataTransfer": "Back-up",
     "export": "Exporteren",
@@ -82,5 +100,5 @@
     "importError": "Kan het instellingenbestand niet importeren."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Bekijk YouTube Live op volledig scherm met chat. Chat mee, stuur Super Chats en pas de overlay naar wens aan."
+  "extensionDescription": "Chat weg in volledig scherm? Deze extensie zet de YouTube-livechat als overlay op de video: lees mee, reageer en stuur Super Chats."
 }

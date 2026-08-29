@@ -5,7 +5,9 @@
         "preset": "Forhåndsinnstilling",
         "setting": "Innstillinger",
         "undo": "Angre stilendring",
-        "redo": "Gjør om stilendring"
+        "redo": "Gjør om stilendring",
+        "undone": "Stilendringen ble angret",
+        "redone": "Stilendringen ble gjort om"
       },
       "alwaysOnDisplay": "Vis chatten ved inaktivitet",
       "chatOnlyDisplay": "Vis bare chatten",
@@ -15,13 +17,14 @@
       "backgroundColor": "Bakgrunnsfarge",
       "fontColor": "Tekstfarge",
       "fontFamily": "Skrifttype",
+      "fontFamilyDefault": "Standardskrift",
+      "fontSearch": "Søk etter skrifttyper",
+      "fontNotFound": "Ingen skrifttyper samsvarer med søket",
       "fontSize": "Skriftstørrelse",
       "blur": "Uskarphet",
       "space": "Mellomrom",
       "footer": {
-        "donate": "Doner",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Doner"
       },
       "theme": "Tema",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Mørk"
       },
       "membershipNameColor": "Farge på medlemsnavn",
-      "defaultColor": "Standard",
       "resetToDefaultColor": "Tilbakestill til standardfarge",
       "group": {
         "display": "Visning",
         "colors": "Farger",
         "text": "Tekst",
         "elements": "Chattelementer"
-      },
-      "requiresAlwaysOn": "Aktiver «Vis alltid chatten» for å endre denne innstillingen"
+      }
+    },
+    "diagnostics": {
+      "legend": "Kompatibilitet",
+      "healthy": "Alt fungerer",
+      "degraded": "Kjører med en kompatibilitetsløsning",
+      "failed": "Kompatibilitetsproblem oppdaget",
+      "waiting": "Samler inn diagnosedata",
+      "lastRecovery": "Siste automatiske gjenoppretting",
+      "restart": "Last inn chatten på nytt",
+      "copy": "Kopier diagnoserapport",
+      "copied": "Diagnoserapporten er kopiert.",
+      "copyFailed": "Kunne ikke kopiere diagnoserapporten."
     },
     "aria": {
       "dragToMove": "Dra for å flytte",
@@ -46,13 +59,17 @@
       "openSettings": "Åpne innstillinger",
       "toggleLiveChat": "Vis eller skjul livechat",
       "close": "Lukk",
-      "reorderPreset": "Flytt forhåndsinnstilling",
+      "dragHandle": "draghåndtak",
+      "settingsFrameTitle": "Innstillinger for fullskjermchat",
+      "reorderPreset": "Flytt {name}",
       "presetName": "Navn på forhåndsinnstilling",
-      "applyPreset": "Bruk forhåndsinnstilling",
-      "deletePreset": "Slett forhåndsinnstilling",
+      "applyPreset": "Bruk {name}",
+      "deletePreset": "Slett {name}",
+      "presetMoved": "{name} ble flyttet til posisjon {position}",
       "colorPicker": "Fargevelger",
       "loading": "Laster",
-      "selectLanguage": "Velg språk"
+      "selectLanguage": "Velg språk",
+      "fontsFound": "Skrifttyper funnet: {count}"
     },
     "preset": {
       "addMessage": "Lagre gjeldende innstillinger",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Fullskjermchat",
     "links": "Lenker",
     "donate": "Doner",
+    "donateAction": "Støtt på Ko-fi",
     "theme": "Tema",
     "dataTransfer": "Sikkerhetskopi",
     "export": "Eksporter",
@@ -82,5 +100,5 @@
     "importError": "Kunne ikke importere innstillingsfilen."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Se YouTube Live i fullskjerm med chatten synlig. Skriv i chatten, send Super Chats og tilpass overlegget slik du vil."
+  "extensionDescription": "Forsvinner chatten i fullskjerm? Utvidelsen legger YouTubes livechat oppå videoen – les meldingene, svar og send Super Chat."
 }

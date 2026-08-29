@@ -48,4 +48,21 @@ describe('ChatSurface', () => {
 
     expect(container.querySelector('[data-ylc-drag-shield]')).not.toBeNull()
   })
+
+  it('sizes the pointer shield to cover its positioned parent', () => {
+    const { container } = render(
+      <ChatSurface innerStyle={{}} isDragging onEnterChat={() => {}} onLeaveChat={() => {}}>
+        chat
+      </ChatSurface>,
+    )
+    const shield = container.querySelector<HTMLElement>('[data-ylc-drag-shield]') as HTMLElement
+    const classes = [...shield.classList]
+
+    // A shield that carries no size utility resolves to 0x0 and silently stops
+    // blocking pointer events over the chat iframe mid-drag.
+    expect(classes).toContain('absolute')
+    expect(classes).toContain('inset-0')
+    // Percentage suffixes such as `w-100%` are not Tailwind utilities and emit no rule.
+    expect(classes.filter(name => /^[wh]-\d+%$/.test(name))).toEqual([])
+  })
 })

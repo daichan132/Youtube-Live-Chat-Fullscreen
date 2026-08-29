@@ -3,6 +3,7 @@ import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState }
 import { ensureFontLoaded } from '@/entrypoints/content/style/fontLoader'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
+import { formatMessage } from '@/shared/i18n/format'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
 import { cn } from '@/shared/utils/cn'
@@ -73,7 +74,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   const searchInputRef = useRef<HTMLInputElement>(null)
   useEnsureSettingPanelVisibility({ isOpen, anchorRef: triggerRef, popupRef: menuRef })
 
-  const defaultLabel = t('content.preset.defaultTitle')
+  const defaultLabel = t('content.setting.fontFamilyDefault')
   const normalizedValue = useMemo(() => normalizeFontFamily(value), [value])
   const options = useMemo(() => buildFontFamilyOptions(defaultLabel), [defaultLabel])
   const selectedOption = useMemo(() => options.find(option => option.value === normalizedValue), [normalizedValue, options])
@@ -204,12 +205,12 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
             value={searchValue}
             onChange={event => setSearchValue(event.target.value)}
             onKeyDown={handleSearchKeyDown}
-            placeholder={t('content.setting.fontFamily')}
+            placeholder={t('content.setting.fontSearch')}
             role='combobox'
             aria-expanded={isOpen}
             aria-autocomplete='list'
             aria-controls='ylc-font-options-listbox'
-            aria-label={t('content.setting.fontFamily')}
+            aria-label={t('content.setting.fontSearch')}
             data-ylc-font-combobox-search='true'
             data-testid='font-family-search'
           />
@@ -227,7 +228,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
               border: 0,
             }}
           >
-            {`${filteredOptions.length} fonts found`}
+            {formatMessage(t('content.aria.fontsFound'), { count: filteredOptions.length })}
           </span>
           <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox' aria-live='polite'>
             {filteredOptions.length > 0 ? (
@@ -254,7 +255,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
                 )
               })
             ) : (
-              <div className='ylc-font-combobox-empty ylc-theme-text-muted'>{t('content.setting.fontFamily')}</div>
+              <div className='ylc-font-combobox-empty ylc-theme-text-muted'>{t('content.setting.fontNotFound')}</div>
             )}
           </div>
         </div>

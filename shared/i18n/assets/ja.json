@@ -5,7 +5,9 @@
         "preset": "プリセット",
         "setting": "設定",
         "undo": "スタイル変更を元に戻す",
-        "redo": "スタイル変更をやり直す"
+        "redo": "スタイル変更をやり直す",
+        "undone": "スタイル変更を元に戻しました",
+        "redone": "スタイル変更をやり直しました"
       },
       "group": {
         "display": "表示",
@@ -13,7 +15,6 @@
         "text": "テキスト",
         "elements": "表示要素"
       },
-      "requiresAlwaysOn": "「操作していないときも表示」をオンにすると設定できます",
       "alwaysOnDisplay": "操作していないときも表示",
       "chatOnlyDisplay": "チャットのみ表示",
       "userNameDisplay": "ユーザー名を表示",
@@ -22,13 +23,14 @@
       "backgroundColor": "背景色",
       "fontColor": "文字色",
       "fontFamily": "フォントファミリー",
+      "fontFamilyDefault": "既定",
+      "fontSearch": "書体を検索",
+      "fontNotFound": "一致する書体がありません",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
       "space": "間隔",
       "footer": {
-        "donate": "寄付",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "寄付"
       },
       "theme": "テーマ",
       "themeMode": {
@@ -37,8 +39,19 @@
         "dark": "ダーク"
       },
       "membershipNameColor": "メンバー名の色",
-      "defaultColor": "既定",
       "resetToDefaultColor": "既定色に戻す"
+    },
+    "diagnostics": {
+      "legend": "互換性",
+      "healthy": "正常",
+      "degraded": "互換フォールバックで動作中",
+      "failed": "互換性の問題を検出",
+      "waiting": "診断情報を収集中",
+      "lastRecovery": "前回の自己回復",
+      "restart": "チャットを再読み込み",
+      "copy": "診断レポートをコピー",
+      "copied": "診断レポートをコピーしました",
+      "copyFailed": "診断レポートをコピーできませんでした"
     },
     "aria": {
       "dragToMove": "ドラッグで移動",
@@ -46,13 +59,17 @@
       "openSettings": "設定を開く",
       "toggleLiveChat": "ライブチャットの切り替え",
       "close": "閉じる",
-      "reorderPreset": "プリセットの並び替え",
+      "dragHandle": "ドラッグハンドル",
+      "settingsFrameTitle": "全画面チャットの設定",
+      "reorderPreset": "{name}を並び替え",
       "presetName": "プリセット名",
-      "applyPreset": "プリセットを適用",
-      "deletePreset": "プリセットを削除",
+      "applyPreset": "{name}を適用",
+      "deletePreset": "{name}を削除",
+      "presetMoved": "{name}を{position}番目に移動しました",
       "colorPicker": "カラーピッカー",
       "loading": "読み込み中",
-      "selectLanguage": "言語を選択"
+      "selectLanguage": "言語を選択",
+      "fontsFound": "{count}件の書体が見つかりました"
     },
     "preset": {
       "addMessage": "現在の設定を追加",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "全画面チャット",
     "links": "リンク",
     "donate": "寄付",
+    "donateAction": "Ko-fiで支援",
     "theme": "テーマ",
     "dataTransfer": "バックアップ",
     "export": "書き出し",
@@ -82,5 +100,5 @@
     "importError": "設定ファイルを読み込めませんでした。"
   },
   "extensionName": "YouTubeライブチャットフルスクリーン",
-  "extensionDescription": "YouTube Liveを全画面で視聴しながらチャットを表示・投稿。スーパーチャットの送信や、オーバーレイの見た目・配置の調整もできます。"
+  "extensionDescription": "全画面にするとチャットが消える。YouTubeのライブチャットを、全画面のまま動画の上にオーバーレイ表示。ライブ配信中はコメントもスーパーチャット（スパチャ）も送れる。位置・大きさ・色は自由で、チャットリプレイ付きのアーカイブにも対応。"
 }

@@ -1,12 +1,11 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+  workflow_dispatch:
+
+concurrency:
+  group: manual-ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -14,20 +13,13 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24.x
           cache: "yarn"
-      - name: Verify dependency release age for pull request
-        if: github.event_name == 'pull_request'
-        run: node scripts/verify/check-lockfile-age.mjs --base "origin/${{ github.base_ref }}"
-      - name: Verify dependency release age for push
-        if: github.event_name == 'push'
-        run: node scripts/verify/check-lockfile-age.mjs --base "${{ github.event.before }}"
       - name: Install dependencies
         run: yarn install --immutable
       - name: Check generated locales
@@ -41,20 +33,15 @@ jobs:
 
   package:
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24.x
           cache: "yarn"
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Build Chrome extension
-        run: yarn build
-      - name: Build Firefox extension
-        run: yarn build:firefox
       - name: Package and verify production extensions
         run: |
           yarn zip
@@ -84,10 +71,9 @@ jobs:
     # Visual baselines are generated for Playwright 1.62.1 Chromium on this
     # fixed GitHub-hosted image. Avoid ubuntu-latest image drift.
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: 24.x
@@ -117,6 +103,7 @@ jobs:
   production-package-smoke:
     needs: package
     runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7

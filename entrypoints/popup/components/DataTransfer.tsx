@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { TbDownload, TbUpload } from '@/shared/components/icons'
 import { useT } from '@/shared/i18n/react'
 import { useAppRuntime } from '@/shared/runtime/AppProvider'
+import { MAX_SETTINGS_BACKUP_BYTES } from '@/shared/settings/persistConfig'
 
 const handleExport = (data: unknown) => {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
@@ -32,21 +33,21 @@ export const DataTransfer = () => {
     }
   }, [])
 
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = async () => {
-      try {
-        const data = JSON.parse(reader.result as string)
-        await runtime.importSettings(data)
-        window.close()
-      } catch {
-        showError(t('popup.importError'))
-      }
-    }
-    reader.readAsText(file)
     e.target.value = ''
+    if (!file) return
+    if (file.size > MAX_SETTINGS_BACKUP_BYTES) {
+      showError(t('popup.importError'))
+      return
+    }
+    try {
+      const data: unknown = JSON.parse(await file.text())
+      await runtime.importSettings(data)
+      window.close()
+    } catch {
+      showError(t('popup.importError'))
+    }
   }
 
   return (

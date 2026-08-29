@@ -1,6 +1,8 @@
-# Browser Verification
+# 実ブラウザ検証
 
 YouTube 上の実表示を確認するときは、基本は専用の Chrome for Testing を使う。ログイン済み UI を見る必要があるときだけ、通常の Google Chrome を専用プロファイルで起動する。
+
+リリース候補ワークフローは Chrome・Firefox・Opera を実 YouTube 上で検証したという申告を必須入力にしている。ここに書いた手順がその証拠を作る手順で、貼り先は [リリース Runbook](release-runbook.md) の手順 4。
 
 ## 基本手順
 

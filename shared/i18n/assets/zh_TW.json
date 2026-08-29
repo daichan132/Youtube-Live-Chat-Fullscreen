@@ -5,7 +5,9 @@
         "preset": "預設方案",
         "setting": "設定",
         "undo": "復原樣式變更",
-        "redo": "重做樣式變更"
+        "redo": "重做樣式變更",
+        "undone": "樣式變更已復原",
+        "redone": "樣式變更已重做"
       },
       "alwaysOnDisplay": "閒置時顯示聊天室",
       "chatOnlyDisplay": "僅顯示聊天室",
@@ -15,13 +17,14 @@
       "backgroundColor": "背景顏色",
       "fontColor": "字型顏色",
       "fontFamily": "字型",
+      "fontFamilyDefault": "預設",
+      "fontSearch": "搜尋字型",
+      "fontNotFound": "沒有符合的字型",
       "fontSize": "字型大小",
       "blur": "模糊效果",
       "space": "間距",
       "footer": {
-        "donate": "贊助",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "贊助"
       },
       "theme": "主題",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "深色"
       },
       "membershipNameColor": "會員名稱顏色",
-      "defaultColor": "預設",
       "resetToDefaultColor": "重設為預設顏色",
       "group": {
         "display": "顯示",
         "colors": "配色",
         "text": "文字",
         "elements": "顯示元素"
-      },
-      "requiresAlwaysOn": "開啟「總是顯示」後即可設定"
+      }
+    },
+    "diagnostics": {
+      "legend": "相容性",
+      "healthy": "正常",
+      "degraded": "正在使用相容性備援方案",
+      "failed": "偵測到相容性問題",
+      "waiting": "正在收集診斷資訊",
+      "lastRecovery": "上次自動修復",
+      "restart": "重新載入聊天室",
+      "copy": "複製診斷報告",
+      "copied": "診斷報告已複製",
+      "copyFailed": "無法複製診斷報告"
     },
     "aria": {
       "dragToMove": "拖曳以移動",
@@ -46,13 +59,17 @@
       "openSettings": "開啟設定",
       "toggleLiveChat": "切換即時聊天",
       "close": "關閉",
-      "reorderPreset": "調整預設順序",
+      "dragHandle": "拖曳控點",
+      "settingsFrameTitle": "全螢幕聊天室設定",
+      "reorderPreset": "調整 {name} 的順序",
       "presetName": "預設名稱",
-      "applyPreset": "套用預設",
-      "deletePreset": "刪除預設",
+      "applyPreset": "套用 {name}",
+      "deletePreset": "刪除 {name}",
+      "presetMoved": "已將 {name} 移至第 {position} 位",
       "colorPicker": "色彩選擇器",
       "loading": "載入中",
-      "selectLanguage": "選擇語言"
+      "selectLanguage": "選擇語言",
+      "fontsFound": "找到 {count} 種字型"
     },
     "preset": {
       "addMessage": "新增目前設定",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "全螢幕聊天室",
     "links": "連結",
     "donate": "贊助",
+    "donateAction": "前往 Ko-fi 贊助",
     "theme": "主題",
     "dataTransfer": "備份",
     "export": "匯出",
@@ -82,5 +100,5 @@
     "importError": "無法匯入設定檔。"
   },
   "extensionName": "YouTube 直播全螢幕聊天室",
-  "extensionDescription": "全螢幕觀看 YouTube 直播時也能查看及傳送聊天訊息、傳送 Super Chat，並自由調整聊天室浮動視窗的樣式與位置。"
+  "extensionDescription": "YouTube 直播一進全螢幕，聊天室就不見了。本擴充功能把 YouTube 自己的即時聊天室重新放回影片上，全螢幕也能讀訊息、發訊息，直播時還能送 Super Chat。位置、大小、字級與配色可調，有聊天重播的封存影片同樣適用。"
 }

@@ -3,12 +3,14 @@ import { useCallback, useState } from 'react'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
+import { formatMessage } from '@/shared/i18n/format'
 import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
 import type { ChatProfile } from '@/shared/settings/model'
 import { deletePresetAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
+import { getPresetDisplayTitle } from './presetDisplayTitle'
 
 interface PresetItemType {
   id: string
@@ -33,7 +35,10 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
-  const displayTitle = preset?.kind === 'builtin' ? t(BUILTIN_PRESETS[preset.id].labelKey) : (preset?.name ?? '')
+  const displayTitle = getPresetDisplayTitle(preset, t)
+  // Every row carries the same three controls, so the name is what tells them apart when read aloud.
+  // A custom preset whose name the user cleared falls back to the label new presets are born with.
+  const rowLabel = (key: string) => formatMessage(t(key), { name: displayTitle || t('content.preset.addItemTitle') })
   const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
   const canApply = profile !== undefined
   const isDragging = reorder.activeId === id
@@ -47,7 +52,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
         type='button'
         className={`ylc-preset-grip ${isDragging ? 'cursor-grabbing' : ''}`}
         {...reorder.getHandleProps(id)}
-        aria-label={t('content.aria.reorderPreset')}
+        aria-label={rowLabel('content.aria.reorderPreset')}
       >
         <TbGripVertical size={20} aria-hidden='true' />
       </button>
@@ -64,7 +69,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
           type='button'
           disabled={!canApply}
           className='ylc-preset-apply'
-          aria-label={t('content.aria.applyPreset')}
+          aria-label={rowLabel('content.aria.applyPreset')}
           onClick={() => {
             if (!profile) return
             updateStyle(profile)
@@ -77,7 +82,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
           <button
             type='button'
             className='ylc-preset-del'
-            aria-label={t('content.aria.deletePreset')}
+            aria-label={rowLabel('content.aria.deletePreset')}
             onClick={() => setIsDeleteModalOpen(true)}
           >
             <TbTrash size={18} aria-hidden='true' />

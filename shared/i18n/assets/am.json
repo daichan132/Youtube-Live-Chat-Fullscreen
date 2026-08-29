@@ -5,7 +5,9 @@
         "preset": "ቅድመ-ቅንብር",
         "setting": "ቅንብሮች",
         "undo": "የቅጥ ለውጡን ቀልብስ",
-        "redo": "የቅጥ ለውጡን ድገም"
+        "redo": "የቅጥ ለውጡን ድገም",
+        "undone": "የቅጥ ለውጡ ተቀልብሷል",
+        "redone": "የቅጥ ለውጡ ተደግሟል"
       },
       "alwaysOnDisplay": "እንቅስቃሴ በሌለበት ጊዜ ውይይቱን አሳይ",
       "chatOnlyDisplay": "ቻት ብቻ",
@@ -15,13 +17,14 @@
       "backgroundColor": "የበስተጀርባ ቀለም",
       "fontColor": "የጽሑፍ ቀለም",
       "fontFamily": "የቅርጸ ቁምፊ ዓይነት",
+      "fontFamilyDefault": "ነባሪ",
+      "fontSearch": "ቅርጸ ቁምፊዎችን ይፈልጉ",
+      "fontNotFound": "ከፍለጋዎ ጋር የሚዛመድ ቅርጸ ቁምፊ የለም",
       "fontSize": "የጽሑፍ መጠን",
       "blur": "ብዥታ",
       "space": "የመልዕክት ክፍተት",
       "footer": {
-        "donate": "ለግስ",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "ለግስ"
       },
       "theme": "ገጽታ",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "ጨለማ"
       },
       "membershipNameColor": "የአባላት ስሞች ቀለም",
-      "defaultColor": "ነባሪ",
       "resetToDefaultColor": "ነባሪውን ቀለም መልስ",
       "group": {
         "display": "ማሳያ",
         "colors": "ቀለሞች",
         "text": "ጽሑፍ",
         "elements": "የቻት አካላት"
-      },
-      "requiresAlwaysOn": "ይህን አማራጭ ለመጠቀም «ቻቱን ሁልጊዜ አሳይ» የሚለውን ያብሩ"
+      }
+    },
+    "diagnostics": {
+      "legend": "ተኳኋኝነት",
+      "healthy": "ጤናማ",
+      "degraded": "በተኳኋኝነት አማራጭ እየሠራ ነው",
+      "failed": "የተኳኋኝነት ችግር ተገኝቷል",
+      "waiting": "የመመርመሪያ መረጃ በመሰብሰብ ላይ",
+      "lastRecovery": "የመጨረሻው ራስ-ማገገም",
+      "restart": "ቻቱን እንደገና ይጫኑ",
+      "copy": "የመመርመሪያ ሪፖርቱን ይቅዱ",
+      "copied": "የመመርመሪያ ሪፖርቱ ተቀድቷል",
+      "copyFailed": "የመመርመሪያ ሪፖርቱን መቅዳት አልተቻለም"
     },
     "aria": {
       "dragToMove": "ለማንቀሳቀስ ይጎትቱ",
@@ -46,13 +59,17 @@
       "openSettings": "ቅንብሮችን ይክፈቱ",
       "toggleLiveChat": "የቀጥታ ቻቱን ያሳዩ ወይም ይደብቁ",
       "close": "ይዝጉ",
-      "reorderPreset": "ቅድመ-ቅንብሩን ያንቀሳቅሱ",
+      "dragHandle": "የመጎተቻ እጀታ",
+      "settingsFrameTitle": "የሙሉ ማያ ገጽ ቻት ቅንብሮች",
+      "reorderPreset": "{name}ን ያንቀሳቅሱ",
       "presetName": "የቅድመ-ቅንብር ስም",
-      "applyPreset": "ቅድመ-ቅንብሩን ይተግብሩ",
-      "deletePreset": "ቅድመ-ቅንብሩን ይሰርዙ",
+      "applyPreset": "{name}ን ይተግብሩ",
+      "deletePreset": "{name}ን ይሰርዙ",
+      "presetMoved": "{name} ወደ {position}ኛ ቦታ ተዛውሯል",
       "colorPicker": "ቀለም መራጭ",
       "loading": "በመጫን ላይ",
-      "selectLanguage": "ቋንቋ ይምረጡ"
+      "selectLanguage": "ቋንቋ ይምረጡ",
+      "fontsFound": "የተገኙ ቅርጸ ቁምፊዎች፦ {count}"
     },
     "preset": {
       "addMessage": "የአሁኑን ቅንብሮች ያስቀምጡ",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "የሙሉ ማያ ገጽ ቻት",
     "links": "አገናኞች",
     "donate": "ለግስ",
+    "donateAction": "በKo-fi ይደግፉ",
     "theme": "ገጽታ",
     "dataTransfer": "ምትኬ",
     "export": "ወደ ውጭ ላክ",
@@ -82,5 +100,5 @@
     "importError": "የቅንብሮች ፋይሉን ማስመጣት አልተቻለም።"
   },
   "extensionName": "YouTube Live Chat ሙሉ ስክሪን",
-  "extensionDescription": "ቻቱን ሳይዘጉ የYouTube የቀጥታ ስርጭቶችን በሙሉ ማያ ገጽ ይመልከቱ። በቻት መልዕክት ይላኩ፣ Super Chat ይላኩ እና የቻቱን ገጽታ እንደፈለጉ ያስተካክሉ።"
+  "extensionDescription": "በሙሉ ማያ ገጽ ቻቱ ይጠፋል? የYouTube ቀጥታ ቻትን በቪዲዮው ላይ የሚያቆይ ተደራቢ፦ መልዕክቶቹን ያንብቡ፣ መልስ ይስጡ፣ Super Chat ይላኩ።"
 }

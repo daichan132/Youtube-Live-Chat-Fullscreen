@@ -5,7 +5,9 @@
         "preset": "Mipangilio iliyowekwa awali",
         "setting": "Mipangilio",
         "undo": "Tendua mabadiliko ya mtindo",
-        "redo": "Rudia mabadiliko ya mtindo"
+        "redo": "Rudia mabadiliko ya mtindo",
+        "undone": "Mabadiliko ya mtindo yametenduliwa",
+        "redone": "Mabadiliko ya mtindo yamerudiwa"
       },
       "alwaysOnDisplay": "Onyesha gumzo wakati hakuna shughuli",
       "chatOnlyDisplay": "Hali ya gumzo pekee",
@@ -15,13 +17,14 @@
       "backgroundColor": "Rangi ya mandharinyuma",
       "fontColor": "Rangi ya maandishi",
       "fontFamily": "Fonti",
+      "fontFamilyDefault": "Chaguomsingi",
+      "fontSearch": "Tafuta fonti",
+      "fontNotFound": "Hakuna fonti inayolingana na utafutaji wako",
       "fontSize": "Ukubwa wa maandishi",
       "blur": "Ukungu",
       "space": "Nafasi kati ya jumbe",
       "footer": {
-        "donate": "Changia",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Changia"
       },
       "theme": "Mandhari",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Giza"
       },
       "membershipNameColor": "Rangi ya majina ya wanachama",
-      "defaultColor": "Chaguomsingi",
       "resetToDefaultColor": "Rejesha rangi chaguomsingi",
       "group": {
         "display": "Onyesho",
         "colors": "Rangi",
         "text": "Maandishi",
         "elements": "Vipengele vya gumzo"
-      },
-      "requiresAlwaysOn": "Ili utumie chaguo hili, washa \"Onyesha gumzo kila wakati\""
+      }
+    },
+    "diagnostics": {
+      "legend": "Uoanifu",
+      "healthy": "Inafanya kazi vizuri",
+      "degraded": "Inatumia njia mbadala ya uoanifu",
+      "failed": "Tatizo la uoanifu limegunduliwa",
+      "waiting": "Inakusanya taarifa za uchunguzi",
+      "lastRecovery": "Kujirekebisha mara ya mwisho",
+      "restart": "Pakia upya ovelei ya gumzo",
+      "copy": "Nakili ripoti ya uchunguzi",
+      "copied": "Ripoti ya uchunguzi imenakiliwa",
+      "copyFailed": "Imeshindikana kunakili ripoti ya uchunguzi"
     },
     "aria": {
       "dragToMove": "Buruta ili kusogeza",
@@ -46,13 +59,17 @@
       "openSettings": "Fungua mipangilio",
       "toggleLiveChat": "Onyesha au ficha gumzo la moja kwa moja",
       "close": "Funga",
-      "reorderPreset": "Sogeza mpangilio uliowekwa awali",
+      "dragHandle": "mpini wa kuburuta",
+      "settingsFrameTitle": "Mipangilio ya gumzo la skrini nzima",
+      "reorderPreset": "Sogeza {name}",
       "presetName": "Jina la mpangilio uliowekwa awali",
-      "applyPreset": "Tumia mpangilio uliowekwa awali",
-      "deletePreset": "Futa mpangilio uliowekwa awali",
+      "applyPreset": "Tumia {name}",
+      "deletePreset": "Futa {name}",
+      "presetMoved": "{name} imesogezwa hadi nafasi ya {position}",
       "colorPicker": "Kichaguzi cha rangi",
       "loading": "Inapakia",
-      "selectLanguage": "Chagua lugha"
+      "selectLanguage": "Chagua lugha",
+      "fontsFound": "Fonti zilizopatikana: {count}"
     },
     "preset": {
       "addMessage": "Hifadhi mipangilio ya sasa",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Gumzo la skrini nzima",
     "links": "Viungo",
     "donate": "Changia",
+    "donateAction": "Changia kupitia Ko-fi",
     "theme": "Mandhari",
     "dataTransfer": "Hifadhi rudufu",
     "export": "Hamisha",
@@ -82,5 +100,5 @@
     "importError": "Imeshindikana kuleta faili ya mipangilio."
   },
   "extensionName": "YouTube Live Chat Skrini Nzima",
-  "extensionDescription": "Tazama YouTube Live kwenye skrini nzima pamoja na gumzo. Tuma ujumbe na Super Chat, kisha ubinafsishe mwonekano."
+  "extensionDescription": "Gumzo hupotea kwenye skrini nzima? Ovelei inayoweka gumzo la moja kwa moja la YouTube juu ya video: soma, jibu, tuma Super Chat."
 }

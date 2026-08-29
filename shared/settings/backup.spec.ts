@@ -68,6 +68,26 @@ describe('settings backup', () => {
     expect(normalized?.chatSettings.presets).toEqual([])
   })
 
+  it('rejects backups with more than 100 custom presets', () => {
+    const presets = Array.from({ length: 101 }, (_, index) => ({
+      kind: 'custom',
+      id: `custom-${index}`,
+      name: `Preset ${index}`,
+      profile: DEFAULT_CHAT_SETTINGS.profile,
+    }))
+
+    expect(
+      normalizeSettingsBackup(
+        {
+          version: 2,
+          globalSetting: {},
+          chatSettings: { ...DEFAULT_CHAT_SETTINGS, presets },
+        },
+        current,
+      ),
+    ).toBeNull()
+  })
+
   it('rejects unknown versions', () => {
     expect(normalizeSettingsBackup({ version: 3, globalSetting: {}, chatSettings: {} }, current)).toBeNull()
   })

@@ -1,11 +1,37 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { LocaleCode, LocaleMessages } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import type { SettingsRepository, SettingsSnapshot } from '@/shared/settings/repository'
-import { chatSettingsStateAtom, globalSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
+import type { PersistenceStatus, SettingsRepository, SettingsSnapshot } from '@/shared/settings/repository'
+import { chatSettingsStateAtom, globalSettingsStateAtom, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
+import { commitGeometryAtom, commitProfileAtom, setThemeModeAtom, setYTDLiveChatEnabledAtom } from '@/shared/state/commands'
 import { createAppRuntime } from './createAppRuntime'
 
 const messages = (value: string) => ({ 'popup.theme': value }) as unknown as LocaleMessages
+
+const defaultSnapshot = (): SettingsSnapshot => ({
+  global: { ytdLiveChat: true, themeMode: 'system' },
+  chat: structuredClone(DEFAULT_CHAT_SETTINGS),
+  locale: 'en',
+})
+
+const createRepository = (overrides: Partial<SettingsRepository> = {}): SettingsRepository => ({
+  load: vi.fn(async () => defaultSnapshot()),
+  saveEnabled: vi.fn(async () => {}),
+  saveTheme: vi.fn(async () => {}),
+  saveAppearance: vi.fn(async () => {}),
+  saveGeometry: vi.fn(async () => {}),
+  saveLocale: vi.fn(async () => {}),
+  replaceSettings: vi.fn(async () => {}),
+  watch: vi.fn(() => vi.fn()),
+  getPersistenceStatus: vi.fn((): PersistenceStatus => ({ status: 'idle', failedDomains: [] })),
+  subscribePersistence: vi.fn(listener => {
+    listener({ status: 'idle', failedDomains: [] })
+    return vi.fn()
+  }),
+  retryFailed: vi.fn(async () => {}),
+  flush: vi.fn(async () => {}),
+  ...overrides,
+})
 
 const createDeferred = <T>() => {
   let resolve!: (value: T) => void
@@ -17,21 +43,9 @@ const createDeferred = <T>() => {
 
 describe('createAppRuntime', () => {
   it('boots with English messages when the selected locale fails to load', async () => {
-    const repository: SettingsRepository = {
-      load: vi.fn(
-        async (): Promise<SettingsSnapshot> => ({
-          global: { ytdLiveChat: true, themeMode: 'system' },
-          chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-          locale: 'ja',
-        }),
-      ),
-      saveGlobal: vi.fn(async () => {}),
-      saveChat: vi.fn(async () => {}),
-      saveLocale: vi.fn(async () => {}),
-      replaceSettings: vi.fn(async () => {}),
-      watch: vi.fn(() => vi.fn()),
-      flush: vi.fn(async () => {}),
-    }
+    const repository = createRepository({
+      load: vi.fn(async (): Promise<SettingsSnapshot> => ({ ...defaultSnapshot(), locale: 'ja' })),
+    })
     const loadMessages = vi.fn(async (locale: LocaleCode) => {
       if (locale === 'ja') throw new Error('missing selected locale')
       return messages('English')
@@ -50,47 +64,24 @@ describe('createAppRuntime', () => {
 
   it('rejects startup when the English base messages are unavailable', async () => {
     const unwatch = vi.fn()
-    const repository: SettingsRepository = {
-      load: vi.fn(
-        async (): Promise<SettingsSnapshot> => ({
-          global: { ytdLiveChat: true, themeMode: 'system' },
-          chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-          locale: 'ja',
-        }),
-      ),
-      saveGlobal: vi.fn(async () => {}),
-      saveChat: vi.fn(async () => {}),
-      saveLocale: vi.fn(async () => {}),
-      replaceSettings: vi.fn(async () => {}),
+    const unsubscribePersistence = vi.fn()
+    const repository = createRepository({
+      load: vi.fn(async (): Promise<SettingsSnapshot> => ({ ...defaultSnapshot(), locale: 'ja' })),
       watch: vi.fn(() => unwatch),
-      flush: vi.fn(async () => {}),
-    }
+      subscribePersistence: vi.fn(() => unsubscribePersistence),
+    })
     const loadMessages = vi.fn(async () => {
       throw new Error('no locale assets')
     })
 
     await expect(createAppRuntime(repository, { loadMessages })).rejects.toThrow('no locale assets')
     expect(loadMessages).toHaveBeenCalledTimes(2)
-    expect(repository.watch).toHaveBeenCalledTimes(1)
     expect(unwatch).toHaveBeenCalledTimes(1)
+    expect(unsubscribePersistence).toHaveBeenCalledTimes(1)
   })
 
   it('persists a selected locale once when its messages use the English fallback', async () => {
-    const repository: SettingsRepository = {
-      load: vi.fn(
-        async (): Promise<SettingsSnapshot> => ({
-          global: { ytdLiveChat: true, themeMode: 'system' },
-          chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-          locale: 'en',
-        }),
-      ),
-      saveGlobal: vi.fn(async () => {}),
-      saveChat: vi.fn(async () => {}),
-      saveLocale: vi.fn(async () => {}),
-      replaceSettings: vi.fn(async () => {}),
-      watch: vi.fn(() => vi.fn()),
-      flush: vi.fn(async () => {}),
-    }
+    const repository = createRepository()
     const loadMessages = vi.fn(async (locale: LocaleCode) => {
       if (locale === 'ja') throw new Error('missing selected locale')
       return messages('English')
@@ -108,26 +99,40 @@ describe('createAppRuntime', () => {
     runtime.dispose()
   })
 
+  it('persists each ownership domain independently', async () => {
+    const repository = createRepository()
+    const runtime = await createAppRuntime(repository, { loadMessages: vi.fn(async () => messages('English')) })
+
+    runtime.store.set(setYTDLiveChatEnabledAtom, false)
+    runtime.store.set(setThemeModeAtom, 'dark')
+    const profile = structuredClone(DEFAULT_CHAT_SETTINGS.profile)
+    profile.appearance.fontSize = 27
+    runtime.store.set(commitProfileAtom, profile)
+    const geometry = {
+      reference: 'player' as const,
+      rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 },
+      pinned: true,
+    }
+    runtime.store.set(commitGeometryAtom, geometry)
+
+    expect(repository.saveEnabled).toHaveBeenCalledWith(false)
+    expect(repository.saveTheme).toHaveBeenCalledWith('dark')
+    expect(repository.saveAppearance).toHaveBeenCalledWith({
+      profile: expect.objectContaining({ appearance: expect.objectContaining({ fontSize: 27 }) }),
+      presets: DEFAULT_CHAT_SETTINGS.presets,
+    })
+    expect(repository.saveGeometry).toHaveBeenCalledWith(geometry)
+    runtime.dispose()
+  })
+
   it('keeps the latest external locale when translations resolve out of order', async () => {
     let handlers: Parameters<SettingsRepository['watch']>[0] | undefined
-    const repository: SettingsRepository = {
-      load: vi.fn(
-        async (): Promise<SettingsSnapshot> => ({
-          global: { ytdLiveChat: true, themeMode: 'system' },
-          chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-          locale: 'en',
-        }),
-      ),
-      saveGlobal: vi.fn(async () => {}),
-      saveChat: vi.fn(async () => {}),
-      saveLocale: vi.fn(async () => {}),
-      replaceSettings: vi.fn(async () => {}),
+    const repository = createRepository({
       watch: vi.fn(nextHandlers => {
         handlers = nextHandlers
         return vi.fn()
       }),
-      flush: vi.fn(async () => {}),
-    }
+    })
     const resolvers = new Map<LocaleCode, (value: LocaleMessages) => void>()
     const loadMessages = vi.fn((locale: LocaleCode) => {
       if (locale === 'en') return Promise.resolve(messages('English'))
@@ -147,27 +152,14 @@ describe('createAppRuntime', () => {
     runtime.dispose()
   })
 
-  it('folds external changes received during locale hydration into the initial state', async () => {
+  it('folds ownership-domain changes received during locale hydration into the initial state', async () => {
     let handlers: Parameters<SettingsRepository['watch']>[0] | undefined
-    const unwatch = vi.fn()
-    const repository: SettingsRepository = {
-      load: vi.fn(
-        async (): Promise<SettingsSnapshot> => ({
-          global: { ytdLiveChat: true, themeMode: 'system' },
-          chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-          locale: 'en',
-        }),
-      ),
-      saveGlobal: vi.fn(async () => {}),
-      saveChat: vi.fn(async () => {}),
-      saveLocale: vi.fn(async () => {}),
-      replaceSettings: vi.fn(async () => {}),
+    const repository = createRepository({
       watch: vi.fn(nextHandlers => {
         handlers = nextHandlers
-        return unwatch
+        return vi.fn()
       }),
-      flush: vi.fn(async () => {}),
-    }
+    })
     const englishMessages = createDeferred<LocaleMessages>()
     const japaneseMessages = createDeferred<LocaleMessages>()
     const loadMessages = vi.fn((locale: LocaleCode) => {
@@ -177,15 +169,17 @@ describe('createAppRuntime', () => {
     const runtimePromise = createAppRuntime(repository, { loadMessages })
     await vi.waitFor(() => expect(loadMessages).toHaveBeenCalledWith('en'))
 
-    const externalChat = structuredClone(DEFAULT_CHAT_SETTINGS)
-    externalChat.profile.appearance.fontSize = 27
-    externalChat.geometry = {
-      reference: 'legacy-viewport-px',
+    const profile = structuredClone(DEFAULT_CHAT_SETTINGS.profile)
+    profile.appearance.fontSize = 27
+    const geometry = {
+      reference: 'legacy-viewport-px' as const,
       coordinates: { x: 120, y: 160 },
       size: { width: 640, height: 520 },
     }
-    handlers?.onGlobal({ ytdLiveChat: false, themeMode: 'dark' })
-    handlers?.onChat(externalChat)
+    handlers?.onEnabled(false)
+    handlers?.onTheme('dark')
+    handlers?.onAppearance({ profile, presets: DEFAULT_CHAT_SETTINGS.presets })
+    handlers?.onGeometry(geometry)
     handlers?.onLocale('ja')
     englishMessages.resolve(messages('English'))
     await vi.waitFor(() => expect(loadMessages).toHaveBeenCalledWith('ja'))
@@ -193,16 +187,34 @@ describe('createAppRuntime', () => {
 
     const runtime = await runtimePromise
     expect(runtime.store.get(globalSettingsStateAtom)).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
-    expect(runtime.store.get(chatSettingsStateAtom)).toEqual(externalChat)
+    expect(runtime.store.get(chatSettingsStateAtom)).toEqual({ profile, geometry, presets: DEFAULT_CHAT_SETTINGS.presets })
     expect(runtime.store.get(localeStateAtom)).toMatchObject({
       code: 'ja',
       messages: { 'popup.theme': '日本語' },
     })
-    expect(repository.saveGlobal).not.toHaveBeenCalled()
-    expect(repository.saveChat).not.toHaveBeenCalled()
-    expect(repository.saveLocale).not.toHaveBeenCalled()
-
+    expect(repository.saveEnabled).not.toHaveBeenCalled()
+    expect(repository.saveTheme).not.toHaveBeenCalled()
+    expect(repository.saveAppearance).not.toHaveBeenCalled()
+    expect(repository.saveGeometry).not.toHaveBeenCalled()
     runtime.dispose()
-    expect(unwatch).toHaveBeenCalledTimes(1)
+  })
+
+  it('exposes repository failures and retries them through the shared runtime', async () => {
+    let persistenceListener: ((status: PersistenceStatus) => void) | undefined
+    const repository = createRepository({
+      subscribePersistence: vi.fn(listener => {
+        persistenceListener = listener
+        listener({ status: 'idle', failedDomains: [] })
+        return vi.fn()
+      }),
+    })
+    const runtime = await createAppRuntime(repository, { loadMessages: vi.fn(async () => messages('English')) })
+
+    persistenceListener?.({ status: 'error', failedDomains: ['geometry'] })
+    expect(runtime.store.get(persistenceStatusAtom)).toEqual({ status: 'error', failedDomains: ['geometry'] })
+
+    await runtime.retryPersistence()
+    expect(repository.retryFailed).toHaveBeenCalledTimes(1)
+    runtime.dispose()
   })
 })

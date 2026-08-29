@@ -55,20 +55,24 @@ export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
       </div>
       {loading ? (
         <div
+          aria-hidden='true'
           data-ylc-loading-overlay
           className='absolute inset-0 flex items-center justify-center pointer-events-auto transition-opacity duration-140 ease-out'
           style={LOADING_OVERLAY_STYLE}
         >
-          <output className='flex justify-center' aria-label={t('content.aria.loading')}>
+          <div className='flex justify-center'>
             <div
               className='animate-ping h-5 w-5 rounded-full'
               style={{
                 backgroundColor: `rgba(${loaderColor.r}, ${loaderColor.g}, ${loaderColor.b}, ${loaderColor.a})`,
               }}
             />
-          </output>
+          </div>
         </div>
       ) : null}
+      {/* <output> carries an implicit role=status. A live region announces its content, never its name, and
+          only once it is already in the tree, so the wait is spoken as text in a region that always exists. */}
+      <output className='ylc-visually-hidden'>{loading ? t('content.aria.loading') : ''}</output>
     </>
   )
 }

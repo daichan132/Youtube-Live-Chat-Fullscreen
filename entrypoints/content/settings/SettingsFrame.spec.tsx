@@ -1,5 +1,6 @@
 import { fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { browser } from 'wxt/browser'
 import { SettingsFrame } from './SettingsFrame'
 import { SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
@@ -8,6 +9,9 @@ const createRuntime = () => ({
   restart: vi.fn(),
   subscribe: vi.fn(() => vi.fn()),
 })
+
+const extensionUrl = new URL(browser.runtime.getURL('/'))
+const extensionOrigin = `${extensionUrl.protocol}//${extensionUrl.host}`
 
 describe('SettingsFrame', () => {
   it('does not mount the extension page while settings are closed', () => {
@@ -19,7 +23,7 @@ describe('SettingsFrame', () => {
   it('loads the settings extension page only while open', () => {
     const { getByTitle } = render(<SettingsFrame open onClose={vi.fn()} runtime={createRuntime()} />)
 
-    expect(getByTitle('YouTube Live Chat Fullscreen settings')).toHaveAttribute('src', expect.stringMatching(/settings\.html$/))
+    expect(getByTitle('YouTube Live Chat Fullscreen settings')).toHaveAttribute('src', expect.stringMatching(/settings\.html/))
   })
 
   it('accepts close messages only from its own extension frame', () => {
@@ -39,7 +43,16 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: 'unrelated-message' },
+      }),
+    )
+    fireEvent(
+      window,
+      new MessageEvent('message', {
+        source: frame.contentWindow,
+        origin: 'https://www.youtube.com',
+        data: { type: SETTINGS_FRAME_MESSAGE.close },
       }),
     )
     expect(onClose).not.toHaveBeenCalled()
@@ -48,6 +61,7 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: SETTINGS_FRAME_MESSAGE.close },
       }),
     )
@@ -57,6 +71,7 @@ describe('SettingsFrame', () => {
       window,
       new MessageEvent('message', {
         source: frame.contentWindow,
+        origin: extensionOrigin,
         data: { type: SETTINGS_FRAME_MESSAGE.runtimeRestart },
       }),
     )

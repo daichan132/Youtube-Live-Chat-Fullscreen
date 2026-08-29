@@ -5,7 +5,9 @@
         "preset": "ค่าตั้งล่วงหน้า",
         "setting": "การตั้งค่า",
         "undo": "เลิกทำการเปลี่ยนรูปแบบ",
-        "redo": "ทำซ้ำการเปลี่ยนรูปแบบ"
+        "redo": "ทำซ้ำการเปลี่ยนรูปแบบ",
+        "undone": "เลิกทำการเปลี่ยนรูปแบบแล้ว",
+        "redone": "ทำซ้ำการเปลี่ยนรูปแบบแล้ว"
       },
       "alwaysOnDisplay": "แสดงแชทเมื่อไม่มีการใช้งาน",
       "chatOnlyDisplay": "โหมดแสดงเฉพาะแชท",
@@ -15,13 +17,14 @@
       "backgroundColor": "สีพื้นหลัง",
       "fontColor": "สีข้อความ",
       "fontFamily": "แบบอักษร",
+      "fontFamilyDefault": "ค่าเริ่มต้น",
+      "fontSearch": "ค้นหาแบบอักษร",
+      "fontNotFound": "ไม่พบแบบอักษรที่ตรงกับการค้นหา",
       "fontSize": "ขนาดข้อความ",
       "blur": "ความเบลอ",
       "space": "ระยะห่างระหว่างข้อความ",
       "footer": {
-        "donate": "บริจาค",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "บริจาค"
       },
       "theme": "ธีม",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "มืด"
       },
       "membershipNameColor": "สีชื่อสมาชิก",
-      "defaultColor": "ค่าเริ่มต้น",
       "resetToDefaultColor": "คืนค่าสีเริ่มต้น",
       "group": {
         "display": "การแสดงผล",
         "colors": "สี",
         "text": "ข้อความ",
         "elements": "องค์ประกอบแชท"
-      },
-      "requiresAlwaysOn": "เปิด \"แสดงแชทตลอดเวลา\" เพื่อใช้ตัวเลือกนี้"
+      }
+    },
+    "diagnostics": {
+      "legend": "ความเข้ากันได้",
+      "healthy": "ทำงานปกติ",
+      "degraded": "กำลังใช้วิธีสำรองเพื่อความเข้ากันได้",
+      "failed": "ตรวจพบปัญหาความเข้ากันได้",
+      "waiting": "กำลังรวบรวมข้อมูลวินิจฉัยการทำงาน",
+      "lastRecovery": "การกู้คืนอัตโนมัติล่าสุด",
+      "restart": "โหลดโอเวอร์เลย์แชทใหม่",
+      "copy": "คัดลอกรายงานการวินิจฉัย",
+      "copied": "คัดลอกรายงานการวินิจฉัยแล้ว",
+      "copyFailed": "ไม่สามารถคัดลอกรายงานการวินิจฉัยได้"
     },
     "aria": {
       "dragToMove": "ลากเพื่อย้าย",
@@ -46,13 +59,17 @@
       "openSettings": "เปิดการตั้งค่า",
       "toggleLiveChat": "แสดงหรือซ่อนแชทสด",
       "close": "ปิด",
-      "reorderPreset": "ย้ายค่าตั้งล่วงหน้า",
+      "dragHandle": "ที่จับสำหรับลาก",
+      "settingsFrameTitle": "การตั้งค่าแชทเต็มหน้าจอ",
+      "reorderPreset": "จัดลำดับ {name}",
       "presetName": "ชื่อค่าตั้งล่วงหน้า",
-      "applyPreset": "ใช้ค่าตั้งล่วงหน้า",
-      "deletePreset": "ลบค่าตั้งล่วงหน้า",
+      "applyPreset": "ใช้ {name}",
+      "deletePreset": "ลบ {name}",
+      "presetMoved": "ย้าย {name} ไปที่ลำดับที่ {position} แล้ว",
       "colorPicker": "เครื่องมือเลือกสี",
       "loading": "กำลังโหลด",
-      "selectLanguage": "เลือกภาษา"
+      "selectLanguage": "เลือกภาษา",
+      "fontsFound": "พบแบบอักษร {count} รายการ"
     },
     "preset": {
       "addMessage": "บันทึกการตั้งค่าปัจจุบัน",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค",
+    "donateAction": "สนับสนุนผ่าน Ko-fi",
     "theme": "ธีม",
     "dataTransfer": "สำรองข้อมูล",
     "export": "ส่งออก",
@@ -82,5 +100,5 @@
     "importError": "ไม่สามารถนำเข้าไฟล์การตั้งค่าได้"
   },
   "extensionName": "YouTube แชทสดแบบเต็มหน้าจอ",
-  "extensionDescription": "ดู YouTube Live แบบเต็มหน้าจอโดยไม่ต้องปิดแชท ส่งข้อความและ Super Chat พร้อมปรับแต่งโอเวอร์เลย์ได้ตามต้องการ"
+  "extensionDescription": "เต็มหน้าจอแล้วแชทหายไปใช่ไหม โอเวอร์เลย์ที่ซ้อนแชทสด YouTube ไว้บนวิดีโอ อ่านข้อความ พิมพ์ตอบ และส่ง Super Chat ได้"
 }

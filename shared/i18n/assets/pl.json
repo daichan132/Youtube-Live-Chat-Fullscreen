@@ -5,7 +5,9 @@
         "preset": "Szablony",
         "setting": "Ustawienia",
         "undo": "Cofnij zmianę stylu",
-        "redo": "Ponów zmianę stylu"
+        "redo": "Ponów zmianę stylu",
+        "undone": "Cofnięto zmianę stylu",
+        "redone": "Ponowiono zmianę stylu"
       },
       "alwaysOnDisplay": "Pokazuj czat podczas bezczynności",
       "chatOnlyDisplay": "Wyświetlaj tylko czat",
@@ -15,13 +17,14 @@
       "backgroundColor": "Kolor tła",
       "fontColor": "Kolor tekstu",
       "fontFamily": "Krój czcionki",
+      "fontFamilyDefault": "Domyślny",
+      "fontSearch": "Szukaj czcionek",
+      "fontNotFound": "Żadna czcionka nie pasuje do wyszukiwania",
       "fontSize": "Rozmiar czcionki",
       "blur": "Rozmycie",
       "space": "Odstęp",
       "footer": {
-        "donate": "Wesprzyj",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "Wesprzyj"
       },
       "theme": "Motyw",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "Ciemny"
       },
       "membershipNameColor": "Kolor nazw członków",
-      "defaultColor": "Domyślny",
       "resetToDefaultColor": "Przywróć kolor domyślny",
       "group": {
         "display": "Wyświetlanie",
         "colors": "Kolory",
         "text": "Tekst",
         "elements": "Widoczne elementy"
-      },
-      "requiresAlwaysOn": "Włącz „Zawsze wyświetlaj czat”, aby użyć tej opcji"
+      }
+    },
+    "diagnostics": {
+      "legend": "Zgodność",
+      "healthy": "Działa prawidłowo",
+      "degraded": "Działa w trybie zgodności",
+      "failed": "Wykryto problem ze zgodnością",
+      "waiting": "Zbieranie danych diagnostycznych",
+      "lastRecovery": "Ostatnia automatyczna naprawa",
+      "restart": "Wczytaj ponownie nakładkę czatu",
+      "copy": "Kopiuj raport diagnostyczny",
+      "copied": "Skopiowano raport diagnostyczny",
+      "copyFailed": "Nie udało się skopiować raportu diagnostycznego"
     },
     "aria": {
       "dragToMove": "Przeciągnij, aby przenieść",
@@ -46,13 +59,17 @@
       "openSettings": "Otwórz ustawienia",
       "toggleLiveChat": "Pokaż lub ukryj czat na żywo",
       "close": "Zamknij",
-      "reorderPreset": "Zmień położenie szablonu",
+      "dragHandle": "uchwyt przeciągania",
+      "settingsFrameTitle": "Ustawienia czatu na pełnym ekranie",
+      "reorderPreset": "Zmień kolejność: {name}",
       "presetName": "Nazwa szablonu",
-      "applyPreset": "Zastosuj szablon",
-      "deletePreset": "Usuń szablon",
+      "applyPreset": "Zastosuj {name}",
+      "deletePreset": "Usuń {name}",
+      "presetMoved": "Przeniesiono {name} na pozycję {position}",
       "colorPicker": "Wybór koloru",
       "loading": "Ładowanie",
-      "selectLanguage": "Wybierz język"
+      "selectLanguage": "Wybierz język",
+      "fontsFound": "Liczba znalezionych czcionek: {count}"
     },
     "preset": {
       "addMessage": "Zapisz bieżące ustawienia",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Odnośniki",
     "donate": "Wesprzyj",
+    "donateAction": "Wesprzyj na Ko-fi",
     "theme": "Motyw",
     "dataTransfer": "Kopia zapasowa",
     "export": "Eksportuj",
@@ -82,5 +100,5 @@
     "importError": "Nie udało się zaimportować pliku ustawień."
   },
   "extensionName": "YouTube Live Chat Fullscreen",
-  "extensionDescription": "Oglądaj transmisje na żywo w YouTube na pełnym ekranie. Pisz na czacie, wysyłaj wiadomości Super Chat i dostosuj wygląd czatu."
+  "extensionDescription": "Czat znika na pełnym ekranie? Nakładka trzyma czat na żywo z YouTube na wideo: przesuwaj, skaluj, odpisuj i wysyłaj Super Chaty."
 }

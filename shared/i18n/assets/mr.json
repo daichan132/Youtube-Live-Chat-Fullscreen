@@ -5,7 +5,9 @@
         "preset": "प्रीसेट",
         "setting": "सेटिंग्ज",
         "undo": "शैलीतील बदल पूर्ववत करा",
-        "redo": "शैलीतील बदल पुन्हा करा"
+        "redo": "शैलीतील बदल पुन्हा करा",
+        "undone": "शैलीतील बदल पूर्ववत केला",
+        "redone": "शैलीतील बदल पुन्हा केला"
       },
       "alwaysOnDisplay": "निष्क्रिय असताना चॅट दाखवा",
       "chatOnlyDisplay": "फक्त चॅट दाखवा",
@@ -15,13 +17,14 @@
       "backgroundColor": "पार्श्वभूमी रंग",
       "fontColor": "अक्षरांचा रंग",
       "fontFamily": "फॉन्ट फॅमिली",
+      "fontFamilyDefault": "डीफॉल्ट",
+      "fontSearch": "फॉन्ट शोधा",
+      "fontNotFound": "तुमच्या शोधाशी जुळणारा कोणताही फॉन्ट नाही",
       "fontSize": "फॉन्ट आकार",
       "blur": "अस्पष्टता",
       "space": "अंतर",
       "footer": {
-        "donate": "देणगी द्या",
-        "chrome": "Chrome",
-        "firefox": "Firefox"
+        "donate": "देणगी द्या"
       },
       "theme": "थीम",
       "themeMode": {
@@ -30,15 +33,25 @@
         "dark": "डार्क"
       },
       "membershipNameColor": "सदस्य नावाचा रंग",
-      "defaultColor": "डीफॉल्ट",
       "resetToDefaultColor": "डीफॉल्ट रंगावर रीसेट करा",
       "group": {
         "display": "प्रदर्शन",
         "colors": "रंग",
         "text": "मजकूर",
         "elements": "चॅट घटक"
-      },
-      "requiresAlwaysOn": "हे कॉन्फिगर करण्यासाठी \"नेहमी दाखवा\" चालू करा"
+      }
+    },
+    "diagnostics": {
+      "legend": "सुसंगतता",
+      "healthy": "सामान्य",
+      "degraded": "पर्यायी सुसंगतता मोडमध्ये चालू आहे",
+      "failed": "सुसंगततेची समस्या आढळली",
+      "waiting": "डायग्नोस्टिक माहिती गोळा केली जात आहे",
+      "lastRecovery": "शेवटची स्वयंचलित पुनर्प्राप्ती",
+      "restart": "चॅट पुन्हा लोड करा",
+      "copy": "डायग्नोस्टिक अहवाल कॉपी करा",
+      "copied": "डायग्नोस्टिक अहवाल कॉपी केला",
+      "copyFailed": "डायग्नोस्टिक अहवाल कॉपी करता आला नाही"
     },
     "aria": {
       "dragToMove": "हलवण्यासाठी ड्रॅग करा",
@@ -46,13 +59,17 @@
       "openSettings": "सेटिंग्ज उघडा",
       "toggleLiveChat": "लाइव्ह चॅट टॉगल करा",
       "close": "बंद करा",
-      "reorderPreset": "प्रीसेट क्रम बदला",
+      "dragHandle": "ड्रॅग हँडल",
+      "settingsFrameTitle": "फुलस्क्रीन चॅट सेटिंग्ज",
+      "reorderPreset": "{name} चा क्रम बदला",
       "presetName": "प्रीसेट नाव",
-      "applyPreset": "प्रीसेट लागू करा",
-      "deletePreset": "प्रीसेट हटवा",
+      "applyPreset": "{name} लागू करा",
+      "deletePreset": "{name} हटवा",
+      "presetMoved": "{name} {position}व्या स्थानावर हलवले",
       "colorPicker": "रंग निवडक",
       "loading": "लोड होत आहे",
-      "selectLanguage": "भाषा निवडा"
+      "selectLanguage": "भाषा निवडा",
+      "fontsFound": "सापडलेले फॉन्ट: {count}"
     },
     "preset": {
       "addMessage": "सध्याच्या सेटिंग्ज जतन करा",
@@ -75,6 +92,7 @@
     "showChatOnFullscreen": "फुलस्क्रीन चॅट",
     "links": "लिंक्स",
     "donate": "देणगी द्या",
+    "donateAction": "Ko-fi वर पाठिंबा द्या",
     "theme": "थीम",
     "dataTransfer": "बॅकअप",
     "export": "निर्यात",
@@ -82,5 +100,5 @@
     "importError": "सेटिंग फाइल आयात करता आली नाही."
   },
   "extensionName": "YouTube लाइव्ह चॅट फुलस्क्रीन",
-  "extensionDescription": "YouTube लाइव्ह फुलस्क्रीनवर पाहताना चॅट वाचा आणि संदेश पाठवा. Super Chat पाठवा आणि ओव्हरलेचे रूप व स्थान आपल्या आवडीनुसार बदला."
+  "extensionDescription": "फुलस्क्रीनमध्ये चॅट गायब? हा ओव्हरले YouTube ची लाइव्ह चॅट व्हिडिओवर आणतो — मेसेज वाचा, उत्तर द्या, Super Chat पाठवा."
 }

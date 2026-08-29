@@ -6,6 +6,21 @@ These are independent visual directions for selection. They use fictional stream
 content and avoid third-party logos, real creators, ratings, awards, or unsupported
 performance claims.
 
+**Read before using any of these as a store screenshot.** The renders are marketing
+illustrations, not captures of the product. The chat panel in them is an invented
+bubble-chat design with fabricated avatars and a generic composer; the real overlay
+is YouTube's own live-chat iframe restyled in place, which looks different. Baked-in
+headline copy is Japanese only, although every entry below is glossed in English.
+None of that disqualifies them as promo tiles or marquee art, where illustration is
+normal — but a Chrome Web Store *screenshot* slot is expected to show the actual
+interface, so these are not drop-in replacements for `yarn capture:store-assets`
+output. See [`../../store-listing/asset-work-list.md`](../../store-listing/asset-work-list.md)
+for what the screenshot slots actually need.
+
+The catalog below maps positionally to the PNG files beside it: entry *n* is
+`<nnn>-*.png`. Nothing verifies that correspondence, so do not renumber, insert,
+or delete an entry without moving the matching file.
+
 1. **消えたチャットが帰ってくる** — fullscreen without chat transforms into fullscreen with the overlay.
 2. **配信に溶け込む透明チャット** — a translucent violet chat layer preserves the performer.
 3. **ドラッグしてベストポジション** — restrained motion cues show the overlay moving to the ideal spot.
