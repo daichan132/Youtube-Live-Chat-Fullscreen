@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useState } from 'react'
+import { useCallback, useId, useState } from 'react'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
@@ -33,6 +33,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const deletePreset = useSetAtom(deletePresetAtom)
   const { commitYLCProfile } = useStyleHistoryCommands()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
+  const deleteDialogTitleId = useId()
   const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
   const displayTitle = getPresetDisplayTitle(preset, t)
@@ -92,6 +93,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
       {!isBuiltIn && isDeleteModalOpen && (
         <Modal
           isOpen={isDeleteModalOpen}
+          ariaLabelledBy={deleteDialogTitleId}
           onRequestClose={() => setIsDeleteModalOpen(false)}
           shouldReturnFocusAfterClose={true}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35'
@@ -100,7 +102,9 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
           parentSelector={getModalParentElement}
         >
           <div className='px-5 py-4 ylc-theme-dialog-divider-bottom'>
-            <h3 className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>{t('content.preset.delete')}</h3>
+            <h3 id={deleteDialogTitleId} className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>
+              {t('content.preset.delete')}
+            </h3>
           </div>
           <div className='px-5 py-4'>
             <p className='m-0 text-sm leading-6 ylc-theme-text-secondary'>{t('content.preset.deleteConfirmationMessage')}</p>

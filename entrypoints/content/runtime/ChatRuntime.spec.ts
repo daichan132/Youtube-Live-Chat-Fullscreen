@@ -164,7 +164,7 @@ describe('ChatRuntime', () => {
     })
   })
 
-  it('ignores unrelated mutations inside the player while observing boundary replacement', () => {
+  it('ignores unrelated mutations while observing boundary replacement', () => {
     const player = document.createElement('div')
     player.id = 'movie_player'
     const controls = document.createElement('div')
@@ -188,6 +188,17 @@ describe('ChatRuntime', () => {
       removedNodes: [],
     } as unknown as MutationRecord
     expect(mutationTouchesChatBoundary(boundaryMutation)).toBe(true)
+
+    const appShell = document.createElement('div')
+    appShell.appendChild(player)
+    const unrelatedNode = document.createElement('span')
+    const ancestorMutation = {
+      type: 'childList',
+      target: appShell,
+      addedNodes: [unrelatedNode],
+      removedNodes: [],
+    } as unknown as MutationRecord
+    expect(mutationTouchesChatBoundary(ancestorMutation)).toBe(false)
   })
 
   it('reobserves a native chat iframe when it finishes loading before fullscreen', () => {
@@ -416,7 +427,7 @@ describe('ChatRuntime', () => {
     })
     expect(harness.portalHost.sync).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        overlayEnabled: true,
+        overlayEnabled: false,
         switchEnabled: true,
       }),
     )

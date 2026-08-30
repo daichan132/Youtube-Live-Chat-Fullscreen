@@ -11,6 +11,7 @@ import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import { commitGeometryAtom, geometryAtom } from '@/shared/state'
 import { deriveResizedLayout, type ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
 import { collectPlayerObstacles } from '../platform/youtube/collectPlayerObstacles'
+import { playerObstacleBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { chooseAutoSafePlacement, shouldApplyAutoSafePlacement } from './autoSafeArea'
 import { type Point, usePointerSession } from './usePointerSession'
 
@@ -40,6 +41,19 @@ const readReferenceSize = (element: HTMLElement | null) => {
   return width > 0 && height > 0 ? { width, height } : null
 }
 
+const nodeMatchesOrContainsPlayerObstacle = (node: Node) =>
+  node instanceof Element &&
+  (node.matches(playerObstacleBoundarySelector) || node.querySelector(playerObstacleBoundarySelector) !== null)
+
+export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
+  if (!(mutation.target instanceof Element)) return false
+  if (mutation.type === 'attributes') {
+    return mutation.target === player || mutation.target.matches(playerObstacleBoundarySelector)
+  }
+  if (mutation.target.matches(playerObstacleBoundarySelector)) return true
+  return [...mutation.addedNodes, ...mutation.removedNodes].some(nodeMatchesOrContainsPlayerObstacle)
+}
+
 export const useOverlayGeometry = ({
   referenceElement,
   settingsOpen = false,
@@ -59,7 +73,6 @@ export const useOverlayGeometry = ({
   const [referenceSize, setReferenceSize] = useState(() => readReferenceSize(playerElement))
   const [obstacleRevision, setObstacleRevision] = useState(0)
   const [draftGeometry, setDraftGeometry] = useState<PixelChatGeometry | null>(null)
-  const draftGeometryRef = useRef<PixelChatGeometry | null>(null)
   const pointerActiveRef = useRef(false)
   const autoPlacementEvaluatedRef = useRef(false)
   const autoRepositionedRef = useRef(false)
@@ -67,11 +80,12 @@ export const useOverlayGeometry = ({
   const viewport = referenceSize ?? { width: window.innerWidth, height: window.innerHeight }
   const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport.height, viewport.width])
   const displayGeometry = draftGeometry ?? fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING)
+  const pinned = isChatGeometryV2(geometry) ? geometry.pinned : true
 
   const commitLayout = useCallback(
-    (layout: PixelChatGeometry, pinned: boolean) => {
+    (layout: PixelChatGeometry, nextPinned: boolean) => {
       const fitted = fitGeometryToViewport(layout, viewport, GEOMETRY_VIEWPORT_PADDING)
-      commitGeometry(layoutGeometryToV2(fitted, viewport, pinned))
+      commitGeometry(layoutGeometryToV2(fitted, viewport, nextPinned))
     },
     [commitGeometry, viewport],
   )
@@ -80,14 +94,13 @@ export const useOverlayGeometry = ({
     (event: React.PointerEvent, point: Point): GeometrySession => {
       const direction = (event.currentTarget as HTMLElement).dataset.ylcResizeDirection as ResizeDirection | undefined
       pointerActiveRef.current = true
-      draftGeometryRef.current = null
       setDraftGeometry(null)
       return { type: direction ? 'resize' : 'move', direction, startPoint: point, startGeometry: displayGeometry }
     },
     [displayGeometry],
   )
 
-  const updateSession = useCallback(
+  const deriveSessionGeometry = useCallback(
     (session: GeometrySession, point: Point) => {
       const delta = { width: point.x - session.startPoint.x, height: point.y - session.startPoint.y }
       const nextGeometry =
@@ -105,27 +118,30 @@ export const useOverlayGeometry = ({
               },
               size: session.startGeometry.size,
             }
-      const normalized = fitGeometryToViewport(nextGeometry, viewport, GEOMETRY_VIEWPORT_PADDING)
-      draftGeometryRef.current = normalized
-      setDraftGeometry(normalized)
+      return fitGeometryToViewport(nextGeometry, viewport, GEOMETRY_VIEWPORT_PADDING)
     },
     [viewport],
   )
 
+  const updateSession = useCallback(
+    (session: GeometrySession, point: Point) => {
+      setDraftGeometry(deriveSessionGeometry(session, point))
+    },
+    [deriveSessionGeometry],
+  )
+
   const finishSession = useCallback(
-    (session: GeometrySession) => {
-      const next = draftGeometryRef.current ?? session.startGeometry
+    (session: GeometrySession, point: Point) => {
+      const next = deriveSessionGeometry(session, point)
       pointerActiveRef.current = false
-      draftGeometryRef.current = null
       setDraftGeometry(null)
       commitLayout(next, true)
     },
-    [commitLayout],
+    [commitLayout, deriveSessionGeometry],
   )
 
   const cancelSession = useCallback(() => {
     pointerActiveRef.current = false
-    draftGeometryRef.current = null
     setDraftGeometry(null)
   }, [])
 
@@ -169,14 +185,18 @@ export const useOverlayGeometry = ({
     window.addEventListener('resize', updateSize, { passive: true })
 
     let scheduledFrame: number | null = null
-    const mutationObserver = new MutationObserver(() => {
-      if (scheduledFrame !== null) return
-      scheduledFrame = requestAnimationFrame(() => {
-        scheduledFrame = null
-        setObstacleRevision(revision => revision + 1)
-      })
-    })
-    mutationObserver.observe(playerElement, {
+    const mutationObserver =
+      pinned || typeof MutationObserver === 'undefined'
+        ? null
+        : new MutationObserver(mutations => {
+            if (!mutations.some(mutation => mutationTouchesPlayerObstacle(mutation, playerElement))) return
+            if (scheduledFrame !== null) return
+            scheduledFrame = requestAnimationFrame(() => {
+              scheduledFrame = null
+              setObstacleRevision(revision => revision + 1)
+            })
+          })
+    mutationObserver?.observe(playerElement, {
       attributes: true,
       attributeFilter: ['aria-hidden', 'class', 'hidden', 'style'],
       childList: true,
@@ -184,11 +204,11 @@ export const useOverlayGeometry = ({
     })
     return () => {
       resizeObserver?.disconnect()
-      mutationObserver.disconnect()
+      mutationObserver?.disconnect()
       if (scheduledFrame !== null) cancelAnimationFrame(scheduledFrame)
       window.removeEventListener('resize', updateSize)
     }
-  }, [playerElement])
+  }, [pinned, playerElement])
 
   useLayoutEffect(() => {
     if (!referenceSize || isChatGeometryV2(geometry)) return
@@ -196,7 +216,6 @@ export const useOverlayGeometry = ({
   }, [commitGeometry, geometry, referenceSize])
 
   useLayoutEffect(() => {
-    const pinned = isChatGeometryV2(geometry) ? geometry.pinned : true
     if (!playerElement || !referenceSize || pinned || pointerActiveRef.current || draftGeometry) return
     if (interactionState === 'dragging' || interactionState === 'resizing') return
     const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
@@ -214,9 +233,9 @@ export const useOverlayGeometry = ({
     commitLayout,
     displayGeometry,
     draftGeometry,
-    geometry,
     interactionState,
     obstacleRevision,
+    pinned,
     playerElement,
     referenceSize,
     settingsOpen,

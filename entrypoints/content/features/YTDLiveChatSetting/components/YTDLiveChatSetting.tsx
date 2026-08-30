@@ -140,9 +140,12 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     [handleRedo, handleUndo],
   )
 
+  const dialogLabel = tabs.find(tab => tab.key === menuItem)?.label ?? t('content.setting.header.setting')
+
   return (
     <Modal
       isOpen={open}
+      ariaLabel={dialogLabel}
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}

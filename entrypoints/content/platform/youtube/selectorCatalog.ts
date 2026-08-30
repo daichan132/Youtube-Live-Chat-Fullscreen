@@ -25,6 +25,12 @@ export const endScreenObstacleProbe = {
   probeId: 'obstacle.endscreen.v1',
   selectors: ['.html5-endscreen', '.ytp-ce-element'],
 } as const
+export const playerObstacleBoundarySelector = [
+  ...captionObstacleProbe.selectors,
+  ...playerControlsObstacleProbe.selectors,
+  ...playerMenuObstacleProbe.selectors,
+  ...endScreenObstacleProbe.selectors,
+].join(', ')
 export const runtimeBoundarySelector =
   'ytd-watch-flexy, ytd-watch-grid, #movie_player, .ytp-right-controls, ytd-live-chat-frame, #chatframe, #chat-container, #show-hide-button, #secondary, #panels-full-bleed-container'
 export const archiveSidebarOpenControlProbe = {

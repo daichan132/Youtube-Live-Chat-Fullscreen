@@ -35,6 +35,7 @@ const createCurrentReplayButton = () => {
 
 beforeEach(() => {
   document.body.innerHTML = ''
+  document.head.querySelectorAll('script').forEach(script => script.remove())
   resetWindowPlayerResponse()
   const nonce = Math.random().toString(16).slice(2)
   window.history.pushState({}, '', `${window.location.origin}/watch?v=${nonce}`)
@@ -105,6 +106,20 @@ describe('isYouTubeLiveNow', () => {
     document.body.appendChild(timeDisplay)
 
     expect(isYouTubeLiveNow()).toBe(false)
+  })
+
+  it('falls back when the movie player API throws during replacement', () => {
+    const videoId = currentUrlVideoId()
+    const moviePlayer = createMoviePlayer(undefined, videoId)
+    moviePlayer.setAttribute('video-id', videoId)
+    moviePlayer.getVideoData = () => {
+      throw new Error('player replacement in progress')
+    }
+    const timeDisplay = document.createElement('div')
+    timeDisplay.className = 'ytp-time-display ytp-live'
+    document.body.appendChild(timeDisplay)
+
+    expect(isYouTubeLiveNow()).toBe(true)
   })
 
   it('returns false when archive replay button is present even if initial response says live', () => {
@@ -281,6 +296,42 @@ describe('isYouTubeLiveNow', () => {
     expect(isYouTubeLiveNow()).toBe(true)
   })
 
+  it('invalidates the inline response cache when the same video changes live state', () => {
+    const videoId = `same-inline-live-${Math.random().toString(16).slice(2)}`
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+    const script = document.createElement('script')
+    script.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":false}}}};`
+    document.head.appendChild(script)
+
+    expect(isYouTubeLiveNow()).toBe(false)
+
+    script.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
+
+    expect(isYouTubeLiveNow()).toBe(true)
+  })
+
+  it('scopes inline live state to videoDetails instead of an unrelated earlier videoId', () => {
+    const videoId = 'current-inline-video'
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+    const script = document.createElement('script')
+    script.textContent = `var ytInitialPlayerResponse = {"related":{"videoId":"stale-related-video"},"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
+    document.head.appendChild(script)
+
+    expect(isYouTubeLiveNow()).toBe(true)
+  })
+
+  it('uses the newest matching inline response for the current video', () => {
+    const videoId = 'current-inline-video'
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+    const stale = document.createElement('script')
+    stale.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":false}}}};`
+    const current = document.createElement('script')
+    current.textContent = `var ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};`
+    document.head.append(stale, current)
+
+    expect(isYouTubeLiveNow()).toBe(true)
+  })
+
   it('ignores stale inline live script from another video', () => {
     window.history.pushState({}, '', `${window.location.origin}/watch?v=current-video`)
     const script = document.createElement('script')
@@ -326,19 +377,15 @@ describe('isYouTubeLiveNow', () => {
 
   describe('SPA navigation stale chatframe', () => {
     it('ignores stale #chatframe replay when URL points to a different video', () => {
-      // URL is now live video B
       window.history.pushState({}, '', `${window.location.origin}/watch?v=live-video-B`)
 
-      // Stale #chatframe still referencing archive video A
       const chatFrame = document.createElement('iframe')
       chatFrame.id = 'chatframe'
       chatFrame.src = 'https://www.youtube.com/live_chat_replay?v=archive-video-A'
       document.body.appendChild(chatFrame)
 
-      // Movie player says live
       createMoviePlayer(true)
 
-      // Stale chatframe should be skipped, movie player live signal wins
       expect(isYouTubeLiveNow()).toBe(true)
     })
 

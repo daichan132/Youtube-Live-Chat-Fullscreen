@@ -8,6 +8,7 @@ import {
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { getLiveChatDocument, hasLiveChatRendererReady, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { getArchiveNativeOpenControl, hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
+import { getYouTubePlayerVideoId, readYouTubePlayerVideoData, type YouTubeMoviePlayer } from './playerVideoData'
 import {
   archivePlayerChatToggleProbe,
   archiveSidebarOpenControlProbe,
@@ -21,31 +22,13 @@ import {
   watchSurfaceProbe,
 } from './selectorCatalog'
 import type { PageEvidence, PageObservation } from './types'
+import { getYouTubeContentSurface } from './youtubeSurface'
 
-type MoviePlayerElement = HTMLElement & {
-  getVideoData?: () => {
-    isLive?: boolean
-    isLiveContent?: boolean
-    video_id?: string
-    videoId?: string
-  }
-}
+const getRoute = (): PageEvidence['route'] => getYouTubeContentSurface(window.location.href)?.route ?? 'other'
 
-const getRoute = (videoId: string | null): PageEvidence['route'] => {
-  if (!videoId) return 'other'
-  try {
-    const pathname = new URL(window.location.href).pathname
-    if (pathname === '/watch') return 'watch'
-    if (pathname.startsWith('/live/') || pathname.endsWith('/live')) return 'live'
-  } catch {
-    // Treat malformed and transient SPA locations as non-watch surfaces.
-  }
-  return 'other'
-}
-
-const getPlayerLiveState = (player: MoviePlayerElement | null, videoId: string | null, watch: HTMLElement | null) => {
-  const data = player?.getVideoData?.()
-  const playerVideoId = data?.video_id ?? data?.videoId ?? player?.getAttribute('video-id')
+const getPlayerLiveState = (player: YouTubeMoviePlayer | null, videoId: string | null, watch: HTMLElement | null) => {
+  const data = readYouTubePlayerVideoData(player)
+  const playerVideoId = getYouTubePlayerVideoId(player, data)
   if (videoId && playerVideoId && playerVideoId !== videoId) return null
   if (data?.isLive === true) return true
   if (data?.isLive === false) return data.isLiveContent === true ? null : false
@@ -75,7 +58,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
   const videoId = getCurrentYouTubeVideoId()
   const watchProbe = queryFirstProbe<HTMLElement>(document, watchSurfaceProbe)
   if (watchProbe.probeId) probeIds.add(watchProbe.probeId)
-  const playerResult = queryFirstProbe<MoviePlayerElement>(document, playerProbe)
+  const playerResult = queryFirstProbe<YouTubeMoviePlayer>(document, playerProbe)
   if (playerResult.probeId) probeIds.add(playerResult.probeId)
   const player = playerResult.element
   const rightControlsResult = player ? queryFirstProbe<HTMLElement>(player, rightControlsProbe) : { element: null, probeId: null }
@@ -134,7 +117,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
     evidence: {
       generation,
       videoId,
-      route: getRoute(videoId),
+      route: getRoute(),
       fullscreen: fullscreenRoot !== null,
       videoMode,
       chatAvailability,

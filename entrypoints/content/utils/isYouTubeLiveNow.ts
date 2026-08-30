@@ -1,15 +1,11 @@
 import { getCurrentLiveChatIframe, isChatHostForCurrentVideo, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import {
+  getYouTubeMoviePlayer,
+  getYouTubePlayerVideoId,
+  readYouTubePlayerVideoData,
+  type YouTubeVideoData,
+} from '../platform/youtube/playerVideoData'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
-
-type YouTubeVideoData = {
-  isLive?: boolean
-  video_id?: string
-  videoId?: string
-}
-
-type YouTubeMoviePlayer = HTMLElement & {
-  getVideoData?: () => YouTubeVideoData
-}
 
 type YouTubeInitialPlayerResponse = {
   microformat?: {
@@ -25,8 +21,8 @@ type YouTubeInitialPlayerResponse = {
   }
 }
 
-let cachedScriptLiveNowKey = ''
-let cachedScriptLiveNowResult: { live: boolean; videoId: string | null } | null = null
+type ScriptLiveNowResult = { live: boolean; videoId: string | null }
+const scriptLiveNowCache = new WeakMap<HTMLScriptElement, { text: string; result: ScriptLiveNowResult | null }>()
 
 const hasReplayLabel = (value: string | null | undefined) => {
   const normalized = (value ?? '').toLowerCase()
@@ -107,10 +103,14 @@ const hasArchiveReplaySignal = () => {
   return Array.from(replayButtons).some(button => isReplayButtonForCurrentChat(button) && hasReplayButtonLabel(button))
 }
 
+const readCurrentPlayerData = (): { data: YouTubeVideoData | null; videoId: string | null } => {
+  const moviePlayer = getYouTubeMoviePlayer()
+  const data = readYouTubePlayerVideoData(moviePlayer)
+  return { data, videoId: getYouTubePlayerVideoId(moviePlayer, data) }
+}
+
 const hasPlayerLiveUiSignal = () => {
-  const moviePlayer = document.getElementById('movie_player') as YouTubeMoviePlayer | null
-  const videoData = moviePlayer?.getVideoData?.()
-  const moviePlayerVideoId = videoData?.video_id ?? videoData?.videoId ?? moviePlayer?.getAttribute('video-id')
+  const { videoId: moviePlayerVideoId } = readCurrentPlayerData()
   if (!isKnownVideoIdCurrent(moviePlayerVideoId)) return false
 
   const watchFlexy = document.querySelector('ytd-watch-flexy')
@@ -127,11 +127,9 @@ const hasPlayerLiveUiSignal = () => {
 }
 
 const getLiveFromMoviePlayer = () => {
-  const moviePlayer = document.getElementById('movie_player') as YouTubeMoviePlayer | null
-  const videoData = moviePlayer?.getVideoData?.()
-  const videoId = videoData?.video_id ?? videoData?.videoId ?? moviePlayer?.getAttribute('video-id')
+  const { data, videoId } = readCurrentPlayerData()
   if (!isKnownVideoIdCurrent(videoId)) return null
-  if (typeof videoData?.isLive === 'boolean') return videoData.isLive
+  if (typeof data?.isLive === 'boolean') return data.isLive
   return null
 }
 
@@ -149,15 +147,19 @@ const getLiveFromInitialPlayerResponse = () => {
 }
 
 const parseVideoIdFromScript = (scriptText: string) => {
-  const videoIdMatch =
-    scriptText.match(/"videoId":"([^"]+)"/) ??
-    scriptText.match(/"video_id":"([^"]+)"/) ??
-    scriptText.match(/"videoDetails":\{[^}]*"videoId":"([^"]+)"/)
-  return videoIdMatch?.[1] ?? null
+  const videoDetailsStart = scriptText.indexOf('"videoDetails"')
+  if (videoDetailsStart >= 0) {
+    const videoDetailsSection = scriptText.slice(videoDetailsStart, videoDetailsStart + 5000)
+    const videoDetailsMatch = videoDetailsSection.match(/"videoId"\s*:\s*"([^"]+)"/)
+    if (videoDetailsMatch?.[1]) return videoDetailsMatch[1]
+  }
+
+  const fallbackMatch = scriptText.match(/"video_id"\s*:\s*"([^"]+)"/) ?? scriptText.match(/"videoId"\s*:\s*"([^"]+)"/)
+  return fallbackMatch?.[1] ?? null
 }
 
-const parseLiveNowFromScript = (scriptText: string) => {
-  const isLiveNowMatch = scriptText.match(/"isLiveNow":(true|false)/)
+const parseLiveNowFromScript = (scriptText: string): ScriptLiveNowResult | null => {
+  const isLiveNowMatch = scriptText.match(/"isLiveNow"\s*:\s*(true|false)/)
   if (isLiveNowMatch?.[1]) {
     return {
       live: isLiveNowMatch[1] === 'true',
@@ -165,7 +167,7 @@ const parseLiveNowFromScript = (scriptText: string) => {
     }
   }
 
-  const viewedLiveMatch = scriptText.match(/"key":"is_viewed_live","value":"(True|False)"/)
+  const viewedLiveMatch = scriptText.match(/"key"\s*:\s*"is_viewed_live"\s*,\s*"value"\s*:\s*"(True|False)"/)
   if (viewedLiveMatch?.[1]) {
     return {
       live: viewedLiveMatch[1] === 'True',
@@ -176,25 +178,24 @@ const parseLiveNowFromScript = (scriptText: string) => {
   return null
 }
 
+const readScriptLiveNow = (script: HTMLScriptElement) => {
+  const text = script.textContent ?? ''
+  const cached = scriptLiveNowCache.get(script)
+  if (cached?.text === text) return cached.result
+
+  const result = text.includes('ytInitialPlayerResponse') ? parseLiveNowFromScript(text) : null
+  scriptLiveNowCache.set(script, { text, result })
+  return result
+}
+
 const getLiveFromInlinePlayerResponseScript = () => {
   const currentVideoId = getCurrentYouTubeVideoId()
   if (!currentVideoId) return null
 
-  const cacheKey = `${window.location.href}\n${currentVideoId}`
-  if (cachedScriptLiveNowKey === cacheKey) {
-    return cachedScriptLiveNowResult?.videoId === currentVideoId ? cachedScriptLiveNowResult.live : null
-  }
-
-  const scripts = document.querySelectorAll('script')
+  const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script')).reverse()
   for (const script of scripts) {
-    const text = script.textContent ?? ''
-    if (!text.includes('ytInitialPlayerResponse')) continue
-    const parsed = parseLiveNowFromScript(text)
-    if (parsed !== null && isExplicitVideoIdCurrent(parsed.videoId)) {
-      cachedScriptLiveNowKey = cacheKey
-      cachedScriptLiveNowResult = parsed
-      return parsed.live
-    }
+    const parsed = readScriptLiveNow(script)
+    if (parsed !== null && parsed.videoId === currentVideoId) return parsed.live
   }
 
   return null

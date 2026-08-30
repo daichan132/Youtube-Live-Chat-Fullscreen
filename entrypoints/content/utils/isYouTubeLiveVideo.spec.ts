@@ -36,6 +36,17 @@ describe('isYouTubeLiveVideo', () => {
     expect(isYouTubeLiveVideo()).toBe(false)
   })
 
+  it('returns false instead of throwing when the player API is temporarily unavailable', () => {
+    const moviePlayer = document.createElement('div') as HTMLDivElement & { getVideoData?: () => never }
+    moviePlayer.id = 'movie_player'
+    moviePlayer.getVideoData = () => {
+      throw new Error('player replacement in progress')
+    }
+    document.body.appendChild(moviePlayer)
+
+    expect(isYouTubeLiveVideo()).toBe(false)
+  })
+
   it('ignores stale player data from another video', () => {
     const moviePlayer = document.createElement('div') as HTMLDivElement & {
       getVideoData?: () => { isLive?: boolean; video_id?: string }

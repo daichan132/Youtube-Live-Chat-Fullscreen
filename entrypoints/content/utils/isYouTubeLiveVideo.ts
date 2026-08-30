@@ -1,17 +1,15 @@
+import {
+  getYouTubeMoviePlayer,
+  getYouTubePlayerVideoId,
+  readYouTubePlayerVideoData,
+} from '../platform/youtube/playerVideoData'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
-type YouTubeVideoData = {
-  isLive?: boolean
-  isLiveContent?: boolean
-  video_id?: string
-  videoId?: string
-}
-
 export const isYouTubeLiveVideo = () => {
-  const moviePlayer = document.getElementById('movie_player') as (HTMLElement & { getVideoData?: () => YouTubeVideoData }) | null
-  const videoData = moviePlayer?.getVideoData?.()
+  const moviePlayer = getYouTubeMoviePlayer()
+  const videoData = readYouTubePlayerVideoData(moviePlayer)
   const currentVideoId = getCurrentYouTubeVideoId()
-  const playerVideoId = videoData?.video_id ?? videoData?.videoId ?? moviePlayer?.getAttribute('video-id')
+  const playerVideoId = getYouTubePlayerVideoId(moviePlayer, videoData)
   if (!currentVideoId) return false
   if (playerVideoId && playerVideoId !== currentVideoId) return false
   if (typeof videoData?.isLive === 'boolean') return videoData.isLive

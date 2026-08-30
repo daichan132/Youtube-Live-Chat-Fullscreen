@@ -2,13 +2,13 @@ import { act, renderHook } from '@testing-library/react'
 import { Provider } from 'jotai'
 import { createStore } from 'jotai/vanilla'
 import { createElement, type ReactNode } from 'react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { layoutGeometryToV2, renderChatGeometry } from '@/shared/settings/chatGeometry'
 import { DEFAULT_CHAT_GEOMETRY } from '@/shared/settings/defaults'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { LegacyChatGeometry } from '@/shared/settings/model'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
-import { useOverlayGeometry } from './useOverlayGeometry'
+import { mutationTouchesPlayerObstacle, useOverlayGeometry } from './useOverlayGeometry'
 
 describe('useOverlayGeometry', () => {
   const store = createStore()
@@ -22,10 +22,10 @@ describe('useOverlayGeometry', () => {
     Object.defineProperty(player, 'clientHeight', { configurable: true, get: () => height })
   }
 
-  const setLayout = (coordinates = { x: 100, y: 50 }, size = { width: 300, height: 200 }) => {
+  const setLayout = (coordinates = { x: 100, y: 50 }, size = { width: 300, height: 200 }, pinned = true) => {
     store.set(chatSettingsStateAtom, {
       ...DEFAULT_CHAT_SETTINGS,
-      geometry: layoutGeometryToV2({ coordinates, size }, reference, true),
+      geometry: layoutGeometryToV2({ coordinates, size }, reference, pinned),
     })
   }
 
@@ -76,6 +76,24 @@ describe('useOverlayGeometry', () => {
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
   })
 
+  it('uses the final pointer-up coordinates even when no pointermove was delivered', () => {
+    const { result } = renderGeometryHook()
+    const handle = document.createElement('div')
+    const pointerDown = {
+      button: 0,
+      pointerId: 7,
+      clientX: 0,
+      clientY: 0,
+      currentTarget: handle,
+      preventDefault: () => {},
+    } as unknown as React.PointerEvent<HTMLDivElement>
+
+    act(() => result.current.onPointerDown(pointerDown))
+    act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 7, clientX: 30, clientY: 15 })))
+
+    expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 130, y: 65 })
+  })
+
   it('keeps pointer resize updates in a draft and commits once on pointer up', () => {
     setPlayerSize(800, 600)
     setLayout()
@@ -123,6 +141,30 @@ describe('useOverlayGeometry', () => {
     expect(persisted.size.height).toBeCloseTo(220)
   })
 
+  it('does not observe player mutations for pinned geometry', () => {
+    const observe = vi.spyOn(MutationObserver.prototype, 'observe')
+
+    renderGeometryHook()
+
+    expect(observe).not.toHaveBeenCalled()
+  })
+
+  it('observes player mutations only while automatic placement is active', () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const observe = vi.spyOn(MutationObserver.prototype, 'observe')
+
+    renderGeometryHook()
+
+    expect(observe).toHaveBeenCalledWith(
+      player,
+      expect.objectContaining({
+        attributes: true,
+        childList: true,
+        subtree: true,
+      }),
+    )
+  })
+
   it('keeps legacy pixels pending until the player is available, then migrates once as pinned ratios', () => {
     const legacy: LegacyChatGeometry = {
       reference: 'legacy-viewport-px',
@@ -144,5 +186,39 @@ describe('useOverlayGeometry', () => {
       ...renderChatGeometry(DEFAULT_CHAT_GEOMETRY, reference),
       coordinates: { ...renderChatGeometry(DEFAULT_CHAT_GEOMETRY, reference).coordinates, x: 10 },
     })
+  })
+})
+
+describe('mutationTouchesPlayerObstacle', () => {
+  it('ignores unrelated subtree changes and recognizes obstacle boundary changes', () => {
+    const player = document.createElement('div')
+    const controls = document.createElement('div')
+    controls.className = 'ytp-chrome-bottom'
+    player.appendChild(controls)
+
+    const unrelated = document.createElement('span')
+    const unrelatedMutation = {
+      type: 'childList',
+      target: player,
+      addedNodes: [unrelated],
+      removedNodes: [],
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(unrelatedMutation, player)).toBe(false)
+
+    const caption = document.createElement('div')
+    caption.className = 'ytp-caption-window-container'
+    const boundaryMutation = {
+      type: 'childList',
+      target: player,
+      addedNodes: [caption],
+      removedNodes: [],
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(boundaryMutation, player)).toBe(true)
+
+    const attributeMutation = {
+      type: 'attributes',
+      target: controls,
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(attributeMutation, player)).toBe(true)
   })
 })

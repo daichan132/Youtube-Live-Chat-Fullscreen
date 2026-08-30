@@ -136,6 +136,38 @@ describe('ResourceReconciler', () => {
     scope.dispose()
   })
 
+  it('does not request an overlay root for switch-only presentation', () => {
+    const presentation: PresentationLease = {
+      sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })),
+      clear: vi.fn(),
+    }
+    const resources = new ResourceReconciler({
+      presentation,
+      chatChrome: { sync: vi.fn(), release: vi.fn() },
+    })
+    const observation = createObservation()
+
+    resources.reconcilePlan(
+      {
+        monitoring: 'active',
+        presentation: 'switch-only',
+        chat: { kind: 'preserve' },
+        layout: 'none',
+        retry: { kind: 'preserve' },
+      },
+      observation,
+      null,
+      vi.fn(),
+    )
+
+    expect(presentation.sync).toHaveBeenCalledWith({
+      player: observation.targets.player,
+      rightControls: observation.targets.rightControls,
+      overlayEnabled: false,
+      switchEnabled: true,
+    })
+  })
+
   it('releases iframe, layout, and presentation in restoration order', () => {
     const log: string[] = []
     const fake = createFakeLease(log)

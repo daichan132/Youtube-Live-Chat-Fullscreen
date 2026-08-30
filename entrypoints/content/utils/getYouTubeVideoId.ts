@@ -1,17 +1,11 @@
-export const getVideoIdFromUrl = () => {
-  try {
-    const url = new URL(window.location.href)
-    const queryId = url.searchParams.get('v')
-    if (queryId) return queryId
-    const liveMatch = url.pathname.match(/\/live\/([a-zA-Z0-9_-]+)/)
-    if (liveMatch?.[1]) return liveMatch[1]
-    return null
-  } catch {
-    return null
-  }
-}
+import {
+  getYouTubeMoviePlayer,
+  getYouTubePlayerVideoId,
+  readYouTubePlayerVideoData,
+} from '../platform/youtube/playerVideoData'
+import { getYouTubeContentSurface } from '../platform/youtube/youtubeSurface'
 
-const CHANNEL_LIVE_PATH_PATTERN = /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/live\/?$/
+export const getVideoIdFromUrl = () => getYouTubeContentSurface(window.location.href)?.videoId ?? null
 
 const getVideoIdFromHref = (href: string | null | undefined) => {
   if (!href) return null
@@ -29,15 +23,8 @@ const addCandidate = (candidates: Set<string>, videoId: string | null | undefine
 const collectChannelLiveVideoIdCandidates = () => {
   const candidates = new Set<string>()
 
-  const moviePlayer = document.getElementById('movie_player') as
-    | (HTMLElement & { getVideoData?: () => { video_id?: string; videoId?: string } })
-    | null
-  try {
-    const videoData = moviePlayer?.getVideoData?.()
-    addCandidate(candidates, videoData?.video_id ?? videoData?.videoId)
-  } catch {
-    // Ignore a temporarily unavailable player API and use other page signals.
-  }
+  const moviePlayer = getYouTubeMoviePlayer()
+  addCandidate(candidates, getYouTubePlayerVideoId(moviePlayer, readYouTubePlayerVideoData(moviePlayer)))
 
   for (const watchElement of Array.from(document.querySelectorAll('ytd-watch-flexy[video-id], ytd-watch-grid[video-id]'))) {
     addCandidate(candidates, watchElement.getAttribute('video-id'))
@@ -59,11 +46,8 @@ const collectChannelLiveVideoIdCandidates = () => {
 }
 
 const isChannelLiveEntryUrl = () => {
-  try {
-    return CHANNEL_LIVE_PATH_PATTERN.test(new URL(window.location.href).pathname)
-  } catch {
-    return false
-  }
+  const surface = getYouTubeContentSurface(window.location.href)
+  return surface?.route === 'live' && surface.videoId === null
 }
 
 export const getCurrentYouTubeVideoId = () => {

@@ -49,6 +49,38 @@ describe('collectPageObservation', () => {
     expect(observation.evidence.chatAvailability).toBe('pending')
   })
 
+  it('falls back to page signals when getVideoData throws during player replacement', () => {
+    window.history.replaceState({}, '', '/watch?v=live-1')
+    const player = document.createElement('div') as HTMLElement & { getVideoData?: () => never }
+    player.id = 'movie_player'
+    player.setAttribute('video-id', 'live-1')
+    player.getVideoData = () => {
+      throw new Error('player replacement in progress')
+    }
+    const watch = document.createElement('ytd-watch-flexy')
+    watch.setAttribute('video-id', 'live-1')
+    watch.setAttribute('is-live-now', '')
+    document.body.append(player, watch)
+
+    const observation = collectPageObservation()
+
+    expect(observation.evidence.videoMode).toBe('live')
+    expect(observation.evidence.chatAvailability).toBe('ready')
+  })
+
+  it('keeps channel live routes active while the current video id is still ambiguous', () => {
+    window.history.replaceState({}, '', '/@lofi/live')
+    const firstWatch = document.createElement('ytd-watch-flexy')
+    firstWatch.setAttribute('video-id', 'video-a')
+    const secondWatch = document.createElement('ytd-watch-grid')
+    secondWatch.setAttribute('video-id', 'video-b')
+    document.body.append(firstWatch, secondWatch)
+
+    const observation = collectPageObservation()
+
+    expect(observation.evidence).toMatchObject({ route: 'live', videoId: null, videoMode: 'unknown', chatAvailability: 'pending' })
+  })
+
   it('keeps DOM targets outside the serializable evidence payload', () => {
     window.history.replaceState({}, '', '/watch?v=video-1')
     const player = document.createElement('div')

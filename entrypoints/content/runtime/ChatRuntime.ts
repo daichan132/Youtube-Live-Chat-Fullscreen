@@ -78,11 +78,14 @@ const isSameView = (a: RuntimeView, b: RuntimeView) =>
   a.overlayRoot === b.overlayRoot &&
   a.switchContainer === b.switchContainer
 
+const isChatBoundaryElement = (node: Node) => node instanceof Element && node.matches(CHAT_BOUNDARY_SELECTOR)
+const isChatBoundarySubtree = (node: Node) =>
+  node instanceof Element && (isChatBoundaryElement(node) || node.querySelector(CHAT_BOUNDARY_SELECTOR) !== null)
+
 export const mutationTouchesChatBoundary = (mutation: MutationRecord) => {
-  const relevant = (node: Node) =>
-    node instanceof Element && (node.matches(CHAT_BOUNDARY_SELECTOR) || node.querySelector(CHAT_BOUNDARY_SELECTOR) !== null)
-  if (mutation.type === 'attributes') return relevant(mutation.target)
-  return relevant(mutation.target) || [...mutation.addedNodes, ...mutation.removedNodes].some(relevant)
+  if (mutation.type === 'attributes') return isChatBoundaryElement(mutation.target)
+  if (isChatBoundaryElement(mutation.target)) return true
+  return [...mutation.addedNodes, ...mutation.removedNodes].some(isChatBoundarySubtree)
 }
 
 /** DOM/timer driver that observes the page and executes pure runtimeModel actions. */

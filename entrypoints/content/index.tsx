@@ -8,7 +8,9 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
 
   main(ctx) {
-    const bootstrap = new ContentBootstrap(() => createContentSession(ctx))
+    const bootstrap = new ContentBootstrap(() => createContentSession(ctx), {
+      onPermanentFailure: failure => console.warn('[YLC] Content session activation failed', failure),
+    })
     ctx.addEventListener(window, 'wxt:locationchange', event => {
       void bootstrap.reconcileLocation(event.newUrl.href)
     })
