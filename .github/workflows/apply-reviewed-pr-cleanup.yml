@@ -29,6 +29,52 @@ jobs:
           rm -f __nonexistent__
           rm -f entrypoints/popup/utils/dataTransfer.ts
           rm -f entrypoints/popup/utils/dataTransfer.spec.ts
+          python3 - <<'PY'
+          from pathlib import Path
+
+          def replace(path: str, old: str, new: str) -> None:
+              file = Path(path)
+              text = file.read_text()
+              if old not in text:
+                  raise RuntimeError(f"Expected source not found in {path}: {old!r}")
+              file.write_text(text.replace(old, new, 1))
+
+          replace(
+              'shared/state/commands.ts',
+              "if (!preset || preset.kind !== 'custom' || preset.name === name) return false",
+              "if (preset?.kind !== 'custom' || preset.name === name) return false",
+          )
+          replace(
+              'shared/runtime/createAppRuntimeLocale.spec.ts',
+              "import type { PersistenceStatus, SettingsRepository } from '@/shared/settings/repository'",
+              "import type { PersistenceStatus, SettingsRepository, SettingsSnapshot } from '@/shared/settings/repository'",
+          )
+          replace(
+              'shared/runtime/createAppRuntimeLocale.spec.ts',
+              'load: vi.fn(async () => ({',
+              'load: vi.fn(async (): Promise<SettingsSnapshot> => ({',
+          )
+          replace(
+              'shared/settings/originAwareStorage.spec.ts',
+              'const theme = values[THEME_STORAGE_KEY] as { writerId?: string } | undefined',
+              'const theme = (values as Record<string, unknown>)[THEME_STORAGE_KEY] as { writerId?: string } | undefined',
+          )
+          replace(
+              'shared/settings/repository.ts',
+              "  const hasCurrentLocale = isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'",
+              "  const currentLocale =\n    isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'\n      ? resolveLanguageCode(localeEnvelope.value)\n      : null",
+          )
+          replace(
+              'shared/settings/repository.ts',
+              '      locale: hasCurrentLocale ? resolveLanguageCode(localeEnvelope.value) : fallbackLocale,',
+              '      locale: currentLocale ?? fallbackLocale,',
+          )
+          replace(
+              'shared/settings/repository.ts',
+              '    compatibilityLocaleToCopy: !hasCurrentLocale && storedCompatibilityLocale !== undefined ? fallbackLocale : null,',
+              '    compatibilityLocaleToCopy: currentLocale === null && storedCompatibilityLocale !== undefined ? fallbackLocale : null,',
+          )
+          PY
       - name: Install dependencies
         run: yarn install --immutable
       - name: Format and apply safe source fixes
