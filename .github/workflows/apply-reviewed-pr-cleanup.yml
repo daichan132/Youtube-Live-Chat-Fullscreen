@@ -1,0 +1,61 @@
+name: Apply reviewed PR cleanup
+
+on:
+  push:
+    branches:
+      - improve/runtime-resilience-and-accessibility
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor == 'daichan132' && github.event.head_commit.message == 'Apply reviewed cleanup patch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          ref: improve/runtime-resilience-and-accessibility
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: 24.x
+          cache: yarn
+      - name: Apply reviewed source changes
+        shell: bash
+        run: |
+          cat .github/ylc-reviewed-patch/part-* | base64 --decode | tar -xzf -
+          rm -f __nonexistent__
+          rm -f entrypoints/popup/utils/dataTransfer.ts
+          rm -f entrypoints/popup/utils/dataTransfer.spec.ts
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Format and apply safe source fixes
+        run: yarn fix
+      - name: Verify source and tests
+        run: yarn verify
+      - name: Verify Chrome and Firefox packages
+        run: |
+          yarn zip
+          yarn zip:firefox
+          yarn verify:package-contracts
+      - name: Install Playwright Chromium
+        run: yarn playwright install --with-deps chromium
+      - name: Run deterministic browser verification
+        run: |
+          yarn build:e2e
+          xvfb-run --auto-servernum yarn playwright test --project=fixture --project=accessibility --retries=0 --max-failures=1
+      - name: Boot exact production Chrome package
+        run: xvfb-run --auto-servernum yarn e2e:production:chrome
+      - name: Commit verified changes
+        shell: bash
+        run: |
+          rm -rf .github/ylc-reviewed-patch
+          rm -f .github/workflows/apply-reviewed-pr-cleanup.yml
+          git add -A
+          git diff --cached --check
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Harden runtime and simplify settings interactions"
+          git push origin HEAD:improve/runtime-resilience-and-accessibility
