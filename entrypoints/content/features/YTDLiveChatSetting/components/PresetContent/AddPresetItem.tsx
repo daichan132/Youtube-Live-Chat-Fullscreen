@@ -23,7 +23,7 @@ export const AddPresetItem = () => {
   }, [addPreset, atLimit, getEffectiveChatProfile, t])
 
   return (
-    <button type='button' className='ylc-add-preset' onClick={addItem} disabled={atLimit}>
+    <button type='button' data-ylc-add-preset className='ylc-add-preset' onClick={addItem} disabled={atLimit}>
       <TbPlus size={18} aria-hidden='true' />
       {t('content.preset.addMessage')}
     </button>

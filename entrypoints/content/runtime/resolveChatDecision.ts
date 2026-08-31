@@ -99,6 +99,15 @@ export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets
     }
   }
 
+  if (evidence.videoMode === 'archive' && evidence.chatAvailability === 'pending') {
+    return {
+      kind: 'pending',
+      videoId: evidence.videoId,
+      mode: 'archive',
+      canToggle: false,
+    }
+  }
+
   if (evidence.videoMode === 'unknown') {
     return {
       kind: 'pending',

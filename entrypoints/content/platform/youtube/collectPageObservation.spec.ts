@@ -26,7 +26,7 @@ describe('collectPageObservation', () => {
     expect(observation.targets.chatIframe).toBeNull()
   })
 
-  it('keeps archived live metadata pending while replay DOM is still loading', () => {
+  it('classifies ended live metadata as archive while replay DOM is still loading', () => {
     window.history.replaceState({}, '', '/watch?v=archive-1')
     const player = document.createElement('div') as unknown as HTMLElement & {
       getVideoData: () => {
@@ -45,7 +45,7 @@ describe('collectPageObservation', () => {
 
     const observation = collectPageObservation()
 
-    expect(observation.evidence.videoMode).toBe('unknown')
+    expect(observation.evidence.videoMode).toBe('archive')
     expect(observation.evidence.chatAvailability).toBe('pending')
   })
 

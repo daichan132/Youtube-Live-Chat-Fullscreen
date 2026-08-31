@@ -238,7 +238,6 @@ export const createAppRuntime = async (
       const current = { globalSetting: store.get(globalSettingsStateAtom), chatSettings: store.get(chatSettingsStateAtom) }
       const normalized = normalizeSettingsBackup(input, current)
       if (!normalized) throw new Error('Unsupported settings backup')
-      await repository.flush()
       await repository.replaceSettings(
         {
           ytdLiveChat: Boolean(normalized.globalSetting.ytdLiveChat),

@@ -78,6 +78,7 @@ export const OverlayFrame = ({
     () => ({ left: coordinates.x, top: coordinates.y, width: size.width, height: size.height, pointerEvents: 'auto' }),
     [coordinates.x, coordinates.y, size.height, size.width],
   )
+  const chatBoundsRevision = `${coordinates.x}:${coordinates.y}:${size.width}:${size.height}`
 
   useEffect(() => onChatVisibilityChange?.(interaction.chatVisible), [interaction.chatVisible, onChatVisibilityChange])
   useEffect(() => onInteractionStateChange?.(interaction.state), [interaction.state, onInteractionStateChange])
@@ -109,6 +110,7 @@ export const OverlayFrame = ({
         <div data-ylc-draggable-frame className='relative h-full w-full'>
           <ChatSurface
             innerStyle={{ overflow: 'hidden', borderRadius: 6 }}
+            boundsRevision={chatBoundsRevision}
             isDragging={interaction.state === 'dragging'}
             onEnterChat={interaction.enterChat}
             onLeaveChat={interaction.leaveChat}

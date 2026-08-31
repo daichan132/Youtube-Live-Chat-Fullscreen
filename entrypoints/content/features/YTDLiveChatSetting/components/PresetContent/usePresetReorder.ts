@@ -2,6 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 type ItemLayout = { id: string; top: number; height: number }
 
+type PointerCaptureTarget = HTMLElement & {
+  setPointerCapture?: (pointerId: number) => void
+  hasPointerCapture?: (pointerId: number) => boolean
+  releasePointerCapture?: (pointerId: number) => void
+}
+
 const AUTO_SCROLL_EDGE_PX = 56
 const AUTO_SCROLL_MAX_STEP_PX = 18
 
@@ -28,12 +34,16 @@ export const usePresetReorder = ({
   const pointerGestureRef = useRef(false)
   const activePointerIdRef = useRef<number | null>(null)
   const pointerClientYRef = useRef<number | null>(null)
+  const captureTargetRef = useRef<PointerCaptureTarget | null>(null)
+  const captureAcquiredRef = useRef(false)
   const scrollContainerRef = useRef<HTMLElement | null>(null)
   const autoScrollFrameRef = useRef<number | null>(null)
-  // Held in a ref so a new translator or preset list never changes the identity of the pointer
-  // callbacks: the same function objects have to survive from addEventListener to removeEventListener.
+  // Held in refs so new callbacks or preset lists never change the identity of
+  // the global pointer listeners between addEventListener and removeEventListener.
   const describeMoveRef = useRef(describeMove)
+  const onCommitRef = useRef(onCommit)
   describeMoveRef.current = describeMove
+  onCommitRef.current = onCommit
 
   useEffect(() => {
     if (!activeIdRef.current) {
@@ -42,32 +52,48 @@ export const usePresetReorder = ({
     }
   }, [ids])
 
-  const finish = useCallback(
-    (commit: boolean) => {
-      const nextActive = activeIdRef.current
-      if (!nextActive) return
-      activeIdRef.current = null
-      pointerGestureRef.current = false
-      activePointerIdRef.current = null
-      pointerClientYRef.current = null
-      scrollContainerRef.current = null
-      if (autoScrollFrameRef.current !== null) {
-        window.cancelAnimationFrame(autoScrollFrameRef.current)
-        autoScrollFrameRef.current = null
+  const finish = useCallback((commit: boolean) => {
+    const nextActive = activeIdRef.current
+    if (!nextActive) return
+
+    const pointerId = activePointerIdRef.current
+    const captureTarget = captureTargetRef.current
+    const captureAcquired = captureAcquiredRef.current
+    activeIdRef.current = null
+    pointerGestureRef.current = false
+    activePointerIdRef.current = null
+    pointerClientYRef.current = null
+    captureTargetRef.current = null
+    captureAcquiredRef.current = false
+    scrollContainerRef.current = null
+    if (autoScrollFrameRef.current !== null) {
+      window.cancelAnimationFrame(autoScrollFrameRef.current)
+      autoScrollFrameRef.current = null
+    }
+    setActiveId(null)
+    window.removeEventListener('pointermove', handleMove)
+    window.removeEventListener('pointerup', handleUp)
+    window.removeEventListener('pointercancel', handleCancel)
+    window.removeEventListener('keydown', handleKeyDown)
+    window.removeEventListener('blur', handleWindowBlur)
+    captureTarget?.removeEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
+
+    if (captureTarget && pointerId !== null && captureAcquired) {
+      try {
+        const stillCaptured =
+          typeof captureTarget.hasPointerCapture !== 'function' || captureTarget.hasPointerCapture(pointerId)
+        if (stillCaptured) captureTarget.releasePointerCapture?.(pointerId)
+      } catch {
+        // The browser may already have released capture during detach or blur.
       }
-      setActiveId(null)
-      window.removeEventListener('pointermove', handleMove)
-      window.removeEventListener('pointerup', handleUp)
-      window.removeEventListener('pointercancel', handleCancel)
-      window.removeEventListener('keydown', handleKeyDown)
-      if (commit && hasOrderChanged(startIdsRef.current, previewIdsRef.current)) onCommit(previewIdsRef.current)
-      else {
-        previewIdsRef.current = startIdsRef.current
-        setPreviewIds(startIdsRef.current)
-      }
-    },
-    [onCommit],
-  )
+    }
+
+    if (commit && hasOrderChanged(startIdsRef.current, previewIdsRef.current)) onCommitRef.current(previewIdsRef.current)
+    else {
+      previewIdsRef.current = startIdsRef.current
+      setPreviewIds(startIdsRef.current)
+    }
+  }, [])
 
   const measureLayouts = useCallback(() => {
     const root = scrollContainerRef.current ?? document
@@ -101,54 +127,60 @@ export const usePresetReorder = ({
     setLiveMessage(describeMoveRef.current(activeId, targetIndex + 1))
   }, [])
 
-  const handleMove = useCallback(
-    (event: PointerEvent) => {
-      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
-      pointerClientYRef.current = event.clientY
-      measureLayouts()
-      updatePointerPreview(event.clientY)
-    },
-    [measureLayouts, updatePointerPreview],
-  )
-
   const runAutoScroll = useCallback(() => {
     autoScrollFrameRef.current = null
     if (!pointerGestureRef.current) return
 
     const container = scrollContainerRef.current
     const clientY = pointerClientYRef.current
-    if (container && clientY !== null) {
-      const rect = container.getBoundingClientRect()
-      const edge = Math.min(AUTO_SCROLL_EDGE_PX, rect.height / 3)
-      const distanceFromTop = clientY - rect.top
-      const distanceFromBottom = rect.bottom - clientY
-      let direction = 0
-      let proximity = 0
+    if (!container || clientY === null) return
 
-      if (distanceFromTop < edge) {
-        direction = -1
-        proximity = Math.min(1, Math.max(0, (edge - distanceFromTop) / edge))
-      } else if (distanceFromBottom < edge) {
-        direction = 1
-        proximity = Math.min(1, Math.max(0, (edge - distanceFromBottom) / edge))
-      }
+    const rect = container.getBoundingClientRect()
+    const edge = Math.min(AUTO_SCROLL_EDGE_PX, rect.height / 3)
+    const distanceFromTop = clientY - rect.top
+    const distanceFromBottom = rect.bottom - clientY
+    let direction = 0
+    let proximity = 0
 
-      if (direction !== 0) {
-        const before = container.scrollTop
-        const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight)
-        const step = Math.max(1, Math.ceil(AUTO_SCROLL_MAX_STEP_PX * proximity))
-        container.scrollTop = Math.min(maxScrollTop, Math.max(0, before + direction * step))
-        if (container.scrollTop !== before) {
-          measureLayouts()
-          updatePointerPreview(clientY)
-        }
-      }
+    if (distanceFromTop < edge) {
+      direction = -1
+      proximity = Math.min(1, Math.max(0, (edge - distanceFromTop) / edge))
+    } else if (distanceFromBottom < edge) {
+      direction = 1
+      proximity = Math.min(1, Math.max(0, (edge - distanceFromBottom) / edge))
     }
 
+    if (direction === 0) return
+
+    const before = container.scrollTop
+    const maxScrollTop = Math.max(0, container.scrollHeight - container.clientHeight)
+    const step = Math.max(1, Math.ceil(AUTO_SCROLL_MAX_STEP_PX * proximity))
+    container.scrollTop = Math.min(maxScrollTop, Math.max(0, before + direction * step))
+    if (container.scrollTop === before) return
+
+    measureLayouts()
+    updatePointerPreview(clientY)
     if (pointerGestureRef.current) {
       autoScrollFrameRef.current = window.requestAnimationFrame(runAutoScroll)
     }
   }, [measureLayouts, updatePointerPreview])
+
+  const requestAutoScrollFrame = useCallback(() => {
+    if (!pointerGestureRef.current || autoScrollFrameRef.current !== null) return
+    autoScrollFrameRef.current = window.requestAnimationFrame(runAutoScroll)
+  }, [runAutoScroll])
+
+  const handleMove = useCallback(
+    (event: PointerEvent) => {
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      pointerClientYRef.current = event.clientY
+      // Row slots are stable during ordinary pointer movement. Re-read layout
+      // only after auto-scroll actually changes their viewport positions.
+      updatePointerPreview(event.clientY)
+      requestAutoScrollFrame()
+    },
+    [requestAutoScrollFrame, updatePointerPreview],
+  )
 
   const handleUp = useCallback(
     (event: PointerEvent) => {
@@ -170,27 +202,57 @@ export const usePresetReorder = ({
     },
     [finish],
   )
+  const handleWindowBlur = useCallback(() => {
+    if (pointerGestureRef.current) finish(false)
+  }, [finish])
+  const handleLostPointerCapture = useCallback(
+    (event: PointerEvent) => {
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      captureAcquiredRef.current = false
+      finish(false)
+    },
+    [finish],
+  )
 
   const begin = useCallback(
-    (id: string, event: React.PointerEvent) => {
+    (id: string, event: React.PointerEvent<HTMLButtonElement>) => {
       if (event.button !== 0 || activeIdRef.current || !previewIdsRef.current.includes(id)) return
-      scrollContainerRef.current = event.currentTarget.closest<HTMLElement>('[data-ylc-setting-scroll-container]')
+      const captureTarget = event.currentTarget as PointerCaptureTarget
+      scrollContainerRef.current = captureTarget.closest<HTMLElement>('[data-ylc-setting-scroll-container]')
       pointerGestureRef.current = true
       activePointerIdRef.current = event.pointerId
       pointerClientYRef.current = event.clientY
+      captureTargetRef.current = captureTarget
+      captureAcquiredRef.current = false
       measureLayouts()
       startIdsRef.current = previewIdsRef.current
       activeIdRef.current = id
       setActiveId(id)
-      event.currentTarget.setPointerCapture?.(event.pointerId)
+      captureTarget.addEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
       window.addEventListener('pointermove', handleMove)
       window.addEventListener('pointerup', handleUp)
       window.addEventListener('pointercancel', handleCancel)
       window.addEventListener('keydown', handleKeyDown)
-      autoScrollFrameRef.current = window.requestAnimationFrame(runAutoScroll)
+      window.addEventListener('blur', handleWindowBlur)
+      try {
+        captureTarget.setPointerCapture?.(event.pointerId)
+        captureAcquiredRef.current = typeof captureTarget.setPointerCapture === 'function'
+      } catch {
+        captureAcquiredRef.current = false
+      }
+      requestAutoScrollFrame()
       event.preventDefault()
     },
-    [handleCancel, handleKeyDown, handleMove, handleUp, measureLayouts, runAutoScroll],
+    [
+      handleCancel,
+      handleKeyDown,
+      handleLostPointerCapture,
+      handleMove,
+      handleUp,
+      handleWindowBlur,
+      measureLayouts,
+      requestAutoScrollFrame,
+    ],
   )
 
   useEffect(() => () => finish(false), [finish])
@@ -239,7 +301,7 @@ export const usePresetReorder = ({
       next.splice(nextIndex, 0, id)
       previewIdsRef.current = next
       setPreviewIds(next)
-      onCommit(next)
+      onCommitRef.current(next)
       setLiveMessage(describeMoveRef.current(id, nextIndex + 1))
     },
   })

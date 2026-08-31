@@ -28,6 +28,11 @@ const DELETE_MODAL_OVERLAY_STYLE = {
   zIndex: CONTENT_UI_LAYER.nestedModal,
 } as const
 
+const getFirstFocusableControl = (element: HTMLElement | undefined) =>
+  element?.querySelector<HTMLElement>(
+    'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+  ) ?? null
+
 export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const preset = useAtomValue(presetsAtom).find(entry => entry.id === id)
   const updatePresetName = useSetAtom(updatePresetNameAtom)
@@ -35,6 +40,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const { commitYLCProfile } = useStyleHistoryCommands()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const deleteDialogTitleId = useId()
+  const itemRef = useRef<HTMLDivElement>(null)
   const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
   const displayTitle = getPresetDisplayTitle(preset, t)
@@ -61,8 +67,29 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
     if (!isBuiltIn) updatePresetName({ id, name: nameDraftRef.current })
   }, [id, isBuiltIn, updatePresetName])
 
+  const deleteAndRestoreFocus = useCallback(() => {
+    const item = itemRef.current
+    const list = item?.parentElement
+    const items = list ? [...list.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')] : []
+    const index = item ? items.indexOf(item) : -1
+    const adjacentItem = index >= 0 ? (items[index + 1] ?? items[index - 1]) : undefined
+    const focusTarget =
+      getFirstFocusableControl(adjacentItem) ??
+      list?.querySelector<HTMLElement>('[data-ylc-add-preset]:not([disabled])') ??
+      null
+
+    if (!deletePreset(id)) return
+    requestAnimationFrame(() => {
+      if (focusTarget?.isConnected) focusTarget.focus({ preventScroll: true })
+    })
+  }, [deletePreset, id])
+
   return (
-    <div className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`} data-ylc-preset-item={id}>
+    <div
+      ref={itemRef}
+      className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`}
+      data-ylc-preset-item={id}
+    >
       <button
         type='button'
         className={`ylc-preset-grip ${isDragging ? 'cursor-grabbing' : ''}`}
@@ -155,7 +182,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
             </button>
             <button
               type='button'
-              onClick={() => deletePreset(id)}
+              onClick={deleteAndRestoreFocus}
               className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90 ylc-dialog-btn-primary'
             >
               {t('content.preset.delete')}

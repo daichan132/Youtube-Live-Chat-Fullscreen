@@ -7,7 +7,11 @@ import {
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { getLiveChatDocument, hasLiveChatRendererReady, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
-import { getArchiveNativeOpenControl, hasArchiveNativeOpenControl } from '@/entrypoints/content/utils/nativeChat'
+import {
+  getArchiveNativeOpenControl,
+  getArchiveReplayOpenControl,
+  hasArchiveNativeOpenControl,
+} from '@/entrypoints/content/utils/nativeChat'
 import { getYouTubePlayerVideoId, readYouTubePlayerVideoData, type YouTubeMoviePlayer } from './playerVideoData'
 import {
   archivePlayerChatToggleProbe,
@@ -24,21 +28,27 @@ import {
 import type { PageEvidence, PageObservation } from './types'
 import { getYouTubeContentSurface } from './youtubeSurface'
 
+type PlayerLiveState = 'live' | 'ended-live' | 'vod' | 'unknown'
+
 const getRoute = (): PageEvidence['route'] => getYouTubeContentSurface(window.location.href)?.route ?? 'other'
 
-const getPlayerLiveState = (player: YouTubeMoviePlayer | null, videoId: string | null, watch: HTMLElement | null) => {
+const getPlayerLiveState = (
+  player: YouTubeMoviePlayer | null,
+  videoId: string | null,
+  watch: HTMLElement | null,
+): PlayerLiveState => {
   const data = readYouTubePlayerVideoData(player)
   const playerVideoId = getYouTubePlayerVideoId(player, data)
-  if (videoId && playerVideoId && playerVideoId !== videoId) return null
-  if (data?.isLive === true) return true
-  if (data?.isLive === false) return data.isLiveContent === true ? null : false
-  if (data?.isLiveContent === false) return false
+  if (videoId && playerVideoId && playerVideoId !== videoId) return 'unknown'
+  if (data?.isLive === true) return 'live'
+  if (data?.isLive === false) return data.isLiveContent === true ? 'ended-live' : 'vod'
+  if (data?.isLiveContent === false) return 'vod'
 
   const watchVideoId = watch?.getAttribute('video-id')
-  if (videoId && watchVideoId && watchVideoId !== videoId) return null
-  if (watch?.hasAttribute('is-live-now')) return true
-  if (document.querySelector('.ytp-time-display.ytp-live, .ytp-live-badge.ytp-live-badge-is-livehead')) return true
-  return null
+  if (videoId && watchVideoId && watchVideoId !== videoId) return 'unknown'
+  if (watch?.hasAttribute('is-live-now')) return 'live'
+  if (document.querySelector('.ytp-time-display.ytp-live, .ytp-live-badge.ytp-live-badge-is-livehead')) return 'live'
+  return 'unknown'
 }
 
 const iframeMatchesVideo = (iframe: HTMLIFrameElement, videoId: string | null) => {
@@ -46,10 +56,13 @@ const iframeMatchesVideo = (iframe: HTMLIFrameElement, videoId: string | null) =
   return getIframeVideoId(iframe) === videoId
 }
 
-const getVideoMode = (sourceKind: PageEvidence['sourceKind'], playerIsLive: boolean | null): PageEvidence['videoMode'] => {
-  if (sourceKind === 'native-replay') return 'archive'
-  if (sourceKind === 'native-live' || sourceKind === 'managed-live' || playerIsLive === true) return 'live'
-  if (playerIsLive === false) return 'vod'
+const getVideoMode = (
+  sourceKind: PageEvidence['sourceKind'],
+  playerLiveState: PlayerLiveState,
+): PageEvidence['videoMode'] => {
+  if (sourceKind === 'native-replay' || playerLiveState === 'ended-live') return 'archive'
+  if (sourceKind === 'native-live' || sourceKind === 'managed-live' || playerLiveState === 'live') return 'live'
+  if (playerLiveState === 'vod') return 'vod'
   return 'unknown'
 }
 
@@ -89,33 +102,41 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
           ? 'native-live'
           : null
     : null
-  const playerIsLive = getPlayerLiveState(player, videoId, watchProbe.element)
-  const archiveOpenControl = getArchiveNativeOpenControl()
+  const playerLiveState = getPlayerLiveState(player, videoId, watchProbe.element)
+  const genericArchiveOpenControl = getArchiveNativeOpenControl()
+  const replayArchiveOpenControl = getArchiveReplayOpenControl()
+  const archiveOpenControl = replayArchiveOpenControl ?? genericArchiveOpenControl
   const archiveOpenProbeId =
     identifyProbeForElement(document, archiveSidebarOpenControlProbe, archiveOpenControl) ??
     identifyProbeForElement(document, archivePlayerChatToggleProbe, archiveOpenControl)
   if (archiveOpenProbeId) probeIds.add(archiveOpenProbeId)
-  const canOpenArchiveChat = archiveOpenControl !== null || hasArchiveNativeOpenControl()
 
-  // A managed live iframe can outlive the live player state. Once YouTube
-  // exposes an archive control and no longer confirms the stream as live,
-  // treat the managed source as stale so the runtime can open and borrow replay.
-  const managedLiveSupersededByArchive = candidateSourceKind === 'managed-live' && playerIsLive !== true && canOpenArchiveChat
-  const chatIframe = managedLiveSupersededByArchive ? null : candidateChatIframe
-  const sourceKind = managedLiveSupersededByArchive ? null : candidateSourceKind
+  const hasGenericArchiveOpenControl = genericArchiveOpenControl !== null || hasArchiveNativeOpenControl()
+  const archiveStateKnown =
+    playerLiveState === 'ended-live' || playerLiveState === 'vod' || candidateSourceKind === 'native-replay'
+  const canOpenArchiveChat = replayArchiveOpenControl !== null || (archiveStateKnown && hasGenericArchiveOpenControl)
+
+  // YouTube can retain either a borrowed or managed live iframe while the
+  // player is being replaced. Preserve it while live state is unknown, but
+  // release it once the player or a replay-labelled control proves archive state.
+  const liveSourceSupersededByArchive =
+    (candidateSourceKind === 'managed-live' || candidateSourceKind === 'native-live') &&
+    (playerLiveState === 'ended-live' || playerLiveState === 'vod' || replayArchiveOpenControl !== null)
+  const chatIframe = liveSourceSupersededByArchive ? null : candidateChatIframe
+  const sourceKind = liveSourceSupersededByArchive ? null : candidateSourceKind
   const chatDocument = chatIframe ? getLiveChatDocument(chatIframe) : null
   const chatUnavailable = Boolean(chatDocument && isLiveChatUnavailable(chatDocument))
   const chatDocumentReady = Boolean(chatDocument && hasLiveChatRendererReady(chatDocument))
-  const videoMode = managedLiveSupersededByArchive ? 'archive' : getVideoMode(sourceKind, playerIsLive)
+  const videoMode = liveSourceSupersededByArchive ? 'archive' : getVideoMode(sourceKind, playerLiveState)
   const chatAvailability: PageEvidence['chatAvailability'] = chatUnavailable
     ? 'unavailable'
     : sourceKind === 'native-replay'
       ? chatDocumentReady
         ? 'ready'
         : 'pending'
-      : sourceKind !== null || playerIsLive === true
+      : sourceKind !== null || playerLiveState === 'live'
         ? 'ready'
-        : playerIsLive === false && !canOpenArchiveChat
+        : playerLiveState === 'vod' && !canOpenArchiveChat
           ? 'unavailable'
           : 'pending'
   const fullscreenRoot = document.fullscreenElement
@@ -130,7 +151,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
       chatAvailability,
       capabilities: {
         canBorrowNativeChat: sourceKind === 'native-live' || (sourceKind === 'native-replay' && chatAvailability === 'ready'),
-        canCreateManagedLiveChat: playerIsLive === true,
+        canCreateManagedLiveChat: playerLiveState === 'live',
         canOpenArchiveChat,
         canRestoreNativeChat: nativeChatIframe !== null && sourceKind !== 'managed-live',
         canMountOverlay: player !== null && fullscreenRoot !== null,
