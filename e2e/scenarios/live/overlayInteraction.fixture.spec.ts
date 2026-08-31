@@ -76,11 +76,12 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await overlay.clickPlayerBoundaryProbe()
       await expect.poll(() => overlay.boundaryProbeClicks()).toBe(1)
 
-      await overlay.startDrag({ x: 2000, y: 2000 })
-      const clampedCoordinates = {
-        x: viewport.viewportWidth - SEEDED_LAYOUT.size.width - 10,
-        y: viewport.viewportHeight - SEEDED_LAYOUT.size.height - 10,
-      }
+      // Keep the synthetic pointer inside Chromium's viewport while still
+      // crossing the minimum padding boundary. Releasing a Playwright mouse
+      // thousands of pixels outside the viewport is platform-dependent and
+      // does not represent a browser-deliverable pointer sequence.
+      await overlay.startDrag({ x: -200, y: -160 })
+      const clampedCoordinates = { x: 10, y: 10 }
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
@@ -116,11 +117,11 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       )
       await expectPersistedGeometry(storagePage, resizedGeometry)
 
-      await overlay.moveWithKeyboard('ArrowLeft')
+      await overlay.moveWithKeyboard('ArrowRight')
       await expectPersistedGeometry(
         storagePage,
         layoutGeometryToV2(
-          { coordinates: { x: clampedCoordinates.x - 10, y: clampedCoordinates.y }, size: { width: 320, height: 240 } },
+          { coordinates: { x: clampedCoordinates.x + 10, y: clampedCoordinates.y }, size: { width: 320, height: 240 } },
           { width: viewport.viewportWidth, height: viewport.viewportHeight },
           true,
         ),
