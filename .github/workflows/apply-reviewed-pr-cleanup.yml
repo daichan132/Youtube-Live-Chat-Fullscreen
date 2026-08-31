@@ -135,8 +135,8 @@ jobs:
       - name: Commit normal source files
         shell: bash
         run: |
+          git restore --source=HEAD -- .github/workflows/ci.yml .github/workflows/apply-reviewed-pr-cleanup.yml
           rm -rf .github/ylc-reviewed-patch
-          rm -f .github/workflows/apply-reviewed-pr-cleanup.yml
           git add -A
           git diff --cached --check
           git config user.name "github-actions[bot]"
