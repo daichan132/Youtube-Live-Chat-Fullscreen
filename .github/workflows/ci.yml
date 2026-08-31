@@ -25,16 +25,11 @@ jobs:
           cache: "yarn"
       - name: Install dependencies
         run: yarn install --immutable
-      - name: Check generated locales
-        run: yarn locales:check
-      - name: Check source
-        run: yarn check
-      - name: Run tests with coverage
-        run: yarn test:coverage
-      - name: Run contract tests
-        run: yarn test:contracts
+      - name: Verify source and tests
+        run: yarn verify
 
   package:
+    needs: quality
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
