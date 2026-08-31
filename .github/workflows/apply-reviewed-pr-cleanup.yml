@@ -141,12 +141,12 @@ jobs:
           yarn verify:package-contracts
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
+      - name: Boot exact production Chrome package
+        run: xvfb-run --auto-servernum yarn e2e:production:chrome
       - name: Run deterministic browser verification
         run: |
           yarn build:e2e
           xvfb-run --auto-servernum yarn playwright test --project=fixture --project=accessibility --retries=0 --max-failures=1
-      - name: Boot exact production Chrome package
-        run: xvfb-run --auto-servernum yarn e2e:production:chrome
       - name: Commit verified changes
         shell: bash
         run: |
