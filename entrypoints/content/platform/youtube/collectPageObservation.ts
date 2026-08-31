@@ -32,11 +32,7 @@ type PlayerLiveState = 'live' | 'ended-live' | 'vod' | 'unknown'
 
 const getRoute = (): PageEvidence['route'] => getYouTubeContentSurface(window.location.href)?.route ?? 'other'
 
-const getPlayerLiveState = (
-  player: YouTubeMoviePlayer | null,
-  videoId: string | null,
-  watch: HTMLElement | null,
-): PlayerLiveState => {
+const getPlayerLiveState = (player: YouTubeMoviePlayer | null, videoId: string | null, watch: HTMLElement | null): PlayerLiveState => {
   const data = readYouTubePlayerVideoData(player)
   const playerVideoId = getYouTubePlayerVideoId(player, data)
   if (videoId && playerVideoId && playerVideoId !== videoId) return 'unknown'
@@ -56,10 +52,7 @@ const iframeMatchesVideo = (iframe: HTMLIFrameElement, videoId: string | null) =
   return getIframeVideoId(iframe) === videoId
 }
 
-const getVideoMode = (
-  sourceKind: PageEvidence['sourceKind'],
-  playerLiveState: PlayerLiveState,
-): PageEvidence['videoMode'] => {
+const getVideoMode = (sourceKind: PageEvidence['sourceKind'], playerLiveState: PlayerLiveState): PageEvidence['videoMode'] => {
   if (sourceKind === 'native-replay' || playerLiveState === 'ended-live') return 'archive'
   if (sourceKind === 'native-live' || sourceKind === 'managed-live' || playerLiveState === 'live') return 'live'
   if (playerLiveState === 'vod') return 'vod'
@@ -112,8 +105,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
   if (archiveOpenProbeId) probeIds.add(archiveOpenProbeId)
 
   const hasGenericArchiveOpenControl = genericArchiveOpenControl !== null || hasArchiveNativeOpenControl()
-  const archiveStateKnown =
-    playerLiveState === 'ended-live' || playerLiveState === 'vod' || candidateSourceKind === 'native-replay'
+  const archiveStateKnown = playerLiveState === 'ended-live' || playerLiveState === 'vod' || candidateSourceKind === 'native-replay'
   const canOpenArchiveChat = replayArchiveOpenControl !== null || (archiveStateKnown && hasGenericArchiveOpenControl)
 
   // YouTube can retain either a borrowed or managed live iframe while the

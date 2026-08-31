@@ -13,30 +13,30 @@ describe('ContentBootstrap navigation-complete retries', () => {
     vi.useRealTimers()
   })
 
-  it.each([
-    'https://www.youtube.com/watch?v=live-video',
-    'https://www.youtube.com/live/live-video',
-  ])('does not reset a terminal activation failure for %s', async href => {
-    const createSession = vi.fn<() => Promise<ContentSession>>().mockRejectedValue(new Error('persistent startup failure'))
-    const onPermanentFailure = vi.fn()
-    const bootstrap = new ContentBootstrap(createSession, {
-      readHref: () => href,
-      onPermanentFailure,
-    })
+  it.each(['https://www.youtube.com/watch?v=live-video', 'https://www.youtube.com/live/live-video'])(
+    'does not reset a terminal activation failure for %s',
+    async href => {
+      const createSession = vi.fn<() => Promise<ContentSession>>().mockRejectedValue(new Error('persistent startup failure'))
+      const onPermanentFailure = vi.fn()
+      const bootstrap = new ContentBootstrap(createSession, {
+        readHref: () => href,
+        onPermanentFailure,
+      })
 
-    bootstrap.start()
-    await flushAsyncWork()
-    await vi.advanceTimersByTimeAsync(250)
-    await vi.advanceTimersByTimeAsync(1000)
+      bootstrap.start()
+      await flushAsyncWork()
+      await vi.advanceTimersByTimeAsync(250)
+      await vi.advanceTimersByTimeAsync(1000)
 
-    expect(createSession).toHaveBeenCalledTimes(3)
-    expect(onPermanentFailure).toHaveBeenCalledOnce()
+      expect(createSession).toHaveBeenCalledTimes(3)
+      expect(onPermanentFailure).toHaveBeenCalledOnce()
 
-    await bootstrap.reconcileLocation(undefined, { navigationCompleted: true })
-    await flushAsyncWork()
+      await bootstrap.reconcileLocation(undefined, { navigationCompleted: true })
+      await flushAsyncWork()
 
-    expect(createSession).toHaveBeenCalledTimes(3)
-    expect(onPermanentFailure).toHaveBeenCalledOnce()
-    bootstrap.dispose()
-  })
+      expect(createSession).toHaveBeenCalledTimes(3)
+      expect(onPermanentFailure).toHaveBeenCalledOnce()
+      bootstrap.dispose()
+    },
+  )
 })

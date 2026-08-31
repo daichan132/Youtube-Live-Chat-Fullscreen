@@ -19,13 +19,7 @@ describe('ChatSurface geometry-aware hover bounds', () => {
     const onEnterChat = vi.fn()
     const onLeaveChat = vi.fn()
     const view = render(
-      <ChatSurface
-        innerStyle={{}}
-        boundsRevision='0:0:100:100'
-        isDragging={false}
-        onEnterChat={onEnterChat}
-        onLeaveChat={onLeaveChat}
-      >
+      <ChatSurface innerStyle={{}} boundsRevision='0:0:100:100' isDragging={false} onEnterChat={onEnterChat} onLeaveChat={onLeaveChat}>
         chat
       </ChatSurface>,
     )
@@ -37,13 +31,7 @@ describe('ChatSurface geometry-aware hover bounds', () => {
     expect(onEnterChat).toHaveBeenCalledOnce()
 
     view.rerender(
-      <ChatSurface
-        innerStyle={{}}
-        boundsRevision='200:0:100:100'
-        isDragging={false}
-        onEnterChat={onEnterChat}
-        onLeaveChat={onLeaveChat}
-      >
+      <ChatSurface innerStyle={{}} boundsRevision='200:0:100:100' isDragging={false} onEnterChat={onEnterChat} onLeaveChat={onLeaveChat}>
         chat
       </ChatSurface>,
     )

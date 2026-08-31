@@ -80,8 +80,7 @@ export const usePresetReorder = ({
 
     if (captureTarget && pointerId !== null && captureAcquired) {
       try {
-        const stillCaptured =
-          typeof captureTarget.hasPointerCapture !== 'function' || captureTarget.hasPointerCapture(pointerId)
+        const stillCaptured = typeof captureTarget.hasPointerCapture !== 'function' || captureTarget.hasPointerCapture(pointerId)
         if (stillCaptured) captureTarget.releasePointerCapture?.(pointerId)
       } catch {
         // The browser may already have released capture during detach or blur.
@@ -243,16 +242,7 @@ export const usePresetReorder = ({
       requestAutoScrollFrame()
       event.preventDefault()
     },
-    [
-      handleCancel,
-      handleKeyDown,
-      handleLostPointerCapture,
-      handleMove,
-      handleUp,
-      handleWindowBlur,
-      measureLayouts,
-      requestAutoScrollFrame,
-    ],
+    [handleCancel, handleKeyDown, handleLostPointerCapture, handleMove, handleUp, handleWindowBlur, measureLayouts, requestAutoScrollFrame],
   )
 
   useEffect(() => () => finish(false), [finish])

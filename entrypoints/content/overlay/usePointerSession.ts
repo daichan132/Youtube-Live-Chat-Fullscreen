@@ -39,8 +39,7 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
     active.captureAcquired = false
     try {
       const stillCaptured =
-        typeof active.captureTarget.hasPointerCapture !== 'function' ||
-        active.captureTarget.hasPointerCapture(active.pointerId)
+        typeof active.captureTarget.hasPointerCapture !== 'function' || active.captureTarget.hasPointerCapture(active.pointerId)
       if (stillCaptured) active.captureTarget.releasePointerCapture?.(active.pointerId)
     } catch {
       // The browser may already have released capture during detach or blur.

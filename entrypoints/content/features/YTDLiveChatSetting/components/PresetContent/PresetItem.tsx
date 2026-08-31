@@ -74,9 +74,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
     const index = item ? items.indexOf(item) : -1
     const adjacentItem = index >= 0 ? (items[index + 1] ?? items[index - 1]) : undefined
     const focusTarget =
-      getFirstFocusableControl(adjacentItem) ??
-      list?.querySelector<HTMLElement>('[data-ylc-add-preset]:not([disabled])') ??
-      null
+      getFirstFocusableControl(adjacentItem) ?? list?.querySelector<HTMLElement>('[data-ylc-add-preset]:not([disabled])') ?? null
 
     if (!deletePreset(id)) return
     requestAnimationFrame(() => {

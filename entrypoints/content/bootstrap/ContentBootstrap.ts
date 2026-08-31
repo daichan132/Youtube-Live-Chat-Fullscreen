@@ -38,8 +38,7 @@ const defaultScheduler: BootstrapScheduler = {
   clearTimeout: timer => clearTimeout(timer),
 }
 
-const canRetryFailedSurfaceAfterNavigation = (surface: YouTubeContentSurface) =>
-  surface.route === 'live' && surface.videoId === null
+const canRetryFailedSurfaceAfterNavigation = (surface: YouTubeContentSurface) => surface.route === 'live' && surface.videoId === null
 
 export class ContentBootstrap {
   private readonly readHref: () => string
@@ -90,11 +89,7 @@ export class ContentBootstrap {
 
     this.transitionSurface(surface.activationKey)
     const navigationCompleted = options.navigationCompleted ?? options.retryFailedSurface
-    if (
-      navigationCompleted &&
-      canRetryFailedSurfaceAfterNavigation(surface) &&
-      this.failedSurfaceKey === surface.activationKey
-    ) {
+    if (navigationCompleted && canRetryFailedSurfaceAfterNavigation(surface) && this.failedSurfaceKey === surface.activationKey) {
       this.failedSurfaceKey = null
       this.retryAttempt = 0
     }
