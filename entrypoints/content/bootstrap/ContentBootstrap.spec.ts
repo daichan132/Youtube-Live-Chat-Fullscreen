@@ -216,7 +216,7 @@ describe('ContentBootstrap', () => {
     await bootstrap.reconcileLocation(href)
     expect(createSession).toHaveBeenCalledTimes(3)
 
-    await bootstrap.reconcileLocation(href, { retryFailedSurface: true })
+    await bootstrap.reconcileLocation(href, { navigationCompleted: true })
     expect(createSession).toHaveBeenCalledTimes(4)
   })
 

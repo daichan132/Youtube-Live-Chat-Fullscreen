@@ -29,8 +29,6 @@ type ContentBootstrapOptions = {
 
 type ReconcileLocationOptions = {
   navigationCompleted?: boolean
-  /** @deprecated Use navigationCompleted. */
-  retryFailedSurface?: boolean
 }
 
 const defaultScheduler: BootstrapScheduler = {
@@ -88,8 +86,7 @@ export class ContentBootstrap {
     }
 
     this.transitionSurface(surface.activationKey)
-    const navigationCompleted = options.navigationCompleted ?? options.retryFailedSurface
-    if (navigationCompleted && canRetryFailedSurfaceAfterNavigation(surface) && this.failedSurfaceKey === surface.activationKey) {
+    if (options.navigationCompleted && canRetryFailedSurfaceAfterNavigation(surface) && this.failedSurfaceKey === surface.activationKey) {
       this.failedSurfaceKey = null
       this.retryAttempt = 0
     }
