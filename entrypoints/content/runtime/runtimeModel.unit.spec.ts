@@ -193,6 +193,48 @@ describe('runtimeModel', () => {
     expect(transition.plan.chat).toEqual({ kind: 'preserve' })
   })
 
+  it('releases a managed live lease before opening replay for the same video', () => {
+    const decision: Extract<ChatDecision, { kind: 'available' }> = {
+      kind: 'available',
+      videoId: 'video-1',
+      mode: 'live',
+      source: {
+        kind: 'live_direct',
+        videoId: 'video-1',
+        url: 'https://www.youtube.com/live_chat?v=video-1',
+      },
+    }
+    const lease: RuntimeLeaseSnapshot = {
+      videoId: 'video-1',
+      kind: 'managed',
+      iframe: iframe('managed-live'),
+    }
+    const planned = transitionRuntimeModel(createInitialRuntimeModel(), {
+      enabled: true,
+      decision,
+      lease: null,
+    })
+    const active = settleRuntimeLeaseInitialization(planned.model, {
+      decision,
+      lease,
+      initialized: true,
+    })
+
+    const transition = transitionRuntimeModel(active.model, {
+      enabled: true,
+      decision: { kind: 'pending', videoId: 'video-1', mode: 'archive', canToggle: true },
+      lease,
+    })
+
+    expect(transition.plan).toMatchObject({
+      chat: { kind: 'none', ensureNativeVisible: false },
+      openArchivePanel: true,
+      presentation: 'overlay-and-switch',
+      layout: 'floating',
+    })
+    expect(transition.model.state).toEqual({ status: 'searching', videoId: 'video-1' })
+  })
+
   it('does not create a second lease when the available source still matches', () => {
     const decision = available('video-1', 'live')
     const active = activate(decision)

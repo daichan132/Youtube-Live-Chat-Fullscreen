@@ -78,10 +78,10 @@ The package contract rejects:
 - `quality` runs `yarn verify`.
 - `package`, after quality, builds Chrome and Firefox production ZIPs and verifies package contracts.
 - `package` also builds and uploads the testing extension consumed by the next job. The production Chrome ZIP artifact is uploaded only for `workflow_dispatch`, where the packaged startup smoke consumes it.
-- `browser-contracts` runs the fixture project on pull requests; manual runs add visual and accessibility projects against the same testing artifact.
+- `browser-contracts` runs the complete fixture project and accessibility project on pull requests; manual runs add the visual project against the same testing artifact.
 - `production-package-smoke` is manual and boots the exact production Chrome ZIP.
 
-The testing build is therefore always consumed, while heavyweight visual/accessibility and exact-artifact startup remain explicit manual gates.
+The testing build is therefore always consumed, while visual regression and exact-artifact startup remain explicit manual gates.
 
 ## Release ownership
 

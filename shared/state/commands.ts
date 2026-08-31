@@ -94,8 +94,11 @@ export const finishStyleGestureAtom = atom(null, (get, set, gestureId?: string) 
   return true
 })
 
-export const cancelStyleGestureAtom = atom(null, (_get, set) => {
-  set(editorSessionStateAtom, createEditorReset())
+export const cancelStyleGestureAtom = atom(null, (get, set) => {
+  const editor = get(editorSessionStateAtom)
+  if (!editor.activeGesture && !editor.draftProfile) return false
+  set(editorSessionStateAtom, { ...editor, activeGesture: null, draftProfile: null })
+  return true
 })
 
 export const commitStylePatchAtom = atom(null, (get, set, patch: ChatProfilePatch) => {

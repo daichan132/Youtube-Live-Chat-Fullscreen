@@ -76,11 +76,10 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await overlay.clickPlayerBoundaryProbe()
       await expect.poll(() => overlay.boundaryProbeClicks()).toBe(1)
 
-      // Keep the synthetic pointer inside Chromium's viewport while still
-      // crossing the minimum padding boundary. Releasing a Playwright mouse
-      // thousands of pixels outside the viewport is platform-dependent and
-      // does not represent a browser-deliverable pointer sequence.
+      // Exercise clamping with a large delta, then return the synthetic pointer
+      // to a browser-deliverable viewport coordinate before pointerup.
       await overlay.startDrag({ x: -200, y: -160 })
+      await page.mouse.move(1, 1)
       const clampedCoordinates = { x: 10, y: 10 }
       await expect
         .poll(() => overlay.getGeometry())

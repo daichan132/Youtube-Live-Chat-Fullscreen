@@ -68,6 +68,52 @@ describe('collectPageObservation', () => {
     expect(observation.evidence.chatAvailability).toBe('ready')
   })
 
+  it('supersedes a managed live iframe when the same video exposes archive replay controls', () => {
+    window.history.replaceState({}, '', '/watch?v=ending-live')
+    const player = document.createElement('div') as unknown as HTMLElement & {
+      getVideoData: () => {
+        video_id: string
+        isLive: boolean
+        isLiveContent: boolean
+      }
+    }
+    player.id = 'movie_player'
+    player.setAttribute('video-id', 'ending-live')
+    player.getVideoData = () => ({
+      video_id: 'ending-live',
+      isLive: false,
+      isLiveContent: true,
+    })
+    const watch = document.createElement('ytd-watch-flexy')
+    watch.setAttribute('video-id', 'ending-live')
+    const managedIframe = document.createElement('iframe')
+    managedIframe.src = 'https://www.youtube.com/live_chat?v=ending-live'
+    managedIframe.setAttribute(YLC_OWNED_ATTR, 'true')
+    managedIframe.setAttribute(YLC_SOURCE_ATTR, YLC_SOURCE_LIVE)
+    const chatHost = document.createElement('ytd-live-chat-frame')
+    chatHost.setAttribute('video-id', 'ending-live')
+    const showHideButton = document.createElement('div')
+    showHideButton.id = 'show-hide-button'
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.setAttribute('aria-label', 'Show chat replay')
+    showHideButton.append(button)
+    chatHost.append(showHideButton)
+    document.body.append(player, watch, managedIframe, chatHost)
+
+    const observation = collectPageObservation(managedIframe)
+
+    expect(observation.evidence).toMatchObject({
+      videoId: 'ending-live',
+      videoMode: 'archive',
+      chatAvailability: 'pending',
+      sourceKind: null,
+      capabilities: { canOpenArchiveChat: true, canCreateManagedLiveChat: false },
+    })
+    expect(observation.targets.chatIframe).toBeNull()
+    expect(observation.targets.archiveOpenControl).toBe(button)
+  })
+
   it('keeps channel live routes active while the current video id is still ambiguous', () => {
     window.history.replaceState({}, '', '/@lofi/live')
     const firstWatch = document.createElement('ytd-watch-flexy')

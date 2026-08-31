@@ -38,7 +38,7 @@ page signal
 
 A generation identifies the current combination of video, player element, and fullscreen root. Timers and callbacks capture the relevant generation and no-op after it changes. A borrowed YouTube iframe is released before another is acquired.
 
-Live streams prefer YouTube's native `live_chat` iframe and may create a managed live iframe when none exists. Archives borrow only a playable native `live_chat_replay` iframe. Videos without usable chat do not receive a broken switch or overlay.
+Live streams prefer YouTube's native `live_chat` iframe and may create a managed live iframe when none exists. Archives borrow only a playable native `live_chat_replay` iframe. If the player stops confirming live while an archive control appears, any remaining managed live iframe is treated as stale and released before replay is opened. Videos without usable chat do not receive a broken switch or overlay.
 
 ## Resource ownership
 
@@ -121,7 +121,7 @@ yarn verify:release
 
 It adds Chrome and Firefox production packages, package contracts, Firefox source-archive reconstruction, deterministic browser scenarios, visual and accessibility checks, an exact Chrome-package startup smoke, and the real-YouTube canary.
 
-The pull-request CI runs source checks, tests, production package contracts, and the deterministic Playwright fixture project. Visual and accessibility checks plus exact production-package startup smoke remain `workflow_dispatch`-only. Release candidate creation and store publication are separate manual workflows; publication submits the already-proven artifacts without rebuilding them.
+The pull-request CI runs source checks, tests, production package contracts, the complete deterministic Playwright fixture project, and accessibility checks. Visual checks and exact production-package startup smoke remain `workflow_dispatch`-only. Release candidate creation and store publication are separate manual workflows; publication submits the already-proven artifacts without rebuilding them.
 
 ## Guarantees
 

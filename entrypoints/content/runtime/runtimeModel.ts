@@ -176,6 +176,18 @@ export const transitionRuntimeModel = (
     next = resetRetry(next, plan)
   }
 
+  if (
+    lease &&
+    input.decision.kind === 'pending' &&
+    input.decision.mode !== null &&
+    (model.state.status === 'active' || model.state.status === 'recovering') &&
+    model.state.mode !== input.decision.mode
+  ) {
+    plan.chat = { kind: 'none', ensureNativeVisible: false }
+    lease = null
+    next = resetRetry(next, plan)
+  }
+
   if (input.decision.kind === 'unavailable') {
     if (lease) plan.chat = { kind: 'none', ensureNativeVisible: false }
     next = resetRetry(next, plan)

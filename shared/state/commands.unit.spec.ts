@@ -5,6 +5,7 @@ import { MAX_CUSTOM_PRESETS } from '@/shared/settings/persistConfig'
 import { chatSettingsStateAtom, editorSessionStateAtom } from './atoms'
 import {
   addPresetAtom,
+  cancelStyleGestureAtom,
   commitGeometryAtom,
   deletePresetAtom,
   reorderPresetsAtom,
@@ -68,5 +69,32 @@ describe('state commands', () => {
     expect(after.presets[0]).toMatchObject({ name: 'After' })
     expect(store.set(updatePresetNameAtom, { id: 'custom', name: 'After' })).toBe(false)
     expect(store.get(chatSettingsStateAtom)).toBe(after)
+  })
+
+  it('cancels only the active gesture while preserving committed undo and redo history', () => {
+    const profile = store.get(chatSettingsStateAtom).profile
+    const pastProfile = {
+      ...profile,
+      appearance: { ...profile.appearance, fontSize: profile.appearance.fontSize + 1 },
+    }
+    const futureProfile = {
+      ...profile,
+      appearance: { ...profile.appearance, fontSize: profile.appearance.fontSize + 2 },
+    }
+    store.set(editorSessionStateAtom, {
+      draftProfile: futureProfile,
+      past: [pastProfile],
+      future: [futureProfile],
+      activeGesture: { id: 'font-size', before: profile },
+    })
+
+    expect(store.set(cancelStyleGestureAtom)).toBe(true)
+    expect(store.get(editorSessionStateAtom)).toEqual({
+      draftProfile: null,
+      past: [pastProfile],
+      future: [futureProfile],
+      activeGesture: null,
+    })
+    expect(store.set(cancelStyleGestureAtom)).toBe(false)
   })
 })

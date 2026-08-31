@@ -93,6 +93,8 @@ Signals are coalesced into one animation frame. Retry work uses `SessionScope`; 
 
 Live streams prefer a native `live_chat` iframe and may fall back to a managed `https://www.youtube.com/live_chat?v=<id>` iframe. Archives use only a native playable `live_chat_replay` iframe because no equivalent standalone replay URL exists.
 
+A managed live iframe is not itself proof that the player is still live. When the player no longer confirms live and YouTube exposes an archive open control, observation treats the managed iframe as superseded. The model releases that live lease, opens the archive panel, and waits for a playable replay iframe instead of keeping the ended live source active.
+
 `transitionRuntimeModel` converts the decision, enabled state, and current lease snapshot into a `RuntimePlan`. Plans express intent (`monitoring`, `presentation`, `chat`, `layout`, `retry`, and optional archive-panel opening), not DOM commands. Every resource field supports `preserve`, which means “do not touch this owner this tick.”
 
 The five runtime statuses are `inactive`, `searching`, `active`, `recovering`, and `unavailable`. Loading is true only while searching or recovering.
@@ -141,11 +143,12 @@ Diagnostic reports contain the extension version, browser family, sanitized evid
 
 - At most one `ContentSession` exists, and only on a supported YouTube content surface. `ContentBootstrap.spec.ts` and `youtubeSurface.unit.spec.ts` pin the route matrix and stale-activation disposal.
 - Runtime timers, frames, observers, and listeners are scoped and disposed. `SessionScope.spec.ts`, `ChatRuntime.spec.ts`, and `ChatRuntimeRecovery.spec.ts` pin cleanup and bounded recovery.
-- The old iframe is released before a new video or source is acquired. `ResourceReconciler.spec.ts` and `ChatRuntime.spec.ts` assert invocation order and identity replacement.
+- The old iframe is released before a new video, source, or live/archive mode is acquired. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release and replacement behavior.
 - Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration.
 - Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries.
 - YouTube selector fallbacks have unique IDs and non-empty candidates. `selectorCatalog.spec.ts` also pins stable live-state mutation boundaries.
-- Channel live entries are exercised by both URL/unit contracts and a deterministic browser fixture that reaches fullscreen chat.
+- Channel live entries are exercised by URL/unit contracts and deterministic browser fixtures that cover initial activation and same-URL video replacement.
+- Managed live chat transitioning to archive replay without a URL change is exercised by the managed/native handoff fixture.
 
 These guarantees are tests and ownership structure, not a string-matching architecture script. `yarn verify` is the routine source gate; `yarn verify:release` adds production packages and browser layers.
 

@@ -75,20 +75,17 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
 
   const nativeChatIframe = iframeProbes.elements.find(iframe => iframeMatchesVideo(iframe, videoId)) ?? null
   const currentLeaseMatches = leasedIframe !== null && iframeMatchesVideo(leasedIframe, videoId) && leasedIframe.isConnected
-  const chatIframe = nativeChatIframe ?? (currentLeaseMatches ? leasedIframe : null)
+  const candidateChatIframe = nativeChatIframe ?? (currentLeaseMatches ? leasedIframe : null)
   const nativeChatHost =
     (nativeChatIframe?.closest('ytd-live-chat-frame') as HTMLElement | null) ??
     chatHostProbes.elements.find(host => host.getAttribute('video-id') === videoId) ??
     null
-  const chatDocument = chatIframe ? getLiveChatDocument(chatIframe) : null
-  const chatUnavailable = Boolean(chatDocument && isLiveChatUnavailable(chatDocument))
-  const chatDocumentReady = Boolean(chatDocument && hasLiveChatRendererReady(chatDocument))
-  const sourceKind: PageEvidence['sourceKind'] = chatIframe
-    ? isReplayChatIframe(chatIframe)
+  const candidateSourceKind: PageEvidence['sourceKind'] = candidateChatIframe
+    ? isReplayChatIframe(candidateChatIframe)
       ? 'native-replay'
-      : isManagedLiveIframe(chatIframe)
+      : isManagedLiveIframe(candidateChatIframe)
         ? 'managed-live'
-        : isLiveChatIframe(chatIframe)
+        : isLiveChatIframe(candidateChatIframe)
           ? 'native-live'
           : null
     : null
@@ -99,7 +96,18 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
     identifyProbeForElement(document, archivePlayerChatToggleProbe, archiveOpenControl)
   if (archiveOpenProbeId) probeIds.add(archiveOpenProbeId)
   const canOpenArchiveChat = archiveOpenControl !== null || hasArchiveNativeOpenControl()
-  const videoMode = getVideoMode(sourceKind, playerIsLive)
+
+  // A managed live iframe can outlive the live player state. Once YouTube
+  // exposes an archive control and no longer confirms the stream as live,
+  // treat the managed source as stale so the runtime can open and borrow replay.
+  const managedLiveSupersededByArchive =
+    candidateSourceKind === 'managed-live' && playerIsLive !== true && canOpenArchiveChat
+  const chatIframe = managedLiveSupersededByArchive ? null : candidateChatIframe
+  const sourceKind = managedLiveSupersededByArchive ? null : candidateSourceKind
+  const chatDocument = chatIframe ? getLiveChatDocument(chatIframe) : null
+  const chatUnavailable = Boolean(chatDocument && isLiveChatUnavailable(chatDocument))
+  const chatDocumentReady = Boolean(chatDocument && hasLiveChatRendererReady(chatDocument))
+  const videoMode = managedLiveSupersededByArchive ? 'archive' : getVideoMode(sourceKind, playerIsLive)
   const chatAvailability: PageEvidence['chatAvailability'] = chatUnavailable
     ? 'unavailable'
     : sourceKind === 'native-replay'

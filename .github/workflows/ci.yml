@@ -87,10 +87,12 @@ jobs:
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
       - name: Run deterministic fixture contracts
-        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --retries=0 --max-failures=1
-      - name: Run visual and accessibility contracts
+        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --retries=0
+      - name: Run accessibility contracts
+        run: xvfb-run --auto-servernum yarn playwright test --project=accessibility --retries=0
+      - name: Run visual contracts
         if: github.event_name == 'workflow_dispatch'
-        run: xvfb-run --auto-servernum yarn playwright test --project=visual --project=accessibility --retries=0 --max-failures=1
+        run: xvfb-run --auto-servernum yarn playwright test --project=visual --retries=0 --max-failures=1
       - name: Upload browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

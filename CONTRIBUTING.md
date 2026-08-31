@@ -35,7 +35,7 @@ yarn verify:firefox-source
 
 For runtime behavior, run the relevant deterministic browser project. The real-YouTube canary is reserved for compatibility checks and release preparation; it is not a substitute for deterministic fixtures.
 
-Pull requests automatically run source/coverage/contracts, production package checks, and deterministic Playwright fixtures. The manual CI workflow adds visual/accessibility checks and exact packaged startup smoke. Local verification remains the fastest way to diagnose failures.
+Pull requests automatically run source/coverage/contracts, production package checks, deterministic Playwright fixtures, and accessibility checks. The manual CI workflow adds visual checks and exact packaged startup smoke. Local verification remains the fastest way to diagnose failures.
 
 ## Change discipline
 

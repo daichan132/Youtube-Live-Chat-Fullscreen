@@ -53,9 +53,9 @@ Pull Request の CI は次を自動実行する。
 
 - `quality`: `yarn verify`
 - `package`: Chrome/Firefox の production ZIP 作成、package 契約、testing extension artifact
-- `browser-contracts`: 決定的 Playwright fixture
+- `browser-contracts`: 決定的 Playwright fixture と accessibility
 
-Visual/accessibility と production ZIP の実起動 smoke は CI の `workflow_dispatch` で追加実行する。
+Visual と production ZIP の実起動 smoke は CI の `workflow_dispatch` で追加実行する。
 
 `cd.yml` と `publish.yml` は依頼されない限り実行しない。version bump、tag、ストア公開も同様。リリースは候補作成と既存 artifact の公開を分離している。
 
