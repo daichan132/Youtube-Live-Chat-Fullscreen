@@ -68,7 +68,9 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
       managedCount: 0,
       nativeCount: 1,
     })
-    await expectCompositedOverlayHost()
+    await overlay.expectOverlayRemoved({ timeout: 12000 })
+    await overlay.expectSwitchReady({ timeout: 12000 })
+
     await overlay.toggleOn()
     await overlay.expectChatLoaded({ timeout: 12000 })
     await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
