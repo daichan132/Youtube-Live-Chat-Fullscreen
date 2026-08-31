@@ -33,7 +33,7 @@ export const importSettingsViaPopup = async (page: Page, extension: Extension, s
  * already on an extension URL (reads directly, avoiding temporary popup pages
  * that could trigger runtime re-initialization side effects).
  */
-export async function readStorageEntry(source: Extension | Page, key: string): Promise<StoredEnvelope<Record<string, unknown>> | null> {
+export async function readStorageEntry<T>(source: Extension | Page, key: string): Promise<StoredEnvelope<T> | null> {
   let raw: unknown
   if ('storage' in source) {
     const stored = await source.storage.get(key)
@@ -43,8 +43,7 @@ export async function readStorageEntry(source: Extension | Page, key: string): P
     raw = stored[key]
   }
   if (!raw || typeof raw !== 'object') return null
-  const envelope = raw as Partial<StoredEnvelope<Record<string, unknown>>>
-  if (envelope.schemaVersion !== 1 || typeof envelope.writerId !== 'string' || !envelope.value || typeof envelope.value !== 'object')
-    return null
-  return envelope as StoredEnvelope<Record<string, unknown>>
+  const envelope = raw as Partial<StoredEnvelope<T>>
+  if (envelope.schemaVersion !== 1 || typeof envelope.writerId !== 'string' || !('value' in envelope)) return null
+  return envelope as StoredEnvelope<T>
 }

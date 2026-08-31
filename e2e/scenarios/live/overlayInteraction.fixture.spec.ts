@@ -6,7 +6,7 @@ import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
-import { CHAT_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const scenarioState = {
   video: { id: 'ylc-overlay-boundary', title: 'Overlay interaction fixture', mode: 'live' },
@@ -28,9 +28,9 @@ const SEEDED_GEOMETRY = layoutGeometryToV2(SEEDED_LAYOUT, FIXTURE_REFERENCE, tru
 
 const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> =>
   storagePage.evaluate(async key => {
-    const stored = (await chrome.storage.local.get(key))[key] as { value?: { geometry?: ChatGeometry } } | undefined
-    return stored?.value?.geometry ?? null
-  }, CHAT_STORAGE_KEY)
+    const stored = (await chrome.storage.local.get(key))[key] as { value?: ChatGeometry } | undefined
+    return stored?.value ?? null
+  }, GEOMETRY_STORAGE_KEY)
 
 const expectPersistedGeometry = async (storagePage: Page, geometry: ChatGeometry) => {
   await expect.poll(() => readPersistedGeometry(storagePage)).toEqual(geometry)
