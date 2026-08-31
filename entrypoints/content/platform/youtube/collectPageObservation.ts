@@ -100,8 +100,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
   // A managed live iframe can outlive the live player state. Once YouTube
   // exposes an archive control and no longer confirms the stream as live,
   // treat the managed source as stale so the runtime can open and borrow replay.
-  const managedLiveSupersededByArchive =
-    candidateSourceKind === 'managed-live' && playerIsLive !== true && canOpenArchiveChat
+  const managedLiveSupersededByArchive = candidateSourceKind === 'managed-live' && playerIsLive !== true && canOpenArchiveChat
   const chatIframe = managedLiveSupersededByArchive ? null : candidateChatIframe
   const sourceKind = managedLiveSupersededByArchive ? null : candidateSourceKind
   const chatDocument = chatIframe ? getLiveChatDocument(chatIframe) : null
