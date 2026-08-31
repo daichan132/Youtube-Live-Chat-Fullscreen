@@ -159,6 +159,7 @@ describe('useOverlayGeometry', () => {
       player,
       expect.objectContaining({
         attributes: true,
+        characterData: true,
         childList: true,
         subtree: true,
       }),
@@ -220,5 +221,41 @@ describe('mutationTouchesPlayerObstacle', () => {
       target: controls,
     } as unknown as MutationRecord
     expect(mutationTouchesPlayerObstacle(attributeMutation, player)).toBe(true)
+
+    const hiddenMenu = document.createElement('div')
+    hiddenMenu.className = 'ytp-popup ytp-settings-menu-hidden'
+    player.appendChild(hiddenMenu)
+    const hiddenMenuMutation = {
+      type: 'attributes',
+      target: hiddenMenu,
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(hiddenMenuMutation, player)).toBe(true)
+  })
+
+  it('recognizes text and nested child changes inside a player obstacle', () => {
+    const player = document.createElement('div')
+    const caption = document.createElement('div')
+    caption.className = 'caption-window'
+    const inner = document.createElement('span')
+    const text = document.createTextNode('caption')
+    inner.appendChild(text)
+    caption.appendChild(inner)
+    player.appendChild(caption)
+
+    const characterDataMutation = {
+      type: 'characterData',
+      target: text,
+      addedNodes: [],
+      removedNodes: [],
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(characterDataMutation, player)).toBe(true)
+
+    const nestedChildMutation = {
+      type: 'childList',
+      target: inner,
+      addedNodes: [document.createTextNode(' updated')],
+      removedNodes: [],
+    } as unknown as MutationRecord
+    expect(mutationTouchesPlayerObstacle(nestedChildMutation, player)).toBe(true)
   })
 })

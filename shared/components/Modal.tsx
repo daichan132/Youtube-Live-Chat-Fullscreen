@@ -104,6 +104,8 @@ export const Modal = ({
   const contentRef = useRef<HTMLDivElement>(null)
   const focusFrameRef = useRef<number | null>(null)
   const [parent, setParent] = useState<HTMLElement | null>(null)
+  const closeRef = useRef(onRequestClose)
+  closeRef.current = onRequestClose
   const lifecycleRef = useRef({ onAfterOpen, onAfterClose, shouldFocusAfterRender, shouldReturnFocusAfterClose })
   lifecycleRef.current = { onAfterOpen, onAfterClose, shouldFocusAfterRender, shouldReturnFocusAfterClose }
 
@@ -122,6 +124,14 @@ export const Modal = ({
     const modalId = modalIdRef.current
     const previousFocus = lifecycleRef.current.shouldReturnFocusAfterClose ? getDeepActiveElement() : null
     modalStack.push(modalId)
+    const handleDocumentKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape' || modalStack[modalStack.length - 1] !== modalId) return
+      event.preventDefault()
+      event.stopPropagation()
+      closeRef.current?.()
+    }
+    document.addEventListener('keydown', handleDocumentKeyDown, true)
+
     const overlay = overlayRef.current
     const restoreBackground = overlay ? makeBackgroundInert(overlay) : () => {}
     lifecycleRef.current.onAfterOpen?.()
@@ -134,6 +144,7 @@ export const Modal = ({
     }
 
     return () => {
+      document.removeEventListener('keydown', handleDocumentKeyDown, true)
       if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current)
       focusFrameRef.current = null
       restoreBackground()
@@ -146,42 +157,32 @@ export const Modal = ({
     }
   }, [isOpen, parent])
 
-  const handleKeyDown = useCallback(
-    (event: React.KeyboardEvent) => {
-      if (modalStack[modalStack.length - 1] !== modalIdRef.current) return
-      if (event.key === 'Escape') {
-        event.preventDefault()
-        event.stopPropagation()
-        onRequestClose?.()
-        return
-      }
-      if (event.key !== 'Tab') return
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (modalStack[modalStack.length - 1] !== modalIdRef.current || event.key !== 'Tab') return
 
-      const content = contentRef.current
-      if (!content) return
-      const focusableElements = getFocusableElements(content)
-      if (focusableElements.length === 0) {
-        event.preventDefault()
-        content.focus({ preventScroll: true })
-        return
-      }
-
-      const activeElement = getDeepActiveElement()
-      const activeIndex = activeElement instanceof HTMLElement ? focusableElements.indexOf(activeElement) : -1
-      const nextElement = event.shiftKey
-        ? activeIndex <= 0
-          ? focusableElements[focusableElements.length - 1]
-          : null
-        : activeIndex === -1 || activeIndex === focusableElements.length - 1
-          ? focusableElements[0]
-          : null
-      if (!nextElement) return
+    const content = contentRef.current
+    if (!content) return
+    const focusableElements = getFocusableElements(content)
+    if (focusableElements.length === 0) {
       event.preventDefault()
-      event.stopPropagation()
-      nextElement.focus({ preventScroll: true })
-    },
-    [onRequestClose],
-  )
+      content.focus({ preventScroll: true })
+      return
+    }
+
+    const activeElement = getDeepActiveElement()
+    const activeIndex = activeElement instanceof HTMLElement ? focusableElements.indexOf(activeElement) : -1
+    const nextElement = event.shiftKey
+      ? activeIndex <= 0
+        ? focusableElements[focusableElements.length - 1]
+        : null
+      : activeIndex === -1 || activeIndex === focusableElements.length - 1
+        ? focusableElements[0]
+        : null
+    if (!nextElement) return
+    event.preventDefault()
+    event.stopPropagation()
+    nextElement.focus({ preventScroll: true })
+  }, [])
 
   const handleOverlayClick = useCallback(
     (event: React.MouseEvent) => {

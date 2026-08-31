@@ -90,7 +90,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     const handled = undoYLCStyle()
     if (handled) {
       setHistoryAnnouncement(current => ({
-        message: t('content.setting.header.undo'),
+        message: t('content.setting.header.undone'),
         sequence: current.sequence + 1,
       }))
     }
@@ -101,7 +101,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     const handled = redoYLCStyle()
     if (handled) {
       setHistoryAnnouncement(current => ({
-        message: t('content.setting.header.redo'),
+        message: t('content.setting.header.redone'),
         sequence: current.sequence + 1,
       }))
     }

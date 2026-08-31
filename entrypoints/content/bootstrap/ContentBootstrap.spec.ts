@@ -9,6 +9,8 @@ const deferred = <T>() => {
   return { promise, resolve }
 }
 
+const flushAsyncWork = () => vi.advanceTimersByTimeAsync(0)
+
 describe('ContentBootstrap', () => {
   const bootstraps: ContentBootstrap[] = []
 
@@ -80,7 +82,8 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
 
     href = 'https://www.youtube.com/'
     await bootstrap.reconcileLocation()
@@ -98,9 +101,10 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(250)
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(2))
+    expect(createSession).toHaveBeenCalledTimes(2)
 
     href = 'https://www.youtube.com/'
     await bootstrap.reconcileLocation()
@@ -120,9 +124,10 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(250)
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(2))
+    expect(createSession).toHaveBeenCalledTimes(2)
   })
 
   it('does not bypass the retry delay when duplicate navigation signals arrive', async () => {
@@ -136,7 +141,8 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await bootstrap.reconcileLocation(href)
     await bootstrap.reconcileLocation(href)
     expect(createSession).toHaveBeenCalledTimes(1)
@@ -144,7 +150,7 @@ describe('ContentBootstrap', () => {
     await vi.advanceTimersByTimeAsync(249)
     expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(1)
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(2))
+    expect(createSession).toHaveBeenCalledTimes(2)
   })
 
   it('resets the retry budget when the watch video changes', async () => {
@@ -154,7 +160,8 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(250)
     await vi.advanceTimersByTimeAsync(1000)
     await vi.runOnlyPendingTimersAsync()
@@ -175,7 +182,8 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(250)
     await vi.advanceTimersByTimeAsync(1000)
     await vi.runOnlyPendingTimersAsync()
@@ -198,7 +206,8 @@ describe('ContentBootstrap', () => {
     bootstraps.push(bootstrap)
 
     bootstrap.start()
-    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(1)
     await vi.advanceTimersByTimeAsync(250)
     await vi.advanceTimersByTimeAsync(1000)
     await vi.runOnlyPendingTimersAsync()
@@ -226,6 +235,7 @@ describe('ContentBootstrap', () => {
     await bootstrap.reconcileLocation()
     const stale = { dispose: vi.fn() }
     pending.resolve(stale)
-    await vi.waitFor(() => expect(stale.dispose).toHaveBeenCalledTimes(1))
+    await flushAsyncWork()
+    expect(stale.dispose).toHaveBeenCalledTimes(1)
   })
 })

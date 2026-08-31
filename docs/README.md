@@ -1,68 +1,68 @@
 # Documentation
 
-Everything written down about YouTube Live Chat Fullscreen, grouped by who it is for.
+Everything written down about YouTube Live Chat Fullscreen, grouped by audience.
 
-Documents for users and contributors are written in English. Documents in `maintainers/` are written in Japanese, because they describe the maintainer's own operating procedures rather than the project's public interface.
+Public product and contributor documents are in English. Maintainer operating procedures under `maintainers/` are in Japanese.
 
-## If you use the extension
-
-| Document | What it covers |
-| --- | --- |
-| [Troubleshooting](troubleshooting.md) | The switch does not appear, Opera-specific checks, how to send a sanitized diagnostic report |
-| [README (日本語)](translations/README.ja.md) · [README (繁體中文)](translations/README.zh-TW.md) | Translations of the product README |
-
-Bug reports go through the [bug report form](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml). Security issues go through [SECURITY.md](../SECURITY.md), never a public issue.
-
-## If you are contributing code
-
-Read in this order.
+## Extension users
 
 | Document | What it covers |
 | --- | --- |
-| [CONTRIBUTING.md](../CONTRIBUTING.md) | Setup, the checks that must pass, translation and screenshot procedures |
-| [Engineering overview](engineering.md) | Why the system is shaped this way, the vocabulary, one reconcile pass end to end, and a "where do I change X" map |
-| [Test contracts](testing/contracts.md) | Which test layer proves which boundary, every test command, and what CI owns |
+| [Troubleshooting](troubleshooting.md) | Missing switch, browser-specific checks, and sanitized diagnostics |
+| [README (日本語)](translations/README.ja.md) · [README (繁體中文)](translations/README.zh-TW.md) | Product README translations |
 
-Then the subsystem you are about to change:
+Use the repository bug form for ordinary defects and [SECURITY.md](../SECURITY.md) for security reports.
 
-| Document | What it covers |
-| --- | --- |
-| [The content runtime](architecture/content-runtime.md) | Lazy bootstrap, session generations, the YouTube adapter, the pure decision model, and the four leases that mutate the page |
-| [Settings, state, and storage](architecture/settings-and-state.md) | The stored envelopes, cross-context synchronization, migration, and chat geometry |
-| [The overlay and iframe styling](architecture/overlay-and-styling.md) | Shadow roots and portals, drag and resize, and how a style setting becomes CSS inside YouTube's chat iframe |
-| [Internationalization](architecture/i18n.md) | The 55-locale generation pipeline, adding a key, adding a language, and RTL |
+## Contributors
 
-Two module-level documents stay next to the code they describe:
-
-- [`entrypoints/content/features/YTDLiveChatIframe/styles/README.md`](../entrypoints/content/features/YTDLiveChatIframe/styles/README.md) — the CSS cascade contract for the styles injected into YouTube's chat iframe. Authoritative for those modules; read it before touching any file in that directory.
-- [`docs/store-assets/concepts/README.md`](store-assets/concepts/README.md) — the store image concept catalog.
-
-## If you maintain the project
-
-These are in Japanese. See [`maintainers/README.md`](maintainers/README.md) for the index.
+Read these first:
 
 | Document | What it covers |
 | --- | --- |
-| [リリース Runbook](maintainers/release-runbook.md) | Cutting a release candidate, promoting it to the stores, and what to do when the canary is degraded |
-| [実ブラウザ検証](maintainers/verification-browser.md) | Driving a real Chrome, Opera, or Firefox against YouTube to produce the evidence the release workflow requires |
-| [リポジトリの見せ方](maintainers/repository-presentation.md) | GitHub repository settings that mirror the product positioning |
+| [CONTRIBUTING.md](../CONTRIBUTING.md) | Setup and contribution workflow |
+| [Engineering overview](engineering.md) | System shape, vocabulary, guarantees, and verification |
+| [Test contracts](testing/contracts.md) | Test placement, commands, package boundaries, and CI ownership |
 
-Store listing copy lives in [`store-listing/`](store-listing/) — 55 locale manuscripts validated by `yarn store:check`, which runs inside `yarn check`. See [`store-listing/asset-work-list.md`](store-listing/asset-work-list.md) for the asset backlog.
+Then read the subsystem document relevant to the change:
 
-## Not documentation
+| Document | What it covers |
+| --- | --- |
+| [Content runtime](architecture/content-runtime.md) | Supported routes, session generations, YouTube observation, decisions, and leases |
+| [Settings, state, and storage](architecture/settings-and-state.md) | Stored envelopes, synchronization, migration, presets, and geometry |
+| [Overlay and iframe styling](architecture/overlay-and-styling.md) | Shadow roots, interaction, geometry, and injected chat CSS |
+| [Internationalization](architecture/i18n.md) | The locale generation pipeline and RTL behavior |
 
-[`articles/`](../articles/) holds unpublished drafts for external platforms, not project documentation. See [`articles/README.md`](../articles/README.md).
+Module-specific documents remain next to their code:
 
-## Keeping this accurate
+- [`entrypoints/content/features/YTDLiveChatIframe/styles/README.md`](../entrypoints/content/features/YTDLiveChatIframe/styles/README.md) — injected CSS cascade contract.
+- [`store-assets/concepts/README.md`](store-assets/concepts/README.md) — store image concept catalog.
 
-Most of what this project enforces is enforced by scripts, not by prose. When a document and the code disagree, the code wins — and the document is a bug. The checks that back these documents:
+## Maintainers
+
+See [`maintainers/README.md`](maintainers/README.md).
+
+| Document | What it covers |
+| --- | --- |
+| [リリース Runbook](maintainers/release-runbook.md) | Candidate creation, proof, and store promotion |
+| [実ブラウザ検証](maintainers/verification-browser.md) | Chrome, Opera, and Firefox evidence against YouTube |
+| [リポジトリの見せ方](maintainers/repository-presentation.md) | Repository presentation settings |
+
+Store listing manuscripts live under [`store-listing/`](store-listing/) and are validated by `yarn store:check`.
+
+## Not project documentation
+
+[`articles/`](../articles/) contains unpublished external article drafts.
+
+## Keeping documents accurate
+
+Code and executable contracts are authoritative. When behavior changes, update the relevant document in the same pull request.
 
 | Check | Runs in | Enforces |
 | --- | --- | --- |
-| `scripts/verify/check-runtime-architecture.mjs` | `yarn check` | The runtime ownership rules described in [architecture/content-runtime.md](architecture/content-runtime.md) |
-| `scripts/verify/check-package-contracts.mjs` | `yarn test:package`, CI | Manifest permissions, locale inventory, and what may appear in a release ZIP |
-| `scripts/verify/check-locales.mjs` | `yarn check` | That generated locale artifacts match their sources |
-| `scripts/verify/check-store-listing.mjs` | `yarn check` | The 55 store listing manuscripts |
-| `scripts/verify/check-release-workflow.mjs` | `yarn check` | That the release workflows still have the shape [maintainers/release-runbook.md](maintainers/release-runbook.md) describes |
+| `yarn verify` | PR quality and local verification | locale/store freshness, Biome, TypeScript, coverage, and Node-side contracts |
+| Playwright fixture project | PR browser contracts | deterministic content, popup, route, and lifecycle behavior |
+| `scripts/verify/check-package-contracts.mjs` | package verification | manifest, locale inventory, production output, and ZIP contents |
+| `scripts/verify/check-release-workflow.mjs` | `yarn check` | release/publish workflow shape |
+| `e2e/config/projectClassification.spec.ts` | contract project | every Playwright scenario is classified exactly once |
 
-There is no check that verifies these documents themselves. If you change behavior that a document describes, change the document in the same pull request.
+No script validates prose automatically; stale documentation is itself a defect.

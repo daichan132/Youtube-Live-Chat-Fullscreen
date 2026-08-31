@@ -5,6 +5,17 @@ import {
   readYouTubePlayerVideoData,
   type YouTubeVideoData,
 } from '../platform/youtube/playerVideoData'
+import {
+  archiveSidebarOpenControlProbe,
+  chatContainerProbe,
+  liveHeadBadgeProbe,
+  liveTimeDisplayProbe,
+  nativeChatHostProbe,
+  nativeChatIframeProbe,
+  queryAllProbes,
+  queryFirstProbe,
+  watchSurfaceProbe,
+} from '../platform/youtube/selectorCatalog'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 type YouTubeInitialPlayerResponse = {
@@ -49,29 +60,26 @@ const hasCurrentVideoMarker = (...videoIds: Array<string | null | undefined>) =>
   return videoIds.some(videoId => videoId === currentVideoId)
 }
 
-const hasLiveNowAttribute = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  return Boolean(
-    (watchFlexy?.hasAttribute('is-live-now') && isExplicitVideoIdCurrent(watchFlexy.getAttribute('video-id'))) ||
-      (watchGrid?.hasAttribute('is-live-now') && isExplicitVideoIdCurrent(watchGrid.getAttribute('video-id'))),
+const getWatchSurfaces = () => queryAllProbes<HTMLElement>(document, watchSurfaceProbe).elements
+
+const hasLiveNowAttribute = () =>
+  getWatchSurfaces().some(
+    watchSurface => watchSurface.hasAttribute('is-live-now') && isExplicitVideoIdCurrent(watchSurface.getAttribute('video-id')),
   )
-}
 
 const isChatFrameForCurrentUrl = (iframe: HTMLIFrameElement): boolean => isIframeForCurrentVideo(iframe, getCurrentYouTubeVideoId())
 
 const isReplayButtonForCurrentChat = (button: HTMLElement) => {
-  const host = button.closest('ytd-live-chat-frame') as HTMLElement | null
+  const host = button.closest(nativeChatHostProbe.selectors.join(', ')) as HTMLElement | null
   if (host) return isChatHostForCurrentVideo(host)
 
-  const chatContainer = button.closest('#chat-container')
+  const chatContainer = button.closest(chatContainerProbe.selectors.join(', '))
   if (!chatContainer) return false
 
-  const containerHost = chatContainer.querySelector('ytd-live-chat-frame') as HTMLElement | null
-  const containerHosts = Array.from(chatContainer.querySelectorAll<HTMLElement>('ytd-live-chat-frame'))
-  if ((containerHost && isChatHostForCurrentVideo(containerHost)) || containerHosts.some(isChatHostForCurrentVideo)) return true
+  const containerHosts = queryAllProbes<HTMLElement>(chatContainer, nativeChatHostProbe).elements
+  if (containerHosts.some(isChatHostForCurrentVideo)) return true
 
-  const containerFrames = Array.from(chatContainer.querySelectorAll<HTMLIFrameElement>('#chatframe, iframe.ytd-live-chat-frame'))
+  const containerFrames = queryAllProbes<HTMLIFrameElement>(chatContainer, nativeChatIframeProbe).elements
   return containerFrames.some(isChatFrameForCurrentUrl)
 }
 
@@ -95,10 +103,8 @@ const hasArchiveReplaySignal = () => {
     if (src.includes('/live_chat_replay')) return true
   }
 
-  const replayButtons = document.querySelectorAll<HTMLElement>(
-    '#show-hide-button button, ytd-live-chat-frame #show-hide-button button, #chat-container #show-hide-button button',
-  )
-  return Array.from(replayButtons).some(button => isReplayButtonForCurrentChat(button) && hasReplayButtonLabel(button))
+  const replayButtons = queryAllProbes<HTMLElement>(document, archiveSidebarOpenControlProbe).elements
+  return replayButtons.some(button => isReplayButtonForCurrentChat(button) && hasReplayButtonLabel(button))
 }
 
 const readCurrentPlayerData = (): { data: YouTubeVideoData | null; videoId: string | null } => {
@@ -111,14 +117,14 @@ const hasPlayerLiveUiSignal = () => {
   const { videoId: moviePlayerVideoId } = readCurrentPlayerData()
   if (!isKnownVideoIdCurrent(moviePlayerVideoId)) return false
 
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  const watchVideoId = watchFlexy?.getAttribute('video-id') ?? watchGrid?.getAttribute('video-id')
+  const watchVideoId = getWatchSurfaces()
+    .map(watchSurface => watchSurface.getAttribute('video-id'))
+    .find((videoId): videoId is string => videoId !== null)
   if (!isKnownVideoIdCurrent(watchVideoId)) return false
   if (!hasCurrentVideoMarker(moviePlayerVideoId, watchVideoId)) return false
 
-  if (document.querySelector('.ytp-time-display.ytp-live')) return true
-  return document.querySelector('.ytp-live-badge.ytp-live-badge-is-livehead') !== null
+  if (queryFirstProbe(document, liveTimeDisplayProbe).element) return true
+  return queryFirstProbe(document, liveHeadBadgeProbe).element !== null
 }
 
 const getLiveFromMoviePlayer = () => {

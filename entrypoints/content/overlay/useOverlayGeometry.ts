@@ -44,12 +44,18 @@ const readReferenceSize = (element: HTMLElement | null) => {
 const nodeMatchesOrContainsPlayerObstacle = (node: Node) =>
   node instanceof Element && (node.matches(playerObstacleBoundarySelector) || node.querySelector(playerObstacleBoundarySelector) !== null)
 
+const mutationTargetTouchesPlayerObstacle = (target: Node, player: HTMLElement) => {
+  const element = target instanceof Element ? target : target.parentElement
+  if (!element) return false
+  const obstacle = element.closest(playerObstacleBoundarySelector)
+  return obstacle !== null && player.contains(obstacle)
+}
+
 export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
-  if (!(mutation.target instanceof Element)) return false
   if (mutation.type === 'attributes') {
-    return mutation.target === player || mutation.target.matches(playerObstacleBoundarySelector)
+    return mutation.target === player || mutationTargetTouchesPlayerObstacle(mutation.target, player)
   }
-  if (mutation.target.matches(playerObstacleBoundarySelector)) return true
+  if (mutationTargetTouchesPlayerObstacle(mutation.target, player)) return true
   return [...mutation.addedNodes, ...mutation.removedNodes].some(nodeMatchesOrContainsPlayerObstacle)
 }
 
@@ -198,6 +204,7 @@ export const useOverlayGeometry = ({
     mutationObserver?.observe(playerElement, {
       attributes: true,
       attributeFilter: ['aria-hidden', 'class', 'hidden', 'style'],
+      characterData: true,
       childList: true,
       subtree: true,
     })

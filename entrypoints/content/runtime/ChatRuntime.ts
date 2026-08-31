@@ -10,7 +10,7 @@ import {
   type SanitizedDiagnosticReport,
 } from '../diagnostics/sanitizeDiagnosticReport'
 import { collectPageObservation } from '../platform/youtube/collectPageObservation'
-import { runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
+import { matchesProbe, nativeChatIframeProbe, runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { type PageObservation, withObservationGeneration } from '../platform/youtube/types'
 import { ResourceReconciler } from './ResourceReconciler'
 import { type ChatDecision, resolveChatDecision } from './resolveChatDecision'
@@ -224,8 +224,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
 
   private handleResourceLoad = (event: Event) => {
     const target = event.target
-    if (!(target instanceof HTMLIFrameElement)) return
-    if (target.id !== 'chatframe' && !target.matches('ytd-live-chat-frame iframe.ytd-live-chat-frame')) return
+    if (!(target instanceof HTMLIFrameElement) || !matchesProbe(target, nativeChatIframeProbe)) return
     this.scheduleReconcile()
   }
 

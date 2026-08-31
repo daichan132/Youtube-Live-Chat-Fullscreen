@@ -6,6 +6,7 @@ import type { PresentationLease } from './resources/PresentationLease'
 vi.mock('wxt/browser', () => ({
   browser: {
     runtime: {
+      getURL: (path: string) => `chrome-extension://test/${path}`,
       getManifest: () => ({ version: '2.3.15' }),
     },
   },

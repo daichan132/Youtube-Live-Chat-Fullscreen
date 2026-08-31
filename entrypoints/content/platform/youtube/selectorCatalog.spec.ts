@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { identifyProbeForElement, queryAllProbes, queryFirstProbe, youtubeSelectorCatalog } from './selectorCatalog'
+import {
+  identifyProbeForElement,
+  matchesProbe,
+  queryAllProbes,
+  queryFirstProbe,
+  runtimeBoundarySelector,
+  youtubeSelectorCatalog,
+} from './selectorCatalog'
 
 describe('youtubeSelectorCatalog', () => {
   it('keeps probe ids unique and selectors non-empty', () => {
@@ -20,6 +27,14 @@ describe('youtubeSelectorCatalog', () => {
     expect(result.element).toBeInstanceOf(HTMLIFrameElement)
   })
 
+  it('matches a resolved element through the shared probe candidates', () => {
+    const root = document.createElement('div')
+    root.innerHTML = '<ytd-live-chat-frame><iframe class="ytd-live-chat-frame"></iframe></ytd-live-chat-frame>'
+    const iframe = root.querySelector('iframe')
+
+    expect(iframe && matchesProbe(iframe, youtubeSelectorCatalog.nativeChatIframe)).toBe(true)
+  })
+
   it('deduplicates elements found by multiple selector candidates', () => {
     const root = document.createElement('div')
     root.innerHTML = '<ytd-live-chat-frame><iframe id="chatframe" class="ytd-live-chat-frame"></iframe></ytd-live-chat-frame>'
@@ -37,5 +52,21 @@ describe('youtubeSelectorCatalog', () => {
     expect(
       identifyProbeForElement(root, { probeId: 'control.v1', selectors: ['.missing', '.fallback'] }, root.querySelector('button')),
     ).toBe('control.v1.2')
+  })
+
+  it('keeps live UI nodes inside the runtime boundary after their active class is removed', () => {
+    const timeDisplay = document.createElement('div')
+    timeDisplay.className = 'ytp-time-display ytp-live'
+    const liveBadge = document.createElement('div')
+    liveBadge.className = 'ytp-live-badge ytp-live-badge-is-livehead'
+
+    expect(timeDisplay.matches(runtimeBoundarySelector)).toBe(true)
+    expect(liveBadge.matches(runtimeBoundarySelector)).toBe(true)
+
+    timeDisplay.classList.remove('ytp-live')
+    liveBadge.classList.remove('ytp-live-badge-is-livehead')
+
+    expect(timeDisplay.matches(runtimeBoundarySelector)).toBe(true)
+    expect(liveBadge.matches(runtimeBoundarySelector)).toBe(true)
   })
 })

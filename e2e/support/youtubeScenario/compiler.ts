@@ -137,6 +137,16 @@ const renderWatchHtml = (state: YouTubeScenarioState, bodyHtml: string) => {
 </html>`
 }
 
+const getScenarioUrl = (state: YouTubeScenarioState) => {
+  const route = state.page.route ?? 'watch'
+  if (route !== 'watch' && state.video.mode !== 'live') {
+    throw new Error(`YouTube scenario route ${route} requires a live video.`)
+  }
+  if (route === 'direct-live') return `https://www.youtube.com/live/${encodeURIComponent(state.video.id)}`
+  if (route === 'channel-live') return 'https://www.youtube.com/@ylc-fixture/live'
+  return `https://www.youtube.com/watch?v=${encodeURIComponent(state.video.id)}`
+}
+
 export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYouTubeScenario => {
   if (!VIDEO_ID_PATTERN.test(state.video.id)) {
     throw new Error(`Invalid YouTube scenario video ID: ${JSON.stringify(state.video.id)}`)
@@ -155,7 +165,7 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
   const isLive = state.video.mode === 'live'
 
   return {
-    watchUrl: `https://www.youtube.com/watch?v=${encodeURIComponent(state.video.id)}`,
+    watchUrl: getScenarioUrl(state),
     watchHtml: renderWatchHtml(state, bodyHtml),
     spaDocument: {
       title: state.video.title,

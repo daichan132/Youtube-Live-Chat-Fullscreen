@@ -1,3 +1,5 @@
+import { playerProbe, queryFirstProbe } from './selectorCatalog'
+
 export type YouTubeVideoData = {
   isLive?: boolean
   isLiveContent?: boolean
@@ -9,7 +11,7 @@ export type YouTubeMoviePlayer = HTMLElement & {
   getVideoData?: () => YouTubeVideoData
 }
 
-export const getYouTubeMoviePlayer = () => document.getElementById('movie_player') as YouTubeMoviePlayer | null
+export const getYouTubeMoviePlayer = () => queryFirstProbe<YouTubeMoviePlayer>(document, playerProbe).element
 
 export const readYouTubePlayerVideoData = (player: YouTubeMoviePlayer | null): YouTubeVideoData | null => {
   try {

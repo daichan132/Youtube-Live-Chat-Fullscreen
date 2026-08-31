@@ -48,6 +48,7 @@ jobs:
       # Keep this before build:e2e: a later WXT mode build may refresh .output
       # before the production artifact has been captured.
       - name: Upload production Chrome ZIP for startup smoke
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: production-chrome-${{ github.sha }}
@@ -65,7 +66,6 @@ jobs:
           if-no-files-found: error
 
   browser-contracts:
-    if: github.event_name == 'workflow_dispatch'
     needs: package
     # Visual baselines are generated for Playwright 1.62.1 Chromium on this
     # fixed GitHub-hosted image. Avoid ubuntu-latest image drift.
@@ -86,8 +86,11 @@ jobs:
           path: .output/chrome-mv3-testing
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
-      - name: Run deterministic browser contracts
-        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1
+      - name: Run deterministic fixture contracts
+        run: xvfb-run --auto-servernum yarn playwright test --project=fixture --retries=0 --max-failures=1
+      - name: Run visual and accessibility contracts
+        if: github.event_name == 'workflow_dispatch'
+        run: xvfb-run --auto-servernum yarn playwright test --project=visual --project=accessibility --retries=0 --max-failures=1
       - name: Upload browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
