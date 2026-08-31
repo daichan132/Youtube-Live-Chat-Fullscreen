@@ -31,6 +31,7 @@ jobs:
           rm -f entrypoints/popup/utils/dataTransfer.spec.ts
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           def replace(path: str, old: str, new: str) -> None:
               file = Path(path)
@@ -74,6 +75,58 @@ jobs:
               '    compatibilityLocaleToCopy: !hasCurrentLocale && storedCompatibilityLocale !== undefined ? fallbackLocale : null,',
               '    compatibilityLocaleToCopy: currentLocale === null && storedCompatibilityLocale !== undefined ? fallbackLocale : null,',
           )
+
+          modal_path = Path('shared/components/Modal.tsx')
+          modal_text = modal_path.read_text()
+          inert_pattern = re.compile(
+              r"const getInertTargets = \(parent: HTMLElement, overlay: HTMLElement\) => \{.*?\n\}\n\n"
+              r"const makeBackgroundInert = \(parent: HTMLElement, overlay: HTMLElement\) => \{.*?\n\}\n",
+              re.S,
+          )
+          inert_replacement = '''const getSiblingElements = (parent: ParentNode, branch: Element) =>
+            Array.from(parent.children).filter(
+              (element): element is HTMLElement => element instanceof HTMLElement && element !== branch,
+            )
+
+          const getInertTargets = (overlay: HTMLElement) => {
+            const targets: HTMLElement[] = []
+            let branch: Element = overlay
+
+            while (true) {
+              const parentElement = branch.parentElement
+              if (parentElement) {
+                targets.push(...getSiblingElements(parentElement, branch))
+                branch = parentElement
+                continue
+              }
+
+              const root = branch.getRootNode()
+              if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot) {
+                targets.push(...getSiblingElements(root, branch))
+                branch = root.host
+                continue
+              }
+
+              return [...new Set(targets)]
+            }
+          }
+
+          const makeBackgroundInert = (overlay: HTMLElement) => {
+            const targets = getInertTargets(overlay)
+            const previous = targets.map(target => ({ target, inert: target.hasAttribute('inert') }))
+            for (const target of targets) target.setAttribute('inert', '')
+            return () => {
+              for (const entry of previous) {
+                if (!entry.inert) entry.target.removeAttribute('inert')
+              }
+            }
+          }
+          '''
+          modal_text, replacement_count = inert_pattern.subn(inert_replacement, modal_text, count=1)
+          if replacement_count != 1:
+              raise RuntimeError(f'Expected one Modal inert implementation, replaced {replacement_count}')
+          modal_text = modal_text.replace('makeBackgroundInert(parent, overlay)', 'makeBackgroundInert(overlay)', 1)
+          modal_path.write_text(modal_text)
           PY
       - name: Install dependencies
         run: yarn install --immutable
