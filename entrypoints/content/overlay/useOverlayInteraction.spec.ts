@@ -49,7 +49,7 @@ describe('useOverlayInteraction', () => {
     act(() => vi.advanceTimersByTime(160))
 
     expect(result.current.state).toBe('idle')
-    expect(result.current.controlsHiding).toBe(true)
+    expect(result.current.controlsVisible).toBe(false)
   })
 
   it('gives settings and gestures explicit interaction states', () => {

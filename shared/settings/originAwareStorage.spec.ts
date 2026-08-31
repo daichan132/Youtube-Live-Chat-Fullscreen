@@ -257,7 +257,7 @@ describe('settings repository', () => {
   it('invalidates a failed retry when another context commits a newer value', async () => {
     const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
     vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-      const theme = values[THEME_STORAGE_KEY] as { writerId?: string } | undefined
+      const theme = (values as Record<string, unknown>)[THEME_STORAGE_KEY] as { writerId?: string } | undefined
       if (theme?.writerId === 'failed-writer') throw new Error('offline')
       await originalSet(values)
     })
@@ -280,10 +280,7 @@ describe('settings repository', () => {
     const profile = structuredClone(DEFAULT_CHAT_SETTINGS.profile)
     profile.appearance.fontSize = 30
 
-    await repository.replaceSettings(
-      { ytdLiveChat: false, themeMode: 'dark' },
-      { ...DEFAULT_CHAT_SETTINGS, profile },
-    )
+    await repository.replaceSettings({ ytdLiveChat: false, themeMode: 'dark' }, { ...DEFAULT_CHAT_SETTINGS, profile })
 
     expect(set).toHaveBeenCalledTimes(1)
     expect(set.mock.calls[0]?.[0]).toMatchObject({

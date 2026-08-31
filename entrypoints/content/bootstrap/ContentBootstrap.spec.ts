@@ -26,6 +26,7 @@ describe('ContentBootstrap', () => {
   it('recognizes only a YouTube watch path without reading the page DOM', () => {
     expect(isYouTubeWatchSurface('https://www.youtube.com/watch?v=live')).toBe(true)
     expect(isYouTubeWatchSurface('https://www.youtube.com/live/live')).toBe(false)
+    expect(isYouTubeWatchSurface('https://example.com/watch?v=live')).toBe(false)
     expect(isYouTubeWatchSurface('https://www.youtube.com/')).toBe(false)
     expect(isYouTubeWatchSurface('https://www.youtube.com/results?search_query=live')).toBe(false)
     expect(isYouTubeWatchSurface('not a url')).toBe(false)
@@ -86,7 +87,7 @@ describe('ContentBootstrap', () => {
     expect(session.dispose).toHaveBeenCalledTimes(1)
   })
 
-  it('recovers from transient session startup failures with bounded retries', async () => {
+  it('recovers from transient asynchronous session startup failures with bounded retries', async () => {
     let href = 'https://www.youtube.com/watch?v=live'
     const session = { dispose: vi.fn() }
     const createSession = vi
@@ -104,6 +105,24 @@ describe('ContentBootstrap', () => {
     href = 'https://www.youtube.com/'
     await bootstrap.reconcileLocation()
     expect(session.dispose).toHaveBeenCalledTimes(1)
+  })
+
+  it('normalizes synchronous session construction failures into the retry flow', async () => {
+    const href = 'https://www.youtube.com/watch?v=live'
+    const session = { dispose: vi.fn() }
+    const createSession = vi
+      .fn<() => Promise<ContentSession>>()
+      .mockImplementationOnce(() => {
+        throw new Error('synchronous setup failure')
+      })
+      .mockResolvedValueOnce(session)
+    const bootstrap = new ContentBootstrap(createSession, { readHref: () => href })
+    bootstraps.push(bootstrap)
+
+    bootstrap.start()
+    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await vi.advanceTimersByTimeAsync(250)
+    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(2))
   })
 
   it('does not bypass the retry delay when duplicate navigation signals arrive', async () => {
@@ -170,6 +189,26 @@ describe('ContentBootstrap', () => {
       attempts: 3,
     })
     expect(JSON.stringify(onPermanentFailure.mock.calls)).not.toContain('private-video-id')
+  })
+
+  it('allows a completed channel navigation to retry a previously failed live-entry surface', async () => {
+    const href = 'https://www.youtube.com/@lofi/live'
+    const createSession = vi.fn<() => Promise<ContentSession>>().mockRejectedValue(new Error('unavailable'))
+    const bootstrap = new ContentBootstrap(createSession, { readHref: () => href })
+    bootstraps.push(bootstrap)
+
+    bootstrap.start()
+    await vi.waitFor(() => expect(createSession).toHaveBeenCalledTimes(1))
+    await vi.advanceTimersByTimeAsync(250)
+    await vi.advanceTimersByTimeAsync(1000)
+    await vi.runOnlyPendingTimersAsync()
+    expect(createSession).toHaveBeenCalledTimes(3)
+
+    await bootstrap.reconcileLocation(href)
+    expect(createSession).toHaveBeenCalledTimes(3)
+
+    await bootstrap.reconcileLocation(href, { retryFailedSurface: true })
+    expect(createSession).toHaveBeenCalledTimes(4)
   })
 
   it('shares an in-flight activation and disposes a stale session after navigation', async () => {

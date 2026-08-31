@@ -4,13 +4,7 @@ import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from './model'
-import {
-  isRecord,
-  normalizeChatGeometry,
-  normalizeChatProfile,
-  normalizeGlobalSetting,
-  normalizePresets,
-} from './normalizeSettings'
+import { isRecord, normalizeChatGeometry, normalizeChatProfile, normalizeGlobalSetting, normalizePresets } from './normalizeSettings'
 import {
   APPEARANCE_STORAGE_KEY,
   ENABLED_STORAGE_KEY,
@@ -224,10 +218,10 @@ const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Pr
 
   const extensionPageLocale = readLegacyLocale(legacyLocaleStorage)
   const browserLegacyLocale = compatibilityValues[2]?.value
-  const storedCompatibilityLocale =
-    extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined)
+  const storedCompatibilityLocale = extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined)
   const fallbackLocale = resolveLanguageCode(storedCompatibilityLocale ?? getDefaultLocale())
-  const hasCurrentLocale = isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string'
+  const currentLocale =
+    isStoredEnvelope<unknown>(localeEnvelope) && typeof localeEnvelope.value === 'string' ? resolveLanguageCode(localeEnvelope.value) : null
 
   return {
     snapshot: {
@@ -245,11 +239,11 @@ const readSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Pr
         presets: appearance.presets,
         geometry,
       },
-      locale: hasCurrentLocale ? resolveLanguageCode(localeEnvelope.value) : fallbackLocale,
+      locale: currentLocale ?? fallbackLocale,
     },
     // This is the only startup write: a non-destructive copy that lets the
     // content script converge with an extension-page-only legacy locale.
-    compatibilityLocaleToCopy: !hasCurrentLocale && storedCompatibilityLocale !== undefined ? fallbackLocale : null,
+    compatibilityLocaleToCopy: currentLocale === null && storedCompatibilityLocale !== undefined ? fallbackLocale : null,
   }
 }
 
@@ -341,12 +335,7 @@ export const createSettingsRepository = (
     return isStoredEnvelope<unknown>(result?.value) ? result.value.value : undefined
   }
 
-  const runWithRetry = async (
-    domain: PersistenceDomain,
-    sequence: number,
-    supersessionVersion: number,
-    task: () => Promise<void>,
-  ) => {
+  const runWithRetry = async (domain: PersistenceDomain, sequence: number, supersessionVersion: number, task: () => Promise<void>) => {
     try {
       await task()
       return true
@@ -354,11 +343,7 @@ export const createSettingsRepository = (
       await dependencies.waitBeforeRetry(SAVE_RETRY_DELAY_MS)
       // A newer local intent or an external commit supersedes this delayed
       // retry. Do not replay an obsolete value after the wait.
-      if (
-        localSequences.get(domain) !== sequence ||
-        supersessionVersions.get(domain) !== supersessionVersion
-      )
-        return false
+      if (localSequences.get(domain) !== sequence || supersessionVersions.get(domain) !== supersessionVersion) return false
       try {
         await task()
         return true
@@ -397,10 +382,7 @@ export const createSettingsRepository = (
             }
           }
         } catch (error) {
-          if (
-            localSequences.get(domain) === sequence &&
-            supersessionVersions.get(domain) === supersessionVersion
-          )
+          if (localSequences.get(domain) === sequence && supersessionVersions.get(domain) === supersessionVersion)
             failedWrites.set(domain, { sequence, task, error })
           throw error
         }

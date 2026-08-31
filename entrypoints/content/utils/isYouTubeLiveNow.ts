@@ -21,8 +21,8 @@ type YouTubeInitialPlayerResponse = {
   }
 }
 
-type ScriptLiveNowResult = { live: boolean; videoId: string | null }
-const scriptLiveNowCache = new WeakMap<HTMLScriptElement, { text: string; result: ScriptLiveNowResult | null }>()
+type ScriptLiveNowResult = { live: boolean; videoId: string }
+const scriptLiveNowCache = new WeakMap<HTMLScriptElement, { text: string; results: readonly ScriptLiveNowResult[] }>()
 
 const hasReplayLabel = (value: string | null | undefined) => {
   const normalized = (value ?? '').toLowerCase()
@@ -69,12 +69,10 @@ const isReplayButtonForCurrentChat = (button: HTMLElement) => {
 
   const containerHost = chatContainer.querySelector('ytd-live-chat-frame') as HTMLElement | null
   const containerHosts = Array.from(chatContainer.querySelectorAll<HTMLElement>('ytd-live-chat-frame'))
-  if ((containerHost && isChatHostForCurrentVideo(containerHost)) || containerHosts.some(host => isChatHostForCurrentVideo(host))) {
-    return true
-  }
+  if ((containerHost && isChatHostForCurrentVideo(containerHost)) || containerHosts.some(isChatHostForCurrentVideo)) return true
 
   const containerFrames = Array.from(chatContainer.querySelectorAll<HTMLIFrameElement>('#chatframe, iframe.ytd-live-chat-frame'))
-  return containerFrames.some(iframe => isChatFrameForCurrentUrl(iframe))
+  return containerFrames.some(isChatFrameForCurrentUrl)
 }
 
 const hasReplayButtonLabel = (button: HTMLElement) =>
@@ -119,73 +117,101 @@ const hasPlayerLiveUiSignal = () => {
   if (!isKnownVideoIdCurrent(watchVideoId)) return false
   if (!hasCurrentVideoMarker(moviePlayerVideoId, watchVideoId)) return false
 
-  const liveTimeDisplay = document.querySelector('.ytp-time-display.ytp-live')
-  if (liveTimeDisplay) return true
-
-  const liveHeadBadge = document.querySelector('.ytp-live-badge.ytp-live-badge-is-livehead')
-  return Boolean(liveHeadBadge)
+  if (document.querySelector('.ytp-time-display.ytp-live')) return true
+  return document.querySelector('.ytp-live-badge.ytp-live-badge-is-livehead') !== null
 }
 
 const getLiveFromMoviePlayer = () => {
   const { data, videoId } = readCurrentPlayerData()
   if (!isKnownVideoIdCurrent(videoId)) return null
-  if (typeof data?.isLive === 'boolean') return data.isLive
-  return null
+  return typeof data?.isLive === 'boolean' ? data.isLive : null
+}
+
+const getPlayerResponseLive = (response: YouTubeInitialPlayerResponse, rawJson = ''): ScriptLiveNowResult | null => {
+  const videoId = response.videoDetails?.videoId
+  if (!videoId) return null
+
+  const liveNow = response.microformat?.playerMicroformatRenderer?.liveBroadcastDetails?.isLiveNow
+  if (typeof liveNow === 'boolean') return { live: liveNow, videoId }
+
+  const isLive = response.videoDetails?.isLive
+  if (typeof isLive === 'boolean') return { live: isLive, videoId }
+
+  const viewedLiveMatch = rawJson.match(/"key"\s*:\s*"is_viewed_live"\s*,\s*"value"\s*:\s*"(True|False)"/)
+  return viewedLiveMatch?.[1] ? { live: viewedLiveMatch[1] === 'True', videoId } : null
 }
 
 const getLiveFromInitialPlayerResponse = () => {
   const response = (window as Window & { ytInitialPlayerResponse?: YouTubeInitialPlayerResponse }).ytInitialPlayerResponse
-  if (!isExplicitVideoIdCurrent(response?.videoDetails?.videoId)) return null
-
-  const liveNow = response?.microformat?.playerMicroformatRenderer?.liveBroadcastDetails?.isLiveNow
-  if (typeof liveNow === 'boolean') return liveNow
-
-  const isLive = response?.videoDetails?.isLive
-  if (typeof isLive === 'boolean') return isLive
-
-  return null
+  if (!response) return null
+  const result = getPlayerResponseLive(response)
+  return result && isExplicitVideoIdCurrent(result.videoId) ? result.live : null
 }
 
-const parseVideoIdFromScript = (scriptText: string) => {
-  const videoDetailsStart = scriptText.indexOf('"videoDetails"')
-  if (videoDetailsStart >= 0) {
-    const videoDetailsSection = scriptText.slice(videoDetailsStart, videoDetailsStart + 5000)
-    const videoDetailsMatch = videoDetailsSection.match(/"videoId"\s*:\s*"([^"]+)"/)
-    if (videoDetailsMatch?.[1]) return videoDetailsMatch[1]
-  }
+const findJsonObjectEnd = (text: string, start: number) => {
+  let depth = 0
+  let inString = false
+  let escaped = false
 
-  const fallbackMatch = scriptText.match(/"video_id"\s*:\s*"([^"]+)"/) ?? scriptText.match(/"videoId"\s*:\s*"([^"]+)"/)
-  return fallbackMatch?.[1] ?? null
-}
-
-const parseLiveNowFromScript = (scriptText: string): ScriptLiveNowResult | null => {
-  const isLiveNowMatch = scriptText.match(/"isLiveNow"\s*:\s*(true|false)/)
-  if (isLiveNowMatch?.[1]) {
-    return {
-      live: isLiveNowMatch[1] === 'true',
-      videoId: parseVideoIdFromScript(scriptText),
+  for (let index = start; index < text.length; index += 1) {
+    const character = text[index]
+    if (inString) {
+      if (escaped) escaped = false
+      else if (character === '\\') escaped = true
+      else if (character === '"') inString = false
+      continue
+    }
+    if (character === '"') {
+      inString = true
+      continue
+    }
+    if (character === '{') depth += 1
+    else if (character === '}') {
+      depth -= 1
+      if (depth === 0) return index + 1
     }
   }
 
-  const viewedLiveMatch = scriptText.match(/"key"\s*:\s*"is_viewed_live"\s*,\s*"value"\s*:\s*"(True|False)"/)
-  if (viewedLiveMatch?.[1]) {
-    return {
-      live: viewedLiveMatch[1] === 'True',
-      videoId: parseVideoIdFromScript(scriptText),
+  return -1
+}
+
+const parseInlinePlayerResponses = (scriptText: string): ScriptLiveNowResult[] => {
+  const results: ScriptLiveNowResult[] = []
+  let searchFrom = 0
+
+  while (searchFrom < scriptText.length) {
+    const markerIndex = scriptText.indexOf('ytInitialPlayerResponse', searchFrom)
+    if (markerIndex < 0) break
+    const objectStart = scriptText.indexOf('{', markerIndex + 'ytInitialPlayerResponse'.length)
+    if (objectStart < 0 || objectStart - markerIndex > 200) {
+      searchFrom = markerIndex + 1
+      continue
     }
+    const objectEnd = findJsonObjectEnd(scriptText, objectStart)
+    if (objectEnd < 0) break
+
+    const rawJson = scriptText.slice(objectStart, objectEnd)
+    try {
+      const response = JSON.parse(rawJson) as YouTubeInitialPlayerResponse
+      const result = getPlayerResponseLive(response, rawJson)
+      if (result) results.push(result)
+    } catch {
+      // Ignore malformed or non-JSON assignments and continue with stronger page signals.
+    }
+    searchFrom = objectEnd
   }
 
-  return null
+  return results
 }
 
 const readScriptLiveNow = (script: HTMLScriptElement) => {
   const text = script.textContent ?? ''
   const cached = scriptLiveNowCache.get(script)
-  if (cached?.text === text) return cached.result
+  if (cached?.text === text) return cached.results
 
-  const result = text.includes('ytInitialPlayerResponse') ? parseLiveNowFromScript(text) : null
-  scriptLiveNowCache.set(script, { text, result })
-  return result
+  const results = text.includes('ytInitialPlayerResponse') ? parseInlinePlayerResponses(text) : []
+  scriptLiveNowCache.set(script, { text, results })
+  return results
 }
 
 const getLiveFromInlinePlayerResponseScript = () => {
@@ -194,8 +220,11 @@ const getLiveFromInlinePlayerResponseScript = () => {
 
   const scripts = Array.from(document.querySelectorAll<HTMLScriptElement>('script')).reverse()
   for (const script of scripts) {
-    const parsed = readScriptLiveNow(script)
-    if (parsed !== null && parsed.videoId === currentVideoId) return parsed.live
+    const results = readScriptLiveNow(script)
+    for (let index = results.length - 1; index >= 0; index -= 1) {
+      const result = results[index]
+      if (result?.videoId === currentVideoId) return result.live
+    }
   }
 
   return null
@@ -214,7 +243,5 @@ export const isYouTubeLiveNow = () => {
   const inlinePlayerResponseLive = getLiveFromInlinePlayerResponseScript()
   if (inlinePlayerResponseLive !== null) return inlinePlayerResponseLive
 
-  if (hasPlayerLiveUiSignal()) return true
-
-  return false
+  return hasPlayerLiveUiSignal()
 }

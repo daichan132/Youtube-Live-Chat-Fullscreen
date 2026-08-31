@@ -1,4 +1,4 @@
-import type { CSSProperties, MouseEvent, ReactNode } from 'react'
+import { type CSSProperties, type MouseEvent, type ReactNode, useRef } from 'react'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 
 type ChatSurfaceProps = {
@@ -13,18 +13,26 @@ const DRAG_SHIELD_STYLE: CSSProperties = {
   zIndex: CHAT_PANEL_LAYER.dragShield,
 }
 
-const isInsideVisibleBounds = (event: MouseEvent<HTMLElement>) => {
-  const rect = event.currentTarget.getBoundingClientRect()
+const isInsideVisibleBounds = (event: MouseEvent<HTMLElement>, rect: DOMRect) => {
   if (rect.bottom <= rect.top || rect.right <= rect.left) return false
   return event.clientX >= rect.left && event.clientX <= rect.right && event.clientY >= rect.top && event.clientY <= rect.bottom
 }
 
 export const ChatSurface = ({ children, innerStyle, isDragging, onEnterChat, onLeaveChat }: ChatSurfaceProps) => {
-  const handlePointerOverVisibleChat = (event: MouseEvent<HTMLElement>) => {
-    if (isInsideVisibleBounds(event)) {
+  const visibleBoundsRef = useRef<DOMRect | null>(null)
+
+  const handlePointerOverVisibleChat = (event: MouseEvent<HTMLElement>, refreshBounds = false) => {
+    const bounds = refreshBounds || !visibleBoundsRef.current ? event.currentTarget.getBoundingClientRect() : visibleBoundsRef.current
+    visibleBoundsRef.current = bounds
+    if (isInsideVisibleBounds(event, bounds)) {
       onEnterChat()
       return
     }
+    onLeaveChat()
+  }
+
+  const handleMouseLeave = () => {
+    visibleBoundsRef.current = null
     onLeaveChat()
   }
 
@@ -34,9 +42,9 @@ export const ChatSurface = ({ children, innerStyle, isDragging, onEnterChat, onL
       data-ylc-chat-inner
       className='relative h-full w-full pointer-events-auto'
       style={innerStyle}
-      onMouseEnter={handlePointerOverVisibleChat}
+      onMouseEnter={event => handlePointerOverVisibleChat(event, true)}
       onMouseMove={handlePointerOverVisibleChat}
-      onMouseLeave={onLeaveChat}
+      onMouseLeave={handleMouseLeave}
     >
       <div className='relative w-full h-full'>
         {isDragging ? (

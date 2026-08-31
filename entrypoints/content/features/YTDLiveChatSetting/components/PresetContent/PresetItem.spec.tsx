@@ -41,12 +41,47 @@ describe('PresetItem', () => {
     const actionButtons = actionContainer.querySelectorAll('button')
     const deleteButton = actionButtons.item(actionButtons.length - 1)
     if (!deleteButton) throw new Error('Missing preset delete button.')
+    deleteButton.focus()
     fireEvent.click(deleteButton)
 
     expect(await findByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.nestedModal) })
     fireEvent.click(await findByText('content.preset.delete', { selector: 'button' }))
 
     expect(store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'custom')).toBe(false)
+  })
+
+  it('persists a custom name only when editing is committed', () => {
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...DEFAULT_CHAT_SETTINGS,
+      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Before', profile }],
+    })
+    const { getByDisplayValue } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
+    const input = getByDisplayValue('Before') as HTMLInputElement
+
+    fireEvent.focus(input)
+    fireEvent.change(input, { target: { value: 'After' } })
+    expect(store.get(chatSettingsStateAtom).presets.at(-1)).toMatchObject({ name: 'Before' })
+
+    fireEvent.blur(input)
+    expect(store.get(chatSettingsStateAtom).presets.at(-1)).toMatchObject({ name: 'After' })
+  })
+
+  it('restores the stored name when editing is cancelled with Escape', () => {
+    const profile = store.get(chatSettingsStateAtom).profile
+    store.set(chatSettingsStateAtom, {
+      ...DEFAULT_CHAT_SETTINGS,
+      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Stored', profile }],
+    })
+    const { getByDisplayValue } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
+    const input = getByDisplayValue('Stored') as HTMLInputElement
+
+    fireEvent.focus(input)
+    fireEvent.change(input, { target: { value: 'Draft' } })
+    fireEvent.keyDown(input, { key: 'Escape' })
+
+    expect(input).toHaveValue('Stored')
+    expect(store.get(chatSettingsStateAtom).presets.at(-1)).toMatchObject({ name: 'Stored' })
   })
 
   it('renders built-in presets from the code catalog and prevents editing or deletion', () => {

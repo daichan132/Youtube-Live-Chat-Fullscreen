@@ -8,6 +8,7 @@ import {
   normalizePresets,
   normalizeRGBA,
 } from './normalizeSettings'
+import { MAX_CUSTOM_PRESETS } from './persistConfig'
 
 describe('normalizeRGBA', () => {
   it('clamps channels and preserves the fallback alpha for invalid input', () => {
@@ -135,6 +136,20 @@ describe('normalizePresets', () => {
       name: 'Custom',
       profile: { appearance: { fontSize: 18 } },
     })
+  })
+
+  it('keeps built-in entries while capping custom presets from storage', () => {
+    const customPresets = Array.from({ length: MAX_CUSTOM_PRESETS + 2 }, (_, index) => ({
+      kind: 'custom',
+      id: `custom-${index}`,
+      name: `Custom ${index}`,
+      profile: {},
+    }))
+
+    const presets = normalizePresets([{ kind: 'builtin', id: 'standard' }, ...customPresets, { kind: 'builtin', id: 'transparent' }], [])
+
+    expect(presets.filter(preset => preset.kind === 'custom')).toHaveLength(MAX_CUSTOM_PRESETS)
+    expect(presets.filter(preset => preset.kind === 'builtin').map(preset => preset.id)).toEqual(['standard', 'transparent'])
   })
 })
 

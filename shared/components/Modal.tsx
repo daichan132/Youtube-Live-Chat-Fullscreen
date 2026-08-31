@@ -1,11 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { useCallback, useEffect, useRef } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 
-type ModalAccessibleName =
-  | { ariaLabel: string; ariaLabelledBy?: never }
-  | { ariaLabel?: never; ariaLabelledBy: string }
+type ModalAccessibleName = { ariaLabel: string; ariaLabelledBy?: never } | { ariaLabel?: never; ariaLabelledBy: string }
 
 type ModalProps = {
   isOpen: boolean
@@ -44,31 +42,37 @@ const getDeepActiveElement = () => {
 
 const getFocusableElements = (container: HTMLElement) =>
   Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-    element => !element.hasAttribute('hidden') && element.getAttribute('aria-hidden') !== 'true',
+    element => !element.hasAttribute('hidden') && !element.hasAttribute('inert') && element.getAttribute('aria-hidden') !== 'true',
   )
 
-const getInertTargets = (parent: HTMLElement, overlay: HTMLElement) => {
-  const directSiblings = Array.from(parent.children).filter(
-    (element): element is HTMLElement => element instanceof HTMLElement && element !== overlay,
-  )
-  if (directSiblings.length > 0) return directSiblings
+const getSiblingElements = (parent: ParentNode, branch: Element) =>
+  Array.from(parent.children).filter((element): element is HTMLElement => element instanceof HTMLElement && element !== branch)
 
-  if (parent !== document.body && parent.parentElement) {
-    return Array.from(parent.parentElement.children).filter(
-      (element): element is HTMLElement => element instanceof HTMLElement && element !== parent,
-    )
+const getInertTargets = (overlay: HTMLElement) => {
+  const targets: HTMLElement[] = []
+  let branch: Element = overlay
+
+  while (true) {
+    const parentElement = branch.parentElement
+    if (parentElement) {
+      targets.push(...getSiblingElements(parentElement, branch))
+      branch = parentElement
+      continue
+    }
+
+    const root = branch.getRootNode()
+    if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot) {
+      targets.push(...getSiblingElements(root, branch))
+      branch = root.host
+      continue
+    }
+
+    return [...new Set(targets)]
   }
-
-  const root = parent.getRootNode()
-  if (typeof ShadowRoot !== 'undefined' && root instanceof ShadowRoot) {
-    return Array.from(root.children).filter((element): element is HTMLElement => element instanceof HTMLElement && element !== parent)
-  }
-
-  return []
 }
 
-const makeBackgroundInert = (parent: HTMLElement, overlay: HTMLElement) => {
-  const targets = getInertTargets(parent, overlay)
+const makeBackgroundInert = (overlay: HTMLElement) => {
+  const targets = getInertTargets(overlay)
   const previous = targets.map(target => ({ target, inert: target.hasAttribute('inert') }))
   for (const target of targets) target.setAttribute('inert', '')
   return () => {
@@ -96,57 +100,51 @@ export const Modal = ({
   children,
 }: ModalProps) => {
   const modalIdRef = useRef(Symbol('modal'))
-  const previousFocusRef = useRef<Element | null>(null)
   const overlayRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const focusFrameRef = useRef<number | null>(null)
-  const wasOpenRef = useRef(false)
-  const parent = isOpen ? (parentSelector?.() ?? document.body) : null
+  const [parent, setParent] = useState<HTMLElement | null>(null)
+  const lifecycleRef = useRef({ onAfterOpen, onAfterClose, shouldFocusAfterRender, shouldReturnFocusAfterClose })
+  lifecycleRef.current = { onAfterOpen, onAfterClose, shouldFocusAfterRender, shouldReturnFocusAfterClose }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setParent(null)
+      return
+    }
+    const nextParent = parentSelector?.() ?? document.body
+    setParent(current => (current === nextParent ? current : nextParent))
+  }, [isOpen, parentSelector])
+
+  useLayoutEffect(() => {
     if (!isOpen || !parent) return
+
     const modalId = modalIdRef.current
+    const previousFocus = lifecycleRef.current.shouldReturnFocusAfterClose ? getDeepActiveElement() : null
     modalStack.push(modalId)
     const overlay = overlayRef.current
-    const restoreBackground = overlay ? makeBackgroundInert(parent, overlay) : () => {}
+    const restoreBackground = overlay ? makeBackgroundInert(overlay) : () => {}
+    lifecycleRef.current.onAfterOpen?.()
+
+    if (lifecycleRef.current.shouldFocusAfterRender) {
+      focusFrameRef.current = requestAnimationFrame(() => {
+        focusFrameRef.current = null
+        contentRef.current?.focus({ preventScroll: true })
+      })
+    }
 
     return () => {
+      if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current)
+      focusFrameRef.current = null
       restoreBackground()
       const index = modalStack.lastIndexOf(modalId)
       if (index >= 0) modalStack.splice(index, 1)
+      lifecycleRef.current.onAfterClose?.()
+      if (lifecycleRef.current.shouldReturnFocusAfterClose && previousFocus instanceof HTMLElement && previousFocus.isConnected) {
+        previousFocus.focus({ preventScroll: true })
+      }
     }
   }, [isOpen, parent])
-
-  useEffect(() => {
-    if (isOpen && !wasOpenRef.current) {
-      if (shouldReturnFocusAfterClose) {
-        previousFocusRef.current = getDeepActiveElement()
-      }
-      onAfterOpen?.()
-      if (shouldFocusAfterRender) {
-        focusFrameRef.current = requestAnimationFrame(() => {
-          focusFrameRef.current = null
-          contentRef.current?.focus({ preventScroll: true })
-        })
-      }
-    } else if (!isOpen && wasOpenRef.current) {
-      if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current)
-      focusFrameRef.current = null
-      onAfterClose?.()
-      if (shouldReturnFocusAfterClose && previousFocusRef.current instanceof HTMLElement) {
-        previousFocusRef.current.focus({ preventScroll: true })
-      }
-      previousFocusRef.current = null
-    }
-    wasOpenRef.current = isOpen
-  }, [isOpen, onAfterOpen, onAfterClose, shouldFocusAfterRender, shouldReturnFocusAfterClose])
-
-  useEffect(
-    () => () => {
-      if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current)
-    },
-    [],
-  )
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -187,11 +185,10 @@ export const Modal = ({
 
   const handleOverlayClick = useCallback(
     (event: React.MouseEvent) => {
-      if (shouldCloseOnOverlayClick && event.target === event.currentTarget) {
-        onRequestClose?.()
-      }
+      if (modalStack[modalStack.length - 1] !== modalIdRef.current) return
+      if (shouldCloseOnOverlayClick && event.target === event.currentTarget) onRequestClose?.()
     },
-    [shouldCloseOnOverlayClick, onRequestClose],
+    [onRequestClose, shouldCloseOnOverlayClick],
   )
 
   if (!isOpen || !parent) return null

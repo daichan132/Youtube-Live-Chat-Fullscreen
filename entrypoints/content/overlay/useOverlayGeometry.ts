@@ -42,8 +42,7 @@ const readReferenceSize = (element: HTMLElement | null) => {
 }
 
 const nodeMatchesOrContainsPlayerObstacle = (node: Node) =>
-  node instanceof Element &&
-  (node.matches(playerObstacleBoundarySelector) || node.querySelector(playerObstacleBoundarySelector) !== null)
+  node instanceof Element && (node.matches(playerObstacleBoundarySelector) || node.querySelector(playerObstacleBoundarySelector) !== null)
 
 export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
   if (!(mutation.target instanceof Element)) return false
@@ -229,17 +228,7 @@ export const useOverlayGeometry = ({
     if (!shouldApplyAutoSafePlacement(placement)) return
     autoRepositionedRef.current = true
     commitLayout(placement.best.geometry, false)
-  }, [
-    commitLayout,
-    displayGeometry,
-    draftGeometry,
-    interactionState,
-    obstacleRevision,
-    pinned,
-    playerElement,
-    referenceSize,
-    settingsOpen,
-  ])
+  }, [commitLayout, displayGeometry, draftGeometry, interactionState, obstacleRevision, pinned, playerElement, referenceSize, settingsOpen])
 
   return {
     displayGeometry,

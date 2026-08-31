@@ -9,7 +9,6 @@ const legacyCoreSpecs = [
   'entrypoints/content/runtime/resolveChatDecision.spec.ts',
   'entrypoints/content/style/compileStylePatch.spec.ts',
   'entrypoints/content/utils/darkenRgbaColor.spec.ts',
-  'entrypoints/popup/utils/dataTransfer.spec.ts',
   'shared/constants/zIndex.spec.ts',
   'shared/i18n/assets.spec.ts',
   'shared/i18n/generated.spec.ts',

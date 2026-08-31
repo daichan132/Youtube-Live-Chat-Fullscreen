@@ -15,7 +15,7 @@ export default defineContentScript({
       void bootstrap.reconcileLocation(event.newUrl.href)
     })
     ctx.addEventListener(document, 'yt-navigate-finish', () => {
-      void bootstrap.reconcileLocation()
+      void bootstrap.reconcileLocation(undefined, { retryFailedSurface: true })
     })
     ctx.onInvalidated(bootstrap.dispose)
     bootstrap.start()

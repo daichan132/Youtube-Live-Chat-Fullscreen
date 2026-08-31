@@ -1,3 +1,4 @@
+const YOUTUBE_ORIGINS = new Set(['https://www.youtube.com', 'https://youtube.com'])
 const DIRECT_LIVE_PATH_PATTERN = /^\/live\/([a-zA-Z0-9_-]+)\/?$/
 export const CHANNEL_LIVE_PATH_PATTERN = /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/live\/?$/
 
@@ -7,11 +8,13 @@ export type YouTubeContentSurface = {
   activationKey: string
 }
 
-const nonEmpty = (value: string | null) => (value ? value : null)
+const nonEmpty = (value: string | null) => value?.trim() || null
 
 export const getYouTubeContentSurface = (href: string): YouTubeContentSurface | null => {
   try {
     const url = new URL(href, 'https://www.youtube.com')
+    if (!YOUTUBE_ORIGINS.has(url.origin)) return null
+
     if (url.pathname === '/watch') {
       const videoId = nonEmpty(url.searchParams.get('v'))
       return {

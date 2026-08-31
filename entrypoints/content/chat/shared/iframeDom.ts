@@ -1,3 +1,8 @@
+import {
+  getYouTubeMoviePlayer,
+  getYouTubePlayerVideoId,
+  readYouTubePlayerVideoData,
+} from '@/entrypoints/content/platform/youtube/playerVideoData'
 import { nativeChatIframeProbe, queryAllProbes } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 
@@ -10,16 +15,11 @@ const YLC_OBSERVED_MODE_ATTR = 'data-ylc-observed-chat-mode'
 
 const getIframeHrefFromSrc = (iframe: HTMLIFrameElement) => iframe.getAttribute('src') ?? iframe.src ?? ''
 
-export const getLiveChatIframes = () => {
-  return queryAllProbes<HTMLIFrameElement>(document, nativeChatIframeProbe).elements
-}
+export const getLiveChatIframes = () => queryAllProbes<HTMLIFrameElement>(document, nativeChatIframeProbe).elements
 
 const getMoviePlayerVideoId = () => {
-  const moviePlayer = document.getElementById('movie_player') as
-    | (HTMLElement & { getVideoData?: () => { video_id?: string; videoId?: string } })
-    | null
-  const videoData = moviePlayer?.getVideoData?.()
-  return videoData?.video_id ?? videoData?.videoId ?? moviePlayer?.getAttribute('video-id') ?? null
+  const moviePlayer = getYouTubeMoviePlayer()
+  return getYouTubePlayerVideoId(moviePlayer, readYouTubePlayerVideoData(moviePlayer))
 }
 
 const hasCurrentPageVideoMarker = (currentVideoId: string) => {
@@ -150,9 +150,8 @@ export const isLiveChatIframe = (iframe: HTMLIFrameElement | null | undefined) =
   return hasLivePath(srcHref)
 }
 
-export const getIframeVideoId = (iframe: HTMLIFrameElement) => {
-  return getDeclaredIframeVideoId(iframe) ?? getObservedVideoId(iframe) ?? getObservedVideoId(getChatHost(iframe))
-}
+export const getIframeVideoId = (iframe: HTMLIFrameElement) =>
+  getDeclaredIframeVideoId(iframe) ?? getObservedVideoId(iframe) ?? getObservedVideoId(getChatHost(iframe))
 
 export const isIframeForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId: string | null) => {
   const pageVideoId = getCurrentYouTubeVideoId()

@@ -1,8 +1,4 @@
-import {
-  getYouTubeMoviePlayer,
-  getYouTubePlayerVideoId,
-  readYouTubePlayerVideoData,
-} from '../platform/youtube/playerVideoData'
+import { getYouTubeMoviePlayer, getYouTubePlayerVideoId, readYouTubePlayerVideoData } from '../platform/youtube/playerVideoData'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 export const isYouTubeLiveVideo = () => {

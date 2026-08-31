@@ -35,7 +35,7 @@ const createCurrentReplayButton = () => {
 
 beforeEach(() => {
   document.body.innerHTML = ''
-  document.head.querySelectorAll('script').forEach(script => script.remove())
+  for (const script of document.head.querySelectorAll('script')) script.remove()
   resetWindowPlayerResponse()
   const nonce = Math.random().toString(16).slice(2)
   window.history.pushState({}, '', `${window.location.origin}/watch?v=${nonce}`)
@@ -330,6 +330,19 @@ describe('isYouTubeLiveNow', () => {
     document.head.append(stale, current)
 
     expect(isYouTubeLiveNow()).toBe(true)
+  })
+
+  it('does not combine live state and video id from separate inline response objects', () => {
+    const videoId = 'current-inline-video'
+    window.history.pushState({}, '', `${window.location.origin}/watch?v=${videoId}`)
+    const script = document.createElement('script')
+    script.textContent = [
+      'var ytInitialPlayerResponse = {"videoDetails":{"videoId":"stale-video"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":true}}}};',
+      `ytInitialPlayerResponse = {"videoDetails":{"videoId":"${videoId}"},"microformat":{"playerMicroformatRenderer":{"liveBroadcastDetails":{"isLiveNow":false}}}};`,
+    ].join('\n')
+    document.head.appendChild(script)
+
+    expect(isYouTubeLiveNow()).toBe(false)
   })
 
   it('ignores stale inline live script from another video', () => {

@@ -43,29 +43,42 @@ export const deriveOverlayPresentation = ({
 const ACTIVITY_EVENTS: (keyof DocumentEventMap)[] = ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll']
 const IDLE_TIMEOUT_MS = 1e3
 const CONTROL_HIDE_DELAY_MS = 160
-export const CONTROL_FADE_OUT_MS = 180
 
 const useDisplayIdle = (initialDisplayOnMount: boolean) => {
   const [idle, setIdle] = useState(!initialDisplayOnMount)
 
   useEffect(() => {
-    let timer: ReturnType<typeof setTimeout> | undefined
+    let idleTimer: ReturnType<typeof setTimeout> | null = null
+    let activityFrame: number | null = null
+    let lastActivityAt = Date.now()
+
+    const scheduleIdleCheck = (delayMs: number) => {
+      idleTimer = setTimeout(() => {
+        idleTimer = null
+        const remaining = IDLE_TIMEOUT_MS - (Date.now() - lastActivityAt)
+        if (remaining <= 0) setIdle(true)
+        else scheduleIdleCheck(remaining)
+      }, delayMs)
+    }
+
     const reset = () => {
-      setIdle(false)
-      if (timer) clearTimeout(timer)
-      timer = setTimeout(() => setIdle(true), IDLE_TIMEOUT_MS)
+      lastActivityAt = Date.now()
+      if (activityFrame === null) {
+        activityFrame = requestAnimationFrame(() => {
+          activityFrame = null
+          setIdle(false)
+        })
+      }
+      if (idleTimer === null) scheduleIdleCheck(IDLE_TIMEOUT_MS)
     }
 
     if (initialDisplayOnMount) reset()
-    for (const event of ACTIVITY_EVENTS) {
-      document.addEventListener(event, reset, { passive: true })
-    }
+    for (const event of ACTIVITY_EVENTS) document.addEventListener(event, reset, { passive: true })
 
     return () => {
-      if (timer) clearTimeout(timer)
-      for (const event of ACTIVITY_EVENTS) {
-        document.removeEventListener(event, reset)
-      }
+      if (idleTimer !== null) clearTimeout(idleTimer)
+      if (activityFrame !== null) cancelAnimationFrame(activityFrame)
+      for (const event of ACTIVITY_EVENTS) document.removeEventListener(event, reset)
     }
   }, [initialDisplayOnMount])
 
@@ -80,54 +93,32 @@ export const useOverlayInteraction = ({
 }: UseOverlayInteractionOptions) => {
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
   const [gesture, setGesture] = useState<Gesture>('none')
-  const [controlsHiding, setControlsHiding] = useState(false)
   const controlHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const controlFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idle = useDisplayIdle(initialDisplayOnMount)
 
   const clearControlHideTimer = useCallback(() => {
-    if (!controlHideTimerRef.current) return
+    if (controlHideTimerRef.current === null) return
     clearTimeout(controlHideTimerRef.current)
     controlHideTimerRef.current = null
-  }, [])
-
-  const clearControlFadeTimer = useCallback(() => {
-    if (!controlFadeTimerRef.current) return
-    clearTimeout(controlFadeTimerRef.current)
-    controlFadeTimerRef.current = null
   }, [])
 
   const showControlRail = useCallback(
     (region: Exclude<HoverRegion, 'none'>) => {
       clearControlHideTimer()
-      clearControlFadeTimer()
-      setControlsHiding(false)
       setHoverRegion(region)
     },
-    [clearControlFadeTimer, clearControlHideTimer],
+    [clearControlHideTimer],
   )
 
   const scheduleControlRailHide = useCallback(() => {
     clearControlHideTimer()
     controlHideTimerRef.current = setTimeout(() => {
       setHoverRegion('none')
-      setControlsHiding(true)
       controlHideTimerRef.current = null
-      clearControlFadeTimer()
-      controlFadeTimerRef.current = setTimeout(() => {
-        setControlsHiding(false)
-        controlFadeTimerRef.current = null
-      }, CONTROL_FADE_OUT_MS)
     }, CONTROL_HIDE_DELAY_MS)
-  }, [clearControlFadeTimer, clearControlHideTimer])
+  }, [clearControlHideTimer])
 
-  useEffect(
-    () => () => {
-      clearControlHideTimer()
-      clearControlFadeTimer()
-    },
-    [clearControlFadeTimer, clearControlHideTimer],
-  )
+  useEffect(() => () => clearControlHideTimer(), [clearControlHideTimer])
 
   const startDragging = useCallback(() => setGesture('dragging'), [])
   const finishDragging = useCallback(() => setGesture('none'), [])
@@ -145,7 +136,6 @@ export const useOverlayInteraction = ({
 
   return {
     ...presentation,
-    controlsHiding,
     enterChat: () => showControlRail('chat'),
     leaveChat: scheduleControlRailHide,
     enterControls: () => showControlRail('controls'),

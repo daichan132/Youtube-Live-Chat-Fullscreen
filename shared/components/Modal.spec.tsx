@@ -1,7 +1,7 @@
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { Modal } from './Modal'
 
@@ -42,6 +42,52 @@ describe('Modal', () => {
 
     expect(queryByRole('dialog')).toBeNull()
     expect(trigger).toHaveFocus()
+  })
+
+  it('restores focus and closes the lifecycle once when a conditionally mounted modal unmounts', async () => {
+    const user = userEvent.setup()
+    const onAfterClose = vi.fn()
+    const Harness = () => {
+      const [open, setOpen] = useState(false)
+      return (
+        <>
+          <button type='button' onClick={() => setOpen(true)}>
+            Open conditional dialog
+          </button>
+          {open ? (
+            <Modal isOpen ariaLabel='Conditional actions' onRequestClose={() => setOpen(false)} onAfterClose={onAfterClose}>
+              <button type='button'>Conditional action</button>
+            </Modal>
+          ) : null}
+        </>
+      )
+    }
+    const { getByRole, queryByRole } = render(<Harness />)
+    const trigger = getByRole('button', { name: 'Open conditional dialog' })
+
+    await user.click(trigger)
+    await user.keyboard('{Escape}')
+
+    expect(queryByRole('dialog')).toBeNull()
+    expect(trigger).toHaveFocus()
+    expect(onAfterClose).toHaveBeenCalledOnce()
+  })
+
+  it('resolves a custom portal parent after render rather than during render', () => {
+    const parent = document.createElement('div')
+    document.body.appendChild(parent)
+    const parentSelector = vi.fn(() => parent)
+
+    const { getByRole, unmount } = render(
+      <Modal isOpen ariaLabel='Custom parent' parentSelector={parentSelector}>
+        <button type='button'>Action</button>
+      </Modal>,
+    )
+
+    expect(parentSelector).toHaveBeenCalledOnce()
+    expect(parent).toContainElement(getByRole('dialog', { name: 'Custom parent' }))
+    unmount()
+    parent.remove()
   })
 
   it('keeps forward and reverse tab navigation inside the dialog', async () => {

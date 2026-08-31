@@ -1,8 +1,4 @@
-import {
-  getYouTubeMoviePlayer,
-  getYouTubePlayerVideoId,
-  readYouTubePlayerVideoData,
-} from '../platform/youtube/playerVideoData'
+import { getYouTubeMoviePlayer, getYouTubePlayerVideoId, readYouTubePlayerVideoData } from '../platform/youtube/playerVideoData'
 import { getYouTubeContentSurface } from '../platform/youtube/youtubeSurface'
 
 export const getVideoIdFromUrl = () => getYouTubeContentSurface(window.location.href)?.videoId ?? null

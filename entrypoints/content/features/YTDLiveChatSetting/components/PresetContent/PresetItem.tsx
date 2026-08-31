@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useId, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
@@ -7,6 +7,7 @@ import { formatMessage } from '@/shared/i18n/format'
 import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
 import type { ChatProfile } from '@/shared/settings/model'
+import { MAX_PRESET_NAME_LENGTH } from '@/shared/settings/persistConfig'
 import { deletePresetAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
@@ -37,15 +38,28 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
   const displayTitle = getPresetDisplayTitle(preset, t)
+  const [nameDraft, setNameDraft] = useState(displayTitle)
+  const nameDraftRef = useRef(displayTitle)
+  const editingNameRef = useRef(false)
   // Every row carries the same three controls, so the name is what tells them apart when read aloud.
   // A custom preset whose name the user cleared falls back to the label new presets are born with.
   const rowLabel = (key: string) => formatMessage(t(key), { name: displayTitle || t('content.preset.addItemTitle') })
   const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
   const canApply = profile !== undefined
   const isDragging = reorder.activeId === id
+
+  useEffect(() => {
+    if (editingNameRef.current) return
+    nameDraftRef.current = displayTitle
+    setNameDraft(displayTitle)
+  }, [displayTitle])
+
   const updateStyle = useCallback((nextProfile: ChatProfile) => {
     commitYLCProfile(nextProfile, 'preset')
   }, [])
+  const commitName = useCallback(() => {
+    if (!isBuiltIn) updatePresetName({ id, name: nameDraftRef.current })
+  }, [id, isBuiltIn, updatePresetName])
 
   return (
     <div className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`} data-ylc-preset-item={id}>
@@ -59,8 +73,30 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
       </button>
       <input
         type='text'
-        value={displayTitle}
-        onChange={event => updatePresetName({ id, name: event.target.value })}
+        value={isBuiltIn ? displayTitle : nameDraft}
+        onFocus={() => {
+          editingNameRef.current = true
+        }}
+        onChange={event => {
+          nameDraftRef.current = event.target.value
+          setNameDraft(event.target.value)
+        }}
+        onBlur={() => {
+          editingNameRef.current = false
+          commitName()
+        }}
+        onKeyDown={event => {
+          if (event.key === 'Enter') {
+            event.preventDefault()
+            event.currentTarget.blur()
+          } else if (event.key === 'Escape') {
+            event.preventDefault()
+            nameDraftRef.current = displayTitle
+            setNameDraft(displayTitle)
+            event.currentTarget.blur()
+          }
+        }}
+        maxLength={MAX_PRESET_NAME_LENGTH}
         readOnly={isBuiltIn}
         aria-label={t('content.aria.presetName')}
         className='ylc-preset-name'

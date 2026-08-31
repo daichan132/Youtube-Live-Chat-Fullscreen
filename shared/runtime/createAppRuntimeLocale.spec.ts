@@ -1,18 +1,20 @@
 import { describe, expect, it, vi } from 'vitest'
 import type { LocaleMessages } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import type { PersistenceStatus, SettingsRepository } from '@/shared/settings/repository'
+import type { PersistenceStatus, SettingsRepository, SettingsSnapshot } from '@/shared/settings/repository'
 import { chatSettingsStateAtom, globalSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createAppRuntime } from './createAppRuntime'
 
 const messages = (label: string) => ({ 'popup.theme': label }) as unknown as LocaleMessages
 
 const createRepository = (saveLocale: SettingsRepository['saveLocale']): SettingsRepository => ({
-  load: vi.fn(async () => ({
-    global: { ytdLiveChat: true, themeMode: 'system' },
-    chat: structuredClone(DEFAULT_CHAT_SETTINGS),
-    locale: 'en',
-  })),
+  load: vi.fn(
+    async (): Promise<SettingsSnapshot> => ({
+      global: { ytdLiveChat: true, themeMode: 'system' },
+      chat: structuredClone(DEFAULT_CHAT_SETTINGS),
+      locale: 'en',
+    }),
+  ),
   saveEnabled: vi.fn(async () => {}),
   saveTheme: vi.fn(async () => {}),
   saveAppearance: vi.fn(async () => {}),

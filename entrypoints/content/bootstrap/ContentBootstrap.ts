@@ -1,4 +1,4 @@
-import { getYouTubeContentSurface } from '../platform/youtube/youtubeSurface'
+import { getYouTubeContentSurface, type YouTubeContentSurface } from '../platform/youtube/youtubeSurface'
 
 export type ContentSession = {
   dispose(): void
@@ -25,6 +25,10 @@ type ContentBootstrapOptions = {
   readHref?: () => string
   scheduler?: BootstrapScheduler
   onPermanentFailure?: (failure: ContentBootstrapFailure) => void
+}
+
+type ReconcileLocationOptions = {
+  retryFailedSurface?: boolean
 }
 
 const defaultScheduler: BootstrapScheduler = {
@@ -68,7 +72,7 @@ export class ContentBootstrap {
     this.session = null
   }
 
-  reconcileLocation = async (href = this.readHref()) => {
+  reconcileLocation = async (href = this.readHref(), options: ReconcileLocationOptions = {}) => {
     if (!this.started) return
     const surface = getYouTubeContentSurface(href)
 
@@ -80,10 +84,14 @@ export class ContentBootstrap {
     }
 
     this.transitionSurface(surface.activationKey)
+    if (options.retryFailedSurface && this.failedSurfaceKey === surface.activationKey) {
+      this.failedSurfaceKey = null
+      this.retryAttempt = 0
+    }
     if (this.session || this.activation || this.retryTimer !== null || this.failedSurfaceKey === surface.activationKey) return
 
     const token = ++this.activationToken
-    const promise = this.createSession()
+    const promise = Promise.resolve().then(() => this.createSession())
     this.activation = { token, promise }
     let shouldRetry = false
     try {
@@ -116,7 +124,7 @@ export class ContentBootstrap {
     this.failedSurfaceKey = null
   }
 
-  private scheduleRetry(surface: NonNullable<ReturnType<typeof getYouTubeContentSurface>>) {
+  private scheduleRetry(surface: YouTubeContentSurface) {
     const delay = RETRY_DELAYS_MS[this.retryAttempt]
     if (delay === undefined) {
       if (this.failedSurfaceKey === surface.activationKey) return

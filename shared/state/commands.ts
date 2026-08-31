@@ -1,14 +1,14 @@
 import { atom } from 'jotai'
+import { areChatGeometriesEqual, areChatProfilesEqual, arePresetListsEqual } from '@/shared/settings/equality'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { ChatGeometry, ChatProfile, PresetEntry } from '@/shared/settings/model'
 import { normalizeChatGeometry, normalizeChatProfile, normalizePresetEntry } from '@/shared/settings/normalizeSettings'
+import { MAX_CUSTOM_PRESETS, MAX_PRESET_NAME_LENGTH } from '@/shared/settings/persistConfig'
 import { chatSettingsStateAtom, editorSessionStateAtom, type GlobalSettings, globalSettingsStateAtom, profileAtom } from './atoms'
 
 export const HISTORY_LIMIT = 50
 
-const profilesEqual = (left: ChatProfile, right: ChatProfile) => JSON.stringify(left) === JSON.stringify(right)
-
-const withEditorReset = () => ({ draftProfile: null, past: [], future: [], activeGesture: null })
+const createEditorReset = () => ({ draftProfile: null, past: [], future: [], activeGesture: null })
 
 export const setThemeModeAtom = atom(null, (get, set, themeMode: GlobalSettings['themeMode']) => {
   const current = get(globalSettingsStateAtom)
@@ -23,7 +23,9 @@ export const setYTDLiveChatEnabledAtom = atom(null, (get, set, enabled: boolean)
 export const commitGeometryAtom = atom(null, (get, set, input: ChatGeometry) => {
   const current = get(chatSettingsStateAtom)
   const geometry = normalizeChatGeometry(input, current.geometry)
-  if (JSON.stringify(current.geometry) !== JSON.stringify(geometry)) set(chatSettingsStateAtom, { ...current, geometry })
+  if (areChatGeometriesEqual(current.geometry, geometry)) return false
+  set(chatSettingsStateAtom, { ...current, geometry })
+  return true
 })
 
 export const commitProfileAtom = atom(null, (get, set, input: ChatProfile) => {
@@ -31,7 +33,7 @@ export const commitProfileAtom = atom(null, (get, set, input: ChatProfile) => {
   const editor = get(editorSessionStateAtom)
   const before = normalizeChatProfile(chat.profile)
   const next = normalizeChatProfile(input, before)
-  if (profilesEqual(before, next)) return false
+  if (areChatProfilesEqual(before, next)) return false
   set(chatSettingsStateAtom, { ...chat, profile: next })
   set(editorSessionStateAtom, {
     draftProfile: null,
@@ -47,7 +49,7 @@ export type ChatProfilePatch = {
   display?: Partial<ChatProfile['display']>
 }
 
-const applyPatch = (profile: ChatProfile, patch: ChatProfilePatch) =>
+export const applyChatProfilePatch = (profile: ChatProfile, patch: ChatProfilePatch) =>
   normalizeChatProfile(
     { appearance: { ...profile.appearance, ...patch.appearance }, display: { ...profile.display, ...patch.display } },
     profile,
@@ -69,7 +71,7 @@ export const previewStylePatchAtom = atom(null, (get, set, input: { id: string; 
   if (editor.activeGesture?.id !== input.id) set(beginStyleGestureAtom, input.id)
   const nextEditor = get(editorSessionStateAtom)
   const base = nextEditor.draftProfile ?? get(profileAtom)
-  set(editorSessionStateAtom, { ...nextEditor, draftProfile: applyPatch(base, input.patch) })
+  set(editorSessionStateAtom, { ...nextEditor, draftProfile: applyChatProfilePatch(base, input.patch) })
 })
 
 export const finishStyleGestureAtom = atom(null, (get, set, gestureId?: string) => {
@@ -77,7 +79,7 @@ export const finishStyleGestureAtom = atom(null, (get, set, gestureId?: string) 
   const gesture = editor.activeGesture
   if (!gesture || (gestureId !== undefined && gesture.id !== gestureId)) return false
   const draft = editor.draftProfile
-  if (!draft || profilesEqual(gesture.before, draft)) {
+  if (!draft || areChatProfilesEqual(gesture.before, draft)) {
     set(editorSessionStateAtom, { ...editor, activeGesture: null, draftProfile: null })
     return true
   }
@@ -93,15 +95,13 @@ export const finishStyleGestureAtom = atom(null, (get, set, gestureId?: string) 
 })
 
 export const cancelStyleGestureAtom = atom(null, (_get, set) => {
-  set(editorSessionStateAtom, getEditorReset())
+  set(editorSessionStateAtom, createEditorReset())
 })
-
-const getEditorReset = () => ({ draftProfile: null, past: [], future: [], activeGesture: null })
 
 export const commitStylePatchAtom = atom(null, (get, set, patch: ChatProfilePatch) => {
   set(finishStyleGestureAtom)
   const current = get(profileAtom)
-  set(commitProfileAtom, applyPatch(current, patch))
+  set(commitProfileAtom, applyChatProfilePatch(current, patch))
 })
 
 export const applyPresetAtom = atom(null, (_get, set, profile: ChatProfile) => {
@@ -112,13 +112,17 @@ export const applyPresetAtom = atom(null, (_get, set, profile: ChatProfile) => {
 export const addPresetAtom = atom(null, (get, set, preset: PresetEntry) => {
   const normalized = normalizePresetEntry(preset)
   const current = get(chatSettingsStateAtom)
-  if (!normalized || current.presets.some(entry => entry.id === normalized.id)) return
+  if (!normalized || current.presets.some(entry => entry.id === normalized.id)) return false
+  if (normalized.kind === 'custom' && current.presets.filter(entry => entry.kind === 'custom').length >= MAX_CUSTOM_PRESETS) return false
   set(chatSettingsStateAtom, { ...current, presets: [...current.presets, normalized] })
+  return true
 })
 
 export const deletePresetAtom = atom(null, (get, set, id: string) => {
   const current = get(chatSettingsStateAtom)
+  if (!current.presets.some(preset => preset.kind === 'custom' && preset.id === id)) return false
   set(chatSettingsStateAtom, { ...current, presets: current.presets.filter(preset => preset.kind === 'builtin' || preset.id !== id) })
+  return true
 })
 
 export const reorderPresetsAtom = atom(null, (get, set, ids: string[]) => {
@@ -133,21 +137,29 @@ export const reorderPresetsAtom = atom(null, (get, set, ids: string[]) => {
       return true
     })
   for (const preset of current.presets) if (!seen.has(preset.id)) presets.push(preset)
+  if (arePresetListsEqual(current.presets, presets)) return false
   set(chatSettingsStateAtom, { ...current, presets })
+  return true
 })
 
 export const updatePresetNameAtom = atom(null, (get, set, input: { id: string; name: string }) => {
   const current = get(chatSettingsStateAtom)
-  set(chatSettingsStateAtom, {
-    ...current,
-    presets: current.presets.map(preset =>
-      preset.kind === 'custom' && preset.id === input.id ? { ...preset, name: input.name.slice(0, 100) } : preset,
-    ),
-  })
+  const name = input.name.slice(0, MAX_PRESET_NAME_LENGTH)
+  const index = current.presets.findIndex(preset => preset.kind === 'custom' && preset.id === input.id)
+  const preset = current.presets[index]
+  if (preset?.kind !== 'custom' || preset.name === name) return false
+  const presets = [...current.presets]
+  presets[index] = { ...preset, name }
+  set(chatSettingsStateAtom, { ...current, presets })
+  return true
 })
 
 export const resetGeometryAtom = atom(null, (get, set) => {
-  set(chatSettingsStateAtom, { ...get(chatSettingsStateAtom), geometry: normalizeChatGeometry(DEFAULT_CHAT_SETTINGS.geometry) })
+  const current = get(chatSettingsStateAtom)
+  const geometry = normalizeChatGeometry(DEFAULT_CHAT_SETTINGS.geometry)
+  if (areChatGeometriesEqual(current.geometry, geometry)) return false
+  set(chatSettingsStateAtom, { ...current, geometry })
+  return true
 })
 
 export const undoStyleAtom = atom(null, (get, set) => {
@@ -182,4 +194,4 @@ export const redoStyleAtom = atom(null, (get, set) => {
   return true
 })
 
-export const clearStyleHistoryAtom = atom(null, (_get, set) => set(editorSessionStateAtom, withEditorReset()))
+export const clearStyleHistoryAtom = atom(null, (_get, set) => set(editorSessionStateAtom, createEditorReset()))

@@ -18,6 +18,7 @@ export {
 } from './atoms'
 export {
   addPresetAtom,
+  applyChatProfilePatch,
   applyPresetAtom,
   beginStyleGestureAtom,
   type ChatProfilePatch,
