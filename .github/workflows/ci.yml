@@ -33,6 +33,14 @@ jobs:
           cache: "yarn"
       - name: Install dependencies
         run: yarn install --immutable
+      - name: Upload temporary Yarn cache
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: yarn-cache-${{ github.sha }}
+          path: /home/runner/.yarn/berry/cache
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 1
       - name: Verify source and tests
         run: yarn verify
 
