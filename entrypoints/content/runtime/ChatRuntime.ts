@@ -464,7 +464,24 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.operationStage = 'publish-view'
     if (isSameView(this.view, next)) return
     this.view = next
-    for (const listener of this.listeners) listener()
+    let notificationFailed = false
+    // Subscribers do not own page resources. One failing UI/diagnostic
+    // subscriber must not tear down healthy leases or break stop/recovery.
+    // Snapshot the set so subscriptions added during delivery wait for the
+    // next change, and respect subscriptions removed before their turn.
+    for (const listener of [...this.listeners]) {
+      if (!this.listeners.has(listener)) continue
+      try {
+        listener()
+      } catch {
+        notificationFailed = true
+      }
+    }
+    if (notificationFailed) {
+      this.lastFailure = 'UNEXPECTED_RUNTIME_ERROR'
+      this.lastFailureStage = 'publish-view'
+      this.recordTrace('failed', this.lastFailure)
+    }
   }
 
   private recordTrace = (event: DiagnosticEventName, failureCode?: RuntimeFailureCode) => {

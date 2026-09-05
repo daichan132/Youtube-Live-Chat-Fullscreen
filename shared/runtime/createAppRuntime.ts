@@ -107,19 +107,28 @@ export const createAppRuntime = async (
   let pendingGeometry: SettingsSnapshot['chat']['geometry'] | undefined
   let pendingLocale: LocaleCode | undefined
   let localeRequestId = 0
+  let watchedLocaleRequestId: number | null = null
 
   const applyExternal = (action: () => void) => {
+    const previous = applyingExternal
     applyingExternal = true
     try {
       action()
     } finally {
-      applyingExternal = false
+      applyingExternal = previous
     }
   }
 
   const applyWatchedLocale = (locale: LocaleCode) => {
-    if (store.get(localeStateAtom).code === locale) return
+    if (store.get(localeStateAtom).code === locale) {
+      // Returning to the rendered language still supersedes a pending external
+      // load. A duplicate save acknowledgement must not cancel a LOCAL choice.
+      if (watchedLocaleRequestId === localeRequestId) localeRequestId += 1
+      watchedLocaleRequestId = null
+      return
+    }
     const requestId = ++localeRequestId
+    watchedLocaleRequestId = requestId
     void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
       .then(messages => {
         if (!disposed && initialized && requestId === localeRequestId) {
@@ -128,6 +137,9 @@ export const createAppRuntime = async (
       })
       .catch(() => {
         // Keep the currently rendered locale when even the English base asset is unavailable.
+      })
+      .finally(() => {
+        if (watchedLocaleRequestId === requestId) watchedLocaleRequestId = null
       })
   }
 
@@ -218,8 +230,10 @@ export const createAppRuntime = async (
   return {
     store,
     async setLocale(locale) {
+      if (disposed) return
       const resolved = resolveLanguageCode(locale)
       const requestId = ++localeRequestId
+      watchedLocaleRequestId = null
       const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
       if (disposed || requestId !== localeRequestId) return
 
@@ -235,6 +249,9 @@ export const createAppRuntime = async (
         locale: store.get(localeStateAtom).code,
       }),
     async importSettings(input) {
+      // File.text() can finish after the extension page has been disposed.
+      // Refuse a new import before it can start writing to shared storage.
+      if (disposed) throw new Error('App runtime has been disposed')
       const current = { globalSetting: store.get(globalSettingsStateAtom), chatSettings: store.get(chatSettingsStateAtom) }
       const normalized = normalizeSettingsBackup(input, current)
       if (!normalized) throw new Error('Unsupported settings backup')
