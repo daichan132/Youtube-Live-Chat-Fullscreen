@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { openArchiveNativeChatPanel } from '../../utils/nativeChat'
-import { collectArchiveChatControls } from './chatControls'
+import { collectArchiveChatControls, isChatControl } from './chatControls'
 
 const VIDEO_ID = 'current-video'
 
@@ -99,5 +99,32 @@ describe('YouTube archive control observation', () => {
     expect(openArchiveNativeChatPanel()).toBe(true)
     expect(oldClick).not.toHaveBeenCalled()
     expect(newClick).toHaveBeenCalledOnce()
+  })
+
+  it('retains replay labels on the icon wrapper while clicking its inner button', () => {
+    const host = createHost()
+    host.innerHTML = '<div id="show-hide-button"><yt-icon-button aria-label="Show chat replay"><button></button></yt-icon-button></div>'
+    const button = host.querySelector('button')!
+    const click = vi.spyOn(button, 'click')
+
+    expect(isChatControl(button)).toBe(true)
+    expect(collectArchiveChatControls().replay?.element).toBe(button)
+    expect(openArchiveNativeChatPanel()).toBe(true)
+    expect(click).toHaveBeenCalledOnce()
+  })
+
+  it('honors explicit relationships on the wrapper instead of its familiar label', () => {
+    const stale = createHost('previous-video')
+    stale.id = 'stale-chat'
+    createHost()
+    const { button } = playerButton('')
+    const wrapper = document.createElement('yt-icon-button')
+    wrapper.setAttribute('aria-controls', stale.id)
+    wrapper.setAttribute('aria-label', 'Chat replay')
+    button.replaceWith(wrapper)
+    wrapper.appendChild(button)
+
+    expect(isChatControl(button)).toBe(false)
+    expect(collectArchiveChatControls()).toMatchObject({ native: null, replay: null, canOpen: false })
   })
 })

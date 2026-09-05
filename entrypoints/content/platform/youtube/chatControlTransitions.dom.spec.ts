@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { openArchiveNativeChatPanel } from '../../utils/nativeChat'
+import { isNativeChatToggleButton, openArchiveNativeChatPanel } from '../../utils/nativeChat'
 import { collectArchiveChatControls, isChatControl } from './chatControls'
 
 const VIDEO_ID = 'current-video'
@@ -15,7 +15,8 @@ const createHost = (id = VIDEO_ID) => {
 const createPlayer = (host: HTMLElement) => {
   const player = document.createElement('div')
   player.id = 'movie_player'
-  player.innerHTML = '<div class="ytp-right-controls"><toggle-button-view-model><button aria-pressed="false" aria-label="Chat replay"></button></toggle-button-view-model></div>'
+  player.innerHTML =
+    '<div class="ytp-right-controls"><toggle-button-view-model><button aria-pressed="false" aria-label="Chat replay"></button></toggle-button-view-model></div>'
   document.body.appendChild(player)
   const button = player.querySelector('button')!
   button.setAttribute('aria-controls', host.id)
@@ -45,7 +46,8 @@ describe('chat control action boundaries', () => {
 
   it('does not rediscover a disabled inner button through its icon wrapper', () => {
     const host = createHost()
-    host.innerHTML = '<div id="show-hide-button"><yt-icon-button aria-label="Chat replay"><button disabled></button></yt-icon-button></div>'
+    host.innerHTML =
+      '<div id="show-hide-button"><yt-icon-button aria-label="Chat replay"><button disabled></button></yt-icon-button></div>'
 
     expect(collectArchiveChatControls()).toMatchObject({ native: null, replay: null, canOpen: false })
   })
@@ -57,19 +59,66 @@ describe('chat control action boundaries', () => {
     expect(collectArchiveChatControls()).toMatchObject({ native: null, replay: null, canOpen: false })
   })
 
+  it('does not bypass a disabled sidebar button through the host method', () => {
+    const host = createHost()
+    host.innerHTML = '<div id="show-hide-button"><button disabled>Show chat replay</button></div>'
+    const toggle = vi.fn()
+    Object.assign(host, { onShowHideChat: toggle })
+
+    expect(collectArchiveChatControls()).toMatchObject({ canOpen: false, fallbackHost: null })
+    expect(openArchiveNativeChatPanel()).toBe(false)
+    expect(toggle).not.toHaveBeenCalled()
+  })
+
+  it('does not bypass a disabled player control through a text-only host', () => {
+    const host = createHost()
+    host.innerHTML = '<div id="show-hide-button">Show chat replay</div>'
+    const { button } = createPlayer(host)
+    button.disabled = true
+    const toggle = vi.fn()
+    Object.assign(host, { onShowHideChat: toggle })
+
+    expect(collectArchiveChatControls()).toMatchObject({ canOpen: false, fallbackHost: null })
+    expect(openArchiveNativeChatPanel()).toBe(false)
+    expect(toggle).not.toHaveBeenCalled()
+  })
+
+  it('retains the host method for text-only YouTube chat UI', () => {
+    const host = createHost()
+    host.innerHTML = '<div id="show-hide-button">Show chat replay</div>'
+    const toggle = vi.fn()
+    Object.assign(host, { onShowHideChat: toggle })
+
+    expect(collectArchiveChatControls().canOpen).toBe(true)
+    expect(openArchiveNativeChatPanel()).toBe(true)
+    expect(toggle).toHaveBeenCalledOnce()
+  })
+
+  it('does not interpret a stale sidebar button as the current chat toggle', () => {
+    const stale = createHost('previous-video')
+    createHost()
+    stale.innerHTML = '<div id="show-hide-button"><button>Show chat</button></div>'
+
+    expect(isNativeChatToggleButton(stale.querySelector('button')!)).toBe(false)
+  })
+
   it('does not toggle chat closed when revealing the player already opened it', () => {
     const host = createHost()
     const { player, button } = createPlayer(host)
     const click = vi.spyOn(button, 'click')
     const watch = document.createElement('ytd-watch-flexy')
     document.body.appendChild(watch)
-    player.addEventListener('mouseover', () => {
-      watch.setAttribute('live-chat-present-and-expanded', '')
-      const iframe = document.createElement('iframe')
-      iframe.id = 'chatframe'
-      iframe.src = `https://www.youtube.com/live_chat_replay?v=${VIDEO_ID}`
-      host.appendChild(iframe)
-    }, { once: true })
+    player.addEventListener(
+      'mouseover',
+      () => {
+        watch.setAttribute('live-chat-present-and-expanded', '')
+        const iframe = document.createElement('iframe')
+        iframe.id = 'chatframe'
+        iframe.src = `https://www.youtube.com/live_chat_replay?v=${VIDEO_ID}`
+        host.appendChild(iframe)
+      },
+      { once: true },
+    )
 
     expect(openArchiveNativeChatPanel()).toBe(false)
     expect(click).not.toHaveBeenCalled()
@@ -81,10 +130,14 @@ describe('chat control action boundaries', () => {
     const click = vi.spyOn(button, 'click')
     const mouseMove = vi.fn()
     player.addEventListener('mousemove', mouseMove)
-    player.addEventListener('mouseover', () => {
-      window.history.replaceState({}, '', '/watch?v=next-video')
-      host.setAttribute('data-ylc-observed-video-id', 'next-video')
-    }, { once: true })
+    player.addEventListener(
+      'mouseover',
+      () => {
+        window.history.replaceState({}, '', '/watch?v=next-video')
+        host.setAttribute('data-ylc-observed-video-id', 'next-video')
+      },
+      { once: true },
+    )
 
     expect(openArchiveNativeChatPanel()).toBe(false)
     expect(click).not.toHaveBeenCalled()
@@ -97,12 +150,16 @@ describe('chat control action boundaries', () => {
     const oldClick = vi.spyOn(button, 'click')
     const sidebar = document.createElement('button')
     const newClick = vi.spyOn(sidebar, 'click')
-    player.addEventListener('mouseover', () => {
-      const slot = document.createElement('div')
-      slot.id = 'show-hide-button'
-      slot.appendChild(sidebar)
-      host.appendChild(slot)
-    }, { once: true })
+    player.addEventListener(
+      'mouseover',
+      () => {
+        const slot = document.createElement('div')
+        slot.id = 'show-hide-button'
+        slot.appendChild(sidebar)
+        host.appendChild(slot)
+      },
+      { once: true },
+    )
 
     expect(openArchiveNativeChatPanel()).toBe(true)
     expect(oldClick).not.toHaveBeenCalled()

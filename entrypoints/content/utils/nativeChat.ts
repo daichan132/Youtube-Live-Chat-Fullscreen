@@ -1,11 +1,13 @@
 import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
-import {
-  collectArchiveChatControls,
-  isChatControl,
-  type YouTubeLiveChatFrameElement,
-} from '@/entrypoints/content/platform/youtube/chatControls'
+import { collectArchiveChatControls, isChatControl } from '@/entrypoints/content/platform/youtube/chatControls'
 import { playerProbe, queryFirstProbe, watchSurfaceProbe } from '@/entrypoints/content/platform/youtube/selectorCatalog'
-import { getCurrentLiveChatHost, getCurrentLiveChatIframe, getNonBlankIframeHref, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import {
+  getCurrentLiveChatHost,
+  getCurrentLiveChatIframe,
+  getNonBlankIframeHref,
+  isChatHostForCurrentVideo,
+  isIframeForCurrentVideo,
+} from '../chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 const nativeChatTriggerSelectors =
@@ -58,12 +60,13 @@ export const openArchiveNativeChatPanel = () => {
 
   // Revealing controls can also create a sidebar target. Preserve the same
   // candidate priority as observation rather than using a stale player target.
-  const control = collectArchiveChatControls().native?.element
+  const controls = collectArchiveChatControls()
+  const control = controls.native?.element
   if (control?.isConnected) {
     control.click()
     return true
   }
-  const host = getCurrentLiveChatHost() as YouTubeLiveChatFrameElement | null
+  const host = controls.fallbackHost
   if (typeof host?.onShowHideChat !== 'function') return false
   host.onShowHideChat()
   return true
@@ -75,6 +78,8 @@ export const isNativeChatToggleButton = (element: HTMLElement) => {
   const button = element.closest('button')
   if (!button) return false
   if (button.closest(`#${SWITCH_BUTTON_CONTAINER_ID}`)) return false
+  const host = button.closest<HTMLElement>('ytd-live-chat-frame')
+  if (host && !isChatHostForCurrentVideo(host)) return false
 
   const isSidebarToggle = Boolean(button.closest('ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button'))
   if (isSidebarToggle) return true
