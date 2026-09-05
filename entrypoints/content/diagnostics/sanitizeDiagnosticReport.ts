@@ -2,7 +2,7 @@ import type { PageEvidence } from '../platform/youtube/types'
 import type { ResourceDiagnosticSnapshot } from '../runtime/ResourceReconciler'
 import type { RuntimeState } from '../runtime/runtimeModel'
 import { assessCompatibilityFingerprint, buildCompatibilityFingerprint, type CompatibilityFingerprint } from './compatibilityFingerprint'
-import type { RuntimeFailureCode } from './failureCodes'
+import { RUNTIME_FAILURE_STAGES, type RuntimeFailureCode, type RuntimeFailureStage } from './failureCodes'
 import type { DiagnosticEvent } from './RuntimeTrace'
 
 export type BrowserFamily = 'chrome' | 'firefox' | 'opera' | 'other'
@@ -22,6 +22,7 @@ export type SanitizedDiagnosticReport = {
     status: RuntimeState['status']
     leases: ResourceDiagnosticSnapshot
     failureCode?: RuntimeFailureCode
+    failureStage?: RuntimeFailureStage
   }
   compatibility: {
     fingerprint: CompatibilityFingerprint
@@ -66,11 +67,14 @@ export const createSanitizedDiagnosticReport = (input: {
   state: RuntimeState
   leases: ResourceDiagnosticSnapshot
   failureCode?: RuntimeFailureCode
+  failureStage?: RuntimeFailureStage
   events: readonly DiagnosticEvent[]
 }): SanitizedDiagnosticReport => {
   const evidence = input.evidence ?? emptyEvidence(input.generation)
   const fingerprint = buildCompatibilityFingerprint(evidence)
   const assessment = assessCompatibilityFingerprint(fingerprint)
+  const failureStage =
+    input.failureCode === 'UNEXPECTED_RUNTIME_ERROR' ? RUNTIME_FAILURE_STAGES.find(stage => stage === input.failureStage) : undefined
   return {
     schemaVersion: 1,
     extensionVersion: input.extensionVersion,
@@ -86,6 +90,7 @@ export const createSanitizedDiagnosticReport = (input: {
       status: input.state.status,
       leases: input.leases,
       ...(input.failureCode ? { failureCode: input.failureCode } : {}),
+      ...(failureStage ? { failureStage } : {}),
     },
     compatibility: {
       fingerprint,

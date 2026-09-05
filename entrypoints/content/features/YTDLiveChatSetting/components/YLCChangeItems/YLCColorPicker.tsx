@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import { useCallback } from 'react'
 import type { RgbaColor } from 'react-colorful'
+import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/settings/defaults'
 import { effectiveProfileAtom } from '@/shared/state'
@@ -12,7 +13,7 @@ type ColorSettingKey = 'backgroundColor' | 'fontColor' | 'membershipNameColor'
 
 type YLCColorPickerProps = {
   settingKey: ColorSettingKey
-  labelKey: string
+  labelKey: TranslationKey
 }
 
 export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) => {

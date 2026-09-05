@@ -1,6 +1,7 @@
 import { useAtomValue } from 'jotai'
 import type { CSSProperties } from 'react'
 import { useCallback } from 'react'
+import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
@@ -9,7 +10,7 @@ export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'spacing'
 
 type YLCNumberSliderProps = {
   settingKey: NumberSliderSettingKey
-  labelKey: string
+  labelKey: TranslationKey
   min: number
   max: number
 }

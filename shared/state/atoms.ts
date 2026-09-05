@@ -1,11 +1,11 @@
 import { atom } from 'jotai'
-import type { LocaleMessages, LocaleState } from '@/shared/i18n/generated/translationTypes'
+import type { LocaleMessages, LocaleState, TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_LANGUAGE } from '@/shared/i18n/language'
 import { isRTL } from '@/shared/i18n/rtl'
-import { areChatProfilesEqual } from '@/shared/settings/equality'
+import { areChatAppearanceSettingsEqual, areChatGeometriesEqual, areChatProfilesEqual } from '@/shared/settings/equality'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from '@/shared/settings/model'
-import { normalizeChatSettings, normalizeGlobalSetting } from '@/shared/settings/normalizeSettings'
+import { normalizeChatSettings } from '@/shared/settings/normalizeSettings'
 import type { ChatAppearanceSettings, PersistenceStatus } from '@/shared/settings/repository'
 
 export type EditorSession = {
@@ -51,7 +51,7 @@ export const localeCodeAtom = atom(get => get(localeStateAtom).code)
 export const localeDirectionAtom = atom(get => get(localeStateAtom).direction)
 export const translatorAtom = atom(get => {
   const messages = get(localeStateAtom).messages
-  return (key: string) => messages[key as keyof LocaleMessages] ?? key
+  return (key: TranslationKey) => messages[key] ?? key
 })
 
 export type AppHydration = {
@@ -74,20 +74,6 @@ export const replaceLocaleAtom = atom(null, (_get, set, locale: LocaleState) => 
   set(localeStateAtom, locale)
 })
 
-export const replaceImportedSettingsAtom = atom(
-  null,
-  (get, set, input: { globalSetting: Record<string, unknown>; chatSettings: ChatSettings }) => {
-    const currentGlobal = get(globalSettingsStateAtom)
-    const global = normalizeGlobalSetting({ ...currentGlobal, ...input.globalSetting })
-    set(globalSettingsStateAtom, {
-      ytdLiveChat: global.ytdLiveChat ?? currentGlobal.ytdLiveChat,
-      themeMode: global.themeMode ?? currentGlobal.themeMode,
-    })
-    set(chatSettingsStateAtom, normalizeChatSettings(input.chatSettings, get(chatSettingsStateAtom)))
-    set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
-  },
-)
-
 export const replaceExternalGlobalSettingsAtom = atom(null, (_get, set, next: GlobalSettings) => {
   set(globalSettingsStateAtom, next)
 })
@@ -104,29 +90,29 @@ export const replaceExternalThemeAtom = atom(null, (get, set, themeMode: GlobalS
 
 export const replaceExternalAppearanceAtom = atom(null, (get, set, next: ChatAppearanceSettings) => {
   const current = get(chatSettingsStateAtom)
-  const editor = get(editorSessionStateAtom)
-  set(chatSettingsStateAtom, { ...current, profile: next.profile, presets: next.presets })
-  if (editor.activeGesture || editor.draftProfile || !areChatProfilesEqual(current.profile, next.profile)) {
+  // A successful local save is read back through this same path. An
+  // acknowledgement of the committed value must not cancel the NEXT gesture.
+  if (areChatAppearanceSettingsEqual(current, next)) return
+  const profileChanged = !areChatProfilesEqual(current.profile, next.profile)
+  set(chatSettingsStateAtom, { ...current, profile: profileChanged ? next.profile : current.profile, presets: next.presets })
+  // Preset-only updates do not conflict with a draft of the current profile.
+  if (profileChanged) {
     set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
   }
 })
 
 export const replaceExternalGeometryAtom = atom(null, (get, set, geometry: ChatGeometry) => {
   const current = get(chatSettingsStateAtom)
-  set(chatSettingsStateAtom, { ...current, geometry })
+  if (!areChatGeometriesEqual(current.geometry, geometry)) set(chatSettingsStateAtom, { ...current, geometry })
 })
 
 export const replacePersistenceStatusAtom = atom(null, (_get, set, status: PersistenceStatus) => {
   set(persistenceStatusAtom, status)
 })
 
-export const replaceExternalChatSettingsAtom = atom(null, (get, set, next: ChatSettings) => {
-  const current = get(chatSettingsStateAtom)
-  const editor = get(editorSessionStateAtom)
-  set(chatSettingsStateAtom, next)
-  if (editor.activeGesture || editor.draftProfile || !areChatProfilesEqual(current.profile, next.profile)) {
-    set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
-  }
+export const replaceExternalChatSettingsAtom = atom(null, (_get, set, next: ChatSettings) => {
+  set(replaceExternalAppearanceAtom, next)
+  set(replaceExternalGeometryAtom, next.geometry)
 })
 
 export const replaceExternalLocaleAtom = atom(null, (_get, set, locale: LocaleState) => {

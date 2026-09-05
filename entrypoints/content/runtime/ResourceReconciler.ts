@@ -181,30 +181,60 @@ export class ResourceReconciler {
   releaseIframe(targets: PageTargets | null, ensureNativeVisible = false) {
     const lease = this.iframeLease
     if (!lease) return
-    this.clearLoadListener()
-    this.chatChrome.sync(null, 'inactive')
-    lease.release({ ensureNativeVisible }, targets)
-    if (lease.state === 'restoring') this.restoringLeases.add(lease)
-    this.iframeLease = null
+    try {
+      this.clearLoadListener()
+      this.chatChrome.sync(null, 'inactive')
+    } finally {
+      // Presentation cleanup must not prevent returning a borrowed iframe.
+      // Retain the lease if release itself throws so recovery can retry it.
+      lease.release({ ensureNativeVisible }, targets)
+      if (lease.state === 'restoring') this.restoringLeases.add(lease)
+      this.iframeLease = null
+    }
   }
 
   clear(targets: PageTargets | null = null) {
-    // Restore the borrowed iframe before removing layout/presentation targets.
-    this.releaseIframe(targets)
-    this.abandonRestoring()
-    this.layoutLease?.release()
-    this.layoutLease = null
-    this.layoutScope = null
-    this.presentation.clear()
-    this.portalTargets = { overlayRoot: null, switchContainer: null }
-    this.presentationState = 'none'
-    this.layoutState = 'none'
-    this.chatChrome.release()
+    const failures: unknown[] = []
+    // Each owner gets a cleanup attempt even when an earlier owner throws.
+    // Clear its reference only after success; diagnostics and a later bounded
+    // recovery can still find owners that could not be released.
+    const cleanups = [
+      () => this.releaseIframe(targets),
+      () => this.abandonRestoring(),
+      () => {
+        this.layoutLease?.release()
+        this.layoutLease = null
+        this.layoutScope = null
+        this.layoutState = 'none'
+      },
+      () => {
+        this.presentation.clear()
+        this.portalTargets = { overlayRoot: null, switchContainer: null }
+        this.presentationState = 'none'
+      },
+      () => this.chatChrome.release(),
+    ]
+    for (const cleanup of cleanups) {
+      try {
+        cleanup()
+      } catch (error) {
+        failures.push(error)
+      }
+    }
+    if (failures.length > 0) throw failures[0]
   }
 
   private abandonRestoring() {
-    for (const lease of this.restoringLeases) lease.abandonRestore()
-    this.restoringLeases.clear()
+    const failures: unknown[] = []
+    for (const lease of this.restoringLeases) {
+      try {
+        lease.abandonRestore()
+        this.restoringLeases.delete(lease)
+      } catch (error) {
+        failures.push(error)
+      }
+    }
+    if (failures.length > 0) throw failures[0]
   }
 
   private ensureLayoutLease(scope: SessionScope) {

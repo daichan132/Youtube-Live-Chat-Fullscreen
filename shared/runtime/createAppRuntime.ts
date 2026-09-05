@@ -8,6 +8,7 @@ import { areChatAppearanceSettingsEqual, areChatGeometriesEqual } from '@/shared
 import {
   buildRepositoryBackup,
   createSettingsRepository,
+  type SettingsCommitSource,
   type SettingsRepository,
   type SettingsSnapshot,
 } from '@/shared/settings/repository'
@@ -22,9 +23,9 @@ import {
   replaceExternalGeometryAtom,
   replaceExternalLocaleAtom,
   replaceExternalThemeAtom,
-  replaceImportedSettingsAtom,
   replacePersistenceStatusAtom,
 } from '@/shared/state/atoms'
+import { clearStyleHistoryAtom } from '@/shared/state/commands'
 
 export type AppRuntime = {
   store: Store
@@ -107,19 +108,25 @@ export const createAppRuntime = async (
   let pendingGeometry: SettingsSnapshot['chat']['geometry'] | undefined
   let pendingLocale: LocaleCode | undefined
   let localeRequestId = 0
+  let localLocaleRequestId: number | null = null
 
   const applyExternal = (action: () => void) => {
+    const previous = applyingExternal
     applyingExternal = true
     try {
       action()
     } finally {
-      applyingExternal = false
+      applyingExternal = previous
     }
   }
 
-  const applyWatchedLocale = (locale: LocaleCode) => {
-    if (store.get(localeStateAtom).code === locale) return
+  const applyWatchedLocale = (locale: LocaleCode, source: SettingsCommitSource = 'external') => {
+    // Only an acknowledgement of our own earlier write may be ignored while
+    // the next local selection loads. An external commit is authoritative even
+    // when it happens to match the rendered locale.
+    if (source === 'readback' && localLocaleRequestId === localeRequestId) return
     const requestId = ++localeRequestId
+    if (store.get(localeStateAtom).code === locale) return
     void loadMessagesWithEnglishFallback(locale, dependencies.loadMessages)
       .then(messages => {
         if (!disposed && initialized && requestId === localeRequestId) {
@@ -155,13 +162,16 @@ export const createAppRuntime = async (
         }
         applyExternal(() => store.set(replaceExternalThemeAtom, value))
       },
-      onAppearance: value => {
+      onAppearance: (value, source) => {
         if (disposed) return
         if (!initialized) {
           pendingAppearance = value
           return
         }
-        applyExternal(() => store.set(replaceExternalAppearanceAtom, value))
+        applyExternal(() => {
+          store.set(replaceExternalAppearanceAtom, value)
+          if (source === 'import') store.set(clearStyleHistoryAtom)
+        })
       },
       onGeometry: value => {
         if (disposed) return
@@ -171,14 +181,14 @@ export const createAppRuntime = async (
         }
         applyExternal(() => store.set(replaceExternalGeometryAtom, value))
       },
-      onLocale: locale => {
+      onLocale: (locale, source) => {
         if (disposed) return
         if (!initialized) {
           pendingLocale = locale
           localeRequestId += 1
           return
         }
-        applyWatchedLocale(locale)
+        applyWatchedLocale(locale, source)
       },
     })
 
@@ -218,15 +228,21 @@ export const createAppRuntime = async (
   return {
     store,
     async setLocale(locale) {
+      if (disposed) return
       const resolved = resolveLanguageCode(locale)
       const requestId = ++localeRequestId
-      const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
-      if (disposed || requestId !== localeRequestId) return
-
-      // Keep the user's selected language visible even if persistence is
-      // temporarily unavailable. The repository owns retry and error status.
-      applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
-      await repository.saveLocale(resolved)
+      localLocaleRequestId = requestId
+      try {
+        const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
+        if (disposed || requestId !== localeRequestId) return
+        applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
+        localLocaleRequestId = null
+        // Keep the selected language visible if persistence fails. Retry and
+        // error status belong to the repository, not to message loading.
+        await repository.saveLocale(resolved)
+      } finally {
+        if (localLocaleRequestId === requestId) localLocaleRequestId = null
+      }
     },
     exportSettings: () =>
       buildRepositoryBackup({
@@ -235,19 +251,16 @@ export const createAppRuntime = async (
         locale: store.get(localeStateAtom).code,
       }),
     async importSettings(input) {
+      // File.text() can finish after the extension page has been disposed.
+      if (disposed) throw new Error('App runtime has been disposed')
       const current = { globalSetting: store.get(globalSettingsStateAtom), chatSettings: store.get(chatSettingsStateAtom) }
       const normalized = normalizeSettingsBackup(input, current)
       if (!normalized) throw new Error('Unsupported settings backup')
-      await repository.replaceSettings(
-        {
-          ytdLiveChat: Boolean(normalized.globalSetting.ytdLiveChat),
-          themeMode: (normalized.globalSetting.themeMode as 'light' | 'dark' | 'system') ?? 'system',
-        },
-        normalized.chatSettings,
-      )
-      applyExternal(() => store.set(replaceImportedSettingsAtom, normalized))
+      // The repository publishes confirmed domains under its sequence guards.
+      // Applying normalized here would overwrite newer changes after the await.
+      await repository.replaceSettings(normalized.globalSetting, normalized.chatSettings)
     },
-    retryPersistence: () => repository.retryFailed(),
+    retryPersistence: () => (disposed ? Promise.resolve() : repository.retryFailed()),
     dispose() {
       if (disposed) return
       disposed = true

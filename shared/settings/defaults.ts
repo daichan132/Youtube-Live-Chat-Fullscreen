@@ -1,4 +1,6 @@
-import type { ChatGeometryV2, ChatProfile, RGBA } from './model'
+import type { ChatGeometryV2, ChatProfile, GlobalSettings, RGBA } from './model'
+
+export const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = { ytdLiveChat: true, themeMode: 'system' }
 
 export const LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR: RGBA = {
   r: 15,

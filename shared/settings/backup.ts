@@ -1,19 +1,20 @@
+import { DEFAULT_GLOBAL_SETTINGS } from './defaults'
 import { migrateSettings } from './migrateSettings'
-import type { ChatSettings } from './model'
+import type { ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
 import { MAX_CUSTOM_PRESETS, SETTINGS_EXPORT_VERSION } from './persistConfig'
 
 export type SettingsBackup = {
   version: typeof SETTINGS_EXPORT_VERSION
   exportedAt: string
-  globalSetting: Record<string, unknown>
+  globalSetting: GlobalSettings
   chatSettings: ChatSettings
 }
 
 export type NormalizedSettingsBackup = {
   version: typeof SETTINGS_EXPORT_VERSION
   exportedAt?: string
-  globalSetting: Record<string, unknown>
+  globalSetting: GlobalSettings
   chatSettings: ChatSettings
 }
 
@@ -27,23 +28,26 @@ type CurrentSettings = {
   chatSettings: ChatSettings
 }
 
+const normalizeBackupGlobal = (input: unknown, fallback: unknown): GlobalSettings => {
+  const current = normalizeGlobalSetting(fallback)
+  const next = normalizeGlobalSetting(input)
+  return {
+    ytdLiveChat: next.ytdLiveChat ?? current.ytdLiveChat ?? DEFAULT_GLOBAL_SETTINGS.ytdLiveChat,
+    themeMode: next.themeMode ?? current.themeMode ?? DEFAULT_GLOBAL_SETTINGS.themeMode,
+  }
+}
+
 export const buildSettingsBackup = (current: CurrentSettings, exportedAt = new Date().toISOString()): SettingsBackup => ({
   version: SETTINGS_EXPORT_VERSION,
   exportedAt,
-  globalSetting: normalizeGlobalSetting(current.globalSetting),
+  globalSetting: normalizeBackupGlobal(current.globalSetting, DEFAULT_GLOBAL_SETTINGS),
   chatSettings: normalizeChatSettings(current.chatSettings, current.chatSettings),
 })
 
 export const normalizeSettingsBackup = (input: unknown, current: CurrentSettings): NormalizedSettingsBackup | null => {
   if (!isRecord(input) || !isRecord(input.globalSetting)) return null
 
-  const globalSetting = {
-    ...current.globalSetting,
-    ...normalizeGlobalSetting({
-      ...current.globalSetting,
-      ...input.globalSetting,
-    }),
-  }
+  const globalSetting = normalizeBackupGlobal(input.globalSetting, current.globalSetting)
 
   if (input.version === SETTINGS_EXPORT_VERSION) {
     if (!isRecord(input.chatSettings) || hasTooManyCustomPresets(input.chatSettings)) return null

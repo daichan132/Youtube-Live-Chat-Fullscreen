@@ -4,6 +4,7 @@ import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { formatMessage } from '@/shared/i18n/format'
+import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
 import type { ChatProfile } from '@/shared/settings/model'
@@ -50,7 +51,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const editingNameRef = useRef(false)
   // Every row carries the same three controls, so the name is what tells them apart when read aloud.
   // A custom preset whose name the user cleared falls back to the label new presets are born with.
-  const rowLabel = (key: string) => formatMessage(t(key), { name: displayTitle || t('content.preset.addItemTitle') })
+  const rowLabel = (key: TranslationKey) => formatMessage(t(key), { name: displayTitle || t('content.preset.addItemTitle') })
   const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
   const canApply = profile !== undefined
   const isDragging = reorder.activeId === id
