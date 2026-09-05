@@ -8,12 +8,14 @@ export default defineContentScript({
   cssInjectionMode: 'ui',
 
   main(ctx) {
-    const bootstrap = new ContentBootstrap(() => createContentSession(ctx))
+    const bootstrap = new ContentBootstrap(() => createContentSession(ctx), {
+      onPermanentFailure: failure => console.warn('[YLC] Content session activation failed', failure),
+    })
     ctx.addEventListener(window, 'wxt:locationchange', event => {
       void bootstrap.reconcileLocation(event.newUrl.href)
     })
     ctx.addEventListener(document, 'yt-navigate-finish', () => {
-      void bootstrap.reconcileLocation()
+      void bootstrap.reconcileLocation(undefined, { navigationCompleted: true })
     })
     ctx.onInvalidated(bootstrap.dispose)
     bootstrap.start()

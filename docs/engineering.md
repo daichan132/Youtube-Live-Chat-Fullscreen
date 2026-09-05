@@ -12,7 +12,7 @@ The extension has three WXT entrypoints and no background service worker:
 
 The content runtime is easiest to understand in this order:
 
-1. `ContentBootstrap.ts` — `/watch` route gate and bounded session-start retry.
+1. `ContentBootstrap.ts` — supported video-surface gate (`/watch`, direct `/live/<videoId>`, and channel `/live` entries) plus bounded session-start retry.
 2. `createContentSession.tsx` and `SessionScope.ts` — construct one context-owned React/runtime session and own cleanup.
 3. `platform/youtube/` — collect evidence and DOM targets from the moving page.
 4. `resolveChatDecision.ts` and `runtimeModel.ts` — pure decisions and plans.
@@ -38,7 +38,7 @@ page signal
 
 A generation identifies the current combination of video, player element, and fullscreen root. Timers and callbacks capture the relevant generation and no-op after it changes. A borrowed YouTube iframe is released before another is acquired.
 
-Live streams prefer YouTube's native `live_chat` iframe and may create a managed live iframe when none exists. Archives borrow only a playable native `live_chat_replay` iframe. Videos without usable chat do not receive a broken switch or overlay.
+Live streams prefer YouTube's native `live_chat` iframe and may create a managed live iframe when none exists. Archives borrow only a playable native `live_chat_replay` iframe. If the player stops confirming live while an archive control appears, any remaining managed live iframe is treated as stale and released before replay is opened. Videos without usable chat do not receive a broken switch or overlay.
 
 ## Resource ownership
 
@@ -121,14 +121,15 @@ yarn verify:release
 
 It adds Chrome and Firefox production packages, package contracts, Firefox source-archive reconstruction, deterministic browser scenarios, visual and accessibility checks, an exact Chrome-package startup smoke, and the real-YouTube canary.
 
-GitHub Actions workflows are manual-only fallbacks. They do not run automatically on pushes, pull requests, or schedules. Release candidate creation and store publication remain separate manual workflows; publication submits the already-proven artifacts without rebuilding them.
+The pull-request CI runs source checks, tests, production package contracts, the complete deterministic Playwright fixture project, and accessibility checks. Visual checks and exact production-package startup smoke remain `workflow_dispatch`-only. Release candidate creation and store publication are separate manual workflows; publication submits the already-proven artifacts without rebuilding them.
 
 ## Guarantees
 
 The repository's contracts and focused tests are intended to demonstrate these properties:
 
 - the production manifest requests only `storage` and exposes only the declared YouTube-scoped resources;
-- non-watch pages do not create the application runtime;
+- unsupported YouTube pages do not create the application runtime;
+- supported `/watch`, direct `/live/<videoId>`, and channel `/live` entries converge on one content-session lifecycle;
 - session-owned timers, listeners, observers, portals, iframe changes, and layout changes are disposed;
 - a stale session cannot mutate a later video generation;
 - Storage outages do not trigger fallback writes;

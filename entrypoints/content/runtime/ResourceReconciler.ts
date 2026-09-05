@@ -225,7 +225,7 @@ export class ResourceReconciler {
   private getPresentationFlags(mode: RuntimePlan['presentation']) {
     if (mode === 'preserve' || mode === 'none') return null
     return {
-      overlayEnabled: mode === 'switch-only' || mode === 'overlay-only' || mode === 'overlay-and-switch',
+      overlayEnabled: mode === 'overlay-only' || mode === 'overlay-and-switch',
       switchEnabled: mode === 'switch-only' || mode === 'overlay-and-switch',
     }
   }

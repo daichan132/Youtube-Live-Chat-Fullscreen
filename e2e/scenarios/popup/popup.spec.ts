@@ -6,7 +6,7 @@ import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
-import { CHAT_STORAGE_KEY, GLOBAL_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const activeOverlayScenario = {
   video: { id: 'ylc-import-active-overlay', title: 'Active overlay import fixture', mode: 'live' },
@@ -18,6 +18,8 @@ const activeOverlayScenario = {
     response: 'playable',
   },
 } satisfies YouTubeScenarioState
+
+type AppearanceValue = { profile: ChatProfile; presets: PresetEntry[] }
 
 const profileWithFontSize = (fontSize: number): ChatProfile => ({
   appearance: {
@@ -80,29 +82,23 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     await importSettingsViaPopup(page, extension, settings)
 
-    // Wait for storage write
-    await expect.poll(async () => (await readStorageEntry(extension, GLOBAL_STORAGE_KEY))?.value.themeMode ?? null).toBe('dark')
+    await expect.poll(async () => (await readStorageEntry<string>(extension, THEME_STORAGE_KEY))?.value ?? null).toBe('dark')
 
-    // Verify global settings repository value
-    const globalState = await readStorageEntry(extension, GLOBAL_STORAGE_KEY)
-    expect(globalState?.value.ytdLiveChat).toBe(false)
-    expect(globalState?.value.themeMode).toBe('dark')
-    expect(globalState?.schemaVersion).toBe(1)
+    const enabledState = await readStorageEntry<boolean>(extension, ENABLED_STORAGE_KEY)
+    expect(enabledState?.value).toBe(false)
+    expect(enabledState?.schemaVersion).toBe(1)
 
-    // Verify chat settings repository value
-    const ytdState = await readStorageEntry(extension, CHAT_STORAGE_KEY)
-    const profile = ytdState?.value.profile as
-      | {
-          appearance?: { fontSize?: number; blur?: number }
-          display?: { idleVisibility?: string }
-        }
-      | undefined
-    expect(profile?.appearance?.fontSize).toBe(40)
-    expect(profile?.appearance?.blur).toBe(10)
-    expect(profile?.display?.idleVisibility).toBe('auto-hide')
-    expect(ytdState?.schemaVersion).toBe(1)
+    const themeState = await readStorageEntry<string>(extension, THEME_STORAGE_KEY)
+    expect(themeState?.value).toBe('dark')
+    expect(themeState?.schemaVersion).toBe(1)
 
-    // Reopen popup and verify runtime hydration
+    const appearanceState = await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY)
+    expect(appearanceState?.value.profile.appearance.fontSize).toBe(40)
+    expect(appearanceState?.value.profile.appearance.blur).toBe(10)
+    expect(appearanceState?.value.profile.display.idleVisibility).toBe('auto-hide')
+    expect(appearanceState?.schemaVersion).toBe(1)
+
+    // Reopen popup and verify runtime hydration.
     await page.goto(extension.url('popup.html'))
     await page.getByLabel('Select language').waitFor({ state: 'visible' })
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
@@ -166,14 +162,18 @@ test.describe('popup', { tag: '@popup' }, () => {
           width: secondLayout.size.width,
           height: secondLayout.size.height,
         })
-      await expect.poll(async () => (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).toEqual(second.presets)
+      await expect
+        .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets)
+        .toEqual(second.presets)
 
       // The file input is reset after every import, so importing the same file again
       // must still complete and keep the replacement set stable.
       await importSettingsViaPopup(popup, extension, importBackup(second))
       await page.bringToFront()
-      await expect.poll(async () => (await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).toEqual(second.presets)
-      expect((await readStorageEntry(extension, CHAT_STORAGE_KEY))?.value.presets).not.toContainEqual(firstPreset)
+      await expect
+        .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets)
+        .toEqual(second.presets)
+      expect((await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets).not.toContainEqual(firstPreset)
     } finally {
       await popup.close()
       await page.bringToFront()

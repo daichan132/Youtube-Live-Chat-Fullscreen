@@ -35,7 +35,7 @@ yarn verify:firefox-source
 
 For runtime behavior, run the relevant deterministic browser project. The real-YouTube canary is reserved for compatibility checks and release preparation; it is not a substitute for deterministic fixtures.
 
-GitHub Actions workflows are manual-only. Do not rely on a pull-request workflow to discover failures that can be reproduced locally.
+Pull requests automatically run source/coverage/contracts, production package checks, deterministic Playwright fixtures, and accessibility checks. The manual CI workflow adds visual checks and exact packaged startup smoke. Local verification remains the fastest way to diagnose failures.
 
 ## Change discipline
 
@@ -52,13 +52,15 @@ Vitest uses three projects:
 
 | Test | Environment | Use for |
 | --- | --- | --- |
-| `*.unit.spec.ts` and registered legacy core specs | Node | Pure logic |
-| `*.dom.spec.ts(x)` and source `*.spec.ts(x)` | jsdom | React, DOM, storage, runtime integration |
-| `*.contract.spec.ts` | Node | Manifest, package, workflow, and architecture contracts |
+| `*.unit.spec.ts(x)` | Node | Pure logic |
+| `*.dom.spec.ts(x)` and legacy/plain source `*.spec.ts(x)` | jsdom | React, DOM, storage, and runtime integration |
+| `*.contract.spec.ts(x)` plus contract directories | Node | Package, workflow, and architecture contracts |
+
+The DOM project runs with `https://www.youtube.com/` as its document URL so origin-sensitive route behavior matches production. Unit and contract suffixes are explicitly excluded from the DOM wildcard.
 
 Focused tests are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging.
 
-Playwright scenarios are explicitly classified in `e2e/config/projectClassification.ts`. Keep real-YouTube canaries separate from deterministic fixtures.
+Playwright scenarios are explicitly classified in `e2e/config/projectClassification.ts`. Register each scenario exactly once and keep real-YouTube canaries separate from deterministic fixtures.
 
 ## Formatting and type safety
 
@@ -67,7 +69,7 @@ yarn check
 yarn fix
 ```
 
-Biome owns source formatting and linting; TypeScript runs with `tsc --noEmit`. Do not suppress errors to make a gate pass.
+Biome owns source formatting and linting; TypeScript runs with `tsc --noEmit`. `yarn check` does not replace the broader `yarn verify` gate. Do not suppress errors to make a gate pass.
 
 ## Translations
 
@@ -90,6 +92,6 @@ Review changed images at full size. Do not update visual baselines to hide an un
 
 ## Bug reports
 
-Include the browser, extension version, URL type (live, archive with replay, or no chat), reproduction steps, and screenshots or recordings. The settings panel can copy a sanitized diagnostic report that excludes URLs, video IDs, chat text, and user names.
+Include the browser, extension version, URL type (`/watch`, direct live entry, channel live entry, archive replay, or no chat), reproduction steps, and screenshots or recordings. The settings panel can copy a sanitized diagnostic report that excludes URLs, video IDs, chat text, and user names.
 
 Report security vulnerabilities privately through [SECURITY.md](SECURITY.md), not a public issue.

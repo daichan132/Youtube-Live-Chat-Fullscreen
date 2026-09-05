@@ -2,11 +2,10 @@ import type { Extension } from '@e2e/fixtures'
 import { DEFAULT_CHAT_SETTINGS } from '../../shared/settings/migrateSettings'
 import type { ChatAppearance, ChatDisplay, ChatGeometry, PresetEntry } from '../../shared/settings/model'
 import { normalizeChatSettings } from '../../shared/settings/normalizeSettings'
-import { CHAT_STORAGE_KEY } from '../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LEGACY_CHAT_STORAGE_KEY } from '../../shared/settings/storageKeys'
 
-const STORE_KEY = CHAT_STORAGE_KEY
-
-type StoreEntry = { schemaVersion: 1; writerId: string; value: Record<string, unknown> }
+type StoreEntry<T> = { schemaVersion: 1; writerId: string; value: T }
+type AppearanceValue = { profile: typeof DEFAULT_CHAT_SETTINGS.profile; presets: PresetEntry[] }
 
 type OverlayStorePatch = {
   profile?: {
@@ -17,32 +16,41 @@ type OverlayStorePatch = {
   presets?: PresetEntry[]
 }
 
-const parseStoreValue = (rawValue: unknown): StoreEntry | null => {
+const parseStoreValue = <T>(rawValue: unknown): StoreEntry<T> | null => {
+  let parsed = rawValue
   if (typeof rawValue === 'string') {
     try {
-      return JSON.parse(rawValue)
+      parsed = JSON.parse(rawValue)
     } catch {
       return null
     }
   }
-  if (typeof rawValue === 'object' && rawValue !== null) {
-    return rawValue as StoreEntry
-  }
-  return null
+  if (!parsed || typeof parsed !== 'object') return null
+  const envelope = parsed as Partial<StoreEntry<T>>
+  if (envelope.schemaVersion !== 1 || typeof envelope.writerId !== 'string' || !('value' in envelope)) return null
+  return envelope as StoreEntry<T>
 }
 
 /**
- * Patch properties in the chat settings repository envelope in chrome.storage.local.
+ * Patch the current appearance and geometry ownership domains in chrome.storage.local.
+ * The legacy combined chat key is read only as a compatibility fallback and is never written.
  *
- * Uses extension.storage (SW-backed or popup-based) for read-modify-write.
- *
- * @returns The verified store state, or null if the patch failed.
+ * @returns The verified combined chat state, or null if the patch failed.
  */
 export const patchOverlayStore = async (extension: Extension, overrides: OverlayStorePatch): Promise<Record<string, unknown> | null> => {
-  const raw = await extension.storage.get(STORE_KEY)
-  const stored = parseStoreValue(raw[STORE_KEY])
-  const existed = stored?.value != null
-  const current = normalizeChatSettings(stored?.value, DEFAULT_CHAT_SETTINGS)
+  const raw = await extension.storage.get([APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LEGACY_CHAT_STORAGE_KEY])
+  const storedAppearance = parseStoreValue<AppearanceValue>(raw[APPEARANCE_STORAGE_KEY])
+  const storedGeometry = parseStoreValue<ChatGeometry>(raw[GEOMETRY_STORAGE_KEY])
+  const legacyChat = parseStoreValue<Record<string, unknown>>(raw[LEGACY_CHAT_STORAGE_KEY])
+  const compatibilityState = normalizeChatSettings(legacyChat?.value, DEFAULT_CHAT_SETTINGS)
+  const current = normalizeChatSettings(
+    {
+      profile: storedAppearance?.value.profile ?? compatibilityState.profile,
+      presets: storedAppearance?.value.presets ?? compatibilityState.presets,
+      geometry: storedGeometry?.value ?? compatibilityState.geometry,
+    },
+    compatibilityState,
+  )
   const state = normalizeChatSettings(
     {
       profile: {
@@ -60,25 +68,36 @@ export const patchOverlayStore = async (extension: Extension, overrides: Overlay
     },
     current,
   )
-  const nextStored: StoreEntry = {
+  const writerId = 'ylc-e2e'
+  const appearanceEntry: StoreEntry<AppearanceValue> = {
     schemaVersion: 1,
-    writerId: 'ylc-e2e',
-    value: state,
+    writerId,
+    value: { profile: state.profile, presets: state.presets },
+  }
+  const geometryEntry: StoreEntry<ChatGeometry> = {
+    schemaVersion: 1,
+    writerId,
+    value: state.geometry,
   }
 
-  await extension.storage.set({ [STORE_KEY]: nextStored })
+  await extension.storage.set({
+    [APPEARANCE_STORAGE_KEY]: appearanceEntry,
+    [GEOMETRY_STORAGE_KEY]: geometryEntry,
+  })
 
-  const verify = await extension.storage.get(STORE_KEY)
-  const verifyState = parseStoreValue(verify[STORE_KEY])?.value ?? null
-
-  if (!verifyState) {
+  const verify = await extension.storage.get([APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY])
+  const verifiedAppearance = parseStoreValue<AppearanceValue>(verify[APPEARANCE_STORAGE_KEY])
+  const verifiedGeometry = parseStoreValue<ChatGeometry>(verify[GEOMETRY_STORAGE_KEY])
+  if (!verifiedAppearance || !verifiedGeometry) {
     console.warn('[patchOverlayStore] Write verification failed')
     return null
   }
 
-  const overrideKeys = Object.keys(overrides)
-  const verified = overrideKeys.every(key => verifyState[key] !== undefined)
-  console.log(`[patchOverlayStore] existed=${existed}, overrides verified=${verified}, keys=${overrideKeys.join(',')}`)
+  const verified =
+    (overrides.profile === undefined || verifiedAppearance.value.profile !== undefined) &&
+    (overrides.presets === undefined || verifiedAppearance.value.presets !== undefined) &&
+    (overrides.geometry === undefined || verifiedGeometry.value !== undefined)
+  console.log(`[patchOverlayStore] current domains verified=${verified}, keys=${Object.keys(overrides).join(',')}`)
 
-  return verifyState
+  return state as unknown as Record<string, unknown>
 }

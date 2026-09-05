@@ -1,11 +1,13 @@
 import { useStore } from 'jotai'
 import type { Store } from 'jotai/vanilla/store'
 import { useMemo } from 'react'
-import type { ChatAppearance, ChatDisplay, ChatProfile } from '@/shared/settings/model'
+import type { ChatProfile } from '@/shared/settings/model'
 import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
 import {
+  applyChatProfilePatch,
   beginStyleGestureAtom,
+  type ChatProfilePatch,
   clearStyleHistoryAtom,
   commitProfileAtom,
   finishStyleGestureAtom,
@@ -14,27 +16,7 @@ import {
   undoStyleAtom,
 } from '@/shared/state/commands'
 
-export type ChatProfilePatch = {
-  appearance?: Partial<ChatAppearance>
-  display?: Partial<ChatDisplay>
-}
-
 const cloneProfile = (profile: ChatProfile) => normalizeChatProfile(profile)
-
-const applyPatch = (profile: ChatProfile, patch: ChatProfilePatch) =>
-  normalizeChatProfile(
-    {
-      appearance: {
-        ...profile.appearance,
-        ...patch.appearance,
-      },
-      display: {
-        ...profile.display,
-        ...patch.display,
-      },
-    },
-    profile,
-  )
 
 export type StyleHistoryCommands = {
   getEffectiveChatProfile: () => ChatProfile
@@ -61,7 +43,7 @@ export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands =
   commitYLCStyleUpdate: (patch, _label) => {
     store.set(finishStyleGestureAtom)
     const current = store.get(chatSettingsStateAtom).profile
-    store.set(commitProfileAtom, applyPatch(current, patch))
+    store.set(commitProfileAtom, applyChatProfilePatch(current, patch))
   },
   commitYLCProfile: (profile, _label) => {
     store.set(finishStyleGestureAtom)

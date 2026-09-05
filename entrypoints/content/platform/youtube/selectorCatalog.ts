@@ -7,11 +7,24 @@ export const watchSurfaceProbe = { probeId: 'watch.surface.v1', selectors: ['ytd
 export const playerProbe = { probeId: 'player.v1', selectors: ['#movie_player'] } as const
 export const rightControlsProbe = { probeId: 'controls.right.v1', selectors: ['.ytp-right-controls'] } as const
 export const nativeChatHostProbe = { probeId: 'chat.host.v1', selectors: ['ytd-live-chat-frame'] } as const
+export const chatContainerProbe = { probeId: 'chat.container.v1', selectors: ['#chat-container'] } as const
 export const nativeChatIframeProbe = {
   probeId: 'chat.iframe.v2',
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
 } as const
 export const fullscreenButtonProbe = { probeId: 'controls.fullscreen.v1', selectors: ['button.ytp-fullscreen-button'] } as const
+export const liveTimeDisplayProbe = {
+  probeId: 'player.live-time.v1',
+  selectors: ['.ytp-time-display.ytp-live'],
+} as const
+export const liveHeadBadgeProbe = {
+  probeId: 'player.live-badge.v1',
+  selectors: ['.ytp-live-badge.ytp-live-badge-is-livehead'],
+} as const
+export const playerLiveUiBoundaryProbe = {
+  probeId: 'player.live-ui-boundary.v1',
+  selectors: ['.ytp-time-display', '.ytp-live-badge'],
+} as const
 export const captionObstacleProbe = {
   probeId: 'obstacle.caption.v1',
   selectors: ['.ytp-caption-window-container', '.caption-window'],
@@ -21,12 +34,32 @@ export const playerMenuObstacleProbe = {
   probeId: 'obstacle.menu.v1',
   selectors: ['.ytp-popup:not(.ytp-settings-menu-hidden)', '.ytp-panel-menu'],
 } as const
+export const playerMenuObstacleBoundaryProbe = {
+  probeId: 'obstacle.menu-boundary.v1',
+  selectors: ['.ytp-popup', '.ytp-panel-menu'],
+} as const
 export const endScreenObstacleProbe = {
   probeId: 'obstacle.endscreen.v1',
   selectors: ['.html5-endscreen', '.ytp-ce-element'],
 } as const
-export const runtimeBoundarySelector =
-  'ytd-watch-flexy, ytd-watch-grid, #movie_player, .ytp-right-controls, ytd-live-chat-frame, #chatframe, #chat-container, #show-hide-button, #secondary, #panels-full-bleed-container'
+export const playerObstacleBoundarySelector = [
+  ...captionObstacleProbe.selectors,
+  ...playerControlsObstacleProbe.selectors,
+  ...playerMenuObstacleBoundaryProbe.selectors,
+  ...endScreenObstacleProbe.selectors,
+].join(', ')
+export const runtimeBoundarySelector = [
+  ...watchSurfaceProbe.selectors,
+  ...playerProbe.selectors,
+  ...rightControlsProbe.selectors,
+  ...nativeChatHostProbe.selectors,
+  ...nativeChatIframeProbe.selectors,
+  ...chatContainerProbe.selectors,
+  '#show-hide-button',
+  '#secondary',
+  '#panels-full-bleed-container',
+  ...playerLiveUiBoundaryProbe.selectors,
+].join(', ')
 export const archiveSidebarOpenControlProbe = {
   probeId: 'chat.archive.sidebar.v1',
   selectors: [
@@ -53,17 +86,24 @@ export const youtubeSelectorCatalog = {
   player: playerProbe,
   rightControls: rightControlsProbe,
   nativeChatHost: nativeChatHostProbe,
+  chatContainer: chatContainerProbe,
   nativeChatIframe: nativeChatIframeProbe,
   fullscreenButton: fullscreenButtonProbe,
+  liveTimeDisplay: liveTimeDisplayProbe,
+  liveHeadBadge: liveHeadBadgeProbe,
+  playerLiveUiBoundary: playerLiveUiBoundaryProbe,
   captionObstacle: captionObstacleProbe,
   playerControlsObstacle: playerControlsObstacleProbe,
   playerMenuObstacle: playerMenuObstacleProbe,
+  playerMenuObstacleBoundary: playerMenuObstacleBoundaryProbe,
   endScreenObstacle: endScreenObstacleProbe,
   archiveSidebarOpenControl: archiveSidebarOpenControlProbe,
   archivePlayerChatToggle: archivePlayerChatToggleProbe,
 } as const satisfies Record<string, SelectorProbe>
 
 const candidateProbeId = (probe: SelectorProbe, index: number) => `${probe.probeId}.${index + 1}`
+
+export const matchesProbe = (element: Element, probe: SelectorProbe) => probe.selectors.some(selector => element.matches(selector))
 
 export const queryFirstProbe = <T extends Element>(
   root: ParentNode,

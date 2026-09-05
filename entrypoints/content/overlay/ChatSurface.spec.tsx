@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ChatSurface } from './ChatSurface'
 
 describe('ChatSurface', () => {
-  it('keeps hover state scoped to the visible chat bounds', () => {
+  it('keeps hover state scoped to cached visible chat bounds', () => {
     const onEnterChat = vi.fn()
     const onLeaveChat = vi.fn()
     const { container } = render(
@@ -12,7 +12,7 @@ describe('ChatSurface', () => {
       </ChatSurface>,
     )
     const surface = container.querySelector<HTMLElement>('[data-ylc-chat-inner]') as HTMLElement
-    vi.spyOn(surface, 'getBoundingClientRect').mockReturnValue({
+    const readBounds = vi.spyOn(surface, 'getBoundingClientRect').mockReturnValue({
       top: 10,
       right: 110,
       bottom: 110,
@@ -29,6 +29,23 @@ describe('ChatSurface', () => {
 
     expect(onEnterChat).toHaveBeenCalledOnce()
     expect(onLeaveChat).toHaveBeenCalledOnce()
+    expect(readBounds).toHaveBeenCalledOnce()
+  })
+
+  it('refreshes cached bounds after the pointer leaves and re-enters', () => {
+    const { container } = render(
+      <ChatSurface innerStyle={{}} isDragging={false} onEnterChat={() => {}} onLeaveChat={() => {}}>
+        chat
+      </ChatSurface>,
+    )
+    const surface = container.querySelector<HTMLElement>('[data-ylc-chat-inner]') as HTMLElement
+    const readBounds = vi.spyOn(surface, 'getBoundingClientRect')
+
+    fireEvent.mouseEnter(surface, { clientX: 0, clientY: 0 })
+    fireEvent.mouseLeave(surface)
+    fireEvent.mouseEnter(surface, { clientX: 0, clientY: 0 })
+
+    expect(readBounds).toHaveBeenCalledTimes(2)
   })
 
   it('adds a pointer shield only while an active pointer gesture is reported', () => {

@@ -1,19 +1,19 @@
 import { render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { Modal } from './Modal'
 
 describe('Modal', () => {
-  it('uses the shared modal layer by default', () => {
+  it('uses the shared modal layer and an accessible name by default', () => {
     const { getByRole } = render(
-      <Modal isOpen>
+      <Modal isOpen ariaLabel='Test dialog'>
         <div>content</div>
       </Modal>,
     )
 
-    expect(getByRole('dialog')).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.modal) })
+    expect(getByRole('dialog', { name: 'Test dialog' })).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.modal) })
   })
 
   it('closes with Escape and restores focus to the invoking control', async () => {
@@ -25,7 +25,7 @@ describe('Modal', () => {
           <button type='button' onClick={() => setOpen(true)}>
             Open dialog
           </button>
-          <Modal isOpen={open} onRequestClose={() => setOpen(false)}>
+          <Modal isOpen={open} ariaLabel='Actions' onRequestClose={() => setOpen(false)}>
             <button type='button'>Dialog action</button>
           </Modal>
         </>
@@ -35,12 +35,94 @@ describe('Modal', () => {
     const trigger = getByRole('button', { name: 'Open dialog' })
 
     await user.click(trigger)
-    const dialog = getByRole('dialog')
+    const dialog = getByRole('dialog', { name: 'Actions' })
     expect(dialog).toBeVisible()
     await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement))
     await user.keyboard('{Escape}')
 
     expect(queryByRole('dialog')).toBeNull()
     expect(trigger).toHaveFocus()
+  })
+
+  it('restores focus and closes the lifecycle once when a conditionally mounted modal unmounts', async () => {
+    const user = userEvent.setup()
+    const onAfterClose = vi.fn()
+    const Harness = () => {
+      const [open, setOpen] = useState(false)
+      return (
+        <>
+          <button type='button' onClick={() => setOpen(true)}>
+            Open conditional dialog
+          </button>
+          {open ? (
+            <Modal isOpen ariaLabel='Conditional actions' onRequestClose={() => setOpen(false)} onAfterClose={onAfterClose}>
+              <button type='button'>Conditional action</button>
+            </Modal>
+          ) : null}
+        </>
+      )
+    }
+    const { getByRole, queryByRole } = render(<Harness />)
+    const trigger = getByRole('button', { name: 'Open conditional dialog' })
+
+    await user.click(trigger)
+    await user.keyboard('{Escape}')
+
+    expect(queryByRole('dialog')).toBeNull()
+    expect(trigger).toHaveFocus()
+    expect(onAfterClose).toHaveBeenCalledOnce()
+  })
+
+  it('resolves a custom portal parent after render rather than during render', () => {
+    const parent = document.createElement('div')
+    document.body.appendChild(parent)
+    const parentSelector = vi.fn(() => parent)
+
+    const { getByRole, unmount } = render(
+      <Modal isOpen ariaLabel='Custom parent' parentSelector={parentSelector}>
+        <button type='button'>Action</button>
+      </Modal>,
+    )
+
+    expect(parentSelector).toHaveBeenCalledOnce()
+    expect(parent).toContainElement(getByRole('dialog', { name: 'Custom parent' }))
+    unmount()
+    parent.remove()
+  })
+
+  it('keeps forward and reverse tab navigation inside the dialog', async () => {
+    const user = userEvent.setup()
+    const { getByRole } = render(
+      <Modal isOpen ariaLabel='Actions'>
+        <button type='button'>First action</button>
+        <button type='button'>Last action</button>
+      </Modal>,
+    )
+    const first = getByRole('button', { name: 'First action' })
+    const last = getByRole('button', { name: 'Last action' })
+
+    await user.tab()
+    expect(first).toHaveFocus()
+    await user.tab()
+    expect(last).toHaveFocus()
+    await user.tab()
+    expect(first).toHaveFocus()
+    await user.tab({ shift: true })
+    expect(last).toHaveFocus()
+  })
+
+  it('makes background content inert while open and restores it after close', () => {
+    const background = document.createElement('main')
+    document.body.appendChild(background)
+    const { unmount } = render(
+      <Modal isOpen ariaLabel='Actions'>
+        <button type='button'>Action</button>
+      </Modal>,
+    )
+
+    expect(background).toHaveAttribute('inert')
+    unmount()
+    expect(background).not.toHaveAttribute('inert')
+    background.remove()
   })
 })

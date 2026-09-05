@@ -14,9 +14,8 @@ import {
   type PresetEntry,
   type RGBA,
 } from './model'
+import { MAX_CUSTOM_PRESETS, MAX_PRESET_ID_LENGTH, MAX_PRESET_NAME_LENGTH } from './persistConfig'
 
-const MAX_PRESET_ID_LENGTH = 128
-const MAX_PRESET_NAME_LENGTH = 100
 const BUILTIN_PRESET_ID_SET = new Set<string>(BUILTIN_PRESET_IDS)
 
 export const isRecord = (value: unknown): value is Record<string, unknown> =>
@@ -158,14 +157,18 @@ export const normalizePresetEntry = (input: unknown): PresetEntry | null => {
 }
 
 export const normalizePresets = (input: unknown, fallback: PresetEntry[]): PresetEntry[] => {
-  if (!Array.isArray(input))
-    return fallback.map(preset => normalizePresetEntry(preset)).filter((preset): preset is PresetEntry => preset !== null)
-
+  const source = Array.isArray(input) ? input : fallback
   const result: PresetEntry[] = []
   const seen = new Set<string>()
-  for (const rawPreset of input) {
+  let customPresetCount = 0
+
+  for (const rawPreset of source) {
     const preset = normalizePresetEntry(rawPreset)
     if (!preset || seen.has(preset.id)) continue
+    if (preset.kind === 'custom') {
+      if (customPresetCount >= MAX_CUSTOM_PRESETS) continue
+      customPresetCount += 1
+    }
     seen.add(preset.id)
     result.push(preset)
   }

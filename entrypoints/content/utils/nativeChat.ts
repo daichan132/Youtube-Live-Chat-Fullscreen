@@ -12,6 +12,13 @@ type YouTubeLiveChatFrameElement = HTMLElement & {
   onShowHideChat?: () => void
 }
 
+type ControlSearchOptions = {
+  requireChatLabel?: boolean
+  requireCurrentChatHost?: boolean
+  requireReplayLabel?: boolean
+  requireVisible?: boolean
+}
+
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
@@ -44,6 +51,7 @@ const getButtonLabelText = (element: HTMLElement) =>
   `${element.getAttribute('aria-label') ?? ''} ${element.getAttribute('title') ?? ''} ${element.getAttribute('data-title-no-tooltip') ?? ''} ${element.getAttribute('data-tooltip-text') ?? ''}`.toLowerCase()
 
 const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
+const isReplayLabel = (label: string) => label.includes('replay') || label.includes('リプレイ')
 
 const getCurrentChatHost = () => {
   return getCurrentLiveChatHost()
@@ -77,28 +85,14 @@ const isElementVisible = (element: HTMLElement) => {
   return element.getClientRects().length > 0
 }
 
-const clickFirstMatchingSelector = (
-  selectors: readonly string[],
-  options: {
-    requireChatLabel?: boolean
-    requireCurrentChatHost?: boolean
-    requireVisible?: boolean
-  } = {},
-) => {
+const clickFirstMatchingSelector = (selectors: readonly string[], options: ControlSearchOptions = {}) => {
   const target = findFirstMatchingControl(selectors, options)
   if (!target) return false
   target.click()
   return true
 }
 
-const findFirstMatchingControl = (
-  selectors: readonly string[],
-  options: {
-    requireChatLabel?: boolean
-    requireCurrentChatHost?: boolean
-    requireVisible?: boolean
-  } = {},
-) => {
+const findFirstMatchingControl = (selectors: readonly string[], options: ControlSearchOptions = {}) => {
   const requireVisible = options.requireVisible ?? true
   for (const selector of selectors) {
     const targets = Array.from(document.querySelectorAll<HTMLElement>(selector))
@@ -109,6 +103,7 @@ const findFirstMatchingControl = (
       if (clickable instanceof HTMLButtonElement && clickable.disabled) continue
       if (clickable.getAttribute('aria-disabled') === 'true') continue
       if (options.requireChatLabel && !isChatControl(clickable)) continue
+      if (options.requireReplayLabel && !isReplayLabel(getButtonLabelText(clickable))) continue
       if (options.requireCurrentChatHost && !isControlScopedToCurrentChatHost(clickable)) continue
       return clickable
     }
@@ -172,6 +167,30 @@ export const getArchiveNativeOpenControl = () =>
   findFirstMatchingControl(archivePlayerChatToggleSelectors, {
     requireChatLabel: true,
     requireCurrentChatHost: true,
+    requireVisible: false,
+  })
+
+export const getArchiveReplayOpenControl = () =>
+  findFirstMatchingControl(archiveSidebarOpenSelectors, {
+    requireCurrentChatHost: true,
+    requireReplayLabel: true,
+    requireVisible: true,
+  }) ??
+  findFirstMatchingControl(archiveSidebarOpenSelectors, {
+    requireCurrentChatHost: true,
+    requireReplayLabel: true,
+    requireVisible: false,
+  }) ??
+  findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+    requireChatLabel: true,
+    requireCurrentChatHost: true,
+    requireReplayLabel: true,
+    requireVisible: true,
+  }) ??
+  findFirstMatchingControl(archivePlayerChatToggleSelectors, {
+    requireChatLabel: true,
+    requireCurrentChatHost: true,
+    requireReplayLabel: true,
     requireVisible: false,
   })
 

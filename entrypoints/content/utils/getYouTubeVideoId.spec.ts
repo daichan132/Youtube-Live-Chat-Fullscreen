@@ -137,4 +137,14 @@ describe('getCurrentYouTubeVideoId', () => {
 
     expect(getCurrentYouTubeVideoId()).toBe('video-b')
   })
+
+  it('ignores a player API exception while resolving channel live signals', () => {
+    const { moviePlayer } = createChannelLiveSignals('channel-live-video')
+    moviePlayer.getVideoData = () => {
+      throw new Error('player replacement in progress')
+    }
+    setLocation('/@lofi/live')
+
+    expect(getCurrentYouTubeVideoId()).toBe('channel-live-video')
+  })
 })

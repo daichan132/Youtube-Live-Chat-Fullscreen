@@ -68,7 +68,9 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
       managedCount: 0,
       nativeCount: 1,
     })
-    await expectCompositedOverlayHost()
+    await overlay.expectOverlayRemoved({ timeout: 12000 })
+    await overlay.expectSwitchReady({ timeout: 12000 })
+
     await overlay.toggleOn()
     await overlay.expectChatLoaded({ timeout: 12000 })
     await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
@@ -79,5 +81,37 @@ test.describe('live managed to native handoff', { tag: '@live' }, () => {
       nativeCount: 0,
     })
     await expectCompositedOverlayHost()
+  })
+
+  test('releases managed live chat and borrows replay when the stream ends without a URL change', { tag: '@fixture' }, async ({
+    page,
+  }) => {
+    test.setTimeout(120000)
+
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({
+      owned: 'true',
+      source: 'live_direct',
+      managedCount: 1,
+    })
+    const liveUrl = page.url()
+
+    await scenario.endLiveAsArchive()
+
+    await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+    await expect.poll(() => scenario.observeExtensionIframeIdentity()).toEqual({
+      id: 'chatframe',
+      owned: null,
+      source: null,
+      managedCount: 0,
+      nativeCount: 0,
+    })
+    await expect.poll(() => scenario.observeExtensionIframeHref()).toContain(`/live_chat_replay?v=${VIDEO_ID}`)
+    expect(page.url()).toBe(liveUrl)
   })
 })

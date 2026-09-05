@@ -176,6 +176,70 @@ export class YouTubeScenario {
     }, label)
   }
 
+  async endLiveAsArchive(response: 'playable' | 'unavailable' = 'playable') {
+    const current = this.requireState()
+    if (current.video.mode !== 'live' || current.chat.mode !== 'live') {
+      throw new Error('Only a live YouTube scenario can transition to archive replay.')
+    }
+    if ((current.page.route ?? 'watch') !== 'watch') {
+      throw new Error('The live-to-archive fixture transition currently requires a watch route.')
+    }
+
+    const archiveState: YouTubeScenarioState = {
+      video: { id: current.video.id, title: current.video.title, mode: 'archive' },
+      page: { ...current.page, route: 'watch' },
+      fullscreen: false,
+      chat: {
+        mode: 'archive',
+        native: { state: 'playable', showHideControl: true },
+        response,
+      },
+    }
+    await this.installChatRoutes(compileYouTubeScenario(archiveState).chatRoutes)
+    await this.page.evaluate(videoId => {
+      const watch = document.querySelector<HTMLElement>('ytd-watch-flexy, ytd-watch-grid')
+      const player = document.getElementById('movie_player')
+      const chatContainer = document.getElementById('chat-container')
+      if (!watch || !player || !chatContainer) throw new Error('YouTube scenario is missing the live-to-archive transition targets.')
+
+      watch.removeAttribute('is-live-now')
+      Object.assign(player, {
+        getVideoData: () => ({
+          isLive: false,
+          isLiveContent: true,
+          video_id: videoId,
+        }),
+      })
+      document.querySelectorAll('.ytp-time-display.ytp-live').forEach(element => element.classList.remove('ytp-live'))
+      document
+        .querySelectorAll('.ytp-live-badge.ytp-live-badge-is-livehead')
+        .forEach(element => element.classList.remove('ytp-live-badge-is-livehead'))
+
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', videoId)
+      const showHideButton = document.createElement('div')
+      showHideButton.id = 'show-hide-button'
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.setAttribute('aria-label', 'Show chat replay')
+      button.textContent = 'Show chat replay'
+      button.addEventListener('click', () => {
+        if (host.querySelector('#chatframe')) return
+        watch.setAttribute('live-chat-present-and-expanded', '')
+        const iframe = document.createElement('iframe')
+        iframe.id = 'chatframe'
+        iframe.className = 'ytd-live-chat-frame'
+        iframe.src = `/live_chat_replay?v=${encodeURIComponent(videoId)}&continuation=ylc-fixture`
+        host.insertBefore(iframe, host.firstChild)
+      })
+      showHideButton.append(button)
+      host.append(showHideButton)
+      chatContainer.append(host)
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+    }, current.video.id)
+    this.state = archiveState
+  }
+
   nativeIframeCount() {
     return this.page.locator('ytd-live-chat-frame > #chatframe').count()
   }

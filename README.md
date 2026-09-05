@@ -122,7 +122,7 @@ yarn verify:release
 
 It additionally builds Chrome and Firefox packages, verifies package contents, rebuilds Firefox from the submitted source archive, runs deterministic browser/visual/accessibility checks, boots the exact production Chrome package, and runs the explicit real-YouTube canary.
 
-GitHub Actions workflows are manual-only fallbacks. Pull requests, pushes, and schedules do not automatically consume Actions minutes.
+Pull requests automatically run source checks, coverage, Node-side contracts, production package verification, deterministic Playwright fixtures, and accessibility checks. Visual checks and exact production-package startup smoke remain available through the manual CI workflow.
 
 | Command | Purpose |
 | --- | --- |

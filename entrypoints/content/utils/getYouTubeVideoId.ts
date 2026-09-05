@@ -1,17 +1,8 @@
-export const getVideoIdFromUrl = () => {
-  try {
-    const url = new URL(window.location.href)
-    const queryId = url.searchParams.get('v')
-    if (queryId) return queryId
-    const liveMatch = url.pathname.match(/\/live\/([a-zA-Z0-9_-]+)/)
-    if (liveMatch?.[1]) return liveMatch[1]
-    return null
-  } catch {
-    return null
-  }
-}
+import { getYouTubeMoviePlayer, getYouTubePlayerVideoId, readYouTubePlayerVideoData } from '../platform/youtube/playerVideoData'
+import { nativeChatIframeProbe, queryAllProbes, watchSurfaceProbe } from '../platform/youtube/selectorCatalog'
+import { getYouTubeContentSurface } from '../platform/youtube/youtubeSurface'
 
-const CHANNEL_LIVE_PATH_PATTERN = /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/live\/?$/
+export const getVideoIdFromUrl = () => getYouTubeContentSurface(window.location.href)?.videoId ?? null
 
 const getVideoIdFromHref = (href: string | null | undefined) => {
   if (!href) return null
@@ -29,24 +20,17 @@ const addCandidate = (candidates: Set<string>, videoId: string | null | undefine
 const collectChannelLiveVideoIdCandidates = () => {
   const candidates = new Set<string>()
 
-  const moviePlayer = document.getElementById('movie_player') as
-    | (HTMLElement & { getVideoData?: () => { video_id?: string; videoId?: string } })
-    | null
-  try {
-    const videoData = moviePlayer?.getVideoData?.()
-    addCandidate(candidates, videoData?.video_id ?? videoData?.videoId)
-  } catch {
-    // Ignore a temporarily unavailable player API and use other page signals.
-  }
+  const moviePlayer = getYouTubeMoviePlayer()
+  addCandidate(candidates, getYouTubePlayerVideoId(moviePlayer, readYouTubePlayerVideoData(moviePlayer)))
 
-  for (const watchElement of Array.from(document.querySelectorAll('ytd-watch-flexy[video-id], ytd-watch-grid[video-id]'))) {
+  for (const watchElement of queryAllProbes<HTMLElement>(document, watchSurfaceProbe).elements) {
     addCandidate(candidates, watchElement.getAttribute('video-id'))
   }
 
-  const nativeIframes = document.querySelectorAll<HTMLIFrameElement>(
-    '#chatframe:not([data-ylc-chat="true"]), ytd-live-chat-frame iframe.ytd-live-chat-frame:not([data-ylc-chat="true"])',
+  const nativeIframes = queryAllProbes<HTMLIFrameElement>(document, nativeChatIframeProbe).elements.filter(
+    iframe => iframe.dataset.ylcChat !== 'true',
   )
-  for (const iframe of Array.from(nativeIframes)) {
+  for (const iframe of nativeIframes) {
     try {
       addCandidate(candidates, getVideoIdFromHref(iframe.contentDocument?.location?.href))
     } catch {
@@ -59,11 +43,8 @@ const collectChannelLiveVideoIdCandidates = () => {
 }
 
 const isChannelLiveEntryUrl = () => {
-  try {
-    return CHANNEL_LIVE_PATH_PATTERN.test(new URL(window.location.href).pathname)
-  } catch {
-    return false
-  }
+  const surface = getYouTubeContentSurface(window.location.href)
+  return surface?.route === 'live' && surface.videoId === null
 }
 
 export const getCurrentYouTubeVideoId = () => {
