@@ -25,6 +25,9 @@ export type PersistenceStatus =
   | { status: 'saving'; failedDomains: readonly [] }
   | { status: 'error'; failedDomains: readonly PersistenceDomain[] }
 
+// A readback is an acknowledgement only when the stored writer is this repository.
+export type SettingsCommitSource = 'external' | 'readback' | 'import'
+
 export type SettingsRepository = {
   load: () => Promise<SettingsSnapshot>
   saveEnabled: (value: boolean) => Promise<void>
@@ -32,13 +35,14 @@ export type SettingsRepository = {
   saveAppearance: (value: ChatAppearanceSettings) => Promise<void>
   saveGeometry: (value: ChatGeometry) => Promise<void>
   saveLocale: (value: LocaleCode) => Promise<void>
+  // Confirmed imported values are delivered through watch, like ordinary commits.
   replaceSettings: (global: GlobalSettings, chat: ChatSettings) => Promise<void>
   watch: (handlers: {
     onEnabled: (value: boolean) => void
     onTheme: (value: GlobalSettings['themeMode']) => void
-    onAppearance: (value: ChatAppearanceSettings) => void
+    onAppearance: (value: ChatAppearanceSettings, source?: SettingsCommitSource) => void
     onGeometry: (value: ChatGeometry) => void
-    onLocale: (value: LocaleCode) => void
+    onLocale: (value: LocaleCode, source?: SettingsCommitSource) => void
   }) => () => void
   getPersistenceStatus: () => PersistenceStatus
   subscribePersistence: (listener: (status: PersistenceStatus) => void) => () => void
@@ -47,6 +51,7 @@ export type SettingsRepository = {
 }
 
 const SAVE_RETRY_DELAY_MS = 400
+const IMPORT_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry'] as const satisfies readonly PersistenceDomain[]
 
 type RepositoryDependencies = {
   waitBeforeRetry: (delayMs: number) => Promise<void>
@@ -80,6 +85,7 @@ export const createSettingsRepository = (
   const listeners = new Set<(status: PersistenceStatus) => void>()
   const watchHandlers = new Set<Parameters<SettingsRepository['watch']>[0]>()
   let storageUnwatchers: (() => void)[] | null = null
+  let replacementTail: Promise<void> | null = null
 
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
 
@@ -87,7 +93,7 @@ export const createSettingsRepository = (
   const getPersistenceStatus = (): PersistenceStatus => {
     const failedDomains = PERSISTENCE_DOMAINS.filter(domain => failedWrites.has(domain))
     if (failedDomains.length > 0) return { status: 'error', failedDomains }
-    if (activeCount() > 0) return { status: 'saving', failedDomains: [] }
+    if (activeCount() > 0 || replacementTail) return { status: 'saving', failedDomains: [] }
     return { status: 'idle', failedDomains: [] }
   }
 
@@ -117,7 +123,7 @@ export const createSettingsRepository = (
     publishStatus()
   }
 
-  const notifyCommitted = (domain: PersistenceDomain, value: unknown) => {
+  const notifyCommitted = (domain: PersistenceDomain, value: unknown, source: SettingsCommitSource) => {
     for (const handlers of watchHandlers) {
       if (domain === 'enabled' && typeof value === 'boolean') handlers.onEnabled(value)
       if (domain === 'theme') handlers.onTheme(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))
@@ -127,16 +133,17 @@ export const createSettingsRepository = (
             profile: DEFAULT_CHAT_SETTINGS.profile,
             presets: DEFAULT_CHAT_SETTINGS.presets,
           }),
+          source,
         )
       }
       if (domain === 'geometry') handlers.onGeometry(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))
-      if (domain === 'locale' && typeof value === 'string') handlers.onLocale(resolveLanguageCode(value))
+      if (domain === 'locale' && typeof value === 'string') handlers.onLocale(resolveLanguageCode(value), source)
     }
   }
 
-  const readCommittedValue = async (domain: PersistenceDomain) => {
+  const readCommittedEnvelope = async (domain: PersistenceDomain) => {
     const [result] = await storage.getItems([settingsItems[domain]])
-    return isStoredEnvelope(result?.value) ? result.value.value : undefined
+    return isStoredEnvelope(result?.value) ? result.value : null
   }
 
   const runWithRetry = async (domain: PersistenceDomain, sequence: number, supersessionVersion: number, task: () => Promise<void>) => {
@@ -159,11 +166,9 @@ export const createSettingsRepository = (
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
-    publishStatus()
-
     const previous = tails.get(domain) ?? Promise.resolve()
-    const current = previous
-      .catch(() => undefined)
+    const barrier = replacementTail
+    const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
       .then(async () => {
         if (localSequences.get(domain) !== sequence) return
         try {
@@ -171,18 +176,17 @@ export const createSettingsRepository = (
           if (!committed) return
           if (localSequences.get(domain) === sequence) {
             failedWrites.delete(domain)
-            // Read after the write, even if an external event arrived while
-            // saving: the local write may have committed last. But an event
-            // arriving DURING this read supersedes the returned snapshot.
+            // An event before this read may precede the local commit. Only
+            // events arriving during the read supersede its captured snapshot.
             const readbackVersion = supersessionVersions.get(domain)
             try {
-              const value = await readCommittedValue(domain)
+              const stored = await readCommittedEnvelope(domain)
               if (
-                value !== undefined &&
+                stored &&
                 localSequences.get(domain) === sequence &&
                 supersessionVersions.get(domain) === readbackVersion
               ) {
-                notifyCommitted(domain, value)
+                notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
               }
             } catch {
               // The write succeeded. A later event or reload can converge
@@ -202,6 +206,7 @@ export const createSettingsRepository = (
         publishStatus()
       })
     tails.set(domain, current)
+    publishStatus()
     return current
   }
 
@@ -223,16 +228,71 @@ export const createSettingsRepository = (
     enqueue('geometry', () => settingsItems.geometry.setValue(envelope(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))))
   const saveLocale = (value: LocaleCode) => enqueue('locale', () => settingsItems.locale.setValue(envelope(resolveLanguageCode(value))))
 
+  const throwPersistenceFailure = () => {
+    if (failedWrites.size > 0) throw [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
+  }
+
   const flush = async () => {
     while (true) {
       const observedTails = [...tails.entries()]
-      await Promise.allSettled(observedTails.map(([, tail]) => tail))
+      const observedReplacement = replacementTail
+      await Promise.allSettled([...observedTails.map(([, tail]) => tail), ...(observedReplacement ? [observedReplacement] : [])])
       const tailsAreStable = observedTails.every(([domain, tail]) => tails.get(domain) === tail)
-      if (tailsAreStable && activeCount() === 0) break
+      if (tailsAreStable && replacementTail === observedReplacement && activeCount() === 0) break
     }
-    if (failedWrites.size > 0) {
-      throw [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
-    }
+    throwPersistenceFailure()
+  }
+
+  const replaceSettings = (global: GlobalSettings, chat: ChatSettings) => {
+    // Reserve the barrier synchronously. Later writes must wait for this import,
+    // while this import waits only for operations already queued before it.
+    // Calling flush here would also wait for later writes and create a cycle.
+    const preceding = [...tails.values(), ...(replacementTail ? [replacementTail] : [])]
+    const sequences = new Map(localSequences)
+    const values = [
+      { item: settingsItems.enabled, value: envelope(Boolean(global.ytdLiveChat)) },
+      { item: settingsItems.theme, value: envelope(normalizeTheme(global.themeMode, DEFAULT_GLOBAL_SETTINGS.themeMode)) },
+      {
+        item: settingsItems.appearance,
+        value: envelope(
+          normalizeAppearance(
+            { profile: chat.profile, presets: chat.presets },
+            { profile: DEFAULT_CHAT_SETTINGS.profile, presets: DEFAULT_CHAT_SETTINGS.presets },
+          ),
+        ),
+      },
+      { item: settingsItems.geometry, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
+    ]
+    const current: Promise<void> = Promise.allSettled(preceding)
+      .then(async () => {
+        throwPersistenceFailure()
+        await storage.setItems(values)
+        const versions = new Map(supersessionVersions)
+        const results = await storage.getItems(IMPORT_DOMAINS.map(domain => settingsItems[domain]))
+        const envelopes = results.map(result => (isStoredEnvelope(result.value) ? result.value : null))
+        if (envelopes.length !== IMPORT_DOMAINS.length || envelopes.some(stored => stored === null)) {
+          throw new Error('Imported settings could not be read back')
+        }
+        for (const [index, domain] of IMPORT_DOMAINS.entries()) {
+          const stored = envelopes[index]
+          if (
+            !stored ||
+            localSequences.get(domain) !== sequences.get(domain) ||
+            supersessionVersions.get(domain) !== versions.get(domain)
+          )
+            continue
+          // Deliver while the read is still current, not via a later caller's
+          // unconditional snapshot replacement. Newer intents keep their UI.
+          notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'import' : 'external')
+        }
+      })
+      .finally(() => {
+        if (replacementTail === current) replacementTail = null
+        publishStatus()
+      })
+    replacementTail = current
+    publishStatus()
+    return current
   }
 
   return {
@@ -250,25 +310,7 @@ export const createSettingsRepository = (
     saveAppearance,
     saveGeometry,
     saveLocale,
-    replaceSettings: async (global, chat) => {
-      await flush()
-      // Keep imports as one bulk operation; interactive edits remain isolated
-      // by domain. The runtime replaces its state only after this succeeds.
-      await storage.setItems([
-        { item: settingsItems.enabled, value: envelope(Boolean(global.ytdLiveChat)) },
-        { item: settingsItems.theme, value: envelope(normalizeTheme(global.themeMode, DEFAULT_GLOBAL_SETTINGS.themeMode)) },
-        {
-          item: settingsItems.appearance,
-          value: envelope(
-            normalizeAppearance(
-              { profile: chat.profile, presets: chat.presets },
-              { profile: DEFAULT_CHAT_SETTINGS.profile, presets: DEFAULT_CHAT_SETTINGS.presets },
-            ),
-          ),
-        },
-        { item: settingsItems.geometry, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
-      ])
-    },
+    replaceSettings,
     watch: handlers => {
       watchHandlers.add(handlers)
       if (!storageUnwatchers) {
@@ -278,7 +320,7 @@ export const createSettingsRepository = (
             if (domain === 'enabled' && typeof next.value !== 'boolean') return
             if (domain === 'locale' && typeof next.value !== 'string') return
             acceptExternalCommit(domain)
-            notifyCommitted(domain, next.value)
+            notifyCommitted(domain, next.value, 'external')
           }),
         )
       }

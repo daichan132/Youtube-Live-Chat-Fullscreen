@@ -2,7 +2,6 @@ import { atom } from 'jotai'
 import type { LocaleMessages, LocaleState, TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_LANGUAGE } from '@/shared/i18n/language'
 import { isRTL } from '@/shared/i18n/rtl'
-import type { NormalizedSettingsBackup } from '@/shared/settings/backup'
 import { areChatAppearanceSettingsEqual, areChatGeometriesEqual, areChatProfilesEqual } from '@/shared/settings/equality'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, PresetEntry } from '@/shared/settings/model'
@@ -74,15 +73,6 @@ export const hydrateAppAtom = atom(null, (_get, set, snapshot: AppHydration) => 
 export const replaceLocaleAtom = atom(null, (_get, set, locale: LocaleState) => {
   set(localeStateAtom, locale)
 })
-
-export const replaceImportedSettingsAtom = atom(
-  null,
-  (_get, set, input: Pick<NormalizedSettingsBackup, 'globalSetting' | 'chatSettings'>) => {
-    set(globalSettingsStateAtom, input.globalSetting)
-    set(chatSettingsStateAtom, input.chatSettings)
-    set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
-  },
-)
 
 export const replaceExternalGlobalSettingsAtom = atom(null, (_get, set, next: GlobalSettings) => {
   set(globalSettingsStateAtom, next)

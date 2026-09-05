@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { LocaleCode, LocaleMessages } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import type { PersistenceStatus, SettingsRepository } from '@/shared/settings/repository'
+import type { PersistenceStatus, SettingsCommitSource, SettingsRepository } from '@/shared/settings/repository'
 import { EMPTY_MESSAGES, globalSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
@@ -34,7 +34,7 @@ const createSession = async (loadMessages: (locale: LocaleCode) => Promise<Local
     },
     getPersistenceStatus: (): PersistenceStatus => ({ status: 'idle', failedDomains: [] }),
     subscribePersistence: () => () => {},
-    retryFailed: async () => {},
+    retryFailed: vi.fn(async () => {}),
     flush: async () => {},
   }
   const runtime = await createAppRuntime(repository, { loadMessages })
@@ -42,9 +42,9 @@ const createSession = async (loadMessages: (locale: LocaleCode) => Promise<Local
   return {
     runtime,
     repository,
-    emitLocale: (locale: LocaleCode) => {
+    emitLocale: (locale: LocaleCode, source: SettingsCommitSource = 'external') => {
       if (!watched) throw new Error('No active settings subscription')
-      watched.onLocale(locale)
+      watched.onLocale(locale, source)
     },
   }
 }
@@ -63,8 +63,6 @@ describe('locale request and runtime disposal boundaries', () => {
     expect(load).toHaveBeenCalledWith('ja')
     emitLocale('en')
     japanese.resolve(messages('ja'))
-    // A task boundary drains the entire loader/fallback/notification promise
-    // chain before this negative assertion, not just the source promise.
     await new Promise<void>(resolve => setTimeout(resolve, 0))
 
     expect(runtime.store.get(localeStateAtom)).toMatchObject({ code: 'en', messages: { 'popup.theme': 'en' } })
@@ -78,7 +76,37 @@ describe('locale request and runtime disposal boundaries', () => {
     )
     await runtime.setLocale('ja')
     const selectingFrench = runtime.setLocale('fr')
+    emitLocale('ja', 'readback')
+    french.resolve(messages('fr'))
+    await selectingFrench
+
+    expect(runtime.store.get(localeStateAtom).code).toBe('fr')
+    expect(repository.saveLocale).toHaveBeenLastCalledWith('fr')
+  })
+
+  it('lets a genuine external commit cancel an older local load even when its value is already rendered', async () => {
+    const french = deferred<LocaleMessages>()
+    const { runtime, repository, emitLocale } = await createSession(locale =>
+      locale === 'fr' ? french.promise : Promise.resolve(messages(locale)),
+    )
+    const selectingFrench = runtime.setLocale('fr')
+    emitLocale('en', 'external')
+    french.resolve(messages('fr'))
+    await selectingFrench
+
+    expect(runtime.store.get(localeStateAtom).code).toBe('en')
+    expect(repository.saveLocale).not.toHaveBeenCalled()
+  })
+
+  it('ignores an old own acknowledgement during a local load even when its value differs from the display', async () => {
+    const french = deferred<LocaleMessages>()
+    const { runtime, repository, emitLocale } = await createSession(locale =>
+      locale === 'fr' ? french.promise : Promise.resolve(messages(locale)),
+    )
     emitLocale('ja')
+    await vi.waitFor(() => expect(runtime.store.get(localeStateAtom).code).toBe('ja'))
+    const selectingFrench = runtime.setLocale('fr')
+    emitLocale('en', 'readback')
     french.resolve(messages('fr'))
     await selectingFrench
 
@@ -106,6 +134,8 @@ describe('locale request and runtime disposal boundaries', () => {
 
     await expect(runtime.importSettings(backup)).rejects.toThrow('disposed')
     expect(repository.replaceSettings).not.toHaveBeenCalled()
+    await runtime.retryPersistence()
+    expect(repository.retryFailed).not.toHaveBeenCalled()
   })
 
   it('does not apply an already-started import after disposal', async () => {
