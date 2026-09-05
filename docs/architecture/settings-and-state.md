@@ -48,7 +48,9 @@ Each domain has an independent serialized queue. A write is attempted once, wait
 
 A newer local write or valid external committed event invalidates an obsolete failed retry for that domain. A local commit reads Storage back to converge on the final value, while its own Storage events are ignored. A local write can finish after an external commit, so the readback generation is captured after the write. Any new local intent or external event received while that readback is pending prevents the captured result from being applied.
 
-`flush()` rechecks the domain tails until no new write was queued while it was waiting. `createAppRuntime` applies repository notifications without writing them back to Storage.
+Appearance and locale notifications carry an optional `SettingsCommitSource`. A read response is an own `readback` acknowledgement only when its envelope has this repository's writer ID; reading another writer's envelope is an `external` commit. Confirmed own imports use `import`. Notifications without a source are treated as external by the runtime. This metadata is in memory only; it does not change the stored envelope.
+
+`flush()` waits for both domain tails and the reserved import barrier, rechecking when new work arrives. `createAppRuntime` applies repository notifications without echoing them to Storage.
 
 ## Editing state is not a save acknowledgement
 
@@ -56,30 +58,37 @@ Draft profile values, active gestures, undo history and redo history live only i
 
 A save readback equal to the current committed appearance is a no-op. It must not cancel a later draft or clear undo/redo history merely because that draft started before the earlier save finished. Equality is checked against committed settings, not against the draft.
 
-An external preset-list-only change updates the list while preserving the current profile reference and profile editing session. A genuinely different committed profile replaces the profile and clears its conflicting draft/history. Geometry-only changes do not discard appearance history. Full chat replacement delegates to these same domain rules instead of maintaining a second conflict policy.
+An external preset-list-only change preserves the current profile reference and editing session. A genuinely different committed profile clears its conflicting draft/history. Geometry-only changes do not discard appearance history. A confirmed, non-superseded own import explicitly clears old history, including when the imported profile equals the committed profile.
 
-The connected regression tests in [`settingsConvergence.dom.spec.ts`](../../shared/runtime/settingsConvergence.dom.spec.ts) use the real repository, runtime and atoms while controlling Storage read delivery. They describe the save-A/edit-B, external-commit/readback, newer-local-write and preset-only cases.
+A newer local language selection is not cancelled by an acknowledgement of an earlier own save. A genuine external language commit invalidates an older load even if its value is already rendered. Message-loading order is not inferred from value equality alone.
 
 ## Import and backup
 
 Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
 
-The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Backup normalization returns complete `GlobalSettings` and `ChatSettings`; internal consumers do not cast an unvalidated theme or reinterpret a general record.
+The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
 
-Import first flushes interactive writes, then writes enabled, theme, appearance and geometry with one bulk `storage.setItems` operation. In-memory state is replaced only after that operation succeeds and only while the application runtime is still alive. This does not add cross-context locking or distributed transactions.
+An import synchronously reserves a barrier. It waits only for previously queued operations, writes the four imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.
+
+Confirmed domains are published through `watch` under local-sequence and external-generation guards. A newer local edit is not replaced by the imported value while it waits to save. The runtime does not apply the original input snapshot again after awaiting the repository, which would overwrite newer committed changes. Disposed runtimes ignore notifications.
+
+After releasing the barrier, successful `replaceSettings` drains later queued work before resolving to the popup, which closes on success. A failure of the bulk operation does not block future writes. Imports are local ordering barriers, not cross-context locks or distributed transactions.
+
+If the bulk write succeeds but confirmation cannot be read, the import reports an error without applying an unconfirmed snapshot. The Storage write is not rolled back; reloading reads the committed values. Do not describe every import error as leaving Storage unchanged.
 
 ## Failure behavior
 
 | Failure | Result |
 | --- | --- |
-| Storage read fails | initialization fails; popup/settings show a reload fallback |
+| Startup Storage read fails | initialization fails; popup/settings show a reload fallback |
 | Interactive write fails once | one delayed retry |
 | Interactive write fails twice | shared persistence notice offers Retry |
 | A newer external value arrives | obsolete failed retry is invalidated and the committed value is applied |
-| Import bulk write fails | the import is not applied to in-memory state; the error is shown |
-| Locale write fails | the selected language remains visible locally with an unsaved-state notice |
+| Import bulk write fails | no imported snapshot is applied; caller receives the error |
+| Import confirmation read fails | caller receives the error; the successful write is not undone |
+| Locale write fails | selected language remains visible locally with an unsaved-state notice |
 
-Focused tests also cover startup compatibility, isolated domain writes, retry invalidation, flush behavior and the bulk import boundary. See [`originAwareStorage.spec.ts`](../../shared/settings/originAwareStorage.spec.ts) and the [test contract matrix](../testing/contracts.md).
+Connected regression cases use the real repository, runtime and atoms with controlled Storage completion order: `settingsConvergence.dom.spec.ts`, `importOrdering.dom.spec.ts`, and `importCompletion.dom.spec.ts` under `shared/runtime/`. Source classification is covered by `shared/settings/commitSource.dom.spec.ts`. These describe intended behavior, not evidence of a particular test run.
 
 ## Non-goals
 

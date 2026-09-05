@@ -181,11 +181,7 @@ export const createSettingsRepository = (
             const readbackVersion = supersessionVersions.get(domain)
             try {
               const stored = await readCommittedEnvelope(domain)
-              if (
-                stored &&
-                localSequences.get(domain) === sequence &&
-                supersessionVersions.get(domain) === readbackVersion
-              ) {
+              if (stored && localSequences.get(domain) === sequence && supersessionVersions.get(domain) === readbackVersion) {
                 notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
               }
             } catch {
@@ -292,7 +288,9 @@ export const createSettingsRepository = (
       })
     replacementTail = current
     publishStatus()
-    return current
+    // The popup closes after import resolves. Drain later edits too, but only
+    // after releasing the barrier those edits depend on (never inside it).
+    return current.then(flush)
   }
 
   return {

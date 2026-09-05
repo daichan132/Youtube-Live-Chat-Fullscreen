@@ -1,6 +1,6 @@
 # Reading runtime failure diagnostics
 
-The settings diagnostic download contains a sanitized, bounded report. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, the optional `runtime.failureStage` identifies the operation that failed.
+The settings diagnostic download contains a sanitized, bounded report. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, optional `runtime.failureStage` identifies the operation that failed.
 
 | Stage | Start investigation here |
 | --- | --- |
@@ -8,16 +8,16 @@ The settings diagnostic download contains a sanitized, bounded report. `runtime.
 | `session-lifecycle` | session identity changes and `bootstrap/SessionScope.ts` |
 | `resolve-decision` | `resolveChatDecision.ts` and `runtimeModel.ts` |
 | `apply-resources` | `ResourceReconciler.ts`, resource leases, observers and archive opening |
-| `publish-view` | runtime subscribers and the React view boundary |
+| `publish-view` | synchronous runtime subscribers and the React view boundary |
 
-Paths above are relative to `entrypoints/content/`. The stage is an investigation starting point, not an exception stack or proof of a particular root cause. It covers errors caught by runtime reconciliation and synchronous subscriber delivery; it does not classify every error in the extension or asynchronous React rendering failures.
+Paths above are relative to `entrypoints/content/`. The stage is an investigation starting point, not an exception stack or proof of a particular root cause. Reconciliation, explicit stop/restart cleanup, and synchronous subscriber failures are classified; asynchronous React rendering errors are outside this boundary.
 
-Reconciliation errors capture the stage before resource cleanup or fallback publication changes it. Automatic recovery remains bounded as documented in the [engineering overview](../engineering.md). A subscriber failure is different: it is isolated so healthy subscribers still receive the view, and it does not restart healthy page resources. Stop and recovery notifications use the same isolation. Subscriptions added during delivery start with the next view change; removed subscriptions are not invoked later in the same delivery.
+Reconciliation captures the stage before recovery changes it. Resource cleanup attempts each owner independently before reporting a failure. A chat chrome cleanup failure does not skip returning a borrowed iframe; an iframe release failure does not skip layout, presentation or chrome cleanup. An owner that fails to release remains referenced for diagnostics and a later bounded cleanup attempt. This is best-effort cleanup, not a guarantee that a permanently throwing page operation can be made to succeed.
 
-A manual restart clears the failure stage. An active runtime clears the prior failure during reconciliation; a new notification error can then set `publish-view`. The report omits the stage when the current failure code is no longer an unexpected error.
+Stop disposes session timers/observers and content listeners even when resource cleanup fails. Restart clears the previous diagnostic before teardown, so a new teardown failure is not accidentally erased. Recovery remains finite; no background or unlimited retry is added.
 
-Only values from `RUNTIME_FAILURE_STAGES` are exported. Do not include raw exception messages or stacks, page URLs, video identifiers, chat text, usernames, or arbitrary DOM content. The field is optional in report schema 1; reports without it remain readable.
+Synchronous subscriber exceptions are isolated per listener. Healthy subscribers still receive the view and subscriber failures do not tear down healthy page leases. New subscriptions wait for the next publication, and listeners removed before their turn are skipped. This is not an asynchronous component error boundary.
 
-Archive observations retain the selector identifier when a candidate is found. Live-UI evidence uses the same selector catalog. Explicit `aria-controls` relationships take precedence over labels. Disabled controls cannot be rediscovered through wrappers or bypassed through a host method; text-only host UI remains supported. Player events require a fresh check of video identity and chat-open state before any toggle is invoked.
+An active runtime clears prior failures, and the report omits a stage when the failure code is no longer unexpected. Only values from `RUNTIME_FAILURE_STAGES` are exported. Do not include raw exception messages or stacks, page URLs, video identifiers, chat text, usernames, or arbitrary DOM content. The field remains optional in report schema 1.
 
-When YouTube changes a control, update the adapter and its focused DOM scenarios rather than adding a test-environment branch to production code.
+Archive control observations retain the selector identifier when the candidate is found. Live-UI fallback evidence uses the shared selector catalog. Update the adapter and focused DOM scenarios when YouTube changes its structure, not a test-environment branch in production code.
