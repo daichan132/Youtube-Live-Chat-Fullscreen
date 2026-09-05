@@ -148,23 +148,24 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (!this.started) return
     this.started = false
     this.cancelScheduledFrame()
-    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), this.lastObservation)
-    this.disposeSessionScope()
-    this.contentScope?.dispose()
-    this.contentScope = null
+    try {
+      this.stopSession()
+    } finally {
+      this.contentScope?.dispose()
+      this.contentScope = null
+    }
   }
 
   restart = () => {
     if (!this.started) return
     this.cancelScheduledFrame()
-    this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), this.lastObservation)
-    this.disposeSessionScope()
-    this.lastObservation = null
-    this.lastObservationSignature = ''
-    this.lastPlanSignature = ''
     this.lastFailure = undefined
     this.lastFailureStage = undefined
     this.unexpectedRecoveryAttempts = 0
+    this.stopSession()
+    this.lastObservation = null
+    this.lastObservationSignature = ''
+    this.lastPlanSignature = ''
     this.scheduleReconcile()
   }
 
@@ -346,6 +347,25 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (!this.sessionScope) this.sessionScope = createSessionScope(++this.generation)
     this.sessionIdentity = nextIdentity
     return created
+  }
+
+  private stopSession = () => {
+    try {
+      this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), this.lastObservation)
+    } catch {
+      this.lastFailure = 'UNEXPECTED_RUNTIME_ERROR'
+      this.lastFailureStage = this.operationStage
+      this.recordTrace('failed', this.lastFailure)
+      try {
+        this.resources.clear(this.lastObservation?.targets ?? null)
+      } catch {
+        // clear has attempted every owner; still dispose the timers/listeners.
+      }
+    } finally {
+      this.disposeSessionScope()
+      this.model = createInitialRuntimeModel()
+      this.publish(initialView)
+    }
   }
 
   private disposeSessionScope = () => {
