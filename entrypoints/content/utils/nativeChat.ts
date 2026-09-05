@@ -6,6 +6,7 @@ import {
 } from '@/entrypoints/content/platform/youtube/chatControls'
 import { playerProbe, queryFirstProbe, watchSurfaceProbe } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { getCurrentLiveChatHost, getCurrentLiveChatIframe, getNonBlankIframeHref, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 const nativeChatTriggerSelectors =
   '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
@@ -24,10 +25,16 @@ const hasCurrentNonBlankNativeChatIframe = () => {
   return Boolean(chatFrame && isIframeForCurrentVideo(chatFrame, null) && getNonBlankIframeHref(chatFrame))
 }
 
-const revealPlayerControls = () => {
+const isNativeChatAlreadyOpen = () => {
+  const host = getCurrentLiveChatHost()
+  return Boolean(isNativeChatMarkedExpanded() && host && hasCurrentNonBlankNativeChatIframe() && isNativeChatHostVisible(host))
+}
+
+const revealPlayerControls = (videoId: string) => {
   const moviePlayer = queryFirstProbe<HTMLElement>(document, playerProbe).element
   if (!moviePlayer) return
   for (const type of ['mouseover', 'mousemove', 'mouseenter']) {
+    if (!moviePlayer.isConnected || getCurrentYouTubeVideoId() !== videoId) return
     moviePlayer.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, composed: true }))
   }
 }
@@ -35,11 +42,10 @@ const revealPlayerControls = () => {
 export const hasArchiveNativeOpenControl = () => collectArchiveChatControls().canOpen
 
 export const openArchiveNativeChatPanel = () => {
-  // The sidebar control is a toggle: do not close a chat already marked open.
-  const currentHost = getCurrentLiveChatHost()
-  if (isNativeChatMarkedExpanded() && currentHost && hasCurrentNonBlankNativeChatIframe() && isNativeChatHostVisible(currentHost)) {
-    return false
-  }
+  // Every candidate is a toggle. Validate identity and open state again after
+  // dispatching page events, which can navigate or open chat synchronously.
+  const videoId = getCurrentYouTubeVideoId()
+  if (!videoId || isNativeChatAlreadyOpen()) return false
 
   const sidebar = collectArchiveChatControls().sidebar?.element
   if (sidebar?.isConnected) {
@@ -47,12 +53,14 @@ export const openArchiveNativeChatPanel = () => {
     return true
   }
 
-  revealPlayerControls()
-  // Revealing controls can synchronously replace YouTube's DOM. Observe again
-  // at the action boundary rather than clicking a previously captured element.
-  const playerControl = collectArchiveChatControls().player?.element
-  if (playerControl?.isConnected) {
-    playerControl.click()
+  revealPlayerControls(videoId)
+  if (getCurrentYouTubeVideoId() !== videoId || isNativeChatAlreadyOpen()) return false
+
+  // Revealing controls can also create a sidebar target. Preserve the same
+  // candidate priority as observation rather than using a stale player target.
+  const control = collectArchiveChatControls().native?.element
+  if (control?.isConnected) {
+    control.click()
     return true
   }
   const host = getCurrentLiveChatHost() as YouTubeLiveChatFrameElement | null

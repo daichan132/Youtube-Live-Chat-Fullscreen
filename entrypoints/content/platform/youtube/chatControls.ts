@@ -20,18 +20,17 @@ const getButtonLabelText = (element: HTMLElement) =>
 const isChatLabel = (label: string) => label.includes('chat') || label.includes('チャット')
 const isReplayLabel = (label: string) => label.includes('replay') || label.includes('リプレイ')
 
-const isStructurallyLinkedToChat = (element: HTMLElement, host: HTMLElement | null) => {
-  if (!host) return false
+// An explicit relationship is authoritative. A familiar label must not turn
+// a stale or unrelated aria-controls target into the current video's chat.
+export const isChatControl = (element: HTMLElement, host = getCurrentLiveChatHost()) => {
   const controlledIds = (element.getAttribute('aria-controls') ?? '').split(/\s+/).filter(Boolean)
+  if (controlledIds.length === 0) return isChatLabel(getButtonLabelText(element))
+  if (!host) return false
   return controlledIds.some(id => {
     const controlled = element.ownerDocument.getElementById(id)
     return Boolean(controlled && (controlled === host || controlled.contains(host) || host.contains(controlled)))
   })
 }
-
-// Prefer structural relationships; localized label recognition is only a fallback.
-export const isChatControl = (element: HTMLElement, host = getCurrentLiveChatHost()) =>
-  isStructurallyLinkedToChat(element, host) || isChatLabel(getButtonLabelText(element))
 
 const isControlVisible = (element: HTMLElement) => {
   if (element.hasAttribute('hidden') || element.getAttribute('aria-hidden') === 'true') return false
@@ -44,12 +43,14 @@ const collectControls = (probe: SelectorProbe, host: HTMLElement | null, require
   const controls: ArchiveChatControl[] = []
   for (const [index, selector] of probe.selectors.entries()) {
     for (const target of document.querySelectorAll<HTMLElement>(selector)) {
-      // Keep clickable targets restricted to supported YouTube controls.
-      const element = target.matches(clickableSelector) ? target : target.querySelector<HTMLElement>(clickableSelector)
+      // Resolve an icon-button wrapper to its actual control. Otherwise a
+      // disabled child skipped by one selector could reappear as its wrapper.
+      const element = target.matches('button')
+        ? target
+        : (target.querySelector<HTMLElement>(clickableSelector) ?? (target.matches(clickableSelector) ? target : null))
       if (!element || seen.has(element)) continue
       seen.add(element)
-      if (element instanceof HTMLButtonElement && element.disabled) continue
-      if (element.getAttribute('aria-disabled') === 'true') continue
+      if (element.matches(':disabled') || element.closest('[aria-disabled="true"], [inert]')) continue
       const parentHost = element.closest<HTMLElement>('ytd-live-chat-frame')
       if (parentHost ? !isChatHostForCurrentVideo(parentHost) : !host) continue
       if (requireChatLabel && !isChatControl(element, host)) continue
@@ -79,7 +80,8 @@ export const collectArchiveChatControls = () => {
   const sidebar = preferVisible(sidebarControls)
   const player = preferVisible(playerControls)
   const native = sidebar ?? player
-  const replay = preferVisible(sidebarControls.filter(control => control.replay)) ?? preferVisible(playerControls.filter(control => control.replay))
+  const replay =
+    preferVisible(sidebarControls.filter(control => control.replay)) ?? preferVisible(playerControls.filter(control => control.replay))
   return {
     sidebar,
     player,
