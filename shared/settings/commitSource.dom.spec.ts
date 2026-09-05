@@ -10,7 +10,9 @@ const observeLocale = () => {
   return { repository, onLocale }
 }
 
-beforeEach(async () => { await chrome.storage.local.clear() })
+beforeEach(async () => {
+  await chrome.storage.local.clear()
+})
 afterEach(() => {
   for (const unwatch of unwatchers.splice(0)) unwatch()
   vi.restoreAllMocks()

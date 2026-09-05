@@ -56,8 +56,10 @@ afterEach(() => {
 describe('YouTube archive control observation', () => {
   it('prefers a laid-out control and carries provenance without losing separate replay evidence', () => {
     const host = createHost()
-    const replay = sidebarButton(host, 'Show chat replay')
     const visible = sidebarButton(host, 'Show chat')
+    const replay = document.createElement('button')
+    replay.setAttribute('aria-label', 'Show chat replay')
+    visible.parentElement?.appendChild(replay)
     giveLayoutBox(visible)
 
     const result = collectArchiveChatControls()
@@ -104,7 +106,8 @@ describe('YouTube archive control observation', () => {
   it('retains replay labels on the icon wrapper while clicking its inner button', () => {
     const host = createHost()
     host.innerHTML = '<div id="show-hide-button"><yt-icon-button aria-label="Show chat replay"><button></button></yt-icon-button></div>'
-    const button = host.querySelector('button')!
+    const button = host.querySelector('button')
+    if (!button) throw new Error('Missing test button')
     const click = vi.spyOn(button, 'click')
 
     expect(isChatControl(button)).toBe(true)

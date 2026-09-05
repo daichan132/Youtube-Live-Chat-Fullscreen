@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
 import { APPEARANCE_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
-import { chatSettingsStateAtom, editorSessionStateAtom, EMPTY_MESSAGES, globalSettingsStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 

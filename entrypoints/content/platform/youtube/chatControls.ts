@@ -22,7 +22,9 @@ const metadataElements = (element: HTMLElement) => {
 const getButtonLabelText = (element: HTMLElement) =>
   metadataElements(element)
     .map(target =>
-      ['aria-label', 'title', 'data-title-no-tooltip', 'data-tooltip-text'].map(attribute => target.getAttribute(attribute) ?? '').join(' '),
+      ['aria-label', 'title', 'data-title-no-tooltip', 'data-tooltip-text']
+        .map(attribute => target.getAttribute(attribute) ?? '')
+        .join(' '),
     )
     .join(' ')
     .toLowerCase()
@@ -59,7 +61,9 @@ const collectControls = (probe: SelectorProbe, host: HTMLElement | null, require
       // disabled child skipped by one selector could reappear as its wrapper.
       const element = target.matches('button')
         ? target
-        : (target.querySelector<HTMLElement>(clickableSelector) ?? (target.matches(clickableSelector) ? target : null))
+        : (target.querySelector<HTMLElement>('button') ??
+          target.querySelector<HTMLElement>(clickableSelector) ??
+          (target.matches(clickableSelector) ? target : null))
       if (!element || seen.has(element)) continue
       seen.add(element)
       const parentHost = element.closest<HTMLElement>('ytd-live-chat-frame')

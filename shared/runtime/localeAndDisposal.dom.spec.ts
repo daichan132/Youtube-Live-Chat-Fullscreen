@@ -116,9 +116,7 @@ describe('locale request and runtime disposal boundaries', () => {
 
   it('keeps a newer local choice when an older external load finishes', async () => {
     const japanese = deferred<LocaleMessages>()
-    const { runtime, emitLocale } = await createSession(locale =>
-      locale === 'ja' ? japanese.promise : Promise.resolve(messages(locale)),
-    )
+    const { runtime, emitLocale } = await createSession(locale => (locale === 'ja' ? japanese.promise : Promise.resolve(messages(locale))))
     emitLocale('ja')
     await runtime.setLocale('fr')
     japanese.resolve(messages('ja'))

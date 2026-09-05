@@ -8,19 +8,20 @@ import type { ChatIframeLease } from './resources/ChatIframeLease'
 
 const scopes: SessionScope[] = []
 const runtimes: ChatRuntimeImpl[] = []
-const makeLease = (state: ChatIframeLease['state'] = 'attached') => ({
-  generation: 1,
-  iframe: document.createElement('iframe'),
-  videoId: 'cleanup-video',
-  kind: 'borrowed-live' as const,
-  ownership: 'borrowed' as const,
-  state,
-  attach: vi.fn(),
-  captureDocumentStyle: vi.fn(() => true),
-  reconcile: vi.fn(),
-  release: vi.fn(),
-  abandonRestore: vi.fn(),
-}) satisfies ChatIframeLease
+const makeLease = (state: ChatIframeLease['state'] = 'attached') =>
+  ({
+    generation: 1,
+    iframe: document.createElement('iframe'),
+    videoId: 'cleanup-video',
+    kind: 'borrowed-live' as const,
+    ownership: 'borrowed' as const,
+    state,
+    attach: vi.fn(),
+    captureDocumentStyle: vi.fn(() => true),
+    reconcile: vi.fn(),
+    release: vi.fn(),
+    abandonRestore: vi.fn(),
+  }) satisfies ChatIframeLease
 
 const decisionFor = (lease: ChatIframeLease): Extract<ChatDecision, { kind: 'available' }> => ({
   kind: 'available',
@@ -69,7 +70,12 @@ afterEach(() => {
 describe('resource cleanup failure isolation', () => {
   it('returns the iframe even when chat chrome cleanup throws', () => {
     const lease = makeLease()
-    const chrome = { sync: vi.fn(() => { throw new Error('chrome failed') }), release: vi.fn() }
+    const chrome = {
+      sync: vi.fn(() => {
+        throw new Error('chrome failed')
+      }),
+      release: vi.fn(),
+    }
     const resources = new ResourceReconciler({ createLease: () => lease, chatChrome: chrome })
     resources.createIframe(decisionFor(lease), 1)
 
@@ -80,16 +86,27 @@ describe('resource cleanup failure isolation', () => {
 
   it('attempts layout, presentation and chrome cleanup after iframe release fails', () => {
     const lease = makeLease()
-    lease.release.mockImplementationOnce(() => { throw new Error('iframe failed') })
+    lease.release.mockImplementationOnce(() => {
+      throw new Error('iframe failed')
+    })
     const layout = { reconcile: vi.fn(), release: vi.fn() }
     const presentation = { sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })), clear: vi.fn() }
     const chrome = { sync: vi.fn(), release: vi.fn() }
     const resources = new ResourceReconciler({ createLease: () => lease, createLayout: () => layout, presentation, chatChrome: chrome })
     const scope = createSessionScope(1)
     scopes.push(scope)
-    resources.reconcilePlan({
-      monitoring: 'active', presentation: 'preserve', chat: { kind: 'preserve' }, layout: 'floating', retry: { kind: 'none' },
-    }, null, scope, vi.fn())
+    resources.reconcilePlan(
+      {
+        monitoring: 'active',
+        presentation: 'preserve',
+        chat: { kind: 'preserve' },
+        layout: 'floating',
+        retry: { kind: 'none' },
+      },
+      null,
+      scope,
+      vi.fn(),
+    )
     resources.createIframe(decisionFor(lease), 1)
 
     expect(() => resources.clear()).toThrow('iframe failed')
@@ -104,7 +121,9 @@ describe('resource cleanup failure isolation', () => {
   it('does not abandon later restoration cleanup when an earlier lease throws', () => {
     const first = makeLease('restoring')
     const second = makeLease('restoring')
-    first.abandonRestore.mockImplementationOnce(() => { throw new Error('restore failed') })
+    first.abandonRestore.mockImplementationOnce(() => {
+      throw new Error('restore failed')
+    })
     const createLease = vi.fn().mockReturnValueOnce(first).mockReturnValueOnce(second)
     const resources = new ResourceReconciler({ createLease, chatChrome: { sync: vi.fn(), release: vi.fn() } })
     resources.createIframe(decisionFor(first), 1)
@@ -125,13 +144,18 @@ describe('resource cleanup failure isolation', () => {
     const clear = vi.fn()
     const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
     const removeListener = vi.spyOn(document, 'removeEventListener')
-    const runtime = new ChatRuntimeImpl({ readObservation, portalHost: { sync: () => ({ overlayRoot: null, switchContainer: null }), clear } })
+    const runtime = new ChatRuntimeImpl({
+      readObservation,
+      portalHost: { sync: () => ({ overlayRoot: null, switchContainer: null }), clear },
+    })
     runtimes.push(runtime)
     runtime.setEnabled(true)
     runtime.start()
     vi.advanceTimersByTime(20)
     const reads = readObservation.mock.calls.length
-    clear.mockImplementation(() => { throw new Error('page node cleanup failed') })
+    clear.mockImplementation(() => {
+      throw new Error('page node cleanup failed')
+    })
 
     expect(() => runtime.stop()).not.toThrow()
     expect(disconnect).toHaveBeenCalled()
@@ -140,19 +164,27 @@ describe('resource cleanup failure isolation', () => {
     document.dispatchEvent(new Event('yt-navigate-finish'))
     vi.runAllTimers()
     expect(readObservation).toHaveBeenCalledTimes(reads)
-    expect(runtime.getDiagnosticReport().runtime).toMatchObject({ failureCode: 'UNEXPECTED_RUNTIME_ERROR', failureStage: 'apply-resources' })
+    expect(runtime.getDiagnosticReport().runtime).toMatchObject({
+      failureCode: 'UNEXPECTED_RUNTIME_ERROR',
+      failureStage: 'apply-resources',
+    })
   })
 
   it('can restart after a transient teardown failure without losing its diagnostic', () => {
     vi.useFakeTimers()
     const readObservation = vi.fn(observation)
     const clear = vi.fn()
-    const runtime = new ChatRuntimeImpl({ readObservation, portalHost: { sync: () => ({ overlayRoot: null, switchContainer: null }), clear } })
+    const runtime = new ChatRuntimeImpl({
+      readObservation,
+      portalHost: { sync: () => ({ overlayRoot: null, switchContainer: null }), clear },
+    })
     runtimes.push(runtime)
     runtime.start()
     vi.advanceTimersByTime(20)
     const generation = runtime.getGeneration()
-    clear.mockImplementationOnce(() => { throw new Error('transient cleanup failure') })
+    clear.mockImplementationOnce(() => {
+      throw new Error('transient cleanup failure')
+    })
 
     expect(() => runtime.restart()).not.toThrow()
     expect(runtime.getDiagnosticReport().runtime.failureStage).toBe('apply-resources')

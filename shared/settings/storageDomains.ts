@@ -2,13 +2,7 @@ import { storage } from 'wxt/utils/storage'
 import type { LocaleCode } from '@/shared/i18n/language'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatProfile, normalizePresets } from './normalizeSettings'
-import {
-  APPEARANCE_STORAGE_KEY,
-  ENABLED_STORAGE_KEY,
-  GEOMETRY_STORAGE_KEY,
-  LOCALE_STORAGE_KEY,
-  THEME_STORAGE_KEY,
-} from './storageKeys'
+import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from './storageKeys'
 
 export { DEFAULT_GLOBAL_SETTINGS } from './defaults'
 

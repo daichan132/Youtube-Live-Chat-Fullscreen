@@ -14,8 +14,8 @@ import {
   PERSISTENCE_DOMAINS,
   type PersistenceDomain,
   type SettingsSnapshot,
-  settingsItems,
   type StoredEnvelope,
+  settingsItems,
 } from './storageDomains'
 
 export type { ChatAppearanceSettings, PersistenceDomain, SettingsSnapshot, StoredEnvelope } from './storageDomains'
@@ -271,11 +271,7 @@ export const createSettingsRepository = (
         }
         for (const [index, domain] of IMPORT_DOMAINS.entries()) {
           const stored = envelopes[index]
-          if (
-            !stored ||
-            localSequences.get(domain) !== sequences.get(domain) ||
-            supersessionVersions.get(domain) !== versions.get(domain)
-          )
+          if (!stored || localSequences.get(domain) !== sequences.get(domain) || supersessionVersions.get(domain) !== versions.get(domain))
             continue
           // Deliver while the read is still current, not via a later caller's
           // unconditional snapshot replacement. Newer intents keep their UI.
