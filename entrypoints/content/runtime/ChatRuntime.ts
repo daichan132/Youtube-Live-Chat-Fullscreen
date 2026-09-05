@@ -2,7 +2,7 @@ import { browser } from 'wxt/browser'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import type { ChatProfile } from '@/shared/settings/model'
 import { createSessionScope, type SessionScope } from '../bootstrap/SessionScope'
-import type { RuntimeFailureCode } from '../diagnostics/failureCodes'
+import type { RuntimeFailureCode, RuntimeFailureStage } from '../diagnostics/failureCodes'
 import { type DiagnosticEventName, RuntimeTrace } from '../diagnostics/RuntimeTrace'
 import {
   createSanitizedDiagnosticReport,
@@ -111,6 +111,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private lastObservationSignature = ''
   private lastPlanSignature = ''
   private lastFailure: RuntimeFailureCode | undefined
+  private lastFailureStage: RuntimeFailureStage | undefined
+  private operationStage: RuntimeFailureStage = 'observe-page'
   private unexpectedRecoveryAttempts = 0
 
   constructor(
@@ -161,6 +163,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     this.lastObservationSignature = ''
     this.lastPlanSignature = ''
     this.lastFailure = undefined
+    this.lastFailureStage = undefined
     this.unexpectedRecoveryAttempts = 0
     this.scheduleReconcile()
   }
@@ -187,6 +190,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
       state: this.model.state,
       leases: this.resources.getDiagnosticSnapshot(),
       failureCode: this.lastFailure,
+      failureStage: this.lastFailureStage,
       events: this.trace.snapshot(),
     })
   }
@@ -320,6 +324,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
       : null
 
   private ensureSessionScope = (observation: PageObservation) => {
+    this.operationStage = 'session-lifecycle'
     const { evidence, targets } = observation
     const nextIdentity = {
       videoId: evidence.videoId,
@@ -344,6 +349,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private disposeSessionScope = () => {
+    this.operationStage = 'session-lifecycle'
     this.sessionScope?.dispose()
     this.sessionScope = null
     this.sessionIdentity = null
@@ -357,6 +363,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
       this.unexpectedRecoveryAttempts = 0
     } catch {
       this.lastFailure = 'UNEXPECTED_RUNTIME_ERROR'
+      // Capture before recovery changes the operation stage. Only fixed
+      // phase identifiers enter diagnostics, never raw exception contents.
+      this.lastFailureStage = this.operationStage
       this.recordTrace('failed', this.lastFailure)
       this.cancelScheduledFrame()
       try {
@@ -379,12 +388,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
 
   private reconcile = () => {
     if (!this.started) return
+    this.operationStage = 'observe-page'
     let observation = this.readObservation(this.resources.lease?.iframe ?? null)
     const sessionStarted = this.ensureSessionScope(observation)
     observation = withObservationGeneration(observation, this.generation)
     this.lastObservation = observation
     if (sessionStarted) this.recordTrace('session-started')
     this.recordObservation(observation)
+    this.operationStage = 'resolve-decision'
     const decision = this.resolveDecision(observation)
     if (decision.kind === 'pending') this.lastFailure = 'CHAT_SOURCE_PENDING'
     else if (decision.kind === 'unavailable') this.lastFailure = 'CHAT_SOURCE_UNAVAILABLE'
@@ -404,6 +415,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private applyModelTransition = (transition: RuntimeModelTransition, observation: PageObservation | null) => {
+    this.operationStage = 'apply-resources'
     const previousStatus = this.model.state.status
     const previousResources = this.resources.getDiagnosticSnapshot()
     this.model = transition.model
@@ -437,6 +449,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private applyRuntimeOperations = (plan: RuntimePlan) => {
+    this.operationStage = 'apply-resources'
     if (plan.monitoring === 'active') this.ensureObserver()
     else if (plan.monitoring === 'inactive') this.disconnectObserver()
     if (plan.retry.kind === 'none') this.cancelRetry()
@@ -448,6 +461,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private publish = (next: RuntimeView) => {
+    this.operationStage = 'publish-view'
     if (isSameView(this.view, next)) return
     this.view = next
     for (const listener of this.listeners) listener()
@@ -508,6 +522,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private updateFailure = (previousStatus: RuntimeState['status'], observation: PageObservation | null) => {
     if (this.model.state.status === 'active') {
       this.lastFailure = undefined
+      this.lastFailureStage = undefined
       return
     }
     if (this.model.state.status === 'unavailable' && (previousStatus === 'searching' || previousStatus === 'recovering')) {

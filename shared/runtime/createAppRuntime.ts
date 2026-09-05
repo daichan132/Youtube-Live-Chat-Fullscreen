@@ -238,14 +238,8 @@ export const createAppRuntime = async (
       const current = { globalSetting: store.get(globalSettingsStateAtom), chatSettings: store.get(chatSettingsStateAtom) }
       const normalized = normalizeSettingsBackup(input, current)
       if (!normalized) throw new Error('Unsupported settings backup')
-      await repository.replaceSettings(
-        {
-          ytdLiveChat: Boolean(normalized.globalSetting.ytdLiveChat),
-          themeMode: (normalized.globalSetting.themeMode as 'light' | 'dark' | 'system') ?? 'system',
-        },
-        normalized.chatSettings,
-      )
-      applyExternal(() => store.set(replaceImportedSettingsAtom, normalized))
+      await repository.replaceSettings(normalized.globalSetting, normalized.chatSettings)
+      if (!disposed) applyExternal(() => store.set(replaceImportedSettingsAtom, normalized))
     },
     retryPersistence: () => repository.retryFailed(),
     dispose() {

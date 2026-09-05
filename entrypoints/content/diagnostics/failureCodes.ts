@@ -12,3 +12,15 @@ export const RUNTIME_FAILURE_CODES = [
 ] as const
 
 export type RuntimeFailureCode = (typeof RUNTIME_FAILURE_CODES)[number]
+
+// Fixed operation names only. Never derive these values from exception text,
+// DOM content, video identifiers or URLs.
+export const RUNTIME_FAILURE_STAGES = [
+  'observe-page',
+  'session-lifecycle',
+  'resolve-decision',
+  'apply-resources',
+  'publish-view',
+] as const
+
+export type RuntimeFailureStage = (typeof RUNTIME_FAILURE_STAGES)[number]
