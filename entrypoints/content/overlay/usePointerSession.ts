@@ -50,7 +50,7 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
     window.removeEventListener('pointermove', handlePointerMove)
     window.removeEventListener('pointerup', handlePointerUp)
     window.removeEventListener('pointercancel', handlePointerCancel)
-    window.removeEventListener('keydown', handleKeyDown)
+    window.removeEventListener('keydown', handleKeyDown, true)
     window.removeEventListener('blur', handleWindowBlur)
     active?.captureTarget.removeEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
   }, [])
@@ -90,7 +90,10 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   )
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape') finish(false)
+      if (event.key !== 'Escape' || event.isComposing || !activeRef.current) return
+      event.preventDefault()
+      event.stopPropagation()
+      finish(false)
     },
     [finish],
   )
@@ -125,7 +128,7 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
       window.addEventListener('pointermove', handlePointerMove)
       window.addEventListener('pointerup', handlePointerUp)
       window.addEventListener('pointercancel', handlePointerCancel)
-      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('keydown', handleKeyDown, true)
       window.addEventListener('blur', handleWindowBlur)
       try {
         captureTarget.setPointerCapture?.(event.pointerId)

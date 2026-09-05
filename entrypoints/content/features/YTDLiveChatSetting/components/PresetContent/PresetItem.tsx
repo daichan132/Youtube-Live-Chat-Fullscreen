@@ -46,6 +46,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const displayTitle = getPresetDisplayTitle(preset, t)
   const [nameDraft, setNameDraft] = useState(displayTitle)
   const nameDraftRef = useRef(displayTitle)
+  const nameAtFocusRef = useRef(displayTitle)
   const editingNameRef = useRef(false)
   // Every row carries the same three controls, so the name is what tells them apart when read aloud.
   // A custom preset whose name the user cleared falls back to the label new presets are born with.
@@ -101,6 +102,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
         value={isBuiltIn ? displayTitle : nameDraft}
         onFocus={() => {
           editingNameRef.current = true
+          nameAtFocusRef.current = displayTitle
         }}
         onChange={event => {
           nameDraftRef.current = event.target.value
@@ -108,14 +110,22 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
         }}
         onBlur={() => {
           editingNameRef.current = false
-          commitName()
+          if (nameDraftRef.current === nameAtFocusRef.current) {
+            // Merely focusing the field must not overwrite an external rename.
+            nameDraftRef.current = displayTitle
+            setNameDraft(displayTitle)
+          } else {
+            commitName()
+          }
         }}
         onKeyDown={event => {
+          if (event.nativeEvent.isComposing || isBuiltIn) return
           if (event.key === 'Enter') {
             event.preventDefault()
             event.currentTarget.blur()
           } else if (event.key === 'Escape') {
             event.preventDefault()
+            event.stopPropagation()
             nameDraftRef.current = displayTitle
             setNameDraft(displayTitle)
             event.currentTarget.blur()

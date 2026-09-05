@@ -41,9 +41,16 @@ const getDeepActiveElement = () => {
 }
 
 const getFocusableElements = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
-    element => !element.hasAttribute('hidden') && !element.hasAttribute('inert') && element.getAttribute('aria-hidden') !== 'true',
-  )
+  Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(element => {
+    if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false
+    if (element.matches(':disabled') || element.closest('[hidden], [inert], [aria-hidden="true"]')) return false
+    const { visibility } = getComputedStyle(element)
+    if (visibility === 'hidden' || visibility === 'collapse') return false
+    for (let ancestor: HTMLElement | null = element; ancestor; ancestor = ancestor.parentElement) {
+      if (getComputedStyle(ancestor).display === 'none') return false
+    }
+    return true
+  })
 
 const getSiblingElements = (parent: ParentNode, branch: Element) =>
   Array.from(parent.children).filter((element): element is HTMLElement => element instanceof HTMLElement && element !== branch)
@@ -125,12 +132,14 @@ export const Modal = ({
     const previousFocus = lifecycleRef.current.shouldReturnFocusAfterClose ? getDeepActiveElement() : null
     modalStack.push(modalId)
     const handleDocumentKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape' || modalStack[modalStack.length - 1] !== modalId) return
+      if (event.defaultPrevented || event.isComposing || event.key !== 'Escape' || modalStack[modalStack.length - 1] !== modalId) return
       event.preventDefault()
       event.stopPropagation()
       closeRef.current?.()
     }
-    document.addEventListener('keydown', handleDocumentKeyDown, true)
+    // Bubble after child controls have had a chance to consume Escape. This also
+    // covers the interval before deferred focus enters the dialog.
+    document.addEventListener('keydown', handleDocumentKeyDown)
 
     const overlay = overlayRef.current
     const restoreBackground = overlay ? makeBackgroundInert(overlay) : () => {}
@@ -144,7 +153,7 @@ export const Modal = ({
     }
 
     return () => {
-      document.removeEventListener('keydown', handleDocumentKeyDown, true)
+      document.removeEventListener('keydown', handleDocumentKeyDown)
       if (focusFrameRef.current !== null) cancelAnimationFrame(focusFrameRef.current)
       focusFrameRef.current = null
       restoreBackground()
@@ -158,7 +167,14 @@ export const Modal = ({
   }, [isOpen, parent])
 
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (modalStack[modalStack.length - 1] !== modalIdRef.current || event.key !== 'Tab') return
+    if (event.defaultPrevented || event.nativeEvent.isComposing || modalStack[modalStack.length - 1] !== modalIdRef.current) return
+    if (event.key === 'Escape') {
+      event.preventDefault()
+      event.stopPropagation()
+      closeRef.current?.()
+      return
+    }
+    if (event.key !== 'Tab') return
 
     const content = contentRef.current
     if (!content) return

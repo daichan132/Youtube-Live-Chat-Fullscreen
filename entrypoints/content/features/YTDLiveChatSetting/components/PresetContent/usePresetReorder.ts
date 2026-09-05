@@ -28,6 +28,7 @@ export const usePresetReorder = ({
   const [previewIds, setPreviewIds] = useState(ids)
   const [liveMessage, setLiveMessage] = useState('')
   const layoutsRef = useRef<ItemLayout[]>([])
+  const measuredScrollTopRef = useRef(0)
   const startIdsRef = useRef(ids)
   const activeIdRef = useRef<string | null>(null)
   const previewIdsRef = useRef(ids)
@@ -45,13 +46,6 @@ export const usePresetReorder = ({
   describeMoveRef.current = describeMove
   onCommitRef.current = onCommit
 
-  useEffect(() => {
-    if (!activeIdRef.current) {
-      setPreviewIds(ids)
-      previewIdsRef.current = ids
-    }
-  }, [ids])
-
   const finish = useCallback((commit: boolean) => {
     const nextActive = activeIdRef.current
     if (!nextActive) return
@@ -59,6 +53,7 @@ export const usePresetReorder = ({
     const pointerId = activePointerIdRef.current
     const captureTarget = captureTargetRef.current
     const captureAcquired = captureAcquiredRef.current
+    const scrollContainer = scrollContainerRef.current
     activeIdRef.current = null
     pointerGestureRef.current = false
     activePointerIdRef.current = null
@@ -74,8 +69,9 @@ export const usePresetReorder = ({
     window.removeEventListener('pointermove', handleMove)
     window.removeEventListener('pointerup', handleUp)
     window.removeEventListener('pointercancel', handleCancel)
-    window.removeEventListener('keydown', handleKeyDown)
+    window.removeEventListener('keydown', handleKeyDown, true)
     window.removeEventListener('blur', handleWindowBlur)
+    scrollContainer?.removeEventListener('scroll', handleScroll)
     captureTarget?.removeEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
 
     if (captureTarget && pointerId !== null && captureAcquired) {
@@ -94,7 +90,18 @@ export const usePresetReorder = ({
     }
   }, [])
 
+  useEffect(() => {
+    // An imported or externally edited list supersedes an in-progress reorder.
+    // Cancelling must restore the latest list, not the gesture's stale snapshot.
+    if (activeIdRef.current && hasOrderChanged(startIdsRef.current, ids)) finish(false)
+    if (!activeIdRef.current) {
+      previewIdsRef.current = ids
+      setPreviewIds(ids)
+    }
+  }, [finish, ids])
+
   const measureLayouts = useCallback(() => {
+    measuredScrollTopRef.current = scrollContainerRef.current?.scrollTop ?? 0
     const root = scrollContainerRef.current ?? document
     const elements = [...root.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
     layoutsRef.current = elements.map(element => {
@@ -169,12 +176,21 @@ export const usePresetReorder = ({
     autoScrollFrameRef.current = window.requestAnimationFrame(runAutoScroll)
   }, [runAutoScroll])
 
+  const handleScroll = useCallback(() => {
+    const container = scrollContainerRef.current
+    const clientY = pointerClientYRef.current
+    if (!pointerGestureRef.current || !container || clientY === null || container.scrollTop === measuredScrollTopRef.current) return
+    measureLayouts()
+    updatePointerPreview(clientY)
+    requestAutoScrollFrame()
+  }, [measureLayouts, requestAutoScrollFrame, updatePointerPreview])
+
   const handleMove = useCallback(
     (event: PointerEvent) => {
-      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current || event.clientY === pointerClientYRef.current) return
       pointerClientYRef.current = event.clientY
       // Row slots are stable during ordinary pointer movement. Re-read layout
-      // only after auto-scroll actually changes their viewport positions.
+      // only after scrolling actually changes their viewport positions.
       updatePointerPreview(event.clientY)
       requestAutoScrollFrame()
     },
@@ -184,9 +200,12 @@ export const usePresetReorder = ({
   const handleUp = useCallback(
     (event: PointerEvent) => {
       if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current) return
+      // Pointer-up can carry a final position without a preceding pointer-move.
+      // A click with no movement must not reorder the row at its own midpoint.
+      if (event.clientY !== pointerClientYRef.current) updatePointerPreview(event.clientY)
       finish(true)
     },
-    [finish],
+    [finish, updatePointerPreview],
   )
   const handleCancel = useCallback(
     (event: PointerEvent) => {
@@ -197,12 +216,15 @@ export const usePresetReorder = ({
   )
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
-      if (event.key === 'Escape') finish(false)
+      if (event.key !== 'Escape' || event.isComposing || !activeIdRef.current) return
+      event.preventDefault()
+      event.stopPropagation()
+      finish(false)
     },
     [finish],
   )
   const handleWindowBlur = useCallback(() => {
-    if (pointerGestureRef.current) finish(false)
+    finish(false)
   }, [finish])
   const handleLostPointerCapture = useCallback(
     (event: PointerEvent) => {
@@ -231,8 +253,9 @@ export const usePresetReorder = ({
       window.addEventListener('pointermove', handleMove)
       window.addEventListener('pointerup', handleUp)
       window.addEventListener('pointercancel', handleCancel)
-      window.addEventListener('keydown', handleKeyDown)
+      window.addEventListener('keydown', handleKeyDown, true)
       window.addEventListener('blur', handleWindowBlur)
+      scrollContainerRef.current?.addEventListener('scroll', handleScroll, { passive: true })
       try {
         captureTarget.setPointerCapture?.(event.pointerId)
         captureAcquiredRef.current = typeof captureTarget.setPointerCapture === 'function'
@@ -242,7 +265,17 @@ export const usePresetReorder = ({
       requestAutoScrollFrame()
       event.preventDefault()
     },
-    [handleCancel, handleKeyDown, handleLostPointerCapture, handleMove, handleUp, handleWindowBlur, measureLayouts, requestAutoScrollFrame],
+    [
+      handleCancel,
+      handleKeyDown,
+      handleLostPointerCapture,
+      handleMove,
+      handleScroll,
+      handleUp,
+      handleWindowBlur,
+      measureLayouts,
+      requestAutoScrollFrame,
+    ],
   )
 
   useEffect(() => () => finish(false), [finish])
@@ -252,7 +285,8 @@ export const usePresetReorder = ({
     startIdsRef.current = previewIdsRef.current
     activeIdRef.current = id
     setActiveId(id)
-    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keydown', handleKeyDown, true)
+    window.addEventListener('blur', handleWindowBlur)
   }
 
   const moveByKeyboard = (id: string, direction: 'up' | 'down') => {
@@ -271,6 +305,7 @@ export const usePresetReorder = ({
   const getHandleProps = (id: string) => ({
     onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => begin(id, event),
     onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (event.nativeEvent.isComposing) return
       if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Enter' && event.key !== ' ') return
       event.preventDefault()
       const current = previewIdsRef.current
