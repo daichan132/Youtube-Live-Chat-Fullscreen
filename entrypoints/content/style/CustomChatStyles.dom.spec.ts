@@ -1,72 +1,81 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { CustomChatStyles } from './CustomChatStyles'
 
-const chatDocument = () => document.implementation.createHTMLDocument('chat fixture')
-describe('owned user stylesheet', () => {
-  it('waits for binding and updates one owned style rather than adding one per update', () => {
+const makeDocument = () => document.implementation.createHTMLDocument('Chat')
+const userStyle = (doc: Document) => doc.querySelector<HTMLStyleElement>('[data-ylc-user-css]')
+
+describe('CustomChatStyles document ownership', () => {
+  it('reuses its node and does not change identical text', () => {
+    const doc = makeDocument()
     const styles = new CustomChatStyles()
-    styles.setCss('body { color: red }')
-    const doc = chatDocument()
-    styles.bind(doc)
-    const first = doc.head.querySelector('style[data-ylc-user-css]')
-    styles.setCss('body { color: blue }')
-    styles.bind(doc)
-    expect(doc.head.querySelectorAll('style[data-ylc-user-css]')).toHaveLength(1)
-    expect(first?.textContent).toBe('body { color: blue }')
-    expect(doc.head.querySelector('style')).toBe(first)
+    styles.update(doc, '#message { color: red; }')
+    const node = userStyle(doc)
+    const writes = vi.spyOn(node as HTMLStyleElement, 'textContent', 'set')
+    styles.update(doc, '#message { color: red; }')
+    expect(writes).not.toHaveBeenCalled()
+    styles.update(doc, '#message { color: blue; }')
+    expect(userStyle(doc)).toBe(node)
+    expect(doc.querySelectorAll('[data-ylc-user-css]')).toHaveLength(1)
+    expect(node?.textContent).toContain('blue')
+    styles.release()
   })
-  it('cleans the old document when an iframe has navigated to another document', () => {
+
+  it('removes the previous document node and releases repeatedly', () => {
+    const before = makeDocument()
+    const after = makeDocument()
     const styles = new CustomChatStyles()
-    const before = chatDocument()
-    const after = chatDocument()
-    styles.setCss('body{}')
-    styles.bind(before)
-    styles.bind(after)
-    expect(before.head.querySelector('style')).toBeNull()
-    expect(after.head.querySelector('style')?.textContent).toBe('body{}')
+    styles.update(before, 'body { color: red; }')
+    styles.update(after, 'body { color: blue; }')
+    expect(userStyle(before)).toBeNull()
+    expect(userStyle(after)?.textContent).toContain('blue')
     styles.release()
     styles.release()
-    expect(after.head.querySelector('style')).toBeNull()
+    expect(userStyle(after)).toBeNull()
   })
-  it('treats source as text, keeps at-rules at the beginning, and removes only its own node', () => {
+
+  it('never installs old content when changing documents and disabling', () => {
+    const before = makeDocument()
+    const after = makeDocument()
     const styles = new CustomChatStyles()
-    const doc = chatDocument()
+    styles.update(before, 'body { color: red; }')
+    const append = vi.spyOn(after.head, 'appendChild')
+    styles.update(after, '')
+    expect(append).not.toHaveBeenCalled()
+    expect(userStyle(before)).toBeNull()
+    expect(userStyle(after)).toBeNull()
+  })
+
+  it('removes its node even after head is removed and the style moved to body', () => {
+    const doc = makeDocument()
+    const styles = new CustomChatStyles()
+    styles.update(doc, 'body { color: red; }')
+    const node = userStyle(doc)
+    if (!node) throw new Error('Expected owned style')
+    doc.body.appendChild(node)
+    doc.head.remove()
+    styles.update(doc, '')
+    expect(node.isConnected).toBe(false)
+  })
+
+  it('releases an unavailable document without removing foreign styles', () => {
+    const doc = makeDocument()
     const foreign = doc.createElement('style')
     foreign.setAttribute('data-ylc-user-css', 'true')
     doc.head.appendChild(foreign)
-    const css = '@media (min-width: 1px) { body{} }\n/* </style><div>not HTML</div> */'
-    styles.setCss(css)
-    styles.bind(doc)
-    expect(doc.head.lastElementChild?.textContent).toBe(css)
-    expect(doc.querySelector('div')).toBeNull()
-    styles.setCss('')
-    expect(doc.head.children).toContain(foreign)
-    expect(doc.head.querySelectorAll('style')).toHaveLength(1)
+    const styles = new CustomChatStyles()
+    styles.update(doc, 'body { color: red; }')
+    styles.update(null, '')
+    expect(foreign.parentNode).toBe(doc.head)
+    expect(doc.querySelectorAll('[data-ylc-user-css]')).toHaveLength(1)
   })
-})
 
-it('removes the owned effect even when the document has no head', () => {
-  const doc = document.implementation.createHTMLDocument('chat')
-  const styles = new CustomChatStyles()
-  styles.setCss('body { color: red }')
-  styles.bind(doc)
-  const owned = doc.querySelector('[data-ylc-user-css]')
-  if (!owned) throw new Error('Expected owned stylesheet')
-  doc.body.appendChild(owned)
-  doc.head.remove()
-  styles.setCss('')
-  expect(owned.parentNode).toBeNull()
-})
-
-it('releases an inaccessible replacement without forgetting the requested CSS', () => {
-  const first = document.implementation.createHTMLDocument('first')
-  const next = document.implementation.createHTMLDocument('next')
-  const styles = new CustomChatStyles()
-  styles.setCss('body{}')
-  styles.bind(first)
-  styles.bind(null)
-  expect(first.querySelector('[data-ylc-user-css]')).toBeNull()
-  styles.bind(next)
-  expect(next.querySelector('[data-ylc-user-css]')?.textContent).toBe('body{}')
-  styles.release()
+  it('treats HTML-looking input as CSS text rather than markup', () => {
+    const doc = makeDocument()
+    const styles = new CustomChatStyles()
+    const source = '</style><script>window.bad = true</script>'
+    styles.update(doc, source)
+    expect(userStyle(doc)?.textContent).toBe(source)
+    expect(doc.querySelector('script')).toBeNull()
+    styles.release()
+  })
 })

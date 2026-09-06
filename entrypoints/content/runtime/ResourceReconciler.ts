@@ -8,6 +8,7 @@ import {
 } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
 import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
 import type { ChatProfile } from '@/shared/settings/model'
+import { CustomChatStyles } from '@/entrypoints/content/style/CustomChatStyles'
 import type { SessionScope } from '../bootstrap/SessionScope'
 import type { PageObservation, PageTargets } from '../platform/youtube/types'
 import type { ChatDecision } from './resolveChatDecision'
@@ -30,6 +31,8 @@ export type ResourceDiagnosticSnapshot = {
 }
 
 export class ResourceReconciler {
+  private readonly customStyles = new CustomChatStyles()
+  private customCss = ''
   private readonly presentation: PresentationLease
   private readonly chatChrome: ChatChromeLease
   private readonly createLease: (source: AvailableDecision['source'], videoId: string, generation: number) => ChatIframeLease
@@ -124,6 +127,16 @@ export class ResourceReconciler {
     }
   }
 
+  setCustomCss(css: string) {
+    const changed = this.customCss !== css
+    this.customCss = css
+    this.syncCustomStyles()
+    if (!changed) return
+    // CSS can change composer/header height without adding DOM nodes.
+    this.chatChrome.sync(null, 'inactive')
+    this.syncChatChrome()
+  }
+
   setProfile(profile: ChatProfile) {
     this.profile = profile
     if (this.iframeLease) {
@@ -158,14 +171,23 @@ export class ResourceReconciler {
     lease.attach(this.overlayContainer)
     if (this.loadListenerIframe !== lease.iframe) {
       this.clearLoadListener()
-      this.removeLoadListener = scope.listen(lease.iframe, 'load', onLoad)
+      this.removeLoadListener = scope.listen(lease.iframe, 'load', () => {
+        this.customStyles.release()
+        onLoad()
+      })
       this.loadListenerIframe = lease.iframe
     }
 
     const doc = getIframeDocument(lease.iframe)
-    if (!doc?.documentElement || !doc.head || !doc.body) return false
+    if (!doc?.documentElement || !doc.head || !doc.body) {
+      this.customStyles.release()
+      return false
+    }
     try {
-      if (doc.location?.href === 'about:blank' && !getIframeDocumentHref(lease.iframe)) return false
+      if (doc.location?.href === 'about:blank' && !getIframeDocumentHref(lease.iframe)) {
+        this.customStyles.release()
+        return false
+      }
     } catch {
       // Cross-origin access can throw; contentDocument remains enough.
     }
@@ -182,6 +204,7 @@ export class ResourceReconciler {
     const lease = this.iframeLease
     if (!lease) return
     try {
+      this.customStyles.release()
       this.clearLoadListener()
       this.chatChrome.sync(null, 'inactive')
     } finally {
@@ -199,6 +222,7 @@ export class ResourceReconciler {
     // Clear its reference only after success; diagnostics and a later bounded
     // recovery can still find owners that could not be released.
     const cleanups = [
+      () => this.customStyles.release(),
       () => this.releaseIframe(targets),
       () => this.abandonRestoring(),
       () => {
@@ -269,13 +293,20 @@ export class ResourceReconciler {
   private applyProfile(iframe: HTMLIFrameElement) {
     if (!this.profile) return false
     const doc = getIframeDocument(iframe)
-    if (!doc?.documentElement || !doc.head || !doc.body) return false
+    if (!doc?.documentElement || !doc.head || !doc.body) {
+      this.customStyles.release()
+      return false
+    }
     try {
-      if (doc.location?.href === 'about:blank') return false
+      if (doc.location?.href === 'about:blank') {
+        this.customStyles.release()
+        return false
+      }
     } catch {
       // A real document can deny location access; contentDocument remains enough.
     }
     applyChatProfileToDocument(doc, this.profile)
+    this.syncCustomStyles()
     return true
   }
 
@@ -285,6 +316,13 @@ export class ResourceReconciler {
     if (this.interaction === 'dragging' || this.interaction === 'resizing') return 'hold'
     if (this.interaction === 'hovering-chat') return 'expanded'
     return 'collapsed'
+  }
+
+  private syncCustomStyles() {
+    const doc = this.iframeLease ? getIframeDocument(this.iframeLease.iframe) : null
+    // The body marker is installed only after the borrowed document has been
+    // captured and the extension's standard styles have been initialized.
+    this.customStyles.update(doc?.body?.classList.contains(IFRAME_CHAT_BODY_CLASS) ? doc : null, this.customCss)
   }
 
   private syncChatChrome() {

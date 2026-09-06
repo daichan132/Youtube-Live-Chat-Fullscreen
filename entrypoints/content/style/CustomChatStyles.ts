@@ -1,45 +1,33 @@
-/** Own exactly one user stylesheet in the currently leased chat Document. */
+/** Own one stylesheet. The runtime owns the requested CSS and the active lease. */
 export class CustomChatStyles {
   private document: Document | null = null
   private element: HTMLStyleElement | null = null
-  private css = ''
 
-  setCss(css: string) {
-    const changed = this.css !== css
-    this.css = css
-    this.render()
-    return changed
-  }
-
-  bind(document: Document | null) {
+  update(document: Document | null, css: string) {
     if (this.document !== document) {
       this.release()
       this.document = document
     }
-    this.render()
+    // Cleanup precedes readiness checks: the owned node may have been moved
+    // to body before the document lost its head.
+    if (!document?.head || !css) {
+      this.element?.remove()
+      this.element = null
+      return
+    }
+    if (!this.element) {
+      this.element = document.createElement('style')
+      this.element.setAttribute('data-ylc-user-css', 'true')
+    }
+    // Set the new content before attaching to a new Document. No previously
+    // requested CSS is briefly installed while a stop/replacement is applied.
+    if (this.element.textContent !== css) this.element.textContent = css
+    if (this.element.parentNode !== document.head) document.head.appendChild(this.element)
   }
 
   release() {
     this.element?.remove()
     this.element = null
     this.document = null
-  }
-
-  private render() {
-    // Removing an effect must also work while YouTube is replacing <head>,
-    // or if the owned style node was moved into another part of the document.
-    if (!this.css || !this.document?.head) {
-      this.element?.remove()
-      this.element = null
-      return
-    }
-    if (!this.element) {
-      this.element = this.document.createElement('style')
-      this.element.setAttribute('data-ylc-user-css', 'true')
-    }
-    // Never interpolate as HTML, concatenate with built-in CSS, or rewrite
-    // selectors/@rules. CSP and normal browser CSS error recovery still apply.
-    if (this.element.textContent !== this.css) this.element.textContent = this.css
-    if (this.element.parentNode !== this.document.head) this.document.head.appendChild(this.element)
   }
 }
