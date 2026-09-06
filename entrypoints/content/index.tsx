@@ -1,6 +1,7 @@
 import { CONTENT_SCRIPT_MATCHES } from '../../config/packagePolicy'
 import './content.css'
 import { ContentBootstrap } from './bootstrap/ContentBootstrap'
+import { registerContentStatusMessaging } from './bootstrap/contentStatusMessaging'
 import { createContentSession } from './bootstrap/createContentSession'
 
 export default defineContentScript({
@@ -17,6 +18,7 @@ export default defineContentScript({
     ctx.addEventListener(document, 'yt-navigate-finish', () => {
       void bootstrap.reconcileLocation(undefined, { navigationCompleted: true })
     })
+    ctx.onInvalidated(registerContentStatusMessaging(bootstrap))
     ctx.onInvalidated(bootstrap.dispose)
     bootstrap.start()
   },

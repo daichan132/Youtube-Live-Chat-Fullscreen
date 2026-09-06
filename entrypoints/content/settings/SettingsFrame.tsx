@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useLayoutEffect, useRef } from 'react'
 import { browser, type PublicPath } from 'wxt/browser'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import type { ChatRuntime } from '../runtime/ChatRuntime'
 import { isSettingsFrameRequest, SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
 type SettingsFrameProps = {
+  returnFocusTo?: HTMLElement | null
   open: boolean
   onClose: () => void
   runtime: Pick<ChatRuntime, 'getDiagnosticReport' | 'restart' | 'subscribe'>
@@ -20,8 +21,28 @@ const getSettingsPageUrl = () => {
   return url.href
 }
 
-export const SettingsFrame = ({ open, onClose, runtime }: SettingsFrameProps) => {
+export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: SettingsFrameProps) => {
   const frameRef = useRef<HTMLIFrameElement>(null)
+  const restoreRef = useRef(false)
+  const originRootRef = useRef<Node | null>(null)
+  useLayoutEffect(() => {
+    if (open) {
+      originRootRef.current = returnFocusTo?.getRootNode() ?? null
+      return
+    }
+    if (!restoreRef.current) return
+    restoreRef.current = false
+    const root = originRootRef.current
+    const active = root instanceof ShadowRoot ? root.activeElement : document.activeElement
+    if (active && active !== document.body && active !== returnFocusTo) return
+    const target =
+      returnFocusTo?.isConnected && !returnFocusTo.matches(':disabled')
+        ? returnFocusTo
+        : root instanceof ShadowRoot && root.host.isConnected
+          ? root.querySelector<HTMLElement>('[data-ylc-settings-btn]:not(:disabled)')
+          : null
+    target?.focus()
+  }, [open, returnFocusTo])
 
   const postDiagnosticReport = () => {
     frameRef.current?.contentWindow?.postMessage(
@@ -36,7 +57,10 @@ export const SettingsFrame = ({ open, onClose, runtime }: SettingsFrameProps) =>
     const handleMessage = (event: MessageEvent) => {
       if (event.source !== frameRef.current?.contentWindow || event.origin !== SETTINGS_PAGE_ORIGIN || !isSettingsFrameRequest(event.data))
         return
-      if (event.data.type === SETTINGS_FRAME_MESSAGE.close) onClose()
+      if (event.data.type === SETTINGS_FRAME_MESSAGE.close) {
+        restoreRef.current = true
+        onClose()
+      }
       if (event.data.type === SETTINGS_FRAME_MESSAGE.diagnosticsRequest) postDiagnosticReport()
       if (event.data.type === SETTINGS_FRAME_MESSAGE.runtimeRestart) {
         runtime.restart()

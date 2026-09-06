@@ -21,7 +21,7 @@ export type OverlayFrameProps = {
   initialDisplayOnMount?: boolean
   ready?: boolean
   settingsOpen?: boolean
-  onOpenSettings?: () => void
+  onOpenSettings?: (source: HTMLElement) => void
   onChatVisibilityChange?: (visible: boolean) => void
   onInteractionStateChange?: (state: ReturnType<typeof useOverlayInteraction>['state']) => void
 }
@@ -100,7 +100,7 @@ export const OverlayFrame = ({
             : event.key === 'ArrowLeft'
               ? { x: -10, y: 0 }
               : { x: 10, y: 0 }
-      geometry.moveByKeyboard(delta)
+      geometry.moveBy(delta)
     }
   }
 
@@ -131,7 +131,7 @@ export const OverlayFrame = ({
           <ResizeHandles onPointerDown={geometry.onPointerDown} />
           <OverlayControlRail
             isDragging={interaction.state === 'dragging'}
-            isReady={ready}
+            isReady={ready && !settingsOpen}
             isVisible={interaction.controlsVisible}
             placement={controlRailPlacement}
             backgroundColor={profile.appearance.backgroundColor}
@@ -143,6 +143,9 @@ export const OverlayFrame = ({
             onKeyDown={handleKeyboardMove}
             onEnterControls={interaction.enterControls}
             onLeaveControls={interaction.leaveControls}
+            onFocusControls={interaction.setControlsFocused}
+            onMoveBy={geometry.moveBy}
+            onResizeBy={geometry.resizeBy}
           />
         </div>
       </div>

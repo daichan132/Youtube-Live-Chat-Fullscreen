@@ -85,6 +85,17 @@
       "compactTitle": "Compatto",
       "neonTitle": "Colorato",
       "apply": "Applica"
+    },
+    "placement": {
+      "open": "Adjust position and size",
+      "up": "Move up",
+      "down": "Move down",
+      "left": "Move left",
+      "right": "Move right",
+      "narrower": "Decrease width",
+      "wider": "Increase width",
+      "shorter": "Decrease height",
+      "taller": "Increase height"
     }
   },
   "popup": {
@@ -97,7 +108,33 @@
     "dataTransfer": "Backup",
     "export": "Esporta",
     "import": "Importa",
-    "importError": "Impossibile importare il file delle impostazioni."
+    "importError": "Impossibile importare il file delle impostazioni.",
+    "importConfirm": "Replace appearance, presets, position, enabled state and theme with this backup. Language stays unchanged.",
+    "importApply": "Apply",
+    "importCancel": "Cancel",
+    "importClose": "Close",
+    "importReading": "Reading backup…",
+    "importApplying": "Applying backup…",
+    "importDone": "Import completed.",
+    "importBeforeWrite": "Earlier settings could not be saved. Retry saving before importing.",
+    "importWrite": "Could not complete saving the backup. Check the current settings.",
+    "importReadback": "Backup written, but the saved settings could not be confirmed. Reopen settings to check.",
+    "importFollowingWrite": "Backup imported, but a later settings change could not be saved. Retry saving.",
+    "recovery": {
+      "check": "Check status",
+      "retry": "Retry chat display",
+      "copy": "Copy diagnostics",
+      "unknown": "Cannot check this tab’s status.",
+      "starting": "Starting. Check again shortly.",
+      "failed": "Could not start chat display.",
+      "unsupported": "This page is not supported.",
+      "running": "Display process is running.",
+      "accepted": "Retry requested. Check status again to confirm the result.",
+      "stale": "The page changed. Check status again.",
+      "copied": "Diagnostics copied.",
+      "copyFailed": "Could not copy diagnostics.",
+      "checking": "Checking…"
+    }
   },
   "extensionName": "YouTube Live Chat Fullscreen",
   "extensionDescription": "La chat sparisce a schermo intero? Tieni la chat live di YouTube in overlay sul video: leggi, rispondi e invia Super Chat."

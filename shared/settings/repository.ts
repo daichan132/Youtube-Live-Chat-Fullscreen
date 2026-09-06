@@ -50,6 +50,17 @@ export type SettingsRepository = {
   flush: () => Promise<void>
 }
 
+export type SettingsImportFailurePhase = 'before-write' | 'write' | 'readback' | 'following-write'
+export class SettingsImportError extends Error {
+  constructor(
+    public readonly phase: SettingsImportFailurePhase,
+    cause: unknown,
+  ) {
+    super(`Settings import failed: ${phase}`, { cause })
+    this.name = 'SettingsImportError'
+  }
+}
+
 const SAVE_RETRY_DELAY_MS = 400
 const IMPORT_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry'] as const satisfies readonly PersistenceDomain[]
 
@@ -259,10 +270,13 @@ export const createSettingsRepository = (
       },
       { item: settingsItems.geometry, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
     ]
+    let phase: SettingsImportFailurePhase = 'before-write'
     const current: Promise<void> = Promise.allSettled(preceding)
       .then(async () => {
         throwPersistenceFailure()
+        phase = 'write'
         await storage.setItems(values)
+        phase = 'readback'
         const versions = new Map(supersessionVersions)
         const results = await storage.getItems(IMPORT_DOMAINS.map(domain => settingsItems[domain]))
         const envelopes = results.map(result => (isStoredEnvelope(result.value) ? result.value : null))
@@ -278,15 +292,24 @@ export const createSettingsRepository = (
           notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'import' : 'external')
         }
       })
+      .catch(error => {
+        throw new SettingsImportError(phase, error)
+      })
       .finally(() => {
         if (replacementTail === current) replacementTail = null
         publishStatus()
       })
     replacementTail = current
     publishStatus()
-    // The popup closes after import resolves. Drain later edits too, but only
+    // Drain later edits too, but only
     // after releasing the barrier those edits depend on (never inside it).
-    return current.then(flush)
+    return current.then(async () => {
+      try {
+        await flush()
+      } catch (error) {
+        throw new SettingsImportError('following-write', error)
+      }
+    })
   }
 
   return {

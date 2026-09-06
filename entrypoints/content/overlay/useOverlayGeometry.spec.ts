@@ -53,7 +53,7 @@ describe('useOverlayGeometry', () => {
 
   it('commits keyboard movement as pinned player ratios', () => {
     const { result } = renderGeometryHook()
-    act(() => result.current.moveByKeyboard({ x: 25, y: 10 }))
+    act(() => result.current.moveBy({ x: 25, y: 10 }))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
     expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ reference: 'player', pinned: true })
   })

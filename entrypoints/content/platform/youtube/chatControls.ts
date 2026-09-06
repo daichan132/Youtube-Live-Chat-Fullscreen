@@ -15,8 +15,13 @@ export type ArchiveChatControl = {
 const clickableSelector = 'button, yt-icon-button, [role="button"]'
 
 const metadataElements = (element: HTMLElement) => {
-  const wrapper = element.closest<HTMLElement>('yt-icon-button')
-  return wrapper && wrapper !== element ? [element, wrapper] : [element]
+  const elements = [element]
+  let parent = element.parentElement
+  while (parent && !parent.matches('ytd-live-chat-frame, .ytp-right-controls, #movie_player, body')) {
+    elements.push(parent)
+    parent = parent.parentElement
+  }
+  return elements
 }
 
 const getButtonLabelText = (element: HTMLElement) =>
@@ -59,17 +64,16 @@ const collectControls = (probe: SelectorProbe, host: HTMLElement | null, require
     for (const target of document.querySelectorAll<HTMLElement>(selector)) {
       // Resolve an icon-button wrapper to its actual control. Otherwise a
       // disabled child skipped by one selector could reappear as its wrapper.
-      const element = target.matches('button')
-        ? target
-        : (target.querySelector<HTMLElement>('button') ??
-          target.querySelector<HTMLElement>(clickableSelector) ??
-          (target.matches(clickableSelector) ? target : null))
+      const buttons = target.matches('button') ? [target] : [...target.querySelectorAll<HTMLElement>('button')]
+      const candidates = buttons.length ? buttons : [...target.querySelectorAll<HTMLElement>(clickableSelector)]
+      const element = candidates.length === 1 ? candidates[0] : candidates.length === 0 && target.matches(clickableSelector) ? target : null
       if (!element || seen.has(element)) continue
       seen.add(element)
       const parentHost = element.closest<HTMLElement>('ytd-live-chat-frame')
       if (parentHost ? !isChatHostForCurrentVideo(parentHost) : !host) continue
-      if (requireChatLabel && !isChatControl(element, host)) continue
-      if (element.matches(':disabled') || element.closest('[aria-disabled="true"], [inert]')) {
+      const hasExplicitTarget = metadataElements(element).some(owner => owner.getAttribute('aria-controls')?.trim())
+      if ((requireChatLabel || hasExplicitTarget) && !isChatControl(element, host)) continue
+      if (element.matches(':disabled') || element.closest('[disabled], [aria-disabled="true"], [inert]')) {
         hasDisabledControl = true
         continue
       }
@@ -107,7 +111,7 @@ export const collectArchiveChatControls = () => {
     !hasSlotControl &&
     !sidebarResult.hasDisabledControl &&
     !playerResult.hasDisabledControl &&
-    !host.closest('[aria-disabled="true"], [inert]')
+    !host.closest('[disabled], [aria-disabled="true"], [inert]')
       ? host
       : null
   return {

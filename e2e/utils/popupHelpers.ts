@@ -15,15 +15,14 @@ export type { TestSettings }
 export const importSettingsViaPopup = async (page: Page, extension: Extension, settings: TestSettings) => {
   await page.goto(extension.url('popup.html'))
   await page.getByLabel('Select language').waitFor({ state: 'visible' })
-  await page.evaluate(() => {
-    window.close = () => {}
-  })
 
   await page.locator('input[type="file"]').setInputFiles({
     name: 'test-settings.json',
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(settings)),
   })
+  await page.getByRole('button', { name: 'Apply', exact: true }).click()
+  await page.getByText('Import completed.', { exact: true }).waitFor()
 }
 
 /**

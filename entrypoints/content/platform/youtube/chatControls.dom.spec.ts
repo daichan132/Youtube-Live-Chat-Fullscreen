@@ -131,3 +131,18 @@ describe('YouTube archive control observation', () => {
     expect(collectArchiveChatControls()).toMatchObject({ native: null, replay: null, canOpen: false })
   })
 })
+
+it('uses wrapper metadata and rejects disabled ancestors without resurrecting a wrapper', () => {
+  const host = createHost()
+  host.id = 'current-chat'
+  const { model, button } = playerButton('chat')
+  model.setAttribute('aria-controls', 'unrelated-chat')
+  expect(collectArchiveChatControls().player).toBeNull()
+  model.setAttribute('aria-controls', host.id)
+  model.setAttribute('disabled', '')
+  expect(collectArchiveChatControls().player).toBeNull()
+  model.removeAttribute('disabled')
+  expect(collectArchiveChatControls().player?.element).toBe(button)
+  button.disabled = true
+  expect(collectArchiveChatControls().player).toBeNull()
+})

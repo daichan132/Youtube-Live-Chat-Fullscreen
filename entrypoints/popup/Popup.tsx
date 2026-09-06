@@ -5,6 +5,7 @@ import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
+import { ContentRecovery } from './components/ContentRecovery'
 import { DataTransfer } from './components/DataTransfer'
 import { LanguageSelector } from './components/LanguageSelector'
 import { Links } from './components/Links'
@@ -101,6 +102,7 @@ export const Popup = () => {
           />
         ))}
       </div>
+      <ContentRecovery />
     </div>
   )
 }

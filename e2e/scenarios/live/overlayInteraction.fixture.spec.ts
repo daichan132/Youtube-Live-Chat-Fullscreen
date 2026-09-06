@@ -221,3 +221,64 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     await expect(viewport).toHaveCSS('opacity', '0')
   })
 })
+
+ test('reaches settings without hover and returns to the trigger, then adjusts with clicks', async ({ page, extension }) => {
+  await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+  const scenario = new YouTubeScenario(page)
+  const overlay = new ExtensionOverlay(page)
+  await scenario.load(scenarioState)
+  await scenario.enterFullscreen()
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  await page.mouse.move(1, 1)
+  const settings = page.locator('[data-ylc-settings-btn]')
+  // Start from the browser's current focus, without focusing a control in code.
+  for (let step = 0; step < 40; step++) {
+    await page.keyboard.press('Tab')
+    if (await settings.evaluate(element => element.matches(':focus'))) break
+  }
+  await expect(settings).toBeFocused()
+  await expect(page.locator('[data-ylc-control-rail]')).toHaveCSS('opacity', '1')
+  await page.keyboard.press('Enter')
+  await expect(overlay.settingsDialog()).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(overlay.settingsDialog()).toHaveCount(0)
+  await expect(settings).toBeFocused()
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('[data-ylc-placement-panel]')).toBeVisible()
+  await page.screenshot({ path: '/tmp/ylc-placement-open.png' })
+  const before = await overlay.getGeometry()
+  await page.getByRole('button', { name: 'Move down', exact: true }).click()
+  await page.getByRole('button', { name: 'Increase width', exact: true }).click()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ y: before.y + 10, width: before.width + 10 })
+  await page.keyboard.press('Escape')
+  await expect(page.locator('[data-ylc-placement-panel]')).toHaveCount(0)
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ y: before.y + 10, width: before.width + 10 })
+  await page.screenshot({ path: '/tmp/ylc-placement-closed.png' })
+ })
+
+ test('queries and retries the content session through the popup extension message boundary', async ({ page, extension }) => {
+  const scenario = new YouTubeScenario(page)
+  await scenario.load(scenarioState)
+  await scenario.enterFullscreen()
+  await new ExtensionOverlay(page).expectChatLoaded({ timeout: 12000 })
+  const popup = await page.context().newPage()
+  try {
+    await popup.goto(extension.url('popup.html'))
+    await page.bringToFront()
+    const response = await popup.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id === undefined) throw new Error('No tab')
+      const status = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:status' }, { frameId: 0 })
+      const retry = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:retry', token: status.token }, { frameId: 0 })
+      const stale = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:retry', token: status.token }, { frameId: 0 })
+      return { status, retry, stale }
+    })
+    expect(response.status.status).toBe('running')
+    expect(response.status.report.schemaVersion).toBe(1)
+    expect(JSON.stringify(response.status.report)).not.toContain(scenarioState.video.id)
+    expect(response.retry.retry).toBe('accepted')
+    expect(response.stale.retry).toBe('stale')
+  } finally { await popup.close() }
+ })

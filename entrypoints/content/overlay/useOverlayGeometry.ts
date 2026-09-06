@@ -79,8 +79,8 @@ export const useOverlayGeometry = ({
   const [obstacleRevision, setObstacleRevision] = useState(0)
   const [draftGeometry, setDraftGeometry] = useState<PixelChatGeometry | null>(null)
   const pointerActiveRef = useRef(false)
-  const autoPlacementEvaluatedRef = useRef(false)
   const autoRepositionedRef = useRef(false)
+  const [autoPlacementComplete, setAutoPlacementComplete] = useState(false)
   const lastObstacleSignatureRef = useRef('')
   const viewport = referenceSize ?? { width: window.innerWidth, height: window.innerHeight }
   const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport.height, viewport.width])
@@ -159,26 +159,42 @@ export const useOverlayGeometry = ({
     onEnd: onGestureEnd,
   })
 
-  const moveByKeyboard = useCallback(
-    (delta: Point) => {
+  const adjustBy = useCallback(
+    (delta: Point, sizeDelta = { width: 0, height: 0 }) => {
+      if (pointerActiveRef.current || settingsOpen) return
       const current = fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING)
-      commitLayout(
-        fitGeometryToViewport(
-          { coordinates: { x: current.coordinates.x + delta.x, y: current.coordinates.y + delta.y }, size: current.size },
-          viewport,
-          GEOMETRY_VIEWPORT_PADDING,
-        ),
-        true,
+      const fitted = fitGeometryToViewport(
+        {
+          coordinates: { x: current.coordinates.x + delta.x, y: current.coordinates.y + delta.y },
+          size: { width: current.size.width + sizeDelta.width, height: current.size.height + sizeDelta.height },
+        },
+        viewport,
+        GEOMETRY_VIEWPORT_PADDING,
       )
+      const next = layoutGeometryToV2(fitted, viewport, true)
+      const rendered = renderChatGeometry(next, viewport)
+      if (
+        Math.abs(rendered.coordinates.x - current.coordinates.x) < 0.001 &&
+        Math.abs(rendered.coordinates.y - current.coordinates.y) < 0.001 &&
+        Math.abs(rendered.size.width - current.size.width) < 0.001 &&
+        Math.abs(rendered.size.height - current.size.height) < 0.001
+      )
+        return
+      commitGeometry(next)
     },
-    [commitLayout, storedLayout, viewport],
+    [commitGeometry, storedLayout, viewport, settingsOpen],
   )
+  const moveBy = useCallback((delta: Point) => adjustBy(delta), [adjustBy])
+  const resizeBy = useCallback((delta: { width: number; height: number }) => adjustBy({ x: 0, y: 0 }, delta), [adjustBy])
+
+  useLayoutEffect(() => {
+    autoRepositionedRef.current = false
+    setAutoPlacementComplete(false)
+    lastObstacleSignatureRef.current = ''
+  }, [pinned, playerElement])
 
   useLayoutEffect(() => {
     if (!playerElement) return
-    autoPlacementEvaluatedRef.current = false
-    autoRepositionedRef.current = false
-    lastObstacleSignatureRef.current = ''
     const updateSize = () => {
       const next = readReferenceSize(playerElement)
       if (!next) return
@@ -189,6 +205,14 @@ export const useOverlayGeometry = ({
     resizeObserver?.observe(playerElement)
     window.addEventListener('resize', updateSize, { passive: true })
 
+    return () => {
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', updateSize)
+    }
+  }, [playerElement])
+
+  useLayoutEffect(() => {
+    if (!playerElement || pinned || autoPlacementComplete) return
     let scheduledFrame: number | null = null
     const mutationObserver =
       pinned || typeof MutationObserver === 'undefined'
@@ -209,12 +233,10 @@ export const useOverlayGeometry = ({
       subtree: true,
     })
     return () => {
-      resizeObserver?.disconnect()
       mutationObserver?.disconnect()
       if (scheduledFrame !== null) cancelAnimationFrame(scheduledFrame)
-      window.removeEventListener('resize', updateSize)
     }
-  }, [pinned, playerElement])
+  }, [pinned, playerElement, autoPlacementComplete])
 
   useLayoutEffect(() => {
     if (!referenceSize || isChatGeometryV2(geometry)) return
@@ -222,18 +244,16 @@ export const useOverlayGeometry = ({
   }, [commitGeometry, geometry, referenceSize])
 
   useLayoutEffect(() => {
-    if (!playerElement || !referenceSize || pinned || pointerActiveRef.current || draftGeometry) return
+    if (!playerElement || !referenceSize || pinned || autoRepositionedRef.current || pointerActiveRef.current || draftGeometry) return
     if (interactionState === 'dragging' || interactionState === 'resizing') return
     const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
     const signature = JSON.stringify(obstacles)
     if (signature === lastObstacleSignatureRef.current) return
     lastObstacleSignatureRef.current = signature
-    const initial = !autoPlacementEvaluatedRef.current
-    autoPlacementEvaluatedRef.current = true
-    if (!initial && autoRepositionedRef.current) return
     const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, obstacles, GEOMETRY_VIEWPORT_PADDING)
     if (!shouldApplyAutoSafePlacement(placement)) return
     autoRepositionedRef.current = true
+    setAutoPlacementComplete(true)
     commitLayout(placement.best.geometry, false)
   }, [commitLayout, displayGeometry, draftGeometry, interactionState, obstacleRevision, pinned, playerElement, referenceSize, settingsOpen])
 
@@ -242,6 +262,7 @@ export const useOverlayGeometry = ({
     draftGeometry,
     viewport,
     onPointerDown: pointerSession.onPointerDown,
-    moveByKeyboard,
+    moveBy,
+    resizeBy,
   }
 }

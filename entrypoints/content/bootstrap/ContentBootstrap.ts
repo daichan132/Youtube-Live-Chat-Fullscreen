@@ -1,6 +1,11 @@
+import type { ContentStatusResponse } from '@/shared/messaging/contentStatus'
+import type { SanitizedDiagnosticReport } from '../diagnostics/sanitizeDiagnosticReport'
 import { getYouTubeContentSurface, type YouTubeContentSurface } from '../platform/youtube/youtubeSurface'
+import { getCurrentYouTubeVideoId } from '../utils/getYouTubeVideoId'
 
 export type ContentSession = {
+  getDiagnosticReport?(): SanitizedDiagnosticReport
+  restart?(): void
   dispose(): void
 }
 
@@ -50,6 +55,8 @@ export class ContentBootstrap {
   private retryTimer: Timer | null = null
   private retryAttempt = 0
   private started = false
+  private statusIdentity = ''
+  private statusToken = ''
 
   constructor(
     private readonly createSession: () => Promise<ContentSession>,
@@ -114,6 +121,35 @@ export class ContentBootstrap {
     }
 
     if (shouldRetry) this.scheduleRetry(surface)
+  }
+
+  getStatus = (): ContentStatusResponse => {
+    const surface = getYouTubeContentSurface(this.readHref())
+    const report = this.session?.getDiagnosticReport?.()
+    // Identity remains in memory; only an opaque token crosses the channel.
+    const identity = JSON.stringify([surface?.activationKey, getCurrentYouTubeVideoId(), this.activationToken, report?.runtime.generation])
+    if (identity !== this.statusIdentity) {
+      this.statusIdentity = identity
+      this.statusToken = crypto.randomUUID()
+    }
+    return {
+      status: !surface ? 'unsupported' : this.session ? 'running' : this.failedSurfaceKey ? 'failed' : 'starting',
+      token: this.statusToken,
+      ...(surface && report ? { report } : {}),
+    }
+  }
+
+  retry = (token: string): ContentStatusResponse => {
+    const status = this.getStatus()
+    if (!this.started || status.token !== token || status.status === 'unsupported') return { ...status, retry: 'stale' }
+    this.statusIdentity = ''
+    if (this.session) this.session.restart?.()
+    else if (!this.activation && this.retryTimer === null) {
+      this.failedSurfaceKey = null
+      this.retryAttempt = 0
+      void this.reconcileLocation()
+    }
+    return { ...this.getStatus(), retry: 'accepted' }
   }
 
   private transitionSurface(nextSurfaceKey: string | null) {

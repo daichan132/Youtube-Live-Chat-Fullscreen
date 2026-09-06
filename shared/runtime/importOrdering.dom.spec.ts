@@ -158,7 +158,10 @@ describe('import ordering across the repository and editor', () => {
     const { runtime, repository } = await createSession()
     const original = runtime.store.get(chatSettingsStateAtom)
     vi.spyOn(chrome.storage.local, 'set').mockRejectedValueOnce(new Error('bulk write rejected'))
-    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toThrow('bulk write rejected')
+    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toMatchObject({
+      phase: 'write',
+      cause: new Error('bulk write rejected'),
+    })
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
 
     runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 33 } })
@@ -171,7 +174,10 @@ describe('import ordering across the repository and editor', () => {
     const { runtime } = await createSession()
     const original = runtime.store.get(chatSettingsStateAtom)
     vi.spyOn(chrome.storage.local, 'get').mockRejectedValueOnce(new Error('confirmation unavailable'))
-    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toThrow('confirmation unavailable')
+    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toMatchObject({
+      phase: 'readback',
+      cause: new Error('confirmation unavailable'),
+    })
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
     expect((await chrome.storage.local.get(THEME_STORAGE_KEY))[THEME_STORAGE_KEY]).toMatchObject({ value: 'dark' })
   })
