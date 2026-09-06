@@ -1,3 +1,4 @@
+import { DEFAULT_CUSTOM_CSS } from './customCss'
 import type { ChatGeometryV2, ChatProfile, GlobalSettings, RGBA } from './model'
 
 export const DEFAULT_GLOBAL_SETTINGS: GlobalSettings = { ytdLiveChat: true, themeMode: 'system' }
@@ -26,6 +27,7 @@ export const DEFAULT_CHAT_PROFILE: ChatProfile = {
     idleVisibility: 'always-visible',
     contentMode: 'full-chat',
   },
+  cssCustomization: { ...DEFAULT_CUSTOM_CSS },
 }
 
 export const DEFAULT_CHAT_GEOMETRY: ChatGeometryV2 = {

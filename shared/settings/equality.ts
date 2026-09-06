@@ -1,3 +1,4 @@
+import { areCustomCssEqual } from './customCss'
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, MembershipNameColor, PresetEntry, RGBA } from './model'
 
 const areRGBAEqual = (left: RGBA, right: RGBA) => left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
@@ -23,7 +24,8 @@ export const areChatProfilesEqual = (left: ChatProfile, right: ChatProfile) => {
     leftAppearance.showUserIcon === rightAppearance.showUserIcon &&
     leftAppearance.showSuperChatBar === rightAppearance.showSuperChatBar &&
     left.display.idleVisibility === right.display.idleVisibility &&
-    left.display.contentMode === right.display.contentMode
+    left.display.contentMode === right.display.contentMode &&
+    areCustomCssEqual(left.cssCustomization, right.cssCustomization)
   )
 }
 
