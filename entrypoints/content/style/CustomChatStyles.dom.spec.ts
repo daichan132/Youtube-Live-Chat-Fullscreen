@@ -1,0 +1,46 @@
+import { describe, expect, it } from 'vitest'
+import { CustomChatStyles } from './CustomChatStyles'
+
+const chatDocument = () => document.implementation.createHTMLDocument('chat fixture')
+describe('owned user stylesheet', () => {
+  it('waits for binding and updates one owned style rather than adding one per update', () => {
+    const styles = new CustomChatStyles()
+    styles.setCss('body { color: red }')
+    const doc = chatDocument()
+    styles.bind(doc)
+    const first = doc.head.querySelector('style[data-ylc-user-css]')
+    styles.setCss('body { color: blue }')
+    styles.bind(doc)
+    expect(doc.head.querySelectorAll('style[data-ylc-user-css]')).toHaveLength(1)
+    expect(first?.textContent).toBe('body { color: blue }')
+    expect(doc.head.querySelector('style')).toBe(first)
+  })
+  it('cleans the old document when an iframe has navigated to another document', () => {
+    const styles = new CustomChatStyles()
+    const before = chatDocument()
+    const after = chatDocument()
+    styles.setCss('body{}')
+    styles.bind(before)
+    styles.bind(after)
+    expect(before.head.querySelector('style')).toBeNull()
+    expect(after.head.querySelector('style')?.textContent).toBe('body{}')
+    styles.release()
+    styles.release()
+    expect(after.head.querySelector('style')).toBeNull()
+  })
+  it('treats source as text, keeps at-rules at the beginning, and removes only its own node', () => {
+    const styles = new CustomChatStyles()
+    const doc = chatDocument()
+    const foreign = doc.createElement('style')
+    foreign.setAttribute('data-ylc-user-css', 'true')
+    doc.head.appendChild(foreign)
+    const css = '@media (min-width: 1px) { body{} }\n/* </style><div>not HTML</div> */'
+    styles.setCss(css)
+    styles.bind(doc)
+    expect(doc.head.lastElementChild?.textContent).toBe(css)
+    expect(doc.querySelector('div')).toBeNull()
+    styles.setCss('')
+    expect(doc.head.children).toContain(foreign)
+    expect(doc.head.querySelectorAll('style')).toHaveLength(1)
+  })
+})
