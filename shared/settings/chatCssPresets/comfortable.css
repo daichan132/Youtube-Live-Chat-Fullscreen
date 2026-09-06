@@ -1,0 +1,14 @@
+/* Comfortable reading / ゆったり読みやすく
+ * Keep a larger UI font size; otherwise use at least 16px.
+ * 既存設定が16pxより大きい場合は、そのサイズを維持します。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin-block: 8px;
+  padding-block: 6px;
+  font-size: max(16px, var(--extension-yt-live-chat-font-size, 13px));
+  line-height: 1.75;
+}
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) #message {
+  font-size: inherit;
+  line-height: inherit;
+}
