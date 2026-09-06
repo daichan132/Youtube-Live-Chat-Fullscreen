@@ -105,7 +105,7 @@
     "picomatch@npm:^2.3.1": "4.0.7",
     "picomatch@npm:^4.0.3": "4.0.7",
     "shell-quote": "1.10.0",
-    "socks": "2.8.9",
+    "socks": "2.8.10",
     "tar": "7.5.22",
     "tmp": "0.2.7",
     "undici": "8.10.0",
