@@ -11,7 +11,7 @@ export class CustomChatStyles {
     return changed
   }
 
-  bind(document: Document) {
+  bind(document: Document | null) {
     if (this.document !== document) {
       this.release()
       this.document = document
@@ -26,8 +26,9 @@ export class CustomChatStyles {
   }
 
   private render() {
-    if (!this.document?.head) return
-    if (!this.css) {
+    // Removing an effect must also work while YouTube is replacing <head>,
+    // or if the owned style node was moved into another part of the document.
+    if (!this.css || !this.document?.head) {
       this.element?.remove()
       this.element = null
       return
