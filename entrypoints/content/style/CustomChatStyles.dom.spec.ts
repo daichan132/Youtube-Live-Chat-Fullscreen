@@ -79,3 +79,26 @@ describe('CustomChatStyles document ownership', () => {
     styles.release()
   })
 })
+
+
+it('restores source order after late native styles without rewriting or duplicating user CSS', () => {
+  const doc = makeDocument()
+  const styles = new CustomChatStyles()
+  const css = '#message { color: red; }'
+  styles.update(doc, css)
+  const own = userStyle(doc)
+  if (!own) throw new Error('Expected user stylesheet')
+  const writes = vi.spyOn(own, 'textContent', 'set')
+  const late = doc.createElement('style')
+  late.textContent = '#message { color: blue; }'
+  doc.head.appendChild(late)
+  styles.update(doc, css)
+  expect(doc.head.lastChild).toBe(own)
+  expect(writes).not.toHaveBeenCalled()
+  expect(doc.querySelectorAll('[data-ylc-user-css]')).toHaveLength(1)
+  const append = vi.spyOn(doc.head, 'appendChild')
+  styles.update(doc, css)
+  expect(append).not.toHaveBeenCalled()
+  styles.release()
+  expect(late.parentNode).toBe(doc.head)
+})

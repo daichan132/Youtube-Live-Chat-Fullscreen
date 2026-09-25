@@ -1,9 +1,7 @@
-import { isCustomCssWithinLimit, utf8Bytes } from './customCss'
+import { utf8Bytes } from './customCss'
 import type { ChatSettings } from './model'
-import { MAX_SETTINGS_BACKUP_BYTES } from './persistConfig'
 
-export type SettingsCapacityErrorCode = 'css-too-large' | 'settings-too-large'
-
+export type SettingsCapacityErrorCode = 'settings-too-large'
 export class SettingsCapacityError extends Error {
   constructor(readonly code: SettingsCapacityErrorCode) {
     super(code)
@@ -11,15 +9,10 @@ export class SettingsCapacityError extends Error {
   }
 }
 
-export const getAppearanceCapacityError = (settings: Pick<ChatSettings, 'profile' | 'presets'>): SettingsCapacityErrorCode | null => {
-  const profiles = [settings.profile, ...settings.presets.flatMap(preset => (preset.kind === 'custom' ? [preset.profile] : []))]
-  if (profiles.some(profile => !isCustomCssWithinLimit(profile.cssCustomization.css))) return 'css-too-large'
-  // Match the export's actual nesting, indentation and JSON escaping. Reserve
-  // 4 KiB for bounded geometry/global settings, version and timestamp fields.
-  // A preset list must remain exportable through the existing 1 MiB importer.
-  const bytes = utf8Bytes(JSON.stringify({ chatSettings: { profile: settings.profile, presets: settings.presets } }, null, 2))
-  return bytes > MAX_SETTINGS_BACKUP_BYTES - 4096 ? 'settings-too-large' : null
-}
+// Applied CSS and its library each have an independent 256 KiB JSON budget.
+// 384 KiB here plus those budgets leaves 128 KiB for wrapping/metadata/geometry.
+export const getAppearanceCapacityError = (settings: Pick<ChatSettings, 'profile' | 'presets'>): SettingsCapacityErrorCode | null =>
+  utf8Bytes(JSON.stringify(settings, null, 2)) > 384 * 1024 ? 'settings-too-large' : null
 
 export const assertAppearanceCapacity = (settings: Pick<ChatSettings, 'profile' | 'presets'>) => {
   const error = getAppearanceCapacityError(settings)

@@ -1,4 +1,4 @@
-export const SETTINGS_EXPORT_VERSION = 2
+export const SETTINGS_EXPORT_VERSION = 3
 export const MAX_SETTINGS_BACKUP_BYTES = 1024 * 1024
 export const MAX_CUSTOM_PRESETS = 100
 export const MAX_PRESET_ID_LENGTH = 128

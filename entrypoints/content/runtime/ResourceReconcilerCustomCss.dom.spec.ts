@@ -114,3 +114,21 @@ describe('custom CSS through the chat lease', () => {
     expect(ownedStyle(current.document)?.textContent).toBe(source)
   })
 })
+
+
+it('ignores a delayed load callback after its owning session has been disposed', () => {
+  const { resources, doc, scope } = setup()
+  const listen = vi.spyOn(scope, 'listen')
+  resources.setCustomCss(source)
+  const onLoad = vi.fn()
+  resources.initializeIframe(scope, onLoad)
+  const load = listen.mock.calls.find(([, type]) => type === 'load')?.[2]
+  if (!load) throw new Error('Expected an owned iframe load listener')
+  scope.dispose()
+  // The real listener is detached by disposal; invoke a retained callback to
+  // model delivery that was queued before disposal.
+  if (typeof load === 'function') load(new Event('load'))
+  else load.handleEvent(new Event('load'))
+  expect(onLoad).not.toHaveBeenCalled()
+  expect(ownedStyle(doc)?.textContent).toBe(source)
+})

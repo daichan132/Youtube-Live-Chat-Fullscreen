@@ -172,6 +172,7 @@ export class ResourceReconciler {
     if (this.loadListenerIframe !== lease.iframe) {
       this.clearLoadListener()
       this.removeLoadListener = scope.listen(lease.iframe, 'load', () => {
+        if (this.iframeLease !== lease || scope.signal.aborted) return
         this.customStyles.release()
         onLoad()
       })

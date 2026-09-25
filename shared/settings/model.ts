@@ -37,16 +37,9 @@ export type ChatDisplay = {
   contentMode: 'full-chat' | 'messages-only'
 }
 
-export type ChatCssCustomization = {
-  enabled: boolean
-  base: 'standard' | 'minimal'
-  css: string
-}
-
 export type ChatProfile = {
   appearance: ChatAppearance
   display: ChatDisplay
-  cssCustomization: ChatCssCustomization
 }
 
 export type LegacyChatGeometry = {

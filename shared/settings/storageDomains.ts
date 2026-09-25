@@ -1,8 +1,12 @@
 import { storage } from 'wxt/utils/storage'
+import type { ChatCssCustomization, SavedChatCss } from './customCss'
 import type { LocaleCode } from '@/shared/i18n/language'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatProfile, normalizePresets } from './normalizeSettings'
 import {
+  CUSTOM_CSS_STORAGE_KEY,
+  SAVED_CHAT_CSS_STORAGE_KEY,
+  CUSTOM_CSS_SUSPENDED_STORAGE_KEY,
   APPEARANCE_STORAGE_KEY,
   ENABLED_STORAGE_KEY,
   GEOMETRY_STORAGE_KEY,
@@ -21,12 +25,18 @@ export type StoredEnvelope<T> = {
 export type ChatAppearanceSettings = Pick<ChatSettings, 'profile' | 'presets'>
 
 export type SettingsSnapshot = {
+  customCss: ChatCssCustomization
+  savedChatCss: SavedChatCss[]
+  customCssSuspended: boolean
   global: GlobalSettings
   chat: ChatSettings
   locale: LocaleCode
 }
 
 export type SettingsDomainValues = {
+  customCss: ChatCssCustomization
+  savedChatCss: SavedChatCss[]
+  customCssSuspended: boolean
   enabled: boolean
   theme: GlobalSettings['themeMode']
   appearance: ChatAppearanceSettings
@@ -36,11 +46,14 @@ export type SettingsDomainValues = {
 
 export type PersistenceDomain = keyof SettingsDomainValues
 
-export const PERSISTENCE_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry', 'locale'] as const satisfies readonly PersistenceDomain[]
+export const PERSISTENCE_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry', 'locale', 'customCss', 'savedChatCss', 'customCssSuspended'] as const satisfies readonly PersistenceDomain[]
 
 export const localKey = <T extends string>(key: T) => `local:${key}` as const
 
 export const settingsItems = {
+  customCss: storage.defineItem<StoredEnvelope<ChatCssCustomization>>(localKey(CUSTOM_CSS_STORAGE_KEY)),
+  savedChatCss: storage.defineItem<StoredEnvelope<SavedChatCss[]>>(localKey(SAVED_CHAT_CSS_STORAGE_KEY)),
+  customCssSuspended: storage.defineItem<StoredEnvelope<boolean>>(localKey(CUSTOM_CSS_SUSPENDED_STORAGE_KEY)),
   enabled: storage.defineItem<StoredEnvelope<SettingsDomainValues['enabled']>>(localKey(ENABLED_STORAGE_KEY)),
   theme: storage.defineItem<StoredEnvelope<SettingsDomainValues['theme']>>(localKey(THEME_STORAGE_KEY)),
   appearance: storage.defineItem<StoredEnvelope<SettingsDomainValues['appearance']>>(localKey(APPEARANCE_STORAGE_KEY)),

@@ -19,7 +19,10 @@ const runtimes: AppRuntime[] = []
 const createSession = async (loadMessages: (locale: LocaleCode) => Promise<LocaleMessages>) => {
   let watched: Parameters<SettingsRepository['watch']>[0] | undefined
   const repository: SettingsRepository = {
-    load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: structuredClone(DEFAULT_CHAT_SETTINGS), locale: 'en' }),
+    load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: structuredClone(DEFAULT_CHAT_SETTINGS), locale: 'en', customCss: { enabled: false, css: '' }, savedChatCss: [], customCssSuspended: false }),
+    saveCustomCss: vi.fn(async () => {}),
+    saveSavedChatCss: vi.fn(async () => {}),
+    saveCustomCssSuspended: vi.fn(async () => {}),
     saveEnabled: vi.fn(async () => {}),
     saveTheme: vi.fn(async () => {}),
     saveAppearance: vi.fn(async () => {}),

@@ -1,0 +1,173 @@
+/* Additive UI only: never restyle the existing tabs, presets or chat frame. */
+.ylc-custom-css {
+  margin: 16px 8px 8px;
+  min-width: 0;
+  border: 1px solid var(--ylc-border);
+  border-radius: var(--ylc-radius-lg);
+  background: var(--ylc-bg-surface);
+}
+
+.ylc-custom-css > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  list-style: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ylc-custom-css > summary::-webkit-details-marker { display: none; }
+.ylc-custom-css > summary:hover { background: var(--ylc-hover-surface); border-radius: inherit; }
+.ylc-custom-css > summary:focus-visible { outline: 2px solid var(--ylc-focus-ring); outline-offset: 2px; }
+
+.ylc-custom-css-chevron {
+  width: 6px;
+  height: 6px;
+  border-inline-end: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: rotate(-45deg);
+  flex-shrink: 0;
+  margin-inline-end: 4px;
+}
+
+[dir="rtl"] .ylc-custom-css-chevron { transform: rotate(45deg); }
+.ylc-custom-css[open] .ylc-custom-css-chevron { transform: rotate(45deg); }
+[dir="rtl"] .ylc-custom-css[open] .ylc-custom-css-chevron { transform: rotate(-45deg); }
+
+.ylc-custom-css-badge {
+  margin-inline-start: auto;
+  padding: 3px 7px;
+  border: 1px solid var(--ylc-border);
+  border-radius: 6px;
+  background: var(--ylc-bg-surface-muted);
+  color: var(--ylc-text-secondary);
+  font-size: 11px;
+  line-height: 1.4;
+  font-weight: 500;
+  text-align: end;
+}
+
+.ylc-custom-css-draft-indicator { display: block; color: var(--ylc-accent); font-weight: 600; }
+.ylc-custom-css-badge[data-stopped="true"] { border-style: dashed; }
+.ylc-custom-css-badge[data-active="true"] { color: var(--ylc-text-primary); background: var(--ylc-accent-soft); }
+.ylc-custom-css-body { padding: 0 12px 12px; min-width: 0; }
+.ylc-custom-css-fieldset { border: 0; margin: 0; padding: 0; min-inline-size: 0; }
+.ylc-custom-css-sources { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; }
+.ylc-custom-css label { display: block; min-width: 0; font-size: 12px; font-weight: 500; line-height: 1.5; }
+
+.ylc-custom-css select,
+.ylc-custom-css input,
+.ylc-custom-css textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: 6px;
+  padding: 8px;
+  background: var(--ylc-bg-surface);
+  color: var(--ylc-text-primary);
+  font: inherit;
+}
+
+.ylc-custom-css select,
+.ylc-custom-css input { margin-top: 4px; min-height: 36px; }
+
+.ylc-custom-css textarea {
+  display: block;
+  font: 13px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
+  resize: vertical;
+  min-height: 200px;
+  max-height: 360px;
+  tab-size: 2;
+  white-space: pre;
+  overflow: auto;
+  background: var(--ylc-bg-surface-muted);
+  caret-color: var(--ylc-accent);
+  scrollbar-gutter: stable;
+}
+
+.ylc-custom-css textarea:focus-visible,
+.ylc-custom-css select:focus-visible,
+.ylc-custom-css input:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 1px;
+}
+
+.ylc-custom-css :is(textarea, input)[aria-invalid="true"] { border-color: var(--ylc-danger-border); }
+.ylc-custom-css-editor-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin: 12px 0 6px; }
+.ylc-custom-css-count { font-size: 11px; font-weight: 400; color: var(--ylc-text-secondary); font-variant-numeric: tabular-nums; }
+.ylc-custom-css-count[data-invalid="true"] { color: var(--ylc-danger-text); }
+.ylc-custom-css-text-state { margin: 6px 0; font-size: 12px; line-height: 1.5; color: var(--ylc-text-secondary); }
+.ylc-custom-css-text-state[data-dirty="true"] { font-weight: 500; color: var(--ylc-text-primary); }
+.ylc-custom-css-text-state[data-dirty="true"]::before { content: "•"; color: var(--ylc-accent); margin-inline-end: 6px; }
+
+.ylc-custom-css-help,
+.ylc-custom-css-warning { margin: 8px 0 12px; font-size: 12px; line-height: 1.6; color: var(--ylc-text-secondary); }
+.ylc-custom-css-warning { margin-top: 16px; border-inline-start: 2px solid var(--ylc-border-strong); padding-inline-start: 8px; }
+.ylc-custom-css-actions,
+.ylc-custom-css-secondary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 12px; }
+.ylc-custom-css-main-actions { padding: 2px 0 4px; }
+.ylc-custom-css .ylc-custom-css-main-actions > .ylc-btn { flex: 1 1 150px; justify-content: center; text-align: center; }
+.ylc-custom-css-secondary { padding-top: 12px; border-top: 1px solid var(--ylc-divider); }
+.ylc-custom-css .ylc-btn { max-width: 100%; overflow-wrap: anywhere; height: auto; min-height: 36px; white-space: normal; text-align: start; line-height: 1.4; }
+.ylc-custom-css .ylc-custom-css-primary { background: var(--ylc-accent); color: var(--ylc-accent-contrast); border-color: var(--ylc-accent); }
+.ylc-custom-css .ylc-custom-css-primary:hover:not(:disabled) { background: var(--ylc-accent-hover); }
+.ylc-custom-css .ylc-custom-css-danger { color: var(--ylc-danger-text); }
+.ylc-custom-css .ylc-custom-css-danger:hover:not(:disabled) { background: var(--ylc-danger-hover); }
+.ylc-custom-css .ylc-btn:focus-visible { outline: 2px solid var(--ylc-focus-ring); outline-offset: 2px; }
+.ylc-custom-css :is(button, input, select, textarea):disabled { cursor: not-allowed; opacity: 0.6; }
+
+.ylc-custom-css-confirm,
+.ylc-custom-css-register {
+  padding: 12px;
+  margin-top: 12px;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: 8px;
+  background: var(--ylc-bg-surface-muted);
+}
+
+.ylc-custom-css-confirm p { font-size: 12px; line-height: 1.6; margin: 0; overflow-wrap: anywhere; }
+.ylc-custom-css-error { color: var(--ylc-danger-text); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.ylc-custom-css-recovery { border-top: 1px solid var(--ylc-divider); margin-top: 16px; padding-top: 12px; }
+.ylc-custom-css-recovery-control { display: grid; gap: 8px; }
+.ylc-custom-css-body > p[role="status"] { font-size: 12px; line-height: 1.6; }
+.ylc-css-close-confirm { margin: 8px; padding: 12px; border: 1px solid var(--ylc-border-strong); border-radius: 8px; background: var(--ylc-bg-surface-muted); }
+.ylc-css-close-confirm p { margin: 0 0 8px; font-size: 13px; line-height: 1.5; }
+
+/* The settings panel can be narrow inside a wide player. Use its available
+   width (auto-fit/flex-wrap), not the browser viewport, for this section. */
+.ylc-custom-css-source-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.ylc-custom-css-error:empty { display: none; }
+.ylc-custom-css-recovery .ylc-btn { max-width: 100%; }
+
+@media (forced-colors: active) {
+  .ylc-custom-css .ylc-custom-css-primary { border: 2px solid ButtonText; }
+  .ylc-custom-css :is(button, input, select, textarea):disabled { opacity: 1; color: GrayText; }
+}
+
+/* A small explanation, not a second theme gallery or a CSS preview surface. */
+.ylc-custom-css-preset-info {
+  margin: 8px 0 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--ylc-border);
+  border-inline-start: 3px solid var(--ylc-accent);
+  border-radius: 6px;
+  background: var(--ylc-bg-surface-muted);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.ylc-custom-css-preset-info p { margin: 0; }
+.ylc-custom-css-preset-info p + p { margin-top: 4px; }
+.ylc-custom-css-preset-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 8px; }
+.ylc-custom-css-preset-heading strong { color: var(--ylc-text-primary); }
+.ylc-custom-css-preset-heading span { color: var(--ylc-text-secondary); font-size: 11px; }
+.ylc-custom-css-preset-info p:not(.ylc-custom-css-preset-heading) { color: var(--ylc-text-secondary); }
+.ylc-custom-css-preset-note { border-top: 1px solid var(--ylc-divider); padding-top: 6px; }
+.ylc-custom-css-preset-info > button { margin-top: 8px; }

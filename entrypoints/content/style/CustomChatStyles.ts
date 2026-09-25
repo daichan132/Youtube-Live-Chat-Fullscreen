@@ -22,7 +22,9 @@ export class CustomChatStyles {
     // Set the new content before attaching to a new Document. No previously
     // requested CSS is briefly installed while a stop/replacement is applied.
     if (this.element.textContent !== css) this.element.textContent = css
-    if (this.element.parentNode !== document.head) document.head.appendChild(this.element)
+    // Native/font styles may have been appended since the previous sync.
+    // Restore the user override's source order without rewriting its text.
+    if (document.head.lastChild !== this.element) document.head.appendChild(this.element)
   }
 
   release() {

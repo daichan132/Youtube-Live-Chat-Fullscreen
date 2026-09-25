@@ -1,7 +1,6 @@
 import type { ThemeMode } from '@/shared/theme'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { normalizeChatGeometryV2, normalizeLegacyChatGeometry } from './chatGeometry'
-import { normalizeCustomCss } from './customCss'
 import { DEFAULT_CHAT_GEOMETRY, DEFAULT_CHAT_PROFILE } from './defaults'
 import {
   BUILTIN_PRESET_IDS,
@@ -95,7 +94,6 @@ export const normalizeChatProfile = (input: unknown, fallback: ChatProfile = DEF
   return {
     appearance: normalizeChatAppearance(raw.appearance, fallback.appearance),
     display: normalizeChatDisplay(raw.display, fallback.display),
-    cssCustomization: normalizeCustomCss(raw.cssCustomization),
   }
 }
 

@@ -12,7 +12,7 @@ describe('settings backup', () => {
     const backup = buildSettingsBackup(current, '2026-07-26T00:00:00.000Z')
 
     expect(backup).toMatchObject({
-      version: 2,
+      version: 3,
       exportedAt: '2026-07-26T00:00:00.000Z',
       chatSettings: {
         profile: {},
@@ -59,7 +59,7 @@ describe('settings backup', () => {
       current,
     )
 
-    expect(normalized?.version).toBe(2)
+    expect(normalized?.version).toBe(3)
     expect(normalized?.globalSetting).toEqual({ ytdLiveChat: false, themeMode: 'system' })
     expect(normalized?.chatSettings.profile.appearance).toMatchObject({
       fontSize: 20,
@@ -89,6 +89,6 @@ describe('settings backup', () => {
   })
 
   it('rejects unknown versions', () => {
-    expect(normalizeSettingsBackup({ version: 3, globalSetting: {}, chatSettings: {} }, current)).toBeNull()
+    expect(normalizeSettingsBackup({ version: 4, globalSetting: {}, chatSettings: {} }, current)).toBeNull()
   })
 })

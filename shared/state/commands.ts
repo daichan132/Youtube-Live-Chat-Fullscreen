@@ -49,7 +49,6 @@ export const commitProfileAtom = atom(null, (get, set, input: ChatProfile) => {
 export type ChatProfilePatch = {
   appearance?: Partial<ChatProfile['appearance']>
   display?: Partial<ChatProfile['display']>
-  cssCustomization?: Partial<ChatProfile['cssCustomization']>
 }
 
 export const applyChatProfilePatch = (profile: ChatProfile, patch: ChatProfilePatch) =>
@@ -58,7 +57,6 @@ export const applyChatProfilePatch = (profile: ChatProfile, patch: ChatProfilePa
       ...profile,
       appearance: { ...profile.appearance, ...patch.appearance },
       display: { ...profile.display, ...patch.display },
-      cssCustomization: { ...profile.cssCustomization, ...patch.cssCustomization },
     },
     profile,
   )

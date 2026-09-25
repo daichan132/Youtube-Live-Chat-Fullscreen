@@ -1,4 +1,12 @@
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
+import {
+  appearanceCapacityErrorAtom,
+  customCssDraftAtom,
+  customCssEditorUiAtom,
+  customCssOperationAtom,
+  customCssRecoveryAtom,
+  hasUnappliedCustomCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   type IconType,
@@ -33,6 +41,37 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
   const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
   const t = useT()
   const direction = useLocaleDirection()
+  const hasUnappliedCss = useAtomValue(hasUnappliedCustomCssAtom)
+  const cssOperation = useAtomValue(customCssOperationAtom)
+  const cssRecovery = useAtomValue(customCssRecoveryAtom)
+  const cssSaving = cssOperation !== null || cssRecovery.pending
+  const capacityError = useAtomValue(appearanceCapacityErrorAtom)
+  const resetCssDraft = useSetAtom(customCssDraftAtom)
+  const resetCssEditor = useSetAtom(customCssEditorUiAtom)
+  const [confirmClose, setConfirmClose] = useState(false)
+  const closeCancelRef = useRef<HTMLButtonElement>(null)
+  const closeNow = () => {
+    resetCssDraft(null)
+    resetCssEditor(current => ({ ...current, name: '', registering: false, source: null }))
+    setConfirmClose(false)
+    onOpenChange(false)
+  }
+  const requestClose = () => {
+    if (cssSaving || hasUnappliedCss) setConfirmClose(true)
+    else closeNow()
+  }
+  useEffect(() => {
+    if (confirmClose) closeCancelRef.current?.focus()
+  }, [confirmClose])
+  useEffect(() => {
+    if (!open || (!hasUnappliedCss && !cssSaving)) return
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [open, hasUnappliedCss, cssSaving])
   const tablistRef = useRef<HTMLDivElement>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
@@ -149,14 +188,15 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
-      onRequestClose={() => onOpenChange(false)}
+      onRequestClose={requestClose}
       onAfterOpen={focusActiveTab}
       parentSelector={getModalParentElement}
     >
       <div
         data-ylc-theme={resolvedThemeMode}
         dir={direction}
-        className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='ylc-setting-panel flex flex-col rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        style={{ width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)' }}
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={handlePanelKeyDown}
       >
@@ -209,13 +249,28 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
               data-ylc-setting-close-button
               aria-label={t('content.aria.close')}
               className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-              onClick={() => onOpenChange(false)}
+              onClick={requestClose}
             >
               <RiCloseLine size={24} />
             </button>
           </div>
         </header>
         <PersistenceNotice />
+        {capacityError && <p role='alert' className='m-2 text-sm'>{t('content.customCss.appearanceFull')}</p>}
+        {confirmClose && (
+          <div className='ylc-css-close-confirm' role='group' aria-label={t('content.customCss.confirmTitle')}>
+            <p>{t(cssSaving ? 'content.customCss.closeWhileSaving' : 'content.customCss.discardOnClose')}</p>
+            <div className='flex flex-wrap gap-2'>
+              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={() => {
+                setConfirmClose(false)
+                focusActiveTab()
+              }}>{t('content.customCss.keepEditing')}</button>
+              <button type='button' className='ylc-btn' onClick={closeNow}>
+                {t(cssSaving ? 'content.customCss.closeAnyway' : 'content.customCss.discardAndClose')}
+              </button>
+            </div>
+          </div>
+        )}
         <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
           {historyAnnouncement.message}
         </span>
@@ -224,7 +279,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
-          className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
+          className='min-h-0 flex-grow overflow-y-auto h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent diagnostics={diagnostics} />}
