@@ -12,8 +12,8 @@ the source. Register stores only an ID, name and CSS; deleting a registration do
 not change the active source or the editor copy. One stylesheet is active at a
 time. The six packaged starter presets use the same editor and application path.
 They are listed separately from personal registrations and consume no slots.
-The selected source's description is shown below the selector, with a separate
-note for prerequisites. Selection survives tab switches and cancellation.
+The selected source has a collapsed description below its selector, including
+prerequisite notes. Selection survives tab switches and cancellation.
 An edited copy can explicitly reload either its starter preset or its saved
 registration after replacement confirmation. Deleting a registration elsewhere
 leaves the loaded editor copy intact and displays a missing-source notice.
@@ -57,7 +57,7 @@ superseded. Non-CSS settings keep their existing best-effort readback behavior.
 A newer local intent or a confirmed external change supersedes the old retry;
 an obsolete readback failure must not re-enqueue it.
 
-When an enabling write fails, Remove effect remains available even if the
+When an enabling write fails, Disable remains available even if the
 previous confirmed source is disabled. It publishes a new disabled intent to
 supersede the failed enabling request before any common Retry. The editor keeps
 the failed source. Conversely, Apply remains available for an unchanged source
@@ -137,11 +137,27 @@ to the active tab. An externally closed Settings session drops its old close
 confirmation without discarding the draft. Beforeunload is only a best-effort
 browser warning.
 
-The main action is Apply; Register is secondary. Deleting a named registration is
-placed with that selected source; removing the current effect is a separate
-action. The editor reports unapplied text, saved-and-active text, disabled text,
-confirmed pause and unconfirmed pause separately. A changed saved state produces
-an early notice, while the action still rechecks its confirmation snapshot.
+The editor's main row is Apply / Save / Disable. Save opens the named-copy
+form; it does not apply CSS. Disable removes the current effect without deleting
+text. Deleting a saved copy stays with its source, away from the main action row.
+While paused, Apply is relabeled Update with the pause state; saving content never
+implies a resume. The recovery control remains available during an ordinary save.
+
+One header badge reports enabled/disabled/paused/unconfirmed state and unapplied
+edits. The textarea retains an accessible state description without repeating the
+same explanation visually. Errors, external changes, destructive confirmations
+and pending recovery remain visible. The read-only editor stays selectable.
+
+Long instructions, source descriptions and trust warnings use native details
+closed by default. They have no saved open state. Escape closes only the focused
+help disclosure and returns focus to its summary (except during IME composition).
+The outer editor ignores bubbled nested toggle events: opening help must not
+change the editor's saved expansion flag. Source reload/delete controls stay
+outside the disclosures and remain available without opening a help panel.
+
+Japanese and English (including US/GB/AU) labels are shortened in the existing
+locale catalog. Other locales keep their existing translations/fallbacks. No new
+translation keys, locale inventory, persistence flags or dependencies are added.
 
 Registration reports duplicate trimmed names and a full library before sending
 a write. A full library does not block editing or applying CSS. The action layer
