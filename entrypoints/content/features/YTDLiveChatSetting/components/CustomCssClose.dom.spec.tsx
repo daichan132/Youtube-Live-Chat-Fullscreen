@@ -40,7 +40,7 @@ describe('closing the CSS editor', () => {
 })
 
 describe('cancelling the settings close confirmation', () => {
-  it('dismisses only the confirmation on Escape and returns focus to the editor', () => {
+  it('dismisses only the confirmation on Escape and returns focus to style selection', () => {
     const store = createTestStore()
     store.set(customCssEditorUiAtom, { name: 'Keep', registering: false, source: null, expanded: true })
     store.set(customCssDraftAtom, { css: '.draft{}', baseline: { enabled: false, css: '' } })
@@ -49,13 +49,16 @@ describe('cancelling the settings close confirmation', () => {
     const editor = view.getByLabelText('CSS')
     editor.focus()
     fireEvent.keyDown(editor, { key: 'Escape' })
+    const editButton = view.getByRole('button', { name: 'content.customCss.emptyEditor' })
+    expect(editButton).toHaveFocus()
+    fireEvent.keyDown(editButton, { key: 'Escape' })
     const keepEditing = view.getByRole('button', { name: 'content.customCss.keepEditing' })
     expect(keepEditing).toHaveFocus()
     fireEvent.keyDown(keepEditing, { key: 'Escape', isComposing: true })
     expect(keepEditing).toBeInTheDocument()
     fireEvent.keyDown(keepEditing, { key: 'Escape' })
     expect(view.queryByRole('button', { name: 'content.customCss.keepEditing' })).toBeNull()
-    expect(editor).toHaveFocus()
+    expect(editButton).toHaveFocus()
     expect(onOpenChange).not.toHaveBeenCalled()
     expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
     expect(store.get(customCssEditorUiAtom).name).toBe('Keep')

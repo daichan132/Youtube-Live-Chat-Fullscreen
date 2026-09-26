@@ -17,11 +17,14 @@ import {
   customCssOperationAtom,
   customCssRecoveryAtom,
   customCssSuspendedAtom,
+  customCssStopVersionAtom,
+  isCustomCssStoppedAtom,
   type CustomCssOperation,
   savedChatCssAtom,
 } from '@/shared/state/customCssAtoms'
 
 export type CustomCssActions = {
+  activate(css: string, expected: ChatCssCustomization): Promise<void>
   apply(css: string, expected: ChatCssCustomization): Promise<void>
   disable(): Promise<void>
   register(name: string, css: string): Promise<void>
@@ -43,7 +46,7 @@ export const createCustomCssActions = (
     // Do not install the submitted snapshot over a newer watched commit.
     if (!matches) throw new CustomCssError('unconfirmed')
   }
-  const run = async (operation: CustomCssOperation, action: () => Promise<void>) => {
+  const run = async (operation: CustomCssOperation, action: () => Promise<void | boolean>) => {
     requireActive()
     // The action boundary owns the lock, not a mounted UI instance. Two
     // registrations must not both append to the same outdated list. A pending
@@ -54,9 +57,9 @@ export const createCustomCssActions = (
     store.set(customCssOperationAtom, operation)
     store.set(customCssFeedbackAtom, null)
     try {
-      await action()
+      const completed = await action()
       requireActive()
-      store.set(customCssFeedbackAtom, { kind: 'success', operation })
+      if (completed !== false) store.set(customCssFeedbackAtom, { kind: 'success', operation })
     } catch (error) {
       if (!isDisposed()) {
         store.set(customCssFeedbackAtom, { kind: 'error', operation, code: error instanceof CustomCssError ? error.code : 'storage' })
@@ -77,7 +80,45 @@ export const createCustomCssActions = (
     confirm(areSavedChatCssEqual(store.get(savedChatCssAtom), value))
   }
 
+  const persistSuspension = async (suspended: boolean) => {
+    if (suspended) store.set(customCssLocalStopAtom, true)
+    const request = { pending: true, target: suspended, failed: false }
+    store.set(customCssRecoveryAtom, request)
+    try {
+      await repository.saveCustomCssSuspended(suspended)
+      requireActive()
+      if (store.get(customCssRecoveryAtom) !== request) return false
+      confirm(store.get(customCssSuspendedAtom) === suspended)
+      store.set(customCssLocalStopAtom, false)
+      store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: false })
+      return true
+    } catch (error) {
+      if (!isDisposed() && store.get(customCssRecoveryAtom) === request) {
+        store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: true })
+      }
+      throw error
+    }
+  }
+
   return {
+    // Only this explicitly labelled Use/Resume command may lift the pause.
+    // Plain Apply, saving a copy and importing settings never resume CSS.
+    activate: (css, expected) => run('apply', async () => {
+      if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
+      if (!css.trim()) throw new CustomCssError('invalid')
+      const stopVersion = store.get(customCssStopVersionAtom)
+      const requested = { css, enabled: true }
+      await saveActive(requested)
+      // Off remains available while saving; never undo a newer stop, including
+      // a repeated true notification from another settings page.
+      if (store.get(customCssStopVersionAtom) !== stopVersion) return false
+      confirm(areCustomCssEqual(store.get(customCssAtom), requested))
+      if (store.get(isCustomCssStoppedAtom) || store.get(customCssRecoveryAtom).failed) {
+        if (!(await persistSuspension(false))) return false
+      }
+      if (store.get(customCssStopVersionAtom) !== stopVersion || store.get(isCustomCssStoppedAtom)) return false
+      confirm(areCustomCssEqual(store.get(customCssAtom), requested))
+    }),
     apply: (css, expected) => run('apply', async () => {
       if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
       if (!css.trim()) throw new CustomCssError('invalid')
@@ -101,25 +142,9 @@ export const createCustomCssActions = (
     async suspend(suspended) {
       requireActive()
       const recovery = store.get(customCssRecoveryAtom)
-      // A stop must still be possible during a save or pending resume. A
-      // second resume, however, must not bypass those operations.
       if (!suspended && (recovery.pending || store.get(customCssOperationAtom) !== null)) throw new CustomCssError('busy')
-      if (suspended) store.set(customCssLocalStopAtom, true)
-      const request = { pending: true, target: suspended, failed: false }
-      store.set(customCssRecoveryAtom, request)
-      try {
-        await repository.saveCustomCssSuspended(suspended)
-        requireActive()
-        if (store.get(customCssRecoveryAtom) !== request) return
-        confirm(store.get(customCssSuspendedAtom) === suspended)
-        store.set(customCssLocalStopAtom, false)
-        store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: false })
-      } catch (error) {
-        if (!isDisposed() && store.get(customCssRecoveryAtom) === request) {
-          store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: true })
-        }
-        throw error
-      }
+      if (suspended) store.set(customCssStopVersionAtom, store.get(customCssStopVersionAtom) + 1)
+      await persistSuspension(suspended)
     },
   }
 }

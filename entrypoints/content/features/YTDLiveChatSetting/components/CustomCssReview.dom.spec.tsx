@@ -15,7 +15,7 @@ import {
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 
-const actions = vi.hoisted(() => ({ apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
+const actions = vi.hoisted(() => ({ activate: vi.fn(), apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
 
 beforeEach(() => {
@@ -67,7 +67,7 @@ describe('CSS review regressions', () => {
     expect(second.getByLabelText('content.customCss.name')).toHaveValue('Same name')
   })
 
-  it('clears a successfully saved name even if only the section was collapsed during the save', async () => {
+  it('clears a successfully saved name even if only the code editor was closed during the save', async () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
     store.set(customCssEditorUiAtom, { name: 'Saved name', registering: true, source: null, expanded: true })
@@ -88,26 +88,28 @@ describe('CSS review regressions', () => {
     const editor = view.getByLabelText('CSS')
     expect(editor).toHaveAttribute('readonly')
     expect(editor).not.toBeDisabled()
-    expect(view.getByLabelText('content.customCss.presets')).toBeDisabled()
-    expect(view.getByRole('button', { name: 'content.customCss.stopAll' })).not.toBeDisabled()
+    expect(view.container.querySelector('[data-ylc-css-use]')).toBeDisabled()
+    expect(view.getByRole('button', { name: 'content.customCss.disable' })).not.toBeDisabled()
   })
 
-  it('can cancel a failed enabling write even when the confirmed state is already disabled', async () => {
+  it('can keep a failed enabling write off even when the confirmed state is already disabled', async () => {
     const store = makeStore()
     store.set(persistenceStatusAtom, { status: 'error', failedDomains: ['customCss'] })
     const view = renderWithStore(<CustomCssSection />, store)
     const disable = view.getByRole('button', { name: 'content.customCss.disable' })
     expect(disable).not.toBeDisabled()
     await act(async () => { fireEvent.click(disable) })
-    expect(actions.disable).toHaveBeenCalledTimes(1)
+    expect(actions.suspend).toHaveBeenCalledTimes(1)
+    expect(actions.suspend).toHaveBeenCalledWith(true)
   })
 
   it('cancels the inner confirmation on Escape without requesting that the settings page close', () => {
     const store = makeStore()
+    store.set(customCssEditorUiAtom, current => ({ ...current, source: { kind: 'preset', id: 'bubbles' } }))
     const onKeyDown = vi.fn()
     const view = renderWithStore(<div onKeyDown={onKeyDown}><CustomCssSection /></div>, store)
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.myDraft{}' } })
-    fireEvent.change(view.getByLabelText('content.customCss.presets'), { target: { value: 'bubbles' } })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadPreset' }))
     fireEvent.keyDown(view.getByRole('button', { name: 'content.customCss.cancel' }), { key: 'Escape' })
     expect(view.queryByRole('group', { name: 'content.customCss.confirmTitle' })).toBeNull()
     expect(view.getByLabelText('CSS')).toHaveFocus()
@@ -121,7 +123,7 @@ describe('CSS review regressions', () => {
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '\0'.repeat(48 * 1024) } })
     expect(view.getByRole('alert')).toHaveTextContent('content.customCss.tooLarge')
     expect(view.getByRole('button', { name: 'content.customCss.apply' })).toBeDisabled()
-    expect(actions.apply).not.toHaveBeenCalled()
+    expect(actions.activate).not.toHaveBeenCalled()
   })
 })
 
@@ -133,7 +135,9 @@ describe('CSS editor usability', () => {
     store.set(customCssAtom, active)
     store.set(savedChatCssAtom, entries)
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox', { name: /content.customCss.savedList/ }), { target: { value: 'mine' } })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
+    fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.edited{}' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadSaved' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
@@ -141,7 +145,7 @@ describe('CSS editor usability', () => {
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadSaved' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.replaceText' }))
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
-    expect(view.getByText('content.customCss.savedLoaded')).toBeInTheDocument()
+    expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'saved', id: 'mine' })
     expect(store.get(customCssAtom)).toBe(active)
     expect(store.get(savedChatCssAtom)).toBe(entries)
     for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
@@ -151,7 +155,9 @@ describe('CSS editor usability', () => {
     const store = makeStore()
     store.set(savedChatCssAtom, [{ id: 'mine', name: 'My CSS', css: '.saved{}' }])
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox', { name: /content.customCss.savedList/ }), { target: { value: 'mine' } })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
+    fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     act(() => { store.set(savedChatCssAtom, []) })
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
     expect(view.getByText('content.customCss.savedMissing')).toBeInTheDocument()
@@ -278,6 +284,6 @@ describe('CSS editor usability', () => {
     expect(view.getByLabelText('CSS')).toHaveValue('.draft{}')
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.apply' }))
     expect(view.getByRole('group', { name: 'content.customCss.confirmTitle' })).toBeInTheDocument()
-    expect(actions.apply).not.toHaveBeenCalled()
+    expect(actions.activate).not.toHaveBeenCalled()
   })
 })

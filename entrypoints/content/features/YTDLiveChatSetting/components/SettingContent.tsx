@@ -1,5 +1,4 @@
 import { useAtomValue } from 'jotai'
-import { CustomCssSection } from './CustomCssSection'
 import { type ReactNode, useId } from 'react'
 import {
   type IconType,
@@ -21,6 +20,7 @@ import { Switch } from '@/shared/components/Switch'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
+import { CustomCssSection } from './CustomCssSection'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
 import { YLCNumberSlider } from './YLCChangeItems/YLCNumberSlider'
@@ -147,6 +147,8 @@ export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => 
         )}
       </SettingGroup>
 
+      <CustomCssSection />
+
       <SettingGroup legend={t('content.setting.group.colors')}>
         <ControlRow icon={TbPaint} title={t('content.setting.backgroundColor')}>
           <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
@@ -186,7 +188,6 @@ export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => 
         </ToggleRow>
       </SettingGroup>
 
-      <CustomCssSection />
       {diagnostics}
     </>
   )

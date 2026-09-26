@@ -10,6 +10,9 @@ export const customCssSuspendedAtom = atom(true)
 // A failed stop write must not be undone by an older resume readback in this
 // context. Only confirmation of a stop or explicit resume clears this latch.
 export const customCssLocalStopAtom = atom(false)
+// A stop is an event, not only a boolean: a repeated external stop while already
+// paused must supersede an in-flight explicit activation too. Never persisted.
+export const customCssStopVersionAtom = atom(0)
 export const isCustomCssStoppedAtom = atom(get => get(customCssSuspendedAtom) || get(customCssLocalStopAtom))
 export const appliedChatCssAtom = atom(get => {
   const value = get(customCssAtom)
@@ -27,6 +30,7 @@ export type CustomCssEditorUi = {
   name: string
   registering: boolean
   source: CustomCssSource
+  // Only the optional code editor; the style selector is always discoverable.
   expanded: boolean
 }
 export const customCssEditorUiAtom = atom<CustomCssEditorUi>({ name: '', registering: false, source: null, expanded: false })
@@ -39,6 +43,7 @@ export const customCssRecoveryAtom = atom({ pending: false, target: true, failed
 // Reconcile a failed request only when the confirmed value matches its intent.
 // In particular, an old resume must never clear a failed, newer stop request.
 export const receiveCustomCssSuspendedAtom = atom(null, (get, set, value: boolean) => {
+  if (value) set(customCssStopVersionAtom, get(customCssStopVersionAtom) + 1)
   set(customCssSuspendedAtom, value)
   const recovery = get(customCssRecoveryAtom)
   if (!recovery.pending && recovery.failed && recovery.target === value) {

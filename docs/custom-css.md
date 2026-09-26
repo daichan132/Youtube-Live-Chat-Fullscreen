@@ -1,196 +1,186 @@
 # Custom chat CSS
 
-## Product scope
+## Settings integration
 
-The existing appearance settings and preset list remain intact. A collapsible
-Custom CSS section is appended to Settings. Paste ordinary CSS, explicitly apply
-it, and optionally register a named copy. Samples and saved registrations only
-populate the editor. Neither selecting nor registering CSS applies it.
+`SettingContent` keeps the existing Display, Colors, Text and Chat Elements
+controls in their original order. The CSS group sits between Display and Colors.
+It uses the same fieldset/legend, theme tokens, corner radii and button styles;
+a small accent icon and border distinguish the optional customization area.
+No new settings tab, application frame or preview-only toolbar is introduced.
 
-Apply persists the current CSS source and enabled preference. Disable preserves
-the source. Register stores only an ID, name and CSS; deleting a registration does
-not change the active source or the editor copy. One stylesheet is active at a
-time. The six packaged starter presets use the same editor and application path.
-They are listed separately from personal registrations and consume no slots.
-The selected source has a collapsed description below its selector, including
-prerequisite notes. Selection survives tab switches and cancellation.
-An edited copy can explicitly reload either its starter preset or its saved
-registration after replacement confirmation. Deleting a registration elsewhere
-leaves the loaded editor copy intact and displays a missing-source notice.
-Opening Register suggests the preset title only when the name is empty; loading
-alone never invents an unsaved name. Catalog changes do not update existing copies.
+The normal path is **choose a style -> Use this style**. One native selector groups
+packaged starters and named personal copies. Code is hidden until Edit or paste
+CSS is requested. Keep a named copy and copy deletion live inside that editor,
+not alongside the primary Use action. The header has one Off operation. When
+paused, the primary button explicitly offers to resume with the selected source.
 
-The preset sources and contributor instructions live in
+The existing appearance settings remain enabled and keep their own Undo/Redo.
+CSS does not rewrite the profile, activate a different appearance preset, or
+clear style history. A short note explains that CSS declarations can override
+those controls. Outline's background-opacity prerequisite points to the existing
+Background Color setting rather than introducing a second background control.
+
+## Sources and illustrations
+
+The six starter sources and contributor instructions are in
 [`shared/settings/chatCssPresets`](../shared/settings/chatCssPresets/README.md).
-`chatCssPresets.ts` is the single list used by the UI. Explicit raw imports keep
-preset styles out of the settings Document.
+`chatCssPresets.ts` remains the single catalog. Explicit raw imports do not inject
+these styles into the settings Document. Starters consume no saved-copy slots.
+The first starter may be suggested when no source exists; rendering that
+suggestion does not create a draft, save anything or enable CSS.
 
-There is no live preview, minimal base mode, gallery, remote theme subscription,
-UserCSS preprocessor, per-message DOM decoration or JavaScript execution.
+Selection copies source into page-local editing state, never into chat. Moving
+between recoverable starters or copies does not ask for confirmation. Replacing
+genuine, unapplied edits that are not already present in the saved list does.
+Cancel leaves the text and source identity intact. The selector uses separate
+`preset:` and `saved:` namespaces, including when their IDs happen to match.
+Edited text is identified as an unapplied draft, not mislabeled as its original.
+
+`ChatCssExample` draws a small, fixed illustration only when the complete source
+exactly matches a packaged starter. It is an example, not the actual YouTube
+Document or a live preview of profile changes. Arbitrary, edited and imported CSS
+show a neutral custom-CSS placeholder and the trust warning. No editable CSS,
+HTML, style node or iframe is executed in the example. Catalog updates do not
+silently update saved or active copies.
 
 ## Ownership
 
 | Data | Storage/domain |
 | --- | --- |
 | Current CSS and enabled preference | `ylc-custom-css` / `customCss` |
-| Named CSS-only registrations | `ylc-saved-chat-css` / `savedChatCss` |
+| Named CSS-only copies | `ylc-saved-chat-css` / `savedChatCss` |
 | Independent pause preference | `ylc-custom-css-suspended` / `customCssSuspended` |
 
-The existing repository owns persistence queues, bounded retries, readbacks and
-external storage events. Current CSS is not part of ChatProfile, appearance
-presets or style Undo/Redo. Draft text, editor UI, pending operations, feedback and
-local recovery intent are page-local Jotai state, never automatically persisted.
+The existing repository owns queues, bounded retries, readback confirmation and
+external events. CSS is not part of ChatProfile or appearance presets. Drafts,
+editor mode, registration name, operation feedback and local stop intent are
+page-local Jotai state. They are never automatically persisted or exported.
+`CustomCssEditorUi.expanded` now means the optional code editor is open, not that
+the entire settings group is hidden. The group and its primary action stay visible.
 
-The previous unreleased WIP profile-level CSS field is removed, not maintained as
-a second input or migrated into an automatically enabled CSS setting.
+The unreleased WIP profile-level CSS field is not maintained as another input or
+migrated into an automatically enabled source. No new storage schema or second
+persistence implementation is required for the focused UI.
 
-## Applying and confirming writes
+## Use, Off and recovery
 
-Actions change committed atoms only through repository notifications. Completion
-does not blindly write an earlier requested snapshot into the store. A write
-without a matching confirmation is reported as unconfirmed; it may already have
-reached storage. Drafts stay available and the user can inspect the current state.
-For the three CSS domains, a missing, invalid or failed readback stays in the
-repository's failed-domain queue. Common Retry reuses the original snapshot
-(including registration IDs); flush rejects until the failure is resolved or
-superseded. Non-CSS settings keep their existing best-effort readback behavior.
-A newer local intent or a confirmed external change supersedes the old retry;
-an obsolete readback failure must not re-enqueue it.
+`activate(css, expected)` is the explicit Use/Resume action. It holds the existing
+normal-action lock for both phases: confirm the requested source, then lift a
+pause if needed. A source-write failure never starts the resume phase. A failed
+resume can leave the new source saved while CSS remains paused or unconfirmed;
+the UI retains the text and reconciles only that matching confirmed baseline.
+It must not announce activation merely because the first phase succeeded.
 
-When an enabling write fails, Disable remains available even if the
-previous confirmed source is disabled. It publishes a new disabled intent to
-supersede the failed enabling request before any common Retry. The editor keeps
-the failed source. Conversely, Apply remains available for an unchanged source
-when the CSS domain has a failed save, so the user can supersede a failed disable
-without first changing their text. Both operations use the repository's queue,
-not a separate UI retry flag. Confirmed commits clear stale persistence feedback
-only for the corresponding operation domain; imports also clear obsolete success notices.
+Off calls `suspend(true)`, keeps the visible source in a draft and leaves the
+current source and personal copies intact. It is available during a normal save
+or a pending resume. The page-local stop revision records local Off requests and
+incoming true pause notifications, even when true was already stored. A Use
+waiting for its source write cannot lift a later stop. Recovery request identity
+also prevents an old resume completion from clearing a newer local stop latch.
+The revision is coordination state, not a new persisted field or cross-tab lock.
 
-Normal CSS actions are mutually exclusive within one runtime. Pending recovery
-also blocks them so a save presented as "keep paused" cannot race with a resume.
-Pausing is still possible during an ordinary save or a pending resume. Old recovery
-completions cannot clear a newer local stop intent. A local intent is not evidence
-that other chat tabs received the pause. UI distinguishes persisted pause, pending
-pause and unconfirmed recovery. A matching confirmation received from the common
-repository Retry action clears an earlier failed recovery notice; an older resume
-cannot clear a newer failed stop. Disposed runtimes do not publish delayed feedback. Unresponsive tabs may require extension disable
-and reload; recovery is not a browser-process watchdog.
+The lower-level Apply and Disable actions keep their existing contracts. Plain
+Apply writes the source without resuming; Disable preserves the source while
+clearing its enabled preference. Saving a named copy, selecting a starter and
+importing a backup do not call the explicit activation command. The settings UI
+does not present Disable and global pause as two competing Off choices.
 
-Overwrite/delete confirmations hold a snapshot of the value being confirmed.
-Actions reject known changes to that value. This does not introduce a distributed
-transaction: simultaneous writes from separate extension pages retain the
-repository's last-writer-wins policy. Avoid editing registrations in multiple
-settings windows at once. The local guard is not a cross-context lock.
+Committed atoms change through repository notifications, not optimistic action
+snapshots. Missing, invalid or failed CSS readbacks remain in the existing failed
+queue; common Retry reuses the same source and saved-copy IDs, and flush rejects
+unresolved failures. New local intents or confirmed external updates supersede
+older retries. Non-CSS settings retain their existing best-effort readback policy.
+Off supersedes a failed resume through the pause domain. A retry of a failed
+source write while paused may save that source, but does not itself resume it.
 
-## Input and capacity
+Source failures and recovery failures remain visible outside the hidden editor.
+The header distinguishes a confirmed state from a pending/unconfirmed result;
+it does not show In use while a source save remains unconfirmed. A matching
+confirmation from common Retry can reconcile an earlier recovery failure.
+Normal actions reject concurrent submissions. Disposed runtimes do not publish
+late feedback, and old UI completions cannot overwrite a later draft session.
 
-CSS is limited to 64 KiB of UTF-8 source, with a separate 256 KiB JSON domain
-budget. At most 20 registrations are accepted; names are nonempty, at most 100
-characters, and unique after trimming. Their serialized list is limited to
-256 KiB. Appearance/profile presets have a separate 384 KiB budget, leaving space
-for wrapper fields and geometry inside the 1 MiB backup limit. Export checks the
-actual pretty-printed backup serialization as well. Source is never truncated.
+These guards do not make the separate storage domains a distributed transaction.
+Other settings pages can write concurrently, and the existing last-writer-wins
+constraint remains. A locally requested Off is not proof that every chat tab has
+received it. Unresponsive tabs can require disabling the extension and reloading.
+Avoid simultaneous editing of the same saved list from multiple windows.
 
-Backup version 3 includes current CSS and registrations, but neither locale nor
-pause state. Versions 1 and 2 remain accepted, with no CSS enabled from extra
-fields. Imported version 3 CSS is always disabled. A backup cannot resume CSS.
-Invalid imported source/registrations are rejected rather than silently
-normalized or shortened. The three CSS domains validate write readbacks and bulk
-import readbacks as well as storage events; malformed data is never treated as a
-confirmation just because startup recovery could normalize it. The CSS backup
-reader distinguishes omitted fields from explicitly invalid null/undefined
-fields: omission can use defaults; a present invalid field is rejected.
+## Editing and accessibility
 
-## Document lifecycle
+Returning to style selection does not discard text or the registration name.
+The editor state also survives switching the existing Settings/Presets tabs.
+Opening code editing pins the displayed text against later external changes.
+Saved-copy deletion leaves both the draft and currently applied source intact;
+external deletion shows a missing-source notice rather than erasing the draft.
+Reload and overwrite confirmations hold snapshots and recheck changes before
+executing. Baselines advance only for the submitted, still-current draft and a
+matching committed source, including a source saved before a failed resume.
 
-Content observes the committed CSS and pause preference, sending the effective
-source to ChatRuntime/ResourceReconciler. Each reconciler owns one CustomChatStyles
-instance. The reconciler retains the requested source for a later valid chat.
-`CustomChatStyles.update(document, css)` receives the target and source together,
-so replacing a document during a stop never briefly attaches previous CSS.
-It releases its own element when the document is replaced/unavailable, the iframe
-is returned, or the runtime is cleared. A load event releases the old document
-before deferred initialization. The load callback checks both the current lease
-and its scope before mutating resources. Head replacement cannot prevent cleanup.
+Names are checked for trimmed duplicates and capacity before submission. The
+name form appears only on request; the preset title is suggested only then.
+Canceling that form clears only its name. Failed saves retain both inputs; an old
+completion must not clear a newly opened form with the same name. Registration
+never applies CSS. A full saved list does not block source editing or Use.
 
-Source is assigned as style.textContent, independently of built-in styles. Equal
-source is not rewritten; other styles with the same marker are never removed.
-At an existing synchronization point, the owned style is moved to the end of head
-if another node was appended later. This preserves source-order precedence where
-the cascade otherwise ties. It does not override selector specificity, important
-declarations or cascade layers, and there is no continuous source-order watcher.
-The settings UI and video page are not custom-CSS targets. CSS can affect measured
-header/composer heights, so the existing chrome measurements are refreshed on a
-source change. No unbounded repair observer is introduced.
+The textarea is LTR, uses native text Undo/IME, and stays read-only rather than
+disabled during saves so selection and copying still work. Control/Meta+Enter
+uses the same explicit action as the button. Modified Enter in the name field
+and composing events do not accidentally submit it.
 
-## Editor behavior
+Escape dismisses the innermost confirmation or name form first, otherwise leaves
+the code editor without discarding it. A subsequent settings-close request still
+uses the existing unapplied-text/name/in-flight-save warning. Escape in that
+close confirmation cancels only the confirmation, including when a save finishes
+while it is open. Focus returns to the corresponding editor, selector or prior
+settings control; a completed operation must not steal focus into a hidden editor.
+When Off removes its button, focus returns to Use unless the user moved elsewhere.
+Beforeunload remains a best-effort browser warning, not a persistence mechanism.
 
-The open/closed section state, text, registration name and feedback survive
-switching existing tabs. Loading another source asks before replacing unapplied
-text; cancellation also preserves the selected registration. Confirmed deletions
-and overwrites recheck the requested snapshot. Closing warns about drafts, names
-or a pending operation, but permits explicit close without pretending to cancel
-an already-started write. Escape dismisses an open close confirmation rather than
-closing Settings, even if the pending save has since finished. Cancellation
-returns focus to the prior control when it still exists and is visible, otherwise
-to the active tab. An externally closed Settings session drops its old close
-confirmation without discarding the draft. Beforeunload is only a best-effort
-browser warning.
+Japanese and English (including US/GB/AU) use the focused action wording. The
+existing translation keys and locale inventory are unchanged. Other languages
+retain their existing translations/fallbacks. Runtime locale arrays are produced
+by the existing compiler, never patched by index.
 
-The editor's main row is Apply / Save / Disable. Save opens the named-copy
-form; it does not apply CSS. Disable removes the current effect without deleting
-text. Deleting a saved copy stays with its source, away from the main action row.
-While paused, Apply is relabeled Update with the pause state; saving content never
-implies a resume. The recovery control remains available during an ordinary save.
+## Input and backup boundaries
 
-One header badge reports enabled/disabled/paused/unconfirmed state and unapplied
-edits. The textarea retains an accessible state description without repeating the
-same explanation visually. Errors, external changes, destructive confirmations
-and pending recovery remain visible. The read-only editor stays selectable.
+CSS is limited to 64 KiB of UTF-8 source and a separate 256 KiB serialized-domain
+budget. Up to 20 named copies are accepted; names must be nonempty, at most 100
+characters, and unique after trimming. The saved list has a 256 KiB JSON budget.
+Appearance presets have a separate 384 KiB budget. Export checks the actual
+pretty-printed backup against the 1 MiB total limit. Source is never truncated.
 
-Long instructions, source descriptions and trust warnings use native details
-closed by default. They have no saved open state. Escape closes only the focused
-help disclosure and returns focus to its summary (except during IME composition).
-The outer editor ignores bubbled nested toggle events: opening help must not
-change the editor's saved expansion flag. Source reload/delete controls stay
-outside the disclosures and remain available without opening a help panel.
+Backup v3 includes current CSS and saved copies, not locale or pause preferences.
+Versions 1 and 2 remain supported without enabling CSS from extra fields. Imported
+CSS is always disabled; a backup cannot resume it. Invalid source/copies are
+rejected instead of silently normalized to empty strings. CSS readbacks, watch
+events and import readbacks validate the data. The backup reader distinguishes
+omitted fields from explicitly invalid null/undefined fields.
 
-Japanese and English (including US/GB/AU) labels are shortened in the existing
-locale catalog. Other locales keep their existing translations/fallbacks. No new
-translation keys, locale inventory, persistence flags or dependencies are added.
+## Document lifecycle and trust
 
-Registration reports duplicate trimmed names and a full library before sending
-a write. A full library does not block editing or applying CSS. The action layer
-remains the authority for capacity and concurrency checks. Canceling registration
-clears only the name and returns focus to the editor; CSS is retained. Unmodified
-Enter submits the name, Escape cancels that subform, and composing key events do
-neither. A failed registration keeps both inputs and returns focus to the name
-when the section remains open. A completed write never focuses a collapsed editor.
-Registration pins the displayed source in a draft even when it has not been
-edited. Its completion checks that draft's identity before clearing the name, so
-a later editor session with the same name is left alone. Collapsing the section
-is not a new draft session. Disable also pins the visible source and advances only
-the submitted draft's baseline after its own confirmed write. Existing external
-conflicts and later drafts are not cleared by an old disable completion.
+Content observes the committed source and pause preference and sends the effective
+CSS to ChatRuntime/ResourceReconciler. Each reconciler owns one CustomChatStyles.
+Updating the Document and source together avoids briefly attaching old CSS while
+stopping or replacing the iframe. Unavailable/replaced Documents, iframe return
+and runtime cleanup release only the owned stylesheet. Load callbacks verify the
+current lease and session before changing resources; missing heads do not block
+cleanup. The reconciler retains the requested source for later valid chat.
 
-Source text is LTR and retains native text Undo and IME behavior. While saving,
-the editor is read-only rather than disabled, so source remains selectable and
-copyable. Changing controls are disabled. Escape in an inner confirmation cancels
-that confirmation and returns focus to the editor, without closing Settings. The UI uses
-existing theme variables, explicit state text and focus outlines. Selectors use
-auto-fit grid sizing and actions wrap at the component's available width, not
-the browser viewport. The CSS textarea uses 13px monospace type with 1.7 line
-height and a visible capacity indicator. It does not inject user CSS into a preview of the settings screen.
+The owned style uses textContent, never HTML parsing. Identical text is not
+rewritten; foreign styles sharing its marker are not removed. At an existing
+synchronization point it returns to the end of head to preserve source ordering
+when the cascade otherwise ties. Specificity, important rules and layers still
+apply. Changed CSS refreshes existing composer/header measurements without a new
+continuous observer. The video page and settings UI are not custom-CSS targets.
 
-## Trust and validation
+This is a trusted-input feature, not a sanitizer. CSS can contact remote sites,
+hide controls or cause rendering load. Browser CSP, cascade, relative URLs and
+error recovery apply normally. A successful save does not prove correct selectors
+or appearance. There is no JavaScript execution, remote theme store, live user-CSS
+preview, multiple-source composition or replacement chat renderer.
 
-This is a trusted-input customization tool, not a CSS sanitizer. CSS may request
-remote resources, hide controls or impose rendering load. Normal browser cascade,
-CSP, relative-URL resolution and error recovery apply; the extension does not
-bypass them. A successful save is not proof of correct selectors or appearance.
-
-Regression sources cover actions, drafts, recovery, storage/import, close behavior
-and stylesheet ownership. Tests, typecheck, lint, builds and real-browser checks
-were not run during preparation of this change. Chrome/Firefox, live/replay,
-iframe replacement, persistence failures and keyboard accessibility remain local
-verification tasks.
+Verification should cover the standard repository gates and Chrome/Firefox with
+live/replay, navigation, iframe replacement, storage failures/retries, Off/Resume,
+IME/focus and narrow settings panels. Static source/illustration checks do not
+replace extension runtime verification.
