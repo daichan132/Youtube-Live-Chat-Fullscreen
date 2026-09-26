@@ -50,12 +50,21 @@ Actions change committed atoms only through repository notifications. Completion
 does not blindly write an earlier requested snapshot into the store. A write
 without a matching confirmation is reported as unconfirmed; it may already have
 reached storage. Drafts stay available and the user can inspect the current state.
+For the three CSS domains, a missing, invalid or failed readback stays in the
+repository's failed-domain queue. Common Retry reuses the original snapshot
+(including registration IDs); flush rejects until the failure is resolved or
+superseded. Non-CSS settings keep their existing best-effort readback behavior.
+A newer local intent or a confirmed external change supersedes the old retry;
+an obsolete readback failure must not re-enqueue it.
 
 When an enabling write fails, Remove effect remains available even if the
 previous confirmed source is disabled. It publishes a new disabled intent to
 supersede the failed enabling request before any common Retry. The editor keeps
-the failed source. Confirmed commits clear stale persistence feedback only for
-the corresponding operation domain; imports also clear obsolete success notices.
+the failed source. Conversely, Apply remains available for an unchanged source
+when the CSS domain has a failed save, so the user can supersede a failed disable
+without first changing their text. Both operations use the repository's queue,
+not a separate UI retry flag. Confirmed commits clear stale persistence feedback
+only for the corresponding operation domain; imports also clear obsolete success notices.
 
 Normal CSS actions are mutually exclusive within one runtime. Pending recovery
 also blocks them so a save presented as "keep paused" cannot race with a resume.
@@ -121,7 +130,12 @@ switching existing tabs. Loading another source asks before replacing unapplied
 text; cancellation also preserves the selected registration. Confirmed deletions
 and overwrites recheck the requested snapshot. Closing warns about drafts, names
 or a pending operation, but permits explicit close without pretending to cancel
-an already-started write. Beforeunload is only a best-effort browser warning.
+an already-started write. Escape dismisses an open close confirmation rather than
+closing Settings, even if the pending save has since finished. Cancellation
+returns focus to the prior control when it still exists and is visible, otherwise
+to the active tab. An externally closed Settings session drops its old close
+confirmation without discarding the draft. Beforeunload is only a best-effort
+browser warning.
 
 The main action is Apply; Register is secondary. Deleting a named registration is
 placed with that selected source; removing the current effect is a separate
@@ -139,7 +153,9 @@ when the section remains open. A completed write never focuses a collapsed edito
 Registration pins the displayed source in a draft even when it has not been
 edited. Its completion checks that draft's identity before clearing the name, so
 a later editor session with the same name is left alone. Collapsing the section
-is not a new draft session.
+is not a new draft session. Disable also pins the visible source and advances only
+the submitted draft's baseline after its own confirmed write. Existing external
+conflicts and later drafts are not cleared by an old disable completion.
 
 Source text is LTR and retains native text Undo and IME behavior. While saving,
 the editor is read-only rather than disabled, so source remains selectable and

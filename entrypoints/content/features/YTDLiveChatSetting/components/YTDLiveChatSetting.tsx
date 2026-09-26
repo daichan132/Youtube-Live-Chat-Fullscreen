@@ -50,19 +50,20 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
   const resetCssEditor = useSetAtom(customCssEditorUiAtom)
   const [confirmClose, setConfirmClose] = useState(false)
   const closeCancelRef = useRef<HTMLButtonElement>(null)
+  const closeFocusRef = useRef<HTMLElement | null>(null)
   const closeNow = () => {
     resetCssDraft(null)
     resetCssEditor(current => ({ ...current, name: '', registering: false, source: null }))
     setConfirmClose(false)
+    closeFocusRef.current = null
     onOpenChange(false)
   }
-  const requestClose = () => {
-    if (cssSaving || hasUnappliedCss) setConfirmClose(true)
-    else closeNow()
-  }
   useEffect(() => {
-    if (confirmClose) closeCancelRef.current?.focus()
-  }, [confirmClose])
+    if (!open) {
+      setConfirmClose(false)
+      closeFocusRef.current = null
+    } else if (confirmClose) closeCancelRef.current?.focus()
+  }, [open, confirmClose])
   useEffect(() => {
     if (!open || (!hasUnappliedCss && !cssSaving)) return
     const warn = (event: BeforeUnloadEvent) => {
@@ -82,6 +83,26 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
     activeTab?.focus({ preventScroll: true })
   }, [])
+
+  const cancelClose = () => {
+    setConfirmClose(false)
+    const previousFocus = closeFocusRef.current
+    closeFocusRef.current = null
+    if (previousFocus?.isConnected && !previousFocus.closest('details:not([open]), [hidden], [inert]')) {
+      previousFocus.focus()
+    } else focusActiveTab()
+  }
+  const requestClose = () => {
+    // Modal routes Escape here. Dismiss only the currently open confirmation,
+    // even when the save finished while the user was deciding.
+    if (confirmClose) {
+      cancelClose()
+    } else if (cssSaving || hasUnappliedCss) {
+      const focused = document.activeElement
+      closeFocusRef.current = focused instanceof HTMLElement && focused !== document.body ? focused : null
+      setConfirmClose(true)
+    } else closeNow()
+  }
 
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
     () => [
@@ -261,10 +282,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
           <div className='ylc-css-close-confirm' role='group' aria-label={t('content.customCss.confirmTitle')}>
             <p>{t(cssSaving ? 'content.customCss.closeWhileSaving' : 'content.customCss.discardOnClose')}</p>
             <div className='flex flex-wrap gap-2'>
-              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={() => {
-                setConfirmClose(false)
-                focusActiveTab()
-              }}>{t('content.customCss.keepEditing')}</button>
+              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={cancelClose}>{t('content.customCss.keepEditing')}</button>
               <button type='button' className='ylc-btn' onClick={closeNow}>
                 {t(cssSaving ? 'content.customCss.closeAnyway' : 'content.customCss.discardAndClose')}
               </button>

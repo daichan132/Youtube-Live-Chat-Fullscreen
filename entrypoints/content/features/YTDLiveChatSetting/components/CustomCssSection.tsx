@@ -88,13 +88,14 @@ export const CustomCssSection = () => {
       return true
     }
   })()
-  const hasFailedApply = persistence.status === 'error' && persistence.failedDomains.includes('customCss')
+  const hasFailedCssSave = persistence.status === 'error' && persistence.failedDomains.includes('customCss')
   const busy = operation !== null || recovery.pending
   const conflict = draft !== null && !areCustomCssEqual(draft.baseline, active)
   const source = editorUi.source
   const selected = source?.kind === 'saved' ? saved.find(entry => entry.id === source.id) : undefined
   const preset = source?.kind === 'preset' ? CHAT_CSS_PRESETS.find(entry => entry.id === source.id) : undefined
-  const canApply = runtime !== null && !busy && !tooLarge && css.trim().length > 0 && (changed || !active.enabled)
+  const canApply = runtime !== null && !busy && !tooLarge && css.trim().length > 0
+    && (changed || !active.enabled || hasFailedCssSave)
   const name = editorUi.name.trim()
   const duplicateName = name.length > 0 && saved.some(entry => entry.name.trim() === name)
   const registrationError = duplicateName ? 'content.customCss.duplicateName'
@@ -161,6 +162,21 @@ export const CustomCssSection = () => {
     }).catch(() => {
       // Runtime feedback and the page-local draft survive tab remounts.
     })
+  }
+  const disable = () => {
+    if (!runtime || isSaving()) return
+    const before = store.get(customCssAtom)
+    const submitted = store.get(customCssDraftAtom) ?? { css, baseline: before }
+    // Disabling must preserve the visible text just like Apply/Register.
+    setDraft(submitted)
+    setConfirmation(null)
+    void runtime.customCss.disable().then(() => {
+      // Our own confirmed disable is not an external editing conflict. Keep
+      // any pre-existing conflict, a later editor session, or a newer draft.
+      setDraft(current => current === submitted && areCustomCssEqual(submitted.baseline, before)
+        ? { ...submitted, baseline: { ...before, enabled: false } }
+        : current)
+    }).catch(() => {})
   }
   const register = () => {
     if (!runtime || !canRegister || isSaving()) return
@@ -414,16 +430,19 @@ export const CustomCssSection = () => {
             </div>
           )}
           <div className='ylc-custom-css-secondary'>
-            <button type='button' className='ylc-btn' disabled={!runtime || busy || (!active.enabled && !hasFailedApply)} onClick={() => {
-              if (runtime) void runtime.customCss.disable().catch(() => {})
-            }}>{t('content.customCss.disable')}</button>
+            <button
+              type='button'
+              className='ylc-btn'
+              disabled={!runtime || busy || (!active.enabled && !hasFailedCssSave)}
+              onClick={disable}
+            >{t('content.customCss.disable')}</button>
             {changed && <button type='button' className='ylc-btn' disabled={busy} onClick={() => requestLoad(active.css)}>
               {t('content.customCss.reloadApplied')}
             </button>}
           </div>
         </fieldset>
         {busy && <p role='status'>{t('content.customCss.saving')}</p>}
-        {hasFailedApply && <p className='ylc-custom-css-help'>{t('content.customCss.failedApplyHelp')}</p>}
+        {hasFailedCssSave && feedback?.operation === 'apply' && <p className='ylc-custom-css-help'>{t('content.customCss.failedApplyHelp')}</p>}
         {!busy && feedback?.kind === 'error' && <p role='alert' className='ylc-custom-css-error'>{t(ERROR_KEYS[feedback.code])}</p>}
         {!busy && successKey && <p role='status'>{t(successKey)}</p>}
         <div className='ylc-custom-css-recovery'><CustomCssRecovery /></div>

@@ -1,6 +1,14 @@
 import { storage } from 'wxt/utils/storage'
-import { assertCustomCss, assertSavedChatCss, type ChatCssCustomization, DEFAULT_CUSTOM_CSS,
-  normalizeCustomCss, normalizeSavedChatCss, type SavedChatCss } from './customCss'
+import {
+  assertCustomCss,
+  assertSavedChatCss,
+  type ChatCssCustomization,
+  CustomCssError,
+  DEFAULT_CUSTOM_CSS,
+  normalizeCustomCss,
+  normalizeSavedChatCss,
+  type SavedChatCss,
+} from './customCss'
 import { assertAppearanceCapacity } from './settingsCapacity'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
@@ -188,12 +196,14 @@ export const createSettingsRepository = (
 
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
+    const requiresConfirmation = domain === 'customCss' || domain === 'savedChatCss' || domain === 'customCssSuspended'
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
     const previous = tails.get(domain) ?? Promise.resolve()
     const barrier = domain === 'customCssSuspended' ? null : replacementTail
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
       .then(async () => {
         if (localSequences.get(domain) !== sequence) return
+        let failureVersion = supersessionVersion
         try {
           const committed = await runWithRetry(domain, sequence, supersessionVersion, task)
           if (!committed) return
@@ -201,19 +211,23 @@ export const createSettingsRepository = (
             failedWrites.delete(domain)
             // An event before this read may precede the local commit. Only
             // events arriving during the read supersede its captured snapshot.
-            const readbackVersion = supersessionVersions.get(domain)
+            const readbackVersion = supersessionVersions.get(domain) ?? 0
+            failureVersion = readbackVersion
             try {
               const stored = await readCommittedEnvelope(domain)
-              if (stored && localSequences.get(domain) === sequence && supersessionVersions.get(domain) === readbackVersion) {
-                notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
-              }
+              if (localSequences.get(domain) !== sequence || supersessionVersions.get(domain) !== readbackVersion) return
+              if (!stored && requiresConfirmation) throw new CustomCssError('unconfirmed')
+              if (stored) notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
             } catch {
-              // The write succeeded. A later event or reload can converge
-              // when this best-effort readback is unavailable.
+              // CSS is not optimistic: an unknown readback must remain visible
+              // to Retry/flush, even if the write already reached other pages.
+              // The outer version guard prevents replaying a superseded intent.
+              if (requiresConfirmation) throw new CustomCssError('unconfirmed')
+              // Other domains retain their existing best-effort readback.
             }
           }
         } catch (error) {
-          if (localSequences.get(domain) === sequence && supersessionVersions.get(domain) === supersessionVersion)
+          if (localSequences.get(domain) === sequence && supersessionVersions.get(domain) === failureVersion)
             failedWrites.set(domain, { sequence, task, error })
           throw error
         }
