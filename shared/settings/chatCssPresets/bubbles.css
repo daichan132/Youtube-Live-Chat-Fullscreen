@@ -1,0 +1,11 @@
+/* Soft bubbles / やわらかい吹き出し
+ * Change the radius, padding or background opacity to make your own copy.
+ * 通常コメントのみ。名前の色・投稿欄・有料メッセージは変更しません。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin: 6px 8px;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background-color: rgb(127 127 127 / 14%);
+  box-sizing: border-box;
+}

@@ -9,7 +9,10 @@ vi.mock('@/shared/i18n/loader', () => ({
 }))
 
 const createRepository = (overrides: Partial<SettingsRepository> = {}): SettingsRepository => ({
-  load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en' }),
+  load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: DEFAULT_CHAT_SETTINGS, locale: 'en', customCss: { enabled: false, css: '' }, savedChatCss: [], customCssSuspended: false }),
+  saveCustomCss: async () => {},
+  saveSavedChatCss: async () => {},
+  saveCustomCssSuspended: async () => {},
   saveEnabled: async () => {},
   saveTheme: async () => {},
   saveAppearance: async () => {},

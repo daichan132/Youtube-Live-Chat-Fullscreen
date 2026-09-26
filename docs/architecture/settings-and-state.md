@@ -29,6 +29,9 @@ Settings are split by write ownership rather than by screen or one broad snapsho
 | `ylc-chat-appearance` | chat profile and custom/builtin preset list | settings page |
 | `ylc-chat-geometry` | player-relative or legacy pixel geometry | content script |
 | `ylc-locale` | selected runtime locale | popup/settings |
+| `ylc-custom-css` | applied CSS text and enabled preference | explicit Apply/Disable |
+| `ylc-saved-chat-css` | CSS-only named registrations | explicit Register/Delete |
+| `ylc-custom-css-suspended` | independent emergency stop | popup/settings recovery controls |
 
 Each value uses `StoredEnvelope<T>`: `{ schemaVersion: 1, writerId: string, value: T }`. Envelope validation establishes only the envelope, not the domain value; domain-specific normalization remains necessary.
 
@@ -64,11 +67,11 @@ A newer local language selection is not cancelled by an acknowledgement of an ea
 
 ## Import and backup
 
-Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
+Backup version 3 contains enabled/theme, profile, presets, geometry, applied CSS and the CSS-only registration list. Locale and the independent CSS emergency-stop preference remain browser-local and are not exported. Version 2 and version 1 imports remain supported. Imported CSS is always disabled; appearance presets do not contain CSS.
 
 The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
 
-An import synchronously reserves a barrier. It waits only for previously queued operations, writes the four imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.
+An import synchronously reserves a barrier. It waits only for previously queued operations, writes the six imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.
 
 Confirmed domains are published through `watch` under local-sequence and external-generation guards. A newer local edit is not replaced by the imported value while it waits to save. The runtime does not apply the original input snapshot again after awaiting the repository, which would overwrite newer committed changes. Disposed runtimes ignore notifications.
 

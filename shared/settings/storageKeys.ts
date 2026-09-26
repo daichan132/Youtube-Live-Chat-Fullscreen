@@ -1,3 +1,7 @@
+export const CUSTOM_CSS_STORAGE_KEY = 'ylc-custom-css' as const
+export const SAVED_CHAT_CSS_STORAGE_KEY = 'ylc-saved-chat-css' as const
+export const CUSTOM_CSS_SUSPENDED_STORAGE_KEY = 'ylc-custom-css-suspended' as const
+
 export const ENABLED_STORAGE_KEY = 'ylc-enabled' as const
 export const THEME_STORAGE_KEY = 'ylc-theme' as const
 export const APPEARANCE_STORAGE_KEY = 'ylc-chat-appearance' as const

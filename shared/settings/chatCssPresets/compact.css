@@ -1,0 +1,9 @@
+/* Compact spacing / コンパクト
+ * Reduce space between messages without hiding names or avatars.
+ * 行の高さを固定しません。長文や絵文字は通常どおり折り返します。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin-block: 0;
+  padding-block: 2px;
+  line-height: 1.4;
+}

@@ -52,6 +52,7 @@ export interface ChatRuntime {
   getGeneration(): number
   setEnabled(enabled: boolean): void
   setProfile(profile: ChatProfile): void
+  setCustomCss(css: string): void
   setOverlayContainer(container: HTMLElement | null): void
   setOverlayInteraction(state: 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open'): void
 }
@@ -202,6 +203,10 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (this.enabled === enabled) return
     this.enabled = enabled
     this.scheduleReconcile()
+  }
+
+  setCustomCss = (css: string) => {
+    this.resources.setCustomCss(css)
   }
 
   setProfile = (profile: ChatProfile) => {

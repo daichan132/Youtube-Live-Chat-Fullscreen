@@ -58,7 +58,10 @@ export const DataTransfer = () => {
           aria-label={t('popup.export')}
           data-tooltip={t('popup.export')}
           className='ylc-theme-icon-link'
-          onClick={() => handleExport(runtime.exportSettings())}
+          onClick={() => {
+            try { handleExport(runtime.exportSettings()) }
+            catch { showError(t('content.customCss.exportFailed')) }
+          }}
         >
           <TbDownload size={18} aria-hidden='true' />
         </button>

@@ -1,0 +1,14 @@
+/* Outlined message text / くっきり文字
+ * Adjust the OUTER panel background with the existing settings separately.
+ * 白い本文に黒い影を付けます。パネル背景は透明にしません。
+ * 名前・バッジ・リンクの色は変更しません。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) #message {
+  color: #fff;
+  line-height: 1.6;
+  text-shadow:
+    -1px -1px 1px #111,
+    1px -1px 1px #111,
+    -1px 1px 1px #111,
+    1px 1px 1px #111;
+}

@@ -1,4 +1,12 @@
 import { createStore } from 'jotai/vanilla'
+import { createCustomCssActions, type CustomCssActions } from './customCssActions'
+import {
+  customCssAtom,
+  customCssFeedbackAtom,
+  customCssSuspendedAtom,
+  receiveCustomCssSuspendedAtom,
+  savedChatCssAtom,
+} from '@/shared/state/customCssAtoms'
 import type { Store } from 'jotai/vanilla/store'
 import type { LocaleCode } from '@/shared/i18n/generated/translationTypes'
 import { resolveLanguageCode } from '@/shared/i18n/language'
@@ -28,6 +36,7 @@ import {
 import { clearStyleHistoryAtom } from '@/shared/state/commands'
 
 export type AppRuntime = {
+  customCss: CustomCssActions
   store: Store
   setLocale: (locale: LocaleCode) => Promise<void>
   exportSettings: () => ReturnType<typeof buildRepositoryBackup>
@@ -102,6 +111,9 @@ export const createAppRuntime = async (
   let applyingExternal = false
   let disposed = false
   let initialized = false
+  let pendingCustomCss: SettingsSnapshot['customCss'] | undefined
+  let pendingSavedChatCss: SettingsSnapshot['savedChatCss'] | undefined
+  let pendingCustomCssSuspended: boolean | undefined
   let pendingEnabled: boolean | undefined
   let pendingTheme: SettingsSnapshot['global']['themeMode'] | undefined
   let pendingAppearance: Pick<SettingsSnapshot['chat'], 'profile' | 'presets'> | undefined
@@ -146,6 +158,40 @@ export const createAppRuntime = async (
       if (!disposed) store.set(replacePersistenceStatusAtom, status)
     })
     unwatch = repository.watch({
+      onCustomCss: (value, source = 'external') => {
+        if (disposed) return
+        if (!initialized) {
+          pendingCustomCss = value
+          return
+        }
+        store.set(customCssAtom, value)
+        const feedback = store.get(customCssFeedbackAtom)
+        if (feedback && (feedback.operation === 'apply' || feedback.operation === 'disable') &&
+          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))) {
+          store.set(customCssFeedbackAtom, null)
+        }
+      },
+      onSavedChatCss: (value, source = 'external') => {
+        if (disposed) return
+        if (!initialized) {
+          pendingSavedChatCss = value
+          return
+        }
+        store.set(savedChatCssAtom, value)
+        const feedback = store.get(customCssFeedbackAtom)
+        if (feedback && (feedback.operation === 'register' || feedback.operation === 'remove') &&
+          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))) {
+          store.set(customCssFeedbackAtom, null)
+        }
+      },
+      onCustomCssSuspended: value => {
+        if (disposed) return
+        if (!initialized) {
+          pendingCustomCssSuspended = value
+          return
+        }
+        store.set(receiveCustomCssSuspendedAtom, value)
+      },
       onEnabled: value => {
         if (disposed) return
         if (!initialized) {
@@ -215,6 +261,9 @@ export const createAppRuntime = async (
       },
       locale: localeStateFromMessages(hydratedLocale, messages),
     })
+    store.set(customCssAtom, pendingCustomCss ?? snapshot.customCss)
+    store.set(savedChatCssAtom, pendingSavedChatCss ?? snapshot.savedChatCss)
+    store.set(customCssSuspendedAtom, pendingCustomCssSuspended ?? snapshot.customCssSuspended)
     unbindPersistence = bindPersistence(store, repository, () => applyingExternal)
     initialized = true
   } catch (error) {
@@ -227,6 +276,7 @@ export const createAppRuntime = async (
 
   return {
     store,
+    customCss: createCustomCssActions(store, repository, () => disposed),
     async setLocale(locale) {
       if (disposed) return
       const resolved = resolveLanguageCode(locale)
@@ -249,6 +299,9 @@ export const createAppRuntime = async (
         global: store.get(globalSettingsStateAtom),
         chat: store.get(chatSettingsStateAtom),
         locale: store.get(localeStateAtom).code,
+        customCss: store.get(customCssAtom),
+        savedChatCss: store.get(savedChatCssAtom),
+        customCssSuspended: store.get(customCssSuspendedAtom),
       }),
     async importSettings(input) {
       // File.text() can finish after the extension page has been disposed.
@@ -258,7 +311,7 @@ export const createAppRuntime = async (
       if (!normalized) throw new Error('Unsupported settings backup')
       // The repository publishes confirmed domains under its sequence guards.
       // Applying normalized here would overwrite newer changes after the await.
-      await repository.replaceSettings(normalized.globalSetting, normalized.chatSettings)
+      await repository.replaceSettings(normalized.globalSetting, normalized.chatSettings, normalized.customCss, normalized.savedChatCss)
     },
     retryPersistence: () => (disposed ? Promise.resolve() : repository.retryFailed()),
     dispose() {

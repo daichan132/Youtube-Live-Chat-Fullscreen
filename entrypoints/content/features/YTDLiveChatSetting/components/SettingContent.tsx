@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai'
+import { CustomCssSection } from './CustomCssSection'
 import { type ReactNode, useId } from 'react'
 import {
   type IconType,
@@ -185,6 +186,7 @@ export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => 
         </ToggleRow>
       </SettingGroup>
 
+      <CustomCssSection />
       {diagnostics}
     </>
   )

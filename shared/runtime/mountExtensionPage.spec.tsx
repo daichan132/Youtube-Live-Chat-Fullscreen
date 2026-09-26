@@ -23,6 +23,7 @@ describe('mountExtensionPage', () => {
       setLocale: vi.fn(),
       exportSettings: vi.fn(),
       importSettings: vi.fn(),
+      customCss: { apply: vi.fn(), disable: vi.fn(), register: vi.fn(), remove: vi.fn(), suspend: vi.fn() },
       retryPersistence: vi.fn(),
       dispose: mocks.dispose,
     })
