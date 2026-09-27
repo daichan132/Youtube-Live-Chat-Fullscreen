@@ -146,8 +146,9 @@ export const CustomCssSection = () => {
     if (canStop) return
     stopTrigger.current = null
     const root = applyButtonRef.current?.getRootNode()
-    const focused = root instanceof ShadowRoot ? root.activeElement : trigger.ownerDocument.activeElement
-    if (focused && focused !== trigger && focused !== trigger.ownerDocument.body) return
+    const focused = (root instanceof ShadowRoot ? root.activeElement : null) ?? trigger.ownerDocument.activeElement
+    const focusLost = !focused || focused === trigger.ownerDocument.body || (root instanceof ShadowRoot && focused === root.host)
+    if (!focusLost && focused !== trigger) return
     if (applyButtonRef.current && !applyButtonRef.current.disabled) applyButtonRef.current.focus()
     else if (editorUi.expanded) editorRef.current?.focus()
     else editRef.current?.focus()
@@ -164,8 +165,9 @@ export const CustomCssSection = () => {
     // its form disappeared. A close confirmation or another control owns focus
     // once the user has moved there. Resolve focus inside the extension root too.
     const root = editorRef.current?.getRootNode()
-    const focused = root instanceof ShadowRoot ? root.activeElement : form.ownerDocument.activeElement
-    if (focused && focused !== form.ownerDocument.body && !form.contains(focused)) return
+    const focused = (root instanceof ShadowRoot ? root.activeElement : null) ?? form.ownerDocument.activeElement
+    const focusLost = !focused || focused === form.ownerDocument.body || (root instanceof ShadowRoot && focused === root.host)
+    if (!focusLost && !form.contains(focused)) return
     if (feedback?.kind === 'error' && editorUi.registering) nameRef.current?.focus()
     else editorRef.current?.focus()
   }, [busy, editorUi.expanded, editorUi.registering, feedback])

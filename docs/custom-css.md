@@ -162,7 +162,9 @@ was removed, never from another control or a settings-close confirmation.
 A completed operation must not focus a hidden editor. When Off removes its
 button, focus returns to Use unless the user moved elsewhere. These checks and
 close-focus snapshots use the containing Document or ShadowRoot, not the outer
-document's shadow host.
+document's shadow host. A null ShadowRoot activeElement alone is not proof of
+lost focus: an outside-document control may now own it. Off and registration
+completion also check that outer focus before restoring a control.
 Beforeunload remains a best-effort browser warning, not a persistence mechanism.
 
 Japanese and English (including US/GB/AU) use the focused action wording. The
