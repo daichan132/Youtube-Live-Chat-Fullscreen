@@ -77,6 +77,14 @@ or a pending resume. The page-local stop revision records local Off requests and
 incoming true pause notifications, even when true was already stored. A Use
 waiting for its source write cannot lift a later stop. Recovery request identity
 also prevents an old resume completion from clearing a newer local stop latch.
+An external Off during the resume phase also installs that latch immediately,
+so a late false readback cannot briefly enable CSS before its Promise settles.
+Both successful and failed resume completions check the stop revision. A
+successful readback that still confirms Off finishes recovery quietly. If the
+value disagrees or the old write/readback failed, the local latch remains set
+and the UI offers a stop retry rather than claiming confirmation from an earlier
+notification. An obsolete failure does not replace the result of a newer local
+stop or publish a misleading Apply error.
 The revision is coordination state, not a new persisted field or cross-tab lock.
 
 The lower-level Apply and Disable actions keep their existing contracts. Plain
@@ -90,6 +98,10 @@ snapshots. Missing, invalid or failed CSS readbacks remain in the existing faile
 queue; common Retry reuses the same source and saved-copy IDs, and flush rejects
 unresolved failures. New local intents or confirmed external updates supersede
 older retries. Non-CSS settings retain their existing best-effort readback policy.
+Pause-domain readback failures retain the original intent's supersession version,
+not a newer version captured after an external stop. This prevents common Retry
+from reviving an obsolete resume when the stop arrived before readback began.
+Other domains keep their existing confirmation and retry behavior.
 Off supersedes a failed resume through the pause domain. A retry of a failed
 source write while paused may save that source, but does not itself resume it.
 
@@ -129,8 +141,12 @@ uses the same explicit action as the button. Modified Enter in the name field
 and composing events do not accidentally submit it.
 
 Escape dismisses the innermost confirmation or name form first, otherwise leaves
-the code editor without discarding it. A subsequent settings-close request still
-uses the existing unapplied-text/name/in-flight-save warning. Escape in that
+the code editor without discarding it. The section owns this ordering regardless
+of whether focus is on the name input, CSS, or a button. During a name save,
+Escape is consumed without canceling the request or bubbling to close Settings.
+A deletion/overwrite confirmation takes priority over the name form.
+A subsequent settings-close request still uses the existing
+unapplied-text/name/in-flight-save warning. Escape in that
 close confirmation cancels only the confirmation, including when a save finishes
 while it is open. Focus returns to the corresponding editor, selector or prior
 settings control; a completed operation must not steal focus into a hidden editor.

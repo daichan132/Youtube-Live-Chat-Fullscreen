@@ -232,7 +232,11 @@ export const CustomCssSection = () => {
           event.preventDefault()
           event.stopPropagation()
           cancelConfirmation()
-        } else if (editorUi.expanded && !editorUi.registering) {
+        } else if (editorUi.expanded && editorUi.registering) {
+          event.preventDefault()
+          event.stopPropagation()
+          cancelRegistration()
+        } else if (editorUi.expanded) {
           event.preventDefault()
           event.stopPropagation()
           setEditorUi(current => ({ ...current, expanded: false }))
@@ -335,11 +339,7 @@ export const CustomCssSection = () => {
                   if (store.get(customCssFeedbackAtom)?.operation === 'register') store.set(customCssFeedbackAtom, null)
                 }} onKeyDown={event => {
                   if (busy || event.nativeEvent.isComposing) return
-                  if (event.key === 'Escape') {
-                    event.preventDefault()
-                    event.stopPropagation()
-                    cancelRegistration()
-                  } else if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
+                  if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                     event.preventDefault()
                     event.stopPropagation()
                     register()

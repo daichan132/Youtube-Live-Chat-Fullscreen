@@ -43,9 +43,14 @@ export const customCssRecoveryAtom = atom({ pending: false, target: true, failed
 // Reconcile a failed request only when the confirmed value matches its intent.
 // In particular, an old resume must never clear a failed, newer stop request.
 export const receiveCustomCssSuspendedAtom = atom(null, (get, set, value: boolean) => {
-  if (value) set(customCssStopVersionAtom, get(customCssStopVersionAtom) + 1)
-  set(customCssSuspendedAtom, value)
   const recovery = get(customCssRecoveryAtom)
+  if (value) {
+    set(customCssStopVersionAtom, get(customCssStopVersionAtom) + 1)
+    // Protect the interval before an older resume Promise settles as well as
+    // its completion. Keep request identity so its action can release the lock.
+    if (recovery.pending && !recovery.target) set(customCssLocalStopAtom, true)
+  }
+  set(customCssSuspendedAtom, value)
   if (!recovery.pending && recovery.failed && recovery.target === value) {
     set(customCssLocalStopAtom, false)
     set(customCssRecoveryAtom, { pending: false, target: value, failed: false })

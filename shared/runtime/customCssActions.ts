@@ -82,20 +82,33 @@ export const createCustomCssActions = (
 
   const persistSuspension = async (suspended: boolean) => {
     if (suspended) store.set(customCssLocalStopAtom, true)
+    const stopVersion = store.get(customCssStopVersionAtom)
     const request = { pending: true, target: suspended, failed: false }
     store.set(customCssRecoveryAtom, request)
+    const settleSupersededRequest = (writeFailed: boolean) => {
+      if (store.get(customCssRecoveryAtom) !== request) return true
+      if (suspended || store.get(customCssStopVersionAtom) === stopVersion) return false
+      // An external Off has the same priority as a later local Off. Its latch
+      // already blocks late resume readbacks. A failed write/readback cannot
+      // establish that storage still contains the previously observed stop.
+      const unconfirmed = writeFailed || !store.get(customCssSuspendedAtom)
+      store.set(customCssLocalStopAtom, unconfirmed)
+      store.set(customCssRecoveryAtom, { pending: false, target: true, failed: unconfirmed })
+      return true
+    }
     try {
       await repository.saveCustomCssSuspended(suspended)
       requireActive()
-      if (store.get(customCssRecoveryAtom) !== request) return false
+      if (settleSupersededRequest(false)) return false
       confirm(store.get(customCssSuspendedAtom) === suspended)
       store.set(customCssLocalStopAtom, false)
       store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: false })
       return true
     } catch (error) {
-      if (!isDisposed() && store.get(customCssRecoveryAtom) === request) {
-        store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: true })
-      }
+      if (isDisposed()) throw error
+      // Superseded failures are not failures of the newer stop operation.
+      if (settleSupersededRequest(true)) return false
+      store.set(customCssRecoveryAtom, { pending: false, target: suspended, failed: true })
       throw error
     }
   }

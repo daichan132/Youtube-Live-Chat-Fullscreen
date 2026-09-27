@@ -212,7 +212,9 @@ export const createSettingsRepository = (
             // An event before this read may precede the local commit. Only
             // events arriving during the read supersede its captured snapshot.
             const readbackVersion = supersessionVersions.get(domain) ?? 0
-            failureVersion = readbackVersion
+            // A pause/resume intent must not become retryable again after a
+            // newer external stop, even when that event preceded this read.
+            failureVersion = domain === 'customCssSuspended' ? supersessionVersion : readbackVersion
             try {
               const stored = await readCommittedEnvelope(domain)
               if (localSequences.get(domain) !== sequence || supersessionVersions.get(domain) !== readbackVersion) return
