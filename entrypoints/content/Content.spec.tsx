@@ -12,6 +12,7 @@ const chatRuntime = {
   stop: vi.fn(),
   setEnabled: vi.fn(),
   setProfile: vi.fn(),
+  setCustomCss: vi.fn(),
 }
 
 vi.mock('./runtime/ChatRuntimeContext', () => ({

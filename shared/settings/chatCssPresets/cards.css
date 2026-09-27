@@ -1,0 +1,13 @@
+/* Outlined cards / すっきりカード
+ * Edit the border opacity or corner radius below.
+ * 通常コメントを枠で区切ります。文字色は既存の設定を使います。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin: 6px 8px;
+  padding: 9px 12px;
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 6px;
+  background-color: rgb(127 127 127 / 8%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+  box-sizing: border-box;
+}

@@ -1,0 +1,401 @@
+/* An additive setting group. Never restyle the surrounding settings controls. */
+
+.ylc-custom-css {
+  container-type: inline-size;
+}
+
+.ylc-custom-css .ylc-setting-group-legend {
+  color: var(--ylc-text-secondary);
+}
+
+.ylc-custom-css-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ylc-custom-css-legend > svg {
+  color: var(--ylc-accent);
+}
+
+.ylc-custom-css-surface {
+  margin: 0 12px;
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--ylc-accent) 24%, var(--ylc-border));
+  border-radius: var(--ylc-radius-lg);
+  background: var(--ylc-bg-surface);
+  min-width: 0;
+}
+
+.ylc-custom-css-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.ylc-custom-css-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ylc-text-secondary);
+  overflow-wrap: anywhere;
+}
+
+.ylc-custom-css-dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ylc-text-muted);
+}
+
+.ylc-custom-css-current[data-active="true"] .ylc-custom-css-dot {
+  background: var(--ylc-accent);
+}
+
+.ylc-custom-css label {
+  display: block;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.ylc-custom-css :is(select, input, textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: var(--ylc-radius-md);
+  background: var(--ylc-bg-surface);
+  color: var(--ylc-text-primary);
+  font: inherit;
+}
+
+.ylc-custom-css :is(select, input) {
+  min-height: 40px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.ylc-custom-css select {
+  text-overflow: ellipsis;
+}
+
+.ylc-custom-css input {
+  margin-top: 6px;
+}
+
+.ylc-custom-css textarea {
+  display: block;
+  padding: 10px;
+  font: 13px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
+  tab-size: 2;
+  white-space: pre;
+  min-height: 180px;
+  max-height: 360px;
+  resize: vertical;
+  overflow: auto;
+  background: var(--ylc-bg-surface-muted);
+  caret-color: var(--ylc-accent);
+}
+
+.ylc-custom-css :is(select, input, textarea, button):focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+}
+
+.ylc-custom-css :is(textarea, input)[aria-invalid="true"] {
+  border-color: var(--ylc-danger-border);
+}
+
+.ylc-custom-css :is(button, select, input):disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.ylc-custom-css-editor-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 8px 0 6px;
+}
+
+.ylc-custom-css-count {
+  color: var(--ylc-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ylc-custom-css-count[data-invalid="true"] {
+  color: var(--ylc-danger-text);
+}
+
+.ylc-custom-css .ylc-btn {
+  min-height: 36px;
+  max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  padding: 8px 10px;
+  line-height: 1.5;
+  text-align: start;
+}
+
+.ylc-custom-css .ylc-custom-css-primary {
+  width: 100%;
+  min-height: 40px;
+  background: var(--ylc-accent);
+  color: var(--ylc-accent-contrast);
+  text-align: center;
+  font-weight: 600;
+}
+
+.ylc-custom-css .ylc-custom-css-primary:hover:not(:disabled) {
+  background: var(--ylc-accent-hover);
+}
+
+.ylc-custom-css .ylc-custom-css-primary:disabled {
+  background: var(--ylc-bg-surface-muted);
+  color: var(--ylc-text-secondary);
+  opacity: 1;
+}
+
+.ylc-custom-css .ylc-custom-css-quiet {
+  color: var(--ylc-text-secondary);
+  font-size: 12px;
+  background: transparent;
+}
+
+.ylc-custom-css-heading > .ylc-btn {
+  flex-shrink: 0;
+  max-width: 50%;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.ylc-custom-css .ylc-custom-css-edit {
+  width: 100%;
+  justify-content: flex-start;
+  padding-inline: 0;
+  color: var(--ylc-text-secondary);
+  font-size: 12px;
+}
+
+.ylc-custom-css-edit > span:last-child {
+  margin-inline-start: auto;
+  font-size: 18px;
+}
+
+.ylc-custom-css .ylc-custom-css-back {
+  padding-inline: 0;
+  font-size: 12px;
+  color: var(--ylc-text-secondary);
+}
+
+.ylc-custom-css .ylc-custom-css-edit:hover,
+.ylc-custom-css .ylc-custom-css-back:hover {
+  color: var(--ylc-accent);
+  background: transparent;
+}
+
+.ylc-custom-css .ylc-custom-css-danger {
+  color: var(--ylc-danger-text);
+  font-size: 12px;
+}
+
+.ylc-custom-css .ylc-custom-css-danger:hover {
+  background: var(--ylc-danger-hover);
+}
+
+.ylc-custom-css-actions,
+.ylc-custom-css-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.ylc-custom-css-help,
+.ylc-custom-css-context,
+.ylc-custom-css-feedback,
+.ylc-custom-css-notice,
+.ylc-custom-css-error {
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+}
+
+.ylc-custom-css-help,
+.ylc-custom-css-feedback {
+  color: var(--ylc-text-secondary);
+}
+
+.ylc-custom-css-context {
+  color: var(--ylc-text-secondary);
+  margin: 6px 12px 0;
+  font-size: 11px;
+}
+
+.ylc-custom-css-notice {
+  border-inline-start: 2px solid var(--ylc-accent);
+  padding-inline-start: 8px;
+}
+
+.ylc-custom-css-error {
+  color: var(--ylc-danger-text);
+}
+
+.ylc-custom-css-error:empty,
+.ylc-custom-css-feedback:empty {
+  display: none;
+}
+
+.ylc-custom-css-register,
+.ylc-custom-css-confirm {
+  padding: 12px;
+  margin-top: 8px;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: var(--ylc-radius-md);
+  background: var(--ylc-bg-surface-muted);
+}
+
+.ylc-custom-css-confirm > p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* Small fixed illustrations for exact packaged sources only. */
+
+.ylc-css-example {
+  margin: 10px 0 0;
+  padding: 8px 10px;
+  border-radius: var(--ylc-radius-md);
+  background: var(--ylc-bg-surface-muted);
+}
+
+.ylc-css-example > figcaption {
+  color: var(--ylc-text-secondary);
+  font-size: 10px;
+  margin-bottom: 4px;
+  line-height: 1.2;
+}
+
+.ylc-css-example-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.ylc-css-example-avatar {
+  width: 16px;
+  height: 16px;
+  margin-top: 0;
+  border-radius: 50%;
+  background: var(--ylc-border-strong);
+  flex-shrink: 0;
+}
+
+.ylc-css-example-content {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+}
+
+.ylc-css-example-line {
+  display: block;
+  color: var(--ylc-text-primary);
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.03em;
+}
+
+.ylc-css-example[data-ylc-css-example="bubbles"] .ylc-css-example-content {
+  background: var(--ylc-bg-surface);
+  padding: 2px 8px;
+  border-radius: 0 9px 9px;
+}
+
+.ylc-css-example[data-ylc-css-example="cards"] .ylc-css-example-content {
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: 4px;
+  padding: 2px 8px;
+}
+
+.ylc-css-example[data-ylc-css-example="accent"] .ylc-css-example-content {
+  border-inline-start: 2px solid var(--ylc-accent);
+  padding-inline-start: 9px;
+}
+
+.ylc-css-example[data-ylc-css-example="comfortable"] .ylc-css-example-line {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.ylc-css-example[data-ylc-css-example="outline"] .ylc-css-example-line {
+  color: white;
+  text-shadow: 1px 1px 1px black, -1px -1px 1px black, -1px 1px 1px black, 1px -1px 1px black;
+}
+
+.ylc-css-example-custom {
+  display: grid;
+  place-items: center;
+  min-height: 58px;
+  color: var(--ylc-text-secondary);
+  font: 24px/1.5 ui-monospace, monospace;
+}
+
+.ylc-css-example[data-ylc-css-example="custom"] > figcaption {
+  text-align: center;
+}
+
+/* Keep the settings close confirmation styled after removing the old editor UI. */
+
+.ylc-css-close-confirm {
+  margin: 8px;
+  padding: 12px;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: 8px;
+  background: var(--ylc-bg-surface-muted);
+}
+
+.ylc-css-close-confirm p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@container (max-width: 330px) {
+  .ylc-custom-css-surface {
+    padding: 10px;
+  }
+  .ylc-custom-css-tools {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+@media (forced-colors: active) {
+  .ylc-custom-css-surface, .ylc-custom-css .ylc-custom-css-primary {
+    border: 1px solid ButtonText;
+  }
+  .ylc-custom-css-dot, .ylc-css-example-avatar {
+    border: 1px solid CanvasText;
+  }
+  .ylc-custom-css :is(button, select, input):disabled {
+    color: GrayText;
+    opacity: 1;
+  }
+}
+
+.ylc-css-example-messages > :first-child {
+  margin-top: 0;
+}

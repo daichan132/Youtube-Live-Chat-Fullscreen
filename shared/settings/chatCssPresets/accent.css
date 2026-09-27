@@ -1,0 +1,13 @@
+/* Accent line / アクセントライン
+ * Edit --ylc-preset-accent below to change the stripe color.
+ * コメントの端にラインを追加します。名前やメンバーの色は変えません。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  --ylc-preset-accent: #4f8df7;
+  margin: 5px 8px;
+  padding: 6px 10px;
+  border-inline-start: 3px solid var(--ylc-preset-accent);
+  border-radius: 4px;
+  background-color: rgb(127 127 127 / 8%);
+  box-sizing: border-box;
+}

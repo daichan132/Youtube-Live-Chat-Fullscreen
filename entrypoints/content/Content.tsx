@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai'
 import { useEffect } from 'react'
+import { appliedChatCssAtom } from '@/shared/state/customCssAtoms'
 import { createPortal } from 'react-dom'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
@@ -19,6 +20,7 @@ export const Content = () => {
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const enabled = useAtomValue(ytdLiveChatEnabledAtom)
   const effectiveProfile = useAtomValue(effectiveProfileAtom)
+  const customCss = useAtomValue(appliedChatCssAtom)
   const chatRuntime = useChatRuntimeInstance()
   const runtimeView = useChatRuntime()
 
@@ -34,6 +36,10 @@ export const Content = () => {
   useEffect(() => {
     chatRuntime.setProfile(effectiveProfile)
   }, [effectiveProfile])
+
+  useEffect(() => {
+    chatRuntime.setCustomCss(customCss)
+  }, [chatRuntime, customCss])
 
   const liveChatPortal =
     runtimeView.showOverlay && runtimeView.overlayRoot

@@ -1,4 +1,5 @@
 import { useAtomValue } from 'jotai'
+import { CustomCssRecovery } from '@/shared/components/CustomCssRecovery'
 import { type ReactNode, useEffect } from 'react'
 import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
@@ -46,6 +47,12 @@ export const Popup = () => {
       icon: TbSunMoon,
       title: t('popup.theme'),
       data: <ThemeModeSelector />,
+    },
+    {
+      id: 'custom-css-recovery',
+      title: t('content.customCss.title'),
+      data: <CustomCssRecovery />,
+      actionAuto: true,
     },
     {
       id: 'data-transfer',

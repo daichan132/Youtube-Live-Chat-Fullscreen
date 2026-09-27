@@ -1,4 +1,5 @@
 import { browser } from 'wxt/browser'
+import { normalizeCustomCss, normalizeSavedChatCss } from './customCss'
 import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { migrateSettings } from './migrateSettings'
@@ -115,6 +116,9 @@ export const readSettingsSnapshot = async (legacyLocaleStorage: LegacyLocaleStor
       settingsItems.locale,
       currentGlobalItem,
       currentChatItem,
+      settingsItems.customCss,
+      settingsItems.savedChatCss,
+      settingsItems.customCssSuspended,
     ]),
     storage.getItems([zustandGlobalItem, zustandChatItem, legacyLocaleItem]),
   ])
@@ -148,8 +152,14 @@ export const readSettingsSnapshot = async (legacyLocaleStorage: LegacyLocaleStor
   const currentLocale =
     isStoredEnvelope(localeEnvelope) && typeof localeEnvelope.value === 'string' ? resolveLanguageCode(localeEnvelope.value) : null
 
+  const cssEnvelope = currentValues[7]?.value
+  const libraryEnvelope = currentValues[8]?.value
+  const stopEnvelope = currentValues[9]?.value
   return {
     snapshot: {
+      customCss: normalizeCustomCss(isStoredEnvelope(cssEnvelope) ? cssEnvelope.value : null),
+      savedChatCss: normalizeSavedChatCss(isStoredEnvelope(libraryEnvelope) ? libraryEnvelope.value : null),
+      customCssSuspended: stopEnvelope == null ? false : !isStoredEnvelope(stopEnvelope) || stopEnvelope.value !== false,
       global: {
         ytdLiveChat:
           isStoredEnvelope(enabledEnvelope) && typeof enabledEnvelope.value === 'boolean'

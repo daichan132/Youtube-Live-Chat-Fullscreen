@@ -5,6 +5,7 @@ import type { ChatGeometry, ChatProfile, PresetEntry } from '@/shared/settings/m
 import { normalizeChatGeometry, normalizeChatProfile, normalizePresetEntry } from '@/shared/settings/normalizeSettings'
 import { MAX_CUSTOM_PRESETS, MAX_PRESET_NAME_LENGTH } from '@/shared/settings/persistConfig'
 import { chatSettingsStateAtom, editorSessionStateAtom, type GlobalSettings, globalSettingsStateAtom, profileAtom } from './atoms'
+import { validateAppearanceCapacityAtom } from './customCssAtoms'
 
 export const HISTORY_LIMIT = 50
 
@@ -33,6 +34,7 @@ export const commitProfileAtom = atom(null, (get, set, input: ChatProfile) => {
   const editor = get(editorSessionStateAtom)
   const before = normalizeChatProfile(chat.profile)
   const next = normalizeChatProfile(input, before)
+  if (!set(validateAppearanceCapacityAtom, { profile: next, presets: chat.presets })) return false
   if (areChatProfilesEqual(before, next)) return false
   set(chatSettingsStateAtom, { ...chat, profile: next })
   set(editorSessionStateAtom, {
@@ -51,7 +53,11 @@ export type ChatProfilePatch = {
 
 export const applyChatProfilePatch = (profile: ChatProfile, patch: ChatProfilePatch) =>
   normalizeChatProfile(
-    { appearance: { ...profile.appearance, ...patch.appearance }, display: { ...profile.display, ...patch.display } },
+    {
+      ...profile,
+      appearance: { ...profile.appearance, ...patch.appearance },
+      display: { ...profile.display, ...patch.display },
+    },
     profile,
   )
 
@@ -84,7 +90,12 @@ export const finishStyleGestureAtom = atom(null, (get, set, gestureId?: string) 
     return true
   }
   const chat = get(chatSettingsStateAtom)
-  set(chatSettingsStateAtom, { ...chat, profile: normalizeChatProfile(draft, chat.profile) })
+  const next = normalizeChatProfile(draft, chat.profile)
+  if (!set(validateAppearanceCapacityAtom, { profile: next, presets: chat.presets })) {
+    set(editorSessionStateAtom, { ...editor, activeGesture: null, draftProfile: null })
+    return false
+  }
+  set(chatSettingsStateAtom, { ...chat, profile: next })
   set(editorSessionStateAtom, {
     draftProfile: null,
     past: [...editor.past, gesture.before].slice(-HISTORY_LIMIT),
@@ -103,13 +114,12 @@ export const cancelStyleGestureAtom = atom(null, (get, set) => {
 
 export const commitStylePatchAtom = atom(null, (get, set, patch: ChatProfilePatch) => {
   set(finishStyleGestureAtom)
-  const current = get(profileAtom)
-  set(commitProfileAtom, applyChatProfilePatch(current, patch))
+  return set(commitProfileAtom, applyChatProfilePatch(get(profileAtom), patch))
 })
 
 export const applyPresetAtom = atom(null, (_get, set, profile: ChatProfile) => {
   set(finishStyleGestureAtom)
-  set(commitProfileAtom, profile)
+  return set(commitProfileAtom, profile)
 })
 
 export const addPresetAtom = atom(null, (get, set, preset: PresetEntry) => {
@@ -117,14 +127,18 @@ export const addPresetAtom = atom(null, (get, set, preset: PresetEntry) => {
   const current = get(chatSettingsStateAtom)
   if (!normalized || current.presets.some(entry => entry.id === normalized.id)) return false
   if (normalized.kind === 'custom' && current.presets.filter(entry => entry.kind === 'custom').length >= MAX_CUSTOM_PRESETS) return false
-  set(chatSettingsStateAtom, { ...current, presets: [...current.presets, normalized] })
+  const next = { ...current, presets: [...current.presets, normalized] }
+  if (!set(validateAppearanceCapacityAtom, next)) return false
+  set(chatSettingsStateAtom, next)
   return true
 })
 
 export const deletePresetAtom = atom(null, (get, set, id: string) => {
   const current = get(chatSettingsStateAtom)
   if (!current.presets.some(preset => preset.kind === 'custom' && preset.id === id)) return false
-  set(chatSettingsStateAtom, { ...current, presets: current.presets.filter(preset => preset.kind === 'builtin' || preset.id !== id) })
+  const next = { ...current, presets: current.presets.filter(preset => preset.kind === 'builtin' || preset.id !== id) }
+  set(chatSettingsStateAtom, next)
+  set(validateAppearanceCapacityAtom, next)
   return true
 })
 
@@ -153,7 +167,9 @@ export const updatePresetNameAtom = atom(null, (get, set, input: { id: string; n
   if (preset?.kind !== 'custom' || preset.name === name) return false
   const presets = [...current.presets]
   presets[index] = { ...preset, name }
-  set(chatSettingsStateAtom, { ...current, presets })
+  const next = { ...current, presets }
+  if (!set(validateAppearanceCapacityAtom, next)) return false
+  set(chatSettingsStateAtom, next)
   return true
 })
 
@@ -171,7 +187,9 @@ export const undoStyleAtom = atom(null, (get, set) => {
   const current = get(profileAtom)
   const target = editor.past.at(-1)
   if (!target) return false
-  set(chatSettingsStateAtom, { ...get(chatSettingsStateAtom), profile: target })
+  const next = { ...get(chatSettingsStateAtom), profile: target }
+  if (!set(validateAppearanceCapacityAtom, next)) return false
+  set(chatSettingsStateAtom, next)
   set(editorSessionStateAtom, {
     draftProfile: null,
     past: editor.past.slice(0, -1),
@@ -187,7 +205,9 @@ export const redoStyleAtom = atom(null, (get, set) => {
   const current = get(profileAtom)
   const target = editor.future[0]
   if (!target) return false
-  set(chatSettingsStateAtom, { ...get(chatSettingsStateAtom), profile: target })
+  const next = { ...get(chatSettingsStateAtom), profile: target }
+  if (!set(validateAppearanceCapacityAtom, next)) return false
+  set(chatSettingsStateAtom, next)
   set(editorSessionStateAtom, {
     draftProfile: null,
     past: [...editor.past, current].slice(-HISTORY_LIMIT),
