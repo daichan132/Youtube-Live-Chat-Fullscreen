@@ -77,7 +77,7 @@ export const CustomCssSection = () => {
   const cancelRef = useRef<HTMLButtonElement>(null)
   const applyButtonRef = useRef<HTMLButtonElement>(null)
   const stopTrigger = useRef<HTMLButtonElement | null>(null)
-  const restoreRegistrationFocus = useRef(false)
+  const restoreRegistrationFocus = useRef<HTMLElement | null>(null)
   const previousEditing = useRef(editorUi.expanded)
   const id = useId()
   // A first-run suggestion is not a draft, a saved value or an enabled style.
@@ -145,8 +145,9 @@ export const CustomCssSection = () => {
     }
     if (canStop) return
     stopTrigger.current = null
-    const focused = trigger.ownerDocument.activeElement
-    if (focused !== trigger && focused !== trigger.ownerDocument.body) return
+    const root = applyButtonRef.current?.getRootNode()
+    const focused = root instanceof ShadowRoot ? root.activeElement : trigger.ownerDocument.activeElement
+    if (focused && focused !== trigger && focused !== trigger.ownerDocument.body) return
     if (applyButtonRef.current && !applyButtonRef.current.disabled) applyButtonRef.current.focus()
     else if (editorUi.expanded) editorRef.current?.focus()
     else editRef.current?.focus()
@@ -155,9 +156,16 @@ export const CustomCssSection = () => {
     if (editorUi.expanded && editorUi.registering) nameRef.current?.focus()
   }, [editorUi.expanded, editorUi.registering])
   useEffect(() => {
-    if (busy || !restoreRegistrationFocus.current) return
-    restoreRegistrationFocus.current = false
+    const form = restoreRegistrationFocus.current
+    if (busy || !form) return
+    restoreRegistrationFocus.current = null
     if (!editorUi.expanded) return
+    // Restore focus only while it still belongs to this save, or was lost when
+    // its form disappeared. A close confirmation or another control owns focus
+    // once the user has moved there. Resolve focus inside the extension root too.
+    const root = editorRef.current?.getRootNode()
+    const focused = root instanceof ShadowRoot ? root.activeElement : form.ownerDocument.activeElement
+    if (focused && focused !== form.ownerDocument.body && !form.contains(focused)) return
     if (feedback?.kind === 'error' && editorUi.registering) nameRef.current?.focus()
     else editorRef.current?.focus()
   }, [busy, editorUi.expanded, editorUi.registering, feedback])
@@ -207,7 +215,7 @@ export const CustomCssSection = () => {
     const submitted = store.get(customCssDraftAtom) ?? { css, baseline: active }
     setDraft(submitted)
     const submittedName = store.get(customCssEditorUiAtom).name
-    restoreRegistrationFocus.current = true
+    restoreRegistrationFocus.current = nameRef.current?.parentElement ?? null
     void runtime.customCss.register(submittedName, css).then(() => {
       setEditorUi(current => store.get(customCssDraftAtom) === submitted && current.name === submittedName
         ? { ...current, name: '', registering: false } : current)

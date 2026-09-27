@@ -203,6 +203,10 @@ export const createSettingsRepository = (
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
       .then(async () => {
         if (localSequences.get(domain) !== sequence) return
+        // A newer external pause preference also supersedes work that has not
+        // started yet, not only delayed retries. Never start an obsolete resume
+        // after receiving Off while this domain was waiting for its predecessor.
+        if (domain === 'customCssSuspended' && supersessionVersions.get(domain) !== supersessionVersion) return
         let failureVersion = supersessionVersion
         try {
           const committed = await runWithRetry(domain, sequence, supersessionVersion, task)

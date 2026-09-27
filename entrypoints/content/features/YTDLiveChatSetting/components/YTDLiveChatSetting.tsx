@@ -98,7 +98,8 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     if (confirmClose) {
       cancelClose()
     } else if (cssSaving || hasUnappliedCss) {
-      const focused = document.activeElement
+      const root = tablistRef.current?.getRootNode()
+      const focused = root instanceof ShadowRoot ? root.activeElement : document.activeElement
       closeFocusRef.current = focused instanceof HTMLElement && focused !== document.body ? focused : null
       setConfirmClose(true)
     } else closeNow()
@@ -219,7 +220,17 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
         className='ylc-setting-panel flex flex-col rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         style={{ width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)' }}
         onWheel={e => e.stopPropagation()}
-        onKeyDownCapture={handlePanelKeyDown}
+        onKeyDownCapture={event => {
+          // The close confirmation takes priority even after focus moves back
+          // into CSS. Do not let the child consume Escape and discard its name.
+          if (confirmClose && event.key === 'Escape' && !event.nativeEvent.isComposing) {
+            event.preventDefault()
+            event.stopPropagation()
+            cancelClose()
+            return
+          }
+          handlePanelKeyDown(event)
+        }}
       >
         <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>

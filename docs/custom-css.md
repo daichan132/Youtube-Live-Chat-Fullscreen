@@ -98,6 +98,11 @@ snapshots. Missing, invalid or failed CSS readbacks remain in the existing faile
 queue; common Retry reuses the same source and saved-copy IDs, and flush rejects
 unresolved failures. New local intents or confirmed external updates supersede
 older retries. Non-CSS settings retain their existing best-effort readback policy.
+Pause-domain work checks its original supersession version before its first
+write as well as before delayed retries. A resume still waiting for the previous
+operation, including a queued common Retry, cannot overwrite an external Off
+already received by this repository. A later explicit resume remains available.
+This cannot cancel a storage write that has already started.
 Pause-domain readback failures retain the original intent's supersession version,
 not a newer version captured after an external stop. This prevents common Retry
 from reviving an obsolete resume when the stop arrived before readback began.
@@ -146,11 +151,18 @@ of whether focus is on the name input, CSS, or a button. During a name save,
 Escape is consumed without canceling the request or bubbling to close Settings.
 A deletion/overwrite confirmation takes priority over the name form.
 A subsequent settings-close request still uses the existing
-unapplied-text/name/in-flight-save warning. Escape in that
-close confirmation cancels only the confirmation, including when a save finishes
-while it is open. Focus returns to the corresponding editor, selector or prior
-settings control; a completed operation must not steal focus into a hidden editor.
-When Off removes its button, focus returns to Use unless the user moved elsewhere.
+unapplied-text/name/in-flight-save warning. While that close confirmation is open,
+the panel handles Escape before its children, even if focus has moved back to
+the CSS or name input. It cancels only the close confirmation, including when a
+save finishes while it is open; it does not discard the name or leave editing.
+Composing Escape events remain ignored. Focus returns to the corresponding
+editor, selector or prior settings control. A registration completion restores
+focus only if it still belongs to the submitting form or was lost when the form
+was removed, never from another control or a settings-close confirmation.
+A completed operation must not focus a hidden editor. When Off removes its
+button, focus returns to Use unless the user moved elsewhere. These checks and
+close-focus snapshots use the containing Document or ShadowRoot, not the outer
+document's shadow host.
 Beforeunload remains a best-effort browser warning, not a persistence mechanism.
 
 Japanese and English (including US/GB/AU) use the focused action wording. The
