@@ -74,6 +74,7 @@ describe('chatOnlyChrome', () => {
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
     iframeDocument.body.appendChild(input)
     await Promise.resolve()
+    vi.advanceTimersToNextFrame()
 
     expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('64px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
@@ -99,6 +100,7 @@ describe('chatOnlyChrome', () => {
     vi.spyOn(replacement, 'getBoundingClientRect').mockReturnValue({ height: 72 } as DOMRect)
     input.replaceWith(replacement)
     await Promise.resolve()
+    vi.advanceTimersToNextFrame()
 
     expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('72px')

@@ -101,3 +101,25 @@ yarn verify:screenshots --port 9335 --out /private/tmp/ylc-overlay-screenshots
 - `elements.dragHandle.x` が `elements.settingsButton.x` より右側
 
 検証が終わったら `verify:browser` を起動したターミナルで `Ctrl+C` する。
+
+## メッセージ更新時の負荷回帰
+
+messages-only 表示のヘッダー・入力欄制御は、本文更新を高さ計測の対象にしない。入力欄などの更新は 1 animation frame にまとめ、展開・解除・iframe 差し替えで予約した計測をキャンセルする。
+
+```bash
+yarn build:e2e
+yarn playwright test --project=fixture e2e/scenarios/live/overlayInteraction.fixture.spec.ts \
+  --grep 'message and input bursts' --reporter=line
+```
+
+実際に拡張を読み込んだ Chromium 上で、120 バッチ・6,000 件の本文更新と、40 回の入力欄更新を実行する。`chat-chrome-work` 添付で本文更新時の chrome style 書き込みが 0、入力欄更新の書き込みが 4 以下であることを確認する。更新後も折り畳みからホバーによる展開ができ、入力欄の高さが戻ることを確認する。これは再現可能な fixture 検証で、実配信の CPU 使用率や FPS の測定とは別。
+
+DOM 層の回帰は次のコマンドで確認できる。
+
+```bash
+yarn vitest run --project dom \
+  entrypoints/content/runtime/chatOnlyChrome.spec.ts \
+  entrypoints/content/runtime/chatChromeTraffic.dom.spec.ts
+```
+
+DOM テストでは本文更新時の全体・部分ツリー検索と chrome のレイアウト読み取りが 0、入力欄の連続更新時の高さ計測が各要素につき 1 回であることを検証する。テキストノード変更、wrapper ごとの差し替え、予約計測のキャンセルも対象。DOM テストは実ブラウザの描画性能や表示の確認を代替しない。

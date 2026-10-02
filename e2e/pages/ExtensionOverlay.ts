@@ -184,6 +184,52 @@ export class ExtensionOverlay {
     })
   }
 
+  getChatOnlyInputTargetHeight() {
+    return this.page.evaluate(() =>
+      window.__ylcHelpers.getExtensionIframe()?.contentDocument?.getElementById('input-panel')?.style
+        .getPropertyValue('--extension-chat-only-target-height'),
+    )
+  }
+
+  exerciseChatChromeTraffic() {
+    return this.page.evaluate(async () => {
+      const doc = window.__ylcHelpers.getExtensionIframe()?.contentDocument
+      if (!doc?.defaultView) throw new Error('Chat document unavailable')
+      const input = doc.getElementById('input-panel')
+      const header = doc.querySelector('yt-live-chat-header-renderer')
+      const messages = doc.querySelector('yt-live-chat-item-list-renderer')
+      if (!input || !header || !messages) throw new Error('Chat chrome unavailable')
+      let styleWrites = 0
+      const observer = new doc.defaultView.MutationObserver(records => { styleWrites += records.length })
+      observer.observe(input, { attributes: true, attributeFilter: ['style'] })
+      observer.observe(header, { attributes: true, attributeFilter: ['style'] })
+      try {
+        for (let batch = 0; batch < 120; batch++) {
+          const fragment = doc.createDocumentFragment()
+          for (let index = 0; index < 50; index++) {
+            const message = doc.createElement('yt-live-chat-text-message-renderer')
+            message.textContent = `Message ${batch * 50 + index}`
+            fragment.append(message)
+          }
+          messages.replaceChildren(fragment)
+          await new Promise(resolve => setTimeout(resolve, 0))
+        }
+        const messageStyleWrites = styleWrites
+        styleWrites = 0
+        for (let index = 0; index < 40; index++) {
+          const child = doc.createElement('span')
+          child.textContent = String(index)
+          input.replaceChildren(child)
+          await Promise.resolve()
+        }
+        await new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+        return { messageUpdates: 6000, messageStyleWrites, inputUpdates: 40, inputStyleWrites: styleWrites }
+      } finally {
+        observer.disconnect()
+      }
+    })
+  }
+
   getChatOnlyGeometryState() {
     return this.page.evaluate(() => {
       const iframe = window.__ylcHelpers.getExtensionIframe()

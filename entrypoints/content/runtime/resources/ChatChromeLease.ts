@@ -14,6 +14,7 @@ const INPUT_FALLBACK_SELECTOR = [
   'yt-live-chat-restricted-participation-renderer',
   'yt-live-chat-sign-in-prompt-renderer',
 ].join(', ')
+const CHROME_SELECTOR = [HEADER_SELECTOR, INPUT_PANEL_SELECTOR, INPUT_FALLBACK_SELECTOR].join(', ')
 const TRANSITION_FALLBACK_MS = 310
 
 const getBody = (iframe: HTMLIFrameElement | null) => {
@@ -43,13 +44,28 @@ const clearMeasurements = (elements: HTMLElement[]) => {
 
 const measure = (elements: HTMLElement[]) => {
   clearMeasurements(elements)
-  for (const element of elements) {
-    element.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, `${Math.max(0, Math.ceil(element.getBoundingClientRect().height))}px`)
-  }
+  // Read all heights before writing CSS so one write cannot invalidate the next read.
+  const heights = elements.map(element => Math.max(0, Math.ceil(element.getBoundingClientRect().height)))
+  elements.forEach((element, index) => {
+    element.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, `${heights[index]}px`)
+  })
 }
 
-const sameElements = (left: HTMLElement[], right: HTMLElement[]) =>
-  left.length === right.length && left.every((element, index) => element === right[index])
+const containsChrome = (node: Node) => {
+  // Nodes belong to the iframe realm, so instanceof Element in the parent is unreliable.
+  if (node.nodeType !== 1) return false
+  const element = node as Element
+  return element.matches(CHROME_SELECTOR) || (element.childElementCount > 0 && element.querySelector(CHROME_SELECTOR) !== null)
+}
+
+const mutationTouchesChrome = (mutation: MutationRecord, elements: HTMLElement[]) => {
+  if (elements.some(element => element === mutation.target || element.contains(mutation.target))) return true
+  const target = mutation.target.nodeType === 1 ? (mutation.target as Element) : mutation.target.parentElement
+  // The message list cannot own header/input chrome. Skip its entire mutation
+  // batch before inspecting individual messages or their growing subtrees.
+  if (target?.closest('yt-live-chat-item-list-renderer')) return false
+  return [...mutation.addedNodes, ...mutation.removedNodes].some(containsChrome)
+}
 
 const blurActiveElement = (body: HTMLElement) => {
   const active = body.ownerDocument.activeElement
@@ -67,6 +83,12 @@ export const createChatChromeLease = (): ChatChromeLease => {
   let elements: HTMLElement[] = []
   let settleTimer: number | null = null
   let targetObserver: MutationObserver | null = null
+  let measurementFrame: number | null = null
+
+  const cancelMeasurement = () => {
+    if (measurementFrame !== null) window.cancelAnimationFrame(measurementFrame)
+    measurementFrame = null
+  }
 
   const clearTimer = () => {
     if (settleTimer !== null) window.clearTimeout(settleTimer)
@@ -80,6 +102,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
 
   const cleanup = (target = body) => {
     clearTimer()
+    cancelMeasurement()
     disconnectTargetObserver()
     target?.classList.remove(IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_MEASURING_CLASS)
     clearMeasurements(elements)
@@ -102,15 +125,16 @@ export const createChatChromeLease = (): ChatChromeLease => {
   const ensureTargetObserver = () => {
     if (!body || targetObserver) return
     targetObserver = new MutationObserver(mutations => {
-      if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
-      const nextElements = resolveChatOnlyChromeElements(body)
-      const chromeElements = [...new Set([...elements, ...nextElements])]
-      const touchesChrome = mutations.some(mutation =>
-        chromeElements.some(element => element === mutation.target || element.contains(mutation.target)),
-      )
-      if (!sameElements(elements, nextElements) || touchesChrome) refreshCollapsedMeasurements(nextElements)
+      if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS) || measurementFrame !== null) return
+      // Discover chrome only when a changed subtree can affect it. Message traffic
+      // must not repeatedly search the entire growing chat document.
+      if (!mutations.some(mutation => mutationTouchesChrome(mutation, elements))) return
+      measurementFrame = window.requestAnimationFrame(() => {
+        measurementFrame = null
+        refreshCollapsedMeasurements()
+      })
     })
-    targetObserver.observe(body, { childList: true, subtree: true })
+    targetObserver.observe(body, { childList: true, characterData: true, subtree: true })
   }
 
   const bind = (nextIframe: HTMLIFrameElement | null) => {
@@ -141,6 +165,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
   }
 
   const expand = () => {
+    cancelMeasurement()
     if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)

@@ -220,4 +220,26 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     await overlay.emulateDocumentFocus(true)
     await expect(viewport).toHaveCSS('opacity', '0')
   })
+  test('keeps messages-only chrome stable through message and input bursts', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
+    test.setTimeout(60000)
+    expect(await patchOverlayStore(extension, {
+      profile: { display: { idleVisibility: 'always-visible', contentMode: 'messages-only' } },
+    })).not.toBeNull()
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.installChatOnlyGeometryProbe()
+    await expect.poll(() => overlay.getChatOnlyInputTargetHeight()).toBe('64px')
+    const metrics = await overlay.exerciseChatChromeTraffic()
+    await testInfo.attach('chat-chrome-work', { body: JSON.stringify(metrics, null, 2), contentType: 'application/json' })
+    expect(metrics.messageStyleWrites).toBe(0)
+    // Each chrome element clears then restores its height once for the entire burst.
+    expect(metrics.inputStyleWrites).toBeLessThanOrEqual(4)
+    await expect.poll(() => overlay.getChatOnlyGeometryState()).toMatchObject({ collapsed: true, input: { height: 0 } })
+    await overlay.frame().hover({ position: { x: 200, y: 160 } })
+    await expect.poll(() => overlay.getChatOnlyGeometryState()).toMatchObject({ collapsed: false, input: { height: 64 } })
+    await page.screenshot({ path: testInfo.outputPath('chat-after-load.png') })
+  })
 })
