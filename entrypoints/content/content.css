@@ -2,3 +2,5 @@
 
 @source "./**/*.{ts,tsx}";
 @source "../../shared/**/*.{ts,tsx}";
+@source not "../../{entrypoints,shared}/**/*.{spec,test}.{ts,tsx}";
+@source not "../../{entrypoints,shared}/**/__tests__/**";
