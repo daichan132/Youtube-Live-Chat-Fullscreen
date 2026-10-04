@@ -127,6 +127,46 @@ describe('collectPageObservation', () => {
     expect(observation.evidence).toMatchObject({ route: 'live', videoId: null, videoMode: 'unknown', chatAvailability: 'pending' })
   })
 
+  it.each(['live_chat', 'live_chat_replay'])('keeps %s ready when ordinary chat messages mention disabled chat', path => {
+    window.history.replaceState({}, '', '/watch?v=video-1')
+    const watch = document.createElement('ytd-watch-flexy')
+    watch.setAttribute('video-id', 'video-1')
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.src = `https://www.youtube.com/${path}?v=video-1`
+    const doc = document.implementation.createHTMLDocument('chat')
+    doc.body.innerHTML = `
+      <yt-live-chat-renderer>
+        <yt-live-chat-item-list-renderer>
+          <yt-live-chat-text-message-renderer>Chat is disabled on another video</yt-live-chat-text-message-renderer>
+        </yt-live-chat-item-list-renderer>
+      </yt-live-chat-renderer>
+      <yt-live-chat-message-renderer>Live chat replay is not available elsewhere</yt-live-chat-message-renderer>
+    `
+    Object.defineProperty(iframe, 'contentDocument', {
+      value: new Proxy(doc, {
+        get(target, key) {
+          if (key === 'location') return { href: iframe.src }
+          const value = Reflect.get(target, key, target)
+          return typeof value === 'function' ? value.bind(target) : value
+        },
+      }),
+    })
+    host.append(iframe)
+    watch.append(host)
+    document.body.append(watch)
+
+    const observation = collectPageObservation()
+
+    expect(observation.evidence).toMatchObject({
+      sourceKind: path === 'live_chat' ? 'native-live' : 'native-replay',
+      chatAvailability: 'ready',
+      capabilities: { canBorrowNativeChat: true },
+    })
+    expect(observation.targets.chatIframe).toBe(iframe)
+  })
+
   it('keeps DOM targets outside the serializable evidence payload', () => {
     window.history.replaceState({}, '', '/watch?v=video-1')
     const player = document.createElement('div')

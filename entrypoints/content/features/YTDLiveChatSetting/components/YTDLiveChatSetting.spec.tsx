@@ -114,13 +114,15 @@ describe('YTDLiveChatSetting history controls', () => {
     expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
   })
 
-  it('focuses the active tab on open and requests close with Escape', async () => {
+  it('focuses the panel on open and requests close with Escape', async () => {
     const user = userEvent.setup()
     const onOpenChange = vi.fn()
     const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
     const settingsTab = getByRole('tab', { name: 'content.setting.header.setting' })
+    const panel = document.querySelector('.ylc-setting-panel') as HTMLElement
 
-    await waitFor(() => expect(settingsTab).toHaveFocus())
+    await waitFor(() => expect(panel).toHaveFocus())
+    expect(settingsTab).not.toHaveFocus()
     await user.keyboard('{Escape}')
 
     expect(onOpenChange).toHaveBeenCalledWith(false)

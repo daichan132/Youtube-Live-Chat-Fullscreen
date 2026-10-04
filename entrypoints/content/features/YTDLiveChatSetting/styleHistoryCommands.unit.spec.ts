@@ -37,11 +37,12 @@ describe('styleHistoryCommands', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(initialFontSize + 4)
   })
 
-  it('keeps gesture previews in draft and persists once at gesture completion', () => {
+  it('keeps repeated starts of the same gesture in draft and persists once at gesture completion', () => {
     const initialBlur = store.get(chatSettingsStateAtom).profile.appearance.blur
 
     beginYLCStyleGesture('range:blur', 'blur')
     previewYLCStyleUpdate('range:blur', { appearance: { blur: initialBlur + 2 } }, 'blur')
+    beginYLCStyleGesture('range:blur', 'blur')
     previewYLCStyleUpdate('range:blur', { appearance: { blur: initialBlur + 6 } }, 'blur')
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.blur).toBe(initialBlur)

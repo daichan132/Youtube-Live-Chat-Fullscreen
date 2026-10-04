@@ -79,7 +79,10 @@ export const applyStylePatch = (document: Document, patch: ChatStylePatch) => {
 
 export const applyChatProfileToDocument = (document: Document, profile: ChatProfile, environment: Partial<ChatStyleEnvironment> = {}) => {
   const patch = compileStylePatch(profile, {
-    membershipDefaultColor: environment.membershipDefaultColor ?? readYouTubeMembershipDefaultColor(document),
+    membershipDefaultColor:
+      profile.appearance.membershipNameColor.mode === 'youtube-default'
+        ? (environment.membershipDefaultColor ?? readYouTubeMembershipDefaultColor(document))
+        : null,
     firefox: environment.firefox ?? import.meta.env.FIREFOX,
   })
   applyStylePatch(document, patch)

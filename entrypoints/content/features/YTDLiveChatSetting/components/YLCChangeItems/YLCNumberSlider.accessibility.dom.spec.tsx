@@ -1,5 +1,5 @@
 import { act, fireEvent } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { createSettingsRepository } from '@/shared/settings/repository'
 import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, replaceExternalAppearanceAtom } from '@/shared/state/atoms'
@@ -60,6 +60,40 @@ describe('range input without pointer or keyboard gestures', () => {
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(15)
     expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
+  })
+
+  it('keeps held-key repeats as one preview and commits once when the key is released', () => {
+    const store = createTestStore()
+    const view = renderWithStore(slider, store)
+    const range = view.getByRole('slider')
+    const committed = vi.fn()
+    const unsubscribe = store.sub(chatSettingsStateAtom, committed)
+    const initial = store.get(chatSettingsStateAtom).profile
+
+    try {
+      fireEvent.keyDown(range, { key: 'ArrowRight' })
+      fireEvent.input(range, { target: { value: '14' } })
+      fireEvent.keyDown(range, { key: 'ArrowRight', repeat: true })
+      fireEvent.input(range, { target: { value: '15' } })
+
+      expect(range).toHaveValue('15')
+      expect(store.get(chatSettingsStateAtom).profile).toBe(initial)
+      expect(store.get(editorSessionStateAtom).draftProfile?.appearance.fontSize).toBe(15)
+      expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
+      expect(committed).not.toHaveBeenCalled()
+
+      fireEvent.keyUp(range, { key: 'ArrowRight' })
+      fireEvent.blur(range)
+
+      expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(15)
+      expect(store.get(editorSessionStateAtom).past).toEqual([initial])
+      expect(committed).toHaveBeenCalledOnce()
+      act(() => store.set(undoStyleAtom))
+      expect(store.get(chatSettingsStateAtom).profile).toEqual(initial)
+      expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
+    } finally {
+      unsubscribe()
+    }
   })
 
   it('finishes another control gesture before committing native input and keeps both undo steps', () => {

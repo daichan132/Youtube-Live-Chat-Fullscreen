@@ -6,7 +6,7 @@ import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
-import { GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const scenarioState = {
   video: { id: 'ylc-overlay-boundary', title: 'Overlay interaction fixture', mode: 'live' },
@@ -219,6 +219,118 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
 
     await overlay.emulateDocumentFocus(true)
     await expect(viewport).toHaveCSS('opacity', '0')
+  })
+
+  test('previews a held native text-size drag in the chat, then saves once and undoes once', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }, testInfo) => {
+    test.setTimeout(90000)
+    const initialFontSize = 13
+    expect(await patchOverlayStore(extension, {
+      geometry: SEEDED_GEOMETRY,
+      profile: { appearance: { fontSize: initialFontSize } },
+    })).not.toBeNull()
+    const storagePage = await openStoragePage(extension, page)
+    let pointerHeld = false
+    try {
+      const readSavedFontSize = () => storagePage.evaluate(async key => {
+        const stored = (await chrome.storage.local.get(key))[key] as {
+          value?: { profile?: { appearance?: { fontSize?: number } } }
+        } | undefined
+        return stored?.value?.profile?.appearance?.fontSize ?? null
+      }, APPEARANCE_STORAGE_KEY)
+      await storagePage.evaluate(key => {
+        const values: number[] = []
+        Object.defineProperty(window, '__ylcAppearanceChanges', { configurable: true, value: values })
+        chrome.storage.onChanged.addListener((changes, area) => {
+          if (area !== 'local' || !changes[key]) return
+          const stored = changes[key].newValue as {
+            value?: { profile?: { appearance?: { fontSize?: number } } }
+          } | undefined
+          const fontSize = stored?.value?.profile?.appearance?.fontSize
+          if (typeof fontSize === 'number') values.push(fontSize)
+        })
+      }, APPEARANCE_STORAGE_KEY)
+      const readAppearanceChanges = () => storagePage.evaluate(() =>
+        (window as unknown as { __ylcAppearanceChanges: number[] }).__ylcAppearanceChanges,
+      )
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      await overlay.installChatTypographyProbe()
+      const readChatTypography = () => overlay.getChatTypographyState()
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+      const initialTypography = await readChatTypography()
+      await overlay.openSettings()
+      const settingsFrame = overlay.settingsFrame()
+      await expect(settingsFrame.locator('.ylc-setting-panel')).toBeFocused()
+      await expect(settingsFrame.getByRole('tab', { name: 'Settings', exact: true })).not.toBeFocused()
+      await testInfo.attach('settings-initial-focus', { body: await page.screenshot(), contentType: 'image/png' })
+      await expect(settingsFrame.locator('[data-ylc-runtime-diagnostics]')).toHaveCount(0)
+      await expect(settingsFrame.getByText('Compatibility', { exact: true })).toHaveCount(0)
+      await expect(settingsFrame.getByRole('button', { name: 'Copy diagnostic report', exact: true })).toHaveCount(0)
+      await expect(settingsFrame.getByRole('button', { name: 'Reload chat overlay', exact: true })).toHaveCount(0)
+      const slider = settingsFrame.getByRole('slider', { name: 'Text Size', exact: true })
+      await slider.scrollIntoViewIfNeeded()
+      await expect(slider).toHaveValue(String(initialFontSize))
+      const undo = settingsFrame.getByRole('button', { name: 'Undo style change', exact: true })
+      await expect(undo).toBeDisabled()
+      await slider.evaluate(input => {
+        const state = { downs: 0, ups: 0, heldMoves: 0 }
+        Object.defineProperty(input, '__ylcPointerProbe', { configurable: true, value: state })
+        input.addEventListener('pointerdown', () => { state.downs += 1 })
+        input.addEventListener('pointermove', event => {
+          if (((event as PointerEvent).buttons & 1) !== 0) state.heldMoves += 1
+        })
+        input.addEventListener('pointerup', () => { state.ups += 1 })
+      })
+      const box = await slider.boundingBox()
+      if (!box) throw new Error('The native text-size slider has no browser bounding box.')
+      // The native thumb is 16px wide; place the press on its current center.
+      const trackStart = box.x + 8
+      const trackWidth = box.width - 16
+      const y = box.y + box.height / 2
+      await page.mouse.move(trackStart + trackWidth * ((initialFontSize - 10) / 30), y)
+      await page.mouse.down()
+      pointerHeld = true
+      let previewFontSize = initialFontSize
+      for (const fraction of [0.4, 0.75]) {
+        await page.mouse.move(trackStart + trackWidth * fraction, y, { steps: 8 })
+        previewFontSize = Number(await slider.inputValue())
+        expect(previewFontSize).toBeGreaterThan(initialFontSize)
+        await expect(slider).toHaveAttribute('aria-valuetext', `${previewFontSize}px`)
+        await expect.poll(readChatTypography).toMatchObject({
+          variable: `${previewFontSize}px`, renderedFontSize: `${previewFontSize}px`,
+        })
+        expect(await readSavedFontSize()).toBe(initialFontSize)
+        expect(await readAppearanceChanges()).toEqual([])
+        expect(await slider.evaluate(input => {
+          const state = (input as HTMLElement & { __ylcPointerProbe: { downs: number; ups: number; heldMoves: number } }).__ylcPointerProbe
+          return { downs: state.downs, ups: state.ups, movedWhileHeld: state.heldMoves > 0 }
+        })).toEqual({ downs: 1, ups: 0, movedWhileHeld: true })
+      }
+      expect((await readChatTypography()).messageHeight).toBeGreaterThan(initialTypography.messageHeight)
+      await testInfo.attach('native-slider-held-preview', { body: await page.screenshot(), contentType: 'image/png' })
+      await page.mouse.up()
+      pointerHeld = false
+      await expect.poll(readSavedFontSize).toBe(previewFontSize)
+      await expect.poll(readAppearanceChanges).toEqual([previewFontSize])
+      await expect(undo).toBeEnabled()
+      await undo.click()
+      await expect.poll(readSavedFontSize).toBe(initialFontSize)
+      await expect.poll(readAppearanceChanges).toEqual([previewFontSize, initialFontSize])
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+      await expect(undo).toBeDisabled()
+      await settingsFrame.getByRole('button', { name: 'Close', exact: true }).click()
+      await expect(overlay.settingsDialog()).toHaveCount(0)
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+    } finally {
+      if (pointerHeld) await page.mouse.up().catch(() => null)
+      await storagePage.close()
+    }
   })
 })
 

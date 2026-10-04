@@ -87,6 +87,14 @@ export const TbArrowForwardUp = (props: IconProps) => (
   </Tabler>
 )
 
+export const TbArrowsHorizontal = (props: IconProps) => (
+  <Tabler {...props}>
+    <path d='M7 8l-4 4l4 4' />
+    <path d='M17 8l4 4l-4 4' />
+    <path d='M3 12h18' />
+  </Tabler>
+)
+
 export const TbSpacingHorizontal = (props: IconProps) => (
   <Tabler {...props}>
     <path d='M20 20h-2a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h2' />

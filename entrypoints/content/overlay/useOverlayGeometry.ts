@@ -10,7 +10,7 @@ import {
 import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import { commitGeometryAtom, geometryAtom } from '@/shared/state'
 import { deriveResizedLayout, type ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
-import { collectPlayerObstacles } from '../platform/youtube/collectPlayerObstacles'
+import { collectPlayerObstacles, type PlayerObstacle } from '../platform/youtube/collectPlayerObstacles'
 import { playerObstacleBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { chooseAutoSafePlacement, shouldApplyAutoSafePlacement } from './autoSafeArea'
 import { type Point, usePointerSession } from './usePointerSession'
@@ -25,6 +25,14 @@ type GeometrySession = {
 }
 
 type InteractionState = 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open'
+
+type ObstacleSnapshot = {
+  player: HTMLElement
+  viewport: { width: number; height: number }
+  settingsOpen: boolean
+  obstacles: PlayerObstacle[]
+  signature: string
+}
 
 const getPlayerElement = (referenceElement: HTMLElement | null) => {
   const root = referenceElement?.getRootNode()
@@ -82,10 +90,22 @@ export const useOverlayGeometry = ({
   const autoRepositionedRef = useRef(false)
   const [autoPlacementComplete, setAutoPlacementComplete] = useState(false)
   const lastObstacleSignatureRef = useRef('')
-  const viewport = referenceSize ?? { width: window.innerWidth, height: window.innerHeight }
-  const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport.height, viewport.width])
-  const displayGeometry = draftGeometry ?? fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING)
+  const obstacleSnapshotRef = useRef<ObstacleSnapshot | null>(null)
+  const viewportWidth = referenceSize?.width ?? window.innerWidth
+  const viewportHeight = referenceSize?.height ?? window.innerHeight
+  const viewport = useMemo(() => ({ width: viewportWidth, height: viewportHeight }), [viewportWidth, viewportHeight])
+  const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport])
+  const displayGeometry = useMemo(
+    () => draftGeometry ?? fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING),
+    [draftGeometry, storedLayout, viewport],
+  )
   const pinned = isChatGeometryV2(geometry) ? geometry.pinned : true
+
+  const measureObstacles = useCallback((): ObstacleSnapshot | null => {
+    if (!playerElement) return null
+    const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
+    return { player: playerElement, viewport, settingsOpen, obstacles, signature: JSON.stringify(obstacles) }
+  }, [playerElement, settingsOpen, viewport])
 
   const commitLayout = useCallback(
     (layout: PixelChatGeometry, nextPinned: boolean) => {
@@ -191,6 +211,7 @@ export const useOverlayGeometry = ({
     autoRepositionedRef.current = false
     setAutoPlacementComplete(false)
     lastObstacleSignatureRef.current = ''
+    obstacleSnapshotRef.current = null
   }, [pinned, playerElement])
 
   useLayoutEffect(() => {
@@ -222,6 +243,13 @@ export const useOverlayGeometry = ({
             if (scheduledFrame !== null) return
             scheduledFrame = requestAnimationFrame(() => {
               scheduledFrame = null
+              const snapshot = measureObstacles()
+              if (!snapshot) return
+              const previous = obstacleSnapshotRef.current
+              obstacleSnapshotRef.current = snapshot
+              // Playback updates progress and time inside the controls even
+              // when their occupied area stays fixed. Publish only new bounds.
+              if (snapshot.signature === previous?.signature) return
               setObstacleRevision(revision => revision + 1)
             })
           })
@@ -236,7 +264,7 @@ export const useOverlayGeometry = ({
       mutationObserver?.disconnect()
       if (scheduledFrame !== null) cancelAnimationFrame(scheduledFrame)
     }
-  }, [pinned, playerElement, autoPlacementComplete])
+  }, [pinned, playerElement, autoPlacementComplete, measureObstacles])
 
   useLayoutEffect(() => {
     if (!referenceSize || isChatGeometryV2(geometry)) return
@@ -246,8 +274,12 @@ export const useOverlayGeometry = ({
   useLayoutEffect(() => {
     if (!playerElement || !referenceSize || pinned || autoRepositionedRef.current || pointerActiveRef.current || draftGeometry) return
     if (interactionState === 'dragging' || interactionState === 'resizing') return
-    const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
-    const signature = JSON.stringify(obstacles)
+    const cached = obstacleSnapshotRef.current
+    const snapshot =
+      cached?.player === playerElement && cached.viewport === viewport && cached.settingsOpen === settingsOpen ? cached : measureObstacles()
+    if (!snapshot) return
+    obstacleSnapshotRef.current = snapshot
+    const { obstacles, signature } = snapshot
     if (signature === lastObstacleSignatureRef.current) return
     lastObstacleSignatureRef.current = signature
     const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, obstacles, GEOMETRY_VIEWPORT_PADDING)
@@ -255,7 +287,19 @@ export const useOverlayGeometry = ({
     autoRepositionedRef.current = true
     setAutoPlacementComplete(true)
     commitLayout(placement.best.geometry, false)
-  }, [commitLayout, displayGeometry, draftGeometry, interactionState, obstacleRevision, pinned, playerElement, referenceSize, settingsOpen])
+  }, [
+    commitLayout,
+    displayGeometry,
+    draftGeometry,
+    interactionState,
+    measureObstacles,
+    obstacleRevision,
+    pinned,
+    playerElement,
+    referenceSize,
+    settingsOpen,
+    viewport,
+  ])
 
   return {
     displayGeometry,

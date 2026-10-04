@@ -1,6 +1,10 @@
+import { useStore } from 'jotai'
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import { browser, type PublicPath } from 'wxt/browser'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
+import { areChatProfilesEqual } from '@/shared/settings/equality'
+import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'
+import { profileAtom, settingsPreviewStateAtom } from '@/shared/state/atoms'
 import type { ChatRuntime } from '../runtime/ChatRuntime'
 import { isSettingsFrameRequest, SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
@@ -8,7 +12,7 @@ type SettingsFrameProps = {
   returnFocusTo?: HTMLElement | null
   open: boolean
   onClose: () => void
-  runtime: Pick<ChatRuntime, 'getDiagnosticReport' | 'restart' | 'subscribe'>
+  runtime: Pick<ChatRuntime, 'getDiagnosticReport' | 'restart'>
 }
 
 const SETTINGS_PAGE_PATH = 'settings.html' as PublicPath
@@ -22,6 +26,7 @@ const getSettingsPageUrl = () => {
 }
 
 export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: SettingsFrameProps) => {
+  const store = useStore()
   const frameRef = useRef<HTMLIFrameElement>(null)
   const restoreRef = useRef(false)
   const originRootRef = useRef<Node | null>(null)
@@ -52,14 +57,29 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
   }
 
   useEffect(() => {
+    if (!open) store.set(settingsPreviewStateAtom, null)
+    return () => store.set(settingsPreviewStateAtom, null)
+  }, [open, store])
+
+  useEffect(() => {
     if (!open) return
 
     const handleMessage = (event: MessageEvent) => {
       if (event.source !== frameRef.current?.contentWindow || event.origin !== SETTINGS_PAGE_ORIGIN || !isSettingsFrameRequest(event.data))
         return
       if (event.data.type === SETTINGS_FRAME_MESSAGE.close) {
+        store.set(settingsPreviewStateAtom, null)
         restoreRef.current = true
         onClose()
+      }
+      if (event.data.type === SETTINGS_FRAME_MESSAGE.stylePreview) {
+        const { profile, active } = event.data
+        const committed = store.get(profileAtom)
+        const normalized = profile && normalizeChatProfile(profile, committed)
+        store.set(
+          settingsPreviewStateAtom,
+          normalized && (active || !areChatProfilesEqual(normalized, committed)) ? { profile: normalized, active } : null,
+        )
       }
       if (event.data.type === SETTINGS_FRAME_MESSAGE.diagnosticsRequest) postDiagnosticReport()
       if (event.data.type === SETTINGS_FRAME_MESSAGE.runtimeRestart) {
@@ -69,12 +89,19 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
     }
 
     window.addEventListener('message', handleMessage)
-    const unsubscribe = runtime.subscribe(postDiagnosticReport)
+    const unsubscribeProfile = store.sub(profileAtom, () => {
+      // An earlier gesture's save can arrive after the next gesture finishes.
+      // Release only the matching final value; the settings store forwards
+      // authoritative external changes through the same preview channel.
+      const preview = store.get(settingsPreviewStateAtom)
+      if (preview?.active === false && areChatProfilesEqual(preview.profile, store.get(profileAtom)))
+        store.set(settingsPreviewStateAtom, null)
+    })
     return () => {
       window.removeEventListener('message', handleMessage)
-      unsubscribe()
+      unsubscribeProfile()
     }
-  }, [onClose, open, runtime])
+  }, [onClose, open, runtime, store])
 
   if (!open) return null
 
@@ -84,7 +111,10 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
       data-ylc-settings-frame
       src={getSettingsPageUrl()}
       title='YouTube Live Chat Fullscreen settings'
-      onLoad={postDiagnosticReport}
+      onLoad={() => {
+        store.set(settingsPreviewStateAtom, null)
+        postDiagnosticReport()
+      }}
       style={{
         position: 'fixed',
         inset: 0,

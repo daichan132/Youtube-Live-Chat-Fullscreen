@@ -16,6 +16,57 @@ const patch = {
 } satisfies ChatStylePatch
 
 describe('applyStylePatch DOM writes', () => {
+  it('does not read YouTube computed styles for a custom membership color across repeated profile applications', () => {
+    const iframe = document.createElement('iframe')
+    document.body.append(iframe)
+    const doc = iframe.contentDocument
+    if (!doc?.defaultView) throw new Error('Missing iframe document')
+    const computedStyle = vi.spyOn(doc.defaultView, 'getComputedStyle')
+    const profile = {
+      ...DEFAULT_CHAT_PROFILE,
+      appearance: {
+        ...DEFAULT_CHAT_PROFILE.appearance,
+        membershipNameColor: { mode: 'custom' as const, value: { r: 12, g: 34, b: 56, a: 0.8 } },
+      },
+    }
+
+    try {
+      for (let index = 0; index < 100; index += 1) applyChatProfileToDocument(doc, profile, { firefox: false })
+
+      expect(computedStyle.mock.calls.length).toBe(0)
+      expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(12, 34, 56, 0.8)')
+    } finally {
+      iframe.remove()
+    }
+  })
+
+  it('keeps resolving the YouTube membership color after a document theme change', () => {
+    const iframe = document.createElement('iframe')
+    document.body.append(iframe)
+    const doc = iframe.contentDocument
+    if (!doc?.defaultView) throw new Error('Missing iframe document')
+    const theme = doc.createElement('style')
+    theme.textContent = `
+      :root { --yt-live-chat-sponsor-color: rgb(22, 163, 74); }
+      :root.dark { --yt-live-chat-sponsor-color: rgb(42, 183, 94); }
+    `
+    doc.head.append(theme)
+    const computedStyle = vi.spyOn(doc.defaultView, 'getComputedStyle')
+
+    try {
+      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+      expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
+      doc.documentElement.classList.add('dark')
+
+      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+
+      expect(computedStyle).toHaveBeenCalledTimes(2)
+      expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(42, 183, 94, 1)')
+    } finally {
+      iframe.remove()
+    }
+  })
+
   it('avoids repeated property writes for the runtime default profile, including unsupported aliases', () => {
     const doc = document.implementation.createHTMLDocument('')
     const rootWrite = vi.spyOn(doc.documentElement.style, 'setProperty')

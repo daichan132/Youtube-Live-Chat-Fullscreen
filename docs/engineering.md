@@ -73,7 +73,7 @@ See [Settings, state, and storage](architecture/settings-and-state.md) for the e
 
 ## Settings iframe trust boundary
 
-The settings iframe uses `window.postMessage` only for close, diagnostic request/report, and runtime restart. Settings values never cross this channel.
+The settings iframe uses origin- and source-checked `window.postMessage` for close, diagnostic request/report, runtime restart, and transient style previews. Preview profiles update content presentation while editing; committed settings still converge through Storage, and each gesture saves once when it finishes.
 
 Both directions require:
 

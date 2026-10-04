@@ -134,6 +134,26 @@ node scripts/verify/measure-performance.mjs --out /private/tmp/ylc-performance-a
 
 変更前に保存したビルドは `--extension /path/to/saved/chrome-mv3` で指定する。測定は外部ネットワークを遮断した YouTube fixture 上で行い、1,000件のメッセージを保持して100回の追加・削除と100回の player 通知を5セット実行する。入力欄はメッセージ一覧の後に置き、`--chrome panel`（既定）、`--chrome fallback`（ログイン案内）、`--chrome absent`（ヘッダー・入力欄なし）を同じ条件で比較できる。実 YouTube の互換性確認は、上記の実ブラウザ手順で別に行う。
 
-JSON にはブラウザ・OS・拡張パス・content script の SHA-256、body を起点とする検索、子要素内の検索、selector の matches、設定 CSS の書き込み回数、CDP の処理時間と描画間隔を保存する。カウンターは読み込まれた拡張 ID の isolated world に取り付け、iframe の Element realm で動作することも確認する。body を起点とする検索でもブラウザの最適化があるため、毎回全ノードを走査するとは限らない。CPU 時間や描画間隔は他のアプリやディスプレイの影響を受けるため、処理回数の削減だけから体感速度の改善率を推定しない。
+JSON にはブラウザ・OS・拡張パス・content script の SHA-256 と次の処理回数を保存する。
+
+- `bodyQueries`、`descendantQueries`、`selectorMatches`: iframe の body・子要素を起点とする検索と selector 判定。
+- `bodyTextReads`: iframe の `body.textContent` 読み出し。メッセージ本文を含む全文取得の発生を追う。
+- `iframeDocumentQueries`、`topDocumentQueries`: iframe・動画ページの Document を起点とする検索。
+- `topElementQueries`、`topSelectorMatches`、`topRectReads`: 動画ページの要素検索、selector 判定、`getBoundingClientRect()`。
+- `iframeComputedStyleCalls`: iframe 要素を対象とする `getComputedStyle()`。
+- `cssWrites`: iframe の html・body に対する `style.setProperty()`。
+
+カウンターは読み込まれた拡張 ID の isolated world に取り付け、両 Document・Element realm と `Node.textContent`、MutationObserver から受け取る node wrapper 上で動作することを自己検証する。Document・body を起点とする検索でもブラウザの最適化があるため、毎回全ノードを走査するとは限らない。`topRectReads` は読み出し回数で、強制 layout の発生回数とは異なる。CSS カウンターも個別のヘッダー・入力欄への style 設定を含まない。
+
+固定サイズの player controls 内の子要素が変わる負荷は、`--workload controls` で別に測定する。`.ytp-chrome-bottom` の子に style と Text node の更新を100回加え、`autoControls` にトップ要素の矩形読み出し回数と処理時間を記録する。測定プロファイルには `DEFAULT_CHAT_GEOMETRY` の `pinned: false` を明示的に保存する。counter 使用時は事前に controls の子を一度更新し、`controlsPrecondition.topRectReads` が正であることを確認して、自動配置の監視が有効な状態だけを測る。既定の `--workload chat` は従来のチャット負荷と player 通知を維持し、`--workload all` は両方を実行する。同じ script、workload、chrome shape、instrumentation で変更前後のビルドを比較する。
+
+```bash
+node scripts/verify/measure-performance.mjs --extension /path/to/saved/chrome-mv3 --workload controls --out /private/tmp/ylc-controls-before.json
+node scripts/verify/measure-performance.mjs --workload controls --out /private/tmp/ylc-controls-after.json
+```
+
+CDP の `TaskDuration`、`ScriptDuration`、`LayoutDuration`、`RecalcStyleDuration` は秒、`LayoutCount` と `RecalcStyleCount` は回数、描画間隔はミリ秒で記録する。処理時間には fixture がメッセージや controls を更新する負荷も含まれ、拡張だけの CPU 時間を表す値ではない。CPU 時間や描画間隔は他のアプリやディスプレイの影響を受けるため、処理回数の削減だけから体感速度の改善率を推定しない。
 
 カウンター自身にも呼び出し回数に応じた負荷がある。処理時間を比較するときは `--instrumentation none` でも同じ組を測定する。このモードの JSON は処理回数を含まず、プロトタイプや CSS メソッドを書き換えない。
+
+メンバーシップ名の色は `--membership-color youtube-default`（既定）と `--membership-color custom` で切り替える。custom は固定の `{ r: 12, g: 34, b: 56, a: 0.8 }` を保存し、JSON の `membershipColor` に選択モードを記録する。同じモードで変更前後を比較し、custom 時の player 通知に伴う不要な computed style 取得を `repeatedSignals.iframeComputedStyleCalls` で確認できる。

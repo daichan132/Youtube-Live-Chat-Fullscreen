@@ -129,7 +129,7 @@ const MembershipNameColorSetting = () => {
   )
 }
 
-export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => {
+export const SettingContent = () => {
   const t = useT()
   const showWhenIdle = useAtomValue(effectiveDisplayAtoms.idleVisibility) === 'always-visible'
 
@@ -184,8 +184,6 @@ export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => 
           <DisplayToggleSettingSwitch settingKey='showSuperChatBar' label={t('content.setting.superChatBarDisplay')} />
         </ToggleRow>
       </SettingGroup>
-
-      {diagnostics}
     </>
   )
 }

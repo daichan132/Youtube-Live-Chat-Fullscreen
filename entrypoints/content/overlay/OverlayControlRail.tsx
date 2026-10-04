@@ -1,5 +1,5 @@
 import { type CSSProperties, type KeyboardEvent, type PointerEvent, useId, useRef, useState } from 'react'
-import { TbAdjustmentsHorizontal, TbGripVertical } from '@/shared/components/icons'
+import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import type { RGBA } from '@/shared/settings/model'
@@ -146,7 +146,7 @@ export const OverlayControlRail = ({
         aria-expanded={placementOpen}
         onClick={() => setPlacementOpen(value => !value)}
       >
-        ↔
+        <TbArrowsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
       {placementOpen && isReady ? (
         <fieldset

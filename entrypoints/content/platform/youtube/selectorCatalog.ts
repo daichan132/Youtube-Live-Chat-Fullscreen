@@ -12,6 +12,13 @@ export const nativeChatIframeProbe = {
   probeId: 'chat.iframe.v2',
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
 } as const
+export const chatRendererProbe = { probeId: 'chat.renderer.v1', selectors: ['yt-live-chat-renderer'] } as const
+export const chatItemListRendererProbe = { probeId: 'chat.item-list.v1', selectors: ['yt-live-chat-item-list-renderer'] } as const
+export const chatUnavailableMessageProbe = {
+  probeId: 'chat.unavailable-message.v1',
+  selectors: ['yt-live-chat-unavailable-message-renderer'],
+} as const
+export const chatStatusMessageProbe = { probeId: 'chat.status-message.v1', selectors: ['yt-live-chat-message-renderer'] } as const
 export const fullscreenButtonProbe = { probeId: 'controls.fullscreen.v1', selectors: ['button.ytp-fullscreen-button'] } as const
 export const liveTimeDisplayProbe = {
   probeId: 'player.live-time.v1',
@@ -88,6 +95,10 @@ export const youtubeSelectorCatalog = {
   nativeChatHost: nativeChatHostProbe,
   chatContainer: chatContainerProbe,
   nativeChatIframe: nativeChatIframeProbe,
+  chatRenderer: chatRendererProbe,
+  chatItemListRenderer: chatItemListRendererProbe,
+  chatUnavailableMessage: chatUnavailableMessageProbe,
+  chatStatusMessage: chatStatusMessageProbe,
   fullscreenButton: fullscreenButtonProbe,
   liveTimeDisplay: liveTimeDisplayProbe,
   liveHeadBadge: liveHeadBadgeProbe,

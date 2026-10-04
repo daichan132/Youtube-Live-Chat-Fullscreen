@@ -24,25 +24,29 @@ import { SettingContent } from './SettingContent'
 type YTDLiveChatSettingProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  diagnostics?: React.ReactNode
 }
 
-export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveChatSettingProps) => {
+export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
   const t = useT()
   const direction = useLocaleDirection()
+  const panelRef = useRef<HTMLDivElement>(null)
   const tablistRef = useRef<HTMLDivElement>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
   const canRedo = useAtomValue(canRedoAtom)
   const { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } = useStyleHistoryCommands()
 
-  const focusActiveTab = useCallback(() => {
-    const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
-    activeTab?.focus({ preventScroll: true })
+  const focusPanel = useCallback(() => {
+    panelRef.current?.focus({ preventScroll: true })
   }, [])
+
+  const handleClose = useCallback(() => {
+    finishYLCStyleGesture()
+    onOpenChange(false)
+  }, [finishYLCStyleGesture, onOpenChange])
 
   const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
     () => [
@@ -83,8 +87,12 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
   useEffect(() => {
     if (!open) {
       finishYLCStyleGesture()
+      return
     }
-  }, [open])
+    const handleWindowBlur = () => finishYLCStyleGesture()
+    window.addEventListener('blur', handleWindowBlur)
+    return () => window.removeEventListener('blur', handleWindowBlur)
+  }, [finishYLCStyleGesture, open])
 
   const handleUndo = useCallback(() => {
     const handled = undoYLCStyle()
@@ -149,11 +157,14 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
-      onRequestClose={() => onOpenChange(false)}
-      onAfterOpen={focusActiveTab}
+      onRequestClose={handleClose}
+      onAfterOpen={focusPanel}
       parentSelector={getModalParentElement}
     >
       <div
+        ref={panelRef}
+        tabIndex={-1}
+        style={{ outline: 'none' }}
         data-ylc-theme={resolvedThemeMode}
         dir={direction}
         className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
@@ -209,7 +220,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
               data-ylc-setting-close-button
               aria-label={t('content.aria.close')}
               className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-              onClick={() => onOpenChange(false)}
+              onClick={handleClose}
             >
               <RiCloseLine size={24} />
             </button>
@@ -227,7 +238,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
           className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
-          {menuItem === 'setting' && <SettingContent diagnostics={diagnostics} />}
+          {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

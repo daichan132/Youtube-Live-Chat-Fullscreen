@@ -1314,6 +1314,7 @@
 }
 
 .ylc-overlay-control-icon {
+  appearance: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1322,6 +1323,7 @@
   padding: 0;
   border: none;
   background: transparent;
+  color: inherit;
   border-radius: var(--ylc-radius-md);
   line-height: 0;
   transition:

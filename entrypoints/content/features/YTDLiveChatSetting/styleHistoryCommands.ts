@@ -37,6 +37,7 @@ export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands =
   },
   finishYLCStyleGesture: gestureId => store.set(finishStyleGestureAtom, gestureId),
   beginYLCStyleGesture: (id, _label) => {
+    if (store.get(editorSessionStateAtom).activeGesture?.id === id) return
     store.set(finishStyleGestureAtom)
     store.set(beginStyleGestureAtom, id)
   },
