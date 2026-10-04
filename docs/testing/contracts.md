@@ -73,6 +73,8 @@ The package contract rejects:
 - mismatches between unpacked output and ZIP inventory;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
+Package size budgets live in `config/package-size-budget.json`. The ZIP ceiling is 380,000 bytes for both browsers. During the October 2026 dependency refresh, an identical-source comparison measured a 348,782-byte Chrome ZIP with the previous lockfile and a 366,122-byte ZIP after updating only React, React DOM, and scheduler to React 19.3. This dependency cost sets the new ZIP baseline; the content-script ceiling remains 450,000 bytes. Future updates must measure both production packages against these budgets.
+
 ## Pull-request CI ownership
 
 - `quality` runs `yarn verify`.

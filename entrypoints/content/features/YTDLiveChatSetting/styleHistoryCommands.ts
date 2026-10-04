@@ -1,5 +1,5 @@
 import { useStore } from 'jotai'
-import type { Store } from 'jotai/vanilla/store'
+import type { Store } from 'jotai/vanilla'
 import { useMemo } from 'react'
 import type { ChatProfile } from '@/shared/settings/model'
 import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'

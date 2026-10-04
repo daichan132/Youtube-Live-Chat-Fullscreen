@@ -1,5 +1,4 @@
-import { createStore } from 'jotai/vanilla'
-import type { Store } from 'jotai/vanilla/store'
+import { createStore, type Store } from 'jotai/vanilla'
 import type { LocaleCode } from '@/shared/i18n/generated/translationTypes'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { loadLocaleMessages } from '@/shared/i18n/loader'

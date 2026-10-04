@@ -57,3 +57,34 @@ it('disconnects obstacle observation after placement and keeps size updates with
   expect(result.current.viewport.width).toBe(900)
   expect(collectPlayerObstacles).toHaveBeenCalledTimes(count)
 })
+
+it('renders the initial legacy migration before a resize and moves from the migrated player ratios', () => {
+  const { store, player, wrapper, resize } = setup()
+  store.set(chatSettingsStateAtom, {
+    ...DEFAULT_CHAT_SETTINGS,
+    geometry: { reference: 'legacy-viewport-px', coordinates: { x: 100, y: 50 }, size: { width: 300, height: 200 } },
+  })
+  const changed = vi.fn()
+  const unsubscribe = store.sub(chatSettingsStateAtom, changed)
+  const { result } = renderHook(() => useOverlayGeometry({ referenceElement: player }), { wrapper })
+
+  expect(store.get(chatSettingsStateAtom).geometry).toEqual(
+    layoutGeometryToV2({ coordinates: { x: 100, y: 50 }, size: { width: 300, height: 200 } }, { width: 1000, height: 700 }, true),
+  )
+  expect(result.current.displayGeometry).toEqual({ coordinates: { x: 100, y: 50 }, size: { width: 300, height: 200 } })
+  expect(changed).toHaveBeenCalledOnce()
+
+  act(resize)
+  expect(result.current.displayGeometry).toEqual({ coordinates: { x: 90, y: 50 }, size: { width: 270, height: 200 } })
+  expect(changed).toHaveBeenCalledOnce()
+
+  act(() => result.current.moveBy({ x: 25, y: 10 }))
+  expect(result.current.displayGeometry.coordinates.x).toBeCloseTo(115, 10)
+  expect(result.current.displayGeometry.coordinates.y).toBe(60)
+  expect(result.current.displayGeometry.size).toEqual({ width: 270, height: 200 })
+  expect(store.get(chatSettingsStateAtom).geometry).toEqual(
+    layoutGeometryToV2({ coordinates: { x: 115, y: 60 }, size: { width: 270, height: 200 } }, { width: 900, height: 700 }, true),
+  )
+  expect(changed).toHaveBeenCalledTimes(2)
+  unsubscribe()
+})
