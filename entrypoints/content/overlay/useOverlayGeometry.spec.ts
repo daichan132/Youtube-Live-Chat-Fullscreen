@@ -15,6 +15,15 @@ describe('useOverlayGeometry', () => {
   const wrapper = ({ children }: { children: ReactNode }) => createElement(Provider, { store }, children)
   let player: HTMLDivElement
   let reference = { width: 500, height: 500 }
+  let frames: Map<number, FrameRequestCallback>
+
+  const flushAnimationFrame = () => {
+    const callbacks = [...frames.values()]
+    frames.clear()
+    act(() => {
+      for (const callback of callbacks) callback(0)
+    })
+  }
 
   const setPlayerSize = (width: number, height: number) => {
     reference = { width, height }
@@ -32,6 +41,16 @@ describe('useOverlayGeometry', () => {
   const renderGeometryHook = () => renderHook(() => useOverlayGeometry({ referenceElement: player }), { wrapper })
 
   beforeEach(() => {
+    frames = new Map()
+    let nextFrameId = 0
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+      const id = ++nextFrameId
+      frames.set(id, callback)
+      return id
+    })
+    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => {
+      frames.delete(id)
+    })
     player = document.createElement('div')
     document.body.append(player)
     player.getBoundingClientRect = () =>
@@ -71,6 +90,7 @@ describe('useOverlayGeometry', () => {
     } as unknown as React.PointerEvent<HTMLDivElement>
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 2, clientX: 25, clientY: 10 })))
+    flushAnimationFrame()
     expect(result.current.draftGeometry?.coordinates).toEqual({ x: 125, y: 60 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 2, clientX: 25, clientY: 10 })))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
@@ -110,6 +130,7 @@ describe('useOverlayGeometry', () => {
     } as unknown as React.PointerEvent<HTMLDivElement>
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 40, clientY: 40 })))
+    flushAnimationFrame()
     expect(result.current.draftGeometry?.size).toEqual({ width: 340, height: 240 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, clientX: 40, clientY: 40 })))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).size).toEqual({ width: 340, height: 240 })
@@ -132,6 +153,7 @@ describe('useOverlayGeometry', () => {
 
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 3, clientX: 60, clientY: 120 })))
+    flushAnimationFrame()
     expect(result.current.draftGeometry).toEqual({ coordinates: { x: 60, y: 50 }, size: { width: 440, height: 220 } })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 3, clientX: 60, clientY: 120 })))
     const persisted = renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference)

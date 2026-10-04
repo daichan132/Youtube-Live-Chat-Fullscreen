@@ -8,12 +8,14 @@ import {
 export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed'
 
 const HEADER_SELECTOR = 'yt-live-chat-header-renderer'
-const INPUT_PANEL_SELECTOR = '#input-panel'
+const INPUT_PANEL_ID = 'input-panel'
+const INPUT_PANEL_SELECTOR = `#${INPUT_PANEL_ID}`
 const INPUT_FALLBACK_SELECTOR = [
   'yt-live-chat-message-input-renderer',
   'yt-live-chat-restricted-participation-renderer',
   'yt-live-chat-sign-in-prompt-renderer',
 ].join(', ')
+const CHROME_TARGET_SELECTOR = `${HEADER_SELECTOR}, ${INPUT_PANEL_SELECTOR}, ${INPUT_FALLBACK_SELECTOR}`
 const TRANSITION_FALLBACK_MS = 310
 
 const getBody = (iframe: HTMLIFrameElement | null) => {
@@ -50,6 +52,13 @@ const measure = (elements: HTMLElement[]) => {
 
 const sameElements = (left: HTMLElement[], right: HTMLElement[]) =>
   left.length === right.length && left.every((element, index) => element === right[index])
+
+const containsChromeTarget = (node: Node) => {
+  // Nodes belong to the iframe's realm, so instanceof Element would reject them.
+  if (node.nodeType !== Node.ELEMENT_NODE) return false
+  const element = node as Element
+  return element.matches(CHROME_TARGET_SELECTOR) || element.querySelector(CHROME_TARGET_SELECTOR) !== null
+}
 
 const blurActiveElement = (body: HTMLElement) => {
   const active = body.ownerDocument.activeElement
@@ -99,10 +108,30 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
   }
 
+  const mutationMayChangeChrome = (mutation: MutationRecord) => {
+    if (mutation.type === 'attributes') {
+      // The input panel can acquire or lose its identity without being replaced.
+      return (
+        mutation.oldValue === INPUT_PANEL_ID ||
+        (mutation.target.nodeType === Node.ELEMENT_NODE && (mutation.target as Element).id === INPUT_PANEL_ID)
+      )
+    }
+    if (elements.some(element => element === mutation.target || element.contains(mutation.target))) return true
+    for (const nodes of [mutation.addedNodes, mutation.removedNodes]) {
+      for (const node of nodes) {
+        if (elements.some(element => node === element || node.contains(element)) || containsChromeTarget(node)) return true
+      }
+    }
+    return false
+  }
+
   const ensureTargetObserver = () => {
     if (!body || targetObserver) return
     targetObserver = new MutationObserver(mutations => {
       if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+      // Most live-chat mutations append messages. Inspect only the changed
+      // subtrees before considering a search through the entire chat body.
+      if (!mutations.some(mutationMayChangeChrome)) return
       const nextElements = resolveChatOnlyChromeElements(body)
       const chromeElements = [...new Set([...elements, ...nextElements])]
       const touchesChrome = mutations.some(mutation =>
@@ -110,7 +139,13 @@ export const createChatChromeLease = (): ChatChromeLease => {
       )
       if (!sameElements(elements, nextElements) || touchesChrome) refreshCollapsedMeasurements(nextElements)
     })
-    targetObserver.observe(body, { childList: true, subtree: true })
+    targetObserver.observe(body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['id'],
+      attributeOldValue: true,
+    })
   }
 
   const bind = (nextIframe: HTMLIFrameElement | null) => {

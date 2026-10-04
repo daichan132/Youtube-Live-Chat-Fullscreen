@@ -22,6 +22,8 @@ type ActivePointerSession<TSession> = {
   session: TSession
   captureTarget: PointerCaptureTarget
   captureAcquired: boolean
+  pendingMove: Point | null
+  scheduledFrame: number | null
 }
 
 export const pointFromPointerEvent = (event: Pick<PointerEvent, 'clientX' | 'clientY'>): Point => ({
@@ -47,6 +49,11 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   }, [])
 
   const cleanup = useCallback((active: ActivePointerSession<TSession> | null) => {
+    if (active) {
+      if (active.scheduledFrame !== null) window.cancelAnimationFrame(active.scheduledFrame)
+      active.scheduledFrame = null
+      active.pendingMove = null
+    }
     window.removeEventListener('pointermove', handlePointerMove)
     window.removeEventListener('pointerup', handlePointerUp)
     window.removeEventListener('pointercancel', handlePointerCancel)
@@ -72,7 +79,16 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   const handlePointerMove = useCallback((event: PointerEvent) => {
     const active = activeRef.current
     if (!active || active.pointerId !== event.pointerId) return
-    optionsRef.current.move(active.session, pointFromPointerEvent(event))
+    active.pendingMove = pointFromPointerEvent(event)
+    if (active.scheduledFrame !== null) return
+    // Only the latest position can be painted. Keep high-frequency pointer
+    // input from producing multiple geometry updates before the next frame.
+    active.scheduledFrame = window.requestAnimationFrame(() => {
+      active.scheduledFrame = null
+      const point = active.pendingMove
+      active.pendingMove = null
+      if (activeRef.current === active && point) optionsRef.current.move(active.session, point)
+    })
   }, [])
   const handlePointerUp = useCallback(
     (event: PointerEvent) => {
@@ -122,6 +138,8 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
         session,
         captureTarget,
         captureAcquired: false,
+        pendingMove: null,
+        scheduledFrame: null,
       }
       activeRef.current = active
       captureTarget.addEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
