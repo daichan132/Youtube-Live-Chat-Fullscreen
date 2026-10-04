@@ -14,7 +14,7 @@ import {
 } from '@/shared/state/customCssAtoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
-import { SettingContent } from './SettingContent'
+import { YTDLiveChatSetting } from './YTDLiveChatSetting'
 
 const actions = vi.hoisted(() => ({
   activate: vi.fn(),
@@ -176,13 +176,20 @@ describe('focused CSS settings', () => {
     expect(view.getByRole('button', { name: 'content.customCss.resume' })).toHaveFocus()
   })
 
-  it('integrates after Display without replacing the main settings groups or controls', () => {
+  it('uses a separate CSS tab without replacing the main settings groups or controls', async () => {
     const store = createTestStore()
-    const view = renderWithStore(<SettingContent />, store)
-    const groups = Array.from(view.container.querySelectorAll(':scope > fieldset'))
+    store.set(customCssSuspendedAtom, false)
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    expect(view.getAllByRole('tab').map(tab => tab.textContent)).toEqual([
+      'content.setting.header.setting',
+      'content.customCss.title',
+      'content.setting.header.preset',
+    ])
+    const groups = Array.from(view.getByRole('tabpanel').querySelectorAll(':scope > fieldset'))
     expect(groups.map(group => group.querySelector('legend')?.textContent)).toEqual([
       'content.setting.group.display',
-      'content.customCss.title',
       'content.setting.group.colors',
       'content.setting.group.text',
       'content.setting.group.elements',
@@ -190,6 +197,21 @@ describe('focused CSS settings', () => {
     expect(view.getByRole('group', { name: 'content.setting.group.colors' })).toBeInTheDocument()
     expect(view.getByRole('group', { name: 'content.setting.group.text' })).toBeInTheDocument()
     expect(view.getByRole('group', { name: 'content.setting.group.elements' })).toBeInTheDocument()
+    expect(view.queryByRole('group', { name: 'content.customCss.title' })).toBeNull()
+
+    const cssTab = view.getByRole('tab', { name: 'content.customCss.title' })
+    fireEvent.click(cssTab)
+    expect(view.getByRole('tabpanel', { name: 'content.customCss.title' })).toHaveAttribute('aria-labelledby', cssTab.id)
+    expect(view.getByRole('group', { name: 'content.customCss.title' })).toBeInTheDocument()
+    expect(view.queryByRole('group', { name: 'content.setting.group.display' })).toBeNull()
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+    fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.tab-source{}' } })
+    await act(async () => {
+      fireEvent.click(view.getByRole('button', { name: 'content.customCss.apply' }))
+    })
+    expect(actions.activate).toHaveBeenCalledWith('.tab-source{}', { enabled: false, css: '' })
+
+    fireEvent.click(settingsTab)
     act(() => {
       store.set(customCssOperationAtom, 'apply')
     })

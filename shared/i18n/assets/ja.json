@@ -88,7 +88,7 @@
     },
     "customCss": {
       "title": "カスタムCSS",
-      "description": "下の設定と併用できます。CSSの指定が優先される場合があります。",
+      "description": "「設定」タブの項目と併用できます。CSSの指定が優先される場合があります。",
       "active": "使用中",
       "inactive": "オフ",
       "stopped": "オフ",
@@ -158,7 +158,7 @@
       "presetCardsDescription": "細い枠と控えめな影で、コメントをカード状に区切ります。名前や本文の色は変更しません。",
       "presetOutline": "くっきり文字",
       "presetOutlineDescription": "通常コメントの本文を白文字＋黒い影にして、輪郭を強調します。名前・バッジ・リンクの色は変更しません。",
-      "presetOutlineNote": "背景の透明度は、下の「背景色」で調整します。",
+      "presetOutlineNote": "背景の透明度は、「設定」タブの「背景色」で調整します。",
       "presetCompact": "コンパクト",
       "presetCompactDescription": "コメント間の余白を詰めます。名前・アイコンや長文の折り返しは残したまま、一覧をコンパクトにします。",
       "presetComfortable": "ゆったり読みやすく",

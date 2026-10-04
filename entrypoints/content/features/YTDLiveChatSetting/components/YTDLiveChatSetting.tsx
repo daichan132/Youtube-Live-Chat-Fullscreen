@@ -8,6 +8,7 @@ import {
   TbBrandGithub,
   TbHeart,
   TbLayoutGrid,
+  TbPalette,
   TbSettings2,
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
@@ -26,8 +27,11 @@ import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
+import { CustomCssSection } from './CustomCssSection'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
+
+type SettingTab = 'setting' | 'css' | 'preset'
 
 type YTDLiveChatSettingProps = {
   open: boolean
@@ -37,7 +41,7 @@ type YTDLiveChatSettingProps = {
 export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
+  const [menuItem, setMenuItem] = useState<SettingTab>('setting')
   const t = useT()
   const direction = useLocaleDirection()
   const hasUnappliedCss = useAtomValue(hasUnappliedCustomCssAtom)
@@ -75,6 +79,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
   }, [open, hasUnappliedCss, cssSaving])
   const panelRef = useRef<HTMLDivElement>(null)
   const tablistRef = useRef<HTMLDivElement>(null)
+  const keyboardTabFocusRef = useRef<SettingTab | null>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
   const canRedo = useAtomValue(canRedoAtom)
@@ -110,9 +115,10 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     } else closeNow()
   }
 
-  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
+  const tabs = useMemo<{ key: SettingTab; label: string; icon: IconType }[]>(
     () => [
       { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
+      { key: 'css', label: t('content.customCss.title'), icon: TbPalette },
       { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     ],
     [t],
@@ -122,22 +128,33 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       const currentIndex = tabs.findIndex(tab => tab.key === menuItem)
       let nextIndex: number | null = null
-      if (e.key === 'ArrowRight') {
+      const nextKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight'
+      const previousKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft'
+      if (e.key === nextKey) {
         nextIndex = (currentIndex + 1) % tabs.length
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === previousKey) {
         nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
       }
       if (nextIndex !== null) {
         const nextTab = tabs[nextIndex]
         if (!nextTab) return
         e.preventDefault()
+        keyboardTabFocusRef.current = nextTab.key
         setMenuItem(nextTab.key)
         const buttons = tablistRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
         buttons?.[nextIndex]?.focus()
       }
     },
-    [menuItem, setMenuItem, tabs],
+    [direction, menuItem, setMenuItem, tabs],
   )
+
+  useEffect(() => {
+    if (keyboardTabFocusRef.current !== menuItem) return
+    keyboardTabFocusRef.current = null
+    // Restoring an expanded CSS editor can focus its name input on mount.
+    // Arrow selection keeps focus on the selected tab after its panel mounts.
+    focusActiveTab()
+  }, [focusActiveTab, menuItem])
 
   useEffect(() => {
     if (!open) return
@@ -243,7 +260,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           handlePanelKeyDown(event)
         }}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
+        <header className='ylc-theme-setting-header flex shrink-0 justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -257,16 +274,17 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
                 className={cn('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
                 onClick={() => {
                   if (menuItem === item.key) return
+                  keyboardTabFocusRef.current = null
                   setMenuItem(item.key)
                 }}
                 onKeyDown={handleTabKeyDown}
               >
-                <item.icon size={16} />
-                {item.label}
+                <item.icon size={16} aria-hidden='true' />
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
-          <div className='self-center inline-flex items-center gap-0.5'>
+          <div className='ylc-setting-header-actions self-center inline-flex items-center gap-0.5'>
             <button
               type='button'
               aria-label={t('content.setting.header.undo')}
@@ -329,6 +347,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}
+          {menuItem === 'css' && <CustomCssSection />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

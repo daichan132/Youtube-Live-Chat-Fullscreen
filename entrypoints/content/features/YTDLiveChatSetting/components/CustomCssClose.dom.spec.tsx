@@ -13,6 +13,7 @@ describe('closing the CSS editor', () => {
     store.set(customCssDraftAtom, { css: '.draft{}', baseline: { enabled: false, css: '' } })
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     const close = view.getByRole('button', { name: 'content.aria.close' })
     expect(close).not.toBeDisabled()
     fireEvent.click(close)
@@ -30,6 +31,7 @@ describe('closing the CSS editor', () => {
     store.set(customCssEditorUiAtom, { name: 'My CSS', registering: true, source: null, expanded: true })
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.keepEditing' }))
     expect(onOpenChange).not.toHaveBeenCalled()
@@ -46,6 +48,7 @@ describe('cancelling the settings close confirmation', () => {
     store.set(customCssDraftAtom, { css: '.draft{}', baseline: { enabled: false, css: '' } })
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     const editor = view.getByLabelText('CSS')
     editor.focus()
     fireEvent.keyDown(editor, { key: 'Escape' })
@@ -69,6 +72,7 @@ describe('cancelling the settings close confirmation', () => {
     store.set(customCssOperationAtom, 'apply')
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
     act(() => {
       store.set(customCssOperationAtom, null)
@@ -83,6 +87,7 @@ describe('cancelling the settings close confirmation', () => {
     store.set(customCssDraftAtom, { css: '.draft{}', baseline: { enabled: false, css: '' } })
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
     view.rerender(
       <Provider store={store}>

@@ -2,7 +2,13 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'jotai'
 import { describe, expect, it, vi } from 'vitest'
-import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
+import {
+  chatSettingsStateAtom,
+  EMPTY_MESSAGES,
+  editorSessionStateAtom,
+  localeStateAtom,
+  localeStateFromMessages,
+} from '@/shared/state/atoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { createStyleHistoryCommands } from '../styleHistoryCommands'
 import { YTDLiveChatSetting } from './YTDLiveChatSetting'
@@ -13,6 +19,7 @@ describe('settings initial focus and keyboard navigation', () => {
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, createTestStore())
     const panel = document.querySelector('.ylc-setting-panel') as HTMLElement
     const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    const cssTab = view.getByRole('tab', { name: 'content.customCss.title' })
     const presetTab = view.getByRole('tab', { name: 'content.setting.header.preset' })
 
     await waitFor(() => expect(panel).toHaveFocus())
@@ -24,16 +31,62 @@ describe('settings initial focus and keyboard navigation', () => {
     await user.tab()
     expect(settingsTab).toHaveFocus()
     await user.keyboard('{ArrowRight}')
+    expect(cssTab).toHaveFocus()
+    expect(cssTab).toHaveAttribute('aria-selected', 'true')
+    expect(view.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', cssTab.id)
+    await user.keyboard('{ArrowRight}')
     expect(presetTab).toHaveFocus()
     expect(presetTab).toHaveAttribute('aria-selected', 'true')
     expect(settingsTab).toHaveAttribute('tabindex', '-1')
     expect(view.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', presetTab.id)
 
     await user.keyboard('{ArrowLeft}')
+    expect(cssTab).toHaveFocus()
+    await user.keyboard('{ArrowLeft}')
     expect(settingsTab).toHaveFocus()
     expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    await user.keyboard('{ArrowLeft}')
+    expect(presetTab).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    expect(settingsTab).toHaveFocus()
     await user.tab()
     expect(view.getByRole('button', { name: 'content.aria.close' })).toHaveFocus()
+  })
+
+  it('follows visual arrow direction for Arabic RTL tabs and updates when locale direction changes', async () => {
+    const user = userEvent.setup()
+    const store = createTestStore()
+    store.set(localeStateAtom, localeStateFromMessages('ar', EMPTY_MESSAGES))
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    const panel = document.querySelector('.ylc-setting-panel') as HTMLElement
+    const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    const cssTab = view.getByRole('tab', { name: 'content.customCss.title' })
+    const presetTab = view.getByRole('tab', { name: 'content.setting.header.preset' })
+    expect(panel).toHaveAttribute('dir', 'rtl')
+    await waitFor(() => expect(panel).toHaveFocus())
+    await user.tab()
+    expect(settingsTab).toHaveFocus()
+
+    await user.keyboard('{ArrowLeft}')
+    expect(cssTab).toHaveFocus()
+    expect(cssTab).toHaveAttribute('aria-selected', 'true')
+    expect(view.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', cssTab.id)
+    await user.keyboard('{ArrowLeft}')
+    expect(presetTab).toHaveFocus()
+    await user.keyboard('{ArrowLeft}')
+    expect(settingsTab).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    expect(presetTab).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    expect(cssTab).toHaveFocus()
+    await user.keyboard('{ArrowRight}')
+    expect(settingsTab).toHaveFocus()
+
+    act(() => store.set(localeStateAtom, localeStateFromMessages('en', EMPTY_MESSAGES)))
+    expect(panel).toHaveAttribute('dir', 'ltr')
+    await user.keyboard('{ArrowRight}')
+    expect(cssTab).toHaveFocus()
+    expect(cssTab).toHaveAttribute('aria-selected', 'true')
   })
 
   it('reopens on the panel while retaining the selected tab for keyboard entry', async () => {
@@ -48,7 +101,7 @@ describe('settings initial focus and keyboard navigation', () => {
     const view = render(setting(true))
     await waitFor(() => expect(document.querySelector('.ylc-setting-panel')).toHaveFocus())
     await user.tab()
-    await user.keyboard('{ArrowRight}')
+    await user.keyboard('{ArrowRight}{ArrowRight}')
     expect(view.getByRole('tab', { name: 'content.setting.header.preset' })).toHaveFocus()
 
     view.rerender(setting(false))

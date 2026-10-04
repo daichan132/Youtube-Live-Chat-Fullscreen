@@ -1,0 +1,7 @@
+@import "../entrypoints/settings/main.css";
+
+@source "../stories/**/*.{ts,tsx}";
+
+body {
+  font-family: system-ui, sans-serif;
+}

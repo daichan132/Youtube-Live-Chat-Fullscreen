@@ -20,7 +20,6 @@ import { Switch } from '@/shared/components/Switch'
 import { useT } from '@/shared/i18n/react'
 import { effectiveAppearanceAtoms, effectiveDisplayAtoms, membershipNameUsesDefaultColorAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
-import { CustomCssSection } from './CustomCssSection'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
 import { YLCNumberSlider } from './YLCChangeItems/YLCNumberSlider'
@@ -146,8 +145,6 @@ export const SettingContent = () => {
           </ToggleRow>
         )}
       </SettingGroup>
-
-      <CustomCssSection />
 
       <SettingGroup legend={t('content.setting.group.colors')}>
         <ControlRow icon={TbPaint} title={t('content.setting.backgroundColor')}>

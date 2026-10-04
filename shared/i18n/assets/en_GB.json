@@ -88,7 +88,7 @@
     },
     "customCss": {
       "title": "Custom CSS",
-      "description": "Combine with the settings below. CSS rules may take precedence.",
+      "description": "Combine with the Settings tab. CSS rules may take precedence.",
       "active": "In use",
       "inactive": "Off",
       "stopped": "Off",
@@ -158,7 +158,7 @@
       "presetCardsDescription": "Separate comments with a fine border and a subtle shadow. Keep author and message colors unchanged.",
       "presetOutline": "Outlined text",
       "presetOutlineDescription": "Use white regular-message text with a dark shadow to emphasize its outline. Leave names, badges and link colors unchanged.",
-      "presetOutlineNote": "Adjust transparency with Background Colour below.",
+      "presetOutlineNote": "Adjust transparency with Background Colour in the Settings tab.",
       "presetCompact": "Compact",
       "presetCompactDescription": "Reduce vertical spacing while keeping names, avatars and wrapping for long messages.",
       "presetComfortable": "Comfortable reading",

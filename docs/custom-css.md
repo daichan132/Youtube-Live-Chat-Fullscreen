@@ -2,11 +2,13 @@
 
 ## Settings integration
 
-`SettingContent` keeps the existing Display, Colors, Text and Chat Elements
-controls in their original order. The CSS group sits between Display and Colors.
-It uses the same fieldset/legend, theme tokens, corner radii and button styles;
-a small accent icon and border distinguish the optional customization area.
-No new settings tab, application frame or preview-only toolbar is introduced.
+The settings panel has three tabs: **Settings**, **Custom CSS** and **Presets**.
+A newly mounted panel starts on Settings. `SettingContent` keeps the existing
+Display, Colors, Text and Chat Elements controls in their original order;
+`CustomCssSection` lives in the dedicated Custom CSS tabpanel. It uses the same
+fieldset/legend, theme tokens, corner radii and button styles, with a small accent
+icon and border. Undo, Redo and Close remain shared header controls. The header
+can wrap these controls onto another row in a narrow panel.
 
 The normal path is **choose a style -> Use this style**. One native selector groups
 packaged starters and named personal copies. Code is hidden until Edit or paste
@@ -126,13 +128,24 @@ Avoid simultaneous editing of the same saved list from multiple windows.
 ## Editing and accessibility
 
 Returning to style selection does not discard text or the registration name.
-The editor state also survives switching the existing Settings/Presets tabs.
-Opening code editing pins the displayed text against later external changes.
+The editor state also survives switching between Settings, Custom CSS and Presets,
+including its selected source, editor mode and open registration form. Switching
+tabs does not apply CSS or save a draft. Opening code editing pins the displayed
+text against later external changes.
 Saved-copy deletion leaves both the draft and currently applied source intact;
 external deletion shows a missing-source notice rather than erasing the draft.
 Reload and overwrite confirmations hold snapshots and recheck changes before
 executing. Baselines advance only for the submitted, still-current draft and a
 matching committed source, including a source saved before a failed resume.
+
+Each tab controls the active tabpanel through `aria-controls`; the panel names
+its selected tab through `aria-labelledby`. Only the selected tab participates in
+Tab navigation. Opening or reopening the dialog focuses the panel; Tab then
+enters the selected tab. Reopening the same mounted dialog retains its selected
+tab. Left and Right arrows select and focus adjacent tabs, wrap at either end,
+and follow the visual direction in LTR and RTL locales. Arrow selection retains
+focus on the selected tab even when a restored registration form would otherwise
+focus its name input on mount.
 
 Names are checked for trimmed duplicates and capacity before submission. The
 name form appears only on request; the preset title is suggested only then.
@@ -151,9 +164,11 @@ of whether focus is on the name input, CSS, or a button. During a name save,
 Escape is consumed without canceling the request or bubbling to close Settings.
 A deletion/overwrite confirmation takes priority over the name form.
 A subsequent settings-close request still uses the existing
-unapplied-text/name/in-flight-save warning. While that close confirmation is open,
-the panel handles Escape before its children, even if focus has moved back to
-the CSS or name input. It cancels only the close confirmation, including when a
+unapplied-text/name/in-flight-save warning, including when Settings or Presets is
+the selected tab. Canceling the close keeps the draft and selected tab; confirming
+the close clears the page-local draft and registration state. While that close
+confirmation is open, the panel handles Escape before its children, even if focus
+has moved back to the CSS or name input. It cancels only the close confirmation, including when a
 save finishes while it is open; it does not discard the name or leave editing.
 Composing Escape events remain ignored. Focus returns to the corresponding
 editor, selector or prior settings control. A registration completion restores

@@ -162,6 +162,7 @@ describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => 
     const store = createStore()
     const onOpenChange = vi.fn()
     const { view, focused } = mount(shadow, store, <YTDLiveChatSetting open onOpenChange={onOpenChange} />)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     const input = view.getByLabelText(label)
     input.focus()
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
@@ -181,6 +182,7 @@ describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => 
   it('returns from the close confirmation to the actual input inside its root', () => {
     const store = createStore()
     const { view, focused } = mount(shadow, store, <YTDLiveChatSetting open onOpenChange={vi.fn()} />)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     const input = view.getByLabelText('content.customCss.name')
     input.focus()
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
