@@ -1,13 +1,21 @@
 import { expect, test } from '@e2e/fixtures'
 import { installCheckerboardVideoSurface, openDeterministicOverlay, stabilizeExtensionRendering } from '@e2e/support/deterministicSurfaces'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
+import type { Locator } from '@playwright/test'
 import { decodePng, edgeEnergy, meanPixelDifference } from './pixelMetrics'
+
+const expectPopupRecoverySettled = async (popup: Locator) => {
+  // This fixture opens popup.html as the active tab, which has no content-session receiver.
+  await expect(popup.getByRole('status')).toHaveText('Cannot check this tab’s status.')
+  await expect(popup.getByRole('button', { name: 'Check status', exact: true })).toBeEnabled()
+}
 
 test.describe('extension visual regression', () => {
   test('popup light', async ({ page, extension }) => {
     await page.goto(extension.url('popup.html'))
     const popup = page.locator('div[data-ylc-theme]').filter({ has: page.getByLabel('Select language') })
     await expect(popup).toBeVisible()
+    await expectPopupRecoverySettled(popup)
     await stabilizeExtensionRendering(page)
 
     await expect(popup).toHaveScreenshot('popup-light.png')
@@ -18,6 +26,7 @@ test.describe('extension visual regression', () => {
     await page.getByRole('radio', { name: /^dark$/i }).check({ force: true })
     const popup = page.locator('div[data-ylc-theme="dark"]').filter({ has: page.getByLabel('Select language') })
     await expect(popup).toBeVisible()
+    await expectPopupRecoverySettled(popup)
     await stabilizeExtensionRendering(page)
 
     await expect(popup).toHaveScreenshot('popup-dark.png')

@@ -21,6 +21,7 @@ export const ContentRecovery = () => {
     try {
       const operation = async () => {
         const [tab] = await browser.tabs.query({ active: true, currentWindow: true })
+        if (id !== requestRef.current) return
         if (tab?.id === undefined) throw new Error('No tab')
         if (retry && (tab.id !== tabRef.current || !result)) throw new Error('Tab changed')
         tabRef.current = tab.id
@@ -51,14 +52,18 @@ export const ContentRecovery = () => {
       }
     } finally {
       clearTimeout(timer)
-      busyRef.current = false
-      if (id === requestRef.current) setBusy(false)
+      if (id === requestRef.current) {
+        requestRef.current += 1
+        busyRef.current = false
+        setBusy(false)
+      }
     }
   }
   useEffect(() => {
     void request()
     return () => {
       requestRef.current += 1
+      busyRef.current = false
     }
   }, [])
   return (
