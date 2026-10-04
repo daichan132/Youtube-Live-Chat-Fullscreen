@@ -6,7 +6,7 @@ This archive contains the source and pinned toolchain needed to rebuild the Fire
 
 - Ubuntu 24.04 in the release workflow
 - Node.js 24, also recorded in `mise.toml`
-- Yarn 4.18.0, pinned by `.yarnrc.yml` and bundled in `.yarn/releases/`
+- Yarn 4.18.1, pinned by `.yarnrc.yml` and bundled in `.yarn/releases/`
 
 The build does not require environment variables, private packages, remote build assets, or generated secrets. Dependencies are resolved from `yarn.lock`. Runtime and manifest locale assets are committed under `public/`, and their TypeScript metadata is committed under `shared/i18n/generated/`.
 

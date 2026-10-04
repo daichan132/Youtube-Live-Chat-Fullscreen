@@ -7,7 +7,7 @@ const e2eDirectory = fileURLToPath(new URL('./e2e', import.meta.url))
 const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta.url))
 
 export const FIREFOX_SOURCE_INCLUDE = [
-  '.yarn/releases/yarn-4.18.0.cjs',
+  '.yarn/releases/yarn-4.18.1.cjs',
   '.yarnrc.yml',
   'LICENSE',
   'README.md',

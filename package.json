@@ -112,7 +112,7 @@
     "uuid": "11.1.1",
     "vite": "8.3.2"
   },
-  "packageManager": "yarn@4.18.0",
+  "packageManager": "yarn@4.18.1",
   "browserslist": [
     "last 2 Chrome versions",
     "last 2 Firefox versions"

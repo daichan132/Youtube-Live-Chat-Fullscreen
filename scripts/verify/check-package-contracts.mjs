@@ -32,7 +32,7 @@ const sourcePackagePolicy = {
   ],
   allowedPrefixes: ['.yarn/releases/', 'config/', 'entrypoints/', 'public/', 'scripts/', 'shared/'],
   requiredFiles: [
-    '.yarn/releases/yarn-4.18.0.cjs',
+    '.yarn/releases/yarn-4.18.1.cjs',
     'config/packagePolicy.ts',
     'entrypoints/content/index.tsx',
     'public/_locales/en/messages.json',
