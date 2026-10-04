@@ -204,7 +204,11 @@ const verifyTarget = async report => {
     if (!files.includes(script)) failures.push(`content script file is missing: ${script}`)
   }
 
-  const runtimeLocales = localeCodes(files, /^locales\/([^/]+)\.json$/).filter(locale => locale !== '_keys')
+  const runtimeMetadata = new Set(['_keys', '_defaults'])
+  for (const name of runtimeMetadata) {
+    if (!files.includes(`locales/${name}.json`)) failures.push(`runtime locale metadata is missing: ${name}.json`)
+  }
+  const runtimeLocales = localeCodes(files, /^locales\/([^/]+)\.json$/).filter(locale => !runtimeMetadata.has(locale))
   const manifestLocales = localeCodes(files, /^_locales\/([^/]+)\/messages\.json$/)
   if (runtimeLocales.length !== 55) failures.push(`expected 55 runtime locales, got ${runtimeLocales.length}`)
   if (JSON.stringify(manifestLocales) !== JSON.stringify(runtimeLocales)) {

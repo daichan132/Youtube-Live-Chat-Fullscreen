@@ -51,7 +51,8 @@ test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
       await expect(page.getByText('اللغة', { exact: true })).toBeVisible()
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', 'rtl')
 
-      await expect.poll(() => [...loadedAssets].sort()).toEqual(['_keys.json', 'ar.json', 'en.json', 'ja.json'])
+      await expect.poll(() => [...loadedAssets].sort()).toEqual(['_defaults.json', '_keys.json', 'ar.json', 'en.json', 'ja.json'])
+      expect(loadedAssets.filter(asset => asset === '_defaults.json')).toHaveLength(1)
       expect(loadedAssets.filter(asset => asset === '_keys.json')).toHaveLength(1)
       expect(loadedAssets.filter(asset => asset === 'en.json')).toHaveLength(1)
       expect(loadedAssets.filter(asset => asset === 'ja.json')).toHaveLength(1)

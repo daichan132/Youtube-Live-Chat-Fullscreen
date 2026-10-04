@@ -6,6 +6,7 @@ const languageNamesUrl = new URL('../../shared/i18n/language_codes.json', import
 export const localeCodePattern = /^[a-z]{2,3}(?:_(?:[A-Z]{2}|\d{3}))?$/u
 export const rtlBaseLocales = ['ar', 'fa', 'he']
 export const runtimeKeysFile = '_keys.json'
+export const runtimeDefaultsFile = '_defaults.json'
 
 const manifestMessageSources = {
   extensionName: 'extensionName',
@@ -26,6 +27,30 @@ const flattenMessages = (value, prefix = '', output = {}) => {
     else throw new Error(`Invalid locale value at ${path}`)
   }
   return output
+}
+
+const selectRuntimeDefaults = (messagesByLocale, translationKeys) => {
+  const english = messagesByLocale.get('en')
+  return translationKeys.map(key => {
+    const counts = new Map()
+    for (const messages of messagesByLocale.values()) {
+      const value = messages[key]
+      counts.set(value, (counts.get(value) ?? 0) + 1)
+    }
+    // English wins a frequency tie. Other ties keep the first locale in the
+    // compiler's sorted source order, making regeneration deterministic.
+    let selected = english[key]
+    let frequency = counts.get(selected)
+    for (const messages of messagesByLocale.values()) {
+      const value = messages[key]
+      const count = counts.get(value)
+      if (count > frequency) {
+        selected = value
+        frequency = count
+      }
+    }
+    return selected
+  })
 }
 
 const quote = value => `'${value}'`
@@ -70,10 +95,15 @@ export const compileLocales = async () => {
   }
   const translationKeys = sourceKeys.filter(key => !manifestOnlyKeys.has(key))
 
-  const runtimeFiles = new Map([[runtimeKeysFile, compactJson(translationKeys)]])
+  const defaults = selectRuntimeDefaults(messagesByLocale, translationKeys)
+  const runtimeFiles = new Map([
+    [runtimeKeysFile, compactJson(translationKeys)],
+    [runtimeDefaultsFile, compactJson(defaults)],
+  ])
   const manifestFiles = new Map()
   for (const [locale, messages] of messagesByLocale) {
-    runtimeFiles.set(`${locale}.json`, compactJson(translationKeys.map(key => messages[key])))
+    const encoded = translationKeys.map((key, index) => messages[key] === defaults[index] ? null : messages[key])
+    runtimeFiles.set(`${locale}.json`, compactJson(encoded))
     const manifestMessages = Object.fromEntries(
       Object.entries(manifestMessageSources).map(([manifestKey, sourceKey]) => [
         manifestKey,
