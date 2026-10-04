@@ -21,6 +21,21 @@ export type NativeChatDefinition = {
   showHideControl?: boolean
   slot?: NativeChatSlot
   hostVideoId?: boolean
+  continuationVideoId?: string
+  navigateWithoutSrc?: boolean
+}
+
+export type NativeIframeContextObservation = {
+  connected: boolean
+  sameDocument: boolean
+  sameRuntimeObject: boolean
+  loadEvents: number
+  src: string
+  srcAttributePresent: boolean
+  documentHref: string | null
+  bodyVideoId: string | null
+  runtimeVideoId: string | null
+  signInNextVideoId: string | null
 }
 
 type YouTubeScenarioBase = {

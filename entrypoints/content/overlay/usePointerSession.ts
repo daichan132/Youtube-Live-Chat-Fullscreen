@@ -22,6 +22,8 @@ type ActivePointerSession<TSession> = {
   session: TSession
   captureTarget: PointerCaptureTarget
   captureAcquired: boolean
+  moveFrame: number | null
+  pendingPoint: Point | null
 }
 
 export const pointFromPointerEvent = (event: Pick<PointerEvent, 'clientX' | 'clientY'>): Point => ({
@@ -47,6 +49,11 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   }, [])
 
   const cleanup = useCallback((active: ActivePointerSession<TSession> | null) => {
+    if (active && active.moveFrame !== null) cancelAnimationFrame(active.moveFrame)
+    if (active) {
+      active.moveFrame = null
+      active.pendingPoint = null
+    }
     window.removeEventListener('pointermove', handlePointerMove)
     window.removeEventListener('pointerup', handlePointerUp)
     window.removeEventListener('pointercancel', handlePointerCancel)
@@ -72,7 +79,14 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   const handlePointerMove = useCallback((event: PointerEvent) => {
     const active = activeRef.current
     if (!active || active.pointerId !== event.pointerId) return
-    optionsRef.current.move(active.session, pointFromPointerEvent(event))
+    active.pendingPoint = pointFromPointerEvent(event)
+    if (active.moveFrame !== null) return
+    active.moveFrame = requestAnimationFrame(() => {
+      active.moveFrame = null
+      const point = active.pendingPoint
+      active.pendingPoint = null
+      if (activeRef.current === active && point) optionsRef.current.move(active.session, point)
+    })
   }, [])
   const handlePointerUp = useCallback(
     (event: PointerEvent) => {
@@ -122,6 +136,8 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
         session,
         captureTarget,
         captureAcquired: false,
+        moveFrame: null,
+        pendingPoint: null,
       }
       activeRef.current = active
       captureTarget.addEventListener('lostpointercapture', handleLostPointerCapture as EventListener)

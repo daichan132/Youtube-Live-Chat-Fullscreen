@@ -10,6 +10,7 @@ export type CompiledYouTubeScenario = {
     bodyHtml: string
     videoId: string
     isLive: boolean
+    nativeChatNavigationHref: string | null
   }
   chatRoutes: Array<{
     pattern: string
@@ -20,13 +21,19 @@ export type CompiledYouTubeScenario = {
 const escapeHtml = (value: string) =>
   value.replaceAll('&', '&amp;').replaceAll('"', '&quot;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 
-const playableChatHtml = (title: string) => `<!doctype html>
+const playableChatHtml = (title: string, runtimeVideoId?: string) => `<!doctype html>
 <html>
   <head><title>${escapeHtml(title)}</title></head>
-  <body>
+  <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
     <yt-live-chat-renderer>
       <yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>
     </yt-live-chat-renderer>
+    ${
+      runtimeVideoId
+        ? `<a id="fixture-sign-in" href="/signin?next=${encodeURIComponent(`/watch?v=${runtimeVideoId}`)}">Sign in</a>
+    <script>window.__ylcFixtureChatRuntime = { videoId: '${runtimeVideoId}' };</script>`
+        : ''
+    }
   </body>
 </html>`
 
@@ -46,8 +53,12 @@ const renderShowHideControl = (mode: 'live' | 'archive') => `
     </button>
   </div>`
 
-const iframeSrc = (videoId: string, mode: 'live' | 'archive') =>
-  mode === 'archive' ? `/live_chat_replay?v=${videoId}&continuation=ylc-fixture` : `/live_chat?v=${videoId}&fixture=native`
+const iframeSrc = (videoId: string, mode: 'live' | 'archive', continuationVideoId?: string) =>
+  continuationVideoId
+    ? `/${mode === 'archive' ? 'live_chat_replay' : 'live_chat'}?continuation=ylc-fixture-${continuationVideoId}`
+    : mode === 'archive'
+      ? `/live_chat_replay?v=${videoId}&continuation=ylc-fixture`
+      : `/live_chat?v=${videoId}&fixture=native`
 
 const renderNativeChat = (videoId: string, mode: 'live' | 'archive', native: NativeChatDefinition) => {
   if (native.state === 'absent') return ''
@@ -55,13 +66,14 @@ const renderNativeChat = (videoId: string, mode: 'live' | 'archive', native: Nat
   const slotAfter = native.slot ? `<span id="${escapeHtml(native.slot.afterId)}"></span>` : ''
   const hostVideoId = native.hostVideoId === false ? '' : ` video-id="${escapeHtml(videoId)}"`
   const srcdoc = native.state === 'unavailable' ? ` srcdoc="${escapeHtml(unavailableChatHtml())}"` : ''
+  const src = native.navigateWithoutSrc ? '' : ` src="${escapeHtml(iframeSrc(videoId, mode, native.continuationVideoId))}"`
   return `
     <ytd-live-chat-frame${hostVideoId}>
       ${slotBefore}
       <iframe
         id="chatframe"
         class="ytd-live-chat-frame"
-        src="${escapeHtml(iframeSrc(videoId, mode))}"${srcdoc}
+        ${src}${srcdoc}
       ></iframe>
       ${slotAfter}
       ${native.showHideControl ? renderShowHideControl(mode) : ''}
@@ -98,7 +110,7 @@ const renderWatchBody = (state: YouTubeScenarioState) => {
     ${renderChatContainer(state)}`
 }
 
-const renderWatchHtml = (state: YouTubeScenarioState, bodyHtml: string) => {
+const renderWatchHtml = (state: YouTubeScenarioState, bodyHtml: string, nativeChatNavigationHref: string | null) => {
   const isLive = state.video.mode === 'live'
   const dimensions =
     state.page.chatDimensions === 'standard'
@@ -121,6 +133,8 @@ const renderWatchHtml = (state: YouTubeScenarioState, bodyHtml: string) => {
     ${bodyHtml}
     <script>
       const player = document.getElementById('movie_player');
+      const nativeChatNavigationHref = ${JSON.stringify(nativeChatNavigationHref)};
+      if (nativeChatNavigationHref) document.getElementById('chatframe').contentWindow.location.assign(nativeChatNavigationHref);
       player.getVideoData = () => ({ isLive: ${isLive}, isLiveContent: ${isLive}, video_id: '${escapeHtml(state.video.id)}' });
       document.querySelector('.ytp-fullscreen-button').addEventListener('click', async () => {
         if (document.fullscreenElement) {
@@ -151,6 +165,13 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
   if (!VIDEO_ID_PATTERN.test(state.video.id)) {
     throw new Error(`Invalid YouTube scenario video ID: ${JSON.stringify(state.video.id)}`)
   }
+  if (
+    state.chat.mode !== 'none' &&
+    state.chat.native.continuationVideoId !== undefined &&
+    !VIDEO_ID_PATTERN.test(state.chat.native.continuationVideoId)
+  ) {
+    throw new Error(`Invalid YouTube scenario continuation video ID: ${JSON.stringify(state.chat.native.continuationVideoId)}`)
+  }
 
   const chatRoutes =
     state.chat.mode === 'none'
@@ -158,20 +179,28 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
       : [
           {
             pattern: state.chat.mode === 'archive' ? '**/live_chat_replay?*' : '**/live_chat?*',
-            body: state.chat.response === 'playable' ? playableChatHtml(`${state.video.title} chat fixture`) : unavailableChatHtml(),
+            body:
+              state.chat.response === 'playable'
+                ? playableChatHtml(`${state.video.title} chat fixture`, state.chat.native.continuationVideoId)
+                : unavailableChatHtml(),
           },
         ]
   const bodyHtml = renderWatchBody(state)
   const isLive = state.video.mode === 'live'
+  const nativeChatNavigationHref =
+    state.chat.mode !== 'none' && state.chat.native.state === 'playable' && state.chat.native.navigateWithoutSrc
+      ? iframeSrc(state.video.id, state.chat.mode, state.chat.native.continuationVideoId)
+      : null
 
   return {
     watchUrl: getScenarioUrl(state),
-    watchHtml: renderWatchHtml(state, bodyHtml),
+    watchHtml: renderWatchHtml(state, bodyHtml, nativeChatNavigationHref),
     spaDocument: {
       title: state.video.title,
       bodyHtml,
       videoId: state.video.id,
       isLive,
+      nativeChatNavigationHref,
     },
     chatRoutes,
   }

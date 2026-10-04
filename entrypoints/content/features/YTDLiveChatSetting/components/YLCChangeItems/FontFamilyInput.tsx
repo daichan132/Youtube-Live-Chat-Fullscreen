@@ -5,7 +5,7 @@ import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
 import { formatMessage } from '@/shared/i18n/format'
 import { useT } from '@/shared/i18n/react'
-import { effectiveProfileAtom } from '@/shared/state'
+import { effectiveAppearanceAtoms } from '@/shared/state'
 import { cn } from '@/shared/utils/cn'
 import { toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
@@ -53,7 +53,7 @@ const buildFontFamilyOptions = (defaultLabel: string) => {
 }
 
 export const FontFamilyInput = () => {
-  const fontFamily = useAtomValue(effectiveProfileAtom).appearance.fontFamily
+  const fontFamily = useAtomValue(effectiveAppearanceAtoms.fontFamily)
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
 
   const handleCommit = useCallback((nextFontFamily: string) => {

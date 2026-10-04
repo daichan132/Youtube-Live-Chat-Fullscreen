@@ -122,3 +122,18 @@ OS / バージョン:
 ```
 
 Chrome と Firefox はそれぞれの成果物について記録する。Firefox の主要経路は Firefox 本体で確認し、Chromium fixture や ZIP 検査の成功で代用しない。未実施の経路は「未確認」と記す。この記録をリリース候補の既存の検証記録へ添付する。
+
+## 性能の比較測定
+
+production ビルドを専用の一時プロファイルに読み込み、同じ実機の Chrome for Testing で比較する。
+
+```bash
+yarn build
+node scripts/verify/measure-performance.mjs --out /private/tmp/ylc-performance-after.json
+```
+
+変更前に保存したビルドは `--extension /path/to/saved/chrome-mv3` で指定する。測定は外部ネットワークを遮断した YouTube fixture 上で行い、1,000件のメッセージを保持して100回の追加・削除と100回の player 通知を5セット実行する。入力欄はメッセージ一覧の後に置き、`--chrome panel`（既定）、`--chrome fallback`（ログイン案内）、`--chrome absent`（ヘッダー・入力欄なし）を同じ条件で比較できる。実 YouTube の互換性確認は、上記の実ブラウザ手順で別に行う。
+
+JSON にはブラウザ・OS・拡張パス・content script の SHA-256、body を起点とする検索、子要素内の検索、selector の matches、設定 CSS の書き込み回数、CDP の処理時間と描画間隔を保存する。カウンターは読み込まれた拡張 ID の isolated world に取り付け、iframe の Element realm で動作することも確認する。body を起点とする検索でもブラウザの最適化があるため、毎回全ノードを走査するとは限らない。CPU 時間や描画間隔は他のアプリやディスプレイの影響を受けるため、処理回数の削減だけから体感速度の改善率を推定しない。
+
+カウンター自身にも呼び出し回数に応じた負荷がある。処理時間を比較するときは `--instrumentation none` でも同じ組を測定する。このモードの JSON は処理回数を含まず、プロトタイプや CSS メソッドを書き換えない。

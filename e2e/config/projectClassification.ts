@@ -22,6 +22,7 @@ export const FIXTURE_SPECS = [
   'archive/borrowRestore.fixture.spec.ts',
   'archive/replayUnavailable.fixture.spec.ts',
   'live/channelLiveEntry.fixture.spec.ts',
+  'live/iframeContextPreservation.fixture.spec.ts',
   'live/managedNativeHandoff.fixture.spec.ts',
   'live/noChatVideo.fixture.spec.ts',
   'live/overlayInteraction.fixture.spec.ts',

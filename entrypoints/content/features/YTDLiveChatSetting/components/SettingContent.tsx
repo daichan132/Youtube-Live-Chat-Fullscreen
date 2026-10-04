@@ -18,7 +18,7 @@ import {
 } from '@/shared/components/icons'
 import { Switch } from '@/shared/components/Switch'
 import { useT } from '@/shared/i18n/react'
-import { effectiveProfileAtom } from '@/shared/state'
+import { effectiveAppearanceAtoms, effectiveDisplayAtoms, membershipNameUsesDefaultColorAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { FontFamilyInput } from './YLCChangeItems/FontFamilyInput'
 import { YLCColorPicker } from './YLCChangeItems/YLCColorPicker'
@@ -60,14 +60,16 @@ const ToggleRow = ({ icon: Icon, title, children }: { icon: IconType; title: str
 
 const ToggleSettingSwitch = ({ settingKey, label }: { settingKey: ToggleSettingKey; label: string }) => {
   const id = useId()
-  const profile = useAtomValue(effectiveProfileAtom)
+  const value = useAtomValue(
+    settingKey === 'idleVisibility'
+      ? effectiveDisplayAtoms.idleVisibility
+      : settingKey === 'contentMode'
+        ? effectiveDisplayAtoms.contentMode
+        : effectiveAppearanceAtoms[settingKey],
+  )
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
   const checked =
-    settingKey === 'idleVisibility'
-      ? profile.display.idleVisibility === 'always-visible'
-      : settingKey === 'contentMode'
-        ? profile.display.contentMode === 'messages-only'
-        : profile.appearance[settingKey]
+    settingKey === 'idleVisibility' ? value === 'always-visible' : settingKey === 'contentMode' ? value === 'messages-only' : value === true
 
   return (
     <Switch
@@ -100,11 +102,9 @@ const DisplayToggleSettingSwitch = ({
 }
 
 const MembershipNameColorSetting = () => {
-  const profile = useAtomValue(effectiveProfileAtom)
+  const isDefault = useAtomValue(membershipNameUsesDefaultColorAtom)
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
   const t = useT()
-  const membershipNameColor = profile.appearance.membershipNameColor
-  const isDefault = membershipNameColor.mode === 'youtube-default'
 
   const resetToDefault = () => {
     commitYLCStyleUpdate({ appearance: { membershipNameColor: { mode: 'youtube-default' } } }, 'membershipNameColor')
@@ -131,7 +131,7 @@ const MembershipNameColorSetting = () => {
 
 export const SettingContent = ({ diagnostics }: { diagnostics?: ReactNode }) => {
   const t = useT()
-  const showWhenIdle = useAtomValue(effectiveProfileAtom).display.idleVisibility === 'always-visible'
+  const showWhenIdle = useAtomValue(effectiveDisplayAtoms.idleVisibility) === 'always-visible'
 
   return (
     <>

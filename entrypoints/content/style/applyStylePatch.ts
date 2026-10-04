@@ -43,9 +43,29 @@ export const readYouTubeMembershipDefaultColor = (document: Document): RGBA | nu
   }
 }
 
+type AppliedProperty = { requested: string; serialized: string; priority: string }
+const appliedProperties = new WeakMap<CSSStyleDeclaration, Map<string, AppliedProperty>>()
+
 const applyProperties = (style: CSSStyleDeclaration, properties: Readonly<Record<string, string>>) => {
+  let applied = appliedProperties.get(style)
+  if (!applied) {
+    applied = new Map()
+    appliedProperties.set(style, applied)
+  }
   for (const [property, value] of Object.entries(properties)) {
+    const currentValue = style.getPropertyValue(property)
+    const currentPriority = style.getPropertyPriority(property)
+    if (currentValue === value && currentPriority === '') continue
+    // CSSOM may normalize values or ignore an unsupported alias. Compare the
+    // actual declaration on every pass so external edits still get repaired.
+    const previous = applied.get(property)
+    if (previous?.requested === value && previous.serialized === currentValue && previous.priority === currentPriority) continue
     style.setProperty(property, value)
+    applied.set(property, {
+      requested: value,
+      serialized: style.getPropertyValue(property),
+      priority: style.getPropertyPriority(property),
+    })
   }
 }
 
