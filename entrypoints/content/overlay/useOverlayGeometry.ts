@@ -79,12 +79,16 @@ export const useOverlayGeometry = ({
   const [obstacleRevision, setObstacleRevision] = useState(0)
   const [draftGeometry, setDraftGeometry] = useState<PixelChatGeometry | null>(null)
   const pointerActiveRef = useRef(false)
-  const autoPlacementEvaluatedRef = useRef(false)
   const autoRepositionedRef = useRef(false)
   const lastObstacleSignatureRef = useRef('')
-  const viewport = referenceSize ?? { width: window.innerWidth, height: window.innerHeight }
-  const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport.height, viewport.width])
-  const displayGeometry = draftGeometry ?? fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING)
+  const viewportWidth = referenceSize?.width ?? window.innerWidth
+  const viewportHeight = referenceSize?.height ?? window.innerHeight
+  const viewport = useMemo(() => ({ width: viewportWidth, height: viewportHeight }), [viewportWidth, viewportHeight])
+  const storedLayout = useMemo(() => renderChatGeometry(geometry, viewport), [geometry, viewport])
+  const displayGeometry = useMemo(
+    () => draftGeometry ?? fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING),
+    [draftGeometry, storedLayout, viewport],
+  )
   const pinned = isChatGeometryV2(geometry) ? geometry.pinned : true
 
   const commitLayout = useCallback(
@@ -176,7 +180,6 @@ export const useOverlayGeometry = ({
 
   useLayoutEffect(() => {
     if (!playerElement) return
-    autoPlacementEvaluatedRef.current = false
     autoRepositionedRef.current = false
     lastObstacleSignatureRef.current = ''
     const updateSize = () => {
@@ -224,13 +227,13 @@ export const useOverlayGeometry = ({
   useLayoutEffect(() => {
     if (!playerElement || !referenceSize || pinned || pointerActiveRef.current || draftGeometry) return
     if (interactionState === 'dragging' || interactionState === 'resizing') return
+    // Only one automatic reposition is allowed per player/pinning session.
+    // Once it has happened, further DOM measurements cannot change the result.
+    if (autoRepositionedRef.current) return
     const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
     const signature = JSON.stringify(obstacles)
     if (signature === lastObstacleSignatureRef.current) return
     lastObstacleSignatureRef.current = signature
-    const initial = !autoPlacementEvaluatedRef.current
-    autoPlacementEvaluatedRef.current = true
-    if (!initial && autoRepositionedRef.current) return
     const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, obstacles, GEOMETRY_VIEWPORT_PADDING)
     if (!shouldApplyAutoSafePlacement(placement)) return
     autoRepositionedRef.current = true
