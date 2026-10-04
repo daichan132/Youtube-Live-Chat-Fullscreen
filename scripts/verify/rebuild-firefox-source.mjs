@@ -49,7 +49,7 @@ const temporaryDirectory = await mkdtemp(join(tmpdir(), 'ylc-firefox-source-'))
 
 try {
   await exec('unzip', ['-q', sourceZip, '-d', temporaryDirectory])
-  const yarn = join(temporaryDirectory, '.yarn/releases/yarn-4.18.0.cjs')
+  const yarn = join(temporaryDirectory, '.yarn/releases/yarn-4.18.1.cjs')
   const environment = {
     ...process.env,
     YARN_ENABLE_HARDENED_MODE: '0',

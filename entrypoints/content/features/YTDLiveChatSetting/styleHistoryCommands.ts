@@ -1,5 +1,5 @@
 import { useStore } from 'jotai'
-import type { Store } from 'jotai/vanilla/store'
+import type { Store } from 'jotai/vanilla'
 import { useMemo } from 'react'
 import type { ChatProfile } from '@/shared/settings/model'
 import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'
@@ -37,6 +37,7 @@ export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands =
   },
   finishYLCStyleGesture: gestureId => store.set(finishStyleGestureAtom, gestureId),
   beginYLCStyleGesture: (id, _label) => {
+    if (store.get(editorSessionStateAtom).activeGesture?.id === id) return
     store.set(finishStyleGestureAtom)
     store.set(beginStyleGestureAtom, id)
   },

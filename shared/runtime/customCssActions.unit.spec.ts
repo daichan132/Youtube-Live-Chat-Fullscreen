@@ -1,15 +1,29 @@
 import { createStore } from 'jotai/vanilla'
 import { describe, expect, it, vi } from 'vitest'
 import type { ChatCssCustomization, SavedChatCss } from '@/shared/settings/customCss'
-import { customCssAtom, customCssFeedbackAtom, customCssLocalStopAtom, customCssOperationAtom, customCssSuspendedAtom, isCustomCssStoppedAtom, savedChatCssAtom } from '@/shared/state/customCssAtoms'
+import {
+  customCssAtom,
+  customCssFeedbackAtom,
+  customCssLocalStopAtom,
+  customCssOperationAtom,
+  customCssSuspendedAtom,
+  isCustomCssStoppedAtom,
+  savedChatCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { createCustomCssActions } from './customCssActions'
 
 const setup = () => {
   const store = createStore()
   const repository = {
-    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => { store.set(customCssAtom, value) }),
-    saveSavedChatCss: vi.fn(async (value: SavedChatCss[]) => { store.set(savedChatCssAtom, value) }),
-    saveCustomCssSuspended: vi.fn(async (value: boolean) => { store.set(customCssSuspendedAtom, value) }),
+    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => {
+      store.set(customCssAtom, value)
+    }),
+    saveSavedChatCss: vi.fn(async (value: SavedChatCss[]) => {
+      store.set(savedChatCssAtom, value)
+    }),
+    saveCustomCssSuspended: vi.fn(async (value: boolean) => {
+      store.set(customCssSuspendedAtom, value)
+    }),
   }
   return { store, repository, actions: createCustomCssActions(store, repository, () => false) }
 }
@@ -38,7 +52,9 @@ describe('explicit CSS actions', () => {
   it('does not overwrite a newer value after awaiting an unconfirmed write', async () => {
     const { store, repository, actions } = setup()
     const expected = store.get(customCssAtom)
-    repository.saveCustomCss.mockImplementationOnce(async () => { store.set(customCssAtom, { enabled: true, css: 'another view' }) })
+    repository.saveCustomCss.mockImplementationOnce(async () => {
+      store.set(customCssAtom, { enabled: true, css: 'another view' })
+    })
     await expect(actions.apply('my draft', expected)).rejects.toThrow('unconfirmed')
     expect(store.get(customCssAtom).css).toBe('another view')
   })
@@ -66,9 +82,15 @@ describe('CSS action ordering and recovery', () => {
   it('rejects overlapping registrations before they can replace each other', async () => {
     const { store, repository, actions } = setup()
     let complete!: () => void
-    repository.saveSavedChatCss.mockImplementationOnce(value => new Promise<void>(resolve => {
-      complete = () => { store.set(savedChatCssAtom, value); resolve() }
-    }))
+    repository.saveSavedChatCss.mockImplementationOnce(
+      value =>
+        new Promise<void>(resolve => {
+          complete = () => {
+            store.set(savedChatCssAtom, value)
+            resolve()
+          }
+        }),
+    )
     const first = actions.register('First', 'body { color: red }')
     await expect(actions.register('Second', 'body { color: blue }')).rejects.toThrow('busy')
     expect(repository.saveSavedChatCss).toHaveBeenCalledTimes(1)
@@ -108,12 +130,24 @@ it('keeps a newer local stop while an older resume is completing', async () => {
   const { store, repository, actions } = setup()
   let completeResume!: () => void
   let completeStop!: () => void
-  repository.saveCustomCssSuspended.mockImplementationOnce(() => new Promise<void>(resolve => {
-    completeResume = () => { store.set(customCssSuspendedAtom, false); resolve() }
-  }))
-  repository.saveCustomCssSuspended.mockImplementationOnce(() => new Promise<void>(resolve => {
-    completeStop = () => { store.set(customCssSuspendedAtom, true); resolve() }
-  }))
+  repository.saveCustomCssSuspended.mockImplementationOnce(
+    () =>
+      new Promise<void>(resolve => {
+        completeResume = () => {
+          store.set(customCssSuspendedAtom, false)
+          resolve()
+        }
+      }),
+  )
+  repository.saveCustomCssSuspended.mockImplementationOnce(
+    () =>
+      new Promise<void>(resolve => {
+        completeStop = () => {
+          store.set(customCssSuspendedAtom, true)
+          resolve()
+        }
+      }),
+  )
   const resume = actions.suspend(false)
   const stop = actions.suspend(true)
   completeResume()
@@ -127,9 +161,15 @@ it('keeps a newer local stop while an older resume is completing', async () => {
 it('does not save new CSS while a previous resume is still unconfirmed', async () => {
   const { store, repository, actions } = setup()
   let complete!: () => void
-  repository.saveCustomCssSuspended.mockImplementationOnce(() => new Promise<void>(resolve => {
-    complete = () => { store.set(customCssSuspendedAtom, false); resolve() }
-  }))
+  repository.saveCustomCssSuspended.mockImplementationOnce(
+    () =>
+      new Promise<void>(resolve => {
+        complete = () => {
+          store.set(customCssSuspendedAtom, false)
+          resolve()
+        }
+      }),
+  )
   const resume = actions.suspend(false)
   await expect(actions.apply('.new{}', store.get(customCssAtom))).rejects.toThrow('busy')
   expect(repository.saveCustomCss).not.toHaveBeenCalled()
@@ -137,13 +177,17 @@ it('does not save new CSS while a previous resume is still unconfirmed', async (
   await resume
 })
 
-
 it('does not publish operation completion after the owning page is disposed', async () => {
   const store = createStore()
   let disposed = false
   let complete!: () => void
   const repository = {
-    saveCustomCss: vi.fn(() => new Promise<void>(resolve => { complete = resolve })),
+    saveCustomCss: vi.fn(
+      () =>
+        new Promise<void>(resolve => {
+          complete = resolve
+        }),
+    ),
     saveSavedChatCss: vi.fn(async () => {}),
     saveCustomCssSuspended: vi.fn(async () => {}),
   }

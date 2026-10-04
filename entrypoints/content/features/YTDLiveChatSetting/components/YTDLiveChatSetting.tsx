@@ -1,12 +1,4 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import {
-  appearanceCapacityErrorAtom,
-  customCssDraftAtom,
-  customCssEditorUiAtom,
-  customCssOperationAtom,
-  customCssRecoveryAtom,
-  hasUnappliedCustomCssAtom,
-} from '@/shared/state/customCssAtoms'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   type IconType,
@@ -22,6 +14,14 @@ import { Modal } from '@/shared/components/Modal'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
+import {
+  appearanceCapacityErrorAtom,
+  customCssDraftAtom,
+  customCssEditorUiAtom,
+  customCssOperationAtom,
+  customCssRecoveryAtom,
+  hasUnappliedCustomCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
@@ -32,10 +32,9 @@ import { SettingContent } from './SettingContent'
 type YTDLiveChatSettingProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  diagnostics?: React.ReactNode
 }
 
-export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveChatSettingProps) => {
+export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
   const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
@@ -52,6 +51,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
   const closeCancelRef = useRef<HTMLButtonElement>(null)
   const closeFocusRef = useRef<HTMLElement | null>(null)
   const closeNow = () => {
+    finishYLCStyleGesture()
     resetCssDraft(null)
     resetCssEditor(current => ({ ...current, name: '', registering: false, source: null }))
     setConfirmClose(false)
@@ -73,11 +73,16 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
     window.addEventListener('beforeunload', warn)
     return () => window.removeEventListener('beforeunload', warn)
   }, [open, hasUnappliedCss, cssSaving])
+  const panelRef = useRef<HTMLDivElement>(null)
   const tablistRef = useRef<HTMLDivElement>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
   const canRedo = useAtomValue(canRedoAtom)
   const { finishYLCStyleGesture, redoYLCStyle, undoYLCStyle } = useStyleHistoryCommands()
+
+  const focusPanel = useCallback(() => {
+    panelRef.current?.focus({ preventScroll: true })
+  }, [])
 
   const focusActiveTab = useCallback(() => {
     const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
@@ -144,8 +149,12 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
   useEffect(() => {
     if (!open) {
       finishYLCStyleGesture()
+      return
     }
-  }, [open])
+    const handleWindowBlur = () => finishYLCStyleGesture()
+    window.addEventListener('blur', handleWindowBlur)
+    return () => window.removeEventListener('blur', handleWindowBlur)
+  }, [finishYLCStyleGesture, open])
 
   const handleUndo = useCallback(() => {
     const handled = undoYLCStyle()
@@ -211,14 +220,16 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
       onRequestClose={requestClose}
-      onAfterOpen={focusActiveTab}
+      onAfterOpen={focusPanel}
       parentSelector={getModalParentElement}
     >
       <div
+        ref={panelRef}
+        tabIndex={-1}
         data-ylc-theme={resolvedThemeMode}
         dir={direction}
         className='ylc-setting-panel flex flex-col rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
-        style={{ width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)' }}
+        style={{ outline: 'none', width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)' }}
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={event => {
           // The close confirmation takes priority even after focus moves back
@@ -288,17 +299,23 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
           </div>
         </header>
         <PersistenceNotice />
-        {capacityError && <p role='alert' className='m-2 text-sm'>{t('content.customCss.appearanceFull')}</p>}
+        {capacityError && (
+          <p role='alert' className='m-2 text-sm'>
+            {t('content.customCss.appearanceFull')}
+          </p>
+        )}
         {confirmClose && (
-          <div className='ylc-css-close-confirm' role='group' aria-label={t('content.customCss.confirmTitle')}>
+          <fieldset className='ylc-css-close-confirm' aria-label={t('content.customCss.confirmTitle')}>
             <p>{t(cssSaving ? 'content.customCss.closeWhileSaving' : 'content.customCss.discardOnClose')}</p>
             <div className='flex flex-wrap gap-2'>
-              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={cancelClose}>{t('content.customCss.keepEditing')}</button>
+              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={cancelClose}>
+                {t('content.customCss.keepEditing')}
+              </button>
               <button type='button' className='ylc-btn' onClick={closeNow}>
                 {t(cssSaving ? 'content.customCss.closeAnyway' : 'content.customCss.discardAndClose')}
               </button>
             </div>
-          </div>
+          </fieldset>
         )}
         <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
           {historyAnnouncement.message}
@@ -311,7 +328,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange, diagnostics }: YTDLiveC
           className='min-h-0 flex-grow overflow-y-auto h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
-          {menuItem === 'setting' && <SettingContent diagnostics={diagnostics} />}
+          {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

@@ -10,6 +10,11 @@ import type { LegacyChatGeometry } from '@/shared/settings/model'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
 import { mutationTouchesPlayerObstacle, useOverlayGeometry } from './useOverlayGeometry'
 
+const flushAnimationFrame = () =>
+  act(async () => {
+    await new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+  })
+
 describe('useOverlayGeometry', () => {
   const store = createStore()
   const wrapper = ({ children }: { children: ReactNode }) => createElement(Provider, { store }, children)
@@ -53,12 +58,12 @@ describe('useOverlayGeometry', () => {
 
   it('commits keyboard movement as pinned player ratios', () => {
     const { result } = renderGeometryHook()
-    act(() => result.current.moveByKeyboard({ x: 25, y: 10 }))
+    act(() => result.current.moveBy({ x: 25, y: 10 }))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
     expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ reference: 'player', pinned: true })
   })
 
-  it('commits one geometry update when a drag ends', () => {
+  it('commits one geometry update when a drag ends', async () => {
     const { result } = renderGeometryHook()
     const handle = document.createElement('div')
     const pointerDown = {
@@ -71,6 +76,7 @@ describe('useOverlayGeometry', () => {
     } as unknown as React.PointerEvent<HTMLDivElement>
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 2, clientX: 25, clientY: 10 })))
+    await flushAnimationFrame()
     expect(result.current.draftGeometry?.coordinates).toEqual({ x: 125, y: 60 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 2, clientX: 25, clientY: 10 })))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
@@ -94,7 +100,7 @@ describe('useOverlayGeometry', () => {
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 130, y: 65 })
   })
 
-  it('keeps pointer resize updates in a draft and commits once on pointer up', () => {
+  it('keeps pointer resize updates in a draft and commits once on pointer up', async () => {
     setPlayerSize(800, 600)
     setLayout()
     const { result } = renderGeometryHook()
@@ -110,12 +116,13 @@ describe('useOverlayGeometry', () => {
     } as unknown as React.PointerEvent<HTMLDivElement>
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 40, clientY: 40 })))
+    await flushAnimationFrame()
     expect(result.current.draftGeometry?.size).toEqual({ width: 340, height: 240 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, clientX: 40, clientY: 40 })))
     expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).size).toEqual({ width: 340, height: 240 })
   })
 
-  it('keeps the opposite edges fixed while resizing from the bottom-left handle', () => {
+  it('keeps the opposite edges fixed while resizing from the bottom-left handle', async () => {
     setPlayerSize(800, 600)
     setLayout({ x: 100, y: 50 }, { width: 400, height: 200 })
     const { result } = renderGeometryHook()
@@ -132,6 +139,7 @@ describe('useOverlayGeometry', () => {
 
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 3, clientX: 60, clientY: 120 })))
+    await flushAnimationFrame()
     expect(result.current.draftGeometry).toEqual({ coordinates: { x: 60, y: 50 }, size: { width: 440, height: 220 } })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 3, clientX: 60, clientY: 120 })))
     const persisted = renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference)

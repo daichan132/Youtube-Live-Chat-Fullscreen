@@ -15,6 +15,7 @@ type UseOverlayInteractionOptions = {
 export type OverlayPresentationInput = Omit<UseOverlayInteractionOptions, 'initialDisplayOnMount'> & {
   hoverRegion: HoverRegion
   gesture: Gesture
+  controlsFocused?: boolean
   idle: boolean
 }
 
@@ -25,6 +26,7 @@ export const deriveOverlayPresentation = ({
   hoverRegion,
   gesture,
   idle,
+  controlsFocused = false,
 }: OverlayPresentationInput) => {
   let state: OverlayInteractionState = 'idle'
   if (settingsOpen) state = 'settings-open'
@@ -35,8 +37,9 @@ export const deriveOverlayPresentation = ({
 
   return {
     state,
-    controlsVisible: !settingsOpen && gesture !== 'resizing' && (hoverRegion !== 'none' || gesture === 'dragging'),
-    chatVisible: alwaysVisible || hoverRegion !== 'none' || gesture !== 'none' || !idle || settingsOpen || !documentFocused,
+    controlsVisible: !settingsOpen && gesture !== 'resizing' && (controlsFocused || hoverRegion !== 'none' || gesture === 'dragging'),
+    chatVisible:
+      controlsFocused || alwaysVisible || hoverRegion !== 'none' || gesture !== 'none' || !idle || settingsOpen || !documentFocused,
   }
 }
 
@@ -92,6 +95,7 @@ export const useOverlayInteraction = ({
   alwaysVisible,
 }: UseOverlayInteractionOptions) => {
   const [hoverRegion, setHoverRegion] = useState<HoverRegion>('none')
+  const [controlsFocused, setControlsFocused] = useState(false)
   const [gesture, setGesture] = useState<Gesture>('none')
   const controlHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const idle = useDisplayIdle(initialDisplayOnMount)
@@ -132,10 +136,12 @@ export const useOverlayInteraction = ({
     hoverRegion,
     gesture,
     idle,
+    controlsFocused,
   })
 
   return {
     ...presentation,
+    setControlsFocused,
     enterChat: () => showControlRail('chat'),
     leaveChat: scheduleControlRailHide,
     enterControls: () => showControlRail('controls'),

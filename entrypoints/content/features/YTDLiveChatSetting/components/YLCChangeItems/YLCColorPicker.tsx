@@ -3,8 +3,7 @@ import { useCallback } from 'react'
 import type { RgbaColor } from 'react-colorful'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
-import { LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from '@/shared/settings/defaults'
-import { effectiveProfileAtom } from '@/shared/state'
+import { effectiveColorAtoms } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { fromRgba } from './colorUtils'
 import { SettingColorPicker } from './SettingColorPicker'
@@ -18,14 +17,8 @@ type YLCColorPickerProps = {
 
 export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) => {
   const t = useT()
-  const appearance = useAtomValue(effectiveProfileAtom).appearance
+  const rgba = useAtomValue(effectiveColorAtoms[settingKey])
   const { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
-  const rgba =
-    settingKey === 'membershipNameColor'
-      ? appearance.membershipNameColor.mode === 'custom'
-        ? appearance.membershipNameColor.value
-        : LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR
-      : appearance[settingKey]
   const gestureId = `color:${settingKey}`
 
   const onChange = useCallback(

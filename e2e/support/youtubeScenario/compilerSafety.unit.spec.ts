@@ -26,6 +26,15 @@ describe('YouTube scenario compiler safety', () => {
       }),
     ).toThrow('Invalid YouTube scenario video ID')
   })
+
+  it.each(["unsafe'id", 'unsafe id', 'unsafe/id', ''])('rejects an unsafe continuation video ID: %j', continuationVideoId => {
+    expect(() =>
+      compileYouTubeScenario({
+        ...liveScenario,
+        chat: { mode: 'live', native: { state: 'playable', continuationVideoId }, response: 'playable' },
+      }),
+    ).toThrow('Invalid YouTube scenario continuation video ID')
+  })
 })
 
 // @ts-expect-error A live video cannot compile an archive chat fixture.

@@ -70,7 +70,9 @@ describe('cancelling the settings close confirmation', () => {
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
-    act(() => { store.set(customCssOperationAtom, null) })
+    act(() => {
+      store.set(customCssOperationAtom, null)
+    })
     fireEvent.keyDown(view.getByRole('button', { name: 'content.customCss.keepEditing' }), { key: 'Escape' })
     expect(onOpenChange).not.toHaveBeenCalled()
     expect(view.queryByRole('button', { name: 'content.customCss.keepEditing' })).toBeNull()
@@ -82,8 +84,16 @@ describe('cancelling the settings close confirmation', () => {
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.aria.close' }))
-    view.rerender(<Provider store={store}><YTDLiveChatSetting open={false} onOpenChange={onOpenChange} /></Provider>)
-    view.rerender(<Provider store={store}><YTDLiveChatSetting open onOpenChange={onOpenChange} /></Provider>)
+    view.rerender(
+      <Provider store={store}>
+        <YTDLiveChatSetting open={false} onOpenChange={onOpenChange} />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={store}>
+        <YTDLiveChatSetting open onOpenChange={onOpenChange} />
+      </Provider>,
+    )
     expect(view.queryByRole('button', { name: 'content.customCss.keepEditing' })).toBeNull()
     expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
   })

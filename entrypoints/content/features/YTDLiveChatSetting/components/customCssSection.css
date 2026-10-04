@@ -92,7 +92,11 @@
 .ylc-custom-css textarea {
   display: block;
   padding: 10px;
-  font: 13px/1.7 ui-monospace, SFMono-Regular, Consolas, monospace;
+  font:
+    13px / 1.7 ui-monospace,
+    SFMono-Regular,
+    Consolas,
+    monospace;
   tab-size: 2;
   white-space: pre;
   min-height: 180px;
@@ -258,8 +262,9 @@
 
 .ylc-custom-css-register,
 .ylc-custom-css-confirm {
+  min-inline-size: 0;
   padding: 12px;
-  margin-top: 8px;
+  margin: 8px 0 0;
   border: 1px solid var(--ylc-border-strong);
   border-radius: var(--ylc-radius-md);
   background: var(--ylc-bg-surface-muted);
@@ -342,7 +347,11 @@
 
 .ylc-css-example[data-ylc-css-example="outline"] .ylc-css-example-line {
   color: white;
-  text-shadow: 1px 1px 1px black, -1px -1px 1px black, -1px 1px 1px black, 1px -1px 1px black;
+  text-shadow:
+    1px 1px 1px black,
+    -1px -1px 1px black,
+    -1px 1px 1px black,
+    1px -1px 1px black;
 }
 
 .ylc-css-example-custom {
@@ -350,7 +359,9 @@
   place-items: center;
   min-height: 58px;
   color: var(--ylc-text-secondary);
-  font: 24px/1.5 ui-monospace, monospace;
+  font:
+    24px / 1.5 ui-monospace,
+    monospace;
 }
 
 .ylc-css-example[data-ylc-css-example="custom"] > figcaption {
@@ -360,6 +371,7 @@
 /* Keep the settings close confirmation styled after removing the old editor UI. */
 
 .ylc-css-close-confirm {
+  min-inline-size: 0;
   margin: 8px;
   padding: 12px;
   border: 1px solid var(--ylc-border-strong);
@@ -384,10 +396,12 @@
 }
 
 @media (forced-colors: active) {
-  .ylc-custom-css-surface, .ylc-custom-css .ylc-custom-css-primary {
+  .ylc-custom-css-surface,
+  .ylc-custom-css .ylc-custom-css-primary {
     border: 1px solid ButtonText;
   }
-  .ylc-custom-css-dot, .ylc-css-example-avatar {
+  .ylc-custom-css-dot,
+  .ylc-css-example-avatar {
     border: 1px solid CanvasText;
   }
   .ylc-custom-css :is(button, select, input):disabled {

@@ -15,7 +15,10 @@ import { createCustomCssActions } from './customCssActions'
 const deferred = () => {
   let resolve!: () => void
   let reject!: (error: Error) => void
-  const promise = new Promise<void>((yes, no) => { resolve = yes; reject = no })
+  const promise = new Promise<void>((yes, no) => {
+    resolve = yes
+    reject = no
+  })
   return { promise, resolve, reject }
 }
 const setup = (paused = true) => {
@@ -23,9 +26,13 @@ const setup = (paused = true) => {
   store.set(customCssAtom, { enabled: true, css: '.old{}' })
   store.set(customCssSuspendedAtom, paused)
   const repository = {
-    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => { store.set(customCssAtom, value) }),
-    saveSavedChatCss: vi.fn(async () => { }),
-    saveCustomCssSuspended: vi.fn(async (value: boolean) => { store.set(receiveCustomCssSuspendedAtom, value) }),
+    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => {
+      store.set(customCssAtom, value)
+    }),
+    saveSavedChatCss: vi.fn(async () => {}),
+    saveCustomCssSuspended: vi.fn(async (value: boolean) => {
+      store.set(receiveCustomCssSuspendedAtom, value)
+    }),
   }
   const actions = createCustomCssActions(store, repository, () => false)
   return { store, repository, actions }

@@ -1,8 +1,13 @@
-import { DEFAULT_GLOBAL_SETTINGS } from './defaults'
 import {
-  assertCustomCss, assertSavedChatCss, type ChatCssCustomization, DEFAULT_CUSTOM_CSS, readCustomCssBackup,
-  type SavedChatCss, utf8Bytes,
+  assertCustomCss,
+  assertSavedChatCss,
+  type ChatCssCustomization,
+  DEFAULT_CUSTOM_CSS,
+  readCustomCssBackup,
+  type SavedChatCss,
+  utf8Bytes,
 } from './customCss'
+import { DEFAULT_GLOBAL_SETTINGS } from './defaults'
 import { migrateSettings } from './migrateSettings'
 import type { ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
@@ -26,7 +31,8 @@ type CurrentSettings = {
   savedChatCss?: SavedChatCss[]
 }
 const hasTooManyCustomPresets = (input: unknown) =>
-  isRecord(input) && Array.isArray(input.presets) &&
+  isRecord(input) &&
+  Array.isArray(input.presets) &&
   input.presets.filter(preset => isRecord(preset) && preset.kind === 'custom').length > MAX_CUSTOM_PRESETS
 
 const normalizeBackupGlobal = (input: unknown, fallback: unknown): GlobalSettings => {
@@ -67,11 +73,16 @@ export const normalizeSettingsBackup = (input: unknown, current: CurrentSettings
       chatSettings = migrateSettings(input.ytdLiveChat)
       if (hasTooManyCustomPresets(chatSettings)) return null
     } else return null
-    if (input.version === SETTINGS_EXPORT_VERSION &&
-      (!isRecord(input.customCss) || typeof input.customCss.css !== 'string' || typeof input.customCss.enabled !== 'boolean' ||
-        !Array.isArray(input.savedChatCss))) return null
-    const css = input.version === SETTINGS_EXPORT_VERSION ? readCustomCssBackup(input) :
-      { customCss: { ...DEFAULT_CUSTOM_CSS }, savedChatCss: [] }
+    if (
+      input.version === SETTINGS_EXPORT_VERSION &&
+      (!isRecord(input.customCss) ||
+        typeof input.customCss.css !== 'string' ||
+        typeof input.customCss.enabled !== 'boolean' ||
+        !Array.isArray(input.savedChatCss))
+    )
+      return null
+    const css =
+      input.version === SETTINGS_EXPORT_VERSION ? readCustomCssBackup(input) : { customCss: { ...DEFAULT_CUSTOM_CSS }, savedChatCss: [] }
     assertAppearanceCapacity(chatSettings)
     const normalized: NormalizedSettingsBackup = {
       version: SETTINGS_EXPORT_VERSION,

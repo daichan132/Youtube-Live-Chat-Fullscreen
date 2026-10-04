@@ -20,10 +20,14 @@ const modalParent = vi.hoisted(() => ({ current: null as HTMLElement | null }))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
 vi.mock('../utils/getModalParentElement', () => ({ getModalParentElement: () => modalParent.current ?? document.body }))
 const hosts: HTMLElement[] = []
-beforeEach(() => { for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined) })
+beforeEach(() => {
+  for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined)
+})
 afterEach(() => {
   cleanup()
-  hosts.splice(0).forEach(host => { host.remove() })
+  hosts.splice(0).forEach(host => {
+    host.remove()
+  })
   modalParent.current = null
 })
 const createOutsideControl = () => {
@@ -34,7 +38,9 @@ const createOutsideControl = () => {
 }
 const deferred = () => {
   let resolve!: () => void
-  const promise = new Promise<void>(yes => { resolve = yes })
+  const promise = new Promise<void>(yes => {
+    resolve = yes
+  })
   return { promise, resolve }
 }
 const createStore = () => {
@@ -62,29 +68,42 @@ const mount = (shadow: boolean, store: ReturnType<typeof createStore>, ui: React
 }
 
 describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => {
-  it.each([[false, false], [true, false], [false, true], [true, true]])(
-    'does not steal moved focus when registration settles (failure: %s, outside root: %s)', async (failed, outside) => {
-      const store = createStore()
-      const { view, focused } = mount(shadow, store, <><CustomCssSection /><button type='button'>Other control</button></>)
-      const gate = deferred()
-      actions.register.mockImplementationOnce(async () => {
-        store.set(customCssOperationAtom, 'register')
-        await gate.promise
-        store.set(customCssFeedbackAtom, failed
-          ? { kind: 'error', operation: 'register', code: 'storage' }
-          : { kind: 'success', operation: 'register' })
-        store.set(customCssOperationAtom, null)
-        if (failed) throw new Error('save failed')
-      })
-      fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
-      const other = outside ? createOutsideControl() : view.getByRole('button', { name: 'Other control' })
-      other.focus()
-      await act(async () => { gate.resolve() })
-      expect(outside ? document.activeElement : focused()).toBe(other)
-      expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
-      expect(store.get(customCssEditorUiAtom).name).toBe(failed ? 'Keep' : '')
-    },
-  )
+  it.each([
+    [false, false],
+    [true, false],
+    [false, true],
+    [true, true],
+  ])('does not steal moved focus when registration settles (failure: %s, outside root: %s)', async (failed, outside) => {
+    const store = createStore()
+    const { view, focused } = mount(
+      shadow,
+      store,
+      <>
+        <CustomCssSection />
+        <button type='button'>Other control</button>
+      </>,
+    )
+    const gate = deferred()
+    actions.register.mockImplementationOnce(async () => {
+      store.set(customCssOperationAtom, 'register')
+      await gate.promise
+      store.set(
+        customCssFeedbackAtom,
+        failed ? { kind: 'error', operation: 'register', code: 'storage' } : { kind: 'success', operation: 'register' },
+      )
+      store.set(customCssOperationAtom, null)
+      if (failed) throw new Error('save failed')
+    })
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
+    const other = outside ? createOutsideControl() : view.getByRole('button', { name: 'Other control' })
+    other.focus()
+    await act(async () => {
+      gate.resolve()
+    })
+    expect(outside ? document.activeElement : focused()).toBe(other)
+    expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
+    expect(store.get(customCssEditorUiAtom).name).toBe(failed ? 'Keep' : '')
+  })
 
   it.each([false, true])('restores registration focus when it has not moved away (failure: %s)', async failed => {
     const store = createStore()
@@ -93,22 +112,32 @@ describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => 
     actions.register.mockImplementationOnce(async () => {
       store.set(customCssOperationAtom, 'register')
       await gate.promise
-      store.set(customCssFeedbackAtom, failed
-        ? { kind: 'error', operation: 'register', code: 'storage' }
-        : { kind: 'success', operation: 'register' })
+      store.set(
+        customCssFeedbackAtom,
+        failed ? { kind: 'error', operation: 'register', code: 'storage' } : { kind: 'success', operation: 'register' },
+      )
       store.set(customCssOperationAtom, null)
       if (failed) throw new Error('save failed')
     })
     const name = view.getByLabelText('content.customCss.name')
     name.focus()
     fireEvent.keyDown(name, { key: 'Enter' })
-    await act(async () => { gate.resolve() })
+    await act(async () => {
+      gate.resolve()
+    })
     expect(focused()).toBe(failed ? name : view.getByLabelText('CSS'))
   })
 
   it.each(['stay', 'inside', 'outside'])('restores Off focus only when it still owns it (focus: %s)', async focus => {
     const store = createStore()
-    const { view, focused } = mount(shadow, store, <><CustomCssSection /><button type='button'>Other control</button></>)
+    const { view, focused } = mount(
+      shadow,
+      store,
+      <>
+        <CustomCssSection />
+        <button type='button'>Other control</button>
+      </>,
+    )
     const gate = deferred()
     actions.suspend.mockImplementationOnce(async () => {
       store.set(customCssRecoveryAtom, { pending: true, target: true, failed: false })
@@ -121,9 +150,12 @@ describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => 
     fireEvent.click(stop)
     const other = focus === 'outside' ? createOutsideControl() : view.getByRole('button', { name: 'Other control' })
     if (focus !== 'stay') other.focus()
-    await act(async () => { gate.resolve() })
-    expect(focus === 'outside' ? document.activeElement : focused())
-      .toBe(focus === 'stay' ? view.container.querySelector('[data-ylc-css-use]') : other)
+    await act(async () => {
+      gate.resolve()
+    })
+    expect(focus === 'outside' ? document.activeElement : focused()).toBe(
+      focus === 'stay' ? view.container.querySelector('[data-ylc-css-use]') : other,
+    )
   })
 
   it.each(['CSS', 'content.customCss.name'])('dismisses only the close confirmation from %s', label => {

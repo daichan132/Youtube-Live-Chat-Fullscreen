@@ -1,23 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LocaleMessages } from '@/shared/i18n/generated/translationTypes'
-import { createAppRuntime, type AppRuntime } from '@/shared/runtime/createAppRuntime'
-import {
-  customCssLocalStopAtom,
-  customCssRecoveryAtom,
-  isCustomCssStoppedAtom,
-} from '@/shared/state/customCssAtoms'
+import { type AppRuntime, createAppRuntime } from '@/shared/runtime/createAppRuntime'
+import { customCssLocalStopAtom, customCssRecoveryAtom, isCustomCssStoppedAtom } from '@/shared/state/customCssAtoms'
 import { createSettingsRepository } from './repository'
 import { CUSTOM_CSS_SUSPENDED_STORAGE_KEY } from './storageKeys'
 
 const runtimes: AppRuntime[] = []
-beforeEach(async () => { await chrome.storage.local.clear() })
+beforeEach(async () => {
+  await chrome.storage.local.clear()
+})
 afterEach(() => {
-  runtimes.splice(0).forEach(runtime => { runtime.dispose() })
+  runtimes.splice(0).forEach(runtime => {
+    runtime.dispose()
+  })
   vi.restoreAllMocks()
 })
 const deferred = () => {
   let resolve!: () => void
-  const promise = new Promise<void>(yes => { resolve = yes })
+  const promise = new Promise<void>(yes => {
+    resolve = yes
+  })
   return { promise, resolve }
 }
 const open = async () => {
@@ -67,9 +69,12 @@ describe('obsolete resume retries', () => {
   it('does not requeue a resume if Off arrived during its failed readback', async () => {
     const { runtime, repository } = await open()
     let rejectRead!: (error: Error) => void
-    const read = vi.spyOn(chrome.storage.local, 'get').mockImplementationOnce(() => new Promise<Record<string, unknown>>((_yes, no) => {
-      rejectRead = no
-    }))
+    const read = vi.spyOn(chrome.storage.local, 'get').mockImplementationOnce(
+      () =>
+        new Promise<Record<string, unknown>>((_yes, no) => {
+          rejectRead = no
+        }),
+    )
     const pending = runtime.customCss.suspend(false)
     await vi.waitFor(() => expect(rejectRead).toBeDefined())
     await chrome.storage.local.set(externalStop)

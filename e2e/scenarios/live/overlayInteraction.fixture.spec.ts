@@ -6,7 +6,7 @@ import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
-import { GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const scenarioState = {
   video: { id: 'ylc-overlay-boundary', title: 'Overlay interaction fixture', mode: 'live' },
@@ -220,4 +220,177 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     await overlay.emulateDocumentFocus(true)
     await expect(viewport).toHaveCSS('opacity', '0')
   })
+
+  test('previews a held native text-size drag in the chat, then saves once and undoes once', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }, testInfo) => {
+    test.setTimeout(90000)
+    const initialFontSize = 13
+    expect(await patchOverlayStore(extension, {
+      geometry: SEEDED_GEOMETRY,
+      profile: { appearance: { fontSize: initialFontSize } },
+    })).not.toBeNull()
+    const storagePage = await openStoragePage(extension, page)
+    let pointerHeld = false
+    try {
+      const readSavedFontSize = () => storagePage.evaluate(async key => {
+        const stored = (await chrome.storage.local.get(key))[key] as {
+          value?: { profile?: { appearance?: { fontSize?: number } } }
+        } | undefined
+        return stored?.value?.profile?.appearance?.fontSize ?? null
+      }, APPEARANCE_STORAGE_KEY)
+      await storagePage.evaluate(key => {
+        const values: number[] = []
+        Object.defineProperty(window, '__ylcAppearanceChanges', { configurable: true, value: values })
+        chrome.storage.onChanged.addListener((changes, area) => {
+          if (area !== 'local' || !changes[key]) return
+          const stored = changes[key].newValue as {
+            value?: { profile?: { appearance?: { fontSize?: number } } }
+          } | undefined
+          const fontSize = stored?.value?.profile?.appearance?.fontSize
+          if (typeof fontSize === 'number') values.push(fontSize)
+        })
+      }, APPEARANCE_STORAGE_KEY)
+      const readAppearanceChanges = () => storagePage.evaluate(() =>
+        (window as unknown as { __ylcAppearanceChanges: number[] }).__ylcAppearanceChanges,
+      )
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      await overlay.installChatTypographyProbe()
+      const readChatTypography = () => overlay.getChatTypographyState()
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+      const initialTypography = await readChatTypography()
+      await overlay.openSettings()
+      const settingsFrame = overlay.settingsFrame()
+      await expect(settingsFrame.locator('.ylc-setting-panel')).toBeFocused()
+      await expect(settingsFrame.getByRole('tab', { name: 'Settings', exact: true })).not.toBeFocused()
+      await testInfo.attach('settings-initial-focus', { body: await page.screenshot(), contentType: 'image/png' })
+      await expect(settingsFrame.locator('[data-ylc-runtime-diagnostics]')).toHaveCount(0)
+      await expect(settingsFrame.getByText('Compatibility', { exact: true })).toHaveCount(0)
+      await expect(settingsFrame.getByRole('button', { name: 'Copy diagnostic report', exact: true })).toHaveCount(0)
+      await expect(settingsFrame.getByRole('button', { name: 'Reload chat overlay', exact: true })).toHaveCount(0)
+      const slider = settingsFrame.getByRole('slider', { name: 'Text Size', exact: true })
+      await slider.scrollIntoViewIfNeeded()
+      await expect(slider).toHaveValue(String(initialFontSize))
+      const undo = settingsFrame.getByRole('button', { name: 'Undo style change', exact: true })
+      await expect(undo).toBeDisabled()
+      await slider.evaluate(input => {
+        const state = { downs: 0, ups: 0, heldMoves: 0 }
+        Object.defineProperty(input, '__ylcPointerProbe', { configurable: true, value: state })
+        input.addEventListener('pointerdown', () => { state.downs += 1 })
+        input.addEventListener('pointermove', event => {
+          if (((event as PointerEvent).buttons & 1) !== 0) state.heldMoves += 1
+        })
+        input.addEventListener('pointerup', () => { state.ups += 1 })
+      })
+      const box = await slider.boundingBox()
+      if (!box) throw new Error('The native text-size slider has no browser bounding box.')
+      // The native thumb is 16px wide; place the press on its current center.
+      const trackStart = box.x + 8
+      const trackWidth = box.width - 16
+      const y = box.y + box.height / 2
+      await page.mouse.move(trackStart + trackWidth * ((initialFontSize - 10) / 30), y)
+      await page.mouse.down()
+      pointerHeld = true
+      let previewFontSize = initialFontSize
+      for (const fraction of [0.4, 0.75]) {
+        await page.mouse.move(trackStart + trackWidth * fraction, y, { steps: 8 })
+        previewFontSize = Number(await slider.inputValue())
+        expect(previewFontSize).toBeGreaterThan(initialFontSize)
+        await expect(slider).toHaveAttribute('aria-valuetext', `${previewFontSize}px`)
+        await expect.poll(readChatTypography).toMatchObject({
+          variable: `${previewFontSize}px`, renderedFontSize: `${previewFontSize}px`,
+        })
+        expect(await readSavedFontSize()).toBe(initialFontSize)
+        expect(await readAppearanceChanges()).toEqual([])
+        expect(await slider.evaluate(input => {
+          const state = (input as HTMLElement & { __ylcPointerProbe: { downs: number; ups: number; heldMoves: number } }).__ylcPointerProbe
+          return { downs: state.downs, ups: state.ups, movedWhileHeld: state.heldMoves > 0 }
+        })).toEqual({ downs: 1, ups: 0, movedWhileHeld: true })
+      }
+      expect((await readChatTypography()).messageHeight).toBeGreaterThan(initialTypography.messageHeight)
+      await testInfo.attach('native-slider-held-preview', { body: await page.screenshot(), contentType: 'image/png' })
+      await page.mouse.up()
+      pointerHeld = false
+      await expect.poll(readSavedFontSize).toBe(previewFontSize)
+      await expect.poll(readAppearanceChanges).toEqual([previewFontSize])
+      await expect(undo).toBeEnabled()
+      await undo.click()
+      await expect.poll(readSavedFontSize).toBe(initialFontSize)
+      await expect.poll(readAppearanceChanges).toEqual([previewFontSize, initialFontSize])
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+      await expect(undo).toBeDisabled()
+      await settingsFrame.getByRole('button', { name: 'Close', exact: true }).click()
+      await expect(overlay.settingsDialog()).toHaveCount(0)
+      await expect.poll(readChatTypography).toMatchObject({ variable: '13px', renderedFontSize: '13px' })
+    } finally {
+      if (pointerHeld) await page.mouse.up().catch(() => null)
+      await storagePage.close()
+    }
+  })
 })
+
+ test('reaches settings without hover and returns to the trigger, then adjusts with clicks', async ({ page, extension }) => {
+  await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+  const scenario = new YouTubeScenario(page)
+  const overlay = new ExtensionOverlay(page)
+  await scenario.load(scenarioState)
+  await scenario.enterFullscreen()
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  await page.mouse.move(1, 1)
+  const settings = page.locator('[data-ylc-settings-btn]')
+  // Start from the browser's current focus, without focusing a control in code.
+  for (let step = 0; step < 40; step++) {
+    await page.keyboard.press('Tab')
+    if (await settings.evaluate(element => element.matches(':focus'))) break
+  }
+  await expect(settings).toBeFocused()
+  await expect(page.locator('[data-ylc-control-rail]')).toHaveCSS('opacity', '1')
+  await page.keyboard.press('Enter')
+  await expect(overlay.settingsDialog()).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(overlay.settingsDialog()).toHaveCount(0)
+  await expect(settings).toBeFocused()
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Tab')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('[data-ylc-placement-panel]')).toBeVisible()
+  await page.screenshot({ path: '/tmp/ylc-placement-open.png' })
+  const before = await overlay.getGeometry()
+  await page.getByRole('button', { name: 'Move down', exact: true }).click()
+  await page.getByRole('button', { name: 'Increase width', exact: true }).click()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ y: before.y + 10, width: before.width + 10 })
+  await page.keyboard.press('Escape')
+  await expect(page.locator('[data-ylc-placement-panel]')).toHaveCount(0)
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ y: before.y + 10, width: before.width + 10 })
+  await page.screenshot({ path: '/tmp/ylc-placement-closed.png' })
+ })
+
+ test('queries and retries the content session through the popup extension message boundary', async ({ page, extension }) => {
+  const scenario = new YouTubeScenario(page)
+  await scenario.load(scenarioState)
+  await scenario.enterFullscreen()
+  await new ExtensionOverlay(page).expectChatLoaded({ timeout: 12000 })
+  const popup = await page.context().newPage()
+  try {
+    await popup.goto(extension.url('popup.html'))
+    await page.bringToFront()
+    const response = await popup.evaluate(async () => {
+      const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+      if (tab?.id === undefined) throw new Error('No tab')
+      const status = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:status' }, { frameId: 0 })
+      const retry = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:retry', token: status.token }, { frameId: 0 })
+      const stale = await chrome.tabs.sendMessage(tab.id, { type: 'ylc:retry', token: status.token }, { frameId: 0 })
+      return { status, retry, stale }
+    })
+    expect(response.status.status).toBe('running')
+    expect(response.status.report.schemaVersion).toBe(1)
+    expect(JSON.stringify(response.status.report)).not.toContain(scenarioState.video.id)
+    expect(response.retry.retry).toBe('accepted')
+    expect(response.stale.retry).toBe('stale')
+  } finally { await popup.close() }
+ })

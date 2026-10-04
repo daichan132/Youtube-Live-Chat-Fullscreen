@@ -1,4 +1,4 @@
-import type { Store } from 'jotai/vanilla/store'
+import type { Store } from 'jotai/vanilla'
 import {
   areCustomCssEqual,
   areSavedChatCssEqual,
@@ -11,15 +11,15 @@ import {
 } from '@/shared/settings/customCss'
 import type { SettingsRepository } from '@/shared/settings/repository'
 import {
+  type CustomCssOperation,
   customCssAtom,
   customCssFeedbackAtom,
   customCssLocalStopAtom,
   customCssOperationAtom,
   customCssRecoveryAtom,
-  customCssSuspendedAtom,
   customCssStopVersionAtom,
+  customCssSuspendedAtom,
   isCustomCssStoppedAtom,
-  type CustomCssOperation,
   savedChatCssAtom,
 } from '@/shared/state/customCssAtoms'
 
@@ -116,42 +116,46 @@ export const createCustomCssActions = (
   return {
     // Only this explicitly labelled Use/Resume command may lift the pause.
     // Plain Apply, saving a copy and importing settings never resume CSS.
-    activate: (css, expected) => run('apply', async () => {
-      if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
-      if (!css.trim()) throw new CustomCssError('invalid')
-      const stopVersion = store.get(customCssStopVersionAtom)
-      const requested = { css, enabled: true }
-      await saveActive(requested)
-      // Off remains available while saving; never undo a newer stop, including
-      // a repeated true notification from another settings page.
-      if (store.get(customCssStopVersionAtom) !== stopVersion) return false
-      confirm(areCustomCssEqual(store.get(customCssAtom), requested))
-      if (store.get(isCustomCssStoppedAtom) || store.get(customCssRecoveryAtom).failed) {
-        if (!(await persistSuspension(false))) return false
-      }
-      if (store.get(customCssStopVersionAtom) !== stopVersion || store.get(isCustomCssStoppedAtom)) return false
-      confirm(areCustomCssEqual(store.get(customCssAtom), requested))
-    }),
-    apply: (css, expected) => run('apply', async () => {
-      if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
-      if (!css.trim()) throw new CustomCssError('invalid')
-      await saveActive({ css, enabled: true })
-      // Applying never resumes the independent emergency stop.
-    }),
+    activate: (css, expected) =>
+      run('apply', async () => {
+        if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
+        if (!css.trim()) throw new CustomCssError('invalid')
+        const stopVersion = store.get(customCssStopVersionAtom)
+        const requested = { css, enabled: true }
+        await saveActive(requested)
+        // Off remains available while saving; never undo a newer stop, including
+        // a repeated true notification from another settings page.
+        if (store.get(customCssStopVersionAtom) !== stopVersion) return false
+        confirm(areCustomCssEqual(store.get(customCssAtom), requested))
+        if (store.get(isCustomCssStoppedAtom) || store.get(customCssRecoveryAtom).failed) {
+          if (!(await persistSuspension(false))) return false
+        }
+        if (store.get(customCssStopVersionAtom) !== stopVersion || store.get(isCustomCssStoppedAtom)) return false
+        confirm(areCustomCssEqual(store.get(customCssAtom), requested))
+      }),
+    apply: (css, expected) =>
+      run('apply', async () => {
+        if (!areCustomCssEqual(store.get(customCssAtom), expected)) throw new CustomCssError('conflict')
+        if (!css.trim()) throw new CustomCssError('invalid')
+        await saveActive({ css, enabled: true })
+        // Applying never resumes the independent emergency stop.
+      }),
     disable: () => run('disable', () => saveActive({ ...store.get(customCssAtom), enabled: false })),
-    register: (inputName, css) => run('register', async () => {
-      const name = inputName.trim()
-      if (!name || name.length > MAX_CSS_NAME_LENGTH || !css.trim()) throw new CustomCssError('invalid')
-      const entries = store.get(savedChatCssAtom)
-      if (entries.some(entry => entry.name.trim() === name)) throw new CustomCssError('duplicate-name')
-      await saveLibrary([...entries, { id: crypto.randomUUID(), name, css }])
-    }),
-    remove: expected => run('remove', async () => {
-      const entries = store.get(savedChatCssAtom)
-      const current = entries.find(entry => entry.id === expected.id)
-      if (!current || !areSavedChatCssEqual([current], [expected])) throw new CustomCssError('conflict')
-      await saveLibrary(entries.filter(entry => entry.id !== expected.id))
-    }),
+    register: (inputName, css) =>
+      run('register', async () => {
+        const name = inputName.trim()
+        if (!name || name.length > MAX_CSS_NAME_LENGTH || !css.trim()) throw new CustomCssError('invalid')
+        const entries = store.get(savedChatCssAtom)
+        if (entries.some(entry => entry.name.trim() === name)) throw new CustomCssError('duplicate-name')
+        await saveLibrary([...entries, { id: crypto.randomUUID(), name, css }])
+      }),
+    remove: expected =>
+      run('remove', async () => {
+        const entries = store.get(savedChatCssAtom)
+        const current = entries.find(entry => entry.id === expected.id)
+        if (!current || !areSavedChatCssEqual([current], [expected])) throw new CustomCssError('conflict')
+        await saveLibrary(entries.filter(entry => entry.id !== expected.id))
+      }),
     async suspend(suspended) {
       requireActive()
       const recovery = store.get(customCssRecoveryAtom)

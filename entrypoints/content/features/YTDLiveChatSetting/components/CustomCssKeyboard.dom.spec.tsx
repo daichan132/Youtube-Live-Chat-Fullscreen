@@ -1,33 +1,46 @@
 import { act, fireEvent } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import {
-  customCssDraftAtom,
-  customCssEditorUiAtom,
-  customCssOperationAtom,
-  savedChatCssAtom,
-} from '@/shared/state/customCssAtoms'
+import { customCssDraftAtom, customCssEditorUiAtom, customCssOperationAtom, savedChatCssAtom } from '@/shared/state/customCssAtoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 
-const actions = vi.hoisted(() => ({ activate: vi.fn(), apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
+const actions = vi.hoisted(() => ({
+  activate: vi.fn(),
+  apply: vi.fn(),
+  register: vi.fn(),
+  remove: vi.fn(),
+  disable: vi.fn(),
+  suspend: vi.fn(),
+}))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
-beforeEach(() => { for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined) })
+beforeEach(() => {
+  for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined)
+})
 
 const setup = () => {
   const store = createTestStore()
   store.set(customCssDraftAtom, { css: '.draft{}', baseline: { enabled: false, css: '' } })
   store.set(customCssEditorUiAtom, { name: 'Copy', registering: true, source: null, expanded: true })
   const onKeyDown = vi.fn()
-  const view = renderWithStore(<div onKeyDown={onKeyDown}><CustomCssSection /></div>, store)
+  const view = renderWithStore(
+    // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
+    <div onKeyDown={onKeyDown}>
+      <CustomCssSection />
+    </div>,
+    store,
+  )
   return { store, view, onKeyDown }
 }
 
 describe('innermost CSS keyboard dismissal', () => {
   it.each(['name', 'editor', 'save', 'back'])('cancels only named saving when Escape starts on %s', target => {
     const { store, view, onKeyDown } = setup()
-    const control = target === 'name' ? view.getByLabelText('content.customCss.name')
-      : target === 'editor' ? view.getByLabelText('CSS')
-        : view.getByRole('button', { name: target === 'save' ? 'content.customCss.saveRegistration' : 'content.customCss.choosePreset' })
+    const control =
+      target === 'name'
+        ? view.getByLabelText('content.customCss.name')
+        : target === 'editor'
+          ? view.getByLabelText('CSS')
+          : view.getByRole('button', { name: target === 'save' ? 'content.customCss.saveRegistration' : 'content.customCss.choosePreset' })
     control.focus()
     fireEvent.keyDown(control, { key: 'Escape' })
     expect(view.queryByLabelText('content.customCss.name')).toBeNull()
@@ -40,7 +53,9 @@ describe('innermost CSS keyboard dismissal', () => {
 
   it.each(['name', 'editor'])('does not bubble Escape from a read-only %s during saving', target => {
     const { store, view, onKeyDown } = setup()
-    act(() => { store.set(customCssOperationAtom, 'register') })
+    act(() => {
+      store.set(customCssOperationAtom, 'register')
+    })
     const control = view.getByLabelText(target === 'name' ? 'content.customCss.name' : 'CSS')
     control.focus()
     fireEvent.keyDown(control, { key: 'Escape' })
@@ -76,7 +91,9 @@ describe('innermost CSS keyboard dismissal', () => {
 
   it('still saves the named copy on plain Enter without applying it', async () => {
     const { view, onKeyDown } = setup()
-    await act(async () => { fireEvent.keyDown(view.getByLabelText('content.customCss.name'), { key: 'Enter' }) })
+    await act(async () => {
+      fireEvent.keyDown(view.getByLabelText('content.customCss.name'), { key: 'Enter' })
+    })
     expect(actions.register).toHaveBeenCalledWith('Copy', '.draft{}')
     expect(actions.activate).not.toHaveBeenCalled()
     expect(actions.apply).not.toHaveBeenCalled()

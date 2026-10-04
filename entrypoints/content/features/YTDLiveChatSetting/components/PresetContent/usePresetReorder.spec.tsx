@@ -114,7 +114,7 @@ const drag = ({
 }) => {
   fireEvent.pointerDown(getByRole('button', { name: 'reorder first' }), { button: 0, pointerId: 1 })
   fireEvent.pointerMove(window, { pointerId: 1, clientY })
-  fireEvent(window, new PointerEvent(pointerEnd, { pointerId: 1 }))
+  fireEvent(window, new PointerEvent(pointerEnd, { pointerId: 1, clientY }))
 }
 
 describe('usePresetReorder', () => {
@@ -138,7 +138,7 @@ describe('usePresetReorder', () => {
     const view = render(<ReorderHarness onCommit={onCommit} />)
     arrangePresetRows(view.container)
 
-    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder last' }), { button: 0, pointerId: 2 })
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder last' }), { button: 0, pointerId: 2, clientY: 100 })
     fireEvent.pointerMove(window, { pointerId: 2, clientY: 0 })
     fireEvent.pointerUp(window, { pointerId: 2 })
 
@@ -261,8 +261,8 @@ describe('usePresetReorder', () => {
     view.unmount()
 
     expect(reorderListeners).toHaveLength(4)
-    for (const [type, listener] of reorderListeners) {
-      expect(removeListener).toHaveBeenCalledWith(type, listener)
+    for (const args of reorderListeners) {
+      expect(removeListener).toHaveBeenCalledWith(...args)
     }
     expect(onCommit).not.toHaveBeenCalled()
   })
@@ -348,7 +348,7 @@ describe('usePresetReorder', () => {
 
     fireEvent.pointerMove(window, { clientY: 200, pointerId: 10 })
     expect(order(view.getByTestId)).toBe('middle,last,first')
-    fireEvent.pointerUp(window, { pointerId: 10 })
+    fireEvent.pointerUp(window, { pointerId: 10, clientY: 200 })
 
     expect(onCommit).toHaveBeenCalledOnce()
     expect(onCommit).toHaveBeenCalledWith(['middle', 'last', 'first'])

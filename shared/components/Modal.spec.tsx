@@ -101,6 +101,7 @@ describe('Modal', () => {
     const first = getByRole('button', { name: 'First action' })
     const last = getByRole('button', { name: 'Last action' })
 
+    await waitFor(() => expect(getByRole('dialog')).toContainElement(document.activeElement as HTMLElement))
     await user.tab()
     expect(first).toHaveFocus()
     await user.tab()

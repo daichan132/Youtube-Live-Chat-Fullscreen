@@ -138,7 +138,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (this.started) return
     this.started = true
     this.contentScope = createSessionScope(0)
-    this.contentScope.listen(document, 'fullscreenchange', this.handlePageSignal)
+    document.addEventListener('fullscreenchange', this.handlePageSignal, true)
+    this.contentScope.addCleanup(() => document.removeEventListener('fullscreenchange', this.handlePageSignal, true))
     this.contentScope.listen(document, 'yt-navigate-finish', this.handleNavigation)
     document.addEventListener('load', this.handleResourceLoad, true)
     this.contentScope.addCleanup(() => document.removeEventListener('load', this.handleResourceLoad, true))
@@ -229,6 +230,13 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private handlePageSignal = () => {
+    if (!document.fullscreenElement && this.resources.lease?.ownership === 'borrowed') {
+      // YouTube may detach the presentation tree in its fullscreen exit handler.
+      // Return its iframe while the loaded browsing context is still connected.
+      this.cancelScheduledFrame()
+      this.reconcileSafely()
+      return
+    }
     this.scheduleReconcile()
   }
 

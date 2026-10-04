@@ -1,7 +1,7 @@
 import { browser } from 'wxt/browser'
-import { normalizeCustomCss, normalizeSavedChatCss } from './customCss'
 import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
+import { normalizeCustomCss, normalizeSavedChatCss } from './customCss'
 import { migrateSettings } from './migrateSettings'
 import type { ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatGeometry, normalizeChatProfile, normalizeGlobalSetting, normalizePresets } from './normalizeSettings'

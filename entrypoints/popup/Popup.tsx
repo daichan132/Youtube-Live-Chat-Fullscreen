@@ -1,11 +1,12 @@
 import { useAtomValue } from 'jotai'
-import { CustomCssRecovery } from '@/shared/components/CustomCssRecovery'
 import { type ReactNode, useEffect } from 'react'
+import { CustomCssRecovery } from '@/shared/components/CustomCssRecovery'
 import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
+import { ContentRecovery } from './components/ContentRecovery'
 import { DataTransfer } from './components/DataTransfer'
 import { LanguageSelector } from './components/LanguageSelector'
 import { Links } from './components/Links'
@@ -81,7 +82,7 @@ export const Popup = () => {
       data: (
         <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-btn'>
           <TbHeart size={16} aria-hidden='true' />
-          Buy me a coffee
+          {t('popup.donateAction')}
         </a>
       ),
       actionAuto: true,
@@ -108,6 +109,7 @@ export const Popup = () => {
           />
         ))}
       </div>
+      <ContentRecovery />
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
 import { APPEARANCE_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
-import { chatSettingsStateAtom, editorSessionStateAtom, EMPTY_MESSAGES, globalSettingsStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
@@ -37,7 +37,7 @@ const pauseImportWrite = () => {
   const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
   let pending = true
   const set = vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-    if (pending && Object.keys(values).length === 4) {
+    if (pending && THEME_STORAGE_KEY in values && APPEARANCE_STORAGE_KEY in values) {
       pending = false
       started.resolve()
       await released.promise
@@ -158,7 +158,10 @@ describe('import ordering across the repository and editor', () => {
     const { runtime, repository } = await createSession()
     const original = runtime.store.get(chatSettingsStateAtom)
     vi.spyOn(chrome.storage.local, 'set').mockRejectedValueOnce(new Error('bulk write rejected'))
-    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toThrow('bulk write rejected')
+    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toMatchObject({
+      phase: 'write',
+      cause: new Error('bulk write rejected'),
+    })
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
 
     runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 33 } })
@@ -171,7 +174,10 @@ describe('import ordering across the repository and editor', () => {
     const { runtime } = await createSession()
     const original = runtime.store.get(chatSettingsStateAtom)
     vi.spyOn(chrome.storage.local, 'get').mockRejectedValueOnce(new Error('confirmation unavailable'))
-    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toThrow('confirmation unavailable')
+    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toMatchObject({
+      phase: 'readback',
+      cause: new Error('confirmation unavailable'),
+    })
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
     expect((await chrome.storage.local.get(THEME_STORAGE_KEY))[THEME_STORAGE_KEY]).toMatchObject({ value: 'dark' })
   })

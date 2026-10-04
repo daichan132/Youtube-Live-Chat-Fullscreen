@@ -1,16 +1,16 @@
 import { storage } from 'wxt/utils/storage'
-import type { ChatCssCustomization, SavedChatCss } from './customCss'
 import type { LocaleCode } from '@/shared/i18n/language'
+import type { ChatCssCustomization, SavedChatCss } from './customCss'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatProfile, normalizePresets } from './normalizeSettings'
 import {
-  CUSTOM_CSS_STORAGE_KEY,
-  SAVED_CHAT_CSS_STORAGE_KEY,
-  CUSTOM_CSS_SUSPENDED_STORAGE_KEY,
   APPEARANCE_STORAGE_KEY,
+  CUSTOM_CSS_STORAGE_KEY,
+  CUSTOM_CSS_SUSPENDED_STORAGE_KEY,
   ENABLED_STORAGE_KEY,
   GEOMETRY_STORAGE_KEY,
   LOCALE_STORAGE_KEY,
+  SAVED_CHAT_CSS_STORAGE_KEY,
   THEME_STORAGE_KEY,
 } from './storageKeys'
 
@@ -46,7 +46,16 @@ export type SettingsDomainValues = {
 
 export type PersistenceDomain = keyof SettingsDomainValues
 
-export const PERSISTENCE_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry', 'locale', 'customCss', 'savedChatCss', 'customCssSuspended'] as const satisfies readonly PersistenceDomain[]
+export const PERSISTENCE_DOMAINS = [
+  'enabled',
+  'theme',
+  'appearance',
+  'geometry',
+  'locale',
+  'customCss',
+  'savedChatCss',
+  'customCssSuspended',
+] as const satisfies readonly PersistenceDomain[]
 
 export const localKey = <T extends string>(key: T) => `local:${key}` as const
 

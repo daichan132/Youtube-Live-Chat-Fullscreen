@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
 import { APPEARANCE_STORAGE_KEY } from '@/shared/settings/storageKeys'
-import { chatSettingsStateAtom, editorSessionStateAtom, effectiveProfileAtom, EMPTY_MESSAGES } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, effectiveProfileAtom } from '@/shared/state/atoms'
 import { commitStylePatchAtom, finishStyleGestureAtom, previewStylePatchAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
@@ -131,7 +131,9 @@ describe('settings persistence and editor convergence', () => {
         },
       },
     })
-    await vi.waitFor(() => expect(runtime.store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'external-preset')).toBe(true))
+    await vi.waitFor(() =>
+      expect(runtime.store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'external-preset')).toBe(true),
+    )
 
     expect(runtime.store.get(editorSessionStateAtom)).toBe(editing)
     expect(runtime.store.get(chatSettingsStateAtom).profile).toBe(current.profile)

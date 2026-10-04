@@ -82,7 +82,7 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
   for (const probeId of iframeProbes.probeIds) probeIds.add(probeId)
 
   for (const iframe of iframeProbes.elements) {
-    if (!getIframeVideoId(iframe)) markChatIframeObservedForCurrentVideo(iframe, videoId)
+    markChatIframeObservedForCurrentVideo(iframe, videoId)
   }
 
   const nativeChatIframe = iframeProbes.elements.find(iframe => iframeMatchesVideo(iframe, videoId)) ?? null

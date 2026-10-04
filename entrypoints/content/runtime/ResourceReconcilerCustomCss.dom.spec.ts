@@ -28,8 +28,12 @@ const setup = () => {
     videoId: 'video-1',
     kind: 'borrowed-live',
     ownership: 'borrowed',
-    get state() { return state },
-    attach: vi.fn(() => { state = 'attached' }),
+    get state() {
+      return state
+    },
+    attach: vi.fn(() => {
+      state = 'attached'
+    }),
     captureDocumentStyle: vi.fn(() => true),
     reconcile: vi.fn(),
     release: vi.fn(() => {
@@ -47,13 +51,19 @@ const setup = () => {
   const scope = createSessionScope(1)
   resources.setProfile(DEFAULT_CHAT_PROFILE)
   resources.setOverlayContainer(document.createElement('div'))
-  resources.createIframe({
-    kind: 'available',
-    videoId: 'video-1',
-    mode: 'live',
-    source: { kind: 'live_borrow', videoId: 'video-1', iframe },
-  }, 1)
-  cleanups.push(() => { resources.clear(); scope.dispose() })
+  resources.createIframe(
+    {
+      kind: 'available',
+      videoId: 'video-1',
+      mode: 'live',
+      source: { kind: 'live_borrow', videoId: 'video-1', iframe },
+    },
+    1,
+  )
+  cleanups.push(() => {
+    resources.clear()
+    scope.dispose()
+  })
   return { doc, iframe, lease, resources, scope }
 }
 
@@ -114,7 +124,6 @@ describe('custom CSS through the chat lease', () => {
     expect(ownedStyle(current.document)?.textContent).toBe(source)
   })
 })
-
 
 it('ignores a delayed load callback after its owning session has been disposed', () => {
   const { resources, doc, scope } = setup()

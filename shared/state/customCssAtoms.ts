@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
-import { DEFAULT_CUSTOM_CSS, type ChatCssCustomization, type CustomCssErrorCode, type SavedChatCss } from '@/shared/settings/customCss'
+import { type ChatCssCustomization, type CustomCssErrorCode, DEFAULT_CUSTOM_CSS, type SavedChatCss } from '@/shared/settings/customCss'
 import type { ChatSettings } from '@/shared/settings/model'
 import { getAppearanceCapacityError, type SettingsCapacityErrorCode } from '@/shared/settings/settingsCapacity'
 
@@ -35,7 +35,9 @@ export type CustomCssEditorUi = {
 }
 export const customCssEditorUiAtom = atom<CustomCssEditorUi>({ name: '', registering: false, source: null, expanded: false })
 export const customCssFeedbackAtom = atom<
-  { kind: 'success'; operation: CustomCssOperation } | { kind: 'error'; operation: CustomCssOperation; code: CustomCssErrorCode | 'storage' } | null
+  | { kind: 'success'; operation: CustomCssOperation }
+  | { kind: 'error'; operation: CustomCssOperation; code: CustomCssErrorCode | 'storage' }
+  | null
 >(null)
 export const customCssRecoveryAtom = atom({ pending: false, target: true, failed: false })
 

@@ -7,8 +7,8 @@ import {
   installMembershipFallback,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
 import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
-import type { ChatProfile } from '@/shared/settings/model'
 import { CustomChatStyles } from '@/entrypoints/content/style/CustomChatStyles'
+import type { ChatProfile } from '@/shared/settings/model'
 import type { SessionScope } from '../bootstrap/SessionScope'
 import type { PageObservation, PageTargets } from '../platform/youtube/types'
 import type { ChatDecision } from './resolveChatDecision'

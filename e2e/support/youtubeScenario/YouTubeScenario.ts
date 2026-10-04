@@ -7,10 +7,11 @@ import {
   isNativeChatUnavailable,
 } from '@e2e/support/diagnostics'
 import { SHADOW_HOST, switchButtonContainerSelector, switchButtonSelector } from '@e2e/utils/selectors'
-import type { Page } from '@playwright/test'
+import type { JSHandle, Page } from '@playwright/test'
 import { compileYouTubeScenario } from './compiler'
 import type {
   ExtensionIframeIdentity,
+  NativeIframeContextObservation,
   NativeIframeMutation,
   NativeSlotObservation,
   ScenarioDocumentObservation,
@@ -19,11 +20,19 @@ import type {
 } from './types'
 
 const FIXTURE_PREFLIGHT_URL = 'https://www.youtube.com/?ylc-fixture-preflight=1'
+type FixtureChatWindow = Window & { __ylcFixtureChatRuntime?: { videoId: string } }
+type NativeIframeContext = {
+  iframe: HTMLIFrameElement
+  document: Document
+  runtime: { videoId: string }
+  loadEvents: number
+}
 
 export class YouTubeScenario {
   private readonly watchPage: YouTubeWatchPage
   private state: YouTubeScenarioState | null = null
   private generation = 0
+  private nativeIframeContext: JSHandle<NativeIframeContext> | null = null
 
   constructor(private readonly page: Page) {
     this.watchPage = new YouTubeWatchPage(page)
@@ -84,6 +93,10 @@ export class YouTubeScenario {
         const fullscreenButton = document.querySelector<HTMLButtonElement>('.ytp-fullscreen-button')
         const boundaryProbe = document.querySelector<HTMLButtonElement>('[data-ylc-player-boundary-probe]')
         if (!player || !fullscreenButton || !boundaryProbe) throw new Error('Compiled SPA document is missing its player contract.')
+        if (spaDocument.nativeChatNavigationHref) {
+          const iframe = document.querySelector<HTMLIFrameElement>('ytd-live-chat-frame > #chatframe')
+          iframe?.contentWindow?.location.assign(spaDocument.nativeChatNavigationHref)
+        }
 
         player.dataset.ylcFixtureGeneration = String(generation)
         Object.assign(player, {
@@ -111,6 +124,78 @@ export class YouTubeScenario {
     )
     this.state = state
     this.generation = generation
+  }
+
+  async captureNativeIframeContext() {
+    await this.nativeIframeContext?.dispose()
+    this.nativeIframeContext = await this.page.evaluateHandle(() => {
+      const iframe = document.querySelector<HTMLIFrameElement>('ytd-live-chat-frame > #chatframe')
+      const chatDocument = iframe?.contentDocument
+      const runtime = (iframe?.contentWindow as FixtureChatWindow | null)?.__ylcFixtureChatRuntime
+      if (!iframe || !chatDocument || !runtime) throw new Error('The native runtime fixture has not loaded.')
+      const snapshot = { iframe, document: chatDocument, runtime, loadEvents: 0 }
+      iframe.addEventListener('load', () => snapshot.loadEvents++)
+      return snapshot
+    })
+  }
+
+  async updateNativeIframeRuntime(videoId: string) {
+    if (videoId !== this.requireState().video.id || !this.nativeIframeContext) {
+      throw new Error('The native runtime update must belong to the current scenario video.')
+    }
+    await this.nativeIframeContext.evaluate((snapshot, videoId) => {
+      snapshot.document.body.dataset.ylcFixtureVideoId = videoId
+      snapshot.runtime.videoId = videoId
+      const signIn = snapshot.document.getElementById('fixture-sign-in')
+      signIn?.setAttribute('href', `/signin?next=${encodeURIComponent(`/watch?v=${videoId}`)}`)
+    }, videoId)
+  }
+
+  async observeNativeIframeContext(): Promise<NativeIframeContextObservation> {
+    if (!this.nativeIframeContext) throw new Error('Capture the native iframe context before observing it.')
+    return this.nativeIframeContext.evaluate(snapshot => {
+      const iframe = snapshot.iframe
+      const chatDocument = iframe.contentDocument
+      const runtime = (iframe.contentWindow as FixtureChatWindow | null)?.__ylcFixtureChatRuntime
+      const signInHref = chatDocument?.getElementById('fixture-sign-in')?.getAttribute('href')
+      const next = signInHref ? new URL(signInHref, window.location.origin).searchParams.get('next') : null
+      return {
+        connected: iframe.isConnected,
+        sameDocument: chatDocument === snapshot.document,
+        sameRuntimeObject: runtime === snapshot.runtime,
+        loadEvents: snapshot.loadEvents,
+        src: iframe.src,
+        srcAttributePresent: iframe.hasAttribute('src'),
+        documentHref: chatDocument?.location.href ?? null,
+        bodyVideoId: chatDocument?.body?.dataset.ylcFixtureVideoId ?? null,
+        runtimeVideoId: runtime?.videoId ?? null,
+        signInNextVideoId: next ? new URL(next, window.location.origin).searchParams.get('v') : null,
+      }
+    })
+  }
+
+  async settleNativeIframeContext() {
+    await this.page.waitForLoadState('networkidle', { timeout: 10000 })
+    await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
+  }
+
+  async installFullscreenExitPlayerDetach() {
+    await this.page.evaluate(() => {
+      document.addEventListener('fullscreenchange', () => {
+        if (document.fullscreenElement) return
+        const player = document.getElementById('movie_player')
+        const parent = player?.parentNode
+        if (!player || !parent) throw new Error('The fullscreen-exit teardown player is unavailable.')
+        const next = player.nextSibling
+        player.remove()
+        parent.insertBefore(player, next)
+        player.dataset.ylcExitDetachCount = String(Number(player.dataset.ylcExitDetachCount ?? 0) + 1)
+      })
+    })
+  }
+
+  observeFullscreenExitPlayerDetachCount() {
+    return this.page.evaluate(() => Number(document.getElementById('movie_player')?.dataset.ylcExitDetachCount ?? 0))
   }
 
   enterFullscreen(options?: { timeout?: number }) {

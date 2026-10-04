@@ -1,13 +1,4 @@
-import { createStore } from 'jotai/vanilla'
-import { createCustomCssActions, type CustomCssActions } from './customCssActions'
-import {
-  customCssAtom,
-  customCssFeedbackAtom,
-  customCssSuspendedAtom,
-  receiveCustomCssSuspendedAtom,
-  savedChatCssAtom,
-} from '@/shared/state/customCssAtoms'
-import type { Store } from 'jotai/vanilla/store'
+import { createStore, type Store } from 'jotai/vanilla'
 import type { LocaleCode } from '@/shared/i18n/generated/translationTypes'
 import { resolveLanguageCode } from '@/shared/i18n/language'
 import { loadLocaleMessages } from '@/shared/i18n/loader'
@@ -34,6 +25,14 @@ import {
   replacePersistenceStatusAtom,
 } from '@/shared/state/atoms'
 import { clearStyleHistoryAtom } from '@/shared/state/commands'
+import {
+  customCssAtom,
+  customCssFeedbackAtom,
+  customCssSuspendedAtom,
+  receiveCustomCssSuspendedAtom,
+  savedChatCssAtom,
+} from '@/shared/state/customCssAtoms'
+import { type CustomCssActions, createCustomCssActions } from './customCssActions'
 
 export type AppRuntime = {
   customCss: CustomCssActions
@@ -166,8 +165,11 @@ export const createAppRuntime = async (
         }
         store.set(customCssAtom, value)
         const feedback = store.get(customCssFeedbackAtom)
-        if (feedback && (feedback.operation === 'apply' || feedback.operation === 'disable') &&
-          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))) {
+        if (
+          feedback &&
+          (feedback.operation === 'apply' || feedback.operation === 'disable') &&
+          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))
+        ) {
           store.set(customCssFeedbackAtom, null)
         }
       },
@@ -179,8 +181,11 @@ export const createAppRuntime = async (
         }
         store.set(savedChatCssAtom, value)
         const feedback = store.get(customCssFeedbackAtom)
-        if (feedback && (feedback.operation === 'register' || feedback.operation === 'remove') &&
-          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))) {
+        if (
+          feedback &&
+          (feedback.operation === 'register' || feedback.operation === 'remove') &&
+          (source !== 'readback' || (feedback.kind === 'error' && (feedback.code === 'storage' || feedback.code === 'unconfirmed')))
+        ) {
           store.set(customCssFeedbackAtom, null)
         }
       },

@@ -31,6 +31,10 @@ export const editorSessionStateAtom = atom<EditorSession>({
   activeGesture: null,
 })
 
+// The embedded settings page owns its editor. Its preview changes only the
+// content presentation; it never becomes a saved setting or an undo entry here.
+export const settingsPreviewStateAtom = atom<{ profile: ChatProfile; active: boolean } | null>(null)
+
 export const localeStateAtom = atom<LocaleState>({
   code: DEFAULT_LANGUAGE,
   direction: 'ltr',
@@ -44,7 +48,9 @@ export const ytdLiveChatEnabledAtom = atom(get => get(globalSettingsStateAtom).y
 export const profileAtom = atom(get => get(chatSettingsStateAtom).profile)
 export const geometryAtom = atom(get => get(chatSettingsStateAtom).geometry)
 export const presetsAtom = atom(get => get(chatSettingsStateAtom).presets)
-export const effectiveProfileAtom = atom(get => get(editorSessionStateAtom).draftProfile ?? get(chatSettingsStateAtom).profile)
+export const effectiveProfileAtom = atom(
+  get => get(settingsPreviewStateAtom)?.profile ?? get(editorSessionStateAtom).draftProfile ?? get(chatSettingsStateAtom).profile,
+)
 export const canUndoAtom = atom(get => get(editorSessionStateAtom).past.length > 0)
 export const canRedoAtom = atom(get => get(editorSessionStateAtom).future.length > 0)
 export const localeCodeAtom = atom(get => get(localeStateAtom).code)
@@ -68,6 +74,7 @@ export const hydrateAppAtom = atom(null, (_get, set, snapshot: AppHydration) => 
   set(chatSettingsStateAtom, normalizeChatSettings(snapshot.chat, DEFAULT_CHAT_SETTINGS))
   set(localeStateAtom, snapshot.locale)
   set(editorSessionStateAtom, { draftProfile: null, past: [], future: [], activeGesture: null })
+  set(settingsPreviewStateAtom, null)
 })
 
 export const replaceLocaleAtom = atom(null, (_get, set, locale: LocaleState) => {

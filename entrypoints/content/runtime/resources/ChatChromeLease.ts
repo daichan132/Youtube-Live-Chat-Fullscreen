@@ -9,11 +9,13 @@ export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed
 
 const HEADER_SELECTOR = 'yt-live-chat-header-renderer'
 const INPUT_PANEL_SELECTOR = '#input-panel'
-const INPUT_FALLBACK_SELECTOR = [
+const INPUT_FALLBACK_TAGS: readonly string[] = [
   'yt-live-chat-message-input-renderer',
   'yt-live-chat-restricted-participation-renderer',
   'yt-live-chat-sign-in-prompt-renderer',
-].join(', ')
+]
+const INPUT_FALLBACK_SELECTOR = INPUT_FALLBACK_TAGS.join(', ')
+const CHROME_SELECTOR = `${HEADER_SELECTOR}, ${INPUT_PANEL_SELECTOR}, ${INPUT_FALLBACK_SELECTOR}`
 const TRANSITION_FALLBACK_MS = 310
 
 const getBody = (iframe: HTMLIFrameElement | null) => {
@@ -50,6 +52,26 @@ const measure = (elements: HTMLElement[]) => {
 
 const sameElements = (left: HTMLElement[], right: HTMLElement[]) =>
   left.length === right.length && left.every((element, index) => element === right[index])
+
+const isChromeElement = (element: Element) => {
+  const tag = element.localName
+  return tag === HEADER_SELECTOR || element.id === 'input-panel' || INPUT_FALLBACK_TAGS.includes(tag)
+}
+
+const mutationMayChangeChrome = (mutation: MutationRecord, elements: HTMLElement[]) => {
+  if (elements.some(element => element === mutation.target || element.contains(mutation.target))) return true
+  for (const node of mutation.removedNodes) {
+    if (elements.some(element => node === element || node.contains(element))) return true
+  }
+  for (const node of mutation.addedNodes) {
+    if (node.nodeType !== Node.ELEMENT_NODE) continue
+    // Added nodes belong to the iframe's realm, so a parent-window
+    // `instanceof Element` check would miss newly mounted chrome.
+    const element = node as Element
+    if (isChromeElement(element) || (element.childElementCount > 0 && element.querySelector(CHROME_SELECTOR))) return true
+  }
+  return false
+}
 
 const blurActiveElement = (body: HTMLElement) => {
   const active = body.ownerDocument.activeElement
@@ -103,6 +125,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
     if (!body || targetObserver) return
     targetObserver = new MutationObserver(mutations => {
       if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+      if (!mutations.some(mutation => mutationMayChangeChrome(mutation, elements))) return
       const nextElements = resolveChatOnlyChromeElements(body)
       const chromeElements = [...new Set([...elements, ...nextElements])]
       const touchesChrome = mutations.some(mutation =>

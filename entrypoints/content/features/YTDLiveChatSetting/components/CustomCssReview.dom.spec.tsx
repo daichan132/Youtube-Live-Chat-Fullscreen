@@ -15,7 +15,14 @@ import {
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 
-const actions = vi.hoisted(() => ({ activate: vi.fn(), apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
+const actions = vi.hoisted(() => ({
+  activate: vi.fn(),
+  apply: vi.fn(),
+  register: vi.fn(),
+  remove: vi.fn(),
+  disable: vi.fn(),
+  suspend: vi.fn(),
+}))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
 
 beforeEach(() => {
@@ -31,7 +38,12 @@ const makeStore = () => {
 
 const delayedRegistration = () => {
   let finish!: () => void
-  actions.register.mockImplementationOnce(() => new Promise<void>(resolve => { finish = resolve }))
+  actions.register.mockImplementationOnce(
+    () =>
+      new Promise<void>(resolve => {
+        finish = resolve
+      }),
+  )
   return () => finish()
 }
 
@@ -43,10 +55,14 @@ describe('CSS review regressions', () => {
     const finish = delayedRegistration()
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
-    act(() => { store.set(customCssAtom, { enabled: true, css: '.external{}' }) })
+    act(() => {
+      store.set(customCssAtom, { enabled: true, css: '.external{}' })
+    })
     expect(view.getByLabelText('CSS')).toHaveValue('.original{}')
     expect(store.get(customCssDraftAtom)?.css).toBe('.original{}')
-    await act(async () => { finish() })
+    await act(async () => {
+      finish()
+    })
     expect(actions.register).toHaveBeenCalledWith('Saved copy', '.original{}')
   })
 
@@ -63,7 +79,9 @@ describe('CSS review regressions', () => {
     store.set(customCssEditorUiAtom, { name: '', registering: false, source: null, expanded: true })
     store.set(customCssEditorUiAtom, { name: 'Same name', registering: true, source: null, expanded: true })
     const second = renderWithStore(<CustomCssSection />, store)
-    await act(async () => { finish() })
+    await act(async () => {
+      finish()
+    })
     expect(second.getByLabelText('content.customCss.name')).toHaveValue('Same name')
   })
 
@@ -74,8 +92,12 @@ describe('CSS review regressions', () => {
     const finish = delayedRegistration()
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
-    act(() => { store.set(customCssEditorUiAtom, current => ({ ...current, expanded: false })) })
-    await act(async () => { finish() })
+    act(() => {
+      store.set(customCssEditorUiAtom, current => ({ ...current, expanded: false }))
+    })
+    await act(async () => {
+      finish()
+    })
     expect(store.get(customCssEditorUiAtom).name).toBe('')
     expect(store.get(customCssEditorUiAtom).expanded).toBe(false)
   })
@@ -98,7 +120,9 @@ describe('CSS review regressions', () => {
     const view = renderWithStore(<CustomCssSection />, store)
     const disable = view.getByRole('button', { name: 'content.customCss.disable' })
     expect(disable).not.toBeDisabled()
-    await act(async () => { fireEvent.click(disable) })
+    await act(async () => {
+      fireEvent.click(disable)
+    })
     expect(actions.suspend).toHaveBeenCalledTimes(1)
     expect(actions.suspend).toHaveBeenCalledWith(true)
   })
@@ -107,7 +131,13 @@ describe('CSS review regressions', () => {
     const store = makeStore()
     store.set(customCssEditorUiAtom, current => ({ ...current, source: { kind: 'preset', id: 'bubbles' } }))
     const onKeyDown = vi.fn()
-    const view = renderWithStore(<div onKeyDown={onKeyDown}><CustomCssSection /></div>, store)
+    const view = renderWithStore(
+      // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
+      <div onKeyDown={onKeyDown}>
+        <CustomCssSection />
+      </div>,
+      store,
+    )
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.myDraft{}' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadPreset' }))
     fireEvent.keyDown(view.getByRole('button', { name: 'content.customCss.cancel' }), { key: 'Escape' })
@@ -158,7 +188,9 @@ describe('CSS editor usability', () => {
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
     fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
-    act(() => { store.set(savedChatCssAtom, []) })
+    act(() => {
+      store.set(savedChatCssAtom, [])
+    })
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
     expect(view.getByText('content.customCss.savedMissing')).toBeInTheDocument()
     expect(view.queryByRole('button', { name: 'content.customCss.deleteSaved' })).toBeNull()
@@ -184,7 +216,10 @@ describe('CSS editor usability', () => {
 
   it('explains a full library without blocking editing or applying a new CSS source', () => {
     const store = makeStore()
-    store.set(savedChatCssAtom, Array.from({ length: 20 }, (_, i) => ({ id: `css-${i}`, name: `CSS ${i}`, css: '.saved{}' })))
+    store.set(
+      savedChatCssAtom,
+      Array.from({ length: 20 }, (_, i) => ({ id: `css-${i}`, name: `CSS ${i}`, css: '.saved{}' })),
+    )
     store.set(customCssEditorUiAtom, { name: 'New CSS', registering: true, source: null, expanded: true })
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.new{}' } })
@@ -213,7 +248,13 @@ describe('CSS editor usability', () => {
     const store = makeStore()
     store.set(customCssEditorUiAtom, { name: 'Draft', registering: true, source: null, expanded: true })
     const onKeyDown = vi.fn()
-    const view = renderWithStore(<div onKeyDown={onKeyDown}><CustomCssSection /></div>, store)
+    const view = renderWithStore(
+      // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
+      <div onKeyDown={onKeyDown}>
+        <CustomCssSection />
+      </div>,
+      store,
+    )
     const input = view.getByLabelText('content.customCss.name')
     fireEvent.keyDown(input, { key: 'Escape', isComposing: true })
     expect(view.getByLabelText('content.customCss.name')).toHaveValue('Draft')
@@ -244,7 +285,9 @@ describe('CSS editor usability', () => {
     let rejectSave!: (error: Error) => void
     actions.register.mockImplementationOnce(() => {
       store.set(customCssOperationAtom, 'register')
-      return new Promise<void>((_resolve, reject) => { rejectSave = reject }).catch(error => {
+      return new Promise<void>((_resolve, reject) => {
+        rejectSave = reject
+      }).catch(error => {
         store.set(customCssFeedbackAtom, { kind: 'error', operation: 'register', code: 'storage' })
         store.set(customCssOperationAtom, null)
         throw error
@@ -252,7 +295,9 @@ describe('CSS editor usability', () => {
     })
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
-    await act(async () => { rejectSave(new Error('Storage unavailable')) })
+    await act(async () => {
+      rejectSave(new Error('Storage unavailable'))
+    })
     expect(view.getByLabelText('content.customCss.name')).toHaveValue('Keep name')
     expect(view.getByLabelText('content.customCss.name')).toHaveFocus()
     expect(view.getByLabelText('CSS')).toHaveValue('.source{}')
@@ -264,7 +309,9 @@ describe('CSS editor usability', () => {
     store.set(customCssAtom, { enabled: false, css: '.source{}' })
     const view = renderWithStore(<CustomCssSection />, store)
     expect(view.getByText('content.customCss.savedButDisabled')).toBeInTheDocument()
-    act(() => { store.set(customCssSuspendedAtom, true) })
+    act(() => {
+      store.set(customCssSuspendedAtom, true)
+    })
     expect(view.getByText('content.customCss.savedButPaused')).toBeInTheDocument()
     act(() => {
       store.set(customCssSuspendedAtom, false)
@@ -279,7 +326,9 @@ describe('CSS editor usability', () => {
     store.set(customCssAtom, { enabled: true, css: '.original{}' })
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.draft{}' } })
-    act(() => { store.set(customCssAtom, { enabled: true, css: '.external{}' }) })
+    act(() => {
+      store.set(customCssAtom, { enabled: true, css: '.external{}' })
+    })
     expect(view.getByText('content.customCss.externalChange')).toBeInTheDocument()
     expect(view.getByLabelText('CSS')).toHaveValue('.draft{}')
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.apply' }))

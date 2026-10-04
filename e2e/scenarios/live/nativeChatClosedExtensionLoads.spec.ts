@@ -4,6 +4,46 @@ import { YouTubeWatchPage } from '@e2e/pages/YouTubeWatchPage'
 import { hasPlayableChat } from '@e2e/support/diagnostics'
 import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 import { closeNativeChat } from '@e2e/utils/nativeChat'
+import type { Page } from '@playwright/test'
+
+const expectSelectedLivePlayerReady = async (page: Page, videoId: string) => {
+  const skipAd = page.getByRole('button', { name: /^(Skip(?: ads?)?|広告をスキップ)$/i }).first()
+  await expect
+    .poll(
+      async () => {
+        const state = await page.evaluate(expectedVideoId => {
+          const player = document.getElementById('movie_player') as
+            | (HTMLElement & { getVideoData?: () => { video_id?: string; videoId?: string; isLive?: boolean } })
+            | null
+          const url = new URL(window.location.href)
+          const watchVideoId =
+            url.searchParams.get('v') ??
+            /^\/live\/([^/]+)\/?$/.exec(url.pathname)?.[1] ??
+            document.querySelector('ytd-watch-flexy, ytd-watch-grid')?.getAttribute('video-id') ??
+            null
+          let data: { video_id?: string; videoId?: string; isLive?: boolean } | null = null
+          try {
+            data = player?.getVideoData?.() ?? null
+          } catch {
+            // YouTube can temporarily replace its player while an advertisement ends.
+          }
+          const playerVideoId = data?.video_id ?? data?.videoId ?? player?.getAttribute('video-id') ?? null
+          return {
+            advertising: player?.classList.contains('ad-showing') === true || player?.classList.contains('ad-interrupting') === true,
+            selectedVideo: watchVideoId === expectedVideoId && playerVideoId === expectedVideoId,
+            live: data?.isLive === true,
+          }
+        }, videoId)
+        if (state.advertising && (await skipAd.isVisible())) {
+          // Use YouTube's UI; a disappearing skip button is handled by the next readiness poll.
+          await skipAd.click({ timeout: 1500 }).catch(() => {})
+        }
+        return state
+      },
+      { timeout: 45000, intervals: [100, 250, 500, 1000], message: 'Selected live player must resume after advertising before chat controls are tested.' },
+    )
+    .toEqual({ advertising: false, selectedVideo: true, live: true })
+}
 
 test.describe('native chat closed extension loads', { tag: '@live' }, () => {
   test('extension chat loads when native chat is closed', async ({ page, liveUrl }) => {
@@ -16,8 +56,32 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
 
     const yt = new YouTubeWatchPage(page)
     const overlay = new ExtensionOverlay(page)
+    const selectedUrl = new URL(liveUrl)
+    let selectedVideoId = selectedUrl.searchParams.get('v') ?? /^\/live\/([^/]+)\/?$/.exec(selectedUrl.pathname)?.[1] ?? null
 
     await yt.goto(liveUrl)
+    await expect
+      .poll(
+        async () => {
+          if (!selectedVideoId) {
+            selectedVideoId = await page.evaluate(() => {
+              const url = new URL(window.location.href)
+              const ids = new Set<string>()
+              const urlVideoId = url.searchParams.get('v') ?? /^\/live\/([^/]+)\/?$/.exec(url.pathname)?.[1]
+              if (urlVideoId) ids.add(urlVideoId)
+              for (const watch of document.querySelectorAll('ytd-watch-flexy, ytd-watch-grid')) {
+                const id = watch.getAttribute('video-id')
+                if (id) ids.add(id)
+              }
+              return ids.size === 1 ? [...ids][0] ?? null : null
+            })
+          }
+          return selectedVideoId !== null
+        },
+        { timeout: 10000, message: 'The selected live entry must expose one concrete watch video identity.' },
+      )
+      .toBe(true)
+    if (!selectedVideoId) throw new Error('The selected live entry did not identify a video.')
 
     const nativeFrameReady = await meetsExternalYouTubePrecondition('native-chat-frame', () => yt.expectNativeChat())
     if (!nativeFrameReady) {
@@ -38,6 +102,7 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
       test.skip(true, 'Selected live video did not have playable chat.')
       return
     }
+    await expectSelectedLivePlayerReady(page, selectedVideoId)
     const closed = await closeNativeChat(page)
     if (!closed) {
       test.skip(true, 'Could not close native chat via UI controls.')
@@ -50,6 +115,8 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
       test.skip(true, 'YouTube did not settle the native chat close operation.')
       return
     }
+
+    await expectSelectedLivePlayerReady(page, selectedVideoId)
 
     const fullscreenReady = await meetsExternalYouTubePrecondition('fullscreen-ui', () => yt.enterFullscreen())
     if (!fullscreenReady) {

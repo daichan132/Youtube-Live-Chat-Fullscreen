@@ -2,22 +2,43 @@ import { act, fireEvent, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import {
-  customCssAtom, customCssDraftAtom, customCssEditorUiAtom, customCssFeedbackAtom,
-  customCssLocalStopAtom, customCssOperationAtom, customCssRecoveryAtom, customCssSuspendedAtom,
-  hasUnappliedCustomCssAtom, savedChatCssAtom,
+  customCssAtom,
+  customCssDraftAtom,
+  customCssFeedbackAtom,
+  customCssLocalStopAtom,
+  customCssOperationAtom,
+  customCssRecoveryAtom,
+  customCssSuspendedAtom,
+  hasUnappliedCustomCssAtom,
+  savedChatCssAtom,
 } from '@/shared/state/customCssAtoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 import { SettingContent } from './SettingContent'
 
-const actions = vi.hoisted(() => ({ activate: vi.fn(), apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
+const actions = vi.hoisted(() => ({
+  activate: vi.fn(),
+  apply: vi.fn(),
+  register: vi.fn(),
+  remove: vi.fn(),
+  disable: vi.fn(),
+  suspend: vi.fn(),
+}))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
-beforeEach(() => { for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined) })
+beforeEach(() => {
+  for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined)
+})
 const setup = () => {
   const store = createTestStore()
   store.set(customCssSuspendedAtom, false)
   const onKeyDown = vi.fn()
-  const view = renderWithStore(<div onKeyDown={onKeyDown}><CustomCssSection /></div>, store)
+  const view = renderWithStore(
+    // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
+    <div onKeyDown={onKeyDown}>
+      <CustomCssSection />
+    </div>,
+    store,
+  )
   return { store, view, onKeyDown }
 }
 
@@ -89,14 +110,17 @@ describe('focused CSS settings', () => {
 
   it('keeps copy deletion inside editing and still requires confirmation', () => {
     const { store, view } = setup()
-    act(() => { store.set(savedChatCssAtom, [{ id: 'mine', name: 'Mine', css: '.saved{}' }]) })
+    act(() => {
+      store.set(savedChatCssAtom, [{ id: 'mine', name: 'Mine', css: '.saved{}' }])
+    })
     fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
     expect(view.queryByRole('button', { name: 'content.customCss.deleteSaved' })).toBeNull()
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.deleteSaved' }))
     expect(actions.remove).not.toHaveBeenCalled()
-    fireEvent.click(within(view.getByRole('group', { name: 'content.customCss.confirmTitle' }))
-      .getByRole('button', { name: 'content.customCss.cancel' }))
+    fireEvent.click(
+      within(view.getByRole('group', { name: 'content.customCss.confirmTitle' })).getByRole('button', { name: 'content.customCss.cancel' }),
+    )
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
   })
 
@@ -113,29 +137,41 @@ describe('focused CSS settings', () => {
       store.set(customCssLocalStopAtom, true)
     })
     expect(view.getByText('content.customCss.stopUnconfirmed')).toBeVisible()
-    await act(async () => { fireEvent.click(view.getByRole('button', { name: 'content.customCss.resume' })) })
+    await act(async () => {
+      fireEvent.click(view.getByRole('button', { name: 'content.customCss.resume' }))
+    })
     expect(actions.activate).toHaveBeenCalledWith('.source{}', { enabled: true, css: '.source{}' })
   })
 
   it('keeps Off available during Use and a pending resume, and retains the copyable source', () => {
     const { store, view } = setup()
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
-    act(() => { store.set(customCssOperationAtom, 'apply') })
+    act(() => {
+      store.set(customCssOperationAtom, 'apply')
+    })
     expect(view.container.querySelector('[data-ylc-css-use]')).toBeDisabled()
     expect(view.getByLabelText('CSS')).toHaveAttribute('readonly')
     expect(view.getByLabelText('CSS')).not.toBeDisabled()
     expect(view.getByRole('button', { name: 'content.customCss.disable' })).not.toBeDisabled()
-    act(() => { store.set(customCssRecoveryAtom, { pending: true, target: false, failed: false }) })
+    act(() => {
+      store.set(customCssRecoveryAtom, { pending: true, target: false, failed: false })
+    })
     expect(view.getByRole('button', { name: 'content.customCss.disable' })).not.toBeDisabled()
   })
 
   it('returns focus to Use after a confirmed Off removes its trigger', async () => {
     const { store, view } = setup()
-    act(() => { store.set(customCssAtom, { enabled: true, css: '.source{}' }) })
-    actions.suspend.mockImplementationOnce(async () => { store.set(customCssSuspendedAtom, true) })
+    act(() => {
+      store.set(customCssAtom, { enabled: true, css: '.source{}' })
+    })
+    actions.suspend.mockImplementationOnce(async () => {
+      store.set(customCssSuspendedAtom, true)
+    })
     const off = view.getByRole('button', { name: 'content.customCss.disable' })
     off.focus()
-    await act(async () => { fireEvent.click(off) })
+    await act(async () => {
+      fireEvent.click(off)
+    })
     expect(view.queryByRole('button', { name: 'content.customCss.disable' })).toBeNull()
     expect(view.getByRole('button', { name: 'content.customCss.resume' })).toHaveFocus()
   })
@@ -145,13 +181,18 @@ describe('focused CSS settings', () => {
     const view = renderWithStore(<SettingContent />, store)
     const groups = Array.from(view.container.querySelectorAll(':scope > fieldset'))
     expect(groups.map(group => group.querySelector('legend')?.textContent)).toEqual([
-      'content.setting.group.display', 'content.customCss.title', 'content.setting.group.colors',
-      'content.setting.group.text', 'content.setting.group.elements',
+      'content.setting.group.display',
+      'content.customCss.title',
+      'content.setting.group.colors',
+      'content.setting.group.text',
+      'content.setting.group.elements',
     ])
     expect(view.getByRole('group', { name: 'content.setting.group.colors' })).toBeInTheDocument()
     expect(view.getByRole('group', { name: 'content.setting.group.text' })).toBeInTheDocument()
     expect(view.getByRole('group', { name: 'content.setting.group.elements' })).toBeInTheDocument()
-    act(() => { store.set(customCssOperationAtom, 'apply') })
+    act(() => {
+      store.set(customCssOperationAtom, 'apply')
+    })
     expect(view.getByLabelText('content.setting.alwaysOnDisplay')).not.toBeDisabled()
   })
 })

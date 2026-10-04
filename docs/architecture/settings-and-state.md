@@ -59,6 +59,8 @@ Appearance and locale notifications carry an optional `SettingsCommitSource`. A 
 
 Draft profile values, active gestures, undo history and redo history live only in memory. Previewing a gesture does not save settings. Committing an appearance change writes one appearance envelope; committing geometry writes only the geometry envelope.
 
+The embedded settings page forwards its draft profile through a source- and origin-checked `postMessage` bridge. The content store holds it in `settingsPreviewStateAtom`, outside persistence and history, so the chat and overlay paint during a slider or color gesture. Preview messages are coalesced to one per animation frame. The final profile remains visible until its matching Storage value arrives; an earlier gesture's delayed save cannot roll it back. Closing, reloading, or removing the settings iframe clears the preview. Authoritative external appearance changes are forwarded by the settings store through the same channel.
+
 A save readback equal to the current committed appearance is a no-op. It must not cancel a later draft or clear undo/redo history merely because that draft started before the earlier save finished. Equality is checked against committed settings, not against the draft.
 
 An external preset-list-only change preserves the current profile reference and editing session. A genuinely different committed profile clears its conflicting draft/history. Geometry-only changes do not discard appearance history. A confirmed, non-superseded own import explicitly clears old history, including when the imported profile equals the committed profile.

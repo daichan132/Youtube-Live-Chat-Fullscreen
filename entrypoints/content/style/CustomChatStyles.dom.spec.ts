@@ -80,7 +80,6 @@ describe('CustomChatStyles document ownership', () => {
   })
 })
 
-
 it('restores source order after late native styles without rewriting or duplicating user CSS', () => {
   const doc = makeDocument()
   const styles = new CustomChatStyles()

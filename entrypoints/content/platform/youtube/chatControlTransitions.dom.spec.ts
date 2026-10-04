@@ -18,7 +18,8 @@ const createPlayer = (host: HTMLElement) => {
   player.innerHTML =
     '<div class="ytp-right-controls"><toggle-button-view-model><button aria-pressed="false" aria-label="Chat replay"></button></toggle-button-view-model></div>'
   document.body.appendChild(player)
-  const button = player.querySelector('button')!
+  const button = player.querySelector('button')
+  if (!button) throw new Error('Missing test button')
   button.setAttribute('aria-controls', host.id)
   return { player, button }
 }
@@ -46,8 +47,7 @@ describe('chat control action boundaries', () => {
 
   it('does not rediscover a disabled inner button through its icon wrapper', () => {
     const host = createHost()
-    host.innerHTML =
-      '<div id="show-hide-button"><yt-icon-button aria-label="Chat replay"><button disabled></button></yt-icon-button></div>'
+    host.innerHTML = '<div id="show-hide-button"><yt-icon-button aria-label="Chat replay"><button disabled></button></yt-icon-button></div>'
 
     expect(collectArchiveChatControls()).toMatchObject({ native: null, replay: null, canOpen: false })
   })
@@ -99,7 +99,9 @@ describe('chat control action boundaries', () => {
     createHost()
     stale.innerHTML = '<div id="show-hide-button"><button>Show chat</button></div>'
 
-    expect(isNativeChatToggleButton(stale.querySelector('button')!)).toBe(false)
+    const button = stale.querySelector('button')
+    if (!button) throw new Error('Missing test button')
+    expect(isNativeChatToggleButton(button)).toBe(false)
   })
 
   it('does not toggle chat closed when revealing the player already opened it', () => {

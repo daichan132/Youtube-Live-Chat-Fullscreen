@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { useNativeChatAutoDisable } from './hooks/watchYouTubeUI/useNativeChatAutoDisable'
 import { ChatViewport } from './overlay/ChatViewport'
 import { OverlayFrame } from './overlay/OverlayFrame'
@@ -11,18 +11,23 @@ type YTDLiveChatProps = {
 
 export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
   const chatRuntime = useChatRuntimeInstance()
+  const settingsTrigger = useRef<HTMLElement | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [chatVisible, setChatVisible] = useState(true)
+  const closeSettings = useCallback(() => setSettingsOpen(false), [])
   useNativeChatAutoDisable({ enabled: true })
 
   return (
     <>
-      <SettingsFrame open={settingsOpen} onClose={() => setSettingsOpen(false)} runtime={chatRuntime} />
+      <SettingsFrame returnFocusTo={settingsTrigger.current} open={settingsOpen} onClose={closeSettings} runtime={chatRuntime} />
       <OverlayFrame
         initialDisplayOnMount
         ready={!loading}
         settingsOpen={settingsOpen}
-        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenSettings={source => {
+          settingsTrigger.current = source
+          setSettingsOpen(true)
+        }}
         onChatVisibilityChange={setChatVisible}
         onInteractionStateChange={chatRuntime.setOverlayInteraction}
       >

@@ -1,7 +1,13 @@
 import { describe, expect, it } from 'vitest'
-import { assertCustomCss, assertSavedChatCss, DEFAULT_CUSTOM_CSS, isCustomCssWithinLimit, normalizeCustomCss,
-  readCustomCssBackup } from './customCss'
 import { buildSettingsBackup, normalizeSettingsBackup } from './backup'
+import {
+  assertCustomCss,
+  assertSavedChatCss,
+  DEFAULT_CUSTOM_CSS,
+  isCustomCssWithinLimit,
+  normalizeCustomCss,
+  readCustomCssBackup,
+} from './customCss'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 
 const current = { globalSetting: { ytdLiveChat: true, themeMode: 'system' }, chatSettings: DEFAULT_CHAT_SETTINGS }
@@ -27,14 +33,22 @@ describe('independent chat CSS settings', () => {
     expect(() => assertSavedChatCss(Array.from({ length: 21 }, (_, i) => ({ ...entry, id: `${i}` })))).toThrow('library-full')
   })
   it('imports source text without allowing execution or importing a stop override', () => {
-    const imported = readCustomCssBackup({ customCss: { enabled: true, css: 'body{}' },
-      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}', enabled: true }], customCssSuspended: false })
-    expect(imported).toEqual({ customCss: { enabled: false, css: 'body{}' },
-      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}' }] })
+    const imported = readCustomCssBackup({
+      customCss: { enabled: true, css: 'body{}' },
+      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}', enabled: true }],
+      customCssSuspended: false,
+    })
+    expect(imported).toEqual({
+      customCss: { enabled: false, css: 'body{}' },
+      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}' }],
+    })
   })
   it('round-trips a version 3 backup while deliberately disabling imported CSS', () => {
-    const backup = buildSettingsBackup({ ...current, customCss: { enabled: true, css: 'body{}' },
-      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}' }] })
+    const backup = buildSettingsBackup({
+      ...current,
+      customCss: { enabled: true, css: 'body{}' },
+      savedChatCss: [{ id: 'one', name: 'Sample', css: '#message{}' }],
+    })
     expect(backup).not.toHaveProperty('customCssSuspended')
     const imported = normalizeSettingsBackup(backup, current)
     expect(imported?.customCss).toEqual({ enabled: false, css: 'body{}' })
@@ -48,7 +62,6 @@ describe('independent chat CSS settings', () => {
   })
 })
 
-
 it('rejects malformed backup CSS rather than replacing it with an empty source', () => {
   expect(() => readCustomCssBackup({ customCss: { enabled: true, css: 123 }, savedChatCss: [] })).toThrow('invalid')
 })
@@ -59,7 +72,6 @@ it('rejects array-shaped objects at the storage boundary', () => {
   const entry = Object.assign([], { id: 'one', name: 'Name', css: 'body{}' })
   expect(() => assertSavedChatCss([entry])).toThrow('invalid')
 })
-
 
 it('defaults omitted backup domains but rejects explicit null or undefined domains', () => {
   expect(readCustomCssBackup({})).toEqual({ customCss: DEFAULT_CUSTOM_CSS, savedChatCss: [] })

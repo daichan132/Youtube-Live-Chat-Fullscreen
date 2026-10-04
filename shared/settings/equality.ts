@@ -1,8 +1,9 @@
 import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, MembershipNameColor, PresetEntry, RGBA } from './model'
 
-const areRGBAEqual = (left: RGBA, right: RGBA) => left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
+export const areRGBAEqual = (left: RGBA, right: RGBA) =>
+  left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
 
-const areMembershipColorsEqual = (left: MembershipNameColor, right: MembershipNameColor) =>
+export const areMembershipColorsEqual = (left: MembershipNameColor, right: MembershipNameColor) =>
   left.mode === right.mode && (left.mode === 'youtube-default' || (right.mode === 'custom' && areRGBAEqual(left.value, right.value)))
 
 export const areGlobalSettingsEqual = (left: GlobalSettings, right: GlobalSettings) =>

@@ -187,7 +187,8 @@ export const usePresetReorder = ({
 
   const handleMove = useCallback(
     (event: PointerEvent) => {
-      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current || event.clientY === pointerClientYRef.current) return
+      if (!pointerGestureRef.current || event.pointerId !== activePointerIdRef.current || event.clientY === pointerClientYRef.current)
+        return
       pointerClientYRef.current = event.clientY
       // Row slots are stable during ordinary pointer movement. Re-read layout
       // only after scrolling actually changes their viewport positions.

@@ -40,6 +40,8 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
     ui.mount()
     let disposed = false
     return {
+      getDiagnosticReport: chatRuntime.getDiagnosticReport,
+      restart: () => chatRuntime.restart(),
       dispose() {
         if (disposed) return
         disposed = true

@@ -179,6 +179,17 @@
       "externalChange": "別の画面でCSSが変わりました。本文は保持しています。",
       "cancelRegistration": "キャンセル",
       "pausePendingState": "保存済みのCSSと同じ内容です。全CSS停止の結果は未確認です。"
+    },
+    "placement": {
+      "open": "配置調整",
+      "up": "上へ",
+      "down": "下へ",
+      "left": "左へ",
+      "right": "右へ",
+      "narrower": "幅を減らす",
+      "wider": "幅を増やす",
+      "shorter": "高さを減らす",
+      "taller": "高さを増やす"
     }
   },
   "popup": {
@@ -191,7 +202,33 @@
     "dataTransfer": "バックアップ",
     "export": "書き出し",
     "import": "読み込み",
-    "importError": "設定ファイルを読み込めませんでした。"
+    "importError": "設定ファイルを読み込めませんでした。",
+    "importConfirm": "外観・プリセット・配置・有効状態・テーマを、このバックアップの内容で置き換えます。表示言語は変更しません。",
+    "importApply": "適用",
+    "importCancel": "キャンセル",
+    "importClose": "閉じる",
+    "importReading": "読み込み中…",
+    "importApplying": "適用中…",
+    "importDone": "取り込みが完了しました。",
+    "importBeforeWrite": "先に行った設定を保存できません。保存を再試行してから取り込んでください。",
+    "importWrite": "バックアップの保存を完了できませんでした。現在の設定を確認してください。",
+    "importReadback": "書き込みは成功しましたが、現在値を確認できませんでした。設定を開き直して確認してください。",
+    "importFollowingWrite": "取り込み後の別の設定変更を保存できませんでした。保存を再試行してください。",
+    "recovery": {
+      "check": "状態を確認",
+      "retry": "チャット表示を再試行",
+      "copy": "診断をコピー",
+      "unknown": "このタブの状態を確認できません。",
+      "starting": "起動中です。少し待って再確認してください。",
+      "failed": "チャット表示を起動できませんでした。",
+      "unsupported": "このページは対応していません。",
+      "running": "表示処理は実行中です。",
+      "accepted": "再試行を受け付けました。状態を再確認して結果を確認してください。",
+      "stale": "ページが切り替わりました。状態を再確認してください。",
+      "copied": "診断をコピーしました。",
+      "copyFailed": "診断をコピーできませんでした。",
+      "checking": "確認中…"
+    }
   },
   "extensionName": "YouTubeライブチャットフルスクリーン",
   "extensionDescription": "全画面にするとチャットが消える。YouTubeのライブチャットを、全画面のまま動画の上にオーバーレイ表示。ライブ配信中はコメントもスーパーチャット（スパチャ）も送れる。位置・大きさ・色は自由で、チャットリプレイ付きのアーカイブにも対応。"

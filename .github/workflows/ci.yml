@@ -67,7 +67,7 @@ jobs:
 
   browser-contracts:
     needs: package
-    # Visual baselines are generated for Playwright 1.62.1 Chromium on this
+    # Visual baselines are generated for Playwright 1.63.0 Chromium on this
     # fixed GitHub-hosted image. Avoid ubuntu-latest image drift.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
@@ -92,7 +92,8 @@ jobs:
         run: xvfb-run --auto-servernum yarn playwright test --project=accessibility --retries=0
       - name: Run visual contracts
         if: github.event_name == 'workflow_dispatch'
-        run: xvfb-run --auto-servernum yarn playwright test --project=visual --retries=0 --max-failures=1
+        # Collect every mismatch image while retaining a failing exit status.
+        run: xvfb-run --auto-servernum yarn playwright test --project=visual --retries=0
       - name: Upload browser diagnostics
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7

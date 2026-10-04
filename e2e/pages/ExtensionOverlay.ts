@@ -152,6 +152,31 @@ export class ExtensionOverlay {
     })
   }
 
+  async installChatTypographyProbe() {
+    await this.page.evaluate(() => {
+      const document = window.__ylcHelpers.getExtensionIframe()?.contentDocument
+      const list = document?.querySelector('yt-live-chat-item-list-renderer')
+      if (!document || !list) throw new Error('The live-chat message list has not loaded.')
+      const message = document.createElement('yt-live-chat-text-message-renderer')
+      message.setAttribute('data-ylc-preview-message', '')
+      message.textContent = 'Native slider preview fixture'
+      list.append(message)
+    })
+  }
+
+  getChatTypographyState() {
+    return this.page.evaluate(() => {
+      const document = window.__ylcHelpers.getExtensionIframe()?.contentDocument
+      const message = document?.querySelector('[data-ylc-preview-message]')
+      if (!document?.defaultView || !message) throw new Error('The live-chat preview message is missing.')
+      return {
+        variable: document.documentElement.style.getPropertyValue('--extension-yt-live-chat-font-size'),
+        renderedFontSize: document.defaultView.getComputedStyle(message).fontSize,
+        messageHeight: message.getBoundingClientRect().height,
+      }
+    })
+  }
+
   async installChatOnlyGeometryProbe() {
     await this.page.evaluate(() => {
       const iframe = window.__ylcHelpers.getExtensionIframe()

@@ -95,7 +95,7 @@ The YouTube-facing runtime separates page observation, pure decisions, and rever
 ### Requirements
 
 - Node.js 24.x (`mise.toml`)
-- Yarn 4.18.0, vendored under `.yarn/releases/`
+- Yarn 4.18.1, vendored under `.yarn/releases/`
 - Playwright Chromium for browser verification
 
 ```bash

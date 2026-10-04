@@ -11,18 +11,22 @@ export const ChatCssExample = ({ preset }: { preset?: ChatCssPreset }) => {
         <>
           <figcaption>{t('content.customCss.presetHelp')}</figcaption>
           <div className='ylc-css-example-messages' aria-hidden='true'>
-            {[0, 1].map(index => <div className='ylc-css-example-message' key={index}>
-              <span className='ylc-css-example-avatar' />
-              <div className='ylc-css-example-content'>
-                <span className='ylc-css-example-line'>Aa Bb Cc</span>
+            {[0, 1].map(index => (
+              <div className='ylc-css-example-message' key={index}>
+                <span className='ylc-css-example-avatar' />
+                <div className='ylc-css-example-content'>
+                  <span className='ylc-css-example-line'>Aa Bb Cc</span>
+                </div>
               </div>
-            </div>)}
+            ))}
           </div>
           <span className='ylc-visually-hidden'>{t(preset.descriptionKey)}</span>
         </>
       ) : (
         <>
-          <div className='ylc-css-example-custom' aria-hidden='true'>{'{ }'}</div>
+          <div className='ylc-css-example-custom' aria-hidden='true'>
+            {'{ }'}
+          </div>
           <figcaption>{t('content.customCss.title')}</figcaption>
           <p className='ylc-custom-css-help'>{t('content.customCss.warning')}</p>
         </>

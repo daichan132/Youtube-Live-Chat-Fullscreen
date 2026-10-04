@@ -175,6 +175,24 @@ const syncBorrowedIframeSrcWithDocumentHref = (iframe: HTMLIFrameElement) => {
   if (!currentSrc || currentSrc.includes('about:blank')) iframe.src = docHref
 }
 
+const canPreserveIframeState = (iframe: HTMLIFrameElement, parent: ParentNode) => {
+  const target = parent as ParentNode & Node & { moveBefore?: (node: Node, reference: Node | null) => void }
+  return (
+    iframe.isConnected && target.isConnected && iframe.ownerDocument === target.ownerDocument && typeof target.moveBefore === 'function'
+  )
+}
+
+const moveBorrowedIframe = (iframe: HTMLIFrameElement, parent: ParentNode, reference: Node | null, syncBlankSrc = false) => {
+  if (canPreserveIframeState(iframe, parent)) {
+    // Ordinary reparenting reloads src. YouTube may have updated the loaded chat
+    // by postMessage while leaving its original continuation URL unchanged.
+    parent.moveBefore(iframe, reference)
+  } else {
+    if (syncBlankSrc) syncBorrowedIframeSrcWithDocumentHref(iframe)
+    parent.insertBefore(iframe, reference)
+  }
+}
+
 const captureIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => ({
   width: iframe.style.width,
   height: iframe.style.height,
@@ -259,6 +277,32 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     finalizeBorrowedRestore()
   }
 
+  const restoreBorrowedIframe = (parent: ParentNode, reference: Node | null) => {
+    try {
+      moveBorrowedIframe(iframe, parent, reference)
+    } catch (error) {
+      if (!canPreserveIframeState(iframe, parent)) throw error
+      // Recovery clears presentation and unmounts its React-owned carrier.
+      // Keep the document connected outside both owners for one restore retry.
+      const parking = iframe.ownerDocument.createElement('div')
+      parking.hidden = true
+      try {
+        iframe.ownerDocument.body.append(parking)
+        if (!canPreserveIframeState(iframe, parking)) throw error
+        parking.moveBefore(iframe, null)
+        if (!canPreserveIframeState(iframe, parent)) throw error
+        parent.moveBefore(iframe, reference)
+      } catch {
+        // A permanently failing move cannot preserve state and remove its DOM.
+        // End ownership explicitly; never reload the old continuation as success.
+        discardBorrowed()
+        throw error
+      } finally {
+        parking.remove()
+      }
+    }
+  }
+
   const restoreToAvailableTarget = (targets?: PageTargets | null) => {
     if (!restore) return false
     if (!isVideoCurrent(restore.sourceVideoId)) {
@@ -267,20 +311,19 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     }
     const placeholderParent = restore.placeholder?.parentNode
     if (placeholderParent && (placeholderParent as Node).isConnected) {
-      placeholderParent.insertBefore(iframe, restore.placeholder?.nextSibling ?? null)
+      restoreBorrowedIframe(placeholderParent, restore.placeholder?.nextSibling ?? null)
       finalizeBorrowedRestore()
       return true
     }
     if (restore.originalParent && (restore.originalParent as Node).isConnected) {
       const sibling = restore.originalNextSibling
-      if (sibling && restore.originalParent.contains(sibling)) restore.originalParent.insertBefore(iframe, sibling)
-      else restore.originalParent.appendChild(iframe)
+      restoreBorrowedIframe(restore.originalParent, sibling?.parentNode === restore.originalParent ? sibling : null)
       finalizeBorrowedRestore()
       return true
     }
     const host = resolveNativeHost(targets)
     if (!host) return false
-    host.insertBefore(iframe, host.firstChild)
+    restoreBorrowedIframe(host, host.firstChild)
     finalizeBorrowedRestore()
     return true
   }
@@ -312,8 +355,10 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
       if (state === 'released' || state === 'restoring') return
       iframe.setAttribute(YLC_CHAT_ATTR, 'true')
       captureRestoreState(nextContainer)
-      if (!managed) syncBorrowedIframeSrcWithDocumentHref(iframe)
-      if (iframe.parentElement !== nextContainer) nextContainer.appendChild(iframe)
+      if (iframe.parentElement !== nextContainer) {
+        if (managed) nextContainer.appendChild(iframe)
+        else moveBorrowedIframe(iframe, nextContainer, null, true)
+      }
       applyChatIframeStyle(iframe)
       state = 'attached'
     },

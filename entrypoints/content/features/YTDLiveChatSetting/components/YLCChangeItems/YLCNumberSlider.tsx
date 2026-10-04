@@ -1,9 +1,10 @@
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useStore } from 'jotai'
 import type { CSSProperties } from 'react'
 import { useCallback } from 'react'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
-import { effectiveProfileAtom } from '@/shared/state'
+import { effectiveAppearanceAtoms } from '@/shared/state'
+import { editorSessionStateAtom } from '@/shared/state/atoms'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 
 export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'spacing'
@@ -19,8 +20,9 @@ const RANGE_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Ar
 
 export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSliderProps) => {
   const t = useT()
-  const storeValue = useAtomValue(effectiveProfileAtom).appearance[settingKey]
-  const { beginYLCStyleGesture, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
+  const store = useStore()
+  const storeValue = useAtomValue(effectiveAppearanceAtoms[settingKey])
+  const { beginYLCStyleGesture, commitYLCStyleUpdate, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
   const gestureId = `range:${settingKey}`
 
   const value = Math.min(max, Math.max(min, storeValue))
@@ -30,9 +32,16 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const next = Number(event.target.value)
-      previewYLCStyleUpdate(gestureId, { appearance: { [settingKey]: next } }, settingKey)
+      const patch = { appearance: { [settingKey]: next } }
+      if (store.get(editorSessionStateAtom).activeGesture?.id === gestureId) {
+        previewYLCStyleUpdate(gestureId, patch, settingKey)
+      } else {
+        // Native accessibility input has no pointer/key gesture to finish.
+        // Commit it now so removing the settings iframe cannot lose the change.
+        commitYLCStyleUpdate(patch, settingKey)
+      }
     },
-    [gestureId, settingKey],
+    [commitYLCStyleUpdate, gestureId, previewYLCStyleUpdate, settingKey, store],
   )
   const beginGesture = useCallback(() => beginYLCStyleGesture(gestureId, settingKey), [gestureId, settingKey])
   const finishGesture = useCallback(() => finishYLCStyleGesture(gestureId), [gestureId])

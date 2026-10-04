@@ -35,8 +35,7 @@ export class CustomCssError extends Error {
   }
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value)
+const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === 'object' && value !== null && !Array.isArray(value)
 
 // Both persistence writes and readback/watch boundaries receive untrusted
 // values. Assertion signatures keep runtime validation and narrowing together.
@@ -57,8 +56,14 @@ export function assertSavedChatCss(entries: unknown): asserts entries is SavedCh
   const names = new Set<string>()
   for (const entry of entries) {
     if (
-      !isRecord(entry) || typeof entry.id !== 'string' || !entry.id || entry.id.length > 128 || ids.has(entry.id) ||
-      typeof entry.name !== 'string' || !entry.name.trim() || entry.name.length > MAX_CSS_NAME_LENGTH
+      !isRecord(entry) ||
+      typeof entry.id !== 'string' ||
+      !entry.id ||
+      entry.id.length > 128 ||
+      ids.has(entry.id) ||
+      typeof entry.name !== 'string' ||
+      !entry.name.trim() ||
+      entry.name.length > MAX_CSS_NAME_LENGTH
     ) {
       throw new CustomCssError('invalid')
     }
@@ -91,15 +96,24 @@ export const normalizeCustomCss = (input: unknown): ChatCssCustomization => {
 export const normalizeSavedChatCss = (input: unknown): SavedChatCss[] => {
   if (!Array.isArray(input)) return []
   const ids = new Set<string>()
-  return input.filter((entry): entry is SavedChatCss => {
-    if (
-      !isRecord(entry) || typeof entry.id !== 'string' || !entry.id || entry.id.length > 128 ||
-      typeof entry.name !== 'string' || !entry.name.trim() || entry.name.length > MAX_CSS_NAME_LENGTH ||
-      typeof entry.css !== 'string' || ids.has(entry.id)
-    ) return false
-    ids.add(entry.id)
-    return true
-  }).map(({ id, name, css }) => ({ id, name, css }))
+  return input
+    .filter((entry): entry is SavedChatCss => {
+      if (
+        !isRecord(entry) ||
+        typeof entry.id !== 'string' ||
+        !entry.id ||
+        entry.id.length > 128 ||
+        typeof entry.name !== 'string' ||
+        !entry.name.trim() ||
+        entry.name.length > MAX_CSS_NAME_LENGTH ||
+        typeof entry.css !== 'string' ||
+        ids.has(entry.id)
+      )
+        return false
+      ids.add(entry.id)
+      return true
+    })
+    .map(({ id, name, css }) => ({ id, name, css }))
 }
 
 export const readCustomCssBackup = (input: unknown): { customCss: ChatCssCustomization; savedChatCss: SavedChatCss[] } => {
@@ -114,7 +128,8 @@ export const readCustomCssBackup = (input: unknown): { customCss: ChatCssCustomi
 }
 
 export const areSavedChatCssEqual = (left: SavedChatCss[], right: SavedChatCss[]) =>
-  left.length === right.length && left.every((entry, index) => {
+  left.length === right.length &&
+  left.every((entry, index) => {
     const other = right[index]
     return other !== undefined && entry.id === other.id && entry.name === other.name && entry.css === other.css
   })

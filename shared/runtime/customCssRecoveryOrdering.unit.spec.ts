@@ -17,7 +17,10 @@ import { createCustomCssActions } from './customCssActions'
 const deferred = () => {
   let resolve!: () => void
   let reject!: (error: Error) => void
-  const promise = new Promise<void>((yes, no) => { resolve = yes; reject = no })
+  const promise = new Promise<void>((yes, no) => {
+    resolve = yes
+    reject = no
+  })
   return { promise, resolve, reject }
 }
 
@@ -27,12 +30,23 @@ const setup = () => {
   store.set(customCssSuspendedAtom, true)
   let disposed = false
   const repository = {
-    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => { store.set(customCssAtom, value) }),
+    saveCustomCss: vi.fn(async (value: ChatCssCustomization) => {
+      store.set(customCssAtom, value)
+    }),
     saveSavedChatCss: vi.fn(async () => {}),
-    saveCustomCssSuspended: vi.fn(async (value: boolean) => { store.set(receiveCustomCssSuspendedAtom, value) }),
+    saveCustomCssSuspended: vi.fn(async (value: boolean) => {
+      store.set(receiveCustomCssSuspendedAtom, value)
+    }),
   }
   const actions = createCustomCssActions(store, repository, () => disposed)
-  return { store, repository, actions, dispose: () => { disposed = true } }
+  return {
+    store,
+    repository,
+    actions,
+    dispose: () => {
+      disposed = true
+    },
+  }
 }
 
 describe('stops superseding pending CSS recovery', () => {
@@ -40,9 +54,7 @@ describe('stops superseding pending CSS recovery', () => {
     const { store, repository, actions } = setup()
     const resume = deferred()
     repository.saveCustomCssSuspended.mockImplementationOnce(() => resume.promise)
-    const pending = command === 'activate'
-      ? actions.activate('.source{}', store.get(customCssAtom))
-      : actions.suspend(false)
+    const pending = command === 'activate' ? actions.activate('.source{}', store.get(customCssAtom)) : actions.suspend(false)
     await vi.waitFor(() => expect(repository.saveCustomCssSuspended).toHaveBeenCalledWith(false))
     const request = store.get(customCssRecoveryAtom)
 

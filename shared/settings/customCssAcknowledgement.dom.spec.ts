@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { LocaleMessages } from '@/shared/i18n/generated/translationTypes'
-import { createAppRuntime, type AppRuntime } from '@/shared/runtime/createAppRuntime'
+import { type AppRuntime, createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import {
   customCssAtom,
   customCssFeedbackAtom,
@@ -13,9 +13,13 @@ import { createSettingsRepository } from './repository'
 import { CUSTOM_CSS_STORAGE_KEY } from './storageKeys'
 
 const runtimes: AppRuntime[] = []
-beforeEach(async () => { await chrome.storage.local.clear() })
+beforeEach(async () => {
+  await chrome.storage.local.clear()
+})
 afterEach(() => {
-  runtimes.splice(0).forEach(runtime => { runtime.dispose() })
+  runtimes.splice(0).forEach(runtime => {
+    runtime.dispose()
+  })
   vi.restoreAllMocks()
 })
 const open = async () => {
@@ -109,9 +113,12 @@ describe('unconfirmed CSS persistence', () => {
   it('does not enqueue an obsolete retry if another page commits during the failed readback', async () => {
     const { runtime, repository } = await open()
     let rejectRead: ((error: Error) => void) | undefined
-    const read = vi.spyOn(chrome.storage.local, 'get').mockImplementationOnce(() => new Promise<Record<string, unknown>>((_resolve, reject) => {
-      rejectRead = reject
-    }))
+    const read = vi.spyOn(chrome.storage.local, 'get').mockImplementationOnce(
+      () =>
+        new Promise<Record<string, unknown>>((_resolve, reject) => {
+          rejectRead = reject
+        }),
+    )
     const pending = runtime.customCss.apply('.older{}', runtime.store.get(customCssAtom))
     const rejected = expect(pending).rejects.toThrow('unconfirmed')
     await vi.waitFor(() => expect(rejectRead).toBeDefined())

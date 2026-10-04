@@ -1,14 +1,24 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createAppRuntime, type AppRuntime } from '@/shared/runtime/createAppRuntime'
 import type { LocaleMessages } from '@/shared/i18n/generated/translationTypes'
-import { customCssAtom, customCssFeedbackAtom, customCssSuspendedAtom, isCustomCssStoppedAtom, savedChatCssAtom } from '@/shared/state/customCssAtoms'
+import { type AppRuntime, createAppRuntime } from '@/shared/runtime/createAppRuntime'
+import {
+  customCssAtom,
+  customCssFeedbackAtom,
+  customCssSuspendedAtom,
+  isCustomCssStoppedAtom,
+  savedChatCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { createSettingsRepository } from './repository'
 import { CUSTOM_CSS_STORAGE_KEY, CUSTOM_CSS_SUSPENDED_STORAGE_KEY } from './storageKeys'
 
 const runtimes: AppRuntime[] = []
-beforeEach(async () => { await chrome.storage.local.clear() })
+beforeEach(async () => {
+  await chrome.storage.local.clear()
+})
 afterEach(() => {
-  runtimes.splice(0).forEach(runtime => { runtime.dispose() })
+  runtimes.splice(0).forEach(runtime => {
+    runtime.dispose()
+  })
   vi.restoreAllMocks()
 })
 const open = async (writer: string) => {
@@ -40,13 +50,10 @@ describe('CSS storage and import integration', () => {
   })
 })
 
-
 describe('CSS write confirmation and retry boundaries', () => {
   it('clears the matching stale save error after the common Retry confirms the value', async () => {
     const { runtime } = await open('retry-error')
-    vi.spyOn(chrome.storage.local, 'set')
-      .mockRejectedValueOnce(new Error('quota'))
-      .mockRejectedValueOnce(new Error('quota'))
+    vi.spyOn(chrome.storage.local, 'set').mockRejectedValueOnce(new Error('quota')).mockRejectedValueOnce(new Error('quota'))
     await expect(runtime.customCss.apply('body{}', runtime.store.get(customCssAtom))).rejects.toThrow('quota')
     expect(runtime.store.get(customCssFeedbackAtom)).toMatchObject({ kind: 'error', operation: 'apply', code: 'storage' })
     await runtime.retryPersistence()
@@ -66,9 +73,7 @@ describe('CSS write confirmation and retry boundaries', () => {
 
   it('lets Remove effect supersede a failed enabling write before a later Retry', async () => {
     const { runtime } = await open('cancel-failed-apply')
-    vi.spyOn(chrome.storage.local, 'set')
-      .mockRejectedValueOnce(new Error('quota'))
-      .mockRejectedValueOnce(new Error('quota'))
+    vi.spyOn(chrome.storage.local, 'set').mockRejectedValueOnce(new Error('quota')).mockRejectedValueOnce(new Error('quota'))
     await expect(runtime.customCss.apply('body {display:none}', runtime.store.get(customCssAtom))).rejects.toThrow('quota')
     await runtime.customCss.disable()
     await runtime.retryPersistence()

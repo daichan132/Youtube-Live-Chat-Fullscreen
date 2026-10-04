@@ -9,8 +9,12 @@ export default defineConfig({
   test: {
     clearMocks: true,
     restoreMocks: true,
+    // WXT's plugin setup must run for each project to initialize the extension API mock.
+    sharedViteServer: false,
     allowOnly: process.env.YLC_ALLOW_ONLY === '1',
     coverage: coverageConfig,
+    // Packaged CSS presets are runtime data, so raw imports must keep their source.
+    css: { include: [/\.css\?raw(?:&|$)/] },
     projects: [
       {
         extends: true,

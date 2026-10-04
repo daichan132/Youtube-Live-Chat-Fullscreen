@@ -5,15 +5,7 @@ import { usePresetReorder } from './usePresetReorder'
 
 const IDS = ['first', 'second', 'third']
 
-const Harness = ({
-  ids = IDS,
-  onCommit,
-  onClose,
-}: {
-  ids?: string[]
-  onCommit: (ids: string[]) => void
-  onClose?: () => void
-}) => {
+const Harness = ({ ids = IDS, onCommit, onClose }: { ids?: string[]; onCommit: (ids: string[]) => void; onClose?: () => void }) => {
   const reorder = usePresetReorder({ ids, onCommit, describeMove: (id, position) => `${id}:${position}` })
   return (
     <Modal isOpen ariaLabel='Presets' shouldFocusAfterRender={false} onRequestClose={onClose}>

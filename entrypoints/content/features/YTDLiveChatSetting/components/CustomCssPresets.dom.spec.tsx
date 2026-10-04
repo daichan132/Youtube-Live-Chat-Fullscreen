@@ -2,13 +2,28 @@ import { act, fireEvent } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
-import { customCssAtom, customCssDraftAtom, customCssEditorUiAtom, customCssSuspendedAtom, savedChatCssAtom } from '@/shared/state/customCssAtoms'
+import {
+  customCssAtom,
+  customCssDraftAtom,
+  customCssEditorUiAtom,
+  customCssSuspendedAtom,
+  savedChatCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 
-const actions = vi.hoisted(() => ({ activate: vi.fn(), apply: vi.fn(), register: vi.fn(), remove: vi.fn(), disable: vi.fn(), suspend: vi.fn() }))
+const actions = vi.hoisted(() => ({
+  activate: vi.fn(),
+  apply: vi.fn(),
+  register: vi.fn(),
+  remove: vi.fn(),
+  disable: vi.fn(),
+  suspend: vi.fn(),
+}))
 vi.mock('@/shared/runtime/AppProvider', () => ({ useOptionalAppRuntime: () => ({ customCss: actions }) }))
-beforeEach(() => { for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined) })
+beforeEach(() => {
+  for (const action of Object.values(actions)) action.mockReset().mockResolvedValue(undefined)
+})
 const presetById = (id: string) => {
   const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
   if (!preset) throw new Error(`Missing fixture preset: ${id}`)
@@ -92,7 +107,9 @@ describe('choosing CSS in one list', () => {
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.register' }))
     expect(view.getByLabelText('content.customCss.name')).toHaveValue(preset.labelKey)
     fireEvent.change(view.getByLabelText('content.customCss.name'), { target: { value: 'My bubbles' } })
-    await act(async () => { fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' })) })
+    await act(async () => {
+      fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
+    })
     expect(actions.register).toHaveBeenCalledWith('My bubbles', '/* personal copy */')
     expect(actions.activate).not.toHaveBeenCalled()
     expect(preset.css).toBe(original)

@@ -58,6 +58,8 @@ page signal
 
 DOM nodes never enter diagnostic reports or pure model transitions.
 
+Chat availability uses structural error renderers first. When both the normal chat renderer and its item list are ready, it does not read the accumulated message text: viewer posts are not evidence that chat is disabled. Loading documents without a ready item list retain the plain error-text fallback.
+
 ## Selectors and page observation
 
 YouTube selectors used for runtime compatibility live in `platform/youtube/selectorCatalog.ts` as named probes. A probe has a stable diagnostic ID and an ordered fallback list. `queryFirstProbe` reports the first matched fallback; `queryAllProbes` deduplicates nodes found by multiple candidates.

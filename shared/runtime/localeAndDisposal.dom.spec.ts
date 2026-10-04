@@ -19,7 +19,14 @@ const runtimes: AppRuntime[] = []
 const createSession = async (loadMessages: (locale: LocaleCode) => Promise<LocaleMessages>) => {
   let watched: Parameters<SettingsRepository['watch']>[0] | undefined
   const repository: SettingsRepository = {
-    load: async () => ({ global: { ytdLiveChat: true, themeMode: 'system' }, chat: structuredClone(DEFAULT_CHAT_SETTINGS), locale: 'en', customCss: { enabled: false, css: '' }, savedChatCss: [], customCssSuspended: false }),
+    load: async () => ({
+      global: { ytdLiveChat: true, themeMode: 'system' },
+      chat: structuredClone(DEFAULT_CHAT_SETTINGS),
+      locale: 'en',
+      customCss: { enabled: false, css: '' },
+      savedChatCss: [],
+      customCssSuspended: false,
+    }),
     saveCustomCss: vi.fn(async () => {}),
     saveSavedChatCss: vi.fn(async () => {}),
     saveCustomCssSuspended: vi.fn(async () => {}),
@@ -119,9 +126,7 @@ describe('locale request and runtime disposal boundaries', () => {
 
   it('keeps a newer local choice when an older external load finishes', async () => {
     const japanese = deferred<LocaleMessages>()
-    const { runtime, emitLocale } = await createSession(locale =>
-      locale === 'ja' ? japanese.promise : Promise.resolve(messages(locale)),
-    )
+    const { runtime, emitLocale } = await createSession(locale => (locale === 'ja' ? japanese.promise : Promise.resolve(messages(locale))))
     emitLocale('ja')
     await runtime.setLocale('fr')
     japanese.resolve(messages('ja'))

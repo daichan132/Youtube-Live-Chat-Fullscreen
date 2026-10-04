@@ -1,4 +1,11 @@
 import { getCurrentLiveChatIframe, getLiveChatIframes, isIframeForCurrentVideo } from '../chat/shared/iframeDom'
+import {
+  chatItemListRendererProbe,
+  chatRendererProbe,
+  chatStatusMessageProbe,
+  chatUnavailableMessageProbe,
+  queryFirstProbe,
+} from '../platform/youtube/selectorCatalog'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 import { isYouTubeLiveNow } from './isYouTubeLiveNow'
 
@@ -43,8 +50,12 @@ const hasUnavailableText = (doc: Document) => {
 }
 
 export const isLiveChatUnavailable = (doc: Document) => {
-  if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
-  if (doc.querySelector('yt-live-chat-message-renderer') && !doc.querySelector('yt-live-chat-renderer')) return true
+  if (queryFirstProbe(doc, chatUnavailableMessageProbe).element) return true
+  const renderer = queryFirstProbe(doc, chatRendererProbe).element
+  // Ready chat messages can quote unavailable text. Skip their accumulated
+  // body text while retaining plain error pages before the item list is ready.
+  if (renderer && queryFirstProbe(doc, chatItemListRendererProbe).element) return false
+  if (!renderer && queryFirstProbe(doc, chatStatusMessageProbe).element) return true
   return hasUnavailableText(doc)
 }
 
@@ -65,8 +76,8 @@ const hasLiveChatDomContainer = () => {
 }
 
 export const hasLiveChatRendererReady = (doc: Document) => {
-  const renderer = doc.querySelector('yt-live-chat-renderer')
-  const itemList = doc.querySelector('yt-live-chat-item-list-renderer')
+  const renderer = queryFirstProbe(doc, chatRendererProbe).element
+  const itemList = queryFirstProbe(doc, chatItemListRendererProbe).element
   return Boolean(renderer && itemList)
 }
 

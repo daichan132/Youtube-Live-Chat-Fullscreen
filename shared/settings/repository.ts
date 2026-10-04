@@ -1,4 +1,6 @@
 import { storage } from 'wxt/utils/storage'
+import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
+import { buildSettingsBackup, type SettingsBackup } from './backup'
 import {
   assertCustomCss,
   assertSavedChatCss,
@@ -9,13 +11,11 @@ import {
   normalizeSavedChatCss,
   type SavedChatCss,
 } from './customCss'
-import { assertAppearanceCapacity } from './settingsCapacity'
-import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
-import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { normalizeChatGeometry } from './normalizeSettings'
 import { getExtensionPageLegacyLocaleStorage, readSettingsSnapshot } from './readSettingsSnapshot'
+import { assertAppearanceCapacity } from './settingsCapacity'
 import {
   type ChatAppearanceSettings,
   DEFAULT_GLOBAL_SETTINGS,
@@ -25,8 +25,8 @@ import {
   PERSISTENCE_DOMAINS,
   type PersistenceDomain,
   type SettingsSnapshot,
-  settingsItems,
   type StoredEnvelope,
+  settingsItems,
 } from './storageDomains'
 
 export type { ChatAppearanceSettings, PersistenceDomain, SettingsSnapshot, StoredEnvelope } from './storageDomains'
@@ -50,7 +50,12 @@ export type SettingsRepository = {
   saveGeometry: (value: ChatGeometry) => Promise<void>
   saveLocale: (value: LocaleCode) => Promise<void>
   // Confirmed imported values are delivered through watch, like ordinary commits.
-  replaceSettings: (global: GlobalSettings, chat: ChatSettings, customCss?: ChatCssCustomization, savedChatCss?: SavedChatCss[]) => Promise<void>
+  replaceSettings: (
+    global: GlobalSettings,
+    chat: ChatSettings,
+    customCss?: ChatCssCustomization,
+    savedChatCss?: SavedChatCss[],
+  ) => Promise<void>
   watch: (handlers: {
     onCustomCss?: (value: ChatCssCustomization, source?: SettingsCommitSource) => void
     onSavedChatCss?: (value: SavedChatCss[], source?: SettingsCommitSource) => void
@@ -67,8 +72,26 @@ export type SettingsRepository = {
   flush: () => Promise<void>
 }
 
+export type SettingsImportFailurePhase = 'before-write' | 'write' | 'readback' | 'following-write'
+export class SettingsImportError extends Error {
+  constructor(
+    public readonly phase: SettingsImportFailurePhase,
+    cause: unknown,
+  ) {
+    super(`Settings import failed: ${phase}`, { cause })
+    this.name = 'SettingsImportError'
+  }
+}
+
 const SAVE_RETRY_DELAY_MS = 400
-const IMPORT_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry', 'customCss', 'savedChatCss'] as const satisfies readonly PersistenceDomain[]
+const IMPORT_DOMAINS = [
+  'enabled',
+  'theme',
+  'appearance',
+  'geometry',
+  'customCss',
+  'savedChatCss',
+] as const satisfies readonly PersistenceDomain[]
 
 type RepositoryDependencies = {
   waitBeforeRetry: (delayMs: number) => Promise<void>
@@ -294,7 +317,10 @@ export const createSettingsRepository = (
   }
 
   const replaceSettings = (
-    global: GlobalSettings, chat: ChatSettings, customCss = DEFAULT_CUSTOM_CSS, savedChatCss: SavedChatCss[] = [],
+    global: GlobalSettings,
+    chat: ChatSettings,
+    customCss = DEFAULT_CUSTOM_CSS,
+    savedChatCss: SavedChatCss[] = [],
   ) => {
     assertAppearanceCapacity(chat)
     assertCustomCss(customCss)
@@ -320,10 +346,13 @@ export const createSettingsRepository = (
       { item: settingsItems.customCss, value: envelope({ ...customCss, enabled: false }) },
       { item: settingsItems.savedChatCss, value: envelope(savedChatCss.map(entry => ({ ...entry }))) },
     ]
+    let phase: SettingsImportFailurePhase = 'before-write'
     const current: Promise<void> = Promise.allSettled(preceding)
       .then(async () => {
         throwPersistenceFailure()
+        phase = 'write'
         await storage.setItems(values)
+        phase = 'readback'
         const versions = new Map(supersessionVersions)
         const results = await storage.getItems(IMPORT_DOMAINS.map(domain => settingsItems[domain]))
         const envelopes = results.map((result, index) => {
@@ -335,16 +364,15 @@ export const createSettingsRepository = (
         }
         for (const [index, domain] of IMPORT_DOMAINS.entries()) {
           const stored = envelopes[index]
-          if (
-            !stored ||
-            localSequences.get(domain) !== sequences.get(domain) ||
-            supersessionVersions.get(domain) !== versions.get(domain)
-          )
+          if (!stored || localSequences.get(domain) !== sequences.get(domain) || supersessionVersions.get(domain) !== versions.get(domain))
             continue
           // Deliver while the read is still current, not via a later caller's
           // unconditional snapshot replacement. Newer intents keep their UI.
           notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'import' : 'external')
         }
+      })
+      .catch(error => {
+        throw new SettingsImportError(phase, error)
       })
       .finally(() => {
         if (replacementTail === current) replacementTail = null
@@ -352,9 +380,15 @@ export const createSettingsRepository = (
       })
     replacementTail = current
     publishStatus()
-    // The popup closes after import resolves. Drain later edits too, but only
+    // Drain later edits too, but only
     // after releasing the barrier those edits depend on (never inside it).
-    return current.then(flush)
+    return current.then(async () => {
+      try {
+        await flush()
+      } catch (error) {
+        throw new SettingsImportError('following-write', error)
+      }
+    })
   }
 
   return {
@@ -415,6 +449,8 @@ export const createSettingsRepository = (
 
 export const buildRepositoryBackup = (snapshot: SettingsSnapshot): SettingsBackup =>
   buildSettingsBackup({
-    globalSetting: snapshot.global, chatSettings: snapshot.chat,
-    customCss: snapshot.customCss, savedChatCss: snapshot.savedChatCss,
+    globalSetting: snapshot.global,
+    chatSettings: snapshot.chat,
+    customCss: snapshot.customCss,
+    savedChatCss: snapshot.savedChatCss,
   })
