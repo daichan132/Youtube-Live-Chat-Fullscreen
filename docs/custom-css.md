@@ -13,7 +13,8 @@ can wrap these controls onto another row in a narrow panel.
 The CSS textarea is always visible in the Custom CSS tab. Without a committed
 source or local draft, it starts blank. Users paste or edit CSS, then choose Use
 or save a named copy beside the editor. A secondary selector loads packaged
-starters; it does not preselect a starter on first use. The header has one Off
+starters, and a visual picker shows their names, descriptions and fixed chat
+thumbnails. Neither picker preselects a starter on first use. The header has one Off
 operation. When paused, Use explicitly offers to resume with the chosen source.
 
 Named personal copies appear as rows with Load, Use and Delete operations. Load
@@ -23,12 +24,16 @@ copy. Editing or using a loaded copy never changes its saved original. Saving
 creates a new named copy, and an existing name is rejected rather than overwritten.
 
 The existing appearance settings remain enabled and keep their own Undo/Redo.
-CSS does not rewrite the profile, activate a different appearance preset, or
-clear style history. A short note explains that CSS declarations can override
-those controls. Outline's background-opacity prerequisite points to the existing
-Background Color setting rather than introducing a second background control.
+The packaged starters consume the existing style variables, so Text Color, Text
+Size, Font Family and Spacing still update the styled comments after Use. Their
+neutral surfaces and borders also follow the existing color tokens; Background
+Color continues to control the chat backdrop. CSS does not rewrite the profile,
+activate a different appearance preset, or clear style history. Handwritten CSS
+with fixed declarations can still override the ordinary controls. Outline's
+background-opacity prerequisite points to the existing Background Color setting
+rather than introducing a second background control.
 
-## Sources and illustrations
+## Sources and previews
 
 The nine starter sources and contributor instructions are in
 [`shared/settings/chatCssPresets`](../shared/settings/chatCssPresets/README.md).
@@ -44,12 +49,21 @@ list does. Cancel leaves the text and source identity intact. Source identity
 keeps starter and saved-copy IDs separate, including when those IDs match.
 Edited text is identified as an unapplied draft, not mislabeled as its original.
 
-`ChatCssExample` draws a small, fixed illustration only when the complete source
-exactly matches a packaged starter. It is an example, not the actual YouTube
-Document or a live preview of profile changes. Arbitrary, edited and imported CSS
-show a neutral custom-CSS placeholder and the trust warning. No editable CSS,
-HTML, style node or iframe is executed in the example. Catalog updates do not
-silently update saved or active copies.
+The visual picker uses `ChatCssExample` for small, fixed illustrations. These
+thumbnails explain the arrangement without executing any CSS. Loading an exact
+packaged source also shows `ChatCssPreview` above the always-visible textarea.
+This selected preview renders representative YouTube-shaped comments with the
+actual packaged source, production iframe styles and current effective appearance
+settings in an isolated iframe. Returning from the Settings tab reflects the
+chosen colors and text size in this preview as well as the actual chat.
+
+The iframe has an empty `sandbox` and an opaque origin, with no script or
+same-origin permission. Its content is built only from the trusted catalog and
+escaped fixed sample text. Editable, imported and saved CSS is never executed in
+a preview; only a byte-for-byte match to a packaged starter can render there.
+Arbitrary or edited sources have no executable preview and retain the existing
+trust warning. Loading or previewing never applies CSS or saves a profile. Catalog
+updates do not silently update saved or active copies.
 
 Three starters change the arrangement of normal messages, in addition to the six
 existing text, spacing and decoration starters:
@@ -65,8 +79,9 @@ item list. Their nested layout uses YouTube's `#content`, author chip and messag
 nodes. A simpler renderer without that wrapper keeps a usable fallback layout.
 The sources preserve author/icon visibility preferences and semantic text colors;
 paid messages and the composer remain outside their selector scope. The fixed
-illustrations explain the intended arrangement; only Use applies the selected
-source to the actual chat Document.
+thumbnails explain the intended arrangement, and the selected isolated preview
+shows how that packaged source combines with ordinary appearance settings. Only
+Use applies the selected source to the actual chat Document.
 
 ## Ownership
 

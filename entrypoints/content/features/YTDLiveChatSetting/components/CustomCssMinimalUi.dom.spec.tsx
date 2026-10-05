@@ -97,14 +97,16 @@ describe('focused CSS settings', () => {
     expect(onOpenChange).not.toHaveBeenCalled()
   })
 
-  it('shows examples only for exact bundled CSS, never for an edited or imported source', () => {
+  it('renders a sandboxed preview only for exact bundled CSS, never for an edited or imported source', () => {
     const { view } = setup()
     const preset = CHAT_CSS_PRESETS[0]
     if (!preset) throw new Error('Missing starter style')
     fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
-    expect(view.container.querySelector('[data-ylc-css-example]')).toHaveAttribute('data-ylc-css-example', preset.id)
+    expect(view.container.querySelector('[data-ylc-css-preview]')).toHaveAttribute('data-ylc-css-preview', preset.id)
+    expect(view.container.querySelector('[data-ylc-css-preview]')).toHaveAttribute('sandbox', '')
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '</style><script>unsafe()</script>' } })
-    expect(view.container.querySelector('[data-ylc-css-example]')).toBeNull()
+    expect(view.container.querySelector('[data-ylc-css-preview]')).toBeNull()
+    expect(view.container.querySelectorAll('.ylc-custom-css-browse [data-ylc-css-example]')).toHaveLength(CHAT_CSS_PRESETS.length)
     expect(view.getByRole('group', { name: 'content.customCss.title' }).querySelector('script, style, iframe')).toBeNull()
     expect(view.getByLabelText('CSS')).toHaveValue('</style><script>unsafe()</script>')
     expect(view.getByLabelText('CSS')).toHaveAccessibleDescription(/content.customCss.warning/)

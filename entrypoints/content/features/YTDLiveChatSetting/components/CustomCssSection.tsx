@@ -31,6 +31,7 @@ import {
   savedChatCssAtom,
 } from '@/shared/state/customCssAtoms'
 import { ChatCssExample } from './ChatCssExample'
+import { ChatCssPreview } from './ChatCssPreview'
 import './customCssSection.css'
 
 type Confirmation =
@@ -80,6 +81,7 @@ export const CustomCssSection = () => {
   const [draft, setDraft] = useAtom(customCssDraftAtom)
   const [editorUi, setEditorUi] = useAtom(customCssEditorUiAtom)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
+  const [browsing, setBrowsing] = useState(false)
   const editorRef = useRef<HTMLTextAreaElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
@@ -183,6 +185,7 @@ export const CustomCssSection = () => {
   }, [busy, editorUi.registering, feedback])
 
   const load = (text: string, nextSource: CustomCssSource) => {
+    setBrowsing(false)
     setDraft({ css: text, baseline: store.get(customCssAtom) })
     setEditorUi(current => ({ ...current, source: nextSource }))
     setConfirmation(null)
@@ -302,6 +305,65 @@ export const CustomCssSection = () => {
             </button>
           )}
         </div>
+        <div className='ylc-custom-css-recommendations'>
+          <label htmlFor={`${id}-style`}>{t('content.customCss.presets')}</label>
+          <select
+            id={`${id}-style`}
+            value={choice}
+            disabled={busy}
+            aria-label={t('content.customCss.choosePreset')}
+            aria-describedby={`${id}-load-help`}
+            onChange={event => {
+              const next = CHAT_CSS_PRESETS.find(entry => `preset:${entry.id}` === event.target.value)
+              if (next) requestLoad(next.css, { kind: 'preset', id: next.id })
+            }}
+          >
+            <option value='' disabled>
+              {t('content.customCss.chooseSaved')}
+            </option>
+            {CHAT_CSS_PRESETS.map(entry => (
+              <option key={entry.id} value={`preset:${entry.id}`}>
+                {t(entry.labelKey)}
+              </option>
+            ))}
+          </select>
+          <p id={`${id}-load-help`} className='ylc-custom-css-help'>
+            {t('content.customCss.loadOnly')}
+          </p>
+          <details className='ylc-custom-css-browse' open={browsing} onToggle={event => setBrowsing(event.currentTarget.open)}>
+            <summary>{t('content.customCss.browsePresets')}</summary>
+            <div className='ylc-custom-css-preset-grid'>
+              {CHAT_CSS_PRESETS.map(entry => (
+                <article className='ylc-custom-css-preset-card' data-selected={example?.id === entry.id} key={entry.id}>
+                  <button
+                    type='button'
+                    className='ylc-custom-css-preset-choice'
+                    data-ylc-css-preset-choice={entry.id}
+                    aria-label={formatMessage(t('content.customCss.loadPreset'), { name: t(entry.labelKey) })}
+                    aria-pressed={example?.id === entry.id}
+                    disabled={busy}
+                    onClick={() => requestLoad(entry.css, { kind: 'preset', id: entry.id })}
+                  >
+                    {t(entry.labelKey)}
+                  </button>
+                  <ChatCssExample preset={entry} compact />
+                </article>
+              ))}
+            </div>
+          </details>
+        </div>
+        {example && (
+          <section className='ylc-custom-css-preview' aria-label={t('content.customCss.previewTitle')}>
+            <div className='ylc-custom-css-preview-heading'>
+              <h3>
+                {t('content.customCss.previewTitle')} · {t(example.labelKey)}
+              </h3>
+              <p className='ylc-custom-css-help'>{t('content.customCss.previewHelp')}</p>
+            </div>
+            <ChatCssPreview preset={example} />
+            {example.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}
+          </section>
+        )}
         <div className='ylc-custom-css-editor-heading'>
           <label htmlFor={`${id}-editor`}>CSS</label>
           <span id={`${id}-limit`} className='ylc-custom-css-count' data-invalid={tooLarge}>
@@ -572,39 +634,6 @@ export const CustomCssSection = () => {
             </ul>
           )}
         </section>
-        <div className='ylc-custom-css-recommendations'>
-          <label htmlFor={`${id}-style`}>{t('content.customCss.presets')}</label>
-          <select
-            id={`${id}-style`}
-            value={choice}
-            disabled={busy}
-            aria-label={t('content.customCss.choosePreset')}
-            aria-describedby={`${id}-load-help`}
-            onChange={event => {
-              const next = CHAT_CSS_PRESETS.find(entry => `preset:${entry.id}` === event.target.value)
-              if (next) requestLoad(next.css, { kind: 'preset', id: next.id })
-            }}
-          >
-            <option value='' disabled>
-              {t('content.customCss.chooseSaved')}
-            </option>
-            {CHAT_CSS_PRESETS.map(entry => (
-              <option key={entry.id} value={`preset:${entry.id}`}>
-                {t(entry.labelKey)}
-              </option>
-            ))}
-          </select>
-          <p id={`${id}-load-help`} className='ylc-custom-css-help'>
-            {t('content.customCss.loadOnly')}
-          </p>
-          {example && (
-            <details key={example.id} open className='ylc-custom-css-example-details'>
-              <summary>{t('content.customCss.presetHelp')}</summary>
-              <ChatCssExample preset={example} />
-              {example.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}
-            </details>
-          )}
-        </div>
       </div>
       <p className='ylc-custom-css-context'>{t('content.customCss.description')}</p>
     </fieldset>

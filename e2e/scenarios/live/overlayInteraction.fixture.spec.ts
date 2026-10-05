@@ -7,7 +7,7 @@ import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtube
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
-import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
+import type { ChatGeometry, ChatGeometryV2, ChatProfile } from '../../../shared/settings/model'
 import {
   APPEARANCE_STORAGE_KEY,
   CUSTOM_CSS_STORAGE_KEY,
@@ -43,6 +43,12 @@ const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> 
 const expectPersistedGeometry = async (storagePage: Page, geometry: ChatGeometry) => {
   await expect.poll(() => readPersistedGeometry(storagePage)).toEqual(geometry)
 }
+
+const readPersistedAppearance = (storagePage: Page): Promise<ChatProfile['appearance'] | null> =>
+  storagePage.evaluate(async key => {
+    const stored = (await chrome.storage.local.get(key))[key] as { value?: { profile?: ChatProfile } } | undefined
+    return stored?.value?.profile?.appearance ?? null
+  }, APPEARANCE_STORAGE_KEY)
 
 const openStoragePage = async (extension: Extension, page: Page) => {
   const storagePage = await page.context().newPage()
@@ -510,7 +516,10 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
     }, testInfo) => {
       test.setTimeout(120000)
       const css = readFileSync(new URL(`../../../shared/settings/chatCssPresets/${presetId}.css`, import.meta.url), 'utf8')
-      expect(await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })).not.toBeNull()
+      expect(await patchOverlayStore(extension, {
+        geometry: SEEDED_GEOMETRY,
+        profile: { appearance: { fontSize: 13, fontColor: { r: 255, g: 255, b: 255, a: 1 }, backgroundColor: { r: 0, g: 0, b: 0, a: 1 } } },
+      })).not.toBeNull()
       const envelope = (value: unknown) => ({ schemaVersion: 1, writerId: 'ylc-preset-layout-fixture', value })
       await extension.storage.set({
         [CUSTOM_CSS_STORAGE_KEY]: envelope({ enabled: false, css: '' }),
@@ -538,7 +547,12 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
         await overlay.openSettings()
         const settings = overlay.settingsFrame()
         await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
-        await settings.getByRole('combobox', { name: 'Choose a style', exact: true }).selectOption(`preset:${presetId}`)
+        if (presetId === 'messenger') {
+          await settings.getByText('Choose by appearance', { exact: true }).click()
+          await settings.locator('[data-ylc-css-preset-choice="messenger"]').click()
+        } else {
+          await settings.getByRole('combobox', { name: 'Choose a style', exact: true }).selectOption(`preset:${presetId}`)
+        }
         await expect(settings.getByRole('textbox', { name: 'CSS', exact: true })).toHaveValue(css)
         // Loading is page-local editing only; activation requires the real Use button.
         expect((await fixture.read()).sources).toEqual([])
@@ -548,10 +562,54 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
           const stored = (await chrome.storage.local.get(key))[key] as { value?: unknown } | undefined
           return stored?.value
         }, CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: true, css })
-        const live = await expectChatPresetLayout(fixture, presetId, css)
+        let live = await expectChatPresetLayout(fixture, presetId, css)
         expect(live.controls).toEqual(before.controls)
         expect(await fixture.mainDocumentStyleCount()).toBe(0)
         await expect(settings.locator('style[data-ylc-user-css]')).toHaveCount(0)
+
+        if (presetId === 'messenger') {
+          // Ordinary appearance controls remain effective after Use. Exercise the
+          // actual UI and repository; changing these values must not rewrite CSS.
+          await settings.getByRole('tab', { name: 'Settings', exact: true }).click()
+          const textSize = settings.getByRole('slider', { name: 'Text Size', exact: true })
+          await expect(textSize).toHaveValue('13')
+          for (let index = 0; index < 7; index += 1) await textSize.press('ArrowRight')
+          await expect(textSize).toHaveValue('20')
+          await settings.getByRole('button', { name: 'Text Color', exact: true }).click()
+          const textColor = settings.getByRole('dialog', { name: 'Color picker', exact: true }).getByRole('slider', { name: 'Color', exact: true })
+          for (let index = 0; index < 20; index += 1) await textColor.press('ArrowDown')
+          await settings.getByRole('button', { name: 'Text Color', exact: true }).click()
+          await expect(settings.getByRole('dialog', { name: 'Color picker', exact: true })).toHaveCount(0)
+          await settings.getByRole('button', { name: 'Background Color', exact: true }).click()
+          const backgroundColor = settings.getByRole('dialog', { name: 'Color picker', exact: true }).getByRole('slider', { name: 'Color', exact: true })
+          for (let index = 0; index < 20; index += 1) await backgroundColor.press('ArrowUp')
+          await settings.getByRole('button', { name: 'Background Color', exact: true }).click()
+          await expect.poll(() => readPersistedAppearance(storagePage)).toMatchObject({
+            fontSize: 20, fontColor: { r: 0, g: 0, b: 0, a: 1 }, backgroundColor: { r: 255, g: 255, b: 255, a: 1 },
+          })
+          await expect.poll(async () => (await fixture.read()).messages.map(message => ({
+            rendererFontSize: message.renderer.fontSize, messageFontSize: message.message.fontSize,
+            messageColor: message.message.color, bubbleColor: message.content.backgroundColor,
+          }))).toEqual(Array(2).fill({
+            rendererFontSize: '20px', messageFontSize: '20px', messageColor: 'rgb(0, 0, 0)', bubbleColor: 'rgba(0, 0, 0, 0.12)',
+          }))
+          await expect(page.locator('[data-ylc-chat-background]')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+          await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
+          const preview = settings.locator('iframe[data-ylc-css-preview="messenger"]')
+          await expect(preview).toBeVisible()
+          await expect(preview).toHaveAttribute('sandbox', '')
+          await expect(settings.locator('.ylc-chat-css-preview-surface')).toHaveCSS('background-color', 'rgb(255, 255, 255)')
+          await expect.poll(async () => (await fixture.readSettingsPreview(settings, presetId)).sources).toEqual([css])
+          await expect.poll(async () => (await fixture.readSettingsPreview(settings, presetId)).messages).toEqual(Array(3).fill({
+            rendererFontSize: '20px', messageFontSize: '20px', messageColor: 'rgb(0, 0, 0)', bubbleColor: 'rgba(0, 0, 0, 0.12)',
+          }))
+          await expect(settings.getByRole('textbox', { name: 'CSS', exact: true })).toHaveValue(css)
+          live = await expectChatPresetLayout(fixture, presetId, css)
+          await testInfo.attach('messenger-after-appearance-settings', {
+            body: JSON.stringify({ appearance: await readPersistedAppearance(storagePage), chat: live,
+              preview: await fixture.readSettingsPreview(settings, presetId) }, null, 2), contentType: 'application/json',
+          })
+        }
         await settings.getByRole('button', { name: 'Close', exact: true }).click()
         await expect(overlay.settingsDialog()).toHaveCount(0)
         await testInfo.attach(`${presetId}-managed-live`, { body: await page.screenshot(), contentType: 'image/png' })
@@ -567,7 +625,7 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
         await expect.poll(() => fixture.previousDocumentStyleCount()).toBe(0)
         await fixture.install()
         const replay = await expectChatPresetLayout(fixture, presetId, css)
-        expect(replay.controls).toEqual(before.controls)
+        expect(replay.controls).toEqual(live.controls)
         expect(await fixture.mainDocumentStyleCount()).toBe(0)
         await testInfo.attach(`${presetId}-borrowed-replay`, { body: await page.screenshot(), contentType: 'image/png' })
 
@@ -579,7 +637,7 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
         await scenario.enterFullscreen()
         await overlay.expectArchiveChatPlayable({ timeout: 12000 })
         const reentered = await expectChatPresetLayout(fixture, presetId, css)
-        expect(reentered.controls).toEqual(before.controls)
+        expect(reentered.controls).toEqual(live.controls)
         await testInfo.attach(`${presetId}-computed-layouts`, {
           body: JSON.stringify({ before, live, replay, reentered }, null, 2), contentType: 'application/json',
         })

@@ -1,0 +1,27 @@
+.ylc-chat-css-preview {
+  min-width: 0;
+  margin: 12px 0;
+}
+.ylc-chat-css-preview > figcaption {
+  margin-bottom: 6px;
+  color: var(--ylc-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.ylc-chat-css-preview-surface {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: var(--ylc-radius-md);
+}
+.ylc-chat-css-preview iframe {
+  display: block;
+  width: 100%;
+  height: 180px;
+  border: 0;
+}
+.ylc-chat-css-preview-description {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+}

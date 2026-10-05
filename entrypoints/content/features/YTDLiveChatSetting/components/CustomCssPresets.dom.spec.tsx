@@ -46,11 +46,10 @@ describe('choosing recommended and saved CSS styles', () => {
     store.set(savedChatCssAtom, copies)
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
-    expect(view.getByText(preset.descriptionKey)).toBeVisible()
-    const illustration = view.container.querySelector('[data-ylc-css-example]')
-    expect(illustration).toHaveAttribute('data-ylc-css-example', preset.id)
-    expect(illustration?.querySelectorAll('.ylc-css-example-message')).toHaveLength(3)
-    expect(illustration?.querySelector('style, script, iframe')).toBeNull()
+    const preview = view.container.querySelector(`[data-ylc-css-preview="${preset.id}"]`)
+    expect(preview).toHaveAttribute('sandbox', '')
+    expect(preview).toHaveAttribute('srcdoc', expect.stringContaining(preset.css))
+    expect(view.container.querySelector('style')).toBeNull()
     if (preset.noteKey) expect(view.getByText(preset.noteKey)).toBeInTheDocument()
     expect(view.getByLabelText('CSS')).toBeVisible()
     expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
@@ -60,6 +59,37 @@ describe('choosing recommended and saved CSS styles', () => {
     expect(store.get(customCssSuspendedAtom)).toBe(true)
     expect(store.get(customCssEditorUiAtom).name).toBe('')
     for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
+  })
+
+  it('shows visual choices before selection and loads a card without applying it', () => {
+    const store = createTestStore()
+    const view = renderWithStore(<CustomCssSection />, store)
+    const browse = view.container.querySelector('details.ylc-custom-css-browse') as HTMLDetailsElement
+    expect(browse.open).toBe(false)
+    expect(view.getByLabelText('CSS')).toHaveValue('')
+    fireEvent.click(view.getByText('content.customCss.browsePresets'))
+    browse.open = true
+    fireEvent(browse, new Event('toggle'))
+    const preset = presetById('messenger')
+    const choice = view.container.querySelector('[data-ylc-css-preset-choice="messenger"]')
+    if (!choice) throw new Error('Missing messenger choice')
+    fireEvent.click(choice)
+    expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
+    expect(view.container.querySelector('[data-ylc-css-preview="messenger"]')).toBeInTheDocument()
+    expect(store.get(customCssAtom)).toEqual({ enabled: false, css: '' })
+    expect(store.get(savedChatCssAtom)).toEqual([])
+    expect(actions.activate).not.toHaveBeenCalled()
+  })
+
+  it('removes the executable preview when a packaged source is edited', () => {
+    const store = createTestStore()
+    const view = renderWithStore(<CustomCssSection />, store)
+    fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:messenger' } })
+    expect(view.container.querySelector('[data-ylc-css-preview="messenger"]')).toBeInTheDocument()
+    fireEvent.change(view.getByLabelText('CSS'), { target: { value: 'body { background: url(https://example.invalid/private); }' } })
+    expect(view.container.querySelector('[data-ylc-css-preview]')).toBeNull()
+    expect(view.container.querySelector('style')).toBeNull()
+    expect(actions.activate).not.toHaveBeenCalled()
   })
 
   it('does not ask to discard a recoverable starter when choosing another starter', () => {

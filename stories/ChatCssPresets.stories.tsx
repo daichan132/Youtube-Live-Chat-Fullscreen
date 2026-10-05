@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, within } from 'storybook/test'
-import { ChatCssExample } from '@/entrypoints/content/features/YTDLiveChatSetting/components/ChatCssExample'
+import { ChatCssPreview } from '@/entrypoints/content/features/YTDLiveChatSetting/components/ChatCssPreview'
+import { YLCColorPicker } from '@/entrypoints/content/features/YTDLiveChatSetting/components/YLCChangeItems/YLCColorPicker'
+import { YLCNumberSlider } from '@/entrypoints/content/features/YTDLiveChatSetting/components/YLCChangeItems/YLCNumberSlider'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { storyLocale, storyText, storyTheme } from './customCssStoryRuntime'
@@ -17,6 +19,30 @@ const ChatLayoutsComparison = () => {
       <p style={{ margin: '0 0 24px', color: '#d1d8e3', fontSize: 14, lineHeight: 1.7 }}>
         {t('content.customCss.presetGalleryDescription')}
       </p>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 230px), 1fr))',
+          gap: 12,
+          padding: 16,
+          marginBottom: 20,
+          borderRadius: 12,
+          background: 'var(--ylc-bg-surface)',
+        }}
+      >
+        <div>
+          <p style={{ margin: '0 0 8px', fontSize: 12 }}>{t('content.setting.fontSize')}</p>
+          <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />
+        </div>
+        <div>
+          <p style={{ margin: '0 0 8px', fontSize: 12 }}>{t('content.setting.fontColor')}</p>
+          <YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />
+        </div>
+        <div>
+          <p style={{ margin: '0 0 8px', fontSize: 12 }}>{t('content.setting.backgroundColor')}</p>
+          <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
+        </div>
+      </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 16 }}>
         {layoutIds.map(id => {
           const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
@@ -28,7 +54,7 @@ const ChatLayoutsComparison = () => {
               style={{ padding: 16, minWidth: 0, borderRadius: 16, background: 'var(--ylc-bg-surface)' }}
             >
               <h2 style={{ margin: '0 0 12px', fontSize: 16 }}>{t(preset.labelKey)}</h2>
-              <ChatCssExample preset={preset} />
+              <ChatCssPreview preset={preset} />
             </article>
           )
         })}
@@ -48,7 +74,7 @@ const meta = {
       failureMode='none'
       locale={storyLocale(context.globals.locale)}
       theme={storyTheme(context.globals.theme)}
-      description='組み込みCSSの固定の見た目の例です。実チャットへの適用は「カスタムCSS」タブで確認できます。'
+      description='色・文字サイズを変えると、3種類のプレビューにも反映されます。製品と同じ設定コントロールと組み込みCSSを使っています。'
     >
       <ChatLayoutsComparison />
     </SettingsStoryHarness>
@@ -65,10 +91,11 @@ export const Comparison: Story = {
       const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
       if (!preset) throw new Error(`Missing chat layout: ${id}`)
       await expect(ui.getByRole('heading', { name: storyText(storyLocale(context.globals.locale), preset.labelKey) })).toBeVisible()
-      const example = context.canvasElement.querySelector(`[data-ylc-css-example="${id}"]`)
+      const example = context.canvasElement.querySelector(`iframe[data-ylc-css-preview="${id}"]`)
       await expect(example).toBeVisible()
-      await expect(example?.querySelectorAll('.ylc-css-example-message')).toHaveLength(3)
+      await expect(example).toHaveAttribute('sandbox', '')
+      await expect(example).toHaveAttribute('srcdoc', expect.stringContaining(preset.css))
     }
-    await expect(context.canvasElement.querySelector('style, iframe, script')).toBeNull()
+    await expect(context.canvasElement.querySelector('style, script')).toBeNull()
   },
 }

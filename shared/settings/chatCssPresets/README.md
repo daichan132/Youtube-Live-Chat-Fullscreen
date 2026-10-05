@@ -3,7 +3,9 @@
 These are extension-owned **starter CSS sources**, not appearance presets or
 user registrations. They are read with explicit `?raw` imports by
 `../chatCssPresets.ts`. Never import a preset CSS file as a stylesheet in the
-settings UI, run it in a preview, or insert it into storage at startup.
+settings Document or insert it into storage at startup. Preview CSS only in the
+separate sandboxed chat document; its scope and appearance tokens must match the
+chat iframe without gaining access to the settings Document or extension APIs.
 
 | File | Purpose | Preserves |
 | --- | --- | --- |
@@ -12,9 +14,9 @@ settings UI, run it in a preview, or insert it into storage at startup.
 | `timeline.css` | Avatar beside a vertical content line and row separators | Avatar-free rows, replay timestamps, links and emoji |
 | `bubbles.css` | Soft round backgrounds | Configured text color and size |
 | `cards.css` | Fine border and subtle shadow | Author and message colors |
-| `outline.css` | White message text with a dark outline | Author/badge/link colors; panel background unchanged |
+| `outline.css` | Configured message color outlined in the panel color | Author/badge/link colors; panel background unchanged |
 | `compact.css` | Small vertical gaps | Names, avatars, wrapping and controls |
-| `comfortable.css` | At least 16px text and generous spacing | Larger configured text sizes |
+| `comfortable.css` | Relaxed line height and generous spacing | The configured text size, including sizes below 16px |
 | `accent.css` | A colored stripe | Author, role and badge colors |
 
 ## Adding or changing a preset
@@ -49,6 +51,19 @@ avatar. Neither path fixes the row height or clips overflowing content. Author
 chips, timestamps, links, emoji and menu buttons keep their native content and
 semantic colors. The header card styles the author chip's box, not its name or
 badge colors.
+
+The normal appearance controls remain available after applying a packaged source.
+The base chat stylesheet supplies the configured font family, font size and text
+color. Presets do not impose a minimum text size. Their row margins use
+`--extension-yt-live-chat-spacing` plus the small gap specific to the style; the
+compact style adds no decorative gap. Bubble surfaces and neutral borders use the
+font-color-derived control surface tokens, so their tint follows the chosen text
+color. The header card uses the panel color for its body and the control tint for
+its header. The accent stripe follows the text color until the user changes its
+local `--ylc-preset-accent` declaration. The outline uses the configured foreground
+and the menu/panel color for its stroke. The outside chat background remains owned
+by the existing appearance controls. The ordinary name, avatar and paid-message
+settings remain in force.
 
 Each source is self-contained and replaces the previous active CSS through the
 normal Apply operation. It is not concatenated with another preset. Loading a

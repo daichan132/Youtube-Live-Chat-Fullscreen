@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, userEvent, within } from 'storybook/test'
+import { expect, fireEvent, userEvent, within } from 'storybook/test'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { EDITED_CSS, storyLocale, storyText, storyTheme } from './customCssStoryRuntime'
 import { SettingsStoryHarness } from './SettingsStoryHarness'
@@ -219,11 +219,42 @@ export const ChatLayouts: Story = {
       if (!preset) throw new Error(`Missing chat layout: ${id}`)
       await userEvent.selectOptions(ui.getByRole('combobox'), `preset:${id}`)
       await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
-      await expect(ui.getByText(text(preset.descriptionKey), { exact: true })).toBeVisible()
+      const previewFigure = context.canvasElement.ownerDocument.querySelector<HTMLElement>('.ylc-chat-css-preview')
+      if (!previewFigure) throw new Error(`Missing preview for chat layout: ${id}`)
+      await expect(within(previewFigure).getByText(text(preset.descriptionKey), { exact: true })).toBeVisible()
       await userEvent.click(ui.getByRole('button', { name: text('content.customCss.apply') }))
       await expect(
         await ui.findByText(`${text('content.customCss.active')} · ${text(preset.labelKey)}`, { exact: true }, { timeout: 5000 }),
       ).toBeVisible()
     }
+  },
+}
+
+export const PresetPreview: Story = {
+  name: 'プレビュー・選んだCSSを設定で調整',
+  args: { saveDelayMs: 0 },
+  parameters: description(
+    '見た目からメッセンジャー風を選び、使用後に「設定」タブで文字サイズを変更します。CSS本文はそのまま、プレビューへ設定が反映されます。',
+  ),
+  play: async context => {
+    const ui = await openCss(context)
+    const text = textFor(context)
+    const preset = CHAT_CSS_PRESETS.find(item => item.id === 'messenger')
+    if (!preset) throw new Error('Missing messenger preset')
+    await userEvent.click(ui.getByText(text('content.customCss.browsePresets')))
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.loadPreset').replace('{name}', text(preset.labelKey)) }))
+    await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
+    await expect(context.canvasElement.ownerDocument.querySelector('iframe[data-ylc-css-preview="messenger"]')).toBeVisible()
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.apply') }))
+    await expect(await ui.findByText(`${text('content.customCss.active')} · ${text(preset.labelKey)}`)).toBeVisible()
+    await userEvent.click(ui.getByRole('tab', { name: text('content.setting.header.setting') }))
+    const size = ui.getByRole('slider', { name: text('content.setting.fontSize') })
+    fireEvent.change(size, { target: { value: '20' } })
+    await expect(size).toHaveValue('20')
+    await userEvent.click(ui.getByRole('tab', { name: text('content.customCss.title') }))
+    await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
+    const preview = context.canvasElement.ownerDocument.querySelector('iframe[data-ylc-css-preview="messenger"]')
+    await expect(preview).toBeVisible()
+    await expect(preview?.getAttribute('srcdoc')).toMatch(/--extension-yt-live-chat-font-size:\s*20px/)
   },
 }

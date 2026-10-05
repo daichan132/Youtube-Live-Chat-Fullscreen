@@ -13,8 +13,8 @@ export default defineConfig({
     sharedViteServer: false,
     allowOnly: process.env.YLC_ALLOW_ONLY === '1',
     coverage: coverageConfig,
-    // Packaged CSS presets are runtime data, so raw imports must keep their source.
-    css: { include: [/\.css\?raw(?:&|$)/] },
+    // Runtime styles and packaged presets are CSS string data, never DOM styles.
+    css: { include: [/\.css\?(?:raw|inline)(?:&|$)/] },
     projects: [
       {
         extends: true,

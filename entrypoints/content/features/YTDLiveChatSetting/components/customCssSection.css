@@ -330,6 +330,78 @@
   overflow-wrap: anywhere;
 }
 
+/* Choosing a source stays separate from applying or saving it. */
+.ylc-custom-css-browse {
+  margin: 8px 0 12px;
+  color: var(--ylc-text-secondary);
+  font-size: 12px;
+}
+
+.ylc-custom-css-browse > summary {
+  cursor: pointer;
+  padding-block: 4px;
+}
+
+.ylc-custom-css-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.ylc-custom-css-preset-card {
+  position: relative;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--ylc-border);
+  border-radius: var(--ylc-radius-md);
+  background: var(--ylc-bg-surface-muted);
+}
+
+.ylc-custom-css-preset-card[data-selected="true"] {
+  border-color: var(--ylc-accent);
+}
+
+.ylc-custom-css-preset-choice {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: start;
+  color: var(--ylc-text-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ylc-custom-css-preset-choice::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.ylc-custom-css-preset-choice:focus-visible {
+  outline: none;
+}
+
+.ylc-custom-css-preset-choice:focus-visible::after {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+}
+
+.ylc-custom-css-preset-choice:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.ylc-custom-css-preview-heading > h3 {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--ylc-text-primary);
+}
+
 /* Fixed chat illustrations. Packaged CSS is never injected into this UI. */
 
 .ylc-css-example {
@@ -352,6 +424,12 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  border-radius: var(--ylc-radius-md);
+  padding: 8px;
+  background: var(--ylc-example-background);
+  font-family: var(--ylc-example-font-family);
+  font-size: var(--ylc-example-font-size);
+  color: var(--ylc-example-text);
 }
 
 .ylc-css-example-message {
@@ -360,18 +438,19 @@
   gap: 8px;
   min-width: 0;
   padding: 4px 0;
+  margin-block: var(--ylc-example-spacing);
 }
 
 .ylc-css-example-avatar {
   display: grid;
   place-items: center;
-  width: 28px;
-  height: 28px;
+  width: calc(24px + var(--ylc-example-font-size) - 13px);
+  height: calc(24px + var(--ylc-example-font-size) - 13px);
   border-radius: 50%;
-  background: var(--ylc-bg-surface);
-  color: var(--ylc-text-secondary);
-  border: 1px solid var(--ylc-border-strong);
-  font-size: 11px;
+  background: var(--ylc-example-subtle-surface);
+  color: var(--ylc-example-text);
+  border: 1px solid var(--ylc-example-border);
+  font-size: 0.8em;
   font-weight: 700;
   flex-shrink: 0;
   box-sizing: border-box;
@@ -387,33 +466,33 @@
 
 .ylc-css-example-author {
   margin-inline-end: 6px;
-  color: var(--ylc-text-secondary);
-  font-size: 11px;
+  color: var(--ylc-example-author);
+  font-size: inherit;
   font-weight: 600;
 }
 
 .ylc-css-example-line {
-  color: var(--ylc-text-primary);
-  font-size: 13px;
+  color: var(--ylc-example-text);
+  font-size: inherit;
   line-height: 1.5;
 }
 
 .ylc-css-example[data-ylc-css-example="bubbles"] .ylc-css-example-message {
-  background: rgb(127 127 127 / 14%);
+  background: var(--ylc-example-subtle-surface);
   padding: 8px;
   border-radius: 16px;
 }
 
 .ylc-css-example[data-ylc-css-example="cards"] .ylc-css-example-message {
-  border: 1px solid rgb(127 127 127 / 35%);
+  border: 1px solid var(--ylc-example-border);
   border-radius: 6px;
   padding: 9px;
-  background: rgb(127 127 127 / 8%);
+  background: var(--ylc-example-subtle-surface);
   box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 }
 
 .ylc-css-example[data-ylc-css-example="accent"] .ylc-css-example-message {
-  border-inline-start: 3px solid var(--ylc-accent);
+  border-inline-start: 3px solid var(--ylc-example-text);
   padding-inline-start: 9px;
 }
 
@@ -430,17 +509,15 @@
 }
 
 .ylc-css-example[data-ylc-css-example="comfortable"] .ylc-css-example-line {
-  font-size: 16px;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .ylc-css-example[data-ylc-css-example="outline"] .ylc-css-example-line {
-  color: white;
   text-shadow:
-    1px 1px 1px black,
-    -1px -1px 1px black,
-    -1px 1px 1px black,
-    1px -1px 1px black;
+    1px 1px 1px var(--ylc-example-outline),
+    -1px -1px 1px var(--ylc-example-outline),
+    -1px 1px 1px var(--ylc-example-outline),
+    1px -1px 1px var(--ylc-example-outline);
 }
 
 .ylc-css-example:is([data-ylc-css-example="messenger"], [data-ylc-css-example="stage"], [data-ylc-css-example="timeline"])
@@ -459,15 +536,10 @@
   gap: 10px;
 }
 
-.ylc-css-example[data-ylc-css-example="messenger"] .ylc-css-example-avatar {
-  width: 32px;
-  height: 32px;
-}
-
 .ylc-css-example[data-ylc-css-example="messenger"] .ylc-css-example-content {
   padding: 8px 12px;
   border-radius: 18px;
-  background: rgb(127 127 127 / 14%);
+  background: var(--ylc-example-subtle-surface);
 }
 
 .ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-message {
@@ -475,17 +547,17 @@
 }
 
 .ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-content {
-  border: 1px solid rgb(127 127 127 / 35%);
+  border: 1px solid var(--ylc-example-border);
   border-radius: 8px;
-  background: rgb(127 127 127 / 8%);
+  background: var(--ylc-example-panel);
 }
 
 .ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-author {
   margin-bottom: 0;
   padding: 8px 12px;
-  border-bottom: 1px solid rgb(127 127 127 / 35%);
+  border-bottom: 1px solid var(--ylc-example-border);
   border-radius: 7px 7px 0 0;
-  background: rgb(127 127 127 / 14%);
+  background: var(--ylc-example-subtle-surface);
 }
 
 .ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-line {
@@ -495,11 +567,11 @@
 .ylc-css-example[data-ylc-css-example="timeline"] .ylc-css-example-message {
   gap: 10px;
   padding-block: 8px;
-  border-bottom: 1px solid rgb(127 127 127 / 24%);
+  border-bottom: 1px solid var(--ylc-example-border);
 }
 
 .ylc-css-example[data-ylc-css-example="timeline"] .ylc-css-example-content {
-  border-inline-start: 2px solid rgb(127 127 127 / 45%);
+  border-inline-start: 2px solid var(--ylc-example-border);
   padding-inline-start: 12px;
 }
 
@@ -515,6 +587,21 @@
 
 .ylc-css-example[data-ylc-css-example="custom"] > figcaption {
   text-align: center;
+}
+
+.ylc-css-example[data-compact="true"] {
+  margin: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.ylc-css-example[data-compact="true"] > figcaption {
+  display: none;
+}
+
+.ylc-css-example[data-compact="true"] .ylc-css-example-messages {
+  max-height: 180px;
+  overflow: hidden;
 }
 
 /* Keep the settings close confirmation styled after removing the old editor UI. */

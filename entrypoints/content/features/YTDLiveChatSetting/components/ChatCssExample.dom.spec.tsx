@@ -2,7 +2,7 @@ import { act } from '@testing-library/react'
 import { Provider } from 'jotai'
 import { describe, expect, it } from 'vitest'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
-import { EMPTY_MESSAGES, localeStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { ChatCssExample } from './ChatCssExample'
 
@@ -24,7 +24,7 @@ const translatedMessages = {
 
 const expectNoExecutableContent = (container: HTMLElement) => {
   expect(container.querySelector('style, script, iframe, link, img')).toBeNull()
-  expect(container.querySelector('[style]')).toBeNull()
+  expect(container.querySelectorAll('[style]')).toHaveLength(container.querySelector('.ylc-css-example-messages') ? 1 : 0)
 }
 
 describe('fixed chat CSS illustrations', () => {
@@ -102,6 +102,42 @@ describe('fixed chat CSS illustrations', () => {
     expect(view.container.querySelector('figure')).toHaveAttribute('data-ylc-css-example', 'custom')
     expect(view.container.querySelector('.ylc-css-example-messages')).toBeNull()
     expect(view.getByText('content.customCss.warning')).toBeVisible()
+    expectNoExecutableContent(view.container)
+  })
+
+  it('reflects current colors, font size, background and visibility in a fixed thumbnail', () => {
+    const store = createTestStore()
+    const saved = store.get(chatSettingsStateAtom)
+    const view = renderWithStore(<ChatCssExample preset={presetById('messenger')} compact />, store)
+    act(() =>
+      store.set(editorSessionStateAtom, {
+        draftProfile: {
+          ...saved.profile,
+          appearance: {
+            ...saved.profile.appearance,
+            fontColor: { r: 12, g: 34, b: 56, a: 1 },
+            backgroundColor: { r: 210, g: 220, b: 230, a: 0.8 },
+            fontSize: 28,
+            spacing: 6,
+            showUserName: false,
+            showUserIcon: false,
+          },
+        },
+        past: [],
+        future: [],
+        activeGesture: null,
+      }),
+    )
+    const sample = view.container.querySelector<HTMLElement>('.ylc-css-example-messages')
+    if (!sample) throw new Error('Missing chat illustration')
+    expect(sample.style.getPropertyValue('--ylc-example-text')).toBe('rgba(12, 34, 56, 1)')
+    expect(sample.style.getPropertyValue('--ylc-example-background')).toBe('rgba(210, 220, 230, 0.8)')
+    expect(sample.style.getPropertyValue('--ylc-example-font-size')).toBe('28px')
+    expect(sample.style.getPropertyValue('--ylc-example-spacing')).toBe('6px')
+    expect(view.container.querySelector('figure')).toHaveAttribute('data-compact', 'true')
+    expect(view.container.querySelector('.ylc-css-example-author, .ylc-css-example-avatar')).toBeNull()
+    expect(view.container.querySelectorAll('.ylc-css-example-line')).toHaveLength(3)
+    expect(store.get(chatSettingsStateAtom)).toBe(saved)
     expectNoExecutableContent(view.container)
   })
 })

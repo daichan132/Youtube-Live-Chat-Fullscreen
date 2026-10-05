@@ -135,6 +135,62 @@ describe('packaged preset selector boundaries', () => {
   })
 })
 
+describe('packaged preset appearance settings', () => {
+  // jsdom serializes var()/calc() without resolving them. These assertions guard
+  // the source-to-settings contract; real-browser tests verify the rendered values.
+  it.each(CHAT_CSS_PRESETS)('$id keeps typography, colors and vertical gaps connected to appearance controls', preset => {
+    const rules = Array.from(installStyle(preset.css).sheet?.cssRules ?? []) as CSSStyleRule[]
+    let rowGap = false
+    for (const rule of rules) {
+      const fontSize = rule.style.getPropertyValue('font-size')
+      if (fontSize) {
+        expect(fontSize === 'inherit' || fontSize.includes('var(--extension-yt-live-chat-font-size')).toBe(true)
+        expect(fontSize).not.toMatch(/(?:max|min|clamp)\(/)
+      }
+      expect(rule.style.getPropertyValue('font-family')).toBe('')
+      for (const property of ['color', 'background-color', 'border-color', 'border-bottom-color', 'border-inline-start-color']) {
+        const value = rule.style.getPropertyValue(property)
+        if (value) expect(value).toContain('var(--extension-yt-live-')
+      }
+      if (!rule.selectorText.endsWith('yt-live-chat-text-message-renderer:not([is-deleted])')) continue
+      for (const property of ['margin', 'margin-block']) {
+        const value = rule.style.getPropertyValue(property)
+        if (!value) continue
+        rowGap = true
+        expect(value).toContain('var(--extension-yt-live-chat-spacing')
+      }
+    }
+    // Outline deliberately leaves the base renderer's variable-based margin alone.
+    if (preset.id !== 'outline') expect(rowGap).toBe(true)
+  })
+
+  it('outline uses configured text and background colors instead of fixing the message to white', () => {
+    const preset = CHAT_CSS_PRESETS.find(candidate => candidate.id === 'outline')
+    if (!preset) throw new Error('Outline preset is missing')
+    const rule = installStyle(preset.css).sheet?.cssRules[0] as CSSStyleRule
+    expect(rule.style.getPropertyValue('color')).toBe('var(--extension-yt-live-font-color, #fff)')
+    expect(rule.style.getPropertyValue('text-shadow')).toContain('var(--extension-yt-live-menu-background-color, #111)')
+  })
+
+  it.each(CHAT_CSS_PRESETS)('$id preserves author, badge and link colors when composed with existing controls', preset => {
+    installFixture()
+    installNativeFlow()
+    const before = semanticSnapshot().map(({ name, badge, link, emoji, timestamp, menu }) => ({
+      name,
+      badge,
+      link,
+      emoji,
+      timestamp,
+      menu,
+    }))
+    const excluded = excludedSnapshot()
+    installStyle(preset.css)
+    const after = semanticSnapshot().map(({ name, badge, link, emoji, timestamp, menu }) => ({ name, badge, link, emoji, timestamp, menu }))
+    expect(after).toEqual(before)
+    expect(excludedSnapshot()).toEqual(excluded)
+  })
+})
+
 describe('packaged message layout presets', () => {
   const installLayout = (preset: ChatCssPreset) => {
     installFixture()

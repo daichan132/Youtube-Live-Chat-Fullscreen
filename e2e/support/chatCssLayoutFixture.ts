@@ -1,4 +1,4 @@
-import type { JSHandle, Page } from '@playwright/test'
+import type { FrameLocator, JSHandle, Page } from '@playwright/test'
 
 const installChatPresetLayoutFixture = (page: Page) => page.evaluate(() => {
   const chatDocument = window.__ylcHelpers.getExtensionIframe()?.contentDocument
@@ -120,6 +120,26 @@ export class ChatCssLayoutFixture {
 
   read() {
     return readChatPresetLayout(this.page)
+  }
+
+  readSettingsPreview(settings: FrameLocator, presetId: 'messenger' | 'stage' | 'timeline') {
+    return settings.frameLocator(`iframe[data-ylc-css-preview="${presetId}"]`).locator('body').evaluate(body => {
+      const previewWindow = body.ownerDocument.defaultView
+      if (!previewWindow) throw new Error('The selected packaged preview Document is missing.')
+      return {
+        background: previewWindow.getComputedStyle(body).backgroundColor,
+        sources: [...body.ownerDocument.querySelectorAll('style[data-ylc-css-preview-source]')].map(style => style.textContent),
+        messages: [...body.querySelectorAll('yt-live-chat-text-message-renderer')].map(renderer => {
+          const content = renderer.querySelector('#content')
+          const message = renderer.querySelector('#message')
+          if (!content || !message) throw new Error('The packaged preview is missing a message body.')
+          const rendererStyle = previewWindow.getComputedStyle(renderer)
+          const messageStyle = previewWindow.getComputedStyle(message)
+          return { rendererFontSize: rendererStyle.fontSize, messageFontSize: messageStyle.fontSize,
+            messageColor: messageStyle.color, bubbleColor: previewWindow.getComputedStyle(content).backgroundColor }
+        }),
+      }
+    })
   }
 
   async captureCurrentDocument() {

@@ -1,0 +1,56 @@
+/* Representative YouTube message markup only. The production extension style
+   modules and exact packaged source are added after this baseline. */
+html,
+body {
+  margin: 0;
+  min-width: 0;
+  background: transparent;
+}
+body {
+  padding: 8px;
+  box-sizing: border-box;
+  color: var(--extension-yt-live-font-color);
+  line-height: 1.5;
+}
+yt-live-chat-renderer,
+yt-live-chat-item-list-renderer,
+#items {
+  display: block;
+  min-width: 0;
+}
+yt-live-chat-text-message-renderer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 4px 0;
+  box-sizing: border-box;
+}
+#content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+#author-photo {
+  flex-shrink: 0;
+}
+.ylc-preview-avatar {
+  display: grid;
+  place-items: center;
+  width: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+  height: calc(24px + var(--extension-yt-live-chat-font-size) - 13px);
+  border-radius: 50%;
+  background: var(--extension-yt-live-control-background-color);
+  color: var(--extension-yt-live-font-color);
+  font-size: 0.8em;
+  font-weight: 600;
+}
+#author-name {
+  color: var(--extension-yt-live-secondary-font-color);
+  margin-inline-end: 6px;
+  font-weight: 600;
+}
+#message {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

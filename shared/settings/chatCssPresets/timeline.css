@@ -1,12 +1,14 @@
 /* Timeline / タイムライン
  * The avatar sits beside a vertical content line; a separator marks each message.
- * Tune the neutral line opacity and spacing without changing role or badge colors.
+ * Line colors, font size and message spacing follow the normal appearance settings.
+ * Tune the line width or padding without changing role or badge colors.
  * アイコンがない行でも空の列を残さず、名前・時刻・本文を自然に積みます。
  */
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items > yt-live-chat-text-message-renderer:not([is-deleted]) {
-  margin: 0 8px;
+  margin: var(--extension-yt-live-chat-spacing, 0px) 8px;
   padding: 8px 0;
   border-bottom: 1px solid rgb(127 127 127 / 24%);
+  border-bottom-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 24%));
   box-sizing: border-box;
 }
 body.custom-yt-app-live-chat-extension
@@ -30,7 +32,7 @@ body.custom-yt-app-live-chat-extension
   padding-inline-start: 12px;
   border-inline-start-width: 2px;
   border-inline-start-style: solid;
-  border-inline-start-color: rgb(127 127 127 / 45%);
+  border-inline-start-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 45%));
   box-sizing: border-box;
 }
 body.custom-yt-app-live-chat-extension
@@ -58,7 +60,7 @@ body.custom-yt-app-live-chat-extension
   padding-inline-start: 12px;
   border-inline-start-width: 2px;
   border-inline-start-style: solid;
-  border-inline-start-color: rgb(127 127 127 / 45%);
+  border-inline-start-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 45%));
 }
 body.custom-yt-app-live-chat-extension
   yt-live-chat-item-list-renderer

@@ -1,10 +1,11 @@
 /* Messenger / メッセンジャー風
  * A round avatar beside a conversation bubble, with the name above the message.
- * Tune the bubble opacity and radius here; author, badge and link colors stay native.
+ * Bubble colors, font size and message spacing follow the normal appearance settings.
+ * Tune the radius or padding here; author, badge and link colors stay native.
  * 名前・アイコンの表示設定、リプレイ時刻、本文の自然な折り返しを維持します。
  */
 body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items > yt-live-chat-text-message-renderer:not([is-deleted]) {
-  margin: 6px 8px;
+  margin: calc(var(--extension-yt-live-chat-spacing, 0px) + 6px) 8px;
   box-sizing: border-box;
 }
 body.custom-yt-app-live-chat-extension
@@ -27,7 +28,7 @@ body.custom-yt-app-live-chat-extension
   gap: 4px;
   padding: 8px 12px;
   border-radius: 18px;
-  background-color: rgb(127 127 127 / 14%);
+  background-color: var(--extension-yt-live-control-background-color, rgb(127 127 127 / 14%));
   box-sizing: border-box;
 }
 body.custom-yt-app-live-chat-extension
@@ -64,7 +65,7 @@ body.custom-yt-app-live-chat-extension
   display: flow-root;
   padding: 8px 12px;
   border-radius: 18px;
-  background-color: rgb(127 127 127 / 14%);
+  background-color: var(--extension-yt-live-control-background-color, rgb(127 127 127 / 14%));
 }
 body.custom-yt-app-live-chat-extension
   yt-live-chat-item-list-renderer
