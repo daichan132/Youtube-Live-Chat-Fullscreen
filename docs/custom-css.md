@@ -7,7 +7,7 @@ A newly mounted panel starts on Settings. `SettingContent` keeps the existing
 Display, Colors, Text and Chat Elements controls in their original order;
 `CustomCssSection` lives in the dedicated Custom CSS tabpanel. It uses the same
 fieldset/legend, theme tokens, corner radii and button styles, with a small accent
-icon and border. Undo, Redo and Close remain shared header controls. The header
+icon. Undo, Redo and Close remain shared header controls. The header
 can wrap these controls onto another row in a narrow panel.
 
 The CSS textarea is always visible in the Custom CSS tab. Without a committed
