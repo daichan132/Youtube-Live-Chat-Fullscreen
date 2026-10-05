@@ -19,7 +19,7 @@ beforeEach(() => {
 })
 const setup = () => {
   const store = createTestStore()
-  store.set(customCssEditorUiAtom, { name: '', registering: false, source: null, expanded: true })
+  store.set(customCssEditorUiAtom, { name: '', registering: false, source: null })
   store.set(customCssSuspendedAtom, false)
   store.set(customCssAtom, { enabled: true, css: '.original{}' })
   return { store, view: renderWithStore(<CustomCssSection />, store) }

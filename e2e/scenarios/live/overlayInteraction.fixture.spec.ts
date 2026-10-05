@@ -6,7 +6,13 @@ import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
-import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import {
+  APPEARANCE_STORAGE_KEY,
+  CUSTOM_CSS_STORAGE_KEY,
+  CUSTOM_CSS_SUSPENDED_STORAGE_KEY,
+  GEOMETRY_STORAGE_KEY,
+  SAVED_CHAT_CSS_STORAGE_KEY,
+} from '../../../shared/settings/storageKeys'
 
 const scenarioState = {
   video: { id: 'ylc-overlay-boundary', title: 'Overlay interaction fixture', mode: 'live' },
@@ -394,3 +400,65 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     expect(response.stale.retry).toBe('stale')
   } finally { await popup.close() }
  })
+
+
+test('saves pasted CSS without applying, then reuses it after reopening the settings iframe', { tag: '@fixture' }, async ({ page, extension }) => {
+  await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+  const envelope = (value: unknown) => ({ schemaVersion: 1, writerId: 'ylc-css-fixture', value })
+  await extension.storage.set({
+    [CUSTOM_CSS_STORAGE_KEY]: envelope({ enabled: false, css: '' }),
+    [SAVED_CHAT_CSS_STORAGE_KEY]: envelope([]),
+    [CUSTOM_CSS_SUSPENDED_STORAGE_KEY]: envelope(true),
+  })
+  const storagePage = await openStoragePage(extension, page)
+  try {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.openSettings()
+    const settings = overlay.settingsFrame()
+    await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
+    const editor = settings.getByRole('textbox', { name: 'CSS', exact: true })
+    await expect(editor).toBeVisible()
+    await expect(editor).toHaveValue('')
+    const css = 'body { --ylc-saved-style-probe: purple; }'
+    const name = 'Fixture CSS'
+    await editor.fill(css)
+    await settings.getByRole('button', { name: 'Save with a name', exact: true }).click()
+    await settings.getByRole('textbox', { name: 'Name', exact: true }).fill(name)
+    await settings.getByRole('button', { name: 'Add to list', exact: true }).click()
+    await expect(settings.getByRole('button', { name: `Use ${name}`, exact: true })).toBeVisible()
+    const storedValue = async (key: string) => {
+      return storagePage.evaluate(async storageKey => {
+        const raw = (await chrome.storage.local.get(storageKey))[storageKey] as { value?: unknown } | undefined
+        return raw?.value
+      }, key)
+    }
+    await expect.poll(() => storedValue(SAVED_CHAT_CSS_STORAGE_KEY)).toEqual([{ id: expect.any(String), name, css }])
+    expect(await storedValue(CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: false, css: '' })
+    const chat = page.frames().find(frame => /\/live_chat(?:[/?]|$)/.test(frame.url()))
+    expect(chat).toBeDefined()
+    await expect(chat!.locator('style[data-ylc-user-css]')).toHaveCount(0)
+
+    await settings.getByRole('button', { name: 'Close', exact: true }).click()
+    await settings.getByRole('button', { name: 'Discard draft and close', exact: true }).click()
+    await expect(overlay.settingsDialog()).toHaveCount(0)
+    await overlay.openSettings()
+    await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
+    await expect(editor).toHaveValue('')
+    await settings.getByRole('button', { name: `Load ${name}`, exact: true }).click()
+    await expect(editor).toHaveValue(css)
+    expect(await storedValue(CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: false, css: '' })
+    await settings.getByRole('button', { name: `Use ${name}`, exact: true }).click()
+    await expect.poll(() => storedValue(CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: true, css })
+    await expect.poll(() => storedValue(CUSTOM_CSS_SUSPENDED_STORAGE_KEY)).toBe(false)
+    await expect(chat!.locator('style[data-ylc-user-css]')).toHaveJSProperty('textContent', css)
+    await expect
+      .poll(() => chat!.locator('body').evaluate(body => getComputedStyle(body).getPropertyValue('--ylc-saved-style-probe').trim()))
+      .toBe('purple')
+  } finally {
+    await storagePage.close()
+  }
+})

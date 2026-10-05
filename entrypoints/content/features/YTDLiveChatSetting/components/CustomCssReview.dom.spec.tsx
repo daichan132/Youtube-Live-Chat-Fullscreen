@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, type RenderResult, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { persistenceStatusAtom } from '@/shared/state/atoms'
 import {
@@ -31,7 +31,7 @@ beforeEach(() => {
 
 const makeStore = () => {
   const store = createTestStore()
-  store.set(customCssEditorUiAtom, { name: '', registering: false, source: null, expanded: true })
+  store.set(customCssEditorUiAtom, { name: '', registering: false, source: null })
   store.set(customCssSuspendedAtom, false)
   return store
 }
@@ -47,11 +47,17 @@ const delayedRegistration = () => {
   return () => finish()
 }
 
+const savedRow = (view: RenderResult, id: string) => {
+  const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
+  if (!row) throw new Error(`Missing saved style row: ${id}`)
+  return within(row)
+}
+
 describe('CSS review regressions', () => {
   it('pins the displayed CSS while a registration without an existing draft is saving', async () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.original{}' })
-    store.set(customCssEditorUiAtom, { name: 'Saved copy', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Saved copy', registering: true, source: null })
     const finish = delayedRegistration()
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
@@ -69,15 +75,15 @@ describe('CSS review regressions', () => {
   it('does not clear a new editor name when an older save with the same name completes', async () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
-    store.set(customCssEditorUiAtom, { name: 'Same name', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Same name', registering: true, source: null })
     const finish = delayedRegistration()
     const first = renderWithStore(<CustomCssSection />, store)
     fireEvent.click(first.getByRole('button', { name: 'content.customCss.saveRegistration' }))
     first.unmount()
     // Closing/discarding and later reopening creates a new editing object.
     store.set(customCssDraftAtom, null)
-    store.set(customCssEditorUiAtom, { name: '', registering: false, source: null, expanded: true })
-    store.set(customCssEditorUiAtom, { name: 'Same name', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: '', registering: false, source: null })
+    store.set(customCssEditorUiAtom, { name: 'Same name', registering: true, source: null })
     const second = renderWithStore(<CustomCssSection />, store)
     await act(async () => {
       finish()
@@ -85,21 +91,21 @@ describe('CSS review regressions', () => {
     expect(second.getByLabelText('content.customCss.name')).toHaveValue('Same name')
   })
 
-  it('clears a successfully saved name even if only the code editor was closed during the save', async () => {
+  it('clears the submitted name when its successful save finishes while the CSS tab is unmounted', async () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
-    store.set(customCssEditorUiAtom, { name: 'Saved name', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Saved name', registering: true, source: null })
     const finish = delayedRegistration()
-    const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.saveRegistration' }))
-    act(() => {
-      store.set(customCssEditorUiAtom, current => ({ ...current, expanded: false }))
-    })
+    const first = renderWithStore(<CustomCssSection />, store)
+    fireEvent.click(first.getByRole('button', { name: 'content.customCss.saveRegistration' }))
+    first.unmount()
     await act(async () => {
       finish()
     })
-    expect(store.get(customCssEditorUiAtom).name).toBe('')
-    expect(store.get(customCssEditorUiAtom).expanded).toBe(false)
+    expect(store.get(customCssEditorUiAtom)).toMatchObject({ name: '', registering: false })
+    const view = renderWithStore(<CustomCssSection />, store)
+    expect(view.getByLabelText('CSS')).toHaveValue('.source{}')
+    expect(view.queryByLabelText('content.customCss.name')).toBeNull()
   })
 
   it('keeps source text selectable while writes are pending', () => {
@@ -165,9 +171,7 @@ describe('CSS editor usability', () => {
     store.set(customCssAtom, active)
     store.set(savedChatCssAtom, entries)
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+    fireEvent.click(savedRow(view, 'mine').getByRole('button', { name: 'content.customCss.loadSaved' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.edited{}' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadSaved' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
@@ -185,22 +189,20 @@ describe('CSS editor usability', () => {
     const store = makeStore()
     store.set(savedChatCssAtom, [{ id: 'mine', name: 'My CSS', css: '.saved{}' }])
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+    fireEvent.click(savedRow(view, 'mine').getByRole('button', { name: 'content.customCss.loadSaved' }))
     act(() => {
       store.set(savedChatCssAtom, [])
     })
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
     expect(view.getByText('content.customCss.savedMissing')).toBeInTheDocument()
-    expect(view.queryByRole('button', { name: 'content.customCss.deleteSaved' })).toBeNull()
+    expect(view.queryByRole('button', { name: 'content.customCss.deleteSavedLabel' })).toBeNull()
   })
 
   it('explains duplicate trimmed names before writing and permits a different name', () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
     store.set(savedChatCssAtom, [{ id: 'mine', name: 'My CSS', css: '.saved{}' }])
-    store.set(customCssEditorUiAtom, { name: '', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: '', registering: true, source: null })
     const view = renderWithStore(<CustomCssSection />, store)
     const input = view.getByLabelText('content.customCss.name')
     fireEvent.change(input, { target: { value: ' My CSS ' } })
@@ -220,9 +222,10 @@ describe('CSS editor usability', () => {
       savedChatCssAtom,
       Array.from({ length: 20 }, (_, i) => ({ id: `css-${i}`, name: `CSS ${i}`, css: '.saved{}' })),
     )
-    store.set(customCssEditorUiAtom, { name: 'New CSS', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'New CSS', registering: true, source: null })
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.new{}' } })
+    expect(view.container.querySelectorAll('[data-ylc-saved-css]')).toHaveLength(20)
     expect(view.getByText('content.customCss.libraryFull')).toBeInTheDocument()
     expect(view.getByRole('button', { name: 'content.customCss.saveRegistration' })).toBeDisabled()
     expect(view.getByRole('button', { name: 'content.customCss.apply' })).not.toBeDisabled()
@@ -233,7 +236,7 @@ describe('CSS editor usability', () => {
   it('cancels only the registration name, without discarding CSS or leaving a hidden unsaved-name warning', () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.kept{}' })
-    store.set(customCssEditorUiAtom, { name: 'Not saved', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Not saved', registering: true, source: null })
     const view = renderWithStore(<CustomCssSection />, store)
     expect(store.get(hasUnappliedCustomCssAtom)).toBe(true)
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancelRegistration' }))
@@ -246,7 +249,7 @@ describe('CSS editor usability', () => {
 
   it('cancels registration with Escape, but not during IME composition', () => {
     const store = makeStore()
-    store.set(customCssEditorUiAtom, { name: 'Draft', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Draft', registering: true, source: null })
     const onKeyDown = vi.fn()
     const view = renderWithStore(
       // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
@@ -268,7 +271,7 @@ describe('CSS editor usability', () => {
   it('does not register CSS on modified Enter shortcuts in the name field', () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
-    store.set(customCssEditorUiAtom, { name: 'Name', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Name', registering: true, source: null })
     const view = renderWithStore(<CustomCssSection />, store)
     const input = view.getByLabelText('content.customCss.name')
     for (const modifier of ['ctrlKey', 'metaKey', 'altKey', 'shiftKey']) {
@@ -281,7 +284,7 @@ describe('CSS editor usability', () => {
   it('returns focus to the retained registration name after a failed write', async () => {
     const store = makeStore()
     store.set(customCssAtom, { enabled: true, css: '.source{}' })
-    store.set(customCssEditorUiAtom, { name: 'Keep name', registering: true, source: null, expanded: true })
+    store.set(customCssEditorUiAtom, { name: 'Keep name', registering: true, source: null })
     let rejectSave!: (error: Error) => void
     actions.register.mockImplementationOnce(() => {
       store.set(customCssOperationAtom, 'register')

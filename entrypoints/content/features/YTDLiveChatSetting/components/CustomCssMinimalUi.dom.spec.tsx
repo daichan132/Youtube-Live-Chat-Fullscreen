@@ -1,4 +1,4 @@
-import { act, fireEvent, within } from '@testing-library/react'
+import { act, fireEvent, type RenderResult, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import {
@@ -42,86 +42,103 @@ const setup = () => {
   return { store, view, onKeyDown }
 }
 
+const savedRow = (view: RenderResult, id: string) => {
+  const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
+  if (!row) throw new Error(`Missing saved style row: ${id}`)
+  return within(row)
+}
+
 describe('focused CSS settings', () => {
-  it('starts with one selector and one Use button, without creating a draft or writing', () => {
+  it('starts with visible empty CSS and one explicit Use button, without creating a draft or writing', () => {
     const { store, view } = setup()
     expect(view.getAllByRole('combobox')).toHaveLength(1)
-    expect(view.queryByRole('textbox')).toBeNull()
-    expect(view.queryByRole('button', { name: 'content.customCss.register' })).toBeNull()
+    expect(view.getByLabelText('CSS')).toBeVisible()
+    expect(view.getByLabelText('CSS')).toHaveValue('')
+    expect(view.queryByLabelText('content.customCss.name')).toBeNull()
     expect(view.container.querySelectorAll('[data-ylc-css-use]')).toHaveLength(1)
-    expect(view.getByRole('button', { name: 'content.customCss.apply' })).not.toBeDisabled()
+    expect(view.getByRole('button', { name: 'content.customCss.apply' })).toBeDisabled()
     expect(store.get(customCssDraftAtom)).toBeNull()
     expect(store.get(hasUnappliedCustomCssAtom)).toBe(false)
     for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
   })
 
-  it('opens editing and named saving only on request, keeping trust information in the editor', () => {
+  it('opens named saving only on request and keeps trust information attached to the visible editor', () => {
     const { view } = setup()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
-    expect(view.getByLabelText('CSS')).toHaveFocus()
     expect(view.getByLabelText('CSS')).toHaveAccessibleDescription(/content.customCss.warning/)
+    fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.save{}' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.register' }))
     expect(view.getByLabelText('content.customCss.name')).toHaveFocus()
     for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancelRegistration' }))
     expect(view.queryByLabelText('content.customCss.name')).toBeNull()
     expect(view.getByLabelText('CSS')).toHaveFocus()
+    expect(view.getByLabelText('CSS')).toHaveValue('.save{}')
   })
 
-  it('returns to selection on Escape without discarding CSS, but ignores composing Escape', () => {
-    const { view, store, onKeyDown } = setup()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+  it('keeps CSS visible when Escape requests modal close and ignores composing Escape', () => {
+    const store = createTestStore()
+    const onOpenChange = vi.fn()
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
     const editor = view.getByLabelText('CSS')
+    editor.focus()
     fireEvent.change(editor, { target: { value: '.retained{}' } })
     fireEvent.keyDown(editor, { key: 'Escape', isComposing: true })
-    expect(editor).toBeInTheDocument()
-    onKeyDown.mockClear()
+    expect(view.queryByText('content.customCss.discardOnClose')).toBeNull()
+    expect(editor).toBeVisible()
     fireEvent.keyDown(editor, { key: 'Escape' })
-    expect(view.queryByLabelText('CSS')).toBeNull()
-    expect(view.getByRole('button', { name: 'content.customCss.emptyEditor' })).toHaveFocus()
+    expect(view.getByText('content.customCss.discardOnClose')).toBeInTheDocument()
+    expect(editor).toBeVisible()
     expect(store.get(customCssDraftAtom)?.css).toBe('.retained{}')
-    expect(onKeyDown).not.toHaveBeenCalled()
+    expect(onOpenChange).not.toHaveBeenCalled()
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.keepEditing' }))
+    expect(editor).toHaveFocus()
+    expect(editor).toHaveValue('.retained{}')
+    expect(onOpenChange).not.toHaveBeenCalled()
   })
 
   it('shows examples only for exact bundled CSS, never for an edited or imported source', () => {
     const { view } = setup()
-    expect(view.container.querySelector('[data-ylc-css-example]')).toHaveAttribute('data-ylc-css-example', CHAT_CSS_PRESETS[0]?.id)
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+    const preset = CHAT_CSS_PRESETS[0]
+    if (!preset) throw new Error('Missing starter style')
+    fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
+    expect(view.container.querySelector('[data-ylc-css-example]')).toHaveAttribute('data-ylc-css-example', preset.id)
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '</style><script>unsafe()</script>' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
-    const example = view.container.querySelector('[data-ylc-css-example]')
-    expect(example).toHaveAttribute('data-ylc-css-example', 'custom')
-    expect(example?.querySelector('script, style, iframe')).toBeNull()
+    expect(view.container.querySelector('[data-ylc-css-example]')).toBeNull()
+    expect(view.getByRole('group', { name: 'content.customCss.title' }).querySelector('script, style, iframe')).toBeNull()
+    expect(view.getByLabelText('CSS')).toHaveValue('</style><script>unsafe()</script>')
+    expect(view.getByLabelText('CSS')).toHaveAccessibleDescription(/content.customCss.warning/)
   })
 
-  it('keeps failure and external-change notices visible after returning to selection', () => {
+  it('keeps failure and external-change notices visible alongside the editor', () => {
     const { store, view } = setup()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.draft{}' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
     act(() => {
       store.set(customCssAtom, { enabled: true, css: '.external{}' })
       store.set(customCssFeedbackAtom, { kind: 'error', operation: 'apply', code: 'unconfirmed' })
     })
     expect(view.getByRole('alert')).toHaveTextContent('content.customCss.saveFailed')
     expect(view.getByText('content.customCss.externalChange')).toBeVisible()
+    expect(view.getByLabelText('CSS')).toBeVisible()
+    expect(view.getByLabelText('CSS')).toHaveValue('.draft{}')
     expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
   })
 
-  it('keeps copy deletion inside editing and still requires confirmation', () => {
+  it('lists named styles with a separate delete action that still requires confirmation', () => {
     const { store, view } = setup()
     act(() => {
       store.set(savedChatCssAtom, [{ id: 'mine', name: 'Mine', css: '.saved{}' }])
     })
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'saved:mine' } })
-    expect(view.queryByRole('button', { name: 'content.customCss.deleteSaved' })).toBeNull()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.deleteSaved' }))
+    const row = savedRow(view, 'mine')
+    expect(row.getByRole('button', { name: 'content.customCss.loadSaved' })).toHaveTextContent('Mine')
+    fireEvent.click(row.getByRole('button', { name: 'content.customCss.loadSaved' }))
+    fireEvent.click(row.getByRole('button', { name: 'content.customCss.deleteSavedLabel' }))
     expect(actions.remove).not.toHaveBeenCalled()
     fireEvent.click(
       within(view.getByRole('group', { name: 'content.customCss.confirmTitle' })).getByRole('button', { name: 'content.customCss.cancel' }),
     )
     expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
+    expect(store.get(savedChatCssAtom)).toEqual([{ id: 'mine', name: 'Mine', css: '.saved{}' }])
   })
 
   it('distinguishes confirmed Off from unconfirmed Off and only resumes on explicit Use', async () => {
@@ -145,7 +162,6 @@ describe('focused CSS settings', () => {
 
   it('keeps Off available during Use and a pending resume, and retains the copyable source', () => {
     const { store, view } = setup()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     act(() => {
       store.set(customCssOperationAtom, 'apply')
     })
@@ -204,7 +220,6 @@ describe('focused CSS settings', () => {
     expect(view.getByRole('tabpanel', { name: 'content.customCss.title' })).toHaveAttribute('aria-labelledby', cssTab.id)
     expect(view.getByRole('group', { name: 'content.customCss.title' })).toBeInTheDocument()
     expect(view.queryByRole('group', { name: 'content.setting.group.display' })).toBeNull()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.tab-source{}' } })
     await act(async () => {
       fireEvent.click(view.getByRole('button', { name: 'content.customCss.apply' }))

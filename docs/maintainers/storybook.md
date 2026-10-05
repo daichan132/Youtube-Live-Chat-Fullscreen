@@ -16,7 +16,31 @@ yarn storybook
 yarn storybook:build
 ```
 
-静的プレビューはルートの `storybook-static/` に生成する。CI の `quality` job は `yarn verify` の後にこのビルドを行う。ビルド成功は story の読み込みと生成の確認であり、すべての操作を実行した結果ではない。
+静的プレビューはルートの `storybook-static/` に生成する。CI の `quality` job は `yarn verify` の後に `yarn storybook:check` とこのビルドを行う。ビルド成功は story の読み込みと生成の確認であり、すべての操作を実行した結果ではない。
+
+## カスタム CSS の11状態
+
+カスタム CSS タブでは textarea が常に表示され、初回は空欄から始まる。本文の使用と名前付き保存は入力欄の近くにあり、保存済みの行から読み込み、使用、削除を行える。おすすめスタイルの selector は補助的な入力元として確認する。
+
+`stories/CustomCss.stories.tsx` は次の11状態を用意している。各 story の `play` が実際のボタンや入力欄を操作するため、表示後に操作結果と assertion の成否を確認する。テーマと言語の toolbar からライト、ダーク、システム設定と日本語、English、RTL のアラビア語を選べる。
+
+| Story | 確認する操作と状態 |
+| --- | --- |
+| `Initial` | 空の textarea と、空欄では無効な使用ボタン |
+| `SavedStyles` | 保存済みの行から本文を読み込む |
+| `Editing` | 常設の textarea に CSS を貼り付ける |
+| `Paused` | 使用中の CSS をオフにし、本文を残して再開できる状態 |
+| `NamedCopy` | おすすめを読み込み、名前付き保存のフォームを開く |
+| `SaveFailure` | 使用時の保存失敗を表示し、本文を保持する |
+| `ReplaceDraftConfirmation` | 未反映の編集を別のおすすめへ置き換える前の確認 |
+| `CloseConfirmation` | 未反映の編集を残したまま設定を閉じる前の確認 |
+| `NarrowSelection` | 360px 幅で保存済み一覧と入力欄を表示する |
+| `NarrowEditing` | 320px 幅で CSS を入力する |
+| `LibraryRoundTrip` | 貼り付けた本文を保存し、閉じて再表示した後に使う |
+
+`LibraryRoundTrip` は CSS の貼り付け、名前付き保存、設定を閉じて下書きを破棄、再表示、保存済みの行から使用、使用中の表示と textarea の本文確認を順に行う。保存は新しいコピーの追加であり、読み込んだコピーを編集したり使用したりしても登録済みの本文は変わらない。同名による上書きは行わない。
+
+Escape は確認画面や名前フォームを内側から閉じ、その後は設定全体の close guard に従う。textarea を閉じる操作として扱わない。タブ切替、Undo/IME、名前付き保存、設定の再表示と合わせて手動でも確認する。
 
 ## コンポーネントと CSS の境界
 
@@ -30,9 +54,11 @@ production output と Chrome/Firefox ZIP には `.storybook/`、`stories/`、`st
 
 ## 設定値と storage の分離
 
-各 story は専用の Jotai store と設定 fixture から開始する。設定 repository や extension API を使うコンポーネントには、story 内で完結する memory mock を渡す。実際の拡張の storage、ユーザーの設定、他の story が書いた値を読み書きしない。
+各 story は専用の Jotai store と設定 fixture から開始する。本番のコンポーネント、atoms、`createCustomCssActions` を使い、repository の書き込みだけを story 内で完結する memory fixture へ置き換える。実際の拡張の storage、ユーザーの設定、他の story が書いた値を読み書きしない。
 
-保存済み、変更中、保存待ち、書き込み失敗などの状態は明示的な fixture で再現する。story を切り替えたり再表示したりするときは、状態と mock の呼び出し履歴を初期化する。コンポーネントを再利用するために本番の repository や storage 契約を簡略化しない。
+同じ story の中で設定を閉じて再表示しても、memory fixture に保存したコピーは残る。`LibraryRoundTrip` が確認するのはこの設定画面の往復であり、ブラウザの再読み込みを越える永続化ではない。別の story を開く、story を再マウントする、ページを再読み込みする場合は fixture から開始する。テーマや保存待ち時間の変更は、その story の draft を保持する。
+
+保存待ちと書き込み失敗は Controls で再現する。実アプリでは既存 repository が extension storage の書き込み、readback、外部更新、retry を処理するため、その永続化と別ウィンドウ間の同期は repository のテストと拡張を読み込んだ実ブラウザで確認する。Storybook の memory fixture を根拠に本番の storage 契約を変更しない。CSS の上限、backup schema、Off/Resume の guard は本番と同じ仕様を保つ。
 
 ## 実ブラウザ検証との関係
 

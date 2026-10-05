@@ -48,28 +48,25 @@ const openCss = async (context: PlayContext) => {
 }
 const openEditor = async (context: PlayContext) => {
   const ui = await openCss(context)
-  const editor = ui.queryByRole('textbox', { name: 'CSS' })
-  if (editor) return editor
-  await userEvent.click(ui.getByRole('button', { name: textFor(context)('content.customCss.emptyEditor') }))
   return ui.findByRole('textbox', { name: 'CSS' })
 }
 const editCss = async (context: PlayContext) => {
   const editor = await openEditor(context)
   await userEvent.clear(editor)
-  await userEvent.type(editor, EDITED_CSS.replaceAll('{', '{{'))
+  await userEvent.type(editor, EDITED_CSS.replaceAll('{', '{{'), { delay: null })
   await expect(editor).toHaveValue(EDITED_CSS)
   return editor
 }
 const description = (story: string) => ({ docs: { description: { story } } })
 
 export const Initial: Story = {
-  name: '初期・スタイルを選ぶ',
-  parameters: description('初めて設定を開き、カスタムCSSタブを選択した状態。選択・使用・編集をそのまま操作できます。'),
+  name: '初期・CSSを貼り付ける',
+  parameters: description('初めてカスタムCSSタブを開いた状態。入力欄は常に表示され、貼り付けたCSSを使用・名前付き保存できます。'),
   play: async context => {
     const ui = await openCss(context)
-    await expect(ui.getByRole('combobox')).toHaveValue('preset:bubbles')
-    await expect(ui.getByRole('button', { name: textFor(context)('content.customCss.apply') })).toBeEnabled()
-    await expect(ui.queryByRole('textbox', { name: 'CSS' })).not.toBeInTheDocument()
+    await expect(ui.getByRole('combobox')).toHaveValue('')
+    await expect(ui.getByRole('button', { name: textFor(context)('content.customCss.apply') })).toBeDisabled()
+    await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue('')
   },
 }
 
@@ -79,15 +76,20 @@ export const SavedStyles: Story = {
   parameters: description('名前を付けたCSSが複数ある状態。保存済みの「動画向けの白文字」を選びます。選択だけでは使用されません。'),
   play: async context => {
     const ui = await openCss(context)
-    await userEvent.selectOptions(ui.getByRole('combobox'), 'saved:video-outline')
-    await expect(ui.getByRole('combobox')).toHaveValue('saved:video-outline')
+    await userEvent.click(
+      ui.getByRole('button', { name: textFor(context)('content.customCss.loadSaved').replace('{name}', '動画向けの白文字') }),
+    )
+    await expect(ui.getByRole('textbox', { name: 'CSS' })).not.toHaveValue('')
+    await expect(
+      ui.getByRole('button', { name: textFor(context)('content.customCss.useSavedLabel').replace('{name}', '動画向けの白文字') }),
+    ).toBeEnabled()
   },
 }
 
 export const Editing: Story = {
   name: '編集中・CSSの貼り付けと変更',
   args: { seed: 'saved' },
-  parameters: description('編集・貼り付けボタンを押し、CSSを変更した状態。入力、Undo、使用、スタイル選択への戻りを確認できます。'),
+  parameters: description('常設の入力欄にCSSを貼り付けた状態。使用・名前付き保存・保存済みスタイルの読み込みを操作できます。'),
   play: async context => {
     await editCss(context)
   },
@@ -108,9 +110,7 @@ export const Paused: Story = {
 
 export const NamedCopy: Story = {
   name: '名前付き保存・登録フォーム',
-  parameters: description(
-    'カードのスタイルを選び、編集画面で「名前を付けて残す」を開いた状態。一覧へ保存しても使用中のCSSは変わりません。',
-  ),
+  parameters: description('カードのスタイルを読み込み、「名前を付けて保存」を開いた状態。一覧へ保存しても使用中のCSSは変わりません。'),
   play: async context => {
     const ui = await openCss(context)
     const text = textFor(context)
@@ -138,12 +138,11 @@ export const SaveFailure: Story = {
 
 export const ReplaceDraftConfirmation: Story = {
   name: '確認・未保存の編集を置き換える',
-  parameters: description('CSSを編集してスタイル選択へ戻り、別のスタイルを選んだ状態。キャンセルすると編集した本文を保持します。'),
+  parameters: description('CSSを編集した後、別のおすすめスタイルを選んだ状態。キャンセルすると編集した本文を保持します。'),
   play: async context => {
     const ui = uiFor(context)
     const text = textFor(context)
     await editCss(context)
-    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.choosePreset') }))
     await userEvent.selectOptions(ui.getByRole('combobox'), 'preset:cards')
     await expect(await ui.findByRole('group', { name: text('content.customCss.confirmTitle') })).toBeVisible()
     await expect(ui.getByText(text('content.customCss.replaceDraft'), { exact: true })).toBeVisible()
@@ -179,5 +178,29 @@ export const NarrowEditing: Story = {
   parameters: description('320px幅の画面でCSSを編集する状態。名前付き保存や確認画面も同じ画面幅で操作できます。'),
   play: async context => {
     await editCss(context)
+  },
+}
+
+export const LibraryRoundTrip: Story = {
+  name: '保存→再表示→使う',
+  parameters: description(
+    '貼り付けたCSSを名前付きで保存し、画面を閉じてから再表示し、一覧から使用した状態。保存した本文を後から再利用できます。',
+  ),
+  play: async context => {
+    const ui = uiFor(context)
+    const text = textFor(context)
+    const name = '配信用の紫ライン'
+    await editCss(context)
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.register') }))
+    await userEvent.type(ui.getByRole('textbox', { name: text('content.customCss.name') }), name, { delay: null })
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.saveRegistration') }))
+    await expect(await ui.findByText(text('content.customCss.registered'), { exact: true }, { timeout: 5000 })).toBeVisible()
+    await userEvent.click(ui.getByRole('button', { name: text('content.aria.close') }))
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.discardAndClose') }))
+    await userEvent.click(ui.getByRole('button', { name: text('content.aria.openSettings') }))
+    await openCss(context)
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.useSavedLabel').replace('{name}', name) }))
+    await expect(await ui.findByText(`${text('content.customCss.active')} · ${name}`, { exact: true }, { timeout: 5000 })).toBeVisible()
+    await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(EDITED_CSS)
   },
 }

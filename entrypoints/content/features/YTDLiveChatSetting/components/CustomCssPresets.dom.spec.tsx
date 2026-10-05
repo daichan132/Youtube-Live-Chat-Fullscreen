@@ -1,4 +1,4 @@
-import { act, fireEvent } from '@testing-library/react'
+import { act, fireEvent, type RenderResult, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
@@ -30,7 +30,13 @@ const presetById = (id: string) => {
   return preset
 }
 
-describe('choosing CSS in one list', () => {
+const savedRow = (view: RenderResult, id: string) => {
+  const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
+  if (!row) throw new Error(`Missing saved style row: ${id}`)
+  return within(row)
+}
+
+describe('choosing recommended and saved CSS styles', () => {
   it.each(CHAT_CSS_PRESETS)('loads $id and its example without saving, applying or resuming', preset => {
     const store = createTestStore()
     const active = { enabled: true, css: '.existing{}' }
@@ -42,8 +48,7 @@ describe('choosing CSS in one list', () => {
     fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
     expect(view.getByText(preset.descriptionKey)).toBeInTheDocument()
     if (preset.noteKey) expect(view.getByText(preset.noteKey)).toBeInTheDocument()
-    expect(view.queryByRole('textbox')).toBeNull()
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
+    expect(view.getByLabelText('CSS')).toBeVisible()
     expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
     expect(store.get(customCssAtom)).toBe(active)
     expect(store.get(savedChatCssAtom)).toBe(copies)
@@ -68,14 +73,11 @@ describe('choosing CSS in one list', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:bubbles' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '/* my changes */' } })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
     fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:cards' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
-    expect(view.getByRole('combobox')).toHaveValue('draft')
+    expect(view.getByLabelText('CSS')).toHaveValue(store.get(customCssDraftAtom)?.css)
     expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'preset', id: 'bubbles' })
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     expect(view.getByLabelText('CSS')).toHaveValue('/* my changes */')
     expect(store.get(customCssAtom).css).toBe('')
   })
@@ -84,7 +86,6 @@ describe('choosing CSS in one list', () => {
     const store = createTestStore()
     const first = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(first.getByRole('combobox'), { target: { value: 'preset:accent' } })
-    fireEvent.click(first.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(first.getByLabelText('CSS'), { target: { value: '/* custom stripe */' } })
     first.unmount()
     const view = renderWithStore(<CustomCssSection />, store)
@@ -102,7 +103,6 @@ describe('choosing CSS in one list', () => {
     const view = renderWithStore(<CustomCssSection />, store)
     fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
     expect(store.get(customCssEditorUiAtom).name).toBe('')
-    fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '/* personal copy */' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.register' }))
     expect(view.getByLabelText('content.customCss.name')).toHaveValue(preset.labelKey)
@@ -115,17 +115,20 @@ describe('choosing CSS in one list', () => {
     expect(preset.css).toBe(original)
   })
 
-  it('namespaces packaged and personal IDs in the combined selector', () => {
+  it('distinguishes recommended and saved styles that share an ID', () => {
     const store = createTestStore()
     store.set(savedChatCssAtom, [{ id: 'cards', name: 'My cards', css: '.mine{}' }])
     const view = renderWithStore(<CustomCssSection />, store)
     const select = view.getByRole('combobox')
     fireEvent.change(select, { target: { value: 'preset:cards' } })
+    expect(view.getByLabelText('CSS')).toHaveValue(presetById('cards').css)
     expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'preset', id: 'cards' })
-    fireEvent.change(select, { target: { value: 'saved:cards' } })
-    expect(select).toHaveValue('saved:cards')
+    expect(within(select).queryByRole('option', { name: 'My cards' })).toBeNull()
+    fireEvent.click(savedRow(view, 'cards').getByRole('button', { name: 'content.customCss.loadSaved' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.mine{}')
     expect(store.get(customCssDraftAtom)?.css).toBe('.mine{}')
     expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'saved', id: 'cards' })
     expect(view.queryByRole('group', { name: 'content.customCss.confirmTitle' })).toBeNull()
+    expect(actions.activate).not.toHaveBeenCalled()
   })
 })

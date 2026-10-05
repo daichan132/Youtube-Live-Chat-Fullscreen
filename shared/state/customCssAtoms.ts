@@ -30,10 +30,8 @@ export type CustomCssEditorUi = {
   name: string
   registering: boolean
   source: CustomCssSource
-  // Only the optional code editor; the style selector is always discoverable.
-  expanded: boolean
 }
-export const customCssEditorUiAtom = atom<CustomCssEditorUi>({ name: '', registering: false, source: null, expanded: false })
+export const customCssEditorUiAtom = atom<CustomCssEditorUi>({ name: '', registering: false, source: null })
 export const customCssFeedbackAtom = atom<
   | { kind: 'success'; operation: CustomCssOperation }
   | { kind: 'error'; operation: CustomCssOperation; code: CustomCssErrorCode | 'storage' }

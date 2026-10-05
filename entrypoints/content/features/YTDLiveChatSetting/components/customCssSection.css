@@ -5,6 +5,7 @@
 }
 
 .ylc-custom-css .ylc-setting-group-legend {
+  box-sizing: border-box;
   color: var(--ylc-text-secondary);
 }
 
@@ -93,13 +94,13 @@
   display: block;
   padding: 10px;
   font:
-    13px / 1.7 ui-monospace,
+    13px / 1.55 ui-monospace,
     SFMono-Regular,
     Consolas,
     monospace;
   tab-size: 2;
   white-space: pre;
-  min-height: 180px;
+  min-height: 140px;
   max-height: 360px;
   resize: vertical;
   overflow: auto;
@@ -182,38 +183,90 @@
   font-size: 12px;
 }
 
-.ylc-custom-css .ylc-custom-css-edit {
-  width: 100%;
-  justify-content: flex-start;
-  padding-inline: 0;
+.ylc-custom-css-editor-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ylc-custom-css-editor-actions > .ylc-btn {
+  min-height: 40px;
+  justify-content: center;
+  text-align: center;
+}
+
+.ylc-custom-css-library,
+.ylc-custom-css-recommendations {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--ylc-border);
+}
+
+.ylc-custom-css-subheading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 0 8px;
+  color: var(--ylc-text-primary);
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.ylc-custom-css-saved-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ylc-custom-css-saved-row {
+  min-width: 0;
+  margin: 6px 0;
+  padding: 6px;
+}
+
+.ylc-custom-css-saved-name {
+  display: block;
+  height: auto;
+  min-height: 36px;
+  padding: 6px;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.ylc-custom-css-saved-row .ylc-preset-apply:disabled {
+  background: var(--ylc-bg-surface-muted);
+  color: var(--ylc-text-secondary);
+}
+
+.ylc-custom-css-saved-row svg {
+  flex-shrink: 0;
+}
+
+.ylc-custom-css-recommendations > label {
+  margin-bottom: 6px;
+  color: var(--ylc-text-secondary);
+}
+
+.ylc-custom-css-disclosure,
+.ylc-custom-css-example-details {
+  margin-top: 8px;
   color: var(--ylc-text-secondary);
   font-size: 12px;
+  line-height: 1.6;
 }
 
-.ylc-custom-css-edit > span:last-child {
-  margin-inline-start: auto;
-  font-size: 18px;
+.ylc-custom-css :is(.ylc-custom-css-disclosure, .ylc-custom-css-example-details) > summary {
+  cursor: pointer;
 }
 
-.ylc-custom-css .ylc-custom-css-back {
-  padding-inline: 0;
-  font-size: 12px;
-  color: var(--ylc-text-secondary);
-}
-
-.ylc-custom-css .ylc-custom-css-edit:hover,
-.ylc-custom-css .ylc-custom-css-back:hover {
-  color: var(--ylc-accent);
-  background: transparent;
-}
-
-.ylc-custom-css .ylc-custom-css-danger {
-  color: var(--ylc-danger-text);
-  font-size: 12px;
-}
-
-.ylc-custom-css .ylc-custom-css-danger:hover {
-  background: var(--ylc-danger-hover);
+.ylc-custom-css summary:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
 }
 
 .ylc-custom-css-actions,
@@ -256,7 +309,8 @@
 }
 
 .ylc-custom-css-error:empty,
-.ylc-custom-css-feedback:empty {
+.ylc-custom-css-feedback:empty,
+.ylc-custom-css-tools:empty {
   display: none;
 }
 
@@ -392,6 +446,13 @@
   .ylc-custom-css-tools {
     align-items: stretch;
     flex-direction: column;
+  }
+  .ylc-custom-css-saved-row {
+    gap: 4px;
+    padding: 4px;
+  }
+  .ylc-custom-css-saved-row .ylc-preset-apply {
+    padding-inline: 8px;
   }
 }
 

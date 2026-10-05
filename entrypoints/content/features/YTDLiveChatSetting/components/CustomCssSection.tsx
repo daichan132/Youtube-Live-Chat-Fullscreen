@@ -1,6 +1,7 @@
 import { useAtom, useAtomValue, useStore } from 'jotai'
 import { type MouseEvent, useEffect, useId, useRef, useState } from 'react'
-import { TbPalette } from '@/shared/components/icons'
+import { TbCheck, TbPalette, TbTrash } from '@/shared/components/icons'
+import { formatMessage } from '@/shared/i18n/format'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { useOptionalAppRuntime } from '@/shared/runtime/AppProvider'
@@ -33,9 +34,9 @@ import { ChatCssExample } from './ChatCssExample'
 import './customCssSection.css'
 
 type Confirmation =
-  | { kind: 'load'; css: string; source: CustomCssSource }
+  | { kind: 'load'; css: string; source: CustomCssSource; use: boolean; expected: ChatCssCustomization }
   | { kind: 'delete'; entry: SavedChatCss }
-  | { kind: 'overwrite'; expected: ChatCssCustomization }
+  | { kind: 'overwrite'; css: string; source: CustomCssSource; expected: ChatCssCustomization }
 
 const ERROR_KEYS: Record<CustomCssErrorCode | 'storage', TranslationKey> = {
   invalid: 'content.customCss.invalid',
@@ -55,6 +56,15 @@ const SUCCESS_KEYS = {
   disable: 'content.customCss.disabled',
 } as const satisfies Record<string, TranslationKey>
 
+const isCssWithinLimit = (css: string) => {
+  try {
+    assertCustomCss({ enabled: true, css })
+    return true
+  } catch {
+    return false
+  }
+}
+
 export const CustomCssSection = () => {
   const t = useT()
   const runtime = useOptionalAppRuntime()
@@ -71,45 +81,29 @@ export const CustomCssSection = () => {
   const [editorUi, setEditorUi] = useAtom(customCssEditorUiAtom)
   const [confirmation, setConfirmation] = useState<Confirmation | null>(null)
   const editorRef = useRef<HTMLTextAreaElement>(null)
-  const chooserRef = useRef<HTMLSelectElement>(null)
-  const editRef = useRef<HTMLButtonElement>(null)
   const nameRef = useRef<HTMLInputElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
   const applyButtonRef = useRef<HTMLButtonElement>(null)
   const stopTrigger = useRef<HTMLButtonElement | null>(null)
   const restoreRegistrationFocus = useRef<HTMLElement | null>(null)
-  const previousEditing = useRef(editorUi.expanded)
   const id = useId()
-  // A first-run suggestion is not a draft, a saved value or an enabled style.
-  const css = draft?.css ?? (active.css || CHAT_CSS_PRESETS[0]?.css || '')
+  // Merely opening the editor never creates a draft or selects a suggestion.
+  const css = draft?.css ?? active.css
   const changed = css !== active.css
   const source = editorUi.source
   const selected = source?.kind === 'saved' ? saved.find(entry => entry.id === source.id) : undefined
   const originalPreset = source?.kind === 'preset' ? CHAT_CSS_PRESETS.find(entry => entry.id === source.id) : undefined
   const example = CHAT_CSS_PRESETS.find(entry => entry.css === css)
-  const choice =
-    selected?.css === css
-      ? `saved:${selected.id}`
-      : example
-        ? `preset:${example.id}`
-        : active.css && css === active.css
-          ? 'current'
-          : 'draft'
+  const choice = example ? `preset:${example.id}` : ''
   const bytes = utf8Bytes(css)
-  const tooLarge = (() => {
-    try {
-      assertCustomCss({ enabled: true, css })
-      return false
-    } catch {
-      return true
-    }
-  })()
+  const tooLarge = !isCssWithinLimit(css)
   const hasFailedCssSave = persistence.status === 'error' && persistence.failedDomains.includes('customCss')
   const busy = operation !== null || recovery.pending
   const conflict = draft !== null && !areCustomCssEqual(draft.baseline, active)
   const inUse = active.enabled && !stopped
+  const canUse = (text: string) => runtime !== null && !busy && isCssWithinLimit(text) && !!text.trim()
   const matched = inUse && !changed && !hasFailedCssSave && !recovery.failed
-  const canApply = runtime !== null && !busy && !tooLarge && !!css.trim() && !matched
+  const canApply = canUse(css) && !matched
   const name = editorUi.name.trim()
   const duplicateName = !!name && saved.some(entry => entry.name.trim() === name)
   const registrationError = duplicateName
@@ -150,16 +144,7 @@ export const CustomCssSection = () => {
       : null
 
   const isSaving = () => store.get(customCssOperationAtom) !== null || store.get(customCssRecoveryAtom).pending
-  const focusInput = () => {
-    if (store.get(customCssEditorUiAtom).expanded) editorRef.current?.focus()
-    else chooserRef.current?.focus()
-  }
-  useEffect(() => {
-    if (previousEditing.current === editorUi.expanded) return
-    previousEditing.current = editorUi.expanded
-    if (editorUi.expanded) editorRef.current?.focus()
-    else editRef.current?.focus()
-  }, [editorUi.expanded])
+  const focusInput = () => editorRef.current?.focus()
   useEffect(() => {
     if (confirmation) cancelRef.current?.focus()
   }, [confirmation])
@@ -177,17 +162,15 @@ export const CustomCssSection = () => {
     const focusLost = !focused || focused === trigger.ownerDocument.body || (root instanceof ShadowRoot && focused === root.host)
     if (!focusLost && focused !== trigger) return
     if (applyButtonRef.current && !applyButtonRef.current.disabled) applyButtonRef.current.focus()
-    else if (editorUi.expanded) editorRef.current?.focus()
-    else editRef.current?.focus()
-  }, [canStop, recovery.pending, recovery.failed, editorUi.expanded])
+    else editorRef.current?.focus()
+  }, [canStop, recovery.pending, recovery.failed])
   useEffect(() => {
-    if (editorUi.expanded && editorUi.registering) nameRef.current?.focus()
-  }, [editorUi.expanded, editorUi.registering])
+    if (editorUi.registering) nameRef.current?.focus()
+  }, [editorUi.registering])
   useEffect(() => {
     const form = restoreRegistrationFocus.current
     if (busy || !form) return
     restoreRegistrationFocus.current = null
-    if (!editorUi.expanded) return
     // Restore focus only while it still belongs to this save, or was lost when
     // its form disappeared. A close confirmation or another control owns focus
     // once the user has moved there. Resolve focus inside the extension root too.
@@ -197,7 +180,7 @@ export const CustomCssSection = () => {
     if (!focusLost && !form.contains(focused)) return
     if (feedback?.kind === 'error' && editorUi.registering) nameRef.current?.focus()
     else editorRef.current?.focus()
-  }, [busy, editorUi.expanded, editorUi.registering, feedback])
+  }, [busy, editorUi.registering, feedback])
 
   const load = (text: string, nextSource: CustomCssSource) => {
     setDraft({ css: text, baseline: store.get(customCssAtom) })
@@ -206,22 +189,14 @@ export const CustomCssSection = () => {
     store.set(customCssFeedbackAtom, null)
     focusInput()
   }
-  const requestLoad = (text: string, nextSource: CustomCssSource = null) => {
-    // Switching recoverable samples/copies needs no confirmation. A genuine
-    // unsaved edit does; cancelling also leaves the selected option unchanged.
-    const unkept = changed && !example && !saved.some(entry => entry.css === css)
-    if (unkept && css !== text) setConfirmation({ kind: 'load', css: text, source: nextSource })
-    else load(text, nextSource)
-  }
-  const apply = (confirmedExpected?: ChatCssCustomization) => {
-    if (!runtime || !canApply || isSaving()) return
-    if (conflict && !confirmedExpected) {
-      setConfirmation({ kind: 'overwrite', expected: active })
-      return
-    }
-    const submitted = { css, baseline: confirmedExpected ?? draft?.baseline ?? active }
+  const activate = (text: string, expected: ChatCssCustomization, nextSource: CustomCssSource, focusEditor = false) => {
+    if (!runtime || !canUse(text) || isSaving()) return
+    // Row Use must submit the chosen copy, not the previous render's textarea.
+    const submitted = { css: text, baseline: expected }
     setDraft(submitted)
+    setEditorUi(current => ({ ...current, source: nextSource }))
     setConfirmation(null)
+    if (focusEditor) focusInput()
     const settle = () => {
       // Activation can save the source and then fail to resume. Advance only
       // a matching confirmed source, never an arbitrary watched replacement.
@@ -231,6 +206,24 @@ export const CustomCssSection = () => {
       }
     }
     void runtime.customCss.activate(submitted.css, submitted.baseline).then(settle, settle)
+  }
+  const requestLoad = (text: string, nextSource: CustomCssSource = null, use = false) => {
+    if (isSaving() || (use && !canUse(text))) return
+    // Switching recoverable samples/copies needs no confirmation. A genuine
+    // unsaved edit does; cancelling leaves both the text and source unchanged.
+    const unkept = changed && !example && !saved.some(entry => entry.css === css)
+    const expected = { ...store.get(customCssAtom) }
+    if (unkept && css !== text) setConfirmation({ kind: 'load', css: text, source: nextSource, use, expected })
+    else if (use) activate(text, expected, nextSource, true)
+    else load(text, nextSource)
+  }
+  const apply = () => {
+    if (!canApply || isSaving()) return
+    if (conflict) {
+      setConfirmation({ kind: 'overwrite', css, source, expected: { ...active } })
+      return
+    }
+    activate(css, draft?.baseline ?? active, source)
   }
   const stop = (event: MouseEvent<HTMLButtonElement>) => {
     if (!runtime) return
@@ -266,6 +259,7 @@ export const CustomCssSection = () => {
     setConfirmation(null)
     focusInput()
   }
+  const rowLabel = (key: TranslationKey, entry: SavedChatCss) => formatMessage(t(key), { name: entry.name })
 
   return (
     <fieldset
@@ -277,14 +271,10 @@ export const CustomCssSection = () => {
           event.preventDefault()
           event.stopPropagation()
           cancelConfirmation()
-        } else if (editorUi.expanded && editorUi.registering) {
+        } else if (editorUi.registering) {
           event.preventDefault()
           event.stopPropagation()
           cancelRegistration()
-        } else if (editorUi.expanded) {
-          event.preventDefault()
-          event.stopPropagation()
-          setEditorUi(current => ({ ...current, expanded: false }))
         }
       }}
     >
@@ -312,200 +302,156 @@ export const CustomCssSection = () => {
             </button>
           )}
         </div>
-        {!editorUi.expanded ? (
-          <>
-            <label className='ylc-visually-hidden' htmlFor={`${id}-style`}>
-              {t('content.customCss.choosePreset')}
-            </label>
-            <select
-              id={`${id}-style`}
-              ref={chooserRef}
-              value={choice}
-              disabled={busy}
-              aria-describedby={`${id}-load-help`}
-              onChange={event => {
-                const value = event.target.value
-                if (value === 'current') requestLoad(active.css)
-                else if (value.startsWith('preset:')) {
-                  const next = CHAT_CSS_PRESETS.find(entry => entry.id === value.slice(7))
-                  if (next) requestLoad(next.css, { kind: 'preset', id: next.id })
-                } else if (value.startsWith('saved:')) {
-                  const next = saved.find(entry => entry.id === value.slice(6))
-                  if (next) requestLoad(next.css, { kind: 'saved', id: next.id })
-                }
-              }}
-            >
-              <optgroup label={t('content.customCss.presets')}>
-                {CHAT_CSS_PRESETS.map(entry => (
-                  <option key={entry.id} value={`preset:${entry.id}`}>
-                    {t(entry.labelKey)}
-                  </option>
-                ))}
-              </optgroup>
-              {saved.length > 0 && (
-                <optgroup label={t('content.customCss.savedList')}>
-                  {saved.map(entry => (
-                    <option key={entry.id} value={`saved:${entry.id}`}>
-                      {entry.name}
-                    </option>
-                  ))}
-                </optgroup>
-              )}
-              {active.css && <option value='current'>{t('content.customCss.sameAsApplied')}</option>}
-              {choice === 'draft' && (
-                <option value='draft' disabled>
-                  {t('content.customCss.unappliedBadge')}
-                </option>
-              )}
-            </select>
-            <ChatCssExample preset={example} />
-            {example?.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}
-          </>
-        ) : (
-          <>
-            <button
-              type='button'
-              className='ylc-btn ylc-custom-css-back'
-              onClick={() => setEditorUi(current => ({ ...current, expanded: false }))}
-            >
-              <span aria-hidden='true'>‹</span>
-              {t('content.customCss.choosePreset')}
-            </button>
-            <div className='ylc-custom-css-editor-heading'>
-              <label htmlFor={`${id}-editor`}>CSS</label>
-              <span id={`${id}-limit`} className='ylc-custom-css-count' data-invalid={tooLarge}>
-                {(bytes / 1024).toFixed(1)} / {MAX_CUSTOM_CSS_BYTES / 1024} KiB
-              </span>
-            </div>
-            <textarea
-              ref={editorRef}
-              id={`${id}-editor`}
-              value={css}
+        <div className='ylc-custom-css-editor-heading'>
+          <label htmlFor={`${id}-editor`}>CSS</label>
+          <span id={`${id}-limit`} className='ylc-custom-css-count' data-invalid={tooLarge}>
+            {(bytes / 1024).toFixed(1)} / {MAX_CUSTOM_CSS_BYTES / 1024} KiB
+          </span>
+        </div>
+        <textarea
+          ref={editorRef}
+          id={`${id}-editor`}
+          value={css}
+          readOnly={busy}
+          spellCheck={false}
+          autoCapitalize='off'
+          autoCorrect='off'
+          wrap='off'
+          dir='ltr'
+          rows={6}
+          aria-invalid={tooLarge}
+          aria-describedby={`${id}-limit ${id}-warning ${id}-text-state${tooLarge ? ` ${id}-css-error` : ''}`}
+          aria-keyshortcuts='Control+Enter Meta+Enter'
+          placeholder={t('content.customCss.placeholder')}
+          onChange={event => {
+            setDraft({ css: event.target.value, baseline: draft?.baseline ?? active })
+            setConfirmation(null)
+            store.set(customCssFeedbackAtom, null)
+          }}
+          onKeyDown={event => {
+            if (busy || event.nativeEvent.isComposing || event.altKey || event.shiftKey) return
+            if (event.key === 'Enter' && event.ctrlKey !== event.metaKey) {
+              event.preventDefault()
+              event.stopPropagation()
+              apply()
+            }
+          }}
+        />
+        <div className='ylc-custom-css-editor-actions'>
+          <button
+            ref={applyButtonRef}
+            type='button'
+            className='ylc-btn ylc-custom-css-primary'
+            data-ylc-css-use
+            onClick={apply}
+            disabled={!canApply}
+            aria-busy={busy}
+          >
+            {t(
+              busy
+                ? 'content.customCss.saving'
+                : matched
+                  ? 'content.customCss.active'
+                  : stopped && active.css
+                    ? 'content.customCss.resume'
+                    : 'content.customCss.apply',
+            )}
+          </button>
+          <button
+            type='button'
+            className='ylc-btn'
+            disabled={!runtime || busy || tooLarge || !css.trim()}
+            aria-expanded={editorUi.registering}
+            aria-controls={editorUi.registering ? `${id}-register` : undefined}
+            onClick={() =>
+              setEditorUi(current => ({
+                ...current,
+                registering: true,
+                name: current.name.trim()
+                  ? current.name
+                  : source?.kind === 'saved'
+                    ? ''
+                    : originalPreset
+                      ? t(originalPreset.labelKey)
+                      : example
+                        ? t(example.labelKey)
+                        : '',
+              }))
+            }
+          >
+            {t('content.customCss.register')}
+          </button>
+        </div>
+        {editorUi.registering && (
+          <div className='ylc-custom-css-register' id={`${id}-register`}>
+            <label htmlFor={`${id}-name`}>{t('content.customCss.name')}</label>
+            <input
+              ref={nameRef}
+              id={`${id}-name`}
+              value={editorUi.name}
               readOnly={busy}
-              spellCheck={false}
-              autoCapitalize='off'
-              autoCorrect='off'
-              wrap='off'
-              dir='ltr'
-              rows={8}
-              aria-invalid={tooLarge}
-              aria-describedby={`${id}-limit ${id}-warning ${id}-text-state${tooLarge ? ` ${id}-css-error` : ''}`}
-              aria-keyshortcuts='Control+Enter Meta+Enter'
-              placeholder={t('content.customCss.placeholder')}
+              maxLength={MAX_CSS_NAME_LENGTH}
+              autoComplete='off'
+              aria-invalid={duplicateName}
+              aria-describedby={`${id}-register-help${registrationError ? ` ${id}-register-error` : ''}`}
               onChange={event => {
-                setDraft({ css: event.target.value, baseline: draft?.baseline ?? active })
-                setConfirmation(null)
-                store.set(customCssFeedbackAtom, null)
+                setEditorUi(current => ({ ...current, name: event.target.value }))
+                if (store.get(customCssFeedbackAtom)?.operation === 'register') store.set(customCssFeedbackAtom, null)
               }}
               onKeyDown={event => {
-                if (busy || event.nativeEvent.isComposing || event.altKey || event.shiftKey) return
-                if (event.key === 'Enter' && event.ctrlKey !== event.metaKey) {
+                if (busy || event.nativeEvent.isComposing) return
+                if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
                   event.preventDefault()
                   event.stopPropagation()
-                  apply()
+                  register()
                 }
               }}
             />
-            <p className='ylc-custom-css-help' id={`${id}-warning`}>
-              {t('content.customCss.warning')}
+            <p id={`${id}-register-help`} className='ylc-custom-css-help'>
+              {t('content.customCss.registerHelp')}
             </p>
-            <div className='ylc-custom-css-tools'>
-              <button
-                type='button'
-                className='ylc-btn ylc-custom-css-quiet'
-                disabled={!runtime || busy || tooLarge || !css.trim()}
-                aria-expanded={editorUi.registering}
-                aria-controls={editorUi.registering ? `${id}-register` : undefined}
-                onClick={() =>
-                  setEditorUi(current => ({
-                    ...current,
-                    registering: true,
-                    name: current.name.trim()
-                      ? current.name
-                      : originalPreset
-                        ? t(originalPreset.labelKey)
-                        : example
-                          ? t(example.labelKey)
-                          : '',
-                  }))
-                }
-              >
-                {t('content.customCss.register')}
+            <p id={`${id}-register-error`} className='ylc-custom-css-error' aria-live='polite'>
+              {registrationError ? t(registrationError) : ''}
+            </p>
+            <div className='ylc-custom-css-actions'>
+              <button type='button' className='ylc-btn' onClick={register} disabled={!canRegister}>
+                {t('content.customCss.saveRegistration')}
               </button>
-              {selected && (
-                <button
-                  type='button'
-                  className='ylc-btn ylc-custom-css-danger'
-                  disabled={!runtime || busy}
-                  onClick={() => setConfirmation({ kind: 'delete', entry: { ...selected } })}
-                >
-                  {t('content.customCss.deleteSaved')}
-                </button>
-              )}
-              {originalPreset && css !== originalPreset.css && (
-                <button
-                  type='button'
-                  className='ylc-btn ylc-custom-css-quiet'
-                  disabled={busy}
-                  onClick={() => requestLoad(originalPreset.css, source)}
-                >
-                  {t('content.customCss.reloadPreset')}
-                </button>
-              )}
-              {selected && css !== selected.css && (
-                <button
-                  type='button'
-                  className='ylc-btn ylc-custom-css-quiet'
-                  disabled={busy}
-                  onClick={() => requestLoad(selected.css, source)}
-                >
-                  {t('content.customCss.reloadSaved')}
-                </button>
-              )}
+              <button type='button' className='ylc-btn' onClick={cancelRegistration} disabled={busy}>
+                {t('content.customCss.cancelRegistration')}
+              </button>
             </div>
-            {editorUi.registering && (
-              <div className='ylc-custom-css-register' id={`${id}-register`}>
-                <label htmlFor={`${id}-name`}>{t('content.customCss.name')}</label>
-                <input
-                  ref={nameRef}
-                  id={`${id}-name`}
-                  value={editorUi.name}
-                  readOnly={busy}
-                  maxLength={MAX_CSS_NAME_LENGTH}
-                  autoComplete='off'
-                  aria-invalid={duplicateName}
-                  aria-describedby={`${id}-register-help${registrationError ? ` ${id}-register-error` : ''}`}
-                  onChange={event => {
-                    setEditorUi(current => ({ ...current, name: event.target.value }))
-                    if (store.get(customCssFeedbackAtom)?.operation === 'register') store.set(customCssFeedbackAtom, null)
-                  }}
-                  onKeyDown={event => {
-                    if (busy || event.nativeEvent.isComposing) return
-                    if (event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey) {
-                      event.preventDefault()
-                      event.stopPropagation()
-                      register()
-                    }
-                  }}
-                />
-                <p id={`${id}-register-help`} className='ylc-custom-css-help'>
-                  {t('content.customCss.registerHelp')}
-                </p>
-                <p id={`${id}-register-error`} className='ylc-custom-css-error' aria-live='polite'>
-                  {registrationError ? t(registrationError) : ''}
-                </p>
-                <div className='ylc-custom-css-actions'>
-                  <button type='button' className='ylc-btn' onClick={register} disabled={!canRegister}>
-                    {t('content.customCss.saveRegistration')}
-                  </button>
-                  <button type='button' className='ylc-btn' onClick={cancelRegistration} disabled={busy}>
-                    {t('content.customCss.cancelRegistration')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
+          </div>
         )}
+        <details className='ylc-custom-css-disclosure'>
+          <summary>{t('content.customCss.warningTitle')}</summary>
+          <p className='ylc-custom-css-help' id={`${id}-warning`}>
+            {t('content.customCss.warning')}
+          </p>
+        </details>
+        <div className='ylc-custom-css-tools'>
+          {originalPreset && css !== originalPreset.css && (
+            <button
+              type='button'
+              className='ylc-btn ylc-custom-css-quiet'
+              disabled={busy}
+              onClick={() => requestLoad(originalPreset.css, source)}
+            >
+              {t('content.customCss.reloadPreset')}
+            </button>
+          )}
+          {selected && css !== selected.css && (
+            <button
+              type='button'
+              className='ylc-btn ylc-custom-css-quiet'
+              disabled={busy}
+              onClick={() => requestLoad(selected.css, source)}
+            >
+              {t('content.customCss.reloadSaved')}
+            </button>
+          )}
+        </div>
+        {selected && <p className='ylc-custom-css-help'>{t('content.customCss.savedHelp')}</p>}
         <p id={`${id}-text-state`} className='ylc-visually-hidden'>
           {t(stateKey)}
         </p>
@@ -515,87 +461,6 @@ export const CustomCssSection = () => {
           <p id={`${id}-css-error`} role='alert' className='ylc-custom-css-error'>
             {t('content.customCss.tooLarge')}
           </p>
-        )}
-        {confirmation && (
-          <fieldset className='ylc-custom-css-confirm' aria-label={t('content.customCss.confirmTitle')}>
-            <p>
-              {confirmation.kind === 'load'
-                ? t('content.customCss.replaceDraft')
-                : confirmation.kind === 'overwrite'
-                  ? t('content.customCss.conflict')
-                  : `${t('content.customCss.deletePrompt')} ${confirmation.entry.name}`}
-            </p>
-            <div className='ylc-custom-css-actions'>
-              <button ref={cancelRef} type='button' className='ylc-btn' onClick={cancelConfirmation}>
-                {t('content.customCss.cancel')}
-              </button>
-              <button
-                type='button'
-                className='ylc-btn'
-                disabled={busy}
-                onClick={() => {
-                  if (confirmation.kind === 'load') load(confirmation.css, confirmation.source)
-                  else if (confirmation.kind === 'overwrite') apply(confirmation.expected)
-                  else if (runtime) {
-                    const entry = confirmation.entry
-                    setConfirmation(null)
-                    focusInput()
-                    void runtime.customCss.remove(entry).catch(() => {})
-                  }
-                }}
-              >
-                {t(
-                  confirmation.kind === 'delete'
-                    ? 'content.customCss.deleteSaved'
-                    : confirmation.kind === 'load'
-                      ? 'content.customCss.replaceText'
-                      : 'content.customCss.overwriteApply',
-                )}
-              </button>
-            </div>
-          </fieldset>
-        )}
-        <p id={`${id}-load-help`} className='ylc-visually-hidden'>
-          {t('content.customCss.loadOnly')}
-        </p>
-        <button
-          ref={applyButtonRef}
-          type='button'
-          className='ylc-btn ylc-custom-css-primary'
-          data-ylc-css-use
-          onClick={() => apply()}
-          disabled={!canApply}
-          aria-busy={busy}
-        >
-          {t(
-            busy
-              ? 'content.customCss.saving'
-              : matched
-                ? 'content.customCss.active'
-                : stopped && active.css
-                  ? 'content.customCss.resume'
-                  : 'content.customCss.apply',
-          )}
-        </button>
-        {!editorUi.expanded && (
-          <button
-            ref={editRef}
-            type='button'
-            className='ylc-btn ylc-custom-css-edit'
-            aria-expanded={false}
-            onClick={() => {
-              setDraft(current => current ?? { css, baseline: active })
-              setEditorUi(current => ({
-                ...current,
-                expanded: true,
-                source: current.source ?? (example ? { kind: 'preset', id: example.id } : null),
-              }))
-            }}
-          >
-            <span aria-hidden='true'>{'{ }'}</span>
-            {t('content.customCss.emptyEditor')}
-            <span aria-hidden='true'>›</span>
-          </button>
         )}
         {!busy && feedback?.kind === 'error' && !recovery.failed && (
           <p role='alert' className='ylc-custom-css-error'>
@@ -615,6 +480,131 @@ export const CustomCssSection = () => {
         <p role='status' className='ylc-custom-css-feedback'>
           {!busy && successKey ? t(successKey) : ''}
         </p>
+        {confirmation && (
+          <fieldset className='ylc-custom-css-confirm' aria-label={t('content.customCss.confirmTitle')}>
+            <p>
+              {confirmation.kind === 'load'
+                ? t('content.customCss.replaceDraft')
+                : confirmation.kind === 'overwrite'
+                  ? t('content.customCss.conflict')
+                  : `${t('content.customCss.deletePrompt')} ${confirmation.entry.name}`}
+            </p>
+            <div className='ylc-custom-css-actions'>
+              <button ref={cancelRef} type='button' className='ylc-btn' onClick={cancelConfirmation}>
+                {t('content.customCss.cancel')}
+              </button>
+              <button
+                type='button'
+                className='ylc-btn'
+                disabled={busy}
+                onClick={() => {
+                  if (confirmation.kind === 'load') {
+                    if (confirmation.use) activate(confirmation.css, confirmation.expected, confirmation.source, true)
+                    else load(confirmation.css, confirmation.source)
+                  } else if (confirmation.kind === 'overwrite') {
+                    activate(confirmation.css, confirmation.expected, confirmation.source)
+                  } else if (runtime) {
+                    const entry = confirmation.entry
+                    setConfirmation(null)
+                    focusInput()
+                    void runtime.customCss.remove(entry).catch(() => {})
+                  }
+                }}
+              >
+                {t(
+                  confirmation.kind === 'delete'
+                    ? 'content.customCss.deleteSaved'
+                    : confirmation.kind === 'load'
+                      ? confirmation.use
+                        ? 'content.customCss.overwriteApply'
+                        : 'content.customCss.replaceText'
+                      : 'content.customCss.overwriteApply',
+                )}
+              </button>
+            </div>
+          </fieldset>
+        )}
+        <section className='ylc-custom-css-library' aria-labelledby={`${id}-saved-heading`}>
+          <h3 id={`${id}-saved-heading`} className='ylc-custom-css-subheading'>
+            {t('content.customCss.savedList')}
+            <span className='ylc-custom-css-count'>
+              {saved.length} / {MAX_SAVED_CHAT_CSS}
+            </span>
+          </h3>
+          {saved.length === 0 ? (
+            <p className='ylc-custom-css-help ylc-custom-css-empty'>{t('content.customCss.savedEmptyHelp')}</p>
+          ) : (
+            <ul className='ylc-custom-css-saved-list'>
+              {saved.map(entry => (
+                <li className='ylc-preset ylc-custom-css-saved-row' data-ylc-saved-css={entry.id} key={entry.id}>
+                  <button
+                    type='button'
+                    className='ylc-preset-name ylc-custom-css-saved-name'
+                    aria-label={rowLabel('content.customCss.loadSaved', entry)}
+                    disabled={busy}
+                    onClick={() => requestLoad(entry.css, { kind: 'saved', id: entry.id })}
+                  >
+                    {entry.name}
+                  </button>
+                  <div className='ylc-preset-actions'>
+                    <button
+                      type='button'
+                      className='ylc-preset-apply'
+                      aria-label={rowLabel('content.customCss.useSavedLabel', entry)}
+                      disabled={!canUse(entry.css)}
+                      onClick={() => requestLoad(entry.css, { kind: 'saved', id: entry.id }, true)}
+                    >
+                      <TbCheck size={16} aria-hidden='true' />
+                      <span>{t('content.customCss.useSaved')}</span>
+                    </button>
+                    <button
+                      type='button'
+                      className='ylc-preset-del'
+                      aria-label={rowLabel('content.customCss.deleteSavedLabel', entry)}
+                      disabled={!runtime || busy}
+                      onClick={() => setConfirmation({ kind: 'delete', entry: { ...entry } })}
+                    >
+                      <TbTrash size={18} aria-hidden='true' />
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+        <div className='ylc-custom-css-recommendations'>
+          <label htmlFor={`${id}-style`}>{t('content.customCss.presets')}</label>
+          <select
+            id={`${id}-style`}
+            value={choice}
+            disabled={busy}
+            aria-label={t('content.customCss.choosePreset')}
+            aria-describedby={`${id}-load-help`}
+            onChange={event => {
+              const next = CHAT_CSS_PRESETS.find(entry => `preset:${entry.id}` === event.target.value)
+              if (next) requestLoad(next.css, { kind: 'preset', id: next.id })
+            }}
+          >
+            <option value='' disabled>
+              {t('content.customCss.chooseSaved')}
+            </option>
+            {CHAT_CSS_PRESETS.map(entry => (
+              <option key={entry.id} value={`preset:${entry.id}`}>
+                {t(entry.labelKey)}
+              </option>
+            ))}
+          </select>
+          <p id={`${id}-load-help`} className='ylc-custom-css-help'>
+            {t('content.customCss.loadOnly')}
+          </p>
+          {example && (
+            <details className='ylc-custom-css-example-details'>
+              <summary>{t('content.customCss.presetHelp')}</summary>
+              <ChatCssExample preset={example} />
+              {example.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}
+            </details>
+          )}
+        </div>
       </div>
       <p className='ylc-custom-css-context'>{t('content.customCss.description')}</p>
     </fieldset>

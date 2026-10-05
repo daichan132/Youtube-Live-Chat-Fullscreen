@@ -49,7 +49,7 @@ const createStore = () => {
   store.set(customCssAtom, active)
   store.set(customCssSuspendedAtom, false)
   store.set(customCssDraftAtom, { css: '.draft{}', baseline: active })
-  store.set(customCssEditorUiAtom, { expanded: true, registering: true, name: 'Keep', source: null })
+  store.set(customCssEditorUiAtom, { registering: true, name: 'Keep', source: null })
   return store
 }
 const mount = (shadow: boolean, store: ReturnType<typeof createStore>, ui: ReactElement) => {
@@ -174,7 +174,7 @@ describe.each([false, true])('CSS focus ownership (shadow root: %s)', shadow => 
     fireEvent.keyDown(input, { key: 'Escape' })
     expect(view.queryByRole('button', { name: 'content.customCss.keepEditing' })).toBeNull()
     expect(focused()).toBe(input)
-    expect(store.get(customCssEditorUiAtom)).toMatchObject({ name: 'Keep', registering: true, expanded: true })
+    expect(store.get(customCssEditorUiAtom)).toMatchObject({ name: 'Keep', registering: true })
     expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
     expect(onOpenChange).not.toHaveBeenCalled()
   })

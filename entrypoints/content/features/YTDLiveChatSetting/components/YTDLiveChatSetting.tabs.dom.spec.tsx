@@ -1,6 +1,7 @@
-import { act, fireEvent, render, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { storage } from 'wxt/utils/storage'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { type AppRuntime, createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
@@ -25,13 +26,18 @@ const open = async () => {
       <YTDLiveChatSetting open onOpenChange={onOpenChange} />
     </AppProvider>,
   )
-  return { runtime, view, onOpenChange }
+  return { runtime, repository, view, onOpenChange }
 }
 
 const editCss = (view: Awaited<ReturnType<typeof open>>['view'], css: string) => {
   fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
-  fireEvent.click(view.getByRole('button', { name: 'content.customCss.emptyEditor' }))
   fireEvent.change(view.getByLabelText('CSS'), { target: { value: css } })
+}
+
+const savedRow = (view: Awaited<ReturnType<typeof open>>['view'], id: string) => {
+  const row = view.getByRole('tabpanel', { name: 'content.customCss.title' }).querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
+  if (!row) throw new Error(`Missing saved style row: ${id}`)
+  return within(row)
 }
 
 describe('settings, CSS and preset tabs', () => {
@@ -61,6 +67,7 @@ describe('settings, CSS and preset tabs', () => {
     await waitFor(() => expect(runtime.store.get(appliedChatCssAtom)).toBe('body { color: red }'))
     expect(activate).toHaveBeenCalledWith('body { color: red }', { enabled: false, css: '' })
     expect(runtime.store.get(customCssAtom)).toEqual({ enabled: true, css: 'body { color: red }' })
+    expect(await storage.getItem('local:ylc-custom-css')).toMatchObject({ value: { enabled: true, css: 'body { color: red }' } })
     expect(runtime.store.get(chatSettingsStateAtom).profile).toBe(profile)
     expect(runtime.store.get(editorSessionStateAtom).past).toBe(history)
   })
@@ -86,7 +93,7 @@ describe('settings, CSS and preset tabs', () => {
     expect(view.getByLabelText('CSS')).toHaveValue('.draft { color: blue }')
     expect(view.getByLabelText('content.customCss.name')).toHaveValue('My draft')
     expect(runtime.store.get(customCssDraftAtom)?.css).toBe('.draft { color: blue }')
-    expect(runtime.store.get(customCssEditorUiAtom)).toMatchObject({ name: 'My draft', registering: true, expanded: true })
+    expect(runtime.store.get(customCssEditorUiAtom)).toMatchObject({ name: 'My draft', registering: true })
     expect(runtime.store.get(appliedChatCssAtom)).toBe('')
   })
 
@@ -105,5 +112,63 @@ describe('settings, CSS and preset tabs', () => {
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.discardAndClose' }))
     expect(onOpenChange).toHaveBeenCalledWith(false)
     expect(runtime.store.get(customCssDraftAtom)).toBeNull()
+  })
+  it('uses the clicked saved style through real persistence only after unapplied replacement is confirmed', async () => {
+    const { runtime, repository, view } = await open()
+    await act(async () => {
+      await repository.saveSavedChatCss([{ id: 'named', name: 'My named style', css: '.named { color: orange }' }])
+    })
+    const activate = vi.spyOn(runtime.customCss, 'activate')
+    editCss(view, '.unapplied { color: blue }')
+    const row = savedRow(view, 'named')
+    expect(row.getByRole('button', { name: 'content.customCss.loadSaved' })).toHaveTextContent('My named style')
+    fireEvent.click(row.getByRole('button', { name: 'content.customCss.useSavedLabel' }))
+    expect(activate).not.toHaveBeenCalled()
+    expect(view.getByLabelText('CSS')).toHaveValue('.unapplied { color: blue }')
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.unapplied { color: blue }')
+    expect(runtime.store.get(customCssEditorUiAtom).source).toBeNull()
+    expect(runtime.store.get(appliedChatCssAtom)).toBe('')
+
+    fireEvent.click(row.getByRole('button', { name: 'content.customCss.useSavedLabel' }))
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.overwriteApply' }))
+    await waitFor(() => expect(runtime.store.get(appliedChatCssAtom)).toBe('.named { color: orange }'))
+    expect(activate).toHaveBeenCalledTimes(1)
+    expect(activate).toHaveBeenCalledWith('.named { color: orange }', { enabled: false, css: '' })
+    expect(await storage.getItem('local:ylc-custom-css')).toMatchObject({ value: { enabled: true, css: '.named { color: orange }' } })
+    expect(view.getByLabelText('CSS')).toHaveValue('.named { color: orange }')
+    expect(view.getByLabelText('CSS')).toHaveFocus()
+    expect(runtime.store.get(customCssEditorUiAtom).source).toEqual({ kind: 'saved', id: 'named' })
+  })
+
+  it('loads a named row without applying and retains its source, edited text and new copy name across tabs', async () => {
+    const { runtime, repository, view } = await open()
+    await act(async () => {
+      await repository.saveSavedChatCss([{ id: 'named', name: 'My named style', css: '.named {}' }])
+    })
+    const activate = vi.spyOn(runtime.customCss, 'activate')
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
+    fireEvent.click(savedRow(view, 'named').getByRole('button', { name: 'content.customCss.loadSaved' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.named {}')
+    fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.edited named {}' } })
+    expect(view.getByText('content.customCss.savedHelp')).toBeInTheDocument()
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadSaved' }))
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.edited named {}')
+    expect(runtime.store.get(customCssEditorUiAtom).source).toEqual({ kind: 'saved', id: 'named' })
+    expect(savedRow(view, 'named').getByRole('button', { name: 'content.customCss.loadSaved' })).toHaveTextContent('My named style')
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.register' }))
+    expect(view.getByLabelText('content.customCss.name')).toHaveValue('')
+    fireEvent.change(view.getByLabelText('content.customCss.name'), { target: { value: 'Edited named style' } })
+    fireEvent.click(view.getByRole('tab', { name: 'content.setting.header.preset' }))
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.edited named {}')
+    expect(view.getByLabelText('content.customCss.name')).toHaveValue('Edited named style')
+    expect(runtime.store.get(customCssEditorUiAtom).source).toEqual({ kind: 'saved', id: 'named' })
+    expect(runtime.store.get(appliedChatCssAtom)).toBe('')
+    expect(activate).not.toHaveBeenCalled()
+    expect(await storage.getItem('local:ylc-saved-chat-css')).toMatchObject({
+      value: [{ id: 'named', name: 'My named style', css: '.named {}' }],
+    })
   })
 })

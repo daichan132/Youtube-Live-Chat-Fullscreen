@@ -151,7 +151,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
   useEffect(() => {
     if (keyboardTabFocusRef.current !== menuItem) return
     keyboardTabFocusRef.current = null
-    // Restoring an expanded CSS editor can focus its name input on mount.
+    // Restoring the CSS registration form can focus its name input on mount.
     // Arrow selection keeps focus on the selected tab after its panel mounts.
     focusActiveTab()
   }, [focusActiveTab, menuItem])
@@ -343,7 +343,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
-          className='min-h-0 flex-grow overflow-y-auto h-[380px] p-2 rounded-2xl'
+          className={`min-h-0 flex-grow overflow-y-auto p-2 rounded-2xl ${menuItem === 'css' ? 'h-[560px]' : 'h-[380px]'}`}
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}

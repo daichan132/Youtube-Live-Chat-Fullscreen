@@ -10,11 +10,17 @@ fieldset/legend, theme tokens, corner radii and button styles, with a small acce
 icon and border. Undo, Redo and Close remain shared header controls. The header
 can wrap these controls onto another row in a narrow panel.
 
-The normal path is **choose a style -> Use this style**. One native selector groups
-packaged starters and named personal copies. Code is hidden until Edit or paste
-CSS is requested. Keep a named copy and copy deletion live inside that editor,
-not alongside the primary Use action. The header has one Off operation. When
-paused, the primary button explicitly offers to resume with the selected source.
+The CSS textarea is always visible in the Custom CSS tab. Without a committed
+source or local draft, it starts blank. Users paste or edit CSS, then choose Use
+or save a named copy beside the editor. A secondary selector loads packaged
+starters; it does not preselect a starter on first use. The header has one Off
+operation. When paused, Use explicitly offers to resume with the chosen source.
+
+Named personal copies appear as rows with Load, Use and Delete operations. Load
+copies the stored text into the textarea; Use explicitly applies that row's CSS
+through the same activation guards as the editor. Delete removes only the named
+copy. Editing or using a loaded copy never changes its saved original. Saving
+creates a new named copy, and an existing name is rejected rather than overwritten.
 
 The existing appearance settings remain enabled and keep their own Undo/Redo.
 CSS does not rewrite the profile, activate a different appearance preset, or
@@ -28,14 +34,14 @@ The six starter sources and contributor instructions are in
 [`shared/settings/chatCssPresets`](../shared/settings/chatCssPresets/README.md).
 `chatCssPresets.ts` remains the single catalog. Explicit raw imports do not inject
 these styles into the settings Document. Starters consume no saved-copy slots.
-The first starter may be suggested when no source exists; rendering that
-suggestion does not create a draft, save anything or enable CSS.
+The secondary starter selector begins with an empty choice. Merely opening the
+tab does not load starter text, create a draft, save anything or enable CSS.
 
-Selection copies source into page-local editing state, never into chat. Moving
-between recoverable starters or copies does not ask for confirmation. Replacing
-genuine, unapplied edits that are not already present in the saved list does.
-Cancel leaves the text and source identity intact. The selector uses separate
-`preset:` and `saved:` namespaces, including when their IDs happen to match.
+Loading a starter or personal copy changes page-local editing state, never chat.
+Moving between recoverable starters or copies does not ask for confirmation.
+Replacing genuine, unapplied edits that are not already present in the saved
+list does. Cancel leaves the text and source identity intact. Source identity
+keeps starter and saved-copy IDs separate, including when those IDs match.
 Edited text is identified as an unapplied draft, not mislabeled as its original.
 
 `ChatCssExample` draws a small, fixed illustration only when the complete source
@@ -55,10 +61,9 @@ silently update saved or active copies.
 
 The existing repository owns queues, bounded retries, readback confirmation and
 external events. CSS is not part of ChatProfile or appearance presets. Drafts,
-editor mode, registration name, operation feedback and local stop intent are
+selected source, registration name, operation feedback and local stop intent are
 page-local Jotai state. They are never automatically persisted or exported.
-`CustomCssEditorUi.expanded` now means the optional code editor is open, not that
-the entire settings group is hidden. The group and its primary action stay visible.
+The textarea has no separate collapsed mode or editor-open state.
 
 The unreleased WIP profile-level CSS field is not maintained as another input or
 migrated into an automatically enabled source. No new storage schema or second
@@ -112,7 +117,7 @@ Other domains keep their existing confirmation and retry behavior.
 Off supersedes a failed resume through the pause domain. A retry of a failed
 source write while paused may save that source, but does not itself resume it.
 
-Source failures and recovery failures remain visible outside the hidden editor.
+Source failures and recovery failures remain visible beside the editor and actions.
 The header distinguishes a confirmed state from a pending/unconfirmed result;
 it does not show In use while a source save remains unconfirmed. A matching
 confirmation from common Retry can reconcile an earlier recovery failure.
@@ -127,11 +132,11 @@ Avoid simultaneous editing of the same saved list from multiple windows.
 
 ## Editing and accessibility
 
-Returning to style selection does not discard text or the registration name.
-The editor state also survives switching between Settings, Custom CSS and Presets,
-including its selected source, editor mode and open registration form. Switching
-tabs does not apply CSS or save a draft. Opening code editing pins the displayed
-text against later external changes.
+The draft, selected source, registration name and open name form survive switching
+between Settings, Custom CSS and Presets. Switching tabs does not apply CSS or
+save a draft. Editing or explicitly loading a source pins the displayed text
+against later external changes. The editor and saved-copy list share this draft;
+there is no separate transition into or out of code editing.
 Saved-copy deletion leaves both the draft and currently applied source intact;
 external deletion shows a missing-source notice rather than erasing the draft.
 Reload and overwrite confirmations hold snapshots and recheck changes before
@@ -151,16 +156,20 @@ Names are checked for trimmed duplicates and capacity before submission. The
 name form appears only on request; the preset title is suggested only then.
 Canceling that form clears only its name. Failed saves retain both inputs; an old
 completion must not clear a newly opened form with the same name. Registration
-never applies CSS. A full saved list does not block source editing or Use.
+never applies CSS. It always creates a new copy with a new ID; there is no rename
+or update action. Changes to a loaded copy can be kept under a different name,
+while its original row remains available. A full saved list does not block source
+editing or Use.
 
 The textarea is LTR, uses native text Undo/IME, and stays read-only rather than
 disabled during saves so selection and copying still work. Control/Meta+Enter
 uses the same explicit action as the button. Modified Enter in the name field
 and composing events do not accidentally submit it.
 
-Escape dismisses the innermost confirmation or name form first, otherwise leaves
-the code editor without discarding it. The section owns this ordering regardless
-of whether focus is on the name input, CSS, or a button. During a name save,
+Escape dismisses the innermost confirmation or name form first. With neither
+open, it follows the settings-close guard; it never collapses the textarea or
+changes an editor mode. The section owns this ordering regardless of whether
+focus is on the name input, CSS, or a button. During a name save,
 Escape is consumed without canceling the request or bubbling to close Settings.
 A deletion/overwrite confirmation takes priority over the name form.
 A subsequent settings-close request still uses the existing
@@ -169,23 +178,23 @@ the selected tab. Canceling the close keeps the draft and selected tab; confirmi
 the close clears the page-local draft and registration state. While that close
 confirmation is open, the panel handles Escape before its children, even if focus
 has moved back to the CSS or name input. It cancels only the close confirmation, including when a
-save finishes while it is open; it does not discard the name or leave editing.
+save finishes while it is open; it does not discard the name or hide the textarea.
 Composing Escape events remain ignored. Focus returns to the corresponding
-editor, selector or prior settings control. A registration completion restores
+editor, source control or prior settings control. A registration completion restores
 focus only if it still belongs to the submitting form or was lost when the form
 was removed, never from another control or a settings-close confirmation.
-A completed operation must not focus a hidden editor. When Off removes its
-button, focus returns to Use unless the user moved elsewhere. These checks and
+A completed operation must not focus an inactive Custom CSS tabpanel. When Off
+removes its button, focus returns to Use unless the user moved elsewhere. These checks and
 close-focus snapshots use the containing Document or ShadowRoot, not the outer
 document's shadow host. A null ShadowRoot activeElement alone is not proof of
 lost focus: an outside-document control may now own it. Off and registration
 completion also check that outer focus before restoring a control.
 Beforeunload remains a best-effort browser warning, not a persistence mechanism.
 
-Japanese and English (including US/GB/AU) use the focused action wording. The
-existing translation keys and locale inventory are unchanged. Other languages
-retain their existing translations/fallbacks. Runtime locale arrays are produced
-by the existing compiler, never patched by index.
+Japanese and English (including US/GB/AU) use wording for the always-visible
+editor and saved-copy actions. The locale inventory is unchanged. Translation
+changes belong in the locale source files; runtime arrays are produced by the
+existing compiler, never patched by index.
 
 ## Input and backup boundaries
 
