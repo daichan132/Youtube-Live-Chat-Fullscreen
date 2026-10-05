@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, userEvent, within } from 'storybook/test'
+import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { EDITED_CSS, storyLocale, storyText, storyTheme } from './customCssStoryRuntime'
 import { SettingsStoryHarness } from './SettingsStoryHarness'
 
@@ -202,5 +203,27 @@ export const LibraryRoundTrip: Story = {
     await userEvent.click(ui.getByRole('button', { name: text('content.customCss.useSavedLabel').replace('{name}', name) }))
     await expect(await ui.findByText(`${text('content.customCss.active')} · ${name}`, { exact: true }, { timeout: 5000 })).toBeVisible()
     await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(EDITED_CSS)
+  },
+}
+
+export const ChatLayouts: Story = {
+  name: 'おすすめ・チャットの配置を変える',
+  parameters: description(
+    'メッセンジャー、名前ヘッダー付きカード、タイムラインを順に読み込んで使用できます。文字だけでなく名前・本文・アバターの配置が変わるおすすめです。',
+  ),
+  play: async context => {
+    const ui = await openCss(context)
+    const text = textFor(context)
+    for (const id of ['messenger', 'stage', 'timeline']) {
+      const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
+      if (!preset) throw new Error(`Missing chat layout: ${id}`)
+      await userEvent.selectOptions(ui.getByRole('combobox'), `preset:${id}`)
+      await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
+      await expect(ui.getByText(text(preset.descriptionKey), { exact: true })).toBeVisible()
+      await userEvent.click(ui.getByRole('button', { name: text('content.customCss.apply') }))
+      await expect(
+        await ui.findByText(`${text('content.customCss.active')} · ${text(preset.labelKey)}`, { exact: true }, { timeout: 5000 }),
+      ).toBeVisible()
+    }
   },
 }

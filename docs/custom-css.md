@@ -30,7 +30,7 @@ Background Color setting rather than introducing a second background control.
 
 ## Sources and illustrations
 
-The six starter sources and contributor instructions are in
+The nine starter sources and contributor instructions are in
 [`shared/settings/chatCssPresets`](../shared/settings/chatCssPresets/README.md).
 `chatCssPresets.ts` remains the single catalog. Explicit raw imports do not inject
 these styles into the settings Document. Starters consume no saved-copy slots.
@@ -50,6 +50,23 @@ Document or a live preview of profile changes. Arbitrary, edited and imported CS
 show a neutral custom-CSS placeholder and the trust warning. No editable CSS,
 HTML, style node or iframe is executed in the example. Catalog updates do not
 silently update saved or active copies.
+
+Three starters change the arrangement of normal messages, in addition to the six
+existing text, spacing and decoration starters:
+
+| Source | Message arrangement |
+| --- | --- |
+| `messenger` | A round avatar beside a bubble, with the author above the message |
+| `stage` | A card with a separate author header and message body |
+| `timeline` | An avatar beside a vertical content line, with a separator between messages |
+
+The packaged rules target non-deleted normal messages directly inside the chat
+item list. Their nested layout uses YouTube's `#content`, author chip and message
+nodes. A simpler renderer without that wrapper keeps a usable fallback layout.
+The sources preserve author/icon visibility preferences and semantic text colors;
+paid messages and the composer remain outside their selector scope. The fixed
+illustrations explain the intended arrangement; only Use applies the selected
+source to the actual chat Document.
 
 ## Ownership
 
@@ -238,3 +255,14 @@ Verification should cover the standard repository gates and Chrome/Firefox with
 live/replay, navigation, iframe replacement, storage failures/retries, Off/Resume,
 IME/focus and narrow settings panels. Static source/illustration checks do not
 replace extension runtime verification.
+
+`overlayInteraction.fixture.spec.ts` exercises the three message layouts through
+the Settings selector and Use button in a testing extension. It supplies
+representative nested normal-message markup inside the actual leased iframe and
+checks computed styles and author/message geometry, including an avatar-free row.
+Paid, deleted and composer samples share their usual IDs to catch rules that
+escape the normal-message scope. The same scenario transitions from managed live
+chat to playable borrowed replay, then exits and re-enters fullscreen to check
+stylesheet release and reapplication. This deterministic fixture does not prove
+compatibility with every current YouTube renderer or replace Chrome/Firefox
+checks on real chat.

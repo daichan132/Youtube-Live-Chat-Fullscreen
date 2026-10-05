@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { YTDLiveChatSetting } from '@/entrypoints/content/features/YTDLiveChatSetting/components/YTDLiveChatSetting'
 import { useT } from '@/shared/i18n/react'
 import { AppProvider } from '@/shared/runtime/AppProvider'
@@ -11,7 +11,7 @@ import {
 } from './customCssStoryRuntime'
 
 export type SettingsStoryArgs = StorySaveControls & { seed: StorySeed }
-type HarnessProps = SettingsStoryArgs & { locale: StoryLocale; theme: StoryTheme; description: string }
+type HarnessProps = SettingsStoryArgs & { locale: StoryLocale; theme: StoryTheme; description: string; children?: ReactNode }
 
 const SettingsSurface = () => {
   const [open, setOpen] = useState(true)
@@ -28,7 +28,7 @@ const SettingsSurface = () => {
   )
 }
 
-export const SettingsStoryHarness = ({ seed, saveDelayMs, failureMode, locale, theme, description }: HarnessProps) => {
+export const SettingsStoryHarness = ({ seed, saveDelayMs, failureMode, locale, theme, description, children }: HarnessProps) => {
   // Preferences and save controls update this instance without replacing its
   // draft. The CSF render key creates an independent session for each story.
   const [session] = useState(() => createCustomCssStoryRuntime(seed, { locale, theme }, { saveDelayMs, failureMode }))
@@ -65,7 +65,7 @@ export const SettingsStoryHarness = ({ seed, saveDelayMs, failureMode, locale, t
         <p data-story-context style={{ margin: 0, maxWidth: 260, color: '#d1d8e3', fontSize: 12, lineHeight: 1.6 }}>
           {description}
         </p>
-        <SettingsSurface />
+        {children ?? <SettingsSurface />}
       </div>
     </AppProvider>
   )

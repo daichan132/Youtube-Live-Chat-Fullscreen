@@ -330,67 +330,103 @@
   overflow-wrap: anywhere;
 }
 
-/* Small fixed illustrations for exact packaged sources only. */
+/* Fixed chat illustrations. Packaged CSS is never injected into this UI. */
 
 .ylc-css-example {
+  min-width: 0;
   margin: 10px 0 0;
-  padding: 8px 10px;
+  padding: 10px;
   border-radius: var(--ylc-radius-md);
   background: var(--ylc-bg-surface-muted);
 }
 
 .ylc-css-example > figcaption {
   color: var(--ylc-text-secondary);
-  font-size: 10px;
-  margin-bottom: 4px;
-  line-height: 1.2;
+  font-size: 11px;
+  margin-bottom: 10px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ylc-css-example-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .ylc-css-example-message {
   display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 3px;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+  padding: 4px 0;
 }
 
 .ylc-css-example-avatar {
-  width: 16px;
-  height: 16px;
-  margin-top: 0;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: var(--ylc-border-strong);
+  background: var(--ylc-bg-surface);
+  color: var(--ylc-text-secondary);
+  border: 1px solid var(--ylc-border-strong);
+  font-size: 11px;
+  font-weight: 700;
   flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .ylc-css-example-content {
   flex: 1;
   min-width: 0;
   padding: 0;
+  overflow-wrap: anywhere;
+  line-height: 1.5;
+}
+
+.ylc-css-example-author {
+  margin-inline-end: 6px;
+  color: var(--ylc-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .ylc-css-example-line {
-  display: block;
   color: var(--ylc-text-primary);
-  font-size: 12px;
-  line-height: 1.4;
-  letter-spacing: 0.03em;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-.ylc-css-example[data-ylc-css-example="bubbles"] .ylc-css-example-content {
-  background: var(--ylc-bg-surface);
-  padding: 2px 8px;
-  border-radius: 0 9px 9px;
+.ylc-css-example[data-ylc-css-example="bubbles"] .ylc-css-example-message {
+  background: rgb(127 127 127 / 14%);
+  padding: 8px;
+  border-radius: 16px;
 }
 
-.ylc-css-example[data-ylc-css-example="cards"] .ylc-css-example-content {
-  border: 1px solid var(--ylc-border-strong);
-  border-radius: 4px;
-  padding: 2px 8px;
+.ylc-css-example[data-ylc-css-example="cards"] .ylc-css-example-message {
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 6px;
+  padding: 9px;
+  background: rgb(127 127 127 / 8%);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
 }
 
-.ylc-css-example[data-ylc-css-example="accent"] .ylc-css-example-content {
-  border-inline-start: 2px solid var(--ylc-accent);
+.ylc-css-example[data-ylc-css-example="accent"] .ylc-css-example-message {
+  border-inline-start: 3px solid var(--ylc-accent);
   padding-inline-start: 9px;
+}
+
+.ylc-css-example[data-ylc-css-example="compact"] .ylc-css-example-messages {
+  gap: 0;
+}
+
+.ylc-css-example[data-ylc-css-example="compact"] .ylc-css-example-message {
+  padding-block: 2px;
+}
+
+.ylc-css-example[data-ylc-css-example="comfortable"] .ylc-css-example-message {
+  padding-block: 8px;
 }
 
 .ylc-css-example[data-ylc-css-example="comfortable"] .ylc-css-example-line {
@@ -405,6 +441,66 @@
     -1px -1px 1px black,
     -1px 1px 1px black,
     1px -1px 1px black;
+}
+
+.ylc-css-example:is([data-ylc-css-example="messenger"], [data-ylc-css-example="stage"], [data-ylc-css-example="timeline"])
+  .ylc-css-example-author {
+  display: block;
+  margin-inline-end: 0;
+  margin-bottom: 4px;
+}
+
+.ylc-css-example:is([data-ylc-css-example="messenger"], [data-ylc-css-example="stage"], [data-ylc-css-example="timeline"])
+  .ylc-css-example-line {
+  display: block;
+}
+
+.ylc-css-example[data-ylc-css-example="messenger"] .ylc-css-example-message {
+  gap: 10px;
+}
+
+.ylc-css-example[data-ylc-css-example="messenger"] .ylc-css-example-avatar {
+  width: 32px;
+  height: 32px;
+}
+
+.ylc-css-example[data-ylc-css-example="messenger"] .ylc-css-example-content {
+  padding: 8px 12px;
+  border-radius: 18px;
+  background: rgb(127 127 127 / 14%);
+}
+
+.ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-message {
+  gap: 10px;
+}
+
+.ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-content {
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 8px;
+  background: rgb(127 127 127 / 8%);
+}
+
+.ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-author {
+  margin-bottom: 0;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 7px 7px 0 0;
+  background: rgb(127 127 127 / 14%);
+}
+
+.ylc-css-example[data-ylc-css-example="stage"] .ylc-css-example-line {
+  padding: 10px 12px;
+}
+
+.ylc-css-example[data-ylc-css-example="timeline"] .ylc-css-example-message {
+  gap: 10px;
+  padding-block: 8px;
+  border-bottom: 1px solid rgb(127 127 127 / 24%);
+}
+
+.ylc-css-example[data-ylc-css-example="timeline"] .ylc-css-example-content {
+  border-inline-start: 2px solid rgb(127 127 127 / 45%);
+  padding-inline-start: 12px;
 }
 
 .ylc-css-example-custom {
@@ -467,8 +563,4 @@
     color: GrayText;
     opacity: 1;
   }
-}
-
-.ylc-css-example-messages > :first-child {
-  margin-top: 0;
 }

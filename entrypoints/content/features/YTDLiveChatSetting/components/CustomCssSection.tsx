@@ -598,7 +598,7 @@ export const CustomCssSection = () => {
             {t('content.customCss.loadOnly')}
           </p>
           {example && (
-            <details className='ylc-custom-css-example-details'>
+            <details key={example.id} open className='ylc-custom-css-example-details'>
               <summary>{t('content.customCss.presetHelp')}</summary>
               <ChatCssExample preset={example} />
               {example.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}

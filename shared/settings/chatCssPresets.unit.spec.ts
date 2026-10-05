@@ -3,6 +3,20 @@ import { CHAT_CSS_PRESETS } from './chatCssPresets'
 import { assertCustomCss } from './customCss'
 
 describe('packaged chat CSS catalog', () => {
+  it('offers the three message layouts first and retains the existing six sources', () => {
+    expect(CHAT_CSS_PRESETS.map(preset => preset.id)).toEqual([
+      'messenger',
+      'stage',
+      'timeline',
+      'bubbles',
+      'cards',
+      'outline',
+      'compact',
+      'comfortable',
+      'accent',
+    ])
+  })
+
   it('has nonempty, unique IDs and nonidentical CSS sources', () => {
     expect(CHAT_CSS_PRESETS.length).toBeGreaterThan(0)
     expect(new Set(CHAT_CSS_PRESETS.map(preset => preset.id)).size).toBe(CHAT_CSS_PRESETS.length)

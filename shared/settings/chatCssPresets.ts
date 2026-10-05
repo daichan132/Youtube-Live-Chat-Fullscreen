@@ -4,7 +4,10 @@ import bubbles from './chatCssPresets/bubbles.css?raw'
 import cards from './chatCssPresets/cards.css?raw'
 import comfortable from './chatCssPresets/comfortable.css?raw'
 import compact from './chatCssPresets/compact.css?raw'
+import messenger from './chatCssPresets/messenger.css?raw'
 import outline from './chatCssPresets/outline.css?raw'
+import stage from './chatCssPresets/stage.css?raw'
+import timeline from './chatCssPresets/timeline.css?raw'
 
 export type ChatCssPreset = {
   readonly id: string
@@ -18,6 +21,24 @@ export type ChatCssPreset = {
 // the editor; it never applies it, changes appearance settings or consumes a slot.
 // Explicit raw imports must NOT inject these styles into the settings Document.
 export const CHAT_CSS_PRESETS: readonly ChatCssPreset[] = [
+  {
+    id: 'messenger',
+    labelKey: 'content.customCss.presetMessenger',
+    descriptionKey: 'content.customCss.presetMessengerDescription',
+    css: messenger,
+  },
+  {
+    id: 'stage',
+    labelKey: 'content.customCss.presetStage',
+    descriptionKey: 'content.customCss.presetStageDescription',
+    css: stage,
+  },
+  {
+    id: 'timeline',
+    labelKey: 'content.customCss.presetTimeline',
+    descriptionKey: 'content.customCss.presetTimelineDescription',
+    css: timeline,
+  },
   {
     id: 'bubbles',
     labelKey: 'content.customCss.presetBubbles',

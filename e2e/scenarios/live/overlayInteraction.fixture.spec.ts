@@ -1,6 +1,8 @@
+import { readFileSync } from 'node:fs'
 import { E2E_BRIDGE_FILE } from '@e2e/config/buildOutput'
 import { type Extension, expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { ChatCssLayoutFixture } from '@e2e/support/chatCssLayoutFixture'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
@@ -47,6 +49,44 @@ const openStoragePage = async (extension: Extension, page: Page) => {
   await storagePage.goto(extension.url(E2E_BRIDGE_FILE), { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.bringToFront()
   return storagePage
+}
+
+const expectChatPresetLayout = async (fixture: ChatCssLayoutFixture, presetId: 'messenger' | 'stage' | 'timeline', css: string) => {
+  await expect.poll(async () => {
+    const layout = await fixture.read()
+    return { scoped: layout.scoped, sources: layout.sources, directions: layout.messages.map(message => message.content.flexDirection) }
+  }).toEqual({ scoped: true, sources: [css], directions: ['column', 'column'] })
+  const layout = await fixture.read()
+  expect(layout.messages).toHaveLength(2)
+  const composer = layout.controls.find(control => control.name === 'composer')?.position
+  if (!composer) throw new Error('The chat fixture composer has no geometry.')
+  expect(composer.top).toBeGreaterThanOrEqual(0)
+  expect(composer.left).toBeGreaterThanOrEqual(0)
+  expect(composer.right).toBeLessThanOrEqual(layout.viewport.width)
+  expect(composer.bottom).toBeLessThanOrEqual(layout.viewport.height)
+  for (const message of layout.messages) {
+    expect(message.renderer.display).toBe('flex')
+    expect(message.content.display).toBe('flex')
+    expect(message.message.display).toBe('block')
+    expect(message.authorBox.height).toBeGreaterThan(0)
+    expect(message.messageBox.height).toBeGreaterThan(0)
+    expect(message.messageBox.width).toBeGreaterThan(0)
+    expect(message.messageBox.top).toBeGreaterThanOrEqual(message.authorBox.bottom - 1)
+    expect(message.messageBox.left).toBeGreaterThanOrEqual(message.contentBox.left - 1)
+    expect(message.messageBox.right).toBeLessThanOrEqual(message.contentBox.right + 1)
+    if (presetId === 'messenger') {
+      expect(message.content.borderRadius).toBe('18px')
+      expect(message.content.padding).toBe('8px 12px')
+    } else if (presetId === 'stage') {
+      expect(message.content.borderRadius).toBe('8px')
+      expect(message.author.borderBottomWidth).toBe('1px')
+      expect(message.message.padding).toBe('10px 12px')
+    } else {
+      expect(message.content.borderInlineStartWidth).toBe('2px')
+      expect(message.renderer.borderBottomWidth).toBe('1px')
+    }
+  }
+  return layout
 }
 
 test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
@@ -460,5 +500,93 @@ test('saves pasted CSS without applying, then reuses it after reopening the sett
       .toBe('purple')
   } finally {
     await storagePage.close()
+  }
+})
+
+test.describe('packaged message layouts in the actual chat iframe', { tag: ['@live', '@archive'] }, () => {
+  for (const presetId of ['messenger', 'stage', 'timeline'] as const) {
+    test(`applies ${presetId} through Settings and keeps its scope across managed live to borrowed replay`, { tag: '@fixture' }, async ({
+      page, extension,
+    }, testInfo) => {
+      test.setTimeout(120000)
+      const css = readFileSync(new URL(`../../../shared/settings/chatCssPresets/${presetId}.css`, import.meta.url), 'utf8')
+      expect(await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })).not.toBeNull()
+      const envelope = (value: unknown) => ({ schemaVersion: 1, writerId: 'ylc-preset-layout-fixture', value })
+      await extension.storage.set({
+        [CUSTOM_CSS_STORAGE_KEY]: envelope({ enabled: false, css: '' }),
+        [CUSTOM_CSS_SUSPENDED_STORAGE_KEY]: envelope(true),
+      })
+      const storagePage = await openStoragePage(extension, page)
+      const fixture = new ChatCssLayoutFixture(page)
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({ owned: 'true', managedCount: 1 })
+      await fixture.captureCurrentDocument()
+      try {
+        await fixture.install()
+        const before = await fixture.read()
+        expect(before.sources).toEqual([])
+        expect(before.messages).toHaveLength(2)
+        const beforeFirst = before.messages[0]
+        if (!beforeFirst) throw new Error('The chat fixture has no normal message before activation.')
+        expect(beforeFirst.content.display).toBe('block')
+        expect(beforeFirst.messageBox.top).toBeLessThan(beforeFirst.authorBox.bottom)
+
+        await overlay.openSettings()
+        const settings = overlay.settingsFrame()
+        await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
+        await settings.getByRole('combobox', { name: 'Choose a style', exact: true }).selectOption(`preset:${presetId}`)
+        await expect(settings.getByRole('textbox', { name: 'CSS', exact: true })).toHaveValue(css)
+        // Loading is page-local editing only; activation requires the real Use button.
+        expect((await fixture.read()).sources).toEqual([])
+        await settings.locator('[data-ylc-css-use]').click()
+        await expect(settings.locator('[data-ylc-css-use]')).toBeDisabled()
+        await expect.poll(() => storagePage.evaluate(async key => {
+          const stored = (await chrome.storage.local.get(key))[key] as { value?: unknown } | undefined
+          return stored?.value
+        }, CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: true, css })
+        const live = await expectChatPresetLayout(fixture, presetId, css)
+        expect(live.controls).toEqual(before.controls)
+        expect(await fixture.mainDocumentStyleCount()).toBe(0)
+        await expect(settings.locator('style[data-ylc-user-css]')).toHaveCount(0)
+        await settings.getByRole('button', { name: 'Close', exact: true }).click()
+        await expect(overlay.settingsDialog()).toHaveCount(0)
+        await testInfo.attach(`${presetId}-managed-live`, { body: await page.screenshot(), contentType: 'image/png' })
+
+        // Replay requires a playable native iframe. This replaces the managed live
+        // Document at the same watch URL and must reuse the confirmed source.
+        await scenario.endLiveAsArchive()
+        await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+        await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({
+          id: 'chatframe', owned: null, managedCount: 0, nativeCount: 0,
+        })
+        await expect.poll(() => scenario.observeExtensionIframeHref()).toContain('/live_chat_replay?')
+        await expect.poll(() => fixture.previousDocumentStyleCount()).toBe(0)
+        await fixture.install()
+        const replay = await expectChatPresetLayout(fixture, presetId, css)
+        expect(replay.controls).toEqual(before.controls)
+        expect(await fixture.mainDocumentStyleCount()).toBe(0)
+        await testInfo.attach(`${presetId}-borrowed-replay`, { body: await page.screenshot(), contentType: 'image/png' })
+
+        // Returning the borrowed iframe removes the extension-owned source. A
+        // later fullscreen lease restores exactly one source and the same layout.
+        await scenario.exitFullscreen()
+        await overlay.expectOverlayRemoved({ timeout: 12000 })
+        await expect.poll(() => fixture.returnedNativeStyleCount()).toBe(0)
+        await scenario.enterFullscreen()
+        await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+        const reentered = await expectChatPresetLayout(fixture, presetId, css)
+        expect(reentered.controls).toEqual(before.controls)
+        await testInfo.attach(`${presetId}-computed-layouts`, {
+          body: JSON.stringify({ before, live, replay, reentered }, null, 2), contentType: 'application/json',
+        })
+      } finally {
+        await fixture.dispose()
+        await storagePage.close()
+      }
+    })
   }
 })

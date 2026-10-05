@@ -1,0 +1,88 @@
+/* Name-header cards / 名前ヘッダー付きカード
+ * Keep the author and badges in a header, with the message in its own lower section.
+ * Tune the neutral header/body opacity and border radius; semantic colors stay native.
+ * 高さ固定やクリッピングはせず、長文・リンク・絵文字・リプレイ時刻を維持します。
+ */
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items > yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin: 6px 8px;
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):has(> #content) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 8px;
+  background-color: rgb(127 127 127 / 8%);
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #content
+  > yt-live-chat-author-chip {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgb(127 127 127 / 35%);
+  border-start-start-radius: 7px;
+  border-start-end-radius: 7px;
+  background-color: rgb(127 127 127 / 14%);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #content
+  > #timestamp {
+  padding: 6px 12px 0;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #author-photo {
+  flex-shrink: 0;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  #message {
+  display: block;
+  min-width: 0;
+  padding: 10px 12px;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
+}
+/* Keep a simpler renderer usable even when YouTube supplies no content wrapper. */
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content)) {
+  display: flow-root;
+  border: 1px solid rgb(127 127 127 / 35%);
+  border-radius: 8px;
+  background-color: rgb(127 127 127 / 8%);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content))
+  > #author-photo {
+  float: inline-start;
+  margin-block: 8px 4px;
+  margin-inline: 12px 10px;
+}

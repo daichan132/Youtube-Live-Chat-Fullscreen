@@ -1,0 +1,77 @@
+/* Messenger / メッセンジャー風
+ * A round avatar beside a conversation bubble, with the name above the message.
+ * Tune the bubble opacity and radius here; author, badge and link colors stay native.
+ * 名前・アイコンの表示設定、リプレイ時刻、本文の自然な折り返しを維持します。
+ */
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items > yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin: 6px 8px;
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):has(> #content) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background-color: rgb(127 127 127 / 14%);
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #author-photo {
+  flex-shrink: 0;
+  border-radius: 50%;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #author-photo
+  > img {
+  border-radius: inherit;
+  object-fit: cover;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  #message {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* A simplified message without #content still gets a bubble and a full-width body. */
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content)) {
+  display: flow-root;
+  padding: 8px 12px;
+  border-radius: 18px;
+  background-color: rgb(127 127 127 / 14%);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content))
+  > #author-photo {
+  float: inline-start;
+  margin-inline-end: 10px;
+  margin-block-end: 4px;
+}

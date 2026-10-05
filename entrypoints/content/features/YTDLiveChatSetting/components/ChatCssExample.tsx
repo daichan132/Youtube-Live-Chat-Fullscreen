@@ -1,26 +1,33 @@
 import { useT } from '@/shared/i18n/react'
-import type { ChatCssPreset } from '@/shared/settings/chatCssPresets'
+import { CHAT_CSS_PRESETS, type ChatCssPreset } from '@/shared/settings/chatCssPresets'
 
-// An illustration of packaged styles, not a live preview. In particular, never
-// mount a style node, iframe or HTML from editable/imported/saved CSS here.
+const EXAMPLE_MESSAGES = [
+  { id: 'A', initial: 'H', authorKey: 'content.customCss.exampleAuthorA', messageKey: 'content.customCss.exampleMessageA' },
+  { id: 'B', initial: 'Y', authorKey: 'content.customCss.exampleAuthorB', messageKey: 'content.customCss.exampleMessageB' },
+  { id: 'C', initial: 'A', authorKey: 'content.customCss.exampleAuthorC', messageKey: 'content.customCss.exampleMessageC' },
+] as const
+
+// Fixed illustrations of exact packaged sources, not live previews. Never mount
+// a style node, iframe or HTML from editable/imported/saved CSS here.
 export const ChatCssExample = ({ preset }: { preset?: ChatCssPreset }) => {
   const t = useT()
+  const example = preset && CHAT_CSS_PRESETS.find(entry => entry.id === preset.id && entry.css === preset.css)
   return (
-    <figure className='ylc-css-example' data-ylc-css-example={preset?.id ?? 'custom'}>
-      {preset ? (
+    <figure className='ylc-css-example' data-ylc-css-example={example?.id ?? 'custom'}>
+      {example ? (
         <>
-          <figcaption>{t('content.customCss.presetHelp')}</figcaption>
+          <figcaption>{t(example.descriptionKey)}</figcaption>
           <div className='ylc-css-example-messages' aria-hidden='true'>
-            {[0, 1].map(index => (
-              <div className='ylc-css-example-message' key={index}>
-                <span className='ylc-css-example-avatar' />
+            {EXAMPLE_MESSAGES.map(message => (
+              <div className='ylc-css-example-message' key={message.id}>
+                <span className='ylc-css-example-avatar'>{message.initial}</span>
                 <div className='ylc-css-example-content'>
-                  <span className='ylc-css-example-line'>Aa Bb Cc</span>
+                  <span className='ylc-css-example-author'>{t(message.authorKey)}</span>
+                  <span className='ylc-css-example-line'>{t(message.messageKey)}</span>
                 </div>
               </div>
             ))}
           </div>
-          <span className='ylc-visually-hidden'>{t(preset.descriptionKey)}</span>
         </>
       ) : (
         <>
