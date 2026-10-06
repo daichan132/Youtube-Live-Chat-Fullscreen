@@ -1,0 +1,73 @@
+/* Timeline / タイムライン
+ * The avatar sits beside a vertical content line; a separator marks each message.
+ * Line colors, font size and message spacing follow the normal appearance settings.
+ * Tune the line width or padding without changing role or badge colors.
+ * アイコンがない行でも空の列を残さず、名前・時刻・本文を自然に積みます。
+ */
+body.custom-yt-app-live-chat-extension yt-live-chat-item-list-renderer #items > yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin: var(--extension-yt-live-chat-spacing, 0px) 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgb(127 127 127 / 24%);
+  border-bottom-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 24%));
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):has(> #content) {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  gap: 4px;
+  padding-inline-start: 12px;
+  border-inline-start-width: 2px;
+  border-inline-start-style: solid;
+  border-inline-start-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 45%));
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  > #author-photo {
+  flex-shrink: 0;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted])
+  #message {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* Flat markup keeps the same line and body wrapping without reserving an avatar column. */
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content)) {
+  display: flow-root;
+  padding-inline-start: 12px;
+  border-inline-start-width: 2px;
+  border-inline-start-style: solid;
+  border-inline-start-color: var(--extension-yt-live-control-border-color, rgb(127 127 127 / 45%));
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-item-list-renderer
+  #items
+  > yt-live-chat-text-message-renderer:not([is-deleted]):not(:has(> #content))
+  > #author-photo {
+  float: inline-start;
+  margin-inline-end: 10px;
+  margin-block-end: 4px;
+}

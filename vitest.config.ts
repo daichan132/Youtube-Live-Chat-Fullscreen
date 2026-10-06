@@ -13,6 +13,8 @@ export default defineConfig({
     sharedViteServer: false,
     allowOnly: process.env.YLC_ALLOW_ONLY === '1',
     coverage: coverageConfig,
+    // Runtime styles and packaged presets are CSS string data, never DOM styles.
+    css: { include: [/\.css\?(?:raw|inline)(?:&|$)/] },
     projects: [
       {
         extends: true,

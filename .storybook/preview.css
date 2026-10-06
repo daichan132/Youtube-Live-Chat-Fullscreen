@@ -1,0 +1,14 @@
+@import "../entrypoints/settings/main.css";
+
+@source "../stories/**/*.{ts,tsx}";
+
+html,
+body {
+  height: auto;
+  min-height: 100%;
+  overflow: auto;
+}
+
+body {
+  font-family: system-ui, sans-serif;
+}

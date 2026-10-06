@@ -10,7 +10,12 @@ const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'
 const sizePolicy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
 const expectedPermissions = ['storage']
 const expectedContentScriptMatches = ['*://www.youtube.com/*']
+const forbiddenStorybookFiles = [
+  { label: 'Storybook asset', matches: file => /(^|\/)(?:\.storybook|stories|storybook-static)(\/|$)/i.test(file) },
+  { label: 'story file', matches: file => /\.stories\.[^/]+$/i.test(file) },
+]
 const forbiddenProductionFiles = [
+  ...forbiddenStorybookFiles,
   { label: 'E2E bridge', matches: file => file === 'e2e.html' },
   { label: 'source map', matches: file => file.endsWith('.map') },
   { label: 'test file', matches: file => /\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file) },
@@ -204,7 +209,11 @@ const verifyTarget = async report => {
     if (!files.includes(script)) failures.push(`content script file is missing: ${script}`)
   }
 
-  const runtimeLocales = localeCodes(files, /^locales\/([^/]+)\.json$/).filter(locale => locale !== '_keys')
+  const runtimeMetadata = new Set(['_keys', '_defaults'])
+  for (const name of runtimeMetadata) {
+    if (!files.includes(`locales/${name}.json`)) failures.push(`runtime locale metadata is missing: ${name}.json`)
+  }
+  const runtimeLocales = localeCodes(files, /^locales\/([^/]+)\.json$/).filter(locale => !runtimeMetadata.has(locale))
   const manifestLocales = localeCodes(files, /^_locales\/([^/]+)\/messages\.json$/)
   if (runtimeLocales.length !== 55) failures.push(`expected 55 runtime locales, got ${runtimeLocales.length}`)
   if (JSON.stringify(manifestLocales) !== JSON.stringify(runtimeLocales)) {
@@ -284,6 +293,9 @@ const verifySourcePackage = async () => {
     if (!allowed) failures.push(`source file is outside the allowlist: ${file}`)
     if (/\.(?:spec|test)\.[cm]?[jt]sx?$/.test(file) || /(^|\/)__tests__(\/|$)/.test(file)) {
       failures.push(`test file must not be shipped in source ZIP: ${file}`)
+    }
+    for (const rule of forbiddenStorybookFiles) {
+      if (rule.matches(file)) failures.push(`${rule.label} must not be shipped in source ZIP: ${file}`)
     }
   }
 

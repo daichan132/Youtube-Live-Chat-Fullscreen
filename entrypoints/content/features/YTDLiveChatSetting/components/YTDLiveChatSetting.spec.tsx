@@ -61,7 +61,7 @@ describe('YTDLiveChatSetting history controls', () => {
 
   it('exposes disabled undo and redo buttons until matching history exists', () => {
     const originalBlur = store.get(chatSettingsStateAtom).profile.appearance.blur
-    const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    const { getByRole, getByText } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     const undoButton = getByRole('button', { name: 'content.setting.header.undo' })
     const redoButton = getByRole('button', { name: 'content.setting.header.redo' })
 
@@ -76,12 +76,14 @@ describe('YTDLiveChatSetting history controls', () => {
     fireEvent.click(undoButton)
     expect(store.get(chatSettingsStateAtom).profile.appearance.blur).toBe(originalBlur)
     expect(redoButton).not.toBeDisabled()
-    expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
+    expect(getByText('content.setting.header.undone', { selector: '[role="status"]' })).toHaveTextContent(
+      /^content\.setting\.header\.undone$/,
+    )
   })
 
   it('refreshes the live-region node for consecutive undo announcements', () => {
     const originalBlur = store.get(chatSettingsStateAtom).profile.appearance.blur
-    const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    const { getByRole, getByText } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     const undoButton = getByRole('button', { name: 'content.setting.header.undo' })
 
     act(() => {
@@ -90,12 +92,14 @@ describe('YTDLiveChatSetting history controls', () => {
     })
 
     fireEvent.click(undoButton)
-    const firstAnnouncement = getByRole('status')
+    const firstAnnouncement = getByText('content.setting.header.undone', { selector: '[role="status"]' })
     expect(firstAnnouncement).toHaveTextContent(/^content\.setting\.header\.undone$/)
 
     fireEvent.click(undoButton)
-    expect(getByRole('status')).not.toBe(firstAnnouncement)
-    expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
+    expect(getByText('content.setting.header.undone', { selector: '[role="status"]' })).not.toBe(firstAnnouncement)
+    expect(getByText('content.setting.header.undone', { selector: '[role="status"]' })).toHaveTextContent(
+      /^content\.setting\.header\.undone$/,
+    )
   })
 
   it('consumes recognized shortcuts inside the panel even when history is empty', () => {

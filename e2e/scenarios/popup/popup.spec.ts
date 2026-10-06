@@ -2,7 +2,9 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import type { SettingsBackup } from '../../../shared/settings/backup'
 import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings/chatGeometry'
+import { DEFAULT_CUSTOM_CSS } from '../../../shared/settings/customCss'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
@@ -132,7 +134,9 @@ test.describe('popup', { tag: '@popup' }, () => {
       exportedAt: '2026-07-28T00:00:00.000Z',
       globalSetting: { ytdLiveChat: true, themeMode: 'dark' },
       chatSettings,
-    })
+      customCss: { ...DEFAULT_CUSTOM_CSS },
+      savedChatCss: [],
+    } satisfies SettingsBackup)
 
     try {
       const first = importedSettings(22, firstPreset)

@@ -5,5 +5,6 @@
     "jsx": "react-jsx",
     "noUncheckedIndexedAccess": true,
     "types": ["chrome", "node"]
-  }
+  },
+  "exclude": ["**/node_modules", ".output", "storybook-static"]
 }

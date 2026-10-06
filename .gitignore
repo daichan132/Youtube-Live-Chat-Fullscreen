@@ -264,3 +264,6 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Storybook preview output
+/storybook-static/

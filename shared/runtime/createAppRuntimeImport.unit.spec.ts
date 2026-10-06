@@ -8,10 +8,16 @@ const snapshot: SettingsSnapshot = {
   global: { ytdLiveChat: true, themeMode: 'system' },
   chat: structuredClone(DEFAULT_CHAT_SETTINGS),
   locale: 'en',
+  customCss: { enabled: false, css: '' },
+  savedChatCss: [],
+  customCssSuspended: false,
 }
 
 const createRepository = (): SettingsRepository => ({
   load: vi.fn(async () => snapshot),
+  saveCustomCss: vi.fn(async () => {}),
+  saveSavedChatCss: vi.fn(async () => {}),
+  saveCustomCssSuspended: vi.fn(async () => {}),
   saveEnabled: vi.fn(async () => {}),
   saveTheme: vi.fn(async () => {}),
   saveAppearance: vi.fn(async () => {}),

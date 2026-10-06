@@ -1,0 +1,10 @@
+/* Compact spacing / コンパクト
+ * Keep the configured message gap; remove extra decorative spacing and reduce padding.
+ * Font size and colors continue to follow the normal appearance settings.
+ * 行の高さを固定しません。長文や絵文字は通常どおり折り返します。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin-block: var(--extension-yt-live-chat-spacing, 0px);
+  padding-block: 2px;
+  line-height: 1.4;
+}

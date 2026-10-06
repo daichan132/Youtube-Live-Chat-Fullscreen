@@ -37,6 +37,13 @@ export const DataTransfer = () => {
     setMessage(null)
     setPhase('idle')
   }
+  const exportBackup = () => {
+    try {
+      handleExport(runtime.exportSettings())
+    } catch {
+      setMessage(t('content.customCss.exportFailed'))
+    }
+  }
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
@@ -98,7 +105,7 @@ export const DataTransfer = () => {
           aria-label={t('popup.export')}
           data-tooltip={t('popup.export')}
           className='ylc-theme-icon-link'
-          onClick={() => handleExport(runtime.exportSettings())}
+          onClick={exportBackup}
         >
           <TbDownload size={18} aria-hidden='true' />
         </button>
@@ -126,7 +133,7 @@ export const DataTransfer = () => {
             <>
               <p className='break-all'>{pending.name}</p>
               <p>{t('popup.importConfirm')}</p>
-              <button type='button' className='ylc-btn' onClick={() => handleExport(runtime.exportSettings())}>
+              <button type='button' className='ylc-btn' onClick={exportBackup}>
                 {t('popup.export')}
               </button>
               <button type='button' className='ylc-btn' onClick={apply}>

@@ -77,3 +77,31 @@ it('prevents duplicate apply and retains a readback failure until dismissed', as
   fireEvent.click(screen.getByText('popup.importClose'))
   expect(screen.queryByText('popup.importReadback')).not.toBeInTheDocument()
 })
+
+it.each(['toolbar', 'confirmation'])('shows an export failure from the %s button without losing import confirmation', async entry => {
+  const { runtime, input } = await setup()
+  const backup = runtime.exportSettings()
+  const imported = vi.spyOn(runtime, 'importSettings')
+  if (entry === 'confirmation') {
+    choose(input, backup)
+    await screen.findByText('popup.importConfirm')
+  }
+  const exported = vi.spyOn(runtime, 'exportSettings').mockImplementation(() => {
+    throw new Error('Settings backup is too large')
+  })
+  fireEvent.click(entry === 'confirmation' ? screen.getByText('popup.export') : screen.getByRole('button', { name: 'popup.export' }))
+  expect(exported).toHaveBeenCalledOnce()
+  expect(screen.getByRole('status')).toHaveTextContent('content.customCss.exportFailed')
+  expect(imported).not.toHaveBeenCalled()
+
+  if (entry === 'confirmation') {
+    expect(screen.getByText('popup.importConfirm')).toBeVisible()
+    expect(screen.getByText('popup.importApply')).toBeEnabled()
+    fireEvent.click(screen.getByText('popup.importApply'))
+    await screen.findByText('popup.importDone')
+    expect(imported).toHaveBeenCalledWith(backup)
+  } else {
+    fireEvent.click(screen.getByText('popup.importClose'))
+    expect(screen.queryByText('content.customCss.exportFailed')).not.toBeInTheDocument()
+  }
+})

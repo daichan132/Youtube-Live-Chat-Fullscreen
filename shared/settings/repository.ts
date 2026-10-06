@@ -1,10 +1,21 @@
 import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
+import {
+  assertCustomCss,
+  assertSavedChatCss,
+  type ChatCssCustomization,
+  CustomCssError,
+  DEFAULT_CUSTOM_CSS,
+  normalizeCustomCss,
+  normalizeSavedChatCss,
+  type SavedChatCss,
+} from './customCss'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { normalizeChatGeometry } from './normalizeSettings'
 import { getExtensionPageLegacyLocaleStorage, readSettingsSnapshot } from './readSettingsSnapshot'
+import { assertAppearanceCapacity } from './settingsCapacity'
 import {
   type ChatAppearanceSettings,
   DEFAULT_GLOBAL_SETTINGS,
@@ -30,14 +41,25 @@ export type SettingsCommitSource = 'external' | 'readback' | 'import'
 
 export type SettingsRepository = {
   load: () => Promise<SettingsSnapshot>
+  saveCustomCss: (value: ChatCssCustomization) => Promise<void>
+  saveSavedChatCss: (value: SavedChatCss[]) => Promise<void>
+  saveCustomCssSuspended: (value: boolean) => Promise<void>
   saveEnabled: (value: boolean) => Promise<void>
   saveTheme: (value: GlobalSettings['themeMode']) => Promise<void>
   saveAppearance: (value: ChatAppearanceSettings) => Promise<void>
   saveGeometry: (value: ChatGeometry) => Promise<void>
   saveLocale: (value: LocaleCode) => Promise<void>
   // Confirmed imported values are delivered through watch, like ordinary commits.
-  replaceSettings: (global: GlobalSettings, chat: ChatSettings) => Promise<void>
+  replaceSettings: (
+    global: GlobalSettings,
+    chat: ChatSettings,
+    customCss?: ChatCssCustomization,
+    savedChatCss?: SavedChatCss[],
+  ) => Promise<void>
   watch: (handlers: {
+    onCustomCss?: (value: ChatCssCustomization, source?: SettingsCommitSource) => void
+    onSavedChatCss?: (value: SavedChatCss[], source?: SettingsCommitSource) => void
+    onCustomCssSuspended?: (value: boolean) => void
     onEnabled: (value: boolean) => void
     onTheme: (value: GlobalSettings['themeMode']) => void
     onAppearance: (value: ChatAppearanceSettings, source?: SettingsCommitSource) => void
@@ -62,7 +84,14 @@ export class SettingsImportError extends Error {
 }
 
 const SAVE_RETRY_DELAY_MS = 400
-const IMPORT_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry'] as const satisfies readonly PersistenceDomain[]
+const IMPORT_DOMAINS = [
+  'enabled',
+  'theme',
+  'appearance',
+  'geometry',
+  'customCss',
+  'savedChatCss',
+] as const satisfies readonly PersistenceDomain[]
 
 type RepositoryDependencies = {
   waitBeforeRetry: (delayMs: number) => Promise<void>
@@ -136,6 +165,9 @@ export const createSettingsRepository = (
 
   const notifyCommitted = (domain: PersistenceDomain, value: unknown, source: SettingsCommitSource) => {
     for (const handlers of watchHandlers) {
+      if (domain === 'customCss') handlers.onCustomCss?.(normalizeCustomCss(value), source)
+      if (domain === 'savedChatCss') handlers.onSavedChatCss?.(normalizeSavedChatCss(value), source)
+      if (domain === 'customCssSuspended') handlers.onCustomCssSuspended?.(value !== false)
       if (domain === 'enabled' && typeof value === 'boolean') handlers.onEnabled(value)
       if (domain === 'theme') handlers.onTheme(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))
       if (domain === 'appearance') {
@@ -152,9 +184,20 @@ export const createSettingsRepository = (
     }
   }
 
+  const isValidCssCommit = (domain: PersistenceDomain, value: unknown) => {
+    try {
+      if (domain === 'customCss') assertCustomCss(value)
+      if (domain === 'savedChatCss') assertSavedChatCss(value)
+      if (domain === 'customCssSuspended') return typeof value === 'boolean'
+      return true
+    } catch {
+      return false
+    }
+  }
+
   const readCommittedEnvelope = async (domain: PersistenceDomain) => {
     const [result] = await storage.getItems([settingsItems[domain]])
-    return isStoredEnvelope(result?.value) ? result.value : null
+    return isStoredEnvelope(result?.value) && isValidCssCommit(domain, result.value.value) ? result.value : null
   }
 
   const runWithRetry = async (domain: PersistenceDomain, sequence: number, supersessionVersion: number, task: () => Promise<void>) => {
@@ -176,12 +219,18 @@ export const createSettingsRepository = (
 
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
+    const requiresConfirmation = domain === 'customCss' || domain === 'savedChatCss' || domain === 'customCssSuspended'
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
     const previous = tails.get(domain) ?? Promise.resolve()
-    const barrier = replacementTail
+    const barrier = domain === 'customCssSuspended' ? null : replacementTail
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
       .then(async () => {
         if (localSequences.get(domain) !== sequence) return
+        // A newer external pause preference also supersedes work that has not
+        // started yet, not only delayed retries. Never start an obsolete resume
+        // after receiving Off while this domain was waiting for its predecessor.
+        if (domain === 'customCssSuspended' && supersessionVersions.get(domain) !== supersessionVersion) return
+        let failureVersion = supersessionVersion
         try {
           const committed = await runWithRetry(domain, sequence, supersessionVersion, task)
           if (!committed) return
@@ -189,19 +238,25 @@ export const createSettingsRepository = (
             failedWrites.delete(domain)
             // An event before this read may precede the local commit. Only
             // events arriving during the read supersede its captured snapshot.
-            const readbackVersion = supersessionVersions.get(domain)
+            const readbackVersion = supersessionVersions.get(domain) ?? 0
+            // A pause/resume intent must not become retryable again after a
+            // newer external stop, even when that event preceded this read.
+            failureVersion = domain === 'customCssSuspended' ? supersessionVersion : readbackVersion
             try {
               const stored = await readCommittedEnvelope(domain)
-              if (stored && localSequences.get(domain) === sequence && supersessionVersions.get(domain) === readbackVersion) {
-                notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
-              }
+              if (localSequences.get(domain) !== sequence || supersessionVersions.get(domain) !== readbackVersion) return
+              if (!stored && requiresConfirmation) throw new CustomCssError('unconfirmed')
+              if (stored) notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
             } catch {
-              // The write succeeded. A later event or reload can converge
-              // when this best-effort readback is unavailable.
+              // CSS is not optimistic: an unknown readback must remain visible
+              // to Retry/flush, even if the write already reached other pages.
+              // The outer version guard prevents replaying a superseded intent.
+              if (requiresConfirmation) throw new CustomCssError('unconfirmed')
+              // Other domains retain their existing best-effort readback.
             }
           }
         } catch (error) {
-          if (localSequences.get(domain) === sequence && supersessionVersions.get(domain) === supersessionVersion)
+          if (localSequences.get(domain) === sequence && supersessionVersions.get(domain) === failureVersion)
             failedWrites.set(domain, { sequence, task, error })
           throw error
         }
@@ -217,20 +272,31 @@ export const createSettingsRepository = (
     return current
   }
 
+  const saveCustomCss = (value: ChatCssCustomization) => {
+    assertCustomCss(value)
+    const snapshot = { enabled: value.enabled, css: value.css }
+    return enqueue('customCss', () => settingsItems.customCss.setValue(envelope(snapshot)))
+  }
+  const saveSavedChatCss = (value: SavedChatCss[]) => {
+    assertSavedChatCss(value)
+    const snapshot = value.map(({ id, name, css }) => ({ id, name, css }))
+    return enqueue('savedChatCss', () => settingsItems.savedChatCss.setValue(envelope(snapshot)))
+  }
+  const saveCustomCssSuspended = (value: boolean) =>
+    enqueue('customCssSuspended', () => settingsItems.customCssSuspended.setValue(envelope(value)))
+
   const saveEnabled = (value: boolean) => enqueue('enabled', () => settingsItems.enabled.setValue(envelope(Boolean(value))))
   const saveTheme = (value: GlobalSettings['themeMode']) =>
     enqueue('theme', () => settingsItems.theme.setValue(envelope(normalizeTheme(value, DEFAULT_GLOBAL_SETTINGS.themeMode))))
   const saveAppearance = (value: ChatAppearanceSettings) =>
-    enqueue('appearance', () =>
-      settingsItems.appearance.setValue(
-        envelope(
-          normalizeAppearance(value, {
-            profile: DEFAULT_CHAT_SETTINGS.profile,
-            presets: DEFAULT_CHAT_SETTINGS.presets,
-          }),
-        ),
-      ),
-    )
+    enqueue('appearance', () => {
+      const normalized = normalizeAppearance(value, {
+        profile: DEFAULT_CHAT_SETTINGS.profile,
+        presets: DEFAULT_CHAT_SETTINGS.presets,
+      })
+      assertAppearanceCapacity(normalized)
+      return settingsItems.appearance.setValue(envelope(normalized))
+    })
   const saveGeometry = (value: ChatGeometry) =>
     enqueue('geometry', () => settingsItems.geometry.setValue(envelope(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))))
   const saveLocale = (value: LocaleCode) => enqueue('locale', () => settingsItems.locale.setValue(envelope(resolveLanguageCode(value))))
@@ -250,7 +316,15 @@ export const createSettingsRepository = (
     throwPersistenceFailure()
   }
 
-  const replaceSettings = (global: GlobalSettings, chat: ChatSettings) => {
+  const replaceSettings = (
+    global: GlobalSettings,
+    chat: ChatSettings,
+    customCss = DEFAULT_CUSTOM_CSS,
+    savedChatCss: SavedChatCss[] = [],
+  ) => {
+    assertAppearanceCapacity(chat)
+    assertCustomCss(customCss)
+    assertSavedChatCss(savedChatCss)
     // Reserve the barrier synchronously. Later writes must wait for this import,
     // while this import waits only for operations already queued before it.
     // Calling flush here would also wait for later writes and create a cycle.
@@ -269,6 +343,8 @@ export const createSettingsRepository = (
         ),
       },
       { item: settingsItems.geometry, value: envelope(normalizeChatGeometry(chat.geometry, DEFAULT_CHAT_SETTINGS.geometry)) },
+      { item: settingsItems.customCss, value: envelope({ ...customCss, enabled: false }) },
+      { item: settingsItems.savedChatCss, value: envelope(savedChatCss.map(entry => ({ ...entry }))) },
     ]
     let phase: SettingsImportFailurePhase = 'before-write'
     const current: Promise<void> = Promise.allSettled(preceding)
@@ -279,7 +355,10 @@ export const createSettingsRepository = (
         phase = 'readback'
         const versions = new Map(supersessionVersions)
         const results = await storage.getItems(IMPORT_DOMAINS.map(domain => settingsItems[domain]))
-        const envelopes = results.map(result => (isStoredEnvelope(result.value) ? result.value : null))
+        const envelopes = results.map((result, index) => {
+          const domain = IMPORT_DOMAINS[index]
+          return domain && isStoredEnvelope(result.value) && isValidCssCommit(domain, result.value.value) ? result.value : null
+        })
         if (envelopes.length !== IMPORT_DOMAINS.length || envelopes.some(stored => stored === null)) {
           throw new Error('Imported settings could not be read back')
         }
@@ -322,6 +401,9 @@ export const createSettingsRepository = (
       }
       return result.snapshot
     },
+    saveCustomCss,
+    saveSavedChatCss,
+    saveCustomCssSuspended,
     saveEnabled,
     saveTheme,
     saveAppearance,
@@ -336,6 +418,7 @@ export const createSettingsRepository = (
             if (!isStoredEnvelope(next) || next.writerId === writerId) return
             if (domain === 'enabled' && typeof next.value !== 'boolean') return
             if (domain === 'locale' && typeof next.value !== 'string') return
+            if (!isValidCssCommit(domain, next.value)) return
             acceptExternalCommit(domain)
             notifyCommitted(domain, next.value, 'external')
           }),
@@ -365,4 +448,9 @@ export const createSettingsRepository = (
 }
 
 export const buildRepositoryBackup = (snapshot: SettingsSnapshot): SettingsBackup =>
-  buildSettingsBackup({ globalSetting: snapshot.global, chatSettings: snapshot.chat })
+  buildSettingsBackup({
+    globalSetting: snapshot.global,
+    chatSettings: snapshot.chat,
+    customCss: snapshot.customCss,
+    savedChatCss: snapshot.savedChatCss,
+  })

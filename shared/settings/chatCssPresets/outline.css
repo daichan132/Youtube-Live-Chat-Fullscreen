@@ -1,0 +1,15 @@
+/* Outlined message text / くっきり文字
+ * Adjust the OUTER panel background with the existing settings separately.
+ * Text color and size follow the normal settings; the outline follows the panel color.
+ * 通常の文字色と背景色を使って本文を縁取ります。パネル背景は透明にしません。
+ * 名前・バッジ・リンクの色は変更しません。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) #message {
+  color: var(--extension-yt-live-font-color, #fff);
+  line-height: 1.6;
+  text-shadow:
+    -1px -1px 1px var(--extension-yt-live-menu-background-color, #111),
+    1px -1px 1px var(--extension-yt-live-menu-background-color, #111),
+    -1px 1px 1px var(--extension-yt-live-menu-background-color, #111),
+    1px 1px 1px var(--extension-yt-live-menu-background-color, #111);
+}

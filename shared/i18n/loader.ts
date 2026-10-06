@@ -1,8 +1,12 @@
 import { browser } from 'wxt/browser'
 import type { LocaleCode, LocaleMessages, TranslationKey } from './generated/translationTypes'
 
-const cache = new Map<LocaleCode, Promise<LocaleMessages>>()
-let keysCache: Promise<readonly TranslationKey[]> | undefined
+type LocaleAssetCache = {
+  messages: Map<LocaleCode, Promise<LocaleMessages>>
+  keys?: Promise<readonly TranslationKey[]>
+  defaults?: Promise<readonly string[]>
+}
+let cache: LocaleAssetCache = { messages: new Map() }
 
 const fetchJson = async (url: string): Promise<unknown> => {
   const response = await fetch(url)
@@ -10,35 +14,49 @@ const fetchJson = async (url: string): Promise<unknown> => {
   return response.json()
 }
 
-const loadTranslationKeys = () => {
-  keysCache ??= fetchJson(browser.runtime.getURL('/locales/_keys.json')).then(value => {
-    if (!Array.isArray(value) || value.some(key => typeof key !== 'string')) {
-      throw new Error('Invalid locale key asset')
-    }
+const loadTranslationKeys = (assets: LocaleAssetCache) => {
+  assets.keys ??= fetchJson(browser.runtime.getURL('/locales/_keys.json')).then(value => {
+    if (!Array.isArray(value)) throw new Error('Invalid locale key asset')
+    for (const key of value) if (typeof key !== 'string') throw new Error('Invalid locale key asset')
     return value as TranslationKey[]
   })
-  return keysCache
+  return assets.keys
 }
 
-export const loadLocaleMessages = (locale: LocaleCode): Promise<LocaleMessages> => {
-  const cached = cache.get(locale)
+const loadTranslationDefaults = (assets: LocaleAssetCache, keyCount: number) => {
+  assets.defaults ??= fetchJson(browser.runtime.getURL('/locales/_defaults.json')).then(value => {
+    if (!Array.isArray(value) || value.length !== keyCount) throw new Error('Invalid locale default asset')
+    for (const message of value) if (typeof message !== 'string') throw new Error('Invalid locale default asset')
+    return value as string[]
+  })
+  return assets.defaults
+}
+
+const loadCachedLocaleMessages = (locale: LocaleCode, assets: LocaleAssetCache): Promise<LocaleMessages> => {
+  const cached = assets.messages.get(locale)
   if (cached) return cached
-  const loading = Promise.all([loadTranslationKeys(), fetchJson(browser.runtime.getURL(`/locales/${locale}.json`))])
-    .then(([keys, value]) => {
-      if (!Array.isArray(value) || value.length !== keys.length || value.some(message => typeof message !== 'string')) {
-        throw new Error(`Invalid locale message asset: ${locale}`)
+  const loading = Promise.all([loadTranslationKeys(assets), fetchJson(browser.runtime.getURL(`/locales/${locale}.json`))])
+    .then(async ([keys, value]) => {
+      if (!Array.isArray(value) || value.length !== keys.length) throw new Error(`Invalid locale message asset: ${locale}`)
+      let needsDefaults = false
+      for (const message of value) {
+        if (message === null) needsDefaults = true
+        else if (typeof message !== 'string') throw new Error(`Invalid locale message asset: ${locale}`)
       }
-      return Object.fromEntries(keys.map((key, index) => [key, value[index]])) as LocaleMessages
+      const defaults = needsDefaults ? await loadTranslationDefaults(assets, keys.length) : []
+      return Object.fromEntries(keys.map((key, index) => [key, value[index] === null ? defaults[index] : value[index]])) as LocaleMessages
     })
     .catch(error => {
       if (locale === 'en') throw error
-      return loadLocaleMessages('en')
+      return loadCachedLocaleMessages('en', assets)
     })
-  cache.set(locale, loading)
+  assets.messages.set(locale, loading)
   return loading
 }
 
+export const loadLocaleMessages = (locale: LocaleCode): Promise<LocaleMessages> => loadCachedLocaleMessages(locale, cache)
+
 export const clearLocaleCache = () => {
-  cache.clear()
-  keysCache = undefined
+  // Pending loads keep their own assets; they must not repopulate the new cache.
+  cache = { messages: new Map() }
 }

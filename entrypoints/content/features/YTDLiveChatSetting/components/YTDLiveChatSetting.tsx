@@ -1,4 +1,4 @@
-import { useAtomValue } from 'jotai'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   type IconType,
@@ -8,18 +8,30 @@ import {
   TbBrandGithub,
   TbHeart,
   TbLayoutGrid,
+  TbPalette,
   TbSettings2,
 } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
+import {
+  appearanceCapacityErrorAtom,
+  customCssDraftAtom,
+  customCssEditorUiAtom,
+  customCssOperationAtom,
+  customCssRecoveryAtom,
+  hasUnappliedCustomCssAtom,
+} from '@/shared/state/customCssAtoms'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
+import { CustomCssSection } from './CustomCssSection'
 import { PresetContent } from './PresetContent'
 import { SettingContent } from './SettingContent'
+
+type SettingTab = 'setting' | 'css' | 'preset'
 
 type YTDLiveChatSettingProps = {
   open: boolean
@@ -29,11 +41,45 @@ type YTDLiveChatSettingProps = {
 export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
+  const [menuItem, setMenuItem] = useState<SettingTab>('setting')
   const t = useT()
   const direction = useLocaleDirection()
+  const hasUnappliedCss = useAtomValue(hasUnappliedCustomCssAtom)
+  const cssOperation = useAtomValue(customCssOperationAtom)
+  const cssRecovery = useAtomValue(customCssRecoveryAtom)
+  const cssSaving = cssOperation !== null || cssRecovery.pending
+  const capacityError = useAtomValue(appearanceCapacityErrorAtom)
+  const resetCssDraft = useSetAtom(customCssDraftAtom)
+  const resetCssEditor = useSetAtom(customCssEditorUiAtom)
+  const [confirmClose, setConfirmClose] = useState(false)
+  const closeCancelRef = useRef<HTMLButtonElement>(null)
+  const closeFocusRef = useRef<HTMLElement | null>(null)
+  const closeNow = () => {
+    finishYLCStyleGesture()
+    resetCssDraft(null)
+    resetCssEditor(current => ({ ...current, name: '', registering: false, source: null }))
+    setConfirmClose(false)
+    closeFocusRef.current = null
+    onOpenChange(false)
+  }
+  useEffect(() => {
+    if (!open) {
+      setConfirmClose(false)
+      closeFocusRef.current = null
+    } else if (confirmClose) closeCancelRef.current?.focus()
+  }, [open, confirmClose])
+  useEffect(() => {
+    if (!open || (!hasUnappliedCss && !cssSaving)) return
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warn)
+    return () => window.removeEventListener('beforeunload', warn)
+  }, [open, hasUnappliedCss, cssSaving])
   const panelRef = useRef<HTMLDivElement>(null)
   const tablistRef = useRef<HTMLDivElement>(null)
+  const keyboardTabFocusRef = useRef<SettingTab | null>(null)
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
   const canRedo = useAtomValue(canRedoAtom)
@@ -43,14 +89,36 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     panelRef.current?.focus({ preventScroll: true })
   }, [])
 
-  const handleClose = useCallback(() => {
-    finishYLCStyleGesture()
-    onOpenChange(false)
-  }, [finishYLCStyleGesture, onOpenChange])
+  const focusActiveTab = useCallback(() => {
+    const activeTab = tablistRef.current?.querySelector<HTMLButtonElement>('[role="tab"][tabindex="0"]')
+    activeTab?.focus({ preventScroll: true })
+  }, [])
 
-  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
+  const cancelClose = () => {
+    setConfirmClose(false)
+    const previousFocus = closeFocusRef.current
+    closeFocusRef.current = null
+    if (previousFocus?.isConnected && !previousFocus.closest('details:not([open]), [hidden], [inert]')) {
+      previousFocus.focus()
+    } else focusActiveTab()
+  }
+  const requestClose = () => {
+    // Modal routes Escape here. Dismiss only the currently open confirmation,
+    // even when the save finished while the user was deciding.
+    if (confirmClose) {
+      cancelClose()
+    } else if (cssSaving || hasUnappliedCss) {
+      const root = tablistRef.current?.getRootNode()
+      const focused = root instanceof ShadowRoot ? root.activeElement : document.activeElement
+      closeFocusRef.current = focused instanceof HTMLElement && focused !== document.body ? focused : null
+      setConfirmClose(true)
+    } else closeNow()
+  }
+
+  const tabs = useMemo<{ key: SettingTab; label: string; icon: IconType }[]>(
     () => [
       { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
+      { key: 'css', label: t('content.customCss.title'), icon: TbPalette },
       { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     ],
     [t],
@@ -60,22 +128,33 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
       const currentIndex = tabs.findIndex(tab => tab.key === menuItem)
       let nextIndex: number | null = null
-      if (e.key === 'ArrowRight') {
+      const nextKey = direction === 'rtl' ? 'ArrowLeft' : 'ArrowRight'
+      const previousKey = direction === 'rtl' ? 'ArrowRight' : 'ArrowLeft'
+      if (e.key === nextKey) {
         nextIndex = (currentIndex + 1) % tabs.length
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === previousKey) {
         nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
       }
       if (nextIndex !== null) {
         const nextTab = tabs[nextIndex]
         if (!nextTab) return
         e.preventDefault()
+        keyboardTabFocusRef.current = nextTab.key
         setMenuItem(nextTab.key)
         const buttons = tablistRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
         buttons?.[nextIndex]?.focus()
       }
     },
-    [menuItem, setMenuItem, tabs],
+    [direction, menuItem, setMenuItem, tabs],
   )
+
+  useEffect(() => {
+    if (keyboardTabFocusRef.current !== menuItem) return
+    keyboardTabFocusRef.current = null
+    // Restoring the CSS registration form can focus its name input on mount.
+    // Arrow selection keeps focus on the selected tab after its panel mounts.
+    focusActiveTab()
+  }, [focusActiveTab, menuItem])
 
   useEffect(() => {
     if (!open) return
@@ -157,21 +236,31 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       shouldFocusAfterRender={false}
       shouldCloseOnOverlayClick={true}
       shouldReturnFocusAfterClose={false}
-      onRequestClose={handleClose}
+      onRequestClose={requestClose}
       onAfterOpen={focusPanel}
       parentSelector={getModalParentElement}
     >
       <div
         ref={panelRef}
         tabIndex={-1}
-        style={{ outline: 'none' }}
         data-ylc-theme={resolvedThemeMode}
         dir={direction}
-        className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='ylc-setting-panel flex flex-col rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        style={{ outline: 'none', width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)' }}
         onWheel={e => e.stopPropagation()}
-        onKeyDownCapture={handlePanelKeyDown}
+        onKeyDownCapture={event => {
+          // The close confirmation takes priority even after focus moves back
+          // into CSS. Do not let the child consume Escape and discard its name.
+          if (confirmClose && event.key === 'Escape' && !event.nativeEvent.isComposing) {
+            event.preventDefault()
+            event.stopPropagation()
+            cancelClose()
+            return
+          }
+          handlePanelKeyDown(event)
+        }}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
+        <header className='ylc-theme-setting-header flex shrink-0 justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -185,16 +274,17 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
                 className={cn('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
                 onClick={() => {
                   if (menuItem === item.key) return
+                  keyboardTabFocusRef.current = null
                   setMenuItem(item.key)
                 }}
                 onKeyDown={handleTabKeyDown}
               >
-                <item.icon size={16} />
-                {item.label}
+                <item.icon size={16} aria-hidden='true' />
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
-          <div className='self-center inline-flex items-center gap-0.5'>
+          <div className='ylc-setting-header-actions self-center inline-flex items-center gap-0.5'>
             <button
               type='button'
               aria-label={t('content.setting.header.undo')}
@@ -220,13 +310,31 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
               data-ylc-setting-close-button
               aria-label={t('content.aria.close')}
               className='ylc-setting-close-button inline-flex items-center justify-center w-[40px] h-[40px] p-[8px] cursor-pointer rounded-md border-none bg-transparent transition-colors duration-160 ylc-theme-focus-ring-soft ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)]'
-              onClick={handleClose}
+              onClick={requestClose}
             >
               <RiCloseLine size={24} />
             </button>
           </div>
         </header>
         <PersistenceNotice />
+        {capacityError && (
+          <p role='alert' className='m-2 text-sm'>
+            {t('content.customCss.appearanceFull')}
+          </p>
+        )}
+        {confirmClose && (
+          <fieldset className='ylc-css-close-confirm' aria-label={t('content.customCss.confirmTitle')}>
+            <p>{t(cssSaving ? 'content.customCss.closeWhileSaving' : 'content.customCss.discardOnClose')}</p>
+            <div className='flex flex-wrap gap-2'>
+              <button ref={closeCancelRef} type='button' className='ylc-btn' onClick={cancelClose}>
+                {t('content.customCss.keepEditing')}
+              </button>
+              <button type='button' className='ylc-btn' onClick={closeNow}>
+                {t(cssSaving ? 'content.customCss.closeAnyway' : 'content.customCss.discardAndClose')}
+              </button>
+            </div>
+          </fieldset>
+        )}
         <span key={historyAnnouncement.sequence} className='ylc-visually-hidden' role='status' aria-live='polite'>
           {historyAnnouncement.message}
         </span>
@@ -235,10 +343,19 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
-          className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
+          className={`min-h-0 flex-grow overflow-y-auto p-2 rounded-2xl ${menuItem === 'css' ? 'h-[560px]' : 'h-[380px]'}`}
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}
+          {menuItem === 'css' && (
+            <CustomCssSection
+              onOpenAppearanceSettings={() => {
+                finishYLCStyleGesture()
+                keyboardTabFocusRef.current = 'setting'
+                setMenuItem('setting')
+              }}
+            />
+          )}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

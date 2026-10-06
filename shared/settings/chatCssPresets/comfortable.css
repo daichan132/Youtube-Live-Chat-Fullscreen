@@ -1,0 +1,14 @@
+/* Comfortable reading / ゆったり読みやすく
+ * Keep the configured font size, with a relaxed line height and extra breathing room.
+ * 文字サイズとコメント間隔は通常の設定を使い、行間と余白をゆったりさせます。
+ */
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) {
+  margin-block: calc(var(--extension-yt-live-chat-spacing, 0px) + 8px);
+  padding-block: 6px;
+  font-size: var(--extension-yt-live-chat-font-size, 13px);
+  line-height: 1.75;
+}
+body.custom-yt-app-live-chat-extension #items yt-live-chat-text-message-renderer:not([is-deleted]) #message {
+  font-size: inherit;
+  line-height: inherit;
+}

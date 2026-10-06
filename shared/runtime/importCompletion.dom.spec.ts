@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
-import { APPEARANCE_STORAGE_KEY } from '@/shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
 import { chatSettingsStateAtom, EMPTY_MESSAGES } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
@@ -39,7 +39,7 @@ describe('import completion before popup closure', () => {
     releases.push(releaseImport.resolve, releaseEdit.resolve)
     const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
     vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-      if (Object.keys(values).length === 4) {
+      if (THEME_STORAGE_KEY in values && APPEARANCE_STORAGE_KEY in values) {
         importStarted.resolve()
         await releaseImport.promise
       } else if (APPEARANCE_STORAGE_KEY in values) {

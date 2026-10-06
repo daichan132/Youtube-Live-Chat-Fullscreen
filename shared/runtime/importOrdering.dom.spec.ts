@@ -37,7 +37,7 @@ const pauseImportWrite = () => {
   const originalSet = chrome.storage.local.set.bind(chrome.storage.local)
   let pending = true
   const set = vi.spyOn(chrome.storage.local, 'set').mockImplementation(async values => {
-    if (pending && Object.keys(values).length === 4) {
+    if (pending && THEME_STORAGE_KEY in values && APPEARANCE_STORAGE_KEY in values) {
       pending = false
       started.resolve()
       await released.promise
