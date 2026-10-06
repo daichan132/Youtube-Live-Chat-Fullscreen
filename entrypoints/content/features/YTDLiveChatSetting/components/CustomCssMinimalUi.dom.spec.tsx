@@ -43,17 +43,32 @@ const setup = () => {
 }
 
 const savedRow = (view: RenderResult, id: string) => {
+  const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
   const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)
 }
 
+const choosePreset = (view: RenderResult, id: string) => {
+  const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+  if (chooser.getAttribute('aria-expanded') !== 'true') fireEvent.click(chooser)
+  const choice = view.container.querySelector(`[data-ylc-css-preset-choice="${id}"]`)
+  if (!choice) throw new Error(`Missing preset choice: ${id}`)
+  fireEvent.click(choice)
+}
+
 describe('focused CSS settings', () => {
   it('starts with visible empty CSS and one explicit Use button, without creating a draft or writing', () => {
     const { store, view } = setup()
-    expect(view.getAllByRole('combobox')).toHaveLength(1)
+    expect(view.queryByRole('combobox')).toBeNull()
+    expect(view.getAllByRole('button', { name: 'content.customCss.choosePreset' })).toHaveLength(1)
+    expect(view.container.querySelector('[data-ylc-css-preset-choice]')).toBeNull()
+    expect(view.container.querySelector('.ylc-custom-css-library')).toBeNull()
     expect(view.getByLabelText('CSS')).toBeVisible()
     expect(view.getByLabelText('CSS')).toHaveValue('')
+    expect(view.getByLabelText('CSS')).toHaveAttribute('rows', '4')
     expect(view.queryByLabelText('content.customCss.name')).toBeNull()
     expect(view.container.querySelectorAll('[data-ylc-css-use]')).toHaveLength(1)
     expect(view.getByRole('button', { name: 'content.customCss.apply' })).toBeDisabled()
@@ -101,12 +116,12 @@ describe('focused CSS settings', () => {
     const { view } = setup()
     const preset = CHAT_CSS_PRESETS[0]
     if (!preset) throw new Error('Missing starter style')
-    fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
+    choosePreset(view, preset.id)
     expect(view.container.querySelector('[data-ylc-css-preview]')).toHaveAttribute('data-ylc-css-preview', preset.id)
     expect(view.container.querySelector('[data-ylc-css-preview]')).toHaveAttribute('sandbox', '')
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '</style><script>unsafe()</script>' } })
     expect(view.container.querySelector('[data-ylc-css-preview]')).toBeNull()
-    expect(view.container.querySelectorAll('.ylc-custom-css-browse [data-ylc-css-example]')).toHaveLength(CHAT_CSS_PRESETS.length)
+    expect(view.container.querySelector('[data-ylc-css-example]')).toBeNull()
     expect(view.getByRole('group', { name: 'content.customCss.title' }).querySelector('script, style, iframe')).toBeNull()
     expect(view.getByLabelText('CSS')).toHaveValue('</style><script>unsafe()</script>')
     expect(view.getByLabelText('CSS')).toHaveAccessibleDescription(/content.customCss.warning/)
@@ -124,6 +139,29 @@ describe('focused CSS settings', () => {
     expect(view.getByLabelText('CSS')).toBeVisible()
     expect(view.getByLabelText('CSS')).toHaveValue('.draft{}')
     expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
+  })
+
+  it('keeps saved styles folded away until requested and preserves the loaded source after folding them again', () => {
+    const { store, view } = setup()
+    act(() => {
+      store.set(savedChatCssAtom, [{ id: 'mine', name: 'Mine', css: '.saved{}' }])
+    })
+    const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+    const summary = library?.querySelector('summary')
+    if (!library || !summary) throw new Error('Missing saved styles disclosure')
+    expect(library.open).toBe(false)
+    expect(view.getByText('Mine')).not.toBeVisible()
+    expect(view.getByLabelText('CSS')).toBeVisible()
+    fireEvent.click(summary)
+    expect(library.open).toBe(true)
+    expect(view.getByText('Mine')).toBeVisible()
+    fireEvent.click(savedRow(view, 'mine').getByRole('button', { name: 'content.customCss.loadSaved' }))
+    expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
+    fireEvent.click(summary)
+    expect(library.open).toBe(false)
+    expect(view.getByLabelText('CSS')).toHaveValue('.saved{}')
+    expect(store.get(customCssAtom)).toEqual({ enabled: false, css: '' })
+    for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
   })
 
   it('lists named styles with a separate delete action that still requires confirmation', () => {

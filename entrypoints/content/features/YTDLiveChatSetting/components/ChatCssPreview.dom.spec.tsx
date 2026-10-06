@@ -46,6 +46,20 @@ describe('packaged chat CSS previews', () => {
     expect(document.querySelector('[data-preview-message="A"] > #content > #message')).not.toBeNull()
   })
 
+  it('can omit repeated captions while keeping a labelled preview iframe', () => {
+    const view = renderWithStore(<ChatCssPreview preset={messenger} caption='none' />, createTestStore())
+    expect(view.container.querySelector('figcaption')).toBeNull()
+    expect(view.container.querySelector('figure')).toHaveAttribute(
+      'aria-label',
+      'content.customCss.previewTitle · content.customCss.presetMessenger',
+    )
+    expect(view.container.querySelector('iframe')).toHaveAttribute(
+      'title',
+      'content.customCss.previewTitle · content.customCss.presetMessenger',
+    )
+    expect(parsePreview(view.container).querySelector('style[data-ylc-css-preview-source]')?.textContent).toBe(messenger.css)
+  })
+
   it('reflects the current editing profile without saving or replacing the packaged CSS', () => {
     const store = createTestStore()
     const saved = store.get(chatSettingsStateAtom)

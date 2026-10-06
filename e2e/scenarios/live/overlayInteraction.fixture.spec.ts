@@ -472,9 +472,10 @@ test('saves pasted CSS without applying, then reuses it after reopening the sett
     const css = 'body { --ylc-saved-style-probe: purple; }'
     const name = 'Fixture CSS'
     await editor.fill(css)
-    await settings.getByRole('button', { name: 'Save with a name', exact: true }).click()
+    await settings.getByRole('button', { name: 'Save', exact: true }).click()
     await settings.getByRole('textbox', { name: 'Name', exact: true }).fill(name)
     await settings.getByRole('button', { name: 'Add to list', exact: true }).click()
+    await settings.locator('.ylc-custom-css-library summary').click()
     await expect(settings.getByRole('button', { name: `Use ${name}`, exact: true })).toBeVisible()
     const storedValue = async (key: string) => {
       return storagePage.evaluate(async storageKey => {
@@ -494,6 +495,7 @@ test('saves pasted CSS without applying, then reuses it after reopening the sett
     await overlay.openSettings()
     await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
     await expect(editor).toHaveValue('')
+    await settings.locator('.ylc-custom-css-library summary').click()
     await settings.getByRole('button', { name: `Load ${name}`, exact: true }).click()
     await expect(editor).toHaveValue(css)
     expect(await storedValue(CUSTOM_CSS_STORAGE_KEY)).toEqual({ enabled: false, css: '' })
@@ -547,12 +549,8 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
         await overlay.openSettings()
         const settings = overlay.settingsFrame()
         await settings.getByRole('tab', { name: 'Custom CSS', exact: true }).click()
-        if (presetId === 'messenger') {
-          await settings.getByText('Choose by appearance', { exact: true }).click()
-          await settings.locator('[data-ylc-css-preset-choice="messenger"]').click()
-        } else {
-          await settings.getByRole('combobox', { name: 'Choose a style', exact: true }).selectOption(`preset:${presetId}`)
-        }
+        await settings.getByRole('button', { name: 'Choose a style', exact: true }).click()
+        await settings.locator(`[data-ylc-css-preset-choice="${presetId}"]`).click()
         await expect(settings.getByRole('textbox', { name: 'CSS', exact: true })).toHaveValue(css)
         // Loading is page-local editing only; activation requires the real Use button.
         expect((await fixture.read()).sources).toEqual([])
@@ -570,7 +568,8 @@ test.describe('packaged message layouts in the actual chat iframe', { tag: ['@li
         if (presetId === 'messenger') {
           // Ordinary appearance controls remain effective after Use. Exercise the
           // actual UI and repository; changing these values must not rewrite CSS.
-          await settings.getByRole('tab', { name: 'Settings', exact: true }).click()
+          await settings.getByRole('button', { name: 'Adjust colors and text size', exact: true }).click()
+          await expect(settings.getByRole('tab', { name: 'Settings', exact: true })).toHaveAttribute('aria-selected', 'true')
           const textSize = settings.getByRole('slider', { name: 'Text Size', exact: true })
           await expect(textSize).toHaveValue('13')
           for (let index = 0; index < 7; index += 1) await textSize.press('ArrowRight')

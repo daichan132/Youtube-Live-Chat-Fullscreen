@@ -153,6 +153,7 @@
       "unappliedBadge": "Unapplied edits",
       "presets": "Starter CSS",
       "choosePreset": "Choose a starter preset…",
+      "adjustAppearance": "Adjust colors and text size",
       "previewTitle": "Preview",
       "previewHelp": "Reflects the colors, text size and visibility options in Settings.",
       "browsePresets": "Choose by appearance",

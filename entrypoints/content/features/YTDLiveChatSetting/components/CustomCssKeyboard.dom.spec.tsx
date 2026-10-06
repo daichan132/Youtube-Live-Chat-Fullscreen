@@ -33,6 +33,9 @@ const setup = () => {
 }
 
 const savedRow = (view: RenderResult, id: string) => {
+  const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
   const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)
@@ -95,6 +98,57 @@ describe('innermost CSS keyboard dismissal', () => {
     fireEvent.keyDown(view.getByLabelText('content.customCss.name'), { key: 'Escape', isComposing: true })
     expect(store.get(customCssEditorUiAtom)).toMatchObject({ name: 'Copy', registering: true })
     expect(actions.register).not.toHaveBeenCalled()
+  })
+
+  it.each(['choice', 'editor'])('closes only the style picker on Escape from %s and lets it reopen', target => {
+    const store = createTestStore()
+    const onKeyDown = vi.fn()
+    const view = renderWithStore(
+      // biome-ignore lint/a11y/noStaticElementInteractions: Test-only wrapper observes keyboard event bubbling from child controls.
+      <div onKeyDown={onKeyDown}>
+        <CustomCssSection />
+      </div>,
+      store,
+    )
+    const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+    fireEvent.click(chooser)
+    const control =
+      target === 'editor' ? view.getByLabelText('CSS') : view.container.querySelector<HTMLElement>('[data-ylc-css-preset-choice]')
+    if (!control) throw new Error('Missing style choice')
+    control.focus()
+    fireEvent.keyDown(control, { key: 'Escape', isComposing: true })
+    expect(chooser).toHaveAttribute('aria-expanded', 'true')
+    onKeyDown.mockClear()
+    fireEvent.keyDown(control, { key: 'Escape' })
+    expect(chooser).toHaveAttribute('aria-expanded', 'false')
+    expect(chooser).toHaveFocus()
+    expect(view.container.querySelector('[data-ylc-css-preset-choice]')).toBeNull()
+    expect(view.getByLabelText('CSS')).toBeVisible()
+    expect(view.getByLabelText('CSS')).toHaveValue('')
+    expect(onKeyDown).not.toHaveBeenCalled()
+    fireEvent.click(chooser)
+    expect(chooser).toHaveAttribute('aria-expanded', 'true')
+    expect(view.container.querySelector('[data-ylc-css-preset-choice]')).toBeInTheDocument()
+    expect(store.get(customCssDraftAtom)).toBeNull()
+    for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
+  })
+
+  it('cancels the name form before dismissing an open style picker', () => {
+    const { view, store, onKeyDown } = setup()
+    const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+    fireEvent.click(chooser)
+    const name = view.getByLabelText('content.customCss.name')
+    name.focus()
+    fireEvent.keyDown(name, { key: 'Escape' })
+    expect(view.queryByLabelText('content.customCss.name')).toBeNull()
+    expect(chooser).toHaveAttribute('aria-expanded', 'true')
+    expect(view.getByLabelText('CSS')).toHaveFocus()
+    fireEvent.keyDown(view.getByLabelText('CSS'), { key: 'Escape' })
+    expect(chooser).toHaveAttribute('aria-expanded', 'false')
+    expect(chooser).toHaveFocus()
+    expect(store.get(customCssDraftAtom)?.css).toBe('.draft{}')
+    expect(onKeyDown).not.toHaveBeenCalled()
+    for (const action of Object.values(actions)) expect(action).not.toHaveBeenCalled()
   })
 
   it('still saves the named copy on plain Enter without applying it', async () => {

@@ -12,7 +12,7 @@ const SAMPLE_MESSAGES = [
   { id: 'C', initial: 'A', authorKey: 'content.customCss.exampleAuthorC', messageKey: 'content.customCss.exampleMessageC' },
 ] as const
 
-export const ChatCssPreview = ({ preset }: { preset?: ChatCssPreset }) => {
+export const ChatCssPreview = ({ preset, caption = 'full' }: { preset?: ChatCssPreset; caption?: 'full' | 'none' }) => {
   const t = useT()
   const direction = useLocaleDirection()
   const language = useLocaleCode()
@@ -34,11 +34,13 @@ export const ChatCssPreview = ({ preset }: { preset?: ChatCssPreset }) => {
   if (!packaged || !srcDoc) return null
   const background = profile.appearance.backgroundColor
   return (
-    <figure className='ylc-chat-css-preview' data-ylc-preview-preset={packaged.id}>
-      <figcaption>
-        <span>{title}</span>
-        <span className='ylc-chat-css-preview-description'>{t(packaged.descriptionKey)}</span>
-      </figcaption>
+    <figure className='ylc-chat-css-preview' data-ylc-preview-preset={packaged.id} aria-label={caption === 'none' ? title : undefined}>
+      {caption === 'full' && (
+        <figcaption>
+          <span>{title}</span>
+          <span className='ylc-chat-css-preview-description'>{t(packaged.descriptionKey)}</span>
+        </figcaption>
+      )}
       <div
         className='ylc-chat-css-preview-surface'
         style={{ backgroundColor: `rgba(${background.r}, ${background.g}, ${background.b}, ${background.a})` }}

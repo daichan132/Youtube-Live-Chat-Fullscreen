@@ -48,6 +48,9 @@ const delayedRegistration = () => {
 }
 
 const savedRow = (view: RenderResult, id: string) => {
+  const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
   const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)

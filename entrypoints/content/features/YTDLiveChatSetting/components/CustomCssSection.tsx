@@ -66,7 +66,11 @@ const isCssWithinLimit = (css: string) => {
   }
 }
 
-export const CustomCssSection = () => {
+type CustomCssSectionProps = {
+  onOpenAppearanceSettings?: () => void
+}
+
+export const CustomCssSection = ({ onOpenAppearanceSettings }: CustomCssSectionProps) => {
   const t = useT()
   const runtime = useOptionalAppRuntime()
   const store = useStore()
@@ -86,6 +90,7 @@ export const CustomCssSection = () => {
   const nameRef = useRef<HTMLInputElement>(null)
   const cancelRef = useRef<HTMLButtonElement>(null)
   const applyButtonRef = useRef<HTMLButtonElement>(null)
+  const pickerButtonRef = useRef<HTMLButtonElement>(null)
   const stopTrigger = useRef<HTMLButtonElement | null>(null)
   const restoreRegistrationFocus = useRef<HTMLElement | null>(null)
   const id = useId()
@@ -96,7 +101,7 @@ export const CustomCssSection = () => {
   const selected = source?.kind === 'saved' ? saved.find(entry => entry.id === source.id) : undefined
   const originalPreset = source?.kind === 'preset' ? CHAT_CSS_PRESETS.find(entry => entry.id === source.id) : undefined
   const example = CHAT_CSS_PRESETS.find(entry => entry.css === css)
-  const choice = example ? `preset:${example.id}` : ''
+  const sourceName = selected?.css === css ? selected.name : example ? t(example.labelKey) : null
   const bytes = utf8Bytes(css)
   const tooLarge = !isCssWithinLimit(css)
   const hasFailedCssSave = persistence.status === 'error' && persistence.failedDomains.includes('customCss')
@@ -115,10 +120,6 @@ export const CustomCssSection = () => {
       : null
   const canRegister =
     runtime !== null && !busy && !tooLarge && !!css.trim() && !!name && name.length <= MAX_CSS_NAME_LENGTH && !registrationError
-  const currentPreset = CHAT_CSS_PRESETS.find(entry => entry.css === active.css)
-  const currentName = currentPreset
-    ? t(currentPreset.labelKey)
-    : (saved.find(entry => entry.css === active.css)?.name ?? t('content.customCss.title'))
   const stateKey = changed
     ? 'content.customCss.unapplied'
     : stopped
@@ -278,95 +279,91 @@ export const CustomCssSection = () => {
           event.preventDefault()
           event.stopPropagation()
           cancelRegistration()
+        } else if (browsing) {
+          event.preventDefault()
+          event.stopPropagation()
+          setBrowsing(false)
+          pickerButtonRef.current?.focus()
         }
       }}
     >
-      <legend className='ylc-setting-group-legend'>
-        <span className='ylc-custom-css-legend'>
-          <TbPalette size={16} aria-hidden='true' />
-          {t('content.customCss.title')}
-        </span>
-      </legend>
+      <legend className='ylc-visually-hidden'>{t('content.customCss.title')}</legend>
       <div className='ylc-custom-css-surface'>
-        <div className='ylc-custom-css-heading'>
-          <span className='ylc-custom-css-current' data-active={inUse && !unconfirmed} role='status'>
-            <span className='ylc-custom-css-dot' aria-hidden='true' />
-            {t(statusKey)}
-            {inUse && !recovery.pending && !unconfirmed ? ` · ${currentName}` : ''}
-          </span>
-          {canStop && (
-            <button
-              type='button'
-              className='ylc-btn ylc-custom-css-quiet'
-              disabled={!runtime || (recovery.pending && recovery.target)}
-              onClick={stop}
-            >
-              {t(recovery.failed && recovery.target ? 'content.customCss.retryStop' : 'content.customCss.disable')}
-            </button>
+        {(active.css || stopped || inUse || canStop || recovery.pending || unconfirmed) && (
+          <div className='ylc-custom-css-heading'>
+            <span className='ylc-custom-css-current' data-active={inUse && !unconfirmed} role='status'>
+              <span className='ylc-custom-css-dot' aria-hidden='true' />
+              {t(statusKey)}
+            </span>
+            {canStop && (
+              <button
+                type='button'
+                className='ylc-btn ylc-custom-css-quiet'
+                disabled={!runtime || (recovery.pending && recovery.target)}
+                onClick={stop}
+              >
+                {t(recovery.failed && recovery.target ? 'content.customCss.retryStop' : 'content.customCss.disable')}
+              </button>
+            )}
+          </div>
+        )}
+        <div className='ylc-custom-css-picker-heading'>
+          <button
+            ref={pickerButtonRef}
+            type='button'
+            className='ylc-btn ylc-custom-css-picker-toggle'
+            disabled={busy}
+            aria-expanded={browsing}
+            aria-controls={browsing ? `${id}-styles` : undefined}
+            onClick={() => setBrowsing(current => !current)}
+          >
+            <TbPalette size={16} aria-hidden='true' />
+            {t('content.customCss.choosePreset')}
+          </button>
+          {sourceName && (
+            <span className='ylc-custom-css-source-name'>
+              {sourceName}
+              {changed && <span className='ylc-custom-css-draft-badge'>{t('content.customCss.unappliedBadge')}</span>}
+            </span>
           )}
         </div>
-        <div className='ylc-custom-css-recommendations'>
-          <label htmlFor={`${id}-style`}>{t('content.customCss.presets')}</label>
-          <select
-            id={`${id}-style`}
-            value={choice}
-            disabled={busy}
-            aria-label={t('content.customCss.choosePreset')}
-            aria-describedby={`${id}-load-help`}
-            onChange={event => {
-              const next = CHAT_CSS_PRESETS.find(entry => `preset:${entry.id}` === event.target.value)
-              if (next) requestLoad(next.css, { kind: 'preset', id: next.id })
-            }}
-          >
-            <option value='' disabled>
-              {t('content.customCss.chooseSaved')}
-            </option>
+        {browsing && (
+          <div className='ylc-custom-css-preset-grid' id={`${id}-styles`}>
             {CHAT_CSS_PRESETS.map(entry => (
-              <option key={entry.id} value={`preset:${entry.id}`}>
-                {t(entry.labelKey)}
-              </option>
+              <article className='ylc-custom-css-preset-card' data-selected={example?.id === entry.id} key={entry.id}>
+                <button
+                  type='button'
+                  className='ylc-custom-css-preset-choice'
+                  data-ylc-css-preset-choice={entry.id}
+                  aria-label={formatMessage(t('content.customCss.loadPreset'), { name: t(entry.labelKey) })}
+                  aria-pressed={example?.id === entry.id}
+                  disabled={busy}
+                  onClick={() => requestLoad(entry.css, { kind: 'preset', id: entry.id })}
+                >
+                  {t(entry.labelKey)}
+                </button>
+                <ChatCssExample preset={entry} compact />
+              </article>
             ))}
-          </select>
-          <p id={`${id}-load-help`} className='ylc-custom-css-help'>
-            {t('content.customCss.loadOnly')}
-          </p>
-          <details className='ylc-custom-css-browse' open={browsing} onToggle={event => setBrowsing(event.currentTarget.open)}>
-            <summary>{t('content.customCss.browsePresets')}</summary>
-            <div className='ylc-custom-css-preset-grid'>
-              {CHAT_CSS_PRESETS.map(entry => (
-                <article className='ylc-custom-css-preset-card' data-selected={example?.id === entry.id} key={entry.id}>
-                  <button
-                    type='button'
-                    className='ylc-custom-css-preset-choice'
-                    data-ylc-css-preset-choice={entry.id}
-                    aria-label={formatMessage(t('content.customCss.loadPreset'), { name: t(entry.labelKey) })}
-                    aria-pressed={example?.id === entry.id}
-                    disabled={busy}
-                    onClick={() => requestLoad(entry.css, { kind: 'preset', id: entry.id })}
-                  >
-                    {t(entry.labelKey)}
-                  </button>
-                  <ChatCssExample preset={entry} compact />
-                </article>
-              ))}
-            </div>
-          </details>
-        </div>
+          </div>
+        )}
         {example && (
           <section className='ylc-custom-css-preview' aria-label={t('content.customCss.previewTitle')}>
-            <div className='ylc-custom-css-preview-heading'>
-              <h3>
-                {t('content.customCss.previewTitle')} · {t(example.labelKey)}
-              </h3>
-              <p className='ylc-custom-css-help'>{t('content.customCss.previewHelp')}</p>
-            </div>
-            <ChatCssPreview preset={example} />
-            {example.noteKey && <p className='ylc-custom-css-help'>{t(example.noteKey)}</p>}
+            <ChatCssPreview preset={example} caption='none' />
+            {onOpenAppearanceSettings && (
+              <button type='button' className='ylc-custom-css-appearance-link' onClick={onOpenAppearanceSettings}>
+                {t('content.customCss.adjustAppearance')}
+              </button>
+            )}
           </section>
         )}
         <div className='ylc-custom-css-editor-heading'>
           <label htmlFor={`${id}-editor`}>CSS</label>
-          <span id={`${id}-limit`} className='ylc-custom-css-count' data-invalid={tooLarge}>
+          <span
+            id={`${id}-limit`}
+            className={tooLarge || bytes >= MAX_CUSTOM_CSS_BYTES * 0.9 ? 'ylc-custom-css-count' : 'ylc-visually-hidden'}
+            data-invalid={tooLarge}
+          >
             {(bytes / 1024).toFixed(1)} / {MAX_CUSTOM_CSS_BYTES / 1024} KiB
           </span>
         </div>
@@ -380,7 +377,7 @@ export const CustomCssSection = () => {
           autoCorrect='off'
           wrap='off'
           dir='ltr'
-          rows={6}
+          rows={4}
           aria-invalid={tooLarge}
           aria-describedby={`${id}-limit ${id}-warning ${id}-text-state${tooLarge ? ` ${id}-css-error` : ''}`}
           aria-keyshortcuts='Control+Enter Meta+Enter'
@@ -485,12 +482,6 @@ export const CustomCssSection = () => {
             </div>
           </div>
         )}
-        <details className='ylc-custom-css-disclosure'>
-          <summary>{t('content.customCss.warningTitle')}</summary>
-          <p className='ylc-custom-css-help' id={`${id}-warning`}>
-            {t('content.customCss.warning')}
-          </p>
-        </details>
         <div className='ylc-custom-css-tools'>
           {originalPreset && css !== originalPreset.css && (
             <button
@@ -513,7 +504,6 @@ export const CustomCssSection = () => {
             </button>
           )}
         </div>
-        {selected && <p className='ylc-custom-css-help'>{t('content.customCss.savedHelp')}</p>}
         <p id={`${id}-text-state`} className='ylc-visually-hidden'>
           {t(stateKey)}
         </p>
@@ -586,16 +576,11 @@ export const CustomCssSection = () => {
             </div>
           </fieldset>
         )}
-        <section className='ylc-custom-css-library' aria-labelledby={`${id}-saved-heading`}>
-          <h3 id={`${id}-saved-heading`} className='ylc-custom-css-subheading'>
-            {t('content.customCss.savedList')}
-            <span className='ylc-custom-css-count'>
-              {saved.length} / {MAX_SAVED_CHAT_CSS}
-            </span>
-          </h3>
-          {saved.length === 0 ? (
-            <p className='ylc-custom-css-help ylc-custom-css-empty'>{t('content.customCss.savedEmptyHelp')}</p>
-          ) : (
+        {saved.length > 0 && (
+          <details className='ylc-custom-css-library'>
+            <summary>
+              {t('content.customCss.savedList')} <span className='ylc-custom-css-count'>({saved.length})</span>
+            </summary>
             <ul className='ylc-custom-css-saved-list'>
               {saved.map(entry => (
                 <li className='ylc-preset ylc-custom-css-saved-row' data-ylc-saved-css={entry.id} key={entry.id}>
@@ -632,10 +617,15 @@ export const CustomCssSection = () => {
                 </li>
               ))}
             </ul>
-          )}
-        </section>
+          </details>
+        )}
+        <details className='ylc-custom-css-disclosure'>
+          <summary>{t('content.customCss.warningTitle')}</summary>
+          <p className='ylc-custom-css-help' id={`${id}-warning`}>
+            {t('content.customCss.warning')}
+          </p>
+        </details>
       </div>
-      <p className='ylc-custom-css-context'>{t('content.customCss.description')}</p>
     </fieldset>
   )
 }

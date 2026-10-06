@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
-import { expect, fireEvent, userEvent, within } from 'storybook/test'
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test'
 import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { EDITED_CSS, storyLocale, storyText, storyTheme } from './customCssStoryRuntime'
 import { SettingsStoryHarness } from './SettingsStoryHarness'
@@ -47,6 +47,26 @@ const openCss = async (context: PlayContext) => {
   await expect(tab).toHaveAttribute('aria-selected', 'true')
   return ui
 }
+const choosePreset = async (context: PlayContext, id: string) => {
+  const ui = uiFor(context)
+  const text = textFor(context)
+  const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
+  if (!preset) throw new Error(`Missing chat layout: ${id}`)
+  const chooser = ui.getByRole('button', { name: text('content.customCss.choosePreset') })
+  await waitFor(() => expect(chooser).toBeEnabled(), { timeout: 5000 })
+  await userEvent.click(chooser)
+  await expect(chooser).toHaveAttribute('aria-expanded', 'true')
+  await userEvent.click(ui.getByRole('button', { name: text('content.customCss.loadPreset').replace('{name}', text(preset.labelKey)) }))
+  return preset
+}
+const openLibrary = async (context: PlayContext) => {
+  const library = context.canvasElement.ownerDocument.querySelector<HTMLDetailsElement>('.ylc-custom-css-library')
+  if (!library) throw new Error('Missing saved CSS library')
+  const summary = library.querySelector('summary')
+  if (!summary) throw new Error('Missing saved CSS library summary')
+  if (!library.open) await userEvent.click(summary)
+  await expect(library).toHaveAttribute('open')
+}
 const openEditor = async (context: PlayContext) => {
   const ui = await openCss(context)
   return ui.findByRole('textbox', { name: 'CSS' })
@@ -65,7 +85,11 @@ export const Initial: Story = {
   parameters: description('初めてカスタムCSSタブを開いた状態。入力欄は常に表示され、貼り付けたCSSを使用・名前付き保存できます。'),
   play: async context => {
     const ui = await openCss(context)
-    await expect(ui.getByRole('combobox')).toHaveValue('')
+    await expect(ui.getByRole('button', { name: textFor(context)('content.customCss.choosePreset') })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    )
+    await expect(context.canvasElement.ownerDocument.querySelector('[data-ylc-css-preset-choice]')).toBeNull()
     await expect(ui.getByRole('button', { name: textFor(context)('content.customCss.apply') })).toBeDisabled()
     await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue('')
   },
@@ -77,6 +101,7 @@ export const SavedStyles: Story = {
   parameters: description('名前を付けたCSSが複数ある状態。保存済みの「動画向けの白文字」を選びます。選択だけでは使用されません。'),
   play: async context => {
     const ui = await openCss(context)
+    await openLibrary(context)
     await userEvent.click(
       ui.getByRole('button', { name: textFor(context)('content.customCss.loadSaved').replace('{name}', '動画向けの白文字') }),
     )
@@ -111,11 +136,11 @@ export const Paused: Story = {
 
 export const NamedCopy: Story = {
   name: '名前付き保存・登録フォーム',
-  parameters: description('カードのスタイルを読み込み、「名前を付けて保存」を開いた状態。一覧へ保存しても使用中のCSSは変わりません。'),
+  parameters: description('カードのスタイルを読み込み、「保存」を開いた状態。一覧へ保存しても使用中のCSSは変わりません。'),
   play: async context => {
     const ui = await openCss(context)
     const text = textFor(context)
-    await userEvent.selectOptions(ui.getByRole('combobox'), 'preset:cards')
+    await choosePreset(context, 'cards')
     await openEditor(context)
     await userEvent.click(ui.getByRole('button', { name: text('content.customCss.register') }))
     const name = await ui.findByRole('textbox', { name: text('content.customCss.name') })
@@ -144,7 +169,7 @@ export const ReplaceDraftConfirmation: Story = {
     const ui = uiFor(context)
     const text = textFor(context)
     await editCss(context)
-    await userEvent.selectOptions(ui.getByRole('combobox'), 'preset:cards')
+    await choosePreset(context, 'cards')
     await expect(await ui.findByRole('group', { name: text('content.customCss.confirmTitle') })).toBeVisible()
     await expect(ui.getByText(text('content.customCss.replaceDraft'), { exact: true })).toBeVisible()
   },
@@ -170,6 +195,7 @@ export const NarrowSelection: Story = {
   parameters: description('360px幅の画面でカスタムCSSを選択する状態。Viewportツールで320px幅とも比較できます。'),
   play: async context => {
     await openCss(context)
+    await openLibrary(context)
   },
 }
 
@@ -200,8 +226,11 @@ export const LibraryRoundTrip: Story = {
     await userEvent.click(ui.getByRole('button', { name: text('content.customCss.discardAndClose') }))
     await userEvent.click(ui.getByRole('button', { name: text('content.aria.openSettings') }))
     await openCss(context)
+    await openLibrary(context)
     await userEvent.click(ui.getByRole('button', { name: text('content.customCss.useSavedLabel').replace('{name}', name) }))
-    await expect(await ui.findByText(`${text('content.customCss.active')} · ${name}`, { exact: true }, { timeout: 5000 })).toBeVisible()
+    await expect(
+      await ui.findByText(text('content.customCss.active'), { selector: '[role="status"]', exact: true }, { timeout: 5000 }),
+    ).toBeVisible()
     await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(EDITED_CSS)
   },
 }
@@ -215,16 +244,16 @@ export const ChatLayouts: Story = {
     const ui = await openCss(context)
     const text = textFor(context)
     for (const id of ['messenger', 'stage', 'timeline']) {
-      const preset = CHAT_CSS_PRESETS.find(item => item.id === id)
-      if (!preset) throw new Error(`Missing chat layout: ${id}`)
-      await userEvent.selectOptions(ui.getByRole('combobox'), `preset:${id}`)
+      const preset = await choosePreset(context, id)
       await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
-      const previewFigure = context.canvasElement.ownerDocument.querySelector<HTMLElement>('.ylc-chat-css-preview')
-      if (!previewFigure) throw new Error(`Missing preview for chat layout: ${id}`)
-      await expect(within(previewFigure).getByText(text(preset.descriptionKey), { exact: true })).toBeVisible()
+      const preview = context.canvasElement.ownerDocument.querySelector(`iframe[data-ylc-css-preview="${id}"]`)
+      await expect(preview).toBeVisible()
+      await expect(preview).toHaveAttribute('sandbox', '')
+      await expect(preview?.getAttribute('srcdoc')).toContain(preset.css)
       await userEvent.click(ui.getByRole('button', { name: text('content.customCss.apply') }))
+      await waitFor(() => expect(ui.getByRole('button', { name: text('content.customCss.active') })).toBeDisabled(), { timeout: 5000 })
       await expect(
-        await ui.findByText(`${text('content.customCss.active')} · ${text(preset.labelKey)}`, { exact: true }, { timeout: 5000 }),
+        await ui.findByText(text('content.customCss.active'), { selector: '[role="status"]', exact: true }, { timeout: 5000 }),
       ).toBeVisible()
     }
   },
@@ -234,20 +263,18 @@ export const PresetPreview: Story = {
   name: 'プレビュー・選んだCSSを設定で調整',
   args: { saveDelayMs: 0 },
   parameters: description(
-    '見た目からメッセンジャー風を選び、使用後に「設定」タブで文字サイズを変更します。CSS本文はそのまま、プレビューへ設定が反映されます。',
+    'おすすめからメッセンジャー風を選び、使用後に「色・文字サイズを調整」から文字サイズを変更します。CSS本文はそのまま、プレビューへ設定が反映されます。',
   ),
   play: async context => {
     const ui = await openCss(context)
     const text = textFor(context)
-    const preset = CHAT_CSS_PRESETS.find(item => item.id === 'messenger')
-    if (!preset) throw new Error('Missing messenger preset')
-    await userEvent.click(ui.getByText(text('content.customCss.browsePresets')))
-    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.loadPreset').replace('{name}', text(preset.labelKey)) }))
+    const preset = await choosePreset(context, 'messenger')
     await expect(ui.getByRole('textbox', { name: 'CSS' })).toHaveValue(preset.css)
     await expect(context.canvasElement.ownerDocument.querySelector('iframe[data-ylc-css-preview="messenger"]')).toBeVisible()
     await userEvent.click(ui.getByRole('button', { name: text('content.customCss.apply') }))
-    await expect(await ui.findByText(`${text('content.customCss.active')} · ${text(preset.labelKey)}`)).toBeVisible()
-    await userEvent.click(ui.getByRole('tab', { name: text('content.setting.header.setting') }))
+    await expect(await ui.findByText(text('content.customCss.active'), { selector: '[role="status"]', exact: true })).toBeVisible()
+    await userEvent.click(ui.getByRole('button', { name: text('content.customCss.adjustAppearance') }))
+    await expect(ui.getByRole('tab', { name: text('content.setting.header.setting') })).toHaveAttribute('aria-selected', 'true')
     const size = ui.getByRole('slider', { name: text('content.setting.fontSize') })
     fireEvent.change(size, { target: { value: '20' } })
     await expect(size).toHaveValue('20')

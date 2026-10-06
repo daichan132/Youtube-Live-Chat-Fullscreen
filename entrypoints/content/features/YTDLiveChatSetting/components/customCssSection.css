@@ -4,26 +4,9 @@
   container-type: inline-size;
 }
 
-.ylc-custom-css .ylc-setting-group-legend {
-  box-sizing: border-box;
-  color: var(--ylc-text-secondary);
-}
-
-.ylc-custom-css-legend {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.ylc-custom-css-legend > svg {
-  color: var(--ylc-accent);
-}
-
 .ylc-custom-css-surface {
   margin: 0 12px;
-  padding: 12px;
-  border-radius: var(--ylc-radius-lg);
-  background: var(--ylc-bg-surface);
+  padding: 8px 0;
   min-width: 0;
 }
 
@@ -64,7 +47,7 @@
   line-height: 1.5;
 }
 
-.ylc-custom-css :is(select, input, textarea) {
+.ylc-custom-css :is(input, textarea) {
   box-sizing: border-box;
   width: 100%;
   min-width: 0;
@@ -75,17 +58,10 @@
   font: inherit;
 }
 
-.ylc-custom-css :is(select, input) {
+.ylc-custom-css input {
   min-height: 40px;
   padding: 8px 10px;
   font-size: 13px;
-}
-
-.ylc-custom-css select {
-  text-overflow: ellipsis;
-}
-
-.ylc-custom-css input {
   margin-top: 6px;
 }
 
@@ -99,7 +75,7 @@
     monospace;
   tab-size: 2;
   white-space: pre;
-  min-height: 140px;
+  min-height: 104px;
   max-height: 360px;
   resize: vertical;
   overflow: auto;
@@ -107,7 +83,7 @@
   caret-color: var(--ylc-accent);
 }
 
-.ylc-custom-css :is(select, input, textarea, button):focus-visible {
+.ylc-custom-css :is(input, textarea, button):focus-visible {
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;
 }
@@ -116,7 +92,7 @@
   border-color: var(--ylc-danger-border);
 }
 
-.ylc-custom-css :is(button, select, input):disabled {
+.ylc-custom-css :is(button, input):disabled {
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -195,23 +171,16 @@
   text-align: center;
 }
 
-.ylc-custom-css-library,
-.ylc-custom-css-recommendations {
-  margin-top: 16px;
-  padding-top: 12px;
-  border-top: 1px solid var(--ylc-border);
+.ylc-custom-css-library {
+  margin-top: 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ylc-text-secondary);
 }
 
-.ylc-custom-css-subheading {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px;
-  margin: 0 0 8px;
-  color: var(--ylc-text-primary);
-  font-size: 13px;
-  line-height: 1.5;
-  font-weight: 600;
+.ylc-custom-css-library > summary {
+  cursor: pointer;
+  padding-block: 4px;
 }
 
 .ylc-custom-css-saved-list {
@@ -246,20 +215,14 @@
   flex-shrink: 0;
 }
 
-.ylc-custom-css-recommendations > label {
-  margin-bottom: 6px;
-  color: var(--ylc-text-secondary);
-}
-
-.ylc-custom-css-disclosure,
-.ylc-custom-css-example-details {
-  margin-top: 8px;
-  color: var(--ylc-text-secondary);
-  font-size: 12px;
+.ylc-custom-css-disclosure {
+  margin-top: 12px;
+  color: var(--ylc-text-muted);
+  font-size: 11px;
   line-height: 1.6;
 }
 
-.ylc-custom-css :is(.ylc-custom-css-disclosure, .ylc-custom-css-example-details) > summary {
+.ylc-custom-css-disclosure > summary {
   cursor: pointer;
 }
 
@@ -277,7 +240,6 @@
 }
 
 .ylc-custom-css-help,
-.ylc-custom-css-context,
 .ylc-custom-css-feedback,
 .ylc-custom-css-notice,
 .ylc-custom-css-error {
@@ -290,12 +252,6 @@
 .ylc-custom-css-help,
 .ylc-custom-css-feedback {
   color: var(--ylc-text-secondary);
-}
-
-.ylc-custom-css-context {
-  color: var(--ylc-text-secondary);
-  margin: 6px 12px 0;
-  font-size: 11px;
 }
 
 .ylc-custom-css-notice {
@@ -330,23 +286,41 @@
   overflow-wrap: anywhere;
 }
 
-/* Choosing a source stays separate from applying or saving it. */
-.ylc-custom-css-browse {
-  margin: 8px 0 12px;
-  color: var(--ylc-text-secondary);
+/* One visual picker loads a copy before the explicit Use or Save action. */
+.ylc-custom-css-picker-heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
+.ylc-custom-css .ylc-custom-css-picker-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
   font-size: 12px;
 }
 
-.ylc-custom-css-browse > summary {
-  cursor: pointer;
-  padding-block: 4px;
+.ylc-custom-css-source-name {
+  min-width: 0;
+  color: var(--ylc-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ylc-custom-css-draft-badge {
+  margin-inline-start: 8px;
+  font-size: 11px;
+  color: var(--ylc-accent);
 }
 
 .ylc-custom-css-preset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
   gap: 10px;
-  margin-top: 10px;
+  margin: 10px 0 12px;
 }
 
 .ylc-custom-css-preset-card {
@@ -396,10 +370,26 @@
   cursor: wait;
 }
 
-.ylc-custom-css-preview-heading > h3 {
-  margin: 8px 0 0;
+.ylc-custom-css-preview {
+  margin-top: 12px;
+}
+
+.ylc-custom-css-appearance-link {
+  display: inline-block;
+  padding: 6px 0;
+  margin-top: 2px;
+  border: 0;
+  background: transparent;
+  color: var(--ylc-accent);
+  font: inherit;
   font-size: 12px;
-  color: var(--ylc-text-primary);
+  line-height: 1.5;
+  text-align: start;
+  cursor: pointer;
+}
+
+.ylc-custom-css-appearance-link:hover {
+  text-decoration: underline;
 }
 
 /* Fixed chat illustrations. Packaged CSS is never injected into this UI. */
@@ -600,8 +590,23 @@
 }
 
 .ylc-css-example[data-compact="true"] .ylc-css-example-messages {
-  max-height: 180px;
+  font-size: 11px;
+  max-height: 120px;
   overflow: hidden;
+}
+
+.ylc-css-example[data-compact="true"] .ylc-css-example-avatar {
+  width: 20px;
+  height: 20px;
+}
+
+.ylc-css-example[data-compact="true"] .ylc-css-example-message {
+  gap: 6px;
+}
+
+.ylc-css-example[data-compact="true"][data-ylc-css-example="messenger"] .ylc-css-example-content,
+.ylc-css-example[data-compact="true"][data-ylc-css-example="stage"] :is(.ylc-css-example-author, .ylc-css-example-line) {
+  padding: 4px 6px;
 }
 
 /* Keep the settings close confirmation styled after removing the old editor UI. */
@@ -622,9 +627,6 @@
 }
 
 @container (max-width: 330px) {
-  .ylc-custom-css-surface {
-    padding: 10px;
-  }
   .ylc-custom-css-tools {
     align-items: stretch;
     flex-direction: column;
@@ -646,7 +648,7 @@
   .ylc-css-example-avatar {
     border: 1px solid CanvasText;
   }
-  .ylc-custom-css :is(button, select, input):disabled {
+  .ylc-custom-css :is(button, input):disabled {
     color: GrayText;
     opacity: 1;
   }

@@ -5,16 +5,27 @@ import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { CustomCssSection } from './CustomCssSection'
 
 const savedRow = (view: RenderResult, id: string) => {
+  const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
   const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)
+}
+
+const choosePreset = (view: RenderResult, id: string) => {
+  const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+  if (chooser.getAttribute('aria-expanded') !== 'true') fireEvent.click(chooser)
+  const choice = view.container.querySelector(`[data-ylc-css-preset-choice="${id}"]`)
+  if (!choice) throw new Error(`Missing preset choice: ${id}`)
+  fireEvent.click(choice)
 }
 
 describe('always-visible CSS editing', () => {
   it('loads a sample without applying it or changing registered CSS', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:bubbles' } })
+    choosePreset(view, 'bubbles')
     expect(store.get(customCssDraftAtom)?.css).toContain('border-radius')
     expect(store.get(customCssAtom)).toEqual({ enabled: false, css: '' })
     expect(store.get(savedChatCssAtom)).toEqual([])

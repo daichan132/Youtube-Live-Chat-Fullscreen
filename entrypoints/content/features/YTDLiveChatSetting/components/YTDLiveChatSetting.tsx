@@ -347,7 +347,15 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}
-          {menuItem === 'css' && <CustomCssSection />}
+          {menuItem === 'css' && (
+            <CustomCssSection
+              onOpenAppearanceSettings={() => {
+                finishYLCStyleGesture()
+                keyboardTabFocusRef.current = 'setting'
+                setMenuItem('setting')
+              }}
+            />
+          )}
           {menuItem === 'preset' && <PresetContent />}
         </div>
         <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>

@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { storage } from 'wxt/utils/storage'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { type AppRuntime, createAppRuntime } from '@/shared/runtime/createAppRuntime'
+import { CHAT_CSS_PRESETS } from '@/shared/settings/chatCssPresets'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
 import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
@@ -35,7 +36,11 @@ const editCss = (view: Awaited<ReturnType<typeof open>>['view'], css: string) =>
 }
 
 const savedRow = (view: Awaited<ReturnType<typeof open>>['view'], id: string) => {
-  const row = view.getByRole('tabpanel', { name: 'content.customCss.title' }).querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
+  const panel = view.getByRole('tabpanel', { name: 'content.customCss.title' })
+  const library = panel.querySelector<HTMLDetailsElement>('.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
+  const row = panel.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)
 }
@@ -70,6 +75,30 @@ describe('settings, CSS and preset tabs', () => {
     expect(await storage.getItem('local:ylc-custom-css')).toMatchObject({ value: { enabled: true, css: 'body { color: red }' } })
     expect(runtime.store.get(chatSettingsStateAtom).profile).toBe(profile)
     expect(runtime.store.get(editorSessionStateAtom).past).toBe(history)
+  })
+
+  it('opens ordinary appearance settings directly while preserving the loaded CSS and preview', async () => {
+    const { runtime, view } = await open()
+    const preset = CHAT_CSS_PRESETS.find(entry => entry.id === 'messenger')
+    if (!preset) throw new Error('Missing messenger preset')
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.choosePreset' }))
+    const card = view.baseElement.querySelector<HTMLButtonElement>('[data-ylc-css-preset-choice="messenger"]')
+    if (!card) throw new Error('Missing messenger choice')
+    fireEvent.click(card)
+    expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
+    fireEvent.click(view.getByRole('button', { name: 'content.customCss.adjustAppearance' }))
+    const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    expect(settingsTab).toHaveFocus()
+    expect(view.getByRole('slider', { name: 'content.setting.fontSize' })).toBeInTheDocument()
+    expect(runtime.store.get(customCssDraftAtom)?.css).toBe(preset.css)
+    act(() => runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 23 } }))
+    fireEvent.click(view.getByRole('tab', { name: 'content.customCss.title' }))
+    expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
+    expect(view.baseElement.querySelector('iframe[data-ylc-css-preview="messenger"]')?.getAttribute('srcdoc')).toContain(
+      '--extension-yt-live-chat-font-size:23px',
+    )
   })
 
   it('keeps CSS and its registration name across both other tabs while arrow focus stays on the selected tab', async () => {
@@ -151,7 +180,7 @@ describe('settings, CSS and preset tabs', () => {
     fireEvent.click(savedRow(view, 'named').getByRole('button', { name: 'content.customCss.loadSaved' }))
     expect(view.getByLabelText('CSS')).toHaveValue('.named {}')
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '.edited named {}' } })
-    expect(view.getByText('content.customCss.savedHelp')).toBeInTheDocument()
+    expect(savedRow(view, 'named').getByRole('button', { name: 'content.customCss.loadSaved' })).toHaveTextContent('My named style')
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.reloadSaved' }))
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
     expect(view.getByLabelText('CSS')).toHaveValue('.edited named {}')

@@ -31,9 +31,20 @@ const presetById = (id: string) => {
 }
 
 const savedRow = (view: RenderResult, id: string) => {
+  const library = view.container.querySelector<HTMLDetailsElement>('details.ylc-custom-css-library')
+  const summary = library?.querySelector('summary')
+  if (library && !library.open && summary) fireEvent.click(summary)
   const row = view.container.querySelector<HTMLElement>(`[data-ylc-saved-css="${id}"]`)
   if (!row) throw new Error(`Missing saved style row: ${id}`)
   return within(row)
+}
+
+const choosePreset = (view: RenderResult, id: string) => {
+  const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+  if (chooser.getAttribute('aria-expanded') !== 'true') fireEvent.click(chooser)
+  const choice = view.container.querySelector(`[data-ylc-css-preset-choice="${id}"]`)
+  if (!choice) throw new Error(`Missing preset choice: ${id}`)
+  fireEvent.click(choice)
 }
 
 describe('choosing recommended and saved CSS styles', () => {
@@ -45,12 +56,11 @@ describe('choosing recommended and saved CSS styles', () => {
     store.set(customCssAtom, active)
     store.set(savedChatCssAtom, copies)
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
+    choosePreset(view, preset.id)
     const preview = view.container.querySelector(`[data-ylc-css-preview="${preset.id}"]`)
     expect(preview).toHaveAttribute('sandbox', '')
     expect(preview).toHaveAttribute('srcdoc', expect.stringContaining(preset.css))
     expect(view.container.querySelector('style')).toBeNull()
-    if (preset.noteKey) expect(view.getByText(preset.noteKey)).toBeInTheDocument()
     expect(view.getByLabelText('CSS')).toBeVisible()
     expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
     expect(store.get(customCssAtom)).toBe(active)
@@ -64,18 +74,23 @@ describe('choosing recommended and saved CSS styles', () => {
   it('shows visual choices before selection and loads a card without applying it', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
-    const browse = view.container.querySelector('details.ylc-custom-css-browse') as HTMLDetailsElement
-    expect(browse.open).toBe(false)
+    const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+    expect(chooser).toHaveAttribute('aria-expanded', 'false')
+    expect(view.container.querySelector('[data-ylc-css-preset-choice]')).toBeNull()
     expect(view.getByLabelText('CSS')).toHaveValue('')
-    fireEvent.click(view.getByText('content.customCss.browsePresets'))
-    browse.open = true
-    fireEvent(browse, new Event('toggle'))
+    fireEvent.click(chooser)
+    expect(chooser).toHaveAttribute('aria-expanded', 'true')
+    expect(view.container.querySelectorAll('[data-ylc-css-preset-choice]')).toHaveLength(CHAT_CSS_PRESETS.length)
+    expect(view.getByLabelText('CSS')).toBeVisible()
     const preset = presetById('messenger')
     const choice = view.container.querySelector('[data-ylc-css-preset-choice="messenger"]')
     if (!choice) throw new Error('Missing messenger choice')
     fireEvent.click(choice)
     expect(view.getByLabelText('CSS')).toHaveValue(preset.css)
     expect(view.container.querySelector('[data-ylc-css-preview="messenger"]')).toBeInTheDocument()
+    expect(chooser).toHaveAttribute('aria-expanded', 'false')
+    expect(view.container.querySelector('[data-ylc-css-preset-choice]')).toBeNull()
+    expect(view.getByLabelText('CSS')).toHaveFocus()
     expect(store.get(customCssAtom)).toEqual({ enabled: false, css: '' })
     expect(store.get(savedChatCssAtom)).toEqual([])
     expect(actions.activate).not.toHaveBeenCalled()
@@ -84,7 +99,7 @@ describe('choosing recommended and saved CSS styles', () => {
   it('removes the executable preview when a packaged source is edited', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:messenger' } })
+    choosePreset(view, 'messenger')
     expect(view.container.querySelector('[data-ylc-css-preview="messenger"]')).toBeInTheDocument()
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: 'body { background: url(https://example.invalid/private); }' } })
     expect(view.container.querySelector('[data-ylc-css-preview]')).toBeNull()
@@ -96,7 +111,7 @@ describe('choosing recommended and saved CSS styles', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
     for (const id of ['bubbles', 'cards', 'accent']) {
-      fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${id}` } })
+      choosePreset(view, id)
       expect(view.queryByRole('group', { name: 'content.customCss.confirmTitle' })).toBeNull()
       expect(store.get(customCssDraftAtom)?.css).toBe(presetById(id).css)
     }
@@ -106,20 +121,30 @@ describe('choosing recommended and saved CSS styles', () => {
   it('keeps genuine edits and provenance when a source replacement is cancelled', () => {
     const store = createTestStore()
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:bubbles' } })
+    choosePreset(view, 'bubbles')
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '/* my changes */' } })
-    fireEvent.change(view.getByRole('combobox'), { target: { value: 'preset:cards' } })
+    choosePreset(view, 'cards')
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.cancel' }))
     expect(view.getByLabelText('CSS')).toHaveValue(store.get(customCssDraftAtom)?.css)
     expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'preset', id: 'bubbles' })
     expect(view.getByLabelText('CSS')).toHaveValue('/* my changes */')
     expect(store.get(customCssAtom).css).toBe('')
+    const chooser = view.getByRole('button', { name: 'content.customCss.choosePreset' })
+    expect(chooser).toHaveAttribute('aria-expanded', 'true')
+    expect(view.getByLabelText('CSS')).toHaveFocus()
+    fireEvent.keyDown(view.getByLabelText('CSS'), { key: 'Escape' })
+    expect(chooser).toHaveAttribute('aria-expanded', 'false')
+    expect(chooser).toHaveFocus()
+    choosePreset(view, 'cards')
+    expect(view.getByRole('group', { name: 'content.customCss.confirmTitle' })).toBeInTheDocument()
+    expect(view.getByLabelText('CSS')).toHaveValue('/* my changes */')
+    expect(actions.activate).not.toHaveBeenCalled()
   })
 
   it('reloads the packaged original only after confirmation and retains the draft across tabs', () => {
     const store = createTestStore()
     const first = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(first.getByRole('combobox'), { target: { value: 'preset:accent' } })
+    choosePreset(first, 'accent')
     fireEvent.change(first.getByLabelText('CSS'), { target: { value: '/* custom stripe */' } })
     first.unmount()
     const view = renderWithStore(<CustomCssSection />, store)
@@ -135,7 +160,7 @@ describe('choosing recommended and saved CSS styles', () => {
     const preset = presetById('bubbles')
     const original = preset.css
     const view = renderWithStore(<CustomCssSection />, store)
-    fireEvent.change(view.getByRole('combobox'), { target: { value: `preset:${preset.id}` } })
+    choosePreset(view, preset.id)
     expect(store.get(customCssEditorUiAtom).name).toBe('')
     fireEvent.change(view.getByLabelText('CSS'), { target: { value: '/* personal copy */' } })
     fireEvent.click(view.getByRole('button', { name: 'content.customCss.register' }))
@@ -153,11 +178,10 @@ describe('choosing recommended and saved CSS styles', () => {
     const store = createTestStore()
     store.set(savedChatCssAtom, [{ id: 'cards', name: 'My cards', css: '.mine{}' }])
     const view = renderWithStore(<CustomCssSection />, store)
-    const select = view.getByRole('combobox')
-    fireEvent.change(select, { target: { value: 'preset:cards' } })
+    choosePreset(view, 'cards')
     expect(view.getByLabelText('CSS')).toHaveValue(presetById('cards').css)
     expect(store.get(customCssEditorUiAtom).source).toEqual({ kind: 'preset', id: 'cards' })
-    expect(within(select).queryByRole('option', { name: 'My cards' })).toBeNull()
+    expect(view.queryByRole('combobox')).toBeNull()
     fireEvent.click(savedRow(view, 'cards').getByRole('button', { name: 'content.customCss.loadSaved' }))
     expect(view.getByLabelText('CSS')).toHaveValue('.mine{}')
     expect(store.get(customCssDraftAtom)?.css).toBe('.mine{}')

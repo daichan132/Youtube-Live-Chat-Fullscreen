@@ -6,18 +6,20 @@ The settings panel has three tabs: **Settings**, **Custom CSS** and **Presets**.
 A newly mounted panel starts on Settings. `SettingContent` keeps the existing
 Display, Colors, Text and Chat Elements controls in their original order;
 `CustomCssSection` lives in the dedicated Custom CSS tabpanel. It uses the same
-fieldset/legend, theme tokens, corner radii and button styles, with a small accent
-icon. Undo, Redo and Close remain shared header controls. The header
+accessible fieldset/legend, theme tokens and button styles. Its heading stays
+visually hidden because the tab already names the section. Undo, Redo and Close remain shared header controls. The header
 can wrap these controls onto another row in a narrow panel.
 
 The CSS textarea is always visible in the Custom CSS tab. Without a committed
 source or local draft, it starts blank. Users paste or edit CSS, then choose Use
-or save a named copy beside the editor. A secondary selector loads packaged
-starters, and a visual picker shows their names, descriptions and fixed chat
-thumbnails. Neither picker preselects a starter on first use. The header has one Off
-operation. When paused, Use explicitly offers to resume with the chosen source.
+or Save beside the editor. A single Choose a style button reveals packaged
+starters as cards with names and fixed chat thumbnails. The buttons also have
+accessible labels naming the source they load. Choosing
+a card closes the picker and focuses the editor; no starter is preselected on
+first use. The status line has one Off operation. When paused, Use explicitly offers to resume with the chosen source.
 
-Named personal copies appear as rows with Load, Use and Delete operations. Load
+When personal copies exist, a collapsed Saved disclosure shows their count.
+Opening it reveals rows with Load, Use and Delete operations. Load
 copies the stored text into the textarea; Use explicitly applies that row's CSS
 through the same activation guards as the editor. Delete removes only the named
 copy. Editing or using a loaded copy never changes its saved original. Saving
@@ -39,8 +41,8 @@ The nine starter sources and contributor instructions are in
 [`shared/settings/chatCssPresets`](../shared/settings/chatCssPresets/README.md).
 `chatCssPresets.ts` remains the single catalog. Explicit raw imports do not inject
 these styles into the settings Document. Starters consume no saved-copy slots.
-The secondary starter selector begins with an empty choice. Merely opening the
-tab does not load starter text, create a draft, save anything or enable CSS.
+The visual picker starts closed. Merely opening the tab does not load starter
+text, create a draft, save anything or enable CSS.
 
 Loading a starter or personal copy changes page-local editing state, never chat.
 Moving between recoverable starters or copies does not ask for confirmation.
@@ -50,12 +52,15 @@ keeps starter and saved-copy IDs separate, including when those IDs match.
 Edited text is identified as an unapplied draft, not mislabeled as its original.
 
 The visual picker uses `ChatCssExample` for small, fixed illustrations. These
-thumbnails explain the arrangement without executing any CSS. Loading an exact
+thumbnails explain the arrangement without executing any CSS. Compact cards
+show names and thumbnails without the illustration caption. Loading an exact
 packaged source also shows `ChatCssPreview` above the always-visible textarea.
 This selected preview renders representative YouTube-shaped comments with the
 actual packaged source, production iframe styles and current effective appearance
-settings in an isolated iframe. Returning from the Settings tab reflects the
-chosen colors and text size in this preview as well as the actual chat.
+settings in an isolated iframe. The selected preview shows the chat alone,
+without repeating the card description. Its Adjust colors and text size button
+opens the ordinary Settings tab. Returning to Custom CSS reflects the chosen
+colors and text size in this preview as well as the actual chat.
 
 The iframe has an empty `sandbox` and an opaque origin, with no script or
 same-origin permission. Its content is built only from the trusted catalog and
@@ -272,7 +277,7 @@ IME/focus and narrow settings panels. Static source/illustration checks do not
 replace extension runtime verification.
 
 `overlayInteraction.fixture.spec.ts` exercises the three message layouts through
-the Settings selector and Use button in a testing extension. It supplies
+the Settings visual picker and Use button in a testing extension. It supplies
 representative nested normal-message markup inside the actual leased iframe and
 checks computed styles and author/message geometry, including an avatar-free row.
 Paid, deleted and composer samples share their usual IDs to catch rules that

@@ -73,6 +73,7 @@ export type TranslationKey =
   | 'content.aria.settingsFrameTitle'
   | 'content.aria.toggleLiveChat'
   | 'content.customCss.active'
+  | 'content.customCss.adjustAppearance'
   | 'content.customCss.appearanceFull'
   | 'content.customCss.applied'
   | 'content.customCss.apply'
