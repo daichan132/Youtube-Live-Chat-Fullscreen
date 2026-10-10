@@ -49,7 +49,7 @@ jobs:
       # before the production artifact has been captured.
       - name: Upload production Chrome ZIP for startup smoke
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: production-chrome-${{ github.sha }}
           path: .output/youtube-live-chat-fullscreen-*-chrome.zip
@@ -58,7 +58,7 @@ jobs:
       - name: Build testing extension
         run: yarn build:e2e
       - name: Upload testing extension
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: testing-extension-${{ github.sha }}
           path: .output/chrome-mv3-testing
@@ -96,7 +96,7 @@ jobs:
         run: xvfb-run --auto-servernum yarn playwright test --project=visual --retries=0
       - name: Upload browser diagnostics
         if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: browser-contracts-${{ github.sha }}
           path: |
