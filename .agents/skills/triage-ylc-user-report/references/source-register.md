@@ -1,0 +1,39 @@
+# Anonymized source register
+
+This register records historical evidence, not current product status. Reopen a source when current state matters. Do not add reviewer names, copied review text, private URLs, video IDs, or account data.
+
+Evidence levels:
+
+- `confirmed`: cause, correction, and meaningful verification are available.
+- `correlated`: reports cluster by version, environment, or symptom, but cause is not fully established.
+- `report-only`: the source establishes a symptom only.
+
+| Source ID | Pattern | Type | URL or revision | Observed at | Affected version or period | Evidence | Anonymized finding |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GH-006 | P06 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/6 | 2026-08-03 | 2023-11 | report-only | Overlay display was associated with a darker video surface. |
+| GH-012 | P07 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/12 | 2026-08-03 | 2024-02 | confirmed | A scrollbar correction became visible only after browser restart, showing stale environment state. |
+| GH-037 | P07 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/37 | 2026-08-03 | 2024-10 | confirmed | Overlay absence was isolated to a conflict with another YouTube extension and later supported by a compatibility release. |
+| GH-048 | P06 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/48 | 2026-08-03 | 2024-12 | confirmed | A fullscreen toggle alignment problem appeared only in Firefox. |
+| GH-112 | P07 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/112 | 2026-08-03 | 2025-04 | confirmed | A font-size failure was isolated to a userscript rather than the base extension. |
+| GH-142 | P01, P05 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/142 | 2026-08-03 | 2025-07 | confirmed | Chat visibility incorrectly followed focus and fragile page attributes; fullscreen authority was separated. |
+| GH-156 | P10 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/156 | 2026-08-03 | 2025-09 | report-only | Overlay presence disabled an NVIDIA video feature on reporter hardware; local hardware verification was unavailable. |
+| GH-162 | P04 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/162 | 2026-08-03 | 2025-10 | correlated | A new YouTube side-panel rollout left a fullscreen bar and differed across users. |
+| GH-164 | P05 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/164 | 2026-08-03 | 2025-12 | report-only | Text input and controls were reported unclickable, consistent with an interaction-route failure. |
+| GH-215 | P06, P07 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/215 | 2026-08-03 | 2026-04 | correlated | Transparency and blur differed in Edge/Zen, with part of the behavior attributed to browser configuration. |
+| GH-219 | P06 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/219 | 2026-08-03 | through 2.3.12 | confirmed | Brave sometimes painted video above chat after lifecycle transitions even though DOM order and hit testing were correct; repeated cycles verified the correction. |
+| GH-221 | P06 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/221 | 2026-08-03 | 2.3.10-2.3.12 | confirmed | A parent-page compositor/filter path changed Firefox/Zen video brightness; keeping blur inside the chat surface removed the delta. |
+| GH-234 | P06 | GitHub Issue | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/234 | 2026-08-03 | 2.3.10 | confirmed | Blur regressed in Gecko-family browsers and was restored inside the iframe surface. |
+| CWS-2026-01 | P01, P05, P09 | Chrome Web Store review cluster | https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews | 2026-08-03 | 2.2.2-2.2.4 | correlated | One update period clustered overlay deactivation, replay failure, settings click-through, and an extra fullscreen bar. |
+| CWS-2025-Q4 | P04 | Chrome Web Store review cluster | https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews | 2026-08-03 | 2025-10 to 2025-11 | correlated | Reports clustered around a YouTube side-panel and black-bar change with inconsistent workarounds. |
+| CWS-2026-07 | P02 | Chrome Web Store review | https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews | 2026-08-03 | 2026-07 | report-only | Previous-stream chat could remain after moving to another stream until reload. |
+| CWS-EXTENSIONS | P07 | Chrome Web Store review cluster | https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews | 2026-08-03 | 2024-2026 | correlated | Enhancer-style extensions, Dark Reader, and browser-specific state changed overlay behavior for some users. |
+| CWS-PERFORMANCE | P10 | Chrome Web Store review cluster | https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews | 2026-08-03 | 2024-2026 | report-only | Reports mentioned memory usage, periodic player freezes, and slow chat loading without sufficient traces to establish one cause. |
+| COMMIT-54be946 | P02 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/54be946a6ac7dc0d4b72b728a625daf3f49a11d7 | 2026-08-03 | 2026-02-25 | confirmed | Current-video identity prevented a stale chat iframe from misclassifying SPA navigation. |
+| COMMIT-a620ea6 | P03 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/a620ea67801e7fc3bb789c8e84f0a1063f77ab50 | 2026-08-03 | 2026-07-23 | confirmed | Chat iframe lifecycle and restoration were hardened around explicit ownership. |
+| COMMIT-c31e7f1 | P06 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/c31e7f1a5ac483aa81dcc88ffd684e01783452e4 | 2026-08-03 | 2026-07-26 | confirmed | Firefox fullscreen video brightness was corrected at the compositor/style boundary. |
+| COMMIT-1947404 | P06 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/1947404aa813578cc7b20aeb61c6a7d6baa8855d | 2026-08-03 | 2026-07-22 | confirmed | Blur ownership was restored inside the chat surface and chat-only motion was stabilized. |
+| COMMIT-8e30840 | P05 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/8e30840f19da2fabf16a8d4fb1eb01166888f99a | 2026-08-03 | 2026-07-28 | confirmed | Expanded chat reactions were no longer clipped by an ancestor overflow path. |
+| COMMIT-591ff33 | P08 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/591ff3328dd99929824fca1030ca8e7553c3a679 | 2026-08-03 | 2026-07-28 | confirmed | Settings initialization races were closed while preserving external changes. |
+| COMMIT-e6e7cc4 | P08 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/e6e7cc4a6934d46cc95d17ad76602df9750a968c | 2026-08-03 | 2026-07-28 | confirmed | Left-edge resizing was corrected at the geometry-operation boundary. |
+| COMMIT-d899a60 | P01 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/d899a606e75de3f20b6bf1ab90aa3c8ca36849a8 | 2026-08-03 | 2026-07-26 | confirmed | The fullscreen chat toggle remained available during transient source detection. |
+| COMMIT-e97c162 | P09 | Git commit | https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/commit/e97c1621e97e37cf6067bd599fe7a4465321d016 | 2026-08-03 | 2026-08-02 | confirmed | CI coverage and a settings-dialog action race were corrected with explicit verification. |

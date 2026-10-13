@@ -7,14 +7,14 @@ FUNCIONES PRINCIPALES
 - Visibilidad: «Mostrar el chat cuando no haya actividad» viene activado de serie, así que el chat sigue ahí cuando se desvanecen los controles del reproductor; con eso activado, «Mostrar solo el chat» pliega la cabecera y el cuadro de mensaje hasta que pasas el puntero.
 - Nombres y espaciado: «Mostrar el nombre de usuario» y «Mostrar la foto de perfil» se apagan en los mensajes normales (los de pago conservan los suyos); de 0 a 40 px entre mensajes.
 - Preajustes: siete incluidos, un clic cada uno, más los tuyos.
-- Teclado: los deslizadores y los selectores responden a las teclas de flecha y cada control está etiquetado para los lectores de pantalla; el ratón solo hace falta para sacar la fila de controles, para recuperar lo que «Mostrar solo el chat» pliega y para redimensionar. En cada cambio se ejecutan comprobaciones automáticas WCAG 2.1 AA sobre la ventana emergente, la fila de controles y el panel de ajustes.
+- Teclado: los deslizadores y los selectores responden a las teclas de flecha y cada control está etiquetado para los lectores de pantalla. En cada cambio se ejecutan comprobaciones automáticas WCAG 2.1 AA sobre la ventana emergente, la fila de controles y el panel de ajustes.
 
 EL CHAT DE YOUTUBE, NO UNA IMITACIÓN
 El panel sobre el vídeo es el chat en directo de YouTube, el mismo de la columna lateral, con otro aspecto: insignias, emojis, adhesivos y el chat solo para miembros siguen funcionando. Los mensajes salen por el cuadro de escritura de YouTube y los Super Chats por su panel de compra: el pago va a YouTube, nunca a la extensión. El único control que la extensión cambia ahí dentro es la entrada de membresía, que abre en una pestaña nueva la página para hacerse miembro del canal.
 
 LO QUE CUESTA Y LO QUE RECOGE
 Gratis: sin cuenta y sin versión de pago.
-Dos permisos, activeTab y storage; www.youtube.com es el único sitio en el que se ejecuta — eso es todo lo que significa el aviso de instalación de Chrome sobre tus datos. En segundo plano no corre nada: sin ninguna pestaña de YouTube abierta, lo único que hace algo es la ventana de la barra de herramientas, y solo mientras está abierta.
+Un único permiso, storage; www.youtube.com es el único sitio en el que se ejecuta — eso es todo lo que significa el aviso de instalación de Chrome sobre tus datos. En segundo plano no corre nada: sin ninguna pestaña de YouTube abierta, lo único que hace algo es la ventana de la barra de herramientas, y solo mientras está abierta.
 Sin analítica, sin rastreo, nada que llegue al desarrollador: lo que lees y lo que escribes no se recoge, ni se guarda, ni se envía; tus ajustes se quedan en este navegador. Todo el código viaja dentro de la extensión; solo los tipos de letra distintos del predeterminado vienen de Google Fonts. Código abierto con licencia GPL-3.0, público en GitHub.
 
 CÓMO EMPEZAR

@@ -1,0 +1,4 @@
+interface:
+  display_name: "YLC Change Verification"
+  short_description: "YLCの変更に必要なテストと実ブラウザ証拠を選定する"
+  default_prompt: "Use $verify-ylc-change to select and run the evidence needed to verify this YLC change."

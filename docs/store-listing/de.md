@@ -7,14 +7,14 @@ HAUPTFUNKTIONEN
 - Anzeige: „Chat bei Inaktivität anzeigen“ ist von Anfang an eingeschaltet, der Chat bleibt also stehen, wenn die Steuerleiste ausgeblendet wird; ist die Option an, klappt „Nur Chat anzeigen“ die Kopfzeile und das Eingabefeld weg, bis du mit der Maus darüberfährst.
 - Namen und Abstand: „Nutzernamen anzeigen“ und „Profilbilder anzeigen“ schaltest du für gewöhnliche Nachrichten ab, bezahlte behalten Name und Bild; „Abstand“ zwischen den Nachrichten 0–40px.
 - Voreinstellungen: sieben eingebaute, je ein Klick, dazu deine eigenen.
-- Tastatur: Schieberegler und Farbauswahl nehmen Pfeiltasten, jedes Bedienelement ist für Screenreader beschriftet; eine Maus brauchen nur das Hervorholen der Bedienleiste, das Zurückholen dessen, was „Nur Chat anzeigen“ wegklappt, und das Ändern der Größe. Automatische Prüfungen nach WCAG 2.1 AA decken bei jeder Änderung das Popup, die Bedienleiste und das Einstellungsfeld ab.
+- Tastatur: Schieberegler und Farbauswahl nehmen Pfeiltasten, jedes Bedienelement ist für Screenreader beschriftet. Automatische Prüfungen nach WCAG 2.1 AA decken bei jeder Änderung das Popup, die Bedienleiste und das Einstellungsfeld ab.
 
 YOUTUBES EIGENER CHAT, KEINE NACHBILDUNG
 Das Panel über dem Video ist YouTubes eigener Livechat aus der Seitenleiste, neu gestaltet – deshalb funktioniert alles weiter: Abzeichen, Emojis, Sticker und der Chat nur für Mitglieder. Geschrieben wird über YouTubes eigenes Eingabefeld, Super Chats laufen über dessen Kaufpanel: Die Zahlung geht an YouTube, nie an die Erweiterung. Das einzige Element, das die Erweiterung dort ändert, ist „Mitgliedschaft“ – es öffnet die Beitrittsseite des Kanals in einem neuen Tab.
 
 WAS SIE KOSTET, WAS SIE SAMMELT
 Kostenlos: kein Konto, keine Bezahlversion.
-Zwei Berechtigungen, activeTab und storage; www.youtube.com ist die einzige Website, in der sie läuft – mehr besagt Chromes Installationshinweis zu deinen Daten nicht. Im Hintergrund läuft nichts: Ohne offenen YouTube-Tab tut nur das Popup in der Symbolleiste etwas, und auch nur, solange es offen ist.
+Nur eine Berechtigung, storage; www.youtube.com ist die einzige Website, in der sie läuft – mehr besagt Chromes Installationshinweis zu deinen Daten nicht. Im Hintergrund läuft nichts: Ohne offenen YouTube-Tab tut nur das Popup in der Symbolleiste etwas, und auch nur, solange es offen ist.
 Keine Analyse, kein Tracking, nichts an den Entwickler: Was du liest und tippst, wird nie gesammelt, gespeichert oder verschickt; die Einstellungen bleiben in diesem Browser. Der gesamte Code steckt in der Erweiterung; nur Schriftarten jenseits der Standardschrift kommen von Google Fonts. Quelloffen unter GPL-3.0, öffentlich auf GitHub.
 
 SO FÄNGST DU AN
