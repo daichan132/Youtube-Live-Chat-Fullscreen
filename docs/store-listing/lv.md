@@ -7,14 +7,14 @@ GALVENAIS
 - Redzamība: “Rādīt čatu neaktivitātes laikā” ir ieslēgts jau no sākuma, tāpēc ziņas paliek ekrānā arī tad, kad vadības josla pazūd; līdzās tam “Rādīt tikai čatu” saloka galveni un rakstīšanas lauku, līdz uzvedat peli.
 - Vārdi un atstarpes: “Rādīt lietotājvārdu” un “Rādīt profila attēlu” parastajām ziņām var izslēgt (maksas ziņas tos patur); “Atstarpe” ir no 0 līdz 40 px.
 - Sagataves: septiņas iebūvētas, katra ar vienu klikšķi, plus jūsu pašu saglabātās.
-- Tastatūra: slīdņi un krāsu atlasītāji klausa bultiņu taustiņus, katrai vadīklai ir ekrānlasītāja marķējums; pele vajadzīga tikai pogu rindas izsaukšanai, tā atgriešanai, ko “Rādīt tikai čatu” saloka, un izmēra maiņai. Automātiskās WCAG 2.1 AA pārbaudes ar katru koda izmaiņu aptver uznirstošo logu, pogu rindu un iestatījumu paneli.
+- Tastatūra: slīdņi un krāsu atlasītāji klausa bultiņu taustiņus, katrai vadīklai ir ekrānlasītāja marķējums. Automātiskās WCAG 2.1 AA pārbaudes ar katru koda izmaiņu aptver uznirstošo logu, pogu rindu un iestatījumu paneli.
 
 NEVIS LĪDZĪGA KOPIJA, BET PATS YOUTUBE ČATS
 Panelis virs video ir tas pats YouTube tiešraides čats no sānjoslas, tikai citādi noformēts, tāpēc nozīmītes, emocijzīmes, uzlīmes un tikai dalībniekiem paredzētais čats darbojas kā vienmēr. Ziņas aiziet caur YouTube ievades lauku, bet Super Chat — caur YouTube pirkšanas paneli: maksājums nonāk pie YouTube, nekad pie paplašinājuma. Vienīgais, ko paplašinājums tur maina, ir dalības poga (“Membership”): tā jaunā cilnē atver kanāla pievienošanās lapu.
 
 CIK MAKSĀ UN KO VĀC
 Bez maksas: nav jāreģistrējas un nav maksas versijas.
-Divas atļaujas, activeTab un storage; vienīgā vietne, kurā paplašinājums darbojas, ir www.youtube.com — tieši to nozīmē Chrome instalēšanas brīdinājums par jūsu datiem. Fonā nedarbojas nekas: kamēr nav atvērtas YouTube cilnes, kaut ko dara vienīgi uznirstošais logs pārlūka joslā, un tikai tik ilgi, kamēr tas ir atvērts.
+Tikai viena atļauja, storage; vienīgā vietne, kurā paplašinājums darbojas, ir www.youtube.com — tieši to nozīmē Chrome instalēšanas brīdinājums par jūsu datiem. Fonā nedarbojas nekas: kamēr nav atvērtas YouTube cilnes, kaut ko dara vienīgi uznirstošais logs pārlūka joslā, un tikai tik ilgi, kamēr tas ir atvērts.
 Nekādas analītikas, nekādas izsekošanas, izstrādātājam neaizceļo nekas: izlasītais un ierakstītais netiek vākts, glabāts vai kaut kur sūtīts, bet iestatījumi paliek šajā pārlūkā. Viss kods atrodas paplašinājumā; no tīkla tiek lejupielādēti tikai tie fonti, kas atšķiras no noklusējuma, — no Google Fonts. Atvērts pirmkods ar GPL-3.0 licenci, publiski pieejams GitHub.
 
 KĀ SĀKT

@@ -7,14 +7,14 @@ MAIN FEATURES
 - Visibility: Show When Idle ships on, so chat stays up after the controls fade; with it on, Chat-Only Mode folds away the header and message box until you hover.
 - Usernames and spacing: hide usernames and profile pictures on ordinary messages, paid ones keep theirs; Message Spacing runs 0-40px.
 - Presets: seven built in, one click each, plus your own.
-- Keyboard: sliders and pickers take arrow keys, every control is labeled for a screen reader; only resizing, and calling up the control row or what Chat-Only Mode folds away, need a mouse. Automated WCAG 2.1 AA checks cover the popup, control row and settings panel on every change.
+- Keyboard: sliders and pickers take arrow keys, every control is labeled for a screen reader. Automated WCAG 2.1 AA checks cover the popup, control row and settings panel on every change.
 
 YOUTUBE'S OWN CHAT, NOT A LOOKALIKE
 The panel over the video is YouTube's own live chat from the sidebar, restyled, so badges, emoji, stickers and members-only chat keep working. Posting uses YouTube's own message box, Super Chats its purchase panel: payment goes to YouTube, never the extension. The one control it changes there is Membership: it opens the channel's join page in a new tab.
 
 WHAT IT COSTS AND WHAT IT COLLECTS
 Free: no sign-up, no paid tier.
-Two permissions, activeTab and storage; www.youtube.com is the only site it runs on — that is all Chrome's install prompt about your data means. Nothing runs in the background: with no YouTube tab open, only the toolbar popup does anything, and only while open.
+The only permission is storage; www.youtube.com is the only site it runs on — that is all Chrome's install prompt about your data means. Nothing runs in the background: with no YouTube tab open, only the toolbar popup does anything, and only while open.
 No analytics, no tracking, nothing to the developer: it never collects, stores or sends what you read or type; settings stay in this browser. All code ships inside the extension; only fonts beyond the default come from Google Fonts. Open source under GPL-3.0, public on GitHub.
 
 HOW TO START

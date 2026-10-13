@@ -7,14 +7,14 @@ FUNZIONI PRINCIPALI
 - Visibilità: «Mostra la chat quando non interagisci» è attivo fin da subito, così la chat resta anche dopo che i comandi del player sono svaniti; con quello attivo, «Mostra solo la chat» ripiega l'intestazione e la casella di scrittura finché non ci passi sopra il puntatore.
 - Nomi e spaziatura: «Mostra i nomi utente» e «Mostra le immagini del profilo» si spengono sui messaggi ordinari (quelli a pagamento mantengono i propri); da 0 a 40 px tra i messaggi.
 - Preimpostazioni: sette incluse, un clic ciascuna, più le tue.
-- Tastiera: cursori e selettori rispondono ai tasti freccia e ogni comando è etichettato per gli screen reader; il mouse serve solo per far comparire la riga di comandi, per riaprire ciò che «Mostra solo la chat» ripiega e per ridimensionare. I controlli automatici WCAG 2.1 AA coprono a ogni modifica il popup, la riga di comandi e il pannello delle impostazioni.
+- Tastiera: cursori e selettori rispondono ai tasti freccia e ogni comando è etichettato per gli screen reader. I controlli automatici WCAG 2.1 AA coprono a ogni modifica il popup, la riga di comandi e il pannello delle impostazioni.
 
 LA CHAT DI YOUTUBE, NON UNA COPIA
 Il pannello sopra il video è la chat live di YouTube, la stessa della colonna laterale, con un altro aspetto: badge, emoji, sticker e chat riservata ai membri continuano a funzionare. I messaggi passano dalla casella di scrittura di YouTube, i Super Chat dal suo pannello di acquisto: il pagamento va a YouTube, mai all'estensione. L'unico comando che l'estensione cambia lì dentro è la voce dell'iscrizione al canale, che apre in una nuova scheda la pagina per iscriversi.
 
 QUANTO COSTA, COSA RACCOGLIE
 Gratis: nessun account, nessuna versione a pagamento.
-Due autorizzazioni, activeTab e storage; www.youtube.com è l'unico sito in cui gira — è tutto quello che intende l'avviso di installazione di Chrome quando parla dei tuoi dati. In background non gira niente: senza una scheda YouTube aperta, l'unica cosa che fa qualcosa è il popup della barra degli strumenti, e solo mentre è aperto.
+Una sola autorizzazione, storage; www.youtube.com è l'unico sito in cui gira — è tutto quello che intende l'avviso di installazione di Chrome quando parla dei tuoi dati. In background non gira niente: senza una scheda YouTube aperta, l'unica cosa che fa qualcosa è il popup della barra degli strumenti, e solo mentre è aperto.
 Nessuna analisi, nessun tracciamento, niente che arrivi allo sviluppatore: quello che leggi e quello che scrivi non viene mai raccolto, conservato né spedito; le impostazioni restano in questo browser. Tutto il codice è dentro l'estensione; solo i tipi di carattere diversi da quello predefinito arrivano da Google Fonts. Open source con licenza GPL-3.0, codice pubblico su GitHub.
 
 COME SI COMINCIA

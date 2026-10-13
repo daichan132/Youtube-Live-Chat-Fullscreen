@@ -1,6 +1,14 @@
 # Troubleshooting
 
-Quick fixes for the most common problems. If none of these help, please [report a bug](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
+Start with the section that matches what you see. The [user guide](user-guide.md) covers normal operation; this page helps you check a problem and collect useful evidence if it continues.
+
+## Check the basics
+
+- Use the YouTube player's fullscreen button; theater mode and making the browser window fullscreen are different from player fullscreen.
+- Open the extension's browser toolbar popup and confirm it is enabled.
+- Use a live stream or an archive with playable chat replay. A regular video, disabled chat, or unavailable replay will not produce an overlay.
+
+You do not need a separate extension account. Signing in to post live messages follows YouTube's usual rules.
 
 ## The chat switch does not appear
 
@@ -8,13 +16,13 @@ The switch at the bottom right of the player only appears when YouTube provides 
 
 1. Open a live stream, or an archived stream that has chat replay. Regular videos have no chat, so the switch stays hidden.
 2. Enter fullscreen. The switch renders inside the fullscreen player controls.
-3. If the video has chat but the switch is still missing, reload the page once — YouTube sometimes swaps the player without a full page load.
+3. If the video has chat and the extension is enabled but the switch is still missing, leave fullscreen, reload the page once, then enter fullscreen again.
 
 ## The switch appears but the chat stays empty
 
-This is a real state, not a broken one. When an archive's chat panel exists but its replay is not yet playable, the switch can be visible before the overlay can mount. Give it a few seconds, or reload the page once.
+Archive replay can briefly be pending before it is playable. Leave fullscreen and check whether YouTube's own chat replay loads for the video, then enter fullscreen again.
 
-If it never fills in, that is worth reporting — include the video type and the diagnostic report described below.
+If YouTube's chat is usable but the overlay remains empty, report it with the video type, reproduction steps, and diagnostic report described below. An available native chat and an empty overlay are different from a video with no chat.
 
 ## Opera: the switch or chat is missing
 
@@ -26,20 +34,26 @@ The switch only appears when chat is available for the video, same as on Chrome.
 
 ## The overlay looks wrong or stops responding
 
-1. Hover the chat panel to bring up its control row, open the settings with the sliders button, then press Reload chat overlay under the Compatibility heading. It rebuilds the chat session on the page; it does not restart the extension.
-2. If the problem persists, press Copy diagnostic report beside it and attach the sanitized report to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
+1. Reveal the chat panel's control row, open settings, then press **Reload chat overlay** under **Compatibility**. This rebuilds the chat session on the page.
+2. If the problem persists, press **Copy diagnostic report** beside it and attach the sanitized report to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
 
-The report is sanitized before it reaches your clipboard: it contains no URLs, video IDs, chat text, or user names. It carries which page elements were found, a short code such as `IFRAME_DOCUMENT_NOT_READY` describing where the runtime stopped, and a compatibility fingerprint. Those codes are what make a report actionable, so it is worth including even if it looks opaque.
+The report is sanitized before it reaches your clipboard: it contains no URLs, video IDs, chat text, or user names. It records which page elements were found, a failure code such as `IFRAME_DOCUMENT_NOT_READY`, and a compatibility fingerprint. These help a maintainer investigate without needing the contents of your conversation.
 
 ## The overlay moved on its own
 
 The overlay repositions itself at most once per video, to get out from under captions, player controls, an open menu, or the end screen. Once you drag or resize it yourself, it stays where you put it and automatic placement is switched off for that layout.
 
-## Still stuck?
+## Send a useful bug report
 
-- Search existing reports: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
-- File a new bug with the template: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml
+Search [existing reports](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues), then use the [bug report form](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) if the problem is not already covered. Include:
+
+- Browser, operating system, and extension versions.
+- Live stream, archive replay, or video without chat; also note direct live or channel live entry if relevant.
+- Steps from opening the video to the failure, and what you expected to happen.
+- The sanitized diagnostic report, if available, and a screenshot or recording with personal information removed.
+
+Share a public video link only when it is safe to do so. Report security vulnerabilities privately through [SECURITY.md](../SECURITY.md).
 
 ---
 
-*Maintainer note: this page is the designated support destination for the extension. The store listing check rejects browser-specific instructions such as `opera://` URLs inside the 55 listing manuscripts and expects those steps to live here instead, so the Opera section above is deliberate — do not move it back into a listing.*
+[Back to the user guide](user-guide.md) · [Back to the README](../README.md)

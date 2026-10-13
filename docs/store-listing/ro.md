@@ -7,14 +7,14 @@ FUNCȚII PRINCIPALE
 - Vizibilitate: „Afișează chatul când nu există activitate” vine pornită, așa că chatul rămâne și după ce dispar comenzile playerului; cu ea pornită, „Afișează doar chatul” pliază antetul și caseta de scriere, până treci cu cursorul peste panou.
 - Nume și spațiere: la mesajele obișnuite oprești „Afișează numele utilizatorilor” și „Afișează fotografiile de profil”, cele plătite le păstrează pe ale lor; „Spațiere”: de la 0 la 40 px între mesaje.
 - Presetări: șapte incluse, fiecare la un clic, plus ale tale.
-- Tastatură: glisoarele și selectoarele de culoare răspund la tastele săgeți, iar fiecare comandă are etichetă pentru cititorul de ecran; mouse-ul e necesar doar ca să scoți rândul de comenzi, ca să aduci înapoi ce pliază „Afișează doar chatul” și ca să redimensionezi. Verificările automate WCAG 2.1 AA acoperă la fiecare modificare fereastra din bara de instrumente, rândul de comenzi și panoul de setări.
+- Tastatură: glisoarele și selectoarele de culoare răspund la tastele săgeți, iar fiecare comandă are etichetă pentru cititorul de ecran. Verificările automate WCAG 2.1 AA acoperă la fiecare modificare fereastra din bara de instrumente, rândul de comenzi și panoul de setări.
 
 CHATUL YOUTUBE ÎNSUȘI, NU O IMITAȚIE
 Panoul de peste videoclip este chiar chatul live al YouTube, cel din bara laterală, doar cu alt aspect — de aceea insignele de membru, emoji, stickerele și chatul doar pentru membri funcționează în continuare. Trimiterea trece prin caseta de mesaje a YouTube, iar Super Chat prin panoul lui de cumpărare: plata ajunge la YouTube, niciodată la extensie. Singurul element pe care extensia îl schimbă acolo este cel de abonament: deschide pagina de înscriere a canalului într-o filă nouă.
 
 CÂT COSTĂ ȘI CE COLECTEAZĂ
 Gratuit: fără cont, fără versiune cu plată.
-Două permisiuni, activeTab și storage; singurul site pe care rulează este www.youtube.com — atât înseamnă avertismentul Chrome despre datele tale. În fundal nu rulează nimic: fără o filă YouTube deschisă, singurul lucru care face ceva este fereastra din bara de instrumente, și doar cât timp e deschisă.
+O singură permisiune, storage; singurul site pe care rulează este www.youtube.com — atât înseamnă avertismentul Chrome despre datele tale. În fundal nu rulează nimic: fără o filă YouTube deschisă, singurul lucru care face ceva este fereastra din bara de instrumente, și doar cât timp e deschisă.
 Fără analiză, fără urmărire, nimic către dezvoltator: ce citești și ce scrii nu se colectează, nu se stochează și nu se trimite nicăieri; setările rămân în acest browser. Tot codul vine în interiorul extensiei; din rețea sosesc doar fonturile diferite de cel implicit, de la Google Fonts. Sursă deschisă sub GPL-3.0, publică pe GitHub.
 
 CUM ÎNCEPI

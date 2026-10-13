@@ -7,14 +7,14 @@ MAIN FEATURES
 - Visibility: Show When Idle ships on, so chat stays up after the controls fade; with it on, Chat-Only Mode folds away the header and message box until you hover.
 - Usernames and spacing: hide usernames and profile pictures on ordinary messages, paid ones keep theirs; 0-40px between messages.
 - Presets: seven built in, one click each, plus your own.
-- Keyboard: sliders and pickers take arrow keys, every control is screen-reader labelled; only resizing, and calling up the control row or what Chat-Only Mode folds away, need a mouse. Automated WCAG 2.1 AA checks cover the popup, control row and settings panel on every change.
+- Keyboard: sliders and pickers take arrow keys, every control is screen-reader labelled. Automated WCAG 2.1 AA checks cover the popup, control row and settings panel on every change.
 
 YOUTUBE'S OWN CHAT, NOT A LOOKALIKE
 The panel is YouTube's own sidebar live chat, restyled, so badges, emoji, stickers and members-only chat still work. Posting uses YouTube's message box, Super Chats its purchase panel: payment goes to YouTube, not the extension. The one control it changes is Membership: it opens the channel's join page in a new tab.
 
 WHAT IT COSTS AND WHAT IT COLLECTS
 Free: no sign-up, no paid tier.
-Two permissions, activeTab and storage; it runs on www.youtube.com only — that is all Chrome's install prompt about your data means. Nothing runs in the background: with no YouTube tab open, only an open popup does anything.
+The only permission is storage; it runs on www.youtube.com only — that is all Chrome's install prompt about your data means. Nothing runs in the background: with no YouTube tab open, only an open popup does anything.
 No analytics, no tracking, nothing to the developer: it never collects, stores or sends what you read or type; settings stay in this browser. All code ships in the extension; only non-default fonts come from Google Fonts. Open source under GPL-3.0, public on GitHub.
 
 HOW TO START
