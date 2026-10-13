@@ -808,13 +808,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:0.3.4":
-  version: 0.3.4
-  resolution: "@types/chrome@npm:0.3.4"
+"@types/chrome@npm:0.3.5":
+  version: 0.3.5
+  resolution: "@types/chrome@npm:0.3.5"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 10c0/089d7fe43a6fcbed9c844a3599e5ab5ed1d8c2a492cb11f7f7c94e2fbdb8f0df5f56db5ef0b6aead0cf4fb8dbc727287ec9c56b8128e81458f5b5cea7bb540a0
+  checksum: 10c0/824d673a6820d8490217a54736f53ae0d883affb5d290232cb7ef9d69e94111a25b0e3520beb5be48dc806707459ca0a08033caf30f189eac7af7a534f38a54a
   languageName: node
   linkType: hard
 
@@ -3525,7 +3525,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:7.0.1"
     "@testing-library/react": "npm:16.3.3"
     "@testing-library/user-event": "npm:14.6.7"
-    "@types/chrome": "npm:0.3.4"
+    "@types/chrome": "npm:0.3.5"
     "@types/node": "npm:26.6.4"
     "@types/react": "npm:19.3.0"
     "@types/react-dom": "npm:19.3.0"
