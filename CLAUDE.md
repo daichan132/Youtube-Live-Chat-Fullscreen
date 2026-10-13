@@ -17,6 +17,17 @@ YouTube のライブチャットをフルスクリーン上にオーバーレイ
 | 実ブラウザ検証 | [`docs/maintainers/verification-browser.md`](docs/maintainers/verification-browser.md) |
 | リリース | [`docs/maintainers/release-runbook.md`](docs/maintainers/release-runbook.md) |
 
+## リポジトリ管理のスキル
+
+YLC 用スキルの正本は `.agents/skills/`。手順を改善するときは、`SKILL.md`、必要な `references/`、表示用の `agents/openai.yaml` をこのリポジトリで更新する。Codex のリポジトリスキルとして利用でき、個人領域へのインストールは不要。
+
+| スキル | 使う場面 |
+| --- | --- |
+| [`triage-ylc-user-report`](.agents/skills/triage-ylc-user-report/SKILL.md) | 不具合報告・互換性問題の原因候補と、次に必要な証拠を絞る |
+| [`verify-ylc-change`](.agents/skills/verify-ylc-change/SKILL.md) | 修正・設定・依存関係変更に必要なテストと実ブラウザ検証を選び、実行する |
+
+明示的に使う場合は `$triage-ylc-user-report` / `$verify-ylc-change`。スキル内のコマンドと `docs/`・`e2e/` パスはリポジトリルートを基準にする。同名の個人用コピーは作らず、ここを更新する。
+
 ## コマンド
 
 ```bash
