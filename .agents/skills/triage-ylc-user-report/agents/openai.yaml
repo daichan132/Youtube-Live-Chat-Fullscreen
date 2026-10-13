@@ -1,0 +1,4 @@
+interface:
+  display_name: "YLC User Report Triage"
+  short_description: "YLCのIssueや評価から原因候補と必要証拠を絞り込む"
+  default_prompt: "Use $triage-ylc-user-report to classify this YLC report, rank hypotheses, and propose the smallest next evidence."

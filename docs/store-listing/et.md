@@ -7,14 +7,14 @@ PÕHILINE
 - Nähtavus: „Näita vestlust tegevusetuse ajal“ on algusest peale sees, nii et sõnumid jäävad ekraanile ka siis, kui juhtnupud kaovad; koos sellega voldib „Näita ainult vestlust“ kokku päise ja kirjutuskasti, kuni viid kursori peale.
 - Nimed ja vahed: „Näita kasutajanime“ ja „Näita profiilipilti“ saab tavaliste sõnumite pealt välja lülitada (tasulistel jäävad need alles); „Vahekaugus“ on 0 kuni 40 px.
 - Eelseadistused: seitse sisseehitatut, igaüks ühe klõpsuga, pluss sinu enda omad.
-- Klaviatuur: liugurid ja värvivalijad kuulavad nooleklahve, igal juhtelemendil on ekraanilugejale mõeldud silt; hiirt vajavad ainult nupurea esiletoomine, kokkuvolditu tagasitoomine ja suuruse muutmine. Automaatsed WCAG 2.1 AA kontrollid katavad iga koodimuudatusega hüpikakna, nupurea ja seadete paneeli.
+- Klaviatuur: liugurid ja värvivalijad kuulavad nooleklahve, igal juhtelemendil on ekraanilugejale mõeldud silt. Automaatsed WCAG 2.1 AA kontrollid katavad iga koodimuudatusega hüpikakna, nupurea ja seadete paneeli.
 
 MITTE JÄRELETEHTUD, VAID YOUTUBE'I ENDA VESTLUS
 Paneel video peal ongi seesama YouTube'i otsevestlus külgribalt, lihtsalt teises kuues, nii et märgid, emojid, kleebised ja ainult liikmetele mõeldud vestlus töötavad nagu ikka. Sõnumid lähevad välja YouTube'i enda sõnumikastist ja Super Chat YouTube'i enda ostupaneelilt: makse läheb YouTube'ile, mitte kunagi laiendusele. Ainus asi, mida laiendus seal muudab, on liitumisnupp („Membership“): see avab uuel kaardil kanali liitumislehe.
 
 MIS SEE MAKSAB JA MIDA KOGUB
 Tasuta: ei mingit kontot, ei mingit tasulist versiooni.
-Kaks luba, activeTab ja storage; ainus sait, kus laiendus töötab, on www.youtube.com — täpselt seda mõtleb Chrome'i paigaldusteade sinu andmete kohta. Taustal ei tööta midagi: kui ühtki YouTube'i kaarti pole avatud, teeb midagi ainult brauseririba hüpikaken, ja sedagi vaid seni, kuni see on lahti.
+Ainult üks luba, storage; ainus sait, kus laiendus töötab, on www.youtube.com — täpselt seda mõtleb Chrome'i paigaldusteade sinu andmete kohta. Taustal ei tööta midagi: kui ühtki YouTube'i kaarti pole avatud, teeb midagi ainult brauseririba hüpikaken, ja sedagi vaid seni, kuni see on lahti.
 Ei mingit analüütikat, ei mingit jälgimist, arendajani ei jõua midagi: mida sa loed ja kirjutad, seda ei koguta, ei salvestata ega saadeta kuhugi, ning seaded jäävad siia brauserisse. Kogu kood on laienduse sees; võrgust laaditakse alla ainult vaikimisi omast erinevad kirjatüübid — Google Fontsist. Avatud lähtekood GPL-3.0 all, avalik GitHubis.
 
 KUIDAS ALUSTADA

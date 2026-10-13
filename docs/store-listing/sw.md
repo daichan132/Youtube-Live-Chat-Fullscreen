@@ -7,14 +7,14 @@ VIPENGELE VIKUU
 - Kuendelea kuonekana: "Onyesha gumzo wakati hakuna shughuli" huja ikiwa imewashwa, hivyo gumzo hubaki hata vidhibiti vya kicheza vikififia; ikiwa imewashwa, "Hali ya gumzo pekee" hukunja kichwa na kisanduku cha kuandikia hadi uweke kishale juu yake.
 - Majina na nafasi: zima "Onyesha majina ya watumiaji" na "Onyesha picha za wasifu" kwa jumbe za kawaida, jumbe zilizolipiwa hubaki na majina na picha zake; "Nafasi kati ya jumbe" ni 0-40px.
 - Mipangilio iliyowekwa awali: saba imejengwa ndani, kila moja kwa mbofyo mmoja, pamoja na yako mwenyewe.
-- Kibodi: vitelezi na viteuzi vya rangi hufanya kazi kwa vitufe vya mishale, kila kidhibiti kina lebo kwa visomaji skrini; kipanya kinahitajika tu kuibua safu ya vidhibiti, kurudisha kile ambacho "Hali ya gumzo pekee" hukunja, na kubadilisha ukubwa. Ukaguzi wa kiotomatiki wa WCAG 2.1 AA hushughulikia kidirisha ibukizi, safu ya vidhibiti na kidirisha cha mipangilio kwa kila mabadiliko.
+- Kibodi: vitelezi na viteuzi vya rangi hufanya kazi kwa vitufe vya mishale, kila kidhibiti kina lebo kwa visomaji skrini. Ukaguzi wa kiotomatiki wa WCAG 2.1 AA hushughulikia kidirisha ibukizi, safu ya vidhibiti na kidirisha cha mipangilio kwa kila mabadiliko.
 
 GUMZO LENYEWE LA YOUTUBE, SI NAKALA
 Kidirisha kilicho juu ya video ni gumzo la moja kwa moja la YouTube lenyewe kutoka pembeni, likiwa limebadilishwa mwonekano, ndiyo maana beji, emoji, vibandiko na gumzo la wanachama pekee huendelea kufanya kazi. Kutuma ujumbe hupitia kisanduku cha kuandika cha YouTube, na Super Chat hupitia kidirisha cha manunuzi cha YouTube: malipo huenda YouTube, kamwe si kwa kiendelezi. Kidhibiti pekee kinachobadilishwa humo ni kitufe cha uanachama (Membership): hufungua ukurasa wa kujiunga wa chaneli katika kichupo kipya.
 
 GHARAMA NI NINI, KINAKUSANYA NINI
 Ni bure: hakuna kujisajili, hakuna kifurushi cha kulipia.
-Ruhusa mbili, activeTab na storage; www.youtube.com ndiyo tovuti pekee kinapofanya kazi — hiyo ndiyo maana yote ya onyo la Chrome kuhusu data yako wakati wa kusakinisha. Hakuna kinachoendelea kufanya kazi chinichini: bila kichupo cha YouTube kilichofunguliwa, kinachofanya kazi ni kidirisha ibukizi cha upau wa vidhibiti pekee, na wakati kimefunguliwa tu.
+Ruhusa moja tu, storage; www.youtube.com ndiyo tovuti pekee kinapofanya kazi — hiyo ndiyo maana yote ya onyo la Chrome kuhusu data yako wakati wa kusakinisha. Hakuna kinachoendelea kufanya kazi chinichini: bila kichupo cha YouTube kilichofunguliwa, kinachofanya kazi ni kidirisha ibukizi cha upau wa vidhibiti pekee, na wakati kimefunguliwa tu.
 Hakuna takwimu, hakuna ufuatiliaji, hakuna kinachomfikia msanidi: hakikusanyi, hakihifadhi wala hakitumi unachosoma au kuandika; mipangilio hubaki katika kivinjari hiki. Msimbo wote huja ndani ya kiendelezi; ni fonti zaidi ya ile chaguo-msingi pekee zinazoletwa kutoka Google Fonts. Chanzo huria chini ya GPL-3.0, wazi kwa umma kwenye GitHub.
 
 JINSI YA KUANZA

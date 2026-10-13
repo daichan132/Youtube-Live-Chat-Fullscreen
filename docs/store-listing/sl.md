@@ -7,14 +7,14 @@ GLAVNE MOŽNOSTI
 - Vidnost: »Prikaži klepet med nedejavnostjo« je vklopljeno že od začetka, zato sporočila ostanejo na zaslonu tudi potem, ko kontrolniki izginejo; ob njem »Prikaži samo klepet« zloži glavo in polje za pisanje, dokler nanje ne pelješ kazalca.
 - Imena in razmik: »Prikaži uporabniška imena« in »Prikaži profilne slike« lahko za navadna sporočila izklopiš (plačana jih obdržijo); »Razmik« gre od 0 do 40 px.
 - Prednastavitve: sedem vgrajenih, vsaka z enim klikom, poleg njih tvoje lastne.
-- Tipkovnica: drsniki in izbirniki barv se odzivajo na puščice, vsak kontrolnik ima oznako za bralnik zaslona; miško potrebujejo le priklic vrste gumbov, vrnitev tega, kar »Prikaži samo klepet« zloži, in spreminjanje velikosti. Samodejni pregledi WCAG 2.1 AA ob vsaki spremembi kode zajamejo pojavno okno, vrsto gumbov in ploščo nastavitev.
+- Tipkovnica: drsniki in izbirniki barv se odzivajo na puščice, vsak kontrolnik ima oznako za bralnik zaslona. Samodejni pregledi WCAG 2.1 AA ob vsaki spremembi kode zajamejo pojavno okno, vrsto gumbov in ploščo nastavitev.
 
 NI POSNEMOVALEC — TO JE YOUTUBOV KLEPET
 Plošča nad videom je tisti isti YouTubov klepet v živo iz stranske vrstice, le drugače oblečen, zato značke, emojiji, nalepke in klepet samo za člane delujejo kot vedno. Sporočila gredo skozi YouTubovo polje za pisanje, Super Chat pa skozi YouTubovo ploščo za nakup: plačilo prevzame YouTube, nikoli razširitev. Edino, kar razširitev tam spremeni, je gumb za včlanitev (»Membership«): odpre kanalovo stran za pristop v novem zavihku.
 
 KOLIKO STANE IN KAJ ZBIRA
 Brezplačno: brez računa in brez plačljive različice.
-Dve dovoljenji, activeTab in storage; edina stran, na kateri razširitev teče, je www.youtube.com — natanko to misli Chromovo obvestilo ob namestitvi, ko omenja tvoje podatke. V ozadju ne teče nič: dokler ni odprtega zavihka YouTuba, dela le pojavno okno v brskalnikovi vrstici, in to samo, dokler je odprto.
+Samo eno dovoljenje, storage; edina stran, na kateri razširitev teče, je www.youtube.com — natanko to misli Chromovo obvestilo ob namestitvi, ko omenja tvoje podatke. V ozadju ne teče nič: dokler ni odprtega zavihka YouTuba, dela le pojavno okno v brskalnikovi vrstici, in to samo, dokler je odprto.
 Nobene analitike, nobenega sledenja, do razvijalca ne pride nič: kar prebereš in natipkaš, se ne zbira, ne shranjuje in nikamor ne pošilja, nastavitve pa ostanejo v tem brskalniku. Vsa koda pride znotraj razširitve; iz omrežja se prenesejo le pisave, drugačne od privzete — z Google Fonts. Odprta koda pod GPL-3.0, javna na GitHubu.
 
 KAKO ZAČNEŠ

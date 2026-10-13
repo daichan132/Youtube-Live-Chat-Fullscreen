@@ -7,14 +7,14 @@ MGA PANGUNAHING TAMPOK
 - Nananatiling nakikita: naka-on agad ang "Ipakita ang chat kapag walang aktibidad", kaya nananatili ang chat kahit mawala na ang mga kontrol ng player; kapag naka-on iyon, titiklupin ng "Chat lang ang ipakita" ang header at ang kahon ng mensahe hanggang idantay mo ang cursor.
 - Mga username at agwat: puwedeng patayin ang "Ipakita ang mga username" at "Ipakita ang mga profile picture" para sa ordinaryong mensahe, pero nananatili ang pangalan at larawan sa mga bayad na mensahe; 0-40px ang "Agwat ng mga mensahe".
 - Mga preset: pito ang nakahanda, isang click bawat isa, saka ang sarili mong mase-save.
-- Keyboard: gumagana sa arrow keys ang mga slider at color picker, may label para sa screen reader ang bawat kontrol; mouse lang ang kailangan sa pagpapalabas ng hanay ng mga button, sa pagbabalik ng tinitiklop ng "Chat lang ang ipakita", at sa pagbabago ng laki. Sa bawat pagbabago, sumasaklaw sa popup, sa hanay ng mga button at sa settings panel ang awtomatikong pagsusuri sa WCAG 2.1 AA.
+- Keyboard: gumagana sa arrow keys ang mga slider at color picker, may label para sa screen reader ang bawat kontrol. Sa bawat pagbabago, sumasaklaw sa popup, sa hanay ng mga button at sa settings panel ang awtomatikong pagsusuri sa WCAG 2.1 AA.
 
 ANG MISMONG CHAT NG YOUTUBE, HINDI KOPYA
 Ang panel sa ibabaw ng video ay ang mismong live chat ng YouTube mula sa sidebar, na binago ang itsura, kaya patuloy na gumagana ang mga badge, emoji, sticker, at ang members-only chat. Sa mismong message box ng YouTube dumadaan ang pagpapadala, at sa purchase panel ng YouTube ang Super Chat: sa YouTube napupunta ang bayad, hindi kailanman sa extension. Iisa lang ang kontrol na binabago nito roon — ang membership button: binubuksan nito sa bagong tab ang join page ng channel.
 
 MAGKANO AT ANO ANG KINOKOLEKTA
 Libre: walang sign-up, walang bayad na bersyon.
-Dalawang permission, activeTab at storage; www.youtube.com lang ang site na pinagpapatakbuhan nito — iyon lang ang ibig sabihin ng babala ng Chrome tungkol sa datos mo. Walang tumatakbo sa background: kapag walang bukas na YouTube tab, ang toolbar popup lang ang may ginagawa, at habang bukas lang ito.
+Iisang permission lang, storage; www.youtube.com lang ang site na pinagpapatakbuhan nito — iyon lang ang ibig sabihin ng babala ng Chrome tungkol sa datos mo. Walang tumatakbo sa background: kapag walang bukas na YouTube tab, ang toolbar popup lang ang may ginagawa, at habang bukas lang ito.
 Walang analytics, walang tracking, walang anumang napupunta sa developer: hindi nito kinokolekta, iniimbak, o ipinapadala ang binabasa o tinitipa mo; sa browser na ito nananatili ang mga setting. Nakapaloob na sa extension ang lahat ng code; ang mga font lang na hindi default ang kinukuha sa Google Fonts. Open source sa ilalim ng GPL-3.0, nakabukas sa publiko sa GitHub.
 
 PAANO MAGSIMULA

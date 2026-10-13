@@ -1,20 +1,22 @@
 # リポジトリの見せ方
 
-GitHub リポジトリの設定を、`README.md` のプロダクト位置づけに揃えておくための控え。ここに書いた値は **GitHub の設定画面で手作業で適用するもの**で、拡張のビルドは一切関与しない。`docs/store-listing/` と違って検査スクリプトもないので、ずれても誰も教えてくれない。
+GitHub の About・Topics・Social preview を [README](../../README.md) と揃えるための設定案。ここに書いた値は GitHub で適用する候補であり、現在の設定を示すものではない。適用するときはリポジトリの表示と設定画面を確認する。
 
-> 現状（2026-08-27 時点）: About の説明と Topics は下記の内容がまだ適用されていない。homepage だけが一致している。
+設定は拡張のビルドや公開ワークフローに含まれない。この文書を更新しても GitHub 側には自動反映されない。
 
 ## About
 
 ```text
-Open-source Chrome & Firefox extension that restores YouTube Live chat in fullscreen. Draggable, privacy-first, and used by 20K+ viewers.
+Keep YouTube live chat in fullscreen. A draggable, resizable chat overlay for Chrome and Firefox, with local settings and no tracking.
 ```
 
-homepage は既存のプロダクトサイトのまま。
+homepage は現在運用しているプロダクトサイトを確認して設定する。説明には利用場面と対応ブラウザを入れ、README の導入と意味を揃える。
+
+利用者数や評価を掲載する場合は、出典と確認日を記録する。以前の「20K+ viewers」や過去の GitHub 設定確認を、現在の値として再利用しない。
 
 ## Topics
 
-プロダクト側の発見語とエンジニアリング側の発見語を混ぜる。
+利用者が探す語と、実装を知りたい開発者が探す語を選ぶ。
 
 ```text
 youtube
@@ -33,29 +35,26 @@ playwright
 manifest-v3
 vtuber
 chat-overlay
-privacy-first
 ```
+
+新しい技術名や対応プラットフォームを追加するときは、実装や配布先で確認できるものに限る。
 
 ## Social preview
 
-[`.github/social-preview.png`](../../.github/social-preview.png)（1280×640）を Social Preview として登録する。
+既存の [`.github/social-preview.png`](../../.github/social-preview.png) は 1280×640 の参考資産。登録前に全体と小さく表示した状態を確認する。現在の画像には「20K+ viewers」が含まれるため、そのまま現在の指標として使わず、数字の根拠を確認するか表記を更新する。
 
-この画像で伝えたいこと:
+画像では実際の動画とチャットの重なりが一目で分かるようにする。製品名、Chrome と Firefox への対応、オープンソースであることを README と揃え、実装と異なる UI や未確認の人数を追加しない。
 
-- フルスクリーンのチャットがプロダクトそのものであること
-- オーバーレイが実際の映像の上に載っていること
-- 2 万人以上が使っていること
-- Chrome と Firefox に対応していること
-- オープンソースで、トラッキングをしないこと
+## 更新後の確認
 
-## 計測
+About、Topics、Social preview は、設定画面に保存したあとリポジトリの表示でも確認する。リンク先が意図したストアやサイトに到達するか、画像が小さい表示でも読めるか、README と説明が食い違わないかを確認し、変更日と適用した値を作業記録に残す。
 
-分析 SDK を新しく入れない。GitHub Traffic を週 1 回、同じ曜日に記録する。
+## 反応の記録
 
-- 新規 star 数
-- ユニークビジター数
-- star ÷ ユニークビジター
+分析 SDK は追加せず、GitHub Traffic を同じ曜日に記録する。
+
+- 新規 star 数とユニークビジター数
 - 参照元サイト
 - ストアの評価と直近レビューの傾向
 
-外部での宣伝を増やす前に、リポジトリの転換率を先に評価する。ビジターが増えて star が増えないなら、最初の画面の説明を直す。転換率が健全でビジターが伸びないなら、技術記事とコミュニティでの露出を増やす。
+説明を変える前後で期間と指標を揃える。star 数と訪問者数だけで改善の原因を断定せず、参照元やレビューと合わせて、次に見直す説明や導線を判断する。

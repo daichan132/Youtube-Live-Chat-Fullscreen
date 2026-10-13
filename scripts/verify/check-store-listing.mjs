@@ -41,7 +41,7 @@ const REQUIRED_URLS = [
 // Tokens that stay verbatim in every locale because they are proper nouns,
 // identifiers, or standards references. They stand in for the description's
 // structure: losing one means a translation dropped the section that carries it.
-const REQUIRED_TOKENS = ['YouTube', 'Opera', 'GitHub', 'GPL-3.0', 'activeTab', 'storage', 'Google Fonts', 'WCAG 2.1']
+const REQUIRED_TOKENS = ['YouTube', 'Opera', 'GitHub', 'GPL-3.0', 'storage', 'Google Fonts', 'WCAG 2.1']
 // Blocks (blank-line separated) the reference manuscript has; translations may
 // merge or split a little, but a large gap means missing content.
 const BLOCK_TOLERANCE = 3
@@ -99,6 +99,9 @@ for (const code of localeCodes) {
   }
   for (const token of REQUIRED_TOKENS) {
     if (!description.includes(token)) fail(`${code}.md: missing "${token}" — the section carrying it was probably dropped in translation`)
+  }
+  if (description.includes('activeTab')) {
+    fail(`${code}.md: contains obsolete activeTab permission copy; the current manifest only requests storage`)
   }
   if (!description.includes(String(localeCodes.length))) {
     fail(`${code}.md: locale count "${localeCodes.length}" not found (locale set changed? update the copy)`)

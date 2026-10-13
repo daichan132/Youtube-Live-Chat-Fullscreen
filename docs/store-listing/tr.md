@@ -7,14 +7,14 @@ BAŞLICA ÖZELLİKLER
 - Görünürlük: "Etkin değilken sohbeti göster" açık gelir, oynatıcı kontrolleri söndükten sonra da sohbet ekranda kalır; bu açıkken "Yalnızca sohbet", imleci üzerine getirene kadar başlığı ve yazma kutusunu katlar.
 - Kullanıcı adları ve aralık: sıradan mesajlarda "Kullanıcı adlarını göster" ile "Profil resimlerini göster" kapatılabilir, ücretli mesajlar kendi adını ve resmini korur; mesajlar arasında "Mesaj aralığı" 0-40px.
 - Hazır ayarlar: yedi tanesi gömülü gelir, her biri tek tıkla, üstüne kendi kaydettikleriniz.
-- Klavye: kaydırıcılar ve renk seçicileri ok tuşlarıyla çalışır, her denetimin ekran okuyucu etiketi vardır; fare yalnızca denetim satırını çağırmak, "Yalnızca sohbet"in katladığını geri getirmek ve yeniden boyutlandırmak için gerekir. Otomatik WCAG 2.1 AA denetimleri her değişiklikte açılır pencereyi, denetim satırını ve ayarlar panelini kapsar.
+- Klavye: kaydırıcılar ve renk seçicileri ok tuşlarıyla çalışır, her denetimin ekran okuyucu etiketi vardır. Otomatik WCAG 2.1 AA denetimleri her değişiklikte açılır pencereyi, denetim satırını ve ayarlar panelini kapsar.
 
 TAKLİT DEĞİL, YOUTUBE'UN KENDİ SOHBETİ
 Videonun üzerindeki panel, kenar çubuğundaki YouTube canlı sohbetinin ta kendisidir, görünümü değiştirilmiş halidir; rozetler, emoji, çıkartmalar ve yalnızca üyelere açık sohbet bu yüzden çalışmaya devam eder. Mesaj göndermek YouTube'un kendi yazı kutusundan, Super Chat ise YouTube'un satın alma panelinden geçer: ödeme YouTube'a gider, eklentiye asla. Eklentinin o panelde değiştirdiği tek denetim üyelik (Membership) düğmesidir: kanalın katılma sayfasını yeni sekmede açar.
 
 NE KADAR TUTAR, NE TOPLAR
 Ücretsiz: kayıt yok, ücretli sürüm yok.
-İki izin, activeTab ve storage; çalıştığı tek site www.youtube.com — Chrome'un kurulum ekranında verilerinizle ilgili gösterdiği uyarının anlamı tam olarak budur. Arka planda hiçbir şey çalışmaz: açık bir YouTube sekmesi yokken yalnızca araç çubuğundaki açılır pencere iş yapar, o da yalnızca açık olduğu sürece.
+Tek bir izin, storage; çalıştığı tek site www.youtube.com — Chrome'un kurulum ekranında verilerinizle ilgili gösterdiği uyarının anlamı tam olarak budur. Arka planda hiçbir şey çalışmaz: açık bir YouTube sekmesi yokken yalnızca araç çubuğundaki açılır pencere iş yapar, o da yalnızca açık olduğu sürece.
 Analiz yok, izleme yok, geliştiriciye giden hiçbir şey yok: okuduğunuzu da yazdığınızı da toplamaz, saklamaz, göndermez; ayarlarınız bu tarayıcıda kalır. Tüm kod eklentinin içinde gelir; yalnızca varsayılan dışındaki yazı tipleri Google Fonts'tan indirilir. GPL-3.0 ile açık kaynak, GitHub'da herkese açık.
 
 NASIL BAŞLARSINIZ
