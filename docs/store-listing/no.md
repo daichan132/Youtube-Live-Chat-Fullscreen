@@ -7,14 +7,14 @@ HOVEDFUNKSJONER
 - Visning: «Vis chatten ved inaktivitet» er slått på fra start, så chatten blir stående når kontrollraden toner bort; er den på, bretter «Vis bare chatten» sammen overskriften og skrivefeltet til du fører musen over panelet.
 - Navn og mellomrom: «Vis brukernavn» og «Vis profilbilde» kan du slå av for vanlige meldinger, betalte beholder navn og bilde; «Mellomrom» på 0–40px mellom meldingene.
 - Forhåndsinnstillinger: sju innebygde, ett klikk hver, pluss dine egne.
-- Tastatur: glidebrytere og fargevelgere tar imot piltaster, og hver kontroll er merket for skjermlesere; mus trenger du bare til å hente fram kontrollraden, til å få tilbake det «Vis bare chatten» bretter sammen, og til å endre størrelsen. Automatiske kontroller mot WCAG 2.1 AA dekker popupvinduet, kontrollraden og innstillingspanelet ved hver endring.
+- Tastatur: glidebrytere og fargevelgere tar imot piltaster, og hver kontroll er merket for skjermlesere. Automatiske kontroller mot WCAG 2.1 AA dekker popupvinduet, kontrollraden og innstillingspanelet ved hver endring.
 
 YOUTUBES EGEN CHAT, INGEN ETTERLIGNING
 Panelet oppå videoen er YouTubes egen livechat fra sidefeltet, med nytt utseende – derfor virker alt som før: merker, emojier, klistremerker og chat bare for medlemmer. Du skriver gjennom YouTubes eget skrivefelt, og Super Chat går gjennom YouTubes kjøpspanel: betalingen går til YouTube, aldri til utvidelsen. Det eneste utvidelsen endrer der, er «Medlemskap», som åpner kanalens bli med-side i en ny fane.
 
 HVA DET KOSTER, HVA DET SAMLER INN
 Gratis: ingen konto, ingen betalversjon.
-To tillatelser, activeTab og storage; www.youtube.com er det eneste nettstedet utvidelsen kjører på – mer betyr ikke Chromes installasjonsvarsel om dataene dine. Ingenting kjører i bakgrunnen: uten en åpen YouTube-fane er det bare popupvinduet i verktøylinjen som gjør noe, og bare mens det er åpent.
+Bare én tillatelse, storage; www.youtube.com er det eneste nettstedet utvidelsen kjører på – mer betyr ikke Chromes installasjonsvarsel om dataene dine. Ingenting kjører i bakgrunnen: uten en åpen YouTube-fane er det bare popupvinduet i verktøylinjen som gjør noe, og bare mens det er åpent.
 Ingen analyse, ingen sporing, ingenting til utvikleren: det du leser og skriver, blir aldri samlet inn, lagret eller sendt; innstillingene blir i denne nettleseren. All koden ligger i utvidelsen; bare skrifttyper utover standardskriften hentes fra Google Fonts. Åpen kildekode under GPL-3.0, offentlig på GitHub.
 
 SLIK KOMMER DU I GANG

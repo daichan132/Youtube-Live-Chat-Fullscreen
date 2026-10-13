@@ -7,14 +7,14 @@ TÍNH NĂNG CHÍNH
 - Hiển thị: "Hiển thị chat khi không hoạt động" bật sẵn, nên chat vẫn còn đó sau khi thanh điều khiển mờ đi; khi nó đang bật, "Chế độ chỉ hiển thị chat" gấp gọn phần đầu khung và ô soạn tin cho tới lúc bạn rê chuột vào.
 - Tên người dùng và khoảng cách: tắt "Hiển thị tên người dùng" và "Hiển thị ảnh hồ sơ" cho tin nhắn thường, tin nhắn trả phí vẫn giữ nguyên tên và ảnh của nó; "Khoảng cách giữa các tin nhắn" từ 0-40px.
 - Bộ cài đặt sẵn: bảy bộ dựng sẵn, mỗi bộ một cú nhấn, cộng thêm bộ do bạn lưu.
-- Bàn phím: thanh trượt và bảng chọn màu đều nhận phím mũi tên, mọi nút đều có nhãn cho trình đọc màn hình; chuột chỉ cần để gọi hàng nút lên, để lấy lại phần "Chế độ chỉ hiển thị chat" gấp gọn và để đổi kích thước. Kiểm tra WCAG 2.1 AA tự động chạy sau mỗi thay đổi, bao quát cửa sổ bật lên, hàng nút và bảng cài đặt.
+- Bàn phím: thanh trượt và bảng chọn màu đều nhận phím mũi tên, mọi nút đều có nhãn cho trình đọc màn hình. Kiểm tra WCAG 2.1 AA tự động chạy sau mỗi thay đổi, bao quát cửa sổ bật lên, hàng nút và bảng cài đặt.
 
 CHAT CỦA CHÍNH YOUTUBE, KHÔNG PHẢI BẢN NHÁI
 Khung nổi trên video chính là khung chat trực tiếp của YouTube ở cột bên, được đổi diện mạo, nên huy hiệu, emoji, nhãn dán và chat dành riêng cho hội viên vẫn chạy như thường. Gửi tin nhắn đi qua ô soạn của YouTube, Super Chat đi qua bảng mua của YouTube: tiền về YouTube, không bao giờ về tiện ích. Thứ duy nhất tiện ích đổi trong bảng đó là nút hội viên (Membership): nó mở trang tham gia của kênh trong tab mới.
 
 GIÁ BAO NHIÊU, THU THẬP NHỮNG GÌ
 Miễn phí: không đăng ký, không gói trả phí.
-Hai quyền, activeTab và storage; www.youtube.com là trang duy nhất tiện ích chạy trên đó — cảnh báo về dữ liệu của bạn lúc cài trên Chrome chỉ có nghĩa như vậy. Không có gì chạy nền: khi không mở tab YouTube nào, chỉ cửa sổ bật lên trên thanh công cụ làm việc, và chỉ khi nó đang mở.
+Chỉ một quyền, storage; www.youtube.com là trang duy nhất tiện ích chạy trên đó — cảnh báo về dữ liệu của bạn lúc cài trên Chrome chỉ có nghĩa như vậy. Không có gì chạy nền: khi không mở tab YouTube nào, chỉ cửa sổ bật lên trên thanh công cụ làm việc, và chỉ khi nó đang mở.
 Không phân tích, không theo dõi, không gì gửi về nhà phát triển: tiện ích không thu thập, không lưu, không gửi đi những gì bạn đọc hay gõ; thiết lập nằm lại trong trình duyệt này. Toàn bộ mã đi kèm bên trong tiện ích; chỉ những phông chữ ngoài phông mặc định mới tải từ Google Fonts. Mã nguồn mở theo GPL-3.0, công khai trên GitHub.
 
 BẮT ĐẦU THẾ NÀO

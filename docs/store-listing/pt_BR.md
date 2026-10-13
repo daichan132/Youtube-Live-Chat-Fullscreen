@@ -7,14 +7,14 @@ PRINCIPAIS RECURSOS
 - Exibição: “Exibir o chat quando inativo” já vem ligado, então o chat continua lá depois que os controles do player somem; com ele ligado, “Exibir apenas o chat” recolhe o cabeçalho e a caixa de mensagem até você passar o ponteiro.
 - Nomes e espaçamento: “Exibir nomes de usuário” e “Exibir fotos de perfil” podem ser desligados nas mensagens comuns (as pagas mantêm os seus); de 0 a 40 px entre as mensagens.
 - Predefinições: sete inclusas, um clique cada, mais as suas.
-- Teclado: os controles deslizantes e os seletores respondem às setas e todo controle tem rótulo para leitores de tela; o mouse só é preciso para fazer aparecer a fila de controles, para trazer de volta o que “Exibir apenas o chat” recolhe e para redimensionar. As verificações automáticas WCAG 2.1 AA cobrem, a cada mudança, a janelinha, a fila de controles e o painel de configurações.
+- Teclado: os controles deslizantes e os seletores respondem às setas e todo controle tem rótulo para leitores de tela. As verificações automáticas WCAG 2.1 AA cobrem, a cada mudança, a janelinha, a fila de controles e o painel de configurações.
 
 O CHAT DO YOUTUBE, NÃO UMA IMITAÇÃO
 O painel sobre o vídeo é o chat ao vivo do YouTube, o mesmo da coluna lateral, com outra aparência: selos, emojis, figurinhas e o chat exclusivo para membros continuam funcionando. As mensagens saem pela caixa de texto do YouTube e os Super Chats pelo painel de compra dele: o pagamento vai para o YouTube, nunca para a extensão. O único controle que a extensão muda lá dentro é o item de participação, que abre em uma nova aba a página para virar membro do canal.
 
 QUANTO CUSTA, O QUE COLETA
 Grátis: sem conta e sem versão paga.
-Duas permissões, activeTab e storage; www.youtube.com é o único site em que ela roda — é só isso que o aviso de instalação do Chrome quer dizer sobre seus dados. Em segundo plano não roda nada: sem nenhuma aba do YouTube aberta, a única coisa que faz alguma coisa é a janelinha da barra de ferramentas, e só enquanto está aberta.
+Uma única permissão, storage; www.youtube.com é o único site em que ela roda — é só isso que o aviso de instalação do Chrome quer dizer sobre seus dados. Em segundo plano não roda nada: sem nenhuma aba do YouTube aberta, a única coisa que faz alguma coisa é a janelinha da barra de ferramentas, e só enquanto está aberta.
 Sem análise de uso, sem rastreamento, nada que chegue ao desenvolvedor: nada do que você lê e nada do que você escreve é coletado, guardado ou enviado; as configurações ficam neste navegador. Todo o código vem dentro da extensão; só as fontes diferentes da padrão vêm do Google Fonts. Código aberto sob a GPL-3.0, público no GitHub.
 
 COMO COMEÇAR

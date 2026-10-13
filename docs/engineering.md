@@ -1,23 +1,39 @@
 # Engineering YouTube Live Chat Fullscreen
 
-YouTube Live Chat Fullscreen is a production browser extension that cooperates with a page it does not control. YouTube changes routes without full reloads, replaces DOM subtrees, moves chat containers in fullscreen, and exposes different chat sources for live streams and archives. The code contains that instability behind explicit runtime, storage, and trust boundaries.
+YouTube Live Chat Fullscreen keeps the video and its chat together in fullscreen. Its main engineering challenge is preserving YouTube's own chat while the surrounding page changes: navigation happens without a reload, player elements are replaced, and live streams and archives expose different chat sources.
+
+The project uses WXT for browser-extension plumbing, React for the UI, TypeScript for runtime and settings models, Jotai for UI state, and Tailwind CSS for styling. The runtime observes the page, makes a pure decision, and applies reversible DOM changes. This guide connects those responsibilities to the code and the tests that check them.
 
 ## Start here
 
 The extension has three WXT entrypoints and no background service worker:
 
-1. `entrypoints/content/index.tsx` gates work by YouTube route and owns the content-session lifecycle.
-2. `entrypoints/popup/main.tsx` mounts the toolbar popup.
-3. `entrypoints/settings/main.tsx` mounts `settings.html`, displayed inside an extension iframe over the player.
+| Entrypoint | Responsibility |
+| --- | --- |
+| [Content script](../entrypoints/content/index.tsx) | Gates work by YouTube route and owns the content-session lifecycle |
+| [Toolbar popup](../entrypoints/popup/main.tsx) | Mounts the extension popup |
+| [Settings page](../entrypoints/settings/main.tsx) | Mounts `settings.html`, displayed inside an extension iframe over the player |
 
 The content runtime is easiest to understand in this order:
 
-1. `ContentBootstrap.ts` — supported video-surface gate (`/watch`, direct `/live/<videoId>`, and channel `/live` entries) plus bounded session-start retry.
-2. `createContentSession.tsx` and `SessionScope.ts` — construct one context-owned React/runtime session and own cleanup.
-3. `platform/youtube/` — collect evidence and DOM targets from the moving page.
-4. `resolveChatDecision.ts` and `runtimeModel.ts` — pure decisions and plans.
-5. `ChatRuntime.ts` and `ResourceReconciler.ts` — coalesce events and apply the plan.
-6. `runtime/resources/` — leases that own and reverse YouTube DOM changes.
+1. [ContentBootstrap](../entrypoints/content/bootstrap/ContentBootstrap.ts) accepts supported video surfaces (`/watch`, direct `/live/<videoId>`, and channel `/live` entries) and limits session-start retries.
+2. [createContentSession](../entrypoints/content/bootstrap/createContentSession.tsx) and [SessionScope](../entrypoints/content/bootstrap/SessionScope.ts) construct one context-owned React/runtime session and own cleanup.
+3. The [YouTube platform adapter](../entrypoints/content/platform/youtube/) collects evidence and DOM targets from the page.
+4. [resolveChatDecision](../entrypoints/content/runtime/resolveChatDecision.ts) and [runtimeModel](../entrypoints/content/runtime/runtimeModel.ts) produce pure decisions and plans.
+5. [ChatRuntime](../entrypoints/content/runtime/ChatRuntime.ts) and [ResourceReconciler](../entrypoints/content/runtime/ResourceReconciler.ts) coalesce events and apply the plan.
+6. [Resource leases](../entrypoints/content/runtime/resources/) own and reverse YouTube DOM changes.
+
+```mermaid
+flowchart LR
+  Page[YouTube page] --> Adapter[Page observation]
+  Adapter --> Decision[Chat decision]
+  Decision --> Model[Runtime model]
+  Model --> Leases[Reversible leases]
+  Leases --> Page
+  Leases --> View[React overlay]
+```
+
+For a focused change, use the [documentation index](README.md) to find the relevant architecture guide, then use these links to inspect the implementation. To run the extension locally, see [Contributing](../CONTRIBUTING.md).
 
 Settings are independent of the YouTube runtime and are documented in [Settings, state, and storage](architecture/settings-and-state.md).
 

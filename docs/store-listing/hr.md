@@ -7,14 +7,14 @@ GLAVNE MOGUĆNOSTI
 - Vidljivost: „Prikaži chat tijekom neaktivnosti” uključeno je od samog početka, pa poruke ostaju na zaslonu i nakon što kontrole nestanu; uz njega „Prikaži samo chat” sklapa zaglavlje i okvir za pisanje dok ne prijeđeš mišem.
 - Imena i razmak: „Prikaži korisnička imena” i „Prikaži profilne slike” za obične poruke možeš ugasiti (plaćene ih zadržavaju); „Razmak” ide od 0 do 40 px.
 - Predlošci: sedam ugrađenih, svaki na jedan klik, plus tvoji vlastiti.
-- Tipkovnica: klizači i birači boja slušaju strelice, svaka kontrola ima oznaku za čitač zaslona; miš treba samo za prizivanje reda gumba, za vraćanje onoga što „Prikaži samo chat” sklopi i za mijenjanje veličine. Automatske WCAG 2.1 AA provjere uz svaku promjenu koda pokrivaju skočni prozor, red gumba i ploču postavki.
+- Tipkovnica: klizači i birači boja slušaju strelice, svaka kontrola ima oznaku za čitač zaslona. Automatske WCAG 2.1 AA provjere uz svaku promjenu koda pokrivaju skočni prozor, red gumba i ploču postavki.
 
 NIJE KOPIJA — TO JE YOUTUBEOV CHAT
 Ploča preko videa jest onaj isti YouTubeov chat uživo iz bočne trake, samo drukčije odjeven, pa značke, emojiji, naljepnice i chat samo za članove rade kao i uvijek. Poruke odlaze kroz YouTubeovo polje za pisanje, a Super Chat kroz YouTubeovu ploču za kupnju: plaćanje ide YouTubeu, nikad proširenju. Jedino što proširenje ondje mijenja jest gumb za učlanjenje („Membership”): otvara stranicu kanala za pristup u novoj kartici.
 
 ŠTO KOŠTA I ŠTO PRIKUPLJA
 Besplatno je: bez računa i bez plaćene verzije.
-Dvije dozvole, activeTab i storage; jedina stranica na kojoj proširenje radi jest www.youtube.com — to je sve što Chrome pri instalaciji misli kad spomene tvoje podatke. U pozadini ne radi ništa: dok nema otvorene YouTube kartice, nešto radi samo skočni prozor u traci preglednika, i to dok je otvoren.
+Samo jedna dozvola, storage; jedina stranica na kojoj proširenje radi jest www.youtube.com — to je sve što Chrome pri instalaciji misli kad spomene tvoje podatke. U pozadini ne radi ništa: dok nema otvorene YouTube kartice, nešto radi samo skočni prozor u traci preglednika, i to dok je otvoren.
 Nema analitike, nema praćenja, do autora ne stiže ništa: ono što pročitaš i utipkaš ne prikuplja se, ne sprema i nikamo ne šalje, a postavke ostaju u ovom pregledniku. Sav kod stiže unutar proširenja; s mreže dolaze samo fontovi različiti od zadanog — s Google Fonts. Otvoren kod pod GPL-3.0, javan na GitHubu.
 
 KAKO POČETI

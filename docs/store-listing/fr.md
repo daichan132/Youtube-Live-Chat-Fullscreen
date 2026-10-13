@@ -7,14 +7,14 @@ PRINCIPALES FONCTIONS
 - Affichage : « Afficher le chat en cas d’inactivité » est activé dès le départ, le chat reste donc là une fois les commandes du lecteur estompées ; avec cette option, « Afficher uniquement le chat » replie l'en-tête et le champ de saisie jusqu'à ce que vous posiez le pointeur dessus.
 - Noms et espacement : « Afficher le nom d'utilisateur » et « Afficher la photo de profil » se coupent sur les messages ordinaires (les messages payants gardent les leurs) ; de 0 à 40 px entre les messages.
 - Préréglages : sept fournis, un clic chacun, plus les vôtres.
-- Clavier : curseurs et sélecteurs répondent aux touches fléchées, chaque commande porte une étiquette pour les lecteurs d'écran ; seuls le redimensionnement, l'affichage de la rangée de commandes et le retour de ce que « Afficher uniquement le chat » replie demandent une souris. Des contrôles WCAG 2.1 AA automatisés couvrent la fenêtre de la barre d'outils, la rangée de commandes et le panneau des réglages à chaque modification.
+- Clavier : curseurs et sélecteurs répondent aux touches fléchées, chaque commande porte une étiquette pour les lecteurs d'écran. Des contrôles WCAG 2.1 AA automatisés couvrent la fenêtre de la barre d'outils, la rangée de commandes et le panneau des réglages à chaque modification.
 
 LE CHAT DE YOUTUBE LUI-MÊME, PAS UNE COPIE
 Le panneau posé sur la vidéo, c'est le chat en direct de YouTube, celui de la colonne de droite, remis en forme : badges, emoji, autocollants et chat réservé aux membres continuent donc de fonctionner. La publication passe par le champ de saisie de YouTube, les Super Chats par son panneau d'achat : le paiement va à YouTube, jamais à l'extension. La seule commande que l'extension y modifie est l'entrée Adhésion, qui ouvre la page d'adhésion de la chaîne dans un nouvel onglet.
 
 CE QUE ÇA COÛTE, CE QUE ÇA COLLECTE
 Gratuit : pas de compte, pas de version payante.
-Deux autorisations, activeTab et storage ; www.youtube.com est le seul site où l'extension s'exécute — c'est tout ce que veut dire le message d'installation de Chrome au sujet de vos données. Rien ne tourne en arrière-plan : sans onglet YouTube ouvert, seule la fenêtre de la barre d'outils fait quelque chose, et seulement tant qu'elle est ouverte.
+Une seule autorisation, storage ; www.youtube.com est le seul site où l'extension s'exécute — c'est tout ce que veut dire le message d'installation de Chrome au sujet de vos données. Rien ne tourne en arrière-plan : sans onglet YouTube ouvert, seule la fenêtre de la barre d'outils fait quelque chose, et seulement tant qu'elle est ouverte.
 Aucune mesure d'audience, aucun pistage, rien qui parte chez le développeur : ce que vous lisez et ce que vous écrivez n'est jamais collecté, conservé ni envoyé ; vos réglages restent dans ce navigateur. Tout le code est livré dans l'extension ; seules les polices autres que celle par défaut viennent de Google Fonts. Open source sous licence GPL-3.0, code public sur GitHub.
 
 POUR COMMENCER

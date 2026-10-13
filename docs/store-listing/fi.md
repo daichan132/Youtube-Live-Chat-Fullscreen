@@ -7,14 +7,14 @@ TÄRKEIMMÄT OMINAISUUDET
 - Näkyvyys: ”Näytä chat käyttämättömänä” on päällä heti alusta, joten chat pysyy näkyvissä, kun hallintapalkki häipyy; sen ollessa päällä ”Näytä vain chat” taittaa piiloon otsikkopalkin ja kirjoituskentän, kunnes viet osoittimen paneelin päälle.
 - Nimet ja välistys: ”Näytä käyttäjänimi” ja ”Näytä profiilikuva” voi kytkeä pois tavallisista viesteistä, maksullisissa nimi ja kuva säilyvät; ”Välistys” viestien välissä 0–40px.
 - Esiasetukset: seitsemän valmista, kukin yhdellä napsautuksella, ja lisäksi omasi.
-- Näppäimistö: liukusäätimet ja värinvalitsimet tottelevat nuolinäppäimiä, ja jokainen säädin on nimetty ruudunlukijaa varten; hiirtä tarvitaan vain painikerivin esiin saamiseen, sen palauttamiseen, minkä ”Näytä vain chat” taittaa piiloon, ja koon muuttamiseen. Automaattiset WCAG 2.1 AA -tarkistukset kattavat jokaisen muutoksen yhteydessä ponnahdusikkunan, painikerivin ja asetuspaneelin.
+- Näppäimistö: liukusäätimet ja värinvalitsimet tottelevat nuolinäppäimiä, ja jokainen säädin on nimetty ruudunlukijaa varten. Automaattiset WCAG 2.1 AA -tarkistukset kattavat jokaisen muutoksen yhteydessä ponnahdusikkunan, painikerivin ja asetuspaneelin.
 
 YOUTUBEN OMA CHAT, EI JÄLJITELMÄ
 Videon päällä oleva paneeli on YouTuben oma livechat sivupalkista, uudella ulkoasulla – siksi merkit, emojit, tarrat ja jäsenten chat toimivat kuten ennenkin. Viestit lähtevät YouTuben omasta viestikentästä ja Super Chatit YouTuben ostopaneelin kautta: maksu menee YouTubelle, ei koskaan laajennukselle. Ainoa asia, jota laajennus siellä muuttaa, on ”Jäsenyys”, joka avaa kanavan liittymissivun uuteen välilehteen.
 
 MITÄ SE MAKSAA JA MITÄ SE KERÄÄ
 Ilmainen: ei tiliä, ei maksullista versiota.
-Kaksi käyttöoikeutta, activeTab ja storage; www.youtube.com on ainoa sivusto, jolla laajennus toimii – tätä Chromen asennusilmoitus tiedoistasi tarkoittaa. Taustalla ei pyöri mitään: kun YouTube-välilehteä ei ole auki, vain työkalurivin ponnahdusikkuna tekee jotain, ja vain silloin kun se on auki.
+Vain yksi käyttöoikeus, storage; www.youtube.com on ainoa sivusto, jolla laajennus toimii – tätä Chromen asennusilmoitus tiedoistasi tarkoittaa. Taustalla ei pyöri mitään: kun YouTube-välilehteä ei ole auki, vain työkalurivin ponnahdusikkuna tekee jotain, ja vain silloin kun se on auki.
 Ei analytiikkaa, ei seurantaa, mitään ei lähde kehittäjälle: lukemaasi ja kirjoittamaasi ei kerätä, tallenneta eikä lähetetä; asetukset pysyvät tässä selaimessa. Kaikki koodi tulee laajennuksen mukana; vain oletusfontin ulkopuoliset fontit haetaan Google Fontsista. Avointa lähdekoodia GPL-3.0-lisenssillä, julkisesti GitHubissa.
 
 NÄIN PÄÄSET ALKUUN

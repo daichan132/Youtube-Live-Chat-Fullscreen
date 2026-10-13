@@ -7,14 +7,14 @@ HLAVNÍ FUNKCE
 - Viditelnost: „Zobrazit chat při nečinnosti“ je zapnuté hned od začátku, takže chat zůstane i po zmizení ovládací lišty přehrávače; při něm „Zobrazit pouze chat“ složí záhlaví a pole pro psaní, dokud na panel nenajedete.
 - Jména a rozestupy: u běžných zpráv vypnete „Zobrazit uživatelská jména“ i „Zobrazit profilové obrázky“, placené si je nechávají; „Rozestup“ mezi zprávami je 0–40 px.
 - Předvolby: sedm vestavěných, každá na jedno kliknutí, plus vaše vlastní.
-- Klávesnice: posuvníky i výběr barev berou šipky a každý prvek má popisek pro čtečku obrazovky; myš potřebuje jen vyvolání řádku ovládání, vrácení toho, co „Zobrazit pouze chat“ složí, a změna velikosti. Automatické kontroly WCAG 2.1 AA běží při každé změně a pokrývají okno na liště, řádek ovládání a panel nastavení.
+- Klávesnice: posuvníky i výběr barev berou šipky a každý prvek má popisek pro čtečku obrazovky. Automatické kontroly WCAG 2.1 AA běží při každé změně a pokrývají okno na liště, řádek ovládání a panel nastavení.
 
 CHAT SAMOTNÉHO YOUTUBE, NE NAPODOBENINA
 Panel nad videem je živý chat samotného YouTube, ten z postranního panelu, jen jinak nastylovaný — proto dál fungují odznaky členů, emoji, samolepky i chat jen pro členy. Odesílání jde přes pole pro psaní od YouTube, Super Chat přes jeho nákupní panel: platba míří k YouTube, nikdy k rozšíření. Jediné, co tam rozšíření mění, je položka členství — otevře stránku pro připojení ke kanálu na nové kartě.
 
 CO STOJÍ A CO SBÍRÁ
 Zdarma: žádná registrace, žádná placená verze.
-Dvě oprávnění, activeTab a storage; jediná stránka, na které rozšíření běží, je www.youtube.com — přesně tolik znamená hláška Chromu o vašich datech. Na pozadí neběží nic: když nemáte otevřenou kartu s YouTube, dělá něco jedině okno na liště, a jen dokud je otevřené.
+Jediné oprávnění, storage; jediná stránka, na které rozšíření běží, je www.youtube.com — přesně tolik znamená hláška Chromu o vašich datech. Na pozadí neběží nic: když nemáte otevřenou kartu s YouTube, dělá něco jedině okno na liště, a jen dokud je otevřené.
 Žádná analytika, žádné sledování, vývojáři se nedostane nic: co čtete a co píšete, se nesbírá, neukládá ani nikam neposílá; nastavení zůstává v tomhle prohlížeči. Veškerý kód je uvnitř rozšíření; ze sítě přijdou jen jiná písma než výchozí — z Google Fonts. Otevřený zdrojový kód pod GPL-3.0, veřejný na GitHubu.
 
 JAK ZAČÍT

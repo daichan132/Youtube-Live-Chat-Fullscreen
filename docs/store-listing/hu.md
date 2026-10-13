@@ -7,14 +7,14 @@ FŐ FUNKCIÓK
 - Láthatóság: a „Csevegés megjelenítése inaktivitáskor” alapból bekapcsolva érkezik, így a csevegés a vezérlők eltűnése után is kint marad; mellette a „Csak a csevegés megjelenítése” összecsukja a fejlécet és az üzenetmezőt, amíg rá nem mutatsz.
 - Nevek és térköz: a hétköznapi üzeneteknél kikapcsolod a „Felhasználónevek megjelenítése” és a „Profilképek megjelenítése” lehetőséget, a fizetősek megtartják a sajátjukat; a „Térköz” az üzenetek között 0–40 px.
 - Sablonok: hét beépített, mind egy kattintás, plusz a sajátjaid.
-- Billentyűzet: a csúszkák és a színválasztók fogadják a nyílbillentyűket, minden vezérlőnek van képernyőolvasó-felirata; egér csak a vezérlősor előhívásához, a „Csak a csevegés megjelenítése” által összecsukott rész visszahozásához és az átméretezéshez kell. Az automatikus WCAG 2.1 AA ellenőrzések minden módosításnál lefutnak a felugró ablakra, a vezérlősorra és a beállítási panelre.
+- Billentyűzet: a csúszkák és a színválasztók fogadják a nyílbillentyűket, minden vezérlőnek van képernyőolvasó-felirata. Az automatikus WCAG 2.1 AA ellenőrzések minden módosításnál lefutnak a felugró ablakra, a vezérlősorra és a beállítási panelre.
 
 A YOUTUBE SAJÁT CSEVEGÉSE, NEM HASONMÁS
 A videó fölötti panel a YouTube saját élő csevegése az oldalsávból, csak más külsővel — ezért működnek továbbra is a tagsági jelvények, az emodzsik, a matricák és a tagoknak szóló csevegés. A küldés a YouTube saját beviteli mezőjén megy át, a Super Chat a vásárlópaneljén: a fizetés a YouTube-hoz kerül, soha nem a bővítményhez. Az egyetlen vezérlő, amit a bővítmény ott megváltoztat, a tagság — új lapon nyitja meg a csatorna csatlakozási oldalát.
 
 MENNYIBE KERÜL, ÉS MIT GYŰJT
 Ingyenes: nincs regisztráció, nincs fizetős csomag.
-Két engedély, az activeTab és a storage; az egyetlen oldal, amelyen fut, a www.youtube.com — a Chrome telepítéskori figyelmeztetése az adataidról pontosan ennyit jelent. A háttérben semmi nem fut: ha nincs nyitva YouTube-lap, egyedül az eszköztár felugró ablaka csinál bármit, és csak amíg nyitva van.
+Egyetlen engedély, a storage; az egyetlen oldal, amelyen fut, a www.youtube.com — a Chrome telepítéskori figyelmeztetése az adataidról pontosan ennyit jelent. A háttérben semmi nem fut: ha nincs nyitva YouTube-lap, egyedül az eszköztár felugró ablaka csinál bármit, és csak amíg nyitva van.
 Nincs analitika, nincs követés, a fejlesztőhöz semmi nem jut el: amit olvasol és amit írsz, azt nem gyűjti, nem tárolja és nem küldi sehová; a beállítások ebben a böngészőben maradnak. A teljes kód a bővítményen belül érkezik; a hálózatról csak az alapértelmezettől eltérő betűtípusok jönnek, a Google Fonts kínálatából. Nyílt forráskód GPL-3.0 alatt, nyilvánosan a GitHubon.
 
 ÍGY KEZDD

@@ -2,22 +2,28 @@
 
 YouTube 上の実表示を確認するときは、基本は専用の Chrome for Testing を使う。ログイン済み UI を見る必要があるときだけ、通常の Google Chrome を専用プロファイルで起動する。
 
-リリース候補ワークフローは Chrome・Firefox・Opera を実 YouTube 上で検証したという申告を必須入力にしている。ここに書いた手順がその証拠を作る手順で、貼り先は [リリース Runbook](release-runbook.md) の手順 4。
+この文書は、読み込んだビルドと実際に操作した範囲を記録するための手順。自動の fixture、production package smoke、実 YouTube canary の結果と、手動で確認した経路は分けて記録する。候補の作成からストア提出までの流れは [リリース Runbook](release-runbook.md) を参照する。
+
+現在の候補ワークフローには手動検証の申告入力はない。配布候補の確認では ZIP のハッシュと対象コミットを照合し、下記の [確認記録](#配布候補ごとの確認記録) をリリースノートや関連する作業記録に残す。
 
 ## 基本手順
 
 ```bash
 yarn build
-yarn verify:browser --port 9335 --url "https://www.youtube.com/watch?v=EWrX250Zhko"
+yarn verify:browser --port 9335 --url "https://www.youtube.com/watch?v=<video_id>"
 ```
 
 `verify:browser` は `.output/chrome-mv3` を読み込む。`.output/chrome-mv3-dev` は WXT dev server 前提で、単体ロードでは content script が入らないことがあるため、手動検証では使わない。
 
 コマンドは起動したままにする。Computer Use を使う場合の対象アプリ名は `Google Chrome for Testing`。
 
+`<video_id>` はその時点で再生でき、チャットが使える動画に置き換える。以前の sample や canary URL は配信終了・削除・年齢制限で使えなくなることがあるため、動画の再生とネイティブチャットを先に確認する。確認中は autoplay を止め、次の動画に切り替わっていないことも確かめる。
+
+候補 ZIP を確認するときは、その ZIP を展開したディレクトリを `--extension /path/to/extracted/chrome` で指定する。`yarn build` で作った出力と候補 ZIP の展開先を混同しない。
+
 ## ログイン済み UI の検証
 
-Google ログインが必要な UI は Chrome for Testing ではなく、通常の Google Chrome を使う。UI 調整中は build ではなく dev 出力を使う。
+Google ログインが必要な UI は、通常の Google Chrome の専用プロファイルで確認する。UI 調整中は dev 出力と起動中の WXT dev server を使う。
 
 ```bash
 yarn dev
@@ -41,10 +47,10 @@ CSS / content script を変更したあとは、`chrome://extensions` でこの�
 
 ```bash
 yarn build
-yarn verify:chrome --setup-extension --port 9336 --url "https://www.youtube.com/watch?v=EWrX250Zhko"
+yarn verify:chrome --setup-extension --port 9336 --url "https://www.youtube.com/watch?v=<video_id>"
 ```
 
-同じ `--port` の Chrome がすでに起動している場合は、process args に `--remote-debugging-port=9336` と `--user-data-dir=~/Library/Application Support/YLC Verify Chrome` がある場合だけ再利用する。一致しない場合は誤った Chrome を触らないために停止する。
+同じ `--port` の Chrome がすでに起動している場合は、指定した port と、起動コマンドが出力した `profileDir` が process args に一致する場合だけ再利用する。プロファイルは `--profile` で変更でき、既定の `~` は実際のホームディレクトリに展開される。一致しない場合は誤った Chrome を触らないために停止する。
 
 Computer Use を使う場合の対象アプリ名は `Google Chrome` だが、同じアプリ名の普段使い Chrome と混ざりやすい。操作前に `verify:chrome` の出力にある `profileDir` と、表示中の URL が検証対象であることを確認する。
 
@@ -69,7 +75,9 @@ yarn verify:overlay --port 9335
 ```
 
 非フルスクリーンでは overlay が未生成でも正常。フルスクリーンに入ったあとに再実行すると、`data-ylc-resizable`、`data-ylc-control-rail`、drag handle、settings button の座標と表示状態を JSON で確認できる。
-フルスクリーン中に拡張 DOM が見つからない場合は `extensionDomMounted: false` を出して非ゼロ終了する。これは検証 Chrome に unpacked extension が読み込まれていない、または YouTube ページを reload していない状態を示す。非フルスクリーンでは `extensionDomExpected: false` なので、拡張 DOM が無くても正常。
+フルスクリーン中に拡張 DOM が見つからない場合は `extensionDomMounted: false` を出して非ゼロ終了する。このコマンドの `extensionDomExpected` は fullscreen だけで決まり、チャットの利用可否を判定しない。チャットなし動画や replay が使えないアーカイブでは、拡張 DOM がなくても正常なため、この結果だけで読み込み失敗とは判断しない。チャットが使える対象で期待した UI がない場合に、読み込んだ拡張と path、ページの reload、診断を確認する。非フルスクリーンでは `extensionDomExpected: false` なので、拡張 DOM が無くても正常。
+
+`verify:overlay` は既定で URL に `youtube.com/watch` を含むタブを探す。`/live` 入口を確認するときは `--url-includes youtube.com/live/` などで対象を明示し、実際の URL と動画が意図したものか確認する。
 
 ログイン済み UI を通常 Google Chrome で見ている場合は、同じ検証 Chrome の CDP port を指定する。
 
@@ -91,6 +99,8 @@ yarn verify:screenshots --port 9335 --out /private/tmp/ylc-overlay-screenshots
 
 ## 見るポイント
 
+利用可能なチャットがある動画で、表示を有効にしてフルスクリーンに入った状態を確認する。チャットなし動画や表示をオフにした状態では、overlay がないことは正常であり、以下の条件は適用しない。
+
 - `fullscreen: true`
 - `extensionDomExpected: true`
 - `extensionDomMounted: true`
@@ -98,7 +108,7 @@ yarn verify:screenshots --port 9335 --out /private/tmp/ylc-overlay-screenshots
 - `elements.controlRail.opacity` がホバー時に `1`
 - `elements.controlRail.pointerEvents` がホバー時に `auto`
 - `elements.controlRail.background` に背景色が入っている
-- `elements.dragHandle.x` が `elements.settingsButton.x` より右側
+- drag handle と settings button が重ならず、両方を操作できること（左右の順序は LTR / RTL で異なる）
 
 検証が終わったら `verify:browser` を起動したターミナルで `Ctrl+C` する。
 
@@ -114,7 +124,9 @@ yarn verify:screenshots --port 9335 --out /private/tmp/ylc-overlay-screenshots
 OS / バージョン:
 ライブ: 成功 / 失敗 / 未確認
 リプレイ: 成功 / 失敗 / 未確認
+チャットなし: 正常（非表示） / 失敗 / 未確認
 全画面解除・再入場: 成功 / 失敗 / 未確認
+SPA 遷移: 成功 / 失敗 / 未確認
 設定（Tab到達・閉じた後のフォーカス）: 成功 / 失敗 / 未確認
 配置（ドラッグ・ボタン移動・拡縮）: 成功 / 失敗 / 未確認
 復旧（状態確認・再試行・診断コピー）: 成功 / 失敗 / 未確認
