@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTubeライブチャットフルスクリーン"
+    "message": "YouTube Live Chat Fullscreen — 全画面でライブチャット"
   },
   "extensionDescription": {
-    "message": "YouTubeの全画面でライブチャットを表示。コメントやスーパーチャットを送信でき、位置・サイズ・透明度を調整。チャットリプレイ付きアーカイブにも対応。"
+    "message": "YouTubeの全画面動画にライブチャットを重ねて表示。コメントやスーパーチャットを送信でき、チャットの位置・サイズ・背景の透明度も調整できます。"
   },
   "popup_theme": {
     "message": "テーマ"

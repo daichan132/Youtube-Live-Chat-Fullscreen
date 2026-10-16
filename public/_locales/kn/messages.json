@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — ಫುಲ್‌ಸ್ಕ್ರೀನ್ ಲೈವ್ ಚಾಟ್"
   },
   "extensionDescription": {
-    "message": "YouTube ಲೈವ್ ಚಾಟ್ ಅನ್ನು ಫುಲ್‌ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಓದಿ, ಉತ್ತರಿಸಿ, Super Chat ಕಳುಹಿಸಿ. ಚಾಟ್ ನೋಟ ಬದಲಿಸಿ, ಹಳೆಯ ಚಾಟ್ ಮರುಪ್ರಸಾರ ನೋಡಿ."
+    "message": "YouTube ವೀಡಿಯೊವನ್ನು ಫುಲ್‌ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ನೋಡಿ, ಅದರ ಮೇಲೆಯೇ ಲೈವ್ ಚಾಟ್ ಓದಿ. ಉತ್ತರಿಸಿ, Super Chat ಕಳುಹಿಸಿ. ಚಾಟ್ ಗಾತ್ರ ಬದಲಿಸಿ."
   },
   "popup_theme": {
     "message": "ಥೀಮ್"

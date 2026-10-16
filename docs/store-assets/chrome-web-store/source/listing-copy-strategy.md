@@ -12,15 +12,19 @@ Prepared on **2026-10-16 (JST)** for all **55 language and region options**. Eng
 | Package short descriptions | [English](../../../../shared/i18n/assets/en.json), [Japanese](../../../../shared/i18n/assets/ja.json), and the three regional English source files |
 | All locale manuscripts and review hashes | [Locale index](listing-copy-locales.md), [hash inventory](listing-copy-locales.json) |
 
+English package title: **YouTube Live Chat Fullscreen**.
+
 English short description, **128 characters**:
 
-> Show YouTube live chat in fullscreen. Send messages and Super Chats, customize the overlay, and watch archives with chat replay.
+> Watch YouTube in fullscreen with a live chat overlay. Send messages and Super Chats, and adjust size, position and transparency.
 
-Japanese short description, **76 characters**:
+Japanese package title: **YouTube Live Chat Fullscreen — 全画面でライブチャット**.
 
-> YouTubeの全画面でライブチャットを表示。コメントやスーパーチャットを送信でき、位置・サイズ・透明度を調整。チャットリプレイ付きアーカイブにも対応。
+Japanese short description, **73 characters**:
 
-All 55 short descriptions are synchronized to authored translation sources and generated manifest messages. They range from **73 to 130 UTF-16 characters**, within the 132-character limit checked by the repository. Titles are not renamed: the existing English manifest name includes “Overlay”, while the description uses the user-selected base brand **YouTube Live Chat Fullscreen**.
+> YouTubeの全画面動画にライブチャットを重ねて表示。コメントやスーパーチャットを送信でき、チャットの位置・サイズ・背景の透明度も調整できます。
+
+All 55 package titles and summaries are synchronized to authored translation sources and generated manifest messages. Titles range from **28 to 66 UTF-16 characters**; summaries range from **62 to 131**, within the 75/132-character limits. English uses the exact formal brand. Non-English titles pair that brand with one localized functional descriptor; they do not add ratings, superlatives, competitor names or unrelated keywords. The [package metadata inventory](package-metadata.md) lists every final title and summary.
 
 ## Search intent and structure
 
@@ -31,7 +35,7 @@ These are feature-based editorial targets, not measured search-volume data:
 | Keep chat while watching a large video | YouTube live chat, fullscreen, full screen | YouTube、全画面、ライブチャット、フルスクリーン | Short description and opening |
 | Put chat over the picture | chat overlay, transparent background | チャットを重ねて表示、背景を透過 | Opening and customization list |
 | Keep the video visible | move and resize, opacity and blur | 位置・サイズ・透明度・ぼかし | Main features |
-| Watch an earlier broadcast with its conversation | archived streams, chat replay | アーカイブ、チャットリプレイ | Short description and supported use cases |
+| Watch an earlier broadcast with its conversation | archived streams, chat replay | アーカイブ、チャットリプレイ | Detailed description and supported use cases |
 | Participate during a live stream | post messages, Super Chats | コメントを送信、スーパーチャット | Short description plus qualified posting section |
 
 The opening states the viewing benefit before setup details. The following sections cover use cases, customization, participation, setup, price, privacy and compatibility. Gaming and VTuber viewing appear once as concrete examples. Short and detailed descriptions are written separately rather than repeated verbatim. There is no public-facing keyword list, competitor-name list, rating claim or promised search position.
@@ -40,7 +44,7 @@ The opening states the viewing benefit before setup details. The following secti
 
 The user requested the installed **yomiyasu** skill. Its principles of preserving meaning, keeping conditions explicit, avoiding invented benefits and using concrete everyday wording were applied to all locales. Japanese grammar guidance was used for Japanese; other languages were edited according to their own word order and vocabulary. Headings name their topic, and the opening describes watching and participating rather than making an unsupported claim about a better experience.
 
-Every manuscript received a writing pass and a separate AI-assisted review. Corrections clarified chat replay versus a new live conversation, opacity versus blur, messages versus private direct messages, and chat appearance versus a person's appearance. The Hungarian summary check now recognizes sending chat messages rather than comments beneath a video, with regression examples for both a lost posting capability and the wrong surface.
+Every manuscript received a writing pass and a separate AI-assisted review. Corrections clarified chat replay versus a new live conversation, opacity versus blur, messages versus private direct messages, and chat appearance versus a person's appearance. The Arabic summary check now accepts the natural broken plural for sending messages while still rejecting reading-only or video-comment claims. The Hungarian summary check recognizes sending chat messages rather than comments beneath a video, with regression examples for both a lost posting capability and the wrong surface.
 
 Japanese yomiyasu lint and diff checks were run, followed by contextual review. The retained list-density candidate reflects five parallel feature items and three setup steps. Repeated polite endings in compatibility statements were retained where they read naturally. Lint output is an editing aid, not proof of human authorship or translation quality. Native-speaker proofreading of every locale has not been performed.
 
@@ -66,6 +70,6 @@ The [public English listing](https://chromewebstore.google.com/detail/youtube-li
 
 ## Validation and publication
 
-Checks passed for all 55 short-description lengths, required posting capabilities, consistent English regional copy, generated translations and store-manuscript contracts. Separate editorial reviews found no unresolved material unsupported feature or keyword-stuffing issue. `yarn verify` passed **965 tests** (799 core/DOM and 166 contracts), with five existing CSS warnings. `yarn test:package` built fresh Chrome and Firefox production packages and passed their contracts. All 55 summaries matched their authored sources in both production outputs (**110 checks**). The [inventory](listing-copy-locales.json) records 110 description/summary hashes, 130 checked local documentation links and the review scope. The Git diff was also checked.
+Checks passed for all 55 title and summary lengths, required posting capabilities, consistent English regional copy, generated translations and store-manuscript contracts. Cross-reviews checked final metadata for unsupported claims, ambiguous posting wording and keyword stuffing. `yarn verify` passed **968 tests** (799 core/DOM and 169 contracts), with five existing CSS warnings. `yarn test:package` built fresh Chrome and Firefox production packages and passed their contracts. All 55 titles and 55 summaries matched their authored sources in both production ZIPs (**220 checks**). The [inventory](listing-copy-locales.json) records description/title/summary hashes, 148 checked local documentation links and the review scope. The Git diff was also checked.
 
-This is prepared repository copy. The dashboard, public listing, version and release tags have not been changed. See the [asset work list](../../../store-listing/asset-work-list.md) for publication work.
+The package metadata in this pass is prepared repository copy and awaits the normal GitHub Actions release. This pass did not change the dashboard, public listing, version or release tags. Earlier saved detailed descriptions and images are recorded separately in the draft evidence. See the [asset work list](../../../store-listing/asset-work-list.md) for publication work.

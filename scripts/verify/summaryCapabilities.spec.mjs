@@ -25,6 +25,7 @@ const DEMOTIONS = [
   { code: 'ru', summary: 'Оверлей возвращает чат поверх видео: читайте сообщения, смотрите Super Chat.' },
   { code: 'id', summary: 'Overlay live chat YouTube di atas video: baca pesan, kirim Super Chat.' },
   { code: 'hu', summary: 'Olvass üzeneteket teljes képernyőn, és küldj Super Chatet.' },
+  { code: 'ar', summary: 'اقرأ الرسائل وأرسل Super Chat.' },
 ]
 
 /**
@@ -39,6 +40,7 @@ const WRONG_SURFACE = [
   { code: 'tr', summary: 'YouTube canlı sohbetini videonun üzerinde tutan kaplama: yorum yazın, Super Chat gönderin.' },
   { code: 'vi', summary: 'Lớp phủ giữ chat trực tiếp YouTube ngay trên video: đọc và viết bình luận, gửi Super Chat.' },
   { code: 'hu', summary: 'Írj hozzászólást a videó alá, és küldj Super Chatet.' },
+  { code: 'ar', summary: 'اكتب تعليقات وأرسل Super Chat.' },
 ]
 
 const satisfies = (code, summary) => SUMMARY_CAPABILITIES[code].every(pattern => pattern.test(summary))
@@ -50,6 +52,10 @@ describe('store summary capability patterns', () => {
 
   it.each(localeCodes)('accepts the summary %s actually ships', code => {
     expect(satisfies(code, summaryOf(code))).toBe(true)
+  })
+
+  it('accepts the Arabic broken plural for sending messages', () => {
+    expect(satisfies('ar', 'أرسل رسائل وSuper Chat.')).toBe(true)
   })
 
   it.each(DEMOTIONS)('rejects $code demoted from posting to reading', ({ code, summary }) => {

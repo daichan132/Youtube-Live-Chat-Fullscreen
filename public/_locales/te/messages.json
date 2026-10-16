@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube లైవ్ చాట్ ఫుల్‌స్క్రీన్"
+    "message": "YouTube Live Chat Fullscreen — ఫుల్‌స్క్రీన్ లైవ్ చాట్"
   },
   "extensionDescription": {
-    "message": "YouTube లైవ్ చాట్‌ను ఫుల్‌స్క్రీన్‌లో చదవండి, మెసేజ్ పంపండి. Super Chat పంపండి, చాట్ రూపాన్ని మార్చండి, చాట్ రీప్లే చూడండి."
+    "message": "YouTube వీడియో ఫుల్‌స్క్రీన్‌లో చూడండి, వీడియోపైనే లైవ్ చాట్ చదవండి. మెసేజ్ పంపండి, Super Chat పంపండి. చాట్ పరిమాణం మార్చండి."
   },
   "popup_theme": {
     "message": "థీమ్"

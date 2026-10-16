@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Toàn Màn Hình"
+    "message": "YouTube Live Chat Fullscreen — Chat trên video toàn màn hình"
   },
   "extensionDescription": {
-    "message": "Đọc và trả lời chat YouTube khi xem toàn màn hình. Gửi Super Chat, chỉnh nền trong suốt và xem lại cuộc trò chuyện."
+    "message": "Xem YouTube toàn màn hình với chat trực tiếp trên video. Trả lời, gửi Super Chat, chỉnh độ trong suốt, vị trí và kích thước chat."
   },
   "popup_theme": {
     "message": "Giao diện"

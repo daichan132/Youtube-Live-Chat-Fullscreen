@@ -30,11 +30,11 @@ The real native composer is visible, editable and unobstructed in all three capt
 
 - Primary detailed description: [English](../../store-listing/en.md), also used for [Australia](../../store-listing/en_AU.md), [United Kingdom](../../store-listing/en_GB.md), and [United States](../../store-listing/en_US.md).
 - Localized descriptions: [all 55 language and region options](source/listing-copy-locales.md), including [Japanese](../../store-listing/ja.md).
-- Title sources and prepared short descriptions: [copy.json](copy.json). All 55 summaries are synchronized to their package translation sources.
+- Package titles and summaries: [all 55 options](source/package-metadata.md), with [source references](copy.json). Both fields are synchronized to their package translation sources.
 - Copy rationale and search-intent mapping: [listing-copy-strategy.md](source/listing-copy-strategy.md), updated on 2026-10-16.
 - Publication status: [asset work list](../../store-listing/asset-work-list.md).
 
-The package title and summary come from `extensionName` and `extensionDescription` in `shared/i18n/assets/*.json`. All 55 summaries in `copy.json` match those authored sources. Every detailed description was revised on 2026-10-16 for clear search intent and feature discovery, using plain local wording while preserving product facts. Posting and paid features depend on YouTube login and eligibility; archives need an available chat replay. The [locale inventory](source/listing-copy-locales.json) records source hashes and review scope.
+The package title and summary come from `extensionName` and `extensionDescription` in `shared/i18n/assets/*.json`. All 55 package titles have been reviewed, and summaries in `copy.json` match those authored sources. English uses the exact formal name; other languages add one localized functional descriptor. Every detailed description was revised on 2026-10-16 for clear search intent and feature discovery, using plain local wording while preserving product facts. Posting and paid features depend on YouTube login and eligibility; archives need an available chat replay. The [locale inventory](source/listing-copy-locales.json) records source hashes and review scope.
 
 ## Captures and verification
 

@@ -18,7 +18,7 @@ The user selected **06 — インディゴの重なり** on **2026-10-16 (JST)**
 
 ## Copy revised on 2026-10-16
 
-All **55 language and region options** now lead with fullscreen viewing and live chat, followed by transparent overlay controls, supported use cases and chat replay. Posting conditions, local settings, external services and compatibility remain explicit. Short descriptions are **73–130 characters** and synchronized to authored translations and generated manifest messages; English is **128**, Japanese is **76**. [The locale index](../store-assets/chrome-web-store/source/listing-copy-locales.md), [copy sources](../store-assets/chrome-web-store/copy.json) and [editing rationale](../store-assets/chrome-web-store/source/listing-copy-strategy.md) record the prepared text, review scope and official guidance. All manuscripts received a writing pass and a separate review using plain-language and meaning-preservation principles from yomiyasu. This is AI-assisted editorial review, not native-speaker certification. The public store listing has not been updated.
+All **55 language and region options** now lead with fullscreen viewing and live chat, followed by transparent overlay controls, supported use cases and chat replay. Posting conditions, local settings, external services and compatibility remain explicit. Package titles are **28–66 characters** and short descriptions are **62–131 characters** and synchronized to authored translations and generated manifest messages; English is **128**, Japanese is **73**. [The locale index](../store-assets/chrome-web-store/source/listing-copy-locales.md), [copy sources](../store-assets/chrome-web-store/copy.json) and [editing rationale](../store-assets/chrome-web-store/source/listing-copy-strategy.md) record the prepared text, review scope and official guidance. All manuscripts received a writing pass and a separate review using plain-language and meaning-preservation principles from yomiyasu. This is AI-assisted editorial review, not native-speaker certification. The public store listing has not been updated.
 
 ## Prepared on 2026-10-14
 
@@ -43,7 +43,7 @@ Those images used the published **2.3.15** extension observed in normal Chrome. 
 ## Publication work remaining
 
 1. Confirm the released UI matches the captured **2.3.16 production candidate**; refresh captures if the release changes the visible behavior.
-2. Distribute the prepared short descriptions in `extensionDescription` through the normal GitHub Actions release workflow. No new version was registered during the draft update.
+2. Distribute the prepared package titles in `extensionName` and short descriptions in `extensionDescription` through the normal GitHub Actions release workflow. No new version was registered during the draft update.
 3. Review the saved dashboard draft before submitting it for review. The selected **06 — インディゴの重なり** tile, three screenshots and all 55 detailed descriptions are already saved. The user reported saving the matching indigo marquee in the draft; that follow-up has not been independently verified. Localized images remain optional future work.
 4. After the user submits and the store publishes the update, inspect the public listing and record a fresh publication snapshot.
 

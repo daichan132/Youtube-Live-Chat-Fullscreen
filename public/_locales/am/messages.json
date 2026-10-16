@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat ሙሉ ስክሪን"
+    "message": "YouTube Live Chat Fullscreen — በሙሉ ማያ ገጽ ቻት"
   },
   "extensionDescription": {
-    "message": "የYouTube ቀጥታ ቻትን በሙሉ ማያ ገጽ በቪዲዮው ላይ ይመልከቱ። መልዕክት ይላኩ፣ Super Chat ይላኩ፣ የቻቱን ገጽታ ያስተካክሉ።"
+    "message": "በሙሉ ማያ ገጽ በሚታየው የYouTube ቪዲዮ ላይ ቀጥታ ቻት ይመልከቱ። መልዕክት ይላኩ፣ Super Chat ይላኩ። የቻቱን ግልጽነት፣ መጠንና ቦታ ይቀይሩ።"
   },
   "popup_theme": {
     "message": "ገጽታ"

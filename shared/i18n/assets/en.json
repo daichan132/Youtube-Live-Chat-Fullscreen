@@ -136,6 +136,6 @@
       "checking": "Checking…"
     }
   },
-  "extensionName": "YouTube Live Chat Fullscreen Overlay",
-  "extensionDescription": "Show YouTube live chat in fullscreen. Send messages and Super Chats, customize the overlay, and watch archives with chat replay."
+  "extensionName": "YouTube Live Chat Fullscreen",
+  "extensionDescription": "Watch YouTube in fullscreen with a live chat overlay. Send messages and Super Chats, and adjust size, position and transparency."
 }

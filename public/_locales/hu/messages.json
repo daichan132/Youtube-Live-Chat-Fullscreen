@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Csevegés a teljes képernyős videón"
   },
   "extensionDescription": {
-    "message": "A YouTube élő csevegése teljes képernyőn: küldj üzeneteket és Super Chatet, és alakítsd a panel megjelenését."
+    "message": "Nézd a YouTube-ot teljes képernyőn, csevegéssel a videón. Küldj üzenetet és Super Chatet, és állítsd a panel átlátszóságát."
   },
   "popup_theme": {
     "message": "Téma"

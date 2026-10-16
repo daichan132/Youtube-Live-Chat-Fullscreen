@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Otsevestlus täisekraanil"
   },
   "extensionDescription": {
-    "message": "YouTube’i otsevestlus täisekraanil: loe sõnumeid, vasta ja saada Super Chate. Kohanda paneeli ning jälgi vestluse taasesitust."
+    "message": "Vestlus YouTube’i video peal ka täisekraanil. Vasta, saada Super Chate ning muuda paneeli suurust ja läbipaistvust."
   },
   "popup_theme": {
     "message": "Teema"

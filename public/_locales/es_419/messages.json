@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Chat en pantalla completa"
   },
   "extensionDescription": {
-    "message": "Chat en vivo de YouTube en pantalla completa: responde, envía Super Chats y ajusta el panel. También con repetición del chat."
+    "message": "Chat sobre el video de YouTube en pantalla completa. Responde, envía Super Chats y ajusta tamaño y transparencia."
   },
   "popup_theme": {
     "message": "Tema"

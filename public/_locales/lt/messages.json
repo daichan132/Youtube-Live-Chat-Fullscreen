@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Pokalbis virš vaizdo visame ekrane"
   },
   "extensionDescription": {
-    "message": "YouTube tiesioginis pokalbis visame ekrane: atsakykite, siųskite Super Chat ir keiskite skydelį. Taip pat su pokalbio pakartojimu."
+    "message": "Žiūrėkite YouTube visame ekrane, o pokalbį – virš vaizdo. Atsakykite, siųskite Super Chat ir keiskite skaidrumą."
   },
   "popup_theme": {
     "message": "Tema"

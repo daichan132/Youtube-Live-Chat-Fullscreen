@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat تمام‌صفحه"
+    "message": "YouTube Live Chat Fullscreen — چت روی ویدیوی تمام‌صفحه"
   },
   "extensionDescription": {
-    "message": "چت زندهٔ YouTube روی ویدیو در حالت تمام‌صفحه. پیام‌ها را بخوانید، پاسخ بدهید و Super Chat بفرستید. ظاهر چت را تنظیم کنید."
+    "message": "YouTube را تمام‌صفحه با چت روی ویدیو ببینید. پیام و Super Chat بفرستید و اندازه و شفافیت چت را تنظیم کنید."
   },
   "popup_theme": {
     "message": "پوسته"

@@ -67,7 +67,7 @@ export const SUMMARY_CAPABILITIES = {
   ko: [/(?:채팅|메시지)[을를도]?\s*(?:보내|보냅|남기|남깁)/i, /슈퍼챗|super ?chat/i],
   zh_CN: [/发(?:送|表)?(?:留言|消息)|发言/i, /super ?chat|超级留言/i],
   zh_TW: [/發(?:送|表)?(?:訊息|留言)|發言/i, /super ?chat|超級留言/i],
-  ar: [/ردّ?\s*عليها|(?:اكتب|أرسل|ارسل)\s+رسال/i, /super\s*chat/i],
+  ar: [/ردّ?\s*عليها|(?:اكتب|أرسل|ارسل)\s+(?:رسال|رسائل)/i, /super\s*chat/i],
   he: [/(?:כתבו|שלחו)\s+הודע/i, /super\s*chat/i],
   fa: [/پاسخ\s*(?:بدهید|دهید)|پیام[\s\S]{0,20}بفرست/i, /super\s*chat/i],
   en: [POSTS_A_MESSAGE, /super\s*chats?/i],

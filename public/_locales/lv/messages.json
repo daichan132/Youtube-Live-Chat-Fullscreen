@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Čats virs video pilnekrānā"
   },
   "extensionDescription": {
-    "message": "YouTube tiešraides čats pilnekrānā: atbildiet, sūtiet Super Chat un pielāgojiet paneli. Sekojiet arī čata atkārtojumam."
+    "message": "Skatieties YouTube pilnekrānā ar čatu virs video. Atbildiet, sūtiet Super Chat un pielāgojiet čata izmēru un caurspīdīgumu."
   },
   "popup_theme": {
     "message": "Motīvs"

@@ -136,6 +136,6 @@
       "checking": "Checking…"
     }
   },
-  "extensionName": "YouTube 直播全屏聊天",
-  "extensionDescription": "YouTube 全屏也能看直播聊天、发消息和发送 Super Chat。聊天窗口叠加在视频上，可调透明度、位置和大小，也支持带聊天回放的直播录像。"
+  "extensionName": "YouTube Live Chat Fullscreen — 全屏直播聊天",
+  "extensionDescription": "全屏看 YouTube，直播聊天直接叠加在视频上。发消息、发送 Super Chat，还能调整聊天窗口的透明度、位置和大小。"
 }

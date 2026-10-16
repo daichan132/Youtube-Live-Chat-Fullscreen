@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Chat di layar penuh"
   },
   "extensionDescription": {
-    "message": "Baca dan balas live chat YouTube dalam layar penuh. Kirim Super Chat, atur tampilan overlay, dan ikuti pemutaran ulang chat."
+    "message": "Tonton YouTube dalam layar penuh dengan live chat di atas video. Balas pesan, kirim Super Chat, atur posisi dan ukuran chat."
   },
   "popup_theme": {
     "message": "Tema"

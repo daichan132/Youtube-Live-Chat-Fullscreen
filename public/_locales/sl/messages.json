@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Klepet čez video na celem zaslonu"
   },
   "extensionDescription": {
-    "message": "YouTube klepet v živo čez video na celem zaslonu. Beri sporočila, odgovarjaj in pošiljaj Super Chat. Prilagodi videz klepeta."
+    "message": "Glej YouTube na celem zaslonu s klepetom čez video. Odgovarjaj, pošiljaj Super Chat ter nastavi velikost in prosojnost klepeta."
   },
   "popup_theme": {
     "message": "Tema"

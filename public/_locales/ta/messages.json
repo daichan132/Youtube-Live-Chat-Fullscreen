@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube நேரலை அரட்டை முழுத்திரை"
+    "message": "YouTube Live Chat Fullscreen — முழுத்திரை நேரலை அரட்டை"
   },
   "extensionDescription": {
-    "message": "YouTube நேரலை அரட்டையை முழுத்திரையில் படித்து, பதில் அனுப்புங்கள். Super Chat அனுப்பலாம், அரட்டையின் தோற்றத்தை மாற்றலாம்."
+    "message": "YouTube முழுத்திரை வீடியோவின் மேல் நேரலை அரட்டையைப் படியுங்கள். பதில் அனுப்புங்கள், Super Chat அனுப்புங்கள். அரட்டை அளவை மாற்றலாம்."
   },
   "popup_theme": {
     "message": "தீம்"

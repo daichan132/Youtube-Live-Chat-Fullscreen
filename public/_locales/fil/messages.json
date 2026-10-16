@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Live chat sa fullscreen"
   },
   "extensionDescription": {
-    "message": "Basahin ang live chat ng YouTube at sumagot habang fullscreen. Magpadala ng Super Chat at ayusin ang transparent na overlay."
+    "message": "Manood ng YouTube nang fullscreen na may live chat sa ibabaw ng video. Sumagot, magpadala ng Super Chat at ilipat ang chat."
   },
   "popup_theme": {
     "message": "Tema"

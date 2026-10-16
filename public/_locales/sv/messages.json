@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat Fullscreen"
+    "message": "YouTube Live Chat Fullscreen — Livechatt i helskärm"
   },
   "extensionDescription": {
-    "message": "YouTubes livechatt i helskärm: läs meddelanden, svara och skicka Super Chats. Anpassa panelen och följ chattrepriser."
+    "message": "Livechatt ovanpå YouTube-videon i helskärm. Svara, skicka Super Chats och justera storlek och genomskinlighet."
   },
   "popup_theme": {
     "message": "Tema"

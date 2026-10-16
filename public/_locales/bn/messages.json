@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat ফুলস্ক্রিন"
+    "message": "YouTube Live Chat Fullscreen — পূর্ণপর্দায় লাইভ চ্যাট"
   },
   "extensionDescription": {
-    "message": "YouTube ফুলস্ক্রিনে লাইভ চ্যাট পড়ুন, উত্তর দিন ও Super Chat পাঠান। চ্যাটের স্বচ্ছতা, অবস্থান ও আকার বদলান, চ্যাট রিপ্লে দেখুন।"
+    "message": "YouTube ভিডিও পূর্ণপর্দায় দেখুন, ভিডিওর ওপরেই লাইভ চ্যাট পড়ুন। উত্তর দিন, Super Chat পাঠান। চ্যাটের অবস্থান ও আকার বদলান।"
   },
   "popup_theme": {
     "message": "থিম"

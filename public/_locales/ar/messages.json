@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "YouTube Live Chat ملء الشاشة"
+    "message": "YouTube Live Chat Fullscreen — دردشة فوق الفيديو بملء الشاشة"
   },
   "extensionDescription": {
-    "message": "دردشة YouTube المباشرة فوق الفيديو بملء الشاشة. اقرأ الرسائل، ردّ عليها وأرسل Super Chat. خصّص مظهر الدردشة."
+    "message": "شاهد YouTube بملء الشاشة مع الدردشة فوق الفيديو. أرسل رسائل وSuper Chat، وغيّر حجم الدردشة وشفافيتها."
   },
   "popup_theme": {
     "message": "المظهر"
