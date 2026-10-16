@@ -1,0 +1,13 @@
+{
+  "id": "01",
+  "nameJa": "アイコニック・ブラック",
+  "headline": "Big screen. Live chat.",
+  "prompt": "Use case: ads-marketing.\nAsset type: one Chrome Web Store listing promotional tile for the browser extension YouTube Live Chat Fullscreen. Final landscape image ratio exactly 11:7, ideally 1760 x 1120 pixels. Compose one finished ad, not a collage, not a grid of alternatives.\nCreative direction: a striking iconic premium entertainment poster. Matte near-black background, vivid vermilion red, warm off-white. A single large red play triangle smoothly interlocks with a bold off-white speech bubble, a simple original emblem suggesting a video with live chat. Integrate restrained off-white fullscreen corner brackets around the emblem. The icon is oversized and visually unforgettable, with generous negative space and carefully balanced asymmetry. Flat graphic clarity and extremely subtle tactile print grain, no 3D. This is a promotional concept, not a literal screenshot.\nTypography: set exactly \"Big screen.\" on one line and \"Live chat.\" on the next, lower left, large elegant contemporary grotesk type in warm off-white. Carefully kerned, precise punctuation. The words are the only typography in the image. Strong hierarchy, good margins, readable when reduced to 440 x 280 pixels.\nFunction to convey: the extension keeps live chat with you while video is fullscreen.\nAvoid: physical monitors, rooms, streamer photographs, cars, gamer neon, gradients, glossy glass panels, feature badges, charts, Chrome or YouTube logos, real creators, unofficial certification or store status claims, watermark, tiny text. Keep the final image sophisticated, quiet, bold and editorial.",
+  "revisionPrompt": "Edit this exact ad into a compact 11:7 landscape tile. Final canvas must be 1760 pixels wide and 1120 pixels tall, ratio 1.5714:1. Do not output an ultra-wide panoramic banner. Preserve the same near-black matte, vermilion red, warm off-white, flat editorial identity. Recompose rather than crop or stretch: put the red play triangle / off-white speech bubble emblem and fullscreen brackets centered in the upper 60% and the two-line headline in the lower 35%, flush left with generous 7% margins. Accurately render the only text exactly \"Big screen.\" then \"Live chat.\". Keep all icon parts and headline comfortably inside this compact aspect ratio. One finished Chrome extension store-listing ad. No new extra text, logos, UI, or objects.",
+  "originalPath": "originals/01.png",
+  "conceptNote": "黒地に再生・吹き出し・全画面の記号を一つにまとめたポスター。最小限の英語コピーで縮小時にも読める構成。初稿は横長すぎたため11:7へ再構成した。",
+  "tool": "built-in image_gen",
+  "illustrative": true,
+  "nativeDimensions": { "width": 1573, "height": 1000 },
+  "qa": { "headlineAccurate": true, "officialLogoAbsent": true }
+}

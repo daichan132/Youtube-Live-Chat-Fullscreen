@@ -1,29 +1,33 @@
-Du går till helskärm på en YouTube-livesändning och chatten försvinner. Det här tillägget lägger tillbaka den ovanpå videon, så att du läser varje meddelande, svarar och under en livesändning skickar Super Chats utan att lämna helskärmen.
+Behåll livechatten på skärmen när du tittar på YouTube i helskärm.
+YouTube Live Chat Fullscreen är ett gratis Chrome-tillägg som lägger konversationen ovanpå videon. Följ livesändningen, läs meddelanden och svara utan att lämna spelaren.
 
-HUVUDFUNKTIONER
-- Placering och storlek: dra panelen dit du vill ovanpå spelaren och dra i vilken kant eller vilket hörn som helst för att ändra storleken; båda skalar med spelaren, så en layout du gör på en laptop sitter lika bra på en 32-tumsskärm.
-- Text: ”Textstorlek” 10 till 40px (13px som standard; 40px är ungefär tre gånger vanlig chattext), egen textfärg, en egen färg för medlemsnamn, 50 teckensnitt.
-- Bakgrund: panelen startar helt täckande vit; färg och genomskinlighet från en och samma färgväljare, plus 0–20px ”Oskärpa” – den inställning som mest sannolikt går ut över mjukheten, så ta det försiktigt på en äldre dator.
-- Visning: ”Visa chatten vid inaktivitet” är påslaget från början, så chatten ligger kvar när kontrollraden tonar bort; med den på fäller ”Visa endast chatten” ihop rubriken och skrivfältet tills du för pekaren över panelen.
-- Namn och mellanrum: ”Visa användarnamn” och ”Visa profilbild” går att stänga av för vanliga meddelanden, betalda behåller namn och bild; ”Mellanrum” 0–40px mellan meddelandena.
-- Förinställningar: sju inbyggda, ett klick var, plus dina egna.
-- Tangentbord: reglage och färgväljare tar piltangenter och varje kontroll är märkt för skärmläsare. Automatiska kontroller mot WCAG 2.1 AA täcker popupen, knappraden och inställningspanelen vid varje ändring.
+Livesändningar och chattrepriser
+Se spelstreamar, VTuber-sändningar och liveevenemang med videon och samtalet i samma vy. På sparade sändningar med tillgänglig chattrepris kan du följa meddelandena från den ursprungliga sändningen.
 
-YOUTUBES EGEN CHATT, INGEN KOPIA
-Panelen ovanpå videon är YouTubes egen livechatt från sidofältet, med nytt utseende – därför fungerar allt precis som förut: märken, emojier, klistermärken och chatt för medlemmar. Du skriver via YouTubes eget skrivfält och Super Chats går via YouTubes köppanel: betalningen går till YouTube, aldrig till tillägget. Det enda tillägget ändrar där är ”Medlemskap”, som öppnar kanalens anslutningssida i en ny flik.
+Anpassa chattpanelen
+- Genomskinlig bakgrund: Justera opacitet och oskärpa så att videon syns bakom chatten.
+- Placering och storlek: Dra panelen bort från det du vill se och ändra bredd och höjd.
+- Läsbarhet: Välj teckensnitt, textstorlek, textfärg, bakgrundsfärg och avstånd mellan meddelanden.
+- Sparade stilar: Välj en förinställd stil eller spara dina egna utseendeinställningar.
+- Färre detaljer: Dölj användarnamn och profilbilder i vanliga meddelanden, eller fäll ihop skrivfältet tills du använder chatten.
 
-VAD DET KOSTAR, VAD DET SAMLAR IN
-Gratis: inget konto, ingen betalversion.
-Bara en behörighet, storage; www.youtube.com är den enda webbplats tillägget körs på – mer betyder inte Chromes installationsvarning om dina data. I bakgrunden körs ingenting: utan en öppen YouTube-flik är det bara popupen i verktygsfältet som gör något, och bara medan den är öppen.
-Ingen analys, ingen spårning, inget till utvecklaren: det du läser och skriver samlas aldrig in, lagras eller skickas; inställningarna stannar i den här webbläsaren. All kod ligger i tillägget; bara teckensnitt utöver standardteckensnittet hämtas från Google Fonts. Öppen källkod under GPL-3.0, publik på GitHub.
+Läs och delta
+Panelen använder YouTubes egen chatt med emojier, medlemsmärken och skrivfält. Logga in för att skicka meddelanden under en livesändning. Super Chats är fortfarande tillgängliga där de stöds. Meddelanden och betalfunktioner följer plattformens krav och kanalens inställningar. På inspelningar spelas den ursprungliga chatten upp; det är inget nytt livesamtal.
 
-SÅ KOMMER DU IGÅNG
-1. Installera tillägget och öppna en livesändning eller ett arkiv med chattrepris.
-2. Ställ spelaren i helskärm – chatten är redan där.
-3. En pratbubbelknapp i kontrollraden stänger av och sätter på den; för pekaren över chatten, så ändrar dess egen inställningsknapp utseendet.
+Kom igång
+1. Installera tillägget och öppna en livesändning eller en inspelning med chattrepris.
+2. Gå till helskärm med videospelarens helskärmsknapp.
+3. Håll pekaren över chatten för att flytta den, ändra storlek eller öppna inställningarna.
+Chattknappen bland spelarens kontroller visar eller döljer panelen. Om du tidigare har stängt av funktionen aktiverar du helskärmschatten igen i tilläggets popupfönster i verktygsfältet.
 
-VAR DET FUNGERAR
-Bara på datorn, bara i helskärm på en visningssida med chatt. Den här Chrome-versionen fungerar även i Opera; Firefox har en egen version på addons.mozilla.org. Gränssnittet finns i 55 alternativ för 49 språk.
+Gratis och med öppen källkod
+Tillägget kräver varken ett separat konto eller en prenumeration. Källkoden är offentlig på GitHub under GPL-3.0. Videoplattformens betalfunktioner är separata från det kostnadsfria tillägget.
+
+Integritet och behörigheter
+Inställningarna stannar i den här webbläsaren via behörigheten storage. Tillägget körs på www.youtube.com, använder ingen analys eller spårning och skickar varken chattinnehåll eller visningshistorik till utvecklaren. Den inbyggda chatten ansluter till YouTubes tjänster. Valfria teckensnitt hämtas från Google Fonts.
+
+Kompatibilitet
+För Chrome på datorer och videor med livechatt eller tillgänglig chattrepris. Videor utan chatt visar ingen panel. Kompatibiliteten med Opera och andra Chromium-baserade webbläsare kan variera; en separat Firefox-version finns på addons.mozilla.org. Inställningarna kan styras med tangentbordet och har 55 språkalternativ.
 
 Rapportera ett fel eller föreslå en funktion: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Källkod: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen

@@ -1,0 +1,20 @@
+{
+  "id": "04",
+  "nameJa": "VTuberとTop chat",
+  "headline": "Fullscreen\nLive Chat",
+  "prompt": "Use case: ads-marketing.\nCreate ONE polished Chrome extension store discovery tile, landscape EXACT 11:7 aspect ratio, 1760 by 1120 px. Concept 04: ORIGINAL VTUBER STREAM, authentic YouTube Live Chat UI language.\n\nInput reference images are STYLE REFERENCE ONLY for the real YouTube chat panel anatomy and restrained UI treatment. Do NOT reproduce either image's real streamer, real game, real handles, real comments, or actual footage. Draw entirely original promotional artwork.\n\nComposition: a dark charcoal header occupying roughly top 34% with huge, tight, impeccably typeset white and red sans-serif heading on two lines:\n\"Fullscreen\"\n\"Live Chat\"\nThese EXACT words must dominate and be readable at 440 x 280. Fullscreen is ONE word, capital F, remainder lower-case. Live Chat has capital L and C. Add tiny contextual text \"YouTube Live Chat Fullscreen\" only if space permits.\nThe lower 66% is a full-bleed wide original game stream: saturated lavender/blue fantasy rhythm game scene, ORIGINAL joyful anime VTuber avatar with short dark violet hair, orange jacket, headphones, occupying lower-left INSIDE the video. The avatar is part of a stream overlay inside the wide video, never a giant floating portrait outside it. Keep the face visible.\nOverlay ONE native YouTube-style chat pane INSIDE upper right of this stream, width about 30% of tile. Flat near-black #161616 rectangular pane, very modest 3px corners, no outline glow, no detached bubbles or cards. It must read like the real YouTube live chat from the references.\nHeader \"Top chat\" with small down-chevron beside it and vertical ⋮ at far right, subtle horizontal bottom line.\nBody 7 compact rows. Each row has a small circular colored avatar, muted-gray @handle and WHITE comment IN THE SAME LINE directly beside the handle. Use only these fictional rows:\n\"@alex GG\"\n\"@mira that was close\"\n\"@sam let's go!\"\n\"@luna nice timing\"\n\"@kai one more!\"\n\"@jules amazing\"\n\"@rin we got this\"\nNo giant separate placeholder lines. Do not put comments beneath handles. Compact consistent row gaps like actual YouTube chat.\nFooter separated by thin line: own small round avatar, underlined minimal text input placeholder \"Chat...\", with simple smiley outline and outlined send-triangle at lower right. This must clearly look like viewers can type a comment.\nTiny white video playback progress/control strip and fullscreen corner symbol may appear at bottom, low contrast. No YouTube logo or Chrome logo, no official marks, no badges or viewer counts. No physical monitor, no gamer room, no Discord/Messenger bubble UI. Premium flat product marketing graphic, crisp graphic hierarchy, clean editorial spacing, entertainment energy via original stream color not neon UI. Make the tile an 11:7 rectangle, NOT a very wide panorama.",
+  "referencePaths": ["../../inputs/en/live-gaming.png", "../../inputs/en/transparent-live.png"],
+  "originalPath": "originals/04.png",
+  "conceptNote": "Original anime VTuber inside a colorful rhythm-game stream; restrained native YouTube-style chat at the right.",
+  "requiredWords": ["Fullscreen", "Live Chat"],
+  "uiTreatment": "Top chat with chevron and kebab; inline muted handles and white comments, circular avatars; underlined composer and outlined send.",
+  "generationMode": "built-in imagegen",
+  "visualInspection": {
+    "requiredWordsCorrect": true,
+    "nativeChatAnatomy": true,
+    "actualScreenshot": false,
+    "aspectRatioTarget": "11:7",
+    "observedDimensions": [1572, 1001],
+    "aspectErrorPercent": 0.064
+  }
+}

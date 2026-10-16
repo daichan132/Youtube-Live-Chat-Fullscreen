@@ -1,0 +1,354 @@
+{
+  "recordedOn": "2026-10-16",
+  "reason": "Repository pre-commit formatting was applied after image exports. Generation manifests retain original source hashes; exported image bytes are unchanged. This record maps changed source bytes to their formatted repository versions.",
+  "sources": [
+    {
+      "manifest": "listing-promo/abstract-youtube-20261015/exports/manifest.json",
+      "file": "listing-promo/abstract-youtube-20261015/source/artwork.mjs",
+      "generationSha256": "e38531fad2ed1371c81f89b5de4e145375a1b17ab8cb1212e661f41a93560fb8",
+      "repositorySha256": "19fa02e5c41bf3c575762ba10e3c17f9f2b0d5f4b42393b881926eca36a1e770"
+    },
+    {
+      "manifest": "listing-promo/abstract-youtube-20261015/exports/manifest.json",
+      "file": "listing-promo/abstract-youtube-20261015/source/render.mjs",
+      "generationSha256": "cea1a23739c92923ac36b8891b24007666c2a473b810aae56e02023265f8d03b",
+      "repositorySha256": "8643a2f731f9c5f8e11064dd9ecd378226cdbd9529ee385efe0b14a192909237"
+    },
+    {
+      "manifest": "listing-promo/text-free-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/text-free-imagegen-20261015/prompts.md",
+      "generationSha256": "9c90a0f96c4bee5adaea33da91cfb69f384847a700e4491ef8cd34661ece4c94",
+      "repositorySha256": "e5c9ba2bb9825ab810f170ddb2378962ea6be8f3515e7e2bd7b0f03ec8e23122"
+    },
+    {
+      "manifest": "listing-promo/text-free-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/text-free-imagegen-20261015/source/render.mjs",
+      "generationSha256": "4e1b26af02c3e369d37bb698b972a7c36e98dcfe0ba445de1314e5b637f44268",
+      "repositorySha256": "895c046f72ad9df458976a9a7559e39d2abcd7e56fd5c01ac815831ab283fe1e"
+    },
+    {
+      "manifest": "listing-promo/balanced-name-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/balanced-name-imagegen-20261015/prompts.md",
+      "generationSha256": "82c2f257efdfd8481d9d811f7daba4ec10b6f47fd8f559f9ed644dc012b31c0d",
+      "repositorySha256": "148ca09c0e65852764b4441d98a30dd7df6b4f7f364fbf8a8098ace7d2c465b9"
+    },
+    {
+      "manifest": "listing-promo/balanced-name-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/balanced-name-imagegen-20261015/source/render.mjs",
+      "generationSha256": "5826cc68de8c0d1ef1636fcbddbb02512398a69afd21498d0fed6e6d6c311a6f",
+      "repositorySha256": "566d70d3c6dfcb6a438c24a756ccbecd2ecc4080e61f6a21b6cdcd5325924b1c"
+    },
+    {
+      "manifest": "listing-promo/concepts-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-20261014/prompts.md",
+      "generationSha256": "c79f107a430728ef913227a7f2534b4631ab05c4742ccdbe01fef11544f1bc43",
+      "repositorySha256": "e9dc63e167232535d947fa45ee3a98b230d58ea0ec2d260ff226caf49e121692"
+    },
+    {
+      "manifest": "listing-promo/concepts-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-20261014/source/render.mjs",
+      "generationSha256": "3879e7537049307be0beb14dfb74b7eacda98493bda194c4fe6cbb06e66b064c",
+      "repositorySha256": "1a8226307bad9bc9ec754fc82ee0dfb4b94ffbef7da5620295155f4b8e38f5f1"
+    },
+    {
+      "manifest": "listing-promo/exports/manifest.json",
+      "file": "listing-promo/source/composition.json",
+      "generationSha256": "e90ecf7732ab2c20ef89da7204d1f62a20676eb5e2833d8187679e5076901ddc",
+      "repositorySha256": "0d114f9240f70685988388921577ead83b418995a6a669cde525b35ef6d23d46"
+    },
+    {
+      "manifest": "listing-promo/exports/manifest.json",
+      "file": "listing-promo/source/render.mjs",
+      "generationSha256": "d24b6a2f60624d42ac78b2935b037cec15b9e9df596dfab84645f1a9c35e34a5",
+      "repositorySha256": "44e2b18232c9118a546136d09a9a405128eefb8318704db0559e460e43a7fc9b"
+    },
+    {
+      "manifest": "listing-promo/balanced-name-20-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/balanced-name-20-imagegen-20261015/prompts.md",
+      "generationSha256": "eef76dd99b6cf003dc13d7066c813eb601b697d7f522d7805375d28b6ec67435",
+      "repositorySha256": "6828c6459be3d409edbeba7ae9e0d9a71aaef63af85afd5499225ca11789e2be"
+    },
+    {
+      "manifest": "listing-promo/balanced-name-20-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/balanced-name-20-imagegen-20261015/source/render.mjs",
+      "generationSha256": "cc137bb22ba569c08cecfdd49f7f022992a4cc7cdeeaf96b3dc59e189ab902a8",
+      "repositorySha256": "ad1648eb0c96019de4266881cdbc7b143e90386c59041d800b75642e9324854c"
+    },
+    {
+      "manifest": "listing-promo/refined-text-free-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/refined-text-free-imagegen-20261015/prompts.md",
+      "generationSha256": "232477763c1d2b9d6f41e1aea1527f2b34f30fd60891419ec0c6725bee855695",
+      "repositorySha256": "fe2fcd493e7e2e421c4bebe151305c2fd98e9d6b78595367ce8cbba38fb7e948"
+    },
+    {
+      "manifest": "listing-promo/refined-text-free-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/refined-text-free-imagegen-20261015/source/render.mjs",
+      "generationSha256": "4ad1d990f28720893566a3934f1247795ea2605763f28bcbbc40214b932456c4",
+      "repositorySha256": "e46afa1260f84d1944e8e050497e6253b53af85294b3c3e20d0fbb749e074c75"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/01.json",
+      "generationSha256": "fd50831589267000590b2e75b21696ba11fa503b5b5ed9ff2b4d272342455cb0",
+      "repositorySha256": "bcf71bbb2bcbb7710dbcd910c939352fa7b47fc5ce841b9f8d17ac5f8ca60c11"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/02.json",
+      "generationSha256": "cdf3be221e45104ee2059570959020dcb08116a76aa3205aecda7f2757bd1e6b",
+      "repositorySha256": "e7beda92c5eda92130de69b6fae03e410589758cd6b89f2f4fd9ded34ae3d4ce"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/03.json",
+      "generationSha256": "8ca3f750e2e40ccfcd3979aae9863afd2ca0f07052843b24abf745bf9a485e4a",
+      "repositorySha256": "a1ecc45825f9e2b315d6019f71eca6d6fd6add2e0df46c6b3f88febf72a864f8"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/04.json",
+      "generationSha256": "9efa2cb04cbf031e2f9476846e04a64919a819bee41f63c241fb02318ec9dbe8",
+      "repositorySha256": "dbb3efff00fad8aa8b50dc8e98f49b52f7a06038074a126d0782571ebaf2765a"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/05.json",
+      "generationSha256": "1c405857e20d958c33338671dcc211e74e5a663b2e6a622b3ad9bd743969c952",
+      "repositorySha256": "33a3b5ed530ab1e2dacc153555d142016b9f369ef907bceb210d01679321ec85"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/06.json",
+      "generationSha256": "0ebe1747f631c7f7d1d022d4920f37d16cd99369e413289c9d3e7db2ecd3b0ac",
+      "repositorySha256": "613021b9a54ba1e84be537ff9e61e92bde21257e98b53e917b57dd0503abc97a"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/07.json",
+      "generationSha256": "410df7923e52102ff57a8de511ae16741e6661b0117d8357a87ea0c3ba717327",
+      "repositorySha256": "247162672a07af50e5b0e9fc78a66e3021b5578b1b62de52567345a5277bef06"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/08.json",
+      "generationSha256": "331a399e19389d9727fad7534effda0549dfb202350e087c35b05658578131ea",
+      "repositorySha256": "66e619428dcfdf5bfb23ab5d70381cb3562d699113bb144951d32e83d2c3041b"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/09.json",
+      "generationSha256": "ea40bf82d49453db3d00e0b3fca828d4e92f9f701d61f75bc551a39976e0eb8e",
+      "repositorySha256": "cd82a75504da4c8694ca11ed698c0889630acf755969e273724f101643206d40"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/metadata/10.json",
+      "generationSha256": "c4d56d115643129fd252d8133ddd19f1d84e8d1d7072f34405d08a8747a365f8",
+      "repositorySha256": "3c9740d226a9b0c4474799f772fe75896274f7e8181d7960e747f713672b62b5"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/prompts.md",
+      "generationSha256": "5256787eb146fcfdeedbc5f85c34a875b613a76c7e467420e31be838f123e06b",
+      "repositorySha256": "c328f7bcf0bd4b5bb63ee1596a2b103ce0c63e591fcb1d68c2f54e67109f5763"
+    },
+    {
+      "manifest": "listing-promo/concepts-fullscreen-live-chat-20261014/exports/manifest.json",
+      "file": "listing-promo/concepts-fullscreen-live-chat-20261014/source/render.mjs",
+      "generationSha256": "10a79c728064ef6be215803a2409592307127218e36a988c18cf0998c665ca21",
+      "repositorySha256": "ae2268726a009d4b0e9ccaa1f5092a61e0dbb720d3cf5e5035493ac7cb6adb2e"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/01.json",
+      "generationSha256": "54bad7953f054651654dd7f195eafd8df978844ede43155cf978fb0717e6d6d7",
+      "repositorySha256": "ad0334966f8b32053057a866fdb2676ab1b2c73cd0c7c46bc54580897fb98c7f"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/02.json",
+      "generationSha256": "518f3184836927d8043732f4db935b5e2b31a24d7dba399a238e0058edf0602c",
+      "repositorySha256": "9ac6556bad0a2a370dc4a0908bf9b44575744000a199b14c851b3f06ea71455d"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/03.json",
+      "generationSha256": "87bdb8482588decc4b92f06651f5874c617836cb8cfa8679c7d650062712ea8a",
+      "repositorySha256": "ac7a48058ade08cc357aeb31b63093d7092386379c77f6409992e43453da98f2"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/07.json",
+      "generationSha256": "096ab05e4f8b742c32e37345616b793a577c707bedcf639d6231ccea95c97f5b",
+      "repositorySha256": "b90fd9fa10c0f07d6fba40d8b342fa121a5a7b1e2119be1fb974f687df4b5fc7"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/08.json",
+      "generationSha256": "3ec3fa903584eab23f4986ac13efd881b9531b02846a2959ab1bb891e6850181",
+      "repositorySha256": "4945dd0f24930eb47241ca47757f84f3b107d52a59e208a7cd3db32c46309f5c"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/metadata/09.json",
+      "generationSha256": "65dc2c1d02c5a850a73c1dc3ac499aef3874978387e1d2edc576f29c35587730",
+      "repositorySha256": "4271ded0b90fedb365c05bbc7ce78459ff052c359bdd4729e98d5ecb0c3ee1ba"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/prompts.md",
+      "generationSha256": "9a3e408ae01746d03ee240d2d793b8ea0266eff57f164ccdd45c2477978911c5",
+      "repositorySha256": "aa52bad3d322a66e1987a849a8ca920e1cd60c23fb600b304f697b408c9f87ac"
+    },
+    {
+      "manifest": "listing-promo/polished-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/polished-imagegen-20261015/source/render.mjs",
+      "generationSha256": "4f114fee52645dea817caf338918588e493e3c5dd3482f66f32398927fa36c9b",
+      "repositorySha256": "f6c9d020d6f4aa29d2b52f8df6033a54aaef59c34601938a873cb18d3071ef0f"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/01.json",
+      "generationSha256": "65c2d09c6f9168abb5b79d8c31ae3953b08a7cb0a98e8fb5e99e0f34a59fd92b",
+      "repositorySha256": "688d29afb4c5a1cb4e27fef897ce9ea555b6f2ab5825278126cb470c86180955"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/02.json",
+      "generationSha256": "a5e102e058a616053df63e6516abb4078f8ae1e88ca61b700e7952be71b6b9d6",
+      "repositorySha256": "e46e7c4afd7beb8cc8ad1afb9dd9b5b5c1fb33a530e1bed7d5dab74ae00c6e2d"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/03.json",
+      "generationSha256": "2cfae77403fda653264aa6098b234e4116dab1fc0e55860994116f808bd2baa5",
+      "repositorySha256": "9aaadcc99ad507a95df159a9a543d3a4c265d65471364e95cef3e85059fe5755"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/07.json",
+      "generationSha256": "16e35ac366ab85b24656f1cf0bc5795a4c65fe945794e22f1a34eabebdc98449",
+      "repositorySha256": "7370b0ab6d656e9094d5b5d2cdf1380699e0f007a44e9611c55a3201955972e4"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/08.json",
+      "generationSha256": "d70ec30d20855ea58d8d84618e2abe97d1d6c8ee9ab58fdf759a49f057da2ea6",
+      "repositorySha256": "3b0612e6732b33a67c50284500eb23cee9c75620cc92c89bc40a47ce7a81c683"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/metadata/09.json",
+      "generationSha256": "7fadb2e50908f8dbaf13e0caf9e1ff5525c7fb56170f5e049685ebcfb5539402",
+      "repositorySha256": "88d1aa026d28cedfc429170f200b7fd1d4dbcef2c570fe1cc7e5126f84ae7455"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/prompts.md",
+      "generationSha256": "ac8a914de91fe8707d5650ac9482afda9c54dc45940d8410e02dccba4bc32b2b",
+      "repositorySha256": "4d773474efd60ea9fd7720489b9b0e5a2adf95e120923e8f332eeb480adf92ac"
+    },
+    {
+      "manifest": "listing-promo/typography-imagegen-20261015/exports/manifest.json",
+      "file": "listing-promo/typography-imagegen-20261015/source/render.mjs",
+      "generationSha256": "0e6bdbed3b2a23e41f4d2600678a6133b556298cab26206fcd05a5208f5c2022",
+      "repositorySha256": "a63bf25825458bedf5daa3540969f8ce43434e0bf94dffad555136b4b541df1c"
+    },
+    {
+      "manifest": "listing-promo/abstract-20261015/exports/manifest.json",
+      "file": "listing-promo/abstract-20261015/source/artwork.mjs",
+      "generationSha256": "3deabcec7dce72b13295dd228f5a8e9cecf0228645c03c2839f897b807513272",
+      "repositorySha256": "cf0ee8200cd0e13658b9dac2bb264e8ba4b83af61025a4745257e2e04b2f0405"
+    },
+    {
+      "manifest": "listing-promo/abstract-20261015/exports/manifest.json",
+      "file": "listing-promo/abstract-20261015/source/render.mjs",
+      "generationSha256": "a9c6b9c7da9ed7b4e820c7153831b656e63f3bdbe75e11c3d6366f9f2f929191",
+      "repositorySha256": "6a4c4eb0aabada31afdeb9bbfd947d3604d5673381bb1f1d7d385ba80fa36140"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/01.json",
+      "generationSha256": "e7a493f4e9a111ff19e8a781bd2d03c70b4c9f2a196927f1b954d463a41df330",
+      "repositorySha256": "528e96872ed2b75c1c67e7e507777895e9a138821e035d2f95a5935211d49fa9"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/02.json",
+      "generationSha256": "490d4e8b499fac3749eec5bbc1d9c87b7c658c9bca6bf573a718e2099ca58e9f",
+      "repositorySha256": "8fd192d9c9c3609f3d4e7744da6fc903ae8154effbbae74589ae96c1837d5516"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/03.json",
+      "generationSha256": "a79844df0286b8e407451767cfaa25828dc1f965fadf9c923a293fcae5cba09e",
+      "repositorySha256": "9a992b1402e12ac0d4525a546c82c6ddab34320478e322a6280bbb1ccd947b06"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/04.json",
+      "generationSha256": "0794ac9f28a23d8bb9b2d72416df7b0142fa87b5fdd301f14ce4861cf5dded85",
+      "repositorySha256": "f7d9c16b1b09309d87d9f0b78f6b23238537fde9a4f9e9e865fb9401fc1dfda2"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/05.json",
+      "generationSha256": "96cee73c4f27169648cd484d28b62092d42e811723149f466c7f3ed9e09237cb",
+      "repositorySha256": "165b49771a779cd0f43246e752edf39a1a90fcf63fe2bfe3e00ab3c8c851d21a"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/06.json",
+      "generationSha256": "501dc093e4aa8c681ee5f1668134438cb7b228d46db929bcd663c08e69db53a4",
+      "repositorySha256": "adb1ea314046dd319f88a7f1e2447d234629899ececbf04b5bc963c20235cb9a"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/07.json",
+      "generationSha256": "72fed9de4499a114795051fd7723c613571803a54192b4c3224e05d222d1c828",
+      "repositorySha256": "899e3ebe638223109ec5fe62b2dc2f8742a2cc4aba47ce9f5ee918dddee130b9"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/08.json",
+      "generationSha256": "f44790e51f47a8921ff9867cc37be8efba25f1a01a1faa38d999f79d25f95dcc",
+      "repositorySha256": "0a0e4e56256a52dee8937f976593c228ec376780bec8d48c6db7292a645fc590"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/09.json",
+      "generationSha256": "3b2cee9445b4974bdcbc18239e835f8d85c8a74398abd323f3155b27215dc43c",
+      "repositorySha256": "9366c2c029b756f9d0c4012d9b5cad7fa64fae290fc9d73101965a73e403213a"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/metadata/10.json",
+      "generationSha256": "81dbb6ded67c924ca0fd00ee0a9e67e36f92202cbc29a428f27ce72fa94666fc",
+      "repositorySha256": "ba1d97774df8be2de96bb2e9faf2aaef581b9675589fbd6dab5069ffce30f678"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/prompts.md",
+      "generationSha256": "d45fd16bc3f034769db58882837566d1a2e1c9ce363842b91e1144cca502d5c8",
+      "repositorySha256": "2517a2b73f0585cb40ae30267e9902645b2ed1eb2c2db55169871d088690c09d"
+    },
+    {
+      "manifest": "listing-promo/concepts-youtube-chat-20261015/exports/manifest.json",
+      "file": "listing-promo/concepts-youtube-chat-20261015/source/render.mjs",
+      "generationSha256": "06ba2784253e85540c9a38368338bbd0532c5380ecfaf7e26258294dfa9e806d",
+      "repositorySha256": "141cec17bec44931cadf851ba6b22e4fe8754e6dc70ab1e5847d0339689679b4"
+    },
+    {
+      "manifest": "exports/manifest.json",
+      "file": "source/render.mjs",
+      "generationSha256": "9f9a2132471ef8f2caa3a512166d66edb44b3db23818f678934a95696944b712",
+      "repositorySha256": "1418cf1dd011f020f31ee8d2f522bffd428d4c0ee5156e9980e8b00931a27511"
+    },
+    {
+      "manifest": "exports/manifest.json",
+      "file": "capture-evidence.json",
+      "generationSha256": "31225f08cbb374614fe13ddbba13d53edd84fffeb64adb1d27cc662d5e574509",
+      "repositorySha256": "ed91c7f6641d03fc1de3aa507308a67a54ae04d110877561ec49e166929120e6"
+    }
+  ]
+}

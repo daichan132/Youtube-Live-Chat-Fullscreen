@@ -1,0 +1,62 @@
+[
+  {
+    "id": "01",
+    "nameJa": "白い基本形",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "左上に三つの言葉、右下に動画とチャット。輪郭と赤い吹き出しで最小限に伝える。"
+  },
+  {
+    "id": "02",
+    "nameJa": "白いセンターシンボル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "中央の四隅・再生・吹き出しを、YouTubeと二つの機能名で挟んだ整った構成。"
+  },
+  {
+    "id": "03",
+    "nameJa": "大きな動画とチャット",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "YouTubeを上に、二つの機能名を横並びに置く。大きな黒い画面に白いチャットを重ねる。"
+  },
+  {
+    "id": "04",
+    "nameJa": "赤いステージ",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "赤い余白と一つの黒い16:9画面。左に機能名、右に白いチャットを収め、全画面の内側で会話できることを図で伝える。"
+  },
+  {
+    "id": "05",
+    "nameJa": "余白と四隅",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "白地に四隅、再生、赤い吹き出しを一つずつ。上のFullscreenと右下のLive Chatで、図を挟む非対称な組み方。"
+  },
+  {
+    "id": "06",
+    "nameJa": "黒地の横組み",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "黒い背景の左に白い機能名、右に四隅と吹き出し。YouTubeだけを赤にして、小さな一覧でも三つの言葉が読み取れる構成。"
+  },
+  {
+    "id": "07",
+    "nameJa": "余白と左チャット",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "白い余白と細い画面の輪郭。赤いチャットを左側に置き、位置を変えられる機能を抽象化する。"
+  },
+  {
+    "id": "08",
+    "nameJa": "黒いシンボル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "黒地に白い全画面の四隅と再生記号。ひとつの赤い吹き出しでライブチャットを示す。"
+  },
+  {
+    "id": "09",
+    "nameJa": "三語と小さな画面",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "左に三つの言葉、右に小さな全画面の図。明るい紙面のような背景と少ない図形で機能を伝える。"
+  },
+  {
+    "id": "10",
+    "nameJa": "YouTubeを主役に",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "YouTubeを大きく、機能名を一列に。下の白い四隅と赤い吹き出しで機能を示す。"
+  }
+]

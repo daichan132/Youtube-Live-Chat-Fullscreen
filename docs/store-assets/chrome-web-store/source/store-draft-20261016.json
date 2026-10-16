@@ -1,0 +1,104 @@
+{
+  "status": "saved-as-draft",
+  "savedOn": "2026-10-16",
+  "timeZone": "Asia/Tokyo",
+  "extensionId": "dlnjcbkmomenmieechnmgglgcljhoepd",
+  "browserProfile": "daichan",
+  "reviewSubmitted": false,
+  "publicationChanged": false,
+  "detailedDescriptions": {
+    "status": "saved-and-read-back",
+    "localeCount": 55,
+    "source": "docs/store-listing/*.md",
+    "dashboardSnapshot": "docs/store-listing/chrome-dashboard-snapshot-2026-10-16.json",
+    "allRepositoryDescriptionsMatchDashboard": true,
+    "comparison": "Both values trimmed before exact comparison; dashboard text was not supplemented from repository sources."
+  },
+  "images": {
+    "status": "saved-and-verified-after-reload",
+    "screenshotAssignment": "all-languages",
+    "screenshots": [
+      {
+        "file": "docs/store-assets/chrome-web-store/exports/en/01-live-gaming.png",
+        "position": 1,
+        "subject": "live-gaming",
+        "width": 1280,
+        "height": 800,
+        "sha256": "017e3ef6b19de42b5940b71dd54f699d0461fca56e0d73b55755dd2dc05d1631"
+      },
+      {
+        "file": "docs/store-assets/chrome-web-store/exports/en/02-vtuber-live.png",
+        "position": 2,
+        "subject": "vtuber-live",
+        "width": 1280,
+        "height": 800,
+        "sha256": "cabeec318fbd340b1964250f4e4065f87222347865ebc7658e92000871e05c3a"
+      },
+      {
+        "file": "docs/store-assets/chrome-web-store/exports/en/03-transparent-chat.png",
+        "position": 3,
+        "subject": "transparent-chat",
+        "width": 1280,
+        "height": 800,
+        "sha256": "6aee0e969ce41c37e7372573253673f700fc8b5c4dcf95c8efb9d67c63c39c4c"
+      }
+    ],
+    "smallPromotionalTile": {
+      "file": "docs/store-assets/chrome-web-store/listing-promo/selected-20261016/small-promo.png",
+      "width": 440,
+      "height": 280,
+      "sha256": "9fe6a337207d55c58491ea14e47cc1feaf3932bf9951fa29d0a300eb1280e9f7"
+    },
+    "marquee": "unchanged"
+  },
+  "package": {
+    "status": "unchanged",
+    "publishedVersion": "2.3.15",
+    "draftVersion": "2.3.15",
+    "uploaded": false,
+    "fileSelectionCancelled": true,
+    "reason": "The user requested no new version registration and will use the GitHub Actions release workflow."
+  },
+  "shortSummaries": {
+    "status": "prepared-only",
+    "localeCount": 55,
+    "appliedToDashboard": false,
+    "source": "shared/i18n/assets/*.json#extensionDescription",
+    "preparedCopy": "docs/store-assets/chrome-web-store/copy.json",
+    "note": "The dashboard reads titles and short summaries from the uploaded package. Existing 2.3.15 values are preserved in the snapshot; prepared summaries await the normal package release."
+  },
+  "verification": {
+    "finalSaveToast": "アイテムが保存されました。",
+    "finalSaveConfirmed": true,
+    "all55DescriptionsReadAfterSavedNavigation": true,
+    "afterReload": {
+      "englishDescriptionMatchesRepository": true,
+      "globalScreenshotCount": 3,
+      "screenshotOrderConfirmed": true,
+      "smallPromotionalTilePresent": true,
+      "draftSaveButtonDisabled": true
+    },
+    "screenshots": [
+      {
+        "file": "docs/store-assets/chrome-web-store/source/store-draft-images-20261016.png",
+        "shows": "Three saved global screenshots in gaming, VTuber, transparent order; disabled draft-save button.",
+        "width": 954,
+        "height": 958,
+        "format": "JPEG",
+        "note": "The original evidence bytes are JPEG; the legacy .png filename is retained to preserve existing links and the recorded hash.",
+        "sha256": "a679831c24c568e1c4fbb26763a290a01cf01aba52f8de939be0e674d28e1971"
+      },
+      {
+        "file": "docs/store-assets/chrome-web-store/source/store-draft-final-20261016.png",
+        "shows": "English detailed description and disabled draft-save button after the final reload.",
+        "width": 954,
+        "height": 958,
+        "format": "JPEG",
+        "note": "The original evidence bytes are JPEG; the legacy .png filename is retained to preserve existing links and the recorded hash.",
+        "sha256": "4e46001840da6834c8bf2138675ee62ceaf0feb30faf7924c9d32b677ce442c1"
+      }
+    ],
+    "limit": "Image evidence and dashboard readback establish saved draft assignments, not review submission or public-store publication."
+  },
+  "subsequentUserUpdate": "store-draft-marquee-20261016.json"
+}

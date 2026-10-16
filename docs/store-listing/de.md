@@ -1,30 +1,34 @@
-Du gehst bei einem YouTube-Livestream ins Vollbild – und der Chat ist weg. Diese Erweiterung holt ihn zurück, auf das Video: Du liest jede Nachricht, antwortest und schickst in einem Livestream Super Chats, ohne das Vollbild zu verlassen.
+Behalte den Livechat im Blick, wenn du YouTube im Vollbild ansiehst.
+YouTube Live Chat Fullscreen ist eine kostenlose Chrome-Erweiterung, die den Chat über das Video legt. Verfolge den Livestream, lies Nachrichten und antworte, ohne den Player zu verlassen.
 
-HAUPTFUNKTIONEN
-- Position und Größe: Zieh das Panel an eine beliebige Stelle über dem Player, die Größe änderst du an jeder Kante und Ecke; beides skaliert mit dem Player, ein am Laptop eingerichtetes Layout passt also auch auf einen 32-Zoll-Bildschirm.
-- Text: „Schriftgröße“ von 10 bis 40px (standardmäßig 13px; 40px ist rund dreimal so groß wie gewöhnliche Chatschrift), eigene Textfarbe, eine eigene Farbe für Mitgliedsnamen, 50 Schriftarten.
-- Hintergrund: Er startet deckend weiß; Farbe und Transparenz kommen aus einer Farbauswahl, dazu 0–20px „Unschärfe“ – die Einstellung, die am ehesten Ruckler verursacht, auf älteren Rechnern also sparsam einsetzen.
-- Anzeige: „Chat bei Inaktivität anzeigen“ ist von Anfang an eingeschaltet, der Chat bleibt also stehen, wenn die Steuerleiste ausgeblendet wird; ist die Option an, klappt „Nur Chat anzeigen“ die Kopfzeile und das Eingabefeld weg, bis du mit der Maus darüberfährst.
-- Namen und Abstand: „Nutzernamen anzeigen“ und „Profilbilder anzeigen“ schaltest du für gewöhnliche Nachrichten ab, bezahlte behalten Name und Bild; „Abstand“ zwischen den Nachrichten 0–40px.
-- Voreinstellungen: sieben eingebaute, je ein Klick, dazu deine eigenen.
-- Tastatur: Schieberegler und Farbauswahl nehmen Pfeiltasten, jedes Bedienelement ist für Screenreader beschriftet. Automatische Prüfungen nach WCAG 2.1 AA decken bei jeder Änderung das Popup, die Bedienleiste und das Einstellungsfeld ab.
+Livestreams und Chat-Wiedergabe
+Gaming-Streams, VTuber-Übertragungen und Live-Events: Video und Unterhaltung bleiben in derselben Ansicht. Bei Aufzeichnungen mit verfügbarer Chat-Wiedergabe kannst du die Nachrichten der ursprünglichen Übertragung mitverfolgen.
 
-YOUTUBES EIGENER CHAT, KEINE NACHBILDUNG
-Das Panel über dem Video ist YouTubes eigener Livechat aus der Seitenleiste, neu gestaltet – deshalb funktioniert alles weiter: Abzeichen, Emojis, Sticker und der Chat nur für Mitglieder. Geschrieben wird über YouTubes eigenes Eingabefeld, Super Chats laufen über dessen Kaufpanel: Die Zahlung geht an YouTube, nie an die Erweiterung. Das einzige Element, das die Erweiterung dort ändert, ist „Mitgliedschaft“ – es öffnet die Beitrittsseite des Kanals in einem neuen Tab.
+Das Chat-Overlay anpassen
+- Transparenter Hintergrund: Stelle Deckkraft und Unschärfe ein, damit das Video hinter dem Chat sichtbar bleibt.
+- Position und Größe: Ziehe das Fenster aus dem Bildbereich, den du sehen möchtest, und passe Breite und Höhe an.
+- Lesbarkeit: Wähle Schriftart, Schriftgröße, Textfarbe, Hintergrundfarbe und den Abstand zwischen Nachrichten.
+- Gespeicherte Stile: Nutze eine Vorlage oder speichere deine eigenen Darstellungseinstellungen.
+- Weniger Ablenkung: Blende Namen und Profilbilder bei normalen Nachrichten aus oder klappe das Eingabefeld ein, bis du mit dem Chat interagierst.
 
-WAS SIE KOSTET, WAS SIE SAMMELT
-Kostenlos: kein Konto, keine Bezahlversion.
-Nur eine Berechtigung, storage; www.youtube.com ist die einzige Website, in der sie läuft – mehr besagt Chromes Installationshinweis zu deinen Daten nicht. Im Hintergrund läuft nichts: Ohne offenen YouTube-Tab tut nur das Popup in der Symbolleiste etwas, und auch nur, solange es offen ist.
-Keine Analyse, kein Tracking, nichts an den Entwickler: Was du liest und tippst, wird nie gesammelt, gespeichert oder verschickt; die Einstellungen bleiben in diesem Browser. Der gesamte Code steckt in der Erweiterung; nur Schriftarten jenseits der Standardschrift kommen von Google Fonts. Quelloffen unter GPL-3.0, öffentlich auf GitHub.
+Mitlesen und mitschreiben
+Das Overlay verwendet den Chat von YouTube, einschließlich Emojis, Mitglieder-Abzeichen und Eingabefeld. Melde dich an, um während eines Livestreams Nachrichten zu senden. Super Chats sind weiterhin verfügbar, sofern sie unterstützt werden. Für Nachrichten und kostenpflichtige Funktionen gelten die Voraussetzungen der Plattform und die Kanaleinstellungen. Bei Aufzeichnungen wird der ursprüngliche Chat wiedergegeben; es entsteht keine neue Live-Unterhaltung.
 
-SO FÄNGST DU AN
-1. Installieren, dann einen Livestream oder ein Archiv mit Chatwiedergabe öffnen.
-2. Den Player ins Vollbild schalten – der Chat ist schon da.
-3. Ein Sprechblasen-Button in der Steuerleiste schaltet ihn aus und ein; fährst du mit der Maus über den Chat, ändert dessen eigener Einstellungs-Button das Aussehen.
+So geht’s
+1. Installiere die Erweiterung und öffne einen Livestream oder eine Aufzeichnung mit Chat-Wiedergabe.
+2. Aktiviere den Vollbildmodus über die Vollbildschaltfläche im Videoplayer.
+3. Bewege den Mauszeiger über den Chat, um ihn zu verschieben, seine Größe zu ändern oder die Einstellungen zu öffnen.
+Über die Chat-Schaltfläche in den Player-Steuerelementen blendest du das Overlay ein oder aus. Falls du die Funktion zuvor deaktiviert hast, aktiviere den Vollbildchat im Popup der Erweiterung in der Symbolleiste.
 
-WO SIE LÄUFT
-Nur auf dem Desktop, nur im Vollbild auf einer Videoseite mit Chat. Diese Chrome-Version läuft auch in Opera; für Firefox gibt es eine eigene Version auf addons.mozilla.org. Die Oberfläche gibt es in 55 Varianten für 49 Sprachen.
+Kostenlos und quelloffen
+Für die Erweiterung sind weder ein eigenes Konto noch ein Abonnement nötig. Der Quellcode ist auf GitHub unter GPL-3.0 veröffentlicht. Kostenpflichtige Funktionen der Videoplattform sind von der kostenlosen Erweiterung unabhängig.
 
-Fehler melden oder Funktion vorschlagen: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Datenschutz und Berechtigungen
+Die Einstellungen bleiben mithilfe der Berechtigung storage in diesem Browser. Die Erweiterung läuft auf www.youtube.com, verwendet weder Analyse- noch Trackingdienste und sendet keine Chat-Inhalte oder Wiedergabeverläufe an den Entwickler. Der integrierte Chat verbindet sich mit den Diensten von YouTube. Optionale Schriftarten werden von Google Fonts geladen.
+
+Kompatibilität
+Für Chrome auf Desktop-Computern und Videos mit Livechat oder verfügbarer Chat-Wiedergabe. Bei Videos ohne Chat erscheint kein Fenster. Die Kompatibilität mit Opera und anderen Chromium-basierten Browsern kann variieren. Eine separate Firefox-Version gibt es auf addons.mozilla.org. Die Einstellungen sind per Tastatur bedienbar und bieten 55 Sprachoptionen.
+
+Fehler melden oder eine Funktion vorschlagen: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Quellcode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Entwickler unterstützen: https://ko-fi.com/daichan132

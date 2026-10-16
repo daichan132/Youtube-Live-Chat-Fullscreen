@@ -1,0 +1,142 @@
+[
+  {
+    "id": "01",
+    "nameJa": "オプティカル・サンセリフ",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "開いたカウンターと整えた字間のサンセリフ。白い余白と細い朱色のルールを使い、左上の文字と右下の小さな機能図に明快な階層を作る。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "b872b82cf9dd942b24ba0f08da8a626625c4e9481b265af8a1e178689dcc1fb3"
+  },
+  {
+    "id": "02",
+    "nameJa": "エディトリアル・イタリック",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "端正なサンセリフのFullscreenと、流れる赤いセリフ体イタリックのLive Chatを対比。中央揃えの誌面のように文字を組み、図を小さく添える。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "e19db7111191a3f9b1731543901bdd95072fb39e323262ddc08f3ca7b41f5e77"
+  },
+  {
+    "id": "03",
+    "nameJa": "ソフト・ジオメトリック",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "赤い面に、柔らかい幾何学的な白い文字を中央揃え。Chatの一階建てのaと丸い字形で親しみを持たせ、映像とチャットの輪郭を控えめに組み合わせる。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "7f1db06434e3f1dfcfc4b3cc7e66f0d02f2a3a22f43716b402e0693247b5ff27"
+  },
+  {
+    "id": "04",
+    "nameJa": "スイスの行間",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "黒地にレギュラー寄りのサンセリフを非対称に配置し、赤い細線でつなぐ。大きな文字の間に、小さな動画とチャットの図を添える。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "7c13792a8255051b58c274ee88f36b9daee775d410d0100245b394093707654a"
+  },
+  {
+    "id": "05",
+    "nameJa": "丸みのあるコーラル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "開いたカウンターと丸みのある文字を、薄いグレーとコーラルに組み合わせる。二つの機能名を同じベースラインに置いた構成。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "f35fbd2659e4ed3d1cee993ac8f6b8bac65d89586b4c8831b9f3e254408f3702"
+  },
+  {
+    "id": "06",
+    "nameJa": "モノスペースのリズム",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "YouTubeとLive Chatを等幅文字、Fullscreenを通常幅のサンセリフで組み合わせる。小さな赤い四隅と動画図を添えた合理的なポスター。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "a0b9abfbd9044c0e020037b55e18605bbc44f919d5a46454d6e0d0187257bd5e"
+  },
+  {
+    "id": "07",
+    "nameJa": "イタリック・ブロードキャスト",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "Fullscreenの傾いた字形と、Live Chatの直立した赤文字を対比。小さな画面記号を右下に添え、文字のリズムを主役にする。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "9ac3a613a71bac084f875a7c3e99aab1d745230ec995546bcd3b939004761f20"
+  },
+  {
+    "id": "08",
+    "nameJa": "アウトラインとソリッド",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "輪郭線のFullscreenと、赤い塗りのLive Chatを対比したタイポグラフィ。画面の四隅と文字の輪郭線が呼応する構成。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "522b825481df44193ba56154075b7ee53d9f8376b2cb6b312c2baccca1d44fc0"
+  },
+  {
+    "id": "09",
+    "nameJa": "モジュラー・レッド",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "角の丸い幾何学的な字形を赤地に白黒で配置。中央揃えのロックアップと小さな全画面記号で、文字中心のブランド表現に。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "7f827c213b40d985a6f4e5f21a53d4eb7c47109a8d9cf75e871567f76f049ac9"
+  },
+  {
+    "id": "10",
+    "nameJa": "ライト・エクステンデッド",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "幅広の細身サンセリフと広い余白。赤いYouTube、濃紺の見出し、小さなチャット記号を同じグリッドに揃えた文字中心の案。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "867be38d06ebae971747aba3b3e9be54a6f5f5944e138e5083620a1c8d4dfb41"
+  }
+]

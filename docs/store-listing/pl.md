@@ -1,29 +1,33 @@
-Włączasz pełny ekran na transmisji na żywo w YouTube i czat znika. To rozszerzenie przywraca go na wideo: czytasz każdą wiadomość, odpisujesz, a na transmisji na żywo wysyłasz też Super Chaty — bez wychodzenia z pełnego ekranu.
+Oglądaj YouTube na pełnym ekranie i miej czat cały czas w zasięgu wzroku.
+YouTube Live Chat Fullscreen to bezpłatne rozszerzenie Chrome, które wyświetla czat na filmie. Śledź transmisję, czytaj wiadomości i odpisuj bez wychodzenia z odtwarzacza.
 
-GŁÓWNE FUNKCJE
-- Pozycja i rozmiar: przeciągnij panel w dowolne miejsce nad odtwarzaczem, zmień jego rozmiar od dowolnej krawędzi lub narożnika; jedno i drugie liczy się względem odtwarzacza, więc układ dobrany na laptopie pasuje też na 32-calowym ekranie.
-- Tekst: „Rozmiar czcionki” od 10 do 40 px (domyślnie 13 px; 40 px to mniej więcej trzykrotność zwykłego tekstu czatu), własny kolor, osobny dla nazw członków, 50 krojów pisma.
-- Tło: na start nieprzezroczysta biel; kolor i przezroczystość z jednego próbnika, plus „Rozmycie” 0–20 px — z ustawień to ono najprawdopodobniej odbije się na płynności, więc na starszym komputerze używaj go oszczędnie.
-- Widoczność: „Pokazuj czat podczas bezczynności” jest włączone od początku, więc czat zostaje na ekranie, gdy zniknie pasek sterowania; przy tej opcji „Wyświetlaj tylko czat” składa nagłówek i pole wpisywania, dopóki nie najedziesz wskaźnikiem.
-- Nazwy i odstępy: przy zwykłych wiadomościach wyłączysz „Pokaż nazwy użytkowników” i „Pokaż zdjęcia profilowe”, płatne zachowują swoje; „Odstęp” między wiadomościami to 0–40 px.
-- Szablony: siedem wbudowanych, każdy na jedno kliknięcie, plus twoje własne.
-- Klawiatura: suwaki i próbniki barw reagują na strzałki, każdy element ma etykietę dla czytnika ekranu. Automatyczne testy WCAG 2.1 AA obejmują przy każdej zmianie okienko na pasku narzędzi, rząd przycisków i panel ustawień.
+Transmisje i powtórki czatu
+Oglądaj streamy z gier, transmisje VTuberów i wydarzenia na żywo, mając rozmowę na tym samym ekranie. W nagraniach z dostępną powtórką czatu zobaczysz wiadomości z pierwotnej transmisji.
 
-CZAT SAMEGO YOUTUBE, NIE PODRÓBKA
-Panel na wideo to czat na żywo samego YouTube, ten z panelu bocznego, tylko inaczej ostylowany — dlatego odznaki członków, emoji, naklejki i czat tylko dla członków działają dalej. Wysyłanie idzie przez pole wiadomości YouTube, a Super Chaty przez jego panel zakupu: płatność trafia do YouTube, nigdy do rozszerzenia. Jedyne, co rozszerzenie tam zmienia, to pozycja członkostwa — otwiera stronę dołączania do kanału w nowej karcie.
+Dostosuj wygląd czatu
+- Przezroczyste tło: ustaw przezroczystość i rozmycie, by widzieć film pod panelem.
+- Położenie i rozmiar: przesuń panel z dala od akcji i zmień jego szerokość oraz wysokość.
+- Czytelność: dobierz czcionkę, wielkość i kolor tekstu, kolor tła oraz odstępy między wiadomościami.
+- Zapisane style: wybierz gotowy styl lub zapisz własne ustawienia wyglądu.
+- Mniej elementów: ukryj nazwy użytkowników i zdjęcia profilowe w zwykłych wiadomościach albo zwiń pole wpisywania dopóki nie zaczniesz korzystać z czatu.
 
-ILE KOSZTUJE I CO ZBIERA
-Za darmo: bez rejestracji, bez wersji płatnej.
-Tylko jedno uprawnienie, storage; jedyna strona, na której rozszerzenie działa, to www.youtube.com — i tylko tyle znaczy ostrzeżenie Chrome o twoich danych. W tle nic nie działa: kiedy nie masz otwartej karty YouTube, cokolwiek robi wyłącznie okienko na pasku narzędzi, i tylko póki jest otwarte.
-Bez analityki, bez śledzenia, nic nie trafia do autora: to, co czytasz i piszesz, nie jest zbierane, zapisywane ani nigdzie wysyłane; ustawienia zostają w tej przeglądarce. Cały kod jest zaszyty w rozszerzeniu; z sieci przychodzą tylko kroje pisma inne niż domyślny — z Google Fonts. Otwarte źródło na licencji GPL-3.0, publiczne na GitHubie.
+Czytaj i pisz na czacie
+Panel korzysta z czatu YouTube, wraz z emoji, odznakami wspierających i polem wiadomości. Zaloguj się do YouTube, aby pisać podczas transmisji na żywo. Super Chat pozostaje dostępny tam, gdzie jest obsługiwany. Wysyłanie wiadomości i płatne funkcje podlegają wymaganiom platformy oraz ustawieniom kanału. Czat przy nagraniu to powtórka, a nie nowa rozmowa na żywo.
 
-JAK ZACZĄĆ
-1. Zainstaluj rozszerzenie, potem otwórz transmisję na żywo albo archiwum z zapisem czatu.
-2. Przełącz odtwarzacz na pełny ekran — czat już tam jest.
-3. Przycisk z dymkiem na pasku sterowania włącza go i wyłącza; najedź wskaźnikiem na czat, a jego własny przycisk ustawień zmieni wygląd.
+Jak zacząć
+1. Zainstaluj rozszerzenie i otwórz transmisję lub nagranie z powtórką czatu.
+2. Włącz pełny ekran przyciskiem odtwarzacza.
+3. Najedź na czat, by go przesunąć, zmienić rozmiar lub otworzyć ustawienia.
+Przycisk czatu w sterowaniu odtwarzaczem pokazuje lub ukrywa panel. Jeśli wcześniej go wyłączono, włącz czat pełnoekranowy w oknie rozszerzenia na pasku przeglądarki.
 
-GDZIE DZIAŁA
-Tylko na komputerze, na pełnym ekranie strony odtwarzania, która ma czat. Ta wersja dla Chrome działa też w przeglądarce Opera; Firefox ma własną wersję na addons.mozilla.org. Interfejs ma 55 opcji dla 49 języków.
+Bezpłatne i z otwartym kodem
+Rozszerzenie nie wymaga osobnego konta ani abonamentu. Kod źródłowy jest publicznie dostępny na GitHub na licencji GPL-3.0. Płatne funkcje platformy wideo są niezależne od bezpłatnego rozszerzenia.
+
+Prywatność i uprawnienia
+Ustawienia pozostają w tej przeglądarce dzięki uprawnieniu storage. Rozszerzenie działa w witrynie www.youtube.com, nie korzysta z analityki ani śledzenia i nie przesyła twórcy treści czatu ani historii oglądania. Oryginalny czat łączy się z usługami YouTube. Opcjonalne czcionki są pobierane z Google Fonts.
+
+Zgodność
+Dla Chrome na komputerze i filmów z czatem na żywo lub dostępną powtórką czatu. Przy filmach bez czatu panel się nie pojawia. Zgodność z przeglądarką Opera i innymi przeglądarkami opartymi na Chromium może się różnić. Osobna wersja dla Firefox jest dostępna na addons.mozilla.org. Ustawienia można obsługiwać klawiaturą; dostępnych jest 55 opcji językowych.
 
 Zgłoś błąd lub zaproponuj funkcję: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Kod źródłowy: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen

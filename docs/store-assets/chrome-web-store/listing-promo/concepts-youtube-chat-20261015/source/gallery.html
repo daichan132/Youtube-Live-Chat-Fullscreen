@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube風ライブチャット — 紹介画像10案</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans CJK JP", "Yu Gothic", sans-serif;
+        color: #25272b;
+        background: #f3f4f5;
+        font-synthesis: none;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button { font: inherit; cursor: pointer; }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 24px 32px 0;
+      }
+      .toolbar p { margin: 0; color: #60656d; font-size: 13px; line-height: 1.7; }
+      .size-controls { display: flex; gap: 4px; padding: 4px; border: 1px solid #d8dbe0; border-radius: 8px; background: #fff; }
+      .size-controls button { border: 0; background: transparent; border-radius: 5px; padding: 8px 12px; color: #60656d; font-size: 13px; white-space: nowrap; }
+      .size-controls button[aria-pressed="true"] { color: #fff; background: #30343b; }
+      button:focus-visible { outline: 3px solid #5489c8; outline-offset: 4px; }
+      #comparison { max-width: 1440px; margin: 0 auto; padding: 32px; }
+      .comparison-heading { margin-bottom: 28px; }
+      h1 { font-size: 26px; font-weight: 650; line-height: 1.4; margin: 0 0 8px; letter-spacing: -0.025em; }
+      .comparison-heading p { font-size: 13px; color: #60656d; margin: 0; line-height: 1.7; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); align-items: start; gap: 32px 24px; }
+      .concept { margin: 0; min-width: 0; }
+      .artwork { display: block; padding: 0; border: 0; background: transparent; width: 100%; max-width: 440px; text-align: left; }
+      .artwork img { display: block; width: 100%; height: auto; aspect-ratio: 11 / 7; object-fit: contain; background: #e4e6e8; }
+      figcaption { padding: 13px 0 0; display: flex; align-items: baseline; gap: 9px; line-height: 1.5; }
+      .number { font-size: 13px; font-variant-numeric: tabular-nums; color: #757b84; }
+      .name { font-size: 14px; font-weight: 600; }
+      .half-size .grid { grid-template-columns: repeat(auto-fit, 220px); gap: 28px 24px; }
+      .half-size .artwork, .half-size .artwork img { width: 220px; height: 140px; }
+      .half-size .name { font-size: 13px; }
+      .export-mode { background: #f3f4f5; }
+      .export-mode .toolbar { display: none; }
+      .export-mode #comparison { width: 1000px; min-width: 1000px; max-width: 1000px; padding: 34px 40px 40px; margin: 0; }
+      .export-mode .comparison-heading { margin-bottom: 26px; }
+      .export-mode h1 { font-size: 24px; }
+      .export-mode .grid { grid-template-columns: 440px 440px; column-gap: 40px; row-gap: 24px; }
+      .export-mode .artwork, .export-mode .artwork img { width: 440px; height: 280px; }
+      .export-mode figcaption { min-height: 41px; padding-top: 11px; }
+      .export-mode .name { font-size: 14px; }
+      .export-mode .artwork { cursor: default; }
+      dialog { width: min(944px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 24px; border: 1px solid #d8dbe0; border-radius: 12px; background: #fff; overflow: auto; color: #25272b; }
+      dialog::backdrop { background: rgb(18 21 26 / 65%); }
+      .modal-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+      .modal-heading h2 { font-size: 19px; line-height: 1.5; font-weight: 600; margin: 0; }
+      .close { border: 1px solid #d8dbe0; border-radius: 6px; background: #fff; color: #30343b; font-size: 13px; padding: 8px 12px; }
+      .modal-image { display: block; width: min(880px, 100%); height: auto; aspect-ratio: 11 / 7; object-fit: contain; margin: 0 auto; background: #e4e6e8; }
+      .modal-copy { margin: 20px 0 0; }
+      .modal-headline { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+      .modal-note { margin: 0; color: #60656d; font-size: 14px; line-height: 1.8; }
+      .error { color: #b12626; }
+      @media (max-width: 600px) {
+        .toolbar { align-items: flex-start; flex-direction: column; padding: 20px 20px 0; }
+        #comparison { padding: 24px 20px; }
+        h1 { font-size: 23px; }
+        .grid { gap: 26px; }
+        dialog { padding: 16px; }
+        .modal-heading h2 { font-size: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar" aria-label="比較表示の設定">
+      <p>画像をクリックすると、大きく表示して制作意図を確認できます。</p>
+      <div class="size-controls" aria-label="画像の表示サイズ">
+        <button type="button" data-size="full" aria-pressed="true">440 × 280</button>
+        <button type="button" data-size="half" aria-pressed="false">220 × 140</button>
+      </div>
+    </div>
+    <main id="comparison">
+      <header class="comparison-heading">
+        <h1>YouTube風ライブチャット · 10案の比較</h1>
+        <p>Fullscreen + Live Chat · Chrome ウェブストア一覧用 · オリジナル映像と架空の会話によるデザイン案</p>
+      </header>
+      <div id="concepts" class="grid"></div>
+    </main>
+    <dialog id="detail" aria-labelledby="detail-title">
+      <div class="modal-heading">
+        <h2 id="detail-title"></h2>
+        <button class="close" type="button" aria-label="拡大表示を閉じる">閉じる</button>
+      </div>
+      <img class="modal-image" width="880" height="560" alt="" />
+      <div class="modal-copy">
+        <p class="modal-headline"></p>
+        <p class="modal-note"></p>
+      </div>
+    </dialog>
+    <script type="module">
+      window.__GALLERY_READY__ = false;
+      const exportMode = window.__EXPORT_MODE__ === true;
+      document.documentElement.classList.toggle('export-mode', exportMode);
+      const exportsBase = new URL(window.__CONCEPT_EXPORTS__ || '../exports/', location.href);
+      const grid = document.getElementById('concepts');
+      const dialog = document.getElementById('detail');
+      const modalImage = dialog.querySelector('.modal-image');
+      const closeButton = dialog.querySelector('.close');
+
+      function imageUrl(id, large = false) {
+        return new URL(`${id}${large ? '@2x' : ''}.png`, exportsBase).href;
+      }
+
+      function openConcept(concept) {
+        if (exportMode) return;
+        document.getElementById('detail-title').textContent = `${concept.id} · ${concept.nameJa}`;
+        dialog.querySelector('.modal-headline').textContent = concept.headline || '';
+        dialog.querySelector('.modal-note').textContent = concept.conceptNote || '';
+        modalImage.alt = `${concept.id} ${concept.nameJa}`;
+        modalImage.onerror = () => {
+          modalImage.onerror = null;
+          modalImage.src = imageUrl(concept.id);
+        };
+        modalImage.src = imageUrl(concept.id, true);
+        dialog.showModal();
+      }
+
+      closeButton.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', event => {
+        if (event.target === dialog) {
+          const bounds = dialog.getBoundingClientRect();
+          if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+        }
+      });
+
+      document.querySelectorAll('[data-size]').forEach(button => {
+        button.addEventListener('click', () => {
+          if (exportMode) return;
+          document.documentElement.classList.toggle('half-size', button.dataset.size === 'half');
+          document.querySelectorAll('[data-size]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        });
+      });
+
+      try {
+        const concepts = window.__CONCEPTS__ || await fetch('../concepts.json').then(response => {
+          if (!response.ok) throw new Error(`Concept metadata could not be loaded (${response.status}).`);
+          return response.json();
+        });
+        if (!Array.isArray(concepts) || concepts.length !== 10) throw new Error('The comparison requires exactly 10 concepts.');
+        const images = concepts.map(concept => {
+          const figure = document.createElement('figure');
+          figure.className = 'concept';
+          const button = document.createElement('button');
+          button.className = 'artwork';
+          button.type = 'button';
+          button.setAttribute('aria-label', `${concept.id} ${concept.nameJa}を拡大表示`);
+          if (exportMode) button.tabIndex = -1;
+          const img = document.createElement('img');
+          img.width = 440;
+          img.height = 280;
+          img.alt = `${concept.id} ${concept.nameJa}`;
+          img.src = imageUrl(concept.id);
+          button.append(img);
+          button.addEventListener('click', () => openConcept(concept));
+          const caption = document.createElement('figcaption');
+          const number = document.createElement('span');
+          number.className = 'number';
+          number.textContent = concept.id;
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = concept.nameJa;
+          caption.append(number, name);
+          figure.append(button, caption);
+          grid.append(figure);
+          return img;
+        });
+        await Promise.all(images.map(img => img.decode()));
+        await document.fonts.ready;
+        window.__GALLERY_READY__ = true;
+      } catch (error) {
+        window.__GALLERY_ERROR__ = String(error);
+        const message = document.createElement('p');
+        message.className = 'error';
+        message.textContent = '画像を読み込めませんでした。ローカルサーバーで開くか、書き出しファイルを確認してください。';
+        grid.append(message);
+        console.error(error);
+      }
+    </script>
+  </body>
+</html>

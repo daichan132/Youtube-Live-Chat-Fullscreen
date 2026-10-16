@@ -1,0 +1,12 @@
+{
+  "id": "10",
+  "nameJa": "モノクロのスケート誌",
+  "headline": "Fullscreen. / Live Chat.",
+  "prompt": "Edit this exact black-and-white skateboard editorial promotional artwork for YouTube Live Chat Fullscreen.\nKeep the sophisticated monochrome action photograph-style illustration, warm white, vermilion accents, anonymous original skater, fullscreen corner brackets and one clear chat overlay inside the video. Preserve the current clean rectangular 11:7 canvas ratio, not a panoramic banner.\nChange the large headline at lower left to exactly these TWO lines:\n\"Fullscreen.\"\n\"Live Chat.\"\nThe word Fullscreen is a SINGLE UNBROKEN word spelled F-u-l-l-s-c-r-e-e-n. Do not write \"Full Screen\", do not split it across lines. Live Chat is the TWO-WORD PHRASE with a space between Live and Chat. Match the exact Title Case and punctuation above. Both phrases must be LARGE, immediately readable at 440x280 and 220x140. These are the entire main headline, not a tiny label. Replace ALL the old \"WATCH BIG.\" and \"REPLY LIVE.\" lettering. Do not retain old slogans or add new words.\nKeep excellent margins around the new headline and real typographic balance; slightly resize/reposition type or chat if necessary so Fullscreen is entirely visible. It must not overlap the chat or cover the skater's face/board. Native chat input silhouette and small red send symbol stay visible at the bottom of the same single panel. No new panels, no branding badges, no official Chrome/YouTube logo, no celebrity, no creator endorsement, no redesigned physical monitor. This is original promotional illustration, not a product screenshot. Recompose naturally instead of stretching or cropping. Preserve the premium sports-editorial character.",
+  "referencePath": "../concepts-20261014/originals/10.png",
+  "originalPath": "originals/10.png",
+  "conceptNote": "ストリート誌のようなモノクロの一瞬と赤いアクセント。メイン見出しにFullscreenとLive Chatを大きく表示。",
+  "requiredWords": ["Fullscreen", "Live Chat"],
+  "tool": "built-in image_gen",
+  "illustrative": true
+}

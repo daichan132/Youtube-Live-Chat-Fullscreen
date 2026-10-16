@@ -1,0 +1,170 @@
+{
+  "status": "design-exploration",
+  "selectedConcept": null,
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-14T16:12:31.023Z",
+  "conceptCount": 4,
+  "artworkMethod": "Hand-authored SVG geometry and editable text. No image generation, screenshots, scenes, textures, gradients or shadows.",
+  "typography": "Embedded bundled Inter 500 under SIL Open Font License.",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin"
+  },
+  "geometryChecks": {
+    "requiredWords": "passed",
+    "textBounds": "passed",
+    "aspect16to9": "passed",
+    "chatInsideVideo": "passed",
+    "noTextOverlap": "passed"
+  },
+  "galleryChecks": {
+    "halfSize": "passed",
+    "expandedExportIdentity": "passed",
+    "escapeClose": "passed",
+    "fullSizeRestore": "passed",
+    "mobile375px": "passed"
+  },
+  "sources": [
+    {
+      "file": "source/artwork.mjs",
+      "sha256": "3deabcec7dce72b13295dd228f5a8e9cecf0228645c03c2839f897b807513272"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "a9c6b9c7da9ed7b4e820c7153831b656e63f3bdbe75e11c3d6366f9f2f929191"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "3273750ba3415752a5303947f95cd831d23ef4dfeacdd2f90e2a1c1c5415d9b4"
+    },
+    {
+      "file": "vectors/01.svg",
+      "sha256": "41b0153a47f00de35387eb1faeb339ffc1b6c5ede1cd2c145952e9a425f3aff5"
+    },
+    {
+      "file": "vectors/02.svg",
+      "sha256": "a7d6053f7e288b8f8cbdc033ea80f69c7ab4ec150959f486fc1a89a438db4457"
+    },
+    {
+      "file": "vectors/03.svg",
+      "sha256": "fab43b153be871ff367a93c68dd6f51e77363187708f286fa54310f8a2c297c3"
+    },
+    {
+      "file": "vectors/04.svg",
+      "sha256": "b671567fa147a1f33473eda6cff4e553ddafaeefa6fa90ea8fd9112c78bab4c2"
+    },
+    {
+      "file": "vectors/FONT-LICENSE.txt",
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "file": "../../source/fonts/inter-500.woff2",
+      "sha256": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f"
+    },
+    {
+      "file": "../../source/fonts/LICENSE",
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "file": "concepts.json",
+      "sha256": "d7f00b38a39ceeab17447635217269f710f65c9f6a6131b4df1e308d68976abe"
+    },
+    {
+      "file": "index.html",
+      "sha256": "1d2ef05c889720f855b453c003945886df76f7403d39ed10d11f0deeae3c05f6"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/01.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "2e61a8ee7b11c9b0adb180e74818bfd2d4ee2f812a082c7367585ec50f4e79b1"
+    },
+    {
+      "file": "exports/02.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "28a082c4d049bbca88d63d877e1bfd1e1308ff8c593517a362768451dee37174"
+    },
+    {
+      "file": "exports/03.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "5266345544f0ee5b4237b29dd17219c22e8aadaa40478fdbad9c802f34651955"
+    },
+    {
+      "file": "exports/04.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "a5fa4a629059f85d38422734da585944398b7ba6839e146eb8c29affbb19018d"
+    },
+    {
+      "file": "exports/01@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "d009063229d5973af92726fbb66b5705043a0d74a5dc08d3bee349521b2e0563"
+    },
+    {
+      "file": "exports/02@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "e664c337c0590d7e2b5e8b290e3d300f1595b29f15da34b6faa7165bc0106bcc"
+    },
+    {
+      "file": "exports/03@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "5c8758bd4fe00ef3e1528611d9d6365373eba4eaeea6ff3ccd5881ac04632bc8"
+    },
+    {
+      "file": "exports/04@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "bfb2e952c19c94f4cdac49ee05ee995e42e57a884afc804794d66b958efeaf0e"
+    },
+    {
+      "file": "exports/01-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "be788ca4e7425cbc89d6f9d05df934f98de280acf723887cb21ae539966426bc"
+    },
+    {
+      "file": "exports/02-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "20ce1a3c5956abfd99042cd299985c090a66041bc21a46b7f7d302fd38030719"
+    },
+    {
+      "file": "exports/03-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "69fb0f690b8b4520dc9abf2bbde9861557952196cddaf964fdaeaf45f3738220"
+    },
+    {
+      "file": "exports/04-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "95ad40444684fd2cb74d0bd062953e51c8c7e17f3cdba909aee6d4b7c747600b"
+    },
+    {
+      "file": "exports/comparison.png",
+      "width": 1000,
+      "height": 830,
+      "colorType": 2,
+      "sha256": "92ea4861d6523d347d40c4b853caf7898b256c49c1dc886a0b24030d792bee62"
+    }
+  ]
+}

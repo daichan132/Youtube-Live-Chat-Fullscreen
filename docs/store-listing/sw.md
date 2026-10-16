@@ -1,30 +1,34 @@
-Unapoweka matangazo ya moja kwa moja ya YouTube kwenye skrini nzima, gumzo hupotea. Kiendelezi hiki hulirudisha juu ya video, ili usome kila ujumbe, ujibu, na — kwenye matangazo ya moja kwa moja — utume Super Chat bila kutoka kwenye skrini nzima.
+Tazama YouTube kwenye skrini nzima huku ukiona gumzo.
+YouTube Live Chat Fullscreen ni kiendelezi cha bure cha Chrome kinachoonyesha gumzo juu ya video. Fuatilia matangazo, soma ujumbe na ujibu bila kutoka kwenye kichezaji.
 
-VIPENGELE VIKUU
-- Mahali na ukubwa: buruta kidirisha popote juu ya kicheza video, badilisha ukubwa kutoka upande au pembe yoyote; vyote viwili hupanuka pamoja na kicheza, hivyo mpangilio uliouweka kwenye kompyuta ndogo unafaa pia kwenye skrini ya inchi 32.
-- Maandishi: "Ukubwa wa maandishi" kuanzia 10px hadi 40px (chaguo-msingi 13px; 40px ni takriban mara tatu ya maandishi ya kawaida ya gumzo), "Rangi ya maandishi" unayochagua mwenyewe, "Rangi ya majina ya wanachama" tofauti, na fonti 50.
-- Mandharinyuma: huanza nyeupe isiyopenyeza; "Rangi ya mandharinyuma" na uwazi kutoka kiteuzi kimoja, pamoja na "Ukungu" wa 0-20px — ndicho kipengele kinachoweza kupunguza ulaini zaidi kuliko vingine, hivyo tumia kwa kiasi kwenye kompyuta kuukuu.
-- Kuendelea kuonekana: "Onyesha gumzo wakati hakuna shughuli" huja ikiwa imewashwa, hivyo gumzo hubaki hata vidhibiti vya kicheza vikififia; ikiwa imewashwa, "Hali ya gumzo pekee" hukunja kichwa na kisanduku cha kuandikia hadi uweke kishale juu yake.
-- Majina na nafasi: zima "Onyesha majina ya watumiaji" na "Onyesha picha za wasifu" kwa jumbe za kawaida, jumbe zilizolipiwa hubaki na majina na picha zake; "Nafasi kati ya jumbe" ni 0-40px.
-- Mipangilio iliyowekwa awali: saba imejengwa ndani, kila moja kwa mbofyo mmoja, pamoja na yako mwenyewe.
-- Kibodi: vitelezi na viteuzi vya rangi hufanya kazi kwa vitufe vya mishale, kila kidhibiti kina lebo kwa visomaji skrini. Ukaguzi wa kiotomatiki wa WCAG 2.1 AA hushughulikia kidirisha ibukizi, safu ya vidhibiti na kidirisha cha mipangilio kwa kila mabadiliko.
+Matangazo ya moja kwa moja na marudio ya gumzo
+Tazama matangazo ya michezo ya video, VTuber na matukio ya moja kwa moja pamoja na gumzo kwenye skrini moja. Kwa rekodi zenye marudio ya gumzo, fuatilia ujumbe kutoka kwenye matangazo ya awali.
 
-GUMZO LENYEWE LA YOUTUBE, SI NAKALA
-Kidirisha kilicho juu ya video ni gumzo la moja kwa moja la YouTube lenyewe kutoka pembeni, likiwa limebadilishwa mwonekano, ndiyo maana beji, emoji, vibandiko na gumzo la wanachama pekee huendelea kufanya kazi. Kutuma ujumbe hupitia kisanduku cha kuandika cha YouTube, na Super Chat hupitia kidirisha cha manunuzi cha YouTube: malipo huenda YouTube, kamwe si kwa kiendelezi. Kidhibiti pekee kinachobadilishwa humo ni kitufe cha uanachama (Membership): hufungua ukurasa wa kujiunga wa chaneli katika kichupo kipya.
+Rekebisha mwonekano wa gumzo
+- Mandharinyuma yenye uwazi: rekebisha uwazi na ukungu ili video ionekane nyuma ya paneli.
+- Nafasi na ukubwa: buruta paneli mbali na sehemu yenye matukio, kisha ubadili upana na urefu wake.
+- Urahisi wa kusoma: chagua fonti, ukubwa na rangi ya maandishi, rangi ya mandharinyuma na nafasi kati ya ujumbe.
+- Mitindo iliyohifadhiwa: chagua mtindo uliopo au uhifadhi mipangilio yako ya mwonekano.
+- Vipengele vichache: ficha majina ya watumiaji na picha za wasifu kwenye ujumbe wa kawaida, au kunja kisanduku cha kuandika hadi utakapotumia gumzo.
 
-GHARAMA NI NINI, KINAKUSANYA NINI
-Ni bure: hakuna kujisajili, hakuna kifurushi cha kulipia.
-Ruhusa moja tu, storage; www.youtube.com ndiyo tovuti pekee kinapofanya kazi — hiyo ndiyo maana yote ya onyo la Chrome kuhusu data yako wakati wa kusakinisha. Hakuna kinachoendelea kufanya kazi chinichini: bila kichupo cha YouTube kilichofunguliwa, kinachofanya kazi ni kidirisha ibukizi cha upau wa vidhibiti pekee, na wakati kimefunguliwa tu.
-Hakuna takwimu, hakuna ufuatiliaji, hakuna kinachomfikia msanidi: hakikusanyi, hakihifadhi wala hakitumi unachosoma au kuandika; mipangilio hubaki katika kivinjari hiki. Msimbo wote huja ndani ya kiendelezi; ni fonti zaidi ya ile chaguo-msingi pekee zinazoletwa kutoka Google Fonts. Chanzo huria chini ya GPL-3.0, wazi kwa umma kwenye GitHub.
+Soma na ushiriki kwenye gumzo
+Paneli hutumia gumzo lenyewe la YouTube, pamoja na emoji, beji za wanachama na kisanduku cha ujumbe. Ingia kwenye YouTube ili utume ujumbe wakati wa matangazo ya moja kwa moja. Super Chat inapatikana mahali ambapo huduma hiyo inatolewa. Kutuma ujumbe na kutumia vipengele vya kulipia kunategemea masharti ya jukwaa na mipangilio ya kituo. Gumzo la rekodi ni marudio ya ujumbe, si mazungumzo mapya ya moja kwa moja.
 
-JINSI YA KUANZA
-1. Sakinisha, kisha fungua matangazo ya moja kwa moja au kumbukumbu yenye marudio ya gumzo.
-2. Weka kicheza video kwenye skrini nzima — gumzo tayari lipo hapo.
-3. Kitufe chenye umbo la kiputo cha maneno kwenye upau wa vidhibiti huliwasha na kulizima; weka kishale juu ya gumzo, na kitufe chake cha mipangilio hubadilisha mwonekano.
+Jinsi ya kuanza
+1. Sakinisha kiendelezi na ufungue matangazo ya moja kwa moja au rekodi yenye marudio ya gumzo.
+2. Tumia kitufe cha kichezaji kutazama kwenye skrini nzima.
+3. Peleka kielekezi juu ya gumzo ili ulihamishe, ubadili ukubwa au ufungue mipangilio.
+Tumia kitufe cha gumzo kwenye vidhibiti vya kichezaji kuonyesha au kuficha paneli. Ikiwa uliizima awali, washa gumzo la skrini nzima kwenye dirisha la kiendelezi katika upau wa vidhibiti wa kivinjari.
 
-INAFANYA KAZI WAPI
-Kwenye kompyuta ya mezani pekee, katika skrini nzima kwenye ukurasa wa kutazama wenye gumzo. Toleo hili la Chrome hufanya kazi pia kwenye Opera; Firefox lina toleo lake kwenye addons.mozilla.org. Kiolesura kinapatikana katika chaguo 55 zinazogusa lugha 49.
+Bure na yenye msimbo huria
+Huhitaji akaunti tofauti ya kiendelezi wala usajili wa kulipia. Msimbo wa programu uko wazi kwenye GitHub chini ya leseni ya GPL-3.0. Vipengele vya kulipia vya jukwaa la video ni tofauti na kiendelezi hiki cha bure.
 
-Ripoti hitilafu au omba kipengele: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
-Msimbo wa chanzo: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Faragha na ruhusa
+Mipangilio hubaki kwenye kivinjari hiki kwa kutumia ruhusa ya storage. Kiendelezi hufanya kazi kwenye www.youtube.com, hakitumii uchanganuzi au ufuatiliaji, wala hakipeleki maudhui ya gumzo au historia ya kutazama kwa msanidi. Gumzo lenyewe huunganishwa na huduma za YouTube. Fonti za hiari hupakuliwa kutoka Google Fonts.
+
+Utangamano
+Kwa Chrome kwenye kompyuta, katika video zenye gumzo la moja kwa moja au marudio ya gumzo yanayopatikana. Video zisizo na gumzo hazionyeshi paneli. Utangamano katika Opera na vivinjari vingine vinavyotumia Chromium unaweza kutofautiana. Toleo tofauti la Firefox linapatikana kwenye addons.mozilla.org. Mipangilio inaweza kutumiwa kwa kibodi na ina chaguo 55 za lugha.
+
+Ripoti hitilafu au pendekeza kipengele: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Msimbo wa programu: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Msaidie msanidi: https://ko-fi.com/daichan132

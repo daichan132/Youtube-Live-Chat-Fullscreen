@@ -1,30 +1,34 @@
-Teljes képernyőre váltasz egy YouTube-os élő adáson, és eltűnik a csevegés. Ez a bővítmény visszateszi a videó fölé, így minden üzenetet elolvasol, hozzászólsz, élő adásban pedig Super Chatet is küldesz — anélkül, hogy kilépnél a teljes képernyőből.
+A YouTube teljes képernyős nézése közben is lásd az élő csevegést.
+A YouTube Live Chat Fullscreen ingyenes Chrome-bővítmény, amely a videóra helyezi a beszélgetést. Kövesd az élő adást, olvasd az üzeneteket, és válaszolj a lejátszó elhagyása nélkül.
 
-FŐ FUNKCIÓK
-- Hely és méret: a panelt bárhová elhúzod a lejátszó fölött, és bármelyik széléről vagy sarkáról átméretezed; mindkettő a lejátszóhoz igazodik, így a laptopon beállított elrendezés egy 32 colos képernyőn is jó.
-- Szöveg: „Betűméret” 10-től 40 pixelig (alapból 13 px; a 40 px nagyjából háromszorosa a szokásos csevegésszövegnek), saját szín, külön szín a tagok nevéhez, 50 betűtípus.
-- Háttér: átlátszatlan fehérrel indul; a szín és az áttetszőség egyetlen választóból jön, plusz „Elmosás” 0–20 px — a beállítások közül ez viszi el a legkönnyebben a gördülékenységet, úgyhogy régebbi gépen bánj vele óvatosan.
-- Láthatóság: a „Csevegés megjelenítése inaktivitáskor” alapból bekapcsolva érkezik, így a csevegés a vezérlők eltűnése után is kint marad; mellette a „Csak a csevegés megjelenítése” összecsukja a fejlécet és az üzenetmezőt, amíg rá nem mutatsz.
-- Nevek és térköz: a hétköznapi üzeneteknél kikapcsolod a „Felhasználónevek megjelenítése” és a „Profilképek megjelenítése” lehetőséget, a fizetősek megtartják a sajátjukat; a „Térköz” az üzenetek között 0–40 px.
-- Sablonok: hét beépített, mind egy kattintás, plusz a sajátjaid.
-- Billentyűzet: a csúszkák és a színválasztók fogadják a nyílbillentyűket, minden vezérlőnek van képernyőolvasó-felirata. Az automatikus WCAG 2.1 AA ellenőrzések minden módosításnál lefutnak a felugró ablakra, a vezérlősorra és a beállítási panelre.
+Élő adások és a csevegés visszajátszása
+Nézz játékstreameket, VTuber-adásokat és élő eseményeket úgy, hogy a videó és a beszélgetés egy nézetben marad. Azoknál a felvételeknél, ahol elérhető a csevegés visszajátszása, az eredeti adás üzeneteit is követheted.
 
-A YOUTUBE SAJÁT CSEVEGÉSE, NEM HASONMÁS
-A videó fölötti panel a YouTube saját élő csevegése az oldalsávból, csak más külsővel — ezért működnek továbbra is a tagsági jelvények, az emodzsik, a matricák és a tagoknak szóló csevegés. A küldés a YouTube saját beviteli mezőjén megy át, a Super Chat a vásárlópaneljén: a fizetés a YouTube-hoz kerül, soha nem a bővítményhez. Az egyetlen vezérlő, amit a bővítmény ott megváltoztat, a tagság — új lapon nyitja meg a csatorna csatlakozási oldalát.
+Alakítsd a csevegőpanelt
+- Átlátszó háttér: állítsd az átlátszatlanságot és az elmosást, hogy a videó a csevegés mögött is látszódjon.
+- Hely és méret: húzd el a panelt a fontos részletek elől, és módosítsd a szélességét, illetve a magasságát.
+- Olvashatóság: válassz betűtípust, betűméretet, szövegszínt, háttérszínt és üzenetek közötti távolságot.
+- Mentett stílusok: használj beépített stílust, vagy mentsd el a saját megjelenítési beállításaidat.
+- Kevesebb elem: rejtsd el a felhasználóneveket és a profilképeket a normál üzeneteknél, vagy csukd össze a beviteli mezőt addig, amíg használni nem kezded a csevegést.
 
-MENNYIBE KERÜL, ÉS MIT GYŰJT
-Ingyenes: nincs regisztráció, nincs fizetős csomag.
-Egyetlen engedély, a storage; az egyetlen oldal, amelyen fut, a www.youtube.com — a Chrome telepítéskori figyelmeztetése az adataidról pontosan ennyit jelent. A háttérben semmi nem fut: ha nincs nyitva YouTube-lap, egyedül az eszköztár felugró ablaka csinál bármit, és csak amíg nyitva van.
-Nincs analitika, nincs követés, a fejlesztőhöz semmi nem jut el: amit olvasol és amit írsz, azt nem gyűjti, nem tárolja és nem küldi sehová; a beállítások ebben a böngészőben maradnak. A teljes kód a bővítményen belül érkezik; a hálózatról csak az alapértelmezettől eltérő betűtípusok jönnek, a Google Fonts kínálatából. Nyílt forráskód GPL-3.0 alatt, nyilvánosan a GitHubon.
+Olvass és kapcsolódj be
+A panel a YouTube saját csevegését használja, emojikkal, tagsági jelvényekkel és üzenetmezővel. Élő adás közbeni üzenetküldéshez jelentkezz be. A Super Chat továbbra is elérhető ott, ahol támogatott; az üzenetküldésre és a fizetős funkciókra a platform követelményei és a csatorna beállításai vonatkoznak. A felvételeken az eredeti beszélgetés játszódik le, nem új élő csevegés indul.
 
-ÍGY KEZDD
-1. Telepítsd, aztán nyiss meg egy élő adást vagy egy visszajátszható csevegésű archívumot.
-2. Váltsd a lejátszót teljes képernyőre — a csevegés már ott van.
-3. A vezérlősáv szövegbuborékos gombja ki-be kapcsolja; mutass rá a csevegésre, és a saját beállítások gombja a külsejét változtatja.
+Első lépések
+1. Telepítsd a bővítményt, majd nyiss meg egy élő adást vagy egy felvételt, amelyhez elérhető a csevegés visszajátszása.
+2. Válts teljes képernyőre a videólejátszó teljes képernyős gombjával.
+3. Vidd az egérmutatót a csevegés fölé a panel áthelyezéséhez, átméretezéséhez vagy a beállítások megnyitásához.
+A lejátszó vezérlői között lévő csevegésgombbal megjelenítheted vagy elrejtheted a panelt. Ha korábban kikapcsoltad a funkciót, kapcsold be újra a teljes képernyős csevegést a bővítmény eszköztárból nyíló ablakában.
 
-HOL MŰKÖDIK
-Csak asztali gépen, teljes képernyőn, olyan megtekintési oldalon, amelyen van csevegés. Ez a Chrome-változat az Opera böngészőben is fut; a Firefoxnak saját változata van az addons.mozilla.org oldalon. A felület 55 választható változatban, 49 nyelven érhető el.
+Ingyenes és nyílt forráskódú
+A bővítményhez nem kell külön fiók vagy előfizetés. A forráskód nyilvános a GitHubon, GPL-3.0 licenc alatt. A videóplatform fizetős funkciói elkülönülnek az ingyenes bővítménytől.
 
-Hibabejelentés vagy funkciókérés: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Adatvédelem és engedélyek
+A beállítások a storage engedély használatával ebben a böngészőben maradnak. A bővítmény a www.youtube.com oldalon fut, nem használ analitikát vagy követést, és nem küldi el a fejlesztőnek a csevegés tartalmát vagy a megtekintési előzményeket. A beépített csevegés a YouTube szolgáltatásaihoz kapcsolódik. A választható betűtípusok a Google Fonts szolgáltatásból töltődnek be.
+
+Kompatibilitás
+Asztali Chrome-hoz, élő csevegéssel vagy elérhető csevegés-visszajátszással rendelkező videókhoz. A csevegés nélküli videóknál nem jelenik meg panel. A kompatibilitás az Opera és más Chromium-alapú böngészők esetén eltérhet; a Firefoxhoz külön verzió érhető el az addons.mozilla.org oldalon. A beállítások billentyűzettel is kezelhetők, és 55 nyelvi lehetőséget kínálnak.
+
+Hibajelentés vagy funkciójavaslat: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Forráskód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Támogasd a fejlesztőt: https://ko-fi.com/daichan132
+A fejlesztő támogatása: https://ko-fi.com/daichan132

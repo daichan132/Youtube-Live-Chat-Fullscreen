@@ -23,14 +23,34 @@ yarn verify:browser --port 9335 --url "https://www.youtube.com/watch?v=<video_id
 
 ## ログイン済み UI の検証
 
-Google ログインが必要な UI は、通常の Google Chrome の専用プロファイルで確認する。UI 調整中は dev 出力と起動中の WXT dev server を使う。
+Google ログインが必要な UI は、通常の Google Chrome の専用プロファイルで確認する。[Google の公式案内](https://support.google.com/accounts/answer/7675428?hl=ja)では、自動制御されているブラウザからのログインが拒否される場合がある。初回ログインは次のように通常の Chrome を直接開き、ユーザー本人が行う。この間は debugging port を付けず、Playwright / CDP や他の自動操作を接続しない。
+
+```bash
+ylc_profile="$PWD/.cache/store-capture-google-chrome"
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+  --user-data-dir="$ylc_profile" --no-first-run --no-default-browser-check \
+  --new-window https://www.youtube.com/ &
+ylc_chrome_pid=$!
+```
+
+ログインが終わったら、起動時に記録した PID と `--user-data-dir` の一致を確認し、その専用プロファイルの Chrome だけを終了する。Chrome 全体の終了や私用ウィンドウの操作は行わない。debugging port は起動済みのプロファイルに後から追加できないため、同じプロファイルで下記の検証コマンドを使って再起動する。認証済みプロファイルは保持し、Cookie やプロファイルを別のディレクトリへコピーしない。
+
+production 出力の初回読み込みは次のコマンドで行い、開いた `chrome://extensions` から `.output/chrome-mv3` を Load unpacked する。
+
+```bash
+yarn build
+yarn verify:chrome --setup-extension --port 9336 --profile "$ylc_profile" \
+  --url "https://www.youtube.com/watch?v=<video_id>"
+```
+
+UI 調整中は dev 出力と起動中の WXT dev server を使う。同じログイン状態を使う場合は `verify:dev` にも `--profile "$ylc_profile"` を指定する。
 
 ```bash
 yarn dev
 yarn verify:dev --port 9336
 ```
 
-`verify:chrome` は `/Applications/Google Chrome.app` を直接起動し、Playwright の自動化 Chrome は使わない。プロファイルは既定で `~/Library/Application Support/YLC Verify Chrome` に作られる。一度 YouTube / Google にログインすると次回以降もその状態を再利用できる。
+`verify:chrome` は `/Applications/Google Chrome.app` を直接起動し、Playwright の自動化 Chrome は使わない。通常 Chrome の headed / headless とも、そのブラウザ本来の User-Agent を保持する。プロファイルは既定で `~/Library/Application Support/YLC Verify Chrome` に作られる。一度 YouTube / Google にログインすると次回以降もその状態を再利用できる。
 `verify:dev` は `.output/chrome-mv3-dev` を対象にして、同名の別 path の拡張を成功扱いしない。`yarn dev` を先に起動して dev manifest を生成し、WXT dev server を動かしたまま使う。
 
 通常の Google Chrome 137+ は `--load-extension` で unpacked extension を読み込まないため、初回だけ `chrome://extensions` で次を行う。
@@ -65,6 +85,44 @@ YLC_BROWSER_EXECUTABLE_PATH="/path/to/browser" YLC_E2E_HEADED=1 \
 ```
 
 `YLC_BROWSER_EXECUTABLE_PATH` 指定時は、対象ブラウザ本来の User-Agent を維持し、Playwright 同梱 Chromium 用の `channel` と Chrome User-Agent override を適用しない。通常プロファイルや既存の拡張状態は再利用しない。
+
+## 設定ファイルを使った起動と撮影
+
+設定 UI を手で操作せず、開発用の対象ページに設定を適用できる。Node.js 24 から現行の設定ドメインを使い、指定した項目だけを一括保存して読み戻す。拡張本体に遠隔操作用の API は追加していない。
+
+```bash
+yarn build
+yarn verify:browser --headless --port 9335 \
+  --profile /private/tmp/ylc-debug-profile \
+  --settings-file docs/store-assets/chrome-web-store/source/settings/transparent-live.json \
+  --url "https://www.youtube.com/watch?v=<video_id>"
+```
+
+起動後も、同じ開発用プロファイルの対象タブだけに設定を適用できる。`--target-id` は CDP target ID を指定する。省略時は `--url-includes` に合う YouTube watch / live ページが1件だけでなければ停止する。
+
+```bash
+yarn verify:settings --port 9335 --profile /private/tmp/ylc-debug-profile \
+  --target-id <target_id> \
+  --settings-file docs/store-assets/chrome-web-store/source/settings/transparent-live.json
+
+yarn verify:screenshots --background --video-only --require-composer --viewport 1600x900 --port 9335 \
+  --profile /private/tmp/ylc-debug-profile --target-id <target_id> \
+  --out /private/tmp/ylc-background-capture
+```
+
+背景撮影は対象タブの描画 surface を直接取得する。headless Chrome は OS ウィンドウを作らず、対象タブを内部で選択して YouTube の本来の全画面ボタンを操作する。headless 起動の viewport は 1600 × 900。全画面 DOM・拡張 overlay・復号された動画の寸法が成立しなければ失敗とする。`--require-composer` は可視かつ編集可能なネイティブ入力欄を要求し、ログイン案内やリプレイを成功扱いしない。headed Chrome の背面タブでは、フォーカスのエミュレーションだけで全画面に入れない場合があるため、同じ保証はない。既存の対話用5枚撮影は `--background` を付けずに使う。
+
+撮影寸法を固定する場合は `--viewport 1600x900` を指定する。起動時の viewport だけでは、全画面への移行後も高さ 900 px を維持できるとは限らない。撮影コマンドはネイティブ全画面に入ったあと、スクリーンショットを取得する同じ CDP session で指定寸法を適用し、撮影後に解除する。指定寸法が保持されなければ画像を採用しない。
+
+設定 JSON は `enabled`、`theme`、`locale`、`profile`（appearance / display の部分更新）、`geometry`（player 相対の完全な矩形）を受け付ける。色は `backgroundColor: { "a": 0.22 }` のように alpha だけを指定できる。コメント入力欄を含める場合は `contentMode: "full-chat"` を指定する。サンプルは [撮影用設定](../store-assets/chrome-web-store/source/settings/) にある。
+
+対象の unpacked path・拡張 ID・有効状態を確認し、実際の content script の isolated world だけで保存する。`storage.clear()` は使わず、未指定の現行設定とプリセットを保持する。破損した現行設定や旧形式だけの appearance は上書き前に拒否する。設定の読み戻し成功は描画成功の証明とは別で、背景色・配置・入力欄は撮影結果でも確認する。
+
+通常の Google Chrome でも `verify:chrome --settings-file ...` / `verify:dev --settings-file ...` を使える。専用プロファイルへの unpacked 初回読み込みは従来どおり必要。ログインと読み込みが済んだ headed Chrome を、その PID とプロファイルを確認して終了したあと、同じ `--profile` を指定して `verify:chrome --headless --settings-file ...` で再起動できる。同じプロファイルを headed / headless で同時起動せず、headless と初回 `--setup-extension` は併用しない。保存済みの認証状態を使い、ログイン拒否や bot 判定が出たらその経路を停止して外部前提として記録する。判定を回避するためのブラウザ識別情報の変更や Cookie の移植は行わない。
+
+普段の Chrome データディレクトリは拒否する。指定したプロファイルと CDP listener の process args が一致しない場合も接続前に停止する。私用プロファイルや Cookie のコピーは行わない。headless / background は認証や外部サイトの条件を回避する手段ではない。
+
+オフラインで設定投入と背景撮影の接続を検証する場合は `yarn verify:background-capture` を使う。production 拡張を一時プロファイルで起動し、1600 × 900 の実全画面・入力欄・透過の合成ピクセル・フォーカスの復元を確認する。この fixture の成功は実 YouTube の再生やログインの成功とは分けて記録する。
 
 ## 状態確認
 

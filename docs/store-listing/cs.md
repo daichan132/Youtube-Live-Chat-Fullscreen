@@ -1,30 +1,34 @@
-Zapnete celou obrazovku u živého přenosu na YouTube a chat zmizí. Tohle rozšíření ho vrátí zpátky nad video, takže si přečtete každou zprávu, odpovíte a při živém přenosu pošlete i Super Chat — a celou obrazovku přitom neopustíte.
+Sledujte YouTube na celé obrazovce a mějte chat stále na očích.
+YouTube Live Chat Fullscreen je bezplatné rozšíření pro Chrome, které zobrazí chat přes video. Sledujte přenos, čtěte zprávy a odpovídejte bez opuštění přehrávače.
 
-HLAVNÍ FUNKCE
-- Poloha a velikost: panel přetáhnete kamkoli nad přehrávač a od kterékoli hrany či rohu mu změníte velikost; obojí se počítá vůči přehrávači, takže rozvržení nastavené na notebooku sedí i na 32palcové obrazovce.
-- Text: „Velikost písma“ od 10 do 40 px (výchozích 13 px; 40 px je zhruba trojnásobek běžného textu chatu), vlastní barva, zvlášť barva jmen členů, 50 písem.
-- Pozadí: na začátku neprůhledná bílá; barva a průhlednost z jednoho výběru, k tomu „Rozostření“ 0–20 px — z nastavení je tohle to, které nejspíš ubere na plynulosti, na starších počítačích s ním tedy šetřete.
-- Viditelnost: „Zobrazit chat při nečinnosti“ je zapnuté hned od začátku, takže chat zůstane i po zmizení ovládací lišty přehrávače; při něm „Zobrazit pouze chat“ složí záhlaví a pole pro psaní, dokud na panel nenajedete.
-- Jména a rozestupy: u běžných zpráv vypnete „Zobrazit uživatelská jména“ i „Zobrazit profilové obrázky“, placené si je nechávají; „Rozestup“ mezi zprávami je 0–40 px.
-- Předvolby: sedm vestavěných, každá na jedno kliknutí, plus vaše vlastní.
-- Klávesnice: posuvníky i výběr barev berou šipky a každý prvek má popisek pro čtečku obrazovky. Automatické kontroly WCAG 2.1 AA běží při každé změně a pokrývají okno na liště, řádek ovládání a panel nastavení.
+Živé přenosy a přehrávání chatu
+Sledujte herní streamy, VTubery i živé události a zároveň čtěte chat. U záznamů, které nabízejí přehrávání chatu, uvidíte zprávy z původního vysílání.
 
-CHAT SAMOTNÉHO YOUTUBE, NE NAPODOBENINA
-Panel nad videem je živý chat samotného YouTube, ten z postranního panelu, jen jinak nastylovaný — proto dál fungují odznaky členů, emoji, samolepky i chat jen pro členy. Odesílání jde přes pole pro psaní od YouTube, Super Chat přes jeho nákupní panel: platba míří k YouTube, nikdy k rozšíření. Jediné, co tam rozšíření mění, je položka členství — otevře stránku pro připojení ke kanálu na nové kartě.
+Vzhled chatového panelu
+- Průhledné pozadí: nastavte průhlednost a rozmazání, aby bylo vidět video pod panelem.
+- Poloha a velikost: přetáhněte panel mimo dění a upravte jeho šířku i výšku.
+- Čitelnost: změňte písmo, velikost a barvu textu, barvu pozadí a rozestupy mezi zprávami.
+- Uložené styly: vyberte vestavěný styl nebo si uložte vlastní nastavení vzhledu.
+- Méně rušivých prvků: skryjte uživatelská jména a profilové obrázky u běžných zpráv nebo nechte vstupní pole sbalené, dokud s chatem nezačnete pracovat.
 
-CO STOJÍ A CO SBÍRÁ
-Zdarma: žádná registrace, žádná placená verze.
-Jediné oprávnění, storage; jediná stránka, na které rozšíření běží, je www.youtube.com — přesně tolik znamená hláška Chromu o vašich datech. Na pozadí neběží nic: když nemáte otevřenou kartu s YouTube, dělá něco jedině okno na liště, a jen dokud je otevřené.
-Žádná analytika, žádné sledování, vývojáři se nedostane nic: co čtete a co píšete, se nesbírá, neukládá ani nikam neposílá; nastavení zůstává v tomhle prohlížeči. Veškerý kód je uvnitř rozšíření; ze sítě přijdou jen jiná písma než výchozí — z Google Fonts. Otevřený zdrojový kód pod GPL-3.0, veřejný na GitHubu.
+Čtení a psaní zpráv
+Panel používá přímo chat YouTube včetně emotikonů, členských odznaků a pole pro zprávy. Pro psaní během živého přenosu se přihlaste k YouTube. Super Chat je dostupný tam, kde je podporován. Posílání zpráv i placené funkce se řídí požadavky platformy a nastavením kanálu. Chat u záznamu je přehráváním původních zpráv, nikoli novou živou konverzací.
 
-JAK ZAČÍT
-1. Nainstalujte rozšíření a otevřete živý přenos nebo záznam s přehráním chatu.
-2. Přepněte přehrávač na celou obrazovku — chat už tam je.
-3. Tlačítko s bublinou v ovládací liště ho zapíná a vypíná; najeďte na chat a jeho vlastní tlačítko nastavení mění vzhled.
+Jak začít
+1. Nainstalujte rozšíření a otevřete živý přenos nebo záznam s přehráváním chatu.
+2. Tlačítkem přehrávače přejděte na celou obrazovku.
+3. Najeďte na chat a přesuňte jej, změňte velikost nebo otevřete nastavení.
+Tlačítko chatu v ovládání přehrávače panel zobrazí nebo skryje. Pokud jste jej dříve vypnuli, zapněte chat na celé obrazovce v nabídce rozšíření na liště prohlížeče.
 
-KDE BĚŽÍ
-Jen na počítači, na celé obrazovce stránky s videem, které má chat. Tahle verze pro Chrome běží i v prohlížeči Opera; Firefox má vlastní verzi na addons.mozilla.org. Rozhraní má 55 možností pro 49 jazyků.
+Zdarma a s otevřeným kódem
+Rozšíření nevyžaduje vlastní účet ani předplatné. Zdrojový kód je veřejně dostupný na GitHub pod licencí GPL-3.0. Placené funkce videoplatformy jsou na bezplatném rozšíření nezávislé.
 
-Nahlásit chybu nebo navrhnout funkci: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Soukromí a oprávnění
+Nastavení zůstává v tomto prohlížeči díky oprávnění storage. Rozšíření funguje na www.youtube.com, nepoužívá analytiku ani sledování a vývojáři neposílá obsah chatu ani historii sledování. Původní chat se připojuje ke službám YouTube. Volitelná písma se načítají z Google Fonts.
+
+Kompatibilita
+Pro Chrome na počítači a videa s živým chatem nebo dostupným přehráváním chatu. U videí bez chatu se panel nezobrazuje. Kompatibilita s prohlížečem Opera a dalšími prohlížeči na bázi Chromium se může lišit. Samostatná verze pro Firefox je na addons.mozilla.org. Nastavení lze ovládat klávesnicí a nabízí 55 jazykových voleb.
+
+Chyby a návrhy funkcí: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Zdrojový kód: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Podpořit vývojáře: https://ko-fi.com/daichan132

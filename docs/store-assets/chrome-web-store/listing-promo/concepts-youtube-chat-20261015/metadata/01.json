@@ -1,0 +1,11 @@
+{
+  "id": "01",
+  "nameJa": "ダーク・ネイティブ",
+  "headline": "Fullscreen\nLive Chat",
+  "prompt": "Use case: ads-marketing. Generate a single finished Chrome extension store small promotional tile, landscape 11:7 canvas, exactly 1760 by 1120 preferred (not a panorama). Concept 01: a YouTube-native dark product stage. The attached screenshot is STYLE REFERENCE ONLY for the chat anatomy: do not reproduce its game, real creator, handles, messages or badges. Design an original vivid indie adventure video, green hills, ruined stone towers, tiny explorer, overlaid by a flat dark #0f0f0f native-looking YouTube live chat pane on the right 30%, entirely INSIDE the video. The video fills almost the whole tile; quiet black negative space on upper-left cleanly supports very large white headline on 2 lines, text EXACTLY 'Fullscreen' then 'Live Chat'. Fullscreen is ONE word F-u-l-l-s-c-r-e-e-n, never Full Screen. The main words occupy 35% of canvas and remain readable at 440x280. Native chat must look like actual YouTube, not generic messenger: small header 'Top chat', tiny down chevron, vertical three-dot menu. 7 compact natural rows, each with small round profile avatar, muted gray @handle and WHITE message INLINE in SAME row, no separate bubble. Fictional row text: @alex let's go!; @mira that was close; @sam GG; @jade hello chat; @luna nice jump; @ben wow; @kit 🔥. Footer: own little round avatar, underlined input 'Chat...', small smiley and small outlined send triangle. Rounded outer corners only subtle, flat matte native typography similar Roboto, small real UI density but text visibly legible. Chat is ONE coherent pane, no floating cards, no horizontal placeholder bars. Gaming and community energy with professional product clarity. Tiny red live dot above heading and micro label 'YOUTUBE LIVE CHAT FULLSCREEN' optional but no other marketing copy. Avoid creator likenesses, logos, endorsements, neon glow, plastic 3D interfaces, isolated floating message bubbles. It is a stylized original promo concept, not a claimed real screenshot.",
+  "referencePath": "docs/store-assets/chrome-web-store/inputs/en/live-gaming.png",
+  "originalPath": "originals/01.png",
+  "conceptNote": "黒い動画画面にYouTube風の一体型チャットを重ね、大きな白文字で機能を明示。実在の配信者・ゲーム・コメントは再現していない。",
+  "requiredWords": ["Fullscreen", "Live Chat"],
+  "uiTreatment": "YouTube-like live chat"
+}

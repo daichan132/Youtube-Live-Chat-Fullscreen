@@ -1,29 +1,33 @@
-Metti una diretta YouTube a schermo intero e la chat sparisce. Questa estensione la rimette sopra il video: leggi ogni messaggio, rispondi e, se la diretta è in corso, mandi Super Chat senza mai uscire dallo schermo intero.
+Guarda YouTube a schermo intero senza perdere la chat live.
+YouTube Live Chat Fullscreen è un’estensione gratuita per Chrome che sovrappone la conversazione al video. Segui la diretta, leggi i messaggi e rispondi senza uscire dal player.
 
-FUNZIONI PRINCIPALI
-- Posizione e dimensione: trascina il pannello dove vuoi sopra il player e ridimensionalo da qualsiasi lato o angolo; entrambe seguono la scala del player, così un assetto deciso sul portatile va bene anche su un monitor da 32 pollici.
-- Testo: da 10 a 40 px («Dimensione carattere», 13 px di partenza; 40 px è circa il triplo del testo normale della chat), il colore che vuoi, uno separato per i nomi dei membri, 50 tipi di carattere.
-- Sfondo: all'inizio è bianco opaco; colore e trasparenza da un unico selettore, più una «Sfocatura» da 0 a 20 px — è l'impostazione che più facilmente costa fluidità, quindi vacci piano sulle macchine più vecchie.
-- Visibilità: «Mostra la chat quando non interagisci» è attivo fin da subito, così la chat resta anche dopo che i comandi del player sono svaniti; con quello attivo, «Mostra solo la chat» ripiega l'intestazione e la casella di scrittura finché non ci passi sopra il puntatore.
-- Nomi e spaziatura: «Mostra i nomi utente» e «Mostra le immagini del profilo» si spengono sui messaggi ordinari (quelli a pagamento mantengono i propri); da 0 a 40 px tra i messaggi.
-- Preimpostazioni: sette incluse, un clic ciascuna, più le tue.
-- Tastiera: cursori e selettori rispondono ai tasti freccia e ogni comando è etichettato per gli screen reader. I controlli automatici WCAG 2.1 AA coprono a ogni modifica il popup, la riga di comandi e il pannello delle impostazioni.
+Dirette e repliche della chat
+Streaming di giochi, dirette di VTuber ed eventi live: video e conversazione restano nella stessa schermata. Nei video archiviati che offrono la replica della chat puoi leggere i messaggi della trasmissione originale.
 
-LA CHAT DI YOUTUBE, NON UNA COPIA
-Il pannello sopra il video è la chat live di YouTube, la stessa della colonna laterale, con un altro aspetto: badge, emoji, sticker e chat riservata ai membri continuano a funzionare. I messaggi passano dalla casella di scrittura di YouTube, i Super Chat dal suo pannello di acquisto: il pagamento va a YouTube, mai all'estensione. L'unico comando che l'estensione cambia lì dentro è la voce dell'iscrizione al canale, che apre in una nuova scheda la pagina per iscriversi.
+Personalizza il pannello della chat
+- Sfondo trasparente: regola opacità e sfocatura per lasciare visibile il video sottostante.
+- Posizione e dimensioni: trascina il pannello lontano dall’azione e modificane larghezza e altezza.
+- Lettura: scegli carattere, dimensione e colore del testo, colore di sfondo e spaziatura tra i messaggi.
+- Stili salvati: usa uno stile predefinito o salva le tue impostazioni grafiche.
+- Meno ingombro: nascondi nomi utente e foto profilo nei messaggi ordinari, oppure comprimi il campo di scrittura finché non interagisci con la chat.
 
-QUANTO COSTA, COSA RACCOGLIE
-Gratis: nessun account, nessuna versione a pagamento.
-Una sola autorizzazione, storage; www.youtube.com è l'unico sito in cui gira — è tutto quello che intende l'avviso di installazione di Chrome quando parla dei tuoi dati. In background non gira niente: senza una scheda YouTube aperta, l'unica cosa che fa qualcosa è il popup della barra degli strumenti, e solo mentre è aperto.
-Nessuna analisi, nessun tracciamento, niente che arrivi allo sviluppatore: quello che leggi e quello che scrivi non viene mai raccolto, conservato né spedito; le impostazioni restano in questo browser. Tutto il codice è dentro l'estensione; solo i tipi di carattere diversi da quello predefinito arrivano da Google Fonts. Open source con licenza GPL-3.0, codice pubblico su GitHub.
+Leggi e partecipa
+Il pannello usa la chat di YouTube, incluse emoji, badge degli abbonati e casella dei messaggi. Accedi per inviare messaggi durante una diretta. I Super Chat restano disponibili dove supportati; l’invio di messaggi e le funzioni a pagamento dipendono dai requisiti della piattaforma e dalle impostazioni del canale. Nei video archiviati la chat riproduce la conversazione originale: non è una nuova conversazione in diretta.
 
-COME SI COMINCIA
-1. Installala, poi apri una diretta o un archivio con la replica della chat.
-2. Metti il player a schermo intero: la chat è già lì.
-3. Un pulsante a fumetto nella barra dei comandi la spegne e la riaccende; passa il puntatore sulla chat e il suo pulsante delle impostazioni ne cambia l'aspetto.
+Come iniziare
+1. Installa l’estensione e apri una diretta o un video archiviato con la replica della chat.
+2. Attiva lo schermo intero con il pulsante del player video.
+3. Passa il puntatore sulla chat per spostarla, ridimensionarla o aprirne le impostazioni.
+Il pulsante della chat nei controlli del player mostra o nasconde il pannello. Se avevi disattivato la funzione, riattiva la chat a schermo intero dalla finestra dell’estensione nella barra degli strumenti.
 
-DOVE FUNZIONA
-Solo su computer, a schermo intero, su una pagina di visione che ha una chat. Questa versione per Chrome funziona anche in Opera; Firefox ha la sua su addons.mozilla.org. L'interfaccia è disponibile in 55 opzioni per 49 lingue.
+Gratuita e open source
+Non servono un account separato o un abbonamento all’estensione. Il codice è pubblico su GitHub con licenza GPL-3.0. Le funzioni a pagamento della piattaforma video sono separate dall’estensione gratuita.
+
+Privacy e autorizzazioni
+Le impostazioni restano in questo browser grazie all’autorizzazione storage. L’estensione funziona su www.youtube.com, non usa strumenti di analisi o tracciamento e non invia al suo sviluppatore il contenuto della chat o la cronologia di visualizzazione. La chat integrata si collega ai servizi di YouTube. I caratteri facoltativi vengono caricati da Google Fonts.
+
+Compatibilità
+Per Chrome su computer, sui video con chat live o replica della chat disponibile. Nei video senza chat non compare alcun pannello. La compatibilità con Opera e altri browser basati su Chromium può variare; una versione separata per Firefox è disponibile su addons.mozilla.org. Le impostazioni si possono usare da tastiera e offrono 55 opzioni di lingua.
 
 Segnala un problema o proponi una funzione: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Codice sorgente: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen

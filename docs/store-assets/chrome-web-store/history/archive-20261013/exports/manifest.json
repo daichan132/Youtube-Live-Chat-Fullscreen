@@ -1,0 +1,92 @@
+{
+  "status": "draft",
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-13T12:19:32.205Z",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin",
+    "arch": "arm64",
+    "deviceScaleFactor": 1,
+    "typography": "Bundled Inter 400/500 under SIL Open Font License; native product UI fonts come from the production capture."
+  },
+  "sourceNote": "Complete production extension UI captures. Source provenance and verification are recorded in the referenced capture evidence.",
+  "captureEvidence": "capture-evidence.json",
+  "sources": [
+    {
+      "file": "source/composition.json",
+      "sha256": "5036e010b3a9f30547f76a6648b635f2c4208126e9d34de0e0ff81be8fcd2fd1"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "674bb4ecc5d63879298b1652a0b88cd5db00508b77ed55a60055e167ce188295"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "9f9a2132471ef8f2caa3a512166d66edb44b3db23818f678934a95696944b712"
+    },
+    {
+      "file": "source/fonts/inter-400.woff2",
+      "sha256": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc"
+    },
+    {
+      "file": "source/fonts/inter-500.woff2",
+      "sha256": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f"
+    },
+    {
+      "file": "source/fonts/LICENSE",
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "file": "inputs/en/overview.jpg",
+      "sha256": "dae8e0af048630048ce0946df181ad2a3660646c7569d064a5ce14ebc394fdf1"
+    },
+    {
+      "file": "inputs/en/position-left.jpg",
+      "sha256": "8b3a8556baeafccec6347de329466f9d28d9e56f046cd1e17faac4cd51ef1c12"
+    },
+    {
+      "file": "inputs/en/archive.jpg",
+      "sha256": "a76be2fcd1a0329ef98cb69de5f701b5ccb6ee2fa7d9b73fc2c94d43a9442790"
+    },
+    {
+      "file": "../../../public/icon/128.png",
+      "sha256": "bbf12731bdb7b3b3486fe00b3a8196ca8d13da7fef467902d5b864a93b2343a9"
+    },
+    {
+      "file": "capture-evidence.json",
+      "sha256": "5152b65af5c79935e68048dfe9c0aa0091a940b777d0d282e078036b2ce8da90"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/en/01-fullscreen-chat.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "1cbfe804cfe2530eaf20bfd27d4ca50a2e6bd0aa80c1c3eaeb255a1b73923b5f"
+    },
+    {
+      "file": "exports/en/02-position-and-size.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "5f45bbf3b4dbe7c2c680ae884ff016f0f518282feace63620ab2948bcb516d9d"
+    },
+    {
+      "file": "exports/en/03-chat-replay.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "f619dc4732e76e74161f86e64d65fea345cda173e9857a3e637b2a96f3229f35"
+    },
+    {
+      "file": "exports/small-promo.png",
+      "width": 440,
+      "height": 280,
+      "sha256": "afaa8d1b680e2cbc9254f89562b145cc819042e58401eec6d5ebf7257674fefa"
+    },
+    {
+      "file": "exports/marquee.png",
+      "width": 1400,
+      "height": 560,
+      "sha256": "aeb377f7520672ae10be41d4b226d470cdadd8f95bdbaf717b0938c87f4e53a5"
+    }
+  ]
+}

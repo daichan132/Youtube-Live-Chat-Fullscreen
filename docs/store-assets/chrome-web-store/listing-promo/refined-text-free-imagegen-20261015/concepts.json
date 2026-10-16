@@ -1,0 +1,152 @@
+[
+  {
+    "id": "01",
+    "nameJa": "黒い映像と静かな透過",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "黒い映像を横切る朱色の曲線を、細いチャット越しに見せる。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "c47932a9a752c2e0f3536f324f2052212f15baac3dcdf91db335efd012d2d9d2"
+  },
+  {
+    "id": "02",
+    "nameJa": "白い余白のレイヤー",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "白い画面と薄いグレーのチャットを、静かな線でまとめる。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "c91a5343f7cdc0e1249faabc16755efb18d55e3caa27104eca7856b0da1773a2"
+  },
+  {
+    "id": "03",
+    "nameJa": "ミッドナイトの細い線",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "深いネイビーに細い白線を置き、透過チャットを浮かせる。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "7e57dce5cba8c869ca27ea833a580a73b15b6780a9ccd3de05433a3cd054a2ab"
+  },
+  {
+    "id": "04",
+    "nameJa": "朱色とスモーク",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "朱色の画面にスモーク色のチャットを重ねる。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "01c1961ed3d7d689134789d2234aea77377933284ab85048c44e074f7c34c2dd"
+  },
+  {
+    "id": "05",
+    "nameJa": "下に浮かぶチャット",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "下寄りの小さなチャットで、映像の広さを優先する。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "95cc28883a4a72613618baf45a781ca4ec8558678b215647c439104768159f5e"
+  },
+  {
+    "id": "06",
+    "nameJa": "インディゴの重なり",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "青い幾何学面がチャットの後ろまで続く構成。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "50104edc2b51679e6ca7dcb2a8112b1e912b84cd337654128be26f28406820e3"
+  },
+  {
+    "id": "07",
+    "nameJa": "左側の軽いチャット",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "左に置いた透過チャットと、右に広がる映像。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "be154bfb046c5d08effa2c5233489d705f87a732171392d284b3582da98e417a"
+  },
+  {
+    "id": "08",
+    "nameJa": "映像を広く見せる輪郭",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "細い輪郭と控えめな再生記号で、広い映像にチャットを重ねる。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "904f9fe71df112b6c55842f8bc890e65f991dbd6635cf2480b46b7d079bc6c0e"
+  },
+  {
+    "id": "09",
+    "nameJa": "赤い線で囲う全画面",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "全画面の細い赤い四隅と、明るい透過チャット。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "40fe0af201a42e74a8d56398acf027b35b1cf591f1e867d472113bc3a4466d64"
+  },
+  {
+    "id": "10",
+    "nameJa": "淡い紫と透明な会話",
+    "headline": "",
+    "textFree": true,
+    "conceptNote": "淡い紫の映像に薄いチャットを重ね、柔らかく整理する。",
+    "uiTreatment": "Text-free abstract fullscreen video with inset live chat; individually generated artwork",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "80db88a211c53a8edef41354d0c982f11a5ad35748d67eea2f0954789a2b356e"
+  }
+]

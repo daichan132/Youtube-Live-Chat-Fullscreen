@@ -1,0 +1,142 @@
+[
+  {
+    "id": "01",
+    "nameJa": "パール・エディトリアル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "真珠色の余白、大きい黒の見出し、浅く彫刻した赤いチャット。動画の内側にチャットを置く関係を、上品な立体の図にまとめる。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "ae19aab2d58a738133fb52a0d0a5295ba5efefe8b1b1600c3509a64b15ab538e"
+  },
+  {
+    "id": "02",
+    "nameJa": "レッド・ブロードキャスト",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "マットな黒と朱色の斜めの面、力強い白い文字を使う放送ポスター。下段の白い全画面マークの内側で、再生とチャットを一緒に見せる。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "121fc261c11ab01069295872f70b34a9638d0cc9fbad3a2ce12c193d580247c8"
+  },
+  {
+    "id": "03",
+    "nameJa": "アイボリー・ペーパーレイヤー",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "温かい紙の質感と浅いエンボスで、動画とチャットの図を作る。大きな黒と朱色の文字を主役に、手触りを感じる静かな広告表現。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1553,
+      "height": 1013,
+      "colorType": 2
+    },
+    "originalSha256": "c9ed58a56c0cdcd323fff4e3cf105e8fec36ad7ac94972b09b9d016fdfe1e6b2"
+  },
+  {
+    "id": "04",
+    "nameJa": "スモークグラス",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "黒いガラスの大きな動画画面に、半透明の赤いチャットを重ねる。放送機材のような質感と大きなタイポグラフィ。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "f669e7f2c48e62694c352c32a13427a33877b07286200cb869aa62790c626e12"
+  },
+  {
+    "id": "05",
+    "nameJa": "アイスシルバー",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "淡い青とブラッシュシルバーを軸に、赤い再生・送信アイコンをアクセントにしたエディトリアルな抽象画面。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "a6ced33e3d7e118e4b68ae472f4ecd670ee7abc87d359dd5e370e9ea91fa362d"
+  },
+  {
+    "id": "06",
+    "nameJa": "斜めの赤とアイボリー",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "赤とアイボリーの対角線、大きな黒い機能名、重ねたカードの奥行きで、全画面内の会話を大胆に示す。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "cda1daa1f5f4433291a1ee1809fe506f4739aafa329fb44ab81f20a7f1405eaa"
+  },
+  {
+    "id": "07",
+    "nameJa": "スイス・エディトリアル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "圧縮した大きな黒文字と赤文字、クリーム紙の静かな質感。画面と赤いチャットを大胆なポスター構成に。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "784257046ac19c0c61be27a5d32cc061f902305dea32e2e1c31706bbe10465a0"
+  },
+  {
+    "id": "08",
+    "nameJa": "グラファイトと赤いアクリル",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "落ち着いたグラファイト地、白いタイプと赤い半透明チャット。控えめな物理的な奥行きで機能を示す。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "d2b95cf0d014e7a0c11d5c41ca93ddf1f9ec95d6e28f3cefda55e076c88d030b"
+  },
+  {
+    "id": "09",
+    "nameJa": "アイボリーのカットペーパー",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "アイボリーと赤、切り紙の輪郭と小さな陰影。大きなタイプと一枚の黒い画面を、余白のある対角構成に。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "02fd9f867579cae8513e1df6b2e84d9720edf9163d9a724c350e94e69efb2e93"
+  },
+  {
+    "id": "10",
+    "nameJa": "ミッドナイト・ブロードキャスト",
+    "headline": "YouTube / Fullscreen / Live Chat",
+    "conceptNote": "黒と朱色のステージに、動画と半透明チャットを重ねた放送グラフィック。大きい見出しと浅い奥行きで力強く見せる。",
+    "uiTreatment": "Abstract video and overlaid chat; individually generated artwork",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "9920872831a62666844e3c9c30a82be28088ad15c1bc8e0fa12fe56f059ef139"
+  }
+]

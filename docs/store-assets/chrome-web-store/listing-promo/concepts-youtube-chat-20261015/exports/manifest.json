@@ -1,0 +1,361 @@
+{
+  "status": "design-exploration",
+  "selectedConcept": null,
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-14T15:36:46.699Z",
+  "imageGeneration": "Ten concepts made with built-in image_gen, using native YouTube chat anatomy as a style reference. Original scenes and fictional conversations; promotional illustrations, not real captures.",
+  "rendering": "Whole originals uniformly fitted; no source crops, repainting, stretching or new baked text. 440 × 280 upload candidates, 880 × 560 review images and 220 × 140 previews.",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin"
+  },
+  "conceptCount": 10,
+  "requiredHeadlineWords": ["Fullscreen", "Live Chat"],
+  "uiDirection": "Top chat header; small round avatars; muted handles and inline message text; native-like composer, smiley and send control.",
+  "galleryChecks": {
+    "halfSizeToggle": "passed",
+    "expandedExportIdentity": "passed",
+    "escapeClose": "passed",
+    "fullSizeRestore": "passed",
+    "mobile375px": "passed"
+  },
+  "sources": [
+    {
+      "file": "metadata/01.json",
+      "sha256": "e7a493f4e9a111ff19e8a781bd2d03c70b4c9f2a196927f1b954d463a41df330"
+    },
+    {
+      "file": "metadata/02.json",
+      "sha256": "490d4e8b499fac3749eec5bbc1d9c87b7c658c9bca6bf573a718e2099ca58e9f"
+    },
+    {
+      "file": "metadata/03.json",
+      "sha256": "a79844df0286b8e407451767cfaa25828dc1f965fadf9c923a293fcae5cba09e"
+    },
+    {
+      "file": "metadata/04.json",
+      "sha256": "0794ac9f28a23d8bb9b2d72416df7b0142fa87b5fdd301f14ce4861cf5dded85"
+    },
+    {
+      "file": "metadata/05.json",
+      "sha256": "96cee73c4f27169648cd484d28b62092d42e811723149f466c7f3ed9e09237cb"
+    },
+    {
+      "file": "metadata/06.json",
+      "sha256": "501dc093e4aa8c681ee5f1668134438cb7b228d46db929bcd663c08e69db53a4"
+    },
+    {
+      "file": "metadata/07.json",
+      "sha256": "72fed9de4499a114795051fd7723c613571803a54192b4c3224e05d222d1c828"
+    },
+    {
+      "file": "metadata/08.json",
+      "sha256": "f44790e51f47a8921ff9867cc37be8efba25f1a01a1faa38d999f79d25f95dcc"
+    },
+    {
+      "file": "metadata/09.json",
+      "sha256": "3b2cee9445b4974bdcbc18239e835f8d85c8a74398abd323f3155b27215dc43c"
+    },
+    {
+      "file": "metadata/10.json",
+      "sha256": "81dbb6ded67c924ca0fd00ee0a9e67e36f92202cbc29a428f27ce72fa94666fc"
+    },
+    {
+      "file": "originals/01.png",
+      "sha256": "208e8160e6aed6003c0535fb07a6c3d6da4c898d2e4f3e72d27ad7752246dd65"
+    },
+    {
+      "file": "originals/02.png",
+      "sha256": "6c740ab51476366f0d04c1dfa5a1d7989c29274369a061648451e70d29c2a4c7"
+    },
+    {
+      "file": "originals/03.png",
+      "sha256": "0c4220eb23622b6a222887db5a71741aa209cd6eb8152ef15dc1669d4fb1b501"
+    },
+    {
+      "file": "originals/04.png",
+      "sha256": "51e8922a71878ea6169c0d51c39db517fc66aec3717a3c6ee9e505d55c399156"
+    },
+    {
+      "file": "originals/05.png",
+      "sha256": "89a775a506e13c47fbd1a3f8c380601dc8bbd993fa93e168adcb08210fc88b67"
+    },
+    {
+      "file": "originals/06.png",
+      "sha256": "0994717a371c2093cf13fdd1d7a984cd05d408a01b50139cf4197d8eb1bf6d32"
+    },
+    {
+      "file": "originals/07.png",
+      "sha256": "b782005bd8fb0ee5040516046d4178c5d313838135e564ccd8c85d325faf226c"
+    },
+    {
+      "file": "originals/08.png",
+      "sha256": "be26f678ef4b8dd1a8bf76ab4a0e9b97442e8bf8ab0e57d1e3751d68b7bd8c1e"
+    },
+    {
+      "file": "originals/09.png",
+      "sha256": "1e01b8faadaed874c0e759bb4f0e852b7fe7504ad51623b37023e9857618ac2d"
+    },
+    {
+      "file": "originals/10.png",
+      "sha256": "9f3a49db21b9b335fd47256c50088c83251544c9f724332cde4323af9a963670"
+    },
+    {
+      "file": "concepts.json",
+      "sha256": "6de4961afef2b55190a88bae05fb733c2b481f586e0671257501780eead867a0"
+    },
+    {
+      "file": "prompts.md",
+      "sha256": "d45fd16bc3f034769db58882837566d1a2e1c9ce363842b91e1144cca502d5c8"
+    },
+    {
+      "file": "index.html",
+      "sha256": "d350f0fe608c21c84d0f4b9fe6d5d75a1dad9e2244682f18cb582d99edb8a6bb"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "06ba2784253e85540c9a38368338bbd0532c5380ecfaf7e26258294dfa9e806d"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "432b2b021d4ead399a3fd206f70f5ae8efef97f88b3d5a790ce5d1fcd58051cf"
+    },
+    {
+      "file": "source/tile.html",
+      "sha256": "1ca2b440a6a78ddb4957d538f0e420074c5cae8c559197bf074871813998c720"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/01.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "f11c5241a59c7a7de46fce5f0b6e03c5e334250341dba251a1593df67a142e85"
+    },
+    {
+      "file": "exports/02.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "fa8f98e10d0d4cd1b7179d1948193c62c27b4032258e8d5e38de4e5c8e00d094"
+    },
+    {
+      "file": "exports/03.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "476215a34582960b1adb486799ff1b82ca99ee11dd94ff2f1a6b02d91721a33b"
+    },
+    {
+      "file": "exports/04.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "bc441c77642bae72857db1d6937331fcca2acf0de1399699097caaca3f96d806"
+    },
+    {
+      "file": "exports/05.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "60dce9b75e6293c77b5e145ee4da113308fcc8055265ac75205bcbc4dc717395"
+    },
+    {
+      "file": "exports/06.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "bea4295cb4d35d43ba2f8b7896f47c1efc3688a8b2a07781fecba0609c195dd0"
+    },
+    {
+      "file": "exports/07.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "aa4b90228fade92b34869e5fa628dfd222b101b10e7a6de7ed0a54222d3fd66c"
+    },
+    {
+      "file": "exports/08.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "f520c69f8b4ce4600b0f7cc253820528e4793f5541d8a2029fcb87532acf7e5e"
+    },
+    {
+      "file": "exports/09.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "fe84cec5ea7c0946ca9ded2b93dd9e908e1a3a0f67524a0f13bda47438e327e0"
+    },
+    {
+      "file": "exports/10.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "c9ed6381d442e9ff58e7ae73739672174ea729e240add04db4da5a1c70ec779a"
+    },
+    {
+      "file": "exports/01@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "641e41fb9325a57c7efa585a7a32a0d30c9465b320337720c64361ca949c0903"
+    },
+    {
+      "file": "exports/02@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "6d385c2baf652d3891a35f0eee933d8defb075eaccc2578455a3700ffc9eaae4"
+    },
+    {
+      "file": "exports/03@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "5e53bab4533f2b9bf65df18b5daa90fc2e0f00ac9e9c2bc4872a74a7c47898ce"
+    },
+    {
+      "file": "exports/04@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "c218eeb9f316a3140a99df941aa26406fcdb8c30239ced17d729206884ba7454"
+    },
+    {
+      "file": "exports/05@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "efecb7964efeb28b4c87c7ef502082e6c28894beab790324cfc6b2d12dc41f43"
+    },
+    {
+      "file": "exports/06@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "22dcbe8fd27daa127daf2130d724bbe6bc65866353c7f7b779563a4adda708a2"
+    },
+    {
+      "file": "exports/07@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "7fc1bfd98417784bed704eeba650cb0c0ee7b968a0fa31acf41e9cba4c4532e5"
+    },
+    {
+      "file": "exports/08@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "6dc54e0c67fab71c79fce21e098a4350632620698de1c5500203844e049fb442"
+    },
+    {
+      "file": "exports/09@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "4569ebff3a7d19a653dddecaf7671989ad7ecfb37ae02a459039a75d74ea94d5"
+    },
+    {
+      "file": "exports/10@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "51cfcf80463cdda4bbde8f8046a0f0b2cfaeb8ad9d0e5679820e4475b7053853"
+    },
+    {
+      "file": "exports/01-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "9bfe5d9a06a184230de38a4711b5c316fad952ccd10a3b0f6e264be8e9d013ab"
+    },
+    {
+      "file": "exports/02-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "c9b6752a1297b59c573133575140eff435ba68df76643786251ccf6f972e978b"
+    },
+    {
+      "file": "exports/03-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "6def8f05868631a67c46fbf41541d653b374789430a7c5d4760c90266a7ab213"
+    },
+    {
+      "file": "exports/04-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "740fb5d83f5d214cc7c81b66ea12b799e73b4314a6b02dbfb6c05f05784e9728"
+    },
+    {
+      "file": "exports/05-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "3257495e614911077b8da41c057ebaf25c469508935e809d2ada35e931dcdf55"
+    },
+    {
+      "file": "exports/06-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "6ca1259b85ab8ee91d9ea6d4e10b9f2f1e9c8366b0aeb827abb75ef97b1f781c"
+    },
+    {
+      "file": "exports/07-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "0467eea8d5d331acca39a2638a00fc984dc1b6034d6b496f4f7b69239c32c2fa"
+    },
+    {
+      "file": "exports/08-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "a2810616bffaf7bec9ad977a955ed61c2e3912c1b9cf83eea8085c23caba7c3b"
+    },
+    {
+      "file": "exports/09-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "53ed773da4d5639fdef786a053b4b78dbc25fed86bfaa538ead2d6702a33ca1a"
+    },
+    {
+      "file": "exports/10-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "72673f36db648049af701aa21a370f2bc9b5bb4322887ea5d290a97d0ff14495"
+    },
+    {
+      "file": "exports/comparison.png",
+      "width": 1000,
+      "height": 1865,
+      "colorType": 2,
+      "sha256": "074717e12226d9bb4e112608095ba4a3f1f91efcfbe2d296350ded0909af7260"
+    },
+    {
+      "file": "exports/comparison-odd.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "86b245e94b5776c02dd225098ce9038632363885e08ac2432a810eb03eb949df"
+    },
+    {
+      "file": "exports/comparison-even.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "5d061e96ddc63d383acf7f6a9c54195359614f18fd1e66385dd21e463eff5898"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+[
+  {
+    "id": "01",
+    "nameJa": "アイコンで伝える黒 × 赤",
+    "headline": "Big screen. Live chat.",
+    "conceptNote": "黒地に再生・吹き出し・全画面の記号を一つにまとめたポスター。最小限の英語コピーで縮小時にも読める構成。初稿は横長すぎたため11:7へ再構成した。",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "f8115888217cb3778420cb9089206ecf1562580d9ed54a24e86d2d53620540be"
+  },
+  {
+    "id": "02",
+    "nameJa": "大胆な赤タイポグラフィ",
+    "headline": "FULL SCREEN / LIVE CHAT",
+    "conceptNote": "赤いポスターに大きな白黒のタイプを組み、中央のゲーム映像と入力欄付きチャットで機能を伝える。",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "b5fb360aaed6bc0719e37bb8bdf18f729e972aca9dc19f7e0ee0c47357390a8a"
+  },
+  {
+    "id": "03",
+    "nameJa": "音楽フェス × 雑誌の表紙",
+    "headline": "Keep the moment. Keep the chat.",
+    "conceptNote": "クリーム地にセリフ見出し、夕暮れのライブ会場と右端チャットを重ねた温かいカルチャー誌風。",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1574,
+      "height": 999,
+      "colorType": 2
+    },
+    "originalSha256": "f3d830f8c431bfd2f24e0312b5c7f1f99dc1957266bd2c292c0100ca0b21f086"
+  },
+  {
+    "id": "04",
+    "nameJa": "VTuber × パステル",
+    "headline": "Your stream. Your chat.",
+    "conceptNote": "Original anime avatar in a lavender and coral editorial campaign, with a single illustrated full-screen stage and usable chat composer.",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1574,
+      "height": 999,
+      "colorType": 2
+    },
+    "originalSha256": "f3668c742acb432bb1027d5c4671010c00dd333c61e321b9c45580a403177637"
+  },
+  {
+    "id": "05",
+    "nameJa": "ライブ会場の熱気",
+    "headline": "Stay in the moment.",
+    "conceptNote": "Cobalt and vermilion concert photo-art, huge flat type and a single translucent chat composer over anonymous crowd silhouettes.",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "acda1d3862733c11026d74674f2104f44fcf9c59a836de39d76253c220a454b9"
+  },
+  {
+    "id": "06",
+    "nameJa": "透過チャット × 夕景",
+    "headline": "More stream. Less clutter.",
+    "conceptNote": "Calm hand-painted indie landscape with sunset lake and legible translucent chat; trees and reflections remain visible through the panel.",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "427e5cccbaa78a73cf5aac8442df2050469e77631a7865c68edff4776b41af48"
+  },
+  {
+    "id": "07",
+    "nameJa": "白地のミニマルタイポ",
+    "headline": "Video + Chat",
+    "conceptNote": "温かい白と赤、巨大な文字と全画面の四隅で機能を表す。小さなチャットと入力欄を右下に配置したエディトリアルな構成。生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1576,
+      "height": 998,
+      "colorType": 2
+    },
+    "originalSha256": "5b00fc7364e728ba377097d79b35bd4ac0255afde33ed7056518b5d6398fcfd9"
+  },
+  {
+    "id": "08",
+    "nameJa": "レトロゲーム",
+    "headline": "Stay for the chat.",
+    "conceptNote": "夜の浮遊村と冒険者を緻密なピクセルアートで描く。全画面のゲーム世界にチャットと入力欄を重ねた、ゲーム配信に寄せた懐かしい表現。生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "353a39813fa97d6fc4abb3545b91162cb3ccc3c3a0291caef24f3c5a6f1acda8"
+  },
+  {
+    "id": "09",
+    "nameJa": "蛍光イエローのポップ",
+    "headline": "WATCH. REACT. REPLY.",
+    "conceptNote": "蛍光イエロー、黒、赤で音楽やファンジンのポスターを表現。巨大な動詞とコンサートのシルエット、一つのチャット入力欄が、見る・反応する・コメントする楽しさを伝える。生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1576,
+      "height": 998,
+      "colorType": 2
+    },
+    "originalSha256": "37932565008bce5d1aeb9b0c94388c63003988fb27527b08534b261115b6836d"
+  },
+  {
+    "id": "10",
+    "nameJa": "モノクロのスケート誌",
+    "headline": "WATCH BIG. / REPLY LIVE.",
+    "conceptNote": "白黒のスポーツ写真風アートと赤。スクリーンの道具感より、配信の一瞬とチャットの関係を伝える。",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "a139b5e03705d578933eb2370673b8409eb03c1f789f794b631f004dc76aba63"
+  }
+]

@@ -3,7 +3,7 @@
     "message": "YouTube Live Chat Fullscreen"
   },
   "extensionDescription": {
-    "message": "Teljes képernyőn eltűnik a csevegés? Az overlay a videón tartja a YouTube élő chatjét: húzd, írj hozzászólást és Super Chatet."
+    "message": "A YouTube élő csevegése teljes képernyőn: küldj üzeneteket és Super Chatet, és alakítsd a panel megjelenését."
   },
   "popup_theme": {
     "message": "Téma"

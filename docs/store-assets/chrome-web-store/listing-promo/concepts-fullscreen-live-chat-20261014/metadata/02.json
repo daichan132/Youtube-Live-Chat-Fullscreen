@@ -1,0 +1,25 @@
+{
+  "id": "02",
+  "nameJa": "タイポグラフィ・レッド",
+  "headline": "FULLSCREEN / LIVE CHAT",
+  "prompt": "Use case: text-localization / ads-marketing. Edit the attached exact red editorial poster for YouTube Live Chat Fullscreen.\nCritical typography correction: replace the entire oversized top phrase \"FULL SCREEN\" with the one unbroken word \"FULLSCREEN\". Exact letters F-U-L-L-S-C-R-E-E-N, no internal space, no line break, no gap suggesting two words. The entire oversized lower phrase must remain exactly \"LIVE CHAT\" (one space). These are the only words in the finished artwork.\nPreserve the original vermilion red background, upper warm off-white condensed bold type, lower charcoal condensed bold type, slight print texture, and the central angled flat streaming-game rectangle with rich blue-orange abstract game scenery. Keep ONE original illustrative charcoal chat panel on the right inside that video, including circles, symbolic message bars, smile symbol and input/send arrow. No actual real-site screenshot claim.\nRe-kern the top word so FULLSCREEN is clearly one word and completely fits inside 5% side margins, matching the original strong poster energy. Do not stretch or crop the whole original. Maintain compact 11:7 landscape canvas, 1760 pixels wide and 1120 pixels tall. Never a panorama. Both main phrases readable even at 220 x 140.\nNo added headline, brand line, badges, official logos, physical monitor, room, person, creator or watermark. Preserve distinct polished flat entertainment art direction.",
+  "originalReferencePath": "../concepts-20261014/originals/02.png",
+  "originalPath": "originals/02.png",
+  "conceptNote": "赤いポスターの上段を一続きのFULLSCREENへ改め、下段のLIVE CHATとゲーム・入力欄の構成を保った。",
+  "requiredWords": ["Fullscreen", "Live Chat"],
+  "tool": "built-in image_gen",
+  "artworkType": "original conceptual UI",
+  "illustrative": true,
+  "nativeDimensions": {
+    "width": 1572,
+    "height": 1001
+  },
+  "qa": {
+    "requiredWordsProminent": true,
+    "fullscreenOneWord": true,
+    "headlineAccurate": true,
+    "headlineClipped": false,
+    "officialLogoAbsent": true,
+    "aspectRatioWithinOnePercent": true
+  }
+}

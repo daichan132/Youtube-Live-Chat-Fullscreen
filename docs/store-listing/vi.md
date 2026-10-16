@@ -1,29 +1,33 @@
-Bật toàn màn hình một buổi phát trực tiếp trên YouTube là khung chat biến mất. Tiện ích này đưa nó trở lại, nằm ngay trên video, để bạn đọc từng tin nhắn, trả lời và — với buổi phát trực tiếp — gửi Super Chat mà không phải thoát toàn màn hình.
+Xem YouTube toàn màn hình mà vẫn đọc và trả lời trong khung trò chuyện.
+YouTube Live Chat Toàn Màn Hình là tiện ích Chrome miễn phí, hiển thị khung trò chuyện đè lên video. Bạn có thể theo dõi buổi phát và gửi tin nhắn mà không cần thoát toàn màn hình.
 
-TÍNH NĂNG CHÍNH
-- Vị trí và kích thước: kéo khung tới bất cứ đâu trên trình phát, đổi kích thước từ mọi cạnh và mọi góc; cả hai đều co giãn theo trình phát, nên bố cục bạn đặt trên laptop vẫn vừa với màn hình 32 inch.
-- Chữ: "Cỡ chữ" từ 10px đến 40px (mặc định 13px; 40px lớn gấp khoảng ba lần chữ chat thường), "Màu chữ" tùy bạn, "Màu tên hội viên" riêng, 50 phông chữ.
-- Nền: ban đầu là nền trắng đục; chọn "Màu nền" và độ trong suốt trong cùng một bảng chọn, thêm "Làm mờ" 0-20px — đây là thiết lập dễ làm mất độ mượt nhất, nên hãy dè chừng trên máy cũ.
-- Hiển thị: "Hiển thị chat khi không hoạt động" bật sẵn, nên chat vẫn còn đó sau khi thanh điều khiển mờ đi; khi nó đang bật, "Chế độ chỉ hiển thị chat" gấp gọn phần đầu khung và ô soạn tin cho tới lúc bạn rê chuột vào.
-- Tên người dùng và khoảng cách: tắt "Hiển thị tên người dùng" và "Hiển thị ảnh hồ sơ" cho tin nhắn thường, tin nhắn trả phí vẫn giữ nguyên tên và ảnh của nó; "Khoảng cách giữa các tin nhắn" từ 0-40px.
-- Bộ cài đặt sẵn: bảy bộ dựng sẵn, mỗi bộ một cú nhấn, cộng thêm bộ do bạn lưu.
-- Bàn phím: thanh trượt và bảng chọn màu đều nhận phím mũi tên, mọi nút đều có nhãn cho trình đọc màn hình. Kiểm tra WCAG 2.1 AA tự động chạy sau mỗi thay đổi, bao quát cửa sổ bật lên, hàng nút và bảng cài đặt.
+Phát trực tiếp và phát lại cuộc trò chuyện
+Xem stream game, VTuber và các sự kiện trực tiếp cùng phản ứng của người xem. Với bản ghi có tính năng phát lại cuộc trò chuyện, bạn có thể xem lại các tin nhắn trong buổi phát gốc.
 
-CHAT CỦA CHÍNH YOUTUBE, KHÔNG PHẢI BẢN NHÁI
-Khung nổi trên video chính là khung chat trực tiếp của YouTube ở cột bên, được đổi diện mạo, nên huy hiệu, emoji, nhãn dán và chat dành riêng cho hội viên vẫn chạy như thường. Gửi tin nhắn đi qua ô soạn của YouTube, Super Chat đi qua bảng mua của YouTube: tiền về YouTube, không bao giờ về tiện ích. Thứ duy nhất tiện ích đổi trong bảng đó là nút hội viên (Membership): nó mở trang tham gia của kênh trong tab mới.
+Điều chỉnh khung trò chuyện
+- Nền trong suốt: chỉnh độ trong suốt và độ nhòe để vẫn nhìn thấy video phía sau khung chat.
+- Vị trí và kích thước: kéo khung ra khỏi phần quan trọng của video, rồi thay đổi chiều rộng và chiều cao.
+- Chữ dễ đọc: chọn phông chữ, cỡ chữ, màu chữ, màu nền và khoảng cách giữa các tin nhắn.
+- Mẫu giao diện: chọn kiểu có sẵn hoặc lưu thiết lập giao diện của riêng bạn.
+- Hiển thị gọn hơn: ẩn tên và ảnh đại diện trên tin nhắn thông thường, hoặc thu gọn ô nhập cho đến khi bạn tương tác.
 
-GIÁ BAO NHIÊU, THU THẬP NHỮNG GÌ
-Miễn phí: không đăng ký, không gói trả phí.
-Chỉ một quyền, storage; www.youtube.com là trang duy nhất tiện ích chạy trên đó — cảnh báo về dữ liệu của bạn lúc cài trên Chrome chỉ có nghĩa như vậy. Không có gì chạy nền: khi không mở tab YouTube nào, chỉ cửa sổ bật lên trên thanh công cụ làm việc, và chỉ khi nó đang mở.
-Không phân tích, không theo dõi, không gì gửi về nhà phát triển: tiện ích không thu thập, không lưu, không gửi đi những gì bạn đọc hay gõ; thiết lập nằm lại trong trình duyệt này. Toàn bộ mã đi kèm bên trong tiện ích; chỉ những phông chữ ngoài phông mặc định mới tải từ Google Fonts. Mã nguồn mở theo GPL-3.0, công khai trên GitHub.
+Trò chuyện ngay trong giao diện YouTube
+Khung chat sử dụng tính năng trò chuyện gốc của YouTube, gồm biểu tượng cảm xúc, huy hiệu hội viên và ô nhập tin nhắn. Bạn cần đăng nhập để gửi tin nhắn trong buổi phát trực tiếp. Super Chat vẫn dùng được ở những buổi phát có hỗ trợ. Việc gửi tin nhắn và sử dụng tính năng trả phí tùy thuộc vào điều kiện của nền tảng và cài đặt kênh. Chat trong bản ghi chỉ phát lại cuộc trò chuyện cũ, không phải cuộc trò chuyện trực tiếp mới.
 
-BẮT ĐẦU THẾ NÀO
-1. Cài tiện ích, rồi mở một buổi phát trực tiếp hoặc bản lưu còn chat replay.
-2. Cho trình phát chạy toàn màn hình — chat đã ở sẵn đó.
-3. Nút bong bóng thoại trên thanh điều khiển bật tắt chat; rê chuột vào chat, nút cài đặt của nó đổi diện mạo.
+Cách sử dụng
+1. Cài tiện ích rồi mở buổi phát trực tiếp hoặc bản ghi có tính năng phát lại cuộc trò chuyện.
+2. Nhấn nút toàn màn hình của trình phát video.
+3. Di chuột lên khung chat để di chuyển, đổi kích thước hoặc mở cài đặt.
+Dùng nút trò chuyện trên thanh điều khiển để hiện hoặc ẩn khung chat. Nếu trước đó đã tắt tính năng, hãy bật chat toàn màn hình trong cửa sổ tiện ích trên thanh công cụ.
 
-CHẠY Ở ĐÂU
-Chỉ trên máy tính để bàn, ở chế độ toàn màn hình của trang xem có chat. Bản Chrome này cũng chạy trên Opera; Firefox có bản riêng trên addons.mozilla.org. Giao diện có 55 lựa chọn, trải khắp 49 ngôn ngữ.
+Miễn phí và mã nguồn mở
+Không cần tài khoản hay gói đăng ký riêng cho tiện ích. Mã nguồn được công khai trên GitHub theo giấy phép GPL-3.0. Các tính năng trả phí của nền tảng video vẫn có phí riêng.
+
+Quyền riêng tư và quyền truy cập
+Cài đặt được lưu trong trình duyệt này bằng quyền storage. Tiện ích chỉ chạy trên các trang www.youtube.com, không phân tích hay theo dõi người dùng, không gửi nội dung chat hoặc lịch sử xem cho nhà phát triển. Chat gốc kết nối với các dịch vụ của YouTube. Phông chữ tùy chọn được tải từ Google Fonts.
+
+Khả năng tương thích
+Dành cho Chrome trên máy tính, với video có trò chuyện trực tiếp hoặc bản phát lại chat khả dụng. Video không có chat sẽ không hiện khung trò chuyện. Khả năng tương thích trên Opera và các trình duyệt dùng Chromium khác có thể khác nhau; bản Firefox được cung cấp riêng tại addons.mozilla.org. Bạn có thể thao tác cài đặt bằng bàn phím và chọn trong 55 tùy chọn ngôn ngữ.
 
 Báo lỗi hoặc đề xuất tính năng: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Mã nguồn: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen

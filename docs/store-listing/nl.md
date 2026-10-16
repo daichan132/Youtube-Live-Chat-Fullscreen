@@ -1,30 +1,34 @@
-Je gaat naar volledig scherm bij een YouTube-livestream en de chat verdwijnt. Deze extensie zet hem terug over de video, zodat je elk bericht leest, reageert en tijdens een livestream Super Chats stuurt zonder het volledige scherm te verlaten.
+Houd de livechat in beeld terwijl je YouTube op volledig scherm bekijkt.
+YouTube Live Chat Fullscreen is een gratis Chrome-extensie die het gesprek over de video legt. Volg een livestream, lees berichten en reageer zonder de speler te verlaten.
 
-BELANGRIJKSTE FUNCTIES
-- Positie en formaat: sleep het paneel naar elke plek boven de speler en trek het bij aan elke rand of hoek; allebei schalen ze mee met de speler, dus een indeling die je op een laptop maakt, past ook op een scherm van 32 inch.
-- Tekst: "Lettergrootte" van 10 tot 40px (standaard 13px; 40px is ongeveer drie keer zo groot als gewone chattekst), je eigen tekstkleur, een aparte kleur voor ledennamen, 50 lettertypes.
-- Achtergrond: het paneel begint dekkend wit; kleur en doorzichtigheid uit één kleurkiezer, plus 0–20px "Vervaging" – de instelling die het meest waarschijnlijk ten koste gaat van de vloeiendheid, dus wees er zuinig mee op een oudere computer.
-- Weergave: "Chat tonen bij inactiviteit" staat vanaf het begin aan, dus de chat blijft staan als de bedieningsbalk verdwijnt; staat die aan, dan vouwt "Alleen chat tonen" de kopbalk en het invoervak op tot je er met de muis overheen gaat.
-- Namen en tussenruimte: "Gebruikersnaam tonen" en "Profielfoto tonen" zet je uit voor gewone berichten, betaalde houden hun naam en foto; "Tussenruimte" van 0–40px tussen de berichten.
-- Voorinstellingen: zeven ingebouwde, één klik per stuk, plus je eigen.
-- Toetsenbord: schuifregelaars en kleurkiezers werken met de pijltoetsen en elk element heeft een label voor schermlezers. Automatische controles op WCAG 2.1 AA dekken bij elke wijziging de pop-up, het rijtje knoppen en het instellingenpaneel.
+Livestreams en chatreplays
+Bekijk gamestreams, VTuber-uitzendingen en live-evenementen met video en gesprek in hetzelfde beeld. Bij opgeslagen streams met een beschikbare chatreplay kun je de berichten uit de oorspronkelijke uitzending volgen.
 
-DE CHAT VAN YOUTUBE ZELF, GEEN NAMAAK
-Het paneel over de video is de livechat van YouTube zelf, dezelfde als in de zijbalk, in een nieuw jasje – daarom blijven badges, emoji, stickers en de chat voor leden gewoon werken. Plaatsen gaat via het invoerveld van YouTube, Super Chats via het aankooppaneel van YouTube: de betaling gaat naar YouTube, nooit naar de extensie. Het enige dat de extensie daar wijzigt is "Lidmaatschap", dat de deelnamepagina van het kanaal in een nieuw tabblad opent.
+Pas de chat aan
+- Transparante achtergrond: stel dekking en vervaging in, zodat de video achter de chat zichtbaar blijft.
+- Plaats en formaat: sleep het paneel weg van de actie en pas de breedte en hoogte aan.
+- Leesbaarheid: kies lettertype, tekstgrootte, tekstkleur, achtergrondkleur en ruimte tussen berichten.
+- Opgeslagen stijlen: kies een ingebouwde stijl of sla je eigen weergave-instellingen op.
+- Minder in beeld: verberg gebruikersnamen en profielfoto’s bij gewone berichten, of klap het invoerveld in totdat je de chat gebruikt.
 
-WAT HET KOST, WAT HET VERZAMELT
-Gratis: geen account, geen betaalde versie.
-Slechts één machtiging, storage; www.youtube.com is de enige website waarop de extensie draait – meer betekent de installatiemelding van Chrome over je gegevens niet. Op de achtergrond draait er niets: zonder open YouTube-tabblad doet alleen de pop-up in de werkbalk iets, en alleen zolang die openstaat.
-Geen analytics, geen tracking, niets naar de ontwikkelaar: wat je leest en typt wordt nooit verzameld, opgeslagen of verstuurd; je instellingen blijven in deze browser. Alle code zit in de extensie zelf; alleen lettertypes buiten het standaardlettertype komen van Google Fonts. Opensource onder GPL-3.0, publiek op GitHub.
+Lees en praat mee
+Het paneel gebruikt de chat van YouTube zelf, inclusief emoji, ledenbadges en het invoerveld voor berichten. Log in om tijdens een livestream berichten te sturen. Super Chats blijven beschikbaar waar ze worden ondersteund. Voor berichten en betaalde functies gelden de voorwaarden van het platform en de kanaalinstellingen. Bij opnamen wordt de oorspronkelijke chat afgespeeld; er ontstaat geen nieuw livegesprek.
 
-ZO BEGIN JE
-1. Installeer de extensie en open een livestream of een archief met chatherhaling.
-2. Zet de speler op volledig scherm – de chat is er al.
-3. Een tekstballonknop in de bedieningsbalk zet hem uit en aan; ga met de muis over de chat, dan verandert zijn eigen instellingenknop het uiterlijk.
+Aan de slag
+1. Installeer de extensie en open een livestream of een opname met chatreplay.
+2. Schakel naar volledig scherm met de knop in de videospeler.
+3. Beweeg de muis over de chat om het paneel te verplaatsen, het formaat te wijzigen of de instellingen te openen.
+Met de chatknop in de bediening van de speler toon of verberg je het paneel. Heb je de functie eerder uitgezet, schakel de chat op volledig scherm dan weer in via het pop-upvenster van de extensie in de werkbalk.
 
-WAAR HET WERKT
-Alleen op de desktop, alleen op volledig scherm op een kijkpagina met chat. Deze Chrome-versie draait ook in Opera; voor Firefox is er een eigen versie op addons.mozilla.org. De interface komt in 55 opties voor 49 talen.
+Gratis en opensource
+Je hebt geen apart account of abonnement voor de extensie nodig. De broncode staat openbaar op GitHub onder GPL-3.0. Betaalde functies van het videoplatform staan los van de gratis extensie.
 
-Een bug melden of een functie aanvragen: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Privacy en machtigingen
+Je instellingen blijven in deze browser via de machtiging storage. De extensie werkt op www.youtube.com, gebruikt geen analyse of tracking en stuurt geen chatinhoud of kijkgeschiedenis naar de ontwikkelaar. De ingebouwde chat maakt verbinding met de diensten van YouTube. Optionele lettertypen worden geladen via Google Fonts.
+
+Compatibiliteit
+Voor Chrome op computers en video’s met livechat of een beschikbare chatreplay. Bij video’s zonder chat verschijnt geen paneel. De compatibiliteit met Opera en andere Chromium-browsers kan verschillen; er is een aparte Firefox-versie op addons.mozilla.org. De instellingen zijn met het toetsenbord te bedienen en bieden 55 taalopties.
+
+Een fout melden of een functie voorstellen: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Broncode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Steun de ontwikkelaar: https://ko-fi.com/daichan132

@@ -1,30 +1,34 @@
-Avaat YouTuben suoran lähetyksen koko näytölle, ja chat katoaa. Tämä laajennus tuo sen takaisin videon päälle: luet jokaisen viestin, vastaat ja lähetät suorassa lähetyksessä Super Chat -viestejä poistumatta koko näytön tilasta.
+Pidä livechat näkyvissä, kun katsot YouTubea koko näytöllä.
+YouTube Live Chat Fullscreen on ilmainen Chrome-laajennus, joka tuo keskustelun videon päälle. Seuraa suoraa lähetystä, lue viestejä ja vastaa poistumatta soittimesta.
 
-TÄRKEIMMÄT OMINAISUUDET
-- Paikka ja koko: vedä paneeli mihin kohtaan tahansa soittimen päällä ja muuta kokoa mistä tahansa reunasta tai kulmasta; molemmat skaalautuvat soittimen mukana, joten kannettavalla tehty asettelu istuu myös 32-tuumaiselle näytölle.
-- Teksti: ”Fonttikoko” 10–40px (oletuksena 13px; 40px on noin kolme kertaa tavallisen chat-tekstin kokoinen), oma tekstin väri, erillinen väri jäsenten nimille, 50 fonttia.
-- Tausta: paneeli avautuu läpikuultamattoman valkoisena; väri ja läpinäkyvyys samasta värivalitsimesta, lisäksi 0–20px ”Sumennus” – asetus, joka todennäköisimmin syö sulavuutta, joten vanhalla koneella sitä kannattaa käyttää säästeliäästi.
-- Näkyvyys: ”Näytä chat käyttämättömänä” on päällä heti alusta, joten chat pysyy näkyvissä, kun hallintapalkki häipyy; sen ollessa päällä ”Näytä vain chat” taittaa piiloon otsikkopalkin ja kirjoituskentän, kunnes viet osoittimen paneelin päälle.
-- Nimet ja välistys: ”Näytä käyttäjänimi” ja ”Näytä profiilikuva” voi kytkeä pois tavallisista viesteistä, maksullisissa nimi ja kuva säilyvät; ”Välistys” viestien välissä 0–40px.
-- Esiasetukset: seitsemän valmista, kukin yhdellä napsautuksella, ja lisäksi omasi.
-- Näppäimistö: liukusäätimet ja värinvalitsimet tottelevat nuolinäppäimiä, ja jokainen säädin on nimetty ruudunlukijaa varten. Automaattiset WCAG 2.1 AA -tarkistukset kattavat jokaisen muutoksen yhteydessä ponnahdusikkunan, painikerivin ja asetuspaneelin.
+Suorat lähetykset ja chatin toisto
+Katso pelistriimejä, VTuber-lähetyksiä ja suoria tapahtumia niin, että video ja keskustelu näkyvät samassa näkymässä. Tallenteissa, joissa chatin toisto on saatavilla, voit seurata alkuperäisen lähetyksen viestejä.
 
-YOUTUBEN OMA CHAT, EI JÄLJITELMÄ
-Videon päällä oleva paneeli on YouTuben oma livechat sivupalkista, uudella ulkoasulla – siksi merkit, emojit, tarrat ja jäsenten chat toimivat kuten ennenkin. Viestit lähtevät YouTuben omasta viestikentästä ja Super Chatit YouTuben ostopaneelin kautta: maksu menee YouTubelle, ei koskaan laajennukselle. Ainoa asia, jota laajennus siellä muuttaa, on ”Jäsenyys”, joka avaa kanavan liittymissivun uuteen välilehteen.
+Mukauta chatpaneelia
+- Läpinäkyvä tausta: säädä peittävyyttä ja sumennusta niin, että video näkyy chatin takaa.
+- Sijainti ja koko: vedä paneeli pois tärkeiden tapahtumien tieltä ja muuta sen leveyttä ja korkeutta.
+- Luettavuus: valitse fontti, tekstin koko ja väri, taustaväri sekä viestien välinen tila.
+- Tallennetut tyylit: valitse valmis tyyli tai tallenna omat ulkoasuasetuksesi.
+- Pelkistetty näkymä: piilota tavallisten viestien käyttäjänimet ja profiilikuvat tai kutista kirjoituskenttä siihen asti, että käytät chatia.
 
-MITÄ SE MAKSAA JA MITÄ SE KERÄÄ
-Ilmainen: ei tiliä, ei maksullista versiota.
-Vain yksi käyttöoikeus, storage; www.youtube.com on ainoa sivusto, jolla laajennus toimii – tätä Chromen asennusilmoitus tiedoistasi tarkoittaa. Taustalla ei pyöri mitään: kun YouTube-välilehteä ei ole auki, vain työkalurivin ponnahdusikkuna tekee jotain, ja vain silloin kun se on auki.
-Ei analytiikkaa, ei seurantaa, mitään ei lähde kehittäjälle: lukemaasi ja kirjoittamaasi ei kerätä, tallenneta eikä lähetetä; asetukset pysyvät tässä selaimessa. Kaikki koodi tulee laajennuksen mukana; vain oletusfontin ulkopuoliset fontit haetaan Google Fontsista. Avointa lähdekoodia GPL-3.0-lisenssillä, julkisesti GitHubissa.
+Lue ja osallistu
+Paneelissa näkyy YouTuben oma chat, jossa ovat mukana emojit, jäsenmerkit ja kirjoituskenttä. Kirjaudu sisään, jotta voit lähettää viestejä suoran lähetyksen aikana. Super Chat -viestit ovat edelleen käytettävissä siellä, missä niitä tuetaan. Viestien lähettämiseen ja maksullisiin toimintoihin sovelletaan alustan vaatimuksia ja kanavan asetuksia. Tallenteen chat toistaa alkuperäisen keskustelun; kyse ei ole uudesta suorasta keskustelusta.
 
-NÄIN PÄÄSET ALKUUN
-1. Asenna laajennus ja avaa suora lähetys tai arkistotallenne, jossa on chatin uusinta.
-2. Siirrä soitin koko näytön tilaan – chat on jo siellä.
-3. Hallintapalkin puhekuplapainike sammuttaa ja sytyttää sen; vie osoitin chatin päälle, niin sen oma asetuspainike muuttaa ulkoasua.
+Näin aloitat
+1. Asenna laajennus ja avaa suora lähetys tai tallenne, jossa on chatin toisto.
+2. Siirry koko näytön tilaan videosoittimen koko näytön painikkeella.
+3. Vie osoitin chatin päälle, kun haluat siirtää paneelia, muuttaa sen kokoa tai avata asetukset.
+Soittimen säätimissä oleva chatpainike näyttää tai piilottaa paneelin. Jos olet aiemmin poistanut toiminnon käytöstä, ota koko näytön chat käyttöön laajennuksen työkalupalkin ponnahdusikkunassa.
 
-MISSÄ SE TOIMII
-Vain pöytäkoneella ja vain koko näytön tilassa katselusivulla, jolla on chat. Tämä Chrome-versio toimii myös Operassa; Firefoxille on oma versionsa osoitteessa addons.mozilla.org. Käyttöliittymä on saatavilla 55 vaihtoehtona 49 kielelle.
+Ilmainen ja avoimen lähdekoodin ohjelmisto
+Laajennus ei vaadi erillistä tiliä tai tilausta. Lähdekoodi on julkisesti GitHubissa GPL-3.0-lisenssillä. Videoalustan maksulliset toiminnot ovat erillisiä ilmaisesta laajennuksesta.
 
-Ilmoita ongelmasta tai ehdota ominaisuutta: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Tietosuoja ja käyttöoikeudet
+Asetukset säilyvät tässä selaimessa storage-käyttöoikeuden avulla. Laajennus toimii osoitteessa www.youtube.com, ei käytä analytiikkaa tai seurantaa eikä lähetä chatin sisältöä tai katseluhistoriaa kehittäjälle. YouTuben oma chat muodostaa yhteyden YouTuben palveluihin. Valinnaiset fontit ladataan Google Fonts -palvelusta.
+
+Yhteensopivuus
+Tietokoneen Chromelle ja videoille, joissa on livechat tai chatin toisto saatavilla. Jos videossa ei ole chatia, paneelia ei näytetä. Yhteensopivuus Operan ja muiden Chromium-pohjaisten selainten kanssa voi vaihdella. Erillinen Firefox-versio on saatavilla osoitteessa addons.mozilla.org. Asetuksia voi käyttää näppäimistöllä, ja tarjolla on 55 kielivaihtoehtoa.
+
+Ilmoita virheestä tai ehdota toimintoa: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Lähdekoodi: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Tue kehittäjää: https://ko-fi.com/daichan132

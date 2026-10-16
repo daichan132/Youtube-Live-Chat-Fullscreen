@@ -1,0 +1,362 @@
+{
+  "status": "design-exploration",
+  "selectedConcept": null,
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-14T17:44:50.317Z",
+  "imageGeneration": "Ten distinct official-name artworks individually generated with the built-in image_gen tool. Typography, whitespace, fullscreen video and inset chat are composed as one identity; not real captures.",
+  "rendering": "Whole originals uniformly fitted; no source crops, repainting, stretching or new baked text. 440 × 280 upload candidates, 880 × 560 review images and 220 × 140 previews.",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin"
+  },
+  "conceptCount": 10,
+  "officialName": "YouTube Live Chat Fullscreen",
+  "requiredHeadlineWords": ["YouTube", "Live Chat", "Fullscreen"],
+  "uiDirection": "Exact official-name reading order; typography and a substantial fullscreen-video diagram with chat fully inset are balanced together. Contrasting palettes, layouts and left/right chat placement.",
+  "galleryChecks": {
+    "halfSizeToggle": "passed",
+    "expandedExportIdentity": "passed",
+    "escapeClose": "passed",
+    "fullSizeRestore": "passed",
+    "mobile375px": "passed"
+  },
+  "sources": [
+    {
+      "file": "metadata/01.json",
+      "sha256": "4f804d0c3f9068b8484e1020f5008e77be9bbbaa8e48b28cbf08f6564dec3195"
+    },
+    {
+      "file": "metadata/02.json",
+      "sha256": "770cab0db75e1d806b0ab45ffc83eb9ddb446f9243a71f25564389da4f5c5a84"
+    },
+    {
+      "file": "metadata/03.json",
+      "sha256": "23ae0c08e81013001cbe6b7004fb16796d230c92cb848cfb75db4c1767b917e8"
+    },
+    {
+      "file": "metadata/04.json",
+      "sha256": "b983d5a737b4c969a1e756cc79d66de3390695d166d15454768455bc4f10e712"
+    },
+    {
+      "file": "metadata/05.json",
+      "sha256": "6c5cf96ecf8d387133c3581daeaf4acb02fe0b7450152ae410fe48df6929b693"
+    },
+    {
+      "file": "metadata/06.json",
+      "sha256": "9674cb98515b27ea126712a699f33ecf70a12ad6074a89bd57fcecaa20238784"
+    },
+    {
+      "file": "metadata/07.json",
+      "sha256": "a9e0c8e52a0e2c853cc0c3986007fa722d57aaf9abcdcfee2780cd0de2861022"
+    },
+    {
+      "file": "metadata/08.json",
+      "sha256": "1539b4e9e8dcd0f16c4a758a7e43b8b5fc7fb9b98b25a51253abf4d19a931501"
+    },
+    {
+      "file": "metadata/09.json",
+      "sha256": "cc9e1cb3a7f568050fae7d565bd62f7a172e56a467c641df4ad861540c69bb72"
+    },
+    {
+      "file": "metadata/10.json",
+      "sha256": "f819cef7a3eec8185528fe42f67435930e899a4f478f8d59cb36a9eddac1090a"
+    },
+    {
+      "file": "originals/01.png",
+      "sha256": "5d921a0a2a69771bbae45b8cd1038c824c887e13582c6c55c2e626cc14879e42"
+    },
+    {
+      "file": "originals/02.png",
+      "sha256": "2d6a65713c9bda0cca1f8f5bb4e6c5a95705f4e9afb09757ea10e1aeee45b8bc"
+    },
+    {
+      "file": "originals/03.png",
+      "sha256": "11a33be1b3f32f1b86c9b17bb342702861e37c29a88bf5d973ba0054a1551ae2"
+    },
+    {
+      "file": "originals/04.png",
+      "sha256": "61ffd696596089a192ab464e2f1a5a8ce1942aadcedd0f06e257d048aadd07e4"
+    },
+    {
+      "file": "originals/05.png",
+      "sha256": "5379ef2af7a0caef2a0aa614cdf812b0f19265b05632d4ff2692d8c33351a4a1"
+    },
+    {
+      "file": "originals/06.png",
+      "sha256": "2a780cc018e2c901baa341a388695e4aa98a2dd4f4d5e4b85ad56951f31ed961"
+    },
+    {
+      "file": "originals/07.png",
+      "sha256": "37294fa50c8d6725c4da5350e0cd5e984d6d51ee67ce4ad934e265dc0bbcfb2c"
+    },
+    {
+      "file": "originals/08.png",
+      "sha256": "cd583b582a042bbeb22349170db1ee8d6a5e24e6fca3ff426bb91c07993a39c0"
+    },
+    {
+      "file": "originals/09.png",
+      "sha256": "5b49df67e9d8a97cf441d51449758f88a4575880a06a430ca900df422f1af6bd"
+    },
+    {
+      "file": "originals/10.png",
+      "sha256": "40c1ad054e266041817dabf31507d41d8830a6a5347619d3bfeba39c5dcf66e3"
+    },
+    {
+      "file": "concepts.json",
+      "sha256": "4c3fac2235a058827eb9a46a14b66ee7c06cf9b1186a1543234dfddab163a24e"
+    },
+    {
+      "file": "prompts.md",
+      "sha256": "82c2f257efdfd8481d9d811f7daba4ec10b6f47fd8f559f9ed644dc012b31c0d"
+    },
+    {
+      "file": "index.html",
+      "sha256": "aeb7ba057bbe88198288937e0cdd21614b2763d7049696a9d945a438a4755823"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "5826cc68de8c0d1ef1636fcbddbb02512398a69afd21498d0fed6e6d6c311a6f"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "4ee9b1eb6fb64b66bbb91bbd7fa65a2f1208816de7cbd449023d7c854cd4f8d7"
+    },
+    {
+      "file": "source/tile.html",
+      "sha256": "1ca2b440a6a78ddb4957d538f0e420074c5cae8c559197bf074871813998c720"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/01.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "bf0e892074858fa37f09cd99ba572b9bed47ba1308a7811177f5ebd28eff1315"
+    },
+    {
+      "file": "exports/02.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "0dfda23f608663c9502282ed2daff11376b9d34a898739f3e175f0e7bc2cca9d"
+    },
+    {
+      "file": "exports/03.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "c9b0e99597977961019c12ecce05193d507315c07ad108c348c770ff3b2bed33"
+    },
+    {
+      "file": "exports/04.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "253350fa6c53d17c628bddc4add245c9747b576d6aa9c0121bb62c64af558058"
+    },
+    {
+      "file": "exports/05.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "a2ff384bf8cf736547060e39a42d892551a4b89102928d69601385d45a2f1da8"
+    },
+    {
+      "file": "exports/06.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "b4c9b74ab1337f9b7f4645297bf9a91e6c987868552d795b3ba0b2fbf00e9f8a"
+    },
+    {
+      "file": "exports/07.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "03f8a8a80eedd487bf1207a2665933d568068899284c751fc948ac326615cb49"
+    },
+    {
+      "file": "exports/08.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "1a1110d463b41e7178db031b611ad8b9b0738644c08715d00838ddf791ee25fd"
+    },
+    {
+      "file": "exports/09.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "d05e9407fd5760a3d5d28562d97c48b97cb3bd74f9a856fc4c4a7617ae016e84"
+    },
+    {
+      "file": "exports/10.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "804435d0dbd3036c30e6c29350642c317a59e074470d05f3d880c2645c271d0d"
+    },
+    {
+      "file": "exports/01@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "6302996c6376a1c6096f08b366becd4f8ec7ab881c1d7a74fc48a02fa97d8bf9"
+    },
+    {
+      "file": "exports/02@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "4ad2bac3a5a999d1ba7c93edc86867c215905081cbd91dd96ab824ea70c2f027"
+    },
+    {
+      "file": "exports/03@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "b443529703a0343e2605170a5f725b14ee18b535a6d81451353b4c0e07fc5a51"
+    },
+    {
+      "file": "exports/04@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "b0a24a12972ebc0619539c5448562a8a5c68ac82cad64d6b2da49213cba98939"
+    },
+    {
+      "file": "exports/05@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "f4e9b647b78c4c75f060103a007862e222b256b0e16cbc44371cdb244aea1895"
+    },
+    {
+      "file": "exports/06@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "06891f22db26abeacb19705ea200d7f2047adeb58e56246cb5c70f7fb884ddda"
+    },
+    {
+      "file": "exports/07@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "db33fdeb4d924ef46a8b88a03036ef104a1974ac73d183d55550552f66e04986"
+    },
+    {
+      "file": "exports/08@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "d8118dc5e4f3282adec46f209f20c6e2dd4446df8da470ef758b8e8609af02d2"
+    },
+    {
+      "file": "exports/09@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "ed2a354c3d41374400eb4b0bb08104e16ea9a367a91ed577c57860c617ed3d23"
+    },
+    {
+      "file": "exports/10@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "3251ed9c328c4055a2b39851dd8f5b5e9eb950793149a63bc22f8beefd6ad1c0"
+    },
+    {
+      "file": "exports/01-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "7ebdcc9c7efee58c5e185f21ebf6019100100f1f7c59326d8bab145098303e6c"
+    },
+    {
+      "file": "exports/02-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "488e4f54ebb30864f60dc19eef1f7f8d93894d841ae379ff1b6e2ff98b02f9b4"
+    },
+    {
+      "file": "exports/03-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "d949a5bbce75d13ca64f28387c91552bdaad900b7982141a655f0420f5b8f7a0"
+    },
+    {
+      "file": "exports/04-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "a295fb89d00186d72b14c8e1869f35fa10cbb0c0ebc38cf54f2c42c09afa8f6e"
+    },
+    {
+      "file": "exports/05-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "4dddab8312a3ba9dabd94c2d0e0baf7b60f7cf8cbba5f4661be083f62396ac5e"
+    },
+    {
+      "file": "exports/06-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "0fc16dcc989f8861ae7f377806bd240804a724adf912ec900cecf367a3c5b2fe"
+    },
+    {
+      "file": "exports/07-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "c3505632ac94322de8c11037240814c80f0f79476a5c79280b7ac1ed1afd1e39"
+    },
+    {
+      "file": "exports/08-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "6647097c8f56a743749e3581a78af9a0e30ed5f78cd7ac6059bd8c762a75b4b6"
+    },
+    {
+      "file": "exports/09-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "1a863ab3e255a37af78cf5fa452f182b5cd4e81bfd94d034fd29c054e9fac24c"
+    },
+    {
+      "file": "exports/10-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "de7293ff6ad685053e15c14e98975ea7540e579ddebda38e36523d9e0b3b0a56"
+    },
+    {
+      "file": "exports/comparison.png",
+      "width": 1000,
+      "height": 1865,
+      "colorType": 2,
+      "sha256": "5a41e51c999643ab92a2a9af3120e9453845e7332ff10a60bfc29b78e86091c8"
+    },
+    {
+      "file": "exports/comparison-odd.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "e8845132032c773bdb467e82cefe6c1d5ac301d89ac2b86a7255e6eaaa3bc06f"
+    },
+    {
+      "file": "exports/comparison-even.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "280c4662e876350343a269ef4915363c3d9a3c9d6f5882cddb9123b0d03431a7"
+    }
+  ]
+}

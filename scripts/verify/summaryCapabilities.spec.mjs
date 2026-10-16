@@ -24,6 +24,7 @@ const DEMOTIONS = [
   { code: 'de', summary: 'Chat weg im Vollbild? Lies jede Nachricht und sende Super Chats.' },
   { code: 'ru', summary: 'Оверлей возвращает чат поверх видео: читайте сообщения, смотрите Super Chat.' },
   { code: 'id', summary: 'Overlay live chat YouTube di atas video: baca pesan, kirim Super Chat.' },
+  { code: 'hu', summary: 'Olvass üzeneteket teljes képernyőn, és küldj Super Chatet.' },
 ]
 
 /**
@@ -37,6 +38,7 @@ const WRONG_SURFACE = [
   { code: 'id', summary: 'Overlay yang menahan live chat YouTube di atas video: baca komentar, kirim Super Chat.' },
   { code: 'tr', summary: 'YouTube canlı sohbetini videonun üzerinde tutan kaplama: yorum yazın, Super Chat gönderin.' },
   { code: 'vi', summary: 'Lớp phủ giữ chat trực tiếp YouTube ngay trên video: đọc và viết bình luận, gửi Super Chat.' },
+  { code: 'hu', summary: 'Írj hozzászólást a videó alá, és küldj Super Chatet.' },
 ]
 
 const satisfies = (code, summary) => SUMMARY_CAPABILITIES[code].every(pattern => pattern.test(summary))

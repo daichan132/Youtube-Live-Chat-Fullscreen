@@ -1,0 +1,10 @@
+{
+  "id": "08",
+  "nameJa": "一本につながる再生ライン",
+  "conceptNote": "動画の進行バーをチャットの下まで一本で通し、チャットが同じ全画面に重なることを示す。",
+  "prompt": "Use case: infographic-diagram. Asset type: premium Chrome Web Store discovery tile, single complete graphic. Landscape 11:7, target 1760 x 1120. NO TEXT, NO WORDS, NO LETTERS, NO NUMBERS, NO FAKE LETTERING. Communicate fullscreen video with live chat overlaid on its right side INSIDE the same video surface. Flat Swiss editorial graphic, dark midnight navy background #101928, warm ivory #f5f1e7 thin outlines and coral red #ff514d accents. One large horizontal video rectangle at 80% canvas width, centered, with FOUR unmistakable ivory fullscreen corner brackets at its FOUR outermost corners, including both RIGHT corners far to the right beyond the chat pane. No corner bracket at the chat seam. Calm video surface, completely flat navy with one subtle broad geometric navy slab, absolutely no scenery. A large refined coral play triangle on left. Slim live chat panel floats inside the right of the video, 27% video width, 64% height, outlined in light ivory, not attached to the video border. Four rows of small muted ivory or coral avatar circles and short rounded line strokes, clear breathing room, blank outlined composer and send triangle. A thin coral playback progress bar runs horizontally near the BOTTOM of the video rectangle for nearly the entire video width: it visibly continues UNDER the floating chat and extends all the way toward the far right fullscreen corner. A small ivory circle on this bar. This full-width line proves the video goes beneath the chat. Confident precise proportions, elegant spacing, bold thumbnail clarity, high contrast, flat 2D vector-like finish. No screenshots, no real monitor, no device photo, no 3D, no glow, no texture, no unnecessary floating shapes, no borders outside the main fullscreen rectangle, no watermark.",
+  "headline": "",
+  "textFree": true,
+  "generationTool": "built-in image_gen",
+  "nativeSourcePath": "/Users/dai/.codex/generated_images/01a13db9-f6df-73d0-af7a-4f2a2fb5c586/exec-b957707e-dab4-42be-b7b6-08bffca759f3.png"
+}

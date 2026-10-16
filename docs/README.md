@@ -40,7 +40,7 @@ The [maintainer guide](maintainers/README.md) connects the operating procedures:
 - [Runtime diagnostics](maintainers/runtime-failure-diagnostics.md): investigate unexpected runtime failures.
 - [Repository presentation](maintainers/repository-presentation.md): keep GitHub discovery and preview assets aligned with the product.
 
-Store listing manuscripts are in [store-listing/](store-listing/); `yarn store:check` checks their required content. The [asset work list](store-listing/asset-work-list.md) and [image concepts](store-assets/concepts/README.md) are planning material. The drafts in [articles/](../articles/README.md) are intended for external publication, rather than setup or support instructions.
+Store listing manuscripts are in [store-listing/](store-listing/); `yarn store:check` checks their required content. The [Chrome Web Store asset guide](store-assets/chrome-web-store/README.md) includes the English screenshot set, promotional tiles, editable sources, and capture evidence. The [asset work list](store-listing/asset-work-list.md) tracks publication status; older [image concepts](store-assets/concepts/README.md) remain design references. The drafts in [articles/](../articles/README.md) are intended for external publication, rather than setup or support instructions.
 
 ## Keep the docs useful
 

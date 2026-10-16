@@ -6,6 +6,9 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import { chromium } from '@playwright/test'
+import { buildChromeUserAgent } from '../../e2e/support/extensionLaunchMode.ts'
+import { applyExtensionSettings, readSettingsPatch } from './extension-settings.mjs'
+import { assertVerificationProfile, createBackgroundPage, findLoadedExtension } from './verification-target.mjs'
 
 const DEFAULT_URL = 'https://www.youtube.com/watch?v=EWrX250Zhko'
 const DEFAULT_PORT = 9335
@@ -45,12 +48,7 @@ const commandHasArg = (command, name, expectedValue) => {
   return new RegExp(`(?:^|\\s)${escapedName}=(?:${escapedValue}|"${escapedValue}"|'${escapedValue}')(?=\\s|$)`).test(command)
 }
 
-export const ensureExistingBrowserMatchesTarget = async ({
-  port,
-  profileDir,
-  extensionPath,
-  executeFile = execFileAsync,
-}) => {
+export const ensureExistingBrowserMatchesTarget = async ({ port, profileDir, extensionPath, executeFile = execFileAsync }) => {
   const { pid, command } = await getCdpProcessCommand(port, executeFile)
   const expectedPortArg = `--remote-debugging-port=${port}`
   const expectedProfileArg = `--user-data-dir=${profileDir}`
@@ -86,6 +84,10 @@ const parseArgs = argv => {
     }
 
     const [rawKey, inlineValue] = arg.slice(2).split('=', 2)
+    if (rawKey === 'headless') {
+      args.set(rawKey, inlineValue ?? 'true')
+      continue
+    }
     const value = inlineValue ?? argv[index + 1]
     args.set(rawKey, value)
     if (inlineValue === undefined) index += 1
@@ -104,6 +106,10 @@ const main = async () => {
     args.get('profile') ?? process.env.YLC_VERIFY_PROFILE ?? path.join('/private/tmp', `ylc-verify-profile-${port}`),
   )
   const ownsProfileDir = !args.has('profile') && !process.env.YLC_VERIFY_PROFILE
+  await assertVerificationProfile(profileDir)
+  const settingsPatch = args.has('settings-file') ? await readSettingsPatch(args.get('settings-file')) : null
+  if (args.has('headless') && !['true', 'false'].includes(args.get('headless'))) throw new Error('--headless must be true or false.')
+  const headless = args.get('headless') === 'true'
   const cdpUrl = `http://127.0.0.1:${port}`
 
   if (!fs.existsSync(manifestPath)) {
@@ -114,7 +120,9 @@ const main = async () => {
 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
   if (!Array.isArray(manifest.content_scripts) || manifest.content_scripts.length === 0) {
-    throw new Error(`Extension manifest has no content_scripts: ${manifestPath}\nUse the built extension output, usually \`.output/chrome-mv3\`.`)
+    throw new Error(
+      `Extension manifest has no content_scripts: ${manifestPath}\nUse the built extension output, usually \`.output/chrome-mv3\`.`,
+    )
   }
 
   const muteVideos = async page => {
@@ -128,44 +136,58 @@ const main = async () => {
       .catch(() => null)
   }
 
-  const connectToExistingBrowser = async () => {
-    const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 500)
-
+  const applyStartupSettings = async (browser, page) => {
+    if (!settingsPatch) return null
+    const extension = await findLoadedExtension(browser, extensionPath)
+    const result = await applyExtensionSettings({ page, extensionId: extension.id, patch: settingsPatch })
+    console.log(JSON.stringify({ settings: result }))
+    return result
+  }
+  const targetIdOf = async page => {
+    const cdp = await page.context().newCDPSession(page)
     try {
-      const response = await fetch(`${cdpUrl}/json/version`, { signal: controller.signal })
-      if (!response.ok) return null
-
-      return await chromium.connectOverCDP(cdpUrl)
-    } catch {
-      return null
+      return (await cdp.send('Target.getTargetInfo')).targetInfo.targetId
     } finally {
-      clearTimeout(timeout)
+      await cdp.detach()
     }
   }
 
-  const existingBrowser = await connectToExistingBrowser()
-  if (existingBrowser) {
-    let verifiedProcess
+  const connectToExistingBrowser = async () => {
+    const controller = new AbortController()
+    const timeout = setTimeout(() => controller.abort(), 500)
+    let available = false
+
     try {
-      verifiedProcess = await ensureExistingBrowserMatchesTarget({ port, profileDir, extensionPath })
-    } catch (error) {
-      await existingBrowser.close().catch(() => null)
-      throw error
+      const response = await fetch(`${cdpUrl}/json/version`, { signal: controller.signal })
+      available = response.ok
+    } catch {
+      // No CDP endpoint: launch the explicitly selected development profile.
+    } finally {
+      clearTimeout(timeout)
     }
+    if (!available) return null
+    const verifiedProcess = await ensureExistingBrowserMatchesTarget({ port, profileDir, extensionPath })
+    if (headless && !/(?:^|\s)--headless(?:=\S+)?(?=\s|$)/.test(verifiedProcess.command)) {
+      throw new Error('The existing verification browser is headed. Use a separate --profile and --port for --headless.')
+    }
+    return { browser: await chromium.connectOverCDP(cdpUrl), verifiedProcess }
+  }
 
+  const existing = await connectToExistingBrowser()
+  if (existing) {
+    const { browser: existingBrowser, verifiedProcess } = existing
     try {
-      const context = existingBrowser.contexts()[0]
-      const page = context?.pages()[0] ?? (context ? await context.newPage() : null)
-      if (!page) throw new Error(`Existing browser on ${cdpUrl} has no usable context.`)
-
-      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+      const page = await createBackgroundPage(existingBrowser, url)
+      await page.waitForLoadState('domcontentloaded', { timeout: 60000 })
       await muteVideos(page)
+      await applyStartupSettings(existingBrowser, page)
 
       console.log(
         JSON.stringify(
           {
             status: 'reused',
+            targetId: await targetIdOf(page),
+            headless,
             app: 'Google Chrome for Testing',
             url,
             extensionPath,
@@ -185,13 +207,18 @@ const main = async () => {
     return
   }
 
+  const browserVersion = headless
+    ? (await execFileAsync(chromium.executablePath(), ['--version'])).stdout.match(/\d+\.\d+\.\d+\.\d+/)?.[0]
+    : null
+  if (headless && !browserVersion) throw new Error('Could not determine the installed Chromium version for headless verification.')
   const context = await chromium.launchPersistentContext(profileDir, {
-    headless: false,
-    viewport: null,
+    headless,
+    ...(headless ? { channel: 'chromium', userAgent: buildChromeUserAgent(browserVersion) } : {}),
+    viewport: headless ? { width: 1600, height: 900 } : null,
     ignoreDefaultArgs: ['--disable-extensions'],
     args: [
       `--remote-debugging-port=${port}`,
-      '--window-size=1280,900',
+      headless ? '--window-size=1600,900' : '--window-size=1280,900',
       '--no-first-run',
       '--no-default-browser-check',
       '--mute-audio',
@@ -200,38 +227,47 @@ const main = async () => {
     ],
   })
 
-  await context.addInitScript(() => {
-    const mute = () => {
-      for (const video of document.querySelectorAll('video')) {
-        video.volume = 0
-        video.muted = true
+  try {
+    await context.addInitScript(() => {
+      const mute = () => {
+        for (const video of document.querySelectorAll('video')) {
+          video.volume = 0
+          video.muted = true
+        }
       }
-    }
-    document.addEventListener('play', mute, true)
-    document.addEventListener('volumechange', mute, true)
-    setInterval(mute, 1000)
-  })
+      document.addEventListener('play', mute, true)
+      document.addEventListener('volumechange', mute, true)
+      setInterval(mute, 1000)
+    })
 
-  const page = context.pages()[0] ?? (await context.newPage())
-  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
-  await muteVideos(page)
+    const page = context.pages()[0] ?? (await context.newPage())
+    await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    await muteVideos(page)
+    await applyStartupSettings(context.browser(), page)
 
-  console.log(
-    JSON.stringify(
-      {
-        status: 'ready',
-        app: 'Google Chrome for Testing',
-        url,
-        extensionPath,
-        profileDir,
-        cdp: cdpUrl,
-        inspect: `yarn verify:overlay --port ${port}`,
-      },
-      null,
-      2,
-    ),
-  )
-  console.log('Keep this process running while using Computer Use. Press Ctrl+C to close the verification browser.')
+    console.log(
+      JSON.stringify(
+        {
+          status: 'ready',
+          targetId: await targetIdOf(page),
+          headless,
+          app: 'Google Chrome for Testing',
+          url,
+          extensionPath,
+          profileDir,
+          cdp: cdpUrl,
+          inspect: `yarn verify:overlay --port ${port}`,
+        },
+        null,
+        2,
+      ),
+    )
+    console.log('Keep this process running for verification. Press Ctrl+C to close the verification browser.')
+  } catch (error) {
+    await context.close().catch(() => null)
+    if (ownsProfileDir) fs.rmSync(profileDir, { recursive: true, force: true })
+    throw error
+  }
 
   const keepAlive = setInterval(() => {}, 1 << 30)
 

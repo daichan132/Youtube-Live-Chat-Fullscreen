@@ -1,30 +1,34 @@
-Du går i fuld skærm på et YouTube-livestream, og chatten forsvinder. Denne udvidelse lægger den tilbage oven på videoen, så du læser hver eneste besked, svarer og under et livestream sender Super Chats uden at forlade fuld skærm.
+Behold livechatten på skærmen, når du ser YouTube i fuld skærm.
+YouTube Live Chat Fullscreen er en gratis Chrome-udvidelse, der lægger samtalen oven på videoen. Følg en livestream, læs beskeder og svar uden at forlade afspilleren.
 
-VIGTIGSTE FUNKTIONER
-- Placering og størrelse: træk panelet hen, hvor du vil, oven på afspilleren, og træk i en vilkårlig kant eller et hjørne for at ændre størrelsen; begge dele skalerer med afspilleren, så en opsætning, du laver på en bærbar, passer også på en 32-tommer skærm.
-- Tekst: "Skriftstørrelse" fra 10 til 40px (13px som standard; 40px er cirka tre gange almindelig chatskrift), din egen tekstfarve, en særskilt farve til medlemsnavne, 50 skrifttyper.
-- Baggrund: panelet starter helt dækkende hvidt; farve og gennemsigtighed fra én farvevælger, plus 0-20px "Sløring" – den indstilling, der mest sandsynligt gør det hakkende, så gå let til den på en ældre computer.
-- Visning: "Vis chatten ved inaktivitet" er slået til fra start, så chatten bliver stående, når kontrolbjælken toner væk; er den slået til, folder "Vis kun chatten" overskriften og skrivefeltet sammen, indtil du fører musen hen over panelet.
-- Navne og mellemrum: "Vis brugernavn" og "Vis profilbillede" kan du slå fra for almindelige beskeder, betalte beholder navn og billede; "Mellemrum" på 0-40px mellem beskederne.
-- Forudindstillinger: syv indbyggede, ét klik hver, plus dine egne.
-- Tastatur: skydere og farvevælgere tager imod piletaster, og hvert element er mærket til skærmlæsere. Automatiske kontroller efter WCAG 2.1 AA dækker pop op-vinduet, kontrolrækken og indstillingspanelet ved hver ændring.
+Livestreams og chatgenafspilning
+Se gaming, VTuber-udsendelser og livebegivenheder med video og samtale i samme visning. På optagede streams med chatgenafspilning kan du følge beskederne fra den oprindelige udsendelse.
 
-YOUTUBES EGEN CHAT, INGEN EFTERLIGNING
-Panelet oven på videoen er YouTubes egen livechat fra sidepanelet, med nyt udseende – derfor virker det hele fortsat: badges, emojis, klistermærker og chat kun for medlemmer. Du skriver gennem YouTubes eget skrivefelt, og Super Chats går gennem YouTubes købspanel: betalingen går til YouTube, aldrig til udvidelsen. Det eneste, udvidelsen ændrer der, er "Medlemskab", som åbner kanalens tilmeldingsside i en ny fane.
+Tilpas chatten
+- Gennemsigtig baggrund: Juster opacitet og sløring, så videoen kan ses bag chatten.
+- Placering og størrelse: Træk panelet væk fra det, du vil se, og tilpas bredde og højde.
+- Læsbarhed: Vælg skrifttype, tekststørrelse, tekstfarve, baggrundsfarve og afstand mellem beskeder.
+- Gemte udseender: Vælg et forudindstillet udseende, eller gem dine egne indstillinger.
+- Færre elementer: Skjul brugernavne og profilbilleder i almindelige beskeder, eller fold skrivefeltet sammen, indtil du bruger chatten.
 
-HVAD DET KOSTER, HVAD DET INDSAMLER
-Gratis: ingen konto, ingen betalingsversion.
-Kun én tilladelse, storage; www.youtube.com er det eneste websted, udvidelsen kører på – mere betyder Chromes installationsadvarsel om dine data ikke. Der kører intet i baggrunden: uden en åben YouTube-fane er det kun pop op-vinduet i værktøjslinjen, der gør noget, og kun mens det er åbent.
-Ingen analyse, ingen sporing, intet til udvikleren: det, du læser og skriver, bliver aldrig indsamlet, gemt eller sendt; indstillingerne bliver i denne browser. Al koden ligger i udvidelsen; kun skrifttyper ud over standardskriften kommer fra Google Fonts. Open source under GPL-3.0, offentligt på GitHub.
+Læs med og deltag
+Panelet bruger YouTubes egen chat med emoji, medlemsbadges og skrivefelt. Log ind for at sende beskeder under en livestream. Super Chats er stadig tilgængelige, hvor de understøttes. Beskeder og betalingsfunktioner følger platformens krav og kanalens indstillinger. På optagelser afspilles den oprindelige chat; det er ikke en ny livesamtale.
 
-SÅDAN KOMMER DU I GANG
-1. Installér udvidelsen, og åbn et livestream eller et arkiv med chatgengivelse.
-2. Sæt afspilleren i fuld skærm – chatten er der allerede.
-3. En taleboble-knap i kontrolbjælken slår den fra og til; før musen hen over chatten, så ændrer dens egen indstillingsknap udseendet.
+Kom i gang
+1. Installer udvidelsen, og åbn en livestream eller en optagelse med chatgenafspilning.
+2. Brug videoafspillerens fuldskærmsknap til at gå i fuld skærm.
+3. Hold markøren over chatten for at flytte den, ændre størrelsen eller åbne indstillingerne.
+Chatknappen i afspillerens betjeningspanel viser eller skjuler chatten. Har du tidligere slået funktionen fra, kan du slå fuldskærmschat til igen i udvidelsens pop op-vindue på værktøjslinjen.
 
-HVOR DET VIRKER
-Kun på computeren, kun i fuld skærm på en visningsside med chat. Denne Chrome-udgave kører også i Opera; Firefox har sin egen udgave på addons.mozilla.org. Brugerfladen findes i 55 muligheder for 49 sprog.
+Gratis og med åben kildekode
+Udvidelsen kræver hverken en særskilt konto eller et abonnement. Kildekoden er offentlig på GitHub under GPL-3.0. Videoplatformens betalingsfunktioner er adskilt fra den gratis udvidelse.
 
-Rapportér en fejl eller foreslå en funktion: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Privatliv og tilladelser
+Indstillingerne bliver i denne browser via tilladelsen storage. Udvidelsen kører på www.youtube.com, bruger ikke analyse eller sporing og sender ikke chatindhold eller afspilningshistorik til udvikleren. Den indbyggede chat opretter forbindelse til YouTubes tjenester. Valgfrie skrifttyper hentes fra Google Fonts.
+
+Kompatibilitet
+Til Chrome på computer og videoer med livechat eller tilgængelig chatgenafspilning. Videoer uden chat får ikke noget chatpanel. Kompatibiliteten med Opera og andre Chromium-baserede browsere kan variere; en særskilt Firefox-version findes på addons.mozilla.org. Indstillingerne kan betjenes med tastaturet og har 55 sprogvalg.
+
+Rapportér en fejl, eller foreslå en funktion: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Kildekode: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Støt udvikleren: https://ko-fi.com/daichan132

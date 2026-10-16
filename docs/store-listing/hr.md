@@ -1,30 +1,34 @@
-Prebaciš YouTube prijenos uživo na cijeli zaslon i chat nestane. Ovo proširenje ga vraća preko videa: čitaš svaku poruku, odgovaraš i, dok prijenos traje, šalješ Super Chat, a da nijednom ne izađeš s cijelog zaslona.
+Gledaj YouTube na cijelom zaslonu i zadrži chat u vidokrugu.
+YouTube Live Chat Fullscreen besplatno je proširenje za Chrome koje prikazuje razgovor preko videa. Prati prijenos, čitaj poruke i odgovaraj bez izlaska iz reproduktora.
 
-GLAVNE MOGUĆNOSTI
-- Položaj i veličina: ploču povučeš bilo kamo preko playera, razvučeš je za bilo koju stranicu ili kut. Oboje se pamti u odnosu na player, pa raspored složen na prijenosniku odgovara i 32-inčnom zaslonu.
-- Tekst: od 10 do 40 px (zadano 13 px; 40 px je otprilike tri puta više od uobičajenog teksta u chatu), boja po tvome i zasebna za imena članova, 50 fontova.
-- Pozadina: na početku neprozirno bijela; boju i prozirnost biraš u istoj paleti, uz „Zamućenje” od 0 do 20 px — baš ta postavka najlakše odnese glatkoću, pa na starijem računalu idi polako.
-- Vidljivost: „Prikaži chat tijekom neaktivnosti” uključeno je od samog početka, pa poruke ostaju na zaslonu i nakon što kontrole nestanu; uz njega „Prikaži samo chat” sklapa zaglavlje i okvir za pisanje dok ne prijeđeš mišem.
-- Imena i razmak: „Prikaži korisnička imena” i „Prikaži profilne slike” za obične poruke možeš ugasiti (plaćene ih zadržavaju); „Razmak” ide od 0 do 40 px.
-- Predlošci: sedam ugrađenih, svaki na jedan klik, plus tvoji vlastiti.
-- Tipkovnica: klizači i birači boja slušaju strelice, svaka kontrola ima oznaku za čitač zaslona. Automatske WCAG 2.1 AA provjere uz svaku promjenu koda pokrivaju skočni prozor, red gumba i ploču postavki.
+Prijenosi uživo i snimke s chatom
+Gledaj prijenose igara, VTuber nastupe i događaje uživo uz razgovor na istom zaslonu. Ako snimka ima dostupnu ponovnu reprodukciju chata, prati poruke iz izvornog prijenosa.
 
-NIJE KOPIJA — TO JE YOUTUBEOV CHAT
-Ploča preko videa jest onaj isti YouTubeov chat uživo iz bočne trake, samo drukčije odjeven, pa značke, emojiji, naljepnice i chat samo za članove rade kao i uvijek. Poruke odlaze kroz YouTubeovo polje za pisanje, a Super Chat kroz YouTubeovu ploču za kupnju: plaćanje ide YouTubeu, nikad proširenju. Jedino što proširenje ondje mijenja jest gumb za učlanjenje („Membership”): otvara stranicu kanala za pristup u novoj kartici.
+Prilagodi chat
+- Prozirna pozadina: podesi prozirnost i zamućenje kako bi se video vidio ispod panela.
+- Položaj i veličina: povuci panel dalje od radnje i promijeni mu širinu i visinu.
+- Čitljivost: podesi font, veličinu i boju teksta, boju pozadine i razmak između poruka.
+- Spremljeni stilovi: odaberi ugrađeni stil ili spremi vlastite postavke izgleda.
+- Manje elemenata: sakrij korisnička imena i profilne slike u običnim porukama ili sklopi polje za unos dok ne počneš koristiti chat.
 
-ŠTO KOŠTA I ŠTO PRIKUPLJA
-Besplatno je: bez računa i bez plaćene verzije.
-Samo jedna dozvola, storage; jedina stranica na kojoj proširenje radi jest www.youtube.com — to je sve što Chrome pri instalaciji misli kad spomene tvoje podatke. U pozadini ne radi ništa: dok nema otvorene YouTube kartice, nešto radi samo skočni prozor u traci preglednika, i to dok je otvoren.
-Nema analitike, nema praćenja, do autora ne stiže ništa: ono što pročitaš i utipkaš ne prikuplja se, ne sprema i nikamo ne šalje, a postavke ostaju u ovom pregledniku. Sav kod stiže unutar proširenja; s mreže dolaze samo fontovi različiti od zadanog — s Google Fonts. Otvoren kod pod GPL-3.0, javan na GitHubu.
+Čitaj i sudjeluj
+Panel koristi izvorni YouTube chat, uključujući emojije, članske značke i polje za poruke. Prijavi se na YouTube za slanje poruka tijekom prijenosa uživo. Super Chat ostaje dostupan ondje gdje je podržan. Slanje poruka i plaćene značajke ovise o uvjetima platforme i postavkama kanala. Chat uz snimku ponavlja izvorne poruke i nije novi razgovor uživo.
 
-KAKO POČETI
-1. Instaliraj proširenje i otvori prijenos uživo ili snimku kojoj je ostala ponovka chata.
-2. Prebaci player na cijeli zaslon — chat je već ondje.
-3. Gumb s oblačićem u traci s kontrolama gasi ga i pali, a prijeđeš li mišem preko chata, njegov vlastiti gumb postavki mijenja izgled.
+Početak rada
+1. Instaliraj proširenje i otvori prijenos uživo ili snimku s ponovnom reprodukcijom chata.
+2. Uključi cijeli zaslon tipkom u videoreproduktoru.
+3. Postavi pokazivač na chat za pomicanje, promjenu veličine ili otvaranje postavki.
+Tipkom za chat u kontrolama reproduktora prikaži ili sakrij panel. Ako si ga ranije isključio, uključi chat na cijelom zaslonu u izborniku proširenja na alatnoj traci preglednika.
 
-GDJE RADI
-Samo na računalu, samo na cijelom zaslonu i samo na stranici za gledanje koja ima chat. Ovo izdanje za Chrome radi i u pregledniku Opera; Firefox ima svoje izdanje na addons.mozilla.org. Jezik sučelja biraš neovisno o pregledniku: 55 izbora za 49 jezika.
+Besplatno i otvorenog koda
+Nije potreban zaseban račun za proširenje ni pretplata. Izvorni kod javno je dostupan na GitHub pod licencom GPL-3.0. Plaćene značajke videoplatforme odvojene su od besplatnog proširenja.
 
-Prijavi grešku ili predloži značajku: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Privatnost i dopuštenja
+Postavke ostaju u ovom pregledniku uz dopuštenje storage. Proširenje radi na www.youtube.com, ne koristi analitiku ni praćenje te razvojnom programeru ne šalje sadržaj chata ni povijest gledanja. Izvorni chat povezuje se s uslugama YouTubea. Neobavezni fontovi učitavaju se s usluge Google Fonts.
+
+Kompatibilnost
+Za Chrome na računalu i videozapise s chatom uživo ili dostupnom ponovnom reprodukcijom chata. Kod videozapisa bez chata panel se ne prikazuje. Kompatibilnost s preglednikom Opera i drugim preglednicima na temelju Chromiuma može se razlikovati. Zasebna verzija za Firefox dostupna je na addons.mozilla.org. Postavkama se može upravljati tipkovnicom, a sučelje nudi 55 jezičnih opcija.
+
+Prijava grešaka i prijedlozi: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Izvorni kod: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Podrži autora: https://ko-fi.com/daichan132
+Podrži razvojnog programera: https://ko-fi.com/daichan132

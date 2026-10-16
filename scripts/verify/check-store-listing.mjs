@@ -41,7 +41,7 @@ const REQUIRED_URLS = [
 // Tokens that stay verbatim in every locale because they are proper nouns,
 // identifiers, or standards references. They stand in for the description's
 // structure: losing one means a translation dropped the section that carries it.
-const REQUIRED_TOKENS = ['YouTube', 'Opera', 'GitHub', 'GPL-3.0', 'storage', 'Google Fonts', 'WCAG 2.1']
+const REQUIRED_TOKENS = ['YouTube', 'Opera', 'GitHub', 'GPL-3.0', 'storage', 'Google Fonts']
 // Blocks (blank-line separated) the reference manuscript has; translations may
 // merge or split a little, but a large gap means missing content.
 const BLOCK_TOLERANCE = 3

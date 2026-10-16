@@ -1,0 +1,588 @@
+{
+  "status": "prepared",
+  "updatedOn": "2026-10-16",
+  "timeZone": "Asia/Tokyo",
+  "localeCount": 55,
+  "reviewMethod": "AI-assisted rewriting with separate semantic and plain-language review; Japanese also checked with yomiyasu lint/diff.",
+  "nativeSpeakerReview": "not-performed",
+  "storePublication": "not-applied",
+  "japaneseLintReview": {
+    "retainedCandidates": [
+      "excess_list: five parallel feature bullets and three setup steps are intentional",
+      "sentence_end_repetition: compatibility statements use ordinary polite explanatory endings"
+    ]
+  },
+  "locales": [
+    {
+      "locale": "am",
+      "nativeName": "አማርኛ",
+      "descriptionSource": "docs/store-listing/am.md",
+      "descriptionSha256": "ba71ea4409e235b684aedfe32766fa61f68e6d4cd40983d86be905f88286e2b7",
+      "summarySource": "shared/i18n/assets/am.json#extensionDescription",
+      "summaryCharacters": 86,
+      "summarySha256": "831785a3585b8a901ab1e999749582b6acc62e940621c64c2f1b638a608d3d10",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ar",
+      "nativeName": "العربية",
+      "descriptionSource": "docs/store-listing/ar.md",
+      "descriptionSha256": "8b50a39f5303034411275c4156ecade8123f62cdfaf128b653198726b66f9d5c",
+      "summarySource": "shared/i18n/assets/ar.json#extensionDescription",
+      "summaryCharacters": 108,
+      "summarySha256": "781cada596b3c44cacfabf251325cf513b7651ab48ce311e87d075051ec91d9d",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "bg",
+      "nativeName": "Български",
+      "descriptionSource": "docs/store-listing/bg.md",
+      "descriptionSha256": "27e272ebc2787584103ba210d2d78bb65421db4775a97c78bd77095d864c2628",
+      "summarySource": "shared/i18n/assets/bg.json#extensionDescription",
+      "summaryCharacters": 121,
+      "summarySha256": "9ebb73b151cfa6163d00d7a38db0b6a64510621976071bb61acfddc1b85eb589",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "bn",
+      "nativeName": "বাংলা",
+      "descriptionSource": "docs/store-listing/bn.md",
+      "descriptionSha256": "f7b6d031574a0cda6fb27db3ef6bb3d52350d6f7c11372dd2947beb928ee7293",
+      "summarySource": "shared/i18n/assets/bn.json#extensionDescription",
+      "summaryCharacters": 127,
+      "summarySha256": "13ba17dbf39730351977b38be33562a8faacebcf2c6836ade1737255b738953f",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ca",
+      "nativeName": "Català",
+      "descriptionSource": "docs/store-listing/ca.md",
+      "descriptionSha256": "742c4242db4f32677bc88389c96d0b0b2d2e1eaaf95e4322aac1a52dd0023a29",
+      "summarySource": "shared/i18n/assets/ca.json#extensionDescription",
+      "summaryCharacters": 121,
+      "summarySha256": "c1aba991b1742a3ca41aeea73c13a0cb2a02a8466e9ceb6ab8b0e27200d20b9e",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "cs",
+      "nativeName": "Čeština",
+      "descriptionSource": "docs/store-listing/cs.md",
+      "descriptionSha256": "aecc9553aa4b46df32271391357573491e64222703978428943906521c8c345c",
+      "summarySource": "shared/i18n/assets/cs.json#extensionDescription",
+      "summaryCharacters": 122,
+      "summarySha256": "118a04ddcb7638a0766de0f63128b3c4c69d6e4aeef4aad20584aadb33d66a6c",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "da",
+      "nativeName": "Dansk",
+      "descriptionSource": "docs/store-listing/da.md",
+      "descriptionSha256": "c0f04bce7a734e294a24552f3652b1fd6e6af828b247092b1c8b2c6ff2925c04",
+      "summarySource": "shared/i18n/assets/da.json#extensionDescription",
+      "summaryCharacters": 113,
+      "summarySha256": "db82e17792e56cb492823033f1e0c2ddce646654566a20f75b0060660813e93c",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "de",
+      "nativeName": "Deutsch",
+      "descriptionSource": "docs/store-listing/de.md",
+      "descriptionSha256": "21ebfb032efc1ee750a4a379f891bb2fdccb8d58c962c73a3a5535ef4fdfecaa",
+      "summarySource": "shared/i18n/assets/de.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "c192c6faf38efb4f216e2dc45dabad6654fe6671e1453d32dbc07186662b3069",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "el",
+      "nativeName": "Ελληνικά",
+      "descriptionSource": "docs/store-listing/el.md",
+      "descriptionSha256": "143f64955ff004c6ca3fe523eb65237ccfb5f09a92c24a13b53ec1de511dc32a",
+      "summarySource": "shared/i18n/assets/el.json#extensionDescription",
+      "summaryCharacters": 124,
+      "summarySha256": "bd1a1c228512372a70a2d68729df76bc6371c6a0e959b898c9b90655a117989c",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "en",
+      "nativeName": "English",
+      "descriptionSource": "docs/store-listing/en.md",
+      "descriptionSha256": "6de84eb2ad29e70a905ff91e8945471d5cc572b5ea1a198c2fc847c6524f802f",
+      "summarySource": "shared/i18n/assets/en.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "cc223639636b35b593770b3f3039b5a9789a84b7d37e890010a3b1dcbe299304",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "en_AU",
+      "nativeName": "English (Australia)",
+      "descriptionSource": "docs/store-listing/en_AU.md",
+      "descriptionSha256": "6de84eb2ad29e70a905ff91e8945471d5cc572b5ea1a198c2fc847c6524f802f",
+      "summarySource": "shared/i18n/assets/en_AU.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "cc223639636b35b593770b3f3039b5a9789a84b7d37e890010a3b1dcbe299304",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "en_GB",
+      "nativeName": "English (UK)",
+      "descriptionSource": "docs/store-listing/en_GB.md",
+      "descriptionSha256": "6de84eb2ad29e70a905ff91e8945471d5cc572b5ea1a198c2fc847c6524f802f",
+      "summarySource": "shared/i18n/assets/en_GB.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "cc223639636b35b593770b3f3039b5a9789a84b7d37e890010a3b1dcbe299304",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "en_US",
+      "nativeName": "English (US)",
+      "descriptionSource": "docs/store-listing/en_US.md",
+      "descriptionSha256": "6de84eb2ad29e70a905ff91e8945471d5cc572b5ea1a198c2fc847c6524f802f",
+      "summarySource": "shared/i18n/assets/en_US.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "cc223639636b35b593770b3f3039b5a9789a84b7d37e890010a3b1dcbe299304",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "es",
+      "nativeName": "Español (España)",
+      "descriptionSource": "docs/store-listing/es.md",
+      "descriptionSha256": "e2597a12426ac9de1a9442584b15629ff3ac582d75bc0ea81009b65b8af54f46",
+      "summarySource": "shared/i18n/assets/es.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "aabcb3f4c2232a6166891a63e0e3b34f0df2e5a04c9cf3ed5feb39386fd2359d",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "es_419",
+      "nativeName": "Español (Latinoamérica)",
+      "descriptionSource": "docs/store-listing/es_419.md",
+      "descriptionSha256": "09e36af25bfd365c88e116ba47b5d82f10db8ef03243471cd1a59694324fb0e2",
+      "summarySource": "shared/i18n/assets/es_419.json#extensionDescription",
+      "summaryCharacters": 125,
+      "summarySha256": "9122f50f637154c50248e68de41bd1990fc5c2bd66a8e3447a1c324701a07e40",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "et",
+      "nativeName": "Eesti",
+      "descriptionSource": "docs/store-listing/et.md",
+      "descriptionSha256": "8c2ff43655809243e25283586bb59b5a18e6d2f0c409efeadf4133c4409e53e0",
+      "summarySource": "shared/i18n/assets/et.json#extensionDescription",
+      "summaryCharacters": 126,
+      "summarySha256": "6bc8de2e84326a5b36f18157af863b0bc4728e4a7c0fafe206ac2aa276588334",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "fa",
+      "nativeName": "فارسی",
+      "descriptionSource": "docs/store-listing/fa.md",
+      "descriptionSha256": "2e33956baef8cae8ab661df4a3817bf63c0cb126eb2f1314a8280af1b14e4ea1",
+      "summarySource": "shared/i18n/assets/fa.json#extensionDescription",
+      "summaryCharacters": 121,
+      "summarySha256": "3ab6836063deccfedf5a26932f59bafcf1a8ac9f60ae5662579884aeeadbd75d",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "fi",
+      "nativeName": "Suomi",
+      "descriptionSource": "docs/store-listing/fi.md",
+      "descriptionSha256": "b5d04c870646f4a39bfa0f191900f8f836ae54f6b8d59cc12b9ad8f02deb93e7",
+      "summarySource": "shared/i18n/assets/fi.json#extensionDescription",
+      "summaryCharacters": 127,
+      "summarySha256": "3e7961c8c02b0919ba4b8b0231426c2e43e67deafd79932b08de86fc97c7f15f",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "fil",
+      "nativeName": "Filipino",
+      "descriptionSource": "docs/store-listing/fil.md",
+      "descriptionSha256": "7399ba276fe95782ad7ff6132591164e0c78e5d52e6f0f2ab0708be5dc647cde",
+      "summarySource": "shared/i18n/assets/fil.json#extensionDescription",
+      "summaryCharacters": 124,
+      "summarySha256": "3115610febf8ae5acc3e2f3d3875378d4d878a8e83ff7a76c4a20b7d0a237bb8",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "fr",
+      "nativeName": "Français",
+      "descriptionSource": "docs/store-listing/fr.md",
+      "descriptionSha256": "680f2147f7b5f0870318957f3b0a2ba58011d591360a92f44530485aa6898c18",
+      "summarySource": "shared/i18n/assets/fr.json#extensionDescription",
+      "summaryCharacters": 119,
+      "summarySha256": "491b7c8c1a907bfbe1c7606777623daaed512dee8c53bbc4411b006b2e355993",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "gu",
+      "nativeName": "ગુજરાતી",
+      "descriptionSource": "docs/store-listing/gu.md",
+      "descriptionSha256": "fbdbfad168357b3ee0f7eaa452013d645a933e9e7df42288ab061d337fd95080",
+      "summarySource": "shared/i18n/assets/gu.json#extensionDescription",
+      "summaryCharacters": 122,
+      "summarySha256": "4a34e9c7f47a5126745b28b65e6f2e97cc5952ffe1ea226487c89071a676588a",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "he",
+      "nativeName": "עברית",
+      "descriptionSource": "docs/store-listing/he.md",
+      "descriptionSha256": "438af27571cafe115463fad94cd5215cdecd6fdc0c672d48d9b9bd2b8c96d3fd",
+      "summarySource": "shared/i18n/assets/he.json#extensionDescription",
+      "summaryCharacters": 102,
+      "summarySha256": "9b9b5eafb0ea598f80fd5a036b9217bc005a42ce685b86ba39197d5f142934a7",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "hi",
+      "nativeName": "हिन्दी",
+      "descriptionSource": "docs/store-listing/hi.md",
+      "descriptionSha256": "4c1a3fbbc654c4bd7bafb763d00b9e81f30087f57284544bf294ee70dba08f54",
+      "summarySource": "shared/i18n/assets/hi.json#extensionDescription",
+      "summaryCharacters": 128,
+      "summarySha256": "813926d5bcca051a5d20e7f74c7b770b2bf38bdaf085ad629f4c4d745b4367a4",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "hr",
+      "nativeName": "Hrvatski",
+      "descriptionSource": "docs/store-listing/hr.md",
+      "descriptionSha256": "efeff5090a2223988d2827d2a15909f8120cdfbce2b2457123be1b06cee5accc",
+      "summarySource": "shared/i18n/assets/hr.json#extensionDescription",
+      "summaryCharacters": 118,
+      "summarySha256": "e42b72ee600f584dc7ab9febfc571285b53f2b884735869eb4a13a40556636e3",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "hu",
+      "nativeName": "Magyar",
+      "descriptionSource": "docs/store-listing/hu.md",
+      "descriptionSha256": "c244c8107968daf7d91c9e4df96f6ad3dbc63618f3954c2fb2140e5cac8ca3a9",
+      "summarySource": "shared/i18n/assets/hu.json#extensionDescription",
+      "summaryCharacters": 109,
+      "summarySha256": "893ae4dac1e3ab5193e0ee8c00df2a837b080622fde36a0c07d145726ed8240a",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "id",
+      "nativeName": "Bahasa Indonesia",
+      "descriptionSource": "docs/store-listing/id.md",
+      "descriptionSha256": "e6aaf5d2ace2af6120447f8fd2fe60d344df4095fc1413fbd2d0d2e1bd05ffff",
+      "summarySource": "shared/i18n/assets/id.json#extensionDescription",
+      "summaryCharacters": 124,
+      "summarySha256": "687cec455ac3f5022c3fab13bf3c68b088e3948c1151895d4bcc933febeaaf68",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "it",
+      "nativeName": "Italiano",
+      "descriptionSource": "docs/store-listing/it.md",
+      "descriptionSha256": "faf3b7fa78632b8a6057114f84a15121436d54aa3b8bd635e41f7f76fe89c2f7",
+      "summarySource": "shared/i18n/assets/it.json#extensionDescription",
+      "summaryCharacters": 123,
+      "summarySha256": "69cf116a41613cca6e383dea346635b7d2bc2e3b1e3a3c49759ee198e052d139",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ja",
+      "nativeName": "日本語",
+      "descriptionSource": "docs/store-listing/ja.md",
+      "descriptionSha256": "57149b75f0363eb33de663e763fd1b0209ba9e9742e5e77941ef918973a448e5",
+      "summarySource": "shared/i18n/assets/ja.json#extensionDescription",
+      "summaryCharacters": 76,
+      "summarySha256": "a2e3e8f77a832b72341b7ba874a35a84ca5c08281ab554ddb711284e3b52529a",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "kn",
+      "nativeName": "ಕನ್ನಡ",
+      "descriptionSource": "docs/store-listing/kn.md",
+      "descriptionSha256": "b06db3c63da119cc3c6988a31961e61c2a090f11187184584585a7b2fd9ffadd",
+      "summarySource": "shared/i18n/assets/kn.json#extensionDescription",
+      "summaryCharacters": 121,
+      "summarySha256": "da1d2b45662001c6189bd6fea571d584f06cee251f44ad4df424f0a1db5d4362",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ko",
+      "nativeName": "한국어",
+      "descriptionSource": "docs/store-listing/ko.md",
+      "descriptionSha256": "89e40b48a3287f7a3e2c43f56849fe8095b019236d27c33fb531351837460707",
+      "summarySource": "shared/i18n/assets/ko.json#extensionDescription",
+      "summaryCharacters": 89,
+      "summarySha256": "22d6fd8f850737a75d14a0d1358c6b6c5d04acaa8177c22765d87c96b701e1aa",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "lt",
+      "nativeName": "Lietuvių",
+      "descriptionSource": "docs/store-listing/lt.md",
+      "descriptionSha256": "deb2a5d85d93b70e797b1608961c49f83e0d4cbcec1f4ce87f9a0a26ab9f956b",
+      "summarySource": "shared/i18n/assets/lt.json#extensionDescription",
+      "summaryCharacters": 130,
+      "summarySha256": "526758ea713417fab435a0f3226efee7eafeb6549f660232edb266c48f1778d7",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "lv",
+      "nativeName": "Latviešu",
+      "descriptionSource": "docs/store-listing/lv.md",
+      "descriptionSha256": "4493cf954e346c67bf79d4f079d8e895a77460b36e55cd79f754c81cf00c3223",
+      "summarySource": "shared/i18n/assets/lv.json#extensionDescription",
+      "summaryCharacters": 119,
+      "summarySha256": "f4fdb93104deefbb24a600847d419be0aaa99a3ed0211f1a1fcca4c59dcee55c",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ml",
+      "nativeName": "മലയാളം",
+      "descriptionSource": "docs/store-listing/ml.md",
+      "descriptionSha256": "097c30462a9d146827fbe86a13d1aa93164a6e21387f455375217913baf3792e",
+      "summarySource": "shared/i18n/assets/ml.json#extensionDescription",
+      "summaryCharacters": 129,
+      "summarySha256": "2b413e321845a353b092eda9869a82e80057fb7c1c5cb179464dec3b9b8ccf32",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "mr",
+      "nativeName": "मराठी",
+      "descriptionSource": "docs/store-listing/mr.md",
+      "descriptionSha256": "fd25074bccddc08abd00c198ba6f3145f6be97f9f247178fa9a62f4c6becb1fe",
+      "summarySource": "shared/i18n/assets/mr.json#extensionDescription",
+      "summaryCharacters": 127,
+      "summarySha256": "f2812c91122839c74eda7a3babe2f5455c07159b5282bdc9d7924bd5eb1125d7",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ms",
+      "nativeName": "Bahasa Malaysia",
+      "descriptionSource": "docs/store-listing/ms.md",
+      "descriptionSha256": "c07bb736634ab9169aa132520e68ce023c2a12be7b4ab324501d7f62a668ed3e",
+      "summarySource": "shared/i18n/assets/ms.json#extensionDescription",
+      "summaryCharacters": 127,
+      "summarySha256": "bfcd7e668f2d4cb202f83963d48b13329e723636cda8dc7c3c6b716ddc6fa7b6",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "nl",
+      "nativeName": "Nederlands",
+      "descriptionSource": "docs/store-listing/nl.md",
+      "descriptionSha256": "2c2b560cd10f210e5cd7b5feac0f1b8e171feb11628f11e2330ae1995b110876",
+      "summarySource": "shared/i18n/assets/nl.json#extensionDescription",
+      "summaryCharacters": 120,
+      "summarySha256": "1d63d0b2d2b19081b238969d469f454624fdbf24e55d018f7c7ab078d9d300ab",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "no",
+      "nativeName": "Norsk",
+      "descriptionSource": "docs/store-listing/no.md",
+      "descriptionSha256": "8da300b1aaa1d095fdff263c3cda14843be682d7fce19116f10420933a2809eb",
+      "summarySource": "shared/i18n/assets/no.json#extensionDescription",
+      "summaryCharacters": 120,
+      "summarySha256": "4ac20863463e1e9626b8b55f62780a4d2cd81e2f9e865cfc16dc6904300c2077",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "pl",
+      "nativeName": "Polski",
+      "descriptionSource": "docs/store-listing/pl.md",
+      "descriptionSha256": "a69a692ce9fcec5150fa06e288e37197817ba53651b3ee5258b995781d0c6a43",
+      "summarySource": "shared/i18n/assets/pl.json#extensionDescription",
+      "summaryCharacters": 110,
+      "summarySha256": "2f4b4caa5015b6d7050bd70c8b4e225e787dd7107838efc851a57ab82c93fb57",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "pt_BR",
+      "nativeName": "Português (Brasil)",
+      "descriptionSource": "docs/store-listing/pt_BR.md",
+      "descriptionSha256": "de68763e5184d6188dd2efaa7cae051090ba5005ca3e5e3988154efcc7636b42",
+      "summarySource": "shared/i18n/assets/pt_BR.json#extensionDescription",
+      "summaryCharacters": 115,
+      "summarySha256": "a310ff6693b937f7ec1c54066d8c20a1b8d3ad246eb3b401076300607ff864aa",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "pt_PT",
+      "nativeName": "Português",
+      "descriptionSource": "docs/store-listing/pt_PT.md",
+      "descriptionSha256": "39bcc3509db09cdab8340e2f505bc89e233033d055e58f23679c207912dac714",
+      "summarySource": "shared/i18n/assets/pt_PT.json#extensionDescription",
+      "summaryCharacters": 127,
+      "summarySha256": "79fcadcaf312ed46d0c58edaab27c2e7fb3bf6fa00cf076cad9240ccee16a017",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ro",
+      "nativeName": "Română",
+      "descriptionSource": "docs/store-listing/ro.md",
+      "descriptionSha256": "e5dcd940fa0e8cf51b759f9690cbaf2b4be058f50c2c778ff5581e94a08cb587",
+      "summarySource": "shared/i18n/assets/ro.json#extensionDescription",
+      "summaryCharacters": 122,
+      "summarySha256": "49ee0cde5888a779d9c07b79b9367021640823c0c95b0f91eb650dbf4975e4c3",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ru",
+      "nativeName": "Русский",
+      "descriptionSource": "docs/store-listing/ru.md",
+      "descriptionSha256": "b47d28535a063775861aca88ba46a1311b2c40373b18bc34b0a27ff8a3b3dd5c",
+      "summarySource": "shared/i18n/assets/ru.json#extensionDescription",
+      "summaryCharacters": 118,
+      "summarySha256": "0264fa8d69ac1d89c6d84957b4bb1cfb6b00cb9b023c8d0354eb4da51b08b04d",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "sk",
+      "nativeName": "Slovenčina",
+      "descriptionSource": "docs/store-listing/sk.md",
+      "descriptionSha256": "89b9904a2d4d2f7d1430e0520a7abd78f17844b162d83ac9534610f835408573",
+      "summarySource": "shared/i18n/assets/sk.json#extensionDescription",
+      "summaryCharacters": 122,
+      "summarySha256": "378b6f69669139ff456576341b716cbaf862f324a4c6bb42c35a7fadca370bb2",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "sl",
+      "nativeName": "Slovenščina",
+      "descriptionSource": "docs/store-listing/sl.md",
+      "descriptionSha256": "dabcba9afae9bbb38f9c3dabd31acd0e81199bee52aaf1cacde8c75dd276fb0a",
+      "summarySource": "shared/i18n/assets/sl.json#extensionDescription",
+      "summaryCharacters": 125,
+      "summarySha256": "75508cc0d288a6b964747f52e1829d543aeff308e7792ab44f532e59d49e28c0",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "sr",
+      "nativeName": "Српски",
+      "descriptionSource": "docs/store-listing/sr.md",
+      "descriptionSha256": "b3298bfb9fafa2727f3335bb1c1a548695bc86963d704a2c482ef9150c17a47c",
+      "summarySource": "shared/i18n/assets/sr.json#extensionDescription",
+      "summaryCharacters": 119,
+      "summarySha256": "a29eabdd05093b9fdd19c71f8c04e0a31e27db7b92948374c2577d526215bfa5",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "sv",
+      "nativeName": "Svenska",
+      "descriptionSource": "docs/store-listing/sv.md",
+      "descriptionSha256": "044c3da472249e07bd93de1fdc99a42310384e84b8b15918ac3c6d18afc6c6bf",
+      "summarySource": "shared/i18n/assets/sv.json#extensionDescription",
+      "summaryCharacters": 117,
+      "summarySha256": "a5a14c4e6f3fd8216d0e1cd184c08e028da5ba4433eb930fb9144fccacdcefaa",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "sw",
+      "nativeName": "Kiswahili",
+      "descriptionSource": "docs/store-listing/sw.md",
+      "descriptionSha256": "d29d25a9c3dcee70da5ae6bc061eec3c671145023cf00259d398342760b27606",
+      "summarySource": "shared/i18n/assets/sw.json#extensionDescription",
+      "summaryCharacters": 126,
+      "summarySha256": "ebb81d73b3c8b574f6e25b961fc7016cdbc57961ff95dbcef20c682272ad73ab",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "ta",
+      "nativeName": "தமிழ்",
+      "descriptionSource": "docs/store-listing/ta.md",
+      "descriptionSha256": "289f32d21628ebb88f5d02f7a02dd80d6b8e64933ba102e5bda2a6b696bdc12b",
+      "summarySource": "shared/i18n/assets/ta.json#extensionDescription",
+      "summaryCharacters": 121,
+      "summarySha256": "150cd83dca1a9f0a6aade369a400a17479eeed953fc75a708b16969717f22cbb",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "te",
+      "nativeName": "తెలుగు",
+      "descriptionSource": "docs/store-listing/te.md",
+      "descriptionSha256": "1cfbec9eb6b57fa1dee62b9722cbf89bc049d47d12ba1dd8351f1d223af37cdb",
+      "summarySource": "shared/i18n/assets/te.json#extensionDescription",
+      "summaryCharacters": 123,
+      "summarySha256": "53a7fbe67a917cec3eec11d5484f1c4f0495c1efb8b5909d805766570311ffe6",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "th",
+      "nativeName": "ภาษาไทย",
+      "descriptionSource": "docs/store-listing/th.md",
+      "descriptionSha256": "7237ee37aade5429edced84048ac663ffa78c84c2cc43a8374d1151e5a740ab8",
+      "summarySource": "shared/i18n/assets/th.json#extensionDescription",
+      "summaryCharacters": 111,
+      "summarySha256": "294e7762a73913adaeb31633246ebdf914d54e2ea7a8e674022dfb59eff55cd2",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "tr",
+      "nativeName": "Türkçe",
+      "descriptionSource": "docs/store-listing/tr.md",
+      "descriptionSha256": "4e0b538760987a86c2d2394bec56e3d9aa6afa757a1e773337b701ea04b04a62",
+      "summarySource": "shared/i18n/assets/tr.json#extensionDescription",
+      "summaryCharacters": 125,
+      "summarySha256": "1b2f49fd3165cb843c719508b69ebf9dc2c937af7cfec4bb56e347db2c473633",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "uk",
+      "nativeName": "Українська",
+      "descriptionSource": "docs/store-listing/uk.md",
+      "descriptionSha256": "ed0dd8eb8cdb62070a7fb79339b96c5be7c41589574a78931c661da0ab073391",
+      "summarySource": "shared/i18n/assets/uk.json#extensionDescription",
+      "summaryCharacters": 118,
+      "summarySha256": "c236e63f1dc3a206556bf846074534cfbd4ad99f86fdd23ac0535185318a0866",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "vi",
+      "nativeName": "Tiếng Việt",
+      "descriptionSource": "docs/store-listing/vi.md",
+      "descriptionSha256": "22c1f3efeb57fd2e1d246ad1940ab1f177beea7c6b55ee4440ad7605c7e1fba8",
+      "summarySource": "shared/i18n/assets/vi.json#extensionDescription",
+      "summaryCharacters": 115,
+      "summarySha256": "90bdd6ca68e5f48cc938acdc93360d125160ad4502077acbe2ebfb8ecaaa19fe",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "zh_CN",
+      "nativeName": "中文 (简体)",
+      "descriptionSource": "docs/store-listing/zh_CN.md",
+      "descriptionSha256": "d8bb322b0be7a9358759a58fedfab5e3cabd693df441d2200b83b443a5af1738",
+      "summarySource": "shared/i18n/assets/zh_CN.json#extensionDescription",
+      "summaryCharacters": 73,
+      "summarySha256": "53689b8d92388dd84f9ac225f1afab38595fb47072d270b9958d5aadcf21fff9",
+      "review": "AI-assisted editorial and separate semantic review"
+    },
+    {
+      "locale": "zh_TW",
+      "nativeName": "中文 (繁體)",
+      "descriptionSource": "docs/store-listing/zh_TW.md",
+      "descriptionSha256": "4ad31235cfc54115ee215f541f3a7b329318072b7691b274ab137c3b85ee4fc6",
+      "summarySource": "shared/i18n/assets/zh_TW.json#extensionDescription",
+      "summaryCharacters": 75,
+      "summarySha256": "a8a8178e55f777d9093cb65d7d8090dc8e71053f84e2db12b8a3967c1d8d4d19",
+      "review": "AI-assisted editorial and separate semantic review"
+    }
+  ],
+  "validation": {
+    "storeCheck": {
+      "locales": 55,
+      "result": "passed"
+    },
+    "verify": {
+      "coreAndDomTests": 799,
+      "contractTests": 166,
+      "totalTests": 965,
+      "result": "passed",
+      "existingCssWarnings": 5
+    },
+    "productionPackages": {
+      "targets": ["chrome-mv3", "firefox-mv2"],
+      "contracts": "passed",
+      "summarySourceMatches": 110
+    },
+    "sourceAndSummaryHashes": "matched",
+    "localLinksChecked": 130,
+    "diffWhitespace": "passed"
+  }
+}

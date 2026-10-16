@@ -1,30 +1,34 @@
-YouTube'da bir canlı yayını tam ekran yaptığınızda sohbet kaybolur. Bu eklenti sohbeti videonun üzerine geri getirir; böylece tam ekrandan çıkmadan her mesajı okur, yanıt yazar ve canlı yayında Super Chat gönderirsiniz.
+YouTube'u tam ekranda izlerken canlı sohbeti de görün.
+YouTube Live Chat Fullscreen, sohbeti videonun üzerinde gösteren ücretsiz bir Chrome uzantısıdır. Oynatıcıdan çıkmadan yayını takip edin, mesajları okuyun ve yanıt yazın.
 
-BAŞLICA ÖZELLİKLER
-- Konum ve boyut: paneli oynatıcının üzerinde dilediğiniz yere sürükleyin, her kenarından ve köşesinden yeniden boyutlandırın; ikisi de oynatıcıyla birlikte ölçeklenir, yani dizüstünde kurduğunuz düzen 32 inçlik ekrana da oturur.
-- Metin: "Metin boyutu" 10px ile 40px arası (varsayılan 13px; 40px, olağan sohbet yazısının yaklaşık üç katı), kendi seçtiğiniz "Metin rengi", ayrı bir "Üye adlarının rengi", 50 yazı tipi.
-- Arka plan: başlangıçta düz beyaz; "Arka plan rengi" ile saydamlık tek bir seçiciden, ayrıca 0-20px "Bulanıklık" — akıcılıktan en çok götürmesi muhtemel ayar, bu yüzden eski makinelerde ölçülü kullanın.
-- Görünürlük: "Etkin değilken sohbeti göster" açık gelir, oynatıcı kontrolleri söndükten sonra da sohbet ekranda kalır; bu açıkken "Yalnızca sohbet", imleci üzerine getirene kadar başlığı ve yazma kutusunu katlar.
-- Kullanıcı adları ve aralık: sıradan mesajlarda "Kullanıcı adlarını göster" ile "Profil resimlerini göster" kapatılabilir, ücretli mesajlar kendi adını ve resmini korur; mesajlar arasında "Mesaj aralığı" 0-40px.
-- Hazır ayarlar: yedi tanesi gömülü gelir, her biri tek tıkla, üstüne kendi kaydettikleriniz.
-- Klavye: kaydırıcılar ve renk seçicileri ok tuşlarıyla çalışır, her denetimin ekran okuyucu etiketi vardır. Otomatik WCAG 2.1 AA denetimleri her değişiklikte açılır pencereyi, denetim satırını ve ayarlar panelini kapsar.
+Canlı yayınlar ve sohbet tekrarı
+Oyun yayınlarını, VTuber yayınlarını ve canlı etkinlikleri sohbetle aynı ekranda izleyin. Sohbet tekrarı sunulan arşiv yayınlarında, ilk yayın sırasında gönderilen mesajları takip edin.
 
-TAKLİT DEĞİL, YOUTUBE'UN KENDİ SOHBETİ
-Videonun üzerindeki panel, kenar çubuğundaki YouTube canlı sohbetinin ta kendisidir, görünümü değiştirilmiş halidir; rozetler, emoji, çıkartmalar ve yalnızca üyelere açık sohbet bu yüzden çalışmaya devam eder. Mesaj göndermek YouTube'un kendi yazı kutusundan, Super Chat ise YouTube'un satın alma panelinden geçer: ödeme YouTube'a gider, eklentiye asla. Eklentinin o panelde değiştirdiği tek denetim üyelik (Membership) düğmesidir: kanalın katılma sayfasını yeni sekmede açar.
+Sohbet görünümünü ayarlama
+- Şeffaf arka plan: alttaki videoyu görmek için şeffaflığı ve bulanıklığı ayarlayın.
+- Konum ve boyut: paneli görüntüdeki önemli noktalardan uzağa sürükleyin, genişliğini ve yüksekliğini değiştirin.
+- Okunabilirlik: yazı tipini, metin boyutunu ve rengini, arka plan rengini ve mesaj aralığını ayarlayın.
+- Kayıtlı stiller: hazır bir stil seçin veya kendi görünüm ayarlarınızı kaydedin.
+- Daha az öğe: normal mesajlarda kullanıcı adlarını ve profil resimlerini gizleyin ya da sohbeti kullanana kadar mesaj kutusunu daraltın.
 
-NE KADAR TUTAR, NE TOPLAR
-Ücretsiz: kayıt yok, ücretli sürüm yok.
-Tek bir izin, storage; çalıştığı tek site www.youtube.com — Chrome'un kurulum ekranında verilerinizle ilgili gösterdiği uyarının anlamı tam olarak budur. Arka planda hiçbir şey çalışmaz: açık bir YouTube sekmesi yokken yalnızca araç çubuğundaki açılır pencere iş yapar, o da yalnızca açık olduğu sürece.
-Analiz yok, izleme yok, geliştiriciye giden hiçbir şey yok: okuduğunuzu da yazdığınızı da toplamaz, saklamaz, göndermez; ayarlarınız bu tarayıcıda kalır. Tüm kod eklentinin içinde gelir; yalnızca varsayılan dışındaki yazı tipleri Google Fonts'tan indirilir. GPL-3.0 ile açık kaynak, GitHub'da herkese açık.
+Mesaj okuma ve gönderme
+Panel, emojiler, üyelik rozetleri ve mesaj kutusu dahil YouTube'un kendi sohbetini kullanır. Canlı yayında mesaj göndermek için YouTube'da oturum açın. Super Chat, desteklendiği yerlerde kullanılabilir. Mesaj gönderme ve ücretli özellikler platformun koşullarına ve kanal ayarlarına bağlıdır. Arşivdeki sohbet, eski mesajların tekrarıdır; yeni bir canlı sohbet değildir.
 
-NASIL BAŞLARSINIZ
-1. Eklentiyi kurun, sonra bir canlı yayını ya da sohbet tekrarı duran bir arşivi açın.
-2. Oynatıcıyı tam ekran yapın — sohbet zaten orada.
-3. Kontrol çubuğundaki konuşma balonu düğmesi sohbeti açıp kapatır; imleci sohbetin üzerine getirin, sohbetin kendi ayarlar düğmesi görünümü değiştirir.
+İlk kullanım
+1. Uzantıyı yükleyin ve bir canlı yayın veya sohbet tekrarı olan bir arşiv yayını açın.
+2. Video oynatıcının tam ekran düğmesiyle tam ekrana geçin.
+3. Sohbeti taşımak, boyutunu değiştirmek veya ayarlarını açmak için imleci üzerine getirin.
+Oynatıcı kontrollerindeki sohbet düğmesiyle paneli gösterin veya gizleyin. Daha önce kapattıysanız tarayıcı araç çubuğundaki uzantı penceresinden tam ekran sohbetini açın.
 
-NEREDE ÇALIŞIR
-Yalnızca masaüstünde, sohbeti olan bir izleme sayfasında ve tam ekranda. Bu Chrome sürümü Opera'da da çalışır; Firefox'un addons.mozilla.org'da kendi sürümü vardır. Arayüz 49 dile yayılan 55 seçenekle gelir.
+Ücretsiz ve açık kaynak
+Uzantı için ayrı hesap veya abonelik gerekmez. Kaynak kodu GPL-3.0 lisansıyla GitHub üzerinde herkese açıktır. Video platformunun ücretli özellikleri, ücretsiz uzantıdan ayrıdır.
 
-Hata bildirin veya özellik isteyin: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Gizlilik ve izinler
+Ayarlar, storage izni kullanılarak bu tarayıcıda saklanır. Uzantı www.youtube.com üzerinde çalışır, analiz veya takip araçları kullanmaz ve sohbet içeriğini ya da izleme geçmişini geliştiriciye göndermez. YouTube'un kendi sohbeti platformun hizmetlerine bağlanır. İsteğe bağlı yazı tipleri Google Fonts'tan yüklenir.
+
+Uyumluluk
+Bilgisayarda Chrome için, canlı sohbeti veya sohbet tekrarı bulunan videolarda çalışır. Sohbeti olmayan videolarda panel gösterilmez. Opera ve diğer Chromium tabanlı tarayıcılarda uyumluluk farklılık gösterebilir. Firefox için ayrı bir sürüm addons.mozilla.org adresinde bulunur. Ayarlar klavyeyle kullanılabilir ve 55 dil seçeneği sunar.
+
+Hata bildirin veya özellik önerin: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Kaynak kodu: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
-Geliştiriciye destek olun: https://ko-fi.com/daichan132
+Geliştiriciyi destekleyin: https://ko-fi.com/daichan132

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Live Chat Fullscreen — Balanced20案</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans CJK JP", "Yu Gothic", sans-serif;
+        color: #25272b;
+        background: #f3f4f5;
+        font-synthesis: none;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; }
+      button { font: inherit; cursor: pointer; }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 24px 32px 0;
+      }
+      .toolbar p { margin: 0; color: #60656d; font-size: 13px; line-height: 1.7; }
+      .size-controls { display: flex; gap: 4px; padding: 4px; border: 1px solid #d8dbe0; border-radius: 8px; background: #fff; }
+      .size-controls button { border: 0; background: transparent; border-radius: 5px; padding: 8px 12px; color: #60656d; font-size: 13px; white-space: nowrap; }
+      .size-controls button[aria-pressed="true"] { color: #fff; background: #30343b; }
+      button:focus-visible { outline: 3px solid #5489c8; outline-offset: 4px; }
+      #comparison { max-width: 1440px; margin: 0 auto; padding: 32px; }
+      .comparison-heading { margin-bottom: 28px; }
+      h1 { font-size: 26px; font-weight: 650; line-height: 1.4; margin: 0 0 8px; letter-spacing: -0.025em; }
+      .comparison-heading p { font-size: 13px; color: #60656d; margin: 0; line-height: 1.7; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(440px, 100%), 1fr)); align-items: start; gap: 32px 24px; }
+      .concept { margin: 0; min-width: 0; }
+      .artwork { display: block; padding: 0; border: 0; background: transparent; width: 100%; max-width: 440px; text-align: left; }
+      .artwork img { display: block; width: 100%; height: auto; aspect-ratio: 11 / 7; object-fit: contain; background: #e4e6e8; }
+      figcaption { padding: 13px 0 0; display: flex; align-items: baseline; gap: 9px; line-height: 1.5; }
+      .number { font-size: 13px; font-variant-numeric: tabular-nums; color: #757b84; }
+      .name { font-size: 14px; font-weight: 600; }
+      .half-size .grid { grid-template-columns: repeat(auto-fit, 220px); gap: 28px 24px; }
+      .half-size .artwork, .half-size .artwork img { width: 220px; height: 140px; }
+      .half-size .name { font-size: 13px; }
+      .export-mode { background: #f3f4f5; }
+      .export-mode .toolbar { display: none; }
+      .export-mode #comparison { width: 1000px; min-width: 1000px; max-width: 1000px; padding: 34px 40px 40px; margin: 0; }
+      .export-mode .comparison-heading { margin-bottom: 26px; }
+      .export-mode h1 { font-size: 24px; }
+      .export-mode .grid { grid-template-columns: 440px 440px; column-gap: 40px; row-gap: 24px; }
+      .export-mode .artwork, .export-mode .artwork img { width: 440px; height: 280px; }
+      .export-mode figcaption { min-height: 41px; padding-top: 11px; }
+      .export-mode .name { font-size: 14px; }
+      .export-mode .artwork { cursor: default; }
+      dialog { width: min(944px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); margin: auto; padding: 24px; border: 1px solid #d8dbe0; border-radius: 12px; background: #fff; overflow: auto; color: #25272b; }
+      dialog::backdrop { background: rgb(18 21 26 / 65%); }
+      .modal-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 18px; }
+      .modal-heading h2 { font-size: 19px; line-height: 1.5; font-weight: 600; margin: 0; }
+      .close { border: 1px solid #d8dbe0; border-radius: 6px; background: #fff; color: #30343b; font-size: 13px; padding: 8px 12px; }
+      .modal-image { display: block; width: min(880px, 100%); height: auto; aspect-ratio: 11 / 7; object-fit: contain; margin: 0 auto; background: #e4e6e8; }
+      .modal-copy { margin: 20px 0 0; }
+      .modal-headline { font-size: 16px; font-weight: 600; margin: 0 0 8px; }
+      .modal-note { margin: 0; color: #60656d; font-size: 14px; line-height: 1.8; }
+      .error { color: #b12626; }
+      @media (max-width: 600px) {
+        .toolbar { align-items: flex-start; flex-direction: column; padding: 20px 20px 0; }
+        #comparison { padding: 24px 20px; }
+        h1 { font-size: 23px; }
+        .grid { gap: 26px; }
+        dialog { padding: 16px; }
+        .modal-heading h2 { font-size: 16px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="toolbar" aria-label="比較表示の設定">
+      <p>画像をクリックすると、大きく表示して制作意図を確認できます。</p>
+      <div class="size-controls" aria-label="画像の表示サイズ">
+        <button type="button" data-size="full" aria-pressed="true">440 × 280</button>
+        <button type="button" data-size="half" aria-pressed="false">220 × 140</button>
+      </div>
+    </div>
+    <main id="comparison">
+      <header class="comparison-heading">
+        <h1>YouTube Live Chat Fullscreen · 20案</h1>
+        <p>Chrome ウェブストア一覧用 · 正式名称 × 全画面内チャット × 文字と図の余白</p>
+      </header>
+      <div id="concepts" class="grid"></div>
+    </main>
+    <dialog id="detail" aria-labelledby="detail-title">
+      <div class="modal-heading">
+        <h2 id="detail-title"></h2>
+        <button class="close" type="button" aria-label="拡大表示を閉じる">閉じる</button>
+      </div>
+      <img class="modal-image" width="880" height="560" alt="" />
+      <div class="modal-copy">
+        <p class="modal-headline"></p>
+        <p class="modal-note"></p>
+      </div>
+    </dialog>
+    <script>window.__CONCEPTS__=[{"id":"01","nameJa":"白いセリフ・グリッド","headline":"YouTube Live Chat Fullscreen","conceptNote":"白地、左に名称、右に映像。セリフ体と図の高さを揃える。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/01.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"f2c2ac2bc42f4f6530102ec1da0dc69762b6346859ef40576d0ede51774b845b"},{"id":"02","nameJa":"黒のライト・ロックアップ","headline":"YouTube Live Chat Fullscreen","conceptNote":"黒い全画面の中で、細い名称と赤いチャットを左右に置く。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/02.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"a77d7d5d74427f9fddfb3d981f642c3db61319969e1c8257b2d19281399d0d74"},{"id":"03","nameJa":"赤い余白と白い画面","headline":"YouTube Live Chat Fullscreen","conceptNote":"赤地に軽い白文字、下に白い映像面と濃い赤チャット。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/03.png","originalSize":{"width":1570,"height":1002,"colorType":2},"originalSha256":"cafb10b6c16f742d145b6f067acdf8c0cd00128fb67d263d87cac9df8769892a"},{"id":"04","nameJa":"ミスト・スイス","headline":"YouTube Live Chat Fullscreen","conceptNote":"淡いグレーに細身の文字、ずらした映像の配置で余白を作る。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/04.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"247fa1844875ba269bee486d62735422c1efed7c064480d3dff387452e259b68"},{"id":"05","nameJa":"ネイビーのセリフ・対比","headline":"YouTube Live Chat Fullscreen","conceptNote":"濃紺に白い文字と赤いセリフ。左チャットで変化をつける。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/05.png","originalSize":{"width":1570,"height":1001,"colorType":2},"originalSha256":"72cdc7cb9f9296957ff16a8f84a14060aee9cd6c988f40f41a4e6ef9aec8bdbe"},{"id":"06","nameJa":"センター・ブランド","headline":"YouTube Live Chat Fullscreen","conceptNote":"名称と映像を中央揃えでまとめ、左右の余白を揃える。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/06.png","originalSize":{"width":1570,"height":1002,"colorType":2},"originalSha256":"984e8d3f7369f0c9889645c477648c7f4b2223d6ea14b175e02e2d6672d7a11f"},{"id":"07","nameJa":"角と名称の一体化","headline":"YouTube Live Chat Fullscreen","conceptNote":"全画面の四隅で名称とチャットをまとめる、白い一枚の画面。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/07.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"e36b82b122c4af072de4af0735f7c40ebc1c1da1d56cb8680dc7a467334d5aee"},{"id":"08","nameJa":"アウトライン・名称","headline":"YouTube Live Chat Fullscreen","conceptNote":"Live Chatの輪郭文字と映像枠を響かせる。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/08.png","originalSize":{"width":1573,"height":1000,"colorType":2},"originalSha256":"75708a260650e3f7da09117b226c469943a1c60947a9cb9c9af6ce4a61f425a2"},{"id":"09","nameJa":"コーラル・透過","headline":"YouTube Live Chat Fullscreen","conceptNote":"コーラルとグレーの抽象映像を、白い透過チャットに通す。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/09.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"acb8c033ba79911c370e2fe6437bf33b7ab814ebeaf44e0b2f0ab31afced3639"},{"id":"10","nameJa":"バランスのある等幅","headline":"YouTube Live Chat Fullscreen","conceptNote":"等幅の名称と通常幅のFullscreenでリズムを付ける。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/10.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"1f6b2d2895c1d9ac8641bb9470276a76e1ebddf41f467b0670395ca0e3fc5f17"},{"id":"11","nameJa":"長い水平線","headline":"YouTube Live Chat Fullscreen","conceptNote":"名称の下の短いルールを、映像枠の位置へつなげる。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/11.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"ff95c304507a191150eef090afe618552b41a711fdadb9e1d5991ab76a388b91"},{"id":"12","nameJa":"クリームと朱色","headline":"YouTube Live Chat Fullscreen","conceptNote":"クリームの余白と朱色の映像面、黒いチャットで温かく。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/12.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"de78fa7e5331b47372be549a728020470a70d44b9d736f7b3644a207b79ea57b"},{"id":"13","nameJa":"グラファイト・ポスター","headline":"YouTube Live Chat Fullscreen","conceptNote":"黒い文字とコーラルの映像面を、非対称な配置でまとめる。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/13.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"5b0603d5d9f81a68ce17ff570da877ad9d77391508217f384ed45fe917125631"},{"id":"14","nameJa":"映像を先に見せる","headline":"YouTube Live Chat Fullscreen","conceptNote":"上に全画面とチャット、下に正式名称。機能を先に読む構図。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/14.png","originalSize":{"width":1573,"height":1000,"colorType":2},"originalSha256":"8df3dd41bdff3d667ebbae09d797cd471ba272a7967422ac5ba55cd306093495"},{"id":"15","nameJa":"二列の水平バランス","headline":"YouTube Live Chat Fullscreen","conceptNote":"黒地の左右に名称と映像を並べ、赤いアクセントで結ぶ。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/15.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"0b619a589253390f9d46d150ea078265c0ba47fdf479c72e1d558743a0fbd316"},{"id":"16","nameJa":"チャットを左に","headline":"YouTube Live Chat Fullscreen","conceptNote":"映像図を左、名称を右。チャットも映像の左側に配置する。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/16.png","originalSize":{"width":1570,"height":1001,"colorType":2},"originalSha256":"538cfc3f4d8a0dc83e433129136c89cf2180355ecd27f724f4ca0fc87d8345be"},{"id":"17","nameJa":"ネイビーと薄いチャット","headline":"YouTube Live Chat Fullscreen","conceptNote":"濃紺の動画面と淡いチャットを重ね、名称と四隅を白で揃える。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/17.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"ce826a6c2c298b7b39a6b1d5c210c3338ea02ee170b538e5bf811f430797cac8"},{"id":"18","nameJa":"チャットと文字の高さ","headline":"YouTube Live Chat Fullscreen","conceptNote":"左チャットと右の名称を、同じ映像の中で高さを揃える。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/18.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"cc996302b9eee43666394061d8d45c72ce6b6b372d620934cc81b4c8af94e5f5"},{"id":"19","nameJa":"Fullscreenのセリフ","headline":"YouTube Live Chat Fullscreen","conceptNote":"最後のFullscreenをセリフにし、名称のまとまりに変化をつける。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/19.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"8c288b166896cfb1b1df693aa88320f81f3778f547d2915d67ea42271a0a83f7"},{"id":"20","nameJa":"静かな赤と白","headline":"YouTube Live Chat Fullscreen","conceptNote":"淡い赤の背景と白い映像、通常幅の名称を軽やかにまとめる。","uiTreatment":"Abstract video and overlaid chat; individually generated artwork","originalPath":"originals/20.png","originalSize":{"width":1572,"height":1001,"colorType":2},"originalSha256":"541bd5528454fb5d5d25b53200afd36b45477a6fc0677a3efd8594741cc0811d"}];window.__CONCEPT_EXPORTS__='./exports/';</script>
+<script type="module">
+      window.__GALLERY_READY__ = false;
+      const exportMode = window.__EXPORT_MODE__ === true;
+      document.documentElement.classList.toggle('export-mode', exportMode);
+      const exportsBase = new URL(window.__CONCEPT_EXPORTS__ || '../exports/', location.href);
+      const grid = document.getElementById('concepts');
+      const dialog = document.getElementById('detail');
+      const modalImage = dialog.querySelector('.modal-image');
+      const closeButton = dialog.querySelector('.close');
+
+      function imageUrl(id, large = false) {
+        return new URL(`${id}${large ? '@2x' : ''}.png`, exportsBase).href;
+      }
+
+      function openConcept(concept) {
+        if (exportMode) return;
+        document.getElementById('detail-title').textContent = `${concept.id} · ${concept.nameJa}`;
+        dialog.querySelector('.modal-headline').textContent = concept.headline || '';
+        dialog.querySelector('.modal-note').textContent = concept.conceptNote || '';
+        modalImage.alt = `${concept.id} ${concept.nameJa}`;
+        modalImage.onerror = () => {
+          modalImage.onerror = null;
+          modalImage.src = imageUrl(concept.id);
+        };
+        modalImage.src = imageUrl(concept.id, true);
+        dialog.showModal();
+      }
+
+      closeButton.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', event => {
+        if (event.target === dialog) {
+          const bounds = dialog.getBoundingClientRect();
+          if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+        }
+      });
+
+      document.querySelectorAll('[data-size]').forEach(button => {
+        button.addEventListener('click', () => {
+          if (exportMode) return;
+          document.documentElement.classList.toggle('half-size', button.dataset.size === 'half');
+          document.querySelectorAll('[data-size]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
+        });
+      });
+
+      try {
+        const concepts = window.__CONCEPTS__ || await fetch('../concepts.json').then(response => {
+          if (!response.ok) throw new Error(`Concept metadata could not be loaded (${response.status}).`);
+          return response.json();
+        });
+        if (!Array.isArray(concepts) || concepts.length !== 20) throw new Error('The comparison requires exactly 20 concepts.');
+        const images = concepts.map(concept => {
+          const figure = document.createElement('figure');
+          figure.className = 'concept';
+          const button = document.createElement('button');
+          button.className = 'artwork';
+          button.type = 'button';
+          button.setAttribute('aria-label', `${concept.id} ${concept.nameJa}を拡大表示`);
+          if (exportMode) button.tabIndex = -1;
+          const img = document.createElement('img');
+          img.width = 440;
+          img.height = 280;
+          img.alt = `${concept.id} ${concept.nameJa}`;
+          img.src = imageUrl(concept.id);
+          button.append(img);
+          button.addEventListener('click', () => openConcept(concept));
+          const caption = document.createElement('figcaption');
+          const number = document.createElement('span');
+          number.className = 'number';
+          number.textContent = concept.id;
+          const name = document.createElement('span');
+          name.className = 'name';
+          name.textContent = concept.nameJa;
+          caption.append(number, name);
+          figure.append(button, caption);
+          grid.append(figure);
+          return img;
+        });
+        await Promise.all(images.map(img => img.decode()));
+        await document.fonts.ready;
+        window.__GALLERY_READY__ = true;
+      } catch (error) {
+        window.__GALLERY_ERROR__ = String(error);
+        const message = document.createElement('p');
+        message.className = 'error';
+        message.textContent = '画像を読み込めませんでした。ローカルサーバーで開くか、書き出しファイルを確認してください。';
+        grid.append(message);
+        console.error(error);
+      }
+    </script>
+  </body>
+</html>

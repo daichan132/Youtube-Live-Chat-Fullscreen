@@ -32,7 +32,7 @@ export const SUMMARY_CAPABILITIES = {
   no: [/\bsvar(?:er)?\b/i, /super[\s-]?chat/i],
   fi: [/\bvastaat?\b/i, /super[\s-]?chat/i],
   et: [/\bvasta(?:d|ta)?\b/i, /super[\s-]?chat/i],
-  hu: [/írj\s+hozzászól|hozzászólsz/i, /super[\s-]?chat/i],
+  hu: [/küldj\s+üzenet(?:et|eket)/i, /super[\s-]?chat/i],
   ru: [/отвеча(?:йте|ете)/i, /super\s*chat/i],
   uk: [/відповіда(?:йте|єте)/i, /super\s*chat/i],
   sr: [/одговар(?:ајте|ај|аш)/i, /super\s*chat/i],

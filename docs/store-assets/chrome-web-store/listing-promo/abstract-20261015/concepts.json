@@ -1,0 +1,26 @@
+[
+  {
+    "id": "01",
+    "nameJa": "白い説明図",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "四隅の全画面マークと、動画の内側にあるチャット。最も素直な機能説明。"
+  },
+  {
+    "id": "02",
+    "nameJa": "黒いミニマル",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "左に二つの言葉、右に動画とチャット。余白と輪郭で伝える横並びの構成。"
+  },
+  {
+    "id": "03",
+    "nameJa": "赤いフルスクリーン",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "ひとつの黒い画面に文字とチャットを収める。ストア一覧で輪郭が強い構成。"
+  },
+  {
+    "id": "04",
+    "nameJa": "四隅と吹き出し",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "全画面の四隅・再生・吹き出しの三つの記号で、機能を抽象化する。"
+  }
+]

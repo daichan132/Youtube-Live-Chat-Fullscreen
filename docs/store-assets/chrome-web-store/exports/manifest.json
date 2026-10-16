@@ -1,0 +1,92 @@
+{
+  "status": "draft",
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-13T18:05:28.494Z",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin",
+    "arch": "arm64",
+    "deviceScaleFactor": 1,
+    "typography": "Bundled Inter 400/500 under SIL Open Font License; native product UI fonts come from the production capture."
+  },
+  "sourceNote": "Complete production extension UI captures. Source provenance and verification are recorded in the referenced capture evidence.",
+  "captureEvidence": "capture-evidence.json",
+  "sources": [
+    {
+      "file": "source/composition.json",
+      "sha256": "a73285fe5dccfa61b483da9774036192b1a063a79f63f83e08950e7a7fbc49bb"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "8200ecca70e45a87d52a88590c9a9881c03456146cb886543dd65d6efb8ca318"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "9f9a2132471ef8f2caa3a512166d66edb44b3db23818f678934a95696944b712"
+    },
+    {
+      "file": "source/fonts/inter-400.woff2",
+      "sha256": "8909904ab6c872eb994093482a88a28eca2cd95912d7b6fecd72103b0dc07edc"
+    },
+    {
+      "file": "source/fonts/inter-500.woff2",
+      "sha256": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f"
+    },
+    {
+      "file": "source/fonts/LICENSE",
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "file": "inputs/en/live-gaming.png",
+      "sha256": "ae5cb05d868e77782901ac33476700c551021b6469375bc5d39d7e9a3ff10aee"
+    },
+    {
+      "file": "inputs/en/vtuber-live.png",
+      "sha256": "75b9cac3762f862b8701c1c96b82dce54f5ec894c21fac2ec35998721009ec7d"
+    },
+    {
+      "file": "inputs/en/transparent-live.png",
+      "sha256": "e925912c88cf4d4307951f3ca3ea6723467df42bd661e0eb2592313738c6196b"
+    },
+    {
+      "file": "../../../public/icon/128.png",
+      "sha256": "bbf12731bdb7b3b3486fe00b3a8196ca8d13da7fef467902d5b864a93b2343a9"
+    },
+    {
+      "file": "capture-evidence.json",
+      "sha256": "31225f08cbb374614fe13ddbba13d53edd84fffeb64adb1d27cc662d5e574509"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/en/01-live-gaming.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "017e3ef6b19de42b5940b71dd54f699d0461fca56e0d73b55755dd2dc05d1631"
+    },
+    {
+      "file": "exports/en/02-vtuber-live.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "cabeec318fbd340b1964250f4e4065f87222347865ebc7658e92000871e05c3a"
+    },
+    {
+      "file": "exports/en/03-transparent-chat.png",
+      "width": 1280,
+      "height": 800,
+      "sha256": "6aee0e969ce41c37e7372573253673f700fc8b5c4dcf95c8efb9d67c63c39c4c"
+    },
+    {
+      "file": "exports/small-promo.png",
+      "width": 440,
+      "height": 280,
+      "sha256": "12e95ba0250cf268935150740b954d41f9f08912eac68ebb80e01c9dc73d31c0"
+    },
+    {
+      "file": "exports/marquee.png",
+      "width": 1400,
+      "height": 560,
+      "sha256": "cb25912bf26b445c21732c66929d3d5cf27d424d925b2260c90be3f8636f8bc5"
+    }
+  ]
+}

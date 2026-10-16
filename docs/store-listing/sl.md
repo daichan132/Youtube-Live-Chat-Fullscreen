@@ -1,30 +1,34 @@
-Prenos v živo na YouTubu razpreš čez cel zaslon in klepet izgine. Razširitev ga vrne nad video: prebereš vsako sporočilo, odgovoriš in med prenosom pošlješ Super Chat, ne da bi kdaj zapustil cel zaslon.
+Glej YouTube na celem zaslonu in imej klepet še vedno pred očmi.
+YouTube Live Chat Fullscreen je brezplačna razširitev za Chrome, ki prikaže klepet čez video. Spremljaj prenos, beri sporočila in odgovarjaj, ne da bi zapustil predvajalnik.
 
-GLAVNE MOŽNOSTI
-- Mesto in velikost: ploščo povlečeš kamor koli nad predvajalnik, raztegneš jo za katero koli stranico ali vogal. Oboje si zapomni glede na predvajalnik, zato postavitev, sestavljena na prenosniku, ustreza tudi 32-palčnemu zaslonu.
-- Besedilo: od 10 do 40 px (privzeto 13 px; 40 px je približno trikrat več od običajnega besedila v klepetu), svoja barva in ločena za imena članov, 50 pisav.
-- Ozadje: na začetku neprosojno belo; barvo in prosojnost izbereš v isti paleti, zraven pa »Zameglitev« od 0 do 20 px — prav ta nastavitev najlaže odnese tekočnost, zato na starejšem računalniku ne pretiravaj.
-- Vidnost: »Prikaži klepet med nedejavnostjo« je vklopljeno že od začetka, zato sporočila ostanejo na zaslonu tudi potem, ko kontrolniki izginejo; ob njem »Prikaži samo klepet« zloži glavo in polje za pisanje, dokler nanje ne pelješ kazalca.
-- Imena in razmik: »Prikaži uporabniška imena« in »Prikaži profilne slike« lahko za navadna sporočila izklopiš (plačana jih obdržijo); »Razmik« gre od 0 do 40 px.
-- Prednastavitve: sedem vgrajenih, vsaka z enim klikom, poleg njih tvoje lastne.
-- Tipkovnica: drsniki in izbirniki barv se odzivajo na puščice, vsak kontrolnik ima oznako za bralnik zaslona. Samodejni pregledi WCAG 2.1 AA ob vsaki spremembi kode zajamejo pojavno okno, vrsto gumbov in ploščo nastavitev.
+Prenosi v živo in ponovitev klepeta
+Glej prenose iger, VTuberje in dogodke v živo skupaj s pogovorom na istem zaslonu. Pri posnetkih z razpoložljivo ponovitvijo klepeta spremljaj sporočila iz prvotnega prenosa.
 
-NI POSNEMOVALEC — TO JE YOUTUBOV KLEPET
-Plošča nad videom je tisti isti YouTubov klepet v živo iz stranske vrstice, le drugače oblečen, zato značke, emojiji, nalepke in klepet samo za člane delujejo kot vedno. Sporočila gredo skozi YouTubovo polje za pisanje, Super Chat pa skozi YouTubovo ploščo za nakup: plačilo prevzame YouTube, nikoli razširitev. Edino, kar razširitev tam spremeni, je gumb za včlanitev (»Membership«): odpre kanalovo stran za pristop v novem zavihku.
+Videz klepeta
+- Prosojno ozadje: nastavi prosojnost in zameglitev, da bo video viden pod ploščo.
+- Položaj in velikost: povleci ploščo stran od dogajanja ter spremeni njeno širino in višino.
+- Berljivost: prilagodi pisavo, velikost in barvo besedila, barvo ozadja in razmik med sporočili.
+- Shranjeni slogi: izberi vgrajeni slog ali shrani svoje nastavitve videza.
+- Manj elementov: skrij uporabniška imena in profilne slike pri običajnih sporočilih ali skrči vnosno polje, dokler ne začneš uporabljati klepeta.
 
-KOLIKO STANE IN KAJ ZBIRA
-Brezplačno: brez računa in brez plačljive različice.
-Samo eno dovoljenje, storage; edina stran, na kateri razširitev teče, je www.youtube.com — natanko to misli Chromovo obvestilo ob namestitvi, ko omenja tvoje podatke. V ozadju ne teče nič: dokler ni odprtega zavihka YouTuba, dela le pojavno okno v brskalnikovi vrstici, in to samo, dokler je odprto.
-Nobene analitike, nobenega sledenja, do razvijalca ne pride nič: kar prebereš in natipkaš, se ne zbira, ne shranjuje in nikamor ne pošilja, nastavitve pa ostanejo v tem brskalniku. Vsa koda pride znotraj razširitve; iz omrežja se prenesejo le pisave, drugačne od privzete — z Google Fonts. Odprta koda pod GPL-3.0, javna na GitHubu.
+Branje in sodelovanje
+Plošča uporablja izvirni YouTube klepet, vključno z emodžiji, članskimi značkami in poljem za sporočila. Za pisanje med prenosom v živo se prijavi v YouTube. Super Chat je na voljo tam, kjer je podprt. Pošiljanje sporočil in plačljive funkcije so odvisni od zahtev platforme in nastavitev kanala. Klepet ob posnetku je ponovitev, ne nov pogovor v živo.
 
-KAKO ZAČNEŠ
-1. Namesti razširitev in odpri prenos v živo ali posnetek, ki ima ponovitev klepeta.
-2. Predvajalnik razpri čez cel zaslon — klepet je že tam.
-3. Gumb z oblačkom v vrstici s kontrolniki ga izklopi in vklopi, s kazalcem pa pelji čez klepet in njegov lastni gumb nastavitev spremeni videz.
+Začetek uporabe
+1. Namesti razširitev in odpri prenos v živo ali posnetek s ponovitvijo klepeta.
+2. Z gumbom videopredvajalnika vklopi celozaslonski način.
+3. S kazalcem se pomakni na klepet, da ga premakneš, spremeniš velikost ali odpreš nastavitve.
+Gumb za klepet v kontrolnikih predvajalnika prikaže ali skrije ploščo. Če si jo prej izklopil, v pojavnem oknu razširitve v orodni vrstici brskalnika vklopi celozaslonski klepet.
 
-KJE TEČE
-Samo na računalniku, samo na celem zaslonu in samo na strani za ogled, ki ima klepet. Ta različica za Chrome teče tudi v brskalniku Opera; Firefox ima svojo različico na addons.mozilla.org. Jezik vmesnika izbereš neodvisno od brskalnika: 55 možnosti za 49 jezikov.
+Brezplačno in odprtokodno
+Razširitev ne potrebuje ločenega računa ali naročnine. Izvorna koda je javno dostopna na GitHub pod licenco GPL-3.0. Plačljive funkcije videoplatforme so ločene od brezplačne razširitve.
 
-Prijavi napako ali predlagaj funkcijo: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Zasebnost in dovoljenja
+Nastavitve ostanejo v tem brskalniku z dovoljenjem storage. Razširitev deluje na www.youtube.com, ne uporablja analitike ali sledenja in razvijalcu ne pošilja vsebine klepeta ali zgodovine ogledov. Izvirni klepet se povezuje s storitvami YouTube. Izbirne pisave se nalagajo iz Google Fonts.
+
+Združljivost
+Za Chrome v računalniku in videe s klepetom v živo ali razpoložljivo ponovitvijo klepeta. Pri videih brez klepeta se plošča ne prikaže. Združljivost z brskalnikom Opera in drugimi brskalniki na osnovi Chromiuma se lahko razlikuje. Ločena različica za Firefox je na voljo na addons.mozilla.org. Nastavitve je mogoče upravljati s tipkovnico, na voljo pa je 55 jezikovnih možnosti.
+
+Prijava napak in predlogi: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Izvorna koda: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Podpri razvijalca: https://ko-fi.com/daichan132

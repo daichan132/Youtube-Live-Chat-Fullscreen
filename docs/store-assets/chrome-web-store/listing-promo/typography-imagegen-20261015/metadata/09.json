@@ -1,0 +1,13 @@
+{
+  "id": "09",
+  "nameJa": "モジュラー・レッド",
+  "headline": "YouTube / Fullscreen / Live Chat",
+  "conceptNote": "角の丸い幾何学的な字形を赤地に白黒で配置。中央揃えのロックアップと小さな全画面記号で、文字中心のブランド表現に。",
+  "prompt": "Use case: ads-marketing.\nCreate ONE fresh high-end brand typographic poster for the Chrome extension YouTube Fullscreen Live Chat, as a compact landscape 11:7 promotional tile, target 1760 × 1120. Edge-to-edge flat signal-red canvas. Crisp white and near-black ink only, no other colors or textures.\nThe key creative work is custom geometric MODULAR LETTERING: subtly distinctive immediately readable medium-weight glyphs inspired by screen corners and rounded chat shapes. Slightly WIDE letter proportions, open counters, continuous monoline-like stroke logic, carefully optically kerned. Squared outer shoulders and softly rounded inner counters can echo the screen symbol. It must feel like an excellent independent studio's custom software wordmark. Avoid chunky Arial, ultra-condensed faces, stencil breaks, ambiguous decorative ligatures and gamer typography.\nComposition is CENTERED, not a left-aligned stack: small but substantial white “YouTube” at top center, very clear at about 90 px cap-height on a 1572-px native image. Then a broad white “Fullscreen” as the central typographic hero on ONE unbroken line. “Live Chat” centered below in the same designed geometric medium family, ink black. Generous precise spacing between lines, calm but confident. In the bottom area center one spare small 16:9 black fullscreen frame symbol, with one white play triangle and a tiny white chat rectangle fully INSIDE its right side, two short red lines inside the chat. The secondary diagram echoes the lettering and never competes with it.\nOnly visible text, each phrase ONCE and exactly capitalized: “YouTube”, “Fullscreen”, “Live Chat”. No other words, numbers, taglines, watermark or badges. All three phrases must be fully legible at 220 × 140. Keep every letter and graphic at least 8 percent inside canvas boundaries. Type is the hero; graphics are quiet. Beautifully balanced optical typography, flat vector-like finish rendered as a polished image.\nNo 3D, bevel, paper, material shadows, glass, gradients, grain, glow, neon, ornamental shapes, photography, humans, avatars, video scenes, fake chat text, dashboard or toolbar.",
+  "generationTool": "built-in image_gen",
+  "nativeSourcePath": "/Users/dai/.codex/generated_images/01a13b37-251e-7572-ab3c-75c83bc29ec2/exec-1f2f0c02-e16d-48af-8ed4-604e0bc8cd7b.png",
+  "revisions": [],
+  "nativeDimensions": [1572, 1001],
+  "sha256": "7f827c213b40d985a6f4e5f21a53d4eb7c47109a8d9cf75e871567f76f049ac9",
+  "savedFileInspected": true
+}

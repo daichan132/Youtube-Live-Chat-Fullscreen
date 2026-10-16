@@ -1,0 +1,13 @@
+{
+  "id": "07",
+  "nameJa": "スイス・エディトリアル",
+  "headline": "YouTube / Fullscreen / Live Chat",
+  "conceptNote": "圧縮した大きな黒文字と赤文字、クリーム紙の静かな質感。画面と赤いチャットを大胆なポスター構成に。",
+  "prompt": "Use case: ads-marketing.\nCreate one finished premium Chrome Web Store promotional tile for a browser extension that overlays live chat inside fullscreen YouTube video. Landscape 11:7 composition, target 1760 × 1120. Edge-to-edge artwork.\nCreative direction: Swiss editorial typography and abstract functional diagram. Warm cream paper, almost-black ink, vivid restrained YouTube-red accent. Crisp refined modernist graphic design, compressed grotesk display type, precisely balanced asymmetry, tiny tactile paper grain only. It should look like a talented human designer's cultural poster, not a tech template.\nComposition: generous cream background. Three very legible text groups organized on a strong invisible grid at upper left and left. “YouTube” is a smaller but substantial black label; below it “Fullscreen” in large dramatically condensed black type, then “Live Chat” in equally deliberate red type. On the right/lower area, a bold beautiful black 16:9 screen outline with precise fullscreen corner marks, a simple play triangle, and one red chat panel fully INSIDE that screen. The chat panel has only three abstract white strokes, no UI labels, no names. The screen and letterforms form a confident editorial layout with controlled breathing space. Keep the diagram clear of all text.\nText, verbatim, each phrase exactly once: “YouTube” ; “Fullscreen” ; “Live Chat”. Fullscreen is ONE word with no line break inside the word. No other visible text.\nAll three text groups must remain immediately readable at 220 × 140. All text and all functional diagram marks stay in a 7% inset safe area. The illustration only depicts fullscreen video with chat INSIDE it.\nNo people, avatars, photography, game scenes, fake screenshots, Chrome logo, dashboards, neon glows, gradients, generic blobs, 3D floating islands, sticker badges, extra taglines, numbers or watermark. This is a polished abstract graphic, not a wireframe or code-generated SVG.",
+  "generationTool": "built-in image_gen",
+  "nativeSourcePath": "/Users/dai/.codex/generated_images/01a13b37-251e-7572-ab3c-75c83bc29ec2/exec-36fe8475-c59c-4d15-9fd7-c439820e7c04.png",
+  "visualReview": "All three required text phrases appear exactly once and are fully visible. Red chat panel is fully inside the fullscreen screen. Native artwork is approximately 11:7, 1572×1001.",
+  "nativeDimensions": [1572, 1001],
+  "sha256": "784257046ac19c0c61be27a5d32cc061f902305dea32e2e1c31706bbe10465a0",
+  "savedFileInspected": true
+}

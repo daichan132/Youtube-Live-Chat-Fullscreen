@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-13T10:06:40.866Z",
+  "sourceCommit": "dc65af1d791e9e7e8a2493c9203a355111656769",
+  "extension": {
+    "version": "2.3.16",
+    "unpublishedCandidate": true,
+    "buildType": "production",
+    "id": "ddnjecbcjffkldooafklphikkbmgmaol",
+    "managerIdentityVerified": true,
+    "manifestSha256": "2978b8af524f58fab6a4d995489435e2d3719b5249ba73c8d5fe7cea7a513970",
+    "contentSha256": "5efe317b69eba09c141fbe2505dd9926a08de3c7dff74897f6da34d6b62dddaa",
+    "testBridgeLoaded": false
+  },
+  "browser": {
+    "name": "Google Chrome for Testing",
+    "version": "156.0.8078.4",
+    "headless": false,
+    "profile": "disposable",
+    "viewport": {
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "provenance": {
+    "productUI": "Actual production extension: overlay, drag/resize controls, settings iframe and preset panels.",
+    "syntheticDemo": "AI-generated rainy city walking-tour scene, fictional messages and anonymous demo viewers on deterministic YouTube DOM fixtures. No real stream, account or submitted message.",
+    "compiler": "e2e/support/youtubeScenario/compiler.ts",
+    "scene": "../source/scene-v2.png",
+    "sceneSha256": "3640c41053e1c92f06598117bf366db0c389fc11244dabdfcc7bd0c3ecfa8d67",
+    "sceneGeneration": "Generated for these store assets with OpenAI ImageGen. The repository stores the original raster source.",
+    "setup": "Only locale/theme are initialized in isolated storage. Appearance and geometry are changed through actual product UI.",
+    "publication": "These candidate screenshots are not evidence of the currently published Chrome Web Store version or external YouTube compatibility. They do not establish real video playback, posting or payment."
+  },
+  "counts": {
+    "executed": 11,
+    "passed": 11,
+    "failed": 0,
+    "skipped": 0,
+    "retried": 0
+  },
+  "checks": [
+    {
+      "language": "all",
+      "name": "chrome-extensions-loaded-production-identity",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "initial-fullscreen-default-chat",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "keyboard-edits-isolated-unsent-demo-input",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "preset-apply-and-save",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "preset-undo-restores-profile",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "font-size-keyboard-input-and-rendered-save",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "pointer-resize-and-drag",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "fullscreen-reentry-keeps-position-and-style",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "reload-keeps-persisted-position-and-style",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "compact-left-position-actual-pointer-resize",
+      "result": "passed"
+    },
+    {
+      "language": "en",
+      "name": "archive-chat-replay-surface",
+      "result": "passed"
+    }
+  ],
+  "captures": [
+    {
+      "file": "inputs/en/settings-text.png",
+      "sha256": "cae193d1e53814a5fc1944cec1faa96d75c507c31f4df37cf8e1a3ef1f26640f",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/settings-text-panel.png",
+      "sha256": "78889e072ea57a6a587ca9bd182575c246893be8c05b9bdf0ed33259c9d06d71",
+      "kind": "unaltered-production-panel-crop",
+      "pixels": {
+        "width": 462,
+        "height": 488
+      },
+      "viewport": null
+    },
+    {
+      "file": "inputs/en/settings.png",
+      "sha256": "f1907a0227a2ad256d1194176a738732fd81283689ce0300af035a9d83cfa2ef",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/settings-panel.png",
+      "sha256": "4f262c23f3c24963354bdcc4f4c757bd520c295e71d5845be076bac2ea1ee844",
+      "kind": "unaltered-production-panel-crop",
+      "pixels": {
+        "width": 462,
+        "height": 488
+      },
+      "viewport": null
+    },
+    {
+      "file": "inputs/en/presets.png",
+      "sha256": "a135da99b0f40bb3ad9b19a628733bbb1fd6d553679108e9265f843c1aec0918",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/presets-panel.png",
+      "sha256": "72ebe7814c88991e2d464d419a7df037f78b40afd679016550d1286f36250c50",
+      "kind": "unaltered-production-panel-crop",
+      "pixels": {
+        "width": 462,
+        "height": 488
+      },
+      "viewport": null
+    },
+    {
+      "file": "inputs/en/position-right.png",
+      "sha256": "85b788db33b73df0f2d15e212ac69610401dc24d18597bf2c5987f78055126ab",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/overview.png",
+      "sha256": "85b788db33b73df0f2d15e212ac69610401dc24d18597bf2c5987f78055126ab",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/position-left.png",
+      "sha256": "a9469f83e3565588bc52a33e7908e13af39e871d62eccac1ea4f1d4380d3cb2c",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    },
+    {
+      "file": "inputs/en/archive.png",
+      "sha256": "57d0a85bb65c9f306772ce6a4d20deb03bd62cf346d1a263ec4e11b733ca7a84",
+      "kind": "production-extension-on-synthetic-demo",
+      "pixels": {
+        "width": 1280,
+        "height": 720
+      },
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "enabled": true,
+  "theme": "dark",
+  "locale": "en",
+  "profile": {
+    "appearance": {
+      "backgroundColor": {
+        "r": 20,
+        "g": 20,
+        "b": 20,
+        "a": 0.4
+      },
+      "fontColor": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 1
+      },
+      "fontSize": 22,
+      "blur": 4,
+      "spacing": 3
+    },
+    "display": {
+      "idleVisibility": "always-visible",
+      "contentMode": "full-chat"
+    }
+  },
+  "geometry": {
+    "reference": "player",
+    "rect": {
+      "x": 0.645,
+      "y": 0.055,
+      "width": 0.3,
+      "height": 0.52
+    },
+    "pinned": true
+  }
+}

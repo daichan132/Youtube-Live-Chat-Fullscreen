@@ -1,30 +1,34 @@
-Apabila siaran langsung YouTube dibuka pada skrin penuh, sembang pun hilang. Sambungan ini mengembalikannya ke atas video, supaya anda boleh membaca setiap mesej, membalas, dan — dalam siaran langsung — menghantar Super Chat tanpa keluar daripada skrin penuh.
+Tonton YouTube dalam skrin penuh sambil membaca dan membalas sembang.
+YouTube Live Chat Skrin Penuh ialah sambungan Chrome percuma yang memaparkan sembang langsung di atas video. Ikuti siaran dan hantar mesej tanpa keluar daripada pemain video.
 
-CIRI UTAMA
-- Kedudukan dan saiz: seret panel ke mana-mana di atas pemain video, ubah saiznya dari mana-mana tepi atau bucu; kedua-duanya turut berskala bersama pemain, jadi susunan yang anda tetapkan pada komputer riba masih kena pada skrin 32 inci.
-- Teks: "Saiz teks" 10px hingga 40px (lalai 13px; 40px kira-kira tiga kali ganda teks sembang biasa), "Warna teks" pilihan anda sendiri, "Warna nama ahli" yang berasingan, 50 jenis fon.
-- Latar: bermula putih pekat; "Warna latar belakang" dan kelutsinaran daripada satu pemilih, tambah "Kabur" 0-20px — tetapan yang paling mudah menjejaskan kelancaran, jadi berpada-pada pada mesin lama.
-- Kekal kelihatan: "Paparkan sembang ketika tidak aktif" hidup sedia ada, jadi sembang kekal walaupun kawalan pemain sudah pudar; dengan tetapan itu hidup, "Mod sembang sahaja" melipat pengepala dan kotak mesej sehingga anda menuding kursor.
-- Nama pengguna dan jarak: matikan "Papar nama pengguna" dan "Papar gambar profil" bagi mesej biasa, mesej berbayar tetap mengekalkan nama dan gambarnya; "Jarak antara mesej" 0-40px.
-- Praset: tujuh disediakan, satu klik setiap satu, serta simpanan anda sendiri.
-- Papan kekunci: peluncur dan pemilih warna menerima kekunci anak panah, setiap kawalan berlabel untuk pembaca skrin. Semakan WCAG 2.1 AA automatik merangkumi tetingkap timbul, baris kawalan dan panel tetapan pada setiap perubahan.
+Siaran langsung dan ulang tayang sembang
+Tonton siaran permainan, VTuber dan acara langsung bersama reaksi penonton. Bagi rakaman siaran yang menyediakan ulang tayang sembang, anda boleh mengikuti semula perbualan ketika siaran itu berlangsung.
 
-SEMBANG YOUTUBE SENDIRI, BUKAN TIRUAN
-Panel di atas video itu ialah sembang langsung YouTube sendiri daripada ruang sisi, dengan gaya yang diubah, sebab itu lencana, emoji, pelekat dan sembang khusus ahli terus berfungsi. Menghantar mesej melalui kotak tulis YouTube, Super Chat melalui panel pembelian YouTube: bayaran pergi kepada YouTube, tidak pernah kepada sambungan ini. Satu-satunya kawalan yang diubahnya di dalam panel itu ialah butang keahlian (Membership): butang itu membuka halaman sertai saluran dalam tab baharu.
+Laraskan paparan sembang
+- Latar lutsinar: laraskan kelegapan dan kesan kabur supaya video di belakang sembang masih kelihatan.
+- Kedudukan dan saiz: seret panel agar tidak menghalang bahagian penting video, kemudian ubah lebar dan tingginya.
+- Teks yang mudah dibaca: pilih fon, saiz dan warna teks, warna latar serta jarak antara mesej.
+- Pratetap: pilih gaya sedia ada atau simpan tetapan paparan anda sendiri.
+- Paparan lebih ringkas: sembunyikan nama pengguna dan gambar profil pada mesej biasa, atau lipat ruang input sehingga anda berinteraksi.
 
-BERAPA KOSNYA, APA YANG DIKUMPULKAN
-Percuma: tiada pendaftaran, tiada pelan berbayar.
-Hanya satu kebenaran, storage; www.youtube.com sahaja tapak tempat ia berjalan — itu sahaja maksud amaran data pada skrin pemasangan Chrome. Tiada apa-apa berjalan di latar belakang: tanpa tab YouTube terbuka, hanya tetingkap timbul pada bar alat yang bekerja, dan hanya selagi ia terbuka.
-Tiada analitik, tiada penjejakan, tiada apa-apa sampai kepada pembangun: apa yang anda baca dan taip tidak dikumpul, tidak disimpan, tidak dihantar ke mana-mana; tetapan kekal dalam pelayar ini. Semua kod dihantar di dalam sambungan; hanya fon selain fon lalai diambil daripada Google Fonts. Sumber terbuka di bawah GPL-3.0, terbuka kepada umum di GitHub.
+Sertai perbualan melalui sembang YouTube
+Panel menggunakan sembang asal YouTube, termasuk emoji, lencana ahli dan ruang menaip mesej. Anda perlu log masuk untuk menghantar mesej semasa siaran langsung. Super Chat tersedia pada siaran yang menyokongnya. Penghantaran mesej dan ciri berbayar tertakluk pada syarat platform serta tetapan saluran. Sembang dalam rakaman ialah ulang tayang perbualan lama, bukannya perbualan langsung yang baharu.
 
-CARA BERMULA
-1. Pasang sambungan ini, kemudian buka siaran langsung atau arkib yang masih ada tayangan semula sembang.
-2. Jadikan pemain video skrin penuh — sembang sudah pun ada di situ.
-3. Butang gelembung kata pada bar kawalan menghidupkan dan mematikannya; tuding kursor pada sembang, dan butang tetapannya sendiri mengubah rupanya.
+Cara menggunakan
+1. Pasang sambungan, kemudian buka siaran langsung atau rakaman yang mempunyai ulang tayang sembang.
+2. Tekan butang skrin penuh pada pemain video.
+3. Letakkan kursor pada sembang untuk mengalih panel, mengubah saiz atau membuka tetapan.
+Gunakan butang sembang pada kawalan pemain untuk memaparkan atau menyembunyikan panel. Jika anda pernah mematikannya, hidupkan sembang skrin penuh dalam tetingkap timbul sambungan pada bar alat.
 
-DI MANA IA BERJALAN
-Komputer meja sahaja, dalam skrin penuh pada halaman tontonan yang ada sembang. Binaan Chrome ini turut berjalan pada Opera; Firefox mempunyai binaannya sendiri di addons.mozilla.org. Antara mukanya hadir dalam 55 pilihan merentasi 49 bahasa.
+Percuma dan sumber terbuka
+Tiada akaun atau langganan khas diperlukan untuk sambungan ini. Kod sumber tersedia di GitHub di bawah lesen GPL-3.0. Ciri berbayar yang ditawarkan platform video tetap dikenakan bayaran berasingan.
 
-Laporkan pepijat atau minta ciri: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Privasi dan kebenaran
+Tetapan disimpan dalam pelayar ini melalui kebenaran storage. Sambungan hanya berjalan pada halaman www.youtube.com, tanpa analitik atau penjejakan, dan tidak menghantar kandungan sembang atau sejarah tontonan kepada pembangun. Sembang asal bersambung dengan perkhidmatan YouTube. Fon pilihan dimuatkan daripada Google Fonts.
+
+Keserasian
+Untuk Chrome desktop pada video yang mempunyai sembang langsung atau ulang tayang sembang yang tersedia. Panel tidak dipaparkan pada video tanpa sembang. Keserasian dalam Opera dan pelayar berasaskan Chromium lain mungkin berbeza; versi Firefox tersedia secara berasingan di addons.mozilla.org. Tetapan menyokong kawalan papan kekunci dan menyediakan 55 pilihan bahasa.
+
+Laporkan pepijat atau cadangkan ciri: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Kod sumber: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Sokong pembangun: https://ko-fi.com/daichan132

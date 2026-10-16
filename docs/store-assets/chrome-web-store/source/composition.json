@@ -1,0 +1,76 @@
+{
+  "productName": "YouTube Live Chat Fullscreen",
+  "defaultLocale": "en",
+  "screenshotSize": {
+    "width": 1280,
+    "height": 800
+  },
+  "captureSize": {
+    "width": 1920,
+    "height": 1080
+  },
+  "headerHeight": 80,
+  "inputDirectory": "../inputs",
+  "captureEvidence": "../capture-evidence.json",
+  "exportDirectory": "../exports",
+  "icon": "../../../../public/icon/128.png",
+  "locales": {
+    "en": {
+      "sampleLabel": "Public stream example",
+      "images": [
+        {
+          "id": "01-live-gaming",
+          "heading": "Watch live. Join the chat.",
+          "caption": "Reply without leaving full screen.",
+          "layout": "overview",
+          "input": "live-gaming.png"
+        },
+        {
+          "id": "02-vtuber-live",
+          "heading": "Watch VTubers. Join the fun.",
+          "caption": "Keep the community in view.",
+          "layout": "overview",
+          "input": "vtuber-live.png"
+        },
+        {
+          "id": "03-transparent-chat",
+          "heading": "Let the stream show through.",
+          "caption": "Adjust background transparency.",
+          "layout": "overview",
+          "input": "transparent-live.png"
+        }
+      ]
+    }
+  },
+  "promotionalImages": [
+    {
+      "id": "small-promo",
+      "layout": "small-promo",
+      "width": 440,
+      "height": 280,
+      "heading": "Watch big. Stay in chat.",
+      "input": "live-gaming.png",
+      "screen": {
+        "x": 0,
+        "y": 32.5,
+        "width": 440,
+        "height": 247.5
+      }
+    },
+    {
+      "id": "marquee",
+      "layout": "marquee",
+      "width": 1400,
+      "height": 560,
+      "heading": "Go full screen.\nKeep the chat.",
+      "caption": "Read and reply without leaving full screen.",
+      "input": "live-gaming.png",
+      "screen": {
+        "x": 456,
+        "y": 19,
+        "width": 928,
+        "height": 522
+      }
+    }
+  ]
+}

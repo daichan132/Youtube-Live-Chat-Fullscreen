@@ -1,30 +1,34 @@
-Perjungiate „YouTube“ tiesioginę transliaciją į visą ekraną – ir pokalbis dingsta. Šis plėtinys jį grąžina ant vaizdo: skaitote kiekvieną žinutę, atsakote ir, kol transliacija vyksta, siunčiate „Super Chat“, nė karto neišėję iš viso ekrano.
+Žiūrėkite YouTube visame ekrane ir matykite tiesioginį pokalbį.
+YouTube Live Chat Fullscreen – nemokamas Chrome plėtinys, rodantis pokalbį virš vaizdo įrašo. Stebėkite tiesioginę transliaciją, skaitykite žinutes ir atsakykite neišeidami iš leistuvo.
 
-PAGRINDINĖS GALIMYBĖS
-- Vieta ir dydis: nutempkite skydelį bet kur ant grotuvo, tempkite už bet kurio krašto ar kampo. Abu dalykai įsimenami grotuvo atžvilgiu, tad nešiojamajame sudėliotas išdėstymas tinka ir 32 colių monitoriui.
-- Tekstas: nuo 10 iki 40 px (numatytasis 13 px; 40 px – maždaug trigubai daugiau nei įprastas pokalbio tekstas), sava spalva ir atskira narių vardams, 50 šriftų.
-- Fonas: iš pradžių nepermatomas baltas; spalvą ir permatomumą renkatės vienoje paletėje, o šalia laukia „Suliejimas“ nuo 0 iki 20 px – būtent šis nustatymas labiausiai gali atimti sklandumo, tad senesniame kompiuteryje neperlenkite.
-- Matomumas: „Rodyti pokalbį neaktyvumo metu“ įjungta iš karto, tad žinutės lieka ekrane ir dingus valdikliams; kartu su ja „Rodyti tik pokalbį“ sulanksto antraštę ir rašymo laukelį, kol neužvedate žymeklio.
-- Vardai ir tarpai: „Rodyti naudotojo vardą“ ir „Rodyti profilio nuotrauką“ įprastoms žinutėms galima išjungti (mokamos juos išlaiko); „Tarpai“ – nuo 0 iki 40 px.
-- Šablonai: septyni įtaisyti, kiekvienas vienu spustelėjimu, plius jūsų pačių išsaugoti.
-- Klaviatūra: slankikliai ir spalvų parinkikliai klauso rodyklių, kiekvienas valdiklis turi etiketę ekrano skaitytuvui. Automatinės WCAG 2.1 AA patikros su kiekvienu kodo pakeitimu apima iškylantįjį langą, mygtukų eilutę ir nustatymų skydelį.
+Tiesioginės transliacijos ir pokalbio pakartojimas
+Žaidimų transliacijas, VTuberių laidas ir tiesioginius renginius žiūrėkite matydami vaizdą bei pokalbį tame pačiame ekrane. Jei įraše galima peržiūrėti pokalbio pakartojimą, galėsite sekti pradinės transliacijos žinutes.
 
-NE PANAŠI KOPIJA, O PATS „YOUTUBE“ POKALBIS
-Skydelis ant vaizdo yra tas pats „YouTube“ tiesioginis pokalbis iš šoninės juostos, tik kitaip apipavidalintas, tad ženkleliai, jaustukai, lipdukai ir tik nariams skirtas pokalbis veikia kaip visada. Žinutės keliauja per „YouTube“ rašymo lauką, o „Super Chat“ – per „YouTube“ pirkimo skydelį: pinigai keliauja „YouTube“, o ne plėtiniui. Vienintelis dalykas, kurį plėtinys ten pakeičia, yra narystės mygtukas („Membership“): jis naujame skirtuke atveria kanalo prisijungimo puslapį.
+Pritaikykite pokalbio skydelį
+- Permatomas fonas: reguliuokite nepermatomumą ir suliejimą, kad už pokalbio matytumėte vaizdą.
+- Vieta ir dydis: nutempkite skydelį, kad jis neužstotų veiksmo, ir keiskite jo plotį bei aukštį.
+- Skaitomumas: pasirinkite šriftą, teksto dydį ir spalvą, fono spalvą bei tarpus tarp žinučių.
+- Išsaugoti stiliai: rinkitės paruoštą stilių arba išsaugokite savo išvaizdos nuostatas.
+- Mažiau elementų: įprastose žinutėse paslėpkite naudotojų vardus ir profilio nuotraukas arba sutraukite įvesties lauką, kol pradėsite naudotis pokalbiu.
 
-KIEK KAINUOJA IR KĄ RENKA
-Nemokamai: be registracijos ir be mokamų planų.
-Tik vienas leidimas, storage; vienintelė svetainė, kurioje plėtinys veikia, yra www.youtube.com – būtent tai ir reiškia diegiant rodomas „Chrome“ pranešimas apie jūsų duomenis. Fone neveikia niekas: kol nėra atverto „YouTube“ skirtuko, dirba tik iškylantysis langas naršyklės juostoje, ir tik tol, kol jis atidarytas.
-Jokios analitikos, jokio sekimo, kūrėjui neiškeliauja niekas: ką perskaitote ir ką parašote, nerenkama, nesaugoma ir niekur nesiunčiama, o nustatymai lieka šioje naršyklėje. Visas kodas atkeliauja plėtinio viduje; iš tinklo parsiunčiami tik nuo numatytojo besiskiriantys šriftai – iš Google Fonts. Atvirasis kodas pagal GPL-3.0, viešai skelbiamas GitHub.
+Skaitykite ir dalyvaukite
+Skydelyje naudojamas pats YouTube pokalbis su jaustukais, narių ženkleliais ir žinučių lauku. Prisijunkite, kad galėtumėte siųsti žinutes tiesioginės transliacijos metu. Funkcija Super Chat tebėra prieinama ten, kur ji palaikoma. Žinučių siuntimui ir mokamoms funkcijoms taikomi platformos reikalavimai bei kanalo nuostatos. Įraše atkuriamas pradinis pokalbis, o ne pradedamas naujas tiesioginis pokalbis.
 
-KAIP PRADĖTI
-1. Įdiekite plėtinį ir atverkite tiesioginę transliaciją arba įrašą, kuriam liko pokalbio pakartojimas.
-2. Perjunkite grotuvą į visą ekraną – pokalbis jau ten.
-3. Debesėlio mygtukas valdymo juostoje jį išjungia ir įjungia, o užvedus žymeklį ant pokalbio pasirodo jo paties nustatymų mygtukas, kuris keičia išvaizdą.
+Kaip pradėti
+1. Įdiekite plėtinį ir atverkite tiesioginę transliaciją arba įrašą su pokalbio pakartojimu.
+2. Vaizdo leistuvo mygtuku įjunkite viso ekrano režimą.
+3. Užveskite žymeklį ant pokalbio, kad galėtumėte perkelti skydelį, pakeisti jo dydį ar atverti nuostatas.
+Pokalbio mygtukas leistuvo valdikliuose parodo arba paslepia skydelį. Jei anksčiau išjungėte šią funkciją, vėl įjunkite viso ekrano pokalbį plėtinio lange, atveriamame iš įrankių juostos.
 
-KUR VEIKIA
-Tik kompiuteryje, tik visame ekrane ir tik žiūrėjimo puslapyje, kuriame yra pokalbis. Ši „Chrome“ laida veikia ir „Opera“ naršyklėje; „Firefox“ turi savo laidą adresu addons.mozilla.org. Sąsajos kalbą renkatės atskirai nuo naršyklės: 55 pasirinkimai 49 kalboms.
+Nemokamas ir atvirojo kodo
+Plėtiniui nereikia atskiros paskyros ar prenumeratos. Išeities kodas viešai pateiktas GitHub pagal GPL-3.0 licenciją. Vaizdo platformos mokamos funkcijos yra atskiros nuo nemokamo plėtinio.
+
+Privatumas ir leidimai
+Nuostatos lieka šioje naršyklėje naudojant storage leidimą. Plėtinys veikia www.youtube.com svetainėje, nenaudoja analitikos ar sekimo ir nesiunčia kūrėjui pokalbio turinio ar žiūrėjimo istorijos. Integruotas pokalbis jungiasi prie YouTube paslaugų. Pasirenkami šriftai įkeliami iš Google Fonts.
+
+Suderinamumas
+Skirta Chrome kompiuteryje ir vaizdo įrašams su tiesioginiu pokalbiu arba pasiekiamu pokalbio pakartojimu. Įrašuose be pokalbio skydelis nerodomas. Suderinamumas su Opera ir kitomis Chromium pagrindu veikiančiomis naršyklėmis gali skirtis; atskira Firefox versija pateikiama addons.mozilla.org. Nuostatas galima valdyti klaviatūra, siūlomi 55 kalbos variantai.
 
 Pranešti apie klaidą arba pasiūlyti funkciją: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
-Pirminis kodas: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
+Išeities kodas: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Paremti kūrėją: https://ko-fi.com/daichan132

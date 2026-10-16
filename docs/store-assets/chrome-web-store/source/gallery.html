@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>YouTube Live Chat Fullscreen — store artwork</title>
+  <style>
+    @font-face { font-family: Inter; font-style: normal; font-weight: 400; font-display: block; src: url('./fonts/inter-400.woff2') format('woff2'); }
+    @font-face { font-family: Inter; font-style: normal; font-weight: 500; font-display: block; src: url('./fonts/inter-500.woff2') format('woff2'); }
+    :root { font-family: Inter, Arial, sans-serif; color: #18191b; background: #e5e5e5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    #gallery { display: grid; gap: 28px; padding: 24px; }
+    .artwork { position: relative; overflow: hidden; background: #18191b; }
+    .artwork:not(.promo)::before { content: ''; position: absolute; top: 0; left: 32px; width: 40px; height: 3px; background: #f4b75a; }
+    .heading { position: absolute; top: 22px; left: 32px; right: 32px; margin: 0; color: #f6f6f3; font-size: 32px; font-weight: 500; line-height: 1.12; letter-spacing: -1px; }
+    .caption { position: absolute; top: 32px; right: 32px; margin: 0; font-size: 14px; font-weight: 400; color: #b0b1b3; line-height: 1.3; }
+    .screen { position: absolute; top: 80px; left: 0; width: 1280px; height: 720px; }
+    .capture { display: block; width: 100%; height: 100%; object-fit: contain; }
+    .sample { position: absolute; right: 20px; bottom: 14px; margin: 0; color: #ffffffcf; font-size: 11px; line-height: 1.2; text-shadow: 0 1px 4px #000; }
+    .artwork:not(.promo) .sample { top: 63px; left: 32px; right: auto; bottom: auto; color: #b0b1b3; text-shadow: none; }
+    .promo { color: #fff; background: #18191b; }
+    .promo-logo, .promo-name, .promo-heading, .promo-caption, .promo-screen, .promo .sample { position: absolute; }
+    .promo-name { margin: 0; font-weight: 400; white-space: pre-line; }
+    .promo-heading { margin: 0; font-weight: 500; white-space: pre-line; }
+    .promo-caption { margin: 0; font-weight: 400; color: #deded9; }
+    .small-promo .promo-logo { right: 12px; top: 7px; width: 18px; height: 18px; }
+    .small-promo .promo-heading { left: 12px; top: 7px; right: 42px; font-size: 17px; line-height: 1.12; letter-spacing: -0.4px; }
+    .small-promo .sample { top: 12px; right: 42px; bottom: auto; font-size: 8px; text-shadow: none; }
+    .marquee .promo-logo { left: 32px; top: 38px; width: 28px; height: 28px; }
+    .marquee .promo-name { left: 74px; top: 44px; width: 350px; font-size: 13px; line-height: 1.4; }
+    .marquee .promo-heading { left: 32px; top: 184px; width: 392px; font-size: 44px; line-height: 1.12; letter-spacing: -1.5px; }
+    .marquee .promo-caption { left: 34px; top: 312px; width: 360px; font-size: 16px; line-height: 1.4; }
+    .marquee .sample { left: 32px; right: auto; bottom: 32px; color: #b0b1b3; text-shadow: none; }
+  </style>
+</head>
+<body>
+  <main id="gallery"></main>
+  <script type="module">
+    const composition = window.__STORE_COMPOSITION__ ?? await fetch('./composition.json').then(response => response.json())
+    const inputBase = window.__STORE_INPUT_BASE__ ?? new URL(`${composition.inputDirectory}/`, location.href).href
+    const iconUrl = window.__STORE_ICON_URL__ ?? new URL(composition.icon, location.href).href
+    const gallery = document.getElementById('gallery')
+    const make = (tag, className, text) => {
+      const node = document.createElement(tag)
+      node.className = className
+      if (text) node.textContent = text
+      return node
+    }
+    const image = (src, className, alt = '') => {
+      const node = make('img', className)
+      node.src = src
+      node.alt = alt
+      node.draggable = false
+      return node
+    }
+    for (const [locale, copy] of Object.entries(composition.locales)) {
+      for (const spec of copy.images) {
+        const artwork = make('article', 'artwork')
+        artwork.id = `${locale}-${spec.id}`
+        artwork.lang = locale
+        artwork.style.width = `${composition.screenshotSize.width}px`
+        artwork.style.height = `${composition.screenshotSize.height}px`
+        const screen = make('div', 'screen')
+        screen.append(image(new URL(`${locale}/${spec.input}`, inputBase).href, 'capture', spec.heading))
+        artwork.append(make('h1', 'heading', spec.heading), screen)
+        if (spec.caption) artwork.append(make('p', 'caption', spec.caption))
+        artwork.append(make('p', 'sample', copy.sampleLabel))
+        gallery.append(artwork)
+      }
+    }
+    for (const spec of composition.promotionalImages) {
+      const artwork = make('article', `artwork promo ${spec.layout}`)
+      artwork.id = spec.id
+      artwork.style.width = `${spec.width}px`
+      artwork.style.height = `${spec.height}px`
+      artwork.append(image(iconUrl, 'promo-logo'), make('h1', 'promo-heading', spec.heading))
+      if (spec.layout === 'marquee') artwork.append(make('p', 'promo-name', composition.productName))
+      if (spec.caption) artwork.append(make('p', 'promo-caption', spec.caption))
+      const screen = make('div', 'promo-screen')
+      screen.style.left = `${spec.screen.x}px`
+      screen.style.top = `${spec.screen.y}px`
+      screen.style.width = `${spec.screen.width}px`
+      screen.style.height = `${spec.screen.height}px`
+      screen.append(image(new URL(`${composition.defaultLocale}/${spec.input}`, inputBase).href, 'capture', spec.heading))
+      artwork.append(screen, make('p', 'sample', composition.locales[composition.defaultLocale].sampleLabel))
+      gallery.append(artwork)
+    }
+    await document.fonts.ready
+    await Promise.all([...document.images].map(image => image.decode()))
+    window.__ASSETS_READY__ = true
+  </script>
+</body>
+</html>

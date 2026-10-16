@@ -1,0 +1,27 @@
+{
+  "id": "05",
+  "nameJa": "丸みのあるコーラル",
+  "headline": "YouTube / Fullscreen / Live Chat",
+  "conceptNote": "開いたカウンターと丸みのある文字を、薄いグレーとコーラルに組み合わせる。二つの機能名を同じベースラインに置いた構成。",
+  "prompt": "Use case: ads-marketing.\nGenerate ONE compact landscape design, exactly11:7 ratio (1760x1120), for a Chrome extension store listing. Do not produce a wide banner or panorama.\n\nPrimary request: a highly refined typographic composition, the opposite of a giant heavy generic bold advertisement. Typeface direction: quiet HUMANIST SANS, normal width, regular and semibold contrast, beautiful open counters, gentle rounded terminals, carefully balanced kerning. Elegant readable lettering with warmth and air; not a condensed grotesk, not chunky Arial, not a rounded cartoon font. Typography is the main artwork. Everything is flat color with crisp edges, no material effects, paper texture, plastic, glass, shadows, extrusion, bevels or glow.\n\nPale cool-gray backdrop with charcoal lettering and restrained coral-red accents. A balanced two-column contemporary gallery layout. YouTube at the upper-left as a LARGE clearly legible label, around70px cap-height at1572px image width. Below it Fullscreen in the left column and Live Chat in the right column, each around90px cap-height, airy humanist letterforms and generous separation. Align their baselines carefully. Leave ample neutral whitespace. All3 terms comfortably readable at220x140. Each word8percent inset from every canvas edge.\n\nA fine charcoal16:9 video frame occupies the lower half, centered and generously inset. Inside it: one small coral-red play triangle on the left; on the right an inset coral-outline chat pane with three fine horizontal comment strokes. The chat pane is OVERLAID INSIDE the SAME complete video area, with clearly visible space between it and ALL FOUR outer video edges. Fullscreen corner accents belong to the complete video boundary. The diagram is a secondary refined line drawing, not a fake dashboard and not a realistic UI screenshot.\n\nOnly these exact three text elements, each once: \"YouTube\", \"Fullscreen\", \"Live Chat\". No extra tagline, labels, numbers, logo mark or watermark. Preserve spelling and case; Fullscreen is one word. No letter cropping or overlap with diagram. No humans, games, scenery, photos or browser chrome. Beautiful editorial typography, intentional positive/negative space, polished but quiet.",
+  "generationTool": "built-in image_gen",
+  "nativeSourcePath": "/Users/dai/.codex/generated_images/01a13b36-c7cc-7381-9521-e95e248acce5/exec-4fe92634-abd9-4156-9246-b6548801fcda.png",
+  "output": "originals/05.png",
+  "revisions": [
+    {
+      "operation": "generate",
+      "prompt": "Use case: ads-marketing.\nGenerate ONE compact landscape design, exactly11:7 ratio (1760x1120), for a Chrome extension store listing. Do not produce a wide banner or panorama.\n\nPrimary request: a highly refined typographic composition, the opposite of a giant heavy generic bold advertisement. Typeface direction: quiet HUMANIST SANS, normal width, regular and semibold contrast, beautiful open counters, gentle rounded terminals, carefully balanced kerning. Elegant readable lettering with warmth and air; not a condensed grotesk, not chunky Arial, not a rounded cartoon font. Typography is the main artwork. Everything is flat color with crisp edges, no material effects, paper texture, plastic, glass, shadows, extrusion, bevels or glow.\n\nPale cool-gray backdrop with charcoal lettering and restrained coral-red accents. A balanced two-column contemporary gallery layout. YouTube at the upper-left as a LARGE clearly legible label, around70px cap-height at1572px image width. Below it Fullscreen in the left column and Live Chat in the right column, each around90px cap-height, airy humanist letterforms and generous separation. Align their baselines carefully. Leave ample neutral whitespace. All3 terms comfortably readable at220x140. Each word8percent inset from every canvas edge.\n\nA fine charcoal16:9 video frame occupies the lower half, centered and generously inset. Inside it: one small coral-red play triangle on the left; on the right an inset coral-outline chat pane with three fine horizontal comment strokes. The chat pane is OVERLAID INSIDE the SAME complete video area, with clearly visible space between it and ALL FOUR outer video edges. Fullscreen corner accents belong to the complete video boundary. The diagram is a secondary refined line drawing, not a fake dashboard and not a realistic UI screenshot.\n\nOnly these exact three text elements, each once: \"YouTube\", \"Fullscreen\", \"Live Chat\". No extra tagline, labels, numbers, logo mark or watermark. Preserve spelling and case; Fullscreen is one word. No letter cropping or overlap with diagram. No humans, games, scenery, photos or browser chrome. Beautiful editorial typography, intentional positive/negative space, polished but quiet.",
+      "nativeSourcePath": "/Users/dai/.codex/generated_images/01a13b36-c7cc-7381-9521-e95e248acce5/exec-4fe92634-abd9-4156-9246-b6548801fcda.png"
+    }
+  ],
+  "verification": {
+    "actualCopiedPngInspected": true,
+    "requiredWords": "Exact three terms each once, no additional visible copy.",
+    "composition": "Chat inset inside complete video; no overlapping or cropped words.",
+    "nativeDimensions": {
+      "width": 1573,
+      "height": 1000
+    },
+    "notes": "Model selected a heavier semibold than the intended quiet regular humanist style; no extra style iteration."
+  }
+}

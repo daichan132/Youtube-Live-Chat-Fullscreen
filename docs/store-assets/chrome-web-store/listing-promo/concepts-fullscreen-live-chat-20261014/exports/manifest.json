@@ -1,0 +1,360 @@
+{
+  "status": "design-exploration",
+  "selectedConcept": null,
+  "storePublication": "not-applied",
+  "generatedAt": "2026-10-14T05:09:54.013Z",
+  "imageGeneration": "Ten distinct concepts made with built-in image_gen; all are promotional illustrations, not real captures.",
+  "rendering": "Whole originals uniformly fitted; no source crops, repainting, stretching or new baked text. 440 × 280 upload candidates, 880 × 560 review images and 220 × 140 previews.",
+  "renderer": {
+    "browser": "156.0.8078.4",
+    "platform": "darwin"
+  },
+  "conceptCount": 10,
+  "requiredHeadlineWords": ["Fullscreen", "Live Chat"],
+  "galleryChecks": {
+    "halfSizeToggle": "passed",
+    "expandedExportIdentity": "passed",
+    "escapeClose": "passed",
+    "fullSizeRestore": "passed",
+    "mobile375px": "passed"
+  },
+  "sources": [
+    {
+      "file": "metadata/01.json",
+      "sha256": "fd50831589267000590b2e75b21696ba11fa503b5b5ed9ff2b4d272342455cb0"
+    },
+    {
+      "file": "metadata/02.json",
+      "sha256": "cdf3be221e45104ee2059570959020dcb08116a76aa3205aecda7f2757bd1e6b"
+    },
+    {
+      "file": "metadata/03.json",
+      "sha256": "8ca3f750e2e40ccfcd3979aae9863afd2ca0f07052843b24abf745bf9a485e4a"
+    },
+    {
+      "file": "metadata/04.json",
+      "sha256": "9efa2cb04cbf031e2f9476846e04a64919a819bee41f63c241fb02318ec9dbe8"
+    },
+    {
+      "file": "metadata/05.json",
+      "sha256": "1c405857e20d958c33338671dcc211e74e5a663b2e6a622b3ad9bd743969c952"
+    },
+    {
+      "file": "metadata/06.json",
+      "sha256": "0ebe1747f631c7f7d1d022d4920f37d16cd99369e413289c9d3e7db2ecd3b0ac"
+    },
+    {
+      "file": "metadata/07.json",
+      "sha256": "410df7923e52102ff57a8de511ae16741e6661b0117d8357a87ea0c3ba717327"
+    },
+    {
+      "file": "metadata/08.json",
+      "sha256": "331a399e19389d9727fad7534effda0549dfb202350e087c35b05658578131ea"
+    },
+    {
+      "file": "metadata/09.json",
+      "sha256": "ea40bf82d49453db3d00e0b3fca828d4e92f9f701d61f75bc551a39976e0eb8e"
+    },
+    {
+      "file": "metadata/10.json",
+      "sha256": "c4d56d115643129fd252d8133ddd19f1d84e8d1d7072f34405d08a8747a365f8"
+    },
+    {
+      "file": "originals/01.png",
+      "sha256": "43645f40af33cb720a8f857e58ef43d77946bc4c0c725f625b204bf22f1a22ec"
+    },
+    {
+      "file": "originals/02.png",
+      "sha256": "219eb9b4087042cef8fc74104fb0fb976c1c4d0fbef2221b30291ded391e0e3a"
+    },
+    {
+      "file": "originals/03.png",
+      "sha256": "9c29d0d7526cf975d8da515f04ab662de4ffd01d47678906f9f3b72a6974347f"
+    },
+    {
+      "file": "originals/04.png",
+      "sha256": "d7a317934b19d9007c1696b59bb8d04e8bc9882cc784610615dcfaed22af04fa"
+    },
+    {
+      "file": "originals/05.png",
+      "sha256": "c281da63e410a7dc3ffdeae9d017e35e6df74db8c13a1bc10fb1f33fdf88630c"
+    },
+    {
+      "file": "originals/06.png",
+      "sha256": "b8cc9d02430ddf6f385391b87682788f40392b53ce171be76079fe4b390a2d44"
+    },
+    {
+      "file": "originals/07.png",
+      "sha256": "690ee3193336fdd21c37fca554fc859ef376eab991912ac1ba55c166f2126958"
+    },
+    {
+      "file": "originals/08.png",
+      "sha256": "8ac4b4d29bd925ebf13edc0fd046ffc48bc0765475d1810a44dc2722adc3bb05"
+    },
+    {
+      "file": "originals/09.png",
+      "sha256": "3ab7f5f2a6550a0100228321360aa77237af7724ade7366d75ac25cf17f112c2"
+    },
+    {
+      "file": "originals/10.png",
+      "sha256": "fc0dcceefac782cf7a31c7887db397380dcc2ef17668d7c263fed81b350f2304"
+    },
+    {
+      "file": "concepts.json",
+      "sha256": "a0502367f7f1d826426a2f2b77ae3b08460808520f0c848885f79fd8e75dc303"
+    },
+    {
+      "file": "prompts.md",
+      "sha256": "5256787eb146fcfdeedbc5f85c34a875b613a76c7e467420e31be838f123e06b"
+    },
+    {
+      "file": "index.html",
+      "sha256": "368e07cd808a537dcb734b462fe999a2af62c7ecb141e06a29e95510f7e7bccc"
+    },
+    {
+      "file": "source/render.mjs",
+      "sha256": "10a79c728064ef6be215803a2409592307127218e36a988c18cf0998c665ca21"
+    },
+    {
+      "file": "source/gallery.html",
+      "sha256": "316d7f5c34b6a69672105bd6c49fcefc65f8dd505420d0bbdd45a0c8d7409067"
+    },
+    {
+      "file": "source/tile.html",
+      "sha256": "1ca2b440a6a78ddb4957d538f0e420074c5cae8c559197bf074871813998c720"
+    }
+  ],
+  "exports": [
+    {
+      "file": "exports/01.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "616a962e33b6849cc954ee87800b8882c9531a4900fd4e8450d8348de30fee5e"
+    },
+    {
+      "file": "exports/02.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "f1b067fa048734788664c66c4055398f031cea659429ae7dec8b6360fbd0c7e8"
+    },
+    {
+      "file": "exports/03.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "20b0e4d48c100038e499cee82e56b3876a896925bc963627a58086f9398f71af"
+    },
+    {
+      "file": "exports/04.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "16230188fac221ae04ea678fa199ea2161f5e60b9959a7557fcff435e57ba2f5"
+    },
+    {
+      "file": "exports/05.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "75bfa7e36575619b42c0e0c5ec40984f38f743367c68ee497e224098e5dd8748"
+    },
+    {
+      "file": "exports/06.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "5a9b4b7df1100613822686a8ae739ba0db5bb566f6497025ae16f456f387f877"
+    },
+    {
+      "file": "exports/07.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "7e7435fb205bccb0c31c69b7ba90a5a4064f26cba14fa88a9eb4938aa9ca87f8"
+    },
+    {
+      "file": "exports/08.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "5810f15f97eca0239cba7724dc7fda6e4e7e47532b3331fab96499b3239054e3"
+    },
+    {
+      "file": "exports/09.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "7d4dec7c2c20898fb8fdc3613545d108c3a0a05be7cd56bb9b65bfdfcf9aea26"
+    },
+    {
+      "file": "exports/10.png",
+      "width": 440,
+      "height": 280,
+      "colorType": 2,
+      "sha256": "3076a6e26eb54360ccc180ce766199d79efa56197c0fd4a31cbbc34266762664"
+    },
+    {
+      "file": "exports/01@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "a53e1dbb27d9cce2d9d6007b41f983b1420134380462d094f477bd8486aa37ac"
+    },
+    {
+      "file": "exports/02@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "e925a3795353d424b4ff3240c8262c64a3220eb1cf565b79e6a0952c348ac9fb"
+    },
+    {
+      "file": "exports/03@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "fc97243f2e87b72faa7803cfb96ab85f5605f807da8bb8bc65101a18f1dfa4b4"
+    },
+    {
+      "file": "exports/04@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "8fb487d85ec3781677dce3c5e35998f01141346c6d046631936a960ab0c5fe98"
+    },
+    {
+      "file": "exports/05@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "fbf4723e0efdd01d822a023f3f6c17bd08ae6fdc254c2dc8532191e3766db013"
+    },
+    {
+      "file": "exports/06@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "e8aae3aca62eaf043d3a570566e3b3bf11ddf49aa816d42019d7a388aad84f02"
+    },
+    {
+      "file": "exports/07@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "d831e8011a67c63b71a424d1951e6fb7bda06e3cb3cdc6106a012663d0aa0311"
+    },
+    {
+      "file": "exports/08@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "ac10c880897f9c2a0fdd31e7062c7462e5e202c3e4142b75eb0c6091f228ac92"
+    },
+    {
+      "file": "exports/09@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "8d6b9b3708bf8b0a52768dfee7878962877183e1a3e29d7a2a503bf636bacba8"
+    },
+    {
+      "file": "exports/10@2x.png",
+      "width": 880,
+      "height": 560,
+      "colorType": 2,
+      "sha256": "463505643d25e9e6bcc2da48149615b4107d586660b0ba6ea35e4814eb45fa3b"
+    },
+    {
+      "file": "exports/01-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "6d8ca15e05b838d17c3e547301bb543a8c523ae16f8b7c2284838b843b9d7411"
+    },
+    {
+      "file": "exports/02-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "cbed730c13f5b52792cbbe5ff153bea5876871a22b98440e756c3ee49b48b7d2"
+    },
+    {
+      "file": "exports/03-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "e69597187217337831c25a41c541c5768cf2ed1a7b4ec20993d2a002bbc30aac"
+    },
+    {
+      "file": "exports/04-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "86eb2f17bf067ba7faf2d7c2d43e42f5a29afd75764647af28038200ce27191f"
+    },
+    {
+      "file": "exports/05-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "21be92524c13e191163cc8ddaa1a3fecc771297d3e8a0be8b5d3a6446b313b95"
+    },
+    {
+      "file": "exports/06-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "86567497cde847172786d0df6b32c2e60088fb79a240c65a740505c38f04788b"
+    },
+    {
+      "file": "exports/07-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "31cf9544ba4c1ff9a5b6c9ecf36b07452fe211cceeb770a411f2e89f75170305"
+    },
+    {
+      "file": "exports/08-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "ad5a4056defd1ce6b3deb084e0afaf07854c839f4f1e61a1ffc7f2eece18e739"
+    },
+    {
+      "file": "exports/09-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "016c0fcb5f6d9476483b5781902a147906e3ba04aff89f252aa69262669d3b3e"
+    },
+    {
+      "file": "exports/10-half.png",
+      "width": 220,
+      "height": 140,
+      "colorType": 2,
+      "sha256": "d419d3a7b083be1ee7a7f458ba2d484ba14a15f231393e04921ecd52ce856884"
+    },
+    {
+      "file": "exports/comparison.png",
+      "width": 1000,
+      "height": 1865,
+      "colorType": 2,
+      "sha256": "a15c20fc848ebeb867f2e186f8060bb4f818542d8de3ec9646dfc6c866e2f779"
+    },
+    {
+      "file": "exports/comparison-odd.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "08c23deeeed68fda915cdd0d377678f53327ffae736d6af5937b86aea8844213"
+    },
+    {
+      "file": "exports/comparison-even.png",
+      "width": 520,
+      "height": 1887,
+      "colorType": 2,
+      "sha256": "f8729b7351bbbc16fc69069509d2a055f6950eda380755465745c98cebf3e78d"
+    }
+  ]
+}

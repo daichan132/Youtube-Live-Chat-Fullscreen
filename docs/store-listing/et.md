@@ -1,30 +1,34 @@
-Paned YouTube'i otseülekande täisekraanile ja vestlus kaob. See laiendus toob selle video peale tagasi: loed iga sõnumi, vastad ja saadad ülekande ajal Super Chate, ilma et peaksid korrakski täisekraanilt lahkuma.
+Hoia otsevestlus nähtaval ka siis, kui vaatad YouTube’i täisekraanil.
+YouTube Live Chat Fullscreen on tasuta Chrome’i laiendus, mis kuvab vestluse video peal. Jälgi otseülekannet, loe sõnumeid ja vasta videopleierist lahkumata.
 
-PÕHILINE
-- Koht ja suurus: lohista paneel kuhu tahes mängija peale, venita seda igast servast ja nurgast. Mõlemat peetakse meeles mängija suhtes, nii et sülearvutis paika pandud paigutus sobib ka 32-tollisele ekraanile.
-- Tekst: 10 kuni 40 px (vaikimisi 13 px; 40 px on umbes kolm korda suurem tavalisest vestlustekstist), oma värv ja eraldi värv liikmete nimedele, 50 kirjatüüpi.
-- Taust: alguses läbipaistmatu valge; värvi ja läbipaistvust valid ühest paletist, kõrvale tuleb „Hägusus“ 0 kuni 20 px — just see seade võib kõige tõenäolisemalt sujuvust maksma minna, nii et vanemas arvutis hoia tagasi.
-- Nähtavus: „Näita vestlust tegevusetuse ajal“ on algusest peale sees, nii et sõnumid jäävad ekraanile ka siis, kui juhtnupud kaovad; koos sellega voldib „Näita ainult vestlust“ kokku päise ja kirjutuskasti, kuni viid kursori peale.
-- Nimed ja vahed: „Näita kasutajanime“ ja „Näita profiilipilti“ saab tavaliste sõnumite pealt välja lülitada (tasulistel jäävad need alles); „Vahekaugus“ on 0 kuni 40 px.
-- Eelseadistused: seitse sisseehitatut, igaüks ühe klõpsuga, pluss sinu enda omad.
-- Klaviatuur: liugurid ja värvivalijad kuulavad nooleklahve, igal juhtelemendil on ekraanilugejale mõeldud silt. Automaatsed WCAG 2.1 AA kontrollid katavad iga koodimuudatusega hüpikakna, nupurea ja seadete paneeli.
+Otseülekanded ja vestluse taasesitus
+Vaata mängustriime, VTuberite ülekandeid ja otseüritusi nii, et video ja vestlus on samas vaates. Kui salvestisel on vestluse taasesitus saadaval, saad jälgida algse ülekande sõnumeid.
 
-MITTE JÄRELETEHTUD, VAID YOUTUBE'I ENDA VESTLUS
-Paneel video peal ongi seesama YouTube'i otsevestlus külgribalt, lihtsalt teises kuues, nii et märgid, emojid, kleebised ja ainult liikmetele mõeldud vestlus töötavad nagu ikka. Sõnumid lähevad välja YouTube'i enda sõnumikastist ja Super Chat YouTube'i enda ostupaneelilt: makse läheb YouTube'ile, mitte kunagi laiendusele. Ainus asi, mida laiendus seal muudab, on liitumisnupp („Membership“): see avab uuel kaardil kanali liitumislehe.
+Kohanda vestluspaneeli
+- Läbipaistev taust: reguleeri läbipaistmatust ja hägusust, et video paistaks vestluse tagant läbi.
+- Asukoht ja suurus: lohista paneel olulise tegevuse eest ära ning muuda selle laiust ja kõrgust.
+- Loetavus: vali font, teksti suurus ja värv, taustavärv ning sõnumite vahekaugus.
+- Salvestatud stiilid: vali valmis kujundus või salvesta oma välimussätted.
+- Vähem kõrvalist: peida tavaliste sõnumite kasutajanimed ja profiilipildid või ahenda sisestusväli, kuni vestlust kasutad.
 
-MIS SEE MAKSAB JA MIDA KOGUB
-Tasuta: ei mingit kontot, ei mingit tasulist versiooni.
-Ainult üks luba, storage; ainus sait, kus laiendus töötab, on www.youtube.com — täpselt seda mõtleb Chrome'i paigaldusteade sinu andmete kohta. Taustal ei tööta midagi: kui ühtki YouTube'i kaarti pole avatud, teeb midagi ainult brauseririba hüpikaken, ja sedagi vaid seni, kuni see on lahti.
-Ei mingit analüütikat, ei mingit jälgimist, arendajani ei jõua midagi: mida sa loed ja kirjutad, seda ei koguta, ei salvestata ega saadeta kuhugi, ning seaded jäävad siia brauserisse. Kogu kood on laienduse sees; võrgust laaditakse alla ainult vaikimisi omast erinevad kirjatüübid — Google Fontsist. Avatud lähtekood GPL-3.0 all, avalik GitHubis.
+Loe ja osale
+Paneel kasutab YouTube’i enda vestlust koos emotikonide, liikmemärkide ja sõnumiväljaga. Otseülekande ajal sõnumite saatmiseks logi sisse. Super Chatid on endiselt saadaval seal, kus neid toetatakse. Sõnumite saatmisel ja tasuliste funktsioonide kasutamisel kehtivad platvormi nõuded ning kanali sätted. Salvestise vestlus taasesitab algset vestlust, mitte uut otsevestlust.
 
-KUIDAS ALUSTADA
-1. Paigalda laiendus ja ava otseülekanne või salvestus, millel on vestluse kordus alles.
-2. Pane mängija täisekraanile — vestlus on juba seal.
-3. Juhtriba jutumullinupp lülitab selle välja ja sisse; vii kursor vestluse peale, ja selle enda seadete nupp muudab välimust.
+Alustamine
+1. Paigalda laiendus ning ava otseülekanne või salvestis, millel on vestluse taasesitus.
+2. Lülitu täisekraanile videopleieri täisekraaninupuga.
+3. Vii kursor vestlusele, et paneeli liigutada, selle suurust muuta või sätteid avada.
+Pleieri juhtnuppude hulgas olev vestlusnupp näitab või peidab paneeli. Kui oled funktsiooni varem välja lülitanud, lülita täisekraani vestlus uuesti sisse laienduse tööriistariba hüpikaknas.
 
-KUS SEE TÖÖTAB
-Ainult arvutis, ainult täisekraanil ja ainult vaatamislehel, millel on vestlus. See Chrome'i versioon töötab ka brauseris Opera; Firefoxil on oma versioon aadressil addons.mozilla.org. Liidese keele valid brauserist sõltumatult: 55 valikut 49 keele jaoks.
+Tasuta ja avatud lähtekoodiga
+Laiendus ei nõua eraldi kontot ega tellimust. Lähtekood on avalik GitHubis GPL-3.0 litsentsi alusel. Videoplatvormi tasulised funktsioonid on tasuta laiendusest eraldiseisvad.
 
-Teata veast või soovi uut funktsiooni: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
+Privaatsus ja õigused
+Sätted jäävad sellesse brauserisse storage-õiguse abil. Laiendus töötab saidil www.youtube.com, ei kasuta analüütikat ega jälgimist ning ei saada arendajale vestluse sisu ega vaatamisajalugu. YouTube’i vestlus ühendub YouTube’i teenustega. Valikulised fondid laaditakse Google Fontsist.
+
+Ühilduvus
+Arvuti Chrome’i jaoks videotes, millel on otsevestlus või saadaval vestluse taasesitus. Vestluseta videotes paneeli ei kuvata. Ühilduvus Opera ja teiste Chromiumi-põhiste brauseritega võib erineda; eraldi Firefoxi versioon on saadaval saidil addons.mozilla.org. Sätteid saab kasutada klaviatuuriga ja saadaval on 55 keelevalikut.
+
+Teata veast või paku funktsiooni: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues
 Lähtekood: https://github.com/daichan132/Youtube-Live-Chat-Fullscreen
 Toeta arendajat: https://ko-fi.com/daichan132

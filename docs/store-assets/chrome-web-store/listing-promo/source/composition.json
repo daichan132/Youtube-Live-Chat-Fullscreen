@@ -1,0 +1,14 @@
+{
+  "productName": "YouTube Live Chat Fullscreen",
+  "locale": "en",
+  "assetType": "illustrated-promotional-tile",
+  "size": {
+    "width": 440,
+    "height": 280
+  },
+  "headline": ["FULL SCREEN.", "STAY IN CHAT."],
+  "illustration": "stream-illustration.png",
+  "icon": "../../../../../public/icon/128.png",
+  "fonts": ["../../source/fonts/inter-500.woff2", "../../source/fonts/LICENSE"],
+  "exportDirectory": "../exports"
+}

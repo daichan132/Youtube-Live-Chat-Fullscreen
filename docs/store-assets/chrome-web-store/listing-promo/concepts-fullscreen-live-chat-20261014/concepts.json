@@ -1,0 +1,132 @@
+[
+  {
+    "id": "01",
+    "nameJa": "アイコンで伝える黒 × 赤",
+    "headline": "Fullscreen. Live Chat.",
+    "conceptNote": "黒地の再生・吹き出し・全画面シンボルを保ち、両方の必須語を大きな白い見出しに置いた。",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "43645f40af33cb720a8f857e58ef43d77946bc4c0c725f625b204bf22f1a22ec"
+  },
+  {
+    "id": "02",
+    "nameJa": "大胆な赤タイポグラフィ",
+    "headline": "FULLSCREEN / LIVE CHAT",
+    "conceptNote": "赤いポスターの上段を一続きのFULLSCREENへ改め、下段のLIVE CHATとゲーム・入力欄の構成を保った。",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "219eb9b4087042cef8fc74104fb0fb976c1c4d0fbef2221b30291ded391e0e3a"
+  },
+  {
+    "id": "03",
+    "nameJa": "音楽フェス × 雑誌の表紙",
+    "headline": "Fullscreen. Live Chat.",
+    "conceptNote": "クリーム地の赤いセリフFullscreenと黒いLive Chatを大きく配置。暖かなフェス映像とチャット入力欄を保った。",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "9c29d0d7526cf975d8da515f04ab662de4ffd01d47678906f9f3b72a6974347f"
+  },
+  {
+    "id": "04",
+    "nameJa": "VTuber × パステル",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "オリジナルのVTuber風キャラクターとパステルの誌面構成。FullscreenとLive Chatを大きな黒文字で示し、配信画面にチャット入力欄を重ねる。",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "d7a317934b19d9007c1696b59bb8d04e8bc9882cc784610615dcfaed22af04fa"
+  },
+  {
+    "id": "05",
+    "nameJa": "ライブ会場の熱気",
+    "headline": "Fullscreen. / Live Chat.",
+    "conceptNote": "青と朱色のライブ会場に、白い大きなFullscreen・Live Chatと半透明のチャット入力欄を重ねる。",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "c281da63e410a7dc3ffdeae9d017e35e6df74db8c13a1bc10fb1f33fdf88630c"
+  },
+  {
+    "id": "06",
+    "nameJa": "透過チャット × 夕景",
+    "headline": "Fullscreen. / Live Chat.",
+    "conceptNote": "静かな夕景と大きな紺色のFullscreen・Live Chat。背景の木々がチャット越しに見える透過版を示す。",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "b8cc9d02430ddf6f385391b87682788f40392b53ce171be76079fe4b390a2d44"
+  },
+  {
+    "id": "07",
+    "nameJa": "白地のミニマルタイポ",
+    "headline": "Fullscreen + Live Chat",
+    "conceptNote": "温かい白・赤・黒の巨大な機能名を主役にする。全画面の四隅とチャット入力欄を使った簡潔なエディトリアル表現。 生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1575,
+      "height": 999,
+      "colorType": 2
+    },
+    "originalSha256": "690ee3193336fdd21c37fca554fc859ef376eab991912ac1ba55c166f2126958"
+  },
+  {
+    "id": "08",
+    "nameJa": "レトロゲーム",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "緻密なピクセルアートの夜の冒険に、アンバーの機能名とチャット入力欄を重ねる。ゲーム配信の楽しさを伝える。 生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1570,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "8ac4b4d29bd925ebf13edc0fd046ffc48bc0765475d1810a44dc2722adc3bb05"
+  },
+  {
+    "id": "09",
+    "nameJa": "蛍光イエローのポップ",
+    "headline": "FULLSCREEN / LIVE CHAT",
+    "conceptNote": "蛍光イエロー・黒・赤、巨大な機能名とコンサートの配信面でコミュニティの熱気を描く。Fullscreenの綴りを追加編集で修正済み。 生成イラストであり実際のスクリーンショットではない。",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1574,
+      "height": 999,
+      "colorType": 2
+    },
+    "originalSha256": "3ab7f5f2a6550a0100228321360aa77237af7724ade7366d75ac25cf17f112c2"
+  },
+  {
+    "id": "10",
+    "nameJa": "モノクロのスケート誌",
+    "headline": "Fullscreen. / Live Chat.",
+    "conceptNote": "ストリート誌のようなモノクロの一瞬と赤いアクセント。メイン見出しにFullscreenとLive Chatを大きく表示。",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1571,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "fc0dcceefac782cf7a31c7887db397380dcc2ef17668d7c263fed81b350f2304"
+  }
+]

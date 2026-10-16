@@ -1,0 +1,142 @@
+[
+  {
+    "id": "01",
+    "nameJa": "YouTube風ダーク",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "黒い動画画面にYouTube風の一体型チャットを重ね、大きな白文字で機能を明示。実在の配信者・ゲーム・コメントは再現していない。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/01.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "208e8160e6aed6003c0535fb07a6c3d6da4c898d2e4f3e72d27ad7752246dd65"
+  },
+  {
+    "id": "02",
+    "nameJa": "赤いタイポ × チャット",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "赤いキャンペーン面と大きな白文字。冒険配信の内部に半透明のYouTube風チャットを置く。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/02.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "6c740ab51476366f0d04c1dfa5a1d7989c29274369a061648451e70d29c2a4c7"
+  },
+  {
+    "id": "03",
+    "nameJa": "YouTube風ライト",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "白黒のタイポグラフィと日中の屋外音楽配信。ライトテーマのYouTube風チャットを映像に重ねる。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/03.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "0c4220eb23622b6a222887db5a71741aa209cd6eb8152ef15dc1669d4fb1b501"
+  },
+  {
+    "id": "04",
+    "nameJa": "VTuber配信",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "Original anime VTuber inside a colorful rhythm-game stream; restrained native YouTube-style chat at the right.",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/04.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "51e8922a71878ea6169c0d51c39db517fc66aec3717a3c6ee9e505d55c399156"
+  },
+  {
+    "id": "05",
+    "nameJa": "チャットを主役に",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "Large native YouTube-style Top chat hero over an original sunset canyon game, with clear white/red typography.",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/05.png",
+    "originalSize": {
+      "width": 1573,
+      "height": 1000,
+      "colorType": 2
+    },
+    "originalSha256": "89a775a506e13c47fbd1a3f8c380601dc8bbd993fa93e168adcb08210fc88b67"
+  },
+  {
+    "id": "06",
+    "nameJa": "ネイティブ風の透過版",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "Original forest-lake adventure scene with restrained transparent native YouTube-style chat; landscape remains visible behind the inline messages.",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/06.png",
+    "originalSize": {
+      "width": 1568,
+      "height": 1003,
+      "colorType": 2
+    },
+    "originalSha256": "0994717a371c2093cf13fdd1d7a984cd05d408a01b50139cf4197d8eb1bf6d32"
+  },
+  {
+    "id": "07",
+    "nameJa": "白と赤のミニマル",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "白地の大きな見出しと赤い罫線。夕景の旅配信を映像領域いっぱいに広げ、右側に余白を残してチャットを重ねる。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/07.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "b782005bd8fb0ee5040516046d4178c5d313838135e564ccd8c85d325faf226c"
+  },
+  {
+    "id": "08",
+    "nameJa": "eスポーツ配信",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "架空のアリーナ配信を全画面に広げ、右上にコンパクトなチャットを重ねる。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/08.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "be26f678ef4b8dd1a8bf76ab4a0e9b97442e8bf8ab0e57d1e3751d68b7bd8c1e"
+  },
+  {
+    "id": "09",
+    "nameJa": "ライブのコミュニティ",
+    "headline": "Fullscreen\nLive Chat",
+    "conceptNote": "キャンプの音楽配信と、メンバー・モデレーター表示を含むYouTube風の会話。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/09.png",
+    "originalSize": {
+      "width": 1572,
+      "height": 1001,
+      "colorType": 2
+    },
+    "originalSha256": "1e01b8faadaed874c0e759bb4f0e852b7fe7504ad51623b37023e9857618ac2d"
+  },
+  {
+    "id": "10",
+    "nameJa": "料理ライブ",
+    "headline": "Fullscreen / Live Chat",
+    "conceptNote": "料理ライブの明るい映像に、Top chatヘッダー、丸いプロフィール画像、ユーザー名に続くコメント、下部入力欄を備えた黒いチャットを重ねる。",
+    "uiTreatment": "YouTube-like native live chat",
+    "originalPath": "originals/10.png",
+    "originalSize": {
+      "width": 1574,
+      "height": 999,
+      "colorType": 2
+    },
+    "originalSha256": "9f3a49db21b9b335fd47256c50088c83251544c9f724332cde4323af9a963670"
+  }
+]

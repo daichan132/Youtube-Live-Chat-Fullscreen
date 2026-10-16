@@ -5,8 +5,13 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { promisify } from 'node:util'
+import { chromium } from '@playwright/test'
+import { applyExtensionSettings, readSettingsPatch } from './extension-settings.mjs'
+import { assertVerificationProfile, createBackgroundPage, findLoadedExtension, verifyCdpProfile } from './verification-target.mjs'
 
+let ownedHeadlessChrome
 const reportFatalError = error => {
+  ownedHeadlessChrome?.kill('SIGTERM')
   console.error(error instanceof Error ? error.message : String(error))
   process.exit(1)
 }
@@ -18,7 +23,7 @@ const DEFAULT_URL = 'https://www.youtube.com/watch?v=EWrX250Zhko'
 const DEFAULT_PORT = 9336
 const DEFAULT_CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const DEFAULT_SETUP_TIMEOUT_MS = 10 * 60 * 1000
-const BOOLEAN_ARGS = new Set(['dev', 'setup-extension'])
+const BOOLEAN_ARGS = new Set(['dev', 'setup-extension', 'headless'])
 
 const args = new Map()
 const positionals = []
@@ -51,8 +56,15 @@ const setupTimeoutMs = Number(args.get('timeout-ms') ?? process.env.YLC_VERIFY_C
 const requestedUrl = positionals[0] ?? args.get('url') ?? process.env.YLC_VERIFY_URL ?? DEFAULT_URL
 const url = setupExtension ? 'chrome://extensions/' : requestedUrl
 const chromePath = args.get('chrome') ?? process.env.YLC_CHROME_PATH ?? DEFAULT_CHROME_PATH
-const profileDir =
-  args.get('profile') ?? process.env.YLC_VERIFY_CHROME_PROFILE ?? path.join(os.homedir(), 'Library/Application Support/YLC Verify Chrome')
+const profileDir = path.resolve(
+  args.get('profile') ?? process.env.YLC_VERIFY_CHROME_PROFILE ?? path.join(os.homedir(), 'Library/Application Support/YLC Verify Chrome'),
+)
+await assertVerificationProfile(profileDir)
+const settingsPatch = args.has('settings-file') ? await readSettingsPatch(args.get('settings-file')) : null
+if (args.has('headless') && !['true', 'false'].includes(args.get('headless'))) throw new Error('--headless must be true or false.')
+const headless = args.get('headless') === 'true'
+if (headless && setupExtension)
+  throw new Error('Load unpacked once in headed Chrome before using --headless; do not combine it with --setup-extension.')
 const cdpUrl = `http://127.0.0.1:${port}`
 const execFileAsync = promisify(execFile)
 let cdpMessageId = 0
@@ -327,6 +339,40 @@ const openUrlInCdpBrowser = async targetUrl => {
   throw new Error(`Could not open ${targetUrl} in ${cdpUrl}`)
 }
 
+const openConfiguredTarget = async () => {
+  const browser = await chromium.connectOverCDP(cdpUrl)
+  try {
+    const page = await createBackgroundPage(browser, headless ? 'about:blank' : requestedUrl)
+    if (headless) {
+      await page.setViewportSize({ width: 1600, height: 900 })
+      await page.goto(requestedUrl, { waitUntil: 'domcontentloaded', timeout: 60000 })
+    }
+    await page.waitForLoadState('domcontentloaded', { timeout: 60000 })
+    const extension = await findLoadedExtension(browser, extensionPath)
+    if (settingsPatch) {
+      const result = await applyExtensionSettings({ page, extensionId: extension.id, patch: settingsPatch })
+      console.log(JSON.stringify({ settings: result }))
+    }
+    const session = await page.context().newCDPSession(page)
+    try {
+      const { targetInfo } = await session.send('Target.getTargetInfo')
+      console.log(
+        JSON.stringify({
+          status: 'configured',
+          targetId: targetInfo.targetId,
+          extensionId: extension.id,
+          extensionVersion: extension.version,
+          headless,
+        }),
+      )
+    } finally {
+      await session.detach()
+    }
+  } finally {
+    await browser.close()
+  }
+}
+
 const getCdpProcessCommand = async () => {
   let pidOutput
   try {
@@ -355,26 +401,18 @@ const getCdpProcessCommand = async () => {
 
 const ensureExistingBrowserMatchesTarget = async () => {
   const { pid, command } = await getCdpProcessCommand()
-  const expectedPortArg = `--remote-debugging-port=${port}`
-  const expectedProfileArg = `--user-data-dir=${profileDir}`
-
-  if (command.includes(expectedPortArg) && command.includes(expectedProfileArg)) {
-    return { pid, command }
+  await verifyCdpProfile({ port, profileDir, inspectProcess: async () => ({ pid, command }) })
+  if (headless && !/(?:^|\s)--headless(?:=new)?(?=\s|$)/.test(command)) {
+    throw new Error('The existing verification Chrome is headed. Use a separate --profile and --port for --headless.')
   }
-
-  console.error(`A browser is already listening on ${cdpUrl}, but it is not the logged-in verification Chrome.`)
-  console.error(`Expected process args: ${expectedPortArg} and ${expectedProfileArg}`)
-  console.error(`Actual PID: ${pid}`)
-  console.error(`Actual command: ${command}`)
-  console.error('Close the process using that port, or rerun with a different --port.')
-  process.exit(1)
+  return { pid, command }
 }
 
 const existingBrowser = await getExistingBrowserVersion()
 const verifyChromeCommand = devMode ? `yarn verify:dev --port ${port}` : `yarn verify:chrome --port ${port}`
 if (existingBrowser) {
   const verifiedProcess = await ensureExistingBrowserMatchesTarget()
-  await openInExistingBrowser()
+  if (setupExtension || (!settingsPatch && !headless)) await openInExistingBrowser()
   console.log(
     JSON.stringify(
       {
@@ -404,9 +442,12 @@ if (existingBrowser) {
     console.log(`Detected extension: ${extension.name} (${extension.id})`)
     await reloadInstalledExtension(extension)
     console.log(`Reloaded extension: ${extension.name} (${extension.id})`)
-    const openedPage = await openUrlInCdpBrowser(requestedUrl)
-    console.log(`Opened verification URL: ${openedPage.url ?? requestedUrl}`)
+    if (!settingsPatch) {
+      const openedPage = await openUrlInCdpBrowser(requestedUrl)
+      console.log(`Opened verification URL: ${openedPage.url ?? requestedUrl}`)
+    }
   }
+  if (settingsPatch || headless) await openConfiguredTarget()
   process.exit(0)
 }
 
@@ -415,11 +456,12 @@ fs.mkdirSync(profileDir, { recursive: true })
 const chromeArgs = [
   `--user-data-dir=${profileDir}`,
   `--remote-debugging-port=${port}`,
-  '--window-size=1280,900',
+  headless ? '--window-size=1600,900' : '--window-size=1280,900',
   '--no-first-run',
   '--no-default-browser-check',
   '--mute-audio',
-  url,
+  ...(headless ? ['--headless=new'] : []),
+  !setupExtension && (settingsPatch || headless) ? 'about:blank' : url,
 ]
 
 const child = spawn(chromePath, chromeArgs, {
@@ -427,12 +469,13 @@ const child = spawn(chromePath, chromeArgs, {
   stdio: 'ignore',
 })
 child.unref()
+if (headless) ownedHeadlessChrome = child
 await waitForCdp()
 
 console.log(
   JSON.stringify(
     {
-      status: 'ready',
+      status: settingsPatch || headless ? 'starting' : 'ready',
       app: 'Google Chrome',
       url,
       extensionPath,
@@ -447,7 +490,11 @@ console.log(
     2,
   ),
 )
-console.log('Use this normal Chrome window for logged-in verification. Sign in once; the profile is persistent.')
+console.log(
+  headless
+    ? 'Headless verification Chrome uses the selected persistent development profile.'
+    : 'Use this normal Chrome window for logged-in verification. Sign in once; the profile is persistent.',
+)
 console.log(`Verification command: ${verifyChromeCommand}`)
 console.log(
   `Google Chrome 137+ does not load unpacked extensions from --load-extension. Load unpacked once from chrome://extensions: ${extensionPath}`,
@@ -458,6 +505,9 @@ if (setupExtension) {
   console.log(`Detected extension: ${extension.name} (${extension.id})`)
   await reloadInstalledExtension(extension)
   console.log(`Reloaded extension: ${extension.name} (${extension.id})`)
-  const openedPage = await openUrlInCdpBrowser(requestedUrl)
-  console.log(`Opened verification URL: ${openedPage.url ?? requestedUrl}`)
+  if (!settingsPatch) {
+    const openedPage = await openUrlInCdpBrowser(requestedUrl)
+    console.log(`Opened verification URL: ${openedPage.url ?? requestedUrl}`)
+  }
 }
+if (settingsPatch || headless) await openConfiguredTarget()

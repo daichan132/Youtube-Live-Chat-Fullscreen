@@ -1,0 +1,255 @@
+{
+  "schemaVersion": 1,
+  "status": "unpublished-draft",
+  "recordedAt": "2026-10-13T18:05:23.887Z",
+  "repositorySourceCommit": "dc65af1d791e9e7e8a2493c9203a355111656769",
+  "sourceWorkingTree": "Capture/render tooling, documentation and assets are uncommitted; product runtime source is unchanged.",
+  "extension": {
+    "id": "ddnjecbcjffkldooafklphikkbmgmaol",
+    "version": "2.3.16",
+    "buildType": "production",
+    "installedFromWebStore": false,
+    "unpackedPath": ".output/chrome-mv3",
+    "enabled": true,
+    "managerIdentityVerified": true,
+    "manifestSha256": "2978b8af524f58fab6a4d995489435e2d3719b5249ba73c8d5fe7cea7a513970",
+    "contentScriptSha256": "5efe317b69eba09c141fbe2505dd9926a08de3c7dff74897f6da34d6b62dddaa",
+    "identityEvidence": [
+      "chrome://extensions exact enabled unpacked path/version",
+      "Injected production content host and styled native chat",
+      "Production manifest without test bridge"
+    ]
+  },
+  "browser": {
+    "name": "Google Chrome",
+    "version": "155.0.8059.40",
+    "headless": false,
+    "nativeUserAgent": true,
+    "profile": "ignored-persistent-dedicated-capture-profile",
+    "authenticatedByUser": true,
+    "separateCaptureWindow": true,
+    "observedNativeWindowBounds": {
+      "left": 0,
+      "top": 88,
+      "width": 1920,
+      "height": 992,
+      "windowState": "fullscreen"
+    },
+    "captureViewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "windowAndViewportNote": "Native fullscreen window and Page capture viewport are recorded separately. Exact capture metrics were retained on the capture CDP session.",
+    "foreground": "Explicit user authorization for only the dedicated capture Chrome"
+  },
+  "capture": {
+    "method": "Native Page.captureScreenshot surface with exact same-session viewport and complete video clip",
+    "aspectRatio": "16:9",
+    "pixelEditing": false,
+    "recreatedProductUi": false,
+    "syntheticChat": false,
+    "sourceProvenance": "source/stream-provenance.md"
+  },
+  "observations": [
+    "Decoded 2560 x 1440 gaming source and 1920 x 1080 VTuber source in native highest available ordinary quality",
+    "Actual document fullscreen, native browser fullscreen state and exact1920 x1080 capture viewport",
+    "Visible and editable unobstructed native composers with an unsent draft; drafts cleared after capture",
+    "22 px rendered font,30 percent width and52 percent height;3 px message spacing",
+    "Native transparent variant uses40 percent opacity with4 px backdrop blur",
+    "Source video positions progressed; no player advertisement during accepted captures"
+  ],
+  "paintValidation": {
+    "nativeWindow": {
+      "left": 0,
+      "top": 88,
+      "width": 1920,
+      "height": 992,
+      "windowState": "fullscreen"
+    },
+    "paintSettings": {
+      "font-size": "10px",
+      "--yt-live-chat-background-color": "transparent",
+      "--yt-live-chat-vem-background-color": "rgba(0, 0, 0, 0.4)",
+      "--yt-live-chat-header-background-color": "transparent",
+      "--yt-spec-general-background-b": "transparent",
+      "--yt-live-chat-action-panel-background-color": "transparent",
+      "--yt-live-chat-message-highlight-background-color": "transparent",
+      "--extension-yt-live-menu-background-color": "rgba(20, 20, 20, 0.568)",
+      "--yt-spec-menu-background": "rgba(20, 20, 20, 0.568)",
+      "--yt-spec-raised-background": "rgba(20, 20, 20, 0.568)",
+      "--extension-yt-live-panel-background-color": "rgba(20, 20, 20, 0.112)",
+      "--extension-yt-live-control-background-color": "rgba(255, 255, 255, 0.12)",
+      "--extension-yt-live-menu-hover-background-color": "rgba(255, 255, 255, 0.12)",
+      "--extension-yt-live-chat-font-size": "22px",
+      "--extension-yt-live-chat-spacing": "3px"
+    },
+    "unobstructedComposer": true,
+    "unsentDraftCleared": true,
+    "fullscreenToolbarHidden": false
+  },
+  "notExercised": ["Message submission", "Paid features", "Real-site SPA/no-chat transitions", "Firefox and Opera"],
+  "language": {
+    "headingsAndCopy": "English",
+    "nativeYouTubeUiDuringCapture": "English; temporarily selected through native UI",
+    "publicStreams": "English-speaking sources with genuine multilingual chat"
+  },
+  "publication": "Repository drafts only; no store publication or creator endorsement claimed.",
+  "captures": [
+    {
+      "file": "inputs/en/live-gaming.png",
+      "capturedAt": "2026-10-13T17:47:33.788Z",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "ae5cb05d868e77782901ac33476700c551021b6469375bc5d39d7e9a3ff10aee",
+      "kind": "native-fullscreen-surface",
+      "captureMethod": "headed-focus-emulation",
+      "captureAttempts": 1,
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1
+      },
+      "overlayInViewport": {
+        "x": 1238.390625,
+        "y": 59.390625,
+        "width": 576,
+        "height": 561.59375,
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "sourceWidth": 2560,
+      "sourceHeight": 1440,
+      "settings": {
+        "fontSize": 22,
+        "messageSpacing": 3,
+        "backgroundOpacity": 0.94,
+        "backgroundBlur": 0,
+        "geometry": {
+          "x": 0.645,
+          "y": 0.055,
+          "width": 0.3,
+          "height": 0.52
+        }
+      },
+      "verification": {
+        "fullscreen": true,
+        "populatedNativeChat": true,
+        "visibleEditableNativeComposer": true,
+        "unobstructedNativeComposer": true,
+        "unsentDraftVisible": true,
+        "unsentDraftClearedAfterCapture": true,
+        "videoPlaying": true,
+        "videoPositionProgressed": true,
+        "noPlayerAdvertisement": true
+      },
+      "pixelEditing": false,
+      "recreatedProductUi": false,
+      "syntheticChat": false
+    },
+    {
+      "file": "inputs/en/vtuber-live.png",
+      "capturedAt": "2026-10-13T17:50:36.951Z",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "75b9cac3762f862b8701c1c96b82dce54f5ec894c21fac2ec35998721009ec7d",
+      "kind": "native-fullscreen-surface",
+      "captureMethod": "headed-focus-emulation",
+      "captureAttempts": 1,
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1
+      },
+      "overlayInViewport": {
+        "x": 38.390625,
+        "y": 59.390625,
+        "width": 576,
+        "height": 561.59375,
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "sourceWidth": 1920,
+      "sourceHeight": 1080,
+      "settings": {
+        "fontSize": 22,
+        "messageSpacing": 3,
+        "backgroundOpacity": 0.94,
+        "backgroundBlur": 0,
+        "geometry": {
+          "x": 0.02,
+          "y": 0.055,
+          "width": 0.3,
+          "height": 0.52
+        }
+      },
+      "verification": {
+        "fullscreen": true,
+        "populatedNativeChat": true,
+        "visibleEditableNativeComposer": true,
+        "unobstructedNativeComposer": true,
+        "unsentDraftVisible": true,
+        "unsentDraftClearedAfterCapture": true,
+        "videoPlaying": true,
+        "videoPositionProgressed": true,
+        "noPlayerAdvertisement": true
+      },
+      "pixelEditing": false,
+      "recreatedProductUi": false,
+      "syntheticChat": false
+    },
+    {
+      "file": "inputs/en/transparent-live.png",
+      "capturedAt": "2026-10-13T17:51:40.004Z",
+      "width": 1920,
+      "height": 1080,
+      "sha256": "e925912c88cf4d4307951f3ca3ea6723467df42bd661e0eb2592313738c6196b",
+      "kind": "native-fullscreen-surface",
+      "captureMethod": "headed-focus-emulation",
+      "captureAttempts": 1,
+      "clip": {
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 1080,
+        "scale": 1
+      },
+      "overlayInViewport": {
+        "x": 1238.390625,
+        "y": 59.390625,
+        "width": 576,
+        "height": 561.59375,
+        "background": "rgba(0, 0, 0, 0)"
+      },
+      "sourceWidth": 2560,
+      "sourceHeight": 1440,
+      "settings": {
+        "fontSize": 22,
+        "messageSpacing": 3,
+        "backgroundOpacity": 0.4,
+        "backgroundBlur": 4,
+        "geometry": {
+          "x": 0.645,
+          "y": 0.055,
+          "width": 0.3,
+          "height": 0.52
+        }
+      },
+      "verification": {
+        "fullscreen": true,
+        "populatedNativeChat": true,
+        "visibleEditableNativeComposer": true,
+        "unobstructedNativeComposer": true,
+        "unsentDraftVisible": true,
+        "unsentDraftClearedAfterCapture": true,
+        "videoPlaying": true,
+        "videoPositionProgressed": true,
+        "noPlayerAdvertisement": true
+      },
+      "pixelEditing": false,
+      "recreatedProductUi": false,
+      "syntheticChat": false
+    }
+  ]
+}

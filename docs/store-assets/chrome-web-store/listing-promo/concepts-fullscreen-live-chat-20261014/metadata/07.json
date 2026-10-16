@@ -1,0 +1,22 @@
+{
+  "id": "07",
+  "nameJa": "Fullscreen + Live Chat ミニマル",
+  "headline": "Fullscreen + Live Chat",
+  "prompt": "Edit this exact warm-white/red/black minimalist promotional tile for the browser extension YouTube Live Chat Fullscreen. The user needs the actual functions stated prominently. REPLACE the current giant \"Video + Chat\" headline with TWO very large clean black Swiss-sans lines rendered exactly \"Fullscreen\" then \"+ Live Chat\". \"Fullscreen\" MUST be ONE word, never \"Full Screen\". \"Live Chat\" must be TWO words and prominently legible, not hidden in small branding. Red plus sign as before. Recompose typography: the first line \"Fullscreen\" may stretch across most of upper-middle width, with natural narrower font size so all10letters fit with generous margins; second \"+ Live Chat\" occupies left/middle below, and the compact chat panel moves to lower-right beneath the first line, without hiding any required headline letters. The required words should dominate and still be readable at440×280thumbnail.\nPreserve the warmoffwhite background, red4fullscreencorner brackets, sober small exact wordmark \"YouTube Live Chat Fullscreen\", tiny red playtriangleupperright, and ONE clear outlined chatillustration with actualmessagewords \"LET'S GO\", \"what a moment\", \"GG!\", \"one more!\", and an unmistakable \"Say something...\" input with redsend arrow. Tiny chatrows can be shortened ifneeded for clear proportion; headline not tiny.\nCanvas MUST remain moderately wide11:7 aspect ratio=1.5714 (target1760×1120). No ultrawidepanorama. Reflow the complete design naturally, do NOTstretch/squash/croptext or createblankbars. Calm witty highquality editorial identity, no gradients, no physicalmonitor/desk/room, fakeChrome/YouTubeofficiallogos, realcreatoridentity, storestatus/ratingbadges or extra panel. This is an original conceptual illustration, not a screenshot. The exact dominant headline is \"Fullscreen + Live Chat\".",
+  "referencePath": "../concepts-20261014/originals/07.png",
+  "originalPath": "originals/07.png",
+  "conceptNote": "温かい白・赤・黒の巨大な機能名を主役にする。全画面の四隅とチャット入力欄を使った簡潔なエディトリアル表現。 生成イラストであり実際のスクリーンショットではない。",
+  "requiredWords": ["Fullscreen", "Live Chat"],
+  "revisionPrompts": [
+    "Edit this exact warm-white/red/black minimalist promotional tile for the browser extension YouTube Live Chat Fullscreen. The user needs the actual functions stated prominently. REPLACE the current giant \"Video + Chat\" headline with TWO very large clean black Swiss-sans lines rendered exactly \"Fullscreen\" then \"+ Live Chat\". \"Fullscreen\" MUST be ONE word, never \"Full Screen\". \"Live Chat\" must be TWO words and prominently legible, not hidden in small branding. Red plus sign as before. Recompose typography: the first line \"Fullscreen\" may stretch across most of upper-middle width, with natural narrower font size so all10letters fit with generous margins; second \"+ Live Chat\" occupies left/middle below, and the compact chat panel moves to lower-right beneath the first line, without hiding any required headline letters. The required words should dominate and still be readable at440×280thumbnail.\nPreserve the warmoffwhite background, red4fullscreencorner brackets, sober small exact wordmark \"YouTube Live Chat Fullscreen\", tiny red playtriangleupperright, and ONE clear outlined chatillustration with actualmessagewords \"LET'S GO\", \"what a moment\", \"GG!\", \"one more!\", and an unmistakable \"Say something...\" input with redsend arrow. Tiny chatrows can be shortened ifneeded for clear proportion; headline not tiny.\nCanvas MUST remain moderately wide11:7 aspect ratio=1.5714 (target1760×1120). No ultrawidepanorama. Reflow the complete design naturally, do NOTstretch/squash/croptext or createblankbars. Calm witty highquality editorial identity, no gradients, no physicalmonitor/desk/room, fakeChrome/YouTubeofficiallogos, realcreatoridentity, storestatus/ratingbadges or extra panel. This is an original conceptual illustration, not a screenshot. The exact dominant headline is \"Fullscreen + Live Chat\"."
+  ],
+  "generationMode": "built-in image_gen",
+  "selectedSourcePath": "/Users/dai/.codex/generated_images/01a138a3-86de-75a3-bca3-1817093fe213/exec-dcf291f1-5e35-446a-9f42-512548658cd5.png",
+  "inspected": true,
+  "inspection": {
+    "fullscreenSingleWord": true,
+    "liveChatProminent": true,
+    "composerVisible": true,
+    "noHeadlineClipping": true
+  }
+}
