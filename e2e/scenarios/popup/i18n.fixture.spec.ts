@@ -2,6 +2,10 @@ import { expect, test } from '@e2e/fixtures'
 import type { Page, Request } from '@playwright/test'
 import { LOCALE_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
+type LocaleProbeGlobal = typeof globalThis & {
+  __ylcLocaleProbe?: { originalFetch: typeof fetch; assets: string[] }
+}
+
 const localeAssetName = (request: Request) => {
   const url = new URL(request.url())
   const match = url.pathname.match(/\/locales\/([^/]+\.json)$/)
@@ -28,12 +32,30 @@ test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
   }) => {
     test.setTimeout(90000)
 
-    const loadedAssets: string[] = []
-    const recordLocaleAsset = (request: Request) => {
+    const context = page.context()
+    const isExtensionWorker = (worker: { url(): string }) => worker.url().startsWith('chrome-extension://')
+    const worker =
+      context.serviceWorkers().find(isExtensionWorker) ?? (await context.waitForEvent('serviceworker', { predicate: isExtensionWorker }))
+    // Chromium does not expose extension-scheme worker fetches as Page/Context
+    // request events. Observe the real fetch boundary without replacing delivery.
+    await worker.evaluate(() => {
+      const scope = globalThis as LocaleProbeGlobal
+      const originalFetch = scope.fetch
+      scope.__ylcLocaleProbe = { originalFetch, assets: [] }
+      scope.fetch = (input, init) => {
+        const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+        const match = new URL(url).pathname.match(/\/locales\/([^/]+\.json)$/)
+        const asset = match?.[1]
+        if (asset) scope.__ylcLocaleProbe?.assets.push(asset)
+        return originalFetch.call(scope, input, init)
+      }
+    })
+    const pageAssets: string[] = []
+    const recordPageAsset = (request: Request) => {
       const asset = localeAssetName(request)
-      if (asset) loadedAssets.push(asset)
+      if (asset) pageAssets.push(asset)
     }
-    page.on('request', recordLocaleAsset)
+    page.on('request', recordPageAsset)
 
     try {
       await page.goto(extension.url('popup.html'))
@@ -51,11 +73,10 @@ test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
       await expect(page.getByText('اللغة', { exact: true })).toBeVisible()
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', 'rtl')
 
-      await expect.poll(() => [...loadedAssets].sort()).toEqual(['_keys.json', 'ar.json', 'en.json', 'ja.json'])
-      expect(loadedAssets.filter(asset => asset === '_keys.json')).toHaveLength(1)
-      expect(loadedAssets.filter(asset => asset === 'en.json')).toHaveLength(1)
-      expect(loadedAssets.filter(asset => asset === 'ja.json')).toHaveLength(1)
-      expect(loadedAssets.filter(asset => asset === 'ar.json')).toHaveLength(1)
+      await expect
+        .poll(() => worker.evaluate(() => [...((globalThis as LocaleProbeGlobal).__ylcLocaleProbe?.assets ?? [])].sort()))
+        .toEqual(['_keys.json', 'ar.json', 'en.json', 'ja.json'])
+      expect(pageAssets).toEqual([])
 
       expect(await page.evaluate(key => chrome.storage.local.get(key).then(values => values[key]), LOCALE_STORAGE_KEY)).toEqual({
         schemaVersion: 1,
@@ -63,7 +84,12 @@ test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
         value: 'ar',
       })
     } finally {
-      page.off('request', recordLocaleAsset)
+      page.off('request', recordPageAsset)
+      await worker.evaluate(() => {
+        const scope = globalThis as LocaleProbeGlobal
+        if (scope.__ylcLocaleProbe) scope.fetch = scope.__ylcLocaleProbe.originalFetch
+        scope.__ylcLocaleProbe = undefined
+      })
     }
   })
 })
