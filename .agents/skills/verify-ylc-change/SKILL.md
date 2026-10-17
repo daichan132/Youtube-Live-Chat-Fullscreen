@@ -21,7 +21,7 @@ Identify the changed invariant and lifecycle transitions that could invalidate i
 
 Use focused checks while iterating, then complete the repository gates required for this change (`yarn verify` for ordinary code/dependency changes). Package, manifest, locale inventory, or build-tool changes also require fresh Chrome and Firefox production packages and their contracts. Testing-build success alone does not prove production-package behavior.
 
-For loaded-build identity, authentication, compositor, or engine-specific behavior, use [browser-evidence.md](references/browser-evidence.md). For suspicious greens, skips, retries, stale bundles, or mismatched claims, use [verification-traps.md](references/verification-traps.md). These are conditional references, not extra mandatory suites.
+For loaded-build identity, authentication, compositor, or engine-specific behavior, use [browser-evidence.md](references/browser-evidence.md). For suspicious greens, skips, retries, stale bundles, or mismatched claims, use [verification-traps.md](references/verification-traps.md). For performance comparisons, memory growth, or long-running stability checks, use [performance-and-endurance.md](references/performance-and-endurance.md). These are conditional references, not extra mandatory suites.
 
 ## Evidence that cannot be substituted
 

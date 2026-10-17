@@ -22,3 +22,5 @@ Consult relevant traps when results may not support the claim. This reference do
 | Baseline warnings hidden | A broad command emits existing warnings or unrelated failures | Separate errors, warnings, selected-boundary results, and unrelated baseline explicitly |
 | Dirty-tree collateral | Verification or formatting alters unrelated user/agent work | Inspect status before and after; preserve and report unrelated changes |
 | Previous-run confidence | A prior revision or agent report passed | Rerun the complete required command against the current revision and read fresh output |
+
+For performance and endurance traps, including retained browser handles, instrumented timing, and fixture/live evidence boundaries, use [performance-and-endurance.md](performance-and-endurance.md).
