@@ -44,6 +44,8 @@ Actions → **Release candidate** → Run workflow で Branch に **main** を�
 5. `yarn e2e:production:chrome`：本番 Chrome ZIP を展開し、test bridge なしで起動
 6. 展開した同じ本番 Chrome ZIP に対する実 YouTube canary
 
+`yarn verify:firefox-source` は `package.json.version` に対応する `.output/youtube-live-chat-fullscreen-<version>-sources.zip` を選ぶ。旧版の ZIP が同じディレクトリに残っていても検証できる。現在版の ZIP がなければ、旧版を代用せずに停止する。
+
 production smoke は `.output/production-smoke/chrome` を作る。canary は `YLC_EXTENSION_OUTPUT_DIR` でそのディレクトリを読み、`YLC_REQUIRE_E2E_BRIDGE=0` で実行する。この順序と参照先を変えると、本番 ZIP に対する確認にならない。
 
 ### canary の判定
