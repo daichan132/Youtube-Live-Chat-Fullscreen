@@ -64,6 +64,8 @@ Chat-only mode collapses the header and input through [`ChatChromeLease.ts`](../
 
 ## Verification
 
+Preset-list synchronization compares the ordered IDs by value. A newly allocated array containing the same order must not cause another state update; the full preset screen recreates that array while rendering. An externally changed order still cancels a stale reorder gesture and adopts the latest list. The connected [preset addition and application test](../../entrypoints/content/features/YTDLiveChatSetting/components/PresetContent/AddPresetItem.dom.spec.tsx) exercises this boundary through the actual list UI.
+
 Use focused tests for the behavior being changed:
 
 - Geometry, pointer cancellation, and automatic placement: [`useOverlayGeometry.spec.ts`](../../entrypoints/content/overlay/useOverlayGeometry.spec.ts), [`usePointerSession.dom.spec.tsx`](../../entrypoints/content/overlay/usePointerSession.dom.spec.tsx), and [`autoSafeArea.spec.ts`](../../entrypoints/content/overlay/autoSafeArea.spec.ts).
