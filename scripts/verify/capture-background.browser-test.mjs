@@ -23,6 +23,8 @@ const compiled = compileYouTubeScenario({
   chat: { mode: 'live', native: { state: 'playable' }, response: 'playable' },
 })
 const video = `<script>
+  const player = document.getElementById('movie_player');
+  if (!player) throw new Error('Offline capture fixture is missing its player.');
   const canvas = document.createElement('canvas'); canvas.width = 640; canvas.height = 360;
   const paint = canvas.getContext('2d'); paint.fillStyle = 'rgb(18,80,160)'; paint.fillRect(0,0,640,360);
   const video = document.createElement('video'); video.className = 'html5-main-video';

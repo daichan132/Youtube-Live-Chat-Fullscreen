@@ -102,6 +102,8 @@ node scripts/verify/connection-policy.browser-test.mjs
 
 This requires OpenSSL and installed Playwright Chromium. It starts a local HTTPS fixture, maps the YouTube origin to that server in a disposable profile, and verifies actual extension installation, Service Worker control, fullscreen UI, and zero extension-asset policy errors under no policy, report-only, and enforced Connection Allowlists. The temporary certificate exception is scoped to that test browser. No live YouTube content or account profile is used. Settings dialog rendering is checked for no-policy and report-only pages; enforced cross-origin iframe navigation is a separate restriction and is not claimed by this asset-delivery check. An archived pre-fix unpacked build may be supplied as the first argument with `--expect-unsafe` to demonstrate the original failure.
 
+`yarn verify:background-capture` builds production Chrome and checks native fullscreen, actual video and translucent chat pixels, composer availability, and restoration of the previously active tab against an offline fixture. Extra fixture scripts resolve their own DOM targets rather than relying on variables scoped inside the shared initializer.
+
 ## Pull-request CI ownership
 
 - `quality` runs `yarn verify`.
