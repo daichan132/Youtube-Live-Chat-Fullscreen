@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildSettingsBackup, normalizeSettingsBackup } from './backup'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
+import type { ChatProfile, ChatSettings } from './model'
 
 const current = {
   globalSetting: { ytdLiveChat: true, themeMode: 'system' },
@@ -8,20 +9,50 @@ const current = {
 }
 
 describe('settings backup', () => {
-  it('exports only the v7 chat settings shape', () => {
-    const backup = buildSettingsBackup(current, '2026-07-26T00:00:00.000Z')
+  it('exports the complete chosen settings without language or private editing state', () => {
+    const profile = {
+      appearance: {
+        backgroundColor: { r: 12, g: 34, b: 56, a: 0.4 },
+        fontColor: { r: 240, g: 230, b: 220, a: 1 },
+        membershipNameColor: { mode: 'custom', value: { r: 10, g: 90, b: 150, a: 0.8 } },
+        fontFamily: 'Inter',
+        fontSize: 27,
+        blur: 6,
+        spacing: 9,
+        showUserName: false,
+        showUserIcon: false,
+        showSuperChatBar: false,
+      },
+      display: { idleVisibility: 'auto-hide', contentMode: 'messages-only' },
+    } satisfies ChatProfile
+    const savedProfile = { ...profile, appearance: { ...profile.appearance, fontSize: 32, spacing: 3 } }
+    const chatSettings = {
+      profile,
+      geometry: { reference: 'player', rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 }, pinned: true },
+      presets: [
+        { kind: 'builtin', id: 'dark' },
+        { kind: 'custom', id: 'reading', name: 'Reading', profile: savedProfile },
+      ],
+    } satisfies ChatSettings
+    const input = {
+      // Global compatibility input accepts unknown keys; the public backup must not expose them.
+      globalSetting: {
+        ytdLiveChat: false,
+        themeMode: 'dark',
+        locale: 'ja',
+        editorSession: { draftProfile: savedProfile, past: [profile], future: [], activeGesture: null },
+      },
+      chatSettings: structuredClone(chatSettings),
+    } satisfies Parameters<typeof buildSettingsBackup>[0]
 
-    expect(backup).toMatchObject({
+    const json = JSON.parse(JSON.stringify(buildSettingsBackup(input, '2026-07-26T00:00:00.000Z')))
+
+    expect(json).toStrictEqual({
       version: 2,
       exportedAt: '2026-07-26T00:00:00.000Z',
-      chatSettings: {
-        profile: {},
-        geometry: {},
-        presets: DEFAULT_CHAT_SETTINGS.presets,
-      },
+      globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
+      chatSettings,
     })
-    expect(backup).not.toHaveProperty('ytdLiveChat')
-    expect(backup.chatSettings).not.toHaveProperty('addPresetEnabled')
   })
 
   it('normalizes a v2 backup', () => {

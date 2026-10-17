@@ -105,6 +105,8 @@ Preserve live streams, archives with replay, videos without chat, and YouTube na
 
 ## Tests
 
+Choose assertions using the [test review criteria](docs/testing/contracts.md#choosing-assertions): start with the behavior being protected, derive expectations from its contract, and check that a representative fault makes the test fail. Coverage alone does not show that a test detects incorrect behavior.
+
 Use an explicit `*.unit.spec.ts(x)`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts(x)` suffix for new Vitest tests. The [testing guide](docs/testing/contracts.md) describes each project and how to run focused checks. `test.only` and `describe.only` markers are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging. Selecting a test file on the command line does not require that variable.
 
 Register each Playwright scenario exactly once in [`e2e/config/projectClassification.ts`](e2e/config/projectClassification.ts). Keep real-YouTube canaries separate from deterministic fixtures.

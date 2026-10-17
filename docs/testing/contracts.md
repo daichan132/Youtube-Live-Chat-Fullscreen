@@ -11,6 +11,19 @@ Tests are separated by the boundary they prove. Pull-request source and package 
 | popup/content messaging | Payload shape | Extension API integration | One round trip |  |  |
 | locales and permissions | Locale resolution | Rendering | Representative locale UI | Primary inventory/manifest policy |  |
 
+## Choosing assertions
+
+Start from a user-visible outcome or a documented boundary. Expected values should come from that contract, rather than the implementation's calculations or a stub's return value.
+
+- Exercise owned collaborators together when their result matters: for example, runtime imports with the real settings repository and controlled browser storage.
+- Assert saved values, rendered controls, exported data, or externally delivered messages. Avoid fixing internal delegation order or query-call counts unless the count itself protects a documented scheduling or resource limit.
+- Keep explicit package, privacy, cleanup, and bounded-retry contracts. Replacing every mock or deleting every source check would lose useful protection.
+- Replace or remove a redundant test when an existing behavior test already protects its contract. Keep pure transformations in the Node project and browser-dependent behavior in DOM or browser tests.
+
+Coverage helps locate gaps; a higher number is not evidence that assertions catch faults. When strengthening a weak test, temporarily introduce a representative fault, confirm the new assertion fails, and restore the implementation. Also check an equivalent implementation change when refactoring resistance is the reason for the replacement.
+
+See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
+
 ## Vitest commands
 
 - `yarn test:core`: `*.unit.spec.ts(x)` in Node.

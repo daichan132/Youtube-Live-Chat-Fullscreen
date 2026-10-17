@@ -96,7 +96,7 @@ export const usePresetReorder = ({
     if (activeIdRef.current && hasOrderChanged(startIdsRef.current, ids)) finish(false)
     if (!activeIdRef.current) {
       previewIdsRef.current = ids
-      setPreviewIds(ids)
+      setPreviewIds(current => (hasOrderChanged(current, ids) ? ids : current))
     }
   }, [finish, ids])
 

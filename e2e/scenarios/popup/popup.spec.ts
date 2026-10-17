@@ -104,6 +104,58 @@ test.describe('popup', { tag: '@popup' }, () => {
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
   })
 
+  test('saved presets remain editable, reorderable, and applicable in settings', async ({ page, extension }) => {
+    test.setTimeout(90000)
+
+    await importSettingsViaPopup(page, extension, {
+      version: SETTINGS_EXPORT_VERSION,
+      exportedAt: '2026-10-18T00:00:00.000Z',
+      globalSetting: { ytdLiveChat: true, themeMode: 'dark' },
+      chatSettings: importedSettings(27, {
+        kind: 'custom',
+        id: 'existing-style',
+        name: 'Existing style',
+        profile: profileWithFontSize(18),
+      }),
+    })
+
+    await page.goto(extension.url('settings.html'))
+    await page.getByRole('tab', { name: 'Presets', exact: true }).click()
+    await page.getByRole('button', { name: 'Save Current Settings', exact: true }).click()
+
+    const presetNames = page.getByRole('textbox', { name: 'Preset name', exact: true })
+    await expect(presetNames).toHaveCount(3)
+    const savedName = presetNames.nth(2)
+    await expect(savedName).toHaveValue('Untitled')
+    await savedName.fill('Reading layout')
+    await savedName.press('Tab')
+
+    const reorderSaved = page.getByRole('button', { name: 'Reorder Reading layout', exact: true })
+    await reorderSaved.focus()
+    await page.keyboard.press('ArrowUp')
+    await expect
+      .poll(() => presetNames.evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value)))
+      .toEqual(['Standard', 'Reading layout', 'Existing style'])
+    await expect
+      .poll(async () =>
+        (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets.map(preset =>
+          preset.kind === 'builtin' ? preset.id : preset.name,
+        ),
+      )
+      .toEqual(['standard', 'Reading layout', 'Existing style'])
+
+    await page.getByRole('button', { name: 'Apply Existing style', exact: true }).click()
+    await expect
+      .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontSize)
+      .toBe(18)
+    await page.getByRole('button', { name: 'Apply Reading layout', exact: true }).click()
+    await expect
+      .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontSize)
+      .toBe(27)
+    await page.getByRole('tab', { name: 'Settings', exact: true }).click()
+    await expect(page.getByRole('slider', { name: 'Text Size', exact: true })).toHaveValue('27')
+  })
+
   test('repeated imports update an active overlay and replace custom presets', async ({ page, extension }) => {
     test.setTimeout(120000)
 
