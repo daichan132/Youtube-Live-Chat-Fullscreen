@@ -87,7 +87,7 @@ The package contract rejects:
 - the E2E bridge in production;
 - source maps, spec/test files, and fixture assets;
 - manifest permissions or public resources outside policy;
-- mismatches between unpacked output and ZIP inventory;
+- mismatches between unpacked output and ZIP inventory or any file's bytes;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
 Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output.

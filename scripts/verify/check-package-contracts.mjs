@@ -235,8 +235,16 @@ const verifyTarget = async report => {
   const zipEntries = await readZipEntries(report.zipPath)
   const zipFiles = [...zipEntries.keys()].filter(file => !file.endsWith('/')).sort()
   if (JSON.stringify(zipFiles) !== JSON.stringify(files)) failures.push('ZIP file inventory differs from the generated extension directory')
-  const zipManifest = zipEntries.get('manifest.json')?.toString('utf8')
-  if (zipManifest !== manifestText) failures.push('ZIP manifest.json differs from the generated manifest.json')
+  for (const file of files) {
+    const zipContents = zipEntries.get(file)
+    if (zipContents && !zipContents.equals(await readFile(join(report.directory, file)))) {
+      failures.push(
+        file === 'manifest.json'
+          ? 'ZIP manifest.json differs from the generated manifest.json'
+          : `ZIP file differs from the generated extension directory: ${file}`,
+      )
+    }
+  }
   failures.push(...findForbiddenFiles(zipFiles).map(failure => `ZIP ${failure}`))
 
   for (const [metric, budget] of Object.entries(report.config.budgets)) {
