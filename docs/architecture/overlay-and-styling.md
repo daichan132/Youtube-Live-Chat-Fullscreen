@@ -76,4 +76,6 @@ Use focused tests for the behavior being changed:
 
 Keep module imports self-contained and ordered, without CSS `@import` or cascade layers. The separate font-loader stylesheet may use an absolute Google Fonts import. Direct `display: none` in the iframe modules is limited to YouTube's native close control; hiding the iframe or its ancestors can throttle chat updates.
 
+The overlay inspection and screenshot CLIs share the self-contained DOM reader in `scripts/verify/overlay-state-reader.mjs`. It reads the same shadow-DOM hooks and geometry in both tools; target selection, fullscreen interaction, output metadata, and success checks remain with each CLI.
+
 Required checks are described in [Testing contracts](../testing/contracts.md). Interaction changes need real pointer/keyboard input, and compositor changes such as blur need pixel review in the affected browser; see [Browser verification](../maintainers/verification-browser.md).
