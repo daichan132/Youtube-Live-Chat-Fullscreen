@@ -2,7 +2,7 @@
 
 *Part of the architecture set: [overview](../engineering.md) · [content runtime](./content-runtime.md) · [overlay and styling](./overlay-and-styling.md) · [internationalization](./i18n.md).*
 
-The popup, content script, and settings page each own a separate Jotai store and `SettingsRepository`. They converge through `browser.storage.local`; there is no background service worker and settings do not travel through runtime or tabs messages.
+The popup, content script, and settings page each own a separate Jotai store and `SettingsRepository`. They converge through `browser.storage.local`; the background handler serves packaged assets only, and settings do not travel through runtime or tabs messages.
 
 ## Ownership in the code
 

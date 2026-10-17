@@ -6,7 +6,7 @@ import { createContentSession } from './bootstrap/createContentSession'
 
 export default defineContentScript({
   matches: [...CONTENT_SCRIPT_MATCHES],
-  cssInjectionMode: 'ui',
+  cssInjectionMode: 'manual',
 
   main(ctx) {
     const bootstrap = new ContentBootstrap(() => createContentSession(ctx), {

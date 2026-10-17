@@ -11,7 +11,7 @@ The content session has two shadow roots:
 - WXT creates `wxt-react-content` on `<body>` in [`createContentSession.tsx`](../../entrypoints/content/bootstrap/createContentSession.tsx). It hosts the React tree, state, and effects.
 - [`PresentationLease.ts`](../../entrypoints/content/runtime/resources/PresentationLease.ts) creates `shadow-root-live-chat` on the current player. [`Content.tsx`](../../entrypoints/content/Content.tsx) portals the overlay into this root and the on/off switch into YouTube's player controls.
 
-The overlay root links to the extension's `content-scripts/content.css`: WXT's automatic CSS injection reaches only roots WXT creates. `PresentationLease` replaces the root when YouTube replaces the player and removes it during cleanup.
+Content startup requests `content-scripts/content.css` through the extension's background asset handler and supplies its text to both shadow roots. WXT uses manual CSS injection; `PresentationLease` installs a local `<style>` instead of a resource link. No CSS fetch originates in the page, so its Service Worker and Connection Allowlist cannot reject the extension stylesheet. `PresentationLease` replaces the root when YouTube replaces the player and removes it during cleanup.
 
 The host uses `transform: translateZ(0)` outside Firefox. As a result, fixed descendants such as the settings iframe use the player as their containing block on Chrome and the viewport on Firefox. Check both engines when changing that layout.
 

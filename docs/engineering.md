@@ -2,7 +2,7 @@
 
 The extension overlays YouTube's own chat on the fullscreen player. The main engineering challenge is returning that chat intact when YouTube replaces the player, changes video without reloading, or switches between live and replay.
 
-WXT handles extension builds and browser integration. React renders the interface, Jotai holds each context's state, TypeScript describes runtime and settings models, and Tailwind CSS styles the extension UI. There is no background service worker.
+WXT handles extension builds and browser integration. React renders the interface, Jotai holds each context's state, TypeScript describes runtime and settings models, and Tailwind CSS styles the extension UI. A small background handler serves allowlisted packaged locale and stylesheet assets; page and chat state stay in their owning contexts.
 
 For local setup and verification, start with [Contributing](../CONTRIBUTING.md).
 

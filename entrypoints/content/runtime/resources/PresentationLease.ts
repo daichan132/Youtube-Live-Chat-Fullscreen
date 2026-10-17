@@ -1,4 +1,3 @@
-import { browser, type PublicPath } from 'wxt/browser'
 import { SHADOW_HOST_ID, SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 
@@ -7,7 +6,7 @@ export type PortalTargets = {
   switchContainer: HTMLElement | null
 }
 
-const createOverlayRoot = (player: HTMLElement, contentCssUrl: string) => {
+const createOverlayRoot = (player: HTMLElement, contentStyles: string) => {
   const stale = document.getElementById(SHADOW_HOST_ID)
   if (stale && stale.parentElement !== player) stale.remove()
 
@@ -40,10 +39,9 @@ const createOverlayRoot = (player: HTMLElement, contentCssUrl: string) => {
     box-sizing: border-box;
   }
 </style>`
-    const link = document.createElement('link')
-    link.rel = 'stylesheet'
-    link.href = contentCssUrl
-    root.appendChild(link)
+    const stylesheet = document.createElement('style')
+    stylesheet.textContent = contentStyles
+    root.appendChild(stylesheet)
     player.appendChild(host)
   }
   return host.shadowRoot
@@ -75,8 +73,7 @@ export type PresentationLease = {
   clear(): void
 }
 
-export const createPresentationLease = (): PresentationLease => {
-  const contentCssUrl = browser.runtime.getURL('content-scripts/content.css' as PublicPath)
+export const createPresentationLease = (contentStyles = ''): PresentationLease => {
   let overlayRoot: ShadowRoot | null = null
   let switchContainer: HTMLElement | null = null
 
@@ -95,7 +92,7 @@ export const createPresentationLease = (): PresentationLease => {
         overlayRoot = null
       } else if (!overlayCurrent) {
         overlayRoot?.host.remove()
-        overlayRoot = createOverlayRoot(player, contentCssUrl)
+        overlayRoot = createOverlayRoot(player, contentStyles)
       }
 
       const switchCurrent = switchContainer?.isConnected === true && switchContainer.parentElement === rightControls

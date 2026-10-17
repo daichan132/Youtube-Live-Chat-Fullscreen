@@ -72,4 +72,13 @@ describe('portalHost', () => {
     expect(document.getElementById(SHADOW_HOST_ID)).toBeNull()
     expect(document.getElementById(SWITCH_BUTTON_CONTAINER_ID)).toBeNull()
   })
+  it('installs the supplied stylesheet without page-origin extension resource requests', () => {
+    const player = document.createElement('div')
+    document.body.append(player)
+    const host = createPresentationLease('.overlay { color: red; }')
+    const targets = host.sync({ player, rightControls: null, overlayEnabled: true, switchEnabled: false })
+    expect(targets.overlayRoot?.querySelector('link')).toBeNull()
+    expect(targets.overlayRoot?.textContent).toContain('.overlay { color: red; }')
+    host.clear()
+  })
 })

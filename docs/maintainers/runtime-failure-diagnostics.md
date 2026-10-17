@@ -21,3 +21,12 @@ Synchronous subscriber exceptions are isolated per listener. Healthy subscribers
 An active runtime clears prior failures, and the report omits a stage when the failure code is no longer unexpected. Only values from `RUNTIME_FAILURE_STAGES` are exported. Do not include raw exception messages or stacks, page URLs, video identifiers, chat text, usernames, or arbitrary DOM content. The field remains optional in report schema 1.
 
 Archive control observations retain the selector identifier when the candidate is found. Live-UI fallback evidence uses the shared selector catalog. Update the adapter and focused DOM scenarios when YouTube changes its structure, not a test-environment branch in production code.
+
+
+## Page connection policy and packaged assets
+
+Chromium can emit `Unsafe attempt to load URL … Domains, protocols and ports must match` for requests that fail a page Connection Allowlist while the page is controlled by a Service Worker. In report-only mode the request can still return successfully, so a successful response is not evidence that the console error is absent. This differs from a missing web-accessible-resource declaration or an invalidated extension context.
+
+The production regression is `node scripts/verify/connection-policy.browser-test.mjs` after a production build. It reproduces the policy locally without account data. The pre-fix build produced the same JSON/CSS errors under report-only policy and failed startup under enforced policy. The background asset handler now fetches packaged files from the extension origin and supplies CSS text to both shadow roots. Check that no page-origin asset fetch or stylesheet resource link has been reintroduced when this error returns. See [testing contracts](../testing/contracts.md#connection-policy-regression) for the exact verification scope.
+
+Chromium's [fetch-context checks](https://chromium.googlesource.com/chromium/src/+/main/third_party/blink/renderer/core/loader/base_fetch_context.cc) explain the shared error text, and the [Chrome Connection Allowlist documentation](https://developer.chrome.com/blog/connection-allowlist-announcement) describes enforced and report-only policies. Do not disable browser security flags or change the site's policies as a product fix.

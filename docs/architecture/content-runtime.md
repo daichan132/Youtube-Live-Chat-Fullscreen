@@ -15,7 +15,7 @@ This subsystem owns:
 - reversible page mutations in the four leases under `runtime/resources/`;
 - bounded in-memory diagnostics under `diagnostics/`.
 
-Overlay geometry and pointer interaction run separately in `overlay/`. Settings storage is also independent: the runtime receives only an effective `ChatProfile` from React. There is no background service worker coordinating this state.
+Overlay geometry and pointer interaction run separately in `overlay/`. Settings storage is also independent: the runtime receives only an effective `ChatProfile` from React. The background handler serves only allowlisted packaged assets; it does not coordinate chat state or own any session resources.
 
 ## Route and bootstrap lifecycle
 
