@@ -12,17 +12,21 @@ Use the browser toolbar popup to enable the extension again if it was turned off
 
 YouTube still owns the chat. Sign-in and live-message posting follow YouTube's usual rules; the extension does not require a separate account. Archive chat is a replay of the original conversation.
 
+![A transparent chat panel with YouTube's native message input over fullscreen gameplay](store-assets/chrome-web-store/exports/en/03-transparent-chat.png)
+
+*A transparent layout with the native message input visible. Public stream example: CohhCarnage. [Source and capture details](store-assets/chrome-web-store/source/stream-provenance.md).*
+
 ## Put the panel where it fits
 
-Hover the panel to reveal its controls. Drag the panel's move handle to reposition it, and drag an edge or corner to resize it. A narrow panel can leave more room for the action; a wider panel gives longer messages room to wrap.
+Hover the panel to reveal its controls. Drag the dotted move handle to reposition it, and drag an edge or corner to resize it. A narrow panel can leave more room for the action; a wider panel gives longer messages room to wrap.
 
-The placement controls also offer buttons to move the panel or change its width and height in small steps. Focus the panel's control row to use these buttons with a keyboard.
+Select **Adjust position and size**, the horizontal-arrows button, to move the panel or change its width and height in small steps. You can also reach the control row with Tab and use these buttons with a keyboard.
 
 The saved layout is relative to the player, so it can adapt to a different fullscreen size. Automatic placement can also move a panel away from captions or player controls. A manual layout change takes priority over automatic placement.
 
 ## Choose a reading style
 
-Open settings from the panel's control row. Appearance controls include:
+Select **Open settings**, the sliders button in the panel's control row, to change the reading style.
 
 | Setting | Use it to |
 | --- | --- |
@@ -31,16 +35,22 @@ Open settings from the panel's control row. Appearance controls include:
 | Background color, opacity, and blur | Separate chat from a busy video frame |
 | Message spacing | Give messages more breathing room |
 | Username and avatar visibility | Simplify ordinary messages; paid-message identity remains visible |
-| Show when idle | Keep chat visible after the player controls fade |
-| Messages-only mode | Fold the chat header and input away until you hover |
+| Show When Idle | Keep chat visible after the player controls fade |
+| Chat-Only Mode | Fold the chat header and input away until you hover |
 
-Messages-only mode is available when chat is set to stay visible while idle. Reduce blur if the overlay feels sluggish on an older machine.
+Turn on **Show When Idle** to make **Chat-Only Mode** available. Leave Chat-Only Mode off if you want the message input to stay visible. Reduce blur if the overlay feels sluggish on an older machine.
 
 The settings controls have accessible labels and support keyboard interaction. Dragging and resizing from the panel edges use a pointer; the placement buttons offer an alternative.
 
 ## Save a preset
 
-Open the preset tab and use **Apply** on the style you want. To create one, select **Save Current Settings**, then edit the new preset's name from **Untitled** to something recognizable. Presets are useful for keeping a compact game layout and a more spacious reading style ready to switch between.
+Open the **Presets** tab and use **Apply** on the style you want. These built-in styles are useful starting points.
+
+- **Transparent** lets the video show through the chat background.
+- **Large Text** uses larger text and a light background.
+- **Chat Only** hides ordinary-message names and avatars and folds away the header and input until you hover.
+
+To keep your own style, select **Save Current Settings**, then edit the new preset's name from **Untitled** to something recognizable. You can keep a compact game layout and a more spacious reading style ready to switch between.
 
 Presets store appearance and display options, including idle visibility and messages-only mode. The panel's position and size are saved separately, so choosing another preset does not move it.
 

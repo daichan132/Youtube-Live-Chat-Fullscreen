@@ -14,6 +14,8 @@ You can help make fullscreen chat easier to use by reporting a reproducible prob
 
 For a larger feature or a change to permissions or storage, open an issue first so the intended behavior can be discussed before implementation. Report security vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
+For a small code contribution, start with a behavior you can see and test on its own. [`compileStylePatch.ts`](entrypoints/content/style/compileStylePatch.ts) turns appearance settings into CSS properties; its [unit tests](entrypoints/content/style/compileStylePatch.unit.spec.ts) cover colors, fonts, spacing, and blur without opening a browser. For runtime logic, [`resolveChatDecision.ts`](entrypoints/content/runtime/resolveChatDecision.ts) and its [tests](entrypoints/content/runtime/resolveChatDecision.unit.spec.ts) show how the extension distinguishes live chat, replay, loading, and unavailable chat.
+
 ## Run a development build
 
 Fork and clone the repository, then run these commands from its root. Use Node.js 24 and the Yarn version in [`package.json`](package.json); Corepack selects that pinned version. If `corepack` is unavailable, follow [Corepack's installation instructions](https://github.com/nodejs/corepack#how-to-install).
@@ -31,6 +33,27 @@ Install Playwright Chromium once before browser tests:
 ```bash
 yarn playwright install --with-deps chromium
 ```
+
+## Try a focused test
+
+After installing dependencies, run the appearance compiler's tests:
+
+```bash
+yarn test:core entrypoints/content/style/compileStylePatch.unit.spec.ts
+```
+
+Follow a setting such as `fontSize` from the input profile to the expected CSS property. This is a small path through the code before working on the UI or YouTube's DOM.
+
+To try a browser scenario, build the testing extension and run the archive restore fixture:
+
+```bash
+yarn build:e2e
+yarn playwright test --project=fixture e2e/scenarios/archive/borrowRestore.fixture.spec.ts --workers=1
+```
+
+This uses a synthetic YouTube page and the actual extension. It enters fullscreen, borrows the replay iframe, then checks that leaving fullscreen returns it to its original position with its native styles. It needs no active stream or YouTube login. Set `YLC_E2E_HEADED=1` before the Playwright command to show the browser while it runs.
+
+The [scenario file](e2e/scenarios/archive/borrowRestore.fixture.spec.ts) describes the page state and expected result; the shared [scenario tools](e2e/support/youtubeScenario/) create the page. You can use that pattern to add a reproducible case for a focused bug fix. These focused checks help during development; complete the required checks below before opening the pull request.
 
 ## Verify your change
 
