@@ -135,7 +135,9 @@ yarn verify:overlay --port 9335
 非フルスクリーンでは overlay が未生成でも正常。フルスクリーンに入ったあとに再実行すると、`data-ylc-resizable`、`data-ylc-control-rail`、drag handle、settings button の座標と表示状態を JSON で確認できる。
 フルスクリーン中に拡張 DOM が見つからない場合は `extensionDomMounted: false` を出して非ゼロ終了する。このコマンドの `extensionDomExpected` は fullscreen だけで決まり、チャットの利用可否を判定しない。チャットなし動画や replay が使えないアーカイブでは、拡張 DOM がなくても正常なため、この結果だけで読み込み失敗とは判断しない。チャットが使える対象で期待した UI がない場合に、読み込んだ拡張と path、ページの reload、診断を確認する。非フルスクリーンでは `extensionDomExpected: false` なので、拡張 DOM が無くても正常。
 
-`verify:overlay` は既定で URL に `youtube.com/watch` を含むタブを探す。`/live` 入口を確認するときは `--url-includes youtube.com/live/` などで対象を明示し、実際の URL と動画が意図したものか確認する。
+`verify:overlay` は既定で URL に `youtube.com/watch` を含むタブを探す。候補が1件だけの場合に検査し、複数ある場合は停止する。`--target-id <target_id>` を指定すると、その CDP target ID のタブを検査する。`/live` 入口を確認するときは `--url-includes youtube.com/live/` などで対象を明示し、実際の URL と動画が意図したものか確認する。検査は既存タブを前面に移したり閉じたりしない。
+
+対象選択だけをオフラインで確認するには `node scripts/verify/inspect-overlay.browser-test.mjs` を使う。一時プロファイルと複数の合成ページで、単一候補、複数候補の拒否、ID 指定、既存タブとフォーカスの保全を確認する。拡張のインストールや描画を確認するテストではない。
 
 ログイン済み UI を通常 Google Chrome で見ている場合は、同じ検証 Chrome の CDP port を指定する。
 

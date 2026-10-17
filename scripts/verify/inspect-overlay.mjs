@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /* biome-ignore-all lint/suspicious/noConsole: verification CLI prints status and diagnostics */
 import { chromium } from '@playwright/test'
+import { resolveCapturePage } from './capture-support.mjs'
 import { readOverlayState } from './overlay-state-reader.mjs'
 
 const DEFAULT_PORT = 9335
@@ -21,14 +22,10 @@ const targetUrlPart = args.get('url-includes') ?? 'youtube.com/watch'
 const browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`)
 
 try {
-  const pages = browser.contexts().flatMap(context => context.pages())
-  const page = pages.find(candidate => candidate.url().includes(targetUrlPart))
-
-  if (!page) {
-    console.error(`No page found for url fragment: ${targetUrlPart}`)
-    console.error(`Open one with: yarn verify:browser --port ${port}`)
-    process.exit(1)
-  }
+  const { page } = await resolveCapturePage(browser, {
+    targetId: args.get('target-id'),
+    urlIncludes: targetUrlPart,
+  })
 
   const state = await page.evaluate(readOverlayState, { includeDiagnostics: true })
 
