@@ -61,28 +61,31 @@ export const createBackgroundPage = async (browser, url) => {
   let targetId
   try {
     ;({ targetId } = await cdp.send('Target.createTarget', { url: 'about:blank', background: true, focus: false }))
-  } finally {
-    await cdp.detach()
-  }
-  const deadline = Date.now() + 10000
-  while (Date.now() < deadline) {
-    for (const context of browser.contexts()) {
-      for (const page of context.pages()) {
-        const session = await context.newCDPSession(page)
-        try {
-          const { targetInfo } = await session.send('Target.getTargetInfo')
-          if (targetInfo.targetId === targetId) {
-            await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
-            return page
+    const deadline = Date.now() + 10000
+    while (Date.now() < deadline) {
+      for (const context of browser.contexts()) {
+        for (const page of context.pages()) {
+          const session = await context.newCDPSession(page)
+          try {
+            const { targetInfo } = await session.send('Target.getTargetInfo')
+            if (targetInfo.targetId === targetId) {
+              await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 })
+              return page
+            }
+          } finally {
+            await session.detach().catch(() => null)
           }
-        } finally {
-          await session.detach()
         }
       }
+      await new Promise(resolve => setTimeout(resolve, 100))
     }
-    await new Promise(resolve => setTimeout(resolve, 100))
+    throw new Error('The owned background target was not attached.')
+  } catch (error) {
+    if (targetId) await cdp.send('Target.closeTarget', { targetId }).catch(() => null)
+    throw error
+  } finally {
+    await cdp.detach().catch(() => null)
   }
-  throw new Error('The owned background target was not attached.')
 }
 
 export const findLoadedExtension = async (browser, extensionPath) => {

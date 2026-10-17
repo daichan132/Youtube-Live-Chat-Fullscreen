@@ -104,6 +104,8 @@ This requires OpenSSL and installed Playwright Chromium. It starts a local HTTPS
 
 `yarn verify:background-capture` builds production Chrome and checks native fullscreen, actual video and translucent chat pixels, composer availability, and restoration of the previously active tab against an offline fixture. Extra fixture scripts resolve their own DOM targets rather than relying on variables scoped inside the shared initializer.
 
+Verification helpers transfer a newly created background tab to the caller only after navigation succeeds. Attachment or navigation failure closes that owned target without closing existing tabs or replacing the original error with a cleanup failure. `verification-target.spec.mjs` covers these ownership outcomes.
+
 ## Pull-request CI ownership
 
 - `quality` runs `yarn verify`.
