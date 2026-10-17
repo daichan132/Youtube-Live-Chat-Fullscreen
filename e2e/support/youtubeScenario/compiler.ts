@@ -1,4 +1,4 @@
-import { scenarioDocumentInitializationScript } from './initializeScenarioDocument'
+import { scenarioDocumentInitializationScript } from './initializeScenarioDocument.ts'
 import type { NativeChatDefinition, YouTubeScenarioState } from './types'
 
 const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]+$/
