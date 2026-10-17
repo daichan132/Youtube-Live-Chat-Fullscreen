@@ -60,7 +60,7 @@ DOM nodes never enter diagnostic reports or pure model transitions.
 
 Chat availability uses structural error renderers first. When both the normal chat renderer and its item list are ready, it does not read the accumulated message text: viewer posts are not evidence that chat is disabled. Loading documents without a ready item list retain the plain error-text fallback.
 
-`observeLiveChatDocument` returns readiness and availability from one set of structural queries per observation. It does not cache document results across reconciliations, so a replaced renderer or a newly mounted error is visible on the next pass.
+`chatDocument.ts` owns document access and `observeLiveChatDocument`, which returns readiness and availability from one set of structural queries per observation. It does not cache document results across reconciliations, so a replaced renderer or a newly mounted error is visible on the next pass. Live/archive classification belongs to `collectPageObservation`; there is no separate page-wide playable-chat or inline player-response parser.
 
 ## Selectors and page observation
 

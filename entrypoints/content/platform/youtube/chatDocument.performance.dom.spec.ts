@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { isLiveChatUnavailable, observeLiveChatDocument } from './hasPlayableLiveChat'
+import { observeLiveChatDocument } from './chatDocument'
 
 const unavailablePhrases = ['Live chat replay is not available', 'Chat is disabled', 'Live chat is disabled']
 
@@ -44,7 +44,7 @@ describe('chat availability observation', () => {
       </yt-live-chat-renderer>
     `)
 
-    expect(isLiveChatUnavailable(doc)).toBe(false)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(false)
   })
 
   it.each(unavailablePhrases)('keeps a normal chat available when a system message contains %s', phrase => {
@@ -53,13 +53,13 @@ describe('chat availability observation', () => {
       <yt-live-chat-message-renderer>${phrase}</yt-live-chat-message-renderer>
     `)
 
-    expect(isLiveChatUnavailable(doc)).toBe(false)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(false)
   })
 
   it.each(unavailablePhrases)('preserves the body error fallback while a chat renderer is still loading for %s', phrase => {
     const doc = createChatDocument(`<yt-live-chat-renderer></yt-live-chat-renderer><div>${phrase}</div>`)
 
-    expect(isLiveChatUnavailable(doc)).toBe(true)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(true)
   })
 
   it('does not read the accumulated chat body text during repeated observations', () => {
@@ -75,7 +75,7 @@ describe('chat availability observation', () => {
     }
     const bodyText = vi.spyOn(doc.body, 'textContent', 'get')
 
-    for (let index = 0; index < 100; index += 1) expect(isLiveChatUnavailable(doc)).toBe(false)
+    for (let index = 0; index < 100; index += 1) expect(observeLiveChatDocument(doc).unavailable).toBe(false)
 
     expect(bodyText).not.toHaveBeenCalled()
   })
@@ -86,18 +86,18 @@ describe('chat availability observation', () => {
       <yt-live-chat-unavailable-message-renderer>Localized unavailable message</yt-live-chat-unavailable-message-renderer>
     `)
 
-    expect(isLiveChatUnavailable(doc)).toBe(true)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(true)
   })
 
   it('still recognizes a localized structural unavailable message without a normal renderer', () => {
     const doc = createChatDocument('<yt-live-chat-message-renderer>チャットは利用できません</yt-live-chat-message-renderer>')
 
-    expect(isLiveChatUnavailable(doc)).toBe(true)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(true)
   })
 
   it.each(unavailablePhrases)('preserves the plain body error fallback for %s', phrase => {
     const doc = createChatDocument(phrase)
 
-    expect(isLiveChatUnavailable(doc)).toBe(true)
+    expect(observeLiveChatDocument(doc).unavailable).toBe(true)
   })
 })

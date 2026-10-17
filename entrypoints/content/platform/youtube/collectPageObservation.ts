@@ -6,8 +6,8 @@ import {
   markChatIframeObservedForCurrentVideo,
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
-import { getLiveChatDocument, observeLiveChatDocument } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { collectArchiveChatControls } from './chatControls'
+import { getLiveChatDocument, observeLiveChatDocument } from './chatDocument'
 import { getYouTubePlayerVideoId, readYouTubePlayerVideoData, type YouTubeMoviePlayer } from './playerVideoData'
 import {
   liveHeadBadgeProbe,
