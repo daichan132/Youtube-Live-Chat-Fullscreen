@@ -4,13 +4,34 @@ import { realpathSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { pathToFileURL } from 'node:url'
 
+const workflowJob = (workflow, name) => {
+  const jobsStart = workflow.search(/^jobs:[ \t]*$/m)
+  assert.ok(jobsStart >= 0, 'Release workflow must declare jobs')
+  const jobs = workflow.slice(jobsStart)
+  const headings = [...jobs.matchAll(/^ {2}([\w-]+):[ \t]*$/gm)]
+  const matches = headings.filter(heading => heading[1] === name)
+  assert.equal(matches.length, 1, `Release workflow must declare exactly one ${name} job`)
+  const heading = matches[0]
+  const next = headings[headings.indexOf(heading) + 1]
+  return jobs.slice(heading.index, next?.index)
+}
+
+const requireActionStep = (job, action, label) => {
+  const steps = job.split(/(?=^ {6}- )/m).slice(1)
+  const matches = steps.filter(step =>
+    step.split('\n').some(line => line.startsWith(`      - uses: ${action}@`) || line.startsWith(`        uses: ${action}@`)),
+  )
+  assert.equal(matches.length, 1, `${label} must have exactly one ${action} step`)
+  return matches[0]
+}
+
 export const assertReleaseWorkflows = (candidate, publish) => {
   const candidateTrigger = candidate.slice(candidate.indexOf('on:'), candidate.indexOf('concurrency:'))
   const publishTrigger = publish.slice(publish.indexOf('on:'), publish.indexOf('concurrency:'))
 
-  assert.doesNotMatch(candidateTrigger, /^  push:$/m, 'Merging main must not publish a new version')
-  assert.match(candidateTrigger, /^  workflow_dispatch:$/m, 'Candidate creation must be an intentional manual action')
-  assert.match(publishTrigger, /^  workflow_dispatch:$/m, 'Store publication must be an intentional manual action')
+  assert.doesNotMatch(candidateTrigger, /^ {2}push:$/m, 'Merging main must not publish a new version')
+  assert.match(candidateTrigger, /^ {2}workflow_dispatch:$/m, 'Candidate creation must be an intentional manual action')
+  assert.match(publishTrigger, /^ {2}workflow_dispatch:$/m, 'Store publication must be an intentional manual action')
   assert.match(candidate, /YLC_CANARY_REQUIRE_CLEAN: "1"/, 'Release candidates must require a clean real-YouTube canary')
   assert.match(candidate, /release-proof\.mjs create --commit "\$GITHUB_SHA"/, 'Candidate artifacts must be bound to their source commit')
   assert.match(candidate, /gh release create .* --draft /, 'Verified candidates must remain draft releases')
@@ -22,30 +43,30 @@ export const assertReleaseWorkflows = (candidate, publish) => {
   )
   assert.match(publishTrigger, /candidate_run_id:[\s\S]*required: true/, 'Publication must select a candidate Actions run')
   assert.doesNotMatch(publish, /gh release download/, 'Mutable Release attachments cannot be publication inputs')
-  const validation = publish.slice(publish.indexOf('  validate-candidate:'), publish.indexOf('  publish-chrome:'))
+  const validation = workflowJob(publish, 'validate-candidate')
+  const validationCheckout = requireActionStep(validation, 'actions/checkout', 'Candidate validation')
+  const validationDownload = requireActionStep(validation, 'actions/download-artifact', 'Candidate validation')
   assert.match(validation, /actions: read/, 'Candidate metadata validation needs read-only Actions access')
-  assert.match(validation, /if \[\[ "\$GITHUB_REF" != "refs\/heads\/main" \]\]/, 'Publication must reject untrusted dispatch refs')
-  assert.ok(
-    validation.indexOf('Require trusted publication workflow') < validation.indexOf('uses: actions/checkout'),
-    'The dispatch ref must be checked before checkout',
-  )
-  assert.match(validation, /ref: \$\{\{ github\.sha \}\}/, 'Validation must use the immutable trusted publication source')
+  const trustedRefGuard = validation.match(/^ {10}if \[\[ "\$GITHUB_REF" != "refs\/heads\/main" \]\]; then[ \t]*$/m)
+  assert.ok(trustedRefGuard, 'Publication must reject untrusted dispatch refs')
+  assert.ok(trustedRefGuard.index < validation.indexOf(validationCheckout), 'The dispatch ref must be checked before checkout')
+  assert.match(validationCheckout, /ref: \$\{\{ github\.sha \}\}/, 'Validation must use the immutable trusted publication source')
   assert.match(
     validation,
     /run: node scripts\/verify\/release-candidate\.mjs/,
     'Publication must validate the candidate workflow and artifact metadata',
   )
   assert.match(
-    validation,
+    validationDownload,
     /artifact-ids: \$\{\{ steps\.candidate\.outputs\.artifact_id \}\}/,
     'Candidate download must use the validated immutable artifact ID',
   )
   assert.match(
-    validation,
+    validationDownload,
     /run-id: \$\{\{ steps\.candidate\.outputs\.run_id \}\}/,
     'Candidate download must use the validated workflow run',
   )
-  assert.match(validation, /github-token: \$\{\{ github\.token \}\}/, 'Cross-run download must use the read-only job token')
+  assert.match(validationDownload, /github-token: \$\{\{ github\.token \}\}/, 'Cross-run download must use the read-only job token')
   assert.match(
     validation,
     /artifact_id: \$\{\{ steps\.proven\.outputs\.artifact-id \}\}/,
@@ -58,27 +79,35 @@ export const assertReleaseWorkflows = (candidate, publish) => {
     'Proof verification must use the validated candidate commit and requested version',
   )
   assert.doesNotMatch(publish, /ref: v\$\{\{ inputs\.version \}\}/, 'Publishing code cannot be checked out from a mutable tag')
-  assert.equal(
-    [...publish.matchAll(/ref: \$\{\{ needs\.validate-candidate\.outputs\.commit \}\}/g)].length,
-    2,
-    'Both stores must use the validated immutable source commit',
-  )
+  for (const [name, environment] of [
+    ['publish-chrome', 'chrome-web-store'],
+    ['publish-firefox', 'firefox-add-ons'],
+  ]) {
+    const job = workflowJob(publish, name)
+    const checkout = requireActionStep(job, 'actions/checkout', name)
+    const download = requireActionStep(job, 'actions/download-artifact', name)
+    assert.match(checkout, /ref: \$\{\{ needs\.validate-candidate\.outputs\.commit \}\}/, `${name} must use the validated source commit`)
+    assert.match(
+      download,
+      /artifact-ids: \$\{\{ needs\.validate-candidate\.outputs\.artifact_id \}\}/,
+      `${name} must download the validated immutable artifact`,
+    )
+    assert.match(job, new RegExp(`^    environment: ${environment}$`, 'm'), `${name} must use its protected environment`)
+  }
   for (const workflow of [candidate, publish]) {
-    for (const step of workflow.split(/(?=^      - )/m).filter(step => step.includes('uses: actions/download-artifact@'))) {
+    for (const step of workflow.split(/(?=^ {6}- )/m).filter(step => step.includes('uses: actions/download-artifact@'))) {
       assert.match(step, /digest-mismatch: error/, 'Every release artifact download must fail on a digest mismatch')
     }
   }
   assert.doesNotMatch(publish, /\byarn (?:build|zip)/, 'Publication must never rebuild proven artifacts')
-  assert.match(publish, /environment: chrome-web-store/, 'Chrome publication must use a protected environment')
-  assert.match(publish, /environment: firefox-add-ons/, 'Firefox publication must use a protected environment')
-  assert.match(
-    publish,
-    /publish-github-release:[\s\S]*needs: \[validate-candidate, publish-chrome, publish-firefox\]/,
-    'The public GitHub release must wait for both stores and use the validated artifact',
-  )
-  const promotion = publish.slice(publish.indexOf('  publish-github-release:'))
+  const promotion = workflowJob(publish, 'publish-github-release')
   assert.match(
     promotion,
+    /needs: \[validate-candidate, publish-chrome, publish-firefox\]/,
+    'The public GitHub release must wait for both stores and use the validated artifact',
+  )
+  assert.match(
+    requireActionStep(promotion, 'actions/download-artifact', 'Public release promotion'),
     /artifact-ids: \$\{\{ needs\.validate-candidate\.outputs\.artifact_id \}\}/,
     'Public downloads must use the same verified artifact as the stores',
   )
