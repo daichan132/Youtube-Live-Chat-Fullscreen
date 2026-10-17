@@ -131,6 +131,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
 
   const handleSearchKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return
       if (event.key === 'ArrowDown') {
         event.preventDefault()
         if (!filteredOptions.length) return

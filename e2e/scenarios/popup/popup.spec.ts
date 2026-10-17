@@ -2,6 +2,7 @@ import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings/chatGeometry'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
@@ -46,6 +47,37 @@ const importedSettings = (fontSize: number, customPreset: PresetEntry): ChatSett
 })
 
 test.describe('popup', { tag: '@popup' }, () => {
+  test('keeps font search composition separate from committing the highlighted option', async ({ page, extension }) => {
+    expect(await patchOverlayStore(extension, { profile: { appearance: { fontFamily: 'Roboto' } } })).not.toBeNull()
+    await page.goto(extension.url('settings.html'))
+    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
+    const savedFont = async () => (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontFamily
+    await trigger.click()
+    const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
+    await expect(search).toBeFocused()
+    const cdp = await page.context().newCDPSession(page)
+    try {
+      await cdp.send('Input.imeSetComposition', { text: 'Roboto Slab', selectionStart: 11, selectionEnd: 11 })
+      await expect(page.getByRole('option', { name: 'Roboto Slab', exact: true })).toBeVisible()
+      await page.keyboard.press('Enter')
+
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      expect(await savedFont()).toBe('Roboto')
+      await expect(undo).toBeDisabled()
+
+      await cdp.send('Input.insertText', { text: 'Roboto Slab' })
+      await page.keyboard.press('Enter')
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      await expect(trigger).toHaveText('Roboto Slab')
+      await expect.poll(savedFont).toBe('Roboto Slab')
+      await undo.click()
+      await expect.poll(savedFont).toBe('Roboto')
+    } finally {
+      await cdp.detach()
+    }
+  })
+
   test('popup renders language selector and chat toggle', async ({ page, extension }) => {
     test.setTimeout(90000)
 
