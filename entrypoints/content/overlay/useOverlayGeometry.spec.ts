@@ -8,7 +8,8 @@ import { DEFAULT_CHAT_GEOMETRY } from '@/shared/settings/defaults'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { LegacyChatGeometry } from '@/shared/settings/model'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
-import { mutationTouchesPlayerObstacle, useOverlayGeometry } from './useOverlayGeometry'
+import { mutationTouchesPlayerObstacle } from './useAutomaticOverlayPlacement'
+import { useOverlayGeometry } from './useOverlayGeometry'
 
 const flushAnimationFrame = () =>
   act(async () => {
