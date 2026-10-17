@@ -13,7 +13,7 @@ Upload the four screenshots in filename order.
 
 The promotional images are [small-promo.png](promotional/small-promo.png), 440 × 280, and [marquee.png](promotional/marquee.png), 1400 × 560. Both use the selected indigo illustration.
 
-Each real-stream screenshot displays its complete 1920 × 1080 source at 1280 × 720 below an 80 px heading. The introduction and promotional images are illustrations. The real examples use the extension's actual chat UI.
+Each real-stream screenshot displays its complete 1920 × 1080 source at 1280 × 720 below an 80 px heading. README pages and the user guide embed the privacy-processed 1920 × 1080 sources directly to avoid the extra downscaling in the store exports. The introduction and promotional images are illustrations. The real examples use the extension's actual chat UI.
 
 ## Sources and privacy
 
