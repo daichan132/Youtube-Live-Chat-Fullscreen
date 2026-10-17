@@ -6,6 +6,23 @@ import {
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { createChatChromeLease } from './resources/ChatChromeLease'
 
+const createMeasuredChromeFixture = () => {
+  const iframe = document.createElement('iframe')
+  document.body.appendChild(iframe)
+  const doc = iframe.contentDocument
+  if (!doc) throw new Error('iframe document unavailable in test')
+  const header = doc.createElement('yt-live-chat-header-renderer')
+  const input = doc.createElement('div')
+  input.id = 'input-panel'
+  doc.body.append(header, input)
+  vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
+  vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
+  const replacement = doc.createElement('div')
+  replacement.id = 'input-panel'
+  vi.spyOn(replacement, 'getBoundingClientRect').mockReturnValue({ height: 72 } as DOMRect)
+  return { iframe, doc, header, input, replacement, controller: createChatChromeLease() }
+}
+
 describe('chatOnlyChrome', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -104,6 +121,56 @@ describe('chatOnlyChrome', () => {
     expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('72px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
     controller.release()
+  })
+
+  it.each(['settle', 'release'] as const)('clears replaced input measurements when expanding before observation, then %s', async ending => {
+    const { iframe, doc, header, input, replacement, controller } = createMeasuredChromeFixture()
+    try {
+      controller.sync(iframe, 'collapsed')
+      expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('64px')
+      input.replaceWith(replacement)
+      // Expand in the same turn, before MutationObserver can clean the old target.
+      controller.sync(iframe, 'expanded')
+      expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('72px')
+
+      if (ending === 'settle') vi.runAllTimers()
+      else controller.release()
+      await Promise.resolve()
+
+      expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+      expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+      expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+      expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+      expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
+    } finally {
+      controller.release()
+      iframe.remove()
+    }
+  })
+
+  it('clears a replaced input when collapse restarts before expansion settles', async () => {
+    const { iframe, doc, header, input, replacement, controller } = createMeasuredChromeFixture()
+    try {
+      controller.sync(iframe, 'collapsed')
+      controller.sync(iframe, 'expanded')
+      input.replaceWith(replacement)
+      controller.sync(iframe, 'collapsed')
+      vi.runAllTimers()
+      await Promise.resolve()
+
+      expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+      expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('72px')
+      expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('48px')
+      expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
+      expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
+
+      controller.release()
+      expect(replacement.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+      expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    } finally {
+      controller.release()
+      iframe.remove()
+    }
   })
 
   it('disconnects its iframe observer and clears measurements on cleanup', () => {

@@ -120,6 +120,8 @@ Four lease types own page mutations:
 - `PlayerLayoutLease` owns fullscreen layout adjustments;
 - `ChatChromeLease` owns presentation changes inside the chat document.
 
+`ChatChromeLease` clears measurements from its previous header and input targets before adopting and measuring replacements. This applies to collapse, expansion, and observer-driven remeasurement, including a target replaced before its mutation callback runs. Expansion settling and release clear every measurement still owned by the lease.
+
 Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. On teardown, the chat iframe is restored before layout and presentation are removed.
 
 Borrowed iframe restoration tries, in order:
