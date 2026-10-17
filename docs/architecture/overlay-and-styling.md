@@ -42,6 +42,8 @@ Obstacle mutations are measured once per animation frame, and unchanged rectangl
 
 The settings UI runs in its own extension-origin `settings.html` iframe and Jotai store. Continuous controls edit a draft; completing a gesture saves the appearance once. [`useSettingsStylePreview.ts`](../../entrypoints/settings/useSettingsStylePreview.ts) sends the draft profile to [`SettingsFrame.tsx`](../../entrypoints/content/settings/SettingsFrame.tsx) once per animation frame so the content overlay updates during editing.
 
+Settings content scrolls vertically without horizontal overflow in both left-to-right and right-to-left locales.
+
 The receiver checks the message source, allowed origin, and profile schema. The preview is transient and remains visible until the matching Storage commit arrives, so an earlier save cannot overwrite a later gesture. Closing or reloading the settings frame clears it. Committed settings converge through Storage; see [Settings, state, and storage](settings-and-state.md) for ordering and failure behavior.
 
 The effective profile reaches [`ResourceReconciler.ts`](../../entrypoints/content/runtime/ResourceReconciler.ts), which applies it to a usable chat document:

@@ -2,12 +2,13 @@ import { readFile } from 'node:fs/promises'
 import { expect, test } from '@e2e/fixtures'
 import { blockExternalNetwork } from '@e2e/fixtures/deterministic'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { openDeterministicOverlay } from '@e2e/support/deterministicSurfaces'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatGeometryV2, ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
-import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const activeOverlayScenario = {
   video: { id: 'ylc-import-active-overlay', title: 'Active overlay import fixture', mode: 'live' },
@@ -44,6 +45,43 @@ const importedSettings = (
 })
 
 test.describe('popup', { tag: '@popup' }, () => {
+  for (const locale of ['en', 'ja', 'ar']) {
+    test(`settings content fits horizontally: ${locale}`, async ({ page, extension }) => {
+      await extension.storage.set({
+        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'settings-layout-fixture', value: locale },
+      })
+      await openDeterministicOverlay(page)
+      const overlay = new ExtensionOverlay(page)
+      await overlay.frame().hover()
+      await page.locator('[data-ylc-settings-btn]').click()
+      await expect(overlay.settingsDialog()).toBeVisible()
+      const frame = overlay.settingsFrame()
+      await expect(frame.locator('.ylc-setting-panel')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      const content = frame.getByRole('tabpanel')
+      await expect(content.locator('.ylc-setting-group-legend')).toHaveCount(4)
+      const horizontalOverflow = () =>
+        content.evaluate(panel => {
+          const bounds = panel.getBoundingClientRect()
+          return {
+            excessWidth: panel.scrollWidth - panel.clientWidth,
+            overflowingHeadings: [...panel.querySelectorAll('legend')].filter(heading => {
+              const rect = heading.getBoundingClientRect()
+              return rect.left < bounds.left - 1 || rect.right > bounds.right + 1
+            }).length,
+          }
+        })
+      await expect.poll(horizontalOverflow).toEqual({ excessWidth: 0, overflowingHeadings: 0 })
+      await content.hover()
+      await page.mouse.wheel(0, 400)
+      await expect.poll(() => content.evaluate(panel => panel.scrollTop)).toBeGreaterThan(0)
+      await frame.getByRole('tab').nth(1).click()
+      await expect(frame.locator('[data-ylc-preset-item]')).toHaveCount(7)
+      expect(
+        await frame.locator('[data-ylc-preset-item]').evaluateAll(items => items.map(item => item.getAttribute('data-ylc-preset-item'))),
+      ).toEqual(['standard', 'transparent', 'simple', 'dark', 'readable', 'compact', 'neon'])
+    })
+  }
+
   test('blocks unmocked HTTP and HTTPS requests while extension pages remain usable', async ({ page, context, extension }) => {
     const browser = context.browser()
     if (!browser) throw new Error('The fixture must expose its browser connection.')
@@ -134,10 +172,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     await page.getByLabel('Select language').waitFor({ state: 'visible' })
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
 
-    const [download] = await Promise.all([
-      page.waitForEvent('download'),
-      page.getByRole('button', { name: 'Export', exact: true }).click(),
-    ])
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Export', exact: true }).click()])
     expect(download.suggestedFilename()).toMatch(/^yt-livechat-fullscreen-backup-\d{4}-\d{2}-\d{2}\.json$/)
     expect(await download.failure()).toBeNull()
     const downloadedPath = await download.path()

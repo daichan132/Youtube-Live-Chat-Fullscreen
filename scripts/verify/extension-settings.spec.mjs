@@ -185,7 +185,15 @@ describe('verification settings storage contract', () => {
     expect(a.writerId).not.toBe(b.writerId)
     expect(first.storage['ylc-chat-appearance'].value).toEqual({
       profile: { ...profile(), appearance: { ...profile().appearance, blur: 3 } },
-      presets: [],
+      presets: [
+        { kind: 'builtin', id: 'standard' },
+        { kind: 'builtin', id: 'transparent' },
+        { kind: 'builtin', id: 'simple' },
+        { kind: 'builtin', id: 'dark' },
+        { kind: 'builtin', id: 'readable' },
+        { kind: 'builtin', id: 'compact' },
+        { kind: 'builtin', id: 'neon' },
+      ],
     })
   })
 
@@ -206,6 +214,7 @@ describe('verification settings storage contract', () => {
       value: { r: 1, g: 2, b: 3, a: 0.5 },
     })
     expect(target.storage['ylc-chat-geometry'].value).toEqual(geometry)
+    expect(target.storage['ylc-chat-appearance'].value.presets).toEqual([])
   })
 
   it('fails closed before any write when an existing appearance envelope is incompatible', async () => {
