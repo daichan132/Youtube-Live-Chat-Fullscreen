@@ -140,6 +140,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     document.addEventListener('fullscreenchange', this.handlePageSignal, true)
     this.contentScope.addCleanup(() => document.removeEventListener('fullscreenchange', this.handlePageSignal, true))
     this.contentScope.listen(document, 'yt-navigate-finish', this.handleNavigation)
+    this.contentScope.listen(document, 'yt-page-data-updated', () => this.scheduleReconcile())
     document.addEventListener('load', this.handleResourceLoad, true)
     this.contentScope.addCleanup(() => document.removeEventListener('load', this.handleResourceLoad, true))
     this.scheduleReconcile()

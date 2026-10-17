@@ -44,6 +44,75 @@ const openStoragePage = async (extension: Extension, page: Page) => {
 }
 
 test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
+  test('resizes from every edge and corner while preserving each opposite edge', { tag: '@fixture' }, async ({ page, extension }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+    const storagePage = await openStoragePage(extension, page)
+    try {
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      const cases = [
+        ['top', { x: 0, y: 10 }, { x: 100, y: 90, width: 400, height: 290 }],
+        ['right', { x: 10, y: 0 }, { x: 100, y: 80, width: 410, height: 300 }],
+        ['bottom', { x: 0, y: 10 }, { x: 100, y: 80, width: 400, height: 310 }],
+        ['left', { x: 10, y: 0 }, { x: 110, y: 80, width: 390, height: 300 }],
+        ['topRight', { x: 10, y: 10 }, { x: 100, y: 90, width: 410, height: 290 }],
+        ['bottomRight', { x: 10, y: 10 }, { x: 100, y: 80, width: 410, height: 310 }],
+        ['bottomLeft', { x: 10, y: 10 }, { x: 110, y: 80, width: 390, height: 310 }],
+        ['topLeft', { x: 10, y: 10 }, { x: 110, y: 90, width: 390, height: 290 }],
+      ] as const
+
+      for (const [direction, delta, expected] of cases) {
+        await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+        await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 100, y: 80, width: 400, height: 300 })
+        await overlay.startResize(direction, delta)
+        await expect.poll(() => overlay.getGeometry(), { message: direction }).toMatchObject(expected)
+        expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
+        await overlay.finishPointerGesture()
+        const viewport = await overlay.getGeometry()
+        await expectPersistedGeometry(
+          storagePage,
+          layoutGeometryToV2(
+            { coordinates: { x: expected.x, y: expected.y }, size: { width: expected.width, height: expected.height } },
+            { width: viewport.viewportWidth, height: viewport.viewportHeight },
+            true,
+          ),
+        )
+      }
+    } finally {
+      await page.mouse.up().catch(() => null)
+      await storagePage.close()
+    }
+  })
+
+  test('keeps placement actions inside a small chat at the upper player edge', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
+    await patchOverlayStore(extension, {
+      geometry: layoutGeometryToV2({ coordinates: { x: 10, y: 10 }, size: { width: 240, height: 180 } }, FIXTURE_REFERENCE, true),
+    })
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await page.mouse.move(120, 100)
+    await page.locator('[data-ylc-placement-button]').click()
+    const panel = page.locator('[data-ylc-placement-panel]')
+    await expect(panel).toBeVisible()
+    const box = await panel.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box?.y).toBeGreaterThanOrEqual(4)
+    await testInfo.attach('small-chat-placement', { body: await page.screenshot(), contentType: 'image/png' })
+    await page.getByRole('button', { name: 'Move up', exact: true }).click()
+    await panel.hover()
+    await page.mouse.wheel(0, 400)
+    await expect.poll(() => panel.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+    await panel.getByRole('button', { name: 'Close', exact: true }).click()
+    await expect(panel).toHaveCount(0)
+    await expect(page.locator('[data-ylc-placement-button]')).toBeFocused()
+  })
+
   test('wires drag, eight resize handles, clamp, passthrough, keyboard, and operation-end persistence', { tag: '@fixture' }, async ({
     page,
     extension,

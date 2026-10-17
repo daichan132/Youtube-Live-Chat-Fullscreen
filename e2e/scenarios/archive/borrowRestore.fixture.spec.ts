@@ -3,6 +3,16 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 
 const VIDEO_ID = 'ylc-archive-borrow-restore-fixture'
+const nativeStyles = [
+  { property: 'width', value: '360px', priority: 'important' },
+  { property: 'height', value: '600px', priority: 'important' },
+  { property: 'border-top-style', value: 'solid', priority: 'important' },
+  { property: 'border-right-style', value: 'dashed', priority: '' },
+  { property: 'border-top-width', value: '3px', priority: 'important' },
+  { property: 'outline-style', value: 'dotted', priority: 'important' },
+  { property: 'outline-width', value: '2px', priority: '' },
+  { property: 'margin-left', value: '12px', priority: 'important' },
+]
 const scenarioState = {
   video: { id: VIDEO_ID, title: 'Archive borrow and restore fixture', mode: 'archive' },
   page: { chatContainer: 'present', chatDimensions: 'standard' },
@@ -11,6 +21,7 @@ const scenarioState = {
     mode: 'archive',
     native: {
       state: 'playable',
+      inlineStyle: nativeStyles.map(({ property, value, priority }) => `${property}:${value}${priority ? ' !important' : ''}`).join(';'),
       showHideControl: true,
       slot: { beforeId: 'fixture-before', afterId: 'fixture-after' },
     },
@@ -43,5 +54,6 @@ test.describe('archive iframe borrow and restore', { tag: '@archive' }, () => {
         attached: null,
         children: ['fixture-before', 'chatframe', 'fixture-after', 'show-hide-button'],
       })
+    expect(await scenario.observeNativeIframeStyles(nativeStyles.map(style => style.property))).toEqual(nativeStyles)
   })
 })

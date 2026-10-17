@@ -6,7 +6,7 @@ import {
   markChatIframeObservedForCurrentVideo,
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
-import { getLiveChatDocument, hasLiveChatRendererReady, isLiveChatUnavailable } from '@/entrypoints/content/utils/hasPlayableLiveChat'
+import { getLiveChatDocument, observeLiveChatDocument } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { collectArchiveChatControls } from './chatControls'
 import { getYouTubePlayerVideoId, readYouTubePlayerVideoData, type YouTubeMoviePlayer } from './playerVideoData'
 import {
@@ -119,8 +119,9 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
   const chatIframe = liveSourceSupersededByArchive ? null : candidateChatIframe
   const sourceKind = liveSourceSupersededByArchive ? null : candidateSourceKind
   const chatDocument = chatIframe ? getLiveChatDocument(chatIframe) : null
-  const chatUnavailable = Boolean(chatDocument && isLiveChatUnavailable(chatDocument))
-  const chatDocumentReady = Boolean(chatDocument && hasLiveChatRendererReady(chatDocument))
+  const chatDocumentState = chatDocument ? observeLiveChatDocument(chatDocument) : null
+  const chatUnavailable = chatDocumentState?.unavailable ?? false
+  const chatDocumentReady = chatDocumentState?.ready ?? false
   const videoMode = liveSourceSupersededByArchive ? 'archive' : getVideoMode(sourceKind, playerLiveState)
   const chatAvailability: PageEvidence['chatAvailability'] = chatUnavailable
     ? 'unavailable'

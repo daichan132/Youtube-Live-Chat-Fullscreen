@@ -73,6 +73,7 @@ const renderNativeChat = (videoId: string, mode: 'live' | 'archive', native: Nat
       <iframe
         id="chatframe"
         class="ytd-live-chat-frame"
+        ${native.inlineStyle ? `style="${escapeHtml(native.inlineStyle)}"` : ''}
         ${src}${srcdoc}
       ></iframe>
       ${slotAfter}

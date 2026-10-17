@@ -27,18 +27,8 @@ import { uninstallMembershipFallback } from './iframeInitializer'
 type InlineStylePropertySnapshot = { value: string; priority: string }
 
 type BorrowedIframeStyleSnapshot = {
-  width: string
-  height: string
-  maxWidth: string
-  borderStyle: string
-  borderWidth: string
-  outline: string
-  position: string
-  zIndex: string
-  backgroundColor: string
+  properties: Map<string, InlineStylePropertySnapshot>
   allowTransparency: string | null
-  filter: InlineStylePropertySnapshot
-  webkitFilter: InlineStylePropertySnapshot
 }
 
 type CustomFontStyleSnapshot = {
@@ -84,6 +74,29 @@ const legacyChatOnlyHeightVariables = [
   '--extension-chat-only-sign-in-height',
 ] as const
 const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
+// Capture longhands: shorthand values can be empty when their components
+// have different priorities, and assigning a shorthand discards those priorities.
+const BORROWED_IFRAME_STYLE_PROPERTIES = [
+  'width',
+  'height',
+  'max-width',
+  'border-top-style',
+  'border-right-style',
+  'border-bottom-style',
+  'border-left-style',
+  'border-top-width',
+  'border-right-width',
+  'border-bottom-width',
+  'border-left-width',
+  'outline-color',
+  'outline-style',
+  'outline-width',
+  'position',
+  'z-index',
+  'background-color',
+  'filter',
+  '-webkit-filter',
+] as const
 
 const captureInlineStyleProperty = (style: CSSStyleDeclaration, property: string): InlineStylePropertySnapshot => ({
   value: style.getPropertyValue(property),
@@ -193,35 +206,35 @@ const moveBorrowedIframe = (iframe: HTMLIFrameElement, parent: ParentNode, refer
   }
 }
 
-const captureIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => ({
-  width: iframe.style.width,
-  height: iframe.style.height,
-  maxWidth: iframe.style.maxWidth,
-  borderStyle: iframe.style.borderStyle,
-  borderWidth: iframe.style.borderWidth,
-  outline: iframe.style.outline,
-  position: iframe.style.position,
-  zIndex: iframe.style.zIndex,
-  backgroundColor: iframe.style.backgroundColor,
-  allowTransparency: iframe.getAttribute('allowtransparency'),
-  filter: captureInlineStyleProperty(iframe.style, 'filter'),
-  webkitFilter: captureInlineStyleProperty(iframe.style, '-webkit-filter'),
-})
+const captureIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => {
+  const properties = new Map<string, InlineStylePropertySnapshot>(
+    BORROWED_IFRAME_STYLE_PROPERTIES.map(property => [property, captureInlineStyleProperty(iframe.style, property)]),
+  )
+  for (const shorthand of ['border-style', 'border-width', 'outline']) {
+    const snapshot = captureInlineStyleProperty(iframe.style, shorthand)
+    const components = BORROWED_IFRAME_STYLE_PROPERTIES.filter(property =>
+      shorthand === 'outline' ? property.startsWith('outline-') : property.startsWith('border-') && property.endsWith(shorthand.slice(6)),
+    )
+    // Preserve the original shorthand when it represents every component.
+    // Mixed priorities need the individual declarations instead.
+    if (
+      !snapshot.value ||
+      components.some(property => properties.get(property)?.value && properties.get(property)?.priority !== snapshot.priority)
+    )
+      continue
+    for (const property of components) properties.delete(property)
+    properties.set(shorthand, snapshot)
+  }
+  return { properties, allowTransparency: iframe.getAttribute('allowtransparency') }
+}
 
 const restoreIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIframeStyleSnapshot) => {
-  iframe.style.width = style.width
-  iframe.style.height = style.height
-  iframe.style.maxWidth = style.maxWidth
-  iframe.style.borderStyle = style.borderStyle
-  iframe.style.borderWidth = style.borderWidth
-  iframe.style.outline = style.outline
-  iframe.style.position = style.position
-  iframe.style.zIndex = style.zIndex
-  iframe.style.backgroundColor = style.backgroundColor
+  iframe.style.removeProperty('border-style')
+  iframe.style.removeProperty('border-width')
+  iframe.style.removeProperty('outline')
+  for (const [property, snapshot] of style.properties) restoreInlineStyleProperty(iframe.style, property, snapshot)
   if (style.allowTransparency === null) iframe.removeAttribute('allowtransparency')
   else iframe.setAttribute('allowtransparency', style.allowTransparency)
-  restoreInlineStyleProperty(iframe.style, 'filter', style.filter)
-  restoreInlineStyleProperty(iframe.style, '-webkit-filter', style.webkitFilter)
 }
 
 const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {

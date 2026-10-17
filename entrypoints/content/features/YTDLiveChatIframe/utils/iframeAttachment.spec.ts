@@ -74,6 +74,45 @@ beforeEach(() => {
 })
 
 describe('iframeAttachment', () => {
+  it('restores native iframe style priorities and mixed border declarations after borrowing', () => {
+    const nativeHost = document.createElement('ytd-live-chat-frame')
+    nativeHost.setAttribute('video-id', 'video-a')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
+    const original = {
+      width: ['360px', 'important'],
+      height: ['640px', 'important'],
+      position: ['absolute', 'important'],
+      'z-index': ['7', 'important'],
+      'background-color': ['rgb(10, 20, 30)', 'important'],
+      'border-top-style': ['solid', 'important'],
+      'border-right-style': ['dashed', ''],
+      'border-top-width': ['3px', 'important'],
+      'border-right-width': ['2px', ''],
+      'outline-style': ['dotted', 'important'],
+      'outline-width': ['2px', ''],
+    } as const
+    for (const [property, [value, priority]] of Object.entries(original)) iframe.style.setProperty(property, value, priority)
+    iframe.style.setProperty('margin-left', '12px', 'important')
+    nativeHost.append(iframe)
+    const carrier = document.createElement('div')
+    document.body.append(nativeHost, carrier)
+    const attachment = createIframeAttachment(iframe, 'video-a')
+
+    attachment.attach(carrier)
+    attachment.release()
+
+    expect(iframe.parentElement).toBe(nativeHost)
+    for (const [property, [value, priority]] of Object.entries(original)) {
+      expect(iframe.style.getPropertyValue(property), property).toBe(value)
+      expect(iframe.style.getPropertyPriority(property), property).toBe(priority)
+    }
+    expect(iframe.style.getPropertyValue('margin-left')).toBe('12px')
+    expect(iframe.style.getPropertyPriority('margin-left')).toBe('important')
+    expect(iframe.style.getPropertyValue('border-bottom-style')).toBe('')
+    expect(iframe.style.getPropertyValue('outline-color')).toBe('')
+  })
+
   it('creates and reuses managed iframe for live source', () => {
     const source: ChatSource = {
       kind: 'live_direct',

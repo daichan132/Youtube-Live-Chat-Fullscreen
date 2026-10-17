@@ -325,8 +325,34 @@ export class YouTubeScenario {
     this.state = archiveState
   }
 
+  async invalidateLoadedChat() {
+    await this.page.evaluate(() => {
+      const iframe = window.__ylcHelpers.getExtensionIframe()
+      const doc = iframe?.contentDocument
+      if (!doc?.body) throw new Error('The loaded scenario chat is unavailable.')
+      const unavailable = doc.createElement('yt-live-chat-unavailable-message-renderer')
+      unavailable.textContent = 'Chat is disabled'
+      doc.body.replaceChildren(unavailable)
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+    })
+  }
+
   nativeIframeCount() {
     return this.page.locator('ytd-live-chat-frame > #chatframe').count()
+  }
+
+  observeNativeIframeStyles(properties: string[]) {
+    return this.page
+      .locator('ytd-live-chat-frame > #chatframe')
+      .evaluate(
+        (iframe: HTMLIFrameElement, properties) =>
+          properties.map(property => ({
+            property,
+            value: iframe.style.getPropertyValue(property),
+            priority: iframe.style.getPropertyPriority(property),
+          })),
+        properties,
+      )
   }
 
   observeExtensionIframeIdentity(): Promise<ExtensionIframeIdentity> {

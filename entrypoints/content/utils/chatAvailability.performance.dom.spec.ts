@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { isLiveChatUnavailable } from './hasPlayableLiveChat'
+import { isLiveChatUnavailable, observeLiveChatDocument } from './hasPlayableLiveChat'
 
 const unavailablePhrases = ['Live chat replay is not available', 'Chat is disabled', 'Live chat is disabled']
 
@@ -10,6 +10,31 @@ const createChatDocument = (html: string) => {
 }
 
 describe('chat availability observation', () => {
+  it('reads readiness and availability together without duplicate renderer queries or stale results', () => {
+    const doc = createChatDocument(
+      '<yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer>',
+    )
+    const query = vi.spyOn(doc, 'querySelector')
+    const bodyText = vi.spyOn(doc.body, 'textContent', 'get')
+
+    for (let index = 0; index < 100; index += 1) {
+      expect(observeLiveChatDocument(doc)).toEqual({ ready: true, unavailable: false })
+    }
+
+    expect(query).toHaveBeenCalledTimes(300)
+    expect(bodyText).not.toHaveBeenCalled()
+
+    // YouTube can replace a ready replay with a localized error document.
+    doc.body.innerHTML = '<yt-live-chat-message-renderer>チャットは利用できません</yt-live-chat-message-renderer>'
+    expect(observeLiveChatDocument(doc)).toEqual({ ready: false, unavailable: true })
+
+    doc.body.innerHTML = '<yt-live-chat-renderer></yt-live-chat-renderer>'
+    expect(observeLiveChatDocument(doc)).toEqual({ ready: false, unavailable: false })
+
+    doc.body.innerHTML = '<yt-live-chat-renderer>Chat is disabled</yt-live-chat-renderer>'
+    expect(observeLiveChatDocument(doc)).toEqual({ ready: false, unavailable: true })
+  })
+
   it.each(unavailablePhrases)('keeps a normal chat available when a viewer writes %s', phrase => {
     const doc = createChatDocument(`
       <yt-live-chat-renderer>

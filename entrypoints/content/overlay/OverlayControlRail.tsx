@@ -23,6 +23,7 @@ type OverlayControlRailProps = {
   isReady: boolean
   isVisible: boolean
   placement: CSSProperties
+  placementPanelMaxHeight?: number
   backgroundColor: RGBA
   fontColor: RGBA
   onSettingsClick: (source: HTMLElement) => void
@@ -42,6 +43,7 @@ export const OverlayControlRail = ({
   isReady,
   isVisible,
   placement,
+  placementPanelMaxHeight,
   backgroundColor,
   fontColor,
   onSettingsClick,
@@ -149,15 +151,19 @@ export const OverlayControlRail = ({
         <TbArrowsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
       {placementOpen && isReady ? (
-        <fieldset
+        // biome-ignore lint/a11y/useSemanticElements: A fieldset's anonymous content box prevents bounded scrolling; retain the labelled group semantics.
+        <div
+          role='group'
           aria-label={t('content.placement.open')}
           data-ylc-placement-panel
-          className='absolute right-0 bottom-full mb-1 grid grid-cols-2 gap-1 rounded-lg p-2 shadow-lg'
+          className='absolute right-0 bottom-full mb-1 grid grid-cols-2 gap-1 rounded-lg border border-solid ylc-theme-border p-2 shadow-lg'
           style={{
             background: toRgba(backgroundColor, 1),
             color,
             width: 240,
             minWidth: 0,
+            maxHeight: placementPanelMaxHeight,
+            overflowY: 'auto',
             boxSizing: 'border-box',
             gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
             gap: 8,
@@ -185,7 +191,7 @@ export const OverlayControlRail = ({
           <button type='button' className='ylc-btn ylc-theme-focus-ring col-span-2' onClick={closePlacement}>
             {t('popup.importClose')}
           </button>
-        </fieldset>
+        </div>
       ) : null}
     </div>
   )

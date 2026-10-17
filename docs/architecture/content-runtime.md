@@ -60,6 +60,8 @@ DOM nodes never enter diagnostic reports or pure model transitions.
 
 Chat availability uses structural error renderers first. When both the normal chat renderer and its item list are ready, it does not read the accumulated message text: viewer posts are not evidence that chat is disabled. Loading documents without a ready item list retain the plain error-text fallback.
 
+`observeLiveChatDocument` returns readiness and availability from one set of structural queries per observation. It does not cache document results across reconciliations, so a replaced renderer or a newly mounted error is visible on the next pass.
+
 ## Selectors and page observation
 
 YouTube selectors used for runtime compatibility live in `platform/youtube/selectorCatalog.ts` as named probes. A probe has a stable diagnostic ID and an ordered fallback list. `queryFirstProbe` reports the first matched fallback; `queryAllProbes` deduplicates nodes found by multiple candidates.
@@ -83,6 +85,8 @@ Auto-placement has its own player-scoped observer. It runs only while geometry i
 Changing any identity component first applies the stop plan to current resources, disposes the old scope, and creates the next generation. Deferred callbacks compare their captured scope or generation against the current one and no-op after replacement.
 
 Signals are coalesced into one animation frame. Retry work uses `SessionScope`; there is no interval and no unbounded retry loop.
+
+YouTube's `yt-page-data-updated` also schedules observation: updates inside the loaded chat document do not reach the top-document MutationObserver. Bursts share the same animation frame, and the content scope removes this listener on stop. The event is a wake-up signal; DOM and source evidence still determine the decision.
 
 ## Decision and model
 
@@ -146,7 +150,7 @@ Diagnostic reports contain the extension version, browser family, sanitized evid
 - At most one `ContentSession` exists, and only on a supported YouTube content surface. `ContentBootstrap.spec.ts` and `youtubeSurface.unit.spec.ts` pin the route matrix and stale-activation disposal.
 - Runtime timers, frames, observers, and listeners are scoped and disposed. `SessionScope.spec.ts`, `ChatRuntime.spec.ts`, and `ChatRuntimeRecovery.spec.ts` pin cleanup and bounded recovery.
 - The old iframe is released before a new video, source, or live/archive mode is acquired. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release and replacement behavior.
-- Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration.
+- Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration and native inline style values, including `!important` priorities and mixed border/outline longhands. The snapshot covers only owned properties, so unrelated inline declarations survive.
 - Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries.
 - YouTube selector fallbacks have unique IDs and non-empty candidates. `selectorCatalog.spec.ts` also pins stable live-state mutation boundaries.
 - Channel live entries are exercised by URL/unit contracts and deterministic browser fixtures that cover initial activation and same-URL video replacement.

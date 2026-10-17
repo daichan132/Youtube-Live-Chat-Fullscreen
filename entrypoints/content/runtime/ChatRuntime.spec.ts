@@ -219,6 +219,35 @@ describe('ChatRuntime', () => {
     harness.runtime.stop()
   })
 
+  it('reobserves page data without a top-document mutation, coalesces bursts, and removes the listener on stop', () => {
+    const iframe = document.createElement('iframe')
+    iframe.src = '/live_chat?v=video-1'
+    const lease = createLease(iframe)
+    const harness = createHarness({
+      decisions: [
+        { kind: 'available', videoId: 'video-1', mode: 'live', source: createBorrowSource(iframe) },
+        { kind: 'unavailable', videoId: 'video-1' },
+      ],
+      leases: [lease],
+    })
+    flushFrame()
+    expect(harness.runtime.getSnapshot().status).toBe('active')
+    const observations = harness.readSnapshot.mock.calls.length
+
+    for (let index = 0; index < 10; index += 1) document.dispatchEvent(new Event('yt-page-data-updated'))
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(observations)
+    flushFrame()
+
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(observations + 1)
+    expect(lease.release).toHaveBeenCalledOnce()
+    expect(harness.runtime.getSnapshot().showOverlay).toBe(false)
+
+    harness.runtime.stop()
+    document.dispatchEvent(new Event('yt-page-data-updated'))
+    flushFrame()
+    expect(harness.readSnapshot).toHaveBeenCalledTimes(observations + 1)
+  })
+
   it('keeps the same iframe lease through a temporary source loss', () => {
     const iframe = document.createElement('iframe')
     iframe.src = '/live_chat?v=video-1'

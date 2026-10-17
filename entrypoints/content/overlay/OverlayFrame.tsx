@@ -63,6 +63,8 @@ export const OverlayFrame = ({
   const lastVisibleControlRailPlacementRef = useRef({ top: controlRailTop, right: 0 })
   if (interaction.controlsVisible) lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
   const controlRailPlacement = interaction.controlsVisible ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
+  // Leave 4px above the placement panel and its 4px gap below it.
+  const placementPanelMaxHeight = Math.max(0, coordinates.y + controlRailTop - 8)
   const controlHoverBridgeTop = Math.max(0, size.height - CONTROL_HOVER_BRIDGE_OVERLAP)
   const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
   const controlHoverBridgeHeight = Math.max(0, controlHoverBridgeBottom - controlHoverBridgeTop)
@@ -134,6 +136,7 @@ export const OverlayFrame = ({
             isReady={ready && !settingsOpen}
             isVisible={interaction.controlsVisible}
             placement={controlRailPlacement}
+            placementPanelMaxHeight={placementPanelMaxHeight}
             backgroundColor={profile.appearance.backgroundColor}
             fontColor={profile.appearance.fontColor}
             onSettingsClick={onOpenSettings}

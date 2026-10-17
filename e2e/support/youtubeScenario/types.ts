@@ -18,6 +18,7 @@ export type NativeChatSlot = {
 
 export type NativeChatDefinition = {
   state: 'absent' | 'playable' | 'unavailable'
+  inlineStyle?: string
   showHideControl?: boolean
   slot?: NativeChatSlot
   hostVideoId?: boolean

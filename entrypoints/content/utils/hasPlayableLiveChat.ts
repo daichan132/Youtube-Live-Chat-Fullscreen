@@ -49,15 +49,21 @@ const hasUnavailableText = (doc: Document) => {
   )
 }
 
-export const isLiveChatUnavailable = (doc: Document) => {
-  if (queryFirstProbe(doc, chatUnavailableMessageProbe).element) return true
+export const observeLiveChatDocument = (doc: Document) => {
+  const unavailable = queryFirstProbe(doc, chatUnavailableMessageProbe).element !== null
   const renderer = queryFirstProbe(doc, chatRendererProbe).element
+  const itemList = queryFirstProbe(doc, chatItemListRendererProbe).element
+  const ready = Boolean(renderer && itemList)
   // Ready chat messages can quote unavailable text. Skip their accumulated
   // body text while retaining plain error pages before the item list is ready.
-  if (renderer && queryFirstProbe(doc, chatItemListRendererProbe).element) return false
-  if (!renderer && queryFirstProbe(doc, chatStatusMessageProbe).element) return true
-  return hasUnavailableText(doc)
+  return {
+    ready,
+    unavailable:
+      unavailable || (!ready && ((!renderer && queryFirstProbe(doc, chatStatusMessageProbe).element !== null) || hasUnavailableText(doc))),
+  }
 }
+
+export const isLiveChatUnavailable = (doc: Document) => observeLiveChatDocument(doc).unavailable
 
 /** Checks if watch element has live chat attributes */
 export const hasWatchChatAttributes = () => {
@@ -90,9 +96,8 @@ export const isArchiveChatPlayable = (iframe: HTMLIFrameElement | null) => {
   const currentVideoId = getCurrentYouTubeVideoId()
   if (!isIframeForCurrentVideo(iframe, currentVideoId)) return false
   if (!isLiveChatDocForCurrentVideo(doc, currentVideoId)) return false
-  if (isLiveChatUnavailable(doc)) return false
-
-  return hasLiveChatRendererReady(doc)
+  const state = observeLiveChatDocument(doc)
+  return state.ready && !state.unavailable
 }
 
 export const hasPlayableLiveChat = () => {
