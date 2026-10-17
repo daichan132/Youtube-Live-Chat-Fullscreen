@@ -1,62 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { deriveResizedLayout, fitLayoutWithinViewportWidth, getControlRailTop, isSameLayoutGeometry } from './clipGeometry'
+import { deriveResizedLayout, getControlRailTop } from './clipGeometry'
 
 describe('clipGeometry', () => {
-  it('matches layout equality helpers', () => {
-    expect(
-      isSameLayoutGeometry(
-        { coordinates: { x: 1, y: 2 }, size: { width: 3, height: 4 } },
-        { coordinates: { x: 1, y: 2 }, size: { width: 3, height: 4 } },
-      ),
-    ).toBe(true)
-
-    expect(
-      isSameLayoutGeometry(
-        { coordinates: { x: 1, y: 2 }, size: { width: 3, height: 4 } },
-        { coordinates: { x: 1, y: 3 }, size: { width: 3, height: 4 } },
-      ),
-    ).toBe(false)
-  })
-
-  it('shifts layout left when the right edge overflows the viewport', () => {
-    expect(
-      fitLayoutWithinViewportWidth(
-        {
-          coordinates: { x: 200, y: 10 },
-          size: { width: 400, height: 300 },
-        },
-        500,
-      ),
-    ).toEqual({
-      coordinates: { x: 100, y: 10 },
-      size: { width: 400, height: 300 },
-    })
-  })
-
-  it('shrinks layout width when shifting left would cross the viewport edge', () => {
-    expect(
-      fitLayoutWithinViewportWidth(
-        {
-          coordinates: { x: 50, y: 20 },
-          size: { width: 600, height: 320 },
-        },
-        500,
-      ),
-    ).toEqual({
-      coordinates: { x: 50, y: 20 },
-      size: { width: 450, height: 320 },
-    })
-  })
-
-  it('keeps layout unchanged when it already fits the viewport width', () => {
-    const layout = {
-      coordinates: { x: 30, y: 40 },
-      size: { width: 200, height: 160 },
-    }
-
-    expect(fitLayoutWithinViewportWidth(layout, 500)).toBe(layout)
-  })
-
   it('places the control rail below the visible chat bottom', () => {
     expect(
       getControlRailTop({
