@@ -52,31 +52,15 @@
 チャット表示は初期状態で有効です。プレイヤーのチャットボタンで表示を切り替えられます。<br />
 [表示されないときは](troubleshooting.ja.md) · [プリセットとバックアップ](user-guide.ja.md)
 
-<details>
-<summary><strong>チャット・対応ブラウザ・プライバシー</strong></summary>
+## プライバシー
 
-チャットには YouTube 本来の機能を使います。ログイン、投稿、バッジ、Super Chat は YouTube のルールやチャンネルの参加条件に従います。アーカイブでは、当時のチャットが再生されます。
+設定はこのブラウザ内に保存され、閲覧履歴やチャット本文を開発者へ送信しません。拡張機能用のアカウントやアクセス解析 SDK、トラッキングサービスはありません。
 
-デスクトップブラウザ向けの拡張機能です。Chrome 版は Opera でも動作します。利用できるチャットがない動画では、通常のフルスクリーンプレイヤーを表示します。
+YouTube のチャットは YouTube と通信し、追加フォントは Google Fonts から取得する場合があります。[プライバシーの詳細](user-guide.ja.md#プライバシー)。
 
-拡張機能用のアカウントやアクセス解析 SDK、トラッキングサービスはありません。設定はこのブラウザの `browser.storage.local` に保存され、閲覧履歴やチャット本文を開発者へ送信しません。YouTube 本来のチャットは、引き続き YouTube と通信します。選択した追加フォントは Google Fonts から取得する場合があります。
+## 開発に参加する
 
-配布版が要求する権限は `storage` のみです。ページ上で動くスクリプトや、ページから利用できる拡張機能のリソースは YouTube に限定しています。[権限とリソースの設定](../../config/packagePolicy.ts)と[パッケージの検証コード](../../scripts/verify/check-package-contracts.mjs)で確認できます。
-
-</details>
-
-<details>
-<summary><strong>実装を知る</strong></summary>
-
-WXT、React、TypeScript、Jotai、Tailwind CSS を使った Chrome / Firefox 向けの拡張機能です。以下の開発資料は英語です。
-
-- [コンテンツの実行処理](../architecture/content-runtime.md)：YouTube のページ遷移に合わせて表示を更新し、借りたチャット iframe を元に戻します。
-- [設定と状態](../architecture/settings-and-state.md)：編集中の値、保存済みの設定、別の拡張画面からの変更を順序どおりに扱いながらプレビューします。
-- [ブラウザテスト](../testing/contracts.md)：同じ条件のテスト用ページでライブ、リプレイ、チャットなしを再現し、実際のサイトとの互換性は別に確認します。
-
-[技術概要](../engineering.md)や[貢献の始め方](../../CONTRIBUTING.md#choose-a-starting-point)からご覧ください。
-
-</details>
+WXT、React、TypeScript、Jotai、Tailwind CSS を使っています。[技術概要](../engineering.md)から、チャットの実行処理、設定、ブラウザテストに対応するコードをたどれます。[貢献の始め方 →](../../CONTRIBUTING.md#choose-a-starting-point)（どちらも英語）
 
 ## 改善に参加する
 
