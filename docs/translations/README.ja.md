@@ -18,7 +18,7 @@
   ·
   <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/"><strong>Firefox にインストール</strong></a>
   ·
-  <a href="../user-guide.md">使い方（英語）</a>
+  <a href="user-guide.ja.md">使い方</a>
   ·
   <a href="../../README.md">English</a>
   ·
@@ -29,7 +29,7 @@
 
 ![風真いろはの配信に、入力欄と視聴者名のぼかしを含むチャットを重ねた画面](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
 
-*標準のチャットと入力欄を表示した例です。入力途中のメッセージは送信していません。画像では視聴者名などをぼかしています。配信映像：風真いろは / hololive。[出典とプライバシー処理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+*標準のチャットと入力欄を表示した例です。入力途中のメッセージは送信していません。画像では視聴者名などをぼかしています。配信映像：風真いろは / hololive。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 ## 映像を見ながら会話にも参加
 
@@ -52,9 +52,9 @@
 
 ![背景を完全に透過したチャットのみの表示で、視聴者の情報を保護したアーカイブの画面](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
 
-*背景を完全に透過し、チャットのみを表示したリプレイの例です。このアーカイブの画像には入力欄はありません。配信映像：CohhCarnage。[出典とプライバシー処理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+*背景を完全に透過し、チャットのみを表示したリプレイの例です。このアーカイブの画像には入力欄はありません。配信映像：CohhCarnage。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
-ライト、ダーク、システム設定に合わせたテーマを選べます。UI は 55 ロケールに対応し、右から左に読む言語のレイアウトも備えています。[使い方](../user-guide.md)では、プリセットを使った設定例や操作方法を紹介しています（英語）。
+ライト、ダーク、システム設定に合わせたテーマを選べます。UI は 55 ロケールに対応し、右から左に読む言語のレイアウトも備えています。[使い方](user-guide.ja.md)では、プリセットを使った設定例や操作方法を紹介しています。
 
 ## 使い始める
 
@@ -64,7 +64,7 @@
 
 デスクトップブラウザ向けの拡張機能です。Chrome 版は Opera でも動作します。利用できるチャットがない動画では、通常のフルスクリーンプレイヤーを表示します。
 
-プリセットやバックアップの手順は[使い方](../user-guide.md)、パネルが表示されない場合は[トラブルシューティング](../troubleshooting.md)をご覧ください（どちらも英語）。
+プリセットやバックアップの手順は[使い方](user-guide.ja.md)、パネルが表示されない場合は[トラブル対処](troubleshooting.ja.md)をご覧ください。
 
 ## プライバシー
 
@@ -75,6 +75,8 @@
 ## 実装を知る
 
 WXT、React、TypeScript、Jotai、Tailwind CSS を使った Chrome / Firefox 向けの拡張機能です。映像とチャットを一緒に表示するため、次のような処理を実装しています。
+
+この節の開発資料は英語です。
 
 - [YouTube のページ遷移に対応する](../architecture/content-runtime.md)：YouTube のチャット iframe を借り、動画の切り替えに合わせて表示を更新し、フルスクリーンを解除したら元に戻します。
 - [見た目を編集中にプレビューする](../architecture/settings-and-state.md)：スライダーの操作をチャットに反映し、編集中の値や保存済みの設定、別の拡張画面からの変更を順序どおりに扱います。
@@ -87,6 +89,6 @@ WXT、React、TypeScript、Jotai、Tailwind CSS を使った Chrome / Firefox �
 視聴中に困ったことの報告、翻訳、説明の改善、小さな修正から参加できます。拡張機能の内部をすべて理解していなくても大丈夫です。[貢献の始め方](../../CONTRIBUTING.md#choose-a-starting-point)から、取り組みやすいものを選べます（英語）。
 
 - [不具合を報告する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml)、または[機能を提案する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml)。
-- 脆弱性は [SECURITY.md](../../SECURITY.md) の非公開の手順で報告してください。
+- 脆弱性は [SECURITY.md（英語）](../../SECURITY.md) の非公開の手順で報告してください。
 
 [GPL-3.0](../../LICENSE) ライセンスで公開しています。

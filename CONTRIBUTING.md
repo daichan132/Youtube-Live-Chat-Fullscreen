@@ -84,7 +84,7 @@ yarn e2e:fixture
 
 While iterating, you can run a relevant classified scenario after `yarn build:e2e`. The [testing guide](docs/testing/contracts.md) explains the projects and additional gates. The real-YouTube canary is reserved for compatibility checks and release preparation; it is not a substitute for deterministic fixtures.
 
-For documentation-only changes, check links, commands, and the diff. You do not need to run the complete source suite. For translations, use the generation and locale checks below.
+For documentation-only changes, check links, commands, and the diff. You do not need to run the complete source suite. For interface-string translations, use the generation and locale checks below.
 
 Pull requests automatically run source/coverage/contracts, production package checks, deterministic Playwright fixtures, and accessibility checks. The manual CI workflow adds visual checks and exact packaged startup smoke.
 
@@ -120,6 +120,8 @@ Biome owns source formatting and linting; TypeScript runs with `tsc --noEmit`. `
 
 ## Translations
 
+### Interface strings
+
 Edit `shared/i18n/assets/*.json`, then regenerate and verify:
 
 ```bash
@@ -128,6 +130,12 @@ yarn locales:check
 ```
 
 Do not edit generated files under `public/locales`, `public/_locales`, or `shared/i18n/generated` by hand.
+
+### Documentation
+
+The [documentation index](docs/README.md#use-the-extension) lists the reader guides available in each language. Use the English page as the reference and follow the [documentation translation rules](docs/README.md#maintain-translated-guides) when editing or adding a translation. Check displayed control names against the corresponding interface JSON.
+
+Documentation translations are Markdown files under `docs/translations/`. They are maintained separately from interface strings and do not require locale generation. Check their links, images, and meaning against the English page before opening a pull request.
 
 ## Screenshots
 

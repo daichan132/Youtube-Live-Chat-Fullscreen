@@ -1,3 +1,5 @@
+**English** · [日本語](translations/user-guide.ja.md) · [繁體中文](translations/user-guide.zh-TW.md)
+
 # Watching with fullscreen chat
 
 YouTube Live Chat Fullscreen places YouTube's chat over the video. This guide covers the everyday controls; installation links and an example layout are in the [README](../README.md).

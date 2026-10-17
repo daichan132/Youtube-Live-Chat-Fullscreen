@@ -2,13 +2,15 @@
 
 The [project README](../README.md) introduces the extension and links to the browser stores. Choose a guide below for using it or contributing.
 
-Product and contributor guides are in English. Product introductions are also available in [Japanese](translations/README.ja.md) and [Traditional Chinese](translations/README.zh-TW.md). Maintainer procedures are mainly in Japanese.
+Product introductions, user guides, and troubleshooting are available in English, Japanese, and Traditional Chinese. Documentation translations are separate from the extension's interface languages. Contributor and architecture guides are in English; maintainer procedures are mainly in Japanese.
 
 ## Use the extension
 
-- [User guide](user-guide.md): move and style the panel, save presets, and back up settings.
-- [Troubleshooting](troubleshooting.md): check missing or empty chat and report a problem.
-- [Security policy](../SECURITY.md): report a vulnerability privately.
+- English: [Introduction](../README.md) · [User guide](user-guide.md) · [Troubleshooting](troubleshooting.md)
+- 日本語: [紹介](translations/README.ja.md) · [使い方](translations/user-guide.ja.md) · [トラブル対処](translations/troubleshooting.ja.md)
+- 繁體中文: [專案介紹](translations/README.zh-TW.md) · [使用指南](translations/user-guide.zh-TW.md) · [疑難排解](translations/troubleshooting.zh-TW.md)
+
+The user guide covers panel placement, appearance, presets, and backups. Troubleshooting helps with missing or empty chat and useful bug reports. For private vulnerability reports, follow the [security policy](../SECURITY.md) in English.
 
 ## Contribute
 
@@ -37,5 +39,17 @@ The asset guide contains only the selected store set and its supporting sources.
 ## Update documentation
 
 Update the relevant guide when behavior changes. Keep setup instructions in Contributing, subsystem details in the architecture guides, and verification requirements in Testing contracts. Link to those explanations rather than repeating them.
+
+### Maintain translated guides
+
+The English [README](../README.md), [user guide](user-guide.md), and [troubleshooting guide](troubleshooting.md) are the reference texts for their translations in [`translations/`](translations/).
+
+- Update the existing Japanese and Traditional Chinese versions in the same change as the English text. Preserve capabilities, limitations, step order, and the difference between live chat and replay.
+- Match control names to the actual strings in [`shared/i18n/assets/`](../shared/i18n/assets/). If a control still displays English in that locale, keep its displayed name and explain it in the surrounding text.
+- Link to the same topic in the reader's language. Mark links to untranslated guides with their language, and keep the language switcher on the equivalent page.
+- Reuse the selected screenshots and their source credits. Keep images in the shared [asset directory](store-assets/chrome-web-store/README.md), rather than making a copy for each language.
+- When adding a documentation language, list the available guides above and update their language links. Label any English fallback for topics that are not yet translated. Review each translation against the reference text and localized UI; locale-generation checks do not assess documentation translations.
+
+Documentation Markdown is not generated from interface strings. Adding or editing a guide does not require regenerating locale bundles. Interface translations follow the [internationalization guide](architecture/i18n.md).
 
 For documentation-only changes, check local links, images, commands, and the diff. Code, configuration, and dependency changes also require `yarn verify` and the additional checks described in [Testing contracts](testing/contracts.md). When prose disagrees with the implementation, check the code and executable checks before updating it.

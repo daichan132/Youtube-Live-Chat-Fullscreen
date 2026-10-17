@@ -18,7 +18,7 @@
   ·
   <a href="https://addons.mozilla.org/zh-TW/firefox/addon/youtube-live-chat-fullscreen/"><strong>安裝到 Firefox</strong></a>
   ·
-  <a href="../user-guide.md">使用指南（英文）</a>
+  <a href="user-guide.zh-TW.md">使用指南</a>
   ·
   <a href="../../README.md">English</a>
   ·
@@ -29,7 +29,7 @@
 
 ![Kazama Iroha 的直播與原生聊天輸入欄，觀眾身分已模糊處理](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
 
-*標準聊天室與原生輸入欄的範例，輸入中的訊息尚未送出。截圖中的觀眾身分已模糊處理。直播影像：Kazama Iroha / hololive。[來源與隱私處理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+*標準聊天室與原生輸入欄的範例，輸入中的訊息尚未送出。截圖中的觀眾身分已模糊處理。直播影像：Kazama Iroha / hololive。[來源與隱私處理（英文）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 ## 看影片，也跟上聊天
 
@@ -52,9 +52,9 @@
 
 ![背景完全透明、僅顯示訊息並保護觀眾身分的遊戲直播存檔](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
 
-*這是背景完全透明、僅顯示聊天訊息的重播版面。這張存檔範例沒有訊息輸入欄。直播影像：CohhCarnage。[來源與隱私處理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+*這是背景完全透明、僅顯示聊天訊息的重播版面。這張存檔範例沒有訊息輸入欄。直播影像：CohhCarnage。[來源與隱私處理（英文）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
-提供亮色、暗色與跟隨系統的主題，以及 55 個介面語系和由右至左的版面。[使用指南](../user-guide.md)介紹預設樣式與各項操作（英文）。
+提供亮色、暗色與跟隨系統的主題，以及 55 個介面語系和由右至左的版面。[使用指南](user-guide.zh-TW.md)介紹預設樣式與各項操作。
 
 ## 開始觀看
 
@@ -64,7 +64,7 @@
 
 本擴充功能適用於桌面瀏覽器，Chrome 版也能在 Opera 上執行。沒有可用聊天的影片，會保留一般的全螢幕播放器畫面。
 
-預設樣式與備份的操作請看[使用指南](../user-guide.md)；聊天視窗沒有出現時，請看[疑難排解](../troubleshooting.md)（兩者皆為英文）。
+預設樣式與備份的操作請看[使用指南](user-guide.zh-TW.md)；聊天視窗沒有出現時，請看[疑難排解](troubleshooting.zh-TW.md)。
 
 ## 查得到的隱私設計
 
@@ -75,6 +75,8 @@
 ## 探索實作
 
 這是使用 WXT、React、TypeScript、Jotai 與 Tailwind CSS 開發的 Chrome / Firefox 擴充功能。小小的介面背後，需要處理幾個實際的瀏覽器問題：
+
+本節連結的開發文件為英文。
 
 - [跟上 YouTube 的頁面切換](../architecture/content-runtime.md)：借用原生聊天 iframe，配合影片切換更新顯示，離開全螢幕時再將它還原。
 - [編輯外觀時即時預覽](../architecture/settings-and-state.md)：拖動滑桿時更新聊天室，同時依序處理編輯中的值、已儲存設定，以及其他擴充功能視窗的變更。
@@ -87,6 +89,6 @@
 描述觀看時遇到的問題、改善翻譯、補充說明，或提交範圍明確的修正，都能參與。你不需要先理解整個內部執行流程；可以從[貢獻的起點](../../CONTRIBUTING.md#choose-a-starting-point)選擇適合的項目（英文）。
 
 - [回報問題](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml)，或[提出功能建議](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml)。
-- 安全性漏洞請依 [SECURITY.md](../../SECURITY.md) 的非公開流程回報。
+- 安全性漏洞請依 [SECURITY.md（英文）](../../SECURITY.md) 的非公開流程回報。
 
 採用 [GPL-3.0](../../LICENSE) 授權。

@@ -1,3 +1,5 @@
+**English** · [日本語](translations/troubleshooting.ja.md) · [繁體中文](translations/troubleshooting.zh-TW.md)
+
 # Troubleshooting
 
 Start with the section that matches what you see. The [user guide](user-guide.md) covers normal operation; this page helps you check a problem and collect useful evidence if it continues.
