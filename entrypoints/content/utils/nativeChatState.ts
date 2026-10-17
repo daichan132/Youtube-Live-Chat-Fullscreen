@@ -12,6 +12,13 @@ import {
   isIframeForCurrentVideo,
   YLC_CHAT_ATTR,
 } from '../chat/shared/iframeDom'
+import {
+  chatContainerProbe,
+  nativeChatHostProbe,
+  queryFirstProbe,
+  secondaryPanelProbe,
+  watchSurfaceProbe,
+} from '../platform/youtube/selectorCatalog'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
 
 /**
@@ -31,9 +38,9 @@ type NativeChatElements = {
 
 /** Retrieves all native chat-related DOM elements */
 export const getNativeChatElements = (): NativeChatElements => ({
-  secondary: document.querySelector('#secondary') as HTMLElement | null,
-  chatContainer: document.querySelector('#chat-container') as HTMLElement | null,
-  chatFrameHost: getCurrentLiveChatHost() ?? (document.querySelector('ytd-live-chat-frame') as HTMLElement | null),
+  secondary: queryFirstProbe<HTMLElement>(document, secondaryPanelProbe).element,
+  chatContainer: queryFirstProbe<HTMLElement>(document, chatContainerProbe).element,
+  chatFrameHost: getCurrentLiveChatHost() ?? queryFirstProbe<HTMLElement>(document, nativeChatHostProbe).element,
   chatFrame: getCurrentLiveChatIframe(getCurrentYouTubeVideoId()),
 })
 
@@ -56,10 +63,9 @@ const isChatHiddenByStyle = (containerStyle: CSSStyleDeclaration, hostStyle: CSS
  * @returns true if the chat panel is expanded and visible
  */
 export const isNativeChatExpanded = () => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  const hasExpandedChat =
-    watchFlexy?.hasAttribute('live-chat-present-and-expanded') || watchGrid?.hasAttribute('live-chat-present-and-expanded')
+  const hasExpandedChat = watchSurfaceProbe.selectors.some(selector =>
+    document.querySelector(selector)?.hasAttribute('live-chat-present-and-expanded'),
+  )
   const { chatContainer, chatFrameHost, chatFrame } = getNativeChatElements()
   const isHidden = isChatHiddenByAttribute(chatContainer, chatFrameHost)
   const hasChatDom = Boolean(chatContainer && chatFrameHost && chatFrame && !chatFrame.hasAttribute(YLC_CHAT_ATTR))

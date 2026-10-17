@@ -1,6 +1,17 @@
 import { SWITCH_BUTTON_CONTAINER_ID } from '@/entrypoints/content/constants/domIds'
 import { collectArchiveChatControls, isChatControl } from '@/entrypoints/content/platform/youtube/chatControls'
-import { playerProbe, queryFirstProbe, watchSurfaceProbe } from '@/entrypoints/content/platform/youtube/selectorCatalog'
+import {
+  chatContainerProbe,
+  closestProbe,
+  nativeChatHostProbe,
+  nativeChatPanelToggleProbe,
+  nativeChatSidebarToggleProbe,
+  nativeChatTriggerProbe,
+  playerProbe,
+  queryFirstProbe,
+  rightControlsProbe,
+  watchSurfaceProbe,
+} from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import {
   getCurrentLiveChatHost,
   getCurrentLiveChatIframe,
@@ -9,9 +20,6 @@ import {
   isIframeForCurrentVideo,
 } from '../chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from './getYouTubeVideoId'
-
-const nativeChatTriggerSelectors =
-  '#chat-container, ytd-live-chat-frame, ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button, #show-hide-button, #close-button'
 
 const isNativeChatMarkedExpanded = () =>
   watchSurfaceProbe.selectors.some(selector => document.querySelector(selector)?.hasAttribute('live-chat-present-and-expanded'))
@@ -72,22 +80,23 @@ export const openArchiveNativeChatPanel = () => {
   return true
 }
 
-const hasChatOnPage = () => Boolean(document.querySelector('ytd-live-chat-frame') || document.querySelector('#chat-container'))
+const hasChatOnPage = () =>
+  Boolean(queryFirstProbe(document, nativeChatHostProbe).element || queryFirstProbe(document, chatContainerProbe).element)
 
 export const isNativeChatToggleButton = (element: HTMLElement) => {
   const button = element.closest('button')
   if (!button) return false
   if (button.closest(`#${SWITCH_BUTTON_CONTAINER_ID}`)) return false
-  const host = button.closest<HTMLElement>('ytd-live-chat-frame')
+  const host = closestProbe<HTMLElement>(button, nativeChatHostProbe)
   if (host && !isChatHostForCurrentVideo(host)) return false
 
-  const isSidebarToggle = Boolean(button.closest('ytd-live-chat-frame #show-hide-button, ytd-live-chat-frame #close-button'))
+  const isSidebarToggle = Boolean(closestProbe(button, nativeChatSidebarToggleProbe))
   if (isSidebarToggle) return true
 
-  if (button.closest('.ytp-right-controls') && isChatControl(button)) return true
+  if (closestProbe(button, rightControlsProbe) && isChatControl(button)) return true
   if (!hasChatOnPage()) return false
-  if (button.closest('#show-hide-button, #close-button')) return true
+  if (closestProbe(button, nativeChatPanelToggleProbe)) return true
   return isChatControl(button)
 }
 
-export const isNativeChatTriggerTarget = (target: HTMLElement) => Boolean(target.closest(nativeChatTriggerSelectors))
+export const isNativeChatTriggerTarget = (target: HTMLElement) => Boolean(closestProbe(target, nativeChatTriggerProbe))

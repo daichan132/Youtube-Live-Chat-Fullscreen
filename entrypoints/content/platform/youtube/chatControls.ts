@@ -1,5 +1,15 @@
 import { getCurrentLiveChatHost, isChatHostForCurrentVideo } from '../../chat/shared/iframeDom'
-import { archivePlayerChatToggleProbe, archiveSidebarOpenControlProbe, type SelectorProbe } from './selectorCatalog'
+import {
+  archivePlayerChatToggleProbe,
+  archiveSidebarOpenControlProbe,
+  chatControlMetadataBoundaryProbe,
+  closestProbe,
+  matchesProbe,
+  nativeChatHostProbe,
+  nativeChatOpenSlotProbe,
+  queryAllProbes,
+  type SelectorProbe,
+} from './selectorCatalog'
 
 export type YouTubeLiveChatFrameElement = HTMLElement & {
   onShowHideChat?: () => void
@@ -17,7 +27,7 @@ const clickableSelector = 'button, yt-icon-button, [role="button"]'
 const metadataElements = (element: HTMLElement) => {
   const elements = [element]
   let parent = element.parentElement
-  while (parent && !parent.matches('ytd-live-chat-frame, .ytp-right-controls, #movie_player, body')) {
+  while (parent && !matchesProbe(parent, chatControlMetadataBoundaryProbe)) {
     elements.push(parent)
     parent = parent.parentElement
   }
@@ -69,7 +79,7 @@ const collectControls = (probe: SelectorProbe, host: HTMLElement | null, require
       const element = candidates.length === 1 ? candidates[0] : candidates.length === 0 && target.matches(clickableSelector) ? target : null
       if (!element || seen.has(element)) continue
       seen.add(element)
-      const parentHost = element.closest<HTMLElement>('ytd-live-chat-frame')
+      const parentHost = closestProbe<HTMLElement>(element, nativeChatHostProbe)
       if (parentHost ? !isChatHostForCurrentVideo(parentHost) : !host) continue
       const hasExplicitTarget = metadataElements(element).some(owner => owner.getAttribute('aria-controls')?.trim())
       if ((requireChatLabel || hasExplicitTarget) && !isChatControl(element, host)) continue
@@ -101,7 +111,7 @@ export const collectArchiveChatControls = () => {
   const replay =
     preferVisible(sidebarResult.controls.filter(control => control.replay)) ??
     preferVisible(playerResult.controls.filter(control => control.replay))
-  const slots = host ? [...host.querySelectorAll<HTMLElement>('#show-hide-button')] : []
+  const slots = host ? queryAllProbes<HTMLElement>(host, nativeChatOpenSlotProbe).elements : []
   const hasSlotControl = slots.some(slot => slot.matches(clickableSelector) || slot.querySelector(clickableSelector) !== null)
   // A host method supports text-only/unfinished YouTube UI. It is not a way
   // to bypass a known disabled control that the adapter deliberately rejected.

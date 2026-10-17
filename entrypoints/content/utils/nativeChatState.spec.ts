@@ -145,6 +145,18 @@ describe('isNativeChatUsable', () => {
 })
 
 describe('isNativeChatExpanded', () => {
+  it('checks the current grid surface even while an older flexy surface remains mounted', () => {
+    const staleWatch = document.createElement('ytd-watch-flexy')
+    staleWatch.setAttribute('video-id', 'video-b')
+    const currentWatch = document.createElement('ytd-watch-grid')
+    currentWatch.setAttribute('video-id', 'video-a')
+    currentWatch.setAttribute('live-chat-present-and-expanded', '')
+    document.body.append(staleWatch, currentWatch)
+    createUsableChat()
+
+    expect(isNativeChatExpanded()).toBe(true)
+  })
+
   it('returns false while YouTube still has expanded markers but its iframe is attached to the extension', () => {
     const watchFlexy = document.createElement('ytd-watch-flexy')
     watchFlexy.setAttribute('live-chat-present-and-expanded', '')

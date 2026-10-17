@@ -3,7 +3,13 @@ import {
   getYouTubePlayerVideoId,
   readYouTubePlayerVideoData,
 } from '@/entrypoints/content/platform/youtube/playerVideoData'
-import { nativeChatIframeProbe, queryAllProbes, watchSurfaceProbe } from '@/entrypoints/content/platform/youtube/selectorCatalog'
+import {
+  closestProbe,
+  nativeChatHostProbe,
+  nativeChatIframeProbe,
+  queryAllProbes,
+  watchSurfaceProbe,
+} from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { getYouTubeContentSurface } from '@/entrypoints/content/platform/youtube/youtubeSurface'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 
@@ -24,13 +30,13 @@ const getMoviePlayerVideoId = () => {
 }
 
 const hasCurrentPageVideoMarker = (currentVideoId: string) => {
-  const watchFlexy = document.querySelector('ytd-watch-flexy')
-  if (watchFlexy?.getAttribute('video-id') === currentVideoId) return true
-  const watchGrid = document.querySelector('ytd-watch-grid')
-  return watchGrid?.getAttribute('video-id') === currentVideoId || getMoviePlayerVideoId() === currentVideoId
+  return (
+    watchSurfaceProbe.selectors.some(selector => document.querySelector(selector)?.getAttribute('video-id') === currentVideoId) ||
+    getMoviePlayerVideoId() === currentVideoId
+  )
 }
 
-const getChatHost = (iframe: HTMLIFrameElement) => iframe.closest('ytd-live-chat-frame') as HTMLElement | null
+const getChatHost = (iframe: HTMLIFrameElement) => closestProbe<HTMLElement>(iframe, nativeChatHostProbe)
 
 const getDeclaredIframeVideoId = (iframe: HTMLIFrameElement) => {
   const declaredVideoId = iframe.getAttribute('video-id')
@@ -358,4 +364,4 @@ export const getCurrentLiveChatIframe = (currentVideoId = getCurrentYouTubeVideo
   getLiveChatIframes().find(iframe => isIframeForCurrentVideo(iframe, currentVideoId)) ?? null
 
 export const getCurrentLiveChatHost = () =>
-  Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(host => isChatHostForCurrentVideo(host)) ?? null
+  queryAllProbes<HTMLElement>(document, nativeChatHostProbe).elements.find(host => isChatHostForCurrentVideo(host)) ?? null

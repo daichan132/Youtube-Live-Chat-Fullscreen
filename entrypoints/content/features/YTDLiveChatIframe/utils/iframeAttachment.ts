@@ -1,4 +1,5 @@
 import {
+  getCurrentLiveChatHost,
   getIframeDocumentHref,
   getIframeVideoId,
   isChatHostForCurrentVideo,
@@ -149,7 +150,7 @@ const isVideoCurrent = (videoId: string | null | undefined) => {
 const resolveNativeHost = (targets?: PageTargets | null) => {
   const candidate = targets?.nativeChatHost
   if (candidate && isChatHostForCurrentVideo(candidate)) return candidate
-  return Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(isChatHostForCurrentVideo) ?? null
+  return getCurrentLiveChatHost()
 }
 
 const ensureNativeChatVisible = () => {

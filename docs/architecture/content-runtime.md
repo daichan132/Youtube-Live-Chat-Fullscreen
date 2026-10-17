@@ -66,6 +66,8 @@ Chat availability uses structural error renderers first. When both the normal ch
 
 YouTube selectors used for runtime compatibility live in `platform/youtube/selectorCatalog.ts` as named probes. A probe has a stable diagnostic ID and an ordered fallback list. `queryFirstProbe` reports the first matched fallback; `queryAllProbes` deduplicates nodes found by multiple candidates.
 
+Native panel state, click targets, current-video host lookup, and restoration use the same catalog. `closestProbe` chooses the nearest matching ancestor across all candidates; watch-state checks retain per-variant searches so a stale flexy surface does not hide a current grid surface. Borrowed iframe restoration reuses the adapter's current-host lookup instead of maintaining a second host selector.
+
 The catalog also defines observer boundaries. Active-state selectors and observer selectors are intentionally different when a class can be removed:
 
 - live detection uses `.ytp-time-display.ytp-live` and `.ytp-live-badge.ytp-live-badge-is-livehead`;
