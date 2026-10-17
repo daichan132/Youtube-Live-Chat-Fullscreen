@@ -119,10 +119,4 @@ export const localeStateFromMessages = (code: LocaleState['code'], messages: Loc
   messages,
 })
 
-export type StateSnapshot = {
-  global: GlobalSettings
-  chat: ChatSettings
-  locale: LocaleState
-}
-
 export type { ChatGeometry, ChatProfile, GlobalSettings, PresetEntry }

@@ -8,7 +8,6 @@ import {
   applyPresetAtom,
   beginStyleGestureAtom,
   type ChatProfilePatch,
-  clearStyleHistoryAtom,
   commitStylePatchAtom,
   finishStyleGestureAtom,
   previewStylePatchAtom,
@@ -27,7 +26,6 @@ export type StyleHistoryCommands = {
   previewYLCStyleUpdate: (gestureId: string, patch: ChatProfilePatch) => void
   undoYLCStyle: () => boolean
   redoYLCStyle: () => boolean
-  clearYLCStyleHistory: () => void
 }
 
 export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands => ({
@@ -48,9 +46,6 @@ export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands =
   },
   undoYLCStyle: () => store.set(undoStyleAtom),
   redoYLCStyle: () => store.set(redoStyleAtom),
-  clearYLCStyleHistory: () => {
-    store.set(clearStyleHistoryAtom)
-  },
 })
 
 export const useStyleHistoryCommands = () => {

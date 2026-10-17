@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
+import { clearStyleHistoryAtom } from '@/shared/state/commands'
 import { createTestStore } from '@/shared/state/testUtils'
 import { createStyleHistoryCommands } from './styleHistoryCommands'
 
 const store = createTestStore()
 const {
   beginYLCStyleGesture,
-  clearYLCStyleHistory,
   commitYLCProfile,
   commitYLCStyleUpdate,
   finishYLCStyleGesture,
@@ -18,7 +18,7 @@ const {
 
 const resetStores = () => {
   store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
-  clearYLCStyleHistory()
+  store.set(clearStyleHistoryAtom)
 }
 
 describe('styleHistoryCommands', () => {

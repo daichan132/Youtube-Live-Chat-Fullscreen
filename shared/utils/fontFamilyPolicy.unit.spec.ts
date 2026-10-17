@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ALLOWED_FONT_FAMILIES, isAllowedFontFamily, normalizeFontFamily } from './fontFamilyPolicy'
+import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from './fontFamilyPolicy'
 
 describe('fontFamilyPolicy', () => {
   it('keeps exactly 50 allowed web font families', () => {
@@ -15,11 +15,5 @@ describe('fontFamilyPolicy', () => {
     expect(normalizeFontFamily('')).toBe('')
     expect(normalizeFontFamily('NotInListFont')).toBe('')
     expect(normalizeFontFamily(null)).toBe('')
-  })
-
-  it('can detect if a font family is allowed', () => {
-    expect(isAllowedFontFamily('Roboto')).toBe(true)
-    expect(isAllowedFontFamily('roboto')).toBe(true)
-    expect(isAllowedFontFamily('NotInListFont')).toBe(false)
   })
 })

@@ -65,5 +65,3 @@ export const normalizeFontFamily = (input: unknown): string => {
 
   return canonicalFontFamilyByKey.get(normalizedInput.toLowerCase()) ?? ''
 }
-
-export const isAllowedFontFamily = (input: unknown): boolean => normalizeFontFamily(input) !== ''

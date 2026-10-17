@@ -11,7 +11,6 @@ export {
   localeStateFromMessages,
   presetsAtom,
   profileAtom,
-  type StateSnapshot,
   themeModeAtom,
   translatorAtom,
   ytdLiveChatEnabledAtom,
