@@ -138,5 +138,3 @@ export const BUILTIN_PRESETS = {
     },
   },
 } as const satisfies Record<BuiltinPresetId, BuiltinPreset>
-
-export const getBuiltinPresetProfile = (id: BuiltinPresetId): ChatProfile => BUILTIN_PRESETS[id].profile

@@ -77,14 +77,6 @@ export const hydrateAppAtom = atom(null, (_get, set, snapshot: AppHydration) => 
   set(settingsPreviewStateAtom, null)
 })
 
-export const replaceLocaleAtom = atom(null, (_get, set, locale: LocaleState) => {
-  set(localeStateAtom, locale)
-})
-
-export const replaceExternalGlobalSettingsAtom = atom(null, (_get, set, next: GlobalSettings) => {
-  set(globalSettingsStateAtom, next)
-})
-
 export const replaceExternalEnabledAtom = atom(null, (get, set, enabled: boolean) => {
   const current = get(globalSettingsStateAtom)
   if (current.ytdLiveChat !== enabled) set(globalSettingsStateAtom, { ...current, ytdLiveChat: enabled })
@@ -115,11 +107,6 @@ export const replaceExternalGeometryAtom = atom(null, (get, set, geometry: ChatG
 
 export const replacePersistenceStatusAtom = atom(null, (_get, set, status: PersistenceStatus) => {
   set(persistenceStatusAtom, status)
-})
-
-export const replaceExternalChatSettingsAtom = atom(null, (_get, set, next: ChatSettings) => {
-  set(replaceExternalAppearanceAtom, next)
-  set(replaceExternalGeometryAtom, next.geometry)
 })
 
 export const replaceExternalLocaleAtom = atom(null, (_get, set, locale: LocaleState) => {
