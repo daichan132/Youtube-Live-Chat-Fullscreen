@@ -119,6 +119,66 @@ describe('settings backup', () => {
     ).toBeNull()
   })
 
+  it('rejects excessive legacy references before reading styles or allocating duplicate IDs', () => {
+    const legacy = {
+      presetItemIds: Array(8000).fill('a'),
+      get presetItemStyles() {
+        throw new Error('Oversized legacy input must not reach migration')
+      },
+    }
+
+    expect(normalizeSettingsBackup({ version: 1, globalSetting: {}, ytdLiveChat: legacy }, current)).toBeNull()
+  })
+
+  it('rejects 101 duplicate legacy custom presets instead of silently truncating them', () => {
+    expect(
+      normalizeSettingsBackup(
+        {
+          version: 1,
+          globalSetting: {},
+          ytdLiveChat: { presetItemIds: Array(101).fill('a'), presetItemStyles: { a: {} } },
+        },
+        current,
+      ),
+    ).toBeNull()
+  })
+
+  it('preserves a valid legacy backup with 100 custom presets and all 7 built-ins', () => {
+    const customIds = Array.from({ length: 100 }, (_, index) => `custom-${index}`)
+    const normalized = normalizeSettingsBackup(
+      {
+        version: 1,
+        globalSetting: {},
+        ytdLiveChat: {
+          presetItemIds: [...Array.from({ length: 7 }, (_, index) => `default${index + 1}`), ...customIds],
+          presetItemStyles: Object.fromEntries(customIds.map(id => [id, { fontSize: 24 }])),
+          presetItemTitles: { 'custom-0': 'Legacy style' },
+        },
+      },
+      current,
+    )
+
+    expect(normalized?.chatSettings.presets.filter(preset => preset.kind === 'builtin')).toHaveLength(7)
+    expect(normalized?.chatSettings.presets.filter(preset => preset.kind === 'custom').map(preset => preset.id)).toEqual(customIds)
+    expect(normalized?.chatSettings.presets.find(preset => preset.id === 'custom-0')).toMatchObject({
+      name: 'Legacy style',
+      profile: { appearance: { fontSize: 24 } },
+    })
+  })
+
+  it('rejects oversized current preset lists carried inside version 1 backups before normalization', () => {
+    expect(
+      normalizeSettingsBackup(
+        {
+          version: 1,
+          globalSetting: {},
+          ytdLiveChat: { presets: Array.from({ length: 101 }, (_, index) => ({ kind: 'custom', id: `custom-${index}`, profile: {} })) },
+        },
+        current,
+      ),
+    ).toBeNull()
+  })
+
   it('rejects unknown versions', () => {
     expect(normalizeSettingsBackup({ version: 3, globalSetting: {}, chatSettings: {} }, current)).toBeNull()
   })

@@ -134,6 +134,8 @@ If YouTube replaced every target, restoration remains owned by the reconciler an
 
 ## Recovery and diagnostics
 
+The extension-origin settings page is a web-accessible UI with permission to save preferences. Its manifest CSP permits framing only when every ancestor is either the extension itself or exact `https://www.youtube.com`; a `parentOrigin` query parameter does not authorize embedding. The policy is emitted as MV3 `extension_pages` and converted by WXT to the MV2 string for Firefox. See the [engineering verification notes](../engineering.md#verification-and-release) for the offline production-browser check.
+
 Expected pending chat states use the model backoff:
 
 ```text

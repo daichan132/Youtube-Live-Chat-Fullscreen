@@ -114,7 +114,7 @@ The testing build is therefore always consumed, while visual regression and exac
 
 `yarn verify:release` adds production packaging, Firefox source reconstruction, deterministic browser projects, exact Chrome ZIP startup, and strict canary execution. The release-candidate workflow produces immutable artifacts and proof; publication verifies and promotes those bytes without rebuilding.
 
-`scripts/verify/check-release-workflow.mjs` validates the release/publish workflow shape and runs inside `yarn check`.
+`scripts/verify/check-release-workflow.mjs` validates the release/publish workflow shape and runs inside `yarn check`. Publication selects a successful candidate Actions run, validates its workflow, main commit and current attempt, and downloads its immutable artifact ID with digest enforcement. Mutable draft Release attachments are not publication inputs. `scripts/verify/release-candidate.spec.mjs` covers the metadata trust boundary and workflow regressions without running or publishing a release.
 
 ## Canary classification
 

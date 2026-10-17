@@ -3,6 +3,7 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { inflateRawSync } from 'node:zlib'
+import { hasExpectedExtensionCsp } from './extension-csp.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const outputRoot = join(root, '.output')
@@ -180,6 +181,9 @@ const verifyTarget = async report => {
     failures.push(`optional_permissions must be absent, got ${manifest.optional_permissions.join(', ')}`)
   if (!hasRuntimeResources(manifest)) {
     failures.push('web_accessible_resources must expose only settings.html to YouTube')
+  }
+  if (!hasExpectedExtensionCsp(manifest)) {
+    failures.push('extension CSP must permit only packaged scripts, no objects, and self or exact HTTPS YouTube frame ancestors')
   }
   if (!files.includes('settings.html')) failures.push('settings extension page is missing')
   const backgroundRegistered = manifest.manifest_version === 3

@@ -104,6 +104,32 @@ test.describe('popup', { tag: '@popup' }, () => {
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
   })
 
+  test('rejects a compact legacy backup with excessive duplicate presets before confirmation', async ({ page, extension }) => {
+    await page.goto(extension.url('popup.html'))
+    await page.getByLabel('Select language').waitFor({ state: 'visible' })
+    const before = await extension.storage.get()
+    const buffer = Buffer.from(
+      JSON.stringify({
+        version: 1,
+        globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
+        ytdLiveChat: { presetItemIds: Array(8000).fill('a'), presetItemStyles: { a: {} } },
+      }),
+    )
+    expect(buffer.byteLength).toBeLessThan(40000)
+
+    await page.locator('input[type="file"]').setInputFiles({
+      name: 'duplicate-presets.json',
+      mimeType: 'application/json',
+      buffer,
+    })
+
+    await expect(page.getByText("Couldn't import this settings file.", { exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Apply', exact: true })).toHaveCount(0)
+    expect(await extension.storage.get()).toEqual(before)
+    await page.getByRole('button', { name: 'Close', exact: true }).click()
+    await expect(page.getByText("Couldn't import this settings file.", { exact: true })).toHaveCount(0)
+  })
+
   test('saved presets remain editable, reorderable, and applicable in settings', async ({ page, extension }) => {
     test.setTimeout(90000)
 

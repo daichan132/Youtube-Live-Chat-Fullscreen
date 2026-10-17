@@ -1,7 +1,12 @@
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, type TargetBrowser, type UserManifest } from 'wxt'
-import { EXTENSION_PERMISSIONS, WEB_ACCESSIBLE_RESOURCE_MATCHES, WEB_ACCESSIBLE_RESOURCES } from './config/packagePolicy'
+import {
+  EXTENSION_PAGE_CSP,
+  EXTENSION_PERMISSIONS,
+  WEB_ACCESSIBLE_RESOURCE_MATCHES,
+  WEB_ACCESSIBLE_RESOURCES,
+} from './config/packagePolicy'
 
 const e2eDirectory = fileURLToPath(new URL('./e2e', import.meta.url))
 const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta.url))
@@ -29,6 +34,7 @@ export const createExtensionManifest = (browser: TargetBrowser): UserManifest =>
   name: '__MSG_extensionName__',
   default_locale: 'en',
   permissions: [...EXTENSION_PERMISSIONS],
+  content_security_policy: { extension_pages: EXTENSION_PAGE_CSP },
   web_accessible_resources: [
     {
       resources: [...WEB_ACCESSIBLE_RESOURCES],

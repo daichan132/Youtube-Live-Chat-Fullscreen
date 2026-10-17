@@ -2,7 +2,7 @@ import { DEFAULT_GLOBAL_SETTINGS } from './defaults'
 import { migrateSettings } from './migrateSettings'
 import type { ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
-import { MAX_CUSTOM_PRESETS, SETTINGS_EXPORT_VERSION } from './persistConfig'
+import { MAX_CUSTOM_PRESETS, MAX_LEGACY_PRESET_REFERENCES, SETTINGS_EXPORT_VERSION } from './persistConfig'
 
 export type SettingsBackup = {
   version: typeof SETTINGS_EXPORT_VERSION
@@ -67,6 +67,13 @@ export const normalizeSettingsBackup = (input: unknown, current: CurrentSettings
 
   if (input.version === 1) {
     if (!isRecord(input.ytdLiveChat)) return null
+    // Legacy duplicate IDs allocate new suffixes during migration. Bound the
+    // raw references before any migration work, not just the resulting presets.
+    if (
+      hasTooManyCustomPresets(input.ytdLiveChat) ||
+      (Array.isArray(input.ytdLiveChat.presetItemIds) && input.ytdLiveChat.presetItemIds.length > MAX_LEGACY_PRESET_REFERENCES)
+    )
+      return null
     const chatSettings = migrateSettings(input.ytdLiveChat)
     if (hasTooManyCustomPresets(chatSettings)) return null
     return {

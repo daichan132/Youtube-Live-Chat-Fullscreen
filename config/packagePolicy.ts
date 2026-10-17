@@ -2,3 +2,4 @@ export const EXTENSION_PERMISSIONS = ['storage'] as const
 export const CONTENT_SCRIPT_MATCHES = ['https://www.youtube.com/*'] as const
 export const WEB_ACCESSIBLE_RESOURCES = ['settings.html'] as const
 export const WEB_ACCESSIBLE_RESOURCE_MATCHES = ['https://www.youtube.com/*'] as const
+export const EXTENSION_PAGE_CSP = "script-src 'self'; object-src 'none'; frame-ancestors 'self' https://www.youtube.com;"

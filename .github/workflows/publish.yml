@@ -7,6 +7,10 @@ on:
         description: Semver version from an existing draft release candidate
         required: true
         type: string
+      candidate_run_id:
+        description: Successful Release candidate Actions run ID for this version
+        required: true
+        type: string
 
 concurrency:
   group: publish-${{ inputs.version }}
@@ -18,12 +22,27 @@ permissions:
 jobs:
   validate-candidate:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      commit: ${{ steps.candidate.outputs.commit }}
+      artifact_id: ${{ steps.proven.outputs.artifact-id }}
     steps:
+      - name: Require trusted publication workflow
+        run: |
+          if [[ "$GITHUB_REF" != "refs/heads/main" ]]; then
+            echo "Publication must run from main"
+            exit 1
+          fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
           persist-credentials: false
-          ref: v${{ inputs.version }}
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: 24.x
       - name: Validate requested version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -33,34 +52,42 @@ jobs:
             echo "Invalid release version: $RELEASE_VERSION"
             exit 1
           fi
-          PACKAGE_VERSION=$(node -p "require('./package.json').version")
-          if [[ "$PACKAGE_VERSION" != "$RELEASE_VERSION" ]]; then
-            echo "Tag package version $PACKAGE_VERSION does not match $RELEASE_VERSION"
-            exit 1
-          fi
           IS_DRAFT=$(gh release view "v$RELEASE_VERSION" --json isDraft --jq .isDraft)
           if [[ "$IS_DRAFT" != "true" ]]; then
             echo "v$RELEASE_VERSION is not an unpublished draft candidate"
             exit 1
           fi
-      - name: Download candidate assets without rebuilding
+      - name: Validate successful candidate run and immutable artifact
+        id: candidate
         env:
           RELEASE_VERSION: ${{ inputs.version }}
+          CANDIDATE_RUN_ID: ${{ inputs.candidate_run_id }}
           GH_TOKEN: ${{ github.token }}
-        run: |
-          mkdir -p .output
-          gh release download "v$RELEASE_VERSION" --dir .output \
-            --pattern "youtube-live-chat-fullscreen-$RELEASE_VERSION-*.zip" \
-            --pattern "release-proof-v$RELEASE_VERSION.json"
+        run: node scripts/verify/release-candidate.mjs
+      - name: Download exact immutable candidate artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          artifact-ids: ${{ steps.candidate.outputs.artifact_id }}
+          run-id: ${{ steps.candidate.outputs.run_id }}
+          repository: ${{ github.repository }}
+          github-token: ${{ github.token }}
+          digest-mismatch: error
+          path: .output
       - name: Verify artifact hashes and source commit
         env:
           RELEASE_VERSION: ${{ inputs.version }}
-        run: node scripts/verify/release-proof.mjs verify --proof ".output/release-proof-v$RELEASE_VERSION.json" --expected-commit "$(git rev-parse HEAD)"
+          CANDIDATE_COMMIT: ${{ steps.candidate.outputs.commit }}
+        run: node scripts/verify/release-proof.mjs verify --proof ".output/release-proof-v$RELEASE_VERSION.json" --expected-commit "$CANDIDATE_COMMIT" --expected-version "$RELEASE_VERSION"
       - name: Forward the exact proven assets
+        id: proven
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: proven-release-assets
-          path: .output
+          path: |
+            .output/youtube-live-chat-fullscreen-${{ inputs.version }}-chrome.zip
+            .output/youtube-live-chat-fullscreen-${{ inputs.version }}-firefox.zip
+            .output/youtube-live-chat-fullscreen-${{ inputs.version }}-sources.zip
+            .output/release-proof-v${{ inputs.version }}.json
           include-hidden-files: true
           if-no-files-found: error
 
@@ -72,14 +99,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-          ref: v${{ inputs.version }}
+          ref: ${{ needs.validate-candidate.outputs.commit }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24.x
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          name: proven-release-assets
+          artifact-ids: ${{ needs.validate-candidate.outputs.artifact_id }}
           path: .output
+          digest-mismatch: error
       - name: Publish proven Chrome ZIP
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -98,7 +126,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
-          ref: v${{ inputs.version }}
+          ref: ${{ needs.validate-candidate.outputs.commit }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: 24.x
@@ -107,8 +135,9 @@ jobs:
         run: yarn install --immutable
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
-          name: proven-release-assets
+          artifact-ids: ${{ needs.validate-candidate.outputs.artifact_id }}
           path: .output
+          digest-mismatch: error
       - name: Publish proven Firefox ZIP
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -120,17 +149,30 @@ jobs:
             --firefox-sources-zip ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip"
 
   publish-github-release:
-    needs: [publish-chrome, publish-firefox]
+    needs: [validate-candidate, publish-chrome, publish-firefox]
     runs-on: ubuntu-24.04
     permissions:
       contents: write
+      actions: read
     steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          artifact-ids: ${{ needs.validate-candidate.outputs.artifact_id }}
+          path: .output
+          digest-mismatch: error
       - name: Publish the already-proven draft release
         env:
           RELEASE_VERSION: ${{ inputs.version }}
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release edit "v$RELEASE_VERSION"
-          --repo "$GITHUB_REPOSITORY"
-          --draft=false
-          --latest
+        run: |
+          IS_DRAFT=$(gh release view "v$RELEASE_VERSION" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)
+          if [[ "$IS_DRAFT" != "true" ]]; then
+            echo "Release must still be an unpublished draft"
+            exit 1
+          fi
+          gh release upload "v$RELEASE_VERSION" --repo "$GITHUB_REPOSITORY" --clobber \
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-chrome.zip" \
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-firefox.zip" \
+            ".output/youtube-live-chat-fullscreen-$RELEASE_VERSION-sources.zip" \
+            ".output/release-proof-v$RELEASE_VERSION.json"
+          gh release edit "v$RELEASE_VERSION" --repo "$GITHUB_REPOSITORY" --draft=false --latest

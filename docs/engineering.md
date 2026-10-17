@@ -48,7 +48,9 @@ Route handling, source selection, restoration, and failure behavior are detailed
 
 The popup, content script, and settings page have independent stores. They share committed preferences through `browser.storage.local`, split into enabled, theme, appearance, geometry, and locale domains. Writes in one domain do not carry stale values from another. Conflicting writes within one domain use last-write-wins.
 
-The settings iframe sends transient style previews through `window.postMessage`. Both directions check the expected window, exact origin, and payload schema. The YouTube parent origin must equal `https://www.youtube.com`; wildcard target origins are not used. Committed preferences still converge through Storage.
+The settings iframe sends transient style previews through `window.postMessage`. The receiver checks the expected window, exact origin, and payload schema. The YouTube parent origin must equal `https://www.youtube.com`; wildcard target origins are not used. Committed preferences still converge through Storage.
+
+The extension's manifest CSP restricts every frame ancestor to the extension itself or exact `https://www.youtube.com`. This protects the storage-writing settings UI from embedding by unrelated sites, including Firefox MV2 where the resource list cannot scope a public resource to one origin. An allowed YouTube iframe inside a hostile top-level page does not bypass this restriction. Only packaged scripts are permitted and embedded objects are disabled.
 
 This separation lets a color or size slider update the chat while it is being dragged, then save once when the gesture finishes. Save ordering also affects what the viewer sees: an earlier gesture's delayed save must not make the next preview snap back. [`SettingsFrame.tsx`](../entrypoints/content/settings/SettingsFrame.tsx) retains the final preview until its matching committed value arrives.
 
@@ -68,6 +70,6 @@ The [typed scenario tools](../e2e/support/youtubeScenario/) keep page constructi
 
 Run `yarn verify` for code, configuration, or dependency changes. Additional browser and package checks depend on the change; [Testing contracts](testing/contracts.md) explains which checks to run and where new tests belong.
 
-Production packages request only `storage`, inject content scripts only on `https://www.youtube.com/*`, and exclude testing bridges and fixtures. Chrome scopes public resources to the same HTTPS origin; Firefox MV2 exposes only the settings page through its resource list. Package checks enforce those rules. Diagnostic reports exclude URLs, video IDs, chat text, usernames, and other user-specific content.
+Production packages request only `storage`, inject content scripts only on `https://www.youtube.com/*`, and exclude testing bridges and fixtures. Chrome scopes public resources to the same HTTPS origin; Firefox MV2 exposes only the settings page through its resource list. Package checks enforce those rules and the exact extension-page CSP in both manifest formats. After building the production Chrome extension, `node scripts/verify/settings-embedding.browser-test.mjs` checks normal YouTube embedding and rejects an allowed immediate parent under a hostile ancestor without external network access. Diagnostic reports exclude URLs, video IDs, chat text, usernames, and other user-specific content.
 
 Release candidates and store submission use separate manual workflows. Publication verifies the candidate's hashes and submits the same ZIPs without rebuilding. See the [maintainer guide](maintainers/README.md) for real-browser verification and release procedures.
