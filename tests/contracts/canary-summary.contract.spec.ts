@@ -19,7 +19,17 @@ const require = createRequire(import.meta.url)
 const projectRoot = resolve(import.meta.dirname, '../..')
 const skipReason = 'Synthetic archive precondition is unavailable.'
 
-const runReporterFixture = async (requireClean: boolean) => {
+const fixtureTests = {
+  mixed: `test('local canary passes', () => {})
+test('local archive is skipped', () => { test.skip(true, ${JSON.stringify(skipReason)}) })`,
+  failure: `test('local extension assertion fails', () => { throw new Error('Synthetic extension assertion failure') })`,
+  flaky: `test('local canary recovers on retry', ({}, info) => {
+  if (info.retry === 0) throw new Error('Synthetic transient failure')
+})`,
+  skipped: `test('local archive is skipped', () => { test.skip(true, ${JSON.stringify(skipReason)}) })`,
+}
+
+const runReporterFixture = async (requireClean: boolean, scenario: keyof typeof fixtureTests = 'mixed') => {
   const directory = await mkdtemp(join(tmpdir(), 'ylc-canary-reporter-'))
   const configPath = join(directory, 'playwright.config.ts')
   const jsonPath = join(directory, 'canary-summary.json')
@@ -41,6 +51,7 @@ export default {
     ...options,
   ]),
   outputDir: ${JSON.stringify(join(directory, 'test-results'))},
+  retries: ${scenario === 'flaky' ? 1 : 0},
   projects: [{ name: ${JSON.stringify(CANARY_PROJECT_NAME)}, testDir: ${JSON.stringify(directory)}, testMatch: 'reporter.fixture.spec.ts' }],
 }
 `,
@@ -50,8 +61,7 @@ export default {
       `import playwright from ${JSON.stringify(require.resolve('@playwright/test'))}
 const { test } = playwright
 
-test('local canary passes', () => {})
-test('local archive is skipped', () => { test.skip(true, ${JSON.stringify(skipReason)}) })
+${fixtureTests[scenario]}
 `,
     )
 
@@ -160,25 +170,36 @@ describe('Real YouTube canary summary', () => {
     expect(renderCanarySummary(outcomes, 'passed')).toContain('No archive replay URL satisfied preconditions.')
   })
 
-  it('reports extension assertion failures as failed rather than degraded', () => {
-    expect(
-      summarizeCanaryOutcomes(
-        [
-          {
-            title: 'live › native closed fallback',
-            file: 'e2e/scenarios/live/nativeChatClosedExtensionLoads.spec.ts',
-            status: 'failed',
-          },
-        ],
-        'failed',
-      ),
-    ).toMatchObject({
-      state: 'failed',
-      executed: 1,
-      skipped: 0,
-      failed: 1,
+  it('publishes an actual extension assertion failure as failed rather than degraded', async () => {
+    const result = await runReporterFixture(false, 'failure')
+    expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+    expect(result.json).toMatchObject({
+      summary: { state: 'failed', executed: 1, passed: 0, flaky: 0, skipped: 0, failed: 1 },
+      runStatus: 'failed',
     })
-  })
+    expect(result.json.outcomes).toEqual([
+      expect.objectContaining({ status: 'failed', detail: expect.stringContaining('Synthetic extension assertion failure') }),
+    ])
+    expect(result.markdown).toMatch(/\|\s*Failed\s*\|\s*1\s*\|/)
+    expect(result.markdown).toContain('Synthetic extension assertion failure')
+  }, 20_000)
+
+  it.each([
+    { lane: 'ordinary', requireClean: false },
+    { lane: 'strict release', requireClean: true },
+  ])('publishes real retry recovery as flaky in the $lane lane', async ({ requireClean }) => {
+    const result = await runReporterFixture(requireClean, 'flaky')
+    if (requireClean) expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+    else expect(result.exitCode, `${result.stdout}\n${result.stderr}`).toBe(0)
+    expect(result.json).toMatchObject({
+      summary: { state: 'degraded', executed: 1, passed: 0, flaky: 1, skipped: 0, failed: 0 },
+      runStatus: 'passed',
+    })
+    expect(result.json.outcomes).toEqual([
+      expect.objectContaining({ status: 'flaky', title: expect.stringContaining('local canary recovers on retry') }),
+    ])
+    expect(result.markdown).toMatch(/\|\s*Flaky\s*\|\s*1\s*\|/)
+  }, 20_000)
 
   it('keeps uncorroborated fingerprint failures degraded outside the strict release lane', () => {
     expect(summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'degraded' }], 'passed').state).toBe('degraded')
@@ -211,23 +232,17 @@ describe('Real YouTube canary summary', () => {
     expect(shouldFailCanaryRun(summary, true)).toBe(true)
   })
 
-  it('makes an all-skipped canary non-green instead of silently passing', () => {
-    const summary = summarizeCanaryOutcomes(
-      [
-        {
-          title: 'archive › replay',
-          file: 'e2e/scenarios/archive/liveChatReplay.spec.ts',
-          status: 'skipped',
-          detail: 'No archive replay URL satisfied preconditions.',
-        },
-      ],
-      'passed',
-    )
-
-    expect(summary).toMatchObject({ state: 'not-run', executed: 0, skipped: 1 })
-    expect(shouldFailCanaryRun(summary)).toBe(true)
+  it('makes an actual all-skipped canary non-green instead of silently passing', async () => {
+    const result = await runReporterFixture(false, 'skipped')
+    expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+    expect(result.json).toMatchObject({
+      summary: { state: 'not-run', executed: 0, passed: 0, flaky: 0, skipped: 1, failed: 0 },
+      runStatus: 'passed',
+    })
+    expect(result.json.outcomes).toEqual([expect.objectContaining({ status: 'skipped', detail: skipReason })])
+    expect(result.markdown).toMatch(/\|\s*State\s*\|\s*not-run\s*\|/)
     expect(renderCanarySummary([], 'passed')).toContain('| State | not-run |')
-  })
+  }, 20_000)
 
   it('rejects degraded evidence in the strict release-candidate lane', () => {
     const degraded = summarizeCanaryOutcomes([passed, { ...passed, title: 'archive › replay', status: 'skipped' }], 'passed')

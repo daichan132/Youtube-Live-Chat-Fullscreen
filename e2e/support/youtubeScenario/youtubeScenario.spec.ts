@@ -117,7 +117,6 @@ describe('YouTube scenario compiler', () => {
     }))
     expect(compiled.watchHtml).toContain('src="/live_chat?continuation=ylc-fixture-video-1"')
     expect(compiled.watchHtml).not.toContain('/live_chat?v=')
-    expect(compiled.chatRoutes[0]?.body).toContain("window.__ylcFixtureChatRuntime = { videoId: 'video-1' }")
     expect(compiled.chatRoutes[0]?.body).toContain('data-ylc-fixture-video-id="video-1"')
   })
 

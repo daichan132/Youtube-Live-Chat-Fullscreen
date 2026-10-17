@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { createSettingsRepository, SettingsImportError } from '@/shared/settings/repository'
+import { APPEARANCE_STORAGE_KEY } from '@/shared/settings/storageKeys'
 import { chatSettingsStateAtom, EMPTY_MESSAGES } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
 import { DataTransfer } from './DataTransfer'
@@ -77,3 +78,37 @@ it('prevents duplicate apply and retains a readback failure until dismissed', as
   fireEvent.click(screen.getByText('popup.importClose'))
   expect(screen.queryByText('popup.importReadback')).not.toBeInTheDocument()
 })
+
+it.each(['oversized', 'malformed JSON', 'unsupported version'] as const)(
+  'rejects a %s backup before applying settings and accepts a later valid file',
+  async kind => {
+    const { runtime, input } = await setup()
+    const before = runtime.store.get(chatSettingsStateAtom)
+    const save = vi.spyOn(chrome.storage.local, 'set')
+    const text = vi.fn(async () =>
+      kind === 'malformed JSON'
+        ? '{'
+        : JSON.stringify({ ...runtime.exportSettings(), ...(kind === 'unsupported version' ? { version: 99 } : {}) }),
+    )
+    fireEvent.change(input, { target: { files: [{ name: 'invalid.json', size: kind === 'oversized' ? 1_048_577 : 20, text }] } })
+
+    await screen.findByText('popup.importError')
+    expect(screen.queryByRole('button', { name: 'popup.importApply' })).not.toBeInTheDocument()
+    expect(save).not.toHaveBeenCalled()
+    expect(runtime.store.get(chatSettingsStateAtom)).toBe(before)
+    // The documented 1 MiB preflight must reject before reading/parsing a large file.
+    if (kind === 'oversized') expect(text).not.toHaveBeenCalled()
+
+    const valid = runtime.exportSettings()
+    valid.chatSettings.profile.appearance.fontSize = 28
+    choose(input, valid)
+    await screen.findByText('popup.importConfirm')
+    expect(screen.queryByText('popup.importError')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'popup.importApply' }))
+    await screen.findByText('popup.importDone')
+    expect(runtime.store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(28)
+    expect((await chrome.storage.local.get(APPEARANCE_STORAGE_KEY))[APPEARANCE_STORAGE_KEY]).toMatchObject({
+      value: { profile: { appearance: { fontSize: 28 } } },
+    })
+  },
+)

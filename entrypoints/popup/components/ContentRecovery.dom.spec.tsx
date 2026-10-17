@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { StrictMode } from 'react'
 import { afterEach, expect, it, vi } from 'vitest'
 import { browser } from 'wxt/browser'
@@ -32,11 +32,15 @@ it('distinguishes accepted retry from display success and consumes the returned 
     .spyOn(browser.tabs, 'sendMessage')
     .mockResolvedValueOnce({ status: 'failed', token: 'first' } as never)
     .mockResolvedValueOnce({ status: 'starting', token: 'second', retry: 'accepted' } as never)
+    .mockResolvedValueOnce({ status: 'running', token: 'third', retry: 'accepted' } as never)
   render(<ContentRecovery />)
   await screen.findByText('popup.recovery.failed')
   fireEvent.click(screen.getByRole('button', { name: 'popup.recovery.retry' }))
   await screen.findByText('popup.recovery.accepted')
   expect(send).toHaveBeenLastCalledWith(12, { type: 'ylc:retry', token: 'first' }, { frameId: 0 })
+
+  fireEvent.click(screen.getByRole('button', { name: 'popup.recovery.retry' }))
+  await waitFor(() => expect(send).toHaveBeenLastCalledWith(12, { type: 'ylc:retry', token: 'second' }, { frameId: 0 }))
 })
 
 it('finishes the current status request after StrictMode replays the mount effect', async () => {

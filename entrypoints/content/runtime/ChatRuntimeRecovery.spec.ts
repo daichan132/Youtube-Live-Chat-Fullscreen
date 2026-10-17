@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
 import type { PageObservation } from '../platform/youtube/types'
 import { ChatRuntimeImpl } from './ChatRuntime'
-import type { PresentationLease } from './resources/PresentationLease'
 
 vi.mock('wxt/browser', () => ({
   browser: {
@@ -47,11 +47,6 @@ const observation = (): PageObservation => {
 
 const flushFrame = () => vi.advanceTimersByTime(20)
 
-const createPortalHost = (): PresentationLease => ({
-  sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })),
-  clear: vi.fn(),
-})
-
 describe('ChatRuntime unexpected error recovery', () => {
   beforeEach(() => {
     vi.useFakeTimers()
@@ -64,31 +59,77 @@ describe('ChatRuntime unexpected error recovery', () => {
     document.body.replaceChildren()
   })
 
-  it('releases resources and retries once after a transient observation error', () => {
-    const portalHost = createPortalHost()
-    const readObservation = vi
-      .fn()
-      .mockImplementationOnce(() => {
+  it('returns an active native iframe before recovering from a transient observation error', () => {
+    window.history.replaceState({}, '', '/watch?v=video-1')
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-1')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-1'
+    const chatDocument = document.implementation.createHTMLDocument('chat')
+    chatDocument.body.innerHTML =
+      '<yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer>'
+    Object.defineProperty(iframe, 'contentDocument', {
+      configurable: true,
+      value: new Proxy(chatDocument, {
+        get(target, key) {
+          if (key === 'location') return { href: 'https://www.youtube.com/live_chat?v=video-1' }
+          const value = Reflect.get(target, key, target)
+          return typeof value === 'function' ? value.bind(target) : value
+        },
+      }),
+    })
+    host.append(iframe)
+    const carrier = document.createElement('div')
+    const current = observation()
+    current.evidence.fullscreen = true
+    current.evidence.sourceKind = 'native-live'
+    current.evidence.capabilities.canBorrowNativeChat = true
+    current.evidence.capabilities.canRestoreNativeChat = true
+    current.targets.fullscreenRoot = current.targets.player
+    current.targets.nativeChatHost = host
+    current.targets.nativeChatIframe = iframe
+    current.targets.chatIframe = iframe
+    const player = current.targets.player
+    const controls = current.targets.rightControls
+    if (!player || !controls) throw new Error('Missing fixture player or controls')
+    player.append(controls)
+    document.body.append(player, host, carrier)
+    const readObservation = vi.fn(() => current)
+    const runtime = new ChatRuntimeImpl({ readObservation })
+
+    runtime.setEnabled(true)
+    runtime.setProfile(DEFAULT_CHAT_PROFILE)
+    runtime.setOverlayContainer(carrier)
+    runtime.start()
+    try {
+      flushFrame()
+      expect(runtime.getSnapshot().status).toBe('active')
+      expect(carrier.querySelector('iframe')).toBe(iframe)
+      const firstGeneration = runtime.getGeneration()
+      readObservation.mockImplementationOnce(() => {
         throw new Error('YouTube replaced the watch surface')
       })
-      .mockReturnValue(observation())
-    const runtime = new ChatRuntimeImpl({
-      portalHost,
-      readObservation,
-      resolveDecision: () => ({ kind: 'inactive', reason: 'not-fullscreen' }),
-    })
 
-    runtime.start()
-    runtime.setEnabled(true)
-    flushFrame()
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+      flushFrame()
 
-    expect(runtime.getDiagnosticReport().runtime.failureCode).toBe('UNEXPECTED_RUNTIME_ERROR')
-    expect(portalHost.clear).toHaveBeenCalled()
+      expect(host.querySelector('iframe')).toBe(iframe)
+      expect(carrier.querySelector('iframe')).toBeNull()
+      expect(runtime.getSnapshot()).toMatchObject({ status: 'inactive', showOverlay: false, showSwitch: false })
+      expect(runtime.getDiagnosticReport().runtime).toMatchObject({
+        failureCode: 'UNEXPECTED_RUNTIME_ERROR',
+        failureStage: 'observe-page',
+        leases: { chat: { kind: 'none', state: 'none' } },
+      })
 
-    flushFrame()
-    expect(readObservation).toHaveBeenCalledTimes(2)
-    expect(runtime.getSnapshot().status).toBe('inactive')
-    runtime.stop()
+      flushFrame()
+      expect(runtime.getSnapshot().status).toBe('active')
+      expect(runtime.getGeneration()).toBeGreaterThan(firstGeneration)
+      expect(carrier.querySelector('iframe')).toBe(iframe)
+    } finally {
+      runtime.stop()
+    }
+    expect(host.querySelector('iframe')).toBe(iframe)
   })
 
   it('does not enter an unbounded retry loop after repeated errors', () => {

@@ -1,4 +1,5 @@
 import { act, fireEvent } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { createStore } from 'jotai/vanilla'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
@@ -84,5 +85,45 @@ describe('OverlayFrame', () => {
       rect: { x: 0.1375, y: 70 / 600, width: 0.375, height: 0.5 },
       pinned: true,
     })
+  })
+
+  it('applies every placement action to the visible panel and saves player-relative geometry', async () => {
+    const user = userEvent.setup()
+    const { getByRole } = renderWithStore(
+      <OverlayFrame>
+        <div>chat</div>
+      </OverlayFrame>,
+      store,
+    )
+    await user.tab()
+    await user.tab()
+    await user.tab()
+    expect(getByRole('button', { name: 'content.placement.open' })).toHaveFocus()
+    await user.keyboard('{Enter}')
+
+    for (const [action, left, top, width, height] of [
+      ['up', 100, 50, 300, 300],
+      ['down', 100, 60, 300, 300],
+      ['left', 90, 60, 300, 300],
+      ['right', 100, 60, 300, 300],
+      ['narrower', 100, 60, 290, 300],
+      ['wider', 100, 60, 300, 300],
+      ['shorter', 100, 60, 300, 290],
+      ['taller', 100, 60, 300, 300],
+    ] as const) {
+      await user.click(getByRole('button', { name: `content.placement.${action}` }))
+
+      expect(getByRole('application'), action).toHaveStyle({
+        left: `${left}px`,
+        top: `${top}px`,
+        width: `${width}px`,
+        height: `${height}px`,
+      })
+      expect(store.get(chatSettingsStateAtom).geometry, action).toEqual({
+        reference: 'player',
+        rect: { x: left / 800, y: top / 600, width: width / 800, height: height / 600 },
+        pinned: true,
+      })
+    }
   })
 })

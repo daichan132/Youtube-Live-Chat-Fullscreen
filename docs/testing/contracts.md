@@ -24,6 +24,8 @@ Coverage helps locate gaps; a higher number is not evidence that assertions catc
 
 For geometry, specify the player dimensions and expected pixels or storage ratios directly; importing the production converter into both sides of an assertion can hide a conversion defect. The [popup browser scenarios](../../e2e/scenarios/popup/popup.spec.ts) also verify the network blocker against an offline fallback that would succeed without it, so DNS failures cannot make the test pass. Scenario classification is checked once in [`projectClassification.spec.ts`](../../e2e/config/projectClassification.spec.ts); fixture API behavior is exercised by the browser scenarios rather than a list of prototype method names.
 
+Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e/scenarios/live/noChatVideo.fixture.spec.ts) shows a live overlay between two no-chat pages, so an extension that never starts cannot satisfy the whole test. Failure-recovery tests should first acquire the resource they claim to release. Canary reporter contracts execute browser-free passing, failing, skipped, and retried tests through the real runner; the release-proof CLI contract verifies known artifact bytes and rejects same-size corruption in a disposable project.
+
 See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
 
 ## Vitest commands

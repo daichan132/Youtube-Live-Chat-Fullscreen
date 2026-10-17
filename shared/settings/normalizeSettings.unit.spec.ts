@@ -166,7 +166,7 @@ describe('normalizeChatSettings', () => {
       DEFAULT_CHAT_SETTINGS,
     )
 
-    expect(Object.keys(result)).toEqual(['profile', 'geometry', 'presets'])
+    expect(Object.keys(result).sort()).toEqual(['geometry', 'presets', 'profile'])
     expect(result.presets).toEqual([])
   })
 })

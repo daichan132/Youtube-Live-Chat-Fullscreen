@@ -13,12 +13,33 @@ const primary: CompatibilityFingerprint = {
 }
 
 describe('Canary compatibility fingerprint', () => {
-  it('reports only sanitized field-level differences', () => {
-    const next = { ...primary, chatProbe: 'chat.iframe.v2.2' }
+  it('reports changed probes and nested capabilities without copying unrelated page metadata', () => {
+    const previous = {
+      ...primary,
+      pageUrl: 'https://www.youtube.com/watch?v=private-previous',
+      userName: 'private-user-before',
+    }
+    const next = {
+      ...primary,
+      chatProbe: 'chat.iframe.v2.2',
+      mode: 'archive' as const,
+      source: 'borrowed-replay' as const,
+      capabilities: { overlay: false, playerSwitch: false, nativeRestore: true },
+      pageUrl: 'https://www.youtube.com/watch?v=private-next',
+      userName: 'private-user-after',
+    }
 
-    expect(diffCompatibilityFingerprints(primary, next)).toEqual([
+    expect([...diffCompatibilityFingerprints(previous, next)].sort((left, right) => left.field.localeCompare(right.field))).toEqual([
       { field: 'chatProbe', previous: 'chat.iframe.v2.1', current: 'chat.iframe.v2.2' },
+      { field: 'mode', previous: 'live', current: 'archive' },
+      { field: 'overlay', previous: true, current: false },
+      { field: 'playerSwitch', previous: true, current: false },
+      { field: 'source', previous: 'borrowed-live', current: 'borrowed-replay' },
     ])
-    expect(JSON.stringify(diffCompatibilityFingerprints(primary, next))).not.toContain('http')
+  })
+
+  it('reports no changes without a baseline or for an unchanged reconstructed fingerprint', () => {
+    expect(diffCompatibilityFingerprints(null, primary)).toEqual([])
+    expect(diffCompatibilityFingerprints(primary, { ...primary, capabilities: { ...primary.capabilities } })).toEqual([])
   })
 })

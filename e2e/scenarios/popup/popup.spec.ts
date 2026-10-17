@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises'
 import { expect, test } from '@e2e/fixtures'
 import { blockExternalNetwork } from '@e2e/fixtures/deterministic'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
@@ -100,7 +101,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     await expect(donateLink).toHaveCount(1)
   })
 
-  test('import persists settings and reflects on reopen', async ({ page, extension }) => {
+  test('imports settings, hydrates them on reopen, and exports the chosen values as a real download', async ({ page, extension }) => {
     test.setTimeout(90000)
 
     const settings = {
@@ -132,6 +133,28 @@ test.describe('popup', { tag: '@popup' }, () => {
     await page.goto(extension.url('popup.html'))
     await page.getByLabel('Select language').waitFor({ state: 'visible' })
     await expect(page.locator('[role="switch"]')).toHaveAttribute('aria-checked', 'false')
+
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: 'Export', exact: true }).click(),
+    ])
+    expect(download.suggestedFilename()).toMatch(/^yt-livechat-fullscreen-backup-\d{4}-\d{2}-\d{2}\.json$/)
+    expect(await download.failure()).toBeNull()
+    const downloadedPath = await download.path()
+    if (!downloadedPath) throw new Error('The settings export did not produce a downloaded file.')
+    const backup = JSON.parse(await readFile(downloadedPath, 'utf8'))
+    expect(Object.keys(backup).sort()).toEqual(['chatSettings', 'exportedAt', 'globalSetting', 'version'])
+    expect(backup).toMatchObject({
+      version: 2,
+      globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
+      chatSettings: {
+        profile: {
+          appearance: { fontSize: 40, blur: 10 },
+          display: { idleVisibility: 'auto-hide' },
+        },
+      },
+    })
+    expect(Number.isNaN(Date.parse(backup.exportedAt))).toBe(false)
   })
 
   test('saved presets remain editable, reorderable, and applicable in settings', async ({ page, extension }) => {

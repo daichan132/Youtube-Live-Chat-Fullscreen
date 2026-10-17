@@ -95,6 +95,18 @@ describe('resolveChatDecision', () => {
     })
   })
 
+  it('keeps unsupported pages inactive even while a live source remains in the DOM', () => {
+    expect(
+      decide(createSnapshot({ isWatchPage: false, playerIsLive: true, chatIframe: element<HTMLIFrameElement>(), iframeMode: 'live' })),
+    ).toEqual({ kind: 'inactive', reason: 'not-watch-page' })
+  })
+
+  it('waits for a current video identity before exposing a live source or switch', () => {
+    expect(
+      decide(createSnapshot({ videoId: null, playerIsLive: true, chatIframe: element<HTMLIFrameElement>(), iframeMode: 'live' })),
+    ).toEqual({ kind: 'pending', videoId: null, mode: null, canToggle: false })
+  })
+
   it('uses the current native live iframe before managed fallback', () => {
     const iframe = element<HTMLIFrameElement>()
     expect(
@@ -224,8 +236,18 @@ describe('resolveChatDecision', () => {
     })
   })
 
-  it('marks an explicit unavailable document as terminal', () => {
-    expect(decide(createSnapshot({ chatUnavailable: true }))).toEqual({
+  it.each(['live', 'archive'] as const)('keeps an explicit unavailable document terminal despite a remaining %s iframe', iframeMode => {
+    expect(
+      decide(
+        createSnapshot({
+          chatUnavailable: true,
+          chatIframe: element<HTMLIFrameElement>(),
+          iframeMode,
+          playerIsLive: true,
+          archiveOpenControlAvailable: true,
+        }),
+      ),
+    ).toEqual({
       kind: 'unavailable',
       videoId: 'video-1',
     })

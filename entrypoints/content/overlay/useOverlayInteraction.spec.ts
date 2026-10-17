@@ -1,16 +1,18 @@
 import { act, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { deriveOverlayPresentation, useOverlayInteraction } from './useOverlayInteraction'
+import { useOverlayInteraction } from './useOverlayInteraction'
 
 const renderInteraction = (overrides: Partial<Parameters<typeof useOverlayInteraction>[0]> = {}) =>
-  renderHook(() =>
-    useOverlayInteraction({
-      initialDisplayOnMount: false,
-      settingsOpen: false,
-      documentFocused: true,
-      alwaysVisible: false,
-      ...overrides,
-    }),
+  renderHook(
+    options =>
+      useOverlayInteraction({
+        initialDisplayOnMount: false,
+        settingsOpen: false,
+        documentFocused: true,
+        alwaysVisible: false,
+        ...options,
+      }),
+    { initialProps: overrides },
   )
 
 describe('useOverlayInteraction', () => {
@@ -58,31 +60,43 @@ describe('useOverlayInteraction', () => {
     act(() => result.current.startDragging())
     expect(result.current.state).toBe('dragging')
     expect(result.current.chatVisible).toBe(true)
+    expect(result.current.controlsVisible).toBe(true)
 
     act(() => result.current.finishDragging())
     act(() => result.current.startResizing())
     expect(result.current.state).toBe('resizing')
+    expect(result.current.controlsVisible).toBe(false)
 
-    rerender()
+    rerender({ settingsOpen: true })
+    expect(result.current.state).toBe('settings-open')
+    expect(result.current.controlsVisible).toBe(false)
+    expect(result.current.chatVisible).toBe(true)
     act(() => result.current.finishResizing())
+    expect(result.current.state).toBe('settings-open')
+    rerender({ settingsOpen: false })
     expect(result.current.state).toBe('idle')
   })
 
-  it.each([
-    { name: 'focused idle', documentFocused: true, idle: true, chatVisible: false },
-    { name: 'window blur', documentFocused: false, idle: true, chatVisible: true },
-    { name: 'focus restored', documentFocused: true, idle: true, chatVisible: false },
-    { name: 'recent activity', documentFocused: true, idle: false, chatVisible: true },
-  ])('derives the focus and idle contract for $name', ({ documentFocused, idle, chatVisible }) => {
-    expect(
-      deriveOverlayPresentation({
-        settingsOpen: false,
-        documentFocused,
-        alwaysVisible: false,
-        hoverRegion: 'none',
-        gesture: 'none',
-        idle,
-      }),
-    ).toEqual({ state: 'idle', controlsVisible: false, chatVisible })
+  it('shows recent activity until idle, while focus and always-visible settings override the timeout', () => {
+    vi.useFakeTimers()
+    const { result, rerender } = renderInteraction({ initialDisplayOnMount: true })
+    expect(result.current.chatVisible).toBe(true)
+
+    act(() => vi.advanceTimersByTime(1000))
+    expect(result.current.chatVisible).toBe(false)
+
+    act(() => document.dispatchEvent(new MouseEvent('mousemove', { bubbles: true })))
+    act(() => vi.advanceTimersToNextFrame())
+    expect(result.current.chatVisible).toBe(true)
+    act(() => vi.advanceTimersByTime(1000))
+    expect(result.current.chatVisible).toBe(false)
+
+    rerender({ documentFocused: false })
+    expect(result.current.chatVisible).toBe(true)
+    expect(result.current.controlsVisible).toBe(false)
+    rerender({ documentFocused: true })
+    expect(result.current.chatVisible).toBe(false)
+    rerender({ alwaysVisible: true })
+    expect(result.current.chatVisible).toBe(true)
   })
 })
