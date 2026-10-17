@@ -42,6 +42,8 @@ A failed Storage API call aborts initialization. It is never interpreted as a mi
 
 Locale has one narrow exception: an extension page that can still read a legacy locale may copy that selection non-destructively into `ylc-locale`. The old value remains. This allows content scripts, which cannot access extension-page localStorage, to converge on the same language.
 
+That automatic copy yields to any locale intent already made by the repository or received while the snapshot is loading. Storage listeners stay active during the read, and the copy checks its generation again when its queued write starts. A newer selection observed before the copy starts invalidates that copy.
+
 ## Writes and convergence
 
 Each domain has an independent serialized queue. A write is attempted once, waits 400 ms after failure, and is attempted once more. An unresolved latest failure remains visible in `PersistenceStatus`, makes `flush()` reject, and can be retried explicitly.
