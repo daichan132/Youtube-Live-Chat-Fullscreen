@@ -152,6 +152,25 @@ export const createSettingsRepository = (
     }
   }
 
+  const ensureStorageWatchers = () => {
+    if (storageUnwatchers) return
+    storageUnwatchers = PERSISTENCE_DOMAINS.map(domain =>
+      settingsItems[domain].watch(next => {
+        if (!isStoredEnvelope(next) || next.writerId === writerId) return
+        if (domain === 'enabled' && typeof next.value !== 'boolean') return
+        if (domain === 'locale' && typeof next.value !== 'string') return
+        acceptExternalCommit(domain)
+        notifyCommitted(domain, next.value, 'external')
+      }),
+    )
+  }
+
+  const releaseIdleStorageWatchers = () => {
+    if (watchHandlers.size > 0 || activeCount() > 0 || replacementTail || !storageUnwatchers) return
+    for (const unwatch of storageUnwatchers) unwatch()
+    storageUnwatchers = null
+  }
+
   const readCommittedEnvelope = async (domain: PersistenceDomain) => {
     const [result] = await storage.getItems([settingsItems[domain]])
     return isStoredEnvelope(result?.value) ? result.value : null
@@ -177,6 +196,7 @@ export const createSettingsRepository = (
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
+    ensureStorageWatchers()
     const previous = tails.get(domain) ?? Promise.resolve()
     const barrier = replacementTail
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
@@ -211,6 +231,7 @@ export const createSettingsRepository = (
         if (count > 0) activeCounts.set(domain, count)
         else activeCounts.delete(domain)
         publishStatus()
+        releaseIdleStorageWatchers()
       })
     tails.set(domain, current)
     publishStatus()
@@ -298,8 +319,10 @@ export const createSettingsRepository = (
       .finally(() => {
         if (replacementTail === current) replacementTail = null
         publishStatus()
+        releaseIdleStorageWatchers()
       })
     replacementTail = current
+    ensureStorageWatchers()
     publishStatus()
     // Drain later edits too, but only
     // after releasing the barrier those edits depend on (never inside it).
@@ -330,22 +353,11 @@ export const createSettingsRepository = (
     replaceSettings,
     watch: handlers => {
       watchHandlers.add(handlers)
-      if (!storageUnwatchers) {
-        storageUnwatchers = PERSISTENCE_DOMAINS.map(domain =>
-          settingsItems[domain].watch(next => {
-            if (!isStoredEnvelope(next) || next.writerId === writerId) return
-            if (domain === 'enabled' && typeof next.value !== 'boolean') return
-            if (domain === 'locale' && typeof next.value !== 'string') return
-            acceptExternalCommit(domain)
-            notifyCommitted(domain, next.value, 'external')
-          }),
-        )
-      }
+      ensureStorageWatchers()
       return () => {
         watchHandlers.delete(handlers)
-        if (watchHandlers.size !== 0 || !storageUnwatchers) return
-        for (const unwatch of storageUnwatchers) unwatch()
-        storageUnwatchers = null
+        // Pending writes still need external commits to invalidate old retries.
+        releaseIdleStorageWatchers()
       }
     },
     getPersistenceStatus,

@@ -48,6 +48,8 @@ Each domain has an independent serialized queue. A write is attempted once, wait
 
 A newer local write or valid external committed event invalidates an obsolete failed retry for that domain. A local commit reads Storage back to converge on the final value, while its own Storage events are ignored. A local write can finish after an external commit, so the readback generation is captured after the write. Any new local intent or external event received while that readback is pending prevents the captured result from being applied.
 
+Disposing a UI runtime removes its notifications but does not discard an in-flight save. The repository keeps its Storage listeners until pending writes and imports finish, so a newer external commit can still cancel an older delayed retry. With no UI watchers or pending operations, it releases those listeners.
+
 Appearance and locale notifications carry an optional `SettingsCommitSource`. A read response is an own `readback` acknowledgement only when its envelope has this repository's writer ID; reading another writer's envelope is an `external` commit. Confirmed own imports use `import`. Notifications without a source are treated as external by the runtime. This metadata is in memory only; it does not change the stored envelope.
 
 `flush()` waits for both domain tails and the reserved import barrier, rechecking when new work arrives. `createAppRuntime` applies repository notifications without echoing them to Storage.
