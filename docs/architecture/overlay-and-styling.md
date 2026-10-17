@@ -38,6 +38,8 @@ Automatic placement applies only to unpinned geometry while no gesture or draft 
 
 Obstacle mutations are measured once per animation frame, and unchanged rectangles do not trigger a React update. Obstacle observation stops after a successful automatic move or when geometry becomes pinned; player-size observation continues. Auto-placement is separate from chat-runtime reconciliation.
 
+Preset reordering has a separate [`usePresetReorder.ts`](../../entrypoints/content/features/YTDLiveChatSetting/components/PresetContent/usePresetReorder.ts) session. Pointer and keyboard moves share the order, preview, and announcement update. Each lifted gesture owns its listeners, pointer capture, and auto-scroll frame through one disposable resource owner; a callback from a finished gesture cannot affect the next one. The stationary scroll container or list captures the pointer so moving a row does not cancel the gesture. Preview changes stay in memory until confirmation. Escape, blur, lost capture, or an external list change cancels them.
+
 ## Settings previews and committed styles
 
 The settings UI runs in its own extension-origin `settings.html` iframe and Jotai store. Continuous controls edit a draft; completing a gesture saves the appearance once. [`useSettingsStylePreview.ts`](../../entrypoints/settings/useSettingsStylePreview.ts) sends the draft profile to [`SettingsFrame.tsx`](../../entrypoints/content/settings/SettingsFrame.tsx) once per animation frame so the content overlay updates during editing.

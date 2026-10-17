@@ -1,4 +1,4 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { usePresetReorder } from './usePresetReorder'
 
@@ -90,12 +90,15 @@ describe('usePresetReorder pointer lifecycle', () => {
       vi.spyOn(row, 'getBoundingClientRect').mockReturnValue(rectAt(index * 40))
     })
     const handle = view.getByRole('button', { name: 'reorder first' })
-    const capture = installPointerCapture(handle)
+    const captureTarget = view.container.querySelector<HTMLElement>('[data-ylc-setting-scroll-container]')
+    if (!captureTarget) throw new Error('Missing settings scroll container')
+    const capture = installPointerCapture(captureTarget)
 
     fireEvent.pointerDown(handle, { button: 0, pointerId: 2 })
+    expect(capture.setPointerCapture).toHaveBeenCalledWith(2)
     if (eventType === 'lostpointercapture') {
       capture.hasPointerCapture.mockReturnValue(false)
-      fireEvent(handle, new PointerEvent('lostpointercapture', { pointerId: 2 }))
+      fireEvent(captureTarget, new PointerEvent('lostpointercapture', { pointerId: 2 }))
     } else {
       fireEvent(window, new Event('blur'))
     }
@@ -109,5 +112,72 @@ describe('usePresetReorder pointer lifecycle', () => {
     } else {
       expect(capture.releasePointerCapture).toHaveBeenCalledWith(2)
     }
+  })
+
+  it('keeps container capture through a bubbled handle-capture loss and releases once after committing', () => {
+    installAnimationFrameQueue()
+    const onCommit = vi.fn()
+    const view = render(<Harness onCommit={onCommit} />)
+    const container = view.container.querySelector<HTMLElement>('[data-ylc-setting-scroll-container]')
+    if (!container) throw new Error('Missing settings scroll container')
+    const capture = installPointerCapture(container)
+    view.container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]').forEach((row, index) => {
+      vi.spyOn(row, 'getBoundingClientRect').mockReturnValue(rectAt(index * 40))
+    })
+    const handle = view.getByRole('button', { name: 'reorder first' })
+    const handleCapture = installPointerCapture(handle)
+    fireEvent.pointerDown(handle, { button: 0, pointerId: 3, clientY: 0 })
+    // Touch may first implicitly capture on the handle before its explicit
+    // container owner takes over. That loss bubbles but does not end the drag.
+    fireEvent(handle, new PointerEvent('lostpointercapture', { pointerId: 3, bubbles: true }))
+    expect(view.getByTestId('active')).toHaveTextContent('first')
+    expect(capture.releasePointerCapture).not.toHaveBeenCalled()
+    fireEvent.pointerMove(window, { pointerId: 3, clientY: 90 })
+
+    expect(capture.setPointerCapture).toHaveBeenCalledWith(3)
+    expect(handleCapture.setPointerCapture).not.toHaveBeenCalled()
+    expect(onCommit).not.toHaveBeenCalled()
+    fireEvent.pointerUp(window, { pointerId: 3, clientY: 90 })
+    fireEvent.pointerCancel(window, { pointerId: 3 })
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith(['second', 'third', 'first'])
+    expect(capture.releasePointerCapture).toHaveBeenCalledExactlyOnceWith(3)
+  })
+
+  it('ignores an already queued auto-scroll callback after another gesture starts', () => {
+    const frames = installAnimationFrameQueue()
+    const onCommit = vi.fn()
+    const view = render(<Harness onCommit={onCommit} />)
+    const container = view.container.querySelector<HTMLElement>('[data-ylc-setting-scroll-container]')
+    if (!container) throw new Error('Missing settings scroll container')
+    Object.defineProperties(container, {
+      clientHeight: { configurable: true, value: 380 },
+      scrollHeight: { configurable: true, value: 800 },
+    })
+    vi.spyOn(container, 'getBoundingClientRect').mockReturnValue(new DOMRect(0, 0, 200, 380))
+    view.container.querySelectorAll<HTMLElement>('[data-ylc-preset-item]').forEach((row, index) => {
+      vi.spyOn(row, 'getBoundingClientRect').mockReturnValue(rectAt(index * 40))
+    })
+
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder first' }), {
+      button: 0,
+      pointerId: 1,
+      clientY: 379,
+    })
+    const staleFrame = frames.values().next().value
+    if (!staleFrame) throw new Error('Missing queued auto-scroll callback')
+    fireEvent.pointerCancel(window, { pointerId: 1 })
+    fireEvent.pointerDown(view.getByRole('button', { name: 'reorder second' }), {
+      button: 0,
+      pointerId: 2,
+      clientY: 379,
+    })
+    act(() => staleFrame(performance.now()))
+
+    expect(container.scrollTop).toBe(0)
+    expect(frames).toHaveLength(1)
+    expect(view.getByTestId('active')).toHaveTextContent('second')
+    fireEvent.pointerUp(window, { pointerId: 2, clientY: 379 })
+    expect(onCommit).not.toHaveBeenCalled()
+    expect(frames).toHaveLength(0)
   })
 })

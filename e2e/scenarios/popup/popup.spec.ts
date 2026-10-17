@@ -131,18 +131,56 @@ test.describe('popup', { tag: '@popup' }, () => {
     await savedName.press('Tab')
 
     const reorderSaved = page.getByRole('button', { name: 'Reorder Reading layout', exact: true })
+    const displayedPresetNames = () => presetNames.evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value))
+    // Read in this extension page so checking storage never blurs a held gesture.
+    const storedPresetNames = async () =>
+      (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.presets.map(preset =>
+        preset.kind === 'builtin' ? preset.id : preset.name,
+      )
     await reorderSaved.focus()
     await page.keyboard.press('ArrowUp')
-    await expect
-      .poll(() => presetNames.evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value)))
-      .toEqual(['Standard', 'Reading layout', 'Existing style'])
-    await expect
-      .poll(async () =>
-        (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets.map(preset =>
-          preset.kind === 'builtin' ? preset.id : preset.name,
-        ),
-      )
-      .toEqual(['standard', 'Reading layout', 'Existing style'])
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+    await expect.poll(storedPresetNames).toEqual(['standard', 'Reading layout', 'Existing style'])
+
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('ArrowUp')
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['standard', 'Reading layout', 'Existing style'])
+    await page.keyboard.press('Escape')
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+
+    const firstRow = page.locator('[data-ylc-preset-item]').first()
+    const handleBox = await reorderSaved.boundingBox()
+    const firstRowBox = await firstRow.boundingBox()
+    if (!handleBox || !firstRowBox) throw new Error('Missing visible preset reorder targets')
+    const pointerX = handleBox.x + handleBox.width / 2
+    await page.mouse.move(pointerX, handleBox.y + handleBox.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(pointerX, firstRowBox.y + firstRowBox.height / 4, { steps: 4 })
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['standard', 'Reading layout', 'Existing style'])
+    await page.mouse.up()
+    await expect.poll(storedPresetNames).toEqual(['Reading layout', 'standard', 'Existing style'])
+
+    const movedHandleBox = await reorderSaved.boundingBox()
+    const lastRowBox = await page.locator('[data-ylc-preset-item]').last().boundingBox()
+    if (!movedHandleBox || !lastRowBox) throw new Error('Missing visible preset cancellation targets')
+    await page.mouse.move(pointerX, movedHandleBox.y + movedHandleBox.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(pointerX, lastRowBox.y + (lastRowBox.height * 3) / 4, { steps: 4 })
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Existing style', 'Reading layout'])
+    await page.keyboard.press('Escape')
+    await page.mouse.up()
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['Reading layout', 'standard', 'Existing style'])
+
+    await reorderSaved.focus()
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+    await expect(reorderSaved).toBeFocused()
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+    await expect.poll(storedPresetNames).toEqual(['standard', 'Reading layout', 'Existing style'])
 
     await page.getByRole('button', { name: 'Apply Existing style', exact: true }).click()
     await expect
