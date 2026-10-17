@@ -139,9 +139,11 @@ describe('YouTube scenario compiler', () => {
   })
 
   it('compiles an opaque native continuation with an observable in-memory chat runtime', () => {
-    const compiled = compileYouTubeScenario(createLiveState({
-      chat: { mode: 'live', native: { state: 'playable', continuationVideoId: 'video-1' }, response: 'playable' },
-    }))
+    const compiled = compileYouTubeScenario(
+      createLiveState({
+        chat: { mode: 'live', native: { state: 'playable', continuationVideoId: 'video-1' }, response: 'playable' },
+      }),
+    )
     expect(compiled.watchHtml).toContain('src="/live_chat?continuation=ylc-fixture-video-1"')
     expect(compiled.watchHtml).not.toContain('/live_chat?v=')
     expect(compiled.chatRoutes[0]?.body).toContain("window.__ylcFixtureChatRuntime = { videoId: 'video-1' }")
@@ -149,18 +151,19 @@ describe('YouTube scenario compiler', () => {
   })
 
   it('navigates a src-less native browsing context without declaring an iframe src', () => {
-    const compiled = compileYouTubeScenario(createLiveState({
-      chat: {
-        mode: 'live',
-        native: { state: 'playable', continuationVideoId: 'previous-video', navigateWithoutSrc: true },
-        response: 'playable',
-      },
-    }))
+    const compiled = compileYouTubeScenario(
+      createLiveState({
+        chat: {
+          mode: 'live',
+          native: { state: 'playable', continuationVideoId: 'previous-video', navigateWithoutSrc: true },
+          response: 'playable',
+        },
+      }),
+    )
     const iframe = compiled.spaDocument.bodyHtml.match(/<iframe\b[^>]*>/)?.[0]
     expect(iframe).toBeDefined()
     expect(iframe).not.toMatch(/\bsrc=/)
     expect(compiled.spaDocument.nativeChatNavigationHref).toBe('/live_chat?continuation=ylc-fixture-previous-video')
-    expect(compiled.watchHtml).toContain('contentWindow.location.assign(nativeChatNavigationHref)')
   })
 
   it('keeps raw fixture DOM, routing, and mutation knowledge out of deterministic specs', () => {

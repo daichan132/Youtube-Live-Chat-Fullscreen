@@ -9,6 +9,7 @@ import {
 import { SHADOW_HOST, switchButtonContainerSelector, switchButtonSelector } from '@e2e/utils/selectors'
 import type { JSHandle, Page } from '@playwright/test'
 import { compileYouTubeScenario } from './compiler'
+import { scenarioDocumentInitializationScript } from './initializeScenarioDocument'
 import type {
   ExtensionIframeIdentity,
   NativeIframeContextObservation,
@@ -82,45 +83,23 @@ export class YouTubeScenario {
     const generation = this.generation + 1
     await this.installChatRoutes(compiled.chatRoutes)
     await this.page.evaluate(
-      async ({ generation, spaDocument, watchUrl }) => {
+      async ({ initializationScript, spaDocument, watchUrl }) => {
         if (document.fullscreenElement) await document.exitFullscreen()
         document.dispatchEvent(new Event('yt-navigate-start'))
         window.history.pushState({}, '', watchUrl)
         document.title = spaDocument.title
         document.body.innerHTML = spaDocument.bodyHtml
 
-        const player = document.getElementById('movie_player')
-        const fullscreenButton = document.querySelector<HTMLButtonElement>('.ytp-fullscreen-button')
-        const boundaryProbe = document.querySelector<HTMLButtonElement>('[data-ylc-player-boundary-probe]')
-        if (!player || !fullscreenButton || !boundaryProbe) throw new Error('Compiled SPA document is missing its player contract.')
-        if (spaDocument.nativeChatNavigationHref) {
-          const iframe = document.querySelector<HTMLIFrameElement>('ytd-live-chat-frame > #chatframe')
-          iframe?.contentWindow?.location.assign(spaDocument.nativeChatNavigationHref)
-        }
-
-        player.dataset.ylcFixtureGeneration = String(generation)
-        Object.assign(player, {
-          getVideoData: () => ({
-            isLive: spaDocument.isLive,
-            isLiveContent: spaDocument.isLive,
-            video_id: spaDocument.videoId,
-          }),
-        })
-        fullscreenButton.addEventListener('click', async () => {
-          if (document.fullscreenElement) {
-            await document.exitFullscreen()
-            return
-          }
-          await player.requestFullscreen()
-        })
-        boundaryProbe.addEventListener('click', event => {
-          const target = event.currentTarget as HTMLElement
-          target.dataset.ylcClicks = String(Number(target.dataset.ylcClicks ?? 0) + 1)
-        })
+        // Run the same self-contained browser code before publishing navigation completion.
+        new Function(initializationScript)()
         document.dispatchEvent(new Event('yt-page-data-updated'))
         document.dispatchEvent(new Event('yt-navigate-finish'))
       },
-      { generation, spaDocument: compiled.spaDocument, watchUrl: compiled.watchUrl },
+      {
+        initializationScript: scenarioDocumentInitializationScript({ ...compiled.spaDocument, generation }),
+        spaDocument: compiled.spaDocument,
+        watchUrl: compiled.watchUrl,
+      },
     )
     this.state = state
     this.generation = generation
@@ -295,10 +274,12 @@ export class YouTubeScenario {
           video_id: videoId,
         }),
       })
-      document.querySelectorAll('.ytp-time-display.ytp-live').forEach(element => element.classList.remove('ytp-live'))
-      document
-        .querySelectorAll('.ytp-live-badge.ytp-live-badge-is-livehead')
-        .forEach(element => element.classList.remove('ytp-live-badge-is-livehead'))
+      document.querySelectorAll('.ytp-time-display.ytp-live').forEach(element => {
+        element.classList.remove('ytp-live')
+      })
+      document.querySelectorAll('.ytp-live-badge.ytp-live-badge-is-livehead').forEach(element => {
+        element.classList.remove('ytp-live-badge-is-livehead')
+      })
 
       const host = document.createElement('ytd-live-chat-frame')
       host.setAttribute('video-id', videoId)
@@ -342,17 +323,15 @@ export class YouTubeScenario {
   }
 
   observeNativeIframeStyles(properties: string[]) {
-    return this.page
-      .locator('ytd-live-chat-frame > #chatframe')
-      .evaluate(
-        (iframe: HTMLIFrameElement, properties) =>
-          properties.map(property => ({
-            property,
-            value: iframe.style.getPropertyValue(property),
-            priority: iframe.style.getPropertyPriority(property),
-          })),
-        properties,
-      )
+    return this.page.locator('ytd-live-chat-frame > #chatframe').evaluate(
+      (iframe: HTMLIFrameElement, properties) =>
+        properties.map(property => ({
+          property,
+          value: iframe.style.getPropertyValue(property),
+          priority: iframe.style.getPropertyPriority(property),
+        })),
+      properties,
+    )
   }
 
   observeExtensionIframeIdentity(): Promise<ExtensionIframeIdentity> {

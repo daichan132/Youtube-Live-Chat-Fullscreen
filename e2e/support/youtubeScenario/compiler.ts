@@ -1,3 +1,4 @@
+import { scenarioDocumentInitializationScript } from './initializeScenarioDocument'
 import type { NativeChatDefinition, YouTubeScenarioState } from './types'
 
 const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]+$/
@@ -133,20 +134,7 @@ const renderWatchHtml = (state: YouTubeScenarioState, bodyHtml: string, nativeCh
   <body>
     ${bodyHtml}
     <script>
-      const player = document.getElementById('movie_player');
-      const nativeChatNavigationHref = ${JSON.stringify(nativeChatNavigationHref)};
-      if (nativeChatNavigationHref) document.getElementById('chatframe').contentWindow.location.assign(nativeChatNavigationHref);
-      player.getVideoData = () => ({ isLive: ${isLive}, isLiveContent: ${isLive}, video_id: '${escapeHtml(state.video.id)}' });
-      document.querySelector('.ytp-fullscreen-button').addEventListener('click', async () => {
-        if (document.fullscreenElement) {
-          await document.exitFullscreen();
-          return;
-        }
-        await player.requestFullscreen();
-      });
-      document.querySelector('[data-ylc-player-boundary-probe]').addEventListener('click', event => {
-        event.currentTarget.dataset.ylcClicks = String(Number(event.currentTarget.dataset.ylcClicks || 0) + 1);
-      });
+      ${scenarioDocumentInitializationScript({ videoId: state.video.id, isLive, nativeChatNavigationHref, generation: 0 })}
     </script>
   </body>
 </html>`

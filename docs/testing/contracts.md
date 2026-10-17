@@ -74,6 +74,8 @@ The classification contract rejects missing, duplicate, or incorrectly named sce
 
 Synthetic YouTube scenarios use the typed API under `e2e/support/youtubeScenario/`. The compiler owns route URLs, fixture HTML, player identity, and chat routes. Scenario files own only state and assertions. The route model supports watch, direct-live, and channel-live entries.
 
+`initializeScenarioDocument.ts` provides the self-contained fixture browser code used by both initial HTML and SPA replacement. It installs player metadata, native iframe navigation, fullscreen controls, and the boundary click counter. SPA replacement keeps history, fullscreen exit, generation advancement, and navigation event ordering in `YouTubeScenario.spaNavigate`. Fixture initialization does not import product selectors or decisions, and assertions remain independent.
+
 ## Production/testing package boundary
 
 WXT adds the Playwright bridge only in `testing` mode. Testing projects load `.output/chrome-mv3-testing`; production smoke loads the extracted production ZIP with `YLC_REQUIRE_E2E_BRIDGE=0`.
