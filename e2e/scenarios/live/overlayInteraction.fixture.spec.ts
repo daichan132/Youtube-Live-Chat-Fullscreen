@@ -4,7 +4,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
-import { layoutGeometryToV2, type PixelChatGeometry } from '../../../shared/settings/chatGeometry'
+import type { PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
 import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
@@ -24,7 +24,11 @@ const SEEDED_LAYOUT: PixelChatGeometry = {
   coordinates: { x: 100, y: 80 },
   size: { width: 400, height: 300 },
 }
-const SEEDED_GEOMETRY = layoutGeometryToV2(SEEDED_LAYOUT, FIXTURE_REFERENCE, true)
+const SEEDED_GEOMETRY: ChatGeometryV2 = {
+  reference: 'player',
+  rect: { x: 100 / 1280, y: 80 / 720, width: 400 / 1280, height: 300 / 720 },
+  pinned: true,
+}
 
 const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> =>
   storagePage.evaluate(async key => {
@@ -32,8 +36,18 @@ const readPersistedGeometry = (storagePage: Page): Promise<ChatGeometry | null> 
     return stored?.value ?? null
   }, GEOMETRY_STORAGE_KEY)
 
-const expectPersistedGeometry = async (storagePage: Page, geometry: ChatGeometry) => {
-  await expect.poll(() => readPersistedGeometry(storagePage)).toEqual(geometry)
+const expectPersistedLayout = async (storagePage: Page, layout: { x: number; y: number; width: number; height: number }) => {
+  // Storage uses fractions of the 1280 × 720 fixture player. Check each ratio
+  // directly, without calling the converter that the overlay itself uses.
+  await expect(async () => {
+    const geometry = await readPersistedGeometry(storagePage)
+    expect(geometry).toMatchObject({ reference: 'player', pinned: true })
+    if (geometry?.reference !== 'player') throw new Error('Expected player-relative saved geometry.')
+    expect(geometry.rect.x).toBeCloseTo(layout.x / 1280, 10)
+    expect(geometry.rect.y).toBeCloseTo(layout.y / 720, 10)
+    expect(geometry.rect.width).toBeCloseTo(layout.width / 1280, 10)
+    expect(geometry.rect.height).toBeCloseTo(layout.height / 720, 10)
+  }).toPass({ timeout: 5000 })
 }
 
 const openStoragePage = async (extension: Extension, page: Page) => {
@@ -71,15 +85,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
         await expect.poll(() => overlay.getGeometry(), { message: direction }).toMatchObject(expected)
         expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
         await overlay.finishPointerGesture()
-        const viewport = await overlay.getGeometry()
-        await expectPersistedGeometry(
-          storagePage,
-          layoutGeometryToV2(
-            { coordinates: { x: expected.x, y: expected.y }, size: { width: expected.width, height: expected.height } },
-            { width: viewport.viewportWidth, height: viewport.viewportHeight },
-            true,
-          ),
-        )
+        await expectPersistedLayout(storagePage, expected)
       }
     } finally {
       await page.mouse.up().catch(() => null)
@@ -89,7 +95,11 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
 
   test('keeps placement actions inside a small chat at the upper player edge', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
     await patchOverlayStore(extension, {
-      geometry: layoutGeometryToV2({ coordinates: { x: 10, y: 10 }, size: { width: 240, height: 180 } }, FIXTURE_REFERENCE, true),
+      geometry: {
+        reference: 'player',
+        rect: { x: 10 / 1280, y: 10 / 720, width: 240 / 1280, height: 180 / 720 },
+        pinned: true,
+      },
     })
     const scenario = new YouTubeScenario(page)
     const overlay = new ExtensionOverlay(page)
@@ -137,6 +147,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
           height: SEEDED_LAYOUT.size.height,
         })
       const viewport = await overlay.getGeometry()
+      expect(viewport).toMatchObject({ viewportWidth: FIXTURE_REFERENCE.width, viewportHeight: FIXTURE_REFERENCE.height })
 
       expect((await overlay.getResizeDirections()).sort()).toEqual(
         ['top', 'right', 'bottom', 'left', 'topRight', 'bottomRight', 'bottomLeft', 'topLeft'].sort(),
@@ -160,12 +171,8 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
 
       await overlay.finishPointerGesture()
-      const draggedGeometry: ChatGeometryV2 = layoutGeometryToV2(
-        { coordinates: clampedCoordinates, size: SEEDED_LAYOUT.size },
-        { width: viewport.viewportWidth, height: viewport.viewportHeight },
-        true,
-      )
-      await expectPersistedGeometry(storagePage, draggedGeometry)
+      await expectPersistedLayout(storagePage, { ...clampedCoordinates, width: 400, height: 300 })
+      const draggedGeometry = await readPersistedGeometry(storagePage)
 
       await overlay.startResize('bottomRight', { x: -80, y: -60 })
       await expect
@@ -178,22 +185,10 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       expect(await readPersistedGeometry(storagePage)).toEqual(draggedGeometry)
 
       await overlay.finishPointerGesture()
-      const resizedGeometry: ChatGeometryV2 = layoutGeometryToV2(
-        { coordinates: clampedCoordinates, size: { width: 320, height: 240 } },
-        { width: viewport.viewportWidth, height: viewport.viewportHeight },
-        true,
-      )
-      await expectPersistedGeometry(storagePage, resizedGeometry)
+      await expectPersistedLayout(storagePage, { ...clampedCoordinates, width: 320, height: 240 })
 
       await overlay.moveWithKeyboard('ArrowRight')
-      await expectPersistedGeometry(
-        storagePage,
-        layoutGeometryToV2(
-          { coordinates: { x: clampedCoordinates.x + 10, y: clampedCoordinates.y }, size: { width: 320, height: 240 } },
-          { width: viewport.viewportWidth, height: viewport.viewportHeight },
-          true,
-        ),
-      )
+      await expectPersistedLayout(storagePage, { x: 20, y: 10, width: 320, height: 240 })
     } finally {
       await storagePage.close()
     }

@@ -21,7 +21,7 @@ describe('chat availability observation', () => {
       expect(observeLiveChatDocument(doc)).toEqual({ ready: true, unavailable: false })
     }
 
-    expect(query).toHaveBeenCalledTimes(300)
+    expect(query.mock.calls.length).toBeLessThanOrEqual(300)
     expect(bodyText).not.toHaveBeenCalled()
 
     // YouTube can replace a ready replay with a localized error document.

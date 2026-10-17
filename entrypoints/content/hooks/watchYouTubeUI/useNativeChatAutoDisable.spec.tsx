@@ -1,118 +1,87 @@
-import { act, renderHook } from '@testing-library/react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { act, fireEvent, renderHook } from '@testing-library/react'
+import { Provider } from 'jotai'
+import { createStore } from 'jotai/vanilla'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { SHADOW_HOST_ID } from '@/entrypoints/content/constants/domIds'
-import { isNativeChatToggleButton, isNativeChatTriggerTarget } from '@/entrypoints/content/utils/nativeChat'
+import { globalSettingsStateAtom } from '@/shared/state/atoms'
 import { useNativeChatAutoDisable } from './useNativeChatAutoDisable'
 
-vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
-  isNativeChatToggleButton: vi.fn(),
-  isNativeChatTriggerTarget: vi.fn(),
-}))
+const setup = (enabled = true) => {
+  const store = createStore()
+  store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
+  const hook = renderHook(({ enabled }) => useNativeChatAutoDisable({ enabled }), {
+    initialProps: { enabled },
+    wrapper: ({ children }) => <Provider store={store}>{children}</Provider>,
+  })
+  return { ...hook, store }
+}
 
-const isNativeChatToggleButtonMock = vi.mocked(isNativeChatToggleButton)
-const isNativeChatTriggerTargetMock = vi.mocked(isNativeChatTriggerTarget)
+const createPlayerChatControl = () => {
+  const controls = document.createElement('div')
+  controls.className = 'ytp-right-controls'
+  controls.innerHTML = '<button aria-label="Open chat"><span>Chat icon</span></button>'
+  document.body.append(controls)
+  return controls.querySelector('span') as HTMLSpanElement
+}
 
 describe('useNativeChatAutoDisable', () => {
   beforeEach(() => {
     document.body.innerHTML = ''
-    isNativeChatToggleButtonMock.mockReset()
-    isNativeChatTriggerTargetMock.mockReset()
-    isNativeChatToggleButtonMock.mockReturnValue(false)
-    isNativeChatTriggerTargetMock.mockReturnValue(false)
   })
 
-  afterEach(() => {
-    // Reset potential test override on instance property.
-    // biome-ignore lint/performance/noDelete: test-only cleanup for configurable override
-    delete (document as { fullscreenElement?: Element | null }).fullscreenElement
+  it('turns off extension chat when a native player chat control is pressed', () => {
+    const { store } = setup()
+    const icon = createPlayerChatControl()
+
+    fireEvent.pointerDown(icon)
+
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(false)
   })
 
-  it('turns off fullscreen chat when native toggle button is pressed in fullscreen', () => {
-    const setYTDLiveChat = vi.fn()
-    isNativeChatToggleButtonMock.mockReturnValue(true)
-    isNativeChatTriggerTargetMock.mockReturnValue(true)
+  it('turns off extension chat for a non-button native chat trigger', () => {
+    const { store } = setup()
+    const trigger = document.createElement('div')
+    trigger.id = 'chat-container'
+    document.body.append(trigger)
 
-    renderHook(() =>
-      useNativeChatAutoDisable({
-        enabled: true,
-        setYTDLiveChat,
-      }),
-    )
+    fireEvent.pointerDown(trigger)
 
-    const nativeButton = document.createElement('button')
-    document.body.appendChild(nativeButton)
-
-    act(() => {
-      nativeButton.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }))
-    })
-
-    expect(setYTDLiveChat).toHaveBeenCalledTimes(1)
-    expect(setYTDLiveChat).toHaveBeenCalledWith(false)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(false)
   })
 
-  it('turns off extension chat for an explicit native chat trigger', () => {
-    const setYTDLiveChat = vi.fn()
-    isNativeChatToggleButtonMock.mockReturnValue(true)
-    isNativeChatTriggerTargetMock.mockReturnValue(true)
-
-    renderHook(() =>
-      useNativeChatAutoDisable({
-        enabled: true,
-        setYTDLiveChat,
-      }),
-    )
-
-    const nativeButton = document.createElement('button')
-    document.body.appendChild(nativeButton)
-
-    act(() => {
-      nativeButton.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }))
-    })
-
-    expect(setYTDLiveChat).toHaveBeenCalledTimes(1)
-    expect(setYTDLiveChat).toHaveBeenCalledWith(false)
-  })
-
-  it('ignores pointer events from inside extension shadow root', () => {
-    const setYTDLiveChat = vi.fn()
-    isNativeChatToggleButtonMock.mockReturnValue(true)
-    isNativeChatTriggerTargetMock.mockReturnValue(true)
-
-    renderHook(() =>
-      useNativeChatAutoDisable({
-        enabled: true,
-        setYTDLiveChat,
-      }),
-    )
+  it('ignores unrelated controls and native-looking controls inside the extension shadow root', () => {
+    const { store } = setup()
+    const unrelated = document.createElement('button')
+    unrelated.setAttribute('aria-label', 'Play')
+    document.body.append(unrelated)
+    fireEvent.pointerDown(unrelated)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(true)
 
     const shadowHost = document.createElement('div')
     shadowHost.id = SHADOW_HOST_ID
     const shadowRoot = shadowHost.attachShadow({ mode: 'open' })
-    const extensionButton = document.createElement('button')
-    shadowRoot.appendChild(extensionButton)
-    document.body.appendChild(shadowHost)
+    const extensionTrigger = document.createElement('div')
+    extensionTrigger.id = 'chat-container'
+    shadowRoot.append(extensionTrigger)
+    document.body.append(shadowHost)
+    fireEvent.pointerDown(extensionTrigger, { composed: true })
 
-    act(() => {
-      extensionButton.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true, composed: true }))
-    })
-
-    expect(setYTDLiveChat).not.toHaveBeenCalled()
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(true)
   })
 
-  it('does not listen while disabled', () => {
-    const setYTDLiveChat = vi.fn()
-    isNativeChatToggleButtonMock.mockReturnValue(true)
-    renderHook(() =>
-      useNativeChatAutoDisable({
-        enabled: false,
-        setYTDLiveChat,
-      }),
-    )
-    const nativeButton = document.createElement('button')
-    document.body.appendChild(nativeButton)
-    act(() => {
-      nativeButton.dispatchEvent(new Event('pointerdown', { bubbles: true, cancelable: true }))
-    })
-    expect(setYTDLiveChat).not.toHaveBeenCalled()
+  it('listens only while enabled and stops after unmount', () => {
+    const { store, rerender, unmount } = setup(false)
+    const icon = createPlayerChatControl()
+    fireEvent.pointerDown(icon)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(true)
+
+    rerender({ enabled: true })
+    fireEvent.pointerDown(icon)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(false)
+
+    act(() => store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' }))
+    unmount()
+    fireEvent.pointerDown(icon)
+    expect(store.get(globalSettingsStateAtom).ytdLiveChat).toBe(true)
   })
 })

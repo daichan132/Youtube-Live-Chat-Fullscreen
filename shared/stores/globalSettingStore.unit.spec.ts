@@ -6,7 +6,6 @@ import { setThemeModeAtom, setYTDLiveChatEnabledAtom } from '@/shared/state/comm
 describe('global settings commands', () => {
   it('starts with stable defaults', () => {
     const store = createStore()
-    store.set(globalSettingsStateAtom, { ytdLiveChat: true, themeMode: 'system' })
     expect(store.get(globalSettingsStateAtom)).toEqual({ ytdLiveChat: true, themeMode: 'system' })
   })
 

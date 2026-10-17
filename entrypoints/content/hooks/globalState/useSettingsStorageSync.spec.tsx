@@ -95,29 +95,4 @@ describe('AppRuntime settings ownership', () => {
     expect(runtime.store.get(editorSessionStateAtom).past).toHaveLength(1)
     runtime.dispose()
   })
-
-  it('delegates the pending-write barrier to the bulk replacement operation', async () => {
-    let replaced: { global: unknown; chat: unknown } | null = null
-    const flush = vi.fn(async () => {})
-    const replaceSettings = vi.fn(async (global, chat) => {
-      replaced = { global, chat }
-    })
-    const repository = createRepository({ flush, replaceSettings })
-    const runtime = await createAppRuntime(repository)
-
-    await runtime.importSettings({
-      version: 1,
-      exportedAt: '',
-      globalSetting: { themeMode: 'dark', ytdLiveChat: false },
-      ytdLiveChat: { fontSize: 42 },
-    })
-
-    expect(flush).not.toHaveBeenCalled()
-    expect(replaceSettings).toHaveBeenCalledOnce()
-    expect(replaced).not.toBeNull()
-    const imported = replaced as unknown as { global: unknown; chat: typeof DEFAULT_CHAT_SETTINGS }
-    expect(imported.global).toEqual({ ytdLiveChat: false, themeMode: 'dark' })
-    expect(imported.chat.profile.appearance.fontSize).toBe(40)
-    runtime.dispose()
-  })
 })

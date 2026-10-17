@@ -25,5 +25,15 @@ describe('settings parent bridge', () => {
         parent,
       ),
     ).toBe(false)
+    expect(
+      isTrustedParentMessage(
+        new MessageEvent('message', { source: null, origin: 'https://www.youtube.com' }),
+        'https://www.youtube.com',
+        parent,
+      ),
+    ).toBe(false)
+    expect(isTrustedParentMessage(new MessageEvent('message', { source: parent, origin: 'https://www.youtube.com' }), null, parent)).toBe(
+      false,
+    )
   })
 })

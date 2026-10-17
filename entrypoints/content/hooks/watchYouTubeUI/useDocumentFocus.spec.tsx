@@ -1,18 +1,16 @@
 import { act, renderHook } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { useDocumentFocus } from './useDocumentFocus'
 
 const setHasFocus = (value: boolean) => {
-  Object.defineProperty(document, 'hasFocus', {
-    value: () => value,
-    configurable: true,
-  })
+  vi.spyOn(document, 'hasFocus').mockReturnValue(value)
 }
 
 describe('useDocumentFocus', () => {
   beforeEach(() => {
     setHasFocus(true)
   })
+  afterEach(() => vi.restoreAllMocks())
 
   it('tracks window focus, blur, and document visibility changes', () => {
     const { result } = renderHook(() => useDocumentFocus())

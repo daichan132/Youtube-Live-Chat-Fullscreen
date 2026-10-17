@@ -73,10 +73,10 @@ describe('Modal', () => {
     expect(onAfterClose).toHaveBeenCalledOnce()
   })
 
-  it('resolves a custom portal parent after render rather than during render', () => {
+  it('mounts inside a custom portal parent and removes the dialog on unmount', () => {
     const parent = document.createElement('div')
     document.body.appendChild(parent)
-    const parentSelector = vi.fn(() => parent)
+    const parentSelector = () => parent
 
     const { getByRole, unmount } = render(
       <Modal isOpen ariaLabel='Custom parent' parentSelector={parentSelector}>
@@ -84,9 +84,9 @@ describe('Modal', () => {
       </Modal>,
     )
 
-    expect(parentSelector).toHaveBeenCalledOnce()
     expect(parent).toContainElement(getByRole('dialog', { name: 'Custom parent' }))
     unmount()
+    expect(parent).toBeEmptyDOMElement()
     parent.remove()
   })
 

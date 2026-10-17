@@ -5,7 +5,7 @@ import type { PageObservation } from '../platform/youtube/types'
 import { ResourceReconciler } from './ResourceReconciler'
 import type { ChatDecision } from './resolveChatDecision'
 import type { ChatChromeLease } from './resources/ChatChromeLease'
-import type { ChatIframeLease } from './resources/ChatIframeLease'
+import { type ChatIframeLease, createIframeLease } from './resources/ChatIframeLease'
 import type { PlayerLayoutLease } from './resources/PlayerLayoutLease'
 import type { PresentationLease } from './resources/PresentationLease'
 import type { RuntimePlan } from './runtimeModel'
@@ -135,6 +135,62 @@ describe('ResourceReconciler', () => {
     resources.clear(observation.targets)
     scope.dispose()
   })
+
+  it.each(['live_borrow', 'archive_borrow', 'live_direct'] as const)(
+    'retains the exact iframe and lease across repeated %s acquisition plans',
+    kind => {
+      window.history.replaceState({}, '', '/watch?v=video-1')
+      const nativeHost = document.createElement('ytd-live-chat-frame')
+      nativeHost.setAttribute('video-id', 'video-1')
+      const iframe = document.createElement('iframe')
+      iframe.src = `https://www.youtube.com/${kind === 'archive_borrow' ? 'live_chat_replay' : 'live_chat'}?v=video-1`
+      nativeHost.append(iframe)
+      const carrier = document.createElement('div')
+      document.body.append(nativeHost, carrier)
+      const createLease = vi.fn(createIframeLease)
+      const resources = new ResourceReconciler({ createLease })
+      const scope = createSessionScope(1)
+      const decision: Extract<ChatDecision, { kind: 'available' }> = {
+        kind: 'available',
+        videoId: 'video-1',
+        mode: kind === 'archive_borrow' ? 'archive' : 'live',
+        source:
+          kind === 'live_direct'
+            ? { kind, videoId: 'video-1', url: 'https://www.youtube.com/live_chat?v=video-1' }
+            : kind === 'live_borrow'
+              ? { kind, videoId: 'video-1', iframe }
+              : { kind, iframe },
+      }
+      const plan: RuntimePlan = {
+        ...acquirePlan(decision),
+        presentation: 'preserve',
+        layout: 'none',
+      }
+      resources.setOverlayContainer(carrier)
+      try {
+        resources.reconcilePlan(plan, null, scope, vi.fn())
+        const firstLease = resources.lease
+        const firstIframe = carrier.querySelector('iframe')
+        expect(firstLease).not.toBeNull()
+        expect(firstIframe).toBe(firstLease?.iframe)
+
+        resources.reconcilePlan(plan, null, scope, vi.fn())
+
+        expect(resources.lease).toBe(firstLease)
+        expect(carrier.querySelectorAll('iframe')).toHaveLength(1)
+        expect(carrier.querySelector('iframe')).toBe(firstIframe)
+        expect(createLease).toHaveBeenCalledOnce()
+      } finally {
+        try {
+          resources.clear()
+        } finally {
+          scope.dispose()
+        }
+      }
+      if (kind === 'live_direct') expect(carrier.querySelector('iframe')).toBeNull()
+      else expect(nativeHost.querySelector('iframe')).toBe(iframe)
+    },
+  )
 
   it('does not request an overlay root for switch-only presentation', () => {
     const presentation: PresentationLease = {

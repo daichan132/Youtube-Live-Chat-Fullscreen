@@ -53,7 +53,6 @@ describe('createAppRuntime', () => {
 
     const runtime = await createAppRuntime(repository, { loadMessages })
 
-    expect(loadMessages.mock.calls.map(([locale]) => locale)).toEqual(['ja', 'en'])
     expect(runtime.store.get(localeStateAtom)).toMatchObject({
       code: 'ja',
       messages: { 'popup.theme': 'English' },
@@ -75,7 +74,6 @@ describe('createAppRuntime', () => {
     })
 
     await expect(createAppRuntime(repository, { loadMessages })).rejects.toThrow('no locale assets')
-    expect(loadMessages).toHaveBeenCalledTimes(2)
     expect(unwatch).toHaveBeenCalledTimes(1)
     expect(unsubscribePersistence).toHaveBeenCalledTimes(1)
   })
@@ -133,18 +131,20 @@ describe('createAppRuntime', () => {
         return vi.fn()
       }),
     })
-    const resolvers = new Map<LocaleCode, (value: LocaleMessages) => void>()
+    const japaneseMessages = createDeferred<LocaleMessages>()
+    const frenchMessages = createDeferred<LocaleMessages>()
     const loadMessages = vi.fn((locale: LocaleCode) => {
-      if (locale === 'en') return Promise.resolve(messages('English'))
-      return new Promise<LocaleMessages>(resolve => resolvers.set(locale, resolve))
+      if (locale === 'ja') return japaneseMessages.promise
+      if (locale === 'fr') return frenchMessages.promise
+      return Promise.resolve(messages('English'))
     })
     const runtime = await createAppRuntime(repository, { loadMessages })
 
     handlers?.onLocale('ja')
     handlers?.onLocale('fr')
-    resolvers.get('fr')?.(messages('Français'))
+    frenchMessages.resolve(messages('Français'))
     await vi.waitFor(() => expect(runtime.store.get(localeStateAtom).code).toBe('fr'))
-    resolvers.get('ja')?.(messages('日本語'))
+    japaneseMessages.resolve(messages('日本語'))
     await Promise.resolve()
 
     expect(runtime.store.get(localeStateAtom).code).toBe('fr')

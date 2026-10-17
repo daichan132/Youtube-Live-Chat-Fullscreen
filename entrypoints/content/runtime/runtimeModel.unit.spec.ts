@@ -235,18 +235,6 @@ describe('runtimeModel', () => {
     expect(transition.model.state).toEqual({ status: 'searching', videoId: 'video-1' })
   })
 
-  it('does not create a second lease when the available source still matches', () => {
-    const decision = available('video-1', 'live')
-    const active = activate(decision)
-    const transition = transitionRuntimeModel(active.model, {
-      enabled: true,
-      decision,
-      lease: active.lease,
-    })
-
-    expect(transition.plan.chat).toEqual({ kind: 'acquire', decision })
-  })
-
   it('ends retry exhaustion as unavailable and physically disables portal hosts', () => {
     const pending: ChatDecision = { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false }
     let model: RuntimeModel = createInitialRuntimeModel()

@@ -11,10 +11,24 @@ describe('loadLocaleMessages', () => {
 
   it('falls back to English when the selected locale asset is unavailable', async () => {
     loadAsset.mockImplementation(async asset => {
-      if (asset === '_keys') return ['popup.theme']
+      if (asset === '_keys') return ['content.aria.close', 'popup.theme']
       if (asset === 'ja') throw new Error('Extension asset unavailable')
-      return ['Theme']
+      return ['Close', 'Theme']
     })
+    await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'content.aria.close': 'Close', 'popup.theme': 'Theme' })
+  })
+
+  it.each([
+    { reason: 'not an array', bundle: { 'popup.theme': 'テーマ' } },
+    { reason: 'missing a message', bundle: [] },
+    { reason: 'too many messages', bundle: ['テーマ', '余分'] },
+    { reason: 'a non-string message', bundle: [42] },
+  ])('uses English instead of exposing an invalid selected bundle: $reason', async ({ bundle }) => {
+    loadAsset.mockImplementation(async asset => {
+      if (asset === '_keys') return ['popup.theme']
+      return asset === 'ja' ? bundle : ['Theme']
+    })
+
     await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'popup.theme': 'Theme' })
   })
 

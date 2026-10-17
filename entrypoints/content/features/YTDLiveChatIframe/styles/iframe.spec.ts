@@ -2,7 +2,7 @@
 
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { iframeStyleModuleNames } from './index'
 
 const stylesDirectory = resolve(process.cwd(), 'entrypoints/content/features/YTDLiveChatIframe/styles')
@@ -34,6 +34,12 @@ const getComputedColor = (selector: string) => {
   return getComputedStyle(element).color
 }
 
+afterEach(() => {
+  document.head.replaceChildren()
+  document.body.replaceChildren()
+  document.body.className = ''
+})
+
 describe('iframe styles contract', () => {
   it('assembles responsibility modules in cascade order', () => {
     expect(iframeStyleModuleNames).toEqual([
@@ -55,9 +61,14 @@ describe('iframe styles contract', () => {
   })
 
   it('keeps the transparent iframe body covering the viewport', () => {
-    expect(iframeStyles).toContain(
-      'body.custom-yt-app-live-chat-extension {\n  margin: 0;\n  min-height: 100vh;\n  position: relative;\n  width: 100%;\n}',
-    )
+    mountStyleFixture(styleModules['frame.css'], '<yt-live-chat-renderer></yt-live-chat-renderer>')
+
+    const body = getComputedStyle(document.body)
+    expect(body.backgroundColor).toBe('rgba(0, 0, 0, 0)')
+    expect(body.margin).toBe('0px')
+    expect(body.minHeight).toBe(`${window.innerHeight}px`)
+    expect(body.position).toBe('relative')
+    expect(body.width).toBe('100%')
   })
 
   it('removes the native chat edge shimmer from both clipped chat-only edges', () => {
@@ -158,12 +169,26 @@ describe('iframe styles contract', () => {
   })
 
   it('lets header menus escape while expanded and clips them while collapsed', () => {
-    expect(iframeStyles).toContain(
-      'body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {\n  height: 56px !important;\n  position: relative !important;\n  z-index: 2 !important;\n  overflow: visible !important;\n}',
+    mountStyleFixture(
+      styleModules['chat-only.css'],
+      '<yt-live-chat-header-renderer><button>Chat mode</button></yt-live-chat-header-renderer>',
     )
-    expect(iframeStyles).toContain(
-      'height: 0 !important;\n  min-height: 0 !important;\n  overflow: hidden !important;\n  opacity: 0 !important;',
-    )
+    const header = document.querySelector('yt-live-chat-header-renderer')
+    if (!header) throw new Error('Missing chat header.')
+
+    const expanded = getComputedStyle(header)
+    expect(expanded.height).toBe('56px')
+    expect(expanded.overflow).toBe('visible')
+    expect(expanded.position).toBe('relative')
+    expect(expanded.zIndex).toBe('2')
+
+    document.body.classList.add('chat-only-display')
+
+    const collapsed = getComputedStyle(header)
+    expect(collapsed.height).toBe('0px')
+    expect(collapsed.overflow).toBe('hidden')
+    expect(collapsed.opacity).toBe('0')
+    expect(collapsed.pointerEvents).toBe('none')
   })
 
   it('keeps user display settings as iframe-internal variables', () => {

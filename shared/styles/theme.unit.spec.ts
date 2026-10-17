@@ -6,10 +6,15 @@ const themeStyles = readFileSync(resolve(process.cwd(), 'shared/styles/controls.
 
 describe('theme layer scale', () => {
   it('defines ordered local surface layers', () => {
-    expect(themeStyles).toContain('--ylc-z-raised: 10;')
-    expect(themeStyles).toContain('--ylc-z-popover: 20;')
-    expect(themeStyles).toContain('--ylc-z-tooltip: 30;')
-    expect(themeStyles).toContain('--ylc-z-toast: 40;')
+    const layer = (name: string) => {
+      const declaration = themeStyles.match(new RegExp(`--ylc-z-${name}\\s*:\\s*([+-]?\\d+)\\s*;`))
+      expect(declaration, `Missing numeric layer: ${name}`).not.toBeNull()
+      return Number(declaration?.[1])
+    }
+
+    expect(layer('raised')).toBeLessThan(layer('popover'))
+    expect(layer('popover')).toBeLessThan(layer('tooltip'))
+    expect(layer('tooltip')).toBeLessThan(layer('toast'))
   })
 
   it('uses named layers instead of independent numeric z-index values', () => {

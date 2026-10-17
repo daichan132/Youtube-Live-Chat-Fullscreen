@@ -14,10 +14,14 @@ import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
 describe('chat settings commands', () => {
   it('initializes one normalized v7 settings model', () => {
     const store = createStore()
-    store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
     const state = store.get(chatSettingsStateAtom)
-    expect(state.profile).toEqual(DEFAULT_CHAT_SETTINGS.profile)
-    expect(state.geometry).toEqual(DEFAULT_CHAT_SETTINGS.geometry)
+    expect(state.profile.appearance.fontSize).toBe(13)
+    expect(state.profile.display).toEqual({ idleVisibility: 'always-visible', contentMode: 'full-chat' })
+    expect(state.geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.015625, y: 0.027778, width: 0.3125, height: 0.555556 },
+      pinned: false,
+    })
     expect(state.presets.map(preset => preset.id)).toEqual(['standard', 'transparent', 'simple', 'dark', 'readable', 'compact', 'neon'])
   })
 

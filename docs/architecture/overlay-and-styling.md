@@ -68,7 +68,7 @@ Preset-list synchronization compares the ordered IDs by value. A newly allocated
 
 Use focused tests for the behavior being changed:
 
-- Geometry, pointer cancellation, and automatic placement: [`useOverlayGeometry.spec.ts`](../../entrypoints/content/overlay/useOverlayGeometry.spec.ts), [`usePointerSession.dom.spec.tsx`](../../entrypoints/content/overlay/usePointerSession.dom.spec.tsx), and [`autoSafeArea.spec.ts`](../../entrypoints/content/overlay/autoSafeArea.spec.ts).
+- Geometry, pointer cancellation, and automatic placement: [`useOverlayGeometry.spec.ts`](../../entrypoints/content/overlay/useOverlayGeometry.spec.ts), [`usePointerSession.dom.spec.tsx`](../../entrypoints/content/overlay/usePointerSession.dom.spec.tsx), and [`autoSafeArea.unit.spec.ts`](../../entrypoints/content/overlay/autoSafeArea.unit.spec.ts).
 - Hover, keyboard focus, and controls: [`useOverlayInteraction.spec.ts`](../../entrypoints/content/overlay/useOverlayInteraction.spec.ts) and the deterministic [overlay interaction scenario](../../e2e/scenarios/live/overlayInteraction.fixture.spec.ts).
 - Compiled styles, cascade order, and restoration: [`compileStylePatch.unit.spec.ts`](../../entrypoints/content/style/compileStylePatch.unit.spec.ts), [`iframe.spec.ts`](../../entrypoints/content/features/YTDLiveChatIframe/styles/iframe.spec.ts), and [`iframeAttachment.spec.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.spec.ts).
 

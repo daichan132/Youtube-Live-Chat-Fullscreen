@@ -1,10 +1,10 @@
 import { expect, test } from '@e2e/fixtures'
+import { blockExternalNetwork } from '@e2e/fixtures/deterministic'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
-import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings/chatGeometry'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
-import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
+import type { ChatGeometryV2, ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
 import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
@@ -32,20 +32,50 @@ const profileWithFontSize = (fontSize: number): ChatProfile => ({
   display: { ...DEFAULT_CHAT_SETTINGS.profile.display },
 })
 
-const importedSettings = (fontSize: number, customPreset: PresetEntry): ChatSettings => ({
+const importedSettings = (
+  fontSize: number,
+  customPreset: PresetEntry,
+  geometry: ChatGeometryV2 = { reference: 'player', rect: { x: 0.125, y: 0.125, width: 0.25, height: 0.375 }, pinned: true },
+): ChatSettings => ({
   profile: profileWithFontSize(fontSize),
-  geometry: layoutGeometryToV2(
-    {
-      coordinates: { x: 80 + fontSize, y: 60 + fontSize },
-      size: { width: 320 + fontSize, height: 240 + fontSize },
-    },
-    { width: 1280, height: 720 },
-    true,
-  ),
+  geometry,
   presets: [{ kind: 'builtin', id: 'standard' }, customPreset],
 })
 
 test.describe('popup', { tag: '@popup' }, () => {
+  test('blocks unmocked HTTP and HTTPS requests while extension pages remain usable', async ({ page, context, extension }) => {
+    const browser = context.browser()
+    if (!browser) throw new Error('The fixture must expose its browser connection.')
+    const probeContext = await browser.newContext({ serviceWorkers: 'block' })
+    const escapedRequests: string[] = []
+    try {
+      // A missing blocker must succeed through this offline fallback. Connection
+      // failure alone would also pass when the network or host is unavailable.
+      await probeContext.route('**/*', async route => {
+        escapedRequests.push(route.request().url())
+        await route.fulfill({ contentType: 'text/html', body: '<title>Unexpected network access</title>' })
+      })
+      await blockExternalNetwork(probeContext)
+      for (const url of ['http://network-sentinel.invalid/', 'https://network-sentinel.invalid/']) {
+        const probe = await probeContext.newPage()
+        try {
+          await expect(probe.goto(url, { waitUntil: 'domcontentloaded', timeout: 5000 })).rejects.toThrow()
+        } finally {
+          await probe.close()
+        }
+      }
+      expect(escapedRequests).toEqual([])
+      const local = await probeContext.newPage()
+      await local.goto('data:text/html,<title>Local page</title>')
+      await expect(local).toHaveTitle('Local page')
+
+      await page.goto(extension.url('popup.html'))
+      await expect(page.getByLabel('Select language')).toBeVisible()
+    } finally {
+      await probeContext.close()
+    }
+  })
+
   test('popup renders language selector and chat toggle', async ({ page, extension }) => {
     test.setTimeout(90000)
 
@@ -188,31 +218,33 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     try {
       const first = importedSettings(22, firstPreset)
-      const firstLayout = renderChatGeometry(first.geometry, { width: 1280, height: 720 })
       await importSettingsViaPopup(popup, extension, importBackup(first))
       await page.bringToFront()
       await expect.poll(() => overlay.getAppliedFontSize()).toBe('22px')
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: firstLayout.coordinates.x,
-          y: firstLayout.coordinates.y,
-          width: firstLayout.size.width,
-          height: firstLayout.size.height,
+          x: 160,
+          y: 90,
+          width: 320,
+          height: 270,
         })
 
-      const second = importedSettings(31, secondPreset)
-      const secondLayout = renderChatGeometry(second.geometry, { width: 1280, height: 720 })
+      const second = importedSettings(31, secondPreset, {
+        reference: 'player',
+        rect: { x: 0.25, y: 0.25, width: 0.375, height: 0.5 },
+        pinned: true,
+      })
       await importSettingsViaPopup(popup, extension, importBackup(second))
       await page.bringToFront()
       await expect.poll(() => overlay.getAppliedFontSize()).toBe('31px')
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: secondLayout.coordinates.x,
-          y: secondLayout.coordinates.y,
-          width: secondLayout.size.width,
-          height: secondLayout.size.height,
+          x: 320,
+          y: 180,
+          width: 480,
+          height: 360,
         })
       await expect
         .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets)

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
-import { createSettingsRepository, type StoredEnvelope } from './repository'
+import { createSettingsRepository } from './repository'
 import {
   APPEARANCE_STORAGE_KEY,
   ENABLED_STORAGE_KEY,
@@ -47,11 +47,6 @@ describe('settings repository', () => {
     await chrome.storage.local.remove(ALL_KEYS)
     immediateRetry.waitBeforeRetry.mockClear()
     vi.restoreAllMocks()
-  })
-
-  it('keeps one versioned envelope with writer identity', () => {
-    const envelope: StoredEnvelope<boolean> = { schemaVersion: 1, writerId: 'writer', value: true }
-    expect(envelope).toEqual({ schemaVersion: 1, writerId: 'writer', value: true })
   })
 
   it('loads current and legacy settings without rewriting global or chat data during startup', async () => {
@@ -283,11 +278,15 @@ describe('settings repository', () => {
     await repository.replaceSettings({ ytdLiveChat: false, themeMode: 'dark' }, { ...DEFAULT_CHAT_SETTINGS, profile })
 
     expect(set).toHaveBeenCalledTimes(1)
-    expect(set.mock.calls[0]?.[0]).toMatchObject({
-      [ENABLED_STORAGE_KEY]: { value: false },
-      [THEME_STORAGE_KEY]: { value: 'dark' },
-      [APPEARANCE_STORAGE_KEY]: { value: { profile: { appearance: { fontSize: 30 } } } },
-      [GEOMETRY_STORAGE_KEY]: { value: DEFAULT_CHAT_SETTINGS.geometry },
+    expect(set).toHaveBeenCalledWith({
+      [ENABLED_STORAGE_KEY]: { schemaVersion: 1, writerId: 'importer', value: false },
+      [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'importer', value: 'dark' },
+      [APPEARANCE_STORAGE_KEY]: {
+        schemaVersion: 1,
+        writerId: 'importer',
+        value: { profile, presets: DEFAULT_CHAT_SETTINGS.presets },
+      },
+      [GEOMETRY_STORAGE_KEY]: { schemaVersion: 1, writerId: 'importer', value: DEFAULT_CHAT_SETTINGS.geometry },
     })
   })
 

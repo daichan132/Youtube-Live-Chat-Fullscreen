@@ -68,9 +68,11 @@ it('renders the initial legacy migration before a resize and moves from the migr
   const unsubscribe = store.sub(chatSettingsStateAtom, changed)
   const { result } = renderHook(() => useOverlayGeometry({ referenceElement: player }), { wrapper })
 
-  expect(store.get(chatSettingsStateAtom).geometry).toEqual(
-    layoutGeometryToV2({ coordinates: { x: 100, y: 50 }, size: { width: 300, height: 200 } }, { width: 1000, height: 700 }, true),
-  )
+  expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+    reference: 'player',
+    rect: { x: 0.1, y: 50 / 700, width: 0.3, height: 200 / 700 },
+    pinned: true,
+  })
   expect(result.current.displayGeometry).toEqual({ coordinates: { x: 100, y: 50 }, size: { width: 300, height: 200 } })
   expect(changed).toHaveBeenCalledOnce()
 
@@ -82,9 +84,13 @@ it('renders the initial legacy migration before a resize and moves from the migr
   expect(result.current.displayGeometry.coordinates.x).toBeCloseTo(115, 10)
   expect(result.current.displayGeometry.coordinates.y).toBe(60)
   expect(result.current.displayGeometry.size).toEqual({ width: 270, height: 200 })
-  expect(store.get(chatSettingsStateAtom).geometry).toEqual(
-    layoutGeometryToV2({ coordinates: { x: 115, y: 60 }, size: { width: 270, height: 200 } }, { width: 900, height: 700 }, true),
-  )
+  const persisted = store.get(chatSettingsStateAtom).geometry
+  expect(persisted).toMatchObject({ reference: 'player', pinned: true })
+  if (persisted.reference !== 'player') throw new Error('Expected player-relative geometry.')
+  expect(persisted.rect.x).toBeCloseTo(115 / 900, 10)
+  expect(persisted.rect.y).toBe(60 / 700)
+  expect(persisted.rect.width).toBe(0.3)
+  expect(persisted.rect.height).toBe(200 / 700)
   expect(changed).toHaveBeenCalledTimes(2)
   unsubscribe()
 })

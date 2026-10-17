@@ -3,7 +3,6 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { compileYouTubeScenario } from './compiler'
 import type { YouTubeScenarioState } from './types'
-import { YouTubeScenario } from './YouTubeScenario'
 
 type LiveScenarioState = Extract<YouTubeScenarioState, { video: { mode: 'live' } }>
 type ArchiveScenarioState = Extract<YouTubeScenarioState, { video: { mode: 'archive' } }>
@@ -42,32 +41,6 @@ const createNoChatState = (overrides: Partial<NoChatScenarioState> = {}): NoChat
 })
 
 describe('YouTube scenario compiler', () => {
-  it('exposes the bounded fixture lifecycle and mutation API', () => {
-    expect(Object.getOwnPropertyNames(YouTubeScenario.prototype)).toEqual(
-      expect.arrayContaining([
-        'load',
-        'spaNavigate',
-        'updateNativeIframeRuntime',
-        'captureNativeIframeContext',
-        'observeNativeIframeContext',
-        'settleNativeIframeContext',
-        'installFullscreenExitPlayerDetach',
-        'observeFullscreenExitPlayerDetachCount',
-        'enterFullscreen',
-        'exitFullscreen',
-        'addNativeIframe',
-        'replaceNativeIframe',
-        'setChatUnavailable',
-        'addNativeChatControl',
-        'observeExtensionIframeIdentity',
-        'observeExtensionIframeHref',
-        'observeNativeSlot',
-        'observeRuntime',
-        'observeDocument',
-      ]),
-    )
-  })
-
   it('compiles a live managed-source fixture without a native iframe', () => {
     const compiled = compileYouTubeScenario(createLiveState())
 
@@ -160,7 +133,6 @@ describe('YouTube scenario compiler', () => {
     expect(iframe).toBeDefined()
     expect(iframe).not.toMatch(/\bsrc=/)
     expect(compiled.spaDocument.nativeChatNavigationHref).toBe('/live_chat?continuation=ylc-fixture-previous-video')
-    expect(compiled.watchHtml).toContain('contentWindow.location.assign(nativeChatNavigationHref)')
   })
 
   it('keeps raw fixture DOM, routing, and mutation knowledge out of deterministic specs', () => {

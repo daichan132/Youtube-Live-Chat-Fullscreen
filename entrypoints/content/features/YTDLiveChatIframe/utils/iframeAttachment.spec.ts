@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import type { ChatSource } from '@/entrypoints/content/runtime/types'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
 import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
@@ -26,18 +25,6 @@ const openArchiveNativeChatPanelMock = vi.mocked(openArchiveNativeChatPanel)
 const isNativeChatOpenMock = vi.mocked(isNativeChatOpen)
 
 type AttachmentCarrier = HTMLIFrameElement & { __testAttachment?: IframeAttachment }
-
-const resolveSourceIframe = (source: ChatSource, currentIframe: HTMLIFrameElement | null) => {
-  if (source.kind !== 'live_direct') return source.iframe
-  if (
-    currentIframe?.getAttribute('data-ylc-owned') === 'true' &&
-    currentIframe.getAttribute('data-ylc-source') === 'live_direct' &&
-    currentIframe.src === source.url
-  ) {
-    return currentIframe
-  }
-  return createManagedLiveIframe(source.url)
-}
 
 const attachIframeToContainer = (container: HTMLElement | null, iframe: HTMLIFrameElement) => {
   if (!container) return null
@@ -113,84 +100,13 @@ describe('iframeAttachment', () => {
     expect(iframe.style.getPropertyValue('outline-color')).toBe('')
   })
 
-  it('creates and reuses managed iframe for live source', () => {
-    const source: ChatSource = {
-      kind: 'live_direct',
-      videoId: 'video-a',
-      url: 'https://www.youtube.com/live_chat?v=video-a',
-    }
+  it('creates a managed live iframe with its source identity and accessible title', () => {
+    const managed = createManagedLiveIframe('https://www.youtube.com/live_chat?v=video-a')
 
-    const managed = resolveSourceIframe(source, null)
     expect(managed.getAttribute('data-ylc-owned')).toBe('true')
+    expect(managed.getAttribute('data-ylc-source')).toBe('live_direct')
     expect(managed).toHaveAttribute('title', 'YouTube live chat')
-    expect(managed.src).toContain('/live_chat?v=video-a')
-
-    const reused = resolveSourceIframe(source, managed)
-    expect(reused).toBe(managed)
-  })
-
-  it('returns native iframe directly for live borrow source', () => {
-    const nativeLiveIframe = document.createElement('iframe') as HTMLIFrameElement
-    nativeLiveIframe.src = 'https://www.youtube.com/live_chat?v=video-a'
-
-    const source: ChatSource = {
-      kind: 'live_borrow',
-      videoId: 'video-a',
-      iframe: nativeLiveIframe,
-    }
-
-    const resolved = resolveSourceIframe(source, null)
-    expect(resolved).toBe(nativeLiveIframe)
-  })
-
-  it('creates a managed iframe for live direct source instead of reusing unrelated native iframe', () => {
-    const source: ChatSource = {
-      kind: 'live_direct',
-      videoId: 'video-a',
-      url: 'https://www.youtube.com/live_chat?v=video-a',
-    }
-    const nativeLiveIframe = document.createElement('iframe') as HTMLIFrameElement
-    nativeLiveIframe.src = source.url
-
-    const resolved = resolveSourceIframe(source, nativeLiveIframe)
-    expect(resolved).not.toBe(nativeLiveIframe)
-    expect(resolved.getAttribute('data-ylc-owned')).toBe('true')
-    expect(resolved.getAttribute('data-ylc-source')).toBe('live_direct')
-    expect(resolved.src).toContain('/live_chat?v=video-a')
-  })
-
-  it('creates a new managed iframe when live source video changes', () => {
-    const sourceA: ChatSource = {
-      kind: 'live_direct',
-      videoId: 'video-a',
-      url: 'https://www.youtube.com/live_chat?v=video-a',
-    }
-    const sourceB: ChatSource = {
-      kind: 'live_direct',
-      videoId: 'video-b',
-      url: 'https://www.youtube.com/live_chat?v=video-b',
-    }
-
-    const managedA = resolveSourceIframe(sourceA, null)
-    const managedB = resolveSourceIframe(sourceB, managedA)
-
-    expect(managedB).not.toBe(managedA)
-    expect(managedB.getAttribute('data-ylc-owned')).toBe('true')
-    expect(managedB.getAttribute('data-ylc-source')).toBe('live_direct')
-    expect(managedB.src).toContain('/live_chat?v=video-b')
-  })
-
-  it('returns native iframe directly for archive borrow source', () => {
-    const nativeIframe = document.createElement('iframe') as HTMLIFrameElement
-    nativeIframe.src = 'https://www.youtube.com/live_chat_replay?v=video-a'
-
-    const source: ChatSource = {
-      kind: 'archive_borrow',
-      iframe: nativeIframe,
-    }
-
-    const resolved = resolveSourceIframe(source, null)
-    expect(resolved).toBe(nativeIframe)
+    expect(managed.src).toBe('https://www.youtube.com/live_chat?v=video-a')
   })
 
   it('attaches iframe to container with expected attributes and style', () => {
@@ -749,12 +665,7 @@ describe('iframeAttachment', () => {
     const container = document.createElement('div') as HTMLDivElement
     document.body.appendChild(container)
 
-    const source: ChatSource = {
-      kind: 'live_direct',
-      videoId: 'video-a',
-      url: 'https://www.youtube.com/live_chat?v=video-a',
-    }
-    const managed = resolveSourceIframe(source, null)
+    const managed = createManagedLiveIframe('https://www.youtube.com/live_chat?v=video-a')
     attachIframeToContainer(container, managed)
     expect(container.contains(managed)).toBe(true)
 

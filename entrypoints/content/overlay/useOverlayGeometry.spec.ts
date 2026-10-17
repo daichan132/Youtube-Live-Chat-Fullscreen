@@ -2,8 +2,7 @@ import { act, renderHook } from '@testing-library/react'
 import { Provider } from 'jotai'
 import { createStore } from 'jotai/vanilla'
 import { createElement, type ReactNode } from 'react'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { layoutGeometryToV2, renderChatGeometry } from '@/shared/settings/chatGeometry'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_GEOMETRY } from '@/shared/settings/defaults'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { LegacyChatGeometry } from '@/shared/settings/model'
@@ -30,7 +29,16 @@ describe('useOverlayGeometry', () => {
   const setLayout = (coordinates = { x: 100, y: 50 }, size = { width: 300, height: 200 }, pinned = true) => {
     store.set(chatSettingsStateAtom, {
       ...DEFAULT_CHAT_SETTINGS,
-      geometry: layoutGeometryToV2({ coordinates, size }, reference, pinned),
+      geometry: {
+        reference: 'player',
+        rect: {
+          x: coordinates.x / reference.width,
+          y: coordinates.y / reference.height,
+          width: size.width / reference.width,
+          height: size.height / reference.height,
+        },
+        pinned,
+      },
     })
   }
 
@@ -44,6 +52,7 @@ describe('useOverlayGeometry', () => {
     setPlayerSize(500, 500)
     setLayout()
   })
+  afterEach(() => player.remove())
 
   it('renders ratios against player resizes and clamps the result locally', () => {
     setLayout({ x: 300, y: 50 }, { width: 300, height: 200 })
@@ -59,8 +68,12 @@ describe('useOverlayGeometry', () => {
   it('commits keyboard movement as pinned player ratios', () => {
     const { result } = renderGeometryHook()
     act(() => result.current.moveBy({ x: 25, y: 10 }))
-    expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
-    expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ reference: 'player', pinned: true })
+    expect(result.current.displayGeometry.coordinates).toEqual({ x: 125, y: 60 })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.25, y: 0.12, width: 0.6, height: 0.4 },
+      pinned: true,
+    })
   })
 
   it('commits one geometry update when a drag ends', async () => {
@@ -79,7 +92,12 @@ describe('useOverlayGeometry', () => {
     await flushAnimationFrame()
     expect(result.current.draftGeometry?.coordinates).toEqual({ x: 125, y: 60 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 2, clientX: 25, clientY: 10 })))
-    expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 125, y: 60 })
+    expect(result.current.displayGeometry.coordinates).toEqual({ x: 125, y: 60 })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.25, y: 0.12, width: 0.6, height: 0.4 },
+      pinned: true,
+    })
   })
 
   it('uses the final pointer-up coordinates even when no pointermove was delivered', () => {
@@ -97,7 +115,12 @@ describe('useOverlayGeometry', () => {
     act(() => result.current.onPointerDown(pointerDown))
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 7, clientX: 30, clientY: 15 })))
 
-    expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).coordinates).toEqual({ x: 130, y: 65 })
+    expect(result.current.displayGeometry.coordinates).toEqual({ x: 130, y: 65 })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.26, y: 0.13, width: 0.6, height: 0.4 },
+      pinned: true,
+    })
   })
 
   it('keeps pointer resize updates in a draft and commits once on pointer up', async () => {
@@ -119,7 +142,12 @@ describe('useOverlayGeometry', () => {
     await flushAnimationFrame()
     expect(result.current.draftGeometry?.size).toEqual({ width: 340, height: 240 })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, clientX: 40, clientY: 40 })))
-    expect(renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference).size).toEqual({ width: 340, height: 240 })
+    expect(result.current.displayGeometry.size).toEqual({ width: 340, height: 240 })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.125, y: 50 / 600, width: 0.425, height: 0.4 },
+      pinned: true,
+    })
   })
 
   it('keeps the opposite edges fixed while resizing from the bottom-left handle', async () => {
@@ -142,11 +170,14 @@ describe('useOverlayGeometry', () => {
     await flushAnimationFrame()
     expect(result.current.draftGeometry).toEqual({ coordinates: { x: 60, y: 50 }, size: { width: 440, height: 220 } })
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 3, clientX: 60, clientY: 120 })))
-    const persisted = renderChatGeometry(store.get(chatSettingsStateAtom).geometry, reference)
-    expect(persisted.coordinates.x).toBeCloseTo(60)
-    expect(persisted.coordinates.y).toBeCloseTo(50)
-    expect(persisted.size.width).toBeCloseTo(440)
-    expect(persisted.size.height).toBeCloseTo(220)
+    expect(result.current.displayGeometry.coordinates).toEqual({ x: 60, y: 50 })
+    expect(result.current.displayGeometry.size.width).toBeCloseTo(440, 10)
+    expect(result.current.displayGeometry.size.height).toBeCloseTo(220, 10)
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.075, y: 50 / 600, width: 0.55, height: 220 / 600 },
+      pinned: true,
+    })
   })
 
   it('does not observe player mutations for pinned geometry', () => {
@@ -183,18 +214,20 @@ describe('useOverlayGeometry', () => {
     store.set(chatSettingsStateAtom, { ...store.get(chatSettingsStateAtom), geometry: legacy })
     const { result } = renderGeometryHook()
     expect(result.current.displayGeometry).toEqual({ coordinates: legacy.coordinates, size: legacy.size })
-    expect(store.get(chatSettingsStateAtom).geometry).toEqual(
-      layoutGeometryToV2({ coordinates: legacy.coordinates, size: legacy.size }, reference, true),
-    )
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual({
+      reference: 'player',
+      rect: { x: 0.2, y: 0.1, width: 0.6, height: 0.4 },
+      pinned: true,
+    })
   })
 
   it('starts from the player-relative settings default when reset by the store', () => {
     store.set(chatSettingsStateAtom, { ...store.get(chatSettingsStateAtom), geometry: DEFAULT_CHAT_GEOMETRY })
     const { result } = renderGeometryHook()
-    expect(result.current.displayGeometry).toEqual({
-      ...renderChatGeometry(DEFAULT_CHAT_GEOMETRY, reference),
-      coordinates: { ...renderChatGeometry(DEFAULT_CHAT_GEOMETRY, reference).coordinates, x: 10 },
-    })
+    expect(result.current.displayGeometry.coordinates.x).toBe(10)
+    expect(result.current.displayGeometry.coordinates.y).toBeCloseTo(13.889, 6)
+    expect(result.current.displayGeometry.size.width).toBe(240)
+    expect(result.current.displayGeometry.size.height).toBeCloseTo(277.778, 6)
   })
 })
 

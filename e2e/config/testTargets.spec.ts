@@ -1,25 +1,11 @@
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getE2ETestTargets } from './testTargets'
 
-const ORIGINAL_ENV = {
-  YLC_ARCHIVE_URL: process.env.YLC_ARCHIVE_URL,
-  YLC_ARCHIVE_NEXT_URL: process.env.YLC_ARCHIVE_NEXT_URL,
-  YLC_NOCHAT_URL: process.env.YLC_NOCHAT_URL,
-  YLC_LIVE_URL: process.env.YLC_LIVE_URL,
-}
-
 const unsetEnv = (...keys: string[]) => {
-  for (const key of keys) {
-    delete process.env[key]
-  }
+  for (const key of keys) vi.stubEnv(key, undefined)
 }
 
-afterEach(() => {
-  process.env.YLC_ARCHIVE_URL = ORIGINAL_ENV.YLC_ARCHIVE_URL
-  process.env.YLC_ARCHIVE_NEXT_URL = ORIGINAL_ENV.YLC_ARCHIVE_NEXT_URL
-  process.env.YLC_NOCHAT_URL = ORIGINAL_ENV.YLC_NOCHAT_URL
-  process.env.YLC_LIVE_URL = ORIGINAL_ENV.YLC_LIVE_URL
-})
+afterEach(() => vi.unstubAllEnvs())
 
 describe('getE2ETestTargets', () => {
   it('returns defaults when env overrides are missing', () => {
@@ -41,10 +27,10 @@ describe('getE2ETestTargets', () => {
   })
 
   it('uses existing YLC_* env overrides', () => {
-    process.env.YLC_ARCHIVE_URL = 'https://example.com/archive'
-    process.env.YLC_ARCHIVE_NEXT_URL = 'https://example.com/archive-next'
-    process.env.YLC_NOCHAT_URL = 'https://example.com/no-chat'
-    process.env.YLC_LIVE_URL = 'https://example.com/live'
+    vi.stubEnv('YLC_ARCHIVE_URL', 'https://example.com/archive')
+    vi.stubEnv('YLC_ARCHIVE_NEXT_URL', 'https://example.com/archive-next')
+    vi.stubEnv('YLC_NOCHAT_URL', 'https://example.com/no-chat')
+    vi.stubEnv('YLC_LIVE_URL', 'https://example.com/live')
 
     const targets = getE2ETestTargets()
 
@@ -56,10 +42,10 @@ describe('getE2ETestTargets', () => {
   })
 
   it('treats blank env overrides as unset', () => {
-    process.env.YLC_ARCHIVE_URL = '   '
-    process.env.YLC_ARCHIVE_NEXT_URL = '  '
-    process.env.YLC_NOCHAT_URL = ''
-    process.env.YLC_LIVE_URL = ' '
+    vi.stubEnv('YLC_ARCHIVE_URL', '   ')
+    vi.stubEnv('YLC_ARCHIVE_NEXT_URL', '  ')
+    vi.stubEnv('YLC_NOCHAT_URL', '')
+    vi.stubEnv('YLC_LIVE_URL', ' ')
 
     const targets = getE2ETestTargets()
 
