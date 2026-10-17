@@ -1,6 +1,6 @@
 # Reading runtime failure diagnostics
 
-The settings diagnostic download contains a sanitized, bounded report. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, optional `runtime.failureStage` identifies the operation that failed.
+The toolbar popup can copy a sanitized, bounded diagnostic report after checking the current tab's status. See [Troubleshooting](../troubleshooting.md) for the user-facing steps. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, optional `runtime.failureStage` identifies the operation that failed.
 
 | Stage | Start investigation here |
 | --- | --- |

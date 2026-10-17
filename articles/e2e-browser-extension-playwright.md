@@ -8,7 +8,7 @@ published: false
 
 ## はじめに
 
-Playwright の公式ドキュメントには「`--load-extension` で拡張をロードできます」という [1 ページ](https://playwright.dev/docs/chrome-extensions)があるだけで、ブラウザ拡張の E2E に関する実践的な情報はほぼ存在しません。筆者は Chrome 拡張（[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)、ユーザー 2 万人超、[WXT](https://wxt.dev/) + React + TypeScript）の E2E テストを Playwright で 1 年以上運用する中でハマった落とし穴と、試行錯誤の末にたどり着いた対処法をまとめます。
+Playwright の [Chrome 拡張の公式ガイド](https://playwright.dev/docs/chrome-extensions)を出発点に、[YouTube Live Chat Fullscreen](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd)の E2E テストで使う実装パターンと注意点をまとめます。この拡張は [WXT](https://wxt.dev/) + React + TypeScript を使用しています。
 
 :::message
 この記事は以下の環境を前提としています。
@@ -329,10 +329,10 @@ await worker.evaluate(
 
 ### Page パス: テスト専用の storage bridge ページ
 
-並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合は **アプリケーションランタイムを一切載せない最小ページ（`e2e.html`）** を用意し、拡張ページ経由で操作します。
+並列テスト実行時の負荷で SW 起動がタイムアウトするケースがあります。その場合はアプリケーションランタイムを載せないテスト専用ページ（`e2e.html`）を用意し、拡張ページ経由で操作します。YLC では `e2e.html` を `testing` モードのビルドにだけ追加し、配布用パッケージには含めません。
 
 ```html
-<!-- public/e2e.html — ビルド時に拡張パッケージに含まれる -->
+<!-- e2e/assets/e2e.html: testing モードでのみビルド出力へ追加する -->
 <!DOCTYPE html>
 <html>
 <head><title>E2E Storage Bridge</title></head>
@@ -560,7 +560,7 @@ await expect.poll(async () => {
 
 ### テスタビリティのための `data-*` 属性
 
-プロダクトコード側で `data-*` 属性を付けておくと、テストからの状態観測が楽になります。本番に残っても害がないので気軽に追加できます。
+プロダクトコード側で `data-*` 属性を付けておくと、テストからの状態観測が楽になります。この属性は画面の状態を示すもので、別ページを追加する storage bridge とは用途が異なります。テスト専用ページの `e2e.html` は前節のとおり配布パッケージから除外します。
 
 ```typescript
 // プロダクトコード: <iframe data-ext-state="ready" src="...">
@@ -581,8 +581,8 @@ await expect.poll(async () => {
 
 外部サービスに依存する E2E テストは本質的に不安定です。すべてのテストを実サービスに向けるのではなく、2 レイヤーに分けると運用が楽になります。
 
-- **実サービス E2E（少数・skip 許容）** — 「拡張が実際のサイト上で動くか」を確認するスモークテスト。URL が腐ったらスキップする前提で設計する
-- **ローカル固定 HTML での疑似 E2E（多数・常に安定）** — 拡張のロジック検証に集中。テスト用の HTML ファイルを用意し、外部要因でフレークしない環境で細かく検証する
+- 実サービス E2E は少数のスモークテストで、拡張が実際のサイト上で動くかを確認します。日常の canary では、テスト対象 URL が利用できなくなった場合の skip を記録します。
+- ローカル固定 HTML での疑似 E2E は、テスト用の HTML ファイルを用意し、外部要因でフレークしない環境で拡張のロジックを細かく検証します。
 
 筆者の拡張では、ライブ配信テスト（実サービス）は 2〜3 本に絞り、チャット表示ロジックや UI 操作の細かい検証はローカル HTML で回しています。実サービス E2E は「本当に動くか」の最終確認、疑似 E2E は「正しく動くか」の詳細検証、という役割分担です。
 
@@ -628,7 +628,7 @@ test('archive replay chat works in fullscreen', async ({ page, archiveReplayUrl 
 })
 ```
 
-こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。
+こうしておくと、テストレポート上で「前提条件の問題（skip）」と「拡張のバグ（fail）」が明確に区別できます。ただし、YLC のリリース候補の検証では `YLC_CANARY_REQUIRE_CLEAN=1` を指定し、skip を含む実サイト canary は成功として扱いません。
 
 ### パターン 3: 予期せぬダイアログの自動処理（`addLocatorHandler`）
 

@@ -2,7 +2,7 @@
 
 YouTube 上の実表示を確認するときは、基本は専用の Chrome for Testing を使う。ログイン済み UI を見る必要があるときだけ、通常の Google Chrome を専用プロファイルで起動する。
 
-この文書は、読み込んだビルドと実際に操作した範囲を記録するための手順。自動の fixture、production package smoke、実 YouTube canary の結果と、手動で確認した経路は分けて記録する。候補の作成からストア提出までの流れは [リリース Runbook](release-runbook.md) を参照する。
+この文書は読み込んだビルドと実際に操作した範囲を記録するための手順。自動の fixture、production package smoke、実 YouTube canary の結果と、手動で確認した経路は分けて記録する。候補の作成からストア提出までの流れは [リリース Runbook](release-runbook.md) を参照する。
 
 現在の候補ワークフローには手動検証の申告入力はない。配布候補の確認では ZIP のハッシュと対象コミットを照合し、下記の [確認記録](#配布候補ごとの確認記録) をリリースノートや関連する作業記録に残す。
 
@@ -84,7 +84,7 @@ YLC_BROWSER_EXECUTABLE_PATH="/path/to/browser" YLC_E2E_HEADED=1 \
   yarn playwright test --project=fixture e2e/scenarios/live/spaNavigation.fixture.spec.ts
 ```
 
-`YLC_BROWSER_EXECUTABLE_PATH` 指定時は、対象ブラウザ本来の User-Agent を維持し、Playwright 同梱 Chromium 用の `channel` と Chrome User-Agent override を適用しない。通常プロファイルや既存の拡張状態は再利用しない。
+`YLC_BROWSER_EXECUTABLE_PATH` 指定時は対象ブラウザ本来の User-Agent を維持し、Playwright 同梱 Chromium 用の `channel` と Chrome User-Agent override を適用しない。通常プロファイルや既存の拡張状態は再利用しない。
 
 ## 設定ファイルを使った起動と撮影
 
@@ -98,7 +98,7 @@ yarn verify:browser --headless --port 9335 \
   --url "https://www.youtube.com/watch?v=<video_id>"
 ```
 
-起動後も、同じ開発用プロファイルの対象タブだけに設定を適用できる。`--target-id` は CDP target ID を指定する。省略時は `--url-includes` に合う YouTube watch / live ページが1件だけでなければ停止する。
+起動後も同じ開発用プロファイルの対象タブだけに設定を適用できる。`--target-id` は CDP target ID を指定する。省略時は `--url-includes` に合う YouTube watch / live ページが1件だけでなければ停止する。
 
 ```bash
 yarn verify:settings --port 9335 --profile /private/tmp/ylc-debug-profile \
@@ -112,7 +112,7 @@ yarn verify:screenshots --background --video-only --require-composer --viewport 
 
 背景撮影は対象タブの描画 surface を直接取得する。headless Chrome は OS ウィンドウを作らず、対象タブを内部で選択して YouTube の本来の全画面ボタンを操作する。headless 起動の viewport は 1600 × 900。全画面 DOM・拡張 overlay・復号された動画の寸法が成立しなければ失敗とする。`--require-composer` は可視かつ編集可能なネイティブ入力欄を要求し、ログイン案内やリプレイを成功扱いしない。headed Chrome の背面タブでは、フォーカスのエミュレーションだけで全画面に入れない場合があるため、同じ保証はない。既存の対話用5枚撮影は `--background` を付けずに使う。
 
-撮影寸法を固定する場合は `--viewport 1600x900` を指定する。起動時の viewport だけでは、全画面への移行後も高さ 900 px を維持できるとは限らない。撮影コマンドはネイティブ全画面に入ったあと、スクリーンショットを取得する同じ CDP session で指定寸法を適用し、撮影後に解除する。指定寸法が保持されなければ画像を採用しない。
+撮影寸法を固定する場合は `--viewport 1600x900` を指定する。起動時の viewport だけでは全画面への移行後も高さ 900 px を維持できるとは限らない。撮影コマンドはネイティブ全画面に入ったあと、スクリーンショットを取得する同じ CDP session で指定寸法を適用し、撮影後に解除する。指定寸法が保持されなければ画像を採用しない。
 
 設定 JSON は `enabled`、`theme`、`locale`、`profile`（appearance / display の部分更新）、`geometry`（player 相対の完全な矩形）を受け付ける。色は `backgroundColor: { "a": 0.22 }` のように alpha だけを指定できる。コメント入力欄を含める場合は `contentMode: "full-chat"` を指定する。サンプルは [撮影用設定](../store-assets/chrome-web-store/source/settings/) にある。
 
@@ -187,11 +187,13 @@ OS / バージョン:
 SPA 遷移: 成功 / 失敗 / 未確認
 設定（Tab到達・閉じた後のフォーカス）: 成功 / 失敗 / 未確認
 配置（ドラッグ・ボタン移動・拡縮）: 成功 / 失敗 / 未確認
-復旧（状態確認・再試行・診断コピー）: 成功 / 失敗 / 未確認
+ポップアップ（状態確認・再試行・診断コピー）: 成功 / 失敗 / 未確認
 問題・再現手順・匿名化済み診断:
 ```
 
 Chrome と Firefox はそれぞれの成果物について記録する。Firefox の主要経路は Firefox 本体で確認し、Chromium fixture や ZIP 検査の成功で代用しない。未実施の経路は「未確認」と記す。この記録をリリース候補の既存の検証記録へ添付する。
+
+状態確認・再試行・診断コピーは拡張のポップアップで操作する。再試行の受付と表示の復旧は分けて確認する。手順は [トラブルシューティング](../troubleshooting.md) を参照する。
 
 ## 性能の比較測定
 
@@ -202,7 +204,7 @@ yarn build
 node scripts/verify/measure-performance.mjs --out /private/tmp/ylc-performance-after.json
 ```
 
-変更前に保存したビルドは `--extension /path/to/saved/chrome-mv3` で指定する。測定は外部ネットワークを遮断した YouTube fixture 上で行い、1,000件のメッセージを保持して100回の追加・削除と100回の player 通知を5セット実行する。入力欄はメッセージ一覧の後に置き、`--chrome panel`（既定）、`--chrome fallback`（ログイン案内）、`--chrome absent`（ヘッダー・入力欄なし）を同じ条件で比較できる。実 YouTube の互換性確認は、上記の実ブラウザ手順で別に行う。
+変更前に保存したビルドは `--extension /path/to/saved/chrome-mv3` で指定する。測定は外部ネットワークを遮断した YouTube fixture 上で行い、1,000件のメッセージを保持して100回の追加・削除と100回の player 通知を5セット実行する。入力欄はメッセージ一覧の後に置き、`--chrome panel`（既定）、`--chrome fallback`（ログイン案内）、`--chrome absent`（ヘッダー・入力欄なし）を同じ条件で比較できる。実 YouTube の互換性確認は上記の実ブラウザ手順で別に行う。
 
 JSON にはブラウザ・OS・拡張パス・content script の SHA-256 と次の処理回数を保存する。
 

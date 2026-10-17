@@ -6,14 +6,14 @@ Security fixes are applied to the latest published version of YouTube Live Chat 
 
 ## Scope
 
-The extension's attack surface is deliberately small. The permission set and the page-match pattern below are pinned by [`check-package-contracts.mjs`](scripts/verify/check-package-contracts.mjs); the rest hold by construction and are reviewable in this repository:
+The production package is checked against the [package policy](config/packagePolicy.ts) by [`check-package-contracts.mjs`](scripts/verify/check-package-contracts.mjs):
 
-- It requests only the `activeTab` and `storage` permissions, and no host permissions.
+- It requests only the `storage` permission, with no host permissions.
 - It runs on `www.youtube.com` only.
-- It has no account system, no analytics, and no reporting endpoint. It reads the network in exactly two cases: its own bundled locale files, and — only once you choose a font other than the default — that font's stylesheet from Google Fonts.
+- It has no extension account, analytics, or reporting endpoint. Settings stay in the browser. Bundled locale files are loaded from the extension package; optional fonts are loaded from Google Fonts. YouTube's own chat continues to communicate with YouTube.
 - Diagnostic reports are sanitized before export and cannot contain URLs, video IDs, chat text, or user names.
 
-Reports about any of those boundaries being broken are especially welcome. So are reports about the extension mishandling content from the YouTube page it runs alongside, or about anything that could leak settings between origins.
+Please report violations of these privacy and permission limits, mishandling of YouTube page content, or settings leaking between origins.
 
 Findings in YouTube itself belong to Google, not here.
 
@@ -30,7 +30,7 @@ Include:
 - Reproduction steps or a minimal proof of concept
 - Whether the report can be disclosed after a fix
 
-When attaching evidence, prefer the sanitized diagnostic report available from the settings panel over raw screenshots or logs, and remove any personal data from a proof of concept before sending it.
+When attaching evidence, prefer the sanitized report available through **Copy diagnostics** in the browser toolbar popup over raw screenshots or logs, and remove any personal data from a proof of concept before sending it.
 
 ## What to expect
 
@@ -39,6 +39,6 @@ This is a single-maintainer project, so please read these as intentions rather t
 - An acknowledgement within about a week.
 - An assessment of severity and a plan once the report is reproduced.
 
-Shipping a fix takes longer than merging it. Releases go through a manual two-stage pipeline and then through Chrome Web Store and Firefox Add-ons review, so the interval between a fix landing on `main` and reaching users is measured in days, not hours, and is largely outside the maintainer's control.
+A merged fix is not immediately available to users. A maintainer must prepare and publish a release, which then goes through Chrome Web Store and Firefox Add-ons review. Release and review times vary.
 
 Please avoid accessing other users' data, disrupting YouTube, or publishing the vulnerability before the maintainer has had a reasonable opportunity to investigate.

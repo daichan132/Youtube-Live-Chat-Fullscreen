@@ -34,14 +34,14 @@ The switch only appears when chat is available for the video, same as on Chrome.
 
 ## The overlay looks wrong or stops responding
 
-1. Reveal the chat panel's control row, open settings, then press **Reload chat overlay** under **Compatibility**. This rebuilds the chat session on the page.
-2. If the problem persists, press **Copy diagnostic report** beside it and attach the sanitized report to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml).
+1. Keep the affected YouTube tab active and open the extension's browser toolbar popup. Select **Retry chat display**, then **Check status** to check the result. A retry request does not confirm that the overlay recovered.
+2. If the problem persists and **Copy diagnostics** is available, copy the report and attach it to a [bug report](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml). If the popup cannot check the tab or the buttons are unavailable, reload the YouTube page and try again.
 
 The report is sanitized before it reaches your clipboard: it contains no URLs, video IDs, chat text, or user names. It records which page elements were found, a failure code such as `IFRAME_DOCUMENT_NOT_READY`, and a compatibility fingerprint. These help a maintainer investigate without needing the contents of your conversation.
 
 ## The overlay moved on its own
 
-The overlay repositions itself at most once per video, to get out from under captions, player controls, an open menu, or the end screen. Once you drag or resize it yourself, it stays where you put it and automatic placement is switched off for that layout.
+Before you place the panel manually, automatic placement can move it away from captions, player controls, an open menu, or the end screen. Dragging, resizing, or using the placement buttons switches off automatic placement for the saved layout. The panel still adjusts to fit the player when its size changes.
 
 ## Send a useful bug report
 

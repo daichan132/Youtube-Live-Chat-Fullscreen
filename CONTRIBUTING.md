@@ -12,7 +12,7 @@ You can help make fullscreen chat easier to use by reporting a reproducible prob
 | Improve a translation | Edit the source JSON described in [Internationalization](docs/architecture/i18n.md) |
 | Change code or add a test | Use the setup below, then follow the [engineering overview](docs/engineering.md) to the relevant files |
 
-For a larger feature or a change to permissions or storage, open an issue first so the intended behavior can be discussed before implementation.
+For a larger feature or a change to permissions or storage, open an issue first so the intended behavior can be discussed before implementation. Report security vulnerabilities privately through [SECURITY.md](SECURITY.md).
 
 ## Run a development build
 
@@ -34,7 +34,7 @@ yarn playwright install --with-deps chromium
 
 ## Verify your change
 
-For code, configuration, or dependency changes, run the local gate:
+For code, configuration, or dependency changes, run the required local checks:
 
 ```bash
 yarn verify
@@ -76,19 +76,9 @@ Preserve live streams, archives with replay, videos without chat, and YouTube na
 
 ## Tests
 
-Vitest uses three projects:
+Use an explicit `*.unit.spec.ts(x)`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts(x)` suffix for new Vitest tests. The [testing guide](docs/testing/contracts.md) describes each project and how to run focused checks. Focused tests are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging.
 
-| Test | Environment | Use for |
-| --- | --- | --- |
-| `*.unit.spec.ts(x)` | Node | Pure logic |
-| `*.dom.spec.ts(x)` and legacy/plain source `*.spec.ts(x)` | jsdom | React, DOM, storage, and runtime integration |
-| `*.contract.spec.ts(x)` plus contract directories | Node | Package, workflow, and architecture contracts |
-
-The DOM project runs with `https://www.youtube.com/` as its document URL so origin-sensitive route behavior matches production. Unit and contract suffixes are explicitly excluded from the DOM wildcard.
-
-Focused tests are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging.
-
-New Vitest tests use an explicit unit, DOM, or contract suffix. Playwright scenarios are explicitly classified in [`e2e/config/projectClassification.ts`](e2e/config/projectClassification.ts). Register each scenario exactly once and keep real-YouTube canaries separate from deterministic fixtures.
+Register each Playwright scenario exactly once in [`e2e/config/projectClassification.ts`](e2e/config/projectClassification.ts). Keep real-YouTube canaries separate from deterministic fixtures.
 
 ## Formatting and type safety
 
@@ -97,7 +87,7 @@ yarn check
 yarn fix
 ```
 
-Biome owns source formatting and linting; TypeScript runs with `tsc --noEmit`. `yarn check` does not replace the broader `yarn verify` gate. Do not suppress errors to make a gate pass.
+Biome owns source formatting and linting; TypeScript runs with `tsc --noEmit`. `yarn check` does not replace `yarn verify`. Do not suppress errors to make checks pass.
 
 ## Translations
 
@@ -119,9 +109,3 @@ yarn capture:store-assets
 ```
 
 Review changed images at full size. Do not update visual baselines to hide an unexplained difference.
-
-## Useful bug reports
-
-Include the browser and OS versions, extension version, video state (live, replay, or no chat), route type (`/watch`, direct live entry, or channel live entry), reproduction steps, and screenshots or recordings. The settings panel can copy a sanitized diagnostic report that excludes URLs, video IDs, chat text, and user names. Remove personal information from any other evidence you attach.
-
-Report security vulnerabilities privately through [SECURITY.md](SECURITY.md), not a public issue.

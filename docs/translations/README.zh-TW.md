@@ -60,40 +60,11 @@
 
 正式版 manifest 只要求 `storage` 權限，content script 與公開的擴充功能資源也都限定在 YouTube 使用。選擇額外字型時，可能會從 Google Fonts 下載。這些範圍可以在 [package policy](../../config/packagePolicy.ts) 與 [package checks](../../scripts/verify/check-package-contracts.mjs) 中確認。
 
-## 探索程式碼
-
-本專案使用 WXT、React、TypeScript、Jotai 與 Tailwind CSS，以同一份程式碼建置 Chrome 和 Firefox 版本。開發的重點，是讓全螢幕聊天視窗能在持續變動的 YouTube 頁面上穩定運作：
-
-- **YouTube 生命週期**：處理 SPA 導覽、播放器替換、直播與重播切換，以及借用聊天 iframe 後的還原。
-- **不同介面共用的設定**：彈出視窗、覆蓋視窗與設定頁面共用已儲存的偏好，避免無關的修改互相覆寫。
-- **瀏覽器驗證**：包含確定性的 YouTube fixture、視覺與無障礙檢查、正式版 package 契約，以及獨立的實際 YouTube 相容性檢查。
-
-[工程概覽](../engineering.md)提供程式碼導覽；想深入特定領域，可從[文件索引](../README.md)開始（英文）。
-
-### 在本機執行
-
-使用 Node.js 24，以及 `package.json` 的 `packageManager` 所指定的 Yarn 版本。
-
-```bash
-corepack enable
-yarn install --immutable
-yarn dev              # Chrome；Firefox 請用 yarn dev:firefox
-```
-
-修改程式碼、設定或依賴套件後，請完成本機品質檢查：
-
-```bash
-yarn verify
-```
-
-安裝步驟、瀏覽器測試的事前準備，以及 package 和發布的額外檢查，請看 [CONTRIBUTING.md](../../CONTRIBUTING.md) 與[測試契約](../testing/contracts.md)（英文）。
-
 ## 一起改善擴充功能
 
-歡迎回報問題、翻譯文件、改善說明，或提交範圍明確的修正。讓聊天更容易閱讀的小改動，或能重現 YouTube 相容性問題的操作步驟，都能幫助下一位使用者。
+歡迎回報問題、翻譯文件、改善說明，或提交範圍明確的修正。開發環境與必要檢查請從[貢獻指南](../../CONTRIBUTING.md)開始；[工程概覽](../engineering.md)說明程式碼結構（兩者皆為英文）。
 
 - [回報問題](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml)，或[提出功能建議](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml)。
-- 第一次修改前，請閱讀[貢獻指南](../../CONTRIBUTING.md)（英文）。
 - 安全性漏洞請依 [SECURITY.md](../../SECURITY.md) 的非公開流程回報。
 
 採用 [GPL-3.0](../../LICENSE) 授權。

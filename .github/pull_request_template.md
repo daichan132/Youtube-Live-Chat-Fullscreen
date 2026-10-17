@@ -10,10 +10,9 @@
 
 <!-- List only commands and manual checks you actually ran. -->
 
-- [ ] `yarn check`
-- [ ] `yarn test:unit`
-- [ ] `yarn build`
-- [ ] Firefox build or browser verification, when relevant
+- [ ] `yarn verify` for code, configuration, or dependency changes
+- [ ] `yarn test:package` for package, manifest, or build changes
+- [ ] Real-browser verification, when relevant
 - [ ] Deterministic E2E, visual, or accessibility checks, when relevant
 
 ## Browser behavior

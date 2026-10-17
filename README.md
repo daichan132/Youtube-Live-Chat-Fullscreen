@@ -58,40 +58,11 @@ There is no extension account, analytics SDK, or tracking service. Settings stay
 
 The production manifest requests only `storage`, and content scripts and public extension resources are scoped to YouTube. Optional font selections may fetch fonts from Google Fonts. The [package policy](config/packagePolicy.ts) and [package checks](scripts/verify/check-package-contracts.mjs) make these boundaries visible in the source.
 
-## Explore the code
-
-This is a WXT, React, TypeScript, Jotai, and Tailwind CSS project with one codebase for Chrome and Firefox. The interesting work is keeping a fullscreen overlay reliable on a page that changes underneath it:
-
-- **YouTube lifecycle:** SPA navigation, player replacement, live/replay transitions, and restoration of borrowed chat iframes.
-- **Settings across extension contexts:** popup, overlay, and settings page share persisted preferences without unrelated edits overwriting one another.
-- **Browser evidence:** deterministic YouTube fixtures, visual and accessibility checks, production-package contracts, and separate real-YouTube compatibility checks.
-
-Start with the [engineering overview](docs/engineering.md) for a code map and the [documentation hub](docs/README.md) for the area you want to explore.
-
-### Run locally
-
-Use Node.js 24 and the Yarn version pinned in `package.json`.
-
-```bash
-corepack enable
-yarn install --immutable
-yarn dev              # Chrome; use yarn dev:firefox for Firefox
-```
-
-For code, configuration, or dependency changes, complete the local quality gate:
-
-```bash
-yarn verify
-```
-
-Setup, browser-test prerequisites, and additional package/release gates are in [CONTRIBUTING.md](CONTRIBUTING.md) and the [testing contracts](docs/testing/contracts.md).
-
 ## Help shape the extension
 
-Bug reports, translations, documentation improvements, and focused fixes are welcome. A small change that makes chat easier to read or a reproduction that explains a YouTube compatibility issue can help the next viewer.
+Bug reports, translations, documentation improvements, and focused fixes are welcome. For development setup and required checks, start with [CONTRIBUTING.md](CONTRIBUTING.md). The [engineering overview](docs/engineering.md) maps the codebase.
 
 - [Report a bug](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) or [suggest a feature](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml).
-- Read the [contribution guide](CONTRIBUTING.md) to make your first change.
 - Follow [SECURITY.md](SECURITY.md) for private vulnerability reports.
 
 Licensed under [GPL-3.0](LICENSE).

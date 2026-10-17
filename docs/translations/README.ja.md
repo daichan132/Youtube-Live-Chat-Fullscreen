@@ -31,7 +31,7 @@
 
 *透明な背景で、通常メッセージのユーザー名を非表示にしたレイアウト例です。配信に合わせて色、文字サイズ、位置を選べます。*
 
-## 映像を見ながら、会話にも参加
+## 映像を見ながら会話にも参加
 
 コンサートを見たり、ゲーム配信を追ったり、アーカイブを見返したりするときも、チャットの反応を一緒に楽しめます。オーバーレイには YouTube 本来のチャットを使うため、ライブチャットへのログイン、投稿、バッジ、Super Chat は引き続き YouTube が扱います。
 
@@ -54,46 +54,17 @@
 
 プリセットやバックアップの手順は[使い方](../user-guide.md)、パネルが表示されない場合は[トラブルシューティング](../troubleshooting.md)をご覧ください（どちらも英語）。
 
-## ソースで確認できるプライバシー
+## プライバシー
 
 拡張機能用のアカウントやアクセス解析 SDK、トラッキングサービスはありません。設定はこのブラウザの `browser.storage.local` に保存され、閲覧履歴やチャット本文を開発者へ送信しません。YouTube 本来のチャットは、引き続き YouTube と通信します。
 
-本番 manifest が要求する権限は `storage` のみです。content script と公開する拡張機能のリソースは YouTube に限定しています。選択した追加フォントは Google Fonts から取得する場合があります。[package policy](../../config/packagePolicy.ts) と [package checks](../../scripts/verify/check-package-contracts.mjs) で、この範囲を確認できます。
-
-## コードを知る
-
-WXT、React、TypeScript、Jotai、Tailwind CSS を使い、ひとつのコードベースから Chrome 版と Firefox 版をビルドします。開発の中心は、構造が変化し続ける YouTube のページ上で、オーバーレイを安定して動かすことです。
-
-- **YouTube のライフサイクル**：SPA 遷移、プレイヤーの差し替え、ライブとリプレイの切り替え、借用したチャット iframe の復元を扱います。
-- **複数の画面で使う設定**：ポップアップ、オーバーレイ、設定画面が保存した設定を共有し、無関係な変更を上書きしないようにします。
-- **ブラウザでの検証**：決定的な YouTube fixture、視覚とアクセシビリティの検査、本番 package の契約、実際の YouTube での互換性確認を用意しています。
-
-コードの全体像は [engineering overview](../engineering.md)、関心のある領域の資料は[ドキュメント一覧](../README.md)から読めます（英語）。
-
-### ローカルで動かす
-
-Node.js 24 と、`package.json` の `packageManager` で指定した Yarn を使います。
-
-```bash
-corepack enable
-yarn install --immutable
-yarn dev              # Chrome 向け。Firefox は yarn dev:firefox
-```
-
-コード、設定、依存関係を変更したら、ローカルの品質ゲートを実行します。
-
-```bash
-yarn verify
-```
-
-セットアップ、ブラウザテストの準備、package やリリースの追加ゲートは [CONTRIBUTING.md](../../CONTRIBUTING.md) と [testing contracts](../testing/contracts.md) を参照してください（英語）。
+配布版が要求する権限は `storage` のみです。ページ上で動くスクリプトや、ページから利用できる拡張機能のリソースは YouTube に限定しています。選択した追加フォントは Google Fonts から取得する場合があります。[権限とリソースの設定](../../config/packagePolicy.ts)と[パッケージの検証コード](../../scripts/verify/check-package-contracts.mjs)で、この範囲を確認できます。
 
 ## 改善に参加する
 
-不具合報告、翻訳、ドキュメントの改善、小さな修正を歓迎します。チャットを読みやすくする変更や、YouTube との互換性問題を再現する手順が、次に使う人の助けになります。
+不具合報告、翻訳、ドキュメントの改善、小さな修正を歓迎します。開発環境の準備や変更後の検証は[コントリビューションガイド](../../CONTRIBUTING.md)、コードの構成は[技術概要](../engineering.md)にまとめています（どちらも英語）。
 
 - [不具合を報告する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml)、または[機能を提案する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml)。
-- 初めての変更は[コントリビューションガイド](../../CONTRIBUTING.md)から始められます（英語）。
 - 脆弱性は [SECURITY.md](../../SECURITY.md) の非公開の手順で報告してください。
 
 [GPL-3.0](../../LICENSE) ライセンスで公開しています。

@@ -42,7 +42,7 @@ The settings controls have accessible labels and support keyboard interaction. D
 
 Open the preset tab and use **Apply** on the style you want. To create one, select **Save Current Settings**, then edit the new preset's name from **Untitled** to something recognizable. Presets are useful for keeping a compact game layout and a more spacious reading style ready to switch between.
 
-Presets store appearance. The panel's position and size are saved separately, so choosing another preset does not move it.
+Presets store appearance and display options, including idle visibility and messages-only mode. The panel's position and size are saved separately, so choosing another preset does not move it.
 
 ## Back up or move settings
 
@@ -56,7 +56,7 @@ Import replaces the backed-up settings, so export a copy first if you want to ke
 
 Regular videos and streams without usable chat do not show the fullscreen overlay. Archive support requires YouTube's chat replay to be available and playable. The extension cannot add a conversation that YouTube does not provide.
 
-If a usable chat exists but the panel is missing, or the layout stops responding, follow [troubleshooting](troubleshooting.md). The settings panel can reload the overlay and copy a sanitized diagnostic report for a bug report.
+If a usable chat exists but the panel is missing, or the layout stops responding, follow [troubleshooting](troubleshooting.md). The browser toolbar popup offers **Retry chat display** and, when a report is available, **Copy diagnostics**.
 
 ## Privacy
 

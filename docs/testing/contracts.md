@@ -73,7 +73,7 @@ The package contract rejects:
 - mismatches between unpacked output and ZIP inventory;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
-Package size budgets live in `config/package-size-budget.json`. The ZIP ceiling is 380,000 bytes for both browsers. During the October 2026 dependency refresh, an identical-source comparison measured a 348,782-byte Chrome ZIP with the previous lockfile and a 366,122-byte ZIP after updating only React, React DOM, and scheduler to React 19.3. This dependency cost sets the new ZIP baseline; the content-script ceiling remains 450,000 bytes. Future updates must measure both production packages against these budgets.
+Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output.
 
 ## Pull-request CI ownership
 
@@ -95,7 +95,7 @@ The testing build is therefore always consumed, while visual regression and exac
 
 Canary skips are reserved for YouTube-owned preconditions. Once a usable page and fullscreen state exist, missing extension UI or chat is a failure. The reporter records executed, skipped, failed, and compatibility fingerprint data for operator review.
 
-The scheduled monitor may report environmental degradation, whereas the release path requests a clean canary. Human real-browser evidence remains part of release operation; see the maintainer runbook.
+The manually triggered [standalone canary](../../.github/workflows/canary.yml) may report environmental degradation, whereas the release path requires a clean canary. Human real-browser evidence remains part of release operation; see the [maintainer runbook](../maintainers/release-runbook.md).
 
 ## Visual baselines
 
