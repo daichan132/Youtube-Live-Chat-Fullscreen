@@ -24,6 +24,18 @@ describe('useDocumentFocus', () => {
 
     setHasFocus(true)
     act(() => {
+      window.dispatchEvent(new Event('focus'))
+    })
+    expect(result.current).toBe(true)
+
+    setHasFocus(false)
+    act(() => {
+      document.dispatchEvent(new Event('visibilitychange'))
+    })
+    expect(result.current).toBe(false)
+
+    setHasFocus(true)
+    act(() => {
       document.dispatchEvent(new Event('visibilitychange'))
     })
     expect(result.current).toBe(true)

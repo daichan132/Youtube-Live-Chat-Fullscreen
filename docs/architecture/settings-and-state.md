@@ -68,6 +68,8 @@ A newer local language selection is not cancelled by an acknowledgement of an ea
 
 Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
 
+Legacy migration maps only `default1`–`default7` to built-in presets; custom entries require their own style object in `presetItemStyles`.
+
 The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
 
 An import synchronously reserves a barrier. It waits only for previously queued operations, writes the four imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.

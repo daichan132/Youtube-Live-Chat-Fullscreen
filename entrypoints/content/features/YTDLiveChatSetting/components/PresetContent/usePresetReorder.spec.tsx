@@ -292,12 +292,32 @@ describe('usePresetReorder', () => {
     expect(order(view.getByTestId)).not.toBe(ids.join(','))
     expect(onCommit).not.toHaveBeenCalled()
 
-    animationFrames.runNext()
-    animationFrames.runNext()
-    fireEvent.pointerUp(window, { pointerId: 7 })
+    // Reach the bottom without fixing how many frames or pixels each step takes.
+    for (let frame = 0; frame < 100 && scrollContainer.scrollTop < 420; frame++) {
+      if (!animationFrames.runNext()) break
+    }
+    expect(scrollContainer.scrollTop).toBe(420)
+    expect(onCommit).not.toHaveBeenCalled()
+    fireEvent.pointerUp(window, { pointerId: 7, clientY: 379 })
 
     expect(onCommit).toHaveBeenCalledOnce()
-    expect(onCommit).toHaveBeenCalledWith(order(view.getByTestId)?.split(','))
+    expect(onCommit).toHaveBeenCalledWith([
+      'preset-2',
+      'preset-3',
+      'preset-4',
+      'preset-5',
+      'preset-6',
+      'preset-7',
+      'preset-8',
+      'preset-9',
+      'preset-10',
+      'preset-11',
+      'preset-12',
+      'preset-1',
+    ])
+    expect(order(view.getByTestId)).toBe(
+      'preset-2,preset-3,preset-4,preset-5,preset-6,preset-7,preset-8,preset-9,preset-10,preset-11,preset-12,preset-1',
+    )
     expect(animationFrames.cancel).toHaveBeenCalledOnce()
     expect(animationFrames.callbacks).toHaveLength(0)
   })

@@ -17,19 +17,30 @@ describe('SessionScope', () => {
     const frameCallback = vi.fn()
     const listener = vi.fn()
 
-    scope.setTimeout(timerCallback, 50)
+    scope.setTimeout(timerCallback, 5)
     scope.requestAnimationFrame(frameCallback)
     scope.listen(target, 'change', listener)
+    target.dispatchEvent(new Event('change'))
+    vi.advanceTimersByTime(20)
+
+    expect(timerCallback).toHaveBeenCalledOnce()
+    expect(frameCallback).toHaveBeenCalledOnce()
+    expect(listener).toHaveBeenCalledOnce()
+
+    scope.setTimeout(timerCallback, 50)
+    scope.requestAnimationFrame(frameCallback)
+    expect(vi.getTimerCount()).toBeGreaterThan(0)
 
     scope.dispose()
+    expect(vi.getTimerCount()).toBe(0)
     vi.runAllTimers()
     target.dispatchEvent(new Event('change'))
 
     expect(scope.generation).toBe(7)
     expect(scope.signal.aborted).toBe(true)
-    expect(timerCallback).not.toHaveBeenCalled()
-    expect(frameCallback).not.toHaveBeenCalled()
-    expect(listener).not.toHaveBeenCalled()
+    expect(timerCallback).toHaveBeenCalledOnce()
+    expect(frameCallback).toHaveBeenCalledOnce()
+    expect(listener).toHaveBeenCalledOnce()
   })
 
   it('runs cleanup exactly once even when dispose is repeated', () => {

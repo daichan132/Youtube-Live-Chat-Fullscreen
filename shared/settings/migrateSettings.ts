@@ -100,7 +100,7 @@ export const migrateLegacyPresets = (input: PersistedSettingsV6): PresetEntry[] 
 
   for (const rawId of effectiveIds) {
     if (typeof rawId !== 'string' || rawId.trim().length === 0 || rawId.length > 128) continue
-    const builtinId = LEGACY_BUILTIN_IDS[rawId]
+    const builtinId = Object.hasOwn(LEGACY_BUILTIN_IDS, rawId) ? LEGACY_BUILTIN_IDS[rawId] : undefined
     if (builtinId) {
       if (usedIds.has(builtinId)) continue
       usedIds.add(builtinId)
@@ -108,7 +108,7 @@ export const migrateLegacyPresets = (input: PersistedSettingsV6): PresetEntry[] 
       continue
     }
 
-    const rawStyle = rawStyles[rawId]
+    const rawStyle = Object.hasOwn(rawStyles, rawId) ? rawStyles[rawId] : undefined
     if (!isRecord(rawStyle)) continue
     const id = nextAvailableCustomId(rawId, usedIds)
     usedIds.add(id)

@@ -21,7 +21,7 @@ const flattenKeys = (value: Record<string, unknown>, prefix = '', output: string
 }
 
 describe('generated i18n contract', () => {
-  it('parses every generated JSON file and preserves the source key set', () => {
+  it('maps every generated message position to the authored translation for that key', () => {
     const sourceKeys = flattenKeys(JSON.parse(readFileSync(join(assetsDir, 'en.json'), 'utf8'))).filter(key => !MANIFEST_ONLY_KEYS.has(key))
     const generatedKeys = JSON.parse(readFileSync(join(generatedDir, '_keys.json'), 'utf8')) as string[]
     expect(generatedKeys).toEqual(sourceKeys)
@@ -30,11 +30,12 @@ describe('generated i18n contract', () => {
       if (file === '_keys.json') continue
       expect(file).toMatch(/^[a-z]{2,3}(?:_(?:[A-Z]{2}|\d{3}))?\.json$/u)
       const generated = JSON.parse(readFileSync(join(generatedDir, file), 'utf8')) as unknown[]
-      expect(generated).toHaveLength(sourceKeys.length)
-      expect(
-        generated.every(message => typeof message === 'string'),
-        file,
-      ).toBe(true)
+      const authored = JSON.parse(readFileSync(join(assetsDir, file), 'utf8')) as Record<string, unknown>
+      // Look up authored messages by the public key contract, independently of the compiler's flattening implementation.
+      const expected = sourceKeys.map(key =>
+        key.split('.').reduce<unknown>((value, part) => (value as Record<string, unknown>)[part], authored),
+      )
+      expect(generated, file).toEqual(expected)
     }
   })
 

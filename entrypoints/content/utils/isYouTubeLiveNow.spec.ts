@@ -21,7 +21,7 @@ const createMoviePlayer = (isLive: boolean | undefined, videoId?: string) => {
 const createCurrentReplayButton = () => {
   const host = document.createElement('ytd-live-chat-frame')
   const iframe = document.createElement('iframe')
-  iframe.src = `https://www.youtube.com/live_chat_replay?v=${currentUrlVideoId()}`
+  iframe.src = `https://www.youtube.com/live_chat?v=${currentUrlVideoId()}`
   const showHide = document.createElement('div')
   showHide.id = 'show-hide-button'
   const button = document.createElement('button')
@@ -123,10 +123,11 @@ describe('isYouTubeLiveNow', () => {
   })
 
   it('returns false when archive replay button is present even if initial response says live', () => {
-    createCurrentReplayButton()
+    const currentReplay = createCurrentReplayButton()
 
     const target = window as Window & {
       ytInitialPlayerResponse?: {
+        videoDetails: { videoId: string }
         microformat?: {
           playerMicroformatRenderer?: {
             liveBroadcastDetails?: {
@@ -137,6 +138,7 @@ describe('isYouTubeLiveNow', () => {
       }
     }
     target.ytInitialPlayerResponse = {
+      videoDetails: { videoId: currentUrlVideoId() },
       microformat: {
         playerMicroformatRenderer: {
           liveBroadcastDetails: {
@@ -147,6 +149,9 @@ describe('isYouTubeLiveNow', () => {
     }
 
     expect(isYouTubeLiveNow()).toBe(false)
+
+    currentReplay.remove()
+    expect(isYouTubeLiveNow()).toBe(true)
   })
 
   it('ignores stale unscoped archive replay buttons when current movie player is live', () => {
@@ -169,10 +174,11 @@ describe('isYouTubeLiveNow', () => {
     showHide.appendChild(staleButton)
     document.body.appendChild(showHide)
 
-    createCurrentReplayButton()
+    const currentReplay = createCurrentReplayButton()
 
     const target = window as Window & {
       ytInitialPlayerResponse?: {
+        videoDetails: { videoId: string }
         microformat?: {
           playerMicroformatRenderer?: {
             liveBroadcastDetails?: {
@@ -183,6 +189,7 @@ describe('isYouTubeLiveNow', () => {
       }
     }
     target.ytInitialPlayerResponse = {
+      videoDetails: { videoId: currentUrlVideoId() },
       microformat: {
         playerMicroformatRenderer: {
           liveBroadcastDetails: {
@@ -193,6 +200,9 @@ describe('isYouTubeLiveNow', () => {
     }
 
     expect(isYouTubeLiveNow()).toBe(false)
+
+    currentReplay.remove()
+    expect(isYouTubeLiveNow()).toBe(true)
   })
 
   it('returns true when movie player reports live', () => {

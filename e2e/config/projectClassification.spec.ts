@@ -1,6 +1,10 @@
+import { execFile } from 'node:child_process'
 import fs from 'node:fs'
+import { createRequire } from 'node:module'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { promisify } from 'node:util'
+import type { JSONReport, JSONReportSuite } from '@playwright/test/reporter'
 import { describe, expect, it } from 'vitest'
 import {
   ACCESSIBILITY_PROJECT_NAME,
@@ -13,6 +17,12 @@ import {
 } from './projectClassification'
 
 const scenariosDir = fileURLToPath(new URL('../scenarios', import.meta.url))
+const projectRoot = fileURLToPath(new URL('../../', import.meta.url))
+const execute = promisify(execFile)
+const require = createRequire(import.meta.url)
+
+const discoveredSpecs = (suites: JSONReportSuite[]): JSONReportSuite['specs'] =>
+  suites.flatMap(suite => [...suite.specs, ...discoveredSpecs(suite.suites ?? [])])
 
 const collectSpecs = (directory: string, relativeDirectory = ''): string[] =>
   fs
@@ -36,10 +46,31 @@ describe('Playwright project classification', () => {
     expect(classifiedSpecs.sort()).toEqual(collectSpecs(scenariosDir))
   })
 
-  it('keeps the deterministic project limited to fixtures and popup tests', () => {
+  it('discovers only fixture and popup scenarios in the deterministic runner project', async () => {
     expect(FIXTURE_SPECS.every(spec => spec.endsWith('.fixture.spec.ts') || spec.startsWith('popup/'))).toBe(true)
     expect(CANARY_SPECS.every(spec => !spec.endsWith('.fixture.spec.ts') && !spec.startsWith('popup/'))).toBe(true)
-  })
+
+    const { stdout } = await execute(
+      process.execPath,
+      [require.resolve('@playwright/test/cli'), 'test', '--list', '--project=fixture', '--project=canary', '--reporter=json'],
+      { cwd: projectRoot, timeout: 15_000, env: { ...process.env, CI: '1' } },
+    )
+    const report: JSONReport = JSON.parse(stdout)
+    expect(report.errors).toEqual([])
+    const specs = discoveredSpecs(report.suites)
+    const filesFor = (project: string) =>
+      [
+        ...new Set(
+          specs
+            .filter(spec => spec.tests.some(test => test.projectName === project))
+            .map(spec => path.posix.relative('e2e/scenarios', spec.file)),
+        ),
+      ].sort()
+
+    expect(filesFor('fixture')).toEqual([...FIXTURE_SPECS].sort())
+    expect(filesFor('canary')).toEqual([...CANARY_SPECS].sort())
+    expect(report.config.projects.find(project => project.name === 'fixture')?.retries).toBe(0)
+  }, 20_000)
 
   it('classifies fixture, visual, and accessibility projects as network independent', () => {
     expect(DETERMINISTIC_PROJECT_NAMES).toEqual([

@@ -24,6 +24,8 @@ Coverage helps locate gaps; a higher number is not evidence that assertions catc
 
 For geometry, specify the player dimensions and expected pixels or storage ratios directly; importing the production converter into both sides of an assertion can hide a conversion defect. The [popup browser scenarios](../../e2e/scenarios/popup/popup.spec.ts) also verify the network blocker against an offline fallback that would succeed without it, so DNS failures cannot make the test pass. Scenario classification is checked once in [`projectClassification.spec.ts`](../../e2e/config/projectClassification.spec.ts); fixture API behavior is exercised by the browser scenarios rather than a list of prototype method names.
 
+For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault.
+
 Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e/scenarios/live/noChatVideo.fixture.spec.ts) shows a live overlay between two no-chat pages, so an extension that never starts cannot satisfy the whole test. Failure-recovery tests should first acquire the resource they claim to release. Canary reporter contracts execute browser-free passing, failing, skipped, and retried tests through the real runner; the release-proof CLI contract verifies known artifact bytes and rejects same-size corruption in a disposable project.
 
 See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
@@ -74,7 +76,7 @@ Every scenario under `e2e/scenarios/` is listed exactly once in `e2e/config/proj
 - popup scenarios are deterministic without that suffix;
 - real YouTube scenarios belong only to the canary list.
 
-The classification contract rejects missing, duplicate, or incorrectly named scenarios. Tags describe and narrow tests but do not choose their project.
+The classification contract rejects missing, duplicate, or incorrectly named scenarios. It also runs Playwright's browser-free `--list` command to verify that the configured fixture and canary projects actually discover their assigned files, with retries disabled for fixtures in CI. Tags describe and narrow tests but do not choose their project.
 
 Synthetic YouTube scenarios use the typed API under `e2e/support/youtubeScenario/`. The compiler owns route URLs, fixture HTML, player identity, and chat routes. Scenario files own only state and assertions. The route model supports watch, direct-live, and channel-live entries.
 

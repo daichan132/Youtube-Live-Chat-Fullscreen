@@ -45,16 +45,24 @@ describe('chat settings commands', () => {
     expect(store.get(chatSettingsStateAtom).geometry).toHaveProperty('rect.y', expect.closeTo(0.1))
   })
 
-  it('keeps normalized defaults and supports preset lifecycle commands', () => {
+  it('preserves every preset while adding, renaming, partially reordering, and deleting a custom preset', () => {
     const store = createStore()
-    store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
-    const profile = store.get(chatSettingsStateAtom).profile
-    store.set(addPresetAtom, { kind: 'custom', id: 'custom', name: 'Custom', profile })
+    const initial = structuredClone(store.get(chatSettingsStateAtom))
+    const profile = {
+      ...initial.profile,
+      appearance: { ...initial.profile.appearance, fontSize: 24 },
+      display: { idleVisibility: 'auto-hide', contentMode: 'messages-only' },
+    } as const
+    store.set(addPresetAtom, { kind: 'custom', id: 'custom', name: 'Custom', profile: structuredClone(profile) })
     store.set(updatePresetNameAtom, { id: 'custom', name: 'Renamed' })
-    store.set(reorderPresetsAtom, ['custom', 'standard'])
-    expect(store.get(chatSettingsStateAtom).presets[0]).toMatchObject({ kind: 'custom', id: 'custom', name: 'Renamed' })
+    // Partial orders may come from an older list; unknown and repeated IDs cannot lose or duplicate saved presets.
+    store.set(reorderPresetsAtom, ['custom', 'missing', 'standard', 'custom'])
+    expect(store.get(chatSettingsStateAtom)).toEqual({
+      ...initial,
+      presets: [{ kind: 'custom', id: 'custom', name: 'Renamed', profile }, ...initial.presets],
+    })
     store.set(deletePresetAtom, 'custom')
-    expect(store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'custom')).toBe(false)
+    expect(store.get(chatSettingsStateAtom)).toEqual(initial)
   })
 
   it('does not delete or rename built-in presets', () => {

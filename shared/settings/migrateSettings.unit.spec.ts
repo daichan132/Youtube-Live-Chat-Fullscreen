@@ -75,14 +75,25 @@ describe('migrateV6ToV7', () => {
     expect(migrated).not.toHaveProperty('presetItemIds')
   })
 
-  it('preserves a custom-only preset list without adding built-ins', () => {
+  it('preserves a custom-only preset list, including IDs inherited by plain objects', () => {
     expect(
       migrateV6ToV7({
-        presetItemIds: ['custom'],
-        presetItemTitles: { custom: 'Custom' },
-        presetItemStyles: { custom: { fontSize: 18 } },
+        presetItemIds: ['custom', 'toString', '__proto__'],
+        presetItemTitles: { custom: 'Custom', toString: 'Method', ['__proto__']: 'Prototype' },
+        presetItemStyles: { custom: { fontSize: 18 }, toString: { fontSize: 20 }, ['__proto__']: { fontSize: 22 } },
       }).presets,
-    ).toMatchObject([{ kind: 'custom', id: 'custom', name: 'Custom' }])
+    ).toMatchObject([
+      { kind: 'custom', id: 'custom', name: 'Custom', profile: { appearance: { fontSize: 18 } } },
+      { kind: 'custom', id: 'toString', name: 'Method', profile: { appearance: { fontSize: 20 } } },
+      { kind: 'custom', id: '__proto__', name: 'Prototype', profile: { appearance: { fontSize: 22 } } },
+    ])
+    expect(
+      migrateV6ToV7({
+        presetItemIds: ['toString', '__proto__', 'constructor'],
+        presetItemStyles: {},
+        presetItemTitles: {},
+      }).presets,
+    ).toEqual([])
   })
 
   it('uses the YouTube default mode for the old sentinel membership color', () => {

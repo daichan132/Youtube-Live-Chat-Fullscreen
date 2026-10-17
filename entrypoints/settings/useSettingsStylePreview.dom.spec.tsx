@@ -59,11 +59,12 @@ describe('settings style preview sender', () => {
     advanceFrame()
 
     const finalValue = settingKey === 'fontSize' ? 30 : 8
+    const expectedProfile = { ...initial, appearance: { ...initial.appearance, [settingKey]: finalValue } }
     expect(postToParent).toHaveBeenCalledOnce()
     expect(postToParent).toHaveBeenLastCalledWith({
       type: SETTINGS_FRAME_MESSAGE.stylePreview,
       active: true,
-      profile: { ...initial, appearance: { ...initial.appearance, [settingKey]: finalValue } },
+      profile: expectedProfile,
     })
 
     fireEvent.pointerUp(range, { pointerId: 7 })
@@ -71,27 +72,31 @@ describe('settings style preview sender', () => {
     fireEvent.blur(range)
 
     expect(committed).toHaveBeenCalledOnce()
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(expectedProfile)
     expect(store.get(editorSessionStateAtom).past).toEqual([initial])
     expect(postToParent).toHaveBeenCalledTimes(2)
     expect(postToParent).toHaveBeenLastCalledWith({
       type: SETTINGS_FRAME_MESSAGE.stylePreview,
       active: false,
-      profile: store.get(chatSettingsStateAtom).profile,
+      profile: expectedProfile,
     })
     unsubscribeCommitted()
   })
 
   it('publishes the final value immediately when pointer release precedes the scheduled preview', () => {
     const { store, postToParent, range } = setup()
+    const initial = store.get(chatSettingsStateAtom).profile
+    const expectedProfile = { ...initial, appearance: { ...initial.appearance, fontSize: 24 } }
     fireEvent.pointerDown(range, { pointerId: 7, button: 0 })
     fireEvent.input(range, { target: { value: '24' } })
     fireEvent.pointerUp(range, { pointerId: 7 })
 
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(expectedProfile)
     expect(postToParent).toHaveBeenCalledOnce()
     expect(postToParent).toHaveBeenLastCalledWith({
       type: SETTINGS_FRAME_MESSAGE.stylePreview,
       active: false,
-      profile: store.get(chatSettingsStateAtom).profile,
+      profile: expectedProfile,
     })
     advanceFrame()
     expect(postToParent).toHaveBeenCalledOnce()
@@ -112,7 +117,7 @@ describe('settings style preview sender', () => {
     expect(postToParent).toHaveBeenLastCalledWith({
       type: SETTINGS_FRAME_MESSAGE.stylePreview,
       active: false,
-      profile: store.get(chatSettingsStateAtom).profile,
+      profile: { ...initial, appearance: { ...initial.appearance, blur: 6 } },
     })
   })
 

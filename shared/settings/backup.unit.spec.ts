@@ -99,20 +99,26 @@ describe('settings backup', () => {
     expect(normalized?.chatSettings.presets).toEqual([])
   })
 
-  it('rejects backups with more than 100 custom presets', () => {
-    const presets = Array.from({ length: 101 }, (_, index) => ({
-      kind: 'custom',
+  it('accepts 100 custom presets plus built-ins and rejects a 101st custom preset', () => {
+    const customPresets = Array.from({ length: 100 }, (_, index) => ({
+      kind: 'custom' as const,
       id: `custom-${index}`,
       name: `Preset ${index}`,
-      profile: DEFAULT_CHAT_SETTINGS.profile,
+      profile: {
+        ...DEFAULT_CHAT_SETTINGS.profile,
+        appearance: { ...DEFAULT_CHAT_SETTINGS.profile.appearance, fontSize: 24 },
+      },
     }))
+    const presets = [{ kind: 'builtin' as const, id: 'dark' as const }, ...customPresets]
+    const backup = { version: 2, globalSetting: {}, chatSettings: { ...DEFAULT_CHAT_SETTINGS, presets } }
+
+    expect(normalizeSettingsBackup(structuredClone(backup), current)?.chatSettings.presets).toEqual(presets)
 
     expect(
       normalizeSettingsBackup(
         {
-          version: 2,
-          globalSetting: {},
-          chatSettings: { ...DEFAULT_CHAT_SETTINGS, presets },
+          ...backup,
+          chatSettings: { ...backup.chatSettings, presets: [...presets, { ...customPresets[0], id: 'custom-100' }] },
         },
         current,
       ),
