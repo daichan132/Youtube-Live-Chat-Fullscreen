@@ -54,7 +54,11 @@ describe('FontFamilyInput', () => {
   })
 
   it('filters options using normalized text matching', () => {
-    const { container, getByRole, getByTestId } = renderFontFamilyInput()
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: { ...store.get(localeStateAtom).messages, 'content.aria.fontsFound': 'Fonts found: {count}' },
+    })
+    const { container, getByRole, getByTestId, getByText } = renderFontFamilyInput()
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'robotoslab' } })
@@ -62,6 +66,7 @@ describe('FontFamilyInput', () => {
     const options = container.querySelectorAll('[role="option"]')
     expect(options).toHaveLength(1)
     expect(options[0]).toHaveTextContent('Roboto Slab')
+    expect(getByText('Fonts found: 1')).toHaveAttribute('aria-live', 'polite')
   })
 
   it('commits highlighted option with Enter key', () => {

@@ -6,17 +6,6 @@ import type { RGBA } from '@/shared/settings/model'
 
 const ICON_STROKE_WIDTH = 1.55
 const CONTROL_GAP = 2
-const VISUALLY_HIDDEN_STYLE: CSSProperties = {
-  position: 'absolute',
-  width: '1px',
-  height: '1px',
-  padding: 0,
-  margin: '-1px',
-  overflow: 'hidden',
-  clip: 'rect(0,0,0,0)',
-  whiteSpace: 'nowrap',
-  border: 0,
-}
 
 type OverlayControlRailProps = {
   isDragging: boolean
@@ -134,7 +123,7 @@ export const OverlayControlRail = ({
         <div className={`ylc-overlay-control-icon ${dragCursorClass} ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
           <TbGripVertical size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
         </div>
-        <span id={dragDescriptionId} style={VISUALLY_HIDDEN_STYLE}>
+        <span id={dragDescriptionId} className='ylc-visually-hidden'>
           {t('content.aria.arrowKeysToMove')}
         </span>
       </button>

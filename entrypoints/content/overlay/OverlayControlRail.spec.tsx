@@ -33,7 +33,7 @@ describe('OverlayControlRail', () => {
     expect(rail.closest('[dir="rtl"]')).not.toBeNull()
     expect(dragHandle).toHaveAttribute('aria-roledescription', 'content.aria.dragHandle')
     expect(dragHandle).toHaveAttribute('data-ylc-drag-handle')
-    expect(dragHandle).toHaveAttribute('aria-describedby')
+    expect(dragHandle).toHaveAccessibleDescription('content.aria.arrowKeysToMove')
 
     fireEvent.mouseEnter(rail)
     fireEvent.mouseLeave(rail)

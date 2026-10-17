@@ -21,6 +21,8 @@ Within the panel, [`OverlayFrame.tsx`](../../entrypoints/content/overlay/Overlay
 
 Use the layer constants in [`zIndex.ts`](../../shared/constants/zIndex.ts) for stacking. Keep `data-ylc-*` hooks synchronized with the [E2E page object](../../e2e/pages/ExtensionOverlay.ts) and browser inspection/capture scripts when changing the DOM.
 
+Screen-reader descriptions and live announcements use the shared `.ylc-visually-hidden` utility in [`controls.css`](../../shared/styles/controls.css), loaded by both content and settings roots. Keep their accessible relationships and live-region attributes on the owning controls.
+
 ## Geometry and input
 
 [`useOverlayGeometry.ts`](../../entrypoints/content/overlay/useOverlayGeometry.ts) renders stored geometry against the current player size. Current settings store player-relative ratios and a `pinned` flag; legacy pixel settings are converted after a usable player rectangle is available. Size limits and conversion functions live in [`chatGeometry.ts`](../../shared/settings/chatGeometry.ts). Rendering and commits also pass through [`fitGeometryToViewport.ts`](../../shared/settings/fitGeometryToViewport.ts), which clamps position and size while preserving the 240 × 180 px minimum. Players smaller than that minimum can still overflow.

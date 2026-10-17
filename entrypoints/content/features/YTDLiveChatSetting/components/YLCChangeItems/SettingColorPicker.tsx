@@ -54,20 +54,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
 
   return (
     <div ref={rootRef} className='relative ylc-action-fill'>
-      <span
-        id={descriptionId}
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0,0,0,0)',
-          whiteSpace: 'nowrap',
-          border: 0,
-        }}
-      >
+      <span id={descriptionId} className='ylc-visually-hidden'>
         {`Current color: rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
       </span>
       <button
