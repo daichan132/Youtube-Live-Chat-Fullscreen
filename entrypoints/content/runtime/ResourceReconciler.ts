@@ -127,7 +127,7 @@ export class ResourceReconciler {
   setProfile(profile: ChatProfile) {
     this.profile = profile
     if (this.iframeLease) {
-      this.applyProfile(this.iframeLease.iframe)
+      this.applyProfile(this.iframeLease)
       this.syncChatChrome()
     }
   }
@@ -173,7 +173,7 @@ export class ResourceReconciler {
     ensureStyleInjected(doc, iframeStyles)
     doc.body.classList.add(IFRAME_CHAT_BODY_CLASS)
     installMembershipFallback(doc)
-    const applied = this.applyProfile(lease.iframe)
+    const applied = this.applyProfile(lease)
     this.syncChatChrome()
     return applied
   }
@@ -266,15 +266,17 @@ export class ResourceReconciler {
     this.loadListenerIframe = null
   }
 
-  private applyProfile(iframe: HTMLIFrameElement) {
-    if (!this.profile) return false
-    const doc = getIframeDocument(iframe)
+  private applyProfile(lease: ChatIframeLease) {
+    if (!this.profile || lease.state !== 'attached') return false
+    const doc = getIframeDocument(lease.iframe)
     if (!doc?.documentElement || !doc.head || !doc.body) return false
     try {
       if (doc.location?.href === 'about:blank') return false
     } catch {
       // A real document can deny location access; contentDocument remains enough.
     }
+    // A profile update can reach a replacement document before its load event.
+    if (lease.ownership === 'borrowed') lease.captureDocumentStyle()
     applyChatProfileToDocument(doc, this.profile)
     return true
   }
@@ -288,6 +290,6 @@ export class ResourceReconciler {
   }
 
   private syncChatChrome() {
-    this.chatChrome.sync(this.iframeLease?.iframe ?? null, this.getChatChromeIntent())
+    this.chatChrome.sync(this.iframeLease?.state === 'attached' ? this.iframeLease.iframe : null, this.getChatChromeIntent())
   }
 }

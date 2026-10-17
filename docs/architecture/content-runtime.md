@@ -124,6 +124,8 @@ Four lease types own page mutations:
 
 Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. On teardown, the chat iframe is restored before layout and presentation are removed.
 
+Profile and chat-chrome updates wait until the lease is attached; selecting a native iframe does not authorize changing it before borrowing. Before applying a profile to a borrowed document, the reconciler captures that document's original styles even if its load event has not arrived. Capture remains once per document, so later profile changes and load notifications cannot replace the native snapshot with extension styles.
+
 Borrowed iframe restoration tries, in order:
 
 1. its captured placeholder;
