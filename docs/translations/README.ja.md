@@ -1,94 +1,85 @@
-<div align="center">
-  <img src="../../public/icon/128.png" alt="YouTube Live Chat Fullscreen ロゴ" width="80" />
-</div>
-
-<h1 align="center">YouTube Live Chat Fullscreen</h1>
+<p align="center">
+  <img src="../store-assets/chrome-web-store/screenshots/01-introduction.png" alt="紹介イラスト：YouTube Live Chat Fullscreen — フルスクリーンにライブチャットを" width="1000" />
+</p>
 
 <p align="center">
   <strong>フルスクリーンでも、映像とチャットを一緒に。</strong><br />
-  配信とチャットの反応を一緒に楽しめます。YouTube 本来のチャットを動画に重ねて、位置や大きさ、見た目を調整できます。
+  YouTube 本来のチャットをフルスクリーンの動画に重ねます。
 </p>
 
 <p align="center">
-  Chrome / Firefox 対応、ライブとリプレイ、55 ロケール、無料、オープンソース
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><img src="https://img.shields.io/badge/Add_to_Chrome-4285F4?style=for-the-badge&amp;logo=googlechrome&amp;logoColor=white" alt="Chrome にインストール" /></a>
+  <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/"><img src="https://img.shields.io/badge/Get_for_Firefox-FF7139?style=for-the-badge&amp;logo=firefoxbrowser&amp;logoColor=white" alt="Firefox にインストール" /></a>
 </p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><strong>Chrome にインストール</strong></a>
-  ·
-  <a href="https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/"><strong>Firefox にインストール</strong></a>
-  ·
-  <a href="user-guide.ja.md">使い方</a>
-  ·
-  <a href="../../README.md">English</a>
-  ·
-  <strong>日本語</strong>
-  ·
-  <a href="README.zh-TW.md">繁體中文</a>
+  ライブとリプレイ · 55 ロケール · 無料・オープンソース<br />
+  <a href="user-guide.ja.md">使い方</a> · <a href="../../README.md">English</a> · <strong>日本語</strong> · <a href="README.zh-TW.md">繁體中文</a>
 </p>
 
-![風真いろはの配信に、入力欄と視聴者名のぼかしを含むチャットを重ねた画面](../store-assets/chrome-web-store/source/captures/default-chat.png)
+## 好みの見た目を選ぶ
 
-*標準のチャットと入力欄を表示した例です。入力途中のメッセージは送信していません。画像では視聴者名などをぼかしています。配信映像：風真いろは / hololive。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+### ライブを見ながら会話にも参加
 
-## 映像を見ながら会話にも参加
+[![風真いろはの配信に、入力欄と未送信のメッセージを含むチャットを重ねた画面。視聴者名などはぼかし処理済み](../store-assets/chrome-web-store/source/captures/default-chat.png)](../store-assets/chrome-web-store/source/captures/default-chat.png)
 
-ボス戦もライブパフォーマンスも、フルスクリーンの映像とチャットを一緒に楽しめます。チャットリプレイが再生できるアーカイブなら、録画を見ながら当時の反応を追えます。
+チャットを読み、YouTube 本来の入力欄で投稿できます。画像の入力途中のメッセージは送信していません。
 
-チャットには YouTube 本来の機能を使います。ライブ配信中はフルスクリーンのままチャットを読んだり投稿したりできます。ログイン、投稿、バッジ、Super Chat は YouTube のルールやチャンネルの参加条件に従います。
+<p>
+  <a href="../store-assets/chrome-web-store/source/captures/transparent-chat.png"><img src="../store-assets/chrome-web-store/source/captures/transparent-chat.png" alt="背景を完全に透過し、視聴者の情報を保護したチャットのみを重ねた CohhCarnage のアーカイブ" width="49%" /></a>
+  <a href="../store-assets/chrome-web-store/source/captures/custom-style.png"><img src="../store-assets/chrome-web-store/source/captures/custom-style.png" alt="紺色の背景、Inter フォント、背景のぼかしを設定し、視聴者の情報を保護した DrLupo のアーカイブ" width="49%" /></a>
+</p>
 
-## 配信に合わせてレイアウトを選ぶ
+**透過スタイル**で映像を見やすく。**カスタムスタイル**で色やフォントを好みに。<br />
+どちらもチャットのみを表示したリプレイの例で、入力欄はありません。各画像を開くと、元の解像度で見られます。
 
-配信に合わせて調整した配置や見た目は自動で保存されます。
+<sub>配信映像：風真いろは / hololive、CohhCarnage、DrLupo。画像では視聴者名などをぼかすか非表示にしています。<a href="../store-assets/chrome-web-store/README.md#sources-and-privacy">出典とプライバシー処理（英語）</a>。</sub>
 
-| やりたいこと | 調整できること |
-| --- | --- |
-| ゲーム画面や出演者を見やすくする | チャットをドラッグして移動し、辺や角からサイズを変更 |
-| チャットの後ろの映像も見る | 背景色、透明度、ぼかしを調整 |
-| 視聴する距離に合わせて読みやすくする | 文字サイズ、フォント、色、メッセージの間隔を変更 |
-| メッセージに集中する | 通常メッセージのユーザー名やアイコンを非表示に |
-| 操作ボタンが消えても反応を見続ける | チャットを常時表示し、必要なら「チャットのみ表示」に切り替え |
-| 読み方に合わせて見た目を切り替える | 名前付きプリセットを保存。設定を JSON で書き出してバックアップや別のブラウザへの移行に使う |
+## 自分好みに調整
 
-![背景を完全に透過したチャットのみの表示で、視聴者の情報を保護したアーカイブの画面](../store-assets/chrome-web-store/source/captures/transparent-chat.png)
+- **移動とサイズ変更**：ゲーム画面や出演者に合わせて配置。
+- **色・透明度・ぼかし**：背景、文字、メッセージの間隔を調整。
+- **スタイルを保存**：名前付きプリセットを保存し、設定を書き出してバックアップや別のブラウザへの移行に。
 
-*背景を完全に透過し、チャットのみを表示したリプレイの例です。このアーカイブの画像には入力欄はありません。配信映像：CohhCarnage。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
+ライト、ダーク、システム設定に合わせたテーマと、右から左に読む言語のレイアウトに対応しています。[操作方法を見る →](user-guide.ja.md)
 
-ライト、ダーク、システム設定に合わせたテーマを選べます。UI は 55 ロケールに対応し、右から左に読む言語のレイアウトも備えています。[使い方](user-guide.ja.md)では、プリセットを使った設定例や操作方法を紹介しています。
+## 3 ステップで使い始める
 
-## 使い始める
+1. 上のボタンから Chrome ウェブストアか Firefox アドオンを開いて**インストール**。
+2. YouTube のライブ配信、またはチャットリプレイを再生できるアーカイブを**フルスクリーンに**。
+3. **チャットを配置**。パネルにポインターを重ねると、移動、サイズ変更、設定の操作ができます。
 
-1. [Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) または [Firefox アドオン](https://addons.mozilla.org/ja/firefox/addon/youtube-live-chat-fullscreen/) からインストールします。
-2. YouTube のライブ配信、またはチャットリプレイを再生できるアーカイブを開き、フルスクリーンにします。チャット表示は初期状態で有効です。
-3. パネルにポインターを重ねると操作ボタンが表示されます。移動ハンドルをドラッグして位置を変え、辺からサイズを変更できます。設定で見た目も調整できます。プレイヤーのチャットボタンで表示を切り替えられます。
+チャット表示は初期状態で有効です。プレイヤーのチャットボタンで表示を切り替えられます。<br />
+[表示されないときは](troubleshooting.ja.md) · [プリセットとバックアップ](user-guide.ja.md)
+
+<details>
+<summary><strong>チャット・対応ブラウザ・プライバシー</strong></summary>
+
+チャットには YouTube 本来の機能を使います。ログイン、投稿、バッジ、Super Chat は YouTube のルールやチャンネルの参加条件に従います。アーカイブでは、当時のチャットが再生されます。
 
 デスクトップブラウザ向けの拡張機能です。Chrome 版は Opera でも動作します。利用できるチャットがない動画では、通常のフルスクリーンプレイヤーを表示します。
 
-プリセットやバックアップの手順は[使い方](user-guide.ja.md)、パネルが表示されない場合は[トラブル対処](troubleshooting.ja.md)をご覧ください。
+拡張機能用のアカウントやアクセス解析 SDK、トラッキングサービスはありません。設定はこのブラウザの `browser.storage.local` に保存され、閲覧履歴やチャット本文を開発者へ送信しません。YouTube 本来のチャットは、引き続き YouTube と通信します。選択した追加フォントは Google Fonts から取得する場合があります。
 
-## プライバシー
+配布版が要求する権限は `storage` のみです。ページ上で動くスクリプトや、ページから利用できる拡張機能のリソースは YouTube に限定しています。[権限とリソースの設定](../../config/packagePolicy.ts)と[パッケージの検証コード](../../scripts/verify/check-package-contracts.mjs)で確認できます。
 
-拡張機能用のアカウントやアクセス解析 SDK、トラッキングサービスはありません。設定はこのブラウザの `browser.storage.local` に保存され、閲覧履歴やチャット本文を開発者へ送信しません。YouTube 本来のチャットは、引き続き YouTube と通信します。
+</details>
 
-配布版が要求する権限は `storage` のみです。ページ上で動くスクリプトや、ページから利用できる拡張機能のリソースは YouTube に限定しています。選択した追加フォントは Google Fonts から取得する場合があります。[権限とリソースの設定](../../config/packagePolicy.ts)と[パッケージの検証コード](../../scripts/verify/check-package-contracts.mjs)で、この範囲を確認できます。
+<details>
+<summary><strong>実装を知る</strong></summary>
 
-## 実装を知る
+WXT、React、TypeScript、Jotai、Tailwind CSS を使った Chrome / Firefox 向けの拡張機能です。以下の開発資料は英語です。
 
-WXT、React、TypeScript、Jotai、Tailwind CSS を使った Chrome / Firefox 向けの拡張機能です。映像とチャットを一緒に表示するため、次のような処理を実装しています。
+- [コンテンツの実行処理](../architecture/content-runtime.md)：YouTube のページ遷移に合わせて表示を更新し、借りたチャット iframe を元に戻します。
+- [設定と状態](../architecture/settings-and-state.md)：編集中の値、保存済みの設定、別の拡張画面からの変更を順序どおりに扱いながらプレビューします。
+- [ブラウザテスト](../testing/contracts.md)：同じ条件のテスト用ページでライブ、リプレイ、チャットなしを再現し、実際のサイトとの互換性は別に確認します。
 
-この節の開発資料は英語です。
+[技術概要](../engineering.md)や[貢献の始め方](../../CONTRIBUTING.md#choose-a-starting-point)からご覧ください。
 
-- [YouTube のページ遷移に対応する](../architecture/content-runtime.md)：YouTube のチャット iframe を借り、動画の切り替えに合わせて表示を更新し、フルスクリーンを解除したら元に戻します。
-- [見た目を編集中にプレビューする](../architecture/settings-and-state.md)：スライダーの操作をチャットに反映し、編集中の値や保存済みの設定、別の拡張画面からの変更を順序どおりに扱います。
-- [ブラウザの動作をローカルで再現する](../testing/contracts.md)：同じ条件のテスト用 YouTube ページでライブ、リプレイ、チャットなしを再現し、実際の YouTube との互換性は別に確認します。
-
-[技術概要](../engineering.md)から、それぞれの動作に対応するコードをたどれます。[コントリビューションガイド](../../CONTRIBUTING.md)には、変更する場所を選ぶ前に試せる小さな実行例があります（どちらも英語）。
+</details>
 
 ## 改善に参加する
 
-視聴中に困ったことの報告、翻訳、説明の改善、小さな修正から参加できます。拡張機能の内部をすべて理解していなくても大丈夫です。[貢献の始め方](../../CONTRIBUTING.md#choose-a-starting-point)から、取り組みやすいものを選べます（英語）。
+[不具合を報告する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) · [機能を提案する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml) · [翻訳やガイドを改善する](../../CONTRIBUTING.md)
 
-- [不具合を報告する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml)、または[機能を提案する](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml)。
-- 脆弱性は [SECURITY.md（英語）](../../SECURITY.md) の非公開の手順で報告してください。
-
-[GPL-3.0](../../LICENSE) ライセンスで公開しています。
+<sub>脆弱性の非公開報告：<a href="../../SECURITY.md">SECURITY.md（英語）</a> · <a href="../../LICENSE">GPL-3.0</a> ライセンス。</sub>
