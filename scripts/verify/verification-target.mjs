@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
+import { getCdpProcessCommand } from './cdp-process.mjs'
 
 const canonicalPath = async value => fs.realpath(path.resolve(value)).catch(() => path.resolve(value))
 const isWithin = (candidate, parent) => candidate === parent || candidate.startsWith(`${parent}${path.sep}`)
@@ -42,7 +43,7 @@ export const commandArgument = (command, name) => {
 export const verifyCdpProfile = async ({ port, profileDir, inspectProcess }) => {
   if (!Number.isInteger(port) || port < 1 || port > 65535) throw new Error('CDP port must be an integer from 1 to 65535.')
   const expectedProfile = await assertVerificationProfile(profileDir)
-  const inspect = inspectProcess ?? (await import('./launch-browser.mjs')).getCdpProcessCommand
+  const inspect = inspectProcess ?? getCdpProcessCommand
   const { pid, command } = await inspect(port)
   const actualProfile = commandArgument(command, '--user-data-dir')
   if (

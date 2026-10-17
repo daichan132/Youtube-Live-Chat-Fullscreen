@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /* biome-ignore-all lint/suspicious/noConsole: verification CLI prints status and diagnostics */
-import { execFile, spawn } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import { promisify } from 'node:util'
 import { chromium } from '@playwright/test'
+import { getCdpProcessCommand } from './cdp-process.mjs'
 import { applyExtensionSettings, readSettingsPatch } from './extension-settings.mjs'
 import { assertVerificationProfile, createBackgroundPage, findLoadedExtension, verifyCdpProfile } from './verification-target.mjs'
 
@@ -66,7 +66,6 @@ const headless = args.get('headless') === 'true'
 if (headless && setupExtension)
   throw new Error('Load unpacked once in headed Chrome before using --headless; do not combine it with --setup-extension.')
 const cdpUrl = `http://127.0.0.1:${port}`
-const execFileAsync = promisify(execFile)
 let cdpMessageId = 0
 
 if (!fs.existsSync(chromePath)) {
@@ -373,34 +372,8 @@ const openConfiguredTarget = async () => {
   }
 }
 
-const getCdpProcessCommand = async () => {
-  let pidOutput
-  try {
-    ;({ stdout: pidOutput } = await execFileAsync('lsof', ['-nP', `-iTCP:${port}`, '-sTCP:LISTEN', '-t']))
-  } catch (error) {
-    throw new Error(`Could not find the Chrome process listening on ${cdpUrl}: ${error.message}`)
-  }
-
-  const pids = pidOutput
-    .split('\n')
-    .map(pid => pid.trim())
-    .filter(Boolean)
-
-  for (const pid of pids) {
-    try {
-      const { stdout } = await execFileAsync('ps', ['-p', pid, '-o', 'command='])
-      const command = stdout.trim()
-      if (command) return { pid, command }
-    } catch {
-      // Try the next PID if this one exits between lsof and ps.
-    }
-  }
-
-  throw new Error(`Could not inspect the Chrome process listening on ${cdpUrl}.`)
-}
-
 const ensureExistingBrowserMatchesTarget = async () => {
-  const { pid, command } = await getCdpProcessCommand()
+  const { pid, command } = await getCdpProcessCommand(port)
   await verifyCdpProfile({ port, profileDir, inspectProcess: async () => ({ pid, command }) })
   if (headless && !/(?:^|\s)--headless(?:=new)?(?=\s|$)/.test(command)) {
     throw new Error('The existing verification Chrome is headed. Use a separate --profile and --port for --headless.')
