@@ -28,6 +28,8 @@ The saved layout is relative to the player, so it can adapt to a different fulls
 
 Select **Open settings**, the sliders button in the panel's control row, to change the reading style.
 
+Appearance and placement changes are saved automatically when you finish an adjustment.
+
 | Setting | Use it to |
 | --- | --- |
 | Text size and font | Read comfortably at your viewing distance |
@@ -38,7 +40,7 @@ Select **Open settings**, the sliders button in the panel's control row, to chan
 | Show When Idle | Keep chat visible after the player controls fade |
 | Chat-Only Mode | Fold the chat header and input away until you hover |
 
-Turn on **Show When Idle** to make **Chat-Only Mode** available. Leave Chat-Only Mode off if you want the message input to stay visible. Reduce blur if the overlay feels sluggish on an older machine.
+For a fully transparent background like the README example, open **Background Color**, move its bottom transparency slider all the way left (0%), and set **Blur** to **0**. For the messages-only layout, turn on **Show When Idle**, then **Chat-Only Mode**. Leave Chat-Only Mode off if you want the message input to stay visible. Reduce blur if the overlay feels sluggish on an older machine.
 
 The settings controls have accessible labels and support keyboard interaction. Dragging and resizing from the panel edges use a pointer; the placement buttons offer an alternative.
 
@@ -46,11 +48,11 @@ The settings controls have accessible labels and support keyboard interaction. D
 
 Open the **Presets** tab and use **Apply** on the style you want. These built-in styles are useful starting points.
 
-- **Transparent** lets the video show through the chat background.
+- **Transparent** uses a semi-transparent background with blur.
 - **Large Text** uses larger text and a light background.
 - **Chat Only** hides ordinary-message names and avatars and folds away the header and input until you hover.
 
-To keep your own style, select **Save Current Settings**, then edit the new preset's name from **Untitled** to something recognizable. You can keep a compact game layout and a more spacious reading style ready to switch between.
+To keep a named copy of your current style, select **Save Current Settings**, then edit the new preset's name from **Untitled** to something recognizable. You can keep a compact game layout and a more spacious reading style ready to switch between.
 
 Presets store appearance and display options, including idle visibility and messages-only mode. The panel's position and size are saved separately, so choosing another preset does not move it.
 

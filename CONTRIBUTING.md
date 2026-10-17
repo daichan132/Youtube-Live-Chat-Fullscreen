@@ -26,7 +26,13 @@ yarn install --immutable
 yarn dev
 ```
 
-`yarn dev` starts the Chrome development build; `yarn dev:firefox` starts Firefox. Keep the development process running while trying changes. For a dedicated Chrome profile, loading the correct output, and checking the overlay on YouTube, follow [browser verification](docs/maintainers/verification-browser.md).
+To load the development build in regular Google Chrome:
+
+1. Open `chrome://extensions` and turn on **Developer mode**.
+2. Select **Load unpacked** and choose `.output/chrome-mv3-dev` from this repository.
+3. Open a YouTube live stream or an archive with chat replay, reload the YouTube tab, and enter fullscreen.
+
+Keep `yarn dev` running while trying changes. After reloading the extension in `chrome://extensions`, also reload the YouTube tab. For Firefox, use `yarn dev:firefox`. The [browser verification guide](docs/maintainers/verification-browser.md) has additional instructions for dedicated Chrome profiles, production builds, and recording browser checks.
 
 Install Playwright Chromium once before browser tests:
 
@@ -99,7 +105,7 @@ Preserve live streams, archives with replay, videos without chat, and YouTube na
 
 ## Tests
 
-Use an explicit `*.unit.spec.ts(x)`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts(x)` suffix for new Vitest tests. The [testing guide](docs/testing/contracts.md) describes each project and how to run focused checks. Focused tests are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging.
+Use an explicit `*.unit.spec.ts(x)`, `*.dom.spec.ts(x)`, or `*.contract.spec.ts(x)` suffix for new Vitest tests. The [testing guide](docs/testing/contracts.md) describes each project and how to run focused checks. `test.only` and `describe.only` markers are rejected unless `YLC_ALLOW_ONLY=1` is explicitly set for local debugging. Selecting a test file on the command line does not require that variable.
 
 Register each Playwright scenario exactly once in [`e2e/config/projectClassification.ts`](e2e/config/projectClassification.ts). Keep real-YouTube canaries separate from deterministic fixtures.
 
@@ -125,10 +131,18 @@ Do not edit generated files under `public/locales`, `public/_locales`, or `share
 
 ## Screenshots
 
-Use the store-asset capture project when updating the listing screenshots:
+Start with the [selected store assets](docs/store-assets/chrome-web-store/README.md) for the approved images, retained sources, and preview tools. Check the selected files without launching a browser:
+
+```bash
+yarn store:assets:render --check
+```
+
+For fresh captures from real YouTube, use the separate store-asset capture project:
 
 ```bash
 yarn capture:store-assets
 ```
+
+This writes PNGs to the ignored `screenshots/` directory at the repository root. It does not replace the selected store assets.
 
 Review changed images at full size. Do not update visual baselines to hide an unexplained difference.

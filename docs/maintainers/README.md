@@ -18,7 +18,7 @@
 
 - [掲載文](../store-listing/) は各言語の原稿。`yarn store:check` が文字数・必須表記・URL・構成を検査する。このチェックは `yarn verify` に含まれ、`yarn check` には含まれない。
 - [ストア更新のチェックリスト](../store-listing/asset-work-list.md) で、原稿・画像の準備から公開後の確認までをたどれる。
-- [Chrome Web Store の画像資料](../store-assets/chrome-web-store/README.md) に、画像、編集用ソース、撮影時の記録がある。コンセプトや過去の記録は、現在の掲載状態とは区別する。
+- [Chrome Web Store の画像資料](../store-assets/chrome-web-store/README.md) に、選択済みの画像6枚と元データ、撮影時の記録がある。画像の選択とストアでの公開状態は別に確認する。
 
 公開ワークフローが提出するのは拡張 ZIP と Firefox のソース ZIP。ストアの掲載文や画像はダッシュボードで手動更新し、公開後に表示を確認する。
 

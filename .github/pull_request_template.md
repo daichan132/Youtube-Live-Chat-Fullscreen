@@ -8,10 +8,13 @@
 
 ## Verification
 
-<!-- List only commands and manual checks you actually ran. -->
+<!-- List only commands and manual checks you actually ran. Remove checks that do not apply. -->
+
+Follow the [verification guide](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/blob/main/CONTRIBUTING.md#verify-your-change) for the checks required by this change. For documentation-only changes, report link, command, and diff checks.
 
 - [ ] `yarn verify` for code, configuration, or dependency changes
 - [ ] `yarn test:package` for package, manifest, or build changes
+- [ ] `yarn verify:firefox-source` for package, manifest, Firefox-source, or release changes
 - [ ] Real-browser verification, when relevant
 - [ ] Deterministic E2E, visual, or accessibility checks, when relevant
 
@@ -27,5 +30,5 @@
 
 - [ ] The pull request is focused and excludes unrelated formatting or refactoring.
 - [ ] New behavior has coverage at the boundary it changes.
-- [ ] No new permissions, tracking, or external data collection were added.
+- [ ] Permission, storage, and network changes are explained and preserve the documented privacy limits.
 - [ ] Documentation and generated locale assets are updated when required.

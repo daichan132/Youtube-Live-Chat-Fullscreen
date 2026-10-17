@@ -37,7 +37,7 @@ The overlay uses YouTube's own chat. During live streams, you can read and reply
 
 ## Make room for your stream
 
-Choose a layout that fits what you are watching, then save the appearance for next time.
+Choose a layout that fits what you are watching. Appearance and placement changes are saved automatically.
 
 | What you want to do | What you can adjust |
 | --- | --- |
