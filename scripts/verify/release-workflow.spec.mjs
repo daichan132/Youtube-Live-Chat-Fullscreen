@@ -30,11 +30,36 @@ const moveCheckout = (workflow, from, to) => {
 }
 
 describe('release publication job contracts', () => {
-  it('accepts the current jobs and a renamed trusted-ref guard', () => {
+  it('accepts the current jobs and changes to the trusted-ref guard display text', () => {
     expect(() => assertReleaseWorkflows(candidate, publish)).not.toThrow()
     expect(() =>
-      assertReleaseWorkflows(candidate, publish.replace('Require trusted publication workflow', 'Reject non-main publication')),
+      assertReleaseWorkflows(
+        candidate,
+        publish
+          .replace('Require trusted publication workflow', 'Reject non-main publication')
+          .replace('Publication must run from main', 'Choose main before publishing'),
+      ),
     ).not.toThrow()
+  })
+
+  it.each([
+    ['removed', job => job.replace('            exit 1\n', '')],
+    ['changed to success', job => job.replace('            exit 1\n', '            exit 0\n')],
+    ['commented out', job => job.replace('            exit 1\n', '            # exit 1\n')],
+    ['only printed', job => job.replace('            exit 1\n', '            echo "exit 1"\n')],
+    [
+      'moved outside the branch',
+      job => job.replace('            exit 1\n', '').replace('          fi\n', '          fi\n          exit 1\n'),
+    ],
+    [
+      'moved into the main branch',
+      job => job.replace('            exit 1\n', '').replace('          fi\n', '          else\n            exit 1\n          fi\n'),
+    ],
+  ])('rejects a trusted-ref guard whose failing exit is %s', (_name, change) => {
+    const changed = replaceJob(publish, 'validate-candidate', change)
+
+    expect(changed).not.toBe(publish)
+    expect(() => assertReleaseWorkflows(candidate, changed)).toThrow()
   })
 
   it.each(['publish-chrome', 'publish-firefox'])('rejects a different artifact in %s alone', name => {

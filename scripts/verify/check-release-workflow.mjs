@@ -16,9 +16,10 @@ const workflowJob = (workflow, name) => {
   return jobs.slice(heading.index, next?.index)
 }
 
+const workflowSteps = job => job.split(/(?=^ {6}- )/m).slice(1)
+
 const requireActionStep = (job, action, label) => {
-  const steps = job.split(/(?=^ {6}- )/m).slice(1)
-  const matches = steps.filter(step =>
+  const matches = workflowSteps(job).filter(step =>
     step.split('\n').some(line => line.startsWith(`      - uses: ${action}@`) || line.startsWith(`        uses: ${action}@`)),
   )
   assert.equal(matches.length, 1, `${label} must have exactly one ${action} step`)
@@ -47,9 +48,21 @@ export const assertReleaseWorkflows = (candidate, publish) => {
   const validationCheckout = requireActionStep(validation, 'actions/checkout', 'Candidate validation')
   const validationDownload = requireActionStep(validation, 'actions/download-artifact', 'Candidate validation')
   assert.match(validation, /actions: read/, 'Candidate metadata validation needs read-only Actions access')
-  const trustedRefGuard = validation.match(/^ {10}if \[\[ "\$GITHUB_REF" != "refs\/heads\/main" \]\]; then[ \t]*$/m)
-  assert.ok(trustedRefGuard, 'Publication must reject untrusted dispatch refs')
-  assert.ok(trustedRefGuard.index < validation.indexOf(validationCheckout), 'The dispatch ref must be checked before checkout')
+  const trustedRefGuards = workflowSteps(validation)
+    .map(step => ({
+      step,
+      guard: step.match(/^ {10}if \[\[ "\$GITHUB_REF" != "refs\/heads\/main" \]\]; then[ \t]*\n([\s\S]*?)(?=^ {10}(?:elif|else|fi)\b)/m),
+    }))
+    .filter(({ guard }) => guard)
+  assert.equal(trustedRefGuards.length, 1, 'Publication must reject untrusted dispatch refs in exactly one guard step')
+  const { step: trustedRefStep, guard: trustedRefGuard } = trustedRefGuards[0]
+  assert.match(trustedRefStep, /^ {8}run: \|[ \t]*$/m, 'The trusted-ref guard must run as a shell step')
+  assert.match(
+    trustedRefGuard[1],
+    /^ {12}exit[ \t]+1(?:[ \t]+#.*)?[ \t]*$/m,
+    'Non-main publication must exit with failure inside its branch',
+  )
+  assert.ok(validation.indexOf(trustedRefStep) < validation.indexOf(validationCheckout), 'The dispatch ref must be checked before checkout')
   assert.match(validationCheckout, /ref: \$\{\{ github\.sha \}\}/, 'Validation must use the immutable trusted publication source')
   assert.match(
     validation,
