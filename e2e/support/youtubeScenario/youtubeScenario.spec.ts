@@ -114,7 +114,7 @@ describe('YouTube scenario compiler', () => {
     expect(compiled.chatRoutes[0]?.pattern).toBe('**/live_chat_replay?*')
   })
 
-  it('renders an unavailable native replay marker and response', () => {
+  it('serves an unavailable native replay from the real chat route rather than srcdoc', () => {
     const compiled = compileYouTubeScenario(
       createArchiveState({
         video: { id: 'archive-unavailable', title: 'Unavailable fixture', mode: 'archive' },
@@ -126,8 +126,14 @@ describe('YouTube scenario compiler', () => {
       }),
     )
 
-    expect(compiled.watchHtml).toContain('yt-live-chat-unavailable-message-renderer')
-    expect(compiled.chatRoutes[0]?.body).toContain('yt-live-chat-unavailable-message-renderer')
+    expect(compiled.watchHtml).toContain(
+      'src="/live_chat_replay?v=archive-unavailable&amp;continuation=ylc-fixture&amp;fixture-unavailable=1"',
+    )
+    expect(compiled.watchHtml).not.toContain('srcdoc=')
+    expect(compiled.chatRoutes).toContainEqual({
+      pattern: '**/live_chat_replay?*fixture-unavailable=1',
+      body: expect.stringContaining('yt-live-chat-unavailable-message-renderer'),
+    })
   })
 
   it('compiles a no-chat fixture without chat routes or native iframe', () => {

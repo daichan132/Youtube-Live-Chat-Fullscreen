@@ -1,4 +1,5 @@
 import {
+  getChatIframeMode,
   getIframeVideoId,
   isLiveChatIframe,
   isManagedLiveIframe,
@@ -86,8 +87,13 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
     markChatIframeObservedForCurrentVideo(iframe, videoId)
   }
 
-  const nativeChatIframe = iframeProbes.elements.find(iframe => iframeMatchesVideo(iframe, videoId)) ?? null
-  const currentLeaseMatches = leasedIframe !== null && iframeMatchesVideo(leasedIframe, videoId) && leasedIframe.isConnected
+  const nativeChatIframe =
+    iframeProbes.elements.find(iframe => getChatIframeMode(iframe) !== null && iframeMatchesVideo(iframe, videoId)) ?? null
+  const currentLeaseMatches =
+    leasedIframe !== null &&
+    getChatIframeMode(leasedIframe) !== null &&
+    iframeMatchesVideo(leasedIframe, videoId) &&
+    leasedIframe.isConnected
   const candidateChatIframe = nativeChatIframe ?? (currentLeaseMatches ? leasedIframe : null)
   const nativeChatHost =
     (nativeChatIframe ? closestProbe<HTMLElement>(nativeChatIframe, nativeChatHostProbe) : null) ??

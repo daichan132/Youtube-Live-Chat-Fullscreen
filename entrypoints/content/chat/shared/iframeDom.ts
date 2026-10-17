@@ -141,9 +141,21 @@ const readIframeSource = (iframe: HTMLIFrameElement) => {
   }
   return {
     document: doc,
+    documentHref,
+    iframeHref,
     ...parsed,
     host: getChatHost(iframe),
   }
+}
+
+export const getChatIframeMode = (iframe: HTMLIFrameElement) => {
+  const source = readIframeSource(iframe)
+  if (!source.document || !source.documentHref) return null
+  // A loaded document is authoritative. A chat-looking src cannot authorize a
+  // different loaded page, and observed markers are only a blank-frame fallback.
+  if (source.documentHref && source.documentHref !== 'about:blank') return source.documentUrl?.mode ?? null
+  if (source.iframeHref && source.iframeHref !== 'about:blank') return source.iframeUrl?.mode ?? null
+  return hasObservedArchiveMode(iframe) || hasObservedArchiveMode(source.host) ? 'archive' : null
 }
 
 type ObservedIframeSource = Omit<ReturnType<typeof readIframeSource>, 'document' | 'host'> & {
@@ -229,6 +241,8 @@ const markObservedElementForCurrentVideo = (element: Element | null | undefined,
 
 export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoId = getCurrentYouTubeVideoId()) => {
   if (!currentVideoId) return
+  const mode = getChatIframeMode(iframe)
+  if (!mode) return
   const source = readIframeSource(iframe)
   const observedVideoIds = [getObservedVideoId(iframe), getObservedVideoId(source.host)]
   const hasObservedConflict = observedVideoIds.some(videoId => videoId !== null && videoId !== currentVideoId)
@@ -242,9 +256,7 @@ export const markChatIframeObservedForCurrentVideo = (iframe: HTMLIFrameElement,
     iframe.setAttribute(YLC_OBSERVED_VIDEO_ATTR, currentVideoId)
     source.host?.setAttribute(YLC_OBSERVED_VIDEO_ATTR, currentVideoId)
   }
-  const explicitMode = source.documentUrl?.mode ?? source.iframeUrl?.mode
-  const isReplay = explicitMode ? explicitMode === 'archive' : isReplayChatIframe(iframe)
-  if (!isReplay && !isLiveChatIframe(iframe)) return
+  const isReplay = mode === 'archive'
   const declaredVideoId = getDeclaredIframeVideoId(iframe)
   if (declaredVideoId && declaredVideoId !== currentVideoId) return
   if (!markObservedElementForCurrentVideo(iframe, currentVideoId)) return
@@ -310,33 +322,10 @@ export const isManagedIframe = (iframe: HTMLIFrameElement | null) => iframe?.get
 export const isManagedLiveIframe = (iframe: HTMLIFrameElement | null | undefined) =>
   isManagedIframe(iframe as HTMLIFrameElement | null) && iframe?.getAttribute(YLC_SOURCE_ATTR) === YLC_SOURCE_LIVE
 
-export const hasReplayPath = (href: string | null | undefined) => Boolean(href?.includes('/live_chat_replay'))
-export const hasLivePath = (href: string | null | undefined) => Boolean(href?.includes('/live_chat'))
-
-export const isReplayChatIframe = (iframe: HTMLIFrameElement) => {
-  const docHref = getIframeDocumentHref(iframe)
-  if (hasReplayPath(docHref)) return true
-  if (hasLivePath(docHref)) return false
-
-  const srcHref = getIframeHrefFromSrc(iframe)
-  if (hasReplayPath(srcHref)) return true
-  if (hasLivePath(srcHref)) return false
-  return hasObservedArchiveMode(iframe) || hasObservedArchiveMode(getChatHost(iframe))
-}
+export const isReplayChatIframe = (iframe: HTMLIFrameElement) => getChatIframeMode(iframe) === 'archive'
 
 export const isLiveChatIframe = (iframe: HTMLIFrameElement | null | undefined) => {
-  if (!iframe) return false
-
-  const docHref = getIframeDocumentHref(iframe)
-  if (docHref) {
-    if (hasReplayPath(docHref)) return false
-    if (hasLivePath(docHref)) return true
-  }
-
-  const srcHref = getIframeHrefFromSrc(iframe)
-  if (!srcHref) return false
-  if (hasReplayPath(srcHref)) return false
-  return hasLivePath(srcHref)
+  return Boolean(iframe && getChatIframeMode(iframe) === 'live')
 }
 
 export const getIframeVideoId = (iframe: HTMLIFrameElement) => {
@@ -361,7 +350,7 @@ export const isIframeForCurrentVideo = (iframe: HTMLIFrameElement, currentVideoI
 }
 
 export const getCurrentLiveChatIframe = (currentVideoId = getCurrentYouTubeVideoId()) =>
-  getLiveChatIframes().find(iframe => isIframeForCurrentVideo(iframe, currentVideoId)) ?? null
+  getLiveChatIframes().find(iframe => getChatIframeMode(iframe) !== null && isIframeForCurrentVideo(iframe, currentVideoId)) ?? null
 
 export const getCurrentLiveChatHost = () =>
   queryAllProbes<HTMLElement>(document, nativeChatHostProbe).elements.find(host => isChatHostForCurrentVideo(host)) ?? null

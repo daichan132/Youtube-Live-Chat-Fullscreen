@@ -9,7 +9,7 @@ const outputRoot = join(root, '.output')
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 const sizePolicy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
 const expectedPermissions = ['storage']
-const expectedContentScriptMatches = ['*://www.youtube.com/*']
+const expectedContentScriptMatches = ['https://www.youtube.com/*']
 const forbiddenProductionFiles = [
   { label: 'E2E bridge', matches: file => file === 'e2e.html' },
   { label: 'source map', matches: file => file.endsWith('.map') },

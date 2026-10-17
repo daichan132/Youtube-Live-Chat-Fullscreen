@@ -66,8 +66,8 @@ const renderNativeChat = (videoId: string, mode: 'live' | 'archive', native: Nat
   const slotBefore = native.slot ? `<span id="${escapeHtml(native.slot.beforeId)}"></span>` : ''
   const slotAfter = native.slot ? `<span id="${escapeHtml(native.slot.afterId)}"></span>` : ''
   const hostVideoId = native.hostVideoId === false ? '' : ` video-id="${escapeHtml(videoId)}"`
-  const srcdoc = native.state === 'unavailable' ? ` srcdoc="${escapeHtml(unavailableChatHtml())}"` : ''
-  const src = native.navigateWithoutSrc ? '' : ` src="${escapeHtml(iframeSrc(videoId, mode, native.continuationVideoId))}"`
+  const href = `${iframeSrc(videoId, mode, native.continuationVideoId)}${native.state === 'unavailable' ? '&fixture-unavailable=1' : ''}`
+  const src = native.navigateWithoutSrc ? '' : ` src="${escapeHtml(href)}"`
   return `
     <ytd-live-chat-frame${hostVideoId}>
       ${slotBefore}
@@ -75,7 +75,7 @@ const renderNativeChat = (videoId: string, mode: 'live' | 'archive', native: Nat
         id="chatframe"
         class="ytd-live-chat-frame"
         ${native.inlineStyle ? `style="${escapeHtml(native.inlineStyle)}"` : ''}
-        ${src}${srcdoc}
+        ${src}
       ></iframe>
       ${slotAfter}
       ${native.showHideControl ? renderShowHideControl(mode) : ''}
@@ -174,6 +174,12 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
                 : unavailableChatHtml(),
           },
         ]
+  if (state.chat.mode !== 'none' && state.chat.native.state === 'unavailable') {
+    chatRoutes.push({
+      pattern: `**/${state.chat.mode === 'archive' ? 'live_chat_replay' : 'live_chat'}?*fixture-unavailable=1`,
+      body: unavailableChatHtml(),
+    })
+  }
   const bodyHtml = renderWatchBody(state)
   const isLive = state.video.mode === 'live'
   const nativeChatNavigationHref =

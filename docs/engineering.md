@@ -68,6 +68,6 @@ The [typed scenario tools](../e2e/support/youtubeScenario/) keep page constructi
 
 Run `yarn verify` for code, configuration, or dependency changes. Additional browser and package checks depend on the change; [Testing contracts](testing/contracts.md) explains which checks to run and where new tests belong.
 
-Production packages request only `storage`, scope public resources to YouTube, and exclude testing bridges and fixtures. Package checks enforce those rules. Diagnostic reports exclude URLs, video IDs, chat text, usernames, and other user-specific content.
+Production packages request only `storage`, inject content scripts only on `https://www.youtube.com/*`, and exclude testing bridges and fixtures. Chrome scopes public resources to the same HTTPS origin; Firefox MV2 exposes only the settings page through its resource list. Package checks enforce those rules. Diagnostic reports exclude URLs, video IDs, chat text, usernames, and other user-specific content.
 
 Release candidates and store submission use separate manual workflows. Publication verifies the candidate's hashes and submits the same ZIPs without rebuilding. See the [maintainer guide](maintainers/README.md) for real-browser verification and release procedures.

@@ -2,7 +2,7 @@
 
 *Part of the architecture set: [overview](../engineering.md) · [Settings, state, and storage](./settings-and-state.md) · [The overlay and iframe styling](./overlay-and-styling.md) · [Internationalization](./i18n.md) — see the [documentation index](../README.md).*
 
-The content script is injected into every `www.youtube.com` page but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, and `/user/<name>/live`. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
+The content script is injected into HTTPS `www.youtube.com` pages but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, and `/user/<name>/live`. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
 
 ## What this owns
 
@@ -102,6 +102,8 @@ YouTube's `yt-page-data-updated` also schedules observation: updates inside the 
 - `unavailable`: the current video has no usable chat.
 
 Live streams prefer a native `live_chat` iframe and may fall back to a managed `https://www.youtube.com/live_chat?v=<id>` iframe. Archives use only a native playable `live_chat_replay` iframe because no equivalent standalone replay URL exists.
+
+Chat source classification accepts only the exact `https://www.youtube.com` origin and `/live_chat` or `/live_chat_replay` pathname, including relative URLs resolved against the page origin. A chat-like string in another origin, path, query, or fragment is not a chat source. A loaded non-blank document takes precedence over `src`, and a missing or inaccessible document is rejected. An accessible `about:blank` document may use a trusted `src`; observed replay markers are a fallback only while both URLs are blank. Native iframe selection applies this same policy before matching video identity so an unrelated iframe cannot hide a valid chat source.
 
 A managed live iframe is not itself proof that the player is still live. When the player no longer confirms live and YouTube exposes an archive open control, observation treats the managed iframe as superseded. The model releases that live lease, opens the archive panel, and waits for a playable replay iframe instead of keeping the ended live source active.
 

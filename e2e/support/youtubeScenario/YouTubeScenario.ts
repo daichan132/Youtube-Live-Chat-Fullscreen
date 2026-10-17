@@ -216,6 +216,38 @@ export class YouTubeScenario {
     await this.addNativeIframe(mutation)
   }
 
+  async addMisleadingNativeIframe(href: string, redirect = false) {
+    await this.page.route(href, route =>
+      route.fulfill({
+        status: 200,
+        contentType: 'text/html',
+        body: '<!doctype html><body data-ylc-misleading-source-fixture><yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer></body>',
+      }),
+    )
+    if (redirect) {
+      const nativeHref = `https://www.youtube.com/live_chat?v=${this.requireState().video.id}&fixture=native`
+      await this.page.route(nativeHref, route =>
+        route.fulfill({
+          status: 200,
+          contentType: 'text/html',
+          body: `<!doctype html><script>location.replace(${JSON.stringify(href)})</script>`,
+        }),
+      )
+    }
+    await this.addNativeIframe({ mode: 'live', state: 'playable' })
+    if (!redirect) {
+      await this.page.locator('ytd-live-chat-frame > #chatframe').evaluate((iframe, href) => {
+        const chatFrame = iframe as HTMLIFrameElement
+        chatFrame.src = href
+      }, href)
+    }
+    await this.page
+      .frameLocator('ytd-live-chat-frame > #chatframe')
+      .locator('[data-ylc-misleading-source-fixture]')
+      .waitFor({ state: 'attached' })
+    return this.page.locator('ytd-live-chat-frame > #chatframe').getAttribute('src')
+  }
+
   async setChatUnavailable() {
     await this.page.evaluate(() => {
       const iframe = document.querySelector<HTMLIFrameElement>('#chatframe')
