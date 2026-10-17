@@ -48,6 +48,8 @@ The settings UI runs in its own extension-origin `settings.html` iframe and Jota
 
 Font search leaves IME composition keys to the input method. Enter chooses a font only after composition has finished, so confirming search text does not also change the saved appearance or undo history.
 
+Escape from a color-picker control or its trigger closes that picker and returns focus to the trigger before the settings modal can handle the key. Closing the picker finishes its active appearance gesture through the same cleanup used for removal.
+
 The receiver checks the message source, allowed origin, and profile schema. The preview is transient and remains visible until the matching Storage commit arrives, so an earlier save cannot overwrite a later gesture. Closing or reloading the settings frame clears it. Committed settings converge through Storage; see [Settings, state, and storage](settings-and-state.md) for ordering and failure behavior.
 
 The effective profile reaches [`ResourceReconciler.ts`](../../entrypoints/content/runtime/ResourceReconciler.ts), which applies it to a usable chat document:

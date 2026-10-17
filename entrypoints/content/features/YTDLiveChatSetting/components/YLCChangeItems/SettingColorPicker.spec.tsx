@@ -23,6 +23,24 @@ describe('SettingColorPicker', () => {
     expect(queryByRole('dialog')).toBeNull()
   })
 
+  it('ends the interaction once when Escape closes the picker', () => {
+    const onInteractionEnd = vi.fn()
+    const { getByRole, queryByRole } = render(
+      <SettingColorPicker
+        rgba={{ r: 1, g: 2, b: 3, a: 0.4 }}
+        label='Background color'
+        onChange={vi.fn()}
+        onInteractionEnd={onInteractionEnd}
+      />,
+    )
+
+    fireEvent.click(getByRole('button', { name: 'Background color' }))
+    fireEvent.keyDown(getByRole('slider', { name: 'Hue' }), { key: 'Escape' })
+
+    expect(queryByRole('dialog')).not.toBeInTheDocument()
+    expect(onInteractionEnd).toHaveBeenCalledOnce()
+  })
+
   it('closes the dialog on outside click', () => {
     const { getByRole, queryByRole } = render(
       <div>
