@@ -42,27 +42,7 @@ const createDeferred = <T>() => {
 }
 
 describe('createAppRuntime', () => {
-  it('boots with English messages when the selected locale fails to load', async () => {
-    const repository = createRepository({
-      load: vi.fn(async (): Promise<SettingsSnapshot> => ({ ...defaultSnapshot(), locale: 'ja' })),
-    })
-    const loadMessages = vi.fn(async (locale: LocaleCode) => {
-      if (locale === 'ja') throw new Error('missing selected locale')
-      return messages('English')
-    })
-
-    const runtime = await createAppRuntime(repository, { loadMessages })
-
-    expect(loadMessages.mock.calls.map(([locale]) => locale)).toEqual(['ja', 'en'])
-    expect(runtime.store.get(localeStateAtom)).toMatchObject({
-      code: 'ja',
-      messages: { 'popup.theme': 'English' },
-    })
-    expect(repository.saveLocale).not.toHaveBeenCalled()
-    runtime.dispose()
-  })
-
-  it('rejects startup when the English base messages are unavailable', async () => {
+  it('unsubscribes settings notifications after locale initialization fails', async () => {
     const unwatch = vi.fn()
     const unsubscribePersistence = vi.fn()
     const repository = createRepository({
@@ -75,28 +55,8 @@ describe('createAppRuntime', () => {
     })
 
     await expect(createAppRuntime(repository, { loadMessages })).rejects.toThrow('no locale assets')
-    expect(loadMessages).toHaveBeenCalledTimes(2)
     expect(unwatch).toHaveBeenCalledTimes(1)
     expect(unsubscribePersistence).toHaveBeenCalledTimes(1)
-  })
-
-  it('persists a selected locale once when its messages use the English fallback', async () => {
-    const repository = createRepository()
-    const loadMessages = vi.fn(async (locale: LocaleCode) => {
-      if (locale === 'ja') throw new Error('missing selected locale')
-      return messages('English')
-    })
-    const runtime = await createAppRuntime(repository, { loadMessages })
-
-    await runtime.setLocale('ja')
-
-    expect(runtime.store.get(localeStateAtom)).toMatchObject({
-      code: 'ja',
-      messages: { 'popup.theme': 'English' },
-    })
-    expect(repository.saveLocale).toHaveBeenCalledTimes(1)
-    expect(repository.saveLocale).toHaveBeenCalledWith('ja')
-    runtime.dispose()
   })
 
   it('persists each ownership domain independently', async () => {

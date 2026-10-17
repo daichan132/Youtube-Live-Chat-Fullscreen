@@ -84,6 +84,8 @@ type AppRuntimeDependencies = {
   loadMessages: typeof loadLocaleMessages
 }
 
+// Language fallback belongs here: try the requested bundle, then English once.
+// The loader evicts failures so a later request can try those assets again.
 const loadMessagesWithEnglishFallback = async (locale: LocaleCode, loadMessages: typeof loadLocaleMessages) => {
   try {
     return await loadMessages(locale)

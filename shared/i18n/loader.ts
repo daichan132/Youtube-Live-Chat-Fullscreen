@@ -33,8 +33,7 @@ export const loadLocaleMessages = (locale: LocaleCode): Promise<LocaleMessages> 
     })
     .catch(error => {
       if (cache.get(locale) === loading) cache.delete(locale)
-      if (locale === 'en') throw error
-      return loadLocaleMessages('en')
+      throw error
     })
   cache.set(locale, loading)
   return loading
