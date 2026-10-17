@@ -13,6 +13,9 @@ for (let index = 2; index < process.argv.length; index += 1) {
 
   const [rawKey, inlineValue] = arg.slice(2).split('=', 2)
   const value = inlineValue ?? process.argv[index + 1]
+  if (rawKey === 'target-id' && (!value || value.startsWith('--'))) {
+    throw new Error('--target-id requires a value')
+  }
   args.set(rawKey, value)
   if (inlineValue === undefined) index += 1
 }

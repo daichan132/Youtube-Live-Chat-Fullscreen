@@ -27,6 +27,14 @@ try {
 
   const unique = await inspect()
   assert.equal(JSON.parse(unique.stdout).url, first.url(), 'A single URL match must remain usable without a target ID.')
+  for (const invalid of [['--target-id='], ['--target-id'], ['--target-id', '--url-includes', 'youtube.com/watch']]) {
+    await assert.rejects(inspect(...invalid), error => error.code === 1 && error.stderr.includes('--target-id requires a value'))
+  }
+  await assert.rejects(
+    inspect('--port', '0', '--target-id'),
+    error => error.code === 1 && error.stderr.includes('--target-id requires a value'),
+  )
+  assert.equal(context.pages().length, 1, 'Invalid explicit targets must not fall back to the single URL match.')
 
   const second = await context.newPage()
   await second.goto('https://www.youtube.com/watch?v=inspect-second-fixture')
