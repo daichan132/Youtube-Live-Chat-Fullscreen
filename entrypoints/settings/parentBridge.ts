@@ -8,6 +8,3 @@ export const getAllowedParentOrigin = (href: string) => {
     return null
   }
 }
-
-export const isTrustedParentMessage = (event: MessageEvent, parentOrigin: string | null, parentWindow: Window) =>
-  parentOrigin !== null && event.source === parentWindow && event.origin === parentOrigin
