@@ -27,7 +27,7 @@
   <a href="README.zh-TW.md">繁體中文</a>
 </p>
 
-![風真いろはの配信に、入力欄と視聴者名のぼかしを含むチャットを重ねた画面](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
+![風真いろはの配信に、入力欄と視聴者名のぼかしを含むチャットを重ねた画面](../store-assets/chrome-web-store/source/captures/default-chat.png)
 
 *標準のチャットと入力欄を表示した例です。入力途中のメッセージは送信していません。画像では視聴者名などをぼかしています。配信映像：風真いろは / hololive。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
@@ -50,7 +50,7 @@
 | 操作ボタンが消えても反応を見続ける | チャットを常時表示し、必要なら「チャットのみ表示」に切り替え |
 | 読み方に合わせて見た目を切り替える | 名前付きプリセットを保存。設定を JSON で書き出してバックアップや別のブラウザへの移行に使う |
 
-![背景を完全に透過したチャットのみの表示で、視聴者の情報を保護したアーカイブの画面](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
+![背景を完全に透過したチャットのみの表示で、視聴者の情報を保護したアーカイブの画面](../store-assets/chrome-web-store/source/captures/transparent-chat.png)
 
 *背景を完全に透過し、チャットのみを表示したリプレイの例です。このアーカイブの画像には入力欄はありません。配信映像：CohhCarnage。[出典とプライバシー処理（英語）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 

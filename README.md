@@ -25,7 +25,7 @@
   <a href="docs/translations/README.zh-TW.md">繁體中文</a>
 </p>
 
-![Fullscreen live chat beside Kazama Iroha, with a native message input and blurred viewer identities](docs/store-assets/chrome-web-store/screenshots/02-default-chat.png)
+![Fullscreen live chat beside Kazama Iroha, with a native message input and blurred viewer identities](docs/store-assets/chrome-web-store/source/captures/default-chat.png)
 
 *Default chat with the native input visible; the draft was not sent. Viewer identities are blurred for the screenshot. Footage: Kazama Iroha / hololive. [Sources and privacy](docs/store-assets/chrome-web-store/README.md#sources-and-privacy).*
 
@@ -48,7 +48,7 @@ Choose a layout that fits what you are watching. Appearance and placement change
 | Keep reactions visible after controls fade | Leave chat visible while idle, with an optional messages-only layout |
 | Switch between reading styles | Save named presets; export settings as JSON to back them up or move browsers |
 
-![An archived gaming stream with fully transparent messages-only chat and protected viewer identities](docs/store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
+![An archived gaming stream with fully transparent messages-only chat and protected viewer identities](docs/store-assets/chrome-web-store/source/captures/transparent-chat.png)
 
 *A fully transparent, messages-only replay layout keeps the game in view. This archive example has no message input. Footage: CohhCarnage. [Sources and privacy](docs/store-assets/chrome-web-store/README.md#sources-and-privacy).*
 

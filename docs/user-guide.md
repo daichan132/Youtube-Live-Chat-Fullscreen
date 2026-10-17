@@ -14,7 +14,7 @@ Use the browser toolbar popup to enable the extension again if it was turned off
 
 YouTube still owns the chat. Sign-in and live-message posting follow YouTube's usual rules; the extension does not require a separate account. Archive chat is a replay of the original conversation.
 
-![Fullscreen live chat with a native message input and blurred viewer identities](store-assets/chrome-web-store/screenshots/02-default-chat.png)
+![Fullscreen live chat with a native message input and blurred viewer identities](store-assets/chrome-web-store/source/captures/default-chat.png)
 
 *Default chat with a visible native input and an unsent draft. Viewer identities are blurred in this screenshot. Footage: Kazama Iroha / hololive. [Sources and privacy](store-assets/chrome-web-store/README.md#sources-and-privacy).*
 

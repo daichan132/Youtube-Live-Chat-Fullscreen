@@ -27,7 +27,7 @@
   <strong>繁體中文</strong>
 </p>
 
-![Kazama Iroha 的直播與原生聊天輸入欄，觀眾身分已模糊處理](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
+![Kazama Iroha 的直播與原生聊天輸入欄，觀眾身分已模糊處理](../store-assets/chrome-web-store/source/captures/default-chat.png)
 
 *標準聊天室與原生輸入欄的範例，輸入中的訊息尚未送出。截圖中的觀眾身分已模糊處理。直播影像：Kazama Iroha / hololive。[來源與隱私處理（英文）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
@@ -50,7 +50,7 @@
 | 控制列隱藏後仍看見反應 | 讓聊天室持續顯示，也可選擇「僅顯示聊天室」版面 |
 | 切換不同的閱讀樣式 | 為樣式取名並儲存；將設定匯出成 JSON 來備份或手動移到另一個瀏覽器 |
 
-![背景完全透明、僅顯示訊息並保護觀眾身分的遊戲直播存檔](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
+![背景完全透明、僅顯示訊息並保護觀眾身分的遊戲直播存檔](../store-assets/chrome-web-store/source/captures/transparent-chat.png)
 
 *這是背景完全透明、僅顯示聊天訊息的重播版面。這張存檔範例沒有訊息輸入欄。直播影像：CohhCarnage。[來源與隱私處理（英文）](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
