@@ -27,9 +27,9 @@
   <strong>繁體中文</strong>
 </p>
 
-![全螢幕遊戲直播左側顯示 YouTube 原生聊天室，右側保留出演者的畫面](../store-assets/chrome-web-store/inputs/en/vtuber-live.png)
+![Kazama Iroha 的直播與原生聊天輸入欄，觀眾身分已模糊處理](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
 
-*這是一種觀看方式：把聊天室移到左側，保留出演者的畫面。直播影像：Gigi Murin、Raora Panthera / hololive。[圖片來源與署名](../store-assets/chrome-web-store/source/stream-provenance.md)。*
+*標準聊天室與原生輸入欄的範例，輸入中的訊息尚未送出。截圖中的觀眾身分已模糊處理。直播影像：Kazama Iroha / hololive。[來源與隱私處理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 ## 看影片，也跟上聊天
 
@@ -50,9 +50,9 @@
 | 控制列隱藏後仍看見反應 | 讓聊天室持續顯示，也可選擇「僅顯示聊天室」版面 |
 | 切換不同的閱讀樣式 | 為樣式取名並儲存；將設定匯出成 JSON 來備份或手動移到另一個瀏覽器 |
 
-![全螢幕遊戲直播中，透過半透明聊天室背景仍可看見影片](../store-assets/chrome-web-store/inputs/en/transparent-live.png)
+![背景完全透明、僅顯示訊息並保護觀眾身分的遊戲直播存檔](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
 
-*讓背景透明一些，就能透過聊天室看見遊戲畫面。直播影像：CohhCarnage。這些圖片使用自訂版面，位置與樣式都能依喜好調整。[圖片來源與署名](../store-assets/chrome-web-store/source/stream-provenance.md)。*
+*這是背景完全透明、僅顯示聊天訊息的重播版面。這張存檔範例沒有訊息輸入欄。直播影像：CohhCarnage。[來源與隱私處理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 提供亮色、暗色與跟隨系統的主題，以及 55 個介面語系和由右至左的版面。[使用指南](../user-guide.md)介紹預設樣式與各項操作（英文）。
 

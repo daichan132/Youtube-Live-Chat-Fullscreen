@@ -16,7 +16,6 @@
     "compile": "tsc --noEmit",
     "locales:check": "node scripts/verify/check-locales.mjs",
     "store:check": "node scripts/verify/check-store-listing.mjs",
-    "store:assets:capture": "yarn build && node scripts/store-assets/capture.mjs",
     "store:assets:render": "node docs/store-assets/chrome-web-store/source/render.mjs",
     "postinstall": "wxt prepare",
     "format": "biome format --write ./entrypoints ./shared",

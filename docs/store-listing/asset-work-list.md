@@ -17,12 +17,8 @@ The [copy locale index](../store-assets/chrome-web-store/source/listing-copy-loc
 2. Update detailed descriptions and image assignments in the store dashboard. Review all affected locale assignments, save, reload, and check the saved values.
 3. Submit the intended draft for review, then check the public listing after publication. Record what was verified and when; a saved draft or accepted submission does not establish publication.
 
-## Saved records
+## Selected assets
 
-These records support comparison with later updates. They are not a current publication status report.
+The [asset guide](../store-assets/chrome-web-store/README.md) lists the four screenshots and two promotional images confirmed by the user on 2026-10-18 (JST). Its manifest records their hashes and source attribution. README examples use the same privacy-protected screenshot files.
 
-- [2026-10-16 dashboard snapshot](chrome-dashboard-snapshot-2026-10-16.json) and [draft evidence](../store-assets/chrome-web-store/source/store-draft-20261016.json): saved descriptions and image assignments observed that day.
-- [2026-10-16 marquee follow-up](../store-assets/chrome-web-store/source/store-draft-marquee-20261016.json): the user's reported save, not an independently verified dashboard check.
-- [Selected discovery tile](../store-assets/chrome-web-store/listing-promo/selected-20261016/README.md) and [matching marquee](../store-assets/chrome-web-store/listing-promo/marquee-indigo-20261016/README.md): selected artwork, export sizes, and hashes.
-- [Capture verification](../store-assets/chrome-web-store/verification.md), [development verification](../store-assets/chrome-web-store/development-verification.md), and [stream provenance](../store-assets/chrome-web-store/source/stream-provenance.md): scope and limitations of the prepared live captures.
-- [2026-10-13 archive set](../store-assets/chrome-web-store/history/archive-20261013/README.md), [2026-08-19 dashboard snapshot](chrome-dashboard-snapshot-2026-08-19.json), and [concept library](../store-assets/concepts/README.md): older reference material.
+Older concepts, captures, comparison galleries, and unselected exports have been removed. Keep only selected designs and the source files needed to maintain them. The selection does not establish a store upload or publication; check the dashboard and public listing separately.

@@ -32,7 +32,7 @@ The [maintainer guide](maintainers/README.md) covers releases, real-browser veri
 - [Chrome Web Store assets](store-assets/chrome-web-store/README.md): prepared images, editable sources, and capture evidence.
 - [Store descriptions](store-listing/): manuscripts for each supported locale, checked by `yarn store:check`.
 
-Asset concepts and dated capture records are reference material, not evidence of the current store listing. Unpublished articles in [`articles/`](../articles/README.md) are separate from the maintained product and development guides.
+The asset guide contains only the selected store set and its supporting sources. Selection and prepared files do not establish what is currently published. Unpublished articles in [`articles/`](../articles/README.md) are separate from the maintained product and development guides.
 
 ## Update documentation
 

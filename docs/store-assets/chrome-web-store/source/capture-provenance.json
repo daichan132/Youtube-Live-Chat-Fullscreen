@@ -1,0 +1,118 @@
+{
+  "kind": "Selected privacy-processed native captures",
+  "browser": "155.0.8059.80",
+  "extension": {
+    "id": "ddnjecbcjffkldooafklphikkbmgmaol",
+    "version": "2.3.16",
+    "contentSha256": "fbcb078af503df98a9108c9d8daf668466399da77072b68a27d4f64dc16b7dcc"
+  },
+  "captures": [
+    {
+      "id": "default-chat",
+      "file": "source/captures/default-chat.png",
+      "sha256": "16852101c8d1767490486fe5f4b84b020a99943cbd4deb6f9371efc6f8521319",
+      "creator": "風真いろは",
+      "sourceUrl": "https://www.youtube.com/watch?v=voiuRX0Fs3Y",
+      "sourceTitle": "【Japanese Ramen Simulator】大繫盛確定★5店舗『ござるらぁめん』開店🍜【風真いろは/ホロライブ】",
+      "mode": "live",
+      "capturedAt": "2026-10-17T11:42:18.169Z",
+      "size": [1920, 1080],
+      "qualitySelection": {
+        "label": "1080p60 HD",
+        "height": 1080,
+        "available": ["1080p60 HD", "720p60", "480p", "360p", "240p", "144p", "自動"],
+        "explicitNativeSelection": true
+      },
+      "decodedVideo": {
+        "width": 1920,
+        "height": 1080,
+        "time": 6058.746386,
+        "paused": false
+      },
+      "faceBounds": [[1460, 580, 1900, 1080]],
+      "settings": "source/settings/default-chat.json",
+      "originalCaptureSha256": "f2f06a62db35c7d04b106ffe763670e740f3e7e031929a9b6dc4850d56f65980",
+      "privacy": {
+        "processedRegions": 23,
+        "unmaskedPixelsUnchanged": true,
+        "creatorFacesUnchanged": true,
+        "namesAndAvatars": "blurred"
+      },
+      "nativeComposerVisible": true,
+      "unsentDraftVisible": true,
+      "messageSubmitted": false
+    },
+    {
+      "id": "transparent-chat",
+      "file": "source/captures/transparent-chat.png",
+      "sha256": "74172b26a3bddeb23a99767768d4bab08a275615652f49918bf1f311af75a0a9",
+      "creator": "CohhCarnage",
+      "sourceUrl": "https://www.youtube.com/watch?v=28chbgbw-dA",
+      "sourceTitle": "Valor Mortis | October 16th",
+      "mode": "archive/replay",
+      "capturedAt": "2026-10-17T11:40:43.789Z",
+      "size": [1920, 1080],
+      "qualitySelection": {
+        "label": "1440p60 HD",
+        "height": 1440,
+        "available": ["1440p60 HD", "1080p60 HD", "720p60", "480p", "360p", "240p", "144p", "自動"],
+        "explicitNativeSelection": true
+      },
+      "decodedVideo": {
+        "width": 2560,
+        "height": 1440,
+        "time": 4834.103689,
+        "paused": false
+      },
+      "faceBounds": [[0, 580, 460, 810]],
+      "settings": "source/settings/transparent-chat.json",
+      "originalCaptureSha256": "0673bbda7ff0741e6b01048ebc901cba26bcdfaaffc22c266ae0305035610038",
+      "privacy": {
+        "processedRegions": 8,
+        "unmaskedPixelsUnchanged": true,
+        "creatorFacesUnchanged": true,
+        "namesAndAvatars": "hidden through product settings; remaining identity mentions masked"
+      },
+      "nativeComposerVisible": false,
+      "unsentDraftVisible": false,
+      "messageSubmitted": false
+    },
+    {
+      "id": "custom-style",
+      "file": "source/captures/custom-style.png",
+      "sha256": "5db33018e79e2bab6d64e947a5cd623746676aebe4d6c2c13bbe58f212cbdfba",
+      "creator": "DrLupo",
+      "sourceUrl": "https://www.youtube.com/watch?v=liUtg0I2ZVE",
+      "sourceTitle": "🔴 THIS IS A WONDERFUL GAME THAT MAKES ME HAPPY",
+      "mode": "archive/replay",
+      "capturedAt": "2026-10-17T11:38:05.674Z",
+      "size": [1920, 1080],
+      "qualitySelection": {
+        "label": "1440p60 HD",
+        "height": 1440,
+        "available": ["1440p60 HD", "1080p60 HD", "720p60", "480p", "360p", "240p", "144p", "自動"],
+        "explicitNativeSelection": true
+      },
+      "decodedVideo": {
+        "width": 2560,
+        "height": 1440,
+        "time": 2421.232737,
+        "paused": false
+      },
+      "faceBounds": [[1474, 748, 1899, 992]],
+      "settings": "source/settings/custom-style.json",
+      "originalCaptureSha256": "a20182d44eed8fe8bfb640f097cd5c4f18bb949fabdb6aa6bd4c4db9bdf42b60",
+      "privacy": {
+        "processedRegions": 3,
+        "unmaskedPixelsUnchanged": true,
+        "creatorFacesUnchanged": true,
+        "namesAndAvatars": "hidden through product settings; remaining identity mentions masked"
+      },
+      "nativeComposerVisible": false,
+      "unsentDraftVisible": false,
+      "messageSubmitted": false
+    }
+  ],
+  "privacyProcessing": "Viewer identities and mentions were blurred or hidden; ordinary message bodies and creator faces remain visible. Only the processed PNGs are retained.",
+  "storePublicationVerified": false
+}

@@ -24,4 +24,4 @@
 
 ## GitHub の掲載内容
 
-About、Topics、Social preview を更新するときは、README の製品説明と対応ブラウザに揃える。これらはビルドや公開ワークフローでは更新されない。利用者数や評価を載せる場合は、出典と確認日を記録する。[既存の Social preview](../../.github/social-preview.png) には「20K+ viewers」が含まれるため、使う前に根拠を確認するか表記を更新する。
+About、Topics、Social preview を更新するときは、README の製品説明と対応ブラウザに揃える。これらはビルドや公開ワークフローでは更新されない。利用者数や評価を載せる場合は、出典と確認日を記録する。画像は [選択済みのストア画像](../store-assets/chrome-web-store/README.md) を参照する。

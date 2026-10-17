@@ -1,87 +1,45 @@
 # Chrome Web Store assets
 
-**Saved as a Chrome Web Store draft on 2026-10-16 (JST):** the selected discovery tile, three global screenshots and all **55 detailed descriptions**. The draft has **not been submitted for review or published**. [Draft evidence](source/store-draft-20261016.json) and the [55-locale dashboard snapshot](../../store-listing/chrome-dashboard-snapshot-2026-10-16.json) record the saved values. Short descriptions remain prepared for the normal package release; no package was uploaded, and both published and draft package versions remain **2.3.15**.
+The user selected these six images on 2026-10-18 (JST). Their bytes are unchanged from the approved files. [manifest.json](manifest.json) records each output, its SHA-256, its previous location, and the retained sources. This cleanup did not upload images, submit a review, or publish the store listing.
 
-Three real live-stream captures and five English-first exports were accepted on 2026-10-14 (JST). These captures show the **2.3.16 production extension**, loaded unpacked in a dedicated regular-Chrome profile.
+## Selected images
 
-![Live gaming with fullscreen chat](exports/en/01-live-gaming.png)
+Upload the four screenshots in filename order.
 
-## Current images and copy
+1. [Introduction](screenshots/01-introduction.png): shared illustration, 1280 × 800.
+2. [Default chat](screenshots/02-default-chat.png): Kazama Iroha, native message input with an unsent draft, 1280 × 800.
+3. [Transparent chat](screenshots/03-transparent-chat.png): CohhCarnage, fully transparent messages-only layout, 1280 × 800.
+4. [Custom style](screenshots/04-custom-style.png): DrLupo, navy chat background and Inter font, 1280 × 800.
 
-**Selected discovery tile — 2026-10-16:** [06 — インディゴの重なり](listing-promo/selected-20261016/README.md), selected by the user from the refined text-free set. The [440 × 280 upload PNG](listing-promo/selected-20261016/small-promo.png) and [880 × 560 review PNG](listing-promo/selected-20261016/small-promo@2x.png) preserve the approved artwork exactly. [Selection evidence and hashes](listing-promo/selected-20261016/selection.json) are recorded. No store publication has been performed. The [ten-concept gallery](listing-promo/refined-text-free-imagegen-20261015/index.html) and older explorations remain preserved.
+The promotional images are [small-promo.png](promotional/small-promo.png), 440 × 280, and [marquee.png](promotional/marquee.png), 1400 × 560. Both use the selected indigo illustration.
 
-| Asset | Output | Size |
-| --- | --- | --- |
-| Selected small promotional tile — Indigo overlay | [PNG](listing-promo/selected-20261016/small-promo.png) | 440 × 280 |
-| 1. Live gaming — “Watch live. Join the chat.” | [PNG](exports/en/01-live-gaming.png) | 1280 × 800 |
-| 2. VTuber community — “Watch VTubers. Join the fun.” | [PNG](exports/en/02-vtuber-live.png) | 1280 × 800 |
-| 3. Transparent chat — “Let the stream show through.” | [PNG](exports/en/03-transparent-chat.png) | 1280 × 800 |
-| Text-free indigo marquee — draft saved by user 2026-10-16 | [PNG](listing-promo/marquee-indigo-20261016/marquee.png) | 1400 × 560 |
-| Capture-based small promotional tile (earlier alternative) | [PNG](exports/small-promo.png) | 440 × 280 |
-| Capture-based marquee promotional tile (earlier alternative) | [PNG](exports/marquee.png) | 1400 × 560 |
+Each real-stream screenshot displays its complete 1920 × 1080 source at 1280 × 720 below an 80 px heading. The introduction and promotional images are illustrations. The real examples use the extension's actual chat UI.
 
-The [matching indigo marquee](listing-promo/marquee-indigo-20261016/README.md) is a newly generated, text-free illustration based on the selected discovery tile. Its [prompt](listing-promo/marquee-indigo-20261016/prompt.md), original, half-size preview and hashes are repository-managed. The user reported saving it in the store draft on **2026-10-16**. This follow-up has not been independently checked in the dashboard; the [user-reported save record](source/store-draft-marquee-20261016.json) is separate from the earlier verified draft evidence.
+## Sources and privacy
 
-The gaming and transparency examples use CohhCarnage's stream. The VTuber example uses Gigi Murin's stream, including Raora Panthera's avatar. [Stream provenance](source/stream-provenance.md) keeps public source links and attribution. These examples do not imply the creators use or endorse the extension.
+- [Kazama Iroha / hololive](https://www.youtube.com/watch?v=voiuRX0Fs3Y): live capture on 2026-10-17, default profile. The native input contains an unsent `Hello!` draft; no message was submitted.
+- [CohhCarnage](https://www.youtube.com/watch?v=28chbgbw-dA): archive example from *Valor Mortis | October 16th*, captured on 2026-10-17 with a fully transparent, messages-only layout.
+- [DrLupo](https://www.youtube.com/watch?v=liUtg0I2ZVE): archive example captured on 2026-10-17 with a navy background, Inter font, and messages-only layout.
 
-Each source is an untouched **1920 × 1080 PNG** captured from the browser's native fullscreen page surface. Each screenshot adds an 80 px English heading above the complete video, uniformly displayed at **1280 × 720**. Both earlier capture-based promotional tiles preserve the same complete gaming capture: the small tile below a heading strip, the marquee beside the copy. No source pixels, native controls, or chat were repainted or recreated. Output sizes follow the [Chrome Web Store image guidelines](https://developer.chrome.com/docs/webstore/images) and [listing dashboard guide](https://developer.chrome.com/docs/webstore/cws-dashboard-listing).
+Viewer names, avatars, donor information, and mentions are blurred in the prepared images or hidden through actual product settings. Ordinary message bodies and creator faces remain visible. This image processing is separate from the extension's background blur setting. The examples do not imply creator use or endorsement, and the archive examples do not demonstrate live-message posting.
 
-The real native composer is visible, editable and unobstructed in all three captures. An unsent draft was shown in the actual input, then cleared; no message was sent. The overlay uses **22 px** source text, **3 px** message spacing, **30%** video width and **52%** video height. The VTuber panel is on the left, keeping the avatars visible. The transparent variant uses **40% background opacity with 4 px blur**, so the stream shows through while the chat remains legible.
+[Capture provenance](source/capture-provenance.json) retains source URLs, capture dates, quality selection, settings, and processed-image hashes. Only the three privacy-processed native sources remain in [source/captures/](source/captures/). Unredacted originals and unused candidates are excluded from this asset set.
 
-- Primary detailed description: [English](../../store-listing/en.md), also used for [Australia](../../store-listing/en_AU.md), [United Kingdom](../../store-listing/en_GB.md), and [United States](../../store-listing/en_US.md).
-- Localized descriptions: [all 55 language and region options](source/listing-copy-locales.md), including [Japanese](../../store-listing/ja.md).
-- Package titles and summaries: [all 55 options](source/package-metadata.md), with [source references](copy.json). Both fields are synchronized to their package translation sources.
-- Copy rationale and search-intent mapping: [listing-copy-strategy.md](source/listing-copy-strategy.md), updated on 2026-10-16.
-- Publication status: [asset work list](../../store-listing/asset-work-list.md).
+## Sources and previews
 
-The package title and summary come from `extensionName` and `extensionDescription` in `shared/i18n/assets/*.json`. All 55 package titles have been reviewed, and summaries in `copy.json` match those authored sources. English uses the exact formal name; other languages add one localized functional descriptor. Every detailed description was revised on 2026-10-16 for clear search intent and feature discovery, using plain local wording while preserving product facts. Posting and paid features depend on YouTube login and eligibility; archives need an available chat replay. The [locale inventory](source/listing-copy-locales.json) records source hashes and review scope.
+The selected [indigo original](source/indigo-original.png) and its [generation prompts](source/indigo-prompt.json) support the introduction and small tile. The [marquee original](source/marquee-original.png) and [prompt](source/marquee-prompt.md) retain the wide composition. [introduction.html](source/introduction.html) uses the extension icon and bundled Inter font under its [SIL Open Font License](source/fonts/LICENSE).
 
-## Captures and verification
-
-The user completed manual login in a retained, ignored dedicated **Google Chrome 155.0.8059.40** profile. The extension manager verified the exact enabled `.output/chrome-mv3` path and **2.3.16** identity. The user explicitly approved temporarily foregrounding only this dedicated capture window. Normal Chrome retained its native User-Agent.
-
-Native YouTube fullscreen and playing video were checked at capture time. The gaming source decoded at **2560 × 1440**, the VTuber source at **1920 × 1080**. Browser window bounds and capture dimensions are recorded separately: the fullscreen window reported width 1920, top 88 and height 992, while the exact **1920 × 1080** page capture viewport and clip were established on the same capture CDP session. The PNG dimensions prove the capture surface; they do not describe the physical window frame.
-
-[capture-evidence.json](capture-evidence.json) records identity, capture bounds, checked behavior, settings and original hashes. [verification.md](verification.md) records the real-site scope and export review. [development-verification.md](development-verification.md) separates accepted real images from offline fixture proof and earlier failed capture attempts. The [variation record](source/live-variations.plan.json) selects all three accepted PNGs, with five rendered outputs.
-
-The current inputs are `inputs/en/live-gaming.png`, `vtuber-live.png`, and `transparent-live.png`. Their matching anonymous settings patches are [live gaming](source/settings/live-gaming.json), [VTuber live](source/settings/vtuber-live.json), and [transparent live](source/settings/transparent-live.json). The [capture guide](source/capture-guide.md) explains how to refresh them. Native YouTube UI was temporarily set to English during capture.
-
-After capture, native video quality was restored to **Auto** on both sources, YouTube UI was restored to **Japanese**, and drafts were blank. The exact owned Chrome was closed; the dedicated authenticated profile was retained.
-
-[exports/manifest.json](exports/manifest.json) records dimensions, bundled fonts, input/source hashes, output hashes and the capture evidence used by the current composition. All five output hashes matched the manifest. Full-size and reduced-size review found no material clipping or overlap; headings, avatars and native composers remain clear. Secondary captions and chat text are not expected to be readable at the small promotional preview sizes. A still image alone does not establish message submission, replay synchronization, settings UI behavior or compatibility with every stream.
-
-## Earlier assets and fixture sources
-
-The reviewed **2026-10-13 PrimeTime archive set**, captured with the published **2.3.15** extension, is preserved in [history/archive-20261013](history/archive-20261013/README.md), including its evidence, composition, verification record and five exports. Its original `overview.jpg`, `position-left.jpg`, `archive.jpg` and raw captures remain under `inputs/`. Its blank settings-panel and extension-manager limitations remain historical observations; these archive images are no longer selected by the renderer.
-
-The generated rainy-street demo is isolated in `fixtures/inputs/` and [fixtures/capture-evidence.json](fixtures/capture-evidence.json). Its [scene](source/scene-v2.png) and [generation provenance](source/scene-v2-prompt.md) remain fixture sources. Deterministic YouTube DOM and fictional messages support repeatable production UI checks; they do not certify external playback, live delivery or authentication, and are not selected as real store imagery.
-
-## Edit and render
-
-Use Node.js 24 and the pinned Yarn; follow the [contribution guide](../../../CONTRIBUTING.md) for dependencies. If the Playwright browser is missing:
-
-```bash
-yarn playwright install chromium
-```
-
-Follow the [capture guide](source/capture-guide.md) to prepare genuine inputs and evidence. Edit [source/composition.json](source/composition.json) for copy and input selection, and [source/gallery.html](source/gallery.html) for layout. The composition labels the images **Public stream example**. Export only after selected inputs and their evidence exist:
+From the repository root, use Node.js 24 and the pinned Yarn.
 
 ```bash
 yarn store:assets:render --check
 yarn store:assets:render
-yarn store:check
 ```
 
-[source/render.mjs](source/render.mjs) supports one to five screenshots and two promotional images. It accepts PNG and JPEG captures, checks dimensions against `captureSize`, preserves displayed 16:9 proportions, validates promotional bounds, output sizes and copy overflow, then refreshes the manifest. Inter 400/500 is bundled under its [SIL Open Font License](source/fonts/LICENSE). Product UI fonts come from the captured browser.
+The first command checks selected output and source hashes, dimensions, and PNG format. The second renders comparison previews in a temporary directory and reports whether they match the selected bytes. It preserves the approved files. A preview can differ when the rendering tool differs from the original export, as with the marquee's historical `sips` downsampling.
 
-The repeatable synthetic capture remains separate:
+The reusable [transparent settings example](source/settings/transparent-live.json) supports the [browser verification guide](../../maintainers/verification-browser.md). The three selected capture settings are kept beside it.
 
-```bash
-yarn store:assets:capture
-```
+## Listing copy
 
-This builds `.output/chrome-mv3`, checks extension identity, exercises the production UI in a disposable Chrome for Testing profile, and writes **only** to `fixtures/inputs/` and `fixtures/capture-evidence.json`. The temporary profile is removed afterward.
-
-Review screenshots at full size and **640 × 400**, the small tile at **220 × 140**, and the marquee at **700 × 280**. Preserve complete video, native interface and creator credit. When executable capture/render logic changes, run `yarn verify`. Keep public source links in provenance; diagnostic reports exclude watch URLs, video IDs, usernames, chat messages and account data.
-
-Generation manifests retain the source hashes recorded when images were exported. [Post-generation formatting](source/post-generation-formatting.json) records source files subsequently formatted for repository checks; exported image bytes were preserved.
+[copy.json](copy.json) points to store descriptions and package metadata sources. The [locale inventory](source/listing-copy-locales.md), [package titles and summaries](source/package-metadata.md), and [copy rationale](source/listing-copy-strategy.md) document the prepared text. Run `yarn store:check` after editing listing copy, and follow the [store publication checklist](../../store-listing/asset-work-list.md) for dashboard work.

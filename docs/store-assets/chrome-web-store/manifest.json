@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "status": "selected-for-store",
+  "selectedBy": "user",
+  "selectedOn": "2026-10-18",
+  "timeZone": "Asia/Tokyo",
+  "approval": "User confirmed the four screenshots plus the selected indigo small promotional tile and marquee.",
+  "publication": "Cleanup preserves selected local assets; no store upload, review submission or publication performed.",
+  "outputs": [
+    {
+      "file": "screenshots/01-introduction.png",
+      "sha256": "5760848578793007947028a07771df2eb886b02815fb11303792379ce0ff2e98",
+      "id": "01-introduction",
+      "width": 1280,
+      "height": 800,
+      "previousFile": "upload-ready-20261018/screenshots/01-introduction.png",
+      "bytesUnchanged": true,
+      "role": "illustrated-introduction",
+      "source": "source/introduction.html"
+    },
+    {
+      "file": "screenshots/02-default-chat.png",
+      "sha256": "92e3697ad58763e1f25137343be0ee0d826604127e41a41e77ca2c687e6fba69",
+      "creator": "風真いろは",
+      "mode": "live",
+      "id": "02-default-chat",
+      "width": 1280,
+      "height": 800,
+      "previousFile": "upload-ready-20261018/screenshots/02-default-chat.png",
+      "bytesUnchanged": true,
+      "source": "source/captures/default-chat.png",
+      "sourceUrl": "https://www.youtube.com/watch?v=voiuRX0Fs3Y",
+      "heading": "Default chat",
+      "credit": "Kazama Iroha",
+      "role": "native-screenshot"
+    },
+    {
+      "file": "screenshots/03-transparent-chat.png",
+      "sha256": "65e40465c2064a89f6275eb6bea5393685a82e63dc373f432458187342e3451f",
+      "creator": "CohhCarnage",
+      "mode": "archive/replay",
+      "id": "03-transparent-chat",
+      "width": 1280,
+      "height": 800,
+      "previousFile": "upload-ready-20261018/screenshots/03-transparent-chat.png",
+      "bytesUnchanged": true,
+      "source": "source/captures/transparent-chat.png",
+      "sourceUrl": "https://www.youtube.com/watch?v=28chbgbw-dA",
+      "heading": "Transparent chat",
+      "credit": "CohhCarnage",
+      "role": "native-screenshot"
+    },
+    {
+      "file": "screenshots/04-custom-style.png",
+      "sha256": "3e3ea546b551035f45fc1ab7a321ec8962db237390740a936d2c109db9c1b3ba",
+      "creator": "DrLupo",
+      "mode": "archive/replay",
+      "id": "04-custom-style",
+      "width": 1280,
+      "height": 800,
+      "previousFile": "upload-ready-20261018/screenshots/04-custom-style.png",
+      "bytesUnchanged": true,
+      "source": "source/captures/custom-style.png",
+      "sourceUrl": "https://www.youtube.com/watch?v=liUtg0I2ZVE",
+      "heading": "Custom style",
+      "credit": "DrLupo",
+      "role": "native-screenshot"
+    },
+    {
+      "id": "small-promo",
+      "file": "promotional/small-promo.png",
+      "width": 440,
+      "height": 280,
+      "sha256": "9fe6a337207d55c58491ea14e47cc1feaf3932bf9951fa29d0a300eb1280e9f7",
+      "previousFile": "listing-promo/selected-20261016/small-promo.png",
+      "bytesUnchanged": true,
+      "role": "promotional-illustration",
+      "source": "source/indigo-original.png"
+    },
+    {
+      "id": "marquee",
+      "file": "promotional/marquee.png",
+      "width": 1400,
+      "height": 560,
+      "sha256": "ff3773bf13de51c20c700f196df79d9a03f6014e736cb0b50948c15766cda939",
+      "previousFile": "listing-promo/marquee-indigo-20261016/marquee.png",
+      "bytesUnchanged": true,
+      "role": "promotional-illustration",
+      "source": "source/marquee-original.png"
+    }
+  ],
+  "sources": [
+    {
+      "file": "source/captures/default-chat.png",
+      "sha256": "16852101c8d1767490486fe5f4b84b020a99943cbd4deb6f9371efc6f8521319",
+      "width": 1920,
+      "height": 1080,
+      "previousFile": "candidates/creators-20261017/public-review/images/hq-17-iroha-default.png"
+    },
+    {
+      "file": "source/captures/transparent-chat.png",
+      "sha256": "74172b26a3bddeb23a99767768d4bab08a275615652f49918bf1f311af75a0a9",
+      "width": 1920,
+      "height": 1080,
+      "previousFile": "candidates/creators-20261017/public-review/images/hq-12-selected-transparent-left.png"
+    },
+    {
+      "file": "source/captures/custom-style.png",
+      "sha256": "5db33018e79e2bab6d64e947a5cd623746676aebe4d6c2c13bbe58f212cbdfba",
+      "width": 1920,
+      "height": 1080,
+      "previousFile": "candidates/creators-20261017/public-review/images/hq-22-lupo-styled.png"
+    },
+    {
+      "file": "source/indigo-original.png",
+      "sha256": "50104edc2b51679e6ca7dcb2a8112b1e912b84cd337654128be26f28406820e3",
+      "width": 1572,
+      "height": 1001,
+      "previousFile": "listing-promo/refined-text-free-imagegen-20261015/originals/06.png"
+    },
+    {
+      "file": "source/marquee-original.png",
+      "sha256": "671a7f1ef0aca94f8f41a5536753565dcb29cb0ec3beb906dbaf6edb550c73bc",
+      "width": 1983,
+      "height": 793,
+      "previousFile": "listing-promo/marquee-indigo-20261016/original.png"
+    },
+    {
+      "file": "source/introduction.html",
+      "sha256": "14e84b9b7699d221c97e3255f7686f599354facb9b8748864289493548f788a6"
+    },
+    {
+      "file": "source/fonts/inter-500.woff2",
+      "sha256": "f3779f1efccc4bdcdf9c0a02ab95bf6bd092ed09c48c08cedc725889edd1d19f"
+    },
+    {
+      "file": "source/fonts/LICENSE",
+      "sha256": "3b0a5fca3d17942cde889069889dedbbbd075e9b599968c82a95f4d944e9b345"
+    },
+    {
+      "file": "source/indigo-prompt.json",
+      "sha256": "a79893ab207c042a43e6827b021e4567b5f7c8c2b47301979a54964313534458"
+    },
+    {
+      "file": "source/marquee-prompt.md",
+      "sha256": "bc4e4c18a1af41a408c6fea92430f34e05491c7d2f6753563feccf8043bdf46a"
+    },
+    {
+      "file": "source/capture-provenance.json",
+      "sha256": "ae820750c4986c1f7cd21d6d39f8544365e608ba02742affe2e729fda86bfa06"
+    },
+    {
+      "file": "source/settings/default-chat.json",
+      "sha256": "1d9ecca2df139ed7dbeeeb3fda3f8e1161eef4929436b1fcbeb03c6cb874196b",
+      "previousFile": "candidates/creators-20261017/settings-selected-default.json"
+    },
+    {
+      "file": "source/settings/transparent-chat.json",
+      "sha256": "6514d0ad10107bccc591e5aaa7b1282d9a4f806974a6071e15191e39777eb8fb",
+      "previousFile": "candidates/creators-20261017/settings-selected-transparent.json"
+    },
+    {
+      "file": "source/settings/custom-style.json",
+      "sha256": "5fab2258333fc8568d5ad041bb84bda19a9fd1e0f25ad2e92eedc37761a24f70",
+      "previousFile": "candidates/creators-20261017/settings-selected-styled.json"
+    }
+  ],
+  "nativeScreenshots": [
+    {
+      "file": "screenshots/02-default-chat.png",
+      "source": "source/captures/default-chat.png",
+      "heading": "Default chat",
+      "credit": "Kazama Iroha"
+    },
+    {
+      "file": "screenshots/03-transparent-chat.png",
+      "source": "source/captures/transparent-chat.png",
+      "heading": "Transparent chat",
+      "credit": "CohhCarnage"
+    },
+    {
+      "file": "screenshots/04-custom-style.png",
+      "source": "source/captures/custom-style.png",
+      "heading": "Custom style",
+      "credit": "DrLupo"
+    }
+  ],
+  "captureProvenance": "source/capture-provenance.json",
+  "privacy": "Blur in the prepared images obscures viewer identities; transparent or colored chat backgrounds are product settings. The archived transparent and custom examples use messages-only mode.",
+  "originalSelections": {
+    "smallPromotionalTile": {
+      "selectedOn": "2026-10-16",
+      "selectedBy": "user",
+      "concept": "06",
+      "nameJa": "インディゴの重なり",
+      "evidence": {
+        "type": "user-attached-image",
+        "attachmentSha256": "0c2072682c203ba820ca5bec5660e1c61cdca79c2c967040903a6e5d6add106c",
+        "matchesReviewBytes": false,
+        "matchesReviewPixels": true
+      }
+    },
+    "marquee": {
+      "selectedOn": "2026-10-16",
+      "selectedBy": "user",
+      "priorDraftSave": "user-reported; not independently verified"
+    }
+  }
+}

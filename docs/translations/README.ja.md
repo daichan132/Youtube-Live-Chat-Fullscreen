@@ -27,9 +27,9 @@
   <a href="README.zh-TW.md">繁體中文</a>
 </p>
 
-![フルスクリーンのゲーム配信で、左側に YouTube のチャット、右側に出演者を表示した画面](../store-assets/chrome-web-store/inputs/en/vtuber-live.png)
+![風真いろはの配信に、入力欄と視聴者名のぼかしを含むチャットを重ねた画面](../store-assets/chrome-web-store/screenshots/02-default-chat.png)
 
-*出演者が見えるように、チャットを左側に置いたレイアウト例です。配信映像：Gigi Murin、Raora Panthera / hololive。[画像の出典とクレジット](../store-assets/chrome-web-store/source/stream-provenance.md)。*
+*標準のチャットと入力欄を表示した例です。入力途中のメッセージは送信していません。画像では視聴者名などをぼかしています。配信映像：風真いろは / hololive。[出典とプライバシー処理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 ## 映像を見ながら会話にも参加
 
@@ -50,9 +50,9 @@
 | 操作ボタンが消えても反応を見続ける | チャットを常時表示し、必要なら「チャットのみ表示」に切り替え |
 | 読み方に合わせて見た目を切り替える | 名前付きプリセットを保存。設定を JSON で書き出してバックアップや別のブラウザへの移行に使う |
 
-![半透明のチャット背景を通してゲーム画面が見えるフルスクリーンの配信](../store-assets/chrome-web-store/inputs/en/transparent-live.png)
+![背景を完全に透過したチャットのみの表示で、視聴者の情報を保護したアーカイブの画面](../store-assets/chrome-web-store/screenshots/03-transparent-chat.png)
 
-*背景を透かすと、チャットの後ろのゲーム画面も見えます。配信映像：CohhCarnage。画像はカスタマイズしたレイアウト例です。位置や見た目は好みに合わせて選べます。[画像の出典とクレジット](../store-assets/chrome-web-store/source/stream-provenance.md)。*
+*背景を完全に透過し、チャットのみを表示したリプレイの例です。このアーカイブの画像には入力欄はありません。配信映像：CohhCarnage。[出典とプライバシー処理](../store-assets/chrome-web-store/README.md#sources-and-privacy)。*
 
 ライト、ダーク、システム設定に合わせたテーマを選べます。UI は 55 ロケールに対応し、右から左に読む言語のレイアウトも備えています。[使い方](../user-guide.md)では、プリセットを使った設定例や操作方法を紹介しています（英語）。
 

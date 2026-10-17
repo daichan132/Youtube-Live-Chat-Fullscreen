@@ -1,0 +1,45 @@
+{
+  "enabled": true,
+  "theme": "system",
+  "locale": "ja",
+  "profile": {
+    "appearance": {
+      "backgroundColor": {
+        "r": 255,
+        "g": 255,
+        "b": 255,
+        "a": 1
+      },
+      "fontColor": {
+        "r": 0,
+        "g": 0,
+        "b": 0,
+        "a": 1
+      },
+      "membershipNameColor": {
+        "mode": "youtube-default"
+      },
+      "fontFamily": null,
+      "fontSize": 13,
+      "blur": 0,
+      "spacing": 0,
+      "showUserName": true,
+      "showUserIcon": true,
+      "showSuperChatBar": true
+    },
+    "display": {
+      "idleVisibility": "always-visible",
+      "contentMode": "full-chat"
+    }
+  },
+  "geometry": {
+    "reference": "player",
+    "rect": {
+      "x": 0.02,
+      "y": 0.045,
+      "width": 0.26,
+      "height": 0.46
+    },
+    "pinned": true
+  }
+}
