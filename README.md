@@ -1,90 +1,85 @@
-<div align="center">
-  <img src="public/icon/128.png" alt="YouTube Live Chat Fullscreen logo" width="80" />
-</div>
-
-<h1 align="center">YouTube Live Chat Fullscreen</h1>
-
 <p align="center">
-  <strong>Watch in fullscreen. Keep the chat.</strong><br />
-  Enjoy the stream and the reactions together. Move, resize, and style YouTube's own chat over the video.
+  <img src="docs/store-assets/chrome-web-store/screenshots/01-introduction.png" alt="Illustrated introduction to YouTube Live Chat Fullscreen — Fullscreen. Live Chat." width="1000" />
 </p>
 
 <p align="center">
-  Chrome &amp; Firefox · Live &amp; replay · 55 interface locales · Free &amp; open source
+  <strong>Watch the stream. Be part of the conversation.</strong><br />
+  YouTube's own chat, right over your fullscreen video.
 </p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><strong>Install on Chrome</strong></a>
-  ·
-  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/"><strong>Install on Firefox</strong></a>
-  ·
-  <a href="docs/user-guide.md">User guide</a>
-  ·
-  <a href="docs/translations/README.ja.md">日本語</a>
-  ·
-  <a href="docs/translations/README.zh-TW.md">繁體中文</a>
+  <a href="https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd"><img src="https://img.shields.io/badge/Add_to_Chrome-4285F4?style=for-the-badge&amp;logo=googlechrome&amp;logoColor=white" alt="Install on Chrome" /></a>
+  <a href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/"><img src="https://img.shields.io/badge/Get_for_Firefox-FF7139?style=for-the-badge&amp;logo=firefoxbrowser&amp;logoColor=white" alt="Install on Firefox" /></a>
 </p>
 
-![Fullscreen live chat beside Kazama Iroha, with a native message input and blurred viewer identities](docs/store-assets/chrome-web-store/source/captures/default-chat.png)
+<p align="center">
+  Live &amp; replay · 55 interface locales · Free &amp; open source<br />
+  <a href="docs/user-guide.md">User guide</a> · <a href="docs/translations/README.ja.md">日本語</a> · <a href="docs/translations/README.zh-TW.md">繁體中文</a>
+</p>
 
-*Default chat with the native input visible; the draft was not sent. Viewer identities are blurred for the screenshot. Footage: Kazama Iroha / hololive. [Sources and privacy](docs/store-assets/chrome-web-store/README.md#sources-and-privacy).*
+## Pick your view
 
-## Keep up with the conversation
+### Live chat, ready to join
 
-A boss fight, a live performance, a moment everyone reacts to: keep the video fullscreen and the conversation in view. On an archive with playable chat replay, you can watch the original reactions alongside the recording.
+[![Kazama Iroha's fullscreen live stream with native chat and an unsent draft; viewer identities are blurred](docs/store-assets/chrome-web-store/source/captures/default-chat.png)](docs/store-assets/chrome-web-store/source/captures/default-chat.png)
 
-The overlay uses YouTube's own chat. During live streams, you can read and reply without leaving fullscreen; sign-in, posting, badges, and Super Chat still follow YouTube's rules and the channel's participation settings.
+Read and reply with YouTube's native input. The draft shown above was not sent.
 
-## Make room for your stream
+<p>
+  <a href="docs/store-assets/chrome-web-store/source/captures/transparent-chat.png"><img src="docs/store-assets/chrome-web-store/source/captures/transparent-chat.png" alt="CohhCarnage archive with fully transparent, messages-only chat and protected viewer identities" width="49%" /></a>
+  <a href="docs/store-assets/chrome-web-store/source/captures/custom-style.png"><img src="docs/store-assets/chrome-web-store/source/captures/custom-style.png" alt="DrLupo archive with navy chat, Inter font, background blur and protected viewer identities" width="49%" /></a>
+</p>
 
-Choose a layout that fits what you are watching. Appearance and placement changes are saved automatically.
+**Transparent** — keep the video in view. **Custom** — choose your colors and font.<br />
+Both are messages-only replay examples, without a message input. Open any image for the full-resolution view.
 
-| What you want to do | What you can adjust |
-| --- | --- |
-| Keep the game or performer in view | Drag chat to another part of the frame and resize it from an edge or corner |
-| See the video behind the conversation | Set the background color, opacity, and blur |
-| Read chat from your viewing distance | Change text size, font, colors, and message spacing |
-| Focus on the messages | Hide ordinary-message usernames and avatars |
-| Keep reactions visible after controls fade | Leave chat visible while idle, with an optional messages-only layout |
-| Switch between reading styles | Save named presets; export settings as JSON to back them up or move browsers |
+<sub>Footage: Kazama Iroha / hololive, CohhCarnage, DrLupo. Viewer identities are blurred or hidden. <a href="docs/store-assets/chrome-web-store/README.md#sources-and-privacy">Sources and privacy</a>.</sub>
 
-![An archived gaming stream with fully transparent messages-only chat and protected viewer identities](docs/store-assets/chrome-web-store/source/captures/transparent-chat.png)
+## Make it yours
 
-*A fully transparent, messages-only replay layout keeps the game in view. This archive example has no message input. Footage: CohhCarnage. [Sources and privacy](docs/store-assets/chrome-web-store/README.md#sources-and-privacy).*
+- **Move & resize** — put chat where it fits the game or performer.
+- **Color, opacity & blur** — adjust the background, text and message spacing.
+- **Save your style** — keep named presets and export settings for backup or another browser.
 
-Light, dark, and system themes are available, with 55 interface locales and right-to-left layouts. The [user guide](docs/user-guide.md) offers preset starting points and explains the controls.
+Light, dark and system themes, plus right-to-left layouts. [Explore the controls →](docs/user-guide.md)
 
-## Start watching
+## Start in 3 steps
 
-1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd) or [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/).
-2. Open a YouTube live stream or an archive with playable chat replay, then enter fullscreen. Chat is enabled by default.
-3. Hover the panel to open its controls. Drag its move handle to reposition it, resize from its edges, or open settings to change the appearance. The chat button in the player controls toggles visibility.
+1. **Install** from Chrome Web Store or Firefox Add-ons using the buttons above.
+2. **Go fullscreen** on a YouTube live stream or an archive with playable chat replay.
+3. **Make room for chat.** Hover the panel to move, resize or open its settings.
 
-The extension is for desktop browsers. The Chrome build also runs in Opera. Videos without usable chat keep the normal fullscreen player without an overlay.
+Chat is enabled by default. The player's chat button toggles it.<br />
+[Need a hand?](docs/troubleshooting.md) · [Presets & backups](docs/user-guide.md)
 
-See the [user guide](docs/user-guide.md) for presets and backups, or [troubleshooting](docs/troubleshooting.md) if the panel does not appear.
+<details>
+<summary><strong>Chat, browser support & privacy</strong></summary>
 
-## Privacy you can inspect
+The overlay uses YouTube's own chat. Sign-in, posting, badges and Super Chat follow YouTube's rules and the channel's participation settings. Archive chat replays the original conversation.
 
-There is no extension account, analytics SDK, or tracking service. Settings stay in this browser's `browser.storage.local`; the extension does not send viewing activity or chat content to the developer. YouTube's own chat continues to communicate with YouTube.
+This extension is for desktop browsers. The Chrome build also runs in Opera. Videos without usable chat keep the normal fullscreen player.
 
-The production manifest requests only `storage`, and content scripts and public extension resources are scoped to YouTube. Optional font selections may fetch fonts from Google Fonts. The [package policy](config/packagePolicy.ts) and [package checks](scripts/verify/check-package-contracts.mjs) make these boundaries visible in the source.
+There is no extension account, analytics SDK or tracking service. Settings stay in this browser's `browser.storage.local`; viewing activity and chat content are not sent to the developer. YouTube's own chat continues to communicate with YouTube. Optional font selections may fetch fonts from Google Fonts.
 
-## Explore the engineering
+The production manifest requests only `storage`, with content scripts and public extension resources scoped to YouTube. See the [package policy](config/packagePolicy.ts) and [package checks](scripts/verify/check-package-contracts.mjs).
 
-This is a WXT, React, TypeScript, Jotai, and Tailwind CSS extension for Chrome and Firefox. Its small interface connects to some practical browser problems:
+</details>
 
-- [Follow YouTube navigation](docs/architecture/content-runtime.md): borrow the native chat iframe, keep it working across video changes, and return it when fullscreen ends.
-- [Preview styles while editing](docs/architecture/settings-and-state.md): update the chat during a slider gesture while keeping drafts, saved settings, and changes from other extension windows in order.
-- [Reproduce browser behavior locally](docs/testing/contracts.md): exercise live, replay, and no-chat scenarios with deterministic YouTube fixtures, then check real-site compatibility separately.
+<details>
+<summary><strong>Explore the engineering</strong></summary>
 
-The [engineering overview](docs/engineering.md) connects those behaviors to the code. The [contribution guide](CONTRIBUTING.md) includes small examples you can run before choosing a change.
+Built with WXT, React, TypeScript, Jotai and Tailwind CSS for Chrome and Firefox.
+
+- [Content runtime](docs/architecture/content-runtime.md): follow YouTube navigation and restore the borrowed native chat iframe.
+- [Settings and state](docs/architecture/settings-and-state.md): preview edits while keeping drafts, saved settings and other extension windows in order.
+- [Browser tests](docs/testing/contracts.md): deterministic live, replay and no-chat fixtures, with real-site compatibility checked separately.
+
+Start with the [engineering overview](docs/engineering.md) or [choose a contribution](CONTRIBUTING.md#choose-a-starting-point).
+
+</details>
 
 ## Help shape the extension
 
-You can help by describing a viewing problem, improving a translation, clarifying a guide, or making a focused fix. You do not need to understand the entire runtime to contribute; [choose a starting point](CONTRIBUTING.md#choose-a-starting-point).
+[Report a bug](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) · [Suggest a feature](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml) · [Improve a translation or guide](CONTRIBUTING.md)
 
-- [Report a bug](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) or [suggest a feature](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml).
-- Follow [SECURITY.md](SECURITY.md) for private vulnerability reports.
-
-Licensed under [GPL-3.0](LICENSE).
+<sub>Private vulnerability reports: <a href="SECURITY.md">SECURITY.md</a> · Licensed under <a href="LICENSE">GPL-3.0</a>.</sub>
