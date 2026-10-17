@@ -56,7 +56,7 @@ The React background and iframe document use `backdrop-filter`. Never apply `fil
 
 ## Restoring a borrowed iframe
 
-Before styling a borrowed document, [`iframeAttachment.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts) captures the owned inline properties, their priorities, the body's backdrop filters, and any existing custom-font style. Release restores those values and removes extension classes, measurement variables, injected styles, and event fallbacks. Unrelated YouTube styles remain untouched. Managed iframes are removed on release.
+Before styling a borrowed document, [`iframeAttachment.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts) captures its original presentation through [`borrowedIframeStyleSnapshot.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/borrowedIframeStyleSnapshot.ts). That module owns the inline properties, their priorities, the body's backdrop filters, and any existing custom-font style. Attachment still owns when each document is captured and restored. Release restores those values and removes extension classes, measurement variables, injected styles, and event fallbacks. Unrelated YouTube styles remain untouched. Managed iframes are removed on release.
 
 When adding a property, update [`YLC_DOCUMENT_STYLE_PROPERTIES`](../../entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants.ts) and the snapshot/restore code as needed. A property absent from the snapshot can remain in YouTube's native chat after release. Keep shared body classes and marker names in [`styleContract.ts`](../../entrypoints/content/features/YTDLiveChatIframe/constants/styleContract.ts).
 

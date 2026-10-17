@@ -1,4 +1,5 @@
 export const IFRAME_STYLE_MARKER_ATTR = 'data-ylc-style-injected'
+export const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
 export const IFRAME_CHAT_BODY_CLASS = 'custom-yt-app-live-chat-extension'
 export const IFRAME_CHAT_ONLY_CLASS = 'chat-only-display'
 export const IFRAME_CHAT_ONLY_TRANSITION_CLASS = 'chat-only-transition-ready'
