@@ -78,14 +78,14 @@ const ToggleSettingSwitch = ({ settingKey, label }: { settingKey: ToggleSettingK
       aria-label={label}
       onChange={nextChecked => {
         if (settingKey === 'idleVisibility') {
-          commitYLCStyleUpdate({ display: { idleVisibility: nextChecked ? 'always-visible' : 'auto-hide' } }, settingKey)
+          commitYLCStyleUpdate({ display: { idleVisibility: nextChecked ? 'always-visible' : 'auto-hide' } })
           return
         }
         if (settingKey === 'contentMode') {
-          commitYLCStyleUpdate({ display: { contentMode: nextChecked ? 'messages-only' : 'full-chat' } }, settingKey)
+          commitYLCStyleUpdate({ display: { contentMode: nextChecked ? 'messages-only' : 'full-chat' } })
           return
         }
-        commitYLCStyleUpdate({ appearance: { [settingKey]: nextChecked } }, settingKey)
+        commitYLCStyleUpdate({ appearance: { [settingKey]: nextChecked } })
       }}
     />
   )
@@ -107,7 +107,7 @@ const MembershipNameColorSetting = () => {
   const t = useT()
 
   const resetToDefault = () => {
-    commitYLCStyleUpdate({ appearance: { membershipNameColor: { mode: 'youtube-default' } } }, 'membershipNameColor')
+    commitYLCStyleUpdate({ appearance: { membershipNameColor: { mode: 'youtube-default' } } })
   }
   const resetLabel = t('content.setting.resetToDefaultColor')
 

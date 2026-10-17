@@ -34,16 +34,16 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
       const next = Number(event.target.value)
       const patch = { appearance: { [settingKey]: next } }
       if (store.get(editorSessionStateAtom).activeGesture?.id === gestureId) {
-        previewYLCStyleUpdate(gestureId, patch, settingKey)
+        previewYLCStyleUpdate(gestureId, patch)
       } else {
         // Native accessibility input has no pointer/key gesture to finish.
         // Commit it now so removing the settings iframe cannot lose the change.
-        commitYLCStyleUpdate(patch, settingKey)
+        commitYLCStyleUpdate(patch)
       }
     },
     [commitYLCStyleUpdate, gestureId, previewYLCStyleUpdate, settingKey, store],
   )
-  const beginGesture = useCallback(() => beginYLCStyleGesture(gestureId, settingKey), [gestureId, settingKey])
+  const beginGesture = useCallback(() => beginYLCStyleGesture(gestureId), [beginYLCStyleGesture, gestureId])
   const finishGesture = useCallback(() => finishYLCStyleGesture(gestureId), [gestureId])
 
   return (

@@ -57,7 +57,7 @@ export const FontFamilyInput = () => {
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
 
   const handleCommit = useCallback((nextFontFamily: string) => {
-    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } }, 'fontFamily')
+    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } })
   }, [])
 
   return <FontFamilyInputUI value={fontFamily ?? ''} onCommit={handleCommit} />

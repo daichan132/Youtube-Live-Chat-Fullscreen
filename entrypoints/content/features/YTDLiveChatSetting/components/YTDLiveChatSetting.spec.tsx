@@ -23,7 +23,7 @@ describe('YTDLiveChatSetting history controls', () => {
     const panel = document.querySelector('.ylc-setting-panel') as HTMLElement
     const settingsTab = getByRole('tab', { name: 'content.setting.header.setting' })
 
-    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 3 } }, 'fontSize')
+    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 3 } })
     fireEvent.keyDown(document.body, { key: 'z', metaKey: true })
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize + 3)
 
@@ -43,7 +43,7 @@ describe('YTDLiveChatSetting history controls', () => {
   it('leaves native text-input undo and IME events untouched', () => {
     const originalFontSize = store.get(chatSettingsStateAtom).profile.appearance.fontSize
     const { getByRole, getByTestId } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
-    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } }, 'fontSize')
+    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } })
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     const input = getByTestId('font-family-search')
@@ -70,7 +70,7 @@ describe('YTDLiveChatSetting history controls', () => {
     expect(undoButton).toHaveAttribute('aria-keyshortcuts', 'Meta+Z Control+Z')
 
     act(() => {
-      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 1 } }, 'blur')
+      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 1 } })
     })
     expect(undoButton).not.toBeDisabled()
     fireEvent.click(undoButton)
@@ -85,8 +85,8 @@ describe('YTDLiveChatSetting history controls', () => {
     const undoButton = getByRole('button', { name: 'content.setting.header.undo' })
 
     act(() => {
-      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 1 } }, 'blur')
-      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 2 } }, 'blur')
+      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 1 } })
+      commitYLCStyleUpdate({ appearance: { blur: originalBlur + 2 } })
     })
 
     fireEvent.click(undoButton)
