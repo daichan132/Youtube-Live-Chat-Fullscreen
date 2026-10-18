@@ -5,6 +5,8 @@ export {
   TbArrowBackUp,
   TbArrowForwardUp,
   TbArrowsHorizontal,
+  TbArrowsHorizontalIn,
+  TbArrowUp,
   TbBlur,
   TbBrandGithub,
   TbCheck,

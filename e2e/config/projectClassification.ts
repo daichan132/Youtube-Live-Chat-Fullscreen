@@ -23,6 +23,7 @@ export const FIXTURE_SPECS = [
   'archive/replayUnavailable.fixture.spec.ts',
   'live/channelLiveEntry.fixture.spec.ts',
   'live/chatOnlySpacing.fixture.spec.ts',
+  'live/placementDesign.fixture.spec.ts',
   'live/iframeContextPreservation.fixture.spec.ts',
   'live/managedNativeHandoff.fixture.spec.ts',
   'live/nativeChatSource.fixture.spec.ts',

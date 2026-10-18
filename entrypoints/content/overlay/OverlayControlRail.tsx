@@ -3,6 +3,7 @@ import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/s
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import type { RGBA } from '@/shared/settings/model'
+import { OverlayPlacementPanel } from './OverlayPlacementPanel'
 import { useOverlayMenuDismiss } from './useOverlayMenuDismiss'
 
 const ICON_STROKE_WIDTH = 1.55
@@ -89,6 +90,14 @@ export const OverlayControlRail = ({
       setFocusedControl(null)
     }
   }, [isDragging, isResizing, isReady, placementOpen, viewportSize?.width, viewportSize?.height])
+  const [placementHeightLimit, setPlacementHeightLimit] = useState<number | undefined>()
+  useLayoutEffect(() => {
+    if (!placementOpen || !railRef.current) return
+    // Fullscreen focus can scroll the host page slightly. Bound the menu by
+    // the painted rail position as well as the player's logical coordinates.
+    const anchorOffset = adjustmentAnchor && placementAnchor ? adjustmentAnchor.top - placementAnchor.top : 0
+    setPlacementHeightLimit(Math.max(0, railRef.current.getBoundingClientRect().top + anchorOffset - 8))
+  }, [placementOpen, placementAnchor?.top, adjustmentAnchor?.top, viewportSize?.height])
   const closePlacement = () => {
     dismissPlacement()
     placementButtonRef.current?.focus({ preventScroll: true })
@@ -97,6 +106,7 @@ export const OverlayControlRail = ({
     if (!placementAnchor) return
     setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: placementPanelMaxHeight })
   }
+  const placementMaxHeight = adjustmentAnchor ? adjustmentAnchor.maxHeight : placementPanelMaxHeight
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
@@ -282,46 +292,28 @@ export const OverlayControlRail = ({
           role='group'
           aria-label={t('content.placement.open')}
           data-ylc-placement-panel
-          className='absolute right-0 bottom-full mb-1 grid grid-cols-2 gap-1 rounded-lg border border-solid ylc-theme-border p-2 shadow-lg'
+          className='ylc-placement-panel absolute right-0 bottom-full mb-1'
           style={{
-            background: toRgba(backgroundColor, 1),
-            color,
             width: 240,
             minWidth: 0,
-            maxHeight: adjustmentAnchor ? adjustmentAnchor.maxHeight : placementPanelMaxHeight,
+            maxHeight:
+              placementHeightLimit === undefined
+                ? placementMaxHeight
+                : Math.min(placementMaxHeight ?? placementHeightLimit, placementHeightLimit),
             transform:
               adjustmentAnchor && placementAnchor
                 ? `translate(${adjustmentAnchor.right - placementAnchor.right}px, ${adjustmentAnchor.top - placementAnchor.top}px)`
                 : undefined,
             overflowY: 'auto',
             boxSizing: 'border-box',
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gap: 8,
           }}
         >
-          {(['up', 'down', 'left', 'right', 'narrower', 'wider', 'shorter', 'taller'] as const).map(action => (
-            <button
-              key={action}
-              type='button'
-              className='ylc-theme-focus-ring rounded border border-solid ylc-theme-border px-2 py-2 text-xs leading-tight cursor-pointer'
-              onClick={() => {
-                preserveAdjustmentAnchor()
-                if (action === 'up') onMoveBy?.({ x: 0, y: -10 })
-                if (action === 'down') onMoveBy?.({ x: 0, y: 10 })
-                if (action === 'left') onMoveBy?.({ x: -10, y: 0 })
-                if (action === 'right') onMoveBy?.({ x: 10, y: 0 })
-                if (action === 'narrower') onResizeBy?.({ width: -10, height: 0 })
-                if (action === 'wider') onResizeBy?.({ width: 10, height: 0 })
-                if (action === 'shorter') onResizeBy?.({ width: 0, height: -10 })
-                if (action === 'taller') onResizeBy?.({ width: 0, height: 10 })
-              }}
-            >
-              {t(`content.placement.${action}`)}
-            </button>
-          ))}
-          <button type='button' className='ylc-btn ylc-theme-focus-ring col-span-2' onClick={closePlacement}>
-            {t('popup.importClose')}
-          </button>
+          <OverlayPlacementPanel
+            onBeforeAdjust={preserveAdjustmentAnchor}
+            onMoveBy={onMoveBy}
+            onResizeBy={onResizeBy}
+            onClose={closePlacement}
+          />
         </div>
       ) : null}
     </div>
