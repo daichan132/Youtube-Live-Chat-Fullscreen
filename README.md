@@ -52,18 +52,30 @@ Light, dark and system themes, plus right-to-left layouts. [Explore the controls
 Chat is enabled by default. The player's chat button toggles it.<br />
 [Need a hand?](docs/troubleshooting.md) · [Presets & backups](docs/user-guide.md)
 
-## Privacy
-
-Settings stay in this browser. There is no extension account, analytics SDK or tracking service, and viewing activity and chat content are not sent to the developer.
-
-YouTube chat still communicates with YouTube; optional fonts may load from Google Fonts. [Privacy details](docs/user-guide.md#privacy).
-
-## For developers
-
-Built with WXT, React, TypeScript, Jotai and Tailwind CSS. The [engineering overview](docs/engineering.md) connects the runtime, settings and browser tests to the code. [Choose a contribution →](CONTRIBUTING.md#choose-a-starting-point)
-
 ## Help shape the extension
 
 [Report a bug](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) · [Suggest a feature](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml) · [Improve a translation or guide](CONTRIBUTING.md)
+
+## Chat & browser support
+
+The overlay uses YouTube's own chat. Sign-in, posting, badges and Super Chat follow YouTube's rules and the channel's participation settings. Archive chat replays the original conversation.
+
+This extension is for desktop browsers. The Chrome build also runs in Opera. Videos without usable chat keep the normal fullscreen player.
+
+## Privacy & permissions
+
+There is no extension account, analytics SDK or tracking service. Settings stay in this browser's `browser.storage.local`; viewing activity and chat content are not sent to the developer. YouTube's own chat continues to communicate with YouTube. Optional font selections may fetch fonts from Google Fonts.
+
+The production manifest requests only `storage`, with content scripts and public extension resources scoped to YouTube. See the [package policy](config/packagePolicy.ts) and [package checks](scripts/verify/check-package-contracts.mjs).
+
+## Explore the engineering
+
+Built with WXT, React, TypeScript, Jotai and Tailwind CSS for Chrome and Firefox.
+
+- [Content runtime](docs/architecture/content-runtime.md): follow YouTube navigation and restore the borrowed native chat iframe.
+- [Settings and state](docs/architecture/settings-and-state.md): preview edits while keeping drafts, saved settings and other extension windows in order.
+- [Browser tests](docs/testing/contracts.md): deterministic live, replay and no-chat fixtures, with real-site compatibility checked separately.
+
+Start with the [engineering overview](docs/engineering.md) or [choose a contribution](CONTRIBUTING.md#choose-a-starting-point).
 
 <sub>Private vulnerability reports: <a href="SECURITY.md">SECURITY.md</a> · Licensed under <a href="LICENSE">GPL-3.0</a>.</sub>
