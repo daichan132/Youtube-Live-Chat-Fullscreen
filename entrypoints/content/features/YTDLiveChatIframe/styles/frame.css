@@ -11,6 +11,13 @@ body.custom-yt-app-live-chat-extension {
   width: 100%;
 }
 
+/* Native app minimums place the composer below a small overlay before a menu
+   can even open. The attached frame, not YouTube's sidebar minimum, owns size. */
+body.custom-yt-app-live-chat-extension yt-live-chat-app {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
 body.custom-yt-app-live-chat-extension,
 body.custom-yt-app-live-chat-extension yt-live-chat-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-renderer #contents,
@@ -43,8 +50,9 @@ body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer > #close-but
   display: none;
 }
 body.custom-yt-app-live-chat-extension #chat #item-scroller.yt-live-chat-item-list-renderer {
-  scrollbar-color: transparent transparent;
-  scrollbar-width: none;
+  scrollbar-color: var(--extension-yt-live-secondary-font-color) transparent;
+  scrollbar-width: thin;
+  overscroll-behavior-y: contain;
   padding-right: 0px !important;
 }
 

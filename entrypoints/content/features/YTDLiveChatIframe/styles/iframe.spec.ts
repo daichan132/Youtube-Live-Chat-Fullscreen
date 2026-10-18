@@ -301,10 +301,138 @@ describe('iframe styles contract', () => {
     expect(getFixtureStyle('#enabled-item').backgroundColor).toBe('rgb(40, 60, 80)')
   })
 
-  it('themes logged-in support and Super Chat picker surfaces', () => {
-    expect(iframeStyles).toContain(
-      '#input-panel:has(yt-live-chat-message-input-renderer[product-picker-open]),\nbody.custom-yt-app-live-chat-extension #input-panel > yt-live-chat-message-input-renderer[product-picker-open] {\n  overflow: visible !important;\n}',
+  it('keeps purchase scrolling on the selected page without clipping the input picker', () => {
+    mountStyleFixture(
+      `yt-live-chat-app { min-width: 298px; min-height: 320px; }
+       #panel-pages { overflow: visible; min-height: auto; }
+       [hidden] { display: none !important; }
+       ${styleModules['frame.css']}
+       ${styleModules['monetization.css']}`,
+      `<yt-live-chat-app><div id="panel-pages">
+        <div id="input-panel" class="iron-selected"><yt-live-chat-message-input-renderer product-picker-open>
+          <yt-live-chat-product-picker-panel-view-model></yt-live-chat-product-picker-panel-view-model>
+        </yt-live-chat-message-input-renderer></div>
+        <div id="buy-flow" hidden><yt-live-chat-message-buy-flow-renderer></yt-live-chat-message-buy-flow-renderer></div>
+        <div id="super-sticker-buy-flow" hidden><yt-live-chat-paid-sticker-panel-renderer></yt-live-chat-paid-sticker-panel-renderer></div>
+        <div id="sponsorships-gift-buy-flow" hidden><ytd-sponsorships-gift-offer-renderer></ytd-sponsorships-gift-offer-renderer></div>
+      </div></yt-live-chat-app>`,
     )
+
+    const app = document.querySelector('yt-live-chat-app')
+    const pages = document.querySelector('#panel-pages')
+    if (!app || !pages) throw new Error('Missing purchase layout fixture')
+    expect(getComputedStyle(app).minHeight).toBe('0px')
+    expect(getComputedStyle(app).minWidth).toBe('0px')
+    expect(getComputedStyle(pages).overflow).toBe('visible')
+
+    document.body.classList.add('ylc-native-purchase-active')
+    expect(getComputedStyle(app).minHeight).toBe('0px')
+    expect(getComputedStyle(app).minWidth).toBe('0px')
+    expect(getComputedStyle(pages).overflow).toBe('visible')
+
+    for (const selector of ['#buy-flow', '#super-sticker-buy-flow', '#sponsorships-gift-buy-flow']) {
+      const flow = document.querySelector(selector)
+      if (!flow) throw new Error(`Missing native purchase page: ${selector}`)
+      expect(getComputedStyle(flow).display).toBe('none')
+      flow.classList.add('iron-selected')
+      flow.removeAttribute('hidden')
+      expect(getComputedStyle(pages).overflow).toBe('auto')
+      expect(getComputedStyle(pages).minHeight).toBe('0px')
+      expect(getComputedStyle(pages).getPropertyValue('scrollbar-width')).toBe('thin')
+      expect(getComputedStyle(pages).getPropertyValue('overscroll-behavior')).toBe('contain')
+      flow.classList.remove('iron-selected')
+      flow.setAttribute('hidden', '')
+      expect(getComputedStyle(pages).overflow).toBe('visible')
+    }
+
+    document.body.classList.remove('ylc-native-purchase-active')
+    expect(getComputedStyle(app).minHeight).toBe('0px')
+    expect(getComputedStyle(app).minWidth).toBe('0px')
+    document.body.classList.remove('custom-yt-app-live-chat-extension')
+    expect(getComputedStyle(app).minHeight).toBe('320px')
+    expect(getComputedStyle(app).minWidth).toBe('298px')
+  })
+
+  it.each(['yt-live-chat-message-input-renderer', 'yt-live-chat-restricted-participation-renderer'])(
+    'lets an open picker escape the %s clipping boundary',
+    inputTag => {
+      mountStyleFixture(
+        `#input-panel, ${inputTag} { overflow: hidden; }
+         ${styleModules['frame.css']}
+         ${styleModules['monetization.css']}`,
+        `<div id="input-panel"><${inputTag}><yt-live-chat-product-picker-panel-view-model></yt-live-chat-product-picker-panel-view-model></${inputTag}></div>`,
+      )
+
+      const input = document.querySelector(inputTag)
+      const panel = document.querySelector('#input-panel')
+      const picker = document.querySelector('yt-live-chat-product-picker-panel-view-model')
+      if (!input || !panel || !picker) throw new Error('Missing native input fixture')
+      expect(getComputedStyle(panel).overflow).toBe('hidden')
+      expect(getComputedStyle(input).overflow).toBe('hidden')
+
+      input.setAttribute('product-picker-open', '')
+      expect(getComputedStyle(panel).overflow).toBe('visible')
+      expect(getComputedStyle(input).overflow).toBe('visible')
+      expect(getComputedStyle(picker).overflowY).toBe('auto')
+      expect(getComputedStyle(picker).getPropertyValue('scrollbar-width')).toBe('thin')
+      expect(getComputedStyle(picker).getPropertyValue('overscroll-behavior')).toBe('contain')
+
+      input.removeAttribute('product-picker-open')
+      expect(getComputedStyle(panel).overflow).toBe('hidden')
+      expect(getComputedStyle(input).overflow).toBe('hidden')
+    },
+  )
+
+  it.each(
+    [
+      { palette: 'custom dark over native light', foreground: '245, 240, 230', nativeHover: '222, 241, 255' },
+      { palette: 'custom white over native dark', foreground: '15, 15, 15', nativeHover: '38, 56, 80' },
+    ].flatMap(palette => [false, true].map(hovered => ({ ...palette, hovered }))),
+  )('keeps $palette gift quantities paired while hovered=$hovered', ({ foreground, nativeHover, hovered }) => {
+    const monetization = styleModules['monetization.css']
+      .replaceAll('var(--extension-yt-live-font-color)', `rgb(${foreground})`)
+      .replaceAll('var(--extension-yt-live-menu-hover-background-color)', `rgba(${foreground}, 0.12)`)
+    mountStyleFixture(
+      `.ytSpecButtonShapeNextText { color: rgb(6, 95, 212); background: transparent; }
+       .ytSpecButtonShapeNextText:hover { background: rgb(${nativeHover}); }
+       #disabled-quantity, #aria-disabled-quantity { color: rgb(96, 96, 96); background: rgb(204, 204, 204); }
+       #filled-quantity { color: rgb(241, 241, 241); background: rgb(6, 95, 212); }
+       #tonal-quantity { color: rgb(6, 95, 212); background: rgb(222, 241, 255); }
+       ${monetization}`,
+      `<ytd-sponsorships-gift-offer-body-renderer>
+        <button id="quantity" class="ytSpecButtonShapeNextText"><span class="ytSpecButtonShapeNextButtonTextContent">Price</span></button>
+        <button id="disabled-quantity" class="ytSpecButtonShapeNextText" disabled>Unavailable</button>
+        <button id="aria-disabled-quantity" class="ytSpecButtonShapeNextText" aria-disabled="true">Unavailable</button>
+        <button id="filled-quantity" class="ytSpecButtonShapeNextText ytSpecButtonShapeNextFilled">Purchase</button>
+        <button id="tonal-quantity" class="ytSpecButtonShapeNextText ytSpecButtonShapeNextTonal">Tonal action</button>
+      </ytd-sponsorships-gift-offer-body-renderer>`,
+    )
+
+    const quantity = document.querySelector('#quantity')
+    if (!quantity) throw new Error('Missing quantity action')
+    // Read each fresh fixture only after the mouse event: jsdom otherwise caches
+    // computed styles across hover changes. Browser fixtures cover real movement.
+    if (hovered) quantity.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+    expect(getComputedStyle(quantity).color).toBe(`rgb(${foreground})`)
+    expect(getComputedColor('#quantity span')).toBe(`rgb(${foreground})`)
+    expect(getComputedStyle(quantity).backgroundColor).toBe(hovered ? `rgba(${foreground}, 0.12)` : 'rgba(0, 0, 0, 0)')
+
+    for (const selector of ['#disabled-quantity', '#aria-disabled-quantity']) {
+      const disabled = document.querySelector(selector)
+      if (!disabled) throw new Error('Missing disabled quantity action')
+      expect(getComputedStyle(disabled).color).toBe('rgb(96, 96, 96)')
+      expect(getComputedStyle(disabled).backgroundColor).toBe('rgb(204, 204, 204)')
+    }
+    const filled = document.querySelector('#filled-quantity')
+    const tonal = document.querySelector('#tonal-quantity')
+    if (!filled || !tonal) throw new Error('Missing native semantic quantity actions')
+    expect(getComputedStyle(filled).color).toBe('rgb(241, 241, 241)')
+    expect(getComputedStyle(filled).backgroundColor).toBe('rgb(6, 95, 212)')
+    expect(getComputedStyle(tonal).color).toBe('rgb(6, 95, 212)')
+    expect(getComputedStyle(tonal).backgroundColor).toBe('rgb(222, 241, 255)')
+  })
+
+  it('themes logged-in support and Super Chat picker surfaces', () => {
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model')
     expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #buy-flow')

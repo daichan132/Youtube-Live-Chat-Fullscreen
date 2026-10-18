@@ -41,12 +41,14 @@ const readReferenceSize = (element: HTMLElement | null) => {
 export const useOverlayGeometry = ({
   referenceElement,
   settingsOpen = false,
+  automaticPlacementPaused = false,
   interactionState = 'idle',
   onGestureStart,
   onGestureEnd,
 }: {
   referenceElement?: HTMLElement | null
   settingsOpen?: boolean
+  automaticPlacementPaused?: boolean
   interactionState?: OverlayInteractionState
   onGestureStart?: (type: GeometrySession['type']) => void
   onGestureEnd?: () => void
@@ -173,6 +175,7 @@ export const useOverlayGeometry = ({
     viewport,
     pinned,
     settingsOpen,
+    paused: automaticPlacementPaused,
     interactionState,
     pointerActiveRef,
     draftGeometry,

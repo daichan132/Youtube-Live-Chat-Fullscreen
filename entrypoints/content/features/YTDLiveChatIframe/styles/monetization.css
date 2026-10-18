@@ -44,20 +44,61 @@ body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer
 }
 body.custom-yt-app-live-chat-extension
   ytd-sponsorships-gift-offer-body-renderer
-  button.ytSpecButtonShapeNextText:not(:disabled):not([aria-disabled="true"]),
+  button.ytSpecButtonShapeNextText:not(.ytSpecButtonShapeNextFilled, .ytSpecButtonShapeNextTonal):not(:disabled):not(
+    [aria-disabled="true"]
+  ),
 body.custom-yt-app-live-chat-extension
   ytd-sponsorships-gift-offer-body-renderer
-  button.ytSpecButtonShapeNextText:not(:disabled):not([aria-disabled="true"])
+  button.ytSpecButtonShapeNextText:not(.ytSpecButtonShapeNextFilled, .ytSpecButtonShapeNextTonal):not(:disabled):not([aria-disabled="true"])
   :is(.ytSpecButtonShapeNextButtonTextContent, yt-icon, .ytSpecIconShapeHost, svg, path) {
   color: var(--extension-yt-live-font-color) !important;
   fill: currentColor !important;
 }
+/* Native light/dark hover fills otherwise clash with the custom text color.
+   Keep both states neutral while retaining semantic and disabled button pairs. */
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  button.ytSpecButtonShapeNextText:not(.ytSpecButtonShapeNextFilled, .ytSpecButtonShapeNextTonal):not(:disabled):not(
+    [aria-disabled="true"]
+  ) {
+  background: transparent !important;
+}
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  button.ytSpecButtonShapeNextText:not(.ytSpecButtonShapeNextFilled, .ytSpecButtonShapeNextTonal):not(:disabled):not(
+    [aria-disabled="true"]
+  ):is(:hover, :focus-visible) {
+  background: var(--extension-yt-live-menu-hover-background-color) !important;
+}
 /* YouTube positions the product picker and purchase flows above a zero-height
    input renderer. Let that open picker escape the chat-only clipping boundary
    without making the resting input panel overflow permanently. */
-body.custom-yt-app-live-chat-extension #input-panel:has(yt-live-chat-message-input-renderer[product-picker-open]),
-body.custom-yt-app-live-chat-extension #input-panel > yt-live-chat-message-input-renderer[product-picker-open] {
+body.custom-yt-app-live-chat-extension
+#input-panel:has(:is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer)[product-picker-open]),
+body.custom-yt-app-live-chat-extension
+  #input-panel
+  > :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer)[product-picker-open] {
   overflow: visible !important;
+}
+
+/* Scroll the selected purchase page without clipping its controls. The picker
+   lives in the short input page, which must retain visible overflow. */
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+#panel-pages:has(> :is(#buy-flow, #super-sticker-buy-flow, #sponsorships-gift-buy-flow).iron-selected) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  scrollbar-color: var(--extension-yt-live-secondary-font-color) transparent;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
+  max-width: calc(100vw - 16px) !important;
+  max-height: calc(100vh - 16px) !important;
+  overflow-y: auto !important;
+  scrollbar-color: var(--extension-yt-live-secondary-font-color) transparent;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
 }
 
 body.custom-yt-app-live-chat-extension #close-button.yt-live-chat-message-buy-flow-renderer,

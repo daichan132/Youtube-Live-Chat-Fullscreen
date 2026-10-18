@@ -26,15 +26,26 @@ export const chatControlMetadataBoundaryProbe = {
   probeId: 'chat.control-metadata-boundary.v1',
   selectors: [...nativeChatHostProbe.selectors, ...rightControlsProbe.selectors, ...playerProbe.selectors, 'body'],
 } as const
-export const videoOwnerChannelLinkProbe = {
-  probeId: 'watch.owner-channel.v1',
+/** Native active state and rendered offer boundaries; never match paid chat messages. */
+export const chatPurchaseInputProbe = {
+  probeId: 'chat.purchase-input.v1',
+  selectors: ['yt-live-chat-message-input-renderer', 'yt-live-chat-restricted-participation-renderer'],
+} as const
+export const chatPurchasePanelProbe = {
+  probeId: 'chat.purchase-panel.v1',
   selectors: [
-    'ytd-video-owner-renderer a[href^="/@"], ytd-video-owner-renderer a[href^="/channel/"], #owner a[href^="/@"], #owner a[href^="/channel/"]',
+    'yt-live-chat-product-picker-panel-view-model',
+    'yt-live-chat-message-buy-flow-renderer',
+    'yt-live-chat-paid-sticker-panel-renderer',
+    'yt-live-chat-super-sticker-preview-renderer',
+    'yt-live-chat-super-sticker-pack-renderer',
+    'ytd-sponsorships-gift-offer-renderer',
+    'yt-pdg-gift-collection-view-model',
   ],
 } as const
-export const membershipPickerItemProbe = {
-  probeId: 'chat.membership-picker-item.v1',
-  selectors: ['yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]'],
+export const chatPurchaseLoadingProbe = {
+  probeId: 'chat.purchase-loading.v1',
+  selectors: ['#panel-pages > #loading.yt-live-chat-renderer'],
 } as const
 export const nativeChatIframeProbe = {
   probeId: 'chat.iframe.v2',
@@ -128,8 +139,9 @@ export const youtubeSelectorCatalog = {
   nativeChatSidebarToggle: nativeChatSidebarToggleProbe,
   nativeChatTrigger: nativeChatTriggerProbe,
   chatControlMetadataBoundary: chatControlMetadataBoundaryProbe,
-  videoOwnerChannelLink: videoOwnerChannelLinkProbe,
-  membershipPickerItem: membershipPickerItemProbe,
+  chatPurchaseInput: chatPurchaseInputProbe,
+  chatPurchasePanel: chatPurchasePanelProbe,
+  chatPurchaseLoading: chatPurchaseLoadingProbe,
   nativeChatIframe: nativeChatIframeProbe,
   chatRenderer: chatRendererProbe,
   chatItemListRenderer: chatItemListRendererProbe,

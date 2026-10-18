@@ -27,6 +27,7 @@ export const FIXTURE_SPECS = [
   'live/nativeChatSource.fixture.spec.ts',
   'live/noChatVideo.fixture.spec.ts',
   'live/overlayInteraction.fixture.spec.ts',
+  'live/purchaseInteraction.fixture.spec.ts',
   'live/spaNavigation.fixture.spec.ts',
   'popup/i18n.fixture.spec.ts',
   'popup/popup.spec.ts',

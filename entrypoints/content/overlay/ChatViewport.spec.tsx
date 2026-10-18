@@ -72,4 +72,15 @@ describe('ChatViewport', () => {
 
     expect(background?.style.backdropFilter).toBe('blur(12px)')
   })
+
+  it('keeps an open native offer visible without covering it with the loading overlay', () => {
+    const { container, rerender } = renderWithStore(<ChatViewport loading visible purchaseActive />, store)
+    expect(container.querySelector<HTMLElement>('[data-ylc-chat-viewport]')?.style.opacity).toBe('1')
+    expect(container.querySelector('[data-ylc-loading-overlay]')).toBeNull()
+    expect(container.querySelector('output')?.textContent).toBe('')
+
+    rerender(<ChatViewport loading visible />)
+    expect(container.querySelector<HTMLElement>('[data-ylc-chat-viewport]')?.style.opacity).toBe('0')
+    expect(container.querySelector('[data-ylc-loading-overlay]')).not.toBeNull()
+  })
 })

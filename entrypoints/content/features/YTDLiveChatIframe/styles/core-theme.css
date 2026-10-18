@@ -40,3 +40,20 @@ body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer .ytSpecButto
 body.custom-yt-app-live-chat-extension a.ytSpecButtonShapeNextTonal {
   background: var(--extension-yt-live-control-background-color);
 }
+
+/* Only text links in message copy: native button-shaped anchors and paid-card
+   foreground/background pairs retain their own semantic colors. */
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-viewer-engagement-message-renderer
+  #message
+  a[href]:not([role="button"], .yt-spec-button-shape-next, .ytSpecButtonShapeNextHost, .ytSpecButtonShapeNextTonal),
+body.custom-yt-app-live-chat-extension
+  #message.yt-live-chat-text-message-renderer
+  a[href]:not([role="button"], .yt-spec-button-shape-next, .ytSpecButtonShapeNextHost, .ytSpecButtonShapeNextTonal) {
+  color: var(--extension-yt-live-link-color) !important;
+  text-decoration-line: underline;
+  text-decoration-thickness: max(1px, 0.08em);
+  text-underline-offset: 0.12em;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}

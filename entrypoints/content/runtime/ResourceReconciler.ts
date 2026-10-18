@@ -1,11 +1,7 @@
 import { getIframeDocumentHref } from '@/entrypoints/content/chat/shared/iframeDom'
 import { IFRAME_CHAT_BODY_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import iframeStyles from '@/entrypoints/content/features/YTDLiveChatIframe/styles'
-import {
-  ensureStyleInjected,
-  getIframeDocument,
-  installMembershipFallback,
-} from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
+import { ensureStyleInjected, getIframeDocument } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
 import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
 import type { ChatProfile } from '@/shared/settings/model'
 import type { SessionScope } from '../bootstrap/SessionScope'
@@ -172,7 +168,6 @@ export class ResourceReconciler {
     if (lease.ownership === 'borrowed') lease.captureDocumentStyle()
     ensureStyleInjected(doc, iframeStyles)
     doc.body.classList.add(IFRAME_CHAT_BODY_CLASS)
-    installMembershipFallback(doc)
     const applied = this.applyProfile(lease)
     this.syncChatChrome()
     return applied

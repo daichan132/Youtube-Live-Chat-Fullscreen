@@ -20,6 +20,7 @@ import {
   IFRAME_CHAT_ONLY_MEASURING_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_PURCHASE_ACTIVE_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
 import {
@@ -30,7 +31,6 @@ import {
   restoreBorrowedDocumentStyle,
   restoreBorrowedIframeStyle,
 } from './borrowedIframeStyleSnapshot'
-import { uninstallMembershipFallback } from './iframeInitializer'
 
 type BorrowedRestoreState = {
   originalParent: ParentNode | null
@@ -128,12 +128,12 @@ const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRes
   if (!doc?.documentElement || !doc.head || !doc.body) return
   const snapshot = restore.documentStyles.get(doc)
   if (snapshot) restoreBorrowedDocumentStyle(doc, snapshot)
-  uninstallMembershipFallback(doc)
   doc.body.classList.remove(
     IFRAME_CHAT_BODY_CLASS,
     IFRAME_CHAT_ONLY_CLASS,
     IFRAME_CHAT_ONLY_TRANSITION_CLASS,
     IFRAME_CHAT_ONLY_MEASURING_CLASS,
+    IFRAME_PURCHASE_ACTIVE_CLASS,
   )
   for (const target of doc.body.querySelectorAll<HTMLElement>(`[style*="${IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR}"]`)) {
     target.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)

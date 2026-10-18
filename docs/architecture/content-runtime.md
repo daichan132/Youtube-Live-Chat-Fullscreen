@@ -126,6 +126,8 @@ Resource reconciliation uses a fixed order. An incompatible iframe is released b
 
 Profile and chat-chrome updates wait until the lease is attached; selecting a native iframe does not authorize changing it before borrowing. Before applying a profile to a borrowed document, the reconciler captures that document's original styles even if its load event has not arrived. Capture remains once per document, so later profile changes and load notifications cannot replace the native snapshot with extension styles.
 
+The chat-chrome lease observes native purchase visibility at the catalogued picker/offer/loading boundaries. It keeps a requested collapse pending while a purchase is open, then resumes the requested intent when the native UI closes. Its purchase-active body class is extension-owned and cleared on document replacement or release. The overlay separately observes the current carrier document to keep presentation visible and temporarily fit purchase content without committing geometry. If the same frame becomes inaccessible after an open offer, its previous document observer is released while the presentation remains held until an accessible document returns or the frame is removed/replaced. This does not inspect or style a cross-origin payment destination. Neither observer activates a paid action or modifies native event routing.
+
 Borrowed iframe restoration tries, in order:
 
 1. its captured placeholder;

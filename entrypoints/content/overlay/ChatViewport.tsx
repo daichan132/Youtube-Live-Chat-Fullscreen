@@ -1,25 +1,45 @@
 import { useAtomValue } from 'jotai'
-import { useId, useMemo } from 'react'
+import { useCallback, useId, useMemo, useState } from 'react'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
 import { useChatRuntimeInstance } from '../runtime/ChatRuntimeContext'
+import { useChatPurchaseActivity } from './useChatPurchaseActivity'
 
 type ChatViewportProps = {
   loading: boolean
   visible: boolean
+  purchaseActive?: boolean
+  onPurchaseActivityChange?: (active: boolean) => void
 }
 
 const LOADING_OVERLAY_STYLE = {
   zIndex: CHAT_PANEL_LAYER.interactionOverlay,
 } as const
 
-export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
+const ignorePurchaseActivity = (_active: boolean) => {}
+
+export const ChatViewport = ({
+  loading,
+  visible,
+  purchaseActive = false,
+  onPurchaseActivityChange = ignorePurchaseActivity,
+}: ChatViewportProps) => {
   const chatRuntime = useChatRuntimeInstance()
   const t = useT()
   const carrierId = useId()
+  const [carrier, setCarrier] = useState<HTMLElement | null>(null)
+  const setCarrierRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      setCarrier(node)
+      chatRuntime.setOverlayContainer(node)
+    },
+    [chatRuntime],
+  )
+  useChatPurchaseActivity(carrier, onPurchaseActivityChange)
   const appearance = useAtomValue(effectiveProfileAtom).appearance
-  const chatVisible = visible && !loading
+  const showLoading = loading && !purchaseActive
+  const chatVisible = visible && !showLoading
   const loaderColor = useMemo(() => {
     const { r, g, b, a } = appearance.fontColor
     const grayLuma = Math.round(r * 0.299 + g * 0.587 + b * 0.114)
@@ -51,9 +71,9 @@ export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
         className='relative h-full w-full overflow-hidden rounded-md transition-opacity duration-320 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-[opacity]'
         style={{ opacity: chatVisible ? 1 : 0 }}
       >
-        <div id={carrierId} ref={chatRuntime.setOverlayContainer} data-ylc-iframe-carrier className='absolute inset-0' />
+        <div id={carrierId} ref={setCarrierRef} data-ylc-iframe-carrier className='absolute inset-0' />
       </div>
-      {loading ? (
+      {showLoading ? (
         <div
           aria-hidden='true'
           data-ylc-loading-overlay
@@ -72,7 +92,7 @@ export const ChatViewport = ({ loading, visible }: ChatViewportProps) => {
       ) : null}
       {/* <output> carries an implicit role=status. A live region announces its content, never its name, and
           only once it is already in the tree, so the wait is spoken as text in a region that always exists. */}
-      <output className='ylc-visually-hidden'>{loading ? t('content.aria.loading') : ''}</output>
+      <output className='ylc-visually-hidden'>{showLoading ? t('content.aria.loading') : ''}</output>
     </>
   )
 }

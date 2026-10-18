@@ -173,7 +173,7 @@ describe('chatOnlyChrome', () => {
     }
   })
 
-  it('disconnects its iframe observer and clears measurements on cleanup', () => {
+  it('clears collapsed chrome and releases its remaining purchase observer on cleanup', () => {
     const iframe = document.createElement('iframe')
     document.body.appendChild(iframe)
     const iframeDocument = iframe.contentDocument
@@ -191,5 +191,6 @@ describe('chatOnlyChrome', () => {
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     controller.release()
+    expect(disconnect).toHaveBeenCalledTimes(2)
   })
 })
