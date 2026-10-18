@@ -280,12 +280,14 @@ describe('usePresetReorder', () => {
 
     fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-1' }), {
       button: 0,
-      clientY: 379,
+      clientY: 20,
       pointerId: 7,
     })
     expect(onCommit).not.toHaveBeenCalled()
     expect(firstRowRect).toHaveBeenCalledTimes(1)
 
+    expect(animationFrames.callbacks).toHaveLength(0)
+    fireEvent.pointerMove(window, { pointerId: 7, clientY: 379 })
     expect(animationFrames.runNext()).toBe(true)
     expect(scrollContainer.scrollTop).toBeGreaterThan(0)
     expect(firstRowRect.mock.calls.length).toBeGreaterThan(1)
@@ -332,9 +334,10 @@ describe('usePresetReorder', () => {
 
     fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-12' }), {
       button: 0,
-      clientY: 1,
+      clientY: 260,
       pointerId: 9,
     })
+    fireEvent.pointerMove(window, { pointerId: 9, clientY: 1 })
     animationFrames.runNext()
 
     expect(scrollContainer.scrollTop).toBeLessThan(200)
@@ -364,7 +367,7 @@ describe('usePresetReorder', () => {
     expect(view.getByTestId('active')).toHaveTextContent('first')
     expect(onCommit).not.toHaveBeenCalled()
     expect(animationFrames.cancel).not.toHaveBeenCalled()
-    expect(animationFrames.callbacks).toHaveLength(1)
+    expect(animationFrames.callbacks).toHaveLength(0)
 
     fireEvent.pointerMove(window, { clientY: 200, pointerId: 10 })
     expect(order(view.getByTestId)).toBe('middle,last,first')
@@ -386,9 +389,10 @@ describe('usePresetReorder', () => {
 
     fireEvent.pointerDown(view.getByRole('button', { name: 'reorder preset-1' }), {
       button: 0,
-      clientY: 379,
+      clientY: 20,
       pointerId: 8,
     })
+    fireEvent.pointerMove(window, { pointerId: 8, clientY: 379 })
     animationFrames.runNext()
     const stoppedAt = scrollContainer.scrollTop
 

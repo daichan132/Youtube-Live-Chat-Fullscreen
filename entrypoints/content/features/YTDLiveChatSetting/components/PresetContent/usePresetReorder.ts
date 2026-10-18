@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-type ItemLayout = { id: string; top: number; height: number }
+type ItemLayout = PresetPointerPreview
 
 type PointerCaptureTarget = HTMLElement & {
   setPointerCapture?: (pointerId: number) => void
@@ -8,10 +8,17 @@ type PointerCaptureTarget = HTMLElement & {
   releasePointerCapture?: (pointerId: number) => void
 }
 
+export type PresetPointerPreview = { id: string; top: number; left: number; width: number; height: number }
+
 type PointerGesture = {
   pointerId: number
   clientY: number
   scrollContainer: HTMLElement | null
+  startY: number
+  row: PresetPointerPreview
+  offsetY: number
+  lifted: boolean
+  handle: HTMLButtonElement
 }
 
 /** Resources belong to one lift and are released before its order is committed or restored. */
@@ -90,6 +97,7 @@ const createReorderResources = (onKeyDown: (event: KeyboardEvent) => void, onBlu
   }
 }
 
+const DRAG_THRESHOLD_PX = 6
 const AUTO_SCROLL_EDGE_PX = 56
 const AUTO_SCROLL_MAX_STEP_PX = 18
 
@@ -106,6 +114,7 @@ export const usePresetReorder = ({
   /** Renders the translated "moved <name> to position <n>" announcement. Positions are 1-based. */
   describeMove: (id: string, position: number) => string
 }) => {
+  const [pointerPreview, setPointerPreview] = useState<PresetPointerPreview | null>(null)
   const [activeId, setActiveId] = useState<string | null>(null)
   const [previewIds, setPreviewIds] = useState(ids)
   const [liveMessage, setLiveMessage] = useState('')
@@ -126,12 +135,15 @@ export const usePresetReorder = ({
     const nextActive = activeIdRef.current
     if (!nextActive) return
 
+    const pointerHandle = pointerGestureRef.current?.handle
     activeIdRef.current = null
     pointerGestureRef.current = null
+    setPointerPreview(null)
     const resources = resourcesRef.current
     resourcesRef.current = null
     resources?.dispose()
     setActiveId(null)
+    if (commit && pointerHandle?.isConnected) pointerHandle.focus({ preventScroll: true })
 
     if (commit && hasOrderChanged(startIdsRef.current, previewIdsRef.current)) onCommitRef.current(previewIdsRef.current)
     else {
@@ -150,8 +162,8 @@ export const usePresetReorder = ({
     }
   }, [finish, ids])
 
-  const measureLayouts = useCallback(() => {
-    const scrollContainer = pointerGestureRef.current?.scrollContainer
+  const measureLayouts = useCallback((container?: HTMLElement | null) => {
+    const scrollContainer = container ?? pointerGestureRef.current?.scrollContainer
     measuredScrollTopRef.current = scrollContainer?.scrollTop ?? 0
     const root = scrollContainer ?? document
     const elements = [...root.querySelectorAll<HTMLElement>('[data-ylc-preset-item]')]
@@ -160,6 +172,8 @@ export const usePresetReorder = ({
       return {
         id: element.dataset.ylcPresetItem ?? '',
         top: rect.top,
+        left: rect.left,
+        width: rect.width,
         height: rect.height,
       }
     })
@@ -182,10 +196,15 @@ export const usePresetReorder = ({
   const updatePointerPreview = useCallback(
     (clientY: number) => {
       const activeId = activeIdRef.current
-      if (!activeId) return
+      const pointer = pointerGestureRef.current
+      if (!activeId || !pointer) return
+      if (!pointer.lifted && Math.abs(clientY - pointer.startY) < DRAG_THRESHOLD_PX) return
+      pointer.lifted = true
+      setPointerPreview({ ...pointer.row, top: clientY - pointer.offsetY })
       const layouts = layoutsRef.current
-      const target = layouts.findIndex(layout => clientY < layout.top + layout.height / 2)
-      moveItem(activeId, target === -1 ? layouts.length - 1 : target)
+      const centerY = clientY - pointer.offsetY + pointer.row.height / 2
+      const target = layouts.filter(layout => layout.id !== activeId && centerY > layout.top + layout.height / 2).length
+      moveItem(activeId, target)
     },
     [moveItem],
   )
@@ -193,7 +212,7 @@ export const usePresetReorder = ({
   const runAutoScroll = useCallback(() => {
     const pointer = pointerGestureRef.current
     const container = pointer?.scrollContainer
-    if (!pointer || !container) return
+    if (!pointer?.lifted || !container) return
     const clientY = pointer.clientY
 
     const rect = container.getBoundingClientRect()
@@ -227,13 +246,13 @@ export const usePresetReorder = ({
   }, [measureLayouts, updatePointerPreview])
 
   const requestAutoScrollFrame = useCallback(() => {
-    if (pointerGestureRef.current) resourcesRef.current?.requestAutoScroll(runAutoScroll)
+    if (pointerGestureRef.current?.lifted) resourcesRef.current?.requestAutoScroll(runAutoScroll)
   }, [runAutoScroll])
 
   const handleScroll = useCallback(() => {
     const pointer = pointerGestureRef.current
     const container = pointer?.scrollContainer
-    if (!pointer || !container || container.scrollTop === measuredScrollTopRef.current) return
+    if (!pointer?.lifted || !container || container.scrollTop === measuredScrollTopRef.current) return
     measureLayouts()
     updatePointerPreview(pointer.clientY)
     requestAutoScrollFrame()
@@ -290,8 +309,19 @@ export const usePresetReorder = ({
       // React can reinsert the active row when its order changes, which drops
       // pointer capture. Keep capture on the stationary list or scroll owner.
       const captureTarget = (scrollContainer ?? handle.closest('[data-ylc-preset-item]')?.parentElement ?? handle) as PointerCaptureTarget
-      pointerGestureRef.current = { pointerId: event.pointerId, clientY: event.clientY, scrollContainer }
-      measureLayouts()
+      measureLayouts(scrollContainer)
+      const rowBounds = layoutsRef.current.find(layout => layout.id === id)
+      if (!rowBounds) return
+      pointerGestureRef.current = {
+        pointerId: event.pointerId,
+        clientY: event.clientY,
+        scrollContainer,
+        startY: event.clientY,
+        offsetY: event.clientY - rowBounds.top,
+        lifted: false,
+        handle,
+        row: { id, top: rowBounds.top, left: rowBounds.left, width: rowBounds.width, height: rowBounds.height },
+      }
       startIdsRef.current = previewIdsRef.current
       activeIdRef.current = id
       setActiveId(id)
@@ -306,10 +336,9 @@ export const usePresetReorder = ({
         onCancel: handleCancel,
         onScroll: handleScroll,
       })
-      requestAutoScrollFrame()
       event.preventDefault()
     },
-    [handleCancel, handleKeyDown, handleMove, handleScroll, handleUp, handleWindowBlur, measureLayouts, requestAutoScrollFrame],
+    [handleCancel, handleKeyDown, handleMove, handleScroll, handleUp, handleWindowBlur, measureLayouts],
   )
 
   useEffect(() => () => finish(false), [finish])
@@ -323,6 +352,7 @@ export const usePresetReorder = ({
   }
 
   const getHandleProps = (id: string) => ({
+    'aria-pressed': activeId === id,
     onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => begin(id, event),
     onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => {
       if (event.nativeEvent.isComposing) return
@@ -340,5 +370,5 @@ export const usePresetReorder = ({
     },
   })
 
-  return { activeId, previewIds, liveMessage, getHandleProps }
+  return { activeId, previewIds, pointerPreview, liveMessage, getHandleProps }
 }

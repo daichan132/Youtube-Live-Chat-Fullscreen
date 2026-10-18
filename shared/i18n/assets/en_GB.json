@@ -73,6 +73,7 @@
     },
     "preset": {
       "addMessage": "Save Current Settings",
+      "current": "Current",
       "apply": "Apply",
       "addItemTitle": "Untitled",
       "defaultTitle": "Standard",

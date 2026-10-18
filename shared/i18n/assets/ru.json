@@ -84,6 +84,7 @@
       "readableTitle": "Крупный текст",
       "compactTitle": "Компактный",
       "neonTitle": "Цветной",
+      "current": "Текущий",
       "apply": "Применить"
     },
     "placement": {

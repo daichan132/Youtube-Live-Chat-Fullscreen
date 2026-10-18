@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react'
+import { fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
@@ -125,5 +125,33 @@ describe('Modal', () => {
     unmount()
     expect(background).not.toHaveAttribute('inert')
     background.remove()
+  })
+  it('closes only when the same primary pointer starts and ends on the backdrop', () => {
+    const close = vi.fn()
+    const { getByRole } = render(
+      <Modal isOpen ariaLabel='Backdrop behavior' onRequestClose={close}>
+        <input aria-label='Name' />
+      </Modal>,
+    )
+    const backdrop = getByRole('dialog')
+    const input = getByRole('textbox')
+    const down = (target: HTMLElement, pointerId = 1) => fireEvent.pointerDown(target, { button: 0, isPrimary: true, pointerId })
+    const up = (pointerId = 1) => {
+      fireEvent.pointerUp(backdrop, { pointerId })
+      fireEvent.click(backdrop)
+    }
+    down(input)
+    up()
+    expect(close).not.toHaveBeenCalled()
+    down(backdrop)
+    fireEvent.pointerCancel(backdrop, { pointerId: 1 })
+    up()
+    expect(close).not.toHaveBeenCalled()
+    down(backdrop)
+    up(2)
+    expect(close).not.toHaveBeenCalled()
+    down(backdrop)
+    up()
+    expect(close).toHaveBeenCalledOnce()
   })
 })

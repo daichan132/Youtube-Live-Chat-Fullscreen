@@ -97,6 +97,7 @@ export type TranslationKey =
   | 'content.preset.apply'
   | 'content.preset.cancel'
   | 'content.preset.compactTitle'
+  | 'content.preset.current'
   | 'content.preset.darkTitle'
   | 'content.preset.defaultTitle'
   | 'content.preset.delete'

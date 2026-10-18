@@ -123,8 +123,8 @@ export const addPresetAtom = atom(null, (get, set, preset: PresetEntry) => {
 
 export const deletePresetAtom = atom(null, (get, set, id: string) => {
   const current = get(chatSettingsStateAtom)
-  if (!current.presets.some(preset => preset.kind === 'custom' && preset.id === id)) return false
-  set(chatSettingsStateAtom, { ...current, presets: current.presets.filter(preset => preset.kind === 'builtin' || preset.id !== id) })
+  if (!current.presets.some(preset => preset.id === id)) return false
+  set(chatSettingsStateAtom, { ...current, presets: current.presets.filter(preset => preset.id !== id) })
   return true
 })
 

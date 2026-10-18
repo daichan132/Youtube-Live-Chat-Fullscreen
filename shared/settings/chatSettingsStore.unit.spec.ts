@@ -65,12 +65,14 @@ describe('chat settings commands', () => {
     expect(store.get(chatSettingsStateAtom)).toEqual(initial)
   })
 
-  it('does not delete or rename built-in presets', () => {
+  it('keeps built-in names fixed while allowing deletion', () => {
     const store = createStore()
     store.set(chatSettingsStateAtom, DEFAULT_CHAT_SETTINGS)
     store.set(updatePresetNameAtom, { id: 'standard', name: 'Renamed' })
-    store.set(deletePresetAtom, 'standard')
     expect(store.get(chatSettingsStateAtom).presets[0]).toEqual({ kind: 'builtin', id: 'standard' })
+    store.set(deletePresetAtom, 'standard')
+    expect(store.get(chatSettingsStateAtom).presets).toEqual(DEFAULT_CHAT_SETTINGS.presets.filter(preset => preset.id !== 'standard'))
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(DEFAULT_CHAT_SETTINGS.profile)
   })
 
   it('migrates legacy v6 settings into normalized v7 state', () => {

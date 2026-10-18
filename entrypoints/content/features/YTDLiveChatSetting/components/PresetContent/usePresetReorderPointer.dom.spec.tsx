@@ -163,6 +163,7 @@ describe('usePresetReorder pointer lifecycle', () => {
       pointerId: 1,
       clientY: 379,
     })
+    fireEvent.pointerMove(window, { pointerId: 1, clientY: 390 })
     const staleFrame = frames.values().next().value
     if (!staleFrame) throw new Error('Missing queued auto-scroll callback')
     fireEvent.pointerCancel(window, { pointerId: 1 })
@@ -174,7 +175,7 @@ describe('usePresetReorder pointer lifecycle', () => {
     act(() => staleFrame(performance.now()))
 
     expect(container.scrollTop).toBe(0)
-    expect(frames).toHaveLength(1)
+    expect(frames).toHaveLength(0)
     expect(view.getByTestId('active')).toHaveTextContent('second')
     fireEvent.pointerUp(window, { pointerId: 2, clientY: 379 })
     expect(onCommit).not.toHaveBeenCalled()

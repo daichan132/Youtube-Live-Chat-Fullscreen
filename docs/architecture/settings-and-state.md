@@ -78,6 +78,8 @@ Backup version 2 contains enabled/theme, profile, presets and geometry. Locale r
 
 Legacy migration maps only `default1`–`default7` to built-in presets; custom entries require their own style object in `presetItemStyles`.
 
+Both built-in and custom preset entries may be deleted after confirmation. Deleting a built-in removes its list entry, not its code-catalog profile. Persisted lists, including an empty list, are authoritative: reload and version-2 backup normalization must not restore deleted built-ins.
+
 Verification profile patches initialize a missing appearance domain with the standard built-in preset list. Existing lists, including explicitly empty ones, remain unchanged.
 
 The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Version 1 backups also allow at most 107 raw legacy preset references (100 custom presets plus 7 built-ins), counting duplicate and unknown references. This limit is checked before migration allocates unique IDs, so a small duplicate-heavy file cannot cause quadratic migration work before confirmation. Oversized imports are rejected rather than truncated. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.

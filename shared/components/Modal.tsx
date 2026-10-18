@@ -109,6 +109,8 @@ export const Modal = ({
   children,
 }: ModalProps) => {
   const modalIdRef = useRef(Symbol('modal'))
+  const backdropPressRef = useRef<{ pointerId: number; startedOnBackdrop: boolean } | null>(null)
+  const backdropClickRef = useRef(false)
   const overlayRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
   const focusFrameRef = useRef<number | null>(null)
@@ -205,7 +207,9 @@ export const Modal = ({
   const handleOverlayClick = useCallback(
     (event: React.MouseEvent) => {
       if (modalStack[modalStack.length - 1] !== modalIdRef.current) return
-      if (shouldCloseOnOverlayClick && event.target === event.currentTarget) onRequestClose?.()
+      const pressedBackdrop = backdropClickRef.current
+      backdropClickRef.current = false
+      if (shouldCloseOnOverlayClick && pressedBackdrop && event.target === event.currentTarget) onRequestClose?.()
     },
     [onRequestClose, shouldCloseOnOverlayClick],
   )
@@ -232,6 +236,21 @@ export const Modal = ({
               ...overlayStyle,
             }
       }
+      onPointerDownCapture={event => {
+        if (event.button !== 0 || event.isPrimary === false) return
+        backdropClickRef.current = false
+        backdropPressRef.current = { pointerId: event.pointerId, startedOnBackdrop: event.target === event.currentTarget }
+      }}
+      onPointerUpCapture={event => {
+        const press = backdropPressRef.current
+        if (!press || press.pointerId !== event.pointerId) return
+        backdropClickRef.current = press.startedOnBackdrop && event.target === event.currentTarget
+        backdropPressRef.current = null
+      }}
+      onPointerCancelCapture={() => {
+        backdropPressRef.current = null
+        backdropClickRef.current = false
+      }}
       onClick={handleOverlayClick}
       onKeyDown={handleKeyDown}
     >

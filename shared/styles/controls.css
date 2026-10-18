@@ -1670,8 +1670,9 @@ label.ylc-row:has(:focus-visible) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 34px;
+  width: 32px;
+  height: 40px;
+  touch-action: none;
   padding: 0;
   color: var(--ylc-text-muted);
   cursor: grab;
@@ -1738,7 +1739,7 @@ label.ylc-row:has(:focus-visible) {
     color 140ms ease;
 }
 
-.ylc-preset-apply:hover {
+.ylc-preset-apply:hover:not(:disabled):not([aria-pressed="true"]) {
   background: var(--ylc-accent);
   color: var(--ylc-accent-contrast);
 }
@@ -2065,4 +2066,70 @@ label.ylc-row:has(:focus-visible) {
 .ylc-placement-restore:disabled {
   opacity: 0.38;
   cursor: not-allowed;
+}
+
+.ylc-preset[data-ylc-preset-current="true"] {
+  border-color: var(--ylc-accent);
+}
+
+.ylc-preset-apply[aria-pressed="true"] {
+  opacity: 1;
+  cursor: default;
+}
+
+.ylc-preset-apply > span {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ylc-preset-delete-name {
+  margin: 0 0 8px;
+  color: var(--ylc-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.ylc-preset-list-dragging,
+.ylc-preset-list-dragging * {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.ylc-preset[data-ylc-preset-dragging="true"] {
+  border-style: dashed;
+  border-color: var(--ylc-accent);
+  background: var(--ylc-accent-soft);
+  box-shadow: none;
+}
+
+.ylc-preset[data-ylc-preset-dragging="true"] > * {
+  opacity: 0.2;
+}
+
+.ylc-preset-drag-preview {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  border: 1px solid var(--ylc-accent);
+  border-radius: var(--ylc-radius-xl);
+  background: var(--ylc-bg-surface-elevated);
+  color: var(--ylc-text-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ylc-preset-drag-preview > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 500;
 }

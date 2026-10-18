@@ -78,4 +78,22 @@ describe('AddPresetItem', () => {
     fireEvent.click(addButton)
     expect(store.get(chatSettingsStateAtom).presets).toHaveLength(MAX_CUSTOM_PRESETS)
   })
+  it('focuses and selects only a locally created name, without stealing focus on external additions', () => {
+    const { getByRole, getByDisplayValue } = renderWithStore(<PresetContent />, store)
+    const add = getByRole('button', { name: 'content.preset.addMessage' })
+    fireEvent.click(add)
+    const name = getByDisplayValue('content.preset.addItemTitle') as HTMLInputElement
+    expect(name).toHaveFocus()
+    expect(name.selectionStart).toBe(0)
+    expect(name.selectionEnd).toBe(name.value.length)
+    act(() => add.focus())
+    act(() => {
+      const current = store.get(chatSettingsStateAtom)
+      store.set(chatSettingsStateAtom, {
+        ...current,
+        presets: [...current.presets, { kind: 'custom', id: 'external', name: 'Other tab', profile: current.profile }],
+      })
+    })
+    expect(add).toHaveFocus()
+  })
 })

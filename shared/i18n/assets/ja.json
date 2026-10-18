@@ -73,6 +73,7 @@
     },
     "preset": {
       "addMessage": "現在の設定を追加",
+      "current": "適用中",
       "apply": "適用",
       "addItemTitle": "無題",
       "defaultTitle": "スタンダード",

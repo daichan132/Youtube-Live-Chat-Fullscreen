@@ -1,5 +1,5 @@
 import { useAtomValue, useSetAtom } from 'jotai'
-import { useCallback, useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { TbCheck, TbGripVertical, TbTrash } from '@/shared/components/icons'
 import { Modal } from '@/shared/components/Modal'
 import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
@@ -7,18 +7,23 @@ import { formatMessage } from '@/shared/i18n/format'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
+import { areChatProfilesEqual } from '@/shared/settings/equality'
 import type { ChatProfile } from '@/shared/settings/model'
 import { MAX_PRESET_NAME_LENGTH } from '@/shared/settings/persistConfig'
-import { deletePresetAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
+import { deletePresetAtom, effectiveProfileAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 import { getModalParentElement } from '../../utils/getModalParentElement'
 import { getPresetDisplayTitle } from './presetDisplayTitle'
 
 interface PresetItemType {
   id: string
+  pointerDragging?: boolean
+  focusName?: boolean
+  onNameFocused?: () => void
   reorder: {
     activeId: string | null
     getHandleProps: (id: string) => {
+      'aria-pressed'?: boolean
       onPointerDown: (event: React.PointerEvent<HTMLButtonElement>) => void
       onKeyDown: (event: React.KeyboardEvent<HTMLButtonElement>) => void
     }
@@ -34,13 +39,17 @@ const getFirstFocusableControl = (element: HTMLElement | undefined) =>
     'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
   ) ?? null
 
-export const PresetItem = ({ id, reorder }: PresetItemType) => {
+export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, pointerDragging = false }: PresetItemType) => {
   const preset = useAtomValue(presetsAtom).find(entry => entry.id === id)
   const updatePresetName = useSetAtom(updatePresetNameAtom)
   const deletePreset = useSetAtom(deletePresetAtom)
   const { commitYLCProfile } = useStyleHistoryCommands()
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false)
   const deleteDialogTitleId = useId()
+  const deleteNameId = useId()
+  const deleteQuestionId = useId()
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const currentProfile = useAtomValue(effectiveProfileAtom)
   const itemRef = useRef<HTMLDivElement>(null)
   const t = useT()
   const isBuiltIn = preset?.kind === 'builtin'
@@ -54,6 +63,15 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   const rowLabel = (key: TranslationKey) => formatMessage(t(key), { name: displayTitle || t('content.preset.addItemTitle') })
   const profile = preset?.kind === 'builtin' ? BUILTIN_PRESETS[preset.id].profile : preset?.profile
   const canApply = profile !== undefined
+  const isCurrent = profile !== undefined && areChatProfilesEqual(profile, currentProfile)
+  useLayoutEffect(() => {
+    const input = nameInputRef.current
+    if (!focusName || !input || isBuiltIn) return
+    input.focus({ preventScroll: true })
+    input.select()
+    input.scrollIntoView?.({ block: 'nearest' })
+    onNameFocused?.()
+  }, [focusName, isBuiltIn, onNameFocused])
   const isDragging = reorder.activeId === id
 
   useEffect(() => {
@@ -89,6 +107,8 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
       ref={itemRef}
       className={`ylc-preset ${isDragging ? 'ylc-theme-raised cursor-grabbing ylc-theme-shadow-sm' : ''}`}
       data-ylc-preset-item={id}
+      data-ylc-preset-current={isCurrent ? 'true' : undefined}
+      data-ylc-preset-dragging={pointerDragging ? 'true' : undefined}
     >
       <button
         type='button'
@@ -99,6 +119,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
         <TbGripVertical size={20} aria-hidden='true' />
       </button>
       <input
+        ref={nameInputRef}
         type='text'
         value={isBuiltIn ? displayTitle : nameDraft}
         onFocus={() => {
@@ -141,31 +162,31 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
         <button
           type='button'
           disabled={!canApply}
+          aria-pressed={isCurrent}
           className='ylc-preset-apply'
           aria-label={rowLabel('content.aria.applyPreset')}
           onClick={() => {
-            if (!profile) return
+            if (!profile || isCurrent) return
             updateStyle(profile)
           }}
         >
-          <TbCheck size={16} aria-hidden='true' />
-          <span>{t('content.preset.apply')}</span>
+          {isCurrent ? <TbCheck size={16} aria-hidden='true' /> : null}
+          <span>{t(isCurrent ? 'content.preset.current' : 'content.preset.apply')}</span>
         </button>
-        {!isBuiltIn && (
-          <button
-            type='button'
-            className='ylc-preset-del'
-            aria-label={rowLabel('content.aria.deletePreset')}
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            <TbTrash size={18} aria-hidden='true' />
-          </button>
-        )}
+        <button
+          type='button'
+          className='ylc-preset-del'
+          aria-label={rowLabel('content.aria.deletePreset')}
+          onClick={() => setIsDeleteModalOpen(true)}
+        >
+          <TbTrash size={18} aria-hidden='true' />
+        </button>
       </div>
-      {!isBuiltIn && isDeleteModalOpen && (
+      {isDeleteModalOpen && (
         <Modal
           isOpen={isDeleteModalOpen}
           ariaLabelledBy={deleteDialogTitleId}
+          ariaDescribedBy={`${deleteNameId} ${deleteQuestionId}`}
           onRequestClose={() => setIsDeleteModalOpen(false)}
           shouldReturnFocusAfterClose={true}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35'
@@ -179,7 +200,12 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
             </h3>
           </div>
           <div className='px-5 py-4'>
-            <p className='m-0 text-sm leading-6 ylc-theme-text-secondary'>{t('content.preset.deleteConfirmationMessage')}</p>
+            <p id={deleteNameId} className='ylc-preset-delete-name'>
+              <bdi>{displayTitle || t('content.preset.addItemTitle')}</bdi>
+            </p>
+            <p id={deleteQuestionId} className='m-0 text-sm leading-6 ylc-theme-text-secondary'>
+              {t('content.preset.deleteConfirmationMessage')}
+            </p>
           </div>
           <div className='px-5 py-3 flex justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
             <button
