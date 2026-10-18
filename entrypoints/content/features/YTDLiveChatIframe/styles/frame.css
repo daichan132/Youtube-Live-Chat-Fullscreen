@@ -61,3 +61,9 @@ body.custom-yt-app-live-chat-extension #left-arrow-container.yt-live-chat-ticker
 body.custom-yt-app-live-chat-extension #pickers-container.yt-live-chat-message-buy-flow-renderer {
   background: transparent;
 }
+
+/* Native resize detection may briefly mistake chrome expansion for leaving
+   the latest message. Only the transition's bottom-following lease owns this. */
+body.custom-yt-app-live-chat-extension.ylc-chat-scroll-following yt-live-chat-item-list-renderer #show-more {
+  visibility: hidden !important;
+}

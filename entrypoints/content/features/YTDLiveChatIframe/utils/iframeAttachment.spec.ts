@@ -4,10 +4,14 @@ import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import {
   IFRAME_CHAT_BODY_CLASS,
+  IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR,
   IFRAME_CHAT_ONLY_CLASS,
   IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  IFRAME_CHAT_ONLY_MODE_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TOP_PADDING_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_CHAT_SCROLL_FOLLOWING_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
 import { createIframeAttachment, createManagedLiveIframe, type IframeAttachment } from './iframeAttachment'
@@ -227,10 +231,14 @@ describe('iframeAttachment', () => {
     doc.documentElement.style.setProperty('font-family', 'Extension Font')
     doc.body.classList.add(
       IFRAME_CHAT_BODY_CLASS,
+      IFRAME_CHAT_SCROLL_FOLLOWING_CLASS,
       IFRAME_CHAT_ONLY_CLASS,
+      IFRAME_CHAT_ONLY_MODE_CLASS,
       IFRAME_CHAT_ONLY_TRANSITION_CLASS,
       IFRAME_CHAT_ONLY_MEASURING_CLASS,
     )
+    doc.body.style.setProperty(IFRAME_CHAT_ONLY_TOP_PADDING_VAR, '0px')
+    doc.body.style.setProperty(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR, '12px')
     doc.body.style.setProperty('backdrop-filter', 'blur(8px)')
     doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(8px)')
     doc.body.style.setProperty('--extension-chat-only-header-height', '54px')
@@ -255,6 +263,10 @@ describe('iframeAttachment', () => {
     expect(iframe.getAttribute('allowtransparency')).toBe('native-value')
     expect(doc.body.classList.contains(IFRAME_CHAT_BODY_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+    expect(doc.body.classList.contains(IFRAME_CHAT_SCROLL_FOLLOWING_CLASS)).toBe(false)
+    expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)).toBe(false)
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('')
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
     expect(doc.body.classList.contains(IFRAME_CHAT_ONLY_MEASURING_CLASS)).toBe(false)
     expect(doc.documentElement.style.getPropertyValue('--yt-live-chat-background-color')).toBe('rgb(1, 2, 3)')

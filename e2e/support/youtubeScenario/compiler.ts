@@ -63,6 +63,18 @@ const appearanceSurfaceHtml = `
     yt-live-chat-poll-choice #endpoint { color: var(--yt-live-chat-poll-choice-text-color); background: var(--yt-live-chat-poll-choice-background-color); }
     yt-live-chat-poll-choice[has-voted] #vote-percentage-bar { background: var(--yt-live-chat-poll-choice-vote-bar-color); height: 4px; }
     yt-live-chat-poll-renderer svg { fill: currentColor; }
+    yt-live-chat-banner-poll-renderer, yt-live-chat-banner-poll-choice { display: block; }
+    yt-live-chat-banner-poll-renderer #content-top { display: flex; align-items: center; gap: 8px; }
+    yt-live-chat-banner-poll-renderer .metadata { color: rgb(96,96,96); }
+    yt-live-chat-banner-poll-renderer #main-content, yt-live-chat-banner-poll-renderer #poll-question { color: rgb(15,15,15); }
+    yt-live-chat-banner-poll-renderer #menu button,
+    yt-live-chat-banner-poll-renderer #menu .ytSpecButtonShapeNextIcon,
+    yt-live-chat-banner-poll-renderer #menu .ytSpecIconShapeHost,
+    yt-live-chat-banner-poll-renderer #menu svg,
+    yt-live-chat-banner-poll-renderer #menu path { color: rgb(15,15,15); fill: currentColor; }
+    yt-live-chat-banner-poll-choice #label-text, yt-live-chat-banner-poll-choice #vote-percentage-text { color: rgb(96,96,96); }
+    yt-live-chat-banner-poll-choice #vote-percentage-bar { background: rgb(230,230,230); height: 4px; }
+    #fixture-closed-poll [hidden] { display: none !important; }
     yt-emoji-picker-upsell-category-renderer #title { color: rgba(17,17,17,.6); background: rgba(247,247,247,.8); }
     yt-emoji-picker-category-renderer #title { color: rgb(96, 96, 96); background: rgb(204, 204, 204); }
     yt-emoji-picker-renderer label.tp-yt-paper-input { color: rgba(17,17,17,.6); }
@@ -116,6 +128,33 @@ const appearanceSurfaceHtml = `
     <yt-live-chat-poll-choice has-voted selected enable-banner-update><a id="endpoint" role="button" aria-label="Selected poll result" href="#fixture-poll-result"><tp-yt-paper-item id="content"><span id="label-text">Selected option</span><span id="vote-percentage-text">60%</span><div id="vote-percentage-bar" style="width: 60%"></div><span id="selected-icon"><svg width="24" height="24"><path d="M4 12l5 5L20 6" /></svg></span></tp-yt-paper-item></a></yt-live-chat-poll-choice>
     <yt-live-chat-poll-choice><a id="endpoint" role="button" aria-label="Disabled poll option" aria-disabled="true" href="#fixture-disabled-poll"><tp-yt-paper-item id="content" disabled><span id="label-text">Unavailable option</span></tp-yt-paper-item></a></yt-live-chat-poll-choice>
   </yt-live-chat-poll-renderer></yt-live-chat-action-panel-renderer>
+  <yt-live-chat-banner-renderer id="fixture-closed-poll" collapsed>
+    <yt-live-chat-banner-poll-renderer>
+      <div id="content-top">
+        <yt-img-shadow id="creator-photo"><img alt="Poll creator artwork" width="24" height="24" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath fill='%238000ff' d='M0 0h24v24H0z'/%3E%3C/svg%3E" /></yt-img-shadow>
+        <yt-formatted-string id="metadata-text" class="metadata" hidden>Poll results</yt-formatted-string>
+        <yt-formatted-string id="collapsed-metadata-text" class="metadata"><span>Fixture poll question</span><span> • </span><span>100 votes</span></yt-formatted-string>
+        <div id="menu"><yt-button-renderer id="menu-button"><yt-button-shape>
+          <button type="button" class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextText ytSpecButtonShapeNextMono" aria-label="Closed poll menu">
+            <div class="ytSpecButtonShapeNextIcon"><span class="ytIconWrapperHost"><span class="yt-icon-shape ytSpecIconShapeHost"><div><svg width="24" height="24"><path d="M12 4v16" /></svg></div></span></span></div>
+          </button>
+        </yt-button-shape></yt-button-renderer></div>
+      </div>
+      <div id="main-content">
+        <yt-formatted-string id="poll-question" class="poll-question" hidden>Fixture poll question</yt-formatted-string>
+        <div id="poll-choices-container" hidden>
+          <yt-live-chat-banner-poll-choice selected><div id="content">
+            <div id="percentage-container"><div id="vote-percentage-bar" style="width: 60%"></div></div>
+            <div id="text-container"><yt-formatted-string id="label-text">Selected fixture answer</yt-formatted-string><yt-formatted-string id="vote-percentage-text">60%</yt-formatted-string></div>
+          </div></yt-live-chat-banner-poll-choice>
+          <yt-live-chat-banner-poll-choice><div id="content">
+            <div id="percentage-container"><div id="vote-percentage-bar" style="width: 40%"></div></div>
+            <div id="text-container"><yt-formatted-string id="label-text">Other fixture answer</yt-formatted-string><yt-formatted-string id="vote-percentage-text">40%</yt-formatted-string></div>
+          </div></yt-live-chat-banner-poll-choice>
+        </div>
+      </div>
+    </yt-live-chat-banner-poll-renderer>
+  </yt-live-chat-banner-renderer>
   <yt-emoji-picker-renderer>
     <div id="search-panel"><label class="tp-yt-paper-input">Search</label><yt-icon-button id="clear-search"><button aria-label="Clear emoji search"><svg width="24" height="24"><path d="M4 4l16 16" /></svg></button></yt-icon-button><tp-yt-iron-input class="tp-yt-paper-input" style="color: rgba(17, 17, 17, .8)"><input class="tp-yt-paper-input" aria-label="Search emoji" placeholder="Search" /></tp-yt-iron-input></div>
     <yt-emoji-picker-upsell-category-renderer><yt-formatted-string id="title">Channel emoji</yt-formatted-string></yt-emoji-picker-upsell-category-renderer>
@@ -144,7 +183,26 @@ const appearanceSurfaceHtml = `
       <button class="ytwPdgGiftCollectionGridCell" aria-label="Selected gift choice"><yt-pdg-gift-item-view-model class="ytwPdgGiftItemHost ytwPdgGiftItemSelected">Send</yt-pdg-gift-item-view-model></button>
       <button class="ytwPdgGiftCollectionGridCell" aria-label="Unavailable gift choice" disabled><yt-pdg-gift-item-view-model class="ytwPdgGiftItemHost">Unavailable</yt-pdg-gift-item-view-model></button>
     </yt-pdg-gift-collection-view-model>
-  </ytd-engagement-panel-section-list-renderer>`
+  </ytd-engagement-panel-section-list-renderer>
+  <script>
+    (() => {
+      const banner = document.getElementById('fixture-closed-poll');
+      const summary = banner.querySelector('#collapsed-metadata-text');
+      const metadata = banner.querySelector('#metadata-text');
+      const question = banner.querySelector('#poll-question');
+      const choices = banner.querySelector('#poll-choices-container');
+      const toggleResults = () => {
+        const collapsed = banner.toggleAttribute('collapsed');
+        summary.hidden = !collapsed;
+        metadata.hidden = collapsed;
+        question.hidden = collapsed;
+        choices.hidden = collapsed;
+      };
+      summary.addEventListener('click', toggleResults);
+      metadata.addEventListener('click', toggleResults);
+      question.addEventListener('click', toggleResults);
+    })();
+  </script>`
 
 // These local native-like handlers exercise event ownership and UI lifetime only.
 // No payment SDK, transaction endpoint, or real account is involved.
@@ -155,8 +213,8 @@ const purchaseInteractionHtml = `
     yt-live-chat-renderer { display: block; position: relative; height: 100%; }
     #content-pages, #chat-messages { display: block; height: 100%; }
     #contents { display: flex; flex-direction: column; position: relative; height: 100%; }
-    #panel-pages { display: block; max-height: 100%; flex: 0 1 auto; min-height: auto; }
-    #fixture-messages { height: max(0px, calc(100vh - 184px)); overflow: hidden; }
+    #panel-pages { display: block; max-height: 100%; flex: 1; min-height: 0; }
+    #fixture-messages { height: 100%; overflow: hidden; }
     #fixture-messages yt-live-chat-item-list-renderer, #item-scroller { display: block; height: 100%; }
     #item-scroller { overflow-y: auto; overflow-x: hidden; }
     #items > * { display: block; margin: 0 8px 8px; line-height: 20px; }

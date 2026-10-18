@@ -4,7 +4,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { readContentStatusViaPopup } from '@e2e/utils/popupHelpers'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
-import type { Page } from '@playwright/test'
+import type { FrameLocator, Page } from '@playwright/test'
 import type { PixelChatGeometry } from '../../../shared/settings/chatGeometry'
 import type { ChatGeometry, ChatGeometryV2 } from '../../../shared/settings/model'
 import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY } from '../../../shared/settings/storageKeys'
@@ -56,6 +56,52 @@ const openStoragePage = async (extension: Extension, page: Page) => {
   await storagePage.goto(extension.url(E2E_BRIDGE_FILE), { waitUntil: 'domcontentloaded', timeout: 15000 })
   await page.bringToFront()
   return storagePage
+}
+
+const expectClosedPollPalette = async (chat: FrameLocator, primary: string, secondary: string, control: string) => {
+  const banner = chat.locator('#fixture-closed-poll')
+  const summary = banner.locator('#collapsed-metadata-text')
+  const metadata = banner.locator('#metadata-text')
+  const choices = banner.locator('yt-live-chat-banner-poll-choice')
+  await expect(banner).toHaveAttribute('collapsed', '')
+  await expect(summary).toBeVisible()
+  await expect(summary).toHaveCSS('color', primary)
+  for (const span of await summary.locator('span').all()) await expect(span).toHaveCSS('color', primary)
+  await expect(metadata).toBeHidden()
+  const menu = banner.getByRole('button', { name: 'Closed poll menu' })
+  await expect(menu).toHaveCSS('color', primary)
+  for (const icon of await menu.locator('.ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path').all()) {
+    await expect(icon).toHaveCSS('color', primary)
+  }
+  await expect(menu.locator('path')).toHaveCSS('fill', primary)
+  await expect(banner.getByAltText('Poll creator artwork')).toHaveCSS('filter', 'none')
+
+  // This local native-like handler only expands a previously answered poll;
+  // styling must not change its recorded choice or either percentage width.
+  await summary.click()
+  await expect(banner).not.toHaveAttribute('collapsed')
+  await expect(metadata).toBeVisible()
+  await expect(metadata).toHaveCSS('color', secondary)
+  await expect(banner.locator('#poll-question')).toBeVisible()
+  await expect(banner.locator('#poll-question')).toHaveCSS('color', primary)
+  await expect(choices).toHaveCount(2)
+  for (const [index, percentage] of ['60%', '40%'].entries()) {
+    const choice = choices.nth(index)
+    await expect(choice.locator('#label-text')).toHaveCSS('color', primary)
+    await expect(choice.locator('#vote-percentage-text')).toHaveCSS('color', primary)
+    await expect(choice.locator('#vote-percentage-text')).toHaveText(percentage)
+    await expect(choice.locator('#vote-percentage-bar')).toHaveCSS('background-color', control)
+    expect(await choice.locator('#vote-percentage-bar').evaluate(element => (element as HTMLElement).style.width)).toBe(percentage)
+  }
+  await expect(choices.first()).toHaveAttribute('selected', '')
+  await expect(choices.last()).not.toHaveAttribute('selected')
+
+  await banner.locator('#poll-question').click()
+  await expect(banner).toHaveAttribute('collapsed', '')
+  await expect(summary).toBeVisible()
+  await expect(summary).toHaveCSS('color', primary)
+  await expect(banner.locator('#poll-choices-container')).toBeHidden()
+  await expect(choices.first()).toHaveAttribute('selected', '')
 }
 
 const expectControlsAtLayout = async (page: Page, layout: { x: number; y: number; width: number; height: number }) => {
@@ -184,7 +230,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await expect(chat.locator('#fixture-poll-panel')).toHaveCSS('background-color', floating)
       await expect(chat.locator('yt-live-chat-poll-header-renderer #poll-question')).toHaveCSS('color', primary)
       await expect(chat.locator('yt-live-chat-poll-header-renderer .metadata')).toHaveCSS('color', secondary)
-      await expect(chat.getByRole('button', { name: 'Poll menu' }).locator('path')).toHaveCSS('fill', primary)
+      await expect(chat.getByRole('button', { name: 'Poll menu', exact: true }).locator('path')).toHaveCSS('fill', primary)
       await expect(chat.getByRole('button', { name: 'Poll option', exact: true })).toHaveCSS('background-color', control)
       await expect(chat.getByRole('button', { name: 'Poll option', exact: true }).locator('#label-text')).toHaveCSS('color', primary)
       const result = chat.getByRole('button', { name: 'Selected poll result' })
@@ -195,6 +241,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       await expect(result.locator('#selected-icon path')).toHaveCSS('fill', primary)
       await expect(chat.getByRole('button', { name: 'Disabled poll option' }).locator('#label-text')).toHaveCSS('color', secondary)
       await expect(chat.getByRole('button', { name: 'Disabled poll option' })).toHaveAttribute('aria-disabled', 'true')
+      await expectClosedPollPalette(chat, primary, secondary, control)
 
       await expect(chat.getByRole('textbox', { name: 'Search emoji' })).toHaveCSS('color', primary)
       await expect

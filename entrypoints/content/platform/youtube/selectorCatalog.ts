@@ -57,6 +57,14 @@ export const collapsedPinnedMessageContentProbe = {
   selectors: ['yt-live-chat-banner-renderer yt-live-chat-text-message-renderer[in-collapsed-banner] #content'],
 } as const
 export const chatItemListRendererProbe = { probeId: 'chat.item-list.v1', selectors: ['yt-live-chat-item-list-renderer'] } as const
+export const chatMessageScrollerProbe = {
+  probeId: 'chat.message-scroller.v1',
+  selectors: ['yt-live-chat-item-list-renderer #item-scroller'],
+} as const
+export const chatMessageItemProbe = {
+  probeId: 'chat.message-item.v1',
+  selectors: ['yt-live-chat-item-list-renderer #items > *'],
+} as const
 export const chatUnavailableMessageProbe = {
   probeId: 'chat.unavailable-message.v1',
   selectors: ['yt-live-chat-unavailable-message-renderer'],
@@ -150,6 +158,8 @@ export const youtubeSelectorCatalog = {
   chatRenderer: chatRendererProbe,
   collapsedPinnedMessageContent: collapsedPinnedMessageContentProbe,
   chatItemListRenderer: chatItemListRendererProbe,
+  chatMessageScroller: chatMessageScrollerProbe,
+  chatMessageItem: chatMessageItemProbe,
   chatUnavailableMessage: chatUnavailableMessageProbe,
   chatStatusMessage: chatStatusMessageProbe,
   fullscreenButton: fullscreenButtonProbe,

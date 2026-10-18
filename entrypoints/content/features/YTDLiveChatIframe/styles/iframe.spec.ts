@@ -184,10 +184,62 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('chat-only-display yt-live-chat-header-renderer {\n  display: none')
   })
 
-  it('adds breathing room above a visible Super Chat ticker in chat-only mode', () => {
-    expect(iframeStyles).toContain('body.custom-yt-app-live-chat-extension.chat-only-display #ticker > yt-live-chat-ticker-renderer')
-    expect(iframeStyles).toContain('margin-top: 8px;')
-    expect(iframeStyles).toContain('transition: margin-top 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;')
+  it('scopes default edge padding and its transition while preserving native purchase/full-chat spacing', () => {
+    // jsdom does not resolve padding custom properties; browser fixtures verify
+    // the live targets and geometry, while this fixture checks CSS scoping.
+    const spacingStyles = styleModules['chat-only.css']
+      .replaceAll('var(--extension-chat-only-top-padding, 12px)', '12px')
+      .replaceAll('var(--extension-chat-only-bottom-padding, 12px)', '12px')
+    mountStyleFixture(
+      `yt-live-chat-renderer { padding: 2px 6px 3px; }
+       [data-nested-contents] { padding: 7px; }
+       ${spacingStyles}`,
+      `<yt-live-chat-renderer><tp-yt-iron-pages id="content-pages"><div id="chat-messages"><div id="contents">
+        <div id="ticker"><yt-live-chat-ticker-renderer></yt-live-chat-ticker-renderer></div>
+        <yt-live-chat-item-list-renderer><div id="contents" data-nested-contents></div></yt-live-chat-item-list-renderer>
+      </div></div></tp-yt-iron-pages></yt-live-chat-renderer>`,
+    )
+    const renderer = 'yt-live-chat-renderer'
+    expect(getFixtureStyle(renderer).paddingTop).toBe('2px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('3px')
+
+    document.body.classList.add('chat-only-mode', 'chat-only-display')
+
+    expect(getFixtureStyle(renderer).paddingTop).toBe('12px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('12px')
+    expect(getFixtureStyle(renderer).paddingLeft).toBe('6px')
+    expect(getFixtureStyle(renderer).boxSizing).toBe('border-box')
+    expect(getFixtureStyle('[data-nested-contents]').paddingTop).toBe('7px')
+    expect(getFixtureStyle('#ticker > yt-live-chat-ticker-renderer').marginTop).toBe('0px')
+
+    document.body.classList.remove('chat-only-display')
+
+    expect(getFixtureStyle(renderer).paddingTop).toBe('12px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('12px')
+    expect(getFixtureStyle(renderer).boxSizing).toBe('border-box')
+
+    expect(getFixtureStyle(renderer).transitionProperty).toBe('padding-top, padding-bottom')
+    expect(getFixtureStyle(renderer).transitionDuration).toBe('260ms')
+
+    document.body.classList.add('chat-only-measuring')
+    expect(getFixtureStyle(renderer).paddingTop).toBe('12px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('12px')
+    document.body.classList.remove('chat-only-measuring')
+
+    document.body.classList.add('ylc-native-purchase-active')
+
+    expect(getFixtureStyle(renderer).paddingTop).toBe('2px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('3px')
+
+    document.body.classList.remove('ylc-native-purchase-active')
+
+    expect(getFixtureStyle(renderer).paddingTop).toBe('12px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('12px')
+
+    document.body.classList.remove('chat-only-mode')
+
+    expect(getFixtureStyle(renderer).paddingTop).toBe('2px')
+    expect(getFixtureStyle(renderer).paddingBottom).toBe('3px')
   })
 
   it('lets header menus escape while expanded and clips them while collapsed', () => {

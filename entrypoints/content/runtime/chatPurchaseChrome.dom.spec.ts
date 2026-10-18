@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
   IFRAME_CHAT_ONLY_CLASS,
+  IFRAME_CHAT_ONLY_MODE_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
@@ -60,6 +61,7 @@ describe('native purchase chrome protection', () => {
     controller.sync(iframe, 'collapsed')
 
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(doc.body).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
     expect(doc.activeElement).toBe(amount)
     expect(blur).not.toHaveBeenCalled()
@@ -68,6 +70,7 @@ describe('native purchase chrome protection', () => {
     await settleMutation()
 
     expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(doc.activeElement).not.toBe(amount)
     expect(blur).toHaveBeenCalledOnce()
     expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
@@ -95,6 +98,7 @@ describe('native purchase chrome protection', () => {
     controller.sync(iframe, 'inactive')
     expect(doc.body).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
 
     offer.hidden = true
     await settleMutation()
@@ -132,11 +136,13 @@ describe('native purchase chrome protection', () => {
     doc.head.append(nativeStyle)
     controller.sync(iframe, 'collapsed')
     expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
 
     input.setAttribute('product-picker-open', '')
     await settleMutation()
 
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     vi.runAllTimers()
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
   })
@@ -278,6 +284,7 @@ describe('native purchase chrome protection', () => {
     vi.runAllTimers()
 
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
     expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')

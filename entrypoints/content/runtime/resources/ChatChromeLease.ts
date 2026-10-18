@@ -1,7 +1,10 @@
 import {
+  IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR,
   IFRAME_CHAT_ONLY_CLASS,
   IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  IFRAME_CHAT_ONLY_MODE_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TOP_PADDING_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
@@ -12,6 +15,7 @@ import {
   chatPurchasePanelProbe,
   queryAllProbes,
 } from '@/entrypoints/content/platform/youtube/selectorCatalog'
+import { preserveChatScroll } from './ChatScrollAnchor'
 
 export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed'
 
@@ -53,9 +57,17 @@ const clearMeasurements = (elements: HTMLElement[]) => {
 
 const measure = (elements: HTMLElement[]) => {
   clearMeasurements(elements)
+  let top = 12
+  let bottom = 12
   for (const element of elements) {
-    element.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, `${Math.max(0, Math.ceil(element.getBoundingClientRect().height))}px`)
+    const height = Math.max(0, Math.ceil(element.getBoundingClientRect().height))
+    element.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, `${height}px`)
+    if (height > 0) {
+      if (element.localName === HEADER_SELECTOR) top = 0
+      else bottom = 0
+    }
   }
+  return { top, bottom }
 }
 
 const sameElements = (left: HTMLElement[], right: HTMLElement[]) =>
@@ -194,6 +206,29 @@ export const createChatChromeLease = (): ChatChromeLease => {
   let stopPurchaseObserver: (() => void) | null = null
   let purchaseOpen = false
   let requestedIntent: ChatOnlyChromeIntent = 'inactive'
+  let expandedPadding = { top: 12, bottom: 12 }
+  let scrollAnchor: ReturnType<typeof preserveChatScroll> = null
+
+  const stopScrollAnchor = () => {
+    scrollAnchor?.stop()
+    scrollAnchor = null
+  }
+
+  const beginScrollAnchor = () => {
+    stopScrollAnchor()
+    if (body && !purchaseOpen) scrollAnchor = preserveChatScroll(body, TRANSITION_FALLBACK_MS)
+  }
+
+  const setPaddingTarget = (collapsed: boolean) => {
+    if (!body) return
+    // Keep these targets independent of temporary chrome measurement classes.
+    for (const [property, value] of [
+      [IFRAME_CHAT_ONLY_TOP_PADDING_VAR, `${collapsed ? 12 : expandedPadding.top}px`],
+      [IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR, `${collapsed ? 12 : expandedPadding.bottom}px`],
+    ] as const) {
+      if (body.style.getPropertyValue(property) !== value) body.style.setProperty(property, value)
+    }
+  }
 
   const clearTimer = () => {
     if (settleTimer !== null) window.clearTimeout(settleTimer)
@@ -210,17 +245,27 @@ export const createChatChromeLease = (): ChatChromeLease => {
     // Release every previous target before losing its reference, even on expand.
     clearMeasurements(elements)
     elements = nextElements
-    measure(elements)
+    expandedPadding = measure(elements)
   }
 
   const clearChromePresentation = (target = body) => {
+    stopScrollAnchor()
     clearTimer()
-    target?.classList.remove(IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_MEASURING_CLASS)
+    target?.classList.remove(
+      IFRAME_CHAT_ONLY_CLASS,
+      IFRAME_CHAT_ONLY_MODE_CLASS,
+      IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+      IFRAME_CHAT_ONLY_MEASURING_CLASS,
+    )
     clearMeasurements(elements)
     elements = []
+    expandedPadding = { top: 12, bottom: 12 }
+    target?.style.removeProperty(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)
+    target?.style.removeProperty(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)
   }
 
   const setPurchaseOpen = (open: boolean) => {
+    if (open) stopScrollAnchor()
     purchaseOpen = open
     if (body && body.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS) !== open) {
       body.classList.toggle(IFRAME_PURCHASE_ACTIVE_CLASS, open)
@@ -238,6 +283,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
 
   const refreshCollapsedMeasurements = (nextElements = body ? resolveChatOnlyChromeElements(body) : []) => {
     if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+    const measuredScroll = purchaseOpen ? null : preserveChatScroll(body, 0)
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
@@ -245,6 +291,8 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.add(IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
+    measuredScroll?.restore()
+    measuredScroll?.stop()
   }
 
   const ensureTargetObserver = () => {
@@ -283,11 +331,14 @@ export const createChatChromeLease = (): ChatChromeLease => {
 
   const collapse = () => {
     if (!body || body.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+    beginScrollAnchor()
     replaceMeasurements(resolveChatOnlyChromeElements(body))
     blurActiveElement(body)
     body.classList.add(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
     body.getBoundingClientRect()
     body.classList.add(IFRAME_CHAT_ONLY_CLASS)
+    setPaddingTarget(true)
+    scrollAnchor?.restore()
     clearTimer()
     settleTimer = window.setTimeout(() => {
       body?.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
@@ -296,7 +347,12 @@ export const createChatChromeLease = (): ChatChromeLease => {
   }
 
   const expand = () => {
-    if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+    if (!body) return
+    if (!body.classList.contains(IFRAME_CHAT_ONLY_CLASS)) {
+      setPaddingTarget(false)
+      return
+    }
+    beginScrollAnchor()
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
@@ -306,6 +362,8 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.add(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_CLASS)
+    setPaddingTarget(false)
+    scrollAnchor?.restore()
     clearTimer()
     settleTimer = window.setTimeout(() => {
       body?.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
@@ -320,6 +378,14 @@ export const createChatChromeLease = (): ChatChromeLease => {
     // Synchronize before blur, including native changes not yet delivered by
     // MutationObserver. While an offer is open, hover loss cannot hide it.
     setPurchaseOpen(hasOpenChatPurchaseUI(body, purchaseOpen))
+    if (!body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)) {
+      body.classList.add(IFRAME_CHAT_ONLY_MODE_CLASS)
+      if (requestedIntent === 'expanded' || purchaseOpen) {
+        replaceMeasurements(resolveChatOnlyChromeElements(body))
+        clearMeasurements(elements)
+        elements = []
+      }
+    }
     if (requestedIntent === 'collapsed' && !purchaseOpen) collapse()
     else expand()
   }
@@ -328,7 +394,11 @@ export const createChatChromeLease = (): ChatChromeLease => {
     sync(nextIframe: HTMLIFrameElement | null, intent: ChatOnlyChromeIntent) {
       requestedIntent = intent
       bind(nextIframe)
-      if (!body || intent === 'hold') return
+      if (!body) return
+      if (intent === 'hold') {
+        stopScrollAnchor()
+        return
+      }
       if (intent === 'inactive') {
         setPurchaseOpen(hasOpenChatPurchaseUI(body, purchaseOpen))
         disconnectTargetObserver()

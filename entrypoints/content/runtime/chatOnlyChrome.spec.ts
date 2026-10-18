@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
+  IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR,
   IFRAME_CHAT_ONLY_CLASS,
+  IFRAME_CHAT_ONLY_MODE_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TOP_PADDING_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { createChatChromeLease } from './resources/ChatChromeLease'
@@ -45,15 +48,55 @@ describe('chatOnlyChrome', () => {
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
     const controller = createChatChromeLease()
 
+    controller.sync(iframe, 'hold')
+    expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+
     controller.sync(iframe, 'collapsed')
+    expect(iframeDocument.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('12px')
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('12px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('48px')
 
+    controller.sync(iframe, 'hold')
+    expect(iframeDocument.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+
     controller.sync(iframe, 'expanded')
+    expect(iframeDocument.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('0px')
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('0px')
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     vi.runAllTimers()
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_TRANSITION_CLASS)).toBe(false)
 
+    controller.sync(iframe, 'hold')
+    expect(iframeDocument.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+
+    controller.release()
+    expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('')
+    expect(iframeDocument.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('')
+  })
+
+  it.each([false, true])('keeps absent replay edges padded when initially expanded: hidden input %s', hiddenInput => {
+    const { iframe, doc, header, input, controller } = createMeasuredChromeFixture()
+    if (hiddenInput) vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 0 } as DOMRect)
+    else input.remove()
+    controller.sync(iframe, 'expanded')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('0px')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('12px')
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    controller.sync(iframe, 'collapsed')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('12px')
+    controller.sync(iframe, 'expanded')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('0px')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('12px')
+    controller.sync(iframe, 'inactive')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('')
     controller.release()
   })
 
@@ -67,10 +110,37 @@ describe('chatOnlyChrome', () => {
     expect(first.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
 
     controller.sync(second, 'collapsed')
+    expect(first.contentDocument?.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(first.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+    expect(second.contentDocument?.body).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(second.contentDocument?.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
 
     controller.release()
+  })
+
+  it('transfers mode ownership when the same iframe loads a replacement document already expanded', () => {
+    const iframe = document.createElement('iframe')
+    const first = document.implementation.createHTMLDocument('First chat document')
+    const replacement = document.implementation.createHTMLDocument('Replacement chat document')
+    let currentDocument = first
+    Object.defineProperty(iframe, 'contentDocument', { get: () => currentDocument })
+    const controller = createChatChromeLease()
+    try {
+      controller.sync(iframe, 'collapsed')
+      expect(first.body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)).toBe(true)
+      expect(first.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(true)
+
+      currentDocument = replacement
+      controller.sync(iframe, 'expanded')
+
+      expect(first.body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)).toBe(false)
+      expect(first.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+      expect(replacement.body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)).toBe(true)
+      expect(replacement.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
+    } finally {
+      controller.release()
+    }
+    expect(replacement.body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)).toBe(false)
   })
 
   it('measures a current signed-out input panel mounted after collapse', async () => {
@@ -189,6 +259,7 @@ describe('chatOnlyChrome', () => {
 
     expect(disconnect).toHaveBeenCalledTimes(1)
     expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     controller.release()
     expect(disconnect).toHaveBeenCalledTimes(2)

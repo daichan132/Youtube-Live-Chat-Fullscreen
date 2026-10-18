@@ -11,7 +11,7 @@ These styles are injected into YouTube's live chat iframe document. The module o
 | `banners.css` | Pinned banners, notices and viewer poll colors |
 | `leaderboard.css` | Top fans / live viewer leaderboard |
 | `composer.css` | Input, restricted state, emoji picker, and reactions |
-| `chat-only.css` | Measured header/input collapse transitions |
+| `chat-only.css` | Measured header/input transitions and 12px collapsed insets that animate away at edges with visible chrome |
 | `monetization.css` | Super Chat, Super Sticker, and product picker flows |
 | `message-layout.css` | Message typography, spacing, author/avatar, and display toggles |
 
@@ -31,6 +31,7 @@ Keep stateful surfaces on the component boundary that replaces the chat list. Th
 | Product picker, Super Chat, Super Sticker pack and preview | `monetization.css` | Each monetization renderer root |
 | Membership gift quantity offer | `monetization.css` | `ytd-sponsorships-gift-offer-renderer` and its header/body |
 | Viewer poll card, question, choices and results | `banners.css` | Action panel containing `yt-live-chat-poll-renderer` |
+| Answered / closed poll summary and results | `banners.css` | `yt-live-chat-banner-poll-renderer` and `yt-live-chat-banner-poll-choice`, including overflow-menu SVGs |
 | Top fans / XP panel | `leaderboard.css` | `PAlive_viewer_leaderboard` engagement panel |
 
 Do not theme `yt-live-chat-message-renderer` globally. YouTube also uses it for regular chat content; the signed-out prompt is identified only as its direct `#input-panel` child.
@@ -69,4 +70,4 @@ Text links within ordinary chat messages and viewer-engagement message copy use 
 
 The membership gift quantity offer uses the profile's panel tint, with transparent inner header/body fills. Theme its title, nested offer-section/quantity labels, description, close icon and unfilled quantity actions at their component boundaries: YouTube uses opaque native color tokens here, so overriding `--yt-spec-text-*` alone does not recolor the labels. Enabled Text quantity actions pair the configured foreground with a transparent resting background and the menu interaction tint on hover or visible keyboard focus. Preserve Filled, Tonal, disabled and ARIA-disabled button color pairs. These rules stay inside the offer renderer; external membership and payment dialogs keep YouTube's native palette.
 
-The viewer poll floats above messages and uses the same minimum-96%-opacity surface as the support picker. Its question, metadata, choices and neutral controls follow the primary/secondary palette. Poll-local styles also tint the result bars; bar widths, selection markers, disabled attributes and voting behavior remain owned by YouTube. No poll-editor or other action-panel renderer is themed by these rules.
+The viewer poll floats above messages and uses the same minimum-96%-opacity surface as the support picker. Its question, metadata, choices and neutral controls follow the primary/secondary palette. Answered or closed polls use separate banner-poll components: theme their collapsed summary and expanded results as well as the overflow-menu SVGs, while retaining the banner's existing surface. Poll-local styles also tint the result bars; bar widths, selection markers, disabled attributes and voting behavior remain owned by YouTube. No poll-editor or other action-panel renderer is themed by these rules.

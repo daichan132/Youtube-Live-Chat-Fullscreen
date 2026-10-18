@@ -34,6 +34,28 @@ body.custom-yt-app-live-chat-extension
   color: var(--extension-yt-live-font-color) !important;
 }
 
+/* Answered or closed polls use a separate banner, not the open poll card.
+   Its summary includes the question, so keep it as readable as message text. */
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-poll-renderer :is(#main-content, #poll-question, #collapsed-metadata-text),
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-poll-choice :is(#label-text, #vote-percentage-text) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-poll-renderer #metadata-text {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-poll-renderer #menu button:not(:disabled):not([aria-disabled="true"]),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-banner-poll-renderer
+  #menu
+  button:not(:disabled):not([aria-disabled="true"])
+  :is(.ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, yt-icon, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-poll-choice #vote-percentage-bar {
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+
 /* A poll floats over messages. Its neutral card must stay readable even when
    the main chat background is transparent. Vote state and bar widths stay native. */
 body.custom-yt-app-live-chat-extension yt-live-chat-action-panel-renderer:has(yt-live-chat-poll-renderer) {

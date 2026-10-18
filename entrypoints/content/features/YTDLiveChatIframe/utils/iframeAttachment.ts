@@ -16,10 +16,14 @@ import { isNativeChatOpen } from '@/entrypoints/content/utils/nativeChatState'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import {
   IFRAME_CHAT_BODY_CLASS,
+  IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR,
   IFRAME_CHAT_ONLY_CLASS,
   IFRAME_CHAT_ONLY_MEASURING_CLASS,
+  IFRAME_CHAT_ONLY_MODE_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
+  IFRAME_CHAT_ONLY_TOP_PADDING_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_CHAT_SCROLL_FOLLOWING_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
@@ -130,7 +134,9 @@ const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRes
   if (snapshot) restoreBorrowedDocumentStyle(doc, snapshot)
   doc.body.classList.remove(
     IFRAME_CHAT_BODY_CLASS,
+    IFRAME_CHAT_SCROLL_FOLLOWING_CLASS,
     IFRAME_CHAT_ONLY_CLASS,
+    IFRAME_CHAT_ONLY_MODE_CLASS,
     IFRAME_CHAT_ONLY_TRANSITION_CLASS,
     IFRAME_CHAT_ONLY_MEASURING_CLASS,
     IFRAME_PURCHASE_ACTIVE_CLASS,
@@ -139,6 +145,8 @@ const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRes
     target.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)
   }
   for (const variable of legacyChatOnlyHeightVariables) doc.body.style.removeProperty(variable)
+  doc.body.style.removeProperty(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)
+  doc.body.style.removeProperty(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)
   doc.head.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.remove()
 }
 

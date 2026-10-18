@@ -24,13 +24,21 @@ body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer {
   overflow: visible !important;
 }
 
-body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
-  margin-top: 0;
-  transition: margin-top 260ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+/* Keep box sizing stable. Only an edge with actual native chrome loses its
+   inset, in time with that chrome. Measurement classes do not change targets. */
+body.custom-yt-app-live-chat-extension.chat-only-mode yt-live-chat-renderer {
+  box-sizing: border-box !important;
+}
+body.custom-yt-app-live-chat-extension.chat-only-mode:not(.ylc-native-purchase-active) yt-live-chat-renderer {
+  padding-top: var(--extension-chat-only-top-padding, 12px) !important;
+  padding-bottom: var(--extension-chat-only-bottom-padding, 12px) !important;
+  transition-property: padding-top, padding-bottom !important;
+  transition-duration: 260ms !important;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
 }
 
-body.custom-yt-app-live-chat-extension.chat-only-display #ticker > yt-live-chat-ticker-renderer {
-  margin-top: 8px;
+body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
+  margin-top: 0;
 }
 
 body.custom-yt-app-live-chat-extension.chat-only-transition-ready yt-live-chat-header-renderer,
@@ -71,20 +79,19 @@ body.custom-yt-app-live-chat-extension.chat-only-measuring:not(:has(#input-panel
   :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer):not(
     :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer)
       :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer)
-  ),
-body.custom-yt-app-live-chat-extension.chat-only-measuring #ticker > yt-live-chat-ticker-renderer {
+  ) {
   transition: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
+  body.custom-yt-app-live-chat-extension.chat-only-mode:not(.ylc-native-purchase-active) yt-live-chat-renderer,
   body.custom-yt-app-live-chat-extension yt-live-chat-header-renderer,
   body.custom-yt-app-live-chat-extension #input-panel,
   body.custom-yt-app-live-chat-extension:not(:has(#input-panel))
     :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer):not(
       :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer)
         :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer, yt-live-chat-sign-in-prompt-renderer)
-    ),
-  body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
+    ) {
     transition-duration: 1ms !important;
   }
 }
