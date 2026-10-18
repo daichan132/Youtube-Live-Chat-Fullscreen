@@ -45,6 +45,7 @@ describe('isIframeForCurrentVideo', () => {
     createWatchFlexy('current-video')
     const iframe = document.createElement('iframe')
     iframe.src = 'https://www.youtube.com/live_chat_replay?continuation=current-replay'
+    document.body.appendChild(iframe)
     markChatIframeObservedForCurrentVideo(iframe, 'current-video')
 
     expect(isIframeForCurrentVideo(iframe, 'current-video')).toBe(true)
@@ -115,12 +116,14 @@ describe('isIframeForCurrentVideo', () => {
     createWatchFlexy('current-video')
     const iframe = document.createElement('iframe')
     iframe.src = 'https://www.youtube.com/live_chat_replay?continuation=current-replay'
+    document.body.appendChild(iframe)
     markChatIframeObservedForCurrentVideo(iframe, 'current-video')
 
     setLocation('/watch?v=next-video')
     document.body.innerHTML = ''
     createWatchFlexy('next-video')
     iframe.src = 'https://www.youtube.com/live_chat_replay?continuation=stale-replay-after-navigation'
+    document.body.appendChild(iframe)
     markChatIframeObservedForCurrentVideo(iframe, 'next-video')
 
     expect(isIframeForCurrentVideo(iframe, 'next-video')).toBe(false)

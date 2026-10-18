@@ -10,9 +10,8 @@ it.each([false, true])('restores a replacement trigger unless the user has moved
   const root = host.attachShadow({ mode: 'open' })
   const source = document.createElement('button')
   root.append(source)
-  const runtime = { getDiagnosticReport: vi.fn(() => ({ schemaVersion: 1 }) as never), restart: vi.fn(), subscribe: () => () => {} }
   const onClose = vi.fn()
-  const view = render(<SettingsFrame open returnFocusTo={source} onClose={onClose} runtime={runtime} />, {
+  const view = render(<SettingsFrame open returnFocusTo={source} onClose={onClose} />, {
     container: document.body.appendChild(document.createElement('div')),
   })
   const replacement = document.createElement('button')
@@ -32,7 +31,7 @@ it.each([false, true])('restores a replacement trigger unless the user has moved
       data: { type: SETTINGS_FRAME_MESSAGE.close },
     }),
   )
-  view.rerender(<SettingsFrame open={false} returnFocusTo={source} onClose={onClose} runtime={runtime} />)
+  view.rerender(<SettingsFrame open={false} returnFocusTo={source} onClose={onClose} />)
   expect(root.activeElement).toBe(movedFocus ? other : replacement)
   view.unmount()
   host.remove()

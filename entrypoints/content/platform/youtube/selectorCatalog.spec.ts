@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  closestProbe,
   identifyProbeForElement,
   matchesProbe,
   queryAllProbes,
@@ -43,6 +44,17 @@ describe('youtubeSelectorCatalog', () => {
 
     expect(result.elements).toHaveLength(1)
     expect(result.probeIds).toEqual(['chat.iframe.v2.1', 'chat.iframe.v2.2'])
+  })
+
+  it('finds the nearest ancestor across selector variants without preferring a farther primary match', () => {
+    const root = document.createElement('div')
+    root.innerHTML = '<div class="primary"><section class="fallback"><button></button></section></div>'
+    const button = root.querySelector('button')
+    if (!button) throw new Error('Missing control')
+
+    const probe = { probeId: 'host.v1', selectors: ['.primary', '.fallback'] }
+    expect(closestProbe(button, probe)).toBe(root.querySelector('.fallback'))
+    expect(closestProbe(button, { probeId: 'absent.v1', selectors: ['.absent'] })).toBeNull()
   })
 
   it('identifies the exact fallback selector that contains a resolved control', () => {

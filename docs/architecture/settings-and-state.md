@@ -42,11 +42,15 @@ A failed Storage API call aborts initialization. It is never interpreted as a mi
 
 Locale has one narrow exception: an extension page that can still read a legacy locale may copy that selection non-destructively into `ylc-locale`. The old value remains. This allows content scripts, which cannot access extension-page localStorage, to converge on the same language.
 
+That automatic copy yields to any locale intent already made by the repository or received while the snapshot is loading. Storage listeners stay active during the read, and the copy checks its generation again when its queued write starts. A newer selection observed before the copy starts invalidates that copy.
+
 ## Writes and convergence
 
 Each domain has an independent serialized queue. A write is attempted once, waits 400 ms after failure, and is attempted once more. An unresolved latest failure remains visible in `PersistenceStatus`, makes `flush()` reject, and can be retried explicitly.
 
 A newer local write or valid external committed event invalidates an obsolete failed retry for that domain. A local commit reads Storage back to converge on the final value, while its own Storage events are ignored. A local write can finish after an external commit, so the readback generation is captured after the write. Any new local intent or external event received while that readback is pending prevents the captured result from being applied.
+
+Disposing a UI runtime removes its notifications but does not discard an in-flight save. The repository keeps its Storage listeners until pending writes and imports finish, so a newer external commit can still cancel an older delayed retry. With no UI watchers or pending operations, it releases those listeners.
 
 Appearance and locale notifications carry an optional `SettingsCommitSource`. A read response is an own `readback` acknowledgement only when its envelope has this repository's writer ID; reading another writer's envelope is an `external` commit. Confirmed own imports use `import`. Notifications without a source are treated as external by the runtime. This metadata is in memory only; it does not change the stored envelope.
 
@@ -56,7 +60,11 @@ Appearance and locale notifications carry an optional `SettingsCommitSource`. A 
 
 Draft profile values, active gestures, undo history and redo history live only in memory. Previewing a gesture does not save settings. Committing an appearance change writes one appearance envelope; committing geometry writes only the geometry envelope.
 
+The settings UI's `styleHistoryCommands` adapter delegates profile and patch commits to the shared command atoms. Starting a different UI gesture first finishes the previous one; patch and preset commits use the same history rules whether invoked by the UI or directly through the store.
+
 The embedded settings page forwards its draft profile through a source- and origin-checked `postMessage` bridge. The content store holds it in `settingsPreviewStateAtom`, outside persistence and history, so the chat and overlay paint during a slider or color gesture. Preview messages are coalesced to one per animation frame. The final profile remains visible until its matching Storage value arrives; an earlier gesture's delayed save cannot roll it back. Closing, reloading, or removing the settings iframe clears the preview. Authoritative external appearance changes are forwarded by the settings store through the same channel.
+
+The settings frame bridge accepts close and style-preview requests. Runtime status, retry, and diagnostic-report copying belong to the toolbar popup's `ContentRecovery`, which uses the content-status extension messages.
 
 A save readback equal to the current committed appearance is a no-op. It must not cancel a later draft or clear undo/redo history merely because that draft started before the earlier save finished. Equality is checked against committed settings, not against the draft.
 
@@ -72,7 +80,7 @@ Legacy migration maps only `default1`–`default7` to built-in presets; custom e
 
 Verification profile patches initialize a missing appearance domain with the standard built-in preset list. Existing lists, including explicitly empty ones, remain unchanged.
 
-The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
+The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Version 1 backups also allow at most 107 raw legacy preset references (100 custom presets plus 7 built-ins), counting duplicate and unknown references. This limit is checked before migration allocates unique IDs, so a small duplicate-heavy file cannot cause quadratic migration work before confirmation. Oversized imports are rejected rather than truncated. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
 
 An import synchronously reserves a barrier. It waits only for previously queued operations, writes the four imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.
 

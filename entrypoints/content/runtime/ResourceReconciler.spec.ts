@@ -73,7 +73,7 @@ const createFakeLease = (log: string[], iframe = document.createElement('iframe'
       log.push('iframe-abandoned')
     }),
   }
-  return { lease, setState: (next: ChatIframeLease['state']) => (state = next) }
+  return { lease }
 }
 
 const acquirePlan = (decision: Extract<ChatDecision, { kind: 'available' }>): RuntimePlan => ({
@@ -267,77 +267,5 @@ describe('ResourceReconciler', () => {
 
     expect(log).toEqual(['iframe-release', 'layout-release', 'presentation-release'])
     scope.dispose()
-  })
-
-  it('keeps a restoring lease instance-scoped until a later observation can finish it', () => {
-    const log: string[] = []
-    const fake = createFakeLease(log)
-    vi.mocked(fake.lease.release).mockImplementation(() => {
-      fake.setState('restoring')
-      log.push('iframe-release')
-    })
-    const resources = new ResourceReconciler({
-      presentation: { sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })), clear: vi.fn() },
-      chatChrome: { sync: vi.fn(), release: vi.fn() },
-      createLease: () => fake.lease,
-    })
-    const observation = createObservation()
-    resources.createIframe(
-      {
-        kind: 'available',
-        videoId: 'video-1',
-        mode: 'live',
-        source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
-      },
-      1,
-    )
-
-    resources.releaseIframe(observation.targets)
-    expect(resources.lease).toBeNull()
-    resources.reconcileRestoring(observation.targets)
-    resources.reconcileRestoring(observation.targets)
-
-    expect(fake.lease.reconcile).toHaveBeenCalledTimes(1)
-    expect(log).toEqual(['iframe-release', 'iframe-restored'])
-  })
-
-  it('disposes an unrestorable iframe when runtime monitoring stops', () => {
-    const log: string[] = []
-    const fake = createFakeLease(log)
-    vi.mocked(fake.lease.release).mockImplementation(() => {
-      fake.setState('restoring')
-      log.push('iframe-release')
-    })
-    const resources = new ResourceReconciler({
-      presentation: { sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })), clear: vi.fn() },
-      chatChrome: { sync: vi.fn(), release: vi.fn() },
-      createLease: () => fake.lease,
-    })
-    const observation = createObservation()
-    resources.createIframe(
-      {
-        kind: 'available',
-        videoId: 'video-1',
-        mode: 'live',
-        source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
-      },
-      1,
-    )
-
-    resources.reconcilePlan(
-      {
-        monitoring: 'inactive',
-        presentation: 'none',
-        chat: { kind: 'none', ensureNativeVisible: false },
-        layout: 'none',
-        retry: { kind: 'none' },
-      },
-      observation,
-      null,
-      vi.fn(),
-    )
-
-    expect(fake.lease.abandonRestore).toHaveBeenCalledOnce()
-    expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(0)
   })
 })

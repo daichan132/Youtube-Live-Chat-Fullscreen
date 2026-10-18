@@ -26,6 +26,17 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer #items {
   border-radius: inherit;
   overflow: hidden;
 }
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown yt-icon,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown svg,
+body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown path,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-icon,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer .ytSpecIconShapeHost,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer svg,
+body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer path {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
 body.custom-yt-app-live-chat-extension tp-yt-paper-item,
 body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item-body,
 body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown tp-yt-paper-item .item,
@@ -44,17 +55,6 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-live-chat-togg
 body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-live-chat-toggle-renderer span,
 body.custom-yt-app-live-chat-extension yt-list-item-view-model {
   color: var(--extension-yt-live-font-color) !important;
-}
-body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown yt-icon,
-body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown svg,
-body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown path,
-body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer yt-icon,
-body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer svg,
-body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer path {
-  color: var(--extension-yt-live-font-color) !important;
-  fill: currentColor !important;
 }
 body.custom-yt-app-live-chat-extension tp-yt-paper-item[disabled],
 body.custom-yt-app-live-chat-extension tp-yt-paper-item[aria-disabled="true"],
@@ -82,4 +82,17 @@ body.custom-yt-app-live-chat-extension ytd-menu-service-item-renderer:hover,
 body.custom-yt-app-live-chat-extension ytd-menu-navigation-item-renderer:hover,
 body.custom-yt-app-live-chat-extension yt-list-item-view-model:hover {
   background: var(--extension-yt-live-menu-hover-background-color) !important;
+}
+
+/* The participants view replaces the chat list, with its own native header. */
+body.custom-yt-app-live-chat-extension yt-live-chat-participant-list-renderer #header {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-participant-list-renderer
+  #back-button
+  :is(button, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
 }

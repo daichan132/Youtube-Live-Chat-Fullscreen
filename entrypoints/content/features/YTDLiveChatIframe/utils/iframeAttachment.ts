@@ -1,4 +1,5 @@
 import {
+  getCurrentLiveChatHost,
   getIframeDocumentHref,
   getIframeVideoId,
   isChatHostForCurrentVideo,
@@ -8,7 +9,6 @@ import {
   YLC_SOURCE_ATTR,
   YLC_SOURCE_LIVE,
 } from '@/entrypoints/content/chat/shared/iframeDom'
-import { YLC_DOCUMENT_STYLE_PROPERTIES } from '@/entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants'
 import type { PageTargets } from '@/entrypoints/content/platform/youtube/types'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
@@ -22,28 +22,15 @@ import {
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
+import {
+  type BorrowedDocumentStyleSnapshot,
+  type BorrowedIframeStyleSnapshot,
+  captureBorrowedDocumentStyle,
+  captureBorrowedIframeStyle,
+  restoreBorrowedDocumentStyle,
+  restoreBorrowedIframeStyle,
+} from './borrowedIframeStyleSnapshot'
 import { uninstallMembershipFallback } from './iframeInitializer'
-
-type InlineStylePropertySnapshot = { value: string; priority: string }
-
-type BorrowedIframeStyleSnapshot = {
-  properties: Map<string, InlineStylePropertySnapshot>
-  allowTransparency: string | null
-}
-
-type CustomFontStyleSnapshot = {
-  element: Element | null
-  parent: ParentNode | null
-  nextSibling: ChildNode | null
-  textContent: string | null
-}
-
-type BorrowedDocumentStyleSnapshot = {
-  documentElementStyles: Map<string, InlineStylePropertySnapshot>
-  bodyBackdropFilter: InlineStylePropertySnapshot
-  bodyWebkitBackdropFilter: InlineStylePropertySnapshot
-  customFontStyle: CustomFontStyleSnapshot
-}
 
 type BorrowedRestoreState = {
   originalParent: ParentNode | null
@@ -73,40 +60,6 @@ const legacyChatOnlyHeightVariables = [
   '--extension-chat-only-restricted-participation-height',
   '--extension-chat-only-sign-in-height',
 ] as const
-const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
-// Capture longhands: shorthand values can be empty when their components
-// have different priorities, and assigning a shorthand discards those priorities.
-const BORROWED_IFRAME_STYLE_PROPERTIES = [
-  'width',
-  'height',
-  'max-width',
-  'border-top-style',
-  'border-right-style',
-  'border-bottom-style',
-  'border-left-style',
-  'border-top-width',
-  'border-right-width',
-  'border-bottom-width',
-  'border-left-width',
-  'outline-color',
-  'outline-style',
-  'outline-width',
-  'position',
-  'z-index',
-  'background-color',
-  'filter',
-  '-webkit-filter',
-] as const
-
-const captureInlineStyleProperty = (style: CSSStyleDeclaration, property: string): InlineStylePropertySnapshot => ({
-  value: style.getPropertyValue(property),
-  priority: style.getPropertyPriority(property),
-})
-
-const restoreInlineStyleProperty = (style: CSSStyleDeclaration, property: string, snapshot: InlineStylePropertySnapshot) => {
-  if (snapshot.value) style.setProperty(property, snapshot.value, snapshot.priority)
-  else style.removeProperty(property)
-}
 
 const getIframeDocument = (iframe: HTMLIFrameElement) => {
   try {
@@ -119,44 +72,8 @@ const getIframeDocument = (iframe: HTMLIFrameElement) => {
 const captureDocumentStyle = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
   if (!doc?.documentElement || !doc.head || !doc.body || restore.documentStyles.has(doc)) return false
-  const customFontStyle = doc.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)
-  restore.documentStyles.set(doc, {
-    documentElementStyles: new Map(
-      YLC_DOCUMENT_STYLE_PROPERTIES.map(property => [property, captureInlineStyleProperty(doc.documentElement.style, property)]),
-    ),
-    bodyBackdropFilter: captureInlineStyleProperty(doc.body.style, 'backdrop-filter'),
-    bodyWebkitBackdropFilter: captureInlineStyleProperty(doc.body.style, '-webkit-backdrop-filter'),
-    customFontStyle: {
-      element: customFontStyle,
-      parent: customFontStyle?.parentNode ?? null,
-      nextSibling: customFontStyle?.nextSibling ?? null,
-      textContent: customFontStyle?.textContent ?? null,
-    },
-  })
+  restore.documentStyles.set(doc, captureBorrowedDocumentStyle(doc))
   return true
-}
-
-const restoreCustomFontStyle = (doc: Document, snapshot: CustomFontStyleSnapshot) => {
-  const current = doc.head?.querySelector(`#${CUSTOM_FONT_STYLE_ID}`) ?? null
-  if (!snapshot.element) {
-    current?.remove()
-    return
-  }
-  if (current && current !== snapshot.element) current.remove()
-  snapshot.element.textContent = snapshot.textContent
-  if (snapshot.element.ownerDocument !== doc || snapshot.element.isConnected) return
-  const parent = snapshot.parent && (snapshot.parent as Node).ownerDocument === doc ? snapshot.parent : doc.head
-  if (!parent) return
-  parent.insertBefore(snapshot.element, snapshot.nextSibling?.parentNode === parent ? snapshot.nextSibling : null)
-}
-
-const restoreDocumentStyle = (doc: Document, snapshot: BorrowedDocumentStyleSnapshot) => {
-  for (const [property, value] of snapshot.documentElementStyles) {
-    restoreInlineStyleProperty(doc.documentElement.style, property, value)
-  }
-  restoreInlineStyleProperty(doc.body.style, 'backdrop-filter', snapshot.bodyBackdropFilter)
-  restoreInlineStyleProperty(doc.body.style, '-webkit-backdrop-filter', snapshot.bodyWebkitBackdropFilter)
-  restoreCustomFontStyle(doc, snapshot.customFontStyle)
 }
 
 export const createManagedLiveIframe = (src: string) => {
@@ -206,42 +123,11 @@ const moveBorrowedIframe = (iframe: HTMLIFrameElement, parent: ParentNode, refer
   }
 }
 
-const captureIframeStyle = (iframe: HTMLIFrameElement): BorrowedIframeStyleSnapshot => {
-  const properties = new Map<string, InlineStylePropertySnapshot>(
-    BORROWED_IFRAME_STYLE_PROPERTIES.map(property => [property, captureInlineStyleProperty(iframe.style, property)]),
-  )
-  for (const shorthand of ['border-style', 'border-width', 'outline']) {
-    const snapshot = captureInlineStyleProperty(iframe.style, shorthand)
-    const components = BORROWED_IFRAME_STYLE_PROPERTIES.filter(property =>
-      shorthand === 'outline' ? property.startsWith('outline-') : property.startsWith('border-') && property.endsWith(shorthand.slice(6)),
-    )
-    // Preserve the original shorthand when it represents every component.
-    // Mixed priorities need the individual declarations instead.
-    if (
-      !snapshot.value ||
-      components.some(property => properties.get(property)?.value && properties.get(property)?.priority !== snapshot.priority)
-    )
-      continue
-    for (const property of components) properties.delete(property)
-    properties.set(shorthand, snapshot)
-  }
-  return { properties, allowTransparency: iframe.getAttribute('allowtransparency') }
-}
-
-const restoreIframeStyle = (iframe: HTMLIFrameElement, style: BorrowedIframeStyleSnapshot) => {
-  iframe.style.removeProperty('border-style')
-  iframe.style.removeProperty('border-width')
-  iframe.style.removeProperty('outline')
-  for (const [property, snapshot] of style.properties) restoreInlineStyleProperty(iframe.style, property, snapshot)
-  if (style.allowTransparency === null) iframe.removeAttribute('allowtransparency')
-  else iframe.setAttribute('allowtransparency', style.allowTransparency)
-}
-
 const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
   if (!doc?.documentElement || !doc.head || !doc.body) return
   const snapshot = restore.documentStyles.get(doc)
-  if (snapshot) restoreDocumentStyle(doc, snapshot)
+  if (snapshot) restoreBorrowedDocumentStyle(doc, snapshot)
   uninstallMembershipFallback(doc)
   doc.body.classList.remove(
     IFRAME_CHAT_BODY_CLASS,
@@ -264,7 +150,7 @@ const isVideoCurrent = (videoId: string | null | undefined) => {
 const resolveNativeHost = (targets?: PageTargets | null) => {
   const candidate = targets?.nativeChatHost
   if (candidate && isChatHostForCurrentVideo(candidate)) return candidate
-  return Array.from(document.querySelectorAll<HTMLElement>('ytd-live-chat-frame')).find(isChatHostForCurrentVideo) ?? null
+  return getCurrentLiveChatHost()
 }
 
 const ensureNativeChatVisible = () => {
@@ -351,7 +237,7 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     nextRestore.originalParent = originalParent
     nextRestore.originalNextSibling = iframe.nextSibling
     nextRestore.placeholder = placeholder
-    nextRestore.iframeStyle = captureIframeStyle(iframe)
+    nextRestore.iframeStyle = captureBorrowedIframeStyle(iframe)
     nextRestore.sourceVideoId = getIframeVideoId(iframe) ?? videoId
     nextRestore.documentStyles = new WeakMap()
     nextRestore.loadListener = () => captureDocumentStyle(iframe, nextRestore)
@@ -387,7 +273,7 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
         iframe.removeAttribute(YLC_SOURCE_ATTR)
         state = 'released'
       } else if (restore) {
-        restoreIframeStyle(iframe, restore.iframeStyle)
+        restoreBorrowedIframeStyle(iframe, restore.iframeStyle)
         cleanupBorrowedDocument(iframe, restore)
         if (!restoreToAvailableTarget(targets)) {
           iframe.remove()

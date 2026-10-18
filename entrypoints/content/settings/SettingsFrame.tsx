@@ -5,14 +5,12 @@ import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { areChatProfilesEqual } from '@/shared/settings/equality'
 import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'
 import { profileAtom, settingsPreviewStateAtom } from '@/shared/state/atoms'
-import type { ChatRuntime } from '../runtime/ChatRuntime'
 import { isSettingsFrameRequest, SETTINGS_FRAME_MESSAGE } from './settingsFrameMessages'
 
 type SettingsFrameProps = {
   returnFocusTo?: HTMLElement | null
   open: boolean
   onClose: () => void
-  runtime: Pick<ChatRuntime, 'getDiagnosticReport' | 'restart'>
 }
 
 const SETTINGS_PAGE_PATH = 'settings.html' as PublicPath
@@ -25,7 +23,7 @@ const getSettingsPageUrl = () => {
   return url.href
 }
 
-export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: SettingsFrameProps) => {
+export const SettingsFrame = ({ open, onClose, returnFocusTo }: SettingsFrameProps) => {
   const store = useStore()
   const frameRef = useRef<HTMLIFrameElement>(null)
   const restoreRef = useRef(false)
@@ -48,13 +46,6 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
           : null
     target?.focus()
   }, [open, returnFocusTo])
-
-  const postDiagnosticReport = () => {
-    frameRef.current?.contentWindow?.postMessage(
-      { type: SETTINGS_FRAME_MESSAGE.diagnosticsReport, report: runtime.getDiagnosticReport() },
-      SETTINGS_PAGE_ORIGIN,
-    )
-  }
 
   useEffect(() => {
     if (!open) store.set(settingsPreviewStateAtom, null)
@@ -81,11 +72,6 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
           normalized && (active || !areChatProfilesEqual(normalized, committed)) ? { profile: normalized, active } : null,
         )
       }
-      if (event.data.type === SETTINGS_FRAME_MESSAGE.diagnosticsRequest) postDiagnosticReport()
-      if (event.data.type === SETTINGS_FRAME_MESSAGE.runtimeRestart) {
-        runtime.restart()
-        postDiagnosticReport()
-      }
     }
 
     window.addEventListener('message', handleMessage)
@@ -101,7 +87,7 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
       window.removeEventListener('message', handleMessage)
       unsubscribeProfile()
     }
-  }, [onClose, open, runtime, store])
+  }, [onClose, open, store])
 
   if (!open) return null
 
@@ -111,10 +97,7 @@ export const SettingsFrame = ({ open, onClose, runtime, returnFocusTo }: Setting
       data-ylc-settings-frame
       src={getSettingsPageUrl()}
       title='YouTube Live Chat Fullscreen settings'
-      onLoad={() => {
-        store.set(settingsPreviewStateAtom, null)
-        postDiagnosticReport()
-      }}
+      onLoad={() => store.set(settingsPreviewStateAtom, null)}
       style={{
         position: 'fixed',
         inset: 0,

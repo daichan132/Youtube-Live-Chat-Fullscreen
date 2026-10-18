@@ -5,11 +5,10 @@ import type { ChatProfile } from '@/shared/settings/model'
 import { normalizeChatProfile } from '@/shared/settings/normalizeSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
 import {
-  applyChatProfilePatch,
+  applyPresetAtom,
   beginStyleGestureAtom,
   type ChatProfilePatch,
-  clearStyleHistoryAtom,
-  commitProfileAtom,
+  commitStylePatchAtom,
   finishStyleGestureAtom,
   previewStylePatchAtom,
   redoStyleAtom,
@@ -21,13 +20,12 @@ const cloneProfile = (profile: ChatProfile) => normalizeChatProfile(profile)
 export type StyleHistoryCommands = {
   getEffectiveChatProfile: () => ChatProfile
   finishYLCStyleGesture: (gestureId?: string) => boolean
-  beginYLCStyleGesture: (id: string, label: string) => void
-  commitYLCStyleUpdate: (patch: ChatProfilePatch, label: string) => void
-  commitYLCProfile: (profile: ChatProfile, label: string) => void
-  previewYLCStyleUpdate: (gestureId: string, patch: ChatProfilePatch, label: string) => void
+  beginYLCStyleGesture: (id: string) => void
+  commitYLCStyleUpdate: (patch: ChatProfilePatch) => void
+  commitYLCProfile: (profile: ChatProfile) => void
+  previewYLCStyleUpdate: (gestureId: string, patch: ChatProfilePatch) => void
   undoYLCStyle: () => boolean
   redoYLCStyle: () => boolean
-  clearYLCStyleHistory: () => void
 }
 
 export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands => ({
@@ -36,28 +34,18 @@ export const createStyleHistoryCommands = (store: Store): StyleHistoryCommands =
     return cloneProfile(editor.draftProfile ?? store.get(chatSettingsStateAtom).profile)
   },
   finishYLCStyleGesture: gestureId => store.set(finishStyleGestureAtom, gestureId),
-  beginYLCStyleGesture: (id, _label) => {
+  beginYLCStyleGesture: id => {
     if (store.get(editorSessionStateAtom).activeGesture?.id === id) return
     store.set(finishStyleGestureAtom)
     store.set(beginStyleGestureAtom, id)
   },
-  commitYLCStyleUpdate: (patch, _label) => {
-    store.set(finishStyleGestureAtom)
-    const current = store.get(chatSettingsStateAtom).profile
-    store.set(commitProfileAtom, applyChatProfilePatch(current, patch))
-  },
-  commitYLCProfile: (profile, _label) => {
-    store.set(finishStyleGestureAtom)
-    store.set(commitProfileAtom, cloneProfile(profile))
-  },
-  previewYLCStyleUpdate: (gestureId, patch, _label) => {
+  commitYLCStyleUpdate: patch => store.set(commitStylePatchAtom, patch),
+  commitYLCProfile: profile => store.set(applyPresetAtom, cloneProfile(profile)),
+  previewYLCStyleUpdate: (gestureId, patch) => {
     store.set(previewStylePatchAtom, { id: gestureId, patch })
   },
   undoYLCStyle: () => store.set(undoStyleAtom),
   redoYLCStyle: () => store.set(redoStyleAtom),
-  clearYLCStyleHistory: () => {
-    store.set(clearStyleHistoryAtom)
-  },
 })
 
 export const useStyleHistoryCommands = () => {

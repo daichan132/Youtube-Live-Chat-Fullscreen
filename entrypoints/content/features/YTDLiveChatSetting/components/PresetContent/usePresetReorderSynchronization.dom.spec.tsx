@@ -71,7 +71,7 @@ describe('preset reorder synchronization', () => {
     measureRows(view.getByTestId('scroll'))
     const handle = view.getByRole('button', { name: 'reorder first' })
     const releasePointerCapture = vi.fn()
-    Object.assign(handle, { setPointerCapture: vi.fn(), hasPointerCapture: () => true, releasePointerCapture })
+    Object.assign(view.getByTestId('scroll'), { setPointerCapture: vi.fn(), hasPointerCapture: () => true, releasePointerCapture })
     fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientY: 0 })
     fireEvent.pointerMove(window, { pointerId: 1, clientY: 90 })
     view.rerender(<Harness ids={['third', 'second']} onCommit={onCommit} />)

@@ -7,6 +7,7 @@ import {
   YLC_BG_DARKEN_PROPERTIES,
   YLC_BG_SURFACE_PROPERTIES,
   YLC_BG_TRANSPARENT_PROPERTIES,
+  YLC_FLOATING_PANEL_BACKGROUND_PROPERTY,
   YLC_FONT_COLOR_LIGHT_PROPERTIES,
   YLC_FONT_COLOR_PROPERTIES,
   YLC_FONT_COLOR_SURFACE_PROPERTIES,
@@ -67,6 +68,12 @@ export const compileStylePatch = (profile: ChatProfile, environment: ChatStyleEn
   setProperties(documentProperties, YLC_BG_TRANSPARENT_PROPERTIES, 'transparent')
   setProperties(documentProperties, YLC_BG_SURFACE_PROPERTIES, toElevatedMenuSurfaceColor(appearance.backgroundColor))
   documentProperties[YLC_PANEL_BACKGROUND_PROPERTY] = toPanelSurfaceColor(appearance.backgroundColor)
+  // This picker floats over live messages. A low-alpha tint lets two layers of
+  // text overlap, even when the main chat is intentionally fully transparent.
+  documentProperties[YLC_FLOATING_PANEL_BACKGROUND_PROPERTY] = toRgbaString(
+    appearance.backgroundColor,
+    Math.max(0.96, appearance.backgroundColor.a),
+  )
 
   const primaryFontColor = toRgbaString(appearance.fontColor)
   const secondaryFontColor = toRgbaString(appearance.fontColor, Math.max(0, appearance.fontColor.a - 0.4))

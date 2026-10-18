@@ -29,42 +29,6 @@ export type ResizeDirection = 'top' | 'left' | 'topLeft' | 'bottomLeft' | 'topRi
 
 const ensurePositiveCoordinate = (value: number): number => Math.max(0, value)
 
-export const isSameLayoutGeometry = (a: LayoutGeometry, b: LayoutGeometry) =>
-  a.coordinates.x === b.coordinates.x &&
-  a.coordinates.y === b.coordinates.y &&
-  a.size.width === b.size.width &&
-  a.size.height === b.size.height
-
-export const fitLayoutWithinViewportWidth = (layout: LayoutGeometry, viewportWidth: number): LayoutGeometry => {
-  const {
-    coordinates: { x, y },
-    size: { width, height },
-  } = layout
-  const overflow = x + width - viewportWidth
-
-  if (overflow <= 0) {
-    return layout
-  }
-
-  const nextX = x - overflow
-  if (nextX >= 0) {
-    return {
-      coordinates: { x: nextX, y },
-      size: { width, height },
-    }
-  }
-
-  const nextWidth = width - overflow
-  if (nextWidth >= 0) {
-    return {
-      coordinates: { x, y },
-      size: { width: nextWidth, height },
-    }
-  }
-
-  return layout
-}
-
 export const getControlRailTop = ({
   chatHeight,
   containerTop,

@@ -1,5 +1,6 @@
 import type { Extension } from '@e2e/fixtures'
 import type { Page } from '@playwright/test'
+import type { ContentStatusResponse } from '../../shared/messaging/contentStatus'
 import type { StoredEnvelope } from '../../shared/settings/repository'
 
 type TestSettings = {
@@ -24,6 +25,20 @@ export const importSettingsViaPopup = async (page: Page, extension: Extension, s
   await page.getByRole('button', { name: 'Apply', exact: true }).click()
   await page.getByText('Import completed.', { exact: true }).waitFor()
 }
+
+/** Query the toolbar popup's public status channel after bringing the target tab to the front. */
+export const readContentStatusViaPopup = (popup: Page): Promise<ContentStatusResponse | null> =>
+  popup.evaluate(async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+    if (tab?.id === undefined) return null
+    try {
+      return await chrome.tabs.sendMessage(tab.id, { type: 'ylc:status' }, { frameId: 0 })
+    } catch {
+      // An uninitialized or missing content script has no responder. Callers
+      // must require a runtime response before asserting absent UI.
+      return null
+    }
+  })
 
 /**
  * Read a settings repository envelope from chrome.storage.local.

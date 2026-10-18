@@ -10,6 +10,8 @@ import { OverlayFrame } from './OverlayFrame'
 
 vi.mock('@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus', () => ({ useDocumentFocus: () => true }))
 
+const flushPointerFrame = () => act(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
+
 describe('OverlayFrame', () => {
   const store = createStore()
   const originalViewport = { width: window.innerWidth, height: window.innerHeight }
@@ -28,7 +30,7 @@ describe('OverlayFrame', () => {
     Object.defineProperty(window, 'innerHeight', { value: originalViewport.height, writable: true, configurable: true })
   })
 
-  it('connects pointer gesture state and commits through the geometry command', () => {
+  it('previews pointer movement and commits the displayed position only when released', async () => {
     const onInteractionStateChange = vi.fn()
     const { getByRole } = renderWithStore(
       <OverlayFrame onInteractionStateChange={onInteractionStateChange}>
@@ -36,10 +38,16 @@ describe('OverlayFrame', () => {
       </OverlayFrame>,
       store,
     )
+    const panel = getByRole('application')
+    expect(panel).toHaveStyle({ left: '100px', top: '60px', width: '300px', height: '300px' })
     const handle = getByRole('button', { name: 'content.aria.dragToMove' })
     fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 100, clientY: 100 })
     expect(onInteractionStateChange).toHaveBeenLastCalledWith('dragging')
     act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 120, clientY: 110 })))
+    await flushPointerFrame()
+    expect(panel).toHaveStyle({ left: '120px', top: '70px', width: '300px', height: '300px' })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(initialGeometry)
+
     act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 1, clientX: 120, clientY: 110 })))
     expect(onInteractionStateChange).toHaveBeenLastCalledWith('idle')
     expect(getByRole('application')).toHaveStyle({ left: '120px', top: '70px', width: '300px', height: '300px' })
@@ -50,7 +58,7 @@ describe('OverlayFrame', () => {
     })
   })
 
-  it('cancels a pointer gesture without leaving the interaction state active', () => {
+  it('discards the visible draft on pointer cancellation without saving it', async () => {
     const onInteractionStateChange = vi.fn()
     const { getByRole } = renderWithStore(
       <OverlayFrame onInteractionStateChange={onInteractionStateChange}>
@@ -58,8 +66,13 @@ describe('OverlayFrame', () => {
       </OverlayFrame>,
       store,
     )
+    const panel = getByRole('application')
     const handle = getByRole('button', { name: 'content.aria.dragToMove' })
     fireEvent.pointerDown(handle, { button: 0, pointerId: 1, clientX: 100, clientY: 100 })
+    act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 1, clientX: 140, clientY: 120 })))
+    await flushPointerFrame()
+    expect(panel).toHaveStyle({ left: '140px', top: '80px' })
+
     act(() => window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 1 })))
     expect(onInteractionStateChange).toHaveBeenLastCalledWith('idle')
     expect(store.get(chatSettingsStateAtom).geometry).toEqual(initialGeometry)

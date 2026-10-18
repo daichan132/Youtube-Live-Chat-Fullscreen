@@ -9,27 +9,14 @@ describe('loadLocaleMessages', () => {
   beforeEach(clearLocaleCache)
   afterEach(() => vi.resetAllMocks())
 
-  it('falls back to English when the selected locale asset is unavailable', async () => {
-    loadAsset.mockImplementation(async asset => {
-      if (asset === '_keys') return ['content.aria.close', 'popup.theme']
-      if (asset === 'ja') throw new Error('Extension asset unavailable')
-      return ['Close', 'Theme']
-    })
-    await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'content.aria.close': 'Close', 'popup.theme': 'Theme' })
-  })
-
-  it.each([
-    { reason: 'not an array', bundle: { 'popup.theme': 'テーマ' } },
-    { reason: 'missing a message', bundle: [] },
-    { reason: 'too many messages', bundle: ['テーマ', '余分'] },
-    { reason: 'a non-string message', bundle: [42] },
-  ])('uses English instead of exposing an invalid selected bundle: $reason', async ({ bundle }) => {
+  it('rejects an unavailable requested locale without choosing another language', async () => {
     loadAsset.mockImplementation(async asset => {
       if (asset === '_keys') return ['popup.theme']
-      return asset === 'ja' ? bundle : ['Theme']
+      if (asset === 'ja') throw new Error('Extension asset unavailable')
+      return ['Theme']
     })
-
-    await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'popup.theme': 'Theme' })
+    await expect(loadLocaleMessages('ja')).rejects.toThrow('Extension asset unavailable')
+    expect(loadAsset).not.toHaveBeenCalledWith('en')
   })
 
   it('rejects when the English base locale is unavailable', async () => {
@@ -51,7 +38,7 @@ describe('loadLocaleMessages', () => {
     await expect(loadLocaleMessages('en')).resolves.toEqual({ 'popup.theme': 'Theme' })
   })
 
-  it('retries the selected locale instead of permanently caching the English fallback', async () => {
+  it('retries a previously unavailable requested locale', async () => {
     let available = false
     loadAsset.mockImplementation(async asset => {
       if (asset === '_keys') return ['popup.theme']
@@ -61,7 +48,7 @@ describe('loadLocaleMessages', () => {
       }
       return ['Theme']
     })
-    await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'popup.theme': 'Theme' })
+    await expect(loadLocaleMessages('ja')).rejects.toThrow('Extension asset unavailable')
     available = true
     await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'popup.theme': 'テーマ' })
   })

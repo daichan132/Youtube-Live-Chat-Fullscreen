@@ -57,7 +57,7 @@ export const FontFamilyInput = () => {
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
 
   const handleCommit = useCallback((nextFontFamily: string) => {
-    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } }, 'fontFamily')
+    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } })
   }, [])
 
   return <FontFamilyInputUI value={fontFamily ?? ''} onCommit={handleCommit} />
@@ -131,6 +131,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
 
   const handleSearchKeyDown = useCallback(
     (event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.nativeEvent.isComposing) return
       if (event.key === 'ArrowDown') {
         event.preventDefault()
         if (!filteredOptions.length) return
@@ -214,20 +215,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
             data-ylc-font-combobox-search='true'
             data-testid='font-family-search'
           />
-          <span
-            aria-live='polite'
-            style={{
-              position: 'absolute',
-              width: '1px',
-              height: '1px',
-              padding: 0,
-              margin: '-1px',
-              overflow: 'hidden',
-              clip: 'rect(0,0,0,0)',
-              whiteSpace: 'nowrap',
-              border: 0,
-            }}
-          >
+          <span aria-live='polite' className='ylc-visually-hidden'>
             {formatMessage(t('content.aria.fontsFound'), { count: filteredOptions.length })}
           </span>
           <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox' aria-live='polite'>

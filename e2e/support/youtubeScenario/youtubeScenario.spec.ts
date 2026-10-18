@@ -87,7 +87,7 @@ describe('YouTube scenario compiler', () => {
     expect(compiled.chatRoutes[0]?.pattern).toBe('**/live_chat_replay?*')
   })
 
-  it('renders an unavailable native replay marker and response', () => {
+  it('serves an unavailable native replay from the real chat route rather than srcdoc', () => {
     const compiled = compileYouTubeScenario(
       createArchiveState({
         video: { id: 'archive-unavailable', title: 'Unavailable fixture', mode: 'archive' },
@@ -99,8 +99,14 @@ describe('YouTube scenario compiler', () => {
       }),
     )
 
-    expect(compiled.watchHtml).toContain('yt-live-chat-unavailable-message-renderer')
-    expect(compiled.chatRoutes[0]?.body).toContain('yt-live-chat-unavailable-message-renderer')
+    expect(compiled.watchHtml).toContain(
+      'src="/live_chat_replay?v=archive-unavailable&amp;continuation=ylc-fixture&amp;fixture-unavailable=1"',
+    )
+    expect(compiled.watchHtml).not.toContain('srcdoc=')
+    expect(compiled.chatRoutes).toContainEqual({
+      pattern: '**/live_chat_replay?*fixture-unavailable=1',
+      body: expect.stringContaining('yt-live-chat-unavailable-message-renderer'),
+    })
   })
 
   it('compiles a no-chat fixture without chat routes or native iframe', () => {
@@ -112,22 +118,26 @@ describe('YouTube scenario compiler', () => {
   })
 
   it('compiles an opaque native continuation with an observable in-memory chat runtime', () => {
-    const compiled = compileYouTubeScenario(createLiveState({
-      chat: { mode: 'live', native: { state: 'playable', continuationVideoId: 'video-1' }, response: 'playable' },
-    }))
+    const compiled = compileYouTubeScenario(
+      createLiveState({
+        chat: { mode: 'live', native: { state: 'playable', continuationVideoId: 'video-1' }, response: 'playable' },
+      }),
+    )
     expect(compiled.watchHtml).toContain('src="/live_chat?continuation=ylc-fixture-video-1"')
     expect(compiled.watchHtml).not.toContain('/live_chat?v=')
     expect(compiled.chatRoutes[0]?.body).toContain('data-ylc-fixture-video-id="video-1"')
   })
 
   it('navigates a src-less native browsing context without declaring an iframe src', () => {
-    const compiled = compileYouTubeScenario(createLiveState({
-      chat: {
-        mode: 'live',
-        native: { state: 'playable', continuationVideoId: 'previous-video', navigateWithoutSrc: true },
-        response: 'playable',
-      },
-    }))
+    const compiled = compileYouTubeScenario(
+      createLiveState({
+        chat: {
+          mode: 'live',
+          native: { state: 'playable', continuationVideoId: 'previous-video', navigateWithoutSrc: true },
+          response: 'playable',
+        },
+      }),
+    )
     const iframe = compiled.spaDocument.bodyHtml.match(/<iframe\b[^>]*>/)?.[0]
     expect(iframe).toBeDefined()
     expect(iframe).not.toMatch(/\bsrc=/)

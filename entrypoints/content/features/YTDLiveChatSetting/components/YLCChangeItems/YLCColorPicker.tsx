@@ -24,19 +24,15 @@ export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) =>
   const onChange = useCallback(
     (color: RgbaColor) => {
       const rgb = fromRgba(color)
-      previewYLCStyleUpdate(
-        gestureId,
-        {
-          appearance: {
-            [settingKey]: settingKey === 'membershipNameColor' ? { mode: 'custom', value: rgb } : rgb,
-          },
+      previewYLCStyleUpdate(gestureId, {
+        appearance: {
+          [settingKey]: settingKey === 'membershipNameColor' ? { mode: 'custom', value: rgb } : rgb,
         },
-        settingKey,
-      )
+      })
     },
     [gestureId, settingKey],
   )
-  const onInteractionStart = useCallback(() => beginYLCStyleGesture(gestureId, settingKey), [gestureId, settingKey])
+  const onInteractionStart = useCallback(() => beginYLCStyleGesture(gestureId), [beginYLCStyleGesture, gestureId])
   const onInteractionEnd = useCallback(() => finishYLCStyleGesture(gestureId), [gestureId])
 
   return (

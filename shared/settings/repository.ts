@@ -97,6 +97,7 @@ export const createSettingsRepository = (
   const watchHandlers = new Set<Parameters<SettingsRepository['watch']>[0]>()
   let storageUnwatchers: (() => void)[] | null = null
   let replacementTail: Promise<void> | null = null
+  let activeLoads = 0
 
   const envelope = <T>(value: T): StoredEnvelope<T> => ({ schemaVersion: 1, writerId, value })
 
@@ -152,6 +153,25 @@ export const createSettingsRepository = (
     }
   }
 
+  const ensureStorageWatchers = () => {
+    if (storageUnwatchers) return
+    storageUnwatchers = PERSISTENCE_DOMAINS.map(domain =>
+      settingsItems[domain].watch(next => {
+        if (!isStoredEnvelope(next) || next.writerId === writerId) return
+        if (domain === 'enabled' && typeof next.value !== 'boolean') return
+        if (domain === 'locale' && typeof next.value !== 'string') return
+        acceptExternalCommit(domain)
+        notifyCommitted(domain, next.value, 'external')
+      }),
+    )
+  }
+
+  const releaseIdleStorageWatchers = () => {
+    if (watchHandlers.size > 0 || activeCount() > 0 || activeLoads > 0 || replacementTail || !storageUnwatchers) return
+    for (const unwatch of storageUnwatchers) unwatch()
+    storageUnwatchers = null
+  }
+
   const readCommittedEnvelope = async (domain: PersistenceDomain) => {
     const [result] = await storage.getItems([settingsItems[domain]])
     return isStoredEnvelope(result?.value) ? result.value : null
@@ -177,6 +197,7 @@ export const createSettingsRepository = (
   const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
+    ensureStorageWatchers()
     const previous = tails.get(domain) ?? Promise.resolve()
     const barrier = replacementTail
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
@@ -211,6 +232,7 @@ export const createSettingsRepository = (
         if (count > 0) activeCounts.set(domain, count)
         else activeCounts.delete(domain)
         publishStatus()
+        releaseIdleStorageWatchers()
       })
     tails.set(domain, current)
     publishStatus()
@@ -233,7 +255,13 @@ export const createSettingsRepository = (
     )
   const saveGeometry = (value: ChatGeometry) =>
     enqueue('geometry', () => settingsItems.geometry.setValue(envelope(normalizeChatGeometry(value, DEFAULT_CHAT_SETTINGS.geometry))))
-  const saveLocale = (value: LocaleCode) => enqueue('locale', () => settingsItems.locale.setValue(envelope(resolveLanguageCode(value))))
+  const saveLocale = (value: LocaleCode, compatibilityVersion?: number) =>
+    enqueue('locale', () => {
+      // A compatibility copy is weaker than an intent received before its queued write starts.
+      if (compatibilityVersion !== undefined && (supersessionVersions.get('locale') ?? 0) !== compatibilityVersion + 1)
+        return Promise.resolve()
+      return settingsItems.locale.setValue(envelope(resolveLanguageCode(value)))
+    })
 
   const throwPersistenceFailure = () => {
     if (failedWrites.size > 0) throw [...failedWrites.values()][0]?.error ?? new Error('Settings persistence failed')
@@ -298,8 +326,10 @@ export const createSettingsRepository = (
       .finally(() => {
         if (replacementTail === current) replacementTail = null
         publishStatus()
+        releaseIdleStorageWatchers()
       })
     replacementTail = current
+    ensureStorageWatchers()
     publishStatus()
     // Drain later edits too, but only
     // after releasing the barrier those edits depend on (never inside it).
@@ -314,13 +344,25 @@ export const createSettingsRepository = (
 
   return {
     load: async () => {
-      const result = await readSettingsSnapshot(legacyLocaleStorage)
-      if (result.compatibilityLocaleToCopy !== null) {
-        void saveLocale(result.compatibilityLocaleToCopy).catch(() => {
-          // Persistence status remains visible; the old locale is not deleted.
-        })
+      activeLoads += 1
+      try {
+        ensureStorageWatchers()
+        const localeVersion = supersessionVersions.get('locale') ?? 0
+        const result = await readSettingsSnapshot(legacyLocaleStorage)
+        if (
+          result.compatibilityLocaleToCopy !== null &&
+          !localSequences.has('locale') &&
+          (supersessionVersions.get('locale') ?? 0) === localeVersion
+        ) {
+          void saveLocale(result.compatibilityLocaleToCopy, localeVersion).catch(() => {
+            // Persistence status remains visible; the old locale is not deleted.
+          })
+        }
+        return result.snapshot
+      } finally {
+        activeLoads -= 1
+        releaseIdleStorageWatchers()
       }
-      return result.snapshot
     },
     saveEnabled,
     saveTheme,
@@ -330,22 +372,11 @@ export const createSettingsRepository = (
     replaceSettings,
     watch: handlers => {
       watchHandlers.add(handlers)
-      if (!storageUnwatchers) {
-        storageUnwatchers = PERSISTENCE_DOMAINS.map(domain =>
-          settingsItems[domain].watch(next => {
-            if (!isStoredEnvelope(next) || next.writerId === writerId) return
-            if (domain === 'enabled' && typeof next.value !== 'boolean') return
-            if (domain === 'locale' && typeof next.value !== 'string') return
-            acceptExternalCommit(domain)
-            notifyCommitted(domain, next.value, 'external')
-          }),
-        )
-      }
+      ensureStorageWatchers()
       return () => {
         watchHandlers.delete(handlers)
-        if (watchHandlers.size !== 0 || !storageUnwatchers) return
-        for (const unwatch of storageUnwatchers) unwatch()
-        storageUnwatchers = null
+        // Pending writes still need external commits to invalidate old retries.
+        releaseIdleStorageWatchers()
       }
     },
     getPersistenceStatus,

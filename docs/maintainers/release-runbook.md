@@ -5,7 +5,7 @@ Chrome Web Store と Firefox Add-ons に新しいバージョンを提出する�
 | ワークフロー | 役割 |
 | --- | --- |
 | [Release candidate](../../.github/workflows/cd.yml) | ビルドと検証を行い、ZIP の SHA-256 とソースコミットを記録した draft release を作る |
-| [Publish proven release](../../.github/workflows/publish.yml) | draft の成果物を照合し、再ビルドせずに同じ ZIP をストアへ提出する |
+| [Publish proven release](../../.github/workflows/publish.yml) | 成功した候補 run の変更不能な Actions artifact を照合し、再ビルドせずに同じ ZIP をストアへ提出する |
 
 実行コマンドは [`package.json`](../../package.json)、公開の制約は [`check-release-workflow.mjs`](../../scripts/verify/check-release-workflow.mjs) を参照する。この文書の更新だけではワークフローは実行されない。
 
@@ -44,6 +44,8 @@ Actions → **Release candidate** → Run workflow で Branch に **main** を�
 5. `yarn e2e:production:chrome`：本番 Chrome ZIP を展開し、test bridge なしで起動
 6. 展開した同じ本番 Chrome ZIP に対する実 YouTube canary
 
+`yarn verify:firefox-source` は `package.json.version` に対応する `.output/youtube-live-chat-fullscreen-<version>-sources.zip` を選ぶ。旧版の ZIP が同じディレクトリに残っていても検証できる。現在版の ZIP がなければ、旧版を代用せずに停止する。
+
 production smoke は `.output/production-smoke/chrome` を作る。canary は `YLC_EXTENSION_OUTPUT_DIR` でそのディレクトリを読み、`YLC_REQUIRE_E2E_BRIDGE=0` で実行する。この順序と参照先を変えると、本番 ZIP に対する確認にならない。
 
 ### canary の判定
@@ -68,7 +70,9 @@ production smoke は `.output/production-smoke/chrome` を作る。canary は `Y
 
 この JSON 自体はテスト結果や実機確認を収集しない。検証の成功は候補ワークフローのログ、手動で確認した範囲はリリースの記録で確認する。
 
-`draft-release` ジョブが annotated タグ `v<version>` と draft release を作り、3 つの ZIP と proof の計 4 ファイルを添付する。同じコミットの既存 draft に対する再実行は、ワークフローが成果物を再添付する。公開済み release は置き換えられない。
+候補は `release-candidate-<run_id>-<run_attempt>` という Actions artifact に保存される。run の再実行は attempt ごとに別の artifact を作る。公開時は指定した run の最新の成功 attempt を照合するため、再実行した場合はその候補で実機確認をやり直す。
+
+`draft-release` ジョブが annotated タグ `v<version>` と draft release を作り、3 つの ZIP と proof の計 4 ファイルを添付する。同じコミットの既存 draft に対する再実行は、ワークフローが成果物を再添付する。公開済み release は置き換えられない。draft の添付と proof は書込権限で差し替えられるため、これらだけで候補の出所を証明することはできない。公開の入力には元の Actions artifact を使う。
 
 ## 4. 候補とリリースノートを確認する
 
@@ -80,9 +84,16 @@ draft 本文は GitHub の自動生成。必要に応じて [リリースノー�
 
 ## 5. ストアへ提出する
 
-Actions → **Publish proven release** → Run workflow で `version` に先頭の `v` を付けない semver を入力する。
+Actions → **Publish proven release** → Run workflow で Branch に **main**、`version` に先頭の `v` を付けない semver、`candidate_run_id` に確認した **Release candidate** の成功 run ID を入力する。run ID は候補 run の URL `/actions/runs/<run_id>` の数値。別の branch やタグからの公開実行は拒否する。
 
-`validate-candidate` はタグ `v<version>` を checkout し、`package.json` のバージョン、draft 状態、proof のコミット、3 つの ZIP のサイズと SHA-256 を確認する。その後、照合済みの成果物を 2 つのジョブへ渡す。
+`validate-candidate` は公開操作を開始した main の固定コミットから検証コードを読み込む。タグのコードは検証前に実行しない。[`release-candidate.mjs`](../../scripts/verify/release-candidate.mjs) が読み取り専用の GitHub API で次を確認する。
+
+- `v<version>` のコミットが検証元 main の履歴に含まれ、その `package.json` のバージョンが一致する
+- run が同じリポジトリの `cd.yml` に属し、fork ではなく main の `workflow_dispatch` で成功・完了している
+- run のソースコミットがタグのコミットと一致する
+- 現在の run attempt に対応する artifact が一つだけあり、期限内で、出所の run・コミット・リポジトリと SHA-256 digest が確認できる
+
+照合した artifact ID でダウンロードし、GitHub が記録した digest と異なる場合は停止する。artifact 内の proof のコミット、指定バージョン、3 つの ZIP のサイズと SHA-256 を追加で照合し、同じ 4 ファイルを公開 run 内の新しい固定 artifact としてストア提出ジョブへ渡す。draft の添付をダウンロードする代替経路はない。提出コードも検証済みの候補コミットを SHA で checkout するため、検証後にタグを変更してもコードの参照先は変わらない。
 
 | ジョブ | environment | 提出方法 |
 | --- | --- | --- |
@@ -96,7 +107,7 @@ environment に required reviewers が設定されている場合は run のペ�
 - Chrome：`CHROME_EXTENSION_ID`、`CHROME_PUBLISHER_ID`、`CHROME_CLIENT_ID`、`CHROME_CLIENT_SECRET`、`REFRESH_TOKEN`。最後の値はワークフロー内で `CHROME_REFRESH_TOKEN` に渡される。
 - Firefox：`FIREFOX_JWT_ISSUER`、`FIREFOX_JWT_SECRET`
 
-両方の提出ジョブが成功すると `publish-github-release` が draft を公開する。ストア提出の成功と、ストアで利用者が更新を取得できる状態は別に確認する。
+両方の提出ジョブが成功すると `publish-github-release` が同じ検証済み artifact から draft の 4 添付を置き換えて公開する。GitHub の Release・タグの書込権限や、公開後の添付の変更制限は別の管理境界になる。main の保護と environment の実行可能 branch・承認設定もリポジトリ設定で維持する。ストア提出の成功と、ストアで利用者が更新を取得できる状態は別に確認する。
 
 ## 6. 提出後の確認
 
@@ -111,10 +122,13 @@ Chrome Web Store と Firefox Add-ons の審査・配信状態を各ダッシュ�
 | canary が `degraded` / `failed` / `not-run` | summary と診断を読み、配信側の前提か拡張の問題かを確認する。修正または有効な対象を確認して候補を再実行する |
 | ストア提出が片方だけ失敗 | GitHub release は draft のまま。成功した側の提出状態を確認し、再提出の影響を把握してから再実行する |
 | proof のコミット・サイズ・ハッシュが不一致 | 成果物を手で差し替えず、候補のソースと添付を確認する。ソース変更が必要なら新しいバージョンの候補を作る |
+| artifact が期限切れ・削除済み、または古い命名規則の候補しかない | 現在の候補ワークフローを main から実行し直し、新しい run ID と artifact で確認する。draft 添付への切替は行わない |
+| failed jobs だけの再実行で最新 attempt の artifact がない | 候補は **Re-run all jobs** で全ジョブをやり直す。前 attempt の artifact に戻して公開しない |
+| run の出所・成功状態・タグとの照合に失敗 | 指定 run ID とタグのコミットを確認する。タグや proof の手修正で検証を迂回しない |
 | 同じバージョンがすでに公開済み | 新しいバージョンの候補を作る。公開済み release はこのワークフローで再提出できない |
 
 ## 独立した canary と契約チェック
 
 [Real YouTube canary](../../.github/workflows/canary.yml) は手動実行の互換性確認で、リリースを自動で開始しない。testing build を使い、CI 上は retry 2 回。release の全件 clean 判定とは用途が異なるが、実行 0 件と失敗はこの経路でも成功扱いしない。
 
-`yarn check` は `check-release-workflow.mjs` を含み、手動実行、clean canary、draft と成果物の照合、再ビルド禁止などの公開契約を検査する。ワークフローを変更したら関連する契約テストとこの文書も更新する。
+`yarn check` は `check-release-workflow.mjs` を含み、手動実行、clean canary、信頼する main と候補 run・artifact ID の照合、digest 不一致時の停止、再ビルド禁止などの公開契約を検査する。ワークフローを変更したら関連する契約テストとこの文書も更新する。

@@ -91,11 +91,11 @@ describe('PresetItem', () => {
     expect(queryByRole('button', { name: 'content.aria.deletePreset' })).toBeNull()
   })
 
-  it('names the preset in every row control so rows do not announce identically', () => {
+  it.each(['Movie Night', "$& $$ $` $' {position}"])('names every row control with the exact preset name %s', name => {
     const profile = store.get(chatSettingsStateAtom).profile
     store.set(chatSettingsStateAtom, {
       ...DEFAULT_CHAT_SETTINGS,
-      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Movie Night', profile }],
+      presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name, profile }],
     })
     store.set(localeStateAtom, {
       ...store.get(localeStateAtom),
@@ -109,9 +109,9 @@ describe('PresetItem', () => {
 
     const { getByRole } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
 
-    expect(getByRole('button', { name: 'Reorder Movie Night' })).toBeInTheDocument()
-    expect(getByRole('button', { name: 'Apply Movie Night' })).toBeInTheDocument()
-    expect(getByRole('button', { name: 'Delete Movie Night' })).toBeInTheDocument()
+    expect(getByRole('button', { name: `Reorder ${name}` })).toBeInTheDocument()
+    expect(getByRole('button', { name: `Apply ${name}` })).toBeInTheDocument()
+    expect(getByRole('button', { name: `Delete ${name}` })).toBeInTheDocument()
   })
 
   it('falls back to the untitled label when a custom preset has no name left', () => {

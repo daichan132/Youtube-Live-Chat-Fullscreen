@@ -21,6 +21,8 @@ Within the panel, [`OverlayFrame.tsx`](../../entrypoints/content/overlay/Overlay
 
 Use the layer constants in [`zIndex.ts`](../../shared/constants/zIndex.ts) for stacking. Keep `data-ylc-*` hooks synchronized with the [E2E page object](../../e2e/pages/ExtensionOverlay.ts) and browser inspection/capture scripts when changing the DOM.
 
+Screen-reader descriptions and live announcements use the shared `.ylc-visually-hidden` utility in [`controls.css`](../../shared/styles/controls.css), loaded by both content and settings roots. Keep their accessible relationships and live-region attributes on the owning controls.
+
 ## Geometry and input
 
 [`useOverlayGeometry.ts`](../../entrypoints/content/overlay/useOverlayGeometry.ts) renders stored geometry against the current player size. Current settings store player-relative ratios and a `pinned` flag; legacy pixel settings are converted after a usable player rectangle is available. Size limits and conversion functions live in [`chatGeometry.ts`](../../shared/settings/chatGeometry.ts). Rendering and commits also pass through [`fitGeometryToViewport.ts`](../../shared/settings/fitGeometryToViewport.ts), which clamps position and size while preserving the 240 × 180 px minimum. Players smaller than that minimum can still overflow.
@@ -36,13 +38,19 @@ The drag button's arrow-key controls and the placement menu move the panel in 10
 
 Automatic placement applies only to unpinned geometry while no gesture or draft is active. [`collectPlayerObstacles.ts`](../../entrypoints/content/platform/youtube/collectPlayerObstacles.ts) measures captions, controls, menus, the end screen, and the settings area. [`autoSafeArea.ts`](../../entrypoints/content/overlay/autoSafeArea.ts) compares the current placement with corner candidates and moves only when its overlap and improvement thresholds are met.
 
-Obstacle mutations are measured once per animation frame, and unchanged rectangles do not trigger a React update. Obstacle observation stops after a successful automatic move or when geometry becomes pinned; player-size observation continues. Auto-placement is separate from chat-runtime reconciliation.
+[`useAutomaticOverlayPlacement.ts`](../../entrypoints/content/overlay/useAutomaticOverlayPlacement.ts) owns obstacle snapshots, observation, and automatic-placement decisions. Obstacle mutations are measured once per animation frame, and unchanged rectangles do not trigger a React update. Obstacle observation stops after a successful automatic move or when geometry becomes pinned; player-size observation continues. `useOverlayGeometry` schedules the reset, observation, and placement effects around player measurement and legacy migration in their original order. Auto-placement is separate from chat-runtime reconciliation.
+
+Preset reordering has a separate [`usePresetReorder.ts`](../../entrypoints/content/features/YTDLiveChatSetting/components/PresetContent/usePresetReorder.ts) session. Pointer and keyboard moves share the order, preview, and announcement update. Each lifted gesture owns its listeners, pointer capture, and auto-scroll frame through one disposable resource owner; a callback from a finished gesture cannot affect the next one. The stationary scroll container or list captures the pointer so moving a row does not cancel the gesture. Preview changes stay in memory until confirmation. Escape, blur, lost capture, or an external list change cancels them.
 
 ## Settings previews and committed styles
 
 The settings UI runs in its own extension-origin `settings.html` iframe and Jotai store. Continuous controls edit a draft; completing a gesture saves the appearance once. [`useSettingsStylePreview.ts`](../../entrypoints/settings/useSettingsStylePreview.ts) sends the draft profile to [`SettingsFrame.tsx`](../../entrypoints/content/settings/SettingsFrame.tsx) once per animation frame so the content overlay updates during editing.
 
 Settings content scrolls vertically without horizontal overflow in both left-to-right and right-to-left locales.
+
+Font search leaves IME composition keys to the input method. Enter chooses a font only after composition has finished, so confirming search text does not also change the saved appearance or undo history.
+
+When Escape reaches a color-picker control or its trigger, it closes that picker and returns focus to the trigger before the settings modal can handle the key. Closing the picker finishes its active appearance gesture through the same cleanup used for removal. A browser-owned Escape can exit native fullscreen before content receives a key event; fullscreen teardown then closes settings and releases chat resources.
 
 The receiver checks the message source, allowed origin, and profile schema. The preview is transient and remains visible until the matching Storage commit arrives, so an earlier save cannot overwrite a later gesture. Closing or reloading the settings frame clears it. Committed settings converge through Storage; see [Settings, state, and storage](settings-and-state.md) for ordering and failure behavior.
 
@@ -56,9 +64,13 @@ The compiler owns color, spacing, font size, display flags, and blur values. You
 
 The React background and iframe document use `backdrop-filter`. Never apply `filter: blur(...)` to the iframe host, which would blur the chat text. The iframe body and inner surfaces use the configured backdrop value; the stylesheet guide explains surface tinting and cascade order.
 
+Inline monetization offers use the profile's neutral surface and text colors, including the Super Sticker preview's close/return controls and the membership gift quantity selector. Preserve colored purchase cards, artwork, and paired sticker-backstory colors. Scope these rules to the borrowed chat document; outer membership and payment dialogs keep YouTube's native palette.
+
+Viewer poll cards float over messages and share the support picker's minimum-opacity surface. Theme question/choice labels, neutral controls and result-bar fills within the poll boundary. YouTube continues to own percentage widths, selected/disabled state and voting; styling must not alter those values or submit an action.
+
 ## Restoring a borrowed iframe
 
-Before styling a borrowed document, [`iframeAttachment.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts) captures the owned inline properties, their priorities, the body's backdrop filters, and any existing custom-font style. Release restores those values and removes extension classes, measurement variables, injected styles, and event fallbacks. Unrelated YouTube styles remain untouched. Managed iframes are removed on release.
+Before styling a borrowed document, [`iframeAttachment.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts) captures its original presentation through [`borrowedIframeStyleSnapshot.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/borrowedIframeStyleSnapshot.ts). That module owns the inline properties, their priorities, the body's backdrop filters, and any existing custom-font style. Attachment still owns when each document is captured and restored. Release restores those values and removes extension classes, measurement variables, injected styles, and event fallbacks. Unrelated YouTube styles remain untouched. Managed iframes are removed on release.
 
 When adding a property, update [`YLC_DOCUMENT_STYLE_PROPERTIES`](../../entrypoints/content/hooks/ylcStyleChange/ylcStyleConstants.ts) and the snapshot/restore code as needed. A property absent from the snapshot can remain in YouTube's native chat after release. Keep shared body classes and marker names in [`styleContract.ts`](../../entrypoints/content/features/YTDLiveChatIframe/constants/styleContract.ts).
 
@@ -75,5 +87,7 @@ Use focused tests for the behavior being changed:
 - Compiled styles, cascade order, and restoration: [`compileStylePatch.unit.spec.ts`](../../entrypoints/content/style/compileStylePatch.unit.spec.ts), [`iframe.spec.ts`](../../entrypoints/content/features/YTDLiveChatIframe/styles/iframe.spec.ts), and [`iframeAttachment.spec.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.spec.ts).
 
 Keep module imports self-contained and ordered, without CSS `@import` or cascade layers. The separate font-loader stylesheet may use an absolute Google Fonts import. Direct `display: none` in the iframe modules is limited to YouTube's native close control; hiding the iframe or its ancestors can throttle chat updates.
+
+The overlay inspection and screenshot CLIs share the self-contained DOM reader in `scripts/verify/overlay-state-reader.mjs`. It reads the same shadow-DOM hooks and geometry in both tools; target selection, fullscreen interaction, output metadata, and success checks remain with each CLI.
 
 Required checks are described in [Testing contracts](../testing/contracts.md). Interaction changes need real pointer/keyboard input, and compositor changes such as blur need pixel review in the affected browser; see [Browser verification](../maintainers/verification-browser.md).

@@ -69,7 +69,7 @@ describe('settings initial focus and keyboard navigation', () => {
     const { commitYLCStyleUpdate } = createStyleHistoryCommands(store)
     renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     await waitFor(() => expect(document.querySelector('.ylc-setting-panel')).toHaveFocus())
-    act(() => commitYLCStyleUpdate({ appearance: { fontSize: initial.appearance.fontSize + 1 } }, 'fontSize'))
+    act(() => commitYLCStyleUpdate({ appearance: { fontSize: initial.appearance.fontSize + 1 } }))
 
     await user.keyboard('{Meta>}z{/Meta}')
 
@@ -155,8 +155,8 @@ describe('settings initial focus and keyboard navigation', () => {
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     view.unmount()
     const { beginYLCStyleGesture, previewYLCStyleUpdate } = createStyleHistoryCommands(store)
-    beginYLCStyleGesture('range:fontSize', 'fontSize')
-    previewYLCStyleUpdate('range:fontSize', { appearance: { fontSize: 15 } }, 'fontSize')
+    beginYLCStyleGesture('range:fontSize')
+    previewYLCStyleUpdate('range:fontSize', { appearance: { fontSize: 15 } })
 
     fireEvent.blur(window)
 

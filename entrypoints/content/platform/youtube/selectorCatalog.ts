@@ -8,6 +8,34 @@ export const playerProbe = { probeId: 'player.v1', selectors: ['#movie_player'] 
 export const rightControlsProbe = { probeId: 'controls.right.v1', selectors: ['.ytp-right-controls'] } as const
 export const nativeChatHostProbe = { probeId: 'chat.host.v1', selectors: ['ytd-live-chat-frame'] } as const
 export const chatContainerProbe = { probeId: 'chat.container.v1', selectors: ['#chat-container'] } as const
+export const secondaryPanelProbe = { probeId: 'watch.secondary.v1', selectors: ['#secondary'] } as const
+export const nativeChatOpenSlotProbe = { probeId: 'chat.open-slot.v1', selectors: ['#show-hide-button'] } as const
+export const nativeChatPanelToggleProbe = {
+  probeId: 'chat.panel-toggle.v1',
+  selectors: [...nativeChatOpenSlotProbe.selectors, '#close-button'],
+} as const
+export const nativeChatSidebarToggleProbe = {
+  probeId: 'chat.sidebar-toggle.v1',
+  selectors: nativeChatHostProbe.selectors.flatMap(host => nativeChatPanelToggleProbe.selectors.map(toggle => `${host} ${toggle}`)),
+} as const
+export const nativeChatTriggerProbe = {
+  probeId: 'chat.trigger.v1',
+  selectors: [...chatContainerProbe.selectors, ...nativeChatHostProbe.selectors, ...nativeChatPanelToggleProbe.selectors],
+} as const
+export const chatControlMetadataBoundaryProbe = {
+  probeId: 'chat.control-metadata-boundary.v1',
+  selectors: [...nativeChatHostProbe.selectors, ...rightControlsProbe.selectors, ...playerProbe.selectors, 'body'],
+} as const
+export const videoOwnerChannelLinkProbe = {
+  probeId: 'watch.owner-channel.v1',
+  selectors: [
+    'ytd-video-owner-renderer a[href^="/@"], ytd-video-owner-renderer a[href^="/channel/"], #owner a[href^="/@"], #owner a[href^="/channel/"]',
+  ],
+} as const
+export const membershipPickerItemProbe = {
+  probeId: 'chat.membership-picker-item.v1',
+  selectors: ['yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]'],
+} as const
 export const nativeChatIframeProbe = {
   probeId: 'chat.iframe.v2',
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
@@ -62,8 +90,8 @@ export const runtimeBoundarySelector = [
   ...nativeChatHostProbe.selectors,
   ...nativeChatIframeProbe.selectors,
   ...chatContainerProbe.selectors,
-  '#show-hide-button',
-  '#secondary',
+  ...nativeChatOpenSlotProbe.selectors,
+  ...secondaryPanelProbe.selectors,
   '#panels-full-bleed-container',
   ...playerLiveUiBoundaryProbe.selectors,
 ].join(', ')
@@ -94,6 +122,14 @@ export const youtubeSelectorCatalog = {
   rightControls: rightControlsProbe,
   nativeChatHost: nativeChatHostProbe,
   chatContainer: chatContainerProbe,
+  secondaryPanel: secondaryPanelProbe,
+  nativeChatOpenSlot: nativeChatOpenSlotProbe,
+  nativeChatPanelToggle: nativeChatPanelToggleProbe,
+  nativeChatSidebarToggle: nativeChatSidebarToggleProbe,
+  nativeChatTrigger: nativeChatTriggerProbe,
+  chatControlMetadataBoundary: chatControlMetadataBoundaryProbe,
+  videoOwnerChannelLink: videoOwnerChannelLinkProbe,
+  membershipPickerItem: membershipPickerItemProbe,
   nativeChatIframe: nativeChatIframeProbe,
   chatRenderer: chatRendererProbe,
   chatItemListRenderer: chatItemListRendererProbe,
@@ -115,6 +151,10 @@ export const youtubeSelectorCatalog = {
 const candidateProbeId = (probe: SelectorProbe, index: number) => `${probe.probeId}.${index + 1}`
 
 export const matchesProbe = (element: Element, probe: SelectorProbe) => probe.selectors.some(selector => element.matches(selector))
+
+/** Find the nearest matching ancestor, independent of fallback selector order. */
+export const closestProbe = <T extends Element>(element: Element, probe: SelectorProbe): T | null =>
+  element.closest<T>(probe.selectors.join(', '))
 
 export const queryFirstProbe = <T extends Element>(
   root: ParentNode,

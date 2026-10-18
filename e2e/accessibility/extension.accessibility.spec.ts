@@ -54,4 +54,26 @@ test.describe('extension accessibility', () => {
       .analyze()
     await expectNoViolations(results)
   })
+
+  test('Escape closes the focused color picker before closing settings', async ({ page }) => {
+    await openDeterministicOverlay(page)
+    const overlay = new ExtensionOverlay(page)
+    await overlay.openSettings()
+    const settings = overlay.settingsFrame()
+    const trigger = settings.getByRole('button', { name: 'Background Color', exact: true })
+    await trigger.click()
+    const picker = settings.getByRole('dialog', { name: 'Color picker', exact: true })
+    const hue = picker.getByRole('slider', { name: 'Hue', exact: true })
+    await hue.focus()
+    await page.keyboard.press('Escape')
+
+    await expect(picker).toHaveCount(0)
+    await expect(settings.locator('.ylc-setting-panel')).toBeVisible()
+    await expect(trigger).toBeFocused()
+    await expect(settings.getByRole('button', { name: 'Undo style change', exact: true })).toBeDisabled()
+
+    await page.keyboard.press('Escape')
+    await expect(page.locator('iframe[data-ylc-settings-frame]')).toHaveCount(0)
+    await expect(page.locator('[data-ylc-settings-btn]')).toBeFocused()
+  })
 })

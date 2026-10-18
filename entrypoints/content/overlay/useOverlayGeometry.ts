@@ -10,9 +10,8 @@ import {
 import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import { commitGeometryAtom, geometryAtom } from '@/shared/state'
 import { deriveResizedLayout, type ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
-import { collectPlayerObstacles, type PlayerObstacle } from '../platform/youtube/collectPlayerObstacles'
-import { playerObstacleBoundarySelector } from '../platform/youtube/selectorCatalog'
-import { chooseAutoSafePlacement, shouldApplyAutoSafePlacement } from './autoSafeArea'
+import { useAutomaticOverlayPlacement } from './useAutomaticOverlayPlacement'
+import type { OverlayInteractionState } from './useOverlayInteraction'
 import { type Point, usePointerSession } from './usePointerSession'
 
 export const GEOMETRY_VIEWPORT_PADDING = 10
@@ -22,16 +21,6 @@ type GeometrySession = {
   direction?: ResizeDirection
   startPoint: Point
   startGeometry: PixelChatGeometry
-}
-
-type InteractionState = 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open'
-
-type ObstacleSnapshot = {
-  player: HTMLElement
-  viewport: { width: number; height: number }
-  settingsOpen: boolean
-  obstacles: PlayerObstacle[]
-  signature: string
 }
 
 const getPlayerElement = (referenceElement: HTMLElement | null) => {
@@ -49,24 +38,6 @@ const readReferenceSize = (element: HTMLElement | null) => {
   return width > 0 && height > 0 ? { width, height } : null
 }
 
-const nodeMatchesOrContainsPlayerObstacle = (node: Node) =>
-  node instanceof Element && (node.matches(playerObstacleBoundarySelector) || node.querySelector(playerObstacleBoundarySelector) !== null)
-
-const mutationTargetTouchesPlayerObstacle = (target: Node, player: HTMLElement) => {
-  const element = target instanceof Element ? target : target.parentElement
-  if (!element) return false
-  const obstacle = element.closest(playerObstacleBoundarySelector)
-  return obstacle !== null && player.contains(obstacle)
-}
-
-export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
-  if (mutation.type === 'attributes') {
-    return mutation.target === player || mutationTargetTouchesPlayerObstacle(mutation.target, player)
-  }
-  if (mutationTargetTouchesPlayerObstacle(mutation.target, player)) return true
-  return [...mutation.addedNodes, ...mutation.removedNodes].some(nodeMatchesOrContainsPlayerObstacle)
-}
-
 export const useOverlayGeometry = ({
   referenceElement,
   settingsOpen = false,
@@ -76,7 +47,7 @@ export const useOverlayGeometry = ({
 }: {
   referenceElement?: HTMLElement | null
   settingsOpen?: boolean
-  interactionState?: InteractionState
+  interactionState?: OverlayInteractionState
   onGestureStart?: (type: GeometrySession['type']) => void
   onGestureEnd?: () => void
 } = {}) => {
@@ -84,13 +55,8 @@ export const useOverlayGeometry = ({
   const commitGeometry = useSetAtom(commitGeometryAtom)
   const playerElement = getPlayerElement(referenceElement ?? null)
   const [referenceSize, setReferenceSize] = useState(() => readReferenceSize(playerElement))
-  const [obstacleRevision, setObstacleRevision] = useState(0)
   const [draftGeometry, setDraftGeometry] = useState<PixelChatGeometry | null>(null)
   const pointerActiveRef = useRef(false)
-  const autoRepositionedRef = useRef(false)
-  const [autoPlacementComplete, setAutoPlacementComplete] = useState(false)
-  const lastObstacleSignatureRef = useRef('')
-  const obstacleSnapshotRef = useRef<ObstacleSnapshot | null>(null)
   const viewportWidth = referenceSize?.width ?? window.innerWidth
   const viewportHeight = referenceSize?.height ?? window.innerHeight
   const viewport = useMemo(() => ({ width: viewportWidth, height: viewportHeight }), [viewportWidth, viewportHeight])
@@ -100,12 +66,6 @@ export const useOverlayGeometry = ({
     [draftGeometry, storedLayout, viewport],
   )
   const pinned = isChatGeometryV2(geometry) ? geometry.pinned : true
-
-  const measureObstacles = useCallback((): ObstacleSnapshot | null => {
-    if (!playerElement) return null
-    const obstacles = collectPlayerObstacles(playerElement, settingsOpen)
-    return { player: playerElement, viewport, settingsOpen, obstacles, signature: JSON.stringify(obstacles) }
-  }, [playerElement, settingsOpen, viewport])
 
   const commitLayout = useCallback(
     (layout: PixelChatGeometry, nextPinned: boolean) => {
@@ -207,12 +167,21 @@ export const useOverlayGeometry = ({
   const moveBy = useCallback((delta: Point) => adjustBy(delta), [adjustBy])
   const resizeBy = useCallback((delta: { width: number; height: number }) => adjustBy({ x: 0, y: 0 }, delta), [adjustBy])
 
-  useLayoutEffect(() => {
-    autoRepositionedRef.current = false
-    setAutoPlacementComplete(false)
-    lastObstacleSignatureRef.current = ''
-    obstacleSnapshotRef.current = null
-  }, [pinned, playerElement])
+  const automaticPlacement = useAutomaticOverlayPlacement({
+    playerElement,
+    referenceSize,
+    viewport,
+    pinned,
+    settingsOpen,
+    interactionState,
+    pointerActiveRef,
+    draftGeometry,
+    displayGeometry,
+    viewportPadding: GEOMETRY_VIEWPORT_PADDING,
+    commitLayout,
+  })
+
+  useLayoutEffect(automaticPlacement.reset, [automaticPlacement.reset])
 
   useLayoutEffect(() => {
     if (!playerElement) return
@@ -232,74 +201,14 @@ export const useOverlayGeometry = ({
     }
   }, [playerElement])
 
-  useLayoutEffect(() => {
-    if (!playerElement || pinned || autoPlacementComplete) return
-    let scheduledFrame: number | null = null
-    const mutationObserver =
-      pinned || typeof MutationObserver === 'undefined'
-        ? null
-        : new MutationObserver(mutations => {
-            if (!mutations.some(mutation => mutationTouchesPlayerObstacle(mutation, playerElement))) return
-            if (scheduledFrame !== null) return
-            scheduledFrame = requestAnimationFrame(() => {
-              scheduledFrame = null
-              const snapshot = measureObstacles()
-              if (!snapshot) return
-              const previous = obstacleSnapshotRef.current
-              obstacleSnapshotRef.current = snapshot
-              // Playback updates progress and time inside the controls even
-              // when their occupied area stays fixed. Publish only new bounds.
-              if (snapshot.signature === previous?.signature) return
-              setObstacleRevision(revision => revision + 1)
-            })
-          })
-    mutationObserver?.observe(playerElement, {
-      attributes: true,
-      attributeFilter: ['aria-hidden', 'class', 'hidden', 'style'],
-      characterData: true,
-      childList: true,
-      subtree: true,
-    })
-    return () => {
-      mutationObserver?.disconnect()
-      if (scheduledFrame !== null) cancelAnimationFrame(scheduledFrame)
-    }
-  }, [pinned, playerElement, autoPlacementComplete, measureObstacles])
+  useLayoutEffect(automaticPlacement.observe, [automaticPlacement.observe])
 
   useLayoutEffect(() => {
     if (!referenceSize || isChatGeometryV2(geometry)) return
     commitGeometry(legacyGeometryToV2(geometry, referenceSize))
   }, [commitGeometry, geometry, referenceSize])
 
-  useLayoutEffect(() => {
-    if (!playerElement || !referenceSize || pinned || autoRepositionedRef.current || pointerActiveRef.current || draftGeometry) return
-    if (interactionState === 'dragging' || interactionState === 'resizing') return
-    const cached = obstacleSnapshotRef.current
-    const snapshot =
-      cached?.player === playerElement && cached.viewport === viewport && cached.settingsOpen === settingsOpen ? cached : measureObstacles()
-    if (!snapshot) return
-    obstacleSnapshotRef.current = snapshot
-    const { obstacles, signature } = snapshot
-    if (signature === lastObstacleSignatureRef.current) return
-    lastObstacleSignatureRef.current = signature
-    const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, obstacles, GEOMETRY_VIEWPORT_PADDING)
-    if (!shouldApplyAutoSafePlacement(placement)) return
-    autoRepositionedRef.current = true
-    setAutoPlacementComplete(true)
-    commitLayout(placement.best.geometry, false)
-  }, [
-    commitLayout,
-    displayGeometry,
-    draftGeometry,
-    interactionState,
-    measureObstacles,
-    obstacleRevision,
-    pinned,
-    playerElement,
-    referenceSize,
-    settingsOpen,
-    viewport,
-  ])
+  useLayoutEffect(automaticPlacement.apply, [automaticPlacement.apply])
 
   return {
     displayGeometry,

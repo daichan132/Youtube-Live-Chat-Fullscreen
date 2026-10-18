@@ -2,7 +2,7 @@
 
 *Part of the architecture set: [overview](../engineering.md) · [Settings, state, and storage](./settings-and-state.md) · [The overlay and iframe styling](./overlay-and-styling.md) · [Internationalization](./i18n.md) — see the [documentation index](../README.md).*
 
-The content script is injected into every `www.youtube.com` page but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, and `/user/<name>/live`. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
+The content script is injected into HTTPS `www.youtube.com` pages but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, and `/user/<name>/live`. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
 
 ## What this owns
 
@@ -60,11 +60,15 @@ DOM nodes never enter diagnostic reports or pure model transitions.
 
 Chat availability uses structural error renderers first. When both the normal chat renderer and its item list are ready, it does not read the accumulated message text: viewer posts are not evidence that chat is disabled. Loading documents without a ready item list retain the plain error-text fallback.
 
-`observeLiveChatDocument` returns readiness and availability from one set of structural queries per observation. It does not cache document results across reconciliations, so a replaced renderer or a newly mounted error is visible on the next pass.
+`chatDocument.ts` owns document access and `observeLiveChatDocument`, which returns readiness and availability from one set of structural queries per observation. It does not cache document results across reconciliations, so a replaced renderer or a newly mounted error is visible on the next pass. Live/archive classification belongs to `collectPageObservation`; there is no separate page-wide playable-chat or inline player-response parser.
 
 ## Selectors and page observation
 
 YouTube selectors used for runtime compatibility live in `platform/youtube/selectorCatalog.ts` as named probes. A probe has a stable diagnostic ID and an ordered fallback list. `queryFirstProbe` reports the first matched fallback; `queryAllProbes` deduplicates nodes found by multiple candidates.
+
+Compatibility fingerprints identify each probe using its catalog ID followed by the candidate suffix. A live-time or live-badge probe is separate evidence and cannot stand in for a missing player probe. Fingerprint code derives these IDs from the catalog rather than maintaining broader prefix strings.
+
+Native panel state, click targets, current-video host lookup, and restoration use the same catalog. `closestProbe` chooses the nearest matching ancestor across all candidates; watch-state checks retain per-variant searches so a stale flexy surface does not hide a current grid surface. Borrowed iframe restoration reuses the adapter's current-host lookup instead of maintaining a second host selector.
 
 The catalog also defines observer boundaries. Active-state selectors and observer selectors are intentionally different when a class can be removed:
 
@@ -99,6 +103,8 @@ YouTube's `yt-page-data-updated` also schedules observation: updates inside the 
 
 Live streams prefer a native `live_chat` iframe and may fall back to a managed `https://www.youtube.com/live_chat?v=<id>` iframe. Archives use only a native playable `live_chat_replay` iframe because no equivalent standalone replay URL exists.
 
+Chat source classification accepts only the exact `https://www.youtube.com` origin and `/live_chat` or `/live_chat_replay` pathname, including relative URLs resolved against the page origin. A chat-like string in another origin, path, query, or fragment is not a chat source. A loaded non-blank document takes precedence over `src`, and a missing or inaccessible document is rejected. An accessible `about:blank` document may use a trusted `src`; observed replay markers are a fallback only while both URLs are blank. Native iframe selection applies this same policy before matching video identity so an unrelated iframe cannot hide a valid chat source.
+
 A managed live iframe is not itself proof that the player is still live. When the player no longer confirms live and YouTube exposes an archive open control, observation treats the managed iframe as superseded. The model releases that live lease, opens the archive panel, and waits for a playable replay iframe instead of keeping the ended live source active.
 
 `transitionRuntimeModel` converts the decision, enabled state, and current lease snapshot into a `RuntimePlan`. Plans express intent (`monitoring`, `presentation`, `chat`, `layout`, `retry`, and optional archive-panel opening), not DOM commands. Every resource field supports `preserve`, which means “do not touch this owner this tick.”
@@ -114,7 +120,11 @@ Four lease types own page mutations:
 - `PlayerLayoutLease` owns fullscreen layout adjustments;
 - `ChatChromeLease` owns presentation changes inside the chat document.
 
+`ChatChromeLease` clears measurements from its previous header and input targets before adopting and measuring replacements. This applies to collapse, expansion, and observer-driven remeasurement, including a target replaced before its mutation callback runs. Expansion settling and release clear every measurement still owned by the lease.
+
 Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. On teardown, the chat iframe is restored before layout and presentation are removed.
+
+Profile and chat-chrome updates wait until the lease is attached; selecting a native iframe does not authorize changing it before borrowing. Before applying a profile to a borrowed document, the reconciler captures that document's original styles even if its load event has not arrived. Capture remains once per document, so later profile changes and load notifications cannot replace the native snapshot with extension styles.
 
 Borrowed iframe restoration tries, in order:
 
@@ -126,13 +136,15 @@ If YouTube replaced every target, restoration remains owned by the reconciler an
 
 ## Recovery and diagnostics
 
+The extension-origin settings page is a web-accessible UI with permission to save preferences. Its manifest CSP permits framing only when every ancestor is either the extension itself or exact `https://www.youtube.com`; a `parentOrigin` query parameter does not authorize embedding. The policy is emitted as MV3 `extension_pages` and converted by WXT to the MV2 string for Firefox. See the [engineering verification notes](../engineering.md#verification-and-release) for the offline production-browser check.
+
 Expected pending chat states use the model backoff:
 
 ```text
 250 ms → 500 ms → 1 s → 2 s → 5 s (capped repetitions)
 ```
 
-The sequence has a finite attempt cap. Exhaustion releases runtime resources and moves the view to `unavailable`.
+Each search or recovery cycle schedules at most 12 retry waits: the first four delays above, followed by eight 5-second waits. This limits scheduled waiting to 43.75 seconds, excluding observation work and animation-frame scheduling. Exhaustion releases runtime resources, hides the loading UI, and moves the view to `unavailable`. A new video/session identity or an explicit recovery starts a fresh budget.
 
 An unexpected reconcile exception records `UNEXPECTED_RUNTIME_ERROR`, clears owned resources best-effort, resets the model and generation scope, and permits one recovery attempt. A second exception stops instead of looping.
 
@@ -151,7 +163,7 @@ Diagnostic reports contain the extension version, browser family, sanitized evid
 - Runtime timers, frames, observers, and listeners are scoped and disposed. `SessionScope.spec.ts`, `ChatRuntime.spec.ts`, and `ChatRuntimeRecovery.spec.ts` pin cleanup and bounded recovery.
 - The old iframe is released before a new video, source, or live/archive mode is acquired. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release and replacement behavior.
 - Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration and native inline style values, including `!important` priorities and mixed border/outline longhands. The snapshot covers only owned properties, so unrelated inline declarations survive.
-- Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries.
+- Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries; `runtimeDiagnosticsPrivacy.dom.spec.ts` exercises the public report with an active borrowed chat containing message text, a viewer name, and URLs.
 - YouTube selector fallbacks have unique IDs and non-empty candidates. `selectorCatalog.spec.ts` also pins stable live-state mutation boundaries.
 - Channel live entries are exercised by URL/unit contracts and deterministic browser fixtures that cover initial activation and same-URL video replacement.
 - Managed live chat transitioning to archive replay without a URL change is exercised by the managed/native handoff fixture.

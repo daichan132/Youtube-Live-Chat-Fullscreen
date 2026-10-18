@@ -19,3 +19,68 @@ body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu 
 body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #menu yt-icon {
   color: var(--extension-yt-live-secondary-font-color);
 }
+
+/* Notice action links use the newer button shape rather than message links.
+   Keep their neutral text legible without changing YouTube's notice artwork. */
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-viewer-engagement-message-renderer
+  #action-button
+  :is(a, button):not(:disabled):not([aria-disabled="true"]),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-viewer-engagement-message-renderer
+  #action-button
+  :is(a, button):not(:disabled):not([aria-disabled="true"])
+  .ytSpecButtonShapeNextButtonTextContent {
+  color: var(--extension-yt-live-font-color) !important;
+}
+
+/* A poll floats over messages. Its neutral card must stay readable even when
+   the main chat background is transparent. Vote state and bar widths stay native. */
+body.custom-yt-app-live-chat-extension yt-live-chat-action-panel-renderer:has(yt-live-chat-poll-renderer) {
+  background: var(--extension-yt-live-floating-panel-background-color) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-renderer {
+  background: transparent !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #endpoint {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice:not([has-voted]) #endpoint:hover {
+  background: var(--extension-yt-live-menu-hover-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice[has-voted] #vote-percentage-bar {
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-header-renderer #main-content,
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-header-renderer #poll-question,
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #label-text,
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #vote-percentage-text {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-header-renderer .metadata {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #selected-icon,
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #selected-icon :is(.ytSpecIconShapeHost, yt-icon, svg, path),
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-header-renderer #menu button:not(:disabled):not([aria-disabled="true"]),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-poll-header-renderer
+  #menu
+  button:not(:disabled):not([aria-disabled="true"])
+  :is(.ytSpecIconShapeHost, yt-icon, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-poll-renderer
+  #button
+  button.ytSpecButtonShapeNextText:not(:disabled):not([aria-disabled="true"]) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #content[disabled] :is(#label-text, #vote-percentage-text),
+body.custom-yt-app-live-chat-extension yt-live-chat-poll-choice #endpoint[aria-disabled="true"] :is(#label-text, #vote-percentage-text) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}

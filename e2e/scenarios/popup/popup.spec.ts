@@ -5,6 +5,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { openDeterministicOverlay } from '@e2e/support/deterministicSurfaces'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
+import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatGeometryV2, ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
@@ -115,7 +116,39 @@ test.describe('popup', { tag: '@popup' }, () => {
     }
   })
 
-  test('popup renders language selector and chat toggle', async ({ page, extension }) => {
+  test('keeps font search composition separate from committing the highlighted option', async ({ page, extension }) => {
+    expect(await patchOverlayStore(extension, { profile: { appearance: { fontFamily: 'Roboto' } } })).not.toBeNull()
+    await page.goto(extension.url('settings.html'))
+    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
+    const savedFont = async () =>
+      (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontFamily
+    await trigger.click()
+    const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
+    await expect(search).toBeFocused()
+    const cdp = await page.context().newCDPSession(page)
+    try {
+      await cdp.send('Input.imeSetComposition', { text: 'Roboto Slab', selectionStart: 11, selectionEnd: 11 })
+      await expect(page.getByRole('option', { name: 'Roboto Slab', exact: true })).toBeVisible()
+      await page.keyboard.press('Enter')
+
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+      expect(await savedFont()).toBe('Roboto')
+      await expect(undo).toBeDisabled()
+
+      await cdp.send('Input.insertText', { text: 'Roboto Slab' })
+      await page.keyboard.press('Enter')
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+      await expect(trigger).toHaveText('Roboto Slab')
+      await expect.poll(savedFont).toBe('Roboto Slab')
+      await undo.click()
+      await expect.poll(savedFont).toBe('Roboto')
+    } finally {
+      await cdp.detach()
+    }
+  })
+
+  test('popup chat toggle persists across reopening', async ({ page, extension }) => {
     test.setTimeout(90000)
 
     await page.goto(extension.url('popup.html'))
@@ -128,12 +161,19 @@ test.describe('popup', { tag: '@popup' }, () => {
     const chatToggle = page.locator('[role="switch"]')
     await expect(chatToggle).toHaveCount(1)
 
-    const initialChecked = await chatToggle.getAttribute('aria-checked')
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
+    await chatToggle.click()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'false')
+    await expect.poll(async () => (await readStorageEntry<boolean>(page, ENABLED_STORAGE_KEY))?.value).toBe(false)
 
+    await page.reload()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'false')
     await chatToggle.click()
-    await expect.poll(async () => chatToggle.getAttribute('aria-checked')).toBe(initialChecked === 'true' ? 'false' : 'true')
-    await chatToggle.click()
-    await expect.poll(async () => chatToggle.getAttribute('aria-checked')).toBe(initialChecked)
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
+    await expect.poll(async () => (await readStorageEntry<boolean>(page, ENABLED_STORAGE_KEY))?.value).toBe(true)
+
+    await page.reload()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
 
     const donateLink = page.locator('a[href*="ko-fi.com"]')
     await expect(donateLink).toHaveCount(1)
@@ -192,6 +232,32 @@ test.describe('popup', { tag: '@popup' }, () => {
     expect(Number.isNaN(Date.parse(backup.exportedAt))).toBe(false)
   })
 
+  test('rejects a compact legacy backup with excessive duplicate presets before confirmation', async ({ page, extension }) => {
+    await page.goto(extension.url('popup.html'))
+    await page.getByLabel('Select language').waitFor({ state: 'visible' })
+    const before = await extension.storage.get()
+    const buffer = Buffer.from(
+      JSON.stringify({
+        version: 1,
+        globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
+        ytdLiveChat: { presetItemIds: Array(8000).fill('a'), presetItemStyles: { a: {} } },
+      }),
+    )
+    expect(buffer.byteLength).toBeLessThan(40000)
+
+    await page.locator('input[type="file"]').setInputFiles({
+      name: 'duplicate-presets.json',
+      mimeType: 'application/json',
+      buffer,
+    })
+
+    await expect(page.getByText("Couldn't import this settings file.", { exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Apply', exact: true })).toHaveCount(0)
+    expect(await extension.storage.get()).toEqual(before)
+    await page.getByRole('button', { name: 'Close', exact: true }).click()
+    await expect(page.getByText("Couldn't import this settings file.", { exact: true })).toHaveCount(0)
+  })
+
   test('saved presets remain editable, reorderable, and applicable in settings', async ({ page, extension }) => {
     test.setTimeout(90000)
 
@@ -219,18 +285,56 @@ test.describe('popup', { tag: '@popup' }, () => {
     await savedName.press('Tab')
 
     const reorderSaved = page.getByRole('button', { name: 'Reorder Reading layout', exact: true })
+    const displayedPresetNames = () => presetNames.evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value))
+    // Read in this extension page so checking storage never blurs a held gesture.
+    const storedPresetNames = async () =>
+      (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.presets.map(preset =>
+        preset.kind === 'builtin' ? preset.id : preset.name,
+      )
     await reorderSaved.focus()
     await page.keyboard.press('ArrowUp')
-    await expect
-      .poll(() => presetNames.evaluateAll(inputs => inputs.map(input => (input as HTMLInputElement).value)))
-      .toEqual(['Standard', 'Reading layout', 'Existing style'])
-    await expect
-      .poll(async () =>
-        (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets.map(preset =>
-          preset.kind === 'builtin' ? preset.id : preset.name,
-        ),
-      )
-      .toEqual(['standard', 'Reading layout', 'Existing style'])
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+    await expect.poll(storedPresetNames).toEqual(['standard', 'Reading layout', 'Existing style'])
+
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('ArrowUp')
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['standard', 'Reading layout', 'Existing style'])
+    await page.keyboard.press('Escape')
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+
+    const firstRow = page.locator('[data-ylc-preset-item]').first()
+    const handleBox = await reorderSaved.boundingBox()
+    const firstRowBox = await firstRow.boundingBox()
+    if (!handleBox || !firstRowBox) throw new Error('Missing visible preset reorder targets')
+    const pointerX = handleBox.x + handleBox.width / 2
+    await page.mouse.move(pointerX, handleBox.y + handleBox.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(pointerX, firstRowBox.y + firstRowBox.height / 4, { steps: 4 })
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['standard', 'Reading layout', 'Existing style'])
+    await page.mouse.up()
+    await expect.poll(storedPresetNames).toEqual(['Reading layout', 'standard', 'Existing style'])
+
+    const movedHandleBox = await reorderSaved.boundingBox()
+    const lastRowBox = await page.locator('[data-ylc-preset-item]').last().boundingBox()
+    if (!movedHandleBox || !lastRowBox) throw new Error('Missing visible preset cancellation targets')
+    await page.mouse.move(pointerX, movedHandleBox.y + movedHandleBox.height / 2)
+    await page.mouse.down()
+    await page.mouse.move(pointerX, lastRowBox.y + (lastRowBox.height * 3) / 4, { steps: 4 })
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Existing style', 'Reading layout'])
+    await page.keyboard.press('Escape')
+    await page.mouse.up()
+    await expect.poll(displayedPresetNames).toEqual(['Reading layout', 'Standard', 'Existing style'])
+    expect(await storedPresetNames()).toEqual(['Reading layout', 'standard', 'Existing style'])
+
+    await reorderSaved.focus()
+    await page.keyboard.press('Enter')
+    await page.keyboard.press('ArrowDown')
+    await page.keyboard.press('Enter')
+    await expect(reorderSaved).toBeFocused()
+    await expect.poll(displayedPresetNames).toEqual(['Standard', 'Reading layout', 'Existing style'])
+    await expect.poll(storedPresetNames).toEqual(['standard', 'Reading layout', 'Existing style'])
 
     await page.getByRole('button', { name: 'Apply Existing style', exact: true }).click()
     await expect
@@ -253,6 +357,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     await scenario.enterFullscreen()
     await overlay.expectSwitchReady({ timeout: 12000 })
     await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.installChatTypographyProbe()
 
     const popup = await page.context().newPage()
     const firstPreset: PresetEntry = {
@@ -278,7 +383,9 @@ test.describe('popup', { tag: '@popup' }, () => {
       const first = importedSettings(22, firstPreset)
       await importSettingsViaPopup(popup, extension, importBackup(first))
       await page.bringToFront()
-      await expect.poll(() => overlay.getAppliedFontSize()).toBe('22px')
+      await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ variable: '22px', renderedFontSize: '22px' })
+      // The backup stores player ratios. These fixed pixels are the independent
+      // contract for a 1280 × 720 player, not output from the geometry renderer.
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
@@ -295,7 +402,7 @@ test.describe('popup', { tag: '@popup' }, () => {
       })
       await importSettingsViaPopup(popup, extension, importBackup(second))
       await page.bringToFront()
-      await expect.poll(() => overlay.getAppliedFontSize()).toBe('31px')
+      await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ variable: '31px', renderedFontSize: '31px' })
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({

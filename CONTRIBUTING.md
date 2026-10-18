@@ -26,6 +26,8 @@ yarn install --immutable
 yarn dev
 ```
 
+Dependency install scripts are disabled by default in [`.yarnrc.yml`](.yarnrc.yml). The `dependenciesMeta` allowlist in [`package.json`](package.json) enables only `esbuild` and `lefthook`, which need their installation steps. Review a dependency's install scripts before adding it to this allowlist; do not enable scripts globally to resolve an installation warning. The repository's own setup scripts still run.
+
 To load the development build in regular Google Chrome:
 
 1. Open `chrome://extensions` and turn on **Developer mode**.

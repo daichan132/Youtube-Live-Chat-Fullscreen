@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import path from 'node:path'
 import { chromium } from '@playwright/test'
 import { captureFullscreenSurface, parseCaptureArgs, resolveCapturePage } from './capture-support.mjs'
+import { readOverlayState } from './overlay-state-reader.mjs'
 import { verifyCdpProfile } from './verification-target.mjs'
 
 const DEFAULT_PORT = 9335
@@ -21,68 +22,6 @@ if (!Number.isFinite(timeout) || timeout <= 0) throw new Error('Invalid capture 
 if (background) await verifyCdpProfile({ port, profileDir: args.get('profile') })
 
 const browser = await chromium.connectOverCDP(`http://127.0.0.1:${port}`)
-
-const deepOverlayState = () => {
-  const findDeep = predicate => {
-    let found = null
-
-    const walk = root => {
-      for (const element of root.querySelectorAll('*')) {
-        if (predicate(element)) {
-          found = element
-          return
-        }
-        if (element.shadowRoot) {
-          walk(element.shadowRoot)
-          if (found) return
-        }
-      }
-    }
-
-    walk(document)
-    return found
-  }
-
-  const rectOf = element => {
-    if (!element) return null
-    const rect = element.getBoundingClientRect()
-    const style = window.getComputedStyle(element)
-    return {
-      tag: element.tagName.toLowerCase(),
-      x: Math.round(rect.x),
-      y: Math.round(rect.y),
-      width: Math.round(rect.width),
-      height: Math.round(rect.height),
-      opacity: style.opacity,
-      pointerEvents: style.pointerEvents,
-      display: style.display,
-      background: style.backgroundColor,
-      transform: style.transform,
-    }
-  }
-
-  const controlRail = findDeep(element => element.hasAttribute('data-ylc-control-rail'))
-  const frame = findDeep(element => element.hasAttribute('data-ylc-draggable-frame'))
-  const resizable = findDeep(element => element.hasAttribute('data-ylc-resizable'))
-  const chatInner = findDeep(element => element.hasAttribute('data-ylc-chat-inner'))
-  const settingsButton = findDeep(element => element.hasAttribute('data-ylc-settings-btn'))
-  const dragHandle = findDeep(element => element.hasAttribute('data-ylc-drag-handle'))
-  const extensionIframe = findDeep(element => element.matches?.('iframe[data-ylc-chat="true"]'))
-
-  return {
-    fullscreen: document.fullscreenElement !== null,
-    overlayMounted: Boolean(findDeep(element => element.hasAttribute('data-ylc-overlay-container'))),
-    elements: {
-      resizable: rectOf(resizable),
-      frame: rectOf(frame),
-      chatInner: rectOf(chatInner),
-      controlRail: rectOf(controlRail),
-      settingsButton: rectOf(settingsButton),
-      dragHandle: rectOf(dragHandle),
-      extensionIframe: rectOf(extensionIframe),
-    },
-  }
-}
 
 const waitFor = async (page, predicate, errorMessage) => {
   const deadline = Date.now() + timeout
@@ -121,7 +60,7 @@ try {
   await muteVideos(page)
   if (background) {
     const { png, state, clip, method, captureAttempts } = await captureFullscreenSurface(page, {
-      stateReader: deepOverlayState,
+      stateReader: readOverlayState,
       videoOnly: args.has('video-only'),
       requireComposer: args.has('require-composer'),
       viewport: args.get('viewport'),
@@ -157,7 +96,7 @@ try {
     const capture = async (name, label) => {
       const file = path.join(outDir, name)
       await page.screenshot({ path: file, fullPage: false })
-      const state = await page.evaluate(deepOverlayState)
+      const state = await page.evaluate(readOverlayState)
       screenshots.push({ label, file })
       states.push({ label, state })
       return file
@@ -191,28 +130,10 @@ try {
 
     await waitFor(
       page,
-      () =>
-        page.evaluate(() => {
-          const findDeep = predicate => {
-            let found = null
-            const walk = root => {
-              for (const element of root.querySelectorAll('*')) {
-                if (predicate(element)) {
-                  found = element
-                  return
-                }
-                if (element.shadowRoot) {
-                  walk(element.shadowRoot)
-                  if (found) return
-                }
-              }
-            }
-            walk(document)
-            return found
-          }
-
-          return document.fullscreenElement !== null && Boolean(findDeep(element => element.hasAttribute('data-ylc-resizable')))
-        }),
+      async () => {
+        const state = await page.evaluate(readOverlayState)
+        return state.fullscreen && Boolean(state.elements.resizable)
+      },
       'Fullscreen overlay did not mount.',
     )
 
@@ -224,7 +145,7 @@ try {
     const chatRect = await waitFor(
       page,
       async () => {
-        const state = await page.evaluate(deepOverlayState)
+        const state = await page.evaluate(readOverlayState)
         return state.elements.chatInner
       },
       'Chat inner was not found.',
@@ -236,7 +157,7 @@ try {
     const handleRect = await waitFor(
       page,
       async () => {
-        const state = await page.evaluate(deepOverlayState)
+        const state = await page.evaluate(readOverlayState)
         return state.elements.dragHandle
       },
       'Drag handle was not found.',
@@ -254,7 +175,7 @@ try {
     const loweredHandleRect = await waitFor(
       page,
       async () => {
-        const state = await page.evaluate(deepOverlayState)
+        const state = await page.evaluate(readOverlayState)
         return state.elements.dragHandle
       },
       'Drag handle was not found after first drag.',
@@ -270,7 +191,7 @@ try {
     const bottomChatRect = await waitFor(
       page,
       async () => {
-        const state = await page.evaluate(deepOverlayState)
+        const state = await page.evaluate(readOverlayState)
         return state.elements.chatInner
       },
       'Chat inner was not found near bottom.',

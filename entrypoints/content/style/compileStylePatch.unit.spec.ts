@@ -29,6 +29,19 @@ describe('compileStylePatch', () => {
     expect(patch.documentProperties['--extension-yt-live-panel-background-color']).toBe(panel)
   })
 
+  it('keeps floating picker text separate from underlying messages without changing main-chat transparency', () => {
+    for (const alpha of [0, 0.4, 0.94, 1]) {
+      const patch = compileStylePatch(createProfile({ backgroundColor: { r: 12, g: 34, b: 56, a: alpha } }), {
+        membershipDefaultColor: null,
+        firefox: false,
+      })
+      expect(patch.documentProperties['--extension-yt-live-floating-panel-background-color']).toBe(
+        `rgba(12, 34, 56, ${Math.max(0.96, alpha)})`,
+      )
+      expect(patch.documentProperties['--yt-live-chat-background-color']).toBe('transparent')
+    }
+  })
+
   it('uses the runtime YouTube membership color without changing the profile', () => {
     const profile = createProfile({ membershipNameColor: { mode: 'youtube-default' } })
     const patch = compileStylePatch(profile, {

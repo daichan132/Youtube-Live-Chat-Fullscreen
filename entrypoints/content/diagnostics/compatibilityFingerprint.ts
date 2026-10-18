@@ -1,3 +1,11 @@
+import {
+  archivePlayerChatToggleProbe,
+  archiveSidebarOpenControlProbe,
+  nativeChatIframeProbe,
+  playerProbe,
+  rightControlsProbe,
+  type SelectorProbe,
+} from '../platform/youtube/selectorCatalog'
 import type { PageEvidence } from '../platform/youtube/types'
 
 export type CompatibilityFingerprint = {
@@ -19,7 +27,8 @@ export type CompatibilityAssessment = {
   reasons: readonly string[]
 }
 
-const findProbe = (probeIds: readonly string[], prefix: string) => probeIds.find(probeId => probeId.startsWith(prefix)) ?? null
+const findProbe = (probeIds: readonly string[], probe: SelectorProbe) =>
+  probeIds.find(probeId => probeId.startsWith(`${probe.probeId}.`)) ?? null
 
 const sourceFromEvidence = (sourceKind: PageEvidence['sourceKind']): CompatibilityFingerprint['source'] => {
   if (sourceKind === 'native-live') return 'borrowed-live'
@@ -35,10 +44,11 @@ const modeFromEvidence = (evidence: PageEvidence): CompatibilityFingerprint['mod
 }
 
 export const buildCompatibilityFingerprint = (evidence: PageEvidence): CompatibilityFingerprint => ({
-  playerProbe: findProbe(evidence.probeIds, 'player.'),
-  controlsProbe: findProbe(evidence.probeIds, 'controls.right.'),
-  chatProbe: findProbe(evidence.probeIds, 'chat.iframe.'),
-  archiveControlProbe: findProbe(evidence.probeIds, 'chat.archive.sidebar.') ?? findProbe(evidence.probeIds, 'chat.archive.player.'),
+  playerProbe: findProbe(evidence.probeIds, playerProbe),
+  controlsProbe: findProbe(evidence.probeIds, rightControlsProbe),
+  chatProbe: findProbe(evidence.probeIds, nativeChatIframeProbe),
+  archiveControlProbe:
+    findProbe(evidence.probeIds, archiveSidebarOpenControlProbe) ?? findProbe(evidence.probeIds, archivePlayerChatToggleProbe),
   mode: modeFromEvidence(evidence),
   source: sourceFromEvidence(evidence.sourceKind),
   capabilities: {

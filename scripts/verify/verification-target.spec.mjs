@@ -1,12 +1,90 @@
 import { mkdtemp, rm, symlink } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
-import { afterEach, describe, expect, it } from 'vitest'
-import { assertVerificationProfile, commandArgument, verifyCdpProfile } from './verification-target.mjs'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+import { assertVerificationProfile, commandArgument, createBackgroundPage, verifyCdpProfile } from './verification-target.mjs'
 
 const temporary = []
 afterEach(async () => {
+  vi.useRealTimers()
   await Promise.all(temporary.splice(0).map(directory => rm(directory, { recursive: true, force: true })))
+})
+
+const backgroundBrowser = ({ navigationError, cleanupError, attached = true } = {}) => {
+  const targets = new Set(['existing'])
+  const existing = { id: 'existing' }
+  const owned = {
+    id: 'owned',
+    goto: vi.fn(async () => {
+      if (navigationError) throw navigationError
+    }),
+  }
+  const detach = vi.fn(async () => {
+    if (cleanupError) throw cleanupError
+  })
+  const cdp = {
+    send: vi.fn(async (method, options) => {
+      if (method === 'Target.createTarget') {
+        targets.add('owned')
+        return { targetId: 'owned' }
+      }
+      if (method === 'Target.closeTarget') {
+        if (cleanupError) throw cleanupError
+        targets.delete(options.targetId)
+        return { success: true }
+      }
+      throw new Error(`Unexpected command: ${method}`)
+    }),
+    detach,
+  }
+  const context = {
+    pages: () => (attached ? [existing, owned] : []),
+    newCDPSession: async page => ({ send: async () => ({ targetInfo: { targetId: page.id } }), detach }),
+  }
+  const browser = { newBrowserCDPSession: async () => cdp, contexts: () => [context] }
+  return { browser, targets, owned, cdp }
+}
+
+describe('owned background target lifetime', () => {
+  it('closes only its own target when navigation fails', async () => {
+    const navigationError = new Error('navigation failed')
+    const fixture = backgroundBrowser({ navigationError })
+
+    await expect(createBackgroundPage(fixture.browser, 'https://example.invalid/')).rejects.toBe(navigationError)
+
+    expect([...fixture.targets]).toEqual(['existing'])
+    expect(fixture.cdp.send).toHaveBeenCalledWith('Target.closeTarget', { targetId: 'owned' })
+  })
+
+  it('also closes an owned target that never attaches', async () => {
+    vi.useFakeTimers()
+    const fixture = backgroundBrowser({ attached: false })
+    const rejected = expect(createBackgroundPage(fixture.browser, 'about:blank')).rejects.toThrow('not attached')
+
+    await vi.runAllTimersAsync()
+    await rejected
+
+    expect([...fixture.targets]).toEqual(['existing'])
+  })
+
+  it('preserves the navigation error when target or session cleanup fails', async () => {
+    const navigationError = new Error('navigation failed')
+    const fixture = backgroundBrowser({ navigationError, cleanupError: new Error('cleanup failed') })
+
+    await expect(createBackgroundPage(fixture.browser, 'https://example.invalid/')).rejects.toBe(navigationError)
+
+    expect(fixture.cdp.send).toHaveBeenCalledWith('Target.closeTarget', { targetId: 'owned' })
+    expect(fixture.targets.has('existing')).toBe(true)
+  })
+
+  it('transfers the successfully navigated target to the caller without closing it', async () => {
+    const fixture = backgroundBrowser()
+
+    await expect(createBackgroundPage(fixture.browser, 'about:blank')).resolves.toBe(fixture.owned)
+
+    expect([...fixture.targets]).toEqual(['existing', 'owned'])
+    expect(fixture.cdp.send).not.toHaveBeenCalledWith('Target.closeTarget', expect.anything())
+  })
 })
 
 describe('verification profile boundary', () => {

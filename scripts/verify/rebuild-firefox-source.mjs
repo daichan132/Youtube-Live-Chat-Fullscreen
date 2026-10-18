@@ -7,18 +7,12 @@ import { tmpdir } from 'node:os'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
+import { findFirefoxSourceZip } from './firefox-source-archive.mjs'
 
 const exec = promisify(execFile)
 const projectRoot = resolve(fileURLToPath(new URL('../..', import.meta.url)))
 const outputDirectory = join(projectRoot, '.output')
 const expectedDirectory = join(outputDirectory, 'firefox-mv2')
-
-const findSourceZip = async () => {
-  const names = await readdir(outputDirectory)
-  const matches = names.filter(name => name.endsWith('-sources.zip'))
-  assert.equal(matches.length, 1, `Expected one Firefox source ZIP, found: ${matches.join(', ') || 'none'}`)
-  return join(outputDirectory, matches[0])
-}
 
 const inventory = async directory => {
   const result = new Map()
@@ -43,7 +37,8 @@ const inventory = async directory => {
   return result
 }
 
-const sourceZip = await findSourceZip()
+const packageJson = JSON.parse(await readFile(join(projectRoot, 'package.json'), 'utf8'))
+const sourceZip = await findFirefoxSourceZip(outputDirectory, packageJson.version)
 await stat(expectedDirectory)
 const temporaryDirectory = await mkdtemp(join(tmpdir(), 'ylc-firefox-source-'))
 

@@ -1,8 +1,7 @@
 import { toGoogleFontFamilyParam } from '@/shared/utils/fontFamilyFormat'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import { CUSTOM_FONT_STYLE_ID } from '../features/YTDLiveChatIframe/constants/styleContract'
 
-// This id is part of iframeAttachment's borrowed-document restore contract.
-const CUSTOM_FONT_STYLE_ID = 'custom-font-style'
 const loadedFontsByDocument = new WeakMap<Document, Set<string>>()
 
 const getLoadedFonts = (document: Document) => {

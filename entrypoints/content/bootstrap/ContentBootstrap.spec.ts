@@ -45,32 +45,34 @@ describe('ContentBootstrap', () => {
     expect(createSession).not.toHaveBeenCalled()
   })
 
-  it('accepts the URL supplied by WXT location changes', async () => {
-    const session = { dispose: vi.fn() }
-    const createSession = vi.fn(async () => session)
-    const bootstrap = new ContentBootstrap(createSession, { readHref: () => 'https://www.youtube.com/' })
-    bootstraps.push(bootstrap)
-    bootstrap.start()
-
-    await bootstrap.reconcileLocation('https://www.youtube.com/watch?v=live')
-
-    expect(createSession).toHaveBeenCalledTimes(1)
-  })
-
-  it('creates one session on supported navigation and disposes it when leaving', async () => {
+  it('installs the session for the WXT destination once that destination is current', async () => {
     let href = 'https://www.youtube.com/'
+    const destination = 'https://www.youtube.com/watch?v=live'
+    const pending = deferred<ContentSession>()
     const session = { dispose: vi.fn() }
-    const createSession = vi.fn(async () => session)
+    const createSession = vi.fn(() => pending.promise)
     const bootstrap = new ContentBootstrap(createSession, { readHref: () => href })
     bootstraps.push(bootstrap)
     bootstrap.start()
+    expect(bootstrap.getStatus().status).toBe('unsupported')
 
-    href = 'https://www.youtube.com/watch?v=live'
-    await bootstrap.reconcileLocation()
+    // The supplied URL can begin lazy startup before a location accessor catches up.
+    const activation = bootstrap.reconcileLocation(destination)
+    await flushAsyncWork()
     expect(createSession).toHaveBeenCalledTimes(1)
+    expect(session.dispose).not.toHaveBeenCalled()
+
+    href = destination
+    pending.resolve(session)
+    await activation
+    await bootstrap.reconcileLocation(destination)
+    expect(bootstrap.getStatus().status).toBe('running')
+    expect(createSession).toHaveBeenCalledTimes(1)
+    expect(session.dispose).not.toHaveBeenCalled()
 
     href = 'https://www.youtube.com/results?search_query=live'
-    await bootstrap.reconcileLocation()
+    await bootstrap.reconcileLocation(href)
+    expect(bootstrap.getStatus().status).toBe('unsupported')
     expect(session.dispose).toHaveBeenCalledTimes(1)
   })
 

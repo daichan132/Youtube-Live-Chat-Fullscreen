@@ -28,6 +28,12 @@ For generated locales, compare each bundled value with the authored translation 
 
 Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e/scenarios/live/noChatVideo.fixture.spec.ts) shows a live overlay between two no-chat pages, so an extension that never starts cannot satisfy the whole test. Failure-recovery tests should first acquire the resource they claim to release. Canary reporter contracts execute browser-free passing, failing, skipped, and retried tests through the real runner; the release-proof CLI contract verifies known artifact bytes and rejects same-size corruption in a disposable project.
 
+Browser setup and assertions need independent evidence too:
+
+- [`patchOverlayStore`](../../e2e/utils/storageHelper.ts) rejects setup when the complete appearance and geometry values read back from Storage differ from the requested state. An older valid envelope or the intended write payload is not proof that setup succeeded.
+- Before asserting that extension UI stays absent, establish that the content runtime has processed the current fullscreen page through its public status response. DOM absence alone also matches a content script that never started.
+- A loaded chat assertion requires an accessible document with its chat renderer and message list, and no structural error renderer. An iframe that navigated to a non-blank URL can still contain only a loading or error page.
+
 See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
 
 ## Vitest commands
@@ -80,6 +86,10 @@ The classification contract rejects missing, duplicate, or incorrectly named sce
 
 Synthetic YouTube scenarios use the typed API under `e2e/support/youtubeScenario/`. The compiler owns route URLs, fixture HTML, player identity, and chat routes. Scenario files own only state and assertions. The route model supports watch, direct-live, and channel-live entries.
 
+`initializeScenarioDocument.ts` provides the self-contained fixture browser code used by both initial HTML and SPA replacement. It installs player metadata, native iframe navigation, fullscreen controls, and the boundary click counter. SPA replacement keeps history, fullscreen exit, generation advancement, and navigation event ordering in `YouTubeScenario.spaNavigate`. Fixture initialization does not import product selectors or decisions, and assertions remain independent.
+
+The compiler is also imported directly by native Node verification CLIs. Runtime TypeScript imports in that module graph use explicit extensions; `compilerNode.contract.spec.ts` exercises this boundary in a fresh Node process without Vite resolution.
+
 ## Production/testing package boundary
 
 WXT adds the Playwright bridge only in `testing` mode. Testing projects load `.output/chrome-mv3-testing`; production smoke loads the extracted production ZIP with `YLC_REQUIRE_E2E_BRIDGE=0`.
@@ -89,7 +99,7 @@ The package contract rejects:
 - the E2E bridge in production;
 - source maps, spec/test files, and fixture assets;
 - manifest permissions or public resources outside policy;
-- mismatches between unpacked output and ZIP inventory;
+- mismatches between unpacked output and ZIP inventory or any file's bytes;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
 Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output.
@@ -103,6 +113,10 @@ node scripts/verify/connection-policy.browser-test.mjs
 ```
 
 This requires OpenSSL and installed Playwright Chromium. It starts a local HTTPS fixture, maps the YouTube origin to that server in a disposable profile, and verifies actual extension installation, Service Worker control, fullscreen UI, and zero extension-asset policy errors under no policy, report-only, and enforced Connection Allowlists. The temporary certificate exception is scoped to that test browser. No live YouTube content or account profile is used. Settings dialog rendering is checked for no-policy and report-only pages; enforced cross-origin iframe navigation is a separate restriction and is not claimed by this asset-delivery check. An archived pre-fix unpacked build may be supplied as the first argument with `--expect-unsafe` to demonstrate the original failure.
+
+`yarn verify:background-capture` builds production Chrome and checks native fullscreen, actual video and translucent chat pixels, composer availability, and restoration of the previously active tab against an offline fixture. Extra fixture scripts resolve their own DOM targets rather than relying on variables scoped inside the shared initializer.
+
+Verification helpers transfer a newly created background tab to the caller only after navigation succeeds. Attachment or navigation failure closes that owned target without closing existing tabs or replacing the original error with a cleanup failure. `verification-target.spec.mjs` covers these ownership outcomes.
 
 ## Pull-request CI ownership
 
@@ -118,7 +132,9 @@ The testing build is therefore always consumed, while visual regression and exac
 
 `yarn verify:release` adds production packaging, Firefox source reconstruction, deterministic browser projects, exact Chrome ZIP startup, and strict canary execution. The release-candidate workflow produces immutable artifacts and proof; publication verifies and promotes those bytes without rebuilding.
 
-`scripts/verify/check-release-workflow.mjs` validates the release/publish workflow shape and runs inside `yarn check`.
+`scripts/verify/check-release-workflow.mjs` validates the release/publish workflow shape and runs inside `yarn check`. Each store job must bind its own checkout, immutable artifact download, and protected environment; matching those strings elsewhere in the workflow is insufficient. The trusted dispatch-ref guard must exist before validation checkout and exit with failure inside its non-main branch regardless of its display name or explanatory text. `scripts/verify/release-workflow.spec.mjs` exercises these job boundaries without running a workflow.
+
+Publication selects a successful candidate Actions run, validates its workflow, main commit and current attempt, and downloads its immutable artifact ID with digest enforcement. Mutable draft Release attachments are not publication inputs. `scripts/verify/release-candidate.spec.mjs` covers the metadata trust boundary without running or publishing a release.
 
 ## Canary classification
 

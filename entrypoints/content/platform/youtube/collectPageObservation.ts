@@ -1,4 +1,5 @@
 import {
+  getChatIframeMode,
   getIframeVideoId,
   isLiveChatIframe,
   isManagedLiveIframe,
@@ -6,10 +7,11 @@ import {
   markChatIframeObservedForCurrentVideo,
 } from '@/entrypoints/content/chat/shared/iframeDom'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
-import { getLiveChatDocument, observeLiveChatDocument } from '@/entrypoints/content/utils/hasPlayableLiveChat'
 import { collectArchiveChatControls } from './chatControls'
+import { getLiveChatDocument, observeLiveChatDocument } from './chatDocument'
 import { getYouTubePlayerVideoId, readYouTubePlayerVideoData, type YouTubeMoviePlayer } from './playerVideoData'
 import {
+  closestProbe,
   liveHeadBadgeProbe,
   liveTimeDisplayProbe,
   nativeChatHostProbe,
@@ -85,11 +87,16 @@ export const collectPageObservation = (leasedIframe: HTMLIFrameElement | null = 
     markChatIframeObservedForCurrentVideo(iframe, videoId)
   }
 
-  const nativeChatIframe = iframeProbes.elements.find(iframe => iframeMatchesVideo(iframe, videoId)) ?? null
-  const currentLeaseMatches = leasedIframe !== null && iframeMatchesVideo(leasedIframe, videoId) && leasedIframe.isConnected
+  const nativeChatIframe =
+    iframeProbes.elements.find(iframe => getChatIframeMode(iframe) !== null && iframeMatchesVideo(iframe, videoId)) ?? null
+  const currentLeaseMatches =
+    leasedIframe !== null &&
+    getChatIframeMode(leasedIframe) !== null &&
+    iframeMatchesVideo(leasedIframe, videoId) &&
+    leasedIframe.isConnected
   const candidateChatIframe = nativeChatIframe ?? (currentLeaseMatches ? leasedIframe : null)
   const nativeChatHost =
-    (nativeChatIframe?.closest('ytd-live-chat-frame') as HTMLElement | null) ??
+    (nativeChatIframe ? closestProbe<HTMLElement>(nativeChatIframe, nativeChatHostProbe) : null) ??
     chatHostProbes.elements.find(host => host.getAttribute('video-id') === videoId) ??
     null
   const candidateSourceKind: PageEvidence['sourceKind'] = candidateChatIframe

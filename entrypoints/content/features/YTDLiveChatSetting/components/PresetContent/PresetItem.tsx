@@ -63,7 +63,7 @@ export const PresetItem = ({ id, reorder }: PresetItemType) => {
   }, [displayTitle])
 
   const updateStyle = useCallback((nextProfile: ChatProfile) => {
-    commitYLCProfile(nextProfile, 'preset')
+    commitYLCProfile(nextProfile)
   }, [])
   const commitName = useCallback(() => {
     if (!isBuiltIn) updatePresetName({ id, name: nameDraftRef.current })

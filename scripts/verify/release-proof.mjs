@@ -4,6 +4,7 @@ import { execFileSync } from 'node:child_process'
 import { readFile, stat, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { requireReleaseVersion } from './release-candidate.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const args = process.argv.slice(2)
@@ -14,7 +15,7 @@ const readOption = name => {
   return args[index + 1]
 }
 const packageJson = JSON.parse(await readFile(path.join(root, 'package.json'), 'utf8'))
-const version = packageJson.version
+const version = requireReleaseVersion(readOption('--expected-version') ?? packageJson.version)
 const proofPath = path.resolve(root, readOption('--proof') ?? `.output/release-proof-v${version}.json`)
 const artifactNames = [
   `youtube-live-chat-fullscreen-${version}-chrome.zip`,
@@ -22,7 +23,10 @@ const artifactNames = [
   `youtube-live-chat-fullscreen-${version}-sources.zip`,
 ]
 
-const sha256 = async file => createHash('sha256').update(await readFile(file)).digest('hex')
+const sha256 = async file =>
+  createHash('sha256')
+    .update(await readFile(file))
+    .digest('hex')
 const describeArtifact = async name => {
   const file = path.join(root, '.output', name)
   return { name, bytes: (await stat(file)).size, sha256: await sha256(file) }
@@ -33,9 +37,7 @@ const requireCommit = commit => {
 }
 
 if (command === 'create') {
-  const commit = requireCommit(
-    readOption('--commit') ?? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(),
-  )
+  const commit = requireCommit(readOption('--commit') ?? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim())
   const proof = {
     schemaVersion: 3,
     version,
@@ -68,5 +70,7 @@ if (command === 'create') {
   }
   console.log(`Verified release proof for v${version} at ${proof.commit}`)
 } else {
-  throw new Error('Usage: release-proof.mjs <create|verify> [--proof path] [--commit sha] [--expected-commit sha]')
+  throw new Error(
+    'Usage: release-proof.mjs <create|verify> [--proof path] [--commit sha] [--expected-commit sha] [--expected-version version]',
+  )
 }

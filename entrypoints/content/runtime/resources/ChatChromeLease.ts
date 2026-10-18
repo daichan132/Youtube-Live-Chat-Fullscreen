@@ -100,6 +100,14 @@ export const createChatChromeLease = (): ChatChromeLease => {
     targetObserver = null
   }
 
+  const replaceMeasurements = (nextElements: HTMLElement[]) => {
+    // YouTube can replace chrome before its mutation records are delivered.
+    // Release every previous target before losing its reference, even on expand.
+    clearMeasurements(elements)
+    elements = nextElements
+    measure(elements)
+  }
+
   const cleanup = (target = body) => {
     clearTimer()
     disconnectTargetObserver()
@@ -113,9 +121,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
-    clearMeasurements(elements)
-    elements = nextElements
-    measure(elements)
+    replaceMeasurements(nextElements)
     body.classList.add(IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
@@ -150,8 +156,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
 
   const collapse = () => {
     if (!body || body.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
-    elements = resolveChatOnlyChromeElements(body)
-    measure(elements)
+    replaceMeasurements(resolveChatOnlyChromeElements(body))
     blurActiveElement(body)
     body.classList.add(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
     body.getBoundingClientRect()
@@ -168,8 +173,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
-    elements = resolveChatOnlyChromeElements(body)
-    measure(elements)
+    replaceMeasurements(resolveChatOnlyChromeElements(body))
     body.classList.add(IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)

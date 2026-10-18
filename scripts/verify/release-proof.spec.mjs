@@ -1,4 +1,4 @@
-import { execFile } from 'node:child_process'
+import { execFile, execFileSync } from 'node:child_process'
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
@@ -14,6 +14,29 @@ const artifacts = [
   { suffix: 'sources', content: 'test', bytes: 4, sha256: '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08' },
 ]
 
+const version = '2.3.16'
+const createFixture = async () => {
+  const directory = await mkdtemp(path.join(tmpdir(), 'ylc-release-proof-'))
+  directories.push(directory)
+  await mkdir(path.join(directory, 'scripts/verify'), { recursive: true })
+  await mkdir(path.join(directory, '.output'))
+  for (const file of ['release-proof.mjs', 'release-candidate.mjs']) {
+    await copyFile(new URL(`./${file}`, import.meta.url), path.join(directory, 'scripts/verify', file))
+  }
+  await writeFile(path.join(directory, 'package.json'), JSON.stringify({ version: '9.9.9' }))
+  for (const target of ['chrome', 'firefox', 'sources']) {
+    await writeFile(path.join(directory, '.output', `youtube-live-chat-fullscreen-${version}-${target}.zip`), `Candidate ${target} bytes`)
+  }
+  const invoke = args =>
+    execFileSync(process.execPath, [path.join(directory, 'scripts/verify/release-proof.mjs'), ...args], {
+      cwd: directory,
+      stdio: 'pipe',
+      encoding: 'utf8',
+    })
+  invoke(['create', '--commit', commit, '--expected-version', version])
+  return { directory, invoke }
+}
+
 afterEach(async () => {
   await Promise.all(directories.splice(0).map(directory => rm(directory, { recursive: true, force: true })))
 })
@@ -28,9 +51,12 @@ const createProject = async () => {
   await mkdir(path.join(root, '.output'))
   const script = path.join(root, 'scripts', 'verify', 'release-proof.mjs')
   await copyFile(new URL('./release-proof.mjs', import.meta.url), script)
+  await copyFile(new URL('./release-candidate.mjs', import.meta.url), path.join(root, 'scripts', 'verify', 'release-candidate.mjs'))
   await writeFile(path.join(root, 'package.json'), JSON.stringify({ type: 'module', version: '1.2.3' }))
   const expected = artifacts.map(({ suffix, bytes, sha256 }) => ({
-    name: `youtube-live-chat-fullscreen-1.2.3-${suffix}.zip`, bytes, sha256,
+    name: `youtube-live-chat-fullscreen-1.2.3-${suffix}.zip`,
+    bytes,
+    sha256,
   }))
   for (const [index, artifact] of artifacts.entries()) {
     await writeFile(path.join(root, '.output', expected[index].name), artifact.content)
@@ -79,12 +105,48 @@ describe('release proof CLI', () => {
   })
 
   it.each([
-    { fault: 'schema', change: proof => { proof.schemaVersion = 2 }, message: 'schema or version does not match' },
-    { fault: 'version', change: proof => { proof.version = '1.2.4' }, message: 'schema or version does not match' },
-    { fault: 'commit', change: proof => { proof.commit = '1234567' }, message: 'requires a full Git commit SHA' },
-    { fault: 'missing inventory', change: proof => { proof.artifacts.pop() }, message: 'artifact inventory is incomplete' },
-    { fault: 'duplicate artifact', change: proof => { proof.artifacts[2] = proof.artifacts[1] }, message: 'is missing' },
-    { fault: 'size', change: proof => { proof.artifacts[0].bytes += 1 }, message: 'does not match its proof' },
+    {
+      fault: 'schema',
+      change: proof => {
+        proof.schemaVersion = 2
+      },
+      message: 'schema or version does not match',
+    },
+    {
+      fault: 'version',
+      change: proof => {
+        proof.version = '1.2.4'
+      },
+      message: 'schema or version does not match',
+    },
+    {
+      fault: 'commit',
+      change: proof => {
+        proof.commit = '1234567'
+      },
+      message: 'requires a full Git commit SHA',
+    },
+    {
+      fault: 'missing inventory',
+      change: proof => {
+        proof.artifacts.pop()
+      },
+      message: 'artifact inventory is incomplete',
+    },
+    {
+      fault: 'duplicate artifact',
+      change: proof => {
+        proof.artifacts[2] = proof.artifacts[1]
+      },
+      message: 'is missing',
+    },
+    {
+      fault: 'size',
+      change: proof => {
+        proof.artifacts[0].bytes += 1
+      },
+      message: 'does not match its proof',
+    },
   ])('rejects a proof with an invalid $fault', async ({ change, message }) => {
     const project = await createProject()
     change(project.proof)
@@ -92,5 +154,41 @@ describe('release proof CLI', () => {
     await expect(project.run('verify', '--expected-commit', commit)).rejects.toMatchObject({
       stderr: expect.stringContaining(message),
     })
+  })
+})
+
+describe('explicit release candidate version', () => {
+  it('verifies the selected candidate version when trusted main has moved to a newer version', async () => {
+    const { invoke } = await createFixture()
+    expect(invoke(['verify', '--expected-version', version, '--expected-commit', commit])).toContain(
+      `Verified release proof for v${version}`,
+    )
+  })
+
+  it('rejects altered artifact bytes before forwarding them', async () => {
+    const { directory, invoke } = await createFixture()
+    await writeFile(path.join(directory, '.output', `youtube-live-chat-fullscreen-${version}-chrome.zip`), 'Replaced bytes')
+    expect(() => invoke(['verify', '--expected-version', version, '--expected-commit', commit])).toThrow(/does not match its proof/)
+  })
+
+  it('rejects proof metadata for a different source commit', async () => {
+    const { invoke } = await createFixture()
+    expect(() => invoke(['verify', '--expected-version', version, '--expected-commit', 'b'.repeat(40)])).toThrow(
+      /does not match checked-out commit/,
+    )
+  })
+
+  it('rejects a proof whose declared version differs from the selected candidate', async () => {
+    const { directory, invoke } = await createFixture()
+    const file = path.join(directory, '.output', `release-proof-v${version}.json`)
+    const proof = JSON.parse(await readFile(file, 'utf8'))
+    proof.version = '9.9.9'
+    await writeFile(file, JSON.stringify(proof))
+    expect(() => invoke(['verify', '--expected-version', version, '--expected-commit', commit])).toThrow(/schema or version does not match/)
+  })
+
+  it('rejects path characters in the requested version', async () => {
+    const { invoke } = await createFixture()
+    expect(() => invoke(['verify', '--expected-version', '../9.9.9'])).toThrow(/semver release version/)
   })
 })

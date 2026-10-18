@@ -187,19 +187,23 @@ describe('Real YouTube canary summary', () => {
   it.each([
     { lane: 'ordinary', requireClean: false },
     { lane: 'strict release', requireClean: true },
-  ])('publishes real retry recovery as flaky in the $lane lane', async ({ requireClean }) => {
-    const result = await runReporterFixture(requireClean, 'flaky')
-    if (requireClean) expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
-    else expect(result.exitCode, `${result.stdout}\n${result.stderr}`).toBe(0)
-    expect(result.json).toMatchObject({
-      summary: { state: 'degraded', executed: 1, passed: 0, flaky: 1, skipped: 0, failed: 0 },
-      runStatus: 'passed',
-    })
-    expect(result.json.outcomes).toEqual([
-      expect.objectContaining({ status: 'flaky', title: expect.stringContaining('local canary recovers on retry') }),
-    ])
-    expect(result.markdown).toMatch(/\|\s*Flaky\s*\|\s*1\s*\|/)
-  }, 20_000)
+  ])(
+    'publishes real retry recovery as flaky in the $lane lane',
+    async ({ requireClean }) => {
+      const result = await runReporterFixture(requireClean, 'flaky')
+      if (requireClean) expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+      else expect(result.exitCode, `${result.stdout}\n${result.stderr}`).toBe(0)
+      expect(result.json).toMatchObject({
+        summary: { state: 'degraded', executed: 1, passed: 0, flaky: 1, skipped: 0, failed: 0 },
+        runStatus: 'passed',
+      })
+      expect(result.json.outcomes).toEqual([
+        expect.objectContaining({ status: 'flaky', title: expect.stringContaining('local canary recovers on retry') }),
+      ])
+      expect(result.markdown).toMatch(/\|\s*Flaky\s*\|\s*1\s*\|/)
+    },
+    20_000,
+  )
 
   it('keeps uncorroborated fingerprint failures degraded outside the strict release lane', () => {
     expect(summarizeCanaryOutcomes([{ ...passed, compatibilityState: 'degraded' }], 'passed').state).toBe('degraded')

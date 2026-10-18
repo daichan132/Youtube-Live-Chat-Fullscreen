@@ -3,13 +3,14 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { inflateRawSync } from 'node:zlib'
+import { hasExpectedExtensionCsp } from './extension-csp.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const outputRoot = join(root, '.output')
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
 const sizePolicy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
 const expectedPermissions = ['storage']
-const expectedContentScriptMatches = ['*://www.youtube.com/*']
+const expectedContentScriptMatches = ['https://www.youtube.com/*']
 const forbiddenProductionFiles = [
   { label: 'E2E bridge', matches: file => file === 'e2e.html' },
   { label: 'source map', matches: file => file.endsWith('.map') },
@@ -181,6 +182,9 @@ const verifyTarget = async report => {
   if (!hasRuntimeResources(manifest)) {
     failures.push('web_accessible_resources must expose only settings.html to YouTube')
   }
+  if (!hasExpectedExtensionCsp(manifest)) {
+    failures.push('extension CSP must permit only packaged scripts, no objects, and self or exact HTTPS YouTube frame ancestors')
+  }
   if (!files.includes('settings.html')) failures.push('settings extension page is missing')
   const backgroundRegistered = manifest.manifest_version === 3
     ? manifest.background?.service_worker === 'background.js'
@@ -231,8 +235,16 @@ const verifyTarget = async report => {
   const zipEntries = await readZipEntries(report.zipPath)
   const zipFiles = [...zipEntries.keys()].filter(file => !file.endsWith('/')).sort()
   if (JSON.stringify(zipFiles) !== JSON.stringify(files)) failures.push('ZIP file inventory differs from the generated extension directory')
-  const zipManifest = zipEntries.get('manifest.json')?.toString('utf8')
-  if (zipManifest !== manifestText) failures.push('ZIP manifest.json differs from the generated manifest.json')
+  for (const file of files) {
+    const zipContents = zipEntries.get(file)
+    if (zipContents && !zipContents.equals(await readFile(join(report.directory, file)))) {
+      failures.push(
+        file === 'manifest.json'
+          ? 'ZIP manifest.json differs from the generated manifest.json'
+          : `ZIP file differs from the generated extension directory: ${file}`,
+      )
+    }
+  }
   failures.push(...findForbiddenFiles(zipFiles).map(failure => `ZIP ${failure}`))
 
   for (const [metric, budget] of Object.entries(report.config.budgets)) {

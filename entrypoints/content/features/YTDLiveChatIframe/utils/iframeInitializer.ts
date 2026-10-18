@@ -1,3 +1,9 @@
+import {
+  closestProbe,
+  membershipPickerItemProbe,
+  queryFirstProbe,
+  videoOwnerChannelLinkProbe,
+} from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
 
 type MembershipPickerData = {
@@ -51,9 +57,7 @@ const getMembershipChannelUrl = (item: Element) => {
   const channelId = decodedParams.match(/UC[\w-]{20,}/)?.[0]
   if (channelId) return `https://www.youtube.com/channel/${channelId}/join`
 
-  const ownerLink = window.document.querySelector<HTMLAnchorElement>(
-    'ytd-video-owner-renderer a[href^="/@"], ytd-video-owner-renderer a[href^="/channel/"], #owner a[href^="/@"], #owner a[href^="/channel/"]',
-  )
+  const ownerLink = queryFirstProbe<HTMLAnchorElement>(window.document, videoOwnerChannelLinkProbe).element
   const href = ownerLink?.getAttribute('href')
   if (!href) return null
 
@@ -72,7 +76,7 @@ export const installMembershipFallback = (doc: Document) => {
     const target = event.target
     if (!target || !('closest' in target)) return
 
-    const item = (target as Element).closest('yt-live-chat-product-picker-panel-item-view-model[item-id="Membership"]')
+    const item = closestProbe(target as Element, membershipPickerItemProbe)
     if (!item) return
 
     const joinUrl = getMembershipChannelUrl(item)

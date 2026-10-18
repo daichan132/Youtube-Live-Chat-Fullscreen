@@ -1,7 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import { chatSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { FontFamilyInput } from './FontFamilyInput'
 
@@ -54,7 +54,11 @@ describe('FontFamilyInput', () => {
   })
 
   it('filters options using normalized text matching', () => {
-    const { container, getByRole, getByTestId } = renderFontFamilyInput()
+    store.set(localeStateAtom, {
+      ...store.get(localeStateAtom),
+      messages: { ...store.get(localeStateAtom).messages, 'content.aria.fontsFound': 'Fonts found: {count}' },
+    })
+    const { container, getByRole, getByTestId, getByText } = renderFontFamilyInput()
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'robotoslab' } })
@@ -62,6 +66,7 @@ describe('FontFamilyInput', () => {
     const options = container.querySelectorAll('[role="option"]')
     expect(options).toHaveLength(1)
     expect(options[0]).toHaveTextContent('Roboto Slab')
+    expect(getByText('Fonts found: 1')).toHaveAttribute('aria-live', 'polite')
   })
 
   it('commits highlighted option with Enter key', () => {
@@ -72,6 +77,32 @@ describe('FontFamilyInput', () => {
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
+  })
+
+  it.each([
+    { search: 'Roboto Slab', expected: 'Roboto Slab' },
+    { search: 'My Custom Font', expected: null },
+  ])('waits for composition to finish before Enter commits the search "$search"', ({ search, expected }) => {
+    const { getByRole, getByTestId, queryByTestId } = renderFontFamilyInput('Roboto')
+    const before = store.get(chatSettingsStateAtom).profile
+    const historyBefore = store.get(editorSessionStateAtom).past
+
+    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    const input = getByTestId('font-family-search')
+    fireEvent.compositionStart(input)
+    fireEvent.change(input, { target: { value: search } })
+    fireEvent.keyDown(input, { key: 'Enter', isComposing: true })
+
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(before)
+    expect(store.get(editorSessionStateAtom).past).toEqual(historyBefore)
+    expect(queryByTestId('font-family-search')).toBeInTheDocument()
+
+    fireEvent.compositionEnd(input)
+    fireEvent.keyDown(input, { key: 'Enter' })
+
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe(expected)
+    expect(store.get(editorSessionStateAtom).past).toEqual([...historyBefore, before])
+    expect(queryByTestId('font-family-search')).not.toBeInTheDocument()
   })
 
   it('commits default when no option matches and Enter is pressed', () => {

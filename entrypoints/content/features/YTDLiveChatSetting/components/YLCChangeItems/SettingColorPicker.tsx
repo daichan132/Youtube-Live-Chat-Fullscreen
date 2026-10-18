@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react'
+import { useCallback, useEffect, useId, useRef, useState } from 'react'
 import type { RgbaColor } from 'react-colorful'
 import { RgbaColorPicker } from 'react-colorful'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
@@ -25,49 +25,42 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const previewBorderColor = getPreviewBorderColor(rgba)
+  const closePicker = useCallback((returnFocus = false) => {
+    setDisplay(false)
+    if (returnFocus) triggerRef.current?.focus({ preventScroll: true })
+  }, [])
 
   useEnsureSettingPanelVisibility({ isOpen: display, anchorRef: triggerRef, popupRef: menuRef })
-  useShadowClickAway(rootRef, () => {
-    if (!display) return
-    onInteractionEnd?.()
-    setDisplay(false)
-  })
+  useShadowClickAway(rootRef, () => closePicker())
 
   useEffect(() => {
     if (!display) return
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation()
-        onInteractionEnd?.()
-        setDisplay(false)
-        triggerRef.current?.focus({ preventScroll: true })
-      }
+      if (e.defaultPrevented || e.isComposing || e.key !== 'Escape') return
+      e.preventDefault()
+      e.stopPropagation()
+      closePicker(true)
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [display, onInteractionEnd])
+  }, [closePicker, display])
 
   useEffect(() => {
     if (!display) return
+    // Closing or removing the picker finishes the current gesture once.
     return () => onInteractionEnd?.()
   }, [display, onInteractionEnd])
 
+  const handleLocalKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (!display || event.nativeEvent.isComposing || event.key !== 'Escape') return
+    event.preventDefault()
+    event.stopPropagation()
+    closePicker(true)
+  }
+
   return (
     <div ref={rootRef} className='relative ylc-action-fill'>
-      <span
-        id={descriptionId}
-        style={{
-          position: 'absolute',
-          width: '1px',
-          height: '1px',
-          padding: 0,
-          margin: '-1px',
-          overflow: 'hidden',
-          clip: 'rect(0,0,0,0)',
-          whiteSpace: 'nowrap',
-          border: 0,
-        }}
-      >
+      <span id={descriptionId} className='ylc-visually-hidden'>
         {`Current color: rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
       </span>
       <button
@@ -78,12 +71,8 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
         aria-haspopup='dialog'
         aria-expanded={display}
         className='ylc-color-trigger ylc-action-fill'
-        onClick={() =>
-          setDisplay(current => {
-            if (current) onInteractionEnd?.()
-            return !current
-          })
-        }
+        onClick={() => setDisplay(current => !current)}
+        onKeyDown={handleLocalKeyDown}
       >
         <span className='ylc-color-swatch'>
           <span
@@ -102,6 +91,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
           className='absolute right-0 ylc-theme-popover'
           role='dialog'
           aria-label={t('content.aria.colorPicker')}
+          onKeyDown={handleLocalKeyDown}
           onPointerDownCapture={onInteractionStart}
           onPointerUpCapture={onInteractionEnd}
           onPointerCancelCapture={onInteractionEnd}

@@ -14,13 +14,12 @@ const profile = { ...DEFAULT_CHAT_PROFILE, appearance: { ...DEFAULT_CHAT_PROFILE
 
 const setup = () => {
   const store = createTestStore()
-  const runtime = { getDiagnosticReport: vi.fn(() => ({ schemaVersion: 1 }) as never), restart: vi.fn() }
-  const view = renderWithStore(<SettingsFrame open onClose={vi.fn()} runtime={runtime} />, store)
+  const view = renderWithStore(<SettingsFrame open onClose={vi.fn()} />, store)
   const frame = view.getByTitle('YouTube Live Chat Fullscreen settings') as HTMLIFrameElement
   const send = (data: unknown, source: MessageEventSource | null = frame.contentWindow, origin = extensionOrigin) =>
     fireEvent(window, new MessageEvent('message', { source, origin, data }))
   const preview = (active = true) => send({ type: SETTINGS_FRAME_MESSAGE.stylePreview, profile, active })
-  return { store, runtime, view, frame, send, preview }
+  return { store, view, frame, send, preview }
 }
 
 describe('embedded settings style preview', () => {
@@ -67,7 +66,7 @@ describe('embedded settings style preview', () => {
   })
 
   it('does not lose an active preview when an earlier save or callback rerender arrives', () => {
-    const { store, runtime, view, preview } = setup()
+    const { store, view, preview } = setup()
     preview()
     act(() =>
       store.set(chatSettingsStateAtom, {
@@ -77,7 +76,7 @@ describe('embedded settings style preview', () => {
     )
     view.rerender(
       <Provider store={store}>
-        <SettingsFrame open onClose={vi.fn()} runtime={runtime} />
+        <SettingsFrame open onClose={vi.fn()} />
       </Provider>,
     )
     expect(store.get(effectiveProfileAtom)).toEqual(profile)
