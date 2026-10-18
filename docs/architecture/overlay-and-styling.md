@@ -62,6 +62,10 @@ The compiler owns color, spacing, font size, display flags, and blur values. You
 
 The React background and iframe document use `backdrop-filter`. Never apply `filter: blur(...)` to the iframe host, which would blur the chat text. The iframe body and inner surfaces use the configured backdrop value; the stylesheet guide explains surface tinting and cascade order.
 
+Inline monetization offers use the profile's neutral surface and text colors, including the Super Sticker preview's close/return controls and the membership gift quantity selector. Preserve colored purchase cards, artwork, and paired sticker-backstory colors. Scope these rules to the borrowed chat document; outer membership and payment dialogs keep YouTube's native palette.
+
+Viewer poll cards float over messages and share the support picker's minimum-opacity surface. Theme question/choice labels, neutral controls and result-bar fills within the poll boundary. YouTube continues to own percentage widths, selected/disabled state and voting; styling must not alter those values or submit an action.
+
 ## Restoring a borrowed iframe
 
 Before styling a borrowed document, [`iframeAttachment.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/iframeAttachment.ts) captures its original presentation through [`borrowedIframeStyleSnapshot.ts`](../../entrypoints/content/features/YTDLiveChatIframe/utils/borrowedIframeStyleSnapshot.ts). That module owns the inline properties, their priorities, the body's backdrop filters, and any existing custom-font style. Attachment still owns when each document is captured and restored. Release restores those values and removes extension classes, measurement variables, injected styles, and event fallbacks. Unrelated YouTube styles remain untouched. Managed iframes are removed on release.

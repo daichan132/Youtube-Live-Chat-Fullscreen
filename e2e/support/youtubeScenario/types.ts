@@ -50,6 +50,9 @@ export type YouTubeScenarioState = YouTubeScenarioBase &
         video: YouTubeScenarioVideoBase & { mode: 'live' }
         chat: {
           mode: 'live'
+          restrictedParticipation?: boolean
+          giftButton?: boolean
+          appearanceSurfaces?: boolean
           native: NativeChatDefinition
           response: 'playable' | 'unavailable'
         }

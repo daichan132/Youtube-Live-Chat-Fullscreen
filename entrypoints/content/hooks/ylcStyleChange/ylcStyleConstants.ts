@@ -20,6 +20,7 @@ export const YLC_BG_SURFACE_PROPERTIES = [
   '--yt-spec-raised-background',
 ] as const
 
+export const YLC_FLOATING_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-floating-panel-background-color'
 export const YLC_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-panel-background-color'
 export const YLC_BACKDROP_FILTER_PROPERTY = '--extension-yt-live-backdrop-filter'
 
@@ -47,6 +48,7 @@ export const YLC_DOCUMENT_STYLE_PROPERTIES = [
   ...YLC_BG_TRANSPARENT_PROPERTIES,
   ...YLC_BG_SURFACE_PROPERTIES,
   YLC_PANEL_BACKGROUND_PROPERTY,
+  YLC_FLOATING_PANEL_BACKGROUND_PROPERTY,
   YLC_BACKDROP_FILTER_PROPERTY,
   ...YLC_FONT_COLOR_PROPERTIES,
   ...YLC_FONT_COLOR_LIGHT_PROPERTIES,

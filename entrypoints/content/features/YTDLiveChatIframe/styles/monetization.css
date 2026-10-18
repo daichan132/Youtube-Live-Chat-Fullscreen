@@ -1,5 +1,57 @@
 /* biome-ignore-all lint/style/noDescendingSpecificity: YouTube monetization custom elements are mutually exclusive selector scopes. */
 /* State-dependent Super Chat / sticker purchase flow. */
+/* The current sticker preview uses #close, rather than #close-button. */
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #close,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-super-sticker-preview-renderer
+  #close
+  :is(button, yt-icon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+/* This is the neutral return action, separate from the colored purchase card
+   and the sticker pack's intentionally white backstory. */
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #back-button {
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+/* Membership gift quantities are another inline offer, not the outer payment
+   dialog. Theme known labels directly instead of YouTube's opaque color tokens. */
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-renderer {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-panel-background-color) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+}
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-header-renderer,
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer {
+  color: var(--extension-yt-live-font-color) !important;
+  background: transparent !important;
+}
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-header-renderer #title,
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer #title,
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer ytd-offer-section-renderer yt-formatted-string.title,
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer ytd-offer-content-renderer yt-formatted-string.title,
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-header-renderer #close-button,
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-header-renderer
+  #close-button
+  :is(button, yt-icon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer #subtitle {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  button.ytSpecButtonShapeNextText:not(:disabled):not([aria-disabled="true"]),
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  button.ytSpecButtonShapeNextText:not(:disabled):not([aria-disabled="true"])
+  :is(.ytSpecButtonShapeNextButtonTextContent, yt-icon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+  fill: currentColor !important;
+}
 /* YouTube positions the product picker and purchase flows above a zero-height
    input renderer. Let that open picker escape the chat-only clipping boundary
    without making the resting input panel overflow permanently. */
@@ -93,8 +145,8 @@ body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-butt
   color: var(--extension-yt-live-font-color) !important;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
-  background: var(--extension-yt-live-panel-background-color) !important;
-  background-color: var(--extension-yt-live-panel-background-color) !important;
+  background: var(--extension-yt-live-floating-panel-background-color) !important;
+  background-color: var(--extension-yt-live-floating-panel-background-color) !important;
   backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   overflow: hidden;
@@ -217,6 +269,38 @@ body.custom-yt-app-live-chat-extension yt-live-chat-paid-message-renderer #label
 body.custom-yt-app-live-chat-extension #author-name.member.yt-live-chat-author-chip {
   color: var(--extension-yt-live-membership-name-color);
 }
-body.custom-yt-app-live-chat-extension #title.yt-emoji-picker-category-renderer {
-  color: var(--yt-spec-text-secondary) !important;
+
+/* Jewels replaces the chat list with an engagement panel. Theme its neutral
+   chrome and unselected cards; selected send gradients and artwork stay native. */
+body.custom-yt-app-live-chat-extension
+  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
+  ytd-engagement-panel-title-header-renderer
+  :is(#title, #title-text),
+body.custom-yt-app-live-chat-extension
+  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
+  ytd-engagement-panel-title-header-renderer
+  :is(#navigation-button, #information-button)
+  :is(button, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
+  ytd-engagement-panel-title-header-renderer
+  :is(#navigation-button, #information-button)
+  :is(svg, path) {
+  fill: currentColor !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-pdg-gift-collection-view-model
+  .ytwPdgGiftCollectionGridCell:not(:disabled):not([aria-disabled="true"])
+  > yt-pdg-gift-item-view-model:not(.ytwPdgGiftItemSelected) {
+  color: var(--extension-yt-live-font-color) !important;
+  background: var(--extension-yt-live-control-background-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-pdg-gift-collection-view-model
+  .ytwPdgGiftCollectionGridCell:not(:disabled):not([aria-disabled="true"])
+  > yt-pdg-gift-item-view-model:not(.ytwPdgGiftItemSelected)
+  :is(.ytwPdgGiftItemGiftName, .ytwPdgGiftItemTokenAmount) {
+  color: var(--extension-yt-live-font-color) !important;
 }
