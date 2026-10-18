@@ -5,6 +5,7 @@ import {
   closestProbe,
   queryFirstProbe,
 } from '@/entrypoints/content/platform/youtube/selectorCatalog'
+import { isAccessibleNode } from './isAccessibleNode'
 
 /** Own scroll compensation only for a chrome transition, never ordinary chat. */
 export const preserveChatScroll = (body: HTMLElement, durationMs: number) => {
@@ -39,6 +40,12 @@ export const preserveChatScroll = (body: HTMLElement, durationMs: number) => {
   const stop = () => {
     if (stopped) return
     stopped = true
+    if (!isAccessibleNode(body) || !isAccessibleNode(scroller)) {
+      // The destroyed iframe realm has already discarded its timers and listeners.
+      observer = null
+      anchor = null
+      return
+    }
     if (suppressJump) body.classList.remove(IFRAME_CHAT_SCROLL_FOLLOWING_CLASS)
     view.cancelAnimationFrame(frame)
     view.clearTimeout(timer)
@@ -54,6 +61,10 @@ export const preserveChatScroll = (body: HTMLElement, durationMs: number) => {
   }
   const restore = () => {
     if (stopped) return
+    if (!isAccessibleNode(body) || !isAccessibleNode(scroller) || (anchor && !isAccessibleNode(anchor))) {
+      stop()
+      return
+    }
     if (!scroller.isConnected || !body.contains(scroller)) {
       stop()
       return

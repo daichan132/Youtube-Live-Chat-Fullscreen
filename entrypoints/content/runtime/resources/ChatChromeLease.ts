@@ -16,6 +16,7 @@ import {
   queryAllProbes,
 } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { preserveChatScroll } from './ChatScrollAnchor'
+import { isAccessibleNode } from './isAccessibleNode'
 
 export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed'
 
@@ -52,7 +53,9 @@ export const resolveChatOnlyChromeElements = (body: HTMLElement) => {
 }
 
 const clearMeasurements = (elements: HTMLElement[]) => {
-  for (const element of elements) element.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)
+  for (const element of elements) {
+    if (isAccessibleNode(element)) element.style.removeProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)
+  }
 }
 
 const measure = (elements: HTMLElement[]) => {
@@ -163,6 +166,7 @@ const mutationMayChangePurchaseUI = (mutation: MutationRecord) => {
 export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolean) => void) => {
   let open = hasOpenChatPurchaseUI(body)
   const refresh = () => {
+    if (!isAccessibleNode(body)) return
     const nextOpen = hasOpenChatPurchaseUI(body, open)
     if (nextOpen === open) return
     open = nextOpen
@@ -182,6 +186,7 @@ export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolea
   body.addEventListener('animationend', onTransitionEnd)
   return () => {
     observer.disconnect()
+    if (!isAccessibleNode(body)) return
     body.removeEventListener('transitionend', onTransitionEnd)
     body.removeEventListener('animationend', onTransitionEnd)
   }
@@ -251,7 +256,8 @@ export const createChatChromeLease = (): ChatChromeLease => {
   const clearChromePresentation = (target = body) => {
     stopScrollAnchor()
     clearTimer()
-    target?.classList.remove(
+    const accessibleTarget = isAccessibleNode(target) ? target : null
+    accessibleTarget?.classList.remove(
       IFRAME_CHAT_ONLY_CLASS,
       IFRAME_CHAT_ONLY_MODE_CLASS,
       IFRAME_CHAT_ONLY_TRANSITION_CLASS,
@@ -260,8 +266,8 @@ export const createChatChromeLease = (): ChatChromeLease => {
     clearMeasurements(elements)
     elements = []
     expandedPadding = { top: 12, bottom: 12 }
-    target?.style.removeProperty(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)
-    target?.style.removeProperty(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)
+    accessibleTarget?.style.removeProperty(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)
+    accessibleTarget?.style.removeProperty(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)
   }
 
   const setPurchaseOpen = (open: boolean) => {
@@ -277,7 +283,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
     stopPurchaseObserver?.()
     stopPurchaseObserver = null
     purchaseOpen = false
-    target?.classList.remove(IFRAME_PURCHASE_ACTIVE_CLASS)
+    if (isAccessibleNode(target)) target.classList.remove(IFRAME_PURCHASE_ACTIVE_CLASS)
     clearChromePresentation(target)
   }
 
