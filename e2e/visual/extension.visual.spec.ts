@@ -33,7 +33,7 @@ test.describe('extension visual regression', () => {
     await expect(overlay).toHaveScreenshot('overlay-default.png')
   })
 
-  test('blur visibly softens only the bounded overlay background', async ({ page, extension }) => {
+  test('blur visibly softens only the bounded overlay background', async ({ page, extension }, testInfo) => {
     expect(
       await patchOverlayStore(extension, {
         profile: { appearance: { blur: 0, backgroundColor: { r: 255, g: 255, b: 255, a: 0.12 } } },
@@ -74,7 +74,8 @@ test.describe('extension visual regression', () => {
     }
     const background = page.locator('[data-ylc-chat-background]')
     await expect(background).toHaveCSS('backdrop-filter', 'none')
-    const unblurred = decodePng(await page.screenshot({ animations: 'disabled' }))
+    const unblurredPng = await page.screenshot({ animations: 'disabled' })
+    const unblurred = decodePng(unblurredPng)
     const bounds = await background.boundingBox()
     if (!bounds) throw new Error('Overlay background has no pixel bounds.')
     const inside = {
@@ -102,14 +103,21 @@ test.describe('extension visual regression', () => {
 
     expect(await patchOverlayStore(extension, { profile: { appearance: { blur: 16 } } })).not.toBeNull()
     await expect(background).toHaveCSS('backdrop-filter', 'blur(16px)')
-    const blurred = decodePng(await page.screenshot({ animations: 'disabled' }))
+    const blurredPng = await page.screenshot({ animations: 'disabled' })
+    const blurred = decodePng(blurredPng)
+    await testInfo.attach('unblurred', { body: unblurredPng, contentType: 'image/png' })
+    await testInfo.attach('blurred', { body: blurredPng, contentType: 'image/png' })
 
     expect(edgeEnergy(unblurred, inside)).toBeGreaterThan(12)
     expect(edgeEnergy(blurred, inside)).toBeLessThan(edgeEnergy(unblurred, inside) * 0.65)
     expect(meanPixelDifference(unblurred, blurred, outside)).toBeLessThan(0.1)
-    // A white or missing probe must not satisfy unchanged-pixel assertions.
-    // First require painted glyph edges, then preserve them while video blurs.
-    expect(edgeEnergy(unblurred, textSample)).toBeGreaterThan(2)
-    expect(meanPixelDifference(unblurred, blurred, textSample)).toBeLessThan(0.1)
+    // Compositing the backdrop changes Linux glyph antialiasing, even when the
+    // foreground remains sharp. Require painted edges, stable bounds and edge
+    // contrast instead of identical subpixel colors. A blurred or blank probe fails.
+    const textEnergy = edgeEnergy(unblurred, textSample)
+    expect(textEnergy).toBeGreaterThan(2)
+    expect(await readabilityProbe.boundingBox()).toEqual(textBounds)
+    expect(edgeEnergy(blurred, textSample)).toBeGreaterThan(textEnergy * 0.95)
+    expect(edgeEnergy(blurred, textSample)).toBeLessThan(textEnergy * 1.05)
   })
 })

@@ -158,4 +158,4 @@ The manually triggered [standalone canary](../../.github/workflows/canary.yml) m
 
 Visual baselines are evaluated on the pinned Ubuntu runner with Playwright Chromium. Do not regenerate Linux baselines from macOS. Compositor-sensitive effects such as blur also use behavioral/pixel metrics rather than relying only on a screenshot match.
 
-The blur pixel test checks background softening, unchanged video outside the overlay, and unchanged painted text inside the chat. A text sample with no glyph edges cannot satisfy the test.
+The blur visual contract compares background edge energy and unchanged pixels outside the overlay. Foreground text must retain its bounds and edge contrast within 5%; identical glyph RGB values are not required because backdrop compositing changes Linux text antialiasing. Both screenshots are attached for inspection. An absent or blurred readability probe must fail.

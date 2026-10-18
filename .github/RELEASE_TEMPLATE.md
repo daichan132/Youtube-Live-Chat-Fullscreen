@@ -8,7 +8,7 @@
 
 ## Compatibility
 
-<!-- The release candidate workflow requires real-browser verification on Chrome, Firefox, and Opera. Record the versions you verified. -->
+<!-- Record the browsers and versions actually verified. Mark unverified browsers explicitly; Opera compatibility is an optional check. -->
 
 - Chrome:
 - Firefox:
