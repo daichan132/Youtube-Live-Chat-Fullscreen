@@ -12,6 +12,7 @@ import {
   YLC_FONT_COLOR_PROPERTIES,
   YLC_FONT_COLOR_SURFACE_PROPERTIES,
   YLC_FONT_SIZE_PROPERTY,
+  YLC_LINK_COLOR_PROPERTY,
   YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
   YLC_PANEL_BACKGROUND_PROPERTY,
   YLC_SPACING_PROPERTY,
@@ -19,6 +20,8 @@ import {
   YLC_USER_ICON_DISPLAY_PROPERTY,
   YLC_USER_NAME_DISPLAY_PROPERTY,
 } from '../hooks/ylcStyleChange/ylcStyleConstants'
+
+import { getChatLinkColor } from './linkColor'
 
 const FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
 
@@ -77,6 +80,7 @@ export const compileStylePatch = (profile: ChatProfile, environment: ChatStyleEn
 
   const primaryFontColor = toRgbaString(appearance.fontColor)
   const secondaryFontColor = toRgbaString(appearance.fontColor, Math.max(0, appearance.fontColor.a - 0.4))
+  documentProperties[YLC_LINK_COLOR_PROPERTY] = toRgbaString(getChatLinkColor(appearance.backgroundColor, appearance.fontColor))
   setProperties(documentProperties, YLC_FONT_COLOR_PROPERTIES, primaryFontColor)
   setProperties(documentProperties, YLC_FONT_COLOR_LIGHT_PROPERTIES, secondaryFontColor)
   setProperties(documentProperties, YLC_FONT_COLOR_SURFACE_PROPERTIES, toSubtleSurfaceColor(appearance.fontColor))

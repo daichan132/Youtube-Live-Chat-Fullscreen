@@ -37,6 +37,7 @@ export const useAutomaticOverlayPlacement = ({
   viewport,
   pinned,
   settingsOpen,
+  paused = false,
   interactionState,
   pointerActiveRef,
   draftGeometry,
@@ -49,6 +50,7 @@ export const useAutomaticOverlayPlacement = ({
   viewport: GeometryReferenceSize
   pinned: boolean
   settingsOpen: boolean
+  paused?: boolean
   interactionState: OverlayInteractionState
   pointerActiveRef: RefObject<boolean>
   draftGeometry: PixelChatGeometry | null
@@ -110,6 +112,7 @@ export const useAutomaticOverlayPlacement = ({
   }, [pinned, playerElement, autoPlacementComplete, measureObstacles])
 
   const apply = useCallback(() => {
+    if (paused) return
     if (!playerElement || !referenceSize || pinned || autoRepositionedRef.current || pointerActiveRef.current || draftGeometry) return
     if (interactionState === 'dragging' || interactionState === 'resizing') return
     const cached = obstacleSnapshotRef.current
@@ -133,6 +136,7 @@ export const useAutomaticOverlayPlacement = ({
     measureObstacles,
     obstacleRevision,
     pinned,
+    paused,
     playerElement,
     pointerActiveRef,
     referenceSize,

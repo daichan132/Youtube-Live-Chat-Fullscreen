@@ -3,7 +3,15 @@ import {
   IFRAME_CHAT_ONLY_MEASURING_CLASS,
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
+
+import {
+  chatPurchaseInputProbe,
+  chatPurchaseLoadingProbe,
+  chatPurchasePanelProbe,
+  queryAllProbes,
+} from '@/entrypoints/content/platform/youtube/selectorCatalog'
 
 export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed'
 
@@ -73,6 +81,100 @@ const mutationMayChangeChrome = (mutation: MutationRecord, elements: HTMLElement
   return false
 }
 
+const PURCHASE_BOUNDARY_SELECTOR = [
+  ...chatPurchaseInputProbe.selectors,
+  ...chatPurchasePanelProbe.selectors,
+  ...chatPurchaseLoadingProbe.selectors,
+].join(', ')
+const PURCHASE_STATE_ATTRIBUTES = ['product-picker-open', 'hidden', 'aria-hidden', 'inert', 'style', 'class', 'selected', 'aria-selected']
+
+const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement) => {
+  if (!body.contains(element)) return false
+  for (let candidate: HTMLElement | null = element; candidate; candidate = candidate.parentElement) {
+    if (candidate.hidden || candidate.getAttribute('aria-hidden') === 'true' || candidate.hasAttribute('inert')) return false
+    const style = candidate.ownerDocument.defaultView?.getComputedStyle(candidate)
+    if (style?.display === 'none' || style?.visibility === 'hidden' || style?.visibility === 'collapse') return false
+    // Our own collapsed input must be allowed to reopen. Native hidden offer
+    // nodes, including retained nodes with opacity:0, must not keep it expanded.
+    if (style?.opacity === '0' && !(body.classList.contains(IFRAME_CHAT_ONLY_CLASS) && isChromeElement(candidate))) return false
+    if (candidate === body) break
+  }
+  return true
+}
+
+const isRenderedPurchasePanel = (element: HTMLElement, body: HTMLElement) => {
+  if (!hasNativeVisibleAncestry(element, body)) return false
+  const rect = element.getBoundingClientRect()
+  return rect.width > 0 && rect.height > 0
+}
+
+/** Inspect native state only; this never activates a paid action or changes focus. */
+export const hasOpenChatPurchaseUI = (body: HTMLElement, previouslyOpen = false) => {
+  const inputs = queryAllProbes<HTMLElement>(body, chatPurchaseInputProbe).elements
+  if (inputs.some(input => input.hasAttribute('product-picker-open') && hasNativeVisibleAncestry(input, body))) return true
+  const panels = queryAllProbes<HTMLElement>(body, chatPurchasePanelProbe).elements
+  if (panels.some(panel => isRenderedPurchasePanel(panel, body))) return true
+  // A native offer may be replaced by a spinner between steps. Only continue
+  // an already-open purchase; initial chat loading is not a purchase state.
+  return (
+    previouslyOpen &&
+    queryAllProbes<HTMLElement>(body, chatPurchaseLoadingProbe).elements.some(panel => isRenderedPurchasePanel(panel, body))
+  )
+}
+
+const PURCHASE_BOUNDARY_TAGS = new Set<string>([...chatPurchaseInputProbe.selectors, ...chatPurchasePanelProbe.selectors])
+const isPurchaseBoundaryElement = (element: Element) =>
+  PURCHASE_BOUNDARY_TAGS.has(element.localName) || (element.id === 'loading' && element.matches(chatPurchaseLoadingProbe.selectors[0]))
+
+const touchesPurchaseBoundary = (node: Node) => {
+  if (node.nodeType !== Node.ELEMENT_NODE) return false
+  const element = node as Element
+  if (isPurchaseBoundaryElement(element)) return true
+  // Chat bursts are not purchase transitions. Avoid selector engines for both
+  // text-only additions and ordinary message subtrees, including paid messages.
+  if (!element.childElementCount || (element.localName.startsWith('yt-live-chat-') && element.localName.endsWith('-message-renderer'))) {
+    return false
+  }
+  return element.querySelector(PURCHASE_BOUNDARY_SELECTOR) !== null
+}
+
+const mutationMayChangePurchaseUI = (mutation: MutationRecord) => {
+  const target = mutation.target.nodeType === Node.ELEMENT_NODE ? (mutation.target as Element) : mutation.target.parentElement
+  for (let candidate = target; candidate; candidate = candidate.parentElement) {
+    if (isPurchaseBoundaryElement(candidate)) return true
+  }
+  if (mutation.type === 'attributes') return target ? touchesPurchaseBoundary(target) : false
+  return [...mutation.addedNodes, ...mutation.removedNodes].some(touchesPurchaseBoundary)
+}
+
+/** Observe only native purchase presentation, emitting the initial state and changes. */
+export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolean) => void) => {
+  let open = hasOpenChatPurchaseUI(body)
+  const refresh = () => {
+    const nextOpen = hasOpenChatPurchaseUI(body, open)
+    if (nextOpen === open) return
+    open = nextOpen
+    onChange(open)
+  }
+  const observer = new MutationObserver(mutations => {
+    if (mutations.some(mutationMayChangePurchaseUI)) refresh()
+  })
+  const onTransitionEnd = (event: Event) => {
+    if (event.target && touchesPurchaseBoundary(event.target as Node)) refresh()
+  }
+  // Establish the initial presentation before observing our callback's own
+  // body classes and measurement writes as if they were native UI changes.
+  onChange(open)
+  observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: PURCHASE_STATE_ATTRIBUTES })
+  body.addEventListener('transitionend', onTransitionEnd)
+  body.addEventListener('animationend', onTransitionEnd)
+  return () => {
+    observer.disconnect()
+    body.removeEventListener('transitionend', onTransitionEnd)
+    body.removeEventListener('animationend', onTransitionEnd)
+  }
+}
+
 const blurActiveElement = (body: HTMLElement) => {
   const active = body.ownerDocument.activeElement
   if (active && 'blur' in active && typeof active.blur === 'function') active.blur()
@@ -89,6 +191,9 @@ export const createChatChromeLease = (): ChatChromeLease => {
   let elements: HTMLElement[] = []
   let settleTimer: number | null = null
   let targetObserver: MutationObserver | null = null
+  let stopPurchaseObserver: (() => void) | null = null
+  let purchaseOpen = false
+  let requestedIntent: ChatOnlyChromeIntent = 'inactive'
 
   const clearTimer = () => {
     if (settleTimer !== null) window.clearTimeout(settleTimer)
@@ -108,12 +213,27 @@ export const createChatChromeLease = (): ChatChromeLease => {
     measure(elements)
   }
 
-  const cleanup = (target = body) => {
+  const clearChromePresentation = (target = body) => {
     clearTimer()
-    disconnectTargetObserver()
     target?.classList.remove(IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_MEASURING_CLASS)
     clearMeasurements(elements)
     elements = []
+  }
+
+  const setPurchaseOpen = (open: boolean) => {
+    purchaseOpen = open
+    if (body && body.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS) !== open) {
+      body.classList.toggle(IFRAME_PURCHASE_ACTIVE_CLASS, open)
+    }
+  }
+
+  const cleanup = (target = body) => {
+    disconnectTargetObserver()
+    stopPurchaseObserver?.()
+    stopPurchaseObserver = null
+    purchaseOpen = false
+    target?.classList.remove(IFRAME_PURCHASE_ACTIVE_CLASS)
+    clearChromePresentation(target)
   }
 
   const refreshCollapsedMeasurements = (nextElements = body ? resolveChatOnlyChromeElements(body) : []) => {
@@ -128,7 +248,14 @@ export const createChatChromeLease = (): ChatChromeLease => {
   }
 
   const ensureTargetObserver = () => {
-    if (!body || targetObserver) return
+    if (!body) return
+    if (!stopPurchaseObserver) {
+      stopPurchaseObserver = observeChatPurchaseUI(body, open => {
+        setPurchaseOpen(open)
+        applyRequestedIntent()
+      })
+    }
+    if (targetObserver || requestedIntent === 'inactive') return
     targetObserver = new MutationObserver(mutations => {
       if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
       if (!mutations.some(mutation => mutationMayChangeChrome(mutation, elements))) return
@@ -188,15 +315,28 @@ export const createChatChromeLease = (): ChatChromeLease => {
     }, TRANSITION_FALLBACK_MS)
   }
 
+  const applyRequestedIntent = () => {
+    if (!body || requestedIntent === 'inactive' || requestedIntent === 'hold') return
+    // Synchronize before blur, including native changes not yet delivered by
+    // MutationObserver. While an offer is open, hover loss cannot hide it.
+    setPurchaseOpen(hasOpenChatPurchaseUI(body, purchaseOpen))
+    if (requestedIntent === 'collapsed' && !purchaseOpen) collapse()
+    else expand()
+  }
+
   return {
     sync(nextIframe: HTMLIFrameElement | null, intent: ChatOnlyChromeIntent) {
+      requestedIntent = intent
       bind(nextIframe)
       if (!body || intent === 'hold') return
-      if (intent === 'inactive') cleanup()
-      else if (intent === 'collapsed') collapse()
-      else expand()
+      if (intent === 'inactive') {
+        setPurchaseOpen(hasOpenChatPurchaseUI(body, purchaseOpen))
+        disconnectTargetObserver()
+        clearChromePresentation()
+      } else applyRequestedIntent()
     },
     release() {
+      requestedIntent = 'inactive'
       cleanup()
       iframe = null
       body = null

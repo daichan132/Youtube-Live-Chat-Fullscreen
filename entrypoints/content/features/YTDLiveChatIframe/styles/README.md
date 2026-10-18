@@ -5,7 +5,7 @@ These styles are injected into YouTube's live chat iframe document. The module o
 | Module | Responsibility |
 |---|---|
 | `tokens.css` | Extension CSS variable defaults |
-| `frame.css` | Transparent iframe surfaces and native chrome trimming |
+| `frame.css` | Transparent iframe surfaces, native sizing, chat scrollbars and chrome trimming |
 | `core-theme.css` | Shared text, icon, button, and control colors |
 | `menus.css` | Dropdown, overflow menu and participant-list header surfaces |
 | `banners.css` | Pinned banners, notices and viewer poll colors |
@@ -58,6 +58,14 @@ The participant-list header and back icon follow the profile rather than YouTube
 
 The purchase-preview header's current `#close` icon follows the primary color, and the Super Sticker preview's `#back-button` return-action surface uses the control tint. The colored purchase button and card, and the white sticker-pack backstory with its paired dark text, keep their native colors.
 
-The membership gift quantity offer uses the profile's panel tint, with transparent inner header/body fills. Theme its title, nested offer-section/quantity labels, description, close icon and unfilled quantity actions at their component boundaries: YouTube uses opaque native color tokens here, so overriding `--yt-spec-text-*` alone does not recolor the labels. These rules stay inside the offer renderer; external membership and payment dialogs keep YouTube's native palette.
+The attached iframe owns the chat size before any purchase menu opens. While the body carries `custom-yt-app-live-chat-extension`, `frame.css` releases `yt-live-chat-app`'s native minimum width and height; otherwise a small overlay can place the purchase entry below its viewport. Removing that body class restores the native minimums. The chat message scroller uses a thin scrollbar in the secondary text color, with a transparent track and contained vertical overscroll so reaching the chat's edge does not scroll the underlying page.
+
+Native purchase menus stay in the borrowed chat iframe. While `ChatChromeLease` marks the body with `ylc-native-purchase-active`, only a selected `#buy-flow`, `#super-sticker-buy-flow`, or `#sponsorships-gift-buy-flow` makes `#panel-pages` scroll. The product picker is anchored inside the short input page: both the ordinary and restricted-participation input retain visible overflow while `[product-picker-open]` is set. The picker itself is bounded to the iframe viewport, with its own scrollbar. Picker and purchase-page scrollbars are thin, use the secondary text color over a transparent track, and contain overscroll. These rules do not force a hidden page to display, intercept an action, or change native values, disabled states, artwork, or payment buttons.
+
+The overlay pauses its extension move and resize controls until the native purchase UI closes. This keeps the temporary purchase size from becoming a saved layout; YouTube's purchase controls remain available within their own scroll area.
+
+Text links within ordinary chat messages and viewer-engagement message copy use `--extension-yt-live-link-color`, an opaque blue chosen against the configured background composited over black and white video extremes. Underlines distinguish links from surrounding text, and long URLs wrap inside the chat. Button-shaped anchors, paid-card foreground/background pairs, and outer payment pages keep native styling. At partial opacity the chosen blue maximizes the worse contrast of the two extremes; it does not promise a fixed contrast ratio for every possible color/opacity setting. With a fully transparent background, the link follows the configured text's light/dark direction: no single text color can guarantee contrast over every video frame.
+
+The membership gift quantity offer uses the profile's panel tint, with transparent inner header/body fills. Theme its title, nested offer-section/quantity labels, description, close icon and unfilled quantity actions at their component boundaries: YouTube uses opaque native color tokens here, so overriding `--yt-spec-text-*` alone does not recolor the labels. Enabled Text quantity actions pair the configured foreground with a transparent resting background and the menu interaction tint on hover or visible keyboard focus. Preserve Filled, Tonal, disabled and ARIA-disabled button color pairs. These rules stay inside the offer renderer; external membership and payment dialogs keep YouTube's native palette.
 
 The viewer poll floats above messages and uses the same minimum-96%-opacity surface as the support picker. Its question, metadata, choices and neutral controls follow the primary/secondary palette. Poll-local styles also tint the result bars; bar widths, selection markers, disabled attributes and voting behavior remain owned by YouTube. No poll-editor or other action-panel renderer is themed by these rules.

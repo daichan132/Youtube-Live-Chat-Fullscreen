@@ -11,7 +11,6 @@ import {
   IFRAME_STYLE_MARKER_ATTR,
 } from '../constants/styleContract'
 import { createIframeAttachment, createManagedLiveIframe, type IframeAttachment } from './iframeAttachment'
-import { installMembershipFallback, MEMBERSHIP_FALLBACK_MARKER_ATTR } from './iframeInitializer'
 
 vi.mock('@/entrypoints/content/utils/nativeChat', () => ({
   openArchiveNativeChatPanel: vi.fn(),
@@ -311,76 +310,31 @@ describe('iframeAttachment', () => {
     expect(secondDocument.documentElement.style.getPropertyPriority('--yt-live-chat-background-color')).toBe('important')
   })
 
-  it('removes only the membership fallback listener and marker installed by the extension', () => {
-    const container = document.createElement('div') as HTMLDivElement
+  it('preserves native purchase event handlers while borrowing and restoring chat', () => {
+    const container = document.createElement('div')
     const host = document.createElement('ytd-live-chat-frame')
-    const iframe = document.createElement('iframe') as HTMLIFrameElement
+    const iframe = document.createElement('iframe')
     iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
     const doc = document.implementation.createHTMLDocument('chat')
-    const item = doc.createElement('yt-live-chat-product-picker-panel-item-view-model')
-    item.setAttribute('item-id', 'Membership')
-    const endpoint = doc.createElement('a')
-    item.appendChild(endpoint)
-    Object.defineProperty(item, 'data', {
-      value: {
-        onTapCommand: {
-          parallelCommand: {
-            commands: [
-              {
-                innertubeCommand: {
-                  ypcGetOffersEndpoint: {
-                    params: `sku-${encodeURIComponent(btoa('channel:UCSJ4gkVC6NrvII8umztf0Ow'))}`,
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
-      configurable: true,
-    })
-    doc.body.appendChild(item)
-    Object.defineProperty(iframe, 'contentDocument', {
-      value: doc,
-      configurable: true,
-    })
+    doc.body.innerHTML =
+      '<yt-live-chat-product-picker-panel-item-view-model item-id="Membership"><button>Membership</button></yt-live-chat-product-picker-panel-item-view-model>'
+    const button = doc.querySelector('button')
+    if (!button) throw new Error('Missing native purchase button')
+    const nativeClick = vi.fn()
+    button.addEventListener('click', nativeClick)
+    Object.defineProperty(iframe, 'contentDocument', { value: doc, configurable: true })
     host.appendChild(iframe)
     document.body.append(host, container)
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
-
     attachIframeToContainer(container, iframe)
-    installMembershipFallback(doc)
-    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
-    expect(openSpy).toHaveBeenCalledTimes(1)
-    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
-
+    const borrowedClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    expect(button.dispatchEvent(borrowedClick)).toBe(true)
+    expect(borrowedClick.defaultPrevented).toBe(false)
     detachAttachedIframe(iframe, container)
-    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
-
     expect(host.contains(iframe)).toBe(true)
-    expect(openSpy).toHaveBeenCalledTimes(1)
-    expect(doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe(false)
-  })
-
-  it('preserves a pre-existing membership fallback marker when restoring native chat', () => {
-    const container = document.createElement('div') as HTMLDivElement
-    const host = document.createElement('ytd-live-chat-frame')
-    const iframe = document.createElement('iframe') as HTMLIFrameElement
-    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
-    const doc = document.implementation.createHTMLDocument('chat')
-    doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'pre-existing')
-    Object.defineProperty(iframe, 'contentDocument', {
-      value: doc,
-      configurable: true,
-    })
-    host.appendChild(iframe)
-    document.body.append(host, container)
-
-    attachIframeToContainer(container, iframe)
-    installMembershipFallback(doc)
-    detachAttachedIframe(iframe, container)
-
-    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('pre-existing')
+    const restoredClick = new MouseEvent('click', { bubbles: true, cancelable: true })
+    expect(button.dispatchEvent(restoredClick)).toBe(true)
+    expect(restoredClick.defaultPrevented).toBe(false)
+    expect(nativeClick).toHaveBeenCalledTimes(2)
   })
 
   it('falls back to current native host when original restore target was removed', () => {

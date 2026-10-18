@@ -43,7 +43,10 @@ const appearanceSurfaceHtml = `
     ytd-sponsorships-gift-offer-header-renderer button { color: var(--fixture-native-offer-primary); }
     ytd-offer-section-renderer yt-formatted-string.title, ytd-offer-content-renderer yt-formatted-string.title { color: var(--fixture-native-offer-primary); }
     ytd-sponsorships-gift-offer-body-renderer #subtitle { color: var(--fixture-native-offer-secondary); }
-    ytd-sponsorships-gift-offer-body-renderer .ytSpecButtonShapeNextText { color: rgb(6,95,212); }
+    ytd-sponsorships-gift-offer-body-renderer .ytSpecButtonShapeNextText { color: rgb(6,95,212); background: transparent; }
+    ytd-sponsorships-gift-offer-body-renderer .ytSpecButtonShapeNextText.ytSpecButtonShapeNextCallToAction:not(:disabled):hover { background: rgb(222,241,255); }
+    ytd-sponsorships-gift-offer-body-renderer .ytSpecButtonShapeNextText:disabled { color: rgba(15,15,15,.3); background: rgba(0,0,0,.05); }
+    ytd-sponsorships-gift-offer-body-renderer .ytSpecButtonShapeNextFilled { color: rgb(241,241,241); background: rgb(6,95,212); }
     ytd-sponsorships-gift-offer-renderer svg { fill: currentColor; }
     #fixture-poll-panel { background: white; }
     yt-live-chat-poll-renderer {
@@ -98,7 +101,9 @@ const appearanceSurfaceHtml = `
     </ytd-sponsorships-gift-offer-header-renderer>
     <ytd-sponsorships-gift-offer-body-renderer>
       <div id="title">Give memberships</div><div id="subtitle">Gift offer description</div>
-      <ytd-offer-section-renderer><div><yt-formatted-string class="title">Buy membership gifts</yt-formatted-string></div></ytd-offer-section-renderer><ytd-offer-content-renderer class="purchase-option"><div><yt-formatted-string class="title">5 memberships</yt-formatted-string></div><button class="ytSpecButtonShapeNextText" aria-label="Choose membership quantity"><span class="ytSpecButtonShapeNextButtonTextContent">Price</span><svg width="24" height="24"><path d="M8 4l8 8-8 8" /></svg></button></ytd-offer-content-renderer>
+      <ytd-offer-section-renderer><div><yt-formatted-string class="title">Buy membership gifts</yt-formatted-string></div></ytd-offer-section-renderer><ytd-offer-content-renderer class="purchase-option"><div><yt-formatted-string class="title">5 memberships</yt-formatted-string></div><button class="ytSpecButtonShapeNextText ytSpecButtonShapeNextCallToAction" aria-label="Choose membership quantity"><span class="ytSpecButtonShapeNextButtonTextContent">Price</span><svg width="24" height="24"><path d="M8 4l8 8-8 8" /></svg></button></ytd-offer-content-renderer>
+      <button class="ytSpecButtonShapeNextText ytSpecButtonShapeNextCallToAction" aria-label="Disabled membership quantity" disabled>Unavailable quantity</button>
+      <button class="ytSpecButtonShapeNextFilled ytSpecButtonShapeNextCallToAction" aria-label="Native filled membership action">Native filled action</button>
     </ytd-sponsorships-gift-offer-body-renderer>
   </ytd-sponsorships-gift-offer-renderer>
   <yt-live-chat-action-panel-renderer id="fixture-poll-panel"><yt-live-chat-poll-renderer>
@@ -141,23 +146,122 @@ const appearanceSurfaceHtml = `
     </yt-pdg-gift-collection-view-model>
   </ytd-engagement-panel-section-list-renderer>`
 
+// These local native-like handlers exercise event ownership and UI lifetime only.
+// No payment SDK, transaction endpoint, or real account is involved.
+const purchaseInteractionHtml = `
+  <style>
+    html, body { height: 100%; margin: 0; overflow: hidden; }
+    yt-live-chat-app { display: block; height: 100vh; min-height: 320px; min-width: 298px; }
+    yt-live-chat-renderer { display: block; position: relative; height: 100%; }
+    #content-pages, #chat-messages { display: block; height: 100%; }
+    #contents { display: flex; flex-direction: column; position: relative; height: 100%; }
+    #panel-pages { display: block; max-height: 100%; flex: 0 1 auto; min-height: auto; }
+    #fixture-messages { height: max(0px, calc(100vh - 184px)); overflow: hidden; }
+    #fixture-messages yt-live-chat-item-list-renderer, #item-scroller { display: block; height: 100%; }
+    #item-scroller { overflow-y: auto; overflow-x: hidden; }
+    #items > * { display: block; margin: 0 8px 8px; line-height: 20px; }
+    #fixture-chat-link, #fixture-pinned-link { color: rgb(6, 95, 212); }
+    #product-picker { position: absolute; right: 8px; bottom: 0; }
+    yt-live-chat-header-renderer { display: block; flex: none; height: 56px; }
+    yt-live-chat-item-list-renderer { display: block; flex: 1; min-height: 0; }
+    #input-panel { position: relative; flex: none; height: 128px; margin-top: auto; }
+    yt-live-chat-message-input-renderer { display: block; position: relative; height: 128px; }
+    button, input, textarea { font: inherit; box-sizing: border-box; }
+    button { min-height: 36px; }
+    [hidden] { display: none !important; }
+    yt-live-chat-product-picker-panel-view-model { display: block; position: absolute; bottom: 128px; left: 0; right: 0; }
+    yt-live-chat-product-picker-panel-item-view-model { display: block; }
+    yt-live-chat-message-buy-flow-renderer { display: block; overflow: hidden; }
+    yt-live-chat-message-buy-flow-renderer #header { height: 48px; }
+    yt-live-chat-message-buy-flow-renderer #body { display: block; }
+    #fixture-purchase-form { padding: 12px; }
+    #fixture-purchase-form label { display: block; margin: 12px 0; }
+    #fixture-purchase-form input, #fixture-purchase-form textarea { display: block; width: 100%; }
+    #fixture-purchase-details { min-height: 600px; }
+  </style>
+  <tp-yt-iron-pages id="content-pages"><div id="chat-messages" class="iron-selected"><div id="contents">
+  <yt-live-chat-header-renderer>Fixture chat header</yt-live-chat-header-renderer>
+  <tp-yt-iron-pages id="panel-pages" class="yt-live-chat-renderer">
+    <div id="fixture-messages" class="iron-selected"><yt-live-chat-item-list-renderer><div id="item-scroller"><div id="items">
+      <yt-live-chat-viewer-engagement-message-renderer><div id="message"><a id="fixture-pinned-link" href="https://example.invalid/pinned">https://example.invalid/pinned/averylongcontinuousreferencewithoutspacesforthenativechatwrappingboundary</a></div></yt-live-chat-viewer-engagement-message-renderer>
+      <yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer"><a id="fixture-chat-link" class="yt-simple-endpoint" href="https://example.invalid/chat">https://example.invalid/chat/averylongcontinuousreferencewithoutspacesforthenativechatwrappingboundary</a></div></yt-live-chat-text-message-renderer>
+      <yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer"><a id="fixture-button-link" role="button" class="ytSpecButtonShapeNextHost" href="#fixture-button" style="background: rgb(6,95,212); color: rgb(241,241,241)">Native button action</a></div></yt-live-chat-text-message-renderer>
+      ${Array.from({ length: 24 }, (_, index) => `<yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer">Fixture scroll message ${index + 1}</div></yt-live-chat-text-message-renderer>`).join('')}
+    </div></div></yt-live-chat-item-list-renderer></div>
+    <div id="buy-flow" class="yt-live-chat-renderer" hidden>
+      <yt-live-chat-message-buy-flow-renderer hidden>
+        <div id="header"><button id="close-button" class="yt-live-chat-message-buy-flow-renderer" type="button" aria-label="Close Super Chat">Close</button></div>
+        <div id="body"><div id="fixture-purchase-form">
+          <label>Amount<input aria-label="Super Chat amount" value="200" inputmode="numeric" /></label>
+          <label>Message<textarea aria-label="Super Chat draft">Unsent paid message</textarea></label>
+          <div id="fixture-purchase-details">Native-like purchase terms and preview</div>
+          <button type="button" aria-label="Confirm fixture purchase">Confirm purchase</button>
+        </div></div>
+      </yt-live-chat-message-buy-flow-renderer>
+    </div>
+  </tp-yt-iron-pages>
+  <div id="input-panel"><yt-live-chat-message-input-renderer>
+    <div id="input-container"><div contenteditable="true" aria-label="Chat draft">Unsent chat draft</div></div>
+    <div id="product-picker"><button type="button" aria-label="Open support menu">Support</button></div>
+    <yt-live-chat-product-picker-panel-view-model hidden>
+      <div id="header">Support choices</div><div id="items">
+        <yt-live-chat-product-picker-panel-item-view-model item-id="SuperChat"><button type="button" aria-label="Open Super Chat">Super Chat</button></yt-live-chat-product-picker-panel-item-view-model>
+        <yt-live-chat-product-picker-panel-item-view-model item-id="Membership"><button type="button" aria-label="Open membership">Membership</button></yt-live-chat-product-picker-panel-item-view-model>
+      </div>
+    </yt-live-chat-product-picker-panel-view-model>
+  </yt-live-chat-message-input-renderer></div>
+  </div></div></tp-yt-iron-pages>
+  <dialog aria-label="Native membership dialog"><p>Local membership preview</p><button type="button" aria-label="Close membership">Cancel</button><button type="button" aria-label="Confirm fixture membership">Join</button></dialog>
+  <script>
+    (() => {
+      const input = document.querySelector('yt-live-chat-message-input-renderer');
+      const picker = document.querySelector('yt-live-chat-product-picker-panel-view-model');
+      const flow = document.querySelector('yt-live-chat-message-buy-flow-renderer');
+      const buyPage = document.getElementById('buy-flow');
+      const messages = document.getElementById('fixture-messages');
+      const membership = document.querySelector('dialog');
+      const probe = window.__ylcFixturePurchase = { supportEntries: 0, superChatEntries: 0, membershipEntries: 0, preventedEntries: 0, trustedEntries: 0, windowOpenCalls: 0, confirmations: 0 };
+      window.open = () => { probe.windowOpenCalls++; return null; };
+      const recordEntry = event => {
+        if (event.isTrusted) probe.trustedEntries++;
+        queueMicrotask(() => { if (event.defaultPrevented) probe.preventedEntries++; });
+      };
+      document.querySelector('[aria-label="Open support menu"]').addEventListener('click', event => {
+        recordEntry(event); probe.supportEntries++; input.setAttribute('product-picker-open', ''); picker.hidden = false; picker.classList.add('iron-selected');
+      });
+      document.querySelector('[aria-label="Open Super Chat"]').addEventListener('click', event => {
+        recordEntry(event); probe.superChatEntries++; picker.hidden = true; picker.classList.remove('iron-selected'); flow.hidden = false; buyPage.hidden = false; buyPage.classList.add('iron-selected'); messages.hidden = true; messages.classList.remove('iron-selected');
+      });
+      document.querySelector('[aria-label="Open membership"]').addEventListener('click', event => {
+        recordEntry(event); probe.membershipEntries++; picker.hidden = true; picker.classList.remove('iron-selected'); membership.showModal();
+      });
+      const close = () => { picker.hidden = true; picker.classList.remove('iron-selected'); flow.hidden = true; buyPage.hidden = true; buyPage.classList.remove('iron-selected'); messages.hidden = false; messages.classList.add('iron-selected'); input.removeAttribute('product-picker-open'); };
+      document.querySelector('[aria-label="Close Super Chat"]').addEventListener('click', close);
+      document.querySelector('[aria-label="Close membership"]').addEventListener('click', () => { membership.close(); close(); });
+      for (const button of document.querySelectorAll('[aria-label^="Confirm fixture"]')) button.addEventListener('click', () => probe.confirmations++);
+    })();
+  </script>`
+
 const playableChatHtml = (
   title: string,
   runtimeVideoId?: string,
   restrictedParticipation = false,
   giftButton = false,
   appearanceSurfaces = false,
+  purchaseInteractions = false,
 ) => `<!doctype html>
 <html>
   <head><title>${escapeHtml(title)}</title></head>
   <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
-    <yt-live-chat-renderer>
-      <yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>
+    ${purchaseInteractions ? '<yt-live-chat-app>' : ''}<yt-live-chat-renderer>
+      ${purchaseInteractions ? '' : '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'}
       ${
-        appearanceSurfaces
-          ? appearanceSurfaceHtml
-          : restrictedParticipation
-            ? `<style>
+        purchaseInteractions
+          ? purchaseInteractionHtml
+          : appearanceSurfaces
+            ? appearanceSurfaceHtml
+            : restrictedParticipation
+              ? `<style>
         #container.yt-live-chat-restricted-participation-renderer { background: white; color: rgba(17,17,17,.6); }
         #body.yt-live-chat-restricted-participation-renderer { color: rgba(17,17,17,.6); }
       </style>
@@ -166,8 +270,8 @@ const playableChatHtml = (
           <div id="explanation"><div id="body" class="yt-live-chat-restricted-participation-renderer"><span id="message">Subscribers-only mode</span></div></div>
         </div>
       </yt-live-chat-restricted-participation-renderer></div>`
-            : giftButton
-              ? `<style>
+              : giftButton
+                ? `<style>
         .ytwPdgGiftButtonButton { color: rgb(15,15,15); background-color: rgba(0,0,0,.05); border: 0; width: 40px; height: 40px; }
         .ytwPdgGiftButtonButton:disabled { color: rgba(15,15,15,.3); }
         .ytSpecIconShapeHost { color: inherit; }
@@ -191,9 +295,9 @@ const playableChatHtml = (
         </div></div></div>
         <span id="gift-catalog-icon">Colored gift</span>
       </yt-live-chat-message-input-renderer></div>`
-              : ''
+                : ''
       }
-    </yt-live-chat-renderer>
+    </yt-live-chat-renderer>${purchaseInteractions ? '</yt-live-chat-app>' : ''}
     ${
       runtimeVideoId
         ? `<a id="fixture-sign-in" href="/signin?next=${encodeURIComponent(`/watch?v=${runtimeVideoId}`)}">Sign in</a>
@@ -341,6 +445,7 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
                     state.chat.mode === 'live' && state.chat.restrictedParticipation === true,
                     state.chat.mode === 'live' && state.chat.giftButton === true,
                     state.chat.mode === 'live' && state.chat.appearanceSurfaces === true,
+                    state.chat.mode === 'live' && state.chat.purchaseInteractions === true,
                   )
                 : unavailableChatHtml(),
           },

@@ -53,6 +53,7 @@ export type YouTubeScenarioState = YouTubeScenarioBase &
           restrictedParticipation?: boolean
           giftButton?: boolean
           appearanceSurfaces?: boolean
+          purchaseInteractions?: boolean
           native: NativeChatDefinition
           response: 'playable' | 'unavailable'
         }

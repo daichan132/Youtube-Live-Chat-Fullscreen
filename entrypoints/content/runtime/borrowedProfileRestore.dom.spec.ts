@@ -15,6 +15,7 @@ const scopes: SessionScope[] = []
 const createNativeDocument = () => {
   const doc = document.implementation.createHTMLDocument('Native chat')
   doc.documentElement.style.setProperty('--yt-live-chat-background-color', 'rgb(7, 8, 9)', 'important')
+  doc.documentElement.style.setProperty('--extension-yt-live-link-color', 'rgb(1, 90, 170)', 'important')
   doc.body.style.setProperty('backdrop-filter', 'blur(3px)', 'important')
   const font = doc.createElement('style')
   font.id = CUSTOM_FONT_STYLE_ID
@@ -65,6 +66,8 @@ const borrow = (attachImmediately = true) => {
 const expectNativeStyles = ({ doc, font }: ReturnType<typeof createNativeDocument>) => {
   expect(doc.documentElement.style.getPropertyValue('--yt-live-chat-background-color')).toBe('rgb(7, 8, 9)')
   expect(doc.documentElement.style.getPropertyPriority('--yt-live-chat-background-color')).toBe('important')
+  expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-link-color')).toBe('rgb(1, 90, 170)')
+  expect(doc.documentElement.style.getPropertyPriority('--extension-yt-live-link-color')).toBe('important')
   expect(doc.body.style.getPropertyValue('backdrop-filter')).toBe('blur(3px)')
   expect(doc.body.style.getPropertyPriority('backdrop-filter')).toBe('important')
   expect(doc.head.querySelector(`#${CUSTOM_FONT_STYLE_ID}`)).toBe(font)
@@ -134,6 +137,7 @@ describe('borrowed document restoration after profile updates', () => {
       reconciler.setProfile({ ...DEFAULT_CHAT_PROFILE, appearance: { ...DEFAULT_CHAT_PROFILE.appearance, fontSize } })
       iframe.dispatchEvent(new Event('load'))
     }
+    expect(native.doc.documentElement.style.getPropertyValue('--extension-yt-live-link-color')).toBe('rgba(3, 66, 148, 1)')
     reconciler.releaseIframe(null)
 
     expect(iframe.parentElement).toBe(host)

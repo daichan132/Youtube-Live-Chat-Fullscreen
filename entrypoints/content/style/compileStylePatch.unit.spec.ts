@@ -42,6 +42,19 @@ describe('compileStylePatch', () => {
     }
   })
 
+  it('publishes a distinct readable link color without changing the configured message ink', () => {
+    const patch = compileStylePatch(
+      createProfile({
+        backgroundColor: { r: 12, g: 16, b: 24, a: 0.94 },
+        fontColor: { r: 245, g: 240, b: 230, a: 0.6 },
+      }),
+      { membershipDefaultColor: null, firefox: false },
+    )
+
+    expect(patch.documentProperties['--extension-yt-live-link-color']).toBe('rgba(151, 204, 255, 1)')
+    expect(patch.documentProperties['--extension-yt-live-font-color']).toBe('rgba(245, 240, 230, 0.6)')
+  })
+
   it('uses the runtime YouTube membership color without changing the profile', () => {
     const profile = createProfile({ membershipNameColor: { mode: 'youtube-default' } })
     const patch = compileStylePatch(profile, {

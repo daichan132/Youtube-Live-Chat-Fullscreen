@@ -1,11 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { IFRAME_STYLE_MARKER_ATTR } from '../constants/styleContract'
-import {
-  ensureStyleInjected,
-  installMembershipFallback,
-  MEMBERSHIP_FALLBACK_MARKER_ATTR,
-  uninstallMembershipFallback,
-} from './iframeInitializer'
+import { ensureStyleInjected } from './iframeInitializer'
 
 const createChatDoc = () => document.implementation.createHTMLDocument('chat') as Document
 
@@ -23,56 +18,20 @@ describe('iframeInitializer', () => {
     expect(doc.head?.querySelector(`style[${IFRAME_STYLE_MARKER_ATTR}="true"]`)?.textContent).toBe('body { color: red; }')
   })
 
-  it('opens the channel join page when membership picker fallback is clicked', () => {
+  it('leaves native membership clicks and their default action intact', () => {
     const doc = createChatDoc()
-    const item = doc.createElement('yt-live-chat-product-picker-panel-item-view-model')
-    item.setAttribute('item-id', 'Membership')
-    const endpoint = doc.createElement('a')
-    endpoint.id = 'endpoint'
-    endpoint.textContent = 'Membership'
-    item.appendChild(endpoint)
-    Object.defineProperty(item, 'data', {
-      value: {
-        onTapCommand: {
-          parallelCommand: {
-            commands: [
-              {
-                innertubeCommand: {
-                  ypcGetOffersEndpoint: {
-                    params: `sku-${encodeURIComponent(btoa('channel:UCSJ4gkVC6NrvII8umztf0Ow'))}`,
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
-      configurable: true,
-    })
-    doc.body.appendChild(item)
-    const openSpy = vi.spyOn(window, 'open').mockImplementation(() => null)
-
-    installMembershipFallback(doc)
-    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
-
-    expect(openSpy).toHaveBeenCalledWith('https://www.youtube.com/channel/UCSJ4gkVC6NrvII8umztf0Ow/join', '_blank', 'noopener')
-    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('true')
-
-    expect(uninstallMembershipFallback(doc)).toBe(true)
-    endpoint.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
-
-    expect(openSpy).toHaveBeenCalledTimes(1)
-    expect(doc.body.hasAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe(false)
-    expect(uninstallMembershipFallback(doc)).toBe(false)
-  })
-
-  it('preserves a membership fallback marker it did not install', () => {
-    const doc = createChatDoc()
-    doc.body.setAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR, 'native-value')
-
-    installMembershipFallback(doc)
-
-    expect(uninstallMembershipFallback(doc)).toBe(false)
-    expect(doc.body.getAttribute(MEMBERSHIP_FALLBACK_MARKER_ATTR)).toBe('native-value')
+    doc.body.innerHTML =
+      '<yt-live-chat-product-picker-panel-item-view-model item-id="Membership"><a id="endpoint" href="#native-offer">Membership</a></yt-live-chat-product-picker-panel-item-view-model>'
+    const nativeClick = vi.fn()
+    const endpoint = doc.querySelector('a')
+    if (!endpoint) throw new Error('Missing native membership link')
+    endpoint.addEventListener('click', nativeClick)
+    const open = vi.spyOn(window, 'open').mockImplementation(() => null)
+    ensureStyleInjected(doc, 'body { color: red; }')
+    const click = new MouseEvent('click', { bubbles: true, cancelable: true })
+    expect(endpoint.dispatchEvent(click)).toBe(true)
+    expect(nativeClick).toHaveBeenCalledOnce()
+    expect(click.defaultPrevented).toBe(false)
+    expect(open).not.toHaveBeenCalled()
   })
 })

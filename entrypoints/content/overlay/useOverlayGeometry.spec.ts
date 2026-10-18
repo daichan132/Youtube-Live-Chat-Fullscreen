@@ -206,6 +206,24 @@ describe('useOverlayGeometry', () => {
     )
   })
 
+  it('defers automatic placement during a native purchase and resumes afterward', () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const saved = store.get(chatSettingsStateAtom).geometry
+    const caption = document.createElement('div')
+    caption.className = 'ytp-caption-window-container'
+    caption.getBoundingClientRect = () =>
+      ({ x: 100, y: 50, left: 100, top: 50, right: 400, bottom: 250, width: 300, height: 200 }) as DOMRect
+    player.append(caption)
+    const { rerender } = renderHook(({ paused }) => useOverlayGeometry({ referenceElement: player, automaticPlacementPaused: paused }), {
+      initialProps: { paused: true },
+      wrapper,
+    })
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(saved)
+    rerender({ paused: false })
+    expect(store.get(chatSettingsStateAtom).geometry).not.toEqual(saved)
+    expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ pinned: false })
+  })
+
   it('keeps legacy pixels pending until the player is available, then migrates once as pinned ratios', () => {
     const legacy: LegacyChatGeometry = {
       reference: 'legacy-viewport-px',

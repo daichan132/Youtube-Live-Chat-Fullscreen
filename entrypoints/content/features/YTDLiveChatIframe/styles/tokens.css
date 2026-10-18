@@ -11,6 +11,7 @@ html {
   --extension-super-chat-bar-display: block;
   --extension-yt-live-chat-font-size: 13px;
   --extension-yt-live-chat-spacing: 0px;
+  --extension-yt-live-link-color: var(--yt-spec-call-to-action, #034294);
   --extension-yt-live-font-color: var(--yt-spec-text-primary, #0f0f0f);
   --extension-yt-live-secondary-font-color: var(--yt-spec-text-secondary, rgba(15, 23, 42, 0.72));
   --extension-yt-live-membership-name-color: var(--yt-live-chat-sponsor-color, rgba(15, 157, 88, 1));

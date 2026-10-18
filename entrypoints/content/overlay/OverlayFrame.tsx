@@ -20,6 +20,7 @@ export type OverlayFrameProps = {
   children: ReactNode
   initialDisplayOnMount?: boolean
   ready?: boolean
+  purchaseActive?: boolean
   settingsOpen?: boolean
   onOpenSettings?: (source: HTMLElement) => void
   onChatVisibilityChange?: (visible: boolean) => void
@@ -29,6 +30,7 @@ export type OverlayFrameProps = {
 export const OverlayFrame = ({
   children,
   ready = true,
+  purchaseActive = false,
   initialDisplayOnMount = false,
   settingsOpen = false,
   onOpenSettings = () => {},
@@ -41,17 +43,33 @@ export const OverlayFrame = ({
     initialDisplayOnMount,
     settingsOpen,
     documentFocused,
-    alwaysVisible: profile.display.idleVisibility === 'always-visible',
+    alwaysVisible: purchaseActive || profile.display.idleVisibility === 'always-visible',
   })
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
   const geometry = useOverlayGeometry({
     referenceElement,
     settingsOpen,
+    automaticPlacementPaused: purchaseActive,
     interactionState: interaction.state,
     onGestureStart: type => (type === 'resize' ? interaction.startResizing() : interaction.startDragging()),
     onGestureEnd: interaction.finishDragging,
   })
-  const { coordinates, size } = geometry.displayGeometry
+  // Native purchase cards need room even when the saved chat is deliberately small.
+  // This is a transient presentation: the user's geometry is never committed here.
+  const purchaseLayout = useMemo(() => {
+    const current = geometry.displayGeometry
+    if (!purchaseActive) return current
+    const width = Math.min(Math.max(0, geometry.viewport.width - 20), Math.max(360, current.size.width))
+    const height = Math.min(Math.max(0, geometry.viewport.height - 20), Math.max(480, current.size.height))
+    return {
+      coordinates: {
+        x: Math.max(10, Math.min(current.coordinates.x, geometry.viewport.width - width - 10)),
+        y: Math.max(10, Math.min(current.coordinates.y, geometry.viewport.height - height - 10)),
+      },
+      size: { width, height },
+    }
+  }, [geometry.displayGeometry, geometry.viewport, purchaseActive])
+  const { coordinates, size } = purchaseLayout
   const controlRailTop = getControlRailTop({
     chatHeight: size.height,
     containerTop: coordinates.y,
@@ -119,7 +137,7 @@ export const OverlayFrame = ({
           >
             {children}
           </ChatSurface>
-          {controlHoverBridgeHeight > 0 ? (
+          {!purchaseActive && controlHoverBridgeHeight > 0 ? (
             // biome-ignore lint/a11y/noStaticElementInteractions: This transparent bridge preserves hover between chat and controls.
             <div
               data-ylc-control-hover-bridge
@@ -130,26 +148,30 @@ export const OverlayFrame = ({
               onMouseLeave={interaction.leaveControls}
             />
           ) : null}
-          <ResizeHandles onPointerDown={geometry.onPointerDown} />
-          <OverlayControlRail
-            isDragging={interaction.state === 'dragging'}
-            isReady={ready && !settingsOpen}
-            isVisible={interaction.controlsVisible}
-            placement={controlRailPlacement}
-            placementPanelMaxHeight={placementPanelMaxHeight}
-            backgroundColor={profile.appearance.backgroundColor}
-            fontColor={profile.appearance.fontColor}
-            onSettingsClick={onOpenSettings}
-            onPointerDown={event => {
-              geometry.onPointerDown(event)
-            }}
-            onKeyDown={handleKeyboardMove}
-            onEnterControls={interaction.enterControls}
-            onLeaveControls={interaction.leaveControls}
-            onFocusControls={interaction.setControlsFocused}
-            onMoveBy={geometry.moveBy}
-            onResizeBy={geometry.resizeBy}
-          />
+          {!purchaseActive ? (
+            <>
+              <ResizeHandles onPointerDown={geometry.onPointerDown} />
+              <OverlayControlRail
+                isDragging={interaction.state === 'dragging'}
+                isReady={ready && !settingsOpen}
+                isVisible={interaction.controlsVisible}
+                placement={controlRailPlacement}
+                placementPanelMaxHeight={placementPanelMaxHeight}
+                backgroundColor={profile.appearance.backgroundColor}
+                fontColor={profile.appearance.fontColor}
+                onSettingsClick={onOpenSettings}
+                onPointerDown={event => {
+                  geometry.onPointerDown(event)
+                }}
+                onKeyDown={handleKeyboardMove}
+                onEnterControls={interaction.enterControls}
+                onLeaveControls={interaction.leaveControls}
+                onFocusControls={interaction.setControlsFocused}
+                onMoveBy={geometry.moveBy}
+                onResizeBy={geometry.resizeBy}
+              />
+            </>
+          ) : null}
         </div>
       </div>
     </div>

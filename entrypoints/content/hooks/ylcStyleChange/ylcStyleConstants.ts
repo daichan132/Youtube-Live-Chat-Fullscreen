@@ -24,6 +24,8 @@ export const YLC_FLOATING_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-float
 export const YLC_PANEL_BACKGROUND_PROPERTY = '--extension-yt-live-panel-background-color'
 export const YLC_BACKDROP_FILTER_PROPERTY = '--extension-yt-live-backdrop-filter'
 
+export const YLC_LINK_COLOR_PROPERTY = '--extension-yt-live-link-color'
+
 export const YLC_FONT_COLOR_PROPERTIES = ['--extension-yt-live-font-color'] as const
 
 export const YLC_FONT_COLOR_LIGHT_PROPERTIES = ['--extension-yt-live-secondary-font-color'] as const
@@ -51,6 +53,7 @@ export const YLC_DOCUMENT_STYLE_PROPERTIES = [
   YLC_FLOATING_PANEL_BACKGROUND_PROPERTY,
   YLC_BACKDROP_FILTER_PROPERTY,
   ...YLC_FONT_COLOR_PROPERTIES,
+  YLC_LINK_COLOR_PROPERTY,
   ...YLC_FONT_COLOR_LIGHT_PROPERTIES,
   ...YLC_FONT_COLOR_SURFACE_PROPERTIES,
   YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
