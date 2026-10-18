@@ -358,7 +358,13 @@ export const createChatChromeLease = (): ChatChromeLease => {
       const observedDocument = nextDocument
       const observedIframe = nextIframe
       documentObserver = new MutationObserver(() => {
-        if (observedDocument !== chatDocument || observedIframe !== iframe || observedDocument.body === body) return
+        if (
+          !isAccessibleNode(observedDocument) ||
+          observedDocument !== chatDocument ||
+          observedIframe !== iframe ||
+          observedDocument.body === body
+        )
+          return
         bind(observedIframe)
         applyRequestedIntent()
       })

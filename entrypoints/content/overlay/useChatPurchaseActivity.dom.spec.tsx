@@ -38,6 +38,8 @@ const mountNativeLoading = (body: HTMLElement) => {
 }
 
 afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
   for (const element of ownedElements.splice(0)) element.remove()
 })
 
@@ -315,4 +317,35 @@ describe('useChatPurchaseActivity', () => {
       expect(onChange).toHaveBeenLastCalledWith(false)
     },
   )
+})
+
+it('ignores a queued document callback after Firefox revokes its wrapper', () => {
+  const callbacks: MutationCallback[] = []
+  const NativeMutationObserver = MutationObserver
+  vi.stubGlobal(
+    'MutationObserver',
+    class extends NativeMutationObserver {
+      constructor(callback: MutationCallback) {
+        super(callback)
+        this.callback = callback
+      }
+      private callback: MutationCallback
+      override observe(target: Node, options?: MutationObserverInit) {
+        if (target.nodeName === 'HTML') callbacks.push(this.callback)
+        super.observe(target, options)
+      }
+    },
+  )
+  const { carrier, body } = createCarrier()
+  const doc = body.ownerDocument
+  const onChange = vi.fn()
+  const { unmount } = renderHook(() => useChatPurchaseActivity(carrier, onChange))
+  expect(callbacks).toHaveLength(1)
+  const dead = () => {
+    throw new TypeError("can't access dead object")
+  }
+  vi.spyOn(doc, 'nodeType', 'get').mockImplementation(dead)
+  vi.spyOn(doc, 'body', 'get').mockImplementation(dead)
+  expect(() => callbacks[0]?.([], {} as MutationObserver)).not.toThrow()
+  unmount()
 })

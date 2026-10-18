@@ -1,5 +1,6 @@
 import { useLayoutEffect } from 'react'
 import { observeChatPurchaseUI } from '../runtime/resources/ChatChromeLease'
+import { isAccessibleNode } from '../runtime/resources/isAccessibleNode'
 
 /** Bind to the current iframe document, including native reloads and replacement. */
 export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (active: boolean) => void) => {
@@ -37,7 +38,7 @@ export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (
       if (nextDocument?.documentElement) {
         const observedDocument = nextDocument
         documentObserver = new MutationObserver(() => {
-          if (observedDocument === chatDocument && observedDocument.body !== body) bind()
+          if (isAccessibleNode(observedDocument) && observedDocument === chatDocument && observedDocument.body !== body) bind()
         })
         documentObserver.observe(observedDocument.documentElement, { childList: true })
       }

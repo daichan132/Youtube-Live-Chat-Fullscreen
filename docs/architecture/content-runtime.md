@@ -122,7 +122,7 @@ Four lease types own page mutations:
 
 `ChatChromeLease` clears measurements from its previous header and input targets before adopting and measuring replacements. This applies to collapse, expansion, and observer-driven remeasurement, including a target replaced before its mutation callback runs. Expansion settling and release clear every measurement still owned by the lease.
 
-Firefox can revoke DOM wrappers when an iframe document is destroyed during navigation. Chat-chrome and scroll-anchor cleanup release their observers and references without touching those unreadable nodes; the destroyed realm has already discarded its own timers and listeners. Detached nodes whose wrappers remain readable still receive normal style and listener restoration. A retired document must not prevent the next live, replay or no-chat session from reconciling.
+Firefox can revoke DOM wrappers when an iframe document is destroyed during navigation. Chat-chrome and scroll-anchor cleanup release their observers and references without touching those unreadable nodes; the destroyed realm has already discarded its own timers and listeners. Detached nodes whose wrappers remain readable still receive normal style and listener restoration. Queued body-replacement callbacks also check that their document wrapper remains readable before accessing its body. A retired document must not prevent the next live, replay or no-chat session from reconciling.
 
 Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. On teardown, the chat iframe is restored before layout and presentation are removed.
 

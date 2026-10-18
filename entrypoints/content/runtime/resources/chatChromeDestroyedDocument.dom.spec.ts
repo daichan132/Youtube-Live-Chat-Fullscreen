@@ -23,6 +23,7 @@ const createFrame = () => {
 }
 
 afterEach(() => {
+  vi.unstubAllGlobals()
   vi.restoreAllMocks()
   document.body.replaceChildren()
 })
@@ -55,4 +56,38 @@ it('stops a transition after its iframe realm is destroyed without reading revok
   revokeNode(body)
   expect(() => lease?.restore()).not.toThrow()
   expect(() => lease?.stop()).not.toThrow()
+})
+
+it('ignores a queued body-replacement callback after Firefox revokes the document', () => {
+  const callbacks: MutationCallback[] = []
+  const NativeMutationObserver = MutationObserver
+  vi.stubGlobal(
+    'MutationObserver',
+    class extends NativeMutationObserver {
+      constructor(callback: MutationCallback) {
+        super(callback)
+        this.callback = callback
+      }
+      private callback: MutationCallback
+      override observe(target: Node, options?: MutationObserverInit) {
+        if (target.nodeName === 'HTML') callbacks.push(this.callback)
+        super.observe(target, options)
+      }
+    },
+  )
+  const old = createFrame()
+  const lease = createChatChromeLease()
+  lease.sync(old.iframe, 'collapsed')
+  expect(callbacks).toHaveLength(1)
+  const dead = () => {
+    throw new TypeError("can't access dead object")
+  }
+  vi.spyOn(old.doc, 'nodeType', 'get').mockImplementation(dead)
+  vi.spyOn(old.doc, 'body', 'get').mockImplementation(dead)
+  revokeNode(old.body)
+  expect(() => callbacks[0]?.([], {} as MutationObserver)).not.toThrow()
+  const next = createFrame()
+  lease.sync(next.iframe, 'collapsed')
+  expect(next.body.classList.contains('chat-only-display')).toBe(true)
+  lease.release()
 })
