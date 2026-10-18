@@ -1,4 +1,4 @@
-import { type CSSProperties, type KeyboardEvent, type PointerEvent, useId, useRef, useState } from 'react'
+import { type CSSProperties, type KeyboardEvent, type PointerEvent, useId, useLayoutEffect, useRef, useState } from 'react'
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
@@ -9,9 +9,12 @@ const CONTROL_GAP = 2
 
 type OverlayControlRailProps = {
   isDragging: boolean
+  isResizing?: boolean
   isReady: boolean
   isVisible: boolean
   placement: CSSProperties
+  placementAnchor?: { right: number; top: number }
+  viewportSize?: { width: number; height: number }
   placementPanelMaxHeight?: number
   backgroundColor: RGBA
   fontColor: RGBA
@@ -29,9 +32,12 @@ const toRgba = (color: RGBA, alpha = color.a) => `rgba(${color.r}, ${color.g}, $
 
 export const OverlayControlRail = ({
   isDragging,
+  isResizing = false,
   isReady,
   isVisible,
   placement,
+  placementAnchor,
+  viewportSize,
   placementPanelMaxHeight,
   backgroundColor,
   fontColor,
@@ -48,10 +54,25 @@ export const OverlayControlRail = ({
   const dragDescriptionId = useId()
   const [focused, setFocused] = useState(false)
   const [placementOpen, setPlacementOpen] = useState(false)
+  const [adjustmentAnchor, setAdjustmentAnchor] = useState<{
+    right: number
+    top: number
+    maxHeight: number | undefined
+  } | null>(null)
   const placementButtonRef = useRef<HTMLButtonElement>(null)
+  // Menu actions move the frame beneath the pointer. Keep their targets in
+  // place until closing or a direct manipulation / viewport change reanchors.
+  useLayoutEffect(() => {
+    setAdjustmentAnchor(null)
+  }, [isDragging, isResizing, isReady, placementOpen, viewportSize?.width, viewportSize?.height])
   const closePlacement = () => {
     setPlacementOpen(false)
+    setAdjustmentAnchor(null)
     placementButtonRef.current?.focus()
+  }
+  const preserveAdjustmentAnchor = () => {
+    if (!placementAnchor) return
+    setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: placementPanelMaxHeight })
   }
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
@@ -151,7 +172,11 @@ export const OverlayControlRail = ({
             color,
             width: 240,
             minWidth: 0,
-            maxHeight: placementPanelMaxHeight,
+            maxHeight: adjustmentAnchor ? adjustmentAnchor.maxHeight : placementPanelMaxHeight,
+            transform:
+              adjustmentAnchor && placementAnchor
+                ? `translate(${adjustmentAnchor.right - placementAnchor.right}px, ${adjustmentAnchor.top - placementAnchor.top}px)`
+                : undefined,
             overflowY: 'auto',
             boxSizing: 'border-box',
             gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
@@ -164,6 +189,7 @@ export const OverlayControlRail = ({
               type='button'
               className='ylc-theme-focus-ring rounded border border-solid ylc-theme-border px-2 py-2 text-xs leading-tight cursor-pointer'
               onClick={() => {
+                preserveAdjustmentAnchor()
                 if (action === 'up') onMoveBy?.({ x: 0, y: -10 })
                 if (action === 'down') onMoveBy?.({ x: 0, y: 10 })
                 if (action === 'left') onMoveBy?.({ x: -10, y: 0 })

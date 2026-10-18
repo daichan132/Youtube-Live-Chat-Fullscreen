@@ -1,17 +1,19 @@
-import { fireEvent, render } from '@testing-library/react'
+import { act, fireEvent, render } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
-import { usePointerSession } from './usePointerSession'
+import { type Point, usePointerSession } from './usePointerSession'
 
 const Harness = ({
   commit,
   cancel,
+  move = () => {},
 }: {
   commit: (session: string, point: { x: number; y: number }) => void
   cancel: (session: string) => void
+  move?: (session: string, point: Point) => void
 }) => {
   const pointer = usePointerSession({
     begin: () => 'session',
-    move: () => {},
+    move,
     commit,
     cancel,
   })
@@ -35,6 +37,66 @@ const installPointerCapture = (element: HTMLElement) => {
 }
 
 describe('usePointerSession pointer capture lifecycle', () => {
+  it('commits once when a host ancestor stops pointerup propagation before capture is lost', () => {
+    const commit = vi.fn()
+    const cancel = vi.fn()
+    const view = render(<Harness commit={commit} cancel={cancel} />)
+    const button = view.getByRole('button', { name: 'drag' })
+    const capture = installPointerCapture(button)
+    const stopPointerUp = vi.fn((event: Event) => event.stopPropagation())
+    view.container.addEventListener('pointerup', stopPointerUp)
+
+    fireEvent.pointerDown(button, { button: 0, clientX: 10, clientY: 20, pointerId: 9 })
+    fireEvent.pointerMove(button, { clientX: 30, clientY: 40, pointerId: 9 })
+    fireEvent.pointerUp(button, { clientX: 45, clientY: 55, pointerId: 9 })
+    fireEvent(button, new PointerEvent('lostpointercapture', { pointerId: 9 }))
+    fireEvent.pointerUp(window, { clientX: 45, clientY: 55, pointerId: 9 })
+
+    expect(stopPointerUp).toHaveBeenCalledOnce()
+    expect(commit).toHaveBeenCalledExactlyOnceWith('session', { x: 45, y: 55 })
+    expect(cancel).not.toHaveBeenCalled()
+    expect(capture.releasePointerCapture).toHaveBeenCalledExactlyOnceWith(9)
+  })
+
+  it('previews the latest movement even when a host ancestor stops pointermove propagation', async () => {
+    const move = vi.fn()
+    const view = render(<Harness commit={vi.fn()} cancel={vi.fn()} move={move} />)
+    const button = view.getByRole('button', { name: 'drag' })
+    installPointerCapture(button)
+    const stopPointerMove = vi.fn((event: Event) => event.stopPropagation())
+    view.container.addEventListener('pointermove', stopPointerMove)
+
+    fireEvent.pointerDown(button, { button: 0, pointerId: 10 })
+    fireEvent.pointerMove(button, { clientX: 30, clientY: 40, pointerId: 10 })
+    fireEvent.pointerMove(button, { clientX: 45, clientY: 55, pointerId: 10 })
+    await act(async () => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
+
+    expect(stopPointerMove).toHaveBeenCalledTimes(2)
+    expect(move).toHaveBeenCalledExactlyOnceWith('session', { x: 45, y: 55 })
+    fireEvent.pointerUp(button, { clientX: 45, clientY: 55, pointerId: 10 })
+  })
+
+  it('cancels once when a host ancestor stops pointercancel propagation', () => {
+    const commit = vi.fn()
+    const cancel = vi.fn()
+    const view = render(<Harness commit={commit} cancel={cancel} />)
+    const button = view.getByRole('button', { name: 'drag' })
+    const capture = installPointerCapture(button)
+    const stopPointerCancel = vi.fn((event: Event) => event.stopPropagation())
+    view.container.addEventListener('pointercancel', stopPointerCancel)
+
+    fireEvent.pointerDown(button, { button: 0, pointerId: 11 })
+    fireEvent.pointerCancel(button, { pointerId: 11 })
+    expect(cancel).toHaveBeenCalledExactlyOnceWith('session')
+    fireEvent(button, new PointerEvent('lostpointercapture', { pointerId: 11 }))
+    fireEvent.pointerUp(window, { clientX: 45, clientY: 55, pointerId: 11 })
+
+    expect(stopPointerCancel).toHaveBeenCalledOnce()
+    expect(cancel).toHaveBeenCalledExactlyOnceWith('session')
+    expect(commit).not.toHaveBeenCalled()
+    expect(capture.releasePointerCapture).toHaveBeenCalledExactlyOnceWith(11)
+  })
+
   it('releases capture when the gesture commits', () => {
     const commit = vi.fn()
     const cancel = vi.fn()

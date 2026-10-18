@@ -21,6 +21,7 @@ export type OverlayFrameProps = {
   initialDisplayOnMount?: boolean
   ready?: boolean
   purchaseActive?: boolean
+  chatInputFocused?: boolean
   settingsOpen?: boolean
   onOpenSettings?: (source: HTMLElement) => void
   onChatVisibilityChange?: (visible: boolean) => void
@@ -31,6 +32,7 @@ export const OverlayFrame = ({
   children,
   ready = true,
   purchaseActive = false,
+  chatInputFocused = false,
   initialDisplayOnMount = false,
   settingsOpen = false,
   onOpenSettings = () => {},
@@ -43,7 +45,7 @@ export const OverlayFrame = ({
     initialDisplayOnMount,
     settingsOpen,
     documentFocused,
-    alwaysVisible: purchaseActive || profile.display.idleVisibility === 'always-visible',
+    alwaysVisible: chatInputFocused || purchaseActive || profile.display.idleVisibility === 'always-visible',
   })
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
   const geometry = useOverlayGeometry({
@@ -150,9 +152,12 @@ export const OverlayFrame = ({
               <ResizeHandles onPointerDown={geometry.onPointerDown} />
               <OverlayControlRail
                 isDragging={interaction.state === 'dragging'}
+                isResizing={interaction.state === 'resizing'}
                 isReady={ready && !settingsOpen}
                 isVisible={interaction.controlsVisible}
                 placement={{ top: controlRailTop, right: 0 }}
+                placementAnchor={{ right: coordinates.x + size.width, top: coordinates.y + controlRailTop }}
+                viewportSize={geometry.viewport}
                 placementPanelMaxHeight={placementPanelMaxHeight}
                 backgroundColor={profile.appearance.backgroundColor}
                 fontColor={profile.appearance.fontColor}

@@ -14,6 +14,7 @@ export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
   const settingsTrigger = useRef<HTMLElement | null>(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [purchaseActive, setPurchaseActive] = useState(false)
+  const [chatInputFocused, setChatInputFocused] = useState(false)
   const [chatVisible, setChatVisible] = useState(true)
   const closeSettings = useCallback(() => setSettingsOpen(false), [])
   useNativeChatAutoDisable({ enabled: true })
@@ -24,6 +25,7 @@ export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
       <OverlayFrame
         initialDisplayOnMount
         purchaseActive={purchaseActive}
+        chatInputFocused={chatInputFocused}
         ready={!loading}
         settingsOpen={settingsOpen}
         onOpenSettings={source => {
@@ -38,6 +40,7 @@ export const YTDLiveChat = ({ loading }: YTDLiveChatProps) => {
           visible={chatVisible}
           purchaseActive={purchaseActive}
           onPurchaseActivityChange={setPurchaseActive}
+          onInputFocusChange={setChatInputFocused}
         />
       </OverlayFrame>
     </>

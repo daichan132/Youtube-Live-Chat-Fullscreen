@@ -9,8 +9,8 @@ describe('z-index layer scales', () => {
 
   it('keeps chat panel interaction surfaces above the iframe', () => {
     expect(CHAT_PANEL_LAYER.iframe).toBeLessThan(CHAT_PANEL_LAYER.hoverBridge)
-    expect(CHAT_PANEL_LAYER.hoverBridge).toBeLessThan(CHAT_PANEL_LAYER.controls)
-    expect(CHAT_PANEL_LAYER.controls).toBeLessThan(CHAT_PANEL_LAYER.interactionOverlay)
-    expect(CHAT_PANEL_LAYER.interactionOverlay).toBeLessThan(CHAT_PANEL_LAYER.dragShield)
+    expect(CHAT_PANEL_LAYER.hoverBridge).toBeLessThan(CHAT_PANEL_LAYER.interactionOverlay)
+    expect(CHAT_PANEL_LAYER.interactionOverlay).toBeLessThan(CHAT_PANEL_LAYER.controls)
+    expect(CHAT_PANEL_LAYER.controls).toBeLessThan(CHAT_PANEL_LAYER.dragShield)
   })
 })

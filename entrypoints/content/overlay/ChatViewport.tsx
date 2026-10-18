@@ -4,6 +4,7 @@ import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import { effectiveProfileAtom } from '@/shared/state'
 import { useChatRuntimeInstance } from '../runtime/ChatRuntimeContext'
+import { useChatInputFocus } from './useChatInputFocus'
 import { useChatPurchaseActivity } from './useChatPurchaseActivity'
 
 type ChatViewportProps = {
@@ -11,6 +12,7 @@ type ChatViewportProps = {
   visible: boolean
   purchaseActive?: boolean
   onPurchaseActivityChange?: (active: boolean) => void
+  onInputFocusChange?: (focused: boolean) => void
 }
 
 const LOADING_OVERLAY_STYLE = {
@@ -18,12 +20,14 @@ const LOADING_OVERLAY_STYLE = {
 } as const
 
 const ignorePurchaseActivity = (_active: boolean) => {}
+const ignoreInputFocus = (_focused: boolean) => {}
 
 export const ChatViewport = ({
   loading,
   visible,
   purchaseActive = false,
   onPurchaseActivityChange = ignorePurchaseActivity,
+  onInputFocusChange = ignoreInputFocus,
 }: ChatViewportProps) => {
   const chatRuntime = useChatRuntimeInstance()
   const t = useT()
@@ -37,6 +41,7 @@ export const ChatViewport = ({
     [chatRuntime],
   )
   useChatPurchaseActivity(carrier, onPurchaseActivityChange)
+  useChatInputFocus(carrier, onInputFocusChange)
   const appearance = useAtomValue(effectiveProfileAtom).appearance
   const showLoading = loading && !purchaseActive
   const chatVisible = visible && !showLoading

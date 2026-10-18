@@ -164,14 +164,14 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       <div
         ref={panelRef}
         tabIndex={-1}
-        style={{ outline: 'none' }}
+        style={{ outline: 'none', width: 'min(460px, calc(100vw - 24px))', maxHeight: 'calc(100dvh - 24px)', boxSizing: 'border-box' }}
         data-ylc-theme={resolvedThemeMode}
         dir={direction}
-        className='ylc-setting-panel flex flex-col w-[460px] rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
+        className='ylc-setting-panel flex min-h-0 flex-col rounded-xl ylc-theme-surface ylc-theme-shadow-md overflow-hidden border border-solid ylc-theme-border'
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={handlePanelKeyDown}
       >
-        <header className='ylc-theme-setting-header flex justify-between items-stretch min-h-[48px]'>
+        <header className='ylc-theme-setting-header flex shrink-0 justify-between items-stretch min-h-[48px]'>
           <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
             {tabs.map(item => (
               <button
@@ -235,13 +235,13 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
-          className='flex-grow overflow-y-scroll h-[380px] p-2 rounded-2xl'
+          className='min-h-0 flex-auto overflow-y-auto h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
         >
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}
         </div>
-        <footer className='ylc-theme-setting-footer flex justify-end items-center px-2 py-1'>
+        <footer className='ylc-theme-setting-footer flex shrink-0 justify-end items-center px-2 py-1'>
           <div className='ylc-theme-footer-links'>
             <a
               href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'

@@ -87,6 +87,112 @@ describe('FontFamilyInput', () => {
     expect(trigger).toHaveTextContent('Roboto')
   })
 
+  it.each(['Escape', 'selection'])('returns focus to the trigger after %s closes the keyboard search', async closeWith => {
+    const user = userEvent.setup()
+    const view = renderFontFamilyInput('Roboto')
+    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    await user.click(trigger)
+    await waitFor(() => expect(view.getByRole('combobox')).toHaveFocus())
+    if (closeWith === 'selection') await user.type(view.getByRole('combobox'), 'Roboto Slab')
+
+    await user.keyboard(closeWith === 'Escape' ? '{Escape}' : '{Enter}')
+
+    expect(view.queryByRole('combobox')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+  })
+
+  it('exposes stable active option IDs through wraparound, filtering, and reopening a selected font', async () => {
+    const user = userEvent.setup()
+    const view = renderFontFamilyInput()
+    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    await user.click(trigger)
+    const search = view.getByRole('combobox')
+    await waitFor(() => expect(search).toHaveFocus())
+    const options = view.getAllByRole('option')
+    const first = options[0]
+    const last = options[options.length - 1]
+    const slab = view.getByRole('option', { name: /^Roboto Slab$/ })
+    expect(slab.id).not.toBe('')
+    const slabId = slab.id
+    expect(search).toHaveAttribute('aria-controls', view.getByRole('listbox').id)
+    expect(search).toHaveAttribute('aria-activedescendant', first?.id)
+    await user.keyboard('{ArrowUp}')
+    expect(search).toHaveAttribute('aria-activedescendant', last?.id)
+    await user.keyboard('{ArrowDown}')
+    expect(search).toHaveAttribute('aria-activedescendant', first?.id)
+    await user.type(search, 'Roboto Slab')
+    expect(search).toHaveAttribute('aria-activedescendant', slabId)
+    await user.keyboard('{Enter}')
+    await user.click(trigger)
+    await waitFor(() => expect(view.getByRole('combobox')).toHaveFocus())
+    expect(view.getByRole('combobox')).toHaveAttribute('aria-activedescendant', slabId)
+    expect(view.getByRole('option', { name: /^Roboto Slab$/ }).id).toBe(slabId)
+  })
+
+  it('scrolls only the font list enough to reveal a distant active option', async () => {
+    const user = userEvent.setup()
+    const view = renderFontFamilyInput('Roboto')
+    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    const search = view.getByRole('combobox')
+    await waitFor(() => expect(search).toHaveFocus())
+    const list = view.getByRole('listbox')
+    list.getBoundingClientRect = () => ({ top: 100, bottom: 320, left: 0, right: 180, width: 180, height: 220 }) as DOMRect
+    for (const option of view.getAllByRole('option')) {
+      option.getBoundingClientRect = () => {
+        const top = 100 + Array.from(list.children).indexOf(option) * 35 - list.scrollTop
+        return { top, bottom: top + 32, left: 0, right: 180, width: 180, height: 32 } as DOMRect
+      }
+    }
+
+    for (let index = 0; index < 12; index += 1) await user.keyboard('{ArrowDown}')
+
+    const active = view.container.querySelector('.ylc-font-combobox-option-active')
+    if (!active) throw new Error('Expected active font option')
+    expect(list.scrollTop).toBeGreaterThan(0)
+    expect(active.getBoundingClientRect().top).toBeGreaterThanOrEqual(100)
+    expect(active.getBoundingClientRect().bottom).toBeLessThanOrEqual(320)
+    expect(search).toHaveFocus()
+  })
+
+  it('lets Tab leave the font composite without walking every option', async () => {
+    const user = userEvent.setup()
+    const view = renderWithStore(
+      <>
+        <FontFamilyInput />
+        <button type='button'>Next control</button>
+      </>,
+      store,
+    )
+    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    await waitFor(() => expect(view.getByRole('combobox')).toHaveFocus())
+    expect(view.getByRole('listbox')).toHaveAttribute('tabindex', '-1')
+
+    await user.tab()
+
+    expect(view.getByRole('button', { name: 'Next control' })).toHaveFocus()
+    expect(view.queryByRole('combobox')).not.toBeInTheDocument()
+  })
+
+  it('keeps keyboard navigation active when scrolling brings another option under a stationary pointer', async () => {
+    const user = userEvent.setup()
+    const view = renderFontFamilyInput('Roboto')
+    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    const search = view.getByRole('combobox')
+    await waitFor(() => expect(search).toHaveFocus())
+    await user.keyboard('{ArrowDown}{ArrowDown}')
+    const keyboardActiveId = search.getAttribute('aria-activedescendant')
+    const first = view.getAllByRole('option')[0]
+    if (!first) throw new Error('Expected a font option')
+    expect(keyboardActiveId).not.toBe(first.id)
+
+    fireEvent.mouseOver(first)
+
+    expect(search).toHaveAttribute('aria-activedescendant', keyboardActiveId)
+    fireEvent.mouseMove(first)
+    expect(search).toHaveAttribute('aria-activedescendant', first.id)
+    expect(search).toHaveFocus()
+  })
+
   it.each([
     { search: 'Roboto Slab', expected: 'Roboto Slab' },
     { search: 'My Custom Font', expected: null },

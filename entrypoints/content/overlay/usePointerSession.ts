@@ -54,9 +54,9 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
       active.moveFrame = null
       active.pendingPoint = null
     }
-    window.removeEventListener('pointermove', handlePointerMove)
-    window.removeEventListener('pointerup', handlePointerUp)
-    window.removeEventListener('pointercancel', handlePointerCancel)
+    window.removeEventListener('pointermove', handlePointerMove, true)
+    window.removeEventListener('pointerup', handlePointerUp, true)
+    window.removeEventListener('pointercancel', handlePointerCancel, true)
     window.removeEventListener('keydown', handleKeyDown, true)
     window.removeEventListener('blur', handleWindowBlur)
     active?.captureTarget.removeEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
@@ -141,9 +141,9 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
       }
       activeRef.current = active
       captureTarget.addEventListener('lostpointercapture', handleLostPointerCapture as EventListener)
-      window.addEventListener('pointermove', handlePointerMove)
-      window.addEventListener('pointerup', handlePointerUp)
-      window.addEventListener('pointercancel', handlePointerCancel)
+      window.addEventListener('pointermove', handlePointerMove, true)
+      window.addEventListener('pointerup', handlePointerUp, true)
+      window.addEventListener('pointercancel', handlePointerCancel, true)
       window.addEventListener('keydown', handleKeyDown, true)
       window.addEventListener('blur', handleWindowBlur)
       try {

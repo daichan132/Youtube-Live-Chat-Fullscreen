@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { type KeyboardEvent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type KeyboardEvent, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ensureFontLoaded } from '@/entrypoints/content/style/fontLoader'
 import { TbCheck } from '@/shared/components/icons'
 import { useShadowClickAway } from '@/shared/hooks/useShadowClickAway'
@@ -10,7 +10,7 @@ import { cn } from '@/shared/utils/cn'
 import { toQuotedFontFamily } from '@/shared/utils/fontFamilyFormat'
 import { ALLOWED_FONT_FAMILIES, normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
-import { useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
+import { getSettingScrollContainer, useEnsureSettingPanelVisibility } from './useEnsureSettingPanelVisibility'
 
 const normalizeSearchValue = (value: string) => value.toLowerCase().replace(/\s+/g, '')
 const PREVIEW_FALLBACK_FONT_FAMILY = 'Roboto, Arial, sans-serif'
@@ -68,15 +68,23 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   const [isOpen, setIsOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const [activeIndex, setActiveIndex] = useState(0)
+  const [menuMaxHeight, setMenuMaxHeight] = useState<number>()
+  const listboxId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const optionsRef = useRef<HTMLDivElement>(null)
+  const activeOptionRef = useRef<HTMLButtonElement>(null)
   useEnsureSettingPanelVisibility({ isOpen, anchorRef: triggerRef, popupRef: menuRef })
 
   const defaultLabel = t('content.setting.fontFamilyDefault')
   const normalizedValue = useMemo(() => normalizeFontFamily(value), [value])
   const options = useMemo(() => buildFontFamilyOptions(defaultLabel), [defaultLabel])
+  const optionIds = useMemo(
+    () => new Map(options.map((option, index) => [option.value, `${listboxId}-option-${index}`])),
+    [listboxId, options],
+  )
   const selectedOption = useMemo(() => options.find(option => option.value === normalizedValue), [normalizedValue, options])
   const displayLabel = selectedOption?.label ?? defaultLabel
   const filteredOptions = useMemo(() => {
@@ -86,6 +94,39 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
     }
     return options.filter(option => normalizeSearchValue(option.label).includes(normalizedSearchValue))
   }, [options, searchValue])
+  const activeOption = filteredOptions[activeIndex]
+  const activeOptionId = activeOption ? optionIds.get(activeOption.value) : undefined
+
+  useLayoutEffect(() => {
+    if (!isOpen) return
+    const anchor = triggerRef.current
+    const container = getSettingScrollContainer(anchor)
+    const updateHeight = () => {
+      const height = container?.clientHeight ?? window.innerHeight
+      const anchorHeight = anchor?.getBoundingClientRect().height ?? 0
+      // Reserve the trigger, popup gap and the scroll container's safe margins.
+      setMenuMaxHeight(Math.max(90, Math.floor(height - anchorHeight - 22)))
+    }
+    updateHeight()
+    const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateHeight)
+    if (container) observer?.observe(container)
+    window.addEventListener('resize', updateHeight, { passive: true })
+    return () => {
+      observer?.disconnect()
+      window.removeEventListener('resize', updateHeight)
+    }
+  }, [isOpen])
+
+  useLayoutEffect(() => {
+    if (!isOpen) return
+    const list = optionsRef.current
+    const option = activeOptionRef.current
+    if (!list || !option) return
+    const bounds = list.getBoundingClientRect()
+    const activeBounds = option.getBoundingClientRect()
+    if (activeBounds.top < bounds.top) list.scrollTop += activeBounds.top - bounds.top
+    else if (activeBounds.bottom > bounds.bottom) list.scrollTop += activeBounds.bottom - bounds.bottom
+  }, [activeIndex, filteredOptions, isOpen, menuMaxHeight])
 
   useEffect(() => {
     ensureFontLoaded(document, normalizedValue, 'ylc-selected-font-preview-style')
@@ -112,17 +153,17 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
     }
   }, [isOpen])
 
-  useShadowClickAway(rootRef, () => setIsOpen(false))
-
-  const closeMenu = useCallback(() => {
+  const closeMenu = useCallback((returnFocus = false) => {
     setIsOpen(false)
     setSearchValue('')
+    if (returnFocus) triggerRef.current?.focus({ preventScroll: true })
   }, [])
+  useShadowClickAway(rootRef, () => closeMenu())
 
   const commitFontFamily = useCallback(
     (nextFontFamily: string) => {
       const normalizedFontFamily = normalizeFontFamily(nextFontFamily)
-      closeMenu()
+      closeMenu(true)
       if (normalizedFontFamily === normalizedValue) return
       onCommit(normalizedFontFamily)
     },
@@ -165,7 +206,8 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
 
       if (event.key === 'Escape') {
         event.preventDefault()
-        closeMenu()
+        event.stopPropagation()
+        closeMenu(true)
       }
     },
     [activeIndex, closeMenu, commitFontFamily, filteredOptions],
@@ -188,6 +230,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
         aria-label={t('content.setting.fontFamily')}
         aria-haspopup='listbox'
         aria-expanded={isOpen}
+        aria-controls={isOpen ? listboxId : undefined}
         data-ylc-font-combobox-trigger='true'
       >
         <span
@@ -199,18 +242,28 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
       </button>
 
       {isOpen && (
-        <div ref={menuRef} className='ylc-font-combobox-menu ylc-theme-shadow-sm ylc-theme-border' data-ylc-font-combobox-menu='true'>
+        <div
+          ref={menuRef}
+          className='ylc-font-combobox-menu ylc-theme-shadow-sm ylc-theme-border'
+          style={{ maxHeight: menuMaxHeight }}
+          data-ylc-font-combobox-menu='true'
+        >
           <input
             ref={searchInputRef}
             className='ylc-font-combobox-search'
+            style={{ flexShrink: 0 }}
             value={searchValue}
             onChange={event => setSearchValue(event.target.value)}
             onKeyDown={handleSearchKeyDown}
+            onBlur={event => {
+              if (!(event.relatedTarget instanceof Node) || !rootRef.current?.contains(event.relatedTarget)) closeMenu()
+            }}
             placeholder={t('content.setting.fontSearch')}
             role='combobox'
             aria-expanded={isOpen}
             aria-autocomplete='list'
-            aria-controls='ylc-font-options-listbox'
+            aria-controls={listboxId}
+            aria-activedescendant={activeOptionId}
             aria-label={t('content.setting.fontSearch')}
             data-ylc-font-combobox-search='true'
             data-testid='font-family-search'
@@ -218,7 +271,15 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
           <span aria-live='polite' className='ylc-visually-hidden'>
             {formatMessage(t('content.aria.fontsFound'), { count: filteredOptions.length })}
           </span>
-          <div className='ylc-font-combobox-options' role='listbox' id='ylc-font-options-listbox' aria-live='polite'>
+          <div
+            ref={optionsRef}
+            className='ylc-font-combobox-options'
+            style={{ minHeight: 0 }}
+            role='listbox'
+            tabIndex={-1}
+            id={listboxId}
+            aria-live='polite'
+          >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option, index) => {
                 const isSelected = option.value === normalizedValue
@@ -226,15 +287,18 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
                 return (
                   <button
                     key={option.value || '__default'}
+                    ref={isActive ? activeOptionRef : undefined}
+                    id={optionIds.get(option.value)}
                     type='button'
                     role='option'
+                    tabIndex={-1}
                     aria-selected={isSelected}
                     className={cn(
                       'ylc-font-combobox-option ylc-theme-focus-ring-soft',
                       isActive && 'ylc-font-combobox-option-active',
                       isSelected && 'ylc-font-combobox-option-selected',
                     )}
-                    onMouseEnter={() => setActiveIndex(index)}
+                    onMouseMove={() => setActiveIndex(index)}
                     onClick={() => commitFontFamily(option.value)}
                   >
                     <span className='ylc-font-combobox-option-label'>{option.label}</span>
