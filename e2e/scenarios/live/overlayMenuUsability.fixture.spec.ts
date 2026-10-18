@@ -270,3 +270,38 @@ test('keeps hover help in the configured chat palette across live appearance cha
     }
   }
 })
+
+test('does not retain hover help for a mouse-focused button after the pointer leaves', async ({ page, extension }) => {
+  await setup(page, extension)
+  const placement = page.locator('[data-ylc-placement-button]')
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await placement.click()
+  await placement.click()
+  await page.mouse.move(1200, 30)
+  await expect(placement).toBeFocused()
+  await expect(tooltip).toHaveCount(0)
+
+  // Keyboard navigation still exposes help, even with the pointer elsewhere.
+  await page.keyboard.press('Shift+Tab')
+  const drag = page.locator('[data-ylc-drag-handle]')
+  await expect(drag).toBeFocused()
+  await expect(tooltip).toContainText('Use arrow keys to move')
+  // Clicking the already-focused button switches back to pointer interaction.
+  await drag.click()
+  await page.mouse.move(1200, 30)
+  await expect(drag).toBeFocused()
+  await expect(tooltip).toHaveCount(0)
+  // Keyboard use on that same focus target re-enables keyboard help.
+  await page.keyboard.press('ArrowRight')
+  await expect(tooltip).toContainText('Use arrow keys to move')
+})
+
+test('restores trigger focus without reopening hover help after the mouse closes placement', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 300, height: 540 })
+  const placement = page.locator('[data-ylc-placement-button]')
+  await placement.click()
+  await page.locator('[data-ylc-placement-panel]').getByRole('button', { name: 'Close', exact: true }).click()
+  await page.mouse.move(1200, 30)
+  await expect(placement).toBeFocused()
+  await expect(page.locator('[data-ylc-control-tooltip]')).toHaveCount(0)
+})

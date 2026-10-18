@@ -83,7 +83,12 @@ describe('overlay menu dismissal and visual help', () => {
     const drag = screen.getByRole('button', { name: 'content.aria.dragToMove' })
     fireEvent.mouseEnter(settings)
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toHaveTextContent('content.aria.openSettings')
-    fireEvent.focus(drag)
+    // jsdom does not model the browser's keyboard/pointer focus modality.
+    // Real-input fixture coverage verifies its :focus-visible decision.
+    const matches = drag.matches.bind(drag)
+    const keyboardFocus = vi.spyOn(drag, 'matches').mockImplementation(selector => selector === ':focus-visible' || matches(selector))
+    act(() => drag.focus())
+    keyboardFocus.mockRestore()
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toHaveTextContent('content.aria.dragToMove')
     fireEvent.click(placement())
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toBeNull()

@@ -1,4 +1,14 @@
-import { type CSSProperties, type KeyboardEvent, type PointerEvent, useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
+import {
+  type CSSProperties,
+  type FocusEvent,
+  type KeyboardEvent,
+  type PointerEvent,
+  useCallback,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react'
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
@@ -167,9 +177,10 @@ export const OverlayControlRail = ({
   const tooltipEvents = (control: ControlName) => ({
     onMouseEnter: () => setHoveredControl(control),
     onMouseLeave: () => setHoveredControl(null),
-    onFocus: () => {
-      setHoveredControl(null)
-      setFocusedControl(control)
+    onFocus: (event: FocusEvent<HTMLButtonElement>) => {
+      const keyboardFocus = event.currentTarget.matches(':focus-visible')
+      if (keyboardFocus) setHoveredControl(null)
+      setFocusedControl(keyboardFocus ? control : null)
     },
     onBlur: () => setFocusedControl(null),
   })
@@ -185,6 +196,20 @@ export const OverlayControlRail = ({
       ref={railRef}
       data-ylc-control-rail
       className='ylc-overlay-control-rail absolute flex items-center'
+      onPointerDownCapture={() => setFocusedControl(null)}
+      onKeyDownCapture={event => {
+        // A pointer-focused button may receive keyboard input without a new
+        // focus event. Let the browser's focus-visible modality decide.
+        const target = event.target
+        if (!(target instanceof Element)) return
+        const control = (Object.keys(CONTROL_SELECTORS) as ControlName[]).find(name =>
+          target.closest(CONTROL_SELECTORS[name])?.matches(':focus-visible'),
+        )
+        if (control) {
+          setHoveredControl(null)
+          setFocusedControl(control)
+        }
+      }}
       onKeyDown={event => {
         if (event.key === 'Escape' && placementOpen) {
           event.preventDefault()
