@@ -1,19 +1,13 @@
-import { fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent, waitFor } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
+import { createStyleHistoryCommands } from '../../styleHistoryCommands'
 import { FontFamilyInput } from './FontFamilyInput'
 
-const dispatchMouseDown = (target: EventTarget, path: EventTarget[]) => {
-  const outsideEvent = new MouseEvent('mousedown', { bubbles: true })
-  Object.defineProperty(outsideEvent, 'composedPath', {
-    value: () => path,
-  })
-  target.dispatchEvent(outsideEvent)
-}
-
-const store = createTestStore()
+let store = createTestStore()
 
 const resetStore = (fontFamily: string | null = null) => {
   store.set(chatSettingsStateAtom, {
@@ -36,7 +30,7 @@ const renderFontFamilyInput = (fontFamily = '') => {
 describe('FontFamilyInput', () => {
   const untranslatedLocale = store.get(localeStateAtom)
   beforeEach(() => {
-    resetStore()
+    store = createTestStore()
     store.set(localeStateAtom, untranslatedLocale)
   })
 
@@ -69,14 +63,28 @@ describe('FontFamilyInput', () => {
     expect(getByText('Fonts found: 1')).toHaveAttribute('aria-live', 'polite')
   })
 
-  it('commits highlighted option with Enter key', () => {
-    const { getByRole, getByTestId } = renderFontFamilyInput()
+  it('opens from the keyboard, focuses the search, and lets Undo restore a selected font', async () => {
+    const user = userEvent.setup()
+    const { getByRole, queryByRole } = renderFontFamilyInput('Roboto')
+    const previousProfile = store.get(chatSettingsStateAtom).profile
+    const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
-    fireEvent.change(getByTestId('font-family-search'), { target: { value: 'Roboto Slab' } })
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
+    await user.tab()
+    expect(trigger).toHaveFocus()
+    await user.keyboard('{Enter}')
+    await waitFor(() => expect(getByRole('combobox', { name: 'content.setting.fontSearch' })).toHaveFocus())
+    // Send real keyboard input to the focused control. Calling change/keyDown on
+    // a queried node would hide a menu that never focuses its search field.
+    await user.keyboard('Roboto Slab{Enter}')
 
+    expect(queryByRole('combobox')).toBeNull()
+    expect(trigger).toHaveTextContent('Roboto Slab')
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
+    act(() => {
+      expect(createStyleHistoryCommands(store).undoYLCStyle()).toBe(true)
+    })
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(previousProfile)
+    expect(trigger).toHaveTextContent('Roboto')
   })
 
   it.each([
@@ -140,6 +148,7 @@ describe('FontFamilyInput', () => {
   })
 
   it('closes the menu with Escape and outside click', async () => {
+    const user = userEvent.setup()
     const { getByRole, getByTestId, queryByTestId } = renderFontFamilyInput()
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
@@ -148,7 +157,7 @@ describe('FontFamilyInput', () => {
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     expect(getByTestId('font-family-search')).toBeInTheDocument()
-    dispatchMouseDown(document.body, [document.body])
+    await user.click(document.body)
     await waitFor(() => {
       expect(queryByTestId('font-family-search')).toBeNull()
     })

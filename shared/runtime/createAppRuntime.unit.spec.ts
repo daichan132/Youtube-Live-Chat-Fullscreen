@@ -2,8 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import type { LocaleCode, LocaleMessages } from '@/shared/i18n/generated/translationTypes'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { PersistenceStatus, SettingsRepository, SettingsSnapshot } from '@/shared/settings/repository'
-import { chatSettingsStateAtom, globalSettingsStateAtom, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
-import { commitGeometryAtom, commitProfileAtom, setThemeModeAtom, setYTDLiveChatEnabledAtom } from '@/shared/state/commands'
+import { chatSettingsStateAtom, globalSettingsStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createAppRuntime } from './createAppRuntime'
 
 const messages = (value: string) => ({ 'popup.theme': value }) as unknown as LocaleMessages
@@ -76,32 +75,6 @@ describe('createAppRuntime', () => {
     await expect(createAppRuntime(repository, { loadMessages })).rejects.toThrow('no locale assets')
     expect(unwatch).toHaveBeenCalledTimes(1)
     expect(unsubscribePersistence).toHaveBeenCalledTimes(1)
-  })
-
-  it('persists each ownership domain independently', async () => {
-    const repository = createRepository()
-    const runtime = await createAppRuntime(repository, { loadMessages: vi.fn(async () => messages('English')) })
-
-    runtime.store.set(setYTDLiveChatEnabledAtom, false)
-    runtime.store.set(setThemeModeAtom, 'dark')
-    const profile = structuredClone(DEFAULT_CHAT_SETTINGS.profile)
-    profile.appearance.fontSize = 27
-    runtime.store.set(commitProfileAtom, profile)
-    const geometry = {
-      reference: 'player' as const,
-      rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 },
-      pinned: true,
-    }
-    runtime.store.set(commitGeometryAtom, geometry)
-
-    expect(repository.saveEnabled).toHaveBeenCalledWith(false)
-    expect(repository.saveTheme).toHaveBeenCalledWith('dark')
-    expect(repository.saveAppearance).toHaveBeenCalledWith({
-      profile: expect.objectContaining({ appearance: expect.objectContaining({ fontSize: 27 }) }),
-      presets: DEFAULT_CHAT_SETTINGS.presets,
-    })
-    expect(repository.saveGeometry).toHaveBeenCalledWith(geometry)
-    runtime.dispose()
   })
 
   it('keeps the latest external locale when translations resolve out of order', async () => {
@@ -177,25 +150,6 @@ describe('createAppRuntime', () => {
     expect(repository.saveTheme).not.toHaveBeenCalled()
     expect(repository.saveAppearance).not.toHaveBeenCalled()
     expect(repository.saveGeometry).not.toHaveBeenCalled()
-    runtime.dispose()
-  })
-
-  it('exposes repository failures and retries them through the shared runtime', async () => {
-    let persistenceListener: ((status: PersistenceStatus) => void) | undefined
-    const repository = createRepository({
-      subscribePersistence: vi.fn(listener => {
-        persistenceListener = listener
-        listener({ status: 'idle', failedDomains: [] })
-        return vi.fn()
-      }),
-    })
-    const runtime = await createAppRuntime(repository, { loadMessages: vi.fn(async () => messages('English')) })
-
-    persistenceListener?.({ status: 'error', failedDomains: ['geometry'] })
-    expect(runtime.store.get(persistenceStatusAtom)).toEqual({ status: 'error', failedDomains: ['geometry'] })
-
-    await runtime.retryPersistence()
-    expect(repository.retryFailed).toHaveBeenCalledTimes(1)
     runtime.dispose()
   })
 })

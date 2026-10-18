@@ -28,11 +28,13 @@ const mountStyleFixture = (styles: string, markup: string) => {
   document.head.append(style)
 }
 
-const getComputedColor = (selector: string) => {
+const getFixtureStyle = (selector: string) => {
   const element = document.querySelector(selector)
   if (!element) throw new Error(`Missing style fixture element: ${selector}`)
-  return getComputedStyle(element).color
+  return getComputedStyle(element)
 }
+
+const getComputedColor = (selector: string) => getFixtureStyle(selector).color
 
 afterEach(() => {
   document.head.replaceChildren()
@@ -83,26 +85,34 @@ describe('iframe styles contract', () => {
   })
 
   it('keeps header SVG controls themed while limiting the native-color exception to the Top fans crown', () => {
-    expect(styleModules['core-theme.css']).not.toContain('[style*="color:"]')
-    expect(styleModules['core-theme.css']).toContain(
-      '#viewer-leaderboard-entry-point\n  .ytSpecButtonShapeNextIcon\n  .ytSpecIconShapeHost {\n  color: inherit;\n}',
-    )
-    expect(styleModules['core-theme.css']).toContain('yt-live-chat-header-renderer .ytSpecIconShapeHost')
-
-    const coreThemeStyles = styleModules['core-theme.css'].replaceAll('var(--extension-yt-live-font-color)', 'rgb(18, 52, 86)')
+    const coreThemeStyles = styleModules['core-theme.css']
+      .replaceAll('var(--extension-yt-live-font-color)', 'rgb(18, 52, 86)')
+      .replaceAll('var(--extension-yt-live-control-background-color)', 'rgb(30, 50, 70)')
     mountStyleFixture(
-      coreThemeStyles,
+      `
+        .ytSpecIconShapeHost svg { fill: currentColor; }
+        yt-button-shape, yt-button-shape button, .ytSpecButtonShapeNextHost,
+        a.ytSpecButtonShapeNextTonal, a.ytSpecButtonShapeNextTonal .ytSpecButtonShapeNextButtonTextContent {
+          color: rgb(201, 80, 40);
+        }
+        ${coreThemeStyles}
+      `,
       `
         <yt-live-chat-header-renderer>
+          <yt-button-shape id="material-shape"><button id="material-button">Shape action</button></yt-button-shape>
+          <button id="material-host" class="ytSpecButtonShapeNextHost">Header action</button>
+          <a id="tonal-link" class="ytSpecButtonShapeNextTonal" href="#action">
+            <span id="tonal-label" class="ytSpecButtonShapeNextButtonTextContent">Tonal action</span>
+          </a>
           <button aria-label="More options">
-            <span class="ytSpecButtonShapeNextIcon">
-              <span id="neutral-icon" class="ytSpecIconShapeHost"></span>
+            <span class="ytSpecButtonShapeNextIcon" style="color: rgb(201, 80, 40)">
+              <span id="neutral-icon" class="ytSpecIconShapeHost"><svg><path id="neutral-icon-path" /></svg></span>
             </span>
           </button>
           <div id="viewer-leaderboard-entry-point">
             <button aria-label="0 XP">
               <span class="ytSpecButtonShapeNextIcon" style="color: rgb(123, 62, 219)">
-                <span id="top-fans-crown" class="ytSpecIconShapeHost"></span>
+                <span id="top-fans-crown" class="ytSpecIconShapeHost"><svg><path id="top-fans-crown-path" /></svg></span>
               </span>
             </button>
           </div>
@@ -110,8 +120,20 @@ describe('iframe styles contract', () => {
       `,
     )
 
+    const materialHost = document.querySelector('#material-host')
+    if (!materialHost) throw new Error('Missing Material header control')
+    materialHost.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+
+    for (const selector of ['#material-shape', '#material-button', '#material-host', '#tonal-link', '#tonal-label']) {
+      expect(getComputedColor(selector), selector).toBe('rgb(18, 52, 86)')
+    }
+    expect(materialHost.matches(':hover')).toBe(true)
+    expect(getFixtureStyle('#material-host').backgroundColor).toBe('rgb(30, 50, 70)')
+    expect(getFixtureStyle('#tonal-link').backgroundColor).toBe('rgb(30, 50, 70)')
     expect(getComputedColor('#neutral-icon')).toBe('rgb(18, 52, 86)')
     expect(getComputedColor('#top-fans-crown')).toBe('rgb(123, 62, 219)')
+    expect(getFixtureStyle('#neutral-icon-path').fill).toBe('rgb(18, 52, 86)')
+    expect(getFixtureStyle('#top-fans-crown-path').fill).toBe('rgb(123, 62, 219)')
   })
 
   it('themes top fan leaderboard text and icons without hiding its entry point', () => {
@@ -199,78 +221,84 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).toContain('display: var(--extension-super-chat-bar-display);')
   })
 
-  it('themes YouTube menu and Material button surfaces with extension colors', () => {
-    expect(iframeStyles).toContain('--extension-yt-live-menu-background-color')
-    expect(iframeStyles).toContain('--extension-yt-live-panel-background-color')
-    expect(iframeStyles).toContain('--extension-yt-live-control-background-color')
-    expect(iframeStyles).toContain('--extension-yt-live-control-border-color')
-    expect(iframeStyles).toContain('--extension-yt-live-menu-hover-background-color')
-    expect(iframeStyles).toContain('yt-live-chat-header-renderer .ytSpecButtonShapeNextHost')
-    expect(iframeStyles).toContain('yt-live-chat-header-renderer yt-button-shape')
-    expect(iframeStyles).toContain('a.ytSpecButtonShapeNextTonal')
-    expect(iframeStyles).toContain('ytd-menu-popup-renderer')
-    expect(iframeStyles).toContain('ytd-menu-service-item-renderer yt-formatted-string')
-    expect(iframeStyles).toContain('tp-yt-paper-listbox')
-    expect(styleModules['menus.css']).toContain('background: var(--extension-yt-live-menu-background-color) !important;')
-    expect(styleModules['menus.css']).toContain('background-color: var(--extension-yt-live-menu-background-color) !important;')
-    expect(iframeStyles).toContain('ytd-menu-service-item-renderer[aria-disabled="true"]')
-    expect(iframeStyles).toContain('border-radius: 8px;')
-    expect(iframeStyles).toContain('overflow: hidden;')
-    expect(iframeStyles).toContain(
-      'tp-yt-iron-dropdown {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
-    )
-    expect(iframeStyles).toContain('background-color: transparent !important;')
-    expect(iframeStyles).toContain('background: var(--extension-yt-live-panel-background-color) !important;')
-    expect(iframeStyles).toContain('background-color: var(--extension-yt-live-panel-background-color) !important;')
-    expect(iframeStyles).toContain('backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;')
-    expect(iframeStyles).toContain('-webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;')
-    expect(iframeStyles).toContain('border-radius: inherit;')
-    expect(iframeStyles).toContain('--extension-yt-live-backdrop-filter: none;')
-    expect(iframeStyles).not.toContain('body.custom-yt-app-live-chat-extension::before')
-    expect(iframeStyles).not.toContain('tp-yt-paper-listbox::before')
-    expect(iframeStyles).not.toContain('ytd-menu-popup-renderer #items::before')
-    expect(iframeStyles).not.toContain('tp-yt-paper-listbox > *')
-    expect(iframeStyles).toContain(
-      'ytd-menu-popup-renderer {\n  color: var(--extension-yt-live-font-color) !important;\n  background: transparent !important;',
-    )
-    expect(iframeStyles).toContain('background: transparent !important;')
-    expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer yt-icon')
-    expect(iframeStyles).toContain('ytd-menu-popup-renderer yt-live-chat-toggle-renderer span')
-    expect(styleModules['menus.css']).not.toContain('tp-yt-paper-item *')
-    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item-body')
-    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item .item')
-    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown tp-yt-paper-item #subtitle')
-    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown svg')
-    expect(styleModules['menus.css']).toContain('tp-yt-iron-dropdown path')
-    expect(iframeStyles).toContain('fill: currentColor !important;')
-
+  it('themes menu surfaces, labels, and icons while preserving disabled and unrelated native colors', () => {
     const menuStyles = styleModules['menus.css']
       .replaceAll('var(--extension-yt-live-font-color)', 'rgb(18, 52, 86)')
       .replaceAll('var(--extension-yt-live-secondary-font-color)', 'rgb(92, 104, 116)')
+      .replaceAll('var(--extension-yt-live-menu-background-color)', 'rgb(30, 50, 70)')
+      .replaceAll('var(--extension-yt-live-menu-hover-background-color)', 'rgb(40, 60, 80)')
     mountStyleFixture(
-      menuStyles,
       `
-        <tp-yt-iron-dropdown>
-          <tp-yt-paper-item>
-            <tp-yt-paper-item-body>
-              <span id="menu-label" class="item">Menu item</span>
-              <yt-icon><span id="menu-icon" class="ytSpecIconShapeHost"></span></yt-icon>
-            </tp-yt-paper-item-body>
-          </tp-yt-paper-item>
-          <tp-yt-paper-item aria-disabled="true">
-            <tp-yt-paper-item-body>
-              <span id="disabled-menu-label" class="item">Disabled item</span>
-              <yt-icon><span id="disabled-menu-icon" class="ytSpecIconShapeHost"></span></yt-icon>
-            </tp-yt-paper-item-body>
-          </tp-yt-paper-item>
+        tp-yt-iron-dropdown, ytd-menu-popup-renderer, tp-yt-paper-listbox, #items {
+          background: rgb(250, 250, 250); color: rgb(15, 15, 15);
+        }
+        .item, yt-formatted-string, .ytSpecIconShapeHost, svg, path { color: rgb(201, 80, 40); }
+        svg, path { fill: rgb(201, 80, 40); }
+        ${menuStyles}
+      `,
+      `
+        <tp-yt-iron-dropdown id="dropdown">
+          <tp-yt-paper-listbox id="listbox">
+            <tp-yt-paper-item id="enabled-item">
+              <tp-yt-paper-item-body>
+                <span id="menu-label" class="item">Menu item</span>
+                <yt-icon><span id="menu-icon" class="ytSpecIconShapeHost"><svg><path id="menu-path" /></svg></span></yt-icon>
+              </tp-yt-paper-item-body>
+            </tp-yt-paper-item>
+            <tp-yt-paper-item aria-disabled="true">
+              <tp-yt-paper-item-body>
+                <span id="disabled-menu-label" class="item">Disabled item</span>
+                <yt-icon><span id="disabled-menu-icon" class="ytSpecIconShapeHost"><svg><path id="disabled-menu-path" /></svg></span></yt-icon>
+              </tp-yt-paper-item-body>
+            </tp-yt-paper-item>
+          </tp-yt-paper-listbox>
         </tp-yt-iron-dropdown>
+        <ytd-menu-popup-renderer id="popup">
+          <div id="items">
+            <ytd-menu-service-item-renderer>
+              <yt-formatted-string id="service-label">Service action</yt-formatted-string>
+              <yt-icon><svg><path id="service-path" /></svg></yt-icon>
+            </ytd-menu-service-item-renderer>
+            <ytd-menu-navigation-item-renderer disabled>
+              <yt-formatted-string id="disabled-navigation-label">Disabled navigation</yt-formatted-string>
+              <yt-icon><svg><path id="disabled-navigation-path" /></svg></yt-icon>
+            </ytd-menu-navigation-item-renderer>
+            <yt-live-chat-toggle-renderer><span id="toggle-label">Menu toggle</span></yt-live-chat-toggle-renderer>
+          </div>
+        </ytd-menu-popup-renderer>
+        <svg><path id="unrelated-semantic-icon" /></svg>
       `,
     )
 
-    expect(getComputedColor('#menu-label')).toBe('rgb(18, 52, 86)')
-    expect(getComputedColor('#menu-icon')).toBe('rgb(18, 52, 86)')
-    expect(getComputedColor('#disabled-menu-label')).toBe('rgb(92, 104, 116)')
-    expect(getComputedColor('#disabled-menu-icon')).toBe('rgb(92, 104, 116)')
+    for (const selector of ['#menu-label', '#menu-icon', '#menu-path', '#service-label', '#service-path', '#toggle-label']) {
+      expect(getComputedColor(selector), selector).toBe('rgb(18, 52, 86)')
+    }
+    for (const selector of [
+      '#disabled-menu-label',
+      '#disabled-menu-icon',
+      '#disabled-menu-path',
+      '#disabled-navigation-label',
+      '#disabled-navigation-path',
+    ]) {
+      expect(getComputedColor(selector), selector).toBe('rgb(92, 104, 116)')
+    }
+    for (const selector of ['#menu-path', '#service-path']) {
+      expect(getFixtureStyle(selector).fill, selector).toBe('rgb(18, 52, 86)')
+    }
+    for (const selector of ['#disabled-menu-path', '#disabled-navigation-path']) {
+      expect(getFixtureStyle(selector).fill, selector).toBe('rgb(92, 104, 116)')
+    }
+    expect(getFixtureStyle('#unrelated-semantic-icon').fill).toBe('rgb(201, 80, 40)')
+    for (const selector of ['#dropdown', '#popup']) {
+      const surface = getFixtureStyle(selector)
+      expect(surface.backgroundColor, selector).toBe('rgba(0, 0, 0, 0)')
+      expect(surface.borderRadius, selector).toBe('8px')
+      expect(surface.overflow, selector).toBe('hidden')
+    }
+    expect(getFixtureStyle('#listbox').backgroundColor).toBe('rgb(30, 50, 70)')
+    expect(getFixtureStyle('#items').backgroundColor).toBe('rgb(30, 50, 70)')
+    document.querySelector('#enabled-item')?.classList.add('iron-selected')
+    expect(getFixtureStyle('#enabled-item').backgroundColor).toBe('rgb(40, 60, 80)')
   })
 
   it('themes logged-in support and Super Chat picker surfaces', () => {
