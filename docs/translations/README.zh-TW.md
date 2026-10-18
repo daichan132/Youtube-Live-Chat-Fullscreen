@@ -52,18 +52,30 @@
 聊天顯示預設為開啟，播放器的聊天按鈕可以切換顯示與隱藏。<br />
 [需要協助？](troubleshooting.zh-TW.md) · [預設樣式與備份](user-guide.zh-TW.md)
 
-## 隱私
-
-設定保存在此瀏覽器中，擴充功能不會把觀看活動或聊天內容傳送給開發者。不需要額外帳號，也沒有分析 SDK 或追蹤服務。
-
-YouTube 聊天室仍會與 YouTube 通訊；選擇額外字型時，可能會從 Google Fonts 下載。[隱私說明](user-guide.zh-TW.md#隱私)。
-
-## 參與開發
-
-使用 WXT、React、TypeScript、Jotai 與 Tailwind CSS 開發。[工程概覽](../engineering.md)說明聊天執行流程、設定及瀏覽器測試對應的程式碼。[選擇貢獻的起點 →](../../CONTRIBUTING.md#choose-a-starting-point)（兩者皆為英文）
-
 ## 一起改善擴充功能
 
 [回報問題](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=bug.yml) · [提出功能建議](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/issues/new?template=feature.yml) · [改善翻譯或指南](../../CONTRIBUTING.md)
+
+## 聊天室與瀏覽器支援
+
+覆蓋視窗使用 YouTube 原本的聊天室。登入、留言、徽章與 Super Chat 仍遵循 YouTube 的規則及頻道的參與條件。直播存檔會重播當時的對話。
+
+本擴充功能適用於桌面瀏覽器，Chrome 版也能在 Opera 上執行。沒有可用聊天的影片，會保留一般的全螢幕播放器畫面。
+
+## 隱私與權限
+
+擴充功能不需要額外帳號，也沒有分析 SDK 或追蹤服務。設定保存在此瀏覽器的 `browser.storage.local`，擴充功能不會把觀看活動或聊天內容傳送給開發者。YouTube 原本的聊天室仍會與 YouTube 通訊。選擇額外字型時，可能會從 Google Fonts 下載。
+
+正式版 manifest 只要求 `storage` 權限，content script 與公開的擴充功能資源也都限定在 YouTube 使用。詳見 [package policy](../../config/packagePolicy.ts) 與 [package checks](../../scripts/verify/check-package-contracts.mjs)。
+
+## 探索實作
+
+這是使用 WXT、React、TypeScript、Jotai 與 Tailwind CSS 開發的 Chrome / Firefox 擴充功能。以下開發文件為英文。
+
+- [內容執行流程](../architecture/content-runtime.md)：跟上 YouTube 的頁面切換，並還原借用的原生聊天 iframe。
+- [設定與狀態](../architecture/settings-and-state.md)：即時預覽編輯內容，同時依序處理草稿、已儲存設定與其他擴充功能視窗的變更。
+- [瀏覽器測試](../testing/contracts.md)：以固定條件的測試頁面重現直播、重播與沒有聊天的情境，再另外確認實際網站的相容性。
+
+從[工程概覽](../engineering.md)或[貢獻的起點](../../CONTRIBUTING.md#choose-a-starting-point)開始探索。
 
 <sub>安全性漏洞的非公開回報流程：<a href="../../SECURITY.md">SECURITY.md（英文）</a> · 採用 <a href="../../LICENSE">GPL-3.0</a> 授權。</sub>
