@@ -57,6 +57,11 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
     event.stopPropagation()
     closePicker(true)
   }
+  const handleFocusLeave = (event: React.FocusEvent<HTMLElement>) => {
+    if (!display) return
+    if (event.relatedTarget instanceof Node && rootRef.current?.contains(event.relatedTarget)) return
+    closePicker()
+  }
 
   return (
     <div ref={rootRef} className='relative ylc-action-fill'>
@@ -73,6 +78,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
         className='ylc-color-trigger ylc-action-fill'
         onClick={() => setDisplay(current => !current)}
         onKeyDown={handleLocalKeyDown}
+        onBlur={handleFocusLeave}
       >
         <span className='ylc-color-swatch'>
           <span
@@ -92,6 +98,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
           role='dialog'
           aria-label={t('content.aria.colorPicker')}
           onKeyDown={handleLocalKeyDown}
+          onBlur={handleFocusLeave}
           onPointerDownCapture={onInteractionStart}
           onPointerUpCapture={onInteractionEnd}
           onPointerCancelCapture={onInteractionEnd}

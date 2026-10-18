@@ -26,14 +26,18 @@ type YTDLiveChatSettingProps = {
   onOpenChange: (open: boolean) => void
 }
 
+type SettingTab = 'setting' | 'preset'
+
 export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingProps) => {
   const themeMode = useAtomValue(themeModeAtom)
   const resolvedThemeMode = useResolvedThemeMode(themeMode)
-  const [menuItem, setMenuItem] = useState<'setting' | 'preset'>('setting')
+  const [menuItem, setMenuItem] = useState<SettingTab>('setting')
   const t = useT()
   const direction = useLocaleDirection()
   const panelRef = useRef<HTMLDivElement>(null)
   const tablistRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const scrollPositionsRef = useRef<Record<SettingTab, number>>({ setting: 0, preset: 0 })
   const [historyAnnouncement, setHistoryAnnouncement] = useState({ message: '', sequence: 0 })
   const canUndo = useAtomValue(canUndoAtom)
   const canRedo = useAtomValue(canRedoAtom)
@@ -48,12 +52,30 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
     onOpenChange(false)
   }, [finishYLCStyleGesture, onOpenChange])
 
-  const tabs = useMemo<{ key: 'preset' | 'setting'; label: string; icon: IconType }[]>(
+  const tabs = useMemo<{ key: SettingTab; label: string; icon: IconType }[]>(
     () => [
       { key: 'setting', label: t('content.setting.header.setting'), icon: TbSettings2 },
       { key: 'preset', label: t('content.setting.header.preset'), icon: TbLayoutGrid },
     ],
     [t],
+  )
+
+  const selectTab = useCallback(
+    (nextTab: SettingTab) => {
+      if (nextTab === menuItem) return
+      const container = scrollContainerRef.current
+      if (container) scrollPositionsRef.current[menuItem] = container.scrollTop
+      setMenuItem(nextTab)
+    },
+    [menuItem],
+  )
+
+  const attachScrollContainer = useCallback(
+    (container: HTMLDivElement | null) => {
+      scrollContainerRef.current = container
+      if (container) container.scrollTop = scrollPositionsRef.current[menuItem]
+    },
+    [menuItem],
   )
 
   const handleTabKeyDown = useCallback(
@@ -69,12 +91,12 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         const nextTab = tabs[nextIndex]
         if (!nextTab) return
         e.preventDefault()
-        setMenuItem(nextTab.key)
+        selectTab(nextTab.key)
         const buttons = tablistRef.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
         buttons?.[nextIndex]?.focus()
       }
     },
-    [menuItem, setMenuItem, tabs],
+    [menuItem, selectTab, tabs],
   )
 
   useEffect(() => {
@@ -171,8 +193,8 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         onWheel={e => e.stopPropagation()}
         onKeyDownCapture={handlePanelKeyDown}
       >
-        <header className='ylc-theme-setting-header flex shrink-0 justify-between items-stretch min-h-[48px]'>
-          <div ref={tablistRef} className='ylc-theme-tablist' role='tablist'>
+        <header className='ylc-theme-setting-header shrink-0 justify-between items-stretch min-h-[48px]'>
+          <div ref={tablistRef} className='ylc-theme-tablist min-w-0' role='tablist'>
             {tabs.map(item => (
               <button
                 key={item.key}
@@ -182,19 +204,16 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
                 aria-selected={menuItem === item.key}
                 aria-controls={`ylc-tabpanel-${item.key}`}
                 tabIndex={menuItem === item.key ? 0 : -1}
-                className={cn('ylc-theme-tab ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
-                onClick={() => {
-                  if (menuItem === item.key) return
-                  setMenuItem(item.key)
-                }}
+                className={cn('ylc-theme-tab min-w-0 ylc-theme-focus-ring-soft', menuItem === item.key && 'ylc-theme-tab-active')}
+                onClick={() => selectTab(item.key)}
                 onKeyDown={handleTabKeyDown}
               >
-                <item.icon size={16} />
-                {item.label}
+                <item.icon size={16} className='shrink-0' />
+                <span className='ylc-setting-tab-label'>{item.label}</span>
               </button>
             ))}
           </div>
-          <div className='self-center inline-flex items-center gap-0.5'>
+          <div className='ylc-setting-header-actions self-center inline-flex shrink-0 items-center gap-0.5'>
             <button
               type='button'
               aria-label={t('content.setting.header.undo')}
@@ -231,12 +250,16 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           {historyAnnouncement.message}
         </span>
         <div
+          ref={attachScrollContainer}
           id={`ylc-tabpanel-${menuItem}`}
           role='tabpanel'
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
           className='min-h-0 flex-auto overflow-y-auto h-[380px] p-2 rounded-2xl'
           style={{ overscrollBehavior: 'contain' }}
+          onScroll={event => {
+            scrollPositionsRef.current[menuItem] = event.currentTarget.scrollTop
+          }}
         >
           {menuItem === 'setting' && <SettingContent />}
           {menuItem === 'preset' && <PresetContent />}

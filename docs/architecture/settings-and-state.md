@@ -82,11 +82,13 @@ Verification profile patches initialize a missing appearance domain with the sta
 
 The file UI rejects imports larger than 1 MiB before JSON parsing. Valid backups contain at most 100 custom presets. Version 1 backups also allow at most 107 raw legacy preset references (100 custom presets plus 7 built-ins), counting duplicate and unknown references. This limit is checked before migration allocates unique IDs, so a small duplicate-heavy file cannot cause quadratic migration work before confirmation. Oversized imports are rejected rather than truncated. Backup normalization returns complete `GlobalSettings` and `ChatSettings`.
 
+Reading, confirmation and application use the shared modal's focus containment. The confirmation exposes a labelled dialog with its filename and explanation as its accessible description; progress and confirmation text also occupy a live status region. Cancellation, success and failure return focus to Import. Escape and outside clicks can cancel before application begins; they cannot dismiss an in-flight application. The existing normalization, import barrier and error-phase reporting remain authoritative.
+
 An import synchronously reserves a barrier. It waits only for previously queued operations, writes the four imported domains with one bulk `storage.setItems` call, and reads those domains back together. Later interactive writes and imports wait behind that barrier; otherwise they could overtake the bulk write. The barrier never calls `flush()` on operations waiting for the barrier itself.
 
 Confirmed domains are published through `watch` under local-sequence and external-generation guards. A newer local edit is not replaced by the imported value while it waits to save. The runtime does not apply the original input snapshot again after awaiting the repository, which would overwrite newer committed changes. Disposed runtimes ignore notifications.
 
-After releasing the barrier, successful `replaceSettings` drains later queued work before resolving to the popup, which closes on success. A failure of the bulk operation does not block future writes. Imports are local ordering barriers, not cross-context locks or distributed transactions.
+After releasing the barrier, successful `replaceSettings` drains later queued work before resolving to the popup. The confirmation closes and the outcome is shown. A failure of the bulk operation does not block future writes. Imports are local ordering barriers, not cross-context locks or distributed transactions.
 
 If the bulk write succeeds but confirmation cannot be read, the import reports an error without applying an unconfirmed snapshot. The Storage write is not rolled back; reloading reads the committed values. Do not describe every import error as leaving Storage unchanged.
 

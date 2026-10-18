@@ -1,4 +1,5 @@
-import { act, fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { afterEach, expect, it, vi } from 'vitest'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
@@ -30,7 +31,7 @@ const setup = async () => {
     </AppProvider>,
   )
   const input = view.container.querySelector('input') as HTMLInputElement
-  return { runtime, repository, input }
+  return { runtime, repository, input, view }
 }
 const choose = (input: HTMLInputElement, data: unknown) =>
   fireEvent.change(input, {
@@ -41,6 +42,53 @@ const backupWithFontSize = (fontSize: number) => ({
   version: 2,
   globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
   chatSettings: { profile: { appearance: { fontSize } } },
+})
+
+it('names and describes confirmation, confines Tab, and returns Cancel focus to Import without saving', async () => {
+  const user = userEvent.setup()
+  const { runtime, input, view } = await setup()
+  const trigger = screen.getByRole('button', { name: 'popup.import' })
+  await user.click(trigger)
+  const before = await chrome.storage.local.get(null)
+  choose(input, runtime.exportSettings())
+
+  const dialog = await screen.findByRole('dialog', { name: 'popup.import' })
+  expect(dialog).toHaveAttribute('aria-modal', 'true')
+  expect(dialog).toHaveAccessibleDescription('backup.json popup.importConfirm')
+  expect(within(dialog).getByRole('status')).toHaveTextContent('popup.importConfirm')
+  expect(view.container).toHaveAttribute('inert')
+  await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement))
+
+  const cancel = within(dialog).getByRole('button', { name: 'popup.importCancel' })
+  await user.tab({ shift: true })
+  expect(cancel).toHaveFocus()
+  await user.tab()
+  expect(within(dialog).getByRole('button', { name: 'popup.export' })).toHaveFocus()
+  await user.tab({ shift: true })
+  expect(cancel).toHaveFocus()
+  await user.keyboard('{Enter}')
+
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(trigger).toHaveFocus()
+  expect(view.container).not.toHaveAttribute('inert')
+  expect(await chrome.storage.local.get(null)).toEqual(before)
+})
+
+it('keeps composing Escape local and cancels ordinary Escape without applying the backup', async () => {
+  const user = userEvent.setup()
+  const { runtime, input } = await setup()
+  const trigger = screen.getByRole('button', { name: 'popup.import' })
+  await user.click(trigger)
+  const before = await chrome.storage.local.get(null)
+  choose(input, runtime.exportSettings())
+  const dialog = await screen.findByRole('dialog', { name: 'popup.import' })
+  await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement))
+  fireEvent.keyDown(document.activeElement as Element, { key: 'Escape', isComposing: true })
+  expect(dialog).toBeInTheDocument()
+  await user.keyboard('{Escape}')
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(trigger).toHaveFocus()
+  expect(await chrome.storage.local.get(null)).toEqual(before)
 })
 
 it('waits for confirmation and saves omitted fields from the settings current at Apply', async () => {
@@ -99,14 +147,22 @@ it('keeps import and cancellation unavailable until the confirmed settings finis
     await originalSet(values)
   })
   choose(input, backupWithFontSize(28))
-  fireEvent.click(await screen.findByRole('button', { name: 'popup.importApply' }))
+  const apply = await screen.findByRole('button', { name: 'popup.importApply' })
+  apply.focus()
+  fireEvent.click(apply)
   expect(screen.getByRole('status')).toHaveTextContent('popup.importApplying')
+  expect(screen.getByRole('status')).toHaveFocus()
+  expect(screen.getByRole('dialog')).toContainElement(document.activeElement as HTMLElement)
   expect(screen.getByRole('button', { name: 'popup.import' })).toBeDisabled()
   expect(screen.queryByRole('button', { name: 'popup.importCancel' })).not.toBeInTheDocument()
   expect(screen.queryByRole('button', { name: 'popup.importApply' })).not.toBeInTheDocument()
+  fireEvent.keyDown(document, { key: 'Escape' })
+  expect(screen.getByRole('status')).toHaveTextContent('popup.importApplying')
 
   await act(async () => release())
   await screen.findByText('popup.importDone')
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  await waitFor(() => expect(screen.getByRole('button', { name: 'popup.import' })).toHaveFocus())
   expect(screen.getByRole('button', { name: 'popup.import' })).toBeEnabled()
   expect(runtime.exportSettings()).toMatchObject({ chatSettings: { profile: { appearance: { fontSize: 28 } } } })
   expect((await chrome.storage.local.get(APPEARANCE_STORAGE_KEY))[APPEARANCE_STORAGE_KEY]).toMatchObject({
@@ -122,6 +178,7 @@ it('reports failed confirmation while leaving the successful write available aft
   vi.spyOn(chrome.storage.local, 'get').mockRejectedValueOnce(new Error('readback offline'))
   fireEvent.click(screen.getByRole('button', { name: 'popup.importApply' }))
   await screen.findByText('popup.importReadback')
+  await waitFor(() => expect(screen.getByRole('button', { name: 'popup.import' })).toHaveFocus())
   expect(runtime.exportSettings()).toMatchObject({ globalSetting: before.globalSetting, chatSettings: before.chatSettings })
   expect(screen.queryByText('popup.importDone')).not.toBeInTheDocument()
 
@@ -155,6 +212,7 @@ it.each(['oversized', 'malformed JSON', 'unsupported version'] as const)(
     fireEvent.change(input, { target: { files: [{ name: 'invalid.json', size: kind === 'oversized' ? 1_048_577 : 20, text }] } })
 
     await screen.findByText('popup.importError')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'popup.import' })).toHaveFocus())
     expect(screen.queryByRole('button', { name: 'popup.importApply' })).not.toBeInTheDocument()
     expect(save).not.toHaveBeenCalled()
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(before)

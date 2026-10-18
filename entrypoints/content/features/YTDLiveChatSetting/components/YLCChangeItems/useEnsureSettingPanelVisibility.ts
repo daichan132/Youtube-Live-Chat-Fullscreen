@@ -44,13 +44,16 @@ export const scrollSettingPanelRangeIntoView = (
   margin: number = DEFAULT_SCROLL_MARGIN,
 ): boolean => {
   const containerRect = container.getBoundingClientRect()
-  const visibleTop = containerRect.top + margin
-  const visibleBottom = containerRect.bottom - margin
-
-  if (visibleBottom <= visibleTop) return false
-
-  const visibleHeight = visibleBottom - visibleTop
+  const containerHeight = containerRect.bottom - containerRect.top
+  const requestedVisibleHeight = containerHeight - margin * 2
+  if (requestedVisibleHeight <= 0) return false
   const targetHeight = range.bottom - range.top
+  // Keep a usable popup and its trigger intact when only the preferred margins do not fit.
+  const fittingMargin =
+    targetHeight > requestedVisibleHeight && targetHeight <= containerHeight ? (containerHeight - targetHeight) / 2 : margin
+  const visibleTop = containerRect.top + fittingMargin
+  const visibleBottom = containerRect.bottom - fittingMargin
+  const visibleHeight = visibleBottom - visibleTop
   let delta = 0
 
   if (targetHeight > visibleHeight) {

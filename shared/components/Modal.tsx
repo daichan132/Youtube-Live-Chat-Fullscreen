@@ -8,6 +8,7 @@ type ModalAccessibleName = { ariaLabel: string; ariaLabelledBy?: never } | { ari
 type ModalProps = {
   isOpen: boolean
   onRequestClose?: () => void
+  ariaDescribedBy?: string
   onAfterOpen?: () => void
   onAfterClose?: () => void
   shouldCloseOnOverlayClick?: boolean
@@ -104,6 +105,7 @@ export const Modal = ({
   contentClassName,
   ariaLabel,
   ariaLabelledBy,
+  ariaDescribedBy,
   children,
 }: ModalProps) => {
   const modalIdRef = useRef(Symbol('modal'))
@@ -217,6 +219,7 @@ export const Modal = ({
       aria-modal='true'
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
       className={overlayClassName}
       style={
         overlayClassName

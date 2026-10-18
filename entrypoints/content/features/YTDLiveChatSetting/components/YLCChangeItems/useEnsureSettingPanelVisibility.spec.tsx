@@ -106,4 +106,43 @@ describe('useEnsureSettingPanelVisibility helpers', () => {
     expect(changed).toBe(false)
     expect(container.scrollTop).toBe(40)
   })
+
+  it('reduces only safe margins when the trigger and usable popup fit a short body', () => {
+    const container = document.createElement('div')
+    mockSmoothScrollTo(container)
+    container.scrollTop = 40
+    setRect(container, 100, 237)
+    // A 36px trigger, 6px gap and 90px popup fit together, without two 8px margins.
+    const range = { top: 200, bottom: 332 }
+
+    expect(scrollSettingPanelRangeIntoView(container, range, 8)).toBe(true)
+
+    const delta = container.scrollTop - 40
+    expect(range.top - delta).toBeGreaterThanOrEqual(100)
+    expect(range.bottom - delta).toBeLessThanOrEqual(237)
+    expect(range.top - delta - 100).toBeCloseTo(237 - (range.bottom - delta))
+  })
+
+  it('keeps the opening context visible when the target itself exceeds the body', () => {
+    const container = document.createElement('div')
+    mockSmoothScrollTo(container)
+    container.scrollTop = 40
+    setRect(container, 100, 237)
+
+    expect(scrollSettingPanelRangeIntoView(container, { top: 200, bottom: 400 }, 8)).toBe(true)
+
+    expect(container.scrollTop).toBe(132)
+  })
+
+  it.each([112, 116])('does not scroll when safe margins leave no visible height at bottom %s', bottom => {
+    const container = document.createElement('div')
+    const scrollToMock = mockSmoothScrollTo(container)
+    container.scrollTop = 40
+    setRect(container, 100, bottom)
+
+    expect(scrollSettingPanelRangeIntoView(container, { top: 101, bottom: 105 }, 8)).toBe(false)
+
+    expect(scrollToMock).not.toHaveBeenCalled()
+    expect(container.scrollTop).toBe(40)
+  })
 })

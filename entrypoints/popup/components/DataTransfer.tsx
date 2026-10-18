@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { TbDownload, TbUpload } from '@/shared/components/icons'
+import { Modal } from '@/shared/components/Modal'
 import { useT } from '@/shared/i18n/react'
 import { useAppRuntime } from '@/shared/runtime/AppProvider'
 import { normalizeSettingsBackup } from '@/shared/settings/backup'
@@ -20,6 +21,11 @@ export const DataTransfer = () => {
   const t = useT()
   const runtime = useAppRuntime()
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const importButtonRef = useRef<HTMLButtonElement>(null)
+  const statusRef = useRef<HTMLParagraphElement>(null)
+  const titleId = useId()
+  const descriptionId = useId()
+  const filenameId = useId()
   const [message, setMessage] = useState<string | null>(null)
   const [pending, setPending] = useState<{ name: string; data: unknown } | null>(null)
   const [phase, setPhase] = useState<'idle' | 'reading' | 'confirm' | 'applying'>('idle')
@@ -31,11 +37,16 @@ export const DataTransfer = () => {
     },
     [],
   )
+  useEffect(() => {
+    if (phase === 'idle' && message) importButtonRef.current?.focus({ preventScroll: true })
+  }, [message, phase])
   const cancel = () => {
+    if (applyingRef.current) return
     requestRef.current += 1
     setPending(null)
     setMessage(null)
     setPhase('idle')
+    if (phase === 'idle') importButtonRef.current?.focus({ preventScroll: true })
   }
   const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -62,6 +73,7 @@ export const DataTransfer = () => {
     if (!pending || applyingRef.current) return
     applyingRef.current = true
     const request = ++requestRef.current
+    statusRef.current?.focus({ preventScroll: true })
     setPhase('applying')
     try {
       // Keep raw data until confirmation; runtime normalizes with current settings.
@@ -103,6 +115,7 @@ export const DataTransfer = () => {
           <TbDownload size={18} aria-hidden='true' />
         </button>
         <button
+          ref={importButtonRef}
           type='button'
           disabled={phase === 'applying'}
           aria-label={t('popup.import')}
@@ -114,31 +127,54 @@ export const DataTransfer = () => {
         </button>
         <input ref={fileInputRef} type='file' accept='.json' onChange={handleImport} style={{ display: 'none' }} />
       </div>
-      {phase !== 'idle' || message ? (
+      <Modal
+        isOpen={phase !== 'idle'}
+        ariaLabelledBy={titleId}
+        ariaDescribedBy={pending ? `${filenameId} ${descriptionId}` : descriptionId}
+        onRequestClose={cancel}
+        shouldReturnFocusAfterClose={false}
+        onAfterClose={() => importButtonRef.current?.focus({ preventScroll: true })}
+        overlayStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
+        contentClassName='fixed inset-x-2 bottom-2 max-h-[calc(100dvh-16px)] overflow-y-auto rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg outline-none'
+      >
+        <h2 id={titleId} className='m-0 text-base font-semibold'>
+          {t('popup.import')}
+        </h2>
+        {pending ? (
+          <p id={filenameId} className='break-all'>
+            {pending.name}
+          </p>
+        ) : null}
+        <p ref={statusRef} id={descriptionId} role='status' aria-live='polite' tabIndex={-1}>
+          {phase === 'reading' ? t('popup.importReading') : phase === 'confirm' ? t('popup.importConfirm') : t('popup.importApplying')}
+        </p>
+        {pending && phase === 'confirm' ? (
+          <>
+            <button type='button' className='ylc-btn' onClick={() => handleExport(runtime.exportSettings())}>
+              {t('popup.export')}
+            </button>
+            <button type='button' className='ylc-btn' onClick={apply}>
+              {t('popup.importApply')}
+            </button>
+          </>
+        ) : null}
+        {phase !== 'applying' ? (
+          <button type='button' className='ylc-btn' onClick={cancel}>
+            {t('popup.importCancel')}
+          </button>
+        ) : null}
+      </Modal>
+      {phase === 'idle' && message ? (
         <section
           aria-label={t('popup.import')}
           className='fixed inset-x-2 bottom-2 z-50 rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg'
         >
           <div role='status' aria-live='polite'>
-            {phase === 'reading' ? t('popup.importReading') : phase === 'applying' ? t('popup.importApplying') : message}
+            {message}
           </div>
-          {pending && phase === 'confirm' ? (
-            <>
-              <p className='break-all'>{pending.name}</p>
-              <p>{t('popup.importConfirm')}</p>
-              <button type='button' className='ylc-btn' onClick={() => handleExport(runtime.exportSettings())}>
-                {t('popup.export')}
-              </button>
-              <button type='button' className='ylc-btn' onClick={apply}>
-                {t('popup.importApply')}
-              </button>
-            </>
-          ) : null}
-          {phase !== 'applying' ? (
-            <button type='button' className='ylc-btn' onClick={cancel}>
-              {phase === 'idle' ? t('popup.importClose') : t('popup.importCancel')}
-            </button>
-          ) : null}
+          <button type='button' className='ylc-btn' onClick={cancel}>
+            {t('popup.importClose')}
+          </button>
         </section>
       ) : null}
     </>

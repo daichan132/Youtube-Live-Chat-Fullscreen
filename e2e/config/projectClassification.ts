@@ -31,6 +31,8 @@ export const FIXTURE_SPECS = [
   'live/overlayInteraction.fixture.spec.ts',
   'live/overlayControlsUsability.fixture.spec.ts',
   'live/settingsUsability.fixture.spec.ts',
+  'live/detailSettingsUsability.fixture.spec.ts',
+  'live/colorPickerUsability.fixture.spec.ts',
   'live/chatInputFocus.fixture.spec.ts',
   'live/overlayDragRelease.fixture.spec.ts',
   'live/overlayMenuUsability.fixture.spec.ts',
@@ -39,6 +41,7 @@ export const FIXTURE_SPECS = [
   'live/spaNavigation.fixture.spec.ts',
   'popup/i18n.fixture.spec.ts',
   'popup/popup.spec.ts',
+  'popup/dataTransferUsability.fixture.spec.ts',
 ] as const
 
 export const CANARY_SPECS = [
