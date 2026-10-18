@@ -269,7 +269,7 @@ export const OverlayControlRail = ({
           data-ylc-control-tooltip
           data-ylc-tooltip-side={tooltipLayout?.side}
           aria-hidden='true'
-          className='absolute rounded-md border border-solid ylc-theme-border px-2.5 py-1.5 text-xs font-medium leading-snug shadow-sm pointer-events-none'
+          className='absolute rounded-md border border-solid px-2.5 py-1.5 text-xs font-medium leading-snug shadow-sm pointer-events-none'
           style={{
             left: tooltipLayout?.left ?? 0,
             top: tooltipLayout?.top ?? 0,
@@ -277,8 +277,9 @@ export const OverlayControlRail = ({
             width: 'max-content',
             maxWidth: Math.min(220, Math.max(0, (viewportSize?.width ?? 240) - TOOLTIP_VIEWPORT_PADDING * 2)),
             boxSizing: 'border-box',
-            background: 'var(--ylc-bg-surface-elevated)',
-            color: 'var(--ylc-text-primary)',
+            background: toRgba(backgroundColor, Math.max(0.94, backgroundColor.a)),
+            color,
+            borderColor: toRgba(fontColor, 0.18),
             whiteSpace: 'normal',
             textAlign: 'center',
           }}

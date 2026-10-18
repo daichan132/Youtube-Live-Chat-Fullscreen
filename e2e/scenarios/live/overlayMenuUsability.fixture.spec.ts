@@ -235,3 +235,38 @@ test('updates help when keyboard focus leaves a button under the stationary poin
   await expect(page.locator('[data-ylc-control-tooltip]')).toContainText('Use arrow keys to move')
   await testInfo.attach('keyboard-help', { body: await page.screenshot(), contentType: 'image/png' })
 })
+
+test('keeps hover help in the configured chat palette across live appearance changes', async ({ page, extension }, testInfo) => {
+  await setup(page, extension)
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  for (const palette of [
+    {
+      name: 'teal', backgroundColor: { r: 12, g: 34, b: 44, a: 0.2 }, fontColor: { r: 216, g: 247, b: 232, a: 1 },
+      background: 'rgba(12, 34, 44, 0.94)', text: 'rgb(216, 247, 232)', border: 'rgba(216, 247, 232, 0.18)',
+    },
+    {
+      name: 'cream', backgroundColor: { r: 248, g: 236, b: 214, a: 1 }, fontColor: { r: 70, g: 40, b: 30, a: 0.9 },
+      background: 'rgb(248, 236, 214)', text: 'rgba(70, 40, 30, 0.9)', border: 'rgba(70, 40, 30, 0.18)',
+    },
+    {
+      name: 'violet', backgroundColor: { r: 48, g: 20, b: 64, a: 0.98 }, fontColor: { r: 250, g: 224, b: 255, a: 1 },
+      background: 'rgba(48, 20, 64, 0.98)', text: 'rgb(250, 224, 255)', border: 'rgba(250, 224, 255, 0.18)',
+    },
+  ]) {
+    await page.locator('[data-ylc-settings-btn]').hover()
+    await expect(tooltip).toBeVisible()
+    await patchOverlayStore(extension, { profile: { appearance: { backgroundColor: palette.backgroundColor, fontColor: palette.fontColor } } })
+    // The already-open tooltip must update before moving to another control.
+    await expect(tooltip).toHaveCSS('background-color', palette.background)
+    await expect(tooltip).toHaveCSS('color', palette.text)
+    await expect(tooltip).toHaveCSS('border-top-color', palette.border)
+    await expect(tooltip).toHaveCSS('pointer-events', 'none')
+    await testInfo.attach(`tooltip-${palette.name}`, { body: await page.screenshot(), contentType: 'image/png' })
+    await tooltip.screenshot({ path: testInfo.outputPath(`tooltip-${palette.name}.png`) })
+    for (const selector of ['[data-ylc-drag-handle]', '[data-ylc-placement-button]']) {
+      await page.locator(selector).hover()
+      await expect(tooltip).toHaveCSS('background-color', palette.background)
+      await expect(tooltip).toHaveCSS('color', palette.text)
+    }
+  }
+})
