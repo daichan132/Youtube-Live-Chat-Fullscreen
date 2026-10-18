@@ -52,6 +52,10 @@ export const nativeChatIframeProbe = {
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
 } as const
 export const chatRendererProbe = { probeId: 'chat.renderer.v1', selectors: ['yt-live-chat-renderer'] } as const
+export const collapsedPinnedMessageContentProbe = {
+  probeId: 'chat.pinned-message-content.v1',
+  selectors: ['yt-live-chat-banner-renderer yt-live-chat-text-message-renderer[in-collapsed-banner] #content'],
+} as const
 export const chatItemListRendererProbe = { probeId: 'chat.item-list.v1', selectors: ['yt-live-chat-item-list-renderer'] } as const
 export const chatUnavailableMessageProbe = {
   probeId: 'chat.unavailable-message.v1',
@@ -144,6 +148,7 @@ export const youtubeSelectorCatalog = {
   chatPurchaseLoading: chatPurchaseLoadingProbe,
   nativeChatIframe: nativeChatIframeProbe,
   chatRenderer: chatRendererProbe,
+  collapsedPinnedMessageContent: collapsedPinnedMessageContentProbe,
   chatItemListRenderer: chatItemListRendererProbe,
   chatUnavailableMessage: chatUnavailableMessageProbe,
   chatStatusMessage: chatStatusMessageProbe,

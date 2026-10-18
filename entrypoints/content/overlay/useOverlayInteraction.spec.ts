@@ -65,7 +65,7 @@ describe('useOverlayInteraction', () => {
     act(() => result.current.finishDragging())
     act(() => result.current.startResizing())
     expect(result.current.state).toBe('resizing')
-    expect(result.current.controlsVisible).toBe(false)
+    expect(result.current.controlsVisible).toBe(true)
 
     rerender({ settingsOpen: true })
     expect(result.current.state).toBe('settings-open')

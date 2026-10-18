@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
+import { IFRAME_CHAT_BODY_CLASS } from '../features/YTDLiveChatIframe/constants/styleContract'
+import { YLC_FONT_COLOR_PROPERTIES } from '../hooks/ylcStyleChange/ylcStyleConstants'
 import { applyChatProfileToDocument, applyStylePatch } from './applyStylePatch'
 import type { ChatStylePatch } from './compileStylePatch'
 
@@ -186,5 +188,144 @@ describe('applyStylePatch DOM writes', () => {
     expect(bodyWrite).toHaveBeenCalledTimes(2)
     expect(nextBody.style.getPropertyValue('opacity')).toBe('0.8')
     expect(nextBody.style.getPropertyValue('backdrop-filter')).toBe('none')
+  })
+})
+
+const primaryColorPatch = (color: string): ChatStylePatch => ({
+  documentProperties: { [YLC_FONT_COLOR_PROPERTIES[0]]: color },
+  bodyProperties: {},
+  fontFamily: null,
+})
+
+const pinnedContentMarkup = `
+  <yt-live-chat-banner-renderer>
+    <yt-live-chat-text-message-renderer in-collapsed-banner>
+      <div id="content" data-target="collapsed"><span id="message-container"><span id="message">Pinned sample</span></span></div>
+    </yt-live-chat-text-message-renderer>
+    <yt-live-chat-text-message-renderer><div id="content" data-target="expanded">Expanded sample</div></yt-live-chat-text-message-renderer>
+    <span data-target="badge" style="color: purple">Badge</span>
+  </yt-live-chat-banner-renderer>
+  <yt-live-chat-text-message-renderer in-collapsed-banner><div id="content" data-target="outside">Ordinary sample</div></yt-live-chat-text-message-renderer>
+`
+
+const createPinnedDocument = (styled = true) => {
+  const doc = document.implementation.createHTMLDocument('')
+  if (styled) doc.body.classList.add(IFRAME_CHAT_BODY_CLASS)
+  doc.body.innerHTML = pinnedContentMarkup
+  const target = doc.querySelector<HTMLElement>('[data-target="collapsed"]')
+  if (!target) throw new Error('Missing pinned content fixture')
+  return { doc, target }
+}
+
+const observePinnedLayout = (element: HTMLElement) => {
+  const read = vi.fn(() => {
+    expect(element.style.getPropertyValue('text-overflow')).toBe('clip')
+    expect(element.style.getPropertyPriority('text-overflow')).toBe('important')
+    return 344
+  })
+  Object.defineProperty(element, 'offsetWidth', { configurable: true, get: read })
+  return read
+}
+
+describe('applyStylePatch pinned ellipsis refresh boundary', () => {
+  it('refreshes only collapsed content inside the styled banner on the first color patch', () => {
+    const { doc, target } = createPinnedDocument()
+    const read = observePinnedLayout(target)
+    const unrelatedReads = Array.from(
+      doc.querySelectorAll<HTMLElement>('[data-target]:not([data-target="collapsed"])'),
+      observePinnedLayout,
+    )
+
+    applyStylePatch(doc, primaryColorPatch('rgb(255, 255, 255)'))
+
+    expect(read).toHaveBeenCalledTimes(1)
+    for (const unrelatedRead of unrelatedReads) expect(unrelatedRead).not.toHaveBeenCalled()
+    expect(target.hasAttribute('style')).toBe(false)
+    expect(doc.querySelector<HTMLElement>('[data-target="badge"]')?.style.color).toBe('purple')
+  })
+
+  it('does not read layout or mutate pinned content for identical or background-only patches', () => {
+    const { doc, target } = createPinnedDocument()
+    const read = observePinnedLayout(target)
+    const color = primaryColorPatch('rgb(255, 255, 255)')
+    applyStylePatch(doc, color)
+    read.mockClear()
+    const write = vi.spyOn(target.style, 'setProperty')
+    const observer = new MutationObserver(() => {})
+    observer.observe(target, { attributes: true, subtree: true, childList: true })
+    try {
+      for (let index = 0; index < 100; index += 1) {
+        applyStylePatch(doc, { ...color, documentProperties: { ...color.documentProperties } })
+      }
+      applyStylePatch(doc, {
+        ...color,
+        documentProperties: { ...color.documentProperties, '--extension-yt-live-panel-background-color': 'rgba(30, 40, 50, 0.8)' },
+      })
+
+      expect(read).not.toHaveBeenCalled()
+      expect(write).not.toHaveBeenCalled()
+      expect(observer.takeRecords()).toHaveLength(0)
+    } finally {
+      observer.disconnect()
+    }
+  })
+
+  it('refreshes for a changed primary color while preserving native inline values and priorities', () => {
+    const { doc, target } = createPinnedDocument()
+    target.style.setProperty('text-overflow', 'ellipsis', 'important')
+    target.style.setProperty('--youtube-owned', 'preserved')
+    target.style.setProperty('color', 'purple')
+    const original = target.getAttribute('style')
+    const read = observePinnedLayout(target)
+    applyStylePatch(doc, primaryColorPatch('rgb(255, 255, 255)'))
+    applyStylePatch(doc, primaryColorPatch('rgba(220, 80, 180, 0.6)'))
+
+    expect(read).toHaveBeenCalledTimes(2)
+    expect(target.getAttribute('style')).toBe(original)
+    expect(target.style.getPropertyPriority('text-overflow')).toBe('important')
+  })
+
+  it('preserves an existing empty style attribute after the temporary refresh', () => {
+    const { doc, target } = createPinnedDocument()
+    target.setAttribute('style', '')
+    const read = observePinnedLayout(target)
+
+    applyStylePatch(doc, primaryColorPatch('rgb(255, 255, 255)'))
+
+    expect(read).toHaveBeenCalledTimes(1)
+    expect(target.getAttribute('style')).toBe('')
+  })
+
+  it('refreshes when the same early patch is applied after the body receives the extension class', () => {
+    const { doc, target } = createPinnedDocument(false)
+    const read = observePinnedLayout(target)
+    const color = primaryColorPatch('rgb(255, 255, 255)')
+    applyStylePatch(doc, color)
+    expect(read).not.toHaveBeenCalled()
+
+    doc.body.classList.add(IFRAME_CHAT_BODY_CLASS)
+    applyStylePatch(doc, color)
+
+    expect(read).toHaveBeenCalledTimes(1)
+  })
+
+  it('refreshes the first classified patch after body replacement even when the color is unchanged', () => {
+    const { doc, target } = createPinnedDocument()
+    const previousRead = observePinnedLayout(target)
+    const color = primaryColorPatch('rgb(255, 255, 255)')
+    applyStylePatch(doc, color)
+    const nextBody = doc.createElement('body')
+    nextBody.classList.add(IFRAME_CHAT_BODY_CLASS)
+    nextBody.innerHTML = pinnedContentMarkup
+    doc.body.replaceWith(nextBody)
+    const nextTarget = nextBody.querySelector<HTMLElement>('[data-target="collapsed"]')
+    if (!nextTarget) throw new Error('Missing replacement pinned content fixture')
+    const nextRead = observePinnedLayout(nextTarget)
+
+    applyStylePatch(doc, color)
+
+    expect(previousRead).toHaveBeenCalledTimes(1)
+    expect(nextRead).toHaveBeenCalledTimes(1)
+    expect(nextTarget.hasAttribute('style')).toBe(false)
   })
 })

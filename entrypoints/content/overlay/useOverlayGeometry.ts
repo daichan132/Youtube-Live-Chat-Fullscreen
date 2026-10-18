@@ -4,6 +4,10 @@ import {
   isChatGeometryV2,
   layoutGeometryToV2,
   legacyGeometryToV2,
+  MAX_CHAT_HEIGHT_RATIO,
+  MAX_CHAT_WIDTH_RATIO,
+  MIN_CHAT_HEIGHT_PX,
+  MIN_CHAT_WIDTH_PX,
   type PixelChatGeometry,
   renderChatGeometry,
 } from '@/shared/settings/chatGeometry'
@@ -21,6 +25,21 @@ type GeometrySession = {
   direction?: ResizeDirection
   startPoint: Point
   startGeometry: PixelChatGeometry
+}
+
+const getResizeMaxSize = (geometry: PixelChatGeometry, direction: ResizeDirection, viewport: { width: number; height: number }) => {
+  const fromLeft = direction === 'left' || direction === 'topLeft' || direction === 'bottomLeft'
+  const fromTop = direction === 'top' || direction === 'topLeft' || direction === 'topRight'
+  const availableWidth = fromLeft
+    ? geometry.coordinates.x + geometry.size.width - GEOMETRY_VIEWPORT_PADDING
+    : viewport.width - GEOMETRY_VIEWPORT_PADDING - geometry.coordinates.x
+  const availableHeight = fromTop
+    ? geometry.coordinates.y + geometry.size.height - GEOMETRY_VIEWPORT_PADDING
+    : viewport.height - GEOMETRY_VIEWPORT_PADDING - geometry.coordinates.y
+  return {
+    width: Math.max(MIN_CHAT_WIDTH_PX, Math.min(viewport.width * MAX_CHAT_WIDTH_RATIO, availableWidth)),
+    height: Math.max(MIN_CHAT_HEIGHT_PX, Math.min(viewport.height * MAX_CHAT_HEIGHT_RATIO, availableHeight)),
+  }
 }
 
 const getPlayerElement = (referenceElement: HTMLElement | null) => {
@@ -97,6 +116,7 @@ export const useOverlayGeometry = ({
               currentSize: session.startGeometry.size,
               direction: session.direction,
               delta,
+              maxSize: getResizeMaxSize(session.startGeometry, session.direction, viewport),
             })
           : {
               coordinates: {

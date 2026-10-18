@@ -1,5 +1,5 @@
 import { useAtomValue } from 'jotai'
-import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react'
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useState } from 'react'
 import { useDocumentFocus } from '@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { effectiveProfileAtom } from '@/shared/state'
@@ -78,9 +78,6 @@ export const OverlayFrame = ({
     viewportHeight: geometry.viewport.height,
     viewportPadding: CONTROL_VIEWPORT_PADDING,
   })
-  const lastVisibleControlRailPlacementRef = useRef({ top: controlRailTop, right: 0 })
-  if (interaction.controlsVisible) lastVisibleControlRailPlacementRef.current = { top: controlRailTop, right: 0 }
-  const controlRailPlacement = interaction.controlsVisible ? { top: controlRailTop, right: 0 } : lastVisibleControlRailPlacementRef.current
   // Leave 4px above the placement panel and its 4px gap below it.
   const placementPanelMaxHeight = Math.max(0, coordinates.y + controlRailTop - 8)
   const controlHoverBridgeTop = Math.max(0, size.height - CONTROL_HOVER_BRIDGE_OVERLAP)
@@ -155,7 +152,7 @@ export const OverlayFrame = ({
                 isDragging={interaction.state === 'dragging'}
                 isReady={ready && !settingsOpen}
                 isVisible={interaction.controlsVisible}
-                placement={controlRailPlacement}
+                placement={{ top: controlRailTop, right: 0 }}
                 placementPanelMaxHeight={placementPanelMaxHeight}
                 backgroundColor={profile.appearance.backgroundColor}
                 fontColor={profile.appearance.fontColor}

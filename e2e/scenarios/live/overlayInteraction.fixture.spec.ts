@@ -58,6 +58,21 @@ const openStoragePage = async (extension: Extension, page: Page) => {
   return storagePage
 }
 
+const expectControlsAtLayout = async (page: Page, layout: { x: number; y: number; width: number; height: number }) => {
+  const rail = page.locator('[data-ylc-control-rail]')
+  await expect(rail).toBeVisible()
+  await expect(rail).toHaveCSS('opacity', '1')
+  await expect(async () => {
+    const bounds = await rail.boundingBox()
+    expect(bounds).not.toBeNull()
+    if (!bounds) throw new Error('Visible overlay controls need browser bounds.')
+    // These seeded layouts have room below the chat: controls sit 6px below
+    // its bottom and remain aligned with its right edge throughout a gesture.
+    expect(bounds.y).toBeCloseTo(layout.y + layout.height + 6, 1)
+    expect(bounds.x + bounds.width).toBeCloseTo(layout.x + layout.width, 1)
+  }).toPass({ timeout: 5000 })
+}
+
 test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
   test('keeps restricted participation chrome transparent over customized chat backgrounds', { tag: '@fixture' }, async ({
     page,
@@ -247,7 +262,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     }
   })
 
-  test('resizes from every edge and corner while preserving each opposite edge', { tag: '@fixture' }, async ({ page, extension }) => {
+  test('resizes from every edge and corner while preserving each opposite edge', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
     const scenario = new YouTubeScenario(page)
     const overlay = new ExtensionOverlay(page)
     await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
@@ -270,12 +285,158 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       for (const [direction, delta, expected] of cases) {
         await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
         await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 100, y: 80, width: 400, height: 300 })
+        await overlay.revealControls()
+        await expectControlsAtLayout(page, { x: 100, y: 80, width: 400, height: 300 })
         await overlay.startResize(direction, delta)
         await expect.poll(() => overlay.getGeometry(), { message: direction }).toMatchObject(expected)
+        await expectControlsAtLayout(page, expected)
+        if (direction === 'bottomRight') {
+          await testInfo.attach('controls-follow-held-bottom-right-resize', {
+            body: await page.screenshot(),
+            contentType: 'image/png',
+          })
+        }
         expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
         await overlay.finishPointerGesture()
         await expectPersistedLayout(storagePage, expected)
+        await overlay.revealControls()
+        await expectControlsAtLayout(page, expected)
       }
+    } finally {
+      await page.mouse.up().catch(() => null)
+      await storagePage.close()
+    }
+  })
+
+  for (const resize of [
+    {
+      name: 'right ratio limit with release outside the panel',
+      direction: 'right',
+      initial: { x: 100, y: 80, width: 832, height: 300 },
+      delta: { x: 180, y: 45 },
+      expected: { x: 100, y: 80, width: 832, height: 300 },
+    },
+    {
+      name: 'bottom ratio limit with release below the panel',
+      direction: 'bottom',
+      initial: { x: 100, y: 10, width: 400, height: 648 },
+      delta: { x: 80, y: 45 },
+      expected: { x: 100, y: 10, width: 400, height: 648 },
+    },
+    {
+      name: 'left ratio limit with a fixed right edge',
+      direction: 'left',
+      initial: { x: 400, y: 80, width: 700, height: 300 },
+      delta: { x: -200, y: 40 },
+      expected: { x: 268, y: 80, width: 832, height: 300 },
+    },
+    {
+      name: 'top ratio limit with a fixed bottom edge',
+      direction: 'top',
+      initial: { x: 100, y: 300, width: 400, height: 360 },
+      delta: { x: 40, y: -290 },
+      expected: { x: 100, y: 12, width: 400, height: 648 },
+    },
+    {
+      name: 'right viewport edge with a fixed left edge',
+      direction: 'right',
+      initial: { x: 700, y: 80, width: 400, height: 300 },
+      delta: { x: 175, y: 20 },
+      expected: { x: 700, y: 80, width: 570, height: 300 },
+    },
+    {
+      name: 'top-left viewport corner with fixed opposite edges',
+      direction: 'topLeft',
+      initial: { x: 200, y: 200, width: 400, height: 300 },
+      delta: { x: -199, y: -199 },
+      expected: { x: 10, y: 10, width: 590, height: 490 },
+    },
+  ]) {
+    test(`keeps resize preview and release consistent at the ${resize.name}`, { tag: '@fixture' }, async ({ page, extension }) => {
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      const { initial, expected } = resize
+      const initialGeometry: ChatGeometryV2 = {
+        reference: 'player',
+        rect: {
+          x: initial.x / 1280,
+          y: initial.y / 720,
+          width: initial.width / 1280,
+          height: initial.height / 720,
+        },
+        pinned: true,
+      }
+      await patchOverlayStore(extension, { geometry: initialGeometry })
+      const storagePage = await openStoragePage(extension, page)
+      try {
+        await scenario.load(scenarioState)
+        await scenario.enterFullscreen()
+        await overlay.expectChatLoaded({ timeout: 12000 })
+        await expect.poll(() => overlay.getGeometry()).toMatchObject(initial)
+        await overlay.startResize(resize.direction, resize.delta)
+        await expect.poll(() => overlay.getGeometry()).toMatchObject(expected)
+        expect(await readPersistedGeometry(storagePage)).toEqual(initialGeometry)
+
+        await overlay.finishPointerGesture()
+        await expectPersistedLayout(storagePage, expected)
+        await expect.poll(() => overlay.getGeometry()).toMatchObject(expected)
+        // The pointer can finish beyond the clamped edge. Moving it over the
+        // iframe and then the player must not restore the pre-resize geometry.
+        await page.mouse.move(expected.x + expected.width / 2, expected.y + expected.height / 2)
+        await expect.poll(() => overlay.getGeometry()).toMatchObject(expected)
+        await page.mouse.move(1200, 30)
+        await expectPersistedLayout(storagePage, expected)
+        await expect.poll(() => overlay.getGeometry()).toMatchObject(expected)
+      } finally {
+        await page.mouse.up().catch(() => null)
+        await storagePage.close()
+      }
+    })
+  }
+
+  test('keeps an open placement menu attached during resize and restores it when Escape cancels', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+    const storagePage = await openStoragePage(extension, page)
+    try {
+      await scenario.load(scenarioState)
+      await scenario.enterFullscreen()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      await overlay.revealControls()
+      await page.locator('[data-ylc-placement-button]').click()
+      const panel = page.locator('[data-ylc-placement-panel]')
+      const expectMenuAtLayout = async (layout: { x: number; y: number; width: number; height: number }) => {
+        await expectControlsAtLayout(page, layout)
+        await expect(panel).toBeVisible()
+        await expect(async () => {
+          const bounds = await panel.boundingBox()
+          expect(bounds).not.toBeNull()
+          if (!bounds) throw new Error('Open placement menu needs browser bounds.')
+          expect(bounds.x + bounds.width).toBeCloseTo(layout.x + layout.width, 1)
+          expect(bounds.y + bounds.height).toBeCloseTo(layout.y + layout.height + 2, 1)
+          expect(bounds.y).toBeGreaterThanOrEqual(4)
+        }).toPass({ timeout: 5000 })
+      }
+      const initial = { x: 100, y: 80, width: 400, height: 300 }
+      await expectMenuAtLayout(initial)
+
+      // The bottom-left handle lies outside the right-aligned open menu.
+      await overlay.startResize('bottomLeft', { x: 40, y: 40 })
+      const resized = { x: 140, y: 80, width: 360, height: 340 }
+      await expect.poll(() => overlay.getGeometry()).toMatchObject(resized)
+      await expectMenuAtLayout(resized)
+      expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
+
+      await page.keyboard.press('Escape')
+      await expect.poll(() => overlay.getGeometry()).toMatchObject(initial)
+      await expectMenuAtLayout(initial)
+      await overlay.finishPointerGesture()
+      await expectMenuAtLayout(initial)
+      expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
     } finally {
       await page.mouse.up().catch(() => null)
       await storagePage.close()

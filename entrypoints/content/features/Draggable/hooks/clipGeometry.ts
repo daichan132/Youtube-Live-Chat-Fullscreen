@@ -52,20 +52,24 @@ export const deriveResizedLayout = ({
   currentSize,
   direction,
   delta,
+  maxSize,
 }: {
   startCoordinates: LayoutGeometry['coordinates']
   currentSize: LayoutGeometry['size']
   direction: ResizeDirection
   delta: ResizeDelta
+  maxSize?: LayoutGeometry['size']
 }): LayoutGeometry => {
   const movesLeftEdge = shiftsLeftEdge(direction)
   const movesTopEdge = shiftsTopEdge(direction)
   const fixedRight = startCoordinates.x + currentSize.width
   const fixedBottom = startCoordinates.y + currentSize.height
-  const requestedWidth = movesLeftEdge ? currentSize.width - delta.width : currentSize.width + delta.width
-  const requestedHeight = movesTopEdge ? currentSize.height - delta.height : currentSize.height + delta.height
-  const width = Math.max(ResizableMinWidth, requestedWidth)
-  const height = Math.max(ResizableMinHeight, requestedHeight)
+  const widthDelta = direction === 'top' || direction === 'bottom' ? 0 : delta.width
+  const heightDelta = direction === 'left' || direction === 'right' ? 0 : delta.height
+  const requestedWidth = movesLeftEdge ? currentSize.width - widthDelta : currentSize.width + widthDelta
+  const requestedHeight = movesTopEdge ? currentSize.height - heightDelta : currentSize.height + heightDelta
+  const width = Math.max(ResizableMinWidth, Math.min(requestedWidth, maxSize?.width ?? Number.POSITIVE_INFINITY))
+  const height = Math.max(ResizableMinHeight, Math.min(requestedHeight, maxSize?.height ?? Number.POSITIVE_INFINITY))
   const x = movesLeftEdge ? ensurePositiveCoordinate(fixedRight - width) : startCoordinates.x
   const y = movesTopEdge ? ensurePositiveCoordinate(fixedBottom - height) : startCoordinates.y
 

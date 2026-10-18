@@ -26,6 +26,7 @@ Keep stateful surfaces on the component boundary that replaces the chat list. Th
 | Emoji picker search control | `composer.css` | `yt-emoji-picker-renderer #search-panel` |
 | Participant-list header and back icon | `menus.css` | `yt-live-chat-participant-list-renderer #header` / `#back-button` |
 | Chat mode, header overflow, and message action menus | `menus.css` | YouTube dropdown / popup outer surface |
+| Collapsed pinned comment ellipsis | `banners.css` | Pinned text renderer's `[in-collapsed-banner] #content` truncation block |
 | Jewels catalog title, neutral controls and unselected cards | `monetization.css` | Engagement panel containing `yt-pdg-gift-collection-view-model` |
 | Product picker, Super Chat, Super Sticker pack and preview | `monetization.css` | Each monetization renderer root |
 | Membership gift quantity offer | `monetization.css` | `ytd-sponsorships-gift-offer-renderer` and its header/body |

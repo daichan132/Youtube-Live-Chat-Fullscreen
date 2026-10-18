@@ -37,7 +37,7 @@ export const deriveOverlayPresentation = ({
 
   return {
     state,
-    controlsVisible: !settingsOpen && gesture !== 'resizing' && (controlsFocused || hoverRegion !== 'none' || gesture === 'dragging'),
+    controlsVisible: !settingsOpen && (controlsFocused || hoverRegion !== 'none' || gesture !== 'none'),
     chatVisible:
       controlsFocused || alwaysVisible || hoverRegion !== 'none' || gesture !== 'none' || !idle || settingsOpen || !documentFocused,
   }

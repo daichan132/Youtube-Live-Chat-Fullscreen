@@ -7,6 +7,7 @@ import { DEFAULT_CHAT_GEOMETRY } from '@/shared/settings/defaults'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { LegacyChatGeometry } from '@/shared/settings/model'
 import { chatSettingsStateAtom } from '@/shared/state/atoms'
+import type { ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
 import { mutationTouchesPlayerObstacle } from './useAutomaticOverlayPlacement'
 import { useOverlayGeometry } from './useOverlayGeometry'
 
@@ -179,6 +180,126 @@ describe('useOverlayGeometry', () => {
       rect: { x: 0.075, y: 50 / 600, width: 0.55, height: 220 / 600 },
       pinned: true,
     })
+  })
+
+  it.each([
+    {
+      name: 'width ratio limit',
+      direction: 'right',
+      coordinates: { x: 100, y: 50 },
+      size: { width: 650, height: 200 },
+      delta: { x: 100, y: 30 },
+      expected: { coordinates: { x: 100, y: 50 }, size: { width: 650, height: 200 } },
+    },
+    {
+      name: 'height ratio limit',
+      direction: 'bottom',
+      coordinates: { x: 100, y: 50 },
+      size: { width: 300, height: 720 },
+      delta: { x: 20, y: 60 },
+      expected: { coordinates: { x: 100, y: 50 }, size: { width: 300, height: 720 } },
+    },
+    {
+      name: 'left edge at the width ratio limit',
+      direction: 'left',
+      coordinates: { x: 500, y: 100 },
+      size: { width: 300, height: 200 },
+      delta: { x: -600, y: 30 },
+      expected: { coordinates: { x: 150, y: 100 }, size: { width: 650, height: 200 } },
+    },
+    {
+      name: 'top edge at the height ratio limit',
+      direction: 'top',
+      coordinates: { x: 100, y: 500 },
+      size: { width: 300, height: 280 },
+      delta: { x: 30, y: -700 },
+      expected: { coordinates: { x: 100, y: 60 }, size: { width: 300, height: 720 } },
+    },
+    {
+      name: 'right edge at the padded viewport boundary',
+      direction: 'right',
+      coordinates: { x: 700, y: 100 },
+      size: { width: 240, height: 200 },
+      delta: { x: 300, y: 30 },
+      expected: { coordinates: { x: 700, y: 100 }, size: { width: 290, height: 200 } },
+    },
+    {
+      name: 'bottom edge at the padded viewport boundary',
+      direction: 'bottom',
+      coordinates: { x: 100, y: 500 },
+      size: { width: 300, height: 200 },
+      delta: { x: 30, y: 300 },
+      expected: { coordinates: { x: 100, y: 500 }, size: { width: 300, height: 290 } },
+    },
+    {
+      name: 'left edge at the padded viewport boundary',
+      direction: 'left',
+      coordinates: { x: 50, y: 100 },
+      size: { width: 300, height: 200 },
+      delta: { x: -300, y: 30 },
+      expected: { coordinates: { x: 10, y: 100 }, size: { width: 340, height: 200 } },
+    },
+    {
+      name: 'top edge at the padded viewport boundary',
+      direction: 'top',
+      coordinates: { x: 100, y: 50 },
+      size: { width: 300, height: 200 },
+      delta: { x: 30, y: -300 },
+      expected: { coordinates: { x: 100, y: 10 }, size: { width: 300, height: 240 } },
+    },
+  ] satisfies {
+    name: string
+    direction: ResizeDirection
+    coordinates: { x: number; y: number }
+    size: { width: number; height: number }
+    delta: { x: number; y: number }
+    expected: { coordinates: { x: number; y: number }; size: { width: number; height: number } }
+  }[])('keeps preview and committed geometry identical at the $name', async ({ direction, coordinates, size, delta, expected }) => {
+    setPlayerSize(1000, 800)
+    setLayout(coordinates, size)
+    const { result } = renderGeometryHook()
+    const handle = document.createElement('div')
+    handle.dataset.ylcResizeDirection = direction
+    act(() =>
+      result.current.onPointerDown({
+        button: 0,
+        pointerId: 11,
+        clientX: 0,
+        clientY: 0,
+        currentTarget: handle,
+        preventDefault: () => {},
+      } as unknown as React.PointerEvent<HTMLDivElement>),
+    )
+    act(() => window.dispatchEvent(new PointerEvent('pointermove', { pointerId: 11, clientX: delta.x, clientY: delta.y })))
+    await flushAnimationFrame()
+    expect(result.current.draftGeometry).toEqual(expected)
+
+    act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 11, clientX: delta.x, clientY: delta.y })))
+
+    expect(result.current.draftGeometry).toBeNull()
+    expect(result.current.displayGeometry).toEqual(expected)
+  })
+
+  it('uses the same anchored resize cap when pointer-up arrives without a preceding move', () => {
+    setPlayerSize(1000, 800)
+    setLayout({ x: 500, y: 100 }, { width: 300, height: 200 })
+    const { result } = renderGeometryHook()
+    const handle = document.createElement('div')
+    handle.dataset.ylcResizeDirection = 'left'
+    act(() =>
+      result.current.onPointerDown({
+        button: 0,
+        pointerId: 12,
+        clientX: 0,
+        clientY: 0,
+        currentTarget: handle,
+        preventDefault: () => {},
+      } as unknown as React.PointerEvent<HTMLDivElement>),
+    )
+
+    act(() => window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 12, clientX: -600, clientY: 30 })))
+
+    expect(result.current.displayGeometry).toEqual({ coordinates: { x: 150, y: 100 }, size: { width: 650, height: 200 } })
   })
 
   it('does not observe player mutations for pinned geometry', () => {

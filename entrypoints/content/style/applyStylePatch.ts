@@ -1,6 +1,9 @@
 import type { ChatProfile, RGBA } from '@/shared/settings/model'
+import { IFRAME_CHAT_BODY_CLASS } from '../features/YTDLiveChatIframe/constants/styleContract'
+import { YLC_FONT_COLOR_PROPERTIES } from '../hooks/ylcStyleChange/ylcStyleConstants'
 import { type ChatStyleEnvironment, type ChatStylePatch, compileStylePatch } from './compileStylePatch'
 import { ensureFontLoaded } from './fontLoader'
+import { refreshPinnedMessageEllipsis } from './refreshPinnedMessageEllipsis'
 
 const SPONSOR_COLOR_PROPERTY = '--yt-live-chat-sponsor-color'
 
@@ -45,6 +48,7 @@ export const readYouTubeMembershipDefaultColor = (document: Document): RGBA | nu
 
 type AppliedProperty = { requested: string; serialized: string; priority: string }
 const appliedProperties = new WeakMap<CSSStyleDeclaration, Map<string, AppliedProperty>>()
+const refreshedPrimaryColors = new WeakMap<HTMLElement, string>()
 
 const applyProperties = (style: CSSStyleDeclaration, properties: Readonly<Record<string, string>>) => {
   let applied = appliedProperties.get(style)
@@ -70,11 +74,23 @@ const applyProperties = (style: CSSStyleDeclaration, properties: Readonly<Record
 }
 
 export const applyStylePatch = (document: Document, patch: ChatStylePatch) => {
+  const primaryColorProperty = YLC_FONT_COLOR_PROPERTIES[0]
+  const previousPrimaryColor = document.documentElement.style.getPropertyValue(primaryColorProperty)
   applyProperties(document.documentElement.style, patch.documentProperties)
   if (document.body) {
     applyProperties(document.body.style, patch.bodyProperties)
   }
   ensureFontLoaded(document, patch.fontFamily)
+  const primaryColor = patch.documentProperties[primaryColorProperty]
+  const body = document.body
+  if (
+    primaryColor !== undefined &&
+    body?.classList.contains(IFRAME_CHAT_BODY_CLASS) &&
+    (refreshedPrimaryColors.get(body) !== primaryColor || previousPrimaryColor !== primaryColor)
+  ) {
+    refreshPinnedMessageEllipsis(document)
+    refreshedPrimaryColors.set(body, primaryColor)
+  }
 }
 
 export const applyChatProfileToDocument = (document: Document, profile: ChatProfile, environment: Partial<ChatStyleEnvironment> = {}) => {

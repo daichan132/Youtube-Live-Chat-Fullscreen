@@ -3,6 +3,7 @@ body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer {
   background: var(--extension-yt-live-control-background-color);
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #contents,
+body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer yt-live-chat-text-message-renderer[in-collapsed-banner] #content,
 body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message-container,
 body.custom-yt-app-live-chat-extension yt-live-chat-banner-renderer #message.yt-live-chat-text-message-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-banner-header-renderer,
