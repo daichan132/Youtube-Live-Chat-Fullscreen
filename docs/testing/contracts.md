@@ -22,6 +22,8 @@ Start from a user-visible outcome or a documented boundary. Expected values shou
 
 Coverage helps locate gaps; a higher number is not evidence that assertions catch faults. When strengthening a weak test, temporarily introduce a representative fault, confirm the new assertion fails, and restore the implementation. Also check an equivalent implementation change when refactoring resistance is the reason for the replacement.
 
+For real-input press-and-hold tests, sample the rendered layout after release and require it to stay unchanged over later repeat intervals. A repeat can legitimately run between an earlier snapshot and delivery of the release command. Controlled-clock DOM tests separately pin exact activation counts and the absence of an extra release click.
+
 For geometry, specify the player dimensions and expected pixels or storage ratios directly; importing the production converter into both sides of an assertion can hide a conversion defect. The [popup browser scenarios](../../e2e/scenarios/popup/popup.spec.ts) also verify the network blocker against an offline fallback that would succeed without it, so DNS failures cannot make the test pass. Scenario classification is checked once in [`projectClassification.spec.ts`](../../e2e/config/projectClassification.spec.ts); fixture API behavior is exercised by the browser scenarios rather than a list of prototype method names.
 
 For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault.

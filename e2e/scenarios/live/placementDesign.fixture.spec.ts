@@ -141,7 +141,7 @@ for (const [label, axis, direction] of [
   ['Decrease width', 'width', -1], ['Increase width', 'width', 1],
   ['Decrease height', 'height', -1], ['Increase height', 'height', 1],
 ] as const) {
-  test(`repeats ${label} while held and stops without a release step`, async ({ page, extension }) => {
+  test(`repeats ${label} while held and stops after pointer release`, async ({ page, extension }) => {
     await setup(page, extension)
     await patchOverlayStore(extension, {
       geometry: { reference: 'player', rect: { x: 300 / 1280, y: 180 / 720, width: 400 / 1280, height: 360 / 720 }, pinned: true },
@@ -157,17 +157,18 @@ for (const [label, axis, direction] of [
     await expect.poll(() => overlay.getGeometry()).toMatchObject(initial)
     await button.hover()
     await page.mouse.down()
-    let held = initial
     try {
       await expect.poll(async () => ((await overlay.getGeometry())[axis] - initial[axis]) * direction).toBeGreaterThanOrEqual(30)
-      held = await overlay.getGeometry()
     } finally {
       await page.mouse.up()
     }
-    expect(await overlay.getGeometry()).toEqual(held)
+    // A timer may fire while the release command travels to the browser.
+    // Controlled-clock DOM tests separately pin the absence of a release click.
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
+    const released = await overlay.getGeometry()
     await page.waitForTimeout(200)
-    expect(await overlay.getGeometry()).toEqual(held)
-    for (const other of ['x', 'y', 'width', 'height'] as const) if (other !== axis) expect(held[other]).toBe(initial[other])
+    expect(await overlay.getGeometry()).toEqual(released)
+    for (const other of ['x', 'y', 'width', 'height'] as const) if (other !== axis) expect(released[other]).toBe(initial[other])
   })
 }
 
@@ -183,16 +184,15 @@ for (const key of ['Enter', 'Space']) {
     await page.locator('[data-ylc-placement-button]').click()
     await page.locator('[data-ylc-placement-panel]').getByRole('button', { name: 'Move right', exact: true }).focus()
     await page.keyboard.down(key)
-    let held = await overlay.getGeometry()
     try {
       await expect.poll(async () => (await overlay.getGeometry()).x).toBeGreaterThanOrEqual(340)
-      held = await overlay.getGeometry()
     } finally {
       await page.keyboard.up(key)
     }
-    expect(await overlay.getGeometry()).toEqual(held)
+    await page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
+    const released = await overlay.getGeometry()
     await page.waitForTimeout(200)
-    expect(await overlay.getGeometry()).toEqual(held)
+    expect(await overlay.getGeometry()).toEqual(released)
   })
 }
 
