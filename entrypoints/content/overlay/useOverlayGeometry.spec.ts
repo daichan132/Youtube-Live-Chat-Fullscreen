@@ -67,6 +67,45 @@ describe('useOverlayGeometry', () => {
     expect(result.current.displayGeometry).toEqual({ coordinates: { x: 150, y: 40 }, size: { width: 240, height: 180 } })
   })
 
+  it('reports only the directions and size changes that can alter the fitted layout', () => {
+    setLayout({ x: 10, y: 10 }, { width: 240, height: 180 })
+    const { result } = renderGeometryHook()
+    expect(result.current.canMoveBy({ x: -10, y: 0 })).toBe(false)
+    expect(result.current.canMoveBy({ x: 0, y: -10 })).toBe(false)
+    expect(result.current.canMoveBy({ x: 10, y: 0 })).toBe(true)
+    expect(result.current.canMoveBy({ x: 0, y: 10 })).toBe(true)
+    expect(result.current.canResizeBy({ width: -10, height: 0 })).toBe(false)
+    expect(result.current.canResizeBy({ width: 0, height: -10 })).toBe(false)
+    act(() => setLayout({ x: 165, y: 40 }, { width: 325, height: 450 }))
+    expect(result.current.canMoveBy({ x: 10, y: 0 })).toBe(false)
+    expect(result.current.canMoveBy({ x: 0, y: 10 })).toBe(false)
+    expect(result.current.canResizeBy({ width: 10, height: 0 })).toBe(false)
+    expect(result.current.canResizeBy({ width: 0, height: 10 })).toBe(false)
+    act(() => result.current.resizeBy({ width: 10, height: 10 }))
+    expect(result.current.displayGeometry).toEqual({ coordinates: { x: 165, y: 40 }, size: { width: 325, height: 450 } })
+  })
+
+  it('restores the opening geometry and pin intent, and recaptures each new adjustment session', () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const original = store.get(chatSettingsStateAtom).geometry
+    const { result } = renderGeometryHook()
+    act(() => result.current.onAdjustmentOpenChange(true))
+    expect(result.current.canRestoreAdjustment).toBe(false)
+    act(() => result.current.moveBy({ x: 20, y: 10 }))
+    act(() => result.current.resizeBy({ width: -20, height: 30 }))
+    expect(result.current.canRestoreAdjustment).toBe(true)
+    act(() => result.current.restoreAdjustment())
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(original)
+    expect(result.current.canRestoreAdjustment).toBe(false)
+    act(() => result.current.moveBy({ x: 10, y: 0 }))
+    const second = store.get(chatSettingsStateAtom).geometry
+    act(() => result.current.onAdjustmentOpenChange(false))
+    act(() => result.current.onAdjustmentOpenChange(true))
+    act(() => result.current.moveBy({ x: 10, y: 0 }))
+    act(() => result.current.restoreAdjustment())
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(second)
+  })
+
   it('commits keyboard movement as pinned player ratios', () => {
     const { result } = renderGeometryHook()
     act(() => result.current.moveBy({ x: 25, y: 10 }))

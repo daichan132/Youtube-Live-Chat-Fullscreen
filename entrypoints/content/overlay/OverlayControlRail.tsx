@@ -4,6 +4,7 @@ import {
   type KeyboardEvent,
   type PointerEvent,
   useCallback,
+  useEffect,
   useId,
   useLayoutEffect,
   useRef,
@@ -45,6 +46,11 @@ type OverlayControlRailProps = {
   onLeaveControls: () => void
   onMoveBy?: (delta: { x: number; y: number }) => void
   onResizeBy?: (delta: { width: number; height: number }) => void
+  onAdjustmentOpenChange?: (open: boolean) => void
+  onRestoreAdjustment?: () => void
+  canRestoreAdjustment?: boolean
+  canMoveBy?: (delta: { x: number; y: number }) => boolean
+  canResizeBy?: (delta: { width: number; height: number }) => boolean
   onFocusControls?: (focused: boolean) => void
 }
 
@@ -69,6 +75,11 @@ export const OverlayControlRail = ({
   onFocusControls,
   onMoveBy,
   onResizeBy,
+  onAdjustmentOpenChange,
+  onRestoreAdjustment,
+  canRestoreAdjustment,
+  canMoveBy,
+  canResizeBy,
 }: OverlayControlRailProps) => {
   const t = useT()
   const dragDescriptionId = useId()
@@ -81,6 +92,9 @@ export const OverlayControlRail = ({
     top: number
     maxHeight: number | undefined
   } | null>(null)
+  useLayoutEffect(() => {
+    onAdjustmentOpenChange?.(placementOpen)
+  }, [placementOpen, onAdjustmentOpenChange])
   const placementButtonRef = useRef<HTMLButtonElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -120,7 +134,15 @@ export const OverlayControlRail = ({
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
-  const tooltipControl = hoveredControl ?? focusedControl
+  const tooltipEnabled = displayed && !placementOpen && !isDragging && !isResizing
+  const [hoverReady, setHoverReady] = useState<ControlName | null>(null)
+  useEffect(() => {
+    setHoverReady(null)
+    if (!hoveredControl || !tooltipEnabled) return
+    const timer = window.setTimeout(() => setHoverReady(hoveredControl), 200)
+    return () => window.clearTimeout(timer)
+  }, [hoveredControl, tooltipEnabled])
+  const tooltipControl = hoveredControl ? (hoverReady === hoveredControl ? hoverReady : null) : focusedControl
   const tooltipLabel =
     tooltipControl &&
     {
@@ -128,7 +150,7 @@ export const OverlayControlRail = ({
       drag: `${t('content.aria.dragToMove')} · ${t('content.aria.arrowKeysToMove')}`,
       placement: t('content.placement.open'),
     }[tooltipControl]
-  const tooltipVisible = displayed && Boolean(tooltipLabel) && !placementOpen && !isDragging && !isResizing
+  const tooltipVisible = tooltipEnabled && Boolean(tooltipLabel)
   useLayoutEffect(() => {
     const rail = railRef.current
     const tooltip = tooltipRef.current
@@ -336,6 +358,10 @@ export const OverlayControlRail = ({
         >
           <OverlayPlacementPanel
             onBeforeAdjust={preserveAdjustmentAnchor}
+            canMoveBy={canMoveBy}
+            canResizeBy={canResizeBy}
+            onRestore={onRestoreAdjustment}
+            canRestore={canRestoreAdjustment}
             onMoveBy={onMoveBy}
             onResizeBy={onResizeBy}
             onClose={closePlacement}

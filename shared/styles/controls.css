@@ -1987,12 +1987,43 @@ label.ylc-row:has(:focus-visible) {
   color: var(--ylc-text-secondary);
 }
 
-.ylc-placement-action:hover,
+.ylc-placement-action:hover:not(:disabled),
 .ylc-placement-close:hover {
   background: var(--ylc-accent-soft);
   border-color: var(--ylc-accent);
 }
 
-.ylc-placement-action:active {
+.ylc-placement-action:active:not(:disabled) {
   background: var(--ylc-accent-soft);
+}
+
+.ylc-placement-restore {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 36px;
+  margin-top: 12px;
+  padding: 6px;
+  border: 1px solid var(--ylc-border);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-size: 11px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.ylc-placement-restore:hover:not(:disabled) {
+  background: var(--ylc-accent-soft);
+  border-color: var(--ylc-accent);
+}
+
+.ylc-placement-action:disabled,
+.ylc-placement-restore:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
 }

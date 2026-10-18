@@ -86,6 +86,7 @@ export type TranslationKey =
   | 'content.placement.left'
   | 'content.placement.narrower'
   | 'content.placement.open'
+  | 'content.placement.restore'
   | 'content.placement.right'
   | 'content.placement.shorter'
   | 'content.placement.taller'

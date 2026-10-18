@@ -78,10 +78,12 @@ describe('overlay menu dismissal and visual help', () => {
   })
 
   it('shows localized visual help for hover and focus, without covering an open menu or gesture', () => {
+    vi.useFakeTimers()
     const view = render(<OverlayControlRail {...props} />)
     const settings = screen.getByRole('button', { name: 'content.aria.openSettings' })
     const drag = screen.getByRole('button', { name: 'content.aria.dragToMove' })
     fireEvent.mouseEnter(settings)
+    act(() => vi.advanceTimersByTime(200))
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toHaveTextContent('content.aria.openSettings')
     // jsdom does not model the browser's keyboard/pointer focus modality.
     // Real-input fixture coverage verifies its :focus-visible decision.
@@ -95,6 +97,7 @@ describe('overlay menu dismissal and visual help', () => {
     fireEvent.click(placement())
     view.rerender(<OverlayControlRail {...props} isDragging />)
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toBeNull()
+    vi.useRealTimers()
   })
 
   it('keeps the placement menu open when directly resizing its own frame', () => {
@@ -107,5 +110,32 @@ describe('overlay menu dismissal and visual help', () => {
     fireEvent.click(placement())
     fireEvent.pointerDown(screen.getByTestId('resize'))
     expect(placement()).toHaveAttribute('aria-expanded', 'true')
+  })
+  it('waits 200ms on each hovered icon and cancels pending help on leave or unmount', () => {
+    vi.useFakeTimers()
+    try {
+      const view = render(<OverlayControlRail {...props} />)
+      const settings = screen.getByRole('button', { name: 'content.aria.openSettings' })
+      const drag = screen.getByRole('button', { name: 'content.aria.dragToMove' })
+      const tooltip = () => view.container.querySelector('[data-ylc-control-tooltip]')
+      fireEvent.mouseEnter(settings)
+      act(() => vi.advanceTimersByTime(199))
+      expect(tooltip()).toBeNull()
+      act(() => vi.advanceTimersByTime(1))
+      expect(tooltip()).toHaveTextContent('content.aria.openSettings')
+      fireEvent.mouseLeave(settings)
+      expect(tooltip()).toBeNull()
+      fireEvent.mouseEnter(drag)
+      act(() => vi.advanceTimersByTime(100))
+      fireEvent.mouseLeave(drag)
+      act(() => vi.advanceTimersByTime(200))
+      expect(tooltip()).toBeNull()
+      fireEvent.mouseEnter(settings)
+      view.unmount()
+      act(() => vi.advanceTimersByTime(200))
+      expect(vi.getTimerCount()).toBe(0)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })

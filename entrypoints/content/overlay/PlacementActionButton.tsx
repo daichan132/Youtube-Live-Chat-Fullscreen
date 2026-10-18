@@ -15,6 +15,9 @@ export const PlacementActionButton = ({ onAdjust, ...props }: Props) => {
     action.current = onAdjust
   }, [onAdjust])
   useEffect(() => () => stopRef.current?.(), [])
+  useLayoutEffect(() => {
+    if (props.disabled) stopRef.current?.()
+  }, [props.disabled])
 
   const begin = (button: HTMLButtonElement, input: { pointerId: number } | { key: string }) => {
     stopRef.current?.()

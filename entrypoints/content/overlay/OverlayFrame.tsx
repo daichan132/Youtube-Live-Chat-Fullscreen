@@ -169,6 +169,11 @@ export const OverlayFrame = ({
                 onEnterControls={interaction.enterControls}
                 onLeaveControls={interaction.leaveControls}
                 onFocusControls={interaction.setControlsFocused}
+                onAdjustmentOpenChange={geometry.onAdjustmentOpenChange}
+                onRestoreAdjustment={geometry.restoreAdjustment}
+                canRestoreAdjustment={geometry.canRestoreAdjustment}
+                canMoveBy={geometry.canMoveBy}
+                canResizeBy={geometry.canResizeBy}
                 onMoveBy={geometry.moveBy}
                 onResizeBy={geometry.resizeBy}
               />

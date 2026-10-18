@@ -95,7 +95,8 @@
       "narrower": "幅を減らす",
       "wider": "幅を増やす",
       "shorter": "高さを減らす",
-      "taller": "高さを増やす"
+      "taller": "高さを増やす",
+      "restore": "調整前に戻す"
     }
   },
   "popup": {

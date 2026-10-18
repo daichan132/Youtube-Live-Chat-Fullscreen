@@ -12,6 +12,7 @@ import {
   renderChatGeometry,
 } from '@/shared/settings/chatGeometry'
 import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
+import type { ChatGeometry } from '@/shared/settings/model'
 import { commitGeometryAtom, geometryAtom } from '@/shared/state'
 import { deriveResizedLayout, type ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
 import { useAutomaticOverlayPlacement } from './useAutomaticOverlayPlacement'
@@ -78,6 +79,19 @@ export const useOverlayGeometry = ({
   const [referenceSize, setReferenceSize] = useState(() => readReferenceSize(playerElement))
   const [draftGeometry, setDraftGeometry] = useState<PixelChatGeometry | null>(null)
   const pointerActiveRef = useRef(false)
+  const currentGeometryRef = useRef(geometry)
+  useLayoutEffect(() => {
+    currentGeometryRef.current = geometry
+  }, [geometry])
+  const [adjustmentBaseline, setAdjustmentBaseline] = useState<ChatGeometry | null>(null)
+  const onAdjustmentOpenChange = useCallback((open: boolean) => {
+    setAdjustmentBaseline(open ? currentGeometryRef.current : null)
+  }, [])
+  const restoreAdjustment = useCallback(() => {
+    if (!adjustmentBaseline || pointerActiveRef.current || settingsOpen) return
+    commitGeometry(adjustmentBaseline)
+  }, [adjustmentBaseline, commitGeometry, settingsOpen])
+  const canRestoreAdjustment = adjustmentBaseline !== null && JSON.stringify(adjustmentBaseline) !== JSON.stringify(geometry)
   const viewportWidth = referenceSize?.width ?? window.innerWidth
   const viewportHeight = referenceSize?.height ?? window.innerHeight
   const viewport = useMemo(() => ({ width: viewportWidth, height: viewportHeight }), [viewportWidth, viewportHeight])
@@ -161,14 +175,17 @@ export const useOverlayGeometry = ({
     onEnd: onGestureEnd,
   })
 
-  const adjustBy = useCallback(
+  const previewAdjustment = useCallback(
     (delta: Point, sizeDelta = { width: 0, height: 0 }) => {
-      if (pointerActiveRef.current || settingsOpen) return
+      if (pointerActiveRef.current || settingsOpen) return null
       const current = fitGeometryToViewport(storedLayout, viewport, GEOMETRY_VIEWPORT_PADDING)
       const fitted = fitGeometryToViewport(
         {
           coordinates: { x: current.coordinates.x + delta.x, y: current.coordinates.y + delta.y },
-          size: { width: current.size.width + sizeDelta.width, height: current.size.height + sizeDelta.height },
+          size: {
+            width: Math.max(MIN_CHAT_WIDTH_PX, Math.min(current.size.width + sizeDelta.width, viewport.width * MAX_CHAT_WIDTH_RATIO)),
+            height: Math.max(MIN_CHAT_HEIGHT_PX, Math.min(current.size.height + sizeDelta.height, viewport.height * MAX_CHAT_HEIGHT_RATIO)),
+          },
         },
         viewport,
         GEOMETRY_VIEWPORT_PADDING,
@@ -181,10 +198,22 @@ export const useOverlayGeometry = ({
         Math.abs(rendered.size.width - current.size.width) < 0.001 &&
         Math.abs(rendered.size.height - current.size.height) < 0.001
       )
-        return
-      commitGeometry(next)
+        return null
+      return next
     },
-    [commitGeometry, storedLayout, viewport, settingsOpen],
+    [storedLayout, viewport, settingsOpen],
+  )
+  const adjustBy = useCallback(
+    (delta: Point, sizeDelta?: { width: number; height: number }) => {
+      const next = previewAdjustment(delta, sizeDelta)
+      if (next) commitGeometry(next)
+    },
+    [commitGeometry, previewAdjustment],
+  )
+  const canMoveBy = useCallback((delta: Point) => previewAdjustment(delta) !== null, [previewAdjustment])
+  const canResizeBy = useCallback(
+    (delta: { width: number; height: number }) => previewAdjustment({ x: 0, y: 0 }, delta) !== null,
+    [previewAdjustment],
   )
   const moveBy = useCallback((delta: Point) => adjustBy(delta), [adjustBy])
   const resizeBy = useCallback((delta: { width: number; height: number }) => adjustBy({ x: 0, y: 0 }, delta), [adjustBy])
@@ -237,6 +266,11 @@ export const useOverlayGeometry = ({
     displayGeometry,
     draftGeometry,
     viewport,
+    onAdjustmentOpenChange,
+    restoreAdjustment,
+    canRestoreAdjustment,
+    canMoveBy,
+    canResizeBy,
     onPointerDown: pointerSession.onPointerDown,
     moveBy,
     resizeBy,

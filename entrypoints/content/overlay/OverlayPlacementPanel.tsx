@@ -1,4 +1,4 @@
-import { RiCloseLine, TbArrowsHorizontal, TbArrowsHorizontalIn, TbArrowUp, TbMessageCircle } from '@/shared/components/icons'
+import { RiCloseLine, TbArrowBackUp, TbArrowsHorizontal, TbArrowsHorizontalIn, TbArrowUp, TbMessageCircle } from '@/shared/components/icons'
 import { useT } from '@/shared/i18n/react'
 import { PlacementActionButton } from './PlacementActionButton'
 
@@ -20,10 +20,23 @@ type Props = {
   onBeforeAdjust: () => void
   onMoveBy?: (delta: { x: number; y: number }) => void
   onResizeBy?: (delta: { width: number; height: number }) => void
+  canMoveBy?: (delta: { x: number; y: number }) => boolean
+  canResizeBy?: (delta: { width: number; height: number }) => boolean
+  onRestore?: () => void
+  canRestore?: boolean
   onClose: () => void
 }
 
-export const OverlayPlacementPanel = ({ onBeforeAdjust, onMoveBy, onResizeBy, onClose }: Props) => {
+export const OverlayPlacementPanel = ({
+  onBeforeAdjust,
+  onMoveBy,
+  onResizeBy,
+  canMoveBy,
+  canResizeBy,
+  onRestore,
+  canRestore,
+  onClose,
+}: Props) => {
   const t = useT()
   return (
     <>
@@ -37,6 +50,7 @@ export const OverlayPlacementPanel = ({ onBeforeAdjust, onMoveBy, onResizeBy, on
             key={name}
             className='ylc-placement-action ylc-theme-focus-ring'
             style={{ gridArea: name }}
+            disabled={canMoveBy ? !canMoveBy({ x, y }) : false}
             onAdjust={() => {
               onBeforeAdjust()
               onMoveBy?.({ x, y })
@@ -55,6 +69,7 @@ export const OverlayPlacementPanel = ({ onBeforeAdjust, onMoveBy, onResizeBy, on
           <PlacementActionButton
             key={name}
             className='ylc-placement-action ylc-theme-focus-ring'
+            disabled={canResizeBy ? !canResizeBy({ width, height }) : false}
             onAdjust={() => {
               onBeforeAdjust()
               onResizeBy?.({ width, height })
@@ -65,6 +80,12 @@ export const OverlayPlacementPanel = ({ onBeforeAdjust, onMoveBy, onResizeBy, on
           </PlacementActionButton>
         ))}
       </div>
+      {onRestore ? (
+        <button type='button' className='ylc-placement-restore ylc-theme-focus-ring' disabled={!canRestore} onClick={onRestore}>
+          <TbArrowBackUp className='ylc-placement-icon' size={17} />
+          {t('content.placement.restore')}
+        </button>
+      ) : null}
       <button type='button' className='ylc-placement-close ylc-theme-focus-ring' onClick={onClose}>
         <RiCloseLine className='ylc-placement-icon' size={16} />
         {t('popup.importClose')}

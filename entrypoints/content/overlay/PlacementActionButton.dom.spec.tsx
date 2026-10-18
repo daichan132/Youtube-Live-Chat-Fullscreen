@@ -100,4 +100,22 @@ describe('placement button press and hold', () => {
     expect(adjust).toHaveBeenCalledOnce()
     expect(vi.getTimerCount()).toBe(0)
   })
+  it('stops a hold immediately when the button reaches its disabled limit', () => {
+    const { button, adjust, rerender } = setup()
+    press(button)
+    act(() => vi.advanceTimersByTime(350))
+    expect(adjust).toHaveBeenCalledOnce()
+    rerender(
+      <PlacementActionButton disabled onAdjust={adjust}>
+        Move
+      </PlacementActionButton>,
+    )
+    act(() => vi.advanceTimersByTime(1000))
+    expect(adjust).toHaveBeenCalledOnce()
+    expect(vi.getTimerCount()).toBe(0)
+    rerender(<PlacementActionButton onAdjust={adjust}>Move</PlacementActionButton>)
+    press(button)
+    release(button)
+    expect(adjust).toHaveBeenCalledTimes(2)
+  })
 })

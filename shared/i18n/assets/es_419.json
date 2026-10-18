@@ -95,7 +95,8 @@
       "narrower": "Decrease width",
       "wider": "Increase width",
       "shorter": "Decrease height",
-      "taller": "Increase height"
+      "taller": "Increase height",
+      "restore": "Restaurar disposición anterior"
     }
   },
   "popup": {

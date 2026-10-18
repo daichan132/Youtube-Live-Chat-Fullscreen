@@ -3,7 +3,7 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Locator, Page } from '@playwright/test'
-import { LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { GEOMETRY_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const state = {
   video: { id: 'local-overlay-menu', title: 'Local overlay controls', mode: 'live' },
@@ -195,3 +195,66 @@ for (const key of ['Enter', 'Space']) {
     expect(await overlay.getGeometry()).toEqual(held)
   })
 }
+
+test('disables each limit direction, stops holding there, and restores availability in the opposite direction', async ({ page, extension }) => {
+  await setup(page, extension)
+  const overlay = new ExtensionOverlay(page)
+  for (const scenario of [
+    { action: 'Move up', opposite: 'Move down', layout: { x: 300, y: 20, width: 400, height: 300 }, end: { y: 10 } },
+    { action: 'Move down', opposite: 'Move up', layout: { x: 300, y: 400, width: 400, height: 300 }, end: { y: 410 } },
+    { action: 'Move left', opposite: 'Move right', layout: { x: 20, y: 180, width: 400, height: 300 }, end: { x: 10 } },
+    { action: 'Move right', opposite: 'Move left', layout: { x: 860, y: 180, width: 400, height: 300 }, end: { x: 870 } },
+    { action: 'Decrease width', opposite: 'Increase width', layout: { x: 300, y: 180, width: 250, height: 300 }, end: { width: 240 } },
+    { action: 'Increase width', opposite: 'Decrease width', layout: { x: 100, y: 100, width: 822, height: 300 }, end: { width: 832 } },
+    { action: 'Decrease height', opposite: 'Increase height', layout: { x: 300, y: 180, width: 400, height: 190 }, end: { height: 180 } },
+    { action: 'Increase height', opposite: 'Decrease height', layout: { x: 100, y: 10, width: 400, height: 638 }, end: { height: 648 } },
+  ]) {
+    const { x, y, width, height } = scenario.layout
+    await patchOverlayStore(extension, { geometry: { reference: 'player', rect: { x: x / 1280, y: y / 720, width: width / 1280, height: height / 720 }, pinned: true } })
+    await expect.poll(() => overlay.getGeometry()).toMatchObject(scenario.layout)
+    await overlay.revealControls()
+    await page.locator('[data-ylc-placement-button]').click()
+    const panel = page.locator('[data-ylc-placement-panel]')
+    const button = panel.getByRole('button', { name: scenario.action, exact: true })
+    await expect(button).toBeEnabled()
+    await button.hover()
+    await page.mouse.down()
+    try { await expect(button).toBeDisabled() } finally { await page.mouse.up() }
+    await expect(button).toHaveCSS('opacity', '0.38')
+    const expected = { ...scenario.layout, ...scenario.end }
+    await expect.poll(() => overlay.getGeometry()).toMatchObject(expected)
+    await page.waitForTimeout(200)
+    expect(await overlay.getGeometry()).toMatchObject(expected)
+    await panel.getByRole('button', { name: scenario.opposite, exact: true }).click()
+    await expect(button).toBeEnabled()
+    await page.locator('[data-ylc-placement-button]').click()
+  }
+})
+
+test('restores the opening position and size and captures a fresh baseline after reopening', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 400 }, { x: 300, y: 180 })
+  const overlay = new ExtensionOverlay(page)
+  const original = await overlay.getGeometry()
+  const originalStored = await extension.storage.get(GEOMETRY_STORAGE_KEY)
+  const placement = page.locator('[data-ylc-placement-button]')
+  const panel = page.locator('[data-ylc-placement-panel]')
+  const restore = panel.getByRole('button', { name: 'Restore previous layout', exact: true })
+  await placement.click()
+  await expect(restore).toBeDisabled()
+  await panel.getByRole('button', { name: 'Move right', exact: true }).click()
+  await panel.getByRole('button', { name: 'Decrease height', exact: true }).click()
+  await expect(restore).toBeEnabled()
+  await restore.click()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject(original)
+  await expect(restore).toBeDisabled()
+  const restored = await extension.storage.get(GEOMETRY_STORAGE_KEY)
+  expect((restored[GEOMETRY_STORAGE_KEY] as { value: unknown }).value).toEqual((originalStored[GEOMETRY_STORAGE_KEY] as { value: unknown }).value)
+  await panel.getByRole('button', { name: 'Move right', exact: true }).click()
+  const second = await overlay.getGeometry()
+  await placement.click()
+  await placement.click()
+  await expect(restore).toBeDisabled()
+  await panel.getByRole('button', { name: 'Move down', exact: true }).click()
+  await restore.click()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject(second)
+})
