@@ -250,7 +250,8 @@ test('restores the opening position and size and captures a fresh baseline after
   const restored = await extension.storage.get(GEOMETRY_STORAGE_KEY)
   expect((restored[GEOMETRY_STORAGE_KEY] as { value: unknown }).value).toEqual((originalStored[GEOMETRY_STORAGE_KEY] as { value: unknown }).value)
   await panel.getByRole('button', { name: 'Move right', exact: true }).click()
-  const second = await overlay.getGeometry()
+  const second = { ...original, x: original.x + 10 }
+  await expect.poll(() => overlay.getGeometry()).toMatchObject(second)
   await placement.click()
   await placement.click()
   await expect(restore).toBeDisabled()
