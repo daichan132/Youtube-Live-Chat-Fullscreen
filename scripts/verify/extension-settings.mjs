@@ -3,6 +3,7 @@ import { readFile, stat } from 'node:fs/promises'
 import { isDeepStrictEqual } from 'node:util'
 import { localeCodes } from '../../shared/i18n/generated/localeMetadata.ts'
 import { DEFAULT_CHAT_PROFILE } from '../../shared/settings/defaults.ts'
+import { BUILTIN_PRESET_IDS } from '../../shared/settings/model.ts'
 import { MAX_SETTINGS_BACKUP_BYTES } from '../../shared/settings/persistConfig.ts'
 import {
   APPEARANCE_STORAGE_KEY,
@@ -236,7 +237,7 @@ export const applyExtensionSettings = async ({ page, extensionId, patch: input }
         const existingProfile = appearance?.profile ?? DEFAULT_CHAT_PROFILE
         validateProfile(existingProfile)
         const profile = mergeProfile(mergeProfile(DEFAULT_CHAT_PROFILE, existingProfile), patch.profile)
-        value = { ...appearance, profile, presets: appearance?.presets ?? [] }
+        value = { ...appearance, profile, presets: appearance?.presets ?? BUILTIN_PRESET_IDS.map(id => ({ kind: 'builtin', id })) }
       }
       items[key] = { schemaVersion: 1, writerId, value }
     }
