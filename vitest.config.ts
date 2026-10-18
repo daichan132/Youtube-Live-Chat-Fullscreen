@@ -3,6 +3,7 @@ import { WxtVitest } from 'wxt/testing/vitest-plugin'
 import { coverageConfig } from './vitest.coverage.ts'
 
 const sourceSpecs = ['shared/**/*.spec.ts', 'shared/**/*.spec.tsx', 'entrypoints/**/*.spec.ts', 'entrypoints/**/*.spec.tsx']
+const projectExcludes = ['**/node_modules/**', '**/.git/**', '.cache/**', '.output/**', '.wxt/**']
 
 export default defineConfig({
   plugins: [WxtVitest()],
@@ -20,6 +21,7 @@ export default defineConfig({
           name: 'core',
           environment: 'node',
           include: ['**/*.unit.spec.ts', '**/*.unit.spec.tsx'],
+          exclude: projectExcludes,
         },
       },
       {
@@ -33,13 +35,7 @@ export default defineConfig({
             },
           },
           include: ['**/*.dom.spec.ts', '**/*.dom.spec.tsx', ...sourceSpecs, 'e2e/support/diagnostics.spec.ts'],
-          exclude: [
-            'node_modules/**',
-            '**/*.unit.spec.ts',
-            '**/*.unit.spec.tsx',
-            '**/*.contract.spec.ts',
-            '**/*.contract.spec.tsx',
-          ],
+          exclude: [...projectExcludes, '**/*.unit.spec.ts', '**/*.unit.spec.tsx', '**/*.contract.spec.ts', '**/*.contract.spec.tsx'],
           setupFiles: ['./tests/setup/dom.ts', './tests/setup/extension.ts'],
         },
       },
@@ -56,7 +52,7 @@ export default defineConfig({
             'scripts/verify/**/*.spec.mjs',
           ],
           exclude: [
-            'node_modules/**',
+            ...projectExcludes,
             '**/*.unit.spec.ts',
             '**/*.unit.spec.tsx',
             '**/*.dom.spec.ts',
@@ -66,6 +62,6 @@ export default defineConfig({
         },
       },
     ],
-    exclude: ['node_modules/**'],
+    exclude: projectExcludes,
   },
 })
