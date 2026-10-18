@@ -1,6 +1,7 @@
+import { isDeepStrictEqual } from 'node:util'
 import type { Extension } from '@e2e/fixtures'
 import { DEFAULT_CHAT_SETTINGS } from '../../shared/settings/migrateSettings'
-import type { ChatAppearance, ChatDisplay, ChatGeometry, PresetEntry } from '../../shared/settings/model'
+import type { ChatAppearance, ChatDisplay, ChatGeometry, ChatSettings, PresetEntry } from '../../shared/settings/model'
 import { normalizeChatSettings } from '../../shared/settings/normalizeSettings'
 import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LEGACY_CHAT_STORAGE_KEY } from '../../shared/settings/storageKeys'
 
@@ -35,9 +36,11 @@ const parseStoreValue = <T>(rawValue: unknown): StoreEntry<T> | null => {
  * Patch the current appearance and geometry ownership domains in chrome.storage.local.
  * The legacy combined chat key is read only as a compatibility fallback and is never written.
  *
- * @returns The verified combined chat state, or null if the patch failed.
+ * Rejects if storage does not retain the complete requested settings, so callers
+ * cannot continue a scenario with silently dropped setup writes.
+ * @returns The combined chat state read back from storage.
  */
-export const patchOverlayStore = async (extension: Extension, overrides: OverlayStorePatch): Promise<Record<string, unknown> | null> => {
+export const patchOverlayStore = async (extension: Pick<Extension, 'storage'>, overrides: OverlayStorePatch): Promise<ChatSettings> => {
   const raw = await extension.storage.get([APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LEGACY_CHAT_STORAGE_KEY])
   const storedAppearance = parseStoreValue<AppearanceValue>(raw[APPEARANCE_STORAGE_KEY])
   const storedGeometry = parseStoreValue<ChatGeometry>(raw[GEOMETRY_STORAGE_KEY])
@@ -88,16 +91,18 @@ export const patchOverlayStore = async (extension: Extension, overrides: Overlay
   const verify = await extension.storage.get([APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY])
   const verifiedAppearance = parseStoreValue<AppearanceValue>(verify[APPEARANCE_STORAGE_KEY])
   const verifiedGeometry = parseStoreValue<ChatGeometry>(verify[GEOMETRY_STORAGE_KEY])
-  if (!verifiedAppearance || !verifiedGeometry) {
-    console.warn('[patchOverlayStore] Write verification failed')
-    return null
+  if (
+    !verifiedAppearance ||
+    !verifiedGeometry ||
+    !isDeepStrictEqual(verifiedAppearance.value, appearanceEntry.value) ||
+    !isDeepStrictEqual(verifiedGeometry.value, geometryEntry.value)
+  ) {
+    throw new Error('[patchOverlayStore] Settings readback did not match the requested values')
   }
 
-  const verified =
-    (overrides.profile === undefined || verifiedAppearance.value.profile !== undefined) &&
-    (overrides.presets === undefined || verifiedAppearance.value.presets !== undefined) &&
-    (overrides.geometry === undefined || verifiedGeometry.value !== undefined)
-  console.log(`[patchOverlayStore] current domains verified=${verified}, keys=${Object.keys(overrides).join(',')}`)
-
-  return state as unknown as Record<string, unknown>
+  return {
+    profile: verifiedAppearance.value.profile,
+    presets: verifiedAppearance.value.presets,
+    geometry: verifiedGeometry.value,
+  }
 }

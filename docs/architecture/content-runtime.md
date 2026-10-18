@@ -144,7 +144,7 @@ Expected pending chat states use the model backoff:
 250 ms → 500 ms → 1 s → 2 s → 5 s (capped repetitions)
 ```
 
-The sequence has a finite attempt cap. Exhaustion releases runtime resources and moves the view to `unavailable`.
+Each search or recovery cycle schedules at most 12 retry waits: the first four delays above, followed by eight 5-second waits. This limits scheduled waiting to 43.75 seconds, excluding observation work and animation-frame scheduling. Exhaustion releases runtime resources, hides the loading UI, and moves the view to `unavailable`. A new video/session identity or an explicit recovery starts a fresh budget.
 
 An unexpected reconcile exception records `UNEXPECTED_RUNTIME_ERROR`, clears owned resources best-effort, resets the model and generation scope, and permits one recovery attempt. A second exception stops instead of looping.
 
@@ -163,7 +163,7 @@ Diagnostic reports contain the extension version, browser family, sanitized evid
 - Runtime timers, frames, observers, and listeners are scoped and disposed. `SessionScope.spec.ts`, `ChatRuntime.spec.ts`, and `ChatRuntimeRecovery.spec.ts` pin cleanup and bounded recovery.
 - The old iframe is released before a new video, source, or live/archive mode is acquired. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release and replacement behavior.
 - Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration and native inline style values, including `!important` priorities and mixed border/outline longhands. The snapshot covers only owned properties, so unrelated inline declarations survive.
-- Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries.
+- Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries; `runtimeDiagnosticsPrivacy.dom.spec.ts` exercises the public report with an active borrowed chat containing message text, a viewer name, and URLs.
 - YouTube selector fallbacks have unique IDs and non-empty candidates. `selectorCatalog.spec.ts` also pins stable live-state mutation boundaries.
 - Channel live entries are exercised by URL/unit contracts and deterministic browser fixtures that cover initial activation and same-URL video replacement.
 - Managed live chat transitioning to archive replay without a URL change is exercised by the managed/native handoff fixture.

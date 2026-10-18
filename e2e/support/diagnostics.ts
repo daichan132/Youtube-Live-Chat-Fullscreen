@@ -124,15 +124,16 @@ export const isExtensionArchiveChatPlayable = () => {
 	if (!iframe) return false
 	if (iframe.getAttribute('data-ylc-owned') === 'true') return false
 
-	const doc = iframe.contentDocument ?? null
-	const href = h.readIframeHref(iframe)
-	if (!doc || !href || href.includes('about:blank')) return false
-
-	if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
-	const text = doc.body?.textContent ?? ''
-	if (h.hasUnavailableText(text)) return false
-
-	return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
+	try {
+		const doc = iframe.contentDocument
+		if (!doc) return false
+		const url = new URL(doc.location.href)
+		if (url.origin !== 'https://www.youtube.com' || url.pathname !== '/live_chat_replay') return false
+		if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
+		return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
+	} catch {
+		return false
+	}
 }
 
 export const isExtensionChatLoaded = () => {
@@ -140,8 +141,19 @@ export const isExtensionChatLoaded = () => {
 	const iframe = h.getExtensionIframe()
 	if (!iframe) return false
 
-	const href = h.readIframeHref(iframe)
-	return Boolean(href && !href.includes('about:blank'))
+	try {
+		const doc = iframe.contentDocument
+		if (!doc) return false
+		const url = new URL(doc.location.href)
+		if (url.origin !== 'https://www.youtube.com' || (url.pathname !== '/live_chat' && url.pathname !== '/live_chat_replay')) return false
+		if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return false
+		// Ready viewer messages may quote unavailable text; only structural errors
+		// override a complete chat renderer and message list.
+		return Boolean(doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer'))
+	} catch {
+		// An inaccessible document is not proof of a loaded chat, even with a trusted src.
+		return false
+	}
 }
 
 export const isExtensionOverlayRendered = () => {

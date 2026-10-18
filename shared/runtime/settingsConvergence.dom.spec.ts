@@ -14,10 +14,10 @@ const deferred = () => {
 }
 
 const sessions: { runtime: AppRuntime; repository: SettingsRepository }[] = []
-const releaseReads: (() => void)[] = []
+const releases: (() => void)[] = []
 
-const createSession = async () => {
-  const repository = createSettingsRepository('local-editor', null, { waitBeforeRetry: async () => {} })
+const createSession = async (writerId = 'local-editor', waitBeforeRetry = async () => {}) => {
+  const repository = createSettingsRepository(writerId, null, { waitBeforeRetry })
   const runtime = await createAppRuntime(repository, { loadMessages: async () => EMPTY_MESSAGES })
   const session = { runtime, repository }
   sessions.push(session)
@@ -40,7 +40,7 @@ const pauseNextReadback = () => {
     }
     return snapshot
   })
-  releaseReads.push(release.resolve)
+  releases.push(release.resolve)
   return { started: started.promise, release: release.resolve }
 }
 
@@ -49,7 +49,7 @@ beforeEach(async () => {
 })
 
 afterEach(async () => {
-  for (const release of releaseReads.splice(0)) release()
+  for (const release of releases.splice(0)) release()
   await Promise.allSettled(sessions.map(({ repository }) => repository.flush()))
   for (const { runtime } of sessions.splice(0)) runtime.dispose()
   vi.restoreAllMocks()
@@ -113,6 +113,37 @@ describe('settings persistence and editor convergence', () => {
     expect(runtime.store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(32)
     expect((await repository.load()).chat.profile.appearance.fontSize).toBe(32)
     expect(runtime.store.get(editorSessionStateAtom).past).toHaveLength(2)
+  })
+
+  it('does not retry an obsolete failed edit over a newer value saved by another context', async () => {
+    const retryStarted = deferred()
+    const releaseRetry = deferred()
+    releases.push(releaseRetry.resolve)
+    const local = await createSession('local-editor', async () => {
+      retryStarted.resolve()
+      await releaseRetry.promise
+    })
+    const other = await createSession('other-editor')
+    vi.spyOn(chrome.storage.local, 'set').mockRejectedValueOnce(new Error('temporary write failure'))
+
+    local.runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 24 } })
+    await retryStarted.promise
+    other.runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 32 } })
+    await other.repository.flush()
+    await vi.waitFor(() =>
+      expect(local.runtime.exportSettings()).toMatchObject({ chatSettings: { profile: { appearance: { fontSize: 32 } } } }),
+    )
+
+    // Storage is available again, but the delayed retry must not revive 24px.
+    releaseRetry.resolve()
+    await local.repository.flush()
+
+    expect((await chrome.storage.local.get(APPEARANCE_STORAGE_KEY))[APPEARANCE_STORAGE_KEY]).toMatchObject({
+      writerId: 'other-editor',
+      value: { profile: { appearance: { fontSize: 32 } } },
+    })
+    expect(local.runtime.exportSettings()).toMatchObject({ chatSettings: { profile: { appearance: { fontSize: 32 } } } })
+    expect(other.runtime.exportSettings()).toMatchObject({ chatSettings: { profile: { appearance: { fontSize: 32 } } } })
   })
 
   it('preserves a profile draft when only the external preset list changes', async () => {

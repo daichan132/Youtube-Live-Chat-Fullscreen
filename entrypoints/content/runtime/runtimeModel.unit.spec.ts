@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { ChatDecision } from './resolveChatDecision'
 import {
   createInitialRuntimeModel,
-  MAX_RETRY_ATTEMPTS,
   markRuntimeRetryFired,
   type RuntimeLeaseSnapshot,
-  type RuntimeModel,
   resetRuntimeRetry,
   settleRuntimeLeaseInitialization,
   stopRuntimeModel,
@@ -235,7 +233,7 @@ describe('runtimeModel', () => {
     expect(transition.model.state).toEqual({ status: 'searching', videoId: 'video-1' })
   })
 
-  it('does not create a second lease when the available source still matches', () => {
+  it('plans acquisition for the reconciler to reuse an available matching source', () => {
     const decision = available('video-1', 'live')
     const active = activate(decision)
     const transition = transitionRuntimeModel(active.model, {
@@ -247,20 +245,40 @@ describe('runtimeModel', () => {
     expect(transition.plan.chat).toEqual({ kind: 'acquire', decision })
   })
 
-  it('ends retry exhaustion as unavailable and physically disables portal hosts', () => {
-    const pending: ChatDecision = { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false }
-    let model: RuntimeModel = createInitialRuntimeModel()
-    let finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
-
-    for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt += 1) {
-      expect(finalTransition.plan.retry.kind).toBe('scheduled')
-      model = markRuntimeRetryFired(finalTransition.model)
-      finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
+  it.each(['searching', 'recovering'] as const)('bounds %s to the documented retry budget before hiding loading UI', status => {
+    const active = status === 'recovering' ? activate(available('video-1', 'live')) : { model: createInitialRuntimeModel(), lease: null }
+    const input = {
+      enabled: true,
+      decision: { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: true } as const,
+      lease: active.lease,
+    }
+    let transition = transitionRuntimeModel(active.model, input)
+    // The waiting budget in content-runtime.md is independent of implementation constants.
+    const expectedDelaysMs = [250, 500, 1000, 2000, 5000, 5000, 5000, 5000, 5000, 5000, 5000, 5000]
+    for (const delayMs of expectedDelaysMs) {
+      expect(transition.plan.retry).toEqual({ kind: 'scheduled', delayMs })
+      expect(transition.model.view).toMatchObject({ status, loading: true, showSwitch: true, showOverlay: true })
+      transition = transitionRuntimeModel(markRuntimeRetryFired(transition.model), input)
     }
 
-    expect(finalTransition.model.state).toEqual({ status: 'unavailable', videoId: 'video-1' })
-    expect(finalTransition.model.view.showOverlay).toBe(false)
-    expect(finalTransition.plan.presentation).toBe('none')
+    expect(transition.model.state).toEqual({ status: 'unavailable', videoId: 'video-1' })
+    expect(transition.model.view).toEqual({
+      status: 'unavailable',
+      mode: null,
+      showSwitch: false,
+      showOverlay: false,
+      loading: false,
+    })
+    expect(transition.plan).toMatchObject({
+      presentation: 'none',
+      layout: 'none',
+      chat: active.lease ? { kind: 'none', ensureNativeVisible: false } : { kind: 'preserve' },
+    })
+    expect(transition.plan.retry.kind).not.toBe('scheduled')
+
+    const observedAgain = transitionRuntimeModel(transition.model, input)
+    expect(observedAgain.model.view).toEqual(transition.model.view)
+    expect(observedAgain.plan.retry.kind).not.toBe('scheduled')
   })
 
   it('resets a pending retry and recovers after lease initialization becomes available', () => {

@@ -3,7 +3,6 @@ import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { importSettingsViaPopup, readStorageEntry } from '@e2e/utils/popupHelpers'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
-import { layoutGeometryToV2, renderChatGeometry } from '../../../shared/settings/chatGeometry'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import type { ChatProfile, ChatSettings, PresetEntry } from '../../../shared/settings/model'
 import { SETTINGS_EXPORT_VERSION } from '../../../shared/settings/persistConfig'
@@ -33,16 +32,17 @@ const profileWithFontSize = (fontSize: number): ChatProfile => ({
   display: { ...DEFAULT_CHAT_SETTINGS.profile.display },
 })
 
-const importedSettings = (fontSize: number, customPreset: PresetEntry): ChatSettings => ({
+const importedSettings = (
+  fontSize: number,
+  customPreset: PresetEntry,
+  geometry: ChatSettings['geometry'] = {
+    reference: 'player',
+    rect: { x: 0.125, y: 0.125, width: 0.25, height: 0.5 },
+    pinned: true,
+  },
+): ChatSettings => ({
   profile: profileWithFontSize(fontSize),
-  geometry: layoutGeometryToV2(
-    {
-      coordinates: { x: 80 + fontSize, y: 60 + fontSize },
-      size: { width: 320 + fontSize, height: 240 + fontSize },
-    },
-    { width: 1280, height: 720 },
-    true,
-  ),
+  geometry,
   presets: [{ kind: 'builtin', id: 'standard' }, customPreset],
 })
 
@@ -78,7 +78,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     }
   })
 
-  test('popup renders language selector and chat toggle', async ({ page, extension }) => {
+  test('popup chat toggle persists across reopening', async ({ page, extension }) => {
     test.setTimeout(90000)
 
     await page.goto(extension.url('popup.html'))
@@ -91,12 +91,19 @@ test.describe('popup', { tag: '@popup' }, () => {
     const chatToggle = page.locator('[role="switch"]')
     await expect(chatToggle).toHaveCount(1)
 
-    const initialChecked = await chatToggle.getAttribute('aria-checked')
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
+    await chatToggle.click()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'false')
+    await expect.poll(async () => (await readStorageEntry<boolean>(page, ENABLED_STORAGE_KEY))?.value).toBe(false)
 
+    await page.reload()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'false')
     await chatToggle.click()
-    await expect.poll(async () => chatToggle.getAttribute('aria-checked')).toBe(initialChecked === 'true' ? 'false' : 'true')
-    await chatToggle.click()
-    await expect.poll(async () => chatToggle.getAttribute('aria-checked')).toBe(initialChecked)
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
+    await expect.poll(async () => (await readStorageEntry<boolean>(page, ENABLED_STORAGE_KEY))?.value).toBe(true)
+
+    await page.reload()
+    await expect(chatToggle).toHaveAttribute('aria-checked', 'true')
 
     const donateLink = page.locator('a[href*="ko-fi.com"]')
     await expect(donateLink).toHaveCount(1)
@@ -261,6 +268,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     await scenario.enterFullscreen()
     await overlay.expectSwitchReady({ timeout: 12000 })
     await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.installChatTypographyProbe()
 
     const popup = await page.context().newPage()
     const firstPreset: PresetEntry = {
@@ -284,31 +292,39 @@ test.describe('popup', { tag: '@popup' }, () => {
 
     try {
       const first = importedSettings(22, firstPreset)
-      const firstLayout = renderChatGeometry(first.geometry, { width: 1280, height: 720 })
       await importSettingsViaPopup(popup, extension, importBackup(first))
       await page.bringToFront()
-      await expect.poll(() => overlay.getAppliedFontSize()).toBe('22px')
+      await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ variable: '22px', renderedFontSize: '22px' })
+      // The backup stores player ratios. These fixed pixels are the independent
+      // contract for a 1280 × 720 player, not output from the geometry renderer.
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: firstLayout.coordinates.x,
-          y: firstLayout.coordinates.y,
-          width: firstLayout.size.width,
-          height: firstLayout.size.height,
+          x: 160,
+          y: 90,
+          width: 320,
+          height: 360,
+          viewportWidth: 1280,
+          viewportHeight: 720,
         })
 
-      const second = importedSettings(31, secondPreset)
-      const secondLayout = renderChatGeometry(second.geometry, { width: 1280, height: 720 })
+      const second = importedSettings(31, secondPreset, {
+        reference: 'player',
+        rect: { x: 0.25, y: 0.25, width: 0.375, height: 0.375 },
+        pinned: true,
+      })
       await importSettingsViaPopup(popup, extension, importBackup(second))
       await page.bringToFront()
-      await expect.poll(() => overlay.getAppliedFontSize()).toBe('31px')
+      await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ variable: '31px', renderedFontSize: '31px' })
       await expect
         .poll(() => overlay.getGeometry())
         .toMatchObject({
-          x: secondLayout.coordinates.x,
-          y: secondLayout.coordinates.y,
-          width: secondLayout.size.width,
-          height: secondLayout.size.height,
+          x: 320,
+          y: 180,
+          width: 480,
+          height: 270,
+          viewportWidth: 1280,
+          viewportHeight: 720,
         })
       await expect
         .poll(async () => (await readStorageEntry<AppearanceValue>(extension, APPEARANCE_STORAGE_KEY))?.value.presets)

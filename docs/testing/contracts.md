@@ -22,6 +22,13 @@ Start from a user-visible outcome or a documented boundary. Expected values shou
 
 Coverage helps locate gaps; a higher number is not evidence that assertions catch faults. When strengthening a weak test, temporarily introduce a representative fault, confirm the new assertion fails, and restore the implementation. Also check an equivalent implementation change when refactoring resistance is the reason for the replacement.
 
+Browser setup and assertions need independent evidence too:
+
+- [`patchOverlayStore`](../../e2e/utils/storageHelper.ts) rejects setup when the complete appearance and geometry values read back from Storage differ from the requested state. An older valid envelope or the intended write payload is not proof that setup succeeded.
+- Geometry integration tests seed explicit player ratios and assert fixed pixel positions and sizes. Do not derive their expected values with the production geometry renderer; the same fault could otherwise affect both sides of the assertion.
+- Before asserting that extension UI stays absent, establish that the content runtime has processed the current fullscreen page through its public status response. DOM absence alone also matches a content script that never started.
+- A loaded chat assertion requires an accessible document with its chat renderer and message list, and no structural error renderer. An iframe that navigated to a non-blank URL can still contain only a loading or error page.
+
 See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
 
 ## Vitest commands
