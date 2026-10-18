@@ -25,11 +25,13 @@ describe('ChatSurface geometry-aware hover bounds', () => {
     )
     const surface = view.container.querySelector<HTMLElement>('[data-ylc-chat-inner]')
     if (!surface) throw new Error('Missing chat surface')
-    const readBounds = vi.spyOn(surface, 'getBoundingClientRect').mockReturnValueOnce(rect(0)).mockReturnValueOnce(rect(200))
+    let visibleBounds = rect(0)
+    vi.spyOn(surface, 'getBoundingClientRect').mockImplementation(() => visibleBounds)
 
     fireEvent.mouseMove(surface, { clientX: 50, clientY: 50 })
     expect(onEnterChat).toHaveBeenCalledOnce()
 
+    visibleBounds = rect(200)
     view.rerender(
       <ChatSurface innerStyle={{}} boundsRevision='200:0:100:100' isDragging={false} onEnterChat={onEnterChat} onLeaveChat={onLeaveChat}>
         chat
@@ -37,7 +39,6 @@ describe('ChatSurface geometry-aware hover bounds', () => {
     )
     fireEvent.mouseMove(surface, { clientX: 50, clientY: 50 })
 
-    expect(readBounds).toHaveBeenCalledTimes(2)
     expect(onLeaveChat).toHaveBeenCalledOnce()
   })
 })

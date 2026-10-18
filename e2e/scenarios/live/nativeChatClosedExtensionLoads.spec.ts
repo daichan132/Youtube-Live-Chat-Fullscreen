@@ -40,7 +40,11 @@ const expectSelectedLivePlayerReady = async (page: Page, videoId: string) => {
         }
         return state
       },
-      { timeout: 45000, intervals: [100, 250, 500, 1000], message: 'Selected live player must resume after advertising before chat controls are tested.' },
+      {
+        timeout: 45000,
+        intervals: [100, 250, 500, 1000],
+        message: 'Selected live player must resume after advertising before chat controls are tested.',
+      },
     )
     .toEqual({ advertising: false, selectedVideo: true, live: true })
 }
@@ -73,7 +77,7 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
                 const id = watch.getAttribute('video-id')
                 if (id) ids.add(id)
               }
-              return ids.size === 1 ? [...ids][0] ?? null : null
+              return ids.size === 1 ? ([...ids][0] ?? null) : null
             })
           }
           return selectedVideoId !== null
@@ -89,14 +93,14 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
       return
     }
     const nativeUsable = await meetsExternalYouTubePrecondition('native-chat-source', () =>
-      expect.poll(async () => page.evaluate(() => window.__ylcHelpers.isNativeChatUsable())).toBe(true),
+      page.waitForFunction(() => window.__ylcHelpers.isNativeChatUsable(), undefined, { timeout: 5000 }).then(() => {}),
     )
     if (!nativeUsable) {
       test.skip(true, 'Selected live video did not expose a usable native chat source.')
       return
     }
     const playable = await meetsExternalYouTubePrecondition('native-chat-source', () =>
-      expect.poll(async () => page.evaluate(hasPlayableChat), { timeout: 20000 }).toBe(true),
+      page.waitForFunction(hasPlayableChat, undefined, { timeout: 20000 }).then(() => {}),
     )
     if (!playable) {
       test.skip(true, 'Selected live video did not have playable chat.')
@@ -109,7 +113,7 @@ test.describe('native chat closed extension loads', { tag: '@live' }, () => {
       return
     }
     const nativeClosed = await meetsExternalYouTubePrecondition('chat-close-ui', () =>
-      expect.poll(async () => page.evaluate(() => window.__ylcHelpers.isNativeChatUsable())).toBe(false),
+      page.waitForFunction(() => !window.__ylcHelpers.isNativeChatUsable(), undefined, { timeout: 5000 }).then(() => {}),
     )
     if (!nativeClosed) {
       test.skip(true, 'YouTube did not settle the native chat close operation.')

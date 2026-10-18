@@ -51,6 +51,36 @@ test.describe('extension visual regression', () => {
     await openDeterministicOverlay(page)
     await installCheckerboardVideoSurface(page)
 
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('body').evaluate(body => {
+      const text = body.ownerDocument.createElement('div')
+      text.setAttribute('data-ylc-readability-probe', '')
+      text.textContent = 'Readable chat 123'
+      Object.assign(text.style, {
+        position: 'fixed',
+        top: '4px',
+        left: '12px',
+        width: '180px',
+        height: '24px',
+        background: 'white',
+        color: 'black',
+        fontSize: '16px',
+        lineHeight: '24px',
+        fontWeight: '700',
+        zIndex: '1000',
+      })
+      body.append(text)
+    })
+    const readabilityProbe = chat.locator('[data-ylc-readability-probe]')
+    await expect(readabilityProbe).toBeVisible()
+    const textBounds = await readabilityProbe.boundingBox()
+    if (!textBounds) throw new Error('Chat readability probe has no pixel bounds.')
+    const textSample = {
+      x: Math.round(textBounds.x + 4),
+      y: Math.round(textBounds.y + 2),
+      width: Math.round(textBounds.width - 8),
+      height: Math.round(textBounds.height - 4),
+    }
     const background = page.locator('[data-ylc-chat-background]')
     await expect(background).toHaveCSS('backdrop-filter', 'none')
     const unblurred = decodePng(await page.screenshot({ animations: 'disabled' }))
@@ -62,6 +92,9 @@ test.describe('extension visual regression', () => {
       width: Math.round(bounds.width - 64),
       height: Math.round(bounds.height - 64),
     }
+    // The opaque text strip is above the checkerboard sample, so its glyphs
+    // cannot make the background-softening measurement pass or fail.
+    expect(textSample.y + textSample.height).toBeLessThanOrEqual(inside.y)
     const outside = [
       { x: 16, y: 16, width: 96, height: 96 },
       { x: unblurred.width - 112, y: 16, width: 96, height: 96 },
@@ -83,5 +116,9 @@ test.describe('extension visual regression', () => {
     expect(edgeEnergy(unblurred, inside)).toBeGreaterThan(12)
     expect(edgeEnergy(blurred, inside)).toBeLessThan(edgeEnergy(unblurred, inside) * 0.65)
     expect(meanPixelDifference(unblurred, blurred, outside)).toBeLessThan(0.1)
+    // A white or missing probe must not satisfy unchanged-pixel assertions.
+    // First require painted glyph edges, then preserve them while video blurs.
+    expect(edgeEnergy(unblurred, textSample)).toBeGreaterThan(2)
+    expect(meanPixelDifference(unblurred, blurred, textSample)).toBeLessThan(0.1)
   })
 })

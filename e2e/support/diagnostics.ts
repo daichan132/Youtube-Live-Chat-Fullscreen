@@ -1,11 +1,12 @@
 import type { Page, TestInfo } from '@playwright/test'
 import { TIMING } from '@e2e/support/constants'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 import { acceptYouTubeConsentWithRetry } from '@e2e/utils/liveUrl'
-import { switchButtonSelector } from '@e2e/utils/selectors'
 import {
-	archivePlayerChatToggleSelectors,
-	archiveSidebarOpenSelectors,
-} from '../../entrypoints/content/platform/youtube/selectorCatalog'
+  ARCHIVE_PLAYER_CHAT_TOGGLE_SELECTORS,
+  ARCHIVE_SIDEBAR_OPEN_SELECTORS,
+  switchButtonSelector,
+} from '@e2e/utils/selectors'
 
 type DiagnosticState = {
 	reason: string
@@ -92,29 +93,26 @@ export const openArchiveWatchPage = async (page: Page, url: string, options: { m
 	const deadline = Date.now() + maxDurationMs
 	const gotoTimeout = timeoutFromRemaining(deadline - Date.now(), 20000)
 
-	try {
+	const navigated = await meetsExternalYouTubePrecondition('video-navigation-ui', async () => {
 		await page.goto(url, { waitUntil: 'domcontentloaded', timeout: gotoTimeout })
 		await acceptYouTubeConsentWithRetry(page)
-	} catch {
-		return false
-	}
+	})
+	if (!navigated) return false
 
 	const remainingBeforePlayerCheck = deadline - Date.now()
 	if (remainingBeforePlayerCheck <= 0) return false
 	const playerTimeout = timeoutFromRemaining(remainingBeforePlayerCheck, 10000)
-	const hasPlayer = await page.waitForSelector('#movie_player', { state: 'attached', timeout: playerTimeout }).then(
-		() => true,
-		() => false,
-	)
+	const hasPlayer = await meetsExternalYouTubePrecondition('watch-player', async () => {
+		await page.waitForSelector('#movie_player', { state: 'attached', timeout: playerTimeout })
+	})
 	if (!hasPlayer) return false
 
 	const remainingBeforeFrameCheck = deadline - Date.now()
 	if (remainingBeforeFrameCheck <= 0) return false
 	const frameTimeout = timeoutFromRemaining(remainingBeforeFrameCheck, 10000)
-	const hasNativeFrame = await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: frameTimeout }).then(
-		() => true,
-		() => false,
-	)
+	const hasNativeFrame = await meetsExternalYouTubePrecondition('native-chat-frame', async () => {
+		await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: frameTimeout })
+	})
 	return hasNativeFrame
 }
 
@@ -254,9 +252,8 @@ const tryOpenArchiveNativeChatPanel = async (page: Page) => {
 
 				return false
 			},
-			{ sidebarSelectors: archiveSidebarOpenSelectors, playerSelectors: archivePlayerChatToggleSelectors },
+			{ sidebarSelectors: ARCHIVE_SIDEBAR_OPEN_SELECTORS, playerSelectors: ARCHIVE_PLAYER_CHAT_TOGGLE_SELECTORS },
 		)
-		.catch(() => false)
 }
 
 export const ensureArchiveNativeChatPlayable = async (page: Page, options: { maxDurationMs?: number } = {}) => {
@@ -264,7 +261,7 @@ export const ensureArchiveNativeChatPlayable = async (page: Page, options: { max
 	const deadline = Date.now() + maxDurationMs
 
 	while (Date.now() < deadline) {
-		const playable = await page.evaluate(isNativeArchivePlayable).catch(() => false)
+		const playable = await page.evaluate(isNativeArchivePlayable)
 		if (playable) return true
 		await tryOpenArchiveNativeChatPanel(page)
 		await page.waitForTimeout(TIMING.ARCHIVE_CHAT_OPEN_INTERVAL_MS)

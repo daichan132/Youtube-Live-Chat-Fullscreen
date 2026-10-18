@@ -1,5 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { hasYouTubePlayerError, isExtensionArchiveChatPlayable, isExtensionChatLoaded } from './diagnostics'
+import {
+  hasPlayableChat,
+  hasYouTubePlayerError,
+  isExtensionArchiveChatPlayable,
+  isExtensionChatLoaded,
+  isNativeChatUnavailable,
+  isNativeLiveChatPlayable,
+} from './diagnostics'
 import { PAGE_HELPERS_INIT_SCRIPT } from './pageHelpers'
 
 const originalHelpers = Object.getOwnPropertyDescriptor(window, '__ylcHelpers')
@@ -34,6 +41,66 @@ const mountChat = (html: string, href = 'https://www.youtube.com/live_chat?v=fix
   chatDocument.close()
   return iframe
 }
+
+const mountNativeChat = (html: string, path: string) => {
+  const host = document.createElement('ytd-live-chat-frame')
+  const iframe = document.createElement('iframe')
+  iframe.id = 'chatframe'
+  iframe.src = `https://www.youtube.com${path}`
+  host.append(iframe)
+  document.body.append(host)
+  const chatDocument = iframe.contentDocument
+  if (!chatDocument) throw new Error('The native fixture chat document is missing.')
+  chatDocument.write(`<!doctype html><body>${html}</body>`)
+  chatDocument.close()
+}
+
+describe('native chat source preconditions', () => {
+  beforeEach(() => PAGE_HELPERS_INIT_SCRIPT())
+
+  it.each(['/live_chat?v=fixture', '/live_chat_replay?continuation=fixture'])(
+    'keeps a ready source playable at %s when viewers discuss unavailable chat',
+    path => {
+      mountNativeChat(
+        `<yt-live-chat-renderer><yt-live-chat-item-list-renderer>
+          <yt-live-chat-text-message-renderer>A viewer quotes: live chat replay is not available.</yt-live-chat-text-message-renderer>
+          <yt-live-chat-text-message-renderer>Another viewer says chat is disabled on a different stream.</yt-live-chat-text-message-renderer>
+          <yt-live-chat-text-message-renderer>Someone asks what "live chat is disabled" means.</yt-live-chat-text-message-renderer>
+        </yt-live-chat-item-list-renderer></yt-live-chat-renderer>`,
+        path,
+      )
+
+      expect(hasPlayableChat()).toBe(true)
+      expect(isNativeChatUnavailable()).toBe(false)
+      if (path.startsWith('/live_chat?')) expect(isNativeLiveChatPlayable()).toBe(true)
+    },
+  )
+
+  it.each(['/live_chat?v=fixture', '/live_chat_replay?continuation=fixture'])(
+    'rejects a structural source error at %s even when ready renderers remain',
+    path => {
+      mountNativeChat(
+        `${readyChat}<yt-live-chat-unavailable-message-renderer>このチャットは利用できません</yt-live-chat-unavailable-message-renderer>`,
+        path,
+      )
+
+      expect(hasPlayableChat()).toBe(false)
+      expect(isNativeChatUnavailable()).toBe(true)
+      if (path.startsWith('/live_chat?')) expect(isNativeLiveChatPlayable()).toBe(false)
+    },
+  )
+
+  it.each([
+    ['plain unavailable response', 'Chat is disabled'],
+    ['incomplete chat with an error', '<yt-live-chat-renderer>Live chat replay is not available</yt-live-chat-renderer>'],
+  ])('preserves text error detection for %s', (_name, html) => {
+    mountNativeChat(html, '/live_chat?v=fixture')
+
+    expect(hasPlayableChat()).toBe(false)
+    expect(isNativeLiveChatPlayable()).toBe(false)
+    expect(isNativeChatUnavailable()).toBe(true)
+  })
+})
 
 describe('isExtensionChatLoaded', () => {
   beforeEach(() => PAGE_HELPERS_INIT_SCRIPT())

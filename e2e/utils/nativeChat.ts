@@ -17,7 +17,7 @@ export const closeNativeChat = async (page: Page): Promise<boolean> => {
 
 	for (const selector of outerSelectors) {
 		const button = page.locator(selector).first()
-		if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {
+		if (await button.isVisible({ timeout: 1500 })) {
 			await button.click()
 			return true
 		}
@@ -32,7 +32,7 @@ export const closeNativeChat = async (page: Page): Promise<boolean> => {
 	]
 	for (const selector of innerSelectors) {
 		const button = frameLocator.locator(selector).first()
-		if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {
+		if (await button.isVisible({ timeout: 1500 })) {
 			await button.click()
 			return true
 		}

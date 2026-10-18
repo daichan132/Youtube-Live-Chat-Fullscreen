@@ -41,12 +41,14 @@ export class YouTubeWatchPage {
 
   async expectNativeChat(options?: { timeout?: number }): Promise<void> {
     const timeout = options?.timeout ?? TIMEOUT.NATIVE_CHAT_FRAME
-    await expect(this.page.locator(NATIVE_CHAT_FRAME)).toBeAttached({ timeout })
+    await this.page.locator(NATIVE_CHAT_FRAME).waitFor({ state: 'attached', timeout })
   }
 
   async expectFullscreen(options?: { timeout?: number }): Promise<void> {
     if (!(await this.isInFullscreen())) await this.enterFullscreen(options)
-    await expect.poll(async () => this.isInFullscreen(), { timeout: options?.timeout ?? TIMEOUT.FULLSCREEN }).toBe(true)
+    await this.page.waitForFunction(() => document.fullscreenElement !== null, undefined, {
+      timeout: options?.timeout ?? TIMEOUT.FULLSCREEN,
+    })
   }
 
   async isInFullscreen() {

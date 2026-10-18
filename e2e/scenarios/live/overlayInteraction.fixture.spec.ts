@@ -2,6 +2,7 @@ import { E2E_BRIDGE_FILE } from '@e2e/config/buildOutput'
 import { type Extension, expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { readContentStatusViaPopup } from '@e2e/utils/popupHelpers'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Page } from '@playwright/test'
 import type { PixelChatGeometry } from '../../../shared/settings/chatGeometry'
@@ -329,6 +330,27 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
         ['top', 'right', 'bottom', 'left', 'topRight', 'bottomRight', 'bottomLeft', 'topLeft'].sort(),
       )
 
+      const shield = page.locator('[data-ylc-drag-shield]')
+      const expectChatShielded = async () => {
+        await expect(shield).toBeVisible()
+        // Verify coverage in the browser rather than requiring particular CSS
+        // utilities. An inline inset or a different sizing rule is equivalent.
+        await expect
+          .poll(() =>
+            page.locator('iframe[data-ylc-chat]').evaluate(iframe => {
+              const bounds = iframe.getBoundingClientRect()
+              const root = iframe.getRootNode() as ShadowRoot
+              if (bounds.width <= 16 || bounds.height <= 16) throw new Error('Chat must have usable browser bounds.')
+              return [8, bounds.width / 2, bounds.width - 8].flatMap(x =>
+                [8, bounds.height / 2, bounds.height - 8].map(y =>
+                  root.elementFromPoint(bounds.left + x, bounds.top + y)?.hasAttribute('data-ylc-drag-shield'),
+                ),
+              )
+            }),
+          )
+          .toEqual(Array(9).fill(true))
+      }
+      await expect(shield).toHaveCount(0)
       await overlay.clickPlayerBoundaryProbe()
       await expect.poll(() => overlay.boundaryProbeClicks()).toBe(1)
 
@@ -345,8 +367,10 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
           height: SEEDED_LAYOUT.size.height,
         })
       expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
+      await expectChatShielded()
 
       await overlay.finishPointerGesture()
+      await expect(shield).toHaveCount(0)
       await expectPersistedLayout(storagePage, { ...clampedCoordinates, width: 400, height: 300 })
       const draggedGeometry = await readPersistedGeometry(storagePage)
 
@@ -361,6 +385,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       expect(await readPersistedGeometry(storagePage)).toEqual(draggedGeometry)
 
       await overlay.finishPointerGesture()
+      await expect(shield).toHaveCount(0)
       await expectPersistedLayout(storagePage, { ...clampedCoordinates, width: 320, height: 240 })
 
       await overlay.moveWithKeyboard('ArrowRight')
@@ -625,11 +650,19 @@ test('reaches settings without hover and returns to the trigger, then adjusts wi
   await page.screenshot({ path: '/tmp/ylc-placement-closed.png' })
 })
 
-test('queries and retries the content session through the popup extension message boundary', async ({ page, extension }) => {
+test('rebuilds a broken chat through the popup retry boundary and rejects the consumed token', async ({ page, extension }) => {
   const scenario = new YouTubeScenario(page)
   await scenario.load(scenarioState)
   await scenario.enterFullscreen()
-  await new ExtensionOverlay(page).expectChatLoaded({ timeout: 12000 })
+  const overlay = new ExtensionOverlay(page)
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  // Break only the already loaded chat document. Without a top-document signal,
+  // the retry must do the recovery rather than accepting an already healthy UI.
+  const chat = page.frameLocator('iframe[data-ylc-chat]')
+  await chat.locator('body').evaluate(body => {
+    body.replaceChildren(Object.assign(body.ownerDocument.createElement('p'), { textContent: 'Chat failed to load' }))
+  })
+  await expect(chat.locator('yt-live-chat-item-list-renderer')).toHaveCount(0)
   const popup = await page.context().newPage()
   try {
     await popup.goto(extension.url('popup.html'))
@@ -647,7 +680,16 @@ test('queries and retries the content session through the popup extension messag
     expect(JSON.stringify(response.status.report)).not.toContain(scenarioState.video.id)
     expect(response.retry.retry).toBe('accepted')
     expect(response.stale.retry).toBe('stale')
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await expect(chat.getByText('Chat failed to load', { exact: true })).toHaveCount(0)
+    await expect
+      .poll(() => readContentStatusViaPopup(popup), { timeout: 12000 })
+      .toMatchObject({
+        status: 'running',
+        report: { page: { fullscreen: true }, runtime: { status: 'active' } },
+      })
   } finally {
     await popup.close()
+    await page.bringToFront()
   }
 })

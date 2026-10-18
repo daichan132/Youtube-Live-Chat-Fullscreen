@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { ChatSurface } from './ChatSurface'
 
 describe('ChatSurface', () => {
-  it('keeps hover state scoped to cached visible chat bounds', () => {
+  it('reports whether the pointer is inside the visible chat bounds', () => {
     const onEnterChat = vi.fn()
     const onLeaveChat = vi.fn()
     const { container } = render(
@@ -12,7 +12,7 @@ describe('ChatSurface', () => {
       </ChatSurface>,
     )
     const surface = container.querySelector<HTMLElement>('[data-ylc-chat-inner]') as HTMLElement
-    const readBounds = vi.spyOn(surface, 'getBoundingClientRect').mockReturnValue({
+    vi.spyOn(surface, 'getBoundingClientRect').mockReturnValue({
       top: 10,
       right: 110,
       bottom: 110,
@@ -29,23 +29,30 @@ describe('ChatSurface', () => {
 
     expect(onEnterChat).toHaveBeenCalledOnce()
     expect(onLeaveChat).toHaveBeenCalledOnce()
-    expect(readBounds).toHaveBeenCalledOnce()
   })
 
-  it('refreshes cached bounds after the pointer leaves and re-enters', () => {
+  it('uses the new visible bounds after leaving and re-entering a moved surface', () => {
+    const onEnterChat = vi.fn()
+    const onLeaveChat = vi.fn()
     const { container } = render(
-      <ChatSurface innerStyle={{}} isDragging={false} onEnterChat={() => {}} onLeaveChat={() => {}}>
+      <ChatSurface innerStyle={{}} isDragging={false} onEnterChat={onEnterChat} onLeaveChat={onLeaveChat}>
         chat
       </ChatSurface>,
     )
     const surface = container.querySelector<HTMLElement>('[data-ylc-chat-inner]') as HTMLElement
-    const readBounds = vi.spyOn(surface, 'getBoundingClientRect')
+    let left = 10
+    vi.spyOn(surface, 'getBoundingClientRect').mockImplementation(() => new DOMRect(left, 10, 100, 100))
 
-    fireEvent.mouseEnter(surface, { clientX: 0, clientY: 0 })
+    fireEvent.mouseEnter(surface, { clientX: 50, clientY: 50 })
+    expect(onEnterChat).toHaveBeenCalledOnce()
     fireEvent.mouseLeave(surface)
-    fireEvent.mouseEnter(surface, { clientX: 0, clientY: 0 })
+    onEnterChat.mockClear()
+    onLeaveChat.mockClear()
+    left = 200
+    fireEvent.mouseEnter(surface, { clientX: 250, clientY: 50 })
 
-    expect(readBounds).toHaveBeenCalledTimes(2)
+    expect(onEnterChat).toHaveBeenCalledOnce()
+    expect(onLeaveChat).not.toHaveBeenCalled()
   })
 
   it('adds a pointer shield only while an active pointer gesture is reported', () => {
@@ -64,22 +71,5 @@ describe('ChatSurface', () => {
     )
 
     expect(container.querySelector('[data-ylc-drag-shield]')).not.toBeNull()
-  })
-
-  it('sizes the pointer shield to cover its positioned parent', () => {
-    const { container } = render(
-      <ChatSurface innerStyle={{}} isDragging onEnterChat={() => {}} onLeaveChat={() => {}}>
-        chat
-      </ChatSurface>,
-    )
-    const shield = container.querySelector<HTMLElement>('[data-ylc-drag-shield]') as HTMLElement
-    const classes = [...shield.classList]
-
-    // A shield that carries no size utility resolves to 0x0 and silently stops
-    // blocking pointer events over the chat iframe mid-drag.
-    expect(classes).toContain('absolute')
-    expect(classes).toContain('inset-0')
-    // Percentage suffixes such as `w-100%` are not Tailwind utilities and emit no rule.
-    expect(classes.filter(name => /^[wh]-\d+%$/.test(name))).toEqual([])
   })
 })

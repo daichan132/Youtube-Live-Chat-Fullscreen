@@ -30,8 +30,9 @@ describe('verification overlay state reader', () => {
     })
   })
 
-  it('reads nested shadow surfaces and keeps the rounded geometry and CSS fields', () => {
-    document.body.innerHTML = '<iframe id="chatframe"></iframe><div id="shadow-root-live-chat"></div>'
+  it('identifies each nested shadow surface independently, including after serialization', () => {
+    document.body.innerHTML =
+      '<iframe id="chatframe"></iframe><iframe data-ylc-settings-frame></iframe><div id="shadow-root-live-chat"></div>'
     const host = document.getElementById('shadow-root-live-chat')
     if (!host) throw new Error('Missing overlay host')
     const outer = host.attachShadow({ mode: 'open' })
@@ -50,37 +51,54 @@ describe('verification overlay state reader', () => {
         </div>
       </div>
     `
-    for (const element of inner.querySelectorAll<HTMLElement>('*')) {
-      vi.spyOn(element, 'getBoundingClientRect').mockReturnValue(new DOMRect(10.6, 20.3, 240.2, 180.6))
-      Object.assign(element.style, {
-        opacity: '0.4',
-        pointerEvents: 'none',
-        display: 'block',
-        backgroundColor: 'rgb(10, 20, 30)',
-        transform: 'translateX(2px)',
-      })
+    const style = {
+      opacity: '0.4',
+      pointerEvents: 'none',
+      display: 'block',
+      backgroundColor: 'rgb(10, 20, 30)',
+      transform: 'translateX(2px)',
     }
+    const setRect = (selector: string, x: number, y: number, width: number, height: number) => {
+      const element = inner.querySelector<HTMLElement>(selector)
+      if (!element) throw new Error(`Missing fixture surface: ${selector}`)
+      vi.spyOn(element, 'getBoundingClientRect').mockReturnValue(new DOMRect(x, y, width, height))
+      Object.assign(element.style, style)
+    }
+    // Different bounds make a selector mix-up observable; identical mocked bounds
+    // would accept the chat iframe in place of its container or the two buttons swapped.
+    setRect('[data-ylc-resizable]', 10.6, 20.3, 240.2, 180.6)
+    setRect('[data-ylc-draggable-frame]', 12, 22, 236, 176)
+    setRect('[data-ylc-chat-inner]', 14, 24, 200, 172)
+    setRect('[data-ylc-control-rail]', 214, 24, 32, 64)
+    setRect('[data-ylc-settings-btn]', 214, 24, 32, 32)
+    setRect('[data-ylc-drag-handle]', 214, 56, 32, 32)
+    setRect('iframe[data-ylc-chat="true"]', 16, 26, 196, 168)
     Object.defineProperty(document, 'fullscreenElement', { configurable: true, value: host })
 
-    const state = readOverlayState()
-
-    expect(state.fullscreen).toBe(true)
-    expect(state.overlayMounted).toBe(true)
-    expect(Object.values(state.elements).every(element => element !== null)).toBe(true)
-    expect(state.elements.dragHandle).toEqual({
-      tag: 'button',
-      x: 11,
-      y: 20,
-      width: 240,
-      height: 181,
+    const css = {
       opacity: '0.4',
       pointerEvents: 'none',
       display: 'block',
       background: 'rgb(10, 20, 30)',
       transform: 'translateX(2px)',
-    })
-    expect(state.elements.extensionIframe?.tag).toBe('iframe')
-    expect(state).not.toHaveProperty('extensionDomExpected')
+    }
+    const expected = {
+      fullscreen: true,
+      overlayMounted: true,
+      elements: {
+        resizable: { tag: 'div', x: 11, y: 20, width: 240, height: 181, ...css },
+        frame: { tag: 'div', x: 12, y: 22, width: 236, height: 176, ...css },
+        chatInner: { tag: 'div', x: 14, y: 24, width: 200, height: 172, ...css },
+        controlRail: { tag: 'div', x: 214, y: 24, width: 32, height: 64, ...css },
+        settingsButton: { tag: 'button', x: 214, y: 24, width: 32, height: 32, ...css },
+        dragHandle: { tag: 'button', x: 214, y: 56, width: 32, height: 32, ...css },
+        extensionIframe: { tag: 'iframe', x: 16, y: 26, width: 196, height: 168, ...css },
+      },
+    }
+    expect(readOverlayState()).toEqual(expected)
+    // Verification CLIs execute the serialized function in the inspected page.
+    const evaluateSerialized = new Function(`return (${readOverlayState.toString()})()`)
+    expect(evaluateSerialized()).toEqual(expected)
   })
 
   it.each([

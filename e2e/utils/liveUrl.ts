@@ -1,9 +1,10 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
-import type { Page } from '@playwright/test'
+import { errors, type Page } from '@playwright/test'
 import { getE2ETestTargets } from '@e2e/config/testTargets'
 import { TIMING } from '@e2e/support/constants'
+import { meetsExternalYouTubePrecondition } from '@e2e/support/externalYouTubePreconditions'
 
 const SHARED_LIVE_URL_PATH = path.join(os.tmpdir(), 'ylc-e2e-live-url.txt')
 
@@ -56,7 +57,7 @@ const normalizeVideoUrl = (rawUrl: string) => {
 const acceptYouTubeConsent = async (page: Page) => {
 	for (const selector of consentSelectors) {
 		const button = page.locator(selector).first()
-		if (await button.isVisible({ timeout: 1500 }).catch(() => false)) {
+		if (await button.isVisible({ timeout: 1500 })) {
 			await button.click()
 			return
 		}
@@ -109,36 +110,36 @@ const isPlayableLiveCandidate = async (page: Page, url: string, deadline: number
 	const start = Date.now()
 	if (start >= deadline) return false
 
-	try {
+	const navigated = await meetsExternalYouTubePrecondition('video-navigation-ui', async () => {
 		await page.goto(url, { waitUntil: 'domcontentloaded', timeout: Math.min(deadline - Date.now(), 15000) })
-	} catch {
-		return false
-	}
-
-	await acceptYouTubeConsent(page)
+		await acceptYouTubeConsent(page)
+	})
+	if (!navigated) return false
 
 	if (Date.now() >= deadline) return false
-	const hasPlayer = await page.waitForSelector('#movie_player', { state: 'attached', timeout: Math.min(deadline - Date.now(), 8000) }).then(
-		() => true,
-		() => false,
-	)
+	const hasPlayer = await meetsExternalYouTubePrecondition('watch-player', async () => {
+		await page.waitForSelector('#movie_player', { state: 'attached', timeout: Math.min(deadline - Date.now(), 8000) })
+	})
 	if (!hasPlayer) return false
 
 	if (Date.now() >= deadline) return false
-	const hasChatContainer = await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: Math.min(deadline - Date.now(), 5000) }).then(
-		() => true,
-		() => false,
-	)
+	const hasChatContainer = await meetsExternalYouTubePrecondition('native-chat-frame', async () => {
+		await page.waitForSelector('ytd-live-chat-frame', { state: 'attached', timeout: Math.min(deadline - Date.now(), 5000) })
+	})
 	if (!hasChatContainer) {
 		log(`candidate: no chat container (${((Date.now() - start) / 1000).toFixed(1)}s)`)
 		return false
 	}
 
 	if (Date.now() >= deadline) return false
-	const status = await page
-		.waitForFunction(checkLiveChatStatus, undefined, { timeout: Math.min(deadline - Date.now(), 10000) })
-		.then(handle => handle.jsonValue() as Promise<ChatStatus>)
-		.catch(() => false as const)
+	let status: ChatStatus
+	try {
+		const handle = await page.waitForFunction(checkLiveChatStatus, undefined, { timeout: Math.min(deadline - Date.now(), 10000) })
+		status = await handle.jsonValue() as ChatStatus
+	} catch (error) {
+		if (!(error instanceof errors.TimeoutError)) throw error
+		status = false
+	}
 
 	log(`candidate: ${status || 'timeout'} (${((Date.now() - start) / 1000).toFixed(1)}s)`)
 	return status === 'playable'
@@ -181,16 +182,15 @@ export const findLiveUrlWithChat = async (page: Page, options: { limit?: number;
 
 	for (const [i, searchUrl] of searchUrls.entries()) {
 		if (Date.now() > deadline) break
-		try {
+		const navigated = await meetsExternalYouTubePrecondition('video-navigation-ui', async () => {
 			await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: Math.min(deadline - Date.now(), SEARCH_PAGE_TIMEOUT_MS) })
-		} catch {
-			continue
-		}
-		await acceptYouTubeConsentWithRetry(page)
+			await acceptYouTubeConsentWithRetry(page)
+		})
+		if (!navigated) continue
 
-		await page
-			.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, undefined, { timeout: 15000 })
-			.catch(() => null)
+		await meetsExternalYouTubePrecondition('search-results', async () => {
+			await page.waitForFunction(() => document.querySelectorAll('a#thumbnail').length > 0, undefined, { timeout: 15000 })
+		})
 		const urls = await page.evaluate(collectVideoUrls)
 		const candidates = urls.map(normalizeVideoUrl).filter(Boolean) as string[]
 		log(`search ${i + 1}/${searchUrls.length}: ${candidates.length} candidates`)

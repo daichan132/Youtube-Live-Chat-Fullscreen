@@ -73,7 +73,9 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 		const fallbackTargets = Array.from(body.querySelectorAll<HTMLElement>(fallbackSelector)).filter(
 			candidate => !candidate.parentElement?.closest(fallbackSelector),
 		)
-		fallbackTargets.forEach((element, index) => targets.push({ selector: `input-${index}`, element }))
+		fallbackTargets.forEach((element, index) => {
+			targets.push({ selector: `input-${index}`, element })
+		})
 		return targets
 	}
 
@@ -85,6 +87,9 @@ export const PAGE_HELPERS_INIT_SCRIPT = () => {
 	const isDocUnavailable = (doc: Document | null) => {
 		if (!doc) return false
 		if (doc.querySelector('yt-live-chat-unavailable-message-renderer')) return true
+		// Ready messages can quote an unavailable phrase without making their
+		// native source unavailable. Keep text fallback for incomplete/error pages.
+		if (doc.querySelector('yt-live-chat-renderer') && doc.querySelector('yt-live-chat-item-list-renderer')) return false
 		const text = doc.body?.textContent ?? ''
 		return hasUnavailableText(text)
 	}

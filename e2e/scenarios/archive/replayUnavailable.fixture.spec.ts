@@ -16,7 +16,7 @@ const scenarioState = {
 } satisfies YouTubeScenarioState
 
 test.describe('replay unavailable archive fixture', { tag: ['@archive', '@fixture'] }, () => {
-  test('rechecks a loaded replay on a page-data signal without a top-document mutation', async ({ page }) => {
+  test('rechecks a loaded replay on a page-data signal and recovers when YouTube replaces it', async ({ page }) => {
     const scenario = new YouTubeScenario(page)
     const overlay = new ExtensionOverlay(page)
     await scenario.load({
@@ -37,6 +37,25 @@ test.describe('replay unavailable archive fixture', { tag: ['@archive', '@fixtur
         extensionOverlayRendered: false,
         extensionChatLoaded: false,
       })
+
+    await scenario.replaceNativeIframe({ mode: 'archive', state: 'playable' })
+
+    await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+    await expect
+      .poll(() => scenario.observeRuntime())
+      .toMatchObject({
+        shadowHostCount: 1,
+        switchContainerCount: 1,
+        switchCount: 1,
+        nativeUnavailable: false,
+        extensionOverlayRendered: true,
+        extensionChatLoaded: true,
+      })
+    await expect.poll(() => scenario.nativeIframeCount()).toBe(0)
+    await scenario.exitFullscreen()
+    await overlay.expectOverlayRemoved({ timeout: 12000 })
+    await expect.poll(() => scenario.nativeIframeCount()).toBe(1)
+    await expect(page.frameLocator('ytd-live-chat-frame > #chatframe').locator('yt-live-chat-item-list-renderer')).toHaveCount(1)
   })
 
   test('extension chat stays hidden after the runtime confirms replay is unavailable', async ({ page, extension }) => {

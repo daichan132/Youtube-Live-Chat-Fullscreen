@@ -15,7 +15,7 @@ Tests are separated by the boundary they prove. Pull-request source and package 
 
 Start from a user-visible outcome or a documented boundary. Expected values should come from that contract, rather than the implementation's calculations or a stub's return value.
 
-- Exercise owned collaborators together when their result matters: for example, runtime imports with the real settings repository and controlled browser storage.
+- Exercise owned collaborators together when their result matters. The [runtime persistence tests](../../shared/runtime/persistenceRecovery.dom.spec.ts) use the real settings repository and controlled browser storage to check saved domains, reopening, failed imports, and Retry.
 - Assert saved values, rendered controls, exported data, or externally delivered messages. Avoid fixing internal delegation order or query-call counts unless the count itself protects a documented scheduling or resource limit.
 - Keep explicit package, privacy, cleanup, and bounded-retry contracts. Replacing every mock or deleting every source check would lose useful protection.
 - Replace or remove a redundant test when an existing behavior test already protects its contract. Keep pure transformations in the Node project and browser-dependent behavior in DOM or browser tests.
@@ -30,6 +30,8 @@ Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e
 
 Browser setup and assertions need independent evidence too:
 
+- Use native composed events for Shadow DOM boundaries. Supplying a fabricated event path can accept an implementation that incorrectly uses the retargeted host as the clicked element. The [click-away tests](../../shared/hooks/useShadowClickAway.spec.tsx) keep an actual shadow menu open for inside clicks and close it for outside clicks.
+- Check browser layout where layout matters. The [overlay interaction scenario](../../e2e/scenarios/live/overlayInteraction.fixture.spec.ts) verifies that the drag shield covers the chat at nine points and disappears after release; CSS utility names alone do not prove input protection.
 - [`patchOverlayStore`](../../e2e/utils/storageHelper.ts) rejects setup when the complete appearance and geometry values read back from Storage differ from the requested state. An older valid envelope or the intended write payload is not proof that setup succeeded.
 - Before asserting that extension UI stays absent, establish that the content runtime has processed the current fullscreen page through its public status response. DOM absence alone also matches a content script that never started.
 - A loaded chat assertion requires an accessible document with its chat renderer and message list, and no structural error renderer. An iframe that navigated to a non-blank URL can still contain only a loading or error page.
@@ -74,6 +76,8 @@ The DOM wildcard still enrolls legacy/plain specs under `entrypoints/` and `shar
 
 The contracts project also includes configuration/support specs under `e2e/config/`, `e2e/support/`, and `scripts/verify/`.
 
+All projects exclude `.cache/`, `.output/`, and `.wxt/`. Ignored nested worktrees must not add another checkout's tests to the current result. The [discovery contract](../../e2e/config/vitestDiscovery.contract.spec.ts) runs the real Vitest CLI to check each project's enrollment and these exclusions.
+
 ## Playwright classification
 
 Every scenario under `e2e/scenarios/` is listed exactly once in `e2e/config/projectClassification.ts`.
@@ -89,6 +93,8 @@ Synthetic YouTube scenarios use the typed API under `e2e/support/youtubeScenario
 `initializeScenarioDocument.ts` provides the self-contained fixture browser code used by both initial HTML and SPA replacement. It installs player metadata, native iframe navigation, fullscreen controls, and the boundary click counter. SPA replacement keeps history, fullscreen exit, generation advancement, and navigation event ordering in `YouTubeScenario.spaNavigate`. Fixture initialization does not import product selectors or decisions, and assertions remain independent.
 
 The compiler is also imported directly by native Node verification CLIs. Runtime TypeScript imports in that module graph use explicit extensions; `compilerNode.contract.spec.ts` exercises this boundary in a fresh Node process without Vite resolution.
+
+Fixture HTML is checked as a [parsed DOM](../../e2e/support/youtubeScenario/youtubeScenario.dom.spec.ts), so equivalent attribute formatting does not cause failures. Input-safety and native-Node contracts remain separate.
 
 ## Production/testing package boundary
 
@@ -138,10 +144,16 @@ Publication selects a successful candidate Actions run, validates its workflow, 
 
 ## Canary classification
 
-Canary skips are reserved for YouTube-owned preconditions. Once a usable page and fullscreen state exist, missing extension UI or chat is a failure. The reporter records executed, skipped, failed, and compatibility fingerprint data for operator review.
+Canary skips are reserved for YouTube-owned preconditions. The shared [external-wait boundary](../../e2e/support/externalYouTubePreconditions.ts) converts only Playwright timeouts into missing prerequisites; unexpected test or browser errors propagate. Live/archive source discovery and native-chat opening also preserve unexpected helper failures. Once a usable page and fullscreen state exist, missing extension UI or chat is a failure. A no-chat assertion also requires a running content session before checking that UI is absent.
+
+YouTube precondition selectors are defined independently in [`e2e/utils/selectors.ts`](../../e2e/utils/selectors.ts). Reusing the production selector catalog here could turn a product selector regression into an unavailable-source skip. The fingerprint reporter still uses the product probe definitions to identify compatibility drift. Native-chat readiness accepts a complete renderer and message list even when a viewer quotes an unavailable-chat message; structural error renderers take precedence.
+
+The reporter records executed, skipped, failed, and compatibility fingerprint data for operator review.
 
 The manually triggered [standalone canary](../../.github/workflows/canary.yml) may report environmental degradation, whereas the release path requires a clean canary. Human real-browser evidence remains part of release operation; see the [maintainer runbook](../maintainers/release-runbook.md).
 
 ## Visual baselines
 
 Visual baselines are evaluated on the pinned Ubuntu runner with Playwright Chromium. Do not regenerate Linux baselines from macOS. Compositor-sensitive effects such as blur also use behavioral/pixel metrics rather than relying only on a screenshot match.
+
+The blur pixel test checks background softening, unchanged video outside the overlay, and unchanged painted text inside the chat. A text sample with no glyph edges cannot satisfy the test.

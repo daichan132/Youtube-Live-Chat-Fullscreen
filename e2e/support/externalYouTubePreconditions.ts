@@ -1,4 +1,8 @@
+import { errors } from '@playwright/test'
+
 export type ExternalYouTubePrecondition =
+  | 'watch-player'
+  | 'search-results'
   | 'native-chat-frame'
   | 'native-chat-source'
   | 'fullscreen-ui'
@@ -6,9 +10,9 @@ export type ExternalYouTubePrecondition =
   | 'video-navigation-ui'
 
 /**
- * Converts failures from YouTube-owned state into a canary skip decision.
+ * Converts timed-out waits for YouTube-owned state into a canary skip decision.
  * Extension-owned switch, overlay, iframe, borrow, and cleanup assertions must
- * never pass through this boundary.
+ * never pass through this boundary. Unexpected test or browser errors still fail.
  */
 export const meetsExternalYouTubePrecondition = async (
   _precondition: ExternalYouTubePrecondition,
@@ -17,7 +21,8 @@ export const meetsExternalYouTubePrecondition = async (
   try {
     await assertion()
     return true
-  } catch {
-    return false
+  } catch (error) {
+    if (error instanceof errors.TimeoutError) return false
+    throw error
   }
 }
