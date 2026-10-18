@@ -40,15 +40,17 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
       const header = panel.locator('header')
       const footer = panel.locator('footer')
       const close = page.locator('[data-ylc-setting-close-button]')
-      for (const element of [panel, header, footer, close]) {
-        const bounds = await element.boundingBox()
-        expect(bounds).not.toBeNull()
-        if (!bounds) throw new Error('Settings controls must be rendered')
-        expect(bounds.x).toBeGreaterThanOrEqual(0)
-        expect(bounds.y).toBeGreaterThanOrEqual(0)
-        expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width)
-        expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height)
-      }
+      await expect(async () => {
+        for (const element of [panel, header, footer, close]) {
+          const bounds = await element.boundingBox()
+          expect(bounds).not.toBeNull()
+          if (!bounds) throw new Error('Settings controls must be rendered')
+          expect(bounds.x).toBeGreaterThanOrEqual(0)
+          expect(bounds.y).toBeGreaterThanOrEqual(0)
+          expect(bounds.x + bounds.width).toBeLessThanOrEqual(viewport.width)
+          expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height)
+        }
+      }).toPass()
       const before = { header: await header.boundingBox(), footer: await footer.boundingBox() }
       const content = page.getByRole('tabpanel')
       expect(await content.evaluate(element => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1)
