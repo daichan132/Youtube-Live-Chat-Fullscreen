@@ -30,7 +30,7 @@ Include:
 - Reproduction steps or a minimal proof of concept
 - Whether the report can be disclosed after a fix
 
-When attaching evidence, prefer the sanitized report available through **Copy diagnostics** in the browser toolbar popup over raw screenshots or logs, and remove any personal data from a proof of concept before sending it.
+When attaching evidence, include reproduction steps and remove personal data from screenshots, logs, and proof-of-concept files before sending them.
 
 ## What to expect
 

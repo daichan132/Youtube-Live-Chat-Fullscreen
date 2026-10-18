@@ -70,7 +70,7 @@ Import replaces the backed-up settings, so export a copy first if you want to ke
 
 Regular videos and streams without usable chat do not show the fullscreen overlay. Archive support requires YouTube's chat replay to be available and playable. The extension cannot add a conversation that YouTube does not provide.
 
-If a usable chat exists but the panel is missing, or the layout stops responding, follow [troubleshooting](troubleshooting.md). The browser toolbar popup offers **Retry chat display** and, when a report is available, **Copy diagnostics**.
+If a usable chat exists but the panel is missing, or the layout stops responding, follow [troubleshooting](troubleshooting.md).
 
 ## Privacy
 

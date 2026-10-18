@@ -64,7 +64,7 @@ The settings UI's `styleHistoryCommands` adapter delegates profile and patch com
 
 The embedded settings page forwards its draft profile through a source- and origin-checked `postMessage` bridge. The content store holds it in `settingsPreviewStateAtom`, outside persistence and history, so the chat and overlay paint during a slider or color gesture. Preview messages are coalesced to one per animation frame. The final profile remains visible until its matching Storage value arrives; an earlier gesture's delayed save cannot roll it back. Closing, reloading, or removing the settings iframe clears the preview. Authoritative external appearance changes are forwarded by the settings store through the same channel.
 
-The settings frame bridge accepts close and style-preview requests. Runtime status, retry, and diagnostic-report copying belong to the toolbar popup's `ContentRecovery`, which uses the content-status extension messages.
+The settings frame bridge accepts close and style-preview requests. Runtime status, retry, and diagnostic reports remain available through internal content-status extension messages for verification and maintenance.
 
 A save readback equal to the current committed appearance is a no-op. It must not cancel a later draft or clear undo/redo history merely because that draft started before the earlier save finished. Equality is checked against committed settings, not against the draft.
 

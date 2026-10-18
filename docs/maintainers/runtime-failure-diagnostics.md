@@ -1,6 +1,6 @@
 # Reading runtime failure diagnostics
 
-The toolbar popup can copy a sanitized, bounded diagnostic report after checking the current tab's status. See [Troubleshooting](../troubleshooting.md) for the user-facing steps. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, optional `runtime.failureStage` identifies the operation that failed.
+The content runtime provides a sanitized, bounded diagnostic report through the internal content-status extension messages used for verification and maintenance. `runtime.failureCode` describes the failure category. For `UNEXPECTED_RUNTIME_ERROR`, optional `runtime.failureStage` identifies the operation that failed.
 
 | Stage | Start investigation here |
 | --- | --- |

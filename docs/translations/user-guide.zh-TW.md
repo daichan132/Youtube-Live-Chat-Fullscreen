@@ -70,7 +70,7 @@ YouTube Live Chat Fullscreen 會將 YouTube 的聊天室疊在影片上。本指
 
 一般影片及沒有可用聊天室的直播，不會顯示全螢幕聊天視窗。直播存檔必須有可用且能播放的 YouTube 聊天重播，擴充功能才能顯示。擴充功能無法新增 YouTube 未提供的對話。
 
-若 YouTube 的聊天室可用，但聊天視窗沒有出現，或版面停止回應，請依照[疑難排解](troubleshooting.zh-TW.md)檢查。瀏覽器工具列的彈出視窗提供 **Retry chat display**（重新嘗試顯示聊天室）；有診斷報告時，也可使用 **Copy diagnostics**（複製診斷資訊）。這兩個按鈕目前以英文顯示。
+若 YouTube 的聊天室可用，但聊天視窗沒有出現，或版面停止回應，請依照[疑難排解](troubleshooting.zh-TW.md)檢查。
 
 ## 隱私
 

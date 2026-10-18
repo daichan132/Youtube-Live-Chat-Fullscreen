@@ -62,11 +62,19 @@ test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
       await expect(page.getByLabel('Select language')).toHaveValue('en')
       await expect(page.getByText('Language', { exact: true })).toBeVisible()
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', 'ltr')
+      for (const name of ['Check status', 'Retry chat display', 'Copy diagnostics']) {
+        await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0)
+      }
+      await expect(page.getByRole('status')).toHaveCount(0)
 
       await setExternalLocale(page, 'ja')
       await expect(page.getByLabel('言語を選択')).toHaveValue('ja')
       await expect(page.getByText('言語設定', { exact: true })).toBeVisible()
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', 'ltr')
+      for (const name of ['状態を確認', 'チャット表示を再試行', '診断をコピー']) {
+        await expect(page.getByRole('button', { name, exact: true })).toHaveCount(0)
+      }
+      await expect(page.getByText('診断をコピーしました。', { exact: true })).toHaveCount(0)
 
       await setExternalLocale(page, 'ar')
       await expect(page.getByLabel('اختيار اللغة')).toHaveValue('ar')
