@@ -32,6 +32,8 @@ export const FIXTURE_SPECS = [
   'live/settingsUsability.fixture.spec.ts',
   'live/chatInputFocus.fixture.spec.ts',
   'live/overlayDragRelease.fixture.spec.ts',
+  'live/overlayMenuUsability.fixture.spec.ts',
+  'live/numberInputUsability.fixture.spec.ts',
   'live/purchaseInteraction.fixture.spec.ts',
   'live/spaNavigation.fixture.spec.ts',
   'popup/i18n.fixture.spec.ts',

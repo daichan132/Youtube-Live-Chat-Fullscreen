@@ -1,7 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Locator } from '@playwright/test'
-import { LOCALE_STORAGE_KEY } from '../../../shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, LOCALE_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const expectInside = async (element: Locator, container: Locator) => {
   await expect(async () => {
@@ -125,8 +125,14 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
     await testInfo.attach('short-font-picker', { body: await page.screenshot(), contentType: 'image/png' })
   })
 
-  test('retains the intentional no-match Enter default-font behavior', async ({ page }) => {
+  test('keeps an unmatched font search open without changing storage or Undo history', async ({ page }) => {
     const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
+    const redo = page.getByRole('button', { name: 'Redo style change', exact: true })
+    const savedAppearance = () => page.evaluate(key => chrome.storage.local.get(key), APPEARANCE_STORAGE_KEY)
+    const before = await savedAppearance()
+    await expect(undo).toBeDisabled()
+    await expect(redo).toBeDisabled()
     await trigger.click()
     const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
     await expect(search).toBeFocused()
@@ -134,7 +140,23 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
     await expect(page.getByRole('option')).toHaveCount(0)
     await expect(search).not.toHaveAttribute('aria-activedescendant', /.+/)
     await page.keyboard.press('Enter')
-    await expect(trigger).toHaveText('Default')
+    await expect(trigger).toHaveText('Roboto')
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(search).toBeFocused()
+    await expect(search).toHaveValue('zzzznotanallowedfont')
+    await expect(undo).toBeDisabled()
+    await expect(redo).toBeDisabled()
+    expect(await savedAppearance()).toEqual(before)
+
+    await search.fill('Roboto Slab')
+    await expect(page.getByRole('option')).toHaveCount(1)
+    await page.keyboard.press('Enter')
+    await expect(trigger).toHaveText('Roboto Slab')
     await expect(trigger).toBeFocused()
+    await expect(undo).toBeEnabled()
+    await undo.click()
+    await expect(trigger).toHaveText('Roboto')
+    await expect(undo).toBeDisabled()
+    await expect(redo).toBeEnabled()
   })
 })

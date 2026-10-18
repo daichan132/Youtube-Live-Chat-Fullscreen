@@ -198,9 +198,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
         const activeOption = activeIndex >= 0 ? filteredOptions[activeIndex] : undefined
         if (activeOption) {
           commitFontFamily(activeOption.value)
-          return
         }
-        commitFontFamily('')
         return
       }
 

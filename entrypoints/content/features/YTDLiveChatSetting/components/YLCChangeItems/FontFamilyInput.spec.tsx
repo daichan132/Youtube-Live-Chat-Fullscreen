@@ -194,9 +194,9 @@ describe('FontFamilyInput', () => {
   })
 
   it.each([
-    { search: 'Roboto Slab', expected: 'Roboto Slab' },
-    { search: 'My Custom Font', expected: null },
-  ])('waits for composition to finish before Enter commits the search "$search"', ({ search, expected }) => {
+    { search: 'Roboto Slab', matches: true },
+    { search: 'My Custom Font', matches: false },
+  ])('waits for composition to finish before handling Enter for "$search"', ({ search, matches }) => {
     const { getByRole, getByTestId, queryByTestId } = renderFontFamilyInput('Roboto')
     const before = store.get(chatSettingsStateAtom).profile
     const historyBefore = store.get(editorSessionStateAtom).past
@@ -214,19 +214,58 @@ describe('FontFamilyInput', () => {
     fireEvent.compositionEnd(input)
     fireEvent.keyDown(input, { key: 'Enter' })
 
-    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe(expected)
-    expect(store.get(editorSessionStateAtom).past).toEqual([...historyBefore, before])
-    expect(queryByTestId('font-family-search')).not.toBeInTheDocument()
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe(matches ? 'Roboto Slab' : 'Roboto')
+    expect(store.get(editorSessionStateAtom).past).toEqual(matches ? [...historyBefore, before] : historyBefore)
+    if (matches) expect(queryByTestId('font-family-search')).not.toBeInTheDocument()
+    else {
+      expect(queryByTestId('font-family-search')).toBeInTheDocument()
+      expect(input).toHaveValue(search)
+    }
   })
 
-  it('commits default when no option matches and Enter is pressed', () => {
-    const { getByRole, getByTestId } = renderFontFamilyInput('Roboto')
+  it('keeps the font and history unchanged after an unmatched Enter, and lets the search be corrected', async () => {
+    const user = userEvent.setup()
+    const view = renderFontFamilyInput('Roboto')
+    const before = store.get(chatSettingsStateAtom)
+    const historyBefore = store.get(editorSessionStateAtom)
+    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    await user.click(trigger)
+    const input = view.getByRole('combobox')
+    await waitFor(() => expect(input).toHaveFocus())
+    await user.type(input, 'My Custom Font')
+    expect(view.queryAllByRole('option')).toHaveLength(0)
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
-    fireEvent.change(getByTestId('font-family-search'), { target: { value: 'My Custom Font' } })
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
+    await user.keyboard('{Enter}{Enter}')
+
+    expect(store.get(chatSettingsStateAtom)).toEqual(before)
+    expect(store.get(editorSessionStateAtom)).toEqual(historyBefore)
+    expect(trigger).toHaveTextContent('Roboto')
+    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(input).toHaveFocus()
+    expect(input).toHaveValue('My Custom Font')
+    expect(input).not.toHaveAttribute('aria-activedescendant')
+
+    await user.clear(input)
+    await user.type(input, 'Roboto Slab{Enter}')
+
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
+    expect(store.get(editorSessionStateAtom).past).toEqual([...historyBefore.past, before.profile])
+    expect(view.queryByRole('combobox')).not.toBeInTheDocument()
+  })
+
+  it('still commits the explicit Default option and lets Undo restore the selected font', () => {
+    const view = renderFontFamilyInput('Roboto')
+    const before = store.get(chatSettingsStateAtom).profile
+    fireEvent.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(view.getByRole('option', { name: /^content\.setting\.fontFamilyDefault$/ }))
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBeNull()
+    expect(store.get(editorSessionStateAtom).past).toEqual([before])
+    expect(view.queryByRole('combobox')).not.toBeInTheDocument()
+    act(() => {
+      expect(createStyleHistoryCommands(store).undoYLCStyle()).toBe(true)
+    })
+    expect(store.get(chatSettingsStateAtom).profile).toEqual(before)
   })
 
   it('normalizes a case-insensitive font input before committing', () => {

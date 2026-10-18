@@ -1,11 +1,20 @@
-import { type CSSProperties, type KeyboardEvent, type PointerEvent, useId, useLayoutEffect, useRef, useState } from 'react'
+import { type CSSProperties, type KeyboardEvent, type PointerEvent, useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
 import type { RGBA } from '@/shared/settings/model'
+import { useOverlayMenuDismiss } from './useOverlayMenuDismiss'
 
 const ICON_STROKE_WIDTH = 1.55
 const CONTROL_GAP = 2
+const TOOLTIP_GAP = 6
+const TOOLTIP_VIEWPORT_PADDING = 8
+const CONTROL_SELECTORS = {
+  settings: '[data-ylc-settings-btn]',
+  drag: '[data-ylc-drag-handle]',
+  placement: '[data-ylc-placement-button]',
+} as const
+type ControlName = 'settings' | 'drag' | 'placement'
 
 type OverlayControlRailProps = {
   isDragging: boolean
@@ -54,21 +63,35 @@ export const OverlayControlRail = ({
   const dragDescriptionId = useId()
   const [focused, setFocused] = useState(false)
   const [placementOpen, setPlacementOpen] = useState(false)
+  const [hoveredControl, setHoveredControl] = useState<ControlName | null>(null)
+  const [focusedControl, setFocusedControl] = useState<ControlName | null>(null)
   const [adjustmentAnchor, setAdjustmentAnchor] = useState<{
     right: number
     top: number
     maxHeight: number | undefined
   } | null>(null)
   const placementButtonRef = useRef<HTMLButtonElement>(null)
+  const railRef = useRef<HTMLDivElement>(null)
+  const tooltipRef = useRef<HTMLDivElement>(null)
+  const [tooltipLayout, setTooltipLayout] = useState<{ left: number; top: number; side: 'top' | 'bottom' } | null>(null)
+  const dismissPlacement = useCallback(() => {
+    setPlacementOpen(false)
+    setAdjustmentAnchor(null)
+  }, [])
+  useOverlayMenuDismiss(placementOpen && isReady, railRef, dismissPlacement)
   // Menu actions move the frame beneath the pointer. Keep their targets in
   // place until closing or a direct manipulation / viewport change reanchors.
   useLayoutEffect(() => {
     setAdjustmentAnchor(null)
+    if (!isReady) {
+      setPlacementOpen(false)
+      setHoveredControl(null)
+      setFocusedControl(null)
+    }
   }, [isDragging, isResizing, isReady, placementOpen, viewportSize?.width, viewportSize?.height])
   const closePlacement = () => {
-    setPlacementOpen(false)
-    setAdjustmentAnchor(null)
-    placementButtonRef.current?.focus()
+    dismissPlacement()
+    placementButtonRef.current?.focus({ preventScroll: true })
   }
   const preserveAdjustmentAnchor = () => {
     if (!placementAnchor) return
@@ -77,6 +100,69 @@ export const OverlayControlRail = ({
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
+  const tooltipControl = hoveredControl ?? focusedControl
+  const tooltipLabel =
+    tooltipControl &&
+    {
+      settings: t('content.aria.openSettings'),
+      drag: `${t('content.aria.dragToMove')} · ${t('content.aria.arrowKeysToMove')}`,
+      placement: t('content.placement.open'),
+    }[tooltipControl]
+  const tooltipVisible = displayed && Boolean(tooltipLabel) && !placementOpen && !isDragging && !isResizing
+  useLayoutEffect(() => {
+    const rail = railRef.current
+    const tooltip = tooltipRef.current
+    const button = tooltipControl && rail?.querySelector<HTMLButtonElement>(CONTROL_SELECTORS[tooltipControl])
+    if (!tooltipVisible || !rail || !tooltip || !button) return
+    const updatePosition = () => {
+      // Geometry is in player coordinates. Remove the rail's visibility scale
+      // from fractional tooltip dimensions before positioning in that space.
+      const railBounds = rail.getBoundingClientRect()
+      const scaleX = (rail.offsetWidth && railBounds.width / rail.offsetWidth) || 1
+      const scaleY = (rail.offsetHeight && railBounds.height / rail.offsetHeight) || 1
+      const railLeft = placementAnchor ? placementAnchor.right - rail.offsetWidth : railBounds.left
+      const railTop = placementAnchor?.top ?? railBounds.top
+      const viewportWidth = viewportSize?.width ?? rail.ownerDocument.defaultView?.innerWidth ?? 240
+      const viewportHeight = viewportSize?.height ?? rail.ownerDocument.defaultView?.innerHeight ?? 240
+      const tooltipBounds = tooltip.getBoundingClientRect()
+      const width = tooltipBounds.width / scaleX
+      const height = tooltipBounds.height / scaleY
+      const center = railLeft + button.offsetLeft + button.offsetWidth / 2
+      const left = Math.max(TOOLTIP_VIEWPORT_PADDING, Math.min(center - width / 2, viewportWidth - width - TOOLTIP_VIEWPORT_PADDING))
+      const below = railTop + rail.offsetHeight + TOOLTIP_GAP
+      const side = below + height <= viewportHeight - TOOLTIP_VIEWPORT_PADDING ? 'bottom' : 'top'
+      const top = Math.max(
+        TOOLTIP_VIEWPORT_PADDING,
+        Math.min(side === 'bottom' ? below : railTop - height - TOOLTIP_GAP, viewportHeight - height - TOOLTIP_VIEWPORT_PADDING),
+      )
+      const next = { left: left - railLeft, top: top - railTop, side } as const
+      setTooltipLayout(current => (current?.left === next.left && current.top === next.top && current.side === next.side ? current : next))
+    }
+    updatePosition()
+    // Reflowed translations and late-loading fonts can change the help's size.
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(updatePosition)
+    observer.observe(tooltip)
+    observer.observe(rail)
+    return () => observer.disconnect()
+  }, [
+    tooltipControl,
+    tooltipLabel,
+    tooltipVisible,
+    placementAnchor?.right,
+    placementAnchor?.top,
+    viewportSize?.width,
+    viewportSize?.height,
+  ])
+  const tooltipEvents = (control: ControlName) => ({
+    onMouseEnter: () => setHoveredControl(control),
+    onMouseLeave: () => setHoveredControl(null),
+    onFocus: () => {
+      setHoveredControl(null)
+      setFocusedControl(control)
+    },
+    onBlur: () => setFocusedControl(null),
+  })
   const runtimeStyle = {
     '--ylc-overlay-control-rail-bg-runtime': toRgba(backgroundColor),
     '--ylc-overlay-control-hover-runtime': toRgba(fontColor, 0.1),
@@ -86,6 +172,7 @@ export const OverlayControlRail = ({
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Hover only keeps controls visible; buttons inside remain semantic.
     <div
+      ref={railRef}
       data-ylc-control-rail
       className='ylc-overlay-control-rail absolute flex items-center'
       onKeyDown={event => {
@@ -118,17 +205,22 @@ export const OverlayControlRail = ({
       }}
     >
       <button
+        {...tooltipEvents('settings')}
         type='button'
         data-ylc-settings-btn
         className='ylc-overlay-control-icon cursor-pointer ylc-theme-focus-ring'
         aria-label={t('content.aria.openSettings')}
         disabled={!isReady}
         tabIndex={isReady ? 0 : -1}
-        onClick={event => onSettingsClick(event.currentTarget)}
+        onClick={event => {
+          dismissPlacement()
+          onSettingsClick(event.currentTarget)
+        }}
       >
         <TbAdjustmentsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
       <button
+        {...tooltipEvents('drag')}
         type='button'
         data-ylc-drag-handle
         className={dragCursorClass}
@@ -149,6 +241,7 @@ export const OverlayControlRail = ({
         </span>
       </button>
       <button
+        {...tooltipEvents('placement')}
         type='button'
         ref={placementButtonRef}
         className='ylc-overlay-control-icon ylc-theme-focus-ring cursor-pointer'
@@ -160,6 +253,29 @@ export const OverlayControlRail = ({
       >
         <TbArrowsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
+      {tooltipVisible ? (
+        <div
+          ref={tooltipRef}
+          data-ylc-control-tooltip
+          data-ylc-tooltip-side={tooltipLayout?.side}
+          aria-hidden='true'
+          className='absolute rounded-md border border-solid ylc-theme-border px-2.5 py-1.5 text-xs font-medium leading-snug shadow-sm pointer-events-none'
+          style={{
+            left: tooltipLayout?.left ?? 0,
+            top: tooltipLayout?.top ?? 0,
+            visibility: tooltipLayout ? 'visible' : 'hidden',
+            width: 'max-content',
+            maxWidth: Math.min(220, Math.max(0, (viewportSize?.width ?? 240) - TOOLTIP_VIEWPORT_PADDING * 2)),
+            boxSizing: 'border-box',
+            background: 'var(--ylc-bg-surface-elevated)',
+            color: 'var(--ylc-text-primary)',
+            whiteSpace: 'normal',
+            textAlign: 'center',
+          }}
+        >
+          {tooltipLabel}
+        </div>
+      ) : null}
       {placementOpen && isReady ? (
         // biome-ignore lint/a11y/useSemanticElements: A fieldset's anonymous content box prevents bounded scrolling; retain the labelled group semantics.
         <div

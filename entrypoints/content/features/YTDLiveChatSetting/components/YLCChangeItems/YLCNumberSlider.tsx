@@ -1,6 +1,6 @@
 import { useAtomValue, useStore } from 'jotai'
 import type { CSSProperties } from 'react'
-import { useCallback } from 'react'
+import { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { effectiveAppearanceAtoms } from '@/shared/state'
@@ -28,6 +28,46 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
   const value = Math.min(max, Math.max(min, storeValue))
   const displayValue = Math.round(storeValue)
   const progress = `${((value - min) / (max - min)) * 100}%`
+  const [numberDraft, setNumberDraft] = useState<string | null>(null)
+  const numberDraftRef = useRef('')
+  const numberBaseRef = useRef(storeValue)
+  const numberDirtyRef = useRef(false)
+  const composingRef = useRef(false)
+
+  useLayoutEffect(() => {
+    // A change to this setting invalidates an unfinished local edit. Changes
+    // to other fields remain intact when this field eventually commits.
+    if (numberDirtyRef.current && numberBaseRef.current !== storeValue) {
+      numberDirtyRef.current = false
+      numberDraftRef.current = ''
+      setNumberDraft(null)
+    }
+    numberBaseRef.current = storeValue
+  }, [storeValue])
+
+  const restoreNumber = useCallback(() => {
+    const current = store.get(effectiveAppearanceAtoms[settingKey])
+    const text = String(Math.round(current))
+    numberBaseRef.current = current
+    numberDirtyRef.current = false
+    numberDraftRef.current = text
+    setNumberDraft(null)
+  }, [settingKey, store])
+
+  const finishNumberEdit = useCallback(() => {
+    if (!numberDirtyRef.current) return
+    const current = store.get(effectiveAppearanceAtoms[settingKey])
+    const text = numberDraftRef.current.trim()
+    const next = Number(text)
+    if (composingRef.current || current !== numberBaseRef.current || !text || !Number.isFinite(next) || !Number.isInteger(next)) {
+      restoreNumber()
+      return
+    }
+    const clamped = Math.min(max, Math.max(min, next))
+    numberDirtyRef.current = false
+    commitYLCStyleUpdate({ appearance: { [settingKey]: clamped } })
+    restoreNumber()
+  }, [commitYLCStyleUpdate, max, min, restoreNumber, settingKey, store])
 
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,6 +100,9 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
         style={{ '--ylc-range-progress': progress } as CSSProperties}
         onChange={handleChange}
         onPointerDown={event => {
+          // Commit a previously focused numeric draft before starting this
+          // range gesture, so its blur cannot finish the new gesture early.
+          event.currentTarget.focus({ preventScroll: true })
           event.currentTarget.setPointerCapture?.(event.pointerId)
           beginGesture()
         }}
@@ -74,9 +117,56 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
         }}
         onBlur={finishGesture}
       />
-      <output className='ylc-range-value' aria-hidden='true'>
-        {displayValue}px
-      </output>
+      <span className='ylc-range-value' style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+        <input
+          type='number'
+          inputMode='numeric'
+          min={min}
+          max={max}
+          step={1}
+          value={numberDraft ?? String(displayValue)}
+          aria-label={t(labelKey)}
+          className='ylc-theme-focus-ring-soft'
+          style={{
+            width: 52,
+            minWidth: 0,
+            height: 28,
+            padding: '0 4px',
+            border: '1px solid var(--ylc-border)',
+            borderRadius: 6,
+            boxSizing: 'border-box',
+            background: 'var(--ylc-bg-surface-elevated)',
+            color: 'var(--ylc-text-primary)',
+            font: 'inherit',
+            textAlign: 'end',
+          }}
+          onFocus={restoreNumber}
+          onChange={event => {
+            numberDirtyRef.current = true
+            numberDraftRef.current = event.target.value
+            setNumberDraft(event.target.value)
+          }}
+          onCompositionStart={() => {
+            composingRef.current = true
+          }}
+          onCompositionEnd={() => {
+            composingRef.current = false
+          }}
+          onKeyDown={event => {
+            if (event.nativeEvent.isComposing || composingRef.current) return
+            if (event.key === 'Enter') {
+              event.preventDefault()
+              finishNumberEdit()
+            } else if (event.key === 'Escape') {
+              event.preventDefault()
+              event.stopPropagation()
+              restoreNumber()
+            }
+          }}
+          onBlur={finishNumberEdit}
+        />
+        <span aria-hidden='true'>px</span>
+      </span>
     </div>
   )
 }
