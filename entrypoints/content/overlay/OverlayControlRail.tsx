@@ -116,21 +116,23 @@ export const OverlayControlRail = ({
   }, [isDragging, isResizing, isReady, placementOpen, viewportSize?.width, viewportSize?.height])
   const [placementHeightLimit, setPlacementHeightLimit] = useState<number | undefined>()
   useLayoutEffect(() => {
-    if (!placementOpen || !railRef.current) return
+    if (!placementOpen || !railRef.current || adjustmentAnchor) return
     // Fullscreen focus can scroll the host page slightly. Bound the menu by
     // the painted rail position as well as the player's logical coordinates.
-    const anchorOffset = adjustmentAnchor && placementAnchor ? adjustmentAnchor.top - placementAnchor.top : 0
-    setPlacementHeightLimit(Math.max(0, railRef.current.getBoundingClientRect().top + anchorOffset - 8))
-  }, [placementOpen, placementAnchor?.top, adjustmentAnchor?.top, viewportSize?.height])
+    setPlacementHeightLimit(Math.max(0, railRef.current.getBoundingClientRect().top - 8))
+  }, [placementOpen, placementAnchor?.top, adjustmentAnchor, viewportSize?.height])
   const closePlacement = () => {
     dismissPlacement()
     placementButtonRef.current?.focus({ preventScroll: true })
   }
   const preserveAdjustmentAnchor = () => {
     if (!placementAnchor) return
-    setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: placementPanelMaxHeight })
+    setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: effectivePlacementMaxHeight })
   }
-  const placementMaxHeight = adjustmentAnchor ? adjustmentAnchor.maxHeight : placementPanelMaxHeight
+  const effectivePlacementMaxHeight =
+    placementHeightLimit === undefined
+      ? placementPanelMaxHeight
+      : Math.min(placementPanelMaxHeight ?? placementHeightLimit, placementHeightLimit)
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
@@ -344,10 +346,7 @@ export const OverlayControlRail = ({
           style={{
             width: 240,
             minWidth: 0,
-            maxHeight:
-              placementHeightLimit === undefined
-                ? placementMaxHeight
-                : Math.min(placementMaxHeight ?? placementHeightLimit, placementHeightLimit),
+            maxHeight: adjustmentAnchor ? adjustmentAnchor.maxHeight : effectivePlacementMaxHeight,
             transform:
               adjustmentAnchor && placementAnchor
                 ? `translate(${adjustmentAnchor.right - placementAnchor.right}px, ${adjustmentAnchor.top - placementAnchor.top}px)`
