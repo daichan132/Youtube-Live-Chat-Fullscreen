@@ -136,6 +136,47 @@ describe('iframe styles contract', () => {
     expect(getFixtureStyle('#top-fans-crown-path').fill).toBe('rgb(123, 62, 219)')
   })
 
+  it.each(['245, 240, 230', '15, 15, 15', '220, 80, 180'])(
+    'themes gift announcement copy with %s while preserving artwork and semantic colors',
+    foreground => {
+      const coreThemeStyles = styleModules['core-theme.css'].replaceAll('var(--extension-yt-live-font-color)', `rgb(${foreground})`)
+      mountStyleFixture(
+        `yt-gift-message-view-model, yt-attributed-string > .ytAttributedStringHost { color: rgb(15, 15, 15); }
+         ${coreThemeStyles}`,
+        `<yt-gift-message-view-model>
+          <div id="content" class="style-scope yt-gift-message-view-model">
+            <yt-attributed-string id="author-name-v2" class="style-scope yt-gift-message-view-model">
+              <span class="ytAttributedStringHost"><span data-gift-author>@sample</span></span>
+            </yt-attributed-string>
+            <yt-attributed-string id="message-v2" class="style-scope yt-gift-message-view-model">
+              <span class="ytAttributedStringHost"><span data-gift-message>Gift sent</span>
+                <span data-semantic-text style="color: rgb(123, 62, 219)">Native badge</span>
+              </span>
+            </yt-attributed-string>
+            <div id="gift-image" style="color: rgb(213, 158, 34)"><svg style="fill: currentColor"><path data-gift-art /></svg></div>
+          </div>
+        </yt-gift-message-view-model>
+        <yt-attributed-string id="unrelated-copy"><span class="ytAttributedStringHost">Native copy</span></yt-attributed-string>
+        <yt-live-chat-paid-message-renderer style="color: rgb(12, 34, 56); background: rgb(200, 220, 240)">Paid card</yt-live-chat-paid-message-renderer>`,
+      )
+
+      for (const selector of [
+        '#author-name-v2',
+        '#author-name-v2 > .ytAttributedStringHost',
+        '[data-gift-author]',
+        '#message-v2',
+        '[data-gift-message]',
+      ]) {
+        expect(getComputedColor(selector), selector).toBe(`rgb(${foreground})`)
+      }
+      expect(getComputedColor('[data-semantic-text]')).toBe('rgb(123, 62, 219)')
+      expect(getFixtureStyle('[data-gift-art]').fill).toBe('rgb(213, 158, 34)')
+      expect(getComputedColor('#unrelated-copy > .ytAttributedStringHost')).toBe('rgb(15, 15, 15)')
+      expect(getComputedColor('yt-live-chat-paid-message-renderer')).toBe('rgb(12, 34, 56)')
+      expect(getFixtureStyle('yt-live-chat-paid-message-renderer').backgroundColor).toBe('rgb(200, 220, 240)')
+    },
+  )
+
   it('themes top fan leaderboard text and icons without hiding its entry point', () => {
     expect(iframeStyles).toContain('ytd-engagement-panel-section-list-renderer[target-id="PAlive_viewer_leaderboard"]')
     expect(iframeStyles).toContain('ytd-engagement-panel-title-header-renderer')

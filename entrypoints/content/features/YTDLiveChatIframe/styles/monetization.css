@@ -76,9 +76,10 @@ body.custom-yt-app-live-chat-extension
 body.custom-yt-app-live-chat-extension
 #input-panel:has(:is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer)[product-picker-open]),
 body.custom-yt-app-live-chat-extension
-  #input-panel
-  > :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer)[product-picker-open] {
+  :is(yt-live-chat-message-input-renderer, yt-live-chat-restricted-participation-renderer)[product-picker-open] {
   overflow: visible !important;
+  position: relative !important;
+  z-index: 3 !important;
 }
 
 /* Scroll the selected purchase page without clipping its controls. The picker
@@ -93,6 +94,9 @@ body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
   overscroll-behavior: contain;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
+  /* Match the current native 8px inset. A legacy input-height offset can put
+     the menu above a short iframe even when its own height is viewport-capped. */
+  bottom: 8px !important;
   max-width: calc(100vw - 16px) !important;
   max-height: calc(100vh - 16px) !important;
   overflow-y: auto !important;
@@ -314,22 +318,82 @@ body.custom-yt-app-live-chat-extension #author-name.member.yt-live-chat-author-c
 /* Jewels replaces the chat list with an engagement panel. Theme its neutral
    chrome and unselected cards; selected send gradients and artwork stay native. */
 body.custom-yt-app-live-chat-extension
-  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
+  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model, pdp-view-model)
   ytd-engagement-panel-title-header-renderer
-  :is(#title, #title-text),
-body.custom-yt-app-live-chat-extension
-  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
-  ytd-engagement-panel-title-header-renderer
-  :is(#navigation-button, #information-button)
-  :is(button, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path) {
+  :is(
+    #title,
+    #title-text,
+    :is(#navigation-button, #information-button) :is(button, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path)
+  ) {
   color: var(--extension-yt-live-font-color) !important;
-}
-body.custom-yt-app-live-chat-extension
-  ytd-engagement-panel-section-list-renderer:has(yt-pdg-gift-collection-view-model)
-  ytd-engagement-panel-title-header-renderer
-  :is(#navigation-button, #information-button)
-  :is(svg, path) {
   fill: currentColor !important;
+}
+/* The native Jewels flow has separate option and Buy/terms PDPs. Scroll them
+   together below the engagement header instead of clipping the footer behind
+   nested viewport caps or reserving it outside a very short viewport. */
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+[target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+}
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  [target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model)
+  > :is(#header, ytd-engagement-panel-title-header-renderer) {
+  flex: none !important;
+  min-width: 0 !important;
+}
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  [target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model)
+  > #content {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  height: 0 !important;
+  flex: 1 1 0px !important;
+  overflow: auto !important;
+  scroll-padding-block: 8px !important;
+  scrollbar-color: var(--extension-yt-live-secondary-font-color) transparent;
+  scrollbar-width: thin;
+  overscroll-behavior: contain;
+}
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  [target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model)
+  :is(
+    ytd-flow-root-renderer,
+    :is(#content, #flow-step).ytd-flow-root-renderer,
+    ytd-flow-step-renderer,
+    :is(#scroller, #content, #bottom-bar).ytd-flow-step-renderer,
+    pdp-view-model,
+    .ytPdpViewModelColumnContainer,
+    .ytPdpViewModelColumn
+  ) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  flex: none !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
+}
+/* Native footer margins remain outside its width, so percentage width would
+   push the Buy control beyond a narrow panel. Auto width keeps those insets. */
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  [target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model)
+  #bottom-bar.ytd-flow-step-renderer {
+  width: auto !important;
+}
+/* Native focus scrolling can leave a partly visible checkout button clipped
+   in Firefox. Pair the scrollport inset with margins on native focus targets. */
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  [target-id="PAcommerce_catalog_selection"].iron-selected:has(pdp-view-model)
+  pdp-view-model
+  :is(button, input, textarea, select, [tabindex]) {
+  scroll-margin-block: 8px !important;
 }
 body.custom-yt-app-live-chat-extension
   yt-pdg-gift-collection-view-model

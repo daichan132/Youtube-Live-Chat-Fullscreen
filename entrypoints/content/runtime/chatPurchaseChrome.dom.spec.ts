@@ -14,11 +14,8 @@ const settleMutation = async () => {
   await Promise.resolve()
 }
 
-const createFixture = () => {
-  const iframe = document.createElement('iframe')
-  document.body.append(iframe)
-  const doc = iframe.contentDocument
-  if (!doc) throw new Error('Missing iframe document')
+const populateBody = (body: HTMLElement) => {
+  const doc = body.ownerDocument
   const header = doc.createElement('yt-live-chat-header-renderer')
   const inputPanel = doc.createElement('div')
   inputPanel.id = 'input-panel'
@@ -26,21 +23,30 @@ const createFixture = () => {
   inputPanel.append(input)
   const panelPages = doc.createElement('div')
   panelPages.id = 'panel-pages'
-  doc.body.append(header, panelPages, inputPanel)
+  body.append(header, panelPages, inputPanel)
   vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ width: 360, height: 56 } as DOMRect)
   vi.spyOn(inputPanel, 'getBoundingClientRect').mockReturnValue({ width: 360, height: 72 } as DOMRect)
-  const controller = createChatChromeLease()
-  disposals.push(() => {
-    controller.release()
-    iframe.remove()
-  })
   const mountPanel = (tag = 'yt-live-chat-message-buy-flow-renderer') => {
     const panel = doc.createElement(tag)
     vi.spyOn(panel, 'getBoundingClientRect').mockReturnValue({ width: 360, height: 400 } as DOMRect)
     panelPages.append(panel)
     return panel
   }
-  return { iframe, doc, header, inputPanel, input, panelPages, controller, mountPanel }
+  return { header, inputPanel, input, panelPages, mountPanel }
+}
+
+const createFixture = () => {
+  const iframe = document.createElement('iframe')
+  document.body.append(iframe)
+  const doc = iframe.contentDocument
+  if (!doc) throw new Error('Missing iframe document')
+  const chrome = populateBody(doc.body)
+  const controller = createChatChromeLease()
+  disposals.push(() => {
+    controller.release()
+    iframe.remove()
+  })
+  return { iframe, doc, controller, ...chrome }
 }
 
 describe('native purchase chrome protection', () => {
@@ -127,6 +133,150 @@ describe('native purchase chrome protection', () => {
 
     expect(previous.doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
     expect(next.doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+  })
+
+  it.each([false, true])('transfers body ownership without a load event when an old offer is open=%s', async initiallyOpen => {
+    const { iframe, doc, header, inputPanel, controller, mountPanel } = createFixture()
+    const oldBody = doc.body
+    const oldOffer = mountPanel()
+    oldOffer.hidden = !initiallyOpen
+    const observe = vi.spyOn(MutationObserver.prototype, 'observe')
+    const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
+    const removeListener = vi.spyOn(oldBody, 'removeEventListener')
+    controller.sync(iframe, 'collapsed')
+    const previousObservers = new Set(observe.mock.contexts)
+    const nextBody = doc.createElement('body')
+    const next = populateBody(nextBody)
+    const nextOffer = next.mountPanel()
+    nextOffer.hidden = initiallyOpen
+
+    oldBody.replaceWith(nextBody)
+    await settleMutation()
+
+    expect(nextBody.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS)).toBe(!initiallyOpen)
+    expect(nextBody.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(initiallyOpen)
+    expect(nextBody).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(oldBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+    expect(oldBody).not.toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+    for (const observer of previousObservers) expect(disconnect.mock.contexts).toContain(observer)
+    expect(removeListener).toHaveBeenCalledWith('transitionend', expect.any(Function))
+    expect(removeListener).toHaveBeenCalledWith('animationend', expect.any(Function))
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    expect(inputPanel.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+
+    oldOffer.hidden = initiallyOpen
+    await settleMutation()
+    expect(nextBody.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS)).toBe(!initiallyOpen)
+    nextOffer.hidden = !initiallyOpen
+    await settleMutation()
+    expect(nextBody.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS)).toBe(initiallyOpen)
+    expect(nextBody.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(!initiallyOpen)
+    vi.runAllTimers()
+    expect(nextBody).not.toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+  })
+
+  it('rebinds purchase observation during hold without changing the new body chrome', async () => {
+    const { iframe, doc, controller } = createFixture()
+    controller.sync(iframe, 'collapsed')
+    controller.sync(iframe, 'hold')
+    const oldBody = doc.body
+    const nextBody = doc.createElement('body')
+    const next = populateBody(nextBody)
+    const offer = next.mountPanel()
+
+    oldBody.replaceWith(nextBody)
+    await settleMutation()
+
+    expect(nextBody).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(nextBody).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+    expect(oldBody).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+    offer.hidden = true
+    await settleMutation()
+    expect(nextBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+    controller.sync(iframe, 'collapsed')
+    expect(nextBody).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  })
+
+  it('restarts cloned chrome transitions without retaining the old body timer or measurements', async () => {
+    const { iframe, doc, header, controller } = createFixture()
+    controller.sync(iframe, 'collapsed')
+    const oldBody = doc.body
+    expect(oldBody).toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+    const nextBody = oldBody.cloneNode(false) as HTMLElement
+    nextBody.append(...oldBody.childNodes)
+
+    oldBody.replaceWith(nextBody)
+    await settleMutation()
+    vi.runAllTimers()
+
+    expect(oldBody).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS, IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+    expect(nextBody).toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
+    expect(nextBody).not.toHaveClass(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('56px')
+    controller.release()
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+  })
+
+  it('binds a body added after the lease starts and releases root observation on cleanup', async () => {
+    const { iframe, doc, controller } = createFixture()
+    doc.body.remove()
+    controller.sync(iframe, 'collapsed')
+    const nextBody = doc.createElement('body')
+    const next = populateBody(nextBody)
+    next.input.setAttribute('product-picker-open', '')
+    doc.documentElement.append(nextBody)
+    await settleMutation()
+    expect(nextBody).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(nextBody).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+
+    controller.release()
+    const afterRelease = doc.createElement('body')
+    const released = populateBody(afterRelease)
+    released.input.setAttribute('product-picker-open', '')
+    nextBody.replaceWith(afterRelease)
+    await settleMutation()
+    vi.runAllTimers()
+    expect(nextBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(afterRelease).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(vi.getTimerCount()).toBe(0)
+  })
+
+  it.each([false, true])('carries a body-replacement spinner only from an already-open purchase=%s', async initiallyOpen => {
+    const { iframe, doc, controller, mountPanel } = createFixture()
+    const oldOffer = mountPanel()
+    oldOffer.hidden = !initiallyOpen
+    controller.sync(iframe, 'collapsed')
+    const nextBody = doc.createElement('body')
+    const next = populateBody(nextBody)
+    const spinner = next.mountPanel('div')
+    spinner.id = 'loading'
+    spinner.className = 'yt-live-chat-renderer'
+
+    doc.body.replaceWith(nextBody)
+    await settleMutation()
+
+    expect(nextBody.classList.contains(IFRAME_PURCHASE_ACTIVE_CLASS)).toBe(initiallyOpen)
+    expect(nextBody.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(!initiallyOpen)
+    spinner.hidden = true
+    await settleMutation()
+    expect(nextBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(nextBody).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  })
+
+  it('does not carry purchase continuity to another document in the same iframe', () => {
+    const previous = createFixture()
+    previous.mountPanel()
+    previous.controller.sync(previous.iframe, 'collapsed')
+    const next = createFixture()
+    const spinner = next.mountPanel('div')
+    spinner.id = 'loading'
+    spinner.className = 'yt-live-chat-renderer'
+    Object.defineProperty(previous.iframe, 'contentDocument', { configurable: true, get: () => next.doc })
+
+    previous.controller.sync(previous.iframe, 'collapsed')
+
+    expect(next.doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(next.doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
   })
 
   it('reopens already-collapsed chrome when the native picker attribute changes without another runtime sync', async () => {

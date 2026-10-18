@@ -1,10 +1,10 @@
 import { useAtomValue } from 'jotai'
-import { type CSSProperties, type KeyboardEvent, type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, type KeyboardEvent, type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useDocumentFocus } from '@/entrypoints/content/hooks/watchYouTubeUI/useDocumentFocus'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { effectiveProfileAtom } from '@/shared/state'
-import { getControlRailTop } from '../features/Draggable/hooks/clipGeometry'
 import { ChatSurface } from './ChatSurface'
+import { getControlRailLayout } from './controlRailLayout'
 import { OverlayControlRail } from './OverlayControlRail'
 import { ResizeHandles } from './ResizeHandles'
 import { useOverlayGeometry } from './useOverlayGeometry'
@@ -13,8 +13,6 @@ import { useOverlayInteraction } from './useOverlayInteraction'
 const CONTROL_RAIL_GAP = 6
 const CONTROL_RAIL_HEIGHT = 46
 const CONTROL_VIEWPORT_PADDING = 4
-const CONTROL_HOVER_BRIDGE_OVERLAP = 12
-const CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM = 12
 
 export type OverlayFrameProps = {
   children: ReactNode
@@ -48,6 +46,11 @@ export const OverlayFrame = ({
     alwaysVisible: chatInputFocused || purchaseActive || profile.display.idleVisibility === 'always-visible',
   })
   const [referenceElement, setReferenceElement] = useState<HTMLDivElement | null>(null)
+  const [controlRailSize, setControlRailSize] = useState({ length: 130, thickness: CONTROL_RAIL_HEIGHT })
+  const measureControlRail = useCallback(({ width, height }: { width: number; height: number }) => {
+    const next = { length: Math.max(width, height), thickness: Math.min(width, height) }
+    setControlRailSize(current => (current.length === next.length && current.thickness === next.thickness ? current : next))
+  }, [])
   const geometry = useOverlayGeometry({
     referenceElement,
     settingsOpen,
@@ -72,24 +75,17 @@ export const OverlayFrame = ({
     }
   }, [geometry.displayGeometry, geometry.viewport, purchaseActive])
   const { coordinates, size } = purchaseLayout
-  const controlRailTop = getControlRailTop({
-    chatHeight: size.height,
-    containerTop: coordinates.y,
-    controlHeight: CONTROL_RAIL_HEIGHT,
+  const controlLayout = getControlRailLayout({
+    chat: { left: coordinates.x, top: coordinates.y, width: size.width, height: size.height },
+    viewport: geometry.viewport,
+    ...controlRailSize,
     gap: CONTROL_RAIL_GAP,
-    viewportHeight: geometry.viewport.height,
-    viewportPadding: CONTROL_VIEWPORT_PADDING,
+    padding: CONTROL_VIEWPORT_PADDING,
   })
   // Leave 4px above the placement panel and its 4px gap below it.
-  const placementPanelMaxHeight = Math.max(0, coordinates.y + controlRailTop - 8)
-  const controlHoverBridgeTop = Math.max(0, size.height - CONTROL_HOVER_BRIDGE_OVERLAP)
-  const controlHoverBridgeBottom = controlRailTop + CONTROL_RAIL_HEIGHT + CONTROL_HOVER_BRIDGE_EXTRA_BOTTOM
-  const controlHoverBridgeHeight = Math.max(0, controlHoverBridgeBottom - controlHoverBridgeTop)
+  const placementPanelMaxHeight = Math.max(0, coordinates.y + controlLayout.rail.top - 8)
   const controlHoverBridgeStyle: CSSProperties = {
-    top: controlHoverBridgeTop,
-    left: 0,
-    right: 0,
-    height: controlHoverBridgeHeight,
+    ...controlLayout.bridge,
     pointerEvents: interaction.state === 'resizing' ? 'none' : 'auto',
     zIndex: CHAT_PANEL_LAYER.hoverBridge,
   }
@@ -124,7 +120,7 @@ export const OverlayFrame = ({
   }
 
   return (
-    <div ref={setReferenceElement} className='absolute inset-0 overflow-hidden' style={{ pointerEvents: 'none' }}>
+    <div ref={setReferenceElement} className='absolute inset-0 overflow-clip' style={{ pointerEvents: 'none' }}>
       <div role='application' data-ylc-resizable className='absolute' style={frameStyle}>
         <div data-ylc-draggable-frame className='relative h-full w-full'>
           <ChatSurface
@@ -136,7 +132,7 @@ export const OverlayFrame = ({
           >
             {children}
           </ChatSurface>
-          {!purchaseActive && controlHoverBridgeHeight > 0 ? (
+          {!purchaseActive && controlLayout.bridge && controlLayout.bridge.width > 0 && controlLayout.bridge.height > 0 ? (
             // biome-ignore lint/a11y/noStaticElementInteractions: This transparent bridge preserves hover between chat and controls.
             <div
               data-ylc-control-hover-bridge
@@ -154,9 +150,15 @@ export const OverlayFrame = ({
                 isDragging={interaction.state === 'dragging'}
                 isResizing={interaction.state === 'resizing'}
                 isReady={ready && !settingsOpen}
-                isVisible={interaction.controlsVisible}
-                placement={{ top: controlRailTop, right: 0 }}
-                placementAnchor={{ right: coordinates.x + size.width, top: coordinates.y + controlRailTop }}
+                isVisible={interaction.controlsVisible && controlLayout.hoverEnabled}
+                vertical={controlLayout.vertical}
+                onSizeChange={measureControlRail}
+                placement={{ top: controlLayout.rail.top, left: controlLayout.rail.left }}
+                placementAnchor={{
+                  left: coordinates.x + controlLayout.rail.left,
+                  right: coordinates.x + controlLayout.rail.left + controlLayout.rail.width,
+                  top: coordinates.y + controlLayout.rail.top,
+                }}
                 viewportSize={geometry.viewport}
                 placementPanelMaxHeight={placementPanelMaxHeight}
                 backgroundColor={profile.appearance.backgroundColor}

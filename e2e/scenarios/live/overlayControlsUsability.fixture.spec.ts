@@ -83,10 +83,79 @@ test('keeps both first-row placement actions above resize handles in a 480x320 p
   }
 })
 
-test('opens placement with a real click when the rail overlaps the bottom edge in a 320x240 player', async ({ page, extension }) => {
-  await setup(page, extension, initial, { width: 320, height: 240 })
-  await page.locator('[data-ylc-placement-button]').click({ timeout: 3000 })
+test('keeps controls off chat when no outside strip fits and opens placement with the keyboard', async ({ page, extension }) => {
+  const overlay = await setup(page, extension, initial, { width: 320, height: 240 })
+  const rail = page.locator('[data-ylc-control-rail]')
+  await overlay.frame().hover()
+  await expect(rail).toHaveCSS('opacity', '0')
+  await expect(rail).toHaveCSS('pointer-events', 'none')
+  await expect
+    .poll(() =>
+      rail.evaluate(element => {
+        const bounds = element.getBoundingClientRect()
+        const root = element.getRootNode() as ShadowRoot
+        const hit = root.elementFromPoint(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2)
+        return !hit || !element.contains(hit)
+      }),
+    )
+    .toBe(true)
+
+  const settings = page.getByRole('button', { name: 'Open settings', exact: true })
+  // The native page/iframe can contribute earlier tab stops; the controls
+  // must be reachable without assuming they follow the fullscreen trigger.
+  for (let step = 0; step < 8 && !(await settings.evaluate(element => element.matches(':focus'))); step += 1) {
+    await page.keyboard.press('Tab')
+  }
+  await expect(settings).toBeFocused()
+  await expect(rail).toHaveCSS('opacity', '1')
+  for (const label of ['Drag to move', 'Adjust position and size']) {
+    await page.keyboard.press('Tab')
+    await expect(page.getByRole('button', { name: label, exact: true })).toBeFocused()
+    await expect(rail).toHaveCSS('opacity', '1')
+  }
+  await page.keyboard.press('Enter')
   await expect(page.locator('[data-ylc-placement-panel]')).toBeVisible()
+})
+
+test('opens placement with a real click on the outside right strip in a 320x240 player', async ({ page, extension }) => {
+  const overlay = await setup(page, extension, initial, { width: 320, height: 240 })
+  // This case deliberately uses actual small-viewport coordinates. The shared
+  // setup's scaled seed above has no complete outside strip for the rail.
+  await patchOverlayStore(extension, {
+    geometry: {
+      reference: 'player',
+      rect: { x: 10 / 320, y: 10 / 240, width: 240 / 320, height: 200 / 240 },
+      pinned: true,
+    },
+  })
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 10, y: 10, width: 240, height: 200 })
+  await overlay.revealControls()
+  const rail = page.locator('[data-ylc-control-rail]')
+  await expect(rail).toHaveAttribute('data-ylc-control-rail-orientation', 'vertical')
+  await expect(rail).toHaveCSS('opacity', '1')
+  await expect(async () => {
+    const bounds = await boundsOf(rail)
+    const chat = await overlay.getGeometry()
+    expect(bounds.x).toBeCloseTo(chat.x + chat.width + 6, 1)
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(316)
+    expect(bounds.y).toBeGreaterThanOrEqual(4)
+    expect(bounds.y + bounds.height).toBeLessThanOrEqual(236)
+  }).toPass({ timeout: 3000 })
+  await page.locator('[data-ylc-placement-button]').click({ timeout: 3000 })
+  const panel = page.locator('[data-ylc-placement-panel]')
+  await expect(panel).toBeVisible()
+  const anchor = await boundsOf(panel)
+  expect(anchor.height).toBeGreaterThanOrEqual(100)
+  expect(anchor.x).toBeGreaterThanOrEqual(0)
+  expect(anchor.y).toBeGreaterThanOrEqual(0)
+  expect(anchor.x + anchor.width).toBeLessThanOrEqual(320)
+  expect(anchor.y + anchor.height).toBeLessThanOrEqual(240)
+  await panel.getByRole('button', { name: 'Move down', exact: true }).click()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 10, y: 20, width: 240, height: 200 })
+  await expectStationary(panel, anchor)
+  await page.keyboard.press('Escape')
+  await expect(panel).toHaveCount(0)
+  await expect(page.locator('[data-ylc-placement-button]')).toBeFocused()
 })
 
 for (const action of ['Move up', 'Move down', 'Increase width', 'Increase height']) {

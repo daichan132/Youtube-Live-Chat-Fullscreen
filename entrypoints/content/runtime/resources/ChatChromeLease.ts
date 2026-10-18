@@ -163,8 +163,8 @@ const mutationMayChangePurchaseUI = (mutation: MutationRecord) => {
 }
 
 /** Observe only native purchase presentation, emitting the initial state and changes. */
-export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolean) => void) => {
-  let open = hasOpenChatPurchaseUI(body)
+export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolean) => void, previouslyOpen = false) => {
+  let open = hasOpenChatPurchaseUI(body, previouslyOpen)
   const refresh = () => {
     if (!isAccessibleNode(body)) return
     const nextOpen = hasOpenChatPurchaseUI(body, open)
@@ -204,10 +204,12 @@ export type ChatChromeLease = {
 
 export const createChatChromeLease = (): ChatChromeLease => {
   let iframe: HTMLIFrameElement | null = null
+  let chatDocument: Document | null = null
   let body: HTMLElement | null = null
   let elements: HTMLElement[] = []
   let settleTimer: number | null = null
   let targetObserver: MutationObserver | null = null
+  let documentObserver: MutationObserver | null = null
   let stopPurchaseObserver: (() => void) | null = null
   let purchaseOpen = false
   let requestedIntent: ChatOnlyChromeIntent = 'inactive'
@@ -279,6 +281,8 @@ export const createChatChromeLease = (): ChatChromeLease => {
   }
 
   const cleanup = (target = body) => {
+    documentObserver?.disconnect()
+    documentObserver = null
     disconnectTargetObserver()
     stopPurchaseObserver?.()
     stopPurchaseObserver = null
@@ -304,10 +308,14 @@ export const createChatChromeLease = (): ChatChromeLease => {
   const ensureTargetObserver = () => {
     if (!body) return
     if (!stopPurchaseObserver) {
-      stopPurchaseObserver = observeChatPurchaseUI(body, open => {
-        setPurchaseOpen(open)
-        applyRequestedIntent()
-      })
+      stopPurchaseObserver = observeChatPurchaseUI(
+        body,
+        open => {
+          setPurchaseOpen(open)
+          applyRequestedIntent()
+        },
+        purchaseOpen,
+      )
     }
     if (targetObserver || requestedIntent === 'inactive') return
     targetObserver = new MutationObserver(mutations => {
@@ -325,13 +333,37 @@ export const createChatChromeLease = (): ChatChromeLease => {
 
   const bind = (nextIframe: HTMLIFrameElement | null) => {
     const nextBody = getBody(nextIframe)
-    if (nextIframe === iframe && nextBody === body) {
+    let nextDocument = nextBody?.ownerDocument ?? null
+    if (!nextDocument) {
+      try {
+        nextDocument = nextIframe?.contentDocument ?? null
+      } catch {
+        // Cross-origin navigation is outside this document lease's ownership.
+      }
+    }
+    if (nextIframe === iframe && nextDocument === chatDocument && nextBody === body) {
       ensureTargetObserver()
       return
     }
+    const continuePurchase = nextIframe === iframe && nextDocument === chatDocument && purchaseOpen
     cleanup()
     iframe = nextIframe
+    chatDocument = nextDocument
     body = nextBody
+    // A shallow body clone can carry our previous transition and padding targets.
+    // Re-establish this lease's presentation from the current intent and native UI.
+    clearChromePresentation()
+    purchaseOpen = continuePurchase
+    if (nextDocument?.documentElement) {
+      const observedDocument = nextDocument
+      const observedIframe = nextIframe
+      documentObserver = new MutationObserver(() => {
+        if (observedDocument !== chatDocument || observedIframe !== iframe || observedDocument.body === body) return
+        bind(observedIframe)
+        applyRequestedIntent()
+      })
+      documentObserver.observe(observedDocument.documentElement, { childList: true })
+    }
     ensureTargetObserver()
   }
 
@@ -415,6 +447,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
       requestedIntent = 'inactive'
       cleanup()
       iframe = null
+      chatDocument = null
       body = null
     },
   }

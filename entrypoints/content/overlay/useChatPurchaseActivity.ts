@@ -6,6 +6,7 @@ export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (
   useLayoutEffect(() => {
     if (!carrier) return
     let iframe: HTMLIFrameElement | null = null
+    let chatDocument: Document | null = null
     let body: HTMLElement | null = null
     let active = false
     let release: (() => void) | undefined
@@ -15,23 +16,40 @@ export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (
     }
     const bind = () => {
       const nextIframe = carrier.querySelector('iframe')
-      let nextBody: HTMLElement | null = null
+      let nextDocument: Document | null = null
       try {
-        nextBody = nextIframe?.contentDocument?.body ?? null
+        nextDocument = nextIframe?.contentDocument ?? null
       } catch {
         // A native payment navigation may be cross-origin; do not inspect it.
       }
-      if (nextIframe === iframe && nextBody === body) return
+      const nextBody = nextDocument?.body ?? null
+      if (nextIframe === iframe && nextDocument === chatDocument && nextBody === body) return
       release?.()
       release = undefined
       const sameIframe = nextIframe === iframe
+      const sameDocument = nextDocument === chatDocument
+      const continuePurchase = sameIframe && sameDocument && active
       iframe = nextIframe
+      chatDocument = nextDocument
       body = nextBody
-      // Keep an already-open flow visible through an inaccessible navigation
-      // in the same borrowed frame. Its old document is no longer observed.
-      if (!body && sameIframe && iframe && active) return
-      update(false)
-      release = body ? observeChatPurchaseUI(body, update) : undefined
+      let stopPurchaseObserver: (() => void) | undefined
+      let documentObserver: MutationObserver | undefined
+      if (nextDocument?.documentElement) {
+        const observedDocument = nextDocument
+        documentObserver = new MutationObserver(() => {
+          if (observedDocument === chatDocument && observedDocument.body !== body) bind()
+        })
+        documentObserver.observe(observedDocument.documentElement, { childList: true })
+      }
+      release = () => {
+        documentObserver?.disconnect()
+        stopPurchaseObserver?.()
+      }
+      // An inaccessible navigation or temporarily absent body can retain this
+      // flow. A different accessible document starts with no purchase history.
+      if (!body && sameIframe && iframe && active && (!nextDocument || sameDocument)) return
+      if (body) stopPurchaseObserver = observeChatPurchaseUI(body, update, continuePurchase)
+      else update(false)
     }
     const observer = new MutationObserver(bind)
     observer.observe(carrier, { childList: true })

@@ -18,6 +18,54 @@ const props = {
 const placement = () => screen.getByRole('button', { name: 'content.placement.open' })
 
 describe('overlay menu dismissal and visual help', () => {
+  it.each([
+    { dir: 'ltr', left: 256, right: 302, expectedLeft: 12 },
+    { dir: 'rtl', left: 256, right: 302, expectedLeft: 12 },
+    { dir: 'ltr', left: 18, right: 64, expectedLeft: 68 },
+    { dir: 'rtl', left: 18, right: 64, expectedLeft: 68 },
+  ])('keeps a side-rail menu usable and stationary in $dir at x=$left', ({ dir, left, right, expectedLeft }) => {
+    const onMoveBy = vi.fn()
+    const initial = { left, right, top: 10 }
+    const view = render(
+      <div dir={dir}>
+        <OverlayControlRail
+          {...props}
+          vertical
+          placementAnchor={initial}
+          viewportSize={{ width: 320, height: 240 }}
+          placementPanelMaxHeight={2}
+          onMoveBy={onMoveBy}
+        />
+      </div>,
+    )
+    fireEvent.click(placement())
+    const panel = () => screen.getByRole('group', { name: 'content.placement.open' })
+    expect(panel()).toHaveStyle({ width: '240px', maxHeight: '224px', overflowY: 'auto' })
+    expect(Number.parseFloat(panel().style.left) + left).toBe(expectedLeft)
+    expect(Number.parseFloat(panel().style.top) + initial.top).toBe(8)
+    expect(expectedLeft).toBeGreaterThanOrEqual(8)
+    expect(expectedLeft + 240).toBeLessThanOrEqual(312)
+    fireEvent.click(screen.getByRole('button', { name: 'content.placement.down' }))
+    expect(onMoveBy).toHaveBeenCalledOnce()
+    // An adjustment may move the rail and switch it back to a horizontal row.
+    // Keep the already-open menu's global targets stationary through both.
+    const next = { left: 100, right: 230, top: 60 }
+    view.rerender(
+      <div dir={dir}>
+        <OverlayControlRail
+          {...props}
+          placementAnchor={next}
+          viewportSize={{ width: 320, height: 240 }}
+          placementPanelMaxHeight={52}
+          onMoveBy={onMoveBy}
+        />
+      </div>,
+    )
+    expect(Number.parseFloat(panel().style.left) + next.left).toBe(expectedLeft)
+    expect(Number.parseFloat(panel().style.top) + next.top).toBe(8)
+    expect(panel()).toHaveStyle({ width: '240px', maxHeight: '224px' })
+  })
+
   it('dismisses outside without preventing the ordinary outside click', () => {
     const click = vi.fn()
     render(

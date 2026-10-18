@@ -100,6 +100,49 @@ describe('OverlayFrame', () => {
     })
   })
 
+  it('moves controls into the free side strip without an input-intercepting hover bridge', () => {
+    window.innerWidth = 320
+    window.innerHeight = 240
+    store.set(chatSettingsStateAtom, {
+      profile: DEFAULT_CHAT_PROFILE,
+      geometry: { reference: 'player', rect: { x: 10 / 320, y: 10 / 240, width: 0.65, height: 200 / 240 }, pinned: true },
+      presets: [],
+    })
+    const view = renderWithStore(<OverlayFrame>Native chat</OverlayFrame>, store)
+    const panel = view.getByRole('application')
+    const rail = view.container.querySelector<HTMLElement>('[data-ylc-control-rail]')
+    const bridge = view.container.querySelector<HTMLElement>('[data-ylc-control-hover-bridge]')
+    if (!rail || !bridge) throw new Error('Expected outside controls and their connection')
+
+    expect(rail.style.flexDirection).toBe('column')
+    expect(Number.parseFloat(rail.style.left)).toBeGreaterThanOrEqual(Number.parseFloat(panel.style.width))
+    expect(Number.parseFloat(bridge.style.left)).toBeGreaterThanOrEqual(Number.parseFloat(panel.style.width))
+    expect(Number.parseFloat(bridge.style.width)).toBe(6)
+  })
+
+  it('keeps a full-viewport chat clear on hover while allowing Tab to reveal the controls', async () => {
+    const user = userEvent.setup()
+    window.innerWidth = 260
+    window.innerHeight = 200
+    store.set(chatSettingsStateAtom, {
+      profile: DEFAULT_CHAT_PROFILE,
+      geometry: { reference: 'player', rect: { x: 10 / 260, y: 10 / 200, width: 0.65, height: 0.9 }, pinned: true },
+      presets: [],
+    })
+    const view = renderWithStore(<OverlayFrame>Native chat</OverlayFrame>, store)
+    const rail = view.container.querySelector<HTMLElement>('[data-ylc-control-rail]')
+    const chat = view.container.querySelector<HTMLElement>('[data-ylc-chat-inner]')
+    if (!rail || !chat) throw new Error('Expected chat and keyboard controls')
+    fireEvent.mouseEnter(chat, { clientX: 30, clientY: 30 })
+    expect(rail).toHaveStyle({ opacity: '0', pointerEvents: 'none' })
+    expect(view.container.querySelector('[data-ylc-control-hover-bridge]')).toBeNull()
+
+    await user.tab()
+
+    expect(view.getByRole('button', { name: 'content.aria.openSettings' })).toHaveFocus()
+    expect(rail).toHaveStyle({ opacity: '1', pointerEvents: 'auto' })
+  })
+
   it('applies every placement action to the visible panel and saves player-relative geometry', async () => {
     const user = userEvent.setup()
     const { getByRole } = renderWithStore(

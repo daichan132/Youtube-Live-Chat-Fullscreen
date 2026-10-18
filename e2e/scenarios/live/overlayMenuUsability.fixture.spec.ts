@@ -151,7 +151,7 @@ for (const viewport of [
     for (const [selector, label] of controls) {
       await page.locator(selector).hover()
       await expect(tooltip).toContainText(label)
-      await expectTooltipAtButton(page, page.locator(selector), viewport.height === 240 ? 'top' : 'bottom', viewport)
+      await expectTooltipAtButton(page, page.locator(selector), 'bottom', viewport)
     }
     await testInfo.attach('hover-help', { body: await page.screenshot(), contentType: 'image/png' })
     await page.locator('[data-ylc-placement-button]').click()
@@ -169,6 +169,12 @@ for (const edge of [
     for (const [selector, label] of controls) {
       const button = page.locator(selector)
       await button.hover()
+      expect(
+        await page.locator('[data-ylc-resizable]').evaluate(element => ({
+          left: element.parentElement?.scrollLeft,
+          top: element.parentElement?.scrollTop,
+        })),
+      ).toEqual({ left: 0, top: 0 })
       await expect(tooltip).toContainText(label)
       await expectTooltipAtButton(page, button, 'bottom')
       await testInfo.attach(`${edge.name}-edge-${label}`, { body: await page.screenshot(), contentType: 'image/png' })
@@ -176,12 +182,19 @@ for (const edge of [
   })
 }
 
-test('flips tooltip above the rail at the bottom player edge', async ({ page, extension }, testInfo) => {
+test('keeps tooltip below the outside rail above chat at the bottom player edge', async ({ page, extension }, testInfo) => {
   await setup(page, extension, { width: 1280, height: 720 }, { width: 240, height: 180 }, { x: 100, y: 530 })
+  const overlay = new ExtensionOverlay(page)
+  await expect(async () => {
+    const rail = await page.locator('[data-ylc-control-rail]').boundingBox()
+    if (!rail) throw new Error('Outside controls need visible browser bounds.')
+    const chat = await overlay.getGeometry()
+    expect(rail.y + rail.height).toBeLessThanOrEqual(chat.y - 6)
+  }).toPass({ timeout: 3000 })
   const drag = page.locator('[data-ylc-drag-handle]')
   await drag.hover()
   await expect(page.locator('[data-ylc-control-tooltip]')).toContainText('Use arrow keys to move')
-  await expectTooltipAtButton(page, drag, 'top')
+  await expectTooltipAtButton(page, drag, 'bottom')
   await testInfo.attach('bottom-edge-tooltip', { body: await page.screenshot(), contentType: 'image/png' })
 })
 
@@ -241,21 +254,35 @@ test('keeps hover help in the configured chat palette across live appearance cha
   const tooltip = page.locator('[data-ylc-control-tooltip]')
   for (const palette of [
     {
-      name: 'teal', backgroundColor: { r: 12, g: 34, b: 44, a: 0.2 }, fontColor: { r: 216, g: 247, b: 232, a: 1 },
-      background: 'rgba(12, 34, 44, 0.94)', text: 'rgb(216, 247, 232)', border: 'rgba(216, 247, 232, 0.18)',
+      name: 'teal',
+      backgroundColor: { r: 12, g: 34, b: 44, a: 0.2 },
+      fontColor: { r: 216, g: 247, b: 232, a: 1 },
+      background: 'rgba(12, 34, 44, 0.94)',
+      text: 'rgb(216, 247, 232)',
+      border: 'rgba(216, 247, 232, 0.18)',
     },
     {
-      name: 'cream', backgroundColor: { r: 248, g: 236, b: 214, a: 1 }, fontColor: { r: 70, g: 40, b: 30, a: 0.9 },
-      background: 'rgb(248, 236, 214)', text: 'rgba(70, 40, 30, 0.9)', border: 'rgba(70, 40, 30, 0.18)',
+      name: 'cream',
+      backgroundColor: { r: 248, g: 236, b: 214, a: 1 },
+      fontColor: { r: 70, g: 40, b: 30, a: 0.9 },
+      background: 'rgb(248, 236, 214)',
+      text: 'rgba(70, 40, 30, 0.9)',
+      border: 'rgba(70, 40, 30, 0.18)',
     },
     {
-      name: 'violet', backgroundColor: { r: 48, g: 20, b: 64, a: 0.98 }, fontColor: { r: 250, g: 224, b: 255, a: 1 },
-      background: 'rgba(48, 20, 64, 0.98)', text: 'rgb(250, 224, 255)', border: 'rgba(250, 224, 255, 0.18)',
+      name: 'violet',
+      backgroundColor: { r: 48, g: 20, b: 64, a: 0.98 },
+      fontColor: { r: 250, g: 224, b: 255, a: 1 },
+      background: 'rgba(48, 20, 64, 0.98)',
+      text: 'rgb(250, 224, 255)',
+      border: 'rgba(250, 224, 255, 0.18)',
     },
   ]) {
     await page.locator('[data-ylc-settings-btn]').hover()
     await expect(tooltip).toBeVisible()
-    await patchOverlayStore(extension, { profile: { appearance: { backgroundColor: palette.backgroundColor, fontColor: palette.fontColor } } })
+    await patchOverlayStore(extension, {
+      profile: { appearance: { backgroundColor: palette.backgroundColor, fontColor: palette.fontColor } },
+    })
     // The already-open tooltip must update before moving to another control.
     await expect(tooltip).toHaveCSS('background-color', palette.background)
     await expect(tooltip).toHaveCSS('color', palette.text)

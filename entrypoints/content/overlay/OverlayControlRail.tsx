@@ -27,14 +27,17 @@ const CONTROL_SELECTORS = {
   placement: '[data-ylc-placement-button]',
 } as const
 type ControlName = 'settings' | 'drag' | 'placement'
+type SideMenuPlacement = { left: number; top: number; width: number; maxHeight: number }
 
 type OverlayControlRailProps = {
   isDragging: boolean
   isResizing?: boolean
   isReady: boolean
   isVisible: boolean
+  vertical?: boolean
+  onSizeChange?: (size: { width: number; height: number }) => void
   placement: CSSProperties
-  placementAnchor?: { right: number; top: number }
+  placementAnchor?: { left?: number; right: number; top: number }
   viewportSize?: { width: number; height: number }
   placementPanelMaxHeight?: number
   backgroundColor: RGBA
@@ -61,6 +64,8 @@ export const OverlayControlRail = ({
   isResizing = false,
   isReady,
   isVisible,
+  vertical = false,
+  onSizeChange,
   placement,
   placementAnchor,
   viewportSize,
@@ -91,6 +96,7 @@ export const OverlayControlRail = ({
     right: number
     top: number
     maxHeight: number | undefined
+    sideMenu: SideMenuPlacement | null
   } | null>(null)
   useLayoutEffect(() => {
     onAdjustmentOpenChange?.(placementOpen)
@@ -98,6 +104,18 @@ export const OverlayControlRail = ({
   const placementButtonRef = useRef<HTMLButtonElement>(null)
   const railRef = useRef<HTMLDivElement>(null)
   const tooltipRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    const rail = railRef.current
+    if (!rail || !onSizeChange) return
+    const update = () => {
+      if (rail.offsetWidth > 0 && rail.offsetHeight > 0) onSizeChange({ width: rail.offsetWidth, height: rail.offsetHeight })
+    }
+    update()
+    if (typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(update)
+    observer.observe(rail)
+    return () => observer.disconnect()
+  }, [onSizeChange, vertical])
   const [tooltipLayout, setTooltipLayout] = useState<{ left: number; top: number; side: 'top' | 'bottom' } | null>(null)
   const dismissPlacement = useCallback(() => {
     setPlacementOpen(false)
@@ -127,12 +145,27 @@ export const OverlayControlRail = ({
   }
   const preserveAdjustmentAnchor = () => {
     if (!placementAnchor) return
-    setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: effectivePlacementMaxHeight })
+    setAdjustmentAnchor(current => current ?? { ...placementAnchor, maxHeight: effectivePlacementMaxHeight, sideMenu })
   }
+  const railLeft = placementAnchor ? (placementAnchor.left ?? placementAnchor.right - (railRef.current?.offsetWidth || 46)) : 0
+  let sideMenu: SideMenuPlacement | null = null
+  if (vertical && placementAnchor) {
+    const width = Math.min(240, Math.max(0, (viewportSize?.width ?? window.innerWidth) - 16))
+    const viewportWidth = viewportSize?.width ?? window.innerWidth
+    const beforeRail = railLeft - 4 - width
+    sideMenu = {
+      left: Math.max(8, Math.min(beforeRail >= 8 ? beforeRail : placementAnchor.right + 4, viewportWidth - width - 8)),
+      top: 8,
+      width,
+      maxHeight: Math.max(0, (viewportSize?.height ?? window.innerHeight) - 16),
+    }
+  }
+  const displayedSideMenu = adjustmentAnchor ? adjustmentAnchor.sideMenu : sideMenu
   const effectivePlacementMaxHeight =
-    placementHeightLimit === undefined
+    sideMenu?.maxHeight ??
+    (placementHeightLimit === undefined
       ? placementPanelMaxHeight
-      : Math.min(placementPanelMaxHeight ?? placementHeightLimit, placementHeightLimit)
+      : Math.min(placementPanelMaxHeight ?? placementHeightLimit, placementHeightLimit))
   const displayed = isReady && (isVisible || focused || placementOpen)
   const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
@@ -219,6 +252,7 @@ export const OverlayControlRail = ({
     <div
       ref={railRef}
       data-ylc-control-rail
+      data-ylc-control-rail-orientation={vertical ? 'vertical' : 'horizontal'}
       className='ylc-overlay-control-rail absolute flex items-center'
       onPointerDownCapture={() => setFocusedControl(null)}
       onKeyDownCapture={event => {
@@ -256,6 +290,7 @@ export const OverlayControlRail = ({
         ...placement,
         transition: focused ? 'none' : undefined,
         gap: CONTROL_GAP,
+        flexDirection: vertical ? 'column' : 'row',
         opacity: displayed ? 1 : 0,
         pointerEvents: displayed ? 'auto' : 'none',
         zIndex: CHAT_PANEL_LAYER.controls,
@@ -344,11 +379,23 @@ export const OverlayControlRail = ({
           data-ylc-placement-panel
           className='ylc-placement-panel absolute right-0 bottom-full mb-1'
           style={{
-            width: 240,
+            width: displayedSideMenu?.width ?? 240,
             minWidth: 0,
-            maxHeight: adjustmentAnchor ? adjustmentAnchor.maxHeight : effectivePlacementMaxHeight,
+            maxHeight: displayedSideMenu?.maxHeight ?? (adjustmentAnchor ? adjustmentAnchor.maxHeight : effectivePlacementMaxHeight),
+            // The rail is transformed, so fixed positioning would still use
+            // its containing block. Convert the bounded player coordinates
+            // back to rail offsets, including after an adjustment moves it.
+            ...(displayedSideMenu && placementAnchor
+              ? {
+                  left: displayedSideMenu.left - railLeft,
+                  top: displayedSideMenu.top - placementAnchor.top,
+                  right: 'auto',
+                  bottom: 'auto',
+                  marginBottom: 0,
+                }
+              : {}),
             transform:
-              adjustmentAnchor && placementAnchor
+              !displayedSideMenu && adjustmentAnchor && placementAnchor
                 ? `translate(${adjustmentAnchor.right - placementAnchor.right}px, ${adjustmentAnchor.top - placementAnchor.top}px)`
                 : undefined,
             overflowY: 'auto',

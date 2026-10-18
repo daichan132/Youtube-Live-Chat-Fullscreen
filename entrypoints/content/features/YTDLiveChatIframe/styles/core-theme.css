@@ -24,6 +24,13 @@ body.custom-yt-app-live-chat-extension #subtext.yt-live-chat-message-renderer,
 body.custom-yt-app-live-chat-extension .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--tonal {
   color: var(--extension-yt-live-font-color);
 }
+/* Gift announcements use attributed copy outside the ordinary message renderer.
+   Theme its neutral text hosts while leaving colored runs and gift artwork native. */
+body.custom-yt-app-live-chat-extension
+  yt-gift-message-view-model
+  :is(#author-name-v2, #message-v2, #author-name-v2 > .ytAttributedStringHost, #message-v2 > .ytAttributedStringHost) {
+  color: var(--extension-yt-live-font-color) !important;
+}
 /* The Top fans crown is YouTube-owned semantic color. All other header icons
    remain extension-colored for contrast against the configured background. */
 body.custom-yt-app-live-chat-extension

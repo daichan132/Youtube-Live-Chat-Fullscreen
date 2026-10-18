@@ -98,7 +98,7 @@ const appearanceSurfaceHtml = `
   <yt-live-chat-product-picker-panel-view-model><yt-attributed-string>Support choices</yt-attributed-string></yt-live-chat-product-picker-panel-view-model>
   <yt-live-chat-paid-sticker-panel-renderer>
     <yt-live-chat-super-sticker-preview-renderer>
-      <div id="header"><div id="left"><yt-icon-button id="close"><button aria-label="Close purchase preview"><svg width="24" height="24"><path d="M4 4l16 16M20 4L4 20" /></svg></button></yt-icon-button></div></div>
+      <div id="header"><div id="left"><yt-icon-button id="close"><button aria-label="Close purchase preview"><svg width="24" height="24"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4z" /></svg></button></yt-icon-button></div></div>
       <div id="footer">
         <button aria-label="Purchase sticker" style="background: rgb(6,95,212); color: rgb(241,241,241)">Purchase</button>
         <div id="back-button"><button aria-label="Show stickers" style="color: inherit; background: transparent">Show stickers</button></div>
@@ -108,7 +108,7 @@ const appearanceSurfaceHtml = `
   </yt-live-chat-paid-sticker-panel-renderer>
   <ytd-sponsorships-gift-offer-renderer>
     <ytd-sponsorships-gift-offer-header-renderer>
-      <yt-icon-button id="close-button"><button aria-label="Close membership gift"><svg width="24" height="24"><path d="M4 4l16 16M20 4L4 20" /></svg></button></yt-icon-button>
+      <yt-icon-button id="close-button"><button aria-label="Close membership gift"><svg width="24" height="24"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4z" /></svg></button></yt-icon-button>
       <div id="title">Membership gifts</div>
     </ytd-sponsorships-gift-offer-header-renderer>
     <ytd-sponsorships-gift-offer-body-renderer>
@@ -206,6 +206,63 @@ const appearanceSurfaceHtml = `
 
 // These local native-like handlers exercise event ownership and UI lifetime only.
 // No payment SDK, transaction endpoint, or real account is involved.
+const jewelsPurchaseHtml = `
+  <style>
+    #fixture-jewels-page { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+    #fixture-jewels-page > #header { flex: none; height: 56px; }
+    #fixture-jewels-page ytd-engagement-panel-title-header-renderer { display: flex; align-items: center; height: 100%; }
+    #fixture-jewels-page ytd-engagement-panel-title-header-renderer #title { flex: 1; margin: 0 8px; }
+    #fixture-jewels-page ytd-engagement-panel-title-header-renderer :is(#title-text, button, .ytSpecIconShapeHost, svg, path) { color: rgb(15,15,15); }
+    #fixture-jewels-page ytd-engagement-panel-title-header-renderer button { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: transparent; border: 0; padding: 8px; }
+    #fixture-jewels-page ytd-engagement-panel-title-header-renderer svg { fill: currentColor; }
+    #fixture-jewels-page > #content { height: 100%; overflow: hidden; }
+    #fixture-jewels-page ytd-flow-root-renderer, #fixture-jewels-page ytd-flow-step-renderer { display: flex; flex-direction: column; }
+    #fixture-jewels-page ytd-flow-root-renderer { background: white; color: rgb(15,15,15); }
+    #fixture-jewels-page .bottom-bar-view-model.ytd-flow-step-renderer { margin: 16px 24px 24px; }
+    #fixture-jewels-page #flow-step.ytd-flow-root-renderer { flex: 1; flex-basis: .000000001px; }
+    #fixture-jewels-page tp-yt-paper-dialog-scrollable { display: block; position: relative; }
+    #fixture-jewels-page #content.ytd-flow-step-renderer { overflow-y: auto; }
+    #fixture-jewels-page ytd-flow-step-renderer[bottom-bar] #content.ytd-flow-step-renderer { max-height: min(616px, 100vh - 230px); }
+    #fixture-jewels-page ytd-flow-step-renderer[fit-content] #content.ytd-flow-step-renderer { max-height: fit-content; }
+    #fixture-jewels-page .ytPdpViewModelHost { display: block; }
+    #fixture-jewels-page .ytPdpViewModelColumn { padding: 4px 12px; box-sizing: border-box; min-width: 360px; }
+    #fixture-jewels-page .ytPdpViewModelInternalScrolling .ytPdpViewModelColumnContainer { max-height: 70vh; overflow-y: auto; }
+    #fixture-jewels-page .fixture-jewels-choice { display: flex; align-items: center; gap: 8px; min-height: 64px; margin-bottom: 8px; padding: 8px; box-sizing: border-box; background: white; color: rgb(15,15,15); }
+    #fixture-jewels-page .fixture-jewels-choice input { flex: none; }
+    #fixture-jewels-page .fixture-jewels-choice span { color: rgb(15,15,15); }
+    #fixture-jewels-page .ytPdpViewModelUseBottomBarLayout .ytPdpViewModelColumn { padding-top: 16px; padding-bottom: 16px; }
+    #fixture-jewels-page [data-jewels-checkout] { width: 100%; background: rgb(6,95,212); color: rgb(255,255,255); }
+    yt-gift-message-view-model, yt-gift-message-view-model .ytAttributedStringHost { color: rgb(15,15,15); }
+  </style>
+  <ytd-engagement-panel-section-list-renderer id="fixture-jewels-page" target-id="PAcommerce_catalog_selection" live-chat-engagement-panel visibility="ENGAGEMENT_PANEL_VISIBILITY_HIDDEN" hidden>
+    <div id="header" class="style-scope ytd-engagement-panel-section-list-renderer"><ytd-engagement-panel-title-header-renderer>
+      <h2 id="title"><yt-formatted-string id="title-text">Buy Jewels</yt-formatted-string></h2>
+      <div id="information-button"><button type="button" aria-label="Jewels information"><span class="ytSpecIconShapeHost"><svg width="24" height="24"><path d="M11 10h2v8h-2zM11 5h2v2h-2z" /></svg></span></button></div>
+      <div id="navigation-button"><button type="button" aria-label="Close Buy Jewels"><span class="ytSpecIconShapeHost"><svg width="24" height="24"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12 19 17.6 17.6 19 12 13.4 6.4 19 5 17.6 10.6 12 5 6.4z" /></svg></span></button></div>
+    </ytd-engagement-panel-title-header-renderer></div>
+    <div id="content" class="style-scope ytd-engagement-panel-section-list-renderer">
+      <ytd-flow-root-renderer dialog="true" panel-content-visible panel-target-id="PAcommerce_catalog_selection">
+        <div id="root-top-bar" class="style-scope ytd-flow-root-renderer"></div>
+        <div id="flow-step" class="style-scope ytd-flow-root-renderer"><ytd-flow-step-renderer enable-scrolling-fix fit-content bottom-bar>
+          <div id="top-bar" class="style-scope ytd-flow-step-renderer"></div>
+          <tp-yt-paper-dialog-scrollable id="scroller" class="style-scope ytd-flow-step-renderer"><div id="content" class="style-scope ytd-flow-step-renderer">
+            <pdp-view-model class="ytPdpViewModelHost ytPdpViewModelInternalScrolling ytPdpViewModelForceSingleColumn">
+              <div class="ytPdpViewModelColumnContainer"><div class="ytPdpViewModelColumn">
+                ${Array.from({ length: 8 }, (_, index) => `<label class="fixture-jewels-choice"><input type="radio" name="fixture-jewels-package" value="${index + 1}" aria-label="Jewels package ${index + 1}"${index === 0 ? ' checked' : ''} /><span>${(index + 1) * 100} Jewels — fixture price ${index + 1}</span></label>`).join('')}
+              </div></div>
+            </pdp-view-model>
+          </div></tp-yt-paper-dialog-scrollable>
+          <div id="bottom-bar" class="style-scope ytd-flow-step-renderer bottom-bar-view-model"><pdp-view-model class="ytPdpViewModelHost ytPdpViewModelUseBottomBarLayout">
+            <div class="ytPdpViewModelColumnContainer"><div class="ytPdpViewModelColumn"><p>Fixture terms apply before checkout. Review the purchase information and the selected package.</p><pdp-primary-button-view-model>
+              <button type="button" class="ytSpecButtonShapeNextHost ytSpecButtonShapeNextFilled ytSpecButtonShapeNextCallToAction" aria-label="Buy fixture Jewels" data-jewels-checkout>Buy</button>
+            </pdp-primary-button-view-model></div></div>
+          </pdp-view-model></div>
+        </ytd-flow-step-renderer></div>
+        <div id="spinner-overlay" class="style-scope ytd-flow-root-renderer" hidden></div>
+      </ytd-flow-root-renderer>
+    </div>
+  </ytd-engagement-panel-section-list-renderer>`
+
 const purchaseInteractionHtml = `
   <style>
     html, body { height: 100%; margin: 0; overflow: hidden; }
@@ -244,6 +301,11 @@ const purchaseInteractionHtml = `
       <yt-live-chat-viewer-engagement-message-renderer><div id="message"><a id="fixture-pinned-link" href="https://example.invalid/pinned">https://example.invalid/pinned/averylongcontinuousreferencewithoutspacesforthenativechatwrappingboundary</a></div></yt-live-chat-viewer-engagement-message-renderer>
       <yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer"><a id="fixture-chat-link" class="yt-simple-endpoint" href="https://example.invalid/chat">https://example.invalid/chat/averylongcontinuousreferencewithoutspacesforthenativechatwrappingboundary</a></div></yt-live-chat-text-message-renderer>
       <yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer"><a id="fixture-button-link" role="button" class="ytSpecButtonShapeNextHost" href="#fixture-button" style="background: rgb(6,95,212); color: rgb(241,241,241)">Native button action</a></div></yt-live-chat-text-message-renderer>
+      <yt-gift-message-view-model><div id="content" class="style-scope yt-gift-message-view-model">
+        <yt-attributed-string id="author-name-v2" class="style-scope yt-gift-message-view-model"><span class="ytAttributedStringHost"><span>@fixture-viewer</span></span></yt-attributed-string>
+        <yt-attributed-string id="message-v2" class="style-scope yt-gift-message-view-model"><span class="ytAttributedStringHost"><span>Gift sent</span><span data-gift-semantic style="color: rgb(123,62,219)">Native badge</span></span></yt-attributed-string>
+        <div id="gift-image" style="color: rgb(213,158,34)"><svg width="24" height="24" style="fill: currentColor"><path data-gift-art d="M2 2h20v20H2z" /></svg></div>
+      </div></yt-gift-message-view-model>
       ${Array.from({ length: 24 }, (_, index) => `<yt-live-chat-text-message-renderer><div id="message" class="yt-live-chat-text-message-renderer">Fixture scroll message ${index + 1}</div></yt-live-chat-text-message-renderer>`).join('')}
     </div></div></yt-live-chat-item-list-renderer></div>
     <div id="buy-flow" class="yt-live-chat-renderer" hidden>
@@ -265,10 +327,11 @@ const purchaseInteractionHtml = `
       <div id="header">Support choices</div><div id="items">
         <yt-live-chat-product-picker-panel-item-view-model item-id="SuperChat"><button type="button" aria-label="Open Super Chat">Super Chat</button></yt-live-chat-product-picker-panel-item-view-model>
         <yt-live-chat-product-picker-panel-item-view-model item-id="Membership"><button type="button" aria-label="Open membership">Membership</button></yt-live-chat-product-picker-panel-item-view-model>
+        <yt-live-chat-product-picker-panel-item-view-model item-id="Jewels"><button type="button" aria-label="Open Buy Jewels">Buy Jewels</button></yt-live-chat-product-picker-panel-item-view-model>
       </div>
     </yt-live-chat-product-picker-panel-view-model>
   </yt-live-chat-message-input-renderer></div>
-  </div></div></tp-yt-iron-pages>
+  </div></div>${jewelsPurchaseHtml}</tp-yt-iron-pages>
   <dialog aria-label="Native membership dialog"><p>Local membership preview</p><button type="button" aria-label="Close membership">Cancel</button><button type="button" aria-label="Confirm fixture membership">Join</button></dialog>
   <script>
     (() => {
@@ -278,6 +341,9 @@ const purchaseInteractionHtml = `
       const buyPage = document.getElementById('buy-flow');
       const messages = document.getElementById('fixture-messages');
       const membership = document.querySelector('dialog');
+      const jewels = document.getElementById('fixture-jewels-page');
+      const chatPage = document.getElementById('chat-messages');
+      const jewelsProbe = window.__ylcFixtureJewels = { entries: 0, trustedEntries: 0, preventedEntries: 0, selections: 0, checkout: 0 };
       const probe = window.__ylcFixturePurchase = { supportEntries: 0, superChatEntries: 0, membershipEntries: 0, preventedEntries: 0, trustedEntries: 0, windowOpenCalls: 0, confirmations: 0 };
       window.open = () => { probe.windowOpenCalls++; return null; };
       const recordEntry = event => {
@@ -293,9 +359,22 @@ const purchaseInteractionHtml = `
       document.querySelector('[aria-label="Open membership"]').addEventListener('click', event => {
         recordEntry(event); probe.membershipEntries++; picker.hidden = true; picker.classList.remove('iron-selected'); membership.showModal();
       });
+      document.querySelector('[aria-label="Open Buy Jewels"]').addEventListener('click', event => {
+        jewelsProbe.entries++; if (event.isTrusted) jewelsProbe.trustedEntries++;
+        queueMicrotask(() => { if (event.defaultPrevented) jewelsProbe.preventedEntries++; });
+        picker.hidden = true; picker.classList.remove('iron-selected'); input.removeAttribute('product-picker-open');
+        chatPage.hidden = true; chatPage.classList.remove('iron-selected');
+        jewels.hidden = false; jewels.classList.add('iron-selected'); jewels.setAttribute('visibility', 'ENGAGEMENT_PANEL_VISIBILITY_EXPANDED');
+      });
       const close = () => { picker.hidden = true; picker.classList.remove('iron-selected'); flow.hidden = true; buyPage.hidden = true; buyPage.classList.remove('iron-selected'); messages.hidden = false; messages.classList.add('iron-selected'); input.removeAttribute('product-picker-open'); };
       document.querySelector('[aria-label="Close Super Chat"]').addEventListener('click', close);
       document.querySelector('[aria-label="Close membership"]').addEventListener('click', () => { membership.close(); close(); });
+      document.querySelector('[aria-label="Close Buy Jewels"]').addEventListener('click', () => {
+        jewels.hidden = true; jewels.classList.remove('iron-selected'); jewels.setAttribute('visibility', 'ENGAGEMENT_PANEL_VISIBILITY_HIDDEN');
+        chatPage.hidden = false; chatPage.classList.add('iron-selected'); close();
+      });
+      for (const radio of jewels.querySelectorAll('input[type="radio"]')) radio.addEventListener('change', () => jewelsProbe.selections++);
+      jewels.querySelector('[data-jewels-checkout]').addEventListener('click', () => jewelsProbe.checkout++);
       for (const button of document.querySelectorAll('[aria-label^="Confirm fixture"]')) button.addEventListener('click', () => probe.confirmations++);
     })();
   </script>`
@@ -309,7 +388,7 @@ const playableChatHtml = (
   purchaseInteractions = false,
 ) => `<!doctype html>
 <html>
-  <head><title>${escapeHtml(title)}</title></head>
+  <head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
   <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
     ${purchaseInteractions ? '<yt-live-chat-app>' : ''}<yt-live-chat-renderer>
       ${purchaseInteractions ? '' : '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'}

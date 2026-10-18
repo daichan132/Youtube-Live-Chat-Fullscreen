@@ -41,6 +41,7 @@ export const chatPurchasePanelProbe = {
     'yt-live-chat-super-sticker-pack-renderer',
     'ytd-sponsorships-gift-offer-renderer',
     'yt-pdg-gift-collection-view-model',
+    'pdp-view-model',
   ],
 } as const
 export const chatPurchaseLoadingProbe = {

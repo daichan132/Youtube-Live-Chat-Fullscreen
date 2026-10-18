@@ -6,6 +6,7 @@ import {
   IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR,
   IFRAME_CHAT_ONLY_TOP_PADDING_VAR,
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
+  IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import { createChatChromeLease } from './resources/ChatChromeLease'
 
@@ -243,7 +244,7 @@ describe('chatOnlyChrome', () => {
     }
   })
 
-  it('clears collapsed chrome and releases its remaining purchase observer on cleanup', () => {
+  it('clears collapsed chrome and releases all remaining observers on cleanup', async () => {
     const iframe = document.createElement('iframe')
     document.body.appendChild(iframe)
     const iframeDocument = iframe.contentDocument
@@ -251,6 +252,7 @@ describe('chatOnlyChrome', () => {
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
     iframeDocument.body.appendChild(header)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
+    const observe = vi.spyOn(MutationObserver.prototype, 'observe')
     const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
     const controller = createChatChromeLease()
 
@@ -262,6 +264,13 @@ describe('chatOnlyChrome', () => {
     expect(iframeDocument.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
     expect(iframeDocument.body.classList.contains(IFRAME_CHAT_ONLY_CLASS)).toBe(false)
     controller.release()
-    expect(disconnect).toHaveBeenCalledTimes(2)
+    expect(new Set(disconnect.mock.contexts)).toEqual(new Set(observe.mock.contexts))
+    const nextBody = iframeDocument.createElement('body')
+    const input = iframeDocument.createElement('yt-live-chat-message-input-renderer')
+    input.setAttribute('product-picker-open', '')
+    nextBody.append(input)
+    iframeDocument.body.replaceWith(nextBody)
+    await Promise.resolve()
+    expect(nextBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
   })
 })
