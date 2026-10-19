@@ -1,7 +1,11 @@
 import { getIframeDocumentHref } from '@/entrypoints/content/chat/shared/iframeDom'
 import { IFRAME_CHAT_BODY_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import iframeStyles from '@/entrypoints/content/features/YTDLiveChatIframe/styles'
-import { ensureStyleInjected, getIframeDocument } from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
+import {
+  ensureNativeChatStylesReady,
+  ensureStyleInjected,
+  getIframeDocument,
+} from '@/entrypoints/content/features/YTDLiveChatIframe/utils/iframeInitializer'
 import { applyChatProfileToDocument } from '@/entrypoints/content/style/applyStylePatch'
 import type { ChatProfile } from '@/shared/settings/model'
 import type { SessionScope } from '../bootstrap/SessionScope'
@@ -38,6 +42,8 @@ export class ResourceReconciler {
   private overlayContainer: HTMLElement | null = null
   private loadListenerIframe: HTMLIFrameElement | null = null
   private removeLoadListener: (() => void) | null = null
+  private readonly styledDocuments = new WeakSet<Document>()
+  private readonly retriedStylesheets = new WeakSet<HTMLLinkElement>()
   private portalTargets: PortalTargets = { overlayRoot: null, switchContainer: null }
   private interaction: 'idle' | 'hovering-chat' | 'hovering-controls' | 'dragging' | 'resizing' | 'settings-open' = 'idle'
   private presentationState: ResourceDiagnosticSnapshot['presentation'] = 'none'
@@ -164,6 +170,10 @@ export class ResourceReconciler {
       if (doc.location?.href === 'about:blank' && !getIframeDocumentHref(lease.iframe)) return false
     } catch {
       // Cross-origin access can throw; contentDocument remains enough.
+    }
+    if (!this.styledDocuments.has(doc)) {
+      if (!ensureNativeChatStylesReady(doc, this.retriedStylesheets)) return false
+      this.styledDocuments.add(doc)
     }
     if (lease.ownership === 'borrowed') lease.captureDocumentStyle()
     ensureStyleInjected(doc, iframeStyles)

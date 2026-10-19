@@ -95,6 +95,44 @@ describe('ResourceReconciler', () => {
     document.body.replaceChildren()
   })
 
+  it('keeps initialization pending for empty native CSS and never re-gates an initialized document', () => {
+    const iframe = document.createElement('iframe')
+    iframe.src = '/live_chat?v=video-1'
+    document.body.append(iframe)
+    const doc = iframe.contentDocument
+    if (!doc) throw new Error('Missing chat document')
+    doc.open()
+    doc.write('<html><head><link id="base-css" rel="stylesheet" href="/base.css"></head><body></body></html>')
+    doc.close()
+    Object.defineProperty(doc, 'readyState', { value: 'complete' })
+    const link = doc.getElementById('base-css')
+    const rules: CSSRule[] = []
+    Object.defineProperty(link, 'sheet', { value: { cssRules: rules } })
+    const { lease } = createFakeLease([], iframe)
+    const resources = new ResourceReconciler({ createLease: () => lease })
+    const scope = createSessionScope(1)
+    resources.setProfile(DEFAULT_CHAT_PROFILE)
+    resources.setOverlayContainer(document.createElement('div'))
+    resources.createIframe(
+      { kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', videoId: 'video-1', iframe } },
+      1,
+    )
+    try {
+      expect(resources.initializeIframe(scope, vi.fn())).toBe(false)
+      expect(doc.querySelector('style[data-ylc-style-injected]')).toBeNull()
+      rules.push({} as CSSRule)
+      expect(resources.initializeIframe(scope, vi.fn())).toBe(true)
+      expect(doc.querySelectorAll('style[data-ylc-style-injected]')).toHaveLength(1)
+      rules.length = 0
+      expect(resources.initializeIframe(scope, vi.fn())).toBe(true)
+      expect(lease.release).not.toHaveBeenCalled()
+      expect(lease.iframe.contentDocument).toBe(doc)
+    } finally {
+      resources.clear()
+      scope.dispose()
+    }
+  })
+
   it('acquires presentation and layout before attaching the iframe', () => {
     const log: string[] = []
     const fake = createFakeLease(log)

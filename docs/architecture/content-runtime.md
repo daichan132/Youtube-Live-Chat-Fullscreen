@@ -111,6 +111,8 @@ A managed live iframe is not itself proof that the player is still live. When th
 
 The five runtime statuses are `inactive`, `searching`, `active`, `recovering`, and `unavailable`. Loading is true only while searching or recovering.
 
+The first initialization of each chat document also waits for YouTube's `#base-css` stylesheet. A complete DOM is insufficient: Firefox can expose a complete chat document with an empty native stylesheet after reparenting. Until CSS rules are available, the existing loading state hides the unstyled chat. A missing or empty same-origin base stylesheet in a complete document is requested once more by appending a `ylc-css-retry` fragment to its `href`. This changes Firefox's parsed-stylesheet cache key without changing the HTTP resource URL, origin, path or query. The native link and iframe are retained. The repair fragment stays for that document's lifetime, including native restoration: reverting it selects the previously cached empty stylesheet again. No extension stylesheet or listener is retained for this repair. Normal pending stylesheets are left alone, unreadable cross-origin CSSOM is accepted, and documents without this native link keep their existing behavior. Recovery uses the existing bounded runtime retry budget, without reloading the chat browsing context or interacting with purchase controls. Once initialized, that document is not re-gated during a purchase. Replacement documents undergo their own first-initialization check.
+
 ## Resource ownership
 
 Four lease types own page mutations:

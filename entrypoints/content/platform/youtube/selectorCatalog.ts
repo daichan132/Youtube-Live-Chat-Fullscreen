@@ -54,6 +54,10 @@ export const nativeChatIframeProbe = {
   selectors: ['#chatframe', 'ytd-live-chat-frame iframe.ytd-live-chat-frame'],
 } as const
 export const chatRendererProbe = { probeId: 'chat.renderer.v1', selectors: ['yt-live-chat-renderer'] } as const
+export const chatBaseStylesheetProbe = {
+  probeId: 'chat.base-stylesheet.v1',
+  selectors: ['link#base-css[rel~="stylesheet"]'],
+} as const
 export const collapsedPinnedMessageContentProbe = {
   probeId: 'chat.pinned-message-content.v1',
   selectors: ['yt-live-chat-banner-renderer yt-live-chat-text-message-renderer[in-collapsed-banner] #content'],

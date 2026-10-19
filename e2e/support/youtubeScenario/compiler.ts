@@ -388,9 +388,10 @@ const playableChatHtml = (
   appearanceSurfaces = false,
   purchaseInteractions = false,
   standardPurchaseInteractions = false,
+  baseStylesheet = false,
 ) => `<!doctype html>
 <html>
-  <head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
+  <head><meta charset="utf-8"><title>${escapeHtml(title)}</title>${baseStylesheet ? '<link id="base-css" rel="stylesheet" href="/ylc-fixture-native-base.css">' : ''}</head>
   <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
     ${purchaseInteractions || standardPurchaseInteractions ? '<yt-live-chat-app>' : ''}<yt-live-chat-renderer>
       ${purchaseInteractions || standardPurchaseInteractions ? '' : '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'}
@@ -588,6 +589,7 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
                     state.chat.mode === 'live' && state.chat.appearanceSurfaces === true,
                     state.chat.mode === 'live' && state.chat.purchaseInteractions === true,
                     state.chat.mode === 'live' && state.chat.standardPurchaseInteractions === true,
+                    state.chat.native.baseStylesheet === true,
                   )
                 : unavailableChatHtml(),
           },

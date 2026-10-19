@@ -26,6 +26,7 @@ export const FIXTURE_SPECS = [
   'live/placementDesign.fixture.spec.ts',
   'live/presetUsability.fixture.spec.ts',
   'live/iframeContextPreservation.fixture.spec.ts',
+  'live/nativeStylesheetReadiness.fixture.spec.ts',
   'live/managedNativeHandoff.fixture.spec.ts',
   'live/nativeChatSource.fixture.spec.ts',
   'live/noChatVideo.fixture.spec.ts',
