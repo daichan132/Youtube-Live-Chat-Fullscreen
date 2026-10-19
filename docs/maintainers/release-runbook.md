@@ -95,6 +95,8 @@ run ID は候補 run の URL `/actions/runs/<run_id>` の数値。別の branch 
 
 `validate-candidate` は公開操作を開始した main の固定コミットから検証コードを読み込む。タグのコードは検証前に実行しない。[`release-candidate.mjs`](../../scripts/verify/release-candidate.mjs) が読み取り専用の GitHub API で次を確認する。
 
+このジョブの token は `contents: write` と `actions: read` を持つ。GitHub は push 権限のない token に draft Release を返さないため、公開前の draft 確認には Contents の書込権限が必要になる（[GitHub の仕様](https://docs.github.com/en/rest/releases/releases#list-releases)）。検証処理自体は Release を変更せず、Actions のメタデータも読み取り専用で扱う。ワークフロー全体の既定権限とストア提出ジョブの Contents 権限は読み取り専用のまま。
+
 - `v<version>` のコミットが検証元 main の履歴に含まれ、その `package.json` のバージョンが一致する
 - run が同じリポジトリの `cd.yml` に属し、fork ではなく main の `workflow_dispatch` で成功・完了している
 - run のソースコミットがタグのコミットと一致する

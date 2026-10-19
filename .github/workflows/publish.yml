@@ -36,7 +36,8 @@ jobs:
   validate-candidate:
     runs-on: ubuntu-24.04
     permissions:
-      contents: read
+      # GitHub hides draft Releases from tokens without push access.
+      contents: write
       actions: read
     outputs:
       commit: ${{ steps.candidate.outputs.commit }}

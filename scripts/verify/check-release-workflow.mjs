@@ -51,6 +51,7 @@ export const assertReleaseWorkflows = (candidate, publish) => {
   const validation = workflowJob(publish, 'validate-candidate')
   const validationCheckout = requireActionStep(validation, 'actions/checkout', 'Candidate validation')
   const validationDownload = requireActionStep(validation, 'actions/download-artifact', 'Candidate validation')
+  assert.match(validation, /^ {6}contents: write$/m, 'Draft Release lookup needs push access to see unpublished candidates')
   assert.match(validation, /actions: read/, 'Candidate metadata validation needs read-only Actions access')
   const trustedRefGuards = workflowSteps(validation)
     .map(step => ({
@@ -83,7 +84,11 @@ export const assertReleaseWorkflows = (candidate, publish) => {
     /run-id: \$\{\{ steps\.candidate\.outputs\.run_id \}\}/,
     'Candidate download must use the validated workflow run',
   )
-  assert.match(validationDownload, /github-token: \$\{\{ github\.token \}\}/, 'Cross-run download must use the read-only job token')
+  assert.match(
+    validationDownload,
+    /github-token: \$\{\{ github\.token \}\}/,
+    'Cross-run download must use the job token with read-only Actions access',
+  )
   assert.match(
     validation,
     /artifact_id: \$\{\{ steps\.proven\.outputs\.artifact-id \}\}/,

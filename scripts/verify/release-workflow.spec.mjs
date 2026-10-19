@@ -69,12 +69,16 @@ describe('release publication job contracts', () => {
     ['wrong artifact', step => step.replace('steps.candidate.outputs.artifact_id', 'inputs.reviewed_artifact_id')],
     ['implicit confirmation', step => step.replace('inputs.browser_review_confirmed', 'true')],
   ])('rejects browser review that is %s', (_name, change) => {
-    const changed = publish.replace(
-      /      - name: Require candidate-specific browser review\n[\s\S]*?(?=      - name: Forward)/,
-      change,
-    )
+    const changed = publish.replace(/ {6}- name: Require candidate-specific browser review\n[\s\S]*?(?= {6}- name: Forward)/, change)
     expect(changed).not.toBe(publish)
     expect(() => assertReleaseWorkflows(candidate, changed)).toThrow()
+  })
+
+  it('rejects a read-only validation token that cannot see the draft release', () => {
+    const changed = replaceJob(publish, 'validate-candidate', job => job.replace('contents: write', 'contents: read'))
+
+    expect(changed).not.toBe(publish)
+    expect(() => assertReleaseWorkflows(candidate, changed)).toThrow('Draft Release lookup needs push access')
   })
 
   it.each([
