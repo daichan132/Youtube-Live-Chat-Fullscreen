@@ -40,6 +40,7 @@ export const chatPurchasePanelProbe = {
     'yt-live-chat-super-sticker-preview-renderer',
     'yt-live-chat-super-sticker-pack-renderer',
     'ytd-sponsorships-gift-offer-renderer',
+    'ytd-donation-amount-picker-renderer[live-chat]',
     'yt-pdg-gift-collection-view-model',
     'pdp-view-model',
   ],

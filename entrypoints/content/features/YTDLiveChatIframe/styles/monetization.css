@@ -85,13 +85,20 @@ body.custom-yt-app-live-chat-extension
 /* Scroll the selected purchase page without clipping its controls. The picker
    lives in the short input page, which must retain visible overflow. */
 body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
-#panel-pages:has(> :is(#buy-flow, #super-sticker-buy-flow, #sponsorships-gift-buy-flow).iron-selected) {
+#panel-pages:has(> :is(#buy-flow, #super-sticker-buy-flow, #sponsorships-gift-buy-flow, #donation-flow).iron-selected) {
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: auto !important;
+  scroll-padding-block: 8px;
   scrollbar-color: var(--extension-yt-live-secondary-font-color) transparent;
   scrollbar-width: thin;
   overscroll-behavior: contain;
+}
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  #panel-pages
+  > :is(#buy-flow, #super-sticker-buy-flow, #sponsorships-gift-buy-flow, #donation-flow).iron-selected
+  :is(button, input, textarea, select, [tabindex]) {
+  scroll-margin-block: 8px;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
   /* Match the current native 8px inset. A legacy input-height offset can put
@@ -105,89 +112,91 @@ body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-mo
   overscroll-behavior: contain;
 }
 
-body.custom-yt-app-live-chat-extension #close-button.yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension .dim.yt-live-chat-message-buy-flow-renderer,
+/* Neutral purchase chrome has its own palette. Keep paid preview cards, error
+   states, price chips, artwork and transactional buttons under native control. */
 body.custom-yt-app-live-chat-extension
-  #price-input.yt-live-chat-message-buy-flow-renderer
-  .input-content.tp-yt-paper-input-container
-  > input,
-body.custom-yt-app-live-chat-extension
-  #price-input.yt-live-chat-message-buy-flow-renderer
-  .input-content.tp-yt-paper-input-container
-  > iron-input,
-body.custom-yt-app-live-chat-extension
-  #price-input.yt-live-chat-message-buy-flow-renderer
-  .input-content.tp-yt-paper-input-container
-  > textarea,
-body.custom-yt-app-live-chat-extension
-  #price-input.yt-live-chat-message-buy-flow-renderer
-  .input-content.tp-yt-paper-input-container
-  > iron-autogrow-textarea,
-body.custom-yt-app-live-chat-extension
-  #price-input.yt-live-chat-message-buy-flow-renderer
-  .input-content.tp-yt-paper-input-container
-  > .paper-input-input,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension #info.yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model #header,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model #items,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #endpoint,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #container,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model tp-yt-paper-item,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #text,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model yt-icon,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model yt-button-view-model,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model button-view-model,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model .ytSpecButtonShapeNextHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model .ytSpecButtonShapeNextIcon,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model yt-attributed-string,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model yt-attributed-string span,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help yt-button-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help yt-button-shape,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help button,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help .ytSpecButtonShapeNextIcon,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #price,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #price-input-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #price-input,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #price-input *,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer yt-live-chat-icon-toggle-button-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-top,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #left,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text *,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button yt-button-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button yt-button-shape,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button .ytSpecButtonShapeNextIcon,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-shape,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button .ytSpecButtonShapeNextIcon,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button yt-button-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button yt-button-shape,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button button,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button .ytSpecButtonShapeNextIcon,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button .ytSpecIconShapeHost,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #title,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #back-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #close-button,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer {
+:is(
+  yt-live-chat-message-buy-flow-renderer,
+  yt-live-chat-paid-sticker-panel-renderer,
+  yt-live-chat-super-sticker-preview-renderer,
+  yt-live-chat-super-sticker-pack-renderer,
+  yt-live-chat-super-sticker-pack-item-button-renderer,
+  yt-live-chat-product-picker-panel-view-model
+) {
   color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(#title, #sub-header-title, #price, #price-input-container, #price-input, #revamped-price-input),
+body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-heading-renderer #heading-title,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(#price-input, #revamped-price-input)
+  .input-content
+  > :is(input, tp-yt-iron-input, iron-input, textarea, iron-autogrow-textarea, .paper-input-input),
+body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer :is(#price-input, #revamped-price-input) input,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text h3,
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer :is(h3, #back-button),
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer :is(#title, #back-button, #close-button),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-product-picker-panel-view-model
+  :is(
+    #header,
+    #items,
+    yt-button-view-model,
+    button-view-model,
+    .ytSpecButtonShapeNextHost,
+    .ytSpecButtonShapeNextIcon,
+    .ytSpecIconShapeHost,
+    #header yt-attributed-string,
+    #header yt-attributed-string span
+  ),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-product-picker-panel-item-view-model
+  :is(
+    #endpoint,
+    #container,
+    tp-yt-paper-item,
+    #text,
+    yt-icon,
+    .ytSpecIconShapeHost,
+    #text yt-attributed-string:first-child,
+    #text yt-attributed-string:first-child span
+  ) {
+  color: var(--extension-yt-live-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer :is(#price-input, #revamped-price-input) {
+  --paper-input-container-focus-color: var(--extension-yt-live-font-color);
+  --paper-input-container-underline-color: var(--extension-yt-live-control-border-color);
+  caret-color: var(--extension-yt-live-font-color);
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(
+    .dim,
+    .info-subscript,
+    #info,
+    #public-disclosure,
+    #disclaimer-header,
+    #disclaimer-text,
+    #disclaimer-header > .ytAttributedStringHost,
+    #disclaimer-text > .ytAttributedStringHost
+  ),
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #right,
+body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text > span {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(#info, #goal-disclaimer-container)
+  a[href]:not([role="button"], .ytSpecButtonShapeNextHost),
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  #subtitle
+  a[href]:not([role="button"], .ytSpecButtonShapeNextHost) {
+  color: var(--extension-yt-live-link-color) !important;
+  text-decoration-line: underline;
+  overflow-wrap: anywhere;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
   background: var(--extension-yt-live-floating-panel-background-color) !important;
@@ -222,33 +231,28 @@ body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer 
   overflow-x: hidden;
   overflow-y: auto;
 }
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model #header,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model #items,
+body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model :is(#header, #items),
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #endpoint,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #container,
-body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model tp-yt-paper-item,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #preview,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #header,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #info,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #message.yt-live-chat-message-buy-flow-renderer,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #price,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #pickers-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #content,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #content-wrapper,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #buy-flow,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-top,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #left,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #header-text,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #content-wrapper,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #buy-flow,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #picker-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #content,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #sticker-container,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #pack,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer #pack-stickers,
+body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model :is(#endpoint, #container, tp-yt-paper-item),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(
+    #preview,
+    #header,
+    #info,
+    #message.yt-live-chat-message-buy-flow-renderer,
+    #price,
+    #pickers-container,
+    #content,
+    #content-wrapper,
+    #buy-flow,
+    #picker-container
+  ),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-paid-sticker-panel-renderer
+  :is(#header, #header-top, #left, #header-text, #content-wrapper, #buy-flow, #picker-container),
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer :is(#header, #content, #sticker-container),
+body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer :is(#pack, #pack-stickers),
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer,
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer #sticker {
   background: transparent !important;
@@ -260,20 +264,22 @@ body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-vi
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-item-button-renderer:hover #sticker {
   background: var(--extension-yt-live-menu-hover-background-color) !important;
 }
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #help path,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer #picker-buttons path,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #close-button path,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #help-button path,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-paid-sticker-panel-renderer #back-button path,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #back-button svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #back-button path,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer svg,
-body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer path {
+body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer :is(#close-button, #help, #picker-buttons),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-message-buy-flow-renderer
+  :is(#close-button, #help, #picker-buttons)
+  :is(button, yt-icon, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-paid-sticker-panel-renderer
+  :is(#close-button, #help-button, #back-button, #scroll-back-button, #scroll-forward-button):not([disabled], [aria-disabled="true"]),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-paid-sticker-panel-renderer
+  :is(#close-button, #help-button, #back-button, #scroll-back-button, #scroll-forward-button):not([disabled], [aria-disabled="true"])
+  :is(button, yt-icon, .ytSpecButtonShapeNextIcon, .ytSpecIconShapeHost, svg, path),
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-super-sticker-preview-renderer
+  #back-button
+  :is(button, .ytSpecButtonShapeNextButtonTextContent, .ytSpecIconShapeHost, svg, path) {
   color: var(--extension-yt-live-font-color) !important;
   fill: currentColor !important;
 }
@@ -294,10 +300,12 @@ body.custom-yt-app-live-chat-extension
   #message.yt-live-chat-restricted-participation-renderer,
 body.custom-yt-app-live-chat-extension #count.yt-live-chat-message-input-renderer,
 body.custom-yt-app-live-chat-extension #header-text.yt-live-chat-paid-sticker-panel-renderer,
-body.custom-yt-app-live-chat-extension #content.ytd-sponsorships-live-chat-gift-redemption-announcement-renderer,
+body.custom-yt-app-live-chat-extension #content.ytd-sponsorships-live-chat-gift-redemption-announcement-renderer {
+  color: var(--extension-yt-live-secondary-font-color);
+}
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #text yt-attributed-string:not(:first-child),
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-item-view-model #text yt-attributed-string:not(:first-child) span {
-  color: var(--extension-yt-live-secondary-font-color);
+  color: var(--extension-yt-live-secondary-font-color) !important;
 }
 body.custom-yt-app-live-chat-extension yt-button-view-model .yt-spec-button-shape-next--mono.yt-spec-button-shape-next--text {
   color: var(--yt-spec-text-primary);
@@ -408,4 +416,49 @@ body.custom-yt-app-live-chat-extension
   > yt-pdg-gift-item-view-model:not(.ytwPdgGiftItemSelected)
   :is(.ytwPdgGiftItemGiftName, .ytwPdgGiftItemTokenAmount) {
   color: var(--extension-yt-live-font-color) !important;
+}
+
+/* Gift quantity sections inherit desktop negative margins. Keep each action
+   inside a narrow chat without hiding content or changing native quantities. */
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer #offer-section {
+  margin-inline: 0 !important;
+}
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-header-renderer #header {
+  box-sizing: border-box;
+}
+body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-renderer :is(#details, .text.ytd-offer-content-renderer) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+body.custom-yt-app-live-chat-extension
+  ytd-sponsorships-gift-offer-body-renderer
+  :is(.description.ytd-offer-section-renderer, .description.ytd-offer-content-renderer) {
+  color: var(--extension-yt-live-secondary-font-color) !important;
+}
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  #panel-pages
+  > #super-sticker-buy-flow.iron-selected
+  yt-live-chat-super-sticker-pack-renderer,
+body.custom-yt-app-live-chat-extension.ylc-native-purchase-active
+  #panel-pages
+  > #sponsorships-gift-buy-flow.iron-selected
+  ytd-sponsorships-gift-offer-renderer {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+/* Shared chat tokens clear the native action-panel fill. Restore the donation
+   card's complete native pair instead of leaving native dark copy over video. */
+body.custom-yt-app-live-chat-extension ytd-donation-amount-picker-renderer[live-chat] > #container {
+  background-color: var(--yt-spec-base-background, #fff) !important;
+  color: var(--yt-live-chat-primary-text-color, var(--yt-spec-text-primary, #0f0f0f));
+}
+body.custom-yt-app-live-chat-extension ytd-donation-amount-picker-renderer[live-chat] #suggested-amount-buttons-row {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+body.custom-yt-app-live-chat-extension ytd-donation-amount-picker-renderer[live-chat] #text-container {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }

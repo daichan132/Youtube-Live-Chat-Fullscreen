@@ -101,7 +101,17 @@ const PURCHASE_BOUNDARY_SELECTOR = [
   ...chatPurchasePanelProbe.selectors,
   ...chatPurchaseLoadingProbe.selectors,
 ].join(', ')
-const PURCHASE_STATE_ATTRIBUTES = ['product-picker-open', 'hidden', 'aria-hidden', 'inert', 'style', 'class', 'selected', 'aria-selected']
+const PURCHASE_STATE_ATTRIBUTES = [
+  'product-picker-open',
+  'live-chat',
+  'hidden',
+  'aria-hidden',
+  'inert',
+  'style',
+  'class',
+  'selected',
+  'aria-selected',
+]
 
 const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement) => {
   if (!body.contains(element)) return false
@@ -137,7 +147,13 @@ export const hasOpenChatPurchaseUI = (body: HTMLElement, previouslyOpen = false)
   )
 }
 
-const PURCHASE_BOUNDARY_TAGS = new Set<string>([...chatPurchaseInputProbe.selectors, ...chatPurchasePanelProbe.selectors])
+// Observe a known tag even when an attribute-qualified probe stops matching.
+// Removing live-chat or hiding the donation root must release the old hold.
+const PURCHASE_BOUNDARY_TAGS = new Set<string>(
+  [...chatPurchaseInputProbe.selectors, ...chatPurchasePanelProbe.selectors].flatMap(
+    selector => selector.match(/^[a-z][a-z0-9-]*/)?.[0] ?? [],
+  ),
+)
 const isPurchaseBoundaryElement = (element: Element) =>
   PURCHASE_BOUNDARY_TAGS.has(element.localName) || (element.id === 'loading' && element.matches(chatPurchaseLoadingProbe.selectors[0]))
 

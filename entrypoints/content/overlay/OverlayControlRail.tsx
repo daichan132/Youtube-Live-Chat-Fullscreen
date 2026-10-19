@@ -361,9 +361,9 @@ export const OverlayControlRail = ({
             width: 'max-content',
             maxWidth: Math.min(220, Math.max(0, (viewportSize?.width ?? 240) - TOOLTIP_VIEWPORT_PADDING * 2)),
             boxSizing: 'border-box',
-            background: toRgba(backgroundColor, Math.max(0.94, backgroundColor.a)),
-            color,
-            borderColor: toRgba(fontColor, 0.18),
+            background: 'var(--ylc-tooltip-bg)',
+            color: 'var(--ylc-tooltip-fg)',
+            borderColor: 'var(--ylc-border-strong)',
             whiteSpace: 'normal',
             textAlign: 'center',
           }}

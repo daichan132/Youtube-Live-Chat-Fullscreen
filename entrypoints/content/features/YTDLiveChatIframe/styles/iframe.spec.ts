@@ -528,7 +528,6 @@ describe('iframe styles contract', () => {
   it('themes logged-in support and Super Chat picker surfaces', () => {
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model')
-    expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #buy-flow')
     expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer')
     expect(iframeStyles).toContain(
       'yt-live-chat-product-picker-panel-view-model {\n  background: var(--extension-yt-live-floating-panel-background-color) !important;',
@@ -550,16 +549,23 @@ describe('iframe styles contract', () => {
     expect(iframeStyles).not.toContain('isolation: isolate;')
     expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-renderer {\n  overflow-x: hidden;\n  overflow-y: auto;\n}')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model #text yt-attributed-string:not(:first-child)')
-    expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-view-model .ytSpecIconShapeHost')
-    expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #help yt-button-renderer')
-    expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #price-input *')
-    expect(iframeStyles).toContain('yt-live-chat-message-buy-flow-renderer #picker-buttons svg')
-    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #header-text *')
-    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #help-button yt-button-renderer')
-    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #close-button svg')
-    expect(iframeStyles).toContain('yt-live-chat-paid-sticker-panel-renderer #back-button path')
+    mountStyleFixture(
+      styleModules['monetization.css']
+        .replaceAll('var(--extension-yt-live-font-color)', 'rgb(240, 230, 220)')
+        .replaceAll('var(--extension-yt-live-secondary-font-color)', 'rgb(160, 150, 140)'),
+      `<yt-live-chat-product-picker-panel-view-model>
+        <span class="ytSpecIconShapeHost"><svg><path /></svg></span>
+        <yt-live-chat-product-picker-panel-item-view-model><div id="text">
+          <yt-attributed-string><span id="picker-primary">Super Chat</span></yt-attributed-string>
+          <yt-attributed-string><span id="picker-secondary">Purchase description</span></yt-attributed-string>
+        </div></yt-live-chat-product-picker-panel-item-view-model>
+      </yt-live-chat-product-picker-panel-view-model><yt-live-chat-message-buy-flow-renderer><div id="buy-flow">Native flow</div></yt-live-chat-message-buy-flow-renderer>`,
+    )
+    expect(getFixtureStyle('#buy-flow').backgroundColor).toBe('rgba(0, 0, 0, 0)')
+    expect(getComputedColor('.ytSpecIconShapeHost')).toBe('rgb(240, 230, 220)')
+    expect(getComputedColor('#picker-primary')).toBe('rgb(240, 230, 220)')
+    expect(getComputedColor('#picker-secondary')).toBe('rgb(160, 150, 140)')
     expect(iframeStyles).toContain('yt-live-chat-product-picker-panel-item-view-model:hover #container')
-    expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-renderer #pack-stickers')
     expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-item-button-renderer:hover #sticker')
     expect(iframeStyles).toContain('yt-live-chat-super-sticker-pack-backstory-renderer {\n  background: #fff !important;')
     expect(iframeStyles).toContain(

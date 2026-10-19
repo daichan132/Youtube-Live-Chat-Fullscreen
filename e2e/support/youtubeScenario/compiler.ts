@@ -1,4 +1,5 @@
 import { scenarioDocumentInitializationScript } from './initializeScenarioDocument.ts'
+import { standardPurchaseUiHtml } from './standardPurchaseUi.ts'
 import type { NativeChatDefinition, YouTubeScenarioState } from './types'
 
 const VIDEO_ID_PATTERN = /^[A-Za-z0-9_-]+$/
@@ -386,19 +387,22 @@ const playableChatHtml = (
   giftButton = false,
   appearanceSurfaces = false,
   purchaseInteractions = false,
+  standardPurchaseInteractions = false,
 ) => `<!doctype html>
 <html>
   <head><meta charset="utf-8"><title>${escapeHtml(title)}</title></head>
   <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
-    ${purchaseInteractions ? '<yt-live-chat-app>' : ''}<yt-live-chat-renderer>
-      ${purchaseInteractions ? '' : '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'}
+    ${purchaseInteractions || standardPurchaseInteractions ? '<yt-live-chat-app>' : ''}<yt-live-chat-renderer>
+      ${purchaseInteractions || standardPurchaseInteractions ? '' : '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer>'}
       ${
-        purchaseInteractions
-          ? purchaseInteractionHtml
-          : appearanceSurfaces
-            ? appearanceSurfaceHtml
-            : restrictedParticipation
-              ? `<style>
+        standardPurchaseInteractions
+          ? standardPurchaseUiHtml
+          : purchaseInteractions
+            ? purchaseInteractionHtml
+            : appearanceSurfaces
+              ? appearanceSurfaceHtml
+              : restrictedParticipation
+                ? `<style>
         #container.yt-live-chat-restricted-participation-renderer { background: white; color: rgba(17,17,17,.6); }
         #body.yt-live-chat-restricted-participation-renderer { color: rgba(17,17,17,.6); }
       </style>
@@ -407,8 +411,8 @@ const playableChatHtml = (
           <div id="explanation"><div id="body" class="yt-live-chat-restricted-participation-renderer"><span id="message">Subscribers-only mode</span></div></div>
         </div>
       </yt-live-chat-restricted-participation-renderer></div>`
-              : giftButton
-                ? `<style>
+                : giftButton
+                  ? `<style>
         .ytwPdgGiftButtonButton { color: rgb(15,15,15); background-color: rgba(0,0,0,.05); border: 0; width: 40px; height: 40px; }
         .ytwPdgGiftButtonButton:disabled { color: rgba(15,15,15,.3); }
         .ytSpecIconShapeHost { color: inherit; }
@@ -432,9 +436,9 @@ const playableChatHtml = (
         </div></div></div>
         <span id="gift-catalog-icon">Colored gift</span>
       </yt-live-chat-message-input-renderer></div>`
-                : ''
+                  : ''
       }
-    </yt-live-chat-renderer>${purchaseInteractions ? '</yt-live-chat-app>' : ''}
+    </yt-live-chat-renderer>${purchaseInteractions || standardPurchaseInteractions ? '</yt-live-chat-app>' : ''}
     ${
       runtimeVideoId
         ? `<a id="fixture-sign-in" href="/signin?next=${encodeURIComponent(`/watch?v=${runtimeVideoId}`)}">Sign in</a>
@@ -583,6 +587,7 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
                     state.chat.mode === 'live' && state.chat.giftButton === true,
                     state.chat.mode === 'live' && state.chat.appearanceSurfaces === true,
                     state.chat.mode === 'live' && state.chat.purchaseInteractions === true,
+                    state.chat.mode === 'live' && state.chat.standardPurchaseInteractions === true,
                   )
                 : unavailableChatHtml(),
           },

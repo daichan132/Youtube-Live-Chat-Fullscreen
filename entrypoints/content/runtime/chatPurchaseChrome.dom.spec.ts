@@ -98,6 +98,40 @@ describe('native purchase chrome protection', () => {
     expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
   })
 
+  it('keeps a native live-chat donation form expanded and focused until it closes', async () => {
+    const { iframe, doc, controller, mountPanel } = createFixture()
+    const donation = mountPanel('ytd-donation-amount-picker-renderer')
+    donation.setAttribute('live-chat', '')
+    const amount = doc.createElement('input')
+    amount.value = '250'
+    donation.append(amount)
+    amount.focus()
+    controller.sync(iframe, 'collapsed')
+    expect(doc.body).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    expect(doc.activeElement).toBe(amount)
+    expect(amount.value).toBe('250')
+    donation.hidden = true
+    await settleMutation()
+    expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  })
+
+  it('only holds an attribute-qualified live-chat donation and observes its marker changing', async () => {
+    const { iframe, doc, controller, mountPanel } = createFixture()
+    const donation = mountPanel('ytd-donation-amount-picker-renderer')
+    controller.sync(iframe, 'collapsed')
+    expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    donation.setAttribute('live-chat', '')
+    await settleMutation()
+    expect(doc.body).toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    donation.removeAttribute('live-chat')
+    await settleMutation()
+    expect(doc.body).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS)
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  })
+
   it('owns the active marker in full-chat mode and clears it when the iframe is released', async () => {
     const { iframe, doc, controller, mountPanel } = createFixture()
     const offer = mountPanel()

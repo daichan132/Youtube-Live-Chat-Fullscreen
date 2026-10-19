@@ -39,6 +39,7 @@ export const FIXTURE_SPECS = [
   'live/overlayMenuUsability.fixture.spec.ts',
   'live/numberInputUsability.fixture.spec.ts',
   'live/purchaseInteraction.fixture.spec.ts',
+  'live/standardPurchaseUi.fixture.spec.ts',
   'live/spaNavigation.fixture.spec.ts',
   'popup/i18n.fixture.spec.ts',
   'popup/popup.spec.ts',
