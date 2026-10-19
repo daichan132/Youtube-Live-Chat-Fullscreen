@@ -19,6 +19,6 @@ The [copy locale index](../store-assets/chrome-web-store/source/listing-copy-loc
 
 ## Selected assets
 
-The [asset guide](../store-assets/chrome-web-store/README.md) lists the four screenshots and two promotional images confirmed by the user on 2026-10-18 (JST). Its manifest records their hashes and source attribution. README examples use the same privacy-protected screenshot files.
+The [asset guide](../store-assets/chrome-web-store/README.md) lists the four screenshots and two promotional images selected by the user on 2026-10-18 (JST). The introduction and promotional tiles were revised for review on 2026-10-19 at the user's request to remove repeated product wording. Its manifest records current hashes, revision history, and source attribution. README examples use the same privacy-protected screenshot files.
 
 Older concepts, captures, comparison galleries, and unselected exports have been removed. Keep only selected designs and the source files needed to maintain them. The selection does not establish a store upload or publication; check the dashboard and public listing separately.

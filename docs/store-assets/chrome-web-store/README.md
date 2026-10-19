@@ -1,6 +1,6 @@
 # Chrome Web Store assets
 
-The user selected these six images on 2026-10-18 (JST). Their bytes are unchanged from the approved files. [manifest.json](manifest.json) records each output, its SHA-256, its previous location, and the retained sources. This cleanup did not upload images, submit a review, or publish the store listing.
+The user selected this six-image set on 2026-10-18 (JST). On 2026-10-19, the introduction and both promotional tiles were revised at the user's request: each product-name word appears once in a single title block, and the duplicate brand header was removed. These three revised exports are prepared for review; the three real-stream screenshots retain their approved bytes. [manifest.json](manifest.json) records the output hashes, revision history, and retained sources. No store upload, review submission, or publication was performed.
 
 ## Selected images
 
@@ -11,7 +11,7 @@ Upload the four screenshots in filename order.
 3. [Transparent chat](screenshots/03-transparent-chat.png): CohhCarnage, fully transparent messages-only layout, 1280 × 800.
 4. [Custom style](screenshots/04-custom-style.png): DrLupo, navy chat background and Inter font, 1280 × 800.
 
-The promotional images are [small-promo.png](promotional/small-promo.png), 440 × 280, and [marquee.png](promotional/marquee.png), 1400 × 560. Both use the selected indigo illustration.
+The promotional images are [small-promo.png](promotional/small-promo.png), 440 × 280, and [marquee.png](promotional/marquee.png), 1400 × 560. Both use the revised indigo illustration with a single “YouTube / Live Chat / Fullscreen” title block. All six uploads are opaque 24-bit RGB PNGs. Review the small tile at 440 × 280 and 220 × 140 to check text and chat readability.
 
 Each real-stream screenshot displays its complete 1920 × 1080 source at 1280 × 720 below an 80 px heading. README pages and the user guide embed the privacy-processed 1920 × 1080 sources directly to avoid the extra downscaling in the store exports. The introduction and promotional images are illustrations. The real examples use the extension's actual chat UI.
 
@@ -27,7 +27,7 @@ Viewer names, avatars, donor information, and mentions are blurred in the prepar
 
 ## Sources and previews
 
-The selected [indigo original](source/indigo-original.png) and its [generation prompts](source/indigo-prompt.json) support the introduction and small tile. The [marquee original](source/marquee-original.png) and [prompt](source/marquee-prompt.md) retain the wide composition. [introduction.html](source/introduction.html) uses the extension icon and bundled Inter font under its [SIL Open Font License](source/fonts/LICENSE).
+The [revised compact artwork](source/compact-titled-original.png) supports the introduction and small tile; the [revised wide artwork](source/wide-titled-original.png) supports the marquee. Their [built-in imagegen prompts](source/promo-titles-20261019.json) record the single-title requirement and input references. [introduction.html](source/introduction.html) fits the compact artwork into the 1280 × 800 screenshot without adding duplicate text. The original [indigo artwork](source/indigo-original.png), [prompts](source/indigo-prompt.json), [wide artwork](source/marquee-original.png), and [wide prompt](source/marquee-prompt.md) retain the pre-revision provenance. The real-stream screenshot headings use the bundled Inter font under its [SIL Open Font License](source/fonts/LICENSE).
 
 From the repository root, use Node.js 24 and the pinned Yarn.
 
@@ -36,7 +36,7 @@ yarn store:assets:render --check
 yarn store:assets:render
 ```
 
-The first command checks selected output and source hashes, dimensions, and PNG format. The second renders comparison previews in a temporary directory and reports whether they match the selected bytes. It preserves the approved files. A preview can differ when the rendering tool differs from the original export, as with the marquee's historical `sips` downsampling.
+The first command checks output and source hashes, dimensions, and 24-bit RGB PNG format. The second renders comparison previews in a temporary directory and reports whether they match the saved bytes; it preserves the saved exports. Browser-version differences can affect rendered bytes. Rendering artwork does not test extension behavior or verify the live store listing.
 
 The reusable [transparent settings example](source/settings/transparent-live.json) supports the [browser verification guide](../../maintainers/verification-browser.md). The three selected capture settings are kept beside it.
 

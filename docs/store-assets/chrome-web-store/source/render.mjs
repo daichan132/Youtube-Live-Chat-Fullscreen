@@ -29,13 +29,15 @@ const requiredSources = [
   ...nativeScreenshots.map(({ input }) => input),
   'source/indigo-original.png',
   'source/marquee-original.png',
+  'source/compact-titled-original.png',
+  'source/wide-titled-original.png',
   'source/introduction.html',
   'source/fonts/inter-500.woff2',
 ]
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex')
 const pngProperties = bytes => {
   assert(bytes.length >= 26 && bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])), 'Expected a PNG file')
-  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20), colorType: bytes[25] }
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20), bitDepth: bytes[24], colorType: bytes[25] }
 }
 const assetPath = file => {
   assert(typeof file === 'string' && !path.isAbsolute(file), `Expected an asset-relative path: ${file}`)
@@ -78,6 +80,7 @@ for (const entry of [...manifest.outputs, ...manifest.sources]) {
   if (outputSizes.has(entry.file)) {
     assert.deepEqual([entry.width, entry.height], size, `Manifest dimensions changed: ${entry.file}`)
     assert.equal(actual.colorType, 2, `Selected upload must be an opaque RGB PNG: ${entry.file}`)
+    assert.equal(actual.bitDepth, 8, `Selected upload must be a 24-bit RGB PNG: ${entry.file}`)
   }
 }
 for (const { input } of nativeScreenshots) {
@@ -101,9 +104,10 @@ const { chromium } = await import('@playwright/test')
 const browser = await chromium.launch({ headless: true })
 const previewOutputs = []
 const record = async (file, bytes) => {
-  const { width, height, colorType } = pngProperties(bytes)
+  const { width, height, bitDepth, colorType } = pngProperties(bytes)
   assert.deepEqual([width, height], outputSizes.get(file), `Preview dimensions changed: ${file}`)
   assert.equal(colorType, 2, `Preview must be an opaque RGB PNG: ${file}`)
+  assert.equal(bitDepth, 8, `Preview must be a 24-bit RGB PNG: ${file}`)
   const selected = manifest.outputs.find(entry => entry.file === file)
   previewOutputs.push({ file, width, height, sha256: sha256(bytes), matchesSelectedBytes: sha256(bytes) === selected.sha256 })
 }
@@ -127,25 +131,25 @@ try {
   await ready()
   const intro = await page.evaluate(() => {
     const canvas = document.getElementById('artwork').getBoundingClientRect()
-    const title = document.querySelector('.title').getBoundingClientRect()
-    const illustration = document.querySelector('.illustration').getBoundingClientRect()
+    const image = document.querySelector('.illustration')
+    const illustration = image.getBoundingClientRect()
     return {
       width: canvas.width,
       height: canvas.height,
-      titleRight: title.right,
-      titleBottom: title.bottom,
+      illustrationWidth: illustration.width,
+      illustrationHeight: illustration.height,
       illustrationBottom: illustration.bottom,
-      fontLoaded: [...document.fonts].some(font => font.family === 'Inter' && font.status === 'loaded'),
+      imageLoaded: image.complete && image.naturalWidth > 0,
     }
   })
   assert(
     intro.width === 1280 &&
       intro.height === 800 &&
-      intro.fontLoaded &&
-      intro.titleRight <= 790 &&
-      intro.titleBottom <= 700 &&
+      intro.imageLoaded &&
+      intro.illustrationWidth === 1280 &&
+      intro.illustrationHeight === 800 &&
       intro.illustrationBottom <= 800,
-    'Introduction layout or font failed',
+    'Introduction layout or image failed',
   )
   const introFile = 'screenshots/01-introduction.png'
   await record(introFile, await page.locator('#artwork').screenshot({ path: await outputPath(introFile), animations: 'disabled' }))
@@ -190,8 +194,8 @@ h1{margin:0;font-size:30px;font-weight:500;letter-spacing:-.8px}.credit{text-ali
   }
 
   for (const [file, input] of [
-    ['promotional/small-promo.png', 'source/indigo-original.png'],
-    ['promotional/marquee.png', 'source/marquee-original.png'],
+    ['promotional/small-promo.png', 'source/compact-titled-original.png'],
+    ['promotional/marquee.png', 'source/wide-titled-original.png'],
   ]) {
     const [width, height] = outputSizes.get(file)
     await page.setViewportSize({ width, height })
