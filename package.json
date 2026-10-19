@@ -53,7 +53,9 @@
     "verify:release-proof": "node scripts/verify/release-proof.mjs verify",
     "verify": "yarn locales:check && yarn store:check && yarn check && yarn test:coverage && yarn test:contracts",
     "verify:firefox-source": "node scripts/verify/rebuild-firefox-source.mjs",
-    "verify:release": "yarn verify && yarn test:package && yarn verify:firefox-source && yarn build:e2e && playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1 && yarn e2e:production:chrome && YLC_EXTENSION_OUTPUT_DIR=.output/production-smoke/chrome YLC_REQUIRE_E2E_BRIDGE=0 YLC_CANARY_REQUIRE_CLEAN=1 playwright test --project=canary --retries=0 --max-failures=1"
+    "verify:release": "yarn verify:release:ci && yarn e2e:canary:production",
+    "verify:release:ci": "yarn verify && yarn test:package && yarn verify:firefox-source && yarn build:e2e && playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1 && yarn e2e:production:chrome",
+    "e2e:canary:production": "YLC_EXTENSION_OUTPUT_DIR=.output/production-smoke/chrome YLC_REQUIRE_E2E_BRIDGE=0 YLC_CANARY_REQUIRE_CLEAN=1 playwright test --project=canary --retries=0 --max-failures=1"
   },
   "dependencies": {
     "jotai": "^3.0.1",

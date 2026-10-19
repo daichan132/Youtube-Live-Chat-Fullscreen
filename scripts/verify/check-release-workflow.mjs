@@ -33,7 +33,11 @@ export const assertReleaseWorkflows = (candidate, publish) => {
   assert.doesNotMatch(candidateTrigger, /^ {2}push:$/m, 'Merging main must not publish a new version')
   assert.match(candidateTrigger, /^ {2}workflow_dispatch:$/m, 'Candidate creation must be an intentional manual action')
   assert.match(publishTrigger, /^ {2}workflow_dispatch:$/m, 'Store publication must be an intentional manual action')
-  assert.match(candidate, /YLC_CANARY_REQUIRE_CLEAN: "1"/, 'Release candidates must require a clean real-YouTube canary')
+  const candidateVerification = workflowSteps(workflowJob(candidate, 'verify-and-package')).filter(step =>
+    step.includes('run: xvfb-run --auto-servernum yarn verify:release:ci'),
+  )
+  assert.equal(candidateVerification.length, 1, 'Candidate must run deterministic release verification')
+  assert.doesNotMatch(candidateVerification[0], /(?:continue-on-error|if):/, 'Candidate verification cannot be optional')
   assert.match(candidate, /release-proof\.mjs create --commit "\$GITHUB_SHA"/, 'Candidate artifacts must be bound to their source commit')
   assert.match(candidate, /gh release create .* --draft /, 'Verified candidates must remain draft releases')
 
@@ -90,6 +94,23 @@ export const assertReleaseWorkflows = (candidate, publish) => {
     validation,
     /--expected-commit "\$CANDIDATE_COMMIT" --expected-version "\$RELEASE_VERSION"/,
     'Proof verification must use the validated candidate commit and requested version',
+  )
+  const reviews = workflowSteps(validation).filter(step => step.includes('run: node scripts/verify/release-browser-review.mjs'))
+  assert.equal(reviews.length, 1, 'Publication must require candidate-specific browser review')
+  const review = reviews[0]
+  assert.doesNotMatch(review, /(?:continue-on-error|if):/, 'Browser review cannot be bypassed')
+  for (const [variable, expression] of [
+    ['CANDIDATE_ARTIFACT_ID', 'steps.candidate.outputs.artifact_id'],
+    ['REVIEWED_ARTIFACT_ID', 'inputs.reviewed_artifact_id'],
+    ['BROWSER_REVIEW_URL', 'inputs.browser_review_url'],
+    ['BROWSER_REVIEW_CONFIRMED', 'inputs.browser_review_confirmed'],
+  ]) {
+    assert.ok(review.includes(`${variable}: \${{ ${expression} }}`), `Review must use ${expression}`)
+  }
+  assert.ok(
+    validation.indexOf(review) > validation.indexOf(validationDownload) &&
+      validation.indexOf(review) < validation.indexOf('      - name: Forward the exact proven assets'),
+    'Review must gate forwarding of the validated candidate',
   )
   assert.doesNotMatch(publish, /ref: v\$\{\{ inputs\.version \}\}/, 'Publishing code cannot be checked out from a mutable tag')
   for (const [name, environment] of [

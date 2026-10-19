@@ -43,10 +43,8 @@ jobs:
         run: yarn install --immutable
       - name: Install Playwright Chromium
         run: yarn playwright install --with-deps chromium
-      - name: Run the local release verification command
-        env:
-          YLC_CANARY_REQUIRE_CLEAN: "1"
-        run: xvfb-run --auto-servernum yarn verify:release
+      - name: Run deterministic candidate verification
+        run: xvfb-run --auto-servernum yarn verify:release:ci
       - name: Create release proof
         run: node scripts/verify/release-proof.mjs create --commit "$GITHUB_SHA"
       - name: Upload browser diagnostics

@@ -11,6 +11,19 @@ on:
         description: Successful Release candidate Actions run ID for this version
         required: true
         type: string
+      reviewed_artifact_id:
+        description: Immutable candidate artifact ID reviewed in both Chrome and Firefox
+        required: true
+        type: string
+      browser_review_url:
+        description: HTTPS link to Chrome/Firefox candidate QA record (hashes, results, untested paths)
+        required: true
+        type: string
+      browser_review_confirmed:
+        description: Both candidate ZIPs were checked on real YouTube without sending or buying; no unresolved release blockers
+        required: true
+        default: false
+        type: boolean
 
 concurrency:
   group: publish-${{ inputs.version }}
@@ -78,6 +91,13 @@ jobs:
           RELEASE_VERSION: ${{ inputs.version }}
           CANDIDATE_COMMIT: ${{ steps.candidate.outputs.commit }}
         run: node scripts/verify/release-proof.mjs verify --proof ".output/release-proof-v$RELEASE_VERSION.json" --expected-commit "$CANDIDATE_COMMIT" --expected-version "$RELEASE_VERSION"
+      - name: Require candidate-specific browser review
+        env:
+          CANDIDATE_ARTIFACT_ID: ${{ steps.candidate.outputs.artifact_id }}
+          REVIEWED_ARTIFACT_ID: ${{ inputs.reviewed_artifact_id }}
+          BROWSER_REVIEW_URL: ${{ inputs.browser_review_url }}
+          BROWSER_REVIEW_CONFIRMED: ${{ inputs.browser_review_confirmed }}
+        run: node scripts/verify/release-browser-review.mjs
       - name: Forward the exact proven assets
         id: proven
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7

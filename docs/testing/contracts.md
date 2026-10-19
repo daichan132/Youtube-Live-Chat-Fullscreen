@@ -138,7 +138,7 @@ The testing build is therefore always consumed, while visual regression and exac
 
 ## Release ownership
 
-`yarn verify:release` adds production packaging, Firefox source reconstruction, deterministic browser projects, exact Chrome ZIP startup, and strict canary execution. The release-candidate workflow produces immutable artifacts and proof; publication verifies and promotes those bytes without rebuilding.
+`yarn verify:release:ci` adds production packaging, Firefox source reconstruction, deterministic browser projects, and exact Chrome ZIP startup. Candidate CI uses this deterministic command. `yarn e2e:canary:production` runs the strict external canary against the extracted production Chrome ZIP with zero retries; `yarn verify:release` combines both commands for local release checks. The release-candidate workflow produces immutable artifacts and proof; publication verifies and promotes those bytes without rebuilding.
 
 `scripts/verify/check-release-workflow.mjs` validates the release/publish workflow shape and runs inside `yarn check`. Each store job must bind its own checkout, immutable artifact download, and protected environment; matching those strings elsewhere in the workflow is insufficient. The trusted dispatch-ref guard must exist before validation checkout and exit with failure inside its non-main branch regardless of its display name or explanatory text. `scripts/verify/release-workflow.spec.mjs` exercises these job boundaries without running a workflow.
 
@@ -152,7 +152,7 @@ YouTube precondition selectors are defined independently in [`e2e/utils/selector
 
 The reporter records executed, skipped, failed, and compatibility fingerprint data for operator review.
 
-The manually triggered [standalone canary](../../.github/workflows/canary.yml) may report environmental degradation, whereas the release path requires a clean canary. Human real-browser evidence remains part of release operation; see the [maintainer runbook](../maintainers/release-runbook.md).
+The manually triggered [standalone canary](../../.github/workflows/canary.yml) and local strict canary retain non-success results for skipped or unavailable sources. The standalone workflow uses a production ZIP without the test bridge and zero retries. External YouTube availability does not block candidate packaging. Publication instead requires an explicit Chrome/Firefox review attestation, an HTTPS QA record link, and a reviewed artifact ID matching the validated candidate attempt. The link contents are not automatically verified; this is a maintainer attestation, not proof that browser QA happened. Human real-browser evidence remains part of release operation; see the [maintainer runbook](../maintainers/release-runbook.md).
 
 ## Visual baselines
 

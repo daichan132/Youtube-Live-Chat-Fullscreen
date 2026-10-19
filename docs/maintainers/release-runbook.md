@@ -11,7 +11,7 @@ Chrome Web Store と Firefox Add-ons に新しいバージョンを提出する�
 
 ## 1. main とバージョンを確認する
 
-公開したい変更を main にまとめ、対象コミットの PR CI（`quality`、`package`、`browser-contracts`）を確認する。CI の `workflow_dispatch` では visual と production package startup smoke も実行できる。候補作成は、同じ種類の検証を `yarn verify:release` で改めて実行する。
+公開したい変更を main にまとめ、対象コミットの PR CI（`quality`、`package`、`browser-contracts`）を確認する。CI の `workflow_dispatch` では visual と production package startup smoke も実行できる。候補作成は、同じ種類の決定的な検証を `yarn verify:release:ci` で改めて実行する。実 YouTube の可用性は候補作成の成否から分離する。
 
 `package.json` の `version` が WXT の manifest と成果物名の情報源。新しいリリースではバージョンを上げ、既存タグと公開済み release に衝突しないことを先に確認する。
 
@@ -35,31 +35,34 @@ git ls-remote --tags origin 'refs/tags/v*'
 
 Actions → **Release candidate** → Run workflow で Branch に **main** を指定する。追加の入力はなく、候補作成のジョブには environment の指定もない。成功するとタグと draft release が作られる。
 
-`verify-and-package` ジョブは Node.js 24、固定した Yarn、Playwright Chromium を用意し、`yarn verify:release` を実行する。現在の順序は次のとおり。
+`verify-and-package` ジョブは Node.js 24、固定した Yarn、Playwright Chromium を用意し、`yarn verify:release:ci` を実行する。現在の順序は次のとおり。
 
 1. `yarn verify`：locale・掲載文・書式・型・coverage・contracts
 2. `yarn test:package`：Chrome / Firefox ZIP と package 契約
 3. `yarn verify:firefox-source`：ソース ZIP からの Firefox 再構築と一致確認
 4. testing build と決定的な fixture・visual・accessibility
 5. `yarn e2e:production:chrome`：本番 Chrome ZIP を展開し、test bridge なしで起動
-6. 展開した同じ本番 Chrome ZIP に対する実 YouTube canary
+
+実 YouTube canary は候補 CI の必須ゲートに含めない。GitHub の IP に対する bot 判定で、製品の不具合と無関係に候補を作れなくなるため。ZIP の確認や決定的なテストを省略する変更ではない。
 
 `yarn verify:firefox-source` は `package.json.version` に対応する `.output/youtube-live-chat-fullscreen-<version>-sources.zip` を選ぶ。旧版の ZIP が同じディレクトリに残っていても検証できる。現在版の ZIP がなければ、旧版を代用せずに停止する。
 
-production smoke は `.output/production-smoke/chrome` を作る。canary は `YLC_EXTENSION_OUTPUT_DIR` でそのディレクトリを読み、`YLC_REQUIRE_E2E_BRIDGE=0` で実行する。この順序と参照先を変えると、本番 ZIP に対する確認にならない。
+production smoke は `.output/production-smoke/chrome` を作る。ローカルで `yarn e2e:canary:production` を実行すると、canary は `YLC_EXTENSION_OUTPUT_DIR` でそのディレクトリを読み、`YLC_REQUIRE_E2E_BRIDGE=0` で実行する。この順序と参照先を変えると、本番 ZIP に対する確認にならない。
 
 ### canary の判定
 
-判定は [`canarySummary.ts`](../../e2e/reporters/canarySummary.ts) が行う。release では `YLC_CANARY_REQUIRE_CLEAN=1` を設定し、retry は 0 回。
+判定は [`canarySummary.ts`](../../e2e/reporters/canarySummary.ts) が行う。`yarn e2e:canary:production` は `YLC_CANARY_REQUIRE_CLEAN=1` を設定し、retry は 0 回。`yarn verify:release` は候補用の全検証にこの実サイトテストを加えたローカル用コマンド。
 
-| 結果 | 条件 | 候補作成 |
+| 結果 | 条件 | strict canary コマンド |
 | --- | --- | --- |
-| `passed` | 実行あり、失敗・skip・flaky・互換性 drift なし | 続行 |
+| `passed` | 実行あり、失敗・skip・flaky・互換性 drift なし | 成功 |
 | `degraded` | 一部 skip、flaky、互換性 drift | 停止 |
 | `failed` | テスト失敗または run の失敗 | 停止 |
 | `not-run` | 全件 skip などで実行 0 件 | 停止 |
 
-全件 skip を成功扱いする経路や、手動の申告で canary を迂回する入力はない。停止した場合は GitHub job summary の「Real YouTube canary」と `release-candidate-browser-<sha>` の診断を確認する。配信終了や replay の消失と、拡張の互換性問題を分けて判断する。
+全件 skip は成功扱いしない。bot 判定時もテスト結果は `not-run` のまま残す。独立した **Real YouTube canary** の summary と診断を読み、外部条件と拡張の不具合を分ける。bot 判定に対する自動再試行の増加や認証情報の CI への持ち込みは行わない。
+
+候補 CI の成功だけでは公開可能とは判断しない。公開前に、その Actions artifact の ZIP を使って Chrome と Firefox の実サイト確認を実施する。ログインが必要な購入 UI も購入・送信を確定する直前まで確認し、確認結果、未確認の経路、ZIP ハッシュ、artifact ID を記録する。実サイトで未解決の不具合があれば公開を止める。
 
 ### 候補の成果物
 
@@ -84,7 +87,11 @@ draft 本文は GitHub の自動生成。必要に応じて [リリースノー�
 
 ## 5. ストアへ提出する
 
-Actions → **Publish proven release** → Run workflow で Branch に **main**、`version` に先頭の `v` を付けない semver、`candidate_run_id` に確認した **Release candidate** の成功 run ID を入力する。run ID は候補 run の URL `/actions/runs/<run_id>` の数値。別の branch やタグからの公開実行は拒否する。
+Actions → **Publish proven release** → Run workflow で Branch に **main**、`version` に先頭の `v` を付けない semver、`candidate_run_id` に確認した **Release candidate** の成功 run ID を入力する。さらに `reviewed_artifact_id` に実機確認した候補の Actions artifact ID、`browser_review_url` に HTTPS の確認記録 URL を入力し、`browser_review_confirmed` を明示的に true にする。artifact ID は run ID とは別の数値で、Actions の artifact 情報から取得する。候補を再実行したら新しい artifact を再確認する。確認記録に URL・チャット本文・ユーザー名等の個人情報を含めない。
+
+これは実施者の申告を必須にするゲートで、リンク先の内容や実機確認の実施を自動で証明するものではない。確認していない状態で true にしない。
+
+run ID は候補 run の URL `/actions/runs/<run_id>` の数値。別の branch やタグからの公開実行は拒否する。
 
 `validate-candidate` は公開操作を開始した main の固定コミットから検証コードを読み込む。タグのコードは検証前に実行しない。[`release-candidate.mjs`](../../scripts/verify/release-candidate.mjs) が読み取り専用の GitHub API で次を確認する。
 
@@ -93,7 +100,7 @@ Actions → **Publish proven release** → Run workflow で Branch に **main**�
 - run のソースコミットがタグのコミットと一致する
 - 現在の run attempt に対応する artifact が一つだけあり、期限内で、出所の run・コミット・リポジトリと SHA-256 digest が確認できる
 
-照合した artifact ID でダウンロードし、GitHub が記録した digest と異なる場合は停止する。artifact 内の proof のコミット、指定バージョン、3 つの ZIP のサイズと SHA-256 を追加で照合し、同じ 4 ファイルを公開 run 内の新しい固定 artifact としてストア提出ジョブへ渡す。draft の添付をダウンロードする代替経路はない。提出コードも検証済みの候補コミットを SHA で checkout するため、検証後にタグを変更してもコードの参照先は変わらない。
+照合した artifact ID でダウンロードし、GitHub が記録した digest と異なる場合は停止する。artifact 内の proof のコミット、指定バージョン、3 つの ZIP のサイズと SHA-256 を追加で照合し、`release-browser-review.mjs` が確認申告・記録 URL・照合済み artifact ID と確認対象 ID の一致を検査してから、同じ 4 ファイルを公開 run 内の新しい固定 artifact としてストア提出ジョブへ渡す。draft の添付をダウンロードする代替経路はない。提出コードも検証済みの候補コミットを SHA で checkout するため、検証後にタグを変更してもコードの参照先は変わらない。
 
 | ジョブ | environment | 提出方法 |
 | --- | --- | --- |
@@ -119,7 +126,7 @@ Chrome Web Store と Firefox Add-ons の審査・配信状態を各ダッシュ�
 
 | 状況 | 対応 |
 | --- | --- |
-| canary が `degraded` / `failed` / `not-run` | summary と診断を読み、配信側の前提か拡張の問題かを確認する。修正または有効な対象を確認して候補を再実行する |
+| canary が `degraded` / `failed` / `not-run` | summary と診断を読み、配信側の前提か拡張の問題かを確認する。製品不具合は修正する。外部条件なら別の利用可能な対象やローカル環境で同じ候補を確認し、結果を記録する。未確認を合格にしない |
 | ストア提出が片方だけ失敗 | GitHub release は draft のまま。成功した側の提出状態を確認し、再提出の影響を把握してから再実行する |
 | proof のコミット・サイズ・ハッシュが不一致 | 成果物を手で差し替えず、候補のソースと添付を確認する。ソース変更が必要なら新しいバージョンの候補を作る |
 | artifact が期限切れ・削除済み、または古い命名規則の候補しかない | 現在の候補ワークフローを main から実行し直し、新しい run ID と artifact で確認する。draft 添付への切替は行わない |
@@ -129,6 +136,6 @@ Chrome Web Store と Firefox Add-ons の審査・配信状態を各ダッシュ�
 
 ## 独立した canary と契約チェック
 
-[Real YouTube canary](../../.github/workflows/canary.yml) は手動実行の互換性確認で、リリースを自動で開始しない。testing build を使い、CI 上は retry 2 回。release の全件 clean 判定とは用途が異なるが、実行 0 件と失敗はこの経路でも成功扱いしない。
+[Real YouTube canary](../../.github/workflows/canary.yml) は手動実行の互換性確認で、リリースを自動で開始しない。その ref の本番 Chrome ZIP を作り、test bridge なし・retry 0 回の strict 判定で確認する。候補 run の ZIP 自体ではないので、特定候補の実機確認の代わりにはしない。実行 0 件や skip を含む結果は成功扱いしない。候補・公開ワークフローには依存しない。
 
-`yarn check` は `check-release-workflow.mjs` を含み、手動実行、clean canary、信頼する main と候補 run・artifact ID の照合、digest 不一致時の停止、再ビルド禁止などの公開契約を検査する。ワークフローを変更したら関連する契約テストとこの文書も更新する。
+`yarn check` は `check-release-workflow.mjs` を含み、手動実行、決定的な候補検証、候補ごとの実機確認申告、信頼する main と候補 run・artifact ID の照合、digest 不一致時の停止、再ビルド禁止などの公開契約を検査する。ワークフローを変更したら関連する契約テストとこの文書も更新する。

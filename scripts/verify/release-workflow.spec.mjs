@@ -30,6 +30,26 @@ const moveCheckout = (workflow, from, to) => {
 }
 
 describe('release publication job contracts', () => {
+  it('keeps the complete deterministic gate separate from strict production canary', async () => {
+    const { scripts } = JSON.parse(await readFile(new URL('../../package.json', import.meta.url), 'utf8'))
+    expect(scripts['verify:release:ci'].split(' && ')).toEqual([
+      'yarn verify',
+      'yarn test:package',
+      'yarn verify:firefox-source',
+      'yarn build:e2e',
+      'playwright test --project=fixture --project=visual --project=accessibility --retries=0 --max-failures=1',
+      'yarn e2e:production:chrome',
+    ])
+    expect(scripts['verify:release']).toBe('yarn verify:release:ci && yarn e2e:canary:production')
+    expect(scripts['e2e:canary:production']).toBe(
+      'YLC_EXTENSION_OUTPUT_DIR=.output/production-smoke/chrome YLC_REQUIRE_E2E_BRIDGE=0 YLC_CANARY_REQUIRE_CLEAN=1 playwright test --project=canary --retries=0 --max-failures=1',
+    )
+    const standalone = await readFile(new URL('../../.github/workflows/canary.yml', import.meta.url), 'utf8')
+    expect(standalone).toContain('run: yarn zip && yarn prepare:production-smoke')
+    expect(standalone).toContain('run: xvfb-run --auto-servernum yarn e2e:canary:production')
+    expect(candidate).not.toContain('yarn e2e:canary')
+  })
+
   it('accepts the current jobs and changes to the trusted-ref guard display text', () => {
     expect(() => assertReleaseWorkflows(candidate, publish)).not.toThrow()
     expect(() =>
@@ -40,6 +60,21 @@ describe('release publication job contracts', () => {
           .replace('Publication must run from main', 'Choose main before publishing'),
       ),
     ).not.toThrow()
+  })
+
+  it.each([
+    ['removed', step => step.replace('run: node scripts/verify/release-browser-review.mjs', 'run: echo unchecked')],
+    ['optional', step => step.replace('        env:', '        continue-on-error: true\n        env:')],
+    ['conditional', step => step.replace('        env:', '        if: false\n        env:')],
+    ['wrong artifact', step => step.replace('steps.candidate.outputs.artifact_id', 'inputs.reviewed_artifact_id')],
+    ['implicit confirmation', step => step.replace('inputs.browser_review_confirmed', 'true')],
+  ])('rejects browser review that is %s', (_name, change) => {
+    const changed = publish.replace(
+      /      - name: Require candidate-specific browser review\n[\s\S]*?(?=      - name: Forward)/,
+      change,
+    )
+    expect(changed).not.toBe(publish)
+    expect(() => assertReleaseWorkflows(candidate, changed)).toThrow()
   })
 
   it.each([
