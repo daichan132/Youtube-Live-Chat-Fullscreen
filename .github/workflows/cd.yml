@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   verify-and-package:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 120
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -71,7 +71,7 @@ jobs:
 
   draft-release:
     needs: verify-and-package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
     steps:
