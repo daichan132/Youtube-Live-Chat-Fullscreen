@@ -97,6 +97,9 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
       getFirstFocusableControl(adjacentItem) ?? list?.querySelector<HTMLElement>('[data-ylc-add-preset]:not([disabled])') ?? null
 
     if (!deletePreset(id)) return
+    // The ordered list can remove this row after its own synchronization effect.
+    // Release the modal's inert background before the next-frame focus request.
+    setIsDeleteModalOpen(false)
     requestAnimationFrame(() => {
       if (focusTarget?.isConnected) focusTarget.focus({ preventScroll: true })
     })
@@ -191,23 +194,29 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
           shouldReturnFocusAfterClose={true}
           overlayClassName='fixed top-0 left-0 w-full h-full bg-black/35'
           overlayStyle={DELETE_MODAL_OVERLAY_STYLE}
-          contentClassName='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
+          contentClassName='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] max-h-[calc(100dvh-24px)] box-border flex min-h-0 flex-col ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           parentSelector={getModalParentElement}
         >
-          <div className='px-5 py-4 ylc-theme-dialog-divider-bottom'>
+          <div className='shrink-0 px-5 py-4 ylc-theme-dialog-divider-bottom'>
             <h3 id={deleteDialogTitleId} className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>
               {t('content.preset.delete')}
             </h3>
           </div>
-          <div className='px-5 py-4'>
+          <section
+            aria-labelledby={deleteDialogTitleId}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: scroll regions need keyboard scrolling inside the modal focus trap
+            tabIndex={0}
+            className='min-h-0 overflow-y-auto px-5 py-4 ylc-theme-focus-ring-soft'
+            style={{ overscrollBehavior: 'contain' }}
+          >
             <p id={deleteNameId} className='ylc-preset-delete-name'>
               <bdi>{displayTitle || t('content.preset.addItemTitle')}</bdi>
             </p>
             <p id={deleteQuestionId} className='m-0 text-sm leading-6 ylc-theme-text-secondary'>
               {t('content.preset.deleteConfirmationMessage')}
             </p>
-          </div>
-          <div className='px-5 py-3 flex justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
+          </section>
+          <div className='shrink-0 px-5 py-3 flex flex-wrap justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}

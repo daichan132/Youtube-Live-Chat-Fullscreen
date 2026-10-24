@@ -1,4 +1,5 @@
-import { act, fireEvent, within } from '@testing-library/react'
+import { act, fireEvent, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { useAtomValue } from 'jotai'
 import { createStore } from 'jotai/vanilla'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -45,6 +46,32 @@ describe('PresetItem deletion focus', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+  })
+
+  it('lets keyboard users enter the named description region and cancel without changing presets', async () => {
+    const user = userEvent.setup()
+    const view = renderWithStore(<FocusHarness />, store)
+    const input = view.getByDisplayValue('First custom')
+    const card = input.closest<HTMLElement>('[data-ylc-preset-item]')
+    const trigger = card?.querySelector<HTMLButtonElement>('.ylc-preset-del')
+    if (!trigger) throw new Error('Missing custom preset deletion control')
+    const before = store.get(chatSettingsStateAtom)
+    await user.click(trigger)
+    const dialog = await view.findByRole('dialog')
+    const description = within(dialog).getByRole('region', { name: 'content.preset.delete' })
+    expect(description).toHaveTextContent('First custom')
+    expect(description).toHaveTextContent('content.preset.deleteConfirmationMessage')
+
+    await waitFor(() => expect(description.parentElement).toHaveFocus())
+    await user.tab()
+    expect(description).toHaveFocus()
+    await user.tab()
+    expect(within(dialog).getByRole('button', { name: 'content.preset.cancel' })).toHaveFocus()
+    await user.keyboard('{Enter}')
+
+    expect(view.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+    expect(store.get(chatSettingsStateAtom)).toBe(before)
   })
 
   it('moves focus to the next preset after the focused row is deleted', async () => {

@@ -33,7 +33,7 @@ describe('PresetItem', () => {
       presets: [...DEFAULT_CHAT_SETTINGS.presets, { kind: 'custom', id: 'custom', name: 'Custom Preset', profile }],
     })
 
-    const { findByRole, findByText, getByDisplayValue } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
+    const { findByRole, findByText, getByDisplayValue, queryByRole } = renderWithStore(<PresetItem id='custom' reorder={reorder} />, store)
 
     const titleInput = getByDisplayValue('Custom Preset') as HTMLInputElement
     const card = findPresetCard(titleInput)
@@ -49,6 +49,8 @@ describe('PresetItem', () => {
     fireEvent.click(await findByText('content.preset.delete', { selector: 'button' }))
 
     expect(store.get(chatSettingsStateAtom).presets.some(preset => preset.id === 'custom')).toBe(false)
+    // The parent may keep this row mounted until its ordered list synchronizes.
+    expect(queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('persists a custom name only when editing is committed', () => {
