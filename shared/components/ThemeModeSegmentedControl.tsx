@@ -28,6 +28,7 @@ export const ThemeModeSegmentedControl = ({ value, onChange, ariaLabel }: ThemeM
           <label key={mode} className='ylc-theme-segment-option'>
             <input type='radio' name={groupName} value={mode} checked={value === mode} aria-label={label} onChange={() => onChange(mode)} />
             <Icon size={18} aria-hidden='true' />
+            <span>{label}</span>
           </label>
         )
       })}

@@ -35,7 +35,7 @@ export const LanguageSelector = () => {
         aria-label={t('content.aria.selectLanguage')}
       >
         {languageOptions.map(option => (
-          <option key={option.value} value={option.value}>
+          <option key={option.value} value={option.value} lang={option.value.replaceAll('_', '-')}>
             {option.label}
           </option>
         ))}

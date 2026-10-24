@@ -46,18 +46,91 @@ const importedSettings = (
 })
 
 test.describe('popup', { tag: '@popup' }, () => {
+  for (const { locale, backupNames, themeNames } of [
+    { locale: 'en', backupNames: ['Export', 'Import'], themeNames: ['Auto', 'Light', 'Dark'] },
+    { locale: 'ja', backupNames: ['書き出し', '読み込み'], themeNames: ['自動', 'ライト', 'ダーク'] },
+    { locale: 'ar', backupNames: ['تصدير', 'استيراد'], themeNames: ['تلقائي', 'فاتح', 'داكن'] },
+  ]) {
+    test(`popup controls keep visible labels and fit narrow viewports: ${locale}`, async ({ page, extension }, testInfo) => {
+      const originalViewport = page.viewportSize()
+      await extension.storage.set({
+        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'popup-layout-fixture', value: locale },
+      })
+      await page.goto(extension.url('popup.html'))
+      await expect(page.getByRole('combobox')).toHaveValue(locale)
+      await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      await expect(page.locator('html')).toHaveAttribute('lang', locale)
+      await expect(page.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+
+      for (const width of [450, 400, 360, 320]) {
+        await page.setViewportSize({ width, height: 650 })
+        for (const name of backupNames) {
+          const button = page.getByRole('button', { name, exact: true })
+          await expect(button.getByText(name, { exact: true })).toBeVisible()
+          const bounds = await button.boundingBox()
+          expect(bounds?.width).toBeGreaterThanOrEqual(44)
+          expect(bounds?.height).toBeGreaterThanOrEqual(44)
+        }
+        for (const name of ['Chrome', 'Firefox', 'GitHub']) {
+          const link = page.getByRole('link', { name, exact: true })
+          await expect(link.getByText(name, { exact: true })).toBeVisible()
+          const bounds = await link.boundingBox()
+          expect(bounds?.width).toBeGreaterThanOrEqual(44)
+          expect(bounds?.height).toBeGreaterThanOrEqual(44)
+        }
+        for (const name of themeNames) {
+          await expect(page.getByText(name, { exact: true })).toBeVisible()
+        }
+        await expect
+          .poll(() =>
+            page.evaluate(() => ({
+              overflow: document.documentElement.scrollWidth - window.innerWidth,
+              clippedControls: [...document.querySelectorAll('a, button, select, label')].filter(control => {
+                const bounds = control.getBoundingClientRect()
+                return bounds.width > 0 && (bounds.left < -1 || bounds.right > window.innerWidth + 1)
+              }).length,
+            })),
+          )
+          .toEqual({ overflow: 0, clippedControls: 0 })
+      }
+      await testInfo.attach(`popup-${locale}-320px`, { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' })
+      if (originalViewport) await page.setViewportSize(originalViewport)
+    })
+  }
+
+  test('popup theme choices support native keyboard selection and keep the saved theme after reopening', async ({ page, extension }) => {
+    await page.goto(extension.url('popup.html'))
+    const system = page.getByRole('radio', { name: 'Auto', exact: true })
+    await expect(system).toBeChecked()
+    await system.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(page.getByRole('radio', { name: 'Light', exact: true })).toBeChecked()
+    await page.keyboard.press('ArrowRight')
+    await expect(page.getByRole('radio', { name: 'Dark', exact: true })).toBeChecked()
+    await expect.poll(async () => (await readStorageEntry<string>(page, THEME_STORAGE_KEY))?.value).toBe('dark')
+    await page.reload()
+    await expect(page.getByRole('radio', { name: 'Dark', exact: true })).toBeChecked()
+    await expect(page.locator('#root > [data-ylc-theme]')).toHaveAttribute('data-ylc-theme', 'dark')
+  })
+
   for (const locale of ['en', 'ja', 'ar']) {
     test(`settings content fits horizontally: ${locale}`, async ({ page, extension }) => {
       await extension.storage.set({
         [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'settings-layout-fixture', value: locale },
       })
       await openDeterministicOverlay(page)
+      const hostLanguage = await page.locator('html').getAttribute('lang')
+      const hostDirection = await page.locator('html').getAttribute('dir')
       const overlay = new ExtensionOverlay(page)
       await overlay.frame().hover()
       await page.locator('[data-ylc-settings-btn]').click()
       await expect(overlay.settingsDialog()).toBeVisible()
       const frame = overlay.settingsFrame()
       await expect(frame.locator('.ylc-setting-panel')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      await expect(frame.locator('html')).toHaveAttribute('lang', locale)
+      await expect(frame.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      expect(await page.locator('html').getAttribute('lang')).toBe(hostLanguage)
+      expect(await page.locator('html').getAttribute('dir')).toBe(hostDirection)
       const content = frame.getByRole('tabpanel')
       await expect(content.locator('.ylc-setting-group-legend')).toHaveCount(4)
       const horizontalOverflow = () =>

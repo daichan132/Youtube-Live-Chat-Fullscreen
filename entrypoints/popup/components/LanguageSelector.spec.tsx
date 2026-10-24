@@ -33,6 +33,8 @@ const setup = async () => {
 describe('LanguageSelector', () => {
   it('renders and saves a selected language so reopening keeps the choice', async () => {
     const { runtime, repository, view } = await setup()
+    expect(screen.getByRole('option', { name: '日本語' })).toHaveAttribute('lang', 'ja')
+    expect(screen.getByRole('option', { name: 'Português (Brasil)' })).toHaveAttribute('lang', 'pt-BR')
     fireEvent.change(screen.getByRole('combobox', { name: 'content.aria.selectLanguage' }), { target: { value: 'pt_BR' } })
     await waitFor(() => expect(screen.getByRole('combobox')).toHaveValue('pt_BR'))
     await act(() => repository.flush())
