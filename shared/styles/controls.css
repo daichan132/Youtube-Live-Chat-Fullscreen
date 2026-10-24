@@ -1,5 +1,8 @@
 [data-ylc-theme] {
   --ylc-accent: #2f6fed;
+  --ylc-danger-fill: #d83a3a;
+  --ylc-danger-fill-hover: #c83232;
+  --ylc-danger-contrast: #ffffff;
   --ylc-border-width: 1px;
   --ylc-divider-width: 1px;
   --ylc-action-width-popup: 176px;
@@ -1523,6 +1526,17 @@
   font-size: 14px;
 }
 
+.ylc-dialog-btn-danger {
+  background: var(--ylc-danger-fill);
+  color: var(--ylc-danger-contrast);
+}
+
+.ylc-dialog-btn-danger:hover,
+.ylc-dialog-btn-danger:active {
+  background: var(--ylc-danger-fill-hover);
+  opacity: 1;
+}
+
 .ylc-dialog-btn-primary {
   height: 36px;
   padding-inline: 16px;
@@ -2332,5 +2346,39 @@ label.ylc-row:has(:focus-visible) {
 
   .ylc-setting-panel .ylc-row:not(label) .ylc-row-action {
     width: 100%;
+  }
+}
+
+@media (pointer: coarse) {
+  @container (max-width: 360px) {
+    .ylc-setting-panel .ylc-preset {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr);
+      gap: 8px;
+    }
+
+    .ylc-setting-panel .ylc-preset-name {
+      box-sizing: border-box;
+      width: 100%;
+    }
+
+    .ylc-setting-panel .ylc-preset-actions {
+      grid-column: 2;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 100%;
+      margin-inline-start: 0;
+    }
+
+    .ylc-setting-panel .ylc-preset-apply {
+      height: auto;
+      max-width: 100%;
+    }
+
+    .ylc-setting-panel .ylc-preset-apply > span {
+      max-width: none;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
   }
 }

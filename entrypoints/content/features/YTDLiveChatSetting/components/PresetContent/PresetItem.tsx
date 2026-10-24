@@ -218,7 +218,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
             <button
               type='button'
               onClick={deleteAndRestoreFocus}
-              className='rounded-md leading-none font-semibold cursor-pointer transition-opacity border-none ylc-theme-focus-ring-soft bg-[var(--ylc-danger-border)] text-white hover:opacity-90 ylc-dialog-btn-primary'
+              className='rounded-md leading-none font-semibold cursor-pointer border-none ylc-theme-focus-ring-soft ylc-dialog-btn-primary ylc-dialog-btn-danger'
             >
               {t('content.preset.delete')}
             </button>
