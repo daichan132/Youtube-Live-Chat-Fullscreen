@@ -79,8 +79,22 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.react-colorful__interactive:focus .react-colorful__pointer {
-  transform: translate(-50%, -50%) scale(1.1);
+.react-colorful__interactive:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring, Highlight);
+  outline-offset: 3px;
+}
+
+.react-colorful__interactive:focus-visible .react-colorful__pointer {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #111;
+}
+
+@media (pointer: coarse) {
+  [data-ylc-theme] .react-colorful__hue,
+  [data-ylc-theme] .react-colorful__alpha {
+    height: 44px;
+  }
 }
 
 .react-colorful__alpha,

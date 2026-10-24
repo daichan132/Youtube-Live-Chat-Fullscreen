@@ -68,9 +68,11 @@
   --ylc-bg-surface-muted: #f6f8fa;
   --ylc-text-primary: #0f1419;
   --ylc-text-secondary: #5b6470;
-  --ylc-text-muted: #79828f;
+  --ylc-text-muted: #657080;
   --ylc-border: #e6e9ee;
   --ylc-border-strong: #d2d8e0;
+  --ylc-control-border: #788493;
+  --ylc-accent-text: #245fd6;
   --ylc-divider: #eef1f4;
   --ylc-accent-hover: #245fd6;
   --ylc-accent-contrast: #ffffff;
@@ -82,18 +84,18 @@
   --ylc-setting-header-bg: rgba(255, 255, 255, 0.86);
   --ylc-setting-footer-bg: rgba(255, 255, 255, 0.9);
   --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 78%, transparent);
-  --ylc-focus-ring: rgba(47, 111, 237, 0.5);
+  --ylc-focus-ring: #245fd6;
   --ylc-shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.06), 0 0 0 1px var(--ylc-border);
   --ylc-shadow-md: 0 10px 30px rgba(15, 20, 25, 0.13), 0 0 0 1px var(--ylc-border);
   --ylc-setting-panel-glass-bg: rgba(255, 255, 255, 0.96);
   --ylc-switch-track-off-bg: #dde2e9;
-  --ylc-switch-track-off-border: #c7cdd6;
+  --ylc-switch-track-off-border: var(--ylc-control-border);
   --ylc-switch-track-on-bg: var(--ylc-accent);
   --ylc-switch-track-on-border: var(--ylc-accent);
   --ylc-switch-track-shine: rgba(255, 255, 255, 0.42);
   --ylc-switch-track-glow: rgba(47, 111, 237, 0.1);
   --ylc-switch-thumb-bg: #ffffff;
-  --ylc-switch-thumb-border: #c7cdd6;
+  --ylc-switch-thumb-border: #657080;
   --ylc-switch-thumb-shadow: rgba(15, 20, 25, 0.16);
   --ylc-switch-thumb-sheen: rgba(255, 255, 255, 0.52);
   --ylc-hover-surface: #f0f3f7;
@@ -105,7 +107,10 @@
   --ylc-slider-thumb-border: #c7cdd6;
   --ylc-slider-thumb-shadow: 0 3px 10px rgba(15, 20, 25, 0.24);
   --ylc-danger-border: #d83a3a;
-  --ylc-danger-text: #d83a3a;
+  --ylc-danger-text: #b42318;
+  --ylc-error-bg: #fff3f2;
+  --ylc-error-text: #8c1c13;
+  --ylc-error-border: #b42318;
   --ylc-danger-hover: rgba(216, 58, 58, 0.1);
   --ylc-overlay-panel: rgba(255, 255, 255, 0.82);
   --ylc-overlay-control-rail-bg: rgba(255, 255, 255, 0.94);
@@ -124,10 +129,12 @@
   --ylc-bg-surface-muted: #191a1c;
   --ylc-text-primary: #f1f1f1;
   --ylc-text-secondary: #c4c7cc;
-  --ylc-text-muted: #909399;
+  --ylc-text-muted: #9b9ea5;
   --ylc-accent: #5b8def;
   --ylc-border: #3a3a3d;
   --ylc-border-strong: #4a4b4f;
+  --ylc-control-border: #898c95;
+  --ylc-accent-text: #9dbdff;
   --ylc-divider: #2e2f32;
   --ylc-accent-hover: #6f9cf2;
   --ylc-accent-contrast: #0d1014;
@@ -139,18 +146,18 @@
   --ylc-setting-header-bg: rgba(33, 33, 36, 0.86);
   --ylc-setting-footer-bg: rgba(15, 15, 15, 0.9);
   --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 72%, transparent);
-  --ylc-focus-ring: rgba(124, 166, 247, 0.65);
+  --ylc-focus-ring: #9dbdff;
   --ylc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--ylc-border);
   --ylc-shadow-md: 0 14px 36px rgba(0, 0, 0, 0.62), 0 0 0 1px var(--ylc-border);
   --ylc-setting-panel-glass-bg: rgba(33, 33, 36, 0.96);
   --ylc-switch-track-off-bg: #45464b;
-  --ylc-switch-track-off-border: #5a5b60;
+  --ylc-switch-track-off-border: var(--ylc-control-border);
   --ylc-switch-track-on-bg: var(--ylc-accent);
   --ylc-switch-track-on-border: var(--ylc-accent);
   --ylc-switch-track-shine: rgba(255, 255, 255, 0.32);
   --ylc-switch-track-glow: rgba(91, 141, 239, 0.12);
-  --ylc-switch-thumb-bg: #f1f1f1;
-  --ylc-switch-thumb-border: #5a5b60;
+  --ylc-switch-thumb-bg: #ffffff;
+  --ylc-switch-thumb-border: #ffffff;
   --ylc-switch-thumb-shadow: rgba(0, 0, 0, 0.42);
   --ylc-switch-thumb-sheen: rgba(255, 255, 255, 0.46);
   --ylc-hover-surface: #2f3034;
@@ -162,7 +169,10 @@
   --ylc-slider-thumb-border: #5a5b60;
   --ylc-slider-thumb-shadow: 0 4px 12px rgba(0, 0, 0, 0.58);
   --ylc-danger-border: #f07171;
-  --ylc-danger-text: #f07171;
+  --ylc-danger-text: #ff9b9b;
+  --ylc-error-bg: #411d1b;
+  --ylc-error-text: #ffd7d2;
+  --ylc-error-border: #fda29b;
   --ylc-danger-hover: rgba(240, 113, 113, 0.18);
   --ylc-overlay-panel: rgba(33, 33, 36, 0.82);
   --ylc-overlay-control-rail-bg: rgba(28, 28, 30, 0.92);
@@ -297,8 +307,8 @@
 }
 
 .ylc-theme-focus-ring-soft:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--ylc-border) 78%, var(--ylc-text-secondary) 22%);
-  outline-offset: 1px;
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
 }
 
 .ylc-theme-icon-badge {
@@ -395,6 +405,7 @@
 
 .ylc-range::-webkit-slider-runnable-track {
   height: 4px;
+  box-shadow: 0 0 0 1px var(--ylc-control-border);
   border-radius: 9999px;
   background: linear-gradient(
     to right,
@@ -409,6 +420,7 @@
 
 .ylc-range::-moz-range-track {
   height: 4px;
+  box-shadow: 0 0 0 1px var(--ylc-control-border);
   border-radius: 9999px;
   background: var(--ylc-slider-track);
 }
@@ -442,6 +454,10 @@
   box-shadow:
     0 1px 3px rgba(15, 23, 42, 0.32),
     0 0 0 1px var(--ylc-border-strong);
+}
+
+.ylc-number-input {
+  height: 28px;
 }
 
 .ylc-range:focus-visible {
@@ -668,6 +684,79 @@
 .ylc-btn:focus-visible {
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;
+}
+
+.ylc-btn-primary {
+  background: var(--ylc-accent);
+  color: var(--ylc-accent-contrast);
+}
+
+.ylc-btn-primary:hover,
+.ylc-btn-primary:active {
+  background: var(--ylc-accent-hover);
+  color: var(--ylc-accent-contrast);
+  opacity: 1;
+}
+
+/* A save failure stays readable in either extension theme and is independent
+   of the OS color scheme and the user's custom chat colors. */
+.ylc-persistence-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--ylc-error-border);
+  border-radius: var(--ylc-radius-lg);
+  background: var(--ylc-error-bg);
+  color: var(--ylc-error-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ylc-persistence-notice--compact {
+  position: fixed;
+  top: 12px;
+  inset-inline-end: 12px;
+  max-width: min(360px, calc(100vw - 24px));
+  margin: 0;
+  pointer-events: auto;
+  box-shadow: var(--ylc-shadow-sm);
+}
+
+.ylc-persistence-notice-message {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.ylc-persistence-notice-retry {
+  flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid currentColor;
+  border-radius: var(--ylc-radius-sm);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ylc-persistence-notice-retry:hover:not(:disabled) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ylc-persistence-notice-retry:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
+}
+
+.ylc-persistence-notice-retry:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 /* Non-blocking toast — replacement for alert() */
@@ -914,6 +1003,8 @@
   height: 16px;
   border-radius: 50%;
   background: var(--ylc-switch-thumb-bg);
+  border: 1px solid var(--ylc-switch-thumb-border);
+  box-sizing: border-box;
   box-shadow: 0 1px 2px var(--ylc-switch-thumb-shadow);
   transition: transform 200ms cubic-bezier(0.2, 0.9, 0.28, 1);
 }
@@ -978,7 +1069,7 @@
   height: 36px;
   padding-inline-start: 12px;
   padding-inline-end: 34px;
-  border: var(--ylc-border-width) solid var(--ylc-border);
+  border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-xl);
   background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 90%, var(--ylc-bg-surface) 10%);
   color: var(--ylc-text-primary);
@@ -995,12 +1086,12 @@
 }
 
 .ylc-theme-select:hover {
-  border-color: color-mix(in srgb, var(--ylc-accent) 18%, var(--ylc-border));
+  border-color: var(--ylc-text-secondary);
   background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 84%, var(--ylc-hover-surface) 16%);
 }
 
 .ylc-theme-select:focus-visible {
-  border-color: color-mix(in srgb, var(--ylc-accent) 24%, var(--ylc-border));
+  border-color: var(--ylc-focus-ring);
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;
 }
@@ -1011,7 +1102,7 @@
 }
 
 .ylc-theme-input {
-  border: var(--ylc-border-width) solid var(--ylc-border);
+  border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-lg);
   background: var(--ylc-bg-surface-elevated);
   color: var(--ylc-text-primary);
@@ -1039,8 +1130,8 @@
 }
 
 .ylc-theme-input-borderless:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--ylc-border) 78%, var(--ylc-text-secondary) 22%);
-  outline-offset: 1px;
+  outline: 2px solid var(--ylc-focus-ring);
+  outline-offset: 2px;
 }
 
 .ylc-theme-input:focus-visible {
@@ -1062,7 +1153,7 @@
   min-width: 0;
   height: 36px;
   padding: 0 12px;
-  border: var(--ylc-border-width) solid var(--ylc-border);
+  border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-lg);
   background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 90%, var(--ylc-bg-surface) 10%);
   color: var(--ylc-text-primary);
@@ -1087,7 +1178,7 @@
 }
 
 .ylc-font-combobox-trigger:hover {
-  border-color: color-mix(in srgb, var(--ylc-accent) 18%, var(--ylc-border));
+  border-color: var(--ylc-text-secondary);
   background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 84%, var(--ylc-hover-surface) 16%);
 }
 
@@ -1134,7 +1225,7 @@
   min-width: 0;
   height: 34px;
   padding: 0 10px;
-  border: var(--ylc-border-width) solid var(--ylc-border);
+  border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-md);
   background: var(--ylc-bg-surface-elevated);
   color: var(--ylc-text-primary);
@@ -1148,11 +1239,11 @@
 }
 
 .ylc-font-combobox-search:hover {
-  border-color: color-mix(in srgb, var(--ylc-accent) 18%, var(--ylc-border));
+  border-color: var(--ylc-text-secondary);
 }
 
 .ylc-font-combobox-search:focus-visible {
-  border-color: color-mix(in srgb, var(--ylc-accent) 24%, var(--ylc-border));
+  border-color: var(--ylc-focus-ring);
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 1px;
 }
@@ -1375,11 +1466,11 @@
   padding: 3px;
   border: none;
   border-radius: var(--ylc-radius-lg);
-  background: var(--ylc-overlay-control-rail-bg-runtime, var(--ylc-overlay-control-rail-bg));
+  background: var(--ylc-overlay-control-rail-bg);
   box-shadow: none;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  color: inherit;
+  color: var(--ylc-text-primary);
   transform-origin: top right;
   will-change: opacity, transform;
   transition:
@@ -1393,7 +1484,7 @@
 }
 
 .ylc-overlay-control-icon:hover {
-  background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
+  background-color: var(--ylc-overlay-control-hover);
 }
 
 .ylc-overlay-control-icon:active {
@@ -1401,7 +1492,7 @@
 }
 
 .ylc-overlay-control-icon-active {
-  background-color: var(--ylc-overlay-control-hover-runtime, var(--yt-spec-10-percent-layer, var(--ylc-overlay-control-hover)));
+  background-color: var(--ylc-overlay-control-hover);
 }
 
 .ylc-overlay-control-icon:focus-visible {
@@ -1445,11 +1536,6 @@
   scrollbar-color: var(--ylc-border) transparent;
 }
 
-.ylc-setting-panel[data-ylc-theme="light"] {
-  /* 4.96:1 on the light panel surface for 11–14px secondary labels. */
-  --ylc-text-muted: #66717f;
-}
-
 .ylc-setting-panel [role="tabpanel"]::-webkit-scrollbar {
   width: 6px;
 }
@@ -1471,13 +1557,15 @@
   [data-ylc-theme="light"] {
     --ylc-text-secondary: #1e293b;
     --ylc-text-muted: #334155;
-    --ylc-border: #94a3b8;
+    --ylc-border: #64748b;
+    --ylc-control-border: #475569;
   }
 
   [data-ylc-theme="dark"] {
     --ylc-text-secondary: #f1f5f9;
     --ylc-text-muted: #cbd5e1;
-    --ylc-border: #64748b;
+    --ylc-border: #94a3b8;
+    --ylc-control-border: #cbd5e1;
   }
 }
 
@@ -1629,6 +1717,7 @@ label.ylc-row:has(:focus-visible) {
   line-height: 1.4;
   color: var(--ylc-text-primary);
   text-wrap: pretty;
+  overflow-wrap: anywhere;
 }
 
 .ylc-row-action {
@@ -1730,7 +1819,7 @@ label.ylc-row:has(:focus-visible) {
   border: 0;
   border-radius: 9999px;
   background: var(--ylc-accent-soft);
-  color: var(--ylc-accent);
+  color: var(--ylc-accent-text);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -1839,7 +1928,7 @@ label.ylc-row:has(:focus-visible) {
   min-width: 0;
   height: 36px;
   padding: 4px 10px 4px 4px;
-  border: var(--ylc-border-width) solid var(--ylc-border-strong);
+  border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-md);
   background: var(--ylc-bg-surface);
   cursor: pointer;
@@ -2132,4 +2221,116 @@ label.ylc-row:has(:focus-visible) {
   white-space: nowrap;
   font-size: 14px;
   font-weight: 500;
+}
+
+/* Larger pointer targets when the primary input is touch. Keep the desktop
+   controls compact and expand labels as well as their visual controls. */
+@media (pointer: coarse) {
+  .ylc-btn,
+  .ylc-theme-icon-link,
+  .ylc-theme-action-button,
+  .ylc-theme-footer-link,
+  .ylc-theme-select,
+  .ylc-font-combobox-trigger,
+  .ylc-font-combobox-search,
+  .ylc-font-combobox-option,
+  .ylc-color-trigger,
+  .ylc-theme-segment-option,
+  .ylc-theme-tab,
+  .ylc-preset-name,
+  .ylc-preset-grip,
+  .ylc-preset-apply,
+  .ylc-preset-del,
+  .ylc-preset-action-btn,
+  .ylc-overlay-control-icon,
+  .ylc-placement-close,
+  .ylc-placement-restore,
+  .ylc-dialog-btn,
+  .ylc-dialog-btn-primary,
+  .ylc-range,
+  .ylc-number-input,
+  .ylc-theme-icon-button,
+  .ylc-setting-close-button,
+  .ylc-setting-history-button,
+  .ylc-color-reset {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (forced-colors: active) {
+  [data-ylc-theme] {
+    --ylc-control-border: ButtonText;
+    --ylc-focus-ring: Highlight;
+  }
+
+  .ylc-theme-toggle {
+    background: Canvas;
+    border-color: ButtonText;
+  }
+
+  .ylc-theme-toggle::before {
+    background: ButtonText;
+    border-color: ButtonText;
+  }
+
+  .ylc-theme-toggle:checked {
+    background: Highlight;
+    border-color: Highlight;
+    forced-color-adjust: none;
+  }
+
+  .ylc-theme-toggle:checked::before {
+    background: HighlightText;
+    border-color: HighlightText;
+  }
+
+  .ylc-range::-webkit-slider-runnable-track {
+    background: Canvas;
+    border: 1px solid ButtonText;
+  }
+
+  .ylc-range::-moz-range-track {
+    background: Canvas;
+    border: 1px solid ButtonText;
+  }
+
+  .ylc-range::-webkit-slider-thumb {
+    background: ButtonText;
+    border-color: Canvas;
+    box-shadow: none;
+    forced-color-adjust: none;
+  }
+
+  .ylc-range::-moz-range-thumb {
+    background: ButtonText;
+    border-color: Canvas;
+    box-shadow: none;
+    forced-color-adjust: none;
+  }
+
+  .ylc-preset-apply[aria-pressed="true"],
+  .ylc-theme-segment-option:has(input:checked) {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+
+  .ylc-theme-segment-option:has(input:focus-visible) {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+/* Leave room for translated labels instead of squeezing them between the icon
+   and a fixed-width editor. Toggle labels keep their single, generous target. */
+@container (max-width: 360px) {
+  .ylc-setting-panel .ylc-row:not(label) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ylc-setting-panel .ylc-row:not(label) .ylc-row-action {
+    width: 100%;
+  }
 }
