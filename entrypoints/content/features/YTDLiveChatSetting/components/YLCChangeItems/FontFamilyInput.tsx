@@ -70,6 +70,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   const [activeIndex, setActiveIndex] = useState(0)
   const [menuMaxHeight, setMenuMaxHeight] = useState<number>()
   const listboxId = useId()
+  const selectedValueId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -226,12 +227,14 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
         className='ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring'
         onClick={handleToggleMenu}
         aria-label={t('content.setting.fontFamily')}
+        aria-describedby={selectedValueId}
         aria-haspopup='listbox'
         aria-expanded={isOpen}
         aria-controls={isOpen ? listboxId : undefined}
         data-ylc-font-combobox-trigger='true'
       >
         <span
+          id={selectedValueId}
           className='ylc-font-combobox-trigger-text'
           style={normalizedValue ? { fontFamily: toFontFamilyStyleValue(normalizedValue) } : undefined}
         >
@@ -274,9 +277,9 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
             className='ylc-font-combobox-options'
             style={{ minHeight: 0 }}
             role='listbox'
+            aria-label={t('content.setting.fontFamily')}
             tabIndex={-1}
             id={listboxId}
-            aria-live='polite'
           >
             {filteredOptions.length > 0 ? (
               filteredOptions.map((option, index) => {

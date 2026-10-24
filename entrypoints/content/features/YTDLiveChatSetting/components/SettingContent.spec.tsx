@@ -87,9 +87,9 @@ describe('SettingContent', () => {
       })
     })
 
-    expect(getByText('Current color: rgba(1, 2, 3, 0.4)')).not.toBeNull()
-    expect(getByText('Current color: rgba(9, 8, 7, 0.6)')).not.toBeNull()
-    expect(getByText('Current color: rgba(4, 5, 6, 0.8)')).not.toBeNull()
+    expect(getByText('rgba(1, 2, 3, 0.4)')).not.toBeNull()
+    expect(getByText('rgba(9, 8, 7, 0.6)')).not.toBeNull()
+    expect(getByText('rgba(4, 5, 6, 0.8)')).not.toBeNull()
     expect(getByRole('slider', { name: 'content.setting.fontSize' })).toHaveAttribute('aria-valuetext', '30px')
     expect(getByRole('slider', { name: 'content.setting.blur' })).toHaveAttribute('aria-valuetext', '12px')
     expect(getByRole('slider', { name: 'content.setting.space' })).toHaveAttribute('aria-valuetext', '24px')

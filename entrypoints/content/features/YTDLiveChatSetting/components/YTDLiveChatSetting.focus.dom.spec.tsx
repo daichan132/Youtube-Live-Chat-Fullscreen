@@ -2,7 +2,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { Provider } from 'jotai'
 import { describe, expect, it, vi } from 'vitest'
-import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
+import { chatSettingsStateAtom, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { createStyleHistoryCommands } from '../styleHistoryCommands'
 import { YTDLiveChatSetting } from './YTDLiveChatSetting'
@@ -28,12 +28,65 @@ describe('settings initial focus and keyboard navigation', () => {
     expect(presetTab).toHaveAttribute('aria-selected', 'true')
     expect(settingsTab).toHaveAttribute('tabindex', '-1')
     expect(view.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', presetTab.id)
+    // Exclude Firefox's implicit scroll-container tab stop from the modal trap.
+    expect(view.getByRole('tabpanel')).toHaveAttribute('tabindex', '-1')
 
     await user.keyboard('{ArrowLeft}')
     expect(settingsTab).toHaveFocus()
     expect(settingsTab).toHaveAttribute('aria-selected', 'true')
     await user.tab()
     expect(view.getByRole('button', { name: 'content.aria.close' })).toHaveFocus()
+    for (const control of [
+      ...view.getAllByRole('switch').slice(0, 2),
+      ...view.getAllByRole('button').filter(button => button.classList.contains('ylc-color-trigger')),
+      view.getByRole('button', { name: 'content.setting.fontFamily' }),
+      view.getByRole('slider', { name: 'content.setting.fontSize' }),
+      view.getByRole('spinbutton', { name: 'content.setting.fontSize' }),
+    ]) {
+      await user.tab()
+      expect(control).toHaveFocus()
+    }
+  })
+
+  it.each(['ltr', 'rtl'] as const)('moves to the first and last tabs with Home and End in %s layouts', async direction => {
+    const user = userEvent.setup()
+    const store = createTestStore()
+    store.set(localeStateAtom, { ...store.get(localeStateAtom), direction })
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    const presetTab = view.getByRole('tab', { name: 'content.setting.header.preset' })
+    await waitFor(() => expect(document.querySelector('.ylc-setting-panel')).toHaveFocus())
+    await user.tab()
+
+    await user.keyboard('{End}')
+    expect(presetTab).toHaveFocus()
+    expect(presetTab).toHaveAttribute('aria-selected', 'true')
+    expect(view.getByRole('tabpanel')).toHaveAttribute('aria-labelledby', presetTab.id)
+    await user.keyboard('{Home}')
+    expect(settingsTab).toHaveFocus()
+    expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    expect(presetTab).toHaveAttribute('tabindex', '-1')
+
+    await user.keyboard(direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}')
+    expect(presetTab).toHaveFocus()
+    await user.keyboard(direction === 'rtl' ? '{ArrowLeft}' : '{ArrowRight}')
+    expect(settingsTab).toHaveFocus()
+  })
+
+  it('leaves modified navigation and IME events to their owners', async () => {
+    const user = userEvent.setup()
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, createTestStore())
+    const settingsTab = view.getByRole('tab', { name: 'content.setting.header.setting' })
+    await waitFor(() => expect(document.querySelector('.ylc-setting-panel')).toHaveFocus())
+    await user.tab()
+
+    for (const modifiers of [{ ctrlKey: true }, { altKey: true }, { metaKey: true }, { isComposing: true }]) {
+      const event = new KeyboardEvent('keydown', { key: 'End', bubbles: true, cancelable: true, ...modifiers })
+      settingsTab.dispatchEvent(event)
+      expect(event.defaultPrevented).toBe(false)
+      expect(settingsTab).toHaveFocus()
+      expect(settingsTab).toHaveAttribute('aria-selected', 'true')
+    }
   })
 
   it('reopens on the panel while retaining the selected tab for keyboard entry', async () => {

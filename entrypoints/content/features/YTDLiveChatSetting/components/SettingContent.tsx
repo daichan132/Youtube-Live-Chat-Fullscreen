@@ -52,7 +52,7 @@ const ToggleRow = ({ icon: Icon, title, children }: { icon: IconType; title: str
       <span className='ylc-row-icon' aria-hidden='true'>
         <Icon size={19} />
       </span>
-      <p className='ylc-row-title'>{title}</p>
+      <span className='ylc-row-title'>{title}</span>
     </span>
     <span className='ylc-row-action ylc-row-action--auto'>{children}</span>
   </label>
@@ -117,7 +117,7 @@ const MembershipNameColorSetting = () => {
       <span className='ylc-theme-tooltip' data-tooltip={resetLabel}>
         <button
           type='button'
-          className='h-[36px] w-[36px] shrink-0 inline-flex items-center justify-center rounded-[8px] border border-solid ylc-theme-border ylc-theme-surface ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] cursor-pointer transition-colors duration-160 ylc-theme-focus-ring disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[var(--ylc-text-secondary)]'
+          className='ylc-color-reset h-[36px] w-[36px] shrink-0 inline-flex items-center justify-center rounded-[8px] border border-solid ylc-theme-border ylc-theme-surface ylc-theme-text-secondary hover:text-[var(--ylc-text-primary)] hover:bg-[var(--ylc-hover-surface)] cursor-pointer transition-colors duration-160 ylc-theme-focus-ring disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-[var(--ylc-text-secondary)]'
           onClick={resetToDefault}
           disabled={isDefault}
           aria-label={resetLabel}

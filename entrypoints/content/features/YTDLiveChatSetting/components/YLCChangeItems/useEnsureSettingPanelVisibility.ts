@@ -74,7 +74,8 @@ export const scrollSettingPanelRangeIntoView = (
   const nextTop = Math.max(0, container.scrollTop + delta)
   if (typeof container.scrollTo === 'function') {
     try {
-      container.scrollTo({ top: nextTop, behavior: 'smooth' })
+      const reducedMotion = container.ownerDocument.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+      container.scrollTo({ top: nextTop, behavior: reducedMotion ? 'instant' : 'smooth' })
       return true
     } catch {
       // Fall through to scrollTop assignment for non-supporting environments.
