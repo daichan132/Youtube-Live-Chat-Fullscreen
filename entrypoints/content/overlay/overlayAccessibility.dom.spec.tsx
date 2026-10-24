@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { expect, it, vi } from 'vitest'
 import { OverlayControlRail } from './OverlayControlRail'
@@ -34,4 +34,29 @@ it('reaches hidden ready controls by Tab and keeps focus visible after pointer e
   expect(screen.queryByRole('group')).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'content.placement.open' })).toHaveFocus()
   expect(move).toHaveBeenCalledTimes(1)
+})
+
+it('closes placement on focus departure without returning focus to the trigger', async () => {
+  const user = userEvent.setup()
+  render(
+    <>
+      <OverlayControlRail
+        isDragging={false}
+        isReady
+        isVisible
+        placement={{}}
+        onSettingsClick={vi.fn()}
+        onPointerDown={vi.fn()}
+        onKeyDown={vi.fn()}
+        onEnterControls={vi.fn()}
+        onLeaveControls={vi.fn()}
+      />
+      <button type='button'>Continue watching</button>
+    </>,
+  )
+  await user.click(screen.getByRole('button', { name: 'content.placement.open' }))
+  act(() => screen.getByRole('button', { name: 'popup.importClose' }).focus())
+  await user.tab()
+  expect(screen.getByRole('button', { name: 'Continue watching' })).toHaveFocus()
+  expect(screen.queryByRole('group')).not.toBeInTheDocument()
 })

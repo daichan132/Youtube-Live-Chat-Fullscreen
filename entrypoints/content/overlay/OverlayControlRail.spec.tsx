@@ -1,5 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
+import { EMPTY_MESSAGES, localeStateAtom, localeStateFromMessages } from '@/shared/state/atoms'
+import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { OverlayControlRail } from './OverlayControlRail'
 
 describe('OverlayControlRail', () => {
@@ -8,8 +10,10 @@ describe('OverlayControlRail', () => {
     const onEnterControls = vi.fn()
     const onLeaveControls = vi.fn()
 
-    render(
-      <div dir='rtl'>
+    const store = createTestStore()
+    store.set(localeStateAtom, localeStateFromMessages('ar', EMPTY_MESSAGES))
+    renderWithStore(
+      <div dir='ltr'>
         <OverlayControlRail
           isDragging={false}
           isReady
@@ -22,13 +26,15 @@ describe('OverlayControlRail', () => {
           onLeaveControls={onLeaveControls}
         />
       </div>,
+      store,
     )
 
     const settingsButton = screen.getByRole('button', { name: 'content.aria.openSettings' })
     const dragHandle = screen.getByRole('button', { name: 'content.aria.dragToMove' })
     const rail = settingsButton.closest('[data-ylc-control-rail]') as HTMLElement
 
-    expect(rail.closest('[dir="rtl"]')).not.toBeNull()
+    expect(rail).toHaveAttribute('lang', 'ar')
+    expect(rail).toHaveAttribute('dir', 'rtl')
     expect(dragHandle).toHaveAttribute('aria-roledescription', 'content.aria.dragHandle')
     expect(dragHandle).toHaveAttribute('data-ylc-drag-handle')
     expect(dragHandle).toHaveAccessibleDescription('content.aria.arrowKeysToMove')

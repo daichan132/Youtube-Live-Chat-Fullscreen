@@ -261,7 +261,9 @@ for (const theme of ['light', 'dark'] as const) {
     ]) {
       await page.locator('[data-ylc-settings-btn]').hover()
       await expect(tooltip).toBeVisible()
-      await patchOverlayStore(extension, { profile: { appearance: { backgroundColor: palette.backgroundColor, fontColor: palette.fontColor } } })
+      await patchOverlayStore(extension, {
+        profile: { appearance: { backgroundColor: palette.backgroundColor, fontColor: palette.fontColor } },
+      })
       for (const [selector] of controls) {
         await page.locator(selector).hover()
         await expect(tooltip).toBeVisible()
@@ -275,10 +277,14 @@ for (const theme of ['light', 'dark'] as const) {
           const fg = rgb(colors.text)
           expect(bg[3] ?? 1).toBe(1)
           expect(fg[3] ?? 1).toBe(1)
-          const luminance = (channels: number[]) => channels.slice(0, 3).map(channel => {
-            const value = channel / 255
-            return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
-          }).reduce((sum, value, index) => sum + value * ([0.2126, 0.7152, 0.0722][index] ?? 0), 0)
+          const luminance = (channels: number[]) =>
+            channels
+              .slice(0, 3)
+              .map(channel => {
+                const value = channel / 255
+                return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+              })
+              .reduce((sum, value, index) => sum + value * ([0.2126, 0.7152, 0.0722][index] ?? 0), 0)
           const values = [luminance(bg), luminance(fg)]
           expect((Math.max(...values) + 0.05) / (Math.min(...values) + 0.05)).toBeGreaterThanOrEqual(4.5)
         }).toPass({ timeout: 3000 })
@@ -351,4 +357,202 @@ test('waits for a continuous 200ms hover and cancels help when the pointer cross
   await page.clock.runFor(500)
   await expect(tooltip).toHaveCount(0)
   await page.clock.resume()
+})
+
+test('dismisses focused visual help with Escape until focus changes', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 300 }, { x: 100, y: 80 })
+  const placement = page.locator('[data-ylc-placement-button]')
+  await placement.click()
+  await placement.click()
+  await page.mouse.move(1200, 30)
+  await page.keyboard.press('Shift+Tab')
+  const drag = page.locator('[data-ylc-drag-handle]')
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await expect(drag).toBeFocused()
+  await expect(tooltip).toContainText('Use arrow keys to move')
+  await drag.hover()
+  await expect(tooltip).toContainText('Use arrow keys to move')
+
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toHaveCount(0)
+  await expect(drag).toBeFocused()
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
+  await page.mouse.move(1200, 30)
+  await expect(tooltip).toHaveCount(0)
+  await page.keyboard.press('ArrowRight')
+  await expect(tooltip).toHaveCount(0)
+  await page.keyboard.press('Tab')
+  await expect(placement).toBeFocused()
+  await expect(tooltip).toContainText('Adjust position and size')
+})
+
+test('closes placement when Tab leaves the rail without stealing the next focus', async ({ page, extension }) => {
+  await setup(page, extension)
+  await page.evaluate(() => {
+    const host = document.getElementById('shadow-root-live-chat')
+    if (!host) throw new Error('The overlay host must exist before adding the next native tab stop.')
+    const next = document.createElement('button')
+    next.textContent = 'Continue watching'
+    next.id = 'fixture-next-native-control'
+    host.after(next)
+  })
+  const placement = page.locator('[data-ylc-placement-button]')
+  await placement.click()
+  const panel = page.locator('[data-ylc-placement-panel]')
+  const close = panel.getByRole('button', { name: 'Close', exact: true })
+  await close.focus()
+  await page.keyboard.press('Tab')
+  await expect(page.getByRole('button', { name: 'Continue watching', exact: true })).toBeFocused()
+  await expect(panel).toHaveCount(0)
+  await expect(placement).toHaveAttribute('aria-expanded', 'false')
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
+})
+
+test('declares translated overlay control language and direction without changing native documents', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 480 }, { x: 100, y: 80 })
+  await page.evaluate(() => {
+    document.documentElement.lang = 'en'
+    document.documentElement.dir = 'ltr'
+  })
+  const rail = page.locator('[data-ylc-control-rail]')
+  await extension.storage.set({ [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'overlay-locale-review', value: 'ar' } })
+  await expect(rail).toHaveAttribute('lang', 'ar')
+  await expect(rail).toHaveAttribute('dir', 'rtl')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'en')
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
+  await page.locator('[data-ylc-settings-btn]').hover()
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await expect(tooltip).toBeVisible()
+  expect(await tooltip.evaluate(element => getComputedStyle(element).direction)).toBe('rtl')
+  await page.locator('[data-ylc-placement-button]').click()
+  const panel = page.locator('[data-ylc-placement-panel]')
+  await expect(panel).toBeVisible()
+  expect(await panel.evaluate(element => getComputedStyle(element).direction)).toBe('rtl')
+  const left = await panel.locator('[data-ylc-placement-action="left"]').boundingBox()
+  const right = await panel.locator('[data-ylc-placement-action="right"]').boundingBox()
+  if (!left || !right) throw new Error('Physical placement buttons must have rendered bounds.')
+  expect(left.x + left.width).toBeLessThan(right.x)
+  await expect(panel.locator('.ylc-placement-step')).toHaveAttribute('dir', 'ltr')
+  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/rtl-placement.png' })
+})
+
+test('dismisses hover help from the native composer after its own Escape handler has finished', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 480, height: 360 }, { x: 100, y: 80 })
+  const composer = page.frameLocator('iframe[data-ylc-chat]').locator('[aria-label="Chat draft"]')
+  await composer.click({ position: { x: 12, y: 8 } })
+  await page.keyboard.press('ControlOrMeta+A')
+  await page.keyboard.press('Backspace')
+  await page.keyboard.type('unsent draft')
+  await page.locator('[data-ylc-settings-btn]').hover()
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await expect(tooltip).toContainText('Open settings')
+  await expect(composer).toBeFocused()
+  await composer.evaluate(element => {
+    element.addEventListener('keydown', event => event.preventDefault(), { once: true })
+  })
+
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toBeVisible()
+  await expect(composer).toHaveText('unsent draft')
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toHaveCount(0)
+  await expect(composer).toBeFocused()
+  await expect(composer).toHaveText('unsent draft')
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
+})
+
+test('keeps hover help readable under the pointer while native clicks still pass through it', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 300 }, { x: 100, y: 80 })
+  const settings = page.locator('[data-ylc-settings-btn]')
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await settings.hover()
+  await expect(tooltip).toContainText('Open settings')
+  const bounds = await tooltip.boundingBox()
+  if (!bounds) throw new Error('Hover help must have painted bounds before moving over it.')
+  await page.evaluate(bounds => {
+    const target = document.createElement('button')
+    target.textContent = 'Native video action'
+    target.id = 'fixture-under-help'
+    target.setAttribute('data-clicks', '0')
+    Object.assign(target.style, {
+      position: 'fixed',
+      left: `${bounds.x}px`,
+      top: `${bounds.y}px`,
+      width: `${bounds.width}px`,
+      height: `${bounds.height}px`,
+      zIndex: '0',
+    })
+    target.addEventListener('click', () => target.setAttribute('data-clicks', String(Number(target.getAttribute('data-clicks')) + 1)))
+    document.fullscreenElement?.append(target)
+  }, bounds)
+  const point = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }
+  await page.mouse.move(point.x, point.y, { steps: 4 })
+  await page.waitForTimeout(250)
+  await expect(tooltip).toBeVisible()
+  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/hover-video.png', animations: 'disabled' })
+  await expect(tooltip).toHaveCSS('pointer-events', 'none')
+  await page.mouse.click(point.x, point.y)
+  await expect(page.locator('#fixture-under-help')).toHaveAttribute('data-clicks', '1')
+  await expect(tooltip).toBeVisible()
+
+  await page.mouse.move(1200, 30)
+  await expect(tooltip).toHaveCount(0)
+  await new ExtensionOverlay(page).revealControls()
+  await settings.hover()
+  await expect(tooltip).toBeVisible()
+  await page.mouse.move(point.x, point.y, { steps: 4 })
+  await expect(tooltip).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toHaveCount(0)
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
+})
+
+test('retains click-through hover help over the borrowed chat document', async ({ page, extension }) => {
+  await setup(page, extension, { width: 1280, height: 720 }, { width: 240, height: 180 }, { x: 100, y: 530 })
+  const settings = page.locator('[data-ylc-settings-btn]')
+  const tooltip = page.locator('[data-ylc-control-tooltip]')
+  await settings.hover()
+  await expect(tooltip).toContainText('Open settings')
+  const bounds = await tooltip.boundingBox()
+  const chatBounds = await page.locator('iframe[data-ylc-chat]').boundingBox()
+  if (!bounds || !chatBounds) throw new Error('Help and native chat must have painted bounds.')
+  const point = { x: bounds.x + bounds.width / 2, y: bounds.y + bounds.height / 2 }
+  expect(point.x).toBeGreaterThan(chatBounds.x)
+  expect(point.x).toBeLessThan(chatBounds.x + chatBounds.width)
+  expect(point.y).toBeGreaterThan(chatBounds.y)
+  expect(point.y).toBeLessThan(chatBounds.y + chatBounds.height)
+  const chat = page.frameLocator('iframe[data-ylc-chat]')
+  await chat.locator('body').evaluate(
+    (body, { bounds, chatBounds }) => {
+      const target = body.ownerDocument.createElement('button')
+      target.id = 'fixture-chat-under-help'
+      target.textContent = 'Native chat action'
+      target.setAttribute('data-clicks', '0')
+      Object.assign(target.style, {
+        position: 'fixed',
+        left: `${bounds.x - chatBounds.x}px`,
+        top: `${bounds.y - chatBounds.y}px`,
+        width: `${bounds.width}px`,
+        height: `${bounds.height}px`,
+        zIndex: '9999',
+      })
+      target.addEventListener('click', event => {
+        target.setAttribute('data-clicks', String(Number(target.getAttribute('data-clicks')) + 1))
+        target.setAttribute('data-trusted', String(event.isTrusted))
+      })
+      body.append(target)
+    },
+    { bounds, chatBounds },
+  )
+  await page.mouse.move(point.x, point.y, { steps: 4 })
+  await page.waitForTimeout(250)
+  await expect(tooltip).toBeVisible()
+  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/hover-chat.png', animations: 'disabled' })
+  await page.mouse.click(point.x, point.y)
+  await expect(chat.locator('#fixture-chat-under-help')).toHaveAttribute('data-clicks', '1')
+  await expect(chat.locator('#fixture-chat-under-help')).toHaveAttribute('data-trusted', 'true')
+  await expect(tooltip).toBeVisible()
+  await page.keyboard.press('Escape')
+  await expect(tooltip).toHaveCount(0)
+  expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
 })

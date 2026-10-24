@@ -12,9 +12,11 @@ import {
 } from 'react'
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
-import { useT } from '@/shared/i18n/react'
+import { useLocaleCode, useLocaleDirection, useT } from '@/shared/i18n/react'
 import { OverlayPlacementPanel } from './OverlayPlacementPanel'
 import { useOverlayMenuDismiss } from './useOverlayMenuDismiss'
+import { useOverlayTooltipDismiss } from './useOverlayTooltipDismiss'
+import { useOverlayTooltipHover } from './useOverlayTooltipHover'
 
 const ICON_STROKE_WIDTH = 1.55
 const CONTROL_GAP = 2
@@ -80,11 +82,15 @@ export const OverlayControlRail = ({
   canResizeBy,
 }: OverlayControlRailProps) => {
   const t = useT()
+  const localeCode = useLocaleCode()
+  const direction = useLocaleDirection()
   const dragDescriptionId = useId()
   const [focused, setFocused] = useState(false)
   const [placementOpen, setPlacementOpen] = useState(false)
   const [hoveredControl, setHoveredControl] = useState<ControlName | null>(null)
   const [focusedControl, setFocusedControl] = useState<ControlName | null>(null)
+  const [dismissedFocusControl, setDismissedFocusControl] = useState<ControlName | null>(null)
+  const [dismissedHoverControl, setDismissedHoverControl] = useState<ControlName | null>(null)
   const [adjustmentAnchor, setAdjustmentAnchor] = useState<{
     right: number
     top: number
@@ -177,7 +183,30 @@ export const OverlayControlRail = ({
       drag: `${t('content.aria.dragToMove')} · ${t('content.aria.arrowKeysToMove')}`,
       placement: t('content.placement.open'),
     }[tooltipControl]
-  const tooltipVisible = tooltipEnabled && Boolean(tooltipLabel)
+  const tooltipVisible =
+    tooltipEnabled && Boolean(tooltipLabel) && tooltipControl !== (hoveredControl ? dismissedHoverControl : dismissedFocusControl)
+  const leaveTooltip = useCallback(() => {
+    setHoveredControl(null)
+    setDismissedHoverControl(null)
+    onLeaveControls()
+  }, [onLeaveControls])
+  const containsTooltipPointer = useOverlayTooltipHover(
+    tooltipVisible && hoveredControl !== null,
+    railRef,
+    tooltipRef,
+    tooltipControl ? CONTROL_SELECTORS[tooltipControl] : null,
+    leaveTooltip,
+  )
+  const dismissTooltip = useCallback(() => {
+    setDismissedFocusControl(focusedControl)
+    setDismissedHoverControl(hoveredControl)
+    const button = tooltipControl && railRef.current?.querySelector(CONTROL_SELECTORS[tooltipControl])
+    if (hoveredControl && !button?.matches(':hover')) {
+      setHoveredControl(null)
+      onLeaveControls()
+    }
+  }, [focusedControl, hoveredControl, onLeaveControls, tooltipControl])
+  useOverlayTooltipDismiss(tooltipVisible, railRef, dismissTooltip)
   useLayoutEffect(() => {
     const rail = railRef.current
     const tooltip = tooltipRef.current
@@ -224,23 +253,39 @@ export const OverlayControlRail = ({
     viewportSize?.height,
   ])
   const tooltipEvents = (control: ControlName) => ({
-    onMouseEnter: () => setHoveredControl(control),
-    onMouseLeave: () => setHoveredControl(null),
+    onMouseEnter: () => {
+      setDismissedHoverControl(null)
+      setHoveredControl(control)
+    },
+    onMouseLeave: (event: React.MouseEvent<HTMLButtonElement>) => {
+      if (containsTooltipPointer({ x: event.clientX, y: event.clientY })) return
+      setDismissedHoverControl(null)
+      setHoveredControl(null)
+    },
     onFocus: (event: FocusEvent<HTMLButtonElement>) => {
+      setDismissedFocusControl(null)
       const keyboardFocus = event.currentTarget.matches(':focus-visible')
       if (keyboardFocus) setHoveredControl(null)
       setFocusedControl(keyboardFocus ? control : null)
     },
-    onBlur: () => setFocusedControl(null),
+    onBlur: () => {
+      setDismissedFocusControl(null)
+      setFocusedControl(null)
+    },
   })
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Hover only keeps controls visible; buttons inside remain semantic.
     <div
       ref={railRef}
       data-ylc-control-rail
+      lang={localeCode.replaceAll('_', '-')}
+      dir={direction}
       data-ylc-control-rail-orientation={vertical ? 'vertical' : 'horizontal'}
       className='ylc-overlay-control-rail ylc-theme-text-primary absolute flex items-center'
-      onPointerDownCapture={() => setFocusedControl(null)}
+      onPointerDownCapture={() => {
+        setDismissedFocusControl(null)
+        setFocusedControl(null)
+      }}
       onKeyDownCapture={event => {
         // A pointer-focused button may receive keyboard input without a new
         // focus event. Let the browser's focus-visible modality decide.
@@ -269,9 +314,15 @@ export const OverlayControlRail = ({
         if (event.relatedTarget instanceof Node && event.currentTarget.contains(event.relatedTarget)) return
         setFocused(false)
         onFocusControls?.(false)
+        // Reaching an adjustment limit can disable the focused button. Keep
+        // that pointer/keyboard adjustment session open instead of dismissing it.
+        if (!event.relatedTarget && event.target instanceof Element && event.target.matches(':disabled')) return
+        dismissPlacement()
       }}
       onMouseEnter={onEnterControls}
-      onMouseLeave={onLeaveControls}
+      onMouseLeave={event => {
+        if (!containsTooltipPointer({ x: event.clientX, y: event.clientY })) onLeaveControls()
+      }}
       style={{
         ...placement,
         transition: focused ? 'none' : undefined,

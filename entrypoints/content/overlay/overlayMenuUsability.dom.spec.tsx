@@ -146,6 +146,28 @@ describe('overlay menu dismissal and visual help', () => {
     vi.useRealTimers()
   })
 
+  it('keeps keyboard help dismissed when only the pointer leaves the focused control', () => {
+    vi.useFakeTimers()
+    try {
+      const view = render(<OverlayControlRail {...props} />)
+      const drag = screen.getByRole('button', { name: 'content.aria.dragToMove' })
+      const matches = drag.matches.bind(drag)
+      vi.spyOn(drag, 'matches').mockImplementation(selector => selector === ':focus-visible' || matches(selector))
+      act(() => drag.focus())
+      fireEvent.mouseEnter(drag)
+      act(() => vi.advanceTimersByTime(200))
+      const tooltip = () => view.container.querySelector('[data-ylc-control-tooltip]')
+      expect(tooltip()).not.toBeNull()
+      fireEvent.keyDown(drag, { key: 'Escape' })
+      expect(tooltip()).toBeNull()
+      fireEvent.mouseLeave(drag, { clientX: 1000, clientY: 500 })
+      expect(drag).toHaveFocus()
+      expect(tooltip()).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
   it('keeps the placement menu open when directly resizing its own frame', () => {
     render(
       <div data-ylc-resizable>
