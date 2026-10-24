@@ -88,15 +88,15 @@
       "apply": "تطبيق"
     },
     "placement": {
-      "open": "Adjust position and size",
-      "up": "Move up",
-      "down": "Move down",
-      "left": "Move left",
-      "right": "Move right",
-      "narrower": "Decrease width",
-      "wider": "Increase width",
-      "shorter": "Decrease height",
-      "taller": "Increase height",
+      "open": "ضبط الموضع والحجم",
+      "up": "تحريك لأعلى",
+      "down": "تحريك لأسفل",
+      "left": "تحريك لليسار",
+      "right": "تحريك لليمين",
+      "narrower": "تقليل العرض",
+      "wider": "زيادة العرض",
+      "shorter": "تقليل الارتفاع",
+      "taller": "زيادة الارتفاع",
       "restore": "استعادة التخطيط السابق"
     }
   },
@@ -114,7 +114,7 @@
     "importConfirm": "Replace appearance, presets, position, enabled state and theme with this backup. Language stays unchanged.",
     "importApply": "Apply",
     "importCancel": "Cancel",
-    "importClose": "Close",
+    "importClose": "إغلاق",
     "importReading": "Reading backup…",
     "importApplying": "Applying backup…",
     "importDone": "Import completed.",

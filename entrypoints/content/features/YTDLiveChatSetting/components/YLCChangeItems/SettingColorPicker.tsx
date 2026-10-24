@@ -120,7 +120,8 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
             if (COLOR_ADJUSTMENT_KEYS.has(event.key)) onInteractionEnd?.()
           }}
         >
-          <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} onChangeEnd={onInteractionEnd} />
+          {/* The library's slider names and value text are English, even in a translated dialog. */}
+          <RgbaColorPicker lang='en' dir='ltr' color={toRgba(rgba)} onChange={onChange} onChangeEnd={onInteractionEnd} />
         </div>
       ) : null}
     </div>

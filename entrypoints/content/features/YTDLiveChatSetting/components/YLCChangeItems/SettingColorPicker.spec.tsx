@@ -30,6 +30,9 @@ describe('SettingColorPicker', () => {
     expect(dialog).toHaveAccessibleDescription('Background color')
     expect(dialog.id).not.toBe('')
     expect(trigger).toHaveAttribute('aria-controls', dialog.id)
+    const hue = getByRole('slider', { name: 'Hue' })
+    expect(hue.closest('[lang]')).toHaveAttribute('lang', 'en')
+    expect(hue.closest('[dir]')).toHaveAttribute('dir', 'ltr')
 
     fireEvent.keyDown(document, { key: 'Escape' })
     expect(queryByRole('dialog')).toBeNull()
