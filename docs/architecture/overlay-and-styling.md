@@ -175,3 +175,5 @@ Preset deletion confirmations group the heading and description without horizont
 Preset cards keep the reorder handle, editable name, Apply/current state, and Delete on one compact row. The name takes the remaining width. Only narrow coarse-pointer layouts move the actions to a second row to preserve touch targets and translated labels. A native title exposes the full saved name without changing editing or truncation behavior. The add-current-settings action aligns its label to the inline start and has a minimum 44px target.
 
 The current preset uses a subtle accent-tinted surface and border plus a checked status pill. Its row height stays the same as other presets, and keyboard focus remains a separate high-contrast outline. Forced colors use Canvas/Highlight with a HighlightText check instead of relying on the tint.
+
+Normal input borders use a softer neutral tone while retaining the 3:1 boundary target in both themes. Color and font triggers also use the muted control surface to identify their hit area. Hover boundaries and the keyboard-focus outline stay distinct; increased-contrast and forced-color overrides remain available.

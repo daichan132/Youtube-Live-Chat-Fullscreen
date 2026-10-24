@@ -74,7 +74,7 @@
   --ylc-text-muted: #657080;
   --ylc-border: #e6e9ee;
   --ylc-border-strong: #d2d8e0;
-  --ylc-control-border: #788493;
+  --ylc-control-border: #898e97;
   --ylc-accent-text: #245fd6;
   --ylc-divider: #eef1f4;
   --ylc-accent-hover: #245fd6;
@@ -136,7 +136,7 @@
   --ylc-accent: #5b8def;
   --ylc-border: #3a3a3d;
   --ylc-border-strong: #4a4b4f;
-  --ylc-control-border: #898c95;
+  --ylc-control-border: #747984;
   --ylc-accent-text: #9dbdff;
   --ylc-divider: #2e2f32;
   --ylc-accent-hover: #6f9cf2;
@@ -998,7 +998,7 @@
   padding: 0 12px;
   border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-lg);
-  background: color-mix(in srgb, var(--ylc-bg-surface-elevated) 90%, var(--ylc-bg-surface) 10%);
+  background: var(--ylc-bg-surface-muted);
   color: var(--ylc-text-primary);
   cursor: pointer;
   box-sizing: border-box;
@@ -1787,7 +1787,7 @@ label.ylc-row:has(:focus-visible) {
   padding: 4px 10px 4px 4px;
   border: var(--ylc-border-width) solid var(--ylc-control-border);
   border-radius: var(--ylc-radius-md);
-  background: var(--ylc-bg-surface);
+  background: var(--ylc-bg-surface-muted);
   cursor: pointer;
 }
 
