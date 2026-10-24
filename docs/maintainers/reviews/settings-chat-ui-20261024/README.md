@@ -65,3 +65,5 @@
 ![改善したカラーピッカー](color-picker-refined.png)
 
 ![改善したカラーピッカー・ダーク](color-picker-refined-dark.png)
+
+数値入力の値を中央揃えに調整。単位の位置とnative入力・増減操作は維持。関連ブラウザテスト9件とyarn verify（1,189＋289件）成功。in-app browserで実画像確認。

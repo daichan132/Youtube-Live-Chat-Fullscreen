@@ -136,7 +136,7 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
             boxSizing: 'border-box',
             color: 'var(--ylc-text-primary)',
             font: 'inherit',
-            textAlign: 'end',
+            textAlign: 'center',
           }}
           onFocus={restoreNumber}
           onChange={event => {
