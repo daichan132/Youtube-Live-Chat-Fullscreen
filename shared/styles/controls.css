@@ -905,7 +905,7 @@
   padding-inline-start: 12px;
   padding-inline-end: 34px;
   border: var(--ylc-border-width) solid transparent;
-  border-radius: var(--ylc-radius-xl);
+  border-radius: var(--ylc-radius-lg);
   background: var(--ylc-control-surface);
   color: var(--ylc-text-primary);
   font-size: 13px;

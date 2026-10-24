@@ -67,3 +67,15 @@
 ![改善したカラーピッカー・ダーク](color-picker-refined-dark.png)
 
 数値入力の値を中央揃えに調整。単位の位置とnative入力・増減操作は維持。関連ブラウザテスト9件とyarn verify（1,189＋289件）成功。in-app browserで実画像確認。
+
+
+## 2026-10-25: ドラッグ終了とpopupの統一
+
+- ポインターキャプチャの喪失を、ドラッグ・リサイズの取消から分離。キャプチャが外れてもドラフトとwindowの入力監視を維持し、pointerupで確定する。Escape、pointercancel、window blur、unmountは引き続き取消。自然発生時の元のイベント順は未取得で、今回の報告と同じ原因とまでは断定していない。
+- 実ブラウザでキャプチャを解放する回帰テストは修正前に期待x=220がx=100へ戻って失敗し、修正後に成功。キャプチャ喪失後の継続移動、iframe上での解放、保存位置、取消、フレーム単位の更新を検証。
+- popupを設定画面と同じ主背景・淡い操作面へ統一。行ごとの区切り線を削除し、選択欄の角丸と矢印を整理。テーマ・ボタン・選択欄は共通トークンで明暗に対応する。
+- 最新のソース検証: `yarn verify` core/DOM 1,190件、contracts 289件成功。関連fixture 36件、全accessibility 25件成功。macOSのpopup visual明暗2件も成功し、基準を更新。最終ブラウザ実行は失敗・skip・retry 0。
+- Linux画像はPlaywright公式 `v1.64.1-noble` のlinux/amd64コンテナ（Ubuntu 24.04.5、Node 24.22.1、Playwright 1.64.1）で現在のソースからビルドして生成。ライト・ダーク2件を更新後、更新なしで同じ2件を再実行して成功（失敗・skip・retry 0）。両画像の文字・アイコン・操作面に欠けがないことを確認し、リポジトリの基準とLinux actualのバイト一致を確認。ホストのmacOS画像は転用していない。
+- 最新の `yarn test:package` でChrome・Firefox・source ZIP契約も成功。今回の追補後にFirefox実機と実YouTube canaryは再実行していない。
+
+![設定とpopupの比較（同じビルドを使用するローカルUIプレビュー）](settings-popup-comparison.png)

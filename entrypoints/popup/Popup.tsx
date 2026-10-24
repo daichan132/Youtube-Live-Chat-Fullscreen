@@ -86,14 +86,13 @@ export const Popup = () => {
       className='ylc-popup flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
     >
       <PersistenceNotice />
-      <div className='flex-grow ylc-theme-surface-muted py-2'>
-        {items.map((item, index) => (
+      <div className='ylc-popup-content flex-grow'>
+        {items.map(item => (
           <PopupItemRow
             key={item.id}
             icon={item.icon}
             title={item.title}
             data={item.data}
-            isLast={index === items.length - 1}
             asLabel={item.asLabel}
             actionAuto={item.actionAuto}
           />

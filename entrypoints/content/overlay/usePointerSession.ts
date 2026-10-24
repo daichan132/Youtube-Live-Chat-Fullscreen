@@ -114,15 +114,15 @@ export const usePointerSession = <TSession>({ begin, move, commit, cancel, onSta
   const handleWindowBlur = useCallback(() => {
     finish(false)
   }, [finish])
-  const handleLostPointerCapture = useCallback(
-    (event: PointerEvent) => {
-      const active = activeRef.current
-      if (!active || active.pointerId !== event.pointerId || event.currentTarget !== active.captureTarget) return
-      active.captureAcquired = false
-      finish(false)
-    },
-    [finish],
-  )
+  const handleLostPointerCapture = useCallback((event: PointerEvent) => {
+    const active = activeRef.current
+    if (!active || active.pointerId !== event.pointerId || event.currentTarget !== active.captureTarget) return
+    // Capture is a routing aid, not ownership of the gesture. The host or
+    // browser can release it while the primary button is still held. Keep
+    // the window listeners and preview until pointerup or explicit cancel;
+    // treating routing loss as cancellation snaps the panel back.
+    active.captureAcquired = false
+  }, [])
 
   const onPointerDown = useCallback(
     (event: React.PointerEvent) => {
