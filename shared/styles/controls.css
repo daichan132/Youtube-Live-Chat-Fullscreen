@@ -2015,14 +2015,26 @@ label.ylc-row:has(:focus-visible) {
 }
 
 .ylc-preset[data-ylc-preset-current="true"] {
-  border-color: var(--ylc-accent);
+  border-color: color-mix(in srgb, var(--ylc-accent) 28%, var(--ylc-border));
+  background: color-mix(in srgb, var(--ylc-bg-surface) 60%, var(--ylc-accent-soft));
 }
 
 .ylc-preset-apply[aria-pressed="true"] {
   opacity: 1;
   cursor: default;
-  background: transparent;
-  color: var(--ylc-text-secondary);
+  background: var(--ylc-accent-soft);
+  color: var(--ylc-accent-text);
+}
+
+.ylc-preset-apply[aria-pressed="true"] > svg {
+  box-sizing: content-box;
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  padding: 2px;
+  border-radius: 50%;
+  background: var(--ylc-accent);
+  color: var(--ylc-accent-contrast);
 }
 
 .ylc-preset-apply > span {
@@ -2168,6 +2180,17 @@ label.ylc-row:has(:focus-visible) {
     background: ButtonText;
     border-color: Canvas;
     box-shadow: none;
+    forced-color-adjust: none;
+  }
+
+  .ylc-preset[data-ylc-preset-current="true"] {
+    border-color: Highlight;
+    background: Canvas;
+  }
+
+  .ylc-preset-apply[aria-pressed="true"] > svg {
+    background: Highlight;
+    color: HighlightText;
     forced-color-adjust: none;
   }
 

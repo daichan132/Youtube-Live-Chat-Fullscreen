@@ -382,3 +382,28 @@ test.describe('settings design accessibility', () => {
     await page.screenshot({ path: testInfo.outputPath('settings-forced-colors.png') })
   })
 })
+
+for (const theme of ['light', 'dark']) {
+  for (const forced of [false, true]) {
+    test(`keeps the current preset readable and compact in ${theme}, forced colors ${forced}`, async ({ page, extension }, testInfo) => {
+      await extension.storage.set({
+        [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'current-preset-review', value: 'en' },
+        [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'current-preset-review', value: theme },
+      })
+      await page.setViewportSize({ width: 480, height: 640 })
+      await page.emulateMedia({ forcedColors: forced ? 'active' : 'none', colorScheme: theme as 'light' | 'dark' })
+      await page.goto(extension.url('settings.html'))
+      await page.getByRole('tab', { name: 'Presets', exact: true }).click()
+      const current = page.locator('[data-ylc-preset-current="true"]').first()
+      const status = current.getByRole('button', { pressed: true })
+      await expect(status).toHaveText('Current')
+      expect((await colorsAt(status, 'color')).ratio).toBeGreaterThanOrEqual(4.5)
+      expect((await colorsAt(status.locator('svg'), 'color')).ratio).toBeGreaterThanOrEqual(3)
+      expect((await current.boundingBox())?.height).toBeLessThanOrEqual(56)
+      await status.focus()
+      await expect(status).toBeFocused()
+      expect((await colorsAt(status, 'outlineColor')).ratio).toBeGreaterThanOrEqual(3)
+      await page.screenshot({ path: testInfo.outputPath(`current-preset-${theme}-${forced}.png`) })
+    })
+  }
+}

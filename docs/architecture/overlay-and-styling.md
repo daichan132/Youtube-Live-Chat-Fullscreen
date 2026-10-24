@@ -173,3 +173,5 @@ Required checks are described in [Testing contracts](../testing/contracts.md). I
 Preset deletion confirmations group the heading and description without horizontal dividers. The heading and actions share 20px side insets, with 20px above the heading, 8px above the actions, and 16px below the actions. The description retains its own keyboard-scrollable region while the heading and actions stay visible in short viewports.
 
 Preset cards keep the reorder handle, editable name, Apply/current state, and Delete on one compact row. The name takes the remaining width. Only narrow coarse-pointer layouts move the actions to a second row to preserve touch targets and translated labels. A native title exposes the full saved name without changing editing or truncation behavior. The add-current-settings action aligns its label to the inline start and has a minimum 44px target.
+
+The current preset uses a subtle accent-tinted surface and border plus a checked status pill. Its row height stays the same as other presets, and keyboard focus remains a separate high-contrast outline. Forced colors use Canvas/Highlight with a HighlightText check instead of relying on the tint.
