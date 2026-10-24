@@ -171,3 +171,5 @@ The overlay inspection and screenshot CLIs share the self-contained DOM reader i
 Required checks are described in [Testing contracts](../testing/contracts.md). Interaction changes need real pointer/keyboard input, and compositor changes such as blur need pixel review in the affected browser; see [Browser verification](../maintainers/verification-browser.md).
 
 Preset deletion confirmations group the heading and description without horizontal dividers. The heading and actions share 20px side insets, with 20px above the heading, 8px above the actions, and 16px below the actions. The description retains its own keyboard-scrollable region while the heading and actions stay visible in short viewports.
+
+Preset cards use two rows at all input sizes: the single-line editable name occupies the available first row, and Apply/current state and Delete share the second row. The reorder handle spans both rows at the inline start. A native title exposes the full saved name without changing editing or truncation behavior. The add-current-settings action aligns its label to the inline start and has a minimum 44px target.

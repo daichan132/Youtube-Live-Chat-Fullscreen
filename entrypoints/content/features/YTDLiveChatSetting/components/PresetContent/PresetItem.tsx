@@ -159,6 +159,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
         maxLength={MAX_PRESET_NAME_LENGTH}
         readOnly={isBuiltIn}
         aria-label={t('content.aria.presetName')}
+        title={displayTitle || t('content.preset.addItemTitle')}
         className='ylc-preset-name'
       />
       <div data-ylc-preset-actions className='ylc-preset-actions'>
