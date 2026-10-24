@@ -1,4 +1,5 @@
 import type { RGBA } from '@/shared/settings/model'
+import { contrast, luminance } from './colorContrast'
 
 type RGB = Pick<RGBA, 'r' | 'g' | 'b'>
 
@@ -7,19 +8,6 @@ const PALE_BLUE = { r: 151, g: 204, b: 255 } as const
 const DEEP_NAVY = { r: 0, g: 0, b: 16 } as const
 const PALEST_BLUE = { r: 250, g: 253, b: 255 } as const
 const MINIMUM_CONTRAST = 4.5
-
-const toLinearChannel = (channel: number) => {
-  const srgb = channel / 255
-  return srgb <= 0.04045 ? srgb / 12.92 : ((srgb + 0.055) / 1.055) ** 2.4
-}
-
-const luminance = (color: RGB) => 0.2126 * toLinearChannel(color.r) + 0.7152 * toLinearChannel(color.g) + 0.0722 * toLinearChannel(color.b)
-
-const contrast = (foreground: RGB, background: RGB) => {
-  const first = luminance(foreground)
-  const second = luminance(background)
-  return (Math.max(first, second) + 0.05) / (Math.min(first, second) + 0.05)
-}
 
 const compositeOver = (background: RGBA, videoChannel: number): RGB => ({
   r: background.r * background.a + videoChannel * (1 - background.a),

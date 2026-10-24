@@ -1,3 +1,4 @@
+import { useAtomValue } from 'jotai'
 import {
   type CSSProperties,
   type FocusEvent,
@@ -13,6 +14,8 @@ import {
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useLocaleCode, useLocaleDirection, useT } from '@/shared/i18n/react'
+import { effectiveProfileAtom } from '@/shared/state'
+import { getControlPalette } from './controlPalette'
 import { OverlayPlacementPanel } from './OverlayPlacementPanel'
 import { useOverlayMenuDismiss } from './useOverlayMenuDismiss'
 import { useOverlayTooltipDismiss } from './useOverlayTooltipDismiss'
@@ -81,6 +84,8 @@ export const OverlayControlRail = ({
   canMoveBy,
   canResizeBy,
 }: OverlayControlRailProps) => {
+  const { backgroundColor, fontColor } = useAtomValue(effectiveProfileAtom).appearance
+  const controlPalette = getControlPalette(backgroundColor, fontColor)
   const t = useT()
   const localeCode = useLocaleCode()
   const direction = useLocaleDirection()
@@ -281,7 +286,7 @@ export const OverlayControlRail = ({
       lang={localeCode.replaceAll('_', '-')}
       dir={direction}
       data-ylc-control-rail-orientation={vertical ? 'vertical' : 'horizontal'}
-      className='ylc-overlay-control-rail ylc-theme-text-primary absolute flex items-center'
+      className='ylc-overlay-control-rail absolute flex items-center'
       onPointerDownCapture={() => {
         setDismissedFocusControl(null)
         setFocusedControl(null)
@@ -324,6 +329,7 @@ export const OverlayControlRail = ({
         if (!containsTooltipPointer({ x: event.clientX, y: event.clientY })) onLeaveControls()
       }}
       style={{
+        ...controlPalette,
         ...placement,
         transition: focused ? 'none' : undefined,
         gap: CONTROL_GAP,

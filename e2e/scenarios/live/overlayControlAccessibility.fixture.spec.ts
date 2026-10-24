@@ -37,7 +37,7 @@ const contrast = (foreground: Color, background: Color) => {
 }
 
 for (const theme of ['light', 'dark'] as const) {
-  test(`keeps recovery controls visible and keyboard operable with unreadable chat colors in ${theme}`, async ({
+  test(`follows readable chat palettes and keeps recovery controls operable with unreadable colors in ${theme}`, async ({
     page,
     extension,
   }, testInfo) => {
@@ -57,15 +57,39 @@ for (const theme of ['light', 'dark'] as const) {
     const drag = page.locator('[data-ylc-drag-handle]')
     const placement = page.locator('[data-ylc-placement-button]')
 
-    for (const alpha of [1, 0]) {
+    for (const palette of [
+      {
+        name: 'navy',
+        backgroundColor: { r: 24, g: 32, b: 52, a: 1 },
+        fontColor: { r: 224, g: 232, b: 248, a: 1 },
+        expectedInk: 'rgb(224, 232, 248)',
+        expectedSurface: 'rgb(24, 32, 52)',
+      },
+      {
+        name: 'warm',
+        backgroundColor: { r: 248, g: 237, b: 218, a: 1 },
+        fontColor: { r: 72, g: 45, b: 31, a: 1 },
+        expectedInk: 'rgb(72, 45, 31)',
+        expectedSurface: 'rgb(248, 237, 218)',
+      },
+      ...[1, 0].map(alpha => ({
+        name: `white-${alpha}`,
+        backgroundColor: { r: 255, g: 255, b: 255, a: alpha },
+        fontColor: { r: 255, g: 255, b: 255, a: alpha },
+        expectedInk: 'rgb(0, 0, 0)',
+        expectedSurface: 'rgb(255, 255, 255)',
+      })),
+    ]) {
       await patchOverlayStore(extension, {
         profile: {
           appearance: {
-            backgroundColor: { r: 255, g: 255, b: 255, a: alpha },
-            fontColor: { r: 255, g: 255, b: 255, a: alpha },
+            backgroundColor: palette.backgroundColor,
+            fontColor: palette.fontColor,
           },
         },
       })
+      await expect(rail).toHaveCSS('background-color', palette.expectedSurface)
+      await expect(settings.locator('svg')).toHaveCSS('color', palette.expectedInk)
       await page.mouse.move(1, 1)
       for (let step = 0; step < 40 && !(await settings.evaluate(element => element.matches(':focus'))); step += 1) {
         await page.keyboard.press('Tab')
@@ -85,6 +109,20 @@ for (const theme of ['light', 'dark'] as const) {
           }
         }
       }).toPass({ timeout: 3000 })
+
+      for (const button of [settings, drag, placement]) {
+        await button.hover()
+        const expectedHover = palette.expectedInk.replace('rgb(', 'rgba(').replace(')', ', 0.1)')
+        await expect(button).toHaveCSS('background-color', expectedHover)
+        const background = parseColor(await rail.evaluate(element => getComputedStyle(element).backgroundColor))
+        const hover = parseColor(await button.evaluate(element => getComputedStyle(element).backgroundColor))
+        const ink = parseColor(await button.locator('svg').evaluate(element => getComputedStyle(element).color))
+        for (const value of [0, 255]) {
+          const surface = composite(hover, composite(background, [value, value, value, 1]))
+          expect(contrast(ink, surface)).toBeGreaterThanOrEqual(3)
+        }
+      }
+      await page.mouse.move(1, 1)
 
       await expect(settings).toHaveCSS('outline-style', 'solid')
       await page.keyboard.press('Tab')
@@ -108,9 +146,10 @@ for (const theme of ['light', 'dark'] as const) {
       await page.keyboard.press('Escape')
       await expect(overlay.settingsDialog()).toHaveCount(0)
       await expect(settings).toBeFocused()
-      const screenshotPath = testInfo.outputPath(`recovery-controls-${theme}-alpha-${alpha}.png`)
+      await page.screenshot({ path: testInfo.outputPath(`chat-controls-${theme}-${palette.name}.png`) })
+      const screenshotPath = testInfo.outputPath(`recovery-controls-${theme}-${palette.name}.png`)
       await rail.screenshot({ path: screenshotPath })
-      await testInfo.attach(`recovery-controls-${theme}-alpha-${alpha}`, { path: screenshotPath, contentType: 'image/png' })
+      await testInfo.attach(`recovery-controls-${theme}-${palette.name}`, { path: screenshotPath, contentType: 'image/png' })
     }
   })
 }

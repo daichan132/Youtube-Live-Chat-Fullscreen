@@ -112,8 +112,6 @@
   --ylc-error-border: #b42318;
   --ylc-danger-hover: rgba(216, 58, 58, 0.1);
   --ylc-overlay-panel: rgba(255, 255, 255, 0.82);
-  --ylc-overlay-control-rail-bg: rgba(255, 255, 255, 0.94);
-  --ylc-overlay-control-hover: rgba(15, 20, 25, 0.08);
   --ylc-alpha-grid-dark: #d6dee8;
   --ylc-alpha-grid-light: #edf2f7;
   --ylc-preview-border-muted: rgba(100, 116, 139, 0.28);
@@ -165,8 +163,6 @@
   --ylc-error-border: #fda29b;
   --ylc-danger-hover: rgba(240, 113, 113, 0.18);
   --ylc-overlay-panel: rgba(33, 33, 36, 0.82);
-  --ylc-overlay-control-rail-bg: rgba(28, 28, 30, 0.92);
-  --ylc-overlay-control-hover: rgba(255, 255, 255, 0.14);
   --ylc-alpha-grid-dark: #3a3a3d;
   --ylc-alpha-grid-light: #2a2a2d;
   --ylc-preview-border-muted: rgba(148, 163, 184, 0.34);
@@ -1299,9 +1295,7 @@
   border-radius: var(--ylc-radius-lg);
   background: var(--ylc-overlay-control-rail-bg);
   box-shadow: none;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--ylc-text-primary);
+  color: var(--ylc-overlay-control-ink);
   transform-origin: top right;
   will-change: opacity, transform;
   transition:
@@ -1327,7 +1321,7 @@
 }
 
 .ylc-overlay-control-icon:focus-visible {
-  outline: 2px solid var(--ylc-focus-ring);
+  outline: 2px solid var(--ylc-overlay-control-ink);
   outline-offset: 2px;
   border-radius: var(--ylc-radius-md);
 }
@@ -1418,6 +1412,11 @@
   }
   .ylc-theme-tab-active {
     border-bottom: 2px solid Highlight;
+  }
+  .ylc-overlay-control-rail {
+    --ylc-overlay-control-rail-bg: Canvas !important;
+    --ylc-overlay-control-ink: CanvasText !important;
+    --ylc-overlay-control-hover: ButtonFace !important;
   }
   .ylc-overlay-control-icon {
     border: 1px solid ButtonText;

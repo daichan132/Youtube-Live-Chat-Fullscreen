@@ -79,3 +79,14 @@
 - 最新の `yarn test:package` でChrome・Firefox・source ZIP契約も成功。今回の追補後にFirefox実機と実YouTube canaryは再実行していない。
 
 ![設定とpopupの比較（同じビルドを使用するローカルUIプレビュー）](settings-popup-comparison.png)
+
+
+## 2026-10-25: 右下の操作列をチャット配色へ追従
+
+- 設定・ドラッグ・配置ボタンはチャットの背景色と文字色に追従する。映像上でも見失わないよう操作列の面とアイコンは不透明にし、通常・ホバー時のアイコンのコントラストが3:1に足りない場合は白黒の補正を行う。ヘルプと配置パネルは読めるインターフェース配色を維持し、強制配色はシステム色を使う。
+- 既存のリンク色とコントラスト計算を共通化し、固定色の不要トークンと不透明面に不要な背面ぼかしを除去した。
+- `yarn verify`: core/DOM 1,193件、contracts 289件成功。配色・ホバー・キーボード・ヘルプの関連fixture 4件とmacOS visual 4件成功。最終実行の失敗・skip・retryは0。途中のfixture/visual同時実行では記録先が競合したため、独立した記録先で再実行して正常終了を確認した。
+- `yarn test:package`: Chrome・Firefox・source ZIP契約成功。Chrome 379,945 bytes、Firefox 379,998 bytesで既存380,000 bytes上限内。
+- 紺色＋淡い文字、暖色＋茶色、透明・同色設定を実ブラウザで確認。今回の追補後のFirefox実機とLinux visualは未再実行。
+
+![チャット配色に追従する操作列（実ブラウザのfixture画像）](chat-control-colors.png)
