@@ -56,7 +56,7 @@ test('names the exact deletion target and leaves settings intact on cancellation
   await page.getByRole('button', { name: `Delete ${presetName}`, exact: true }).click()
   const dialog = page.getByRole('dialog', { name: 'Delete', exact: true })
   await expect(dialog).toContainText(presetName)
-  await expect(dialog).toHaveAccessibleDescription(`${presetName} Delete this preset?`)
+  await expect(dialog).toHaveAccessibleDescription(`${presetName} This preset will be removed from the list. Your current chat settings will stay the same.`)
   await testInfo.attach('named-preset-deletion', { body: await page.screenshot(), contentType: 'image/png' })
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
   expect(await extension.storage.get(APPEARANCE_STORAGE_KEY)).toEqual(before)
@@ -136,6 +136,7 @@ test('persists deletion of built-in presets, including an empty list, across rel
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   const row = page.locator('[data-ylc-preset-item="standard"]')
   await expect(row.locator('input')).toHaveAttribute('readonly', '')
+  const beforeDeletion = await extension.storage.get(APPEARANCE_STORAGE_KEY)
   await row.getByRole('button', { name: /^Delete / }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click()
   await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
@@ -143,6 +144,10 @@ test('persists deletion of built-in presets, including an empty list, across rel
     const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
     return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: unknown[] } }).value.presets
   }).toEqual([])
+  const afterDeletion = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+  expect((afterDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile).toEqual(
+    (beforeDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile,
+  )
   await page.reload()
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
