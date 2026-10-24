@@ -54,7 +54,7 @@ it('names and describes confirmation, confines Tab, and returns Cancel focus to 
 
   const dialog = await screen.findByRole('dialog', { name: 'popup.import' })
   expect(dialog).toHaveAttribute('aria-modal', 'true')
-  expect(dialog).toHaveAccessibleDescription('backup.json popup.importConfirm')
+  await waitFor(() => expect(dialog).toHaveAccessibleDescription('backup.json popup.importConfirm'))
   expect(within(dialog).getByRole('status')).toHaveTextContent('popup.importConfirm')
   expect(view.container).toHaveAttribute('inert')
   await waitFor(() => expect(dialog).toContainElement(document.activeElement as HTMLElement))
