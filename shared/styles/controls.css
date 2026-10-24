@@ -1592,11 +1592,11 @@ label.ylc-row:has(:focus-visible) {
 /* Preset card */
 .ylc-preset {
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  align-items: start;
-  gap: 4px 8px;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px;
   margin: 8px 12px;
-  padding: 10px;
+  padding: 6px 8px;
   border: var(--ylc-border-width) solid var(--ylc-border);
   border-radius: var(--ylc-radius-xl);
   background: var(--ylc-bg-surface);
@@ -1610,12 +1610,11 @@ label.ylc-row:has(:focus-visible) {
 }
 
 .ylc-preset-grip {
-  grid-row: 1 / span 2;
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
+  width: 28px;
   height: 40px;
   touch-action: none;
   padding: 0;
@@ -1660,12 +1659,10 @@ label.ylc-row:has(:focus-visible) {
 }
 
 .ylc-preset-actions {
-  grid-column: 2;
-  display: flex;
+  grid-column: 3;
+  display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 4px;
   min-width: 0;
 }
 
@@ -1674,7 +1671,7 @@ label.ylc-row:has(:focus-visible) {
   align-items: center;
   gap: 5px;
   height: 32px;
-  padding: 0 13px;
+  padding: 0 10px;
   border: 0;
   border-radius: 9999px;
   background: var(--ylc-accent-soft);
