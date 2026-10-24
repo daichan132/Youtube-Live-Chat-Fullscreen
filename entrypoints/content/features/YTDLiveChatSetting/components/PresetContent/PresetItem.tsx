@@ -216,7 +216,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
               {t('content.preset.deleteConfirmationMessage')}
             </p>
           </section>
-          <div className='shrink-0 px-5 py-4 flex flex-wrap justify-end items-center gap-2'>
+          <div className='shrink-0 px-5 pt-2 pb-4 flex flex-wrap justify-end items-center gap-2'>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}
