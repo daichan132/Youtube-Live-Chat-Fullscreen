@@ -1,6 +1,6 @@
 # 設定・チャットUIの改善と検証記録
 
-2026-10-24〜25 JST。最終UIコードは `c3edb66d`。この後の変更はUbuntu画像の基準更新と検証文書・画像のみ。
+2026-10-24〜25 JST。共通UI全体の検証コードは `c3edb66d`。後続のカラーピッカー追加調整は末尾に別記する。
 
 ## デザインの統一方針
 
@@ -24,7 +24,7 @@
 - popupのテーマ・バックアップ・リンク先の操作ラベルを明確化し、保存失敗時のRetryとリカバリー操作を改善。
 - 任意のFirefox自然遅延記録ツールを追加し、未借用のiframeを復帰成功に数えないよう修正。fixture画像はtestInfo.outputPathで保存する。
 
-## 最終コードの検証
+## 共通UI全体の検証（c3edb66d）
 
 - `yarn verify`: core/DOM 1,189件、contracts 289件成功。CSS specificity警告4件は残る。
 - Chromeの全fixture 224件＋accessibility 25件＝249件成功。日本語・ドイツ語200%・アラビア語RTL、320px幅、タッチ、強制配色、直接数値編集、Undo、ドラッグ、設定の同期、ライブ・アーカイブ・no-chat・SPAの決定的シナリオを含む。
@@ -53,3 +53,15 @@
 ![popupのダークテーマ](popup-unified-dark.png)
 
 [初期popup比較](popup-before-after.png)・[強制配色/削除確認の比較](settings-before-after.png)・[Firefox RTLと200%拡大](firefox-rtl-200-percent.png)は各改善時点の参考画像。最終の枠なしデザインは上の実画面と最新画像基準を参照。
+
+## カラーピッカーのデザイン調整
+
+アプリの共通ポップオーバーと同じ角丸・面・影のカードにまとめた。色面の下の黒い区切り帯をなくし、色面を独立した角丸にし、色相/透明度バーを細いピル状にして12pxずつ離した。つまみは通常18px、タッチ時24pxに抑え、白と黒の境界で色面上でも見分けられる。デスクトップのカードは224×200px、タッチ時は44pxのバーを確保。色のグラデーションと値、キーボード/ARIA、lang/dirは維持。強制配色ではカードだけをシステム色にし、編集中の色面は保持する。
+
+追加後のyarn verifyはcore/DOM1,189件＋contracts289件成功。関連fixtureと全accessibilityは32件成功（失敗・skip・retry0）。320pxのRTL、タッチ、200%拡大、強制配色、キーでの色変更・Escape復帰を含む。Chrome/Firefox/sourceの本番ZIP契約も成功し、既存容量上限は維持。
+
+消音の専用Firefox158で本番ビルドの明暗を確認。どちらも224×200px、色相バー12px、黒い区切り帯0pxで、実Tab/矢印キーによる色変更を確認。数値編集・Spaceでのトグル反転も成功。専用Firefox正常終了・一時profile削除を確認した。新しいYouTube自然条件の遅延調査は行っていない。
+
+![改善したカラーピッカー](color-picker-refined.png)
+
+![改善したカラーピッカー・ダーク](color-picker-refined-dark.png)

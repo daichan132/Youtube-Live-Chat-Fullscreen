@@ -103,7 +103,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
         <div
           ref={menuRef}
           id={pickerId}
-          className='absolute end-0 ylc-theme-popover'
+          className='absolute end-0 ylc-theme-popover ylc-color-popover'
           role='dialog'
           aria-label={t('content.aria.colorPicker')}
           aria-describedby={fieldLabelId}
