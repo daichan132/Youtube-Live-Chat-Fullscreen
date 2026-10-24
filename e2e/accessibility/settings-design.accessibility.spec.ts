@@ -8,7 +8,8 @@ const colorsAt = (target: Locator, property: 'color' | 'borderTopColor' | 'outli
   target.evaluate((element, property) => {
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = 1
-    const context = canvas.getContext('2d')!
+    const context = canvas.getContext('2d')
+    if (!context) throw new Error('Canvas color sampling is unavailable')
     type Color = [number, number, number, number]
     const rgba = (value: string): Color => {
       context.clearRect(0, 0, 1, 1)
@@ -71,7 +72,7 @@ test.describe('settings design accessibility', () => {
     const cdp = await context.newCDPSession(page)
     await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: false })
     await cdp.detach()
-    await page.emulateMedia({ forcedColors: 'none', reducedMotion: 'reduce' })
+    await page.emulateMedia({ forcedColors: 'none', reducedMotion: 'reduce', colorScheme: 'light' })
     await page.setViewportSize({ width: 1280, height: 720 })
   })
 
@@ -314,6 +315,38 @@ test.describe('settings design accessibility', () => {
       } finally {
         await restore()
       }
+    })
+  }
+
+  for (const colorScheme of ['light', 'dark'] as const) {
+    test(`preserves the edited colors and keyboard input in a forced-color palette in ${colorScheme}`, async ({
+      page,
+      extension,
+    }, testInfo) => {
+      await page.emulateMedia({ forcedColors: 'active', colorScheme })
+      await page.goto(extension.url('settings.html'))
+      const trigger = page.getByRole('button', { name: 'Background Color', exact: true })
+      await trigger.click()
+      const saturation = page.locator('.react-colorful__saturation .react-colorful__interactive')
+      await page.keyboard.press('Tab')
+      await expect(saturation).toBeFocused()
+      await expect(saturation).toHaveCSS('outline-style', 'solid')
+      await page.keyboard.press('ArrowRight')
+      await expect(trigger.locator('.ylc-color-value')).not.toHaveText('#FFFFFF')
+      const swatch = trigger.locator('.ylc-color-swatch-fill')
+      const savedColor = await swatch.evaluate(element => (element as HTMLElement).style.backgroundColor)
+      await expect(swatch).toHaveCSS('background-color', savedColor)
+      for (const region of ['saturation', 'hue', 'alpha-gradient']) {
+        await expect(page.locator(`.react-colorful__${region}`)).not.toHaveCSS('background-image', 'none')
+      }
+      // The surrounding interface still follows the system palette. Only the
+      // visual color data opts out, so the swatch must differ from its button.
+      expect(await swatch.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe(
+        await trigger.evaluate(element => getComputedStyle(element).backgroundColor),
+      )
+      await page.screenshot({ path: testInfo.outputPath(`settings-forced-colors-palette-${colorScheme}.png`) })
+      await page.keyboard.press('Escape')
+      await expect(trigger).toBeFocused()
     })
   }
 

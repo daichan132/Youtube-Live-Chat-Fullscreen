@@ -110,3 +110,11 @@
 .react-colorful__hue-pointer {
   z-index: 2;
 }
+
+@media (forced-colors: active) {
+  /* These gradients are the color being edited, rather than interface chrome.
+     Keep their colors and pointer halos; focus still uses the system Highlight. */
+  .react-colorful {
+    forced-color-adjust: none;
+  }
+}
