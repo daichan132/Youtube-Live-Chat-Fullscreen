@@ -197,7 +197,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
           contentClassName='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(92vw,380px)] max-h-[calc(100dvh-24px)] box-border flex min-h-0 flex-col ylc-theme-surface rounded-xl ylc-theme-shadow-md outline-none overflow-hidden ylc-theme-dialog-border'
           parentSelector={getModalParentElement}
         >
-          <div className='shrink-0 px-5 py-4 ylc-theme-dialog-divider-bottom'>
+          <div className='shrink-0 px-5 pt-5 pb-3'>
             <h3 id={deleteDialogTitleId} className='m-0 text-base leading-6 font-semibold ylc-theme-text-primary'>
               {t('content.preset.delete')}
             </h3>
@@ -206,7 +206,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
             aria-labelledby={deleteDialogTitleId}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: scroll regions need keyboard scrolling inside the modal focus trap
             tabIndex={0}
-            className='min-h-0 overflow-y-auto px-5 py-4 ylc-theme-focus-ring-soft'
+            className='min-h-0 overflow-y-auto px-5 pb-1 ylc-theme-focus-ring-soft'
             style={{ overscrollBehavior: 'contain' }}
           >
             <p id={deleteNameId} className='ylc-preset-delete-name'>
@@ -216,7 +216,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
               {t('content.preset.deleteConfirmationMessage')}
             </p>
           </section>
-          <div className='shrink-0 px-5 py-3 flex flex-wrap justify-end items-center gap-2 ylc-theme-dialog-divider-top'>
+          <div className='shrink-0 px-5 py-4 flex flex-wrap justify-end items-center gap-2'>
             <button
               type='button'
               onClick={() => setIsDeleteModalOpen(false)}

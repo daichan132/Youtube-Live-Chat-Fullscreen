@@ -169,3 +169,5 @@ Keep module imports self-contained and ordered, without CSS `@import` or cascade
 The overlay inspection and screenshot CLIs share the self-contained DOM reader in `scripts/verify/overlay-state-reader.mjs`. It reads the same shadow-DOM hooks and geometry in both tools; target selection, fullscreen interaction, output metadata, and success checks remain with each CLI.
 
 Required checks are described in [Testing contracts](../testing/contracts.md). Interaction changes need real pointer/keyboard input, and compositor changes such as blur need pixel review in the affected browser; see [Browser verification](../maintainers/verification-browser.md).
+
+Preset deletion confirmations group the heading and description without horizontal dividers. The heading and actions share 20px side insets, with 20px above the heading and 16px above/below the actions. The description retains its own keyboard-scrollable region while the heading and actions stay visible in short viewports.
