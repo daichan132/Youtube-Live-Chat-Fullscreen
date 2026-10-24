@@ -13,7 +13,6 @@ import {
 import { TbAdjustmentsHorizontal, TbArrowsHorizontal, TbGripVertical } from '@/shared/components/icons'
 import { CHAT_PANEL_LAYER } from '@/shared/constants/zIndex'
 import { useT } from '@/shared/i18n/react'
-import type { RGBA } from '@/shared/settings/model'
 import { OverlayPlacementPanel } from './OverlayPlacementPanel'
 import { useOverlayMenuDismiss } from './useOverlayMenuDismiss'
 
@@ -40,8 +39,6 @@ type OverlayControlRailProps = {
   placementAnchor?: { left?: number; right: number; top: number }
   viewportSize?: { width: number; height: number }
   placementPanelMaxHeight?: number
-  backgroundColor: RGBA
-  fontColor: RGBA
   onSettingsClick: (source: HTMLElement) => void
   onPointerDown: (event: PointerEvent<HTMLElement>) => void
   onKeyDown: (event: KeyboardEvent<HTMLElement>) => void
@@ -57,8 +54,6 @@ type OverlayControlRailProps = {
   onFocusControls?: (focused: boolean) => void
 }
 
-const toRgba = (color: RGBA, alpha = color.a) => `rgba(${color.r}, ${color.g}, ${color.b}, ${alpha})`
-
 export const OverlayControlRail = ({
   isDragging,
   isResizing = false,
@@ -70,8 +65,6 @@ export const OverlayControlRail = ({
   placementAnchor,
   viewportSize,
   placementPanelMaxHeight,
-  backgroundColor,
-  fontColor,
   onSettingsClick,
   onPointerDown: handlePointerDown,
   onKeyDown,
@@ -167,7 +160,6 @@ export const OverlayControlRail = ({
       ? placementPanelMaxHeight
       : Math.min(placementPanelMaxHeight ?? placementHeightLimit, placementHeightLimit))
   const displayed = isReady && (isVisible || focused || placementOpen)
-  const color = toRgba(fontColor)
   const dragCursorClass = isDragging ? 'cursor-grabbing' : 'cursor-grab'
   const tooltipEnabled = displayed && !placementOpen && !isDragging && !isResizing
   const [hoverReady, setHoverReady] = useState<ControlName | null>(null)
@@ -241,19 +233,13 @@ export const OverlayControlRail = ({
     },
     onBlur: () => setFocusedControl(null),
   })
-  const runtimeStyle = {
-    '--ylc-overlay-control-rail-bg-runtime': toRgba(backgroundColor),
-    '--ylc-overlay-control-hover-runtime': toRgba(fontColor, 0.1),
-    color,
-  } as CSSProperties
-
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: Hover only keeps controls visible; buttons inside remain semantic.
     <div
       ref={railRef}
       data-ylc-control-rail
       data-ylc-control-rail-orientation={vertical ? 'vertical' : 'horizontal'}
-      className='ylc-overlay-control-rail absolute flex items-center'
+      className='ylc-overlay-control-rail ylc-theme-text-primary absolute flex items-center'
       onPointerDownCapture={() => setFocusedControl(null)}
       onKeyDownCapture={event => {
         // A pointer-focused button may receive keyboard input without a new
@@ -295,7 +281,6 @@ export const OverlayControlRail = ({
         pointerEvents: displayed ? 'auto' : 'none',
         zIndex: CHAT_PANEL_LAYER.controls,
         transform: displayed ? 'translateY(0) scale(1)' : 'translateY(-2px) scale(0.98)',
-        ...runtimeStyle,
       }}
     >
       <button
@@ -311,14 +296,13 @@ export const OverlayControlRail = ({
           onSettingsClick(event.currentTarget)
         }}
       >
-        <TbAdjustmentsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
+        <TbAdjustmentsHorizontal size={22} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
       <button
         {...tooltipEvents('drag')}
         type='button'
         data-ylc-drag-handle
-        className={dragCursorClass}
-        style={{ border: 0, background: 'transparent', padding: 0, color: 'inherit' }}
+        className={`ylc-overlay-control-icon ylc-theme-focus-ring ${dragCursorClass} ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}
         onPointerDown={handlePointerDown}
         onKeyDown={onKeyDown}
         disabled={!isReady}
@@ -327,9 +311,7 @@ export const OverlayControlRail = ({
         aria-roledescription={t('content.aria.dragHandle')}
         aria-describedby={dragDescriptionId}
       >
-        <div className={`ylc-overlay-control-icon ${dragCursorClass} ${isDragging ? 'ylc-overlay-control-icon-active' : ''}`}>
-          <TbGripVertical size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
-        </div>
+        <TbGripVertical size={22} strokeWidth={ICON_STROKE_WIDTH} />
         <span id={dragDescriptionId} className='ylc-visually-hidden'>
           {t('content.aria.arrowKeysToMove')}
         </span>
@@ -345,7 +327,7 @@ export const OverlayControlRail = ({
         aria-expanded={placementOpen}
         onClick={() => setPlacementOpen(value => !value)}
       >
-        <TbArrowsHorizontal size={22} color={color} strokeWidth={ICON_STROKE_WIDTH} />
+        <TbArrowsHorizontal size={22} strokeWidth={ICON_STROKE_WIDTH} />
       </button>
       {tooltipVisible ? (
         <div

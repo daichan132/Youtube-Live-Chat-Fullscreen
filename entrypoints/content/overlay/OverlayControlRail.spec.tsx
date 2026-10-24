@@ -15,8 +15,6 @@ describe('OverlayControlRail', () => {
           isReady
           isVisible
           placement={{ top: 20, right: 0 }}
-          backgroundColor={{ r: 1, g: 2, b: 3, a: 0.5 }}
-          fontColor={{ r: 4, g: 5, b: 6, a: 0.8 }}
           onSettingsClick={onSettingsClick}
           onPointerDown={() => {}}
           onKeyDown={() => {}}
@@ -51,8 +49,6 @@ describe('OverlayControlRail', () => {
         isReady={false}
         isVisible
         placement={{}}
-        backgroundColor={{ r: 0, g: 0, b: 0, a: 0 }}
-        fontColor={{ r: 255, g: 255, b: 255, a: 1 }}
         onSettingsClick={() => {}}
         onPointerDown={() => {}}
         onKeyDown={() => {}}

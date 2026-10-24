@@ -32,6 +32,7 @@ export const FIXTURE_SPECS = [
   'live/noChatVideo.fixture.spec.ts',
   'live/overlayInteraction.fixture.spec.ts',
   'live/overlayControlsUsability.fixture.spec.ts',
+  'live/overlayControlAccessibility.fixture.spec.ts',
   'live/settingsUsability.fixture.spec.ts',
   'live/detailSettingsUsability.fixture.spec.ts',
   'live/colorPickerUsability.fixture.spec.ts',

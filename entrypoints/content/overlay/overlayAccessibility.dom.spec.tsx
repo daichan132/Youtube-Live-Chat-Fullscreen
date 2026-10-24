@@ -12,8 +12,6 @@ it('reaches hidden ready controls by Tab and keeps focus visible after pointer e
       isReady
       isVisible={false}
       placement={{}}
-      backgroundColor={{ r: 0, g: 0, b: 0, a: 1 }}
-      fontColor={{ r: 255, g: 255, b: 255, a: 1 }}
       onSettingsClick={vi.fn()}
       onPointerDown={vi.fn()}
       onKeyDown={vi.fn()}

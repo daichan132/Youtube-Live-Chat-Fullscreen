@@ -161,8 +161,6 @@ export const OverlayFrame = ({
                 }}
                 viewportSize={geometry.viewport}
                 placementPanelMaxHeight={placementPanelMaxHeight}
-                backgroundColor={profile.appearance.backgroundColor}
-                fontColor={profile.appearance.fontColor}
                 onSettingsClick={onOpenSettings}
                 onPointerDown={event => {
                   geometry.onPointerDown(event)
