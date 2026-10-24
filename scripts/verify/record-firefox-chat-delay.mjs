@@ -164,7 +164,10 @@ export async function record(options) {
     summary.counts = {
       executed: summary.trials.filter(t => t.outcome !== 'precondition-failed').length,
       preconditionFailed: summary.trials.filter(t => t.outcome === 'precondition-failed').length,
-      failed: summary.trials.filter(t => ['measurement-error', 'recovery-timeout', 'late-recovery'].includes(t.outcome)).length,
+      entryNotBorrowed: summary.trials.filter(t => t.outcome === 'entry-not-borrowed').length,
+      failed: summary.trials.filter(t =>
+        ['entry-not-borrowed', 'measurement-error', 'recovery-timeout', 'late-recovery'].includes(t.outcome),
+      ).length,
     }
     summary.networkEvents = journal.sequence
     summary.networkTail = journal.snapshot()
@@ -177,7 +180,7 @@ export async function record(options) {
     summary.stoppingReason === 'capture-error' ||
     summary.journalIntegrityError ||
     summary.cleanup !== 'normal-quit' ||
-    summary.trials.some(t => ['measurement-error', 'recovery-timeout', 'late-recovery'].includes(t.outcome))
+    summary.trials.some(t => ['entry-not-borrowed', 'measurement-error', 'recovery-timeout', 'late-recovery'].includes(t.outcome))
   )
     process.exitCode = 1
   if (['source-unavailable', 'precondition-failed'].includes(summary.stoppingReason) && process.exitCode !== 1) process.exitCode = 2

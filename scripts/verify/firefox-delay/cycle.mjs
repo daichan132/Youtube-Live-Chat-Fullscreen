@@ -71,7 +71,7 @@ export async function discover(api) {
   }
   throw new PreconditionError('No usable public live source found')
 }
-const state = `(()=>{const o=window.__ylcDelayRecorder;if(!o?.iframe)throw new Error('Observation reference unavailable');const f=o.iframe,d=f?.contentDocument;if(o&&d!==o.document){o.document=d;o.generation++}return {fullscreen:!!document.fullscreenElement,generation:o?.generation??0,nativeConnected:!!f?.isConnected,parentRestored:f?.parentNode===o?.parent,nativeHostHasOriginal:document.querySelector('ytd-live-chat-frame iframe')===f,blank:d?.location.href==='about:blank',renderer:!!d?.querySelector('yt-live-chat-renderer'),defined:!!d?.defaultView.customElements.get('yt-live-chat-renderer'),readyState:d?.readyState??null,nativeRules:d?.querySelector('#base-css')?.sheet?.cssRules.length??0,extensionStyles:d?.querySelectorAll('style[data-ylc-style-injected]').length??0,extensionClass:d?.body?.classList.contains('custom-yt-app-live-chat-extension')??false}})()`
+const state = `(()=>{const o=window.__ylcDelayRecorder;if(!o?.iframe)throw new Error('Observation reference unavailable');const f=o.iframe,d=f?.contentDocument;if(o&&d!==o.document){o.document=d;o.generation++}return {fullscreen:!!document.fullscreenElement,generation:o?.generation??0,nativeConnected:!!f?.isConnected,parentRestored:f?.parentNode===o?.parent,nativeHostHasOriginal:document.querySelector('ytd-live-chat-frame iframe')===f,overlayHasOriginal:document.querySelector('#shadow-root-live-chat')?.shadowRoot?.querySelector('iframe[data-ylc-chat]')===f,blank:d?.location.href==='about:blank',renderer:!!d?.querySelector('yt-live-chat-renderer'),defined:!!d?.defaultView.customElements.get('yt-live-chat-renderer'),readyState:d?.readyState??null,nativeRules:d?.querySelector('#base-css')?.sheet?.cssRules.length??0,extensionStyles:d?.querySelectorAll('style[data-ylc-style-injected]').length??0,extensionClass:d?.body?.classList.contains('custom-yt-app-live-chat-extension')??false}})()`
 export async function resources(api) {
   return mainWorld(
     api,
@@ -121,6 +121,18 @@ export async function runCycle(api, journal, { url, out, index, entry, slowMs = 
       )
     await api.delay(entry === 'steady' ? 500 : 200)
     record.entered = await mainWorld(api, state)
+    if (
+      !record.entered.fullscreen ||
+      !record.entered.nativeConnected ||
+      record.entered.parentRestored ||
+      record.entered.nativeHostHasOriginal ||
+      !record.entered.overlayHasOriginal
+    ) {
+      record.outcome = 'entry-not-borrowed'
+      journal.mark('entry-not-borrowed')
+      await api.key('\uE00C')
+      return record
+    }
     journal.mark('fullscreen-exit')
     record.stage = 'exit-recovery'
     record.exitStartedEpochMs = Date.now()

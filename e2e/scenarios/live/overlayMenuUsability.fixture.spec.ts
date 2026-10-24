@@ -408,7 +408,10 @@ test('closes placement when Tab leaves the rail without stealing the next focus'
   expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
 })
 
-test('declares translated overlay control language and direction without changing native documents', async ({ page, extension }) => {
+test('declares translated overlay control language and direction without changing native documents', async ({
+  page,
+  extension,
+}, testInfo) => {
   await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 480 }, { x: 100, y: 80 })
   await page.evaluate(() => {
     document.documentElement.lang = 'en'
@@ -433,7 +436,7 @@ test('declares translated overlay control language and direction without changin
   if (!left || !right) throw new Error('Physical placement buttons must have rendered bounds.')
   expect(left.x + left.width).toBeLessThan(right.x)
   await expect(panel.locator('.ylc-placement-step')).toHaveAttribute('dir', 'ltr')
-  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/rtl-placement.png' })
+  await page.screenshot({ path: testInfo.outputPath('rtl-placement.png') })
 })
 
 test('dismisses hover help from the native composer after its own Escape handler has finished', async ({ page, extension }) => {
@@ -461,7 +464,7 @@ test('dismisses hover help from the native composer after its own Escape handler
   expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
 })
 
-test('keeps hover help readable under the pointer while native clicks still pass through it', async ({ page, extension }) => {
+test('keeps hover help readable under the pointer while native clicks still pass through it', async ({ page, extension }, testInfo) => {
   await setup(page, extension, { width: 1280, height: 720 }, { width: 400, height: 300 }, { x: 100, y: 80 })
   const settings = page.locator('[data-ylc-settings-btn]')
   const tooltip = page.locator('[data-ylc-control-tooltip]')
@@ -489,7 +492,7 @@ test('keeps hover help readable under the pointer while native clicks still pass
   await page.mouse.move(point.x, point.y, { steps: 4 })
   await page.waitForTimeout(250)
   await expect(tooltip).toBeVisible()
-  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/hover-video.png', animations: 'disabled' })
+  await page.screenshot({ path: testInfo.outputPath('hover-video.png'), animations: 'disabled' })
   await expect(tooltip).toHaveCSS('pointer-events', 'none')
   await page.mouse.click(point.x, point.y)
   await expect(page.locator('#fixture-under-help')).toHaveAttribute('data-clicks', '1')
@@ -507,7 +510,7 @@ test('keeps hover help readable under the pointer while native clicks still pass
   expect(await page.evaluate(() => Boolean(document.fullscreenElement))).toBe(true)
 })
 
-test('retains click-through hover help over the borrowed chat document', async ({ page, extension }) => {
+test('retains click-through hover help over the borrowed chat document', async ({ page, extension }, testInfo) => {
   await setup(page, extension, { width: 1280, height: 720 }, { width: 240, height: 180 }, { x: 100, y: 530 })
   const settings = page.locator('[data-ylc-settings-btn]')
   const tooltip = page.locator('[data-ylc-control-tooltip]')
@@ -547,7 +550,7 @@ test('retains click-through hover help over the borrowed chat document', async (
   await page.mouse.move(point.x, point.y, { steps: 4 })
   await page.waitForTimeout(250)
   await expect(tooltip).toBeVisible()
-  await page.screenshot({ path: '/private/tmp/ylc-design-continuation-20261024/overlay/hover-chat.png', animations: 'disabled' })
+  await page.screenshot({ path: testInfo.outputPath('hover-chat.png'), animations: 'disabled' })
   await page.mouse.click(point.x, point.y)
   await expect(chat.locator('#fixture-chat-under-help')).toHaveAttribute('data-clicks', '1')
   await expect(chat.locator('#fixture-chat-under-help')).toHaveAttribute('data-trusted', 'true')
