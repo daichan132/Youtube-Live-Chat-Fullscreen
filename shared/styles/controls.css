@@ -97,23 +97,13 @@
   --ylc-shadow-md: 0 10px 30px rgba(15, 20, 25, 0.13), 0 0 0 1px var(--ylc-border);
   --ylc-setting-panel-glass-bg: rgba(255, 255, 255, 0.96);
   --ylc-switch-track-off-bg: #dde2e9;
-  --ylc-switch-track-off-border: var(--ylc-control-border);
   --ylc-switch-track-on-bg: var(--ylc-accent);
-  --ylc-switch-track-on-border: var(--ylc-accent);
-  --ylc-switch-track-shine: rgba(255, 255, 255, 0.42);
-  --ylc-switch-track-glow: rgba(47, 111, 237, 0.1);
   --ylc-switch-thumb-bg: #ffffff;
   --ylc-switch-thumb-off-bg: #697586;
-  --ylc-switch-thumb-border: #657080;
-  --ylc-switch-thumb-shadow: rgba(15, 20, 25, 0.16);
-  --ylc-switch-thumb-sheen: rgba(255, 255, 255, 0.52);
   --ylc-hover-surface: #f0f3f7;
   --ylc-slider-track: #dde2e9;
-  --ylc-slider-track-border: #c7cdd6;
   --ylc-slider-fill: var(--ylc-accent);
-  --ylc-slider-fill-glow: rgba(47, 111, 237, 0.1);
   --ylc-slider-thumb-bg: #ffffff;
-  --ylc-slider-thumb-border: #c7cdd6;
   --ylc-slider-thumb-shadow: 0 3px 10px rgba(15, 20, 25, 0.24);
   --ylc-danger-border: #d83a3a;
   --ylc-danger-text: #b42318;
@@ -160,23 +150,13 @@
   --ylc-shadow-md: 0 14px 36px rgba(0, 0, 0, 0.62), 0 0 0 1px var(--ylc-border);
   --ylc-setting-panel-glass-bg: rgba(33, 33, 36, 0.96);
   --ylc-switch-track-off-bg: #45464b;
-  --ylc-switch-track-off-border: var(--ylc-control-border);
   --ylc-switch-track-on-bg: var(--ylc-accent);
-  --ylc-switch-track-on-border: var(--ylc-accent);
-  --ylc-switch-track-shine: rgba(255, 255, 255, 0.32);
-  --ylc-switch-track-glow: rgba(91, 141, 239, 0.12);
   --ylc-switch-thumb-bg: #ffffff;
   --ylc-switch-thumb-off-bg: #b8bdc7;
-  --ylc-switch-thumb-border: #ffffff;
-  --ylc-switch-thumb-shadow: rgba(0, 0, 0, 0.42);
-  --ylc-switch-thumb-sheen: rgba(255, 255, 255, 0.46);
   --ylc-hover-surface: #2f3034;
   --ylc-slider-track: #45464b;
-  --ylc-slider-track-border: #5a5b60;
   --ylc-slider-fill: var(--ylc-accent);
-  --ylc-slider-fill-glow: rgba(91, 141, 239, 0.12);
   --ylc-slider-thumb-bg: #f1f1f1;
-  --ylc-slider-thumb-border: #5a5b60;
   --ylc-slider-thumb-shadow: 0 4px 12px rgba(0, 0, 0, 0.58);
   --ylc-danger-border: #f07171;
   --ylc-danger-text: #ff9b9b;
@@ -866,7 +846,6 @@
 
 .ylc-theme-toggle:checked {
   background: var(--ylc-switch-track-on-bg);
-  border-color: var(--ylc-switch-track-on-border);
 }
 
 .ylc-theme-toggle:checked::before {
