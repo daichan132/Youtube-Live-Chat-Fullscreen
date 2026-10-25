@@ -110,7 +110,7 @@ The package contract rejects:
 - mismatches between unpacked output and ZIP inventory or any file's bytes;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
-Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output.
+Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output. Native chat layout ownership adds visibility and lifecycle invalidation checks; its uncompressed content-script allowance is 451,000 bytes (formerly 450,000), while the production download ZIP limit remains 380,000 bytes for both browsers.
 
 ## Connection policy regression
 

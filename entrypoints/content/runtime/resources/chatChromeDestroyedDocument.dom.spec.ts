@@ -18,7 +18,8 @@ const createFrame = () => {
   document.body.append(iframe)
   const doc = iframe.contentDocument
   if (!doc) throw new Error('Expected a same-origin iframe')
-  doc.body.innerHTML = '<yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="input-panel"></div>'
+  doc.body.innerHTML =
+    '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer><yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="input-panel"></div>'
   return { iframe, doc, body: doc.body }
 }
 

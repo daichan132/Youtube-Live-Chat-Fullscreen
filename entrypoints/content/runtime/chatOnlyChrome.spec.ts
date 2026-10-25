@@ -18,7 +18,7 @@ const createMeasuredChromeFixture = () => {
   const header = doc.createElement('yt-live-chat-header-renderer')
   const input = doc.createElement('div')
   input.id = 'input-panel'
-  doc.body.append(header, input)
+  doc.body.append(header, doc.createElement('yt-live-chat-item-list-renderer'), input)
   vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
   vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
   const replacement = doc.createElement('div')
@@ -44,7 +44,7 @@ describe('chatOnlyChrome', () => {
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
     const input = iframeDocument.createElement('div')
     input.id = 'input-panel'
-    iframeDocument.body.append(header, input)
+    iframeDocument.body.append(header, iframeDocument.createElement('yt-live-chat-item-list-renderer'), input)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
     const controller = createChatChromeLease()
@@ -105,6 +105,11 @@ describe('chatOnlyChrome', () => {
     const first = document.createElement('iframe')
     const second = document.createElement('iframe')
     document.body.append(first, second)
+    for (const frame of [first, second]) {
+      const doc = frame.contentDocument
+      if (!doc) throw new Error('Missing chat fixture document')
+      doc.body.append(doc.createElement('yt-live-chat-item-list-renderer'))
+    }
     const controller = createChatChromeLease()
 
     controller.sync(first, 'collapsed')
@@ -123,6 +128,8 @@ describe('chatOnlyChrome', () => {
     const iframe = document.createElement('iframe')
     const first = document.implementation.createHTMLDocument('First chat document')
     const replacement = document.implementation.createHTMLDocument('Replacement chat document')
+    first.body.append(first.createElement('yt-live-chat-item-list-renderer'))
+    replacement.body.append(replacement.createElement('yt-live-chat-item-list-renderer'))
     let currentDocument = first
     Object.defineProperty(iframe, 'contentDocument', { get: () => currentDocument })
     const controller = createChatChromeLease()
@@ -150,7 +157,7 @@ describe('chatOnlyChrome', () => {
     const iframeDocument = iframe.contentDocument
     if (!iframeDocument) throw new Error('iframe document unavailable in test')
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
-    iframeDocument.body.appendChild(header)
+    iframeDocument.body.append(header, iframeDocument.createElement('yt-live-chat-item-list-renderer'))
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     const controller = createChatChromeLease()
 
@@ -176,7 +183,7 @@ describe('chatOnlyChrome', () => {
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
     const input = iframeDocument.createElement('div')
     input.id = 'input-panel'
-    iframeDocument.body.append(header, input)
+    iframeDocument.body.append(header, iframeDocument.createElement('yt-live-chat-item-list-renderer'), input)
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     vi.spyOn(input, 'getBoundingClientRect').mockReturnValue({ height: 64 } as DOMRect)
     const controller = createChatChromeLease()
@@ -250,7 +257,7 @@ describe('chatOnlyChrome', () => {
     const iframeDocument = iframe.contentDocument
     if (!iframeDocument) throw new Error('iframe document unavailable in test')
     const header = iframeDocument.createElement('yt-live-chat-header-renderer')
-    iframeDocument.body.appendChild(header)
+    iframeDocument.body.append(header, iframeDocument.createElement('yt-live-chat-item-list-renderer'))
     vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ height: 48 } as DOMRect)
     const observe = vi.spyOn(MutationObserver.prototype, 'observe')
     const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
@@ -273,4 +280,80 @@ describe('chatOnlyChrome', () => {
     await Promise.resolve()
     expect(nextBody).not.toHaveClass(IFRAME_PURCHASE_ACTIVE_CLASS, IFRAME_CHAT_ONLY_MODE_CLASS, IFRAME_CHAT_ONLY_CLASS)
   })
+})
+
+it.each(['hidden', 'style', 'class', 'aria-hidden', 'inert'] as const)(
+  'suspends and restores ownership when a native ancestor changes %s without page metadata',
+  async attribute => {
+    const { iframe, doc, header, input, controller } = createMeasuredChromeFixture()
+    const region = doc.createElement('section')
+    region.append(...doc.body.childNodes)
+    doc.body.append(region)
+    const rules = doc.createElement('style')
+    rules.textContent = '.native-hidden { display:none; }'
+    doc.head.append(rules)
+    controller.sync(iframe, 'collapsed')
+    const hide = () => {
+      if (attribute === 'style') region.style.display = 'none'
+      else if (attribute === 'class') region.className = 'native-hidden'
+      else region.setAttribute(attribute, attribute === 'aria-hidden' ? 'true' : '')
+    }
+    hide()
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('')
+    expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    expect(input.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+    region.removeAttribute(attribute)
+    await Promise.resolve()
+    await Promise.resolve()
+    expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+    controller.sync(iframe, 'expanded')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_TOP_PADDING_VAR)).toBe('0px')
+    expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('0px')
+    controller.release()
+    region.hidden = true
+    await Promise.resolve()
+    expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+  },
+)
+
+it('updates edge ownership when a native input is hidden and restored in the same chat', async () => {
+  const { iframe, doc, input, controller } = createMeasuredChromeFixture()
+  controller.sync(iframe, 'expanded')
+  input.hidden = true
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('12px')
+  input.hidden = false
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('0px')
+  controller.release()
+})
+
+it('acquires chrome only for present message content and releases it when that content is removed', async () => {
+  const { iframe, doc, header, controller } = createMeasuredChromeFixture()
+  const content = doc.querySelector('yt-live-chat-item-list-renderer')
+  if (!content) throw new Error('Missing message surface')
+  content.remove()
+  controller.sync(iframe, 'collapsed')
+  expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+  expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+  doc.body.append(content)
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  content.remove()
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(doc.body).not.toHaveClass(IFRAME_CHAT_ONLY_MODE_CLASS)
+  expect(doc.body.style.getPropertyValue(IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR)).toBe('')
+  expect(header.style.getPropertyValue(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR)).toBe('')
+  doc.body.append(doc.createElement('yt-live-chat-item-list-renderer'))
+  await Promise.resolve()
+  await Promise.resolve()
+  expect(doc.body).toHaveClass(IFRAME_CHAT_ONLY_CLASS)
+  controller.release()
 })

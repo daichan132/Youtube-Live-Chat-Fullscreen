@@ -79,7 +79,6 @@
   --ylc-text-muted: #657080;
   --ylc-border: #e6e9ee;
   --ylc-border-strong: #d2d8e0;
-  --ylc-control-border: #898e97;
   --ylc-accent-text: #245fd6;
   --ylc-divider: #eef1f4;
   --ylc-accent-hover: #245fd6;
@@ -89,9 +88,6 @@
   --ylc-tooltip-fg: #f6f7f9;
   --ylc-panel-glass-bg: rgba(255, 255, 255, 0.82);
   --ylc-panel-glass-muted-bg: rgba(246, 248, 250, 0.72);
-  --ylc-setting-header-bg: rgba(255, 255, 255, 0.86);
-  --ylc-setting-footer-bg: rgba(255, 255, 255, 0.9);
-  --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 78%, transparent);
   --ylc-focus-ring: #245fd6;
   --ylc-shadow-sm: 0 1px 2px rgba(15, 20, 25, 0.06), 0 0 0 1px var(--ylc-border);
   --ylc-shadow-md: 0 10px 30px rgba(15, 20, 25, 0.13), 0 0 0 1px var(--ylc-border);
@@ -104,14 +100,12 @@
   --ylc-slider-track: #dde2e9;
   --ylc-slider-fill: var(--ylc-accent);
   --ylc-slider-thumb-bg: #ffffff;
-  --ylc-slider-thumb-shadow: 0 3px 10px rgba(15, 20, 25, 0.24);
   --ylc-danger-border: #d83a3a;
   --ylc-danger-text: #b42318;
   --ylc-error-bg: #fff3f2;
   --ylc-error-text: #8c1c13;
   --ylc-error-border: #b42318;
   --ylc-danger-hover: rgba(216, 58, 58, 0.1);
-  --ylc-overlay-panel: rgba(255, 255, 255, 0.82);
   --ylc-alpha-grid-dark: #d6dee8;
   --ylc-alpha-grid-light: #edf2f7;
   --ylc-preview-border-muted: rgba(100, 116, 139, 0.28);
@@ -130,7 +124,6 @@
   --ylc-accent: #5b8def;
   --ylc-border: #3a3a3d;
   --ylc-border-strong: #4a4b4f;
-  --ylc-control-border: #747984;
   --ylc-accent-text: #9dbdff;
   --ylc-divider: #2e2f32;
   --ylc-accent-hover: #6f9cf2;
@@ -140,9 +133,6 @@
   --ylc-tooltip-fg: #18181b;
   --ylc-panel-glass-bg: rgba(33, 33, 36, 0.82);
   --ylc-panel-glass-muted-bg: rgba(25, 26, 28, 0.72);
-  --ylc-setting-header-bg: rgba(33, 33, 36, 0.86);
-  --ylc-setting-footer-bg: rgba(15, 15, 15, 0.9);
-  --ylc-setting-section-border: color-mix(in srgb, var(--ylc-border) 72%, transparent);
   --ylc-focus-ring: #9dbdff;
   --ylc-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--ylc-border);
   --ylc-shadow-md: 0 14px 36px rgba(0, 0, 0, 0.62), 0 0 0 1px var(--ylc-border);
@@ -155,14 +145,12 @@
   --ylc-slider-track: #45464b;
   --ylc-slider-fill: var(--ylc-accent);
   --ylc-slider-thumb-bg: #f1f1f1;
-  --ylc-slider-thumb-shadow: 0 4px 12px rgba(0, 0, 0, 0.58);
   --ylc-danger-border: #f07171;
   --ylc-danger-text: #ff9b9b;
   --ylc-error-bg: #411d1b;
   --ylc-error-text: #ffd7d2;
   --ylc-error-border: #fda29b;
   --ylc-danger-hover: rgba(240, 113, 113, 0.18);
-  --ylc-overlay-panel: rgba(33, 33, 36, 0.82);
   --ylc-alpha-grid-dark: #3a3a3d;
   --ylc-alpha-grid-light: #2a2a2d;
   --ylc-preview-border-muted: rgba(148, 163, 184, 0.34);
@@ -1394,14 +1382,12 @@
     --ylc-text-secondary: #1e293b;
     --ylc-text-muted: #334155;
     --ylc-border: #64748b;
-    --ylc-control-border: #475569;
   }
 
   [data-ylc-theme="dark"] {
     --ylc-text-secondary: #f1f5f9;
     --ylc-text-muted: #cbd5e1;
     --ylc-border: #94a3b8;
-    --ylc-control-border: #cbd5e1;
   }
 }
 
@@ -2136,7 +2122,6 @@ label.ylc-row:has(:focus-visible) {
   }
 
   [data-ylc-theme] {
-    --ylc-control-border: ButtonText;
     --ylc-focus-ring: Highlight;
   }
 
