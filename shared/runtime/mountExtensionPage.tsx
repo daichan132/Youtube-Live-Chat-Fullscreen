@@ -1,7 +1,20 @@
-import { type ReactNode, StrictMode } from 'react'
+import { type ReactNode, StrictMode, useEffect } from 'react'
 import { createRoot } from 'react-dom/client'
+import { useLocaleCode, useLocaleDirection } from '@/shared/i18n/react'
 import { AppProvider } from './AppProvider'
 import { createAppRuntime } from './createAppRuntime'
+
+const ExtensionPageLocale = ({ children }: { children: ReactNode }) => {
+  const localeCode = useLocaleCode()
+  const direction = useLocaleDirection()
+
+  useEffect(() => {
+    document.documentElement.lang = localeCode.replaceAll('_', '-')
+    document.documentElement.dir = direction
+  }, [localeCode, direction])
+
+  return children
+}
 
 const renderStartupFailure = (rootElement: HTMLElement) => {
   rootElement.replaceChildren()
@@ -52,7 +65,9 @@ export const mountExtensionPage = async (app: ReactNode, rootId = 'root') => {
 
   root.render(
     <StrictMode>
-      <AppProvider runtime={runtime}>{app}</AppProvider>
+      <AppProvider runtime={runtime}>
+        <ExtensionPageLocale>{app}</ExtensionPageLocale>
+      </AppProvider>
     </StrictMode>,
   )
   rootElement.removeAttribute('aria-busy')

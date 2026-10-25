@@ -20,6 +20,8 @@ const COLOR_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'Ar
 export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, onInteractionEnd }: SettingColorPickerProps) => {
   const t = useT()
   const descriptionId = useId()
+  const fieldLabelId = useId()
+  const pickerId = useId()
   const [display, setDisplay] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -65,8 +67,11 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
 
   return (
     <div ref={rootRef} className='relative ylc-action-fill'>
-      <span id={descriptionId} className='ylc-visually-hidden'>
-        {`Current color: rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
+      <span id={fieldLabelId} className='ylc-visually-hidden'>
+        {label}
+      </span>
+      <span id={descriptionId} dir='ltr' className='ylc-visually-hidden'>
+        {`rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${rgba.a})`}
       </span>
       <button
         ref={triggerRef}
@@ -74,6 +79,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
         aria-label={label}
         aria-describedby={descriptionId}
         aria-haspopup='dialog'
+        aria-controls={display ? pickerId : undefined}
         aria-expanded={display}
         className='ylc-color-trigger ylc-action-fill'
         onClick={() => setDisplay(current => !current)}
@@ -89,14 +95,18 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
             }}
           />
         </span>
-        <span className='ylc-color-value'>{formatColorValue(rgba)}</span>
+        <bdi dir='ltr' className='ylc-color-value'>
+          {formatColorValue(rgba)}
+        </bdi>
       </button>
       {display ? (
         <div
           ref={menuRef}
-          className='absolute right-0 ylc-theme-popover'
+          id={pickerId}
+          className='absolute end-0 ylc-theme-popover ylc-color-popover'
           role='dialog'
           aria-label={t('content.aria.colorPicker')}
+          aria-describedby={fieldLabelId}
           onKeyDown={handleLocalKeyDown}
           onBlur={handleFocusLeave}
           onPointerDownCapture={onInteractionStart}
@@ -110,7 +120,8 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
             if (COLOR_ADJUSTMENT_KEYS.has(event.key)) onInteractionEnd?.()
           }}
         >
-          <RgbaColorPicker color={toRgba(rgba)} onChange={onChange} onChangeEnd={onInteractionEnd} />
+          {/* The library's slider names and value text are English, even in a translated dialog. */}
+          <RgbaColorPicker lang='en' dir='ltr' color={toRgba(rgba)} onChange={onChange} onChangeEnd={onInteractionEnd} />
         </div>
       ) : null}
     </div>

@@ -23,7 +23,7 @@ const populateBody = (body: HTMLElement) => {
   inputPanel.append(input)
   const panelPages = doc.createElement('div')
   panelPages.id = 'panel-pages'
-  body.append(header, panelPages, inputPanel)
+  body.append(header, doc.createElement('yt-live-chat-item-list-renderer'), panelPages, inputPanel)
   vi.spyOn(header, 'getBoundingClientRect').mockReturnValue({ width: 360, height: 56 } as DOMRect)
   vi.spyOn(inputPanel, 'getBoundingClientRect').mockReturnValue({ width: 360, height: 72 } as DOMRect)
   const mountPanel = (tag = 'yt-live-chat-message-buy-flow-renderer') => {

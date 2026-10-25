@@ -80,12 +80,18 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
 
   const handleTabKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLButtonElement>) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || e.nativeEvent.isComposing) return
       const currentIndex = tabs.findIndex(tab => tab.key === menuItem)
+      const forwardStep = direction === 'rtl' ? -1 : 1
       let nextIndex: number | null = null
       if (e.key === 'ArrowRight') {
-        nextIndex = (currentIndex + 1) % tabs.length
+        nextIndex = (currentIndex + forwardStep + tabs.length) % tabs.length
       } else if (e.key === 'ArrowLeft') {
-        nextIndex = (currentIndex - 1 + tabs.length) % tabs.length
+        nextIndex = (currentIndex - forwardStep + tabs.length) % tabs.length
+      } else if (e.key === 'Home') {
+        nextIndex = 0
+      } else if (e.key === 'End') {
+        nextIndex = tabs.length - 1
       }
       if (nextIndex !== null) {
         const nextTab = tabs[nextIndex]
@@ -96,7 +102,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         buttons?.[nextIndex]?.focus()
       }
     },
-    [menuItem, selectTab, tabs],
+    [direction, menuItem, selectTab, tabs],
   )
 
   useEffect(() => {
@@ -253,6 +259,8 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
           ref={attachScrollContainer}
           id={`ylc-tabpanel-${menuItem}`}
           role='tabpanel'
+          // Firefox otherwise adds this scroll container to Tab order before its controls.
+          tabIndex={-1}
           aria-labelledby={`ylc-tab-${menuItem}`}
           data-ylc-setting-scroll-container='true'
           className='min-h-0 flex-auto overflow-y-auto h-[380px] p-2 rounded-2xl'

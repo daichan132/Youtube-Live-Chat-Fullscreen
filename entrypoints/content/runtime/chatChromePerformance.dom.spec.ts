@@ -10,6 +10,7 @@ const createIframeDocument = () => {
   document.body.append(iframe)
   const doc = iframe.contentDocument
   if (!doc) throw new Error('iframe document unavailable in test')
+  doc.body.append(doc.createElement('yt-live-chat-item-list-renderer'))
   return { iframe, doc }
 }
 
@@ -21,7 +22,8 @@ afterEach(() => {
 describe('chat chrome mutation work', () => {
   it('does not invoke selector engines for added text-only elements', async () => {
     const { iframe, doc } = createIframeDocument()
-    doc.body.innerHTML = '<yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="items"></div><div id="input-panel"></div>'
+    doc.body.innerHTML =
+      '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer><yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="items"></div><div id="input-panel"></div>'
     const items = doc.getElementById('items')
     const elementPrototype = doc.defaultView?.Element.prototype
     if (!items || !elementPrototype) throw new Error('Missing chat fixture elements')
@@ -47,7 +49,8 @@ describe('chat chrome mutation work', () => {
 
   it('does not search the whole chat document or measure chrome for message bursts', async () => {
     const { iframe, doc } = createIframeDocument()
-    doc.body.innerHTML = '<yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="items"></div><div id="input-panel"></div>'
+    doc.body.innerHTML =
+      '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer><yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="items"></div><div id="input-panel"></div>'
     const header = doc.querySelector<HTMLElement>('yt-live-chat-header-renderer')
     const input = doc.getElementById('input-panel')
     const items = doc.getElementById('items')
@@ -130,7 +133,7 @@ describe('chat chrome mutation work', () => {
   it('remeasures a chrome child change and switches to fallback input after ancestor removal', async () => {
     const { iframe, doc } = createIframeDocument()
     doc.body.innerHTML =
-      '<yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="wrapper"><div id="input-panel"></div></div><yt-live-chat-sign-in-prompt-renderer></yt-live-chat-sign-in-prompt-renderer>'
+      '<yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer><yt-live-chat-header-renderer></yt-live-chat-header-renderer><div id="wrapper"><div id="input-panel"></div></div><yt-live-chat-sign-in-prompt-renderer></yt-live-chat-sign-in-prompt-renderer>'
     const input = doc.getElementById('input-panel')
     const fallback = doc.querySelector<HTMLElement>('yt-live-chat-sign-in-prompt-renderer')
     if (!input || !fallback) throw new Error('Missing input fixture elements')

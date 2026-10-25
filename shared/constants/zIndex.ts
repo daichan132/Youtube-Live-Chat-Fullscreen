@@ -3,6 +3,7 @@ export const CONTENT_UI_LAYER = {
   overlay: 1000,
   modal: 1100,
   nestedModal: 1200,
+  notice: 1300,
 } as const
 
 /** Layers local to one draggable chat panel. */

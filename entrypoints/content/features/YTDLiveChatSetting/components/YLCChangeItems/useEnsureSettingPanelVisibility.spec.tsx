@@ -35,6 +35,7 @@ const mockSmoothScrollTo = (element: HTMLElement) => {
 describe('useEnsureSettingPanelVisibility helpers', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
     document.body.innerHTML = ''
   })
 
@@ -93,6 +94,21 @@ describe('useEnsureSettingPanelVisibility helpers', () => {
 
     expect(changed).toBe(true)
     expect(scrollToMock).toHaveBeenCalledWith({ top: 2, behavior: 'smooth' })
+    expect(container.scrollTop).toBe(2)
+  })
+
+  it.each([true, false])('respects reduced-motion preference %s while revealing an offscreen popup', reducedMotion => {
+    const matchMedia = vi.fn().mockReturnValue({ matches: reducedMotion })
+    vi.stubGlobal('matchMedia', matchMedia)
+    const container = document.createElement('div')
+    const scrollToMock = mockSmoothScrollTo(container)
+    container.scrollTop = 40
+    setRect(container, 100, 300)
+
+    expect(scrollSettingPanelRangeIntoView(container, { top: 70, bottom: 140 }, 8)).toBe(true)
+
+    expect(matchMedia).toHaveBeenCalledWith('(prefers-reduced-motion: reduce)')
+    expect(scrollToMock).toHaveBeenCalledWith({ top: 2, behavior: reducedMotion ? 'instant' : 'smooth' })
     expect(container.scrollTop).toBe(2)
   })
 

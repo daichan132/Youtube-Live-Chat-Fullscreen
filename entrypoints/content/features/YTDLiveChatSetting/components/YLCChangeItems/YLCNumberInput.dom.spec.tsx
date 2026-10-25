@@ -23,10 +23,15 @@ describe('direct numeric settings input', () => {
     'keeps a numeric input beside the existing $settingKey range',
     ({ settingKey, min, max, value }) => {
       const view = renderWithStore(
-        <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.fontSize' min={min} max={max} />,
+        <div dir='rtl'>
+          <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.fontSize' min={min} max={max} />
+        </div>,
         store,
       )
       expect(view.getByRole('spinbutton')).toHaveValue(value)
+      expect(view.getByRole('spinbutton')).toHaveAccessibleDescription('px')
+      expect(view.getByRole('spinbutton').closest('[dir]')).toHaveAttribute('dir', 'ltr')
+      expect(view.getByText('px').closest('[dir]')).toHaveAttribute('dir', 'ltr')
       expect(view.getByRole('spinbutton')).toHaveAttribute('min', String(min))
       expect(view.getByRole('spinbutton')).toHaveAttribute('max', String(max))
       expect(view.getByRole('slider')).toHaveValue(String(value))

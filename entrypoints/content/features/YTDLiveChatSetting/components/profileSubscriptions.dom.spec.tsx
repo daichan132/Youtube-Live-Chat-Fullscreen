@@ -107,7 +107,7 @@ describe('settings control subscriptions', () => {
     act(() => store.set(replaceExternalAppearanceAtom, { profile: externalProfile, presets: store.get(chatSettingsStateAtom).presets }))
     expect(getByRole('slider', { name: 'content.setting.fontSize' })).toHaveValue('25')
     expect(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' })).not.toBeChecked()
-    expect(getByText('Current color: rgba(1, 2, 3, 1)')).toBeInTheDocument()
+    expect(getByText('rgba(1, 2, 3, 1)')).toBeInTheDocument()
     expect(getByRole('button', { name: 'content.setting.resetToDefaultColor' })).toBeEnabled()
 
     act(() => store.set(applyPresetAtom, original))
@@ -115,6 +115,6 @@ describe('settings control subscriptions', () => {
     expect(getByRole('switch', { name: 'content.setting.alwaysOnDisplay' })).toBeChecked()
     expect(getByRole('button', { name: 'content.setting.resetToDefaultColor' })).toBeDisabled()
     const { r, g, b, a } = LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR
-    expect(getByText(`Current color: rgba(${r}, ${g}, ${b}, ${a})`)).toBeInTheDocument()
+    expect(getByText(`rgba(${r}, ${g}, ${b}, ${a})`)).toBeInTheDocument()
   })
 })

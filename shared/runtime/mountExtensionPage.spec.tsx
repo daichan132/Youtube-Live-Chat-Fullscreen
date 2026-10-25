@@ -1,5 +1,6 @@
 import { act } from '@testing-library/react'
 import { createStore } from 'jotai/vanilla'
+import { createPortal } from 'react-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const mocks = vi.hoisted(() => ({
@@ -11,6 +12,7 @@ vi.mock('./createAppRuntime', () => ({
   createAppRuntime: mocks.createAppRuntime,
 }))
 
+import { EMPTY_MESSAGES, localeStateAtom, localeStateFromMessages } from '@/shared/state/atoms'
 import { mountExtensionPage } from './mountExtensionPage'
 
 describe('mountExtensionPage', () => {
@@ -41,6 +43,44 @@ describe('mountExtensionPage', () => {
 
     expect(mocks.dispose).toHaveBeenCalledTimes(1)
     expect(document.getElementById('root')).toBeEmptyDOMElement()
+  })
+
+  it('keeps extension documents and body portals in the chosen language and direction until disposal', async () => {
+    const store = createStore()
+    store.set(localeStateAtom, localeStateFromMessages('pt_BR', EMPTY_MESSAGES))
+    mocks.createAppRuntime.mockResolvedValue({ store, dispose: mocks.dispose })
+    const originalLanguage = document.documentElement.getAttribute('lang')
+    const originalDirection = document.documentElement.getAttribute('dir')
+    let dispose: (() => void) | undefined
+
+    try {
+      await act(async () => {
+        dispose = await mountExtensionPage(createPortal(<button type='button'>Portal action</button>, document.body))
+      })
+      expect(document.documentElement).toHaveAttribute('lang', 'pt-BR')
+      expect(document.documentElement).toHaveAttribute('dir', 'ltr')
+      expect(document.querySelector('button')?.closest('[lang]')).toBe(document.documentElement)
+      expect(document.querySelector('button')?.closest('[dir]')).toBe(document.documentElement)
+
+      act(() => store.set(localeStateAtom, localeStateFromMessages('ar', EMPTY_MESSAGES)))
+      expect(document.documentElement).toHaveAttribute('lang', 'ar')
+      expect(document.documentElement).toHaveAttribute('dir', 'rtl')
+
+      act(() => store.set(localeStateAtom, localeStateFromMessages('ja', EMPTY_MESSAGES)))
+      expect(document.documentElement).toHaveAttribute('lang', 'ja')
+      expect(document.documentElement).toHaveAttribute('dir', 'ltr')
+
+      await act(async () => dispose?.())
+      act(() => store.set(localeStateAtom, localeStateFromMessages('en_US', EMPTY_MESSAGES)))
+      expect(document.documentElement).toHaveAttribute('lang', 'ja')
+      expect(document.documentElement).toHaveAttribute('dir', 'ltr')
+    } finally {
+      await act(async () => dispose?.())
+      if (originalLanguage === null) document.documentElement.removeAttribute('lang')
+      else document.documentElement.setAttribute('lang', originalLanguage)
+      if (originalDirection === null) document.documentElement.removeAttribute('dir')
+      else document.documentElement.setAttribute('dir', originalDirection)
+    }
   })
 
   it('renders a reload fallback when runtime startup fails', async () => {

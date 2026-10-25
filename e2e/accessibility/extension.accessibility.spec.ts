@@ -24,6 +24,22 @@ test.describe('extension accessibility', () => {
     await expectNoViolations(results)
   })
 
+  test('expanded settings editors have no automated WCAG A/AA violations', async ({ page, extension }) => {
+    await page.goto(extension.url('settings.html'))
+    const font = page.getByRole('button', { name: 'Font', exact: true })
+    await font.click()
+    await expect(page.getByRole('combobox', { name: 'Search fonts', exact: true })).toBeFocused()
+    await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
+    await page.getByRole('combobox', { name: 'Search fonts', exact: true }).fill('no matching typeface 12345')
+    await expect(page.getByRole('option')).toHaveCount(0)
+    await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
+    await page.keyboard.press('Escape')
+    await expect(font).toBeFocused()
+    await page.getByRole('button', { name: 'Background Color', exact: true }).click()
+    await expect(page.getByRole('dialog', { name: 'Color picker', exact: true })).toBeVisible()
+    await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
+  })
+
   test('overlay and control rail have no automated WCAG A/AA violations', async ({ page }) => {
     await openDeterministicOverlay(page)
     const overlay = page.locator('[data-ylc-resizable]')

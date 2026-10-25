@@ -44,14 +44,14 @@ describe('YLCColorPicker', () => {
     const { getByRole } = renderWithStore(<YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />, store)
     const button = getByRole('button', { name: 'content.setting.backgroundColor' })
 
-    expect(button).toHaveAccessibleDescription('Current color: rgba(0, 0, 0, 0.4)')
+    expect(button).toHaveAccessibleDescription('rgba(0, 0, 0, 0.4)')
     const slider = openAlphaSlider(getByRole, 'content.setting.backgroundColor')
 
     fireEvent.mouseDown(slider, { buttons: 1, clientX: 40, clientY: 50 })
     expect(store.get(editorSessionStateAtom).draftProfile?.appearance.backgroundColor.a).toBe(0.2)
     fireEvent.mouseMove(window, { buttons: 1, clientX: 150, clientY: 50 })
 
-    expect(button).toHaveAccessibleDescription('Current color: rgba(0, 0, 0, 0.75)')
+    expect(button).toHaveAccessibleDescription('rgba(0, 0, 0, 0.75)')
     expect(store.get(editorSessionStateAtom).draftProfile?.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.75 })
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.4 })
     expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
@@ -78,7 +78,7 @@ describe('YLCColorPicker', () => {
     })
 
     const { getByRole } = renderWithStore(<YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />, store)
-    expect(getByRole('button', { name: 'content.setting.fontColor' })).toHaveAccessibleDescription('Current color: rgba(4, 5, 6, 0.7)')
+    expect(getByRole('button', { name: 'content.setting.fontColor' })).toHaveAccessibleDescription('rgba(4, 5, 6, 0.7)')
 
     const slider = openAlphaSlider(getByRole, 'content.setting.fontColor')
     fireEvent.mouseDown(slider, { buttons: 1, clientX: 150, clientY: 50 })
@@ -93,9 +93,7 @@ describe('YLCColorPicker', () => {
       <YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' />,
       store,
     )
-    expect(getByRole('button', { name: 'content.setting.membershipNameColor' })).toHaveAccessibleDescription(
-      'Current color: rgba(15, 157, 88, 1)',
-    )
+    expect(getByRole('button', { name: 'content.setting.membershipNameColor' })).toHaveAccessibleDescription('rgba(15, 157, 88, 1)')
 
     const slider = openAlphaSlider(getByRole, 'content.setting.membershipNameColor')
     fireEvent.mouseDown(slider, { buttons: 1, clientX: 150, clientY: 50 })

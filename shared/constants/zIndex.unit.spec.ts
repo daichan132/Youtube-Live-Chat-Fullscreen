@@ -5,6 +5,7 @@ describe('z-index layer scales', () => {
   it('keeps fullscreen overlay surfaces in explicit elevation order', () => {
     expect(CONTENT_UI_LAYER.overlay).toBeLessThan(CONTENT_UI_LAYER.modal)
     expect(CONTENT_UI_LAYER.modal).toBeLessThan(CONTENT_UI_LAYER.nestedModal)
+    expect(CONTENT_UI_LAYER.nestedModal).toBeLessThan(CONTENT_UI_LAYER.notice)
   })
 
   it('keeps chat panel interaction surfaces above the iframe', () => {

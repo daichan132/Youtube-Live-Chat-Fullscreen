@@ -88,7 +88,21 @@ const cases: Array<{
   focusComposer?: boolean
   stopHostPointerUp?: boolean
   releaseOverChat?: boolean
+  loseCaptureDuringDrag?: boolean
 }> = [
+  {
+    name: 'capture being released while the primary button is still held',
+    layout: { x: 100, y: 80, width: 400, height: 300 },
+    delta: { x: 120, y: -40 },
+    loseCaptureDuringDrag: true,
+  },
+  {
+    name: 'capture being released before dropping over the chat iframe',
+    layout: { x: 100, y: 80, width: 400, height: 300 },
+    delta: { x: -40, y: -100 },
+    releaseOverChat: true,
+    loseCaptureDuringDrag: true,
+  },
   { name: 'an ordinary interior release', layout: { x: 100, y: 80, width: 400, height: 300 }, delta: { x: 120, y: -40 } },
   {
     name: 'a release over the initial and clamped chat iframe area',
@@ -189,6 +203,21 @@ for (const probe of cases) {
       if (probe.via) await page.mouse.move(probe.via.x, probe.via.y, { steps: 4 })
       await page.mouse.move(endpoint.x, endpoint.y, { steps: 6 })
       await expectLayout(overlay, expected)
+      if (probe.loseCaptureDuringDrag) {
+        // Host/player updates can release capture without cancelling the user's
+        // gesture. This is a real browser capture loss, not a synthetic event.
+        await handle.evaluate(element => element.releasePointerCapture(1))
+        await page.mouse.move(endpoint.x, endpoint.y)
+        await expectLayout(overlay, expected)
+        // Prove the session still processes new input instead of merely
+        // freezing the preview until the button is released.
+        if (!probe.releaseOverChat) {
+          await page.mouse.move(endpoint.x - 20, endpoint.y + 20, { steps: 2 })
+          await expectLayout(overlay, { ...expected, x: expected.x - 20, y: expected.y + 20 })
+          await page.mouse.move(endpoint.x, endpoint.y, { steps: 2 })
+          await expectLayout(overlay, expected)
+        }
+      }
       preview = await overlay.getGeometry()
       nativeReleaseTarget = await page.locator('iframe[data-ylc-chat]').evaluate((iframe, point) => {
         const frame = iframe as HTMLIFrameElement

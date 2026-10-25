@@ -83,7 +83,7 @@
       "readableTitle": "大きめ",
       "compactTitle": "コンパクト",
       "neonTitle": "カラフル",
-      "deleteConfirmationMessage": "本当に削除しますか？",
+      "deleteConfirmationMessage": "このプリセットを一覧から削除します。現在のチャット設定は変わりません。",
       "delete": "削除",
       "cancel": "キャンセル"
     },

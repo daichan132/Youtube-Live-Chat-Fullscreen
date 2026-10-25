@@ -1,5 +1,5 @@
 import { RiCloseLine, TbArrowBackUp, TbArrowsHorizontal, TbArrowsHorizontalIn, TbArrowUp, TbMessageCircle } from '@/shared/components/icons'
-import { useT } from '@/shared/i18n/react'
+import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { PlacementActionButton } from './PlacementActionButton'
 
 const STEP = 10
@@ -38,16 +38,21 @@ export const OverlayPlacementPanel = ({
   onClose,
 }: Props) => {
   const t = useT()
+  const direction = useLocaleDirection()
   return (
     <>
       <div className='ylc-placement-heading'>
         <span>{t('content.placement.open')}</span>
-        <span className='ylc-placement-step'>{STEP} px</span>
+        <span className='ylc-placement-step' dir='ltr'>
+          {STEP} px
+        </span>
       </div>
-      <div className='ylc-placement-directions'>
+      <div className='ylc-placement-directions' dir='ltr'>
         {moveActions.map(({ name, x, y, rotation }) => (
           <PlacementActionButton
             key={name}
+            data-ylc-placement-action={name}
+            dir={direction}
             className='ylc-placement-action ylc-theme-focus-ring'
             style={{ gridArea: name }}
             disabled={canMoveBy ? !canMoveBy({ x, y }) : false}
@@ -68,6 +73,7 @@ export const OverlayPlacementPanel = ({
         {resizeActions.map(({ name, width, height, rotation, icon: Icon }) => (
           <PlacementActionButton
             key={name}
+            data-ylc-placement-action={name}
             className='ylc-placement-action ylc-theme-focus-ring'
             disabled={canResizeBy ? !canResizeBy({ width, height }) : false}
             onAdjust={() => {

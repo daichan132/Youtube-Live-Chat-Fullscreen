@@ -22,7 +22,7 @@ const createNativeDocument = () => {
   font.textContent = '@font-face { font-family: NativeChat; }'
   doc.head.append(font)
   const header = doc.createElement('yt-live-chat-header-renderer')
-  doc.body.append(header)
+  doc.body.append(header, doc.createElement('yt-live-chat-item-list-renderer'))
   return { font, doc, header }
 }
 

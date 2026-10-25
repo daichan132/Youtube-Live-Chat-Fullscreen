@@ -52,7 +52,6 @@ export const Popup = () => {
       icon: TbArchive,
       title: t('popup.dataTransfer'),
       data: <DataTransfer />,
-      actionAuto: true,
     },
     {
       id: 'language',
@@ -65,7 +64,6 @@ export const Popup = () => {
       icon: TbLink,
       title: t('popup.links'),
       data: <Links />,
-      actionAuto: true,
     },
     {
       id: 'donate',
@@ -85,17 +83,16 @@ export const Popup = () => {
     <div
       data-ylc-theme={resolvedThemeMode}
       dir={direction}
-      className='flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
+      className='ylc-popup flex flex-col w-[450px] max-w-full box-border m-0 rounded-xl border border-solid ylc-theme-border overflow-hidden ylc-theme-surface'
     >
       <PersistenceNotice />
-      <div className='flex-grow ylc-theme-surface-muted py-2'>
-        {items.map((item, index) => (
+      <div className='ylc-popup-content flex-grow'>
+        {items.map(item => (
           <PopupItemRow
             key={item.id}
             icon={item.icon}
             title={item.title}
             data={item.data}
-            isLast={index === items.length - 1}
             asLabel={item.asLabel}
             actionAuto={item.actionAuto}
           />

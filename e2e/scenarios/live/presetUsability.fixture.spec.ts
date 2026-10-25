@@ -1,4 +1,5 @@
 import { expect, test } from '@e2e/fixtures'
+import type { Locator } from '@playwright/test'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
@@ -55,7 +56,7 @@ test('names the exact deletion target and leaves settings intact on cancellation
   await page.getByRole('button', { name: `Delete ${presetName}`, exact: true }).click()
   const dialog = page.getByRole('dialog', { name: 'Delete', exact: true })
   await expect(dialog).toContainText(presetName)
-  await expect(dialog).toHaveAccessibleDescription(`${presetName} Delete this preset?`)
+  await expect(dialog).toHaveAccessibleDescription(`${presetName} This preset will be removed from the list. Your current chat settings will stay the same.`)
   await testInfo.attach('named-preset-deletion', { body: await page.screenshot(), contentType: 'image/png' })
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
   expect(await extension.storage.get(APPEARANCE_STORAGE_KEY)).toEqual(before)
@@ -135,6 +136,7 @@ test('persists deletion of built-in presets, including an empty list, across rel
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   const row = page.locator('[data-ylc-preset-item="standard"]')
   await expect(row.locator('input')).toHaveAttribute('readonly', '')
+  const beforeDeletion = await extension.storage.get(APPEARANCE_STORAGE_KEY)
   await row.getByRole('button', { name: /^Delete / }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click()
   await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
@@ -142,6 +144,10 @@ test('persists deletion of built-in presets, including an empty list, across rel
     const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
     return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: unknown[] } }).value.presets
   }).toEqual([])
+  const afterDeletion = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+  expect((afterDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile).toEqual(
+    (beforeDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile,
+  )
   await page.reload()
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
@@ -214,3 +220,106 @@ test('restores the order and removes the drag preview on Escape without saving',
   expect(await rows.evaluateAll(elements => elements.map(el => el.getAttribute('data-ylc-preset-item')))).toEqual(order)
   expect(await extension.storage.get(APPEARANCE_STORAGE_KEY)).toEqual(before)
 })
+
+for (const scenario of [
+  { locale: 'ja', width: 320, height: 280, zoom: 1, touch: false, dismiss: 'Escape' },
+  { locale: 'de', width: 640, height: 560, zoom: 2, touch: false, dismiss: 'keyboard Cancel' },
+  { locale: 'ar', width: 320, height: 280, zoom: 1, touch: true, dismiss: 'touch Cancel' },
+]) {
+  test(`keeps long preset deletion readable and cancellable in ${scenario.locale} at ${scenario.zoom * 100}% zoom`, async ({
+    page,
+    extension,
+    context,
+  }, testInfo) => {
+    await page.setViewportSize({ width: scenario.width, height: scenario.height })
+    await extension.storage.set({ [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'preset-delete-fit', value: scenario.locale } })
+    const name = '長いプリセット名の確認対象'.repeat(8).slice(0, 100)
+    await patchOverlayStore(extension, { presets: [{ kind: 'custom', id: 'long-delete-target', name, profile }] })
+    await page.reload()
+    await expect(page.getByRole('tab').nth(1)).toBeVisible()
+    await page.evaluate(async zoom => {
+      const tab = await chrome.tabs.getCurrent()
+      if (tab?.id === undefined) throw new Error('Settings tab unavailable')
+      await chrome.tabs.setZoom(tab.id, zoom)
+    }, scenario.zoom)
+    const cdp = await context.newCDPSession(page)
+    await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: scenario.touch, maxTouchPoints: 1 })
+    const activate = async (target: Locator) => {
+      if (!scenario.touch) {
+        await target.click()
+        return
+      }
+      await target.scrollIntoViewIfNeeded()
+      const rect = await target.boundingBox()
+      if (!rect) throw new Error('Expected a rendered touch control')
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchStart',
+        touchPoints: [{ x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }],
+      })
+      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] })
+    }
+    try {
+      await activate(page.getByRole('tab').nth(1))
+      const trigger = page.locator('[data-ylc-preset-item="long-delete-target"] .ylc-preset-del')
+      const before = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+      await activate(trigger)
+      const dialog = page.getByRole('dialog').last()
+      const description = dialog.getByRole('region')
+      await expect(description).toContainText(name)
+      const viewport = await page.evaluate(() => ({ width: innerWidth, height: innerHeight }))
+      const content = await dialog.locator(':scope > div').boundingBox()
+      if (!content) throw new Error('Expected deletion dialog content')
+      expect(content.y).toBeGreaterThanOrEqual(11)
+      expect(content.y + content.height).toBeLessThanOrEqual(viewport.height - 11)
+      const actions = dialog.getByRole('button')
+      for (const action of await actions.all()) {
+        const bounds = await action.boundingBox()
+        if (!bounds) throw new Error('Expected a rendered confirmation action')
+        expect(bounds.y).toBeGreaterThanOrEqual(0)
+        expect(bounds.y + bounds.height).toBeLessThanOrEqual(viewport.height)
+      }
+      expect(await description.evaluate(element => element.scrollHeight - element.clientHeight)).toBeGreaterThan(10)
+      await page.screenshot({ path: testInfo.outputPath(`delete-${scenario.locale}-before-scroll.png`) })
+      await expect(dialog.locator(':scope > div')).toBeFocused()
+      await page.keyboard.press('Tab')
+      await expect(description).toBeFocused()
+      const footerBefore = await actions.first().boundingBox()
+      await page.keyboard.press('End')
+      await expect.poll(() => description.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+      expect(await actions.first().boundingBox()).toEqual(footerBefore)
+      await page.screenshot({ path: testInfo.outputPath(`delete-${scenario.locale}-after-scroll.png`) })
+      if (scenario.dismiss === 'Escape') {
+        await page.keyboard.press('Escape')
+      } else if (scenario.dismiss === 'keyboard Cancel') {
+        await page.keyboard.press('Tab')
+        await expect(actions.first()).toBeFocused()
+        await page.keyboard.press('Enter')
+      } else {
+        await activate(actions.first())
+      }
+      await expect(description).toHaveCount(0)
+      expect(await extension.storage.get(APPEARANCE_STORAGE_KEY)).toEqual(before)
+      await expect(trigger).toBeFocused()
+      if (scenario.locale === 'ja') {
+        await activate(trigger)
+        const reopened = page.getByRole('dialog').last()
+        await expect(reopened.locator(':scope > div')).toBeFocused()
+        await page.keyboard.press('Tab')
+        await expect(reopened.getByRole('region')).toBeFocused()
+        await page.keyboard.press('Tab')
+        await page.keyboard.press('Tab')
+        await expect(reopened.getByRole('button').last()).toBeFocused()
+        await page.keyboard.press('Enter')
+        await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
+        await expect(page.locator('[data-ylc-add-preset]')).toBeFocused()
+      }
+    } finally {
+      await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: false })
+      await cdp.detach()
+      await page.evaluate(async () => {
+        const tab = await chrome.tabs.getCurrent()
+        if (tab?.id !== undefined) await chrome.tabs.setZoom(tab.id, 1)
+      })
+    }
+  })
+}

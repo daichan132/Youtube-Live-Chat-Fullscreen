@@ -579,3 +579,80 @@ test.describe('scroll position during chat chrome transitions', { tag: '@fixture
     }
   }
 })
+
+for (const navigation of ['participants', 'style', 'hidden', 'aria-hidden', 'class', 'detach', 'replace'] as const) {
+  test(`releases chat layout ownership across ${navigation} view changes`, async ({ page, extension }, testInfo) => {
+    await patchOverlayStore(extension, {
+      geometry,
+      profile: { display: { contentMode: 'messages-only', idleVisibility: 'always-visible' } },
+    })
+    const scenario = new YouTubeScenario(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    const overlay = new ExtensionOverlay(page)
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await installNativeLayoutProbe(page, 'nested')
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('body').evaluate((body, mode) => {
+      const doc = body.ownerDocument
+      const pages = doc.querySelector<HTMLElement>('#content-pages')!
+      let messages = doc.querySelector<HTMLElement>('#chat-messages')!
+      pages.style.position = 'relative'
+      const rules = doc.createElement('style')
+      rules.textContent = '.fixture-main-hidden, [aria-hidden="true"] { display:none !important; }'
+      doc.head.append(rules)
+      const panel = doc.createElement(mode === 'participants' ? 'yt-live-chat-participant-list-renderer' : 'section')
+      panel.setAttribute('data-fixture-auxiliary', '')
+      panel.style.cssText = 'display:none;position:absolute;inset:0;flex-direction:column'
+      panel.innerHTML = '<div id="header"><button aria-label="Return to chat">Back</button>Auxiliary view</div><div>Fixture content</div>'
+      pages.append(panel)
+      const menu = doc.createElement('button')
+      menu.textContent = 'Open view'
+      menu.setAttribute('aria-label', 'Open auxiliary view')
+      doc.querySelector('yt-live-chat-header-renderer')!.append(menu)
+      menu.onclick = () => {
+        if (mode === 'hidden') messages.hidden = true
+        else if (mode === 'aria-hidden') messages.setAttribute('aria-hidden', 'true')
+        else if (mode === 'class') messages.classList.add('fixture-main-hidden')
+        else if (mode === 'detach') messages.remove()
+        else messages.style.display = 'none'
+        if (mode === 'replace') {
+          const replacement = messages.cloneNode(true) as HTMLElement
+          messages.replaceWith(replacement)
+          messages = replacement
+        }
+        if (mode === 'participants') panel.classList.add('iron-selected')
+        panel.style.display = 'flex'
+      }
+      panel.querySelector<HTMLButtonElement>('button')!.onclick = () => {
+        panel.classList.remove('iron-selected')
+        panel.style.display = 'none'
+        if (mode === 'detach') pages.append(messages)
+        messages.hidden = false
+        messages.removeAttribute('aria-hidden')
+        messages.classList.remove('fixture-main-hidden')
+        messages.style.display = ''
+      }
+    }, navigation)
+    await overlay.frame().hover()
+    await chat.getByRole('button', { name: 'Open auxiliary view' }).click()
+    const auxiliary = chat.locator('[data-fixture-auxiliary]')
+    await expect(auxiliary).toBeVisible()
+    await page.mouse.move(1100, 600)
+    const bounds = async () => auxiliary.evaluate(element => {
+      const rect = element.getBoundingClientRect()
+      return { top: rect.top, bottom: element.ownerDocument.defaultView!.innerHeight - rect.bottom }
+    })
+    await expect.poll(bounds).toEqual({ top: 0, bottom: 0 })
+    await page.waitForTimeout(700)
+    expect(await bounds()).toEqual({ top: 0, bottom: 0 })
+    await page.screenshot({ path: testInfo.outputPath('auxiliary-without-edge-gaps.png') })
+    await chat.getByRole('button', { name: 'Return to chat' }).click()
+    await expect.poll(() => readLayout(page)).toMatchObject({ flowTopInset: 0, flowBottomInset: 0, headerHeight: 56, inputHeight: 64 })
+    await page.waitForTimeout(400)
+    expect(await readLayout(page)).toMatchObject({ flowTopInset: 0, flowBottomInset: 0, headerHeight: 56, inputHeight: 64 })
+    await page.screenshot({ path: testInfo.outputPath('chat-restored-without-stale-gaps.png') })
+    await page.mouse.move(1100, 600)
+    await expect.poll(() => readLayout(page)).toMatchObject({ flowTopInset: 12, flowBottomInset: 12, headerHeight: 0, inputHeight: 0 })
+  })
+}

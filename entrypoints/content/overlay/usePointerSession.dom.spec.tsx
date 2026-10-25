@@ -113,7 +113,28 @@ describe('usePointerSession pointer capture lifecycle', () => {
     expect(cancel).not.toHaveBeenCalled()
   })
 
-  it.each(['lostpointercapture', 'blur'] as const)('cancels exactly once on %s', eventType => {
+  it('continues preview and commits the release point after capture routing is lost', async () => {
+    const commit = vi.fn()
+    const cancel = vi.fn()
+    const move = vi.fn()
+    const view = render(<Harness commit={commit} cancel={cancel} move={move} />)
+    const button = view.getByRole('button', { name: 'drag' })
+    const capture = installPointerCapture(button)
+    fireEvent.pointerDown(button, { button: 0, clientX: 10, clientY: 20, pointerId: 12 })
+    fireEvent.pointerMove(window, { clientX: 30, clientY: 40, pointerId: 12 })
+    capture.hasPointerCapture.mockReturnValue(false)
+    fireEvent(button, new PointerEvent('lostpointercapture', { pointerId: 12 }))
+    fireEvent.pointerMove(window, { clientX: 50, clientY: 60, pointerId: 12 })
+    await act(async () => new Promise<void>(resolve => requestAnimationFrame(() => resolve())))
+    expect(move).toHaveBeenCalledExactlyOnceWith('session', { x: 50, y: 60 })
+    expect(cancel).not.toHaveBeenCalled()
+    fireEvent.pointerUp(window, { clientX: 65, clientY: 75, pointerId: 12 })
+    fireEvent.pointerUp(window, { clientX: 65, clientY: 75, pointerId: 12 })
+    expect(commit).toHaveBeenCalledExactlyOnceWith('session', { x: 65, y: 75 })
+    expect(capture.releasePointerCapture).not.toHaveBeenCalled()
+  })
+
+  it.each(['pointercancel', 'blur', 'Escape'] as const)('cancels exactly once after capture loss followed by %s', eventType => {
     const commit = vi.fn()
     const cancel = vi.fn()
     const view = render(<Harness commit={commit} cancel={cancel} />)
@@ -121,21 +142,17 @@ describe('usePointerSession pointer capture lifecycle', () => {
     const capture = installPointerCapture(button)
 
     fireEvent.pointerDown(button, { button: 0, pointerId: 8 })
-    if (eventType === 'lostpointercapture') {
-      capture.hasPointerCapture.mockReturnValue(false)
-      fireEvent(button, new PointerEvent('lostpointercapture', { pointerId: 8 }))
-    } else {
-      fireEvent(window, new Event('blur'))
-    }
+    capture.hasPointerCapture.mockReturnValue(false)
+    fireEvent(button, new PointerEvent('lostpointercapture', { pointerId: 8 }))
+    expect(cancel).not.toHaveBeenCalled()
+    if (eventType === 'pointercancel') fireEvent.pointerCancel(window, { pointerId: 8 })
+    else if (eventType === 'Escape') fireEvent.keyDown(window, { key: 'Escape' })
+    else fireEvent(window, new Event('blur'))
     fireEvent.pointerCancel(window, { pointerId: 8 })
     fireEvent(window, new Event('blur'))
 
     expect(commit).not.toHaveBeenCalled()
     expect(cancel).toHaveBeenCalledOnce()
-    if (eventType === 'lostpointercapture') {
-      expect(capture.releasePointerCapture).not.toHaveBeenCalled()
-    } else {
-      expect(capture.releasePointerCapture).toHaveBeenCalledWith(8)
-    }
+    expect(capture.releasePointerCapture).not.toHaveBeenCalled()
   })
 })

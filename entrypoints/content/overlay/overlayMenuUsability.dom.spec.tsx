@@ -7,8 +7,6 @@ const props = {
   isReady: true,
   isVisible: true,
   placement: { top: 20, right: 0 },
-  backgroundColor: { r: 0, g: 0, b: 0, a: 1 },
-  fontColor: { r: 255, g: 255, b: 255, a: 1 },
   onSettingsClick: () => {},
   onPointerDown: () => {},
   onKeyDown: () => {},
@@ -146,6 +144,28 @@ describe('overlay menu dismissal and visual help', () => {
     view.rerender(<OverlayControlRail {...props} isDragging />)
     expect(view.container.querySelector('[data-ylc-control-tooltip]')).toBeNull()
     vi.useRealTimers()
+  })
+
+  it('keeps keyboard help dismissed when only the pointer leaves the focused control', () => {
+    vi.useFakeTimers()
+    try {
+      const view = render(<OverlayControlRail {...props} />)
+      const drag = screen.getByRole('button', { name: 'content.aria.dragToMove' })
+      const matches = drag.matches.bind(drag)
+      vi.spyOn(drag, 'matches').mockImplementation(selector => selector === ':focus-visible' || matches(selector))
+      act(() => drag.focus())
+      fireEvent.mouseEnter(drag)
+      act(() => vi.advanceTimersByTime(200))
+      const tooltip = () => view.container.querySelector('[data-ylc-control-tooltip]')
+      expect(tooltip()).not.toBeNull()
+      fireEvent.keyDown(drag, { key: 'Escape' })
+      expect(tooltip()).toBeNull()
+      fireEvent.mouseLeave(drag, { clientX: 1000, clientY: 500 })
+      expect(drag).toHaveFocus()
+      expect(tooltip()).toBeNull()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   it('keeps the placement menu open when directly resizing its own frame', () => {

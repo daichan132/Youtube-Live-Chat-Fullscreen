@@ -14,9 +14,107 @@ body,
 
 html,
 body {
-  background: var(--ylc-bg-surface-muted, transparent);
+  background: var(--ylc-bg-surface, transparent);
 }
 
 #root {
   background: inherit;
+}
+
+.ylc-popup {
+  --ylc-action-width-popup: 208px;
+}
+
+.ylc-popup-content {
+  padding: 8px;
+  background: var(--ylc-bg-surface);
+}
+
+.ylc-popup .ylc-btn:not(.ylc-btn-primary) {
+  background: var(--ylc-control-surface);
+}
+
+.ylc-popup .ylc-btn:not(.ylc-btn-primary):hover {
+  background: var(--ylc-control-surface-hover);
+}
+
+.ylc-popup .ylc-theme-select-wrap::after {
+  border-color: var(--ylc-text-secondary);
+}
+
+.ylc-popup .ylc-row-action:not(.ylc-row-action--auto) {
+  width: min(100%, var(--ylc-action-width-popup));
+}
+
+.ylc-popup-actions {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.ylc-popup-action {
+  flex: 1;
+  min-width: 0;
+  min-height: 56px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 6px;
+  font-size: 12px;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.ylc-popup .ylc-theme-segment-option {
+  box-sizing: border-box;
+  min-width: 0;
+  min-height: 56px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 6px;
+  line-height: 1.4;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: center;
+}
+
+.ylc-popup .ylc-theme-segment-option > svg {
+  flex-shrink: 0;
+}
+
+.ylc-popup .ylc-theme-select,
+.ylc-popup .ylc-btn:not(.ylc-popup-action) {
+  min-height: 44px;
+}
+
+.ylc-popup-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.ylc-popup-dialog-actions .ylc-btn {
+  min-height: 44px;
+  padding-block: 8px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 399px) {
+  .ylc-popup .ylc-row:not(label) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .ylc-popup .ylc-row:not(label) .ylc-row-action {
+    width: calc(100% - 32px);
+    max-width: none;
+    margin-inline-start: 32px;
+    justify-content: flex-start;
+  }
 }

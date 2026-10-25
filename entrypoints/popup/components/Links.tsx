@@ -20,18 +20,11 @@ const linkItems = [
 
 export const Links = () => {
   return (
-    <div className='ylc-theme-links-wrap'>
+    <div className='ylc-popup-actions'>
       {linkItems.map(({ href, name, icon: Icon }) => (
-        <a
-          key={name}
-          href={href}
-          target='_blank'
-          rel='noopener noreferrer'
-          aria-label={name}
-          data-tooltip={name}
-          className='ylc-theme-icon-link'
-        >
+        <a key={name} href={href} target='_blank' rel='noopener noreferrer' className='ylc-btn ylc-popup-action'>
           <Icon size={18} aria-hidden='true' />
+          <span>{name}</span>
         </a>
       ))}
     </div>

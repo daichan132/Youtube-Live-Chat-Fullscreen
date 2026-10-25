@@ -231,3 +231,27 @@ CDP の `TaskDuration`、`ScriptDuration`、`LayoutDuration`、`RecalcStyleDurat
 カウンター自身にも呼び出し回数に応じた負荷がある。処理時間を比較するときは `--instrumentation none` でも同じ組を測定する。このモードの JSON は処理回数を含まず、プロトタイプや CSS メソッドを書き換えない。
 
 メンバーシップ名の色は `--membership-color youtube-default`（既定）と `--membership-color custom` で切り替える。custom は固定の `{ r: 12, g: 34, b: 56, a: 0.8 }` を保存し、JSON の `membershipColor` に選択モードを記録する。同じモードで変更前後を比較し、custom 時の player 通知に伴う不要な computed style 取得を `repeatedSignals.iframeComputedStyleCalls` で確認できる。
+
+## Firefox の自然なチャット生成待ちの通信記録
+
+`record-firefox-chat-delay.mjs` は、全画面終了後にチャット本体の生成が遅れる回を調べる任意のローカル検証コマンド。Firefox 158/macOSで確認する。production Firefox出力または候補ZIPの展開先と、システム一時ディレクトリ内に用意した別のFirefoxコピーを明示する。通常のインストール先の実行ファイルや既存プロファイルは使わない。
+
+```bash
+node scripts/verify/record-firefox-chat-delay.mjs \
+  --firefox '/private/tmp/Firefox-Verify.app/Contents/MacOS/firefox' \
+  --extension /path/to/extracted/firefox \
+  --out /private/tmp/ylc-firefox-natural-new \
+  --minutes 10 --cycles 40 --slow-ms 5000
+```
+
+保存先は新しいディレクトリにする。既存の記録は上書きしない。`YLC_FIREFOX_WATCH_URL` を環境変数で指定すると対象ライブを固定でき、未指定なら現在利用可能な公開ライブを探す。配信終了などで前提が失われた場合は停止し、成功扱いにしない。
+
+専用コピーを新規一時プロファイルで起動し、起動前から音量0・自動再生禁止・更新処理抑止を設定し、ナビゲーション前に音量と自動再生設定を読み戻す。通常のキャッシュ・通信を使い、遅延挿入・通信の書換え・CPUプロファイラーは使わない。実ポインターで全画面に入り、約200msで終了する回と、チャット本体を待ってから終了する回を交互に記録する。
+
+`network.jsonl` は観測開始から、要求開始・応答開始・応答完了・失敗を逐次保存する。通信種別、匿名の要求番号、時刻、状態コード、取得可能な数値timingを残す。URL・動画ID・header/Cookie・本文・ユーザー名は記録しない。ブラウザーの一時プロファイルはレポート外に作り、正常終了後に削除する。
+
+5秒を超える待ちを検出したら、`trial-NNN.json` に保留通信と状態をその時点で保存し、復帰後の情報を追記する。監視タイマーはNode側で動き、ブラウザーからの返答が止まっても保留通信を保存できる。通信の全記録はその後も継続する。最初の遅い回を記録した後に停止する。15秒以降の復帰はlate-recovery、30秒まで未復帰ならrecovery-timeoutと明記し、待ち時間を伸ばして成功へ置き換えない。
+
+セットアップとソース選定後の観測は最大10分または40回（指定値）で終了する。各退出後は最低2.5秒を観察し、同じnative文書の700ms以上の安定・元のiframe/親の復元・拡張スタイルの解除を確認する。退出前に元のiframeが拡張オーバーレイ内へ実際に借用されたことを確認する。借用が確認できない回は `entry-not-borrowed` として記録して停止し、復帰成功に含めず終了コード1にする。`summary.json` の観測範囲・停止理由・記録の整合性を見て結果を判断する。pending上限や書込み失敗は記録失敗として扱う。通信記録の取得はブラウザーのタイミングに影響し得るため、生成待ちの切り分けと性能比較は区別する。
+
+終了時は所有を確認した専用Firefoxへnormal quitを送り、他のFirefoxやupdaterへシグナルを送らない。接続前の起動失敗や正常終了失敗では専用コピーが残る可能性があり、`startup-owner.json` と停止理由を確認する。Ctrl+Cは現在の観測を終了してから専用セッションを閉じる。

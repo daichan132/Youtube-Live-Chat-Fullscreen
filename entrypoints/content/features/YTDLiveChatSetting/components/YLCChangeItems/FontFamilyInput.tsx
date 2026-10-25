@@ -70,6 +70,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   const [activeIndex, setActiveIndex] = useState(0)
   const [menuMaxHeight, setMenuMaxHeight] = useState<number>()
   const listboxId = useId()
+  const selectedValueId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -94,6 +95,7 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
     }
     return options.filter(option => normalizeSearchValue(option.label).includes(normalizedSearchValue))
   }, [options, searchValue])
+  const hasSuggestions = filteredOptions.length > 0
   const activeOption = filteredOptions[activeIndex]
   const activeOptionId = activeOption ? optionIds.get(activeOption.value) : undefined
 
@@ -226,12 +228,14 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
         className='ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring'
         onClick={handleToggleMenu}
         aria-label={t('content.setting.fontFamily')}
+        aria-describedby={selectedValueId}
         aria-haspopup='listbox'
-        aria-expanded={isOpen}
-        aria-controls={isOpen ? listboxId : undefined}
+        aria-expanded={isOpen && hasSuggestions}
+        aria-controls={isOpen && hasSuggestions ? listboxId : undefined}
         data-ylc-font-combobox-trigger='true'
       >
         <span
+          id={selectedValueId}
           className='ylc-font-combobox-trigger-text'
           style={normalizedValue ? { fontFamily: toFontFamilyStyleValue(normalizedValue) } : undefined}
         >
@@ -258,9 +262,9 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
             }}
             placeholder={t('content.setting.fontSearch')}
             role='combobox'
-            aria-expanded={isOpen}
+            aria-expanded={isOpen && hasSuggestions}
             aria-autocomplete='list'
-            aria-controls={listboxId}
+            aria-controls={hasSuggestions ? listboxId : undefined}
             aria-activedescendant={activeOptionId}
             aria-label={t('content.setting.fontSearch')}
             data-ylc-font-combobox-search='true'
@@ -269,17 +273,17 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
           <span aria-live='polite' className='ylc-visually-hidden'>
             {formatMessage(t('content.aria.fontsFound'), { count: filteredOptions.length })}
           </span>
-          <div
-            ref={optionsRef}
-            className='ylc-font-combobox-options'
-            style={{ minHeight: 0 }}
-            role='listbox'
-            tabIndex={-1}
-            id={listboxId}
-            aria-live='polite'
-          >
-            {filteredOptions.length > 0 ? (
-              filteredOptions.map((option, index) => {
+          {hasSuggestions ? (
+            <div
+              ref={optionsRef}
+              className='ylc-font-combobox-options'
+              style={{ minHeight: 0 }}
+              role='listbox'
+              aria-label={t('content.setting.fontFamily')}
+              tabIndex={-1}
+              id={listboxId}
+            >
+              {filteredOptions.map((option, index) => {
                 const isSelected = option.value === normalizedValue
                 const isActive = index === activeIndex
                 return (
@@ -303,11 +307,11 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
                     {isSelected && <TbCheck size={16} aria-hidden='true' />}
                   </button>
                 )
-              })
-            ) : (
-              <div className='ylc-font-combobox-empty ylc-theme-text-muted'>{t('content.setting.fontNotFound')}</div>
-            )}
-          </div>
+              })}
+            </div>
+          ) : (
+            <div className='ylc-font-combobox-empty ylc-theme-text-muted'>{t('content.setting.fontNotFound')}</div>
+          )}
         </div>
       )}
     </div>

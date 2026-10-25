@@ -1,6 +1,6 @@
 import { useAtomValue, useStore } from 'jotai'
 import type { CSSProperties } from 'react'
-import { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { effectiveAppearanceAtoms } from '@/shared/state'
@@ -24,6 +24,7 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
   const storeValue = useAtomValue(effectiveAppearanceAtoms[settingKey])
   const { beginYLCStyleGesture, commitYLCStyleUpdate, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
   const gestureId = `range:${settingKey}`
+  const unitId = useId()
 
   const value = Math.min(max, Math.max(min, storeValue))
   const displayValue = Math.round(storeValue)
@@ -117,7 +118,7 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
         }}
         onBlur={finishGesture}
       />
-      <span className='ylc-range-value' style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
+      <span dir='ltr' className='ylc-range-value' style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
         <input
           type='number'
           inputMode='numeric'
@@ -126,19 +127,16 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
           step={1}
           value={numberDraft ?? String(displayValue)}
           aria-label={t(labelKey)}
-          className='ylc-theme-focus-ring-soft'
+          aria-describedby={unitId}
+          className='ylc-number-input ylc-theme-focus-ring-soft'
           style={{
             width: 52,
             minWidth: 0,
-            height: 28,
             padding: '0 4px',
-            border: '1px solid var(--ylc-border)',
-            borderRadius: 6,
             boxSizing: 'border-box',
-            background: 'var(--ylc-bg-surface-elevated)',
             color: 'var(--ylc-text-primary)',
             font: 'inherit',
-            textAlign: 'end',
+            textAlign: 'center',
           }}
           onFocus={restoreNumber}
           onChange={event => {
@@ -165,7 +163,9 @@ export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSli
           }}
           onBlur={finishNumberEdit}
         />
-        <span aria-hidden='true'>px</span>
+        <span id={unitId} aria-hidden='true'>
+          px
+        </span>
       </span>
     </div>
   )

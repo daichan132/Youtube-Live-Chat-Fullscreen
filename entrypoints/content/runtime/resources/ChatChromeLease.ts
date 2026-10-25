@@ -10,6 +10,7 @@ import {
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 
 import {
+  chatItemListRendererProbe,
   chatPurchaseInputProbe,
   chatPurchaseLoadingProbe,
   chatPurchasePanelProbe,
@@ -39,17 +40,14 @@ const getBody = (iframe: HTMLIFrameElement | null) => {
   }
 }
 
-const resolveOutermostFallbacks = (body: HTMLElement) =>
-  [...body.querySelectorAll<HTMLElement>(INPUT_FALLBACK_SELECTOR)].filter(
-    candidate => !candidate.parentElement?.closest(INPUT_FALLBACK_SELECTOR),
+export const resolveChatOnlyChromeElements = (body: HTMLElement, candidates = [...body.querySelectorAll<HTMLElement>(CHROME_SELECTOR)]) => {
+  const visible = candidates.filter(element => hasNativeVisibleAncestry(element, body, true))
+  const header = visible.find(element => element.localName === HEADER_SELECTOR)
+  const input = visible.find(element => element.id === 'input-panel')
+  const fallbacks = visible.filter(
+    element => INPUT_FALLBACK_TAGS.includes(element.localName) && !element.parentElement?.closest(INPUT_FALLBACK_SELECTOR),
   )
-
-export const resolveChatOnlyChromeElements = (body: HTMLElement) => {
-  const header = body.querySelector<HTMLElement>(HEADER_SELECTOR)
-  const inputPanel = body.querySelector<HTMLElement>(INPUT_PANEL_SELECTOR)
-  return [header, ...(inputPanel ? [inputPanel] : resolveOutermostFallbacks(body))].filter(
-    (element): element is HTMLElement => element !== null,
-  )
+  return [header, ...(input ? [input] : fallbacks)].filter((element): element is HTMLElement => element != null)
 }
 
 const clearMeasurements = (elements: HTMLElement[]) => {
@@ -113,7 +111,7 @@ const PURCHASE_STATE_ATTRIBUTES = [
   'aria-selected',
 ]
 
-const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement) => {
+const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement, layoutOnly = false) => {
   if (!body.contains(element)) return false
   for (let candidate: HTMLElement | null = element; candidate; candidate = candidate.parentElement) {
     if (candidate.hidden || candidate.getAttribute('aria-hidden') === 'true' || candidate.hasAttribute('inert')) return false
@@ -121,7 +119,8 @@ const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement) => {
     if (style?.display === 'none' || style?.visibility === 'hidden' || style?.visibility === 'collapse') return false
     // Our own collapsed input must be allowed to reopen. Native hidden offer
     // nodes, including retained nodes with opacity:0, must not keep it expanded.
-    if (style?.opacity === '0' && !(body.classList.contains(IFRAME_CHAT_ONLY_CLASS) && isChromeElement(candidate))) return false
+    if (style?.opacity === '0' && !layoutOnly && !(isChromeElement(candidate) && body.classList.contains(IFRAME_CHAT_ONLY_CLASS)))
+      return false
     if (candidate === body) break
   }
   return true
@@ -229,6 +228,10 @@ export const createChatChromeLease = (): ChatChromeLease => {
   let stopPurchaseObserver: (() => void) | null = null
   let purchaseOpen = false
   let requestedIntent: ChatOnlyChromeIntent = 'inactive'
+  let content: HTMLElement | null = null
+  let contentVisible = false
+  let visibleChrome: HTMLElement[] = []
+  let knownChrome: HTMLElement[] = []
   let expandedPadding = { top: 12, bottom: 12 }
   let scrollAnchor: ReturnType<typeof preserveChatScroll> = null
 
@@ -261,6 +264,10 @@ export const createChatChromeLease = (): ChatChromeLease => {
   const disconnectTargetObserver = () => {
     targetObserver?.disconnect()
     targetObserver = null
+    if (isAccessibleNode(body)) {
+      body.removeEventListener('transitionend', settleLayout)
+      body.removeEventListener('animationend', settleLayout)
+    }
   }
 
   const replaceMeasurements = (nextElements: HTMLElement[]) => {
@@ -303,13 +310,16 @@ export const createChatChromeLease = (): ChatChromeLease => {
     stopPurchaseObserver?.()
     stopPurchaseObserver = null
     purchaseOpen = false
+    content = null
+    contentVisible = false
+    visibleChrome = []
+    knownChrome = []
     if (isAccessibleNode(target)) target.classList.remove(IFRAME_PURCHASE_ACTIVE_CLASS)
     clearChromePresentation(target)
   }
 
-  const refreshCollapsedMeasurements = (nextElements = body ? resolveChatOnlyChromeElements(body) : []) => {
-    if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
-    const measuredScroll = purchaseOpen ? null : preserveChatScroll(body, 0)
+  const measureChrome = (nextElements: HTMLElement[]) => {
+    if (!body) return
     body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
@@ -317,8 +327,20 @@ export const createChatChromeLease = (): ChatChromeLease => {
     body.classList.add(IFRAME_CHAT_ONLY_CLASS)
     body.getBoundingClientRect()
     body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
+  }
+
+  const refreshCollapsedMeasurements = (nextElements = body ? resolveChatOnlyChromeElements(body) : []) => {
+    if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+    const measuredScroll = purchaseOpen ? null : preserveChatScroll(body, 0)
+    measureChrome(nextElements)
     measuredScroll?.restore()
     measuredScroll?.stop()
+  }
+
+  const touchesLayout = (target: Node) =>
+    target !== body && (Boolean(content && target.contains(content)) || knownChrome.some(element => target.contains(element)))
+  const settleLayout = (event: Event) => {
+    if (event.target && touchesLayout(event.target as Node)) applyRequestedIntent()
   }
 
   const ensureTargetObserver = () => {
@@ -334,8 +356,27 @@ export const createChatChromeLease = (): ChatChromeLease => {
       )
     }
     if (targetObserver || requestedIntent === 'inactive') return
+    body.addEventListener('transitionend', settleLayout)
+    body.addEventListener('animationend', settleLayout)
     targetObserver = new MutationObserver(mutations => {
-      if (!body?.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
+      if (!body) return
+      if (
+        mutations.some(mutation => {
+          if (touchesLayout(mutation.target)) return true
+          return [...mutation.addedNodes, ...mutation.removedNodes].some(node => {
+            if (content && node.contains(content)) return true
+            if (node.nodeType !== Node.ELEMENT_NODE) return false
+            const element = node as Element
+            if (element.localName === chatItemListRendererProbe.selectors[0]) return true
+            if (!element.childElementCount || element.localName.endsWith('-message-renderer')) return false
+            return element.querySelector(chatItemListRendererProbe.selectors[0]) !== null
+          })
+        })
+      ) {
+        applyRequestedIntent()
+      }
+      if (mutations.every(mutation => mutation.type === 'attributes')) return
+      if (!body.classList.contains(IFRAME_CHAT_ONLY_CLASS)) return
       if (!mutations.some(mutation => mutationMayChangeChrome(mutation, elements))) return
       const nextElements = resolveChatOnlyChromeElements(body)
       const chromeElements = [...new Set([...elements, ...nextElements])]
@@ -344,7 +385,12 @@ export const createChatChromeLease = (): ChatChromeLease => {
       )
       if (!sameElements(elements, nextElements) || touchesChrome) refreshCollapsedMeasurements(nextElements)
     })
-    targetObserver.observe(body, { childList: true, subtree: true })
+    targetObserver.observe(body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style', 'hidden', 'aria-hidden', 'inert'],
+    })
   }
 
   const bind = (nextIframe: HTMLIFrameElement | null) => {
@@ -413,13 +459,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
       return
     }
     beginScrollAnchor()
-    body.classList.add(IFRAME_CHAT_ONLY_MEASURING_CLASS)
-    body.classList.remove(IFRAME_CHAT_ONLY_TRANSITION_CLASS, IFRAME_CHAT_ONLY_CLASS)
-    body.getBoundingClientRect()
-    replaceMeasurements(resolveChatOnlyChromeElements(body))
-    body.classList.add(IFRAME_CHAT_ONLY_CLASS)
-    body.getBoundingClientRect()
-    body.classList.remove(IFRAME_CHAT_ONLY_MEASURING_CLASS)
+    measureChrome(resolveChatOnlyChromeElements(body))
     body.classList.add(IFRAME_CHAT_ONLY_TRANSITION_CLASS)
     body.classList.remove(IFRAME_CHAT_ONLY_CLASS)
     setPaddingTarget(false)
@@ -434,14 +474,35 @@ export const createChatChromeLease = (): ChatChromeLease => {
   }
 
   const applyRequestedIntent = () => {
-    if (!body || requestedIntent === 'inactive' || requestedIntent === 'hold') return
+    const targetBody = body
+    if (!targetBody || requestedIntent === 'inactive' || requestedIntent === 'hold') return
+    const candidates = [...targetBody.querySelectorAll<HTMLElement>(chatItemListRendererProbe.selectors[0])]
+    const nextContent = candidates.find(element => hasNativeVisibleAncestry(element, targetBody, true)) ?? candidates[0] ?? null
+    const nextVisible = nextContent !== null && hasNativeVisibleAncestry(nextContent, targetBody, true)
+    knownChrome = [...targetBody.querySelectorAll<HTMLElement>(CHROME_SELECTOR)]
+    const nextChrome = resolveChatOnlyChromeElements(targetBody, knownChrome)
+    if (content !== nextContent || contentVisible !== nextVisible) {
+      clearChromePresentation()
+    } else if (!sameElements(visibleChrome, nextChrome) && targetBody.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)) {
+      if (targetBody.classList.contains(IFRAME_CHAT_ONLY_CLASS)) refreshCollapsedMeasurements(nextChrome)
+      else {
+        replaceMeasurements(nextChrome)
+        clearMeasurements(elements)
+        elements = []
+        setPaddingTarget(false)
+      }
+    }
+    content = nextContent
+    contentVisible = nextVisible
+    visibleChrome = nextChrome
+    if (!contentVisible) return
     // Synchronize before blur, including native changes not yet delivered by
     // MutationObserver. While an offer is open, hover loss cannot hide it.
-    setPurchaseOpen(hasOpenChatPurchaseUI(body, purchaseOpen))
-    if (!body.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)) {
-      body.classList.add(IFRAME_CHAT_ONLY_MODE_CLASS)
+    setPurchaseOpen(hasOpenChatPurchaseUI(targetBody, purchaseOpen))
+    if (!targetBody.classList.contains(IFRAME_CHAT_ONLY_MODE_CLASS)) {
+      targetBody.classList.add(IFRAME_CHAT_ONLY_MODE_CLASS)
       if (requestedIntent === 'expanded' || purchaseOpen) {
-        replaceMeasurements(resolveChatOnlyChromeElements(body))
+        replaceMeasurements(resolveChatOnlyChromeElements(targetBody))
         clearMeasurements(elements)
         elements = []
       }

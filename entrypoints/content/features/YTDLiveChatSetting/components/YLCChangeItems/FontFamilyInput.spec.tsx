@@ -39,9 +39,11 @@ describe('FontFamilyInput', () => {
 
     const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
     expect(queryByTestId('font-family-search')).toBeNull()
+    expect(trigger).toHaveAccessibleDescription('content.setting.fontFamilyDefault')
 
     fireEvent.click(trigger)
     expect(queryByTestId('font-family-search')).toBeInTheDocument()
+    expect(getByRole('listbox', { name: 'content.setting.fontFamily' })).toBeInTheDocument()
 
     fireEvent.click(trigger)
     expect(queryByTestId('font-family-search')).toBeNull()
@@ -61,6 +63,7 @@ describe('FontFamilyInput', () => {
     expect(options).toHaveLength(1)
     expect(options[0]).toHaveTextContent('Roboto Slab')
     expect(getByText('Fonts found: 1')).toHaveAttribute('aria-live', 'polite')
+    expect(getByRole('listbox')).not.toHaveAttribute('aria-live')
   })
 
   it('opens from the keyboard, focuses the search, and lets Undo restore a selected font', async () => {
@@ -79,12 +82,14 @@ describe('FontFamilyInput', () => {
 
     expect(queryByRole('combobox')).toBeNull()
     expect(trigger).toHaveTextContent('Roboto Slab')
+    expect(trigger).toHaveAccessibleDescription('Roboto Slab')
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
     act(() => {
       expect(createStyleHistoryCommands(store).undoYLCStyle()).toBe(true)
     })
     expect(store.get(chatSettingsStateAtom).profile).toEqual(previousProfile)
     expect(trigger).toHaveTextContent('Roboto')
+    expect(trigger).toHaveAccessibleDescription('Roboto')
   })
 
   it.each(['Escape', 'selection'])('returns focus to the trigger after %s closes the keyboard search', async closeWith => {
@@ -240,13 +245,20 @@ describe('FontFamilyInput', () => {
     expect(store.get(chatSettingsStateAtom)).toEqual(before)
     expect(store.get(editorSessionStateAtom)).toEqual(historyBefore)
     expect(trigger).toHaveTextContent('Roboto')
-    expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    expect(trigger).not.toHaveAttribute('aria-controls')
+    expect(input).toHaveAttribute('aria-expanded', 'false')
+    expect(input).not.toHaveAttribute('aria-controls')
+    expect(view.queryByRole('listbox')).not.toBeInTheDocument()
     expect(input).toHaveFocus()
     expect(input).toHaveValue('My Custom Font')
     expect(input).not.toHaveAttribute('aria-activedescendant')
 
     await user.clear(input)
-    await user.type(input, 'Roboto Slab{Enter}')
+    await user.type(input, 'Roboto Slab')
+    expect(input).toHaveAttribute('aria-expanded', 'true')
+    expect(input).toHaveAttribute('aria-controls', view.getByRole('listbox').id)
+    await user.keyboard('{Enter}')
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
     expect(store.get(editorSessionStateAtom).past).toEqual([...historyBefore.past, before.profile])

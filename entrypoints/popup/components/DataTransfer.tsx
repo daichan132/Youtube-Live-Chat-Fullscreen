@@ -104,26 +104,20 @@ export const DataTransfer = () => {
 
   return (
     <>
-      <div className='ylc-theme-links-wrap'>
-        <button
-          type='button'
-          aria-label={t('popup.export')}
-          data-tooltip={t('popup.export')}
-          className='ylc-theme-icon-link'
-          onClick={() => handleExport(runtime.exportSettings())}
-        >
+      <div className='ylc-popup-actions'>
+        <button type='button' className='ylc-btn ylc-popup-action' onClick={() => handleExport(runtime.exportSettings())}>
           <TbDownload size={18} aria-hidden='true' />
+          <span>{t('popup.export')}</span>
         </button>
         <button
           ref={importButtonRef}
           type='button'
           disabled={phase === 'applying'}
-          aria-label={t('popup.import')}
-          data-tooltip={t('popup.import')}
-          className='ylc-theme-icon-link'
+          className='ylc-btn ylc-popup-action'
           onClick={() => fileInputRef.current?.click()}
         >
           <TbUpload size={18} aria-hidden='true' />
+          <span>{t('popup.import')}</span>
         </button>
         <input ref={fileInputRef} type='file' accept='.json' onChange={handleImport} style={{ display: 'none' }} />
       </div>
@@ -148,20 +142,22 @@ export const DataTransfer = () => {
         <p ref={statusRef} id={descriptionId} role='status' aria-live='polite' tabIndex={-1}>
           {phase === 'reading' ? t('popup.importReading') : phase === 'confirm' ? t('popup.importConfirm') : t('popup.importApplying')}
         </p>
-        {pending && phase === 'confirm' ? (
-          <>
-            <button type='button' className='ylc-btn' onClick={() => handleExport(runtime.exportSettings())}>
-              {t('popup.export')}
-            </button>
-            <button type='button' className='ylc-btn' onClick={apply}>
-              {t('popup.importApply')}
-            </button>
-          </>
-        ) : null}
         {phase !== 'applying' ? (
-          <button type='button' className='ylc-btn' onClick={cancel}>
-            {t('popup.importCancel')}
-          </button>
+          <div className='ylc-popup-dialog-actions'>
+            {pending && phase === 'confirm' ? (
+              <button type='button' className='ylc-btn' onClick={() => handleExport(runtime.exportSettings())}>
+                {t('popup.export')}
+              </button>
+            ) : null}
+            <button type='button' className='ylc-btn' onClick={cancel}>
+              {t('popup.importCancel')}
+            </button>
+            {pending && phase === 'confirm' ? (
+              <button type='button' className='ylc-btn ylc-btn-primary' onClick={apply}>
+                {t('popup.importApply')}
+              </button>
+            ) : null}
+          </div>
         ) : null}
       </Modal>
       {phase === 'idle' && message ? (
@@ -172,9 +168,11 @@ export const DataTransfer = () => {
           <div role='status' aria-live='polite'>
             {message}
           </div>
-          <button type='button' className='ylc-btn' onClick={cancel}>
-            {t('popup.importClose')}
-          </button>
+          <div className='ylc-popup-dialog-actions'>
+            <button type='button' className='ylc-btn' onClick={cancel}>
+              {t('popup.importClose')}
+            </button>
+          </div>
         </section>
       ) : null}
     </>

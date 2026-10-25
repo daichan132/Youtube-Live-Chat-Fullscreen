@@ -79,8 +79,22 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.react-colorful__interactive:focus .react-colorful__pointer {
-  transform: translate(-50%, -50%) scale(1.1);
+.react-colorful__interactive:focus-visible {
+  outline: 2px solid var(--ylc-focus-ring, Highlight);
+  outline-offset: 3px;
+}
+
+.react-colorful__interactive:focus-visible .react-colorful__pointer {
+  box-shadow:
+    0 0 0 2px #fff,
+    0 0 0 4px #111;
+}
+
+@media (pointer: coarse) {
+  [data-ylc-theme] .react-colorful__hue,
+  [data-ylc-theme] .react-colorful__alpha {
+    height: 44px;
+  }
 }
 
 .react-colorful__alpha,
@@ -95,4 +109,76 @@
 
 .react-colorful__hue-pointer {
   z-index: 2;
+}
+
+@media (forced-colors: active) {
+  /* These gradients are the color being edited, rather than interface chrome.
+     Keep their colors and pointer halos; focus still uses the system Highlight. */
+  .react-colorful {
+    forced-color-adjust: none;
+  }
+}
+
+/* Match the application's filled controls without altering the edited colors.
+   Scope overrides above the library's document-injected default rules. */
+.ylc-color-popover {
+  box-sizing: border-box;
+  width: 224px;
+  max-width: calc(100vw - 24px);
+  margin-top: 8px;
+  padding: 12px;
+  border-radius: var(--ylc-radius-xl);
+  background: var(--ylc-bg-surface-elevated);
+  box-shadow: var(--ylc-shadow-md);
+}
+
+.ylc-color-popover .react-colorful {
+  width: 100%;
+  height: 176px;
+  gap: 12px;
+}
+
+.ylc-color-popover .react-colorful__saturation {
+  min-height: 0;
+  border: 0;
+  border-radius: var(--ylc-radius-lg);
+}
+
+.ylc-color-popover .react-colorful__hue,
+.ylc-color-popover .react-colorful__alpha {
+  flex-shrink: 0;
+  height: 12px;
+  border-radius: 9999px;
+}
+
+.ylc-color-popover .react-colorful__pointer {
+  width: 18px;
+  height: 18px;
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.55),
+    0 1px 3px rgba(0, 0, 0, 0.16);
+}
+
+@media (pointer: coarse) {
+  .ylc-color-popover .react-colorful {
+    height: 212px;
+  }
+
+  .ylc-color-popover .react-colorful__hue,
+  .ylc-color-popover .react-colorful__alpha {
+    height: 44px;
+  }
+
+  .ylc-color-popover .react-colorful__pointer {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (forced-colors: active) {
+  .ylc-color-popover {
+    background: Canvas;
+    outline: 1px solid ButtonText;
+    box-shadow: none;
+  }
 }

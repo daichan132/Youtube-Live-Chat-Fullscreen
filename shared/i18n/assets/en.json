@@ -83,7 +83,7 @@
       "readableTitle": "Large Text",
       "compactTitle": "Compact",
       "neonTitle": "Colorful",
-      "deleteConfirmationMessage": "Delete this preset?",
+      "deleteConfirmationMessage": "This preset will be removed from the list. Your current chat settings will stay the same.",
       "delete": "Delete",
       "cancel": "Cancel"
     },
