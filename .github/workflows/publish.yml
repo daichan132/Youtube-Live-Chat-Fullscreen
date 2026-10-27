@@ -34,7 +34,7 @@ permissions:
 
 jobs:
   validate-candidate:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       # GitHub hides draft Releases from tokens without push access.
       contents: write
@@ -114,7 +114,7 @@ jobs:
 
   publish-chrome:
     needs: validate-candidate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment: chrome-web-store
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -141,7 +141,7 @@ jobs:
 
   publish-firefox:
     needs: validate-candidate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     environment: firefox-add-ons
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -171,7 +171,7 @@ jobs:
 
   publish-github-release:
     needs: [validate-candidate, publish-chrome, publish-firefox]
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write
       actions: read
