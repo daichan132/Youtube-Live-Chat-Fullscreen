@@ -1,7 +1,27 @@
-import type { ChatGeometry, ChatProfile, ChatSettings, GlobalSettings, MembershipNameColor, PresetEntry, RGBA } from './model'
+import type {
+  ChatAppearance,
+  ChatDisplay,
+  ChatGeometry,
+  ChatGeometryV2,
+  ChatProfile,
+  ChatSettings,
+  GlobalSettings,
+  LegacyChatGeometry,
+  MembershipNameColor,
+  PresetEntry,
+  RGBA,
+} from './model'
 
-export const areRGBAEqual = (left: RGBA, right: RGBA) =>
-  left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
+// A comparator is required for every field, so adding a setting cannot silently
+// bypass persistence and history change detection.
+const compareFields = <T extends object>(comparators: { [K in keyof T]-?: (left: T[K], right: T[K]) => boolean }) => {
+  const keys = Object.keys(comparators) as (keyof T)[]
+  return (left: T, right: T) => keys.every(key => comparators[key](left[key], right[key]))
+}
+
+const equalValue = <T>(left: T, right: T) => left === right
+
+export const areRGBAEqual = compareFields<RGBA>({ r: equalValue, g: equalValue, b: equalValue, a: equalValue })
 
 export const areMembershipColorsEqual = (left: MembershipNameColor, right: MembershipNameColor) =>
   left.mode === right.mode && (left.mode === 'youtube-default' || (right.mode === 'custom' && areRGBAEqual(left.value, right.value)))
@@ -9,44 +29,61 @@ export const areMembershipColorsEqual = (left: MembershipNameColor, right: Membe
 export const areGlobalSettingsEqual = (left: GlobalSettings, right: GlobalSettings) =>
   left.ytdLiveChat === right.ytdLiveChat && left.themeMode === right.themeMode
 
-export const areChatProfilesEqual = (left: ChatProfile, right: ChatProfile) => {
-  const leftAppearance = left.appearance
-  const rightAppearance = right.appearance
-  return (
-    areRGBAEqual(leftAppearance.backgroundColor, rightAppearance.backgroundColor) &&
-    areRGBAEqual(leftAppearance.fontColor, rightAppearance.fontColor) &&
-    areMembershipColorsEqual(leftAppearance.membershipNameColor, rightAppearance.membershipNameColor) &&
-    leftAppearance.fontFamily === rightAppearance.fontFamily &&
-    leftAppearance.fontSize === rightAppearance.fontSize &&
-    leftAppearance.blur === rightAppearance.blur &&
-    leftAppearance.spacing === rightAppearance.spacing &&
-    leftAppearance.showUserName === rightAppearance.showUserName &&
-    leftAppearance.showUserIcon === rightAppearance.showUserIcon &&
-    leftAppearance.showSuperChatBar === rightAppearance.showSuperChatBar &&
-    left.display.idleVisibility === right.display.idleVisibility &&
-    left.display.contentMode === right.display.contentMode
-  )
-}
+const areAppearancesEqual = compareFields<ChatAppearance>({
+  backgroundColor: areRGBAEqual,
+  fontColor: areRGBAEqual,
+  membershipNameColor: areMembershipColorsEqual,
+  fontFamily: equalValue,
+  fontSize: equalValue,
+  blur: equalValue,
+  spacing: equalValue,
+  showUserName: equalValue,
+  showUserIcon: equalValue,
+  showSuperChatBar: equalValue,
+})
+
+const areDisplaysEqual = compareFields<ChatDisplay>({
+  idleVisibility: equalValue,
+  contentMode: equalValue,
+})
+
+export const areChatProfilesEqual = compareFields<ChatProfile>({
+  appearance: areAppearancesEqual,
+  display: areDisplaysEqual,
+})
+
+const areLegacyCoordinatesEqual = compareFields<LegacyChatGeometry['coordinates']>({ x: equalValue, y: equalValue })
+const areLegacySizesEqual = compareFields<LegacyChatGeometry['size']>({ width: equalValue, height: equalValue })
+const areLegacyGeometriesEqual = compareFields<LegacyChatGeometry>({
+  reference: equalValue,
+  coordinates: areLegacyCoordinatesEqual,
+  size: areLegacySizesEqual,
+})
+const arePlayerRectsEqual = compareFields<ChatGeometryV2['rect']>({
+  x: equalValue,
+  y: equalValue,
+  width: equalValue,
+  height: equalValue,
+})
+const arePlayerGeometriesEqual = compareFields<ChatGeometryV2>({
+  reference: equalValue,
+  rect: arePlayerRectsEqual,
+  pinned: equalValue,
+})
 
 export const areChatGeometriesEqual = (left: ChatGeometry, right: ChatGeometry) => {
   if (left.reference !== right.reference) return false
-  if (left.reference === 'legacy-viewport-px') {
-    return (
-      right.reference === 'legacy-viewport-px' &&
-      left.coordinates.x === right.coordinates.x &&
-      left.coordinates.y === right.coordinates.y &&
-      left.size.width === right.size.width &&
-      left.size.height === right.size.height
-    )
+  switch (left.reference) {
+    case 'legacy-viewport-px':
+      return right.reference === 'legacy-viewport-px' && areLegacyGeometriesEqual(left, right)
+    case 'player':
+      return right.reference === 'player' && arePlayerGeometriesEqual(left, right)
+    default: {
+      const unhandled: never = left
+      void unhandled
+      return false
+    }
   }
-  return (
-    right.reference === 'player' &&
-    left.rect.x === right.rect.x &&
-    left.rect.y === right.rect.y &&
-    left.rect.width === right.rect.width &&
-    left.rect.height === right.rect.height &&
-    left.pinned === right.pinned
-  )
 }
 
 export const arePresetEntriesEqual = (left: PresetEntry, right: PresetEntry) =>

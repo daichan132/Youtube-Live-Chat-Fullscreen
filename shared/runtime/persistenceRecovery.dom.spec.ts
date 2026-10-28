@@ -147,6 +147,33 @@ describe('settings persistence through the app runtime', () => {
     expect(reopened.runtime.store.get(localeStateAtom)).toMatchObject({ code: 'ja', messages: { 'popup.theme': 'ja' } })
   })
 
+  it('preserves duplicate maximum-length legacy preset IDs through import and reopening', async () => {
+    const longId = 'a'.repeat(128)
+    const occupied = `${'a'.repeat(126)}-2`
+    const backup = {
+      version: 1,
+      globalSetting: {},
+      ytdLiveChat: {
+        presetItemIds: [occupied, longId, longId],
+        presetItemStyles: { [occupied]: { fontSize: 18 }, [longId]: { fontSize: 24 } },
+        presetItemTitles: { [occupied]: 'First', [longId]: 'Repeated' },
+      },
+    }
+    const expected = [
+      { kind: 'custom', id: occupied, name: 'First', profile: { appearance: { fontSize: 18 } } },
+      { kind: 'custom', id: longId, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+      { kind: 'custom', id: `${'a'.repeat(126)}-3`, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+    ]
+    const { runtime } = await openSettings()
+
+    await runtime.importSettings(backup)
+
+    expect((await chrome.storage.local.get('ylc-chat-appearance'))['ylc-chat-appearance']).toMatchObject({ value: { presets: expected } })
+    runtime.dispose()
+    const reopened = await openSettings('reopened-page')
+    expect(reopened.runtime.exportSettings().chatSettings.presets).toMatchObject(expected)
+  })
+
   it('preserves saved settings when an import write fails and accepts the next valid import', async () => {
     const { runtime } = await openSettings()
     const previous = runtime.exportSettings()

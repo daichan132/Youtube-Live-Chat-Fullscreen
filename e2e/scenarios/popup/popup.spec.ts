@@ -255,11 +255,25 @@ test.describe('popup', { tag: '@popup' }, () => {
   test('imports settings, hydrates them on reopen, and exports the chosen values as a real download', async ({ page, extension }) => {
     test.setTimeout(90000)
 
+    const longId = 'a'.repeat(128)
+    const occupied = `${'a'.repeat(126)}-2`
+    const expectedPresets = [
+      { kind: 'custom', id: occupied, name: 'First', profile: { appearance: { fontSize: 18 } } },
+      { kind: 'custom', id: longId, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+      { kind: 'custom', id: `${'a'.repeat(126)}-3`, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+    ]
     const settings = {
       version: 1,
       exportedAt: '2024-01-01T00:00:00.000Z',
       globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
-      ytdLiveChat: { fontSize: 42, blur: 10, alwaysOnDisplay: false },
+      ytdLiveChat: {
+        fontSize: 42,
+        blur: 10,
+        alwaysOnDisplay: false,
+        presetItemIds: [occupied, longId, longId],
+        presetItemStyles: { [occupied]: { fontSize: 18 }, [longId]: { fontSize: 24 } },
+        presetItemTitles: { [occupied]: 'First', [longId]: 'Repeated' },
+      },
     }
 
     await importSettingsViaPopup(page, extension, settings)
@@ -278,6 +292,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     expect(appearanceState?.value.profile.appearance.fontSize).toBe(40)
     expect(appearanceState?.value.profile.appearance.blur).toBe(10)
     expect(appearanceState?.value.profile.display.idleVisibility).toBe('auto-hide')
+    expect(appearanceState?.value.presets).toMatchObject(expectedPresets)
     expect(appearanceState?.schemaVersion).toBe(1)
 
     // Reopen popup and verify runtime hydration.
@@ -300,6 +315,7 @@ test.describe('popup', { tag: '@popup' }, () => {
           appearance: { fontSize: 40, blur: 10 },
           display: { idleVisibility: 'auto-hide' },
         },
+        presets: expectedPresets,
       },
     })
     expect(Number.isNaN(Date.parse(backup.exportedAt))).toBe(false)

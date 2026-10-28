@@ -1,4 +1,3 @@
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
 import type { ChatGeometry, ChatGeometryV2, LegacyChatGeometry } from './model'
 
 export const MIN_CHAT_WIDTH_PX = 240
@@ -94,7 +93,7 @@ export const normalizeLegacyChatGeometry = (
     y: finiteOr(coordinates.y, 20),
   },
   size: {
-    width: Math.max(ResizableMinWidth, finiteOr(size.width, 400)),
-    height: Math.max(ResizableMinHeight, finiteOr(size.height, 400)),
+    width: Math.max(MIN_CHAT_WIDTH_PX, finiteOr(size.width, 400)),
+    height: Math.max(MIN_CHAT_HEIGHT_PX, finiteOr(size.height, 400)),
   },
 })

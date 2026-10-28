@@ -16,6 +16,7 @@ import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
+import { isTextInputType } from '@/shared/utils/isTextInputType'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
@@ -153,7 +154,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         if (!(target instanceof HTMLElement)) return false
         if (target.isContentEditable || target instanceof HTMLTextAreaElement) return true
         if (!(target instanceof HTMLInputElement)) return false
-        return !['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'].includes(target.type)
+        return isTextInputType(target.type)
       })
       if (isTextEditing) return
 

@@ -3,22 +3,22 @@ import type { CSSProperties } from 'react'
 import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
+import { APPEARANCE_NUMBER_LIMITS, type AppearanceNumberKey } from '@/shared/settings/appearanceLimits'
 import { effectiveAppearanceAtoms } from '@/shared/state'
 import { editorSessionStateAtom } from '@/shared/state/atoms'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
 
-export type NumberSliderSettingKey = 'fontSize' | 'blur' | 'spacing'
+export type NumberSliderSettingKey = AppearanceNumberKey
 
 type YLCNumberSliderProps = {
   settingKey: NumberSliderSettingKey
   labelKey: TranslationKey
-  min: number
-  max: number
 }
 
 const RANGE_ADJUSTMENT_KEYS = new Set(['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Home', 'End'])
 
-export const YLCNumberSlider = ({ settingKey, labelKey, min, max }: YLCNumberSliderProps) => {
+export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) => {
+  const { min, max } = APPEARANCE_NUMBER_LIMITS[settingKey]
   const t = useT()
   const store = useStore()
   const storeValue = useAtomValue(effectiveAppearanceAtoms[settingKey])

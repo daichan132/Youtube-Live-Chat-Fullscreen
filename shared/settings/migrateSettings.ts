@@ -1,7 +1,9 @@
 import { BUILTIN_PRESETS } from './builtinPresets'
 import { DEFAULT_CHAT_GEOMETRY, DEFAULT_CHAT_PROFILE, LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from './defaults'
-import { BUILTIN_PRESET_IDS, type BuiltinPresetId, type ChatProfile, type ChatSettings, type PresetEntry, type RGBA } from './model'
+import { areRGBAEqual } from './equality'
+import { BUILTIN_PRESET_IDS, type BuiltinPresetId, type ChatProfile, type ChatSettings, type PresetEntry } from './model'
 import { isRecord, normalizeChatGeometry, normalizeChatProfile, normalizeChatSettings, normalizeRGBA } from './normalizeSettings'
+import { MAX_PRESET_ID_LENGTH, MAX_PRESET_NAME_LENGTH } from './persistConfig'
 
 export type PersistedSettingsV6 = {
   bgColor?: unknown
@@ -35,10 +37,8 @@ const LEGACY_BUILTIN_IDS: Record<string, BuiltinPresetId> = {
   default7: 'neon',
 }
 
-const isSameRGBA = (left: RGBA, right: RGBA) => left.r === right.r && left.g === right.g && left.b === right.b && left.a === right.a
-
 export const isLegacyDefaultMembershipColor = (input: unknown) =>
-  isSameRGBA(normalizeRGBA(input, LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR), LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR)
+  areRGBAEqual(normalizeRGBA(input, LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR), LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR)
 
 const booleanOr = (value: unknown, fallback: boolean) => (typeof value === 'boolean' ? value : fallback)
 const numberOr = (value: unknown, fallback: number) => (typeof value === 'number' && Number.isFinite(value) ? value : fallback)
@@ -52,7 +52,7 @@ export const migrateLegacyStyleToProfile = (input: unknown, fallback: ChatProfil
       appearance: {
         backgroundColor: raw.bgColor,
         fontColor: raw.fontColor,
-        membershipNameColor: isSameRGBA(legacyMembershipColor, LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR)
+        membershipNameColor: areRGBAEqual(legacyMembershipColor, LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR)
           ? { mode: 'youtube-default' }
           : { mode: 'custom', value: legacyMembershipColor },
         fontFamily: typeof raw.fontFamily === 'string' && raw.fontFamily.length > 0 ? raw.fontFamily : null,
@@ -75,11 +75,13 @@ export const migrateLegacyStyleToProfile = (input: unknown, fallback: ChatProfil
 }
 
 const nextAvailableCustomId = (requestedId: string, usedIds: Set<string>) => {
-  const base = BUILTIN_PRESET_IDS.includes(requestedId as BuiltinPresetId) ? `custom-${requestedId}` : requestedId
+  const normalizedId = requestedId.trim()
+  const base = BUILTIN_PRESET_IDS.includes(normalizedId as BuiltinPresetId) ? `custom-${normalizedId}` : normalizedId
   let id = base
   let suffix = 2
   while (usedIds.has(id)) {
-    id = `${base}-${suffix}`
+    const ending = `-${suffix}`
+    id = `${base.slice(0, MAX_PRESET_ID_LENGTH - ending.length).trimEnd()}${ending}`
     suffix += 1
   }
   return id
@@ -99,7 +101,7 @@ export const migrateLegacyPresets = (input: PersistedSettingsV6): PresetEntry[] 
   const usedIds = new Set<string>()
 
   for (const rawId of effectiveIds) {
-    if (typeof rawId !== 'string' || rawId.trim().length === 0 || rawId.length > 128) continue
+    if (typeof rawId !== 'string' || rawId.trim().length === 0 || rawId.length > MAX_PRESET_ID_LENGTH) continue
     const builtinId = Object.hasOwn(LEGACY_BUILTIN_IDS, rawId) ? LEGACY_BUILTIN_IDS[rawId] : undefined
     if (builtinId) {
       if (usedIds.has(builtinId)) continue
@@ -115,7 +117,7 @@ export const migrateLegacyPresets = (input: PersistedSettingsV6): PresetEntry[] 
     presets.push({
       kind: 'custom',
       id,
-      name: typeof rawTitles[rawId] === 'string' ? rawTitles[rawId].slice(0, 100) : '',
+      name: typeof rawTitles[rawId] === 'string' ? rawTitles[rawId].slice(0, MAX_PRESET_NAME_LENGTH) : '',
       profile: migrateLegacyStyleToProfile(rawStyle),
     })
   }

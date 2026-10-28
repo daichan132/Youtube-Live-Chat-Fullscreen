@@ -7,7 +7,7 @@ import { beginStyleGestureAtom, finishStyleGestureAtom, previewStylePatchAtom, u
 import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { YLCNumberSlider } from './YLCNumberSlider'
 
-const slider = <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />
+const slider = <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
 
 describe('range input without pointer or keyboard gestures', () => {
   it('persists native input actions before the settings frame is removed', async () => {

@@ -30,14 +30,7 @@ const setup = (settingKey: NumberSliderSettingKey = 'fontSize') => {
   const unsubscribeCommitted = store.sub(chatSettingsStateAtom, committed)
   const App = () => {
     useSettingsStylePreview(postToParent)
-    return (
-      <YLCNumberSlider
-        settingKey={settingKey}
-        labelKey='content.setting.fontSize'
-        min={settingKey === 'fontSize' ? 10 : 0}
-        max={settingKey === 'blur' ? 20 : 40}
-      />
-    )
+    return <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.fontSize' />
   }
   const view = renderWithStore(<App />, store)
   return { ...view, store, postToParent, committed, unsubscribeCommitted, range: view.getByRole('slider') }

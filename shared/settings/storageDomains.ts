@@ -1,5 +1,6 @@
 import { storage } from 'wxt/utils/storage'
 import type { LocaleCode } from '@/shared/i18n/language'
+import { isThemeMode } from '@/shared/theme/themeMode'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
 import { isRecord, normalizeChatProfile, normalizePresets } from './normalizeSettings'
 import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from './storageKeys'
@@ -30,8 +31,6 @@ export type SettingsDomainValues = {
 
 export type PersistenceDomain = keyof SettingsDomainValues
 
-export const PERSISTENCE_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry', 'locale'] as const satisfies readonly PersistenceDomain[]
-
 export const localKey = <T extends string>(key: T) => `local:${key}` as const
 
 export const settingsItems = {
@@ -42,12 +41,15 @@ export const settingsItems = {
   locale: storage.defineItem<StoredEnvelope<SettingsDomainValues['locale']>>(localKey(LOCALE_STORAGE_KEY)),
 } satisfies Record<PersistenceDomain, unknown>
 
+// The item order also determines the order in which failed domains are reported.
+export const PERSISTENCE_DOMAINS = Object.keys(settingsItems) as readonly PersistenceDomain[]
+
 // Only the envelope is known here. Each domain still validates its value.
 export const isStoredEnvelope = (value: unknown): value is StoredEnvelope<unknown> =>
   isRecord(value) && value.schemaVersion === 1 && typeof value.writerId === 'string' && 'value' in value
 
 export const normalizeTheme = (input: unknown, fallback: GlobalSettings['themeMode']): GlobalSettings['themeMode'] =>
-  input === 'light' || input === 'dark' || input === 'system' ? input : fallback
+  isThemeMode(input) ? input : fallback
 
 export const normalizeAppearance = (input: unknown, fallback: ChatAppearanceSettings): ChatAppearanceSettings => {
   const raw = isRecord(input) ? input : {}

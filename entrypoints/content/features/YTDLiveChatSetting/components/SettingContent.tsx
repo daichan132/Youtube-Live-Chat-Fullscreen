@@ -163,13 +163,13 @@ export const SettingContent = () => {
           <FontFamilyInput />
         </ControlRow>
         <ControlRow icon={TbTextSize} title={t('content.setting.fontSize')}>
-          <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />
+          <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
         </ControlRow>
         <ControlRow icon={TbBlur} title={t('content.setting.blur')}>
-          <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' min={0} max={20} />
+          <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' />
         </ControlRow>
         <ControlRow icon={TbSpacingHorizontal} title={t('content.setting.space')}>
-          <YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' min={0} max={40} />
+          <YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' />
         </ControlRow>
       </SettingGroup>
 

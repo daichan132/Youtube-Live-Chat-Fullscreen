@@ -2,6 +2,8 @@ export type ThemeMode = 'light' | 'dark' | 'system'
 
 export type ResolvedThemeMode = Exclude<ThemeMode, 'system'>
 
+export const isThemeMode = (value: unknown): value is ThemeMode => value === 'light' || value === 'dark' || value === 'system'
+
 export const resolveThemeMode = (themeMode: ThemeMode, systemTheme: ResolvedThemeMode): ResolvedThemeMode => {
   if (themeMode === 'system') {
     return systemTheme

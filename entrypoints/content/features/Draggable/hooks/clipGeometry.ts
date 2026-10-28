@@ -1,4 +1,4 @@
-import { ResizableMinHeight, ResizableMinWidth } from '@/shared/constants'
+import { MIN_CHAT_HEIGHT_PX, MIN_CHAT_WIDTH_PX } from '@/shared/settings/chatGeometry'
 
 export interface LayoutGeometry {
   coordinates: {
@@ -44,8 +44,8 @@ export const getControlRailTop = ({
   return Math.max(minTop, Math.min(desiredTop, maxTop))
 }
 
-const shiftsLeftEdge = (direction: ResizeDirection) => direction === 'left' || direction === 'topLeft' || direction === 'bottomLeft'
-const shiftsTopEdge = (direction: ResizeDirection) => direction === 'top' || direction === 'topLeft' || direction === 'topRight'
+export const shiftsLeftEdge = (direction: ResizeDirection) => direction === 'left' || direction === 'topLeft' || direction === 'bottomLeft'
+export const shiftsTopEdge = (direction: ResizeDirection) => direction === 'top' || direction === 'topLeft' || direction === 'topRight'
 
 export const deriveResizedLayout = ({
   startCoordinates,
@@ -68,8 +68,8 @@ export const deriveResizedLayout = ({
   const heightDelta = direction === 'left' || direction === 'right' ? 0 : delta.height
   const requestedWidth = movesLeftEdge ? currentSize.width - widthDelta : currentSize.width + widthDelta
   const requestedHeight = movesTopEdge ? currentSize.height - heightDelta : currentSize.height + heightDelta
-  const width = Math.max(ResizableMinWidth, Math.min(requestedWidth, maxSize?.width ?? Number.POSITIVE_INFINITY))
-  const height = Math.max(ResizableMinHeight, Math.min(requestedHeight, maxSize?.height ?? Number.POSITIVE_INFINITY))
+  const width = Math.max(MIN_CHAT_WIDTH_PX, Math.min(requestedWidth, maxSize?.width ?? Number.POSITIVE_INFINITY))
+  const height = Math.max(MIN_CHAT_HEIGHT_PX, Math.min(requestedHeight, maxSize?.height ?? Number.POSITIVE_INFINITY))
   const x = movesLeftEdge ? ensurePositiveCoordinate(fixedRight - width) : startCoordinates.x
   const y = movesTopEdge ? ensurePositiveCoordinate(fixedBottom - height) : startCoordinates.y
 

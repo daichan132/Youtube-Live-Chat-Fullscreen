@@ -9,6 +9,7 @@ The popup, content script, and settings page each own a separate Jotai store and
 | Responsibility | Module |
 | --- | --- |
 | Settings types and defaults | `shared/settings/model.ts`, `defaults.ts` |
+| Numeric appearance bounds used by normalization and controls | `shared/settings/appearanceLimits.ts` |
 | Domain/value mapping, Storage items and envelope validation | `shared/settings/storageDomains.ts` |
 | Startup and read-only compatibility decoding | `shared/settings/readSettingsSnapshot.ts` |
 | Serialized writes, bounded retry, notifications and bulk import | `shared/settings/repository.ts` |
@@ -52,6 +53,8 @@ A newer local write or valid external committed event invalidates an obsolete fa
 
 Disposing a UI runtime removes its notifications but does not discard an in-flight save. The repository keeps its Storage listeners until pending writes and imports finish, so a newer external commit can still cancel an older delayed retry. With no UI watchers or pending operations, it releases those listeners.
 
+Extension pages also track `pagehide` during asynchronous startup. If the page closes before initialization completes, a late runtime is disposed without mounting; a late startup failure does not render a fallback into the closed page.
+
 Appearance and locale notifications carry an optional `SettingsCommitSource`. A read response is an own `readback` acknowledgement only when its envelope has this repository's writer ID; reading another writer's envelope is an `external` commit. Confirmed own imports use `import`. Notifications without a source are treated as external by the runtime. This metadata is in memory only; it does not change the stored envelope.
 
 `flush()` waits for both domain tails and the reserved import barrier, rechecking when new work arrives. `createAppRuntime` applies repository notifications without echoing them to Storage.
@@ -77,6 +80,7 @@ A newer local language selection is not cancelled by an acknowledgement of an ea
 Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
 
 Legacy migration maps only `default1`–`default7` to built-in presets; custom entries require their own style object in `presetItemStyles`.
+Duplicate legacy custom IDs receive a unique numeric suffix within the current ID length limit. IDs are trimmed before collision checks so they remain unique after normalization and reloading.
 
 Both built-in and custom preset entries may be deleted after confirmation. Deleting a built-in removes its list entry, not its code-catalog profile. Persisted lists, including an empty list, are authoritative: reload and version-2 backup normalization must not restore deleted built-ins.
 

@@ -27,6 +27,28 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
     await page.setViewportSize({ width: 1280, height: 720 })
   })
 
+  test('keeps native text undo separate from style undo on a range input', async ({ page }) => {
+    const range = page.getByRole('slider', { name: 'Text Size', exact: true })
+    const initial = Number(await range.inputValue())
+    await range.focus()
+    await page.keyboard.press('ArrowRight')
+    await expect(range).toHaveValue(String(initial + 1))
+
+    await page.getByRole('button', { name: 'Font', exact: true }).click()
+    const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
+    await expect(search).toBeFocused()
+    await page.keyboard.type('Roboto')
+    await expect(search).toHaveValue('Roboto')
+    await page.keyboard.press('ControlOrMeta+Z')
+    await expect.poll(async () => (await search.inputValue()).length).toBeLessThan('Roboto'.length)
+    await expect(range).toHaveValue(String(initial + 1))
+
+    await page.keyboard.press('Escape')
+    await range.focus()
+    await page.keyboard.press('ControlOrMeta+Z')
+    await expect(range).toHaveValue(String(initial))
+  })
+
   for (const viewport of [
     { width: 400, height: 300 },
     { width: 400, height: 720 },

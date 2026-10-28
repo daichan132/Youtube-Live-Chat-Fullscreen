@@ -21,6 +21,15 @@ describe('normalizeRGBA', () => {
 })
 
 describe('normalizeChatProfile', () => {
+  it.each([
+    { key: 'fontSize', min: 10, max: 40 },
+    { key: 'blur', min: 0, max: 20 },
+    { key: 'spacing', min: 0, max: 40 },
+  ] as const)('clamps $key to its supported range', ({ key, min, max }) => {
+    expect(normalizeChatProfile({ appearance: { [key]: min - 1 } }).appearance[key]).toBe(min)
+    expect(normalizeChatProfile({ appearance: { [key]: max + 1 } }).appearance[key]).toBe(max)
+  })
+
   it('normalizes the nested v7 profile without creating legacy fields', () => {
     const result = normalizeChatProfile({
       appearance: {

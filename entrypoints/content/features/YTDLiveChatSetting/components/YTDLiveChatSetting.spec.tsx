@@ -59,6 +59,16 @@ describe('YTDLiveChatSetting history controls', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize + 2)
   })
 
+  it('handles style undo from the focused range control', () => {
+    const originalFontSize = store.get(chatSettingsStateAtom).profile.appearance.fontSize
+    const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } })
+
+    fireEvent.keyDown(getByRole('slider', { name: 'content.setting.fontSize' }), { key: 'z', metaKey: true })
+
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize)
+  })
+
   it('exposes disabled undo and redo buttons until matching history exists', () => {
     const originalBlur = store.get(chatSettingsStateAtom).profile.appearance.blur
     const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)

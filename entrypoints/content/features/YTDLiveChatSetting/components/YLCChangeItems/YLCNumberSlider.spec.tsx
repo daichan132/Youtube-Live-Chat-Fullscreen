@@ -21,10 +21,7 @@ describe('YLCNumberSlider', () => {
       profile: { ...profile, appearance: { ...profile.appearance, fontSize: 25 } },
     })
 
-    const { getByRole } = renderWithStore(
-      <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />,
-      store,
-    )
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.fontSize' })
     expect(slider.getAttribute('aria-valuetext')).toBe('25px')
@@ -41,10 +38,7 @@ describe('YLCNumberSlider', () => {
       },
     })
 
-    const { getByRole } = renderWithStore(
-      <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />,
-      store,
-    )
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.fontSize' })
     const setPointerCapture = vi.fn()
@@ -71,7 +65,7 @@ describe('YLCNumberSlider', () => {
       },
     })
 
-    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' min={0} max={40} />, store)
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.space' })
     fireEvent.pointerDown(slider)

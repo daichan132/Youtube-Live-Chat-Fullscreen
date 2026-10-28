@@ -57,6 +57,38 @@ describe('settings repository', () => {
     expect(await chrome.storage.local.get(null)).toEqual(before)
   })
 
+  it.each(['light', 'dark', 'system'] as const)('loads the current %s theme over compatibility data', async theme => {
+    await chrome.storage.local.set({
+      [LEGACY_GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'old', value: { themeMode: 'dark' } },
+      [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'current', value: theme },
+    })
+
+    const snapshot = await createSettingsRepository('reader', null, immediateRetry).load()
+
+    expect(snapshot.global.themeMode).toBe(theme)
+  })
+
+  it('falls back to the valid compatibility theme when the current theme is invalid', async () => {
+    await chrome.storage.local.set({
+      [LEGACY_GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'old', value: { themeMode: 'dark' } },
+      [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'current', value: 'DARK' },
+    })
+
+    const snapshot = await createSettingsRepository('reader', null, immediateRetry).load()
+
+    expect(snapshot.global.themeMode).toBe('dark')
+  })
+
+  it('uses the default when the compatibility theme is invalid', async () => {
+    await chrome.storage.local.set({
+      [LEGACY_GLOBAL_STORAGE_KEY]: { schemaVersion: 1, writerId: 'old', value: { themeMode: 'DARK' } },
+    })
+
+    const snapshot = await createSettingsRepository('reader', null, immediateRetry).load()
+
+    expect(snapshot.global.themeMode).toBe('system')
+  })
+
   it('loads current and legacy settings without rewriting global or chat data during startup', async () => {
     await chrome.storage.local.set({
       [LEGACY_GLOBAL_STORAGE_KEY]: {
