@@ -24,10 +24,7 @@ const getIframeHrefFromSrc = (iframe: HTMLIFrameElement) => iframe.getAttribute(
 
 export const getLiveChatIframes = () => queryAllProbes<HTMLIFrameElement>(document, nativeChatIframeProbe).elements
 
-const getMoviePlayerVideoId = () => {
-  const moviePlayer = getYouTubeMoviePlayer()
-  return getYouTubePlayerVideoId(moviePlayer, readYouTubePlayerVideoData(moviePlayer))
-}
+const getMoviePlayerVideoId = (player = getYouTubeMoviePlayer()) => getYouTubePlayerVideoId(player, readYouTubePlayerVideoData(player))
 
 const hasCurrentPageVideoMarker = (currentVideoId: string) => {
   return (
@@ -174,7 +171,7 @@ const isCurrentNativeIframe = (iframe: HTMLIFrameElement, currentVideoId: string
   if (iframe.getAttribute(YLC_CHAT_ATTR) === 'true' || iframe.getAttribute(YLC_OWNED_ATTR) === 'true') return false
   const watch = host.closest(watchSurfaceProbe.selectors.join(', '))
   const player = getYouTubeMoviePlayer()
-  const playerVideoId = getMoviePlayerVideoId()
+  const playerVideoId = getMoviePlayerVideoId(player)
   if (
     getCurrentYouTubeVideoId() !== currentVideoId ||
     watch?.getAttribute('video-id') !== currentVideoId ||

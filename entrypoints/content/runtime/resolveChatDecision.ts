@@ -60,7 +60,6 @@ export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets
         mode: 'live',
         source: {
           kind: 'live_direct',
-          videoId: evidence.videoId,
           url: getManagedLiveChatUrl(evidence.videoId),
         },
       }
@@ -71,7 +70,6 @@ export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets
       mode: 'live',
       source: {
         kind: 'live_borrow',
-        videoId: evidence.videoId,
         iframe: targets.chatIframe,
       },
     }
@@ -84,7 +82,6 @@ export const resolveChatDecision = (evidence: PageEvidence, targets: PageTargets
       mode: 'live',
       source: {
         kind: 'live_direct',
-        videoId: evidence.videoId,
         url: getManagedLiveChatUrl(evidence.videoId),
       },
     }

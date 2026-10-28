@@ -24,6 +24,7 @@ const createFakeLease = (iframe: HTMLIFrameElement) => {
     attach: vi.fn(() => {
       state = 'attached'
     }),
+    setBorrowedMode: vi.fn(),
     captureDocumentStyle: vi.fn(() => true),
     reconcile: vi.fn(() => {
       state = 'released'
@@ -75,10 +76,7 @@ describe('ResourceReconciler', () => {
     const scope = createSessionScope(1)
     resources.setProfile(DEFAULT_CHAT_PROFILE)
     resources.setOverlayContainer(document.createElement('div'))
-    resources.createIframe(
-      { kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', videoId: 'video-1', iframe } },
-      1,
-    )
+    resources.createIframe({ kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', iframe } }, 1)
     try {
       expect(resources.initializeIframe(scope, vi.fn())).toBe(false)
       expect(doc.querySelector('style[data-ylc-style-injected]')).toBeNull()
@@ -94,6 +92,100 @@ describe('ResourceReconciler', () => {
       scope.dispose()
     }
   })
+
+  it.each([false, true])(
+    'keeps one lease through same-iframe live and replay changes when the original host is missing=%s',
+    hostMissing => {
+      window.history.replaceState({}, '', '/watch?v=video-1')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', 'video-1')
+      const iframe = document.createElement('iframe')
+      iframe.src = 'https://www.youtube.com/live_chat?v=video-1'
+      const makeDocument = (path: string) => {
+        const doc = document.implementation.createHTMLDocument('chat')
+        doc.body.innerHTML =
+          '<yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer>'
+        doc.documentElement.style.setProperty('--extension-yt-live-chat-font-size', '37px')
+        return new Proxy(doc, {
+          get(target, key) {
+            if (key === 'location') return { href: `https://www.youtube.com/${path}?v=video-1` }
+            const value = Reflect.get(target, key, target)
+            return typeof value === 'function' ? value.bind(target) : value
+          },
+        })
+      }
+      let currentDocument = makeDocument('live_chat')
+      Object.defineProperty(iframe, 'contentDocument', { configurable: true, get: () => currentDocument })
+      host.append(iframe)
+      const carrier = document.createElement('div')
+      document.body.append(host, carrier)
+      const createLease = vi.fn(createIframeLease)
+      const resources = new ResourceReconciler({ createLease })
+      const scope = createSessionScope(1)
+      resources.setProfile(DEFAULT_CHAT_PROFILE)
+      resources.setOverlayContainer(carrier)
+      const makePlan = (decision: Extract<ChatDecision, { kind: 'available' }>): RuntimePlan => ({
+        ...acquirePlan(decision),
+        presentation: 'preserve',
+        layout: 'none',
+      })
+      const live = makePlan({
+        kind: 'available',
+        videoId: 'video-1',
+        mode: 'live',
+        source: { kind: 'live_borrow', iframe },
+      })
+      const replay = makePlan({ kind: 'available', videoId: 'video-1', mode: 'archive', source: { kind: 'archive_borrow', iframe } })
+      const currentHost = hostMissing ? document.createElement('ytd-live-chat-frame') : host
+      currentHost.setAttribute('video-id', 'video-1')
+      const targets = {
+        player: null,
+        fullscreenRoot: null,
+        rightControls: null,
+        nativeChatHost: currentHost,
+        nativeChatIframe: iframe,
+        chatIframe: iframe,
+        archiveOpenControl: null,
+      }
+      try {
+        expect(resources.reconcilePlan(live, null, scope, vi.fn()).initialization?.success).toBe(true)
+        const lease = resources.lease
+        if (!lease) throw new Error('Expected a borrowed live lease')
+        expect(lease.kind).toBe('borrowed-live')
+        const context = iframe.contentWindow
+        if (hostMissing) host.remove()
+        currentDocument = makeDocument('live_chat_replay')
+        const replayDocument = iframe.contentDocument
+        expect(resources.reconcilePlan(replay, null, scope, vi.fn()).initialization?.success).toBe(true)
+        expect(resources.lease).toBe(lease)
+        expect(lease.state).toBe('attached')
+        expect(resources.getDiagnosticSnapshot().chat.kind).toBe('borrowed-replay')
+        expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(0)
+        expect(iframe.contentWindow).toBe(context)
+        expect(iframe.contentDocument).toBe(replayDocument)
+        expect(createLease).toHaveBeenCalledOnce()
+
+        if (hostMissing) document.body.append(currentHost)
+        resources.reconcileRestoring(targets)
+        expect(carrier.querySelector('iframe')).toBe(iframe)
+        expect(currentHost.querySelector('iframe')).toBeNull()
+        currentDocument = makeDocument('live_chat')
+        const laterLiveDocument = iframe.contentDocument
+        expect(resources.reconcilePlan(live, null, scope, vi.fn()).initialization?.success).toBe(true)
+        expect(resources.lease).toBe(lease)
+        expect(resources.getDiagnosticSnapshot().chat.kind).toBe('borrowed-live')
+        expect(iframe.contentWindow).toBe(context)
+        expect(iframe.contentDocument).toBe(laterLiveDocument)
+        expect(createLease).toHaveBeenCalledOnce()
+        resources.clear(targets)
+        expect(currentHost.querySelector('iframe')).toBe(iframe)
+        expect(laterLiveDocument?.documentElement.style.getPropertyValue('--extension-yt-live-chat-font-size')).toBe('37px')
+      } finally {
+        resources.clear()
+        scope.dispose()
+      }
+    },
+  )
 
   it.each(['live_borrow', 'archive_borrow', 'live_direct'] as const)(
     'retains the exact iframe and lease across repeated %s acquisition plans',
@@ -115,9 +207,9 @@ describe('ResourceReconciler', () => {
         mode: kind === 'archive_borrow' ? 'archive' : 'live',
         source:
           kind === 'live_direct'
-            ? { kind, videoId: 'video-1', url: 'https://www.youtube.com/live_chat?v=video-1' }
+            ? { kind, url: 'https://www.youtube.com/live_chat?v=video-1' }
             : kind === 'live_borrow'
-              ? { kind, videoId: 'video-1', iframe }
+              ? { kind, iframe }
               : { kind, iframe },
       }
       const plan: RuntimePlan = {

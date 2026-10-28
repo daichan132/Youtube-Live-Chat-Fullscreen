@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react'
-import { observeChatPurchaseUI } from '../runtime/resources/ChatChromeLease'
-import { isAccessibleNode } from '../runtime/resources/isAccessibleNode'
+import { observeChatPurchaseUI } from '../chat/shared/chatPurchaseActivity'
+import { isAccessibleNode } from '../chat/shared/isAccessibleNode'
 
 /** Bind to the current iframe document, including native reloads and replacement. */
 export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (active: boolean) => void) => {
@@ -23,6 +23,7 @@ export const useChatPurchaseActivity = (carrier: HTMLElement | null, onChange: (
       } catch {
         // A native payment navigation may be cross-origin; do not inspect it.
       }
+      if (!isAccessibleNode(nextDocument)) nextDocument = null
       const nextBody = nextDocument?.body ?? null
       if (nextIframe === iframe && nextDocument === chatDocument && nextBody === body) return
       release?.()

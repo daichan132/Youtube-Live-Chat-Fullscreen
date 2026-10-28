@@ -77,8 +77,7 @@ export class ContentBootstrap {
     if (!this.started) return
     this.started = false
     this.transitionSurface(null)
-    this.session?.dispose()
-    this.session = null
+    this.disposeSession()
   }
 
   reconcileLocation = async (href = this.readHref(), options: ReconcileLocationOptions = {}) => {
@@ -87,8 +86,7 @@ export class ContentBootstrap {
 
     if (!surface) {
       this.transitionSurface(null)
-      this.session?.dispose()
-      this.session = null
+      this.disposeSession()
       return
     }
 
@@ -150,6 +148,12 @@ export class ContentBootstrap {
       void this.reconcileLocation()
     }
     return { ...this.getStatus(), retry: 'accepted' }
+  }
+
+  private disposeSession() {
+    const session = this.session
+    this.session = null
+    session?.dispose()
   }
 
   private transitionSurface(nextSurfaceKey: string | null) {

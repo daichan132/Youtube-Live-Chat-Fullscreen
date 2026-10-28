@@ -240,4 +240,53 @@ describe('ContentBootstrap', () => {
     await flushAsyncWork()
     expect(stale.dispose).toHaveBeenCalledTimes(1)
   })
+
+  it('allows a new session after disposal throws during navigation away', async () => {
+    let href = 'https://www.youtube.com/watch?v=live'
+    const failure = new Error('session cleanup failed')
+    const previous = {
+      dispose: vi.fn(() => {
+        throw failure
+      }),
+    }
+    const next = { dispose: vi.fn() }
+    const createSession = vi.fn<() => Promise<ContentSession>>().mockResolvedValueOnce(previous).mockResolvedValueOnce(next)
+    const bootstrap = new ContentBootstrap(createSession, { readHref: () => href })
+    bootstraps.push(bootstrap)
+    bootstrap.start()
+    await flushAsyncWork()
+    expect(bootstrap.getStatus().status).toBe('running')
+
+    href = 'https://www.youtube.com/'
+    await expect(bootstrap.reconcileLocation()).rejects.toBe(failure)
+    expect(previous.dispose).toHaveBeenCalledOnce()
+
+    href = 'https://www.youtube.com/watch?v=live'
+    await bootstrap.reconcileLocation()
+    expect(createSession).toHaveBeenCalledTimes(2)
+    expect(bootstrap.getStatus().status).toBe('running')
+  })
+
+  it('allows restart after disposal throws', async () => {
+    const href = 'https://www.youtube.com/watch?v=live'
+    const failure = new Error('session cleanup failed')
+    const previous = {
+      dispose: vi.fn(() => {
+        throw failure
+      }),
+    }
+    const next = { dispose: vi.fn() }
+    const createSession = vi.fn<() => Promise<ContentSession>>().mockResolvedValueOnce(previous).mockResolvedValueOnce(next)
+    const bootstrap = new ContentBootstrap(createSession, { readHref: () => href })
+    bootstraps.push(bootstrap)
+    bootstrap.start()
+    await flushAsyncWork()
+
+    expect(() => bootstrap.dispose()).toThrow(failure)
+    expect(previous.dispose).toHaveBeenCalledOnce()
+    bootstrap.start()
+    await flushAsyncWork()
+    expect(createSession).toHaveBeenCalledTimes(2)
+    expect(bootstrap.getStatus().status).toBe('running')
+  })
 })

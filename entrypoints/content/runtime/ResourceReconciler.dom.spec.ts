@@ -84,7 +84,7 @@ const acquireNativeChat = (mode: 'live' | 'archive') => {
     kind: 'available',
     videoId: 'video-1',
     mode,
-    source: mode === 'archive' ? { kind: 'archive_borrow', iframe } : { kind: 'live_borrow', videoId: 'video-1', iframe },
+    source: mode === 'archive' ? { kind: 'archive_borrow', iframe } : { kind: 'live_borrow', iframe },
   }
   const activePlan: RuntimePlan = {
     monitoring: 'active',

@@ -79,7 +79,26 @@ export class ResourceReconciler {
     if (pageTargets) this.reconcileRestoring(pageTargets)
 
     if (plan.chat.kind === 'none') this.releaseIframe(pageTargets, plan.chat.ensureNativeVisible)
-    if (plan.chat.kind === 'acquire' && !this.sourceMatches(plan.chat.decision)) this.releaseIframe(pageTargets)
+    if (plan.chat.kind === 'acquire') {
+      const { decision } = plan.chat
+      if (!this.sourceMatches(decision)) this.releaseIframe(pageTargets)
+      else {
+        switch (decision.source.kind) {
+          case 'live_direct':
+            break
+          case 'live_borrow':
+            this.iframeLease?.setBorrowedMode('live')
+            break
+          case 'archive_borrow':
+            this.iframeLease?.setBorrowedMode('replay')
+            break
+          default: {
+            const unhandled: never = decision.source
+            void unhandled
+          }
+        }
+      }
+    }
     if (plan.monitoring === 'inactive') this.abandonRestoring()
 
     if (plan.layout === 'none') {
@@ -253,8 +272,19 @@ export class ResourceReconciler {
   private sourceMatches(decision: AvailableDecision) {
     const lease = this.iframeLease
     if (!lease || lease.videoId !== decision.videoId) return false
-    if (decision.source.kind === 'live_direct') return lease.ownership === 'managed'
-    return lease.ownership === 'borrowed' && lease.iframe === decision.source.iframe
+    const source = decision.source
+    switch (source.kind) {
+      case 'live_direct':
+        return lease.ownership === 'managed'
+      case 'live_borrow':
+      case 'archive_borrow':
+        return lease.ownership === 'borrowed' && lease.iframe === source.iframe
+      default: {
+        const unhandled: never = source
+        void unhandled
+        return false
+      }
+    }
   }
 
   private getPresentationFlags(mode: RuntimePlan['presentation']) {

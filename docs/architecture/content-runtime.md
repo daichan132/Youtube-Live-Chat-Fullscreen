@@ -36,7 +36,9 @@ A channel live entry is valid before YouTube has resolved the current stream. `g
 
 `ContentBootstrap` creates no session on unsupported pages. Session construction is normalized through a promise so synchronous and asynchronous failures enter the same bounded retry sequence: initial attempt, 250 ms, then 1 second. After exhaustion it reports only a sanitized route-level failure and remains stopped until the surface changes or a completed navigation explicitly retries it.
 
-An activation token prevents a session that finishes after navigation from being installed. A stale constructed session is disposed immediately.
+An activation token prevents a session that finishes after navigation from being installed. A stale constructed session is disposed immediately. When leaving a supported surface or disposing the bootstrap, the active session reference is cleared before disposal, so a cleanup error cannot prevent a later activation.
+
+Session creation tracks the React root before rendering because WXT inserts the shadow host before calling `onMount`. If mount fails, the session attempts to remove the partially inserted UI and independently releases the root, chat runtime, and settings runtime while preserving the original startup error. Cleanup failures do not prevent the remaining owners from being released.
 
 ## One reconcile pass
 
@@ -88,7 +90,7 @@ Auto-placement has its own player-scoped observer. It runs only while geometry i
 
 Changing any identity component first applies the stop plan to current resources, disposes the old scope, and creates the next generation. Deferred callbacks compare their captured scope or generation against the current one and no-op after replacement.
 
-Signals are coalesced into one animation frame. Retry work uses `SessionScope`; there is no interval and no unbounded retry loop.
+Signals are coalesced into one animation frame. A retry can reconcile before an already-scheduled frame; when that observation changes the generation, it cancels an old observer-only frame, and callbacks from the disposed observer cannot schedule another. A page signal received during observation, including one coalesced into that frame, still gets its own reconciliation. Retry work uses `SessionScope`; there is no interval and no unbounded retry loop.
 
 YouTube's `yt-page-data-updated` also schedules observation: updates inside the loaded chat document do not reach the top-document MutationObserver. Bursts share the same animation frame, and the content scope removes this listener on stop. The event is a wake-up signal; DOM and source evidence still determine the decision.
 
@@ -124,13 +126,13 @@ Four lease types own page mutations:
 
 `ChatChromeLease` clears measurements from its previous header and input targets before adopting and measuring replacements. This applies to collapse, expansion, and observer-driven remeasurement, including a target replaced before its mutation callback runs. Expansion settling and release clear every measurement still owned by the lease.
 
-Firefox can revoke DOM wrappers when an iframe document is destroyed during navigation. Chat-chrome and scroll-anchor cleanup release their observers and references without touching those unreadable nodes; the destroyed realm has already discarded its own timers and listeners. Detached nodes whose wrappers remain readable still receive normal style and listener restoration. Queued body-replacement callbacks also check that their document wrapper remains readable before accessing its body. A retired document must not prevent the next live, replay or no-chat session from reconciling.
+Firefox can revoke DOM wrappers when an iframe document is destroyed during navigation. Chat-chrome, scroll-anchor, and overlay document cleanup release their observers and references without touching those unreadable nodes; the destroyed realm has already discarded its own timers and listeners. Detached nodes whose wrappers remain readable still receive normal style and listener restoration. Queued body-replacement callbacks also check that their document wrapper remains readable before accessing its body. A retired document must not prevent the next live, replay or no-chat session from reconciling.
 
-Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. On teardown, the chat iframe is restored before layout and presentation are removed.
+Resource reconciliation uses a fixed order. An incompatible iframe is released before another is acquired. If a ready live or replay source uses the same borrowed iframe for the same video, its lease and original restoration snapshot remain in place while its diagnostic kind follows the source. On teardown, the chat iframe is restored before layout and presentation are removed.
 
 Profile and chat-chrome updates wait until the lease is attached; selecting a native iframe does not authorize changing it before borrowing. Before applying a profile to a borrowed document, the reconciler captures that document's original styles even if its load event has not arrived. Capture remains once per document, so later profile changes and load notifications cannot replace the native snapshot with extension styles.
 
-The chat-chrome lease observes native purchase visibility at the catalogued picker/offer/loading boundaries. It keeps a requested collapse pending while a purchase is open, then resumes the requested intent when the native UI closes. Its purchase-active body class is extension-owned and cleared on document replacement or release. The overlay separately observes the current carrier document to keep presentation visible and temporarily fit purchase content without committing geometry. If the same frame becomes inaccessible after an open offer, its previous document observer is released while the presentation remains held until an accessible document returns or the frame is removed/replaced. This does not inspect or style a cross-origin payment destination. Neither observer activates a paid action or modifies native event routing.
+The shared `chatPurchaseActivity.ts` observes native purchase visibility at the catalogued picker/offer/loading boundaries. The chat-chrome lease and the overlay independently bind this observer to their current document; neither owns the other's lifecycle. The lease keeps a requested collapse pending while a purchase is open, then resumes the requested intent when the native UI closes. Its purchase-active body class is extension-owned and cleared on document replacement or release. The overlay separately observes the current carrier document to keep presentation visible and temporarily fit purchase content without committing geometry. If the same frame becomes inaccessible or returns a revoked document after an open offer, its previous document observer is released while the presentation remains held until an accessible document returns or the frame is removed/replaced. This does not inspect or style a cross-origin payment destination. Neither observer activates a paid action or modifies native event routing.
 
 Borrowed iframe restoration tries, in order:
 
@@ -152,7 +154,7 @@ Expected pending chat states use the model backoff:
 
 Each search or recovery cycle schedules at most 12 retry waits: the first four delays above, followed by eight 5-second waits. This limits scheduled waiting to 43.75 seconds, excluding observation work and animation-frame scheduling. Exhaustion releases runtime resources, hides the loading UI, and moves the view to `unavailable`. A new video/session identity or an explicit recovery starts a fresh budget.
 
-An unexpected reconcile exception records `UNEXPECTED_RUNTIME_ERROR`, clears owned resources best-effort, resets the model and generation scope, and permits one recovery attempt. A second exception stops instead of looping.
+An unexpected reconcile exception or synchronous resource-update exception from a profile, carrier, or interaction setter records `UNEXPECTED_RUNTIME_ERROR`, clears owned resources best-effort, resets the model and generation scope, and permits one recovery attempt. Requested profile, carrier, and interaction values remain available to the next generation. Successful setter calls do not reset the recovery budget, and a reentrant failure cannot make an outer reconcile appear successful. A second exception stops instead of looping.
 
 Diagnostic reports contain the extension version, browser family, sanitized evidence, current state, lease summary, failure code, and a bounded trace. They exclude URLs, video IDs, chat text, user names, and other user-specific content.
 
@@ -167,7 +169,7 @@ Diagnostic reports contain the extension version, browser family, sanitized evid
 
 - At most one `ContentSession` exists, and only on a supported YouTube content surface. `ContentBootstrap.spec.ts` and `youtubeSurface.unit.spec.ts` pin the route matrix and stale-activation disposal.
 - Runtime timers, frames, observers, and listeners are scoped and disposed. `SessionScope.spec.ts`, `ChatRuntime.spec.ts`, and `ChatRuntimeRecovery.spec.ts` pin cleanup and bounded recovery.
-- The old iframe is released before a new video, source, or live/archive mode is acquired. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release and replacement behavior.
+- An incompatible iframe is released before a different video or source is acquired. A ready live/replay transition on the same borrowed iframe retains its single lease and updates its kind. `runtimeModel.unit.spec.ts`, `ResourceReconciler.spec.ts`, and `ChatRuntime.spec.ts` assert release, replacement, and same-iframe behavior.
 - Borrowed YouTube DOM is restored rather than deleted. `iframeAttachment.spec.ts` and the deterministic borrow/restore fixture pin exact slot restoration and native inline style values, including `!important` priorities and mixed border/outline longhands. The snapshot covers only owned properties, so unrelated inline declarations survive.
 - Evidence is serializable and diagnostics omit video identity. Observation and sanitizer specs pin both boundaries; `runtimeDiagnosticsPrivacy.dom.spec.ts` exercises the public report with an active borrowed chat containing message text, a viewer name, and URLs.
 - YouTube selector fallbacks have unique IDs and non-empty candidates. `selectorCatalog.spec.ts` also pins stable live-state mutation boundaries.

@@ -66,9 +66,8 @@ const createSnapshot = (overrides: Partial<TestSnapshot> = {}): PageObservation 
   }
 }
 
-const createBorrowSource = (iframe: HTMLIFrameElement, videoId = 'video-1'): ChatSource => ({
+const createBorrowSource = (iframe: HTMLIFrameElement): ChatSource => ({
   kind: 'live_borrow',
-  videoId,
   iframe,
 })
 
@@ -90,6 +89,7 @@ const createLease = (iframe: HTMLIFrameElement, videoId = 'video-1'): ChatIframe
     attach(container) {
       if (!released && iframe.parentElement !== container) container.appendChild(iframe)
     },
+    setBorrowedMode: vi.fn(),
     captureDocumentStyle: vi.fn(() => true),
     reconcile: vi.fn(),
     release: vi.fn(() => {
@@ -297,7 +297,7 @@ describe('ChatRuntime', () => {
           kind: 'available',
           videoId: 'video-2',
           mode: 'live',
-          source: createBorrowSource(secondIframe, 'video-2'),
+          source: createBorrowSource(secondIframe),
         },
       ],
       snapshots: [createSnapshot(), createSnapshot({ videoId: 'video-2', chatIframe: secondIframe })],
@@ -314,6 +314,154 @@ describe('ChatRuntime', () => {
     expect(releaseOrder).toBeLessThan(createOrder)
     expect(harness.carrier.querySelector('iframe')).toBe(secondIframe)
     harness.runtime.stop()
+  })
+
+  it('does not lose a new page signal behind a stale generation frame', () => {
+    let nextFrame = 0
+    const frames = new Map<number, FrameRequestCallback>()
+    const request = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+      const id = ++nextFrame
+      frames.set(id, callback)
+      return id
+    })
+    const cancel = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => {
+      frames.delete(id)
+    })
+    const observers: MutationCallback[] = []
+    vi.stubGlobal(
+      'MutationObserver',
+      class {
+        constructor(callback: MutationCallback) {
+          observers.push(callback)
+        }
+        observe() {}
+        disconnect() {}
+        takeRecords() {
+          return []
+        }
+      },
+    )
+    const runFrame = () => {
+      const first = frames.entries().next().value
+      if (!first) throw new Error('Expected a scheduled animation frame')
+      const [id, callback] = first
+      frames.delete(id)
+      callback(0)
+    }
+    const firstPlayer = document.createElement('div')
+    firstPlayer.id = 'movie_player'
+    const nextPlayer = document.createElement('div')
+    const harness = createHarness({
+      decisions: [
+        { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false },
+        { kind: 'unavailable', videoId: 'video-2' },
+        { kind: 'pending', videoId: 'video-2', mode: 'live', canToggle: false },
+      ],
+      snapshots: [
+        createSnapshot({ player: firstPlayer }),
+        createSnapshot({ videoId: 'video-2', player: nextPlayer }),
+        createSnapshot({ videoId: 'video-2', player: nextPlayer }),
+      ],
+    })
+    try {
+      runFrame()
+      expect(harness.runtime.getGeneration()).toBe(1)
+      expect(observers).toHaveLength(1)
+      observers[0]?.([{ type: 'attributes', target: firstPlayer } as unknown as MutationRecord], {} as MutationObserver)
+      expect(frames.size).toBe(1)
+
+      vi.advanceTimersByTime(250)
+      expect(harness.runtime.getGeneration()).toBe(2)
+      expect(harness.readSnapshot).toHaveBeenCalledTimes(2)
+      expect(frames.size).toBe(0)
+      observers[0]?.([{ type: 'attributes', target: firstPlayer } as unknown as MutationRecord], {} as MutationObserver)
+      expect(frames.size).toBe(0)
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+      expect(frames.size).toBe(1)
+      runFrame()
+
+      expect(harness.readSnapshot).toHaveBeenCalledTimes(3)
+      expect(harness.runtime.getSnapshot().status).toBe('searching')
+    } finally {
+      harness.runtime.stop()
+      vi.unstubAllGlobals()
+      request.mockRestore()
+      cancel.mockRestore()
+    }
+  })
+
+  it.each([false, true])('preserves a page signal during observation with an old observer frame=%s', oldFrame => {
+    let nextFrame = 0
+    const frames = new Map<number, FrameRequestCallback>()
+    const request = vi.spyOn(window, 'requestAnimationFrame').mockImplementation(callback => {
+      const id = ++nextFrame
+      frames.set(id, callback)
+      return id
+    })
+    const cancel = vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(id => {
+      frames.delete(id)
+    })
+    const observers: MutationCallback[] = []
+    vi.stubGlobal(
+      'MutationObserver',
+      class {
+        constructor(callback: MutationCallback) {
+          observers.push(callback)
+        }
+        observe() {}
+        disconnect() {}
+        takeRecords() {
+          return []
+        }
+      },
+    )
+    const runFrame = () => {
+      const first = frames.entries().next().value
+      if (!first) throw new Error('Expected a scheduled animation frame')
+      const [id, callback] = first
+      frames.delete(id)
+      callback(0)
+    }
+    const firstPlayer = document.createElement('div')
+    firstPlayer.id = 'movie_player'
+    const nextPlayer = document.createElement('div')
+    const harness = createHarness({
+      decisions: [
+        { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false },
+        { kind: 'unavailable', videoId: 'video-2' },
+        { kind: 'pending', videoId: 'video-2', mode: 'live', canToggle: false },
+      ],
+      snapshots: [
+        createSnapshot({ player: firstPlayer }),
+        createSnapshot({ videoId: 'video-2', player: nextPlayer }),
+        createSnapshot({ videoId: 'video-2', player: nextPlayer }),
+      ],
+    })
+    try {
+      runFrame()
+      expect(harness.runtime.getGeneration()).toBe(1)
+      expect(observers).toHaveLength(1)
+      if (oldFrame) observers[0]?.([{ type: 'attributes', target: firstPlayer } as unknown as MutationRecord], {} as MutationObserver)
+      harness.readSnapshot.mockImplementationOnce(() => {
+        document.dispatchEvent(new Event('yt-page-data-updated'))
+        document.dispatchEvent(new Event('yt-page-data-updated'))
+        return createSnapshot({ videoId: 'video-2', player: nextPlayer })
+      })
+      vi.advanceTimersByTime(250)
+      expect(harness.runtime.getGeneration()).toBe(2)
+      expect(harness.readSnapshot).toHaveBeenCalledTimes(2)
+      expect(frames.size).toBe(1)
+      runFrame()
+
+      expect(harness.readSnapshot).toHaveBeenCalledTimes(3)
+      expect(harness.runtime.getSnapshot().status).toBe('searching')
+    } finally {
+      harness.runtime.stop()
+      vi.unstubAllGlobals()
+      request.mockRestore()
+      cancel.mockRestore()
+    }
   })
 
   it('cancels retry callbacks owned by the previous video generation', () => {

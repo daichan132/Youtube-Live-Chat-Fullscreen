@@ -22,7 +22,7 @@ const available = (
         kind: 'available',
         videoId,
         mode,
-        source: { kind: 'live_borrow', videoId, iframe: sourceIframe },
+        source: { kind: 'live_borrow', iframe: sourceIframe },
       }
     : {
         kind: 'available',
@@ -198,7 +198,6 @@ describe('runtimeModel', () => {
       mode: 'live',
       source: {
         kind: 'live_direct',
-        videoId: 'video-1',
         url: 'https://www.youtube.com/live_chat?v=video-1',
       },
     }

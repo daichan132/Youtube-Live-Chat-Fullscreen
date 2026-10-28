@@ -13,6 +13,7 @@ export type ChatIframeLease = {
   readonly kind: 'borrowed-live' | 'borrowed-replay' | 'managed-live'
   readonly ownership: 'borrowed' | 'managed'
   readonly state: IframeAttachmentState
+  setBorrowedMode(mode: 'live' | 'replay'): void
   attach(container: HTMLElement): void
   captureDocumentStyle(): boolean
   reconcile(targets?: PageTargets | null): void
@@ -22,12 +23,18 @@ export type ChatIframeLease = {
 
 const createLease = (iframe: HTMLIFrameElement, videoId: string, kind: ChatIframeLease['kind'], generation: number): ChatIframeLease => {
   const attachment = createIframeAttachment(iframe, videoId)
+  let currentKind = kind
   return {
     generation,
     iframe,
     videoId,
-    kind,
+    get kind() {
+      return currentKind
+    },
     ownership: kind === 'managed-live' ? 'managed' : 'borrowed',
+    setBorrowedMode(mode) {
+      if (kind !== 'managed-live') currentKind = mode === 'live' ? 'borrowed-live' : 'borrowed-replay'
+    },
     get state() {
       return attachment.state
     },
@@ -50,6 +57,17 @@ export const createManagedIframeLease = (url: string, videoId: string, generatio
   createLease(createManagedLiveIframe(url), videoId, 'managed-live', generation)
 
 export const createIframeLease = (source: ChatSource, videoId: string, generation = 0): ChatIframeLease => {
-  if (source.kind === 'live_direct') return createManagedIframeLease(source.url, videoId, generation)
-  return createBorrowedIframeLease(source.iframe, videoId, source.kind === 'archive_borrow' ? 'replay' : 'live', generation)
+  switch (source.kind) {
+    case 'live_direct':
+      return createManagedIframeLease(source.url, videoId, generation)
+    case 'live_borrow':
+      return createBorrowedIframeLease(source.iframe, videoId, 'live', generation)
+    case 'archive_borrow':
+      return createBorrowedIframeLease(source.iframe, videoId, 'replay', generation)
+    default: {
+      const unhandled: never = source
+      void unhandled
+      throw new Error('Unsupported chat source')
+    }
+  }
 }

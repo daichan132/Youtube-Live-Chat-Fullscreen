@@ -17,6 +17,7 @@ const makeLease = (state: ChatIframeLease['state'] = 'attached') =>
     ownership: 'borrowed' as const,
     state,
     attach: vi.fn(),
+    setBorrowedMode: vi.fn(),
     captureDocumentStyle: vi.fn(() => true),
     reconcile: vi.fn(),
     release: vi.fn(),
@@ -27,7 +28,7 @@ const decisionFor = (lease: ChatIframeLease): Extract<ChatDecision, { kind: 'ava
   kind: 'available',
   videoId: lease.videoId,
   mode: 'live',
-  source: { kind: 'live_borrow', videoId: lease.videoId, iframe: lease.iframe },
+  source: { kind: 'live_borrow', iframe: lease.iframe },
 })
 
 const observation = (): PageObservation => ({

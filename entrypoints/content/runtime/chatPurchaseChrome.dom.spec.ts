@@ -6,7 +6,8 @@ import {
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
-import { createChatChromeLease, hasOpenChatPurchaseUI, observeChatPurchaseUI } from './resources/ChatChromeLease'
+import { hasOpenChatPurchaseUI, observeChatPurchaseUI } from '../chat/shared/chatPurchaseActivity'
+import { createChatChromeLease } from './resources/ChatChromeLease'
 
 const disposals: Array<() => void> = []
 const settleMutation = async () => {
