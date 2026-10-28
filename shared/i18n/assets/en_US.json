@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Language",
+    "languageLoadError": "Could not load the language. Please select it again.",
     "showChatOnFullscreen": "Fullscreen Chat",
     "links": "Links",
     "donate": "Donate",

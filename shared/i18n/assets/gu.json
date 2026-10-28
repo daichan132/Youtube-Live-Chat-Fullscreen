@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "ભાષા સેટિંગ્સ",
+    "languageLoadError": "ભાષા લોડ થઈ શકી નથી. કૃપા કરીને તેને ફરીથી પસંદ કરો.",
     "showChatOnFullscreen": "ફુલસ્ક્રીન ચેટ",
     "links": "લિંક્સ",
     "donate": "દાન કરો",

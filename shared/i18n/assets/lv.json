@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Valodas iestatījumi",
+    "languageLoadError": "Neizdevās ielādēt valodu. Lūdzu, atlasiet to vēlreiz.",
     "showChatOnFullscreen": "Pilnekrāna čats",
     "links": "Saites",
     "donate": "Ziedot",

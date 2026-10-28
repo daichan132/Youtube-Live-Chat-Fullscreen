@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "ቋንቋ",
+    "languageLoadError": "ቋንቋውን መጫን አልተቻለም። እባክዎ እንደገና ይምረጡት።",
     "showChatOnFullscreen": "የሙሉ ማያ ገጽ ቻት",
     "links": "አገናኞች",
     "donate": "ለግስ",

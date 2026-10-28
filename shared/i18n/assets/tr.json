@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Dil",
+    "languageLoadError": "Dil yüklenemedi. Lütfen tekrar seçin.",
     "showChatOnFullscreen": "Tam ekran sohbeti",
     "links": "Bağlantılar",
     "donate": "Bağış yap",

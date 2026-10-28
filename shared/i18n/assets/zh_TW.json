@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "語言設定",
+    "languageLoadError": "無法載入語言。請重新選擇。",
     "showChatOnFullscreen": "全螢幕聊天室",
     "links": "連結",
     "donate": "贊助",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "भाषा सेटिंग्ज",
+    "languageLoadError": "भाषा लोड करता आली नाही. कृपया ती पुन्हा निवडा.",
     "showChatOnFullscreen": "फुलस्क्रीन चॅट",
     "links": "लिंक्स",
     "donate": "देणगी द्या",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Език",
+    "languageLoadError": "Езикът не можа да се зареди. Моля, изберете го отново.",
     "showChatOnFullscreen": "Чат на цял екран",
     "links": "Връзки",
     "donate": "Дарение",

@@ -155,6 +155,7 @@ export type TranslationKey =
   | 'popup.importReading'
   | 'popup.importWrite'
   | 'popup.language'
+  | 'popup.languageLoadError'
   | 'popup.links'
   | 'popup.recovery.accepted'
   | 'popup.recovery.check'

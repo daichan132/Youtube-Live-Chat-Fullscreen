@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Nyelv",
+    "languageLoadError": "A nyelv betöltése nem sikerült. Válaszd ki újra.",
     "showChatOnFullscreen": "Csevegés teljes képernyőn",
     "links": "Hivatkozások",
     "donate": "Támogatás",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Setări de limbă",
+    "languageLoadError": "Limba nu a putut fi încărcată. Selectați-o din nou.",
     "showChatOnFullscreen": "Chat pe tot ecranul",
     "links": "Linkuri",
     "donate": "Donează",

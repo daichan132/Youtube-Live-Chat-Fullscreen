@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Мова",
+    "languageLoadError": "Не вдалося завантажити мову. Виберіть її ще раз.",
     "showChatOnFullscreen": "Чат у повноекранному режимі",
     "links": "Посилання",
     "donate": "Підтримати",

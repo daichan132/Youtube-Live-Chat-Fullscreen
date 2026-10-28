@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Jezik",
+    "languageLoadError": "Jezik se nije mogao učitati. Odaberite ga ponovno.",
     "showChatOnFullscreen": "Chat na cijelom zaslonu",
     "links": "Poveznice",
     "donate": "Doniraj",

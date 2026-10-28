@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Kieliasetukset",
+    "languageLoadError": "Kielen lataaminen epäonnistui. Valitse se uudelleen.",
     "showChatOnFullscreen": "Koko näytön chat",
     "links": "Linkit",
     "donate": "Lahjoita",

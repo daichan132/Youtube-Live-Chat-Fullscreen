@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Taalinstellingen",
+    "languageLoadError": "De taal kon niet worden geladen. Selecteer deze opnieuw.",
     "showChatOnFullscreen": "Chat op volledig scherm",
     "links": "Links",
     "donate": "Doneren",

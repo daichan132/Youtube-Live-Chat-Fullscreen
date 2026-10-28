@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Keeleseaded",
+    "languageLoadError": "Keele laadimine ebaõnnestus. Palun valige see uuesti.",
     "showChatOnFullscreen": "Täisekraanivestlus",
     "links": "Lingid",
     "donate": "Anneta",

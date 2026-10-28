@@ -7,10 +7,12 @@ import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
 const deferred = <T>() => {
   let resolve!: (value: T) => void
-  const promise = new Promise<T>(next => {
+  let reject!: (reason: unknown) => void
+  const promise = new Promise<T>((next, fail) => {
     resolve = next
+    reject = fail
   })
-  return { promise, resolve }
+  return { promise, resolve, reject }
 }
 
 const messages = (locale: LocaleCode): LocaleMessages => ({ ...EMPTY_MESSAGES, 'popup.theme': locale })
@@ -95,6 +97,26 @@ describe('locale request and runtime disposal boundaries', () => {
     await selectingFrench
 
     expect(runtime.store.get(localeStateAtom).code).toBe('en')
+    expect(repository.saveLocale).not.toHaveBeenCalled()
+  })
+
+  it('does not report an obsolete local load failure after a newer external selection', async () => {
+    const french = deferred<LocaleMessages>()
+    const english = deferred<LocaleMessages>()
+    let initialEnglish = true
+    const { runtime, repository, emitLocale } = await createSession(locale => {
+      if (locale === 'fr') return french.promise
+      if (locale === 'en' && !initialEnglish) return english.promise
+      initialEnglish = false
+      return Promise.resolve(messages(locale))
+    })
+    const selectingFrench = runtime.setLocale('fr')
+    emitLocale('ja')
+    french.reject(new Error('failed French bundle'))
+    await Promise.resolve()
+    english.reject(new Error('failed English fallback'))
+    await expect(selectingFrench).resolves.toBeUndefined()
+    await vi.waitFor(() => expect(runtime.store.get(localeStateAtom).code).toBe('ja'))
     expect(repository.saveLocale).not.toHaveBeenCalled()
   })
 

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Kalbos nustatymai",
+    "languageLoadError": "Nepavyko įkelti kalbos. Pasirinkite ją dar kartą.",
     "showChatOnFullscreen": "Pokalbis visame ekrane",
     "links": "Nuorodos",
     "donate": "Paaukoti",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "اللغة",
+    "languageLoadError": "تعذّر تحميل اللغة. يُرجى اختيارها مرة أخرى.",
     "showChatOnFullscreen": "الدردشة في وضع ملء الشاشة",
     "links": "الروابط",
     "donate": "تبرّع",

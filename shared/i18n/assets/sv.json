@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Språkinställningar",
+    "languageLoadError": "Språket kunde inte läsas in. Välj det igen.",
     "showChatOnFullscreen": "Chatt i helskärm",
     "links": "Länkar",
     "donate": "Donera",

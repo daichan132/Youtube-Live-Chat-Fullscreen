@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Језик",
+    "languageLoadError": "Није могуће учитати језик. Изаберите га поново.",
     "showChatOnFullscreen": "Ћаскање преко целог екрана",
     "links": "Везе",
     "donate": "Донирај",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "ভাষা সেটিংস",
+    "languageLoadError": "ভাষা লোড করা যায়নি। অনুগ্রহ করে আবার নির্বাচন করুন।",
     "showChatOnFullscreen": "ফুলস্ক্রিন চ্যাট",
     "links": "লিঙ্ক",
     "donate": "দান করুন",

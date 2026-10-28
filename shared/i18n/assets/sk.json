@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Jazyk",
+    "languageLoadError": "Jazyk sa nepodarilo načítať. Vyberte ho znova.",
     "showChatOnFullscreen": "Chat na celú obrazovku",
     "links": "Odkazy",
     "donate": "Prispieť",

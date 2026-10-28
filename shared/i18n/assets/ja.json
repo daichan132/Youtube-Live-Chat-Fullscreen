@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "言語設定",
+    "languageLoadError": "言語を読み込めませんでした。もう一度選択してください。",
     "showChatOnFullscreen": "全画面チャット",
     "links": "リンク",
     "donate": "寄付",

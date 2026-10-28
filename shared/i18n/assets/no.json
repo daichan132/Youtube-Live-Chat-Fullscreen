@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Språkinnstillinger",
+    "languageLoadError": "Språket kunne ikke lastes inn. Velg det på nytt.",
     "showChatOnFullscreen": "Fullskjermchat",
     "links": "Lenker",
     "donate": "Doner",

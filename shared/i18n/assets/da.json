@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Sprogindstillinger",
+    "languageLoadError": "Sproget kunne ikke indlæses. Vælg det igen.",
     "showChatOnFullscreen": "Fuldskærmschat",
     "links": "Links",
     "donate": "Donér",

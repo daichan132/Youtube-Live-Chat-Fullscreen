@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "زبان",
+    "languageLoadError": "بارگیری زبان ممکن نشد. لطفاً دوباره آن را انتخاب کنید.",
     "showChatOnFullscreen": "چت تمام‌صفحه",
     "links": "پیوندها",
     "donate": "حمایت مالی",

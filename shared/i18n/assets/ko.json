@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "언어 설정",
+    "languageLoadError": "언어를 불러오지 못했습니다. 다시 선택해 주세요.",
     "showChatOnFullscreen": "전체화면 채팅",
     "links": "링크",
     "donate": "후원하기",

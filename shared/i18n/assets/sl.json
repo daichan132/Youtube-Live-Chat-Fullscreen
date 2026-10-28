@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Jezik",
+    "languageLoadError": "Jezika ni bilo mogoče naložiti. Izberite ga znova.",
     "showChatOnFullscreen": "Klepet na celotnem zaslonu",
     "links": "Povezave",
     "donate": "Doniraj",

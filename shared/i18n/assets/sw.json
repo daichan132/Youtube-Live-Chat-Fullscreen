@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Lugha",
+    "languageLoadError": "Lugha haikuweza kupakiwa. Tafadhali ichague tena.",
     "showChatOnFullscreen": "Gumzo la skrini nzima",
     "links": "Viungo",
     "donate": "Changia",

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Wika",
+    "languageLoadError": "Hindi ma-load ang wika. Pakipili itong muli.",
     "showChatOnFullscreen": "Chat sa fullscreen",
     "links": "Mga link",
     "donate": "Mag-donate",

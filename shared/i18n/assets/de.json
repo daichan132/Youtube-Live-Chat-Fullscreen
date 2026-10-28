@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Sprache",
+    "languageLoadError": "Die Sprache konnte nicht geladen werden. Bitte wähle sie erneut aus.",
     "showChatOnFullscreen": "Vollbild-Chat",
     "links": "Links",
     "donate": "Spenden",

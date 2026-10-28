@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "语言设置",
+    "languageLoadError": "无法加载语言。请重新选择。",
     "showChatOnFullscreen": "全屏聊天",
     "links": "链接",
     "donate": "捐赠",

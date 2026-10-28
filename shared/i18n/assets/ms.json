@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Bahasa",
+    "languageLoadError": "Bahasa tidak dapat dimuatkan. Sila pilih semula.",
     "showChatOnFullscreen": "Sembang skrin penuh",
     "links": "Pautan",
     "donate": "Derma",

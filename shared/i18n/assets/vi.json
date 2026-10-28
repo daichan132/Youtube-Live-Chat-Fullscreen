@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Ngôn ngữ",
+    "languageLoadError": "Không thể tải ngôn ngữ. Vui lòng chọn lại.",
     "showChatOnFullscreen": "Chat toàn màn hình",
     "links": "Liên kết",
     "donate": "Ủng hộ",

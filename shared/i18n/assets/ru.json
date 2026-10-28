@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Язык",
+    "languageLoadError": "Не удалось загрузить язык. Выберите его ещё раз.",
     "showChatOnFullscreen": "Чат в полноэкранном режиме",
     "links": "Ссылки",
     "donate": "Поддержать",

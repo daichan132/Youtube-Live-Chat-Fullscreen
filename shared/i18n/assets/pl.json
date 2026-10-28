@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Język",
+    "languageLoadError": "Nie udało się wczytać języka. Wybierz go ponownie.",
     "showChatOnFullscreen": "Czat na pełnym ekranie",
     "links": "Odnośniki",
     "donate": "Wesprzyj",

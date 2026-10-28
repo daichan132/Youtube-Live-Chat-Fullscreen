@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Configuració de la llengua",
+    "languageLoadError": "No s’ha pogut carregar l’idioma. Torna a seleccionar-lo.",
     "showChatOnFullscreen": "Xat a pantalla completa",
     "links": "Enllaços",
     "donate": "Fes una donació",

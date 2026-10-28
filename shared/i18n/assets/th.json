@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "ภาษา",
+    "languageLoadError": "โหลดภาษาไม่ได้ โปรดเลือกอีกครั้ง",
     "showChatOnFullscreen": "แชทเต็มหน้าจอ",
     "links": "ลิงก์",
     "donate": "บริจาค",

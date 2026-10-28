@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
+import type { LocaleCode, LocaleMessages } from '@/shared/i18n/generated/translationTypes'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { createSettingsRepository } from '@/shared/settings/repository'
@@ -14,9 +15,9 @@ afterEach(async () => {
   vi.restoreAllMocks()
 })
 
-const setup = async () => {
+const setup = async (loadMessages: (locale: LocaleCode) => Promise<LocaleMessages> = async () => EMPTY_MESSAGES) => {
   const repository = createSettingsRepository('language-popup', null, { waitBeforeRetry: async () => {} })
-  const runtime = await createAppRuntime(repository, { loadMessages: async () => EMPTY_MESSAGES })
+  const runtime = await createAppRuntime(repository, { loadMessages })
   cleanups.push(async () => {
     await repository.flush().catch(() => {})
     runtime.dispose()
@@ -67,5 +68,28 @@ describe('LanguageSelector', () => {
     await act(() => repository.flush())
     expect(screen.getByRole('combobox')).toHaveValue('pt_BR')
     expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({ value: 'pt_BR' })
+  })
+
+  it('shows a load failure and lets the user select the language again', async () => {
+    await chrome.storage.local.set({ [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'previous-page', value: 'ja' } })
+    let frenchAvailable = false
+    await setup(async locale => {
+      if (locale === 'ja') return { ...EMPTY_MESSAGES, 'popup.languageLoadError': '言語を読み込めませんでした。もう一度選択してください。' }
+      if (locale === 'fr' && frenchAvailable) return EMPTY_MESSAGES
+      throw new Error('locale assets unavailable')
+    })
+
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'fr' } })
+    expect(await screen.findByRole('alert')).toHaveTextContent('言語を読み込めませんでした')
+    expect(screen.getByRole('combobox')).toHaveValue('ja')
+    expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({ value: 'ja' })
+
+    frenchAvailable = true
+    fireEvent.change(screen.getByRole('combobox'), { target: { value: 'fr' } })
+    await waitFor(() => expect(screen.getByRole('combobox')).toHaveValue('fr'))
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    await waitFor(async () =>
+      expect((await chrome.storage.local.get(LOCALE_STORAGE_KEY))[LOCALE_STORAGE_KEY]).toMatchObject({ value: 'fr' }),
+    )
   })
 })

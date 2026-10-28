@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "Bahasa",
+    "languageLoadError": "Bahasa tidak dapat dimuat. Silakan pilih lagi.",
     "showChatOnFullscreen": "Chat layar penuh",
     "links": "Tautan",
     "donate": "Donasi",

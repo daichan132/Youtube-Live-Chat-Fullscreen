@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "שפה",
+    "languageLoadError": "לא ניתן לטעון את השפה. יש לבחור אותה שוב.",
     "showChatOnFullscreen": "צ׳אט במסך מלא",
     "links": "קישורים",
     "donate": "תרומה",
