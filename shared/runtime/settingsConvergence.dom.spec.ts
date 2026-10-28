@@ -1,8 +1,14 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
-import { APPEARANCE_STORAGE_KEY } from '@/shared/settings/storageKeys'
-import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, effectiveProfileAtom } from '@/shared/state/atoms'
-import { commitStylePatchAtom, finishStyleGestureAtom, previewStylePatchAtom } from '@/shared/state/commands'
+import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, GEOMETRY_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
+import {
+  chatSettingsStateAtom,
+  EMPTY_MESSAGES,
+  editorSessionStateAtom,
+  effectiveProfileAtom,
+  globalSettingsStateAtom,
+} from '@/shared/state/atoms'
+import { commitStylePatchAtom, finishStyleGestureAtom, previewStylePatchAtom, setThemeModeAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
 const deferred = () => {
@@ -56,6 +62,44 @@ afterEach(async () => {
 })
 
 describe('settings persistence and editor convergence', () => {
+  it('saves a local theme and applies another context’s global settings without writing them back', async () => {
+    const { runtime, repository } = await createSession()
+    runtime.store.set(setThemeModeAtom, 'dark')
+    await repository.flush()
+    expect((await chrome.storage.local.get(THEME_STORAGE_KEY))[THEME_STORAGE_KEY]).toEqual({
+      schemaVersion: 1,
+      writerId: 'local-editor',
+      value: 'dark',
+    })
+
+    const theme = { schemaVersion: 1, writerId: 'other-context', value: 'light' }
+    const enabled = { schemaVersion: 1, writerId: 'other-context', value: false }
+    await chrome.storage.local.set({ [THEME_STORAGE_KEY]: theme, [ENABLED_STORAGE_KEY]: enabled })
+    await vi.waitFor(() => expect(runtime.store.get(globalSettingsStateAtom)).toEqual({ themeMode: 'light', ytdLiveChat: false }))
+    await repository.flush()
+    expect(await chrome.storage.local.get([THEME_STORAGE_KEY, ENABLED_STORAGE_KEY])).toEqual({
+      [THEME_STORAGE_KEY]: theme,
+      [ENABLED_STORAGE_KEY]: enabled,
+    })
+  })
+
+  it('applies external geometry without discarding an appearance draft or its history', async () => {
+    const { runtime, repository } = await createSession()
+    runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 24 } })
+    await repository.flush()
+    runtime.store.set(previewStylePatchAtom, { id: 'font-size', patch: { appearance: { fontSize: 30 } } })
+    const editing = structuredClone(runtime.store.get(editorSessionStateAtom))
+    const geometry = { reference: 'player', rect: { x: 0.2, y: 0.1, width: 0.3, height: 0.4 }, pinned: true }
+    const external = { schemaVersion: 1, writerId: 'other-context', value: geometry }
+    await chrome.storage.local.set({ [GEOMETRY_STORAGE_KEY]: external })
+    await vi.waitFor(() => expect(runtime.store.get(chatSettingsStateAtom).geometry).toEqual(geometry))
+
+    expect(runtime.store.get(editorSessionStateAtom)).toEqual(editing)
+    expect(runtime.store.get(effectiveProfileAtom).appearance.fontSize).toBe(30)
+    await repository.flush()
+    expect((await chrome.storage.local.get(GEOMETRY_STORAGE_KEY))[GEOMETRY_STORAGE_KEY]).toEqual(external)
+  })
+
   it('keeps the next draft and undo history when a previous save is acknowledged', async () => {
     const { runtime, repository } = await createSession()
     const readback = pauseNextReadback()

@@ -47,8 +47,6 @@ test.describe('extension accessibility', () => {
     await expect(page.locator('[data-ylc-control-rail]')).toBeVisible()
     await page.locator('[data-ylc-placement-button]').click()
     await expect(page.locator('[data-ylc-placement-panel]')).toBeVisible()
-    await page.screenshot({ path: '/tmp/ylc-placement-final.png' })
-
     const results = await new AxeBuilder({ page })
       .include('#shadow-root-live-chat')
       .include(switchButtonContainerSelector)

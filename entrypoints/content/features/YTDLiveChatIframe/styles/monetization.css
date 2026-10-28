@@ -19,8 +19,8 @@ body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-render
 body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-renderer {
   color: var(--extension-yt-live-font-color) !important;
   background: var(--extension-yt-live-panel-background-color) !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
 }
 body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-header-renderer,
 body.custom-yt-app-live-chat-extension ytd-sponsorships-gift-offer-body-renderer {
@@ -201,8 +201,8 @@ body.custom-yt-app-live-chat-extension
 body.custom-yt-app-live-chat-extension yt-live-chat-product-picker-panel-view-model {
   background: var(--extension-yt-live-floating-panel-background-color) !important;
   background-color: var(--extension-yt-live-floating-panel-background-color) !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   overflow: hidden;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-message-buy-flow-renderer,
@@ -211,8 +211,8 @@ body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-render
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-pack-renderer {
   background: transparent !important;
   background-color: transparent !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   overflow: hidden;
 }
 body.custom-yt-app-live-chat-extension yt-live-chat-super-sticker-preview-renderer #footer {

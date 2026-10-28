@@ -33,6 +33,36 @@ test.describe('extension visual regression', () => {
     await expect(overlay).toHaveScreenshot('overlay-default.png')
   })
 
+  test('expanded reaction surface visibly blurs the content behind it', async ({ page, extension }, testInfo) => {
+    await patchOverlayStore(extension, { profile: { appearance: { blur: 0 } } })
+    await openDeterministicOverlay(page)
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('body').evaluate(body => {
+      body.insertAdjacentHTML(
+        'beforeend',
+        `<div data-reaction-blur-probe style="position:fixed;left:30px;top:50px;width:160px;height:100px;
+          background:repeating-linear-gradient(90deg, black 0 8px, white 8px 16px);z-index:1000">
+          <yt-reaction-control-panel-view-model reaction-control-panel-expanded>
+            <div id="fab-container" style="position:absolute;inset:0"></div>
+          </yt-reaction-control-panel-view-model>
+        </div>`,
+      )
+    })
+    const surface = chat.locator('[data-reaction-blur-probe] #fab-container')
+    await expect(surface).toHaveCSS('backdrop-filter', 'none')
+    const unblurredPng = await surface.screenshot({ animations: 'disabled' })
+    await patchOverlayStore(extension, { profile: { appearance: { blur: 16 } } })
+    await expect(surface).toHaveCSS('backdrop-filter', 'blur(16px)')
+    const blurredPng = await surface.screenshot({ animations: 'disabled' })
+    const sample = { x: 20, y: 20, width: 120, height: 60 }
+    const before = edgeEnergy(decodePng(unblurredPng), sample)
+    const after = edgeEnergy(decodePng(blurredPng), sample)
+    await testInfo.attach('reaction-unblurred', { body: unblurredPng, contentType: 'image/png' })
+    await testInfo.attach('reaction-blurred', { body: blurredPng, contentType: 'image/png' })
+    expect(before).toBeGreaterThan(5)
+    expect(after).toBeLessThan(before * 0.65)
+  })
+
   test('blur visibly softens only the bounded overlay background', async ({ page, extension }, testInfo) => {
     expect(
       await patchOverlayStore(extension, {

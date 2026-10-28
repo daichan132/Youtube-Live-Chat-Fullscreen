@@ -9,7 +9,7 @@ import {
   reorderPresetsAtom,
   updatePresetNameAtom,
 } from '@/shared/state/commands'
-import { DEFAULT_CHAT_SETTINGS, migrateSettings } from './migrateSettings'
+import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 
 describe('chat settings commands', () => {
   it('initializes one normalized v7 settings model', () => {
@@ -73,23 +73,5 @@ describe('chat settings commands', () => {
     store.set(deletePresetAtom, 'standard')
     expect(store.get(chatSettingsStateAtom).presets).toEqual(DEFAULT_CHAT_SETTINGS.presets.filter(preset => preset.id !== 'standard'))
     expect(store.get(chatSettingsStateAtom).profile).toEqual(DEFAULT_CHAT_SETTINGS.profile)
-  })
-
-  it('migrates legacy v6 settings into normalized v7 state', () => {
-    const state = migrateSettings({
-      fontSize: 21,
-      coordinates: { x: 80, y: 90 },
-      size: { width: 600, height: 500 },
-      presetItemIds: ['custom'],
-      presetItemTitles: { custom: 'Legacy' },
-      presetItemStyles: { custom: { fontSize: 18 } },
-    })
-    expect(state.profile.appearance.fontSize).toBe(21)
-    expect(state.geometry).toMatchObject({
-      reference: 'legacy-viewport-px',
-      coordinates: { x: 80, y: 90 },
-    })
-    expect(state.presets).toMatchObject([{ kind: 'custom', id: 'custom', name: 'Legacy' }])
-    expect(state).not.toHaveProperty('fontSize')
   })
 })

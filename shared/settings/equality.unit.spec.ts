@@ -11,7 +11,7 @@ describe('settings equality', () => {
     expect(areGlobalSettingsEqual({ ytdLiveChat: true, themeMode: 'dark' }, { ytdLiveChat: false, themeMode: 'dark' })).toBe(false)
   })
 
-  it('detects nested profile changes without serializing settings', () => {
+  it('detects nested profile changes', () => {
     const left = copySettings()
     const right = copySettings()
     expect(areChatProfilesEqual(left.profile, right.profile)).toBe(true)

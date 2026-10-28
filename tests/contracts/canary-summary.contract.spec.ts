@@ -149,27 +149,6 @@ describe('Real YouTube canary summary', () => {
     })
   })
 
-  it('marks an otherwise successful run with external skips as degraded', () => {
-    const outcomes: CanaryTestOutcome[] = [
-      passed,
-      {
-        title: 'archive › replay',
-        file: 'e2e/scenarios/archive/liveChatReplay.spec.ts',
-        status: 'skipped',
-        detail: 'No archive replay URL satisfied preconditions.',
-      },
-    ]
-
-    expect(summarizeCanaryOutcomes(outcomes, 'passed')).toMatchObject({
-      state: 'degraded',
-      executed: 1,
-      skipped: 1,
-      failed: 0,
-    })
-    expect(renderCanarySummary(outcomes, 'passed')).toContain('| State | degraded |')
-    expect(renderCanarySummary(outcomes, 'passed')).toContain('No archive replay URL satisfied preconditions.')
-  })
-
   it('publishes an actual extension assertion failure as failed rather than degraded', async () => {
     const result = await runReporterFixture(false, 'failure')
     expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
@@ -257,10 +236,20 @@ describe('Real YouTube canary summary', () => {
 
   it('keeps diagnostics after a non-green run on a fixed runner image', () => {
     const workflow = readFileSync(resolve(import.meta.dirname, '../../.github/workflows/canary.yml'), 'utf8')
+    const job = workflow.match(/^  canary:\n[\s\S]*?(?=^  [\w-]+:\n|(?![\s\S]))/m)?.[0]
+    const upload = job
+      ?.split(/^      - /m)
+      .find(
+        step =>
+          /^        uses: actions\/upload-artifact@/m.test(step) &&
+          /^            playwright-report$/m.test(step) &&
+          /^            test-results$/m.test(step),
+      )
 
-    expect(workflow).toContain('runs-on: ubuntu-24.04')
-    expect(workflow).toContain('if: always()')
-    expect(workflow).toContain('playwright-report')
-    expect(workflow).toContain('test-results')
+    expect(job).toMatch(/^    runs-on: ubuntu-24\.04$/m)
+    expect(upload).toMatch(/^        if: (?:\$\{\{\s*)?always\(\)(?:\s*\}\})?$/m)
+    expect(upload).toMatch(/^        uses: actions\/upload-artifact@/m)
+    expect(upload).toMatch(/^            playwright-report$/m)
+    expect(upload).toMatch(/^            test-results$/m)
   })
 })

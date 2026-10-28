@@ -134,8 +134,8 @@ body.custom-yt-app-live-chat-extension
 body.custom-yt-app-live-chat-extension yt-emoji-picker-renderer {
   background: var(--extension-yt-live-panel-background-color) !important;
   background-color: var(--extension-yt-live-panel-background-color) !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -180,8 +180,8 @@ body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model #fab
 }
 body.custom-yt-app-live-chat-extension yt-reaction-control-panel-view-model[reaction-control-panel-expanded] #fab-container {
   background-color: color-mix(in srgb, var(--extension-yt-live-panel-background-color) 70%, transparent) !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   transition-delay: 0s, 0s !important;
 }
 

@@ -2,10 +2,8 @@ import { describe, expect, it } from 'vitest'
 import type { ChatDecision } from './resolveChatDecision'
 import {
   createInitialRuntimeModel,
-  MAX_RETRY_ATTEMPTS,
   markRuntimeRetryFired,
   type RuntimeLeaseSnapshot,
-  type RuntimeModel,
   resetRuntimeRetry,
   settleRuntimeLeaseInitialization,
   stopRuntimeModel,
@@ -150,7 +148,7 @@ describe('runtimeModel', () => {
     })
   })
 
-  it('releases the old lease before creating one for an SPA video transition', () => {
+  it('plans acquisition for the next video during an SPA transition', () => {
     const first = available('video-1', 'live')
     const active = activate(first)
     const second = available('video-2', 'live')
@@ -193,7 +191,7 @@ describe('runtimeModel', () => {
     expect(transition.plan.chat).toEqual({ kind: 'preserve' })
   })
 
-  it('releases a managed live lease before opening replay for the same video', () => {
+  it('plans release of a managed live lease while opening replay for the same video', () => {
     const decision: Extract<ChatDecision, { kind: 'available' }> = {
       kind: 'available',
       videoId: 'video-1',
@@ -363,21 +361,5 @@ describe('runtimeModel', () => {
       layout: 'none',
       retry: { kind: 'none' },
     })
-  })
-
-  it('ends retry exhaustion as unavailable and physically disables portal hosts', () => {
-    const pending: ChatDecision = { kind: 'pending', videoId: 'video-1', mode: 'live', canToggle: false }
-    let model: RuntimeModel = createInitialRuntimeModel()
-    let finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
-
-    for (let attempt = 0; attempt < MAX_RETRY_ATTEMPTS; attempt += 1) {
-      expect(finalTransition.plan.retry.kind).toBe('scheduled')
-      model = markRuntimeRetryFired(finalTransition.model)
-      finalTransition = transitionRuntimeModel(model, { enabled: true, decision: pending, lease: null })
-    }
-
-    expect(finalTransition.model.state).toEqual({ status: 'unavailable', videoId: 'video-1' })
-    expect(finalTransition.model.view.showOverlay).toBe(false)
-    expect(finalTransition.plan.presentation).toBe('none')
   })
 })

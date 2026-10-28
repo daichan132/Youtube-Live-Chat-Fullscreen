@@ -3,7 +3,6 @@ import { createStore } from 'jotai/vanilla'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import type { ChatGeometry, ChatProfile } from '@/shared/settings/model'
-import { MAX_CUSTOM_PRESETS } from '@/shared/settings/persistConfig'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
 import { renderWithStore } from '@/shared/state/testUtils'
 import { PresetContent } from '../PresetContent'
@@ -64,7 +63,7 @@ describe('AddPresetItem', () => {
 
   it('disables creation when the custom preset limit is reached', () => {
     const profile = store.get(chatSettingsStateAtom).profile
-    const presets = Array.from({ length: MAX_CUSTOM_PRESETS }, (_, index) => ({
+    const presets = Array.from({ length: 100 }, (_, index) => ({
       kind: 'custom' as const,
       id: `custom-${index}`,
       name: `Custom ${index}`,
@@ -76,7 +75,7 @@ describe('AddPresetItem', () => {
     const addButton = getByRole('button', { name: 'content.preset.addMessage' })
     expect(addButton).toBeDisabled()
     fireEvent.click(addButton)
-    expect(store.get(chatSettingsStateAtom).presets).toHaveLength(MAX_CUSTOM_PRESETS)
+    expect(store.get(chatSettingsStateAtom).presets).toHaveLength(100)
   })
   it('focuses and selects only a locally created name, without stealing focus on external additions', () => {
     const { getByRole, getByDisplayValue } = renderWithStore(<PresetContent />, store)

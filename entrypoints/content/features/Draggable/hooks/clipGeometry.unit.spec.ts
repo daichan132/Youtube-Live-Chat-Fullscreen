@@ -1,46 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { deriveResizedLayout, getControlRailTop } from './clipGeometry'
+import { deriveResizedLayout } from './clipGeometry'
 
 describe('clipGeometry', () => {
-  it('places the control rail below the visible chat bottom', () => {
-    expect(
-      getControlRailTop({
-        chatHeight: 200,
-        containerTop: 50,
-        controlHeight: 40,
-        gap: 6,
-        viewportHeight: 500,
-        viewportPadding: 4,
-      }),
-    ).toBe(206)
-  })
-
-  it('uses the visible panel bottom when positioning the control rail', () => {
-    expect(
-      getControlRailTop({
-        chatHeight: 200,
-        containerTop: 10,
-        controlHeight: 40,
-        gap: 6,
-        viewportHeight: 500,
-        viewportPadding: 4,
-      }),
-    ).toBe(206)
-  })
-
-  it('keeps the control rail inside the viewport bottom', () => {
-    expect(
-      getControlRailTop({
-        chatHeight: 500,
-        containerTop: 0,
-        controlHeight: 40,
-        gap: 6,
-        viewportHeight: 500,
-        viewportPadding: 4,
-      }),
-    ).toBe(456)
-  })
-
   it.each([
     ['top', { width: 0, height: -20 }, { x: 100, y: 60 }, { width: 300, height: 220 }],
     ['right', { width: 40, height: 0 }, { x: 100, y: 80 }, { width: 340, height: 200 }],

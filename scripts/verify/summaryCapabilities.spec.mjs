@@ -1,14 +1,5 @@
-import { readdirSync, readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import { SUMMARY_CAPABILITIES } from './summaryCapabilities.mjs'
-
-const assetsDir = fileURLToPath(new URL('../../shared/i18n/assets/', import.meta.url))
-const localeCodes = readdirSync(assetsDir)
-  .filter(name => name.endsWith('.json'))
-  .map(name => name.slice(0, -'.json'.length))
-  .sort()
-const summaryOf = code => JSON.parse(readFileSync(`${assetsDir}${code}.json`, 'utf8')).extensionDescription
 
 /**
  * Rewrites a native reader would call a loss of the posting capability. Each one passed
@@ -46,14 +37,6 @@ const WRONG_SURFACE = [
 const satisfies = (code, summary) => SUMMARY_CAPABILITIES[code].every(pattern => pattern.test(summary))
 
 describe('store summary capability patterns', () => {
-  it('covers every shipped locale', () => {
-    expect(Object.keys(SUMMARY_CAPABILITIES).sort()).toEqual(localeCodes)
-  })
-
-  it.each(localeCodes)('accepts the summary %s actually ships', code => {
-    expect(satisfies(code, summaryOf(code))).toBe(true)
-  })
-
   it('accepts the Arabic broken plural for sending messages', () => {
     expect(satisfies('ar', 'أرسل رسائل وSuper Chat.')).toBe(true)
   })

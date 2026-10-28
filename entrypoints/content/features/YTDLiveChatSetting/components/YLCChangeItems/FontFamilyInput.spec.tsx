@@ -151,7 +151,8 @@ describe('FontFamilyInput', () => {
 
     for (let index = 0; index < 12; index += 1) await user.keyboard('{ArrowDown}')
 
-    const active = view.container.querySelector('.ylc-font-combobox-option-active')
+    const activeId = search.getAttribute('aria-activedescendant')
+    const active = view.getAllByRole('option').find(option => option.id === activeId)
     if (!active) throw new Error('Expected active font option')
     expect(list.scrollTop).toBeGreaterThan(0)
     expect(active.getBoundingClientRect().top).toBeGreaterThanOrEqual(100)
@@ -285,20 +286,6 @@ describe('FontFamilyInput', () => {
 
     fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'roboto' } })
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
-
-    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')
-  })
-
-  it('supports arrow navigation before Enter selection', async () => {
-    const { container, getByRole, getByTestId } = renderFontFamilyInput()
-
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'ArrowDown' })
-    await waitFor(() => {
-      const activeOption = container.querySelector('.ylc-font-combobox-option-active')
-      expect(activeOption).toHaveTextContent('Roboto')
-    })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')

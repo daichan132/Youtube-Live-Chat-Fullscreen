@@ -6,15 +6,8 @@ import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
 import type { JSONReport, JSONReportSuite } from '@playwright/test/reporter'
 import { describe, expect, it } from 'vitest'
-import {
-  ACCESSIBILITY_PROJECT_NAME,
-  CANARY_SPECS,
-  DETERMINISTIC_PROJECT_NAMES,
-  FIXTURE_PROJECT_NAME,
-  FIXTURE_SPECS,
-  PRODUCTION_CHROME_PROJECT_NAME,
-  VISUAL_PROJECT_NAME,
-} from './projectClassification'
+import { isDeterministicProject } from '../fixtures/deterministic'
+import { CANARY_SPECS, FIXTURE_SPECS } from './projectClassification'
 
 const scenariosDir = fileURLToPath(new URL('../scenarios', import.meta.url))
 const projectRoot = fileURLToPath(new URL('../../', import.meta.url))
@@ -72,12 +65,10 @@ describe('Playwright project classification', () => {
     expect(report.config.projects.find(project => project.name === 'fixture')?.retries).toBe(0)
   }, 20_000)
 
-  it('classifies fixture, visual, and accessibility projects as network independent', () => {
-    expect(DETERMINISTIC_PROJECT_NAMES).toEqual([
-      FIXTURE_PROJECT_NAME,
-      VISUAL_PROJECT_NAME,
-      ACCESSIBILITY_PROJECT_NAME,
-      PRODUCTION_CHROME_PROJECT_NAME,
-    ])
+  it('blocks external network for deterministic projects but allows the YouTube canary', () => {
+    for (const project of ['fixture', 'visual', 'accessibility', 'production-chrome']) {
+      expect(isDeterministicProject(project), project).toBe(true)
+    }
+    expect(isDeterministicProject('canary')).toBe(false)
   })
 })

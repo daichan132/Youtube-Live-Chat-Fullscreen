@@ -42,8 +42,8 @@ describe('reliableClick', () => {
     let active = false
     const locator = {
       click: vi.fn(),
-      dispatchEvent: vi.fn(async () => {
-        active = true
+      dispatchEvent: vi.fn(async (event: string) => {
+        if (event === 'click') active = true
       }),
     } as unknown as Locator
 
@@ -51,36 +51,5 @@ describe('reliableClick', () => {
     expect(active).toBe(true)
 
     await expect(reliableClick(locator, async () => false, { allowJsFallback: true })).rejects.toThrow('all 3 stages failed')
-  })
-
-  it('rejects a failed pointer action instead of silently switching to an untrusted event', async () => {
-    let active = false
-    const locator = {
-      click: async () => {},
-      dispatchEvent: async () => {
-        active = true
-      },
-    } as unknown as Locator
-
-    await expect(reliableClick(locator, async () => active)).rejects.toThrow('normal/force click did not produce expected state')
-    expect(active).toBe(false)
-  })
-
-  it('allows an explicitly requested event fallback only when its expected state is reached', async () => {
-    let active = false
-    const locator = {
-      click: async () => {},
-      dispatchEvent: async (event: string) => {
-        if (event === 'click') active = true
-      },
-    } as unknown as Locator
-
-    await reliableClick(locator, async () => active, { allowJsFallback: true })
-    expect(active).toBe(true)
-    active = false
-    locator.dispatchEvent = async () => {}
-    await expect(reliableClick(locator, async () => active, { allowJsFallback: true })).rejects.toThrow(
-      'all 3 stages failed to produce expected state',
-    )
   })
 })

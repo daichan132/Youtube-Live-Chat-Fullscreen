@@ -2,7 +2,7 @@ import { type Extension, expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
-import type { Locator, Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 import { GEOMETRY_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 const state = {
@@ -40,40 +40,6 @@ const setup = async (
   const overlay = new ExtensionOverlay(page)
   await overlay.expectChatLoaded({ timeout: 12000 })
   await overlay.revealControls()
-}
-
-const controls = [
-  ['[data-ylc-settings-btn]', 'Open settings'],
-  ['[data-ylc-drag-handle]', 'Drag to move'],
-  ['[data-ylc-placement-button]', 'Adjust position and size'],
-] as const
-
-const expectTooltipAtButton = async (page: Page, button: Locator, side: 'bottom' | 'top', viewport = { width: 1280, height: 720 }) => {
-  const tooltip = page.locator('[data-ylc-control-tooltip]')
-  await expect(tooltip).toHaveAttribute('data-ylc-tooltip-side', side)
-  await expect(async () => {
-    const [help, target, rail] = await Promise.all([
-      tooltip.boundingBox(),
-      button.boundingBox(),
-      page.locator('[data-ylc-control-rail]').boundingBox(),
-    ])
-    if (!help || !target || !rail) throw new Error('Tooltip, active button and rail need visible browser bounds.')
-    const center = target.x + target.width / 2
-    const centeredLeft = center - help.width / 2
-    const expectedLeft = Math.max(8, Math.min(centeredLeft, viewport.width - 8 - help.width))
-    // offsetWidth/offsetHeight used for scale-independent layout round to a
-    // CSS pixel; the painted DOMRect can retain fractional font metrics.
-    expect(Math.abs(help.x - expectedLeft)).toBeLessThanOrEqual(1)
-    expect(center).toBeGreaterThanOrEqual(help.x - 0.1)
-    expect(center).toBeLessThanOrEqual(help.x + help.width + 0.1)
-    expect(help.x).toBeGreaterThanOrEqual(7.9)
-    expect(help.x + help.width).toBeLessThanOrEqual(viewport.width - 7.9)
-    expect(help.y).toBeGreaterThanOrEqual(7.9)
-    expect(help.y + help.height).toBeLessThanOrEqual(viewport.height - 7.9)
-    if (side === 'bottom') expect(Math.abs(help.y - (rail.y + rail.height + 6))).toBeLessThanOrEqual(1)
-    else expect(Math.abs(help.y + help.height - (rail.y - 6))).toBeLessThanOrEqual(1)
-    expect(await tooltip.evaluate(element => getComputedStyle(element).pointerEvents)).toBe('none')
-  }).toPass({ timeout: 3000 })
 }
 
 test.afterEach(async ({ page }) => {

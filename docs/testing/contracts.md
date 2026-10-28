@@ -20,13 +20,19 @@ Start from a user-visible outcome or a documented boundary. Expected values shou
 - Keep explicit package, privacy, cleanup, and bounded-retry contracts. Replacing every mock or deleting every source check would lose useful protection.
 - Replace or remove a redundant test when an existing behavior test already protects its contract. Keep pure transformations in the Node project and browser-dependent behavior in DOM or browser tests.
 
+For unchanged settings, the persistence tests check the complete stored domains and their writer IDs after no-op edits. This detects unintended writes without requiring a particular state-object identity. The popup switch test also checks the saved value after reopening and confirms that changing it leaves the theme domain alone.
+
 Coverage helps locate gaps; a higher number is not evidence that assertions catch faults. When strengthening a weak test, temporarily introduce a representative fault, confirm the new assertion fails, and restore the implementation. Also check an equivalent implementation change when refactoring resistance is the reason for the replacement.
 
 For real-input press-and-hold tests, sample the rendered layout after release and require it to stay unchanged over later repeat intervals. A repeat can legitimately run between an earlier snapshot and delivery of the release command. Controlled-clock DOM tests separately pin exact activation counts and the absence of an extra release click.
 
 For geometry, specify the player dimensions and expected pixels or storage ratios directly; importing the production converter into both sides of an assertion can hide a conversion defect. The [popup browser scenarios](../../e2e/scenarios/popup/popup.spec.ts) also verify the network blocker against an offline fallback that would succeed without it, so DNS failures cannot make the test pass. Scenario classification is checked once in [`projectClassification.spec.ts`](../../e2e/config/projectClassification.spec.ts); fixture API behavior is exercised by the browser scenarios rather than a list of prototype method names.
 
-For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault.
+The [overlay interaction scenario](../../e2e/scenarios/live/overlayInteraction.fixture.spec.ts) checks that each chat visibility setting affects its corresponding native element while leaving the other elements visible. It also checks emoji category colors and native reaction button colors in the browser. CSS source strings alone cannot prove a declaration applies to the intended element or survives the build.
+
+For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault. The generated locale and translation-key types are also checked as TypeScript unions against authored files, so a string appearing in the wrong type does not satisfy the check.
+
+`yarn store:check` checks every shipped summary against its locale's capability patterns. The pattern tests focus on independent examples of misleading or wrong-surface copy, rather than repeating that check once per current locale.
 
 Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e/scenarios/live/noChatVideo.fixture.spec.ts) shows a live overlay between two no-chat pages, so an extension that never starts cannot satisfy the whole test. Failure-recovery tests should first acquire the resource they claim to release. Canary reporter contracts execute browser-free passing, failing, skipped, and retried tests through the real runner; the release-proof CLI contract verifies known artifact bytes and rejects same-size corruption in a disposable project.
 

@@ -4,8 +4,8 @@ body.custom-yt-app-live-chat-extension tp-yt-iron-dropdown {
   color: var(--extension-yt-live-font-color) !important;
   background: transparent !important;
   background-color: transparent !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   border-radius: 8px;
   overflow: hidden;
 }
@@ -13,8 +13,8 @@ body.custom-yt-app-live-chat-extension ytd-menu-popup-renderer {
   color: var(--extension-yt-live-font-color) !important;
   background: transparent !important;
   background-color: transparent !important;
-  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   -webkit-backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
+  backdrop-filter: var(--extension-yt-live-backdrop-filter) !important;
   border-radius: 8px;
   overflow: hidden;
 }

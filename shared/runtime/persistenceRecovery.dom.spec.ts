@@ -1,8 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
-import { EMPTY_MESSAGES, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
-import { commitGeometryAtom, commitStylePatchAtom, setThemeModeAtom, setYTDLiveChatEnabledAtom } from '@/shared/state/commands'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
+import {
+  commitGeometryAtom,
+  commitStylePatchAtom,
+  deletePresetAtom,
+  reorderPresetsAtom,
+  resetGeometryAtom,
+  setThemeModeAtom,
+  setYTDLiveChatEnabledAtom,
+  updatePresetNameAtom,
+} from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
 const sessions: { runtime: AppRuntime; repository: SettingsRepository }[] = []
@@ -40,6 +49,30 @@ afterEach(async () => {
 })
 
 describe('settings persistence through the app runtime', () => {
+  it('does not rewrite saved domains for edits that leave their values unchanged', async () => {
+    const preset = { kind: 'custom', id: 'saved', name: 'Saved', profile: structuredClone(DEFAULT_CHAT_SETTINGS.profile) }
+    await chrome.storage.local.set({
+      'ylc-chat-appearance': envelope({ profile: structuredClone(DEFAULT_CHAT_SETTINGS.profile), presets: [preset] }),
+      'ylc-chat-geometry': envelope(structuredClone(DEFAULT_CHAT_SETTINGS.geometry)),
+    })
+    const before = await chrome.storage.local.get(null)
+    const { runtime, repository } = await openSettings()
+    const state = runtime.store.get(chatSettingsStateAtom)
+
+    runtime.store.set(setYTDLiveChatEnabledAtom, true)
+    runtime.store.set(setThemeModeAtom, 'system')
+    runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 13 } })
+    runtime.store.set(commitGeometryAtom, state.geometry)
+    runtime.store.set(resetGeometryAtom)
+    runtime.store.set(deletePresetAtom, 'missing')
+    runtime.store.set(reorderPresetsAtom, ['saved'])
+    runtime.store.set(updatePresetNameAtom, { id: 'saved', name: 'Saved' })
+    await repository.flush()
+
+    expect(await chrome.storage.local.get(null)).toEqual(before)
+    expect(runtime.exportSettings()).toMatchObject({ chatSettings: { presets: [preset], geometry: DEFAULT_CHAT_SETTINGS.geometry } })
+  })
+
   it.each(['enabled', 'theme', 'appearance', 'geometry'] as const)(
     'saves only the edited %s domain and restores it on reopening',
     async domain => {

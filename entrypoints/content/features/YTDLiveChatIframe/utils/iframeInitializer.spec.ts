@@ -70,7 +70,7 @@ describe('iframeInitializer', () => {
   it('leaves usable, disabled and unreadable native stylesheets alone', () => {
     const { doc, link } = nativeCss([{} as CSSRule])
     const retried = new WeakSet<HTMLLinkElement>()
-    const remove = vi.spyOn(link, 'removeAttribute')
+    const href = link.href
     expect(ensureNativeChatStylesReady(doc, retried)).toBe(true)
     Object.defineProperty(link, 'sheet', {
       value: {
@@ -82,35 +82,19 @@ describe('iframeInitializer', () => {
     expect(ensureNativeChatStylesReady(doc, retried)).toBe(true)
     link.disabled = true
     expect(ensureNativeChatStylesReady(doc, retried)).toBe(true)
-    expect(remove).not.toHaveBeenCalled()
+    expect(link.href).toBe(href)
+    expect(doc.getElementById('base-css')).toBe(link)
   })
 
   it('does not re-request cross-origin or malformed URLs and supports chat without a base link', () => {
     const { doc, link } = nativeCss([])
-    const remove = vi.spyOn(link, 'removeAttribute')
     link.href = 'https://static.example.test/base.css'
     expect(ensureNativeChatStylesReady(doc, new WeakSet())).toBe(false)
+    expect(link.href).toBe('https://static.example.test/base.css')
     link.href = 'https://['
     expect(ensureNativeChatStylesReady(doc, new WeakSet())).toBe(false)
-    expect(remove).not.toHaveBeenCalled()
+    expect(link.getAttribute('href')).toBe('https://[')
     link.remove()
     expect(ensureNativeChatStylesReady(doc, new WeakSet())).toBe(true)
-  })
-
-  it('leaves native membership clicks and their default action intact', () => {
-    const doc = createChatDoc()
-    doc.body.innerHTML =
-      '<yt-live-chat-product-picker-panel-item-view-model item-id="Membership"><a id="endpoint" href="#native-offer">Membership</a></yt-live-chat-product-picker-panel-item-view-model>'
-    const nativeClick = vi.fn()
-    const endpoint = doc.querySelector('a')
-    if (!endpoint) throw new Error('Missing native membership link')
-    endpoint.addEventListener('click', nativeClick)
-    const open = vi.spyOn(window, 'open').mockImplementation(() => null)
-    ensureStyleInjected(doc, 'body { color: red; }')
-    const click = new MouseEvent('click', { bubbles: true, cancelable: true })
-    expect(endpoint.dispatchEvent(click)).toBe(true)
-    expect(nativeClick).toHaveBeenCalledOnce()
-    expect(click.defaultPrevented).toBe(false)
-    expect(open).not.toHaveBeenCalled()
   })
 })

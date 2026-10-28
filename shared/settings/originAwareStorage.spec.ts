@@ -49,6 +49,14 @@ describe('settings repository', () => {
     vi.restoreAllMocks()
   })
 
+  it('uses enabled chat and system theme for a new installation without writing settings', async () => {
+    const before = await chrome.storage.local.get(null)
+    const snapshot = await createSettingsRepository('new-install', null, immediateRetry).load()
+
+    expect(snapshot.global).toEqual({ ytdLiveChat: true, themeMode: 'system' })
+    expect(await chrome.storage.local.get(null)).toEqual(before)
+  })
+
   it('loads current and legacy settings without rewriting global or chat data during startup', async () => {
     await chrome.storage.local.set({
       [LEGACY_GLOBAL_STORAGE_KEY]: {

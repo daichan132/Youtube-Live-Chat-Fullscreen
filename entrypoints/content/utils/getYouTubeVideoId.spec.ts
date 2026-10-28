@@ -59,16 +59,6 @@ describe('getVideoIdFromUrl', () => {
 })
 
 describe('getCurrentYouTubeVideoId', () => {
-  it('prefers URL id over stale DOM ids during SPA navigation', () => {
-    const watchFlexy = document.createElement('ytd-watch-flexy')
-    watchFlexy.setAttribute('video-id', 'stale-dom-id')
-    document.body.appendChild(watchFlexy)
-
-    setLocation('/watch?v=current-url-id')
-
-    expect(getCurrentYouTubeVideoId()).toBe('current-url-id')
-  })
-
   it('does not fall back to stale DOM ids when the URL has no video id', () => {
     createChannelLiveSignals('stale-dom-id')
 

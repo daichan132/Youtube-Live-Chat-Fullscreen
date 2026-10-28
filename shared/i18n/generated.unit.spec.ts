@@ -1,14 +1,15 @@
-import { readdirSync, readFileSync, statSync } from 'node:fs'
-import { dirname, join } from 'node:path'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
-import { getSupportedLanguageCodes } from './language'
 import { isRTL } from './rtl'
 
 const i18nDir = dirname(fileURLToPath(import.meta.url))
 const assetsDir = join(i18nDir, 'assets')
 const generatedDir = join(i18nDir, '..', '..', 'public', 'locales')
-const typesSource = readFileSync(join(i18nDir, 'generated', 'translationTypes.ts'), 'utf8')
+const typesPath = join(i18nDir, 'generated', 'translationTypes.ts')
 const MANIFEST_ONLY_KEYS = new Set(['extensionName', 'extensionDescription'])
 
 const flattenKeys = (value: Record<string, unknown>, prefix = '', output: string[] = []) => {
@@ -40,10 +41,54 @@ describe('generated i18n contract', () => {
   })
 
   it('keeps generated LocaleCode and TranslationKey declarations aligned with source', () => {
-    for (const locale of getSupportedLanguageCodes()) expect(typesSource).toContain(`'${locale}'`)
+    const locales = readdirSync(assetsDir)
+      .filter(file => file.endsWith('.json'))
+      .map(file => file.slice(0, -'.json'.length))
+      .sort()
     const sourceKeys = flattenKeys(JSON.parse(readFileSync(join(assetsDir, 'en.json'), 'utf8'))).filter(key => !MANIFEST_ONLY_KEYS.has(key))
-    for (const key of sourceKeys) expect(typesSource).toContain(`'${key}'`)
-    expect(typesSource).toContain('export type TranslationKey =')
+    const directory = mkdtempSync(join(tmpdir(), 'ylc-translation-types-'))
+    try {
+      const checkFile = join(directory, 'check.mts')
+      const union = (values: string[]) => values.map(value => JSON.stringify(value)).join(' | ')
+      writeFileSync(
+        checkFile,
+        `
+        import type { LocaleCode, TranslationKey } from ${JSON.stringify(typesPath)}
+        type Equal<A, B> = (<T>() => T extends A ? 1 : 2) extends (<T>() => T extends B ? 1 : 2)
+          ? ((<T>() => T extends B ? 1 : 2) extends (<T>() => T extends A ? 1 : 2) ? true : false) : false
+        const locales: Equal<LocaleCode, ${union(locales)}> = true
+        const keys: Equal<TranslationKey, ${union(sourceKeys)}> = true
+        void locales; void keys
+      `,
+      )
+      try {
+        execFileSync(
+          process.execPath,
+          [
+            resolve('node_modules/typescript/bin/tsc'),
+            '--noEmit',
+            '--skipLibCheck',
+            '--strict',
+            '--module',
+            'nodenext',
+            '--moduleResolution',
+            'nodenext',
+            '--target',
+            'esnext',
+            '--allowImportingTsExtensions',
+            checkFile,
+          ],
+          { cwd: directory, encoding: 'utf8' },
+        )
+      } catch (error) {
+        const output = error as { stdout?: string; stderr?: string }
+        throw new Error(`Generated translation types differ from authored assets:\n${output.stdout ?? ''}${output.stderr ?? ''}`, {
+          cause: error,
+        })
+      }
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+    }
   })
 
   it('keeps right-to-left direction classification explicit', () => {

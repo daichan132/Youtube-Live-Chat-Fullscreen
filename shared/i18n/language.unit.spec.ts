@@ -1,11 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  DEFAULT_LANGUAGE,
-  getSupportedLanguageCodes,
-  normalizeLanguageCode,
-  resolveLanguageCode,
-  resolveLanguagePreference,
-} from './language'
+import { getSupportedLanguageCodes, normalizeLanguageCode, resolveLanguageCode, resolveLanguagePreference } from './language'
 
 describe('normalizeLanguageCode', () => {
   it('replaces hyphen with underscore', () => {
@@ -35,12 +29,12 @@ describe('resolveLanguageCode', () => {
   })
 
   it('falls back to default language for unknown code', () => {
-    expect(resolveLanguageCode('xx-YY')).toBe(DEFAULT_LANGUAGE)
+    expect(resolveLanguageCode('xx-YY')).toBe('en')
   })
 
   it('falls back safely when Intl rejects a malformed tag', () => {
     expect(resolveLanguageCode('zh_Hant_BAD!')).toBe('zh_TW')
-    expect(resolveLanguageCode('_')).toBe(DEFAULT_LANGUAGE)
+    expect(resolveLanguageCode('_')).toBe('en')
   })
 
   // The cases below are the values browser.i18n.getUILanguage() actually reports.
@@ -105,8 +99,8 @@ describe('resolveLanguageCode', () => {
   })
 
   it('does not reach Object.prototype for tags that name its members', () => {
-    expect(resolveLanguageCode('toString')).toBe(DEFAULT_LANGUAGE)
-    expect(resolveLanguageCode('constructor')).toBe(DEFAULT_LANGUAGE)
+    expect(resolveLanguageCode('toString')).toBe('en')
+    expect(resolveLanguageCode('constructor')).toBe('en')
   })
 
   it('still resolves every bundled locale to itself', () => {
@@ -123,6 +117,6 @@ describe('resolveLanguagePreference', () => {
   })
 
   it('falls back to English when no preference is supported', () => {
-    expect(resolveLanguagePreference([null, undefined, 'xx-YY'])).toBe(DEFAULT_LANGUAGE)
+    expect(resolveLanguagePreference([null, undefined, 'xx-YY'])).toBe('en')
   })
 })
