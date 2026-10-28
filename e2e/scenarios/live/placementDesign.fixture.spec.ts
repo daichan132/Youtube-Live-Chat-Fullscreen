@@ -46,6 +46,109 @@ test.afterEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
 })
 
+test('rechecks a stationary caption when resizing brings an unpinned chat into it', async ({ page, extension }) => {
+  await page.setViewportSize({ width: 500, height: 500 })
+  const initialGeometry = {
+    reference: 'player' as const,
+    rect: { x: 50 / 500, y: 50 / 500, width: 240 / 500, height: 180 / 500 },
+    pinned: false,
+  }
+  await patchOverlayStore(extension, {
+    geometry: initialGeometry,
+    profile: { display: { contentMode: 'full-chat', idleVisibility: 'always-visible' } },
+  })
+  const scenario = new YouTubeScenario(page)
+  await scenario.load(state)
+  await scenario.addCaptionObstacle({ x: 300, y: 50, width: 200, height: 200 })
+  await scenario.enterFullscreen()
+  const overlay = new ExtensionOverlay(page)
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 50, y: 50, width: 240, height: 180 })
+  const caption = page.locator('[data-fixture-caption]')
+  const initialCaption = await caption.boundingBox()
+  expect(initialCaption).toMatchObject({ x: 300, y: 50, width: 200, height: 200 })
+
+  await page.setViewportSize({ width: 800, height: 800 })
+
+  await expect.poll(() => caption.boundingBox()).toEqual(initialCaption)
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 10, y: 502, width: 384, height: 288 })
+  await expect
+    .poll(async () => {
+      const stored = (await extension.storage.get(GEOMETRY_STORAGE_KEY))[GEOMETRY_STORAGE_KEY] as { value: { pinned: boolean } }
+      return stored.value.pinned
+    })
+    .toBe(false)
+})
+
+test('moves an unpinned chat when a hidden player menu appears', async ({ page, extension }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  const initialGeometry = {
+    reference: 'player' as const,
+    rect: { x: 10 / 1280, y: 10 / 720, width: 300 / 1280, height: 200 / 720 },
+    pinned: false,
+  }
+  await patchOverlayStore(extension, {
+    geometry: initialGeometry,
+    profile: { display: { contentMode: 'full-chat', idleVisibility: 'always-visible' } },
+  })
+  const scenario = new YouTubeScenario(page)
+  await scenario.load(state)
+  await page.evaluate(() => {
+    const player = document.getElementById('movie_player')
+    if (!player) throw new Error('Fixture player is missing.')
+    const style = document.createElement('style')
+    style.textContent = '.ytp-settings-menu-hidden { display: none; }'
+    const menu = document.createElement('div')
+    menu.className = 'ytp-popup ytp-settings-menu-hidden'
+    menu.dataset.fixtureMenu = 'true'
+    menu.style.cssText = 'position: absolute; left: 0; top: 0; width: 500px; height: 400px;'
+    player.append(style, menu)
+  })
+  await scenario.enterFullscreen()
+  const overlay = new ExtensionOverlay(page)
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  const menu = page.locator('[data-fixture-menu]')
+  await expect(menu).toBeHidden()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 10, y: 10, width: 300, height: 200 })
+  const initialChat = await overlay.getGeometry()
+  expect(((await extension.storage.get(GEOMETRY_STORAGE_KEY))[GEOMETRY_STORAGE_KEY] as { value: unknown }).value).toEqual(initialGeometry)
+
+  await menu.evaluate(element => element.classList.remove('ytp-settings-menu-hidden'))
+  await expect(menu).toBeVisible()
+  const shownMenu = await menu.boundingBox()
+  expect(shownMenu).toMatchObject({ x: 0, y: 0, width: 500, height: 400 })
+  if (!shownMenu) throw new Error('The visible fixture menu must have bounds.')
+  expect(initialChat.x).toBeLessThan(shownMenu.x + shownMenu.width)
+  expect(initialChat.x + initialChat.width).toBeGreaterThan(shownMenu.x)
+  expect(initialChat.y).toBeLessThan(shownMenu.y + shownMenu.height)
+  expect(initialChat.y + initialChat.height).toBeGreaterThan(shownMenu.y)
+  await expect.poll(async () => {
+    const [chat, obstacle] = await Promise.all([overlay.frame().boundingBox(), menu.boundingBox()])
+    if (!chat || !obstacle) return false
+    return (
+      chat.x + chat.width <= obstacle.x ||
+      obstacle.x + obstacle.width <= chat.x ||
+      chat.y + chat.height <= obstacle.y ||
+      obstacle.y + obstacle.height <= chat.y
+    )
+  }).toBe(true)
+
+  const chat = await overlay.getGeometry()
+  expect(chat.y).toBeGreaterThan(10)
+  for (let sample = 0; sample < 3; sample += 1) {
+    await page.waitForTimeout(150)
+    expect(await overlay.getGeometry()).toEqual(chat)
+  }
+  await expect(async () => {
+    const stored = (await extension.storage.get(GEOMETRY_STORAGE_KEY))[GEOMETRY_STORAGE_KEY] as {
+      value: { reference: string; pinned: boolean; rect: { x: number; y: number; width: number; height: number } }
+    }
+    expect(stored.value).toMatchObject({ reference: 'player', pinned: false })
+    expect(stored.value.rect.x).toBeCloseTo(chat.x / 1280, 4)
+    expect(stored.value.rect.y).toBeCloseTo(chat.y / 720, 4)
+  }).toPass()
+})
+
 for (const variant of [
   { theme: 'light', viewport: { width: 1280, height: 720 } },
   { theme: 'dark', viewport: { width: 1280, height: 720 } },

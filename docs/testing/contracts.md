@@ -113,10 +113,16 @@ The package contract rejects:
 - the E2E bridge in production;
 - source maps, spec/test files, and fixture assets;
 - manifest permissions or public resources outside policy;
+- runtime or manifest locale inventories that differ from `language_codes.json`, and a missing or invalid `locales/_keys.json`;
+- runtime locale arrays with invalid values or lengths, or any packaged locale asset whose bytes differ from `public/`;
 - mismatches between unpacked output and ZIP inventory or any file's bytes;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
-Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output. Native chat layout ownership adds visibility and lifecycle invalidation checks; its uncompressed content-script allowance is 451,000 bytes (formerly 450,000), while the production download ZIP limit remains 380,000 bytes for both browsers.
+The package checker reports ZIP and component sizes for both browsers and the source archive. These measurements do not impose size limits; permissions, packaged contents, and byte-for-byte ZIP consistency remain enforced.
+
+`yarn locales:check` compares generated `public/` assets with authored translations. The package checker separately compares packaged locale assets with `public/`, even when the unpacked output and ZIP agree with each other.
+
+The Firefox source archive includes the Yarn release selected by `packageManager` and the WXT helper that validates its `.yarnrc.yml` path. The checker rejects a missing release, inconsistent source configuration, or missing locale generator inputs or generated outputs for any authored language; source reconstruction uses that same validated release and runs the archived locale generator in check mode before installation.
 
 ## Connection policy regression
 

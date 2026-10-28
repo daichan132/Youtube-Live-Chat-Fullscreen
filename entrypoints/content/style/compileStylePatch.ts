@@ -38,7 +38,6 @@ export type ChatStyleEnvironment = {
    * extension deliberately leaves the semantic color unmodified.
    */
   membershipDefaultColor: RGBA | null
-  firefox: boolean
 }
 
 const toRgbaString = (rgba: RGBA, alpha = rgba.a) => `rgba(${rgba.r}, ${rgba.g}, ${rgba.b}, ${alpha})`

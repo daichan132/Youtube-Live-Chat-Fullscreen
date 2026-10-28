@@ -1,13 +1,7 @@
-import {
-  captionObstacleProbe,
-  endScreenObstacleProbe,
-  playerControlsObstacleProbe,
-  playerMenuObstacleProbe,
-  queryAllProbes,
-} from './selectorCatalog'
+import { playerObstacleSources, queryAllProbes } from './selectorCatalog'
 
 export type PlayerObstacle = {
-  kind: 'caption' | 'controls' | 'menu' | 'end-screen' | 'settings'
+  kind: (typeof playerObstacleSources)[number]['kind'] | 'settings'
   rect: { x: number; y: number; width: number; height: number }
 }
 
@@ -19,14 +13,8 @@ const isVisible = (element: Element, rect: DOMRect) => {
 
 export const collectPlayerObstacles = (player: HTMLElement, settingsOpen: boolean): PlayerObstacle[] => {
   const playerRect = player.getBoundingClientRect()
-  const probes = [
-    ['caption', captionObstacleProbe],
-    ['controls', playerControlsObstacleProbe],
-    ['menu', playerMenuObstacleProbe],
-    ['end-screen', endScreenObstacleProbe],
-  ] as const
   const obstacles: PlayerObstacle[] = []
-  for (const [kind, probe] of probes) {
+  for (const { kind, probe } of playerObstacleSources) {
     for (const element of queryAllProbes<HTMLElement>(player, probe).elements) {
       const rect = element.getBoundingClientRect()
       if (!isVisible(element, rect)) continue
