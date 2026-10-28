@@ -25,7 +25,13 @@ const mutationTargetTouchesPlayerObstacle = (target: Node, player: HTMLElement) 
 
 export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
   if (mutation.type === 'attributes') {
-    return mutation.target === player || mutationTargetTouchesPlayerObstacle(mutation.target, player)
+    return (
+      mutation.target === player ||
+      mutationTargetTouchesPlayerObstacle(mutation.target, player) ||
+      (mutation.target instanceof Element &&
+        mutation.target.childElementCount > 0 &&
+        mutation.target.querySelector(playerObstacleBoundarySelector) !== null)
+    )
   }
   if (mutationTargetTouchesPlayerObstacle(mutation.target, player)) return true
   return [...mutation.addedNodes, ...mutation.removedNodes].some(nodeMatchesOrContainsPlayerObstacle)

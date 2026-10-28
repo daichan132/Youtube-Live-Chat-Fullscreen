@@ -23,6 +23,7 @@ import type {
 
 const FIXTURE_PREFLIGHT_URL = 'https://www.youtube.com/?ylc-fixture-preflight=1'
 type FixtureChatWindow = Window & { __ylcFixtureChatRuntime?: { videoId: string } }
+type FixtureArchiveWindow = Window & { __ylcArchiveOpenEvents?: { videoId: string }[] }
 type NativeIframeContext = {
   iframe: HTMLIFrameElement
   document: Document
@@ -80,23 +81,38 @@ export class YouTubeScenario {
     if (state.fullscreen) await this.enterFullscreen()
   }
 
-  async addCaptionObstacle(rect: { x: number; y: number; width: number; height: number }) {
+  async addCaptionObstacle(rect: { x: number; y: number; width: number; height: number }, parentHidden = false) {
     this.requireState()
-    await this.page.evaluate(bounds => {
-      const player = document.getElementById('movie_player')
-      if (!player) throw new Error('The fixture player is unavailable.')
-      const caption = document.createElement('div')
-      caption.className = 'ytp-caption-window-container'
-      caption.dataset.fixtureCaption = 'true'
-      Object.assign(caption.style, {
-        position: 'absolute',
-        left: `${bounds.x}px`,
-        top: `${bounds.y}px`,
-        width: `${bounds.width}px`,
-        height: `${bounds.height}px`,
-      })
-      player.append(caption)
-    }, rect)
+    await this.page.evaluate(
+      ({ bounds, parentHidden }) => {
+        const player = document.getElementById('movie_player')
+        if (!player) throw new Error('The fixture player is unavailable.')
+        const parent = document.createElement('div')
+        parent.dataset.fixtureCaptionParent = 'true'
+        parent.hidden = parentHidden
+        const caption = document.createElement('div')
+        caption.className = 'ytp-caption-window-container'
+        caption.dataset.fixtureCaption = 'true'
+        Object.assign(caption.style, {
+          position: 'absolute',
+          left: `${bounds.x}px`,
+          top: `${bounds.y}px`,
+          width: `${bounds.width}px`,
+          height: `${bounds.height}px`,
+        })
+        parent.append(caption)
+        player.append(parent)
+      },
+      { bounds: rect, parentHidden },
+    )
+  }
+
+  async setCaptionParentHidden(hidden: boolean) {
+    await this.page.evaluate(value => {
+      const parent = document.querySelector<HTMLElement>('[data-fixture-caption-parent]')
+      if (!parent) throw new Error('The fixture caption parent is unavailable.')
+      parent.hidden = value
+    }, hidden)
   }
 
   async spaNavigate(state: YouTubeScenarioState) {
@@ -125,6 +141,40 @@ export class YouTubeScenario {
     )
     this.state = state
     this.generation = generation
+  }
+
+  cancelNextHistoryNavigation(path: string) {
+    return this.page.evaluate(destination => {
+      if (typeof navigation?.addEventListener !== 'function') throw new Error('Navigation API is unavailable in this fixture.')
+      const before = location.href
+      let cancelled = false
+      navigation.addEventListener(
+        'navigate',
+        event => {
+          event.preventDefault()
+          cancelled = event.defaultPrevented
+        },
+        { once: true },
+      )
+      history.pushState({}, '', destination)
+      return { before, after: location.href, cancelled }
+    }, path)
+  }
+
+  async pushHistoryLocation(path: string) {
+    await this.page.evaluate(destination => history.pushState({}, '', destination), path)
+  }
+
+  async replaceHistoryLocation(path: string) {
+    await this.page.evaluate(destination => history.replaceState({}, '', destination), path)
+  }
+
+  async goBackHistory() {
+    await this.page.evaluate(() => history.back())
+  }
+
+  async notifyPageDataUpdated() {
+    await this.page.evaluate(() => document.dispatchEvent(new Event('yt-page-data-updated')))
   }
 
   async captureNativeIframeContext() {
@@ -175,6 +225,16 @@ export class YouTubeScenario {
     })
   }
 
+  async nativeIframeIsDiscoverableInPage() {
+    if (!this.nativeIframeContext) throw new Error('Capture the native iframe context before observing it.')
+    return this.nativeIframeContext.evaluate(snapshot => [...document.querySelectorAll('#chatframe')].includes(snapshot.iframe))
+  }
+
+  async extensionIframeIsCapturedNative() {
+    if (!this.nativeIframeContext) throw new Error('Capture the native iframe context before observing it.')
+    return this.nativeIframeContext.evaluate(snapshot => window.__ylcHelpers.getExtensionIframe() === snapshot.iframe)
+  }
+
   async settleNativeIframeContext() {
     await this.page.waitForLoadState('networkidle', { timeout: 10000 })
     await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
@@ -207,6 +267,55 @@ export class YouTubeScenario {
     return this.watchPage.expectFullscreenExited(options)
   }
 
+  async removeNativeChatHost() {
+    this.requireState()
+    await this.page.evaluate(() => {
+      const host = document.querySelector('ytd-live-chat-frame')
+      if (!host) throw new Error('The native chat host is unavailable.')
+      host.remove()
+    })
+  }
+
+  async addEmptyNativeChatHost() {
+    const videoId = this.requireState().video.id
+    await this.page.evaluate(currentVideoId => {
+      const container = document.getElementById('chat-container')
+      if (!container) throw new Error('YouTube scenario has no chat container.')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', currentVideoId)
+      container.append(host)
+    }, videoId)
+  }
+
+  async installClosedArchiveControl() {
+    const state = this.requireState()
+    if (state.chat.mode !== 'archive') throw new Error('A closed archive control requires an archive scenario.')
+    await this.page.evaluate(videoId => {
+      const container = document.getElementById('chat-container')
+      if (!container) throw new Error('YouTube scenario has no chat container.')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', videoId)
+      const slot = document.createElement('div')
+      slot.id = 'show-hide-button'
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.textContent = 'Show chat replay'
+      button.setAttribute('aria-label', 'Show chat replay')
+      button.addEventListener('click', () => {
+        const fixture = window as FixtureArchiveWindow
+        fixture.__ylcArchiveOpenEvents ??= []
+        fixture.__ylcArchiveOpenEvents.push({ videoId })
+      })
+      slot.append(button)
+      host.append(slot)
+      container.append(host)
+    }, state.video.id)
+  }
+
+  observeArchiveOpenEvents(): Promise<{ videoId: string }[]> {
+    return this.page.evaluate(() => (window as FixtureArchiveWindow).__ylcArchiveOpenEvents ?? [])
+  }
+
   async addNativeIframe(mutation: NativeIframeMutation) {
     const videoId = this.requireState().video.id
     await this.page.evaluate(
@@ -229,6 +338,14 @@ export class YouTubeScenario {
       },
       { videoId, mutation },
     )
+  }
+
+  async removeNativeIframe() {
+    await this.page.evaluate(() => {
+      const iframe = document.querySelector('ytd-live-chat-frame > #chatframe')
+      if (!iframe) throw new Error('The native chat iframe is unavailable.')
+      iframe.remove()
+    })
   }
 
   async replaceNativeIframe(mutation: NativeIframeMutation) {

@@ -57,6 +57,7 @@ export interface ChatRuntime {
 }
 
 const ARCHIVE_OPEN_COOLDOWN_MS = 2000
+const MAX_RECENT_ARCHIVE_OPENS = 16
 const CHAT_BOUNDARY_SELECTOR = runtimeBoundarySelector
 
 const initialView: RuntimeView = {
@@ -107,7 +108,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private scheduledFrame: number | null = null
   private scheduledFrameGeneration: number | undefined
   private retryTimer: number | null = null
-  private lastArchiveOpenAt = 0
+  private readonly recentArchiveOpens = new Map<string, number>()
   private lastObservation: PageObservation | null = null
   private lastObservationSignature = ''
   private lastPlanSignature = ''
@@ -158,6 +159,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     } finally {
       this.contentScope?.dispose()
       this.contentScope = null
+      this.recentArchiveOpens.clear()
     }
   }
 
@@ -350,9 +352,20 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private ensureArchivePanelOpen = () => {
+    const videoId = this.sessionIdentity?.videoId
+    if (!videoId) return
     const now = Date.now()
-    if (now - this.lastArchiveOpenAt < ARCHIVE_OPEN_COOLDOWN_MS) return
-    if (openArchiveNativeChatPanel()) this.lastArchiveOpenAt = now
+    for (const [id, openedAt] of this.recentArchiveOpens) {
+      if (now < openedAt || now - openedAt >= ARCHIVE_OPEN_COOLDOWN_MS) this.recentArchiveOpens.delete(id)
+    }
+    if (this.recentArchiveOpens.has(videoId)) return
+    if (openArchiveNativeChatPanel()) {
+      this.recentArchiveOpens.set(videoId, now)
+      if (this.recentArchiveOpens.size > MAX_RECENT_ARCHIVE_OPENS) {
+        const oldest = this.recentArchiveOpens.keys().next().value
+        if (oldest !== undefined) this.recentArchiveOpens.delete(oldest)
+      }
+    }
   }
 
   private getLeaseSnapshot = (): RuntimeLeaseSnapshot | null =>

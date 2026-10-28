@@ -58,6 +58,30 @@ describe('ResourceReconciler', () => {
     document.body.replaceChildren()
   })
 
+  it('leaves the native iframe untouched when a pending lease is released before a carrier exists', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    host.append(iframe)
+    document.body.append(host)
+    const resources = new ResourceReconciler()
+    const scope = createSessionScope(1)
+    const plan: RuntimePlan = {
+      ...acquirePlan({ kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', iframe } }),
+      presentation: 'preserve',
+      layout: 'none',
+    }
+    try {
+      expect(resources.reconcilePlan(plan, null, scope, vi.fn()).initialization?.success).toBe(false)
+      expect(resources.lease?.state).toBe('created')
+      resources.reconcilePlan({ ...plan, chat: { kind: 'none', ensureNativeVisible: false } }, null, scope, vi.fn())
+      expect(host.contains(iframe)).toBe(true)
+      expect(resources.lease).toBeNull()
+    } finally {
+      resources.clear()
+      scope.dispose()
+    }
+  })
+
   it('keeps initialization pending for empty native CSS and never re-gates an initialized document', () => {
     const iframe = document.createElement('iframe')
     iframe.src = '/live_chat?v=video-1'

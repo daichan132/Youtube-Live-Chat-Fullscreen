@@ -1,6 +1,8 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
+import { freezeContentClock } from '@e2e/support/freezeContentClock'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { readContentStatusViaPopup } from '@e2e/utils/popupHelpers'
 
 const VIDEO_ID = 'ylc-archive-borrow-restore-fixture'
 const nativeStyles = [
@@ -30,6 +32,66 @@ const scenarioState = {
 } satisfies YouTubeScenarioState
 
 test.describe('archive iframe borrow and restore', { tag: '@archive' }, () => {
+  test('requests each new archive without waiting for the previous video cooldown', { tag: '@fixture' }, async ({ page, extension }) => {
+    const closedArchive = (id: string): YouTubeScenarioState => ({
+      video: { id, title: 'Closed replay fixture', mode: 'archive' },
+      page: { chatContainer: 'present', chatDimensions: 'standard' },
+      fullscreen: false,
+      chat: { mode: 'archive', native: { state: 'absent' }, response: 'playable' },
+    })
+    const scenario = new YouTubeScenario(page)
+    await scenario.load(closedArchive('ylc-archive-open-a'))
+    const clock = await freezeContentClock(page, extension.id, 1_000_000)
+    try {
+      expect(await clock.read()).toBe(1_000_000)
+      await scenario.installClosedArchiveControl()
+      await scenario.enterFullscreen()
+      await expect.poll(() => scenario.observeArchiveOpenEvents()).toMatchObject([{ videoId: 'ylc-archive-open-a' }])
+
+      await scenario.spaNavigate(closedArchive('ylc-archive-open-b'))
+      expect(await clock.read()).toBe(1_000_000)
+      await scenario.installClosedArchiveControl()
+      await scenario.enterFullscreen()
+      await expect.poll(() => scenario.observeArchiveOpenEvents()).toMatchObject([
+        { videoId: 'ylc-archive-open-a' },
+        { videoId: 'ylc-archive-open-b' },
+      ])
+
+      const popup = await page.context().newPage()
+      try {
+        await popup.goto(extension.url('popup.html'))
+        await page.bringToFront()
+        const previous = await readContentStatusViaPopup(popup)
+        if (!previous?.report) throw new Error('Expected a running content runtime.')
+        const previousGeneration = previous.report.runtime.generation
+        await scenario.spaNavigate(closedArchive('ylc-archive-open-a'))
+        expect(await clock.read()).toBe(1_000_000)
+        await scenario.installClosedArchiveControl()
+        await scenario.enterFullscreen()
+        await expect
+          .poll(async () => (await readContentStatusViaPopup(popup))?.report?.runtime.generation)
+          .toBeGreaterThan(previousGeneration)
+        expect(await scenario.observeArchiveOpenEvents()).toEqual([
+          { videoId: 'ylc-archive-open-a' },
+          { videoId: 'ylc-archive-open-b' },
+        ])
+
+        expect(await clock.set(1_002_001)).toBe(1_002_001)
+        await scenario.notifyPageDataUpdated()
+        await expect.poll(() => scenario.observeArchiveOpenEvents()).toEqual([
+          { videoId: 'ylc-archive-open-a' },
+          { videoId: 'ylc-archive-open-b' },
+          { videoId: 'ylc-archive-open-a' },
+        ])
+      } finally {
+        await popup.close()
+        await page.bringToFront()
+      }
+    } finally {
+      await clock.dispose()
+    }
+  })
+
   test('restores the borrowed replay iframe to its exact native slot', { tag: '@fixture' }, async ({ page }) => {
     test.setTimeout(120000)
 

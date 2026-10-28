@@ -1,4 +1,5 @@
-import { fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -53,6 +54,29 @@ describe('YLCNumberSlider', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.spacing).toBe(8)
     expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
     expect(setPointerCapture).toHaveBeenCalled()
+  })
+
+  it('finishes a range gesture in the current store after the provider changes', () => {
+    const first = createTestStore()
+    const second = createTestStore()
+    const original = first.get(chatSettingsStateAtom).profile.appearance.fontSize
+    const view = render(
+      <Provider store={first}>
+        <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
+      </Provider>,
+    )
+    const slider = view.getByRole('slider', { name: 'content.setting.fontSize' })
+    fireEvent.pointerDown(slider)
+    fireEvent.change(slider, { target: { value: '25' } })
+    fireEvent.pointerUp(slider)
+    expect(second.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(25)
+    expect(second.get(editorSessionStateAtom).activeGesture).toBeNull()
+    expect(first.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(original)
   })
 
   it('uses the provided range when updating space', () => {

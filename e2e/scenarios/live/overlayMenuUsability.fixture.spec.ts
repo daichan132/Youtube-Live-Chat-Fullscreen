@@ -141,6 +141,26 @@ test('does not resurrect the placement menu after opening and closing settings',
   await expect(page.locator('[data-ylc-placement-panel]')).toHaveCount(0)
 })
 
+test('keeps embedded settings open when Escape closes a picker opened without native click focus', async ({ page, extension }) => {
+  await setup(page, extension)
+  await page.locator('[data-ylc-settings-btn]').click()
+  const settings = page.frameLocator('[data-ylc-settings-frame]')
+  const trigger = settings.getByRole('button', { name: 'Background Color', exact: true })
+  const picker = settings.getByRole('dialog', { name: 'Color picker', exact: true })
+  await settings.getByRole('button', { name: 'Font', exact: true }).focus()
+  await trigger.evaluate(element => element.addEventListener('mousedown', event => event.preventDefault(), { once: true }))
+  await trigger.click()
+  await expect(trigger).toBeFocused()
+  await expect(picker).toBeVisible()
+
+  await page.keyboard.press('Escape')
+
+  await expect(picker).toHaveCount(0)
+  await expect(trigger).toBeFocused()
+  await expect(page.locator('[data-ylc-settings-frame]')).toBeVisible()
+  await expect(settings.locator('.ylc-setting-panel')).toBeVisible()
+})
+
 for (const viewport of [
   { width: 1280, height: 720 },
   { width: 320, height: 240 },

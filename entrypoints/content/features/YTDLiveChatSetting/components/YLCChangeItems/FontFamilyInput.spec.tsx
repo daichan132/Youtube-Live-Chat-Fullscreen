@@ -1,5 +1,6 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
@@ -90,6 +91,26 @@ describe('FontFamilyInput', () => {
     expect(store.get(chatSettingsStateAtom).profile).toEqual(previousProfile)
     expect(trigger).toHaveTextContent('Roboto')
     expect(trigger).toHaveAccessibleDescription('Roboto')
+  })
+
+  it('commits a font to the current store after the provider changes', async () => {
+    const user = userEvent.setup()
+    const first = createTestStore()
+    const second = createTestStore()
+    const view = render(
+      <Provider store={first}>
+        <FontFamilyInput />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <FontFamilyInput />
+      </Provider>,
+    )
+    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    await user.type(view.getByRole('combobox'), 'Roboto Slab{Enter}')
+    expect(second.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
+    expect(first.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBeNull()
   })
 
   it.each(['Escape', 'selection'])('returns focus to the trigger after %s closes the keyboard search', async closeWith => {

@@ -64,4 +64,29 @@ describe('player obstacle measurement and observation', () => {
     observer.disconnect()
     player.remove()
   })
+
+  it('observes ancestor visibility while ignoring unrelated subtree attributes', () => {
+    const player = document.createElement('div')
+    const parent = document.createElement('div')
+    const caption = document.createElement('div')
+    const unrelated = document.createElement('div')
+    caption.className = 'caption-window'
+    parent.append(caption)
+    unrelated.append(document.createElement('span'))
+    player.append(parent, unrelated)
+    document.body.append(player)
+    const observer = new MutationObserver(() => {})
+    observer.observe(player, { attributes: true, subtree: true })
+    const changed = () => observer.takeRecords().some(record => mutationTouchesPlayerObstacle(record, player))
+
+    parent.hidden = true
+    expect(changed()).toBe(true)
+    parent.hidden = false
+    expect(changed()).toBe(true)
+    unrelated.className = 'playing'
+    expect(changed()).toBe(false)
+
+    observer.disconnect()
+    player.remove()
+  })
 })

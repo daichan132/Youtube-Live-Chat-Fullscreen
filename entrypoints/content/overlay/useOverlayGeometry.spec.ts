@@ -424,6 +424,47 @@ describe('useOverlayGeometry', () => {
     expect(result.current.displayGeometry.coordinates.y).toBeCloseTo(502)
   })
 
+  it('rechecks a caption revealed by a previously hidden parent', async () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const parent = document.createElement('div')
+    const caption = document.createElement('div')
+    caption.className = 'caption-window'
+    parent.hidden = true
+    caption.getBoundingClientRect = () => (parent.hidden ? new DOMRect(0, 0, 0, 0) : new DOMRect(100, 50, 300, 200))
+    parent.append(caption)
+    player.append(parent)
+    const original = store.get(chatSettingsStateAtom).geometry
+    renderGeometryHook()
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(original)
+
+    await act(async () => {
+      parent.hidden = false
+      await Promise.resolve()
+    })
+    await flushAnimationFrame()
+
+    expect(store.get(chatSettingsStateAtom).geometry).not.toEqual(original)
+  })
+
+  it('does not remeasure obstacles for unrelated playback attribute updates', async () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const progress = document.createElement('div')
+    progress.className = 'ytp-progress-bar'
+    progress.append(document.createElement('span'))
+    player.append(progress)
+    const measurePlayer = vi.spyOn(player, 'getBoundingClientRect')
+    renderGeometryHook()
+    measurePlayer.mockClear()
+
+    await act(async () => {
+      progress.style.transform = 'scaleX(.5)'
+      await Promise.resolve()
+    })
+    await flushAnimationFrame()
+
+    expect(measurePlayer).not.toHaveBeenCalled()
+  })
+
   it('keeps legacy pixels pending until the player is available, then migrates once as pinned ratios', () => {
     const legacy: LegacyChatGeometry = {
       reference: 'legacy-viewport-px',

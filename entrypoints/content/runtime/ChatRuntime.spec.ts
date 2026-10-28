@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
 import type { PageObservation } from '../platform/youtube/types'
+import * as nativeChat from '../utils/nativeChat'
 import { ChatRuntimeImpl, mutationTouchesChatBoundary } from './ChatRuntime'
 import type { ChatDecision } from './resolveChatDecision'
 import type { ChatIframeLease } from './resources/ChatIframeLease'
@@ -675,6 +676,103 @@ describe('ChatRuntime', () => {
     expect(setIntervalSpy).not.toHaveBeenCalled()
     harness.runtime.stop()
     setIntervalSpy.mockRestore()
+  })
+
+  it('opens the next archive without waiting for the previous video cooldown', () => {
+    const open = vi.spyOn(nativeChat, 'openArchiveNativeChatPanel').mockReturnValue(true)
+    const player = document.createElement('div')
+    const harness = createHarness({
+      snapshots: [createSnapshot({ videoId: 'video-1', player }), createSnapshot({ videoId: 'video-2', player })],
+      decisions: [
+        { kind: 'pending', videoId: 'video-1', mode: 'archive', canToggle: true },
+        { kind: 'pending', videoId: 'video-2', mode: 'archive', canToggle: true },
+      ],
+    })
+    try {
+      flushFrame()
+      expect(open).toHaveBeenCalledTimes(1)
+      dispatchNavigation()
+      expect(harness.runtime.getGeneration()).toBe(2)
+      expect(open).toHaveBeenCalledTimes(2)
+    } finally {
+      harness.runtime.stop()
+      open.mockRestore()
+    }
+  })
+
+  it('keeps the same-video archive cooldown across player replacement and retries', () => {
+    const open = vi.spyOn(nativeChat, 'openArchiveNativeChatPanel').mockReturnValue(true)
+    const harness = createHarness({
+      snapshots: [createSnapshot(), createSnapshot()],
+      decisions: [{ kind: 'pending', videoId: 'video-1', mode: 'archive', canToggle: true }],
+    })
+    try {
+      flushFrame()
+      expect(open).toHaveBeenCalledTimes(1)
+      dispatchNavigation()
+      expect(harness.runtime.getGeneration()).toBe(2)
+      vi.advanceTimersByTime(1900)
+      expect(open).toHaveBeenCalledTimes(1)
+      vi.advanceTimersByTime(100)
+      dispatchNavigation()
+      expect(open).toHaveBeenCalledTimes(2)
+    } finally {
+      harness.runtime.stop()
+      open.mockRestore()
+    }
+  })
+
+  it('keeps an archive cooldown when navigating A to B and back to A', () => {
+    const open = vi.spyOn(nativeChat, 'openArchiveNativeChatPanel').mockReturnValue(true)
+    const player = document.createElement('div')
+    const harness = createHarness({
+      snapshots: ['video-a', 'video-b', 'video-a'].map(videoId => createSnapshot({ videoId, player })),
+      decisions: ['video-a', 'video-b', 'video-a'].map(videoId => ({ kind: 'pending', videoId, mode: 'archive', canToggle: true })),
+    })
+    try {
+      vi.advanceTimersByTime(50)
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+      vi.advanceTimersByTime(50)
+      document.dispatchEvent(new Event('yt-page-data-updated'))
+      vi.advanceTimersByTime(50)
+      expect(open).toHaveBeenCalledTimes(2)
+
+      vi.advanceTimersByTime(2000)
+      dispatchNavigation()
+      expect(open).toHaveBeenCalledTimes(3)
+    } finally {
+      harness.runtime.stop()
+      open.mockRestore()
+    }
+  })
+
+  it('bounds recent archive history, prunes expired entries and clears it on stop', () => {
+    const open = vi.spyOn(nativeChat, 'openArchiveNativeChatPanel').mockReturnValue(true)
+    const player = document.createElement('div')
+    const videoIds = Array.from({ length: 20 }, (_, index) => `video-${index}`)
+    const harness = createHarness({
+      snapshots: videoIds.map(videoId => createSnapshot({ videoId, player })),
+      decisions: videoIds.map(videoId => ({ kind: 'pending', videoId, mode: 'archive', canToggle: true })),
+    })
+    const recent = (harness.runtime as unknown as { recentArchiveOpens: Map<string, number> }).recentArchiveOpens
+    try {
+      vi.advanceTimersByTime(50)
+      for (const _videoId of videoIds.slice(1)) {
+        document.dispatchEvent(new Event('yt-page-data-updated'))
+        vi.advanceTimersByTime(50)
+      }
+      expect(open).toHaveBeenCalledTimes(videoIds.length)
+      expect(recent.size).toBe(16)
+
+      vi.setSystemTime(Date.now() + 2001)
+      dispatchNavigation()
+      expect(recent.size).toBe(1)
+      harness.runtime.stop()
+      expect(recent.size).toBe(0)
+    } finally {
+      harness.runtime.stop()
+      open.mockRestore()
+    }
   })
 
   it('physically disables portal hosts when retry exhaustion becomes unavailable', () => {

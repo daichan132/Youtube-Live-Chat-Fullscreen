@@ -191,4 +191,79 @@ describe('ResourceReconciler owned DOM lifecycle', () => {
     expect(rebuiltHost.querySelector('iframe')).toBeNull()
     expect(iframe.isConnected).toBe(false)
   })
+
+  it.each(['recover old', 'keep newest'] as const)('keeps an occupied native host and an active replacement separate, then %s', outcome => {
+    const previous = Object.getOwnPropertyDescriptor(Element.prototype, 'moveBefore')
+    Object.defineProperty(Element.prototype, 'moveBefore', {
+      configurable: true,
+      value(this: Element, node: Node, reference: Node | null) {
+        this.insertBefore(node, reference)
+      },
+    })
+    try {
+      const { resources, scope, observation, nativeHost, iframe: original } = acquireNativeChat('live')
+      nativeHost.remove()
+      observation.targets.nativeChatHost = null
+      resources.reconcilePlan(switchOnlyPlan, observation, scope, onLoad)
+      expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+      expect(original.isConnected).toBe(true)
+
+      const replacementHost = createNativeHost()
+      const replacement = document.createElement('iframe')
+      replacement.id = 'chatframe'
+      replacement.src = '/live_chat?v=video-1'
+      replacementHost.append(replacement)
+      observation.targets.nativeChatHost = replacementHost
+      observation.targets.nativeChatIframe = replacement
+      observation.targets.chatIframe = replacement
+      resources.reconcilePlan(preservePlan, observation, scope, onLoad)
+      expect(replacementHost.querySelectorAll('iframe')).toHaveLength(1)
+      expect(replacementHost.contains(replacement)).toBe(true)
+      expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+
+      const newCarrier = document.createElement('div')
+      document.body.append(newCarrier)
+      resources.setOverlayContainer(newCarrier)
+      const activePlan: RuntimePlan = {
+        ...preservePlan,
+        chat: {
+          kind: 'acquire',
+          decision: { kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', iframe: replacement } },
+        },
+      }
+      resources.reconcilePlan(activePlan, observation, scope, onLoad)
+      resources.reconcilePlan(preservePlan, observation, scope, onLoad)
+      expect(newCarrier.contains(replacement)).toBe(true)
+      expect(replacementHost.querySelector('iframe')).toBeNull()
+      expect(original.isConnected).toBe(true)
+      expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+
+      if (outcome === 'keep newest') {
+        const third = document.createElement('iframe')
+        third.src = '/live_chat?v=video-1'
+        replacementHost.append(third)
+        resources.reconcilePlan(switchOnlyPlan, observation, scope, onLoad)
+        expect(original.isConnected).toBe(false)
+        expect(replacement.isConnected).toBe(true)
+        expect(replacementHost.contains(third)).toBe(true)
+        expect(replacementHost.querySelectorAll('iframe')).toHaveLength(1)
+        expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+        resources.reconcilePlan(stopPlan, observation, scope, onLoad)
+        expect(replacement.isConnected).toBe(false)
+        expect(replacementHost.contains(third)).toBe(true)
+      } else {
+        resources.reconcilePlan(switchOnlyPlan, observation, scope, onLoad)
+        expect(replacementHost.contains(replacement)).toBe(true)
+        expect(original.isConnected).toBe(true)
+        expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+        replacement.remove()
+        resources.reconcilePlan(preservePlan, observation, scope, onLoad)
+        expect(replacementHost.contains(original)).toBe(true)
+        expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(0)
+      }
+    } finally {
+      if (previous) Object.defineProperty(Element.prototype, 'moveBefore', previous)
+      else Reflect.deleteProperty(Element.prototype, 'moveBefore')
+    }
+  })
 })

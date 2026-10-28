@@ -77,6 +77,23 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
     await expect(page.getByRole('dialog', { name: 'Color picker', exact: true })).toHaveCount(0)
   })
 
+  test('focuses a pointer-opened picker when the browser does not focus buttons on click', async ({ page }) => {
+    const background = page.getByRole('button', { name: 'Background Color', exact: true })
+    const font = page.getByRole('button', { name: 'Font', exact: true })
+    const picker = page.getByRole('dialog', { name: 'Color picker', exact: true })
+    await font.focus()
+    // Emulate the native no-focus-on-click behavior while still using real input.
+    await background.evaluate(element => element.addEventListener('mousedown', event => event.preventDefault(), { once: true }))
+    await background.click()
+
+    await expect(background).toBeFocused()
+    await expect(picker).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(picker).toHaveCount(0)
+    await expect(background).toBeFocused()
+    await expect(page.locator('.ylc-setting-panel')).toBeVisible()
+  })
+
   test('finishes a held color gesture once on focus exit and keeps Escape local to the reopened picker', async ({ page, extension }) => {
     const background = page.getByRole('button', { name: 'Background Color', exact: true })
     const text = page.getByRole('button', { name: 'Text Color', exact: true })

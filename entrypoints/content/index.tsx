@@ -3,6 +3,7 @@ import './content.css'
 import { ContentBootstrap } from './bootstrap/ContentBootstrap'
 import { registerContentStatusMessaging } from './bootstrap/contentStatusMessaging'
 import { createContentSession } from './bootstrap/createContentSession'
+import { observeCommittedLocation } from './bootstrap/observeCommittedLocation'
 
 export default defineContentScript({
   matches: [...CONTENT_SCRIPT_MATCHES],
@@ -12,9 +13,7 @@ export default defineContentScript({
     const bootstrap = new ContentBootstrap(() => createContentSession(ctx), {
       onPermanentFailure: failure => console.warn('[YLC] Content session activation failed', failure),
     })
-    ctx.addEventListener(window, 'wxt:locationchange', event => {
-      void bootstrap.reconcileLocation(event.newUrl.href)
-    })
+    observeCommittedLocation(ctx, () => void bootstrap.reconcileLocation())
     ctx.addEventListener(document, 'yt-navigate-finish', () => {
       void bootstrap.reconcileLocation(undefined, { navigationCompleted: true })
     })

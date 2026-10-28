@@ -233,6 +233,41 @@ describe('usePresetReorder', () => {
     expect(onCommit).toHaveBeenCalledWith(['middle', 'first', 'last'])
   })
 
+  it('ignores keyboard moves and confirmation during a pointer gesture', () => {
+    const onCommit = vi.fn()
+    const view = render(<ReorderHarness onCommit={onCommit} />)
+    arrangePresetRows(view.container)
+    const first = view.getByRole('button', { name: 'reorder first' })
+    const middle = view.getByRole('button', { name: 'reorder middle' })
+    middle.focus()
+    fireEvent.pointerDown(first, { button: 0, pointerId: 11, clientY: 0 })
+    fireEvent.pointerMove(window, { pointerId: 11, clientY: 200 })
+    expect(order(view.getByTestId)).toBe('middle,last,first')
+
+    fireEvent.keyDown(middle, { key: 'ArrowDown' })
+    fireEvent.keyDown(first, { key: 'Enter' })
+    expect(order(view.getByTestId)).toBe('middle,last,first')
+    expect(onCommit).not.toHaveBeenCalled()
+    fireEvent.pointerUp(window, { pointerId: 11, clientY: 200 })
+    expect(onCommit).toHaveBeenCalledExactlyOnceWith(['middle', 'last', 'first'])
+    expect(first).toHaveFocus()
+  })
+
+  it('does not let a different handle commit a keyboard gesture preview', () => {
+    const onCommit = vi.fn()
+    const view = render(<ReorderHarness onCommit={onCommit} />)
+    const first = view.getByRole('button', { name: 'reorder first' })
+    const middle = view.getByRole('button', { name: 'reorder middle' })
+    fireEvent.keyDown(first, { key: 'Enter' })
+    fireEvent.keyDown(first, { key: 'ArrowDown' })
+    middle.focus()
+    fireEvent.keyDown(middle, { key: 'ArrowDown' })
+    expect(order(view.getByTestId)).toBe('middle,first,last')
+    expect(onCommit).not.toHaveBeenCalled()
+    fireEvent.keyDown(middle, { key: 'Escape' })
+    expect(order(view.getByTestId)).toBe(INITIAL_IDS.join(','))
+  })
+
   it('does not start reordering from an interactive child outside the handle', () => {
     const onCommit = vi.fn()
     const view = render(<ReorderHarness onCommit={onCommit} />)

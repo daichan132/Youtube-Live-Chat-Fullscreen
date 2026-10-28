@@ -358,6 +358,8 @@ export const usePresetReorder = ({
       if (event.nativeEvent.isComposing) return
       if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown' && event.key !== 'Enter' && event.key !== ' ') return
       event.preventDefault()
+      // A gesture owns its preview until it finishes; another input must not commit it.
+      if (pointerGestureRef.current || (activeIdRef.current && activeIdRef.current !== id)) return
       const current = previewIdsRef.current
       if (event.key === 'Enter' || event.key === ' ') {
         if (activeIdRef.current === id) finish(true)

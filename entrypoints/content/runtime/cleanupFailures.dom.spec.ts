@@ -85,6 +85,26 @@ describe('resource cleanup failure isolation', () => {
     expect(resources.lease).toBeNull()
   })
 
+  it('preserves the first error and retains the iframe when both cleanup steps fail', () => {
+    const lease = makeLease()
+    lease.release.mockImplementationOnce(() => {
+      throw new Error('iframe failed')
+    })
+    const chrome = {
+      sync: vi.fn().mockImplementationOnce(() => {
+        throw new Error('chrome failed')
+      }),
+      release: vi.fn(),
+    }
+    const resources = new ResourceReconciler({ createLease: () => lease, chatChrome: chrome })
+    resources.createIframe(decisionFor(lease), 1)
+
+    expect(() => resources.releaseIframe(null)).toThrow('chrome failed')
+    expect(resources.lease).toBe(lease)
+    expect(() => resources.clear()).not.toThrow()
+    expect(resources.lease).toBeNull()
+  })
+
   it('attempts layout, presentation and chrome cleanup after iframe release fails', () => {
     const lease = makeLease()
     lease.release.mockImplementationOnce(() => {
@@ -121,7 +141,7 @@ describe('resource cleanup failure isolation', () => {
 
   it('does not abandon later restoration cleanup when an earlier lease throws', () => {
     const first = makeLease('restoring')
-    const second = makeLease('restoring')
+    const second = { ...makeLease('restoring'), videoId: 'different-video' }
     first.abandonRestore.mockImplementationOnce(() => {
       throw new Error('restore failed')
     })
@@ -132,6 +152,32 @@ describe('resource cleanup failure isolation', () => {
     resources.createIframe(decisionFor(second), 1)
     resources.releaseIframe(null)
 
+    expect(() => resources.clear()).toThrow('restore failed')
+    expect(second.abandonRestore).toHaveBeenCalledOnce()
+    expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)
+    expect(() => resources.clear()).not.toThrow()
+    expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(0)
+  })
+
+  it('retains both restorations when pruning an older same-video lease fails', () => {
+    const first = makeLease('restoring')
+    const second = makeLease('restoring')
+    first.abandonRestore
+      .mockImplementationOnce(() => {
+        throw new Error('restore failed')
+      })
+      .mockImplementationOnce(() => {
+        throw new Error('restore failed')
+      })
+    const createLease = vi.fn().mockReturnValueOnce(first).mockReturnValueOnce(second)
+    const resources = new ResourceReconciler({ createLease, chatChrome: { sync: vi.fn(), release: vi.fn() } })
+    resources.createIframe(decisionFor(first), 1)
+    resources.releaseIframe(null)
+    resources.createIframe(decisionFor(second), 1)
+
+    expect(() => resources.releaseIframe(null)).toThrow('restore failed')
+    expect(resources.lease).toBeNull()
+    expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(2)
     expect(() => resources.clear()).toThrow('restore failed')
     expect(second.abandonRestore).toHaveBeenCalledOnce()
     expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(1)

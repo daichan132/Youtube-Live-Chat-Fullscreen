@@ -31,8 +31,10 @@ A channel live entry is valid before YouTube has resolved the current stream. `g
 
 `entrypoints/content/index.tsx` owns the bootstrap and forwards two signals:
 
-- WXT `wxt:locationchange`, including its completed destination URL;
+- committed `navigation.currententrychange`, or WXT `wxt:locationchange` polling when the Navigation API is unavailable;
 - YouTube `yt-navigate-finish`, which may retry a previously exhausted channel-live activation after the page has populated its player.
+
+The Navigation API's `navigate` event precedes the URL change and may be cancelled. WXT forwards that early destination and remembers it even when cancelled, so the extension observes committed entries instead; cancelling and later retrying the same destination does not dispose or strand the current session. The fallback reads the current URL after WXT detects a change.
 
 `ContentBootstrap` creates no session on unsupported pages. Session construction is normalized through a promise so synchronous and asynchronous failures enter the same bounded retry sequence: initial attempt, 250 ms, then 1 second. After exhaustion it reports only a sanitized route-level failure and remains stopped until the surface changes or a completed navigation explicitly retries it.
 
@@ -92,6 +94,8 @@ Changing any identity component first applies the stop plan to current resources
 
 Signals are coalesced into one animation frame. A retry can reconcile before an already-scheduled frame; when that observation changes the generation, it cancels an old observer-only frame, and callbacks from the disposed observer cannot schedule another. A page signal received during observation, including one coalesced into that frame, still gets its own reconciliation. Retry work uses `SessionScope`; there is no interval and no unbounded retry loop.
 
+Archive open controls are toggles, so repeat activation is cooled down for two seconds per video. A different video's first request is not delayed by another video's cooldown; replacing the player or fullscreen root, or briefly navigating away and back, keeps the original video's cooldown. Expired timestamps are removed on the next open request; at most 16 recent video IDs are retained, and stopping the runtime clears them.
+
 YouTube's `yt-page-data-updated` also schedules observation: updates inside the loaded chat document do not reach the top-document MutationObserver. Bursts share the same animation frame, and the content scope removes this listener on stop. The event is a wake-up signal; DOM and source evidence still determine the decision.
 
 ## Decision and model
@@ -140,7 +144,9 @@ Borrowed iframe restoration tries, in order:
 2. its original parent and next sibling;
 3. a current matching native chat host.
 
-If YouTube replaced every target, restoration remains owned by the reconciler and is retried on later observations. A lease is discarded rather than attached to a different video.
+If YouTube replaced every target, restoration remains owned by the reconciler and is retried on later observations. When a connected iframe can be moved with `moveBefore`, it waits in a hidden, closed shadow tree outside the React carrier. This keeps its browsing context alive without exposing it to native iframe discovery; restoring, abandoning, stopping, and changing generations remove the parking host. Browsers without state-preserving moves fall back to a detached iframe, which can reload when reinserted. A borrowed lease released before attachment leaves YouTube's original iframe in place.
+
+A native host already containing another chat iframe is not an available restore target; the extension leaves that iframe untouched and continues to own the waiting lease. An uninitialized native chatframe also occupies the slot, while unrelated iframes do not. If a newer iframe for the same video is active in the overlay, its temporarily empty native slot also stays reserved. The waiting iframe is restored when that slot becomes available, or discarded on session stop or generation change. Waiting retains the old document in memory for as long as monitoring continues. To bound repeated host replacements, only the newest pending restore is kept per video: if another borrowed iframe also has no free restore target, the previous waiting iframe is discarded, including any unsent draft in it. If that cleanup throws, the older lease remains tracked until recovery retries its release. A lease is never attached to a different video.
 
 ## Recovery and diagnostics
 

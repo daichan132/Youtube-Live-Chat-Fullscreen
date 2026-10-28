@@ -85,7 +85,7 @@ export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) 
     [commitYLCStyleUpdate, gestureId, previewYLCStyleUpdate, settingKey, store],
   )
   const beginGesture = useCallback(() => beginYLCStyleGesture(gestureId), [beginYLCStyleGesture, gestureId])
-  const finishGesture = useCallback(() => finishYLCStyleGesture(gestureId), [gestureId])
+  const finishGesture = useCallback(() => finishYLCStyleGesture(gestureId), [finishYLCStyleGesture, gestureId])
 
   return (
     <div className='ylc-range-field'>

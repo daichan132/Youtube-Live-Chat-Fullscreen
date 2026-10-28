@@ -80,6 +80,46 @@ test('rechecks a stationary caption when resizing brings an unpinned chat into i
     .toBe(false)
 })
 
+test('moves an unpinned chat when a hidden caption ancestor becomes visible', async ({ page, extension }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  const initialGeometry = {
+    reference: 'player' as const,
+    rect: { x: 10 / 1280, y: 10 / 720, width: 300 / 1280, height: 200 / 720 },
+    pinned: false,
+  }
+  await patchOverlayStore(extension, {
+    geometry: initialGeometry,
+    profile: { display: { contentMode: 'full-chat', idleVisibility: 'always-visible' } },
+  })
+  const scenario = new YouTubeScenario(page)
+  await scenario.load(state)
+  await scenario.addCaptionObstacle({ x: 0, y: 0, width: 500, height: 400 }, true)
+  await scenario.enterFullscreen()
+  const overlay = new ExtensionOverlay(page)
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  const caption = page.locator('[data-fixture-caption]')
+  await expect(caption).toBeHidden()
+  await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 10, y: 10, width: 300, height: 200 })
+
+  await scenario.setCaptionParentHidden(false)
+  await expect(caption).toBeVisible()
+  const obstacle = await caption.boundingBox()
+  expect(obstacle).toMatchObject({ x: 0, y: 0, width: 500, height: 400 })
+  if (!obstacle) throw new Error('The visible fixture caption must have bounds.')
+  await expect.poll(async () => {
+    const chat = await overlay.frame().boundingBox()
+    if (!chat) return false
+    return (
+      chat.x + chat.width <= obstacle.x ||
+      obstacle.x + obstacle.width <= chat.x ||
+      chat.y + chat.height <= obstacle.y ||
+      obstacle.y + obstacle.height <= chat.y
+    )
+  }).toBe(true)
+  const saved = (await extension.storage.get(GEOMETRY_STORAGE_KEY))[GEOMETRY_STORAGE_KEY] as { value: { pinned: boolean } }
+  expect(saved.value.pinned).toBe(false)
+})
+
 test('moves an unpinned chat when a hidden player menu appears', async ({ page, extension }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
   const initialGeometry = {

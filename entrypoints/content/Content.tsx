@@ -25,15 +25,15 @@ export const Content = () => {
   useEffect(() => {
     chatRuntime.start()
     return () => chatRuntime.stop()
-  }, [])
+  }, [chatRuntime])
 
   useEffect(() => {
     chatRuntime.setEnabled(enabled)
-  }, [enabled])
+  }, [chatRuntime, enabled])
 
   useEffect(() => {
     chatRuntime.setProfile(effectiveProfile)
-  }, [effectiveProfile])
+  }, [chatRuntime, effectiveProfile])
 
   const liveChatPortal =
     runtimeView.showOverlay && runtimeView.overlayRoot

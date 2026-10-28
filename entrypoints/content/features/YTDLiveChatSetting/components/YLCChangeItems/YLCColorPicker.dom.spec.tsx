@@ -1,4 +1,5 @@
-import { fireEvent, type RenderResult } from '@testing-library/react'
+import { fireEvent, type RenderResult, render } from '@testing-library/react'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -61,6 +62,27 @@ describe('YLCColorPicker', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.75 })
     expect(store.get(editorSessionStateAtom).draftProfile).toBeNull()
     expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
+  })
+
+  it('commits a color to the current store after the provider changes', () => {
+    const first = createTestStore()
+    const second = createTestStore()
+    const original = first.get(chatSettingsStateAtom).profile.appearance.backgroundColor
+    const view = render(
+      <Provider store={first}>
+        <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
+      </Provider>,
+    )
+    const slider = openAlphaSlider(view.getByRole, 'content.setting.backgroundColor')
+    fireEvent.mouseDown(slider, { buttons: 1, clientX: 40, clientY: 50 })
+    fireEvent.mouseUp(window)
+    expect(second.get(chatSettingsStateAtom).profile.appearance.backgroundColor.a).toBe(0.2)
+    expect(first.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual(original)
   })
 
   it('updates the font color setting without changing the background color setting', () => {

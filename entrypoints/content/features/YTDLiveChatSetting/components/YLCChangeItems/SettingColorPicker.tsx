@@ -82,7 +82,10 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
         aria-controls={display ? pickerId : undefined}
         aria-expanded={display}
         className='ylc-color-trigger ylc-action-fill'
-        onClick={() => setDisplay(current => !current)}
+        onClick={event => {
+          if (!display) event.currentTarget.focus({ preventScroll: true })
+          setDisplay(current => !current)
+        }}
         onKeyDown={handleLocalKeyDown}
         onBlur={handleFocusLeave}
       >

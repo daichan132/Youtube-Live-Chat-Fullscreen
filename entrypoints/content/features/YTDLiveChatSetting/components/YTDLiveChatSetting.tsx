@@ -132,7 +132,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       }))
     }
     return handled
-  }, [t])
+  }, [t, undoYLCStyle])
 
   const handleRedo = useCallback(() => {
     const handled = redoYLCStyle()
@@ -143,7 +143,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       }))
     }
     return handled
-  }, [t])
+  }, [redoYLCStyle, t])
 
   const handlePanelKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {

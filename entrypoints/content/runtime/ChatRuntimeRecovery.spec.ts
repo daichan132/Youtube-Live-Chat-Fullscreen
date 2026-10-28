@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
+import { getLiveChatIframes } from '../chat/shared/iframeDom'
 import type { PageObservation } from '../platform/youtube/types'
 import { ChatRuntimeImpl } from './ChatRuntime'
 
@@ -57,6 +58,79 @@ describe('ChatRuntime unexpected error recovery', () => {
     vi.runOnlyPendingTimers()
     vi.useRealTimers()
     document.body.replaceChildren()
+  })
+
+  it.each(['stop', 'generation change'] as const)('releases a parked iframe on %s', outcome => {
+    window.history.replaceState({}, '', '/watch?v=video-1')
+    const previous = Object.getOwnPropertyDescriptor(Element.prototype, 'moveBefore')
+    Object.defineProperty(Element.prototype, 'moveBefore', {
+      configurable: true,
+      value(this: Element, node: Node, reference: Node | null) {
+        this.insertBefore(node, reference)
+      },
+    })
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-1')
+    const iframe = document.createElement('iframe')
+    iframe.id = 'chatframe'
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-1'
+    const chatDocument = document.implementation.createHTMLDocument('chat')
+    chatDocument.body.innerHTML =
+      '<yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer>'
+    Object.defineProperty(iframe, 'contentDocument', { configurable: true, value: chatDocument })
+    const carrier = document.createElement('div')
+    const current = observation()
+    current.evidence.fullscreen = true
+    current.evidence.sourceKind = 'native-live'
+    current.evidence.capabilities.canBorrowNativeChat = true
+    current.evidence.capabilities.canRestoreNativeChat = true
+    current.targets.fullscreenRoot = current.targets.player
+    current.targets.nativeChatHost = host
+    current.targets.nativeChatIframe = iframe
+    current.targets.chatIframe = iframe
+    const player = current.targets.player
+    const controls = current.targets.rightControls
+    if (!player || !controls) throw new Error('Missing fixture player or controls')
+    player.append(controls)
+    host.append(iframe)
+    document.body.append(player, host, carrier)
+    const runtime = new ChatRuntimeImpl({ readObservation: () => current })
+    runtime.setEnabled(true)
+    runtime.setProfile(DEFAULT_CHAT_PROFILE)
+    runtime.setOverlayContainer(carrier)
+    runtime.start()
+    try {
+      flushFrame()
+      expect(runtime.getSnapshot().status).toBe('active')
+      const generation = runtime.getGeneration()
+      host.remove()
+      current.targets.nativeChatHost = null
+      runtime.setEnabled(false)
+      flushFrame()
+      expect(runtime.getDiagnosticReport().runtime.leases.restoringChatCount).toBe(1)
+      expect(iframe.isConnected).toBe(true)
+      expect(getLiveChatIframes()).not.toContain(iframe)
+      const parkingHost = (iframe.getRootNode() as ShadowRoot).host
+
+      if (outcome === 'stop') runtime.stop()
+      else {
+        window.history.replaceState({}, '', '/watch?v=video-2')
+        current.evidence.videoId = 'video-2'
+        current.targets.nativeChatIframe = null
+        current.targets.chatIframe = null
+        document.dispatchEvent(new Event('yt-page-data-updated'))
+        flushFrame()
+        expect(runtime.getGeneration()).toBeGreaterThan(generation)
+      }
+
+      expect(runtime.getDiagnosticReport().runtime.leases.restoringChatCount).toBe(0)
+      expect(iframe.isConnected).toBe(false)
+      expect(parkingHost.isConnected).toBe(false)
+    } finally {
+      runtime.stop()
+      if (previous) Object.defineProperty(Element.prototype, 'moveBefore', previous)
+      else Reflect.deleteProperty(Element.prototype, 'moveBefore')
+    }
   })
 
   it('returns an active native iframe before recovering from a transient observation error', () => {
