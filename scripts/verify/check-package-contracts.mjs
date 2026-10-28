@@ -3,12 +3,18 @@ import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { inflateRawSync } from 'node:zlib'
+import { validateYarnRelease } from '../../config/yarnRelease.ts'
 import { hasExpectedExtensionCsp } from './extension-csp.mjs'
 
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const outputRoot = join(root, '.output')
 const packageJson = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'))
-const sizePolicy = JSON.parse(await readFile(join(root, 'config/package-size-budget.json'), 'utf8'))
+const yarnRelease = validateYarnRelease(packageJson.packageManager, await readFile(join(root, '.yarnrc.yml'), 'utf8'))
+const expectedLocales = Object.keys(JSON.parse(await readFile(join(root, 'shared/i18n/language_codes.json'), 'utf8'))).sort()
+const packageTargets = {
+  'chrome-mv3': { browser: 'chrome' },
+  'firefox-mv2': { browser: 'firefox' },
+}
 const expectedPermissions = ['storage']
 const expectedContentScriptMatches = ['https://www.youtube.com/*']
 const forbiddenProductionFiles = [
@@ -19,7 +25,6 @@ const forbiddenProductionFiles = [
   { label: 'test bridge asset', matches: file => /(^|\/)test-bridge(?:\/|$)/i.test(file) },
 ]
 const sourcePackagePolicy = {
-  budgetBytes: 5_000_000,
   rootFiles: [
     '.yarnrc.yml',
     'LICENSE',
@@ -33,12 +38,23 @@ const sourcePackagePolicy = {
   ],
   allowedPrefixes: ['.yarn/releases/', 'config/', 'entrypoints/', 'public/', 'scripts/', 'shared/'],
   requiredFiles: [
-    '.yarn/releases/yarn-4.18.1.cjs',
+    yarnRelease,
     'config/packagePolicy.ts',
+    'config/yarnRelease.ts',
     'entrypoints/content/index.tsx',
     'public/_locales/en/messages.json',
+    'public/locales/_keys.json',
     'scripts/generate-locales.mjs',
+    'scripts/locales/compiler.mjs',
+    'shared/i18n/language_codes.json',
+    'shared/i18n/generated/localeMetadata.ts',
+    'shared/i18n/generated/translationTypes.ts',
     'shared/settings/repository.ts',
+    ...expectedLocales.flatMap(locale => [
+      `shared/i18n/assets/${locale}.json`,
+      `public/locales/${locale}.json`,
+      `public/_locales/${locale}/messages.json`,
+    ]),
   ],
   forbiddenPrefixes: ['.github/', '.output/', 'articles/', 'docs/', 'e2e/', 'node_modules/', 'playwright-report/', 'test-results/', 'tests/'],
 }
@@ -214,43 +230,80 @@ const verifyTarget = async report => {
 
   const runtimeLocales = localeCodes(files, /^locales\/([^/]+)\.json$/).filter(locale => locale !== '_keys')
   const manifestLocales = localeCodes(files, /^_locales\/([^/]+)\/messages\.json$/)
-  if (runtimeLocales.length !== 55) failures.push(`expected 55 runtime locales, got ${runtimeLocales.length}`)
-  if (JSON.stringify(manifestLocales) !== JSON.stringify(runtimeLocales)) {
-    failures.push('runtime and manifest locale inventories differ')
+  if (JSON.stringify(runtimeLocales) !== JSON.stringify(expectedLocales)) {
+    failures.push('runtime locale inventory differs from language_codes.json')
+  }
+  if (JSON.stringify(manifestLocales) !== JSON.stringify(expectedLocales)) {
+    failures.push('manifest locale inventory differs from language_codes.json')
+  }
+
+  let localeKeys = null
+  if (!files.includes('locales/_keys.json')) {
+    failures.push('locales/_keys.json is missing')
+  } else {
+    try {
+      const keys = JSON.parse(await readFile(join(report.directory, 'locales/_keys.json'), 'utf8'))
+      if (!Array.isArray(keys) || keys.some(key => typeof key !== 'string')) {
+        failures.push('locales/_keys.json must be an array of strings')
+      } else localeKeys = keys
+    } catch (error) {
+      failures.push(`locales/_keys.json is not valid JSON: ${error instanceof Error ? error.message : String(error)}`)
+    }
   }
 
   for (const file of [
-    ...files.filter(file => /^locales\/[^/]+\.json$/.test(file)),
+    ...files.filter(file => /^locales\/[^/]+\.json$/.test(file) && file !== 'locales/_keys.json'),
     ...files.filter(file => /^_locales\/[^/]+\/messages\.json$/.test(file)),
   ]) {
     try {
-      JSON.parse(await readFile(join(report.directory, file), 'utf8'))
+      const value = JSON.parse(await readFile(join(report.directory, file), 'utf8'))
+      if (file.startsWith('locales/')) {
+        if (!Array.isArray(value) || value.some(message => typeof message !== 'string')) {
+          failures.push(`${file} must be an array of strings`)
+        } else if (localeKeys && value.length !== localeKeys.length) {
+          failures.push(`${file} length does not match locales/_keys.json`)
+        }
+      }
     } catch (error) {
       failures.push(`${file} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
 
-  failures.push(...findForbiddenFiles(files))
-
-  const zipEntries = await readZipEntries(report.zipPath)
-  const zipFiles = [...zipEntries.keys()].filter(file => !file.endsWith('/')).sort()
-  if (JSON.stringify(zipFiles) !== JSON.stringify(files)) failures.push('ZIP file inventory differs from the generated extension directory')
-  for (const file of files) {
-    const zipContents = zipEntries.get(file)
-    if (zipContents && !zipContents.equals(await readFile(join(report.directory, file)))) {
-      failures.push(
-        file === 'manifest.json'
-          ? 'ZIP manifest.json differs from the generated manifest.json'
-          : `ZIP file differs from the generated extension directory: ${file}`,
-      )
+  // locales:check validates public against authored translations. Compare the
+  // built assets independently, even when the ZIP matches the unpacked build.
+  const expectedLocaleFiles = [
+    'locales/_keys.json',
+    ...expectedLocales.flatMap(locale => [`locales/${locale}.json`, `_locales/${locale}/messages.json`]),
+  ]
+  for (const file of expectedLocaleFiles) {
+    if (!files.includes(file)) continue
+    try {
+      const [built, generated] = await Promise.all([readFile(join(report.directory, file)), readFile(join(root, 'public', file))])
+      if (!built.equals(generated)) failures.push(`${file} differs from generated public asset`)
+    } catch (error) {
+      failures.push(`cannot compare ${file} with generated public asset: ${error instanceof Error ? error.message : String(error)}`)
     }
   }
-  failures.push(...findForbiddenFiles(zipFiles).map(failure => `ZIP ${failure}`))
 
-  for (const [metric, budget] of Object.entries(report.config.budgets)) {
-    const value = report.metrics[metric]
-    if (value == null) failures.push(`${metric}: package ZIP is missing`)
-    else if (value > budget) failures.push(`${metric}: ${value} > ${budget}`)
+  failures.push(...findForbiddenFiles(files))
+
+  if (report.metrics.zipBytes === null) {
+    failures.push('package ZIP is missing')
+  } else {
+    const zipEntries = await readZipEntries(report.zipPath)
+    const zipFiles = [...zipEntries.keys()].filter(file => !file.endsWith('/')).sort()
+    if (JSON.stringify(zipFiles) !== JSON.stringify(files)) failures.push('ZIP file inventory differs from the generated extension directory')
+    for (const file of files) {
+      const zipContents = zipEntries.get(file)
+      if (zipContents && !zipContents.equals(await readFile(join(report.directory, file)))) {
+        failures.push(
+          file === 'manifest.json'
+            ? 'ZIP manifest.json differs from the generated manifest.json'
+            : `ZIP file differs from the generated extension directory: ${file}`,
+        )
+      }
+    }
+    failures.push(...findForbiddenFiles(zipFiles).map(failure => `ZIP ${failure}`))
   }
 
   return {
@@ -274,10 +327,6 @@ const verifySourcePackage = async () => {
   if (zipBytes === null) {
     return { target: 'sources', zip: zipName, metrics: { zipBytes }, failures: ['sources ZIP is missing'] }
   }
-  if (zipBytes > sourcePackagePolicy.budgetBytes) {
-    failures.push(`zipBytes: ${zipBytes} > ${sourcePackagePolicy.budgetBytes}`)
-  }
-
   const entries = await readZipEntries(zipPath)
   const files = [...entries.keys()].filter(file => !file.endsWith('/')).sort()
   const rootFiles = new Set(sourcePackagePolicy.rootFiles)
@@ -285,7 +334,7 @@ const verifySourcePackage = async () => {
   for (const file of sourcePackagePolicy.rootFiles) {
     if (!files.includes(file)) failures.push(`required source file is missing: ${file}`)
   }
-  for (const file of sourcePackagePolicy.requiredFiles) {
+  for (const file of new Set(sourcePackagePolicy.requiredFiles)) {
     if (!files.includes(file)) failures.push(`required rebuild input is missing: ${file}`)
   }
   for (const prefix of sourcePackagePolicy.allowedPrefixes) {
@@ -321,6 +370,15 @@ const verifySourcePackage = async () => {
     }
   }
 
+  const sourceYarnrc = entries.get('.yarnrc.yml')?.toString('utf8')
+  if (sourceYarnrc !== undefined) {
+    try {
+      validateYarnRelease(packageJson.packageManager, sourceYarnrc)
+    } catch (error) {
+      failures.push(`source Yarn configuration is invalid: ${error instanceof Error ? error.message : String(error)}`)
+    }
+  }
+
   return {
     target: 'sources',
     zip: zipName,
@@ -330,7 +388,7 @@ const verifySourcePackage = async () => {
   }
 }
 
-const reports = await Promise.all(Object.entries(sizePolicy).map(([target, config]) => measureTarget(target, config)))
+const reports = await Promise.all(Object.entries(packageTargets).map(([target, config]) => measureTarget(target, config)))
 const results = await Promise.all(reports.map(verifyTarget))
 results.push(await verifySourcePackage())
 

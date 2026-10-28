@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, type TargetBrowser, type UserManifest } from 'wxt'
@@ -7,12 +8,15 @@ import {
   WEB_ACCESSIBLE_RESOURCE_MATCHES,
   WEB_ACCESSIBLE_RESOURCES,
 } from './config/packagePolicy'
+import { validateYarnRelease } from './config/yarnRelease'
 
 const e2eDirectory = fileURLToPath(new URL('./e2e', import.meta.url))
 const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta.url))
+const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { packageManager?: unknown }
+const yarnRelease = validateYarnRelease(packageJson.packageManager, readFileSync(new URL('./.yarnrc.yml', import.meta.url), 'utf8'))
 
 export const FIREFOX_SOURCE_INCLUDE = [
-  '.yarn/releases/yarn-4.18.1.cjs',
+  yarnRelease,
   '.yarnrc.yml',
   'LICENSE',
   'README.md',
@@ -23,6 +27,7 @@ export const FIREFOX_SOURCE_INCLUDE = [
   'package.json',
   'public/**',
   'scripts/generate-locales.mjs',
+  'scripts/locales/compiler.mjs',
   'shared/**',
   'tsconfig.json',
   'wxt.config.ts',

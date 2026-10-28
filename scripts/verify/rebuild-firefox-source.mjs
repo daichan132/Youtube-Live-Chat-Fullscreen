@@ -7,6 +7,7 @@ import { tmpdir } from 'node:os'
 import { join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { promisify } from 'node:util'
+import { validateYarnRelease } from '../../config/yarnRelease.ts'
 import { findFirefoxSourceZip } from './firefox-source-archive.mjs'
 
 const exec = promisify(execFile)
@@ -44,11 +45,23 @@ const temporaryDirectory = await mkdtemp(join(tmpdir(), 'ylc-firefox-source-'))
 
 try {
   await exec('unzip', ['-q', sourceZip, '-d', temporaryDirectory])
-  const yarn = join(temporaryDirectory, '.yarn/releases/yarn-4.18.1.cjs')
+  const sourcePackage = JSON.parse(await readFile(join(temporaryDirectory, 'package.json'), 'utf8'))
+  if (sourcePackage.packageManager !== packageJson.packageManager) throw new Error('Source archive packageManager does not match the checkout')
+  const yarn = join(
+    temporaryDirectory,
+    validateYarnRelease(sourcePackage.packageManager, await readFile(join(temporaryDirectory, '.yarnrc.yml'), 'utf8')),
+  )
   const environment = {
     ...process.env,
     YARN_ENABLE_HARDENED_MODE: '0',
   }
+  // Validate generated translations with the compiler shipped in this exact
+  // source archive before installing dependencies or rebuilding the extension.
+  await exec(process.execPath, ['scripts/generate-locales.mjs', '--check'], {
+    cwd: temporaryDirectory,
+    env: environment,
+    maxBuffer: 10 * 1024 * 1024,
+  })
   await exec(process.execPath, [yarn, 'install', '--immutable'], {
     cwd: temporaryDirectory,
     env: environment,
