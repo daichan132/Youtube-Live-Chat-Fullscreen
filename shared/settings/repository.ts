@@ -1,9 +1,10 @@
 import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
+import { isThemeMode } from '@/shared/theme/themeMode'
 import { buildSettingsBackup, type SettingsBackup } from './backup'
 import { DEFAULT_CHAT_SETTINGS } from './migrateSettings'
 import type { ChatGeometry, ChatSettings, GlobalSettings } from './model'
-import { normalizeChatGeometry } from './normalizeSettings'
+import { isRecord, normalizeChatGeometry } from './normalizeSettings'
 import { getExtensionPageLegacyLocaleStorage, readSettingsSnapshot } from './readSettingsSnapshot'
 import {
   type ChatAppearanceSettings,
@@ -63,6 +64,22 @@ export class SettingsImportError extends Error {
 
 const SAVE_RETRY_DELAY_MS = 400
 const IMPORT_DOMAINS = ['enabled', 'theme', 'appearance', 'geometry'] as const satisfies readonly PersistenceDomain[]
+
+// Reject values with no usable domain shape. Partial objects and unknown
+// locale strings still go through the existing compatibility normalization.
+const isUsableDomainValue = (domain: PersistenceDomain, value: unknown) => {
+  switch (domain) {
+    case 'enabled':
+      return typeof value === 'boolean'
+    case 'theme':
+      return isThemeMode(value)
+    case 'appearance':
+    case 'geometry':
+      return isRecord(value)
+    case 'locale':
+      return typeof value === 'string'
+  }
+}
 
 type RepositoryDependencies = {
   waitBeforeRetry: (delayMs: number) => Promise<void>
@@ -157,9 +174,7 @@ export const createSettingsRepository = (
     if (storageUnwatchers) return
     storageUnwatchers = PERSISTENCE_DOMAINS.map(domain =>
       settingsItems[domain].watch(next => {
-        if (!isStoredEnvelope(next) || next.writerId === writerId) return
-        if (domain === 'enabled' && typeof next.value !== 'boolean') return
-        if (domain === 'locale' && typeof next.value !== 'string') return
+        if (!isStoredEnvelope(next) || next.writerId === writerId || !isUsableDomainValue(domain, next.value)) return
         acceptExternalCommit(domain)
         notifyCommitted(domain, next.value, 'external')
       }),
@@ -174,7 +189,7 @@ export const createSettingsRepository = (
 
   const readCommittedEnvelope = async (domain: PersistenceDomain) => {
     const [result] = await storage.getItems([settingsItems[domain]])
-    return isStoredEnvelope(result?.value) ? result.value : null
+    return isStoredEnvelope(result?.value) ? { envelope: result.value, usable: isUsableDomainValue(domain, result.value.value) } : null
   }
 
   const runWithRetry = async (domain: PersistenceDomain, sequence: number, supersessionVersion: number, task: () => Promise<void>) => {
@@ -194,7 +209,7 @@ export const createSettingsRepository = (
     }
   }
 
-  const enqueue = (domain: PersistenceDomain, task: () => Promise<void>) => {
+  const enqueue = (domain: PersistenceDomain, task: () => Promise<void>, cancelIfExternallySuperseded = false) => {
     const { sequence, supersessionVersion } = nextLocalIntent(domain)
     activeCounts.set(domain, (activeCounts.get(domain) ?? 0) + 1)
     ensureStorageWatchers()
@@ -202,7 +217,11 @@ export const createSettingsRepository = (
     const barrier = replacementTail
     const current = Promise.allSettled(barrier ? [previous, barrier] : [previous])
       .then(async () => {
-        if (localSequences.get(domain) !== sequence) return
+        if (
+          localSequences.get(domain) !== sequence ||
+          (cancelIfExternallySuperseded && supersessionVersions.get(domain) !== supersessionVersion)
+        )
+          return
         try {
           const committed = await runWithRetry(domain, sequence, supersessionVersion, task)
           if (!committed) return
@@ -211,14 +230,25 @@ export const createSettingsRepository = (
             // An event before this read may precede the local commit. Only
             // events arriving during the read supersede its captured snapshot.
             const readbackVersion = supersessionVersions.get(domain)
+            let stored: Awaited<ReturnType<typeof readCommittedEnvelope>> = null
             try {
-              const stored = await readCommittedEnvelope(domain)
-              if (stored && localSequences.get(domain) === sequence && supersessionVersions.get(domain) === readbackVersion) {
-                notifyCommitted(domain, stored.value, stored.writerId === writerId ? 'readback' : 'external')
-              }
+              stored = await readCommittedEnvelope(domain)
             } catch {
               // The write succeeded. A later event or reload can converge
               // when this best-effort readback is unavailable.
+            }
+            if (stored && localSequences.get(domain) === sequence && supersessionVersions.get(domain) === readbackVersion) {
+              if (!stored.usable) {
+                // A valid external commit received after this intent may not
+                // be overwritten by a retry of the older local value.
+                if (readbackVersion === supersessionVersion) throw new Error('Settings could not be confirmed')
+                return
+              }
+              try {
+                notifyCommitted(domain, stored.envelope.value, stored.envelope.writerId === writerId ? 'readback' : 'external')
+              } catch {
+                // A failing notification does not undo the completed write.
+              }
             }
           }
         } catch (error) {
@@ -307,7 +337,10 @@ export const createSettingsRepository = (
         phase = 'readback'
         const versions = new Map(supersessionVersions)
         const results = await storage.getItems(IMPORT_DOMAINS.map(domain => settingsItems[domain]))
-        const envelopes = results.map(result => (isStoredEnvelope(result.value) ? result.value : null))
+        const envelopes = results.map((result, index) => {
+          const domain = IMPORT_DOMAINS[index]
+          return domain && isStoredEnvelope(result.value) && isUsableDomainValue(domain, result.value.value) ? result.value : null
+        })
         if (envelopes.length !== IMPORT_DOMAINS.length || envelopes.some(stored => stored === null)) {
           throw new Error('Imported settings could not be read back')
         }
@@ -387,7 +420,7 @@ export const createSettingsRepository = (
     },
     retryFailed: async () => {
       const retries = [...failedWrites.entries()].flatMap(([domain, failed]) =>
-        localSequences.get(domain) === failed.sequence ? [enqueue(domain, failed.task)] : [],
+        localSequences.get(domain) === failed.sequence ? [enqueue(domain, failed.task, true)] : [],
       )
       await Promise.all(retries)
     },

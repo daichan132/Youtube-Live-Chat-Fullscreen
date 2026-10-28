@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
-import { APPEARANCE_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
+import { APPEARANCE_STORAGE_KEY, ENABLED_STORAGE_KEY, GEOMETRY_STORAGE_KEY, THEME_STORAGE_KEY } from '@/shared/settings/storageKeys'
 import { chatSettingsStateAtom, EMPTY_MESSAGES, editorSessionStateAtom, globalSettingsStateAtom } from '@/shared/state/atoms'
 import { commitStylePatchAtom } from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
@@ -178,6 +178,26 @@ describe('import ordering across the repository and editor', () => {
       phase: 'readback',
       cause: new Error('confirmation unavailable'),
     })
+    expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
+    expect((await chrome.storage.local.get(THEME_STORAGE_KEY))[THEME_STORAGE_KEY]).toMatchObject({ value: 'dark' })
+  })
+
+  it.each([
+    [ENABLED_STORAGE_KEY, 'true'],
+    [THEME_STORAGE_KEY, 'DARK'],
+    [APPEARANCE_STORAGE_KEY, null],
+    [GEOMETRY_STORAGE_KEY, null],
+  ])('reports an invalid confirmed %s without applying a partially confirmed import', async (key, value) => {
+    const { runtime } = await createSession()
+    const original = runtime.store.get(chatSettingsStateAtom)
+    const originalGet = chrome.storage.local.get.bind(chrome.storage.local) as (keys: string[]) => Promise<Record<string, unknown>>
+    vi.spyOn(chrome.storage.local, 'get').mockImplementationOnce(async keys => ({
+      ...(await originalGet(keys as string[])),
+      [key]: { schemaVersion: 1, writerId: 'external-editor', value },
+    }))
+
+    await expect(runtime.importSettings(backupWithSize(runtime, 24))).rejects.toMatchObject({ phase: 'readback' })
+
     expect(runtime.store.get(chatSettingsStateAtom)).toBe(original)
     expect((await chrome.storage.local.get(THEME_STORAGE_KEY))[THEME_STORAGE_KEY]).toMatchObject({ value: 'dark' })
   })
