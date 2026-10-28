@@ -10,10 +10,11 @@ const version = '2.3.16'
 // Stored ZIP entries keep the fixture independent of WXT and exercise the
 // checker's actual central-directory reader, including the bytes it returns.
 const zipEntries = entries => {
+  const records = [...entries]
   const local = []
   const central = []
   let offset = 0
-  for (const [name, contents] of entries) {
+  for (const [name, contents] of records) {
     const filename = Buffer.from(name)
     const bytes = Buffer.from(contents)
     const header = Buffer.alloc(30)
@@ -39,8 +40,8 @@ const zipEntries = entries => {
   const directory = Buffer.concat(central)
   const end = Buffer.alloc(22)
   end.writeUInt32LE(0x06054b50, 0)
-  end.writeUInt16LE(entries.size, 8)
-  end.writeUInt16LE(entries.size, 10)
+  end.writeUInt16LE(records.length, 8)
+  end.writeUInt16LE(records.length, 10)
   end.writeUInt32LE(directory.length, 12)
   end.writeUInt32LE(offset, 16)
   return Buffer.concat([...local, directory, end])
@@ -62,6 +63,19 @@ const createFixture = (
     omitYarnHelper = false,
     omitLocaleCompiler = false,
     omitSourceFile,
+    contentScriptsTarget,
+    contentScriptsJs,
+    missingFileTarget,
+    missingFile,
+    popupTarget,
+    popupPath,
+    duplicateTarget,
+    emptyStyleTarget,
+    emptyScriptTarget,
+    emptyScriptFile,
+    emptyPageTarget,
+    emptyPageFile,
+    corruptCrcTarget,
   } = {},
 ) => {
   const files = new Map()
@@ -92,19 +106,28 @@ const createFixture = (
       permissions: ['storage'],
       content_scripts: [{ matches: ['https://www.youtube.com/*'], js: ['content-scripts/content.js'] }],
       background: manifestVersion === 3 ? { service_worker: 'background.js' } : { scripts: ['background.js'] },
+      ...(manifestVersion === 3 ? { action: { default_popup: 'popup.html' } } : { browser_action: { default_popup: 'popup.html' } }),
       web_accessible_resources:
         manifestVersion === 3 ? [{ resources: ['settings.html'], matches: ['https://www.youtube.com/*'] }] : ['settings.html'],
       content_security_policy: manifestVersion === 3 ? { extension_pages: csp } : csp,
     }
+    if (target === contentScriptsTarget) manifest.content_scripts[0].js = contentScriptsJs
+    if (target === popupTarget) (manifest.action ?? manifest.browser_action).default_popup = popupPath
     if (manifestVersion === 2) {
       manifest.browser_specific_settings = { gecko: { data_collection_permissions: { required: ['none'] } } }
     }
     const entries = new Map([
       ['manifest.json', JSON.stringify(manifest)],
       ['settings.html', '<!doctype html>'],
+      ['popup.html', '<!doctype html>'],
       ['background.js', '// background'],
       ['content-scripts/content.js', `const CURRENT_RUNTIME = true;${large ? ' '.repeat(451_001) : ''}`],
+      ['content-scripts/content.css', '.overlay{}'],
     ])
+    if (target === emptyStyleTarget) entries.set('content-scripts/content.css', ' \n\t')
+    if (target === emptyScriptTarget) entries.set(emptyScriptFile, ' \n\t')
+    if (target === emptyPageTarget) entries.set(emptyPageFile, ' \n\t')
+    if (target === missingFileTarget) entries.delete(missingFile)
     for (const locale of packagedLocales) {
       entries.set(`locales/${locale}.json`, locale === 'lang0' && localeData?.runtime !== undefined ? localeData.runtime : '["Theme"]')
       entries.set(`_locales/${locale}/messages.json`, locale === 'lang0' && localeData?.manifest !== undefined ? localeData.manifest : '{}')
@@ -112,7 +135,14 @@ const createFixture = (
     if (keys !== 'missing') entries.set('locales/_keys.json', keys === 'valid' ? '["popup.theme"]' : keys)
     for (const [name, contents] of entries) put(`.output/${target}/${name}`, contents)
     if (target === staleTarget) entries.set('content-scripts/content.js', 'const STALE___RUNTIME = true;')
-    if (target !== missingTarget) put(`.output/youtube-live-chat-fullscreen-${version}-${browser}.zip`, zipEntries(entries))
+    const zipContents =
+      target === duplicateTarget ? [...entries, ['content-scripts/content.js', entries.get('content-scripts/content.js')]] : entries
+    const archive = zipEntries(zipContents)
+    if (target === corruptCrcTarget) {
+      archive.writeUInt32LE(0, 14)
+      archive.writeUInt32LE(0, archive.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02])) + 16)
+    }
+    if (target !== missingTarget) put(`.output/youtube-live-chat-fullscreen-${version}-${browser}.zip`, archive)
   }
   const sourceFiles = [
     '.yarnrc.yml',
@@ -150,7 +180,13 @@ const createFixture = (
   if (omitSourceFile) sources.delete(omitSourceFile)
   if (large) sources.set('README.md', 'x'.repeat(5_000_001))
   sources.set('SOURCE_CODE_REVIEW.md', 'yarn install --immutable\nyarn zip:firefox')
-  if (missingTarget !== 'sources') put(`.output/youtube-live-chat-fullscreen-${version}-sources.zip`, zipEntries(sources))
+  const sourceContents = duplicateTarget === 'sources' ? [...sources, ['package.json', sources.get('package.json')]] : sources
+  const sourceArchive = zipEntries(sourceContents)
+  if (corruptCrcTarget === 'sources') {
+    sourceArchive.writeUInt32LE(0, 14)
+    sourceArchive.writeUInt32LE(0, sourceArchive.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02])) + 16)
+  }
+  if (missingTarget !== 'sources') put(`.output/youtube-live-chat-fullscreen-${version}-sources.zip`, sourceArchive)
   return {
     readdir: async directory => {
       const children = new Map()
@@ -197,6 +233,78 @@ describe('production package checker', () => {
     const { report, exitCode } = await invokeChecker()
     expect(exitCode).toBe(0)
     expect(report.results.every(result => result.failures.length === 0)).toBe(true)
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects a missing or invalid content script registration in %s', async target => {
+    for (const contentScriptsJs of [undefined, [], 'content-scripts/content.js', ['background.js']]) {
+      vi.resetModules()
+      vi.restoreAllMocks()
+      const { report, exitCode } = await invokeChecker(undefined, { contentScriptsTarget: target, contentScriptsJs })
+      expect(exitCode).toBe(1)
+      expect(report.results.find(result => result.target === target).failures).toContain(
+        'content script must register content-scripts/content.js',
+      )
+      expect(report.results.filter(result => result.target !== target).every(result => result.failures.length === 0)).toBe(true)
+    }
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2', 'sources'])('rejects a duplicate path in the %s ZIP', async target => {
+    const file = target === 'sources' ? 'package.json' : 'content-scripts/content.js'
+    await expect(invokeChecker(undefined, { duplicateTarget: target })).rejects.toThrow(`Duplicate ZIP entry: ${file}`)
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2', 'sources'])('rejects a corrupt CRC in the %s ZIP', async target => {
+    const file = target === 'sources' ? '.yarnrc.yml' : 'manifest.json'
+    await expect(invokeChecker(undefined, { corruptCrcTarget: target })).rejects.toThrow(`ZIP CRC mismatch: ${file}`)
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects missing popup and content stylesheet in %s', async target => {
+    for (const file of ['popup.html', 'content-scripts/content.css']) {
+      vi.resetModules()
+      vi.restoreAllMocks()
+      const { report, exitCode } = await invokeChecker(undefined, { missingFileTarget: target, missingFile: file })
+      expect(exitCode).toBe(1)
+      expect(report.results.find(result => result.target === target).failures).toContain(`required extension file is missing: ${file}`)
+    }
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects an empty content stylesheet in %s', async target => {
+    const { report, exitCode } = await invokeChecker(undefined, { emptyStyleTarget: target })
+    expect(exitCode).toBe(1)
+    expect(report.results.find(result => result.target === target).failures).toContain('content stylesheet must not be empty')
+    expect(report.results.filter(result => result.target !== target).every(result => result.failures.length === 0)).toBe(true)
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects empty required scripts in %s', async target => {
+    for (const file of ['background.js', 'content-scripts/content.js']) {
+      vi.resetModules()
+      vi.restoreAllMocks()
+      const { report, exitCode } = await invokeChecker(undefined, { emptyScriptTarget: target, emptyScriptFile: file })
+      expect(exitCode).toBe(1)
+      expect(report.results.find(result => result.target === target).failures).toContain(
+        `required extension file must not be empty: ${file}`,
+      )
+      expect(report.results.filter(result => result.target !== target).every(result => result.failures.length === 0)).toBe(true)
+    }
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects empty extension pages in %s', async target => {
+    for (const file of ['popup.html', 'settings.html']) {
+      vi.resetModules()
+      vi.restoreAllMocks()
+      const { report, exitCode } = await invokeChecker(undefined, { emptyPageTarget: target, emptyPageFile: file })
+      expect(exitCode).toBe(1)
+      expect(report.results.find(result => result.target === target).failures).toContain(
+        `required extension file must not be empty: ${file}`,
+      )
+      expect(report.results.filter(result => result.target !== target).every(result => result.failures.length === 0)).toBe(true)
+    }
+  })
+
+  it.each(['chrome-mv3', 'firefox-mv2'])('rejects an unregistered popup in %s', async target => {
+    const { report, exitCode } = await invokeChecker(undefined, { popupTarget: target, popupPath: 'missing.html' })
+    expect(exitCode).toBe(1)
+    expect(report.results.find(result => result.target === target).failures).toContain('extension action must register popup.html')
   })
 
   it('accepts a different consistently pinned Yarn version', async () => {

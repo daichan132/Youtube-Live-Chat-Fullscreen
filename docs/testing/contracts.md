@@ -113,12 +113,18 @@ The package contract rejects:
 - the E2E bridge in production;
 - source maps, spec/test files, and fixture assets;
 - manifest permissions or public resources outside policy;
+- a missing content-script registration for `content-scripts/content.js`;
+- a missing popup or popup registration, or a missing or empty content stylesheet served by the background handler;
+- an empty background or content script, or extension page;
 - runtime or manifest locale inventories that differ from `language_codes.json`, and a missing or invalid `locales/_keys.json`;
 - runtime locale arrays with invalid values or lengths, or any packaged locale asset whose bytes differ from `public/`;
 - mismatches between unpacked output and ZIP inventory or any file's bytes;
+- duplicate ZIP paths that would make the packaged content ambiguous;
+- ZIP entries whose decompressed bytes do not match their CRC;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
 The package checker reports ZIP and component sizes for both browsers and the source archive. These measurements do not impose size limits; permissions, packaged contents, and byte-for-byte ZIP consistency remain enforced.
+Non-empty script, stylesheet and page checks detect empty assets only; they do not prove that the code, styling or UI works. Browser behavior is verified separately.
 
 `yarn locales:check` compares generated `public/` assets with authored translations. The package checker separately compares packaged locale assets with `public/`, even when the unpacked output and ZIP agree with each other.
 
@@ -138,15 +144,16 @@ This requires OpenSSL and installed Playwright Chromium. It starts a local HTTPS
 
 Verification helpers transfer a newly created background tab to the caller only after navigation succeeds. Attachment or navigation failure closes that owned target without closing existing tabs or replacing the original error with a cleanup failure. `verification-target.spec.mjs` covers these ownership outcomes.
 
-## Pull-request CI ownership
+## CI ownership
 
 - `quality` runs `yarn verify`.
 - `package`, after quality, builds Chrome and Firefox production ZIPs and verifies package contracts.
 - `package` also builds and uploads the testing extension consumed by the next job. The production Chrome ZIP artifact is uploaded only for `workflow_dispatch`, where the packaged startup smoke consumes it.
-- `browser-contracts` runs the complete fixture project and accessibility project on pull requests; manual runs add the visual project against the same testing artifact.
+- `browser-contracts` runs the complete fixture project and accessibility project on pull requests and pushes to `main`; manual runs add the visual project against the same testing artifact.
 - `production-package-smoke` is manual and boots the exact production Chrome ZIP.
 
 The testing build is therefore always consumed, while visual regression and exact-artifact startup remain explicit manual gates.
+Direct pushes to `main` run the same quality, package and browser gates as pull requests. A merged pull request therefore runs these gates both before and after the merge. CI concurrency groups include the event type, so a push cannot cancel a manual visual or production smoke run. Release-candidate and store-publication workflows remain manual.
 
 ## Release ownership
 
@@ -159,6 +166,8 @@ Publication selects a successful candidate Actions run, validates its workflow, 
 ## Canary classification
 
 Canary skips are reserved for YouTube-owned preconditions. The shared [external-wait boundary](../../e2e/support/externalYouTubePreconditions.ts) converts only Playwright timeouts into missing prerequisites; unexpected test or browser errors propagate. Live/archive source discovery and native-chat opening also preserve unexpected helper failures. Once a usable page and fullscreen state exist, missing extension UI or chat is a failure. A no-chat assertion also requires a running content session before checking that UI is absent.
+
+No current canary uses Playwright's expected-failure annotation. If one is added, an assertion that fails as expected is still reported as a failure in both ordinary and strict canary runs, including after a retry; it is not successful compatibility evidence. A failed attempt followed by a passing retry remains flaky.
 
 YouTube precondition selectors are defined independently in [`e2e/utils/selectors.ts`](../../e2e/utils/selectors.ts). Reusing the production selector catalog here could turn a product selector regression into an unavailable-source skip. The fingerprint reporter still uses the product probe definitions to identify compatibility drift. Native-chat readiness accepts a complete renderer and message list even when a viewer quotes an unavailable-chat message; structural error renderers take precedence.
 

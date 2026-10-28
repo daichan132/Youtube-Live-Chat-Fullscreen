@@ -2,7 +2,7 @@
 import { readdir, readFile, stat } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { inflateRawSync } from 'node:zlib'
+import { crc32, inflateRawSync } from 'node:zlib'
 import { validateYarnRelease } from '../../config/yarnRelease.ts'
 import { hasExpectedExtensionCsp } from './extension-csp.mjs'
 
@@ -102,12 +102,14 @@ const readZipEntries = async zipPath => {
   for (let index = 0; index < entryCount; index += 1) {
     if (buffer.readUInt32LE(offset) !== 0x02014b50) throw new Error(`Invalid ZIP central-directory entry at offset ${offset}`)
     const compressionMethod = buffer.readUInt16LE(offset + 10)
+    const expectedCrc = buffer.readUInt32LE(offset + 16)
     const compressedSize = buffer.readUInt32LE(offset + 20)
     const fileNameLength = buffer.readUInt16LE(offset + 28)
     const extraLength = buffer.readUInt16LE(offset + 30)
     const commentLength = buffer.readUInt16LE(offset + 32)
     const localHeaderOffset = buffer.readUInt32LE(offset + 42)
     const fileName = buffer.subarray(offset + 46, offset + 46 + fileNameLength).toString('utf8')
+    if (entries.has(fileName)) throw new Error(`Duplicate ZIP entry: ${fileName}`)
 
     if (buffer.readUInt32LE(localHeaderOffset) !== 0x04034b50) throw new Error(`Invalid ZIP local entry for ${fileName}`)
     const localFileNameLength = buffer.readUInt16LE(localHeaderOffset + 26)
@@ -122,6 +124,7 @@ const readZipEntries = async zipPath => {
           ? inflateRawSync(compressed)
           : null
     if (contents === null) throw new Error(`Unsupported ZIP compression method ${compressionMethod} for ${fileName}`)
+    if (crc32(contents) !== expectedCrc) throw new Error(`ZIP CRC mismatch: ${fileName}`)
     entries.set(fileName, contents)
     offset += 46 + fileNameLength + extraLength + commentLength
   }
@@ -202,6 +205,19 @@ const verifyTarget = async report => {
     failures.push('extension CSP must permit only packaged scripts, no objects, and self or exact HTTPS YouTube frame ancestors')
   }
   if (!files.includes('settings.html')) failures.push('settings extension page is missing')
+  for (const file of ['popup.html', 'content-scripts/content.css']) {
+    if (!files.includes(file)) failures.push(`required extension file is missing: ${file}`)
+  }
+  if (files.includes('content-scripts/content.css') && !(await readFile(join(report.directory, 'content-scripts/content.css'), 'utf8')).trim()) {
+    failures.push('content stylesheet must not be empty')
+  }
+  for (const file of ['background.js', 'content-scripts/content.js', 'popup.html', 'settings.html']) {
+    if (files.includes(file) && !(await readFile(join(report.directory, file), 'utf8')).trim()) {
+      failures.push(`required extension file must not be empty: ${file}`)
+    }
+  }
+  const popup = manifest.manifest_version === 3 ? manifest.action?.default_popup : manifest.browser_action?.default_popup
+  if (popup !== 'popup.html') failures.push('extension action must register popup.html')
   const backgroundRegistered = manifest.manifest_version === 3
     ? manifest.background?.service_worker === 'background.js'
     : JSON.stringify(manifest.background?.scripts) === JSON.stringify(['background.js'])
@@ -224,7 +240,9 @@ const verifyTarget = async report => {
   if (JSON.stringify(contentScript?.matches) !== JSON.stringify(expectedContentScriptMatches)) {
     failures.push(`content script matches must be ${expectedContentScriptMatches.join(', ')}`)
   }
-  for (const script of contentScript?.js ?? []) {
+  const scripts = Array.isArray(contentScript?.js) ? contentScript.js : []
+  if (!scripts.includes('content-scripts/content.js')) failures.push('content script must register content-scripts/content.js')
+  for (const script of scripts) {
     if (!files.includes(script)) failures.push(`content script file is missing: ${script}`)
   }
 
