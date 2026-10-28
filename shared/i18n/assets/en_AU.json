@@ -137,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen",
   "extensionDescription": "Watch YouTube in fullscreen with a live chat overlay. Send messages and Super Chats, and adjust size, position and transparency."

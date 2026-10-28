@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, type TargetBrowser, type UserManifest } from 'wxt'
+import { acquireDevOutputLock } from './config/devOutputLock'
 import {
   EXTENSION_PAGE_CSP,
   EXTENSION_PERMISSIONS,
@@ -61,6 +62,8 @@ export const createExtensionManifest = (browser: TargetBrowser): UserManifest =>
 })
 
 // See https://wxt.dev/api/config.html
+let devOutputLock: Awaited<ReturnType<typeof acquireDevOutputLock>> | undefined
+
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   alias: {
@@ -72,6 +75,13 @@ export default defineConfig({
     includeSources: [...FIREFOX_SOURCE_INCLUDE],
   },
   hooks: {
+    'server:started': async wxt => {
+      devOutputLock = await acquireDevOutputLock(wxt.config.outDir)
+    },
+    'server:closed': async () => {
+      if (devOutputLock) await new Promise<void>((resolve, reject) => devOutputLock?.close(error => (error ? reject(error) : resolve())))
+      devOutputLock = undefined
+    },
     'build:publicAssets': (wxt, files) => {
       if (wxt.config.mode !== 'testing') return
       files.push({

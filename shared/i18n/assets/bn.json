@@ -137,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen — পূর্ণপর্দায় লাইভ চ্যাট",
   "extensionDescription": "YouTube ভিডিও পূর্ণপর্দায় দেখুন, ভিডিওর ওপরেই লাইভ চ্যাট পড়ুন। উত্তর দিন, Super Chat পাঠান। চ্যাটের অবস্থান ও আকার বদলান।"

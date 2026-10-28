@@ -137,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen — دردشة فوق الفيديو بملء الشاشة",
   "extensionDescription": "شاهد YouTube بملء الشاشة مع الدردشة فوق الفيديو. أرسل رسائل وSuper Chat، وغيّر حجم الدردشة وشفافيتها."

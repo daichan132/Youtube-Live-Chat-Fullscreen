@@ -137,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen — Chat di layar penuh",
   "extensionDescription": "Tonton YouTube dalam layar penuh dengan live chat di atas video. Balas pesan, kirim Super Chat, atur posisi dan ukuran chat."

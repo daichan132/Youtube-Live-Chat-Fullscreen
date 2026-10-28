@@ -137,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen — ಫುಲ್‌ಸ್ಕ್ರೀನ್ ಲೈವ್ ಚಾಟ್",
   "extensionDescription": "YouTube ವೀಡಿಯೊವನ್ನು ಫುಲ್‌ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ನೋಡಿ, ಅದರ ಮೇಲೆಯೇ ಲೈವ್ ಚಾಟ್ ಓದಿ. ಉತ್ತರಿಸಿ, Super Chat ಕಳುಹಿಸಿ. ಚಾಟ್ ಗಾತ್ರ ಬದಲಿಸಿ."

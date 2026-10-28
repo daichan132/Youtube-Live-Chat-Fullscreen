@@ -51,6 +51,8 @@ yarn verify:dev --port 9336
 ```
 
 `verify:chrome` は `/Applications/Google Chrome.app` を直接起動し、Playwright の自動化 Chrome は使わない。通常 Chrome の headed / headless とも、そのブラウザ本来の User-Agent を保持する。プロファイルは既定で `~/Library/Application Support/YLC Verify Chrome` に作られる。一度 YouTube / Google にログインすると次回以降もその状態を再利用できる。
+同じ dev 出力を複数の WXT サーバーが同時に書き換えないよう、起動中の出力先をロックする。2つ目のサーバーはビルド前に停止するため、既存のサーバーを確認してから再起動する。ロック用のローカルポートが別プロセスに使用されている場合も停止する。
+
 `verify:dev` は `.output/chrome-mv3-dev` を対象にして、同名の別 path の拡張を成功扱いしない。`yarn dev` を先に起動して dev manifest を生成し、WXT dev server を動かしたまま使う。
 
 通常の Google Chrome 137+ は `--load-extension` で unpacked extension を読み込まないため、初回だけ `chrome://extensions` で次を行う。

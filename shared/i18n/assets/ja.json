@@ -137,7 +137,13 @@
       "copied": "診断をコピーしました。",
       "copyFailed": "診断をコピーできませんでした。",
       "checking": "確認中…"
-    }
+    },
+    "reviewAction": "レビューを書く",
+    "starAction": "GitHub で Star",
+    "supportTitle": "使ってくれて、ありがとう",
+    "supportMessage": "役に立ったら、応援してもらえると嬉しいです。",
+    "firefoxEdition": "Firefox 版",
+    "chromeEdition": "Chrome 版"
   },
   "extensionName": "YouTube Live Chat Fullscreen — 全画面でライブチャット",
   "extensionDescription": "YouTubeの全画面動画にライブチャットを重ねて表示。コメントやスーパーチャットを送信でき、チャットの位置・サイズ・背景の透明度も調整できます。"

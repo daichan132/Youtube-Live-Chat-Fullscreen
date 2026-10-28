@@ -61,6 +61,7 @@ test.describe('popup', { tag: '@popup' }, () => {
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
       await expect(page.locator('html')).toHaveAttribute('lang', locale)
       await expect(page.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      await expect(page.locator('a[href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/"]')).toBeVisible()
 
       for (const width of [450, 400, 360, 320]) {
         await page.setViewportSize({ width, height: 650 })
@@ -71,7 +72,10 @@ test.describe('popup', { tag: '@popup' }, () => {
           expect(bounds?.width).toBeGreaterThanOrEqual(44)
           expect(bounds?.height).toBeGreaterThanOrEqual(44)
         }
-        for (const name of ['Chrome', 'Firefox', 'GitHub']) {
+        for (const name of [
+          ...(locale === 'ja' ? ['Firefox 版'] : ['Firefox edition']),
+          ...(locale === 'ja' ? ['レビューを書く', 'GitHub で Star'] : ['Write a review', 'Star on GitHub']),
+        ]) {
           const link = page.getByRole('link', { name, exact: true })
           await expect(link.getByText(name, { exact: true })).toBeVisible()
           const bounds = await link.boundingBox()
