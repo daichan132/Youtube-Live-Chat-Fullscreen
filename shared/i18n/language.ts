@@ -7,6 +7,7 @@ export const DEFAULT_LANGUAGE = 'en'
 
 const supportedLanguageCodeList: readonly LocaleCode[] = localeCodes
 const supportedLanguageCodes = new Set<string>(supportedLanguageCodeList)
+const supportedLanguageCodesByCaseFold = new Map(supportedLanguageCodeList.map(code => [code.toLowerCase(), code]))
 
 /**
  * Bundles whose directory name differs from the language subtag browsers report.
@@ -80,9 +81,8 @@ export const matchLanguageCode = (languageCode?: string | null): LocaleCode | nu
     return null
   }
 
-  if (supportedLanguageCodes.has(normalizedLanguageCode)) {
-    return normalizedLanguageCode as LocaleCode
-  }
+  const exactBundle = supportedLanguageCodesByCaseFold.get(normalizedLanguageCode.toLowerCase())
+  if (exactBundle) return exactBundle
 
   const parts = maximizeLanguageTag(normalizedLanguageCode) ?? parseLanguageTag(normalizedLanguageCode)
   const language = BUNDLE_ALIASES.get(parts.language) ?? parts.language

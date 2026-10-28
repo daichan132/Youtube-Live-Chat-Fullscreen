@@ -109,11 +109,25 @@ describe('resolveLanguageCode', () => {
       expect(resolveLanguageCode(code.replace('_', '-'))).toBe(code)
     }
   })
+
+  it('recognizes every bundled locale regardless of tag casing and separator', () => {
+    for (const code of getSupportedLanguageCodes()) {
+      for (const input of [
+        code.toLowerCase(),
+        code.toUpperCase(),
+        code.replace('_', '-').toLowerCase(),
+        code.replace('_', '-').toUpperCase(),
+      ]) {
+        expect(resolveLanguageCode(input), input).toBe(code)
+      }
+    }
+  })
 })
 
 describe('resolveLanguagePreference', () => {
   it('uses the first supported language in preference order', () => {
     expect(resolveLanguagePreference(['xx-YY', 'fr-CA', 'ja'])).toBe('fr')
+    expect(resolveLanguagePreference(['xx-YY', 'EN-au', 'ja'])).toBe('en_AU')
   })
 
   it('falls back to English when no preference is supported', () => {

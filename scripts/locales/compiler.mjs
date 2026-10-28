@@ -43,14 +43,14 @@ const renderLocaleMetadata = ({ localeCodes, languageNames }) => {
   return `import type { LocaleCode } from './translationTypes'\n\nexport const localeCodes = ${arrayLines(localeCodes)} as const satisfies readonly LocaleCode[]\n\nexport const localeDisplayNames = {\n${nameEntries}\n} as const satisfies Readonly<Record<LocaleCode, string>>\n\nexport const rtlBaseLocales = [${rtlBaseLocales.map(quote).join(', ')}] as const\n`
 }
 
-export const compileLocales = async () => {
-  const files = (await readdir(assetsDir)).filter(file => file.endsWith('.json')).sort()
+export const compileLocales = async ({ assetsDirectory = assetsDir, languageNamesFile = languageNamesUrl } = {}) => {
+  const files = (await readdir(assetsDirectory)).filter(file => file.endsWith('.json')).sort()
   const localeCodes = files.map(file => file.slice(0, -5))
   const invalidLocale = localeCodes.find(locale => !localeCodePattern.test(locale))
   if (invalidLocale) throw new Error(`Invalid locale code: ${invalidLocale}`)
   if (!localeCodes.includes('en')) throw new Error('English locale source is required')
 
-  const languageNames = JSON.parse(await readFile(languageNamesUrl, 'utf8'))
+  const languageNames = JSON.parse(await readFile(languageNamesFile, 'utf8'))
   const languageNameCodes = Object.keys(languageNames).sort()
   if (languageNameCodes.join('\0') !== localeCodes.join('\0')) {
     throw new Error('Language display names must match locale assets')
@@ -59,7 +59,7 @@ export const compileLocales = async () => {
   const messagesByLocale = new Map()
   for (const file of files) {
     const locale = file.slice(0, -5)
-    messagesByLocale.set(locale, flattenMessages(JSON.parse(await readFile(new URL(file, assetsDir), 'utf8'))))
+    messagesByLocale.set(locale, flattenMessages(JSON.parse(await readFile(new URL(file, assetsDirectory), 'utf8'))))
   }
 
   const sourceKeys = Object.keys(messagesByLocale.get('en')).sort()
@@ -69,6 +69,16 @@ export const compileLocales = async () => {
     }
   }
   const translationKeys = sourceKeys.filter(key => !manifestOnlyKeys.has(key))
+  const english = messagesByLocale.get('en')
+  for (const [locale, messages] of messagesByLocale) {
+    for (const key of translationKeys) {
+      // Match formatMessage: a locale may reorder, repeat or omit English slots.
+      const allowed = new Set([...english[key].matchAll(/\{([^{}]+)\}/g)].map(match => match[1]))
+      if (allowed.size === 0) continue
+      const unknown = [...messages[key].matchAll(/\{([^{}]+)\}/g)].find(match => !allowed.has(match[1]))
+      if (unknown) throw new Error(`Unknown placeholder ${unknown[0]} in locale ${locale}, key ${key}`)
+    }
+  }
 
   const runtimeFiles = new Map([[runtimeKeysFile, compactJson(translationKeys)]])
   const manifestFiles = new Map()
