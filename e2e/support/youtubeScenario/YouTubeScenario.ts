@@ -11,6 +11,7 @@ import type { JSHandle, Page } from '@playwright/test'
 import { compileYouTubeScenario } from './compiler'
 import { scenarioDocumentInitializationScript } from './initializeScenarioDocument'
 import type {
+  BorrowedReplayContextObservation,
   ExtensionIframeIdentity,
   NativeIframeContextObservation,
   NativeIframeMutation,
@@ -28,12 +29,14 @@ type NativeIframeContext = {
   runtime: { videoId: string }
   loadEvents: number
 }
+type BorrowedReplayContext = { iframe: HTMLIFrameElement; document: Document; sentinel: object; loadEvents: number }
 
 export class YouTubeScenario {
   private readonly watchPage: YouTubeWatchPage
   private state: YouTubeScenarioState | null = null
   private generation = 0
   private nativeIframeContext: JSHandle<NativeIframeContext> | null = null
+  private borrowedReplayContext: JSHandle<BorrowedReplayContext> | null = null
 
   constructor(private readonly page: Page) {
     this.watchPage = new YouTubeWatchPage(page)
@@ -75,6 +78,25 @@ export class YouTubeScenario {
 
     await this.watchPage.goto(compiled.watchUrl)
     if (state.fullscreen) await this.enterFullscreen()
+  }
+
+  async addCaptionObstacle(rect: { x: number; y: number; width: number; height: number }) {
+    this.requireState()
+    await this.page.evaluate(bounds => {
+      const player = document.getElementById('movie_player')
+      if (!player) throw new Error('The fixture player is unavailable.')
+      const caption = document.createElement('div')
+      caption.className = 'ytp-caption-window-container'
+      caption.dataset.fixtureCaption = 'true'
+      Object.assign(caption.style, {
+        position: 'absolute',
+        left: `${bounds.x}px`,
+        top: `${bounds.y}px`,
+        width: `${bounds.width}px`,
+        height: `${bounds.height}px`,
+      })
+      player.append(caption)
+    }, rect)
   }
 
   async spaNavigate(state: YouTubeScenarioState) {
@@ -336,6 +358,70 @@ export class YouTubeScenario {
       document.dispatchEvent(new Event('yt-page-data-updated'))
     }, current.video.id)
     this.state = archiveState
+  }
+
+  async endLiveWithSameBorrowedIframe() {
+    const current = this.requireState()
+    if (current.video.mode !== 'live' || current.chat.mode !== 'live' || (current.page.route ?? 'watch') !== 'watch') {
+      throw new Error('The same-iframe replay transition requires a live watch scenario.')
+    }
+    const archiveState: YouTubeScenarioState = {
+      video: { ...current.video, mode: 'archive' },
+      page: current.page,
+      fullscreen: false,
+      chat: { mode: 'archive', native: { state: 'playable' }, response: 'playable' },
+    }
+    await this.installChatRoutes(compileYouTubeScenario(archiveState).chatRoutes)
+    await this.borrowedReplayContext?.dispose()
+    this.borrowedReplayContext = await this.page.evaluateHandle(
+      videoId =>
+        new Promise<BorrowedReplayContext>((resolve, reject) => {
+          const iframe = window.__ylcHelpers.getExtensionIframe()
+          const player = document.getElementById('movie_player')
+          const watch = document.querySelector<HTMLElement>('ytd-watch-flexy, ytd-watch-grid')
+          if (!iframe?.contentWindow || !player || !watch) return reject(new Error('The borrowed live iframe is unavailable.'))
+          let snapshot: BorrowedReplayContext | null = null
+          iframe.addEventListener('load', () => {
+            if (snapshot) {
+              snapshot.loadEvents++
+              return
+            }
+            const chatDocument = iframe.contentDocument
+            if (!chatDocument?.location.pathname.endsWith('/live_chat_replay')) {
+              reject(new Error('The expected replay document did not load.'))
+              return
+            }
+            const sentinel = {}
+            Object.assign(chatDocument.body, { ylcReplaySentinel: sentinel })
+            snapshot = { iframe, document: chatDocument, sentinel, loadEvents: 1 }
+            watch.removeAttribute('is-live-now')
+            Object.assign(player, { getVideoData: () => ({ isLive: false, isLiveContent: true, video_id: videoId }) })
+            document.querySelectorAll('.ytp-time-display.ytp-live').forEach(element => {
+              element.classList.remove('ytp-live')
+            })
+            document.querySelectorAll('.ytp-live-badge.ytp-live-badge-is-livehead').forEach(element => {
+              element.classList.remove('ytp-live-badge-is-livehead')
+            })
+            document.dispatchEvent(new Event('yt-page-data-updated'))
+            resolve(snapshot)
+          })
+          iframe.contentWindow.location.assign(`/live_chat_replay?v=${encodeURIComponent(videoId)}&continuation=ylc-fixture`)
+        }),
+      current.video.id,
+    )
+    this.state = archiveState
+  }
+
+  async observeBorrowedReplayContext(): Promise<BorrowedReplayContextObservation> {
+    if (!this.borrowedReplayContext) throw new Error('Transition the borrowed live iframe to replay before observing it.')
+    return this.borrowedReplayContext.evaluate(snapshot => ({
+      sameOverlayIframe: window.__ylcHelpers.getExtensionIframe() === snapshot.iframe,
+      sameNativeIframe: document.querySelector('ytd-live-chat-frame > #chatframe') === snapshot.iframe,
+      sameDocument: snapshot.iframe.contentDocument === snapshot.document,
+      sameSentinel:
+        (snapshot.iframe.contentDocument?.body as HTMLElement & { ylcReplaySentinel?: object })?.ylcReplaySentinel === snapshot.sentinel,
+      loadEvents: snapshot.loadEvents,
+    }))
   }
 
   async invalidateLoadedChat() {

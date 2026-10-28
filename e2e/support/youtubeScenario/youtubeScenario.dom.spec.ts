@@ -50,6 +50,27 @@ describe('YouTube scenario compiler', () => {
     expect(chatDocument.querySelector('yt-live-chat-unavailable-message-renderer')).toBeNull()
   })
 
+  it('chooses the most specific live chat surface when fixture options overlap', () => {
+    const surfaces = [
+      { options: { standardPurchaseInteractions: true }, selector: '#fixture-messages' },
+      { options: { purchaseInteractions: true }, selector: '#fixture-purchase-form' },
+      { options: { appearanceSurfaces: true }, selector: '#fixture-closed-poll' },
+      { options: { restrictedParticipation: true }, selector: 'yt-live-chat-restricted-participation-renderer' },
+      { options: { giftButton: true }, selector: '#jewels-gifts-button' },
+    ]
+    for (let index = 0; index < surfaces.length; index += 1) {
+      const options = Object.assign({}, ...surfaces.slice(index).map(surface => surface.options))
+      const compiled = compileYouTubeScenario(
+        createLiveState({ chat: { mode: 'live', native: { state: 'absent' }, response: 'playable', ...options } }),
+      )
+      const document = parseDocument(compiled.chatRoutes[0]?.body ?? '')
+      expect(document.querySelector(surfaces[index]?.selector ?? '')).not.toBeNull()
+      for (const lowerPriority of surfaces.slice(index + 1)) {
+        expect(document.querySelector(lowerPriority.selector)).toBeNull()
+      }
+    }
+  })
+
   it('preserves the exact native slot order for an archive borrow fixture', () => {
     const compiled = compileYouTubeScenario(
       createArchiveState({
