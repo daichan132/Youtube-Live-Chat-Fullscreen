@@ -56,7 +56,7 @@ jobs:
           ref: ${{ github.sha }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 24.x
+          node-version: 26.x
       - name: Validate requested version
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -123,7 +123,7 @@ jobs:
           ref: ${{ needs.validate-candidate.outputs.commit }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 24.x
+          node-version: 26.x
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
         with:
           artifact-ids: ${{ needs.validate-candidate.outputs.artifact_id }}
@@ -150,7 +150,7 @@ jobs:
           ref: ${{ needs.validate-candidate.outputs.commit }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
-          node-version: 24.x
+          node-version: 26.x
           cache: "yarn"
       - name: Install publishing dependencies
         run: yarn install --immutable
