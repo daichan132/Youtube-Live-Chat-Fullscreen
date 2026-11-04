@@ -15,13 +15,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@acemir/cssom@npm:^0.9.32":
-  version: 0.9.32
-  resolution: "@acemir/cssom@npm:0.9.32"
-  checksum: 10c0/663a49a1e8be095d9b0d39d85d716181efe8af83ef95a49fad67963486951b81c0a91d40ba4d5a54efbac04bb42b8b4f9a4aa2cd7e513b7cd62250b9fae1ae1a
-  languageName: node
-  linkType: hard
-
 "@adobe/css-tools@npm:^4.4.0":
   version: 4.5.0
   resolution: "@adobe/css-tools@npm:4.5.0"
@@ -1425,6 +1418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssomnom@npm:^0.1.11":
+  version: 0.1.11
+  resolution: "cssomnom@npm:0.1.11"
+  checksum: 10c0/177528698d3e1258184fa37397a062a0c1ab84397bfbde050d2db1a16cf86c2783fa5646d53ada584ef9cab0a4da84b9915d91274055e0a14c5eae5e9e61e484
+  languageName: node
+  linkType: hard
+
 "csstype@npm:^3.2.2":
   version: 3.2.3
   resolution: "csstype@npm:3.2.3"
@@ -2261,11 +2261,11 @@ __metadata:
   linkType: hard
 
 "linkedom@npm:^0.18.12":
-  version: 0.18.14
-  resolution: "linkedom@npm:0.18.14"
+  version: 0.18.15
+  resolution: "linkedom@npm:0.18.15"
   dependencies:
-    "@acemir/cssom": "npm:^0.9.32"
     css-select: "npm:^7.0.0"
+    cssomnom: "npm:^0.1.11"
     html-escaper: "npm:^3.0.3"
     htmlparser2: "npm:^10.1.0"
     uhyphen: "npm:^0.2.0"
@@ -2274,7 +2274,7 @@ __metadata:
   peerDependenciesMeta:
     canvas:
       optional: true
-  checksum: 10c0/ce2f78d05fa1cd900b5a96bd666f169b66e853ae8f2f2d3084639b1d2cffafa092e97ef892f2b87f8e9271067ea42dcde76c4fc5555ed608edf6c4cf1caad6ab
+  checksum: 10c0/ade1df183c32a0efc2671a134e5d3fbcd7b766a494d50e10b8274d17e43aba42d6cfdba8c87421e84d40d9ea25377cc2b144cb97d979d094a8a81d91a95a18e2
   languageName: node
   linkType: hard
 
