@@ -2,40 +2,40 @@
 
 These styles are injected into YouTube's live chat iframe document. The module order in `index.ts` is part of the cascade contract.
 
-| Module | Responsibility |
-|---|---|
-| `tokens.css` | Extension CSS variable defaults |
-| `frame.css` | Transparent iframe surfaces, native sizing, chat scrollbars and chrome trimming |
-| `core-theme.css` | Shared text, icon, button, and control colors |
-| `menus.css` | Dropdown, overflow menu and participant-list header surfaces |
-| `banners.css` | Pinned banners, notices and viewer poll colors |
-| `leaderboard.css` | Top fans / live viewer leaderboard |
-| `composer.css` | Input, restricted state, emoji picker, and reactions |
-| `chat-only.css` | Measured header/input transitions and 12px collapsed insets that animate away at edges with visible chrome |
-| `monetization.css` | Super Chat, Super Sticker, and product picker flows |
-| `message-layout.css` | Message typography, spacing, author/avatar, and display toggles |
+| Module               | Responsibility                                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `tokens.css`         | Extension CSS variable defaults                                                                            |
+| `frame.css`          | Transparent iframe surfaces, native sizing, chat scrollbars and chrome trimming                            |
+| `core-theme.css`     | Shared text, icon, button, and control colors                                                              |
+| `menus.css`          | Dropdown, overflow menu and participant-list header surfaces                                               |
+| `banners.css`        | Pinned banners, notices and viewer poll colors                                                             |
+| `leaderboard.css`    | Top fans / live viewer leaderboard                                                                         |
+| `composer.css`       | Input, restricted state, emoji picker, and reactions                                                       |
+| `chat-only.css`      | Measured header/input transitions and 12px collapsed insets that animate away at edges with visible chrome |
+| `monetization.css`   | Super Chat, Super Sticker, and product picker flows                                                        |
+| `message-layout.css` | Message typography, spacing, author/avatar, and display toggles                                            |
 
 ## Surface coverage
 
 Keep stateful surfaces on the component boundary that replaces the chat list. The shared frame and message list stay transparent, and body transparency is owned by `frame.css` — a borrowed iframe must not gain an inline background that then needs restoring. Blur is applied in two places: the React background layer behind the iframe samples the parent-page video, and the iframe body carries its own `backdrop-filter` so surfaces inside the document blur what is behind them. Inline composer and monetization surfaces use a low-alpha tint derived from the configured background color, and apply the configured blur to their outer backdrop. The floating support product picker instead uses the configured RGB at a minimum 96% opacity: it overlaps live messages, so a subtle tint makes two layers of text compete. This exception does not change the main chat background or its transparency. The monetization loading panel clears only YouTube's opaque fill; the React background continues to own the configured color and opacity.
 
-| UI state | Surface owner | Boundary |
-|---|---|---|
-| Signed-in input, restricted input, legacy sign-in prompt, current signed-out prompt | `composer.css` | Direct child of `#input-panel` |
-| Jewels gift entry icon and neutral button | `composer.css` | `#jewels-gifts-button yt-pdg-gift-button > button` (enabled only) |
-| Emoji picker search control | `composer.css` | `yt-emoji-picker-renderer #search-panel` |
-| Participant-list header and back icon | `menus.css` | `yt-live-chat-participant-list-renderer #header` / `#back-button` |
-| Chat mode, header overflow, and message action menus | `menus.css` | YouTube dropdown / popup outer surface |
-| Collapsed pinned comment ellipsis | `banners.css` | Pinned text renderer's `[in-collapsed-banner] #content` truncation block |
-| Gift announcement author and message | `core-theme.css` | `yt-gift-message-view-model` attributed-string wrappers; explicit semantic spans and artwork remain native |
-| Buy Jewels title, neutral controls and responsive purchase layout | `monetization.css` | Engagement panel containing `pdp-view-model` |
-| Jewels catalog title, neutral controls and unselected cards | `monetization.css` | Engagement panel containing `yt-pdg-gift-collection-view-model` |
-| Product picker, legacy/revamped Super Chat, Super Sticker pack and preview | `monetization.css` | Each monetization renderer root |
-| Live-chat donation amount picker | Native palette; selected purchase-page scrolling and purchase lifetime only | `ytd-donation-amount-picker-renderer[live-chat]` |
-| Membership gift quantity offer | `monetization.css` | `ytd-sponsorships-gift-offer-renderer` and its header/body |
-| Viewer poll card, question, choices and results | `banners.css` | Action panel containing `yt-live-chat-poll-renderer` |
-| Answered / closed poll summary and results | `banners.css` | `yt-live-chat-banner-poll-renderer` and `yt-live-chat-banner-poll-choice`, including overflow-menu SVGs |
-| Top fans / XP panel | `leaderboard.css` | `PAlive_viewer_leaderboard` engagement panel |
+| UI state                                                                            | Surface owner                                                               | Boundary                                                                                                   |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| Signed-in input, restricted input, legacy sign-in prompt, current signed-out prompt | `composer.css`                                                              | Direct child of `#input-panel`                                                                             |
+| Jewels gift entry icon and neutral button                                           | `composer.css`                                                              | `#jewels-gifts-button yt-pdg-gift-button > button` (enabled only)                                          |
+| Emoji picker search control                                                         | `composer.css`                                                              | `yt-emoji-picker-renderer #search-panel`                                                                   |
+| Participant-list header and back icon                                               | `menus.css`                                                                 | `yt-live-chat-participant-list-renderer #header` / `#back-button`                                          |
+| Chat mode, header overflow, and message action menus                                | `menus.css`                                                                 | YouTube dropdown / popup outer surface                                                                     |
+| Collapsed pinned comment ellipsis                                                   | `banners.css`                                                               | Pinned text renderer's `[in-collapsed-banner] #content` truncation block                                   |
+| Gift announcement author and message                                                | `core-theme.css`                                                            | `yt-gift-message-view-model` attributed-string wrappers; explicit semantic spans and artwork remain native |
+| Buy Jewels title, neutral controls and responsive purchase layout                   | `monetization.css`                                                          | Engagement panel containing `pdp-view-model`                                                               |
+| Jewels catalog title, neutral controls and unselected cards                         | `monetization.css`                                                          | Engagement panel containing `yt-pdg-gift-collection-view-model`                                            |
+| Product picker, legacy/revamped Super Chat, Super Sticker pack and preview          | `monetization.css`                                                          | Each monetization renderer root                                                                            |
+| Live-chat donation amount picker                                                    | Native palette; selected purchase-page scrolling and purchase lifetime only | `ytd-donation-amount-picker-renderer[live-chat]`                                                           |
+| Membership gift quantity offer                                                      | `monetization.css`                                                          | `ytd-sponsorships-gift-offer-renderer` and its header/body                                                 |
+| Viewer poll card, question, choices and results                                     | `banners.css`                                                               | Action panel containing `yt-live-chat-poll-renderer`                                                       |
+| Answered / closed poll summary and results                                          | `banners.css`                                                               | `yt-live-chat-banner-poll-renderer` and `yt-live-chat-banner-poll-choice`, including overflow-menu SVGs    |
+| Top fans / XP panel                                                                 | `leaderboard.css`                                                           | `PAlive_viewer_leaderboard` engagement panel                                                               |
 
 Do not theme `yt-live-chat-message-renderer` globally. YouTube also uses it for regular chat content; the signed-out prompt is identified only as its direct `#input-panel` child.
 

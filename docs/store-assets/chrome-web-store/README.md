@@ -29,7 +29,7 @@ Viewer names, avatars, donor information, and mentions are blurred in the prepar
 
 The [revised compact artwork](source/compact-titled-original.png) supports the introduction and small tile; the [revised wide artwork](source/wide-titled-original.png) supports the marquee. Their [built-in imagegen prompts](source/promo-titles-20261019.json) record the single-title requirement and input references. [introduction.html](source/introduction.html) fits the compact artwork into the 1280 × 800 screenshot without adding duplicate text. The original [indigo artwork](source/indigo-original.png), [prompts](source/indigo-prompt.json), [wide artwork](source/marquee-original.png), and [wide prompt](source/marquee-prompt.md) retain the pre-revision provenance. The real-stream screenshot headings use the bundled Inter font under its [SIL Open Font License](source/fonts/LICENSE).
 
-From the repository root, use Node.js 24 and the pinned Yarn.
+From the repository root, use Node.js 26 and the pinned Yarn.
 
 ```bash
 yarn store:assets:render --check
