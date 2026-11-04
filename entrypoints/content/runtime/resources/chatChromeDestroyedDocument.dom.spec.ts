@@ -92,3 +92,28 @@ it('ignores a queued body-replacement callback after Firefox revokes the documen
   expect(next.body.classList.contains('chat-only-display')).toBe(true)
   lease.release()
 })
+
+it('cleans the old chrome and follows a usable document after a revoked replacement', () => {
+  const old = createFrame()
+  const lease = createChatChromeLease()
+  lease.sync(old.iframe, 'collapsed')
+  expect(old.body.classList.contains('chat-only-display')).toBe(true)
+  const revoked = createFrame()
+  const replacement = createFrame()
+  let currentDocument = revoked.doc
+  Object.defineProperty(old.iframe, 'contentDocument', { configurable: true, get: () => currentDocument })
+  const dead = () => {
+    throw new TypeError('revoked document')
+  }
+  vi.spyOn(revoked.doc, 'nodeType', 'get').mockImplementation(dead)
+  vi.spyOn(revoked.doc, 'body', 'get').mockImplementation(dead)
+  vi.spyOn(revoked.doc, 'documentElement', 'get').mockImplementation(dead)
+
+  expect(() => lease.sync(old.iframe, 'collapsed')).not.toThrow()
+  expect(old.body.classList.contains('chat-only-display')).toBe(false)
+  currentDocument = replacement.doc
+  lease.sync(old.iframe, 'collapsed')
+  expect(replacement.body.classList.contains('chat-only-display')).toBe(true)
+  lease.release()
+  expect(replacement.body.classList.contains('chat-only-display')).toBe(false)
+})

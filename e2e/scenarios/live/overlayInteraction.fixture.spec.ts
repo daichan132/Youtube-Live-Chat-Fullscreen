@@ -146,6 +146,139 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     }
   })
 
+  test('applies each chat visibility setting to its own native surface', { tag: '@fixture' }, async ({ page, extension }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('yt-live-chat-item-list-renderer').evaluate(items => {
+      items.insertAdjacentHTML(
+        'beforeend',
+        `<div id="items"><yt-live-chat-text-message-renderer>
+          <yt-live-chat-author-chip class="yt-live-chat-text-message-renderer" data-visibility-name>Viewer</yt-live-chat-author-chip>
+          <span id="author-photo" class="yt-live-chat-text-message-renderer" data-visibility-icon>Icon</span>
+          <span data-visibility-message>Message</span>
+        </yt-live-chat-text-message-renderer></div>
+        <div id="ticker"><yt-live-chat-ticker-renderer data-visibility-ticker>Paid messages</yt-live-chat-ticker-renderer></div>`,
+      )
+    })
+    const parts = [
+      ['showUserName', '[data-visibility-name]'],
+      ['showUserIcon', '[data-visibility-icon]'],
+      ['showSuperChatBar', '[data-visibility-ticker]'],
+    ] as const
+    for (const [field, selector] of parts) {
+      await patchOverlayStore(extension, {
+        profile: { appearance: { showUserName: true, showUserIcon: true, showSuperChatBar: true, [field]: false } },
+      })
+      for (const [, candidate] of parts) {
+        if (candidate === selector) await expect(chat.locator(candidate)).toBeHidden()
+        else await expect(chat.locator(candidate)).toBeVisible()
+      }
+      await expect(chat.locator('[data-visibility-message]')).toBeVisible()
+    }
+    await patchOverlayStore(extension, { profile: { appearance: { showUserName: true, showUserIcon: true, showSuperChatBar: true } } })
+    for (const [, selector] of parts) await expect(chat.locator(selector)).toBeVisible()
+  })
+
+  test('suppresses native edge shimmer styles only while the chat is styled', { tag: '@fixture' }, async ({ page }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('yt-live-chat-renderer').evaluate(renderer => {
+      renderer.insertAdjacentHTML(
+        'beforeend',
+        `<style>yt-live-chat-renderer #chat::before, yt-live-chat-renderer #chat::after {
+          content: ''; background-image: linear-gradient(red, blue); animation: shimmer 1s infinite;
+        }</style><div id="chat" data-shimmer-probe></div>`,
+      )
+    })
+    const edgeStyles = () =>
+      chat.locator('[data-shimmer-probe]').evaluate(element =>
+        ['::before', '::after'].map(edge => {
+          const style = getComputedStyle(element, edge)
+          return { image: style.backgroundImage, animation: style.animationName }
+        }),
+      )
+    expect(await edgeStyles()).toEqual([
+      { image: 'none', animation: 'none' },
+      { image: 'none', animation: 'none' },
+    ])
+    await chat.locator('body').evaluate(body => body.classList.remove('custom-yt-app-live-chat-extension'))
+    for (const edge of await edgeStyles()) {
+      expect(edge.image).toContain('linear-gradient')
+      expect(edge.animation).toBe('shimmer')
+    }
+  })
+
+  test('themes emoji categories and the expanded reaction surface without recoloring reaction buttons', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await patchOverlayStore(extension, {
+      profile: {
+        appearance: {
+          fontColor: { r: 240, g: 230, b: 220, a: 1 },
+          blur: 8,
+          membershipNameColor: { mode: 'custom', value: { r: 21, g: 140, b: 85, a: 1 } },
+        },
+      },
+    })
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('body').evaluate(body => {
+      body.insertAdjacentHTML(
+        'beforeend',
+        `<style>#fab-container { background-color: rgb(40, 40, 40); }
+          [data-reaction-button] { color: rgb(250, 200, 10); background: rgb(6, 95, 212); }</style>
+        <yt-live-chat-author-chip><span id="author-name" class="member yt-live-chat-author-chip" data-member-name>Member</span></yt-live-chat-author-chip>
+        <yt-live-chat-author-chip><span id="author-name" class="yt-live-chat-author-chip" data-viewer-name>Viewer</span></yt-live-chat-author-chip>
+        <yt-emoji-picker-renderer>
+          <yt-emoji-picker-category-button-renderer data-category="normal"><svg><path /></svg></yt-emoji-picker-category-button-renderer>
+          <yt-emoji-picker-category-button-renderer data-category="active" active><svg><path /></svg></yt-emoji-picker-category-button-renderer>
+          <yt-emoji-picker-category-button-renderer data-category="selected" aria-selected="true"><svg><path /></svg></yt-emoji-picker-category-button-renderer>
+        </yt-emoji-picker-renderer>
+        <tp-yt-iron-dropdown data-blur-surface></tp-yt-iron-dropdown>
+        <ytd-menu-popup-renderer data-blur-surface></ytd-menu-popup-renderer>
+        <yt-live-chat-action-panel-renderer data-blur-surface><yt-live-chat-poll-renderer></yt-live-chat-poll-renderer></yt-live-chat-action-panel-renderer>
+        <ytd-sponsorships-gift-offer-renderer data-blur-surface></ytd-sponsorships-gift-offer-renderer>
+        <yt-live-chat-product-picker-panel-view-model data-blur-surface></yt-live-chat-product-picker-panel-view-model>
+        <yt-live-chat-message-buy-flow-renderer data-blur-surface></yt-live-chat-message-buy-flow-renderer>
+        <yt-live-chat-paid-sticker-panel-renderer data-blur-surface></yt-live-chat-paid-sticker-panel-renderer>
+        <yt-live-chat-super-sticker-preview-renderer data-blur-surface></yt-live-chat-super-sticker-preview-renderer>
+        <yt-live-chat-super-sticker-pack-renderer data-blur-surface></yt-live-chat-super-sticker-pack-renderer>
+        <yt-reaction-control-panel-view-model><div id="fab-container"><button data-reaction-button>React</button></div></yt-reaction-control-panel-view-model>`,
+      )
+    })
+    await expect(chat.locator('[data-member-name]')).toHaveCSS('color', 'rgb(21, 140, 85)')
+    await expect(chat.locator('[data-viewer-name]')).toHaveCSS('color', 'rgba(240, 230, 220, 0.6)')
+    await expect(chat.locator('[data-category="normal"] path')).toHaveCSS('fill', 'rgba(240, 230, 220, 0.6)')
+    await expect(chat.locator('[data-category="active"] path')).toHaveCSS('fill', 'rgb(240, 230, 220)')
+    await expect(chat.locator('[data-category="selected"] path')).toHaveCSS('fill', 'rgb(240, 230, 220)')
+    await expect(chat.locator('yt-emoji-picker-renderer')).toHaveCSS('backdrop-filter', 'blur(8px)')
+    for (const surface of await chat.locator('[data-blur-surface]').all()) await expect(surface).toHaveCSS('backdrop-filter', 'blur(8px)')
+    const panel = chat.locator('yt-reaction-control-panel-view-model')
+    const surface = panel.locator('#fab-container')
+    const button = panel.locator('[data-reaction-button]')
+    await expect(surface).toHaveCSS('background-color', 'rgb(40, 40, 40)')
+    await panel.evaluate(element => element.setAttribute('reaction-control-panel-expanded', ''))
+    await expect(surface).not.toHaveCSS('background-color', 'rgb(40, 40, 40)')
+    await expect(surface).toHaveCSS('backdrop-filter', 'blur(8px)')
+    await expect(button).toHaveCSS('color', 'rgb(250, 200, 10)')
+    await expect(button).toHaveCSS('background-color', 'rgb(6, 95, 212)')
+    await panel.evaluate(element => element.removeAttribute('reaction-control-panel-expanded'))
+    await expect(surface).toHaveCSS('background-color', 'rgb(40, 40, 40)')
+  })
+
   test('themes composer surfaces, emoji labels and notice actions across contrasting palettes', { tag: '@fixture' }, async ({
     page,
     extension,

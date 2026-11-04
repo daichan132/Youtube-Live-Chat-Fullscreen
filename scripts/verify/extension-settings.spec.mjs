@@ -90,6 +90,28 @@ describe('verification settings patch input', () => {
     await expect(readSettingsPatch(await patchFile(patch))).resolves.toEqual(patch)
   })
 
+  it('accepts appearance and geometry limits and rejects values beyond them', async () => {
+    for (const appearance of [
+      { fontSize: 10, blur: 0, spacing: 0 },
+      { fontSize: 40, blur: 20, spacing: 40 },
+    ]) {
+      const patch = { profile: { appearance } }
+      await expect(readSettingsPatch(await patchFile(patch))).resolves.toEqual(patch)
+    }
+    const maximumGeometry = { reference: 'player', rect: { x: 0, y: 0, width: 0.65, height: 0.9 }, pinned: true }
+    await expect(readSettingsPatch(await patchFile({ geometry: maximumGeometry }))).resolves.toEqual({ geometry: maximumGeometry })
+
+    for (const patch of [
+      { profile: { appearance: { fontSize: 9 } } },
+      { profile: { appearance: { blur: 21 } } },
+      { profile: { appearance: { spacing: 41 } } },
+      { geometry: { ...maximumGeometry, rect: { ...maximumGeometry.rect, width: 0.651 } } },
+      { geometry: { ...maximumGeometry, rect: { ...maximumGeometry.rect, height: 0.901 } } },
+    ]) {
+      await expect(readSettingsPatch(await patchFile(patch))).rejects.toThrow('Invalid settings patch')
+    }
+  })
+
   it.each([
     null,
     [],

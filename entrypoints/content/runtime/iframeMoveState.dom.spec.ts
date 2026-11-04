@@ -210,7 +210,7 @@ describe('borrowed iframe state across presentation moves', () => {
       clear: vi.fn(() => overlay.remove()),
     }
     const resources = new ResourceReconciler({ presentation, chatChrome: { sync: vi.fn(), release: vi.fn() } })
-    resources.createIframe({ kind: 'available', videoId, mode: 'live', source: { kind: 'live_borrow', videoId, iframe } }, 1)
+    resources.createIframe({ kind: 'available', videoId, mode: 'live', source: { kind: 'live_borrow', iframe } }, 1)
     resources.lease?.attach(carrier)
     hostMove.mockImplementationOnce(() => {
       throw new DOMException('Transient native restore failure', 'HierarchyRequestError')
@@ -243,7 +243,7 @@ describe('borrowed iframe state across presentation moves', () => {
         },
         chatChrome: { sync: vi.fn(), release: vi.fn() },
       })
-      resources.createIframe({ kind: 'available', videoId, mode: 'live', source: { kind: 'live_borrow', videoId, iframe } }, 1)
+      resources.createIframe({ kind: 'available', videoId, mode: 'live', source: { kind: 'live_borrow', iframe } }, 1)
       const lease = resources.lease
       lease?.attach(carrier)
       const sourceWrite = vi.spyOn(iframe, 'src', 'set')
@@ -366,7 +366,7 @@ describe('borrowed iframe state across presentation moves', () => {
               kind: 'available',
               videoId,
               mode,
-              source: mode === 'archive' ? { kind: 'archive_borrow', iframe } : { kind: 'live_borrow', videoId, iframe },
+              source: mode === 'archive' ? { kind: 'archive_borrow', iframe } : { kind: 'live_borrow', iframe },
             }
           : { kind: 'inactive', reason: 'not-fullscreen' },
     })

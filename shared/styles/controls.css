@@ -165,14 +165,14 @@
 
 .ylc-theme-glass-panel {
   background-color: var(--ylc-panel-glass-bg);
-  backdrop-filter: blur(18px) saturate(135%);
   -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
 }
 
 .ylc-theme-glass-panel-muted {
   background-color: var(--ylc-panel-glass-muted-bg);
-  backdrop-filter: blur(14px) saturate(125%);
   -webkit-backdrop-filter: blur(14px) saturate(125%);
+  backdrop-filter: blur(14px) saturate(125%);
 }
 
 .ylc-setting-panel.ylc-theme-glass-panel {
@@ -252,14 +252,14 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .ylc-theme-glass-panel {
     background-color: var(--ylc-bg-surface);
-    backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .ylc-theme-glass-panel-muted {
     background-color: var(--ylc-bg-surface-muted);
-    backdrop-filter: none;
     -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 }
 
@@ -1432,8 +1432,8 @@
 }
 
 .ylc-setting-panel .ylc-theme-glass-panel-muted {
-  backdrop-filter: none;
   -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 /* =========================================================================

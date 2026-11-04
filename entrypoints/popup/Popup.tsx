@@ -1,14 +1,14 @@
 import { useAtomValue } from 'jotai'
 import { type ReactNode, useEffect } from 'react'
-import { type IconType, TbArchive, TbHeart, TbLanguage, TbLink, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
+import { type IconType, TbArchive, TbLanguage, TbMessageCircle, TbSunMoon } from '@/shared/components/icons'
 import { PersistenceNotice } from '@/shared/components/PersistenceNotice'
 import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { DataTransfer } from './components/DataTransfer'
 import { LanguageSelector } from './components/LanguageSelector'
-import { Links } from './components/Links'
 import { PopupItemRow } from './components/PopupItemRow'
+import { SupportLinks } from './components/SupportLinks'
 import { ThemeModeSelector } from './components/ThemeModeSelector'
 import { YTDLiveChatSwitch } from './components/YTDLiveChatSwitch'
 
@@ -59,24 +59,6 @@ export const Popup = () => {
       title: t('popup.language'),
       data: <LanguageSelector />,
     },
-    {
-      id: 'links',
-      icon: TbLink,
-      title: t('popup.links'),
-      data: <Links />,
-    },
-    {
-      id: 'donate',
-      icon: TbHeart,
-      title: t('popup.donate'),
-      data: (
-        <a href='https://ko-fi.com/D1D01A39U6' target='_blank' rel='noopener noreferrer' className='ylc-btn'>
-          <TbHeart size={16} aria-hidden='true' />
-          {t('popup.donateAction')}
-        </a>
-      ),
-      actionAuto: true,
-    },
   ]
 
   return (
@@ -97,6 +79,7 @@ export const Popup = () => {
             actionAuto={item.actionAuto}
           />
         ))}
+        <SupportLinks />
       </div>
     </div>
   )

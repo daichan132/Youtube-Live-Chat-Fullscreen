@@ -1,4 +1,5 @@
-import { fireEvent, type RenderResult } from '@testing-library/react'
+import { fireEvent, type RenderResult, render } from '@testing-library/react'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -6,7 +7,7 @@ import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { YLCColorPicker } from './YLCColorPicker'
 
 const openAlphaSlider = (getByRole: RenderResult['getByRole'], label: string) => {
-  fireEvent.click(getByRole('button', { name: label }))
+  fireEvent.click(getByRole('button', { name: (name: string) => name.startsWith(label) }))
   const slider = getByRole('slider', { name: 'Alpha' })
   vi.spyOn(slider, 'getBoundingClientRect').mockReturnValue({
     bottom: 100,
@@ -42,8 +43,9 @@ describe('YLCColorPicker', () => {
     })
 
     const { getByRole } = renderWithStore(<YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />, store)
-    const button = getByRole('button', { name: 'content.setting.backgroundColor' })
+    const button = getByRole('button', { name: /content\.setting\.backgroundColor/ })
 
+    expect(button).toHaveAccessibleName('content.setting.backgroundColor #000000 · 40%')
     expect(button).toHaveAccessibleDescription('rgba(0, 0, 0, 0.4)')
     const slider = openAlphaSlider(getByRole, 'content.setting.backgroundColor')
 
@@ -51,6 +53,7 @@ describe('YLCColorPicker', () => {
     expect(store.get(editorSessionStateAtom).draftProfile?.appearance.backgroundColor.a).toBe(0.2)
     fireEvent.mouseMove(window, { buttons: 1, clientX: 150, clientY: 50 })
 
+    expect(button).toHaveAccessibleName('content.setting.backgroundColor #000000 · 75%')
     expect(button).toHaveAccessibleDescription('rgba(0, 0, 0, 0.75)')
     expect(store.get(editorSessionStateAtom).draftProfile?.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.75 })
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.4 })
@@ -61,6 +64,27 @@ describe('YLCColorPicker', () => {
     expect(store.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual({ r: 0, g: 0, b: 0, a: 0.75 })
     expect(store.get(editorSessionStateAtom).draftProfile).toBeNull()
     expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
+  })
+
+  it('commits a color to the current store after the provider changes', () => {
+    const first = createTestStore()
+    const second = createTestStore()
+    const original = first.get(chatSettingsStateAtom).profile.appearance.backgroundColor
+    const view = render(
+      <Provider store={first}>
+        <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <YLCColorPicker settingKey='backgroundColor' labelKey='content.setting.backgroundColor' />
+      </Provider>,
+    )
+    const slider = openAlphaSlider(view.getByRole, 'content.setting.backgroundColor')
+    fireEvent.mouseDown(slider, { buttons: 1, clientX: 40, clientY: 50 })
+    fireEvent.mouseUp(window)
+    expect(second.get(chatSettingsStateAtom).profile.appearance.backgroundColor.a).toBe(0.2)
+    expect(first.get(chatSettingsStateAtom).profile.appearance.backgroundColor).toEqual(original)
   })
 
   it('updates the font color setting without changing the background color setting', () => {
@@ -78,7 +102,7 @@ describe('YLCColorPicker', () => {
     })
 
     const { getByRole } = renderWithStore(<YLCColorPicker settingKey='fontColor' labelKey='content.setting.fontColor' />, store)
-    expect(getByRole('button', { name: 'content.setting.fontColor' })).toHaveAccessibleDescription('rgba(4, 5, 6, 0.7)')
+    expect(getByRole('button', { name: /content\.setting\.fontColor/ })).toHaveAccessibleDescription('rgba(4, 5, 6, 0.7)')
 
     const slider = openAlphaSlider(getByRole, 'content.setting.fontColor')
     fireEvent.mouseDown(slider, { buttons: 1, clientX: 150, clientY: 50 })
@@ -93,7 +117,7 @@ describe('YLCColorPicker', () => {
       <YLCColorPicker settingKey='membershipNameColor' labelKey='content.setting.membershipNameColor' />,
       store,
     )
-    expect(getByRole('button', { name: 'content.setting.membershipNameColor' })).toHaveAccessibleDescription('rgba(15, 157, 88, 1)')
+    expect(getByRole('button', { name: /content\.setting\.membershipNameColor/ })).toHaveAccessibleDescription('rgba(15, 157, 88, 1)')
 
     const slider = openAlphaSlider(getByRole, 'content.setting.membershipNameColor')
     fireEvent.mouseDown(slider, { buttons: 1, clientX: 150, clientY: 50 })

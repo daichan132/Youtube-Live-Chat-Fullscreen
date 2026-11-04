@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR } from './defaults'
 import { migrateSettings, migrateV6ToV7 } from './migrateSettings'
+import { MAX_PRESET_ID_LENGTH } from './persistConfig'
 
 describe('migrateV6ToV7', () => {
   it('preserves profile, geometry, and custom presets while removing parallel collections', () => {
@@ -102,6 +103,37 @@ describe('migrateV6ToV7', () => {
         membershipNameColor: LEGACY_DEFAULT_MEMBERSHIP_NAME_COLOR,
       }).profile.appearance.membershipNameColor,
     ).toEqual({ mode: 'youtube-default' })
+  })
+
+  it('keeps duplicate and colliding legacy IDs unique after normalization', () => {
+    const longId = 'a'.repeat(MAX_PRESET_ID_LENGTH)
+    const occupied = `${'a'.repeat(MAX_PRESET_ID_LENGTH - 2)}-2`
+    const padded = ` ${'b'.repeat(MAX_PRESET_ID_LENGTH - 3)} x`
+    const prefixCollision = `${'b'.repeat(MAX_PRESET_ID_LENGTH - 3)}-2`
+    const presets = migrateV6ToV7({
+      presetItemIds: [occupied, longId, longId, prefixCollision, padded, padded, 'custom', 'custom', ' custom '],
+      presetItemStyles: {
+        [occupied]: {},
+        [longId]: {},
+        [prefixCollision]: {},
+        [padded]: {},
+        custom: {},
+        ' custom ': {},
+      },
+    }).presets
+
+    expect(presets.map(preset => preset.id)).toEqual([
+      occupied,
+      longId,
+      `${'a'.repeat(MAX_PRESET_ID_LENGTH - 2)}-3`,
+      prefixCollision,
+      padded.trim(),
+      `${'b'.repeat(MAX_PRESET_ID_LENGTH - 3)}-3`,
+      'custom',
+      'custom-2',
+      'custom-3',
+    ])
+    expect(presets.every(preset => preset.id.length <= MAX_PRESET_ID_LENGTH && preset.id === preset.id.trim())).toBe(true)
   })
 })
 

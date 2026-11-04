@@ -13,17 +13,25 @@ describe('getE2ETestTargets', () => {
 
     const targets = getE2ETestTargets()
 
-    expect(targets.archive.replayUrl).toContain('/watch?v=')
-    expect(targets.archive.transitionFromUrl).toContain('/watch?v=')
-    expect(targets.archive.transitionToUrl).toContain('/watch?v=')
-    expect(targets.noChat.url).toContain('/watch?v=')
+    const videoId = (url: string) => {
+      const parsed = new URL(url)
+      expect(parsed.origin).toBe('https://www.youtube.com')
+      expect(parsed.pathname).toBe('/watch')
+      expect(parsed.searchParams.get('v')).toBeTruthy()
+      return parsed.searchParams.get('v')
+    }
+    videoId(targets.archive.replayUrl)
+    expect(videoId(targets.archive.transitionFromUrl)).not.toBe(videoId(targets.archive.transitionToUrl))
+    videoId(targets.noChat.url)
     expect(targets.live.preferredUrl).toBeNull()
-    expect(targets.liveSearch.urls).toEqual([
-      'https://www.youtube.com/results?search_query=vtuber&sp=EgJAAQ%3D%3D',
-      'https://www.youtube.com/results?search_query=%E3%82%B2%E3%83%BC%E3%83%A0%E9%85%8D%E4%BF%A1&sp=EgJAAQ%3D%3D',
-      'https://www.youtube.com/results?search_query=live+stream+chat&sp=EgJAAQ%3D%3D',
-    ])
-    expect(targets.liveSearch.urls.every(url => new URL(url).searchParams.get('sp') === 'EgJAAQ==')).toBe(true)
+    expect(targets.liveSearch.urls.length).toBeGreaterThan(0)
+    for (const url of targets.liveSearch.urls) {
+      const search = new URL(url)
+      expect(search.origin).toBe('https://www.youtube.com')
+      expect(search.pathname).toBe('/results')
+      expect(search.searchParams.get('search_query')?.trim()).toBeTruthy()
+      expect(search.searchParams.get('sp')).toBe('EgJAAQ==')
+    }
   })
 
   it('uses existing YLC_* env overrides', () => {
@@ -42,16 +50,13 @@ describe('getE2ETestTargets', () => {
   })
 
   it('treats blank env overrides as unset', () => {
+    unsetEnv('YLC_ARCHIVE_URL', 'YLC_ARCHIVE_NEXT_URL', 'YLC_NOCHAT_URL', 'YLC_LIVE_URL')
+    const defaults = getE2ETestTargets()
     vi.stubEnv('YLC_ARCHIVE_URL', '   ')
     vi.stubEnv('YLC_ARCHIVE_NEXT_URL', '  ')
     vi.stubEnv('YLC_NOCHAT_URL', '')
     vi.stubEnv('YLC_LIVE_URL', ' ')
 
-    const targets = getE2ETestTargets()
-
-    expect(targets.archive.replayUrl).toContain('/watch?v=')
-    expect(targets.archive.transitionToUrl).toContain('/watch?v=')
-    expect(targets.noChat.url).toContain('/watch?v=')
-    expect(targets.live.preferredUrl).toBeNull()
+    expect(getE2ETestTargets()).toEqual(defaults)
   })
 })

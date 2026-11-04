@@ -15,7 +15,13 @@ describe('youtubeSelectorCatalog', () => {
     const probeIds = probes.map(probe => probe.probeId)
 
     expect(new Set(probeIds).size).toBe(probeIds.length)
-    expect(probes.every(probe => probe.selectors.every(selector => selector.trim().length > 0))).toBe(true)
+    for (const probe of probes) {
+      expect(probe.selectors.length, probe.probeId).toBeGreaterThan(0)
+      for (const selector of probe.selectors) {
+        expect(selector.trim(), probe.probeId).not.toBe('')
+        expect(() => document.querySelector(selector), `${probe.probeId}: ${selector}`).not.toThrow()
+      }
+    }
   })
 
   it('reports the fallback probe that actually matched', () => {

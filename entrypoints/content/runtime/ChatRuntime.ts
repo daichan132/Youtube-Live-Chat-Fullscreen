@@ -57,6 +57,7 @@ export interface ChatRuntime {
 }
 
 const ARCHIVE_OPEN_COOLDOWN_MS = 2000
+const MAX_RECENT_ARCHIVE_OPENS = 16
 const CHAT_BOUNDARY_SELECTOR = runtimeBoundarySelector
 
 const initialView: RuntimeView = {
@@ -105,8 +106,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private sessionIdentity: { videoId: string | null; player: HTMLElement | null; fullscreenRoot: Element | null } | null = null
   private observer: MutationObserver | null = null
   private scheduledFrame: number | null = null
+  private scheduledFrameGeneration: number | undefined
   private retryTimer: number | null = null
-  private lastArchiveOpenAt = 0
+  private readonly recentArchiveOpens = new Map<string, number>()
   private lastObservation: PageObservation | null = null
   private lastObservationSignature = ''
   private lastPlanSignature = ''
@@ -114,6 +116,8 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private lastFailureStage: RuntimeFailureStage | undefined
   private operationStage: RuntimeFailureStage = 'observe-page'
   private unexpectedRecoveryAttempts = 0
+  private recoveryEpoch = 0
+  private recoveringUnexpected = false
 
   constructor(
     dependencies: Partial<{
@@ -155,6 +159,7 @@ export class ChatRuntimeImpl implements ChatRuntime {
     } finally {
       this.contentScope?.dispose()
       this.contentScope = null
+      this.recentArchiveOpens.clear()
     }
   }
 
@@ -207,17 +212,35 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   setProfile = (profile: ChatProfile) => {
-    this.resources.setProfile(profile)
+    this.updateResources(() => this.resources.setProfile(profile))
   }
 
   setOverlayContainer = (container: HTMLElement | null) => {
-    this.resources.setOverlayContainer(container)
-    if (container && this.resources.lease && this.sessionScope) this.initializeLease()
-    this.scheduleReconcile()
+    if (
+      this.updateResources(() => {
+        this.resources.setOverlayContainer(container)
+        if (container && this.resources.lease && this.sessionScope) this.initializeLease()
+      })
+    )
+      this.scheduleReconcile()
   }
 
   setOverlayInteraction = (state: Parameters<ChatRuntime['setOverlayInteraction']>[0]) => {
-    this.resources.setInteraction(state)
+    this.updateResources(() => this.resources.setInteraction(state))
+  }
+
+  private updateResources = (update: () => void) => {
+    const previousStage = this.operationStage
+    this.operationStage = 'apply-resources'
+    try {
+      update()
+      return true
+    } catch {
+      this.recoverUnexpected()
+      return false
+    } finally {
+      this.operationStage = previousStage
+    }
   }
 
   private handleNavigation = () => {
@@ -243,12 +266,20 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private scheduleReconcile = (expectedGeneration?: number) => {
-    if (!this.started || this.scheduledFrame !== null) return
+    if (!this.started || this.recoveringUnexpected) return
+    if (this.scheduledFrame !== null) {
+      // A page-level signal must survive even when an older observer scheduled the frame.
+      if (expectedGeneration === undefined) this.scheduledFrameGeneration = undefined
+      return
+    }
     const scope = this.contentScope
     if (!scope) return
+    this.scheduledFrameGeneration = expectedGeneration
     this.scheduledFrame = scope.requestAnimationFrame(() => {
+      const generation = this.scheduledFrameGeneration
       this.scheduledFrame = null
-      if (expectedGeneration !== undefined && expectedGeneration !== this.sessionScope?.generation) return
+      this.scheduledFrameGeneration = undefined
+      if (generation !== undefined && generation !== this.sessionScope?.generation) return
       this.reconcileSafely()
     })
   }
@@ -257,12 +288,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
     if (this.scheduledFrame === null) return
     this.contentScope?.cancelAnimationFrame(this.scheduledFrame)
     this.scheduledFrame = null
+    this.scheduledFrameGeneration = undefined
   }
 
   private ensureObserver = () => {
     const scope = this.sessionScope
     if (this.observer || !document.documentElement || !scope) return
     const observer = new MutationObserver(mutations => {
+      if (scope !== this.sessionScope || scope.signal.aborted) return
       if (mutations.some(mutationTouchesChatBoundary)) this.scheduleReconcile(scope.generation)
     })
     this.observer = observer
@@ -319,9 +352,20 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private ensureArchivePanelOpen = () => {
+    const videoId = this.sessionIdentity?.videoId
+    if (!videoId) return
     const now = Date.now()
-    if (now - this.lastArchiveOpenAt < ARCHIVE_OPEN_COOLDOWN_MS) return
-    if (openArchiveNativeChatPanel()) this.lastArchiveOpenAt = now
+    for (const [id, openedAt] of this.recentArchiveOpens) {
+      if (now < openedAt || now - openedAt >= ARCHIVE_OPEN_COOLDOWN_MS) this.recentArchiveOpens.delete(id)
+    }
+    if (this.recentArchiveOpens.has(videoId)) return
+    if (openArchiveNativeChatPanel()) {
+      this.recentArchiveOpens.set(videoId, now)
+      if (this.recentArchiveOpens.size > MAX_RECENT_ARCHIVE_OPENS) {
+        const oldest = this.recentArchiveOpens.keys().next().value
+        if (oldest !== undefined) this.recentArchiveOpens.delete(oldest)
+      }
+    }
   }
 
   private getLeaseSnapshot = (): RuntimeLeaseSnapshot | null =>
@@ -348,6 +392,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
         this.sessionIdentity.fullscreenRoot !== nextIdentity.fullscreenRoot)
 
     if (changed) {
+      // The current observation supersedes an old observer-only frame. A page
+      // signal received during observation still needs its own reconciliation.
+      if (this.scheduledFrameGeneration !== undefined) this.cancelScheduledFrame()
       this.applyModelTransition(stopRuntimeModel(this.model, this.getLeaseSnapshot()), observation)
       this.disposeSessionScope()
     }
@@ -387,10 +434,21 @@ export class ChatRuntimeImpl implements ChatRuntime {
   }
 
   private reconcileSafely = () => {
+    const epoch = this.recoveryEpoch
     try {
       this.reconcile()
-      this.unexpectedRecoveryAttempts = 0
+      if (epoch === this.recoveryEpoch) this.unexpectedRecoveryAttempts = 0
     } catch {
+      this.recoverUnexpected()
+    }
+  }
+
+  private recoverUnexpected = () => {
+    if (this.recoveringUnexpected) return
+    this.recoveringUnexpected = true
+    this.recoveryEpoch += 1
+    let retry = false
+    try {
       this.lastFailure = 'UNEXPECTED_RUNTIME_ERROR'
       // Capture before recovery changes the operation stage. Only fixed
       // phase identifiers enter diagnostics, never raw exception contents.
@@ -409,10 +467,14 @@ export class ChatRuntimeImpl implements ChatRuntime {
       this.lastPlanSignature = ''
       this.publish(initialView)
 
-      if (!this.started || this.unexpectedRecoveryAttempts >= 1) return
-      this.unexpectedRecoveryAttempts += 1
-      this.scheduleReconcile()
+      if (this.started && this.unexpectedRecoveryAttempts < 1) {
+        this.unexpectedRecoveryAttempts += 1
+        retry = true
+      }
+    } finally {
+      this.recoveringUnexpected = false
     }
+    if (retry) this.scheduleReconcile()
   }
 
   private reconcile = () => {

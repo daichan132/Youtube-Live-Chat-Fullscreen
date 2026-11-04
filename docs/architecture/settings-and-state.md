@@ -9,6 +9,7 @@ The popup, content script, and settings page each own a separate Jotai store and
 | Responsibility | Module |
 | --- | --- |
 | Settings types and defaults | `shared/settings/model.ts`, `defaults.ts` |
+| Numeric appearance bounds used by normalization and controls | `shared/settings/appearanceLimits.ts` |
 | Domain/value mapping, Storage items and envelope validation | `shared/settings/storageDomains.ts` |
 | Startup and read-only compatibility decoding | `shared/settings/readSettingsSnapshot.ts` |
 | Serialized writes, bounded retry, notifications and bulk import | `shared/settings/repository.ts` |
@@ -48,9 +49,15 @@ That automatic copy yields to any locale intent already made by the repository o
 
 Each domain has an independent serialized queue. A write is attempted once, waits 400 ms after failure, and is attempted once more. An unresolved latest failure remains visible in `PersistenceStatus`, makes `flush()` reject, and can be retried explicitly.
 
+A manual retry that is waiting for an import or an earlier write rechecks for a newer external commit before its first attempt. Regular new local edits still follow their normal queue order.
+
 A newer local write or valid external committed event invalidates an obsolete failed retry for that domain. A local commit reads Storage back to converge on the final value, while its own Storage events are ignored. A local write can finish after an external commit, so the readback generation is captured after the write. Any new local intent or external event received while that readback is pending prevents the captured result from being applied.
 
+An external event with an invalid domain value is ignored; it cannot replace the current value or cancel a valid pending retry. Enabled must be a boolean, theme one of its supported values, appearance and geometry objects, and locale a string. Partial objects and unknown locale strings still pass through compatibility normalization. A normal write's readback applies only a usable value. If a read returns an envelope with an unusable value and no newer local or valid external intent has superseded the write, persistence reports a retryable failure; an unavailable read remains best-effort. A valid external commit invalidates the old retry even when it precedes the invalid readback. An import with any unusable confirmed value reports a readback error rather than applying a partial snapshot. Compatibility reads still use the previous value as the fallback for an invalid stored theme.
+
 Disposing a UI runtime removes its notifications but does not discard an in-flight save. The repository keeps its Storage listeners until pending writes and imports finish, so a newer external commit can still cancel an older delayed retry. With no UI watchers or pending operations, it releases those listeners.
+
+Extension pages also track `pagehide` during asynchronous startup. If the page closes before initialization completes, a late runtime is disposed without mounting; a late startup failure does not render a fallback into the closed page.
 
 Appearance and locale notifications carry an optional `SettingsCommitSource`. A read response is an own `readback` acknowledgement only when its envelope has this repository's writer ID; reading another writer's envelope is an `external` commit. Confirmed own imports use `import`. Notifications without a source are treated as external by the runtime. This metadata is in memory only; it does not change the stored envelope.
 
@@ -77,6 +84,7 @@ A newer local language selection is not cancelled by an acknowledgement of an ea
 Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
 
 Legacy migration maps only `default1`–`default7` to built-in presets; custom entries require their own style object in `presetItemStyles`.
+Duplicate legacy custom IDs receive a unique numeric suffix within the current ID length limit. IDs are trimmed before collision checks so they remain unique after normalization and reloading.
 
 Both built-in and custom preset entries may be deleted after confirmation. Deleting a built-in removes its list entry, not its code-catalog profile. Persisted lists, including an empty list, are authoritative: reload and version-2 backup normalization must not restore deleted built-ins.
 

@@ -25,7 +25,13 @@ const mutationTargetTouchesPlayerObstacle = (target: Node, player: HTMLElement) 
 
 export const mutationTouchesPlayerObstacle = (mutation: MutationRecord, player: HTMLElement) => {
   if (mutation.type === 'attributes') {
-    return mutation.target === player || mutationTargetTouchesPlayerObstacle(mutation.target, player)
+    return (
+      mutation.target === player ||
+      mutationTargetTouchesPlayerObstacle(mutation.target, player) ||
+      (mutation.target instanceof Element &&
+        mutation.target.childElementCount > 0 &&
+        mutation.target.querySelector(playerObstacleBoundarySelector) !== null)
+    )
   }
   if (mutationTargetTouchesPlayerObstacle(mutation.target, player)) return true
   return [...mutation.addedNodes, ...mutation.removedNodes].some(nodeMatchesOrContainsPlayerObstacle)
@@ -61,7 +67,6 @@ export const useAutomaticOverlayPlacement = ({
   const [obstacleRevision, setObstacleRevision] = useState(0)
   const autoRepositionedRef = useRef(false)
   const [autoPlacementComplete, setAutoPlacementComplete] = useState(false)
-  const lastObstacleSignatureRef = useRef('')
   const obstacleSnapshotRef = useRef<ObstacleSnapshot | null>(null)
 
   const measureObstacles = useCallback((): ObstacleSnapshot | null => {
@@ -73,7 +78,6 @@ export const useAutomaticOverlayPlacement = ({
   const reset = useCallback(() => {
     autoRepositionedRef.current = false
     setAutoPlacementComplete(false)
-    lastObstacleSignatureRef.current = ''
     obstacleSnapshotRef.current = null
   }, [pinned, playerElement])
 
@@ -120,10 +124,7 @@ export const useAutomaticOverlayPlacement = ({
       cached?.player === playerElement && cached.viewport === viewport && cached.settingsOpen === settingsOpen ? cached : measureObstacles()
     if (!snapshot) return
     obstacleSnapshotRef.current = snapshot
-    const { obstacles, signature } = snapshot
-    if (signature === lastObstacleSignatureRef.current) return
-    lastObstacleSignatureRef.current = signature
-    const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, obstacles, viewportPadding)
+    const placement = chooseAutoSafePlacement(displayGeometry, referenceSize, snapshot.obstacles, viewportPadding)
     if (!shouldApplyAutoSafePlacement(placement)) return
     autoRepositionedRef.current = true
     setAutoPlacementComplete(true)

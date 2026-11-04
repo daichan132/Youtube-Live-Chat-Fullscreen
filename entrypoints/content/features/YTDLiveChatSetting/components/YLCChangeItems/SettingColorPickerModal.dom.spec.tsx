@@ -10,7 +10,7 @@ describe('settings popover Escape ownership', () => {
     const store = createTestStore()
     const before = store.get(chatSettingsStateAtom).profile
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
-    const trigger = view.getByRole('button', { name: 'content.setting.backgroundColor' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.backgroundColor/ })
     fireEvent.click(trigger)
     const target = focus === 'slider' ? view.getByRole('slider', { name: 'Hue' }) : trigger
     target.focus()
@@ -35,12 +35,30 @@ describe('settings popover Escape ownership', () => {
   it('lets the font search consume Escape before the settings dialog', () => {
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, createTestStore())
-    fireEvent.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
 
     fireEvent.keyDown(view.getByRole('combobox'), { key: 'Escape' })
 
     expect(onOpenChange).not.toHaveBeenCalled()
     expect(view.queryByRole('combobox')).not.toBeInTheDocument()
     expect(view.getByRole('dialog', { name: 'content.setting.header.setting' })).toBeInTheDocument()
+  })
+
+  it('keeps Escape in the picker when a click does not focus its trigger', () => {
+    const onOpenChange = vi.fn()
+    const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, createTestStore())
+    const trigger = view.getByRole('button', { name: /content\.setting\.backgroundColor/ })
+    const otherControl = view.getByRole('button', { name: /content\.setting\.fontFamily/ })
+    otherControl.focus()
+
+    // Native click focus differs between browsers and user preferences.
+    fireEvent.click(trigger)
+    expect(trigger).toHaveFocus()
+    fireEvent.keyDown(document.activeElement ?? document, { key: 'Escape' })
+
+    expect(onOpenChange).not.toHaveBeenCalled()
+    expect(view.queryByRole('dialog', { name: 'content.aria.colorPicker' })).not.toBeInTheDocument()
+    expect(view.getByRole('dialog', { name: 'content.setting.header.setting' })).toBeInTheDocument()
+    expect(trigger).toHaveFocus()
   })
 })

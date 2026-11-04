@@ -41,13 +41,13 @@ describe('applyStylePatch', () => {
 
     expect(readYouTubeMembershipDefaultColor(iframeDocument)).toEqual({ r: 22, g: 163, b: 74, a: 1 })
 
-    applyChatProfileToDocument(iframeDocument, profile, { firefox: false })
+    applyChatProfileToDocument(iframeDocument, profile)
 
     expect(iframeDocument.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
     expect(profile.appearance.membershipNameColor).toEqual({ mode: 'youtube-default' })
   })
 
-  it('applies configured blur to the Firefox iframe document', () => {
+  it('applies configured blur to the iframe document', () => {
     const iframeDocument = document.implementation.createHTMLDocument('')
     const profile = {
       ...DEFAULT_CHAT_PROFILE,
@@ -57,7 +57,7 @@ describe('applyStylePatch', () => {
       },
     }
 
-    applyChatProfileToDocument(iframeDocument, profile, { firefox: true })
+    applyChatProfileToDocument(iframeDocument, profile)
 
     expect(iframeDocument.documentElement.style.getPropertyValue('--extension-yt-live-backdrop-filter')).toBe('blur(12px)')
     expect(iframeDocument.body.style.getPropertyValue('backdrop-filter')).toBe('blur(12px)')

@@ -1,6 +1,6 @@
 import { useLayoutEffect } from 'react'
-
-const NON_TEXT_INPUT_TYPES = new Set(['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'])
+import { isTextInputType } from '@/shared/utils/isTextInputType'
+import { isAccessibleNode } from '../chat/shared/isAccessibleNode'
 
 const focusedEditable = (document: Document) => {
   const active = document.activeElement
@@ -10,7 +10,7 @@ const focusedEditable = (document: Document) => {
     if (
       input.matches(':disabled') ||
       input.readOnly ||
-      (input.localName === 'input' && NON_TEXT_INPUT_TYPES.has((input as HTMLInputElement).type))
+      (input.localName === 'input' && !isTextInputType((input as HTMLInputElement).type))
     ) {
       return null
     }
@@ -42,6 +42,7 @@ export const useChatInputFocus = (carrier: HTMLElement | null, onChange: (focuse
       } catch {
         // Native navigation can make the borrowed document inaccessible.
       }
+      if (!isAccessibleNode(nextDocument)) nextDocument = null
       const nextBody = nextDocument?.body ?? null
       if (nextIframe === iframe && nextDocument === document && nextBody === body) return
       release?.()
@@ -62,6 +63,10 @@ export const useChatInputFocus = (carrier: HTMLElement | null, onChange: (focuse
       const stillOwned = () => !disposed && currentIframe === iframe && currentDocument === document && carrier.contains(currentIframe)
       const sync = () => {
         if (!stillOwned()) return
+        if (!isAccessibleNode(currentDocument)) {
+          update(false)
+          return
+        }
         editable = focusedEditable(currentDocument)
         update(currentDocument.hasFocus() && Boolean(editable))
       }
@@ -83,6 +88,10 @@ export const useChatInputFocus = (carrier: HTMLElement | null, onChange: (focuse
       // Removal of a focused node need not dispatch focusout. Ignore unrelated
       // chat mutations, and rebind if YouTube replaces the document's body.
       const documentObserver = new MutationObserver(records => {
+        if (!isAccessibleNode(currentDocument)) {
+          if (stillOwned()) update(false)
+          return
+        }
         if (currentDocument.body !== currentBody) {
           bind()
           return
@@ -108,10 +117,12 @@ export const useChatInputFocus = (carrier: HTMLElement | null, onChange: (focuse
         disposed = true
         if (pendingFrame !== null) cancelAnimationFrame(pendingFrame)
         documentObserver.disconnect()
-        currentDocument.removeEventListener('focusin', settle)
-        currentDocument.removeEventListener('focusout', settle)
-        chatWindow?.removeEventListener('focus', settle)
-        chatWindow?.removeEventListener('blur', settle)
+        if (isAccessibleNode(currentDocument)) {
+          currentDocument.removeEventListener('focusin', settle)
+          currentDocument.removeEventListener('focusout', settle)
+          chatWindow?.removeEventListener('focus', settle)
+          chatWindow?.removeEventListener('blur', settle)
+        }
         window.removeEventListener('focus', settle)
         window.removeEventListener('blur', settle)
       }

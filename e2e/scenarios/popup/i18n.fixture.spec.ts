@@ -4,6 +4,7 @@ import { LOCALE_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
 type LocaleProbeGlobal = typeof globalThis & {
   __ylcLocaleProbe?: { originalFetch: typeof fetch; assets: string[] }
+  __ylcLocaleFailure?: { originalFetch: typeof fetch; fail: boolean }
 }
 
 const localeAssetName = (request: Request) => {
@@ -26,6 +27,61 @@ const setExternalLocale = (page: Page, locale: string) =>
   )
 
 test.describe('popup locale runtime boundary', { tag: '@popup' }, () => {
+  test('shows a message load failure and saves a later successful selection', { tag: '@fixture' }, async ({ page, extension }) => {
+    const context = page.context()
+    const isExtensionWorker = (worker: { url(): string }) => worker.url().startsWith('chrome-extension://')
+    const worker =
+      context.serviceWorkers().find(isExtensionWorker) ?? (await context.waitForEvent('serviceworker', { predicate: isExtensionWorker }))
+    await worker.evaluate(async key => {
+      const scope = globalThis as LocaleProbeGlobal
+      const originalFetch = scope.fetch
+      scope.__ylcLocaleFailure = { originalFetch, fail: true }
+      scope.fetch = (input, init) => {
+        const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url
+        if (scope.__ylcLocaleFailure?.fail && /\/locales\/(fr|en)\.json$/.test(new URL(url).pathname)) {
+          return Promise.resolve(new Response('', { status: 503 }))
+        }
+        return originalFetch.call(scope, input, init)
+      }
+      await chrome.storage.local.set({ [key]: { schemaVersion: 1, writerId: 'e2e-original', value: 'ja' } })
+    }, LOCALE_STORAGE_KEY)
+
+    try {
+      await page.goto(extension.url('popup.html'))
+      const language = page.getByLabel('言語を選択')
+      await expect(language).toHaveValue('ja')
+      await language.selectOption('fr')
+      await expect(page.getByRole('alert')).toHaveText('言語を読み込めませんでした。もう一度選択してください。')
+      await expect(language).toHaveValue('ja')
+      expect(await page.evaluate(key => chrome.storage.local.get(key).then(values => values[key]), LOCALE_STORAGE_KEY)).toMatchObject({
+        writerId: 'e2e-original',
+        value: 'ja',
+      })
+
+      await worker.evaluate(() => {
+        const failure = (globalThis as LocaleProbeGlobal).__ylcLocaleFailure
+        if (failure) failure.fail = false
+      })
+      await language.selectOption('fr')
+      await expect(page.getByRole('alert')).toHaveCount(0)
+      await expect(page.getByLabel('Choisir la langue')).toHaveValue('fr')
+      await expect
+        .poll(() =>
+          page.evaluate(
+            key => chrome.storage.local.get(key).then(values => (values[key] as { value?: string } | undefined)?.value),
+            LOCALE_STORAGE_KEY,
+          ),
+        )
+        .toBe('fr')
+    } finally {
+      await worker.evaluate(() => {
+        const scope = globalThis as LocaleProbeGlobal
+        if (scope.__ylcLocaleFailure) scope.fetch = scope.__ylcLocaleFailure.originalFetch
+        scope.__ylcLocaleFailure = undefined
+      })
+    }
+  })
+
   test('syncs en, ja, and RTL locale state while loading only selected message assets', { tag: '@fixture' }, async ({
     page,
     extension,

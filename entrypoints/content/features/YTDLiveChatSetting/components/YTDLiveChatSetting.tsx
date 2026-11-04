@@ -1,6 +1,8 @@
 import { useAtomValue } from 'jotai'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
+  FaChrome,
+  FaFirefox,
   type IconType,
   RiCloseLine,
   TbArrowBackUp,
@@ -16,6 +18,7 @@ import { useLocaleDirection, useT } from '@/shared/i18n/react'
 import { canRedoAtom, canUndoAtom, themeModeAtom } from '@/shared/state'
 import { useResolvedThemeMode } from '@/shared/theme'
 import { cn } from '@/shared/utils/cn'
+import { isTextInputType } from '@/shared/utils/isTextInputType'
 import { useStyleHistoryCommands } from '../styleHistoryCommands'
 import { getModalParentElement } from '../utils/getModalParentElement'
 import { PresetContent } from './PresetContent'
@@ -131,7 +134,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       }))
     }
     return handled
-  }, [t])
+  }, [t, undoYLCStyle])
 
   const handleRedo = useCallback(() => {
     const handled = redoYLCStyle()
@@ -142,7 +145,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
       }))
     }
     return handled
-  }, [t])
+  }, [redoYLCStyle, t])
 
   const handlePanelKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
@@ -153,7 +156,7 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         if (!(target instanceof HTMLElement)) return false
         if (target.isContentEditable || target instanceof HTMLTextAreaElement) return true
         if (!(target instanceof HTMLInputElement)) return false
-        return !['button', 'checkbox', 'color', 'file', 'hidden', 'image', 'radio', 'range', 'reset', 'submit'].includes(target.type)
+        return isTextInputType(target.type)
       })
       if (isTextEditing) return
 
@@ -274,6 +277,19 @@ export const YTDLiveChatSetting = ({ open, onOpenChange }: YTDLiveChatSettingPro
         </div>
         <footer className='ylc-theme-setting-footer flex shrink-0 justify-end items-center px-2 py-1'>
           <div className='ylc-theme-footer-links'>
+            <a
+              href={
+                import.meta.env.FIREFOX
+                  ? 'https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/'
+                  : 'https://chromewebstore.google.com/detail/youtube-live-chat-fullscr/dlnjcbkmomenmieechnmgglgcljhoepd/reviews'
+              }
+              target='_blank'
+              rel='noopener noreferrer'
+              className='ylc-theme-footer-link'
+            >
+              {import.meta.env.FIREFOX ? <FaFirefox size={15} aria-hidden='true' /> : <FaChrome size={15} aria-hidden='true' />}
+              {t('popup.reviewAction')}
+            </a>
             <a
               href='https://github.com/daichan132/Youtube-Live-Chat-Fullscreen'
               target='_blank'

@@ -102,6 +102,7 @@
   },
   "popup": {
     "language": "भाषा सेटिंग्स",
+    "languageLoadError": "भाषा लोड नहीं हो सकी। कृपया इसे फिर से चुनें।",
     "showChatOnFullscreen": "फ़ुलस्क्रीन चैट",
     "links": "लिंक",
     "donate": "दान करें",
@@ -136,7 +137,13 @@
       "copied": "Diagnostics copied.",
       "copyFailed": "Could not copy diagnostics.",
       "checking": "Checking…"
-    }
+    },
+    "reviewAction": "Write a review",
+    "starAction": "Star on GitHub",
+    "supportTitle": "Thank you for using this extension",
+    "supportMessage": "If you find it useful, your support means a lot.",
+    "firefoxEdition": "Firefox edition",
+    "chromeEdition": "Chrome edition"
   },
   "extensionName": "YouTube Live Chat Fullscreen — फुलस्क्रीन लाइव चैट",
   "extensionDescription": "YouTube वीडियो फुलस्क्रीन में देखें, उसी पर लाइव चैट पढ़ें। जवाब दें, Super Chat भेजें। चैट की जगह और आकार बदलें।"

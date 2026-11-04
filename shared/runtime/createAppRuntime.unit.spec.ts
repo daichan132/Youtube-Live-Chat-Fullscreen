@@ -34,10 +34,12 @@ const createRepository = (overrides: Partial<SettingsRepository> = {}): Settings
 
 const createDeferred = <T>() => {
   let resolve!: (value: T) => void
-  const promise = new Promise<T>(next => {
+  let reject!: (reason: unknown) => void
+  const promise = new Promise<T>((next, fail) => {
     resolve = next
+    reject = fail
   })
-  return { promise, resolve }
+  return { promise, resolve, reject }
 }
 
 describe('createAppRuntime', () => {
@@ -150,6 +152,56 @@ describe('createAppRuntime', () => {
     expect(repository.saveTheme).not.toHaveBeenCalled()
     expect(repository.saveAppearance).not.toHaveBeenCalled()
     expect(repository.saveGeometry).not.toHaveBeenCalled()
+    runtime.dispose()
+  })
+
+  it('starts with a newer external locale when the old startup load fails', async () => {
+    let handlers: Parameters<SettingsRepository['watch']>[0] | undefined
+    const repository = createRepository({
+      watch: vi.fn(nextHandlers => {
+        handlers = nextHandlers
+        return vi.fn()
+      }),
+    })
+    const englishMessages = createDeferred<LocaleMessages>()
+    const loadMessages = vi.fn((locale: LocaleCode) => (locale === 'en' ? englishMessages.promise : Promise.resolve(messages('日本語'))))
+    const runtimePromise = createAppRuntime(repository, { loadMessages })
+    await vi.waitFor(() => expect(loadMessages).toHaveBeenCalledWith('en'))
+
+    handlers?.onLocale('ja')
+    englishMessages.reject(new Error('obsolete load failed'))
+
+    const runtime = await runtimePromise
+    expect(runtime.store.get(localeStateAtom)).toMatchObject({ code: 'ja', messages: { 'popup.theme': '日本語' } })
+    expect(repository.saveLocale).not.toHaveBeenCalled()
+    runtime.dispose()
+  })
+
+  it('does not wait for the English fallback of a superseded startup selection', async () => {
+    let handlers: Parameters<SettingsRepository['watch']>[0] | undefined
+    const repository = createRepository({
+      load: vi.fn(async (): Promise<SettingsSnapshot> => ({ ...defaultSnapshot(), locale: 'ja' })),
+      watch: vi.fn(nextHandlers => {
+        handlers = nextHandlers
+        return vi.fn()
+      }),
+    })
+    const japaneseMessages = createDeferred<LocaleMessages>()
+    const loadMessages = vi.fn((locale: LocaleCode) => {
+      if (locale === 'ja') return japaneseMessages.promise
+      if (locale === 'fr') return Promise.resolve(messages('Français'))
+      return new Promise<LocaleMessages>(() => {})
+    })
+    const runtimePromise = createAppRuntime(repository, { loadMessages })
+    await vi.waitFor(() => expect(loadMessages).toHaveBeenCalledWith('ja'))
+
+    handlers?.onLocale('fr')
+    japaneseMessages.reject(new Error('obsolete load failed'))
+
+    await vi.waitFor(() => expect(loadMessages).toHaveBeenCalledWith('fr'))
+    expect(loadMessages).not.toHaveBeenCalledWith('en')
+    const runtime = await runtimePromise
+    expect(runtime.store.get(localeStateAtom)).toMatchObject({ code: 'fr', messages: { 'popup.theme': 'Français' } })
     runtime.dispose()
   })
 })

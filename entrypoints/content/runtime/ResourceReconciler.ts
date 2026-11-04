@@ -79,7 +79,26 @@ export class ResourceReconciler {
     if (pageTargets) this.reconcileRestoring(pageTargets)
 
     if (plan.chat.kind === 'none') this.releaseIframe(pageTargets, plan.chat.ensureNativeVisible)
-    if (plan.chat.kind === 'acquire' && !this.sourceMatches(plan.chat.decision)) this.releaseIframe(pageTargets)
+    if (plan.chat.kind === 'acquire') {
+      const { decision } = plan.chat
+      if (!this.sourceMatches(decision)) this.releaseIframe(pageTargets)
+      else {
+        switch (decision.source.kind) {
+          case 'live_direct':
+            break
+          case 'live_borrow':
+            this.iframeLease?.setBorrowedMode('live')
+            break
+          case 'archive_borrow':
+            this.iframeLease?.setBorrowedMode('replay')
+            break
+          default: {
+            const unhandled: never = decision.source
+            void unhandled
+          }
+        }
+      }
+    }
     if (plan.monitoring === 'inactive') this.abandonRestoring()
 
     if (plan.layout === 'none') {
@@ -145,6 +164,9 @@ export class ResourceReconciler {
 
   reconcileRestoring(targets: PageTargets) {
     for (const lease of this.restoringLeases) {
+      // A newer iframe for the same video may already occupy the overlay.
+      // Its empty native slot is still owned until that lease is released.
+      if (this.iframeLease && this.iframeLease.videoId === lease.videoId && this.iframeLease.iframe !== lease.iframe) continue
       lease.reconcile(targets)
       if (lease.state === 'released') this.restoringLeases.delete(lease)
     }
@@ -186,16 +208,43 @@ export class ResourceReconciler {
   releaseIframe(targets: PageTargets | null, ensureNativeVisible = false) {
     const lease = this.iframeLease
     if (!lease) return
+    let failed = false
+    let firstFailure: unknown
+    const recordFailure = (error: unknown) => {
+      if (!failed) firstFailure = error
+      failed = true
+    }
     try {
       this.clearLoadListener()
       this.chatChrome.sync(null, 'inactive')
-    } finally {
+    } catch (error) {
+      recordFailure(error)
+    }
+    try {
       // Presentation cleanup must not prevent returning a borrowed iframe.
       // Retain the lease if release itself throws so recovery can retry it.
       lease.release({ ensureNativeVisible }, targets)
-      if (lease.state === 'restoring') this.restoringLeases.add(lease)
+      if (lease.state === 'restoring') {
+        // A rapidly rebuilt host can replace chat repeatedly. Retain only the
+        // newest unrestored iframe for each video, rather than every old draft.
+        // Keep every failed cleanup tracked so recovery can still release it.
+        this.restoringLeases.add(lease)
+        this.iframeLease = null
+        for (const previous of this.restoringLeases) {
+          if (previous === lease || previous.videoId !== lease.videoId) continue
+          try {
+            previous.abandonRestore()
+            this.restoringLeases.delete(previous)
+          } catch (error) {
+            recordFailure(error)
+          }
+        }
+      }
       this.iframeLease = null
+    } catch (error) {
+      recordFailure(error)
     }
+    if (failed) throw firstFailure
   }
 
   clear(targets: PageTargets | null = null) {
@@ -253,8 +302,19 @@ export class ResourceReconciler {
   private sourceMatches(decision: AvailableDecision) {
     const lease = this.iframeLease
     if (!lease || lease.videoId !== decision.videoId) return false
-    if (decision.source.kind === 'live_direct') return lease.ownership === 'managed'
-    return lease.ownership === 'borrowed' && lease.iframe === decision.source.iframe
+    const source = decision.source
+    switch (source.kind) {
+      case 'live_direct':
+        return lease.ownership === 'managed'
+      case 'live_borrow':
+      case 'archive_borrow':
+        return lease.ownership === 'borrowed' && lease.iframe === source.iframe
+      default: {
+        const unhandled: never = source
+        void unhandled
+        return false
+      }
+    }
   }
 
   private getPresentationFlags(mode: RuntimePlan['presentation']) {

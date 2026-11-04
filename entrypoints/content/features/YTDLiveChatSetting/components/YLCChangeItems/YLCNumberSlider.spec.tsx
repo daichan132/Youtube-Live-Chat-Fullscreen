@@ -1,4 +1,5 @@
-import { fireEvent } from '@testing-library/react'
+import { fireEvent, render } from '@testing-library/react'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom } from '@/shared/state/atoms'
@@ -21,10 +22,7 @@ describe('YLCNumberSlider', () => {
       profile: { ...profile, appearance: { ...profile.appearance, fontSize: 25 } },
     })
 
-    const { getByRole } = renderWithStore(
-      <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />,
-      store,
-    )
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.fontSize' })
     expect(slider.getAttribute('aria-valuetext')).toBe('25px')
@@ -41,10 +39,7 @@ describe('YLCNumberSlider', () => {
       },
     })
 
-    const { getByRole } = renderWithStore(
-      <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />,
-      store,
-    )
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.fontSize' })
     const setPointerCapture = vi.fn()
@@ -61,6 +56,29 @@ describe('YLCNumberSlider', () => {
     expect(setPointerCapture).toHaveBeenCalled()
   })
 
+  it('finishes a range gesture in the current store after the provider changes', () => {
+    const first = createTestStore()
+    const second = createTestStore()
+    const original = first.get(chatSettingsStateAtom).profile.appearance.fontSize
+    const view = render(
+      <Provider store={first}>
+        <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
+      </Provider>,
+    )
+    const slider = view.getByRole('slider', { name: 'content.setting.fontSize' })
+    fireEvent.pointerDown(slider)
+    fireEvent.change(slider, { target: { value: '25' } })
+    fireEvent.pointerUp(slider)
+    expect(second.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(25)
+    expect(second.get(editorSessionStateAtom).activeGesture).toBeNull()
+    expect(first.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(original)
+  })
+
   it('uses the provided range when updating space', () => {
     const profile = store.get(chatSettingsStateAtom).profile
     store.set(chatSettingsStateAtom, {
@@ -71,7 +89,7 @@ describe('YLCNumberSlider', () => {
       },
     })
 
-    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' min={0} max={40} />, store)
+    const { getByRole } = renderWithStore(<YLCNumberSlider settingKey='spacing' labelKey='content.setting.space' />, store)
 
     const slider = getByRole('slider', { name: 'content.setting.space' })
     fireEvent.pointerDown(slider)

@@ -124,7 +124,6 @@ describe('resolveChatDecision', () => {
       mode: 'live',
       source: {
         kind: 'live_borrow',
-        videoId: 'video-1',
         iframe,
       },
     })
@@ -138,7 +137,6 @@ describe('resolveChatDecision', () => {
       mode: 'live',
       source: {
         kind: 'live_direct',
-        videoId: 'video-1',
       },
     })
   })
@@ -160,7 +158,6 @@ describe('resolveChatDecision', () => {
       mode: 'live',
       source: {
         kind: 'live_direct',
-        videoId: 'video-1',
         url: 'https://www.youtube.com/live_chat?v=video-1',
       },
     })

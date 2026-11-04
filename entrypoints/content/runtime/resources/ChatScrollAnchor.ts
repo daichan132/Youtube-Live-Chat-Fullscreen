@@ -1,3 +1,4 @@
+import { isAccessibleNode } from '@/entrypoints/content/chat/shared/isAccessibleNode'
 import { IFRAME_CHAT_SCROLL_FOLLOWING_CLASS } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
 import {
   chatMessageItemProbe,
@@ -5,7 +6,6 @@ import {
   closestProbe,
   queryFirstProbe,
 } from '@/entrypoints/content/platform/youtube/selectorCatalog'
-import { isAccessibleNode } from './isAccessibleNode'
 
 /** Own scroll compensation only for a chrome transition, never ordinary chat. */
 export const preserveChatScroll = (body: HTMLElement, durationMs: number) => {

@@ -1,18 +1,23 @@
+import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig, type TargetBrowser, type UserManifest } from 'wxt'
+import { acquireDevOutputLock } from './config/devOutputLock'
 import {
   EXTENSION_PAGE_CSP,
   EXTENSION_PERMISSIONS,
   WEB_ACCESSIBLE_RESOURCE_MATCHES,
   WEB_ACCESSIBLE_RESOURCES,
 } from './config/packagePolicy'
+import { validateYarnRelease } from './config/yarnRelease'
 
 const e2eDirectory = fileURLToPath(new URL('./e2e', import.meta.url))
 const e2eBridgePath = fileURLToPath(new URL('./e2e/assets/e2e.html', import.meta.url))
+const packageJson = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { packageManager?: unknown }
+const yarnRelease = validateYarnRelease(packageJson.packageManager, readFileSync(new URL('./.yarnrc.yml', import.meta.url), 'utf8'))
 
 export const FIREFOX_SOURCE_INCLUDE = [
-  '.yarn/releases/yarn-4.18.1.cjs',
+  yarnRelease,
   '.yarnrc.yml',
   'LICENSE',
   'README.md',
@@ -23,6 +28,7 @@ export const FIREFOX_SOURCE_INCLUDE = [
   'package.json',
   'public/**',
   'scripts/generate-locales.mjs',
+  'scripts/locales/compiler.mjs',
   'shared/**',
   'tsconfig.json',
   'wxt.config.ts',
@@ -56,6 +62,8 @@ export const createExtensionManifest = (browser: TargetBrowser): UserManifest =>
 })
 
 // See https://wxt.dev/api/config.html
+let devOutputLock: Awaited<ReturnType<typeof acquireDevOutputLock>> | undefined
+
 export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   alias: {
@@ -67,6 +75,13 @@ export default defineConfig({
     includeSources: [...FIREFOX_SOURCE_INCLUDE],
   },
   hooks: {
+    'server:started': async wxt => {
+      devOutputLock = await acquireDevOutputLock(wxt.config.outDir)
+    },
+    'server:closed': async () => {
+      if (devOutputLock) await new Promise<void>((resolve, reject) => devOutputLock?.close(error => (error ? reject(error) : resolve())))
+      devOutputLock = undefined
+    },
     'build:publicAssets': (wxt, files) => {
       if (wxt.config.mode !== 'testing') return
       files.push({

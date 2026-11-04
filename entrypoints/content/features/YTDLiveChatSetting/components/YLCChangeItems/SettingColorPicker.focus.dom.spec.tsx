@@ -19,8 +19,8 @@ describe('color picker focus boundary', () => {
         <SettingColorPicker rgba={color} label='Text color' onChange={vi.fn()} />
       </>,
     )
-    const background = view.getByRole('button', { name: 'Background color' })
-    const text = view.getByRole('button', { name: 'Text color' })
+    const background = view.getByRole('button', { name: /^Background color/ })
+    const text = view.getByRole('button', { name: /^Text color/ })
     await user.click(background)
     for (const slider of view.getAllByRole('slider')) {
       await user.tab()
@@ -49,7 +49,7 @@ describe('color picker focus boundary', () => {
         <SettingColorPicker rgba={color} label='Background color' onChange={vi.fn()} />
       </>,
     )
-    await user.click(view.getByRole('button', { name: 'Background color' }))
+    await user.click(view.getByRole('button', { name: /^Background color/ }))
 
     await user.tab({ shift: true })
 
@@ -66,9 +66,9 @@ describe('color picker focus boundary', () => {
       </>,
       createTestStore(),
     )
-    await user.click(view.getByRole('button', { name: 'Background color' }))
+    await user.click(view.getByRole('button', { name: /^Background color/ }))
     for (let index = 0; index < 4; index += 1) await user.tab()
-    expect(view.getByRole('button', { name: 'content.setting.fontFamily' })).toHaveFocus()
+    expect(view.getByRole('button', { name: /content\.setting\.fontFamily/ })).toHaveFocus()
 
     await user.keyboard('{Enter}')
 
@@ -91,7 +91,7 @@ describe('color picker focus boundary', () => {
       </>,
       store,
     )
-    await user.click(view.getByRole('button', { name: 'content.setting.backgroundColor' }))
+    await user.click(view.getByRole('button', { name: /content\.setting\.backgroundColor/ }))
     const alpha = view.getByRole('slider', { name: 'Alpha' })
     act(() => alpha.focus())
     fireEvent.keyDown(alpha, { key: 'ArrowRight', keyCode: 39 })

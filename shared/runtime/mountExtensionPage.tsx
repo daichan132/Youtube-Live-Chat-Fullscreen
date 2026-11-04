@@ -44,25 +44,34 @@ export const mountExtensionPage = async (app: ReactNode, rootId = 'root') => {
   if (!rootElement) throw new Error(`Extension page root #${rootId} was not found`)
 
   rootElement.setAttribute('aria-busy', 'true')
-  let runtime: Awaited<ReturnType<typeof createAppRuntime>>
-  try {
-    runtime = await createAppRuntime()
-  } catch {
-    rootElement.removeAttribute('aria-busy')
-    return renderStartupFailure(rootElement)
-  }
-
-  const root = createRoot(rootElement)
+  let runtime: Awaited<ReturnType<typeof createAppRuntime>> | null = null
+  let root: ReturnType<typeof createRoot> | null = null
   let disposed = false
 
   const dispose = () => {
     if (disposed) return
     disposed = true
     window.removeEventListener('pagehide', dispose)
-    root.unmount()
-    runtime.dispose()
+    rootElement.removeAttribute('aria-busy')
+    root?.unmount()
+    runtime?.dispose()
+  }
+  // The page can close while storage or locale assets are still loading.
+  window.addEventListener('pagehide', dispose, { once: true })
+  try {
+    runtime = await createAppRuntime()
+  } catch {
+    if (disposed) return dispose
+    dispose()
+    return renderStartupFailure(rootElement)
   }
 
+  if (disposed) {
+    runtime.dispose()
+    return dispose
+  }
+
+  root = createRoot(rootElement)
   root.render(
     <StrictMode>
       <AppProvider runtime={runtime}>
@@ -71,7 +80,6 @@ export const mountExtensionPage = async (app: ReactNode, rootId = 'root') => {
     </StrictMode>,
   )
   rootElement.removeAttribute('aria-busy')
-  window.addEventListener('pagehide', dispose, { once: true })
 
   return dispose
 }

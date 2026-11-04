@@ -1,3 +1,5 @@
+import type { ThemeMode } from '@/shared/theme/themeMode'
+
 export type RGBA = {
   r: number
   g: number
@@ -7,7 +9,7 @@ export type RGBA = {
 
 export type GlobalSettings = {
   ytdLiveChat: boolean
-  themeMode: 'light' | 'dark' | 'system'
+  themeMode: ThemeMode
 }
 
 export type MembershipNameColor =

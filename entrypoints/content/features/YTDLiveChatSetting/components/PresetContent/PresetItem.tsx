@@ -8,7 +8,6 @@ import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { BUILTIN_PRESETS } from '@/shared/settings/builtinPresets'
 import { areChatProfilesEqual } from '@/shared/settings/equality'
-import type { ChatProfile } from '@/shared/settings/model'
 import { MAX_PRESET_NAME_LENGTH } from '@/shared/settings/persistConfig'
 import { deletePresetAtom, effectiveProfileAtom, presetsAtom, updatePresetNameAtom } from '@/shared/state'
 import { useStyleHistoryCommands } from '../../styleHistoryCommands'
@@ -80,9 +79,6 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
     setNameDraft(displayTitle)
   }, [displayTitle])
 
-  const updateStyle = useCallback((nextProfile: ChatProfile) => {
-    commitYLCProfile(nextProfile)
-  }, [])
   const commitName = useCallback(() => {
     if (!isBuiltIn) updatePresetName({ id, name: nameDraftRef.current })
   }, [id, isBuiltIn, updatePresetName])
@@ -171,7 +167,7 @@ export const PresetItem = ({ id, reorder, focusName = false, onNameFocused, poin
           aria-label={rowLabel('content.aria.applyPreset')}
           onClick={() => {
             if (!profile || isCurrent) return
-            updateStyle(profile)
+            commitYLCProfile(profile)
           }}
         >
           {isCurrent ? <TbCheck size={16} aria-hidden='true' /> : null}

@@ -35,7 +35,7 @@ git ls-remote --tags origin 'refs/tags/v*'
 
 Actions → **Release candidate** → Run workflow で Branch に **main** を指定する。追加の入力はなく、候補作成のジョブには environment の指定もない。成功するとタグと draft release が作られる。
 
-`verify-and-package` ジョブは Node.js 24、固定した Yarn、Playwright Chromium を用意し、`yarn verify:release:ci` を実行する。現在の順序は次のとおり。
+`verify-and-package` ジョブは Node.js 26、固定した Yarn、Playwright Chromium を用意し、`yarn verify:release:ci` を実行する。現在の順序は次のとおり。
 
 1. `yarn verify`：locale・掲載文・書式・型・coverage・contracts
 2. `yarn test:package`：Chrome / Firefox ZIP と package 契約

@@ -99,7 +99,6 @@ export const applyChatProfileToDocument = (document: Document, profile: ChatProf
       profile.appearance.membershipNameColor.mode === 'youtube-default'
         ? (environment.membershipDefaultColor ?? readYouTubeMembershipDefaultColor(document))
         : null,
-    firefox: environment.firefox ?? import.meta.env.FIREFOX,
   })
   applyStylePatch(document, patch)
   return patch

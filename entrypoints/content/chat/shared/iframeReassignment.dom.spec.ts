@@ -91,6 +91,28 @@ describe('native chat iframe reuse after SPA navigation', () => {
     expect(observation.targets.chatIframe).toBe(iframe)
   })
 
+  it.each([true, false])('keeps the first player authoritative when a stale SPA player is present (stale first: %s)', staleFirst => {
+    const { iframe, watch, player, nextPage, reload } = setupReusedIframe()
+    nextPage()
+    player.setAttribute('video-id', nextId)
+    iframe.src = chatHref('next')
+    reload()
+
+    const staleWatch = document.createElement('ytd-watch-flexy')
+    staleWatch.setAttribute('video-id', oldId)
+    const stalePlayer = document.createElement('div')
+    stalePlayer.id = 'movie_player'
+    stalePlayer.setAttribute('video-id', oldId)
+    staleWatch.append(stalePlayer)
+    if (staleFirst) watch.before(staleWatch)
+    else watch.after(staleWatch)
+
+    const observation = collectPageObservation()
+
+    expect(iframe.getAttribute(YLC_OBSERVED_VIDEO_ATTR)).toBe(staleFirst ? oldId : nextId)
+    expect(observation.targets.chatIframe).toBe(staleFirst ? null : iframe)
+  })
+
   it('does not attribute a new src to the next video while the previous document remains loaded', () => {
     const { iframe, nextPage } = setupReusedIframe()
     nextPage()

@@ -2,6 +2,8 @@ import { randomUUID } from 'node:crypto'
 import { readFile, stat } from 'node:fs/promises'
 import { isDeepStrictEqual } from 'node:util'
 import { localeCodes } from '../../shared/i18n/generated/localeMetadata.ts'
+import { APPEARANCE_NUMBER_LIMITS } from '../../shared/settings/appearanceLimits.ts'
+import { MAX_CHAT_HEIGHT_RATIO, MAX_CHAT_WIDTH_RATIO } from '../../shared/settings/chatGeometry.ts'
 import { DEFAULT_CHAT_PROFILE } from '../../shared/settings/defaults.ts'
 import { BUILTIN_PRESET_IDS } from '../../shared/settings/model.ts'
 import { MAX_SETTINGS_BACKUP_BYTES } from '../../shared/settings/persistConfig.ts'
@@ -13,6 +15,7 @@ import {
   LOCALE_STORAGE_KEY,
   THEME_STORAGE_KEY,
 } from '../../shared/settings/storageKeys.ts'
+import { isThemeMode } from '../../shared/theme/themeMode.ts'
 import { ALLOWED_FONT_FAMILIES } from '../../shared/utils/fontFamilyPolicy.ts'
 
 const keysByDomain = {
@@ -79,11 +82,7 @@ const validateProfile = profile => {
     if (owns(appearance, 'fontFamily') && appearance.fontFamily !== null) {
       choice(appearance.fontFamily, ALLOWED_FONT_FAMILIES, 'profile.appearance.fontFamily')
     }
-    for (const [key, min, max] of [
-      ['fontSize', 10, 40],
-      ['blur', 0, 20],
-      ['spacing', 0, 40],
-    ]) {
+    for (const [key, { min, max }] of Object.entries(APPEARANCE_NUMBER_LIMITS)) {
       if (owns(appearance, key)) finite(appearance[key], min, max, `profile.appearance.${key}`)
     }
     for (const key of ['showUserName', 'showUserIcon', 'showSuperChatBar']) {
@@ -103,7 +102,7 @@ const validateProfile = profile => {
 const validatePatch = patch => {
   record(patch, Object.keys(keysByDomain), 'root')
   if (owns(patch, 'enabled')) boolean(patch.enabled, 'enabled')
-  if (owns(patch, 'theme')) choice(patch.theme, ['light', 'dark', 'system'], 'theme')
+  if (owns(patch, 'theme') && !isThemeMode(patch.theme)) invalid('theme is unsupported')
   if (owns(patch, 'locale')) choice(patch.locale, localeCodes, 'locale')
   if (owns(patch, 'profile')) validateProfile(patch.profile)
   if (owns(patch, 'geometry')) {
@@ -113,8 +112,8 @@ const validatePatch = patch => {
     boolean(geometry.pinned, 'geometry.pinned')
     record(geometry.rect, ['x', 'y', 'width', 'height'], 'geometry.rect', true)
     // Match the renderer's player-relative bounds; reject instead of silently clamping.
-    finite(geometry.rect.width, Number.MIN_VALUE, 0.65, 'geometry.rect.width')
-    finite(geometry.rect.height, Number.MIN_VALUE, 0.9, 'geometry.rect.height')
+    finite(geometry.rect.width, Number.MIN_VALUE, MAX_CHAT_WIDTH_RATIO, 'geometry.rect.width')
+    finite(geometry.rect.height, Number.MIN_VALUE, MAX_CHAT_HEIGHT_RATIO, 'geometry.rect.height')
     finite(geometry.rect.x, 0, 1 - geometry.rect.width, 'geometry.rect.x')
     finite(geometry.rect.y, 0, 1 - geometry.rect.height, 'geometry.rect.y')
   }

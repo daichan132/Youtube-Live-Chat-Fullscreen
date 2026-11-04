@@ -319,6 +319,44 @@ describe('useChatPurchaseActivity', () => {
   )
 })
 
+it('holds an open purchase when the next document is already revoked, then follows a usable document', async () => {
+  const { carrier, iframe, body } = createCarrier()
+  const oldOffer = mountNativeOffer(body)
+  const onChange = vi.fn()
+  const { unmount } = renderHook(() => useChatPurchaseActivity(carrier, onChange))
+  expect(onChange).toHaveBeenLastCalledWith(true)
+  const dead = createCarrier().body.ownerDocument
+  const replacement = createCarrier()
+  let currentDocument = dead
+  Object.defineProperty(iframe, 'contentDocument', { configurable: true, get: () => currentDocument })
+  const error = () => {
+    throw new TypeError('revoked document')
+  }
+  const nodeType = vi.spyOn(dead, 'nodeType', 'get').mockImplementation(error)
+  const deadBody = vi.spyOn(dead, 'body', 'get').mockImplementation(error)
+  const documentElement = vi.spyOn(dead, 'documentElement', 'get').mockImplementation(error)
+  try {
+    onChange.mockClear()
+    act(() => iframe.dispatchEvent(new Event('load')))
+    expect(onChange).not.toHaveBeenCalled()
+    oldOffer.hidden = true
+    await settleMutation()
+    expect(onChange).not.toHaveBeenCalled()
+    currentDocument = replacement.body.ownerDocument
+    act(() => iframe.dispatchEvent(new Event('load')))
+    expect(onChange).toHaveBeenLastCalledWith(false)
+    mountNativeOffer(replacement.body)
+    await settleMutation()
+    expect(onChange).toHaveBeenLastCalledWith(true)
+    unmount()
+    expect(onChange).toHaveBeenLastCalledWith(false)
+  } finally {
+    nodeType.mockRestore()
+    deadBody.mockRestore()
+    documentElement.mockRestore()
+  }
+})
+
 it('ignores a queued document callback after Firefox revokes its wrapper', () => {
   const callbacks: MutationCallback[] = []
   const NativeMutationObserver = MutationObserver

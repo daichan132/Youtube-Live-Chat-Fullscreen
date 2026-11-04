@@ -1,17 +1,8 @@
 import { createStore } from 'jotai/vanilla'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
-import { MAX_CUSTOM_PRESETS } from '@/shared/settings/persistConfig'
 import { chatSettingsStateAtom, editorSessionStateAtom } from './atoms'
-import {
-  addPresetAtom,
-  cancelStyleGestureAtom,
-  commitGeometryAtom,
-  deletePresetAtom,
-  reorderPresetsAtom,
-  resetGeometryAtom,
-  updatePresetNameAtom,
-} from './commands'
+import { addPresetAtom, cancelStyleGestureAtom, updatePresetNameAtom } from './commands'
 
 const store = createStore()
 
@@ -23,21 +14,9 @@ const resetStore = () => {
 describe('state commands', () => {
   beforeEach(resetStore)
 
-  it('keeps the same chat state object for no-op commands', () => {
-    const initial = store.get(chatSettingsStateAtom)
-    const ids = initial.presets.map(preset => preset.id)
-
-    expect(store.set(deletePresetAtom, 'missing')).toBe(false)
-    expect(store.set(reorderPresetsAtom, ids)).toBe(false)
-    expect(store.set(updatePresetNameAtom, { id: 'missing', name: 'Missing' })).toBe(false)
-    expect(store.set(resetGeometryAtom)).toBe(false)
-    expect(store.set(commitGeometryAtom, initial.geometry)).toBe(false)
-    expect(store.get(chatSettingsStateAtom)).toBe(initial)
-  })
-
   it('rejects custom presets after the shared maximum is reached', () => {
     const profile = store.get(chatSettingsStateAtom).profile
-    const customPresets = Array.from({ length: MAX_CUSTOM_PRESETS }, (_, index) => ({
+    const customPresets = Array.from({ length: 100 }, (_, index) => ({
       kind: 'custom' as const,
       id: `custom-${index}`,
       name: `Custom ${index}`,

@@ -106,6 +106,27 @@ describe('useOverlayGeometry', () => {
     expect(store.get(chatSettingsStateAtom).geometry).toEqual(second)
   })
 
+  it('keeps Restore disabled when the same geometry arrives with a different property order', () => {
+    const { result } = renderGeometryHook()
+    act(() => result.current.onAdjustmentOpenChange(true))
+    act(() => {
+      const current = store.get(chatSettingsStateAtom)
+      const geometry = current.geometry
+      if (geometry.reference !== 'player') throw new Error('Expected player-relative geometry')
+      store.set(chatSettingsStateAtom, {
+        ...current,
+        geometry: {
+          pinned: geometry.pinned,
+          rect: { height: geometry.rect.height, width: geometry.rect.width, y: geometry.rect.y, x: geometry.rect.x },
+          reference: 'player',
+        },
+      })
+    })
+    expect(result.current.canRestoreAdjustment).toBe(false)
+    act(() => result.current.moveBy({ x: 10, y: 0 }))
+    expect(result.current.canRestoreAdjustment).toBe(true)
+  })
+
   it('commits keyboard movement as pinned player ratios', () => {
     const { result } = renderGeometryHook()
     act(() => result.current.moveBy({ x: 25, y: 10 }))
@@ -382,6 +403,66 @@ describe('useOverlayGeometry', () => {
     rerender({ paused: false })
     expect(store.get(chatSettingsStateAtom).geometry).not.toEqual(saved)
     expect(store.get(chatSettingsStateAtom).geometry).toMatchObject({ pinned: false })
+  })
+
+  it('rechecks a stationary obstacle when the player resizes an unpinned chat into it', () => {
+    setLayout({ x: 50, y: 50 }, { width: 240, height: 180 }, false)
+    const caption = document.createElement('div')
+    caption.className = 'ytp-caption-window-container'
+    caption.getBoundingClientRect = () => new DOMRect(300, 50, 200, 200)
+    player.append(caption)
+    const saved = store.get(chatSettingsStateAtom).geometry
+    const { result } = renderGeometryHook()
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(saved)
+
+    act(() => {
+      setPlayerSize(800, 800)
+      window.dispatchEvent(new Event('resize'))
+    })
+
+    expect(store.get(chatSettingsStateAtom).geometry).not.toEqual(saved)
+    expect(result.current.displayGeometry.coordinates.y).toBeCloseTo(502)
+  })
+
+  it('rechecks a caption revealed by a previously hidden parent', async () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const parent = document.createElement('div')
+    const caption = document.createElement('div')
+    caption.className = 'caption-window'
+    parent.hidden = true
+    caption.getBoundingClientRect = () => (parent.hidden ? new DOMRect(0, 0, 0, 0) : new DOMRect(100, 50, 300, 200))
+    parent.append(caption)
+    player.append(parent)
+    const original = store.get(chatSettingsStateAtom).geometry
+    renderGeometryHook()
+    expect(store.get(chatSettingsStateAtom).geometry).toEqual(original)
+
+    await act(async () => {
+      parent.hidden = false
+      await Promise.resolve()
+    })
+    await flushAnimationFrame()
+
+    expect(store.get(chatSettingsStateAtom).geometry).not.toEqual(original)
+  })
+
+  it('does not remeasure obstacles for unrelated playback attribute updates', async () => {
+    setLayout({ x: 100, y: 50 }, { width: 300, height: 200 }, false)
+    const progress = document.createElement('div')
+    progress.className = 'ytp-progress-bar'
+    progress.append(document.createElement('span'))
+    player.append(progress)
+    const measurePlayer = vi.spyOn(player, 'getBoundingClientRect')
+    renderGeometryHook()
+    measurePlayer.mockClear()
+
+    await act(async () => {
+      progress.style.transform = 'scaleX(.5)'
+      await Promise.resolve()
+    })
+    await flushAnimationFrame()
+
+    expect(measurePlayer).not.toHaveBeenCalled()
   })
 
   it('keeps legacy pixels pending until the player is available, then migrates once as pinned ratios', () => {

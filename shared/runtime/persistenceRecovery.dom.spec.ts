@@ -1,8 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { createSettingsRepository, type SettingsRepository } from '@/shared/settings/repository'
-import { EMPTY_MESSAGES, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
-import { commitGeometryAtom, commitStylePatchAtom, setThemeModeAtom, setYTDLiveChatEnabledAtom } from '@/shared/state/commands'
+import { chatSettingsStateAtom, EMPTY_MESSAGES, localeStateAtom, persistenceStatusAtom } from '@/shared/state/atoms'
+import {
+  commitGeometryAtom,
+  commitStylePatchAtom,
+  deletePresetAtom,
+  reorderPresetsAtom,
+  resetGeometryAtom,
+  setThemeModeAtom,
+  setYTDLiveChatEnabledAtom,
+  updatePresetNameAtom,
+} from '@/shared/state/commands'
 import { type AppRuntime, createAppRuntime } from './createAppRuntime'
 
 const sessions: { runtime: AppRuntime; repository: SettingsRepository }[] = []
@@ -40,6 +49,30 @@ afterEach(async () => {
 })
 
 describe('settings persistence through the app runtime', () => {
+  it('does not rewrite saved domains for edits that leave their values unchanged', async () => {
+    const preset = { kind: 'custom', id: 'saved', name: 'Saved', profile: structuredClone(DEFAULT_CHAT_SETTINGS.profile) }
+    await chrome.storage.local.set({
+      'ylc-chat-appearance': envelope({ profile: structuredClone(DEFAULT_CHAT_SETTINGS.profile), presets: [preset] }),
+      'ylc-chat-geometry': envelope(structuredClone(DEFAULT_CHAT_SETTINGS.geometry)),
+    })
+    const before = await chrome.storage.local.get(null)
+    const { runtime, repository } = await openSettings()
+    const state = runtime.store.get(chatSettingsStateAtom)
+
+    runtime.store.set(setYTDLiveChatEnabledAtom, true)
+    runtime.store.set(setThemeModeAtom, 'system')
+    runtime.store.set(commitStylePatchAtom, { appearance: { fontSize: 13 } })
+    runtime.store.set(commitGeometryAtom, state.geometry)
+    runtime.store.set(resetGeometryAtom)
+    runtime.store.set(deletePresetAtom, 'missing')
+    runtime.store.set(reorderPresetsAtom, ['saved'])
+    runtime.store.set(updatePresetNameAtom, { id: 'saved', name: 'Saved' })
+    await repository.flush()
+
+    expect(await chrome.storage.local.get(null)).toEqual(before)
+    expect(runtime.exportSettings()).toMatchObject({ chatSettings: { presets: [preset], geometry: DEFAULT_CHAT_SETTINGS.geometry } })
+  })
+
   it.each(['enabled', 'theme', 'appearance', 'geometry'] as const)(
     'saves only the edited %s domain and restores it on reopening',
     async domain => {
@@ -112,6 +145,33 @@ describe('settings persistence through the app runtime', () => {
     runtime.dispose()
     const reopened = await openSettings('reopened-page')
     expect(reopened.runtime.store.get(localeStateAtom)).toMatchObject({ code: 'ja', messages: { 'popup.theme': 'ja' } })
+  })
+
+  it('preserves duplicate maximum-length legacy preset IDs through import and reopening', async () => {
+    const longId = 'a'.repeat(128)
+    const occupied = `${'a'.repeat(126)}-2`
+    const backup = {
+      version: 1,
+      globalSetting: {},
+      ytdLiveChat: {
+        presetItemIds: [occupied, longId, longId],
+        presetItemStyles: { [occupied]: { fontSize: 18 }, [longId]: { fontSize: 24 } },
+        presetItemTitles: { [occupied]: 'First', [longId]: 'Repeated' },
+      },
+    }
+    const expected = [
+      { kind: 'custom', id: occupied, name: 'First', profile: { appearance: { fontSize: 18 } } },
+      { kind: 'custom', id: longId, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+      { kind: 'custom', id: `${'a'.repeat(126)}-3`, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+    ]
+    const { runtime } = await openSettings()
+
+    await runtime.importSettings(backup)
+
+    expect((await chrome.storage.local.get('ylc-chat-appearance'))['ylc-chat-appearance']).toMatchObject({ value: { presets: expected } })
+    runtime.dispose()
+    const reopened = await openSettings('reopened-page')
+    expect(reopened.runtime.exportSettings().chatSettings.presets).toMatchObject(expected)
   })
 
   it('preserves saved settings when an import write fails and accepts the next valid import', async () => {

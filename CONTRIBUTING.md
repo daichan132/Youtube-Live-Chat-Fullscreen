@@ -18,7 +18,7 @@ For a small code contribution, start with a behavior you can see and test on its
 
 ## Run a development build
 
-Fork and clone the repository, then run these commands from its root. Use Node.js 24 and the Yarn version in [`package.json`](package.json); Corepack selects that pinned version. If `corepack` is unavailable, follow [Corepack's installation instructions](https://github.com/nodejs/corepack#how-to-install).
+Fork and clone the repository, then run these commands from its root. Use Node.js 26 and the Yarn version in [`package.json`](package.json); Corepack selects that pinned version. If `corepack` is unavailable, follow [Corepack's installation instructions](https://github.com/nodejs/corepack#how-to-install).
 
 ```bash
 corepack enable
@@ -88,7 +88,7 @@ While iterating, you can run a relevant classified scenario after `yarn build:e2
 
 For documentation-only changes, check links, commands, and the diff. You do not need to run the complete source suite. For interface-string translations, use the generation and locale checks below.
 
-Pull requests automatically run source/coverage/contracts, production package checks, deterministic Playwright fixtures, and accessibility checks. The manual CI workflow adds visual checks and exact packaged startup smoke.
+Pull requests and pushes to `main` automatically run source/coverage/contracts, production package checks, deterministic Playwright fixtures, and accessibility checks. A merged pull request runs these checks before and after the merge. The manual CI workflow adds visual checks and exact packaged startup smoke. Release candidate and publication workflows remain manual.
 
 ## Open a pull request
 

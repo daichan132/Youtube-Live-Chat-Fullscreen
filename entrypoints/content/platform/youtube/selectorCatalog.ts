@@ -26,11 +26,26 @@ export const chatControlMetadataBoundaryProbe = {
   probeId: 'chat.control-metadata-boundary.v1',
   selectors: [...nativeChatHostProbe.selectors, ...rightControlsProbe.selectors, ...playerProbe.selectors, 'body'],
 } as const
+const chatMessageInputTag = 'yt-live-chat-message-input-renderer'
+const chatRestrictedParticipationTag = 'yt-live-chat-restricted-participation-renderer'
+
 /** Native active state and rendered offer boundaries; never match paid chat messages. */
 export const chatPurchaseInputProbe = {
   probeId: 'chat.purchase-input.v1',
-  selectors: ['yt-live-chat-message-input-renderer', 'yt-live-chat-restricted-participation-renderer'],
+  selectors: [chatMessageInputTag, chatRestrictedParticipationTag],
 } as const
+// Chat chrome uses these same native tags for layout and purchase visibility.
+export const chatChromeHeaderSelector = 'yt-live-chat-header-renderer'
+export const chatChromeInputPanelId = 'input-panel'
+const chatChromeInputPanelSelector = `#${chatChromeInputPanelId}`
+export const chatChromeInputFallbackTags: readonly string[] = [
+  chatMessageInputTag,
+  chatRestrictedParticipationTag,
+  'yt-live-chat-sign-in-prompt-renderer',
+]
+export const chatChromeInputFallbackSelector = chatChromeInputFallbackTags.join(', ')
+export const chatChromeSelector = `${chatChromeHeaderSelector}, ${chatChromeInputPanelSelector}, ${chatChromeInputFallbackSelector}`
+
 export const chatPurchasePanelProbe = {
   probeId: 'chat.purchase-panel.v1',
   selectors: [
@@ -106,12 +121,15 @@ export const endScreenObstacleProbe = {
   probeId: 'obstacle.endscreen.v1',
   selectors: ['.html5-endscreen', '.ytp-ce-element'],
 } as const
-export const playerObstacleBoundarySelector = [
-  ...captionObstacleProbe.selectors,
-  ...playerControlsObstacleProbe.selectors,
-  ...playerMenuObstacleBoundaryProbe.selectors,
-  ...endScreenObstacleProbe.selectors,
-].join(', ')
+// Measurement and invalidation must evolve together. Menus retain a broader
+// boundary so changes to a hidden menu can make it visible to measurement.
+export const playerObstacleSources = [
+  { kind: 'caption', probe: captionObstacleProbe, boundary: captionObstacleProbe },
+  { kind: 'controls', probe: playerControlsObstacleProbe, boundary: playerControlsObstacleProbe },
+  { kind: 'menu', probe: playerMenuObstacleProbe, boundary: playerMenuObstacleBoundaryProbe },
+  { kind: 'end-screen', probe: endScreenObstacleProbe, boundary: endScreenObstacleProbe },
+] as const
+export const playerObstacleBoundarySelector = playerObstacleSources.flatMap(({ boundary }) => boundary.selectors).join(', ')
 export const runtimeBoundarySelector = [
   ...watchSurfaceProbe.selectors,
   ...playerProbe.selectors,

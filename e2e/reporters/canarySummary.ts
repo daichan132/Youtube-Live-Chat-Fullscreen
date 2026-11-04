@@ -97,7 +97,16 @@ class CanarySummaryReporter implements Reporter {
       return {
         title: test.titlePath().slice(1).join(' › '),
         file: test.location.file,
-        status: outcome === 'expected' ? 'passed' : outcome === 'unexpected' ? 'failed' : outcome,
+        // An expected failure is useful in development, but is not passing
+        // compatibility evidence for either the ordinary or strict canary.
+        status:
+          outcome === 'skipped'
+            ? 'skipped'
+            : outcome === 'unexpected' || lastResult?.status !== 'passed'
+              ? 'failed'
+              : outcome === 'expected'
+                ? 'passed'
+                : outcome,
         detail: outcome === 'skipped' ? skipReason : failure,
         compatibilityState:
           compatibility === 'passed' || compatibility === 'degraded' || compatibility === 'failed' ? compatibility : undefined,

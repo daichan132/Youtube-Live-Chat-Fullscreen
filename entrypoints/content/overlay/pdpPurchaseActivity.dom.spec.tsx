@@ -4,7 +4,8 @@ import {
   IFRAME_CHAT_ONLY_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
-import { createChatChromeLease, hasOpenChatPurchaseUI } from '../runtime/resources/ChatChromeLease'
+import { hasOpenChatPurchaseUI } from '../chat/shared/chatPurchaseActivity'
+import { createChatChromeLease } from '../runtime/resources/ChatChromeLease'
 import { useChatPurchaseActivity } from './useChatPurchaseActivity'
 
 const disposals: Array<() => void> = []

@@ -12,9 +12,29 @@ import type { ContentSession } from './ContentBootstrap'
 export const createContentSession = async (ctx: ContentScriptContext): Promise<ContentSession> => {
   const contentStyles = await loadContentStyles()
   const runtime = await createAppRuntime()
-  const chatRuntime = new ChatRuntimeImpl({ portalHost: createPresentationLease(contentStyles) })
+  let chatRuntime: ChatRuntimeImpl | null = null
+  let root: ReturnType<typeof createRoot> | null = null
+  let ui: Awaited<ReturnType<typeof createShadowRootUi>> | null = null
+  let cleaned = false
+  let cleanupFailed = false
+  let cleanupError: unknown
+  const cleanup = () => {
+    if (cleaned) return
+    cleaned = true
+    for (const release of [() => root?.unmount(), () => chatRuntime?.stop(), () => runtime.dispose()]) {
+      try {
+        release()
+      } catch (error) {
+        if (!cleanupFailed) cleanupError = error
+        cleanupFailed = true
+      }
+    }
+    root = null
+  }
   try {
-    const ui = await createShadowRootUi(ctx, {
+    const activeChatRuntime = new ChatRuntimeImpl({ portalHost: createPresentationLease(contentStyles) })
+    chatRuntime = activeChatRuntime
+    ui = await createShadowRootUi(ctx, {
       name: 'wxt-react-content',
       css: contentStyles.replaceAll(':root', ':host'),
       position: 'inline',
@@ -24,37 +44,50 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
         container.id = 'wxt-react-content'
         container.dataset.ylcRoot = ''
 
-        const root = createRoot(container)
+        root = createRoot(container)
         root.render(
           <AppProvider runtime={runtime}>
-            <ChatRuntimeProvider runtime={chatRuntime}>
+            <ChatRuntimeProvider runtime={activeChatRuntime}>
               <Content />
             </ChatRuntimeProvider>
           </AppProvider>,
         )
         return root
       },
-      onRemove: root => {
-        root?.unmount()
-        chatRuntime.stop()
-        runtime.dispose()
-      },
+      onRemove: cleanup,
     })
 
-    ui.mount()
+    const mountedUi = ui
+    mountedUi.mount()
     let disposed = false
     return {
-      getDiagnosticReport: chatRuntime.getDiagnosticReport,
-      restart: () => chatRuntime.restart(),
+      getDiagnosticReport: activeChatRuntime.getDiagnosticReport,
+      restart: () => activeChatRuntime.restart(),
       dispose() {
         if (disposed) return
         disposed = true
-        ui.remove()
+        try {
+          mountedUi.remove()
+        } finally {
+          cleanup()
+        }
+        if (cleanupFailed) throw cleanupError
       },
     }
   } catch (error) {
-    chatRuntime.stop()
-    runtime.dispose()
+    // WXT inserts the host before onMount completes. Its remove path calls
+    // onRemove before removing the host and document styles.
+    try {
+      ui?.remove()
+    } catch {
+      // Preserve the startup failure while attempting the remaining owners.
+      try {
+        ui?.shadowHost.remove()
+      } catch {
+        // The page may already have destroyed the host.
+      }
+    }
+    cleanup()
     throw error
   }
 }

@@ -30,10 +30,10 @@ export const YLCColorPicker = ({ settingKey, labelKey }: YLCColorPickerProps) =>
         },
       })
     },
-    [gestureId, settingKey],
+    [gestureId, previewYLCStyleUpdate, settingKey],
   )
   const onInteractionStart = useCallback(() => beginYLCStyleGesture(gestureId), [beginYLCStyleGesture, gestureId])
-  const onInteractionEnd = useCallback(() => finishYLCStyleGesture(gestureId), [gestureId])
+  const onInteractionEnd = useCallback(() => finishYLCStyleGesture(gestureId), [finishYLCStyleGesture, gestureId])
 
   return (
     <SettingColorPicker

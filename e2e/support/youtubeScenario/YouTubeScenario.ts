@@ -11,6 +11,7 @@ import type { JSHandle, Page } from '@playwright/test'
 import { compileYouTubeScenario } from './compiler'
 import { scenarioDocumentInitializationScript } from './initializeScenarioDocument'
 import type {
+  BorrowedReplayContextObservation,
   ExtensionIframeIdentity,
   NativeIframeContextObservation,
   NativeIframeMutation,
@@ -22,18 +23,21 @@ import type {
 
 const FIXTURE_PREFLIGHT_URL = 'https://www.youtube.com/?ylc-fixture-preflight=1'
 type FixtureChatWindow = Window & { __ylcFixtureChatRuntime?: { videoId: string } }
+type FixtureArchiveWindow = Window & { __ylcArchiveOpenEvents?: { videoId: string }[] }
 type NativeIframeContext = {
   iframe: HTMLIFrameElement
   document: Document
   runtime: { videoId: string }
   loadEvents: number
 }
+type BorrowedReplayContext = { iframe: HTMLIFrameElement; document: Document; sentinel: object; loadEvents: number }
 
 export class YouTubeScenario {
   private readonly watchPage: YouTubeWatchPage
   private state: YouTubeScenarioState | null = null
   private generation = 0
   private nativeIframeContext: JSHandle<NativeIframeContext> | null = null
+  private borrowedReplayContext: JSHandle<BorrowedReplayContext> | null = null
 
   constructor(private readonly page: Page) {
     this.watchPage = new YouTubeWatchPage(page)
@@ -77,6 +81,40 @@ export class YouTubeScenario {
     if (state.fullscreen) await this.enterFullscreen()
   }
 
+  async addCaptionObstacle(rect: { x: number; y: number; width: number; height: number }, parentHidden = false) {
+    this.requireState()
+    await this.page.evaluate(
+      ({ bounds, parentHidden }) => {
+        const player = document.getElementById('movie_player')
+        if (!player) throw new Error('The fixture player is unavailable.')
+        const parent = document.createElement('div')
+        parent.dataset.fixtureCaptionParent = 'true'
+        parent.hidden = parentHidden
+        const caption = document.createElement('div')
+        caption.className = 'ytp-caption-window-container'
+        caption.dataset.fixtureCaption = 'true'
+        Object.assign(caption.style, {
+          position: 'absolute',
+          left: `${bounds.x}px`,
+          top: `${bounds.y}px`,
+          width: `${bounds.width}px`,
+          height: `${bounds.height}px`,
+        })
+        parent.append(caption)
+        player.append(parent)
+      },
+      { bounds: rect, parentHidden },
+    )
+  }
+
+  async setCaptionParentHidden(hidden: boolean) {
+    await this.page.evaluate(value => {
+      const parent = document.querySelector<HTMLElement>('[data-fixture-caption-parent]')
+      if (!parent) throw new Error('The fixture caption parent is unavailable.')
+      parent.hidden = value
+    }, hidden)
+  }
+
   async spaNavigate(state: YouTubeScenarioState) {
     this.requireState()
     const compiled = compileYouTubeScenario(state)
@@ -103,6 +141,40 @@ export class YouTubeScenario {
     )
     this.state = state
     this.generation = generation
+  }
+
+  cancelNextHistoryNavigation(path: string) {
+    return this.page.evaluate(destination => {
+      if (typeof navigation?.addEventListener !== 'function') throw new Error('Navigation API is unavailable in this fixture.')
+      const before = location.href
+      let cancelled = false
+      navigation.addEventListener(
+        'navigate',
+        event => {
+          event.preventDefault()
+          cancelled = event.defaultPrevented
+        },
+        { once: true },
+      )
+      history.pushState({}, '', destination)
+      return { before, after: location.href, cancelled }
+    }, path)
+  }
+
+  async pushHistoryLocation(path: string) {
+    await this.page.evaluate(destination => history.pushState({}, '', destination), path)
+  }
+
+  async replaceHistoryLocation(path: string) {
+    await this.page.evaluate(destination => history.replaceState({}, '', destination), path)
+  }
+
+  async goBackHistory() {
+    await this.page.evaluate(() => history.back())
+  }
+
+  async notifyPageDataUpdated() {
+    await this.page.evaluate(() => document.dispatchEvent(new Event('yt-page-data-updated')))
   }
 
   async captureNativeIframeContext() {
@@ -153,6 +225,16 @@ export class YouTubeScenario {
     })
   }
 
+  async nativeIframeIsDiscoverableInPage() {
+    if (!this.nativeIframeContext) throw new Error('Capture the native iframe context before observing it.')
+    return this.nativeIframeContext.evaluate(snapshot => [...document.querySelectorAll('#chatframe')].includes(snapshot.iframe))
+  }
+
+  async extensionIframeIsCapturedNative() {
+    if (!this.nativeIframeContext) throw new Error('Capture the native iframe context before observing it.')
+    return this.nativeIframeContext.evaluate(snapshot => window.__ylcHelpers.getExtensionIframe() === snapshot.iframe)
+  }
+
   async settleNativeIframeContext() {
     await this.page.waitForLoadState('networkidle', { timeout: 10000 })
     await this.page.evaluate(() => new Promise<void>(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve()))))
@@ -185,6 +267,55 @@ export class YouTubeScenario {
     return this.watchPage.expectFullscreenExited(options)
   }
 
+  async removeNativeChatHost() {
+    this.requireState()
+    await this.page.evaluate(() => {
+      const host = document.querySelector('ytd-live-chat-frame')
+      if (!host) throw new Error('The native chat host is unavailable.')
+      host.remove()
+    })
+  }
+
+  async addEmptyNativeChatHost() {
+    const videoId = this.requireState().video.id
+    await this.page.evaluate(currentVideoId => {
+      const container = document.getElementById('chat-container')
+      if (!container) throw new Error('YouTube scenario has no chat container.')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', currentVideoId)
+      container.append(host)
+    }, videoId)
+  }
+
+  async installClosedArchiveControl() {
+    const state = this.requireState()
+    if (state.chat.mode !== 'archive') throw new Error('A closed archive control requires an archive scenario.')
+    await this.page.evaluate(videoId => {
+      const container = document.getElementById('chat-container')
+      if (!container) throw new Error('YouTube scenario has no chat container.')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', videoId)
+      const slot = document.createElement('div')
+      slot.id = 'show-hide-button'
+      const button = document.createElement('button')
+      button.type = 'button'
+      button.textContent = 'Show chat replay'
+      button.setAttribute('aria-label', 'Show chat replay')
+      button.addEventListener('click', () => {
+        const fixture = window as FixtureArchiveWindow
+        fixture.__ylcArchiveOpenEvents ??= []
+        fixture.__ylcArchiveOpenEvents.push({ videoId })
+      })
+      slot.append(button)
+      host.append(slot)
+      container.append(host)
+    }, state.video.id)
+  }
+
+  observeArchiveOpenEvents(): Promise<{ videoId: string }[]> {
+    return this.page.evaluate(() => (window as FixtureArchiveWindow).__ylcArchiveOpenEvents ?? [])
+  }
+
   async addNativeIframe(mutation: NativeIframeMutation) {
     const videoId = this.requireState().video.id
     await this.page.evaluate(
@@ -207,6 +338,14 @@ export class YouTubeScenario {
       },
       { videoId, mutation },
     )
+  }
+
+  async removeNativeIframe() {
+    await this.page.evaluate(() => {
+      const iframe = document.querySelector('ytd-live-chat-frame > #chatframe')
+      if (!iframe) throw new Error('The native chat iframe is unavailable.')
+      iframe.remove()
+    })
   }
 
   async replaceNativeIframe(mutation: NativeIframeMutation) {
@@ -336,6 +475,70 @@ export class YouTubeScenario {
       document.dispatchEvent(new Event('yt-page-data-updated'))
     }, current.video.id)
     this.state = archiveState
+  }
+
+  async endLiveWithSameBorrowedIframe() {
+    const current = this.requireState()
+    if (current.video.mode !== 'live' || current.chat.mode !== 'live' || (current.page.route ?? 'watch') !== 'watch') {
+      throw new Error('The same-iframe replay transition requires a live watch scenario.')
+    }
+    const archiveState: YouTubeScenarioState = {
+      video: { ...current.video, mode: 'archive' },
+      page: current.page,
+      fullscreen: false,
+      chat: { mode: 'archive', native: { state: 'playable' }, response: 'playable' },
+    }
+    await this.installChatRoutes(compileYouTubeScenario(archiveState).chatRoutes)
+    await this.borrowedReplayContext?.dispose()
+    this.borrowedReplayContext = await this.page.evaluateHandle(
+      videoId =>
+        new Promise<BorrowedReplayContext>((resolve, reject) => {
+          const iframe = window.__ylcHelpers.getExtensionIframe()
+          const player = document.getElementById('movie_player')
+          const watch = document.querySelector<HTMLElement>('ytd-watch-flexy, ytd-watch-grid')
+          if (!iframe?.contentWindow || !player || !watch) return reject(new Error('The borrowed live iframe is unavailable.'))
+          let snapshot: BorrowedReplayContext | null = null
+          iframe.addEventListener('load', () => {
+            if (snapshot) {
+              snapshot.loadEvents++
+              return
+            }
+            const chatDocument = iframe.contentDocument
+            if (!chatDocument?.location.pathname.endsWith('/live_chat_replay')) {
+              reject(new Error('The expected replay document did not load.'))
+              return
+            }
+            const sentinel = {}
+            Object.assign(chatDocument.body, { ylcReplaySentinel: sentinel })
+            snapshot = { iframe, document: chatDocument, sentinel, loadEvents: 1 }
+            watch.removeAttribute('is-live-now')
+            Object.assign(player, { getVideoData: () => ({ isLive: false, isLiveContent: true, video_id: videoId }) })
+            document.querySelectorAll('.ytp-time-display.ytp-live').forEach(element => {
+              element.classList.remove('ytp-live')
+            })
+            document.querySelectorAll('.ytp-live-badge.ytp-live-badge-is-livehead').forEach(element => {
+              element.classList.remove('ytp-live-badge-is-livehead')
+            })
+            document.dispatchEvent(new Event('yt-page-data-updated'))
+            resolve(snapshot)
+          })
+          iframe.contentWindow.location.assign(`/live_chat_replay?v=${encodeURIComponent(videoId)}&continuation=ylc-fixture`)
+        }),
+      current.video.id,
+    )
+    this.state = archiveState
+  }
+
+  async observeBorrowedReplayContext(): Promise<BorrowedReplayContextObservation> {
+    if (!this.borrowedReplayContext) throw new Error('Transition the borrowed live iframe to replay before observing it.')
+    return this.borrowedReplayContext.evaluate(snapshot => ({
+      sameOverlayIframe: window.__ylcHelpers.getExtensionIframe() === snapshot.iframe,
+      sameNativeIframe: document.querySelector('ytd-live-chat-frame > #chatframe') === snapshot.iframe,
+      sameDocument: snapshot.iframe.contentDocument === snapshot.document,
+      sameSentinel:
+        (snapshot.iframe.contentDocument?.body as HTMLElement & { ylcReplaySentinel?: object })?.ylcReplaySentinel === snapshot.sentinel,
+      loadEvents: snapshot.loadEvents,
+    }))
   }
 
   async invalidateLoadedChat() {

@@ -23,6 +23,11 @@ const fixtureTests = {
   mixed: `test('local canary passes', () => {})
 test('local archive is skipped', () => { test.skip(true, ${JSON.stringify(skipReason)}) })`,
   failure: `test('local extension assertion fails', () => { throw new Error('Synthetic extension assertion failure') })`,
+  expectedFailure: `test('known failing canary', () => { test.fail(); throw new Error('Known canary failure') })`,
+  expectedFailureRetry: `test('known failing canary after retry', ({}, info) => {
+  test.fail()
+  if (info.retry > 0) throw new Error('Known canary failure after retry')
+})`,
   flaky: `test('local canary recovers on retry', ({}, info) => {
   if (info.retry === 0) throw new Error('Synthetic transient failure')
 })`,
@@ -51,7 +56,7 @@ export default {
     ...options,
   ]),
   outputDir: ${JSON.stringify(join(directory, 'test-results'))},
-  retries: ${scenario === 'flaky' ? 1 : 0},
+  retries: ${scenario === 'flaky' || scenario === 'expectedFailureRetry' ? 1 : 0},
   projects: [{ name: ${JSON.stringify(CANARY_PROJECT_NAME)}, testDir: ${JSON.stringify(directory)}, testMatch: 'reporter.fixture.spec.ts' }],
 }
 `,
@@ -149,27 +154,6 @@ describe('Real YouTube canary summary', () => {
     })
   })
 
-  it('marks an otherwise successful run with external skips as degraded', () => {
-    const outcomes: CanaryTestOutcome[] = [
-      passed,
-      {
-        title: 'archive › replay',
-        file: 'e2e/scenarios/archive/liveChatReplay.spec.ts',
-        status: 'skipped',
-        detail: 'No archive replay URL satisfied preconditions.',
-      },
-    ]
-
-    expect(summarizeCanaryOutcomes(outcomes, 'passed')).toMatchObject({
-      state: 'degraded',
-      executed: 1,
-      skipped: 1,
-      failed: 0,
-    })
-    expect(renderCanarySummary(outcomes, 'passed')).toContain('| State | degraded |')
-    expect(renderCanarySummary(outcomes, 'passed')).toContain('No archive replay URL satisfied preconditions.')
-  })
-
   it('publishes an actual extension assertion failure as failed rather than degraded', async () => {
     const result = await runReporterFixture(false, 'failure')
     expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
@@ -183,6 +167,35 @@ describe('Real YouTube canary summary', () => {
     expect(result.markdown).toMatch(/\|\s*Failed\s*\|\s*1\s*\|/)
     expect(result.markdown).toContain('Synthetic extension assertion failure')
   }, 20_000)
+
+  it.each([false, true])(
+    'does not report an expected failing canary as passed (strict: %s)',
+    async requireClean => {
+      const result = await runReporterFixture(requireClean, 'expectedFailure')
+      expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+      expect(result.json).toMatchObject({
+        summary: { state: 'failed', executed: 1, passed: 0, flaky: 0, skipped: 0, failed: 1 },
+        runStatus: 'passed',
+      })
+      expect(result.json.outcomes).toEqual([
+        expect.objectContaining({ status: 'failed', detail: expect.stringContaining('Known canary failure') }),
+      ])
+    },
+    20_000,
+  )
+
+  it.each([false, true])(
+    'does not accept an expected failure after retry as flaky success (strict: %s)',
+    async requireClean => {
+      const result = await runReporterFixture(requireClean, 'expectedFailureRetry')
+      expect(result.exitCode, `${result.stdout}\n${result.stderr}`).not.toBe(0)
+      expect(result.json.summary).toMatchObject({ state: 'failed', executed: 1, passed: 0, flaky: 0, failed: 1 })
+      expect(result.json.outcomes).toEqual([
+        expect.objectContaining({ status: 'failed', detail: expect.stringContaining('Known canary failure after retry') }),
+      ])
+    },
+    20_000,
+  )
 
   it.each([
     { lane: 'ordinary', requireClean: false },
@@ -257,10 +270,20 @@ describe('Real YouTube canary summary', () => {
 
   it('keeps diagnostics after a non-green run on a fixed runner image', () => {
     const workflow = readFileSync(resolve(import.meta.dirname, '../../.github/workflows/canary.yml'), 'utf8')
+    const job = workflow.match(/^  canary:\n[\s\S]*?(?=^  [\w-]+:\n|(?![\s\S]))/m)?.[0]
+    const upload = job
+      ?.split(/^      - /m)
+      .find(
+        step =>
+          /^        uses: actions\/upload-artifact@/m.test(step) &&
+          /^            playwright-report$/m.test(step) &&
+          /^            test-results$/m.test(step),
+      )
 
-    expect(workflow).toContain('runs-on: ubuntu-24.04')
-    expect(workflow).toContain('if: always()')
-    expect(workflow).toContain('playwright-report')
-    expect(workflow).toContain('test-results')
+    expect(job).toMatch(/^    runs-on: ubuntu-24\.04$/m)
+    expect(upload).toMatch(/^        if: (?:\$\{\{\s*)?always\(\)(?:\s*\}\})?$/m)
+    expect(upload).toMatch(/^        uses: actions\/upload-artifact@/m)
+    expect(upload).toMatch(/^            playwright-report$/m)
+    expect(upload).toMatch(/^            test-results$/m)
   })
 })

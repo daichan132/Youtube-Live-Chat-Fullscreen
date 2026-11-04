@@ -35,6 +35,13 @@ export type AppRuntime = {
   dispose: () => void
 }
 
+export class LocaleLoadError extends Error {
+  constructor(cause: unknown) {
+    super('Could not load language messages', { cause })
+    this.name = 'LocaleLoadError'
+  }
+}
+
 const ignoreHandledPersistenceFailure = (promise: Promise<void>) => {
   void promise.catch(() => {
     // The repository publishes the failure through persistenceStatusAtom.
@@ -86,11 +93,11 @@ type AppRuntimeDependencies = {
 
 // Language fallback belongs here: try the requested bundle, then English once.
 // The loader evicts failures so a later request can try those assets again.
-const loadMessagesWithEnglishFallback = async (locale: LocaleCode, loadMessages: typeof loadLocaleMessages) => {
+const loadMessagesWithEnglishFallback = async (locale: LocaleCode, loadMessages: typeof loadLocaleMessages, isCurrent?: () => boolean) => {
   try {
     return await loadMessages(locale)
   } catch (error) {
-    if (locale === 'en') throw error
+    if (locale === 'en' || (isCurrent && !isCurrent())) throw error
     return loadMessages('en')
   }
 }
@@ -198,7 +205,13 @@ export const createAppRuntime = async (
     let messages: Awaited<ReturnType<typeof loadLocaleMessages>>
     while (true) {
       const requestId = localeRequestId
-      messages = await loadMessagesWithEnglishFallback(hydratedLocale, dependencies.loadMessages)
+      try {
+        messages = await loadMessagesWithEnglishFallback(hydratedLocale, dependencies.loadMessages, () => requestId === localeRequestId)
+      } catch (error) {
+        if (requestId === localeRequestId) throw error
+        hydratedLocale = pendingLocale ?? snapshot.locale
+        continue
+      }
       if (requestId === localeRequestId) break
       hydratedLocale = pendingLocale ?? snapshot.locale
     }
@@ -234,7 +247,13 @@ export const createAppRuntime = async (
       const requestId = ++localeRequestId
       localLocaleRequestId = requestId
       try {
-        const messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
+        let messages: Awaited<ReturnType<typeof loadLocaleMessages>>
+        try {
+          messages = await loadMessagesWithEnglishFallback(resolved, dependencies.loadMessages)
+        } catch (error) {
+          if (disposed || requestId !== localeRequestId) return
+          throw new LocaleLoadError(error)
+        }
         if (disposed || requestId !== localeRequestId) return
         applyExternal(() => store.set(replaceExternalLocaleAtom, localeStateFromMessages(resolved, messages)))
         localLocaleRequestId = null

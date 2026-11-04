@@ -8,7 +8,6 @@ import {
   normalizePresets,
   normalizeRGBA,
 } from './normalizeSettings'
-import { MAX_CUSTOM_PRESETS } from './persistConfig'
 
 describe('normalizeRGBA', () => {
   it('clamps channels and preserves the fallback alpha for invalid input', () => {
@@ -22,6 +21,15 @@ describe('normalizeRGBA', () => {
 })
 
 describe('normalizeChatProfile', () => {
+  it.each([
+    { key: 'fontSize', min: 10, max: 40 },
+    { key: 'blur', min: 0, max: 20 },
+    { key: 'spacing', min: 0, max: 40 },
+  ] as const)('clamps $key to its supported range', ({ key, min, max }) => {
+    expect(normalizeChatProfile({ appearance: { [key]: min - 1 } }).appearance[key]).toBe(min)
+    expect(normalizeChatProfile({ appearance: { [key]: max + 1 } }).appearance[key]).toBe(max)
+  })
+
   it('normalizes the nested v7 profile without creating legacy fields', () => {
     const result = normalizeChatProfile({
       appearance: {
@@ -139,7 +147,7 @@ describe('normalizePresets', () => {
   })
 
   it('keeps built-in entries while capping custom presets from storage', () => {
-    const customPresets = Array.from({ length: MAX_CUSTOM_PRESETS + 2 }, (_, index) => ({
+    const customPresets = Array.from({ length: 102 }, (_, index) => ({
       kind: 'custom',
       id: `custom-${index}`,
       name: `Custom ${index}`,
@@ -148,7 +156,7 @@ describe('normalizePresets', () => {
 
     const presets = normalizePresets([{ kind: 'builtin', id: 'standard' }, ...customPresets, { kind: 'builtin', id: 'transparent' }], [])
 
-    expect(presets.filter(preset => preset.kind === 'custom')).toHaveLength(MAX_CUSTOM_PRESETS)
+    expect(presets.filter(preset => preset.kind === 'custom')).toHaveLength(100)
     expect(presets.filter(preset => preset.kind === 'builtin').map(preset => preset.id)).toEqual(['standard', 'transparent'])
   })
 })

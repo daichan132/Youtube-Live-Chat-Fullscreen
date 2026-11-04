@@ -20,13 +20,19 @@ Start from a user-visible outcome or a documented boundary. Expected values shou
 - Keep explicit package, privacy, cleanup, and bounded-retry contracts. Replacing every mock or deleting every source check would lose useful protection.
 - Replace or remove a redundant test when an existing behavior test already protects its contract. Keep pure transformations in the Node project and browser-dependent behavior in DOM or browser tests.
 
+For unchanged settings, the persistence tests check the complete stored domains and their writer IDs after no-op edits. This detects unintended writes without requiring a particular state-object identity. The popup switch test also checks the saved value after reopening and confirms that changing it leaves the theme domain alone.
+
 Coverage helps locate gaps; a higher number is not evidence that assertions catch faults. When strengthening a weak test, temporarily introduce a representative fault, confirm the new assertion fails, and restore the implementation. Also check an equivalent implementation change when refactoring resistance is the reason for the replacement.
 
 For real-input press-and-hold tests, sample the rendered layout after release and require it to stay unchanged over later repeat intervals. A repeat can legitimately run between an earlier snapshot and delivery of the release command. Controlled-clock DOM tests separately pin exact activation counts and the absence of an extra release click.
 
 For geometry, specify the player dimensions and expected pixels or storage ratios directly; importing the production converter into both sides of an assertion can hide a conversion defect. The [popup browser scenarios](../../e2e/scenarios/popup/popup.spec.ts) also verify the network blocker against an offline fallback that would succeed without it, so DNS failures cannot make the test pass. Scenario classification is checked once in [`projectClassification.spec.ts`](../../e2e/config/projectClassification.spec.ts); fixture API behavior is exercised by the browser scenarios rather than a list of prototype method names.
 
-For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault.
+The [overlay interaction scenario](../../e2e/scenarios/live/overlayInteraction.fixture.spec.ts) checks that each chat visibility setting affects its corresponding native element while leaving the other elements visible. It also checks emoji category colors and native reaction button colors in the browser. CSS source strings alone cannot prove a declaration applies to the intended element or survives the build.
+
+For generated locales, compare each bundled value with the authored translation at its key. Regenerating expected files with the same compiler cannot detect a compiler mapping fault. The generated locale and translation-key types are also checked as TypeScript unions against authored files, so a string appearing in the wrong type does not satisfy the check.
+
+`yarn store:check` checks every shipped summary against its locale's capability patterns. The pattern tests focus on independent examples of misleading or wrong-surface copy, rather than repeating that check once per current locale.
 
 Absence assertions need a working prerequisite. The [no-chat scenario](../../e2e/scenarios/live/noChatVideo.fixture.spec.ts) shows a live overlay between two no-chat pages, so an extension that never starts cannot satisfy the whole test. Failure-recovery tests should first acquire the resource they claim to release. Canary reporter contracts execute browser-free passing, failing, skipped, and retried tests through the real runner; the release-proof CLI contract verifies known artifact bytes and rejects same-size corruption in a disposable project.
 
@@ -107,10 +113,22 @@ The package contract rejects:
 - the E2E bridge in production;
 - source maps, spec/test files, and fixture assets;
 - manifest permissions or public resources outside policy;
+- a missing content-script registration for `content-scripts/content.js`;
+- a missing popup or popup registration, or a missing or empty content stylesheet served by the background handler;
+- an empty background or content script, or extension page;
+- runtime or manifest locale inventories that differ from `language_codes.json`, and a missing or invalid `locales/_keys.json`;
+- runtime locale arrays with invalid values or lengths, or any packaged locale asset whose bytes differ from `public/`;
 - mismatches between unpacked output and ZIP inventory or any file's bytes;
+- duplicate ZIP paths that would make the packaged content ambiguous;
+- ZIP entries whose decompressed bytes do not match their CRC;
 - Firefox source-archive inputs that cannot be reconstructed from tracked files.
 
-Package size budgets live in [`config/package-size-budget.json`](../../config/package-size-budget.json). Measure both production packages against those limits when updating dependencies or build output. Native chat layout ownership adds visibility and lifecycle invalidation checks; its uncompressed content-script allowance is 451,000 bytes (formerly 450,000), while the production download ZIP limit remains 380,000 bytes for both browsers.
+The package checker reports ZIP and component sizes for both browsers and the source archive. These measurements do not impose size limits; permissions, packaged contents, and byte-for-byte ZIP consistency remain enforced.
+Non-empty script, stylesheet and page checks detect empty assets only; they do not prove that the code, styling or UI works. Browser behavior is verified separately.
+
+`yarn locales:check` compares generated `public/` assets with authored translations. The package checker separately compares packaged locale assets with `public/`, even when the unpacked output and ZIP agree with each other.
+
+The Firefox source archive includes the Yarn release selected by `packageManager` and the WXT helper that validates its `.yarnrc.yml` path. The checker rejects a missing release, inconsistent source configuration, or missing locale generator inputs or generated outputs for any authored language; source reconstruction uses that same validated release and runs the archived locale generator in check mode before installation.
 
 ## Connection policy regression
 
@@ -126,15 +144,16 @@ This requires OpenSSL and installed Playwright Chromium. It starts a local HTTPS
 
 Verification helpers transfer a newly created background tab to the caller only after navigation succeeds. Attachment or navigation failure closes that owned target without closing existing tabs or replacing the original error with a cleanup failure. `verification-target.spec.mjs` covers these ownership outcomes.
 
-## Pull-request CI ownership
+## CI ownership
 
 - `quality` runs `yarn verify`.
 - `package`, after quality, builds Chrome and Firefox production ZIPs and verifies package contracts.
 - `package` also builds and uploads the testing extension consumed by the next job. The production Chrome ZIP artifact is uploaded only for `workflow_dispatch`, where the packaged startup smoke consumes it.
-- `browser-contracts` runs the complete fixture project and accessibility project on pull requests; manual runs add the visual project against the same testing artifact.
+- `browser-contracts` runs the complete fixture project and accessibility project on pull requests and pushes to `main`; manual runs add the visual project against the same testing artifact.
 - `production-package-smoke` is manual and boots the exact production Chrome ZIP.
 
 The testing build is therefore always consumed, while visual regression and exact-artifact startup remain explicit manual gates.
+Direct pushes to `main` run the same quality, package and browser gates as pull requests. A merged pull request therefore runs these gates both before and after the merge. CI concurrency groups include the event type, so a push cannot cancel a manual visual or production smoke run. Release-candidate and store-publication workflows remain manual.
 
 ## Release ownership
 
@@ -147,6 +166,8 @@ Publication selects a successful candidate Actions run, validates its workflow, 
 ## Canary classification
 
 Canary skips are reserved for YouTube-owned preconditions. The shared [external-wait boundary](../../e2e/support/externalYouTubePreconditions.ts) converts only Playwright timeouts into missing prerequisites; unexpected test or browser errors propagate. Live/archive source discovery and native-chat opening also preserve unexpected helper failures. Once a usable page and fullscreen state exist, missing extension UI or chat is a failure. A no-chat assertion also requires a running content session before checking that UI is absent.
+
+No current canary uses Playwright's expected-failure annotation. If one is added, an assertion that fails as expected is still reported as a failure in both ordinary and strict canary runs, including after a retry; it is not successful compatibility evidence. A failed attempt followed by a passing retry remains flaky.
 
 YouTube precondition selectors are defined independently in [`e2e/utils/selectors.ts`](../../e2e/utils/selectors.ts). Reusing the production selector catalog here could turn a product selector regression into an unavailable-source skip. The fingerprint reporter still uses the product probe definitions to identify compatibility drift. Native-chat readiness accepts a complete renderer and message list even when a viewer quotes an unavailable-chat message; structural error renderers take precedence.
 

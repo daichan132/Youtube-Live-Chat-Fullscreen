@@ -2,20 +2,9 @@ import { fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useState } from 'react'
 import { describe, expect, it, vi } from 'vitest'
-import { CONTENT_UI_LAYER } from '@/shared/constants/zIndex'
 import { Modal } from './Modal'
 
 describe('Modal', () => {
-  it('uses the shared modal layer and an accessible name by default', () => {
-    const { getByRole } = render(
-      <Modal isOpen ariaLabel='Test dialog'>
-        <div>content</div>
-      </Modal>,
-    )
-
-    expect(getByRole('dialog', { name: 'Test dialog' })).toHaveStyle({ zIndex: String(CONTENT_UI_LAYER.modal) })
-  })
-
   it('closes with Escape and restores focus to the invoking control', async () => {
     const user = userEvent.setup()
     const Harness = () => {

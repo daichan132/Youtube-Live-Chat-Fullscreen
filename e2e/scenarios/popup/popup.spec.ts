@@ -61,6 +61,7 @@ test.describe('popup', { tag: '@popup' }, () => {
       await expect(page.locator('#root > [dir]')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
       await expect(page.locator('html')).toHaveAttribute('lang', locale)
       await expect(page.locator('html')).toHaveAttribute('dir', locale === 'ar' ? 'rtl' : 'ltr')
+      await expect(page.locator('a[href="https://addons.mozilla.org/firefox/addon/youtube-live-chat-fullscreen/"]')).toBeVisible()
 
       for (const width of [450, 400, 360, 320]) {
         await page.setViewportSize({ width, height: 650 })
@@ -71,7 +72,10 @@ test.describe('popup', { tag: '@popup' }, () => {
           expect(bounds?.width).toBeGreaterThanOrEqual(44)
           expect(bounds?.height).toBeGreaterThanOrEqual(44)
         }
-        for (const name of ['Chrome', 'Firefox', 'GitHub']) {
+        for (const name of [
+          ...(locale === 'ja' ? ['Firefox 版'] : ['Firefox edition']),
+          ...(locale === 'ja' ? ['レビューを書く', 'GitHub で Star'] : ['Write a review', 'Star on GitHub']),
+        ]) {
           const link = page.getByRole('link', { name, exact: true })
           await expect(link.getByText(name, { exact: true })).toBeVisible()
           const bounds = await link.boundingBox()
@@ -192,7 +196,7 @@ test.describe('popup', { tag: '@popup' }, () => {
   test('keeps font search composition separate from committing the highlighted option', async ({ page, extension }) => {
     expect(await patchOverlayStore(extension, { profile: { appearance: { fontFamily: 'Roboto' } } })).not.toBeNull()
     await page.goto(extension.url('settings.html'))
-    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const trigger = page.getByRole('button', { name: 'Font' })
     const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
     const savedFont = async () =>
       (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontFamily
@@ -255,11 +259,25 @@ test.describe('popup', { tag: '@popup' }, () => {
   test('imports settings, hydrates them on reopen, and exports the chosen values as a real download', async ({ page, extension }) => {
     test.setTimeout(90000)
 
+    const longId = 'a'.repeat(128)
+    const occupied = `${'a'.repeat(126)}-2`
+    const expectedPresets = [
+      { kind: 'custom', id: occupied, name: 'First', profile: { appearance: { fontSize: 18 } } },
+      { kind: 'custom', id: longId, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+      { kind: 'custom', id: `${'a'.repeat(126)}-3`, name: 'Repeated', profile: { appearance: { fontSize: 24 } } },
+    ]
     const settings = {
       version: 1,
       exportedAt: '2024-01-01T00:00:00.000Z',
       globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
-      ytdLiveChat: { fontSize: 42, blur: 10, alwaysOnDisplay: false },
+      ytdLiveChat: {
+        fontSize: 42,
+        blur: 10,
+        alwaysOnDisplay: false,
+        presetItemIds: [occupied, longId, longId],
+        presetItemStyles: { [occupied]: { fontSize: 18 }, [longId]: { fontSize: 24 } },
+        presetItemTitles: { [occupied]: 'First', [longId]: 'Repeated' },
+      },
     }
 
     await importSettingsViaPopup(page, extension, settings)
@@ -278,6 +296,7 @@ test.describe('popup', { tag: '@popup' }, () => {
     expect(appearanceState?.value.profile.appearance.fontSize).toBe(40)
     expect(appearanceState?.value.profile.appearance.blur).toBe(10)
     expect(appearanceState?.value.profile.display.idleVisibility).toBe('auto-hide')
+    expect(appearanceState?.value.presets).toMatchObject(expectedPresets)
     expect(appearanceState?.schemaVersion).toBe(1)
 
     // Reopen popup and verify runtime hydration.
@@ -300,6 +319,7 @@ test.describe('popup', { tag: '@popup' }, () => {
           appearance: { fontSize: 40, blur: 10 },
           display: { idleVisibility: 'auto-hide' },
         },
+        presets: expectedPresets,
       },
     })
     expect(Number.isNaN(Date.parse(backup.exportedAt))).toBe(false)

@@ -60,6 +60,8 @@ Choose the guide for the area you are changing:
 - [Overlay and iframe styling](architecture/overlay-and-styling.md): panel geometry, interactions, CSS ownership, and restoration.
 - [Internationalization](architecture/i18n.md): authored translations, generated assets, and language loading.
 
+The popup links to the current browser’s store review page, the other browser’s store listing, and the GitHub repository. The settings panel also offers compact review, GitHub, and donation links in its footer. These links open external pages; starring and reviewing are user actions on those sites.
+
 ## Browser scenarios
 
 The deterministic scenarios run the extension against synthetic YouTube pages. You can reproduce a fullscreen transition without finding a live stream or depending on today's YouTube layout. For example, [archive restoration](../e2e/scenarios/archive/borrowRestore.fixture.spec.ts) checks the borrowed iframe's original position and styles, while [channel live entries](../e2e/scenarios/live/channelLiveEntry.fixture.spec.ts) exercise video changes on the same page URL.

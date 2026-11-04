@@ -1,3 +1,6 @@
+import { hasNativeVisibleAncestry, isChromeElement } from '@/entrypoints/content/chat/shared/chatChromeVisibility'
+import { hasOpenChatPurchaseUI, observeChatPurchaseUI } from '@/entrypoints/content/chat/shared/chatPurchaseActivity'
+import { isAccessibleNode } from '@/entrypoints/content/chat/shared/isAccessibleNode'
 import {
   IFRAME_CHAT_ONLY_BOTTOM_PADDING_VAR,
   IFRAME_CHAT_ONLY_CLASS,
@@ -8,28 +11,18 @@ import {
   IFRAME_CHAT_ONLY_TRANSITION_CLASS,
   IFRAME_PURCHASE_ACTIVE_CLASS,
 } from '@/entrypoints/content/features/YTDLiveChatIframe/constants/styleContract'
-
 import {
+  chatChromeHeaderSelector,
+  chatChromeInputFallbackSelector,
+  chatChromeInputFallbackTags,
+  chatChromeInputPanelId,
+  chatChromeSelector,
   chatItemListRendererProbe,
-  chatPurchaseInputProbe,
-  chatPurchaseLoadingProbe,
-  chatPurchasePanelProbe,
-  queryAllProbes,
 } from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import { preserveChatScroll } from './ChatScrollAnchor'
-import { isAccessibleNode } from './isAccessibleNode'
 
 export type ChatOnlyChromeIntent = 'inactive' | 'hold' | 'expanded' | 'collapsed'
 
-const HEADER_SELECTOR = 'yt-live-chat-header-renderer'
-const INPUT_PANEL_SELECTOR = '#input-panel'
-const INPUT_FALLBACK_TAGS: readonly string[] = [
-  'yt-live-chat-message-input-renderer',
-  'yt-live-chat-restricted-participation-renderer',
-  'yt-live-chat-sign-in-prompt-renderer',
-]
-const INPUT_FALLBACK_SELECTOR = INPUT_FALLBACK_TAGS.join(', ')
-const CHROME_SELECTOR = `${HEADER_SELECTOR}, ${INPUT_PANEL_SELECTOR}, ${INPUT_FALLBACK_SELECTOR}`
 const TRANSITION_FALLBACK_MS = 310
 
 const getBody = (iframe: HTMLIFrameElement | null) => {
@@ -40,12 +33,15 @@ const getBody = (iframe: HTMLIFrameElement | null) => {
   }
 }
 
-export const resolveChatOnlyChromeElements = (body: HTMLElement, candidates = [...body.querySelectorAll<HTMLElement>(CHROME_SELECTOR)]) => {
+export const resolveChatOnlyChromeElements = (
+  body: HTMLElement,
+  candidates = [...body.querySelectorAll<HTMLElement>(chatChromeSelector)],
+) => {
   const visible = candidates.filter(element => hasNativeVisibleAncestry(element, body, true))
-  const header = visible.find(element => element.localName === HEADER_SELECTOR)
-  const input = visible.find(element => element.id === 'input-panel')
+  const header = visible.find(element => element.localName === chatChromeHeaderSelector)
+  const input = visible.find(element => element.id === chatChromeInputPanelId)
   const fallbacks = visible.filter(
-    element => INPUT_FALLBACK_TAGS.includes(element.localName) && !element.parentElement?.closest(INPUT_FALLBACK_SELECTOR),
+    element => chatChromeInputFallbackTags.includes(element.localName) && !element.parentElement?.closest(chatChromeInputFallbackSelector),
   )
   return [header, ...(input ? [input] : fallbacks)].filter((element): element is HTMLElement => element != null)
 }
@@ -64,7 +60,7 @@ const measure = (elements: HTMLElement[]) => {
     const height = Math.max(0, Math.ceil(element.getBoundingClientRect().height))
     element.style.setProperty(IFRAME_CHAT_ONLY_TARGET_HEIGHT_VAR, `${height}px`)
     if (height > 0) {
-      if (element.localName === HEADER_SELECTOR) top = 0
+      if (element.localName === chatChromeHeaderSelector) top = 0
       else bottom = 0
     }
   }
@@ -73,11 +69,6 @@ const measure = (elements: HTMLElement[]) => {
 
 const sameElements = (left: HTMLElement[], right: HTMLElement[]) =>
   left.length === right.length && left.every((element, index) => element === right[index])
-
-const isChromeElement = (element: Element) => {
-  const tag = element.localName
-  return tag === HEADER_SELECTOR || element.id === 'input-panel' || INPUT_FALLBACK_TAGS.includes(tag)
-}
 
 const mutationMayChangeChrome = (mutation: MutationRecord, elements: HTMLElement[]) => {
   if (elements.some(element => element === mutation.target || element.contains(mutation.target))) return true
@@ -89,122 +80,9 @@ const mutationMayChangeChrome = (mutation: MutationRecord, elements: HTMLElement
     // Added nodes belong to the iframe's realm, so a parent-window
     // `instanceof Element` check would miss newly mounted chrome.
     const element = node as Element
-    if (isChromeElement(element) || (element.childElementCount > 0 && element.querySelector(CHROME_SELECTOR))) return true
+    if (isChromeElement(element) || (element.childElementCount > 0 && element.querySelector(chatChromeSelector))) return true
   }
   return false
-}
-
-const PURCHASE_BOUNDARY_SELECTOR = [
-  ...chatPurchaseInputProbe.selectors,
-  ...chatPurchasePanelProbe.selectors,
-  ...chatPurchaseLoadingProbe.selectors,
-].join(', ')
-const PURCHASE_STATE_ATTRIBUTES = [
-  'product-picker-open',
-  'live-chat',
-  'hidden',
-  'aria-hidden',
-  'inert',
-  'style',
-  'class',
-  'selected',
-  'aria-selected',
-]
-
-const hasNativeVisibleAncestry = (element: HTMLElement, body: HTMLElement, layoutOnly = false) => {
-  if (!body.contains(element)) return false
-  for (let candidate: HTMLElement | null = element; candidate; candidate = candidate.parentElement) {
-    if (candidate.hidden || candidate.getAttribute('aria-hidden') === 'true' || candidate.hasAttribute('inert')) return false
-    const style = candidate.ownerDocument.defaultView?.getComputedStyle(candidate)
-    if (style?.display === 'none' || style?.visibility === 'hidden' || style?.visibility === 'collapse') return false
-    // Our own collapsed input must be allowed to reopen. Native hidden offer
-    // nodes, including retained nodes with opacity:0, must not keep it expanded.
-    if (style?.opacity === '0' && !layoutOnly && !(isChromeElement(candidate) && body.classList.contains(IFRAME_CHAT_ONLY_CLASS)))
-      return false
-    if (candidate === body) break
-  }
-  return true
-}
-
-const isRenderedPurchasePanel = (element: HTMLElement, body: HTMLElement) => {
-  if (!hasNativeVisibleAncestry(element, body)) return false
-  const rect = element.getBoundingClientRect()
-  return rect.width > 0 && rect.height > 0
-}
-
-/** Inspect native state only; this never activates a paid action or changes focus. */
-export const hasOpenChatPurchaseUI = (body: HTMLElement, previouslyOpen = false) => {
-  const inputs = queryAllProbes<HTMLElement>(body, chatPurchaseInputProbe).elements
-  if (inputs.some(input => input.hasAttribute('product-picker-open') && hasNativeVisibleAncestry(input, body))) return true
-  const panels = queryAllProbes<HTMLElement>(body, chatPurchasePanelProbe).elements
-  if (panels.some(panel => isRenderedPurchasePanel(panel, body))) return true
-  // A native offer may be replaced by a spinner between steps. Only continue
-  // an already-open purchase; initial chat loading is not a purchase state.
-  return (
-    previouslyOpen &&
-    queryAllProbes<HTMLElement>(body, chatPurchaseLoadingProbe).elements.some(panel => isRenderedPurchasePanel(panel, body))
-  )
-}
-
-// Observe a known tag even when an attribute-qualified probe stops matching.
-// Removing live-chat or hiding the donation root must release the old hold.
-const PURCHASE_BOUNDARY_TAGS = new Set<string>(
-  [...chatPurchaseInputProbe.selectors, ...chatPurchasePanelProbe.selectors].flatMap(
-    selector => selector.match(/^[a-z][a-z0-9-]*/)?.[0] ?? [],
-  ),
-)
-const isPurchaseBoundaryElement = (element: Element) =>
-  PURCHASE_BOUNDARY_TAGS.has(element.localName) || (element.id === 'loading' && element.matches(chatPurchaseLoadingProbe.selectors[0]))
-
-const touchesPurchaseBoundary = (node: Node) => {
-  if (node.nodeType !== Node.ELEMENT_NODE) return false
-  const element = node as Element
-  if (isPurchaseBoundaryElement(element)) return true
-  // Chat bursts are not purchase transitions. Avoid selector engines for both
-  // text-only additions and ordinary message subtrees, including paid messages.
-  if (!element.childElementCount || (element.localName.startsWith('yt-live-chat-') && element.localName.endsWith('-message-renderer'))) {
-    return false
-  }
-  return element.querySelector(PURCHASE_BOUNDARY_SELECTOR) !== null
-}
-
-const mutationMayChangePurchaseUI = (mutation: MutationRecord) => {
-  const target = mutation.target.nodeType === Node.ELEMENT_NODE ? (mutation.target as Element) : mutation.target.parentElement
-  for (let candidate = target; candidate; candidate = candidate.parentElement) {
-    if (isPurchaseBoundaryElement(candidate)) return true
-  }
-  if (mutation.type === 'attributes') return target ? touchesPurchaseBoundary(target) : false
-  return [...mutation.addedNodes, ...mutation.removedNodes].some(touchesPurchaseBoundary)
-}
-
-/** Observe only native purchase presentation, emitting the initial state and changes. */
-export const observeChatPurchaseUI = (body: HTMLElement, onChange: (open: boolean) => void, previouslyOpen = false) => {
-  let open = hasOpenChatPurchaseUI(body, previouslyOpen)
-  const refresh = () => {
-    if (!isAccessibleNode(body)) return
-    const nextOpen = hasOpenChatPurchaseUI(body, open)
-    if (nextOpen === open) return
-    open = nextOpen
-    onChange(open)
-  }
-  const observer = new MutationObserver(mutations => {
-    if (mutations.some(mutationMayChangePurchaseUI)) refresh()
-  })
-  const onTransitionEnd = (event: Event) => {
-    if (event.target && touchesPurchaseBoundary(event.target as Node)) refresh()
-  }
-  // Establish the initial presentation before observing our callback's own
-  // body classes and measurement writes as if they were native UI changes.
-  onChange(open)
-  observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: PURCHASE_STATE_ATTRIBUTES })
-  body.addEventListener('transitionend', onTransitionEnd)
-  body.addEventListener('animationend', onTransitionEnd)
-  return () => {
-    observer.disconnect()
-    if (!isAccessibleNode(body)) return
-    body.removeEventListener('transitionend', onTransitionEnd)
-    body.removeEventListener('animationend', onTransitionEnd)
-  }
 }
 
 const blurActiveElement = (body: HTMLElement) => {
@@ -403,6 +281,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
         // Cross-origin navigation is outside this document lease's ownership.
       }
     }
+    if (!isAccessibleNode(nextDocument)) nextDocument = null
     if (nextIframe === iframe && nextDocument === chatDocument && nextBody === body) {
       ensureTargetObserver()
       return
@@ -479,7 +358,7 @@ export const createChatChromeLease = (): ChatChromeLease => {
     const candidates = [...targetBody.querySelectorAll<HTMLElement>(chatItemListRendererProbe.selectors[0])]
     const nextContent = candidates.find(element => hasNativeVisibleAncestry(element, targetBody, true)) ?? candidates[0] ?? null
     const nextVisible = nextContent !== null && hasNativeVisibleAncestry(nextContent, targetBody, true)
-    knownChrome = [...targetBody.querySelectorAll<HTMLElement>(CHROME_SELECTOR)]
+    knownChrome = [...targetBody.querySelectorAll<HTMLElement>(chatChromeSelector)]
     const nextChrome = resolveChatOnlyChromeElements(targetBody, knownChrome)
     if (content !== nextContent || contentVisible !== nextVisible) {
       clearChromePresentation()

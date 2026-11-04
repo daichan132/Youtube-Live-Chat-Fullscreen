@@ -1,5 +1,6 @@
-import type { ThemeMode } from '@/shared/theme'
+import { isThemeMode, type ThemeMode } from '@/shared/theme/themeMode'
 import { normalizeFontFamily } from '@/shared/utils/fontFamilyPolicy'
+import { APPEARANCE_NUMBER_LIMITS } from './appearanceLimits'
 import { normalizeChatGeometryV2, normalizeLegacyChatGeometry } from './chatGeometry'
 import { DEFAULT_CHAT_GEOMETRY, DEFAULT_CHAT_PROFILE } from './defaults'
 import {
@@ -70,9 +71,9 @@ export const normalizeChatAppearance = (input: unknown, fallback: ChatAppearance
           return normalized || null
         })()
       : fallback.fontFamily,
-    fontSize: clampFinite(raw.fontSize, 10, 40, fallback.fontSize),
-    blur: clampFinite(raw.blur, 0, 20, fallback.blur),
-    spacing: clampFinite(raw.spacing, 0, 40, fallback.spacing),
+    fontSize: clampFinite(raw.fontSize, APPEARANCE_NUMBER_LIMITS.fontSize.min, APPEARANCE_NUMBER_LIMITS.fontSize.max, fallback.fontSize),
+    blur: clampFinite(raw.blur, APPEARANCE_NUMBER_LIMITS.blur.min, APPEARANCE_NUMBER_LIMITS.blur.max, fallback.blur),
+    spacing: clampFinite(raw.spacing, APPEARANCE_NUMBER_LIMITS.spacing.min, APPEARANCE_NUMBER_LIMITS.spacing.max, fallback.spacing),
     showUserName: booleanOr(raw.showUserName, fallback.showUserName),
     showUserIcon: booleanOr(raw.showUserIcon, fallback.showUserIcon),
     showSuperChatBar: booleanOr(raw.showSuperChatBar, fallback.showSuperChatBar),
@@ -189,7 +190,7 @@ export const normalizeGlobalSetting = (input: unknown) => {
 
   const result: { ytdLiveChat?: boolean; themeMode?: ThemeMode } = {}
   if (typeof input.ytdLiveChat === 'boolean') result.ytdLiveChat = input.ytdLiveChat
-  if (input.themeMode === 'light' || input.themeMode === 'dark' || input.themeMode === 'system') {
+  if (isThemeMode(input.themeMode)) {
     result.themeMode = input.themeMode
   }
   return result

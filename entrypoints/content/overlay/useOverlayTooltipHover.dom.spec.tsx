@@ -84,4 +84,43 @@ describe('click-through tooltip hover region', () => {
     move(replacementDocument, 0, 0)
     expect(leave).toHaveBeenCalledTimes(2)
   })
+
+  it('ignores a queued pointermove from a revoked document and follows its replacement', () => {
+    const leave = vi.fn()
+    const view = render(<Harness active={false} leave={leave} />)
+    setBounds(view)
+    const frame = view.getByTitle('Native chat') as HTMLIFrameElement
+    const old = setChatBounds(frame)
+    const addListener = vi.spyOn(old, 'addEventListener')
+    view.rerender(<Harness active leave={leave} />)
+    const oldHandler = addListener.mock.calls.find(([type]) => type === 'pointermove')?.[1]
+    if (typeof oldHandler !== 'function') throw new Error('The chat pointer listener must exist.')
+
+    const nextFrame = document.createElement('iframe')
+    document.body.append(nextFrame)
+    const next = setChatBounds(nextFrame)
+    Object.defineProperty(frame, 'contentDocument', { configurable: true, get: () => next })
+    const nodeType = vi.spyOn(old, 'nodeType', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    const defaultView = vi.spyOn(old, 'defaultView', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    try {
+      fireEvent.load(frame)
+      expect(() => oldHandler.call(old, new MouseEvent('pointermove', { clientX: 0, clientY: 0 }))).not.toThrow()
+      expect(leave).not.toHaveBeenCalled()
+      move(next, 100, 240)
+      expect(leave).not.toHaveBeenCalled()
+      move(next, 0, 0)
+      expect(leave).toHaveBeenCalledOnce()
+      view.unmount()
+      move(next, 0, 0)
+      expect(leave).toHaveBeenCalledOnce()
+    } finally {
+      nodeType.mockRestore()
+      defaultView.mockRestore()
+      nextFrame.remove()
+    }
+  })
 })

@@ -33,7 +33,7 @@ describe('applyStylePatch DOM writes', () => {
     }
 
     try {
-      for (let index = 0; index < 100; index += 1) applyChatProfileToDocument(doc, profile, { firefox: false })
+      for (let index = 0; index < 100; index += 1) applyChatProfileToDocument(doc, profile)
 
       expect(computedStyle.mock.calls.length).toBe(0)
       expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(12, 34, 56, 0.8)')
@@ -56,11 +56,11 @@ describe('applyStylePatch DOM writes', () => {
     const computedStyle = vi.spyOn(doc.defaultView, 'getComputedStyle')
 
     try {
-      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE)
       expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(22, 163, 74, 1)')
       doc.documentElement.classList.add('dark')
 
-      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+      applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE)
 
       expect(computedStyle).toHaveBeenCalledTimes(2)
       expect(doc.documentElement.style.getPropertyValue('--extension-yt-live-membership-name-color')).toBe('rgba(42, 183, 94, 1)')
@@ -73,13 +73,13 @@ describe('applyStylePatch DOM writes', () => {
     const doc = document.implementation.createHTMLDocument('')
     const rootWrite = vi.spyOn(doc.documentElement.style, 'setProperty')
     const bodyWrite = vi.spyOn(doc.body.style, 'setProperty')
-    const compiled = applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+    const compiled = applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE)
     expect(rootWrite).toHaveBeenCalledTimes(Object.keys(compiled.documentProperties).length)
     expect(bodyWrite).toHaveBeenCalledTimes(Object.keys(compiled.bodyProperties).length)
     rootWrite.mockClear()
     bodyWrite.mockClear()
 
-    applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE, { firefox: false })
+    applyChatProfileToDocument(doc, DEFAULT_CHAT_PROFILE)
 
     expect(rootWrite).not.toHaveBeenCalled()
     expect(bodyWrite).not.toHaveBeenCalled()

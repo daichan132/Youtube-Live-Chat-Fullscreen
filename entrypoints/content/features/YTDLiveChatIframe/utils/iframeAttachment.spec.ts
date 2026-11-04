@@ -64,6 +64,27 @@ beforeEach(() => {
 })
 
 describe('iframeAttachment', () => {
+  it('restores a borrowed iframe when its previous document wrapper has been revoked', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    const carrier = document.createElement('div')
+    host.append(iframe)
+    document.body.append(host, carrier)
+    const attachment = createIframeAttachment(iframe, 'video-a')
+    attachment.attach(carrier)
+    const revokedDocument = new Proxy({} as Document, {
+      get() {
+        throw new TypeError("can't access dead object")
+      },
+    })
+    Object.defineProperty(iframe, 'contentDocument', { configurable: true, get: () => revokedDocument })
+
+    expect(() => attachment.captureDocumentStyle()).not.toThrow()
+    expect(() => attachment.release()).not.toThrow()
+    expect(attachment.state).toBe('released')
+    expect(host.contains(iframe)).toBe(true)
+  })
+
   it('restores native iframe style priorities and mixed border declarations after borrowing', () => {
     const nativeHost = document.createElement('ytd-live-chat-frame')
     nativeHost.setAttribute('video-id', 'video-a')
@@ -401,7 +422,7 @@ describe('iframeAttachment', () => {
     expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
   })
 
-  it('falls back to native host identified through a current child iframe', () => {
+  it('waits when the replacement host already contains a different native iframe', () => {
     const container = document.createElement('div') as HTMLDivElement
     const originalParent = document.createElement('div')
     const originalHost = document.createElement('ytd-live-chat-frame')
@@ -413,7 +434,7 @@ describe('iframeAttachment', () => {
     document.body.appendChild(originalParent)
     document.body.appendChild(container)
 
-    attachIframeToContainer(container, iframe)
+    const attachment = attachIframeToContainer(container, iframe)
     originalParent.remove()
 
     const rebuiltHost = document.createElement('ytd-live-chat-frame')
@@ -424,9 +445,87 @@ describe('iframeAttachment', () => {
 
     detachAttachedIframe(iframe, container)
 
-    expect(rebuiltHost.contains(iframe)).toBe(true)
+    expect(attachment?.state).toBe('restoring')
+    expect(rebuiltHost.contains(iframe)).toBe(false)
+    expect(rebuiltHost.contains(rebuiltIframe)).toBe(true)
     expect(container.contains(iframe)).toBe(false)
     expect(iframe.getAttribute('data-ylc-chat')).toBeNull()
+
+    rebuiltIframe.remove()
+    rebuiltHost.setAttribute('video-id', 'video-a')
+    attachment?.reconcile()
+    expect(rebuiltHost.contains(iframe)).toBe(true)
+    expect(attachment?.state).toBe('released')
+  })
+
+  it('does not restore to its original placeholder while another iframe occupies that host', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-a')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const carrier = document.createElement('div')
+    host.append(iframe)
+    document.body.append(host, carrier)
+    const attachment = createIframeAttachment(iframe, 'video-a')
+    attachment.attach(carrier)
+    const replacement = document.createElement('iframe')
+    replacement.src = 'https://www.youtube.com/live_chat?v=video-a'
+    host.append(replacement)
+
+    attachment.release()
+
+    expect(attachment.state).toBe('restoring')
+    expect(host.contains(replacement)).toBe(true)
+    expect(host.contains(iframe)).toBe(false)
+    replacement.remove()
+    attachment.reconcile()
+    expect(host.contains(iframe)).toBe(true)
+    expect(attachment.state).toBe('released')
+  })
+
+  it('waits for an uninitialized native chatframe even before its document has a URL', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-a')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const carrier = document.createElement('div')
+    host.append(iframe)
+    document.body.append(host, carrier)
+    const attachment = createIframeAttachment(iframe, 'video-a')
+    attachment.attach(carrier)
+    const pending = document.createElement('iframe')
+    pending.id = 'chatframe'
+    host.append(pending)
+
+    attachment.release()
+
+    expect(attachment.state).toBe('restoring')
+    expect(host.contains(pending)).toBe(true)
+    expect(host.contains(iframe)).toBe(false)
+    pending.remove()
+    attachment.reconcile()
+    expect(host.contains(iframe)).toBe(true)
+  })
+
+  it('restores chat alongside an unrelated iframe in the same host', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    host.setAttribute('video-id', 'video-a')
+    const iframe = document.createElement('iframe')
+    iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+    const carrier = document.createElement('div')
+    host.append(iframe)
+    document.body.append(host, carrier)
+    const attachment = createIframeAttachment(iframe, 'video-a')
+    attachment.attach(carrier)
+    const unrelated = document.createElement('iframe')
+    unrelated.src = 'https://example.test/embedded-player'
+    host.append(unrelated)
+
+    attachment.release()
+
+    expect(attachment.state).toBe('released')
+    expect(host.contains(iframe)).toBe(true)
+    expect(host.contains(unrelated)).toBe(true)
   })
 
   it('waits instead of falling back to a stale native host for another video', async () => {
@@ -512,6 +611,97 @@ describe('iframeAttachment', () => {
     reconcilePendingNativeIframeRestores(attachment)
 
     expect(rebuiltHost.contains(iframe)).toBe(true)
+  })
+
+  it.each(['restore', 'abandon', 'new-video'] as const)(
+    'keeps a connected restoring iframe out of native discovery, then cleans its parking host on %s',
+    outcome => {
+      const previous = Object.getOwnPropertyDescriptor(Element.prototype, 'moveBefore')
+      Object.defineProperty(Element.prototype, 'moveBefore', {
+        configurable: true,
+        value(this: Element, node: Node, reference: Node | null) {
+          this.insertBefore(node, reference)
+        },
+      })
+      try {
+        const host = document.createElement('ytd-live-chat-frame')
+        const iframe = document.createElement('iframe')
+        iframe.id = 'chatframe'
+        iframe.src = 'https://www.youtube.com/live_chat?v=video-a'
+        const carrier = document.createElement('div')
+        host.append(iframe)
+        document.body.append(host, carrier)
+        const attachment = createIframeAttachment(iframe, 'video-a')
+        attachment.attach(carrier)
+        host.remove()
+
+        attachment.release()
+
+        expect(attachment.state).toBe('restoring')
+        expect(iframe.isConnected).toBe(true)
+        expect(document.querySelector('#chatframe')).toBeNull()
+        const root = iframe.getRootNode()
+        expect(root).toBeInstanceOf(ShadowRoot)
+        const parkingHost = (root as ShadowRoot).host
+        expect(parkingHost.isConnected).toBe(true)
+
+        if (outcome === 'restore') {
+          const rebuiltHost = document.createElement('ytd-live-chat-frame')
+          rebuiltHost.setAttribute('video-id', 'video-a')
+          document.body.append(rebuiltHost)
+          attachment.reconcile()
+          expect(rebuiltHost.contains(iframe)).toBe(true)
+        } else if (outcome === 'abandon') {
+          attachment.abandonRestore()
+          expect(iframe.isConnected).toBe(false)
+        } else {
+          setLocation('/watch?v=video-b')
+          attachment.reconcile()
+          expect(iframe.isConnected).toBe(false)
+        }
+        expect(attachment.state).toBe('released')
+        expect(parkingHost.isConnected).toBe(false)
+      } finally {
+        if (previous) Object.defineProperty(Element.prototype, 'moveBefore', previous)
+        else Reflect.deleteProperty(Element.prototype, 'moveBefore')
+      }
+    },
+  )
+
+  it('falls back to a detached restore when parking cannot preserve the browsing context', () => {
+    const previous = Object.getOwnPropertyDescriptor(Element.prototype, 'moveBefore')
+    Object.defineProperty(Element.prototype, 'moveBefore', {
+      configurable: true,
+      value(this: Element, node: Node, reference: Node | null) {
+        if (this.getRootNode() instanceof ShadowRoot) throw new Error('Unable to park iframe')
+        this.insertBefore(node, reference)
+      },
+    })
+    try {
+      const host = document.createElement('ytd-live-chat-frame')
+      const iframe = document.createElement('iframe')
+      const carrier = document.createElement('div')
+      host.append(iframe)
+      document.body.append(host, carrier)
+      const attachment = createIframeAttachment(iframe, 'video-a')
+      attachment.attach(carrier)
+      host.remove()
+      attachment.release()
+
+      expect(attachment.state).toBe('restoring')
+      expect(iframe.isConnected).toBe(false)
+      expect(Array.from(document.body.children)).toEqual([carrier])
+
+      const replacement = document.createElement('ytd-live-chat-frame')
+      replacement.setAttribute('video-id', 'video-a')
+      document.body.append(replacement)
+      attachment.reconcile()
+      expect(replacement.contains(iframe)).toBe(true)
+      expect(attachment.state).toBe('released')
+    } finally {
+      if (previous) Object.defineProperty(Element.prototype, 'moveBefore', previous)
+      else Reflect.deleteProperty(Element.prototype, 'moveBefore')
+    }
   })
 
   it('abandons a queued restore without retaining its detached iframe or placeholder', () => {

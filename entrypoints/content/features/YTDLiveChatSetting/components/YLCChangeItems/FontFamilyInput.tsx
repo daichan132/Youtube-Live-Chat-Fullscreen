@@ -56,9 +56,12 @@ export const FontFamilyInput = () => {
   const fontFamily = useAtomValue(effectiveAppearanceAtoms.fontFamily)
   const { commitYLCStyleUpdate } = useStyleHistoryCommands()
 
-  const handleCommit = useCallback((nextFontFamily: string) => {
-    commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } })
-  }, [])
+  const handleCommit = useCallback(
+    (nextFontFamily: string) => {
+      commitYLCStyleUpdate({ appearance: { fontFamily: nextFontFamily || null } })
+    },
+    [commitYLCStyleUpdate],
+  )
 
   return <FontFamilyInputUI value={fontFamily ?? ''} onCommit={handleCommit} />
 }
@@ -70,7 +73,6 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
   const [activeIndex, setActiveIndex] = useState(0)
   const [menuMaxHeight, setMenuMaxHeight] = useState<number>()
   const listboxId = useId()
-  const selectedValueId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -227,15 +229,13 @@ const FontFamilyInputUI = ({ value, onCommit }: { value: string; onCommit: (font
         type='button'
         className='ylc-font-combobox-trigger ylc-action-fill ylc-theme-focus-ring'
         onClick={handleToggleMenu}
-        aria-label={t('content.setting.fontFamily')}
-        aria-describedby={selectedValueId}
+        aria-label={`${t('content.setting.fontFamily')} ${currentValue}`}
         aria-haspopup='listbox'
         aria-expanded={isOpen && hasSuggestions}
         aria-controls={isOpen && hasSuggestions ? listboxId : undefined}
         data-ylc-font-combobox-trigger='true'
       >
         <span
-          id={selectedValueId}
           className='ylc-font-combobox-trigger-text'
           style={normalizedValue ? { fontFamily: toFontFamilyStyleValue(normalizedValue) } : undefined}
         >

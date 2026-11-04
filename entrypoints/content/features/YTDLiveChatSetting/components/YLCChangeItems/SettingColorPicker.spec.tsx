@@ -9,7 +9,7 @@ describe('SettingColorPicker', () => {
         <SettingColorPicker rgba={{ r: 1, g: 2, b: 3, a: 0.4 }} label='Background color' onChange={vi.fn()} />
       </div>,
     )
-    const trigger = getByRole('button', { name: 'Background color' })
+    const trigger = getByRole('button', { name: /^Background color/ })
     expect(trigger).toHaveAccessibleDescription('rgba(1, 2, 3, 0.4)')
     expect(getByText('#010203 · 40%').closest('[dir]')).toHaveAttribute('dir', 'ltr')
     expect(document.getElementById(trigger.getAttribute('aria-describedby') ?? '')).toHaveAttribute('dir', 'ltr')
@@ -20,7 +20,7 @@ describe('SettingColorPicker', () => {
       <SettingColorPicker rgba={{ r: 1, g: 2, b: 3, a: 0.4 }} label='Background color' onChange={vi.fn()} />,
     )
 
-    const trigger = getByRole('button', { name: 'Background color' })
+    const trigger = getByRole('button', { name: /^Background color/ })
     expect(queryByRole('dialog')).toBeNull()
     expect(trigger).not.toHaveAttribute('aria-controls')
 
@@ -50,7 +50,7 @@ describe('SettingColorPicker', () => {
       />,
     )
 
-    fireEvent.click(getByRole('button', { name: 'Background color' }))
+    fireEvent.click(getByRole('button', { name: /^Background color/ }))
     fireEvent.keyDown(getByRole('slider', { name: 'Hue' }), { key: 'Escape' })
 
     expect(queryByRole('dialog')).not.toBeInTheDocument()
@@ -65,7 +65,7 @@ describe('SettingColorPicker', () => {
       </div>,
     )
 
-    fireEvent.click(getByRole('button', { name: 'Background color' }))
+    fireEvent.click(getByRole('button', { name: /^Background color/ }))
     expect(getByRole('dialog', { name: 'content.aria.colorPicker' })).not.toBeNull()
 
     fireEvent.mouseDown(getByRole('button', { name: 'Outside' }))

@@ -1,5 +1,6 @@
-import { act, fireEvent, waitFor } from '@testing-library/react'
+import { act, fireEvent, render, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { Provider } from 'jotai'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { DEFAULT_CHAT_SETTINGS } from '@/shared/settings/migrateSettings'
 import { chatSettingsStateAtom, editorSessionStateAtom, localeStateAtom } from '@/shared/state/atoms'
@@ -37,13 +38,13 @@ describe('FontFamilyInput', () => {
   it('toggles menu visibility from trigger button', () => {
     const { getByRole, queryByTestId } = renderFontFamilyInput()
 
-    const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = getByRole('button', { name: /content\.setting\.fontFamily/ })
     expect(queryByTestId('font-family-search')).toBeNull()
-    expect(trigger).toHaveAccessibleDescription('content.setting.fontFamilyDefault')
+    expect(trigger).toHaveAccessibleName('content.setting.fontFamily content.setting.fontFamilyDefault')
 
     fireEvent.click(trigger)
     expect(queryByTestId('font-family-search')).toBeInTheDocument()
-    expect(getByRole('listbox', { name: 'content.setting.fontFamily' })).toBeInTheDocument()
+    expect(getByRole('listbox', { name: /content\.setting\.fontFamily/ })).toBeInTheDocument()
 
     fireEvent.click(trigger)
     expect(queryByTestId('font-family-search')).toBeNull()
@@ -56,7 +57,7 @@ describe('FontFamilyInput', () => {
     })
     const { container, getByRole, getByTestId, getByText } = renderFontFamilyInput()
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'robotoslab' } })
 
     const options = container.querySelectorAll('[role="option"]')
@@ -70,7 +71,7 @@ describe('FontFamilyInput', () => {
     const user = userEvent.setup()
     const { getByRole, queryByRole } = renderFontFamilyInput('Roboto')
     const previousProfile = store.get(chatSettingsStateAtom).profile
-    const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = getByRole('button', { name: /content\.setting\.fontFamily/ })
 
     await user.tab()
     expect(trigger).toHaveFocus()
@@ -82,20 +83,40 @@ describe('FontFamilyInput', () => {
 
     expect(queryByRole('combobox')).toBeNull()
     expect(trigger).toHaveTextContent('Roboto Slab')
-    expect(trigger).toHaveAccessibleDescription('Roboto Slab')
+    expect(trigger).toHaveAccessibleName('content.setting.fontFamily Roboto Slab')
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
     act(() => {
       expect(createStyleHistoryCommands(store).undoYLCStyle()).toBe(true)
     })
     expect(store.get(chatSettingsStateAtom).profile).toEqual(previousProfile)
     expect(trigger).toHaveTextContent('Roboto')
-    expect(trigger).toHaveAccessibleDescription('Roboto')
+    expect(trigger).toHaveAccessibleName('content.setting.fontFamily Roboto')
+  })
+
+  it('commits a font to the current store after the provider changes', async () => {
+    const user = userEvent.setup()
+    const first = createTestStore()
+    const second = createTestStore()
+    const view = render(
+      <Provider store={first}>
+        <FontFamilyInput />
+      </Provider>,
+    )
+    view.rerender(
+      <Provider store={second}>
+        <FontFamilyInput />
+      </Provider>,
+    )
+    await user.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
+    await user.type(view.getByRole('combobox'), 'Roboto Slab{Enter}')
+    expect(second.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto Slab')
+    expect(first.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBeNull()
   })
 
   it.each(['Escape', 'selection'])('returns focus to the trigger after %s closes the keyboard search', async closeWith => {
     const user = userEvent.setup()
     const view = renderFontFamilyInput('Roboto')
-    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.fontFamily/ })
     await user.click(trigger)
     await waitFor(() => expect(view.getByRole('combobox')).toHaveFocus())
     if (closeWith === 'selection') await user.type(view.getByRole('combobox'), 'Roboto Slab')
@@ -109,7 +130,7 @@ describe('FontFamilyInput', () => {
   it('exposes stable active option IDs through wraparound, filtering, and reopening a selected font', async () => {
     const user = userEvent.setup()
     const view = renderFontFamilyInput()
-    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.fontFamily/ })
     await user.click(trigger)
     const search = view.getByRole('combobox')
     await waitFor(() => expect(search).toHaveFocus())
@@ -137,7 +158,7 @@ describe('FontFamilyInput', () => {
   it('scrolls only the font list enough to reveal a distant active option', async () => {
     const user = userEvent.setup()
     const view = renderFontFamilyInput('Roboto')
-    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    await user.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
     const search = view.getByRole('combobox')
     await waitFor(() => expect(search).toHaveFocus())
     const list = view.getByRole('listbox')
@@ -151,7 +172,8 @@ describe('FontFamilyInput', () => {
 
     for (let index = 0; index < 12; index += 1) await user.keyboard('{ArrowDown}')
 
-    const active = view.container.querySelector('.ylc-font-combobox-option-active')
+    const activeId = search.getAttribute('aria-activedescendant')
+    const active = view.getAllByRole('option').find(option => option.id === activeId)
     if (!active) throw new Error('Expected active font option')
     expect(list.scrollTop).toBeGreaterThan(0)
     expect(active.getBoundingClientRect().top).toBeGreaterThanOrEqual(100)
@@ -168,7 +190,7 @@ describe('FontFamilyInput', () => {
       </>,
       store,
     )
-    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    await user.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
     await waitFor(() => expect(view.getByRole('combobox')).toHaveFocus())
     expect(view.getByRole('listbox')).toHaveAttribute('tabindex', '-1')
 
@@ -181,7 +203,7 @@ describe('FontFamilyInput', () => {
   it('keeps keyboard navigation active when scrolling brings another option under a stationary pointer', async () => {
     const user = userEvent.setup()
     const view = renderFontFamilyInput('Roboto')
-    await user.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    await user.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
     const search = view.getByRole('combobox')
     await waitFor(() => expect(search).toHaveFocus())
     await user.keyboard('{ArrowDown}{ArrowDown}')
@@ -206,7 +228,7 @@ describe('FontFamilyInput', () => {
     const before = store.get(chatSettingsStateAtom).profile
     const historyBefore = store.get(editorSessionStateAtom).past
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     const input = getByTestId('font-family-search')
     fireEvent.compositionStart(input)
     fireEvent.change(input, { target: { value: search } })
@@ -233,7 +255,7 @@ describe('FontFamilyInput', () => {
     const view = renderFontFamilyInput('Roboto')
     const before = store.get(chatSettingsStateAtom)
     const historyBefore = store.get(editorSessionStateAtom)
-    const trigger = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.fontFamily/ })
     await user.click(trigger)
     const input = view.getByRole('combobox')
     await waitFor(() => expect(input).toHaveFocus())
@@ -268,7 +290,7 @@ describe('FontFamilyInput', () => {
   it('still commits the explicit Default option and lets Undo restore the selected font', () => {
     const view = renderFontFamilyInput('Roboto')
     const before = store.get(chatSettingsStateAtom).profile
-    fireEvent.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
     fireEvent.click(view.getByRole('option', { name: /^content\.setting\.fontFamilyDefault$/ }))
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBeNull()
@@ -283,22 +305,8 @@ describe('FontFamilyInput', () => {
   it('normalizes a case-insensitive font input before committing', () => {
     const { getByRole, getByTestId } = renderFontFamilyInput()
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'roboto' } })
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
-
-    expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')
-  })
-
-  it('supports arrow navigation before Enter selection', async () => {
-    const { container, getByRole, getByTestId } = renderFontFamilyInput()
-
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
-    fireEvent.keyDown(getByTestId('font-family-search'), { key: 'ArrowDown' })
-    await waitFor(() => {
-      const activeOption = container.querySelector('.ylc-font-combobox-option-active')
-      expect(activeOption).toHaveTextContent('Roboto')
-    })
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Enter' })
 
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontFamily).toBe('Roboto')
@@ -308,11 +316,11 @@ describe('FontFamilyInput', () => {
     const user = userEvent.setup()
     const { getByRole, getByTestId, queryByTestId } = renderFontFamilyInput()
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     fireEvent.keyDown(getByTestId('font-family-search'), { key: 'Escape' })
     expect(queryByTestId('font-family-search')).toBeNull()
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     expect(getByTestId('font-family-search')).toBeInTheDocument()
     await user.click(document.body)
     await waitFor(() => {
@@ -327,7 +335,7 @@ describe('FontFamilyInput', () => {
     })
     const { getByRole } = renderFontFamilyInput('NotInListFont')
 
-    const trigger = getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = getByRole('button', { name: /content\.setting\.fontFamily/ })
     expect(trigger).toHaveTextContent('Default')
   })
 
@@ -342,7 +350,7 @@ describe('FontFamilyInput', () => {
     })
     const { container, getByRole, getByTestId } = renderFontFamilyInput()
 
-    fireEvent.click(getByRole('button', { name: 'Font' }))
+    fireEvent.click(getByRole('button', { name: /Font/ }))
     fireEvent.change(getByTestId('font-family-search'), { target: { value: 'zzzznotafont' } })
 
     expect(container.querySelectorAll('[role="option"]')).toHaveLength(0)

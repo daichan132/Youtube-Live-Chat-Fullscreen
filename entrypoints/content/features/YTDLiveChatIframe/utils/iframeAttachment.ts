@@ -1,4 +1,5 @@
 import {
+  getChatIframeMode,
   getCurrentLiveChatHost,
   getIframeDocumentHref,
   getIframeVideoId,
@@ -9,6 +10,13 @@ import {
   YLC_SOURCE_ATTR,
   YLC_SOURCE_LIVE,
 } from '@/entrypoints/content/chat/shared/iframeDom'
+import { isAccessibleNode } from '@/entrypoints/content/chat/shared/isAccessibleNode'
+import {
+  closestProbe,
+  matchesProbe,
+  nativeChatHostProbe,
+  nativeChatIframeProbe,
+} from '@/entrypoints/content/platform/youtube/selectorCatalog'
 import type { PageTargets } from '@/entrypoints/content/platform/youtube/types'
 import { getCurrentYouTubeVideoId } from '@/entrypoints/content/utils/getYouTubeVideoId'
 import { openArchiveNativeChatPanel } from '@/entrypoints/content/utils/nativeChat'
@@ -75,7 +83,7 @@ const getIframeDocument = (iframe: HTMLIFrameElement) => {
 
 const captureDocumentStyle = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
-  if (!doc?.documentElement || !doc.head || !doc.body || restore.documentStyles.has(doc)) return false
+  if (!isAccessibleNode(doc) || !doc.documentElement || !doc.head || !doc.body || restore.documentStyles.has(doc)) return false
   restore.documentStyles.set(doc, captureBorrowedDocumentStyle(doc))
   return true
 }
@@ -129,7 +137,7 @@ const moveBorrowedIframe = (iframe: HTMLIFrameElement, parent: ParentNode, refer
 
 const cleanupBorrowedDocument = (iframe: HTMLIFrameElement, restore: BorrowedRestoreState) => {
   const doc = getIframeDocument(iframe)
-  if (!doc?.documentElement || !doc.head || !doc.body) return
+  if (!isAccessibleNode(doc) || !doc.documentElement || !doc.head || !doc.body) return
   const snapshot = restore.documentStyles.get(doc)
   if (snapshot) restoreBorrowedDocumentStyle(doc, snapshot)
   doc.body.classList.remove(
@@ -169,12 +177,39 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
   const managed = isManagedIframe(iframe)
   let state: IframeAttachmentState = 'created'
   let restore: BorrowedRestoreState | null = null
+  let parkingHost: HTMLElement | null = null
+
+  const clearParking = () => {
+    parkingHost?.remove()
+    parkingHost = null
+  }
+
+  const parkBorrowedIframe = () => {
+    const body = iframe.ownerDocument.body
+    if (!body || !iframe.isConnected) return false
+    const host = iframe.ownerDocument.createElement('div')
+    host.hidden = true
+    const parking = iframe.ownerDocument.createElement('div')
+    host.attachShadow({ mode: 'closed' }).append(parking)
+    body.append(host)
+    try {
+      if (!canPreserveIframeState(iframe, parking)) return false
+      parking.moveBefore(iframe, null)
+      parkingHost = host
+      return true
+    } catch {
+      return false
+    } finally {
+      if (parkingHost !== host) host.remove()
+    }
+  }
 
   const finalizeBorrowedRestore = () => {
     if (!restore) return
     iframe.removeEventListener('load', restore.loadListener)
     restore.placeholder?.remove()
     restore = null
+    clearParking()
     state = 'released'
   }
 
@@ -210,6 +245,17 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     }
   }
 
+  const hasOtherChatIframe = (parent: ParentNode) => {
+    const host = parent instanceof Element ? closestProbe<HTMLElement>(parent, nativeChatHostProbe) : null
+    const candidates = host ? host.querySelectorAll('iframe') : parent.children
+    return Array.from(candidates).some(
+      element =>
+        element instanceof HTMLIFrameElement &&
+        element !== iframe &&
+        (matchesProbe(element, nativeChatIframeProbe) || getChatIframeMode(element) !== null),
+    )
+  }
+
   const restoreToAvailableTarget = (targets?: PageTargets | null) => {
     if (!restore) return false
     if (!isVideoCurrent(restore.sourceVideoId)) {
@@ -218,18 +264,20 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
     }
     const placeholderParent = restore.placeholder?.parentNode
     if (placeholderParent && (placeholderParent as Node).isConnected) {
+      if (hasOtherChatIframe(placeholderParent)) return false
       restoreBorrowedIframe(placeholderParent, restore.placeholder?.nextSibling ?? null)
       finalizeBorrowedRestore()
       return true
     }
     if (restore.originalParent && (restore.originalParent as Node).isConnected) {
+      if (hasOtherChatIframe(restore.originalParent)) return false
       const sibling = restore.originalNextSibling
       restoreBorrowedIframe(restore.originalParent, sibling?.parentNode === restore.originalParent ? sibling : null)
       finalizeBorrowedRestore()
       return true
     }
     const host = resolveNativeHost(targets)
-    if (!host) return false
+    if (!host || hasOtherChatIframe(host)) return false
     restoreBorrowedIframe(host, host.firstChild)
     finalizeBorrowedRestore()
     return true
@@ -284,11 +332,15 @@ export const createIframeAttachment = (iframe: HTMLIFrameElement, videoId: strin
         restoreBorrowedIframeStyle(iframe, restore.iframeStyle)
         cleanupBorrowedDocument(iframe, restore)
         if (!restoreToAvailableTarget(targets)) {
-          iframe.remove()
+          // Park only when the browser can move a connected iframe without
+          // reloading its browsing context. A closed shadow keeps it out of
+          // native chat discovery until a matching host returns.
+          if (!parkBorrowedIframe()) iframe.remove()
           state = 'restoring'
         }
       } else {
-        iframe.remove()
+        // A lease may be released before an overlay carrier exists. YouTube
+        // still owns that iframe, so leave it in its original host.
         state = 'released'
       }
       if (options.ensureNativeVisible) ensureNativeChatVisible()

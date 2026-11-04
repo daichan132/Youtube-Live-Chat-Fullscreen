@@ -40,6 +40,14 @@ export type NativeIframeContextObservation = {
   signInNextVideoId: string | null
 }
 
+export type BorrowedReplayContextObservation = {
+  sameOverlayIframe: boolean
+  sameNativeIframe: boolean
+  sameDocument: boolean
+  sameSentinel: boolean
+  loadEvents: number
+}
+
 type YouTubeScenarioBase = {
   page: YouTubeScenarioPage
   fullscreen: boolean

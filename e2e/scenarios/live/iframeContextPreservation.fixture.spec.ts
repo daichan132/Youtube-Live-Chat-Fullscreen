@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { readContentStatusViaPopup } from '@e2e/utils/popupHelpers'
 
 const createState = (id: string, mode: 'live' | 'archive', continuationVideoId?: string, navigateWithoutSrc = false): YouTubeScenarioState => {
   const base = {
@@ -110,5 +111,182 @@ test.describe('borrowed iframe browsing context', () => {
       await scenario.settleNativeIframeContext()
       expect(await scenario.observeNativeIframeContext()).toEqual(retained)
     }
+  })
+
+  test('preserves a borrowed chat while its native host is temporarily missing', { tag: ['@fixture', '@live'] }, async ({ page, extension }) => {
+    const state = createState('ylc-restoring-current-b', 'live', 'ylc-restoring-continuation-a')
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(state)
+    await scenario.settleNativeIframeContext()
+    await scenario.captureNativeIframeContext()
+    await scenario.updateNativeIframeRuntime(state.video.id)
+    const retained = await scenario.observeNativeIframeContext()
+    expect(retained).toMatchObject({ connected: true, sameDocument: true, sameRuntimeObject: true, loadEvents: 0 })
+
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await scenario.removeNativeChatHost()
+    await overlay.toggleOff()
+    await overlay.expectChatDetached({ timeout: 12000 })
+    const popup = await page.context().newPage()
+    try {
+      await popup.goto(extension.url('popup.html'))
+      await page.bringToFront()
+      await expect
+        .poll(() => readContentStatusViaPopup(popup), { timeout: 12000 })
+        .toMatchObject({ report: { runtime: { leases: { chat: { kind: 'none' }, restoringChatCount: 1 } } } })
+      await expect(overlay.frame()).toHaveCount(0)
+      expect(await scenario.nativeIframeIsDiscoverableInPage()).toBe(false)
+      await scenario.settleNativeIframeContext()
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+
+      await scenario.addEmptyNativeChatHost()
+      await expect.poll(() => scenario.observeNativeSlot()).toMatchObject({ restored: true, attached: null })
+      expect(await scenario.nativeIframeIsDiscoverableInPage()).toBe(true)
+      await expect.poll(() => readContentStatusViaPopup(popup), { timeout: 12000 }).toMatchObject({
+        report: { runtime: { leases: { restoringChatCount: 0 } } },
+      })
+      await scenario.settleNativeIframeContext()
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+    } finally {
+      await popup.close()
+      await page.bringToFront()
+    }
+
+    await overlay.toggleOn()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+    await scenario.exitFullscreen()
+    await overlay.expectOverlayRemoved({ timeout: 12000 })
+    await expect.poll(() => scenario.observeNativeSlot()).toMatchObject({ restored: true, attached: null })
+    expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+  })
+
+  test('keeps a pending iframe separate from a replacement native chat', { tag: ['@fixture', '@live'] }, async ({ page, extension }) => {
+    const state = createState('ylc-occupied-current-b', 'live', 'ylc-occupied-continuation-a')
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(state)
+    await scenario.settleNativeIframeContext()
+    await scenario.captureNativeIframeContext()
+    await scenario.updateNativeIframeRuntime(state.video.id)
+    const retained = await scenario.observeNativeIframeContext()
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await overlay.expectSwitchReady({ timeout: 12000 })
+    await scenario.removeNativeChatHost()
+    await overlay.toggleOff()
+    await overlay.expectChatDetached({ timeout: 12000 })
+
+    const popup = await page.context().newPage()
+    try {
+      await popup.goto(extension.url('popup.html'))
+      await page.bringToFront()
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({
+        report: { runtime: { leases: { restoringChatCount: 1 } } },
+      })
+      await scenario.addNativeIframe({ mode: 'live', state: 'playable' })
+      await expect.poll(() => scenario.nativeIframeCount()).toBe(1)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({
+        report: { runtime: { leases: { restoringChatCount: 1 } } },
+      })
+      expect(await scenario.nativeIframeIsDiscoverableInPage()).toBe(false)
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+
+      await overlay.toggleOn()
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      expect(await scenario.extensionIframeIsCapturedNative()).toBe(false)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({
+        report: { runtime: { leases: { chat: { kind: 'borrowed-live', state: 'attached' }, restoringChatCount: 1 } } },
+      })
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+      await overlay.toggleOff()
+      await expect.poll(() => scenario.nativeIframeCount()).toBe(1)
+      expect(await scenario.nativeIframeIsDiscoverableInPage()).toBe(false)
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+
+      await scenario.removeNativeIframe()
+      await expect.poll(() => scenario.nativeIframeIsDiscoverableInPage()).toBe(true)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({
+        report: { runtime: { leases: { restoringChatCount: 0 } } },
+      })
+      expect(await scenario.observeNativeIframeContext()).toEqual(retained)
+    } finally {
+      await popup.close()
+      await page.bringToFront()
+    }
+  })
+})
+
+const REPLAY_VIDEO_ID = 'ylc-same-iframe-replay'
+const liveState = {
+  video: { id: REPLAY_VIDEO_ID, title: 'Same iframe replay fixture', mode: 'live' },
+  page: { chatContainer: 'present', chatDimensions: 'standard' },
+  fullscreen: false,
+  chat: {
+    mode: 'live',
+    native: { state: 'playable', slot: { beforeId: 'fixture-before', afterId: 'fixture-after' } },
+    response: 'playable',
+  },
+} satisfies YouTubeScenarioState
+
+test('keeps a borrowed iframe and its replay document when the same live video ends', { tag: ['@fixture', '@live'] }, async ({ page, extension }) => {
+  test.setTimeout(120000)
+  const scenario = new YouTubeScenario(page)
+  const overlay = new ExtensionOverlay(page)
+  await scenario.load(liveState)
+  await scenario.enterFullscreen()
+  await overlay.expectChatLoaded({ timeout: 12000 })
+  await expect.poll(() => scenario.observeExtensionIframeIdentity()).toMatchObject({ id: 'chatframe', owned: null, nativeCount: 0 })
+  const pageUrl = page.url()
+
+  await scenario.endLiveWithSameBorrowedIframe()
+
+  await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+  const popup = await page.context().newPage()
+  try {
+    await popup.goto(extension.url('popup.html'))
+    await page.bringToFront()
+    await expect
+      .poll(() => readContentStatusViaPopup(popup), { timeout: 12000 })
+      .toMatchObject({
+        status: 'running',
+        report: {
+          page: { mode: 'archive', fullscreen: true },
+          runtime: { status: 'active', leases: { chat: { kind: 'borrowed-replay', state: 'attached' } } },
+        },
+      })
+  } finally {
+    await popup.close()
+    await page.bringToFront()
+  }
+  await scenario.settleNativeIframeContext()
+  expect(await scenario.observeBorrowedReplayContext()).toEqual({
+    sameOverlayIframe: true,
+    sameNativeIframe: false,
+    sameDocument: true,
+    sameSentinel: true,
+    loadEvents: 1,
+  })
+  expect(page.url()).toBe(pageUrl)
+
+  await scenario.exitFullscreen()
+  await overlay.expectOverlayRemoved({ timeout: 12000 })
+  await expect
+    .poll(() => scenario.observeNativeSlot())
+    .toEqual({
+      restored: true,
+      attached: null,
+      children: ['fixture-before', 'chatframe', 'fixture-after'],
+    })
+  await scenario.settleNativeIframeContext()
+  expect(await scenario.observeBorrowedReplayContext()).toEqual({
+    sameOverlayIframe: false,
+    sameNativeIframe: true,
+    sameDocument: true,
+    sameSentinel: true,
+    loadEvents: 1,
   })
 })

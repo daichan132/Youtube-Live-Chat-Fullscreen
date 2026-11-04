@@ -1,50 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { DEFAULT_CHAT_PROFILE } from '@/shared/settings/defaults'
 import { createSessionScope } from '../bootstrap/SessionScope'
-import type { PageObservation } from '../platform/youtube/types'
 import { ResourceReconciler } from './ResourceReconciler'
 import type { ChatDecision } from './resolveChatDecision'
-import type { ChatChromeLease } from './resources/ChatChromeLease'
 import { type ChatIframeLease, createIframeLease } from './resources/ChatIframeLease'
-import type { PlayerLayoutLease } from './resources/PlayerLayoutLease'
-import type { PresentationLease } from './resources/PresentationLease'
 import type { RuntimePlan } from './runtimeModel'
 
 vi.mock('wxt/browser', () => ({
   browser: { runtime: { getURL: (path: string) => `chrome-extension://test/${path}` } },
 }))
 
-const createObservation = (player = document.createElement('div')): PageObservation => ({
-  evidence: {
-    generation: 1,
-    videoId: 'video-1',
-    route: 'watch',
-    fullscreen: true,
-    videoMode: 'live',
-    chatAvailability: 'ready',
-    capabilities: {
-      canBorrowNativeChat: true,
-      canCreateManagedLiveChat: true,
-      canOpenArchiveChat: false,
-      canRestoreNativeChat: true,
-      canMountOverlay: true,
-      canMountPlayerSwitch: true,
-    },
-    sourceKind: 'native-live',
-    probeIds: [],
-  },
-  targets: {
-    player,
-    fullscreenRoot: player,
-    rightControls: document.createElement('div'),
-    nativeChatHost: null,
-    nativeChatIframe: null,
-    chatIframe: null,
-    archiveOpenControl: null,
-  },
-})
-
-const createFakeLease = (log: string[], iframe = document.createElement('iframe')) => {
+const createFakeLease = (iframe: HTMLIFrameElement) => {
   let state: ChatIframeLease['state'] = 'created'
   const lease: ChatIframeLease = {
     generation: 1,
@@ -57,20 +23,17 @@ const createFakeLease = (log: string[], iframe = document.createElement('iframe'
     },
     attach: vi.fn(() => {
       state = 'attached'
-      log.push('iframe-acquire')
     }),
+    setBorrowedMode: vi.fn(),
     captureDocumentStyle: vi.fn(() => true),
     reconcile: vi.fn(() => {
       state = 'released'
-      log.push('iframe-restored')
     }),
     release: vi.fn(() => {
       state = 'released'
-      log.push('iframe-release')
     }),
     abandonRestore: vi.fn(() => {
       state = 'released'
-      log.push('iframe-abandoned')
     }),
   }
   return { lease }
@@ -95,6 +58,30 @@ describe('ResourceReconciler', () => {
     document.body.replaceChildren()
   })
 
+  it('leaves the native iframe untouched when a pending lease is released before a carrier exists', () => {
+    const host = document.createElement('ytd-live-chat-frame')
+    const iframe = document.createElement('iframe')
+    host.append(iframe)
+    document.body.append(host)
+    const resources = new ResourceReconciler()
+    const scope = createSessionScope(1)
+    const plan: RuntimePlan = {
+      ...acquirePlan({ kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', iframe } }),
+      presentation: 'preserve',
+      layout: 'none',
+    }
+    try {
+      expect(resources.reconcilePlan(plan, null, scope, vi.fn()).initialization?.success).toBe(false)
+      expect(resources.lease?.state).toBe('created')
+      resources.reconcilePlan({ ...plan, chat: { kind: 'none', ensureNativeVisible: false } }, null, scope, vi.fn())
+      expect(host.contains(iframe)).toBe(true)
+      expect(resources.lease).toBeNull()
+    } finally {
+      resources.clear()
+      scope.dispose()
+    }
+  })
+
   it('keeps initialization pending for empty native CSS and never re-gates an initialized document', () => {
     const iframe = document.createElement('iframe')
     iframe.src = '/live_chat?v=video-1'
@@ -108,15 +95,12 @@ describe('ResourceReconciler', () => {
     const link = doc.getElementById('base-css')
     const rules: CSSRule[] = []
     Object.defineProperty(link, 'sheet', { value: { cssRules: rules } })
-    const { lease } = createFakeLease([], iframe)
+    const { lease } = createFakeLease(iframe)
     const resources = new ResourceReconciler({ createLease: () => lease })
     const scope = createSessionScope(1)
     resources.setProfile(DEFAULT_CHAT_PROFILE)
     resources.setOverlayContainer(document.createElement('div'))
-    resources.createIframe(
-      { kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', videoId: 'video-1', iframe } },
-      1,
-    )
+    resources.createIframe({ kind: 'available', videoId: 'video-1', mode: 'live', source: { kind: 'live_borrow', iframe } }, 1)
     try {
       expect(resources.initializeIframe(scope, vi.fn())).toBe(false)
       expect(doc.querySelector('style[data-ylc-style-injected]')).toBeNull()
@@ -133,46 +117,99 @@ describe('ResourceReconciler', () => {
     }
   })
 
-  it('acquires presentation and layout before attaching the iframe', () => {
-    const log: string[] = []
-    const fake = createFakeLease(log)
-    const presentation: PresentationLease = {
-      sync: vi.fn(() => {
-        log.push('presentation-acquire')
-        return { overlayRoot: null, switchContainer: null }
-      }),
-      clear: vi.fn(),
-    }
-    const layout: PlayerLayoutLease = {
-      reconcile: vi.fn(active => {
-        if (active) log.push('layout-acquire')
-      }),
-      release: vi.fn(),
-    }
-    const chatChrome: ChatChromeLease = { sync: vi.fn(), release: vi.fn() }
-    const resources = new ResourceReconciler({
-      presentation,
-      chatChrome,
-      createLease: () => fake.lease,
-      createLayout: () => layout,
-    })
-    const observation = createObservation()
-    const decision: Extract<ChatDecision, { kind: 'available' }> = {
-      kind: 'available',
-      videoId: 'video-1',
-      mode: 'live',
-      source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
-    }
-    const scope = createSessionScope(1)
+  it.each([false, true])(
+    'keeps one lease through same-iframe live and replay changes when the original host is missing=%s',
+    hostMissing => {
+      window.history.replaceState({}, '', '/watch?v=video-1')
+      const host = document.createElement('ytd-live-chat-frame')
+      host.setAttribute('video-id', 'video-1')
+      const iframe = document.createElement('iframe')
+      iframe.src = 'https://www.youtube.com/live_chat?v=video-1'
+      const makeDocument = (path: string) => {
+        const doc = document.implementation.createHTMLDocument('chat')
+        doc.body.innerHTML =
+          '<yt-live-chat-renderer><yt-live-chat-item-list-renderer></yt-live-chat-item-list-renderer></yt-live-chat-renderer>'
+        doc.documentElement.style.setProperty('--extension-yt-live-chat-font-size', '37px')
+        return new Proxy(doc, {
+          get(target, key) {
+            if (key === 'location') return { href: `https://www.youtube.com/${path}?v=video-1` }
+            const value = Reflect.get(target, key, target)
+            return typeof value === 'function' ? value.bind(target) : value
+          },
+        })
+      }
+      let currentDocument = makeDocument('live_chat')
+      Object.defineProperty(iframe, 'contentDocument', { configurable: true, get: () => currentDocument })
+      host.append(iframe)
+      const carrier = document.createElement('div')
+      document.body.append(host, carrier)
+      const createLease = vi.fn(createIframeLease)
+      const resources = new ResourceReconciler({ createLease })
+      const scope = createSessionScope(1)
+      resources.setProfile(DEFAULT_CHAT_PROFILE)
+      resources.setOverlayContainer(carrier)
+      const makePlan = (decision: Extract<ChatDecision, { kind: 'available' }>): RuntimePlan => ({
+        ...acquirePlan(decision),
+        presentation: 'preserve',
+        layout: 'none',
+      })
+      const live = makePlan({
+        kind: 'available',
+        videoId: 'video-1',
+        mode: 'live',
+        source: { kind: 'live_borrow', iframe },
+      })
+      const replay = makePlan({ kind: 'available', videoId: 'video-1', mode: 'archive', source: { kind: 'archive_borrow', iframe } })
+      const currentHost = hostMissing ? document.createElement('ytd-live-chat-frame') : host
+      currentHost.setAttribute('video-id', 'video-1')
+      const targets = {
+        player: null,
+        fullscreenRoot: null,
+        rightControls: null,
+        nativeChatHost: currentHost,
+        nativeChatIframe: iframe,
+        chatIframe: iframe,
+        archiveOpenControl: null,
+      }
+      try {
+        expect(resources.reconcilePlan(live, null, scope, vi.fn()).initialization?.success).toBe(true)
+        const lease = resources.lease
+        if (!lease) throw new Error('Expected a borrowed live lease')
+        expect(lease.kind).toBe('borrowed-live')
+        const context = iframe.contentWindow
+        if (hostMissing) host.remove()
+        currentDocument = makeDocument('live_chat_replay')
+        const replayDocument = iframe.contentDocument
+        expect(resources.reconcilePlan(replay, null, scope, vi.fn()).initialization?.success).toBe(true)
+        expect(resources.lease).toBe(lease)
+        expect(lease.state).toBe('attached')
+        expect(resources.getDiagnosticSnapshot().chat.kind).toBe('borrowed-replay')
+        expect(resources.getDiagnosticSnapshot().restoringChatCount).toBe(0)
+        expect(iframe.contentWindow).toBe(context)
+        expect(iframe.contentDocument).toBe(replayDocument)
+        expect(createLease).toHaveBeenCalledOnce()
 
-    resources.setProfile(DEFAULT_CHAT_PROFILE)
-    resources.setOverlayContainer(document.createElement('div'))
-    resources.reconcilePlan(acquirePlan(decision), observation, scope, vi.fn())
-
-    expect(log.slice(0, 3)).toEqual(['presentation-acquire', 'layout-acquire', 'iframe-acquire'])
-    resources.clear(observation.targets)
-    scope.dispose()
-  })
+        if (hostMissing) document.body.append(currentHost)
+        resources.reconcileRestoring(targets)
+        expect(carrier.querySelector('iframe')).toBe(iframe)
+        expect(currentHost.querySelector('iframe')).toBeNull()
+        currentDocument = makeDocument('live_chat')
+        const laterLiveDocument = iframe.contentDocument
+        expect(resources.reconcilePlan(live, null, scope, vi.fn()).initialization?.success).toBe(true)
+        expect(resources.lease).toBe(lease)
+        expect(resources.getDiagnosticSnapshot().chat.kind).toBe('borrowed-live')
+        expect(iframe.contentWindow).toBe(context)
+        expect(iframe.contentDocument).toBe(laterLiveDocument)
+        expect(createLease).toHaveBeenCalledOnce()
+        resources.clear(targets)
+        expect(currentHost.querySelector('iframe')).toBe(iframe)
+        expect(laterLiveDocument?.documentElement.style.getPropertyValue('--extension-yt-live-chat-font-size')).toBe('37px')
+      } finally {
+        resources.clear()
+        scope.dispose()
+      }
+    },
+  )
 
   it.each(['live_borrow', 'archive_borrow', 'live_direct'] as const)(
     'retains the exact iframe and lease across repeated %s acquisition plans',
@@ -194,9 +231,9 @@ describe('ResourceReconciler', () => {
         mode: kind === 'archive_borrow' ? 'archive' : 'live',
         source:
           kind === 'live_direct'
-            ? { kind, videoId: 'video-1', url: 'https://www.youtube.com/live_chat?v=video-1' }
+            ? { kind, url: 'https://www.youtube.com/live_chat?v=video-1' }
             : kind === 'live_borrow'
-              ? { kind, videoId: 'video-1', iframe }
+              ? { kind, iframe }
               : { kind, iframe },
       }
       const plan: RuntimePlan = {
@@ -229,81 +266,4 @@ describe('ResourceReconciler', () => {
       else expect(nativeHost.querySelector('iframe')).toBe(iframe)
     },
   )
-
-  it('does not request an overlay root for switch-only presentation', () => {
-    const presentation: PresentationLease = {
-      sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })),
-      clear: vi.fn(),
-    }
-    const resources = new ResourceReconciler({
-      presentation,
-      chatChrome: { sync: vi.fn(), release: vi.fn() },
-    })
-    const observation = createObservation()
-
-    resources.reconcilePlan(
-      {
-        monitoring: 'active',
-        presentation: 'switch-only',
-        chat: { kind: 'preserve' },
-        layout: 'none',
-        retry: { kind: 'preserve' },
-      },
-      observation,
-      null,
-      vi.fn(),
-    )
-
-    expect(presentation.sync).toHaveBeenCalledWith({
-      player: observation.targets.player,
-      rightControls: observation.targets.rightControls,
-      overlayEnabled: false,
-      switchEnabled: true,
-    })
-  })
-
-  it('releases iframe, layout, and presentation in restoration order', () => {
-    const log: string[] = []
-    const fake = createFakeLease(log)
-    const presentation: PresentationLease = {
-      sync: vi.fn(() => ({ overlayRoot: null, switchContainer: null })),
-      clear: vi.fn(() => log.push('presentation-release')),
-    }
-    const layout: PlayerLayoutLease = {
-      reconcile: vi.fn(),
-      release: vi.fn(() => log.push('layout-release')),
-    }
-    const resources = new ResourceReconciler({
-      presentation,
-      chatChrome: { sync: vi.fn(), release: vi.fn() },
-      createLease: () => fake.lease,
-      createLayout: () => layout,
-    })
-    const observation = createObservation()
-    const scope = createSessionScope(1)
-    const decision: Extract<ChatDecision, { kind: 'available' }> = {
-      kind: 'available',
-      videoId: 'video-1',
-      mode: 'live',
-      source: { kind: 'live_borrow', videoId: 'video-1', iframe: fake.lease.iframe },
-    }
-    resources.reconcilePlan(acquirePlan(decision), observation, scope, vi.fn())
-    log.length = 0
-
-    resources.reconcilePlan(
-      {
-        monitoring: 'inactive',
-        presentation: 'none',
-        chat: { kind: 'none', ensureNativeVisible: false },
-        layout: 'none',
-        retry: { kind: 'none' },
-      },
-      observation,
-      scope,
-      vi.fn(),
-    )
-
-    expect(log).toEqual(['iframe-release', 'layout-release', 'presentation-release'])
-    scope.dispose()
-  })
 })

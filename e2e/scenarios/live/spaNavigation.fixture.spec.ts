@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { readContentStatusViaPopup } from '@e2e/utils/popupHelpers'
 
 const expectCurrentChatTarget = async (scenario: YouTubeScenario, videoId: string) => {
   await expect
@@ -28,6 +29,52 @@ const firstState = createLiveState('a')
 const secondState = createLiveState('b')
 
 test.describe('SPA navigation and DOM regeneration', { tag: '@live' }, () => {
+  test('keeps the session after a cancelled navigation and follows committed history changes', { tag: '@fixture' }, async ({ page, extension }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(firstState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    const watchUrl = page.url()
+    const popup = await page.context().newPage()
+    try {
+      await popup.goto(extension.url('popup.html'))
+      await page.bringToFront()
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'running' })
+
+      expect(await scenario.cancelNextHistoryNavigation('/results?search_query=cancelled')).toEqual({
+        before: watchUrl,
+        after: watchUrl,
+        cancelled: true,
+      })
+      expect(await readContentStatusViaPopup(popup)).toMatchObject({ status: 'running' })
+      await overlay.expectChatLoaded({ timeout: 12000 })
+
+      await scenario.pushHistoryLocation('/results?search_query=cancelled')
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'unsupported' })
+      await overlay.expectOverlayRemoved({ timeout: 12000 })
+
+      await scenario.goBackHistory()
+      await expect.poll(() => page.url()).toBe(watchUrl)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'running' })
+      await overlay.expectChatLoaded({ timeout: 12000 })
+      const restored = await readContentStatusViaPopup(popup)
+      if (!restored) throw new Error('Expected the active content status.')
+
+      await scenario.pushHistoryLocation(`${watchUrl}#chapter`)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'running', token: restored.token })
+      await scenario.replaceHistoryLocation(`${watchUrl}#updated`)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'running', token: restored.token })
+      await scenario.goBackHistory()
+      await expect.poll(() => page.url()).toBe(watchUrl)
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'running', token: restored.token })
+      await overlay.expectChatLoaded({ timeout: 12000 })
+    } finally {
+      await popup.close()
+      await page.bringToFront()
+    }
+  })
+
   test('rebuilds the runtime against the current player without retaining a stale overlay', { tag: '@fixture' }, async ({ page }) => {
     test.setTimeout(120000)
 

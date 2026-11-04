@@ -45,7 +45,7 @@ describe('YTDLiveChatSetting history controls', () => {
     const { getByRole, getByTestId } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } })
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     const input = getByTestId('font-family-search')
     fireEvent.keyDown(input, { key: 'z', metaKey: true })
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize + 2)
@@ -57,6 +57,16 @@ describe('YTDLiveChatSetting history controls', () => {
       isComposing: true,
     })
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize + 2)
+  })
+
+  it('handles style undo from the focused range control', () => {
+    const originalFontSize = store.get(chatSettingsStateAtom).profile.appearance.fontSize
+    const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
+    commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } })
+
+    fireEvent.keyDown(getByRole('slider', { name: 'content.setting.fontSize' }), { key: 'z', metaKey: true })
+
+    expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize)
   })
 
   it('exposes disabled undo and redo buttons until matching history exists', () => {
@@ -79,7 +89,7 @@ describe('YTDLiveChatSetting history controls', () => {
     expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
   })
 
-  it('refreshes the live-region node for consecutive undo announcements', () => {
+  it('updates the live region again for consecutive undo announcements', () => {
     const originalBlur = store.get(chatSettingsStateAtom).profile.appearance.blur
     const { getByRole } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     const undoButton = getByRole('button', { name: 'content.setting.header.undo' })
@@ -92,10 +102,24 @@ describe('YTDLiveChatSetting history controls', () => {
     fireEvent.click(undoButton)
     const firstAnnouncement = getByRole('status')
     expect(firstAnnouncement).toHaveTextContent(/^content\.setting\.header\.undone$/)
+    const parent = firstAnnouncement.parentElement
+    if (!parent) throw new Error('Missing live-region parent')
+    const observer = new MutationObserver(() => {})
+    observer.observe(parent, { childList: true, characterData: true, subtree: true })
 
     fireEvent.click(undoButton)
-    expect(getByRole('status')).not.toBe(firstAnnouncement)
-    expect(getByRole('status')).toHaveTextContent(/^content\.setting\.header\.undone$/)
+    const secondAnnouncement = getByRole('status')
+    expect(secondAnnouncement).toHaveTextContent(/^content\.setting\.header\.undone$/)
+    expect(
+      observer
+        .takeRecords()
+        .some(record =>
+          [firstAnnouncement, secondAnnouncement].some(
+            region => region.contains(record.target) || [...record.addedNodes, ...record.removedNodes].includes(region),
+          ),
+        ),
+    ).toBe(true)
+    observer.disconnect()
   })
 
   it('consumes recognized shortcuts inside the panel even when history is empty', () => {

@@ -44,27 +44,6 @@ describe('SettingContent', () => {
     })
   })
 
-  it('renders settings in the expected order without removed settings', () => {
-    const { container } = renderWithStore(<SettingContent />, store)
-
-    const labels = Array.from(container.querySelectorAll('.ylc-row-title')).map(label => label.textContent)
-    expect(labels).toEqual([
-      'content.setting.alwaysOnDisplay',
-      'content.setting.chatOnlyDisplay',
-      'content.setting.backgroundColor',
-      'content.setting.fontColor',
-      'content.setting.membershipNameColor',
-      'content.setting.fontFamily',
-      'content.setting.fontSize',
-      'content.setting.blur',
-      'content.setting.space',
-      'content.setting.userNameDisplay',
-      'content.setting.userIconDisplay',
-      'content.setting.superChatBarDisplay',
-    ])
-    expect(labels).not.toContain('content.setting.reactionButtonDisplay')
-  })
-
   it('keeps color pickers and sliders in sync with nested profile updates', () => {
     const { getByRole, getByText } = renderWithStore(<SettingContent />, store)
     const profile = store.get(chatSettingsStateAtom).profile

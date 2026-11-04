@@ -1,12 +1,10 @@
 export type LiveDirectChatSource = {
   kind: 'live_direct'
-  videoId: string
   url: string
 }
 
 export type LiveBorrowChatSource = {
   kind: 'live_borrow'
-  videoId: string
   iframe: HTMLIFrameElement
 }
 

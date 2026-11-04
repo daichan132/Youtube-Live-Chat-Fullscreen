@@ -175,4 +175,102 @@ describe('useChatInputFocus', () => {
     expect(onChange).not.toHaveBeenCalled()
     expect(hasFocus).not.toHaveBeenCalled()
   })
+
+  it('releases parent listeners and follows focus after the old document is revoked', () => {
+    const old = createChat(carrier)
+    const onChange = vi.fn()
+    const documentCallbacks: MutationCallback[] = []
+    const NativeMutationObserver = MutationObserver
+    vi.stubGlobal(
+      'MutationObserver',
+      class extends NativeMutationObserver {
+        constructor(private callback: MutationCallback) {
+          super(callback)
+        }
+        override observe(target: Node, options?: MutationObserverInit) {
+          if (target === old.chat.documentElement) documentCallbacks.push(this.callback)
+          super.observe(target, options)
+        }
+      },
+    )
+    const addListener = vi.spyOn(window, 'addEventListener')
+    const removeListener = vi.spyOn(window, 'removeEventListener')
+    const { unmount } = renderHook(() => useChatInputFocus(carrier, onChange))
+    const parentFocusHandlers = addListener.mock.calls.filter(([type]) => type === 'focus' || type === 'blur')
+    act(() => old.editable.focus())
+    expect(onChange).toHaveBeenLastCalledWith(true)
+
+    const nextCarrier = document.createElement('div')
+    document.body.append(nextCarrier)
+    const next = createChat(nextCarrier)
+    Object.defineProperty(old.iframe, 'contentDocument', { configurable: true, get: () => next.chat })
+    const nodeType = vi.spyOn(old.chat, 'nodeType', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    const remove = vi.spyOn(old.chat, 'removeEventListener').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    const body = vi.spyOn(old.chat, 'body', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    try {
+      expect(documentCallbacks).toHaveLength(1)
+      expect(() => documentCallbacks[0]?.([], {} as MutationObserver)).not.toThrow()
+      expect(onChange).toHaveBeenLastCalledWith(false)
+      act(() => old.iframe.dispatchEvent(new Event('load')))
+      expect(onChange).toHaveBeenLastCalledWith(false)
+      for (const [type, handler] of parentFocusHandlers) expect(removeListener).toHaveBeenCalledWith(type, handler)
+      act(() => next.input.focus())
+      expect(onChange).toHaveBeenLastCalledWith(true)
+      onChange.mockClear()
+      expect(() => documentCallbacks[0]?.([], {} as MutationObserver)).not.toThrow()
+      expect(onChange).not.toHaveBeenCalled()
+      unmount()
+      expect(onChange).toHaveBeenLastCalledWith(false)
+    } finally {
+      nodeType.mockRestore()
+      remove.mockRestore()
+      body.mockRestore()
+      vi.unstubAllGlobals()
+      nextCarrier.remove()
+    }
+  })
+
+  it('treats an already revoked replacement as inaccessible and later follows a live document', () => {
+    const old = createChat(carrier)
+    const onChange = vi.fn()
+    const { unmount } = renderHook(() => useChatInputFocus(carrier, onChange))
+    act(() => old.editable.focus())
+    expect(onChange).toHaveBeenLastCalledWith(true)
+    const nextCarrier = document.createElement('div')
+    document.body.append(nextCarrier)
+    const dead = createChat(nextCarrier)
+    const next = createChat(nextCarrier)
+    let currentDocument = dead.chat
+    Object.defineProperty(old.iframe, 'contentDocument', { configurable: true, get: () => currentDocument })
+    const nodeType = vi.spyOn(dead.chat, 'nodeType', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    const body = vi.spyOn(dead.chat, 'body', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    const defaultView = vi.spyOn(dead.chat, 'defaultView', 'get').mockImplementation(() => {
+      throw new TypeError('revoked document')
+    })
+    try {
+      act(() => old.iframe.dispatchEvent(new Event('load')))
+      expect(onChange).toHaveBeenLastCalledWith(false)
+      currentDocument = next.chat
+      act(() => old.iframe.dispatchEvent(new Event('load')))
+      act(() => next.input.focus())
+      expect(onChange).toHaveBeenLastCalledWith(true)
+      unmount()
+      expect(onChange).toHaveBeenLastCalledWith(false)
+    } finally {
+      nodeType.mockRestore()
+      body.mockRestore()
+      defaultView.mockRestore()
+      nextCarrier.remove()
+    }
+  })
 })

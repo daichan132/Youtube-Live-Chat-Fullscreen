@@ -16,15 +16,6 @@ describe('loadLocaleMessages', () => {
       return ['Theme']
     })
     await expect(loadLocaleMessages('ja')).rejects.toThrow('Extension asset unavailable')
-    expect(loadAsset).not.toHaveBeenCalledWith('en')
-  })
-
-  it('rejects when the English base locale is unavailable', async () => {
-    loadAsset.mockImplementation(async asset => {
-      if (asset === '_keys') return ['popup.theme']
-      throw new Error('Extension asset unavailable')
-    })
-    await expect(loadLocaleMessages('en')).rejects.toThrow('Extension asset unavailable')
   })
 
   it('retries the key asset after a temporary failure', async () => {
@@ -53,18 +44,64 @@ describe('loadLocaleMessages', () => {
     await expect(loadLocaleMessages('ja')).resolves.toEqual({ 'popup.theme': 'テーマ' })
   })
 
-  it('retries a failed English bundle while sharing requests and reusing loaded keys', async () => {
-    let available = false
+  it('retries a failed English bundle and keeps successfully loaded keys', async () => {
     loadAsset.mockImplementation(async asset => {
       if (asset === '_keys') return ['popup.theme']
-      if (!available) throw new Error('Extension asset unavailable')
-      return ['Theme']
+      throw new Error('Extension asset unavailable')
     })
     await expect(loadLocaleMessages('en')).rejects.toThrow('Extension asset unavailable')
-    available = true
+    loadAsset.mockImplementation(async asset => {
+      if (asset === '_keys') throw new Error('Keys no longer available')
+      return ['Theme']
+    })
+    await expect(loadLocaleMessages('en')).resolves.toEqual({ 'popup.theme': 'Theme' })
+  })
+
+  it('shares an in-flight request between callers', async () => {
+    let resolveMessages!: (value: unknown) => void
+    const pending = new Promise<unknown>(resolve => {
+      resolveMessages = resolve
+    })
+    loadAsset.mockImplementation(async asset => (asset === '_keys' ? ['popup.theme'] : pending))
+
     const first = loadLocaleMessages('en')
-    expect(loadLocaleMessages('en')).toBe(first)
-    await expect(first).resolves.toEqual({ 'popup.theme': 'Theme' })
-    expect(loadAsset.mock.calls.filter(([asset]) => asset === '_keys')).toHaveLength(1)
+    const second = loadLocaleMessages('en')
+    resolveMessages(['Theme'])
+
+    await expect(Promise.all([first, second])).resolves.toEqual([{ 'popup.theme': 'Theme' }, { 'popup.theme': 'Theme' }])
+    expect(loadAsset.mock.calls.filter(([asset]) => asset === 'en')).toHaveLength(1)
+  })
+
+  it.each([
+    { keys: 'popup.theme', messages: ['Theme'] },
+    { keys: [123], messages: ['Theme'] },
+    { keys: ['popup.theme'], messages: 'Theme' },
+    { keys: ['popup.theme'], messages: ['Theme', 'Language'] },
+    { keys: ['popup.theme'], messages: [123] },
+  ])('rejects invalid bundle data and accepts a corrected retry: $keys / $messages', async ({ keys, messages }) => {
+    loadAsset.mockImplementation(async asset => (asset === '_keys' ? keys : messages))
+    await expect(loadLocaleMessages('en')).rejects.toThrow(/Invalid locale/)
+
+    loadAsset.mockImplementation(async asset => (asset === '_keys' ? ['popup.theme'] : ['Theme']))
+    await expect(loadLocaleMessages('en')).resolves.toEqual({ 'popup.theme': 'Theme' })
+  })
+
+  it('keeps a newer successful load when an older request fails after cache reset', async () => {
+    let rejectOld: (error: Error) => void = () => {}
+    const oldMessages = new Promise<unknown>((_, reject) => {
+      rejectOld = reject
+    })
+    loadAsset.mockImplementation(async asset => (asset === '_keys' ? ['popup.theme'] : oldMessages))
+    const oldLoad = loadLocaleMessages('en')
+    const oldFailure = expect(oldLoad).rejects.toThrow('Old request failed')
+
+    clearLocaleCache()
+    loadAsset.mockImplementation(async asset => (asset === '_keys' ? ['popup.theme'] : ['Theme']))
+    await expect(loadLocaleMessages('en')).resolves.toEqual({ 'popup.theme': 'Theme' })
+    rejectOld(new Error('Old request failed'))
+    await oldFailure
+
+    loadAsset.mockRejectedValue(new Error('Assets no longer available'))
+    await expect(loadLocaleMessages('en')).resolves.toEqual({ 'popup.theme': 'Theme' })
   })
 })

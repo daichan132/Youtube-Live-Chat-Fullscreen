@@ -11,10 +11,11 @@ import {
   type PixelChatGeometry,
   renderChatGeometry,
 } from '@/shared/settings/chatGeometry'
+import { areChatGeometriesEqual } from '@/shared/settings/equality'
 import { fitGeometryToViewport } from '@/shared/settings/fitGeometryToViewport'
 import type { ChatGeometry } from '@/shared/settings/model'
 import { commitGeometryAtom, geometryAtom } from '@/shared/state'
-import { deriveResizedLayout, type ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
+import { deriveResizedLayout, type ResizeDirection, shiftsLeftEdge, shiftsTopEdge } from '../features/Draggable/hooks/clipGeometry'
 import { useAutomaticOverlayPlacement } from './useAutomaticOverlayPlacement'
 import type { OverlayInteractionState } from './useOverlayInteraction'
 import { type Point, usePointerSession } from './usePointerSession'
@@ -29,8 +30,8 @@ type GeometrySession = {
 }
 
 const getResizeMaxSize = (geometry: PixelChatGeometry, direction: ResizeDirection, viewport: { width: number; height: number }) => {
-  const fromLeft = direction === 'left' || direction === 'topLeft' || direction === 'bottomLeft'
-  const fromTop = direction === 'top' || direction === 'topLeft' || direction === 'topRight'
+  const fromLeft = shiftsLeftEdge(direction)
+  const fromTop = shiftsTopEdge(direction)
   const availableWidth = fromLeft
     ? geometry.coordinates.x + geometry.size.width - GEOMETRY_VIEWPORT_PADDING
     : viewport.width - GEOMETRY_VIEWPORT_PADDING - geometry.coordinates.x
@@ -91,7 +92,7 @@ export const useOverlayGeometry = ({
     if (!adjustmentBaseline || pointerActiveRef.current || settingsOpen) return
     commitGeometry(adjustmentBaseline)
   }, [adjustmentBaseline, commitGeometry, settingsOpen])
-  const canRestoreAdjustment = adjustmentBaseline !== null && JSON.stringify(adjustmentBaseline) !== JSON.stringify(geometry)
+  const canRestoreAdjustment = adjustmentBaseline !== null && !areChatGeometriesEqual(adjustmentBaseline, geometry)
   const viewportWidth = referenceSize?.width ?? window.innerWidth
   const viewportHeight = referenceSize?.height ?? window.innerHeight
   const viewport = useMemo(() => ({ width: viewportWidth, height: viewportHeight }), [viewportWidth, viewportHeight])

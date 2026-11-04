@@ -380,16 +380,27 @@ const purchaseInteractionHtml = `
     })();
   </script>`
 
-const playableChatHtml = (
-  title: string,
-  runtimeVideoId?: string,
-  restrictedParticipation = false,
-  giftButton = false,
-  appearanceSurfaces = false,
-  purchaseInteractions = false,
-  standardPurchaseInteractions = false,
-  baseStylesheet = false,
-) => `<!doctype html>
+type PlayableChatOptions = {
+  title: string
+  runtimeVideoId?: string
+  restrictedParticipation?: boolean
+  giftButton?: boolean
+  appearanceSurfaces?: boolean
+  purchaseInteractions?: boolean
+  standardPurchaseInteractions?: boolean
+  baseStylesheet?: boolean
+}
+
+const playableChatHtml = ({
+  title,
+  runtimeVideoId,
+  restrictedParticipation,
+  giftButton,
+  appearanceSurfaces,
+  purchaseInteractions,
+  standardPurchaseInteractions,
+  baseStylesheet,
+}: PlayableChatOptions) => `<!doctype html>
 <html>
   <head><meta charset="utf-8"><title>${escapeHtml(title)}</title>${baseStylesheet ? '<link id="base-css" rel="stylesheet" href="/ylc-fixture-native-base.css">' : ''}</head>
   <body${runtimeVideoId ? ` data-ylc-fixture-video-id="${escapeHtml(runtimeVideoId)}"` : ''}>
@@ -581,16 +592,16 @@ export const compileYouTubeScenario = (state: YouTubeScenarioState): CompiledYou
             pattern: state.chat.mode === 'archive' ? '**/live_chat_replay?*' : '**/live_chat?*',
             body:
               state.chat.response === 'playable'
-                ? playableChatHtml(
-                    `${state.video.title} chat fixture`,
-                    state.chat.native.continuationVideoId,
-                    state.chat.mode === 'live' && state.chat.restrictedParticipation === true,
-                    state.chat.mode === 'live' && state.chat.giftButton === true,
-                    state.chat.mode === 'live' && state.chat.appearanceSurfaces === true,
-                    state.chat.mode === 'live' && state.chat.purchaseInteractions === true,
-                    state.chat.mode === 'live' && state.chat.standardPurchaseInteractions === true,
-                    state.chat.native.baseStylesheet === true,
-                  )
+                ? playableChatHtml({
+                    title: `${state.video.title} chat fixture`,
+                    runtimeVideoId: state.chat.native.continuationVideoId,
+                    restrictedParticipation: state.chat.mode === 'live' && state.chat.restrictedParticipation === true,
+                    giftButton: state.chat.mode === 'live' && state.chat.giftButton === true,
+                    appearanceSurfaces: state.chat.mode === 'live' && state.chat.appearanceSurfaces === true,
+                    purchaseInteractions: state.chat.mode === 'live' && state.chat.purchaseInteractions === true,
+                    standardPurchaseInteractions: state.chat.mode === 'live' && state.chat.standardPurchaseInteractions === true,
+                    baseStylesheet: state.chat.native.baseStylesheet === true,
+                  })
                 : unavailableChatHtml(),
           },
         ]

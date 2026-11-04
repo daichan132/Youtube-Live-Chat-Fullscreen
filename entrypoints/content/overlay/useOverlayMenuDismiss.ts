@@ -1,4 +1,6 @@
 import { type RefObject, useEffect } from 'react'
+import { isAccessibleNode } from '../chat/shared/isAccessibleNode'
+import { observeOverlayChatDocument } from './observeOverlayChatDocument'
 
 /** Listen only while open, including the currently borrowed chat document. */
 export const useOverlayMenuDismiss = (open: boolean, railRef: RefObject<HTMLDivElement | null>, dismiss: () => void) => {
@@ -8,7 +10,6 @@ export const useOverlayMenuDismiss = (open: boolean, railRef: RefObject<HTMLDivE
     const frame = rail.closest('[data-ylc-resizable]')
     const scope = frame ?? (rail.getRootNode() as Document | ShadowRoot)
     const ownerDocument = rail.ownerDocument
-    let chatDocument: Document | null = null
     const onPointerDown = (event: PointerEvent) => {
       const path = event.composedPath()
       if (path.includes(rail)) return
@@ -16,28 +17,17 @@ export const useOverlayMenuDismiss = (open: boolean, railRef: RefObject<HTMLDivE
       if (path.some(node => node instanceof Element && frame?.contains(node) && node.hasAttribute('data-ylc-resize-direction'))) return
       dismiss()
     }
-    const bindChat = () => {
-      let next: Document | null = null
-      try {
-        next = scope.querySelector<HTMLIFrameElement>('iframe[data-ylc-chat]')?.contentDocument ?? null
-      } catch {
-        // A native navigation may temporarily make the borrowed document inaccessible.
-      }
-      if (next === chatDocument) return
-      chatDocument?.removeEventListener('pointerdown', onPointerDown, true)
-      chatDocument = next
-      chatDocument?.addEventListener('pointerdown', onPointerDown, true)
-    }
     ownerDocument.addEventListener('pointerdown', onPointerDown, true)
-    scope.addEventListener('load', bindChat, true)
-    const observer = new MutationObserver(bindChat)
-    observer.observe(scope, { childList: true, subtree: true })
-    bindChat()
+    const releaseChat = observeOverlayChatDocument(scope, (_frame, chatDocument) => {
+      const onChatPointerDown = (event: PointerEvent) => {
+        if (isAccessibleNode(chatDocument)) onPointerDown(event)
+      }
+      chatDocument.addEventListener('pointerdown', onChatPointerDown, true)
+      return () => chatDocument.removeEventListener('pointerdown', onChatPointerDown, true)
+    })
     return () => {
       ownerDocument.removeEventListener('pointerdown', onPointerDown, true)
-      chatDocument?.removeEventListener('pointerdown', onPointerDown, true)
-      scope.removeEventListener('load', bindChat, true)
-      observer.disconnect()
+      releaseChat()
     }
   }, [dismiss, open, railRef])
 }

@@ -7,8 +7,7 @@ import { createTestStore, renderWithStore } from '@/shared/state/testUtils'
 import { type NumberSliderSettingKey, YLCNumberSlider } from './YLCNumberSlider'
 
 let store = createTestStore()
-const renderNumber = () =>
-  renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />, store)
+const renderNumber = () => renderWithStore(<YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />, store)
 
 beforeEach(() => {
   store = createTestStore()
@@ -24,7 +23,7 @@ describe('direct numeric settings input', () => {
     ({ settingKey, min, max, value }) => {
       const view = renderWithStore(
         <div dir='rtl'>
-          <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.fontSize' min={min} max={max} />
+          <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.fontSize' />
         </div>,
         store,
       )
@@ -184,16 +183,16 @@ describe('direct numeric settings input', () => {
   })
 
   it.each([
-    { settingKey: 'fontSize', max: 40, first: '28', last: '30' },
-    { settingKey: 'blur', max: 20, first: '5', last: '8' },
-  ] satisfies { settingKey: NumberSliderSettingKey; max: number; first: string; last: string }[])(
+    { settingKey: 'fontSize', first: '28', last: '30' },
+    { settingKey: 'blur', first: '5', last: '8' },
+  ] satisfies { settingKey: NumberSliderSettingKey; first: string; last: string }[])(
     'finishes a typed draft before grouping a pointer drag on the $settingKey range',
-    async ({ settingKey, max, first, last }) => {
+    async ({ settingKey, first, last }) => {
       const user = userEvent.setup()
       const view = renderWithStore(
         <>
-          <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' min={10} max={40} />
-          {settingKey !== 'fontSize' && <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.blur' min={0} max={max} />}
+          <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
+          {settingKey !== 'fontSize' && <YLCNumberSlider settingKey={settingKey} labelKey='content.setting.blur' />}
         </>,
         store,
       )

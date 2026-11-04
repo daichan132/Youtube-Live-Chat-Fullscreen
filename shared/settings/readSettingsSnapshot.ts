@@ -3,7 +3,7 @@ import { storage } from 'wxt/utils/storage'
 import { type LocaleCode, resolveLanguageCode } from '@/shared/i18n/language'
 import { migrateSettings } from './migrateSettings'
 import type { ChatSettings, GlobalSettings } from './model'
-import { isRecord, normalizeChatGeometry, normalizeChatProfile, normalizeGlobalSetting, normalizePresets } from './normalizeSettings'
+import { isRecord, normalizeChatGeometry, normalizeChatSettings, normalizeGlobalSetting } from './normalizeSettings'
 import {
   type ChatAppearanceSettings,
   DEFAULT_GLOBAL_SETTINGS,
@@ -65,12 +65,7 @@ const normalizeLegacyGlobal = (input: unknown): GlobalSettings => {
 
 const normalizeCurrentChat = (input: unknown, fallback: ChatSettings): ChatSettings => {
   const value = isStoredEnvelope(input) ? input.value : input
-  const raw = isRecord(value) ? value : {}
-  return {
-    profile: normalizeChatProfile(raw.profile, fallback.profile),
-    geometry: normalizeChatGeometry(raw.geometry, fallback.geometry),
-    presets: normalizePresets(raw.presets, fallback.presets),
-  }
+  return normalizeChatSettings(value, fallback)
 }
 
 const readLegacyLocale = (legacyLocaleStorage: LegacyLocaleStorage | null) => {
@@ -106,7 +101,10 @@ const getDefaultLocale = () => {
 export const readSettingsSnapshot = async (legacyLocaleStorage: LegacyLocaleStorage | null): Promise<SnapshotRead> => {
   // Missing values come from successful reads. Storage failures must abort
   // initialization rather than authorizing fallback writes or deletion.
-  const [currentValues, compatibilityValues] = await Promise.all([
+  const [
+    [enabledItem, themeItem, appearanceItem, geometryItem, localeItem, currentGlobalResult, currentChatResult],
+    [legacyGlobalResult, legacyChatResult, legacyLocaleResult],
+  ] = await Promise.all([
     storage.getItems([
       settingsItems.enabled,
       settingsItems.theme,
@@ -119,16 +117,16 @@ export const readSettingsSnapshot = async (legacyLocaleStorage: LegacyLocaleStor
     storage.getItems([zustandGlobalItem, zustandChatItem, legacyLocaleItem]),
   ])
 
-  const legacyGlobal = normalizeLegacyGlobal(compatibilityValues[0]?.value)
-  const legacyChat = migrateSettings(legacyState(compatibilityValues[1]?.value))
-  const currentGlobal = normalizeCurrentGlobal(currentValues[5]?.value, legacyGlobal)
-  const currentChat = normalizeCurrentChat(currentValues[6]?.value, legacyChat)
+  const legacyGlobal = normalizeLegacyGlobal(legacyGlobalResult?.value)
+  const legacyChat = migrateSettings(legacyState(legacyChatResult?.value))
+  const currentGlobal = normalizeCurrentGlobal(currentGlobalResult?.value, legacyGlobal)
+  const currentChat = normalizeCurrentChat(currentChatResult?.value, legacyChat)
 
-  const enabledEnvelope = currentValues[0]?.value
-  const themeEnvelope = currentValues[1]?.value
-  const appearanceEnvelope = currentValues[2]?.value
-  const geometryEnvelope = currentValues[3]?.value
-  const localeEnvelope = currentValues[4]?.value
+  const enabledEnvelope = enabledItem?.value
+  const themeEnvelope = themeItem?.value
+  const appearanceEnvelope = appearanceItem?.value
+  const geometryEnvelope = geometryItem?.value
+  const localeEnvelope = localeItem?.value
 
   const fallbackAppearance: ChatAppearanceSettings = {
     profile: currentChat.profile,
@@ -142,7 +140,7 @@ export const readSettingsSnapshot = async (legacyLocaleStorage: LegacyLocaleStor
     : currentChat.geometry
 
   const extensionPageLocale = readLegacyLocale(legacyLocaleStorage)
-  const browserLegacyLocale = compatibilityValues[2]?.value
+  const browserLegacyLocale = legacyLocaleResult?.value
   const storedCompatibilityLocale = extensionPageLocale ?? (typeof browserLegacyLocale === 'string' ? browserLegacyLocale : undefined)
   const fallbackLocale = resolveLanguageCode(storedCompatibilityLocale ?? getDefaultLocale())
   const currentLocale =
