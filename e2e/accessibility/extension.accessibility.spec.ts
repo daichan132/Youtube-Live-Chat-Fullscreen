@@ -26,7 +26,7 @@ test.describe('extension accessibility', () => {
 
   test('expanded settings editors have no automated WCAG A/AA violations', async ({ page, extension }) => {
     await page.goto(extension.url('settings.html'))
-    const font = page.getByRole('button', { name: 'Font', exact: true })
+    const font = page.getByRole('button', { name: 'Font' })
     await font.click()
     await expect(page.getByRole('combobox', { name: 'Search fonts', exact: true })).toBeFocused()
     await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
@@ -35,7 +35,7 @@ test.describe('extension accessibility', () => {
     await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
     await page.keyboard.press('Escape')
     await expect(font).toBeFocused()
-    await page.getByRole('button', { name: 'Background Color', exact: true }).click()
+    await page.getByRole('button', { name: 'Background Color' }).click()
     await expect(page.getByRole('dialog', { name: 'Color picker', exact: true })).toBeVisible()
     await expectNoViolations(await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
   })
@@ -74,7 +74,7 @@ test.describe('extension accessibility', () => {
     const overlay = new ExtensionOverlay(page)
     await overlay.openSettings()
     const settings = overlay.settingsFrame()
-    const trigger = settings.getByRole('button', { name: 'Background Color', exact: true })
+    const trigger = settings.getByRole('button', { name: 'Background Color' })
     await trigger.click()
     const picker = settings.getByRole('dialog', { name: 'Color picker', exact: true })
     const hue = picker.getByRole('slider', { name: 'Hue', exact: true })

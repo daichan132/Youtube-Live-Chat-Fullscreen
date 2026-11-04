@@ -20,7 +20,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
     await extension.storage.set({ [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'settings-usability', value: 'en' } })
     expect(await patchOverlayStore(extension, { profile: { appearance: { fontFamily: 'Roboto' } } })).not.toBeNull()
     await page.goto(extension.url('settings.html'))
-    await expect(page.getByRole('button', { name: 'Font', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Font' })).toBeVisible()
   })
 
   test.afterEach(async ({ page }) => {
@@ -34,7 +34,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
     await page.keyboard.press('ArrowRight')
     await expect(range).toHaveValue(String(initial + 1))
 
-    await page.getByRole('button', { name: 'Font', exact: true }).click()
+    await page.getByRole('button', { name: 'Font' }).click()
     const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
     await expect(search).toBeFocused()
     await page.keyboard.type('Roboto')
@@ -86,7 +86,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
   }
 
   test('keeps keyboard candidates visible with stable ARIA relations and restores trigger focus', async ({ page }, testInfo) => {
-    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const trigger = page.getByRole('button', { name: 'Font' })
     await trigger.click()
     const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
     await expect(search).toBeFocused()
@@ -115,7 +115,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
   })
 
   test('wraps the active font and lets Tab continue outside the list', async ({ page }) => {
-    await page.getByRole('button', { name: 'Font', exact: true }).click()
+    await page.getByRole('button', { name: 'Font' }).click()
     const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
     await expect(search).toBeFocused()
     const options = page.getByRole('option')
@@ -138,7 +138,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
 
   test('keeps the font search and scrollable candidates inside a short settings body', async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 400, height: 300 })
-    await page.getByRole('button', { name: 'Font', exact: true }).click()
+    await page.getByRole('button', { name: 'Font' }).click()
     const search = page.getByRole('combobox', { name: 'Search fonts', exact: true })
     await expect(search).toBeFocused()
     await expectInside(page.locator('[data-ylc-font-combobox-menu]'), page.getByRole('tabpanel'))
@@ -150,7 +150,7 @@ test.describe('settings usability', { tag: '@fixture' }, () => {
   })
 
   test('keeps an unmatched font search open without changing storage or Undo history', async ({ page }) => {
-    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const trigger = page.getByRole('button', { name: 'Font' })
     const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
     const redo = page.getByRole('button', { name: 'Redo style change', exact: true })
     const savedAppearance = () => page.evaluate(key => chrome.storage.local.get(key), APPEARANCE_STORAGE_KEY)

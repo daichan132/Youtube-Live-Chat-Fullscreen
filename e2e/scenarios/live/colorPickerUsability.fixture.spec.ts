@@ -27,7 +27,7 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
       profile: { appearance: { backgroundColor: { r: 10, g: 20, b: 30, a: 0.4 }, membershipNameColor: { mode: 'youtube-default' } } },
     })
     await page.goto(extension.url('settings.html'))
-    await expect(page.getByRole('button', { name: 'Background Color', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Background Color' })).toBeVisible()
   })
 
   test.afterEach(async ({ page }) => {
@@ -35,9 +35,9 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
   })
 
   test('keeps internal sliders open and replaces the active picker through real Tab and Enter', async ({ page }, testInfo) => {
-    const background = page.getByRole('button', { name: 'Background Color', exact: true })
-    const text = page.getByRole('button', { name: 'Text Color', exact: true })
-    const membership = page.getByRole('button', { name: 'Member Name Color', exact: true })
+    const background = page.getByRole('button', { name: 'Background Color' })
+    const text = page.getByRole('button', { name: 'Text Color' })
+    const membership = page.getByRole('button', { name: 'Member Name Color' })
     const picker = page.getByRole('dialog', { name: 'Color picker', exact: true })
     await background.click()
     for (const name of ['Color', 'Hue', 'Alpha']) {
@@ -64,8 +64,8 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
   })
 
   test('closes a picker while Tab continues to Font without stealing focus', async ({ page }) => {
-    const background = page.getByRole('button', { name: 'Background Color', exact: true })
-    const font = page.getByRole('button', { name: 'Font', exact: true })
+    const background = page.getByRole('button', { name: 'Background Color' })
+    const font = page.getByRole('button', { name: 'Font' })
     await background.click()
 
     await tabTo(page, font)
@@ -78,8 +78,8 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
   })
 
   test('focuses a pointer-opened picker when the browser does not focus buttons on click', async ({ page }) => {
-    const background = page.getByRole('button', { name: 'Background Color', exact: true })
-    const font = page.getByRole('button', { name: 'Font', exact: true })
+    const background = page.getByRole('button', { name: 'Background Color' })
+    const font = page.getByRole('button', { name: 'Font' })
     const picker = page.getByRole('dialog', { name: 'Color picker', exact: true })
     await font.focus()
     // Emulate the native no-focus-on-click behavior while still using real input.
@@ -95,8 +95,8 @@ test.describe('color picker focus usability', { tag: '@fixture' }, () => {
   })
 
   test('finishes a held color gesture once on focus exit and keeps Escape local to the reopened picker', async ({ page, extension }) => {
-    const background = page.getByRole('button', { name: 'Background Color', exact: true })
-    const text = page.getByRole('button', { name: 'Text Color', exact: true })
+    const background = page.getByRole('button', { name: 'Background Color' })
+    const text = page.getByRole('button', { name: 'Text Color' })
     const picker = page.getByRole('dialog', { name: 'Color picker', exact: true })
     await background.click()
     await tabTo(page, picker.getByRole('slider', { name: 'Alpha', exact: true }))

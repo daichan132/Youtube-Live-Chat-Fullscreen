@@ -45,7 +45,7 @@ describe('YTDLiveChatSetting history controls', () => {
     const { getByRole, getByTestId } = renderWithStore(<YTDLiveChatSetting open onOpenChange={vi.fn()} />, store)
     commitYLCStyleUpdate({ appearance: { fontSize: originalFontSize + 2 } })
 
-    fireEvent.click(getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(getByRole('button', { name: /content\.setting\.fontFamily/ }))
     const input = getByTestId('font-family-search')
     fireEvent.keyDown(input, { key: 'z', metaKey: true })
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(originalFontSize + 2)

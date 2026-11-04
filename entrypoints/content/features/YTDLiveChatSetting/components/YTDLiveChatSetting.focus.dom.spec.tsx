@@ -39,7 +39,7 @@ describe('settings initial focus and keyboard navigation', () => {
     for (const control of [
       ...view.getAllByRole('switch').slice(0, 2),
       ...view.getAllByRole('button').filter(button => button.classList.contains('ylc-color-trigger')),
-      view.getByRole('button', { name: 'content.setting.fontFamily' }),
+      view.getByRole('button', { name: /content\.setting\.fontFamily/ }),
       view.getByRole('slider', { name: 'content.setting.fontSize' }),
       view.getByRole('spinbutton', { name: 'content.setting.fontSize' }),
     ]) {

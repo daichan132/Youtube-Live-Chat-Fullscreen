@@ -37,6 +37,8 @@ Escape dismisses visible pointer help until its hover trigger changes, and focus
 
 Use the layer constants in [`zIndex.ts`](../../shared/constants/zIndex.ts) for stacking. Keep `data-ylc-*` hooks synchronized with the [E2E page object](../../e2e/pages/ExtensionOverlay.ts) and browser inspection/capture scripts when changing the DOM.
 
+Color and font triggers include their visible current value in their accessible names so speech input can refer to the displayed text. Color triggers also describe their RGBA values.
+
 Screen-reader descriptions and live announcements use the shared `.ylc-visually-hidden` utility in [`controls.css`](../../shared/styles/controls.css), loaded by both content and settings roots. Keep their accessible relationships and live-region attributes on the owning controls.
 
 The control rail follows the chat's background and foreground hues. Its background uses the opaque chat hue to stay readable over video, and icons use opaque chat ink when it reaches 3:1 in resting and hover states; otherwise black or white provides the stronger minimum contrast. Hover and focus use that same ink. Tooltips and placement panels retain the interface theme, and forced colors use system surfaces and ink. Settings, dragging and placement remain discoverable even when a custom chat palette is transparent or uses identical text and background colors. Each rail button, including the drag handle, owns its visible keyboard focus indicator. The rail declares its selected interface language and direction locally, including its placement controls and help, while YouTube's page and chat documents retain their own attributes.
