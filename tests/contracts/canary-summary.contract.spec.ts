@@ -280,7 +280,7 @@ describe('Real YouTube canary summary', () => {
           /^            test-results$/m.test(step),
       )
 
-    expect(job).toMatch(/^    runs-on: ubuntu-24\.04$/m)
+    expect(job).toMatch(/^    runs-on: ubuntu-26\.04$/m)
     expect(upload).toMatch(/^        if: (?:\$\{\{\s*)?always\(\)(?:\s*\}\})?$/m)
     expect(upload).toMatch(/^        uses: actions\/upload-artifact@/m)
     expect(upload).toMatch(/^            playwright-report$/m)
