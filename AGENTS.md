@@ -5,7 +5,7 @@ YouTube のライブチャットをフルスクリーン上に重ねる Chrome /
 
 ## 開発環境
 
-Node.js 24 と `package.json` の `packageManager` で固定した Yarn を使う。セットアップの詳細は [CONTRIBUTING.md](CONTRIBUTING.md)。
+Node.js 26 と `package.json` の `packageManager` で固定した Yarn を使う。セットアップの詳細は [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ```bash
 yarn install --immutable

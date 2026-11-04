@@ -10,7 +10,7 @@ describe('settings popover Escape ownership', () => {
     const store = createTestStore()
     const before = store.get(chatSettingsStateAtom).profile
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, store)
-    const trigger = view.getByRole('button', { name: 'content.setting.backgroundColor' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.backgroundColor/ })
     fireEvent.click(trigger)
     const target = focus === 'slider' ? view.getByRole('slider', { name: 'Hue' }) : trigger
     target.focus()
@@ -35,7 +35,7 @@ describe('settings popover Escape ownership', () => {
   it('lets the font search consume Escape before the settings dialog', () => {
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, createTestStore())
-    fireEvent.click(view.getByRole('button', { name: 'content.setting.fontFamily' }))
+    fireEvent.click(view.getByRole('button', { name: /content\.setting\.fontFamily/ }))
 
     fireEvent.keyDown(view.getByRole('combobox'), { key: 'Escape' })
 
@@ -47,8 +47,8 @@ describe('settings popover Escape ownership', () => {
   it('keeps Escape in the picker when a click does not focus its trigger', () => {
     const onOpenChange = vi.fn()
     const view = renderWithStore(<YTDLiveChatSetting open onOpenChange={onOpenChange} />, createTestStore())
-    const trigger = view.getByRole('button', { name: 'content.setting.backgroundColor' })
-    const otherControl = view.getByRole('button', { name: 'content.setting.fontFamily' })
+    const trigger = view.getByRole('button', { name: /content\.setting\.backgroundColor/ })
+    const otherControl = view.getByRole('button', { name: /content\.setting\.fontFamily/ })
     otherControl.focus()
 
     // Native click focus differs between browsers and user preferences.

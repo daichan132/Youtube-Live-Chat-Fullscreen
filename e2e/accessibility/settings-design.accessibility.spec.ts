@@ -80,12 +80,12 @@ test.describe('settings design accessibility', () => {
     test(`keeps labels, input boundaries and keyboard focus legible in ${theme}`, async ({ page, extension }, testInfo) => {
       await extension.storage.set({ [THEME_STORAGE_KEY]: { schemaVersion: 1, writerId: 'design-accessibility', value: theme } })
       await page.goto(extension.url('settings.html'))
-      await expect(page.getByRole('button', { name: 'Font', exact: true })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Font' })).toBeVisible()
       for (const label of await page.locator('.ylc-setting-group-legend').all()) {
         expect((await colorsAt(label, 'color')).ratio).toBeGreaterThanOrEqual(4.5)
       }
-      const font = page.getByRole('button', { name: 'Font', exact: true })
-      for (const control of [font, page.getByRole('button', { name: 'Background Color', exact: true })]) {
+      const font = page.getByRole('button', { name: 'Font' })
+      for (const control of [font, page.getByRole('button', { name: 'Background Color' })]) {
         expect((await colorsAt(control.locator('.ylc-color-value, .ylc-font-combobox-trigger-text'), 'color')).ratio).toBeGreaterThanOrEqual(4.5)
         expect((await colorsAt(control, 'borderRightColor', '::after')).ratio).toBeGreaterThanOrEqual(3)
         const affordance = await control.evaluate(element => {
@@ -178,8 +178,8 @@ test.describe('settings design accessibility', () => {
     const content = page.getByRole('tabpanel')
     expect(await content.evaluate(element => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1)
     await expectInViewport(page, page.locator('[data-ylc-setting-close-button]'))
-    await expectInViewport(page, page.getByRole('button', { name: 'Font', exact: true }))
-    await page.getByRole('button', { name: 'Font', exact: true }).click()
+    await expectInViewport(page, page.getByRole('button', { name: 'Font' }))
+    await page.getByRole('button', { name: 'Font' }).click()
     await expectInViewport(page, page.getByRole('combobox', { name: 'Search fonts', exact: true }))
     await page.keyboard.press('Escape')
     const settings = page.getByRole('tab', { name: 'Settings', exact: true })
@@ -197,7 +197,7 @@ test.describe('settings design accessibility', () => {
     await cdp.send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 1 })
     try {
       expect(await page.evaluate(() => matchMedia('(pointer: coarse)').matches)).toBe(true)
-      const font = page.getByRole('button', { name: 'Font', exact: true })
+      const font = page.getByRole('button', { name: 'Font' })
       await expect(font).toBeVisible()
       for (const control of [
         font,
@@ -207,7 +207,7 @@ test.describe('settings design accessibility', () => {
       ]) {
         expect((await control.boundingBox())?.height).toBeGreaterThanOrEqual(44)
       }
-      await page.getByRole('button', { name: 'Background Color', exact: true }).click()
+      await page.getByRole('button', { name: 'Background Color' }).click()
       const hue = page.getByRole('slider', { name: 'Hue', exact: true })
       await hue.focus()
       await page.keyboard.press('Tab')
@@ -338,7 +338,7 @@ test.describe('settings design accessibility', () => {
     }, testInfo) => {
       await page.emulateMedia({ forcedColors: 'active', colorScheme })
       await page.goto(extension.url('settings.html'))
-      const trigger = page.getByRole('button', { name: 'Background Color', exact: true })
+      const trigger = page.getByRole('button', { name: 'Background Color' })
       await trigger.click()
       const saturation = page.locator('.react-colorful__saturation .react-colorful__interactive')
       await page.keyboard.press('Tab')

@@ -76,7 +76,7 @@ export const SettingColorPicker = ({ rgba, label, onChange, onInteractionStart, 
       <button
         ref={triggerRef}
         type='button'
-        aria-label={label}
+        aria-label={`${label} ${formatColorValue(rgba)}`}
         aria-describedby={descriptionId}
         aria-haspopup='dialog'
         aria-controls={display ? pickerId : undefined}

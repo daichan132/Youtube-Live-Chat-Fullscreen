@@ -196,7 +196,7 @@ test.describe('popup', { tag: '@popup' }, () => {
   test('keeps font search composition separate from committing the highlighted option', async ({ page, extension }) => {
     expect(await patchOverlayStore(extension, { profile: { appearance: { fontFamily: 'Roboto' } } })).not.toBeNull()
     await page.goto(extension.url('settings.html'))
-    const trigger = page.getByRole('button', { name: 'Font', exact: true })
+    const trigger = page.getByRole('button', { name: 'Font' })
     const undo = page.getByRole('button', { name: 'Undo style change', exact: true })
     const savedFont = async () =>
       (await readStorageEntry<AppearanceValue>(page, APPEARANCE_STORAGE_KEY))?.value.profile.appearance.fontFamily

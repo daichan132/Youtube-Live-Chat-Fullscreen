@@ -18,7 +18,7 @@ For a small code contribution, start with a behavior you can see and test on its
 
 ## Run a development build
 
-Fork and clone the repository, then run these commands from its root. Use Node.js 24 and the Yarn version in [`package.json`](package.json); Corepack selects that pinned version. If `corepack` is unavailable, follow [Corepack's installation instructions](https://github.com/nodejs/corepack#how-to-install).
+Fork and clone the repository, then run these commands from its root. Use Node.js 26 and the Yarn version in [`package.json`](package.json); Corepack selects that pinned version. If `corepack` is unavailable, follow [Corepack's installation instructions](https://github.com/nodejs/corepack#how-to-install).
 
 ```bash
 corepack enable
