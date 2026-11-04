@@ -63,6 +63,26 @@ describe('Playwright project classification', () => {
     expect(filesFor('fixture')).toEqual([...FIXTURE_SPECS].sort())
     expect(filesFor('canary')).toEqual([...CANARY_SPECS].sort())
     expect(report.config.projects.find(project => project.name === 'fixture')?.retries).toBe(0)
+
+    const fixtureIds = specs
+      .filter(spec => spec.tests.some(test => test.projectName === 'fixture'))
+      .map(spec => spec.id)
+      .sort()
+    const shardIds = await Promise.all(
+      [1, 2].map(async shard => {
+        const { stdout: shardOutput } = await execute(
+          process.execPath,
+          [require.resolve('@playwright/test/cli'), 'test', '--list', '--project=fixture', `--shard=${shard}/2`, '--reporter=json'],
+          { cwd: projectRoot, timeout: 15_000, env: { ...process.env, CI: '1' } },
+        )
+        const shardReport: JSONReport = JSON.parse(shardOutput)
+        expect(shardReport.errors).toEqual([])
+        return discoveredSpecs(shardReport.suites).map(spec => spec.id)
+      }),
+    )
+    const combined = shardIds.flat()
+    expect(new Set(combined).size).toBe(combined.length)
+    expect(combined.sort()).toEqual(fixtureIds)
   }, 20_000)
 
   it('blocks external network for deterministic projects but allows the YouTube canary', () => {
