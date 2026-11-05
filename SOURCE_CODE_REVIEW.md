@@ -4,7 +4,7 @@ This archive contains the source and pinned toolchain needed to rebuild the Fire
 
 ## Toolchain
 
-- Ubuntu 24.04 in the release workflow
+- Ubuntu 26.04 in the release workflow
 - Node.js 26, also recorded in `mise.toml`
 - Yarn, pinned by `package.json` and `.yarnrc.yml` and bundled in `.yarn/releases/`
 

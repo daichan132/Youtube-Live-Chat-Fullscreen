@@ -18,7 +18,7 @@ permissions:
 
 jobs:
   quality:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -33,7 +33,7 @@ jobs:
 
   package:
     needs: quality
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -76,7 +76,7 @@ jobs:
         shard: [1, 2]
     # Visual baselines are generated for Playwright 1.64.1 Chromium on this
     # fixed GitHub-hosted image. Avoid ubuntu-latest image drift.
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -127,7 +127,7 @@ jobs:
   production-package-smoke:
     if: github.event_name == 'workflow_dispatch'
     needs: package
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7

@@ -123,7 +123,7 @@ describe('release publication job contracts', () => {
   ])('rejects moving the %s protected environment to another job', (name, environment) => {
     const withoutEnvironment = replaceJob(publish, name, job => job.replace(`    environment: ${environment}\n`, ''))
     const changed = replaceJob(withoutEnvironment, 'validate-candidate', job =>
-      job.replace('    runs-on: ubuntu-24.04\n', `    runs-on: ubuntu-24.04\n    environment: ${environment}\n`),
+      job.replace('    runs-on: ubuntu-26.04\n', `    runs-on: ubuntu-26.04\n    environment: ${environment}\n`),
     )
 
     expect(() => assertReleaseWorkflows(candidate, changed)).toThrow()
