@@ -70,6 +70,12 @@ Every testing-mode browser command builds `.output/chrome-mv3-testing` first.
 
 Install the Playwright browser explicitly with `yarn playwright install --with-deps chromium`.
 
+To run the same Linux browser stack locally with Docker, use `bash scripts/verify/browser-docker.sh fixture`. The script uses the exact Playwright image version from `package.json`, verifies the Node major from `mise.toml`, copies the current checkout into an isolated container, installs the locked dependencies, and builds the testing extension. Pass Playwright options after the project, for example `bash scripts/verify/browser-docker.sh fixture --shard=1/2`. `accessibility`, `visual` and `production-chrome` are also supported. Reports and test results go to `.cache/browser-docker/`; set `YLC_DOCKER_RESULTS_DIR` to use a separate directory for each concurrent invocation. Dependencies are cached in the Docker volume `ylc-browser-yarn-cache`, which can be removed with `docker volume rm ylc-browser-yarn-cache` when no run is using it. This command needs Docker and network access for uncached dependencies; it does not alter the host's `node_modules` or build output.
+
+The `production-chrome` option builds the production ZIP, installs `unzip` in the disposable container if needed, and tests the extracted ZIP without the testing bridge. It also needs access to the container image's Ubuntu package repository.
+
+The Docker host architecture and fonts may differ from the pinned GitHub runner. A local visual mismatch is diagnostic evidence, not permission to replace Linux baselines from a different environment.
+
 ## Where a Vitest test belongs
 
 New specs use an explicit suffix:
@@ -149,11 +155,13 @@ Verification helpers transfer a newly created background tab to the caller only 
 - `quality` runs `yarn verify`.
 - `package`, after quality, builds Chrome and Firefox production ZIPs and verifies package contracts.
 - `package` also builds and uploads the testing extension consumed by the next job. The production Chrome ZIP artifact is uploaded only for `workflow_dispatch`, where the packaged startup smoke consumes it.
-- `browser-contracts` runs the complete fixture project and accessibility project on pull requests and pushes to `main`; manual runs add the visual project against the same testing artifact.
+- `browser-shards` runs the complete fixture project in two isolated runners on pull requests and pushes to `main`; shard 1 also runs accessibility. Manual runs add the visual project against the same testing artifact. The `browser-contracts` check succeeds only when both shards succeed, and each shard uploads separately named diagnostics.
 - `production-package-smoke` is manual and boots the exact production Chrome ZIP.
 
 The testing build is therefore always consumed, while visual regression and exact-artifact startup remain explicit manual gates.
 Direct pushes to `main` run the same quality, package and browser gates as pull requests. A merged pull request therefore runs these gates both before and after the merge. CI concurrency groups include the event type, so a push cannot cancel a manual visual or production smoke run. Release-candidate and store-publication workflows remain manual.
+
+If GitHub shows a job as running after every step, including `Complete job`, has succeeded, inspect the job record as well as the step results: `gh api repos/{owner}/{repo}/actions/jobs/JOB_ID --jq '{status, conclusion, started_at, completed_at, steps}'`. Keep the run and job IDs, timestamps and runner identity for diagnosis; successful steps are not a completed successful job. Similar GitHub-hosted runner status inconsistencies have been [reported upstream](https://github.com/orgs/community/discussions/209225). A new run provides separate evidence and does not change the unresolved result of the old run.
 
 ## Release ownership
 
