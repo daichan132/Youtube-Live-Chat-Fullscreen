@@ -165,6 +165,10 @@ test.describe('appearance slider usability', { tag: '@fixture' }, () => {
     await testInfo.attach('aligned-settings-sliders', { body: await page.screenshot(), contentType: 'image/png' })
     await page.setViewportSize({ width: 400, height: 300 })
     const range = page.getByRole('slider', { name: 'Text Size', exact: true })
+    // Resizing reflows the compact header and its scroll viewport. Reveal the
+    // control before measuring it instead of depending on focus-scroll timing.
+    await range.scrollIntoViewIfNeeded()
+    await expect(range).toBeInViewport({ ratio: 1 })
     await setRangeWithKeyboard(range, 18)
     await expect(range).toHaveValue('18')
     const bounds = await range.boundingBox()
