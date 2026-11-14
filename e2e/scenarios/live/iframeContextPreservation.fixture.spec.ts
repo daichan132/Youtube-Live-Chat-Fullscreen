@@ -20,6 +20,54 @@ const createState = (id: string, mode: 'live' | 'archive', continuationVideoId?:
 }
 
 test.describe('borrowed iframe browsing context', () => {
+  test('returns a cached replay frame before committed navigation and reborrows it after cancellation', {
+    tag: ['@fixture', '@archive'],
+  }, async ({ page, extension }) => {
+    const state = createState('ylc-navigation-handoff', 'archive', 'ylc-navigation-handoff')
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await scenario.load(state)
+    await scenario.settleNativeIframeContext()
+    await scenario.captureNativeIframeContext()
+    await scenario.enterFullscreen()
+    await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+    const watchUrl = page.url()
+
+    expect(await scenario.cancelNextHistoryNavigation('/results?search_query=cancelled')).toEqual({
+      before: watchUrl,
+      after: watchUrl,
+      cancelled: true,
+    })
+    await overlay.expectArchiveChatPlayable({ timeout: 12000 })
+    await expect
+      .poll(() => scenario.observeNativeIframeContext())
+      .toMatchObject({
+        connected: true,
+        sameDocument: true,
+        sameRuntimeObject: true,
+        loadEvents: 0,
+      })
+
+    const popup = await page.context().newPage()
+    try {
+      await popup.goto(extension.url('popup.html'))
+      await page.bringToFront()
+      await scenario.pushHistoryLocation('/results?search_query=committed')
+      await expect.poll(() => readContentStatusViaPopup(popup)).toMatchObject({ status: 'unsupported' })
+      await overlay.expectOverlayRemoved({ timeout: 12000 })
+      await expect.poll(() => scenario.nativeIframeCount()).toBe(1)
+      expect(await scenario.observeNativeIframeContext()).toMatchObject({
+        connected: true,
+        sameDocument: true,
+        sameRuntimeObject: true,
+        loadEvents: 0,
+      })
+    } finally {
+      await popup.close()
+      await page.bringToFront()
+    }
+  })
+
   for (const mode of ['live', 'archive'] as const) {
     test(
       `preserves the current ${mode} runtime when its continuation belongs to the previous SPA video`,

@@ -36,7 +36,9 @@ YouTube can redirect a handle entry to a legacy channel name while retaining `/l
 - committed `navigation.currententrychange`, or WXT `wxt:locationchange` polling when the Navigation API is unavailable;
 - YouTube `yt-navigate-finish`, which may retry a previously exhausted channel-live activation after the page has populated its player.
 
-The Navigation API's `navigate` event precedes the URL change and may be cancelled. WXT forwards that early destination and remembers it even when cancelled, so the extension observes committed entries instead; cancelling and later retrying the same destination does not dispose or strand the current session. The fallback reads the current URL after WXT detects a change.
+The Navigation API's `navigate` event precedes the URL change and may be cancelled. WXT forwards that early destination and remembers it even when cancelled, so bootstrap observes committed entries instead; cancelling and later retrying the same destination does not dispose or strand the current session. The fallback reads the current URL after WXT detects a change.
+
+The active runtime separately uses `navigate` for a reversible resource handoff: when the destination changes the activation key, it synchronously returns a borrowed native iframe before the source URL becomes stale. YouTube caches and reuses that iframe across videos; discarding it after commit would leave its native panel empty. This early handoff does not activate a destination, stop the session, or change its generation. If navigation is cancelled, the next scheduled observation can borrow the same iframe again. Same-video and already-cancelled events leave it attached. The content scope owns and removes the listener.
 
 `ContentBootstrap` creates no session on unsupported pages. Session construction is normalized through a promise so synchronous and asynchronous failures enter the same bounded retry sequence: initial attempt, 250 ms, then 1 second. After exhaustion it reports only a sanitized route-level failure and remains stopped until the surface changes or a completed navigation explicitly retries it.
 

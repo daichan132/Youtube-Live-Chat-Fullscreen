@@ -12,6 +12,7 @@ import {
 import { collectPageObservation } from '../platform/youtube/collectPageObservation'
 import { matchesProbe, nativeChatIframeProbe, runtimeBoundarySelector } from '../platform/youtube/selectorCatalog'
 import { type PageObservation, withObservationGeneration } from '../platform/youtube/types'
+import { getYouTubeContentSurface } from '../platform/youtube/youtubeSurface'
 import { ResourceReconciler } from './ResourceReconciler'
 import { type ChatDecision, resolveChatDecision } from './resolveChatDecision'
 import type { ChatIframeLease } from './resources/ChatIframeLease'
@@ -144,6 +145,9 @@ export class ChatRuntimeImpl implements ChatRuntime {
     document.addEventListener('fullscreenchange', this.handlePageSignal, true)
     this.contentScope.addCleanup(() => document.removeEventListener('fullscreenchange', this.handlePageSignal, true))
     this.contentScope.listen(document, 'yt-navigate-finish', this.handleNavigation)
+    if (typeof globalThis.navigation?.addEventListener === 'function') {
+      this.contentScope.listen(globalThis.navigation, 'navigate', this.handleBeforeNavigation)
+    }
     this.contentScope.listen(document, 'yt-page-data-updated', () => this.scheduleReconcile())
     document.addEventListener('load', this.handleResourceLoad, true)
     this.contentScope.addCleanup(() => document.removeEventListener('load', this.handleResourceLoad, true))
@@ -246,6 +250,22 @@ export class ChatRuntimeImpl implements ChatRuntime {
   private handleNavigation = () => {
     this.applyStandaloneTransition(resetRuntimeRetry(this.model))
     this.scheduleReconcile()
+  }
+
+  private handleBeforeNavigation = (event: Event) => {
+    if (event.defaultPrevented || this.resources.lease?.ownership !== 'borrowed') return
+    const destination = (event as NavigateEvent).destination?.url
+    if (
+      !destination ||
+      getYouTubeContentSurface(destination)?.activationKey === getYouTubeContentSurface(window.location.href)?.activationKey
+    )
+      return
+    // YouTube reuses its cached chatframe across videos. Return it while the
+    // source URL is still current, before committed navigation invalidates it.
+    // Only the borrowed resource changes ownership; cancellation keeps this
+    // session alive and the next observation can borrow the same frame again.
+    this.cancelScheduledFrame()
+    if (this.updateResources(() => this.resources.releaseIframe(this.lastObservation?.targets ?? null))) this.scheduleReconcile()
   }
 
   private handlePageSignal = () => {
