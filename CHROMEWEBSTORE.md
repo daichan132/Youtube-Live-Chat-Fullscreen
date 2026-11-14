@@ -42,7 +42,7 @@ The public listing declares no data collection or use. Data is not sold, used fo
 
 ## Version history
 
-- **2.3.20 — 2026-11-15 — Preparing candidate.** Fix font-size reflection, add text-shadow strength, align slider widths with the other menus, show values only while adjusting, enlarge resize targets, support legacy channel live URLs, keep Firefox backup import in an extension tab, and return borrowed chat before SPA navigation so YouTube can reuse its cached iframe.
+- **2.3.20 — 2026-11-15 — Submitted to Chrome and Firefox; awaiting store review/distribution.** Fix font-size reflection, add text-shadow strength, align slider widths with the other menus, show values only while adjusting, enlarge resize targets, support legacy channel live URLs, keep Firefox backup import in an extension tab, and return borrowed chat before SPA navigation so YouTube can reuse its cached iframe. The [GitHub Release](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/releases/tag/v2.3.20) is public; its notes record the candidate artifact, tested and unverified paths, package hashes, and submission status.
 - **2.3.19 — Candidate only; not submitted.** Real-site review found that fullscreen video navigation could disconnect YouTube's cached replay iframe. Superseded by 2.3.20; retain the original tag and candidate proof.
 - **2.3.18 — Published.** Public Chrome and Firefox listing versions checked on 2026-11-15. Publication date and older changes are recorded in [GitHub Releases](https://github.com/daichan132/Youtube-Live-Chat-Fullscreen/releases).
 
