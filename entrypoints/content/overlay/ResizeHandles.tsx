@@ -5,14 +5,15 @@ import type { ResizeDirection } from '../features/Draggable/hooks/clipGeometry'
 const DIRECTIONS: ResizeDirection[] = ['top', 'right', 'bottom', 'left', 'topRight', 'bottomRight', 'bottomLeft', 'topLeft']
 
 const HANDLE_CLASS: Record<ResizeDirection, string> = {
-  top: 'absolute -top-4 left-2 right-2 h-4 cursor-n-resize touch-none',
-  right: 'absolute -right-4 top-2 bottom-2 w-4 cursor-e-resize touch-none',
-  bottom: 'absolute -bottom-4 left-2 right-2 h-4 cursor-s-resize touch-none',
-  left: 'absolute -left-4 top-2 bottom-2 w-4 cursor-w-resize touch-none',
-  topRight: 'absolute -right-4 -top-4 size-4 cursor-ne-resize touch-none',
-  bottomRight: 'absolute -right-4 -bottom-4 size-4 cursor-se-resize touch-none',
-  bottomLeft: 'absolute -left-4 -bottom-4 size-4 cursor-sw-resize touch-none',
-  topLeft: 'absolute -left-4 -top-4 size-4 cursor-nw-resize touch-none',
+  // Include the painted border without covering native controls at its inside edge.
+  top: 'absolute -top-[22px] left-0.5 right-0.5 h-6 cursor-n-resize',
+  right: 'absolute -right-[22px] top-0.5 bottom-0.5 w-6 cursor-e-resize',
+  bottom: 'absolute -bottom-[22px] left-0.5 right-0.5 h-6 cursor-s-resize',
+  left: 'absolute -left-[22px] top-0.5 bottom-0.5 w-6 cursor-w-resize',
+  topRight: 'absolute -right-[22px] -top-[22px] size-6 cursor-ne-resize',
+  bottomRight: 'absolute -right-[22px] -bottom-[22px] size-6 cursor-se-resize',
+  bottomLeft: 'absolute -left-[22px] -bottom-[22px] size-6 cursor-sw-resize',
+  topLeft: 'absolute -left-[22px] -top-[22px] size-6 cursor-nw-resize',
 }
 
 export const ResizeHandles = ({ onPointerDown }: { onPointerDown: PointerEventHandler<HTMLElement> }) => (
@@ -22,7 +23,7 @@ export const ResizeHandles = ({ onPointerDown }: { onPointerDown: PointerEventHa
         key={direction}
         data-ylc-resize-direction={direction}
         aria-hidden='true'
-        className={HANDLE_CLASS[direction]}
+        className={`${HANDLE_CLASS[direction]} touch-none select-none`}
         style={{ pointerEvents: 'auto', zIndex: CHAT_PANEL_LAYER.interactionOverlay }}
         onPointerDown={onPointerDown}
       />

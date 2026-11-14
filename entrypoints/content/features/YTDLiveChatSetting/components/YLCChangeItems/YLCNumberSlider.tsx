@@ -1,6 +1,6 @@
-import { useAtomValue, useStore } from 'jotai'
+import { atom, useAtomValue, useStore } from 'jotai'
 import type { CSSProperties } from 'react'
-import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react'
+import { useCallback, useId, useMemo } from 'react'
 import type { TranslationKey } from '@/shared/i18n/generated/translationTypes'
 import { useT } from '@/shared/i18n/react'
 import { APPEARANCE_NUMBER_LIMITS, type AppearanceNumberKey } from '@/shared/settings/appearanceLimits'
@@ -24,52 +24,14 @@ export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) 
   const storeValue = useAtomValue(effectiveAppearanceAtoms[settingKey])
   const { beginYLCStyleGesture, commitYLCStyleUpdate, finishYLCStyleGesture, previewYLCStyleUpdate } = useStyleHistoryCommands()
   const gestureId = `range:${settingKey}`
-  const unitId = useId()
+  const isAdjusting = useAtomValue(useMemo(() => atom(get => get(editorSessionStateAtom).activeGesture?.id === gestureId), [gestureId]))
+  const unit = settingKey === 'textShadow' ? '%' : 'px'
+  const anchorName = `--ylc-range-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
   const value = Math.min(max, Math.max(min, storeValue))
   const displayValue = Math.round(storeValue)
-  const progress = `${((value - min) / (max - min)) * 100}%`
-  const [numberDraft, setNumberDraft] = useState<string | null>(null)
-  const numberDraftRef = useRef('')
-  const numberBaseRef = useRef(storeValue)
-  const numberDirtyRef = useRef(false)
-  const composingRef = useRef(false)
-
-  useLayoutEffect(() => {
-    // A change to this setting invalidates an unfinished local edit. Changes
-    // to other fields remain intact when this field eventually commits.
-    if (numberDirtyRef.current && numberBaseRef.current !== storeValue) {
-      numberDirtyRef.current = false
-      numberDraftRef.current = ''
-      setNumberDraft(null)
-    }
-    numberBaseRef.current = storeValue
-  }, [storeValue])
-
-  const restoreNumber = useCallback(() => {
-    const current = store.get(effectiveAppearanceAtoms[settingKey])
-    const text = String(Math.round(current))
-    numberBaseRef.current = current
-    numberDirtyRef.current = false
-    numberDraftRef.current = text
-    setNumberDraft(null)
-  }, [settingKey, store])
-
-  const finishNumberEdit = useCallback(() => {
-    if (!numberDirtyRef.current) return
-    const current = store.get(effectiveAppearanceAtoms[settingKey])
-    const text = numberDraftRef.current.trim()
-    const next = Number(text)
-    if (composingRef.current || current !== numberBaseRef.current || !text || !Number.isFinite(next) || !Number.isInteger(next)) {
-      restoreNumber()
-      return
-    }
-    const clamped = Math.min(max, Math.max(min, next))
-    numberDirtyRef.current = false
-    commitYLCStyleUpdate({ appearance: { [settingKey]: clamped } })
-    restoreNumber()
-  }, [commitYLCStyleUpdate, max, min, restoreNumber, settingKey, store])
-
+  const ratio = (value - min) / (max - min)
+  const valueText = `${displayValue}${unit}`
   const handleChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const next = Number(event.target.value)
@@ -88,7 +50,16 @@ export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) 
   const finishGesture = useCallback(() => finishYLCStyleGesture(gestureId), [finishYLCStyleGesture, gestureId])
 
   return (
-    <div className='ylc-range-field'>
+    <div
+      className='ylc-range-field'
+      style={
+        {
+          '--ylc-range-anchor': anchorName,
+          '--ylc-range-progress': `${ratio * 100}%`,
+          '--ylc-range-ratio': ratio,
+        } as CSSProperties
+      }
+    >
       <input
         type='range'
         className='ylc-range'
@@ -97,12 +68,9 @@ export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) 
         step={1}
         value={value}
         aria-label={t(labelKey)}
-        aria-valuetext={`${displayValue}px`}
-        style={{ '--ylc-range-progress': progress } as CSSProperties}
+        aria-valuetext={valueText}
         onChange={handleChange}
         onPointerDown={event => {
-          // Commit a previously focused numeric draft before starting this
-          // range gesture, so its blur cannot finish the new gesture early.
           event.currentTarget.focus({ preventScroll: true })
           event.currentTarget.setPointerCapture?.(event.pointerId)
           beginGesture()
@@ -118,55 +86,11 @@ export const YLCNumberSlider = ({ settingKey, labelKey }: YLCNumberSliderProps) 
         }}
         onBlur={finishGesture}
       />
-      <span dir='ltr' className='ylc-range-value' style={{ display: 'inline-flex', alignItems: 'center', gap: 3 }}>
-        <input
-          type='number'
-          inputMode='numeric'
-          min={min}
-          max={max}
-          step={1}
-          value={numberDraft ?? String(displayValue)}
-          aria-label={t(labelKey)}
-          aria-describedby={unitId}
-          className='ylc-number-input ylc-theme-focus-ring-soft'
-          style={{
-            width: 52,
-            minWidth: 0,
-            padding: '0 4px',
-            boxSizing: 'border-box',
-            color: 'var(--ylc-text-primary)',
-            font: 'inherit',
-            textAlign: 'center',
-          }}
-          onFocus={restoreNumber}
-          onChange={event => {
-            numberDirtyRef.current = true
-            numberDraftRef.current = event.target.value
-            setNumberDraft(event.target.value)
-          }}
-          onCompositionStart={() => {
-            composingRef.current = true
-          }}
-          onCompositionEnd={() => {
-            composingRef.current = false
-          }}
-          onKeyDown={event => {
-            if (event.nativeEvent.isComposing || composingRef.current) return
-            if (event.key === 'Enter') {
-              event.preventDefault()
-              finishNumberEdit()
-            } else if (event.key === 'Escape') {
-              event.preventDefault()
-              event.stopPropagation()
-              restoreNumber()
-            }
-          }}
-          onBlur={finishNumberEdit}
-        />
-        <span id={unitId} aria-hidden='true'>
-          px
+      {isAdjusting && (
+        <span className='ylc-range-feedback' dir='ltr' aria-hidden='true'>
+          {valueText}
         </span>
-      </span>
+      )}
     </div>
   )
 }

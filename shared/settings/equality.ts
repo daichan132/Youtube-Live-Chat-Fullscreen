@@ -35,6 +35,7 @@ const areAppearancesEqual = compareFields<ChatAppearance>({
   membershipNameColor: areMembershipColorsEqual,
   fontFamily: equalValue,
   fontSize: equalValue,
+  textShadow: equalValue,
   blur: equalValue,
   spacing: equalValue,
   showUserName: equalValue,

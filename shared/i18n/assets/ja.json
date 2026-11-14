@@ -26,6 +26,7 @@
       "fontFamilyDefault": "既定",
       "fontSearch": "書体を検索",
       "fontNotFound": "一致する書体がありません",
+      "textShadow": "文字の影",
       "fontSize": "フォントサイズ",
       "blur": "ぼかし",
       "space": "間隔",

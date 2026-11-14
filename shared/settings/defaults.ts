@@ -16,6 +16,7 @@ export const DEFAULT_CHAT_PROFILE: ChatProfile = {
     membershipNameColor: { mode: 'youtube-default' },
     fontFamily: null,
     fontSize: 13,
+    textShadow: 0,
     blur: 0,
     spacing: 0,
     showUserName: true,

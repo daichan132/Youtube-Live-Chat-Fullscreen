@@ -2,7 +2,7 @@
 
 *Part of the architecture set: [overview](../engineering.md) · [Settings, state, and storage](./settings-and-state.md) · [The overlay and iframe styling](./overlay-and-styling.md) · [Internationalization](./i18n.md) — see the [documentation index](../README.md).*
 
-The content script is injected into HTTPS `www.youtube.com` pages but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, and `/user/<name>/live`. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
+The content script is injected into HTTPS `www.youtube.com` pages but creates the application runtime only on a supported video surface. Supported entry URLs are `/watch`, direct `/live/<videoId>`, and channel live entries such as `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, `/user/<name>/live`, and legacy `/<name>/live` URLs. One content session owns one React tree and one `ChatRuntimeImpl`; leaving those surfaces disposes the complete session.
 
 ## What this owns
 
@@ -25,9 +25,11 @@ Overlay geometry and pointer interaction run separately in `overlay/`. Settings 
 | --- | --- | --- |
 | `/watch?v=<id>` | `watch` | query parameter, or pending when absent |
 | `/live/<id>` | `live` | path segment |
-| `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, `/user/<name>/live` | `live` | initially unknown |
+| `/@name/live`, `/channel/<id>/live`, `/c/<name>/live`, `/user/<name>/live`, `/<name>/live` | `live` | initially unknown |
 
 A channel live entry is valid before YouTube has resolved the current stream. `getCurrentYouTubeVideoId()` then collects candidates from the player API, watch surface attributes, and native chat iframe URLs. It accepts the identity only when exactly one candidate remains, preventing a stale SPA subtree from selecting the wrong video.
+
+YouTube can redirect a handle entry to a legacy channel name while retaining `/live`. Those names use the same identity resolution and session lifecycle; reserved platform paths such as `/feed/live` or incomplete `/channel/live` are not channel entries.
 
 `entrypoints/content/index.tsx` owns the bootstrap and forwards two signals:
 

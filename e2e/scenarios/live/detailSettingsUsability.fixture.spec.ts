@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { setRangeWithKeyboard } from '@e2e/utils/rangeInput'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
 import type { Locator } from '@playwright/test'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
@@ -82,9 +83,8 @@ test.describe('localized settings header and independent tab scrolling', { tag: 
         await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
         await page.keyboard.press('ArrowLeft')
         await expect(tabs.nth(0)).toBeFocused()
-        const fontSize = settingsFrame.getByRole('spinbutton').first()
-        await fontSize.fill('18')
-        await fontSize.press('Enter')
+        const fontSize = settingsFrame.getByRole('slider').first()
+        await setRangeWithKeyboard(fontSize, 18)
         await expect(undo).toBeEnabled()
         await tabs.nth(0).click()
         await page.keyboard.press('Tab')

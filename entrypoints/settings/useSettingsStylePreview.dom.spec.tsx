@@ -39,42 +39,45 @@ const setup = (settingKey: NumberSliderSettingKey = 'fontSize') => {
 const advanceFrame = () => act(() => vi.advanceTimersToNextFrame())
 
 describe('settings style preview sender', () => {
-  it.each(['fontSize', 'blur', 'spacing'] as const)('previews %s before pointer release and commits one Undo entry', settingKey => {
-    const { store, postToParent, committed, unsubscribeCommitted, range } = setup(settingKey)
-    const initial = store.get(chatSettingsStateAtom).profile
-    expect(postToParent).not.toHaveBeenCalled()
+  it.each(['fontSize', 'textShadow', 'blur', 'spacing'] as const)(
+    'previews %s before pointer release and commits one Undo entry',
+    settingKey => {
+      const { store, postToParent, committed, unsubscribeCommitted, range } = setup(settingKey)
+      const initial = store.get(chatSettingsStateAtom).profile
+      expect(postToParent).not.toHaveBeenCalled()
 
-    fireEvent.pointerDown(range, { pointerId: 7, button: 0 })
-    fireEvent.input(range, { target: { value: settingKey === 'fontSize' ? '20' : '4' } })
-    fireEvent.input(range, { target: { value: settingKey === 'fontSize' ? '30' : '8' } })
-    expect(committed).not.toHaveBeenCalled()
-    expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
-    advanceFrame()
+      fireEvent.pointerDown(range, { pointerId: 7, button: 0 })
+      fireEvent.input(range, { target: { value: settingKey === 'fontSize' ? '20' : '4' } })
+      fireEvent.input(range, { target: { value: settingKey === 'fontSize' ? '30' : '8' } })
+      expect(committed).not.toHaveBeenCalled()
+      expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
+      advanceFrame()
 
-    const finalValue = settingKey === 'fontSize' ? 30 : 8
-    const expectedProfile = { ...initial, appearance: { ...initial.appearance, [settingKey]: finalValue } }
-    expect(postToParent).toHaveBeenCalledOnce()
-    expect(postToParent).toHaveBeenLastCalledWith({
-      type: SETTINGS_FRAME_MESSAGE.stylePreview,
-      active: true,
-      profile: expectedProfile,
-    })
+      const finalValue = settingKey === 'fontSize' ? 30 : 8
+      const expectedProfile = { ...initial, appearance: { ...initial.appearance, [settingKey]: finalValue } }
+      expect(postToParent).toHaveBeenCalledOnce()
+      expect(postToParent).toHaveBeenLastCalledWith({
+        type: SETTINGS_FRAME_MESSAGE.stylePreview,
+        active: true,
+        profile: expectedProfile,
+      })
 
-    fireEvent.pointerUp(range, { pointerId: 7 })
-    fireEvent.lostPointerCapture(range, { pointerId: 7 })
-    fireEvent.blur(range)
+      fireEvent.pointerUp(range, { pointerId: 7 })
+      fireEvent.lostPointerCapture(range, { pointerId: 7 })
+      fireEvent.blur(range)
 
-    expect(committed).toHaveBeenCalledOnce()
-    expect(store.get(chatSettingsStateAtom).profile).toEqual(expectedProfile)
-    expect(store.get(editorSessionStateAtom).past).toEqual([initial])
-    expect(postToParent).toHaveBeenCalledTimes(2)
-    expect(postToParent).toHaveBeenLastCalledWith({
-      type: SETTINGS_FRAME_MESSAGE.stylePreview,
-      active: false,
-      profile: expectedProfile,
-    })
-    unsubscribeCommitted()
-  })
+      expect(committed).toHaveBeenCalledOnce()
+      expect(store.get(chatSettingsStateAtom).profile).toEqual(expectedProfile)
+      expect(store.get(editorSessionStateAtom).past).toEqual([initial])
+      expect(postToParent).toHaveBeenCalledTimes(2)
+      expect(postToParent).toHaveBeenLastCalledWith({
+        type: SETTINGS_FRAME_MESSAGE.stylePreview,
+        active: false,
+        profile: expectedProfile,
+      })
+      unsubscribeCommitted()
+    },
+  )
 
   it('publishes the final value immediately when pointer release precedes the scheduled preview', () => {
     const { store, postToParent, range } = setup()

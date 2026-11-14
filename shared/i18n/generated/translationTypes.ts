@@ -131,6 +131,7 @@ export type TranslationKey =
   | 'content.setting.resetToDefaultColor'
   | 'content.setting.space'
   | 'content.setting.superChatBarDisplay'
+  | 'content.setting.textShadow'
   | 'content.setting.theme'
   | 'content.setting.themeMode.dark'
   | 'content.setting.themeMode.light'

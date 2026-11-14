@@ -146,6 +146,44 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     }
   })
 
+  test('scales shadow on ordinary messages and names', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await patchOverlayStore(extension, { profile: { display: { idleVisibility: 'always-visible', contentMode: 'full-chat' } } })
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    // Compare shadow pixels after the overlay's initial opacity transition.
+    await expect(page.locator('[data-ylc-chat-viewport]')).toHaveCSS('opacity', '1')
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('yt-live-chat-item-list-renderer').evaluate(items => {
+      items.insertAdjacentHTML(
+        'beforeend',
+        `<yt-live-chat-text-message-renderer>
+        <span id="author-name" data-shadow-name>Viewer</span><span id="message" data-shadow-message style="display:inline-block;background:white;color:black;font-family:Arial,sans-serif">Message</span>
+      </yt-live-chat-text-message-renderer><button data-shadow-control>Control</button>`,
+      )
+    })
+    const images: Buffer[] = []
+    for (const strength of [0, 30, 100, 0]) {
+      await patchOverlayStore(extension, { profile: { appearance: { textShadow: strength } } })
+      for (const selector of ['[data-shadow-name]', '[data-shadow-message]']) {
+        await expect.poll(() => chat.locator(selector).evaluate(el => getComputedStyle(el).textShadow === 'none')).toBe(strength === 0)
+      }
+      await expect(chat.locator('[data-shadow-control]')).toHaveCSS('text-shadow', 'none')
+      const screenshot = await chat
+        .locator('[data-shadow-message]')
+        .screenshot({ path: testInfo.outputPath(`shadow-${images.length}-${strength}.png`) })
+      images.push(screenshot)
+      await testInfo.attach(`shadow-${images.length}-${strength}`, { body: screenshot, contentType: 'image/png' })
+    }
+    expect(images[0]).toBeDefined()
+    expect(images[1]).toBeDefined()
+    expect(images[0]?.equals(images[1] as Buffer)).toBe(false)
+    expect(images[1]?.equals(images[2] as Buffer)).toBe(false)
+    expect(images[0]?.equals(images[3] as Buffer)).toBe(true)
+  })
+
   test('applies each chat visibility setting to its own native surface', { tag: '@fixture' }, async ({ page, extension }) => {
     const scenario = new YouTubeScenario(page)
     const overlay = new ExtensionOverlay(page)
@@ -442,51 +480,123 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     }
   })
 
-  test('resizes from every edge and corner while preserving each opposite edge', { tag: '@fixture' }, async ({ page, extension }, testInfo) => {
+  test('catches every resize edge and corner on both sides of the visible border', { tag: '@fixture' }, async ({ page, extension }) => {
     const scenario = new YouTubeScenario(page)
     const overlay = new ExtensionOverlay(page)
-    await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
-    const storagePage = await openStoragePage(extension, page)
-    try {
-      await scenario.load(scenarioState)
-      await scenario.enterFullscreen()
-      await overlay.expectChatLoaded({ timeout: 12000 })
-      const cases = [
-        ['top', { x: 0, y: 10 }, { x: 100, y: 90, width: 400, height: 290 }],
-        ['right', { x: 10, y: 0 }, { x: 100, y: 80, width: 410, height: 300 }],
-        ['bottom', { x: 0, y: 10 }, { x: 100, y: 80, width: 400, height: 310 }],
-        ['left', { x: 10, y: 0 }, { x: 110, y: 80, width: 390, height: 300 }],
-        ['topRight', { x: 10, y: 10 }, { x: 100, y: 90, width: 410, height: 290 }],
-        ['bottomRight', { x: 10, y: 10 }, { x: 100, y: 80, width: 410, height: 310 }],
-        ['bottomLeft', { x: 10, y: 10 }, { x: 110, y: 80, width: 390, height: 310 }],
-        ['topLeft', { x: 10, y: 10 }, { x: 110, y: 90, width: 390, height: 290 }],
-      ] as const
-
-      for (const [direction, delta, expected] of cases) {
+    await patchOverlayStore(extension, {
+      geometry: SEEDED_GEOMETRY,
+      profile: { display: { contentMode: 'full-chat', idleVisibility: 'always-visible' } },
+    })
+    await scenario.load(scenarioState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    const cases = [
+      ['top', 300, 80, 0, -1],
+      ['right', 500, 230, 1, 0],
+      ['bottom', 200, 380, 0, 1],
+      ['left', 100, 230, -1, 0],
+      ['topRight', 500, 80, 1, -1],
+      ['bottomRight', 500, 380, 1, 1],
+      ['bottomLeft', 100, 380, -1, 1],
+      ['topLeft', 100, 80, -1, -1],
+    ] as const
+    for (const [direction, x, y, dx, dy] of cases) {
+      for (const offset of [-1, 20]) {
         await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
         await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 100, y: 80, width: 400, height: 300 })
-        await overlay.revealControls()
-        await expectControlsAtLayout(page, { x: 100, y: 80, width: 400, height: 300 })
-        await overlay.startResize(direction, delta)
-        await expect.poll(() => overlay.getGeometry(), { message: direction }).toMatchObject(expected)
-        await expectControlsAtLayout(page, expected)
-        if (direction === 'bottomRight') {
-          await testInfo.attach('controls-follow-held-bottom-right-resize', {
-            body: await page.screenshot(),
-            contentType: 'image/png',
+        const point = { x: x + dx * offset, y: y + dy * offset }
+        await page.mouse.move(point.x, point.y)
+        const target = await page.locator('[data-ylc-resizable]').evaluate((panel, point) => {
+          const root = panel.getRootNode() as ShadowRoot
+          return root.elementFromPoint(point.x, point.y)?.getAttribute('data-ylc-resize-direction')
+        }, point)
+        expect(target, `${direction}, ${offset}px from visible border`).toBe(direction)
+        await page.mouse.down()
+        await page.mouse.move(point.x + dx * 20, point.y + dy * 20, { steps: 3 })
+        await page.mouse.up()
+        await expect
+          .poll(() => overlay.getGeometry())
+          .toMatchObject({
+            x: dx < 0 ? 80 : 100,
+            y: dy < 0 ? 60 : 80,
+            width: dx === 0 ? 400 : 420,
+            height: dy === 0 ? 300 : 320,
           })
-        }
-        expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
-        await overlay.finishPointerGesture()
-        await expectPersistedLayout(storagePage, expected)
-        await overlay.revealControls()
-        await expectControlsAtLayout(page, expected)
       }
-    } finally {
-      await page.mouse.up().catch(() => null)
-      await storagePage.close()
     }
+    await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+    await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 100, y: 80, width: 400, height: 300 })
+    const chat = page.frameLocator('iframe[data-ylc-chat]')
+    await chat.locator('body').evaluate(body => {
+      const button = body.ownerDocument.createElement('button')
+      button.textContent = 'Native edge action'
+      button.style.cssText = 'position:fixed;top:16px;right:16px;width:28px;height:28px;z-index:999999'
+      button.onclick = () => button.setAttribute('data-clicked', 'true')
+      const scroller = body.ownerDocument.createElement('div')
+      scroller.setAttribute('data-resize-scroll-probe', '')
+      scroller.style.cssText = 'position:fixed;left:16px;bottom:16px;width:140px;height:80px;overflow:auto;z-index:999999'
+      const content = body.ownerDocument.createElement('div')
+      content.style.height = '1000px'
+      scroller.append(content)
+      body.append(button, scroller)
+    })
+    await chat.getByRole('button', { name: 'Native edge action' }).click()
+    await expect(chat.getByRole('button', { name: 'Native edge action' })).toHaveAttribute('data-clicked', 'true')
+    const scroller = chat.locator('[data-resize-scroll-probe]')
+    await scroller.hover()
+    await page.mouse.wheel(0, 100)
+    await expect.poll(() => scroller.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
   })
+
+  test(
+    'resizes from every edge and corner while preserving each opposite edge',
+    { tag: '@fixture' },
+    async ({ page, extension }, testInfo) => {
+      const scenario = new YouTubeScenario(page)
+      const overlay = new ExtensionOverlay(page)
+      await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+      const storagePage = await openStoragePage(extension, page)
+      try {
+        await scenario.load(scenarioState)
+        await scenario.enterFullscreen()
+        await overlay.expectChatLoaded({ timeout: 12000 })
+        const cases = [
+          ['top', { x: 0, y: 10 }, { x: 100, y: 90, width: 400, height: 290 }],
+          ['right', { x: 10, y: 0 }, { x: 100, y: 80, width: 410, height: 300 }],
+          ['bottom', { x: 0, y: 10 }, { x: 100, y: 80, width: 400, height: 310 }],
+          ['left', { x: 10, y: 0 }, { x: 110, y: 80, width: 390, height: 300 }],
+          ['topRight', { x: 10, y: 10 }, { x: 100, y: 90, width: 410, height: 290 }],
+          ['bottomRight', { x: 10, y: 10 }, { x: 100, y: 80, width: 410, height: 310 }],
+          ['bottomLeft', { x: 10, y: 10 }, { x: 110, y: 80, width: 390, height: 310 }],
+          ['topLeft', { x: 10, y: 10 }, { x: 110, y: 90, width: 390, height: 290 }],
+        ] as const
+
+        for (const [direction, delta, expected] of cases) {
+          await patchOverlayStore(extension, { geometry: SEEDED_GEOMETRY })
+          await expect.poll(() => overlay.getGeometry()).toMatchObject({ x: 100, y: 80, width: 400, height: 300 })
+          await overlay.revealControls()
+          await expectControlsAtLayout(page, { x: 100, y: 80, width: 400, height: 300 })
+          await overlay.startResize(direction, delta)
+          await expect.poll(() => overlay.getGeometry(), { message: direction }).toMatchObject(expected)
+          await expectControlsAtLayout(page, expected)
+          if (direction === 'bottomRight') {
+            await testInfo.attach('controls-follow-held-bottom-right-resize', {
+              body: await page.screenshot(),
+              contentType: 'image/png',
+            })
+          }
+          expect(await readPersistedGeometry(storagePage)).toEqual(SEEDED_GEOMETRY)
+          await overlay.finishPointerGesture()
+          await expectPersistedLayout(storagePage, expected)
+          await overlay.revealControls()
+          await expectControlsAtLayout(page, expected)
+        }
+      } finally {
+        await page.mouse.up().catch(() => null)
+        await storagePage.close()
+      }
+    },
+  )
 
   for (const resize of [
     {
@@ -939,6 +1049,9 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
           await expect.poll(readChatTypography).toMatchObject({
             variable: `${previewFontSize}px`,
             renderedFontSize: `${previewFontSize}px`,
+            authorFontSize: `${previewFontSize}px`,
+            timestampFontSize: `${previewFontSize}px`,
+            linkFontSize: `${previewFontSize}px`,
           })
           expect(await readSavedFontSize()).toBe(initialFontSize)
           expect(await readAppearanceChanges()).toEqual([])
@@ -951,6 +1064,7 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
           ).toEqual({ downs: 1, ups: 0, movedWhileHeld: true })
         }
         expect((await readChatTypography()).messageHeight).toBeGreaterThan(initialTypography.messageHeight)
+        expect((await readChatTypography()).textHeight).toBeGreaterThan(initialTypography.textHeight)
         await testInfo.attach('native-slider-held-preview', { body: await page.screenshot(), contentType: 'image/png' })
         await page.mouse.up()
         pointerHeld = false

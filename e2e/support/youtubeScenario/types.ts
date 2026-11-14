@@ -3,7 +3,7 @@ type YouTubeScenarioVideoBase = {
   title: string
 }
 
-export type YouTubeScenarioRoute = 'watch' | 'direct-live' | 'channel-live'
+export type YouTubeScenarioRoute = 'watch' | 'direct-live' | 'channel-live' | 'legacy-channel-live'
 
 export type YouTubeScenarioPage = {
   chatContainer: 'present' | 'absent'

@@ -47,17 +47,20 @@ describe('range input without pointer or keyboard gestures', () => {
     const store = createTestStore()
     const view = renderWithStore(slider, store)
     const range = view.getByRole('slider', { name: 'content.setting.fontSize' })
+    expect(view.container.querySelector('.ylc-range-feedback')).toBeNull()
 
     fireEvent.keyDown(range, { key: 'ArrowRight' })
     fireEvent.input(range, { target: { value: '14' } })
     fireEvent.input(range, { target: { value: '15' } })
 
     expect(range).toHaveValue('15')
+    expect(view.container.querySelector('.ylc-range-feedback')).toHaveTextContent('15px')
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(13)
     expect(store.get(editorSessionStateAtom).past).toHaveLength(0)
 
     fireEvent.keyUp(range, { key: 'ArrowRight' })
 
+    expect(view.container.querySelector('.ylc-range-feedback')).toBeNull()
     expect(store.get(chatSettingsStateAtom).profile.appearance.fontSize).toBe(15)
     expect(store.get(editorSessionStateAtom).past).toHaveLength(1)
   })

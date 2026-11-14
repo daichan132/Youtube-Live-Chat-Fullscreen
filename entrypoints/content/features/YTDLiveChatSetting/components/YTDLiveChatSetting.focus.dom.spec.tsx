@@ -41,7 +41,7 @@ describe('settings initial focus and keyboard navigation', () => {
       ...view.getAllByRole('button').filter(button => button.classList.contains('ylc-color-trigger')),
       view.getByRole('button', { name: /content\.setting\.fontFamily/ }),
       view.getByRole('slider', { name: 'content.setting.fontSize' }),
-      view.getByRole('spinbutton', { name: 'content.setting.fontSize' }),
+      view.getByRole('slider', { name: 'content.setting.textShadow' }),
     ]) {
       await user.tab()
       expect(control).toHaveFocus()

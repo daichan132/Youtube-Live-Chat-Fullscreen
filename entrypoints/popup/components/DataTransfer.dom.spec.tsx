@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { afterEach, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, expect, it, vi } from 'vitest'
 import { AppProvider } from '@/shared/runtime/AppProvider'
 import { createAppRuntime } from '@/shared/runtime/createAppRuntime'
 import { createSettingsRepository } from '@/shared/settings/repository'
@@ -12,10 +12,12 @@ import { DataTransfer } from './DataTransfer'
 const cleanups: (() => Promise<void>)[] = []
 const releases: (() => void)[] = []
 const originalURL = globalThis.URL
+beforeEach(() => vi.stubEnv('FIREFOX', ''))
 afterEach(async () => {
   for (const release of releases.splice(0)) release()
   for (const cleanup of cleanups.splice(0)) await cleanup()
   vi.restoreAllMocks()
+  vi.unstubAllEnvs()
   globalThis.URL = originalURL
 })
 const setup = async () => {
@@ -42,6 +44,38 @@ const backupWithFontSize = (fontSize: number) => ({
   version: 2,
   globalSetting: { ytdLiveChat: false, themeMode: 'dark' },
   chatSettings: { profile: { appearance: { fontSize } } },
+})
+
+it('opens Firefox imports in a stable extension tab without reading or saving a file', async () => {
+  vi.stubEnv('FIREFOX', 'true')
+  await setup()
+  const before = await chrome.storage.local.get(null)
+  const link = screen.getByRole('link', { name: 'popup.import' })
+  expect(link).toHaveAttribute('href', '?backup')
+  expect(link).toHaveAttribute('target', '_blank')
+  expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  expect(screen.queryByRole('button', { name: 'popup.import' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  expect(await chrome.storage.local.get(null)).toEqual(before)
+})
+
+it('keeps the Firefox backup tab on the existing file confirmation and import path', async () => {
+  vi.stubEnv('FIREFOX', 'true')
+  const previous = window.location.href
+  window.history.replaceState(null, '', '?backup')
+  try {
+    const { input } = await setup()
+    expect(screen.getByRole('button', { name: 'popup.import' })).toBeEnabled()
+    choose(input, backupWithFontSize(28))
+    await screen.findByText('popup.importConfirm')
+    fireEvent.click(screen.getByRole('button', { name: 'popup.importApply' }))
+    await screen.findByText('popup.importDone')
+    expect((await chrome.storage.local.get(APPEARANCE_STORAGE_KEY))[APPEARANCE_STORAGE_KEY]).toMatchObject({
+      value: { profile: { appearance: { fontSize: 28 } } },
+    })
+  } finally {
+    window.history.replaceState(null, '', previous)
+  }
 })
 
 it('names and describes confirmation, confines Tab, and returns Cancel focus to Import without saving', async () => {

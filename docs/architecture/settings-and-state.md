@@ -37,7 +37,7 @@ Separate domains prevent an unrelated stale field from riding along with an edit
 
 ## Startup compatibility
 
-`repository.load()` delegates to a fail-closed, read-through compatibility lookup. Current domain keys take precedence over the previous global/chat envelopes, which take precedence over legacy Zustand and locale values. Defaults fill missing values.
+`repository.load()` delegates to a fail-closed, read-through compatibility lookup. Current domain keys take precedence over the previous global/chat envelopes, which take precedence over legacy Zustand and locale values. Defaults fill missing values. Text shadow is stored as a 0–100 strength; compatibility decoding maps the previous boolean false/true to 0/100 in profiles and custom presets. Startup does not rewrite those older values. Numeric edits and backup exports use the normalized strength.
 
 A failed Storage API call aborts initialization. It is never interpreted as a missing key and cannot authorize fallback writes or deletion. Global/chat compatibility inputs are not rewritten or removed during startup.
 
@@ -82,6 +82,8 @@ A newer local language selection is not cancelled by an acknowledgement of an ea
 ## Import and backup
 
 Backup version 2 contains enabled/theme, profile, presets and geometry. Locale remains browser-local and is not exported. Version 1 imports still use the compatibility decoder.
+
+On Firefox, the toolbar popup's Import link opens `popup.html?backup` in an extension tab. The tab owns file selection, confirmation and application because Firefox can close a toolbar popup while its native file picker is open. Chrome keeps the inline popup flow. Opening the tab does not read a file or apply settings; both still require the existing user actions.
 
 Legacy migration maps only `default1`–`default7` to built-in presets; custom entries require their own style object in `presetItemStyles`.
 Duplicate legacy custom IDs receive a unique numeric suffix within the current ID length limit. IDs are trimmed before collision checks so they remain unique after normalization and reloading.

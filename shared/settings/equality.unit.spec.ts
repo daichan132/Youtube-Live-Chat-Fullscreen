@@ -53,6 +53,9 @@ describe('settings equality', () => {
       fontSize: profile => {
         profile.appearance.fontSize += 1
       },
+      textShadow: profile => {
+        profile.appearance.textShadow += 1
+      },
       blur: profile => {
         profile.appearance.blur += 1
       },

@@ -569,6 +569,7 @@ const getScenarioUrl = (state: YouTubeScenarioState) => {
   }
   if (route === 'direct-live') return `https://www.youtube.com/live/${encodeURIComponent(state.video.id)}`
   if (route === 'channel-live') return 'https://www.youtube.com/@ylc-fixture/live'
+  if (route === 'legacy-channel-live') return 'https://www.youtube.com/ylc-fixture/live'
   return `https://www.youtube.com/watch?v=${encodeURIComponent(state.video.id)}`
 }
 

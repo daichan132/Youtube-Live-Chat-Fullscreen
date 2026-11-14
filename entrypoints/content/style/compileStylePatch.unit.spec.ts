@@ -13,6 +13,19 @@ const createProfile = (appearance: Partial<ChatProfile['appearance']> = {}): Cha
 
 describe('compileStylePatch', () => {
   it.each([
+    [0, 'none'],
+    [25, '0 1px 3px rgba(0, 0, 0, 0.225), 0 0 2px rgba(0, 0, 0, 0.2)'],
+    [50, '0 1px 3px rgba(0, 0, 0, 0.45), 0 0 2px rgba(0, 0, 0, 0.4)'],
+    [100, '0 1px 3px rgba(0, 0, 0, 0.9), 0 0 2px rgba(0, 0, 0, 0.8)'],
+  ])('compiles text shadow at %s percent', (textShadow, expected) => {
+    expect(
+      compileStylePatch(createProfile({ textShadow }), { membershipDefaultColor: null }).documentProperties[
+        '--extension-yt-live-text-shadow'
+      ],
+    ).toBe(expected)
+  })
+
+  it.each([
     { alpha: 0.8, menu: 'rgba(100, 120, 140, 0.856)', panel: 'rgba(100, 120, 140, 0.224)' },
     { alpha: 0, menu: 'rgba(100, 120, 140, 0.28)', panel: 'rgba(100, 120, 140, 0)' },
   ])('keeps public backgrounds transparent and compiles internal surfaces for alpha $alpha', ({ alpha, menu, panel }) => {

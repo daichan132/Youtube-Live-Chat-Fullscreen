@@ -20,6 +20,9 @@ const handleExport = (data: unknown) => {
 export const DataTransfer = () => {
   const t = useT()
   const runtime = useAppRuntime()
+  // Firefox can destroy a toolbar popup while its native file picker is open.
+  // Keep file reading and confirmation in a normal extension tab instead.
+  const importInTab = import.meta.env.FIREFOX && !new URL(window.location.href).searchParams.has('backup')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const importButtonRef = useRef<HTMLButtonElement>(null)
   const statusRef = useRef<HTMLParagraphElement>(null)
@@ -109,16 +112,23 @@ export const DataTransfer = () => {
           <TbDownload size={18} aria-hidden='true' />
           <span>{t('popup.export')}</span>
         </button>
-        <button
-          ref={importButtonRef}
-          type='button'
-          disabled={phase === 'applying'}
-          className='ylc-btn ylc-popup-action'
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <TbUpload size={18} aria-hidden='true' />
-          <span>{t('popup.import')}</span>
-        </button>
+        {importInTab ? (
+          <a href='?backup' target='_blank' rel='noopener noreferrer' className='ylc-btn ylc-popup-action'>
+            <TbUpload size={18} aria-hidden='true' />
+            <span>{t('popup.import')}</span>
+          </a>
+        ) : (
+          <button
+            ref={importButtonRef}
+            type='button'
+            disabled={phase === 'applying'}
+            className='ylc-btn ylc-popup-action'
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <TbUpload size={18} aria-hidden='true' />
+            <span>{t('popup.import')}</span>
+          </button>
+        )}
         <input ref={fileInputRef} type='file' accept='.json' onChange={handleImport} style={{ display: 'none' }} />
       </div>
       <Modal
@@ -129,7 +139,7 @@ export const DataTransfer = () => {
         shouldReturnFocusAfterClose={false}
         onAfterClose={() => importButtonRef.current?.focus({ preventScroll: true })}
         overlayStyle={{ backgroundColor: 'rgba(0, 0, 0, 0.15)' }}
-        contentClassName='fixed inset-x-2 bottom-2 max-h-[calc(100dvh-16px)] overflow-y-auto rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg outline-none'
+        contentClassName='fixed inset-x-2 bottom-2 mx-auto max-w-[432px] max-h-[calc(100dvh-16px)] overflow-y-auto rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg outline-none'
       >
         <h2 id={titleId} className='m-0 text-base font-semibold'>
           {t('popup.import')}
@@ -163,7 +173,7 @@ export const DataTransfer = () => {
       {phase === 'idle' && message ? (
         <section
           aria-label={t('popup.import')}
-          className='fixed inset-x-2 bottom-2 z-50 rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg'
+          className='fixed inset-x-2 bottom-2 mx-auto max-w-[432px] z-50 rounded-lg border border-solid ylc-theme-border ylc-theme-surface p-3 shadow-lg'
         >
           <div role='status' aria-live='polite'>
             {message}

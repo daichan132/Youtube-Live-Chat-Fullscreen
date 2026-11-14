@@ -72,6 +72,17 @@ export const normalizeChatAppearance = (input: unknown, fallback: ChatAppearance
         })()
       : fallback.fontFamily,
     fontSize: clampFinite(raw.fontSize, APPEARANCE_NUMBER_LIMITS.fontSize.min, APPEARANCE_NUMBER_LIMITS.fontSize.max, fallback.fontSize),
+    textShadow:
+      typeof raw.textShadow === 'boolean'
+        ? raw.textShadow
+          ? 100
+          : 0
+        : clampFinite(
+            raw.textShadow,
+            APPEARANCE_NUMBER_LIMITS.textShadow.min,
+            APPEARANCE_NUMBER_LIMITS.textShadow.max,
+            fallback.textShadow,
+          ),
     blur: clampFinite(raw.blur, APPEARANCE_NUMBER_LIMITS.blur.min, APPEARANCE_NUMBER_LIMITS.blur.max, fallback.blur),
     spacing: clampFinite(raw.spacing, APPEARANCE_NUMBER_LIMITS.spacing.min, APPEARANCE_NUMBER_LIMITS.spacing.max, fallback.spacing),
     showUserName: booleanOr(raw.showUserName, fallback.showUserName),

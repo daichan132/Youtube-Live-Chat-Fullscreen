@@ -159,7 +159,22 @@ export class ExtensionOverlay {
       if (!document || !list) throw new Error('The live-chat message list has not loaded.')
       const message = document.createElement('yt-live-chat-text-message-renderer')
       message.setAttribute('data-ylc-preview-message', '')
-      message.textContent = 'Native slider preview fixture'
+      // Model child-level native typography: testing only the renderer's size
+      // misses text that does not inherit its parent's font-size/line-height.
+      const nativeStyle = document.createElement('style')
+      nativeStyle.textContent = `
+        yt-live-chat-text-message-renderer { line-height: 20px; }
+        #content.yt-live-chat-text-message-renderer, #message.yt-live-chat-text-message-renderer { font-size: 13px; line-height: 20px; }
+        yt-live-chat-author-chip, #author-name.yt-live-chat-author-chip { font-size: 13px; line-height: 20px; }
+        #timestamp.yt-live-chat-text-message-renderer { font-size: 11px; line-height: 16px; }
+      `
+      document.head.append(nativeStyle)
+      message.innerHTML = `
+        <span id="timestamp" class="yt-live-chat-text-message-renderer">12:34</span>
+        <div id="content" class="yt-live-chat-text-message-renderer">
+          <yt-live-chat-author-chip><span id="author-name" class="yt-live-chat-author-chip">Fixture viewer</span></yt-live-chat-author-chip>
+          <span id="message" class="yt-live-chat-text-message-renderer">Native slider preview <a href="https://example.invalid/">fixture link</a></span>
+        </div>`
       list.append(message)
     })
   }
@@ -169,9 +184,18 @@ export class ExtensionOverlay {
       const document = window.__ylcHelpers.getExtensionIframe()?.contentDocument
       const message = document?.querySelector('[data-ylc-preview-message]')
       if (!document?.defaultView || !message) throw new Error('The live-chat preview message is missing.')
+      const text = message.querySelector('#message')
+      const author = message.querySelector('#author-name')
+      const timestamp = message.querySelector('#timestamp')
+      const link = message.querySelector('a')
+      if (!text || !author || !timestamp || !link) throw new Error('The live-chat preview text is missing.')
       return {
         variable: document.documentElement.style.getPropertyValue('--extension-yt-live-chat-font-size'),
-        renderedFontSize: document.defaultView.getComputedStyle(message).fontSize,
+        renderedFontSize: document.defaultView.getComputedStyle(text).fontSize,
+        authorFontSize: document.defaultView.getComputedStyle(author).fontSize,
+        timestampFontSize: document.defaultView.getComputedStyle(timestamp).fontSize,
+        linkFontSize: document.defaultView.getComputedStyle(link).fontSize,
+        textHeight: text.getBoundingClientRect().height,
         messageHeight: message.getBoundingClientRect().height,
       }
     })

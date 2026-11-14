@@ -31,6 +31,7 @@ const appearanceFields = [
   'membershipNameColor',
   'fontFamily',
   'fontSize',
+  'textShadow',
   'blur',
   'spacing',
   'showUserName',

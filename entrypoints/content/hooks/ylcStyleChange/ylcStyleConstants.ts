@@ -37,6 +37,7 @@ export const YLC_FONT_COLOR_SURFACE_PROPERTIES = [
 ] as const
 
 export const YLC_MEMBERSHIP_NAME_COLOR_PROPERTY = '--extension-yt-live-membership-name-color'
+export const YLC_TEXT_SHADOW_PROPERTY = '--extension-yt-live-text-shadow'
 export const YLC_FONT_SIZE_PROPERTY = '--extension-yt-live-chat-font-size'
 export const YLC_SPACING_PROPERTY = '--extension-yt-live-chat-spacing'
 export const YLC_USER_NAME_DISPLAY_PROPERTY = '--extension-user-name-display'
@@ -58,6 +59,7 @@ export const YLC_DOCUMENT_STYLE_PROPERTIES = [
   ...YLC_FONT_COLOR_SURFACE_PROPERTIES,
   YLC_MEMBERSHIP_NAME_COLOR_PROPERTY,
   YLC_FONT_SIZE_PROPERTY,
+  YLC_TEXT_SHADOW_PROPERTY,
   YLC_SPACING_PROPERTY,
   YLC_USER_NAME_DISPLAY_PROPERTY,
   YLC_USER_ICON_DISPLAY_PROPERTY,

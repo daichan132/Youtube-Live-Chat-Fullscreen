@@ -356,13 +356,47 @@
   max-width: 100%;
 }
 
-/* Native <input type="range"> + <output> */
+/* Native range slider */
 .ylc-range-field {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
   width: 100%;
   min-width: 0;
+  --ylc-range-progress: 50%;
+  --ylc-range-ratio: 0.5;
+  --ylc-range-thumb-x: calc(8px + (100% - 16px) * var(--ylc-range-ratio));
+}
+
+.ylc-range-field:dir(rtl) {
+  --ylc-range-thumb-x: calc(100% - (8px + (100% - 16px) * var(--ylc-range-ratio)));
+}
+
+.ylc-range-feedback {
+  position: absolute;
+  position-anchor: var(--ylc-range-anchor);
+  z-index: var(--ylc-z-tooltip);
+  left: var(--ylc-range-thumb-x);
+  bottom: calc(50% + 8px);
+  margin-bottom: 6px;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  border: 1px solid var(--ylc-border-strong);
+  border-radius: 6px;
+  background: var(--ylc-tooltip-bg);
+  color: var(--ylc-tooltip-fg);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  line-height: 18px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@supports (position-anchor: --ylc-range-thumb) {
+  .ylc-range-feedback {
+    left: anchor(center, var(--ylc-range-thumb-x));
+    bottom: anchor(top, calc(50% + 8px));
+  }
 }
 
 .ylc-range {
@@ -374,7 +408,6 @@
   margin: 0;
   background: transparent;
   cursor: pointer;
-  --ylc-range-progress: 50%;
 }
 
 .ylc-range::-webkit-slider-runnable-track {
@@ -404,6 +437,7 @@
 }
 
 .ylc-range::-webkit-slider-thumb {
+  anchor-name: var(--ylc-range-anchor);
   -webkit-appearance: none;
   appearance: none;
   width: 16px;
@@ -418,6 +452,7 @@
 }
 
 .ylc-range::-moz-range-thumb {
+  anchor-name: var(--ylc-range-anchor);
   width: 14px;
   height: 14px;
   border-radius: 50%;
@@ -426,17 +461,6 @@
   box-shadow:
     0 1px 3px rgba(15, 23, 42, 0.32),
     0 0 0 1px var(--ylc-border-strong);
-}
-
-.ylc-number-input {
-  height: 28px;
-  border: 1px solid transparent;
-  border-radius: var(--ylc-radius-lg);
-  background: var(--ylc-control-surface);
-}
-
-.ylc-number-input:hover {
-  background: var(--ylc-control-surface-hover);
 }
 
 .ylc-range:focus-visible {
@@ -451,16 +475,6 @@
 .ylc-range:focus-visible::-moz-range-thumb {
   outline: 2px solid var(--ylc-focus-ring);
   outline-offset: 2px;
-}
-
-.ylc-range-value {
-  flex-shrink: 0;
-  min-width: 44px;
-  text-align: end;
-  font-variant-numeric: tabular-nums;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ylc-text-secondary);
 }
 
 /* Labeled button (icon + text) — backup export/import, support, etc. */
@@ -2094,7 +2108,6 @@ label.ylc-row:has(:focus-visible) {
   .ylc-dialog-btn,
   .ylc-dialog-btn-primary,
   .ylc-range,
-  .ylc-number-input,
   .ylc-theme-icon-button,
   .ylc-setting-close-button,
   .ylc-setting-history-button,
@@ -2107,7 +2120,6 @@ label.ylc-row:has(:focus-visible) {
 @media (forced-colors: active) {
   .ylc-theme-select,
   .ylc-theme-input,
-  .ylc-number-input,
   .ylc-font-combobox-search,
   .ylc-theme-segment,
   .ylc-font-combobox-trigger,

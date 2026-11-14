@@ -1,6 +1,24 @@
 const YOUTUBE_ORIGINS = new Set(['https://www.youtube.com', 'https://youtube.com'])
 const DIRECT_LIVE_PATH_PATTERN = /^\/live\/([a-zA-Z0-9_-]+)\/?$/
 export const CHANNEL_LIVE_PATH_PATTERN = /^\/(?:@[^/]+|channel\/[^/]+|c\/[^/]+|user\/[^/]+)\/live\/?$/
+const LEGACY_CHANNEL_LIVE_PATH_PATTERN = /^\/([a-zA-Z0-9_-]+)\/live\/?$/
+const RESERVED_CHANNEL_NAMES = new Set([
+  'c',
+  'channel',
+  'clip',
+  'embed',
+  'feed',
+  'gaming',
+  'hashtag',
+  'live',
+  'live_chat',
+  'live_chat_replay',
+  'playlist',
+  'results',
+  'shorts',
+  'user',
+  'watch',
+])
 
 export type YouTubeContentSurface = {
   route: 'watch' | 'live'
@@ -34,7 +52,9 @@ export const getYouTubeContentSurface = (href: string): YouTubeContentSurface | 
       }
     }
 
-    if (CHANNEL_LIVE_PATH_PATTERN.test(url.pathname)) {
+    // YouTube can redirect a handle entry to a legacy /<name>/live URL.
+    const legacyChannel = url.pathname.match(LEGACY_CHANNEL_LIVE_PATH_PATTERN)?.[1]
+    if (CHANNEL_LIVE_PATH_PATTERN.test(url.pathname) || (legacyChannel && !RESERVED_CHANNEL_NAMES.has(legacyChannel.toLowerCase()))) {
       return {
         route: 'live',
         videoId: null,

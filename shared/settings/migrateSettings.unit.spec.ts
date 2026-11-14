@@ -38,6 +38,7 @@ describe('migrateV6ToV7', () => {
         membershipNameColor: { mode: 'custom', value: { r: 1, g: 2, b: 3, a: 0.5 } },
         fontFamily: 'Inter',
         fontSize: 19,
+        textShadow: 0,
         blur: 7,
         spacing: 9,
         showUserName: false,

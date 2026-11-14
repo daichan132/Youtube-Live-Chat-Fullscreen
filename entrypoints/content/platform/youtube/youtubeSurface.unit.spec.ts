@@ -26,6 +26,21 @@ describe('youtubeSurface', () => {
     )
   })
 
+  it.each(['/creator/live', '/creator/live/'])('recognizes legacy channel live entries at %s', path => {
+    expect(getYouTubeContentSurface(`https://www.youtube.com${path}`)).toEqual({
+      route: 'live',
+      videoId: null,
+      activationKey: 'channel-live:/creator/live',
+    })
+  })
+
+  it.each(['feed', 'results', 'watch', 'shorts', 'embed', 'clip', 'playlist', 'channel', 'c', 'user', 'live_chat', 'live_chat_replay'])(
+    'does not mistake the reserved %s route for a legacy channel',
+    name => {
+      expect(getYouTubeContentSurface(`https://www.youtube.com/${name}/live`)).toBeNull()
+    },
+  )
+
   it('accepts relative YouTube locations but rejects absolute non-YouTube origins', () => {
     expect(getYouTubeContentSurface('/watch?v=relative-video')).toMatchObject({
       route: 'watch',

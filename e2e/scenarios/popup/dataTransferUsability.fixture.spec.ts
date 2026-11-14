@@ -37,6 +37,18 @@ test.afterEach(async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 720 })
 })
 
+test('imports from the persistent backup tab and hydrates the result in the popup', async ({ page, extension }, testInfo) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+  await page.goto(`${extension.url('popup.html')}?backup`)
+  const dialog = await chooseBackup(page)
+  await testInfo.attach('backup-tab-confirmation', { body: await page.screenshot(), contentType: 'image/png' })
+  await dialog.getByRole('button', { name: 'Apply', exact: true }).click()
+  await expect(page.getByRole('status')).toHaveText('Import completed.')
+  await page.goto(extension.url('popup.html'))
+  await expect(page.getByRole('switch', { name: 'Fullscreen Chat' })).not.toBeChecked()
+  await expect(page.getByRole('radio', { name: 'Dark', exact: true })).toBeChecked()
+})
+
 test('describes backup confirmation and keeps keyboard cancellation local without saving', async ({ page }, testInfo) => {
   const before = await page.evaluate(() => chrome.storage.local.get(null))
   const dialog = await chooseBackup(page)

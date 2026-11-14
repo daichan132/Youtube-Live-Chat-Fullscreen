@@ -17,6 +17,7 @@ import {
   YLC_PANEL_BACKGROUND_PROPERTY,
   YLC_SPACING_PROPERTY,
   YLC_SUPER_CHAT_BAR_DISPLAY_PROPERTY,
+  YLC_TEXT_SHADOW_PROPERTY,
   YLC_USER_ICON_DISPLAY_PROPERTY,
   YLC_USER_NAME_DISPLAY_PROPERTY,
 } from '../hooks/ylcStyleChange/ylcStyleConstants'
@@ -96,6 +97,11 @@ export const compileStylePatch = (profile: ChatProfile, environment: ChatStyleEn
   const blurValue = appearance.blur > 0 ? `blur(${appearance.blur}px)` : 'none'
   documentProperties[YLC_BACKDROP_FILTER_PROPERTY] = blurValue
   documentProperties[YLC_FONT_SIZE_PROPERTY] = `${appearance.fontSize}px`
+  const shadowStrength = appearance.textShadow / 100
+  documentProperties[YLC_TEXT_SHADOW_PROPERTY] =
+    shadowStrength > 0
+      ? `0 1px 3px rgba(0, 0, 0, ${Number((0.9 * shadowStrength).toFixed(3))}), 0 0 2px rgba(0, 0, 0, ${Number((0.8 * shadowStrength).toFixed(3))})`
+      : 'none'
   documentProperties[YLC_SPACING_PROPERTY] = `${appearance.spacing}px`
   documentProperties[YLC_USER_NAME_DISPLAY_PROPERTY] = appearance.showUserName ? 'inline' : 'none'
   documentProperties[YLC_USER_ICON_DISPLAY_PROPERTY] = appearance.showUserIcon ? 'inline' : 'none'

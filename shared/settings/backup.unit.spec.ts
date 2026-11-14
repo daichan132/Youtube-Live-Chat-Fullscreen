@@ -9,6 +9,22 @@ const current = {
 }
 
 describe('settings backup', () => {
+  it('imports boolean shadows in the active profile and saved presets without losing their appearance', () => {
+    const result = normalizeSettingsBackup(
+      {
+        version: 2,
+        globalSetting: {},
+        chatSettings: {
+          profile: { appearance: { textShadow: true } },
+          presets: [{ kind: 'custom', id: 'old-shadow', name: 'Old shadow', profile: { appearance: { textShadow: false } } }],
+        },
+      },
+      current,
+    )
+    expect(result?.chatSettings.profile.appearance.textShadow).toBe(100)
+    expect(result?.chatSettings.presets[0]).toMatchObject({ profile: { appearance: { textShadow: 0 } } })
+  })
+
   it('exports the complete chosen settings without language or private editing state', () => {
     const profile = {
       appearance: {
@@ -17,6 +33,7 @@ describe('settings backup', () => {
         membershipNameColor: { mode: 'custom', value: { r: 10, g: 90, b: 150, a: 0.8 } },
         fontFamily: 'Inter',
         fontSize: 27,
+        textShadow: 65,
         blur: 6,
         spacing: 9,
         showUserName: false,

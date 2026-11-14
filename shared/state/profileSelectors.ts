@@ -12,6 +12,7 @@ export const effectiveAppearanceAtoms = {
   membershipNameColor: selectAtom(effectiveProfileAtom, profile => profile.appearance.membershipNameColor, areMembershipColorsEqual),
   fontFamily: atom(get => get(effectiveProfileAtom).appearance.fontFamily),
   fontSize: atom(get => get(effectiveProfileAtom).appearance.fontSize),
+  textShadow: atom(get => get(effectiveProfileAtom).appearance.textShadow),
   blur: atom(get => get(effectiveProfileAtom).appearance.blur),
   spacing: atom(get => get(effectiveProfileAtom).appearance.spacing),
   showUserName: atom(get => get(effectiveProfileAtom).appearance.showUserName),

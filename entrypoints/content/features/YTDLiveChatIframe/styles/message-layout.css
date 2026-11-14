@@ -1,6 +1,14 @@
 /* --------------------------- Typography / sizing -------------------------- */
-body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer {
+/* Native child styles can set their own size instead of inheriting the renderer. */
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension
+  yt-live-chat-text-message-renderer
+  :is(#content, #message, #author-name, #timestamp, yt-live-chat-author-chip) {
   font-size: var(--extension-yt-live-chat-font-size);
+  line-height: normal;
+}
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer,
+body.custom-yt-app-live-chat-extension #items > yt-live-chat-text-message-renderer:not(.yt-live-chat-banner-renderer) {
   margin: var(--extension-yt-live-chat-spacing) 0;
 }
 body.custom-yt-app-live-chat-extension #input.yt-live-chat-text-input-field-renderer {
@@ -44,4 +52,10 @@ body.custom-yt-app-live-chat-extension #author-photo.yt-live-chat-text-message-r
 }
 body.custom-yt-app-live-chat-extension #ticker > yt-live-chat-ticker-renderer {
   display: var(--extension-super-chat-bar-display);
+}
+
+/* Apply only to ordinary message text and author names, not controls or paid cards. */
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #message,
+body.custom-yt-app-live-chat-extension yt-live-chat-text-message-renderer #author-name {
+  text-shadow: var(--extension-yt-live-text-shadow, none);
 }

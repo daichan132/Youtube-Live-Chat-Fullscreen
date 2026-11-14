@@ -1,6 +1,7 @@
 import { expect, test } from '@e2e/fixtures'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario, type YouTubeScenarioState } from '@e2e/support/youtubeScenario'
+import { patchOverlayStore } from '@e2e/utils/storageHelper'
 
 const expectCurrentChatTarget = async (scenario: YouTubeScenario, videoId: string) => {
   await expect
@@ -13,7 +14,11 @@ const expectCurrentChatTarget = async (scenario: YouTubeScenario, videoId: strin
     .toEqual({ origin: 'https://www.youtube.com', pathname: '/live_chat', videoId })
 }
 
-const createLiveEntryState = (videoId: string, title: string, route: 'channel-live' | 'direct-live'): YouTubeScenarioState => ({
+const createLiveEntryState = (
+  videoId: string,
+  title: string,
+  route: 'channel-live' | 'legacy-channel-live' | 'direct-live',
+): YouTubeScenarioState => ({
   video: { id: videoId, title, mode: 'live' },
   page: { chatContainer: 'present', chatDimensions: 'standard', route },
   fullscreen: false,
@@ -29,6 +34,33 @@ const nextChannelLiveState = createLiveEntryState('ylc-channel-live-next', 'Next
 const directLiveState = createLiveEntryState('ylc-direct-live', 'Direct live fixture', 'direct-live')
 
 test.describe('live entry routes', { tag: '@live' }, () => {
+  test('applies saved typography on a legacy channel entry and follows its next video', { tag: '@fixture' }, async ({
+    page,
+    extension,
+  }) => {
+    const scenario = new YouTubeScenario(page)
+    const overlay = new ExtensionOverlay(page)
+    await patchOverlayStore(extension, { profile: { appearance: { fontSize: 24 } } })
+    const legacyState = createLiveEntryState('legacy-live-first', 'Legacy channel fixture', 'legacy-channel-live')
+    await scenario.load(legacyState)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await expectCurrentChatTarget(scenario, 'legacy-live-first')
+    await overlay.installChatTypographyProbe()
+    await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ renderedFontSize: '24px', authorFontSize: '24px' })
+
+    const channelUrl = page.url()
+    await scenario.spaNavigate(createLiveEntryState('legacy-live-next', 'Next legacy channel fixture', 'legacy-channel-live'))
+    expect(page.url()).toBe(channelUrl)
+    await scenario.enterFullscreen()
+    await overlay.expectChatLoaded({ timeout: 12000 })
+    await expectCurrentChatTarget(scenario, 'legacy-live-next')
+    await overlay.installChatTypographyProbe()
+    await expect.poll(() => overlay.getChatTypographyState()).toMatchObject({ renderedFontSize: '24px', authorFontSize: '24px' })
+    await scenario.exitFullscreen()
+    await overlay.expectChatDetached({ timeout: 12000 })
+  })
+
   test('starts the content session and resolves the current channel player video', { tag: '@fixture' }, async ({ page }) => {
     test.setTimeout(120000)
 

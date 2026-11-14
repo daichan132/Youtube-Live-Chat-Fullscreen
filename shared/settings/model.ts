@@ -27,6 +27,7 @@ export type ChatAppearance = {
   membershipNameColor: MembershipNameColor
   fontFamily: string | null
   fontSize: number
+  textShadow: number
   blur: number
   spacing: number
   showUserName: boolean

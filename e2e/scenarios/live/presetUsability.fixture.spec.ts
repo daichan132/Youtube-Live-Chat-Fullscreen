@@ -1,8 +1,9 @@
 import { expect, test } from '@e2e/fixtures'
-import type { Locator } from '@playwright/test'
 import { ExtensionOverlay } from '@e2e/pages/ExtensionOverlay'
 import { YouTubeScenario } from '@e2e/support/youtubeScenario'
+import { setRangeWithKeyboard } from '@e2e/utils/rangeInput'
 import { patchOverlayStore } from '@e2e/utils/storageHelper'
+import type { Locator } from '@playwright/test'
 import { DEFAULT_CHAT_SETTINGS } from '../../../shared/settings/migrateSettings'
 import { APPEARANCE_STORAGE_KEY, GEOMETRY_STORAGE_KEY, LOCALE_STORAGE_KEY } from '../../../shared/settings/storageKeys'
 
@@ -14,7 +15,8 @@ test.beforeEach(async ({ page, extension }) => {
   await extension.storage.set({ [LOCALE_STORAGE_KEY]: { schemaVersion: 1, writerId: 'preset-usability', value: 'en' } })
   await patchOverlayStore(extension, {
     profile: DEFAULT_CHAT_SETTINGS.profile,
-    presets: [...DEFAULT_CHAT_SETTINGS.presets,
+    presets: [
+      ...DEFAULT_CHAT_SETTINGS.presets,
       { id: 'night', kind: 'custom', name: presetName, profile },
       { id: 'copy', kind: 'custom', name: 'Same style', profile },
     ],
@@ -23,11 +25,18 @@ test.beforeEach(async ({ page, extension }) => {
   await expect(page.getByRole('tab', { name: 'Presets', exact: true })).toBeVisible()
 })
 
-test.afterEach(async ({ page }) => { await page.setViewportSize({ width: 1280, height: 720 }) })
+test.afterEach(async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 720 })
+})
 
 test('keeps settings open when text selection ends on the backdrop, and closes on a real backdrop click', async ({ page }) => {
   const scenario = new YouTubeScenario(page)
-  await scenario.load({ video: { id: 'preset-backdrop', title: 'Preset backdrop fixture', mode: 'live' }, page: { chatContainer: 'present', chatDimensions: 'standard' }, fullscreen: false, chat: { mode: 'live', native: { state: 'absent' }, response: 'playable' } })
+  await scenario.load({
+    video: { id: 'preset-backdrop', title: 'Preset backdrop fixture', mode: 'live' },
+    page: { chatContainer: 'present', chatDimensions: 'standard' },
+    fullscreen: false,
+    chat: { mode: 'live', native: { state: 'absent' }, response: 'playable' },
+  })
   await scenario.enterFullscreen()
   const overlay = new ExtensionOverlay(page)
   await overlay.expectChatLoaded({ timeout: 12000 })
@@ -56,7 +65,9 @@ test('names the exact deletion target and leaves settings intact on cancellation
   await page.getByRole('button', { name: `Delete ${presetName}`, exact: true }).click()
   const dialog = page.getByRole('dialog', { name: 'Delete', exact: true })
   await expect(dialog).toContainText(presetName)
-  await expect(dialog).toHaveAccessibleDescription(`${presetName} This preset will be removed from the list. Your current chat settings will stay the same.`)
+  await expect(dialog).toHaveAccessibleDescription(
+    `${presetName} This preset will be removed from the list. Your current chat settings will stay the same.`,
+  )
   await testInfo.attach('named-preset-deletion', { body: await page.screenshot(), contentType: 'image/png' })
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
   expect(await extension.storage.get(APPEARANCE_STORAGE_KEY)).toEqual(before)
@@ -69,17 +80,21 @@ test('selects the added name so typing immediately replaces Untitled', async ({ 
   const input = page.getByRole('textbox', { name: 'Preset name', exact: true }).last()
   await expect(input).toBeFocused()
   await expect(input).toHaveValue('Untitled')
-  expect(await input.evaluate(el => {
-    if (!(el instanceof HTMLInputElement)) throw new Error('Expected a preset name input.')
-    return [el.selectionStart, el.selectionEnd]
-  })).toEqual([0, 8])
+  expect(
+    await input.evaluate(el => {
+      if (!(el instanceof HTMLInputElement)) throw new Error('Expected a preset name input.')
+      return [el.selectionStart, el.selectionEnd]
+    }),
+  ).toEqual([0, 8])
   await page.keyboard.type('Evening chat')
   await page.keyboard.press('Enter')
   await expect(input).toHaveValue('Evening chat')
-  await expect.poll(async () => {
-    const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
-    return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: Array<{ name?: string }> } }).value.presets.at(-1)?.name
-  }).toBe('Evening chat')
+  await expect
+    .poll(async () => {
+      const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+      return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: Array<{ name?: string }> } }).value.presets.at(-1)?.name
+    })
+    .toBe('Evening chat')
   await testInfo.attach('named-new-preset', { body: await page.screenshot(), contentType: 'image/png' })
 })
 
@@ -99,9 +114,8 @@ test('marks only matching settings, tracks edits and Undo, and keeps Apply focus
   expect(await extension.storage.get(GEOMETRY_STORAGE_KEY)).toEqual(geometry)
   await testInfo.attach('matching-presets', { body: await page.screenshot(), contentType: 'image/png' })
   await page.getByRole('tab', { name: 'Settings', exact: true }).click()
-  const size = page.getByRole('spinbutton', { name: 'Text Size', exact: true })
-  await size.fill('26')
-  await size.press('Enter')
+  const size = page.getByRole('slider', { name: 'Text Size', exact: true })
+  await setRangeWithKeyboard(size, 26)
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   await expect(apply).toHaveAttribute('aria-pressed', 'false')
   await expect(same).toHaveAttribute('aria-pressed', 'false')
@@ -140,10 +154,12 @@ test('persists deletion of built-in presets, including an empty list, across rel
   await row.getByRole('button', { name: /^Delete / }).click()
   await page.getByRole('dialog').getByRole('button', { name: 'Delete', exact: true }).click()
   await expect(page.locator('[data-ylc-preset-item]')).toHaveCount(0)
-  await expect.poll(async () => {
-    const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
-    return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: unknown[] } }).value.presets
-  }).toEqual([])
+  await expect
+    .poll(async () => {
+      const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+      return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: unknown[] } }).value.presets
+    })
+    .toEqual([])
   const afterDeletion = await extension.storage.get(APPEARANCE_STORAGE_KEY)
   expect((afterDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile).toEqual(
     (beforeDeletion[APPEARANCE_STORAGE_KEY] as { value: { profile: unknown } }).value.profile,
@@ -192,10 +208,12 @@ test('shows a pointer-following drag preview, ignores jitter, and saves only on 
   await expect(handle).toBeFocused()
   const order = await rows.evaluateAll(elements => elements.map(el => el.getAttribute('data-ylc-preset-item')))
   expect(order[0]).not.toBe(firstId)
-  await expect.poll(async () => {
-    const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
-    return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: Array<{ id: string }> } }).value.presets.map(preset => preset.id)
-  }).toEqual(order)
+  await expect
+    .poll(async () => {
+      const raw = await extension.storage.get(APPEARANCE_STORAGE_KEY)
+      return (raw[APPEARANCE_STORAGE_KEY] as { value: { presets: Array<{ id: string }> } }).value.presets.map(preset => preset.id)
+    })
+    .toEqual(order)
   await page.reload()
   await page.getByRole('tab', { name: 'Presets', exact: true }).click()
   expect(await rows.evaluateAll(elements => elements.map(el => el.getAttribute('data-ylc-preset-item')))).toEqual(order)

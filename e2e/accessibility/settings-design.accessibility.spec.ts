@@ -4,46 +4,53 @@ import { ENABLED_STORAGE_KEY, LOCALE_STORAGE_KEY, THEME_STORAGE_KEY } from '../.
 
 // Sample painted CSS colors rather than duplicating theme token values. The
 // targets below use flat surfaces; alpha backgrounds are composed with ancestors.
-const colorsAt = (target: Locator, property: 'color' | 'backgroundColor' | 'borderTopColor' | 'borderRightColor' | 'outlineColor', pseudo: '::after' | '::before' | null = null) =>
-  target.evaluate((element, { property, pseudo }) => {
-    const canvas = document.createElement('canvas')
-    canvas.width = canvas.height = 1
-    const context = canvas.getContext('2d')
-    if (!context) throw new Error('Canvas color sampling is unavailable')
-    type Color = [number, number, number, number]
-    const rgba = (value: string): Color => {
-      context.clearRect(0, 0, 1, 1)
-      context.fillStyle = value
-      context.fillRect(0, 0, 1, 1)
-      const [r = 0, g = 0, b = 0, a = 0] = context.getImageData(0, 0, 1, 1).data
-      return [r, g, b, a / 255]
-    }
-    const over = (front: Color, back: Color): Color => {
-      const alpha = front[3] + back[3] * (1 - front[3])
-      const blend = (index: 0 | 1 | 2) => (front[index] * front[3] + back[index] * back[3] * (1 - front[3])) / (alpha || 1)
-      return [blend(0), blend(1), blend(2), alpha]
-    }
-    let background: Color = [0, 0, 0, 0]
-    // Text is compared to its own background. A boundary/focus outline is
-    // compared to the surface surrounding the control.
-    let ancestor: Element | null = property === 'color' || pseudo ? element : element.parentElement
-    while (ancestor) {
-      background = over(background, rgba(getComputedStyle(ancestor).backgroundColor))
-      ancestor = ancestor.parentElement
-    }
-    background = over(background, [255, 255, 255, 1])
-    const foreground = over(rgba(getComputedStyle(element, pseudo)[property]), background)
-    const luminance = ([r, g, b]: Color) => {
-      const linear = (value: number) => {
-        const channel = value / 255
-        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+const colorsAt = (
+  target: Locator,
+  property: 'color' | 'backgroundColor' | 'borderTopColor' | 'borderRightColor' | 'outlineColor',
+  pseudo: '::after' | '::before' | null = null,
+) =>
+  target.evaluate(
+    (element, { property, pseudo }) => {
+      const canvas = document.createElement('canvas')
+      canvas.width = canvas.height = 1
+      const context = canvas.getContext('2d')
+      if (!context) throw new Error('Canvas color sampling is unavailable')
+      type Color = [number, number, number, number]
+      const rgba = (value: string): Color => {
+        context.clearRect(0, 0, 1, 1)
+        context.fillStyle = value
+        context.fillRect(0, 0, 1, 1)
+        const [r = 0, g = 0, b = 0, a = 0] = context.getImageData(0, 0, 1, 1).data
+        return [r, g, b, a / 255]
       }
-      return linear(r) * 0.2126 + linear(g) * 0.7152 + linear(b) * 0.0722
-    }
-    const a = luminance(foreground)
-    const b = luminance(background)
-    return { foreground, background, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) }
-  }, { property, pseudo })
+      const over = (front: Color, back: Color): Color => {
+        const alpha = front[3] + back[3] * (1 - front[3])
+        const blend = (index: 0 | 1 | 2) => (front[index] * front[3] + back[index] * back[3] * (1 - front[3])) / (alpha || 1)
+        return [blend(0), blend(1), blend(2), alpha]
+      }
+      let background: Color = [0, 0, 0, 0]
+      // Text is compared to its own background. A boundary/focus outline is
+      // compared to the surface surrounding the control.
+      let ancestor: Element | null = property === 'color' || pseudo ? element : element.parentElement
+      while (ancestor) {
+        background = over(background, rgba(getComputedStyle(ancestor).backgroundColor))
+        ancestor = ancestor.parentElement
+      }
+      background = over(background, [255, 255, 255, 1])
+      const foreground = over(rgba(getComputedStyle(element, pseudo)[property]), background)
+      const luminance = ([r, g, b]: Color) => {
+        const linear = (value: number) => {
+          const channel = value / 255
+          return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4
+        }
+        return linear(r) * 0.2126 + linear(g) * 0.7152 + linear(b) * 0.0722
+      }
+      const a = luminance(foreground)
+      const b = luminance(background)
+      return { foreground, background, ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05) }
+    },
+    { property, pseudo },
+  )
 
 const expectInViewport = async (page: Page, target: Locator) => {
   await target.scrollIntoViewIfNeeded()
@@ -86,11 +93,13 @@ test.describe('settings design accessibility', () => {
       }
       const font = page.getByRole('button', { name: 'Font' })
       for (const control of [font, page.getByRole('button', { name: 'Background Color' })]) {
-        expect((await colorsAt(control.locator('.ylc-color-value, .ylc-font-combobox-trigger-text'), 'color')).ratio).toBeGreaterThanOrEqual(4.5)
+        expect(
+          (await colorsAt(control.locator('.ylc-color-value, .ylc-font-combobox-trigger-text'), 'color')).ratio,
+        ).toBeGreaterThanOrEqual(4.5)
         expect((await colorsAt(control, 'borderRightColor', '::after')).ratio).toBeGreaterThanOrEqual(3)
         const affordance = await control.evaluate(element => {
           const arrow = getComputedStyle(element, '::after')
-          return arrow.content !== 'none' && parseFloat(arrow.width) > 0 && parseFloat(arrow.borderRightWidth) > 0
+          return arrow.content !== 'none' && Number.parseFloat(arrow.width) > 0 && Number.parseFloat(arrow.borderRightWidth) > 0
         })
         expect(affordance).toBe(true)
         await page.keyboard.press('Tab')
@@ -99,19 +108,16 @@ test.describe('settings design accessibility', () => {
         await expect(control).toHaveCSS('outline-style', 'solid')
         await expect.poll(async () => (await colorsAt(control, 'outlineColor')).ratio).toBeGreaterThanOrEqual(3)
       }
-      expect((await colorsAt(page.getByRole('spinbutton', { name: 'Text Size', exact: true }), 'color')).ratio).toBeGreaterThanOrEqual(4.5)
       const toggle = page.getByRole('switch').first()
       await toggle.uncheck()
       await expect.poll(async () => (await colorsAt(toggle, 'backgroundColor', '::before')).ratio).toBeGreaterThanOrEqual(3)
       await toggle.check()
       await expect.poll(async () => (await colorsAt(toggle, 'backgroundColor', '::before')).ratio).toBeGreaterThanOrEqual(3)
-      const number = page.getByRole('spinbutton', { name: 'Text Size', exact: true })
-      await page.getByRole('slider', { name: 'Text Size', exact: true }).focus()
-      await page.keyboard.press('Tab')
-      await expect(number).toBeFocused()
-      await expect(number).toHaveCSS('outline-style', 'solid')
-      expect(Number.parseFloat(await number.evaluate(element => getComputedStyle(element).outlineWidth))).toBeGreaterThanOrEqual(2)
-      expect((await colorsAt(number, 'outlineColor')).ratio).toBeGreaterThanOrEqual(3)
+      const range = page.getByRole('slider', { name: 'Text Size', exact: true })
+      await range.focus()
+      await page.keyboard.press('ArrowRight')
+      await expect(range).toBeFocused()
+      expect(await range.evaluate(element => element.matches(':focus-visible'))).toBe(true)
       await page.screenshot({ path: testInfo.outputPath(`settings-${theme}-keyboard.png`) })
       await page.getByRole('tab', { name: 'Presets', exact: true }).click()
       for (const apply of await page.locator('.ylc-preset-apply').all()) {
@@ -201,7 +207,6 @@ test.describe('settings design accessibility', () => {
       await expect(font).toBeVisible()
       for (const control of [
         font,
-        page.getByRole('spinbutton', { name: 'Text Size', exact: true }),
         page.getByRole('slider', { name: 'Text Size', exact: true }),
         page.locator('[data-ylc-setting-close-button]'),
       ]) {

@@ -15,15 +15,10 @@ const createLiveState = (route: NonNullable<YouTubeScenarioState['page']['route'
 
 describe('YouTube scenario route compilation', () => {
   it('compiles watch, direct-live, and channel-live entry URLs', () => {
-    expect(compileYouTubeScenario(createLiveState('watch')).watchUrl).toBe(
-      'https://www.youtube.com/watch?v=ylc-channel-live',
-    )
-    expect(compileYouTubeScenario(createLiveState('direct-live')).watchUrl).toBe(
-      'https://www.youtube.com/live/ylc-channel-live',
-    )
-    expect(compileYouTubeScenario(createLiveState('channel-live')).watchUrl).toBe(
-      'https://www.youtube.com/@ylc-fixture/live',
-    )
+    expect(compileYouTubeScenario(createLiveState('watch')).watchUrl).toBe('https://www.youtube.com/watch?v=ylc-channel-live')
+    expect(compileYouTubeScenario(createLiveState('direct-live')).watchUrl).toBe('https://www.youtube.com/live/ylc-channel-live')
+    expect(compileYouTubeScenario(createLiveState('channel-live')).watchUrl).toBe('https://www.youtube.com/@ylc-fixture/live')
+    expect(compileYouTubeScenario(createLiveState('legacy-channel-live')).watchUrl).toBe('https://www.youtube.com/ylc-fixture/live')
   })
 
   it('rejects live-only entry routes for archived videos', () => {

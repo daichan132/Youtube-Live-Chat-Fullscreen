@@ -165,6 +165,9 @@ export const SettingContent = () => {
         <ControlRow icon={TbTextSize} title={t('content.setting.fontSize')}>
           <YLCNumberSlider settingKey='fontSize' labelKey='content.setting.fontSize' />
         </ControlRow>
+        <ControlRow icon={TbTypography} title={t('content.setting.textShadow')}>
+          <YLCNumberSlider settingKey='textShadow' labelKey='content.setting.textShadow' />
+        </ControlRow>
         <ControlRow icon={TbBlur} title={t('content.setting.blur')}>
           <YLCNumberSlider settingKey='blur' labelKey='content.setting.blur' />
         </ControlRow>
