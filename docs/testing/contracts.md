@@ -46,6 +46,8 @@ Browser setup and assertions need independent evidence too:
 
 See [良いテストを書き、良いテストを見分ける](https://zenn.dev/nexta_/articles/unit-testing-principles-essence) and Khorikov's [When to Mock](https://enterprisecraftsmanship.com/posts/when-to-mock/) for the reasoning behind this approach.
 
+CSS DOM tests resolve `currentColor` through the element's computed color and check outline longhands instead of shorthand spelling. Fixtures attach elements before reading computed styles and explicitly provide native link decoration. jsdom 31 normalizes time units and treats `-webkit-filter` as a `filter` alias; restoration fixtures use a consistent native value and priority for both names. Header and gift-quantity hover surfaces are verified with real pointer input in `overlayInteraction.fixture.spec.ts`, rather than synthetic mouseover in jsdom.
+
 ## Vitest commands
 
 - `yarn test:core`: `*.unit.spec.ts(x)` in Node.

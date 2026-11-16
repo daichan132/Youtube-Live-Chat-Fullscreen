@@ -35,6 +35,10 @@ const getFixtureStyle = (selector: string) => {
 }
 
 const getComputedColor = (selector: string) => getFixtureStyle(selector).color
+const getComputedFill = (selector: string) => {
+  const style = getFixtureStyle(selector)
+  return style.fill.toLowerCase() === 'currentcolor' ? style.color : style.fill
+}
 
 afterEach(() => {
   document.head.replaceChildren()
@@ -94,20 +98,14 @@ describe('iframe styles contract', () => {
       `,
     )
 
-    const materialHost = document.querySelector('#material-host')
-    if (!materialHost) throw new Error('Missing Material header control')
-    materialHost.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
-
     for (const selector of ['#material-shape', '#material-button', '#material-host', '#tonal-link', '#tonal-label']) {
       expect(getComputedColor(selector), selector).toBe('rgb(18, 52, 86)')
     }
-    expect(materialHost.matches(':hover')).toBe(true)
-    expect(getFixtureStyle('#material-host').backgroundColor).toBe('rgb(30, 50, 70)')
     expect(getFixtureStyle('#tonal-link').backgroundColor).toBe('rgb(30, 50, 70)')
     expect(getComputedColor('#neutral-icon')).toBe('rgb(18, 52, 86)')
     expect(getComputedColor('#top-fans-crown')).toBe('rgb(123, 62, 219)')
-    expect(getFixtureStyle('#neutral-icon-path').fill).toBe('rgb(18, 52, 86)')
-    expect(getFixtureStyle('#top-fans-crown-path').fill).toBe('rgb(123, 62, 219)')
+    expect(getComputedFill('#neutral-icon-path')).toBe('rgb(18, 52, 86)')
+    expect(getComputedFill('#top-fans-crown-path')).toBe('rgb(123, 62, 219)')
   })
 
   it.each(['245, 240, 230', '15, 15, 15', '220, 80, 180'])(
@@ -144,7 +142,7 @@ describe('iframe styles contract', () => {
         expect(getComputedColor(selector), selector).toBe(`rgb(${foreground})`)
       }
       expect(getComputedColor('[data-semantic-text]')).toBe('rgb(123, 62, 219)')
-      expect(getFixtureStyle('[data-gift-art]').fill).toBe('rgb(213, 158, 34)')
+      expect(getComputedFill('[data-gift-art]')).toBe('rgb(213, 158, 34)')
       expect(getComputedColor('#unrelated-copy > .ytAttributedStringHost')).toBe('rgb(15, 15, 15)')
       expect(getComputedColor('yt-live-chat-paid-message-renderer')).toBe('rgb(12, 34, 56)')
       expect(getFixtureStyle('yt-live-chat-paid-message-renderer').backgroundColor).toBe('rgb(200, 220, 240)')
@@ -183,7 +181,7 @@ describe('iframe styles contract', () => {
 
     for (const selector of ['#title', '#rank', '#name']) expect(getComputedColor(selector), selector).toBe('rgb(18, 52, 86)')
     for (const selector of ['#points', '#description']) expect(getComputedColor(selector), selector).toBe('rgb(92, 104, 116)')
-    expect(getFixtureStyle('#header-icon').fill).toBe('rgb(18, 52, 86)')
+    expect(getComputedFill('#header-icon')).toBe('rgb(18, 52, 86)')
     for (const selector of ['#leaderboard', '#badge', '#other-title']) expect(getComputedColor(selector), selector).toBe('rgb(201, 80, 40)')
     expect(getFixtureStyle('#badge').backgroundColor).toBe('rgb(240, 220, 180)')
     expect(getFixtureStyle('#entry').display).not.toBe('none')
@@ -224,7 +222,7 @@ describe('iframe styles contract', () => {
     expect(getFixtureStyle(renderer).boxSizing).toBe('border-box')
 
     expect(getFixtureStyle(renderer).transitionProperty).toBe('padding-top, padding-bottom')
-    expect(getFixtureStyle(renderer).transitionDuration).toBe('260ms')
+    expect(getFixtureStyle(renderer).transitionDuration).toBe('0.26s')
 
     document.body.classList.add('chat-only-measuring')
     expect(getFixtureStyle(renderer).paddingTop).toBe('12px')
@@ -332,12 +330,12 @@ describe('iframe styles contract', () => {
       expect(getComputedColor(selector), selector).toBe('rgb(92, 104, 116)')
     }
     for (const selector of ['#menu-path', '#service-path']) {
-      expect(getFixtureStyle(selector).fill, selector).toBe('rgb(18, 52, 86)')
+      expect(getComputedFill(selector), selector).toBe('rgb(18, 52, 86)')
     }
     for (const selector of ['#disabled-menu-path', '#disabled-navigation-path']) {
-      expect(getFixtureStyle(selector).fill, selector).toBe('rgb(92, 104, 116)')
+      expect(getComputedFill(selector), selector).toBe('rgb(92, 104, 116)')
     }
-    expect(getFixtureStyle('#unrelated-semantic-icon').fill).toBe('rgb(201, 80, 40)')
+    expect(getComputedFill('#unrelated-semantic-icon')).toBe('rgb(201, 80, 40)')
     for (const selector of ['#dropdown', '#popup']) {
       const surface = getFixtureStyle(selector)
       expect(surface.backgroundColor, selector).toBe('rgba(0, 0, 0, 0)')
@@ -432,12 +430,10 @@ describe('iframe styles contract', () => {
     },
   )
 
-  it.each(
-    [
-      { palette: 'custom dark over native light', foreground: '245, 240, 230', nativeHover: '222, 241, 255' },
-      { palette: 'custom white over native dark', foreground: '15, 15, 15', nativeHover: '38, 56, 80' },
-    ].flatMap(palette => [false, true].map(hovered => ({ ...palette, hovered }))),
-  )('keeps $palette gift quantities paired while hovered=$hovered', ({ foreground, nativeHover, hovered }) => {
+  it.each([
+    { palette: 'custom dark over native light', foreground: '245, 240, 230', nativeHover: '222, 241, 255' },
+    { palette: 'custom white over native dark', foreground: '15, 15, 15', nativeHover: '38, 56, 80' },
+  ])('keeps $palette gift quantities paired at rest', ({ foreground, nativeHover }) => {
     const monetization = styleModules['monetization.css']
       .replaceAll('var(--extension-yt-live-font-color)', `rgb(${foreground})`)
       .replaceAll('var(--extension-yt-live-menu-hover-background-color)', `rgba(${foreground}, 0.12)`)
@@ -459,12 +455,10 @@ describe('iframe styles contract', () => {
 
     const quantity = document.querySelector('#quantity')
     if (!quantity) throw new Error('Missing quantity action')
-    // Read each fresh fixture only after the mouse event: jsdom otherwise caches
-    // computed styles across hover changes. Browser fixtures cover real movement.
-    if (hovered) quantity.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
+    // Real pointer hover and its background are verified by overlayInteraction.fixture.spec.ts.
     expect(getComputedStyle(quantity).color).toBe(`rgb(${foreground})`)
     expect(getComputedColor('#quantity span')).toBe(`rgb(${foreground})`)
-    expect(getComputedStyle(quantity).backgroundColor).toBe(hovered ? `rgba(${foreground}, 0.12)` : 'rgba(0, 0, 0, 0)')
+    expect(getComputedStyle(quantity).backgroundColor).toBe('rgba(0, 0, 0, 0)')
 
     for (const selector of ['#disabled-quantity', '#aria-disabled-quantity']) {
       const disabled = document.querySelector(selector)
