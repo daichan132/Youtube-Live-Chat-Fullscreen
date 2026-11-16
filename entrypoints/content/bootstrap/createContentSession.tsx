@@ -18,10 +18,26 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
   let cleaned = false
   let cleanupFailed = false
   let cleanupError: unknown
+  const uiInvalidationSubscriptions = new Set<() => void>()
+  // WXT registers its UI removal on the page-lifetime context. Scope those
+  // subscriptions to this session so removed shadow trees can be collected.
+  const uiContext = Object.create(ctx) as ContentScriptContext
+  uiContext.onInvalidated = callback => {
+    const unsubscribe = ctx.onInvalidated(callback)
+    uiInvalidationSubscriptions.add(unsubscribe)
+    return () => {
+      uiInvalidationSubscriptions.delete(unsubscribe)
+      unsubscribe()
+    }
+  }
   const cleanup = () => {
     if (cleaned) return
     cleaned = true
-    for (const release of [() => root?.unmount(), () => chatRuntime?.stop(), () => runtime.dispose()]) {
+    const releaseUiInvalidation = () => {
+      for (const unsubscribe of uiInvalidationSubscriptions) unsubscribe()
+      uiInvalidationSubscriptions.clear()
+    }
+    for (const release of [releaseUiInvalidation, () => root?.unmount(), () => chatRuntime?.stop(), () => runtime.dispose()]) {
       try {
         release()
       } catch (error) {
@@ -34,7 +50,7 @@ export const createContentSession = async (ctx: ContentScriptContext): Promise<C
   try {
     const activeChatRuntime = new ChatRuntimeImpl({ portalHost: createPresentationLease(contentStyles) })
     chatRuntime = activeChatRuntime
-    ui = await createShadowRootUi(ctx, {
+    ui = await createShadowRootUi(uiContext, {
       name: 'wxt-react-content',
       css: contentStyles.replaceAll(':root', ':host'),
       position: 'inline',

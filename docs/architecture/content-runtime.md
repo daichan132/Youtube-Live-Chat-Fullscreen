@@ -46,6 +46,8 @@ An activation token prevents a session that finishes after navigation from being
 
 Session creation tracks the React root before rendering because WXT inserts the shadow host before calling `onMount`. If mount fails, the session attempts to remove the partially inserted UI and independently releases the root, chat runtime, and settings runtime while preserving the original startup error. Cleanup failures do not prevent the remaining owners from being released.
 
+The content-script context lives for the page, while content sessions can be destroyed and recreated when navigating away from and back to video surfaces. Session creation passes WXT a context view that tracks the UI's invalidation subscriptions. Session cleanup unregisters those callbacks, including after a failed mount, so the page's abort signal cannot retain removed shadow trees. Invalidating the parent context still removes an active UI and disposes its runtime through the same cleanup path.
+
 ## One reconcile pass
 
 ```text
