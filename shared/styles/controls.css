@@ -2189,6 +2189,15 @@ label.ylc-row:has(:focus-visible) {
     background: Canvas;
   }
 
+  .ylc-preset-apply[aria-pressed="true"] {
+    background: ButtonFace;
+    color: ButtonText;
+  }
+
+  .ylc-preset-apply[aria-pressed="true"]:focus-visible {
+    outline-color: CanvasText;
+  }
+
   .ylc-preset-apply[aria-pressed="true"] > svg {
     background: Highlight;
     color: HighlightText;
