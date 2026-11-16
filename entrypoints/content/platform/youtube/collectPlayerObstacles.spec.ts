@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { collectPlayerObstacles } from './collectPlayerObstacles'
 
 const rect = (left: number, top: number, width: number, height: number) =>
   ({ x: left, y: top, left, top, right: left + width, bottom: top + height, width, height, toJSON: () => ({}) }) as DOMRect
+
+afterEach(() => document.body.replaceChildren())
 
 describe('collectPlayerObstacles', () => {
   it('collects visible YouTube obstacles relative to the player', () => {
@@ -16,6 +18,7 @@ describe('collectPlayerObstacles', () => {
     hiddenMenu.style.display = 'none'
     hiddenMenu.getBoundingClientRect = () => rect(900, 100, 300, 400)
     player.append(caption, hiddenMenu)
+    document.body.append(player)
 
     expect(collectPlayerObstacles(player, false)).toEqual([{ kind: 'caption', rect: { x: 400, y: 500, width: 400, height: 80 } }])
   })

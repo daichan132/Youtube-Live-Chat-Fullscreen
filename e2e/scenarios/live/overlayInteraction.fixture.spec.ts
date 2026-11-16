@@ -327,6 +327,19 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
     await scenario.enterFullscreen()
     await overlay.expectChatLoaded({ timeout: 12000 })
     const chat = page.frameLocator('iframe[data-ylc-chat]')
+    // Exercise the native :hover boundary with real pointer input, rather than
+    // depending on jsdom's handling of synthetic mouseover events.
+    await chat.locator('yt-live-chat-renderer').evaluate(renderer => {
+      const header = renderer.ownerDocument.createElement('yt-live-chat-header-renderer')
+      const action = renderer.ownerDocument.createElement('button')
+      action.className = 'ytSpecButtonShapeNextHost'
+      action.textContent = 'Fixture header action'
+      action.style.width = '140px'
+      action.style.height = '40px'
+      header.append(action)
+      renderer.prepend(header)
+    })
+
     const palettes = [
       { backgroundColor: { r: 255, g: 255, b: 255, a: 1 }, fontColor: { r: 15, g: 15, b: 15, a: 1 } },
       { backgroundColor: { r: 12, g: 16, b: 24, a: 0.94 }, fontColor: { r: 245, g: 240, b: 230, a: 1 } },
@@ -342,6 +355,11 @@ test.describe('overlay browser interaction boundary', { tag: '@live' }, () => {
       const primary = `rgb(${r}, ${g}, ${b})`
       const secondary = `rgba(${r}, ${g}, ${b}, 0.6)`
       const control = `rgba(${r}, ${g}, ${b}, 0.12)`
+      const headerAction = chat.getByRole('button', { name: 'Fixture header action', exact: true })
+      await expect(headerAction).toHaveCSS('color', primary)
+      await headerAction.hover()
+      await expect(headerAction).toHaveCSS('background-color', control)
+
       await expect(chat.locator('yt-live-chat-message-input-renderer #input-container')).toHaveCSS('background-color', control)
       await expect(chat.locator('yt-live-chat-participant-list-renderer #header')).toHaveCSS('background-color', control)
       await expect(chat.locator('yt-live-chat-participant-list-renderer #header')).toHaveCSS('color', primary)

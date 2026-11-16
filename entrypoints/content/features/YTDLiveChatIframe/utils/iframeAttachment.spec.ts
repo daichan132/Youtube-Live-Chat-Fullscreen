@@ -146,7 +146,7 @@ describe('iframeAttachment', () => {
     expect(iframe.style.height).toBe('100%')
     expect(iframe.style.borderStyle).toBe('none')
     expect(iframe.style.borderWidth).toBe('0px')
-    expect(iframe.style.outline).toBe('none')
+    expect(iframe.style.outlineStyle).toBe('none')
     expect(iframe.style.zIndex).toBe(String(CHAT_PANEL_LAYER.iframe))
   })
 
@@ -223,7 +223,8 @@ describe('iframeAttachment', () => {
     doc.body.style.setProperty('-webkit-backdrop-filter', 'blur(3px)')
     const nativeWebkitBackdropFilterValue = doc.body.style.getPropertyValue('-webkit-backdrop-filter')
     iframe.style.setProperty('filter', 'contrast(1.2)', 'important')
-    iframe.style.setProperty('-webkit-filter', 'saturate(0.8)')
+    // Prefixed filter is an alias in browsers, so keep both native declarations consistent.
+    iframe.style.setProperty('-webkit-filter', 'contrast(1.2)', 'important')
     const nativeWebkitFilterValue = iframe.style.getPropertyValue('-webkit-filter')
     const nativeFontStyle = doc.createElement('style')
     nativeFontStyle.id = 'custom-font-style'
@@ -303,7 +304,7 @@ describe('iframeAttachment', () => {
     expect(iframe.style.getPropertyValue('filter')).toBe('contrast(1.2)')
     expect(iframe.style.getPropertyPriority('filter')).toBe('important')
     expect(iframe.style.getPropertyValue('-webkit-filter')).toBe(nativeWebkitFilterValue)
-    expect(iframe.style.getPropertyPriority('-webkit-filter')).toBe('')
+    expect(iframe.style.getPropertyPriority('-webkit-filter')).toBe('important')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-header-height')).toBe('')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-input-panel-height')).toBe('')
     expect(doc.body.style.getPropertyValue('--extension-chat-only-input-height')).toBe('')

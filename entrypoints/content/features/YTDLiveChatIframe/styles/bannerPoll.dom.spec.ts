@@ -94,6 +94,10 @@ const fixtureElement = (name: string) => {
   return element
 }
 const fixtureStyle = (name: string) => getComputedStyle(fixtureElement(name))
+const fixtureFill = (name: string) => {
+  const style = fixtureStyle(name)
+  return style.fill.toLowerCase() === 'currentcolor' ? style.color : style.fill
+}
 
 afterEach(() => {
   document.head.replaceChildren()
@@ -121,10 +125,10 @@ describe('post-vote banner poll colors', () => {
 
     for (const suffix of ['button', 'icon', 'shape', 'svg', 'path']) {
       expect.soft(fixtureStyle(`enabled-${suffix}`).color, suffix).toBe(palette.primary)
-      expect.soft(fixtureStyle(`enabled-${suffix}`).fill, suffix).toBe(palette.primary)
+      expect.soft(fixtureFill(`enabled-${suffix}`), suffix).toBe(palette.primary)
       for (const name of ['disabled', 'aria-disabled']) {
         expect(fixtureStyle(`${name}-${suffix}`).color, `${name}-${suffix}`).toBe(nativeSecondary)
-        expect(fixtureStyle(`${name}-${suffix}`).fill, `${name}-${suffix}`).toBe(nativeSecondary)
+        expect(fixtureFill(`${name}-${suffix}`), `${name}-${suffix}`).toBe(nativeSecondary)
       }
     }
     expect(fixtureElement('disabled-button')).toBeDisabled()
