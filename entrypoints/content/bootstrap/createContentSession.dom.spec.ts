@@ -1,7 +1,7 @@
 import { createRoot } from 'react-dom/client'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { browser } from 'wxt/browser'
-import type { ContentScriptContext } from 'wxt/utils/content-script-context'
+import { ContentScriptContext } from 'wxt/utils/content-script-context'
 import { createShadowRootUi } from 'wxt/utils/content-script-ui/shadow-root'
 import { clearLocaleCache } from '@/shared/i18n/loader'
 import { isExtensionAssetRequest } from '@/shared/runtime/extensionAssets'
@@ -13,6 +13,7 @@ vi.mock('../runtime/resources/PresentationLease', async importOriginal => {
   const actual = await importOriginal<typeof import('../runtime/resources/PresentationLease')>()
   return { ...actual, createPresentationLease: vi.fn(actual.createPresentationLease) }
 })
+
 vi.mock('react-dom/client', async importOriginal => {
   const actual = await importOriginal<typeof import('react-dom/client')>()
   return { ...actual, createRoot: vi.fn(actual.createRoot) }
@@ -161,6 +162,87 @@ describe('content session startup failure cleanup', () => {
     } finally {
       host.remove()
       for (const [listener] of added.mock.calls) browser.storage.local.onChanged.removeListener(listener)
+    }
+  })
+})
+
+describe('content session UI invalidation ownership', () => {
+  beforeEach(async () => {
+    const actual = await vi.importActual<typeof import('wxt/utils/content-script-ui/shadow-root')>(
+      'wxt/utils/content-script-ui/shadow-root',
+    )
+    vi.mocked(createShadowRootUi).mockImplementation(actual.createShadowRootUi)
+  })
+
+  afterEach(() => vi.mocked(createShadowRootUi).mockReset())
+
+  it('unregisters each removed UI from the still-active content context', async () => {
+    const ctx = new ContentScriptContext('content', { cssInjectionMode: 'manual' })
+    const added = vi.spyOn(ctx.signal, 'addEventListener')
+    const removed = vi.spyOn(ctx.signal, 'removeEventListener')
+    const hostRemovals: ReturnType<typeof vi.spyOn>[] = []
+    try {
+      for (let index = 0; index < 5; index++) {
+        vi.mocked(createRoot).mockReturnValueOnce({ render: vi.fn(), unmount: vi.fn() })
+        const before = added.mock.calls.length
+        const session = await createContentSession(ctx)
+        const ui = await vi.mocked(createShadowRootUi).mock.results.at(-1)?.value
+        const removeHost = vi.spyOn(ui.shadowHost, 'remove')
+        hostRemovals.push(removeHost)
+        expect(ui.shadowHost.isConnected).toBe(true)
+        const callbacks = added.mock.calls.slice(before).filter(([type]) => type === 'abort')
+        expect(callbacks.length).toBeGreaterThan(0)
+
+        session.dispose()
+        expect(ui.shadowHost.isConnected).toBe(false)
+        expect(ctx.signal.aborted).toBe(false)
+        for (const [, callback] of callbacks) expect(removed).toHaveBeenCalledWith('abort', callback)
+      }
+      ctx.abort('extension invalidated after all sessions were removed')
+      for (const removeHost of hostRemovals) expect(removeHost).toHaveBeenCalledOnce()
+    } finally {
+      ctx.abort('test complete')
+    }
+  })
+
+  it('still removes an active UI and releases settings when the parent context is invalidated', async () => {
+    const ctx = new ContentScriptContext('content', { cssInjectionMode: 'manual' })
+    const unmount = vi.fn()
+    vi.mocked(createRoot).mockReturnValueOnce({ render: vi.fn(), unmount })
+    const added = vi.spyOn(browser.storage.local.onChanged, 'addListener')
+    const session = await createContentSession(ctx)
+    const ui = await vi.mocked(createShadowRootUi).mock.results.at(-1)?.value
+    expect(ui.shadowHost.isConnected).toBe(true)
+    ctx.abort('extension invalidated')
+    expect(ui.shadowHost.isConnected).toBe(false)
+    expect(unmount).toHaveBeenCalledOnce()
+    expect(added.mock.calls.length).toBeGreaterThan(0)
+    for (const [listener] of added.mock.calls) expect(browser.storage.local.onChanged.hasListener(listener)).toBe(false)
+    session.dispose()
+    expect(unmount).toHaveBeenCalledOnce()
+  })
+
+  it('unregisters the UI after a mount failure even when React cleanup fails', async () => {
+    const ctx = new ContentScriptContext('content', { cssInjectionMode: 'manual' })
+    const failure = new Error('render failed')
+    const added = vi.spyOn(ctx.signal, 'addEventListener')
+    const removed = vi.spyOn(ctx.signal, 'removeEventListener')
+    vi.mocked(createRoot).mockReturnValueOnce({
+      render: vi.fn(() => {
+        throw failure
+      }),
+      unmount: vi.fn(() => {
+        throw new Error('unmount failed')
+      }),
+    })
+    try {
+      await expect(createContentSession(ctx)).rejects.toBe(failure)
+      expect(document.querySelector('wxt-react-content')).toBeNull()
+      const callbacks = added.mock.calls.filter(([type]) => type === 'abort')
+      expect(callbacks.length).toBeGreaterThan(0)
+      for (const [, callback] of callbacks) expect(removed).toHaveBeenCalledWith('abort', callback)
+    } finally {
+      ctx.abort('test complete')
     }
   })
 })
