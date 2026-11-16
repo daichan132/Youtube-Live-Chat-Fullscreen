@@ -38,7 +38,7 @@ const mount = () => {
     </yt-live-chat-super-sticker-preview-renderer>
   `
   const nativeStyle = document.createElement('style')
-  nativeStyle.textContent = `body { font-size: 16px; } a[href] { color: ${nativeLink}; }`
+  nativeStyle.textContent = `body { font-size: 16px; } a { text-decoration: none; } a[href] { color: ${nativeLink}; }`
   const extensionStyle = document.createElement('style')
   extensionStyle.textContent = css
   document.head.append(nativeStyle, extensionStyle)
